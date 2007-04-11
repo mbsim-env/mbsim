@@ -1,0 +1,110 @@
+/* Copyright (C) 2004-2006  Martin Förg
+ 
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+ *
+ * Contact:
+ *   mfoerg@users.berlios.de
+ *
+ */
+#include <config.h>
+#include "connection.h"
+#include "port.h"
+
+namespace MBSim {
+
+  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0) {
+  }
+
+  void Connection::calcSize() {
+    LinkPort::calcSize();
+    gSize = forceDir.cols()+momentDir.cols();
+    laSize = gSize;
+    rFactorSize = setValued?laSize:0;
+    xSize = momentDir.cols();
+  }
+
+  void Connection::init() {
+    LinkPort::init();
+    IT = Index(0,forceDir.cols()-1);
+    IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
+    if(forceDir.cols()) 
+      Wf = forceDir;
+    else {
+      forceDir.resize(3,0);
+      Wf.resize(3,0);
+    }
+    if(momentDir.cols())
+      Wm = momentDir;
+    else {
+      momentDir.resize(3,0);
+      Wm.resize(3,0);
+    }
+  }
+
+  void Connection::setKOSY(int id) {
+    KOSYID = id;
+    assert(KOSYID >= 0);
+    assert(KOSYID <= 2);
+  }
+
+  void Connection::connect(Port *port0, Port* port1) {
+    LinkPort::connect(port0,0);
+    LinkPort::connect(port1,1);
+  }
+
+  void Connection::updateStage1(double t) {
+    if(KOSYID) {
+      Wf = port[KOSYID-1]->getAWP()*forceDir;
+      Wm = port[KOSYID-1]->getAWP()*momentDir;
+    }
+    g(IT) = trans(Wf)*(port[1]->getWrOP() - port[0]->getWrOP());
+    g(IR) = x;
+  }
+
+  void Connection::updateStage2(double t) {
+    gd(IT) = trans(Wf)*(port[1]->getWvP() - port[0]->getWvP());
+    gd(IR) = trans(Wm)*(port[1]->getWomegaP() - port[0]->getWomegaP());
+
+    updateKinetics(t);
+  }
+
+  void Connection::setForceDirection(const Mat &fd) {
+    assert(fd.rows() == 3);
+
+    forceDir = fd;
+
+    for(int i=0; i<fd.cols(); i++)
+      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
+  }
+
+  void Connection::setMomentDirection(const Mat &md) {
+    assert(md.rows() == 3);
+
+    momentDir = md;
+
+    for(int i=0; i<md.cols(); i++)
+      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+  }
+
+  void Connection::updatexd(double t) {
+    xd = gd(IR);
+  }
+
+  void Connection::updatedx(double t, double dt) {
+    xd = gd(IR)*dt;
+  }
+
+}
