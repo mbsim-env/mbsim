@@ -27,11 +27,7 @@
 #include "fmatvec.h"
 #include <vector>
 
-//class LinkBody;
-//class ConnectionRigid;
-//class Port;
-
-namespace AMVis {class CRigidBody;};
+namespace AMVis {class CRigidBody;}
 
 namespace MBSim {
 
