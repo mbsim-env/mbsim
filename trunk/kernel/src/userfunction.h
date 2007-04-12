@@ -32,12 +32,11 @@
 #include <vector>
 #include "data_interface_base.h"
 
-class PPolynom;
-
-
 using namespace fmatvec;
 
 namespace MBSim {
+  class PPolynom;
+
   /*! Comment
    *
    * */
