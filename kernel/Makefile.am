@@ -1,7 +1,7 @@
 SUBDIRS = src
 
 DIST_SUBDIRS = src  doc
-EXTRA_DIST = src/contact_kinematics/*.h src/body_flexible/finite_elements/*.h
+EXTRA_DIST = src/contact_kinematics/*.h src/body_flexible/finite_elements/*.h doc/macros.sty
 
 #bin_SCRIPTS = mbsim-config
 
