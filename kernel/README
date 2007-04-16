@@ -1,10 +1,13 @@
-MBSim - Mehrkörpersimulation am Lehrstuhl für Angewandte Mechanik
-==============================
+MBSim - Multi-Body Simulation Software 
+======================================
+
+Entwickelt am Lehrstuhl für Angewandte Mechanik der Technischen Universität
+München (http://www.amm.mw.tu-muenchen.de)
 
 Benötigt:
 =========
-	- fmatvec
-	- AMVis-C++Interface
+	- fmatvec (http://developer.berlios.de/projects/fmatvec)
+	- AMVis-C++Interface (http://www.amm.mw.tu-muenchen.de)
 
 Installation:
 =============
