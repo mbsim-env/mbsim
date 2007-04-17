@@ -499,8 +499,9 @@ namespace MBSim {
 
     updateKinematics(t);
     updateLinksStage1(t);
-    for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
-      (*iL)->updateStage2(t);
+    updateLinksStage2(t);
+   // for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
+    //  (*iL)->updateStage2(t);
     updateh(t); 
     plot(t,dt);
   }
