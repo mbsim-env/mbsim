@@ -29,11 +29,11 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidCircleHollow::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<CircleSolid*>(contour[0])) {
-      icircle0 = 0; icircle1 = 1;
+      icircle0 = 1; icircle1 = 0;
       circle0 = static_cast<CircleSolid*>(contour[0]);
       circle1 = static_cast<CircleHollow*>(contour[1]);
     } else {
-      icircle0 = 1; icircle1 = 0;
+      icircle0 = 0; icircle1 = 1;
       circle0 = static_cast<CircleSolid*>(contour[1]);
       circle1 = static_cast<CircleHollow*>(contour[0]);
     }
