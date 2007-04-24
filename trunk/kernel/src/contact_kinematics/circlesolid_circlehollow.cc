@@ -29,11 +29,11 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidCircleHollow::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<CircleSolid*>(contour[0])) {
-      icircle0 = 1; icircle1 = 0;
+      icircle0 = 0; icircle1 = 1;
       circle0 = static_cast<CircleSolid*>(contour[0]);
       circle1 = static_cast<CircleHollow*>(contour[1]);
     } else {
-      icircle0 = 0; icircle1 = 1;
+      icircle0 = 1; icircle1 = 0;
       circle0 = static_cast<CircleSolid*>(contour[1]);
       circle1 = static_cast<CircleHollow*>(contour[0]);
     }
@@ -42,29 +42,31 @@ namespace MBSim {
   void ContactKinematicsCircleSolidCircleHollow::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
     Vec WrD = circle1->getWrOP() - circle0->getWrOP();
-    cpData[icircle1].Wn = WrD/nrm2(WrD);
-    cpData[icircle0].Wn = -cpData[icircle1].Wn;
-    g(0) = circle1->getRadius() - trans(cpData[icircle1].Wn)*WrD - circle0->getRadius();
+    cpData[icircle1].Wn = - WrD/nrm2(WrD);
+    cpData[icircle0].Wn = - cpData[icircle1].Wn;
+    g(0) = circle1->getRadius() - trans(cpData[icircle0].Wn)*WrD - circle0->getRadius();
   }
 
   void ContactKinematicsCircleSolidCircleHollow::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
     Vec WrPC[2], WvC[2];
 
+    // Solid
+    WrPC[icircle0] = - cpData[icircle0].Wn*(circle0->getRadius());
+    cpData[icircle0].WrOC = circle0->getWrOP()+WrPC[icircle0];
+
+    // Hollow
     WrPC[icircle1] = cpData[icircle1].Wn*circle1->getRadius();
     cpData[icircle1].WrOC = circle1->getWrOP()+WrPC[icircle1];
 
-    WrPC[icircle0] = cpData[icircle0].Wn*(circle0->getRadius());
-    cpData[icircle0].WrOC = circle0->getWrOP()+WrPC[icircle0];
-
     WvC[icircle0] = circle0->getWvP()+crossProduct(circle0->getWomegaC(),WrPC[icircle0]);
     WvC[icircle1] = circle1->getWvP()+crossProduct(circle1->getWomegaC(),WrPC[icircle1]);
-    Vec WvD = WvC[icircle0] - WvC[icircle1];
+    Vec WvD = WvC[icircle1] - WvC[icircle0];
     gd(0) = trans(cpData[icircle1].Wn)*WvD;
     if(cpData[icircle0].Wt.cols()) {
-      cpData[icircle1].Wt = crossProduct(circle0->computeWb(),cpData[icircle1].Wn);
-      cpData[icircle0].Wt = -cpData[icircle1].Wt;
-      static Index iT(1,cpData[icircle0].Wt.cols());
+      cpData[icircle0].Wt = crossProduct(circle0->computeWb(),cpData[icircle0].Wn);
+      cpData[icircle1].Wt = -cpData[icircle0].Wt;
+      static Index iT(1,cpData[icircle1].Wt.cols());
       gd(iT) = trans(cpData[icircle1].Wt)*WvD;
     }
   }
