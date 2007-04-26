@@ -77,6 +77,7 @@ namespace MBSim {
 
   void ContactKinematicsPointContourInterpolation::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
+    if(g(0)>0.0) return;
     // Contour-Interpolation
     cpData[idinterpol].WrOC = cinterpol->computeWrOC(cpData[idinterpol].alpha);
 
