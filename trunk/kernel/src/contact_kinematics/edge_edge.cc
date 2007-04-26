@@ -71,7 +71,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsEdgeEdge::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
-
+    if(g(0)>0.0) return;
     cpData[iedge1].WrOC = edge1->getWrOP()+WrPC[iedge1];
     cpData[iedge0].WrOC = edge0->getWrOP()+WrPC[iedge0];
 

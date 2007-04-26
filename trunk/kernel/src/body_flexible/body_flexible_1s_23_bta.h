@@ -47,6 +47,8 @@ namespace MBSim {
       int Elements;
       double L, E, G, A, Iyy, Izz, It,rho, rc, dm, dl;
 
+// TODO: updateContours aus BodyFlexibleLinearExternal übernehmen
+
       bool implicit;
       SqrMat Dhq, Dhqp;
 

@@ -54,7 +54,7 @@ namespace MBSim {
     RHitSphere = 0;
 
     for(int i=0; i<contour.size(); i++) {
-      if( (J[contour[i]->getID()]).rows() ) { // echte, keine Interpolationscontour
+      if( (J[contour[i]->getID()]).rows() ) { // echte, keine Interpolationscontour  // TODO: nutze constContourPosition aus BodyFlexible
 	Vec rContour = trans(J[contour[i]->getID()]) * q ;
 	Vec uContour = trans(J[contour[i]->getID()]) * u ;
 
