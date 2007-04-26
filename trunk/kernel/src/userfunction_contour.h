@@ -36,23 +36,30 @@ namespace MBSim {
   /** userFunction for Contours: Contourpoint and trihedral (T,N,B) *
    * Parent class */
   class  UserFunctionContour1s : public UserFunction {
-    private:
-      double alpha_start, alpha_end;
+    protected:
+      double alphaStart, alphaEnd;
     public:
       UserFunctionContour1s(){};
-      virtual Vec computeT(double alpha)   { Vec T = diff1(alpha); T/=nrm2(T); return T;};
-      virtual Vec computeB(double alpha)   { Vec B = crossProduct(diff1(alpha), diff2(alpha)); B/=nrm2(B); return B;};
-      virtual Vec computeN(double alpha)   { Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N;};
-      virtual double computeR(double alpha){ Vec rs = diff1(alpha); double nrm2rs = nrm2(rs); 
-	return nrm2rs*nrm2rs*nrm2rs/nrm2(crossProduct(rs,diff2(alpha)));};
+      virtual Vec computeT(double alpha)   { Vec T = diff1(alpha); T/=nrm2(T); return T;}
+      virtual Vec computeB(double alpha)   { Vec B = crossProduct(diff1(alpha), diff2(alpha)); B/=nrm2(B); return B;}
+      virtual Vec computeN(double alpha)   { Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N;}
+      virtual double computeR(double alpha){ 
+	Vec rs = diff1(alpha);
+	double nrm2rs = nrm2(rs);
+	return nrm2rs*nrm2rs*nrm2rs/nrm2(crossProduct(rs,diff2(alpha)));
+      }
 
-	virtual void init(double alpha) {};
-	virtual Vec computeT(const ContourPointData &cp)   {return computeT(cp.alpha(0));};
-	virtual Vec computeB(const ContourPointData &cp)   {return computeB(cp.alpha(0));};
-	virtual Vec computeN(const ContourPointData &cp)   {return computeN(cp.alpha(0));};
-	virtual double computeR(const ContourPointData &cp){return computeR(cp.alpha(0));}; 
-	virtual void init(const ContourPointData &cp) {init(cp.alpha(0));};
+      virtual void init(double alpha) {};
+      virtual Vec computeT(const ContourPointData &cp)   {return computeT(cp.alpha(0));};
+      virtual Vec computeB(const ContourPointData &cp)   {return computeB(cp.alpha(0));};
+      virtual Vec computeN(const ContourPointData &cp)   {return computeN(cp.alpha(0));};
+      virtual double computeR(const ContourPointData &cp){return computeR(cp.alpha(0));}; 
+      virtual void init(const ContourPointData &cp) {init(cp.alpha(0));};
 
+      double getalphaStart() {return alphaStart;}
+      double getalphaEnd() {return alphaEnd;}
+      void setalphaStart(double alphaStart_) {alphaStart = alphaStart_;};
+      void setalphaEnd(double alphaEnd_) {alphaEnd = alphaEnd_;};
   };  
 }
 
