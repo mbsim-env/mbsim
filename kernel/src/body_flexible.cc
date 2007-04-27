@@ -246,11 +246,11 @@ namespace MBSim {
   BodyFlexible1s::BodyFlexible1s(const string &name) 
     :BodyFlexible(name), userContourNodes(0) { 
 
-      contourR = new Contour1sFlexible("R");
-      contourL = new Contour1sFlexible("L");
-      ContourPointData cpTmp;
-      BodyFlexible::addContour(contourR,cpTmp,false);
-      BodyFlexible::addContour(contourL,cpTmp,false);
+//      contourR = new Contour1sFlexible("R");
+//      contourL = new Contour1sFlexible("L");
+//      ContourPointData cpTmp;
+//      BodyFlexible::addContour(contourR,cpTmp,false);
+//      BodyFlexible::addContour(contourL,cpTmp,false);
     }
 
   void BodyFlexible1s::addPort(const string &name, const double &s) {

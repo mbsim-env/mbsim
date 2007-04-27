@@ -41,7 +41,11 @@ namespace MBSim {
     WrON00(3), WrON0(3), 
     alphaRelax0(-99999.99999), alphaRelax(alphaRelax0), initialized(false),
     Wt(3), Wn(3), WrOC(3), WvC(3) { 
-
+	  contourR = new Contour1sFlexible("R");
+	  contourL = new Contour1sFlexible("L");
+	  ContourPointData cpTmp;
+	  BodyFlexible::addContour(contourR,cpTmp,false);
+	  BodyFlexible::addContour(contourL,cpTmp,false);
     }
 
 

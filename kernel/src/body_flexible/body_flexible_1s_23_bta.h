@@ -29,6 +29,7 @@
 
 namespace MBSim {
 
+//  class CylinderFlexible;
   class FiniteElement1s23BTA;
 
   /*! \brief
@@ -70,6 +71,8 @@ namespace MBSim {
       double sTangent;
       Vec Wt, WrOC, WvC, Womega;
 
+     CylinderFlexible *contourCyl;
+
     public:
       BodyFlexible1s23BTA(const string &name); 
 
@@ -82,7 +85,7 @@ namespace MBSim {
       void setMaterialDamping(double d)     {dm = d;}
       void setLehrDamping(double d)         {dl = d;}
 
-      void setContourRadius(double r) {static_cast<CylinderFlexible*>(contourR)->setRadius(r);}
+      void setContourRadius(double r) {contourCyl->setRadius(r);}
 
       using BodyFlexible1s::addPort;
       /*! add Port at
