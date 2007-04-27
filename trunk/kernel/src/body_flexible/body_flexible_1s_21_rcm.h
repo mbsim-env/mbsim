@@ -100,6 +100,9 @@ namespace MBSim {
       double sTangent;
       Vec Wt, Wn, WrOC, WvC, Womega;
 
+      /** right and left side contour of body: defined using binormal of contour */
+      Contour1sFlexible *contourR, *contourL;
+
     public:
       /*! Constructor:
        * \param name body name

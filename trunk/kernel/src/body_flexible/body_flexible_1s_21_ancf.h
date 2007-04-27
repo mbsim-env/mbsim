@@ -68,6 +68,9 @@ namespace MBSim {
       double sTangent;
       Vec Wt, Wn, WrOC, WvC, Womega;
 
+      /** right and left side contour of body: defined using binormal of contour */
+      Contour1sFlexible *contourR, *contourL;
+
     public:
       BodyFlexible1s21ANCF(const string &name, bool openStructure); 
 

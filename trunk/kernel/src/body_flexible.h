@@ -193,9 +193,6 @@ namespace MBSim {
   class BodyFlexible1s : public BodyFlexible {
 
     protected:
-      /** right and left side contour of body: defined using binormal of contour */
-      Contour1sFlexible *contourR, *contourL;
-
       /** grid for contact point detection given to Contour1sFlexible */
       Vec userContourNodes;
 

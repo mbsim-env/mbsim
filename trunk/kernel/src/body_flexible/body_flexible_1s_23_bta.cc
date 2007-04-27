@@ -40,9 +40,9 @@ namespace MBSim {
   implicit(false), WrON00(3), WrON0(3),
   WrOC(3), WvC(3), Womega(3) { 
 
-    contourR = new CylinderFlexible("cylinder");
+    contourCyl = new CylinderFlexible("cylinder");
     ContourPointData cpTmp;
-    BodyFlexible::addContour(contourR,cpTmp,false);
+    BodyFlexible::addContour(contourCyl,cpTmp,false);
   }
 
   void BodyFlexible1s23BTA::init() {
@@ -61,22 +61,22 @@ namespace MBSim {
     }
 
 
-    contourR->setAlphaStart(0);  contourR->setAlphaEnd(L);
+    contourCyl->setAlphaStart(0);  contourCyl->setAlphaEnd(L);
 
     if(userContourNodes.size()==0) {
       Vec contourNodes(Elements+1);
       for(int i=0;i<=Elements;i++)
 	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
-      contourR->setNodes(contourNodes);
+      contourCyl->setNodes(contourNodes);
     }
     else {
-      contourR->setNodes(userContourNodes);
+      contourCyl->setNodes(userContourNodes);
     }
     // wenn ein file fuer AMVis geschrieben werden soll
     if(boolAMVis) {
       ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
       BTAbody->setElementLength(element[0].l0);
-      BTAbody->setRadius(static_cast<CylinderFlexible*>(contourR)->getRadius());
+      BTAbody->setRadius(static_cast<CylinderFlexible*>(contourCyl)->getRadius());
 
       float amvisJ[3][3];
       for(int i=0;i<3;i++)
