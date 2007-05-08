@@ -26,9 +26,10 @@
 #include "contour.h"
 #include "link.h"
 #include "extra_dynamic_interface.h"
-#include <sys/stat.h>
 #include "integrator.h"
 #include "eps.h"
+
+extern "C" int mkdir(const char *);
 
 namespace MBSim {
 
@@ -236,7 +237,7 @@ namespace MBSim {
       number << "." << setw(2) << setfill('0') << i;
       projectDirectory = directoryName + number.str();
 
-      mkdir(projectDirectory.c_str(),0777);
+      mkdir(projectDirectory.c_str());
       cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
     }
     else { // hart immer ins gleiche Verzeichnis
@@ -245,7 +246,7 @@ namespace MBSim {
       dir_d = opendir(projectDirectory.c_str());
 
       if(dir_d == NULL) {	// Verzeichnis ist NICHT vorhanden
-	mkdir(projectDirectory.c_str(),0777);
+	mkdir(projectDirectory.c_str());
 	cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
       }
       else {	// Verzeichnis IST vorhanden
@@ -264,7 +265,7 @@ namespace MBSim {
       DIR* dir_pre = opendir(preDir.c_str());
 
       if(dir_pre == NULL) {	// Verzeichnis ist NICHT vorhanden
-	mkdir(preDir.c_str(),0777);
+	mkdir(preDir.c_str());
 	cout << "Make directory " << preDir << " for Preintegration results." << endl;
       }
       else {	// Verzeichnis IST vorhanden
