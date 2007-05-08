@@ -15,6 +15,16 @@ AC_C_CONST
 
 PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1 amvisc++interface >= 2.0.0)
 
+dnl By autoscan
+AC_CHECK_FUNCS([mkdir])
+AC_CHECK_FUNCS([pow])
+AC_CHECK_FUNCS([sqrt])
+AC_C_INLINE
+AC_FUNC_CLOSEDIR_VOID
+AC_HEADER_DIRENT
+AC_HEADER_STDBOOL
+AC_PROG_RANLIB
+
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
 dnl revision: 	The implementation number of the current interface. 
