@@ -1423,6 +1423,7 @@ namespace MBSim {
     laOld = la;
     iter = (this->*solve_)(dt);
     if(iter >= maxIter) {
+      cout << endl;
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<<endl;
       if(stopIfNoConvergence) {
@@ -1534,7 +1535,7 @@ namespace MBSim {
     contactDrop << "constraint velocities gp" << endl << trans(gd) << endl << endl;
     contactDrop << "non-holonomic part in gp; b" << endl << trans(b) << endl << endl;
     contactDrop << "Lagrange multipliers la" << endl << trans(la) << endl << endl;
-    contactDrop.close()
+    contactDrop.close();
   }
 
   string MultiBodySystem::getSolverInfo() {
