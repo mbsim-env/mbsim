@@ -129,7 +129,7 @@ namespace MBSim {
       Mat ld = it1->link->getLoadDirections(objectID);
       Index iJ(0,ld.cols()-1);
       (*itW).resize(uSize,ld.cols(),NONINIT);
-      (*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
+      (*itW)(iT,iJ) = trans(JT)*(trans(AWK)*ld(IF,iJ)); // trans(AWK) vergessen ???  TODO: Martin, pruefe das bitte!
       (*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKP[portID])*ld(IF,iJ)));
       *itw = trans(ld(IF,iJ))*crossProduct(WomegaK,crossProduct(WomegaK,WrKP[portID]));
       it1++; itW++; itw++;
