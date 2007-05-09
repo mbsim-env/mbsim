@@ -1426,6 +1426,7 @@ namespace MBSim {
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<<endl;
       if(stopIfNoConvergence) {
+	if(dropContactInfo) dropContactMatrices();
 	assert(iter < maxIter);
       }
       cout << "Anyway, continuing integration..."<<endl;
@@ -1518,6 +1519,22 @@ namespace MBSim {
       }
     }
     return iter;
+  }
+
+  void MultiBodySystem::dropContactMatrices() {
+    cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
+    ofstream contactDrop("dump_matrices.asc");   
+
+    contactDrop << "constraint functions g" << endl << trans(g) << endl << endl;
+    contactDrop << endl;
+    contactDrop << "mass matrix M" << endl << M << endl << endl;
+    contactDrop << "generalized force directions W" << endl << W << endl << endl;
+    contactDrop << "Delassus matrix G" << endl << G << endl << endl;
+    contactDrop << endl;
+    contactDrop << "constraint velocities gp" << endl << trans(gd) << endl << endl;
+    contactDrop << "non-holonomic part in gp; b" << endl << trans(b) << endl << endl;
+    contactDrop << "Lagrange multipliers la" << endl << trans(la) << endl << endl;
+    contactDrop.close()
   }
 
   string MultiBodySystem::getSolverInfo() {
