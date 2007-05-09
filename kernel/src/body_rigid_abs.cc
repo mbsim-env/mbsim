@@ -65,8 +65,8 @@ namespace MBSim {
     J.resize(6,uSize);
     J(Index(0,2),iT) = JT;
     J(Index(3,5),iR) = JR;
-    JT >> J(Index(0,2),iT);
-    JR >> J(Index(3,5),iR);
+    //JT >> J(Index(0,2),iT);
+    //JR >> J(Index(3,5),iR);
 
     WrOHitSphere >> WrOK;
 
@@ -129,7 +129,7 @@ namespace MBSim {
       Mat ld = it1->link->getLoadDirections(objectID);
       Index iJ(0,ld.cols()-1);
       (*itW).resize(uSize,ld.cols(),NONINIT);
-      (*itW)(iT,iJ) = trans(JT)*(trans(AWK)*ld(IF,iJ)); // trans(AWK) vergessen ???  TODO: Martin, pruefe das bitte!
+      (*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
       (*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKP[portID])*ld(IF,iJ)));
       *itw = trans(ld(IF,iJ))*crossProduct(WomegaK,crossProduct(WomegaK,WrKP[portID]));
       it1++; itW++; itw++;
