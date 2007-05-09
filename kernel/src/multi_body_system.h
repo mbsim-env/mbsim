@@ -126,6 +126,7 @@ namespace MBSim {
     Strategy strategy;
     LinAlg linAlg;
     bool stopIfNoConvergence;
+    bool dropContactInfo;
     bool useOldla;
     bool numJac;
     Vector<int> decreaseLevels;
@@ -330,8 +331,11 @@ namespace MBSim {
 
     /*! specify wether time integration should be stopped (true) in case of no convergence of constraint-problem
      * or only a waring should be processed (flase=default)
-     * \param flag true, false */
-    void setStopIfNoConvergence(bool flag) {stopIfNoConvergence = flag;}
+     * \param flag true, false for stopping
+     * \param dropInfo true, (false) for dropping contact informations to file
+     * */
+    void setStopIfNoConvergence(bool flag, bool dropInfo = false) {stopIfNoConvergence = flag;dropContactInfo=dropInfo;}
+    void dropContactMatrices();
     void setUseOldla(bool flag) {useOldla = flag;}
     void setDecreaseLevels(const Vector<int> &decreaseLevels_) {decreaseLevels = decreaseLevels_;}
     void setCheckTermLevels(const Vector<int> &checkTermLevels_) {checkTermLevels = checkTermLevels_;}
