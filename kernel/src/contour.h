@@ -277,12 +277,11 @@ namespace MBSim {
       Vec computeWvC   (double alpha);
       Vec computeWomega(double alpha);
 
-      //    Vec computeWt  (double s) {return (((static_cast<BodyFlexible1s*>(parent))->computeWt(s)).col(0));} //TODO: eigentlich ist Wt Mat!!!
-      Mat computeWt  (const ContourPointData &cp)   ;// {return computeWt  (cp.alpha(0));}
-      Vec computeWn  (const ContourPointData &cp)   ;// {return computeWn  (cp.alpha(0));}
-      Vec computeWb  (const ContourPointData &cp)   ;// {return computeWb  (cp.alpha(0));}
-      Vec computeWrOC(const ContourPointData &cp)   ;// {return computeWrOC(cp.alpha(0));}
-      Vec computeWvC (const ContourPointData &cp)   ;// {return computeWvC (cp.alpha(0));}
+      Mat computeWt  (const ContourPointData &cp);
+      Vec computeWn  (const ContourPointData &cp);
+      Vec computeWb  (const ContourPointData &cp);
+      Vec computeWrOC(const ContourPointData &cp);
+      Vec computeWvC (const ContourPointData &cp);
 
       Vec computeWomega(const ContourPointData &cp) {return Vec(3);}
       // TODO
@@ -303,16 +302,7 @@ namespace MBSim {
       /*     Mat computeWt    (double s); */
       Vec computeWn    (const ContourPointData& cp) {return Vec(3);}
 
-      Vec computeWomega(const ContourPointData &cp);// {return computeWomega(cp.alpha(0));}
-      /*     Vec computeWrOC  (double s); */
-      /*     Vec computeWvC   (double s); */
-      /*     Vec computeWomega(double s); */
-
-      /*     using Contour1s::computeWt; */
-      /*     using Contour1s::computeWn; */
-      /*     using Contour1s::computeWrOC; */
-      /*     using Contour1s::computeWvC; */
-      /*     using Contour1s::computeWomega; */
+      Vec computeWomega(const ContourPointData &cp);
   };
 
   /*! \brief Contour Plane without borders
