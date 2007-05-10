@@ -78,7 +78,7 @@ namespace MBSim {
     // Biegeeigenfrequenz
     //    double wbL  = sqrt(1260.*128.*EI/(197.*Arho*l0h4));
 
-    depsilon  = 1.0 * D * weps * (     Arho*l0h3/12.  );
+    depsilon  = 2.0 * D * weps * (     Arho*l0h3/12.  );
     Damp(3,3) = -depsilon;
     //    dw       = 0.0 * D * wbL  * (197.*Arho*l0h3/1260.);
 
