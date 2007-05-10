@@ -31,7 +31,7 @@
 #ifndef MINGW
 #  include <sys/stat.h>
 #else
-   int mkdir(const char*);
+#  include <io.h>
 #  define mkdir(a,b) mkdir(a)
 #endif
 
