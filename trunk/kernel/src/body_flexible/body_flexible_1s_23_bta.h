@@ -82,8 +82,8 @@ namespace MBSim {
       void setCrossSectionalArea(double A_) {A = A_;}
       void setMomentsInertia(double Iyy_,double Izz_,double It_)      {Iyy = Iyy_;Izz = Izz_;It = It_;}
       void setDensity(double rho_)          {rho = rho_;}
-      void setMaterialDamping(double d)     {dm = d;}
-      void setLehrDamping(double d)         {dl = d;}
+//      void setMaterialDamping(double d)     {dm = d;}
+//      void setLehrDamping(double d)         {dl = d;}
 
       void setContourRadius(double r) {contourCyl->setRadius(r);}
 
