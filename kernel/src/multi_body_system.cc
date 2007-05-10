@@ -28,24 +28,25 @@
 #include "extra_dynamic_interface.h"
 #include "integrator.h"
 #include "eps.h"
-
-extern "C" int mkdir(const char *);
+#ifndef MINGW
+#  include <sys/stat.h>
+#else
+   int mkdir(const char*);
+#  define mkdir(a,b) mkdir(a)
+#endif
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Object("Default"), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), directoryName("Default") , dir_d(NULL), numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false), solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001) , preIntegrator(NULL) , nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500){
+  MultiBodySystem::MultiBodySystem() : Object("Default"), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), directoryName("Default") , numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false), solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001) , preIntegrator(NULL) , nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500){
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true),  directoryName(projectName) , dir_d(NULL), numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false),solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001), preIntegrator(NULL), nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500) {
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true),  directoryName(projectName) , numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false),solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001), preIntegrator(NULL), nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500) {
   }
 
   MultiBodySystem::~MultiBodySystem() {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i)
       delete *i;
-
-    // leaving created directory
-    closedir(dir_d);
   } 
 
   void MultiBodySystem::init() {
@@ -214,63 +215,39 @@ namespace MBSim {
     string projectDirectory;
 
     if(directoryName == name) { // fortlaufend nummerierte Verzeichnisse
-      for(i=99;0<=i;i--) { // Suche nach evtl vorhandenen Verzeichnissen
+      for(i=0; i<=99; i++) {
 
-	stringstream number;
-	number << "." << setw(2) << setfill('0') << i;
-	projectDirectory = directoryName + number.str();
-
-	dir_d = opendir(projectDirectory.c_str());
-
-	/* Verzeichnis ist NICHT vorhanden -> weitersuchen */
-	if(dir_d == NULL){ }
-	/* Verzeichnis IST vorhanden -> fertig gesucht*/
-	else {
-	  closedir(dir_d);
-	  break;
-	}
+        stringstream number;
+        number << "." << setw(2) << setfill('0') << i;
+        projectDirectory = directoryName + number.str();
+        int ret=mkdir(projectDirectory.c_str(),0777);
+        if(ret==0) break; // Wenn anlegbar, dann ist es ein neues Verz.
       }
-      // wieder eins drauf, anlegen
-      i++;
 
-      stringstream number;
-      number << "." << setw(2) << setfill('0') << i;
-      projectDirectory = directoryName + number.str();
-
-      mkdir(projectDirectory.c_str());
       cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
     }
     else { // hart immer ins gleiche Verzeichnis
-      projectDirectory = string(directoryName);
+       projectDirectory = string(directoryName);
 
-      dir_d = opendir(projectDirectory.c_str());
-
-      if(dir_d == NULL) {	// Verzeichnis ist NICHT vorhanden
-	mkdir(projectDirectory.c_str());
-	cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-      }
-      else {	// Verzeichnis IST vorhanden
-	closedir(dir_d);
-	cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
-      }
+       int ret=mkdir(projectDirectory.c_str(),0777);
+       if(ret==0) {
+         cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+       }
+       else {
+         cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+       }
     }
-
-    dir_d = opendir(projectDirectory.c_str());
-
 
     dirName = projectDirectory+"/";
 
     if(preIntegrator) {
       string preDir="PREINTEG";
-      DIR* dir_pre = opendir(preDir.c_str());
-
-      if(dir_pre == NULL) {	// Verzeichnis ist NICHT vorhanden
-	mkdir(preDir.c_str());
-	cout << "Make directory " << preDir << " for Preintegration results." << endl;
+      int ret=mkdir(preDir.c_str(),0777);
+      if(ret==0) {
+        cout << "Make directory " << preDir << " for Preintegration results." << endl;
       }
-      else {	// Verzeichnis IST vorhanden
-	closedir(dir_pre);
-	cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+      else {
+        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
       }
     }
 

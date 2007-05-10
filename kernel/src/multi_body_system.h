@@ -25,7 +25,6 @@
 #define _MULTI_BODY_SYSTEM_H_
 
 #include <string>
-#include <dirent.h>
 #include "object.h"
 #include "hitsphere_link.h"
 #include "sparse_matrix.h"
@@ -171,7 +170,6 @@ namespace MBSim {
     /*! Test and enumerate directories for simulation output
     */
     void setDirectory();
-    DIR* dir_d;
 
     /** hydraulic fluid, only for hydraulic systems */
     HydFluid *fl;
