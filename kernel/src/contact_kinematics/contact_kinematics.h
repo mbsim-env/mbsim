@@ -67,6 +67,7 @@ namespace MBSim {
 
 
       virtual void assignContours(const vector<Contour*> &contour) = 0;
+      void assignContours(Contour *contour1, Contour *contour2) { vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
     protected:
 
   };

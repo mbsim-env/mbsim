@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg, Roland Zander, Felix Kahr
+/* Copyright (C) 2004-2006  Martin Förg, Roland Zander
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
