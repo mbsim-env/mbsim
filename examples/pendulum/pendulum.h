@@ -1,5 +1,5 @@
-#ifndef _WERKZEUGMASCHINE_H
-#define _WERKZEUGMASCHINE_H
+#ifndef _PENDULUM_H
+#define _PENDULUM_H
 
 #include "multi_body_system.h"
 #include <string>
