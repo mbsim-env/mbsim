@@ -958,6 +958,8 @@ namespace MBSim {
     //   for(i3 = EDI.begin(); i3!= EDI.end(); ++i3)
     //     (**i3).plot(t,dt);
 
+    Object::plot(t,dt);
+
     /* Gesamtsystem Energien */
     if(plotLevel>=3) {
       double Ttemp = this->computeKineticEnergy();
