@@ -88,6 +88,7 @@ namespace MBSim {
     void updateuRef();
     void updatehRef();
     void updaterRef();
+    void updateTRef();
     void init();
     void initz();
     void initPlotFiles();

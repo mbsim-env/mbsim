@@ -105,6 +105,8 @@ namespace MBSim {
     if(laSize>8000)
       laSize=8000;
     MParent.resize(getuSize());
+    TParent.resize(getqSize(),getuSize());
+    LLMParent.resize(getuSize());
     WParent.resize(getuSize(),getlaSize());
     GParent.resize(getlaSize());
     wParent.resize(getlaSize());
@@ -128,20 +130,20 @@ namespace MBSim {
     updatehRef(hParent);
     updaterRef(rParent);
     updateMRef(MParent);
+    updateTRef(TParent);
+    updateLLMRef(LLMParent);
     G.resize() >> GParent;
     W.resize() >> WParent;
     b.resize() >> bParent;
     w.resize() >> wParent;
     g.resize() >> gParent;
-    for(vector<Link*>::iterator ic = links.begin(); ic != links.end(); ++ic) {
-      if((*ic)->isSetValued()) 
-	(**ic).updategRef();
-    }
 
     updatezdRef(zdParent);
 
     // Init der einzelenen Komponenten
     cout << "  initialising ..." << endl;
+    for(int i=0; i<T.cols(); i++)
+      T(i,i) = 1;
 
     if(objects.size()>0)  cout << "      " << objects.size() << " Objects" << endl;
     Object::init();
@@ -177,6 +179,10 @@ namespace MBSim {
     //   updateKinematics(t0);
     //   updateh(t0);
     //   // -----------
+    for(vector<Link*>::iterator ic = links.begin(); ic != links.end(); ++ic) {
+      if((*ic)->isSetValued()) 
+	(**ic).updategRef();
+    }
     checkActiveConstraints();
 
     // solver specific things
@@ -420,6 +426,25 @@ namespace MBSim {
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateMRef();
   }
+
+  void MultiBodySystem::updateTRef(const Mat &TParent) {
+
+    T >> TParent;
+
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updateTRef();
+  }
+
+  void MultiBodySystem::updateLLMRef(const SymMat &LLMParent) {
+
+    LLM >> LLMParent;
+
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updateLLMRef();
+  }
+
 
   void MultiBodySystem::updatehRef(const Vec &hParent) {
 
@@ -972,6 +997,51 @@ namespace MBSim {
 
   void MultiBodySystem::computeConstraintForces(double t) {
     la = slvLL(G, -(w+b));
+  }
+
+  void MultiBodySystem::projectViolatedConstraints(double t) {
+    if(laSize) {
+    Vec nu(uSize);
+    int gASize = 0;
+    for(int i = 0; i<linkSetValuedActive.size(); i++) {
+      gASize += linkSetValuedActive[i]->getgSize();
+    }
+    SymMat Gv(gASize,NONINIT);
+    Mat Wv(W.rows(),gASize,NONINIT);
+    Vec gv(gASize,NONINIT);
+    int gAIndi = 0;
+    for(int i = 0; i<linkSetValuedActive.size(); i++) {
+      Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
+      Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
+      Wv(Index(0,Wv.rows()-1),Iv) = W(Index(0,W.rows()-1),I1);
+      gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
+
+      Gv(Iv) = G(I1);
+      int gAIndj = 0;
+      for(int j = 0; j<i; j++) {
+	Index Jv = Index(gAIndj,gAIndj+linkSetValuedActive[j]->getgSize()-1);
+	Index J1 = Index(linkSetValuedActive[j]->getlaInd(),linkSetValuedActive[j]->getlaInd()+linkSetValuedActive[j]->getgSize()-1);
+	Gv(Jv,Iv) = G(J1,I1);
+	gAIndj+=linkSetValuedActive[j]->getgSize();
+      }
+      gAIndi+=linkSetValuedActive[i]->getgSize();
+    }
+    while(nrmInf(gv) >= 1e-8) {
+      Vec mu = slvLL(Gv, -gv+trans(Wv)*nu);
+      Vec dnu = slvLLFac(LLM,Wv*mu- M*nu);
+      nu += dnu;
+      q += T*dnu;
+      updateKinematics(t);
+      updateLinksStage1(t);
+      int gAIndi = 0;
+      for(int i = 0; i<linkSetValuedActive.size(); i++) {
+	Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
+	Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
+	gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
+	gAIndi+=linkSetValuedActive[i]->getgSize();
+      }
+    }
+    }
   }
 
   void MultiBodySystem::savela() {

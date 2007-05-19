@@ -32,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3) {
+  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {
   }
 
   void TimeSteppingIntegrator::integrate(MultiBodySystem& system) {
@@ -127,6 +127,9 @@ namespace MBSim {
 
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
+
+      if(driftCompensation)
+	system.projectViolatedConstraints(t);
     }
 
     integPlot.close();

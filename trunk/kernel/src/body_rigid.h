@@ -42,7 +42,7 @@ namespace MBSim {
       SymMat I, Mh;
       Vec WrOK, WvK, WomegaK, KomegaK, KrKS;
       SqrMat AWK, AK0K;
-      Mat T, H, TH;
+      Mat H, TH;
 
       Vec l, WF, WM, WLtmp, WFtmp, WMtmp;
       Mat J, JT, JR;

@@ -101,6 +101,7 @@ namespace MBSim {
     void updatehRef();
     void updaterRef();
     void updateMhRef();
+    void updateTRef();
     virtual void updatelRef();
     virtual void updateJRef();
 
