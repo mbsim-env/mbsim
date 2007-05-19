@@ -112,6 +112,12 @@ namespace MBSim {
     root->updaterRef();
   }
 
+  void Tree::updateTRef() {
+
+    Object::updateTRef();
+    root->updateTRef();
+  }
+
   void Tree::calcSize() {
 
     root->calcSize();

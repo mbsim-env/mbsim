@@ -98,6 +98,8 @@ namespace MBSim {
     Vector<int> jsv;
 
     SymMat MParent;
+    SymMat LLMParent;
+    Mat TParent;
     SymMat GParent;
     Mat WParent;
     Vec wParent;
@@ -146,7 +148,9 @@ namespace MBSim {
     void updatehRef(const Vec &hExt);
     void updaterRef(const Vec &rExt);
     void updatefRef(const Vec &fExt);
+    void updateTRef(const Mat &TExt);
     void updateMRef(const SymMat &MExt);
+    void updateLLMRef(const SymMat &LLMExt);
     void updatesvRef(const Vec &svExt);
     void updatejsvRef(const Vector<int> &jsvExt);
 
@@ -188,6 +192,7 @@ namespace MBSim {
     void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
     virtual void preInteg(MultiBodySystem *parent);
 
+    void projectViolatedConstraints(double t);
     /*!
      * return vector of gravitational acceleration in world system
      */

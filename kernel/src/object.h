@@ -94,6 +94,7 @@ namespace MBSim {
     Vec qd,ud,xd;
     Vec h,r,f;
 
+    Mat T;
     SymMat M;
     SymMat LLM;
     vector<Mat> W;
@@ -119,7 +120,9 @@ namespace MBSim {
     virtual void updatehRef();
     virtual void updaterRef();
     virtual void updatefRef();
+    virtual void updateTRef();
     virtual void updateMRef();
+    virtual void updateLLMRef();
 
     /*! initialize object at start of simulation */
     virtual void init();
@@ -163,6 +166,12 @@ namespace MBSim {
 
     const SymMat& getM() const {return M;};
     SymMat& getM() {return M;};
+
+    const Mat& getT() const {return T;};
+    Mat& getT() {return T;};
+
+    const SymMat& getLLM() const {return LLM;};
+    SymMat& getLLM() {return LLM;};
 
     const Vec& getq() const {return q;};
     const Vec& getu() const {return u;};

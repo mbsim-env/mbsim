@@ -129,6 +129,17 @@ namespace MBSim {
     M>>mbs->getM()(I);
   }
 
+  void Object::updateTRef() {
+    Index Iu = getuIndex();
+    Index Iq = Index(qInd,qInd+qSize-1);
+    T>>mbs->getT()(Iq,Iu);
+  }
+
+  void Object::updateLLMRef() {
+    Index I = getuIndex();
+    LLM>>mbs->getLLM()(I);
+  }
+
   void Object::initz() {
     q = q0;
     u = u0;

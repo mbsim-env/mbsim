@@ -34,6 +34,7 @@ namespace MBSim {
     private:
 
       double dt;
+      bool driftCompensation;
 
     public:
 
@@ -42,6 +43,7 @@ namespace MBSim {
 
       void setdt(double dt_) {dt = dt_;}
       void integrate(MultiBodySystem& system);
+      void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };
 
 }

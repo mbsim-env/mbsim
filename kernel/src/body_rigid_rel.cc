@@ -132,6 +132,15 @@ namespace MBSim {
     }
   }
 
+  void BodyRigidRel::updateTRef() {
+    Index Iu = getuIndex();
+    Index Iq = Index(qInd,qInd+qSize-1);
+    T>>(tree->getT()(Iq,Iu));
+    for(int i=0; i<successor.size(); i++) {
+      successor[i]->updateTRef();
+    }
+  }
+
   void BodyRigidRel::initStage1() {
     BodyRigid::init();
 
