@@ -33,6 +33,7 @@ using namespace std;
 namespace MBSim {
 
   class BodyRigidRel;
+  class Port;
 
   /*! \brief Class for subsystems with tree structure
    *
@@ -99,6 +100,7 @@ namespace MBSim {
 
     double computePotentialEnergy();
 
+    Port* getPort(const string &pName);
   };
 
 }
