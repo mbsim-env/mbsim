@@ -43,13 +43,6 @@ namespace MBSim {
       double  getSigSize(){return SigSize;}
   };
 
-  ///*! depricated form of DataInterfaceBase
-  // */
-  //class DIB: public DataInterfaceBase {
-  //  public:
-  //    DIB():DataInterfaceBase() {cout << "DIB is depricated, use DataInterfaceBase now" << endl;}
-  //};
-
 }
 
 #endif
