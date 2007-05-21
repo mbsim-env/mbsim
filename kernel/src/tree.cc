@@ -24,6 +24,7 @@
 #include "body.h"
 #include "body_rigid_rel.h"
 #include "multi_body_system.h"
+#include "port.h"
 
 namespace MBSim {
 
@@ -192,4 +193,8 @@ namespace MBSim {
     return Vtemp;
   }
 
+  Port* Tree::getPort(const string &pName) {
+  cout << "Port* Tree::getPort(const string &name)" << endl;
+    return root->getPort(pName);
+  }
 }

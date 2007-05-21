@@ -421,4 +421,18 @@ namespace MBSim {
     }
   }
 
+  Port* BodyRigidRel::getPort(const string &pName) {
+  cout << "Port* BodyRigidRel::getPort(const string &name): name = " << name << endl;
+     // Auf sich selber suchen
+    for(int i=0;i<port.size();i++) {
+      cout << "port[" << i << "]->name = " << port[i]->getName() << endl;
+      if(port[i]->getName() == pName)
+        return port[i];
+}
+    for(int i=0;i<successor.size();i++) {
+      Port* p = successor[i]->getPort(pName);
+      if(p) return p;
+    }
+  }
+
 }
