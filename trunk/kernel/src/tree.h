@@ -101,6 +101,7 @@ namespace MBSim {
     double computePotentialEnergy();
 
     Port* getPort(const string &pName);
+    Contour* getContour(const string &cName);
   };
 
 }
