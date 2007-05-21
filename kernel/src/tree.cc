@@ -194,7 +194,6 @@ namespace MBSim {
   }
 
   Port* Tree::getPort(const string &pName) {
-  cout << "Port* Tree::getPort(const string &name)" << endl;
     return root->getPort(pName);
   }
 }
