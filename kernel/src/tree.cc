@@ -196,4 +196,8 @@ namespace MBSim {
   Port* Tree::getPort(const string &pName) {
     return root->getPort(pName);
   }
+
+  Contour* Tree::getContour(const string &cName) {
+    return root->getContour(cName);
+  }
 }

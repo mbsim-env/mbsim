@@ -30,7 +30,6 @@
 
 namespace MBSim {
 
-  class Port;
   /*! \brief Class for rigid bodies with relative coordinates 
    *
    * */
@@ -111,6 +110,7 @@ namespace MBSim {
     void updateFullName();
 
     Port* getPort(const string &pName);
+    Contour* getContour(const string &cName);
   };
 
 }

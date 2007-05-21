@@ -438,7 +438,7 @@ namespace MBSim {
       if(contour[i]->getName() == cName)
         return contour[i];
     for(int i=0;i<successor.size();i++) {
-      Contour* c = successor[i]->getContour(pName);
+      Contour* c = successor[i]->getContour(cName);
       if(c) return c;
     }
   }
