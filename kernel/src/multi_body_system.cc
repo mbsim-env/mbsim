@@ -503,9 +503,16 @@ namespace MBSim {
     updateKinematics(t);
     updateLinksStage1(t);
     updateLinksStage2(t);
+    // TODO nötig für ODE-Integration und hohem plotLevel
    // for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
     //  (*iL)->updateStage2(t);
     updateh(t); 
+    //updateG(t); 
+    //computeConstraintForces(t); 
+    //updater(t); 
+    //updatezd(t); 
+
+
     plot(t,dt);
   }
 
