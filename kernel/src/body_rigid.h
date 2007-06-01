@@ -125,13 +125,13 @@ namespace MBSim {
 
       void setRotationalParameters(Rot rot_) {rot = rot_;}
 
-      void addPort(Port * port, const Vec &KrSP);
+      void addPort(Port * port, const Vec &KrKP);
       /*! add a Port with constant relativ position in body-fixed system K
       */
-      void addPort(const string &name, const Vec &KrSP);
+      void addPort(const string &name, const Vec &KrKP);
 
-      void addContour(Contour* contour, const Vec &KrSC_, const SqrMat &AKC_);
-      void addContour(Contour *contour, const Vec &KrSCO);
+      void addContour(Contour* contour, const Vec &KrKC, const SqrMat &AKC);
+      void addContour(Contour *contour, const Vec &KrKC);
       void addContour(Contour *contour);
 
       /*! set output to center of reference (true) or center of gravity (false, default)
