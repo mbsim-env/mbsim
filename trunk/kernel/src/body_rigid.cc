@@ -115,7 +115,7 @@ namespace MBSim {
     if(port.size()>0) parafile << "# ports: " <<endl;
     for(int i=0; i<port.size(); i++) {
       Vec KrKPtemp = KrKP[i];
-      parafile << "# KrSP: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = (" << KrKPtemp(0) <<","<< KrKPtemp(1) <<","<< KrKPtemp(2) << ")" << endl;
+      parafile << "# KrKP: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = (" << KrKPtemp(0) <<","<< KrKPtemp(1) <<","<< KrKPtemp(2) << ")" << endl;
     }
   }
 
@@ -212,21 +212,21 @@ namespace MBSim {
     }
   }
 
-  void BodyRigid::addPort(const string &name, const Vec &KrSP) {
+  void BodyRigid::addPort(const string &name, const Vec &KrKP) {
     Port *port = new Port(name);
-    addPort(port,KrSP);
+    addPort(port,KrKP);
   }
 
-  void BodyRigid::addPort(Port* port, const Vec &KrSP_) {
+  void BodyRigid::addPort(Port* port, const Vec &KrKP_) {
     Object::addPort(port);
-    KrKP.push_back(KrSP_.copy()); 
+    KrKP.push_back(KrKP_.copy()); 
     WrKP.push_back(Vec());
   }
 
-  void BodyRigid::addContour(Contour* contour, const Vec &KrSC_) {
+  void BodyRigid::addContour(Contour* contour, const Vec &KrKC_) {
     Object::addContour(contour);
 
-    KrKC.push_back(KrSC_.copy()); 
+    KrKC.push_back(KrKC_.copy()); 
     WrKC.push_back(Vec());
     SqrMat AKC_(3);
     AKC_(0,0) = 1;
@@ -235,12 +235,12 @@ namespace MBSim {
     AKC.push_back(AKC_); 
 
     // HitSphere anpassen !!!
-    contour->adjustParentHitSphere(KrSC_);
+    contour->adjustParentHitSphere(KrKC_);
   }
 
-  void BodyRigid::addContour(Contour* contour, const Vec &KrSC_, const SqrMat &AKC_) {
+  void BodyRigid::addContour(Contour* contour, const Vec &KrKC_, const SqrMat &AKC_) {
     Object::addContour(contour);
-    KrKC.push_back(KrSC_.copy()); 
+    KrKC.push_back(KrKC_.copy()); 
     WrKC.push_back(Vec());
     AKC.push_back(AKC_.copy()); 
   }
