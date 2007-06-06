@@ -87,9 +87,9 @@ namespace MBSim {
     LLM = facLL(M);
 
     if(nrm2(KrKS) <= 1e-14) {
-      updateM = &BodyRigidAbs::updateM1;
+      updateh_ = &BodyRigidAbs::updateh1;
     } else {
-      updateM = &BodyRigidAbs::updateM2;
+      updateh_ = &BodyRigidAbs::updateh2;
     }
   }
 
@@ -104,21 +104,22 @@ namespace MBSim {
     WomegaK = AWK*KomegaK;
   }
 
-  void BodyRigidAbs::updateM2() {
+  void BodyRigidAbs::updateh(double t) {
+    sumUpForceElements(t);
+    (this->*updateh_)();
+  }
+
+  void BodyRigidAbs::updateh1() {
+    h(iT) = trans(JT)*(WF);
+    h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
+  }
+
+  void BodyRigidAbs::updateh2() {
     J(Index(0,2),iT) = trans(AWK)*JT;
     M = JTMJ(Mh,J);
     LLM = facLL(M);
-  }
-
-  void BodyRigidAbs::updateh(double t) {
-
-    (this->*updateM)();
-    sumUpForceElements(t);
-//    h(iT) = trans(JT)*WF;
-//    h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
-//   TODO::: Hi Martin: ich glaube, du hast bei der Umstellung auf einen beliebigen Bezugspunkt die gyroskopischen Terme vergessen. Pruefe das bitte. (vgl. deine Diss. S. 19). Mit dem plus oder minus bin ich mir auch nicht ganz sicher??? Wenn - und nicht +, dann vielleicht auch noch mal in BodyRigidRel schauen...
-    h(iT) = trans(JT)*(           WF + AWK*( m*(trans(KomegaK)*KomegaK)*KrKS) );
-    h(iR) = trans(JR)*(trans(AWK)*WM -       crossProduct(I*KomegaK,KomegaK)  );
+    h(iT) = trans(JT)*(WF - AWK*(m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS))));
+    h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
   }
 
   void BodyRigidAbs::updateW(double t) {
