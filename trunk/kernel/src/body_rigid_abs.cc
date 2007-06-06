@@ -114,8 +114,11 @@ namespace MBSim {
 
     (this->*updateM)();
     sumUpForceElements(t);
-    h(iT) = trans(JT)*WF;
-    h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
+//    h(iT) = trans(JT)*WF;
+//    h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
+//   TODO::: Hi Martin: ich glaube, du hast bei der Umstellung auf einen beliebigen Bezugspunkt die gyroskopischen Terme vergessen. Pruefe das bitte. (vgl. deine Diss. S. 19). Mit dem plus oder minus bin ich mir auch nicht ganz sicher??? Wenn - und nicht +, dann vielleicht auch noch mal in BodyRigidRel schauen...
+    h(iT) = trans(JT)*(           WF + AWK*( m*(trans(KomegaK)*KomegaK)*KrKS) );
+    h(iR) = trans(JR)*(trans(AWK)*WM -       crossProduct(I*KomegaK,KomegaK)  );
   }
 
   void BodyRigidAbs::updateW(double t) {
