@@ -43,9 +43,9 @@ namespace MBSim {
       virtual void updateW(double t);
       virtual void updatezd(double t);
       virtual void updatedu(double t, double dt);
-      void (BodyRigidAbs::*updateM)();
-      void updateM1() {};
-      void updateM2();
+      void (BodyRigidAbs::*updateh_)();
+      void updateh1();
+      void updateh2();
     public:
 
       BodyRigidAbs(const string &name);
