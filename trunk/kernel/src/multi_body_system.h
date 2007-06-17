@@ -257,7 +257,9 @@ namespace MBSim {
     double computePotentialEnergy();
 
     Object* getObject(const string &name,bool check=true);
-    ExtraDynamicInterface* getEDI(const string &name);
+    Link* getLink(const string &name,bool check=true);
+    ExtraDynamicInterface* getEDI(const string &name, bool check=true);
+    DataInterfaceBase* getDataInterfaceBase(const string &name, bool check=true);
     void addObject(Object *object);
     void addLink(Link *connection);
     void addEDI(ExtraDynamicInterface *edi_);
@@ -266,7 +268,6 @@ namespace MBSim {
     /** Method to add any element (Link,Object,ExtraDynamicInterface) by dynamic casting*/
     void addElement(Element *element_);
     /** returns the pointer to a data_interface_base_which is listed in the DataInterfaceBase-vector*/
-    DataInterfaceBase* getDataInterfaceBase(const string &name);
     Element* getElement(const string &name); 
 
     HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);

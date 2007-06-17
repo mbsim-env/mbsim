@@ -221,8 +221,8 @@ namespace MBSim {
     virtual void addPort(Port * port);
     virtual void addContour(Contour* contour);
 
-    Port* getPort(const string &name);
-    Contour* getContour(const string &name);
+    Port* getPort(const string &name, bool check=true);
+    Contour* getContour(const string &name, bool check=true);
 
     void   setWrHitSphere(const Vec &WrOS)     {WrOHitSphere = WrOS;}
     const Vec&    getWrHitSphere()  const      {return WrOHitSphere;}

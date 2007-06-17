@@ -1111,6 +1111,7 @@ namespace MBSim {
     contour->setWrOP(WrOP);
     contour->setAWC(AWC);
   }
+
   void MultiBodySystem::preInteg(MultiBodySystem *parent){
     if(preIntegrator){
       setProjectDirectory(name+".preInteg");
@@ -1187,6 +1188,24 @@ namespace MBSim {
     }
     else return NULL;
   }
+  Link* MultiBodySystem::getLink(const string &name, bool check) {
+    int i;
+    for(i=0; i<links.size(); i++) {
+      //cout << links[i]->getName() << " " << name << endl;
+      if(links[i]->getName() == name)
+	return links[i];
+    }
+    for(i=0; i<links.size(); i++) {
+      //cout << links[i]->getFullName() << " " << name << endl;
+      if(links[i]->getFullName() == name)
+	return links[i];
+    }
+    if(check){
+      if(!(i<links.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no link " << name << "!" << endl; 
+      assert(i<links.size());
+    }
+    else return NULL;
+  }
 
   Element* MultiBodySystem::getElement(const string &name) {
     int i1;
@@ -1220,7 +1239,7 @@ namespace MBSim {
     assert(i1<objects.size()||i2<links.size()||!(i3<EDI.size()));
   }
 
-  ExtraDynamicInterface* MultiBodySystem::getEDI(const string &name) {
+  ExtraDynamicInterface* MultiBodySystem::getEDI(const string &name, bool check) {
     int i;
     for(i=0; i<EDI.size(); i++) {
       if(EDI[i]->getName() == name)
@@ -1230,28 +1249,40 @@ namespace MBSim {
       if(EDI[i]->getFullName() == name)
 	return EDI[i];
     }
-    if(!(i<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
-    assert(i<EDI.size());
+    if(check) {
+      if(!(i<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
+      assert(i<EDI.size());
+    } else return NULL;
   }    
 
   void MultiBodySystem::addObject(Object *object) {
+    if(getObject(object->getFullName(),false)) {
+      cout << "Error: The MultiBodySystem " << name << " can only comprise one Object by the name " <<  object->getFullName() << "!" << endl;
+      assert(getObject(object->getFullName(),false) == NULL); 
+    }
     objects.push_back(object);
     object->setMbs(this);
     object->setFullName(getFullName()+"."+object->getFullName());
 
   }
 
-  DataInterfaceBase* MultiBodySystem::getDataInterfaceBase(const string &name_) {
+  DataInterfaceBase* MultiBodySystem::getDataInterfaceBase(const string &name_, bool check) {
     int i;
     for(i=0; i<DIBs.size(); i++) {
       if(DIBs[i]->getName() == name_ || DIBs[i]->getName()== fullName+"."+name_)
 	return DIBs[i];
     }
-    if(!(i<DIBs.size())) cout << "Error: The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
-    assert(i<DIBs.size());
+    if(check){
+      if(!(i<DIBs.size())) cout << "Error: The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
+      assert(i<DIBs.size());
+    } else return NULL;
   }
 
   void MultiBodySystem::addDataInterfaceBase(DataInterfaceBase* dib_){
+    if(getDataInterfaceBase(dib_->getName(),false)) {
+      cout << "Error: The MultiBodySystem " << name << " can only comprise one DataInterfaceBase by the name " <<  dib_->getName() << "!" << endl;
+      assert(getDataInterfaceBase(dib_->getName(),false) == NULL);
+    }
     DIBs.push_back(dib_);
     dib_->setName(getFullName()+"."+dib_->getName());
   }
@@ -1272,12 +1303,20 @@ namespace MBSim {
   }
 
   void MultiBodySystem::addLink(Link *link) {
+    if(getLink(link->getFullName(),false)){
+      cout << "Error: The MultiBodySystem " << name << " can only comprise one Link by the name " <<  link->getFullName() << "!" << endl;
+      assert(getLink(link->getFullName(),false) == NULL);
+    }
     links.push_back(link);
     link->setMbs(this);
     link->setFullName(getFullName()+"."+link->getFullName());
 
   }
   void MultiBodySystem::addEDI(ExtraDynamicInterface *edi_) {
+    if(getEDI(edi_->getFullName(),false)){
+      cout << "Error: The MultiBodySystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getFullName() << "!" << endl;
+      assert(getEDI(edi_->getFullName(),false) == NULL);
+    }
     EDI.push_back(edi_);
     edi_->setMbs(this);
     edi_->setFullName(getFullName()+"."+edi_->getFullName());
