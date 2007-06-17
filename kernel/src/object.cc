@@ -260,6 +260,10 @@ namespace MBSim {
   }
 
   void Object::addContour(Contour* contour_) {
+    if(getContour(contour_->getFullName(),false)) { //Contourname exists already
+      cout << "Error: The Object " << name << " can only comprise one Contour by the name " <<  contour_->getFullName() << "!" << endl;
+      assert(getContour(contour_->getFullName(),false)==NULL);
+    }
     contour_->setID(contour.size());
     contour_->setFullName(getFullName()+"."+contour_->getFullName());
     contour.push_back(contour_);
@@ -267,30 +271,38 @@ namespace MBSim {
   }
 
   void Object::addPort(Port* port_) {
+    if(getPort(port_->getFullName(),false)) { //Contourname exists already
+      cout << "Error: The Object " << name << " can only comprise one Port by the name " <<  port_->getFullName() << "!" << endl;
+      assert(getPort(port_->getFullName(),false)==NULL);
+    }
     port_->setID(port.size());
     port_->setFullName(getFullName()+"."+port_->getFullName());
     port.push_back(port_);
     port_->setObject(this);
   }
 
-  Port* Object::getPort(const string &name) {
+  Port* Object::getPort(const string &name, bool check) {
     int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name)
 	return port[i];
     }             
-    if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
-    assert(i<port.size());
+    if(check) {
+      if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
+      assert(i<port.size());
+    }else return NULL;
   }
 
-  Contour* Object::getContour(const string &name) {
+  Contour* Object::getContour(const string &name, bool check) {
     int i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
 	return contour[i];
     }
-    if(!(i<contour.size())) cout << "Error: The object " << this->name <<" comprises no contour " << name << "!" << endl; 
-    assert(i<contour.size());
+    if(check) {
+      if(!(i<contour.size())) cout << "Error: The object " << this->name <<" comprises no contour " << name << "!" << endl; 
+      assert(i<contour.size());
+    } else return NULL;
   }
 
   void Object::init() {
@@ -352,4 +364,3 @@ namespace MBSim {
   }
 
 }
-
