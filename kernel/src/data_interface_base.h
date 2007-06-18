@@ -41,6 +41,7 @@ namespace MBSim {
       void setName(const string& name_) {name=name_;}
       virtual Vec operator()(double t) = 0;
       double  getSigSize(){return SigSize;}
+      virtual void update(double t) {}
   };
 
 }
