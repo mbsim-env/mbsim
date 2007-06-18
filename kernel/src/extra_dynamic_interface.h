@@ -47,7 +47,8 @@ namespace MBSim {
       int getxSize() const {return xSize;}
       virtual void init();
       virtual void initz();
-      virtual void updateStage1(double t) = 0;
+      virtual void updateStage1(double t) {};
+      virtual void updateStage2(double t) {};
       virtual void updatedx(double t, double dt) {};
       virtual void updatexd(double t) {};
       void plot(double t, double dt=1);
