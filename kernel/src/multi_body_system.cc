@@ -702,18 +702,25 @@ namespace MBSim {
 	(*iHS)->checkActive();
     }
 
-    for(vector<Link*>::iterator iL = linkSingleValued.begin(); iL != linkSingleValued.end(); ++iL) 
-      (*iL)->updateStage1(t);
-    for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL)  
-      (*iL)->updateStage1(t);
     for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) 
       (*iF)->updateStage1(t);
+
+    for(vector<Link*>::iterator iL = linkSingleValued.begin(); iL != linkSingleValued.end(); ++iL) 
+      (*iL)->updateStage1(t);
+
+    for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL)  
+      (*iL)->updateStage1(t);
+
   }
 
   void MultiBodySystem::updateLinksStage2(double t) {
 
+    for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) 
+      (*iF)->updateStage2(t);
+
     for(vector<Link*>::iterator iL = linkSingleValued.begin(); iL != linkSingleValued.end(); ++iL) 
       (*iL)->updateStage2(t);
+
     for(vector<Link*>::iterator iL = linkSetValuedActive.begin(); iL != linkSetValuedActive.end(); ++iL) {
       (*iL)->updateStage2(t);
     }
