@@ -40,6 +40,8 @@ namespace MBSim {
   }
 
   void BodyRigid::calcSize() {
+    assert(JT.cols()<=3);
+    assert(JR.cols()<=3);
     Body::calcSize();
     uSize = JT.cols() + JR.cols();
     if(JR.cols()== 0) {
@@ -50,6 +52,9 @@ namespace MBSim {
       updateAK0K = &BodyRigid::updateAK0KAxis;
       updateT = &BodyRigid::noUpdateT;
       qSize = uSize;
+    } else if(JR.cols() == 2) {
+      cout << "Rotations with two angles not yet implemented!" << endl;
+      assert(JR.cols()!=2);
     } else if(rot == cardanAngles) {
       updateAK0K = &BodyRigid::updateAK0KCardanAngles;
       updateT = &BodyRigid::updateTCardanAngles;
@@ -60,9 +65,13 @@ namespace MBSim {
       qSize = uSize+1;
       H.resize(3,4);
       TH.resize(3,4);
-      assert(fabs(nrm2(q0(3,6))-1)<=1e-16);
-    }
-  }
+      if(q0.size() == 0) {
+	q0.resize(qSize);
+	q0(JT.cols()) = 1;
+      }
+      assert(fabs(nrm2(q0(JT.cols(),JT.cols()+3))-1)<=1e-16);
+    } 
+  } 
 
   void BodyRigid::init() {
 
@@ -286,9 +295,10 @@ namespace MBSim {
   }
 
   void BodyRigid::updateAK0KCardanAngles() {
-    double a=q(3);
-    double b=q(4);
-    double g=q(5);
+    int iRInd = iR.start();
+    double a=q(iRInd);
+    double b=q(iRInd+1);
+    double g=q(iRInd+2);
 
     AK0K(0,0) = cos(b)*cos(g);
     AK0K(1,0) = sin(a)*sin(b)*cos(g)+cos(a)*sin(g);
@@ -302,35 +312,38 @@ namespace MBSim {
   }
 
   void BodyRigid::updateTCardanAngles() {
-    double beta = q(4);
-    double gamma = q(5);
+    int iRInd = iR.start();
+    double beta = q(iRInd+1);
+    double gamma = q(iRInd+2);
     double cos_beta = cos(beta);
     double sin_beta = sin(beta);
     double cos_gamma = cos(gamma);
     double sin_gamma = sin(gamma);
     double tan_beta = sin_beta/cos_beta;
 
-    T(3,3) = cos_gamma/cos_beta;
-    T(3,4) = -sin_gamma/cos_beta;
-    T(4,3) = sin_gamma;
-    T(4,4) = cos_gamma;
-    T(5,3) = -cos_gamma*tan_beta;
-    T(5,4) = sin_gamma*tan_beta;           
+    T(iRInd,iRInd) = cos_gamma/cos_beta;
+    T(iRInd,iRInd+1) = -sin_gamma/cos_beta;
+    T(iRInd+1,iRInd) = sin_gamma;
+    T(iRInd+1,iRInd+1) = cos_gamma;
+    T(iRInd+2,iRInd) = -cos_gamma*tan_beta;
+    T(iRInd+2,iRInd+1) = sin_gamma*tan_beta;           
   }
 
   void BodyRigid::updateAK0KEulerParameters() {
     DiagMat E(3,INIT,1.0);
-    Vec e = q(4,6);
+    int iRInd = iR.start();
+
+    Vec e = q(iRInd+1,qSize-1);
     H.col(0) = -e;
     TH.col(0) = -e;
     SqrMat Te = tilde(e);
-    H(Index(0,2),Index(1,3)) = Te+q(3)*E;
-    TH(Index(0,2),Index(1,3)) = -Te+q(3)*E;
+    H(Index(0,2),Index(1,3)) = Te+q(iRInd)*E;
+    TH(Index(0,2),Index(1,3)) = -Te+q(iRInd)*E;
     AK0K = SqrMat(H*trans(TH));
   }
 
   void BodyRigid::updateTEulerParameters() {
-    T(Index(3,6),iR) = 0.5 * trans(TH);
+    T(Index(iR.start(),qSize-1),iR) = 0.5 * trans(TH);
   }
 
   void BodyRigid::updateAK0KAxis() {
