@@ -42,35 +42,15 @@ namespace MBSim {
   void BodyRigid::calcSize() {
     assert(JT.cols()<=3);
     assert(JR.cols()<=3);
+
     Body::calcSize();
+
     uSize = JT.cols() + JR.cols();
-    if(JR.cols()== 0) {
-      updateAK0K = &BodyRigid::noUpdateAK0K;
-      updateT = &BodyRigid::noUpdateT;
-      qSize = uSize;
-    } else if(JR.cols() == 1) {
-      updateAK0K = &BodyRigid::updateAK0KAxis;
-      updateT = &BodyRigid::noUpdateT;
-      qSize = uSize;
-    } else if(JR.cols() == 2) {
-      cout << "Rotations with two angles not yet implemented!" << endl;
-      assert(JR.cols()!=2);
-    } else if(rot == cardanAngles) {
-      updateAK0K = &BodyRigid::updateAK0KCardanAngles;
-      updateT = &BodyRigid::updateTCardanAngles;
-      qSize = uSize;
-    } else if(rot == eulerParameters) {
-      updateAK0K = &BodyRigid::updateAK0KEulerParameters;
-      updateT = &BodyRigid::updateTEulerParameters;
+
+     if(JR.cols() == 3 && rot == eulerParameters)
       qSize = uSize+1;
-      H.resize(3,4);
-      TH.resize(3,4);
-      if(q0.size() == 0) {
-	q0.resize(qSize);
-	q0(JT.cols()) = 1;
-      }
-      assert(fabs(nrm2(q0(JT.cols(),JT.cols()+3))-1)<=1e-16);
-    } 
+     else
+      qSize = uSize;
   } 
 
   void BodyRigid::init() {
@@ -88,6 +68,32 @@ namespace MBSim {
       JT.col(i) /= nrm2(JT.col(i));
     for(int i=0; i<JR.cols(); i++)
       JR.col(i) /= nrm2(JR.col(i));
+
+    if(JR.cols()== 0) {
+      updateAK0K = &BodyRigid::noUpdateAK0K;
+      updateT = &BodyRigid::noUpdateT;
+    } else if(JR.cols() == 1) {
+      updateAK0K = &BodyRigid::updateAK0KAxis;
+      updateT = &BodyRigid::noUpdateT;
+    } else if(JR.cols() == 2) {
+      //updateAK0K = &BodyRigid::updateAK0Kxz;
+      //updateT = &BodyRigid::updateTxz;
+      cout << "Rotations with two angles not yet implemented!" << endl;
+      assert(JR.cols()!=2);
+    } else if(rot == cardanAngles) {
+      updateAK0K = &BodyRigid::updateAK0KCardanAngles;
+      updateT = &BodyRigid::updateTCardanAngles;
+    } else if(rot == eulerParameters) {
+      updateAK0K = &BodyRigid::updateAK0KEulerParameters;
+      updateT = &BodyRigid::updateTEulerParameters;
+      H.resize(3,4);
+      TH.resize(3,4);
+      if(q0.size() == 0) {
+	q0.resize(qSize);
+	q0(JT.cols()) = 1;
+      }
+      assert(fabs(nrm2(q0(JT.cols(),JT.cols()+3))-1)<=1e-16);
+    } 
   }
 
   void BodyRigid::initPlotFiles() {
