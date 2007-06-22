@@ -144,23 +144,8 @@ namespace MBSim {
   void BodyRigidRel::initStage1() {
     BodyRigid::init();
 
-    if(JT.rows()==0)
-      JT.resize(3,0);
-    if(JR.rows()==0)
-      JR.resize(3,0);
-
     IuT = Index(uInd+iT.start(),uInd+iT.end());
     IuR = Index(uInd+iR.start(),uInd+iR.end());
-
-    Mh(0,0) = m;
-    Mh(1,1) = m;
-    Mh(2,2) = m;
-
-    Mat tKrKS = tilde(KrKS);
-    I += m*JTJ(tKrKS);
-    Mh(Index(3,5)) = I;
-    Mh(Index(0,2),Index(3,5)) = m*trans(tKrKS);
-
 
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
     for(int i=0; i<linkSetValuedPortData.size(); i++) {

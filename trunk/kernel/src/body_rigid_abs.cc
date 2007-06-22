@@ -65,24 +65,9 @@ namespace MBSim {
     J.resize(6,uSize);
     J(Index(0,2),iT) = JT;
     J(Index(3,5),iR) = JR;
-    if(JT.rows() == 0)
-      JT.resize(3,0);
-    if(JR.rows() == 0)
-      JR.resize(3,0);
-    //JT >> J(Index(0,2),iT);
-    //JR >> J(Index(3,5),iR);
-
+  
     WrOHitSphere >> WrOK;
-
-    Mh(0,0) = m;
-    Mh(1,1) = m;
-    Mh(2,2) = m;
-
-    Mat tKrKS = tilde(KrKS);
-    I += m*JTJ(tKrKS);
-    Mh(Index(3,5)) = I;
-    Mh(Index(0,2),Index(3,5)) = m*trans(tKrKS);
-
+ 
     M = JTMJ(Mh,J);
     LLM = facLL(M);
 
