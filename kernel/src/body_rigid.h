@@ -73,6 +73,7 @@ namespace MBSim {
 
       AMVis::CRigidBody *bodyAMVis;
 
+      bool inertiaWithRespectToCOG;
       bool AMVisDataRel;
 
     public:
@@ -115,10 +116,12 @@ namespace MBSim {
 	*/
       void setMass(double m_) {m = m_;}
 
-      /*! define the matrix of inertia with respect to the center of gravity
+      /*! \brief matrix of inertia
+       * define the matrix of inertia with respect to the point of reference if
+       * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
 	\param I martix of inertia
 	*/
-      void setInertia(const SymMat& I_) {I = I_;}
+      void setInertia(const SymMat& I_, bool cog = false) {I = I_; inertiaWithRespectToCOG = cog;}
 
       void setKrKS(const Vec& KrKS_) {KrKS = KrKS_;}
       const Vec& getKrKS() const {return KrKS;}

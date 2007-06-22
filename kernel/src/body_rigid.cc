@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  BodyRigid::BodyRigid(const string &name) : Body(name), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), bodyAMVis(0), AMVisDataRel(false) { 
+  BodyRigid::BodyRigid(const string &name) : Body(name), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), bodyAMVis(0), inertiaWithRespectToCOG(false), AMVisDataRel(false) { 
 
     AK0K(0,0)=1.0;
     AK0K(1,1)=1.0;
@@ -56,6 +56,21 @@ namespace MBSim {
   void BodyRigid::init() {
 
     Body::init();
+
+    if(JT.rows() == 0)
+      JT.resize(3,0);
+    if(JR.rows() == 0)
+      JR.resize(3,0);
+
+    Mh(0,0) = m;
+    Mh(1,1) = m;
+    Mh(2,2) = m;
+
+    Mat tKrKS = tilde(KrKS);
+    if(inertiaWithRespectToCOG)
+      I += m*JTJ(tKrKS);
+    Mh(Index(3,5)) = I;
+    Mh(Index(0,2),Index(3,5)) = m*trans(tKrKS);
 
     iT = Index(0,JT.cols()-1);
     iR = Index(JT.cols(),JT.cols()+JR.cols()-1);
