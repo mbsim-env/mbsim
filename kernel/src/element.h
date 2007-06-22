@@ -38,6 +38,9 @@
 using namespace std;
 using namespace fmatvec;
 
+/*!
+ * \brief namespace MBSim
+ */
 namespace MBSim {
 
   class MultiBodySystem;
