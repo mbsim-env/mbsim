@@ -142,8 +142,8 @@ namespace MBSim {
 
     // Init der einzelenen Komponenten
     cout << "  initialising ..." << endl;
-    for(int i=0; i<T.cols(); i++)
-      T(i,i) = 1;
+  //  for(int i=0; i<T.cols(); i++)
+  //   T(i,i) = 1;
 
     if(objects.size()>0)  cout << "      " << objects.size() << " Objects" << endl;
     Object::init();

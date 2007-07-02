@@ -76,8 +76,8 @@ namespace MBSim {
     iR = Index(JT.cols(),JT.cols()+JR.cols()-1);
 
     //T.resize(qSize,uSize);
-    //for(int i=0; i<uSize; i++) 
-      //T(i,i) = 1;
+    for(int i=0; i<uSize; i++) 
+      T(i,i) = 1;
 
     for(int i=0; i<JT.cols(); i++)
       JT.col(i) /= nrm2(JT.col(i));
