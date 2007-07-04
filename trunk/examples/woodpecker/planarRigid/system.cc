@@ -2,6 +2,7 @@
 #include "body_rigid_abs.h"
 #include "contour.h"
 #include "contact_rigid.h"
+#include "connection_flexible.h"
 #include "impact_rigid.h"
 #include "connection_rigid.h"
 
