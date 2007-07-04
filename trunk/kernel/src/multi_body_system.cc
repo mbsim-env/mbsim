@@ -1129,6 +1129,8 @@ namespace MBSim {
       preIntegrator->integrate(*this);
       closePlotFiles();
       writez();
+      delete preIntegrator;
+      preIntegrator=NULL; 
       cout << "Finished." << endl;
     }  
   }
