@@ -13,6 +13,7 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
   integrator.setdt(1.e-5);
+  integrator.setDriftCompensation(true);
   integrator.settEnd(5);
   integrator.setdtPlot(1.e-2);
   
