@@ -98,7 +98,7 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   muffe->setJR(JR);
   muffe->setMass(mMuffe);
   Theta(2,2) = JMuffe;
-  muffe->setInertia(Theta);
+  muffe->setInertia(Theta,true);
 
   // KontaktPunkte
   Point* p0muffe = new Point("PM0");
@@ -171,7 +171,7 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   specht->setJR(JR);
   specht->setMass(mSpecht);
   Theta(2,2) = JSpecht;
-  specht->setInertia(Theta);
+  specht->setInertia(Theta,true);
 
 
 
