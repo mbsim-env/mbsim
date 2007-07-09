@@ -5,8 +5,7 @@ libutils_la_SOURCES = eps.cc\
 		      function.cc\
 		      ppolynom.cc\
 		      contact_utils.cc\
-		      rotarymatrices.cc\
-                      amvisinterface_utils.cc
+		      rotarymatrices.cc
 
 libutils_la_CPPFLAGS = -I..
 utilsincludedir = $(includedir)/mbsim
@@ -20,5 +19,4 @@ utilsinclude_HEADERS = eps.h\
 		       function.h\
 		       ppolynom.h\
 	               contact_utils.h\
-		       rotarymatrices.h\
-                       amvisinterface_utils.h
+		       rotarymatrices.h
