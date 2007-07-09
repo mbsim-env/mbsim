@@ -33,7 +33,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab1->setKrKS(KrKS);
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
-  stab1->setInertia(Theta);
+  stab1->setInertia(Theta,true);
   stab1->setJR("[0; 0; 1]");
 
   BodyRigidRel* stab2 = new BodyRigidRel("Stab2");
@@ -43,7 +43,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab2->setKrKS(KrKS);
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertia(Theta);
+  stab2->setInertia(Theta,true);
   stab2->setJR("[0; 0; 1]");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
