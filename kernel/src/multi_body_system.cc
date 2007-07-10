@@ -1278,14 +1278,14 @@ namespace MBSim {
   DataInterfaceBase* MultiBodySystem::getDataInterfaceBase(const string &name_, bool check) {
     int i;
     for(i=0; i<DIBs.size(); i++) {
-      if(DIBs[i]->getName() == name_ || DIBs[i]->getName()== fullName+"."+name_)
+      if(DIBs[i]->getName() == name_ || DIBs[i]->getName()== fullName+"."+name_ || DIBs[i]->getName() == name_+".SigOut" || DIBs[i]->getName()== fullName+"."+name_+".SigOut")
 	return DIBs[i];
     }
     if(check){
       if(!(i<DIBs.size())) cout << "Error: The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
       assert(i<DIBs.size());
     } else return NULL;
-  }
+  }    
 
   void MultiBodySystem::addDataInterfaceBase(DataInterfaceBase* dib_){
     if(getDataInterfaceBase(dib_->getName(),false)) {
