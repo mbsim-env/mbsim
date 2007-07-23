@@ -36,7 +36,9 @@ namespace MBSim {
   SqrMat BasicRotAIKx(double phi);
   SqrMat BasicRotAIKy(double phi);
   SqrMat BasicRotAIKz(double phi);
-
+  
+  Vec AKI2Cardan(const SqrMat &AKI);
+  Vec AIK2Cardan(const SqrMat &AIK);
 
   SqrMat Cardan2AIK(double alpha,double beta,double gamma);
 
