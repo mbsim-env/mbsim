@@ -99,4 +99,24 @@ namespace MBSim {
     return AIKx*AIKy*AIKz;          //Wie im TM VI Skript
   }
 
+
+  Vec AIK2Cardan(const SqrMat &AIK) { 
+    Vec AlphaBetaGamma(3,INIT,0.0);    
+    AlphaBetaGamma(1)= asin(AIK(0,2));
+    double nenner = cos(AlphaBetaGamma(1));
+    if (nenner>1e-10) {
+      AlphaBetaGamma(0) = atan2(-AIK(1,2),AIK(2,2));
+      AlphaBetaGamma(2) = atan2(-AIK(0,1),AIK(0,0));
+    } else {
+      AlphaBetaGamma(0)=0;
+      AlphaBetaGamma(2)=atan2(AIK(1,0),AIK(1,1));
+    }
+    return AlphaBetaGamma;
+  }
+
+
+  Vec AKI2Cardan(const SqrMat &AKI) {
+    return AIK2Cardan(trans(AKI));
+  }
+
 }
