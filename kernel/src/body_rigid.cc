@@ -119,15 +119,9 @@ namespace MBSim {
       bodyAMVis->writeBodyFile();
 
     if(plotLevel>0) {
-      if(AMVisDataRel) {
-	plotfile <<"# "<< plotNr++ << ": WxOK" << endl;
-	plotfile <<"# "<< plotNr++ << ": WyOK" << endl;
-	plotfile <<"# "<< plotNr++ << ": WzOK" << endl;
-      } else {
-	plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
-	plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
-	plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
-      }
+      plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
+      plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
+      plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
       plotfile <<"# "<< plotNr++ << ": alpha" << endl;
       plotfile <<"# "<< plotNr++ << ": beta" << endl;
       plotfile <<"# "<< plotNr++ << ": gamma" <<endl;
@@ -157,12 +151,7 @@ namespace MBSim {
 
   void BodyRigid::plot(double t, double dt) {
     Body::plot(t,dt);
-    Vec WrOS;
-
-    if(AMVisDataRel)
-      WrOS >> WrOK;
-    else
-      WrOS >> computeWrOS();
+    Vec WrOS = computeWrOS();
 
     if(plotLevel>0 || bodyAMVis) {
       double alpha;
@@ -191,6 +180,8 @@ namespace MBSim {
       }
 
       if(bodyAMVis) {
+	if(AMVisDataRel)
+	  WrOS >> WrOK;
 	bodyAMVis->setTime(t);
 	bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
 	bodyAMVis->setRotation(alpha,beta,gamma);
