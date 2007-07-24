@@ -119,9 +119,15 @@ namespace MBSim {
       bodyAMVis->writeBodyFile();
 
     if(plotLevel>0) {
-      plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
-      plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
-      plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
+      if(AMVisDataRel) {
+	plotfile <<"# "<< plotNr++ << ": WxOK" << endl;
+	plotfile <<"# "<< plotNr++ << ": WyOK" << endl;
+	plotfile <<"# "<< plotNr++ << ": WzOK" << endl;
+      } else {
+	plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
+	plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
+	plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
+      }
       plotfile <<"# "<< plotNr++ << ": alpha" << endl;
       plotfile <<"# "<< plotNr++ << ": beta" << endl;
       plotfile <<"# "<< plotNr++ << ": gamma" <<endl;
