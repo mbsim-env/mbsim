@@ -307,7 +307,7 @@ namespace MBSim {
       Wt     =          JT * tangente;
       WrOC   = WrON00 + JT * X(0,1);
       WvC    =          JT * X(3,4);
-      Womega =          JR.col(0) * X(2);
+      Womega =          JR.col(0) * X(5);
     }
     return Wt;
   }
