@@ -66,6 +66,9 @@ namespace MBSim {
       // Tangent
       Vec Tangent (Vec &q, double &s);
 
+      // Tangent
+      SqrMat AWK (Vec &q, double &s);
+
       // Balkenort
       Vec StateAxis (Vec &q, Vec &v, double &s); // Zustand - global
 
