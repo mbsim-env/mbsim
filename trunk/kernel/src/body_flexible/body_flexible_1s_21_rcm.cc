@@ -217,6 +217,41 @@ namespace MBSim {
     return Jacobian;
   }
 
+  Mat BodyFlexible1s21RCM::computeJp(const ContourPointData &S_) {
+    static Index All(0,3-1);
+    Mat Jp(qSize,3);
+
+    // ForceElement on continuum
+    if(S_.type == CONTINUUM)
+    {
+      double s  = S_.alpha(0) ; // globaler KontParameter
+      double sp = 0;
+      if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
+      double sLokal = BuildElement(s);
+
+      Mat Jtmp = balken->JpGeneralized(qElement,uElement,sLokal,sp);
+
+      if(CurrentElement<Elements-1 || openStructure) {
+	Index Dofs(5*CurrentElement,5*CurrentElement+7);
+	Jp(Dofs,All) = Jtmp;
+      }
+      else { // Ringschluss
+	Jp(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
+	Jp(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
+      }
+
+    }
+//    // ForceElement on node
+//    else if(S_.type == NODE)
+//    {
+//      int node = S_.ID;
+//      Index Dofs(5*node,5*node+2);
+//      Jp(Dofs,All) << DiagMat(3,INIT,0.0);
+//    }
+
+    return Jp;
+  }
+
   void BodyFlexible1s21RCM::updateh(double t) {
     static int i,j;
 

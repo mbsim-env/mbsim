@@ -98,6 +98,7 @@ namespace MBSim {
       Vec computeWrOC  (const ContourPointData &S_);
       Vec computeWvC   (const ContourPointData &S_);
       Vec computeWomega(const ContourPointData &S_);
+      SqrMat computeAWK(const ContourPointData &S_);
 
       bool hasConstMass() const {return false;}
 

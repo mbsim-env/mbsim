@@ -90,7 +90,9 @@ namespace MBSim {
       /* geerbt */
       Mat computeJacobianMatrix(const ContourPointData &S);
       /* geerbt */
-      void updateh(double t);
+      Mat computeJp(const ContourPointData &S);
+      /* geerbt */
+       void updateh(double t);
 
       /* geerbt */
       void init();
