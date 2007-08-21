@@ -257,8 +257,15 @@ namespace MBSim {
     return Wt;
   }
 
+  SqrMat BodyFlexible1s23BTA::computeAWK (const ContourPointData &S_) {
+    const double &s = S_.alpha(0);
+    double sElement = BuildElement(s);
+    SqrMat AWK = element[CurrentElement].AWK(qElement,sElement);
+    return SqrMat(JR * AWK);
+  }
+
   Vec BodyFlexible1s23BTA::computeWrOC(const ContourPointData &S_) {
-    //    if (S_.alpha(0) != sTangent) 
+    if (S_.alpha(0) != sTangent) 
     {
       sTangent = S_.alpha(0);
       double sElement = BuildElement(sTangent);
@@ -272,14 +279,14 @@ namespace MBSim {
   }
 
   Vec BodyFlexible1s23BTA::computeWvC (const ContourPointData &S_) {
-    //    if (S_.alpha(0) != sTangent) 
-    computeWrOC(S_);
+    if (S_.alpha(0) != sTangent) 
+      computeWrOC(S_);
     return WvC;
   }
 
   Vec BodyFlexible1s23BTA::computeWomega (const ContourPointData &S_) {
-    //  if (S_.alpha(0) != sTangent) 
-    computeWrOC(S_);
+    if (S_.alpha(0) != sTangent) 
+      computeWrOC(S_);
     return Womega;
   }
 
