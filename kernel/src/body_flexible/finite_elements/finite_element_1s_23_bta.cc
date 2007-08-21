@@ -267,6 +267,24 @@ namespace MBSim {
     return tangent;
   }
 
+  SqrMat FiniteElement1s23BTA::AWK(Vec &q, double& s)
+  {
+    SqrMat AWK(3,NONINIT);
+    Vec bzT(3,INIT,0.0);
+  
+    double alpha = q(0) * (1-s/l0) + q(5) * (s/l0);
+ 
+    bzT(1) = -sin(alpha);
+    bzT(2) =  cos(alpha);
+
+    AWK.col(0)  = Tangent(q,s);
+    AWK.col(1)  = crossProduct(bzT,AWK.col(0));
+    AWK.col(1) /= nrm2(AWK.col(1));
+    AWK.col(2)  = crossProduct(AWK.col(0),AWK.col(1));
+
+    return AWK;
+  }
+
   // Balkenort ermitteln aus lokalen Lagen 
   Vec FiniteElement1s23BTA::StateAxis(Vec &q, Vec &v,double& s)
   {
@@ -300,8 +318,8 @@ namespace MBSim {
     X( 7) = -(((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4)) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) - (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0) - ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4);
     X( 8) = (g1p*s + u1p - (Power(s,2)*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (Power(s,3)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*l0 - a1*s + a2*s)/l0) + ((a1p*(l0 - s) + a2p*s)*(b1*l0*Power(l0 - s,2)*s + b2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*w1 - 3*l0*Power(s,2)*w1 + 2*Power(s,3)*w1 + 3*l0*Power(s,2)*w2 - 2*Power(s,3)*w2)*cos((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) - ((a1p*(l0 - s) + a2p*s)*(g1*l0*Power(l0 - s,2)*s + g2*l0*Power(s,2)*(-l0 + s) + Power(l0,3)*u1 - 3*l0*Power(s,2)*u1 + 2*Power(s,3)*u1 + 3*l0*Power(s,2)*u2 - 2*Power(s,3)*u2)*sin((a1*l0 - a1*s + a2*s)/l0))/Power(l0,4) + (b1p*s + w1p - (Power(s,2)*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) + (Power(s,3)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*l0 - a1*s + a2*s)/l0);
     X( 9) = (a1p*l0 - a1p*s + a2p*s)/l0;
-    X(10) = (g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
-    X(11) = (-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) + (g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0);
+    X(10) =  -((g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) - (-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
+    X(11) =  -((-b1p + (2*s*(2*b1p*l0 + b2p*l0 + 3*w1p - 3*w2p))/Power(l0,2) - (3*Power(s,2)*(b1p*l0 + b2p*l0 + 2*w1p - 2*w2p))/Power(l0,3))*cos((a1*(l0 - s))/l0 + (a2*s)/l0) + (g1p - (2*s*(2*g1p*l0 + g2p*l0 + 3*u1p - 3*u2p))/Power(l0,2) + (3*Power(s,2)*(g1p*l0 + g2p*l0 + 2*u1p - 2*u2p))/Power(l0,3))*sin((a1*(l0 - s))/l0 + (a2*s)/l0));
 
     return X;
   }
@@ -323,53 +341,53 @@ namespace MBSim {
     J(0,0) = -(((l0 - s)*(((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*cos(a1 + ((-a1 + a2)*s)/l0) + ((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4));
     J(0,1) = ((l0 - s)*(((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*cos(a1 + ((-a1 + a2)*s)/l0) - ((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
     J(0,2) = 1 - s/l0;
-    J(0,3) = ((l0 - s)*((b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*cos(a1 + ((-a1 + a2)*s)/l0) - (g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
-    J(0,4) = ((l0 - s)*((g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*cos(a1 + ((-a1 + a2)*s)/l0) + (b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
+    J(0,3) = -((l0 - s)*((b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*cos(a1 + ((-a1 + a2)*s)/l0) - (g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
+    J(0,4) = -((l0 - s)*((g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*cos(a1 + ((-a1 + a2)*s)/l0) + (b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
     J(1,0) = (Power(l0 - s,2)*(l0 + 2*s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(1,1) = (Power(l0 - s,2)*(l0 + 2*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(1,2) = 0;
-    J(1,3) = (6*s*(-l0 + s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
-    J(1,4) = (6*(l0 - s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(1,3) = -(6*s*(-l0 + s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(1,4) = -(6*(l0 - s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(2,0) = (Power(l0 - s,2)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(2,1) = (Power(l0 - s,2)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(2,2) = 0;
-    J(2,3) = ((l0 - 3*s)*(l0 - s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
-    J(2,4) = -(((l0 - 3*s)*(l0 - s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2));
+    J(2,3) = -((l0 - 3*s)*(l0 - s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(2,4) = -(-(((l0 - 3*s)*(l0 - s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2)));
     J(3,0) = -((Power(l0 - s,2)*(l0 + 2*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3));
     J(3,1) = (Power(l0 - s,2)*(l0 + 2*s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(3,2) = 0;
-    J(3,3) = (6*s*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
-    J(3,4) = (6*s*(-l0 + s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(3,3) = -(6*s*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(3,4) = -(6*s*(-l0 + s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(4,0) = -((Power(l0 - s,2)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2));
     J(4,1) = (Power(l0 - s,2)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(4,2) = 0;
-    J(4,3) = ((l0 - 3*s)*(l0 - s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
-    J(4,4) = ((l0 - 3*s)*(l0 - s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(4,3) = -((l0 - 3*s)*(l0 - s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(4,4) = -((l0 - 3*s)*(l0 - s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(5,0) = -((s*(((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*cos(a1 + ((-a1 + a2)*s)/l0) + ((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4));
     J(5,1) = (s*(((-l0 + s)*(l0*s*(-(b1*l0) + (b1 + b2)*s) + (-l0 + s)*(l0 + 2*s)*w1) + (3*l0 - 2*s)*Power(s,2)*w2)*cos(a1 + ((-a1 + a2)*s)/l0) - ((-l0 + s)*(l0*s*(-(g1*l0) + (g1 + g2)*s) + (-l0 + s)*(l0 + 2*s)*u1) + (3*l0 - 2*s)*Power(s,2)*u2)*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
     J(5,2) = s/l0;
-    J(5,3) = (s*((b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*cos(a1 + ((-a1 + a2)*s)/l0) - (g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
-    J(5,4) = (s*((g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*cos(a1 + ((-a1 + a2)*s)/l0) + (b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
+    J(5,3) = -(s*((b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*cos(a1 + ((-a1 + a2)*s)/l0) - (g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
+    J(5,4) = -(s*((g1*l0*(l0 - 3*s)*(l0 - s) + s*(g2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(u1 - u2)))*cos(a1 + ((-a1 + a2)*s)/l0) + (b1*l0*(l0 - 3*s)*(l0 - s) + s*(b2*l0*(-2*l0 + 3*s) - 6*(l0 - s)*(w1 - w2)))*sin(a1 + ((-a1 + a2)*s)/l0)))/Power(l0,4);
     J(6,0) = ((3*l0 - 2*s)*Power(s,2)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(6,1) = ((3*l0 - 2*s)*Power(s,2)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(6,2) = 0;
-    J(6,3) = (6*(l0 - s)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
-    J(6,4) = (6*s*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(6,3) = -(6*(l0 - s)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(6,4) = -(6*s*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(7,0) = (Power(s,2)*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(7,1) = (Power(s,2)*(-l0 + s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(7,2) = 0;
-    J(7,3) = (s*(-2*l0 + 3*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
-    J(7,4) = ((2*l0 - 3*s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(7,3) = -(s*(-2*l0 + 3*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(7,4) = -((2*l0 - 3*s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(8,0) = (Power(s,2)*(-3*l0 + 2*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(8,1) = ((3*l0 - 2*s)*Power(s,2)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(8,2) = 0;
-    J(8,3) = (6*(l0 - s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
-    J(8,4) = (6*(l0 - s)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(8,3) = -(6*(l0 - s)*s*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
+    J(8,4) = -(6*(l0 - s)*s*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,3);
     J(9,0) = ((l0 - s)*Power(s,2)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(9,1) = (Power(s,2)*(-l0 + s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
     J(9,2) = 0;
-    J(9,3) = (s*(-2*l0 + 3*s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
-    J(9,4) = (s*(-2*l0 + 3*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(9,3) = -(s*(-2*l0 + 3*s)*cos(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
+    J(9,4) = -(s*(-2*l0 + 3*s)*sin(a1 + ((-a1 + a2)*s)/l0))/Power(l0,2);
 
 
     return J;

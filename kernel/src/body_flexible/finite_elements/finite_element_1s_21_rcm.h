@@ -85,7 +85,9 @@ namespace MBSim {
       Vec StateBalken (Vec&,Vec&,double&); // Zustand - global
 
       // Eingriffsmatrizen
-      Mat JGeneralized(Vec&,const double&);
+      Mat JGeneralizedInternal(Vec&,const double&);
+      Mat JGeneralized (Vec&,const double&);
+      Mat JpGeneralized(Vec&,Vec&,const double&,const double&);
 
       // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
       Vec ElementData(Vec qElement, Vec qpElement);
