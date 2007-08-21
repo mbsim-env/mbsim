@@ -30,15 +30,19 @@ namespace MBSim {
 
   class CircleSolid;
   class Contour1s;
-
+  class FuncPairContour1sCircleSolid;
+ 
   /** pairing CircleSolid to Contour1s; author: Martin Foerg */
   class ContactKinematicsCircleSolidContour1s : public ContactKinematics {
     private:
       int icircle, icontour;
       CircleSolid *circle;
       Contour1s *contour1d;
+      FuncPairContour1sCircleSolid *func;
 
     public:
+      ~ContactKinematicsCircleSolidContour1s();
+
       void stage1(Vec &g, vector<ContourPointData> &cpData);
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
 

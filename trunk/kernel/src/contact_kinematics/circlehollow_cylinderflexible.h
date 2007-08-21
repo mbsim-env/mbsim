@@ -30,15 +30,17 @@ namespace MBSim {
 
   class CircleHollow;
   class CylinderFlexible;
-
+  class FuncPairContour1sCircleHollow;
   /** pairing CircleHollow to CylinderFlexible; author: Roland Zander */
   class ContactKinematicsCircleHollowCylinderFlexible : public ContactKinematics {
     private:
       int icircle, icylinder;
       CircleHollow *circle;
       CylinderFlexible *cylinder;
+      FuncPairContour1sCircleHollow *func;
 
     public:
+      ~ContactKinematicsCircleHollowCylinderFlexible();
       void stage1(Vec &g, vector<ContourPointData> &cpData);
       void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData);
       void assignContours(const vector<Contour*> &contour);
