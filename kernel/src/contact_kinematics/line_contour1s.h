@@ -30,14 +30,18 @@ namespace MBSim {
 
   class Line;
   class Contour1s;
+  class FuncPairContour1sLine;
 
   /** pairing Line to Contour1s; author: Felix Kahr */
   class ContactKinematicsLineContour1s : public ContactKinematics {
     private:
       int iline, icontour;
       Line *line;
-      Contour1s *contour1s; 
+      Contour1s *contour1s;
+      FuncPairContour1sLine *func;
+ 
     public:
+      ~ContactKinematicsLineContour1s();
       void stage1(Vec &g, vector<ContourPointData> &cpData);
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
 

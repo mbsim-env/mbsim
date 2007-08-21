@@ -38,11 +38,14 @@ namespace MBSim {
       circle = static_cast<CircleSolid*>(contour[1]);
       contour1d = static_cast<Contour1s*>(contour[0]);
     }
+    func= new FuncPairContour1sCircleSolid(circle,contour1d);
   }
+
+  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() {delete func;};
 
   void ContactKinematicsCircleSolidContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
-    FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,contour1d);
+//    FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,contour1d);
     Contact1sSearch search(func);
     search.setNodes(contour1d->getNodes());     
 

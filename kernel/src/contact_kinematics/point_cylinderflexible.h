@@ -30,6 +30,7 @@ namespace MBSim {
 
   class Point;
   class CylinderFlexible;
+  class FuncPairContour1sPoint;
 
   /** pairing Point to CylinderFlexible; author: Roland Zander */
   class ContactKinematicsPointCylinderFlexible : public ContactKinematics {
@@ -37,8 +38,9 @@ namespace MBSim {
       int ipoint, icylinder;
       Point *point;
       CylinderFlexible *cylinder;
-
+      FuncPairContour1sPoint *func;
     public:
+      ~ContactKinematicsPointCylinderFlexible();
       void stage1(Vec &g, vector<ContourPointData> &cpData);
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
 

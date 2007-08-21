@@ -39,13 +39,16 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       contour1s = static_cast<Contour1s*>(contour[0]);
     }
+    func= new FuncPairContour1sPoint(point,contour1s);
+  }
+  ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {
+    delete func;
   }
 
   void ContactKinematicsPointContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
     cpData[ipoint].WrOC = point->getWrOP();
 
-    FuncPairContour1sPoint *func= new FuncPairContour1sPoint(point,contour1s);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());
 

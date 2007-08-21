@@ -30,6 +30,7 @@ namespace MBSim {
 
   class Point;
   class Contour1s;
+  class FuncPairContour1sPoint;
 
   /** pairing Point to Contour1s; author: Roland Zander */
   class ContactKinematicsPointContour1s: public ContactKinematics {
@@ -37,7 +38,9 @@ namespace MBSim {
       int ipoint, icontour;
       Point *point;
       Contour1s *contour1s;
+      FuncPairContour1sPoint *func;
     public:
+      ~ContactKinematicsPointContour1s();
       void stage1(Vec &g, vector<ContourPointData> &cpData);
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
 

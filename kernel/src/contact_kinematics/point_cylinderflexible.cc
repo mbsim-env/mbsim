@@ -38,13 +38,16 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       cylinder = static_cast<CylinderFlexible*>(contour[0]);
     }
+    func= new FuncPairContour1sPoint(point,cylinder);
+  }
+  ContactKinematicsPointCylinderFlexible::~ContactKinematicsPointCylinderFlexible() {
+    delete func;
   }
 
   void ContactKinematicsPointCylinderFlexible::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
     cpData[ipoint].WrOC     = point->getWrOP();
 
-    FuncPairContour1sPoint *func= new FuncPairContour1sPoint(point,cylinder);
     Contact1sSearch search(func);
     search.setNodes(cylinder->getNodes());
 

@@ -38,13 +38,17 @@ namespace MBSim {
       circle = static_cast<CircleHollow*>(contour[1]);
       cylinder = static_cast<CylinderFlexible*>(contour[0]);
     }
+    func= new FuncPairContour1sCircleHollow(circle,cylinder);
+  }
+
+  ContactKinematicsCircleHollowCylinderFlexible::~ContactKinematicsCircleHollowCylinderFlexible() {
+    delete func;
   }
 
   void ContactKinematicsCircleHollowCylinderFlexible::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
     Vec WrOP_circle =  circle->getWrOP();
 
-    FuncPairContour1sCircleHollow *func= new FuncPairContour1sCircleHollow(circle,cylinder);
     Contact1sSearch search(func);
     search.setNodes(cylinder->getNodes());
 
@@ -107,6 +111,7 @@ namespace MBSim {
       Vec dTilde = funcPhi->computeWrD(cpData[icylinder].alpha(1));
 
       // Suchen fertig!!!
+      delete funcPhi;
 
       cpData[icircle]  .WrOC = WrOP_circle + R * dTilde/nrm2(dTilde);
       cpData[icylinder].WrOC = WrOP_circle + dTilde;

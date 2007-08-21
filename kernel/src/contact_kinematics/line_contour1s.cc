@@ -40,11 +40,14 @@ namespace MBSim {
       line = static_cast<Line*>(contour[1]);
       contour1s = static_cast<Contour1s*>(contour[0]);
     }
+    func= new FuncPairContour1sLine(line,contour1s);
+  }
+  ContactKinematicsLineContour1s::~ContactKinematicsLineContour1s() {
+    delete func;
   }
 
   void ContactKinematicsLineContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
-    FuncPairContour1sLine *func= new FuncPairContour1sLine(line,contour1s);
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes());     
     if(cpData[icontour].alpha.size()==1) {
