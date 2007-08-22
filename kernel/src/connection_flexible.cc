@@ -42,4 +42,9 @@ namespace MBSim {
     WM[1] = -WM[0];
   }
 
+  double ConnectionFlexible::computePotentialEnergy() {
+    double V = 0.5* (trans(la)*g);
+    return V;
+  }
+
 }

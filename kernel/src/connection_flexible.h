@@ -48,6 +48,8 @@ namespace MBSim {
       void setTranslationalDamping(double d) {dT = d;}
       void setRotationalStiffness(double c) {cR = c;}
       void setRotationalDamping(double d) {dR = d;}
+
+      double computePotentialEnergy();
   };
 
 }
