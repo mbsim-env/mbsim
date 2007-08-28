@@ -89,6 +89,9 @@ namespace MBSim {
       Mat JGeneralized (Vec&,const double&);
       Mat JpGeneralized(Vec&,Vec&,const double&,const double&);
 
+      Vec DrDs (Vec&,const double&);
+      Vec DrDsp(Vec&,Vec&,const double&,const double&);
+     
       // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
       Vec ElementData(Vec qElement, Vec qpElement);
 

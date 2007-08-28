@@ -90,9 +90,6 @@ namespace MBSim {
        */
       void updateContours(double t);
 
-      /* geerbt */
-      Mat computeJacobianMatrix(const ContourPointData &CP);
-
       /*! 
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$
        * \param t time
@@ -201,6 +198,9 @@ namespace MBSim {
       */
       void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
 
+      /* geerbt */
+      Mat computeJacobianMatrix(const ContourPointData &CP);
+
       /*! \return zero matrix, BodyFlexibleLinearExternal does not hold any contour, no tangent defined
       */
       Mat computeWt  (const ContourPointData& CP) {return Mat(3,2);};
@@ -222,7 +222,11 @@ namespace MBSim {
 	\return \f$\rs{_W}[_P]{\boldsymbol{\omega}}\f$
 	*/
       Vec computeWomega(const ContourPointData& CP);
-  };
+
+      /* inherted */ 
+      SqrMat computeAWK (const ContourPointData &data) {return SqrMat(3,INIT,0.0);} 
+      SqrMat computeAWKp(const ContourPointData &data) {return SqrMat(3,INIT,0.0);} 
+   };
 
 }
 

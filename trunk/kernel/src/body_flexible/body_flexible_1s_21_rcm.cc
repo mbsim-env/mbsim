@@ -241,6 +241,11 @@ namespace MBSim {
       }
 
     }
+
+/// cout << "BodyFlexible1s21RCM::computeJp" << endl;
+/// cout << "   BodyFlexible1s21RCM::Jp = " << trans(Jp) <<  endl;
+/// cout << "          BodyFlexible::Jp = " << trans(BodyFlexible::computeJp(S_)) <<  endl;
+
 //    // ForceElement on node
 //    else if(S_.type == NODE)
 //    {
@@ -248,8 +253,27 @@ namespace MBSim {
 //      Index Dofs(5*node,5*node+2);
 //      Jp(Dofs,All) << DiagMat(3,INIT,0.0);
 //    }
-
     return Jp;
+  }
+
+  Mat BodyFlexible1s21RCM::computeDrDs (const ContourPointData &S_) {
+    double s  = S_.alpha(0);
+    double sLokal = BuildElement(s);
+
+    Vec DrDs = balken->DrDs(qElement,sLokal);
+
+    return JT*DrDs;
+  }
+
+  Mat BodyFlexible1s21RCM::computeDrDsp(const ContourPointData &S_) {
+    double s  = S_.alpha(0);
+    double sp = 0;
+    if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
+    double sLokal = BuildElement(s);
+
+    Vec DrDsp = balken->DrDsp(qElement,uElement,sLokal,sp);
+
+    return JT*DrDsp;
   }
 
   void BodyFlexible1s21RCM::updateh(double t) {
@@ -268,8 +292,6 @@ namespace MBSim {
       // * Koordinaten Sortieren
       BuildElement(i);
       j = 5 * i;
-
-      //   	cout << "\nElementNr.: " << i << "\tMatrixplatz.: " << j << endl;
 
       balken->berechne(qElement, uElement);
 
@@ -343,9 +365,17 @@ namespace MBSim {
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
     double sLokal = 0;
     int Element = 0;
-    while( (Element+1)*balken->l0 < sGlobal)
+    int outOfBounds = 0;
+
+// project into periodic structure  
+    if(!openStructure) {
+      while(sGlobal - outOfBounds*L < 0.0) outOfBounds--;
+      while(sGlobal - outOfBounds*L > L  ) outOfBounds++;
+    }
+
+    while( (Element+1)*balken->l0 < sGlobal - outOfBounds*L)
       Element++;
-    sLokal = sGlobal - ( 0.5 + Element ) * balken->l0;
+    sLokal = sGlobal - outOfBounds*L - ( 0.5 + Element ) * balken->l0;
 
     if(Element >= Elements) {
       if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
@@ -399,26 +429,26 @@ namespace MBSim {
       WvC    =          JT * X(3,4);
       Womega =          JR.col(0) * X(5);
     }
-    return Wt;
+    return Wt.copy();
   }
 
   Vec BodyFlexible1s21RCM::computeWn  (const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return Wn;
+    return Wn.copy();
   }
 
   Vec BodyFlexible1s21RCM::computeWrOC(const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return WrOC;
+    return WrOC.copy();
   }
 
   Vec BodyFlexible1s21RCM::computeWvC (const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return WvC;
+    return WvC.copy();
   }
   Vec BodyFlexible1s21RCM::computeWomega(const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return Womega;
+    return Womega.copy();
   }
 
   //-----------------------------------------------------------------------------------

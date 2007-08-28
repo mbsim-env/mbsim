@@ -309,27 +309,27 @@ namespace MBSim {
       WvC    =          JT * X(3,4);
       Womega =          JR.col(0) * X(5);
     }
-    return Wt;
+    return Wt.copy();
   }
 
   Vec BodyFlexible1s21ANCF::computeWn  (const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return Wn;
+    return Wn.copy();
   }
 
   Vec BodyFlexible1s21ANCF::computeWrOC(const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return WrOC;
+    return WrOC.copy();
   }
 
   Vec BodyFlexible1s21ANCF::computeWvC (const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return WvC;
+    return WvC.copy();
   }
 
   Vec BodyFlexible1s21ANCF::computeWomega(const ContourPointData &S_) {
     if(S_.alpha(0) != sTangent) computeWt(S_);
-    return Womega;
+    return Womega.copy();
   }
 
   ////----------------------------------------------------------------------
