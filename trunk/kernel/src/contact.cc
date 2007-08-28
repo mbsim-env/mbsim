@@ -68,6 +68,9 @@ namespace MBSim {
     active = false;
   }
 
+  Contact::~Contact() {
+    if (contactKinematics) delete contactKinematics;
+  }
   void Contact::calcSize() {
     LinkContour::calcSize();
     gSize = 1;

@@ -63,6 +63,8 @@ namespace MBSim {
       /*! clone constructor with new name ! same parameters ! */
       Contact(const Contact *master, const string &name_);
 
+      virtual ~Contact();
+
       void calcSize();
       /*geerbt*/
       void init();

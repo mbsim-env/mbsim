@@ -39,6 +39,13 @@ namespace MBSim {
 
   }
 
+  BodyRigid::~BodyRigid() {
+    if (bodyAMVis) {
+      bodyAMVis->deleteContours();
+      delete bodyAMVis;
+    }
+  }
+
   void BodyRigid::calcSize() {
     assert(JT.cols()<=3);
     assert(JR.cols()<=3);
