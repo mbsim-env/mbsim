@@ -39,6 +39,9 @@ namespace MBSim {
    * general definitions, common implementation e.g. for updateW(double t) and sumUpForceElements(double t)
    */
   class BodyFlexible : public Body {
+    friend class FlexRel;
+    friend class BodyRigidRelFlex;
+
     protected:
       /** JACOBIAN-matrizes: \f$\vJ_{ges}=(\vJ_T,\vJ_R)\f$ */
       Mat Jges;
@@ -78,13 +81,6 @@ namespace MBSim {
        */
       void updatedq(double t, double dt);
 
-      /*! pre-definition for method giving JACOBIAN-matrix at contour-point S,
-       *  needs to be defined in implementation for deduced classes
-       *  @param S contour parameters specifing location
-       *  \param t  time of evaluation
-       *  \return JACOBIAN-matrix of system dimensions Object::qSize x BodyFlexible::Jges ->cols()
-       */
-      virtual Mat computeJacobianMatrix(const ContourPointData &data) = 0; // alle muessen!!! diese Methode zur Verfuegung stellen
 
       /** indices of forces and moments in load vectors, finally defined in derived and specified classes/bodies
       */
@@ -93,7 +89,10 @@ namespace MBSim {
        * of computeJacobianMatrix() to distrubute loads
        *  \param t time of evaluation
        */
-      void sumUpForceElements(double t);
+
+// TODO: das "virtual" einchecken !!!!!!!!!!!!!!!!!!1
+
+      virtual void sumUpForceElements(double t);
       /*! update generalised force directions \f$\vW\f$ for set-valued interactions on Port and Contour interfaces,
        *  therefor collects JACOBIAN-matrizes of implementations of computeJacobianMatrix()
        *  \param t  time of evaluation
@@ -113,6 +112,11 @@ namespace MBSim {
        */
       BodyFlexible(const string &name); 
 
+      /*!
+       * destructor mainly handles memory-cleanup
+       */
+      ~BodyFlexible(); 
+
       /*! set JACOBIAN-matrix BodyFlexible::JT, \f$\vJ_R\f$ of translations
        *  \param JT_ JACOBIAN-matrix of translations
        */
@@ -130,6 +134,23 @@ namespace MBSim {
 	*/
       void createAMVisBody(bool binary_) {boolAMVis = true; boolAMVisBinary = binary_;}
 
+       /*! pre-definition for method giving JACOBIAN-matrix at contour-point S,
+       *  needs to be defined in implementation for deduced classes
+       *  @param S contour parameters specifing location
+       *  \return JACOBIAN-matrix of system dimensions Object::qSize x BodyFlexible::Jges ->cols()
+       */
+      virtual Mat computeJacobianMatrix(const ContourPointData &data) = 0; // alle muessen!!! diese Methode zur Verfuegung stellen
+
+      /*! definition for method giving numerical time-derivative of JACOBIAN-matrix at contour-point S,
+       * should be re-defined in deduced classes providing \f$\vJ\f$ analytical
+       *  @param S contour parameters specifing location
+       *  \return \f$\dot{\vJ}\f$ of system dimensions Object::qSize x BodyFlexible::Jges ->cols()
+       */
+      virtual Mat computeJp(const ContourPointData &data);
+
+      virtual Mat computeDrDs (const ContourPointData &data);
+      virtual Mat computeDrDsp(const ContourPointData &data);
+
       /*! compute matrix describing tangential directions to body contour
        * \param data contour parameter set
        */
@@ -138,10 +159,19 @@ namespace MBSim {
        * \param data contour parameter set
        */
       virtual Vec computeWn  (const ContourPointData &data) = 0;
+      /*! compute trafo-matrix from contour to world system at s
+       * \param data contour parameter set
+       */
+      virtual SqrMat computeAWK (const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
+      virtual SqrMat computeAWKp(const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
+
+      Mat computeK (const ContourPointData &cp);
+      Mat computeKp(const ContourPointData &cp);
+
       /*! compute absolute position in world system to body contour at s
        * \param data contour parameter set
        */
-      virtual Vec computeWrOC(const ContourPointData &data) = 0;
+       virtual Vec computeWrOC(const ContourPointData &data) = 0;
       /*! compute absolute velocity in world system to body contour at s
        * \param data contour parameter set
        */
@@ -184,6 +214,14 @@ namespace MBSim {
       /*! basic prototype plotting basic class name "BodyFlexible"
       */
       void plotParameters();
+
+      void updateMRef(SymMat M_) { M  >> M_ ;}
+      void updateqRef(Vec q_)    { q  >> q_ ;}
+      void updateuRef(Vec u_)    { u  >> u_ ;}
+      void updateqdRef(Vec qd_)  { qd >> qd_;}
+      void updateudRef(Vec ud_)  { ud >> ud_;}
+      void updatehRef(Vec h_)    { h  >> h_ ;}
+      void updaterRef(Vec r_)    { r  >> r_ ;}
   };
 
   //####################################################
@@ -244,7 +282,10 @@ namespace MBSim {
       */
       Vec computeWomega(const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWomega(temp); }
 
-      //---------------------------------------------------------------------------
+      SqrMat computeAWK (const ContourPointData &data); 
+      SqrMat computeAWKp(const ContourPointData &data); 
+
+       //---------------------------------------------------------------------------
       /*! definition of BodyFlexible1s::userContourNodes for search-fields of contact-search
       */
       void setContourNodes(const Vec& nodes) {userContourNodes = nodes;}

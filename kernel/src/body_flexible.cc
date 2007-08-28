@@ -28,11 +28,17 @@
 
 #include "elastic.h"
 
+#include "eps.h"
+
 using namespace AMVis;
 
 namespace MBSim {
 
   BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true) { }
+
+  BodyFlexible::~BodyFlexible() {
+    if (bodyAMVis) delete bodyAMVis;
+  }
 
   void BodyFlexible::init() {
     Body::init();
@@ -239,6 +245,134 @@ namespace MBSim {
   }
 
 
+  Mat BodyFlexible::computeJp(const ContourPointData &data) {
+    static double eps = epsroot();
+    Vec qAct     = q.copy();
+
+    ContourPointData dataMod;
+    dataMod.type   = data.type;
+    dataMod.alpha  = data.alpha.copy();
+    dataMod.alphap = data.alphap.copy();
+
+    Mat JAct = computeJacobianMatrix(data);
+    Mat Jp(JAct.rows(),JAct.cols(),INIT,0.0);
+
+    for (int i=0; i<qSize ; i++) {
+      q(i) += eps;
+      Jp += (computeJacobianMatrix(data) - JAct)/eps * u(i);
+      q(i) = qAct(i);
+    }
+
+    for(int i=0;i<data.alphap.size();i++) {
+      dataMod.alpha(i) += eps;
+      Jp += (computeJacobianMatrix(dataMod) - JAct)/eps * data.alphap(i);
+      dataMod.alpha(i) = data.alpha(i);
+    }
+
+    return Jp;
+  }
+
+  Mat BodyFlexible::computeDrDs(const ContourPointData &data) {
+    static double eps = epsroot();
+
+    ContourPointData dataMod;
+    dataMod.type  = data.type;
+    dataMod.alpha = data.alpha.copy();
+
+    Vec WrAct   = computeWrOC(data);
+    Mat DrDs(3,data.alphap.size(),NONINIT); // alphap used only if contour-parameter is DOF
+
+    for(int i=0;i<DrDs.cols();i++) {
+      dataMod.alpha(i) += eps;
+      DrDs.col(i) = (computeWrOC(dataMod) - WrAct)/eps;
+      dataMod.alpha(i) = data.alpha(i);
+    }
+
+    return DrDs;
+  }
+
+  Mat BodyFlexible::computeDrDsp(const ContourPointData &data) {
+    static double eps = epsroot();
+    Vec qAct     = q.copy();
+
+    ContourPointData dataMod;
+    dataMod.type   = data.type;
+    dataMod.alpha  = data.alpha.copy();
+    dataMod.alphap = data.alphap.copy();
+
+    Mat DrDsAct = computeDrDs(data);
+    Mat DrDsp(DrDsAct.rows(),DrDsAct.cols(),INIT,0.0);
+// cout << "Mat BodyFlexible::computeDrDsp(const ContourPointData &data)" << endl;
+// cout << "  DrDs  = " << DrDsAct << endl;
+// cout << "  DrDsp = " << DrDsp << endl;
+
+    if(data.alphap.rows()) {
+      for (int i=0; i<qSize ; i++) {
+	q(i) += eps;
+updateKinematics(0.0);
+// cout << "    DrDs_mod_q("<<i<<") = " << computeDrDs(data) << endl;
+	DrDsp += (computeDrDs(data) - DrDsAct)/eps * u(i);
+	q(i) = qAct(i);
+      }
+// cout << "DrDsp_ns = " << DrDsp << endl;
+
+      for(int i=0;i<data.alphap.size();i++) {
+	dataMod.alpha(i) += eps;
+// cout << "    DrDs_mod_s("<<i<<") = " << computeDrDs(data) << endl;
+// cout << "    DrDsAct  = " << DrDsAct << endl;
+// cout << "      => inc = " <<  (computeDrDs(dataMod) - DrDsAct)/eps * data.alphap(i) << endl;
+	DrDsp += (computeDrDs(dataMod) - DrDsAct)/eps * data.alphap(i);
+	dataMod.alpha(i) = data.alpha(i);
+      }
+    }
+
+    return DrDsp;
+  }
+
+  Mat BodyFlexible::computeK(const ContourPointData &cp) {
+    static const double eps = epsroot();
+    Mat K(3,cp.alphap.size(),NONINIT);
+    SqrMat AWP = computeAWK(cp);
+    ContourPointData cpMod;
+       cpMod.type   = cp.type;
+       cpMod.alpha  = cp.alpha .copy();
+       cpMod.alphap = cp.alphap.copy();
+    for(int i=0;i<K.cols();i++) {
+      cpMod.alpha(i) += eps;
+      Mat KiTilde = (computeAWK(cpMod) - AWP) / eps * trans(AWP);
+      K(0,i) = KiTilde(2,1);
+      K(1,i) = KiTilde(0,2);
+      K(2,i) = KiTilde(1,0);
+      cpMod.alpha(i)  = cp.alpha(i);
+    }
+
+    return K;
+  }
+  Mat BodyFlexible::computeKp(const ContourPointData &cp) {
+    static const double eps = epsroot();
+//    Vec qAct     = q.copy();
+
+    Mat Kp(3,cp.alphap.size(),INIT,0.0);
+    Mat KAct = computeK(cp);
+
+    SqrMat AWP  = computeAWK (cp);
+    SqrMat AWPp = computeAWKp(cp);
+    ContourPointData cpMod;
+       cpMod.type   = cp.type;
+       cpMod.alpha  = cp.alpha .copy();
+       cpMod.alphap = cp.alphap.copy();
+    for(int i=0;i<Kp.cols();i++) {
+      cpMod.alpha(i) += eps;
+      Mat KiTilde = (computeAWK(cpMod) - AWP) / eps * trans(AWPp) + (computeAWKp(cpMod) - AWPp) / eps * trans(AWP);
+      Kp(0,i) = KiTilde(2,1);
+      Kp(1,i) = KiTilde(0,2);
+      Kp(2,i) = KiTilde(1,0);
+      cpMod.alpha(i)  = cp.alpha(i);
+    }
+
+    return Kp;
+  }
+
 
   //####################################################
   //####################################################
@@ -265,6 +399,41 @@ namespace MBSim {
     temp.alpha = Vec(1,INIT,s);
     addContour(contour,temp); 
   }
+
+  SqrMat BodyFlexible1s::computeAWK  (const ContourPointData &data) {
+    SqrMat AWK(3,NONINIT);
+    AWK.col(0) = (computeWt(data)).col(0);
+    AWK.col(1) =  computeWn(data);
+    AWK.col(2) =  crossProduct(AWK.col(0),AWK.col(1));
+    AWK.col(2) /= nrm2(AWK.col(2));
+    return AWK.copy();
+  }
+
+  SqrMat BodyFlexible1s::computeAWKp(const ContourPointData &data) {
+    static double eps = epsroot();
+
+    ContourPointData dataMod;
+    dataMod.type   = data.type;
+    dataMod.alpha  = data.alpha.copy();
+    dataMod.alphap = data.alphap.copy();
+
+    SqrMat AWKAct = computeAWK(data);
+
+// zeitliche Ableitung in Folge Referenzbewegung
+    SqrMat AWKp = tilde(computeWomega(data))*AWKAct;
+
+// Aenderungen aufgrund von RelativBewegungen, numerisch
+    for(int i=0;i<data.alphap.size();i++) {
+      dataMod.alpha(i) += eps;
+      AWKp += (computeAWK(dataMod) - AWKAct)/eps * data.alphap(i);
+      dataMod.alpha(i) = data.alpha(i);
+    }
+
+    return AWKp.copy();
+  }
+
+
+
 
 }
 

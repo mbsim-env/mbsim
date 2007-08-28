@@ -51,6 +51,8 @@ namespace MBSim {
     int ID;
     /** contour parameter(s) */
     Vec alpha;
+    /** contour parameter(s) velocities */
+    Vec alphap;
     /** interpolation weights */
     Vec iWeights;
     /*! list of nodes used in interpolation 
