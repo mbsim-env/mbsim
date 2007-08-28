@@ -58,6 +58,7 @@ namespace MBSim {
     public:
       //Contour(const string &name, ContourType type);
       Contour(const string &name);
+      virtual ~Contour();	
 
       virtual void init();
       void initPlotFiles();
@@ -236,6 +237,7 @@ namespace MBSim {
       UserFunctionContour1s  *funcCrPC;
     public:
       Contour1sAnalytical(const string &name);
+      virtual ~Contour1sAnalytical();
 
       /*! \todo Cache !!!
       */

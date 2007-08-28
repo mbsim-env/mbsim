@@ -74,6 +74,12 @@ namespace MBSim {
   }
 
   Object::~Object() {
+    vector<Port*>::iterator iP;
+    for(iP = port.begin(); iP != port.end(); ++iP)
+      delete *iP;
+    vector<Contour*>::iterator iC;
+    for(iC = contour.begin(); iC != contour.end(); ++iC)
+      delete *iC;
   }
 
   void Object::updatezRef() {
