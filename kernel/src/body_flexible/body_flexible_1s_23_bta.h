@@ -62,8 +62,6 @@ namespace MBSim {
       void updateKinematics(double t);
       void updatePorts(double t);
 
-      Mat computeJacobianMatrix(const ContourPointData &data);
-
       void updateh(double t);
 
       void init();
@@ -92,6 +90,8 @@ namespace MBSim {
        * \param node
        */
       void addPort(const string &name, const int &node);
+
+      Mat computeJacobianMatrix(const ContourPointData &data);
 
       Vec computeWn    (const ContourPointData &S_){return Vec(3);}
       Mat computeWt    (const ContourPointData &S_);

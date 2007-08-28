@@ -36,8 +36,6 @@ namespace MBSim {
       double E, rho, A, I , l;
       //    Vec JGeneralized(const double &s); // nur zur Kompatibilitaet
 
-      Mat computeJacobianMatrix(const ContourPointData &S_); // virtual of body_flexible
-
       Vec sTangent;
       Mat Wt;
       Vec Wn, CrOC, CvC;
@@ -88,6 +86,8 @@ namespace MBSim {
 
       /*     void addPort(const string &name, const double &S); */
       /*     using BodyFlexible1s::addPort; */
+
+      Mat computeJacobianMatrix(const ContourPointData &S_); // virtual of body_flexible
 
       Mat computeWt  (const ContourPointData &S_){return Axis; }
       Vec computeWn  (const ContourPointData &S_){return Vec(3); }

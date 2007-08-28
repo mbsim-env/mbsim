@@ -254,7 +254,7 @@ namespace MBSim {
     double sElement = BuildElement(s);
     Vec Tangent = element[CurrentElement].Tangent(qElement,sElement);
     Wt = JR * Tangent;
-    return Wt;
+    return Wt.copy();
   }
 
   SqrMat BodyFlexible1s23BTA::computeAWK (const ContourPointData &S_) {
@@ -275,18 +275,18 @@ namespace MBSim {
       WvC    = JR * Z(6,8);
       Womega = JR * Z(9,11);
     }
-    return WrOC;
+    return WrOC.copy();
   }
 
   Vec BodyFlexible1s23BTA::computeWvC (const ContourPointData &S_) {
     if (S_.alpha(0) != sTangent) 
       computeWrOC(S_);
-    return WvC;
+    return WvC.copy();
   }
 
   Vec BodyFlexible1s23BTA::computeWomega (const ContourPointData &S_) {
     if (S_.alpha(0) != sTangent) 
-      computeWrOC(S_);
+      computeWrOC(S_).copy();
     return Womega;
   }
 

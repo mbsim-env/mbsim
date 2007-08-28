@@ -88,10 +88,6 @@ namespace MBSim {
       /* geerbt */
       void updatePorts(double t);
       /* geerbt */
-      Mat computeJacobianMatrix(const ContourPointData &S);
-      /* geerbt */
-      Mat computeJp(const ContourPointData &S);
-      /* geerbt */
        void updateh(double t);
 
       /* geerbt */
@@ -138,6 +134,13 @@ namespace MBSim {
        */
       void addPort(const string &name, const int &node);
 
+      /* geerbt */
+      Mat computeJacobianMatrix(const ContourPointData &S);
+      /* geerbt */
+      Mat computeJp(const ContourPointData &S);
+      /* geerbt */
+      Mat computeDrDs (const ContourPointData &data);
+      Mat computeDrDsp(const ContourPointData &data);
       /* geerbt */
       Mat computeWt  (const ContourPointData &S_);
       Vec computeWn  (const ContourPointData &S_);
