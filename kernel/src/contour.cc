@@ -44,6 +44,12 @@ namespace MBSim {
     plotLevel = 0;
   }
 
+  Contour::~Contour() {
+    if (bodyAMVis) {
+      bodyAMVis->deleteContours();
+      delete bodyAMVis;
+    }
+  }
   void Contour::init() {
     setFullName(parent->getFullName()+"."+name);
   }
@@ -155,6 +161,9 @@ namespace MBSim {
   Contour1sAnalytical::Contour1sAnalytical(const string &name) : Contour1s(name) {
   }
 
+  Contour1sAnalytical::~Contour1sAnalytical() {
+    if (funcCrPC) delete funcCrPC;
+  }
   void Contour1sAnalytical::init() {
     Contour::init();
     double s = 0.5*(getAlphaEnd()-getAlphaStart());

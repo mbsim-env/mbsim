@@ -47,6 +47,19 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i)
       delete *i;
+    vector<Link*>::iterator iL;
+    for(iL = links.begin(); iL != links.end(); ++iL)
+      delete *iL;
+    vector<ExtraDynamicInterface*>::iterator iEDI;
+    for(iEDI = EDI.begin(); iEDI != EDI.end(); ++iEDI)
+      delete *iEDI;
+    vector<DataInterfaceBase*>::iterator iD;
+    for(iD = DIBs.begin(); iD != DIBs.end(); ++iD)
+      delete *iD;
+    vector<HitSphereLink*>::iterator iHS;
+    for(iHS =  HSLinks.begin(); iHS != HSLinks.end(); ++iHS)
+      delete *iHS;
+    if (preIntegrator) delete preIntegrator;
   } 
 
   void MultiBodySystem::init() {
@@ -527,20 +540,13 @@ namespace MBSim {
   double MultiBodySystem::computePotentialEnergy() {
     double Vpot = 0.0;
 
-    //      cout << endl << "Objects:" << endl;
     vector<Object*>::iterator i;
-    for(i = objects.begin(); i != objects.end(); ++i) {
-      //  	cout << (**i).getFullName() << endl;
+    for(i = objects.begin(); i != objects.end(); ++i)
       Vpot += (**i).computePotentialEnergy();
-    }
 
-    //      cout << endl << "Links:" << endl;
     vector<Link*>::iterator ic;
-    for(ic = links.begin(); ic != links.end(); ++ic) {
-      // 	cout << (**ic).getFullName() << endl;
+    for(ic = links.begin(); ic != links.end(); ++ic)
       Vpot += (**ic).computePotentialEnergy();
-    }
-    //      cout << " -------- " << endl;
 
     return Vpot;
   }

@@ -79,6 +79,7 @@ namespace MBSim {
     public:
 
       BodyRigid(const string &name);
+      virtual ~BodyRigid();
 
       /*! define Jacobian of translations in world system
 	\param JT Jacobian-matrix
