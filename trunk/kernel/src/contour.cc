@@ -46,7 +46,6 @@ namespace MBSim {
 
   Contour::~Contour() {
     if (bodyAMVis) {
-      bodyAMVis->deleteContours();
       delete bodyAMVis;
     }
   }
