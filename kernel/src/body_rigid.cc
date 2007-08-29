@@ -41,7 +41,6 @@ namespace MBSim {
 
   BodyRigid::~BodyRigid() {
     if (bodyAMVis) {
-      bodyAMVis->deleteContours();
       delete bodyAMVis;
     }
   }
