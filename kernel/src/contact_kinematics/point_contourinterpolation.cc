@@ -39,14 +39,19 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       cinterpol = static_cast<ContourInterpolation*>(contour[0]);
     }
+    func = new FuncPairPointContourInterpolation(point,cinterpol);
+   }
+
+  ContactKinematicsPointContourInterpolation::~ContactKinematicsPointContourInterpolation() {
+    delete func;
   }
+
 
   // Point - Interpolationskontour
   void ContactKinematicsPointContourInterpolation::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
     // MultiDimNewton zur Kontaktpunktsuche
-    FuncPairPointContourInterpolation *fct = new FuncPairPointContourInterpolation(point,cinterpol);
-    MultiDimNewtonMethod rf(fct);
+    MultiDimNewtonMethod rf(func);
 
     // Nullstellensuche aufsetzen, wenn moeglich mit alter Loesung
     if(cpData[idinterpol].alpha.size() == cinterpol->getNContourParameters())
