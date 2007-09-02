@@ -74,7 +74,7 @@ namespace MBSim {
   void Tree::updatezd(double t) {
 
     root->updateqd(t);
-    ud = slvLL(M,h);
+    ud =  slvLLFac(LLM, h+r);
   }
 
   void Tree::updateqRef() {
