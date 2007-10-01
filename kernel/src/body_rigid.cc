@@ -25,14 +25,20 @@
 #include "contour.h"
 #include "link.h"
 #include "multi_body_system.h"
-#include "crigidbody.h"
 
+#ifdef HAVE_AMVIS
+#include "crigidbody.h"
 using namespace AMVis;
+#endif
 
 namespace MBSim {
 
-  BodyRigid::BodyRigid(const string &name) : Body(name), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), bodyAMVis(0), inertiaWithRespectToCOG(false), AMVisDataRel(false) { 
-
+  BodyRigid::BodyRigid(const string &name) : Body(name), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), inertiaWithRespectToCOG(false) 
+# ifdef HAVE_AMVIS
+    ,
+    bodyAMVis(0), AMVisDataRel(false) 
+# endif
+  {
     AK0K(0,0)=1.0;
     AK0K(1,1)=1.0;
     AK0K(2,2)=1.0;
@@ -40,9 +46,11 @@ namespace MBSim {
   }
 
   BodyRigid::~BodyRigid() {
-    if (bodyAMVis) {
-      delete bodyAMVis;
-    }
+#   ifdef HAVE_AMVIS
+      if (bodyAMVis) {
+        delete bodyAMVis;
+      }
+#   endif
   }
 
   void BodyRigid::calcSize() {
@@ -121,8 +129,10 @@ namespace MBSim {
 
     Body::initPlotFiles();
 
+#ifdef HAVE_AMVIS
     if(bodyAMVis)
       bodyAMVis->writeBodyFile();
+#endif
 
     if(plotLevel>0) {
       plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
@@ -159,7 +169,12 @@ namespace MBSim {
     Body::plot(t,dt);
     Vec WrOS = computeWrOS();
 
-    if(plotLevel>0 || bodyAMVis) {
+#ifdef HAVE_AMVIS
+    if(plotLevel>0 || bodyAMVis)
+#else
+    if(plotLevel>0)
+#endif
+    {
       double alpha;
       double beta=asin(AWK(0,2));
       double gamma;
@@ -185,6 +200,7 @@ namespace MBSim {
 	}
       }
 
+#ifdef HAVE_AMVIS
       if(bodyAMVis) {
 	if(AMVisDataRel)
 	  WrOS >> WrOK;
@@ -193,6 +209,7 @@ namespace MBSim {
 	bodyAMVis->setRotation(alpha,beta,gamma);
 	bodyAMVis->appendDataset(0);
       }
+#endif
     }
   }
 

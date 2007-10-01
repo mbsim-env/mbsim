@@ -5,9 +5,8 @@ includedir=@includedir@
 
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
-Requires: fmatvec amvisc++interface
+Requires: @requires@
 Version: @VERSION@
 Libs: -L${libdir} -lmbsim
-Cflags: -I${includedir}/mbsim 
-
+Cflags: -I${includedir}/mbsim @amvis_compilerflag@
 

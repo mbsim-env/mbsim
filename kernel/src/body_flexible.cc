@@ -26,18 +26,26 @@
 #include <link.h>
 #include "contour.h"
 
-#include "elastic.h"
-
 #include "eps.h"
 
+#ifdef HAVE_AMVIS
+#include "elastic.h"
 using namespace AMVis;
+#endif
 
 namespace MBSim {
 
-  BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true) { }
+  BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5))
+# ifdef HAVE_AMVIS
+    ,
+    boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true)
+# endif
+  { }
 
   BodyFlexible::~BodyFlexible() {
+#ifdef HAVE_AMVIS
     if (bodyAMVis) delete bodyAMVis;
+#endif
   }
 
   void BodyFlexible::init() {
@@ -89,8 +97,10 @@ namespace MBSim {
       }
     }
 
+#ifdef HAVE_AMVIS
     if(boolAMVis)
       bodyAMVis->writeBodyFile();
+#endif
   }
 
   void BodyFlexible::plot(double t, double dt) {
@@ -113,6 +123,7 @@ namespace MBSim {
       }
     }
 
+#ifdef HAVE_AMVIS
     // visualisationFile-dependent
     if(boolAMVis) {
       float qDummy[qSize];
@@ -121,6 +132,7 @@ namespace MBSim {
       bodyAMVis->setCoordinates(qDummy);
       bodyAMVis->appendDataset(0);
     }
+#endif
   }
 
   void BodyFlexible::plotParameters() {

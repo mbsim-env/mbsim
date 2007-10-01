@@ -25,17 +25,22 @@
 #include "object.h"
 #include "body_flexible.h"
 
+#ifdef HAVE_AMVIS
 // for AMVis
 #include "cbody.h"
 #include "sphere.h"
 #include "area.h"
 #include "quad.h"
-///using namespace AMVis;
+#endif
 
 namespace MBSim {
 
-  Contour::Contour(const string &name) : Element(name), WrOP(3), WvP(3), WomegaC(3), AWC(3), bodyAMVis(NULL) {
-
+  Contour::Contour(const string &name) : Element(name), WrOP(3), WvP(3), WomegaC(3), AWC(3)
+# ifdef HAVE_AMVIS
+    ,
+    bodyAMVis(NULL)
+# endif
+  {
     AWC(0,0) = 1;
     AWC(1,1) = 1;
     AWC(2,2) = 1;
@@ -45,9 +50,9 @@ namespace MBSim {
   }
 
   Contour::~Contour() {
-    if (bodyAMVis) {
-      delete bodyAMVis;
-    }
+#ifdef HAVE_AMVIS
+    if (bodyAMVis) delete bodyAMVis;
+#endif
   }
   void Contour::init() {
     setFullName(parent->getFullName()+"."+name);
@@ -56,9 +61,9 @@ namespace MBSim {
   void Contour::initPlotFiles() {
     Element::initPlotFiles();
     if(plotLevel) {
-      if(boolAMVis) {
-	bodyAMVis->writeBodyFile();
-      }
+#ifdef HAVE_AMVIS
+      if(boolAMVis) bodyAMVis->writeBodyFile();
+#endif
     }
   }
 
@@ -73,6 +78,7 @@ namespace MBSim {
 
   void Contour::plot(double t, double dt) {
     if(plotLevel) {
+#ifdef HAVE_AMVIS
       if(boolAMVis) {
 
 	double alpha;
@@ -95,6 +101,7 @@ namespace MBSim {
 	static_cast<AMVis::CRigidBody*>(bodyAMVis)->setRotation(alpha,beta,gamma);
 	static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
       }
+#endif
     }
   }
 
@@ -232,6 +239,7 @@ namespace MBSim {
     Cn = Cn/nrm2(Cn);
 
     if(plotLevel) {
+#ifdef HAVE_AMVIS
       if(boolAMVis) {
 	AMVis::Area *area = new AMVis::Area(fullName,1,boolAMVisBinary);
 	area->setBase1(Cd1(0),Cd1(1),Cd1(2));
@@ -241,6 +249,7 @@ namespace MBSim {
 
 	bodyAMVis = area;
       }
+#endif
     }
   }
 
@@ -255,15 +264,12 @@ namespace MBSim {
     Ce = e/nrm2(e);
   }
 
-  //void Edge::init() {
-  //  Contour::init();
-  //}
-
   Sphere::Sphere(const string &name) : Contour(name) {
   }
   void Sphere::init() {
     Contour::init();
     if(plotLevel) {
+#ifdef HAVE_AMVIS
       // wenn ein file fuer AMVis geschrieben werden soll
       if(boolAMVis) {
 	AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
@@ -271,6 +277,7 @@ namespace MBSim {
 
 	bodyAMVis = sphere;
       }
+#endif
     }
   }
 
@@ -368,6 +375,7 @@ namespace MBSim {
 
   void ContourInterpolation::plot(double t, double dt) {
     if(plotLevel) {
+#ifdef HAVE_AMVIS
       if(bodyAMVis) {
 	float qQuad[12];
 	for(int i=0;i<4;i++) {
@@ -380,6 +388,7 @@ namespace MBSim {
 	static_cast<AMVis::ElasticBody*>(bodyAMVis)->setCoordinates(qQuad);
 	static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
       }
+#endif
     }
   }
 
@@ -397,12 +406,14 @@ namespace MBSim {
   void ContourQuad::init() {
     Contour::init();
     if(plotLevel) {
+#ifdef HAVE_AMVIS
       // wenn ein file fuer AMVis geschrieben werden soll
       if(boolAMVis) {
 	AMVis::Quad *quad = new AMVis::Quad(fullName,1,boolAMVisBinary);
 
 	bodyAMVis = quad;
       }
+#endif
     }
   }
 

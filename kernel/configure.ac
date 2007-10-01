@@ -13,7 +13,12 @@ AC_F77_WRAPPERS
 
 AC_C_CONST
 
-PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1 amvisc++interface >= 2.0.0)
+requires="fmatvec"
+PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1)
+PKG_CHECK_MODULES(AMVIS, amvisc++interface >= 2.0.0,[echo "yes";requires="$requires amvisc++interface";amvis_compilerflag="-DHAVE_AMVIS";AC_DEFINE([HAVE_AMVIS],[1],[linking with AMVis])],[echo "no"])
+
+AC_SUBST([requires])
+AC_SUBST([amvis_compilerflag])
 
 dnl By autoscan
 AC_CHECK_FUNCS([mkdir])

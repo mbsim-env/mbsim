@@ -34,8 +34,8 @@ functions_contact.cc
 
 libmbsim_la_LIBADD = body_flexible/libbodyflexible.la integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la 
 
-INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(AMVIS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
