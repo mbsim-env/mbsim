@@ -26,7 +26,6 @@
 #include "link.h"
 #include "tree.h"
 #include "multi_body_system.h"
-#include "crigidbody.h"
 
 namespace MBSim {
 

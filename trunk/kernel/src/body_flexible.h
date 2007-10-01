@@ -26,8 +26,9 @@
 #include "body.h"
 #include "contour_pdata.h"
 
-
+#ifdef HAVE_AMVIS
 namespace AMVis {class ElasticBody;}
+#endif
 
 namespace MBSim {
 
@@ -90,8 +91,6 @@ namespace MBSim {
        *  \param t time of evaluation
        */
 
-// TODO: das "virtual" einchecken !!!!!!!!!!!!!!!!!!1
-
       virtual void sumUpForceElements(double t);
       /*! update generalised force directions \f$\vW\f$ for set-valued interactions on Port and Contour interfaces,
        *  therefor collects JACOBIAN-matrizes of implementations of computeJacobianMatrix()
@@ -99,10 +98,12 @@ namespace MBSim {
        */
       void updateW(double t);
 
+#ifdef HAVE_AMVIS
       /** body for AMVis */
       AMVis::ElasticBody *bodyAMVis;
       /** flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
+#endif
 
     public:
       /*!
@@ -126,6 +127,7 @@ namespace MBSim {
        */
       void setJR(const Mat &JR_) {JR = JR_;}
 
+#ifdef HAVE_AMVIS
       /*! activate output for AMVis
       */
       void createAMVisBody() {boolAMVis = true;  boolAMVisBinary = true;}
@@ -133,6 +135,7 @@ namespace MBSim {
 	\param binary_ for binary or ASCII data format in pos-file
 	*/
       void createAMVisBody(bool binary_) {boolAMVis = true; boolAMVisBinary = binary_;}
+#endif
 
        /*! pre-definition for method giving JACOBIAN-matrix at contour-point S,
        *  needs to be defined in implementation for deduced classes

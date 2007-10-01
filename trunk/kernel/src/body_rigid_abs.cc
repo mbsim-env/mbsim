@@ -26,9 +26,6 @@
 #include "contour.h"
 #include "link.h"
 #include "multi_body_system.h"
-#include "crigidbody.h"
-
-using namespace AMVis;
 
 namespace MBSim {
 

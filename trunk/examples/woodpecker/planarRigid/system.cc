@@ -11,7 +11,6 @@
 #include "objobject.h"
 using namespace AMVis;
 
-
 System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   // Gravitation
@@ -190,17 +189,17 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   specht->setPlotLevel(2);
   muffe ->setPlotLevel(2);
 
-  ObjObject *spechtobj = new ObjObject(specht->getFullName(),1,true);
-  spechtobj->setObjFilename("objects/specht.obj");
-  spechtobj->setInitialTranslation(-0.01, 0.01, 0);
-  spechtobj->setInitialRotation(-1.570796, 0, 0);
-  spechtobj->setScaleFactor(0.041);
-  specht->setAMVisBody(spechtobj);  
+ObjObject *spechtobj = new ObjObject(specht->getFullName(),1,true);
+spechtobj->setObjFilename("objects/specht.obj");
+spechtobj->setInitialTranslation(-0.01, 0.01, 0);
+spechtobj->setInitialRotation(-1.570796, 0, 0);
+spechtobj->setScaleFactor(0.041);
+specht->setAMVisBody(spechtobj);  
 
-  ObjObject* cylinder = new ObjObject(muffe->getFullName(),1,true);
-  cylinder->setObjFilename("objects/muffe.obj");
-  cylinder->setInitialRotation(0,0,1.570796);
-  cylinder->setScaleFactor(r+spiel);
-  muffe->setAMVisBody(cylinder);
+ObjObject* cylinder = new ObjObject(muffe->getFullName(),1,true);
+cylinder->setObjFilename("objects/muffe.obj");
+cylinder->setInitialRotation(0,0,1.570796);
+cylinder->setScaleFactor(r+spiel);
+muffe->setAMVisBody(cylinder);
 }
 

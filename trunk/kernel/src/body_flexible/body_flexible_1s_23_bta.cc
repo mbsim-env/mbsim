@@ -28,8 +28,10 @@
 #include "contact_rigid.h"
 #include "contour.h"
 
+#ifdef HAVE_AMVIS
 #include "elastic1sbta.h"
 using namespace AMVis;
+#endif
 
 namespace MBSim {
 
@@ -72,6 +74,7 @@ namespace MBSim {
     else {
       contourCyl->setNodes(userContourNodes);
     }
+#ifdef HAVE_AMVIS
     // wenn ein file fuer AMVis geschrieben werden soll
     if(boolAMVis) {
       ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
@@ -85,7 +88,8 @@ namespace MBSim {
       BTAbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
 
       bodyAMVis = BTAbody;
-    } 
+    }
+#endif 
   }
 
   void BodyFlexible1s23BTA::setNumberElements(int n) {

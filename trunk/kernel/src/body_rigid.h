@@ -27,7 +27,9 @@
 #include "fmatvec.h"
 #include <vector>
 
+#ifdef HAVE_AMVIS
 namespace AMVis {class CRigidBody;}
+#endif
 
 namespace MBSim {
 
@@ -71,10 +73,12 @@ namespace MBSim {
       void updateAK0KEulerParameters();
       void updateTEulerParameters();
 
+#ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
+      bool AMVisDataRel;
+#endif
 
       bool inertiaWithRespectToCOG;
-      bool AMVisDataRel;
 
     public:
 
@@ -90,7 +94,14 @@ namespace MBSim {
 	*/
       void setJR(const Mat &JR);
 
+#ifdef HAVE_AMVIS
       void setAMVisBody(AMVis::CRigidBody *body) {bodyAMVis = body;}
+
+      /*! set output to center of reference (true) or center of gravity (false, default)
+	\param rel_
+	*/
+      void setAMVisOutputRel(bool rel_) {AMVisDataRel = rel_;}
+#endif
 
       Vec computeJTqT() const {return JT*q(iT);}
       Vec computeJRqR() const {return JR*q(iR);}
@@ -137,11 +148,6 @@ namespace MBSim {
       void addContour(Contour* contour, const Vec &KrKC, const SqrMat &AKC);
       void addContour(Contour *contour, const Vec &KrKC);
       void addContour(Contour *contour);
-
-      /*! set output to center of reference (true) or center of gravity (false, default)
-	\param rel_
-	*/
-      void setAMVisOutputRel(bool rel_) {AMVisDataRel = rel_;}
 
   };
 

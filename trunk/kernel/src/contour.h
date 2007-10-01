@@ -28,7 +28,9 @@
 #include "userfunction_contour.h"
 #include "contour_pdata.h"
 
+#ifdef HAVE_AMVIS
 namespace AMVis {class CBody;}
+#endif
 
 namespace MBSim {
 
@@ -50,10 +52,12 @@ namespace MBSim {
       Vec WrOP, WvP, WomegaC;
       SqrMat AWC;
 
+#ifdef HAVE_AMVIS
       /** body for AMVis */
       AMVis::CBody *bodyAMVis;
       /** flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
+#endif
 
     public:
       //Contour(const string &name, ContourType type);
@@ -86,13 +90,12 @@ namespace MBSim {
       */
       virtual void adjustParentHitSphere(const Vec &CrC);
 
-      /*! activate output for AMVis
-      */
-      void createAMVisBody() {boolAMVis = true;  boolAMVisBinary = true; plotLevel = 1;}
+#ifdef HAVE_AMVIS
       /*! activate output for AMVis
 	\param binary_ for binary or ASCII data format in pos-file
 	*/
-      void createAMVisBody(bool binary_) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+#endif
   };
 
   /*! \brief most primitive Contour: the point (no extention)

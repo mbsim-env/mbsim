@@ -30,8 +30,10 @@
 
 #define FMATVEC_DEEP_COPY
 
+#ifdef HAVE_AMVIS
 #include "elastic1s21rcm.h"
 using namespace AMVis;
+#endif
 
 namespace MBSim {
 
@@ -91,6 +93,7 @@ namespace MBSim {
     balken->setMaterialDamping(dm);
     balken->setLehrDamping(dl);
 
+#ifdef HAVE_AMVIS
     // wenn ein file fuer AMVis geschrieben werden soll
     if(boolAMVis) {
       ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(fullName,Elements,openStructure,1,boolAMVisBinary);
@@ -106,6 +109,7 @@ namespace MBSim {
 
       bodyAMVis = RCMbody;
     } 
+#endif
   }
 
   void BodyFlexible1s21RCM::setNumberElements(int n) {

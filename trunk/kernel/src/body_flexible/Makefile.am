@@ -11,8 +11,8 @@ libbodyflexible_la_CPPFLAGS = -I.. -Ifinite_elements
 libbodyflexible_la_LIBADD=finite_elements/libfe.la
 bodyflexibleincludedir = $(includedir)/mbsim
 
-INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(AMVIS_CFLAGS)
+LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
 
 bodyflexibleinclude_HEADERS =	body_flexible_1s_01_torsion.h\
 				body_flexible_1s_21_ancf.h\
