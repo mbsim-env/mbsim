@@ -140,6 +140,9 @@ namespace MBSim {
 	throw 1;
       }
     }
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << -K;
+    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << -D;
   }
 
   void BodyFlexibleLinearExternal::setMassMatrix(const SymMat &mat) {
@@ -318,8 +321,8 @@ namespace MBSim {
   }
 
   void BodyFlexibleLinearExternal::updateJh_internal(double t) {
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
-    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << -K;
-    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << -D;
+//    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+//    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << -K;
+//    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << -D;
   }
 }

@@ -108,6 +108,7 @@ namespace MBSim {
        */
       ContourPointData addInterface(const Mat &J_, const Vec &r_);
 
+      /* empty function since mass, damping and stiffness matrices are constant !!! */
       void updateJh_internal(double t);
 
     public:
