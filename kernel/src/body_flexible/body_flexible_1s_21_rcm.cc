@@ -339,6 +339,13 @@ namespace MBSim {
     sumUpForceElements(t);
   }
 
+  void BodyFlexible1s21RCM::updateJh_internal(double t) {
+    if(!implicit) { implicit = true; balken->Implicit(implicit); Dhq.resize(uSize,qSize);Dhqp.resize(uSize,uSize); updateh(t); }
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << Dhq;
+    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << Dhqp;
+  }
+
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21RCM::BuildElement(const int& ENumber) {
     // Grenzen testen

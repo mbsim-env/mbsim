@@ -238,8 +238,8 @@ namespace MBSim {
     {
       static Mat Dhz(16,8,fmatvec::INIT,0.0);
       Dhz   = hFullJacobi(qElement,qpElement,qLokal,qpLokal,Jeg,Jegp,MLokal,hZwischen);
-      Dhq   = static_cast<SqrMat>(Dhz(0,0, 7,7));
-      Dhqp  = static_cast<SqrMat>(Dhz(8,0,15,7));
+      Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
+      Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
       Dhqp += trans(Jeg)*Damp*Jeg;
     }
 

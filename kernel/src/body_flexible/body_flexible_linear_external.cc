@@ -315,7 +315,11 @@ namespace MBSim {
 	parafile << "# extern -> contour:  name= "<< contour[i]->getName()<<",  ID= "<<contour[i]->getID() << endl;
       }
     }
-
   }
 
+  void BodyFlexibleLinearExternal::updateJh_internal(double t) {
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << -K;
+    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << -D;
+  }
 }

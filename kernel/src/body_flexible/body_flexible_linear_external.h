@@ -108,6 +108,8 @@ namespace MBSim {
        */
       ContourPointData addInterface(const Mat &J_, const Vec &r_);
 
+      void updateJh_internal(double t);
+
     public:
       BodyFlexibleLinearExternal(const string &name); 
 
