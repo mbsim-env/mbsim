@@ -101,6 +101,8 @@ namespace MBSim {
       /** right and left side contour of body: defined using binormal of contour */
       Contour1sFlexible *contourR, *contourL;
 
+      void updateJh_internal(double t);
+
     public:
       /*! Constructor:
        * \param name body name

@@ -290,8 +290,8 @@ namespace MBSim {
 
   Vec BodyFlexible1s23BTA::computeWomega (const ContourPointData &S_) {
     if (S_.alpha(0) != sTangent) 
-      computeWrOC(S_).copy();
-    return Womega;
+      computeWrOC(S_);
+    return Womega.copy();
   }
 
 }
