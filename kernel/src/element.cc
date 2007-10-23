@@ -28,7 +28,7 @@ namespace MBSim {
   string Element::dirName = "./";
 
 
-  Element::Element(const string &name_) : name(name_), fullName(name_), plotNr(1), plotLevel(1) {
+  Element::Element(const string &name_) : name(name_), fullName(name_), plotNr(1), plotLevel(1), plotPrec(6) {
   }
 
   Element::~Element() {
@@ -39,8 +39,14 @@ namespace MBSim {
   void Element::plot(double t, double dt) {
     if(plotLevel) {
       plotfile << endl;
-      plotfile <<showpos<<setw(10)<< t;
+      plotfile <<showpos<<setw(16)<< t;
+      plotfile.precision(plotPrec);
     }
+  }
+
+  void Element::setPlotPrecision(int prec) {
+   plotPrec = prec;
+   if(plotfile.is_open()) plotfile.precision(plotPrec);
   }
 
   void Element::initPlotFiles() {
