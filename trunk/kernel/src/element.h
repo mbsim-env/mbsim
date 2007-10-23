@@ -79,6 +79,9 @@ namespace MBSim {
        * 2: ...
        */ 
       int plotLevel;
+      /** output-precision of ostream
+      */
+      int plotPrec;
 
       /** file used for output of element parameters, e.g. mass ...
       */
@@ -107,6 +110,10 @@ namespace MBSim {
        * set Element::plotLevel and therewith specifiy outputs in plot-files
        */
       void setPlotLevel(int level) {plotLevel = level;}
+      /*!
+       * set Element::plotPrec for output precision
+       */
+      void setPlotPrecision(int prec);
       /*!
        * get Element::plotLevel
        */
