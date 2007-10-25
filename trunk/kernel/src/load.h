@@ -48,6 +48,7 @@ namespace MBSim {
 
     public: 
       Load(const string &name);
+      virtual ~Load();
 
       void calcSize();
       void init();

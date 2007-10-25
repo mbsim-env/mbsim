@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -22,11 +22,20 @@
 #include <config.h>
 #include "port.h"
 #include "object.h"
+#ifdef HAVE_AMVIS
+#include "crigidbody.h"
+#include "data_interface_base.h"
+#include "rotarymatrices.h"
+using namespace AMVis;
+#endif
 
 namespace MBSim {
 
-  Port::Port(const string &name) : Element(name), WrOP(3), WvP(3), WomegaP(3), AWP(3)  {
-
+  Port::Port(const string &name) : Element(name), WrOP(3), WvP(3), WomegaP(3), AWP(3) {
+#ifdef HAVE_AMVIS
+bodyAMVisUserFunctionColor= NULL;
+bodyAMVis = NULL;
+#endif
     AWP(0,0) = 1;
     AWP(1,1) = 1;
     AWP(2,2) = 1;
@@ -37,6 +46,14 @@ namespace MBSim {
     setFullName(parent->getName()+"."+name);
   }
 
+#ifdef HAVE_AMVIS
+  void Port::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
+    bodyAMVis = AMVisBody;
+    bodyAMVisUserFunctionColor = funcColor;
+    if (!plotLevel) plotLevel=1;
+  }
+#endif
+
   void Port::plot(double t, double dt) {				// HR 03.01.07
     Element::plot(t,dt);
     if (plotLevel > 0) {
@@ -45,10 +62,31 @@ namespace MBSim {
       for(int i=0; i<3; i++)
 	plotfile<<" "<< WvP(i);
     }
+#ifdef HAVE_AMVIS
+    if (bodyAMVis) {
+      Vec AlpBetGam;
+      AlpBetGam = AIK2Cardan(AWP);
+      if (bodyAMVisUserFunctionColor) {
+	double color = (*bodyAMVisUserFunctionColor)(t)(0);
+	if (color>1)   color =1;
+	if (color<0) color =0;
+	bodyAMVis->setColor(color);
+      }
+      bodyAMVis->setTime(t);
+      bodyAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
+      bodyAMVis->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
+      bodyAMVis->appendDataset(0);
+    }
+#endif
   }
 
   void Port::initPlotFiles() {					// HR 03.01.07
-    Element::initPlotFiles(); 
+#ifdef HAVE_AMVIS
+    if(bodyAMVis)
+      bodyAMVis->writeBodyFile();  
+#endif
+
+    Element::initPlotFiles();
     if(plotLevel > 0) {
       for(int i=0; i<3; i++)
 	plotfile <<"# "<< plotNr++ <<": WrOP("<<i<<")" << endl;
