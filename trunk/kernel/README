@@ -7,6 +7,9 @@ München (http://www.amm.mw.tu-muenchen.de)
 Benötigt:
 =========
 	- fmatvec (http://developer.berlios.de/projects/fmatvec)
+
+Kann optional verwenden:
+========================
 	- AMVis-C++Interface (http://www.amm.mw.tu-muenchen.de)
 
 Installation:
