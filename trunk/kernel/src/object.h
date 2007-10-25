@@ -71,6 +71,7 @@ namespace MBSim {
     vector<LinkContourData> linkSetValuedContourData;
 
     vector<Link*> linkSetValued;
+    vector<Link*> linkSingleValued;
 
     vector<Link*> links;
     vector<Port*> port;
@@ -140,6 +141,13 @@ namespace MBSim {
     virtual void updatedq(double t, double dt) = 0;
     virtual void updatedx(double t, double dt) {};
 
+    /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
+    */
+    virtual void updateJh_internal(double t);
+    /*! compute Jacobian of right-hand side for single-valued links
+    */
+    virtual void updateJh_links(double t);
+
     public:
     Object(const string &name);
     virtual ~Object();
@@ -147,6 +155,9 @@ namespace MBSim {
     void setqInd(int qInd_) { qInd = qInd_; }
     void setuInd(int uInd_) { uInd = uInd_; Iu = Index(uInd,uInd+uSize-1); }
     void setxInd(int xInd_) { xInd = xInd_; Ix = Index(xInd,xInd+xSize-1); }
+    int  getqInd() { return qInd; }
+    int  getuInd() { return uInd; }
+    int  getxInd() { return xInd; }
 
     int getqSize() const { return qSize; }
     int getuSize() const { return uSize; }
@@ -238,6 +249,10 @@ namespace MBSim {
     /*! compute potential energy, holding every potential!!!
     */
     virtual double computePotentialEnergy() {return 0; }
+
+    /*! compute Jacobian \f$\boldsymbol{J}=\ptdiff{\boldsymbol{h}}{\boldsymbol{z}}\f$ of generalized force vector
+    */
+    virtual void updateJh(double t);
   };
 
 }

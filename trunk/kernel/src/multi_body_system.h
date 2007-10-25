@@ -120,6 +120,8 @@ namespace MBSim {
     Vec grav;
     bool activeConstraintsChanged;
 
+    Mat Jh;
+
     int maxIter, highIter, maxDampingSteps;
     double lmParm;
     int warnLevel;
@@ -160,7 +162,7 @@ namespace MBSim {
     void updateLinksStage2(double t);
     void updateh(double t);
     void updateG(double t);
-    void updater(double t);
+//    void updater(double t);
     void updatezd(double t);
     void updatedx(double t, double dt);
     void updatedu(double t, double dt);
@@ -181,6 +183,7 @@ namespace MBSim {
     double pinf;
 
     public:
+    void updater(double t);
     MultiBodySystem();
     MultiBodySystem(const string &projectName);
     ~MultiBodySystem();
@@ -306,6 +309,8 @@ namespace MBSim {
     Vec& getgd() {return gd;}
     const Vec& geth() const {return h;}
     Vec& geth() {return h;}
+    const SymMat& getM() const {return M;}
+    SymMat& getM() {return M;}
     const Vec& getrFactor() const {return rFactor;}
     Vec& getrFactor() {return rFactor;}
 
@@ -385,6 +390,9 @@ namespace MBSim {
     HydFluid *getFluid(){return fl;}  
 
     void initDataInterfaceBase();
+
+    Mat& getJh() {return Jh;}
+    void updateJh(double t);
   };
 
 }

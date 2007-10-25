@@ -153,6 +153,10 @@ namespace MBSim {
 
     updatezdRef(zdParent);
 
+
+    Jh.resize(getuSize(),getzSize());
+ 
+
     // Init der einzelenen Komponenten
     cout << "  initialising ..." << endl;
   //  for(int i=0; i<T.cols(); i++)
@@ -1699,4 +1703,9 @@ namespace MBSim {
     for(ie1 = EDI.begin(); ie1 != EDI.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
+  void MultiBodySystem::updateJh(double t) {
+    Jh.init(0.0);
+    for (vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i)
+      (**i).updateJh(t);
+  }
 }

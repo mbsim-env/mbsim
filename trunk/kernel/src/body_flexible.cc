@@ -52,6 +52,7 @@ namespace MBSim {
     Body::init();
     IndexForce  = Index(         0,JT.cols()          -1 );
     IndexMoment = Index( JT.cols(),JT.cols()+JR.cols()-1 );
+    T = SqrMat(qSize,fmatvec::EYE);
   }
 
 
