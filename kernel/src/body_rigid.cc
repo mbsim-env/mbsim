@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -28,6 +28,7 @@
 
 #ifdef HAVE_AMVIS
 #include "crigidbody.h"
+#include "data_interface_base.h"
 using namespace AMVis;
 #endif
 
@@ -35,8 +36,8 @@ namespace MBSim {
 
   BodyRigid::BodyRigid(const string &name) : Body(name), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), inertiaWithRespectToCOG(false) 
 # ifdef HAVE_AMVIS
-    ,
-    bodyAMVis(0), AMVisDataRel(false) 
+					     ,
+					     bodyAMVis(0), AMVisDataRel(false) 
 # endif
   {
     AK0K(0,0)=1.0;
@@ -47,9 +48,10 @@ namespace MBSim {
 
   BodyRigid::~BodyRigid() {
 #   ifdef HAVE_AMVIS
-      if (bodyAMVis) {
-        delete bodyAMVis;
-      }
+    if (bodyAMVis) {
+      delete bodyAMVis;
+      delete bodyAMVisUserFunctionColor;
+    }
 #   endif
   }
 
@@ -61,9 +63,9 @@ namespace MBSim {
 
     uSize = JT.cols() + JR.cols();
 
-     if(JR.cols() == 3 && rot == eulerParameters)
+    if(JR.cols() == 3 && rot == eulerParameters)
       qSize = uSize+1;
-     else
+    else
       qSize = uSize;
   } 
 
@@ -172,45 +174,51 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     if(plotLevel>0 || bodyAMVis)
 #else
-    if(plotLevel>0)
+      if(plotLevel>0)
 #endif
-    {
-      double alpha;
-      double beta=asin(AWK(0,2));
-      double gamma;
-      double nenner=cos(beta);
-      if (nenner>1e-10) {
-	alpha=atan2(-AWK(1,2),AWK(2,2));
-	gamma=atan2(-AWK(0,1),AWK(0,0));
-      } else {
-	alpha=0;
-	gamma=atan2(AWK(1,0),AWK(1,1));
-      }
-
-      if(plotLevel>0) {
-	plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
-	plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
-
-	if(plotLevel>2) {
-	  double Ttemp = computeKineticEnergy();
-	  double Vtemp = computePotentialEnergy();
-	  plotfile <<" "<<  Ttemp;
-	  plotfile <<" "<<  Vtemp;
-	  plotfile <<" "<< Ttemp+Vtemp;
+      {
+	double alpha;
+	double beta=asin(AWK(0,2));
+	double gamma;
+	double nenner=cos(beta);
+	if (nenner>1e-10) {
+	  alpha=atan2(-AWK(1,2),AWK(2,2));
+	  gamma=atan2(-AWK(0,1),AWK(0,0));
+	} else {
+	  alpha=0;
+	  gamma=atan2(AWK(1,0),AWK(1,1));
 	}
-      }
+
+	if(plotLevel>0) {
+	  plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
+	  plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
+
+	  if(plotLevel>2) {
+	    double Ttemp = computeKineticEnergy();
+	    double Vtemp = computePotentialEnergy();
+	    plotfile <<" "<<  Ttemp;
+	    plotfile <<" "<<  Vtemp;
+	    plotfile <<" "<< Ttemp+Vtemp;
+	  }
+	}
 
 #ifdef HAVE_AMVIS
-      if(bodyAMVis) {
-	if(AMVisDataRel)
-	  WrOS >> WrOK;
-	bodyAMVis->setTime(t);
-	bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
-	bodyAMVis->setRotation(alpha,beta,gamma);
-	bodyAMVis->appendDataset(0);
-      }
+	if(bodyAMVis) {
+	  if(AMVisDataRel)
+	    WrOS >> WrOK;
+	  bodyAMVis->setTime(t);
+	  bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
+	  bodyAMVis->setRotation(alpha,beta,gamma);
+	  if (bodyAMVisUserFunctionColor) {
+	    double color = (*bodyAMVisUserFunctionColor)(t)(0);
+	    if (color>1) color =1;
+	    if (color<0) color =0;
+	    bodyAMVis->setColor(color);
+	  }
+	  bodyAMVis->appendDataset(0);
+	}
 #endif
-    }
+      }
   }
 
   void BodyRigid::updateKinematics(double t) {

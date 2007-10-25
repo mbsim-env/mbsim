@@ -34,6 +34,10 @@ namespace MBSim {
     WM >> load[0](Index(3,5));
   }
 
+  Load::~Load() {
+    delete func;
+  }
+
   void Load::calcSize() {
     LinkPort::calcSize();
     gSize = 0;

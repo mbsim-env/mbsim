@@ -66,14 +66,14 @@ namespace MBSim {
       const Vec& getWrOS0() const;
 
       /*! define initial position of center of gravity in world system
-      */
+       */
       void setWrOS0(const Vec &WrOK0_);
 
       /*! define initial position of point of reference in world system
-      */
+       */
       void setWrOK0(const Vec &WrOK0_);
       /*! define 
-      */
+       */
       void setAWK0(const SqrMat &A); 
   };
 }

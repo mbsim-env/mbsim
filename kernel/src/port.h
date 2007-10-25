@@ -25,9 +25,16 @@
 
 #include "element.h"
 
-namespace MBSim {
+#ifdef HAVE_AMVIS
+namespace AMVis {class CRigidBody;}
+#endif
 
+namespace MBSim {
+ 
   class Object;
+#ifdef HAVE_AMVIS
+  class DataInterfaceBase;
+#endif
 
   /*! Port on Bodies, used for application of e.g. Links and Loads
    *
@@ -39,6 +46,11 @@ namespace MBSim {
 
       Vec WrOP, WvP, WomegaP;
       SqrMat AWP;
+
+#ifdef HAVE_AMVIS
+      AMVis::CRigidBody *bodyAMVis;
+      DataInterfaceBase* bodyAMVisUserFunctionColor;
+#endif
 
     public:
       Port(const string &name);
@@ -62,6 +74,9 @@ namespace MBSim {
       void plot(double t, double dt=1);					// HR 03.01.07
       void initPlotFiles();
       void plotParameters();
+#ifdef HAVE_AMVIS
+      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+#endif
 
   };
 

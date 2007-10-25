@@ -32,6 +32,7 @@ namespace AMVis {class CRigidBody;}
 #endif
 
 namespace MBSim {
+  class DataInterfaceBase;
 
   enum Rot {cardanAngles, eulerParameters};
 
@@ -75,6 +76,7 @@ namespace MBSim {
 
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
+      DataInterfaceBase* bodyAMVisUserFunctionColor;
       bool AMVisDataRel;
 #endif
 
@@ -95,11 +97,10 @@ namespace MBSim {
       void setJR(const Mat &JR);
 
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body) {bodyAMVis = body;}
-
+      void setAMVisBody(AMVis::CRigidBody *body, DataInterfaceBase* funcColor=0) {bodyAMVis= body; bodyAMVisUserFunctionColor= funcColor;}
       /*! set output to center of reference (true) or center of gravity (false, default)
 	\param rel_
-	*/
+       */
       void setAMVisOutputRel(bool rel_) {AMVisDataRel = rel_;}
 #endif
 
@@ -118,6 +119,7 @@ namespace MBSim {
       void calcSize();
 
       const SqrMat& getAWK() const {return AWK;}
+      const Vec& getWvK() const {return WvK;}
       const Vec& getKomegaK() const {return KomegaK;}
 
       double computePotentialEnergy();//{return - m * trans(mbs->getGrav()) * WrOS;}

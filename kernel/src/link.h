@@ -27,11 +27,16 @@
 #include "element.h"
 #include "contour_pdata.h"
 
+#ifdef HAVE_AMVIS
+namespace AMVis {class Arrow;}
+#endif
+
 namespace MBSim {
   class Port;
   class Contour;
   class MultiBodySystem;
   class HitSphereLink;
+  class UserFunction;
   struct ContourPointData;
   /*! 
    *  \brief This is a general link to one or more objects.
@@ -74,6 +79,15 @@ namespace MBSim {
 
       HitSphereLink* HSLink;
       bool checkHSLink;
+
+#ifdef HAVE_AMVIS
+      vector<AMVis::Arrow*> arrowAMVis;
+      vector<double> arrowAMVisScale;
+      vector<int> arrowAMVisID;
+      vector<bool> arrowAMVisMoment;
+      vector<UserFunction*> arrowAMVisUserFunctionColor;
+#endif
+
     public:
 
       virtual void updatexRef();
@@ -82,6 +96,7 @@ namespace MBSim {
       virtual void updatejsvRef();
 
       Link(const string &name, bool setValued);
+      ~Link();
 
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};
@@ -177,6 +192,18 @@ namespace MBSim {
 
       /*! Defines the maximal r-factor. */  
       virtual void setrMax(double rMax_) {rMax = rMax_;}
+
+      /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
+       * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
+       * @param ID ID of load and corresponding Port/Contour (ID=0 or 1)
+       * @param funcColor Userfunction to manipulate Color of Arrow at each TimeStep
+       * default: Red arrow for Forces and green one for Moments
+       * */
+
+#ifdef HAVE_AMVIS
+      virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
+      virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
+#endif
   };
 
 
@@ -195,6 +222,8 @@ namespace MBSim {
       LinkPort(const string &name, bool setValued);
 
       virtual void connect(Port *port1, int id);
+      void plot(double t, double dt=1);
+
       vector<Port*> getPorts() { return port; }
   };
 
@@ -212,6 +241,7 @@ namespace MBSim {
 
     public:
       LinkContour(const string &name, bool setValued);
+      void plot(double t, double dt=1);
 
       void init();
 
