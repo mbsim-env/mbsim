@@ -26,6 +26,7 @@
 #include "contour.h"
 #include "link.h"
 #include "multi_body_system.h"
+#include "eps.h"
 
 namespace MBSim {
 
@@ -314,6 +315,7 @@ namespace MBSim {
   void Object::init() {
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
+// Liste aller SetValued
     for(int i=0; i<linkSetValuedPortData.size(); i++) {
       linkSetValued.push_back(linkSetValuedPortData[i].link);
       W.push_back(Mat(getWSize(),linkSetValuedPortData[i].link->getlaSize()));
@@ -325,6 +327,13 @@ namespace MBSim {
       W.push_back(Mat(getWSize(),linkSetValuedContourData[i].link->getlaSize()));
       w.push_back(Vec(linkSetValuedContourData[i].link->getlaSize())); 
       itW++; itw++;
+    }
+// Liste aller SingleValued
+    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+      linkSingleValued.push_back(linkSingleValuedPortData[i].link);
+    }
+    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+      linkSingleValued.push_back(linkSingleValuedContourData[i].link);
     }
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->init();
@@ -367,6 +376,129 @@ namespace MBSim {
       }
       it1++; itW++; itw++;
     }
+  }
+
+  void Object::updateJh(double t) {
+    updateJh_internal(t);
+    updateJh_links(t);
+  }
+
+  void Object::updateJh_internal(double t) {
+    static const double eps = epsroot();
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Vec hi = geth().copy();
+    int pos = qInd;
+
+    for(int i=0;i<qSize;i++) {
+      double qSave = q(i);
+      q(i) += eps;
+      updateh(t);
+      Jh.col(pos+i) = (geth()-hi)/eps;
+      q(i) = qSave;
+    }
+    pos = mbs->getqSize()+uInd;
+    for(int i=0;i<uSize;i++) {
+      double uSave = u(i);
+      u(i) += eps;
+      updateh(t);
+      Jh.col(pos+i) = (geth()-hi)/eps;
+      u(i) = uSave;
+    }
+    pos = mbs->getqSize()+mbs->getuSize()+xInd;
+    for(int i=0;i<xSize;i++) {
+      double xSave = x(i);
+      x(i) += eps;
+      updateh(t);
+      Jh.col(pos+i) = (geth()-hi)/eps;
+      x(i) = xSave;
+    }
+  }
+
+  void Object::updateJh_links(double t) {
+    static const double eps = epsroot();
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+
+    Vec hi = geth().copy();
+    Mat JhOwn = Jh.copy();
+
+    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+      LinkPort* l = linkSingleValuedPortData[i].link;
+      vector<Port*> ports = l->getPorts();
+      for(int b=0; b<ports.size(); b++) {
+	Object *obj = ports[b]->getObject();
+	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	  Vec qObj = obj->getq();
+	  Vec uObj = obj->getu();
+	  Vec xObj = obj->getx();
+	  int pos = obj->getqInd();
+	  for(int i=0;i<qObj.size();i++) {
+	    double qSave = qObj(i);
+	    qObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    qObj(i) = qSave;
+	  }
+	  pos = mbs->getqSize()+obj->getuInd();
+	  for(int i=0;i<uObj.size();i++) {
+	    double uSave = uObj(i);
+	    uObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    uObj(i) = uSave;
+	  }
+	  pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+	  for(int i=0;i<xObj.size();i++) {
+	    double xSave = xObj(i);
+	    xObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    xObj(i) = xSave;
+	  }
+	}
+      }
+    }
+    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+      LinkContour* l = linkSingleValuedContourData[i].link;
+      vector<Contour*> contours = l->getContours();
+      for(int b=0; b<contours.size(); b++) {
+	Object *obj = contours[b]->getObject();
+	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	  Vec qObj = obj->getq();
+	  Vec uObj = obj->getu();
+	  Vec xObj = obj->getx();
+	  int pos = obj->getqInd();
+	  for(int i=0;i<qObj.size();i++) {
+	    double qSave = qObj(i);
+	    qObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    qObj(i) = qSave;
+	  }
+	  pos = mbs->getqSize()+obj->getuInd();
+	  for(int i=0;i<uObj.size();i++) {
+	    double uSave = uObj(i);
+	    uObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    uObj(i) = uSave;
+	  }
+	  pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+	  for(int i=0;i<xObj.size();i++) {
+	    double xSave = xObj(i);
+	    xObj(i) += eps;
+	    obj->updateKinematics(t);///???????????
+	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	    xObj(i) = xSave;
+	  }
+	}
+      }
+     }
   }
 
 }
