@@ -195,6 +195,7 @@ namespace MBSim {
       LinkPort(const string &name, bool setValued);
 
       virtual void connect(Port *port1, int id);
+      vector<Port*> getPorts() { return port; }
   };
 
   /*! 
@@ -217,6 +218,7 @@ namespace MBSim {
       /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
       virtual void connect(Contour *port1, int id);
       Contour* getContour(int id) { return contour[id]; }
+      vector<Contour*> getContours() { return contour; }
 
       /*! Returns the actual vector from world inertia to Contourpoint. */
       const Vec& getWrOC(int id) const { return cpData[id].WrOC; }
