@@ -53,7 +53,8 @@ namespace MBSim {
 
     public:
 
-      BodyRigidConstrainedAcc(const string &name); 
+      BodyRigidConstrainedAcc(const string &name);
+      virtual ~BodyRigidConstrainedAcc();
 
       void setAcceleration(DataInterfaceBase *func);
       void setVelocity(DataInterfaceBase *func);
@@ -70,6 +71,7 @@ namespace MBSim {
     private:
       DataInterfaceBase *pos;
       DataInterfaceBase *vel;
+      bool overwriteqWithpos;
       double delta, sqrtdelta;
 
     protected:
@@ -85,10 +87,12 @@ namespace MBSim {
 
     public:
 
-      BodyRigidConstrainedVel(const string &name); 
+      BodyRigidConstrainedVel(const string &name);
+      virtual ~BodyRigidConstrainedVel();
 
       void setVelocity(DataInterfaceBase *func);
-      void setPosition(DataInterfaceBase *func);
+      /** If option overwriteq is set to true, the integrator state q (Position) is overwriten with the Position given by func. This may cause integrator instability.*/
+      void setPosition(DataInterfaceBase *func, bool  overwriteq=0); 
 
       void init();
 

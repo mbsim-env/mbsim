@@ -37,6 +37,12 @@ namespace MBSim {
     I(2,2) = 1.0; 
   }
 
+  BodyRigidConstrainedAcc::~BodyRigidConstrainedAcc() {
+    delete pos;
+    delete vel;
+    delete acc;
+  }
+
   void BodyRigidConstrainedAcc::init() {
     BodyRigidAbs::init();
     if(pos)
@@ -109,7 +115,12 @@ namespace MBSim {
     }
   }
 
-  BodyRigidConstrainedVel::BodyRigidConstrainedVel(const string &name) : BodyRigidAbs(name), pos(0), vel(0) {
+ BodyRigidConstrainedVel::~BodyRigidConstrainedVel() {
+  delete pos;
+  delete vel;
+  }
+
+  BodyRigidConstrainedVel::BodyRigidConstrainedVel(const string &name) : BodyRigidAbs(name), pos(0), vel(0), overwriteqWithpos(0) {
     delta = epsroot();
     sqrtdelta = sqrt(delta);
     m = 1.0;	//Default Mass values; Otherwise BodyRigidAbs::init() : inv(M) not defined!
@@ -132,8 +143,9 @@ namespace MBSim {
       assert((*vel)(0).size() == JT.cols()+JR.cols());
   }
 
-  void BodyRigidConstrainedVel::setPosition(DataInterfaceBase *func_) {
+  void BodyRigidConstrainedVel::setPosition(DataInterfaceBase *func_, bool overwriteq) {
     pos = func_;
+    overwriteqWithpos = overwriteq;
   }
 
   void BodyRigidConstrainedVel::setVelocity(DataInterfaceBase *func_) {
@@ -144,17 +156,20 @@ namespace MBSim {
   }
 
   void BodyRigidConstrainedVel::updateh(double t) {
-    if(pos)
-      h = ((*pos)(t+sqrtdelta)+(*pos)(t-sqrtdelta)-2*(*pos)(t))/(sqrtdelta*sqrtdelta);
-    else 
+    if(vel)
       h = ((*vel)(t+delta)-((*vel)(t-delta)))/(2*delta);
+    else
+      h = ((*pos)(t+sqrtdelta)+(*pos)(t-sqrtdelta)-2*(*pos)(t))/(sqrtdelta*sqrtdelta);
+
   }
 
   void BodyRigidConstrainedVel::updateKinematics(double t) {
-    if(pos)
-      u = ((*pos)(t+delta)-((*pos)(t-delta)))/(2*delta);
-    else
+    if(vel)
       u = (*vel)(t);
+    else
+      u = ((*pos)(t+delta)-((*pos)(t-delta)))/(2*delta);
+    if (overwriteqWithpos)
+     q = (*pos)(t);
     BodyRigidAbs::updateKinematics(t);
   }
 

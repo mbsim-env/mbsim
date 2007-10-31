@@ -150,6 +150,12 @@ namespace MBSim {
     return res;
   }
 
+  FuncSum::~FuncSum() { 
+    vector<DataInterfaceBase*>::iterator i;
+    for(i =  dib.begin(); i != dib.end(); ++i)
+      delete *i;
+  }
+
   void FuncSum::addInput(DataInterfaceBase* dib_,double c_,int dim){
     if(!dib.size()) {
       outputdim=dim;
@@ -181,8 +187,6 @@ namespace MBSim {
     {
       y+=c[i]*(*dib[i])(x);
     }
-    if(y(0)>max) y(0)=max;
-    if(y(0)<min) y(0)=min;
     return y;
   }  
   FuncConst::FuncConst(const Vec& c_) : UserFunction() {
