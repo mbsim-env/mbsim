@@ -37,7 +37,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), stiff(false) {
+  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), stiff(false), maxSteps(10000) {
   }
 
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -82,7 +82,7 @@ namespace MBSim {
     rWork(6) = dtMin;
     int liWork=(20+zSize)                             *10;//////////////;
     Vector<int> iWork(liWork);
-    iWork(5) = 10000;
+    iWork(5) = maxSteps;
 
     system->plot(z, t);
 

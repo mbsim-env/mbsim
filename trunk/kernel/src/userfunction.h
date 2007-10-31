@@ -56,23 +56,7 @@ namespace MBSim {
       }; 
   };
 
-  //DEPRECIATED REPLACED BY PPOLYNOM class UserFunctionSpline : public UserFunction {
-  //DEPRECIATED REPLACED BY PPOLYNOM   private:
-  //DEPRECIATED REPLACED BY PPOLYNOM     Mat pp;
-  //DEPRECIATED REPLACED BY PPOLYNOM     Vec breaks;
-  //DEPRECIATED REPLACED BY PPOLYNOM     //int n;
-  //DEPRECIATED REPLACED BY PPOLYNOM     double ppval(double alpha) ;
-  //DEPRECIATED REPLACED BY PPOLYNOM     double ppval_s(double alpha) ;
-  //DEPRECIATED REPLACED BY PPOLYNOM     double ppval_ss(double alpha) ;   
-  //DEPRECIATED REPLACED BY PPOLYNOM   public:
-  //DEPRECIATED REPLACED BY PPOLYNOM     UserFunctionSpline() {}
-  //DEPRECIATED REPLACED BY PPOLYNOM     ~UserFunctionSpline() {}
-  //DEPRECIATED REPLACED BY PPOLYNOM     Vec operator()(double alpha) ; 
-  //DEPRECIATED REPLACED BY PPOLYNOM     Vec diff1(double alpha) ; 
-  //DEPRECIATED REPLACED BY PPOLYNOM     Vec diff2(double alpha) ; 
-  //DEPRECIATED REPLACED BY PPOLYNOM     void setFile(const string &filename);
-  //DEPRECIATED REPLACED BY PPOLYNOM     void setpp(const Mat& pp_,const Vec& breaks_) {pp=pp_; breaks=breaks_;}
-  //DEPRECIATED REPLACED BY PPOLYNOM };
+  // Userfunction for spline interpolation or/and picewise defined polynoms see ppolynom.h
 
   class FuncTable : public UserFunction {
     protected:
@@ -108,15 +92,11 @@ namespace MBSim {
       vector<DataInterfaceBase*> dib;
       vector<double> c;
       int outputdim;
-      double max,min;
     public:
-      FuncSum() { }
+      FuncSum() {}
+      ~FuncSum();
       void addInput(DataInterfaceBase* func_,double c_,int dim);
-      void addInput(DataInterfaceBase* func_,double c_);
-      /** Nur fuer ersten vektoreintrag...TODO*/
-      void setMax(double max_) {max=max_;}
-      /** Nur fuer ersten vektoreintrag...TODO*/
-      void setMin(double min_) {min=min_;}
+      void addInput(DataInterfaceBase* func_,double c_=1);
       Vec operator()(double x) ;      
   };
   class FuncConst : public UserFunction {
@@ -161,20 +141,7 @@ namespace MBSim {
       FuncFunction(UserFunction *f_, DataInterfaceBase *g_);
       Vec operator()(double x) {return (*f)(((*g)(x))(0));} 
   };
-  //DEPRECIATED   class FuncCrPC : public UserFunction {
-  //DEPRECIATED     private:
-  //DEPRECIATED       UserFunctionSpline pp_y, pp_z;
-  //DEPRECIATED     public:
-  //DEPRECIATED       FuncCrPC() {}
-  //DEPRECIATED       FuncCrPC(std::string y, std::string z) {setFiles(y,z);} 
-  //DEPRECIATED       void setFiles(std::string y, std::string z);
-  //DEPRECIATED       /** \param discretization interval of points to use */
-  //DEPRECIATED       void setFile(string yz,int discretization);
-  //DEPRECIATED       Vec operator()(double alpha); 
-  //DEPRECIATED       Vec diff1(double alpha);
-  //DEPRECIATED       Vec diff2(double alpha);
-  //DEPRECIATED   };   
-
+ 
 }
 
 #endif
