@@ -385,13 +385,14 @@ namespace MBSim {
 
   void Object::updateJh_internal(double t) {
     static const double eps = epsroot();
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
     Vec hi = geth().copy();
     int pos = qInd;
 
     for(int i=0;i<qSize;i++) {
       double qSave = q(i);
       q(i) += eps;
+// TODO: Prüfen, ob Aufteilung updatehInt und updatehExt sinnvoll
       updateh(t);
       Jh.col(pos+i) = (geth()-hi)/eps;
       q(i) = qSave;
@@ -404,19 +405,20 @@ namespace MBSim {
       Jh.col(pos+i) = (geth()-hi)/eps;
       u(i) = uSave;
     }
-    pos = mbs->getqSize()+mbs->getuSize()+xInd;
-    for(int i=0;i<xSize;i++) {
-      double xSave = x(i);
-      x(i) += eps;
-      updateh(t);
-      Jh.col(pos+i) = (geth()-hi)/eps;
-      x(i) = xSave;
-    }
+// Unnötig da h=h(q,u,t)
+   // pos = mbs->getqSize()+mbs->getuSize()+xInd;
+   // for(int i=0;i<xSize;i++) {
+   //   double xSave = x(i);
+   //   x(i) += eps;
+   //   updateh(t);
+   //   Jh.col(pos+i) = (geth()-hi)/eps;
+   //   x(i) = xSave;
+   // }
   }
 
   void Object::updateJh_links(double t) {
     static const double eps = epsroot();
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
 
     Vec hi = geth().copy();
     Mat JhOwn = Jh.copy();
@@ -448,15 +450,15 @@ namespace MBSim {
 	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
 	    uObj(i) = uSave;
 	  }
-	  pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
-	  for(int i=0;i<xObj.size();i++) {
-	    double xSave = xObj(i);
-	    xObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    xObj(i) = xSave;
-	  }
+	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+	 // for(int i=0;i<xObj.size();i++) {
+	 //   double xSave = xObj(i);
+	 //   xObj(i) += eps;
+	 //   obj->updateKinematics(t);///???????????
+	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
+	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	 //   xObj(i) = xSave;
+	 // }
 	}
       }
     }
@@ -487,15 +489,15 @@ namespace MBSim {
 	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
 	    uObj(i) = uSave;
 	  }
-	  pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
-	  for(int i=0;i<xObj.size();i++) {
-	    double xSave = xObj(i);
-	    xObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    xObj(i) = xSave;
-	  }
+	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+	 // for(int i=0;i<xObj.size();i++) {
+	 //   double xSave = xObj(i);
+	 //   xObj(i) += eps;
+	 //   obj->updateKinematics(t);///???????????
+	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
+	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+	 //   xObj(i) = xSave;
+	 // }
 	}
       }
      }

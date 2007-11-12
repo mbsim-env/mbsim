@@ -141,7 +141,6 @@ namespace MBSim {
     bool checkGSize;
     int limitGSize;
 
-    void updatezRef(const Vec &zExt);
     void updatezdRef(const Vec &zdExt);
     void updateqRef(const Vec &qExt);
     void updateqdRef(const Vec &qdExt);
@@ -157,12 +156,6 @@ namespace MBSim {
     void updatejsvRef(const Vector<int> &jsvExt);
 
     void updaterFactors();
-    void updateKinematics(double t);
-    void updateLinksStage1(double t);
-    void updateLinksStage2(double t);
-    void updateh(double t);
-    void updateG(double t);
-//    void updater(double t);
     void updatezd(double t);
     void updatedx(double t, double dt);
     void updatedu(double t, double dt);
@@ -183,7 +176,16 @@ namespace MBSim {
     double pinf;
 
     public:
+    void updatezRef(const Vec &zExt);
     void updater(double t);
+    void updateKinematics(double t);
+    void updateLinksStage1(double t);
+    void updateLinksStage2(double t);
+    void updateh(double t);
+    void updateG(double t);
+    void updateW(double t);
+    void updateGs();
+
     MultiBodySystem();
     MultiBodySystem(const string &projectName);
     ~MultiBodySystem();
