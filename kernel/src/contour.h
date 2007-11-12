@@ -42,7 +42,7 @@ namespace MBSim {
   enum ContourType {point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation};
 
   /*! \brief basic class for contour definition for rigid - which don't know about their shape - 
-   *  and flexible - they kown how they look like - bodies
+   *  and flexible - they know how they look like - bodies
    *
    * */
   class Contour : public Element {
@@ -398,6 +398,7 @@ namespace MBSim {
       Vec Ka;
       Vec r;
       double h;
+      bool outCont;
       /** Haltepunkt der Kontur **/
     public:
       Frustum(const string &name);
