@@ -743,6 +743,13 @@ namespace MBSim {
       (**i).updateh(t);
   }
 
+  void MultiBodySystem::updateW(double t) {
+
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updateW(t);
+  }
+
   void MultiBodySystem::updateG(double t) {
     G.init(0);
     b.init(0);
@@ -752,6 +759,10 @@ namespace MBSim {
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateG(t);
 
+    updateGs();
+  }
+
+  void MultiBodySystem::updateGs() {
     if(checkGSize)
       Gs.resize();
     else if(Gs.cols() != G.size()) {
