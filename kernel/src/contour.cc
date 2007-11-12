@@ -281,12 +281,7 @@ namespace MBSim {
     }
   }
 
-
-  Frustum::Frustum(const string &name) : Contour(name), Ka(3), r(2), h(0), outCont(false)  {
-  }
-
-  void Frustum::setAxis(const Vec &a) {
-    Ka = a/nrm2(a);
+  Frustum::Frustum(const string &name) : Contour(name), a(3), r(2), h(0), outCont(false) {
   }
 
   Contour2s::Contour2s(const string &name) : Contour(name) {
