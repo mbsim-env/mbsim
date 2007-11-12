@@ -31,20 +31,24 @@ namespace MBSim {
   class Point; 
   class Frustum; 
 
-  /** pairing Point to Frustum; author: Martin Foerg */
+  /*!
+   * Pairing Point to Frustum Surface
+   * Authors: Martin Foerg, Thorsten Schindler
+   */
   class ContactKinematicsPointFrustum : public ContactKinematics {
     private:
       int ipoint, ifrustum; 
       Point *point;
       Frustum *frustum;
-    public:
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
 
+    public:
+      /*! Compute normal distance in contact point */
+      void stage1(Vec &g, vector<ContourPointData> &cpData);
+      /*! Compute tangential directions and normal velocities in contact point */
+      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+      /*! Treat ordering of contacting bodies in connect-call */
       void assignContours(const vector<Contour*> &contour);
   };
-
 }
 
 #endif
-
