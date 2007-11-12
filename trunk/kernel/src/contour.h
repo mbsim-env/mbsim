@@ -389,26 +389,38 @@ namespace MBSim {
       virtual void init();
   };
 
-  /*! \brief Frustum of height and upper and lower radii
-   *
-   * */
+  /*! 
+   * \brief Frustum of height h, axis a (contour FR) and in direction of the axis upper r(1) and lower radius r(0)
+   *  Further it can be distinguished if the contact is on the outer or inner surface by outCont.
+   *  Authors: Martin Foerg, Thorsten Schindler
+   */
   class Frustum : public Contour {
-    protected:
-      /** Normalenvektor der Kontur **/
-      Vec Ka;
+    private:
+      Vec a;
       Vec r;
       double h;
       bool outCont;
-      /** Haltepunkt der Kontur **/
+
     public:
       Frustum(const string &name);
+      /*! Set Radii of the Frustum */
       void setRadii(const Vec &r_) {r = r_;}
-      const Vec& getRadii() const {return r;} 
-      void setAxis(const Vec &a);
-      const Vec& getAxis() const {return Ka;} 
+      /*! Get Radii of the Frustum */
+      const Vec& getRadii() const {return r;}
+      /*! Set Axis of the Frustum in contour FR */
+      void setAxis(const Vec &a_) {a = a_/nrm2(a_);}
+      /*! Get Axis of the Frustum in contour FR */
+      const Vec& getAxis() const {return a;} 
+      /*! Set Height of the Frustum */
       void setHeight(double h_) {h = h_;}
-      double getHeight() const {return h;} 
-  };
+      /*! Get Height of the Frustum */
+      double getHeight() const {return h;}
+      /*! Set Contact on outer surface of the Frustum */
+      void setOutCont(bool outCont_) {outCont = outCont_;}
+      /*! Get Contact on outer surface of the Frustum */
+      bool getOutCont() const {return outCont;}
+  }; 
+
 
   /*! \brief Parent for contours described by two contour parameters \f$\vs\f$
    *
