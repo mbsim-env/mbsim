@@ -29,21 +29,21 @@
 
 namespace MBSim {
 
-  class MuTimeSteppingIntegrator : public Integrator { 
+  class ThetaTimeSteppingIntegrator : public Integrator { 
 
     private:
 
       double dt;
-      double mu;
+      double theta;
       bool driftCompensation;
 
     public:
 
-      MuTimeSteppingIntegrator();
-      ~MuTimeSteppingIntegrator() {}
+      ThetaTimeSteppingIntegrator();
+      ~ThetaTimeSteppingIntegrator() {}
 
       void setdt(double dt_) {dt = dt_;}
-      void setmu(double mu_ ) {mu  = mu_;}
+      void settheta(double theta_ ) {theta  = theta_;}
       void integrate(MultiBodySystem& system);
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };

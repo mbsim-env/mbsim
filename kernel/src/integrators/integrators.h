@@ -32,6 +32,7 @@
 #include "odex_integrator.h"
 #include "radau5_integrator.h"
 #include "time_stepping_integrator.h"
+#include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
 
 #endif

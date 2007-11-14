@@ -35,10 +35,10 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MuTimeSteppingIntegrator::MuTimeSteppingIntegrator() : dt(1e-3), mu(0.5), driftCompensation(false) {
+  ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), driftCompensation(false) {
   }
 
-  void MuTimeSteppingIntegrator::integrate(MultiBodySystem& system) {
+  void ThetaTimeSteppingIntegrator::integrate(MultiBodySystem& system) {
     assert(dtPlot >= dt);
 
     double t0 = 0.0;
@@ -112,10 +112,10 @@ namespace MBSim {
       Mat Jh = system.getJh();
 
       Vector<int> ipiv(system.getM().size());
-      SqrMat luMeff = SqrMat(facLU(system.getM() - mu*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - mu*mu*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT(),ipiv));
+      SqrMat luMeff = SqrMat(facLU(system.getM() - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT(),ipiv));
       system.getG() << SymMat(trans(system.getW())*slvLUFac(luMeff,system.getW(),ipiv));
       system.updateGs();
-      system.getb() << trans(system.getW())*(slvLUFac(luMeff,system.geth()+mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt,ipiv) );
+      system.getb() << trans(system.getW())*(slvLUFac(luMeff,system.geth()+theta*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt,ipiv) );
 
       iter = system.solve(dt);
       if(iter>maxIter)
@@ -123,8 +123,8 @@ namespace MBSim {
       sumIter += iter;
 
       system.updater(t);
-      Vec du = slvLUFac(luMeff,system.geth() * dt + system.getr() + mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt*dt,ipiv);
-      q += system.getT()*(u+mu*du)*dt;
+      Vec du = slvLUFac(luMeff,system.geth() * dt + system.getr() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt*dt,ipiv);
+      q += system.getT()*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);
 
