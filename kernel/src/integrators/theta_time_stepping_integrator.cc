@@ -99,17 +99,14 @@ namespace MBSim {
 
    //   q += system.deltaq(z,t,dt);
       //q += system.getT()*(u)*dt;
-      // TODO T updaten (passiert sonst in deltaq)
 
-      //if(system.getq()()!=z()) {
-	      //system.updatezRef(z);
-      //}
+      // TODO T updaten (passiert sonst in deltaq)
       system.updateKinematics(t);
       system.updateLinksStage1(t);
       system.checkActiveConstraints();
       system.updateLinksStage2(t);
       system.updateh(t); 
-   system.updateW(t); 
+      system.updateW(t); 
 
       system.updateJh(t);
       Mat Jh = system.getJh();
@@ -120,16 +117,10 @@ namespace MBSim {
       system.updateGs();
       system.getb() << trans(system.getW())*(slvLUFac(luMeff,system.geth()+mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt,ipiv) );
 
-//      SymMat luMeff = facLL(system.getM());
-//      system.getG() << SymMat(trans(system.getW())*slvLLFac(luMeff,system.getW()));
-//      system.updateGs();
-//      system.getb() << trans(system.getW())*(slvLLFac(luMeff,system.geth()));
-
       iter = system.solve(dt);
       if(iter>maxIter)
 	maxIter = iter;
       sumIter += iter;
-      //u += system.deltau(z,t,dt);
 
       system.updater(t);
       Vec du = slvLUFac(luMeff,system.geth() * dt + system.getr() + mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt*dt,ipiv);

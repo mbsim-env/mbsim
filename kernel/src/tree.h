@@ -60,7 +60,7 @@ namespace MBSim {
 
     void updateKinematics(double t);
     void updateh(double t);
-    void updateW(double t);
+    void updateWj(double t);
     void updatezd(double t);
     void updatedq(double t, double dt);
     void updatedu(double t, double dt);

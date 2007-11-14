@@ -196,7 +196,7 @@ namespace MBSim {
 
   //-------------------------------------------
 
-  void BodyFlexible::updateW(double t) {
+  void BodyFlexible::updateWj(double t) {
     static Index IF(0,2);
     static Index IM(3,5);
 

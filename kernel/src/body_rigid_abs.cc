@@ -104,7 +104,7 @@ namespace MBSim {
     h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
   }
 
-  void BodyRigidAbs::updateW(double t) {
+  void BodyRigidAbs::updateWj(double t) {
 
     Index IF(0,2);
     Index IM(3,5);
