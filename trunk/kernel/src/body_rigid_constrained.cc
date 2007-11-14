@@ -92,7 +92,7 @@ namespace MBSim {
   }
 
   void BodyRigidConstrainedAcc::updateG(double t) {
-    BodyRigidAbs::updateW(t);
+    BodyRigidAbs::updateWj(t);
     vector<Mat>::iterator itW=W.begin(),jtW; 
     vector<Vec>::iterator itw=w.begin(); 
     vector<LinkPortData>::iterator jt1,it1=linkSetValuedPortData.begin(); 

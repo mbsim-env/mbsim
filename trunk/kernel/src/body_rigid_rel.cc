@@ -377,7 +377,7 @@ namespace MBSim {
     }
   }
 
-  void BodyRigidRel::updateW(double t) {
+  void BodyRigidRel::updateWj(double t) {
     Index IF(0,2);
     Index IM(3,5);
 
@@ -413,7 +413,7 @@ namespace MBSim {
       it2++; itW++; 
     }
     for(int i=0; i<successor.size(); i++) {
-      successor[i]->updateW(t);
+      successor[i]->updateWj(t);
     }
   }
 

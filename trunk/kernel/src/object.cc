@@ -349,8 +349,22 @@ namespace MBSim {
     }
   }
 
+  void Object::updateW(double t) {
+    updateWj(t);
+    vector<Mat>::iterator itW=W.begin(); 
+    vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
+    for(int i=0; i<linkSetValued.size(); i++) {
+      if((*it1)->isActive()) {
+	Index I = (*it1)->getlaIndex();
+	Mat Wi = (*itW);
+	mbs->getW()(getuIndex(),I) = Wi; 
+      }
+      it1++; itW++; 
+    }
+  }
+
   void Object::updateG(double t) {
-    updateW(t);
+    updateWj(t);
     Vec iMh = slvLLFac(LLM,h);
     vector<Mat>::iterator itW=W.begin(), jtW; 
     vector<Vec>::iterator itw=w.begin(); 

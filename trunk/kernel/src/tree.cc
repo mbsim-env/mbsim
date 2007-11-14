@@ -51,11 +51,11 @@ namespace MBSim {
   //root->updater(t);
   //}
 
-  void Tree::updateW(double t) {
+  void Tree::updateWj(double t) {
     vector<Mat>::iterator itW=W.begin(); 
     for(int i=0; i<W.size(); i++)
       W[i].init(0);
-    root->updateW(t);
+    root->updateWj(t);
     LLM = facLL(M); // TODO evtl. in updateh berechnen -> slvLL
   }
 

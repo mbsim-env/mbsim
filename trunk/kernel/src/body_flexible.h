@@ -96,7 +96,7 @@ namespace MBSim {
        *  therefor collects JACOBIAN-matrizes of implementations of computeJacobianMatrix()
        *  \param t  time of evaluation
        */
-      void updateW(double t);
+      void updateWj(double t);
 
 #ifdef HAVE_AMVIS
       /** body for AMVis */
