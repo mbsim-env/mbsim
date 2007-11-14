@@ -1,0 +1,173 @@
+/* Copyright (C) 2004-2006  Roland Zander, Martin Förg
+ 
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+
+ *
+ * Contact:
+ *   mfoerg@users.berlios.de
+ *   rzander@users.berlios.de
+ *
+ */
+
+#include "theta_time_stepping_integrator.h"
+#include "multi_body_system.h"
+
+#include "eps.h"
+#include <cmath>
+
+#ifndef NO_ISO_14882
+using namespace std;
+#endif
+
+using namespace fmatvec;
+
+namespace MBSim {
+
+  MuTimeSteppingIntegrator::MuTimeSteppingIntegrator() : dt(1e-3), mu(0.5), driftCompensation(false) {
+  }
+
+  void MuTimeSteppingIntegrator::integrate(MultiBodySystem& system) {
+    assert(dtPlot >= dt);
+
+    double t0 = 0.0;
+    double  t = t0;
+
+    int nq = system.getqSize();
+    int nu = system.getuSize();
+    int nx = system.getxSize();
+    int n = nq + nu + nx;
+
+    Index Iq(0,nq-1);
+    Index Iu(nq,nq+nu-1);
+    Index Ix(nq+nu,n-1);
+    Vec z(n);
+    Vec q(z(Iq));
+    Vec u(z(Iu));
+    Vec x(z(Ix));
+
+    if(z0.size())
+      z = z0;
+    else
+      system.initz(z);
+
+    double tPlot = 0.0;
+
+    ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
+
+    int iter = 0;
+
+    cout.setf(ios::scientific, ios::floatfield);
+
+    int step = 0;
+    int stepPlot =(int) (dtPlot/dt + 0.5);
+
+    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+
+    int integrationSteps = 0;
+    int maxIter = 0;
+    int sumIter = 0;
+
+    double s0 = clock();
+    double time = 0;
+    while(t<=tEnd+dt/2.) {
+      integrationSteps++;
+      if( (step*stepPlot - integrationSteps) < 0) {
+	step++;
+	system.plot(z,t,dt);
+	double s1 = clock();
+	time += (s1-s0)/CLOCKS_PER_SEC;
+	s0 = s1; 
+	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+	if(output)
+	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+	tPlot += dtPlot;
+      }
+
+      t += dt;
+
+   //   q += system.deltaq(z,t,dt);
+      //q += system.getT()*(u)*dt;
+      // TODO T updaten (passiert sonst in deltaq)
+
+      //if(system.getq()()!=z()) {
+	      //system.updatezRef(z);
+      //}
+      system.updateKinematics(t);
+      system.updateLinksStage1(t);
+      system.checkActiveConstraints();
+      system.updateLinksStage2(t);
+      system.updateh(t); 
+   system.updateW(t); 
+
+      system.updateJh(t);
+      Mat Jh = system.getJh();
+
+      Vector<int> ipiv(system.getM().size());
+      SqrMat luMeff = SqrMat(facLU(system.getM() - mu*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - mu*mu*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT(),ipiv));
+      system.getG() << SymMat(trans(system.getW())*slvLUFac(luMeff,system.getW(),ipiv));
+      system.updateGs();
+      system.getb() << trans(system.getW())*(slvLUFac(luMeff,system.geth()+mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt,ipiv) );
+
+//      SymMat luMeff = facLL(system.getM());
+//      system.getG() << SymMat(trans(system.getW())*slvLLFac(luMeff,system.getW()));
+//      system.updateGs();
+//      system.getb() << trans(system.getW())*(slvLLFac(luMeff,system.geth()));
+
+      iter = system.solve(dt);
+      if(iter>maxIter)
+	maxIter = iter;
+      sumIter += iter;
+      //u += system.deltau(z,t,dt);
+
+      system.updater(t);
+      Vec du = slvLUFac(luMeff,system.geth() * dt + system.getr() + mu*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt*dt,ipiv);
+      q += system.getT()*(u+mu*du)*dt;
+      u += du;
+      x += system.deltax(z,t,dt);
+
+///Mat Jh2(nu,n);
+///static const double eps = epsroot();
+///for(int i=0;i<n;i++) {
+///  double zSave = z(i);
+///  z(i) += eps;system.update(z,t);
+///  Vec hp = system.geth().copy();
+///  z(i) -= 2*eps;system.update(z,t);
+///  Vec hm = system.geth().copy();
+///  Jh2.col(i) << (hp-hm)/(2*eps);
+///  z(i) = zSave;
+///}
+///
+///cout << "system. Jh = " << system.getJh() << endl;
+///cout << "numeric.Jh = " << Jh2 << endl;
+///cout << "      diff = " << system.getJh() - Jh2 << endl;
+
+      if(driftCompensation)
+	system.projectViolatedConstraints(t);
+    }
+
+    integPlot.close();
+
+    ofstream integSum((system.getDirectoryName() + name + ".sum").c_str());
+    integSum << "Integration time: " << time << endl;
+    integSum << "Integration steps: " << integrationSteps << endl;
+    integSum << "Maximum number of iterations: " << maxIter << endl;
+    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    integSum.close();
+
+    cout.unsetf (ios::scientific);
+    cout << endl;
+  }
+
+}
