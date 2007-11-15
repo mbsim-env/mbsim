@@ -60,6 +60,7 @@ namespace MBSim {
     gd(0) = trans(cpData[iplane].Wn)*WvD;
 
     if(cpData[iplane].Wt.cols()) {
+// ToDo: Pruefen: macht alles nur sinn bei exakt ZWEI Reibrichtungen!!!!!!!!!!!!
       cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);
       if(cpData[iplane].Wt.cols()==2) {
 	cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
