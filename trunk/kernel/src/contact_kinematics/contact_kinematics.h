@@ -47,7 +47,7 @@ namespace MBSim {
     public:
       virtual ~ContactKinematics() {}
 
-      /*! compute \f$\vg_N\f$
+      /*! compute \f$\vg_N\f, which MUST be provided, others optional$
        * \param contour  vector of Contour holding both contours
        * \param i1       index of first contour within all data-vectors
        * \param i2       index of second contour within all data-vectors
@@ -55,7 +55,7 @@ namespace MBSim {
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
       virtual void stage1(Vec &g, vector<ContourPointData> &cpData) = 0;
-      /*! compute \f$\dot{\vg}\f$, generalised position vectors must be up-to-date at end of method
+      /*! compute \f$\dot{\vg}\f$, force directions, ... must be up-to-date at end of method
        * \param contour  vector of Contour holding both contours
        * \param i1       index of first contour within all data-vectors
        * \param i2       index of second contour within all data-vectors
