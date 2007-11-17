@@ -34,40 +34,20 @@ namespace MBSim {
   Tree::~Tree() { 
   }
 
-  void Tree::updateKinematics(double t) {
-
-    root->updateKinematics(t);
-  }
-
-  void Tree::updateh(double t) {
-
-    root->updateh(t);
-  }
-
-  //void Tree::updater(double t) {
-
-  //Ob
-  //r.init(0);
-  //root->updater(t);
-  //}
-
   void Tree::updateWj(double t) {
     vector<Mat>::iterator itW=W.begin(); 
     for(int i=0; i<W.size(); i++)
       W[i].init(0);
     root->updateWj(t);
-    LLM = facLL(M); // TODO evtl. in updateh berechnen -> slvLL
   }
 
   void Tree::updatedq(double t, double dt) {
 
     root->updatedq(t,dt);
-    //qd = u*dt;
   }
 
   void Tree::updatedu(double t, double dt) {
 
-    //ud = slvLL(M,h*dt+r);
     ud = slvLLFac(LLM, h*dt+r);
   }
 
@@ -158,6 +138,24 @@ namespace MBSim {
     root->setMbs(mbs);
     root->updateFullName();
   } 
+
+  void Tree::updateKinematics(double t) { 
+    root->updateKinematics(t); 
+  }
+
+  void Tree::updateT(double t) { 
+    root->updateT(t); 
+  }
+
+  void Tree::updateh(double t) {
+    h.init(0);
+    root->updateh(t); 
+  }
+
+  void Tree::updateM(double t) {
+    M.init(0);
+    root->updateM(t); 
+  }
 
   void Tree::setFullName(const string &name) {
     Element::setFullName(name);

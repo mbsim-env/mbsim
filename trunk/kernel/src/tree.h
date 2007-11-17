@@ -59,7 +59,10 @@ namespace MBSim {
     ~Tree();
 
     void updateKinematics(double t);
+    void updateT(double t);
     void updateh(double t);
+    void updateM(double t);
+
     void updateWj(double t);
     void updatezd(double t);
     void updatedq(double t, double dt);

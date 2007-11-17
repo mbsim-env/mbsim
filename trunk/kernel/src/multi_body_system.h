@@ -80,14 +80,12 @@ namespace MBSim {
     Matrix<Sparse, double> Gs;
     Mat W;
     SqrMat Jprox;
-    Vec w;
     Vec b;
     Vec la;
     Vec dla;
     Vec s;
     Vec res;
     Vec rFactor;
-    //Vector<int> rFactorUnsure;
     Vec g, gd;
     int laSize, laInd;
     int rFactorSize, rFactorInd;
@@ -182,9 +180,10 @@ namespace MBSim {
     void updateLinksStage1(double t);
     void updateLinksStage2(double t);
     void updateh(double t);
-    void updateG(double t);
+    void updateM(double t);
     void updateW(double t);
-    void updateGs();
+    void updateGb(double t);
+    void updateT(double t);
 
     MultiBodySystem();
     MultiBodySystem(const string &projectName);
@@ -293,8 +292,8 @@ namespace MBSim {
     Mat& getW() {return W;}
     const SqrMat& getJprox() const {return Jprox;}
     SqrMat& getJprox() {return Jprox;}
-    const Vec& getw() const {return w;}
-    Vec& getw() {return w;}
+    //const Vec& getw() const {return w;}
+    //Vec& getw() {return w;}
     const Vec& getb() const {return b;}
     Vec& getb() {return b;}
     const Vec& getla() const {return la;}

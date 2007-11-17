@@ -73,7 +73,6 @@ namespace MBSim {
     vector<Link*> linkSetValued;
     vector<Link*> linkSingleValued;
 
-    vector<Link*> links;
     vector<Port*> port;
     vector<Contour*> contour;
 
@@ -132,9 +131,10 @@ namespace MBSim {
     virtual void updateM(double t) {};
 
     virtual void updateKinematics(double t) = 0;
-    virtual void updateG(double t);
-    virtual void updateWj(double t) {};
+    virtual void updateGb(double t);
     virtual void updateW(double t);
+    virtual void updateWj(double t) {};
+    virtual void updateT(double t) {};
     virtual void updateh(double t) {};
     virtual void updater(double t);
     virtual void updatezd(double t) = 0;
@@ -142,12 +142,14 @@ namespace MBSim {
     virtual void updatedq(double t, double dt) = 0;
     virtual void updatedx(double t, double dt) {};
 
+    virtual void facLLM();
+
     /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
     */
-    virtual void updateJh_internal(double t);
+    //virtual void updateJh_internal(double t);
     /*! compute Jacobian of right-hand side for single-valued links
     */
-    virtual void updateJh_links(double t);
+    //virtual void updateJh_links(double t);
 
     public:
     Object(const string &name);

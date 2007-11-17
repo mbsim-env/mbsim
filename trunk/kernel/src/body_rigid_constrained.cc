@@ -54,7 +54,6 @@ namespace MBSim {
   }
 
   void BodyRigidConstrainedAcc::updatezd(double t) {
-    (this->*updateT)();
     qd = T*u;
     ud = h;
   }
@@ -91,7 +90,7 @@ namespace MBSim {
     acc = func_;
   }
 
-  void BodyRigidConstrainedAcc::updateG(double t) {
+  void BodyRigidConstrainedAcc::updateGb(double t) {
     BodyRigidAbs::updateWj(t);
     vector<Mat>::iterator itW=W.begin(),jtW; 
     vector<Vec>::iterator itw=w.begin(); 
@@ -100,16 +99,16 @@ namespace MBSim {
     for(int i=0; i<linkSetValuedPortData.size(); i++) {
       Index I = it1->link->getlaIndex();
       Mat Wi = (*itW);
-      mbs->getw()(I) += (*itw); 
-      mbs->getb()(I) += trans(Wi)*h; 
+      //mbs->getw()(I) += (*itw); 
+      mbs->getb()(I) += trans(Wi)*h + (*itw); 
       it1++; itW++; itw++;
     }
     for(int i=linkSetValuedPortData.size(); i<linkSetValuedContourData.size() + linkSetValuedPortData.size(); i++) {
       if(it2->link->isActive()) {
 	Index I = it2->link->getlaIndex();
 	Mat Wi = (*itW);
-	mbs->getw()(I) += (*itw); 
-	mbs->getb()(I) += trans(Wi)*h; 
+	//mbs->getw()(I) += (*itw); 
+	mbs->getb()(I) += trans(Wi)*h + (*itw); 
       }
       it2++; itW++; itw++;
     }
@@ -174,7 +173,6 @@ namespace MBSim {
   }
 
   void BodyRigidConstrainedVel::updatezd(double t) {
-    (this->*updateT)();
     qd = T*u;
     //  ud = h;
   }
@@ -187,7 +185,7 @@ namespace MBSim {
     qd = T*u*dt;
   }
 
-  void BodyRigidConstrainedVel::updateG(double t) {
+  void BodyRigidConstrainedVel::updateGb(double t) {
     vector<Mat>::iterator itW=W.begin(),jtW; 
     vector<Vec>::iterator itw=w.begin(); 
     vector<LinkPortData>::iterator jt1,it1=linkSetValuedPortData.begin(); 

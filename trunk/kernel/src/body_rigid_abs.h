@@ -43,6 +43,16 @@ namespace MBSim {
       virtual void updateWj(double t);
       virtual void updatezd(double t);
       virtual void updatedu(double t, double dt);
+      void (BodyRigidAbs::*updateM_)();
+      void (BodyRigidAbs::*facLLM_)();
+
+      void updateM() {(this->*updateM_)();}
+      void updateM1() {};
+      void updateM2();
+
+      void facLLM() {(this->*facLLM_)();}
+      void facLLM1() {};
+      void facLLM2();
       void (BodyRigidAbs::*updateh_)();
       void updateh1();
       void updateh2();

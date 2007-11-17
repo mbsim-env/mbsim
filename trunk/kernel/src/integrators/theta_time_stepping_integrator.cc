@@ -105,17 +105,38 @@ namespace MBSim {
       system.updateLinksStage1(t);
       system.checkActiveConstraints();
       system.updateLinksStage2(t);
+      system.updateT(t); 
+      system.updateM(t); 
       system.updateh(t); 
       system.updateW(t); 
 
-      system.updateJh(t);
-      Mat Jh = system.getJh();
+      SymMat M = system.getM().copy();
+      Mat W = system.getW().copy();
+      Vec h = system.geth().copy();
+      Mat T = system.getT().copy();
+      //system.updateJh(t);
+      //Mat Jh2 = system.getJh();
 
-      Vector<int> ipiv(system.getM().size());
-      SqrMat luMeff = SqrMat(facLU(system.getM() - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT(),ipiv));
-      system.getG() << SymMat(trans(system.getW())*slvLUFac(luMeff,system.getW(),ipiv));
-      system.updateGs();
-      system.getb() << trans(system.getW())*(slvLUFac(luMeff,system.geth()+theta*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt,ipiv) );
+Mat Jh(nu,n);
+static const double eps = epsroot();
+for(int i=0;i<n;i++) {
+  double zSave = z(i);
+  z(i) += eps;
+  system.updateKinematics(t);
+  system.updateLinksStage1(t);
+  system.updateLinksStage2(t);
+  system.updateh(t); 
+  Vec hm = system.geth();
+  Jh.col(i) << (hm-h)/(eps);
+  z(i) = zSave;
+}
+
+      Vector<int> ipiv(M.size());
+      SqrMat luMeff = SqrMat(facLU(M - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*T,ipiv));
+      SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,W,ipiv));
+      system.getGs().resize();
+      system.getGs() << Geff;
+      system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
 
       iter = system.solve(dt);
       if(iter>maxIter)
@@ -123,26 +144,14 @@ namespace MBSim {
       sumIter += iter;
 
       system.updater(t);
-      Vec du = slvLUFac(luMeff,system.geth() * dt + system.getr() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*system.getT()*u*dt*dt,ipiv);
-      q += system.getT()*(u+theta*du)*dt;
+      Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
+      q += T*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);
 
-///Mat Jh2(nu,n);
-///static const double eps = epsroot();
-///for(int i=0;i<n;i++) {
-///  double zSave = z(i);
-///  z(i) += eps;system.update(z,t);
-///  Vec hp = system.geth().copy();
-///  z(i) -= 2*eps;system.update(z,t);
-///  Vec hm = system.geth().copy();
-///  Jh2.col(i) << (hp-hm)/(2*eps);
-///  z(i) = zSave;
-///}
-///
 ///cout << "system. Jh = " << system.getJh() << endl;
 ///cout << "numeric.Jh = " << Jh2 << endl;
-///cout << "      diff = " << system.getJh() - Jh2 << endl;
+//cout << "      diff = " << Jh - Jh2 << endl;
 
       if(driftCompensation)
 	system.projectViolatedConstraints(t);

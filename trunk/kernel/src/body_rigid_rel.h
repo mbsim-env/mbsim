@@ -56,6 +56,9 @@ namespace MBSim {
     virtual void updatedq(double t, double dt);
     virtual void updateqd(double t);
 
+    void updateM(double t);
+    void updateMh(double t);
+
     public:
 
     BodyRigidRel(const string &name);

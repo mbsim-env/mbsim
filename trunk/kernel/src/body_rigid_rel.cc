@@ -294,7 +294,51 @@ namespace MBSim {
     precessor = precessor_;
   }
 
+  void BodyRigidRel::updateM(double t) {
+    tree->getM()(Index(0,uInd+uSize-1)) += JTMJ(Mh,J);
+
+    for(int i=0; i<successor.size(); i++) {
+      successor[i]->updateM(t);
+    }
+  }
+ 
   void BodyRigidRel::updateh(double t) {
+    sumUpForceElements(t);
+    Vec KF = trans(AWK)*WF;
+    Vec KM = trans(AWK)*WM;
+    l(0,2) = KF - m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS));
+    l(3,5) = KM + crossProduct(I*KomegaK,KomegaK);
+
+    if(precessor) {
+      C(Index(0,2),Index(0,2)) = trans(APK);
+      C(Index(3,5),Index(3,5)) = trans(APK);
+      C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
+
+      Vec f(6,NONINIT);
+      f(0,2) = trans(APK)*(crossProduct(precessor->getKomegaK(), 2*(JT*u(iT))+crossProduct(precessor->getKomegaK(),PrPK)));
+      f(3,5) = crossProduct(KomegaK,JR*u(iR));
+
+      e = C*precessor->gete()+f;
+
+      l -= Mh*e;
+
+      BodyRigidRel* nextBody = precessor;
+      while(nextBody) {
+	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
+	nextBody = nextBody->getPrecessor();
+      }
+    }
+    J(Index(0,2),IuT) = trans(APK)*JT;
+    J(Index(3,5),IuR) = JR;
+
+    tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
+
+    for(int i=0; i<successor.size(); i++) {
+      successor[i]->updateh(t);
+    }
+  }
+
+  void BodyRigidRel::updateMh(double t) {
     sumUpForceElements(t);
 
     Vec KF = trans(AWK)*WF;
@@ -312,7 +356,6 @@ namespace MBSim {
       C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
 
       e = C*precessor->gete()+f;
-
 
       J(Index(0,2),IuT) = trans(APK)*JT;
       J(Index(3,5),IuR) = JR;
@@ -333,14 +376,12 @@ namespace MBSim {
       J(Index(3,5),IuR) = JR;
 
       Index I(0,uInd+uSize-1);
-      tree->getM().init(0);
-      tree->geth().init(0);
       tree->geth()(I) = trans(J)*l;
       tree->getM()(I) = JTMJ(Mh,J);
     }
 
     for(int i=0; i<successor.size(); i++) {
-      successor[i]->updateh(t);
+      successor[i]->updateMh(t);
     }
   }
 
@@ -393,8 +434,6 @@ namespace MBSim {
       Kl(IF,iJ) = trans(AWK)*ld(IF,iJ);
       Kl(IM,iJ) = trans(AWK)*ld(IM,iJ) + tilde(KrKP[portID])*Kl(IF,iJ) ;
       (*itW) += trans(J)*Kl;
-      //(*itW)(iI,iJ) += trans(J)*Kl;
-      //    (*itw) = trans(fd)*crossProduct(WomegaK,crossProduct(WomegaK,WrSP[portID]));
       it1++; itW++; 
     }
 
@@ -408,7 +447,6 @@ namespace MBSim {
 	Kl(IF,iJ) = trans(AWK)*ld(IF,iJ);
 	Kl(IM,iJ) = trans(AWK)*ld(IM,iJ) + tilde(KrKC)*Kl(IF,iJ) ;
 	(*itW) += trans(J)*Kl;
-	//(*itW)(iI,iJ) += trans(J)*Kl;
       }
       it2++; itW++; 
     }
@@ -447,7 +485,6 @@ namespace MBSim {
   }
 
   void BodyRigidRel::updateqd(double t) {
-    (this->*updateT)();
     qd = T*u;
     for(int i=0; i<successor.size(); i++) {
       successor[i]->updateqd(t);
