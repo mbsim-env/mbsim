@@ -102,21 +102,21 @@ namespace MBSim {
 
     if(JR.cols()== 0) {
       updateAK0K = &BodyRigid::noUpdateAK0K;
-      updateT = &BodyRigid::noUpdateT;
+      updateT_ = &BodyRigid::noUpdateT;
     } else if(JR.cols() == 1) {
       updateAK0K = &BodyRigid::updateAK0KAxis;
-      updateT = &BodyRigid::noUpdateT;
+      updateT_ = &BodyRigid::noUpdateT;
     } else if(JR.cols() == 2) {
       //updateAK0K = &BodyRigid::updateAK0Kxz;
-      //updateT = &BodyRigid::updateTxz;
+      //updateT_ = &BodyRigid::updateTxz;
       cout << "Rotations with two angles not yet implemented!" << endl;
       assert(JR.cols()!=2);
     } else if(rot == cardanAngles) {
       updateAK0K = &BodyRigid::updateAK0KCardanAngles;
-      updateT = &BodyRigid::updateTCardanAngles;
+      updateT_ = &BodyRigid::updateTCardanAngles;
     } else if(rot == eulerParameters) {
       updateAK0K = &BodyRigid::updateAK0KEulerParameters;
-      updateT = &BodyRigid::updateTEulerParameters;
+      updateT_ = &BodyRigid::updateTEulerParameters;
       H.resize(3,4);
       TH.resize(3,4);
       if(q0.size() == 0) {
@@ -315,7 +315,6 @@ namespace MBSim {
   }
 
   void BodyRigid::updatezd(double t) {
-    (this->*updateT)();
     qd = T*u;
     ud = slvLLFac(LLM, h+r);
   }
@@ -325,7 +324,6 @@ namespace MBSim {
   }
 
   void BodyRigid::updatedq(double t, double dt) {
-    (this->*updateT)();
     qd = T*u*dt;
   }
 

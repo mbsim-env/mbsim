@@ -69,9 +69,13 @@ namespace MBSim {
     LLM = facLL(M);
 
     if(nrm2(KrKS) <= 1e-14) {
+      updateM_ = &BodyRigidAbs::updateM2;
       updateh_ = &BodyRigidAbs::updateh1;
+      facLLM_ = &BodyRigidAbs::facLLM1;
     } else {
+      updateM_ = &BodyRigidAbs::updateM2;
       updateh_ = &BodyRigidAbs::updateh2;
+      facLLM_ = &BodyRigidAbs::facLLM2;
     }
   }
 
@@ -86,6 +90,11 @@ namespace MBSim {
     WomegaK = AWK*KomegaK;
   }
 
+  void BodyRigidAbs::updateM2() {
+    J(Index(0,2),iT) = trans(AWK)*JT;
+    M = JTMJ(Mh,J);
+  }
+
   void BodyRigidAbs::updateh(double t) {
     sumUpForceElements(t);
     (this->*updateh_)();
@@ -97,11 +106,12 @@ namespace MBSim {
   }
 
   void BodyRigidAbs::updateh2() {
-    J(Index(0,2),iT) = trans(AWK)*JT;
-    M = JTMJ(Mh,J);
-    LLM = facLL(M);
     h(iT) = trans(JT)*(WF - AWK*(m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS))));
     h(iR) = trans(JR)*(trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK));
+  }
+
+  void BodyRigidAbs::facLLM2() {
+    LLM = facLL(M);
   }
 
   void BodyRigidAbs::updateWj(double t) {
@@ -140,7 +150,6 @@ namespace MBSim {
   }
 
   void BodyRigidAbs::updatezd(double t) {
-    (this->*updateT)();
     qd = T*u;
     ud = slvLLFac(LLM, h+r);
   }

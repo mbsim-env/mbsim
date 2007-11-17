@@ -363,158 +363,242 @@ namespace MBSim {
     }
   }
 
-  void Object::updateG(double t) {
-    updateWj(t);
+  void Object::facLLM() {
+    LLM = facLL(M); 
+  }
+
+//  void Object::updateb(double t) {
+//    Vec iMh = slvLLFac(LLM,h);
+//    vector<Vec>::iterator itw=w.begin(); 
+//    vector<Link*>::iterator it1=linkSetValued.begin(); 
+//    for(int i=0; i<linkSetValued.size(); i++) {
+//      if((*it1)->isActive()) {
+//	Index I = (*it1)->getlaIndex();
+//	Mat Wi = (*itW);
+//	mbs->getb()(I) += trans(Wi)*iMh; 
+//      }
+//      it1++; itw++;
+//    }
+//  }
+//
+//  void Object::updateG(double t) {
+//    facLLM();
+//    vector<Mat>::iterator itW=W.begin(), jtW; 
+//    vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
+//    for(int i=0; i<linkSetValued.size(); i++) {
+//      if((*it1)->isActive()) {
+//	Index I = (*it1)->getlaIndex();
+//	Mat Wi = (*itW);
+//	Mat iMWi = slvLLFac(LLM,Wi);
+//	mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
+//	jt1 = linkSetValued.begin(); 
+//	jtW = W.begin(); 
+//	for(int j=0; j<i; j++) {
+//	  if((*jt1)->isActive()) {
+//	    Index J =  (*jt1)->getlaIndex();
+//	    mbs->getG()(J,I) += trans((*jtW))*iMWi; 
+//	  }
+//	  jt1++; jtW++;
+//	}
+//      }
+//      it1++; itW++; itw++;
+//    }
+//  }
+
+
+  void Object::updateGb(double t) {
+    facLLM();
     Vec iMh = slvLLFac(LLM,h);
     vector<Mat>::iterator itW=W.begin(), jtW; 
     vector<Vec>::iterator itw=w.begin(); 
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
     for(int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
-	Index I = (*it1)->getlaIndex();
-	Mat Wi = (*itW);
-	mbs->getW()(getuIndex(),I) = Wi; 
-	mbs->getw()(I) += (*itw); 
-	mbs->getb()(I) += trans(Wi)*iMh; 
-	Mat iMWi = slvLLFac(LLM,Wi);
-	mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
-	jt1 = linkSetValued.begin(); 
-	jtW = W.begin(); 
-	for(int j=0; j<i; j++) {
-	  if((*jt1)->isActive()) {
-	    Index J =  (*jt1)->getlaIndex();
-	    mbs->getG()(J,I) += trans((*jtW))*iMWi; 
-	  }
-	  jt1++; jtW++;
-	}
+        Index I = (*it1)->getlaIndex();
+        Mat Wi = (*itW);
+        mbs->getb()(I) += trans(Wi)*iMh+(*itw); 
+        Mat iMWi = slvLLFac(LLM,Wi);
+        mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
+        jt1 = linkSetValued.begin(); 
+        jtW = W.begin(); 
+        for(int j=0; j<i; j++) {
+          if((*jt1)->isActive()) {
+            Index J =  (*jt1)->getlaIndex();
+            mbs->getG()(J,I) += trans((*jtW))*iMWi; 
+          }
+          jt1++; jtW++;
+        }
       }
       it1++; itW++; itw++;
     }
   }
 
+//  void Object::updateWGb(double t) {
+//    facLLM();
+//    updateWj(t);
+//    Vec iMh = slvLLFac(LLM,h);
+//    vector<Mat>::iterator itW=W.begin(), jtW; 
+//    vector<Vec>::iterator itw=w.begin(); 
+//    vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
+//    for(int i=0; i<linkSetValued.size(); i++) {
+//      if((*it1)->isActive()) {
+//        Index I = (*it1)->getlaIndex();
+//        Mat Wi = (*itW);
+//        mbs->getW()(getuIndex(),I) = Wi; 
+//        mbs->getw()(I) += (*itw); 
+//        mbs->getb()(I) += trans(Wi)*iMh; 
+//        Mat iMWi = slvLLFac(LLM,Wi);
+//        mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
+//        jt1 = linkSetValued.begin(); 
+//        jtW = W.begin(); 
+//        for(int j=0; j<i; j++) {
+//          if((*jt1)->isActive()) {
+//            Index J =  (*jt1)->getlaIndex();
+//            mbs->getG()(J,I) += trans((*jtW))*iMWi; 
+//          }
+//          jt1++; jtW++;
+//        }
+//      }
+//      it1++; itW++; itw++;
+//    }
+//  }
+
+ // void Object::updateh(double t) {
+ //   updatehInt(t);
+ //   updatehExt(t);
+ // }
+
   void Object::updateJh(double t) {
-    updateJh_internal(t);
-    updateJh_links(t);
+    cout << "Error: Jacobian of h not yet implemented" << endl;
+    throw 5;
+//    updateJh_internal(t);
+//    updateJh_links(t);
   }
-
-  void Object::updateJh_internal(double t) {
-    static const double eps = epsroot();
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
-    Vec hi = geth().copy();
-    int pos = qInd;
-
-    for(int i=0;i<qSize;i++) {
-      double qSave = q(i);
-      q(i) += eps;
-// TODO: Prüfen, ob Aufteilung updatehInt und updatehExt sinnvoll
-      updateh(t);
-      Jh.col(pos+i) = (geth()-hi)/eps;
-      q(i) = qSave;
-    }
-    pos = mbs->getqSize()+uInd;
-    for(int i=0;i<uSize;i++) {
-      double uSave = u(i);
-      u(i) += eps;
-      updateh(t);
-      Jh.col(pos+i) = (geth()-hi)/eps;
-      u(i) = uSave;
-    }
-// Unnötig da h=h(q,u,t)
-   // pos = mbs->getqSize()+mbs->getuSize()+xInd;
-   // for(int i=0;i<xSize;i++) {
-   //   double xSave = x(i);
-   //   x(i) += eps;
-   //   updateh(t);
-   //   Jh.col(pos+i) = (geth()-hi)/eps;
-   //   x(i) = xSave;
-   // }
-  }
-
-  void Object::updateJh_links(double t) {
-    static const double eps = epsroot();
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
-
-    Vec hi = geth().copy();
-    Mat JhOwn = Jh.copy();
-
-    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
-      LinkPort* l = linkSingleValuedPortData[i].link;
-      vector<Port*> ports = l->getPorts();
-      for(int b=0; b<ports.size(); b++) {
-	Object *obj = ports[b]->getObject();
-	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-	  Vec qObj = obj->getq();
-	  Vec uObj = obj->getu();
-	  Vec xObj = obj->getx();
-	  int pos = obj->getqInd();
-	  for(int i=0;i<qObj.size();i++) {
-	    double qSave = qObj(i);
-	    qObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    qObj(i) = qSave;
-	  }
-	  pos = mbs->getqSize()+obj->getuInd();
-	  for(int i=0;i<uObj.size();i++) {
-	    double uSave = uObj(i);
-	    uObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    uObj(i) = uSave;
-	  }
-	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
-	 // for(int i=0;i<xObj.size();i++) {
-	 //   double xSave = xObj(i);
-	 //   xObj(i) += eps;
-	 //   obj->updateKinematics(t);///???????????
-	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
-	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	 //   xObj(i) = xSave;
-	 // }
-	}
-      }
-    }
-    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
-      LinkContour* l = linkSingleValuedContourData[i].link;
-      vector<Contour*> contours = l->getContours();
-      for(int b=0; b<contours.size(); b++) {
-	Object *obj = contours[b]->getObject();
-	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-	  Vec qObj = obj->getq();
-	  Vec uObj = obj->getu();
-	  Vec xObj = obj->getx();
-	  int pos = obj->getqInd();
-	  for(int i=0;i<qObj.size();i++) {
-	    double qSave = qObj(i);
-	    qObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    qObj(i) = qSave;
-	  }
-	  pos = mbs->getqSize()+obj->getuInd();
-	  for(int i=0;i<uObj.size();i++) {
-	    double uSave = uObj(i);
-	    uObj(i) += eps;
-	    obj->updateKinematics(t);///???????????
-	    l->updateStage1(t); l->updateStage2(t); updateh(t);
-	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	    uObj(i) = uSave;
-	  }
-	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
-	 // for(int i=0;i<xObj.size();i++) {
-	 //   double xSave = xObj(i);
-	 //   xObj(i) += eps;
-	 //   obj->updateKinematics(t);///???????????
-	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
-	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
-	 //   xObj(i) = xSave;
-	 // }
-	}
-      }
-     }
-  }
+//
+//  void Object::updateJh_internal(double t) {
+//    static const double eps = epsroot();
+//    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
+//    Vec hi = geth().copy();
+//    int pos = qInd;
+//
+//    for(int i=0;i<qSize;i++) {
+//      double qSave = q(i);
+//      q(i) += eps;
+//// TODO: Prüfen, ob Aufteilung updatehInt und updatehExt sinnvoll
+//      
+//      updateKinematics(t);
+//      updateh(t);
+//      Jh.col(pos+i) = (geth()-hi)/eps;
+//      q(i) = qSave;
+//    }
+//    pos = mbs->getqSize()+uInd;
+//    for(int i=0;i<uSize;i++) {
+//      double uSave = u(i);
+//      u(i) += eps;
+//      updateKinematics(t);
+//      updateh(t);
+//      Jh.col(pos+i) = (geth()-hi)/eps;
+//      u(i) = uSave;
+//    }
+//// Unnötig da h=h(q,u,t)
+//   // pos = mbs->getqSize()+mbs->getuSize()+xInd;
+//   // for(int i=0;i<xSize;i++) {
+//   //   double xSave = x(i);
+//   //   x(i) += eps;
+//   //   updateh(t);
+//   //   Jh.col(pos+i) = (geth()-hi)/eps;
+//   //   x(i) = xSave;
+//   // }
+//  }
+//
+//  void Object::updateJh_links(double t) {
+//    static const double eps = epsroot();
+//    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getqSize()+mbs->getuSize()-1));
+//
+//    Vec hi = geth().copy();
+//    Mat JhOwn = Jh.copy();
+//
+//    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+//      LinkPort* l = linkSingleValuedPortData[i].link;
+//      vector<Port*> ports = l->getPorts();
+//      for(int b=0; b<ports.size(); b++) {
+//	Object *obj = ports[b]->getObject();
+//	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+//	  Vec qObj = obj->getq();
+//	  Vec uObj = obj->getu();
+//	  Vec xObj = obj->getx();
+//	  int pos = obj->getqInd();
+//	  for(int i=0;i<qObj.size();i++) {
+//	    double qSave = qObj(i);
+//	    qObj(i) += eps;
+//	    obj->updateKinematics(t);///???????????
+//	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	    //Jh.col(pos+i) += (geth()-hi)/eps;
+//	    qObj(i) = qSave;
+//	  }
+//	  pos = mbs->getqSize()+obj->getuInd();
+//	  for(int i=0;i<uObj.size();i++) {
+//	    double uSave = uObj(i);
+//	    uObj(i) += eps;
+//	    obj->updateKinematics(t);///???????????
+//	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	    //Jh.col(pos+i) += (geth()-hi)/eps;
+//	    uObj(i) = uSave;
+//	  }
+//	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+//	 // for(int i=0;i<xObj.size();i++) {
+//	 //   double xSave = xObj(i);
+//	 //   xObj(i) += eps;
+//	 //   obj->updateKinematics(t);///???????????
+//	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	 //   xObj(i) = xSave;
+//	 // }
+//	}
+//      }
+//    }
+//    cout << "end"<<endl;
+//    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+//      LinkContour* l = linkSingleValuedContourData[i].link;
+//      vector<Contour*> contours = l->getContours();
+//      for(int b=0; b<contours.size(); b++) {
+//	Object *obj = contours[b]->getObject();
+//	if(obj != mbs) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+//	  Vec qObj = obj->getq();
+//	  Vec uObj = obj->getu();
+//	  Vec xObj = obj->getx();
+//	  int pos = obj->getqInd();
+//	  for(int i=0;i<qObj.size();i++) {
+//	    double qSave = qObj(i);
+//	    qObj(i) += eps;
+//	    obj->updateKinematics(t);///???????????
+//	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	    qObj(i) = qSave;
+//	  }
+//	  pos = mbs->getqSize()+obj->getuInd();
+//	  for(int i=0;i<uObj.size();i++) {
+//	    double uSave = uObj(i);
+//	    uObj(i) += eps;
+//	    obj->updateKinematics(t);///???????????
+//	    l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	    Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	    uObj(i) = uSave;
+//	  }
+//	 // pos = mbs->getqSize()+mbs->getuSize()+obj->getxInd();
+//	 // for(int i=0;i<xObj.size();i++) {
+//	 //   double xSave = xObj(i);
+//	 //   xObj(i) += eps;
+//	 //   obj->updateKinematics(t);///???????????
+//	 //   l->updateStage1(t); l->updateStage2(t); updateh(t);
+//	 //   Jh.col(pos+i) += (geth()-hi)/eps - JhOwn.col(pos+i);
+//	 //   xObj(i) = xSave;
+//	 // }
+//	}
+//      }
+//     }
+//  }
 
 }

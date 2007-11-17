@@ -44,7 +44,7 @@ namespace MBSim {
 
     protected:
 
-      void updateG(double t);
+      void updateGb(double t);
       void updateh(double t);
       void updater(double t);
       void updatezd(double t);
@@ -76,7 +76,7 @@ namespace MBSim {
 
     protected:
 
-      void updateG(double t);
+      void updateGb(double t);
       void updateh(double t);
       void updater(double t);
       void updatezd(double t);

@@ -148,7 +148,7 @@ namespace MBSim {
     G.resize() >> GParent;
     W.resize() >> WParent;
     b.resize() >> bParent;
-    w.resize() >> wParent;
+    //w.resize() >> wParent;
     g.resize() >> gParent;
 
     updatezdRef(zdParent);
@@ -320,37 +320,26 @@ namespace MBSim {
     }
     updateKinematics(t);
     updateLinksStage1(t);
-    //  checkActiveConstraints();
     updateLinksStage2(t);
 
+    updateT(t); 
     updateh(t); 
-    updateG(t); 
-    computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
+    updateM(t); 
+    updateW(t); 
+    updateGb(t); 
+    computeConstraintForces(t); 
     updater(t); 
-    updatezd(t); // Läuft du
+    updatezd(t);
 
     return zdParent;
   }
 
   void MultiBodySystem::zdot(const Vec &zParent, Vec &zdParent, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
     if(qd()!=zdParent()) {
       updatezdRef(zdParent);
     }
-    updateKinematics(t);
-    updateLinksStage1(t);
-    //  checkActiveConstraints();
-    updateLinksStage2(t);
-
-    updateh(t); 
-    updateG(t); 
-    computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
-    updater(t); 
-    updatezd(t); // Läuft du
+    zdot(zParent,t);
   }
-
 
   void MultiBodySystem::updatezRef(const Vec &zParent) {
 
@@ -570,7 +559,8 @@ namespace MBSim {
     updateLinksStage1(t);
     updateLinksStage2(t);
     updateh(t); 
-    updateG(t); 
+    updateW(t); 
+    updateGb(t); 
     computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
     updateStopVector(t);
   }
@@ -587,9 +577,11 @@ namespace MBSim {
     updateLinksStage1(t);
     checkActiveConstraints();
     updateLinksStage2(t);
+    updateT(t); 
     updateh(t); 
-    updateG(t); 
-
+    updateM(t); 
+    updateW(t); 
+    updateGb(t); 
   }
 
   void MultiBodySystem::updaterFactors() {
@@ -614,73 +606,10 @@ namespace MBSim {
       for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
 	(**i).updaterFactors();
 
-      // } else if(strategy == optimal) {
-      // //  cout << "Strategy vorübergehend deaktiviert" << endl;
-      // //  throw 5;
-      //   if(rFactor.size() == 1) {
-      //     rFactor(0) = 1.0/G(0,0);
-      //   } else {
-      //   for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      //    (**i).updaterFactors();
-      //   //rFactor.init(1);
-
-      // //  if(G.size()>=3)  {
-      //   MyZfkt zfkt(this);
-      //   TAMOEBAOptimizer OPTI(&zfkt);   
-      //   //Vec State(rFactor.size(),INIT,1);
-      //   //Vec State = rFactor.copy();
-
-      //   OPTI.setInitialState(rFactor);
-      //   OPTI.optimize();
-
-      //   rFactor = OPTI.getx();
-      //   if(OPTI.getNumberOfIterations() > 450)
-      //     cout << "WARNING WARNING, high iterations during optimization" << endl;
-      //   if(min(rFactor) <= 0) {
-      //  
-      //  cout << "WARNING WARNING, using local Strategy" << endl;
-      //   for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      //     (**i).updaterFactors();
-
-      // // cout << "WARNING WARNING, using IFFCO, as" << endl;
-      // //    cout << rFactor << endl;
-      // //    rFactor.init(1);
-      // //    IFFCOOptimizer OPTI(&zfkt);   
-      // //    Vec UBounds(rFactor.size(),INIT,2);
-      // //    Vec LBounds(rFactor.size(),INIT,0.000001);
-      // //    OPTI.setStateBounds(UBounds,LBounds);
-      // //    OPTI.setInitialState(rFactor);
-      // //    OPTI.setProfitMagnitude(0);
-      // //    OPTI.setMaxCuts(3);
-      // //    OPTI.setMinhnMaxh(0.001,0.5);
-      // //    OPTI.activateFortranOutput();
-      // //    OPTI.optimize();
-
-      // //    rFactor = OPTI.getx();
-      //   }
-
-      //   //   DiagMat E(G.size(),INIT,1.);
-      //   //    DiagMat R(G.size());
-      //   //     for(int i=0; i<G.size(); i++) {
-      //   //	R(i) = r(i);
-      //   // }
-      //   //SqrMat A = SqrMat(E-R*G);
-      //   //cout << trans(eigval(A)) <<endl;
-
-      //   // if((**i).isActive()) {
-      //   //(**i).updaterFactors();
-      //   // Vector<int> unsure = (**i).getrFactorUnsure();
-      //   // if(max(unsure)==1) {
-      //   //cout << unsure << endl;
-      //   //cout << G << endl;
-      //   //      }
-      //   //}
-      //   //}
-      //   }
-  } else {
-    cout << "Unknown strategy" << endl;
-    throw 5;
-  }
+    } else {
+      cout << "Unknown strategy" << endl;
+      throw 5;
+    }
 
   }
 
@@ -736,6 +665,20 @@ namespace MBSim {
     }
   }
 
+  void MultiBodySystem::updateM(double t) {
+
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updateM(t);
+  }
+
+  void MultiBodySystem::updateT(double t) {
+
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updateT(t);
+  }
+
   void MultiBodySystem::updateh(double t) {
 
     vector<Object*>::iterator i;
@@ -750,19 +693,14 @@ namespace MBSim {
       (**i).updateW(t);
   }
 
-  void MultiBodySystem::updateG(double t) {
+  void MultiBodySystem::updateGb(double t) {
     G.init(0);
     b.init(0);
-    w.init(0);
 
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
-      (**i).updateG(t);
+      (**i).updateGb(t);
 
-    updateGs();
-  }
-
-  void MultiBodySystem::updateGs() {
     if(checkGSize)
       Gs.resize();
     else if(Gs.cols() != G.size()) {
@@ -1031,7 +969,7 @@ namespace MBSim {
   }
 
   void MultiBodySystem::computeConstraintForces(double t) {
-    la = slvLL(G, -(w+b));
+    la = slvLL(G, -b);
   }
 
   void MultiBodySystem::projectViolatedConstraints(double t) {

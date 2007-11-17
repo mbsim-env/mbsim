@@ -64,8 +64,10 @@ namespace MBSim {
       virtual void updatezd(double t);
       virtual void updatedu(double t, double dt);
       virtual void updatedq(double t, double dt);
+      void updateT(double t) {(this->*updateT_)();}
+
       void (BodyRigid::*updateAK0K)();
-      void (BodyRigid::*updateT)();
+      void (BodyRigid::*updateT_)();
       void noUpdateAK0K() {}
       void noUpdateT() {}
       void updateAK0KAxis();
