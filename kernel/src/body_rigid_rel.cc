@@ -338,53 +338,6 @@ namespace MBSim {
     }
   }
 
-  void BodyRigidRel::updateMh(double t) {
-    sumUpForceElements(t);
-
-    Vec KF = trans(AWK)*WF;
-    Vec KM = trans(AWK)*WM;
-    l(0,2) = KF - m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS));
-    l(3,5) = KM + crossProduct(I*KomegaK,KomegaK);
-
-    if(precessor) {
-      Vec f(6,NONINIT);
-      f(0,2) = trans(APK)*(crossProduct(precessor->getKomegaK(), 2*(JT*u(iT))+crossProduct(precessor->getKomegaK(),PrPK)));
-      f(3,5) = crossProduct(KomegaK,JR*u(iR));
-
-      C(Index(0,2),Index(0,2)) = trans(APK);
-      C(Index(3,5),Index(3,5)) = trans(APK);
-      C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
-
-      e = C*precessor->gete()+f;
-
-      J(Index(0,2),IuT) = trans(APK)*JT;
-      J(Index(3,5),IuR) = JR;
-      BodyRigidRel* nextBody = precessor;
-      while(nextBody) {
-	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
-	nextBody = nextBody->getPrecessor();
-      }
-
-      l -= Mh*e;
-
-      Index I(0,uInd+uSize-1);
-      tree->geth()(I) += trans(J)*l;
-      tree->getM()(I) += JTMJ(Mh,J);
-    } else {
-
-      J(Index(0,2),IuT) = trans(APK)*JT;
-      J(Index(3,5),IuR) = JR;
-
-      Index I(0,uInd+uSize-1);
-      tree->geth()(I) = trans(J)*l;
-      tree->getM()(I) = JTMJ(Mh,J);
-    }
-
-    for(int i=0; i<successor.size(); i++) {
-      successor[i]->updateMh(t);
-    }
-  }
-
   void BodyRigidRel::updateCenterOfGravity(double t) {
 
     (this->*updateAK0K)();
