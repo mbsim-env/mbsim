@@ -57,7 +57,6 @@ namespace MBSim {
     virtual void updateqd(double t);
 
     void updateM(double t);
-    void updateMh(double t);
 
     public:
 
