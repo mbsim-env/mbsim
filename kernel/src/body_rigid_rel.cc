@@ -158,6 +158,18 @@ namespace MBSim {
 	tree->addLink(it1->link,port[portID],objectID);
       it1++;
     }
+    vector<LinkPortData>::iterator it4=linkSingleValuedPortData.begin(); 
+    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+      int portID = it4->ID;
+      int objectID = it4->objectID;
+      bool addLink = true;
+      for(int j=0; j<tree->linkSingleValuedPortData.size(); j++)
+	if(tree->linkSingleValuedPortData[j].link == it4->link)
+	  addLink = false;
+      if(addLink)
+	tree->addLink(it4->link,port[portID],objectID);
+      it4++;
+    }
 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
     for(int i=0; i<linkSetValuedContourData.size(); i++) {
@@ -171,6 +183,19 @@ namespace MBSim {
 	tree->addLink(it2->link,contour[contourID],objectID);
 
       it2++;
+    }
+    vector<LinkContourData>::iterator it3=linkSingleValuedContourData.begin(); 
+    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+      int contourID = it3->ID;
+      int objectID = it3->objectID;
+      bool addLink = true;
+      for(int j=0; j<tree->linkSingleValuedContourData.size(); j++)
+	if(tree->linkSingleValuedContourData[j].link == it3->link)
+	  addLink = false;
+      if(addLink) 
+	tree->addLink(it3->link,contour[contourID],objectID);
+
+      it3++;
     }
 
     for(int i=0; i<successor.size(); i++) {

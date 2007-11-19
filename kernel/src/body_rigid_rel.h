@@ -113,6 +113,8 @@ namespace MBSim {
 
     Port* getPort(const string &pName);
     Contour* getContour(const string &cName);
+
+    Object* getResponsible() {return tree;}
   };
 
 }
