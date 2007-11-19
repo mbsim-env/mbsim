@@ -42,6 +42,8 @@ namespace MBSim {
   class BodyRigid : public Body {
 
     protected:
+      /** mass */
+      double m;
       SymMat I, Mh;
       Vec WrOK, WvK, WomegaK, KomegaK, KrKS;
       SqrMat AWK, AK0K;

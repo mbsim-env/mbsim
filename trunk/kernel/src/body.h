@@ -34,7 +34,6 @@ namespace MBSim {
   class Body : public Object {
 
     protected:
-      double m;
 
     public:
       Body(const string &name);
