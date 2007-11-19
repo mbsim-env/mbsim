@@ -32,6 +32,7 @@ namespace AMVis {class Arrow;}
 #endif
 
 namespace MBSim {
+  //class Object;
   class Port;
   class Contour;
   class MultiBodySystem;
@@ -80,6 +81,8 @@ namespace MBSim {
       HitSphereLink* HSLink;
       bool checkHSLink;
 
+     // vector<Object*> object;
+
 #ifdef HAVE_AMVIS
       vector<AMVis::Arrow*> arrowAMVis;
       vector<double> arrowAMVisScale;
@@ -97,6 +100,10 @@ namespace MBSim {
 
       Link(const string &name, bool setValued);
       ~Link();
+
+     // Object* getObject(int id) { return object[id]; }
+     // void addObject(Object* obj) { object.push_back(obj); }
+     // int getNumObjects() const { return object.size(); }
 
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};

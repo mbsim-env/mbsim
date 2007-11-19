@@ -144,6 +144,8 @@ namespace MBSim {
 
     virtual void facLLM();
 
+    virtual Object* getResponsible() {return this;}
+
     /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
     */
     //virtual void updateJh_internal(double t);

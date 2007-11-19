@@ -114,22 +114,23 @@ namespace MBSim {
       Mat W = system.getW().copy();
       Vec h = system.geth().copy();
       Mat T = system.getT().copy();
-      //system.updateJh(t);
-      //Mat Jh2 = system.getJh();
+      system.updateJh(t);
+      Mat Jh = system.getJh();
 
-Mat Jh(nu,n);
-static const double eps = epsroot();
-for(int i=0;i<n;i++) {
-  double zSave = z(i);
-  z(i) += eps;
-  system.updateKinematics(t);
-  system.updateLinksStage1(t);
-  system.updateLinksStage2(t);
-  system.updateh(t); 
-  Vec hm = system.geth();
-  Jh.col(i) << (hm-h)/(eps);
-  z(i) = zSave;
-}
+      // Global computation of Jacobian only for validation of function getJh
+//Mat Jh(nu,n);
+//static const double eps = epsroot();
+//for(int i=0;i<n;i++) {
+//  double zSave = z(i);
+//  z(i) += eps;
+//  system.updateKinematics(t);
+//  system.updateLinksStage1(t);
+//  system.updateLinksStage2(t);
+//  system.updateh(t); 
+//  Vec hm = system.geth();
+//  Jh.col(i) << (hm-h)/(eps);
+//  z(i) = zSave;
+//}
 
       Vector<int> ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*T,ipiv));
@@ -149,9 +150,11 @@ for(int i=0;i<n;i++) {
       u += du;
       x += system.deltax(z,t,dt);
 
-///cout << "system. Jh = " << system.getJh() << endl;
-///cout << "numeric.Jh = " << Jh2 << endl;
-//cout << "      diff = " << Jh - Jh2 << endl;
+//if(abs(nrmInf(Jh)-nrmInf(Jh2)) > 1e-10) {
+//cout << "system. Jh = " << Jh2 << endl;
+//cout << "numeric.Jh = " << Jh << endl;
+//  cout << "      diff = " << Jh - Jh2 << endl;
+//}
 
       if(driftCompensation)
 	system.projectViolatedConstraints(t);
