@@ -109,8 +109,7 @@ namespace MBSim {
     parafile << "Contour" << endl;
   }
 
-  Point::Point(const string &name) : Contour(name) {
-  }
+  Point::Point(const string &name) : Contour(name) {}
 
   Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {
   }
@@ -215,12 +214,9 @@ namespace MBSim {
   }
 
 
-  Plane::Plane(const string &name) : Contour(name), Cn(3) {
-  }
+  Plane::Plane(const string &name) : Contour(name) {}
 
-  void Plane::setCn(const Vec &n) {
-    Cn = n/nrm2(n);
-  }
+  void Plane::setCn(const Vec &n) { Cn = n/nrm2(n);}
 
   Area::Area(const string &name) : Contour(name), lim1(1), lim2(1), Cn(3), Cd1(3), Cd2(3) {
   }
@@ -281,8 +277,8 @@ namespace MBSim {
     }
   }
 
-  Frustum::Frustum(const string &name) : Contour(name), a(3), r(2), h(0), outCont(false) {
-  }
+  Frustum::Frustum(const string &name) : Contour(name), h(0), outCont(false) {}
+  Frustum::Frustum(const string &name, bool outCont_) : Contour(name), h(0), outCont(outCont_) {}
 
   Contour2s::Contour2s(const string &name) : Contour(name) {
   }

@@ -27,7 +27,6 @@
 #include "fmatvec.h"
 #include <vector>
 
-
 using namespace fmatvec;
 
 namespace MBSim {
@@ -35,16 +34,17 @@ namespace MBSim {
   class ContourPointData;
   class Contour;
 
+  /*! Computes a perpendicular vector \result t to the normal \param n */	
   Vec computeTangential(const Vec &n);
 
-  /*! \brief Basis class for contact kinematical calculations
-   *
-   *  the generalised position to the contact point including normal and tangential directions need to be up-to-date latest at the end of stage2();
-   *
-   *  per default non data is stored or managed within this class
+  /*! 
+   * \brief Basis class for contact kinematical calculations
+   *  The generalised position to the contact point including normal and tangential directions need to be up-to-date latest at the end of stage2()
+   *  Per default no data is stored or managed within this class
    */
   class ContactKinematics {
-    public:
+  	public:
+      /*! Destructor */
       virtual ~ContactKinematics() {}
 
       /*! compute \f$\vg_N\f, which MUST be provided, others optional$
@@ -55,6 +55,7 @@ namespace MBSim {
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
       virtual void stage1(Vec &g, vector<ContourPointData> &cpData) = 0;
+
       /*! compute \f$\dot{\vg}\f$, force directions, ... must be up-to-date at end of method
        * \param contour  vector of Contour holding both contours
        * \param i1       index of first contour within all data-vectors
@@ -64,12 +65,10 @@ namespace MBSim {
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
       virtual void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) = 0;
-
-
+	  /*! Treats ordering of contours \param contour */
       virtual void assignContours(const vector<Contour*> &contour) = 0;
-      void assignContours(Contour *contour1, Contour *contour2) { vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
-    protected:
-
+      /*! Treats ordering of contours \param contour1 and \param contour2 */
+      void assignContours(Contour *contour1, Contour *contour2) {vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
   };
 
 }

@@ -98,17 +98,14 @@ namespace MBSim {
 #endif
   };
 
-  /*! \brief most primitive Contour: the point (no extention)
-   *
-   * */
+  /*! \brief Most primitive Contour: the Point (no extention) */
   class Point : public Contour {
     public:
+      /*! Constructor with \param name */
       Point(const string &name);
   };
 
-  /*! \brief unbounded line with constant normal
-   *
-   * */
+  /*! \brief unbounded line with constant normal */
   class Line : public Contour {
 
     protected:
@@ -126,9 +123,7 @@ namespace MBSim {
       Vec computeWt() {return AWC*crossProduct(Cn,Cb);}
   };
 
-  /*! \brief circular Contour with material included inside
-   *
-   * */
+  /*! \brief circular Contour with material included inside */
   class CircleSolid : public Contour {
 
     protected:
@@ -146,9 +141,7 @@ namespace MBSim {
   };
 
 
-  /*! \brief circular Contour describing hole in material
-   *
-   * */
+  /*! \brief circular Contour describing hole in material */
   class CircleHollow : public Contour {
 
     protected:
@@ -192,9 +185,7 @@ namespace MBSim {
 
   };
 
-  /*! \brief Parent for contours described by one contour parameter \f$s\f$
-   *
-   * */
+  /*! \brief Parent for contours described by one contour parameter \f$s\f$ */
   class Contour1s : public Contour {
     protected:
       double as, ae;
@@ -232,9 +223,7 @@ namespace MBSim {
       const Vec& getNodes() const {return nodes;}
   };
 
-  /*! \brief analytical description of contours
-   *
-   * */
+  /*! \brief analytical description of contours */
   class Contour1sAnalytical : public Contour1s {
     protected:
       UserFunctionContour1s  *funcCrPC;
@@ -265,9 +254,7 @@ namespace MBSim {
       virtual void init();
   };
 
-  /*! \brief 1s flexible
-   *
-   * */
+  /*! \brief 1s flexible */
   class Contour1sFlexible : public Contour1s {
     protected:
 
@@ -310,26 +297,23 @@ namespace MBSim {
       Vec computeWomega(const ContourPointData &cp);
   };
 
-  /*! \brief Contour Plane without borders
-   *
-   * */
+  /*! \brief Contour Plane without borders */
   class Plane : public Contour {
-
-    protected:
+    private:
       Vec Cn;
 
     public:
+      /*! Constructor with \param name */
       Plane(const string &name);
-
-      const Vec& getCn() const {return Cn;} 
+      /*! Get normal \return Cn of the Plane in local FR */
+      const Vec& getCn() const {return Cn;}
+      /*! Set normal \param Cn of the Plane in local FR */
       void setCn(const Vec& Cn_);
-
+      /*! Compute normal \return AWC*Cn of the Plane in inertial FR */
       Vec computeWn() {return AWC*Cn;}
   };
 
-  /*! \brief Contour Area 
-   *
-   * */
+  /*! \brief Contour Area */
   class Area : public Contour {
 
     protected:
@@ -352,9 +336,7 @@ namespace MBSim {
       Vec computeWd2() {return AWC*Cd2;}
   };
 
-  /*! \brief Contour Edge
-   *
-   * */
+  /*! \brief Contour Edge */
   class Edge : public Contour {
 
     protected:
@@ -375,9 +357,7 @@ namespace MBSim {
       Vec computeWd() {return AWC*Cd;}
   };
 
-  /*! \brief Contour Sphere
-   *
-   * */
+  /*! \brief Contour Sphere */
   class Sphere : public Contour {
     protected:
       double r;
@@ -389,38 +369,40 @@ namespace MBSim {
       virtual void init();
   };
 
-  /*! 
-   * \brief Frustum of height h, axis a (contour FR) and in direction of the axis upper r(1) and lower radius r(0)
-   *  Further it can be distinguished if the contact is on the outer or inner surface by outCont.
-   *  Authors: Martin Foerg, Thorsten Schindler
-   */
-  class Frustum : public Contour {
-    private:
-      Vec a;
-      Vec r;
-      double h;
-      bool outCont;
-
-    public:
-      Frustum(const string &name);
-      /*! Set Radii of the Frustum */
-      void setRadii(const Vec &r_) {r = r_;}
-      /*! Get Radii of the Frustum */
-      const Vec& getRadii() const {return r;}
-      /*! Set Axis of the Frustum in contour FR */
-      void setAxis(const Vec &a_) {a = a_/nrm2(a_);}
-      /*! Get Axis of the Frustum in contour FR */
-      const Vec& getAxis() const {return a;} 
-      /*! Set Height of the Frustum */
-      void setHeight(double h_) {h = h_;}
-      /*! Get Height of the Frustum */
-      double getHeight() const {return h;}
-      /*! Set Contact on outer surface of the Frustum */
-      void setOutCont(bool outCont_) {outCont = outCont_;}
-      /*! Get Contact on outer surface of the Frustum */
-      bool getOutCont() const {return outCont;}
-  }; 
-
+ /*! 
+  * \brief Frustum of height h, axis a (contour FR) and in direction of the axis upper r(1) and lower radius r(0)
+  *  Further it can be distinguished if the contact is on the outer or inner surface by outCont.
+  *  Authors: Martin Foerg, Thorsten Schindler
+  */
+ class Frustum : public Contour {
+	    private:
+		      Vec a;
+		      Vec r;
+		      double h;
+		      bool outCont;
+		
+	    public:
+	    	  /*! Constructor with \param name and \default outCont=false */
+		      Frustum(const string &name);
+		      /*! Constructor with \param name and \param outCont_ */
+		      Frustum(const string &name, bool outCont_);
+		      /*! Set Radii \param r_ of the Frustum */
+		      void setRadii(const Vec &r_) {r = r_;}
+		      /*! Get Radii \return r of the Frustum */
+		      const Vec& getRadii() const {return r;}
+		      /*! Set Axis \param a_ of the Frustum in contour FR */
+		      void setAxis(const Vec &a_) {a = a_/nrm2(a_);}
+		      /*! Get Axis \return a of the Frustum in contour FR */
+		      const Vec& getAxis() const {return a;} 
+		      /*! Set Height \param h_ of the Frustum */
+		      void setHeight(double h_) {h = h_;}
+		      /*! Get Height \return h of the Frustum */
+		      double getHeight() const {return h;}
+		      /*! Set Contact \param outcont_ on outer surface of the Frustum */
+		      void setOutCont(bool outCont_) {outCont = outCont_;}
+		      /*! Get Contact \return outcont on outer surface of the Frustum */
+		      bool getOutCont() const {return outCont;}
+  };
 
   /*! \brief Parent for contours described by two contour parameters \f$\vs\f$
    *
@@ -560,4 +542,4 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _CONTOUR_H_ */

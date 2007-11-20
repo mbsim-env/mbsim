@@ -31,7 +31,10 @@ namespace MBSim {
   class Point;
   class Plane; 
 
-  /** pairing Point to Plane; author: Martin Foerg */
+  /*! 
+   * Pairing Point to Plane
+   * Author: Martin Foerg
+   */
   class ContactKinematicsPointPlane : public ContactKinematics {
     private:
       int ipoint, iplane;
@@ -39,13 +42,14 @@ namespace MBSim {
       Plane *plane;
 
     public:
+      /*! Compute normal distance \param g in contact point \param cpData */
       void stage1(Vec &g, vector<ContourPointData> &cpData);
+      /*! Compute tangential directions and normal velocities \param gd in contact points \param cpData with distance \param g*/
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
-
+      /*! Treat ordering of contacting bodies \param contour in connect-call */
       void assignContours(const vector<Contour*> &contour);
   };
 
 }
 
-#endif
-
+#endif /* _CONTACT_KINEMATICS_POINT_PLANE_H_ */
