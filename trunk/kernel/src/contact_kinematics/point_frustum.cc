@@ -27,84 +27,87 @@
 
 namespace MBSim {
 
-  void ContactKinematicsPointFrustum::assignContours(const vector<Contour*> &contour) {
+	  void ContactKinematicsPointFrustum::assignContours(const vector<Contour*> &contour)
+	  {
+	  		// ASSIGNCONTOURS treats the ordering of the bodies in connect-call
+			// INPUT	contour	Vector of the two body contours
+		
+	    	if(dynamic_cast<Point*>(contour[0])) {
+	      		ipoint = 0;
+	      		ifrustum = 1;
+	      		point = static_cast<Point*>(contour[0]);
+	      		frustum = static_cast<Frustum*>(contour[1]);
+	    	}
+	    	else {
+	      		ipoint = 1;
+	      		ifrustum = 0;
+	      		point = static_cast<Point*>(contour[1]);
+	      		frustum = static_cast<Frustum*>(contour[0]);
+	    	}
+	  }
 
-    // ASSIGNCONTOURS treats the ordering of the bodies in connect-call
-    // INPUT	contour	Vector of the two body contours
+	  void ContactKinematicsPointFrustum::stage1(Vec &g, vector<ContourPointData> &cpData)
+	  {
+	  		// STAGE1 computes normal distance in the possible contact point
+			// INPUT	g		Normal distance (OUTPUT)
+			//			cpData	Contact parameter (OUTPUT)
+			
+			double eps = 5.e-8; // tolerance for rough contact description
+		    Vec Wd; Wd = point->getWrOP() - frustum->getWrOP(); // difference vector of Point and Frustum basis point in inertial FR
+		    Vec Wa; Wa = frustum->getAWC()*frustum->getAxis(); // axis in inertial FR
+		    Vec r; r = frustum->getRadii(); // radii of Frustum
+		    double h = frustum->getHeight(); // height of Frustum	    
+		    double s = trans(Wd)*Wa; // projection of difference vector on axis
+		    double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
+		    double r_h = r(0) + (r(1)-r(0))/h * s; // radius of Frustum at s
+		    bool outCont = frustum->getOutCont(); // contact on outer surface?
+		    
+		   	if(s<0 || s>h  || d < (r_h-eps) || d > (r_h+eps)) g(0) = 1.;		    
+		    else {
+		    	if(outCont) { // contact on outer surface
+				      double  phi = atan((r(1) - r(0))/h); // half cone angle
+				      Vec b; b = Wd-s*Wa;
+				      b /= d;
+				      cpData[ifrustum].Wn = sin(phi)*Wa - cos(phi)*b;
+				      cpData[ipoint].Wn  = -cpData[ifrustum].Wn;    
+				      g(0) = (d-r_h)*cos(phi);
+		    	}
+		    	else { // contact on inner surface
+				      double  phi = atan((r(1) - r(0))/h); // half cone angle
+				      Vec b; b = Wd-s*Wa;
+				      b /= d;
+				      cpData[ifrustum].Wn = -(sin(phi)*Wa - cos(phi)*b);
+				      cpData[ipoint].Wn  = -cpData[ifrustum].Wn;
+				      g(0) = (r_h-d)*cos(phi);
+		    	}  
+		    } 
+	  }
 
-    if(dynamic_cast<Point*>(contour[0])) {
-      ipoint = 0; ifrustum = 1;
-      point = static_cast<Point*>(contour[0]);
-      frustum = static_cast<Frustum*>(contour[1]);
-    } else {
-      ipoint = 1; ifrustum = 0;
-      point = static_cast<Point*>(contour[1]);
-      frustum = static_cast<Frustum*>(contour[0]);
-    }
-  }
-
-  void ContactKinematicsPointFrustum::stage1(Vec &g, vector<ContourPointData> &cpData) {
-    // STAGE1 computes normal distance in the possible contact point
-    // INPUT  	g	Normal distance (OUTPUT)
-    // 		cpData 	Contact parameter (OUTPUT)
-
-    double eps = 5.e-3; // tolerance for rough contact description
-    Vec Wd; Wd = point->getWrOP() - frustum->getWrOP(); // difference vector of Point and Frustum basis point in inertial FR
-    Vec Wa; Wa = frustum->getAWC()*frustum->getAxis(); // axis in inertial FR
-    Vec r; r = frustum->getRadii(); // radii of Frustum
-    double h = frustum->getHeight(); // height of Frustum
-    if(h==0.) {cout << "Frustum contour with height h=0!" << endl; throw(1);}	    
-    double s = trans(Wd)*Wa; // projection of difference vector on axis
-    double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
-    double r_h = r(0) + (r(1)-r(0))/h * s; // radius of Frustum at s
-    bool outCont = frustum->getOutCont(); // contact on outer surface?
-
-    if(s<0 || s>h  || d < (r_h-eps) || d > (r_h+eps)) g(0) = 1.;		    
-    else {
-      if(outCont) { // contact on outer surface
-	double  phi = atan((r(1) - r(0))/h); // half cone angle
-	Vec b; b = Wd-s*Wa;
-	b /= d;
-	cpData[ifrustum].Wn = sin(phi)*Wa - cos(phi)*b;
-	cpData[ipoint].Wn  = -cpData[ifrustum].Wn;    
-	g(0) = (d-r_h)*cos(phi);
-      }
-      else { // contact on inner surface
-	double  phi = atan((r(1) - r(0))/h); // half cone angle
-	Vec b; b = Wd-s*Wa;
-	b /= d;
-	cpData[ifrustum].Wn = -(sin(phi)*Wa - cos(phi)*b);
-	cpData[ipoint].Wn  = -cpData[ifrustum].Wn;
-	g(0) = (r_h-d)*cos(phi);
-      }  
-    } 
-  }
-
-  void ContactKinematicsPointFrustum::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
-    // STAGE2 computes tangential directions and normal velocities in contact point
-    // INPUT 	g 	Normal distance
-    //		gd	Normal velocity (OUTPUT)
-    //		cpData	Contact parameter (OUTPUT)
-
-    Vec WrPC[2], WvC[2];
-
-    cpData[ipoint].WrOC= point->getWrOP();
-    cpData[ifrustum].WrOC =  cpData[ipoint].WrOC - cpData[ipoint].Wn*g;
-    WrPC[ifrustum] = cpData[ifrustum].WrOC - frustum->getWrOP();
-    WvC[ipoint] = point->getWvP();
-    WvC[ifrustum] = frustum->getWvP()+crossProduct(frustum->getWomegaC(),WrPC[ifrustum]);
-    Vec WvD = WvC[ipoint] - WvC[ifrustum];
-    gd(0) = trans(cpData[ipoint].Wn)*WvD; // positive for enlarging the distance between Point and Frustum
-
-    if(cpData[ipoint].Wt.cols()) {
-      // If the Frustum does not degenerate to a Cylinder, the first column is the tangential direction
-      // and the second column the radial direction of the Frustum:
-      cpData[ipoint].Wt.col(0) = computeTangential(cpData[ipoint].Wn);
-      cpData[ipoint].Wt.col(1) = crossProduct(cpData[ipoint].Wn,cpData[ipoint].Wt.col(0));
-      cpData[ifrustum].Wt = -cpData[ipoint].Wt;
-      static Index iT(1,cpData[ipoint].Wt.cols());
-      gd(iT) = trans(cpData[ipoint].Wt)*WvD;
-    }
-  }
-
+	  void ContactKinematicsPointFrustum::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData)
+	  {
+	  		// STAGE2 computes tangential directions and normal velocities in contact point
+			// INPUT	g		Normal distance
+			//			gd		Normal velocity (OUTPUT)
+			//			cpData	Contact parameter (OUTPUT)
+	
+		    Vec WrPC[2], WvC[2];
+		
+		    cpData[ipoint].WrOC= point->getWrOP();
+		    cpData[ifrustum].WrOC =  cpData[ipoint].WrOC - cpData[ipoint].Wn*g;
+		    WrPC[ifrustum] = cpData[ifrustum].WrOC - frustum->getWrOP();
+		    WvC[ipoint] = point->getWvP();
+		    WvC[ifrustum] = frustum->getWvP()+crossProduct(frustum->getWomegaC(),WrPC[ifrustum]);
+		    Vec WvD = WvC[ipoint] - WvC[ifrustum];
+		    gd(0) = trans(cpData[ipoint].Wn)*WvD; // positive for enlarging the distance between Point and Frustum
+		
+		    if(cpData[ipoint].Wt.cols()) {
+		    	  // If the Frustum does not degenerate to a Cylinder, the first column is the tangential direction
+		    	  // and the second column the radial direction of the Frustum:
+			      cpData[ipoint].Wt.col(0) = computeTangential(cpData[ipoint].Wn);
+			      cpData[ipoint].Wt.col(1) = crossProduct(cpData[ipoint].Wn,cpData[ipoint].Wt.col(0));
+			      cpData[ifrustum].Wt = -cpData[ipoint].Wt;
+			      static Index iT(1,cpData[ipoint].Wt.cols());
+			      gd(iT) = trans(cpData[ipoint].Wt)*WvD;
+		    }
+	  }
 }
