@@ -255,7 +255,7 @@ namespace MBSim {
     */
     virtual double computePotentialEnergy() {return 0; }
 
-    /*! compute Jacobian \f$\boldsymbol{J}=\ptdiff{\boldsymbol{h}}{\boldsymbol{z}}\f$ of generalized force vector
+    /*! compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector
     */
     virtual void updateJh(double t);
   };
