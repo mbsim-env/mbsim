@@ -89,6 +89,7 @@ namespace MBSim {
 
     double computeKineticEnergy();
     double computeKineticEnergyBranch();
+    double computePotentialEnergyBranch();
 
     int getWSize() const { return tree->getuSize(); }
     void initStage1();

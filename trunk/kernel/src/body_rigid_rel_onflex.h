@@ -64,8 +64,6 @@ namespace MBSim {
 
     void setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
     BodyFlexible* getPrecessor() {return precessor;}
-
-    double computePotentialEnergyBranch();
   };
 
 }

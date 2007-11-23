@@ -352,7 +352,11 @@ namespace MBSim {
 //	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
 //	nextBody = nextBody->getPrecessor();
 //      }
+//
+// TODO: ist nur eine voruebergehende Lsg, bis mir was besseres einfaellt...
        J(Index(0,5),Index(0,precessor->getIuR().end())) = C*precessor->getJ();
+// ...!
+
     }
     J(Index(0,2),IuT) = trans(APK)*JT;
     J(Index(3,5),IuR) = JR;
@@ -462,6 +466,12 @@ namespace MBSim {
     for(int i=0; i<successor.size(); i++) {
       Ttemp += successor[i]->computeKineticEnergyBranch();
     }
+  }
+
+  double BodyRigidRel::computePotentialEnergyBranch() {
+    double Vbranch = BodyRigid::computePotentialEnergy();
+    for(int i=0; i<successor.size(); i++)
+      Vbranch += successor[i]->computePotentialEnergy();
   }
 
   void BodyRigidRel::updatedq(double t, double dt) {

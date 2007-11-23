@@ -269,10 +269,4 @@ namespace MBSim {
     KvK  = trans(AWK) * WvK;
   }
 
-  double BodyRigidRelOnFlex::computePotentialEnergyBranch() {
-    double Vbranch = BodyRigid::computePotentialEnergy();
-    for(int i=0; i<successor.size(); i++)
-      Vbranch += successor[i]->computePotentialEnergy();
-  }
-
 }
