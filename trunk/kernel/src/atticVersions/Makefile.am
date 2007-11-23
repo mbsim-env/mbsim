@@ -10,7 +10,6 @@ multi_body_system.cc\
 body_rigid.cc\
 body_rigid_abs.cc\
 body_rigid_rel.cc\
-body_rigid_rel_onflex.cc\
 body_rigid_constrained.cc\
 body_flexible.cc\
 connection.cc\
@@ -25,8 +24,6 @@ impact_rigid.cc\
 load.cc\
 element.cc\
 tree.cc\
-tree_rigid.cc\
-tree_flexroot.cc\
 contour.cc\
 port.cc\
 data_interface_base.cc\
@@ -49,7 +46,6 @@ multi_body_system.h\
 body_rigid.h\
 body_rigid_abs.h\
 body_rigid_rel.h\
-body_rigid_rel_onflex.h\
 body_rigid_constrained.h\
 body_flexible.h\
 connection.h\
@@ -64,8 +60,6 @@ impact_rigid.h\
 load.h\
 element.h\
 tree.h\
-tree_rigid.h\
-tree_flexroot.h\
 port.h\
 contour.h\
 contour_pdata.h\

@@ -35,9 +35,7 @@ namespace MBSim {
    * */
   class BodyRigidRel : public BodyRigid {
 
-    friend class TreeRigid;
-    friend class TreeFlexRoot;
-    friend class BodyRigidRelOnFlex;
+    friend class Tree;
 
     protected:
     Index Il;
@@ -50,9 +48,9 @@ namespace MBSim {
     Index IuT, IuR, iI;
     SqrMat C;
 
+    virtual void updateKinematics(double t);
     virtual void updateCenterOfGravity(double t);
     virtual void updateh(double t);
-    virtual void updateKinematics(double t);
     virtual void updateWj(double t);
     virtual void updater(double t);
     virtual void updatedq(double t, double dt);
@@ -61,6 +59,7 @@ namespace MBSim {
     void updateM(double t);
 
     public:
+
     BodyRigidRel(const string &name);
 
     void calcSize();
@@ -88,7 +87,6 @@ namespace MBSim {
 
 
     double computeKineticEnergy();
-    double computeKineticEnergyBranch();
 
     int getWSize() const { return tree->getuSize(); }
     void initStage1();
