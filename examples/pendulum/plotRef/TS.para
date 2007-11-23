@@ -1,0 +1,5 @@
+MultibodySystem: 	TS
+solver: 		FixedPointSingle(local)
+
+Objects:
+#  Baum
