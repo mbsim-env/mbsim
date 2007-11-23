@@ -1,7 +1,7 @@
 #include "pendulum.h"
 #include "body_rigid_rel.h"
 #include "objobject.h"
-#include "tree.h"
+#include "tree_rigid.h"
 
 using namespace AMVis;
 
@@ -13,7 +13,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   grav(1)=-9.81;
   setGrav(grav);
 
-  Tree *tree = new Tree("Baum"); 
+  TreeRigid *tree = new TreeRigid("Baum"); 
   addObject(tree);
 
   double mStab = 0.2;
