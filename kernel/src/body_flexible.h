@@ -40,8 +40,8 @@ namespace MBSim {
    * general definitions, common implementation e.g. for updateW(double t) and sumUpForceElements(double t)
    */
   class BodyFlexible : public Body {
-    friend class FlexRel;
-    friend class BodyRigidRelFlex;
+    friend class TreeFlexRoot;
+    friend class BodyRigidRelOnFlex;
 
     protected:
       /** JACOBIAN-matrizes: \f$\vJ_{ges}=(\vJ_T,\vJ_R)\f$ */
@@ -81,7 +81,12 @@ namespace MBSim {
        *  \param dt time step size
        */
       void updatedq(double t, double dt);
+      /*! compute \f$\dot{\vq}\f$
+       *  \param t  time of evaluation
+       */
+      void updateqd(double t) {qd << u;}
 
+      void updateT(double t) {}
 
       /** indices of forces and moments in load vectors, finally defined in derived and specified classes/bodies
       */

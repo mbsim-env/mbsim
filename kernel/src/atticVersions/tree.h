@@ -32,44 +32,41 @@ using namespace std;
 
 namespace MBSim {
 
+  class BodyRigidRel;
+  class Port;
+
   /*! \brief Class for subsystems with tree structure
    *
    * */
   class Tree : public Object {
-    friend class BodyRigidRel;
 
+    friend class BodyRigidRel;
     private:
 
     protected:
     int lSize;
+    BodyRigidRel *root;
     Vec l;
     Mat J;
     SymMat Mh;
     Vec invMh;
+
+    double computePotentialEnergyBranch(BodyRigidRel* body);
 
     public:
 
     Tree(const string &projectName);
     ~Tree();
 
-    virtual void updateKinematics(double t) = 0;
-    virtual void updateh(double t) = 0;
-    virtual void updateM(double t) = 0;
-    virtual void updateT(double t) = 0;
-    virtual void updateWj(double t) = 0;
-    virtual void updatezd(double t) = 0;
-    virtual void updatedq(double t, double dt) = 0;
-    virtual void updatedu(double t, double dt) = 0;
+    void updateKinematics(double t);
+    void updateT(double t);
+    void updateh(double t);
+    void updateM(double t);
 
-    virtual void calcSize() = 0;
-
-    virtual void updateqRef() = 0;
-    virtual void updateqdRef() = 0;
-    virtual void updatezdRef() = 0;
-    virtual void updateuRef() = 0;
-    virtual void updatehRef() = 0;
-    virtual void updaterRef() = 0;
-    virtual void updateTRef() = 0;
+    void updateWj(double t);
+    void updatezd(double t);
+    void updatedq(double t, double dt);
+    void updatedu(double t, double dt);
 
     const Vec& getl() const {return l;}
     Vec& getl() {return l;}
@@ -80,16 +77,34 @@ namespace MBSim {
     const Vec& getInvMh() const {return invMh;}
     Vec& getInvMh() {return invMh;}
 
-    int getlSize()   const    { return lSize;   }
+    void calcSize();
+
+    int getlSize() const { return lSize; }
     void setqSize(int qSize_) { qSize = qSize_; }
     void setuSize(int uSize_) { uSize = uSize_; }
     void setxSize(int xSize_) { xSize = xSize_; }
     void setlSize(int lSize_) { lSize = lSize_; }
 
-    virtual double computePotentialEnergy() { return 0.5*trans(u)*M*u; }
+    void setRoot(BodyRigidRel* root_);
+    void updateqRef();
+    void updateqdRef();
+    void updatezdRef();
+    void updateuRef();
+    void updatehRef();
+    void updaterRef();
+    void updateTRef();
+    void init();
+    void initz();
+    void initPlotFiles();
+    void plot(double t, double dt=1);
 
-    virtual Port* getPort(const string &pName) = 0;
-    virtual Contour* getContour(const string &cName) = 0;
+    void setMbs(MultiBodySystem* mbs);
+    void setFullName(const string &name);
+
+    double computePotentialEnergy();
+
+    Port* getPort(const string &pName);
+    Contour* getContour(const string &cName);
   };
 
 }

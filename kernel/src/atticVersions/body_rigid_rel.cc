@@ -29,7 +29,7 @@
 
 namespace MBSim {
 
-  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), APK(3), APK0(3), lSize(6), lInd(0), tree(0), PrPK(3), PrPK0(3), KrOK(3), KvK(3), e(6), precessor(0), successor(0), C(6) {
+  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), APK(3), APK0(3), lSize(6), lInd(0), tree(0), PrPK(3), PrPK0(3), KrOK(3), KvK(3), e(6), precessor(0), C(6) {
 
     APK0(0,0)=1.0;
     APK0(1,1)=1.0;
@@ -347,24 +347,20 @@ namespace MBSim {
 
       l -= Mh*e;
 
-//      BodyRigidRel* nextBody = precessor;
-//      while(nextBody) {
-//	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
-//	nextBody = nextBody->getPrecessor();
-//      }
-       J(Index(0,5),Index(0,precessor->getIuR().end())) = C*precessor->getJ();
+      BodyRigidRel* nextBody = precessor;
+      while(nextBody) {
+	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
+	nextBody = nextBody->getPrecessor();
+      }
     }
     J(Index(0,2),IuT) = trans(APK)*JT;
     J(Index(3,5),IuR) = JR;
-
-//cout << getFullName() << endl << J << endl;
 
     tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
 
     for(int i=0; i<successor.size(); i++) {
       successor[i]->updateh(t);
     }
-//    if(successor.size()==0) throw 1;
   }
 
   void BodyRigidRel::updateCenterOfGravity(double t) {
@@ -455,13 +451,6 @@ namespace MBSim {
 
   double BodyRigidRel::computeKineticEnergy() {
     return 0.5 * (m*trans(KvK)*(KvK + 2*crossProduct(KomegaK,KrKS)) + trans(KomegaK)*I*KomegaK);
-  }
-  
-  double BodyRigidRel::computeKineticEnergyBranch() {
-    double Ttemp = computeKineticEnergy();
-    for(int i=0; i<successor.size(); i++) {
-      Ttemp += successor[i]->computeKineticEnergyBranch();
-    }
   }
 
   void BodyRigidRel::updatedq(double t, double dt) {
