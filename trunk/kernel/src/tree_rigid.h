@@ -59,14 +59,14 @@ namespace MBSim {
     void updatedq(double t, double dt);
     void updatedu(double t, double dt);
 
-    const Vec& getl() const {return l;}
-    Vec& getl() {return l;}
-    const Mat& getJ() const {return J;}
-    Mat& getJ() {return J;}
-    const SymMat& getMh() const {return Mh;}
-    SymMat& getMh() {return Mh;}
-    const Vec& getInvMh() const {return invMh;}
-    Vec& getInvMh() {return invMh;}
+ //   const Vec& getl() const {return l;}
+ //   Vec& getl() {return l;}
+ //   const Mat& getJ() const {return J;}
+ //   Mat& getJ() {return J;}
+ //   const SymMat& getMh() const {return Mh;}
+ //   SymMat& getMh() {return Mh;}
+ //   const Vec& getInvMh() const {return invMh;}
+ //   Vec& getInvMh() {return invMh;}
 
     void calcSize();
 
