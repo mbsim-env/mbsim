@@ -19,8 +19,8 @@
  *    rzander@users.berlios.de
  */
 
-#ifndef _TREE_FLEXIBLE_H_
-#define _TREE_FLEXIBLE_H_
+#ifndef _TREE_FLEXROOT_H_
+#define _TREE_FLEXROOT_H_
 
 #include "tree.h"
 

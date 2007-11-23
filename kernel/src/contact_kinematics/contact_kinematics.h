@@ -44,10 +44,9 @@ namespace MBSim {
    */
   class ContactKinematics {
   	public:
-      /*! Destructor */
       virtual ~ContactKinematics() {}
 
-      /*! compute \f$\vg_N\f, which MUST be provided, others optional$
+      /*! compute \f$\boldsymbol{g}_N\f$, which MUST be provided, others optional$
        * \param contour  vector of Contour holding both contours
        * \param i1       index of first contour within all data-vectors
        * \param i2       index of second contour within all data-vectors
@@ -56,7 +55,7 @@ namespace MBSim {
        */
       virtual void stage1(Vec &g, vector<ContourPointData> &cpData) = 0;
 
-      /*! compute \f$\dot{\vg}\f$, force directions, ... must be up-to-date at end of method
+      /*! compute \f$\dot{\boldsymbol{g}}\f$, force directions, ... must be up-to-date at end of method
        * \param contour  vector of Contour holding both contours
        * \param i1       index of first contour within all data-vectors
        * \param i2       index of second contour within all data-vectors

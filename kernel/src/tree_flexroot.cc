@@ -323,9 +323,8 @@ namespace MBSim {
 
   double TreeFlexRoot::computePotentialEnergy() {
     double Vtemp = flexible->computePotentialEnergy();
-    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
+    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       Vtemp += (*ib)->computePotentialEnergyBranch();
-    }
     return Vtemp;
   }
 
