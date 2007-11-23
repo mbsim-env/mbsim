@@ -8,6 +8,7 @@
 #include "cylinder.h"
 #include "objobject.h"
 #include "transfersys.h"
+#include "tree_rigid.h"
 
 using namespace AMVis;
 
@@ -46,7 +47,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   // --------------------------- Setup MBS ----------------------------
   
   // System with tree-structure
-  Tree *tree = new Tree("Baum");
+  TreeRigid *tree = new TreeRigid("Baum");
   addObject(tree);
 
   // Body with relative kinematics
