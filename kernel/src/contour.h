@@ -41,10 +41,10 @@ namespace MBSim {
   //                0    , 1   , 2          , 3           , 4        , 5    , 6     , 7      , 8   , 9   , 10       , 11       , 12              , 13
   enum ContourType {point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation};
 
-  /*! \brief basic class for contour definition for rigid - which don't know about their shape - 
-   *  and flexible - they know how they look like - bodies
-   *
-   * */
+  /*! 
+   * \brief Basic class for contour definition for rigid (which do not know about their shape) 
+   *  and flexible (they know how they look like) bodies
+   */
   class Contour : public Element {
     protected:
       int id;
@@ -52,12 +52,12 @@ namespace MBSim {
       Vec WrOP, WvP, WomegaC;
       SqrMat AWC;
 
-#ifdef HAVE_AMVIS
-      /** body for AMVis */
-      AMVis::CBody *bodyAMVis;
-      /** flag to allow for activation of AMVis output during Init-Routines */
-      bool boolAMVis, boolAMVisBinary;
-#endif
+	  #ifdef HAVE_AMVIS
+	      /* Body for AMVis */
+	      AMVis::CBody *bodyAMVis;
+	      /* Flag to allow for activation of AMVis output during Init-Routines */
+	      bool boolAMVis, boolAMVisBinary;
+	  #endif
 
     public:
       //Contour(const string &name, ContourType type);
@@ -90,12 +90,12 @@ namespace MBSim {
       */
       virtual void adjustParentHitSphere(const Vec &CrC);
 
-#ifdef HAVE_AMVIS
-      /*! activate output for AMVis
-	\param binary_ for binary or ASCII data format in pos-file
-	*/
-      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
-#endif
+	  #ifdef HAVE_AMVIS
+	      /*! activate output for AMVis
+		\param binary_ for binary or ASCII data format in pos-file
+		*/
+	      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+	  #endif
   };
 
   /*! \brief Most primitive Contour: the Point (no extention) */
@@ -123,20 +123,23 @@ namespace MBSim {
       Vec computeWt() {return AWC*crossProduct(Cn,Cb);}
   };
 
-  /*! \brief circular Contour with material included inside */
+  /*! \brief Circular Contour with material included inside */
   class CircleSolid : public Contour {
 
-    protected:
+    private:
       double r;
       Vec Cb;
 
     public:
+      /*! Constructor with \param name */
       CircleSolid(const string &name);
+      /*! Set radius \param r_*/
       void setRadius(double r_) {r = r_;}
+      /*! Get radius \result r */
       double getRadius() const {return r;}
-
+	  /*! Set binormal \param Cb_ in local FR */ 
       void setCb(const Vec& Cb_);
-
+	  /*! Compute binormal \return Wb in inertial FR */
       Vec computeWb() {return AWC*Cb;}
   };
 

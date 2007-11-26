@@ -23,45 +23,62 @@
 
 #include <config.h> 
 #include "circlesolid_plane.h"
-#include "contact.h"
+#include "contour.h"
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour) {
+  void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour)
+  {
+  	// ASSIGNCONTOURS treats the ordering of the bodies in connect-call
+	// INPUT	contour	Vector of the two body contours
+	
     if(dynamic_cast<CircleSolid*>(contour[0])) {
-      icircle = 0; iplane = 1;
+      icircle = 0;
+      iplane = 1;
       circlesolid = static_cast<CircleSolid*>(contour[0]);
       plane = static_cast<Plane*>(contour[1]);
-    } else {
-      icircle = 1; iplane = 0;
+    } 
+    else {
+      icircle = 1;
+      iplane = 0;
       circlesolid = static_cast<CircleSolid*>(contour[1]);
       plane = static_cast<Plane*>(contour[0]);
     }
   }
 
-  void ContactKinematicsCircleSolidPlane::stage1(Vec &g, vector<ContourPointData> &cpData) {
-
-    Vec Wd;
-    Vec Wbcircle = circlesolid->computeWb();
+  void ContactKinematicsCircleSolidPlane::stage1(Vec &g, vector<ContourPointData> &cpData) 
+  {
+	// STAGE1 computes normal distance in the possible contact point
+	// INPUT	g		Normal distance (OUTPUT)
+	//			cpData	Contact parameter (OUTPUT)
+	
+	Vec Wd;
+	Vec Wbcircle; Wbcircle = circlesolid->computeWb();
     cpData[iplane].Wn = plane->computeWn();
     cpData[icircle].Wn = -cpData[iplane].Wn;
-    Vec Wrot = crossProduct(Wbcircle,cpData[iplane].Wn);
-    double normWrot = nrm2(Wrot);
-
-    if(normWrot <= 1e-8) {
+   
+	double t_EC = trans(cpData[iplane].Wn)*Wbcircle;
+	Vec z_EC; z_EC = cpData[iplane].Wn - t_EC*Wbcircle;
+	double z_EC_nrm2 = nrm2(z_EC);
+	
+    if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
       Wd = plane->getWrOP() - circlesolid->getWrOP();
-      genBuf = Vec(3);
-    } else {
-      Wrot /= nrm2(Wrot);
-      genBuf = crossProduct(Wrot,Wbcircle)*circlesolid->getRadius();
+      genBuf = Vec(3); // 0-Vector
+    } 
+    else { // exactly one possible contact point
+      genBuf = (circlesolid->getRadius()/z_EC_nrm2)*z_EC;
       Wd = plane->getWrOP() - (circlesolid->getWrOP() + genBuf);
     }
-
     g(0) = trans(cpData[iplane].Wn)*Wd;
   }
 
-  void ContactKinematicsCircleSolidPlane::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
-
+  void ContactKinematicsCircleSolidPlane::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) 
+  {
+	// STAGE2 computes tangential directions and normal velocities in contact point
+	// INPUT	g		Normal distance
+	//			gd		Normal velocity (OUTPUT)
+	//			cpData	Contact parameter (OUTPUT)
+	
     Vec WrPC[2], WvC[2];
     WrPC[icircle] = genBuf;
     cpData[icircle].WrOC = circlesolid->getWrOP() + WrPC[icircle];
@@ -74,9 +91,12 @@ namespace MBSim {
     gd(0) = trans(cpData[iplane].Wn)*WvD;
 
     if(cpData[iplane].Wt.cols()) {
-      cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);
-      if(cpData[iplane].Wt.cols() == 2)
-	cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
+      if(cpData[iplane].Wt.cols() == 1) {
+    	  	cout << "ERROR: Two tangential contact directions necessary for spatial contact!" << endl;
+			throw(1);
+   	  }
+      cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);            
+      cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
       cpData[icircle].Wt = -cpData[iplane].Wt;
       static Index iT(1,cpData[iplane].Wt.cols());
       gd(iT) = trans(cpData[iplane].Wt)*WvD;
@@ -84,4 +104,3 @@ namespace MBSim {
   }
 
 }
-
