@@ -52,13 +52,17 @@ namespace MBSim {
 			// INPUT	g		Normal distance (OUTPUT)
 			//			cpData	Contact parameter (OUTPUT)
 			
-			double eps = 5.e-8; // tolerance for rough contact description
+			double eps = 5.e-2; // tolerance for rough contact description
 		    Vec Wd; Wd = point->getWrOP() - frustum->getWrOP(); // difference vector of Point and Frustum basis point in inertial FR
 		    Vec Wa; Wa = frustum->getAWC()*frustum->getAxis(); // axis in inertial FR
 		    Vec r; r = frustum->getRadii(); // radii of Frustum
 		    double h = frustum->getHeight(); // height of Frustum	    
 		    double s = trans(Wd)*Wa; // projection of difference vector on axis
 		    double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
+		    if(h==0.) {
+		    	cout << "ERROR: Frustum with height = 0!" << endl;
+		    	throw(1);
+		    }
 		    double r_h = r(0) + (r(1)-r(0))/h * s; // radius of Frustum at s
 		    bool outCont = frustum->getOutCont(); // contact on outer surface?
 		    
@@ -103,6 +107,10 @@ namespace MBSim {
 		    if(cpData[ipoint].Wt.cols()) {
 		    	  // If the Frustum does not degenerate to a Cylinder, the first column is the tangential direction
 		    	  // and the second column the radial direction of the Frustum:
+		    	  if(cpData[ipoint].Wt.cols() == 1) {
+    	  			cout << "ERROR: Two tangential contact directions necessary for spatial contact!" << endl;
+					throw(1);
+    	  		  }
 			      cpData[ipoint].Wt.col(0) = computeTangential(cpData[ipoint].Wn);
 			      cpData[ipoint].Wt.col(1) = crossProduct(cpData[ipoint].Wn,cpData[ipoint].Wt.col(0));
 			      cpData[ifrustum].Wt = -cpData[ipoint].Wt;
