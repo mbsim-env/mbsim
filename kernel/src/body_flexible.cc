@@ -38,7 +38,7 @@ namespace MBSim {
   BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5))
 # ifdef HAVE_AMVIS
     ,
-    boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true)
+    bodyAMVis(NULL), boolAMVis(false), boolAMVisBinary(true)
 # endif
   { }
 
@@ -57,12 +57,13 @@ namespace MBSim {
 
 
   Port* BodyFlexible::getPort(const string &name) {
-    int i;
+    unsigned int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name)
 	return port[i];
     }
     assert(i<port.size());
+    return NULL;
   }
 
   void BodyFlexible::addPort(const string &name, const ContourPointData &S_) {
@@ -127,11 +128,12 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     // visualisationFile-dependent
     if(boolAMVis) {
-      float qDummy[qSize];
+      float *qDummy = (float*) malloc(qSize*sizeof(float));
       for(int i=0;i<qSize;i++) qDummy[i] = q(i);
       bodyAMVis->setTime(t);
       bodyAMVis->setCoordinates(qDummy);
       bodyAMVis->appendDataset(0);
+      free(qDummy);
     }
 #endif
   }
@@ -159,7 +161,7 @@ namespace MBSim {
   void BodyFlexible::sumUpForceElements(double t) {
     Vec WLtmpLocal( JT.cols() + JR.cols() ); // Kraefte und Momente in Dimension des Modells bringen
 
-    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
       const int &portID = linkSingleValuedPortData[i].ID;
       const int &objectID = linkSingleValuedPortData[i].objectID;
 
@@ -171,7 +173,7 @@ namespace MBSim {
       h += computeJacobianMatrix(S_Port[portID]) * WLtmpLocal;
     }
 
-    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
       if(linkSingleValuedContourData[i].link->isActive()) {
 	const int &ID       = linkSingleValuedContourData[i].ID;       // ID der Contour in der Koerper-Daten-Verwaltung de
 	const int &objectID = linkSingleValuedContourData[i].objectID; // ID der Contour innerhalb der LinkContour-Paarung
@@ -205,7 +207,7 @@ namespace MBSim {
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       const int &portID   = it1->ID;
       const int &objectID = it1->objectID;
 
@@ -225,7 +227,7 @@ namespace MBSim {
       it1++; itW++; itw++;
     }    
 
-    for(int i=0; i<linkSetValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       if(it2->link->isActive()) {
 	const int &ID        = it2->ID;       // ID der Contour in der Koerper-Daten-Verwaltung des Body
 	const int &objectID  = it2->objectID; // ID der Contour innerhalb der LinkContour-Paarung

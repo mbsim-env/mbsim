@@ -96,6 +96,9 @@ namespace MBSim {
 	return res;
       } 
     }
+    cout << "Vec FuncTable::operator()(double x) did not offer return value" << endl;
+    throw 1;
+    return 0;
   }
 
   //TODO ableiten
@@ -183,7 +186,7 @@ namespace MBSim {
 
   Vec FuncSum::operator()(double x) {
     Vec y(outputdim,INIT,0.0);
-    for(int i=0;i<dib.size();i++)
+    for(unsigned int i=0;i<dib.size();i++)
     {
       y+=c[i]*(*dib[i])(x);
     }

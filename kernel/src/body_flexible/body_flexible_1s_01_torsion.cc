@@ -32,11 +32,9 @@ namespace MBSim {
 
   BodyFlexible1s01Torsion::BodyFlexible1s01Torsion(const string &name)
     :BodyFlexible1s(name),
-    // JT(3,3),	 JR(3), 
-    WrON00(3), WrON0(3), 
-    //     WLtmp(6), WFtmp(WLtmp(Index(0,2))), WMtmp(WLtmp(Index(3,5))),
-    A(0),I(0),E(0),rho(0),
-    Wn(3), Wt(3,2), CrOC(3), CvC(3){
+    E(0),rho(0),A(0),I(0),
+    Wt(3,2), Wn(3), CrOC(3), CvC(3),
+    WrON00(3), WrON0(3){ 
 
     }
 
@@ -101,7 +99,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s01Torsion::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       double s=S_Port[i].alpha(0);
       /* Ermittlung der Position in Achsrichtung  ist konstant */
       port[i]->setWrOP(WrON00 + Axis*s*l);

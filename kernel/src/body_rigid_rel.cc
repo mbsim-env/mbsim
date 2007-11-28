@@ -29,7 +29,7 @@
 
 namespace MBSim {
 
-  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), APK(3), APK0(3), lSize(6), lInd(0), tree(0), PrPK(3), PrPK0(3), KrOK(3), KvK(3), e(6), precessor(0), successor(0), C(6) {
+  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), lSize(6), lInd(0), tree(0), successor(0), precessor(0), APK(3), APK0(3), PrPK(3), PrPK0(3), KrOK(3), KvK(3), e(6), C(6) {
 
     APK0(0,0)=1.0;
     APK0(1,1)=1.0;
@@ -47,28 +47,28 @@ namespace MBSim {
     tree->setuSize(tree->getuSize()+uSize);
     tree->setxSize(tree->getxSize()+xSize);
     tree->setlSize(tree->getlSize()+lSize);
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->calcSize();
     }
   }
 
   void BodyRigidRel::setMbs(MultiBodySystem* mbs_) {
     Element::setMbs(mbs_);
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->setMbs(mbs);
     }
   }
 
   void BodyRigidRel::setTree(Tree* tree_) {
     tree = tree_;
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->setTree(tree);
     }
   }
 
   void BodyRigidRel::updateqRef() {
     q>>(tree->getq()(qInd,qInd+qSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateqRef();
     }
   }
@@ -76,35 +76,35 @@ namespace MBSim {
   void BodyRigidRel::updatezdRef() {
     qd>>(tree->getqd()(qInd,qInd+qSize-1));
     ud>>(tree->getud()(uInd,uInd+uSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updatezdRef();
     }
   }
 
   void BodyRigidRel::updateqdRef() {
     qd>>(tree->getqd()(qInd,qInd+qSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateqdRef();
     }
   }
 
   void BodyRigidRel::updateuRef() {
     u>>(tree->getu()(uInd,uInd+uSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateuRef();
     }
   }
 
   void BodyRigidRel::updatehRef() {
     h>>(tree->geth()(uInd,uInd+uSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updatehRef();
     }
   }
 
   void BodyRigidRel::updaterRef() {
     r>>(tree->getr()(uInd,uInd+uSize-1));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updaterRef();
     }
   }
@@ -112,21 +112,21 @@ namespace MBSim {
   void BodyRigidRel::updateMhRef() {
     Index I = getlIndex();
     Mh>>tree->getMh()(I);
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateMhRef();
     }
   }
 
   void BodyRigidRel::updatelRef() {
     l>>(tree->getl()(Il));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updatelRef();
     }
   }
 
   void BodyRigidRel::updateJRef() {
     J>>(tree->getJ()(Il,Index(0,uInd+uSize-1)));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateJRef();
     }
   }
@@ -135,7 +135,7 @@ namespace MBSim {
     Index Iu = getuIndex();
     Index Iq = Index(qInd,qInd+qSize-1);
     T>>(tree->getT()(Iq,Iu));
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateTRef();
     }
   }
@@ -147,11 +147,11 @@ namespace MBSim {
     IuR = Index(uInd+iR.start(),uInd+iR.end());
 
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       int portID = it1->ID;
       int objectID = it1->objectID;
       bool addLink = true;
-      for(int j=0; j<tree->linkSetValuedPortData.size(); j++)
+      for(unsigned int j=0; j<tree->linkSetValuedPortData.size(); j++)
 	if(tree->linkSetValuedPortData[j].link == it1->link)
 	  addLink = false;
       if(addLink)
@@ -159,11 +159,11 @@ namespace MBSim {
       it1++;
     }
     vector<LinkPortData>::iterator it4=linkSingleValuedPortData.begin(); 
-    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
       int portID = it4->ID;
       int objectID = it4->objectID;
       bool addLink = true;
-      for(int j=0; j<tree->linkSingleValuedPortData.size(); j++)
+      for(unsigned int j=0; j<tree->linkSingleValuedPortData.size(); j++)
 	if(tree->linkSingleValuedPortData[j].link == it4->link)
 	  addLink = false;
       if(addLink)
@@ -172,11 +172,11 @@ namespace MBSim {
     }
 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
-    for(int i=0; i<linkSetValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       int contourID = it2->ID;
       int objectID = it2->objectID;
       bool addLink = true;
-      for(int j=0; j<tree->linkSetValuedContourData.size(); j++)
+      for(unsigned int j=0; j<tree->linkSetValuedContourData.size(); j++)
 	if(tree->linkSetValuedContourData[j].link == it2->link)
 	  addLink = false;
       if(addLink) 
@@ -185,11 +185,11 @@ namespace MBSim {
       it2++;
     }
     vector<LinkContourData>::iterator it3=linkSingleValuedContourData.begin(); 
-    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
       int contourID = it3->ID;
       int objectID = it3->objectID;
       bool addLink = true;
-      for(int j=0; j<tree->linkSingleValuedContourData.size(); j++)
+      for(unsigned int j=0; j<tree->linkSingleValuedContourData.size(); j++)
 	if(tree->linkSingleValuedContourData[j].link == it3->link)
 	  addLink = false;
       if(addLink) 
@@ -198,7 +198,7 @@ namespace MBSim {
       it3++;
     }
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initStage1();
     }
     iI = Index(0,uInd+uSize-1);
@@ -206,9 +206,9 @@ namespace MBSim {
 
   void BodyRigidRel::initStage2() {
     int k=0;
-    for(int i=0; i<linkSetValued.size(); i++) {
+    for(unsigned int i=0; i<linkSetValued.size(); i++) {
       int linkID = -1;
-      for(int j=0; j<tree->linkSetValued.size(); j++)
+      for(unsigned int j=0; j<tree->linkSetValued.size(); j++)
 	if(tree->linkSetValued[j] == linkSetValued[i])
 	  linkID = j;
       Index iJ(0,linkSetValued[i]->getlaSize()-1);
@@ -219,7 +219,7 @@ namespace MBSim {
 	k++;
       }
     }
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initStage2();
     }
   }
@@ -227,7 +227,7 @@ namespace MBSim {
 
   void BodyRigidRel::initz() {
     Body::initz();
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initz();
     }
   }
@@ -241,7 +241,7 @@ namespace MBSim {
 	plotfile <<"# "<< plotNr++ << ": LG(" << i << ")" << endl;
     }
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initPlotFiles();
     }
   }
@@ -258,7 +258,7 @@ namespace MBSim {
 	LG.init(0);
     }
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->plot(t,dt);
     }
 
@@ -266,7 +266,7 @@ namespace MBSim {
 
       vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
       vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
-      for(int i=0; i<linkSetValuedPortData.size(); i++) {
+      for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
 	int portID = it1->ID;
 	int objectID = it1->objectID;
 	WLtmp = it1->link->getLoadDirections(objectID)*it1->link->getla()/dt;
@@ -275,7 +275,7 @@ namespace MBSim {
 	it1++;
       }
 
-      for(int i=0; i<linkSetValuedContourData.size(); i++) {
+      for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
 	if(it2->link->isActive()) {
 	  int objectID = it2->objectID;
 	  WLtmp = it2->link->getLoadDirections(objectID)*it2->link->getla()/dt;
@@ -301,7 +301,7 @@ namespace MBSim {
 
   void BodyRigidRel::updateFullName() {
     Element::setFullName(tree->getFullName()+"."+getName());
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateFullName();
     }
   } 
@@ -320,9 +320,15 @@ namespace MBSim {
   }
 
   void BodyRigidRel::updateM(double t) {
+/// cout << "void BodyRigidRel::updateM(double t) <" << getFullName() << "> ----------------------------------------------------------------" << endl;
+/// cout << "tree->getM() = " << tree->getM() << endl;
+/// cout << "tree->getM()(Index(0,uInd+uSize-1)) = " << tree->getM()(Index(0,uInd+uSize-1)) << endl;
+/// cout << "M += " << JTMJ(Mh,J) << endl;
     tree->getM()(Index(0,uInd+uSize-1)) += JTMJ(Mh,J);
+// cout << "tree->getM() = " << tree->getM() << endl;
+// cout << "----------------------------------------------------------------" << endl;
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateM(t);
     }
   }
@@ -365,7 +371,7 @@ namespace MBSim {
 
     tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateh(t);
     }
 //    if(successor.size()==0) throw 1;
@@ -399,7 +405,7 @@ namespace MBSim {
 
     BodyRigid::updateKinematics(t);
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateKinematics(t);
     }
   }
@@ -411,7 +417,7 @@ namespace MBSim {
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
     vector<Mat>::iterator itW=W.begin(); 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       int portID = it1->ID;
       int objectID = it1->objectID;
       Mat ld = it1->link->getLoadDirections(objectID);
@@ -423,7 +429,7 @@ namespace MBSim {
       it1++; itW++; 
     }
 
-    for(int i=0; i<linkSetValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       if(it2->link->isActive()) {
 	int objectID = it2->objectID;
 	Mat ld = it2->link->getLoadDirections(objectID);
@@ -436,7 +442,7 @@ namespace MBSim {
       }
       it2++; itW++; 
     }
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateWj(t);
     }
   }
@@ -452,7 +458,7 @@ namespace MBSim {
 	tree->getr() += mbs->getW()(tree->getuIndex(),I)*i->link->getla();
       }
     }
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updater(t);
     }
   }
@@ -463,53 +469,56 @@ namespace MBSim {
   
   double BodyRigidRel::computeKineticEnergyBranch() {
     double Ttemp = computeKineticEnergy();
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++)
       Ttemp += successor[i]->computeKineticEnergyBranch();
-    }
+    return Ttemp;
   }
 
   double BodyRigidRel::computePotentialEnergyBranch() {
-    double Vbranch = BodyRigid::computePotentialEnergy();
-    for(int i=0; i<successor.size(); i++)
+    double Vbranch = this->computePotentialEnergy();
+    for(unsigned int i=0; i<successor.size(); i++)
       Vbranch += successor[i]->computePotentialEnergy();
+    return Vbranch;
   }
 
   void BodyRigidRel::updatedq(double t, double dt) {
 
     BodyRigid::updatedq(t,dt);
 
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updatedq(t,dt);
     }
   }
 
   void BodyRigidRel::updateqd(double t) {
     qd = T*u;
-    for(int i=0; i<successor.size(); i++) {
+    for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateqd(t);
     }
   }
 
   Port* BodyRigidRel::getPort(const string &pName) {
      // Auf sich selber suchen
-    for(int i=0;i<port.size();i++)
+    for(unsigned int i=0;i<port.size();i++)
       if(port[i]->getName() == pName)
         return port[i];
-    for(int i=0;i<successor.size();i++) {
+    for(unsigned int i=0;i<successor.size();i++) {
       Port* p = successor[i]->getPort(pName);
       if(p) return p;
     }
+    return NULL;
   }
 
   Contour* BodyRigidRel::getContour(const string &cName) {
      // Auf sich selber suchen
-    for(int i=0;i<contour.size();i++)
+    for(unsigned int i=0;i<contour.size();i++)
       if(contour[i]->getName() == cName)
         return contour[i];
-    for(int i=0;i<successor.size();i++) {
+    for(unsigned int i=0;i<successor.size();i++) {
       Contour* c = successor[i]->getContour(cName);
       if(c) return c;
     }
+    return NULL;
   }
 
 }

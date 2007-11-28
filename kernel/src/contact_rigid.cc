@@ -128,7 +128,7 @@ namespace MBSim {
   void ContactRigid::updaterFactors() {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+//    int *ja = mbs->getGs().Jp(); // unused
     double sumN = 0;
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       sumN += fabs(a[j]);

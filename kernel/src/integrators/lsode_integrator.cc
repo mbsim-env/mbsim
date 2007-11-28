@@ -37,7 +37,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), stiff(false), maxSteps(10000) {
+  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
   }
 
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -73,7 +73,8 @@ namespace MBSim {
       assert (aTol.size() >= zSize);
     }
 
-    int i, one=1, zero=0, two=2, istate=1;
+//    int i, one=1, zero=0, two=2, istate=1;
+    int one=1, istate=1;
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
@@ -102,7 +103,7 @@ namespace MBSim {
       MF = 10; // Nonstiff (Adams) method, no Jacobian used.
 
     Vector<int> jsv(nsv);  
-    bool donedrift;
+//    bool donedrift;
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {

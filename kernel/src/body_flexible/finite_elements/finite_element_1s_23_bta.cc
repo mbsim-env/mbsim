@@ -42,7 +42,7 @@ namespace MBSim {
   //-------------------------------------------------------------------------
   FiniteElement1s23BTA::FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
     :l0(sl0), Arho(sArho), EIyy(sEIyy), EIzz(sEIzz), Itrho(sItrho), GIt(sGIt),
-    g(sg), depsilon(0.0),
+    depsilon(0.0), g(sg),
     M(2*nodalDOFs), h(2*nodalDOFs), implicit(false), Dhq(8), Dhqp(8),
     Damp(8,fmatvec::INIT,0.0)
   {
@@ -81,7 +81,7 @@ namespace MBSim {
   //------------------------------------------------------------------------------
   int FiniteElement1s23BTA::update(Vec &q, Vec &v)
   {
-    double &gy = g(1); double &gz = g(2);
+//    double &gy = g(1); double &gz = g(2);
 
     double &a1     = q(0);
     double &w1     = q(1);    double &b1   = q(2);

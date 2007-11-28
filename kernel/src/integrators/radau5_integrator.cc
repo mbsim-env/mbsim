@@ -71,7 +71,7 @@ namespace MBSim {
 
     system = &system_;
     int zSize=system->getzSize();
-    int nrDens = zSize;
+//    int nrDens = zSize;
 
     double t = 0.0;
 

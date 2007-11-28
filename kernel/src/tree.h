@@ -86,8 +86,6 @@ namespace MBSim {
     void setxSize(int xSize_) { xSize = xSize_; }
     void setlSize(int lSize_) { lSize = lSize_; }
 
-    virtual double computePotentialEnergy() { return 0.5*trans(u)*M*u; }
-
     virtual Port* getPort(const string &pName) = 0;
     virtual Contour* getContour(const string &cName) = 0;
   };

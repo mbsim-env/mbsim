@@ -34,12 +34,12 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), laSize(0), rFactorSize(0), active(true), gdTol(1e-8), laTol(1e-2), rMax(1.0), scaleTolQ(1e-9), scaleTolp(1e-5), HSLink(0), checkHSLink(false) {
+  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), laSize(0), rFactorSize(0), active(true), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {
   }
 
   Link::~Link() { 
 #ifdef HAVE_AMVIS   
-    for (int i=0; i<arrowAMVis.size(); i++) {
+    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       delete arrowAMVis[i];
       delete arrowAMVisUserFunctionColor[i];
     }
@@ -132,7 +132,7 @@ namespace MBSim {
     Element::initPlotFiles();
 
 #ifdef HAVE_AMVIS
-    for (int i=0; i<arrowAMVis.size(); i++)
+    for (unsigned int i=0; i<arrowAMVis.size(); i++)
       arrowAMVis[i]->writeBodyFile();
 #endif
 
@@ -245,7 +245,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     Vec WrOToPoint;
     Vec LoadArrow;
-    for (int i=0; i<arrowAMVis.size(); i++) {
+    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = port[arrowAMVisID[i]]->getWrOP();
       if(setValued){ 
 	if (active) 
@@ -300,7 +300,7 @@ namespace MBSim {
     Vec WrOToPoint;
     Vec LoadArrow;
 
-    for (int i=0; i<arrowAMVis.size(); i++) {
+    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
       if(setValued){ 
 	if (active) 

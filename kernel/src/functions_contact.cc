@@ -86,7 +86,7 @@ namespace MBSim {
 
     if(nRoots > 1) { // compare roots with respect to contact distances
       double g_=1e10;
-      double sMin;
+      double sMin = 1.0;
 
       for(int i=0;i<nRoots;i++)
 		if(gbuf(i) < g_) {

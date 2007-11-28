@@ -74,7 +74,7 @@ namespace MBSim {
     Vec WtB = (cylinder->computeWt(alphaC)).col(0);
 
     const double cos_alpha = trans( WtB ) * WbK;
-    const double sin_alpha = sqrt(1-cos_alpha*cos_alpha);
+//    const double sin_alpha = sqrt(1-cos_alpha*cos_alpha);
 
     if( nrm2(WrD) > 0 ) {
 

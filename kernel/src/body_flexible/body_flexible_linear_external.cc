@@ -28,7 +28,7 @@
 namespace MBSim {
 
   BodyFlexibleLinearExternal::BodyFlexibleLinearExternal(const string &name) 
-    :BodyFlexible(name), K(0), Mread(0) ,alpha(0), beta(0), nContours(0), WrON00(Vec(3)) {
+    :BodyFlexible(name), Mread(0), K(0), alpha(0), beta(0), nContours(0), WrON00(Vec(3)) {
       JT << DiagMat(3,INIT,1.0);
     }
 
@@ -38,7 +38,7 @@ namespace MBSim {
   }
 
   void BodyFlexibleLinearExternal::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       if( (J[port[i]->getID()]).rows() ) {
 	Vec rPort = trans(J[port[i]->getID()]) * q ;
 	Vec uPort = trans(J[port[i]->getID()]) * u ;
@@ -53,7 +53,7 @@ namespace MBSim {
     Vec WrHS(3);
     RHitSphere = 0;
 
-    for(int i=0; i<contour.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       if( (J[contour[i]->getID()]).rows() ) { // echte, keine Interpolationscontour  // TODO: nutze constContourPosition aus BodyFlexible
 	Vec rContour = trans(J[contour[i]->getID()]) * q ;
 	Vec uContour = trans(J[contour[i]->getID()]) * u ;
@@ -74,33 +74,35 @@ namespace MBSim {
   }
 
   Vec BodyFlexibleLinearExternal::computeWrOC(const ContourPointData& CP) {
-    //     return (contour[ CP.ID ]->getWrOP());
+    Vec WrOC;
     if(CP.type == NODE) {
-      return (WrON00  + JT * (KrP[CP.ID] + trans(J[CP.ID]) * q) ) ;
+      WrOC = (WrON00  + JT * (KrP[CP.ID] + trans(J[CP.ID]) * q) ) ;
     } else if(CP.type == EXTINTERPOL) {
       Vec Temp(3);
-      for (int i=0;i<CP.iPoints.size();i++) {
+      for (unsigned int i=0;i<CP.iPoints.size();i++) {
 	int ID = CP.iPoints[i]->getID();
 	Temp += CP.iWeights(i) * ( KrP[ID] + trans(J[ID]) * q );
       }
-      return (WrON00  + JT * (Temp) ) ;
+      WrOC = (WrON00  + JT * (Temp) ) ;
     }
+    return WrOC;
   }
+ 
   Vec BodyFlexibleLinearExternal::computeWvC (const ContourPointData& CP) {
-    //     return (contour[ CP.ID ]->getWvP() );
-    //     return (          JT *               trans(J[CP.ID]) * u  ) ;
-    // //     return (contour[ CP.ID ]->getWrOP());
+    Vec WvC;
     if(CP.type == NODE) {
-      return JT * ( trans(J[CP.ID]) * u) ;
+      WvC = JT * ( trans(J[CP.ID]) * u) ;
     } else if(CP.type == EXTINTERPOL) {
       Vec Temp(3);
-      for (int i=0;i<CP.iPoints.size();i++) {
+      for (unsigned int i=0;i<CP.iPoints.size();i++) {
 	int ID = CP.iPoints[i]->getID();
 	Temp += CP.iWeights(i) * ( trans(J[ID]) * u );
       }
-      return JT * (Temp) ;
+      WvC = JT * (Temp) ;
     }
+    return WvC;
   }
+
   Vec BodyFlexibleLinearExternal::computeWomega(const ContourPointData& CP) {
     //     return (contour[ CP.ID ]->getWomegaC() );
     return Vec(3);
@@ -123,7 +125,7 @@ namespace MBSim {
     LLM = facLL(M);
     D = static_cast<SqrMat>( alpha*M + beta * K ); 
 
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       Mat JTemp = J[port[i]->getID()];
       if(JTemp.rows() != M.size()) {
 	cout << "Jacobimatrix of port " << i ;
@@ -131,7 +133,7 @@ namespace MBSim {
 	throw 1;
       }
     }
-    for(int i=0; i<contour.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       Mat JTemp = J[contour[i]->getID()];
       if(JTemp.rows() != M.size() && JTemp.rows() != 0) {
 	cout << "Jacobimatrix of contour " << i ;
@@ -282,17 +284,17 @@ namespace MBSim {
 
   // //---------------------------------------------------------------------------
   Mat BodyFlexibleLinearExternal::computeJacobianMatrix(const ContourPointData& CP) {
-    //     return J[ CP.ID ];
-    // }
+    Mat Jreturn;
     if(CP.type == NODE) {
-      return J[ CP.ID ] ;
+      Jreturn = J[ CP.ID ] ;
     } else if(CP.type == EXTINTERPOL) {
       Mat JTemp(J[0].rows(),J[0].cols());
-      for (int i=0;i<CP.iPoints.size();i++) {
+      for (unsigned int i=0;i<CP.iPoints.size();i++) {
 	JTemp += CP.iWeights(i) * J[CP.iPoints[i]->getID()];
       }
-      return JTemp ;
+      Jreturn = JTemp;
     }
+    return Jreturn;    
   }
 
 
@@ -305,12 +307,12 @@ namespace MBSim {
     parafile << "\n# JR\n"      << JR   << endl;
 
     if(port.size()>0) parafile << "\nports:" <<endl;
-    for(int i=0; i<port.size(); i++) { 
+    for(unsigned int i=0; i<port.size(); i++) { 
       parafile << "# J: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") \n"<< J[port[i]->getID()]<<endl;
     }
 
     if(contour.size()>0) parafile << "\ncontours:" <<endl;
-    for(int i=0; i<contour.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       if(dynamic_cast<Point*>(contour[i])) {
 	parafile << "# J: (contour:  name= "<< contour[i]->getName()<<",  ID= "<<contour[i]->getID()<<")"<< endl;
 	parafile << J[contour[i]->getID()]<<endl;

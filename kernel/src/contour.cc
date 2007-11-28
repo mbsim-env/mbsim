@@ -278,7 +278,7 @@ namespace MBSim {
   ///   
 
   /* Contour Interpolation */
-  ContourInterpolation::ContourInterpolation(const string &name,int parameters_,int nPoints_) : Contour(name),numberOfPoints(nPoints_),contourParameters(parameters_) {}
+  ContourInterpolation::ContourInterpolation(const string &name,int parameters_,int nPoints_) : Contour(name),contourParameters(parameters_),numberOfPoints(nPoints_) {}
   void ContourInterpolation::setPoint(Point *point_, int n) 
   {
     assert(0 <= n);
@@ -384,6 +384,7 @@ namespace MBSim {
       case 1: return (  xi)*(1-eta);
       case 2: return (  xi)*(  eta);
       case 3: return (1-xi)*(  eta);
+      default: return 0.0;  // new, probably not OK
     }
   }
 
@@ -398,6 +399,7 @@ namespace MBSim {
 		case 1: return  (1-eta);
 		case 2: return  (  eta);
 		case 3: return -(  eta);
+                default: return 0.0;  // new, probably not OK
       }
     else // Ableitungen nach eta
       switch(i) {
@@ -405,6 +407,7 @@ namespace MBSim {
 		case 1: return - (  xi);
 		case 2: return   (  xi);
 		case 3: return   (1-xi);
+                default: return 0.0;  // new, probably not OK
       }
   }
 

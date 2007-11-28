@@ -41,7 +41,7 @@ namespace MBSim {
     func= new FuncPairContour1sCircleSolid(circle,contour1d);
   }
 
-  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() {delete func;};
+  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() {delete func;}
 
   void ContactKinematicsCircleSolidContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
 

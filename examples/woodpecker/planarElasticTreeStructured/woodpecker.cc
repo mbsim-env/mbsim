@@ -1,4 +1,5 @@
 #include "woodpecker.h"
+#include "tree_rigid.h"
 #include "body_rigid_rel.h"
 #include "body_flexible_1s_21_rcm.h"
 #include "userfunction.h"
@@ -20,6 +21,7 @@ using namespace AMVis;
 
 Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName) {
   setProjectDirectory("plot");
+  setPlotLevel(3);
 
   // Gravitation
   Vec grav(3,INIT,0.0);
@@ -86,7 +88,7 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   double  JMuffe =  5.e-6;
   // 
 
-  Tree *tree = new Tree("Baum"); 
+  TreeRigid *tree = new TreeRigid("Baum"); 
   addObject(tree);
 
 

@@ -200,7 +200,7 @@ namespace MBSim {
 	for(int i=0; i<uSize; ++i)
 	  plotfile<<" "<<r(i)/dt;
 	if(plotLevel>3) {							//HR 04.01.07
-	  for(int j=0; j<port.size(); j++) {
+	  for(unsigned int j=0; j<port.size(); j++) {
 	    for(int i=0; i<3; i++)
 	      plotfile<< " " << port[j]->getWrOP()(i);
 	  }    
@@ -239,7 +239,7 @@ namespace MBSim {
 	  plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
 
 	if (plotLevel>3) {									//HR 04.01.2007
-	  for(int j=0; j<port.size(); j++) {
+	  for(unsigned int j=0; j<port.size(); j++) {
 	    for(int i=0; i<3; i++)
 	      plotfile<< "# " << plotNr++ <<": WrOP ("<<port[j]->getName()<<")" << endl;
 	  }    
@@ -289,7 +289,7 @@ namespace MBSim {
   }
 
   Port* Object::getPort(const string &name, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name)
 	return port[i];
@@ -297,11 +297,12 @@ namespace MBSim {
     if(check) {
       if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
       assert(i<port.size());
-    }else return NULL;
+    }
+    return NULL;
   }
 
   Contour* Object::getContour(const string &name, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name)
 	return contour[i];
@@ -309,31 +310,32 @@ namespace MBSim {
     if(check) {
       if(!(i<contour.size())) cout << "Error: The object " << this->name <<" comprises no contour " << name << "!" << endl; 
       assert(i<contour.size());
-    } else return NULL;
+    }
+    return NULL;
   }
 
   void Object::init() {
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
 // Liste aller SetValued
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       linkSetValued.push_back(linkSetValuedPortData[i].link);
       W.push_back(Mat(getWSize(),linkSetValuedPortData[i].link->getlaSize()));
       w.push_back(Vec(linkSetValuedPortData[i].link->getlaSize())); 
       itW++; itw++;
     }
-    for(int i=0; i<linkSetValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       linkSetValued.push_back(linkSetValuedContourData[i].link);
       W.push_back(Mat(getWSize(),linkSetValuedContourData[i].link->getlaSize()));
       w.push_back(Vec(linkSetValuedContourData[i].link->getlaSize())); 
       itW++; itw++;
     }
 // Liste aller SingleValued
-    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
       linkSingleValued.push_back(linkSingleValuedPortData[i].link);
       //linkSingleValuedContourData[i].link->addObject(this);
     }
-    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
       linkSingleValued.push_back(linkSingleValuedContourData[i].link);
       //linkSingleValuedContourData[i].link->addObject(this);
     }
@@ -355,7 +357,7 @@ namespace MBSim {
     updateWj(t);
     vector<Mat>::iterator itW=W.begin(); 
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
-    for(int i=0; i<linkSetValued.size(); i++) {
+    for(unsigned int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
 	Index I = (*it1)->getlaIndex();
 	Mat Wi = (*itW);
@@ -375,7 +377,7 @@ namespace MBSim {
     vector<Mat>::iterator itW=W.begin(), jtW; 
     vector<Vec>::iterator itw=w.begin(); 
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
-    for(int i=0; i<linkSetValued.size(); i++) {
+    for(unsigned int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
         Index I = (*it1)->getlaIndex();
         Mat Wi = (*itW);
@@ -384,7 +386,7 @@ namespace MBSim {
         mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
         jt1 = linkSetValued.begin(); 
         jtW = W.begin(); 
-        for(int j=0; j<i; j++) {
+        for(unsigned int j=0; j<i; j++) {
           if((*jt1)->isActive()) {
             Index J =  (*jt1)->getlaIndex();
             mbs->getG()(J,I) += trans((*jtW))*iMWi; 
@@ -440,16 +442,16 @@ namespace MBSim {
       double qSave = q(j);
       q(j) += eps;
       updateKinematics(t);
-      for(int i=0; i<linkSingleValued.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValued.size(); i++) {
 	linkSingleValued[i]->updateStage1(t); 
 	linkSingleValued[i]->updateStage2(t); 
       }
       updateh(t);
       Jhcol(Iu) += (geth()-hOld)/eps;
-      for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
 	LinkPort* l = linkSingleValuedPortData[i].link;
 	vector<Port*> ports = l->getPorts();
-	for(int b=0; b<ports.size(); b++) {
+	for(unsigned int b=0; b<ports.size(); b++) {
 	  Object *obj = ports[b]->getObject()->getResponsible();
 	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
 	    Vec hOld = obj->geth().copy();
@@ -459,10 +461,10 @@ namespace MBSim {
 	  }
 	}
       }
-      for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
 	LinkContour* l = linkSingleValuedContourData[i].link;
 	vector<Contour*> contours = l->getContours();
-	for(int b=0; b<contours.size(); b++) {
+	for(unsigned int b=0; b<contours.size(); b++) {
 	  Object *obj = contours[b]->getObject()->getResponsible();
 	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
 	    Vec hOld = obj->geth().copy();
@@ -481,15 +483,15 @@ namespace MBSim {
       double uSave = u(j);
       u(j) += eps;
       updateKinematics(t);
-      for(int i=0; i<linkSingleValued.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValued.size(); i++) {
 	linkSingleValued[i]->updateStage1(t); linkSingleValued[i]->updateStage2(t); 
       }
       updateh(t);
       Jhcol(Iu) += (geth()-hOld)/eps;
-      for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
 	LinkPort* l = linkSingleValuedPortData[i].link;
 	vector<Port*> ports = l->getPorts();
-	for(int b=0; b<ports.size(); b++) {
+	for(unsigned int b=0; b<ports.size(); b++) {
 	  Object *obj = ports[b]->getObject()->getResponsible();
 	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
 	    Vec hOld = obj->geth().copy();
@@ -499,10 +501,10 @@ namespace MBSim {
 	  }
 	}
       }
-      for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+      for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
 	LinkContour* l = linkSingleValuedContourData[i].link;
 	vector<Contour*> contours = l->getContours();
-	for(int b=0; b<contours.size(); b++) {
+	for(unsigned int b=0; b<contours.size(); b++) {
 	  Object *obj = contours[b]->getObject()->getResponsible();
 	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
 	    Vec hOld = obj->geth().copy();
@@ -515,11 +517,16 @@ namespace MBSim {
       u(j) = uSave;
     }
     updateKinematics(t);
-    for(int i=0; i<linkSingleValued.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValued.size(); i++) {
       linkSingleValued[i]->updateStage1(t); 
       linkSingleValued[i]->updateStage2(t); 
     }
     h=hOld;
+  }
+  
+
+  double Object::computeKineticEnergy() {
+    return 0.5*trans(u)*M*u;
   }
 
 }

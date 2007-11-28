@@ -41,7 +41,7 @@ namespace MBSim {
 
   //-------------------------------------------------------------------------
   FiniteElement1s21RCM::FiniteElement1s21RCM(double sl0, double sArho, double sEA, double sEI, Vec sg)
-    :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), g(sg), wss0(0.0), depsilon(0.0),
+    :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.0), depsilon(0.0), g(sg),
     M(8), h(8), implicit(false), Dhq(8), Dhqp(8),
     Damp(8,fmatvec::INIT,0.0)
   {
@@ -551,7 +551,7 @@ namespace MBSim {
     //    static Vec qpElementDummy(8,fmatvec::INIT,0.0);
     //lokale Koordinate
     BuildqLokal(qElement,qLokal);
-    static double &xS     = qLokal(0);      static double &yS    = qLokal(1);
+//    static double &xS     = qLokal(0);      static double &yS    = qLokal(1);
     static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
     static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
     static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
@@ -641,11 +641,11 @@ namespace MBSim {
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
     qpLokal = Jeg*qpElement;
 
-    double &xS     = qLokal(0);      double &yS    = qLokal(1);
+//    double &xS     = qLokal(0);      double &yS    = qLokal(1);
     double &phiS   = qLokal(2);      double &eps   = qLokal(3);
     double &aL     = qLokal(4);      double &bL    = qLokal(5);
     double &aR     = qLokal(6);      double &bR    = qLokal(7);
-    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+//    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
     double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
     double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
     double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
@@ -715,7 +715,7 @@ namespace MBSim {
     //lokale Koordinate
     BuildqLokal(qElement,qLokal);
 
-    double &xS     = qLokal(0);      double &yS    = qLokal(1);
+//    double &xS     = qLokal(0);      double &yS    = qLokal(1);
     double &phiS   = qLokal(2);      double &eps   = qLokal(3);
     double &aL     = qLokal(4);      double &bL    = qLokal(5);
     double &aR     = qLokal(6);      double &bR    = qLokal(7);
@@ -743,12 +743,12 @@ namespace MBSim {
     BuildJacobi(qElement,Jeg);
     Vec qpLokal = Jeg*qpElement;
 
-    double &xS     = qLokal(0);      double &yS    = qLokal(1);
+//    double &xS     = qLokal(0);      double &yS    = qLokal(1);
     double &phiS   = qLokal(2);      double &eps   = qLokal(3);
     double &aL     = qLokal(4);      double &bL    = qLokal(5);
     double &aR     = qLokal(6);      double &bR    = qLokal(7);
 
-    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+//    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
     double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
     double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
     double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
@@ -815,7 +815,8 @@ namespace MBSim {
 
     // Gravitation
     static double gx = g(0);
-    static double gy = g(1);
+//    static double gy = g(1);
+cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
 
     // die Komponenten
     // Alb. nach q

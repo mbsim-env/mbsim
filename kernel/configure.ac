@@ -48,7 +48,7 @@ AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS -I$(pwd)/src/body_flexible -I$(pwd)/src/body_flexible/finite_elements -I$(pwd)/src/integrators -I$(pwd)/src/contact_kinematics -I$(pwd)/src/utils"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -I$(pwd)/src/body_flexible -I$(pwd)/src/body_flexible/finite_elements -I$(pwd)/src/integrators -I$(pwd)/src/contact_kinematics -I$(pwd)/src/utils"
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])

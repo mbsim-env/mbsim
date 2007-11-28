@@ -117,7 +117,7 @@ namespace MBSim {
     parafile << "\n# JR:\n"      << JR   << endl;
 
     if(port.size()>0) parafile << "\nports:" <<endl;
-    for(int i=0; i<port.size(); i++) { 
+    for(unsigned int i=0; i<port.size(); i++) { 
       parafile << "# s: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = ";
       if(S_Port[i].type==CONTINUUM) parafile << S_Port[i].alpha(0) << endl;
       if(S_Port[i].type==NODE     ) parafile << S_Port[i].ID*L/Elements  << endl;
@@ -141,7 +141,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s23BTA::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       if(S_Port[i].type == CONTINUUM) // ForceElement on continuum
       {
 	const double &s = S_Port[i].alpha(0);
@@ -188,7 +188,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s23BTA::updateh(double t) {
-    static int i,j;
+    static int i;
 
     M.init(0.0);
     h.init(0.0);

@@ -55,7 +55,7 @@ namespace MBSim {
 
   void TreeRigid::updateWj(double t) {
     vector<Mat>::iterator itW=W.begin(); 
-    for(int i=0; i<W.size(); i++)
+    for(unsigned int i=0; i<W.size(); i++)
       W[i].init(0);
     root->updateWj(t);
     LLM = facLL(M); // TODO evtl. in updateh berechnen -> slvLL
@@ -189,7 +189,7 @@ namespace MBSim {
     //    cout << body->getFullName() << endl;
 
     // ... und seine Nachfolger
-    for(int i=0; i<body->successor.size(); i++) {
+    for(unsigned int i=0; i<body->successor.size(); i++) {
       Vtemp += computePotentialEnergyBranch(body->successor[i]);
     }
     return Vtemp;

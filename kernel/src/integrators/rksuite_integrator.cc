@@ -78,7 +78,7 @@ namespace MBSim {
     Vec zdGot(zSize);
     Vec zMax(zSize);
     int result;
-    bool donedrift;
+//    bool donedrift;
 
     system->plot(z, t);
 

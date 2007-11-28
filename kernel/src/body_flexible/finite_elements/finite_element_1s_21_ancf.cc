@@ -49,7 +49,7 @@ namespace MBSim {
   }
 
   FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg)
-    :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), g(sg), wss0(0.0), depsilon(0.0),
+    :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.0), depsilon(0.0), g(sg),
     M(ElementalDOFs), h(ElementalDOFs), implicit(false), Dhq(ElementalDOFs), Dhqp(ElementalDOFs),
     Damp(ElementalDOFs,fmatvec::INIT,0.0)
   {
@@ -157,8 +157,6 @@ namespace MBSim {
   //------------------------------------------------------------------------------
   void FiniteElement1s21ANCF::berechneh(Vec qElement, Vec qpElement)
   {
-    double &x1p = qpElement(0);
-
     //---  Koordinaten, Geschwindigkeiten
     double & x1 = qElement(0);    double & y1 = qElement(1);
     double &dx1 = qElement(2);    double &dy1 = qElement(3);

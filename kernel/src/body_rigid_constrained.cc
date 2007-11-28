@@ -96,14 +96,14 @@ namespace MBSim {
     vector<Vec>::iterator itw=w.begin(); 
     vector<LinkPortData>::iterator jt1,it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator jt2,it2=linkSetValuedContourData.begin(); 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       Index I = it1->link->getlaIndex();
       Mat Wi = (*itW);
       //mbs->getw()(I) += (*itw); 
       mbs->getb()(I) += trans(Wi)*h + (*itw); 
       it1++; itW++; itw++;
     }
-    for(int i=linkSetValuedPortData.size(); i<linkSetValuedContourData.size() + linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=linkSetValuedPortData.size(); i<linkSetValuedContourData.size() + linkSetValuedPortData.size(); i++) {
       if(it2->link->isActive()) {
 	Index I = it2->link->getlaIndex();
 	Mat Wi = (*itW);
@@ -190,12 +190,12 @@ namespace MBSim {
     vector<Vec>::iterator itw=w.begin(); 
     vector<LinkPortData>::iterator jt1,it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator jt2,it2=linkSetValuedContourData.begin(); 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       Index I = it1->link->getlaIndex();
       Mat Wi = (*itW);
       it1++; itW++; itw++;
     }
-    for(int i=linkSetValuedPortData.size(); i<linkSetValuedContourData.size() + linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=linkSetValuedPortData.size(); i<linkSetValuedContourData.size() + linkSetValuedPortData.size(); i++) {
       if(it2->link->isActive()) {
 	Index I = it2->link->getlaIndex();
 	Mat Wi = (*itW);

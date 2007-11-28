@@ -78,13 +78,13 @@ namespace MBSim {
       void updateAK0KEulerParameters();
       void updateTEulerParameters();
 
+      bool inertiaWithRespectToCOG;
+
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
       DataInterfaceBase* bodyAMVisUserFunctionColor;
       bool AMVisDataRel;
 #endif
-
-      bool inertiaWithRespectToCOG;
 
     public:
 

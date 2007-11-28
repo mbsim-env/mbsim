@@ -60,10 +60,13 @@ namespace MBSim {
     void sets0(const Vec& s0_);
 
 //    void plot(double t, double dt = 1);
-    void initStage1();
+//    void initStage2();
 
     void setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
     BodyFlexible* getPrecessor() {return precessor;}
+
+    void updateqRef();
+    void updateuRef();
   };
 
 }
