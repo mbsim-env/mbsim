@@ -58,6 +58,7 @@ namespace MBSim {
 
     const Index& getIJactive() const {return IJactive;}
     void sets0(const Vec& s0_);
+    void setPrPK0(const Vec& PrPK0_) {cout << "WARNING\n\tBodyRigidRelOnFlex::setPrPK0(): PrPK0 restricted to 0 and left unchanged" << endl;}
 
 //    void plot(double t, double dt = 1);
 //    void initStage2();
