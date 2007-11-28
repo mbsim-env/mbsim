@@ -92,7 +92,7 @@ namespace MBSim {
     if(active) {
       double *a = mbs->getGs()();
       int *ia = mbs->getGs().Ip();
-      int *ja = mbs->getGs().Jp();
+//      int *ja = mbs->getGs().Jp(); // unused
       for(int i=0; i<rFactorSize; i++) {
 	double sum = 0;
 	for(int j=ia[laInd+i]+1; j<ia[laInd+i+1]; j++)

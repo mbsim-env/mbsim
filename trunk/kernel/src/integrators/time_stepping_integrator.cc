@@ -66,7 +66,7 @@ namespace MBSim {
 
     cout.setf(ios::scientific, ios::floatfield);
 
-    double dt0 = dt;
+//    double dt0 = dt;
     int step = 0;
     int stepPlot =(int) (1.0/dtPlot);
     int integrationSteps = 0;

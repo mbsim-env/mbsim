@@ -25,7 +25,7 @@ namespace MBSim {
 
   MultiBodySystem * Integrator::system = 0;
 
-  Integrator::Integrator() : tEnd(1), dtPlot(1e-4), warnLevel(0), output(true),tStart(0) {
+  Integrator::Integrator() : tStart(0), tEnd(1), dtPlot(1e-4), warnLevel(0), output(true) {
     name = "Integrator";
   }
 

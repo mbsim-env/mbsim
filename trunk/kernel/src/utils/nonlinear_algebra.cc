@@ -69,7 +69,6 @@ namespace MBSim {
 
     iter=0;
     double x = x0, xold;
-    double nrmf;
 
     double f = (*fct)(x);
     double nrmf0 = fabs(f);
@@ -102,6 +101,7 @@ namespace MBSim {
 	return rc;
       }
 
+      double nrmf = 1;
       double alpha = 1;
       xold = x;
       for (int k=0; k<kmax; k++) {
@@ -131,7 +131,6 @@ namespace MBSim {
     iter=0;
     Vec x, xold;
     x = x0;
-    double nrmf;
 
     Vec f = (*fct)(x);
     double nrmf0 = nrmInf(f);
@@ -167,6 +166,7 @@ namespace MBSim {
 
       Vec dx = slvLU(J,f);
 
+      double nrmf = 1;
       double alpha = 1;
       xold = x;
       for (int k=0; k<kmax; k++) {

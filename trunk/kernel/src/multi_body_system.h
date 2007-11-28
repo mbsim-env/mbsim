@@ -55,7 +55,6 @@ namespace MBSim {
     friend class HitSphereLink;
 
     protected:
-    Integrator *preIntegrator;
     vector<Object*> objects;
     vector<Link*> links;
     vector<ExtraDynamicInterface*> EDI;
@@ -115,6 +114,7 @@ namespace MBSim {
     Vec fParent;
     Vec svParent;
     Vector<int> jsvParent;
+    /** gravitation common for all components */
     Vec grav;
     bool activeConstraintsChanged;
 
@@ -172,6 +172,7 @@ namespace MBSim {
     HydFluid *fl;
     /** ambient pressure, only for hydraulic systems */
     double pinf;
+    Integrator *preIntegrator;
 
     public:
     void updatezRef(const Vec &zExt);

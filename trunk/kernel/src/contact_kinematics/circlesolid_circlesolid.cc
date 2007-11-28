@@ -43,7 +43,8 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidCircleSolid::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
-    Vec WrOC[2], WrPC[2];
+//    Vec WrOC[2], WrPC[2];
+    Vec WrPC[2];
     WrPC[icircle1] = cpData[icircle0].Wn*circle1->getRadius();
     cpData[icircle1].WrOC = circle1->getWrOP()+WrPC[icircle1];
 

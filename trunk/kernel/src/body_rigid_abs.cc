@@ -123,7 +123,7 @@ namespace MBSim {
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
-    for(int i=0; i<linkSetValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       int portID = it1->ID;
       int objectID = it1->objectID;
       Mat ld = it1->link->getLoadDirections(objectID);
@@ -135,7 +135,7 @@ namespace MBSim {
       it1++; itW++; itw++;
     }
 
-    for(int i=0; i<linkSetValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       if(it2->link->isActive()) {
 	int objectID = it2->objectID;
 	Mat ld = it2->link->getLoadDirections(objectID);

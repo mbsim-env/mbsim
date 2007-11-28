@@ -63,10 +63,10 @@ namespace MBSim {
   }
 
   void TreeFlexRoot::updateM(double t) {
-//    flexible->updateM();
+    flexible->updateM(t);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->updateM(t);
-
+// cout <<"  void TreeFlexRoot::updateM(double t) {" << endl;
 // cout << "M = " << M << endl;
 // cout << "h = " << h << endl;
 // cout << "M^-1h = " << inv(M)*h << endl;
@@ -328,14 +328,16 @@ namespace MBSim {
     return Vtemp;
   }
 
-//   double TreeFlexRoot::computeKineticEnergy() {
-//   return Object::computeKineticEnergy();
-//     double Ttemp = flexible->computeKineticEnergy();
-//     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
-//       Ttemp += (*ib)->computeKineticEnergyBranch();
-//     }
-//     return Ttemp;
-//   }
+///   double TreeFlexRoot::computeKineticEnergy() {
+/// ///    return 0.5*trans(u)*M*u;
+///   cout << "double TreeFlexRoot::computeKineticEnergy() = " << Object::computeKineticEnergy() << endl;
+///   return Object::computeKineticEnergy();
+/// /// //     double Ttemp = flexible->computeKineticEnergy();
+/// /// //     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
+/// /// //       Ttemp += (*ib)->computeKineticEnergyBranch();
+/// /// //     }
+/// /// //     return Ttemp;
+///    }
 
   Port* TreeFlexRoot::getPort(const string &pName) {
 //    return root->getPort(pName);

@@ -89,7 +89,7 @@ namespace MBSim {
     // Interpolation
     cpData[idinterpol].iPoints = cinterpol->getPoints();
     cpData[idinterpol].iWeights = Vec(cpData[idinterpol].iPoints.size(),NONINIT);
-    for(int i=0;i<cpData[idinterpol].iPoints.size();i++)
+    for(unsigned int i=0;i<cpData[idinterpol].iPoints.size();i++)
       cpData[idinterpol].iWeights(i) = cinterpol->computePointWeight(cpData[idinterpol].alpha, i);      
 
     // Kontakt-Geschwindigkeiten

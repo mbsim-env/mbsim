@@ -39,7 +39,7 @@ namespace MBSim {
     L(0), E(0), A(0), I(0), rho(0), openStructure(openStructure_), 
     implicit(false), qElement(8), uElement(8), 
     WrON00(3), WrON0(3), 
-    alphaRelax0(-99999.99999), alphaRelax(alphaRelax0), initialized(false),
+    initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0),
     Wt(3), Wn(3), WrOC(3), WvC(3) { 
 	  contourR = new Contour1sFlexible("R");
 	  contourL = new Contour1sFlexible("L");
@@ -116,7 +116,7 @@ namespace MBSim {
 
 
   void BodyFlexible1s21ANCF::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       if(S_Port[i].type == CONTINUUM) {      // ForceElement on continuum
 	const double &s = S_Port[i].alpha(0);// globaler KontParameter
 	double sLokal = BuildElement(s);

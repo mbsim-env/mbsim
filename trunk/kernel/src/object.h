@@ -249,7 +249,7 @@ namespace MBSim {
 
     /*! compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies
     */
-    virtual double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
+    virtual double computeKineticEnergy(); // return 0.5*trans(u)*M*u; }
 
     /*! compute potential energy, holding every potential!!!
     */

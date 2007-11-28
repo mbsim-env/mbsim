@@ -46,14 +46,31 @@ namespace MBSim {
     constcPosition = true;
     cPosition.alpha = s0_;
     cPosition.alphap = Vec(0);
-  };
+  }
 
-  void BodyRigidRelOnFlex::initStage1() {
-    BodyRigidRel::initStage1();
-    if(!constcPosition) {
-      cPosition.alpha  >> q(iT);
-      cPosition.alphap >> u(iT);
-    }
+//  void BodyRigidRelOnFlex::initStage2() {
+//    BodyRigidRel::initStage2();
+//    if(!constcPosition) {
+////      cPosition.alpha .resize(iT.end()-iT.start()+1);
+////      cPosition.alphap.resize(iT.end()-iT.start()+1);
+//
+//cout << "iT: start " << iT.start() << " end: " << iT.end() << endl;
+//cout << q(iT) << endl;
+//cout << u(iT) << endl;
+//cout << cPosition.alpha << endl;
+//cout << cPosition.alphap << endl;
+//      cPosition.alpha  >> q(iT);
+//      cPosition.alphap >> u(iT);
+//    }
+//  }
+
+  void BodyRigidRelOnFlex::updateqRef() {
+    BodyRigidRel::updateqRef();
+    if(!constcPosition) cPosition.alpha  >> q(iT);
+  }
+  void BodyRigidRelOnFlex::updateuRef() {
+    BodyRigidRel::updateuRef();
+    if(!constcPosition) cPosition.alphap >> u(iT);
   }
  
 //  void BodyRigidRelOnFlex::updateM(double t) {
@@ -63,90 +80,6 @@ namespace MBSim {
 //    }
 //  }
   
-//////////-------------------------------------------------------------------------------------------------------------------------
-////////// RIGID PRECESSOR
-//////////
-////////  void BodyRigidRelOnFlex::updatehRigid(double t) {
-////////    sumUpForceElements(t);
-////////    Vec KF = trans(AWK)*WF;
-////////    Vec KM = trans(AWK)*WM;
-////////    l(0,2) = KF - m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS));
-////////    l(3,5) = KM + crossProduct(I*KomegaK,KomegaK);
-////////
-////////    if(rigidPrecessor) {
-////////      C(Index(0,2),Index(0,2)) = trans(APK);
-////////      C(Index(3,5),Index(3,5)) = trans(APK);
-////////      C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
-////////
-////////      Vec f(6,NONINIT);
-////////      f(0,2) = trans(APK)*(crossProduct(rigidPrecessor->getKomegaK(), 2*(JT*u(iT))+crossProduct(rigidPrecessor->getKomegaK(),PrPK)));
-////////      f(3,5) = crossProduct(KomegaK,JR*u(iR));
-////////
-////////      e = C*rigidPrecessor->gete()+f;
-////////      l -= Mh*e;
-////////
-////////
-////////////       BodyRigidRel* nextBody = rigidPrecessor;
-////////////       while(nextBody) {
-//////////// //	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*rigidPrecessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
-//////////// 	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*nextBody->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
-//////////// 	nextBody = nextBody->getPrecessor();
-////////
-////////// ToDo: Martin! Waere das nicht evtl. die schnellere, weil Index-Scan-freie Loesung, um J auf Vorgaenger zu bestimmen? dann waers fuer mich halt auch direkt verwendbar
-////////       J(Index(0,5),Index(0,rigidPrecessor->getIuR().end())) = C*rigidPrecessor->getJ();
-//////// 
-//////////       Macontour_t Jright = J.copy();
-////////// 
-//////////       BodyRigidRel* nextBody = rigidPrecessor;
-//////////       while(nextBody) {
-//////////// 	J(Index(0,5),nextBody->getIJactive()) = C*rigidPrecessor->getJ()(Index(0,5),nextBody->getIJactive()); // den precessor check ich an der Stelle hier nicht!
-//////////	J(Index(0,5),nextBody->getIJactive()) = C*nextBody->getJ()(Index(0,5),nextBody->getIJactive());
-////////// 	nextBody = nextBody->getPrecessor();
-//////////      }
-////////
-////////    }
-////////    J(Index(0,2),IuT) = trans(APK)*JT;
-////////    J(Index(3,5),IuR) = JR;
-////////
-//////////cout << getFullName() << " J = " << J << endl;
-////////
-////////    tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
-////////
-////////    for(int i=0; i<successor.size(); i++) {
-////////      successor[i]->updateh(t);
-////////    }
-////////  }
-////////
-////////  void BodyRigidRelOnFlex::updateCenterOfGravityRigid(double t) {
-////////
-////////    (this->*updateAK0K)();
-////////
-////////    PrPK = JT*q(iT) + PrPK0;
-////////    APK = APK0*AK0K;
-////////    if(rigidPrecessor) {
-////////      AWK = rigidPrecessor->getAWK()*APK;
-////////      KomegaK = trans(APK)*rigidPrecessor->getKomegaK() + JR*u(iR);
-////////      WomegaK = AWK * KomegaK;
-////////      KrOK = trans(APK)*(PrPK + rigidPrecessor->getKrOK());
-////////      KvK = trans(APK)*(rigidPrecessor->getKvK() + JT*u(iT) + crossProduct(rigidPrecessor->getKomegaK(),PrPK));
-////////    } else {
-////////      AWK = APK;
-////////      KomegaK = JR*u(iR);
-////////      WomegaK = AWK * KomegaK;
-////////      KrOK = trans(APK)*(PrPK);
-////////      KvK = trans(APK)*JT*u(iT);
-////////    }
-////////
-////////    WrOK = AWK * KrOK;
-////////    WvK = AWK * KvK;
-////////  }
-////////
-//////////-------------------------------------------------------------------------------------------------------------------------
-  
-//  void BodyRigidRelOnFlex::sets0(const Vec& s0_) {
-//    s0 = s0_;
-//  }
-//
   void BodyRigidRelOnFlex::updateh(double t) {
 //static int i=0;
 //cout << "void BodyRigidRelOnFlex::updateh(double t) i = " << i++ << endl;
@@ -195,7 +128,9 @@ namespace MBSim {
 
     C(Index(0,2),Index(0,2)) = trans(APK);
     C(Index(3,5),Index(3,5)) = trans(APK);
-    C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
+//    C(Index(0,2),Index(3,5)) = -trans(APK)*tilde(PrPK);
+    C(Index(0,2),Index(3,5)).init(0.0);
+    C(Index(3,5),Index(0,2)).init(0.0);
 
     Mat Jges_pre(6,precessor->JT.cols()+precessor->JR.cols(),INIT,0.0);
     Jges_pre(Index(0,2),Index(                   0,precessor->JT.cols()-1)) = trans(AWP)*precessor->JT;
@@ -221,7 +156,7 @@ namespace MBSim {
 
     tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
 
-    for(int i=0; i<successor.size(); i++)
+    for(unsigned int i=0; i<successor.size(); i++)
       successor[i]->updateh(t);
   }
 
@@ -256,6 +191,7 @@ namespace MBSim {
       //cout << "u(iT) " << trans(u(iT)) << endl;
       //cout << "+= trans(AWK)*precessor->computeK(cp) * u(iT) " << trans(trans(AWK)*precessor->computeK(cp) * u(iT)) << endl;
     }
+    WomegaK = AWK * KomegaK;
 
     //      KrOK = trans(APK)*(PrPK + precessor->getKrOK());
     WrOK = precessor->computeWrOC(cPosition);
@@ -263,8 +199,6 @@ namespace MBSim {
     WvK  = precessor->computeWvC(cPosition);
     if(JT.cols()) WvK += precessor->computeDrDs(cPosition)*u(iT);
 
-
-    WomegaK = AWK * KomegaK;
     KrOK = trans(AWK) * WrOK;
     KvK  = trans(AWK) * WvK;
   }

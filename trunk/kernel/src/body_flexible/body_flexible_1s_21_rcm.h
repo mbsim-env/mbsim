@@ -25,7 +25,7 @@
 
 #include "body_flexible.h"
 
-namespace AMVis {class ElasticBody1s21RCM;};
+namespace AMVis {class ElasticBody1s21RCM;}
 
 namespace MBSim {
 

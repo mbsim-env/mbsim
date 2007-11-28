@@ -8,6 +8,7 @@ using namespace AMVis;
 Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
 
   setProjectDirectory("plot");
+  setPlotLevel(3); 
 
   Vec grav(3);
   grav(1)=-9.81;

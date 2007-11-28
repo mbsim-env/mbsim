@@ -37,10 +37,10 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Object("Default"), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), directoryName("Default") , numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false), solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001) , preIntegrator(NULL) , nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500){
+  MultiBodySystem::MultiBodySystem() :                          Object("Default"),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true),  directoryName(projectName) , numJac(false), maxIter(10000), highIter(1000), stopIfNoConvergence(false),solver(FixedPointSingle), strategy(local), warnLevel(0), useOldla(true), linAlg(LUDecomposition), maxDampingSteps(3), lmParm(0.001), preIntegrator(NULL), nHSLinksSingleValuedFixed(0), nHSLinksSetValuedFixed(0), checkGSize(true), limitGSize(500) {
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
   }
 
   MultiBodySystem::~MultiBodySystem() {
@@ -513,6 +513,7 @@ namespace MBSim {
    // for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
     //  (*iL)->updateStage2(t);
     updateh(t); 
+    updateM(t); 
     //updateG(t); 
     //computeConstraintForces(t); 
     //updater(t); 
@@ -666,28 +667,24 @@ namespace MBSim {
   }
 
   void MultiBodySystem::updateM(double t) {
-
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateM(t);
   }
 
   void MultiBodySystem::updateT(double t) {
-
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateT(t);
   }
 
   void MultiBodySystem::updateh(double t) {
-
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateh(t);
   }
 
   void MultiBodySystem::updateW(double t) {
-
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateW(t);
@@ -976,14 +973,14 @@ namespace MBSim {
     if(laSize) {
     Vec nu(uSize);
     int gASize = 0;
-    for(int i = 0; i<linkSetValuedActive.size(); i++) {
+    for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
       gASize += linkSetValuedActive[i]->getgSize();
     }
     SymMat Gv(gASize,NONINIT);
     Mat Wv(W.rows(),gASize,NONINIT);
     Vec gv(gASize,NONINIT);
     int gAIndi = 0;
-    for(int i = 0; i<linkSetValuedActive.size(); i++) {
+    for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
       Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
       Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
       Wv(Index(0,Wv.rows()-1),Iv) = W(Index(0,W.rows()-1),I1);
@@ -991,7 +988,7 @@ namespace MBSim {
 
       Gv(Iv) = G(I1);
       int gAIndj = 0;
-      for(int j = 0; j<i; j++) {
+      for(unsigned int j = 0; j<i; j++) {
 	Index Jv = Index(gAIndj,gAIndj+linkSetValuedActive[j]->getgSize()-1);
 	Index J1 = Index(linkSetValuedActive[j]->getlaInd(),linkSetValuedActive[j]->getlaInd()+linkSetValuedActive[j]->getgSize()-1);
 	Gv(Jv,Iv) = G(J1,I1);
@@ -1007,7 +1004,7 @@ namespace MBSim {
       updateKinematics(t);
       updateLinksStage1(t);
       int gAIndi = 0;
-      for(int i = 0; i<linkSetValuedActive.size(); i++) {
+      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
 	Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
 	Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
 	gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
@@ -1030,8 +1027,7 @@ namespace MBSim {
   }
 
   Port* MultiBodySystem::getPort(const string &name,bool check) {
-
-    int i;
+    unsigned int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name || port[i]->getFullName()== name)
 	return port[i];
@@ -1040,10 +1036,12 @@ namespace MBSim {
       if(!(i<port.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no port " << name << "!" << endl; 
       assert(i<port.size());
     }
-    else return NULL;
+//    else return NULL;
+    return NULL;
   }
+
   Contour* MultiBodySystem::getContour(const string &name,bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<contour.size(); i++) {
       if(contour[i]->getName() == name || contour[i]->getFullName()== name)
 	return contour[i];
@@ -1052,7 +1050,8 @@ namespace MBSim {
       if(!(i<contour.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no contour " << name << "!" << endl; 
       assert(i<contour.size());
     }
-    else return NULL;
+//    else return cReturn;
+    return NULL;
   }
 
 
@@ -1095,51 +1094,51 @@ namespace MBSim {
   }
 
   void MultiBodySystem::writez(){
-    for(int i=0; i<objects.size(); i++)  {
+    for(unsigned int i=0; i<objects.size(); i++)  {
       objects[i]->writeq();
       objects[i]->writeu();
       objects[i]->writex();
     }
-    for(int i=0; i<EDI.size(); i++)  {
+    for(unsigned int i=0; i<EDI.size(); i++)  {
       EDI[i]->writex();
     }
   }
 
   void MultiBodySystem::readz0(){
-    for(int i=0; i<objects.size(); i++)  {
+    for(unsigned int i=0; i<objects.size(); i++)  {
       objects[i]->readq0();
       objects[i]->readu0();
       objects[i]->readx0();
     }
-    for(int i=0; i<EDI.size(); i++)  {
+    for(unsigned int i=0; i<EDI.size(); i++)  {
       EDI[i]->readx0();
     }
   }
 
   void MultiBodySystem::addMbs(MultiBodySystem* mbs) {
 
-    for(int i=0; i<mbs->port.size(); i++) {
+    for(unsigned int i=0; i<mbs->port.size(); i++) {
       Object::addPort(mbs->port[i]);
     }
-    for(int i=0; i<mbs->contour.size(); i++) {
+    for(unsigned int i=0; i<mbs->contour.size(); i++) {
       Object::addContour(mbs->contour[i]);
     }
-    for(int i=0; i<mbs->objects.size(); i++) {
+    for(unsigned int i=0; i<mbs->objects.size(); i++) {
       addObject(mbs->objects[i]);
     }
-    for(int i=0; i<mbs->links.size(); i++) {
+    for(unsigned int i=0; i<mbs->links.size(); i++) {
       addLink(mbs->links[i]);
     }
-    for(int i=0; i<mbs->EDI.size(); i++) {
+    for(unsigned int i=0; i<mbs->EDI.size(); i++) {
       addEDI(mbs->EDI[i]);
     }
-    for(int i=0; i<mbs->DIBs.size(); i++) {
+    for(unsigned int i=0; i<mbs->DIBs.size(); i++) {
       addDataInterfaceBase(mbs->DIBs[i]);
     }
   }
 
   Object* MultiBodySystem::getObject(const string &name, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<objects.size(); i++) {
       //cout << objects[i]->getName() << " " << name << endl;
       if(objects[i]->getName() == name)
@@ -1154,10 +1153,11 @@ namespace MBSim {
       if(!(i<objects.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no object " << name << "!" << endl; 
       assert(i<objects.size());
     }
-    else return NULL;
+//    else return NULL;
+    return NULL;
   }
   Link* MultiBodySystem::getLink(const string &name, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<links.size(); i++) {
       //cout << links[i]->getName() << " " << name << endl;
       if(links[i]->getName() == name)
@@ -1172,11 +1172,12 @@ namespace MBSim {
       if(!(i<links.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no link " << name << "!" << endl; 
       assert(i<links.size());
     }
-    else return NULL;
+    return NULL;
+//    else return NULL;
   }
 
   Element* MultiBodySystem::getElement(const string &name) {
-    int i1;
+    unsigned int i1;
     for(i1=0; i1<objects.size(); i1++) {
       if(objects[i1]->getName() == name)
 	return (Element*)objects[i1];
@@ -1185,7 +1186,7 @@ namespace MBSim {
       if(objects[i1]->getFullName() == name)
 	return (Element*)objects[i1];
     }
-    int i2;
+    unsigned int i2;
     for(i2=0; i2<links.size(); i2++) {
       if(links[i2]->getName() == name)
 	return (Element*)links[i2];
@@ -1194,7 +1195,7 @@ namespace MBSim {
       if(links[i2]->getFullName() == name)
 	return (Element*)links[i2];
     }
-    int i3;
+    unsigned int i3;
     for(i3=0; i3<EDI.size(); i3++) {
       if(EDI[i3]->getName() == name)
 	return (Element*)EDI[i3];
@@ -1205,10 +1206,11 @@ namespace MBSim {
     }
     if(!(i1<objects.size())||!(i2<links.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
     assert(i1<objects.size()||i2<links.size()||!(i3<EDI.size()));
+    return NULL;
   }
 
   ExtraDynamicInterface* MultiBodySystem::getEDI(const string &name, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<EDI.size(); i++) {
       if(EDI[i]->getName() == name)
 	return EDI[i];
@@ -1220,7 +1222,9 @@ namespace MBSim {
     if(check) {
       if(!(i<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
       assert(i<EDI.size());
-    } else return NULL;
+    }
+//   else return NULL;
+    return NULL; 
   }    
 
   void MultiBodySystem::addObject(Object *object) {
@@ -1235,7 +1239,7 @@ namespace MBSim {
   }
 
   DataInterfaceBase* MultiBodySystem::getDataInterfaceBase(const string &name_, bool check) {
-    int i;
+    unsigned int i;
     for(i=0; i<DIBs.size(); i++) {
       if(DIBs[i]->getName() == name_ || DIBs[i]->getName()== fullName+"."+name_ || DIBs[i]->getName() == name_+".SigOut" || DIBs[i]->getName()== fullName+"."+name_+".SigOut")
 	return DIBs[i];
@@ -1243,7 +1247,8 @@ namespace MBSim {
     if(check){
       if(!(i<DIBs.size())) cout << "Error: The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
       assert(i<DIBs.size());
-    } else return NULL;
+    } 
+    return NULL;
   }    
 
   void MultiBodySystem::addDataInterfaceBase(DataInterfaceBase* dib_){
@@ -1378,7 +1383,7 @@ namespace MBSim {
       return 0 ;
 
     int iter, level = 0;
-    int checkTermLevel = 0;
+//    int checkTermLevel = 0;
 
     for(iter = 1; iter<=maxIter; iter++) {
       double *a = getGs()();
@@ -1511,7 +1516,7 @@ namespace MBSim {
 
     s = getgd() + getb()*dt;
     int iter;
-    int prim = 0;
+//    int prim = 0;
     int checkTermLevel = 0;
 
     residualProj(dt); 
@@ -1562,7 +1567,7 @@ namespace MBSim {
 
       Vec La_old = la.copy();
 
-      double nrmf;
+      double nrmf=1;
       for (int k=0; k<maxDampingSteps; k++) {
 	la = La_old - alpha*dx;
 	residualProj(dt);

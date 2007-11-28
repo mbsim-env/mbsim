@@ -34,7 +34,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  BodyRigid::BodyRigid(const string &name) : Body(name), m(0), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), AWK(3), AK0K(3), KrKS(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), inertiaWithRespectToCOG(false) 
+  BodyRigid::BodyRigid(const string &name) : Body(name), m(0), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), KrKS(3), AWK(3), AK0K(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), inertiaWithRespectToCOG(false) 
 # ifdef HAVE_AMVIS
 					     ,
 					     bodyAMVis(0), AMVisDataRel(false) 
@@ -161,7 +161,7 @@ namespace MBSim {
     parafile << "# JT:\n"      << JT   << endl;
     parafile << "# JR:\n"      << JR   << endl;
     if(port.size()>0) parafile << "# ports: " <<endl;
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       Vec KrKPtemp = KrKP[i];
       parafile << "# KrKP: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = (" << KrKPtemp(0) <<","<< KrKPtemp(1) <<","<< KrKPtemp(2) << ")" << endl;
     }
@@ -228,7 +228,7 @@ namespace MBSim {
   }
 
   void BodyRigid::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       WrKP[i] = AWK * KrKP[i];
       port[i]->setWrOP(WrOK + WrKP[i]);
       port[i]->setWvP(WvK + crossProduct(WomegaK, WrKP[i]));
@@ -238,7 +238,7 @@ namespace MBSim {
   }
 
   void BodyRigid::updateContours(double t) {
-    for(int i=0; i<contour.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat AWC = AWK*AKC[i];
       WrKC[i] = AWK * KrKC[i];
       contour[i]->setWrOP(WrOK + WrKC[i]);
@@ -252,14 +252,14 @@ namespace MBSim {
     WF = m*mbs->getGrav();
     WM = crossProduct(AWK*KrKS,WF);
 
-    for(int i=0; i<linkSingleValuedPortData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
       int portID = linkSingleValuedPortData[i].ID;
       int objectID = linkSingleValuedPortData[i].objectID;
       WLtmp = linkSingleValuedPortData[i].link->getLoad(objectID);
       WF += WFtmp;
       WM += WMtmp + crossProduct(WrKP[portID],WFtmp);
     }
-    for(int i=0; i<linkSingleValuedContourData.size(); i++) {
+    for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
       if(linkSingleValuedContourData[i].link->isActive()) {
 	int objectID = linkSingleValuedContourData[i].objectID;
 	WLtmp = linkSingleValuedContourData[i].link->getLoad(objectID);

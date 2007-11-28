@@ -41,7 +41,7 @@ namespace MBSim {
   L(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), 
   implicit(false), qElement(8), uElement(8), 
   WrON00(3), WrON0(3), 
-  alphaRelax0(-99999.99999), alphaRelax(alphaRelax0), initialized(false),
+  initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0),
   Wt(3), Wn(3), WrOC(3), WvC(3) { 
 	  contourR = new Contour1sFlexible("R");
 	  contourL = new Contour1sFlexible("L");
@@ -144,7 +144,7 @@ namespace MBSim {
     parafile << "\n# JR:\n"      << JR   << endl;
 
     if(port.size()>0) parafile << "\nports:" <<endl;
-    for(int i=0; i<port.size(); i++) { 
+    for(unsigned int i=0; i<port.size(); i++) { 
       parafile << "# s: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = ";
       if(S_Port[i].type==CONTINUUM) parafile << S_Port[i].alpha(0) << endl;
       if(S_Port[i].type==NODE     ) parafile << S_Port[i].ID*L/Elements    << endl;
@@ -169,7 +169,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s21RCM::updatePorts(double t) {
-    for(int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
       //    if(S_Port[i](0) == -1) // ForceElement on continuum
       if(S_Port[i].type == CONTINUUM) { // ForceElement on continuum
 	const double     &s = S_Port[i].alpha(0);// globaler KontParameter
