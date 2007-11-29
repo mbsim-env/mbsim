@@ -294,7 +294,7 @@ namespace MBSim {
     dataMod.type  = data.type;
     dataMod.alpha = data.alpha.copy();
 
-    Vec WrAct   = computeWrOC(data);
+    Vec WrAct   = computeWrOC(data).copy();
     Mat DrDs(3,data.alphap.size(),NONINIT); // alphap used only if contour-parameter is DOF
 
     for(int i=0;i<DrDs.cols();i++) {
