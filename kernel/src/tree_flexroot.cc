@@ -29,8 +29,8 @@
 
 namespace MBSim {
   TreeFlexRoot::TreeFlexRoot(const string &projectName) : Tree(projectName), flexible(NULL) {
-    cout << "WARINING: TreeFlexRoot WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING" << endl;
-    cout << "WARINING: this still is TESTING - means definitly buggy!!!\n\t\t\tblame the author in case of malfunction;-)" << endl;
+    cout << "WARINING: TreeFlexRoot:: > " << name <<  " < WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING" << endl;
+    cout << "WARINING: this still is TESTING -- blame the author in case of malfunction;-)\n" << endl;
   }
 
   TreeFlexRoot::~TreeFlexRoot() {
