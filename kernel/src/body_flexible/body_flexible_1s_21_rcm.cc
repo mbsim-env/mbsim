@@ -42,7 +42,13 @@ namespace MBSim {
   implicit(false), qElement(8), uElement(8), 
   WrON00(3), WrON0(3), 
   initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0),
-  Wt(3), Wn(3), WrOC(3), WvC(3) { 
+  Wt(3), Wn(3), WrOC(3), WvC(3)
+#ifdef HAVE_AMVIS
+  ,
+  AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
+#endif
+
+ { 
 	  contourR = new Contour1sFlexible("R");
 	  contourL = new Contour1sFlexible("L");
 	  ContourPointData cpTmp;
@@ -88,12 +94,12 @@ namespace MBSim {
 
     if(alphaRelax != alphaRelax0) initRelaxed(alphaRelax);
 
-    if(rc != 0)
-      balken->setCurleRadius(rc);
+    if(rc != 0) balken->setCurleRadius(rc);
     balken->setMaterialDamping(dm);
     balken->setLehrDamping(dl);
 
 #ifdef HAVE_AMVIS
+
     // wenn ein file fuer AMVis geschrieben werden soll
     if(boolAMVis) {
       ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(fullName,Elements,openStructure,1,boolAMVisBinary);
@@ -106,7 +112,9 @@ namespace MBSim {
       }
       RCMbody->setJacobians(amvisJT,amvisJR);
       RCMbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
-
+      RCMbody->setCylinder(AMVisRadius);
+      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
+ 
       bodyAMVis = RCMbody;
     } 
 #endif

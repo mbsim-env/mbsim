@@ -103,6 +103,10 @@ namespace MBSim {
 
       void updateJh_internal(double t);
 
+#ifdef HAVE_AMVIS
+      float AMVisRadius, AMVisBreadth, AMVisHeight;
+#endif
+
     public:
       /*! Constructor:
        * \param name body name
@@ -171,6 +175,13 @@ namespace MBSim {
 
       /* geerbt */
       void plotParameters();
+
+#ifdef HAVE_AMVIS
+      /*! set radius of cylinder for AMVis-visualization */
+      void setAMVisCylinder(float r) {boolAMVis=true;AMVisRadius=r;}
+      /*! set radius of cylinder for AMVis-visualization */
+      void setAMVisCuboid(float breadth, float height) {boolAMVis=true;AMVisBreadth=breadth;AMVisHeight=height;}
+#endif
 
   };
 
