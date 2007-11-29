@@ -35,10 +35,8 @@ namespace MBSim {
 
   BodyRigidRelOnFlex::BodyRigidRelOnFlex(const string &name) : BodyRigidRel(name), precessor(0), AWP(3), constcPosition(false) {
     cPosition.type = CONTINUUM;
-
-    cout << "WARINING: BodyRigidRelOnFlex WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING" << endl;
-    cout << "WARINING: this still is TESTING - means definitly buggy!!!\n\t\t\tblame the author in case of malfunction;-)" << endl;
-
+    cout << "WARINING: BodyRigidRelOnFlex:: > " << name <<  " < WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING" << endl;
+    cout << "WARINING: this still is TESTING -- blame the author in case of malfunction;-)\n" << endl;
   }
 
 //  void BodyRigidRelOnFlex::setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
