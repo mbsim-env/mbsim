@@ -52,12 +52,12 @@ namespace MBSim {
       Vec WrOP, WvP, WomegaC;
       SqrMat AWC;
 
-	  #ifdef HAVE_AMVIS
-	      /* Body for AMVis */
-	      AMVis::CBody *bodyAMVis;
-	      /* Flag to allow for activation of AMVis output during Init-Routines */
-	      bool boolAMVis, boolAMVisBinary;
-	  #endif
+#ifdef HAVE_AMVIS
+      /* Body for AMVis */
+      AMVis::CBody *bodyAMVis;
+      /* Flag to allow for activation of AMVis output during Init-Routines */
+      bool boolAMVis, boolAMVisBinary;
+#endif
 
     public:
       //Contour(const string &name, ContourType type);
@@ -90,12 +90,12 @@ namespace MBSim {
       */
       virtual void adjustParentHitSphere(const Vec &CrC);
 
-	  #ifdef HAVE_AMVIS
-	      /*! activate output for AMVis
-		\param binary_ for binary or ASCII data format in pos-file
-		*/
-	      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
-	  #endif
+#ifdef HAVE_AMVIS
+      /*! activate output for AMVis
+	\param binary_ for binary or ASCII data format in pos-file
+	*/
+      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+#endif
   };
 
   /*! \brief Most primitive Contour: the Point (no extention) */
