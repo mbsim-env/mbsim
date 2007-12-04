@@ -325,6 +325,7 @@ namespace MBSim {
     updateT(t); 
     updateh(t); 
     updateM(t); 
+    facLLM(); 
     updateW(t); 
     updateGb(t); 
     computeConstraintForces(t); 
@@ -581,6 +582,7 @@ namespace MBSim {
     updateT(t); 
     updateh(t); 
     updateM(t); 
+    facLLM(); 
     updateW(t); 
     updateGb(t); 
   }
@@ -670,6 +672,12 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateM(t);
+  }
+
+  void MultiBodySystem::facLLM() {
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).facLLM();
   }
 
   void MultiBodySystem::updateT(double t) {

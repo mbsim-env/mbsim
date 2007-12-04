@@ -372,7 +372,8 @@ namespace MBSim {
   }
 
   void Object::updateGb(double t) {
-    facLLM();
+//cout << " Object::updateGb(double t) " << getFullName() << endl;
+//    facLLM();
     Vec iMh = slvLLFac(LLM,h);
     vector<Mat>::iterator itW=W.begin(), jtW; 
     vector<Vec>::iterator itw=w.begin(); 

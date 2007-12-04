@@ -118,6 +118,9 @@ namespace MBSim {
       */
       bool hasConstMass() const {return true;}
 
+      /*! NULL-function, since mass matrix is constant*/
+      void facLLM() {}
+
       /*! 
        * read mass matrix: style e.g. for 2*2 matrix \n
        * n x n   \n

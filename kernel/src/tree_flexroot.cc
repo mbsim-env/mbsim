@@ -80,7 +80,6 @@ namespace MBSim {
     flexible->updateWj(t);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->updateWj(t);
-    LLM = facLL(M); // TODO evtl. in updateh berechnen -> slvLL
   }
 
   void TreeFlexRoot::updatedq(double t, double dt) {

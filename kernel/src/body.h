@@ -39,17 +39,6 @@ namespace MBSim {
       Body(const string &name);
       void init();
 
-      // ATTIC CODE - implemented in object
-      /*     /\* !  */
-      /*       compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
-      /*      *\/ */
-      /*     double computeKineticEnergy() { return 0.5*trans(u)*M*u; } */
-
-      /*     /\*! compute potential energy, holding every potential!!! */
-      /*      *\/ */
-      /*     virtual double computePotentialEnergy() {return 0;} */
-      // ATTIC CODE - implemented in object
-
   };
 
 }
