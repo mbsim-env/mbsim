@@ -47,11 +47,13 @@ namespace MBSim {
     bool constcPosition;
     ContourPointData cPosition;
     Index IJactive;
-
+    Index preIJT, preIJR;
+  
+    Mat C;
+  
     void updateCenterOfGravity(double t);
     void updateh(double t);
 
-//    void updateM(double t);
 
     public:
     BodyRigidRelOnFlex(const string &name);
@@ -61,7 +63,7 @@ namespace MBSim {
     void setPrPK0(const Vec& PrPK0_) {cout << "WARNING\n\tBodyRigidRelOnFlex::setPrPK0(): PrPK0 restricted to 0 and left unchanged" << endl;}
 
 //    void plot(double t, double dt = 1);
-//    void initStage2();
+    void initStage2();
 
     void setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
     BodyFlexible* getPrecessor() {return precessor;}

@@ -29,8 +29,6 @@
 
 namespace MBSim {
   TreeFlexRoot::TreeFlexRoot(const string &projectName) : Tree(projectName), flexible(NULL) {
-    cout << "WARINING: TreeFlexRoot:: > " << name <<  " < WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING WARINING" << endl;
-    cout << "WARINING: this still is TESTING -- blame the author in case of malfunction;-)\n" << endl;
   }
 
   TreeFlexRoot::~TreeFlexRoot() {
@@ -66,10 +64,6 @@ namespace MBSim {
     flexible->updateM(t);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->updateM(t);
-// cout <<"  void TreeFlexRoot::updateM(double t) {" << endl;
-// cout << "M = " << M << endl;
-// cout << "h = " << h << endl;
-// cout << "M^-1h = " << inv(M)*h << endl;
   }
 
 
