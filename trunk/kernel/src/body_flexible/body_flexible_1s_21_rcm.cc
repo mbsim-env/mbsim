@@ -285,6 +285,10 @@ namespace MBSim {
 
     Vec DrDsp = balken->DrDsp(qElement,uElement,sLokal,sp);
 
+/// cout << "---------------------------" << endl;
+/// cout << "DrDsp.analytisch = " << trans(JT*DrDsp) << endl;
+/// cout << "DrDsp.numerisch  = " << trans(BodyFlexible::computeDrDsp(S_)) << endl;
+
     return JT*DrDsp;
   }
 

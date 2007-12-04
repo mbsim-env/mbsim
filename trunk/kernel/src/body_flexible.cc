@@ -305,8 +305,35 @@ namespace MBSim {
 
     return DrDs;
   }
-
   Mat BodyFlexible::computeDrDsp(const ContourPointData &data) {
+    static double eps = epsroot();
+
+    ContourPointData dataMod;
+    dataMod.type  = data.type;
+    dataMod.alpha = data.alpha.copy();
+    dataMod.alphap = data.alphap.copy();
+
+    Vec WvAct   = computeWvC(data).copy();
+    Mat DrDsp(3,data.alphap.size(),NONINIT); // alphap used only if contour-parameter is DOF
+
+    for(int i=0;i<DrDsp.cols();i++) {
+      dataMod.alpha(i) += eps;
+      DrDsp.col(i) = (computeWvC(dataMod) - WvAct)/eps;
+      dataMod.alpha(i) = data.alpha(i);
+    }
+    if(data.alphap.size()) {
+      Mat DrDsAct = computeDrDs(data);
+      for(int i=0;i<data.alphap.size();i++) {
+	dataMod.alpha(i) += eps;
+	DrDsp += (computeDrDs(dataMod) - DrDsAct)/eps * data.alphap(i);
+	dataMod.alpha(i) = data.alpha(i);  
+      }
+    }
+
+    return DrDsp;
+  }
+
+/*  Mat BodyFlexible::computeDrDsp(const ContourPointData &data) {
     static double eps = epsroot();
     Vec qAct     = q.copy();
 
@@ -343,6 +370,7 @@ updateKinematics(0.0);
 
     return DrDsp;
   }
+*/
 
   Mat BodyFlexible::computeK(const ContourPointData &cp) {
     static const double eps = epsroot();
