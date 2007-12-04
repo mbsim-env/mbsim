@@ -42,7 +42,7 @@ namespace MBSim {
     protected:
 
     BodyFlexible* precessor;
-    SqrMat AWP;
+//    SqrMat AWP;
 //    Vec s0;
     bool constcPosition;
     ContourPointData cPosition;

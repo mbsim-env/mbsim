@@ -33,7 +33,7 @@
 
 namespace MBSim {
 
-  BodyRigidRelOnFlex::BodyRigidRelOnFlex(const string &name) : BodyRigidRel(name), precessor(0), AWP(3), constcPosition(false) {
+  BodyRigidRelOnFlex::BodyRigidRelOnFlex(const string &name) : BodyRigidRel(name), precessor(0), constcPosition(false) {
     cPosition.type = CONTINUUM;
   }
 
@@ -128,8 +128,9 @@ namespace MBSim {
 
     //    PrPK = JT*q(iT) + PrPK0;
     APK = APK0*AK0K;
-    AWP = precessor->computeAWK(cPosition);
-    AWK = AWP*APK;
+//    AWP = precessor->computeAWK(cPosition);
+//    AWK = AWP*APK;
+    AWK = precessor->computeAWK(cPosition)*APK;
 
     //    KomegaK = trans(APK)*precessor->getKomegaK() + JR*u(iR);
     KomegaK = trans(AWK)*precessor->computeWomega(cPosition) + JR*u(iR);
