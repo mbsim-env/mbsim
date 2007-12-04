@@ -232,7 +232,7 @@ namespace MBSim {
       }
     }
 
-    LLM << facLL(M);
+//    if(autoInvM) LLM = facLL(M);
 
   }
 

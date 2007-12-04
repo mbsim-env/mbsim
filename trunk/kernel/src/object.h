@@ -142,6 +142,7 @@ namespace MBSim {
     virtual void updatedq(double t, double dt) = 0;
     virtual void updatedx(double t, double dt) {};
 
+    /*! perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
     virtual void facLLM();
 
     virtual Object* getResponsible() {return this;}

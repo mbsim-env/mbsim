@@ -94,8 +94,13 @@ namespace MBSim {
       Vec computeWrOC(const ContourPointData &S_){return WrON00 + S_.alpha(0) * Axis;}
       Vec computeWvC (const ContourPointData &S_){return Vec(3); }
 
+
+      /*! \return true
+      */
       bool hasConstMass() const {return true;}
 
+      /*! NULL-function, since mass matrix is constant*/
+      void facLLM() {}
 
       /* Jacobi Matrix der Rotation */
       void setJR(const Vec &JR_) {assert(JR_.cols()==1); JR = JR_; Axis = JR_;};

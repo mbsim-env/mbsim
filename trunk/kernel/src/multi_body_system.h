@@ -182,6 +182,7 @@ namespace MBSim {
     void updateLinksStage2(double t);
     void updateh(double t);
     void updateM(double t);
+    void facLLM();
     void updateW(double t);
     void updateGb(double t);
     void updateT(double t);

@@ -342,7 +342,8 @@ namespace MBSim {
       }
     }
 
-    LLM = facLL(M);
+//    if(autoInvM) {LLM = facLL(M); cout << "BodyFlexible1s21RCM::LLM->yes" << endl;}
+//    else         {LLM.init(0.0);  cout << "BodyFlexible1s21RCM::LLM->NO!" << endl;}
 
     sumUpForceElements(t);
   }
