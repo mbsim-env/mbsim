@@ -122,7 +122,6 @@ namespace MBSim {
     LLMParent.resize(getuSize());
     WParent.resize(getuSize(),getlaSize());
     GParent.resize(getlaSize());
-    wParent.resize(getlaSize());
     bParent.resize(getlaSize());
     laParent.resize(getlaSize());
     dlaParent.resize(getlaSize());
@@ -148,7 +147,6 @@ namespace MBSim {
     G.resize() >> GParent;
     W.resize() >> WParent;
     b.resize() >> bParent;
-    //w.resize() >> wParent;
     g.resize() >> gParent;
 
     updatezdRef(zdParent);
@@ -328,6 +326,7 @@ namespace MBSim {
     facLLM(); 
     updateW(t); 
     updateGb(t); 
+    updatew(t);
     computeConstraintForces(t); 
     updater(t); 
     updatezd(t);
@@ -563,6 +562,7 @@ namespace MBSim {
     updateh(t); 
     updateW(t); 
     updateGb(t); 
+    updatew(t);
     computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
     updateStopVector(t);
   }
@@ -690,6 +690,12 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateh(t);
+  }
+
+  void MultiBodySystem::updatew(double t) {
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) 
+      (**i).updatew(t);
   }
 
   void MultiBodySystem::updateW(double t) {

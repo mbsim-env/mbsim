@@ -133,6 +133,7 @@ namespace MBSim {
     virtual void updateKinematics(double t) = 0;
     virtual void updateGb(double t);
     virtual void updateW(double t);
+    virtual void updatew(double t);
     virtual void updateWj(double t) {};
     virtual void updateT(double t) {};
     virtual void updateh(double t) {};

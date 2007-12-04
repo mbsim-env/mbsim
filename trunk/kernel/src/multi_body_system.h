@@ -99,7 +99,6 @@ namespace MBSim {
     Mat TParent;
     SymMat GParent;
     Mat WParent;
-    Vec wParent;
     Vec bParent;
     Vec laParent;
     Vec dlaParent;
@@ -184,6 +183,7 @@ namespace MBSim {
     void updateM(double t);
     void facLLM();
     void updateW(double t);
+    void updatew(double t);
     void updateGb(double t);
     void updateT(double t);
 
@@ -294,8 +294,6 @@ namespace MBSim {
     Mat& getW() {return W;}
     const SqrMat& getJprox() const {return Jprox;}
     SqrMat& getJprox() {return Jprox;}
-    //const Vec& getw() const {return w;}
-    //Vec& getw() {return w;}
     const Vec& getb() const {return b;}
     Vec& getb() {return b;}
     const Vec& getla() const {return la;}
