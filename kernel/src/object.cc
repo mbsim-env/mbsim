@@ -371,6 +371,19 @@ namespace MBSim {
     LLM = facLL(M); 
   }
 
+  void Object::updatew(double t) {
+    Vec iMh = slvLLFac(LLM,h);
+    vector<Vec>::iterator itw=w.begin(); 
+    vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
+    for(unsigned int i=0; i<linkSetValued.size(); i++) {
+      if((*it1)->isActive()) {
+        Index I = (*it1)->getlaIndex();
+        mbs->getb()(I) += *itw; 
+      }
+      it1++; itw++;
+    }
+  }
+
   void Object::updateGb(double t) {
 //cout << " Object::updateGb(double t) " << getFullName() << endl;
 //    facLLM();
@@ -382,7 +395,7 @@ namespace MBSim {
       if((*it1)->isActive()) {
         Index I = (*it1)->getlaIndex();
         Mat Wi = (*itW);
-        mbs->getb()(I) += trans(Wi)*iMh+(*itw); 
+        mbs->getb()(I) += trans(Wi)*iMh; 
         Mat iMWi = slvLLFac(LLM,Wi);
         mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
         jt1 = linkSetValued.begin(); 
