@@ -25,6 +25,7 @@
 #include "connection_rigid.h"
 #include "port.h"
 #include "multi_body_system.h"
+#include "function.h"
 
 namespace MBSim {
 
@@ -145,6 +146,18 @@ namespace MBSim {
 	return;
       }
     }
+  }
+
+  std::string ConnectionRigid::getTerminationInfo(double dt) {
+    std::string s;
+    int j=-1;
+    s= Link::getTerminationInfo(dt);
+    for (int i=0; i<gdn.size(); i++) {
+      if (fabs(gdn(i)) > gdTol) j=i;
+    }
+    if (j>0) s = s + " gdn(" + numtostr(j) + ")= " + numtostr(gdn(j));
+      s= s + " (gdTol= " + numtostr(gdTol) + " )";
+    return s;
   }
 
 }

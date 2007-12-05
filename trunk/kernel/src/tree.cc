@@ -28,6 +28,15 @@ namespace MBSim {
   }
 
   Tree::~Tree() { 
+  port.clear();			//sonst: object Destructor loescht Ports, zweiter delete Aufruf (z.B. ~BodyRigidRel) liefert segmentation fault
+  contour.clear();
   }
 
+  void Tree::addPort(Port * port_)  {
+    port.push_back(port_);
+  }
+
+  void Tree::addContour(Contour* contour_) {
+    contour.push_back(contour_);
+  }
 }

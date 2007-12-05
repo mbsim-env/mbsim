@@ -521,4 +521,19 @@ namespace MBSim {
     return NULL;
   }
 
+  void BodyRigidRel::addPort(Port * port, const Vec &KrKP) {		 
+    BodyRigid::addPort(port, KrKP);
+    tree->addPort(port); 
+    // port container von tree nur temporaere Liste z.b. zum erstellen von ports2plot (multi_body_system.cc)
+  }
+
+  void BodyRigidRel::addPort(const string &name, const Vec &KrKP) {
+    Port *port = new Port(name);
+    addPort(port, KrKP);
+  }
+
+  void BodyRigidRel::addContour(Contour* contour, const Vec &KrKC_, const SqrMat &AKC_) {
+    BodyRigid::addContour(contour, KrKC_, AKC_);
+    tree->addContour(contour);
+  }
 }

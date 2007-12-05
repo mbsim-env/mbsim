@@ -30,4 +30,10 @@ namespace MBSim {
     return oss.str(); 
   }
 
+  std::string numtostr(double d) {
+    std::ostringstream oss;
+    oss << d;
+    return oss.str(); 
+  }
+
 }

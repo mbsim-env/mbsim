@@ -122,6 +122,7 @@ namespace MBSim {
     LLMParent.resize(getuSize());
     WParent.resize(getuSize(),getlaSize());
     GParent.resize(getlaSize());
+    wParent.resize(getlaSize());
     bParent.resize(getlaSize());
     laParent.resize(getlaSize());
     dlaParent.resize(getlaSize());
@@ -147,6 +148,7 @@ namespace MBSim {
     G.resize() >> GParent;
     W.resize() >> WParent;
     b.resize() >> bParent;
+    //w.resize() >> wParent;
     g.resize() >> gParent;
 
     updatezdRef(zdParent);
@@ -323,10 +325,8 @@ namespace MBSim {
     updateT(t); 
     updateh(t); 
     updateM(t); 
-    facLLM(); 
     updateW(t); 
     updateGb(t); 
-    updatew(t);
     computeConstraintForces(t); 
     updater(t); 
     updatezd(t);
@@ -562,7 +562,6 @@ namespace MBSim {
     updateh(t); 
     updateW(t); 
     updateGb(t); 
-    updatew(t);
     computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
     updateStopVector(t);
   }
@@ -582,7 +581,6 @@ namespace MBSim {
     updateT(t); 
     updateh(t); 
     updateM(t); 
-    facLLM(); 
     updateW(t); 
     updateGb(t); 
   }
@@ -674,12 +672,6 @@ namespace MBSim {
       (**i).updateM(t);
   }
 
-  void MultiBodySystem::facLLM() {
-    vector<Object*>::iterator i;
-    for(i = objects.begin(); i != objects.end(); ++i) 
-      (**i).facLLM();
-  }
-
   void MultiBodySystem::updateT(double t) {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
@@ -690,12 +682,6 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updateh(t);
-  }
-
-  void MultiBodySystem::updatew(double t) {
-    vector<Object*>::iterator i;
-    for(i = objects.begin(); i != objects.end(); ++i) 
-      (**i).updatew(t);
   }
 
   void MultiBodySystem::updateW(double t) {
@@ -1040,33 +1026,6 @@ namespace MBSim {
       (**ic).initla();
   }
 
-  Port* MultiBodySystem::getPort(const string &name,bool check) {
-    unsigned int i;
-    for(i=0; i<port.size(); i++) {
-      if(port[i]->getName() == name || port[i]->getFullName()== name)
-	return port[i];
-    }
-    if(check){
-      if(!(i<port.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no port " << name << "!" << endl; 
-      assert(i<port.size());
-    }
-//    else return NULL;
-    return NULL;
-  }
-
-  Contour* MultiBodySystem::getContour(const string &name,bool check) {
-    unsigned int i;
-    for(i=0; i<contour.size(); i++) {
-      if(contour[i]->getName() == name || contour[i]->getFullName()== name)
-	return contour[i];
-    }
-    if(check){
-      if(!(i<contour.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no contour " << name << "!" << endl; 
-      assert(i<contour.size());
-    }
-//    else return cReturn;
-    return NULL;
-  }
 
 
 
@@ -1080,16 +1039,23 @@ namespace MBSim {
     port->setWrOP(WrOP);
   }
 
-  void MultiBodySystem::addContour(Contour* contour, const Vec &WrOP) {
-    Object::addContour(contour);
-    contour->setWrOP(WrOP);
-  }
-
   void MultiBodySystem::addContour(Contour* contour, const Vec &WrOP, const SqrMat &AWC) {
     Object::addContour(contour);
     contour->setWrOP(WrOP);
     contour->setAWC(AWC);
   }
+
+  std::string MultiBodySystem::getTerminationInfo(double dt) {
+    term = true;
+    std::string s="";
+    for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) {
+      (**ic).checkForTermination(dt);
+      if(term == false)
+	s= s + (**ic).getTerminationInfo(dt) + "\n";
+    }
+    return s;
+  }
+
 
   void MultiBodySystem::preInteg(MultiBodySystem *parent){
     if(preIntegrator){
@@ -1508,6 +1474,7 @@ namespace MBSim {
       cout << endl;
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<<endl;
+      cout << getTerminationInfo(dt)<<endl;
       if(stopIfNoConvergence) {
 	if(dropContactInfo) dropContactMatrices();
 	assert(iter < maxIter);

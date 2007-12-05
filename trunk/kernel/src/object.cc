@@ -291,7 +291,7 @@ namespace MBSim {
   Port* Object::getPort(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<port.size(); i++) {
-      if(port[i]->getName() == name)
+      if((port[i]->getName() == name) || (port[i]->getFullName()== name))
 	return port[i];
     }             
     if(check) {
@@ -304,7 +304,7 @@ namespace MBSim {
   Contour* Object::getContour(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<contour.size(); i++) {
-      if(contour[i]->getName() == name)
+      if((contour[i]->getName() == name) || (contour[i]->getFullName() == name))
 	return contour[i];
     }
     if(check) {

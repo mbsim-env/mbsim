@@ -118,6 +118,12 @@ namespace MBSim {
     Contour* getContour(const string &cName);
 
     Object* getResponsible() {return tree;}
+
+    virtual void addPort(Port * port, const Vec &KrKP);	
+    virtual void addPort(const string &name, const Vec &KrKP=Vec(3,INIT,0.0));
+
+    virtual void addContour(Contour* contour, const Vec &KrKC_=Vec(3,INIT,0.0), const SqrMat &AKC_=SqrMat(3,EYE));
+
   };
 
 }

@@ -281,37 +281,14 @@ namespace MBSim {
     WrKP.push_back(Vec());
   }
 
-  void BodyRigid::addContour(Contour* contour, const Vec &KrKC_) {
-    Object::addContour(contour);
-
-    KrKC.push_back(KrKC_.copy()); 
-    WrKC.push_back(Vec());
-    SqrMat AKC_(3);
-    AKC_(0,0) = 1;
-    AKC_(1,1) = 1;
-    AKC_(2,2) = 1;
-    AKC.push_back(AKC_); 
-
-    // HitSphere anpassen !!!
-    contour->adjustParentHitSphere(KrKC_);
-  }
-
   void BodyRigid::addContour(Contour* contour, const Vec &KrKC_, const SqrMat &AKC_) {
     Object::addContour(contour);
     KrKC.push_back(KrKC_.copy()); 
     WrKC.push_back(Vec());
-    AKC.push_back(AKC_.copy()); 
-  }
+    AKC.push_back(AKC_.copy());
 
-  void BodyRigid::addContour(Contour* contour) {
-    Object::addContour(contour);
-    KrKC.push_back(Vec(3)); 
-    WrKC.push_back(Vec());
-    SqrMat AKC_(3);
-    AKC_(0,0) = 1;
-    AKC_(1,1) = 1;
-    AKC_(2,2) = 1;
-    AKC.push_back(AKC_); 
+    // HitSphere anpassen !!!
+    contour->adjustParentHitSphere(KrKC_);
   }
 
   void BodyRigid::updatezd(double t) {

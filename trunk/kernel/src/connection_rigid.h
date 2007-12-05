@@ -47,6 +47,7 @@ namespace MBSim {
       void projectGS(double dt);
       void solveGS(double dt);
       void checkForTermination(double dt);
+      std::string getTerminationInfo(double dt);
 
       void residualProj(double dt);
       void residualProjJac(double dt);

@@ -88,6 +88,13 @@ namespace MBSim {
 
     virtual Port* getPort(const string &pName) = 0;
     virtual Contour* getContour(const string &cName) = 0;
+
+    void addPort(Port * port_);	
+    void addContour(Contour* contour_);
+    //  tree::vector<Port*> port:    list of all ports of all single Bodies of the whole tree are temporary stored (the tree itself has no port)
+    // 	(analog contour)	     so all ports can be accesed by the object-container of the multibodysystem (e.g. to create ports2plot-List)
+    //				     Its only a temporary List; there is no data management (e.g. update, delete ..) within this class
+    //				     (Data managment is done e.g. by BodyRigidRel)
   };
 
 }

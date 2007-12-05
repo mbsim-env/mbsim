@@ -186,6 +186,7 @@ namespace MBSim {
 
       virtual void residualProj(double dt) { cout << "\nresidualProj not implemented." << endl; throw 50; }
       virtual void checkForTermination(double dt) { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
+      virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getFullName());}
       virtual void residualProjJac(double dt) { cout << "\nresidualProjJac not implemented." << endl; throw 50; }
 
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }
