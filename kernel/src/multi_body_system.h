@@ -99,7 +99,6 @@ namespace MBSim {
     Mat TParent;
     SymMat GParent;
     Mat WParent;
-    Vec wParent;
     Vec bParent;
     Vec laParent;
     Vec dlaParent;
@@ -182,7 +181,9 @@ namespace MBSim {
     void updateLinksStage2(double t);
     void updateh(double t);
     void updateM(double t);
+    void facLLM();
     void updateW(double t);
+    void updatew(double t);
     void updateGb(double t);
     void updateT(double t);
 
@@ -239,8 +240,13 @@ namespace MBSim {
     void initla();
 
     void addPort(Port *port, const Vec &WrOP);
-    void addPort(const string &name, const Vec &WrSP=Vec(3,INIT,0.0));
-    void addContour(Contour *contour, const Vec &WrOP=Vec(3,INIT,0.0),const SqrMat &AWC=SqrMat(3,EYE));
+    Port* getPort(const string &name,bool check=true);
+    Contour* getContour(const string &name,bool check=true);
+
+
+    void addPort(const string &name, const Vec &WrSP);
+    void addContour(Contour *contour, const Vec &WrOP);
+    void addContour(Contour *contour, const Vec &WrOP,const SqrMat &AWC);
 
     void plot(double t, double dt=1);
     void plotParameters();
@@ -288,8 +294,6 @@ namespace MBSim {
     Mat& getW() {return W;}
     const SqrMat& getJprox() const {return Jprox;}
     SqrMat& getJprox() {return Jprox;}
-    //const Vec& getw() const {return w;}
-    //Vec& getw() {return w;}
     const Vec& getb() const {return b;}
     Vec& getb() {return b;}
     const Vec& getla() const {return la;}
@@ -359,8 +363,7 @@ namespace MBSim {
     int solveFixpointTotal(double dt); 
     int solveRootFinding(double dt); 
     void residualProj(double dt); 
-    void checkForTermination(double dt);
-    std::string getTerminationInfo(double dt);
+    void checkForTermination(double dt); 
     void residualProjJac(double dt);
 
     using Object::addPort;
