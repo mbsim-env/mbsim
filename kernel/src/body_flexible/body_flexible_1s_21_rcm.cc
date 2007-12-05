@@ -389,17 +389,14 @@ namespace MBSim {
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
     double sLokal = 0;
     int Element = 0;
-    int outOfBounds = 0;
 
-// project into periodic structure  
-    if(!openStructure) {
-      while(sGlobal - outOfBounds*L < 0.0) outOfBounds--;
-      while(sGlobal - outOfBounds*L > L  ) outOfBounds++;
-    }
-
-    while( (Element+1)*balken->l0 < sGlobal - outOfBounds*L)
+    // project into periodic structure  
+    double remainder = fmod(sGlobal,L);
+    if(sGlobal<0.0) remainder += L;
+    
+    while( (Element+1)*balken->l0 < remainder )
       Element++;
-    sLokal = sGlobal - outOfBounds*L - ( 0.5 + Element ) * balken->l0;
+    sLokal = remainder - ( 0.5 + Element ) * balken->l0;
 
     if(Element >= Elements) {
       if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
