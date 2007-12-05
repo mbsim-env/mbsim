@@ -31,7 +31,7 @@
 namespace MBSim {
   class BodyFlexible;
 
-  /*! \brief Class for rigid bodies with relative coordinates 
+  /*! \brief Class for rigid bodies with relative parametrization with respect to flexible precessor 
    *
    * */
   class BodyRigidRelOnFlex : public BodyRigidRel {
@@ -42,8 +42,7 @@ namespace MBSim {
     protected:
 
     BodyFlexible* precessor;
-//    SqrMat AWP;
-//    Vec s0;
+    Index         Iflexible;
     bool constcPosition;
     ContourPointData cPosition;
     Index IJactive;
@@ -53,7 +52,7 @@ namespace MBSim {
   
     void updateCenterOfGravity(double t);
     void updateh(double t);
-
+    void updateM(double t);
 
     public:
     BodyRigidRelOnFlex(const string &name);
@@ -62,7 +61,6 @@ namespace MBSim {
     void sets0(const Vec& s0_);
     void setPrPK0(const Vec& PrPK0_) {cout << "WARNING\n\tBodyRigidRelOnFlex::setPrPK0(): PrPK0 restricted to 0 and left unchanged" << endl;}
 
-//    void plot(double t, double dt = 1);
     void initStage2();
 
     void setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
@@ -70,7 +68,10 @@ namespace MBSim {
 
     void updateqRef();
     void updateuRef();
-  };
+
+    const Vec& getKrOK();
+    const Vec& getKvK() ;
+   };
 
 }
 

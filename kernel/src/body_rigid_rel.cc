@@ -320,14 +320,7 @@ namespace MBSim {
   }
 
   void BodyRigidRel::updateM(double t) {
-/// cout << "void BodyRigidRel::updateM(double t) <" << getFullName() << "> ----------------------------------------------------------------" << endl;
-/// cout << "tree->getM() = " << tree->getM() << endl;
-/// cout << "tree->getM()(Index(0,uInd+uSize-1)) = " << tree->getM()(Index(0,uInd+uSize-1)) << endl;
-/// cout << "M += " << JTMJ(Mh,J) << endl;
     tree->getM()(Index(0,uInd+uSize-1)) += JTMJ(Mh,J);
-// cout << "tree->getM() = " << tree->getM() << endl;
-// cout << "----------------------------------------------------------------" << endl;
-
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateM(t);
     }

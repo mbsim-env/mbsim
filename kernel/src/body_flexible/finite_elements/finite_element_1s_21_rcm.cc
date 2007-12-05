@@ -211,12 +211,12 @@ namespace MBSim {
     //h-Vektor
     hLokal(0) = (Arho*l0*(480*gx + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*cos(bL - phiS) + 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*cos(bR + phiS) - (3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*sin(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*sin(bR + phiS)))/480.;
     hLokal(1) = Arho*gy*l0 - (Arho*l0*((3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*cos(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*cos(bR + phiS) + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*sin(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*sin(bR + phiS)))/480.;
-    hLokal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*Power(l0,2) - 42*Power(bLp,2)*bR*Power(l0,2) - 51*bL*bLp*bRp*Power(l0,2) + 51*bLp*bR*bRp*Power(l0,2) + 42*bL*Power(bRp,2)*Power(l0,2) - 211*bR*Power(bRp,2)*Power(l0,2) + 3360*bLp*epsp*Power(l0,2) - 3360*bRp*epsp*Power(l0,2) + 3360*bLp*eps*epsp*Power(l0,2) - 3360*bRp*eps*epsp*Power(l0,2) - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*((8*(13*aL + aR)*gx + 3*(5*bL*gx - bR*gx - 20*(1 + eps)*gy)*l0)*cos(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*cos(bR + phiS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*sin(bL - phiS) + (8*(aL + 13*aR)*gy - 3*(20*(1 + eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS))))/40320.;
-    hLokal(3) = -(EA*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2)) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*l0 + 3*(140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*Power(l0,2))*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*Power(l0,2)))/(176400.*Power(l0,3)) - (aLp*Arho*Power(l0,2)*(19*bLp + bRp - 18*phiSp))/120. - (Arho*aRp*Power(l0,2)*(bLp + 19*bRp + 18*phiSp))/120. + (Arho*Power(l0,3)*(67*Power(bLp,2) + 6*bLp*bRp + 67*Power(bRp,2) + 80*Power(bLp,2)*eps + 80*Power(bRp,2)*eps - 16*(bLp - bRp)*(9 + 10*eps)*phiSp + 160*(1 + eps)*Power(phiSp,2)))/1920. - (Arho*Power(l0,3)*(13*Power(bLp,2) - 2*bLp*(3*bRp + 8*phiSp) + bRp*(13*bRp + 16*phiSp)))/1920. - (Arho*gx*Power(l0,2)*cos(bL - phiS))/8. + (Arho*gx*Power(l0,2)*cos(bR + phiS))/8. + (Arho*gy*Power(l0,2)*sin(bL - phiS))/8. + (Arho*gy*Power(l0,2)*sin(bR + phiS))/8.;
-    hLokal(4) = -(282240*EI*(160*aL - 32*aR - 43*bL*l0 + 11*bR*l0) + 8*EA*(1 + eps)*(272*aL - 16*aR - 24*bL*l0 + 9*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*Power(l0,2)))/(352800.*Power(l0,3)) + (Arho*epsp*Power(l0,2)*(19*bLp + bRp - 18*phiSp))/240. + (aL*Arho*l0*(196*Power(bLp,2) + Power(bRp,2) - 392*bLp*phiSp + 2*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*Power(l0,2)*(205*bL*Power(bLp,2) - 51*Power(bLp,2)*bR - 6*bL*Power(bRp,2) + 28*bR*Power(bRp,2) + 1596*bLp*epsp + 84*bRp*epsp - 2*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp)*phiSp + (199*bL - 23*bR)*Power(phiSp,2)))/20160. + (17*aR*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (13*Arho*gy*l0*cos(bL - phiS))/60.  - (Arho*gy*l0*cos(bR + phiS))/60. - (13*Arho*gx*l0*sin(bL - phiS))/60. + (Arho*gx*l0*sin(bR + phiS))/60.;
-    hLokal(5) = -(-835584*Power(aL,3)*EA*Power(1 + eps,2) + 313344*Power(aR,3)*EA*Power(1 + eps,2) + 2304*Power(aR,2)*(213*bL - 92*bR)*EA*Power(1 + eps,2)*l0 + 3072*Power(aL,2)*EA*Power(1 + eps,2)*(134*aR + 201*bL*l0 - 69*bR*l0) - 4*aL*(24272640*EI + 218112*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(8*bL - 9*bR)*EA*Power(1 + eps,2)*l0 + Power(l0,2)*(288*EA*(1 + eps)*(560*eps + 3*(36*Power(bL,2) - 25*bL*bR + 15*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(6272*aLp*(bLp - phiSp) + 272*aRp*(bLp - phiSp) + l0*(205*Power(bLp,2) - 102*bLp*bRp + 6*Power(bRp,2) + 114*bRp*phiSp - 199*Power(phiSp,2))))) + 4*aR*(6209280*EI + Power(l0,2)*(432*EA*(1 + eps)*(140*eps + (3*bL - 5*bR)*(9*bL - 5*bR)*(1 + eps)) + 35*Arho*l0*(272*aLp*(bLp - phiSp) + 32*aRp*(bLp - phiSp) + l0*(28*Power(bLp,2) - 12*bLp*bRp + 51*Power(bRp,2) + 114*bRp*phiSp + 23*Power(phiSp,2))))) + l0*(23328*Power(bL,3)*EA*Power(1 + eps,2)*Power(l0,2) - 23328*Power(bL,2)*bR*EA*Power(1 + eps,2)*Power(l0,2) + bL*(32175360*EI + Power(l0,2)*(2592*EA*(1 + eps)*(140*eps + 11*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(1640*aLp*(bLp - phiSp) + 224*aRp*(bLp - phiSp) + l0*(211*Power(bLp,2) - 84*bLp*bRp - 9*Power(bRp,2) + 66*bRp*phiSp - 220*Power(phiSp,2))))) - 6*(1296*Power(bR,3)*EA*Power(1 + eps,2)*Power(l0,2) + 35*bR*(40320*EI + Power(l0,2)*(576*EA*eps*(1 + eps) + Arho*l0*(68*aLp*(bLp - phiSp) + 8*aRp*(bLp - phiSp) + l0*(7*Power(bLp,2) - 3*bLp*bRp - 7*Power(bRp,2) - 11*bRp*phiSp - 14*Power(phiSp,2))))) + 490*l0*(Arho*epsp*Power(l0,3)*(-3*bRp - bLp*(67 + 80*eps) + 64*phiSp + 80*eps*phiSp) + 960*EI*wss0))) - 5880*Arho*Power(l0,3)*((-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 5*(3 + 4*eps)*gy)*l0)*cos(bL - phiS) + 3*gy*l0*cos(bR + phiS) + (8*(13*aL + aR)*gy + 3*(5*(3 + 4*eps)*gx + (5*bL - bR)*gy)*l0)*sin(bL - phiS) - 3*gx*l0*sin(bR + phiS)))/(2.8224e6*Power(l0,2));
-    hLokal(6) = (282240*EI*(32*aL - 160*aR - 11*bL*l0 + 43*bR*l0) + 8*EA*(1 + eps)*(16*aL - 272*aR - 9*bL*l0 + 24*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*Power(l0,2)))/(352800.*Power(l0,3)) + (Arho*epsp*Power(l0,2)*(bLp + 19*bRp + 18*phiSp))/240. + (aR*Arho*l0*(Power(bLp,2) + 196*Power(bRp,2) - 2*bLp*phiSp + 392*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*Power(l0,2)*(28*bL*Power(bLp,2) - 6*Power(bLp,2)*bR - 51*bL*Power(bRp,2) + 205*bR*Power(bRp,2) + 84*bLp*epsp + 1596*bRp*epsp + 2*(-28*bL*bLp + 6*bLp*bR - 51*bL*bRp + 205*bR*bRp + 756*epsp)*phiSp + (-23*bL + 199*bR)*Power(phiSp,2)))/20160. + (17*aL*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (Arho*gy*l0*cos(bL - phiS))/60. - (13*Arho*gy*l0*cos(bR + phiS))/60. - (Arho*gx*l0*sin(bL - phiS))/60. + (13*Arho*gx*l0*sin(bR + phiS))/60.;
-    hLokal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*Power(l0,3) + 362880*bR*EA*eps*Power(l0,3) + 46656*Power(bR,3)*EA*eps*Power(l0,3) + 362880*bR*EA*Power(eps,2)*Power(l0,3) + 23328*Power(bR,3)*EA*Power(eps,2)*Power(l0,3) - 7776*Power(bL,3)*EA*Power(1 + eps,2)*Power(l0,3) + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*Power(l0,3) + 7840*aLp*Arho*bR*bRp*Power(l0,4) + 57400*Arho*aRp*bR*bRp*Power(l0,4) - 315*Arho*Power(bLp,2)*bR*Power(l0,5) - 2940*Arho*bLp*bR*bRp*Power(l0,5) + 7385*Arho*bR*Power(bRp,2)*Power(l0,5) + 8820*Arho*bLp*epsp*Power(l0,5) + 196980*Arho*bRp*epsp*Power(l0,5) + 235200*Arho*bRp*eps*epsp*Power(l0,5) - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*Power(l0,4)*phiSp + 57400*Arho*aRp*bR*Power(l0,4)*phiSp - 2310*Arho*bLp*bR*Power(l0,5)*phiSp + 188160*Arho*epsp*Power(l0,5)*phiSp + 235200*Arho*eps*epsp*Power(l0,5)*phiSp - 7700*Arho*bR*Power(l0,5)*Power(phiSp,2) - 6*bL*l0*(1411200*EI + Power(l0,2)*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + Power(l0,2)*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + Power(l0,2)*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*Power(l0,2)*wss0 - 5880*Arho*Power(l0,3)*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*Power(l0,2));
+    hLokal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*l0h2 - 42*Power(bLp,2)*bR*l0h2 - 51*bL*bLp*bRp*l0h2 + 51*bLp*bR*bRp*l0h2 + 42*bL*Power(bRp,2)*l0h2 - 211*bR*Power(bRp,2)*l0h2 + 3360*bLp*epsp*l0h2 - 3360*bRp*epsp*l0h2 + 3360*bLp*eps*epsp*l0h2 - 3360*bRp*eps*epsp*l0h2 - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*((8*(13*aL + aR)*gx + 3*(5*bL*gx - bR*gx - 20*(1 + eps)*gy)*l0)*cos(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*cos(bR + phiS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*sin(bL - phiS) + (8*(aL + 13*aR)*gy - 3*(20*(1 + eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS))))/40320.;
+    hLokal(3) = -(EA*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2)) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*l0 + 3*(140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*l0h2)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(176400.*l0h3) - (aLp*Arho*l0h2*(19*bLp + bRp - 18*phiSp))/120. - (Arho*aRp*l0h2*(bLp + 19*bRp + 18*phiSp))/120. + (Arho*l0h3*(67*Power(bLp,2) + 6*bLp*bRp + 67*Power(bRp,2) + 80*Power(bLp,2)*eps + 80*Power(bRp,2)*eps - 16*(bLp - bRp)*(9 + 10*eps)*phiSp + 160*(1 + eps)*Power(phiSp,2)))/1920. - (Arho*l0h3*(13*Power(bLp,2) - 2*bLp*(3*bRp + 8*phiSp) + bRp*(13*bRp + 16*phiSp)))/1920. - (Arho*gx*l0h2*cos(bL - phiS))/8. + (Arho*gx*l0h2*cos(bR + phiS))/8. + (Arho*gy*l0h2*sin(bL - phiS))/8. + (Arho*gy*l0h2*sin(bR + phiS))/8.;
+    hLokal(4) = -(282240*EI*(160*aL - 32*aR - 43*bL*l0 + 11*bR*l0) + 8*EA*(1 + eps)*(272*aL - 16*aR - 24*bL*l0 + 9*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(19*bLp + bRp - 18*phiSp))/240. + (aL*Arho*l0*(196*Power(bLp,2) + Power(bRp,2) - 392*bLp*phiSp + 2*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(205*bL*Power(bLp,2) - 51*Power(bLp,2)*bR - 6*bL*Power(bRp,2) + 28*bR*Power(bRp,2) + 1596*bLp*epsp + 84*bRp*epsp - 2*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp)*phiSp + (199*bL - 23*bR)*Power(phiSp,2)))/20160. + (17*aR*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (13*Arho*gy*l0*cos(bL - phiS))/60.  - (Arho*gy*l0*cos(bR + phiS))/60. - (13*Arho*gx*l0*sin(bL - phiS))/60. + (Arho*gx*l0*sin(bR + phiS))/60.;
+    hLokal(5) = -(-835584*Power(aL,3)*EA*Power(1 + eps,2) + 313344*Power(aR,3)*EA*Power(1 + eps,2) + 2304*Power(aR,2)*(213*bL - 92*bR)*EA*Power(1 + eps,2)*l0 + 3072*Power(aL,2)*EA*Power(1 + eps,2)*(134*aR + 201*bL*l0 - 69*bR*l0) - 4*aL*(24272640*EI + 218112*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(8*bL - 9*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(36*Power(bL,2) - 25*bL*bR + 15*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(6272*aLp*(bLp - phiSp) + 272*aRp*(bLp - phiSp) + l0*(205*Power(bLp,2) - 102*bLp*bRp + 6*Power(bRp,2) + 114*bRp*phiSp - 199*Power(phiSp,2))))) + 4*aR*(6209280*EI + l0h2*(432*EA*(1 + eps)*(140*eps + (3*bL - 5*bR)*(9*bL - 5*bR)*(1 + eps)) + 35*Arho*l0*(272*aLp*(bLp - phiSp) + 32*aRp*(bLp - phiSp) + l0*(28*Power(bLp,2) - 12*bLp*bRp + 51*Power(bRp,2) + 114*bRp*phiSp + 23*Power(phiSp,2))))) + l0*(23328*Power(bL,3)*EA*Power(1 + eps,2)*l0h2 - 23328*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h2 + bL*(32175360*EI + l0h2*(2592*EA*(1 + eps)*(140*eps + 11*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(1640*aLp*(bLp - phiSp) + 224*aRp*(bLp - phiSp) + l0*(211*Power(bLp,2) - 84*bLp*bRp - 9*Power(bRp,2) + 66*bRp*phiSp - 220*Power(phiSp,2))))) - 6*(1296*Power(bR,3)*EA*Power(1 + eps,2)*l0h2 + 35*bR*(40320*EI + l0h2*(576*EA*eps*(1 + eps) + Arho*l0*(68*aLp*(bLp - phiSp) + 8*aRp*(bLp - phiSp) + l0*(7*Power(bLp,2) - 3*bLp*bRp - 7*Power(bRp,2) - 11*bRp*phiSp - 14*Power(phiSp,2))))) + 490*l0*(Arho*epsp*l0h3*(-3*bRp - bLp*(67 + 80*eps) + 64*phiSp + 80*eps*phiSp) + 960*EI*wss0))) - 5880*Arho*l0h3*((-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 5*(3 + 4*eps)*gy)*l0)*cos(bL - phiS) + 3*gy*l0*cos(bR + phiS) + (8*(13*aL + aR)*gy + 3*(5*(3 + 4*eps)*gx + (5*bL - bR)*gy)*l0)*sin(bL - phiS) - 3*gx*l0*sin(bR + phiS)))/(2.8224e6*l0h2);
+    hLokal(6) = (282240*EI*(32*aL - 160*aR - 11*bL*l0 + 43*bR*l0) + 8*EA*(1 + eps)*(16*aL - 272*aR - 9*bL*l0 + 24*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(bLp + 19*bRp + 18*phiSp))/240. + (aR*Arho*l0*(Power(bLp,2) + 196*Power(bRp,2) - 2*bLp*phiSp + 392*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(28*bL*Power(bLp,2) - 6*Power(bLp,2)*bR - 51*bL*Power(bRp,2) + 205*bR*Power(bRp,2) + 84*bLp*epsp + 1596*bRp*epsp + 2*(-28*bL*bLp + 6*bLp*bR - 51*bL*bRp + 205*bR*bRp + 756*epsp)*phiSp + (-23*bL + 199*bR)*Power(phiSp,2)))/20160. + (17*aL*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (Arho*gy*l0*cos(bL - phiS))/60. - (13*Arho*gy*l0*cos(bR + phiS))/60. - (Arho*gx*l0*sin(bL - phiS))/60. + (13*Arho*gx*l0*sin(bR + phiS))/60.;
+    hLokal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 - 5880*Arho*l0h3*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
 
 
     // Daempfung------------------------------------------------------------------
@@ -489,9 +489,9 @@ namespace MBSim {
       X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s + 8*(16*aL - 8*aR - 5*bL*l0 + 3*bR*l0)*Power(s,2)))/l0h4;
 
       if(calcAll) {
-	X(3) = xSp + (s*((2*epsp*Power(l0,4) + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS) + (2*Power(l0,4)*(-(bLp*eps) + phiSp + eps*phiSp) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*sin(bL - phiS)))/(2.*Power(l0,4));
-	X(4) = ySp + (s*(2*Power(l0,4)*(-(bLp*eps) + phiSp + eps*phiSp) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*cos(bL - phiS) + s*(-2*epsp*Power(l0,4) - bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*Power(l0,4));
-	X(5) = phiSp + (3*(bLp + bRp)*Power(l0,3)*s + 64*(2*aLp - aRp)*Power(s,3) - 2*Power(l0,2)*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp - 5*bLp*s + 3*bRp*s))/Power(l0,4);
+	X(3) = xSp + (s*((2*epsp*l0h4 + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS) + (2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*sin(bL - phiS)))/(2.*l0h4);
+	X(4) = ySp + (s*(2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3))*cos(bL - phiS) + s*(-2*epsp*l0h4 - bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*Power(l0 + 2*s,2) + (bLp - phiSp)*s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
+	X(5) = phiSp + (3*(bLp + bRp)*l0h3*s + 64*(2*aLp - aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp - 5*bLp*s + 3*bRp*s))/l0h4;
       }
     }
     else       // rechter Teilbereich
@@ -501,9 +501,9 @@ namespace MBSim {
       X(2) = phiS + (s*(l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 6*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s - 8*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*Power(s,2)))/l0h4;
 
       if(calcAll) {
-	X(3) = xSp + (s*((2*epsp*Power(l0,4) + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - (2*Power(l0,4)*(phiSp + eps*(bRp + phiSp)) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*sin(bR + phiS)))/(2.*Power(l0,4));
-	X(4) = ySp + (s*(2*Power(l0,4)*(phiSp + eps*(bRp + phiSp)) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*cos(bR + phiS) + s*(2*epsp*Power(l0,4) + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*Power(l0,4));
-	X(5) = phiSp + (3*(bLp + bRp)*Power(l0,3)*s - 64*(aLp - 2*aRp)*Power(s,3) - 2*Power(l0,2)*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp + 3*bLp*s - 5*bRp*s))/Power(l0,4);
+	X(3) = xSp + (s*((2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - (2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*sin(bR + phiS)))/(2.*l0h4);
+	X(4) = ySp + (s*(2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3))*cos(bR + phiS) + s*(2*epsp*l0h4 + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*(2*l0 + 5*s) + (bRp + phiSp)*s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
+	X(5) = phiSp + (3*(bLp + bRp)*l0h3*s - 64*(aLp - 2*aRp)*Power(s,3) - 2*l0h2*s*(4*aLp + 4*aRp + 9*bLp*s - 9*bRp*s) + 8*l0*Power(s,2)*(6*aLp - 6*aRp + 3*bLp*s - 5*bRp*s))/l0h4;
       }
     }
 
@@ -563,27 +563,27 @@ namespace MBSim {
       J(0,1) = 0;
       J(1,0) = 0;
       J(1,1) = 1;
-      J(2,0) = (s*(-(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2)) + s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/(2.*Power(l0,4)) + (1 + eps)*s*sin(bL - phiS);
-      J(2,1) = (1 + eps)*s*cos(bL - phiS) + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*Power(l0,4));
+      J(2,0) = (s*(-(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2)) + s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/(2.*l0h4) + (1 + eps)*s*sin(bL - phiS);
+      J(2,1) = (1 + eps)*s*cos(bL - phiS) + (s*(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/(2.*l0h4);
       J(3,0) = s*cos(bL - phiS);
       J(3,1) = -(s*sin(bL - phiS));
-      J(4,0) = (-4*Power(s,2)*(Power(l0,2) - 4*l0*s - 8*Power(s,2))*sin(bL - phiS))/Power(l0,4);
-      J(4,1) = (-4*Power(s,2)*(Power(l0,2) - 4*l0*s - 8*Power(s,2))*cos(bL - phiS))/Power(l0,4);
-      J(5,0) = (s*(((bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/Power(l0,4) - 2*(1 + eps)*sin(bL - phiS) + ((2*l0 - 5*s)*Power(l0 + 2*s,2)*sin(bL - phiS))/Power(l0,3)))/2.;
-      J(5,1) = (s*(-2*(1 + eps)*cos(bL - phiS) + ((2*l0 - 5*s)*Power(l0 + 2*s,2)*cos(bL - phiS))/Power(l0,3) + ((-(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2)) + s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/Power(l0,4)))/2.;
-      J(6,0) = (-4*Power(s,2)*Power(l0 + 2*s,2)*sin(bL - phiS))/Power(l0,4);
-      J(6,1) = (-4*Power(s,2)*Power(l0 + 2*s,2)*cos(bL - phiS))/Power(l0,4);
-      J(7,0) = (3*Power(s,2)*Power(l0 + 2*s,2)*sin(bL - phiS))/(2.*Power(l0,3));
-      J(7,1) = (3*Power(s,2)*Power(l0 + 2*s,2)*cos(bL - phiS))/(2.*Power(l0,3));
+      J(4,0) = (-4*Power(s,2)*(l0h2 - 4*l0*s - 8*Power(s,2))*sin(bL - phiS))/l0h4;
+      J(4,1) = (-4*Power(s,2)*(l0h2 - 4*l0*s - 8*Power(s,2))*cos(bL - phiS))/l0h4;
+      J(5,0) = (s*(((bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2) + s*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*cos(bL - phiS))/l0h4 - 2*(1 + eps)*sin(bL - phiS) + ((2*l0 - 5*s)*Power(l0 + 2*s,2)*sin(bL - phiS))/l0h3))/2.;
+      J(5,1) = (s*(-2*(1 + eps)*cos(bL - phiS) + ((2*l0 - 5*s)*Power(l0 + 2*s,2)*cos(bL - phiS))/l0h3 + ((-(bL*l0*(2*l0 - 5*s)*Power(l0 + 2*s,2)) + s*((8*aR - 3*bR*l0)*Power(l0 + 2*s,2) + 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))))*sin(bL - phiS))/l0h4))/2.;
+      J(6,0) = (-4*Power(s,2)*Power(l0 + 2*s,2)*sin(bL - phiS))/l0h4;
+      J(6,1) = (-4*Power(s,2)*Power(l0 + 2*s,2)*cos(bL - phiS))/l0h4;
+      J(7,0) = (3*Power(s,2)*Power(l0 + 2*s,2)*sin(bL - phiS))/(2.*l0h3);
+      J(7,1) = (3*Power(s,2)*Power(l0 + 2*s,2)*cos(bL - phiS))/(2.*l0h3);
       // Rotation
       J(0,2) = 0;
       J(1,2) = 0;
       J(2,2) = 1;
       J(3,2) = 0;
-      J(4,2) = (-8*(l0 - 8*s)*s*(l0 + 2*s))/Power(l0,4);
-      J(5,2) = (s*(3*Power(l0,2) - 18*l0*s - 40*Power(s,2)))/Power(l0,3);
-      J(6,2) = (-8*s*(l0 + 2*s)*(l0 + 4*s))/Power(l0,4);
-      J(7,2) = (3*s*(l0 + 2*s)*(l0 + 4*s))/Power(l0,3);
+      J(4,2) = (-8*(l0 - 8*s)*s*(l0 + 2*s))/l0h4;
+      J(5,2) = (s*(3*l0h2 - 18*l0*s - 40*Power(s,2)))/l0h3;
+      J(6,2) = (-8*s*(l0 + 2*s)*(l0 + 4*s))/l0h4;
+      J(7,2) = (3*s*(l0 + 2*s)*(l0 + 4*s))/l0h3;
     }
     else
     {
@@ -592,27 +592,27 @@ namespace MBSim {
       J(0,1) = 0;
       J(1,0) = 0;
       J(1,1) = 1;
-      J(2,0) = (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS))/(2.*Power(l0,4)) - (1 + eps)*s*sin(bR + phiS);
-      J(2,1) = (1 + eps)*s*cos(bR + phiS) + (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*Power(l0,4));
+      J(2,0) = (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS))/(2.*l0h4) - (1 + eps)*s*sin(bR + phiS);
+      J(2,1) = (1 + eps)*s*cos(bR + phiS) + (s*(bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS))/(2.*l0h4);
       J(3,0) = s*cos(bR + phiS);
       J(3,1) = s*sin(bR + phiS);
-      J(4,0) = (4*Power(l0 - 2*s,2)*Power(s,2)*sin(bR + phiS))/Power(l0,4);
-      J(4,1) = (-4*Power(l0 - 2*s,2)*Power(s,2)*cos(bR + phiS))/Power(l0,4);
-      J(5,0) = (-3*Power(l0 - 2*s,2)*Power(s,2)*sin(bR + phiS))/(2.*Power(l0,3));
-      J(5,1) = (3*Power(l0 - 2*s,2)*Power(s,2)*cos(bR + phiS))/(2.*Power(l0,3));
-      J(6,0) = (4*Power(s,2)*(Power(l0,2) + 4*l0*s - 8*Power(s,2))*sin(bR + phiS))/Power(l0,4);
-      J(6,1) = (-4*Power(s,2)*(Power(l0,2) + 4*l0*s - 8*Power(s,2))*cos(bR + phiS))/Power(l0,4);
-      J(7,0) = (s*((bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - l0*(2*eps*Power(l0,3) + s*(3*Power(l0,2) + 12*l0*s - 20*Power(s,2)))*sin(bR + phiS)))/(2.*Power(l0,4));
-      J(7,1) = (s*(l0*(2*eps*Power(l0,3) + s*(3*Power(l0,2) + 12*l0*s - 20*Power(s,2)))*cos(bR + phiS) + (bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS)))/(2.*Power(l0,4));
+      J(4,0) = (4*Power(l0 - 2*s,2)*Power(s,2)*sin(bR + phiS))/l0h4;
+      J(4,1) = (-4*Power(l0 - 2*s,2)*Power(s,2)*cos(bR + phiS))/l0h4;
+      J(5,0) = (-3*Power(l0 - 2*s,2)*Power(s,2)*sin(bR + phiS))/(2.*l0h3);
+      J(5,1) = (3*Power(l0 - 2*s,2)*Power(s,2)*cos(bR + phiS))/(2.*l0h3);
+      J(6,0) = (4*Power(s,2)*(l0h2 + 4*l0*s - 8*Power(s,2))*sin(bR + phiS))/l0h4;
+      J(6,1) = (-4*Power(s,2)*(l0h2 + 4*l0*s - 8*Power(s,2))*cos(bR + phiS))/l0h4;
+      J(7,0) = (s*((bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*cos(bR + phiS) - l0*(2*eps*l0h3 + s*(3*l0h2 + 12*l0*s - 20*Power(s,2)))*sin(bR + phiS)))/(2.*l0h4);
+      J(7,1) = (s*(l0*(2*eps*l0h3 + s*(3*l0h2 + 12*l0*s - 20*Power(s,2)))*cos(bR + phiS) + (bR*l0*Power(l0 - 2*s,2)*(2*l0 + 5*s) + s*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))))*sin(bR + phiS)))/(2.*l0h4);
       // Rotation
       J(0,2) = 0;
       J(1,2) = 0;
       J(2,2) = 1;
       J(3,2) = 0;
-      J(4,2) = (-8*(l0 - 4*s)*(l0 - 2*s)*s)/Power(l0,4);
-      J(5,2) = (3*(l0 - 4*s)*(l0 - 2*s)*s)/Power(l0,3);
-      J(6,2) = (-8*(l0 - 2*s)*s*(l0 + 8*s))/Power(l0,4);
-      J(7,2) = (s*(3*Power(l0,2) + 18*l0*s - 40*Power(s,2)))/Power(l0,3);
+      J(4,2) = (-8*(l0 - 4*s)*(l0 - 2*s)*s)/l0h4;
+      J(5,2) = (3*(l0 - 4*s)*(l0 - 2*s)*s)/l0h3;
+      J(6,2) = (-8*(l0 - 2*s)*s*(l0 + 8*s))/l0h4;
+      J(7,2) = (s*(3*l0h2 + 18*l0*s - 40*Power(s,2)))/l0h3;
     }
     return J;
   }
@@ -656,54 +656,54 @@ namespace MBSim {
       Jp(0,1) = 0;
       Jp(1,0) = 0;
       Jp(1,1) = 0;
-      Jp(2,0) = ((s*(2*Power(l0,4)*(bLp*eps - (1 + eps)*phiSp) - Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(-16*aLp + 8*aRp + 5*bLp*l0 - 3*bRp*l0)*Power(s,3)) - 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*cos(bL - phiS) + (2*epsp*Power(l0,4)*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*Power(l0,4)*sp)*sin(bL - phiS))/(2.*Power(l0,4));
-      Jp(2,1) = ((2*epsp*Power(l0,4)*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*Power(l0,4)*sp)*cos(bL - phiS) + (s*(2*Power(l0,4)*(-(bLp*eps) + phiSp + eps*phiSp) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3)) + 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*sin(bL - phiS))/(2.*Power(l0,4));
+      Jp(2,0) = ((s*(2*l0h4*(bLp*eps - (1 + eps)*phiSp) - l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(-16*aLp + 8*aRp + 5*bLp*l0 - 3*bRp*l0)*Power(s,3)) - 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*cos(bL - phiS) + (2*epsp*l0h4*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*l0h4*sp)*sin(bL - phiS))/(2.*l0h4);
+      Jp(2,1) = ((2*epsp*l0h4*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*l0h4*sp)*cos(bL - phiS) + (s*(2*l0h4*(-(bLp*eps) + phiSp + eps*phiSp) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s - 4*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*Power(s,2) + 4*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,3)) + 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*sin(bL - phiS))/(2.*l0h4);
       Jp(3,0) = sp*cos(bL - phiS) + (-bLp + phiSp)*s*sin(bL - phiS);
       Jp(3,1) = (-bLp + phiSp)*s*cos(bL - phiS) - sp*sin(bL - phiS);
-      Jp(4,0) = (4*s*((bLp - phiSp)*s*(-Power(l0,2) + 4*l0*s + 8*Power(s,2))*cos(bL - phiS) - 2*(l0 - 8*s)*(l0 + 2*s)*sp*sin(bL - phiS)))/Power(l0,4);
-      Jp(4,1) = (4*s*(-2*(l0 - 8*s)*(l0 + 2*s)*sp*cos(bL - phiS) + (bLp - phiSp)*s*(Power(l0,2) - 4*l0*s - 8*Power(s,2))*sin(bL - phiS)))/Power(l0,4);
-      Jp(5,0) = ((s*(-2*Power(l0,4)*(bLp*(-1 + eps) - eps*phiSp) + Power(l0,2)*(-8*aLp - 8*aRp + 3*l0*(2*bLp + bRp - phiSp))*s - 4*l0*(-8*aLp + 8*aRp + 6*bLp*l0 - 3*bRp*l0 - 3*l0*phiSp)*Power(s,2) + 4*(16*aLp - 8*aRp + l0*(-10*bLp + 3*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*cos(bL - phiS) - (2*epsp*Power(l0,4)*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*Power(l0,3) + s*(-3*Power(l0,2) + 18*l0*s + 40*Power(s,2)))*sp)*sin(bL - phiS))/(2.*Power(l0,4));
-      Jp(5,1) = (-((2*epsp*Power(l0,4)*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(Power(l0,2) - 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*Power(l0,3) + s*(-3*Power(l0,2) + 18*l0*s + 40*Power(s,2)))*sp)*cos(bL - phiS)) + (s*(2*Power(l0,4)*(bLp*(-1 + eps) - eps*phiSp) - Power(l0,2)*(-8*aLp - 8*aRp + 3*l0*(2*bLp + bRp - phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 6*bLp*l0 - 3*bRp*l0 - 3*l0*phiSp)*Power(s,2) - 4*(16*aLp - 8*aRp + l0*(-10*bLp + 3*bRp + 5*phiSp))*Power(s,3)) - 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*sin(bL - phiS))/(2.*Power(l0,4));
-      Jp(6,0) = (-4*s*(l0 + 2*s)*((bLp - phiSp)*s*(l0 + 2*s)*cos(bL - phiS) + 2*(l0 + 4*s)*sp*sin(bL - phiS)))/Power(l0,4);
-      Jp(6,1) = (4*s*(l0 + 2*s)*(-2*(l0 + 4*s)*sp*cos(bL - phiS) + (bLp - phiSp)*s*(l0 + 2*s)*sin(bL - phiS)))/Power(l0,4);
-      Jp(7,0) = (3*s*(l0 + 2*s)*((bLp - phiSp)*s*(l0 + 2*s)*cos(bL - phiS) + 2*(l0 + 4*s)*sp*sin(bL - phiS)))/(2.*Power(l0,3));
-      Jp(7,1) = (3*s*(l0 + 2*s)*(2*(l0 + 4*s)*sp*cos(bL - phiS) - (bLp - phiSp)*s*(l0 + 2*s)*sin(bL - phiS)))/(2.*Power(l0,3));
+      Jp(4,0) = (4*s*((bLp - phiSp)*s*(-l0h2 + 4*l0*s + 8*Power(s,2))*cos(bL - phiS) - 2*(l0 - 8*s)*(l0 + 2*s)*sp*sin(bL - phiS)))/l0h4;
+      Jp(4,1) = (4*s*(-2*(l0 - 8*s)*(l0 + 2*s)*sp*cos(bL - phiS) + (bLp - phiSp)*s*(l0h2 - 4*l0*s - 8*Power(s,2))*sin(bL - phiS)))/l0h4;
+      Jp(5,0) = ((s*(-2*l0h4*(bLp*(-1 + eps) - eps*phiSp) + l0h2*(-8*aLp - 8*aRp + 3*l0*(2*bLp + bRp - phiSp))*s - 4*l0*(-8*aLp + 8*aRp + 6*bLp*l0 - 3*bRp*l0 - 3*l0*phiSp)*Power(s,2) + 4*(16*aLp - 8*aRp + l0*(-10*bLp + 3*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*cos(bL - phiS) - (2*epsp*l0h4*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*l0h3 + s*(-3*l0h2 + 18*l0*s + 40*Power(s,2)))*sp)*sin(bL - phiS))/(2.*l0h4);
+      Jp(5,1) = (-((2*epsp*l0h4*s + bL*l0*(bLp - phiSp)*(2*l0 - 5*s)*s*Power(l0 + 2*s,2) + (bLp - phiSp)*Power(s,2)*(-((8*aR - 3*bR*l0)*Power(l0 + 2*s,2)) - 8*aL*(l0h2 - 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*l0h3 + s*(-3*l0h2 + 18*l0*s + 40*Power(s,2)))*sp)*cos(bL - phiS)) + (s*(2*l0h4*(bLp*(-1 + eps) - eps*phiSp) - l0h2*(-8*aLp - 8*aRp + 3*l0*(2*bLp + bRp - phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 6*bLp*l0 - 3*bRp*l0 - 3*l0*phiSp)*Power(s,2) - 4*(16*aLp - 8*aRp + l0*(-10*bLp + 3*bRp + 5*phiSp))*Power(s,3)) - 2*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp)*sin(bL - phiS))/(2.*l0h4);
+      Jp(6,0) = (-4*s*(l0 + 2*s)*((bLp - phiSp)*s*(l0 + 2*s)*cos(bL - phiS) + 2*(l0 + 4*s)*sp*sin(bL - phiS)))/l0h4;
+      Jp(6,1) = (4*s*(l0 + 2*s)*(-2*(l0 + 4*s)*sp*cos(bL - phiS) + (bLp - phiSp)*s*(l0 + 2*s)*sin(bL - phiS)))/l0h4;
+      Jp(7,0) = (3*s*(l0 + 2*s)*((bLp - phiSp)*s*(l0 + 2*s)*cos(bL - phiS) + 2*(l0 + 4*s)*sp*sin(bL - phiS)))/(2.*l0h3);
+      Jp(7,1) = (3*s*(l0 + 2*s)*(2*(l0 + 4*s)*sp*cos(bL - phiS) - (bLp - phiSp)*s*(l0 + 2*s)*sin(bL - phiS)))/(2.*l0h3);
       //JRLp
       Jp(0,2) = 0;
       Jp(1,2) = 0;
       Jp(2,2) = 0;
       Jp(3,2) = 0;
-      Jp(4,2) = (-8*(Power(l0,2) - 12*l0*s - 48*Power(s,2))*sp)/Power(l0,4);
-      Jp(5,2) = (3*(Power(l0,2) - 12*l0*s - 40*Power(s,2))*sp)/Power(l0,3);
-      Jp(6,2) = (-8*(Power(l0,2) + 12*l0*s + 24*Power(s,2))*sp)/Power(l0,4);
-      Jp(7,2) = (3*(Power(l0,2) + 12*l0*s + 24*Power(s,2))*sp)/Power(l0,3);
+      Jp(4,2) = (-8*(l0h2 - 12*l0*s - 48*Power(s,2))*sp)/l0h4;
+      Jp(5,2) = (3*(l0h2 - 12*l0*s - 40*Power(s,2))*sp)/l0h3;
+      Jp(6,2) = (-8*(l0h2 + 12*l0*s + 24*Power(s,2))*sp)/l0h4;
+      Jp(7,2) = (3*(l0h2 + 12*l0*s + 24*Power(s,2))*sp)/l0h3;
     } else {
       //JTRp
       Jp(0,0) = 0;
       Jp(0,1) = 0;
       Jp(1,0) = 0;
       Jp(1,1) = 0;
-      Jp(2,0) = -((s*(2*Power(l0,4)*(phiSp + eps*(bRp + phiSp)) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3)) - 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*cos(bR + phiS) + (2*epsp*Power(l0,4)*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*Power(l0,4)*sp)*sin(bR + phiS))/(2.*Power(l0,4));
-      Jp(2,1) = ((2*epsp*Power(l0,4)*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*Power(l0,4)*sp)*cos(bR + phiS) - (s*(2*Power(l0,4)*(phiSp + eps*(bRp + phiSp)) + Power(l0,2)*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3)) - 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*sin(bR + phiS))/(2.*Power(l0,4));
+      Jp(2,0) = -((s*(2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3)) - 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*cos(bR + phiS) + (2*epsp*l0h4*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*l0h4*sp)*sin(bR + phiS))/(2.*l0h4);
+      Jp(2,1) = ((2*epsp*l0h4*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))) + 2*(1 + eps)*l0h4*sp)*cos(bR + phiS) - (s*(2*l0h4*(phiSp + eps*(bRp + phiSp)) + l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0)*s + 4*l0*(8*aLp - 8*aRp + 3*(-bLp + bRp)*l0)*Power(s,2) - 4*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,3)) - 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*sin(bR + phiS))/(2.*l0h4);
       Jp(3,0) = sp*cos(bR + phiS) - (bRp + phiSp)*s*sin(bR + phiS);
       Jp(3,1) = (bRp + phiSp)*s*cos(bR + phiS) + sp*sin(bR + phiS);
-      Jp(4,0) = (4*(l0 - 2*s)*s*((bRp + phiSp)*(l0 - 2*s)*s*cos(bR + phiS) + 2*(l0 - 4*s)*sp*sin(bR + phiS)))/Power(l0,4);
-      Jp(4,1) = (4*(l0 - 2*s)*s*(-2*(l0 - 4*s)*sp*cos(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*s*sin(bR + phiS)))/Power(l0,4);
-      Jp(5,0) = (-3*(l0 - 2*s)*s*((bRp + phiSp)*(l0 - 2*s)*s*cos(bR + phiS) + 2*(l0 - 4*s)*sp*sin(bR + phiS)))/(2.*Power(l0,3));
-      Jp(5,1) = (3*(l0 - 2*s)*s*(2*(l0 - 4*s)*sp*cos(bR + phiS) + (bRp + phiSp)*s*(-l0 + 2*s)*sin(bR + phiS)))/(2.*Power(l0,3));
-      Jp(6,0) = (4*s*((bRp + phiSp)*s*(Power(l0,2) + 4*l0*s - 8*Power(s,2))*cos(bR + phiS) + 2*(l0 - 2*s)*(l0 + 8*s)*sp*sin(bR + phiS)))/Power(l0,4);
-      Jp(6,1) = (4*s*(-2*(l0 - 2*s)*(l0 + 8*s)*sp*cos(bR + phiS) + (bRp + phiSp)*s*(Power(l0,2) + 4*l0*s - 8*Power(s,2))*sin(bR + phiS)))/Power(l0,4);
-      Jp(7,0) = ((s*(-2*Power(l0,4)*(bRp*(-1 + eps) + eps*phiSp) - Power(l0,2)*(-8*aLp - 8*aRp + 3*l0*(bLp + 2*bRp + phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 3*l0*(bLp - 2*bRp - phiSp))*Power(s,2) + 4*(8*aLp - 16*aRp + l0*(-3*bLp + 10*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*cos(bR + phiS) - (2*epsp*Power(l0,4)*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*Power(l0,3) + s*(3*Power(l0,2) + 18*l0*s - 40*Power(s,2)))*sp)*sin(bR + phiS))/(2.*Power(l0,4));
-      Jp(7,1) = ((2*epsp*Power(l0,4)*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(Power(l0,2) + 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*Power(l0,3) + s*(3*Power(l0,2) + 18*l0*s - 40*Power(s,2)))*sp)*cos(bR + phiS) + (s*(-2*Power(l0,4)*(bRp*(-1 + eps) + eps*phiSp) - Power(l0,2)*(-8*aLp - 8*aRp + 3*l0*(bLp + 2*bRp + phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 3*l0*(bLp - 2*bRp - phiSp))*Power(s,2) + 4*(8*aLp - 16*aRp + l0*(-3*bLp + 10*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*sin(bR + phiS))/(2.*Power(l0,4));
+      Jp(4,0) = (4*(l0 - 2*s)*s*((bRp + phiSp)*(l0 - 2*s)*s*cos(bR + phiS) + 2*(l0 - 4*s)*sp*sin(bR + phiS)))/l0h4;
+      Jp(4,1) = (4*(l0 - 2*s)*s*(-2*(l0 - 4*s)*sp*cos(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*s*sin(bR + phiS)))/l0h4;
+      Jp(5,0) = (-3*(l0 - 2*s)*s*((bRp + phiSp)*(l0 - 2*s)*s*cos(bR + phiS) + 2*(l0 - 4*s)*sp*sin(bR + phiS)))/(2.*l0h3);
+      Jp(5,1) = (3*(l0 - 2*s)*s*(2*(l0 - 4*s)*sp*cos(bR + phiS) + (bRp + phiSp)*s*(-l0 + 2*s)*sin(bR + phiS)))/(2.*l0h3);
+      Jp(6,0) = (4*s*((bRp + phiSp)*s*(l0h2 + 4*l0*s - 8*Power(s,2))*cos(bR + phiS) + 2*(l0 - 2*s)*(l0 + 8*s)*sp*sin(bR + phiS)))/l0h4;
+      Jp(6,1) = (4*s*(-2*(l0 - 2*s)*(l0 + 8*s)*sp*cos(bR + phiS) + (bRp + phiSp)*s*(l0h2 + 4*l0*s - 8*Power(s,2))*sin(bR + phiS)))/l0h4;
+      Jp(7,0) = ((s*(-2*l0h4*(bRp*(-1 + eps) + eps*phiSp) - l0h2*(-8*aLp - 8*aRp + 3*l0*(bLp + 2*bRp + phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 3*l0*(bLp - 2*bRp - phiSp))*Power(s,2) + 4*(8*aLp - 16*aRp + l0*(-3*bLp + 10*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*cos(bR + phiS) - (2*epsp*l0h4*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*l0h3 + s*(3*l0h2 + 18*l0*s - 40*Power(s,2)))*sp)*sin(bR + phiS))/(2.*l0h4);
+      Jp(7,1) = ((2*epsp*l0h4*s + bR*l0*(bRp + phiSp)*Power(l0 - 2*s,2)*s*(2*l0 + 5*s) + (bRp + phiSp)*Power(s,2)*(8*aL*Power(l0 - 2*s,2) - 3*bL*l0*Power(l0 - 2*s,2) + 8*aR*(l0h2 + 4*l0*s - 8*Power(s,2))) + 2*l0*(eps*l0h3 + s*(3*l0h2 + 18*l0*s - 40*Power(s,2)))*sp)*cos(bR + phiS) + (s*(-2*l0h4*(bRp*(-1 + eps) + eps*phiSp) - l0h2*(-8*aLp - 8*aRp + 3*l0*(bLp + 2*bRp + phiSp))*s + 4*l0*(-8*aLp + 8*aRp + 3*l0*(bLp - 2*bRp - phiSp))*Power(s,2) + 4*(8*aLp - 16*aRp + l0*(-3*bLp + 10*bRp + 5*phiSp))*Power(s,3)) + 2*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp)*sin(bR + phiS))/(2.*l0h4);
       //JRRp
       Jp(0,2) = 0;
       Jp(1,2) = 0;
       Jp(2,2) = 0;
       Jp(3,2) = 0;
-      Jp(4,2) = (-8*(Power(l0,2) - 12*l0*s + 24*Power(s,2))*sp)/Power(l0,4);
-      Jp(5,2) = (3*(Power(l0,2) - 12*l0*s + 24*Power(s,2))*sp)/Power(l0,3);
-      Jp(6,2) = (-8*(Power(l0,2) + 12*l0*s - 48*Power(s,2))*sp)/Power(l0,4);
-      Jp(7,2) = (3*(Power(l0,2) + 12*l0*s - 40*Power(s,2))*sp)/Power(l0,3);
+      Jp(4,2) = (-8*(l0h2 - 12*l0*s + 24*Power(s,2))*sp)/l0h4;
+      Jp(5,2) = (3*(l0h2 - 12*l0*s + 24*Power(s,2))*sp)/l0h3;
+      Jp(6,2) = (-8*(l0h2 + 12*l0*s - 48*Power(s,2))*sp)/l0h4;
+      Jp(7,2) = (3*(l0h2 + 12*l0*s - 40*Power(s,2))*sp)/l0h3;
     }
     return trans(Jeg)*Jp + trans(Jegp)*JGeneralizedInternal(qElement,s);
   }
@@ -722,13 +722,13 @@ namespace MBSim {
 
     if (s < 0) {// linker Teilbereich
       //DrDsL
-      dr(0) = ((1 + eps)*Power(l0,4)*cos(bL - phiS) + (l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sin(bL - phiS))/Power(l0,4);
-      dr(1) = ((l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*cos(bL - phiS) - (1 + eps)*Power(l0,4)*sin(bL - phiS))/Power(l0,4);
+      dr(0) = ((1 + eps)*l0h4*cos(bL - phiS) + (l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sin(bL - phiS))/l0h4;
+      dr(1) = ((l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*cos(bL - phiS) - (1 + eps)*l0h4*sin(bL - phiS))/l0h4;
 
     } else {
       //DrDsR
-      dr(0) = ((1 + eps)*Power(l0,4)*cos(bR + phiS) + (l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sin(bR + phiS))/Power(l0,4);
-      dr(1) = (-((l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*cos(bR + phiS)) + (1 + eps)*Power(l0,4)*sin(bR + phiS))/Power(l0,4);
+      dr(0) = ((1 + eps)*l0h4*cos(bR + phiS) + (l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sin(bR + phiS))/l0h4;
+      dr(1) = (-((l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*cos(bR + phiS)) + (1 + eps)*l0h4*sin(bR + phiS))/l0h4;
 
     }
     return dr;
@@ -755,14 +755,51 @@ namespace MBSim {
 
     if (s < 0) {// linker Teilbereich
       //DrDspL
-      drp(0) = (epsp*Power(l0,4)*cos(bL - phiS) + (bLp - phiSp)*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*cos(bL - phiS) - (1 + eps)*Power(l0,4)*(bLp - phiSp)*sin(bL - phiS) + 2*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp*sin(bL - phiS) + (l0 + 2*s)*(bLp*l0*(l0 - 4*s)*(l0 + 5*s) + 5*bL*l0*(l0 - 4*s)*sp - 4*bL*l0*(l0 + 5*s)*sp + (-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s))*sp + s*(-8*aLp*(l0 - 8*s) - (8*aRp - 3*bRp*l0)*(l0 + 4*s) + 64*aL*sp - 4*(8*aR - 3*bR*l0)*sp))*sin(bL - phiS))/Power(l0,4);
-      drp(1) = (-((1 + eps)*Power(l0,4)*(bLp - phiSp)*cos(bL - phiS)) + 2*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp*cos(bL - phiS) + (l0 + 2*s)*(bLp*l0*(l0 - 4*s)*(l0 + 5*s) + 5*bL*l0*(l0 - 4*s)*sp - 4*bL*l0*(l0 + 5*s)*sp + (-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s))*sp + s*(-8*aLp*(l0 - 8*s) - (8*aRp - 3*bRp*l0)*(l0 + 4*s) + 64*aL*sp - 4*(8*aR - 3*bR*l0)*sp))*cos(bL - phiS) - epsp*Power(l0,4)*sin(bL - phiS) - (bLp - phiSp)*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sin(bL - phiS))/Power(l0,4);
+      drp(0) = (epsp*l0h4*cos(bL - phiS) + (bLp - phiSp)*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*cos(bL - phiS) - (1 + eps)*l0h4*(bLp - phiSp)*sin(bL - phiS) + 2*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp*sin(bL - phiS) + (l0 + 2*s)*(bLp*l0*(l0 - 4*s)*(l0 + 5*s) + 5*bL*l0*(l0 - 4*s)*sp - 4*bL*l0*(l0 + 5*s)*sp + (-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s))*sp + s*(-8*aLp*(l0 - 8*s) - (8*aRp - 3*bRp*l0)*(l0 + 4*s) + 64*aL*sp - 4*(8*aR - 3*bR*l0)*sp))*sin(bL - phiS))/l0h4;
+      drp(1) = (-((1 + eps)*l0h4*(bLp - phiSp)*cos(bL - phiS)) + 2*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sp*cos(bL - phiS) + (l0 + 2*s)*(bLp*l0*(l0 - 4*s)*(l0 + 5*s) + 5*bL*l0*(l0 - 4*s)*sp - 4*bL*l0*(l0 + 5*s)*sp + (-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s))*sp + s*(-8*aLp*(l0 - 8*s) - (8*aRp - 3*bRp*l0)*(l0 + 4*s) + 64*aL*sp - 4*(8*aR - 3*bR*l0)*sp))*cos(bL - phiS) - epsp*l0h4*sin(bL - phiS) - (bLp - phiSp)*(l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sin(bL - phiS))/l0h4;
     } else {
       //DrDspR
-      drp(0) = (epsp*Power(l0,4)*cos(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*cos(bR + phiS) - (1 + eps)*Power(l0,4)*(bRp + phiSp)*sin(bR + phiS) - 2*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp*sin(bR + phiS) + (l0 - 2*s)*(bRp*l0*(l0 - 5*s)*(l0 + 4*s) + 4*bR*l0*(l0 - 5*s)*sp - 5*bR*l0*(l0 + 4*s)*sp + (8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s))*sp + s*(8*aLp*(l0 - 4*s) - 3*bLp*l0*(l0 - 4*s) + 8*aRp*(l0 + 8*s) - 32*aL*sp + 64*aR*sp + 12*bL*l0*sp))*sin(bR + phiS))/Power(l0,4);
-      drp(1) = ((1 + eps)*Power(l0,4)*(bRp + phiSp)*cos(bR + phiS) + 2*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp*cos(bR + phiS) - (l0 - 2*s)*(bRp*l0*(l0 - 5*s)*(l0 + 4*s) + 4*bR*l0*(l0 - 5*s)*sp - 5*bR*l0*(l0 + 4*s)*sp + (8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s))*sp + s*(8*aLp*(l0 - 4*s) - 3*bLp*l0*(l0 - 4*s) + 8*aRp*(l0 + 8*s) - 32*aL*sp + 64*aR*sp + 12*bL*l0*sp))*cos(bR + phiS) + epsp*Power(l0,4)*sin(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sin(bR + phiS))/Power(l0,4);
+      drp(0) = (epsp*l0h4*cos(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*cos(bR + phiS) - (1 + eps)*l0h4*(bRp + phiSp)*sin(bR + phiS) - 2*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp*sin(bR + phiS) + (l0 - 2*s)*(bRp*l0*(l0 - 5*s)*(l0 + 4*s) + 4*bR*l0*(l0 - 5*s)*sp - 5*bR*l0*(l0 + 4*s)*sp + (8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s))*sp + s*(8*aLp*(l0 - 4*s) - 3*bLp*l0*(l0 - 4*s) + 8*aRp*(l0 + 8*s) - 32*aL*sp + 64*aR*sp + 12*bL*l0*sp))*sin(bR + phiS))/l0h4;
+      drp(1) = ((1 + eps)*l0h4*(bRp + phiSp)*cos(bR + phiS) + 2*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sp*cos(bR + phiS) - (l0 - 2*s)*(bRp*l0*(l0 - 5*s)*(l0 + 4*s) + 4*bR*l0*(l0 - 5*s)*sp - 5*bR*l0*(l0 + 4*s)*sp + (8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s))*sp + s*(8*aLp*(l0 - 4*s) - 3*bLp*l0*(l0 - 4*s) + 8*aRp*(l0 + 8*s) - 32*aL*sp + 64*aR*sp + 12*bL*l0*sp))*cos(bR + phiS) + epsp*l0h4*sin(bR + phiS) + (bRp + phiSp)*(l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sin(bR + phiS))/l0h4;
     }
     return drp;
+  }
+  double FiniteElement1s21RCM::Kcurvature (Vec &qElement,const double &s) {
+    double Kc;
+    Vec  qLokal(8,fmatvec::NONINIT);
+
+    //lokale Koordinate
+    BuildqLokal(qElement,qLokal);
+
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
+
+    if (s < 0) // linker Teilbereich
+      Kc = (l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 12*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s + 24*(16*aL - 8*aR - 5*bL*l0 + 3*bR*l0)*Power(s,2))/ l0h4;
+    else
+      Kc = (l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 12*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s - 24*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*Power(s,2))/ l0h4;
+    return Kc;
+  }
+  double FiniteElement1s21RCM::Kpcurvature(Vec &qElement,Vec &qpElement,const double &s,const double &sp) {
+    double Kcp;
+    Vec  qLokal(8,fmatvec::NONINIT);
+    SqrMat  Jeg(8,fmatvec::INIT,0.0);
+
+    //lokale Koordinate
+    BuildqLokal(qElement,qLokal);
+    BuildJacobi(qElement,Jeg);
+    Vec qpLokal = Jeg*qpElement;
+
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
+
+    if (s < 0) // linker Teilbereich
+      Kcp = (l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0) - 12*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*s + 24*(16*aLp - 8*aRp - 5*bLp*l0 + 3*bRp*l0)*Power(s,2) - 12*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*sp + 48*(16*aL - 8*aR - 5*bL*l0 + 3*bR*l0)*s*sp)/l0h4;
+    else 
+      Kcp = (l0h2*(-8*(aLp + aRp) + 3*(bLp + bRp)*l0) - 12*l0*(-8*aLp + 8*aRp + 3*(bLp - bRp)*l0)*s -  24*(8*aLp - 16*aRp - 3*bLp*l0 + 5*bRp*l0)*Power(s,2) - 12*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*sp - 48*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*s*sp)/l0h4;
+    return Kcp;
   }
 
   //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
@@ -1306,7 +1343,7 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
     // Lokale Geschwindigkeit-----------------------------------------------------
     qpLokal << Jeg * qpElement;
 
-    return (Arho*l0*(12608*Power(aLp,2) + 12608*Power(aRp,2) - 856*aRp*bLp*l0 + 1640*aL*bL*Power(bLp,2)*l0 + 224*aR*bL*Power(bLp,2)*l0 - 408*aL*Power(bLp,2)*bR*l0 - 48*aR*Power(bLp,2)*bR*l0 - 11176*aRp*bRp*l0 - 48*aL*bL*Power(bRp,2)*l0 - 408*aR*bL*Power(bRp,2)*l0 + 224*aL*bR*Power(bRp,2)*l0 + 1640*aR*bR*Power(bRp,2)*l0 - 672*aRp*bLp*eps*l0 - 12768*aRp*bRp*eps*l0 + 12768*aL*bLp*epsp*l0 + 672*aR*bLp*epsp*l0 + 672*aL*bRp*epsp*l0 + 12768*aR*bRp*epsp*l0 + 2488*Power(bLp,2)*Power(l0,2) + 211*Power(bL,2)*Power(bLp,2)*Power(l0,2) - 84*bL*Power(bLp,2)*bR*Power(l0,2) + 9*Power(bLp,2)*Power(bR,2)*Power(l0,2) + 336*bLp*bRp*Power(l0,2) + 2488*Power(bRp,2)*Power(l0,2) + 9*Power(bL,2)*Power(bRp,2)*Power(l0,2) - 84*bL*bR*Power(bRp,2)*Power(l0,2) + 211*Power(bR,2)*Power(bRp,2)*Power(l0,2) + 5628*Power(bLp,2)*eps*Power(l0,2) + 504*bLp*bRp*eps*Power(l0,2) + 5628*Power(bRp,2)*eps*Power(l0,2) + 3360*Power(bLp,2)*Power(eps,2)*Power(l0,2) + 3360*Power(bRp,2)*Power(eps,2)*Power(l0,2) + 1092*bL*bLp*epsp*Power(l0,2) - 252*bLp*bR*epsp*Power(l0,2) - 252*bL*bRp*epsp*Power(l0,2) + 1092*bR*bRp*epsp*Power(l0,2) + 6720*Power(epsp,2)*Power(l0,2) - 2*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2))*bLp - 64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*bRp + 8*(756*aRp*(1 + eps) + aR*(28*bL*bLp - 6*bLp*bR + 51*bL*bRp - 205*bR*bRp - 756*epsp) + aL*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp))*l0 + (bLp*(211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) - bRp*(9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) + 672*(bL - bR)*epsp)*Power(l0,2))*phiSp + 4*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*Power(l0,2) + aL*(544*aR + 398*bL*l0 - 46*bR*l0))*Power(phiSp,2) + 8*aLp*(272*aRp + l0*(-1397*bLp - 107*bRp - 84*(19*bLp + bRp)*eps + 1512*(1 + eps)*phiSp)) + 64*((196*Power(aL,2) + 17*aL*aR + Power(aR,2))*Power(bLp,2) + (Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*Power(bRp,2) + 1260*(Power(xSp,2) + Power(ySp,2))) - 336*(3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp))*xSp + 104*aL*(bLp - phiSp)*xSp + 8*aR*(bLp - phiSp)*xSp + 8*(13*aLp + aRp)*ySp - 3*l0*(bRp + 5*bLp*(3 + 4*eps) - 20*(1 + eps)*phiSp)*ySp)*cos(bL - phiS) + 336*((8*aL*(bRp + phiSp)*xSp + 104*aR*(bRp + phiSp)*xSp - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp))*xSp - 8*(aLp + 13*aRp)*ySp + 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp)*ySp)*cos(bR + phiS) + (-((104*aLp + 8*aRp - 3*(bRp + 5*bLp*(3 + 4*eps))*l0 + 60*(1 + eps)*l0*phiSp)*xSp) + (3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*ySp)*sin(bL - phiS) + ((8*aLp + 104*aRp - 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp))*xSp + (8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp)))*ySp)*sin(bR + phiS))))/161280.;
+    return (Arho*l0*(12608*Power(aLp,2) + 12608*Power(aRp,2) - 856*aRp*bLp*l0 + 1640*aL*bL*Power(bLp,2)*l0 + 224*aR*bL*Power(bLp,2)*l0 - 408*aL*Power(bLp,2)*bR*l0 - 48*aR*Power(bLp,2)*bR*l0 - 11176*aRp*bRp*l0 - 48*aL*bL*Power(bRp,2)*l0 - 408*aR*bL*Power(bRp,2)*l0 + 224*aL*bR*Power(bRp,2)*l0 + 1640*aR*bR*Power(bRp,2)*l0 - 672*aRp*bLp*eps*l0 - 12768*aRp*bRp*eps*l0 + 12768*aL*bLp*epsp*l0 + 672*aR*bLp*epsp*l0 + 672*aL*bRp*epsp*l0 + 12768*aR*bRp*epsp*l0 + 2488*Power(bLp,2)*l0h2 + 211*Power(bL,2)*Power(bLp,2)*l0h2 - 84*bL*Power(bLp,2)*bR*l0h2 + 9*Power(bLp,2)*Power(bR,2)*l0h2 + 336*bLp*bRp*l0h2 + 2488*Power(bRp,2)*l0h2 + 9*Power(bL,2)*Power(bRp,2)*l0h2 - 84*bL*bR*Power(bRp,2)*l0h2 + 211*Power(bR,2)*Power(bRp,2)*l0h2 + 5628*Power(bLp,2)*eps*l0h2 + 504*bLp*bRp*eps*l0h2 + 5628*Power(bRp,2)*eps*l0h2 + 3360*Power(bLp,2)*Power(eps,2)*l0h2 + 3360*Power(bRp,2)*Power(eps,2)*l0h2 + 1092*bL*bLp*epsp*l0h2 - 252*bLp*bR*epsp*l0h2 - 252*bL*bRp*epsp*l0h2 + 1092*bR*bRp*epsp*l0h2 + 6720*Power(epsp,2)*l0h2 - 2*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2))*bLp - 64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*bRp + 8*(756*aRp*(1 + eps) + aR*(28*bL*bLp - 6*bLp*bR + 51*bL*bRp - 205*bR*bRp - 756*epsp) + aL*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp))*l0 + (bLp*(211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) - bRp*(9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) + 672*(bL - bR)*epsp)*l0h2)*phiSp + 4*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0))*Power(phiSp,2) + 8*aLp*(272*aRp + l0*(-1397*bLp - 107*bRp - 84*(19*bLp + bRp)*eps + 1512*(1 + eps)*phiSp)) + 64*((196*Power(aL,2) + 17*aL*aR + Power(aR,2))*Power(bLp,2) + (Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*Power(bRp,2) + 1260*(Power(xSp,2) + Power(ySp,2))) - 336*(3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp))*xSp + 104*aL*(bLp - phiSp)*xSp + 8*aR*(bLp - phiSp)*xSp + 8*(13*aLp + aRp)*ySp - 3*l0*(bRp + 5*bLp*(3 + 4*eps) - 20*(1 + eps)*phiSp)*ySp)*cos(bL - phiS) + 336*((8*aL*(bRp + phiSp)*xSp + 104*aR*(bRp + phiSp)*xSp - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp))*xSp - 8*(aLp + 13*aRp)*ySp + 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp)*ySp)*cos(bR + phiS) + (-((104*aLp + 8*aRp - 3*(bRp + 5*bLp*(3 + 4*eps))*l0 + 60*(1 + eps)*l0*phiSp)*xSp) + (3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*ySp)*sin(bL - phiS) + ((8*aLp + 104*aRp - 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp))*xSp + (8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp)))*ySp)*sin(bR + phiS))))/161280.;
   }
 
   double FiniteElement1s21RCM::computeV(Vec qElement) {
@@ -1326,7 +1363,7 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
     //lokale Koordinate-----------------------------------------------------------
     BuildqLokal(qElement,qLokal);
 
-    return (EA*Power(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*Power(l0,2),2) + 35280*EI*(640*Power(aL,2) + 640*Power(aR,2) + 8*aR*(11*bL - 43*bR)*l0 - 8*aL*(32*aR + 43*bL*l0 - 11*bR*l0) + Power(l0,2)*(57*Power(bL,2) - 30*bL*bR + 57*Power(bR,2) - 10*(bL + bR)*l0*wss0 + 5*Power(l0,2)*Power(wss0,2))))/(352800.*Power(l0,3)) - (Arho*l0*(480*(gx*xS + gy*yS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*cos(bL - phiS) + (-8*(aL + 13*aR)*gy + 60*(1 + eps)*gx*l0 + 3*(bL - 5*bR)*gy*l0)*cos(bR + phiS) + (-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 20*(1 + eps)*gy)*l0)*sin(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*sin(bR + phiS)))/480.;
+    return (EA*Power(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2,2) + 35280*EI*(640*Power(aL,2) + 640*Power(aR,2) + 8*aR*(11*bL - 43*bR)*l0 - 8*aL*(32*aR + 43*bL*l0 - 11*bR*l0) + l0h2*(57*Power(bL,2) - 30*bL*bR + 57*Power(bR,2) - 10*(bL + bR)*l0*wss0 + 5*l0h2*Power(wss0,2))))/(352800.*l0h3) - (Arho*l0*(480*(gx*xS + gy*yS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*cos(bL - phiS) + (-8*(aL + 13*aR)*gy + 60*(1 + eps)*gx*l0 + 3*(bL - 5*bR)*gy*l0)*cos(bR + phiS) + (-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 20*(1 + eps)*gy)*l0)*sin(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*sin(bR + phiS)))/480.;
   }
 
 }

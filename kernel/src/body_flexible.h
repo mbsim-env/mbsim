@@ -156,6 +156,8 @@ namespace MBSim {
        */
       virtual Mat computeJp(const ContourPointData &data);
 
+      virtual Mat computeK    (const ContourPointData &cp);
+      virtual Mat computeKp   (const ContourPointData &cp);
       virtual Mat computeDrDs (const ContourPointData &data);
       virtual Mat computeDrDsp(const ContourPointData &data);
 
@@ -172,9 +174,6 @@ namespace MBSim {
        */
       virtual SqrMat computeAWK (const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
       virtual SqrMat computeAWKp(const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
-
-      Mat computeK (const ContourPointData &cp);
-      Mat computeKp(const ContourPointData &cp);
 
       /*! compute absolute position in world system to body contour at s
        * \param data contour parameter set

@@ -91,6 +91,8 @@ namespace MBSim {
 
       Vec DrDs (Vec&,const double&);
       Vec DrDsp(Vec&,Vec&,const double&,const double&);
+      double Kcurvature (Vec&,const double&);
+      double Kpcurvature(Vec&,Vec&,const double&,const double&);
      
       // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
       Vec ElementData(Vec qElement, Vec qpElement);
