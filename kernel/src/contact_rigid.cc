@@ -24,6 +24,7 @@
 #include "contact_rigid.h"
 #include "utils/nonsmooth_algebra.h"
 #include "multi_body_system.h"
+#include "function.h"
 
 namespace MBSim {
 
@@ -298,5 +299,46 @@ namespace MBSim {
     }
   }
 
+  std::string ContactRigid::getTerminationInfo(double dt){
+    std::string s= "ContactRigid " + getName();
+    bool NormalDirectionFailed= false;
+    
+    if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
+      ;
+    else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
+      ;
+    else {
+      s= s+" (normal): no convergence  gdn= " + numtostr(gdn(0)) + " (gdTol= " + numtostr(gdTol);
+      s= s+ ")     la(0)= " + numtostr(la(0)/dt) + " (laTol= " + numtostr(laTol) + ")";
+      NormalDirectionFailed= true;
+    }
+
+    if(nFric==1) {
+      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt)  // Gleiten
+	; 
+      else if(fabs(la(1)) <= mue*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
+	;
+      else {
+	if (NormalDirectionFailed) s += "\n";
+	s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
+	s= s+ ")\n    stick: abs(laT) - mue abs(laN) = " + numtostr(fabs(la(1)/dt)- mue*fabs(la(0)/dt));
+        s= s+ "\n     slip: abs(laT - mue laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0)))/dt); 
+        s= s+ " (laTol= " + numtostr(laTol) + ")";
+      }
+    } else if(nFric==2) {
+      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt)
+	;
+      else if(nrm2(la(1,2)) <= mue*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
+	;
+      else {
+	if (NormalDirectionFailed) s += "\n";
+	s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
+	s= s+ ")\n    stick: abs(laT) - mue abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mue*fabs(la(0))/dt);
+        s= s+ " \n    slip: abs(laT -mue laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0)))/dt);
+        s= s+  "  (laTol= " + numtostr(laTol) + ")";
+      }
+    }
+    return s;
+  }
 }
 

@@ -63,6 +63,7 @@ namespace MBSim {
       void residualProj(double dt);
       void residualProjJac(double dt);
       void checkForTermination(double dt);
+      std::string getTerminationInfo(double dt);
 
       void updateKinetics(double t);
       void setOmN(double omN_) {omN = omN_;}

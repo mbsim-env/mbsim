@@ -42,7 +42,7 @@ namespace MBSim {
     };
 
   std::string numtostr(int i);   
-
+  std::string numtostr(double d);   
 }
 
 #endif

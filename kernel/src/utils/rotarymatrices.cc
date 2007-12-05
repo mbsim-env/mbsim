@@ -119,4 +119,53 @@ namespace MBSim {
     return AIK2Cardan(trans(AKI));
   }
 
+
+  SqrMat Euler2AIK(double psi,double theta,double phi) {
+    //z Preazession
+    SqrMat AIKz_psi(3,3,INIT,0);
+    AIKz_psi =  BasicRotAIKz(psi);
+    //x Nutation (Kippen)
+    SqrMat AIKx(3,3,INIT,0); 
+    AIKx =  BasicRotAIKx(theta);
+
+    //z Rotation (um eigene Achse)
+    SqrMat AIKz_phi(3,3,INIT,0);  
+    AIKz_phi = BasicRotAIKz(phi);
+
+    return AIKz_psi*AIKx*AIKz_phi; 
+  }
+
+  Vec AIK2ParametersZXY(const SqrMat &AIK) {
+    Vec AlphaBetaGamma(3,INIT,0.0);
+    AlphaBetaGamma(0) = asin(AIK(2,1));
+    double nenner = cos(AlphaBetaGamma(0));
+    if (nenner>1e10) {
+      AlphaBetaGamma(2) = atan2(-AIK(0,1), AIK(1,1));
+      AlphaBetaGamma(1) = atan2(-AIK(2,0),AIK(2,2));
+    }
+    else {
+      AlphaBetaGamma(1)=0;
+      AlphaBetaGamma(2)=atan2(AIK(0,2),AIK(0,0));
+    }
+    return AlphaBetaGamma;
+  }
+
+  Vec calcParametersDotZXY(const SqrMat &AIK, const Vec &KomegaK) {
+    Vec AlBeGa = AIK2ParametersZXY(AIK);
+    SqrMat B(3,INIT,0.0);
+    double cosAl = cos(AlBeGa(0));
+    double sinAl = sin(AlBeGa(0));
+    double cosBe = cos(AlBeGa(1));
+    double sinBe = sin(AlBeGa(1));
+    B(0,0) = cosAl*cosBe;
+    B(1,0) = sinAl*sinBe;
+    B(2,0) = -sinBe;
+    B(0,2) = cosAl*sinBe;
+    B(1,2) = -sinAl*cosBe;
+    B(2,2) = cosBe;
+    B = B/cosAl;
+    B(1,1)=1;
+    return B*KomegaK;
+  }
+
 }
