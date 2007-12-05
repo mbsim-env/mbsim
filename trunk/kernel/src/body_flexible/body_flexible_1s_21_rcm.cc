@@ -268,6 +268,20 @@ namespace MBSim {
     return Jp;
   }
 
+
+  Mat BodyFlexible1s21RCM::computeK    (const ContourPointData &S_) {
+    double s  = S_.alpha(0);
+    double sLokal = BuildElement(s);
+    return JR*balken->Kcurvature(qElement,sLokal);
+  } 
+  Mat BodyFlexible1s21RCM::computeKp   (const ContourPointData &S_){
+    double s  = S_.alpha(0);
+    double sp = 0;
+    if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
+    double sLokal = BuildElement(s);
+    return JR*balken->Kpcurvature(qElement,uElement,sLokal,sp);
+  }
+
   Mat BodyFlexible1s21RCM::computeDrDs (const ContourPointData &S_) {
     double s  = S_.alpha(0);
     double sLokal = BuildElement(s);
@@ -361,52 +375,60 @@ namespace MBSim {
 
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21RCM::BuildElement(const int& ENumber) {
-    // Grenzen testen
-    assert(ENumber >= 0       );
-    assert(ENumber <  Elements);
+    static int ENumberOld = -1;
+    if( ENumber != ENumberOld ) {
+      ENumberOld = ENumber;
+      // Grenzen testen
+      assert(ENumber >= 0       );
+      assert(ENumber <  Elements);
 
-    CurrentElement = ENumber;
-    int n = 5 * ENumber ;
+      CurrentElement = ENumber;
+      int n = 5 * ENumber ;
 
-    if  ( ENumber < Elements-1  || openStructure==true) {
-      // Standard-Elemente
-      qElement << q (n,n+7);
-      uElement << u(n,n+7);
-    } else if (ENumber == Elements-1) {
-      // Ringschluss durch Einbeziehnung des Ersten Referenzpunktes als zweiten Knoten
-      qElement(0,4) << q (n,n+4);
-      uElement(0,4) << u(n,n+4);
-      qElement(5,7) << q (0,  2);
-      qElement(7)   += 2*M_PI;
-      uElement(5,7) << u(0,  2);
-    } else {
-      qElement.init(0.0);uElement.init(0.0);
-      cout << "\nKein Element " <<ENumber<< " vorhanden. Nur 0, 1 ...  " <<Elements-1<< " Elemente definiert!\n";
-      throw(1);
+      if  ( ENumber < Elements-1  || openStructure==true) {
+	// Standard-Elemente
+	qElement << q (n,n+7);
+	uElement << u(n,n+7);
+      } else if (ENumber == Elements-1) {
+	// Ringschluss durch Einbeziehnung des Ersten Referenzpunktes als zweiten Knoten
+	qElement(0,4) << q (n,n+4);
+	uElement(0,4) << u(n,n+4);
+	qElement(5,7) << q (0,  2);
+	qElement(7)   += 2*M_PI;
+	uElement(5,7) << u(0,  2);
+      } else {
+	qElement.init(0.0);uElement.init(0.0);
+	cout << "\nKein Element " <<ENumber<< " vorhanden. Nur 0, 1 ...  " <<Elements-1<< " Elemente definiert!\n";
+	throw(1);
+      }
     }
   }
 
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
-    double sLokal = 0;
-    int Element = 0;
+    static double sGlobalOld = -1.0;
+    static double sLokal = 0;
+    if (sGlobal != sGlobalOld ) {
+      sGlobalOld = sGlobal;
+      int Element = 0;
 
-    // project into periodic structure  
-    double remainder = fmod(sGlobal,L);
-    if(sGlobal<0.0) remainder += L;
-    
-    while( (Element+1)*balken->l0 < remainder )
-      Element++;
-    sLokal = remainder - ( 0.5 + Element ) * balken->l0;
+      // project into periodic structure  
+      double remainder = fmod(sGlobal,L);
+      if(sGlobal<0.0) remainder += L;
 
-    if(Element >= Elements) {
-      if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
-      else              { Element -= Elements;}                         /* start at the beginning again  */
+      while( (Element+1)*balken->l0 < remainder )
+	Element++;
+      sLokal = remainder - ( 0.5 + Element ) * balken->l0;
+
+      if(Element >= Elements) {
+	if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
+	else              { Element -= Elements;}                         /* start at the beginning again  */
+      }
+
+      BuildElement(Element);
+      return sLokal;
     }
-
-    BuildElement(Element);
     return sLokal;
   }
-
 
   void BodyFlexible1s21RCM::addPort(const string &name, const int &node) {
     Port *port = new Port(name);

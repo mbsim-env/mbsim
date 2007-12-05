@@ -321,17 +321,6 @@ namespace MBSim {
     return Vtemp;
   }
 
-///   double TreeFlexRoot::computeKineticEnergy() {
-/// ///    return 0.5*trans(u)*M*u;
-///   cout << "double TreeFlexRoot::computeKineticEnergy() = " << Object::computeKineticEnergy() << endl;
-///   return Object::computeKineticEnergy();
-/// /// //     double Ttemp = flexible->computeKineticEnergy();
-/// /// //     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
-/// /// //       Ttemp += (*ib)->computeKineticEnergyBranch();
-/// /// //     }
-/// /// //     return Ttemp;
-///    }
-
   Port* TreeFlexRoot::getPort(const string &pName) {
 //    return root->getPort(pName);
     cout << "\n  method TreeFlexRoot::getPort(const string &pName) needs to be implemented!!!" << endl;

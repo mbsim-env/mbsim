@@ -145,6 +145,8 @@ namespace MBSim {
       /* geerbt */
       Mat computeJp(const ContourPointData &S);
       /* geerbt */
+      Mat computeK    (const ContourPointData &data);
+      Mat computeKp   (const ContourPointData &data);
       Mat computeDrDs (const ContourPointData &data);
       Mat computeDrDsp(const ContourPointData &data);
       /* geerbt */
