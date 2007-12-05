@@ -58,7 +58,6 @@ namespace MBSim {
     for(unsigned int i=0; i<W.size(); i++)
       W[i].init(0);
     root->updateWj(t);
-    LLM = facLL(M); // TODO evtl. in updateh berechnen -> slvLL
   }
 
   void TreeRigid::updatedq(double t, double dt) {
