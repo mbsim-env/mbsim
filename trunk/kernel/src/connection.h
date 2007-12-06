@@ -37,6 +37,7 @@ namespace MBSim {
       Mat forceDir, momentDir;
       Mat Wf, Wm;
       int KOSYID;
+      Vec WrP0P1, WvP0P1, WomP0P1;
 
     public: 
       Connection(const string &name, bool setValued);
@@ -51,6 +52,7 @@ namespace MBSim {
       void setMomentDirection(const Mat& md);
       void updateStage1(double t);
       void updateStage2(double t);
+      void updatew(double t);
       virtual void updateKinetics(double t) = 0;
       void updatexd(double t);
       void updatedx(double t, double dt);

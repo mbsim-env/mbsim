@@ -678,6 +678,9 @@ namespace MBSim {
   }
 
   void MultiBodySystem::updatew(double t) {
+    vector<Link*>::iterator il;
+    for(il = links.begin(); il!= links.end(); ++il)
+      (**il).updatew(t);
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updatew(t);

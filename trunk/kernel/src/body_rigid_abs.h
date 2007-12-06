@@ -41,6 +41,7 @@ namespace MBSim {
       virtual void updateCenterOfGravity(double t);
       virtual void updateh(double t);
       virtual void updateWj(double t);
+      virtual void updatewj(double t);
       virtual void updatezd(double t);
       virtual void updatedu(double t, double dt);
       void (BodyRigidAbs::*updateM_)();

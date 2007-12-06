@@ -122,7 +122,6 @@ namespace MBSim {
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
     vector<Mat>::iterator itW=W.begin(); 
-    vector<Vec>::iterator itw=w.begin(); 
     for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
       int portID = it1->ID;
       int objectID = it1->objectID;
@@ -131,8 +130,7 @@ namespace MBSim {
       (*itW).resize(uSize,ld.cols(),NONINIT);
       (*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
       (*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKP[portID])*ld(IF,iJ)));
-      *itw = trans(ld(IF,iJ))*crossProduct(WomegaK,crossProduct(WomegaK,WrKP[portID]));
-      it1++; itW++; itw++;
+      it1++; itW++;
     }
 
     for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
@@ -145,7 +143,36 @@ namespace MBSim {
 	(*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
 	(*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKC)*ld(IF,iJ)));
       }
-      it2++; itW++; itw++;
+      it2++; itW++; 
+    }
+  }
+
+  void BodyRigidAbs::updatewj(double t) {
+
+    Index IF(0,2);
+    Index IM(3,5);
+
+    vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
+    vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
+    vector<Vec>::iterator itw=w.begin(); 
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+      int portID = it1->ID;
+      int objectID = it1->objectID;
+      Mat ld = it1->link->getLoadDirections(objectID);
+      Index iJ(0,ld.cols()-1);
+      *itw = trans(ld(IF,iJ))*crossProduct(WomegaK,crossProduct(WomegaK,WrKP[portID])) +  it1->link->getw(objectID);
+      it1++; itw++;
+    }
+
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
+      if(it2->link->isActive()) {
+	int objectID = it2->objectID;
+	Mat ld = it2->link->getLoadDirections(objectID);
+	Vec WrKC = it2->link->getWrOC(objectID)-WrOK;
+	Index iJ(0,ld.cols()-1);
+	cout << "Error: no implementation of updatew for contacts yet. Use Time-Stepping-Integrator instead of ODE-Integrator." << endl;
+      }
+      it2++; itw++;
     }
   }
 

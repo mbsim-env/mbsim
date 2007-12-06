@@ -52,6 +52,8 @@ namespace MBSim {
       momentDir.resize(3,0);
       Wm.resize(3,0);
     }
+    for(int i=0; i<2 ; i++) 
+      w.push_back(forceDir.cols()+momentDir.cols());
   }
 
   void Connection::setKOSY(int id) {
@@ -67,18 +69,25 @@ namespace MBSim {
 
   void Connection::updateStage1(double t) {
     if(KOSYID) {
-      Wf = port[KOSYID-1]->getAWP()*forceDir;
-      Wm = port[KOSYID-1]->getAWP()*momentDir;
+      Wf = port[0]->getAWP()*forceDir;
+      Wm = port[1]->getAWP()*momentDir;
     }
-    g(IT) = trans(Wf)*(port[1]->getWrOP() - port[0]->getWrOP());
+    WrP0P1 = port[1]->getWrOP()-port[0]->getWrOP();
+    g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
   }
 
   void Connection::updateStage2(double t) {
-    gd(IT) = trans(Wf)*(port[1]->getWvP() - port[0]->getWvP());
-    gd(IR) = trans(Wm)*(port[1]->getWomegaP() - port[0]->getWomegaP());
-
+    WvP0P1 = port[1]->getWvP()-port[0]->getWvP();
+    WomP0P1 = port[1]->getWomegaP()-port[0]->getWomegaP();
+    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
+    gd(IR) = trans(Wm)*WomP0P1;
     updateKinetics(t);
+  }
+
+  void Connection::updatew(double t) {
+    w[0](0,Wf.cols()-1)=trans(Wf)*(crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
+    w[0](Wf.cols(),Wm.cols()+Wf.cols()-1)=trans(Wm)*crossProduct(WomP0P1,port[1]->getWomegaP());
   }
 
   void Connection::setForceDirection(const Mat &fd) {
