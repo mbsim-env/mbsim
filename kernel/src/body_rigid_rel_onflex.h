@@ -53,6 +53,7 @@ namespace MBSim {
     void updateCenterOfGravity(double t);
     void updateh(double t);
     void updateM(double t);
+    void updateWj(double t);
 
     public:
     BodyRigidRelOnFlex(const string &name);

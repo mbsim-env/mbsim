@@ -199,7 +199,7 @@ namespace MBSim {
 
   Mat BodyFlexible1s21RCM::computeJacobianMatrix(const ContourPointData &S_) {
     static Index All(0,3-1);
-    Mat Jacobian(qSize,3);
+    Mat Jacobian(qSize,3,INIT,0.0);
 
     // ForceElement on continuum
     if(S_.type == CONTINUUM)
@@ -231,7 +231,7 @@ namespace MBSim {
 
   Mat BodyFlexible1s21RCM::computeJp(const ContourPointData &S_) {
     static Index All(0,3-1);
-    Mat Jp(qSize,3);
+    Mat Jp(qSize,3,INIT,0.0);
 
     // ForceElement on continuum
     if(S_.type == CONTINUUM)
@@ -285,9 +285,7 @@ namespace MBSim {
   Mat BodyFlexible1s21RCM::computeDrDs (const ContourPointData &S_) {
     double s  = S_.alpha(0);
     double sLokal = BuildElement(s);
-
     Vec DrDs = balken->DrDs(qElement,sLokal);
-
     return JT*DrDs;
   }
 
@@ -296,13 +294,10 @@ namespace MBSim {
     double sp = 0;
     if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
     double sLokal = BuildElement(s);
-
     Vec DrDsp = balken->DrDsp(qElement,uElement,sLokal,sp);
-
 /// cout << "---------------------------" << endl;
 /// cout << "DrDsp.analytisch = " << trans(JT*DrDsp) << endl;
 /// cout << "DrDsp.numerisch  = " << trans(BodyFlexible::computeDrDsp(S_)) << endl;
-
     return JT*DrDsp;
   }
 
@@ -409,14 +404,11 @@ namespace MBSim {
     static double sLokal = 0;
     if (sGlobal != sGlobalOld ) {
       sGlobalOld = sGlobal;
-      int Element = 0;
 
       // project into periodic structure  
       double remainder = fmod(sGlobal,L);
-      if(sGlobal<0.0) remainder += L;
-
-      while( (Element+1)*balken->l0 < remainder )
-	Element++;
+      if(remainder<0.0) remainder += L;
+      int Element = int(remainder/balken->l0);
       sLokal = remainder - ( 0.5 + Element ) * balken->l0;
 
       if(Element >= Elements) {

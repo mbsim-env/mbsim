@@ -45,7 +45,6 @@ namespace MBSim {
     preIJR = Index(precessor->JT.cols(),precessor->JT.cols()+precessor->JR.cols()-1);
   }
 
-//  void BodyRigidRelOnFlex::setPrecessor(BodyFlexible *precessor_) {precessor=precessor_;}
   void BodyRigidRelOnFlex::sets0(const Vec& s0_) {
     constcPosition = true;
     cPosition.alpha = s0_;
@@ -62,10 +61,10 @@ namespace MBSim {
   }
  
   void BodyRigidRelOnFlex::updateM(double t) {
-    //    MTree(Index(0,uInd+uSize-1)) += JTMJ(Mh,J);
+    static Index AllCartesian(0,5);
+    
     SymMat MTree  = tree->getM();
 
-    static Index AllCartesian(0,5);
     MTree(Iflexible)    += JTMJ(Mh,J(AllCartesian,Iflexible));
     MTree(Iu,Iflexible) += trans(J(AllCartesian,Iu))*Mh*J(AllCartesian,Iflexible);
     MTree(      Iu)     += JTMJ(Mh,J(AllCartesian,Iu));
@@ -93,9 +92,12 @@ namespace MBSim {
 // ---  WomegaK  = precessor->computeWomega(cp) + AWK*JR*u(iR);
 
 //       SqrMat AWKp = precessor->computeAWKp(cp)*APK  +  AWP*tilde(APK*JR*u(iR))*APK;
-    SqrMat AWKp = tilde(WomegaK)*AWK;
+//    SqrMat AWKp = tilde(WomegaK)*AWK;
+//    f(3,5) = trans(AWK)*AWKp*JR*u(iR);
 
-    f(3,5) = trans(AWK)*AWKp*JR*u(iR);
+    if(JR.cols()) f(3,5) = trans(AWK)*tilde(WomegaK)*AWK*JR*u(iR);
+    else f(3,5).init(0.0);
+
     if(JT.cols()) {
       f(3,5) += trans(AWK)*precessor->computeKp(cPosition) *u(iT);
 
@@ -131,6 +133,48 @@ namespace MBSim {
 
     for(unsigned int i=0; i<successor.size(); i++)
       successor[i]->updateh(t);
+  }
+
+  void BodyRigidRelOnFlex::updateWj(double t) {
+    static Index IF(0,2);
+    static Index IM(3,5);
+    static Index AllCartesian(0,5);
+
+    vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
+    vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
+    vector<Mat>::iterator itW=W.begin(); 
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+      int portID = it1->ID;
+      int objectID = it1->objectID;
+      Mat ld = it1->link->getLoadDirections(objectID);
+      Index iJ(0,ld.cols()-1);
+      Mat Kl(6,ld.cols(),NONINIT);
+      Kl(IF,iJ) = trans(AWK)*ld(IF,iJ);
+      Kl(IM,iJ) = trans(AWK)*ld(IM,iJ) + tilde(KrKP[portID])*Kl(IF,iJ);
+      Mat W = (*itW);
+      W(Iflexible,Index(0,ld.cols()-1)) += trans(J(AllCartesian,Iflexible))*Kl;
+      W(Iu       ,Index(0,ld.cols()-1)) += trans(J(AllCartesian,Iu       ))*Kl;
+      it1++; itW++; 
+    }
+
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
+      if(it2->link->isActive()) {
+	int objectID = it2->objectID;
+	Mat ld = it2->link->getLoadDirections(objectID);
+	Index iJ(0,ld.cols()-1);
+	Mat Kl(6,ld.cols(),NONINIT);
+	Vec KrKC = trans(AWK)*(it2->link->getWrOC(objectID)-WrOK);
+	Kl(IF,iJ) = trans(AWK)*ld(IF,iJ);
+	Kl(IM,iJ) = trans(AWK)*ld(IM,iJ) + tilde(KrKC)*Kl(IF,iJ) ;
+	Mat W = (*itW);
+	W(Iflexible,Index(0,ld.cols()-1)) += trans(J(AllCartesian,Iflexible))*Kl;
+	W(Iu       ,Index(0,ld.cols()-1)) += trans(J(AllCartesian,Iu       ))*Kl;
+      }
+      it2++; itW++; 
+    }
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->updateWj(t);
+    }
   }
 
   void BodyRigidRelOnFlex::updateCenterOfGravity(double t) {
