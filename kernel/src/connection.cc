@@ -53,7 +53,7 @@ namespace MBSim {
       Wm.resize(3,0);
     }
     for(int i=0; i<2 ; i++) 
-      w.push_back(forceDir.cols()+momentDir.cols());
+      w.push_back(Vec(laSize));
   }
 
   void Connection::setKOSY(int id) {
