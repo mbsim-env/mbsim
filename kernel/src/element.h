@@ -25,8 +25,8 @@
 #define _ELEMENT_H_
 
 #include "fmatvec.h"
-#include <string>
-#include <vector>
+#include<string>
+#include<vector>
 
 #ifdef NO_ISO_14882
 #include<fstream.h>
@@ -34,100 +34,82 @@
 #include<fstream>
 #endif
 
-
 using namespace std;
 using namespace fmatvec;
 
-/*!
- * \brief namespace MBSim
- */
+/*! \brief Namespace MBSim */
 namespace MBSim {
 
   class MultiBodySystem;
   /*! 
-   *  \brief THE basic class of MBSim
+   * \brief THE basic class of MBSim
    *
-   * Used for definitions of element parameters and interactions like plotting ...
-   * 
-   * */
+   * Used for definitions of general element parameters and general interactions (e.g. plotting)
+   */
   class Element {
 
     protected:
-
+	  /* Multibodysystem */
       MultiBodySystem *mbs;
-
-      /** short name of Element
-      */
+      /* Short name of Element */
       string name;
-      /** full name of Element
-      */
+      /* Full name of Element */
       string fullName;
-      /** Name of the output directory
-      */
+      /* Name of the output directory */
       static string dirName;
-      /** file used for output of time dependent data, specified using Element::plotLevel
-      */
+      /* File used for output of time dependent data, specified using Element::plotLevel */
       ofstream plotfile;
-
-      /** counter for enumeration of output data in Element::plotfile
-      */
+      /* Counter for enumeration of output data in Element::plotfile */
       int plotNr;
-      /**
-       * specify Plot Level:\n
+      /*
+       * Specify Plot Level:\n
        * 0: plot only time\n
        * 1: plot position\n
        * 2: ...
        */ 
       int plotLevel;
-      /** output-precision of ostream
-      */
+      /* Output-precision of ostream */
       int plotPrec;
-
-      /** file used for output of element parameters, e.g. mass ...
-      */
+      /* File used for output of element parameters, e.g. mass ... */
       ofstream parafile;
-
-      /** Vector for Data Interface Base References */
+      /* Vector for Data Interface Base References */
       vector<string> DIBRefs;
 
     public:
-
+	  /*! Constructor */	
       Element(const string &name);
+      /*! Destructor */
       virtual ~Element();
-
-      //virtual void plot(double t);
-      /*! first definition of plot routine to Element::plotfile\n plotting time, do not overload without explicit call to partent class, or previous outputs will be lost
-      */
+      /*! 
+       * First definition of plot routine to Element::plotfile\n plotting time
+       * Do not overload without explicit call to parent class; otherwise previous outputs will be lost
+       */
       virtual void plot(double t, double dt = 1);
-      /*! predefinition for output of system parameters in Element:parafile
-      */
+      /*! Predefinition for output of system parameters in Element:parafile */
       virtual void plotParameters();
-
+	  /*! Initialises plotfiles */
       virtual void initPlotFiles();
+      /*! Closes plotfiles */
       virtual void closePlotFiles();
-
-      /*!
-       * set Element::plotLevel and therewith specifiy outputs in plot-files
-       */
+      /*! Set Element::plotLevel \param level and therewith specifiy outputs in plot-files */
       void setPlotLevel(int level) {plotLevel = level;}
-      /*!
-       * set Element::plotPrec for output precision
-       */
+      /*! Set Element::plotPrec \param prec for output precision */
       void setPlotPrecision(int prec);
-      /*!
-       * get Element::plotLevel
-       */
+      /*! Get \return Element::plotLevel */
       int getPlotLevel() {return plotLevel;}
-
-
+	  /*! Get element short \return name */
       const string& getName() const { return name; }
+      /*! Get element \return fullname */
       const string& getFullName() const { return fullName; }
+      /*! Set element fullname \param str */
       virtual void setFullName(const string &str) {fullName = str;}
+      /*! Set element name \param str */
       virtual void setName(const string &str) {name = str;}
-
+	  /*! Get element multibody system \return mbs */
       MultiBodySystem* getMbs() {return mbs;}
+      /*! Set element multibody system \param mbs */
       virtual void setMbs(MultiBodySystem* mbs_) {mbs=mbs_;}
-
+	  
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
   };

@@ -40,11 +40,11 @@ namespace MBSim {
 
   class Integrator;
 
-  /** solver for contact parameter identification */
+  /* Solver for contact parameter identification */
   enum Solver {FixedPointTotal, FixedPointSingle, GaussSeidel, LinearEquations, RootFinding};
-  /** r-Factor strategies */
+  /* r-Factor strategies */
   enum Strategy {global, local};
-  /** linear algebra for root-function solver solveN */
+  /* Linear algebra for root-function solver solveN */
   enum LinAlg {LUDecomposition,LevenbergMarquardt,PseudoInverse};
 
   /*! Comment
@@ -160,55 +160,60 @@ namespace MBSim {
     void computeConstraintForces(double t);
     void updateStopVector(double t);
 
-    /** Name of directory where output is processed
-    */
+    /* Name of directory where output is processed */
     string directoryName;
-    /*! Test and enumerate directories for simulation output
-    */
+    /*! Test and enumerate directories for simulation output */
     void setDirectory();
 
-    /** hydraulic fluid, only for hydraulic systems */
+    /* Hydraulic fluid, only for hydraulic systems */
     HydFluid *fl;
-    /** ambient pressure, only for hydraulic systems */
+    /* Ambient pressure, only for hydraulic systems */
     double pinf;
     Integrator *preIntegrator;
 
     public:
+    /*! References multibody children to multibody parent states and external states \param zExt and collects data */
     void updatezRef(const Vec &zExt);
+    /*! Calls updater for children at time \param t */
     void updater(double t);
+    /*! Calls updateKinematics for children at time \param t */
     void updateKinematics(double t);
     void updateLinksStage1(double t);
-    void updateLinksStage2(double t);
+    /*! Calls updateLinksStage2 for children at time \param t */
+    void updateLinksStage2(double t);   
+    /*! Calls updateh for children at time \param t */
     void updateh(double t);
+    /*! Calls updateM for children at time \param t */
     void updateM(double t);
     void facLLM();
+    /*! Calls updateW for children at time \param t */
     void updateW(double t);
     void updatew(double t);
     void updateGb(double t);
+    /*! Calls updateT for children at time \param t */
     void updateT(double t);
-
+	/*! Constructor */
     MultiBodySystem();
+    /*! Constructor */
     MultiBodySystem(const string &projectName);
+    /*! Destructor */
     ~MultiBodySystem();
-
+	/*! Adds \param mbs to multibody system */
     void addMbs(MultiBodySystem* mbs);
 
     void init();
     void checkActiveConstraints();
     void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
     virtual void preInteg(MultiBodySystem *parent);
-
+	/*! Projects state at time \param t, such that constraints are not violated */
     void projectViolatedConstraints(double t);
-    /*!
-     * return vector of gravitational acceleration in world system
-     */
+    /*! Return vector of gravitational acceleration \return g in world system */
     const Vec& getGrav() const {return grav;};
-    /*!
-     * define vector of gravitational acceleration in world system
-     */
+    /*! Define vector of gravitational acceleration \param g in world system */
     void setGrav(const Vec& g);
-    /*!
-     * define MultiBodySystem::directoryName for simulation output. Default is Element::(fullName+i) with i used for enumeration
+    /*! 
+     * Define \param directoryName_ for simulation output.
+     * Default is Element::(fullName+i) with i used for enumeration 
      */
     void setProjectDirectory(const string &directoryName_) {directoryName = directoryName_;}
     void setPreInteg(Integrator *preInteg_) {preIntegrator = preInteg_;}
@@ -221,13 +226,15 @@ namespace MBSim {
     virtual void shift(Vec& z, const Vector<int>& jsv, double t) {}
 
     void plot(const Vec& z, double t, double dt=1);
-
+	/* Updates the position depending structures for multibody system */
     void update(const Vec &zParent, double t);
+    /*! Computes velocity difference for current time \param t with state \param zParent and time step \param dt */
     Vec deltau(const Vec &uParent, double t, double dt);
+    /*! Updates position gap for current time \param t with state \param zParent and time step \param dt*/
     Vec deltaq(const Vec &zParent, double t, double dt);
     Vec deltax(const Vec &zParent, double t, double dt);
     void decreaserFactors();
-
+	/*! Initialises the state of objects and EDIs */
     void initz(Vec& z0);
     Vec& getsv() {return sv;}
     const Vec& getsv() const {return sv;}
@@ -253,27 +260,25 @@ namespace MBSim {
     void initPlotFiles();
     void closePlotFiles();
 
-    /* ! 
-       compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems
-     */
+    /*! Compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems */
     double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
-    /* ! 
-       compute potential energy of entire multibodysystem
-       */
+    /* ! Compute potential energy of entire multibody system */
     double computePotentialEnergy();
 
     Object* getObject(const string &name,bool check=true);
     Link* getLink(const string &name,bool check=true);
-    ExtraDynamicInterface* getEDI(const string &name, bool check=true);
+    /*! Returns an extra dynamic interface */
+    ExtraDynamicInterface* getEDI(const string &name,bool check=true);
     DataInterfaceBase* getDataInterfaceBase(const string &name, bool check=true);
+    /*! Adds an \param object to multibody system */
     void addObject(Object *object);
     void addLink(Link *connection);
     void addEDI(ExtraDynamicInterface *edi_);
-    /** add a data_interface_base to the DataInterfaceBase-vector */
+    /* Add a data_interface_base \param dib_ to the DataInterfaceBase-vector */
     void addDataInterfaceBase(DataInterfaceBase* dib_);
-    /** Method to add any element (Link,Object,ExtraDynamicInterface) by dynamic casting*/
+    /* Method to add any element \param element_ (Link,Object,ExtraDynamicInterface) by dynamic casting */
     void addElement(Element *element_);
-    /** returns the pointer to a data_interface_base_which is listed in the DataInterfaceBase-vector*/
+    /* Returns the pointer to an element \param name */
     Element* getElement(const string &name); 
 
     HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);
@@ -329,22 +334,20 @@ namespace MBSim {
     void setHighIter(int iter) {highIter = iter;}
     void setMaxDampingSteps(int maxDSteps) {maxDampingSteps = maxDSteps;}
     void setLevenbergMarquardtParam(double lmParm_) {lmParm = lmParm_;}
-    /*! set Solver for treatment of constraint problems
-     * 		  */
+    /*! Set Solver for treatment of constraint problems */
     void setSolver(Solver solver_) {solver = solver_;}                         
     void setLinAlg(LinAlg linAlg_) {linAlg = linAlg_;}                         
     void setStrategy(Strategy strategy_) {strategy = strategy_;}
-    /*! get info for solver including strategy and linear algebra
-     * \return string holding solver name, r-factor strategie and linear algebra
-     */
+    /*! Returns information \return string for solver including strategy and linear algebra */
     string getSolverInfo();
 
-    /*! specify wether time integration should be stopped (true) in case of no convergence of constraint-problem
-     * or only a waring should be processed (flase=default)
-     * \param flag true, false for stopping
-     * \param dropInfo true, (false) for dropping contact informations to file
-     * */
-    void setStopIfNoConvergence(bool flag, bool dropInfo = false) {stopIfNoConvergence = flag;dropContactInfo=dropInfo;}
+    /*! 
+     * Specify whether time integration should be stopped \param flag(true) in case of no convergence of constraint-problem
+     * or only a warning should be processed (false=default)
+     * \param dropInfo is used for dropping contact informations to file (true)
+     */
+    void setStopIfNoConvergence(bool flag, bool dropInfo = false) {stopIfNoConvergence = flag; dropContactInfo=dropInfo;}
+    /*! Writes a file with relevant matrices for debugging */
     void dropContactMatrices();
     void setUseOldla(bool flag) {useOldla = flag;}
     void setDecreaseLevels(const Vector<int> &decreaseLevels_) {decreaseLevels = decreaseLevels_;}
@@ -355,9 +358,11 @@ namespace MBSim {
 
     MultiBodySystem* getMultiBodySystem() const {return mbs;};
 
+	/*! Solves prox-functions at time \param t depending on solver settings */
     int solve(double dt); 
     int (MultiBodySystem::*solve_)(double dt);
-    int solveGaussSeidel(double dt); 
+    int solveGaussSeidel(double dt);
+    /*! Solves constraint equations at time \param t with Cholesky decomposition */
     int solveLinearEquations(double dt); 
     int solveFixpointSingle(double dt); 
     int solveFixpointTotal(double dt); 
@@ -368,7 +373,6 @@ namespace MBSim {
 
     using Object::addPort;
 
-    //-----------
     void writez();
     void readz0();
 

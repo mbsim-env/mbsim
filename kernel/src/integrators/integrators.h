@@ -35,4 +35,4 @@
 #include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
 
-#endif
+#endif  /* INTEGRATORS_H_ */

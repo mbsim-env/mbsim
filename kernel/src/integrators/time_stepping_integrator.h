@@ -23,29 +23,31 @@
 #ifndef _TIME_STEPPING_INTEGRATOR_H_ 
 #define _TIME_STEPPING_INTEGRATOR_H_
 
-#include <fmatvec.h>
+#include<fmatvec.h>
 #include "integrator.h"
 
 namespace MBSim {
 
-  /** Half-explicit time-stepping integrator of first order. */
+  /*! brief Half-explicit time-stepping integrator of first order */
   class TimeSteppingIntegrator : public Integrator { 
 
     private:
-
       double dt;
       bool driftCompensation;
 
     public:
-
+      /*! Constructor with \default dt(1e-3), \default driftCompensation(false) */
       TimeSteppingIntegrator();
+      /*! Destructor */
       ~TimeSteppingIntegrator() {}
-
+	  /*! Set time step size \param dt_ */
       void setdt(double dt_) {dt = dt_;}
+      /*! Start the integration for \param system */
       void integrate(MultiBodySystem& system);
+      /*! Set drift compensation \param dc (true/false) */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };
 
 }
 
-#endif
+#endif /* _TIME_STEPPING_INTEGRATOR_H_ */

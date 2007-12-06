@@ -76,13 +76,15 @@ namespace MBSim {
        *  \param dt time step size
        */
       void updatedu(double t, double dt);
-      /*! compute \f$\Delta{\vq}\f$
-       *  \param t  time of evaluation
-       *  \param dt time step size
+      /*! 
+       * Compute \f$\Delta{\vq}\f$
+       * \param t  time of evaluation
+       * \param dt time step size
        */
       void updatedq(double t, double dt);
-      /*! compute \f$\dot{\vq}\f$
-       *  \param t  time of evaluation
+      /*! 
+       * Compute \f$\dot{\vq}\f$
+       * \param t  time of evaluation
        */
       void updateqd(double t) {qd << u;}
 

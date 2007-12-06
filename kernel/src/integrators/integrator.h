@@ -23,20 +23,18 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
-#include <fmatvec.h>
-#include <string>
+#include<fmatvec.h>
+#include<string>
 
 namespace MBSim {
 
   class MultiBodySystem;
 
 
-  /*! \brief Integrator-interface for multi-body systems 
-  */
+  /*! \brief Integrator-interface for multi-body systems */
   class Integrator {
 
     protected:
-
       static MultiBodySystem* system;
       double tStart, tEnd, dtPlot;
       fmatvec::Vec z0;
@@ -45,17 +43,23 @@ namespace MBSim {
       string name;
 
     public:
-
+      /*! Constructor with \default tStart(0.), \default tEnd(1.), \default dtPlot(1e-4), \default warnLevel(0), \default output(true), \default name("Integrator") */
       Integrator();
+      /*! Destructor */
       virtual ~Integrator() {};
-
+	  /*! Set integration end time \param tEnd_ */	
       void settEnd(double tEnd_) {tEnd = tEnd_;}
+      /*! Set plot step size \param dtPlot_ */
       void setdtPlot(double dtPlot_) {dtPlot = dtPlot_;}
+      /*! Set initial state \param z0_ */
       void setz0(const fmatvec::Vec &z0_) {z0 = z0_;}
+      /*! Set warn level \param level TODO DOC */
       void setWarnLevel(int level) {warnLevel = level;}
+      /*! Set output \param flag (true/false) */
       void setOutput(bool flag) {output = flag;}
+      /*! Set integration start time \param tStart_ */
       void settStart(double tStart_){tStart=tStart_;}
-      /** Start the integration. */
+      /*! Start the integration for \param system */
       virtual void integrate(MultiBodySystem& system) = 0;
   };
 
