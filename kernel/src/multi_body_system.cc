@@ -319,11 +319,13 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
-    updateW(t); 
-    updateGb(t); 
-    updatew(t);
-    computeConstraintForces(t); 
-    updater(t); 
+    if(linkSetValued.size()) {
+      updateW(t); 
+      updateGb(t); 
+      updatew(t);
+      computeConstraintForces(t); 
+      updater(t); 
+    }
     updatezd(t);
 
     return zdParent;
@@ -553,10 +555,12 @@ namespace MBSim {
     updateLinksStage1(t);
     updateLinksStage2(t);
     updateh(t); 
-    updateW(t); 
-    updateGb(t); 
-    updatew(t);
-    computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
+    if(linkSetValued.size()) {
+      updateW(t); 
+      updateGb(t); 
+      updatew(t);
+      computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
+    }
     updateStopVector(t);
   }
 
