@@ -39,15 +39,19 @@ namespace MBSim {
     friend class BodyRigidRel;
     friend class BodyRigidRelOnFlex;
 
-    private:
+    protected:
+    /** flexible root body */
+    BodyFlexible *flexible;
+    /** Index of flexible body parameters */
+    Index Iflexible;
+    /** Index of parameters of all rigid bodies*/
+    Index Irigid;
+    vector<BodyRigidRelOnFlex*> rigid;
+//    vector<Index> Irigid;
+
+    void resetMh();
     void initFlexibleStage1();
     void initFlexibleStage2();
-
-    protected:
-    BodyFlexible *flexible;
-    Index Iflexible;
-    vector<BodyRigidRelOnFlex*> rigid;
-    vector<Index> Irigid;
 
     public:
     TreeFlexRoot(const string &name);

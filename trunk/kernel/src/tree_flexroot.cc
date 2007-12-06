@@ -49,9 +49,16 @@ namespace MBSim {
       (*ib)->updateT(t);
   }
 
+  void TreeFlexRoot::resetMh() {
+    M(Iflexible,Irigid).init(0.0);
+    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
+      (*ib)->getM().init(0.0);
+    h(Irigid)      .init(0.0);
+  }
+
   void TreeFlexRoot::updateh(double t) {
-    M.init(0.0);
-    h.init(0.0);
+    resetMh();
+
     flexible->updateh(t);  // beschreibt durch updatehRef(...) auf die passenden Speicherbereiche
 			   // update auch fuer zugehoeriges M()
     //    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
@@ -77,15 +84,12 @@ namespace MBSim {
   }
 
   void TreeFlexRoot::updatedq(double t, double dt) {
-//    qd = T*u*dt;
     flexible->updatedq(t,dt);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->updatedq(t,dt);
   }
 
   void TreeFlexRoot::updatedu(double t, double dt) {
-
-    //ud = slvLL(M,h*dt+r);
     ud = slvLLFac(LLM, h*dt+r);
   }
 
@@ -100,7 +104,7 @@ namespace MBSim {
     flexible->updateqd(t);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->updateqd(t);
-    ud = slvLLFac(LLM, h+r);//slvLL(M,h);
+    ud = slvLLFac(LLM, h+r);
   }
 
   void TreeFlexRoot::updateqRef() {
@@ -174,9 +178,9 @@ namespace MBSim {
     flexible->setqInd(qSize);
     flexible->setuInd(uSize);
     qSize = flexible->getqSize();
-    uSize = qSize;
+    uSize = flexible->getuSize();
     lSize = qSize;
-    Iflexible = Index(0,qSize-1);
+    Iflexible = Index(0,uSize-1);
 
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       (*ib)->calcSize();
@@ -190,7 +194,7 @@ namespace MBSim {
       (*ib)->updateJRef();
       (*ib)->updateMhRef();
     }
-
+    Irigid = Index(flexible->getuSize(),uSize-1);
   }
 
   void TreeFlexRoot::init() {
