@@ -34,12 +34,12 @@ namespace MBSim {
   }
 
   void ConnectionFlexible::updateKinetics(double t) {
-    la(IT) = cT*g(IT) + dT*gd(IT);
-    la(IR) = cR*g(IR) + dR*gd(IR);
-    WF[0] = Wf*la(IT);
-    WF[1] = -WF[0];
-    WM[0] = Wm*la(IR);
-    WM[1] = -WM[0];
+    la(IT) = -cT*g(IT) - dT*gd(IT);
+    la(IR) = -cR*g(IR) - dR*gd(IR);
+    WF[1] = Wf*la(IT);
+    WM[1] = Wm*la(IR);
+    WF[0] = -WF[1];
+    WM[0] = -WM[1] + crossProduct(WrP0P1,WF[0]);
   }
 
   double ConnectionFlexible::computePotentialEnergy() {

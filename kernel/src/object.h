@@ -130,6 +130,7 @@ namespace MBSim {
     virtual void updateW(double t);
     virtual void updatew(double t);
     virtual void updateWj(double t) {};
+    virtual void updatewj(double t) {};
     virtual void updateT(double t) {};
     virtual void updateh(double t) {};
     virtual void updater(double t);

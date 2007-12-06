@@ -64,6 +64,7 @@ namespace MBSim {
 
       vector<Vec> load;
       vector<Mat> loadDir;
+      vector<Vec> w;
 
       int rFactorSize, rFactorInd;
       Vec g, gd, gdn, la, s, res;
@@ -123,6 +124,7 @@ namespace MBSim {
 
       virtual void updateStage1(double t) = 0;
       virtual void updateStage2(double t) {}
+      virtual void updatew(double t) {}
 
       /*! compute potential energy, holding every potential!!!
       */
@@ -149,6 +151,7 @@ namespace MBSim {
       /*! Returns the actual load supplied by the Link to the Port connected by it*/
       const Vec& getLoad(int id) const { return load[id];}
       const Mat& getLoadDirections(int id) const {return loadDir[id];}
+      const Vec& getw(int id) const {return w[id];}
 
       const Vec& getla() const {return la;}
       Vec& getla() {return la;}

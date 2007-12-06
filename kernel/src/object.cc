@@ -405,7 +405,7 @@ namespace MBSim {
   }
 
   void Object::updatew(double t) {
-    Vec iMh = slvLLFac(LLM,h);
+    updatewj(t);
     vector<Vec>::iterator itw=w.begin(); 
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
     for(unsigned int i=0; i<linkSetValued.size(); i++) {

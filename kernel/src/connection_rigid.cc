@@ -37,6 +37,7 @@ namespace MBSim {
 
     for(int i=0; i<2; i++) {
       loadDir.push_back(Mat(6,laSize));
+      w.push_back(Vec(laSize));
       fF[i] >> loadDir[i](Index(0,2),Index(0,Wf.cols()-1));
       fM[i] >> loadDir[i](Index(3,5),Index(Wf.cols(),Wf.cols()+Wm.cols()-1));
     }
@@ -54,6 +55,7 @@ namespace MBSim {
       fM[0] = -Wm;
       fM[1] = Wm;
     }
+    loadDir[0](Index(3,5),Index(0,Wf.cols()-1)) = tilde(WrP0P1)*fF[0];
   }
 
   void ConnectionRigid::projectJ(double dt) {
