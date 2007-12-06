@@ -20,8 +20,8 @@
  *
  */
 
-#include <config.h>
-#include <multi_body_system.h>
+#include<config.h>
+#include<multi_body_system.h>
 #include "time_stepping_integrator.h"
 
 #ifndef NO_ISO_14882
@@ -32,15 +32,18 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {
-  }
+  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {}
 
-  void TimeSteppingIntegrator::integrate(MultiBodySystem& system) {
+  void TimeSteppingIntegrator::integrate(MultiBodySystem& system) 
+  {
+  	// INTEGRATE starts the integration
+  	// INPUT	system	multibodysystem
+  	
     assert(dtPlot >= dt);
 
-    double t = 0;
+    double t = 0.;
 
-    int nq = system.getqSize();
+    int nq = system.getqSize(); // size of positions, velocities, state
     int nu = system.getuSize();
     int nx = system.getxSize();
     int n = nq + nu + nx;
@@ -53,83 +56,74 @@ namespace MBSim {
     Vec u(z(Iu));
     Vec x(z(Ix));
 
-    if(z0.size())
-      z = z0;
-    else
-      system.initz(z);
+    if(z0.size()) z = z0; // define initial state
+    else system.initz(z);
 
-    double tPlot = 0.0;
-
+    double tPlot = 0.;
     ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
-
+	cout.setf(ios::scientific, ios::floatfield);
+	int stepPlot =(int) (1./dtPlot);
+	
     int iter = 0;
-
-    cout.setf(ios::scientific, ios::floatfield);
-
 //    double dt0 = dt;
-    int step = 0;
-    int stepPlot =(int) (1.0/dtPlot);
+    int step = 0;   
     int integrationSteps = 0;
     int maxIter = 0;
     int sumIter = 0;
 
-    //unsigned long s0 = clock();
+    // unsigned long s0 = clock();
     double s0 = clock();
     double time = 0;
-    //ofstream rzeit("rzeit.asc");
+    // ofstream rzeit("rzeit.asc");
     while(t<tEnd) {
-      //rzeit << "Zeit: " << t <<endl;
-      //long clock1 = clock();
+      // rzeit << "Zeit: " << t << endl;
+      // long clock1 = clock();
       integrationSteps++;
-      if((t+dt)*stepPlot >= step) {
-	step++;
-	system.plot(z,t,dt);
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-	tPlot += dtPlot;
+      if((t+dt)*stepPlot >= step) { // plotten
+		step++;
+		system.plot(z,t,dt);
+		double s1 = clock();
+		time += (s1-s0)/CLOCKS_PER_SEC;
+		s0 = s1; 
+		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
+		tPlot += dtPlot;
       }
-      //long clock1b = clock();
+      // long clock1b = clock();
 
-      //    if(fabs(tPlot-t)*dt < 1e-14)  {
-      //      // Interpolation macht wahrscheinlich keinen Sinn
-      //      //	  Vec zPlot = z + (z-zOld)/(t-tOld)*(t-tPlot)
-      //      system.plot(z,t,dt);
-      //      integPlot<< t << " " << dt << " " <<  iter << " " << (clock()-s0)/CLOCKS_PER_SEC << " "<<dt <<endl;
-      //      if(output)
-      //        cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(4)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-      //      tPlot += dtPlot;
-      //    }
+      // if(fabs(tPlot-t)*dt < 1e-14) {
+      // 	// Interpolation macht wahrscheinlich keinen Sinn
+      //    // Vec zPlot = z + (z-zOld)/(t-tOld)*(t-tPlot)
+      //    system.plot(z,t,dt);
+      //    integPlot<< t << " " << dt << " " <<  iter << " " << (clock()-s0)/CLOCKS_PER_SEC << " "<< dt <<endl;
+      //    if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(4) << setiosflags(ios::left) << iter <<  "\r" << flush;
+      //    tPlot += dtPlot;
+      // }
 
-      //    if ((tPlot-(t+dt))*dt < -1e-14)  {
-      //      cout << "Warnging " << t << " " << tPlot << " " << t+dt << " "<< t+dt - tPlot << endl;;
-      //      dt = t+dt - tPlot;
-      //    } else {
-      //      dt = dt0;
-      //    }
+      // if ((tPlot-(t+dt))*dt < -1e-14) {
+      //    cout << "Warning " << t << " " << tPlot << " " << t+dt << " "<< t+dt - tPlot << endl;
+      //    dt = t+dt - tPlot;
+      // } 
+      // else dt = dt0;
 
       q += system.deltaq(z,t,dt);
+      
       t += dt;
-      //long clock2 = clock();
+      // long clock2 = clock();
 
       system.update(z,t); 
-      //long clock3 = clock();
+      // long clock3 = clock();
 
       iter = system.solve(dt);
-      //long clock4 = clock();
+      // long clock4 = clock();
 
-      if(iter>maxIter)
-	maxIter = iter;
+      if(iter>maxIter) maxIter = iter;
       sumIter += iter;
 
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
 
-      if(driftCompensation)
-	system.projectViolatedConstraints(t);
+      if(driftCompensation) system.projectViolatedConstraints(t);
     }
 
     integPlot.close();
@@ -141,7 +135,7 @@ namespace MBSim {
     integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
     integSum.close();
 
-    cout.unsetf (ios::scientific);
+    cout.unsetf(ios::scientific);
     cout << endl;
   }
 

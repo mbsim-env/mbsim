@@ -19,9 +19,9 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
+#include<stdexcept>
 #include "object.h"
-#include <stdexcept>
 #include "port.h"
 #include "contour.h"
 #include "link.h"
@@ -30,43 +30,47 @@
 
 namespace MBSim {
 
-  Object::Object(const string &name_) : Element(name_),  qSize(0), uSize(0), xSize(0), qInd(0), uInd(0), xInd(0), q0(qSize), u0(uSize), x0(xSize), WrOHitSphere(3), RHitSphere(0) {
+  Object::Object(const string &name_) : Element(name_),  qSize(0), uSize(0), xSize(0), qInd(0), uInd(0), xInd(0), q0(qSize), u0(uSize), x0(xSize), WrOHitSphere(3), RHitSphere(0) {}
 
-  }
-
-  void Object::writeq(){
+  void Object::writeq()
+  {
     string fname="PREINTEG/"+fullName+".q0.asc";  
     ofstream osq(fname.c_str(), ios::out);
     osq << q;
     osq.close();
   }
-  void Object::readq0(){
+  void Object::readq0()
+  {
     string fname="PREINTEG/"+fullName+".q0.asc";  
     ifstream isq(fname.c_str());
     if(isq) isq >> q0;
     else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
     isq.close();
   }
-  void Object::writeu(){
+  void Object::writeu()
+  {
     string fname="PREINTEG/"+fullName+".u0.asc";  
     ofstream osu(fname.c_str(), ios::out);
     osu << u;
     osu.close();
   }
-  void Object::readu0(){
+  void Object::readu0()
+  {
     string fname="PREINTEG/"+fullName+".u0.asc";  
     ifstream isu(fname.c_str());
     if(isu) isu >> u0;
     else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
     isu.close();
   }
-  void Object::writex(){
+  void Object::writex()
+  {
     string fname="PREINTEG/"+fullName+".x0.asc";  
     ofstream osx(fname.c_str(), ios::out);
     osx << x;
     osx.close();
   }
-  void Object::readx0(){
+  void Object::readx0()
+  {
     string fname="PREINTEG/"+fullName+".x0.asc";  
     ifstream isx(fname.c_str());
     if(isx) isx >> x0;
@@ -74,80 +78,107 @@ namespace MBSim {
     isx.close();
   }
 
-  Object::~Object() {
+  Object::~Object()
+  {
+  	// Destructs port and contour pointers
     vector<Port*>::iterator iP;
-    for(iP = port.begin(); iP != port.end(); ++iP)
-      delete *iP;
+    for(iP = port.begin(); iP != port.end(); ++iP) delete *iP;
     vector<Contour*>::iterator iC;
-    for(iC = contour.begin(); iC != contour.end(); ++iC)
-      delete *iC;
+    for(iC = contour.begin(); iC != contour.end(); ++iC) delete *iC;
   }
 
-  void Object::updatezRef() {
+  void Object::updatezRef() 
+  {
+  	// UPDATEZREF references to positions, velocities and TODO DOC of multibody system mbs
     updateqRef();
     updateuRef();
     updatexRef();
   }
 
-  void Object::updatezdRef() {
+  void Object::updatezdRef() 
+  {
+  	// UPDATEZDREF references to differentiated positions, velocities and TODO DOC of multibody system mbs
     updateqdRef();
     updateudRef();
     updatexdRef();
   }
 
-  void Object::updateqRef() {
+  void Object::updateqRef() 
+  {
+  	// UPDATEQREF references to positions of multibody system mbs
     q>>(mbs->getq()(qInd,qInd+qSize-1));
   }
 
-  void Object::updateqdRef() {
+  void Object::updateqdRef()
+  {
+  	// UPDATEQDREF references to differentiated positions of multibody system mbs
     qd>>(mbs->getqd()(qInd,qInd+qSize-1));
   }
 
-  void Object::updateuRef() {
+  void Object::updateuRef()
+  {
+  	// UPDATEUREF references to velocities of multibody system mbs
     u>>(mbs->getu()(uInd,uInd+uSize-1));
   }
 
-  void Object::updateudRef() {
+  void Object::updateudRef()
+  {
+  	// UPDATEUDREF references to differentiated velocities of multibody system mbs
     ud>>(mbs->getud()(uInd,uInd+uSize-1));
   }
 
-  void Object::updatexRef() {
+  void Object::updatexRef()
+  {
     x>>(mbs->getx()(xInd,xInd+xSize-1));
   }
 
-  void Object::updatexdRef() {
+  void Object::updatexdRef()
+  {
     xd>>(mbs->getxd()(xInd,xInd+xSize-1));
   }
 
-  void Object::updatehRef() {
+  void Object::updatehRef()
+  {
+  	// UPDATEHREF references to smooth force vector of multibody system mbs
     h>>(mbs->geth()(uInd,uInd+uSize-1));
   }
 
-  void Object::updaterRef() {
+  void Object::updaterRef()
+  {
+  	// UPDATERREF references to smooth force vector of multibody system mbs
     r>>(mbs->getr()(uInd,uInd+uSize-1));
   }
 
-  void Object::updatefRef() {
+  void Object::updatefRef()
+  {
     f>>(mbs->getf()(xInd,xInd+xSize-1));
   }
 
-  void Object::updateMRef() {
+  void Object::updateMRef()
+  {
+  	// UPDATEMREF references to mass matrix of multibody system mbs
     Index I = getuIndex();
     M>>mbs->getM()(I);
   }
 
-  void Object::updateTRef() {
+  void Object::updateTRef()
+  {
+  	// UPDATETREF references to T-matrix of multibody system mbs
     Index Iu = getuIndex();
     Index Iq = Index(qInd,qInd+qSize-1);
     T>>mbs->getT()(Iq,Iu);
   }
 
-  void Object::updateLLMRef() {
+  void Object::updateLLMRef()
+  {
+  	// UPDATELLMREF references to cholesky decomposition of mass matrix of multibody system mbs
     Index I = getuIndex();
     LLM>>mbs->getLLM()(I);
   }
 
-  void Object::initz() {
+  void Object::initz()
+  {
+  	// INITZ initialises the Object state
     q = q0;
     u = u0;
     x = x0;
@@ -314,11 +345,12 @@ namespace MBSim {
     return NULL;
   }
 
-  void Object::init() {
+  void Object::init() 
+  {
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
-// Liste aller SetValued
-    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) { // SetValued
       linkSetValued.push_back(linkSetValuedPortData[i].link);
       W.push_back(Mat(getWSize(),linkSetValuedPortData[i].link->getlaSize()));
       w.push_back(Vec(linkSetValuedPortData[i].link->getlaSize())); 
@@ -330,8 +362,8 @@ namespace MBSim {
       w.push_back(Vec(linkSetValuedContourData[i].link->getlaSize())); 
       itW++; itw++;
     }
-// Liste aller SingleValued
-    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
+    
+    for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) { // SingleValued
       linkSingleValued.push_back(linkSingleValuedPortData[i].link);
       //linkSingleValuedContourData[i].link->addObject(this);
     }
@@ -339,8 +371,7 @@ namespace MBSim {
       linkSingleValued.push_back(linkSingleValuedContourData[i].link);
       //linkSingleValuedContourData[i].link->addObject(this);
     }
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->init();
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) (*i)->init();
   }
 
   void Object::updater(double t) {
@@ -367,7 +398,9 @@ namespace MBSim {
     }
   }
 
-  void Object::facLLM() {
+  void Object::facLLM()
+  {
+  	// FACLLM computes Cholesky decomposition of the mass matrix
     LLM = facLL(M); 
   }
 

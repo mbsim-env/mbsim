@@ -23,8 +23,8 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
-#include <string>
-#include <vector>
+#include<string>
+#include<vector>
 #include "element.h"
 
 using namespace std;
@@ -41,29 +41,23 @@ namespace MBSim {
   class ContactRigid;
   class Contour;
 
-  /*! 
-   *  \brief base class for all Objects having own dynamics and mass
-   *
-   * */
+  /*! \brief Node class for all Objects having own dynamics and mass */
   class Object : public Element {
 
     friend class MultiBodySystem;
 
     protected:
-
     struct LinkPortData {
       LinkPort* link;
       int ID;
       int objectID;
     };
-
+    
     struct LinkContourData {
       LinkContour* link;
       int ID;
       int objectID;
     };
-
-    protected:
 
     vector<LinkPortData> linkSingleValuedPortData;
     vector<LinkPortData> linkSetValuedPortData;
@@ -76,19 +70,19 @@ namespace MBSim {
     vector<Port*> port;
     vector<Contour*> contour;
 
-    /** size of object positions */
+    /* Size of object positions */
     int qSize;
-    /** size of object velocities */
+    /* Size of object velocities */
     int uSize;
-    /** size of object order one parameters */
+    /** Size of object order one parameters */
     int xSize;
     int qInd, uInd, xInd;
 
-    /** object positions */
+    /* Object positions */
     Vec q;
-    /** object velocities */
+    /* Object velocities */
     Vec u;
-    /** object order one parameters */
+    /* Object order one parameters */
     Vec x;
     Vec q0,u0,x0;
     Vec qd,ud,xd;
@@ -109,7 +103,7 @@ namespace MBSim {
     virtual void readx0();
     Vec  WrOHitSphere;
     double RHitSphere;
-    virtual void updatezRef();
+    virtual void updatezRef(); // references to mbs data
     virtual void updatezdRef();
     virtual void updateqRef();
     virtual void updateqdRef();
@@ -124,8 +118,9 @@ namespace MBSim {
     virtual void updateMRef();
     virtual void updateLLMRef();
 
-    /*! initialize object at start of simulation */
+    /*! Initialize object at start of simulation with respect to contours and ports */
     virtual void init();
+    /*! Initialize state of object at start of simulation */
     virtual void initz();
 
     virtual void updateM(double t) {};
@@ -143,7 +138,7 @@ namespace MBSim {
     virtual void updatedq(double t, double dt) = 0;
     virtual void updatedx(double t, double dt) {};
 
-    /*! perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
+    /*! Perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
     virtual void facLLM();
 
     virtual Object* getResponsible() {return this;}
@@ -154,9 +149,12 @@ namespace MBSim {
     /*! compute Jacobian of right-hand side for single-valued links
     */
     //virtual void updateJh_links(double t);
-
+	/* ************************************************************************/
+	
     public:
+    /* Constructor */
     Object(const string &name);
+    /* Destructor */
     virtual ~Object();
 
     void setqInd(int qInd_) { qInd = qInd_; }
@@ -166,7 +164,9 @@ namespace MBSim {
     int  getuInd() { return uInd; }
     int  getxInd() { return xInd; }
 
+	/*! Get size of position vector \return qSize */
     int getqSize() const { return qSize; }
+    /*! Get size of velocity vector \return uSize */
     int getuSize() const { return uSize; }
     int getxSize() const { return xSize; }
     int getzSize() const { return qSize + uSize + xSize; }
@@ -174,21 +174,26 @@ namespace MBSim {
 
     const Index& getuIndex() const { return Iu;}
     const Index& getxIndex() const { return Ix;}
-
+	/* Get smooth force vector */
     const Vec& geth() const {return h;};
+    /* Get setvalued force vector */
     const Vec& getr() const {return r;};
+    /* Get smooth force vector */
     Vec& geth() {return h;};
 
     const Vec& getf() const {return f;};
     Vec& getf() {return f;};
-
+	/* Get mass matrix */
     const SymMat& getM() const {return M;};
+    /* Get mass matrix */
     SymMat& getM() {return M;};
-
+	/* Get T-matrix */
     const Mat& getT() const {return T;};
+    /* Get T-matrix */
     Mat& getT() {return T;};
-
+	/* Get Cholesky decomposition of the mass matrix */
     const SymMat& getLLM() const {return LLM;};
+    /* Get Cholesky decomposition of the mass matrix */
     SymMat& getLLM() {return LLM;};
 
     const Vec& getq() const {return q;};
@@ -218,8 +223,10 @@ namespace MBSim {
     void setq(Vec q_) { q = q_; }
     void setu(Vec u_) { u = u_; }
     void setx(Vec x_) { x = x_; }
-
+	
+	/* Set initial positions with \param q0_ */
     void setq0(Vec q0_) { q0 = q0_; }
+    /* Set initial velocities with \param u0_ */
     void setu0(Vec u0_) { u0 = u0_; }
     void setx0(Vec x0_) { x0 = x0_; }
 
@@ -249,16 +256,11 @@ namespace MBSim {
 
     virtual void calcSize() {};
 
-    /*! compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies
-    */
-    virtual double computeKineticEnergy(); // return 0.5*trans(u)*M*u; }
-
-    /*! compute potential energy, holding every potential!!!
-    */
+    /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
+    virtual double computeKineticEnergy();
+    /*! Compute potential energy */
     virtual double computePotentialEnergy() {return 0; }
-
-    /*! compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector
-    */
+    /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
     virtual void updateJh(double t);
   };
 

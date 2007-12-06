@@ -175,23 +175,23 @@ namespace MBSim {
 
     for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
       if(linkSingleValuedContourData[i].link->isActive()) {
-	const int &ID       = linkSingleValuedContourData[i].ID;       // ID der Contour in der Koerper-Daten-Verwaltung de
-	const int &objectID = linkSingleValuedContourData[i].objectID; // ID der Contour innerhalb der LinkContour-Paarung
-	WLtmp = linkSingleValuedContourData[i].link->getLoad(objectID);
-
-	ContourPointData Stmp = linkSingleValuedContourData[i].link->getContourPointData(objectID);
-
-	Vec WrSC = Stmp.WrOC - computeWrOC(Stmp);
-
-	if(JT.cols()) WLtmpLocal(IndexForce ) = trans(JT)*WFtmp ;
-	if(JR.cols()) WLtmpLocal(IndexMoment) = trans(JR)*(WMtmp + crossProduct(WrSC,WFtmp));
-
-	if(!constContourPosition[ID])    // alle relevanten Daten kommen aus dem Link
-	  h += computeJacobianMatrix(Stmp) * WLtmpLocal;
-	else                             // hinzugefuegte Contour: nutze Aufhaenge-Daten (cpData) der Contour auf dem Body
-	  h += computeJacobianMatrix(S_Contour[ID]) * WLtmpLocal;
-
-	//		    h += computeJacobianMatrix(Stmp) * WLtmpLocal;
+		const int &ID       = linkSingleValuedContourData[i].ID;       // ID der Contour in der Koerper-Daten-Verwaltung de
+		const int &objectID = linkSingleValuedContourData[i].objectID; // ID der Contour innerhalb der LinkContour-Paarung
+		WLtmp = linkSingleValuedContourData[i].link->getLoad(objectID);
+	
+		ContourPointData Stmp = linkSingleValuedContourData[i].link->getContourPointData(objectID);
+	
+		Vec WrSC = Stmp.WrOC - computeWrOC(Stmp);
+	
+		if(JT.cols()) WLtmpLocal(IndexForce ) = trans(JT)*WFtmp ;
+		if(JR.cols()) WLtmpLocal(IndexMoment) = trans(JR)*(WMtmp + crossProduct(WrSC,WFtmp));
+	
+		if(!constContourPosition[ID])    // alle relevanten Daten kommen aus dem Link
+		  h += computeJacobianMatrix(Stmp) * WLtmpLocal;
+		else                             // hinzugefuegte Contour: nutze Aufhaenge-Daten (cpData) der Contour auf dem Body
+		  h += computeJacobianMatrix(S_Contour[ID]) * WLtmpLocal;
+	
+		//		    h += computeJacobianMatrix(Stmp) * WLtmpLocal;
       }
     }
   }
@@ -356,6 +356,7 @@ updateKinematics(0.0);
 	DrDsp += (computeDrDs(data) - DrDsAct)/eps * u(i);
 	q(i) = qAct(i);
       }
+
 // cout << "DrDsp_ns = " << DrDsp << endl;
 
       for(int i=0;i<data.alphap.size();i++) {
