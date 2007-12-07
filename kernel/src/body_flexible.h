@@ -88,17 +88,20 @@ namespace MBSim {
        */
       void updateqd(double t) {qd << u;}
 
+      /* geerbt */
       void updateT(double t) {}
 
-      /** indices of forces and moments in load vectors, finally defined in derived and specified classes/bodies
-      */
-      Index IndexForce, IndexMoment;
+      /** indices of forces in load vectors, finally defined classes in derived and specified classes/bodies */
+      Index IndexForce;
+      /** indices of moments in load vectors, finally defined classes in derived and specified classes/bodies */
+      Index IndexMoment;
+
       /*! sum up forces acting on Port and Contour interfaces, collects JACOBIAN-matrizes of implementations
        * of computeJacobianMatrix() to distrubute loads
        *  \param t time of evaluation
        */
-
       virtual void sumUpForceElements(double t);
+
       /*! update generalised force directions \f$\vW\f$ for set-valued interactions on Port and Contour interfaces,
        *  therefor collects JACOBIAN-matrizes of implementations of computeJacobianMatrix()
        *  \param t  time of evaluation
@@ -115,8 +118,6 @@ namespace MBSim {
     public:
       /*!
        * \param name  name of body
-       * \param qSize default size of Object::q, depends on discretisation level, to be defined later but needed due to inheritage
-       * \param uSize default size of Object::u, depends on discretisation level, to be defined later but needed due to inheritage
        */
       BodyFlexible(const string &name); 
 
@@ -152,9 +153,9 @@ namespace MBSim {
       virtual Mat computeJacobianMatrix(const ContourPointData &data) = 0; // alle muessen!!! diese Methode zur Verfuegung stellen
 
       /*! definition for method giving numerical time-derivative of JACOBIAN-matrix at contour-point S,
-       * should be re-defined in deduced classes providing \f$\vJ\f$ analytical
+       * should be re-defined in deduced classes providing \f$\boldsymbol{J}\f$ analytical
        *  @param S contour parameters specifing location
-       *  \return \f$\dot{\vJ}\f$ of system dimensions Object::qSize x BodyFlexible::Jges ->cols()
+       *  \return \f$\dot{\boldsymbol{J}}\f$ of system dimensions Object::qSize x BodyFlexible::Jges ->cols()
        */
       virtual Mat computeJp(const ContourPointData &data);
 
@@ -171,11 +172,12 @@ namespace MBSim {
        * \param data contour parameter set
        */
       virtual Vec computeWn  (const ContourPointData &data) = 0;
-      /*! compute trafo-matrix from contour to world system at s
+      /*! compute trafo-matrix \f$\boldsymbol{A}_{WK}\f$ from contour to world system at s
        * \param data contour parameter set
        */
-      virtual SqrMat computeAWK (const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
-      virtual SqrMat computeAWKp(const ContourPointData &data) = 0;// {return SqrMat(3,INIT,0.0);}
+      virtual SqrMat computeAWK (const ContourPointData &data) = 0;
+      /*! compute time derivative \f$\dot{\boldsymbol{A}}_{WK}\f$ of \f$\boldsymbol{A}_{WK}\f$*/
+      virtual SqrMat computeAWKp(const ContourPointData &data) = 0;
 
       /*! compute absolute position in world system to body contour at s
        * \param data contour parameter set
@@ -212,18 +214,17 @@ namespace MBSim {
        */
       void addContour(Contour *contour, const ContourPointData &S_, bool constPosition=true);
 
-      /*! write header for Element::plotfile
-      */
+      /*! write header for Element::plotfile */
       void initPlotFiles();
       /*! write generalised state of BodyFlexible, initially calls Element::plot(double t, double dt) to flush ostream and write time
        *  \param t  time of evaluation
        *  \param dt time step size
        */
       void plot(double t, double dt);
-      /*! basic prototype plotting basic class name "BodyFlexible"
-      */
+      /*! basic prototype plotting basic class name "BodyFlexible" */
       void plotParameters();
 
+      /* alle geerbt */
       void updateMRef(SymMat M_) { M  >> M_ ;}
       void updateqRef(Vec q_)    { q  >> q_ ;}
       void updateuRef(Vec u_)    { u  >> u_ ;}

@@ -70,26 +70,29 @@ namespace MBSim {
     vector<Port*> port;
     vector<Contour*> contour;
 
-    /* Size of object positions */
+    /** Size of object positions */
     int qSize;
-    /* Size of object velocities */
+    /** Size of object velocities */
     int uSize;
     /** Size of object order one parameters */
     int xSize;
     int qInd, uInd, xInd;
 
-    /* Object positions */
+    /** Object positions */
     Vec q;
-    /* Object velocities */
+    /** Object velocities */
     Vec u;
-    /* Object order one parameters */
+    /** Object order one parameters */
     Vec x;
     Vec q0,u0,x0;
     Vec qd,ud,xd;
     Vec h,r,f;
 
+    /** linear relation matrix \f$\boldsymbol{T}\f$ of position and velocity parameters */
     Mat T;
+    /** mass matrix \f$\boldsymbol{M}\f$*/
     SymMat M;
+    /** LU-decomposition of mass matrix \f$\boldsymbol{M}\f$*/
     SymMat LLM;
     vector<Mat> W;
     vector<Vec> w;
@@ -131,6 +134,7 @@ namespace MBSim {
     virtual void updatew(double t);
     virtual void updateWj(double t) {};
     virtual void updatewj(double t) {};
+    /*! update relation matrix \boldsymbol{T} between position and velocity parameters \f$\dot{\boldsymbol{q}}=\boldsymbol{T}\boldsymbol{u}\f$*/
     virtual void updateT(double t) {};
     virtual void updateh(double t) {};
     virtual void updater(double t);
@@ -165,7 +169,7 @@ namespace MBSim {
     int  getuInd() { return uInd; }
     int  getxInd() { return xInd; }
 
-	/*! Get size of position vector \return qSize */
+    /*! Get size of position vector \return qSize */
     int getqSize() const { return qSize; }
     /*! Get size of velocity vector \return uSize */
     int getuSize() const { return uSize; }
@@ -175,26 +179,26 @@ namespace MBSim {
 
     const Index& getuIndex() const { return Iu;}
     const Index& getxIndex() const { return Ix;}
-	/* Get smooth force vector */
+    /*! Get smooth force vector */
     const Vec& geth() const {return h;};
-    /* Get setvalued force vector */
-    const Vec& getr() const {return r;};
-    /* Get smooth force vector */
+    /*! Get smooth force vector */
     Vec& geth() {return h;};
+    /*! Get setvalued force vector */
+    const Vec& getr() const {return r;};
 
     const Vec& getf() const {return f;};
     Vec& getf() {return f;};
-	/* Get mass matrix */
+    /*! Get mass matrix */
     const SymMat& getM() const {return M;};
-    /* Get mass matrix */
+    /*! Get mass matrix */
     SymMat& getM() {return M;};
-	/* Get T-matrix */
+    /*! Get T-matrix */
     const Mat& getT() const {return T;};
-    /* Get T-matrix */
+    /*! Get T-matrix */
     Mat& getT() {return T;};
-	/* Get Cholesky decomposition of the mass matrix */
+    /*! Get Cholesky decomposition of the mass matrix */
     const SymMat& getLLM() const {return LLM;};
-    /* Get Cholesky decomposition of the mass matrix */
+    /*! Get Cholesky decomposition of the mass matrix */
     SymMat& getLLM() {return LLM;};
 
     const Vec& getq() const {return q;};
@@ -225,9 +229,9 @@ namespace MBSim {
     void setu(Vec u_) { u = u_; }
     void setx(Vec x_) { x = x_; }
 	
-	/* Set initial positions with \param q0_ */
+    /*! Set initial positions with \param q0_ */
     void setq0(Vec q0_) { q0 = q0_; }
-    /* Set initial velocities with \param u0_ */
+    /*! Set initial velocities with \param u0_ */
     void setu0(Vec u0_) { u0 = u0_; }
     void setx0(Vec x0_) { x0 = x0_; }
 
