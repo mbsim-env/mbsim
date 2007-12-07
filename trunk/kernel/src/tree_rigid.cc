@@ -59,6 +59,12 @@ namespace MBSim {
       W[i].init(0);
     root->updateWj(t);
   }
+  void TreeRigid::updatewj(double t) {
+    vector<Vec>::iterator itw=w.begin(); 
+    for(unsigned int i=0; i<w.size(); i++)
+      w[i].init(0);
+    root->updatewj(t);
+  }
 
   void TreeRigid::updatedq(double t, double dt) {
 

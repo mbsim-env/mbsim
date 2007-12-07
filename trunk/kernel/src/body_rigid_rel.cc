@@ -214,8 +214,10 @@ namespace MBSim {
       Index iJ(0,linkSetValued[i]->getlaSize()-1);
       if(linkID > -1) {
 	W[i].resize() >> tree->W[linkID](iI,iJ);
+	w[i].resize() >> tree->w[linkID](iJ);
       } else {
 	W[i].resize() >> tree->W[k](iI,iJ);
+	w[i].resize() >> tree->w[k](iJ);
 	k++;
       }
     }
@@ -434,6 +436,40 @@ namespace MBSim {
 	(*itW) += trans(J)*Kl;
       }
       it2++; itW++; 
+    }
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->updateWj(t);
+    }
+  }
+
+  void BodyRigidRel::updatewj(double t) {
+
+    Index IF(0,2);
+    Index IM(3,5);
+
+    vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
+    vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
+    vector<Vec>::iterator itw=w.begin(); 
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+      int portID = it1->ID;
+      int objectID = it1->objectID;
+      Mat ld = it1->link->getLoadDirections(objectID);
+      Index iJ(0,ld.cols()-1);
+      cout << "Error: no implementation of updatew for connections in BodyRigidRel yet. Use Time-Stepping-Integrator instead of ODE-Integrator." << endl;
+      // (*itw) += 
+      it1++; itw++;
+    }
+
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
+      if(it2->link->isActive()) {
+	int objectID = it2->objectID;
+	Mat ld = it2->link->getLoadDirections(objectID);
+	Vec WrKC = it2->link->getWrOC(objectID)-WrOK;
+	Index iJ(0,ld.cols()-1);
+	cout << "Error: no implementation of updatew for contacts in BodyRigidRel yet. Use Time-Stepping-Integrator instead of ODE-Integrator." << endl;
+	// (*itw) += 
+      }
+      it2++; itw++;
     }
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateWj(t);

@@ -55,6 +55,7 @@ namespace MBSim {
     void updateM(double t);
 
     void updateWj(double t);
+    void updatewj(double t);
     void updatezd(double t);
     void updatedq(double t, double dt);
     void updatedu(double t, double dt);
