@@ -134,7 +134,7 @@ namespace MBSim {
     virtual void updatew(double t);
     virtual void updateWj(double t) {};
     virtual void updatewj(double t) {};
-    /*! update relation matrix \boldsymbol{T} between position and velocity parameters \f$\dot{\boldsymbol{q}}=\boldsymbol{T}\boldsymbol{u}\f$*/
+    /*! update relation matrix \f$\boldsymbol{T}\f$ between position and velocity parameters \f$\dot{\boldsymbol{q}}=\boldsymbol{T}\boldsymbol{u}\f$*/
     virtual void updateT(double t) {};
     virtual void updateh(double t) {};
     virtual void updater(double t);
@@ -148,18 +148,18 @@ namespace MBSim {
 
     virtual Object* getResponsible() {return this;}
 
-    /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
-    */
-    //virtual void updateJh_internal(double t);
-    /*! compute Jacobian of right-hand side for single-valued links
-    */
-    //virtual void updateJh_links(double t);
-	/* ************************************************************************/
+////    /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
+////    */
+////    //virtual void updateJh_internal(double t);
+////    /*! compute Jacobian of right-hand side for single-valued links
+////    */
+////    //virtual void updateJh_links(double t);
+////	/* ************************************************************************/
 	
     public:
-    /* Constructor */
+    /*! Constructor */
     Object(const string &name);
-    /* Destructor */
+    /*! Destructor */
     virtual ~Object();
 
     void setqInd(int qInd_) { qInd = qInd_; }
@@ -169,11 +169,13 @@ namespace MBSim {
     int  getuInd() { return uInd; }
     int  getxInd() { return xInd; }
 
-    /*! Get size of position vector \return qSize */
+    /*! Get size of position vector Object::q \return Object::qSize */
     int getqSize() const { return qSize; }
-    /*! Get size of velocity vector \return uSize */
+    /*! Get size of velocity vector Object::u \return Object::uSize */
     int getuSize() const { return uSize; }
+    /*! Get size of order one parameter vector Object::x \return Object::xSize */
     int getxSize() const { return xSize; }
+    /*! Get number of state variables \return Object::qSize + Object::uSize + Object::xSize */
     int getzSize() const { return qSize + uSize + xSize; }
     virtual int getWSize() const { return uSize; }
 
