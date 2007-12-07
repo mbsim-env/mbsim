@@ -52,7 +52,6 @@ namespace MBSim {
       void setMomentDirection(const Mat& md);
       void updateStage1(double t);
       void updateStage2(double t);
-      void updatew(double t);
       virtual void updateKinetics(double t) = 0;
       void updatexd(double t);
       void updatedx(double t, double dt);

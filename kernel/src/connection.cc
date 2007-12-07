@@ -85,11 +85,6 @@ namespace MBSim {
     updateKinetics(t);
   }
 
-  void Connection::updatew(double t) {
-    w[0](0,Wf.cols()-1)=trans(Wf)*(crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
-    w[0](Wf.cols(),Wm.cols()+Wf.cols()-1)=trans(Wm)*crossProduct(WomP0P1,port[1]->getWomegaP());
-  }
-
   void Connection::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 
