@@ -46,8 +46,10 @@ namespace MBSim {
   class Link : public Element {
 
     protected:
-      /*! Internal integrable State Variables x and its velocities ud \see updatedu(double t, double dt), updateud(double t) */
-      Vec x, xd;
+      /** Internal integrable State Variables */
+      Vec x;
+      /** Internal integrable State Variables velocities ud \see updatedu(double t, double dt), updateud(double t) */
+      Vec xd;
 
       int xSize;
       int xInd;
@@ -139,7 +141,7 @@ namespace MBSim {
 
       const Vec& getx() const {return x;}
       const Vec& getxd() const {return xd;}
-      /* Sets the internal states of a Link.*/
+      /*! Sets the internal states of a Link.*/
       void setx(const Vec &x_) {x = x_;}
 
       void plot(double t, double dt=1);
