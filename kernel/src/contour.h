@@ -101,8 +101,6 @@ namespace MBSim {
   /*! \brief Most primitive Contour: the Point (no extention) */
   class Point : public Contour {
     public:
-      /*! Standard Constructor */
-      Point();
       /*! Constructor with \param name */
       Point(const string &name);
       /*! Deconstructor */
@@ -389,8 +387,6 @@ namespace MBSim {
 		      bool outCont;
 		
 	    public:
-	    	  /*! Standard Constructor */
-	    	  Frustum();
 	    	  /*! Constructor with \param name and \default outCont=false */
 		      Frustum(const string &name);
 		      /*! Constructor with \param name and \param outCont_ */

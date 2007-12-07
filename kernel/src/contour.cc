@@ -111,7 +111,6 @@ namespace MBSim {
   void Contour::plotParameters() {parafile << "Contour" << endl;}
   
   /* Point */
-  Point::Point() : Contour("Point") {}
   Point::Point(const string &name) : Contour(name) {}
   Point::~Point() {}
 
@@ -241,9 +240,8 @@ namespace MBSim {
   }
 
   /* Frustum */
-  Frustum::Frustum() : Contour("Frustum"), a(3,INIT,0.), r(3,INIT,0.), h(0), outCont(false) {}
-  Frustum::Frustum(const string &name) : Contour(name), a(3,INIT,0.), r(3,INIT,0.), h(0), outCont(false) {}
-  Frustum::Frustum(const string &name, bool outCont_) : Contour(name), a(3,INIT,0.), r(3,INIT,0.), h(0), outCont(outCont_) {}
+  Frustum::Frustum(const string &name) : Contour(name), a(3,INIT,0.), r(2,INIT,0.), h(0), outCont(false) {}
+  Frustum::Frustum(const string &name, bool outCont_) : Contour(name), a(3,INIT,0.), r(2,INIT,0.), h(0), outCont(outCont_) {}
   Frustum::~Frustum() {}
 
   /* Contour2s */
