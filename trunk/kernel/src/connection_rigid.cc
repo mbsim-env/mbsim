@@ -57,6 +57,11 @@ namespace MBSim {
     loadDir[0](Index(3,5),Index(0,Wf.cols()-1)) = tilde(WrP0P1)*fF[0];
   }
 
+  void ConnectionRigid::updatew(double t) {
+    w[0](0,Wf.cols()-1)=trans(Wf)*(crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
+    w[0](Wf.cols(),Wm.cols()+Wf.cols()-1)=trans(Wm)*crossProduct(WomP0P1,port[1]->getWomegaP());
+  }
+
   void ConnectionRigid::projectJ(double dt) {
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) 
       la(i) -= rFactor(i)*s(i);
