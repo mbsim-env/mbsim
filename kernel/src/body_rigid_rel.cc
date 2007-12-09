@@ -472,7 +472,7 @@ namespace MBSim {
       it2++; itw++;
     }
     for(unsigned int i=0; i<successor.size(); i++) {
-      successor[i]->updateWj(t);
+      successor[i]->updatewj(t);
     }
   }
 
