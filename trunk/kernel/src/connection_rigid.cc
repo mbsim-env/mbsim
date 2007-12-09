@@ -53,8 +53,8 @@ namespace MBSim {
       fF[1] = Wf;
       fM[0] = -Wm;
       fM[1] = Wm;
+      loadDir[0](Index(3,5),Index(0,Wf.cols()-1)) = tilde(WrP0P1)*fF[0];
     }
-    loadDir[0](Index(3,5),Index(0,Wf.cols()-1)) = tilde(WrP0P1)*fF[0];
   }
 
   void ConnectionRigid::updatew(double t) {

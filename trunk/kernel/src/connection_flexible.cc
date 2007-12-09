@@ -39,7 +39,9 @@ namespace MBSim {
     WF[1] = Wf*la(IT);
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];
-    WM[0] = -WM[1] + crossProduct(WrP0P1,WF[0]);
+    WM[0] = -WM[1];
+    if(KOSYID)
+      WM[0] += crossProduct(WrP0P1,WF[0]);
   }
 
   double ConnectionFlexible::computePotentialEnergy() {
