@@ -113,7 +113,7 @@ namespace MBSim {
 
 //      e = C*precessor->gete()+f;
 ////    e = C*Jges_pre*trans(precessor->computeJp(cPosition))*precessor->getu() + f;
-    e = C*trans(precessor->computeJp(cPosition))*precessor->getu() + f;
+    j = C*trans(precessor->computeJp(cPosition))*precessor->getu() + f;
 
 //      J(Index(0,2),IuT) = trans(APK)*JT;
     if(JT.cols()) {
@@ -125,7 +125,7 @@ namespace MBSim {
 ////    J(Index(0,5),static_cast<TreeFlexRoot*>(tree)->Iflexible) = C*Jges_pre*trans(precessor->computeJacobianMatrix(cPosition));
     J(Index(0,5),Iflexible) = C*trans(precessor->computeJacobianMatrix(cPosition));
 
-    l -= Mh*e;
+    l -= Mh*j;
 //    tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
     Vec hTree = tree->geth();
     hTree(Iflexible) += trans(J(AllCartesian,Iflexible))*l;

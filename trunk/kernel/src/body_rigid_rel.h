@@ -46,7 +46,7 @@ namespace MBSim {
     vector<BodyRigidRel*> successor;
     BodyRigidRel* precessor;
     SqrMat APK, APK0;
-    Vec PrPK, PrPK0, KrOK, KvK, e;
+    Vec PrPK, PrPK0, KrOK, KvK, j;
     Index IuT, IuR, iI;
     SqrMat C;
 
@@ -82,7 +82,7 @@ namespace MBSim {
     const Vec& getWvK() const {return WvK;}
     const Vec& getKrOK() const {return KrOK;}
     const Vec& getKvK() const {return KvK;}
-    const Vec& gete() const {return e;}
+    const Vec& getj() const {return j;}
     const Mat& getJ() const {return J;}
 
     //const Vec computeWvS()  const {return WvK  + crossProduct(KomegaK,WrKS);}

@@ -29,7 +29,7 @@
 
 namespace MBSim {
 
-  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), lSize(6), lInd(0), tree(0), successor(0), precessor(0), APK(3), APK0(3), PrPK(3), PrPK0(3), KrOK(3), KvK(3), e(6), C(6) {
+  BodyRigidRel::BodyRigidRel(const string &name) : BodyRigid(name), lSize(6), lInd(0), tree(0), successor(0), precessor(0), APK(3), APK0(3), PrPK(3), PrPK0(3), KrOK(3), KvK(3), j(6), C(6) {
 
     APK0(0,0)=1.0;
     APK0(1,1)=1.0;
@@ -344,9 +344,9 @@ namespace MBSim {
       f(0,2) = trans(APK)*(crossProduct(precessor->getKomegaK(), 2*(JT*u(iT))+crossProduct(precessor->getKomegaK(),PrPK)));
       f(3,5) = crossProduct(KomegaK,JR*u(iR));
 
-      e = C*precessor->gete()+f;
+      j = C*precessor->getj()+f;
 
-      l -= Mh*e;
+      l -= Mh*j;
 
 //      BodyRigidRel* nextBody = precessor;
 //      while(nextBody) {
@@ -451,12 +451,17 @@ namespace MBSim {
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
     for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
-//      int portID = it1->ID;
+      int portID = it1->ID;
       int objectID = it1->objectID;
       Mat ld = it1->link->getLoadDirections(objectID);
       Index iJ(0,ld.cols()-1);
-      cout << "Error: no implementation of updatew for connections in BodyRigidRel yet. Use Time-Stepping-Integrator instead of ODE-Integrator." << endl;
-      // (*itw) += 
+      Mat Wl(6,ld.cols(),NONINIT);
+      Wl(IF,iJ) = ld(IF,iJ);
+      Wl(IM,iJ) = ld(IM,iJ) + tilde(WrKP[portID])*Wl(IF,iJ) ;
+      Vec Wjs(6,NONINIT);
+      Wjs(IF) = AWK*j(IF)+crossProduct(WomegaK,crossProduct(WomegaK,WrKP[portID])); 
+      Wjs(IM) = AWK*j(IM);
+      (*itw) += it1->link->getw(objectID) + trans(Wl) * Wjs; 
       it1++; itw++;
     }
 
