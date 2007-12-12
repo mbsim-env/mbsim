@@ -80,7 +80,10 @@ namespace MBSim {
   void Connection::updateStage2(double t) {
     WvP0P1 = port[1]->getWvP()-port[0]->getWvP();
     WomP0P1 = port[1]->getWomegaP()-port[0]->getWomegaP();
-    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
+    if(KOSYID) 
+      gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
+    else
+      gd(IT) = trans(Wf)*(WvP0P1);
     gd(IR) = trans(Wm)*WomP0P1;
     updateKinetics(t);
   }
