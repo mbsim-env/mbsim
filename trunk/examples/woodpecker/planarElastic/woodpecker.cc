@@ -220,14 +220,15 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   balken->setPlotLevel(2);
   muffe ->setPlotLevel(2);
 
-  balken->createAMVisBody();
+  balken->setAMVisCylinder(5.e-3);
+  balken->setAMVisColor(-1.);
 //   balken->createAMVisBody();
 
   ObjObject *spechtobj = new ObjObject(specht->getFullName(),1,true);
   spechtobj->setColor(0);
   spechtobj->setObjFilename("objects/specht.obj");
   spechtobj->setInitialTranslation(-0.01, 0.01, 0);
-  spechtobj->setInitialRotation(-1.570796, 0, 0);
+  spechtobj->setInitialRotation(-M_PI/2., 0, 0);
   spechtobj->setScaleFactor(0.04);
   specht->setAMVisBody(spechtobj);  
 

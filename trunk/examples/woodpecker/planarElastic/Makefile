@@ -2,8 +2,8 @@ CC = g++
 sources = main.cc woodpecker.cc
 libsources = 
 objects = $(sources:.cc=.o) 
-CPPFLAGS= -g3 -Wall `pkg-config --cflags mbsim`
-Target = woodpecker
+CPPFLAGS= -O2 -Wall `pkg-config --cflags mbsim`
+Target = main
 
 $(Target) : $(objects) Makefile
 	$(CC) -o $@ $(objects) `pkg-config --libs mbsim`
