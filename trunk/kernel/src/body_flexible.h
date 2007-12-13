@@ -113,6 +113,8 @@ namespace MBSim {
       AMVis::ElasticBody *bodyAMVis;
       /** flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
+      /** float to pass to AMVis-object */
+      float AMVisColor;
 #endif
 
     public:
@@ -143,6 +145,10 @@ namespace MBSim {
 	\param binary_ for binary or ASCII data format in pos-file
 	*/
       void createAMVisBody(bool binary_) {boolAMVis = true; boolAMVisBinary = binary_;}
+      /*! set color for AMVis-object
+	\param color float; [0;1] blue - green - red; out of these bounds default color is used
+	*/
+      void setAMVisColor(float color) {AMVisColor = color;}
 #endif
 
        /*! pre-definition for method giving JACOBIAN-matrix at contour-point S,

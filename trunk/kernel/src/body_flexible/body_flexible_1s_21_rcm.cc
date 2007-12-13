@@ -114,6 +114,7 @@ namespace MBSim {
       RCMbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
       RCMbody->setCylinder(AMVisRadius);
       RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
+      RCMbody->setColor(AMVisColor);
  
       bodyAMVis = RCMbody;
     } 
