@@ -80,6 +80,7 @@ namespace MBSim {
       ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
       BTAbody->setElementLength(element[0].l0);
       BTAbody->setRadius(static_cast<CylinderFlexible*>(contourCyl)->getRadius());
+      BTAbody->setColor(AMVisColor);
 
       float amvisJ[3][3];
       for(int i=0;i<3;i++)
