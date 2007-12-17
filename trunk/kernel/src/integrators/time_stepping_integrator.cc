@@ -61,9 +61,13 @@ namespace MBSim {
 
     double tPlot = 0.;
     ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
-	cout.setf(ios::scientific, ios::floatfield);
-	int stepPlot =(int) (1./dtPlot);
-	
+    cout.setf(ios::scientific, ios::floatfield);
+//	int stepPlot =(int) (1./dtPlot);
+
+    int stepPlot =(int) (dtPlot/dt + 0.5);
+    assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
+
+
     int iter = 0;
 //    double dt0 = dt;
     int step = 0;   
@@ -79,16 +83,27 @@ namespace MBSim {
       // rzeit << "Zeit: " << t << endl;
       // long clock1 = clock();
       integrationSteps++;
-      if((t+dt)*stepPlot >= step) { // plotten
-		step++;
-		system.plot(z,t,dt);
-		double s1 = clock();
-		time += (s1-s0)/CLOCKS_PER_SEC;
-		s0 = s1; 
-		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
-		tPlot += dtPlot;
+      if( (step*stepPlot - integrationSteps) < 0) {
+	step++;
+	system.plot(z,t,dt);
+	double s1 = clock();
+	time += (s1-s0)/CLOCKS_PER_SEC;
+	s0 = s1; 
+	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+	if(output)
+	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+	tPlot += dtPlot;
       }
+////      if((t+dt)*stepPlot >= step) { // plotten
+////		step++;
+////		system.plot(z,t,dt);
+////		double s1 = clock();
+////		time += (s1-s0)/CLOCKS_PER_SEC;
+////		s0 = s1; 
+////		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+////		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
+////		tPlot += dtPlot;
+////      }
       // long clock1b = clock();
 
       // if(fabs(tPlot-t)*dt < 1e-14) {
