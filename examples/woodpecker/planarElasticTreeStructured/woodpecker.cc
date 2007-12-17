@@ -12,6 +12,7 @@
 #include "connection_rigid.h"
 #include "connection_flexible.h"
 #include "spring_rotational_rel.h"
+#include "tree_rigid.h"
 
 #include "cuboid.h"
 #include "cylinder.h"
