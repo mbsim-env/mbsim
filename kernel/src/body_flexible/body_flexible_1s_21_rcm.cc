@@ -498,34 +498,34 @@ namespace MBSim {
 
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21RCM::initRelaxed(double alpha) {
+    Vec q0Dummy(q0.size(),INIT,0.0);
     if(!initialized) {
       alphaRelax = alpha;
-    }
-    else
-    {
+    } else {
       if(openStructure) {
 	Vec direction(2);
 	direction(0) = cos(alpha);
 	direction(1) = sin(alpha);
 
 	for(int i=0;i<=Elements;i++) {
-	  q0(5*i+0,5*i+1) = direction*L/Elements*i;
-	  q0(5*i+2)        = alpha;
+	  q0Dummy(5*i+0,5*i+1) = direction*L/Elements*i;
+	  q0Dummy(5*i+2)        = alpha;
 	}
-      }
-      else {
+      } else {
 	double R  = L/(2*M_PI);
 	double a_ = sqrt(R*R + (balken->l0*balken->l0)/16.) - R;
 
 	for(int i=0;i<Elements;i++) {
 	  double alpha_ = i*(2*M_PI)/Elements;
-	  q0(5*i+0) = R*cos(alpha_);
-	  q0(5*i+1) = R*sin(alpha_);
-	  q0(5*i+2) = alpha_ + M_PI/2.;
-	  q0(5*i+3) = a_;
-	  q0(5*i+4) = a_;
+	  q0Dummy(5*i+0) = R*cos(alpha_);
+	  q0Dummy(5*i+1) = R*sin(alpha_);
+	  q0Dummy(5*i+2) = alpha_ + M_PI/2.;
+	  q0Dummy(5*i+3) = a_;
+	  q0Dummy(5*i+4) = a_;
 	}
       }
+      setq0(q0Dummy);
+      setu0(Vec(q0Dummy.size(),INIT,0.0));
     }
   }
 

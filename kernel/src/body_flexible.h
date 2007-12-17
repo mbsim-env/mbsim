@@ -238,6 +238,8 @@ namespace MBSim {
       void updateudRef(Vec ud_)  { ud >> ud_;}
       void updatehRef(Vec h_)    { h  >> h_ ;}
       void updaterRef(Vec r_)    { r  >> r_ ;}
+      void setq0(Vec q0_)        { Body::setq0(q0_); q>>q0; }
+      void setu0(Vec u0_)        { Body::setu0(u0_); u>>u0; }
   };
 
   //####################################################
