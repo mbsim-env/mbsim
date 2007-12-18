@@ -1,0 +1,20 @@
+set size square
+
+set xlabel "x" 
+set ylabel "z"
+
+set key spacing 3  
+
+  plot "plot/Ball_0.01.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.01"
+replot "plot/Ball_0.02.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.02"
+replot "plot/Ball_0.04.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.04"
+replot "plot/Ball_0.08.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.08"
+replot "plot/Ball_0.16.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.16"
+replot "plot/Ball_0.32.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.32"
+replot "plot/Ball_0.64.Ball.plt" u 2:4 w l linewidth 4 title "mu=0.64"
+
+set terminal png size 1024,1024 giant transparent enhanced
+set output "path_mu_variation.png"
+replot
+
+set terminal X11

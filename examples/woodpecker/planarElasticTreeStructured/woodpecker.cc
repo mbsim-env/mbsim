@@ -205,7 +205,9 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   balken->setPlotLevel(2);
   muffe ->setPlotLevel(2);
 
-  balken->createAMVisBody(false);
+//  balken->setAMVisCylinder(0.01);
+  balken->setAMVisCuboid(0.01,0.01);
+//  balken->createAMVisBody(false);
 
   ObjObject *spechtobj = new ObjObject(specht->getFullName(),1,true);
   spechtobj->setColor(0);
