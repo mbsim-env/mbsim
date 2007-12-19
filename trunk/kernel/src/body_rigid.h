@@ -116,6 +116,8 @@ namespace MBSim {
       const Mat& getJT() const {return JT;}
       const Mat& getJR() const {return JR;}
 
+      const Mat& getl() const {return l;}
+
       void plot(double t, double dt = 1);
       void plotParameters();
       void initPlotFiles();
