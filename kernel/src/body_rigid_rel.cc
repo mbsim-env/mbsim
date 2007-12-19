@@ -251,53 +251,13 @@ namespace MBSim {
 
   void BodyRigidRel::plot(double t, double dt) {
 
-    static Vec LG(6);
-
     BodyRigid::plot(t); 
 
-    if(tree->plotLevel>2) {
-      if(precessor==0)
-	LG.init(0);
-    }
+    for(int i=0; i<l.size(); ++i)
+      plotfile<<" "<<l(i);
 
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->plot(t,dt);
-    }
-
-    if(tree->plotLevel>2) {
-
-      vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
-      vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
-      for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
-	int portID = it1->ID;
-	int objectID = it1->objectID;
-	WLtmp = it1->link->getLoadDirections(objectID)*it1->link->getla()/dt;
-	l(0,2) += trans(AWK)*WFtmp;
-	l(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKP[portID],WFtmp));
-	it1++;
-      }
-
-      for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
-	if(it2->link->isActive()) {
-	  int objectID = it2->objectID;
-	  WLtmp = it2->link->getLoadDirections(objectID)*it2->link->getla()/dt;
-	  l(0,2) += trans(AWK)*WFtmp;
-	  Vec WrKC = linkSetValuedContourData[i].link->getWrOC(objectID)-WrOK;
-	  l(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKC,WFtmp));
-	}
-	it2++; 
-      } 
-
-      LG = (Mh*J(Index(0,5),Index(0,getIuR().end()))*tree->getud()(0,getIuR().end())/dt-l)-LG;
-
-      Vec WLG(6,NONINIT);
-      WLG(0,2) = AWK*LG(0,2);
-      WLG(3,5) = AWK*LG(3,5);
-      for(int i=0; i<WLG.size(); ++i)
-	plotfile<<" "<<WLG(i);
-      if(precessor) {
-	LG = -trans(C)*LG;
-      } 
     }
   }
 
@@ -570,4 +530,42 @@ namespace MBSim {
     BodyRigid::addContour(contour, KrKC_, AKC_);
     tree->addContour(contour);
   }
+
+  void BodyRigidRel::updateKLC(double t, double dt) {
+
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->updateKLC(t,dt);
+    }
+
+    Vec KLC = l;
+
+    vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
+    vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+      int portID = it1->ID;
+      int objectID = it1->objectID;
+      WLtmp = it1->link->getLoadDirections(objectID)*it1->link->getla()/dt;
+      KLC(0,2) += trans(AWK)*WFtmp;
+      KLC(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKP[portID],WFtmp));
+      it1++;
+    }
+
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
+      if(it2->link->isActive()) {
+	int objectID = it2->objectID;
+	WLtmp = it2->link->getLoadDirections(objectID)*it2->link->getla()/dt;
+	KLC(0,2) += trans(AWK)*WFtmp;
+	Vec WrKC = linkSetValuedContourData[i].link->getWrOC(objectID)-WrOK;
+	KLC(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKC,WFtmp));
+      }
+      it2++; 
+    } 
+
+    KLC = Mh*J(Index(0,5),Index(0,getIuR().end()))*tree->getud()(0,getIuR().end())/dt-KLC;
+
+    for(unsigned int i=0; i<successor.size(); i++) {
+      KLC += trans(successor[i]->getC())*successor[i]->getl();
+    }
+  }
+
 }

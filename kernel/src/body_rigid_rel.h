@@ -58,6 +58,7 @@ namespace MBSim {
     virtual void updater(double t);
     virtual void updatedq(double t, double dt);
     virtual void updateqd(double t);
+    const SqrMat& getC() const {return C;}
 
     void updateM(double t);
 
@@ -87,6 +88,7 @@ namespace MBSim {
 
     //const Vec computeWvS()  const {return WvK  + crossProduct(KomegaK,WrKS);}
 
+    void updateKLC(double t, double dt = 1);
 
     double computeKineticEnergy();
     double computeKineticEnergyBranch();
