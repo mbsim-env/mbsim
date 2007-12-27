@@ -79,6 +79,16 @@ namespace MBSim {
     }
   }
 
+  void BodyRigidAbs::initPlotFiles() {
+
+    BodyRigid::initPlotFiles();
+  }
+
+  void BodyRigidAbs::plot(double t, double dt) {
+
+    BodyRigid::plot(t); 
+  }
+
   void BodyRigidAbs::updateCenterOfGravity(double t) {
 
     (this->*updateAK0K)();
@@ -185,4 +195,37 @@ namespace MBSim {
     ud = slvLLFac(LLM, h*dt +r);
   }
 
+  void BodyRigidAbs::updateKLC(double t, double dt) {
+
+    Vec KLC = l;
+    Vec KF = trans(AWK)*WF;
+    Vec KM = trans(AWK)*WM;
+    KLC(0,2) = KF - m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS));
+    KLC(3,5) = KM + crossProduct(I*KomegaK,KomegaK);
+    J(Index(0,2),iT) = trans(AWK)*JT;
+
+    vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
+    vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
+    for(unsigned int i=0; i<linkSetValuedPortData.size(); i++) {
+      int portID = it1->ID;
+      int objectID = it1->objectID;
+      WLtmp = it1->link->getLoadDirections(objectID)*it1->link->getla()/dt;
+      KLC(0,2) += trans(AWK)*WFtmp;
+      KLC(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKP[portID],WFtmp));
+      it1++;
+    }
+
+    for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
+      if(it2->link->isActive()) {
+	int objectID = it2->objectID;
+	WLtmp = it2->link->getLoadDirections(objectID)*it2->link->getla()/dt;
+	KLC(0,2) += trans(AWK)*WFtmp;
+	Vec WrKC = linkSetValuedContourData[i].link->getWrOC(objectID)-WrOK;
+	KLC(3,5) += trans(AWK)*(WMtmp + crossProduct(WrKC,WFtmp));
+      }
+      it2++; 
+    } 
+
+    KLC = Mh*J*ud/dt-KLC;
+  }
 }
