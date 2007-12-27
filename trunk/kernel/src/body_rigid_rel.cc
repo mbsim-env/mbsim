@@ -240,7 +240,7 @@ namespace MBSim {
 
     if(tree->plotLevel>2) {
       for(int i=0; i<6; ++i)
-	plotfile <<"# "<< plotNr++ << ": LG(" << i << ")" << endl;
+	plotfile <<"# "<< plotNr++ << ": KLC(" << i << ")" << endl;
     }
 
     for(unsigned int i=0; i<successor.size(); i++) {
@@ -253,7 +253,7 @@ namespace MBSim {
 
     BodyRigid::plot(t); 
 
-    for(int i=0; i<l.size(); ++i)
+    for(int i=0; i<6; ++i)
       plotfile<<" "<<l(i);
 
     for(unsigned int i=0; i<successor.size(); i++) {

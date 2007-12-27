@@ -156,8 +156,6 @@ namespace MBSim {
 
   void TreeRigid::plot(double t, double dt) {
     Object::plot(t,dt);
-    if(plotLevel>2)
-      root->updateKLC(t,dt);
     root->plot(t,dt);
   }
 
