@@ -238,11 +238,6 @@ namespace MBSim {
 
     BodyRigid::initPlotFiles();
 
-    if(tree->plotLevel>2) {
-      for(int i=0; i<6; ++i)
-	plotfile <<"# "<< plotNr++ << ": KLC(" << i << ")" << endl;
-    }
-
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initPlotFiles();
     }
@@ -252,9 +247,6 @@ namespace MBSim {
   void BodyRigidRel::plot(double t, double dt) {
 
     BodyRigid::plot(t); 
-
-    for(int i=0; i<6; ++i)
-      plotfile<<" "<<l(i);
 
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->plot(t,dt);
