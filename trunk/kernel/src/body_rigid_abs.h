@@ -57,6 +57,12 @@ namespace MBSim {
       void (BodyRigidAbs::*updateh_)();
       void updateh1();
       void updateh2();
+
+      void updateKLC(double t, double dt = 1);
+
+      void initPlotFiles();
+      void plot(double t, double dt = 1);
+
     public:
 
       BodyRigidAbs(const string &name);
