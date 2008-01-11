@@ -417,43 +417,7 @@ updateKinematics(0.0);
     return Kp;
   }
 
-
-  //####################################################
-  //####################################################
-
-  BodyFlexible1s::BodyFlexible1s(const string &name) 
-    :BodyFlexible(name), userContourNodes(0) { 
-
-//      contourR = new Contour1sFlexible("R");
-//      contourL = new Contour1sFlexible("L");
-//      ContourPointData cpTmp;
-//      BodyFlexible::addContour(contourR,cpTmp,false);
-//      BodyFlexible::addContour(contourL,cpTmp,false);
-    }
-
-  void BodyFlexible1s::addPort(const string &name, const double &s) {
-    ContourPointData temp;
-    temp.type  = CONTINUUM;
-    temp.alpha = Vec(1,INIT,s);
-    addPort(name,temp); 
-  }
-  void BodyFlexible1s::addContour(Contour *contour, const double &s) {
-    ContourPointData temp;
-    temp.type  = CONTINUUM;
-    temp.alpha = Vec(1,INIT,s);
-    addContour(contour,temp); 
-  }
-
-  SqrMat BodyFlexible1s::computeAWK  (const ContourPointData &data) {
-    SqrMat AWK(3,NONINIT);
-    AWK.col(0) = (computeWt(data)).col(0);
-    AWK.col(1) =  computeWn(data);
-    AWK.col(2) =  crossProduct(AWK.col(0),AWK.col(1));
-    AWK.col(2) /= nrm2(AWK.col(2));
-    return AWK.copy();
-  }
-
-  SqrMat BodyFlexible1s::computeAWKp(const ContourPointData &data) {
+  SqrMat BodyFlexible::computeAWKp(const ContourPointData &data) {
     static double eps = epsroot();
 
     ContourPointData dataMod;
@@ -477,18 +441,58 @@ updateKinematics(0.0);
   }
 
 
+  //####################################################
+  //####################################################
 
+  BodyFlexible1s::BodyFlexible1s(const string &name):BodyFlexible(name), userContourNodes(0) {}
+
+  void BodyFlexible1s::addPort(const string &name, const double &s) {
+    ContourPointData temp;
+    temp.type  = CONTINUUM;
+    temp.alpha = Vec(1,INIT,s);
+    addPort(name,temp); 
+  }
+  void BodyFlexible1s::addContour(Contour *contour, const double &s) {
+    ContourPointData temp;
+    temp.type  = CONTINUUM;
+    temp.alpha = Vec(1,INIT,s);
+    addContour(contour,temp); 
+  }
+
+  SqrMat BodyFlexible1s::computeAWK  (const ContourPointData &data) {
+    SqrMat AWK(3,NONINIT);
+    AWK.col(0) = (computeWt(data)).col(0);   // ! Achtung: so nicht allgemeingueltig! TODO; danach evtl allgemeine Implementierung in BodyFlexible???
+    AWK.col(1) =  computeWn(data);
+    AWK.col(2) =  crossProduct(AWK.col(0),AWK.col(1));
+    AWK.col(2) /= nrm2(AWK.col(2));
+    return AWK.copy();
+  }
+
+  //####################################################
+  //####################################################
+  BodyFlexible2s::BodyFlexible2s(const string &name) :BodyFlexible(name) {}
+  
+  void BodyFlexible2s::addPort(const string &name, const Vec &alpha) {
+    ContourPointData temp;
+    temp.type  = CONTINUUM;
+    temp.alpha = alpha;
+    addPort(name,temp); 
+  }
+  void BodyFlexible2s::addContour(Contour *contour, const Vec &alpha) {
+    ContourPointData temp;
+    temp.type  = CONTINUUM;
+    temp.alpha = alpha;
+    addContour(contour,temp); 
+  }
+
+  SqrMat BodyFlexible2s::computeAWK  (const ContourPointData &data) {
+    SqrMat AWK(3,NONINIT);
+	Mat WT = computeWt(data);
+    AWK.col(0) = WT.col(0);
+    AWK.col(1) = WT.col(1);
+    AWK.col(2) =  crossProduct(AWK.col(0),AWK.col(1));
+//    AWK.col(2) /= nrm2(AWK.col(2));
+    return AWK.copy();
+  }
 
 }
-
-  /////////  //####################################################
-  /////////  
-  /////////  BodyFlexible2s::BodyFlexible2s(const string &name) 
-  /////////      :BodyFlexible(name) {
-  /////////  
-  /////////      contourR = new Contour2sFlexible("R");
-  /////////      contourL = new Contour2sFlexible("L");
-  /////////      ContourPointData cpTmp;
-  /////////      BodyFlexible::addContour(contourR,cpTmp,false);
-  /////////      BodyFlexible::addContour(contourL,cpTmp,false);
-  /////////  }
