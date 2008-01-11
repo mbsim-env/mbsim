@@ -251,34 +251,6 @@ namespace MBSim {
   ///     Cb = Cb_/nrm2(Cb_);
   ///   }
 
-  ///   Contour2sFlexible::Contour2sFlexible(const string &name) : Contour2s(name) {
-  ///   }
-  ///   Vec Contour2sFlexible::transformCW(const Vec& WrPoint) {
-  ///       return (static_cast<BodyFlexible2s*>(parent))->transformCW(WrPoint);
-  ///   }
-  ///   Mat Contour2sFlexible::computeWt  (const Vec& s) {
-  ///       ContourPointData temp;
-  ///       temp.alpha = s;
-  ///       return (static_cast<BodyFlexible2s*>(parent))->computeWt(temp);
-  ///   }
-  ///   Vec Contour2sFlexible::computeWn  (const Vec& s) {
-  ///       ContourPointData temp;
-  ///       temp.alpha = s;
-  ///       if(Cb(2) < 0.0 )
-  ///   	return   (static_cast<BodyFlexible2s*>(parent))->computeWn(temp); // Vorzeichenkonvent: Normale zeigt ins Material = "Verbotener" Bereich
-  ///       else
-  ///   	return - (static_cast<BodyFlexible2s*>(parent))->computeWn(temp); // Vorzeichenkonvent: Normale zeigt ins Material = "Verbotener" Bereich
-  ///   }
-  ///   Vec Contour2sFlexible::computeWrOC(const Vec& s) {
-  ///       return (static_cast<BodyFlexible2s*>(parent))->computeWrOC(s,Cb);
-  ///   }
-  ///   Vec Contour2sFlexible::computeWvC (const Vec& s) {
-  ///       ContourPointData temp;
-  ///       temp.alpha = s;
-  ///       return (static_cast<BodyFlexible2s*>(parent))->computeWvC(temp);
-  ///   }
-  ///   
-
   /* Contour Interpolation */
   ContourInterpolation::ContourInterpolation(const string &name,int parameters_,int nPoints_) : Contour(name),contourParameters(parameters_),numberOfPoints(nPoints_) {}
   void ContourInterpolation::setPoint(Point *point_, int n) 

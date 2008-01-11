@@ -28,6 +28,7 @@
 namespace MBSim {
 
   class FiniteElement1s21ANCF;
+  class Contour1sFlexible;
 
   /*! Absolute Nodal Coordinate Formulation (Prof. A.A. Shabana) for flexible planar beam systems, implementation analogous to BodyFlexible1s21RCM
    *
