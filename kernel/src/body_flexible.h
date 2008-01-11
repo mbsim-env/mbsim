@@ -32,8 +32,8 @@ namespace AMVis {class ElasticBody;}
 
 namespace MBSim {
 
-  class Contour1sFlexible;
-  class Contour2sFlexible;
+//  class Contour1sFlexible;
+//  class Contour2sFlexible;
 
   /*! \brief Upmost class for flexible body implementation
    *
@@ -118,14 +118,10 @@ namespace MBSim {
 #endif
 
     public:
-      /*!
-       * \param name  name of body
-       */
+      /*!  \param name  name of body */
       BodyFlexible(const string &name); 
 
-      /*!
-       * destructor mainly handles memory-cleanup
-       */
+      /*!  destructor mainly handles memory-cleanup */
       ~BodyFlexible(); 
 
       /*! set JACOBIAN-matrix BodyFlexible::JT, \f$\vJ_R\f$ of translations
@@ -179,11 +175,13 @@ namespace MBSim {
        */
       virtual Vec computeWn  (const ContourPointData &data) = 0;
       /*! compute trafo-matrix \f$\boldsymbol{A}_{WK}\f$ from contour to world system at s
-       * \param data contour parameter set
+       * \param data contour parameter
        */
       virtual SqrMat computeAWK (const ContourPointData &data) = 0;
-      /*! compute time derivative \f$\dot{\boldsymbol{A}}_{WK}\f$ of \f$\boldsymbol{A}_{WK}\f$*/
-      virtual SqrMat computeAWKp(const ContourPointData &data) = 0;
+      /*! compute time derivative \f$\dot{\boldsymbol{A}}_{WK} = \tilde{\boldsymbol{\omega}}_K\boldsymbol{A}_{WK}\f$ of \f$\boldsymbol{A}_{WK}\f$
+       * \param data contour parameter
+       */
+      virtual SqrMat computeAWKp(const ContourPointData &data);
 
       /*! compute absolute position in world system to body contour at s
        * \param data contour parameter set
@@ -243,9 +241,7 @@ namespace MBSim {
   };
 
   //####################################################
-  /*! \brief 
-   * Flexible bodies defined by one material (or LAGRANGE) coordinate
-   */
+  /*! \brief Flexible bodies defined by one material (or LAGRANGE) coordinate */
   class BodyFlexible1s : public BodyFlexible {
 
     protected:
@@ -253,11 +249,7 @@ namespace MBSim {
       Vec userContourNodes;
 
     public:
-      /*! 
-       * \param name  name of body
-       * \param qSize default size of Object::q, depends on discretisation level, to be defined later but needed due to inheritage
-       * \param uSize default size of Object::u, depends on discretisation level, to be defined later but needed due to inheritage
-       */
+      /*! \param name  name of body */
       BodyFlexible1s(const string &name); 
 
       /*! add Port at Contour parameter s
@@ -268,7 +260,7 @@ namespace MBSim {
       using BodyFlexible::addPort;
       /*! add additional Contour at specified position
        * \param contour Contour to add
-       * \param s       position pf Contour
+       * \param s       position of Contour reference point
        */
       void addContour(Contour *contour, const double &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addContour(contour,temp); }
       using BodyFlexible::addContour;
@@ -280,60 +272,86 @@ namespace MBSim {
       using BodyFlexible::computeWvC;
       using BodyFlexible::computeWomega;
 
-      /*! compute vector describing tangential direction to body contour at alpha
-      */
+      /*! compute vector describing tangential direction to body contour at alpha */
       Mat computeWt  (const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWt(temp); }
 
-      /*! compute vector describing normal direction to bodies contour at alpha
-      */
+      /*! compute vector describing normal direction to bodies contour at alpha */
       Vec computeWn  (const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWn(temp); }
 
-      /*! compute position in world system of material point at alpha
-      */
+      /*! compute position in world system of material point at alpha */
       Vec computeWrOC(const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWrOC(temp); }
 
-      /*! compute absolute velocity in world of material point at alpha
-      */
+      /*! compute absolute velocity in world of material point at alpha */
       Vec computeWvC (const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWvC(temp); }
 
-      /*! compute absolute angular velocity in world of material point at alpha
-      */
+      /*! compute absolute angular velocity in world of material point at alpha */
       Vec computeWomega(const double &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,alpha); return computeWomega(temp); }
 
       SqrMat computeAWK (const ContourPointData &data); 
-      SqrMat computeAWKp(const ContourPointData &data); 
+//      SqrMat computeAWKp(const ContourPointData &data); 
 
        //---------------------------------------------------------------------------
-      /*! definition of BodyFlexible1s::userContourNodes for search-fields of contact-search
-      */
+      /*! definition of BodyFlexible1s::userContourNodes for search-fields of contact-search */
       void setContourNodes(const Vec& nodes) {userContourNodes = nodes;}
   };
 
-//////////// FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK ----
-///////    //####################################################
-///////    /*! \brief
-///////     * Flexible bodies defined by two material (or LAGRANGE) coordinate
-///////     * */
-///////    class BodyFlexible2s : public BodyFlexible {
-///////    
-///////      protected:
-///////        Contour2sFlexible *contourR, *contourL;
-///////    
-///////      public:
-///////        /*! 
-///////         * \param name  name of body
-///////         * \param qSize default size of Object::q, depends on discretisation level, to be defined later but needed due to inheritage
-///////         * \param uSize default size of Object::u, depends on discretisation level, to be defined later but needed due to inheritage
-///////         */
-///////        BodyFlexible2s(const string &name); 
-///////    
-///////        Vec computeWrOC(const Vec& s) {return computeWrOC(s,Vec("[1.0;0.0;0.0]"));}
-///////        virtual Vec computeWrOC(const Vec& s, const Vec& Cb) = 0;
-///////        virtual Vec transformCW(const Vec& WrPoint) = 0;
-///////        
-///////    //    void setContourNodes(const Mat& nodes) {userContourNodes = nodes;}
-///////    };
-//////////// FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK - FUTURE WORK ----
+  //####################################################
+  /*! \brief Flexible bodies defined by two material (or LAGRANGE) coordinate */
+  class BodyFlexible2s : public BodyFlexible {
+
+	protected:
+	  /** grid for contact point detection given to Contour1sFlexible */
+	  Mat userContourNodes;
+
+	public:
+	  /*! \param name  name of body */
+	  BodyFlexible2s(const string &name); 
+
+      /*! add Port at Contour parameter s
+       *  \param name of Port
+       *  \param s    position of Port
+       */
+      void addPort(const string &name, const Vec &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addPort(name,temp); }
+      using BodyFlexible::addPort;
+      /*! add additional Contour at specified position
+       * \param contour Contour to add
+       * \param s       position of Contour reference point
+       */
+      void addContour(Contour *contour, const Vec &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addContour(contour,temp); }
+      using BodyFlexible::addContour;
+
+      //---------------------------------------------------------------------------
+      using BodyFlexible::computeWt;
+      using BodyFlexible::computeWn;
+      using BodyFlexible::computeWrOC;
+      using BodyFlexible::computeWvC;
+      using BodyFlexible::computeWomega;
+
+      /*! compute vector describing tangential direction to body contour at alpha */
+      Mat computeWt  (const Vec &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = alpha; return computeWt(temp); }
+
+      /*! compute vector describing normal direction to bodies contour at alpha */
+      Vec computeWn  (const Vec &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = alpha; return computeWn(temp); }
+
+      /*! compute position in world system of material point at alpha */
+      Vec computeWrOC(const Vec &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = alpha; return computeWrOC(temp); }
+
+      /*! compute absolute velocity in world of material point at alpha */
+      Vec computeWvC (const Vec &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = alpha; return computeWvC(temp); }
+
+      /*! compute absolute angular velocity in world of material point at alpha */
+      Vec computeWomega(const Vec &alpha) { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = alpha; return computeWomega(temp); }
+
+      SqrMat computeAWK (const ContourPointData &data); 
+
+///	  Vec computeWrOC(const Vec& s) {return computeWrOC(s,Vec("[1.0;0.0;0.0]"));}
+///	  virtual Vec computeWrOC(const Vec& s, const Vec& Cb) = 0;
+///	  virtual Vec transformCW(const Vec& WrPoint) = 0;
+
+	  //---------------------------------------------------------------------------
+	  /*! definition of BodyFlexible1s::userContourNodes for search-fields of contact-search */
+	  void setContourNodes(const Mat& nodes) {userContourNodes = nodes;}
+  };
 
 }
 #endif
