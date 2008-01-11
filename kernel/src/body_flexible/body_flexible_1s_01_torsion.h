@@ -27,9 +27,9 @@
 
 namespace MBSim {
 
-  /*! Comment
-   *
-   * */
+//  class Contour1sFlexible;
+
+  /*! \brief torsional axis with polinomial ansatz system of order \f$n\f$ */
   class BodyFlexible1s01Torsion : public BodyFlexible1s {
     protected:
       int n;

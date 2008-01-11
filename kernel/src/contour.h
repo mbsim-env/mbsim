@@ -443,25 +443,6 @@ namespace MBSim {
       const Mat& getNodes() const {return nodes;}
   };
 
-  ///////  /*! \brief 2s flexible
-  ///////   *
-  ///////   * */
-  ///////  class Contour2sFlexible : public Contour2s {
-  ///////    protected:
-  ///////  	
-  ///////    public:
-  ///////      Contour2sFlexible(const string &name);
-  ///////  
-  ///////      Vec computeWb  (const Vec& s)       {return AWC*Cb;}
-  ///////      Vec transformCW(const Vec& WrPoint);
-  ///////  
-  ///////      Mat computeWt  (const Vec& s);
-  ///////      Vec computeWn  (const Vec& s);
-  ///////      Vec computeWrOC(const Vec& s);
-  ///////      Vec computeWvC (const Vec& s);
-  ///////  };
-
-
   /*! \brief Basis-Class for Contour interpolation between Point s, standard contact Point-ContourInterpolation is implemented
     special interpolations only need to provide (as derived class) the pure virtuals predefined here
     */

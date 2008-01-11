@@ -200,31 +200,31 @@ namespace MBSim {
 
   Mat BodyFlexible1s21RCM::computeJacobianMatrix(const ContourPointData &S_) {
     static Index All(0,3-1);
-    Mat Jacobian(qSize,3,INIT,0.0);
+	Mat Jacobian(qSize,3,INIT,0.0);
 
-    // ForceElement on continuum
-    if(S_.type == CONTINUUM)
-    {
-      double s = S_.alpha(0); // globaler KontParameter
-      double sLokal = BuildElement(s);
-      Mat Jtmp = balken->JGeneralized(qElement,sLokal);
+	// ForceElement on continuum
+	if(S_.type == CONTINUUM)
+	{
+	  double s = S_.alpha(0); // globaler KontParameter
+	  double sLokal = BuildElement(s);
+	  Mat Jtmp = balken->JGeneralized(qElement,sLokal);
 
-      if(CurrentElement<Elements-1 || openStructure) {
-	Index Dofs(5*CurrentElement,5*CurrentElement+7);
-	Jacobian(Dofs,All) = Jtmp;
-      }
-      else { // Ringschluss
-	Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
-	Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
-      }
+	  if(CurrentElement<Elements-1 || openStructure) {
+		Index Dofs(5*CurrentElement,5*CurrentElement+7);
+		Jacobian(Dofs,All) = Jtmp;
+	  }
+	  else { // Ringschluss
+		Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
+		Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
+	  }
 
-    }
-    // ForceElement on node
-    else if(S_.type == NODE)
-    {
-      int node = S_.ID;
-      Index Dofs(5*node,5*node+2);
-      Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
+	}
+	// ForceElement on node
+	else if(S_.type == NODE)
+	{
+	  int node = S_.ID;
+	  Index Dofs(5*node,5*node+2);
+	  Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
     }
 
     return Jacobian;

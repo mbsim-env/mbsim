@@ -30,6 +30,7 @@ namespace AMVis {class ElasticBody1s21RCM;}
 namespace MBSim {
 
   class FiniteElement1s21RCM;
+  class Contour1sFlexible;
 
   /*! \brief Model for beams ...
    *
