@@ -25,7 +25,13 @@
 
 #include "link.h"
 
+#ifdef HAVE_AMVIS
+namespace AMVis {class Spring;}
+#endif
+
 namespace MBSim {
+
+  class DataInterfaceBase;
 
   /*! \brief Class for connections: Constraints on Ports
    *
@@ -38,6 +44,11 @@ namespace MBSim {
       Mat Wf, Wm;
       int KOSYID;
       Vec WrP0P1, WvP0P1, WomP0P1;
+#ifdef HAVE_AMVIS
+      AMVis::Spring *springAMVis;
+      DataInterfaceBase *springAMVisUserFunctionColor;
+#endif
+
 
     public: 
       Connection(const string &name, bool setValued);
@@ -55,6 +66,12 @@ namespace MBSim {
       virtual void updateKinetics(double t) = 0;
       void updatexd(double t);
       void updatedx(double t, double dt);
+      void initPlotFiles(); 
+      void plot(double t, double dt=1);
+
+#ifdef HAVE_AMVIS
+      void setAMVisSpring(AMVis::Spring *spring_, DataInterfaceBase* funcColor=0) {springAMVis= spring_; springAMVisUserFunctionColor= funcColor;}
+#endif
   };
 
 }
