@@ -31,9 +31,15 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0) {
+  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0), springAMVis(0), springAMVisUserFunctionColor(0) {
   }
 
+  Connection::~Connection() { 
+#ifdef HAVE_AMVIS   
+      delete springAMVis;
+      delete springAMVisUserFunctionColor;
+#endif
+}
   void Connection::calcSize() {
     LinkPort::calcSize();
     gSize = forceDir.cols()+momentDir.cols();
