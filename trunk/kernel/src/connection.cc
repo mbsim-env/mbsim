@@ -36,10 +36,10 @@ namespace MBSim {
 
   Connection::~Connection() { 
 #ifdef HAVE_AMVIS   
-      delete springAMVis;
-      delete springAMVisUserFunctionColor;
+    delete springAMVis;
+    delete springAMVisUserFunctionColor;
 #endif
-}
+  }
   void Connection::calcSize() {
     LinkPort::calcSize();
     gSize = forceDir.cols()+momentDir.cols();
@@ -132,7 +132,9 @@ namespace MBSim {
     LinkPort::initPlotFiles();
 
 #ifdef HAVE_AMVIS
-    springAMVis->writeBodyFile();
+    if (springAMVis) {
+      springAMVis->writeBodyFile();
+    }
 #endif
   }
 
@@ -141,22 +143,24 @@ namespace MBSim {
     LinkPort::plot(t,dt);
 
 #ifdef HAVE_AMVIS
-    Vec WrOToPoint;
-    Vec WrOFromPoint;
+    if (springAMVis) {
+      Vec WrOToPoint;
+      Vec WrOFromPoint;
 
-    WrOFromPoint = port[0]->getWrOP();
-    WrOToPoint   = port[1]->getWrOP();
-    if (springAMVisUserFunctionColor) {
-      double color;
-      color = ((*springAMVisUserFunctionColor)(t))(0);
-      if (color>1) color=1;
-      if (color<0) color=0;
-      springAMVis->setColor(color);
-    } 
-    springAMVis->setTime(t); 
-    springAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
-    springAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
-    springAMVis->appendDataset(0);
+      WrOFromPoint = port[0]->getWrOP();
+      WrOToPoint   = port[1]->getWrOP();
+      if (springAMVisUserFunctionColor) {
+	double color;
+	color = ((*springAMVisUserFunctionColor)(t))(0);
+	if (color>1) color=1;
+	if (color<0) color=0;
+	springAMVis->setColor(color);
+      } 
+      springAMVis->setTime(t); 
+      springAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
+      springAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
+      springAMVis->appendDataset(0);
+    }
   }
 #endif
 }
