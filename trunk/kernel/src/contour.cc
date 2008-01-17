@@ -113,6 +113,14 @@ namespace MBSim {
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
   Point::~Point() {}
+  void Point::init() {
+    Contour::init();
+    if(boolAMVis) {
+      AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
+      sphere->setRadius(0.01);
+      bodyAMVis = sphere;
+    }
+  }
 
   /* Line */
   Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {}
