@@ -26,7 +26,7 @@
 #include "link.h"
 
 #ifdef HAVE_AMVIS
-namespace AMVis {class Spring;}
+namespace AMVis {class CoilSpring;}
 #endif
 
 namespace MBSim {
@@ -45,8 +45,8 @@ namespace MBSim {
       int KOSYID;
       Vec WrP0P1, WvP0P1, WomP0P1;
 #ifdef HAVE_AMVIS
-      AMVis::Spring *springAMVis;
-      DataInterfaceBase *springAMVisUserFunctionColor;
+      AMVis::CoilSpring *coilspringAMVis;
+      DataInterfaceBase *coilspringAMVisUserFunctionColor;
 #endif
 
 
@@ -70,7 +70,7 @@ namespace MBSim {
       void plot(double t, double dt=1);
 
 #ifdef HAVE_AMVIS
-      void setAMVisSpring(AMVis::Spring *spring_, DataInterfaceBase* funcColor=0) {springAMVis= spring_; springAMVisUserFunctionColor= funcColor;}
+      void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
 #endif
   };
 

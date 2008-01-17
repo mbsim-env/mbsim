@@ -25,19 +25,19 @@
 #include "data_interface_base.h"
 
 #ifdef HAVE_AMVIS
-#include "spring.h"
+#include "coilspring.h"
 using namespace AMVis;
 #endif
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0), springAMVis(0), springAMVisUserFunctionColor(0) {
+  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
   }
 
   Connection::~Connection() { 
 #ifdef HAVE_AMVIS   
-    delete springAMVis;
-    delete springAMVisUserFunctionColor;
+    delete coilspringAMVis;
+    delete coilspringAMVisUserFunctionColor;
 #endif
   }
   void Connection::calcSize() {
@@ -132,8 +132,8 @@ namespace MBSim {
     LinkPort::initPlotFiles();
 
 #ifdef HAVE_AMVIS
-    if (springAMVis) {
-      springAMVis->writeBodyFile();
+    if (coilspringAMVis) {
+      coilspringAMVis->writeBodyFile();
     }
 #endif
   }
@@ -143,23 +143,23 @@ namespace MBSim {
     LinkPort::plot(t,dt);
 
 #ifdef HAVE_AMVIS
-    if (springAMVis) {
+    if (coilspringAMVis) {
       Vec WrOToPoint;
       Vec WrOFromPoint;
 
       WrOFromPoint = port[0]->getWrOP();
       WrOToPoint   = port[1]->getWrOP();
-      if (springAMVisUserFunctionColor) {
+      if (coilspringAMVisUserFunctionColor) {
 	double color;
-	color = ((*springAMVisUserFunctionColor)(t))(0);
+	color = ((*coilspringAMVisUserFunctionColor)(t))(0);
 	if (color>1) color=1;
 	if (color<0) color=0;
-	springAMVis->setColor(color);
+	coilspringAMVis->setColor(color);
       } 
-      springAMVis->setTime(t); 
-      springAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
-      springAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
-      springAMVis->appendDataset(0);
+      coilspringAMVis->setTime(t); 
+      coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
+      coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
+      coilspringAMVis->appendDataset(0);
     }
   }
 #endif
