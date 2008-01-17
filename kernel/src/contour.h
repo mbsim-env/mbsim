@@ -105,6 +105,7 @@ namespace MBSim {
       Point(const string &name);
       /*! Deconstructor */
       ~Point();
+      void init();
   };
 
   /*! \brief unbounded line with constant normal */
