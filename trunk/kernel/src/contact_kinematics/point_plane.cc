@@ -29,10 +29,7 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::assignContours(const vector<Contour*> &contour)
   {
-  	// ASSIGNCONTOURS treats the ordering of the bodies in connect-call
-	// INPUT	contour	Vector of the two body contours
-	
-    if(dynamic_cast<Point*>(contour[0])) {
+  	if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       iplane = 1;
       point = static_cast<Point*>(contour[0]);
@@ -48,11 +45,7 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::stage1(Vec &g, vector<ContourPointData> &cpData)
   {
-  	// STAGE1 computes normal distance in the possible contact point
-	// INPUT	g		Normal distance (OUTPUT)
-	//			cpData	Contact parameter (OUTPUT)
-	
-    Vec Wd; Wd = plane->getWrOP() - point->getWrOP();
+  	Vec Wd = plane->getWrOP() - point->getWrOP();
     cpData[iplane].Wn = plane->computeWn();
     cpData[ipoint].Wn = -cpData[iplane].Wn;
     g(0) = trans(cpData[iplane].Wn)*Wd;
@@ -60,19 +53,14 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData)
   {
-  	// STAGE2 computes tangential directions and normal velocities in contact point
-	// INPUT	g		Normal distance
-	//			gd		Normal velocity (OUTPUT)
-	//			cpData	Contact parameter (OUTPUT)
-	
-    Vec WrPC[2], WvC[2];
+  	Vec WrPC[2], WvC[2];
 
     cpData[ipoint].WrOC = point->getWrOP();
     cpData[iplane].WrOC = cpData[ipoint].WrOC+cpData[iplane].Wn*g;
     WrPC[iplane] = cpData[iplane].WrOC - plane->getWrOP();
     WvC[ipoint] = point->getWvP();
     WvC[iplane] = plane->getWvP()+crossProduct(plane->getWomegaC(),WrPC[iplane]);
-    Vec WvD; WvD = WvC[iplane] - WvC[ipoint]; 
+    Vec WvD = WvC[iplane] - WvC[ipoint]; 
     gd(0) = trans(cpData[iplane].Wn)*WvD;
 
     if(cpData[iplane].Wt.cols()) {

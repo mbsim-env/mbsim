@@ -132,7 +132,7 @@ namespace MBSim {
   void CircleSolid::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
 
   /* Circle Hollow */
-  CircleHollow::CircleHollow(const string &name) : Contour(name), Cb(3) {}
+  CircleHollow::CircleHollow(const string &name) : Contour(name), r(0.), Cb(3) {}
   void CircleHollow::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
 
   /* Frustum2D */
@@ -199,7 +199,7 @@ namespace MBSim {
   }
 
   /* Plane */
-  Plane::Plane(const string &name) : Contour(name) {}
+  Plane::Plane(const string &name) : Contour(name), Cn(3) {}
   void Plane::setCn(const Vec &n) {Cn = n/nrm2(n);}
 
   /* Area */
@@ -232,7 +232,7 @@ namespace MBSim {
   void Edge::setCe(const Vec &e) {Ce = e/nrm2(e);}
   
   /* Sphere */
-  Sphere::Sphere(const string &name) : Contour(name) {}
+  Sphere::Sphere(const string &name) : Contour(name), r(0.) {}
   void Sphere::init() 
   {
     Contour::init();
@@ -248,8 +248,8 @@ namespace MBSim {
   }
 
   /* Frustum */
-  Frustum::Frustum(const string &name) : Contour(name), a(3,INIT,0.), r(2,INIT,0.), h(0), outCont(false) {}
-  Frustum::Frustum(const string &name, bool outCont_) : Contour(name), a(3,INIT,0.), r(2,INIT,0.), h(0), outCont(outCont_) {}
+  Frustum::Frustum(const string &name) : Contour(name), a(3), r(2), h(0.), outCont(false) {}
+  Frustum::Frustum(const string &name, bool outCont_) : Contour(name), a(3), r(2), h(0.), outCont(outCont_) {}
   Frustum::~Frustum() {}
 
   /* Contour2s */

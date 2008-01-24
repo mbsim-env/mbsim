@@ -36,10 +36,7 @@ namespace MBSim {
 
   void TimeSteppingIntegrator::integrate(MultiBodySystem& system) 
   {
-  	// INTEGRATE starts the integration
-  	// INPUT	system	multibodysystem
-  	
-    assert(dtPlot >= dt);
+  	assert(dtPlot >= dt);
 
     double t = 0.;
 

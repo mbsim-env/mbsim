@@ -28,21 +28,14 @@ namespace MBSim {
 
   void Contact1sSearch::setEqualSpacing(const int &n, const double &x0, const double &dx)
   {
-  	// Set equally distanced nodes
-  	// INPUT	n	nnumber of search areas
-  	//			x0	starting point
-  	//			dx	width of search areas
-  	
-    Vec nodesTilde(n+1,NONINIT);
+  	Vec nodesTilde(n+1,NONINIT);
     for(int i=0;i<=n;i++) nodesTilde(i) = x0 + i*dx;
     nodes = nodesTilde;
   }
 
   double Contact1sSearch::slv()
   {
-  	// Find point with minimal distance at contour-parameter s
-  
-    Vec alphaC(nodes.size()-1); // root
+  	Vec alphaC(nodes.size()-1); // root
     Vec gbuf; // buffering distances for comparison in Regula-Falsi
     int nRoots = 0; // number of found roots
     

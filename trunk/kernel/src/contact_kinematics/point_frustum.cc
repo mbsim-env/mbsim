@@ -29,10 +29,7 @@ namespace MBSim {
 
 	  void ContactKinematicsPointFrustum::assignContours(const vector<Contour*> &contour)
 	  {
-	  		// ASSIGNCONTOURS treats the ordering of the bodies in connect-call
-			// INPUT	contour	Vector of the two body contours
-		
-	    	if(dynamic_cast<Point*>(contour[0])) {
+	  		if(dynamic_cast<Point*>(contour[0])) {
 	      		ipoint = 0;
 	      		ifrustum = 1;
 	      		point = static_cast<Point*>(contour[0]);
@@ -48,14 +45,10 @@ namespace MBSim {
 
 	  void ContactKinematicsPointFrustum::stage1(Vec &g, vector<ContourPointData> &cpData)
 	  {
-	  		// STAGE1 computes normal distance in the possible contact point
-			// INPUT	g		Normal distance (OUTPUT)
-			//			cpData	Contact parameter (OUTPUT)
-			
-			double eps = 5.e-2; // tolerance for rough contact description
-		    Vec Wd; Wd = point->getWrOP() - frustum->getWrOP(); // difference vector of Point and Frustum basis point in inertial FR
-		    Vec Wa; Wa = frustum->getAWC()*frustum->getAxis(); // axis in inertial FR
-		    Vec r; r = frustum->getRadii(); // radii of Frustum
+	  		double eps = 5.e-2; // tolerance for rough contact description
+		    Vec Wd = point->getWrOP() - frustum->getWrOP(); // difference vector of Point and Frustum basis point in inertial FR
+		    Vec Wa = frustum->getAWC()*frustum->getAxis(); // axis in inertial FR
+		    Vec r = frustum->getRadii(); // radii of Frustum
 		    double h = frustum->getHeight(); // height of Frustum	    
 		    double s = trans(Wd)*Wa; // projection of difference vector on axis
 		    double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
@@ -70,7 +63,7 @@ namespace MBSim {
 		    else {
 		    	if(outCont) { // contact on outer surface
 				      double  phi = atan((r(1) - r(0))/h); // half cone angle
-				      Vec b; b = Wd-s*Wa;
+				      Vec b = Wd-s*Wa;
 				      b /= d;
 				      cpData[ifrustum].Wn = sin(phi)*Wa - cos(phi)*b;
 				      cpData[ipoint].Wn  = -cpData[ifrustum].Wn;    
@@ -78,7 +71,7 @@ namespace MBSim {
 		    	}
 		    	else { // contact on inner surface
 				      double  phi = atan((r(1) - r(0))/h); // half cone angle
-				      Vec b; b = Wd-s*Wa;
+				      Vec b = Wd-s*Wa;
 				      b /= d;
 				      cpData[ifrustum].Wn = -(sin(phi)*Wa - cos(phi)*b);
 				      cpData[ipoint].Wn  = -cpData[ifrustum].Wn;
@@ -89,12 +82,7 @@ namespace MBSim {
 
 	  void ContactKinematicsPointFrustum::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData)
 	  {
-	  		// STAGE2 computes tangential directions and normal velocities in contact point
-			// INPUT	g		Normal distance
-			//			gd		Normal velocity (OUTPUT)
-			//			cpData	Contact parameter (OUTPUT)
-	
-		    Vec WrPC[2], WvC[2];
+	  		Vec WrPC[2], WvC[2];
 		
 		    cpData[ipoint].WrOC= point->getWrOP();
 		    cpData[ifrustum].WrOC =  cpData[ipoint].WrOC - cpData[ipoint].Wn*g;
