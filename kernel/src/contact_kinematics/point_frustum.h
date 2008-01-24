@@ -31,23 +31,23 @@ namespace MBSim {
   	class Point; 
   	class Frustum; 
 
-	/*!
-	 * Pairing Point to Frustum Surface
+	/*! \brief Pairing Point to Frustum Surface
+	 * 
 	 * Authors: Martin Foerg, Thorsten Schindler
 	 */
-	class ContactKinematicsPointFrustum : public ContactKinematics {
-	  	private:
+	class ContactKinematicsPointFrustum : public ContactKinematics {     
+	    public:
+	    	  /*! Compute normal distance in contact point */
+		      void stage1(Vec &g, vector<ContourPointData> &cpData);
+		      /*! Compute tangential directions and normal velocities in contact points */
+		      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+		      /*! Treat ordering of contacting bodies in connect-call */
+		      void assignContours(const vector<Contour*> &contour);
+		      
+		private:
 		      int ipoint, ifrustum; 
 		      Point *point;
 		      Frustum *frustum;
-		      
-	    public:
-	    	  /*! Compute normal distance \param g in contact point \param cpData */
-		      void stage1(Vec &g, vector<ContourPointData> &cpData);
-		      /*! Compute tangential directions and normal velocities \param gd in contact points \param cpData with distance \param g*/
-		      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
-		      /*! Treat ordering of contacting bodies \param contour in connect-call */
-		      void assignContours(const vector<Contour*> &contour);
 	};
 }
 

@@ -101,7 +101,7 @@ namespace MBSim {
   /*! \brief Most primitive Contour: the Point (no extention) */
   class Point : public Contour {
     public:
-      /*! Constructor with \param name */
+      /*! Constructor */
       Point(const string &name);
       /*! Deconstructor */
       ~Point();
@@ -134,15 +134,15 @@ namespace MBSim {
       Vec Cb;
 
     public:
-      /*! Constructor with \param name */
+      /*! Constructor */
       CircleSolid(const string &name);
-      /*! Set radius \param r_*/
+      /*! Set radius */
       void setRadius(double r_) {r = r_;}
-      /*! Get radius \result r */
+      /*! Get radius */
       double getRadius() const {return r;}
-	  /*! Set binormal \param Cb_ in local FR */ 
+	  /*! Set binormal in local FR */ 
       void setCb(const Vec& Cb_);
-	  /*! Compute binormal \return Wb in inertial FR */
+	  /*! Compute binormal in inertial FR */
       Vec computeWb() {return AWC*Cb;}
   };
 
@@ -309,13 +309,13 @@ namespace MBSim {
       Vec Cn;
 
     public:
-      /*! Constructor with \param name */
+      /*! Constructor */
       Plane(const string &name);
-      /*! Get normal \return Cn of the Plane in local FR */
+      /*! Get normal of the Plane in local FR */
       const Vec& getCn() const {return Cn;}
-      /*! Set normal \param Cn of the Plane in local FR */
+      /*! Set normal of the Plane in local FR */
       void setCn(const Vec& Cn_);
-      /*! Compute normal \return AWC*Cn of the Plane in inertial FR */
+      /*! Compute normal of the Plane in inertial FR */
       Vec computeWn() {return AWC*Cn;}
   };
 
@@ -366,8 +366,9 @@ namespace MBSim {
   /*! \brief Contour Sphere */
   class Sphere : public Contour {
     protected:
+      /** radius */
       double r;
-      /** Haltepunkt der Kontur **/
+      
     public:
       Sphere(const string &name);
       void setRadius(double r_) {r = r_;}
@@ -375,42 +376,57 @@ namespace MBSim {
       virtual void init();
   };
 
- /*! 
-  * \brief Frustum of height h, axis a (contour FR) and in direction of the axis upper r(1) and lower radius r(0)
-  *  Further it can be distinguished if the contact is on the outer or inner surface by outCont.
+ /*! \brief Frustum
+  *
   *  Authors: Martin Foerg, Thorsten Schindler
   */
  class Frustum : public Contour {
-	    private:
-		      Vec a;
-		      Vec r;
-		      double h;
-		      bool outCont;
-		
 	    public:
-	    	  /*! Constructor with \param name and \default outCont=false */
+	    	  /*! Constructor with \default outCont=false */
 		      Frustum(const string &name);
-		      /*! Constructor with \param name and \param outCont_ */
+		      /*! Constructor */
 		      Frustum(const string &name, bool outCont_);
 		      /*! Deconstructor */
 		      ~Frustum();
-		      /*! Set Radii \param r_ of the Frustum */
-		      void setRadii(const Vec &r_) {r = r_;}
-		      /*! Get Radii \return r of the Frustum */
-		      const Vec& getRadii() const {return r;}
-		      /*! Set Axis \param a_ of the Frustum in contour FR */
-		      void setAxis(const Vec &a_) {a = a_/nrm2(a_);}
-		      /*! Get Axis \return a of the Frustum in contour FR */
-		      const Vec& getAxis() const {return a;} 
-		      /*! Set Height \param h_ of the Frustum */
-		      void setHeight(double h_) {h = h_;}
-		      /*! Get Height \return h of the Frustum */
-		      double getHeight() const {return h;}
-		      /*! Set Contact \param outcont_ on outer surface of the Frustum */
-		      void setOutCont(bool outCont_) {outCont = outCont_;}
-		      /*! Get Contact \return outcont on outer surface of the Frustum */
-		      bool getOutCont() const {return outCont;}
+		      /*! Set Radii of the Frustum */
+		      void setRadii(const Vec &r_);
+		      /*! Get Radii of the Frustum */
+		      const Vec& getRadii() const;
+		      /*! Set Axis of the Frustum in contour FR */
+		      void setAxis(const Vec &a_);
+		      /*! Get Axis of the Frustum in contour FR */
+		      const Vec& getAxis() const; 
+		      /*! Set Height of the Frustum */
+		      void setHeight(double h_);
+		      /*! Get Height of the Frustum */
+		      double getHeight() const;
+		      /*! Set Contact on outer surface of the Frustum */
+		      void setOutCont(bool outCont_);
+		      /*! Get Contact outcont on outer surface of the Frustum */
+		      bool getOutCont() const;
+		      
+		private:
+	    	  /** axis (contour FR) */
+		      Vec a;
+		      
+		      /** upper r(1) and lower radius r(0) in direction of the axis */
+		      Vec r;
+		      
+		      /** height */
+		      double h;
+		      
+		      /** contact on outer or inner surface? */
+		      bool outCont;
   };
+  
+  inline void Frustum::setRadii(const Vec &r_) {r = r_;}
+  inline const Vec& Frustum::getRadii() const {return r;}
+  inline void Frustum::setAxis(const Vec &a_) {a = a_/nrm2(a_);}
+  inline const Vec& Frustum::getAxis() const {return a;}
+  inline void Frustum::setHeight(double h_) {h = h_;}
+  inline double Frustum::getHeight() const {return h;}
+  inline void Frustum::setOutCont(bool outCont_) {outCont = outCont_;}
+  inline bool Frustum::getOutCont() const {return outCont;}
 
   /*! \brief Parent for contours described by two contour parameters \f$\vs\f$
    *

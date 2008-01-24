@@ -40,11 +40,11 @@ namespace MBSim {
       TimeSteppingIntegrator();
       /*! Destructor */
       ~TimeSteppingIntegrator() {}
-	  /*! Set time step size \param dt_ */
+	  /*! Set time step size */
       void setdt(double dt_) {dt = dt_;}
-      /*! Start the integration for \param system */
+      /*! Start the integration */
       void integrate(MultiBodySystem& system);
-      /*! Set drift compensation \param dc (true/false) */
+      /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };
 

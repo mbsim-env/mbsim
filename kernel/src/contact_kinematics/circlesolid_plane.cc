@@ -29,10 +29,7 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour)
   {
-  	// ASSIGNCONTOURS treats the ordering of the bodies in connect-call
-	// INPUT	contour	Vector of the two body contours
-	
-    if(dynamic_cast<CircleSolid*>(contour[0])) {
+  	if(dynamic_cast<CircleSolid*>(contour[0])) {
       icircle = 0;
       iplane = 1;
       circlesolid = static_cast<CircleSolid*>(contour[0]);
@@ -48,17 +45,13 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidPlane::stage1(Vec &g, vector<ContourPointData> &cpData) 
   {
-	// STAGE1 computes normal distance in the possible contact point
-	// INPUT	g		Normal distance (OUTPUT)
-	//			cpData	Contact parameter (OUTPUT)
-	
 	Vec Wd;
-	Vec Wbcircle; Wbcircle = circlesolid->computeWb();
+	Vec Wbcircle = circlesolid->computeWb();
     cpData[iplane].Wn = plane->computeWn();
     cpData[icircle].Wn = -cpData[iplane].Wn;
    
 	double t_EC = trans(cpData[iplane].Wn)*Wbcircle;
-	Vec z_EC; z_EC = cpData[iplane].Wn - t_EC*Wbcircle;
+	Vec z_EC = cpData[iplane].Wn - t_EC*Wbcircle;
 	double z_EC_nrm2 = nrm2(z_EC);
 	
     if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
@@ -74,12 +67,7 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidPlane::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) 
   {
-	// STAGE2 computes tangential directions and normal velocities in contact point
-	// INPUT	g		Normal distance
-	//			gd		Normal velocity (OUTPUT)
-	//			cpData	Contact parameter (OUTPUT)
-	
-    Vec WrPC[2], WvC[2];
+	Vec WrPC[2], WvC[2];
     WrPC[icircle] = genBuf;
     cpData[icircle].WrOC = circlesolid->getWrOP() + WrPC[icircle];
     cpData[iplane].WrOC  = cpData[icircle].WrOC + cpData[iplane].Wn*g(0);

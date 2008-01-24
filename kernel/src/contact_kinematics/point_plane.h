@@ -42,11 +42,11 @@ namespace MBSim {
       Plane *plane;
 
     public:
-      /*! Compute normal distance \param g in contact point \param cpData */
+      /*! Compute normal distance in contact point */
       void stage1(Vec &g, vector<ContourPointData> &cpData);
-      /*! Compute tangential directions and normal velocities \param gd in contact points \param cpData with distance \param g*/
+      /*! Compute tangential directions and normal velocities */
       void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
-      /*! Treat ordering of contacting bodies \param contour in connect-call */
+      /*! Treat ordering of contacting bodies in connect-call */
       void assignContours(const vector<Contour*> &contour);
   };
 
