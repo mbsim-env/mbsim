@@ -276,9 +276,9 @@ namespace MBSim {
       double sElement = BuildElement(sTangent);
       Vec Z = element[CurrentElement].StateAxis(qElement,uElement,sElement);
       Z(0) = sTangent;
-      WrOC   = JR * Z(0,2);
-      WvC    = JR * Z(6,8);
-      Womega = JR * Z(9,11);
+      WrOC   = WrON00 + JR * Z(0,2);
+      WvC    =          JR * Z(6,8);
+      Womega =          JR * Z(9,11);
     }
     return WrOC.copy();
   }
