@@ -54,7 +54,7 @@ namespace MBSim {
       SqrMat Dhq, Dhqp;
 
       // KOS-Definition und Lage des ersten Knoten im Weltsystem
-      Vec WrON00,WrON0;
+      Vec WrON00;
 
       void   BuildElement(const int&);
       double BuildElement(const double&);
