@@ -39,7 +39,7 @@ namespace MBSim {
 
   BodyFlexible1s23BTA::BodyFlexible1s23BTA(const string &name) :BodyFlexible1s(name), 
   L(0), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0), dm(0), dl(0),
-  implicit(false), WrON00(3), WrON0(3),
+  implicit(false), WrON00(3),
   WrOC(3), WvC(3), Womega(3) { 
 
     contourCyl = new CylinderFlexible("cylinder");

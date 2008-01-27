@@ -73,63 +73,64 @@ namespace MBSim {
     Vec WbK = circle->computeWb();
     Vec WtB = (cylinder->computeWt(alphaC)).col(0);
 
-    const double cos_alpha = trans( WtB ) * WbK;
-//    const double sin_alpha = sqrt(1-cos_alpha*cos_alpha);
+	const double cos_alpha = trans( WtB ) * WbK;
+	//    const double sin_alpha = sqrt(1-cos_alpha*cos_alpha);
 
-    if( nrm2(WrD) > 0 ) {
+	if( nrm2(WrD) > 0 ) {
 
-      Vec b1 = WrD/nrm2(WrD);
-      Vec b2 = crossProduct(WbK,b1); b2 /=nrm2(b2); // ist schon normiert b2 /= nrm2(b2);
+	  Vec b1 = WrD/nrm2(WrD);
+	  Vec b2 = crossProduct(WbK,b1); b2 /=nrm2(b2); // ist schon normiert b2 /= nrm2(b2);
 
-      Vec be1, be2;
-      double a;
-      if( -0.99750 < cos_alpha && cos_alpha < 0.99750) { // bis ca 1Grad Verkippung ...
-	be2 = crossProduct(WtB,WbK); be2 /= nrm2(be2);// ist schon normiert
-	be1 = crossProduct(be2,WbK); be1 /= nrm2(be1);// ist schon normiert
+	  Vec be1, be2;
+	  double a;
+	  if( -0.99750 < cos_alpha && cos_alpha < 0.99750) { // bis ca 1Grad Verkippung ...
+		be2 = crossProduct(WtB,WbK); be2 /= nrm2(be2);// ist schon normiert
+		be1 = crossProduct(be2,WbK); be1 /= nrm2(be1);// ist schon normiert
 
-	a   =  r/cos_alpha;
-      }
-      else {
-	be1 = b1;
-	be2 = b2;
-	a   = r;
-      }
+		//		a   =  r/cos_alpha;
+	  }
+	  else {
+		be1 = b1;
+		be2 = b2;
+		//		a   = r;
+	  }
+	  a   =  abs(r/cos_alpha);
 
-      // Kontaktpaarung Kreis-Ellipse
-      FuncPairEllipseCircle *funcPhi= new FuncPairEllipseCircle(R, a, r);
+	  // Kontaktpaarung Kreis-Ellipse
+	  FuncPairEllipseCircle *funcPhi= new FuncPairEllipseCircle(R, a, r);
 
-      funcPhi->setDiffVec(WrD);
-      funcPhi->setEllipseCOS(be1,be2);
+	  funcPhi->setDiffVec(WrD);
+	  funcPhi->setEllipseCOS(be1,be2);
 
-      Contact1sSearch searchPhi(funcPhi);
-      searchPhi.setSearchAll(true);
-      static const int                SEC = 16;
-      static const double            dphi =   2*M_PI/SEC * 1.02;      // ueberschneidung zwischen 0 und 2*Pi erzeugen
-      static const double phiStartSpacing = - 2*M_PI/SEC * 0.02 / 2.; // besser fuer konvergenz des Loesers
-      searchPhi.setEqualSpacing(SEC,phiStartSpacing,dphi);
-      cpData[icylinder].alpha(1) = searchPhi.slv();  /////// war mal phi
-      Vec dTilde = funcPhi->computeWrD(cpData[icylinder].alpha(1));
+	  Contact1sSearch searchPhi(funcPhi);
+	  searchPhi.setSearchAll(true);
+	  static const int                SEC =   16;
+	  static const double            dphi =   2*M_PI/SEC * 1.02;      // ueberschneidung zwischen 0 und 2*Pi erzeugen
+	  static const double phiStartSpacing = - 2*M_PI/SEC * 0.02 / 2.; // besser fuer konvergenz des Loesers
+	  searchPhi.setEqualSpacing(SEC,phiStartSpacing,dphi);
+	  cpData[icylinder].alpha(1) = searchPhi.slv();  /////// war mal phi
+	  Vec dTilde = funcPhi->computeWrD(cpData[icylinder].alpha(1));
 
-      // Suchen fertig!!!
-      delete funcPhi;
+	  // Suchen fertig!!!
+	  delete funcPhi;
 
-      cpData[icircle]  .WrOC = WrOP_circle + R * dTilde/nrm2(dTilde);
-      cpData[icylinder].WrOC = WrOP_circle + dTilde;
+	  cpData[icircle]  .WrOC = WrOP_circle + R * dTilde/nrm2(dTilde);
+	  cpData[icylinder].WrOC = WrOP_circle + dTilde;
 
-      Vec normal           = (WrD - trans(WtB)*WrD*WtB );
-      cpData[icircle].Wn   = normal/nrm2(normal);
-      cpData[icylinder].Wn = - cpData[icircle].Wn;
+	  Vec normal           = (WrD - trans(WtB)*WrD*WtB );
+	  cpData[icircle].Wn   = normal/nrm2(normal);
+	  cpData[icylinder].Wn = - cpData[icircle].Wn;
 
-      g(0) = trans(cpData[icylinder].Wn) * ( cpData[icylinder].WrOC - cpData[icircle].WrOC);
+	  g(0) = trans(cpData[icylinder].Wn) * ( cpData[icylinder].WrOC - cpData[icircle].WrOC);
 
-    }
-    else { // kontaktpunktvektoren zumindest gueltig dimensionieren
-      cpData[icircle]  .WrOC = WrOP_circle;
-      cpData[icylinder].WrOC = cylinder->computeWrOC( cpData[icylinder] );
+	}
+	else { // kontaktpunktvektoren zumindest gueltig dimensionieren
+	  cpData[icircle]  .WrOC = WrOP_circle;
+	  cpData[icylinder].WrOC = cylinder->computeWrOC( cpData[icylinder] );
 
-      if(cos_alpha > 0) g(0) = (   R*cos_alpha - r );
-      else	      g(0) = ( - R*cos_alpha - r );
-    }
+	  if(cos_alpha > 0) g(0) = (   R*cos_alpha - r );
+	  else	      g(0) = ( - R*cos_alpha - r );
+	}
   }
 
   void ContactKinematicsCircleHollowCylinderFlexible::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
