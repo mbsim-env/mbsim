@@ -29,7 +29,7 @@
 #include "contour_pdata.h"
 
 #ifdef HAVE_AMVIS
-namespace AMVis {class CBody;}
+namespace AMVis {class CBody; class CRigidBody;}
 #endif
 
 namespace MBSim {
@@ -55,6 +55,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
       /* Body for AMVis */
       AMVis::CBody *bodyAMVis;
+      DataInterfaceBase* bodyAMVisUserFunctionColor;
       /* Flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
 #endif
@@ -95,6 +96,8 @@ namespace MBSim {
 	\param binary_ for binary or ASCII data format in pos-file
 	*/
       void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+
+      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
 #endif
   };
 
@@ -105,7 +108,6 @@ namespace MBSim {
       Point(const string &name);
       /*! Deconstructor */
       ~Point();
-      void init();
   };
 
   /*! \brief unbounded line with constant normal */
