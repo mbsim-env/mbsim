@@ -50,7 +50,7 @@ bodyAMVis = NULL;
   void Port::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
     bodyAMVis = AMVisBody;
     bodyAMVisUserFunctionColor = funcColor;
-    if (!plotLevel) plotLevel=1;
+    plotLevel = 1;
   }
 #endif
 

@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -27,9 +27,11 @@
 
 #ifdef HAVE_AMVIS
 #include "cbody.h"
+//#include "crigidbody.h"
 #include "sphere.h"
 #include "area.h"
 #include "quad.h"
+#include "rotarymatrices.h"
 #endif
 
 namespace MBSim {
@@ -37,39 +39,45 @@ namespace MBSim {
   /* Contour */
   Contour::Contour(const string &name) : Element(name), WrOP(3), WvP(3), WomegaC(3), AWC(3)
 # ifdef HAVE_AMVIS
-    ,
-    bodyAMVis(NULL)
+					 ,
+					 bodyAMVis(NULL)
 # endif
-  {
-    AWC(0,0) = 1;
-    AWC(1,1) = 1;
-    AWC(2,2) = 1;
+ {
+   AWC(0,0) = 1;
+   AWC(1,1) = 1;
+   AWC(2,2) = 1;
 
-    // Contouren standardmaessig nicht ausgeben...
-    plotLevel = 0;
-  }
+   // Contouren standardmaessig nicht ausgeben...
+   plotLevel = 0;
+ }
 
   Contour::~Contour() 
   {
-	#ifdef HAVE_AMVIS
-	    if (bodyAMVis) delete bodyAMVis;
-	#endif
+#ifdef HAVE_AMVIS
+    if (bodyAMVis) delete bodyAMVis;
+#endif
   }
-  
+
   void Contour::init() 
   {
     setFullName(parent->getFullName()+"."+name);
   }
-  
+
   void Contour::initPlotFiles() 
   {
     Element::initPlotFiles();
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-		      if(boolAMVis) bodyAMVis->writeBodyFile();
-		#endif
-    }
+#ifdef HAVE_AMVIS
+    if(bodyAMVis) bodyAMVis->writeBodyFile();
+#endif
   }
+
+#ifdef HAVE_AMVIS
+  void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
+    bodyAMVis = AMVisBody;
+    bodyAMVisUserFunctionColor = funcColor;
+    plotLevel = 1;
+  }
+#endif
 
   void Contour::adjustParentHitSphere(const Vec &CrC) 
   {
@@ -79,48 +87,31 @@ namespace MBSim {
 
   void Contour::plot(double t, double dt) 
   {
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-		    if(boolAMVis) {
-		
-				double alpha;
-				double beta=asin(AWC(0,2));
-				double gamma;
-				double nenner=cos(beta);
-				if (nenner>1e-10) {
-				  alpha=atan2(-AWC(1,2),AWC(2,2));
-				  gamma=atan2(-AWC(0,1),AWC(0,0));
-				} 
-				else {
-				  alpha=0;
-				  gamma=atan2(AWC(1,0),AWC(1,1));
-				}
-			
-				//	plotfile<<" "<<WrOP(0)<<" "<<WrOP(1)<<" "<<WrOP(2);
-				//	plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
-			
-				static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTime(t);
-				static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTranslation(WrOP(0),WrOP(1),WrOP(2));
-				static_cast<AMVis::CRigidBody*>(bodyAMVis)->setRotation(alpha,beta,gamma);
-				static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
-		      }
-		#endif
+#ifdef HAVE_AMVIS
+    if(bodyAMVis) {
+
+      Vec AlpBetGam;
+      AlpBetGam = AIK2Cardan(AWC);
+
+      if (bodyAMVisUserFunctionColor) {
+	double color = (*bodyAMVisUserFunctionColor)(t)(0);
+	if (color>1)   color =1;
+	if (color<0) color =0;
+	static_cast<AMVis::CRigidBody*>(bodyAMVis)->setColor(color);
+      }
+      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTime(t);
+      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTranslation(WrOP(0),WrOP(1),WrOP(2));
+      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
+      static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
     }
+#endif
   }
-  
+
   void Contour::plotParameters() {parafile << "Contour" << endl;}
-  
+
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
   Point::~Point() {}
-  void Point::init() {
-    Contour::init();
-    if(boolAMVis) {
-      AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
-      sphere->setRadius(0.01);
-      bodyAMVis = sphere;
-    }
-  }
 
   /* Line */
   Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {}
@@ -212,39 +203,37 @@ namespace MBSim {
     Cn = crossProduct(Cd1,Cd2);
     Cn = Cn/nrm2(Cn);
 
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-      		if(boolAMVis) {
-				AMVis::Area *area = new AMVis::Area(fullName,1,boolAMVisBinary);
-				area->setBase1(Cd1(0),Cd1(1),Cd1(2));
-				area->setLimit1(lim1);
-				area->setBase2(Cd2(0),Cd2(1),Cd2(2));
-				area->setLimit2(lim2);	
-				bodyAMVis = area;
-      		}
-		#endif
+#ifdef HAVE_AMVIS
+    if(boolAMVis && !bodyAMVis) 
+    {
+      AMVis::Area *area = new AMVis::Area(fullName,1,boolAMVisBinary);
+      area->setBase1(Cd1(0),Cd1(1),Cd1(2));
+      area->setLimit1(lim1);
+      area->setBase2(Cd2(0),Cd2(1),Cd2(2));
+      area->setLimit2(lim2);	
+      bodyAMVis = area;
     }
+#endif
   }
 
   /* Edge */
   Edge::Edge(const string &name) : Contour(name), lim(1), Cn(3), Cd(3), Ce(3) {}
   void Edge::setCd(const Vec &d) {Cd = d/nrm2(d);}
   void Edge::setCe(const Vec &e) {Ce = e/nrm2(e);}
-  
+
   /* Sphere */
   Sphere::Sphere(const string &name) : Contour(name), r(0.) {}
   void Sphere::init() 
   {
     Contour::init();
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-		      if(boolAMVis) {
-				AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
-				sphere->setRadius(r);
-				bodyAMVis = sphere;
-		      }
-		#endif
+#ifdef HAVE_AMVIS
+    if(boolAMVis && !bodyAMVis) 
+    {
+      AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
+      sphere->setRadius(r);
+      bodyAMVis = sphere;
     }
+#endif
   }
 
   /* Frustum */
@@ -304,22 +293,20 @@ namespace MBSim {
     return t;
   }
 
-  void ContourInterpolation::plot(double t, double dt) 
-  {
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-			if(bodyAMVis) {
-				float qQuad[12];
-				for(int i=0;i<4;i++) {
-				  Vec WrOPi = iPoints[i]->getWrOP();
-				  for(int j=0;j<3;j++) qQuad[3*i+j] = WrOPi(j);
-				}		
-				static_cast<AMVis::ElasticBody*>(bodyAMVis)->setTime(t);
-				static_cast<AMVis::ElasticBody*>(bodyAMVis)->setCoordinates(qQuad);
-				static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
-			}
-		#endif
+  void ContourInterpolation::plot(double t, double dt) {
+#ifdef HAVE_AMVIS
+    if(bodyAMVis) 
+    {
+      float qQuad[12];
+      for(int i=0;i<4;i++) {
+	Vec WrOPi = iPoints[i]->getWrOP();
+	for(int j=0;j<3;j++) qQuad[3*i+j] = WrOPi(j);
+      }		
+      static_cast<AMVis::ElasticBody*>(bodyAMVis)->setTime(t);
+      static_cast<AMVis::ElasticBody*>(bodyAMVis)->setCoordinates(qQuad);
+      static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
     }
+#endif
   }
 
   Vec ContourInterpolation::computeWrOC(const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);}
@@ -333,17 +320,15 @@ namespace MBSim {
     iPoints.resize(numberOfPoints);
   }
 
-  void ContourQuad::init()
-  {
+  void ContourQuad::init() {
     Contour::init();
-    if(plotLevel) {
-		#ifdef HAVE_AMVIS
-		    if(boolAMVis) {
-				AMVis::Quad *quad = new AMVis::Quad(fullName,1,boolAMVisBinary);		
-				bodyAMVis = quad;
-		    }
-		#endif
+#ifdef HAVE_AMVIS
+    if(boolAMVis && !bodyAMVis) 
+    {
+      AMVis::Quad *quad = new AMVis::Quad(fullName,1,boolAMVisBinary);		
+      bodyAMVis = quad;
     }
+#endif
   }
 
   bool ContourQuad::testInsideBounds(const ContourPointData &cp) 
@@ -377,19 +362,19 @@ namespace MBSim {
 
     if (diff == 0) // Ableitungen nach xi
       switch(i) {
-		case 0: return -(1-eta);
-		case 1: return  (1-eta);
-		case 2: return  (  eta);
-		case 3: return -(  eta);
-                default: return 0.0;  // new, probably not OK
+	case 0: return -(1-eta);
+	case 1: return  (1-eta);
+	case 2: return  (  eta);
+	case 3: return -(  eta);
+	default: return 0.0;  // new, probably not OK
       }
     else // Ableitungen nach eta
       switch(i) {
-		case 0: return - (1-xi);
-		case 1: return - (  xi);
-		case 2: return   (  xi);
-		case 3: return   (1-xi);
-                default: return 0.0;  // new, probably not OK
+	case 0: return - (1-xi);
+	case 1: return - (  xi);
+	case 2: return   (  xi);
+	case 3: return   (1-xi);
+	default: return 0.0;  // new, probably not OK
       }
   }
 
