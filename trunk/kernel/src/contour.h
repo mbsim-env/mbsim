@@ -388,6 +388,7 @@ namespace MBSim {
 		      Frustum(const string &name);
 		      /*! Constructor */
 		      Frustum(const string &name, bool outCont_);
+		      
 		      /*! Deconstructor */
 		      ~Frustum();
 		      /*! Set Radii of the Frustum */
