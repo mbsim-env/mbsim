@@ -51,6 +51,10 @@ namespace MBSim {
     cpData[icircle].Wn = -cpData[iplane].Wn;
    
 	double t_EC = trans(cpData[iplane].Wn)*Wbcircle;
+	if(t_EC>0) {
+		Wbcircle *= -1.;
+		t_EC *= -1;	
+	}
 	Vec z_EC = cpData[iplane].Wn - t_EC*Wbcircle;
 	double z_EC_nrm2 = nrm2(z_EC);
 	
