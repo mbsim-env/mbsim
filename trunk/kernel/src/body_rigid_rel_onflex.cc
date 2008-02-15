@@ -95,7 +95,9 @@ namespace MBSim {
 //    SqrMat AWKp = tilde(WomegaK)*AWK;
 //    f(3,5) = trans(AWK)*AWKp*JR*u(iR);
 
-    if(JR.cols()) f(3,5) = trans(AWK)*tilde(WomegaK)*AWK*JR*u(iR);
+//    if(JR.cols()) f(3,5) = trans(AWK)*tilde(WomegaK)*AWK*JR*u(iR); // TODO: Pruefen,
+//    ob untere Zeile wirklich richtig!!!!!!!11
+    if(JR.cols()) f(3,5) = tilde(KomegaK)*JR*u(iR);
     else f(3,5).init(0.0);
 
     if(JT.cols()) {
