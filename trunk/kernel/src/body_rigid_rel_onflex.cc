@@ -110,8 +110,9 @@ namespace MBSim {
     }
     else f(0,2).init(0.0);
 
-    C(Index(0,2),preIJT) = trans(AWK)*precessor->JT;
-    C(Index(3,5),preIJR) = trans(AWK)*precessor->JR;
+// Ostern 2008
+//    C(Index(0,2),preIJT) = trans(AWK)*precessor->JT;
+//    C(Index(3,5),preIJR) = trans(AWK)*precessor->JR;
 
 //      e = C*precessor->gete()+f;
 ////    e = C*Jges_pre*trans(precessor->computeJp(cPosition))*precessor->getu() + f;
@@ -119,13 +120,14 @@ namespace MBSim {
 
 //      J(Index(0,2),IuT) = trans(APK)*JT;
     if(JT.cols()) {
-      J(Index(0,2),IuT) = trans(AWK)*precessor->computeDrDs(cPosition);
-      J(Index(3,5),IuT) = trans(AWK)*precessor->computeK(cPosition);
+      J(Index(0,2),IuT) = trans(AWK)*WB; //            precessor->computeDrDs(cPosition);
+      J(Index(3,5),IuT) =            KK; // trans(AWK)*precessor->computeK(cPosition);
     }
     J(Index(3,5),IuR) = JR;
 
 ////    J(Index(0,5),static_cast<TreeFlexRoot*>(tree)->Iflexible) = C*Jges_pre*trans(precessor->computeJacobianMatrix(cPosition));
-    J(Index(0,5),Iflexible) = C*trans(precessor->computeJacobianMatrix(cPosition));
+// Ostern 2008
+//    J(Index(0,5),Iflexible) = C*trans(precessor->computeJacobianMatrix(cPosition));
 
     l -= Mh*j;
 //    tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
@@ -188,13 +190,21 @@ namespace MBSim {
 //    AWK = AWP*APK;
     AWK = precessor->computeAWK(cPosition)*APK;
 
+	C(Index(0,2),preIJT) = trans(AWK)*precessor->JT;
+    C(Index(3,5),preIJR) = trans(AWK)*precessor->JR;
+    J(Index(0,5),Iflexible) = C*trans(precessor->computeJacobianMatrix(cPosition));
+
     //    KomegaK = trans(APK)*precessor->getKomegaK() + JR*u(iR);
-    KomegaK = trans(AWK)*precessor->computeWomega(cPosition) + JR*u(iR);
+//    KomegaK = trans(AWK)*precessor->computeWomega(cPosition) + JR*u(iR);
+    Vec vDummy = J(Index(0,5),Iflexible)*precessor->getu();
+    KomegaK = vDummy(Index(3,5)) + JR*u(iR);
+
     //cout << "-----------------" << endl;
     //cout << "KomegaK ohne K " << trans(KomegaK) << endl;
     // precessor many have curved path, leading to angular processes when translating 
     if(JT.cols()) {
-      KomegaK += trans(AWK)*precessor->computeK(cPosition) * u(iT);   
+      KK       = trans(AWK)*precessor->computeK(cPosition);   
+      KomegaK += KK * u(iT);   
       //cout << "KomegaK mit  K " << trans(KomegaK) << endl;
       //cout << "precessor->computeK(cp)" << trans(precessor->computeK(cp)) << endl;
       //cout << "u(iT) " << trans(u(iT)) << endl;
@@ -205,14 +215,16 @@ namespace MBSim {
     //      KrOK = trans(APK)*(PrPK + precessor->getKrOK());
     WrOK = precessor->computeWrOC(cPosition);
     //      WvK  = precessor->computeWvC(cp) + AWP*JT*u(iT);
-    WvK  = precessor->computeWvC(cPosition);
+    // WvK  = precessor->computeWvC(cPosition);
+	WvK = AWK * vDummy(Index(0,2));
     if(JT.cols())
-      WvK += precessor->computeDrDs(cPosition)*u(iT);
+	  WB   = precessor->computeDrDs(cPosition);
+      WvK += WB*u(iT);
   }
 
-   const Vec& BodyRigidRelOnFlex::getKrOK()  {
-    KrOK = trans(AWK) * WrOK;
-    return KrOK;
+  const Vec& BodyRigidRelOnFlex::getKrOK()  {
+	KrOK = trans(AWK) * WrOK;
+	return KrOK;
   }
 
    const Vec& BodyRigidRelOnFlex::getKvK()   {
