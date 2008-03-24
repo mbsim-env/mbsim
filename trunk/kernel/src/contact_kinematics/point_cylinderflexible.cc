@@ -71,19 +71,19 @@ namespace MBSim {
       cpData[ipoint].Wn    = WrD/nrm2(WrD);
       cpData[icylinder].Wn = -cpData[ipoint].Wn;
       const double &r = cylinder->getRadius();
-      cpData[icylinder].WrOC  = WrOC_CylBuf - cpData[icylinder].Wn*r; // TODO: Vorzeichen pruefen!!!
+      cpData[icylinder].WrOC  = WrOC_CylBuf - cpData[icylinder].Wn*r;
       g(0) = trans(cpData[ipoint].Wn)*WrD - r;
+      //  cout << " Start" << endl;
+      //  cout << "cpData[ipoint].Wn       = " << trans(cpData[ipoint].Wn) << endl;
+      //  cout << "cpData[ipoint].WrOC     = " << trans(cpData[ipoint].WrOC) << endl;
+      //  cout << "cpData[icylinder].alpha = " << cpData[icylinder].alpha(0) << endl;
+      //  cout << "cpData[icylinder].Wn    = " << trans(cpData[icylinder].Wn) << endl;
+      //  cout << "cpData[icylinder].WrOC  = " << trans(cpData[icylinder].WrOC) << endl;
+      //  cout << "WrD = " << trans(WrD) << endl;
+      //  cout << "g = " << g(0) << endl;
+      //  cout << "----------------" << endl;
     }
 
-    //  cout << " Start" << endl;
-    //  cout << "cpData[ipoint].Wn       = " << trans(cpData[ipoint].Wn) << endl;
-    //  cout << "cpData[ipoint].WrOC     = " << trans(cpData[ipoint].WrOC) << endl;
-    //  cout << "cpData[icylinder].alpha = " << cpData[icylinder].alpha(0) << endl;
-    //  cout << "cpData[icylinder].Wn    = " << trans(cpData[icylinder].Wn) << endl;
-    //  cout << "cpData[icylinder].WrOC  = " << trans(cpData[icylinder].WrOC) << endl;
-    //  cout << "WrD = " << trans(WrD) << endl;
-    //  cout << "g = " << g(0) << endl;
-    //  cout << "----------------" << endl;
   }
 
   void ContactKinematicsPointCylinderFlexible::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
@@ -96,7 +96,7 @@ namespace MBSim {
 
     if(cpData[0].Wt.cols()) {
       static Index iT(1,cpData[0].Wt.cols());
-      cpData[icylinder].Wt.col(0) = (cylinder->computeWt(cpData[icylinder])).col(0);
+      cpData[icylinder].Wt.col(0) = -(cylinder->computeWt(cpData[icylinder])).col(0);
       cpData[icylinder].Wt.col(1) = crossProduct(cpData[icylinder].Wn,cpData[icylinder].Wt.col(0));
       cpData[ipoint].Wt           = - cpData[icylinder].Wt;
       gd(iT) = trans(cpData[icylinder].Wt)*WvD;

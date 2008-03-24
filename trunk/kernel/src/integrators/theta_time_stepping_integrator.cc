@@ -137,15 +137,17 @@ namespace MBSim {
       SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,W,ipiv));
       system.getGs().resize();
       system.getGs() << Geff;
+//	  cout << " G  = " << Geff << endl;
       system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
 
-      iter = system.solve(dt);
-      if(iter>maxIter)
-	maxIter = iter;
-      sumIter += iter;
+	  iter = system.solve(dt);
+	  if(iter>maxIter)
+		maxIter = iter;
+	  sumIter += iter;
 
-      system.updater(t);
-      Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
+	  system.updater(t);
+//	  cout << " la = " << trans(system.getla()) << endl;
+	  Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
       q += T*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);
