@@ -49,6 +49,8 @@ namespace MBSim {
     Index preIJT, preIJR;
   
     Mat C;
+	Mat KK;
+	Mat WB;
   
     void updateCenterOfGravity(double t);
     void updateh(double t);
