@@ -128,18 +128,27 @@ namespace MBSim {
     I(2,2) = 1.0; 
   }
 
+  void BodyRigidConstrainedVel::calcSize() {
+    BodyRigidAbs::calcSize();
+  } 
+
   void BodyRigidConstrainedVel::init() {
-    BodyRigidAbs::init();
-    uSize = 0;
-    ud.resize(uSize);
+    BodyRigid::init();
+
+    WrOHitSphere >> WrOK;
+
+    //uSize = 0;
+    //ud.resize(uSize);
     //for(int i=0; i<JT.cols(); i++)
     //JT.col(i) /= nrm2(JT.col(i));
     //for(int i=0; i<JR.cols(); i++)
     //JR.col(i) /= nrm2(JR.col(i));
     if(pos)
       assert((*pos)(0).size() == qSize);
-    if(vel)
+    if(vel) {
       assert((*vel)(0).size() == JT.cols()+JR.cols());
+      u = (*vel)(0);
+    }
   }
 
   void BodyRigidConstrainedVel::setPosition(DataInterfaceBase *func_, bool overwriteq) {

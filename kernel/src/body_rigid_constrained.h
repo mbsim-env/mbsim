@@ -82,8 +82,10 @@ namespace MBSim {
       void updatezd(double t);
       void updatedu(double t, double dt);
       void updatedq(double t, double dt);
+      void facLLM() {}
 
       void updateKinematics(double t);
+      void calcSize();
 
     public:
 
