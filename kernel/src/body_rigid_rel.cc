@@ -198,6 +198,11 @@ namespace MBSim {
       it3++;
     }
 
+    for(unsigned int i=0;i<port.size();i++)
+      tree->addPort(port[i]);			    // port und contour container von tree nur temporaere Liste 
+    for(unsigned int i=0;i<contour.size();i++)      // z.b. zum Erstellen von ports2plot (multi_body_system.cc)
+      tree->addContour(contour[i]);
+
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->initStage1();
     }
@@ -509,8 +514,6 @@ namespace MBSim {
 
   void BodyRigidRel::addPort(Port * port, const Vec &KrKP) {		 
     BodyRigid::addPort(port, KrKP);
-    tree->addPort(port); 
-    // port container von tree nur temporaere Liste z.b. zum erstellen von ports2plot (multi_body_system.cc)
   }
 
   void BodyRigidRel::addPort(const string &name, const Vec &KrKP) {
@@ -520,7 +523,6 @@ namespace MBSim {
 
   void BodyRigidRel::addContour(Contour* contour, const Vec &KrKC_, const SqrMat &AKC_) {
     BodyRigid::addContour(contour, KrKC_, AKC_);
-    tree->addContour(contour);
   }
 
   void BodyRigidRel::updateKLC(double t, double dt) {
