@@ -47,7 +47,7 @@ namespace MBSim {
       void (BodyRigidAbs::*updateM_)();
       void (BodyRigidAbs::*facLLM_)();
 
-      void updateM() {(this->*updateM_)();}
+      void updateM(double t) {(this->*updateM_)();}
       void updateM1() {};
       void updateM2();
 
