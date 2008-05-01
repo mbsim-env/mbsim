@@ -69,7 +69,7 @@ namespace MBSim {
     LLM = facLL(M);
 
     if(nrm2(KrKS) <= 1e-14) {
-      updateM_ = &BodyRigidAbs::updateM2;
+      updateM_ = &BodyRigidAbs::updateM1;
       updateh_ = &BodyRigidAbs::updateh1;
       facLLM_ = &BodyRigidAbs::facLLM1;
     } else {
