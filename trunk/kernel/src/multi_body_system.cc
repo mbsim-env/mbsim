@@ -40,7 +40,7 @@ namespace MBSim {
   MultiBodySystem::MultiBodySystem() :                          Object("Default"),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName(projectName) , preIntegrator(NULL)  {
   }
 
   MultiBodySystem::~MultiBodySystem() {
