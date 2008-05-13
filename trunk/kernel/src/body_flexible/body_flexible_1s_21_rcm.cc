@@ -401,25 +401,34 @@ namespace MBSim {
   }
 
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
-    static double sGlobalOld = -1.0;
-    static double sLokal = 0;
-    static int Element = 0;
-    if (sGlobal != sGlobalOld ) {
-      sGlobalOld = sGlobal;
+	static double sGlobalOld = -1.0;
+	static double sLokal = 0;
+	static int Element = 0;
+	if (sGlobal != sGlobalOld ) {
+	  sGlobalOld = sGlobal;
 
-      // project into periodic structure  
-      double remainder = fmod(sGlobal,L);
-      if(remainder<0.0) remainder += L;
-      Element = int(remainder/balken->l0);
-      sLokal = remainder - ( 0.5 + Element ) * balken->l0;
+	  double remainder = sGlobal;
+	  if(!openStructure) {
+		remainder = fmod(sGlobal,L);
+		if(sGlobal<0.) remainder += L; // project into periodic structure 
+	  }
+//  double remainder = fmod(sGlobal,L);
+//	  if(remainder<0.0) remainder += L;
+	  Element = int(remainder/balken->l0);
+	  sLokal = remainder - ( 0.5 + Element ) * balken->l0;
 
-      if(Element >= Elements) {
-	if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
-	else              { Element -= Elements;}                         /* start at the beginning again  */
-      }
-    }
-    BuildElement(Element);
-    return sLokal;
+	  if(Element >= Elements) {
+		if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
+		else              { Element -= Elements;}                         /* start at the beginning again  */
+	  }
+	  else if( Element <0 )   {
+		if(openStructure) { Element =  0;           sLokal -= balken->l0;} /*somehow buggy, but who cares?!?*/
+		else              { Element += Elements;}                         /* start at the beginning again  */
+	  }
+
+	}
+	BuildElement(Element);
+	return sLokal;
   }
 
   void BodyFlexible1s21RCM::addPort(const string &name, const int &node) {
