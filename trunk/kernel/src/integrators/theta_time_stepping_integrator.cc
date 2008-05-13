@@ -147,7 +147,8 @@ namespace MBSim {
 
 	  system.updater(t);
 //	  cout << " la = " << trans(system.getla()) << endl;
-	  Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
+//	  Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
+	  Vec du = slvLUFac(luMeff,h * dt +   system.getr()  + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
       q += T*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);
