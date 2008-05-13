@@ -73,28 +73,33 @@ namespace MBSim {
     Vec WbK = circle->computeWb();
     Vec WtB = (cylinder->computeWt(alphaC)).col(0);
 
-	const double cos_alpha = trans( WtB ) * WbK;
+	double cos_alpha = trans( WtB ) * WbK;
 	//    const double sin_alpha = sqrt(1-cos_alpha*cos_alpha);
 
 	if( nrm2(WrD) > 0 ) {
+	  double a   =  abs(r/cos_alpha);
 
-	  Vec b1 = WrD/nrm2(WrD);
-	  Vec b2 = crossProduct(WbK,b1); b2 /=nrm2(b2); // ist schon normiert b2 /= nrm2(b2);
+//	  Vec b1 = WrD/nrm2(WrD);
+//	  Vec b2 = crossProduct(WbK,b1); b2 /=nrm2(b2); // ist schon normiert b2 /= nrm2(b2);
 
 	  Vec be1, be2;
-	  double a;
 	  if( -0.99750 < cos_alpha && cos_alpha < 0.99750) { // bis ca 1Grad Verkippung ...
 		be2 = crossProduct(WtB,WbK); be2 /= nrm2(be2);// ist schon normiert
 		be1 = crossProduct(be2,WbK); be1 /= nrm2(be1);// ist schon normiert
-
 		//		a   =  r/cos_alpha;
 	  }
 	  else {
-		be1 = b1;
-		be2 = b2;
+		if(nrm2(WrD) > 0.01*a) {
+		  be2 = WrD/nrm2(WrD);//b1;
+//		  cout << be2 << endl;
+		} else {
+		  // compute arbitrary normal to cylinder tangent
+		  be2 = Vec(3,NONINIT); be2(0) = WtB(1); be2(1) = - WtB(0); be2(2) = 0.0;
+		  be2 /= nrm2(be2);
+		}
+		be1 = crossProduct(WbK,be2); be1 /=nrm2(be1);// b1;
 		//		a   = r;
 	  }
-	  a   =  abs(r/cos_alpha);
 
 	  // Kontaktpaarung Kreis-Ellipse
 	  FuncPairEllipseCircle *funcPhi= new FuncPairEllipseCircle(R, a, r);
@@ -116,20 +121,25 @@ namespace MBSim {
 
 	  cpData[icircle]  .WrOC = WrOP_circle + R * dTilde/nrm2(dTilde);
 	  cpData[icylinder].WrOC = WrOP_circle + dTilde;
+      Vec WrD2 = cpData[icylinder].WrOC - cpData[icircle].WrOC ;
 
 	  Vec normal           = (WrD - trans(WtB)*WrD*WtB );
-	  cpData[icircle].Wn   = normal/nrm2(normal);
-	  cpData[icylinder].Wn = - cpData[icircle].Wn;
 
-	  g(0) = trans(cpData[icylinder].Wn) * ( cpData[icylinder].WrOC - cpData[icircle].WrOC);
 
+	  g(0) = nrm2(WrD2);
+	  if( nrm2(normal)>0.01*a ) {
+//cout << " n = " << trans(normal) << endl << endl;
+		cpData[icircle].Wn   = normal/nrm2(normal);
+		cpData[icylinder].Wn = - cpData[icircle].Wn;
+
+		g(0) = trans(cpData[icylinder].Wn) * WrD2 ;
+	  }
 	}
 	else { // kontaktpunktvektoren zumindest gueltig dimensionieren
 	  cpData[icircle]  .WrOC = WrOP_circle;
 	  cpData[icylinder].WrOC = cylinder->computeWrOC( cpData[icylinder] );
 
-	  if(cos_alpha > 0) g(0) = (   R*cos_alpha - r );
-	  else	      g(0) = ( - R*cos_alpha - r );
+	  g(0) = R*abs(cos_alpha) - r ;
 	}
   }
 
