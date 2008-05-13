@@ -45,8 +45,9 @@ namespace MBSim {
   }
 
   double ConnectionFlexible::computePotentialEnergy() {
-    double V = 0.5* (trans(la)*g);
-    return V;
+//    double V = 0.5* (trans(la)*g); // ERROR!!! mixed term including velocity*dampingCoefficient
+//    return C;
+    return 0.5* ( cT*trans(g(IT))*g(IT) + cR*trans(g(IR))*g(IR) );
   }
 
 }
