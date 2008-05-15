@@ -49,6 +49,9 @@ namespace MBSim {
     TreeRigid(const string &projectName);
     ~TreeRigid();
 
+	Body* getRoot();
+	void plotParameters();
+
     void updateKinematics(double t);
     void updateT(double t);
     void updateh(double t);

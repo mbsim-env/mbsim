@@ -21,6 +21,7 @@
  */
 #include <config.h>
 #include "tree.h"
+#include "body.h"
 
 namespace MBSim {
 
@@ -39,4 +40,10 @@ namespace MBSim {
   void Tree::addContour(Contour* contour_) {
     contour.push_back(contour_);
   }
+
+  void Tree::plotParameterFiles() {
+	Object::plotParameterFiles();
+	getRoot()->plotParameterFiles();
+  }
+
 }

@@ -154,7 +154,6 @@ namespace MBSim {
   }
 
   void BodyRigid::plotParameters() {
-
     parafile << "BodyRigid"  << JT.cols() << JR.cols() << endl;
     parafile << "# mass:\n"    << m    << endl;
     parafile << "# inertia:\n" << I    << endl;

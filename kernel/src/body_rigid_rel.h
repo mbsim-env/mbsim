@@ -100,6 +100,7 @@ namespace MBSim {
     void initz();
     void initPlotFiles();
     void plot(double t, double dt = 1);
+    void plotParameterFiles();
     void setPrecessor(BodyRigidRel *precessor_);
     BodyRigidRel* getPrecessor() {return precessor;}
     void updateqRef();
@@ -126,6 +127,8 @@ namespace MBSim {
     virtual void addPort(const string &name, const Vec &KrKP=Vec(3,INIT,0.0));
 
     virtual void addContour(Contour* contour, const Vec &KrKC_=Vec(3,INIT,0.0), const SqrMat &AKC_=SqrMat(3,EYE));
+
+	void plotNameToStream(ostream& os, string indent="");
 
   };
 

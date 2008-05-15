@@ -24,7 +24,6 @@
 
 #include "tree.h"
 
-
 namespace MBSim {
   class BodyFlexible;
   class BodyRigidRel;
@@ -57,6 +56,8 @@ namespace MBSim {
     TreeFlexRoot(const string &name);
     ~TreeFlexRoot();
 
+	Body* getRoot();
+
     void updateKinematics(double t);
     void updateh(double t);
     void updateM(double t);
@@ -87,6 +88,8 @@ namespace MBSim {
     void initz();
     void initPlotFiles();
     void plot(double t, double dt=1);
+	void plotParameters();
+	void plotParameterFiles();
 
     void setMbs(MultiBodySystem* mbs);
     void setFullName(const string &name);

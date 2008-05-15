@@ -257,6 +257,8 @@ namespace MBSim {
 
     void plot(double t, double dt=1);
     void plotParameters();
+    void plotParameterFiles();
+    void initPlotLists();
     void initPlotFiles();
     void closePlotFiles();
 

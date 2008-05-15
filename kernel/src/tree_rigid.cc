@@ -27,12 +27,14 @@
 
 namespace MBSim {
 
-  TreeRigid::TreeRigid(const string &projectName) : Tree(projectName), root(0) {
+  TreeRigid::TreeRigid(const string &projectName) : Tree(projectName), root(NULL) {
   }
 
   TreeRigid::~TreeRigid() {
     delete root; 
   }
+
+  Body* TreeRigid::getRoot() {return root;}
 
   void TreeRigid::updateKinematics(double t) {
 
@@ -206,5 +208,11 @@ namespace MBSim {
 
   Contour* TreeRigid::getContour(const string &cName) {
     return root->getContour(cName);
+  }
+
+  void TreeRigid::plotParameters() {
+	parafile << "TreeRigid" << endl<<endl;
+	parafile << "# BodyList:" << endl;
+	root->plotNameToStream(parafile);
   }
 }

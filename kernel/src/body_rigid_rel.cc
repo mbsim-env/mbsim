@@ -248,9 +248,14 @@ namespace MBSim {
     }
   }
 
+  void BodyRigidRel::plotParameterFiles() {
+    BodyRigid::plotParameterFiles(); 
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->plotParameterFiles();
+    }
+  }
 
   void BodyRigidRel::plot(double t, double dt) {
-
     BodyRigid::plot(t); 
 
     for(unsigned int i=0; i<successor.size(); i++) {
@@ -559,6 +564,13 @@ namespace MBSim {
 
     for(unsigned int i=0; i<successor.size(); i++) {
       KLC += trans(successor[i]->getC())*successor[i]->getl();
+    }
+  }
+
+  void BodyRigidRel::plotNameToStream(ostream& os, string indent) {
+	os << indent << getName() << endl;
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->plotNameToStream(os,indent+"  ");
     }
   }
 
