@@ -202,24 +202,27 @@ namespace MBSim {
 
     // solver specific settings
     cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
-    if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
-    else if(solver == LinearEquations) {
-      solve_ = &MultiBodySystem::solveLinearEquations;
-      cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
-    }
-    else if(solver == FixedPointSingle) solve_ = &MultiBodySystem::solveFixpointSingle;
-    else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
-    else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
-    else {
-      cout << "Error: unknown solver" << endl;
-      throw 5;
+	if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
+	else if(solver == LinearEquations) {
+	  solve_ = &MultiBodySystem::solveLinearEquations;
+	  cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+	}
+	else if(solver == FixedPointSingle) solve_ = &MultiBodySystem::solveFixpointSingle;
+	else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
+	else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
+	else {
+	  cout << "Error: unknown solver" << endl;
+	  throw 5;
     }
 
     // if(plotting) {
-    cout << "  initialising plot-files ..." << endl;
+    cout << "  building plot lists, ";
+    initPlotLists();
+    cout << "writing parameter-files, ";
+    plotParameterFiles();
+
+    cout << "initialising plot-files ..." << endl;
     initPlotFiles();
-    cout << "  writing parameter-files ..." << endl;
-    plotParameters();
     // }
 
     cout << "...... done initialising." << endl << endl;
@@ -799,19 +802,17 @@ namespace MBSim {
     return ud;
   }
 
-  void MultiBodySystem::initPlotFiles() {
-    Object::initPlotFiles();
-
+  void MultiBodySystem::initPlotLists() {
     // plot-Listen aufbauen
     //  vector<Object*>::iterator i;
-    for(vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) {
-      if((**i).getPlotLevel()>0) objects2plot.push_back((*i));
-      for(vector<Contour*>::iterator i4 = (**i).contour.begin(); i4!= (**i).contour.end(); ++i4)
-	if((**i4).getPlotLevel()>0) contours2plot.push_back((*i4));
-      for(vector<Port*>::iterator i5 = (**i).port.begin(); i5!= (**i).port.end(); ++i5)
-	// jetzt in Port::init()      (**i5).setFullName((**i).getFullName()+ "."+ (**i5).getFullName());  // etl. problematisch bei Namens-Aufloesungen durch Vergleiche: pruefen
-	if((**i5).getPlotLevel()>0) ports2plot.push_back((*i5));
-    }
+	for(vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) {
+	  if((**i).getPlotLevel()>0) objects2plot.push_back((*i));
+	  for(vector<Contour*>::iterator i4 = (**i).contour.begin(); i4!= (**i).contour.end(); ++i4)
+		if((**i4).getPlotLevel()>0) contours2plot.push_back((*i4));
+	  for(vector<Port*>::iterator i5 = (**i).port.begin(); i5!= (**i).port.end(); ++i5)
+		// jetzt in Port::init()      (**i5).setFullName((**i).getFullName()+ "."+ (**i5).getFullName()); // etl. problem. bei Namens-Aufloesungen durch Vergleiche: pruefen
+		if((**i5).getPlotLevel()>0) ports2plot.push_back((*i5));
+	}
 
     for(vector<Link*>::iterator i2 = links.begin(); i2!= links.end(); ++i2)
       if((**i2).getPlotLevel()>0) links2plot.push_back((*i2));
@@ -823,63 +824,25 @@ namespace MBSim {
 
     for(vector<ExtraDynamicInterface*>::iterator i3 = EDI.begin(); i3!= EDI.end(); ++i3)
       if((**i3).getPlotLevel()>0) EDIs2plot.push_back((*i3));
+  }
 
-    // die eigentliche Initialisierung
-
-    for(vector<Object*>::iterator                i = objects2plot.begin();  i != objects2plot.end(); ++i)  (**i).initPlotFiles();
-    for(vector<Link*>::iterator                  i = links2plot.begin();    i != links2plot.end(); ++i)    (**i).initPlotFiles();
-    for(vector<Contour*>::iterator               i = contours2plot.begin(); i != contours2plot.end(); ++i) (**i).initPlotFiles();
-    for(vector<Port*>::iterator                  i = ports2plot.begin();    i != ports2plot.end(); ++i)    (**i).initPlotFiles();
-    for(vector<ExtraDynamicInterface*>::iterator i = EDIs2plot.begin();     i != EDIs2plot.end(); ++i)     (**i).initPlotFiles();
-
-    // cout << "members of plot lists" << endl; 
-    //   for(vector<Object*>::iterator                i = objects2plot.begin();  i != objects2plot.end(); ++i)  cout << (**i).getFullName() << endl;
-    // cout << endl;
-    //   for(vector<Link*>::iterator                  i = links2plot.begin();    i != links2plot.end(); ++i)    cout << (**i).getFullName() << endl;
-    // cout << endl;
-    //   for(vector<Contour*>::iterator               i = contours2plot.begin(); i != contours2plot.end(); ++i) cout << (**i).getFullName() << endl;
-    // cout << endl;
-    //   for(vector<Port*>::iterator                  i = ports2plot.begin();    i != ports2plot.end(); ++i)    cout << (**i).getFullName() << endl;
-    // cout << endl;
-    //   for(vector<ExtraDynamicInterface*>::iterator i = EDIs2plot.begin();     i != EDIs2plot.end(); ++i)     cout << (**i).getFullName() << endl;
-
-    //  Object::initPlotFiles();
-    //  vector<Object*>::iterator i;
-    //  for(i = objects.begin(); i != objects.end(); ++i) {
-    //    (**i).initPlotFiles();
-    //    vector<Contour*>::iterator i4; // todo: listen contour2plot und port2plot anlegen, nur diese in plot() auswerten ...
-    //    for(i4 = (**i).contour.begin(); i4!= (**i).contour.end(); ++i4)
-    //      (**i4).initPlotFiles();
-    //    vector<Port*>::iterator i5;
-    //    for(i5 = (**i).port.begin(); i5!= (**i).port.end(); ++i5) {
-    //      (**i5).setFullName((**i).getFullName()+ "."+ (**i5).getFullName());  // etl. problematisch bei Namens-Aufloesungen durch Vergleiche: pruefen
-    //      (**i5).initPlotFiles();
-    //    }
-    //  }
-    //
-    //  vector<Link*>::iterator i2;
-    //  for(i2 = links.begin(); i2!= links.end(); ++i2)
-    //    (**i2).initPlotFiles();
-    //
-    //  vector<Contour*>::iterator i4; // todo: listen contour2plot und port2plot anlegen, nur diese in plot() auswerten ...
-    //  for(i4 = contour.begin(); i4!= contour.end(); ++i4)
-    //    (**i4).initPlotFiles();
-    //  vector<Port*>::iterator i5;
-    //  for(i5 = port.begin(); i5!= port.end(); ++i5)
-    //    (**i5).initPlotFiles();
-    // 
-    //  vector<ExtraDynamicInterface*>::iterator i3;
-    //  for(i3 = EDI.begin(); i3!= EDI.end(); ++i3)
-    //    (**i3).initPlotFiles();
-
-
+  void MultiBodySystem::initPlotFiles() {
+    Object::initPlotFiles();
     // Energieterme
     if(plotLevel>=3) {
       plotfile <<"# " << plotNr++ << ": T" << endl;
       plotfile <<"# " << plotNr++ << ": V" << endl;
       plotfile <<"# " << plotNr++ << ": E" << endl;
     }   
+
+    // initialization of plot-active elements
+    for(vector<Object*>::iterator                i = objects2plot.begin();  i != objects2plot.end(); ++i)  (**i).initPlotFiles();
+    for(vector<Link*>::iterator                  i = links2plot.begin();    i != links2plot.end(); ++i)    (**i).initPlotFiles();
+    for(vector<Contour*>::iterator               i = contours2plot.begin(); i != contours2plot.end(); ++i) (**i).initPlotFiles();
+    for(vector<Port*>::iterator                  i = ports2plot.begin();    i != ports2plot.end(); ++i)    (**i).initPlotFiles();
+    for(vector<ExtraDynamicInterface*>::iterator i = EDIs2plot.begin();     i != EDIs2plot.end(); ++i)     (**i).initPlotFiles();
   }
+
   void MultiBodySystem::closePlotFiles() {
     Object::closePlotFiles();
     vector<Object*>::iterator i;
@@ -898,34 +861,37 @@ namespace MBSim {
   }
 
   void MultiBodySystem::plotParameters() {
-    parafile << "MultibodySystem: \t" << fullName << endl;
-    parafile << "solver: \t\t" << getSolverInfo() << endl;
+    parafile << "#MultibodySystem\n" << fullName << endl;
+    parafile << "#solver\n" << getSolverInfo() << endl;
 
     // all Objects of MultibodySystem
-    if(objects.size()>0) {
-      parafile << "\nObjects:" << endl;
-      for(vector<Object*>::iterator i = objects2plot.begin();  i != objects2plot.end();  ++i)
-	parafile << "#  " << (**i).getName() << endl;
-    }
+	if(objects.size()>0) {
+	  parafile << "\n#Objects" << endl;
+	  for(vector<Object*>::iterator i = objects2plot.begin();  i != objects2plot.end();  ++i)
+		parafile << "  " << (**i).getName() << endl;
+	}
     // all Ports to environment
-    if(port.size()>0) {
-      parafile << "\nenvironmental ports:" << endl;
-      for(vector<Port*>::iterator i = port.begin();  i != port.end();  ++i) {
-	Vec WrOPtemp = (**i).getWrOP();
-	parafile << "#  KrSP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
+	if(port.size()>0) {
+	  parafile << "\n#environmental ports" << endl;
+	  for(vector<Port*>::iterator i = port.begin();  i != port.end();  ++i) {
+		Vec WrOPtemp = (**i).getWrOP();
+		parafile << "  KrSP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
       } 
     }
     // all Contours of environment
-    if(contour.size()>0) {
-      parafile << "\nenvironmental contours:" << endl;
-      for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
-	parafile << "#  " << (**i).getName() << endl;
-    }
+	if(contour.size()>0) {
+	  parafile << "\n#environmental contours" << endl;
+	  for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
+		parafile << "  " << (**i).getName() << endl;
+	}
+  }
 
-    for(vector<Object*>::iterator                i = objects2plot.begin();  i != objects2plot.end();  ++i) (**i).plotParameters();
-    for(vector<Link*>::iterator                  i = links2plot.begin();    i != links2plot.end();    ++i) (**i).plotParameters();
-    for(vector<Contour*>::iterator               i = contours2plot.begin(); i != contours2plot.end(); ++i) (**i).plotParameters();
-    for(vector<Port*>::iterator                  i = ports2plot.begin();    i != ports2plot.end();    ++i) (**i).plotParameters();
+  void MultiBodySystem::plotParameterFiles() {
+	Object::plotParameterFiles();
+    for(vector<Object*>::iterator  i = objects2plot.begin();  i != objects2plot.end();  ++i) (**i).plotParameterFiles();
+    for(vector<Link*>::iterator    i = links2plot.begin();    i != links2plot.end();    ++i) (**i).plotParameterFiles();
+    for(vector<Contour*>::iterator i = contours2plot.begin(); i != contours2plot.end(); ++i) (**i).plotParameterFiles();
+    for(vector<Port*>::iterator    i = ports2plot.begin();    i != ports2plot.end();    ++i) (**i).plotParameterFiles();
   }
 
   void MultiBodySystem::plot(double t, double dt) {

@@ -49,7 +49,7 @@ namespace MBSim {
   class Element {
 
     protected:
-	  /* Multibodysystem */
+	  /* MultiBodySystem */
       MultiBodySystem *mbs;
       /* Short name of Element */
       string name;
@@ -89,8 +89,10 @@ namespace MBSim {
       virtual void plotParameters();
 	  /*! Initialises plotfiles */
       virtual void initPlotFiles();
-      /*! Closes plotfiles */
+      /*! Closes time-history plotfile */
       virtual void closePlotFiles();
+      /*! Closes parameter plotfile */
+      virtual void plotParameterFiles();
       /*! Set Element::plotLevel \param level and therewith specifiy outputs in plot-files */
       void setPlotLevel(int level) {plotLevel = level;}
       /*! Set Element::plotPrec \param prec for output precision */
@@ -114,6 +116,7 @@ namespace MBSim {
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
   };
 
+inline void Element::closePlotFiles() {if(plotLevel) plotfile.close();}
 }
 
 #endif

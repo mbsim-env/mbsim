@@ -27,10 +27,10 @@
 #include <vector>
 #include "object.h"
 
-
 using namespace std;
 
 namespace MBSim {
+  class Body;
 
   /*! \brief Class for subsystems with tree structure
    *
@@ -51,6 +51,9 @@ namespace MBSim {
 
     Tree(const string &projectName);
     ~Tree();
+
+	void plotParameterFiles();
+	virtual Body* getRoot() = 0;
 
     virtual void updateKinematics(double t) = 0;
     virtual void updateh(double t) = 0;

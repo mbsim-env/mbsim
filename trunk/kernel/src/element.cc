@@ -32,8 +32,9 @@ namespace MBSim {
   }
 
   Element::~Element() {
-    plotfile.close();
-    parafile.close();
+	closePlotFiles();
+//    plotfile.close();
+//    parafile.close();
   }
 
   void Element::plot(double t, double dt) {
@@ -54,18 +55,24 @@ namespace MBSim {
     if(plotLevel) {
       plotfile.open((dirName+fullName+".plt").c_str(), ios::out);
       plotfile <<"# " << plotNr++ << ": t" << endl;
+    }
+  } 
+//  void Element::closePlotFiles() {
+//    if(plotLevel) {
+//      plotfile.close();
+//      parafile.close();
+//    }
+//  } 
+
+  void Element::plotParameterFiles() {
+	if(plotLevel) {
       parafile.open((dirName+fullName+".para").c_str(), ios::out);
-    }
-  } 
-  void Element::closePlotFiles() {
-    if(plotLevel) {
-      plotfile.close();
+	  plotParameters();
       parafile.close();
-    }
-  } 
+	}
+  }
 
   void Element::plotParameters() {
-    if(plotLevel) 
       parafile << "Element" << endl;
   }
 

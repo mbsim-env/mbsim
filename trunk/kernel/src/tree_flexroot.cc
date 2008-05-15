@@ -37,6 +37,8 @@ namespace MBSim {
       delete (*ib); 
   }
 
+  Body* TreeFlexRoot::getRoot() {return flexible;}
+
   void TreeFlexRoot::updateKinematics(double t) {
     flexible->updateKinematics(t);
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
@@ -335,6 +337,20 @@ namespace MBSim {
 //    return root->getContour(cName);
     cout << "\n  method TreeFlexRoot::getContour(const string &pName) needs to be implemented!!!" << endl;
     throw 1;
+  }
+
+  void TreeFlexRoot::plotParameterFiles() {
+	Tree::plotParameterFiles();
+	for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
+      (*ib)->plotParameterFiles();
+  }
+
+  void TreeFlexRoot::plotParameters() {
+	parafile << "TreeFlexRoot" << endl<<endl;
+	parafile << "# BodyList:" << endl;
+	parafile << flexible->getName() << endl;
+	for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
+	  (*ib)->plotNameToStream(parafile,"  ");
   }
 
 }
