@@ -390,7 +390,10 @@ namespace MBSim {
 	qElement(0,4) << q (n,n+4);
 	uElement(0,4) << u(n,n+4);
 	qElement(5,7) << q (0,  2);
-	qElement(7)   += 2*M_PI;
+	if(qElement(2)-q(2)>0.0) 
+	  qElement(7)   += 2*M_PI;
+	else
+	  qElement(7)   -= 2*M_PI;
 	uElement(5,7) << u(0,  2);
       } else {
 	qElement.init(0.0);uElement.init(0.0);
