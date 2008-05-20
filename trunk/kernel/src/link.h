@@ -92,6 +92,7 @@ namespace MBSim {
       vector<int> arrowAMVisID;
       vector<bool> arrowAMVisMoment;
       vector<UserFunction*> arrowAMVisUserFunctionColor;
+      vector<int> AMVisInstance;
 #endif
 
     public:
@@ -214,8 +215,8 @@ namespace MBSim {
        * */
 
 #ifdef HAVE_AMVIS
-      virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
-      virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
+      virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0, int instance=0);
+      virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0, int instance=0);
 #endif
   };
 

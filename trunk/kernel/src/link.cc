@@ -133,7 +133,8 @@ namespace MBSim {
 
 #ifdef HAVE_AMVIS
     for (unsigned int i=0; i<arrowAMVis.size(); i++)
-      arrowAMVis[i]->writeBodyFile();
+      if (AMVisInstance[i]==0)
+        arrowAMVis[i]->writeBodyFile();
 #endif
 
     if(plotLevel>0) {
@@ -210,7 +211,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_AMVIS
-  void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
+  void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor, int instance) {
     assert(ID >= 0);
     assert(ID < 2);
     arrowAMVis.push_back(arrow);
@@ -218,9 +219,10 @@ namespace MBSim {
     arrowAMVisID.push_back(ID);
     arrowAMVisUserFunctionColor.push_back(funcColor);
     arrowAMVisMoment.push_back(false);
+    AMVisInstance.push_back(instance);
   }
 
-  void Link::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
+  void Link::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor, int instance) {
     assert(ID >= 0);
     assert(ID < 2);
     arrowAMVis.push_back(arrow);
@@ -228,6 +230,7 @@ namespace MBSim {
     arrowAMVisID.push_back(ID);
     arrowAMVisUserFunctionColor.push_back(funcColor);
     arrowAMVisMoment.push_back(true);
+    AMVisInstance.push_back(instance);
   }
 #endif
 
@@ -277,7 +280,7 @@ namespace MBSim {
 	if (color<0) color=0;
       }  
       arrowAMVis[i]->setColor(color);
-      arrowAMVis[i]->appendDataset(0);
+      arrowAMVis[i]->appendDataset(AMVisInstance[i]);
     }
 #endif
   }
@@ -332,7 +335,7 @@ namespace MBSim {
 	if (color<0) color=0;
       }  
       arrowAMVis[i]->setColor(color);
-      arrowAMVis[i]->appendDataset(0);
+      arrowAMVis[i]->appendDataset(AMVisInstance[i]);
     }
 #endif
   }

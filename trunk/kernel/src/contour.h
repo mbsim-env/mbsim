@@ -58,6 +58,7 @@ namespace MBSim {
       DataInterfaceBase* bodyAMVisUserFunctionColor;
       /* Flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
+      int AMVisInstance;
 #endif
 
     public:
@@ -97,7 +98,7 @@ namespace MBSim {
 	*/
       void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
 
-      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL, int instance=0);
 #endif
   };
 

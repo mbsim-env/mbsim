@@ -35,6 +35,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
 bodyAMVisUserFunctionColor= NULL;
 bodyAMVis = NULL;
+AMVisInstance=0;
 #endif
     AWP(0,0) = 1;
     AWP(1,1) = 1;
@@ -47,9 +48,10 @@ bodyAMVis = NULL;
   }
 
 #ifdef HAVE_AMVIS
-  void Port::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
+  void Port::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor, int instance){
     bodyAMVis = AMVisBody;
     bodyAMVisUserFunctionColor = funcColor;
+    AMVisInstance=instance;
     if (!plotLevel) plotLevel=1;
   }
 #endif
@@ -75,14 +77,14 @@ bodyAMVis = NULL;
       bodyAMVis->setTime(t);
       bodyAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
       bodyAMVis->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
-      bodyAMVis->appendDataset(0);
+      bodyAMVis->appendDataset(AMVisInstance);
     }
 #endif
   }
 
   void Port::initPlotFiles() {					// HR 03.01.07
 #ifdef HAVE_AMVIS
-    if(bodyAMVis)
+    if(bodyAMVis && AMVisInstance==0)
       bodyAMVis->writeBodyFile();  
 #endif
 
