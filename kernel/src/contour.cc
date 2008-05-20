@@ -40,7 +40,8 @@ namespace MBSim {
   Contour::Contour(const string &name) : Element(name), WrOP(3), WvP(3), WomegaC(3), AWC(3)
 # ifdef HAVE_AMVIS
 					 ,
-					 bodyAMVis(NULL)
+					 bodyAMVis(NULL),
+                                         AMVisInstance(0)
 # endif
  {
    AWC(0,0) = 1;
@@ -67,14 +68,15 @@ namespace MBSim {
   {
     Element::initPlotFiles();
 #ifdef HAVE_AMVIS
-    if(bodyAMVis) bodyAMVis->writeBodyFile();
+    if(bodyAMVis && AMVisInstance==0) bodyAMVis->writeBodyFile();
 #endif
   }
 
 #ifdef HAVE_AMVIS
-  void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
+  void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor, int instance){
     bodyAMVis = AMVisBody;
     bodyAMVisUserFunctionColor = funcColor;
+    AMVisInstance=instance;
     if (!plotLevel) plotLevel=1;
   }
 #endif
@@ -102,7 +104,7 @@ namespace MBSim {
       static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTime(t);
       static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTranslation(WrOP(0),WrOP(1),WrOP(2));
       static_cast<AMVis::CRigidBody*>(bodyAMVis)->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
-      static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
+      static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(AMVisInstance);
     }
 #endif
   }
@@ -304,7 +306,7 @@ namespace MBSim {
       }		
       static_cast<AMVis::ElasticBody*>(bodyAMVis)->setTime(t);
       static_cast<AMVis::ElasticBody*>(bodyAMVis)->setCoordinates(qQuad);
-      static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
+      static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(AMVisInstance);
     }
 #endif
   }

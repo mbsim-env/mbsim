@@ -50,6 +50,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
       DataInterfaceBase* bodyAMVisUserFunctionColor;
+      int AMVisInstance;
 #endif
 
     public:
@@ -75,7 +76,7 @@ namespace MBSim {
       void initPlotFiles();
       void plotParameters();
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL, int instance=0);
 #endif
 
   };

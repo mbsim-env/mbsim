@@ -31,7 +31,11 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
+  Connection::Connection(const string &name, bool setValued) : LinkPort(name,setValued), KOSYID(0)
+#ifdef HAVE_AMVIS
+    , coilspringAMVis(0), coilspringAMVisUserFunctionColor(0)
+#endif
+  {
   }
 
   Connection::~Connection() { 
@@ -161,6 +165,6 @@ namespace MBSim {
       coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
       coilspringAMVis->appendDataset(0);
     }
-  }
 #endif
+  }
 }

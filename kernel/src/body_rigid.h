@@ -84,6 +84,7 @@ namespace MBSim {
       AMVis::CRigidBody *bodyAMVis;
       DataInterfaceBase* bodyAMVisUserFunctionColor;
       bool AMVisDataRel;
+      int AMVisInstance;
 #endif
 
     public:
@@ -101,7 +102,7 @@ namespace MBSim {
       void setJR(const Mat &JR);
 
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, DataInterfaceBase* funcColor=0) {bodyAMVis= body; bodyAMVisUserFunctionColor= funcColor;}
+      void setAMVisBody(AMVis::CRigidBody *body, DataInterfaceBase* funcColor=0, int instance=0) {bodyAMVis= body; bodyAMVisUserFunctionColor= funcColor; AMVisInstance=instance; }
       /*! set output to center of reference (true) or center of gravity (false, default)
 	\param rel_
        */
