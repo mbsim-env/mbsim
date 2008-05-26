@@ -578,7 +578,7 @@ namespace MBSim {
     updateStopVector(t);
   }
 
-  void MultiBodySystem::setGrav(const Vec& g) 
+  void MultiBodySystem::setAccelerationOfGravity(const Vec& g) 
   {
   	// SETGRAV sets gravitation
     grav = g;
@@ -1127,7 +1127,7 @@ namespace MBSim {
   void MultiBodySystem::preInteg(MultiBodySystem *parent){
     if(preIntegrator){
       setProjectDirectory(name+".preInteg");
-      setGrav(parent->getGrav()); //TODO bedeutet, dass fuer Vorintegration der gravitationsvektor im MBS parent schon gesetzt sein muss.
+      setAccelerationOfGravity(parent->getGrav()); //TODO bedeutet, dass fuer Vorintegration der gravitationsvektor im MBS parent schon gesetzt sein muss.
       cout << "Initialisation of " << name << " for Preintegration..."<<endl;
       init();  
       cout << "Preintegration..."<<endl;
