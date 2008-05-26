@@ -322,8 +322,6 @@ namespace MBSim {
     unsigned int i;
     for(i=0; i<port.size(); i++) {
       if((port[i]->getName() == name) || (port[i]->getFullName()== name)) {
-	cout << port[i]<<endl;
-	cout << port[i]->getName()<<endl;
 	return port[i];
       }
     }             

@@ -258,9 +258,7 @@ namespace MBSim {
   }
 
   void LinkCoordinateSystem::connect(CoordinateSystem *port_, int id) {
-    cout << "still here"<<endl;
     port.push_back(port_);
-    //port_->getObject()->addLink(this,port_,id);
   }
 
   void LinkCoordinateSystem::updateW(double t) {
