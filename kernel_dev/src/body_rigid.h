@@ -347,14 +347,7 @@ namespace MBSim {
 
     void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
 
-    int portIndex(const CoordinateSystem *port_) const {
-      for(unsigned int i=0; i<port.size(); i++) {
-	if(port_==port[i])
-	  return i;
-      }
-      return -1;
-    }
-
+    
     void setRefCoordinateSystem(CoordinateSystem *port) {
       iRef = portIndex(port);
       assert(iRef > -1);

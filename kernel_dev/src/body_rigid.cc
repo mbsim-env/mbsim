@@ -45,7 +45,9 @@ namespace MBSim {
 
     SqrMat eye;
     eye << DiagMat(3,INIT,1);
-    port.push_back(new CoordinateSystem("COG"));
+
+    Object::addCoordinateSystem(new CoordinateSystem("COG"));
+
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
     ASK.push_back(eye);
@@ -385,8 +387,8 @@ namespace MBSim {
   return -1;
   }
 
-  void BodyRigid::addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
-    Object::addCoordinateSystem(port_);
+  void BodyRigid::addCoordinateSystem(CoordinateSystem *cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
+    Object::addCoordinateSystem(cosy);
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
