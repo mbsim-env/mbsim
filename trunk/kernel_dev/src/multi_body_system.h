@@ -242,12 +242,12 @@ namespace MBSim {
     void savela();
     void initla();
 
-    void addCoordinateSystem(CoordinateSystem *port, const Vec &WrOP);
-    //CoordinateSystem* getCoordinateSystem(const string &name,bool check=true);
+    void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
+
+    void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
+
     Contour* getContour(const string &name,bool check=true);
 
-
-    void addCoordinateSystem(const string &name, const Vec &WrSP);
     void addContour(Contour *contour, const Vec &WrOP);
     void addContour(Contour *contour, const Vec &WrOP,const SqrMat &AWC);
 

@@ -39,9 +39,25 @@
 namespace MBSim {
 
   MultiBodySystem::MultiBodySystem() :                          Object("Default"),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
+
+    SqrMat eye;
+    eye << DiagMat(3,INIT,1);
+    
+    CoordinateSystem *cosy = new CoordinateSystem("O");
+    Object::addCoordinateSystem(cosy);
+    cosy->setWrOP(Vec(3));
+    cosy->setAWP(eye);
   } 
 
   MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
+
+    SqrMat eye;
+    eye << DiagMat(3,INIT,1);
+    
+    CoordinateSystem *cosy = new CoordinateSystem("O");
+    Object::addCoordinateSystem(cosy);
+    cosy->setWrOP(Vec(3));
+    cosy->setAWP(eye);
   }
 
   MultiBodySystem::~MultiBodySystem() {
@@ -67,7 +83,6 @@ namespace MBSim {
   {
     cout << endl << "Initialising MultiBodySystem " << fullName << " ......" << endl;
     setDirectory(); // output directory
-
 
     // Vektor-Dimensionierung
     cout << "  setting dimensions of ..." << endl;
@@ -1101,21 +1116,19 @@ namespace MBSim {
     return NULL;
   }
 
+  void MultiBodySystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
 
+    Object::addCoordinateSystem(cosy);
+    int i = 0;
+    if(refCoordinateSystem)
+      i = portIndex(refCoordinateSystem);
 
-  void MultiBodySystem::addCoordinateSystem(const string &name, const Vec &WrOP) {
-    CoordinateSystem *port = new CoordinateSystem(name);
-    addCoordinateSystem(port,WrOP);
-  }
+    cosy->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
+    cosy->setAWP(port[i]->getAWP()*ARC);
+ }
 
-  void MultiBodySystem::addCoordinateSystem(CoordinateSystem* port, const Vec &WrOP) {
-    Object::addCoordinateSystem(port);
-    port->setWrOP(WrOP);
-  }
-
-  void MultiBodySystem::addContour(Contour* contour, const Vec &WrOP) {
-    Object::addContour(contour);
-    contour->setWrOP(WrOP);
+  void MultiBodySystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
+    addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
 
   void MultiBodySystem::addContour(Contour* contour, const Vec &WrOP, const SqrMat &AWC) {
