@@ -51,16 +51,16 @@ namespace MBSim {
       (*ib)->updateT(t);
   }
 
-  void TreeFlexRoot::resetMh() {
-    M(Iflexible,Irigid).init(0.0);
-    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
-      (*ib)->getM().init(0.0);
-    h(Irigid)      .init(0.0);
-  }
+//  void TreeFlexRoot::resetMh() {
+//    M(Iflexible,Irigid).init(0.0);
+//    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
+//      (*ib)->getM().init(0.0);
+//    h(Irigid)      .init(0.0);
+//  }
 
   void TreeFlexRoot::updateh(double t) {
-    resetMh();
-
+    M.init(0.0);
+    h.init(0.0);
     flexible->updateh(t);  // beschreibt durch updatehRef(...) auf die passenden Speicherbereiche
 			   // update auch fuer zugehoeriges M()
     //    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
@@ -71,8 +71,9 @@ namespace MBSim {
 
   void TreeFlexRoot::updateM(double t) {
     flexible->updateM(t);
-    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
-      (*ib)->updateM(t);
+    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
+	  (*ib)->updateM(t);
+	}
   }
 
 

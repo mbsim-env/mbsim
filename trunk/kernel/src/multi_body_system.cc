@@ -157,8 +157,6 @@ namespace MBSim {
 
     // Init der einzelenen Komponenten
     cout << "  initialising ..." << endl;
-  //  for(int i=0; i<T.cols(); i++)
-  //   T(i,i) = 1;
 
     if(objects.size()>0)  cout << "      " << objects.size() << " Objects" << endl;
     Object::init();
@@ -661,8 +659,10 @@ namespace MBSim {
   void MultiBodySystem::updateM(double t) 
   {
   	// UPDATEM calls updateM of children
-    vector<Object*>::iterator i;
-    for(i = objects.begin(); i != objects.end(); ++i) (**i).updateM(t);
+	vector<Object*>::iterator i;
+	for(i = objects.begin(); i != objects.end(); ++i) {
+	  (**i).updateM(t);
+	}
   }
 
   void MultiBodySystem::facLLM() {

@@ -217,18 +217,16 @@ namespace MBSim {
     //      WvK  = precessor->computeWvC(cp) + AWP*JT*u(iT);
     // WvK  = precessor->computeWvC(cPosition);
 	WvK = AWK * vDummy(Index(0,2));
-    if(JT.cols())
+    if(JT.cols()) {
 	  WB   = precessor->computeDrDs(cPosition);
       WvK += WB*u(iT);
-  }
+	}
 
-  const Vec& BodyRigidRelOnFlex::getKrOK()  {
 	KrOK = trans(AWK) * WrOK;
-	return KrOK;
+    KvK  = trans(AWK) * WvK;
   }
 
-   const Vec& BodyRigidRelOnFlex::getKvK()   {
-    KvK = trans(AWK) * WvK;
-    return KvK;
+  void BodyRigidRelOnFlex::setPrPK0(const Vec& PrPK0_) {
+	cout << "WARNING\n\tBodyRigidRelOnFlex::setPrPK0(): PrPK0 restricted to 0 and left unchanged" << endl;
   }
 }

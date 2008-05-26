@@ -48,7 +48,6 @@ namespace MBSim {
     vector<BodyRigidRelOnFlex*> rigid;
 //    vector<Index> Irigid;
 
-    void resetMh();
     void initFlexibleStage1();
     void initFlexibleStage2();
 
