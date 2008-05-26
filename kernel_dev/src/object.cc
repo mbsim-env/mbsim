@@ -290,11 +290,13 @@ namespace MBSim {
     }
   }
 
-//  void Object::addLink(LinkCoordinateSytem *link, CoordinateSystem *port, int objectID) {
-//  }
-//
-//  void Object::addLink(LinkContour *link, Contour *contour, int objectID) {
-//  }
+  int Object::portIndex(const CoordinateSystem *port_) const {
+    for(unsigned int i=0; i<port.size(); i++) {
+      if(port_==port[i])
+	return i;
+    }
+    return -1;
+  }
 
   void Object::addContour(Contour* contour_) {
     if(getContour(contour_->getFullName(),false)) { //Contourname exists already

@@ -256,6 +256,8 @@ namespace MBSim {
     virtual void addCoordinateSystem(CoordinateSystem * port);
     virtual void addContour(Contour* contour);
 
+    int portIndex(const CoordinateSystem *port_) const;
+
     virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
     virtual Contour* getContour(const string &name, bool check=true);
 
