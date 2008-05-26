@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkCoordinateSystem(name,setValued), KOSYID(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
+  Connection::Connection(const string &name, bool setValued) : LinkCoordinateSystem(name,setValued), KOSYID(1), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
   }
 
   Connection::~Connection() { 
