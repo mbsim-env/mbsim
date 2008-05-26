@@ -206,7 +206,7 @@ namespace MBSim {
     /*! Return vector of gravitational acceleration \return g in world system */
     const Vec& getGrav() const {return grav;};
     /*! Define vector of gravitational acceleration \param g in world system */
-    void setGrav(const Vec& g);
+    void setAccelerationOfGravity(const Vec& g);
     /*! 
      * Define \param directoryName_ for simulation output.
      * Default is Element::(fullName+i) with i used for enumeration 
