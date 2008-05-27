@@ -37,7 +37,7 @@ namespace MBSim {
       Mat fF[2], fM[2];
       double argN;
       Vec argT;
-      double omN;
+      double epsilonN, gd_grenz;
 
       void checkActive();
 
@@ -67,7 +67,9 @@ namespace MBSim {
 
       void updateKinetics(double t);
       void updateW(double t);
-      void setOmN(double omN_) {omN = omN_;}
+
+      void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
+
   };
 
 }
