@@ -224,7 +224,7 @@ namespace MBSim {
       port[0]->setWjR(port[iRef]->getWjR());
     }
 
-    // Jacobi der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY)
+    // Jacobi der anderen KOSY (außer Schwerpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
 	SqrMat tWrSK = tilde(WrSK[i]);
@@ -233,6 +233,15 @@ namespace MBSim {
 	port[i]->setWjP(port[0]->getWjP()- tWrSK*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSK[i])));
 	port[i]->setWjR(port[0]->getWjR());
       }
+    }
+
+     // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
+    for(unsigned int i=0; i<contour.size(); i++) {
+      SqrMat tWrSC = tilde(WrSC[i]);
+      contour[i]->setWJP(port[0]->getWJP() - tWrSC*port[0]->getWJR());
+      contour[i]->setWJR(port[0]->getWJR());
+      contour[i]->setWjP(port[0]->getWjP()- tWrSC*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSC[i])));
+      contour[i]->setWjR(port[0]->getWjR());
     }
   }
 
@@ -339,6 +348,11 @@ namespace MBSim {
       WrSK[i] = port[0]->getAWP()*SrSK[i];
     }
 
+    // Ortsvektoren vom Schwerpunkt-KOSY zu Konturen im Welt-KOSY 
+    for(unsigned int i=0; i<contour.size(); i++) {
+      WrSC[i] = port[0]->getAWP()*SrSC[i];
+    }
+
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Kinematik des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
       port[0]->setWrOP(port[iRef]->getWrOP() - WrSK[iRef]);
@@ -346,7 +360,7 @@ namespace MBSim {
       port[0]->setWomegaP(port[iRef]->getWomegaP());
     }
 
-    // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY)
+    // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
 	port[i]->setWrOP(port[0]->getWrOP() + WrSK[i]);
@@ -355,14 +369,12 @@ namespace MBSim {
 	port[i]->setAWP(port[0]->getAWP()*ASK[i]);
       }
     }
-    // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY)
+    // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
-      SqrMat AWC = port[0]->getAWP()*AKC[i];
-      WrKC[i] = port[0]->getAWP() * KrKC[i];
-      contour[i]->setWrOP(port[0]->getWrOP() + WrKC[i]);
-      contour[i]->setWvP(port[0]->getWvP() + crossProduct(port[0]->getWomegaP(), WrKC[i]));
+      contour[i]->setWrOP(port[0]->getWrOP() + WrSC[i]);
+      contour[i]->setWvP(port[0]->getWvP() + crossProduct(port[0]->getWomegaP(), WrSC[i]));
       contour[i]->setWomegaC(port[0]->getWomegaP());
-      contour[i]->setAWC(AWC);
+      contour[i]->setAWC(port[0]->getAWP()*ASC[i]);
     }
   }
 
@@ -402,15 +414,18 @@ namespace MBSim {
     addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
 
-  void BodyRigid::addContour(Contour* contour, const Vec &KrKC_, const SqrMat &AKC_) {
+  void BodyRigid::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
     Object::addContour(contour);
-    KrKC.push_back(KrKC_.copy()); 
-    WrKC.push_back(Vec());
-    AKC.push_back(AKC_.copy());
+
+    int i = 0;
+    if(refCoordinateSystem)
+      i = portIndex(refCoordinateSystem);
+
+    SrSC.push_back(SrSK[i] + ASK[i]*RrRC);
+    WrSC.push_back(Vec(3));
+    ASC.push_back(ASK[i]*ARC);
 
     // HitSphere anpassen !!!
-    contour->adjustParentHitSphere(KrKC_);
-    if(parent != mbs)
-      parent->addContour(contour);
+    contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
   }
 }

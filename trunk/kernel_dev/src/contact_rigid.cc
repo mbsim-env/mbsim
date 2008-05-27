@@ -56,10 +56,13 @@ namespace MBSim {
 
   }
 
-  //void ContactRigid::updateW(double t) {
-    //W[0] += trans(port[0]->getWJP())*fF[0] + trans(port[0]->getWJR())*(fM[0]+tilde(WrP0P1)*fF[0]);
-    //W[1] += trans(port[1]->getWJP())*fF[1] + trans(port[1]->getWJR())*fM[1];
-  //}
+  void ContactRigid::updateW(double t) {
+    Vec WrPC[2];
+    WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
+    WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
+    W[0] += trans(contour[0]->getWJP())*fF[0] + trans(contour[0]->getWJR())*(tilde(WrPC[0])*fF[0]);
+    W[1] += trans(contour[1]->getWJP())*fF[1] + trans(contour[1]->getWJR())*(tilde(WrPC[1])*fF[1]);
+  }
 
   void ContactRigid::checkActive() {
 

@@ -45,6 +45,7 @@ namespace MBSim {
       void init();
 
       void updateKinetics(double t);
+      void updateh(double t);
 
       void setStiffness(double c_) {c = c_;}
       void setDamping(double d_) {d = d_;}

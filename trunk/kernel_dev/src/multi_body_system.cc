@@ -162,7 +162,6 @@ namespace MBSim {
 
     updatesvRef(svParent);
     updatejsvRef(jsvParent);
-    updaterRef(rParent);
     updateMRef(MParent);
     updateTRef(TParent);
     updateLLMRef(LLMParent);
@@ -224,6 +223,7 @@ namespace MBSim {
     checkActiveConstraints();
 
     updatehRef(hParent);
+    updaterRef(rParent);
 
     // solver specific settings
     cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
@@ -316,6 +316,7 @@ namespace MBSim {
       W.resize() >> WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1));
       G.resize() >> GParent(Index(0,getlaSize()-1));
       b.resize() >> bParent(Index(0,getlaSize()-1));
+      r.resize() >> rParent(Index(0,getuSize()-1));
 
       la.resize() >> laParent(Index(0,getlaSize()-1));
       gd.resize() >> gdParent(Index(0,getlaSize()-1));
@@ -327,8 +328,6 @@ namespace MBSim {
 	(**ic).updateRef();
 
       activeConstraintsChanged = false;
-      W.init(0);
-      G.init(0);
     }
   }
 
@@ -485,13 +484,17 @@ namespace MBSim {
       (**iL).updatehRef();
   }
 
-  void MultiBodySystem::updaterRef(const Vec &hParent) {
+  void MultiBodySystem::updaterRef(const Vec &rParent) {
 
     r >> rParent;
 
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i)
       (**i).updaterRef();
+
+    vector<Link*>::iterator iL;
+    for(iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL)
+      (**iL).updaterRef();
   }
 
   void MultiBodySystem::updatefRef(const Vec &fParent) {
@@ -502,7 +505,6 @@ namespace MBSim {
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).updatefRef();
   }
-
 
   void MultiBodySystem::updatesvRef(const Vec &svExt) {
 
@@ -770,7 +772,7 @@ namespace MBSim {
     r.init(0);
 
     // UPDATER calls updater for active links 
-    for(vector<Link*>::iterator i = links.begin(); i!= links.end(); ++i) (**i).updater(t);
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i!=linkSetValuedActive.end(); ++i) (**i).updater(t);
   }
 
   void MultiBodySystem::updatezd(double t) {
@@ -1103,18 +1105,18 @@ namespace MBSim {
  //   return NULL;
  // }
 
-  Contour* MultiBodySystem::getContour(const string &name,bool check) {
-    unsigned int i;
-    for(i=0; i<contour.size(); i++) {
-      if(contour[i]->getName() == name || contour[i]->getFullName()== name) return contour[i];
-    }
-    if(check){
-      if(!(i<contour.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no contour " << name << "!" << endl; 
-      assert(i<contour.size());
-    }
-//    else return cReturn;
-    return NULL;
-  }
+///  Contour* MultiBodySystem::getContour(const string &name,bool check) {
+///    unsigned int i;
+///    for(i=0; i<contour.size(); i++) {
+///      if(contour[i]->getName() == name || contour[i]->getFullName()== name) return contour[i];
+///    }
+///    if(check){
+///      if(!(i<contour.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no contour " << name << "!" << endl; 
+///      assert(i<contour.size());
+///    }
+/////    else return cReturn;
+///    return NULL;
+///  }
 
   void MultiBodySystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
 
@@ -1131,11 +1133,16 @@ namespace MBSim {
     addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
 
-  void MultiBodySystem::addContour(Contour* contour, const Vec &WrOP, const SqrMat &AWC) {
+ void MultiBodySystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
+
     Object::addContour(contour);
-    contour->setWrOP(WrOP);
-    contour->setAWC(AWC);
-  }
+    int i = 0;
+    if(refCoordinateSystem)
+      i = portIndex(refCoordinateSystem);
+
+    contour->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
+    contour->setAWC(port[i]->getAWP()*ARC);
+ }
 
   void MultiBodySystem::preInteg(MultiBodySystem *parent){
     if(preIntegrator){

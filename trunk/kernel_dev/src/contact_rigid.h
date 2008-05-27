@@ -66,6 +66,7 @@ namespace MBSim {
       std::string getTerminationInfo(double dt);
 
       void updateKinetics(double t);
+      void updateW(double t);
       void setOmN(double omN_) {omN = omN_;}
   };
 

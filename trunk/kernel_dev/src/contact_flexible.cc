@@ -70,4 +70,14 @@ namespace MBSim {
     WF[1] = -WF[0];
   }
 
+  void ContactFlexible::updateh(double t) {
+    if(active) {
+    Vec WrPC[2];
+    WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
+    WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
+    h[0] += trans(contour[0]->getWJP())*WF[0] + trans(contour[0]->getWJR())*(crossProduct(WrPC[0],WF[0]));
+    h[1] += trans(contour[1]->getWJP())*WF[1] + trans(contour[1]->getWJR())*(crossProduct(WrPC[1],WF[1]));
+  }
+  }
+
 }

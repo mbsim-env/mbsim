@@ -184,7 +184,8 @@ namespace MBSim {
 
   void Contact::updateStage2(double t) {
     contactKinematics->stage2(g,gd,cpData);
-    updateKinetics(t);
+    if(active)
+      updateKinetics(t);
   }
 
 
