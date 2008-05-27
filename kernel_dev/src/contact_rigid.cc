@@ -38,7 +38,7 @@ namespace MBSim {
     // return x>=0?1:-1;
   }
 
-  ContactRigid::ContactRigid(const string &name) : Contact(name,true), argT(2) {
+  ContactRigid::ContactRigid(const string &name) : Contact(name,true), argT(2), epsilonN(0), gd_grenz(1e-2) {
   }
 
   void ContactRigid::init() {
@@ -87,22 +87,24 @@ namespace MBSim {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
-    double *lap = mbs->getla()();
     gdn(0) = s(0);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*lap[ja[j]];
+      gdn(0) += a[j]*mbs->getla()(ja[j]);
+
+    if(fabs(gd(0)) > gd_grenz)
+      gdn(0) += epsilonN*gd(0);
 
     la(0) = proxCN(la(0)-rFactor(0)*gdn(0));
 
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*lap[ja[j]];
+	gdn(i) += a[j]*mbs->getla()(ja[j]);
     }
-    if(nFric == 1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*la(0));
+    if(nFric==1) 
+      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
     else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*la(0));
+      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
   }
 
   void ContactRigid::solveGS(double dt) {
@@ -115,10 +117,17 @@ namespace MBSim {
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*mbs->getla()(ja[j]);
 
+    if(fabs(gd(0)) > gd_grenz)
+      gdn(0) += epsilonN*gd(0);
+
+    double om = 1.0;
+    double buf;
     if(gdn(0) >= 0)
-      la(0) = 0;
-    else 
-      la(0) = -gdn(0)/a[ia[laInd]];
+      buf = 0;
+    else {
+      buf = -gdn(0)/a[ia[laInd]];
+    }
+    la(0) += om*(buf - la(0));;
 
     if(nFric) {
       gdn(1) = s(1);
@@ -129,62 +138,13 @@ namespace MBSim {
       double sdG = -gdn(1)/a[ia[laInd+1]];
 
       if(fabs(sdG)<=laNmue) 
-	la(1) = sdG;
+	buf = sdG;
       else 
-	la(1) = (laNmue<=sdG) ? laNmue : -laNmue;
+	buf = (laNmue<=sdG) ? laNmue : -laNmue;
+      la(1) += om*(buf - la(1));;
     }
   }
 
-  void ContactRigid::updaterFactors() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-//    int *ja = mbs->getGs().Jp(); // unused
-    double sumN = 0;
-    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      sumN += fabs(a[j]);
-    double aN = a[ia[laInd]];
-    if(aN > sumN) {
-      rFactorUnsure(0) = 0;
-      rFactor(0) = 1.0/aN;
-    } else {
-      rFactorUnsure(0) = 1;
-      rFactor(0) = rMax/aN;
-    }
-    double sumT1 = 0;
-    double sumT2 = 0;
-    double aT1, aT2;
-    if(nFric == 1) {
-      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	sumT1 += fabs(a[j]);
-      aT1 = a[ia[laInd+1]];
-      if(aT1 > sumT1) {
-	rFactorUnsure(1)=0;
-	rFactor(1) = 1.0/aT1;
-      } else {
-	rFactorUnsure(1)=1;
-	rFactor(1) = rMax/aT1;
-      }
-    } else if(nFric == 2) {
-      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	sumT1 += fabs(a[j]);
-      for(int j=ia[laInd+2]+1; j<ia[laInd+3]; j++)
-	sumT2 += fabs(a[j]);
-      aT1 = a[ia[laInd+1]];
-      aT2 = a[ia[laInd+2]];
-
-      // TODO rFactorUnsure
-      if(aT1 - sumT1 >= aT2 - sumT2) 
-	if(aT1 + sumT1 >= aT2 + sumT2) 
-	  rFactor(1) = 2.0/(aT1+aT2+sumT1-sumT2);
-	else 
-	  rFactor(1) = 1.0/aT2;
-      else 
-	if(aT1 + sumT1 < aT2 + sumT2) 
-	  rFactor(1) = 2.0/(aT1+aT2-sumT1+sumT2);
-	else 
-	  rFactor(1) = 1.0/aT1;
-    }
-  }
 
   void ContactRigid::residualProj(double dt) {
     double *a = mbs->getGs()();
@@ -195,6 +155,9 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*mbs->getla()(ja[j]);
     }
+
+    if(fabs(gd(0)) > gd_grenz)
+      gdn(0) += epsilonN*gd(0);
 
     argN = la(0) - rFactor(0)*gdn(0);
     res(0) = la(0) - proxCN(argN);
@@ -209,6 +172,7 @@ namespace MBSim {
     }
   }
 
+    
   void ContactRigid::residualProjJac(double dt) {
 
     SqrMat Jprox = mbs->getJprox();
@@ -267,7 +231,7 @@ namespace MBSim {
     }
   }
 
-  void ContactRigid::checkForTermination(double dt) {
+void ContactRigid::checkForTermination(double dt) {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -277,6 +241,9 @@ namespace MBSim {
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*mbs->getla()(ja[j]);
     }
+
+    if(fabs(gd(0)) > gd_grenz)
+      gdn(0) += epsilonN*gd(0);
 
     if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
       ;
@@ -290,7 +257,7 @@ namespace MBSim {
     if(nFric==1) {
       if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt)
 	;
-      else if(fabs(la(1)) <= mue*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)
+      else if(fabs(la(1)) <= mue*fabs(la(0))+laTol*dt && fabs(gdn(1)) <= gdTol)
 	;
       else {
 	mbs->setTermination(false);
@@ -305,6 +272,58 @@ namespace MBSim {
 	mbs->setTermination(false);
 	return;
       }
+    }
+
+  }
+
+void ContactRigid::updaterFactors() {
+    double *a = mbs->getGs()();
+    int *ia = mbs->getGs().Ip();
+//    int *ja = mbs->getGs().Jp(); // unused
+    double sumN = 0;
+    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
+      sumN += fabs(a[j]);
+    double aN = a[ia[laInd]];
+    if(aN > sumN) {
+      rFactorUnsure(0) = 0;
+      rFactor(0) = 1.0/aN;
+    } else {
+      rFactorUnsure(0) = 1;
+      rFactor(0) = rMax/aN;
+    }
+    double sumT1 = 0;
+    double sumT2 = 0;
+    double aT1, aT2;
+    if(nFric == 1) {
+      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
+	sumT1 += fabs(a[j]);
+      aT1 = a[ia[laInd+1]];
+      if(aT1 > sumT1) {
+	rFactorUnsure(1)=0;
+	rFactor(1) = 1.0/aT1;
+      } else {
+	rFactorUnsure(1)=1;
+	rFactor(1) = rMax/aT1;
+      }
+    } else if(nFric == 2) {
+      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
+	sumT1 += fabs(a[j]);
+      for(int j=ia[laInd+2]+1; j<ia[laInd+3]; j++)
+	sumT2 += fabs(a[j]);
+      aT1 = a[ia[laInd+1]];
+      aT2 = a[ia[laInd+2]];
+
+      // TODO rFactorUnsure
+      if(aT1 - sumT1 >= aT2 - sumT2) 
+	if(aT1 + sumT1 >= aT2 + sumT2) 
+	  rFactor(1) = 2.0/(aT1+aT2+sumT1-sumT2);
+	else 
+	  rFactor(1) = 1.0/aT2;
+      else 
+	if(aT1 + sumT1 < aT2 + sumT2) 
+	  rFactor(1) = 2.0/(aT1+aT2-sumT1+sumT2);
+	else 
+	  rFactor(1) = 1.0/aT1;
     }
   }
 

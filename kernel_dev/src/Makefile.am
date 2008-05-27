@@ -16,7 +16,6 @@ contact_rigid.cc\
 contact_rigid_bilateral.cc\
 contact_flexible.cc\
 contact_flexible_bilateral.cc\
-impact_rigid.cc\
 load.cc\
 element.cc\
 tree.cc\
@@ -48,7 +47,6 @@ contact_rigid.h\
 contact_rigid_bilateral.h\
 contact_flexible.h\
 contact_flexible_bilateral.h\
-impact_rigid.h\
 load.h\
 element.h\
 tree.h\
