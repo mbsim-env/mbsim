@@ -264,8 +264,8 @@ namespace MBSim {
     vector<SqrMat> ASK;
     vector<Vec> SrSK, WrSK;
 
-    vector<SqrMat> AKC;
-    vector<Vec> KrKP, WrKP, KrKC, WrKC;
+    vector<SqrMat> ASC;
+    vector<Vec> SrSC, WrSC;
 
     Jacobian *fT;
 
@@ -347,6 +347,7 @@ namespace MBSim {
 
     void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
 
+    void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
     
     void setRefCoordinateSystem(CoordinateSystem *port) {
       iRef = portIndex(port);
@@ -366,10 +367,6 @@ namespace MBSim {
 
     void init();
     void initPlotFiles();
-
-    Object* getResponsible() {return parent;}
-
-    virtual void addContour(Contour* contour, const Vec &KrKC_=Vec(3,INIT,0.0), const SqrMat &AKC_=SqrMat(3,EYE));
 
   };
 

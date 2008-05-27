@@ -39,11 +39,11 @@ namespace MBSim {
     WF[1] = Wf*la(IT);
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];
-    WM[0] = -WM[1] + crossProduct(WrP0P1,WF[0]);
+    WM[0] = -WM[1];
   }
 
   void ConnectionFlexible::updateh(double t) {
-    h[0] += trans(port[0]->getWJP())*WF[0] + trans(port[0]->getWJR())*WM[0];
+    h[0] += trans(port[0]->getWJP())*WF[0] + trans(port[0]->getWJR())*(WM[0]+crossProduct(WrP0P1,WF[0]));
     h[1] += trans(port[1]->getWJP())*WF[1] + trans(port[1]->getWJR())*WM[1];
   }
 

@@ -246,10 +246,7 @@ namespace MBSim {
 
     void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
 
-    Contour* getContour(const string &name,bool check=true);
-
-    void addContour(Contour *contour, const Vec &WrOP);
-    void addContour(Contour *contour, const Vec &WrOP,const SqrMat &AWC);
+    void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
 
     void plot(double t, double dt=1);
     void plotParameters();

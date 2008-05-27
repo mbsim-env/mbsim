@@ -174,7 +174,6 @@ namespace MBSim {
     updatelaRef();
     updategdRef();
     updatebRef();
-    updaterRef();
     updatesRef();
     // TODO Nur bei Newton
     updateresRef();
@@ -342,6 +341,7 @@ namespace MBSim {
       //h.push_back(Vec(contour[i]->getParent()->gethSize()));
       W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
       h.push_back(Vec(contour[i]->getWJP().cols()));
+      r.push_back(Vec(contour[i]->getWJP().cols()));
     }
   }
 
