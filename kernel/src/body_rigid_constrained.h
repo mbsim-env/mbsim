@@ -85,8 +85,7 @@ namespace MBSim {
       void facLLM() {}
 
       void updateKinematics(double t);
-      void calcSize();
-
+      
     public:
 
       BodyRigidConstrainedVel(const string &name);

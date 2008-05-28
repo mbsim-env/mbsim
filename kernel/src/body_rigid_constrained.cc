@@ -128,12 +128,8 @@ namespace MBSim {
     I(2,2) = 1.0; 
   }
 
-  void BodyRigidConstrainedVel::calcSize() {
-    BodyRigidAbs::calcSize();
-  } 
-
   void BodyRigidConstrainedVel::init() {
-    BodyRigid::init();
+    BodyRigidAbs::init();
 
     WrOHitSphere >> WrOK;
 
