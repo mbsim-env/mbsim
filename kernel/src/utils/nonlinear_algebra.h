@@ -30,15 +30,14 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*! Regular Falsi for one-dimensional root-finding
-   *
-   * */
+  /*! Regular Falsi for one-dimensional root-finding */
   class RegulaFalsi {
     private:
       Function<double,double> *func;
       int itmax,it,info;
       double tol;
     public:
+    
       RegulaFalsi(Function<double,double> *f);
       int getIter() const {return it;};
       int getInfo() const {return info;};
@@ -47,9 +46,7 @@ namespace MBSim {
       double slv(double a, double b);
   };
 
-  /*! Newton method for one-dimensional root-finding
-   *
-   * */
+  /*! Newton method for one-dimensional root-finding */
   class NewtonMethod {
     private:
       Function<double,double> *fct;
@@ -58,6 +55,7 @@ namespace MBSim {
       int itmax, iter, prim, kmax, rc, info;
       double tol;
     public:
+    
       NewtonMethod(Function<double,double> *fct_, Function<double,double> *jac_=0);
       int getIter() const {return iter;}
       int getInfo() const {return info;}
@@ -67,9 +65,7 @@ namespace MBSim {
       int nit() const {return iter;};
   };
 
-  /*! Newton method for multi-dimensional root-finding
-   *
-   * */
+  /*! Newton method for multi-dimensional root-finding */
   class MultiDimNewtonMethod {
     private:
       Function<Vec,Vec> *fct;
@@ -77,6 +73,7 @@ namespace MBSim {
 
       int itmax, iter, prim, kmax, rc, info;
       double tol;
+      
     public:
       MultiDimNewtonMethod(Function<Vec,Vec> *fct_, Function<SqrMat,Vec> *jac_=0);
       int getIter() const {return iter;}
@@ -88,6 +85,5 @@ namespace MBSim {
   };
 
 }
-
 
 #endif

@@ -19,7 +19,7 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
 #include "nonsmooth_algebra.h"
 
 namespace MBSim {
@@ -29,19 +29,15 @@ namespace MBSim {
   }
 
   double proxCT2D(double arg, double laNmue) {
-    if(fabs(arg)<=laNmue)
-      return arg;
-    else 
-      return (arg>=0) ? laNmue : -laNmue;
+    if(fabs(arg)<=laNmue) return arg;
+    else return (arg>=0) ? laNmue : -laNmue;
   }
 
   Vec proxCT3D(const Vec& arg, double laNmue) {
     Vec prox(2,NONINIT);
     double fabsLaT = nrm2(arg);
-    if(fabsLaT <=  laNmue) 
-      prox = arg;
-    else 
-      prox = (laNmue/fabsLaT)*arg;
+    if(fabsLaT <=  laNmue) prox = arg;
+    else prox = (laNmue/fabsLaT)*arg;
     return prox;
   }
 

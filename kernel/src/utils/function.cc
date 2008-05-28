@@ -19,12 +19,12 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
 #include "function.h"
 
 namespace MBSim {
 
-  std::string numtostr(int i){
+  std::string numtostr(int i) {
     std::ostringstream oss;
     oss << i;
     return oss.str(); 

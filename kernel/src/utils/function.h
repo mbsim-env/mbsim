@@ -31,18 +31,19 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*! \brief Template class for Funtions
-   *
-   * */
-  template<class Ret, class Arg>
-    class Function {
+  /*! \brief Template class for Functions */
+  template<class Ret, class Arg> class Function {
       public:
-	virtual ~Function(){}
-	virtual Ret operator()(const Arg& x) = 0;
-    };
-
+        /*! Destructor */
+		virtual ~Function() {}
+		/*! Functional operator */
+		virtual Ret operator()(const Arg& x) = 0;
+  };
+  
+  /*! Conversion of integer to String */
   std::string numtostr(int i);   
+  /*! Conversion of double to String */
   std::string numtostr(double d);   
 }
 
-#endif
+#endif /* FUNCTION_H_ */

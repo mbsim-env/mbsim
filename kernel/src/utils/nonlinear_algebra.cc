@@ -20,10 +20,10 @@
  *
  */
 
-#include <config.h>
+#include<config.h>
+#include<cmath>
 #include "nonlinear_algebra.h"
 #include "eps.h"
-#include <cmath>
 
 namespace MBSim {
 
