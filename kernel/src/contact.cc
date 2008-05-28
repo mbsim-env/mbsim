@@ -20,7 +20,7 @@
  *   rzander@users.berlios.de
  *
  */
-#include <config.h> 
+#include<config.h> 
 #include "contact.h"
 #include "object.h"
 #include "contour.h"
@@ -56,21 +56,20 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : LinkContour(name,setValued), mue(0), nFric(0), contactKinematics(0) {
-
+  Contact::Contact(const string &name, bool setValued) : LinkContour(name,setValued), nFric(0), contactKinematics(0) {
+    mue_fun = new FuncConst(Vec(1,INIT,0.));
     active = false;
   }
 
-  Contact::Contact(const Contact *master, const string &name) : LinkContour(name,master->setValued), mue(0), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
-
-    mue = master->mue;
-
+  Contact::Contact(const Contact *master, const string &name) : LinkContour(name,master->setValued), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
+  	mue_fun = master->mue_fun;
     active = false;
   }
 
   Contact::~Contact() {
-    if (contactKinematics) delete contactKinematics;
+    if(contactKinematics) delete contactKinematics;
   }
+  
   void Contact::calcSize() {
     LinkContour::calcSize();
     gSize = 1;
@@ -99,67 +98,44 @@ namespace MBSim {
     LinkContour::connect(contour1,1);
 
     if(contactKinematics);
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Line*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Line*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointLine; 
-
     else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Line*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Line*>(contour[0]))) 
       contactKinematics = new ContactKinematicsCircleSolidLine;
-
     else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
       contactKinematics = new ContactKinematicsCircleSolidPlane;
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointPlane;
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Area*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Area*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointArea;
-
     else if(dynamic_cast<Edge*>(contour[0]) && dynamic_cast<Edge*>(contour[1])) 
       contactKinematics = new ContactKinematicsEdgeEdge;
-
     else if((dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<Sphere*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
       contactKinematics = new ContactKinematicsSpherePlane;
-
-    // INTERPOLATIONSGESCHICHTEN - Interpol-Point
     else if((dynamic_cast<Point*>(contour[0]) &&  dynamic_cast<ContourInterpolation*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) &&  dynamic_cast<ContourInterpolation*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointContourInterpolation;
-    // INTERPOLATIONSGESCHICHTEN
-
     else if((dynamic_cast<CircleHollow*>(contour[0]) && dynamic_cast<CylinderFlexible*>(contour[1])) || (dynamic_cast<CircleHollow*>(contour[1]) && dynamic_cast<CylinderFlexible*>(contour[0]))) 
       contactKinematics = new ContactKinematicsCircleHollowCylinderFlexible;
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<CylinderFlexible*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<CylinderFlexible*>(contour[0])))
       contactKinematics = new ContactKinematicsPointCylinderFlexible;
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointContour1s;
-
     else if((dynamic_cast<Line*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<Line*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0]))) 
       contactKinematics = new ContactKinematicsLineContour1s;
-
     else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0])))
       contactKinematics = new ContactKinematicsCircleSolidContour1s;
-
-
     else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<CircleHollow*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<CircleHollow*>(contour[0])))
       contactKinematics = new ContactKinematicsCircleSolidCircleHollow;
-
     else if(dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<CircleSolid*>(contour[1]))
       contactKinematics = new ContactKinematicsCircleSolidCircleSolid;
-
     else if(dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Sphere*>(contour[1]))
       contactKinematics = new ContactKinematicsSphereSphere;
-
     else if((dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Frustum*>(contour[1])) || (dynamic_cast<Sphere*>(contour[1]) && dynamic_cast<Frustum*>(contour[0])))
       contactKinematics = new ContactKinematicsSphereFrustum;
-
     else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Frustum2D*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Frustum2D*>(contour[0]))) 
       contactKinematics = new ContactKinematicsCircleSolidFrustum2D;
-
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Frustum*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Frustum*>(contour[0])))
       contactKinematics = new ContactKinematicsPointFrustum;  
-
     else {
       cout << "Unkown contact pairing" <<endl;
       throw 5;
@@ -167,7 +143,6 @@ namespace MBSim {
   }
 
   void Contact::connectHitSpheres(Contour *contour0, Contour* contour1) {
-    // wird eh erst im init() ausgefuehrt
     if(checkHSLink) {
       Object* obj0 = contour0->getObject();
       Object* obj1 = contour1->getObject();
@@ -187,52 +162,9 @@ namespace MBSim {
     updateKinetics(t);
   }
 
-
   void Contact::checkActive() {
-    if(g(0)>0)
-      active = false;
-    else {
-      active = true;
-    }
+    if(g(0)>0) active = false;
+    else active = true;
   }
 
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ZUR NUMERISCHEN BESTIMMUNG DER GENERALISIERTEN KRAFTRICHTUNGEN WN
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//       if (false) {
-// // Numerische Ableitung gp(0) -> WN    
-//     static bool rootCall = true;
-//     static double eps = 5.e-9;
-
-//     if(rootCall) {
-// 	rootCall = false;
-
-// 	int WNSize = cylinder->getObject()->getqSize();
-// 	Mat WN(WNSize,1);
-// 	const double gAlt = g(0);
-
-// 	for(int i=0;i<WNSize;i++) {
-// 	    Vec qTemp = cylinder->getObject()->getq();
-// 	    qTemp(i) += eps;
-// 	    cylinder->getObject()->setq(qTemp);
-// 	    pairingCircleHollowCylinderFlexibleStage1(icircle,icylinder);
-// 	    WN(i,0) = (g(0) - gAlt) / eps ;
-// 	    qTemp(i) -= eps;
-// 	    cylinder->getObject()->setq(qTemp);
-// 	}
-
-// 	// reset
-// 	pairingCircleHollowCylinderFlexibleStage2(icircle,icylinder);
-
-// // 	cout << "numerisches WN = " << trans(WN) << endl;
-
-// 	rootCall = true;
-//     }
-
-//       }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
