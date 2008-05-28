@@ -20,14 +20,13 @@
  *   rzander@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
 #include "hitsphere_link.h"
 #include "multi_body_system.h"
 
 namespace MBSim {
 
-  HitSphereLink::HitSphereLink() : active(false) {
-  }
+  HitSphereLink::HitSphereLink() : active(false) {}
 
   void HitSphereLink::init() {
     mbs = obj[0]->getMbs();
@@ -50,14 +49,13 @@ namespace MBSim {
     R   [1] = obj[1]->getRadiusHitSphere();
 
     if(nrm2(WrOC[0] - WrOC[1]) < R[0] + R[1] ) {
-      for(vector<Link*>::iterator iL = linkList.begin(); iL != linkList.end(); ++iL)  {
-	if((*iL)->isSetValued()) {
-	  mbs->linkSetValued.push_back(*iL); 
-	  //active = true;
-	} else {
-	  mbs->linkSingleValued.push_back(*iL);
-	  //active = false;
-	}
+      for(vector<Link*>::iterator iL = linkList.begin(); iL != linkList.end(); ++iL) {
+		if((*iL)->isSetValued()) {
+		  mbs->linkSetValued.push_back(*iL); 
+		}
+		else {
+		  mbs->linkSingleValued.push_back(*iL);
+		}
       }
     }
   }
