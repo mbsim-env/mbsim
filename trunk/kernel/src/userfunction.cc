@@ -19,10 +19,10 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
+#include<fstream>
 #include "userfunction.h" 
 #include "ppolynom.h" 
-#include <fstream>
 
 namespace MBSim {
 
@@ -195,17 +195,26 @@ namespace MBSim {
   FuncConst::FuncConst(const Vec& c_) : UserFunction() {
     c=c_;
   }
+  
   FuncLinear::FuncLinear(const Vec& a_,const Vec& b_) : UserFunction() {
     a=a_;
     b=b_;
     if(a.size()!=b.size()) {cout << "Error: FuncLinear: a and b have different dimensions" << endl; throw 50; }
   }
+  
+  FuncQuadratic::FuncQuadratic(const Vec& a_,const Vec& b_,const Vec& c_) : UserFunction() {
+    a=a_;
+    b=b_;
+    c=c_;
+    if(a.size()!=b.size() || a.size()!=c.size()) {cout << "Error: FuncQuadratic: coefficients have different dimensions" << endl; throw 50; }
+  }
+  
   FuncGainOffset::FuncGainOffset(DataInterfaceBase *f_,double gain,const Vec& offset) : UserFunction() {
     f=f_;
     a=gain;
     b=offset;
   }
-  FuncFunction::FuncFunction(UserFunction *f_, DataInterfaceBase *g_) : UserFunction() {
+  FuncFunction::FuncFunction(DataInterfaceBase *f_, DataInterfaceBase *g_) : UserFunction() {
     f=f_;
     g=g_;
   }
