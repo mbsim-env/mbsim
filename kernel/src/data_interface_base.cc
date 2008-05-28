@@ -21,4 +21,3 @@
 
 #include <config.h>
 #include "data_interface_base.h"
-
