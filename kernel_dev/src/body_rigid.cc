@@ -218,9 +218,9 @@ namespace MBSim {
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
       SqrMat tWrSK = tilde(WrSK[iRef]);
-      port[0]->setWJP(port[iRef]->getWJP() +  tWrSK*port[iRef]->getWJR());
+      port[0]->setWJP(port[iRef]->getWJP() + tWrSK*port[iRef]->getWJR());
       port[0]->setWJR(port[iRef]->getWJR());
-      port[0]->setWjP(port[iRef]->getWjP() +  tWrSK*port[iRef]->getWjR() + crossProduct(port[iRef]->getWomegaP(),crossProduct(port[iRef]->getWomegaP(),-WrSK[iRef])));
+      port[0]->setWjP(port[iRef]->getWjP() + tWrSK*port[iRef]->getWjR() + crossProduct(port[iRef]->getWomegaP(),crossProduct(port[iRef]->getWomegaP(),-WrSK[iRef])));
       port[0]->setWjR(port[iRef]->getWjR());
     }
 
@@ -230,7 +230,7 @@ namespace MBSim {
 	SqrMat tWrSK = tilde(WrSK[i]);
 	port[i]->setWJP(port[0]->getWJP() - tWrSK*port[0]->getWJR());
 	port[i]->setWJR(port[0]->getWJR());
-	port[i]->setWjP(port[0]->getWjP()- tWrSK*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSK[i])));
+	port[i]->setWjP(port[0]->getWjP() - tWrSK*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSK[i])));
 	port[i]->setWjR(port[0]->getWjR());
       }
     }
@@ -240,7 +240,7 @@ namespace MBSim {
       SqrMat tWrSC = tilde(WrSC[i]);
       contour[i]->setWJP(port[0]->getWJP() - tWrSC*port[0]->getWJR());
       contour[i]->setWJR(port[0]->getWJR());
-      contour[i]->setWjP(port[0]->getWjP()- tWrSC*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSC[i])));
+      contour[i]->setWjP(port[0]->getWjP() - tWrSC*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSC[i])));
       contour[i]->setWjR(port[0]->getWjR());
     }
   }
