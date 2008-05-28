@@ -61,10 +61,9 @@ namespace MBSim {
     W[1] += trans(port[1]->getWJP())*fF[1] + trans(port[1]->getWJR())*fM[1];
   }
 
- 
   void ConnectionRigid::updateb(double t) {
-    b(0,Wf.cols()-1) += trans(Wf)*(port[1]->getWjP() - port[0]->getWjP() + crossProduct(WrP0P1,port[0]->getWjR()) + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
-    b(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getWjR()-port[0]->getWjR() + crossProduct(WomP0P1,port[0]->getWomegaP()));
+    b(0,Wf.cols()-1) += trans(Wf)*(port[1]->getWjP() - port[0]->getWjP() + crossProduct(WrP0P1,port[0]->getWjR()) + crossProduct(WrP0P1,port[0]->getWjR()) + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
+    b(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getWjR()-port[0]->getWjR() - crossProduct(port[0]->getWomegaP(),WomP0P1));
   }
 
   void ConnectionRigid::projectJ(double dt) {
