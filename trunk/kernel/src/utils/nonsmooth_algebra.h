@@ -27,15 +27,15 @@
 using namespace fmatvec;
 
 namespace MBSim {
-
+  /*! prox-function for normal direction */
   double proxCN(double arg);
-
+  /*! prox-function for 2D-tangential direction */
   double proxCT2D(double arg, double LaNmue);
-
+  /*! prox-function for 3D-tangential direction */
   Vec proxCT3D(const Vec& arg, double laNmue);
-
+  /*! prox-function for normal direction with translated cone */
   double proxCN(double arg,double boundary);
 
 }
 
-#endif
+#endif /* NONSMOOTH_ALGEBRA_H_ */
