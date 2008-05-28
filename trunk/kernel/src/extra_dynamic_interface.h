@@ -27,7 +27,7 @@
 
 namespace MBSim {
 
-  /*! base class for all subsystems with own dynamics not being solid-mechanics or hydraulics */
+  /*! Base class for all subsystems with own dynamics not being solid-mechanics or hydraulics */
   class ExtraDynamicInterface : public Element {
 
     protected:
@@ -35,6 +35,7 @@ namespace MBSim {
       int xSize;
       int xInd;
       Vec y;
+      
     public:
 
       ExtraDynamicInterface(const string &name);
@@ -59,4 +60,4 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _EDInterface_H_ */
