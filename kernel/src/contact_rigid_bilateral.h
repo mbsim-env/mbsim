@@ -27,23 +27,27 @@
 
 namespace MBSim {
 
-  /*! \brief Class for bilateral rigid contacts 
-   *
-   */
+  /*! \brief Class for bilateral rigid contacts */
   class ContactRigidBilateral: public ContactRigid {
-
-    public: 
+    public:
+      /*! Constructor */
       ContactRigidBilateral(const string &name);
-
+      /*! Destructor */
+      virtual ~ContactRigidBilateral() {}
+	  /*! Function for single step */
       void projectGS(double dt);
+      /*! Function for Gauss-Seidel (splitting) */
       void solveGS(double dt);
+      /*! Test, if constraint iteration has converged */
       void checkForTermination(double dt);
+      /*! Overwrites checkActive of Contact */
       void checkActive() {}
-
+	  /*! Function for rootFinding with numerical Jacobian */
       void residualProj(double dt);
+      /*! Function for rootFinding with analytical Jacobian */
       void residualProjJac(double dt);
   };
 
 }
 
-#endif
+#endif /* _CONTACT_RIGID_BILATERAL_H_ */
