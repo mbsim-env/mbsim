@@ -19,15 +19,13 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
 #include "body.h"
 #include "contour.h"
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name) {
-
-  } 
+  Body::Body(const string &name) : Object(name) {} 
 
   void Body::init() {
     Object::init();
