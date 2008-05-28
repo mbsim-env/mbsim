@@ -27,49 +27,52 @@
 
 namespace MBSim {
 
-  /*! \brief Class for rigid contacts
-   *
-   * */
+  /*! \brief Class for rigid contacts */
   class ContactRigid : public Contact {
-
     protected:
-
+      /** contact forces and moments for the two partners */
       Mat fF[2], fM[2];
+      /** normal argument of prox */
       double argN;
+      /** tangential argument of prox */
       Vec argT;
-      double omN;
-
+      /** current friction coefficient for Newton */
+      double mue;
+	  /*! Tests, if a contact is closed (=active) or not */
       void checkActive();
+      /*! Updates friction coefficient with norm of relative tangential velocity */
+      void updateFrictionCoefficient(double vel);
 
     public: 
-
+	  /*! Constructor */
       ContactRigid(const string &name);
-
-      /*! clone constructor with new name ! same parameters ! */
+      /*! Clone constructor with new name, same parameters */
       ContactRigid(const ContactRigid *master, const string &name_) : Contact(master,name_) {}
-
+	  /*! Destructor */
+      virtual ~ContactRigid() {}
+	  /*! Initialise contact description */
       void init();
 
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Function for total step */
       void projectJ(double dt);
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Function for single step */
       void projectGS(double dt);
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Function for Gauss-Seidel (splitting) */
       void solveGS(double dt);
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Update rFactors */
       void updaterFactors();
-
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Function for rootFinding with numerical Jacobian */
       void residualProj(double dt);
+      /*! Function for rootFinding with analytical Jacobian */
       void residualProjJac(double dt);
+      /*! Test, if constraint iteration has converged */
       void checkForTermination(double dt);
+      /*! Return information about constraint iteration */
       std::string getTerminationInfo(double dt);
-
+	  /*! Set the contact directions */
       void updateKinetics(double t);
-      void setOmN(double omN_) {omN = omN_;}
   };
 
 }
 
-#endif   
-
+#endif /* _CONTACT_RIGID_H_ */
