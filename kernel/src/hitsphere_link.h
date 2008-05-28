@@ -24,7 +24,7 @@
 #ifndef _HITSPHERE_LINK_H_
 #define _HITSPHERE_LINK_H_
 
-#include <string>
+#include<string>
 #include "object.h"
 #include "link.h"
 
@@ -32,30 +32,40 @@ namespace MBSim {
 
   class MultiBodySystem;
 
-  /*! \brief hit spheres for all bodies including all contours.
+  /*! \brief Hit spheres for all bodies including all contours
+   * 
    *  Used for pre-identification of pairings with potential contacts
-   * */
+   */
   class HitSphereLink {
     protected:
+      /** managed bodies */
       Object* obj[2];
+      /** FLAG if hitspheres intersect */
       bool active;
+      /** managed link list */
       vector<Link*> linkList;
+      /** associated MBS */
       MultiBodySystem* mbs;
 
     public:
+      /*! Constructor */
       HitSphereLink();
+      /*! Destructor */
+      virtual ~HitSphereLink() {}
+      /*! Set managed bodies and links */
       void setParents(Object *obj0, Object *obj1, Link* link);
-
-      Object* getObject(const int &id) {
-	return obj[id];
-      }
-
+	  /*! Get involved objects */
+      Object* getObject(const int &id) const {return obj[id];}
+	  /*! Initialise hitspheres */
       void init();
+      /*! Check if the hitspheres intersect */
       void checkActive();
-      bool isActive() {	return active;    }
+      /*! Get FLAG for intersecting hitspheres */
+      bool isActive() const {return active;}
+      /*! Get managed links */
       vector<Link*> getLinkList();
   };
 
 }
 
-#endif
+#endif /* _HITSPHERE_LINK_H_ */

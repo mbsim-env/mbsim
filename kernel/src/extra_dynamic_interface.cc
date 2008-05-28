@@ -23,7 +23,7 @@
  *    
  */
 
-#include <config.h>
+#include<config.h>
 #include "extra_dynamic_interface.h"
 #include "object.h"
 #include "multi_body_system.h"
