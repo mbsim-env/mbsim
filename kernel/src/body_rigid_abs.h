@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2006  Martin Fï¿½rg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
