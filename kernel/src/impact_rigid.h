@@ -27,28 +27,30 @@
 
 namespace MBSim {
 
-  /*! \brief Class for impacts
-   *
-   */
+  /*! \brief Class for impacts */
   class ImpactRigid: public ContactRigid {
 
     protected:
-
+	  /** normal restitution coefficient, limit velocity for additional term in relative velocity */
       double epsilonN, gd_grenz;
 
-    public: 
+    public:
+      /*! Constructor */
       ImpactRigid(const string &name);
+      /*! Destructor */
+      virtual ~ImpactRigid() {}
+      /*! Function for single step */
       void projectGS(double dt);
+      /*! Function for Gauss-Seidel (splitting) */
       void solveGS(double dt);
+      /*! Test, if constraint iteration has converged */
       void checkForTermination(double dt);
-
-      /*! for time integration with projection methods for constraint and contact treatment */
+      /*! Function for rootFinding with numerical Jacobian */
       void residualProj(double dt);
-
+	  /*! Set normal restitution coefficient */
       void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
-      //void setTangentialRestitutionCoefficient(double e) {epsilonT = e;}
   };
 
 }
 
-#endif
+#endif /* _IMPACT_RIGID_H_ */
