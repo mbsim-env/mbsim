@@ -28,8 +28,8 @@
 #ifndef _USERFUNCTION_H_
 #define _USERFUNCTION_H_
 
+#include<vector>
 #include "eps.h"
-#include <vector>
 #include "data_interface_base.h"
 
 using namespace fmatvec;
@@ -37,55 +37,63 @@ using namespace fmatvec;
 namespace MBSim {
   class PPolynom;
 
-  /*! Comment
-   *
-   * */
+  /*! Class for user defined functions
+   * 
+   * Spline interpolation or piecewise defined polynoms: ppolynom.h
+   */
   class UserFunction : public DataInterfaceBase{
     private:
+      /** tolerances for numerical differentiation */
       double delta, sqrtdelta;
 
     public:
+      /*! Constructor */
       UserFunction() : delta(epsroot()), sqrtdelta(sqrt(delta)) {}
+      /*! Destructor */
       virtual ~UserFunction() {}
-      virtual Vec operator()(double t) = 0; 
-      virtual Vec diff1(double t) { 
-	return (operator()(t+delta)-operator()(t-delta))/(2.0*delta);
-      } 
-      virtual Vec diff2(double t) {
-	return (operator()(t+sqrtdelta)+operator()(t-sqrtdelta)-2*operator()(t))/(sqrtdelta*sqrtdelta);
-      }; 
+      
+      /*! Function value */
+//      virtual Vec operator()(double t);
+      /*! Derivative */
+      virtual Vec diff1(double t) {return (operator()(t+delta)-operator()(t-delta))/(2.0*delta);}
+      /*! 2nd derivative */
+      virtual Vec diff2(double t) {return (operator()(t+sqrtdelta)+operator()(t-sqrtdelta)-2*operator()(t))/(sqrtdelta*sqrtdelta);}    
   };
 
-  // Userfunction for spline interpolation or/and picewise defined polynoms see ppolynom.h
-
+  /*! Linearly interpolated function table */
   class FuncTable : public UserFunction {
     protected:
       Mat table;
       int oldi;
+      
     public:
+      /*! Constructor */
       FuncTable() {oldi=0;}
-      ~FuncTable() {}
-      Vec operator()(double alpha) ; 
-      // Vec diff1(double alpha) ; 
-      // Vec diff2(double alpha) ; 
+      /*! Destructor */
+      virtual ~FuncTable() {}
+      
+      /*! Function value */
+      Vec operator()(double alpha); 
+      /*! Initialise table */
       void setTable(const Mat &tab) {table = tab;}
+      /*! Set given values manually */
       void setXY(const Vec& X,const Mat& Y);
+      /*! Set given values by file */
       void setFile(const string &filename); 
   };
 
   class FuncTablePer : public UserFunction {
     protected:
       Mat table;
+      
     public:
+      /*! Constructor */
       FuncTablePer() {}
-      ~FuncTablePer() {}
+      /*! Destructor */
+      virtual ~FuncTablePer() {}
       Vec operator()(double alpha) ; 
-      // Vec diff1(double alpha) ; 
-      // Vec diff2(double alpha) ; 
-
       void setFile(const string &filename); 
   };
-
 
   class FuncSum : public UserFunction {
     protected: 
@@ -94,51 +102,86 @@ namespace MBSim {
       int outputdim;
     public:
       FuncSum() {}
-      ~FuncSum();
+      virtual ~FuncSum();
       void addInput(DataInterfaceBase* func_,double c_,int dim);
       void addInput(DataInterfaceBase* func_,double c_=1);
-      Vec operator()(double x) ;      
+      Vec operator()(double x);      
   };
+  
+  /*! Constant function */
   class FuncConst : public UserFunction {
     protected:
+      /** constant value */
       Vec c;
+      
     public:
+      /*! Constructor */
       FuncConst(const Vec& c_);
-      Vec operator()(double x) {return c;} 
+      /*! Destructor */
+      virtual ~FuncConst() {}
+      /*! Returns constant value */
+      Vec operator()(double x) {return c;}
   };
+  
+  /*! Linear function */
   class FuncLinear : public UserFunction {
     protected:
       Vec a,b;
+      
     public:
+      /*! Constructor */
       FuncLinear(const Vec& a_,const Vec& b_);
-      Vec operator()(double x) {return a*x+b;} 
-  };  
+      Vec operator()(double x) {return a*x+b;}
+  };
+  
+  /*! Quadratic function */
+  class FuncQuadratic : public UserFunction {
+    protected:
+      Vec a,b,c;
+      
+    public:
+      /*! Constructor */
+      FuncQuadratic(const Vec& a_,const Vec& b_,const Vec& c_);
+      Vec operator()(double x) {return a*x*x+b*x+c;}
+  };
+  
+  /*! Harmonic function */
   class FuncHarmonic : public UserFunction {
     protected:
       Vec A,offset;
       double om, phi;
+      
     public:
       FuncHarmonic(const Vec& A_,double om_, double phi_, const Vec& offset_) {A=A_; om=om_; phi=phi_; offset=offset_;}
       Vec operator()(double x) {return A*sin(om*x+phi)+offset;} 
-  };  
+  };
+   
   class FuncGainOffset : public UserFunction {
     protected:
       double a;
       Vec b;
       DataInterfaceBase *f;
+      
     public:
       /** gain*(f(x)+offset)*/
       FuncGainOffset(DataInterfaceBase *f_,double gain_,const Vec& offset_);
       Vec operator()(double x) {return a*((*f)(x)+b);} 
-  };  
+  };
+  
+  /*! Composed functions */
   class FuncFunction : public UserFunction {
     protected:
-      UserFunction *f;
+      /** outer function */
+      DataInterfaceBase *f;
+      /** inner function */
       DataInterfaceBase *g;
+      
     public:
-      /** f(g(x)) nur für skalare Funktionen g(x) TODO, unsauber!!!
-      */
-      FuncFunction(UserFunction *f_, DataInterfaceBase *g_);
+      /*! Constructor */
+      FuncFunction(DataInterfaceBase *f_, DataInterfaceBase *g_);
+      /*! Destructor */
+      virtual ~FuncFunction() {}
+      /*! Return function TODO: only for scalar-valued g*/
       Vec operator()(double x) {return (*f)(((*g)(x))(0));} 
   };
  
