@@ -27,23 +27,31 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*! DataInterfaceBase
-  */
-  class DataInterfaceBase { // Data Interface Base
+  /*! \brief Class for describing external signals */
+  class DataInterfaceBase {
     protected:
-      double SigSize;// angedacht fuer Fähigkeit Signale zu muxen
-      //virtual Vec y; // hinfällig wenn Ports etc. instantan über Dimension verfügen
+      /** merge multidimensional signals */
+      double SigSize;
+      /** name */
       string name;
+      
     public:
-      DataInterfaceBase(){}
+      /*! Constructor */
+      DataInterfaceBase() {}
+      /*! Destructor */
       virtual ~DataInterfaceBase() {}
+      /*! Get name of DataInterface */
       const string& getName() {return name;}
+      /*! Set name of DataInterface */
       void setName(const string& name_) {name=name_;}
+      /*! Calculate multidimensional signal with respect to one variable */
       virtual Vec operator()(double t) = 0;
+      /*! Get signal size */
       double  getSigSize(){return SigSize;}
+      /*! Update signal */
       virtual void update(double t) {}
   };
 
 }
 
-#endif
+#endif /* _DIB_H_ */
