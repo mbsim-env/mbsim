@@ -27,20 +27,16 @@
 
 namespace MBSim {
 
-  /*! 
-   *  \brief base class for all mechanical bodies with mass and generalised coordinates
-   * 
-   * */
+  /*! \brief Base class for all mechanical bodies with mass and generalised coordinates */
   class Body : public Object {
-
-    protected:
-
-    public:
+	public:
+	  /*! Constructor */
       Body(const string &name);
+      
+      /*! Initialisation */
       void init();
-
   };
 
 }
 
-#endif
+#endif /* _BODY_H_ */
