@@ -47,230 +47,295 @@ namespace MBSim {
     friend class MultiBodySystem;
 
     protected:
-    struct LinkPortData {
-      LinkPort* link;
-      int ID;
-      int objectID;
-    };
-    
-    struct LinkContourData {
-      LinkContour* link;
-      int ID;
-      int objectID;
-    };
-
-    vector<LinkPortData> linkSingleValuedPortData;
-    vector<LinkPortData> linkSetValuedPortData;
-    vector<LinkContourData> linkSingleValuedContourData;
-    vector<LinkContourData> linkSetValuedContourData;
-
-    vector<Link*> linkSetValued;
-    vector<Link*> linkSingleValued;
-
-    vector<Port*> port;
-    vector<Contour*> contour;
-
-    /** Size of object positions */
-    int qSize;
-    /** Size of object velocities */
-    int uSize;
-    /** Size of object order one parameters */
-    int xSize;
-    int qInd, uInd, xInd;
-
-    /** Object positions */
-    Vec q;
-    /** Object velocities */
-    Vec u;
-    /** Object order one parameters */
-    Vec x;
-    Vec q0,u0,x0;
-    Vec qd,ud,xd;
-    Vec h,r,f;
-
-    /** linear relation matrix \f$\boldsymbol{T}\f$ of position and velocity parameters */
-    Mat T;
-    /** mass matrix \f$\boldsymbol{M}\f$*/
-    SymMat M;
-    /** LU-decomposition of mass matrix \f$\boldsymbol{M}\f$*/
-    SymMat LLM;
-    vector<Mat> W;
-    vector<Vec> w;
-    Index Iu, Ix;
-
-    virtual void writeq();
-    virtual void readq0();
-    virtual void writeu();
-    virtual void readu0();
-    virtual void writex();
-    virtual void readx0();
-    Vec  WrOHitSphere;
-    double RHitSphere;
-    virtual void updatezRef(); // references to mbs data
-    virtual void updatezdRef();
-    virtual void updateqRef();
-    virtual void updateqdRef();
-    virtual void updateuRef();
-    virtual void updateudRef();
-    virtual void updatexRef();
-    virtual void updatexdRef();
-    virtual void updatehRef();
-    virtual void updaterRef();
-    virtual void updatefRef();
-    virtual void updateTRef();
-    virtual void updateMRef();
-    virtual void updateLLMRef();
-
-    /*! Initialize object at start of simulation with respect to contours and ports */
-    virtual void init();
-    /*! Initialize state of object at start of simulation */
-    virtual void initz();
-
-    virtual void updateM(double t) {};
-
-    virtual void updateKinematics(double t) = 0;
-    virtual void updateGb(double t);
-    virtual void updateW(double t);
-    virtual void updatew(double t);
-    virtual void updateWj(double t) {};
-    virtual void updatewj(double t) {};
-    /*! update relation matrix \f$\boldsymbol{T}\f$ between position and velocity parameters \f$\dot{\boldsymbol{q}}=\boldsymbol{T}\boldsymbol{u}\f$*/
-    virtual void updateT(double t) {};
-    virtual void updateh(double t) {};
-    virtual void updater(double t);
-    virtual void updatezd(double t) = 0;
-    virtual void updatedu(double t, double dt) = 0;
-    virtual void updatedq(double t, double dt) = 0;
-    virtual void updatedx(double t, double dt) {};
-
-    /*! Perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
-    virtual void facLLM();
-
-    virtual Object* getResponsible() {return this;}
-
-////    /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
-////    */
-////    //virtual void updateJh_internal(double t);
-////    /*! compute Jacobian of right-hand side for single-valued links
-////    */
-////    //virtual void updateJh_links(double t);
-////	/* ************************************************************************/
+	    struct LinkPortData {
+	      LinkPort* link;
+	      int ID;
+	      int objectID;
+	    };
+	    
+	    struct LinkContourData {
+	      LinkContour* link;
+	      int ID;
+	      int objectID;
+	    };
+	    
+		/** link data vectors */
+	    vector<LinkPortData> linkSingleValuedPortData;
+	    vector<LinkPortData> linkSetValuedPortData;
+	    vector<LinkContourData> linkSingleValuedContourData;
+	    vector<LinkContourData> linkSetValuedContourData;	
+		/** set-valued and single-valued links */
+	    vector<Link*> linkSetValued;
+	    vector<Link*> linkSingleValued;
+		/** ports */
+	    vector<Port*> port;
+	    /** contours */
+	    vector<Contour*> contour;
+	
+	    /** size of object positions */
+	    int qSize;
+	    /** size of object velocities */
+	    int uSize;
+	    /** size of object order one parameters */
+	    int xSize;
+	    /** indices of q, u, x */
+	    int qInd, uInd, xInd;
+	    /** indices for velocities and order one parameters */
+	    Index Iu, Ix;
+	
+	    /** Object positions, velocities, order one parameters */
+	    Vec q, u, x;
+	    /** initial values */
+	    Vec q0,u0,x0;
+	    /** velocities */
+	    Vec qd,ud,xd;
+	    /** smooth, set-valued and control vector */
+	    Vec h,r,f;
+	
+	    /** linear relation matrix of position and velocity parameters */
+	    Mat T;
+	    /** mass matrix */
+	    SymMat M;
+	    /** LU-decomposition of mass matrix */
+	    SymMat LLM;
+	    /** force direction matrix */
+	    vector<Mat> W;
+	    /** for explicit time depending kinematical excitations */
+	    vector<Vec> w;
+	    
+	    /** centre of hit sphere */
+	    Vec WrOHitSphere;
+	    /** radius of hit sphere */
+	    double RHitSphere;
+	    
+		/*! Write positions to file for preintegration */
+	    virtual void writeq();
+	    /*! Read positions from file for preintegration */
+	    virtual void readq0();
+	    /*! Write velocities to file for preintegration */
+	    virtual void writeu();
+	    /*! Read velocities from file for preintegration */
+	    virtual void readu0();
+	    /*! Write order one parameters to file for preintegration */
+	    virtual void writex();
+	    /*! Write order one parameters from file for preintegration */
+	    virtual void readx0();
+	        
+	    /*! References to state of multibody system mbs */
+	    virtual void updatezRef();
+	    /*! References to differentiated state of multibody system mbs */
+	    virtual void updatezdRef();
+	    /*! References to positions of multibody system mbs */
+	    virtual void updateqRef();
+	    /*! References to differentiated positions of multibody system mbs */
+	    virtual void updateqdRef();
+	    /*! References to velocities of multibody system mbs */
+	    virtual void updateuRef();
+	    /*! References to differentiated velocities of multibody system mbs */
+	    virtual void updateudRef();
+	    /*! References to order one parameters of multibody system mbs */
+	    virtual void updatexRef();
+	    /*! References to differentiated order one parameters of multibody system mbs */
+	    virtual void updatexdRef();
+	    /*! References to smooth vector of multibody system mbs */
+	    virtual void updatehRef();
+	    /*! References to set valued vector of multibody system mbs */
+	    virtual void updaterRef();
+	    /*! References to control vector of multibody system mbs */
+	    virtual void updatefRef();
+	    /*! References to T-matrix of multibody system mbs */
+	    virtual void updateTRef();
+	    /*! References to mass matrix of multibody system mbs */
+	    virtual void updateMRef();
+	    /*! References to cholesky decomposition of mass matrix of multibody system mbs */
+	    virtual void updateLLMRef();
+	
+	    /*! Initialize object at start of simulation with respect to contours and ports */
+	    virtual void init();
+	    /*! Initialize state of object at start of simulation */
+	    virtual void initz();
+		/*! Updates mass matrix */
+	    virtual void updateM(double t) {};
+		/*! Updates kinematics */
+	    virtual void updateKinematics(double t) = 0;
+	    /*! Update Delassus matrix and vector for constrained equations */
+	    virtual void updateGb(double t);
+	    /*! Updates force direction matrix for absolute parametrisation */
+	    virtual void updateW(double t);
+	    /*! Updates explicit time depending kinematical excitations for absolute parametrisation */
+	    virtual void updatew(double t);
+	    /*! Updates force direction matrix for relative parametrisation */
+	    virtual void updateWj(double t) {};
+	    /*! Updates explicit time depending kinematical excitations for absolute parametrisation */
+	    virtual void updatewj(double t) {};
+	    /*! Update relation matrix between position and velocity parameters */
+	    virtual void updateT(double t) {};
+	    /*! Updates smooth right hand side */
+	    virtual void updateh(double t) {};
+	    /*! Updates set-valued right hand side */
+	    virtual void updater(double t);
+	    /*! Updates differentiated state */
+	    virtual void updatezd(double t) = 0;
+	    /*! Updates velocity gaps */
+	    virtual void updatedu(double t, double dt) = 0;
+	    /*! Updates position gaps */
+	    virtual void updatedq(double t, double dt) = 0;
+	    /*! Updates order one parameter gaps */
+	    virtual void updatedx(double t, double dt) {};
+	
+	    /*! Perform LL-decomposition of mass martix */
+	    virtual void facLLM();
+		/*! Return self-reference */
+	    virtual Object* getResponsible() {return this;}
 	
     public:
-    /*! Constructor */
-    Object(const string &name);
-    /*! Destructor */
-    virtual ~Object();
-
-    void setqInd(int qInd_) { qInd = qInd_; }
-    void setuInd(int uInd_) { uInd = uInd_; Iu = Index(uInd,uInd+uSize-1); }
-    void setxInd(int xInd_) { xInd = xInd_; Ix = Index(xInd,xInd+xSize-1); }
-    int  getqInd() { return qInd; }
-    int  getuInd() { return uInd; }
-    int  getxInd() { return xInd; }
-
-    /*! Get size of position vector Object::q \return Object::qSize */
-    int getqSize() const { return qSize; }
-    /*! Get size of velocity vector Object::u \return Object::uSize */
-    int getuSize() const { return uSize; }
-    /*! Get size of order one parameter vector Object::x \return Object::xSize */
-    int getxSize() const { return xSize; }
-    /*! Get number of state variables \return Object::qSize + Object::uSize + Object::xSize */
-    int getzSize() const { return qSize + uSize + xSize; }
-    virtual int getWSize() const { return uSize; }
-
-    const Index& getuIndex() const { return Iu;}
-    const Index& getxIndex() const { return Ix;}
-    /*! Get smooth force vector */
-    const Vec& geth() const {return h;};
-    /*! Get smooth force vector */
-    Vec& geth() {return h;};
-    /*! Get setvalued force vector */
-    const Vec& getr() const {return r;};
-
-    const Vec& getf() const {return f;};
-    Vec& getf() {return f;};
-    /*! Get mass matrix */
-    const SymMat& getM() const {return M;};
-    /*! Get mass matrix */
-    SymMat& getM() {return M;};
-    /*! Get T-matrix */
-    const Mat& getT() const {return T;};
-    /*! Get T-matrix */
-    Mat& getT() {return T;};
-    /*! Get Cholesky decomposition of the mass matrix */
-    const SymMat& getLLM() const {return LLM;};
-    /*! Get Cholesky decomposition of the mass matrix */
-    SymMat& getLLM() {return LLM;};
-
-    const Vec& getq() const {return q;};
-    const Vec& getu() const {return u;};
-    const Vec& getx() const {return x;};
-
-    Vec& getq() {return q;};
-    Vec& getu() {return u;};
-    Vec& getx() {return x;};
-
-    const Vec& getq0() const {return q0;};
-    const Vec& getu0() const {return u0;};
-    const Vec& getx0() const {return x0;};
-
-    Vec& getq0() {return q0;};
-    Vec& getu0() {return u0;};
-    Vec& getx0() {return x0;};
-
-    const Vec& getqd() const {return qd;};
-    const Vec& getud() const {return ud;};
-    const Vec& getxd() const {return xd;};
-
-    Vec& getqd() {return qd;};
-    Vec& getud() {return ud;};
-    Vec& getxd() {return xd;};
-
-    void setq(Vec q_) { q = q_; }
-    void setu(Vec u_) { u = u_; }
-    void setx(Vec x_) { x = x_; }
+	    /*! Constructor */
+	    Object(const string &name);
+	    /*! Destructor */
+	    virtual ~Object();
 	
-    /*! Set initial positions with \param q0_ */
-    void setq0(Vec q0_) { q0 = q0_; }
-    /*! Set initial velocities with \param u0_ */
-    void setu0(Vec u0_) { u0 = u0_; }
-    void setx0(Vec x0_) { x0 = x0_; }
-
-    void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
-    void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
-    void setx0(double x0_) { x0 = Vec(1,INIT,x0_); }
-
-    vector<Mat>& getWs() {return W;}
-
-    //void plot(double t); 
-    void plot(double t, double dt = 1); 
-    void initPlotFiles();
-
-    virtual void addLink(LinkPort *link, Port *port, int objectID);
-    virtual void addLink(LinkContour *link, Contour *contour, int objectID);
-
-    virtual void addPort(Port * port);
-    virtual void addContour(Contour* contour);
-
-    virtual Port* getPort(const string &name, bool check=true);
-    virtual Contour* getContour(const string &name, bool check=true);
-
-    void   setWrHitSphere(const Vec &WrOS)     {WrOHitSphere = WrOS;}
-    const Vec&    getWrHitSphere()  const      {return WrOHitSphere;}
-    void   setRadiusHitSphere(const double &R) {RHitSphere = R;}
-    const double& getRadiusHitSphere() const   {return RHitSphere;}
-
-    virtual void calcSize() {};
-
-    /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
-    virtual double computeKineticEnergy();
-    /*! Compute potential energy */
-    virtual double computePotentialEnergy() {return 0; }
-    /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
-    virtual void updateJh(double t);
+		/*! Set indices of q */
+	    void setqInd(int qInd_) { qInd = qInd_; }
+	    /*! Set indices of u */
+	    void setuInd(int uInd_) { uInd = uInd_; Iu = Index(uInd,uInd+uSize-1); }
+	    /*! Set indices of x */
+	    void setxInd(int xInd_) { xInd = xInd_; Ix = Index(xInd,xInd+xSize-1); }
+	    /*! Get indices of q */
+	    int getqInd() { return qInd; }
+	    /*! Get indices of u */
+	    int getuInd() { return uInd; }
+	    /*! Get indices of x */
+	    int getxInd() { return xInd; }
+	    /*! Returns index for velocities */
+	    const Index& getuIndex() const { return Iu;}
+	    /*! Returns index for order one parameters */
+	    const Index& getxIndex() const { return Ix;}
+	
+	    /*! Get size of position vector */
+	    int getqSize() const { return qSize; }
+	    /*! Get size of velocity vector */
+	    int getuSize() const { return uSize; }
+	    /*! Get size of order one parameter vector */
+	    int getxSize() const { return xSize; }
+	    /*! Get number of state variables */
+	    int getzSize() const { return qSize + uSize + xSize; }
+	    
+	    /*! Get smooth force vector */
+	    const Vec& geth() const {return h;};
+	    /*! Get smooth force vector */
+	    Vec& geth() {return h;};
+	    /*! Get setvalued force vector */
+	    const Vec& getr() const {return r;};
+		/*! Get control vector */
+	    const Vec& getf() const {return f;};
+	    /*! Get control vector */
+	    Vec& getf() {return f;};
+	    /*! Get mass matrix */
+	    const SymMat& getM() const {return M;};
+	    /*! Get mass matrix */
+	    SymMat& getM() {return M;};
+	    /*! Get T-matrix */
+	    const Mat& getT() const {return T;};
+	    /*! Get T-matrix */
+	    Mat& getT() {return T;};
+	    /*! Get Cholesky decomposition of the mass matrix */
+	    const SymMat& getLLM() const {return LLM;};
+	    /*! Get Cholesky decomposition of the mass matrix */
+	    SymMat& getLLM() {return LLM;};
+		/*! Get positions */
+	    const Vec& getq() const {return q;};
+	    /*! Get velocities */
+	    const Vec& getu() const {return u;};
+	    /*! Get order one parameters */
+	    const Vec& getx() const {return x;};
+		/*! Get positions */
+	    Vec& getq() {return q;};
+	    /*! Get velocities */
+	    Vec& getu() {return u;};
+	    /*! Get order one parameters */
+	    Vec& getx() {return x;};
+		/*! Get initial positions */
+	    const Vec& getq0() const {return q0;};
+	    /*! Get initial velocities */
+	    const Vec& getu0() const {return u0;};
+	    /*! Set initial order one parameters */
+	    const Vec& getx0() const {return x0;};
+		/*! Get initial positions */
+	    Vec& getq0() {return q0;};
+	    /*! Get initial velocities */
+	    Vec& getu0() {return u0;};
+	    /*! Set initial order one parameters */
+	    Vec& getx0() {return x0;};
+		/*! Get initial differentiated positions */
+	    const Vec& getqd() const {return qd;};
+	    /*! Get initial differentiated velocities */
+	    const Vec& getud() const {return ud;};
+	    /*! Get initial order one parameters */
+	    const Vec& getxd() const {return xd;};
+		/*! Get initial differentiated positions */
+	    Vec& getqd() {return qd;};
+	    /*! Get initial differentiated velocities */
+	    Vec& getud() {return ud;};
+	    /*! Get initial order one parameters */
+	    Vec& getxd() {return xd;};
+		/*! Set positions */
+	    void setq(Vec q_) { q = q_; }
+	    /*! Set velocities */
+	    void setu(Vec u_) { u = u_; }
+	    /*! Set order one parameters */
+	    void setx(Vec x_) { x = x_; }	
+	    /*! Set initial positions */
+	    void setq0(Vec q0_) { q0 = q0_; }
+	    /*! Set initial velocities */
+	    void setu0(Vec u0_) { u0 = u0_; }
+	    /*! Set initial order one parameters */
+	    void setx0(Vec x0_) { x0 = x0_; }
+		/*! Set initial positions */
+	    void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
+	    /*! Set initial velocities */
+	    void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
+	    /*! Set initial order one parameters */
+	    void setx0(double x0_) { x0 = Vec(1,INIT,x0_); }
+		/*! Get column dimension of W */
+		virtual int getWSize() const { return uSize; }
+		/*! Get W */
+	    vector<Mat>& getWs() {return W;}
+	    
+	    /*! Plots intereseting data */ 
+	    void plot(double t, double dt = 1);
+	    /*! Initialises plot files */ 
+	    void initPlotFiles();
+		/*! Add link */
+	    virtual void addLink(LinkPort *link, Port *port, int objectID);
+	    /*! Add link */
+	    virtual void addLink(LinkContour *link, Contour *contour, int objectID);
+		/*! Add port */
+	    virtual void addPort(Port * port);
+	    /*! Add contour */
+	    virtual void addContour(Contour* contour);
+		/*! Get port */
+	    virtual Port* getPort(const string &name, bool check=true);
+	    /*! Get contour */
+	    virtual Contour* getContour(const string &name, bool check=true);
+		/*! Set centre of hit sphere */
+	    void setWrHitSphere(const Vec &WrOS) {WrOHitSphere = WrOS;}
+	    /*! Get centre of hit sphere */
+	    const Vec& getWrHitSphere() const {return WrOHitSphere;}
+	    /*! Set radius of hit sphere */
+	    void setRadiusHitSphere(const double &R) {RHitSphere = R;}
+	    /*! Get radius of hit sphere */
+	    const double& getRadiusHitSphere() const {return RHitSphere;}
+		/*! Calculates dimension of state */
+	    virtual void calcSize() {};
+	
+	    /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
+	    virtual double computeKineticEnergy();
+	    /*! Compute potential energy */
+	    virtual double computePotentialEnergy() {return 0; }
+	    /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
+	    virtual void updateJh(double t);
   };
 
 }
 
-#endif
+#endif /* _OBJECT_H_ */
