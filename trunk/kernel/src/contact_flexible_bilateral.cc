@@ -19,7 +19,7 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
+#include<config.h>
 #define FMATVEC_NO_BOUNDS_CHECK
 #include "contact_flexible_bilateral.h"
 #include "multi_body_system.h"
@@ -31,19 +31,21 @@ namespace MBSim {
   }
 
   void ContactFlexibleBilateral::updateKinetics(double t) {
-    double mue0 = mue;
+  	static const double eps = epsroot();
+  	if(flag_c) la(0) = ((*c_fun)(g(0)))(0) + ((*d_fun)(gd(0)))(0); // normal direction
+	else la(0) = (((*V_fun)(g(0)))(0)-((*V_fun)(g(0)+eps))(0))/eps + ((*d_fun)(gd(0)))(0); // normal direction
 
-    la(0) = -c*g(0) - d*gd(0);
-
-    for(int i=1; i<=nFric; i++) {
-      if(fabs(gd(i)) < 0.01)
-	la(i) = -fabs(la(0))*mue0*gd(i)/0.01;
-      else
-	la(i) = gd(i)>0?-la(0)*mue:fabs(la(0))*mue;
+    for(int i=1; i<=nFric; i++) { // tangential direction
+      if(fabs(gd(i)) < gdT_grenz) la(i) = -fabs(la(0))*((*mue_fun)(gdT_grenz))(0)*gd(i)/gdT_grenz;
+      else la(i) = gd(i)>0?-la(0)*((*mue_fun)(gd(i)))(0):fabs(la(0))*((*mue_fun)(-gd(i)))(0);
     }
 
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
     WF[1] = -WF[0];
+  }
+  
+  double ContactFlexibleBilateral::computePotentialEnergy() {
+    return ((*V_fun)(g(0)))(0);
   }
 
 }

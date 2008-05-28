@@ -26,19 +26,22 @@
 #include "contact_flexible.h"
 
 namespace MBSim {
-
-  /*! \brief Class for flexible bilateral contacts 
-   *
-   */
+  /*! \brief Class for linear flexible bilateral contacts with regularised and decoupled Coulomb friction */
   class ContactFlexibleBilateral: public ContactFlexible {
 
     public: 
+      /*! Constructor */
       ContactFlexibleBilateral(const string &name);
-
-      void checkActive() {}
+      /*! Destructor */
+	  virtual ~ContactFlexibleBilateral() {}
+      /*! Evaluates the fully functional force law */
       void updateKinetics(double t);
+      /*! Overwrites checkActive of Contact */
+      void checkActive() {}
+      /*! Compute potential energy */
+      double computePotentialEnergy();
   };
 
 }
 
-#endif
+#endif /* _CONTACT_FLEXIBLE_BILATERAL_H_ */
