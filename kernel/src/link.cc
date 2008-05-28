@@ -19,8 +19,8 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
-#include <string.h>
+#include<config.h>
+#include<string.h>
 #include "link.h"
 #include "port.h"
 #include "contour.h"
@@ -34,17 +34,15 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), laSize(0), rFactorSize(0), active(true), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {
-  }
+  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), laSize(0), rFactorSize(0), active(true), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {}
 
   Link::~Link() { 
-#ifdef HAVE_AMVIS   
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
+   #ifdef HAVE_AMVIS   
+    for(unsigned int i=0; i<arrowAMVis.size(); i++) {
       delete arrowAMVis[i];
       delete arrowAMVisUserFunctionColor[i];
     }
-#endif
-
+   #endif
   }
 
   bool Link::isSetValued() const {
@@ -85,80 +83,45 @@ namespace MBSim {
 
     if(plotfile>0) {
       if(plotLevel > 1) {
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<x(i);
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<xd(i)/dt;
+		for(int i=0; i<xSize; ++i) plotfile << " " << x(i);	
+		for(int i=0; i<xSize; ++i) plotfile << " " << xd(i)/dt;
       }
-      for(int i=0; i<gSize; ++i)
-	plotfile<<" "<<g(i);
-
+      for(int i=0; i<gSize; ++i) plotfile << " " << g(i);
     }
     if(active || plotLevel > 2) {
-
       if(plotLevel>0) {
-	if(plotLevel>1) {
-	  for(int i=0; i<laSize; ++i)
-	    plotfile<<" "<<gd(i);
-	}
-	if(setValued)
-	  for(int i=0; i<laSize; ++i)
-	    plotfile<<" "<<la(i)/dt;
-	else
-	  for(int i=0; i<laSize; ++i)
-	    plotfile<<" "<<la(i);
-      }
-    } else {
-
-      if(plotLevel>0) {
-	if(plotLevel>1) {
-	  for(int i=0; i<laSize; ++i)
-	    plotfile<<" "<<0;
-	}
-	for(int i=0; i<laSize; ++i)
-	  plotfile<<" "<<0;
-
+		if(plotLevel>1) for(int i=0; i<laSize; ++i) plotfile << " " << gd(i);
+		if(setValued) for(int i=0; i<laSize; ++i) plotfile << " " << la(i)/dt;
+		else for(int i=0; i<laSize; ++i) plotfile << " " << la(i);
       }
     }
-    if(plotLevel>2) {
-      plotfile<<" "<<computePotentialEnergy(); 
+    else {
+	  if(plotLevel>0) {
+		if(plotLevel>1) for(int i=0; i<laSize; ++i) plotfile << " " << 0;
+		for(int i=0; i<laSize; ++i) plotfile << " " << 0;
+      }
     }
+    if(plotLevel>2) plotfile << " " << computePotentialEnergy(); 
   }
 
   void Link::initPlotFiles() {
 
     Element::initPlotFiles();
 
-#ifdef HAVE_AMVIS
-    for (unsigned int i=0; i<arrowAMVis.size(); i++)
-      if (AMVisInstance[i]==0)
-        arrowAMVis[i]->writeBodyFile();
-#endif
+	#ifdef HAVE_AMVIS
+	    for(unsigned int i=0; i<arrowAMVis.size(); i++)
+	    	if (AMVisInstance[i]==0) arrowAMVis[i]->writeBodyFile();
+	#endif
 
     if(plotLevel>0) {
       if(plotLevel>1) {
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
-
+		for(int i=0; i<xSize; ++i) plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
+		for(int i=0; i<xSize; ++i) plotfile <<"# "<< plotNr++ <<": xd("<< i <<")" << endl;
       }
-      for(int i=0; i<gSize; ++i)
-	plotfile <<"# "<< plotNr++ << ": g(" << i << ")" << endl;
-
-      if(plotLevel>1) {
-	for(int i=0; i<laSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": gd(" << i << ")" << endl;
-      }
-
-      for(int i=0; i<laSize; ++i)
-	plotfile <<"# "<< plotNr++ << ": la(" << i << ")" << endl;
-
-      if(plotLevel>2) {
-	plotfile <<"# "<< plotNr++ << ": V" << endl;
-      }
+      for(int i=0; i<gSize; ++i) plotfile <<"# "<< plotNr++ << ": g(" << i << ")" << endl;
+      if(plotLevel>1) for(int i=0; i<laSize; ++i) plotfile <<"# "<< plotNr++ << ": gd(" << i << ")" << endl;
+      for(int i=0; i<laSize; ++i) plotfile <<"# "<< plotNr++ << ": la(" << i << ")" << endl;
+      if(plotLevel>2) plotfile <<"# "<< plotNr++ << ": V" << endl;
     }
   }
 
@@ -174,7 +137,7 @@ namespace MBSim {
     la >> mbs->getla()(laInd,laInd+laSize-1);
     gd >> mbs->getgd()(laInd,laInd+laSize-1);
     s >> mbs->gets()(laInd,laInd+laSize-1);
-    // TODO Nur bei Newton
+    // TODO only with Newton
     res >> mbs->getres()(laInd,laInd+laSize-1);
     rFactor >> mbs->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
   }
@@ -195,22 +158,15 @@ namespace MBSim {
     rFactor >> mbs->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
   }
 
-  void Link::savela() {
-    la0 = la;
-  }
+  void Link::savela() {la0 = la;}
 
-  void Link::initla() {
-    // TODO Prufen ob initilisierung auf 0 besser, wenn vorher inaktiv
-    la = la0;
-  }
+  void Link::initla() {la = la0;}
 
   void Link::decreaserFactors() {
-    for(int i=0; i<rFactor.size(); i++)
-      if(rFactorUnsure(i))
-	rFactor(i) *= 0.9;
+    for(int i=0; i<rFactor.size(); i++) if(rFactorUnsure(i)) rFactor(i) *= 0.9;
   }
 
-#ifdef HAVE_AMVIS
+ #ifdef HAVE_AMVIS
   void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor, int instance) {
     assert(ID >= 0);
     assert(ID < 2);
@@ -232,10 +188,9 @@ namespace MBSim {
     arrowAMVisMoment.push_back(true);
     AMVisInstance.push_back(instance);
   }
-#endif
+ #endif
 
-  LinkPort::LinkPort(const string &name, bool setValued) : Link(name,setValued) {
-  }
+  LinkPort::LinkPort(const string &name, bool setValued) : Link(name,setValued) {}
 
   void LinkPort::connect(Port *port_, int id) {
     port.push_back(port_);
@@ -245,48 +200,43 @@ namespace MBSim {
   void LinkPort::plot(double t,double dt) {
     Link::plot(t,dt);
 
-#ifdef HAVE_AMVIS
+   #ifdef HAVE_AMVIS
     Vec WrOToPoint;
     Vec LoadArrow;
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      WrOToPoint = port[arrowAMVisID[i]]->getWrOP();
-      if(setValued){ 
-	if (active) 
-	  LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
-	else {
-	  LoadArrow = Vec(6,INIT,0.0);
-	  WrOToPoint= Vec(3,INIT,0.0);
-	}
+    for(unsigned int i=0; i<arrowAMVis.size(); i++) {
+      if(active) {
+      	WrOToPoint = port[arrowAMVisID[i]]->getWrOP();
+      	if(setValued) LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
+      	else LoadArrow = load[arrowAMVisID[i]];
       }
-      else
-	LoadArrow = load[arrowAMVisID[i]];
-      // Scaling: 1KN or 1KNm scaled to arrowlenght one
+      else {
+		  LoadArrow = Vec(6,INIT,0.0);
+		  WrOToPoint= Vec(3,INIT,0.0);
+      }
       LoadArrow= LoadArrow/1000*arrowAMVisScale[i];
-
       arrowAMVis[i]->setTime(t);
       arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
       double color;
-      if (arrowAMVisMoment[i]) {
-	arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-	color=0.5;
+      if(arrowAMVisMoment[i]) {
+		arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
+		color=0.5;
       }
       else {
-	arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-	color =1.0;
+		arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
+		color =1.0;
       }
-      if (arrowAMVisUserFunctionColor[i]) {
-	color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
-      }  
+      if(arrowAMVisUserFunctionColor[i]) {
+		color = (*arrowAMVisUserFunctionColor[i])(t)(0);
+		if(color>1) color=1;
+		if(color<0) color=0;
+      }
       arrowAMVis[i]->setColor(color);
       arrowAMVis[i]->appendDataset(AMVisInstance[i]);
     }
-#endif
+   #endif
   }
 
-  LinkContour::LinkContour(const string &name, bool setValued) : Link(name,setValued) {
-  }
+  LinkContour::LinkContour(const string &name, bool setValued) : Link(name,setValued) {}
 
   void LinkContour::init() {
     Link::init();
@@ -297,46 +247,42 @@ namespace MBSim {
     contour_->getObject()->addLink(this,contour_,id);
   }
 
-  void LinkContour::plot(double t, double dt){
+  void LinkContour::plot(double t, double dt) {
     Link::plot(t,dt);
-#ifdef HAVE_AMVIS
+   
+   #ifdef HAVE_AMVIS
     Vec WrOToPoint;
     Vec LoadArrow;
-
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
-      if(setValued){ 
-	if (active) 
-	  LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
-	else {
-	  LoadArrow = Vec(6,INIT,0.0);
-	  WrOToPoint= Vec(3,INIT,0.0);
-	}
+    for(unsigned int i=0; i<arrowAMVis.size(); i++) {
+      if(active) {
+      	WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
+      	if(setValued) LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
+      	else LoadArrow = load[arrowAMVisID[i]];
       }
-      else
-	LoadArrow = load[arrowAMVisID[i]];
-      // Scaling: 1KN or 1KNm scaled to arrowlenght one
+      else {
+		  LoadArrow = Vec(6,INIT,0.0);
+		  WrOToPoint= Vec(3,INIT,0.0);
+      }
       LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i];
-
       arrowAMVis[i]->setTime(t);
       arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
       double color;
-      if (arrowAMVisMoment[i]) {
-	arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-	color=0.5;
+      if(arrowAMVisMoment[i]) {
+		arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
+		color=0.5;
       }
       else {
-	arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-	color =1.0;
+		arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
+		color=1.0;
       }
-      if (arrowAMVisUserFunctionColor[i]) {
-	color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
+      if(arrowAMVisUserFunctionColor[i]) {
+		color = (*arrowAMVisUserFunctionColor[i])(t)(0);
+		if(color>1) color=1;
+		if(color<0) color=0;
       }  
       arrowAMVis[i]->setColor(color);
       arrowAMVis[i]->appendDataset(AMVisInstance[i]);
     }
-#endif
+   #endif
   }
 }
