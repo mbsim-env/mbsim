@@ -38,7 +38,7 @@ namespace MBSim {
   {
   	assert(dtPlot >= dt);
 
-    double t = 0.;
+    double t = 0.; // starting time without restriction because of flow property of dynamical systems
 
     int nq = system.getqSize(); // size of positions, velocities, state
     int nu = system.getuSize();
@@ -80,16 +80,15 @@ namespace MBSim {
       // rzeit << "Zeit: " << t << endl;
       // long clock1 = clock();
       integrationSteps++;
-      if( (step*stepPlot - integrationSteps) < 0) {
-	step++;
-	system.plot(z,t,dt);
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-	tPlot += dtPlot;
+      if( (step*stepPlot - integrationSteps) < 0) { // effort can be neglected with factor between dt and dtPlot
+		step++;
+		system.plot(z,t,dt); // is executed with current data t_i,q_i,u_i
+		double s1 = clock();
+		time += (s1-s0)/CLOCKS_PER_SEC;
+		s0 = s1; 
+		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+		tPlot += dtPlot;
       }
 ////      if((t+dt)*stepPlot >= step) { // plotten
 ////		step++;
@@ -123,7 +122,7 @@ namespace MBSim {
       t += dt;
       // long clock2 = clock();
 
-      system.update(z,t); 
+      system.update(z,t); // is executed with t_{i+1},q_{i+1},u_i
       // long clock3 = clock();
 
       iter = system.solve(dt);
