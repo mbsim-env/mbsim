@@ -195,7 +195,19 @@ namespace MBSim {
   FuncConst::FuncConst(const Vec& c_) : UserFunction() {
     c=c_;
   }
-  
+  FuncConstSwitchOff::FuncConstSwitchOff(const Vec& c_, double xout_) : UserFunction() {
+    xout = xout_;
+    c=c_;
+    int cSize = c.size();
+    Null = Vec(cSize,INIT,0.0);
+  }
+  Vec FuncConstSwitchOff::operator()(double x) {
+  if (x<xout)
+  return c;
+  else
+  return Null;
+  }
+
   FuncLinear::FuncLinear(const Vec& a_,const Vec& b_) : UserFunction() {
     a=a_;
     b=b_;

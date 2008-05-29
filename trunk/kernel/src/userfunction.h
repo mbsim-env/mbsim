@@ -122,6 +122,18 @@ namespace MBSim {
       /*! Returns constant value */
       Vec operator()(double x) {return c;}
   };
+
+  class FuncConstSwitchOff : public UserFunction {
+    protected:
+      Vec c;
+      Vec Null;
+      double xout;
+    public:
+      FuncConstSwitchOff(const Vec& c_, double xout_);
+      Vec operator()(double x);  
+  };
+
+
   
   /*! Linear function */
   class FuncLinear : public UserFunction {
