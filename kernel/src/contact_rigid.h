@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -38,19 +38,19 @@ namespace MBSim {
       Vec argT;
       /** current friction coefficient for Newton */
       double mue;
-	  /*! Tests, if a contact is closed (=active) or not */
+      /*! Tests, if a contact is closed (=active) or not */
       void checkActive();
       /*! Updates friction coefficient with norm of relative tangential velocity */
       void updateFrictionCoefficient(double vel);
 
     public: 
-	  /*! Constructor */
+      /*! Constructor */
       ContactRigid(const string &name);
       /*! Clone constructor with new name, same parameters */
       ContactRigid(const ContactRigid *master, const string &name_) : Contact(master,name_) {}
-	  /*! Destructor */
+      /*! Destructor */
       virtual ~ContactRigid() {}
-	  /*! Initialise contact description */
+      /*! Initialise contact description */
       void init();
 
       /*! Function for total step */
@@ -69,7 +69,7 @@ namespace MBSim {
       void checkForTermination(double dt);
       /*! Return information about constraint iteration */
       std::string getTerminationInfo(double dt);
-	  /*! Set the contact directions */
+      /*! Set the contact directions */
       void updateKinetics(double t);
   };
 

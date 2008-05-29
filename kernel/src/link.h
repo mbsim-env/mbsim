@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -38,7 +38,7 @@ namespace MBSim {
   class HitSphereLink;
   class UserFunction;
   struct ContourPointData;
-  
+
   /*! \brief A general link to one or more objects */
   class Link : public Element {
     protected:
@@ -46,7 +46,7 @@ namespace MBSim {
       Vec x;
       /** internal integrable state variable velocities */
       Vec xd;
-	  /** dimension of internal Link state */
+      /** dimension of internal Link state */
       int xSize;
       /** start index of internal Link state */
       int xInd;
@@ -55,55 +55,56 @@ namespace MBSim {
       Vec sv;
       int svInd;
       Vector<int> jsv;
-	  /** set valued or functional link? */
+      /** set valued or functional link? */
       bool setValued;
 
-	  /** dimension and start index of gap parameters */
+      /** dimension and start index of gap parameters */
       int gSize, gInd;
       /** dimension and start index of force parameters */
       int laSize, laInd;
-	  /** load vector */
+      /** load vector */
       vector<Vec> load;
       /** load directions */
       vector<Mat> loadDir;
       /** vector of time explicit kinematical excitations */
       vector<Vec> w;
-	  /** number and start index of rFactors */
+      /** number and start index of rFactors */
       int rFactorSize, rFactorInd;
       /** gap, gap velocity, gap normal velocity, constraint forces, velocities for constraint iteration, Newton residuum */
       Vec g, gd, gdn, la, s, res;
-	  /** rFactors */
+      /** rFactors */
       Vec rFactor;
       Vector<int> rFactorUnsure;
 
-	  /** is a link active such that is has to be included in the kinetical balance */
+      /** is a link active such that is has to be included in the kinetical balance */
       bool active;
       /** Index of gaps and loads */
       Index Ig, Ila;
       /** saved force parameters */
       Vec la0;
-	  
-	  /** scale factor for flow and pressure quantity tolerances */
+
+      /** scale factor for flow and pressure quantity tolerances */
       double scaleTolQ,scaleTolp;
       /** tolerances and maximum rFactor */
       double gdTol, laTol, rMax;
-	  /** HitSphere for checking approximately intersection of partners */
+      /** HitSphere for checking approximately intersection of partners */
       HitSphereLink* HSLink;
       /** activate hit sphere check */
       bool checkHSLink;
 
-	  /** AMVis visualisation of loads */
-	#ifdef HAVE_AMVIS
+      /** AMVis visualisation of loads */
+#ifdef HAVE_AMVIS
       vector<AMVis::Arrow*> arrowAMVis;
       vector<double> arrowAMVisScale;
       vector<int> arrowAMVisID;
       vector<bool> arrowAMVisMoment;
       vector<UserFunction*> arrowAMVisUserFunctionColor;
+      vector<Vec> arrowAMVisToPoint;
       vector<int> AMVisInstance;
 #endif
 
     public:
-	  /*! Constructor */
+      /*! Constructor */
       Link(const string &name, bool setValued);
       /*! Destructor */
       virtual ~Link();
@@ -113,10 +114,10 @@ namespace MBSim {
       virtual void updatexdRef();
       virtual void updatesvRef();
       virtual void updatejsvRef();
-	  /*! Set start index of internal Link state */
+      /*! Set start index of internal Link state */
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};
-	  /*! Get dimension of internal Link state */
+      /*! Get dimension of internal Link state */
       int getxSize() const {return xSize;}
       int getsvSize() const {return svSize;}
       /*! Activate HitSphereLink-check for the Link before updateStage1(), only usefull for Contacts */
@@ -127,7 +128,7 @@ namespace MBSim {
       virtual void calcSize() {}
       /*! Initialises Link representation */
       virtual void init();
-	  /*! Updates necessary data for further calculations in a first step */
+      /*! Updates necessary data for further calculations in a first step */
       virtual void updateStage1(double t) = 0;
       /*! Updates necessary data for further calculations in a second step */
       virtual void updateStage2(double t) {}
@@ -141,13 +142,13 @@ namespace MBSim {
       virtual void updatexd(double t) {};
 
       virtual void updateStopVector(double t) {}
-	  /*! Get internal state variables of a Link */
+      /*! Get internal state variables of a Link */
       const Vec& getx() const {return x;}
       /*! Get internal state velocities of a Link */
       const Vec& getxd() const {return xd;}
       /*! Sets the internal states of a Link */
       void setx(const Vec &x_) {x = x_;}
-	  /*! Plots interesting data */
+      /*! Plots interesting data */
       void plot(double t, double dt=1);
       /*! Initialises plot files */
       void initPlotFiles();
@@ -159,7 +160,7 @@ namespace MBSim {
       const Mat& getLoadDirections(int id) const {return loadDir[id];}
       /*! Get explicit time kinematical excitation */
       const Vec& getw(int id) const {return w[id];}
-	  /*! Get loads */
+      /*! Get loads */
       const Vec& getla() const {return la;}
       /*! Get loads */
       Vec& getla() {return la;}
@@ -187,7 +188,7 @@ namespace MBSim {
       void initla();
 
       const Vector<int>& getrFactorUnsure() const {return rFactorUnsure;}
-	  /*! Get loads from MBS */
+      /*! Get loads from MBS */
       virtual void updatelaRef();
       /*! Get gaps from MBS */
       virtual void updategRef();
@@ -201,19 +202,19 @@ namespace MBSim {
       virtual void updaterFactorRef();
       /*! Get everything necessary from MBS */
       virtual void updateRef();
-	  /*! Set index of gaps */
+      /*! Set index of gaps */
       void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);}
       /*! Set index of loads */
       void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); }
       /*! Set start index of rFactors */
       void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
-	  /*! Abstract Jacobian solver */
+      /*! Abstract Jacobian solver */
       virtual void projectJ(double dt) { cout << "\nprojectJ not implemented." << endl; throw 50; }
       /*! Abstract Gauss-Seidel solver for 3D*/
       virtual void projectGS(double dt) { cout << "\nprojectGS not implemented." << endl; throw 50; }
       /*! Abstract Gauss-Seidel solver for 2D */
       virtual void solveGS(double dt) { cout << "\nsolveGS not implemented." << endl; throw 50; }
-	  /*! Abstract rootFinding with numerical Jacobian */
+      /*! Abstract rootFinding with numerical Jacobian */
       virtual void residualProj(double dt) { cout << "\nresidualProj not implemented." << endl; throw 50; }
       /*! Test if there is convergence in constraint solver */
       virtual void checkForTermination(double dt) { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
@@ -221,7 +222,7 @@ namespace MBSim {
       virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getFullName());}
       /*! Abstract rootFinding with analytical Jacobian */
       virtual void residualProjJac(double dt) { cout << "\nresidualProjJac not implemented." << endl; throw 50; }
-	  /*! Abstract update of rFactors */
+      /*! Abstract update of rFactors */
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }
       /*! Automatically decreases r-factors for Link */
       void decreaserFactors();
@@ -244,12 +245,12 @@ namespace MBSim {
        * @param funcColor Userfunction to manipulate color of Arrow at each time step
        * default: Red arrow for forces and green one for moments
        */
- 	#ifdef HAVE_AMVIS
-	  /*! AMVis visualisation of force */
+#ifdef HAVE_AMVIS
+      /*! AMVis visualisation of force */
       virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0, int instance=0);
       /*! AMVis visualisation of torque */
       virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0, int instance=0);
- 	#endif
+#endif
   };
 
   /*! \brief A general link via Port to one or more objects */
@@ -263,11 +264,11 @@ namespace MBSim {
       LinkPort(const string &name, bool setValued);
       /*! Destructor */
       virtual ~LinkPort() {}
-	  /*! Adds ports of other bodies connected to a LinkPort */
+      /*! Adds ports of other bodies connected to a LinkPort */
       virtual void connect(Port *port1, int id);
       /*! Writing to plot-file */
       void plot(double t, double dt=1);
-	  /*! Returns the complete port vector */
+      /*! Returns the complete port vector */
       vector<Port*> getPorts() const { return port; }
   };
 
@@ -276,7 +277,7 @@ namespace MBSim {
     protected:
       /** Array in which all contours linked by LinkContour are managed */
       vector<Contour*> contour;
-	  /** Array of ContourPoint Datas to manage the location of the link on a partner */
+      /** Array of ContourPoint Datas to manage the location of the link on a partner */
       vector<ContourPointData> cpData;
 
     public:
@@ -286,7 +287,7 @@ namespace MBSim {
       virtual ~LinkContour() {}
       /*! Writing to plot-file */
       void plot(double t, double dt=1);
-	  /*! Calls the init-method of Link */
+      /*! Calls the init-method of Link */
       void init();
       /*! Adds contours of other bodies connected to a LinkContour */
       virtual void connect(Contour *port1, int id);

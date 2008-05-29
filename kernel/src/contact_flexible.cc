@@ -76,6 +76,7 @@ namespace MBSim {
 
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
     WF[1] = -WF[0];
+cout<<"la"<<la<<endl;
   }
   
   double ContactFlexible::computePotentialEnergy() {
