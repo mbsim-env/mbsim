@@ -44,8 +44,8 @@ namespace MBSim {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++) gdn(i) += a[j]*mbs->getla()(ja[j]);
     }
-    if(nFric==1) la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
-    else if(nFric == 2) la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
+    if(nFric==1) la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),((*mue_fun)(abs(gdn(1))))(0)*fabs(la(0)));
+    else if(nFric == 2) la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),((*mue_fun)(nrm2(gdn(1,2))))(0)*fabs(la(0)));
   }
 
   void ContactRigidBilateral::solveGS(double dt) {
@@ -62,7 +62,7 @@ namespace MBSim {
       gdn(1) = s(1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++) gdn(1) += a[j]*mbs->getla()(ja[j]);
 
-      double laNmue = fabs(la(0))*mue;
+      double laNmue = fabs(la(0))*((*mue_fun)(abs(gdn(1))))(0);
       double sdG = -gdn(1)/a[ia[laInd+1]];
 
       if(fabs(sdG)<=laNmue) la(1) = sdG;
@@ -82,10 +82,12 @@ namespace MBSim {
     res(0) = gdn(0);
 
     if(nFric==1) {
+      updateFrictionCoefficient(abs(gdn(1)));
       argT(0) = la(1) - rFactor(1)*gdn(1);
       res(1) = la(1) - proxCT2D(argT(0),mue*fabs(la(0)));
 
     } else if(nFric == 2) {
+      updateFrictionCoefficient(nrm2(gdn(1,2)));
       argT = la(1,2) - rFactor(1)*gdn(1,2);
       res(1,2) = la(1,2) - proxCT3D(argT,mue*fabs(la(0)));
     }
@@ -169,8 +171,8 @@ namespace MBSim {
 
     if(nFric==1) {
 
-      if(fabs(gdn(1)) > 0 && fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt) ;
-      else if(fabs(la(1)) <= mue*fabs(la(0)) && fabs(gdn(1)) <= gdTol) ;
+      if(fabs(gdn(1)) > 0 && fabs(la(1) + gdn(1)/fabs(gdn(1))*((*mue_fun)(abs(gdn(1))))(0)*fabs(la(0))) <= laTol*dt) ;
+      else if(fabs(la(1)) <= ((*mue_fun)(abs(gdn(1))))(0)*fabs(la(0)) && fabs(gdn(1)) <= gdTol) ;
       else {
 		mbs->setTermination(false);
 		return;
@@ -179,8 +181,8 @@ namespace MBSim {
     }
     else if(nFric==2) {
 
-      if(nrm2(gdn(1,2)) > 0 && nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt) ;
-      else if(nrm2(la(1,2)) <= mue*fabs(la(0)) && nrm2(gdn(1,2)) <= gdTol) ;
+      if(nrm2(gdn(1,2)) > 0 && nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*((*mue_fun)(nrm2(gdn(1,2))))(0)*fabs(la(0))) <= laTol*dt) ;
+      else if(nrm2(la(1,2)) <= ((*mue_fun)(nrm2(gdn(1,2))))(0)*fabs(la(0)) && nrm2(gdn(1,2)) <= gdTol) ;
       else {
 		mbs->setTermination(false);
 		return;
