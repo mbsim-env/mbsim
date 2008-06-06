@@ -57,6 +57,9 @@ namespace MBSim {
       /** temporary martix of generalised moment directions */
       Vec WMtmp;
 
+	  /** damping factor for mass proportion, see BodyFlexible::setMassProportionalDamping() */
+      double d_massproportional;
+
       /** vector of ContourPointData, e.g. contourparameters, each describing a Port */
       vector<ContourPointData> S_Port;
       /** specify wether Contour is native or added with specific S_Contour */
@@ -133,17 +136,22 @@ namespace MBSim {
        */
       void setJR(const Mat &JR_) {JR = JR_;}
 
+	  /*! set mass proportional damping: \f$\vh_d=-d_{pm}\vM\vu\f$ 
+	   * \param d_ coefficient \f$d_{pm}\f$
+	   */
+	  void setMassProportionalDamping(const double d_) {d_massproportional=d_;}
+
 #ifdef HAVE_AMVIS
       /*! activate output for AMVis
       */
       void createAMVisBody() {boolAMVis = true;  boolAMVisBinary = true;}
-      /*! activate output for AMVis
-	\param binary_ for binary or ASCII data format in pos-file
-	*/
+	  /*! activate output for AMVis
+	   * \param binary_ for binary or ASCII data format in pos-file
+	   */
       void createAMVisBody(bool binary_) {boolAMVis = true; boolAMVisBinary = binary_;}
-      /*! set color for AMVis-object
-	\param color float; [0;1] blue - green - red; out of these bounds default color is used
-	*/
+	  /*! set color for AMVis-object
+	   * \param color float; [0;1] blue - green - red; out of these bounds default color is used
+	   */
       void setAMVisColor(float color) {AMVisColor = color;}
 #endif
 
