@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5))
+  BodyFlexible::BodyFlexible(const string &name) : Body(name), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)),d_massproportional(0)
 # ifdef HAVE_AMVIS
     ,
     bodyAMVis(NULL), boolAMVis(false), boolAMVisBinary(true)
@@ -194,6 +194,8 @@ namespace MBSim {
 		//		    h += computeJacobianMatrix(Stmp) * WLtmpLocal;
       }
     }
+	if(d_massproportional)
+	  h -= d_massproportional*(M*u);
   }
 
   //-------------------------------------------
