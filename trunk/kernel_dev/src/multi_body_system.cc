@@ -40,13 +40,10 @@ namespace MBSim {
 
   MultiBodySystem::MultiBodySystem() :                          Object("Default"),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
 
-    SqrMat eye;
-    eye << DiagMat(3,INIT,1);
-    
     CoordinateSystem *cosy = new CoordinateSystem("O");
     Object::addCoordinateSystem(cosy);
     cosy->setWrOP(Vec(3));
-    cosy->setAWP(eye);
+    cosy->setAWP(SqrMat(3,EYE));
   } 
 
   MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName),   gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), grav(3), activeConstraintsChanged(true), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  {
