@@ -43,14 +43,11 @@ namespace MBSim {
 
     portParent = 0;
 
-    SqrMat eye;
-    eye << DiagMat(3,INIT,1);
-
     Object::addCoordinateSystem(new CoordinateSystem("COG"));
 
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
-    ASK.push_back(eye);
+    ASK.push_back(SqrMat(3,EYE));
   }
 
   void BodyRigid::calcSize() {
