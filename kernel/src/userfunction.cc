@@ -195,6 +195,7 @@ namespace MBSim {
   FuncConst::FuncConst(const Vec& c_) : UserFunction() {
     c=c_;
   }
+  DynamicSteps::DynamicSteps() : UserFunction(), c(Vec(0)) {}
   FuncConstSwitchOff::FuncConstSwitchOff(const Vec& c_, double xout_) : UserFunction() {
     xout = xout_;
     c=c_;

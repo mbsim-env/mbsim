@@ -123,6 +123,23 @@ namespace MBSim {
       Vec operator()(double x) {return c;}
   };
 
+  /*! Dynamic Step function (Used for e.g. Cosim) */
+  class DynamicSteps : public UserFunction {
+    protected:
+      /** constant value */
+      Vec c;
+      
+    public:
+      /*! Constructor */
+      DynamicSteps();
+      /*! set new const value (current step) */
+      void setValue(const Vec& c_) { c=c_; }
+      /*! Destructor */
+      virtual ~DynamicSteps() {}
+      /*! Returns constant value */
+      Vec operator()(double x) {return c;}
+  };
+
   class FuncConstSwitchOff : public UserFunction {
     protected:
       Vec c;
