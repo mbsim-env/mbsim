@@ -24,6 +24,7 @@
 #include <config.h> 
 #include "circlesolid_circlehollow.h"
 #include "contact.h"
+#include "eps.h"
 
 namespace MBSim {
 
@@ -40,11 +41,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleSolidCircleHollow::stage1(Vec &g, vector<ContourPointData> &cpData) {
-
     Vec WrD = circle1->getWrOP() - circle0->getWrOP();
-    cpData[icircle1].Wn = - WrD/nrm2(WrD);
-    cpData[icircle0].Wn = - cpData[icircle1].Wn;
-    g(0) = circle1->getRadius() - trans(cpData[icircle0].Wn)*WrD - circle0->getRadius();
+    double Abs_WrD = nrm2(WrD);
+    if (Abs_WrD > epsroot()) {
+      cpData[icircle1].Wn = - WrD/Abs_WrD;
+      cpData[icircle0].Wn = - cpData[icircle1].Wn;
+      g(0) = circle1->getRadius() - trans(cpData[icircle0].Wn)*WrD - circle0->getRadius();
+    } else
+      g(0) = circle1->getRadius() - circle0->getRadius();
   }
 
   void ContactKinematicsCircleSolidCircleHollow::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
