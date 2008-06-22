@@ -61,6 +61,7 @@ namespace MBSim {
     const SqrMat& getC() const {return C;}
 
     void updateM(double t);
+    void updateT(double t);
 
     public:
     BodyRigidRel(const string &name);
