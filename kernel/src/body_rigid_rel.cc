@@ -289,6 +289,13 @@ namespace MBSim {
       successor[i]->updateM(t);
     }
   }
+
+  void BodyRigidRel::updateT(double t) {
+  BodyRigid::updateT(t);
+    for(unsigned int i=0; i<successor.size(); i++) {
+      successor[i]->updateT(t);
+    }
+  }
  
   void BodyRigidRel::updateh(double t) {
     sumUpForceElements(t);
