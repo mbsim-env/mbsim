@@ -37,6 +37,7 @@ namespace MBSim {
 
     public:
       double l0, Arho, EIyy, EIzz, Itrho, GIt;
+	  double dTorsional;
       double depsilon;
       Vec g;
 
@@ -49,6 +50,7 @@ namespace MBSim {
 
       void setMaterialDamping(double){}
       void setLehrDamping(double){}
+      void setTorsionalDamping(double dTorsional_){dTorsional=dTorsional_;}
 
       SymMat M;
       Vec h;

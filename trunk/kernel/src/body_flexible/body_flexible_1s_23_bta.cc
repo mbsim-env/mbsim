@@ -58,10 +58,10 @@ namespace MBSim {
       //    FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
       element.push_back(  FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g )  );
 
-      element[i].setMaterialDamping(dm);
-      element[i].setLehrDamping(dl);
+//      element[i].setMaterialDamping(dm);
+//      element[i].setLehrDamping(dl);
+	  element[i].setTorsionalDamping(dTorsional);
     }
-
 
     contourCyl->setAlphaStart(0);  contourCyl->setAlphaEnd(L);
 

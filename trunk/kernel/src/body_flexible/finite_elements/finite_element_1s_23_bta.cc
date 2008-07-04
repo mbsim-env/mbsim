@@ -43,7 +43,7 @@ namespace MBSim {
   FiniteElement1s23BTA::FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
     :l0(sl0), Arho(sArho), EIyy(sEIyy), EIzz(sEIzz), Itrho(sItrho), GIt(sGIt),
     depsilon(0.0), g(sg),
-    M(2*nodalDOFs), h(2*nodalDOFs), implicit(false), Dhq(8), Dhqp(8),
+    M(2*nodalDOFs,INIT,0.0), h(2*nodalDOFs,INIT,0.0), implicit(false), Dhq(8), Dhqp(8),
     Damp(8,fmatvec::INIT,0.0)
   {
     // zur Performance-Steigerung nur einmal im Konstruktor rechnen
@@ -111,23 +111,23 @@ namespace MBSim {
     // M(1,0) = M(0,1);
     M(1,1) = (13*Arho*l0)/35.;
     M(1,2) = (11*Arho*l0h2)/210.;
-    M(1,3) = 0;
-    M(1,4) = 0;
+//    M(1,3) = 0;
+//    M(1,4) = 0;
     M(1,5) = -(Arho*l0*(7*g1*l0 - 6*g2*l0 + 36*u1 + 27*u2))/420.;
     M(1,6) = (9*Arho*l0)/70.;
     M(1,7) = (-13*Arho*l0h2)/420.;
-    M(1,8) = 0;
-    M(1,9) = 0;
+//    M(1,8) = 0;
+//    M(1,9) = 0;
     // M(2,0) = M(0,2);
     // M(2,1) = M(1,2);
     M(2,2) = (Arho*l0h3)/105.;
-    M(2,3) = 0;
-    M(2,4) = 0;
+//    M(2,3) = 0;
+//    M(2,4) = 0;
     M(2,5) = -(Arho*l0h2*(3*g1*l0 - 3*g2*l0 + 14*(u1 + u2)))/840.;
     M(2,6) = (13*Arho*l0h2)/420.;
     M(2,7) = -(Arho*l0h3)/140.;
-    M(2,8) = 0;
-    M(2,9) = 0;
+//    M(2,8) = 0;
+//    M(2,9) = 0;
     // M(3,0) = M(0,3);
     // M(3,1) = M(1,3);
     // M(3,2) = M(2,3);
@@ -144,8 +144,8 @@ namespace MBSim {
     // M(4,3) = M(3,4);
     M(4,4) = (Arho*l0h3)/105.;
     M(4,5) = (Arho*l0h2*(3*b1*l0 - 3*b2*l0 + 14*(w1 + w2)))/840.;
-    M(4,6) = 0;
-    M(4,7) = 0;
+//    M(4,6) = 0;
+//    M(4,7) = 0;
     M(4,8) = (13*Arho*l0h2)/420.;
     M(4,9) = -(Arho*l0h3)/140.;
     // M(5,0) = M(0,5);
@@ -166,8 +166,8 @@ namespace MBSim {
     // M(6,5) = M(5,6);
     M(6,6) = (13*Arho*l0)/35.;
     M(6,7) = (-11*Arho*l0h2)/210.;
-    M(6,8) = 0;
-    M(6,9) = 0;
+//    M(6,8) = 0;
+//    M(6,9) = 0;
     // M(7,0) = M(0,7);
     // M(7,1) = M(1,7);
     // M(7,2) = M(2,7);
@@ -176,8 +176,8 @@ namespace MBSim {
     // M(7,5) = M(5,7);
     // M(7,6) = M(6,7);
     M(7,7) = (Arho*l0h3)/105.;
-    M(7,8) = 0;
-    M(7,9) = 0;
+//    M(7,8) = 0;
+//    M(7,9) = 0;
     // M(8,0) = M(0,8);
     // M(8,1) = M(1,8);
     // M(8,2) = M(2,8);
@@ -222,6 +222,9 @@ namespace MBSim {
     //+ (Arho*l0h2*(2*(a1*gy - a2*gy + 3*gz)*cos(a1) + (4*(a1 - a2)*gy + (-6 + Power(a1 - a2,2))*gz)*cos(a2) - 2*(3*gy + (-a1 + a2)*gz)*sin(a1) - ((-6 + Power(a1 - a2,2))*gy + 4*(-a1 + a2)*gz)*sin(a2)))/Power(a1 - a2,4));
 
 
+    // Daempfung------------------------------------------------------------------
+	h(0) += dTorsional * ( a2p - a1p ) ;
+	h(5) += dTorsional * ( a1p - a2p ) ;
     /*    
     // Daempfung------------------------------------------------------------------
     //    hdLokal.init(0.0); beim Initialisieren

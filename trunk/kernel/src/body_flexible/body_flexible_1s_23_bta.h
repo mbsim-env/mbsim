@@ -46,7 +46,7 @@ namespace MBSim {
       vector <FiniteElement1s23BTA> element;
 
       int Elements;
-      double L, E, G, A, Iyy, Izz, It,rho, rc, dm, dl;
+      double L, E, G, A, Iyy, Izz, It,rho, rc, dm, dl, dTorsional;
 
 // TODO: updateContours aus BodyFlexibleLinearExternal übernehmen
 
@@ -82,6 +82,7 @@ namespace MBSim {
       void setDensity(double rho_)          {rho = rho_;}
 //      void setMaterialDamping(double d)     {dm = d;}
 //      void setLehrDamping(double d)         {dl = d;}
+      void setTorsionalDamping(double d)    {dTorsional = d;}
 
       void setContourRadius(double r) {contourCyl->setRadius(r);}
 
