@@ -83,6 +83,10 @@ namespace MBSim {
     }
     WF = Wf*la(IT);
     WM = Wm*la(IR);
+  } 
+  
+  void Load::updateh(double t) {
+    h[0] += trans(port[0]->getWJP())*WF + trans(port[0]->getWJR())*WM;
   }
 
   void Load::setUserFunction(DataInterfaceBase *func_) {
