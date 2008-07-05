@@ -1,5 +1,5 @@
 #include "pendulum.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "objobject.h"
 
 using namespace AMVis;
@@ -25,15 +25,15 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 
 
   stab1->addCoordinateSystem("Ref",-KrKS,A);
-  stab1->setRefCoordinateSystem(stab1->getCoordinateSystem("Ref"));
+  stab1->setReferenceCoordinateSystem(stab1->getCoordinateSystem("Ref"));
 
   stab1->setqSize(1);
   stab1->setuSize(1);
 
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
-  stab1->setInertia(Theta);
-  stab1->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  stab1->setMomentOfInertia(Theta);
+  stab1->setRotation(new RotationAxis(Vec("[0;0;1]")));
   ObjObject * obj = new ObjObject(stab1->getFullName(),1,false);
   obj->setObjFilename("objects/pendel1.obj");
   stab1->setAMVisBody(obj);
@@ -55,11 +55,11 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab2->setqSize(1);
   stab2->setuSize(1);
   stab2->setParentCoordinateSystem(stab1->getCoordinateSystem("P"));
-  stab2->setRefCoordinateSystem(stab2->getCoordinateSystem("R"));
+  stab2->setReferenceCoordinateSystem(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertia(Theta,stab2->getCoordinateSystem("COG"));
-  stab2->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  stab2->setMomentOfInertia(Theta,stab2->getCoordinateSystem("COG"));
+  stab2->setRotation(new RotationAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
   obj = new ObjObject(stab2->getFullName(),1,false);

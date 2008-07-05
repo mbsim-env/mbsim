@@ -1,9 +1,8 @@
 #include "system.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "tree.h"
 #include "cuboid.h"
 #include "contour.h"
-#include "impact_rigid.h"
 #include "load.h"
 #include "cube.h"
 
@@ -90,15 +89,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   tree->addObject(body);
   body->setParentCoordinateSystem(getCoordinateSystem("O"));
-  body->setRefCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
-  body->setInertia(Theta);
-  body->setfPrPK(new MyPos);
-//  body->setfAPK(new MyRot);
-  body->setfPJT(new JacobianT);
-//  body->setfPJR(new JacobianR);
-  body->setfPdJT(new MyDerT);
-  //body->setfPdJR(new MyDer);
+  body->setMomentOfInertia(Theta);
+  body->setTranslation(new MyPos);
+  body->setJacobianOfTranslation(new JacobianT);
+  body->setDerivativeOfJacobianOfTranslation(new MyDerT);
 
    Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
    cubeoid->setSize(l,h,d);

@@ -1,8 +1,8 @@
 #include "system.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "objobject.h"
 #include "contour.h"
-#include "contact_flexible.h"
+#include "flexible_contact.h"
 #include "load.h"
 #include "cube.h"
 
@@ -36,20 +36,15 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double deltax = 0.2;           
   double mu  = 0.3;
 
-  //CoSy* origin = new CoSy("O");
-  //Vec WrOK(3);
-  //WrOK(2) = d/2;;
-  //origin->setWrOP(WrOK);
-
   BodyRigid* body = new BodyRigid("Rod");
   addObject(body);
 
   body->setParentCoordinateSystem(getCoordinateSystem("O"));
-  body->setRefCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
-  body->setInertia(Theta);
-  body->setfPrPK(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  body->setMomentOfInertia(Theta);
+  body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
+  body->setRotation(new RotationAxis(Vec("[0;0;1]")));
 
  // Initial translation and rotation
   Vec q0(3);

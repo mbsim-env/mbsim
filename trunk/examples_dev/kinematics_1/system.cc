@@ -1,9 +1,8 @@
 #include "system.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "tree.h"
 #include "cuboid.h"
 #include "contour.h"
-#include "impact_rigid.h"
 #include "load.h"
 #include "cube.h"
 
@@ -85,12 +84,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addObject(body);
 
   body->setParentCoordinateSystem(getCoordinateSystem("O"));
-  body->setRefCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
-  body->setInertia(Theta);
-  body->setfPrPK(new MyPos);
-  body->setfPjT(new jT);
-  body->setfPdjT(new djT);
+  body->setMomentOfInertia(Theta);
+  body->setTranslation(new MyPos);
+  body->setGuidingVelocityOfTranslation(new jT);
+  body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
   Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
   cubeoid->setSize(l,h,d);
@@ -101,9 +100,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body = new BodyRigid("Rod2");
   addObject(body);
   body->setParentCoordinateSystem(getCoordinateSystem("O"));
-  body->setRefCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
-  body->setInertia(Theta);
-  body->setfPrPK(new LinearTranslation("[0; 1; 0]"));
+  body->setMomentOfInertia(Theta);
+  body->setTranslation(new LinearTranslation("[0; 1; 0]"));
 }
 

@@ -1,7 +1,7 @@
 #include "system.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "userfunction.h"
-#include "connection_rigid.h"
+#include "rigid_connection.h"
 #include "load.h"
 #include "cuboid.h"
 #include "cylinder.h"
@@ -30,7 +30,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setMass(m1);
   SymMat Theta(3);
   Theta(2,2) = 1./12.*m1*l1*l1;
-  box1->setInertia(Theta);
+  box1->setMomentOfInertia(Theta);
 
   SqrMat E(3);
   E << DiagMat(3,INIT,1);
@@ -38,12 +38,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   KrSP(1) = a1;
   box1->addCoordinateSystem("PunktO",KrSP,E);
 
-  box1->setfPrPK( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box1->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
+  box1->setRotation(new RotationAxis(Vec("[0;0;1]")));
 
 
   box1->setParentCoordinateSystem(getCoordinateSystem("O"));
-  box1->setRefCoordinateSystem(box1->getCoordinateSystem("COG"));
+  box1->setReferenceCoordinateSystem(box1->getCoordinateSystem("COG"));
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
@@ -56,12 +56,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addObject(box2);
   box2->setMass(m2);
   Theta(2,2) = 1./12.*m2*l2*l2;
-  box2->setInertia(Theta);
+  box2->setMomentOfInertia(Theta);
 
   KrSP(1) = a2;
   box2->addCoordinateSystem("Punkt",KrSP,E);
-  box2->setfPrPK( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box2->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
+  box2->setRotation(new RotationAxis(Vec("[0;0;1]")));
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);
@@ -83,17 +83,19 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   addCoordinateSystem("Os","[0;0;0.04]",E);
   box2->setParentCoordinateSystem(getCoordinateSystem("Os"));
-  box2->setRefCoordinateSystem(box2->getCoordinateSystem("COG"));
+  box2->setReferenceCoordinateSystem(box2->getCoordinateSystem("COG"));
 
   ConnectionRigid *ls = new ConnectionRigid("Gelenk1");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->connect(getCoordinateSystem("O"),box1->getCoordinateSystem("PunktO"));
+  ls->setPlotLevel(2);
 
   ls = new ConnectionRigid("Gelenk2");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->connect(box1->getCoordinateSystem("PunktU"),box2->getCoordinateSystem("Punkt"));
+  ls->setPlotLevel(2);
 
   ////////////////////// Visualisierung in AMVis ////////////////////////
   Cylinder * cylinder = new Cylinder(box1->getFullName(),1,false);
