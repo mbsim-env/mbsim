@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2008  Martin Förg
+/* Copyright (C) 2004-2006  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -20,43 +20,26 @@
  *
  */
 
-#ifndef _CONNECTION_RIGID_H_
-#define _CONNECTION_RIGID_H_
+#ifndef _BILATERAL_FLEXIBLE_CONTACT_H_
+#define _BILATERAL_FLEXIBLE_CONTACT_H_
 
-#include "connection.h"
+#include "flexible_contact.h"
 
 namespace MBSim {
 
-  /*! \brief Class for rigid connections
+  /*! \brief Class for flexible bilateral contacts 
    *
-   * */
-  class ConnectionRigid : public Connection {
+   */
+  class BilateralFlexibleContact: public FlexibleContact {
 
-    protected:
+    public: 
+      BilateralFlexibleContact(const string &name);
 
-      Mat fF[2], fM[2];
-
-    public:
-
-      ConnectionRigid(const string &name);
-
-      void init();
-
+      void checkActive() {}
       void updateKinetics(double t);
-      void updateW(double t);
-      void projectJ(double dt);
-      void projectGS(double dt);
-      void solveGS(double dt);
-      void checkForTermination(double dt);
-      void updateb(double t);
-      std::string getTerminationInfo(double dt);
-
-      void residualProj(double dt);
-      void residualProjJac(double dt);
-
-      void updaterFactors();
   };
 
+  typedef BilateralFlexibleContact ContactFlexibleBilateral;
 }
 
 #endif

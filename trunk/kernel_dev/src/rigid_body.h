@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _BODY_RIGID_H_
-#define _BODY_RIGID_H_
+#ifndef _RIGID_BODY_H_
+#define _RIGID_BODY_H_
 
 #include "body.h"
 #include "fmatvec.h"
@@ -243,7 +243,7 @@ namespace MBSim {
   /*! \brief Class for rigid bodies with relative coordinates 
    *
    * */
-  class BodyRigid : public Body {
+  class RigidBody : public Body {
 
     friend class TreeTest;
 
@@ -287,12 +287,12 @@ namespace MBSim {
     virtual void updateKinematics(double t);
 
     void updateM(double t) {(this->*updateM_)(t);}
-    void (BodyRigid::*updateM_)(double t);
+    void (RigidBody::*updateM_)(double t);
     void updateMConst(double t);
     void updateMNotConst(double t); 
 
     void facLLM() {(this->*facLLM_)();}
-    void (BodyRigid::*facLLM_)();
+    void (RigidBody::*facLLM_)();
     void facLLMConst() {};
     void facLLMNotConst() {Object::facLLM();}
 
@@ -306,7 +306,7 @@ namespace MBSim {
 
 
     public:
-    BodyRigid(const string &name);
+    RigidBody(const string &name);
 
     void useCoordinateSystemOfBodyForRotation(bool cb_) {cb = cb_;}
     void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
@@ -367,6 +367,8 @@ namespace MBSim {
     void calcSize();
 
   };
+
+  typedef RigidBody BodyRigid;
 
 }
 

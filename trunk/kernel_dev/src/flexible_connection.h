@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _CONNECTION_FLEXIBLE_H_
-#define _CONNECTION_FLEXIBLE_H_
+#ifndef _FLEXIBLE_CONNECTION_H_
+#define _FLEXIBLE_CONNECTION_H_
 
 #include "connection.h"
 
@@ -30,7 +30,7 @@ namespace MBSim {
   /*! \brief Class for flexible connections
    *
    * */
-  class ConnectionFlexible : public Connection {
+  class FlexibleConnection : public Connection {
 
     protected:
       Vec WF[2], WM[2];
@@ -39,7 +39,7 @@ namespace MBSim {
 
     public:
 
-      ConnectionFlexible(const string &name);
+      FlexibleConnection(const string &name);
 
       void updateKinetics(double t);
       void updateh(double t);
@@ -51,6 +51,7 @@ namespace MBSim {
       double computePotentialEnergy();
   };
 
+  typedef FlexibleConnection ConnectionFlexible;
 }
 
 #endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _CONTACT_RIGID_H_
-#define _CONTACT_RIGID_H_
+#ifndef _RIGID_CONTACT_H_
+#define _RIGID_CONTACT_H_
 
 #include "contact.h"
 
@@ -30,7 +30,7 @@ namespace MBSim {
   /*! \brief Class for rigid contacts
    *
    * */
-  class ContactRigid : public Contact {
+  class RigidContact : public Contact {
 
     protected:
 
@@ -43,10 +43,10 @@ namespace MBSim {
 
     public: 
 
-      ContactRigid(const string &name);
+      RigidContact(const string &name);
 
       /*! clone constructor with new name ! same parameters ! */
-      ContactRigid(const ContactRigid *master, const string &name_) : Contact(master,name_) {}
+      RigidContact(const RigidContact *master, const string &name_) : Contact(master,name_) {}
 
       void init();
 
@@ -71,6 +71,8 @@ namespace MBSim {
       void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
 
   };
+
+  typedef RigidContact ContactRigid;
 
 }
 

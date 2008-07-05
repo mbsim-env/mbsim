@@ -33,10 +33,6 @@ namespace MBSim {
 
   class Link;
   class CoordinateSystem;
-  class Constraint;
-  class ForceElement;
-  class ContactFlexible;
-  class ContactRigid;
   class Contour;
 
   /*! \brief Node class for all Objects having own dynamics and mass */

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2006  Martin Förg
+/* Copyright (C) 2004-2008  Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -19,40 +19,45 @@
  *   mfoerg@users.berlios.de
  *
  */
-#ifndef _CONTACT_FLEXIBLE_H_
-#define _CONTACT_FLEXIBLE_H_
 
-#include "contact.h"
+#ifndef _RIGID_CONNECTION_H_
+#define _RIGID_CONNECTION_H_
+
+#include "connection.h"
 
 namespace MBSim {
 
-  /*! \brief Class for flexible contacts
+  /*! \brief Class for rigid connections
    *
    * */
-  class ContactFlexible : public Contact {
+  class RigidConnection : public Connection {
 
     protected:
-      Vec WF[2], WM[2];
 
-      double c, d;
-      double gdT_grenz;
+      Mat fF[2], fM[2];
 
-    public: 
-      ContactFlexible(const string &name);
+    public:
 
-      ContactFlexible(const ContactFlexible *master,const string &name_);
+      RigidConnection(const string &name);
 
       void init();
 
       void updateKinetics(double t);
-      void updateh(double t);
+      void updateW(double t);
+      void projectJ(double dt);
+      void projectGS(double dt);
+      void solveGS(double dt);
+      void checkForTermination(double dt);
+      void updateb(double t);
+      std::string getTerminationInfo(double dt);
 
-      void setStiffness(double c_) {c = c_;}
-      void setDamping(double d_) {d = d_;}
+      void residualProj(double dt);
+      void residualProjJac(double dt);
 
-      void setMarginalVelocity(double v) {gdT_grenz = v;}
+      void updaterFactors();
   };
 
+  typedef RigidConnection ConnectionRigid;
 }
 
 #endif

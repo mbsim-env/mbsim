@@ -21,17 +21,17 @@
  */
 #include <config.h>
 #define FMATVEC_NO_BOUNDS_CHECK
-#include "contact_rigid_bilateral.h"
+#include "bilateral_rigid_contact.h"
 #include "utils/nonsmooth_algebra.h"
 #include "multi_body_system.h"
 
 namespace MBSim {
 
-  ContactRigidBilateral::ContactRigidBilateral(const string &name) : ContactRigid(name) {
+  BilateralRigidContact::BilateralRigidContact(const string &name) : RigidContact(name) {
     active = true;
   }
 
-  void ContactRigidBilateral::projectGS(double dt) {
+  void BilateralRigidContact::projectGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -52,7 +52,7 @@ namespace MBSim {
       la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
   }
 
-  void ContactRigidBilateral::solveGS(double dt) {
+  void BilateralRigidContact::solveGS(double dt) {
     assert(nFric <= 1);
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -78,7 +78,7 @@ namespace MBSim {
     }
   }
 
-  void ContactRigidBilateral::residualProj(double dt) {
+  void BilateralRigidContact::residualProj(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -100,7 +100,7 @@ namespace MBSim {
     }
   }
 
-  void ContactRigidBilateral::residualProjJac(double dt) {
+  void BilateralRigidContact::residualProjJac(double dt) {
     SqrMat Jprox = mbs->getJprox();
     SymMat G = mbs->getG();
 
@@ -167,7 +167,7 @@ namespace MBSim {
     }
   }
 
-  void ContactRigidBilateral::checkForTermination(double dt) {
+  void BilateralRigidContact::checkForTermination(double dt) {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();

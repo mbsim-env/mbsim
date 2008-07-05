@@ -19,31 +19,31 @@
  *   mfoerg@users.berlios.de
  *
  */
-
-#ifndef _CONTACT_RIGID_BILATERAL_H_
-#define _CONTACT_RIGID_BILATERAL_H_
-
-#include "contact_rigid.h"
+#include <config.h>
+#define FMATVEC_NO_BOUNDS_CHECK
+#include "bilateral_flexible_contact.h"
+#include "multi_body_system.h"
 
 namespace MBSim {
 
-  /*! \brief Class for bilateral rigid contacts 
-   *
-   */
-  class ContactRigidBilateral: public ContactRigid {
+  BilateralFlexibleContact::BilateralFlexibleContact(const string &name) : FlexibleContact(name) {
+    active = true;
+  }
 
-    public: 
-      ContactRigidBilateral(const string &name);
+  void BilateralFlexibleContact::updateKinetics(double t) {
+    double mue0 = mue;
 
-      void projectGS(double dt);
-      void solveGS(double dt);
-      void checkForTermination(double dt);
-      void checkActive() {}
+    la(0) = -c*g(0) - d*gd(0);
 
-      void residualProj(double dt);
-      void residualProjJac(double dt);
-  };
+    for(int i=1; i<=nFric; i++) {
+      if(fabs(gd(i)) < 0.01)
+	la(i) = -fabs(la(0))*mue0*gd(i)/0.01;
+      else
+	la(i) = gd(i)>0?-la(0)*mue:fabs(la(0))*mue;
+    }
+
+    WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
+    WF[1] = -WF[0];
+  }
 
 }
-
-#endif

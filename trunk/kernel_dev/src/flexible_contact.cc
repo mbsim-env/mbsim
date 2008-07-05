@@ -21,22 +21,22 @@
  */
 #include <config.h>
 #define FMATVEC_NO_BOUNDS_CHECK
-#include "contact_flexible.h"
+#include "flexible_contact.h"
 #include "multi_body_system.h"
 
 namespace MBSim {
 
-  ContactFlexible::ContactFlexible(const string &name) : Contact(name,false), gdT_grenz(0.1) {
+  FlexibleContact::FlexibleContact(const string &name) : Contact(name,false), gdT_grenz(0.1) {
     active = false;
   }
 
-  ContactFlexible::ContactFlexible(const ContactFlexible *master,const string &name_) : Contact(master,name_), gdT_grenz(0.1) {
+  FlexibleContact::FlexibleContact(const FlexibleContact *master,const string &name_) : Contact(master,name_), gdT_grenz(0.1) {
     c = master->c;
     d = master->d;
     active = false;
   }
 
-  void ContactFlexible::init() {
+  void FlexibleContact::init() {
     Contact::init();
     for(int i=0; i<2 ; i++) {
       load.push_back(Vec(6));
@@ -45,7 +45,7 @@ namespace MBSim {
     }
   }
 
-  void ContactFlexible::updateKinetics(double t) {
+  void FlexibleContact::updateKinetics(double t) {
     double mue0 = mue;
 
     if(gd(0)<0) 
@@ -70,7 +70,7 @@ namespace MBSim {
     WF[1] = -WF[0];
   }
 
-  void ContactFlexible::updateh(double t) {
+  void FlexibleContact::updateh(double t) {
     if(active) {
     Vec WrPC[2];
     WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();

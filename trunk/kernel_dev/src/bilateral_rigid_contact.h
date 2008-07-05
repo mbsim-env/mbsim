@@ -20,25 +20,31 @@
  *
  */
 
-#ifndef _CONTACT_FLEXIBLE_BILATERAL_H_
-#define _CONTACT_FLEXIBLE_BILATERAL_H_
+#ifndef _BILATERAL_RIGID_CONTACT_H_
+#define _BILATERAL_RIGID_CONTACT_H_
 
-#include "contact_flexible.h"
+#include "rigid_contact.h"
 
 namespace MBSim {
 
-  /*! \brief Class for flexible bilateral contacts 
+  /*! \brief Class for bilateral rigid contacts 
    *
    */
-  class ContactFlexibleBilateral: public ContactFlexible {
+  class BilateralRigidContact: public RigidContact {
 
     public: 
-      ContactFlexibleBilateral(const string &name);
+      BilateralRigidContact(const string &name);
 
+      void projectGS(double dt);
+      void solveGS(double dt);
+      void checkForTermination(double dt);
       void checkActive() {}
-      void updateKinetics(double t);
+
+      void residualProj(double dt);
+      void residualProjJac(double dt);
   };
 
+  typedef BilateralRigidContact ContactRigidBilateral;
 }
 
 #endif
