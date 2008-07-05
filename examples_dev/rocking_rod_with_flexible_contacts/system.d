@@ -20,7 +20,7 @@ system.o system.d : system.cc system.h \
   /home/foerg/install//include/mbsim/link.h \
   /home/foerg/install//include/mbsim/contour_pdata.h \
   /home/foerg/install//include/fmatvec/sparse_matrix.h \
-  /home/foerg/install//include/mbsim/body_rigid.h \
+  /home/foerg/install//include/mbsim/rigid_body.h \
   /home/foerg/install//include/mbsim/body.h \
   /home/foerg/install//include/mbsim/tree.h \
   /home/foerg/install//include/mbsim/coordinate_system.h \
@@ -36,7 +36,7 @@ system.o system.d : system.cc system.h \
   /home/foerg/install//include/mbsim/ppolynom.h \
   /home/foerg/install//include/fmatvec/fmatvec.h \
   /home/foerg/install//include/mbsim/contour_pdata.h \
-  /home/foerg/install//include/mbsim/contact_flexible.h \
+  /home/foerg/install//include/mbsim/flexible_contact.h \
   /home/foerg/install//include/mbsim/contact.h \
   /home/foerg/install//include/mbsim/contour.h \
   /home/foerg/install//include/mbsim/load.h \

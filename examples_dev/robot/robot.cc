@@ -1,7 +1,7 @@
 #include "robot.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "userfunction.h"
-#include "connection_flexible.h"
+#include "flexible_connection.h"
 #include "load.h"
 #include "cuboid.h"
 #include "cylinder.h"
@@ -43,7 +43,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(0,0) = mB*rB*rB;
   Theta(1,1) = 1./2.*mB*rB*rB;
   Theta(2,2) = mB*rB*rB;
-  basis->setInertia(Theta);
+  basis->setMomentOfInertia(Theta);
 
   SqrMat A(3);
   for(int i=0; i<3; i++)
@@ -52,12 +52,12 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
 
   Vec KrKS(3);
   KrKS(1) = hB/2;
-  basis->setfAPK(new RotationAxis(Vec("[0;1;0]")));
+  basis->setRotation(new RotationAxis(Vec("[0;1;0]")));
   Vec KrSP(3);
   KrSP(1) = hB/2;
   basis->addCoordinateSystem("R",-KrKS,A);
   basis->setParentCoordinateSystem(getCoordinateSystem("O"));
-  basis->setRefCoordinateSystem(basis->getCoordinateSystem("R"));
+  basis->setReferenceCoordinateSystem(basis->getCoordinateSystem("R"));
 
   BodyRigid *arm = new BodyRigid("Arm");
   tree->addObject(arm);
@@ -68,31 +68,29 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   KrKS(1) = lA/2;
   arm->addCoordinateSystem("R",-KrKS,A);
   arm->setParentCoordinateSystem(basis->getCoordinateSystem("P"));
-  arm->setRefCoordinateSystem(arm->getCoordinateSystem("R"));
+  arm->setReferenceCoordinateSystem(arm->getCoordinateSystem("R"));
   arm->setq0(Vec("[0.3]"));
 
   arm->setMass(mA);
   Theta(0,0) = mA*rA*rA;
   Theta(1,1) = 1./2.*mA*rA*rA;
   Theta(2,2) = mA*rA*rA;
-  arm->setInertia(Theta);
-  arm->setfAPK(new RotationAxis(Vec("[0;0;1]")));
+  arm->setMomentOfInertia(Theta);
+  arm->setRotation(new RotationAxis(Vec("[0;0;1]")));
   KrSP(1) = -lA/2;
   KrSP(1) = lA/2;
 
   BodyRigid *spitze = new BodyRigid("Spitze");
   tree->addObject(spitze);
-  PrPK0.init(0);
-  PrPK0(1) = lA;
-  arm->addCoordinateSystem("P",PrPK0,A,arm->getCoordinateSystem("R"));
   spitze->setMass(mS);
   Theta(0,0) = mS*rS*rS;
   Theta(1,1) = 1./2.*mS*rS*rS;
   Theta(2,2) = mS*rS*rS;
-  spitze->setInertia(Theta);
-  spitze->setfPrPK(new LinearTranslation(Vec("[0;1;0]")));
-  spitze->setParentCoordinateSystem(arm->getCoordinateSystem("P"));
-  spitze->setRefCoordinateSystem(spitze->getCoordinateSystem("COG"));
+  spitze->setMomentOfInertia(Theta);
+  spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
+  spitze->setParentCoordinateSystem(arm->getCoordinateSystem("COG"));
+  spitze->setReferenceCoordinateSystem(spitze->getCoordinateSystem("COG"));
+  spitze->setq0(Vec(1,INIT,lA/2));
   
   // --------------------------- Setup Visualisation ----------------------------
   ObjObject *obj = new ObjObject(basis->getName(),1,false);

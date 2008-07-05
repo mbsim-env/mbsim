@@ -6,7 +6,7 @@
 
 
 namespace MBSim {
-class BodyRigid;
+class RigidBody;
 }
 
 using namespace std;
@@ -14,12 +14,12 @@ using namespace MBSim;
 
 class Pendulum : public Tree {
   private:
-    BodyRigid *stab1, *stab2;
+    RigidBody *stab1, *stab2;
   public:
     Pendulum(const string &projectName); 
 
-    BodyRigid* getRod1() {return stab1;}
-    BodyRigid* getRod2() {return stab2;}
+    RigidBody* getRod1() {return stab1;}
+    RigidBody* getRod2() {return stab2;}
     
  
 };

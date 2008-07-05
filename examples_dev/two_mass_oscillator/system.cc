@@ -1,9 +1,9 @@
 #include "system.h"
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "tree.h"
 #include "cuboid.h"
 #include "contour.h"
-#include "connection_flexible.h"
+#include "flexible_connection.h"
 #include "load.h"
 #include "cube.h"
 
@@ -50,10 +50,10 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   //tree->addObject(body);
 
   body->setParentCoordinateSystem(origin);
-  body->setRefCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
-  body->setInertia(Theta);
-  body->setfPrPK(new LinearTranslation("[1; 0; 0]"));
+  body->setMomentOfInertia(Theta);
+  body->setTranslation(new LinearTranslation("[1; 0; 0]"));
   //body->setfAPK(new RotationAxis(Vec("[0;0;1]")));
   //body->setfPJT(new ConstJacobian("[1, 0, 0; 0, 1, 0; 0, 0, 0]"));
   //body->setfPJT(new ConstJacobian("[1, 0; 0, 1; 0, 0]"));
@@ -80,10 +80,10 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addObject(body2);
 
   body2->setParentCoordinateSystem(origin);
-  body2->setRefCoordinateSystem(body2->getCoordinateSystem("COG"));
+  body2->setReferenceCoordinateSystem(body2->getCoordinateSystem("COG"));
   body2->setMass(m);
-  body2->setInertia(Theta);
-  body2->setfPrPK(new LinearTranslation("[1; 0; 0]"));
+  body2->setMomentOfInertia(Theta);
+  body2->setTranslation(new LinearTranslation("[1; 0; 0]"));
   body2->setq0(Vec(1,INIT,2*l));
   body2->setu0(Vec(1,INIT,1));
 
