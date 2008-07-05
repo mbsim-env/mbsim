@@ -20,12 +20,12 @@
  *
  */
 #include <config.h>
-#include "connection_flexible.h"
+#include "flexible_connection.h"
 #include "coordinate_system.h"
 
 namespace MBSim {
 
-  ConnectionFlexible::ConnectionFlexible(const string &name) : Connection(name,false), cT(0), dT(0), cR(0), dR(0) {
+  FlexibleConnection::FlexibleConnection(const string &name) : Connection(name,false), cT(0), dT(0), cR(0), dR(0) {
     for(int i=0; i<2 ; i++) {
       load.push_back(Vec(6));
       WF[i] >> load[i](Index(0,2));
@@ -33,7 +33,7 @@ namespace MBSim {
     }
   }
 
-  void ConnectionFlexible::updateKinetics(double t) {
+  void FlexibleConnection::updateKinetics(double t) {
     la(IT) = -cT*g(IT) - dT*gd(IT);
     la(IR) = -cR*g(IR) - dR*gd(IR);
     WF[1] = Wf*la(IT);
@@ -42,12 +42,12 @@ namespace MBSim {
     WM[0] = -WM[1];
   }
 
-  void ConnectionFlexible::updateh(double t) {
+  void FlexibleConnection::updateh(double t) {
     h[0] += trans(port[0]->getWJP())*WF[0] + trans(port[0]->getWJR())*(WM[0]+crossProduct(WrP0P1,WF[0]));
     h[1] += trans(port[1]->getWJP())*WF[1] + trans(port[1]->getWJR())*WM[1];
   }
 
-  double ConnectionFlexible::computePotentialEnergy() {
+  double FlexibleConnection::computePotentialEnergy() {
     double V = 0.5* (trans(la)*g);
     return V;
   }

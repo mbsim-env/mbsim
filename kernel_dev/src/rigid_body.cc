@@ -20,7 +20,7 @@
  *
  */
 #include <config.h>
-#include "body_rigid.h"
+#include "rigid_body.h"
 #include "coordinate_system.h"
 #include "contour.h"
 #include "link.h"
@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  BodyRigid::BodyRigid(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3),iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3),iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 
     APK(0,0)=1.0;
     APK(1,1)=1.0;
@@ -50,7 +50,7 @@ namespace MBSim {
     ASK.push_back(SqrMat(3,EYE));
   }
 
-  void BodyRigid::calcSize() {
+  void RigidBody::calcSize() {
 
     Body::calcSize();
     qSize = 0;
@@ -78,7 +78,7 @@ namespace MBSim {
 
   }
 
-  void BodyRigid::init() {
+  void RigidBody::init() {
     Object::init();
 
     PJT.resize(3,uSize);
@@ -118,16 +118,16 @@ namespace MBSim {
       Mat JRR(3, uSize);
       PJR(Index(0,2), Index(uSize-JR.cols(),uSize-1)) = JR;
 
-      updateM_ = &BodyRigid::updateMNotConst;
-      facLLM_ = &BodyRigid::facLLMNotConst;
+      updateM_ = &RigidBody::updateMNotConst;
+      facLLM_ = &RigidBody::facLLMNotConst;
 
       if(cb) {
 	 // cout << "Benüzte körperfestes KOSY für Rot" << endl;
 	  if(iRef == 0 && false) {
-	    updateM_ = &BodyRigid::updateMConst;
+	    updateM_ = &RigidBody::updateMConst;
 	    Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
 	    LLM = facLL(Mbuf);
-	    facLLM_ = &BodyRigid::facLLMConst;
+	    facLLM_ = &RigidBody::facLLMConst;
 	  }
 	  PJR0 = PJR;
 	  //fPJR = new PJRTest(port[iRef],portParent,PJR);
@@ -144,27 +144,18 @@ namespace MBSim {
     for(int i=0; i<uSize; i++) 
       T(i,i) = 1;
 
-  //  cout << name <<endl;
-  //  cout << hInd <<endl;
-  //  cout << uSize <<endl;
-  //  cout << hSize <<endl;
- //   hSize = portParent->getWJP().cols()+uSize;
     for(unsigned int i=0; i<port.size(); i++) {
-      //port[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
-      //port[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
       port[i]->getWJP().resize(3,hSize);
       port[i]->getWJR().resize(3,hSize);
     }
     for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->getWJP().resize(3,hSize);
       contour[i]->getWJR().resize(3,hSize);
-      //contour[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
-      //contour[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
     }
       
   }
 
-  void BodyRigid::initPlotFiles() {
+  void RigidBody::initPlotFiles() {
 
       Body::initPlotFiles();
 
@@ -191,17 +182,16 @@ namespace MBSim {
 
   }
 
-  void BodyRigid::updateMConst(double t) {
+  void RigidBody::updateMConst(double t) {
       M += Mbuf;
-      //cout << "update" <<endl;
       //M += m*JTJ(port[0]->getWJP()) + JTMJ(WThetaS,port[0]->getWJR());
   }
 
-  void BodyRigid::updateMNotConst(double t) {
+  void RigidBody::updateMNotConst(double t) {
       M += m*JTJ(port[0]->getWJP()) + JTMJ(WThetaS,port[0]->getWJR());
   }
 
-  void BodyRigid::updateJacobians(double t) {
+  void RigidBody::updateJacobians(double t) {
    // TODO: Abfrage ob Inertiales System zur Performancesteigerung
   
     if(fPdJT)
@@ -223,8 +213,6 @@ namespace MBSim {
     port[iRef]->getWJR()(Index(0,2),Index(0,portParent->getWJR().cols()-1)) = portParent->getWJR();
     port[iRef]->getWJP()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJT;
     port[iRef]->getWJR()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJR;
-    //cout << name << endl;
-    //cout << port[iRef]->getWJR() <<endl;
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
@@ -256,7 +244,7 @@ namespace MBSim {
     }
   }
 
-  void BodyRigid::updateh(double t) {
+  void RigidBody::updateh(double t) {
     updateJacobians(t);
 
     // Trägheitstensor auf Welt-System umrechnen
@@ -268,17 +256,9 @@ namespace MBSim {
 
     h += trans(port[0]->getWJP())*WF +  trans(port[0]->getWJR())*WM;
 
-   // cout << name <<endl;
-   // cout << trans(port[iRef]->getAWP())*port[iRef]->getWJP()<<endl;
-   // cout << trans(port[iRef]->getAWP())*port[iRef]->getWJR()<<endl;
-   // cout << port[iRef]->getWJP()<<endl;
-   // cout << port[iRef]->getWJR()<<endl;
-   // cout << port[0]->getWJP()<<endl;
-   // cout << port[0]->getWJR()<<endl;
-   // cout << h <<endl;
   }
 
- void BodyRigid::plot(double t, double dt) {
+ void RigidBody::plot(double t, double dt) {
    Body::plot(t,dt);
    //Vec WrOS = computeWrOS();
    SqrMat AWK = port[0]->getAWP();
@@ -331,7 +311,7 @@ namespace MBSim {
       }
   }
 
-  void BodyRigid::updateKinematics(double t) {
+  void RigidBody::updateKinematics(double t) {
 
     // TODO: Abfrage ob Inertiales System zur Performancesteigerung
     
@@ -359,8 +339,6 @@ namespace MBSim {
 
     WrPK = portParent->getAWP()*PrPK;
     WomPK = portParent->getAWP()*(PJR*u + PjR);
-    //cout << name << endl;
-    //cout << WomPK <<endl;
     WvPKrel = portParent->getAWP()*(PJT*u + PjT);
     port[iRef]->setWomegaP(portParent->getWomegaP() + WomPK);
     port[iRef]->setWrOP(WrPK + portParent->getWrOP());
@@ -405,12 +383,12 @@ namespace MBSim {
     }
   }
 
-  double BodyRigid::computeKineticEnergy() {
+  double RigidBody::computeKineticEnergy() {
     //return 0.5 * (m*trans(KvK)*(KvK + 2*crossProduct(KomegaK,KrKS)) + trans(KomegaK)*I*KomegaK);
     return 0;
   }
   
-  double BodyRigid::computeKineticEnergyBranch() {
+  double RigidBody::computeKineticEnergyBranch() {
    // double Ttemp = computeKineticEnergy();
    // for(unsigned int i=0; i<successor.size(); i++)
    //   Ttemp += successor[i]->computeKineticEnergyBranch();
@@ -418,7 +396,7 @@ namespace MBSim {
    return -1;
   }
 
-  double BodyRigid::computePotentialEnergyBranch() {
+  double RigidBody::computePotentialEnergyBranch() {
   //  double Vbranch = this->computePotentialEnergy();
   //  for(unsigned int i=0; i<successor.size(); i++)
   //    Vbranch += successor[i]->computePotentialEnergy();
@@ -426,7 +404,7 @@ namespace MBSim {
   return -1;
   }
 
-  void BodyRigid::addCoordinateSystem(CoordinateSystem *cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
+  void RigidBody::addCoordinateSystem(CoordinateSystem *cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
     Object::addCoordinateSystem(cosy);
     int i = 0;
     if(refCoordinateSystem)
@@ -437,11 +415,11 @@ namespace MBSim {
     ASK.push_back(ASK[i]*ARK);
   }
 
-  void BodyRigid::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
+  void RigidBody::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
     addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
 
-  void BodyRigid::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
+  void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
     Object::addContour(contour);
 
     int i = 0;

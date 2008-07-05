@@ -19,31 +19,41 @@
  *   mfoerg@users.berlios.de
  *
  */
-#include <config.h>
-#define FMATVEC_NO_BOUNDS_CHECK
-#include "contact_flexible_bilateral.h"
-#include "multi_body_system.h"
+#ifndef _FLEXIBLE_CONTACT_H_
+#define _FLEXIBLE_CONTACT_H_
+
+#include "contact.h"
 
 namespace MBSim {
 
-  ContactFlexibleBilateral::ContactFlexibleBilateral(const string &name) : ContactFlexible(name) {
-    active = true;
-  }
+  /*! \brief Class for flexible contacts
+   *
+   * */
+  class FlexibleContact : public Contact {
 
-  void ContactFlexibleBilateral::updateKinetics(double t) {
-    double mue0 = mue;
+    protected:
+      Vec WF[2], WM[2];
 
-    la(0) = -c*g(0) - d*gd(0);
+      double c, d;
+      double gdT_grenz;
 
-    for(int i=1; i<=nFric; i++) {
-      if(fabs(gd(i)) < 0.01)
-	la(i) = -fabs(la(0))*mue0*gd(i)/0.01;
-      else
-	la(i) = gd(i)>0?-la(0)*mue:fabs(la(0))*mue;
-    }
+    public: 
+      FlexibleContact(const string &name);
 
-    WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
-    WF[1] = -WF[0];
-  }
+      FlexibleContact(const FlexibleContact *master,const string &name_);
 
+      void init();
+
+      void updateKinetics(double t);
+      void updateh(double t);
+
+      void setStiffness(double c_) {c = c_;}
+      void setDamping(double d_) {d = d_;}
+
+      void setMarginalVelocity(double v) {gdT_grenz = v;}
+  };
+
+  typedef FlexibleContact ContactFlexible;
 }
+
+#endif

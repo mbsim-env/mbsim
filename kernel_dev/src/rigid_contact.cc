@@ -21,7 +21,7 @@
  */
 #include <config.h>
 #define FMATVEC_NO_BOUNDS_CHECK
-#include "contact_rigid.h"
+#include "rigid_contact.h"
 #include "utils/nonsmooth_algebra.h"
 #include "multi_body_system.h"
 #include "function.h"
@@ -38,10 +38,10 @@ namespace MBSim {
     // return x>=0?1:-1;
   }
 
-  ContactRigid::ContactRigid(const string &name) : Contact(name,true), argT(2), epsilonN(0), gd_grenz(1e-2) {
+  RigidContact::RigidContact(const string &name) : Contact(name,true), argT(2), epsilonN(0), gd_grenz(1e-2) {
   }
 
-  void ContactRigid::init() {
+  void RigidContact::init() {
     Contact::init();
     for(int i=0; i<2; i++) {
       loadDir.push_back(Mat(6,laSize));
@@ -49,14 +49,14 @@ namespace MBSim {
     }
   }
 
-  void ContactRigid::updateKinetics(double t) {
+  void RigidContact::updateKinetics(double t) {
     fF[0].col(0) = getContourPointData(0).Wn;
     fF[0](Index(0,2),iT) = getContourPointData(0).Wt;
     fF[1] = -fF[0];
 
   }
 
-  void ContactRigid::updateW(double t) {
+  void RigidContact::updateW(double t) {
     Vec WrPC[2];
     WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
     WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
@@ -64,7 +64,7 @@ namespace MBSim {
     W[1] += trans(contour[1]->getWJP())*fF[1] + trans(contour[1]->getWJR())*(tilde(WrPC[1])*fF[1]);
   }
 
-  void ContactRigid::checkActive() {
+  void RigidContact::checkActive() {
 
     bool active_old = active;
 
@@ -74,7 +74,7 @@ namespace MBSim {
       mbs->setActiveConstraintsChanged(true);
   }
 
-  void ContactRigid::projectJ(double dt) {
+  void RigidContact::projectJ(double dt) {
     if(nFric==1) 
       la(1) = proxCT2D(la(1)-rFactor(1)*s(1),mue*fabs(la(0)));
     else if(nFric == 2) 
@@ -83,7 +83,7 @@ namespace MBSim {
     la(0) = proxCN(la(0)-rFactor(0)*s(0));
   }
 
-  void ContactRigid::projectGS(double dt) {
+  void RigidContact::projectGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -107,7 +107,7 @@ namespace MBSim {
       la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
   }
 
-  void ContactRigid::solveGS(double dt) {
+  void RigidContact::solveGS(double dt) {
     assert(nFric <= 1);
 
     double *a = mbs->getGs()();
@@ -146,7 +146,7 @@ namespace MBSim {
   }
 
 
-  void ContactRigid::residualProj(double dt) {
+  void RigidContact::residualProj(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -173,7 +173,7 @@ namespace MBSim {
   }
 
     
-  void ContactRigid::residualProjJac(double dt) {
+  void RigidContact::residualProjJac(double dt) {
 
     SqrMat Jprox = mbs->getJprox();
     SymMat G = mbs->getG();
@@ -231,7 +231,7 @@ namespace MBSim {
     }
   }
 
-void ContactRigid::checkForTermination(double dt) {
+void RigidContact::checkForTermination(double dt) {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -276,7 +276,7 @@ void ContactRigid::checkForTermination(double dt) {
 
   }
 
-void ContactRigid::updaterFactors() {
+void RigidContact::updaterFactors() {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
 //    int *ja = mbs->getGs().Jp(); // unused
@@ -327,8 +327,8 @@ void ContactRigid::updaterFactors() {
     }
   }
 
-  std::string ContactRigid::getTerminationInfo(double dt){
-    std::string s= "ContactRigid " + getName();
+  std::string RigidContact::getTerminationInfo(double dt){
+    std::string s= "RigidContact " + getName();
     bool NormalDirectionFailed= false;
     
     if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)

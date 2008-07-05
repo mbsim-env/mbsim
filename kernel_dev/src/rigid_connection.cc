@@ -22,17 +22,17 @@
 
 #define FMATVEC_NO_BOUNDS_CHECK
 #include <config.h>
-#include "connection_rigid.h"
+#include "rigid_connection.h"
 #include "coordinate_system.h"
 #include "multi_body_system.h"
 #include "function.h"
 
 namespace MBSim {
 
-  ConnectionRigid::ConnectionRigid(const string &name) : Connection(name,true) {
+  RigidConnection::RigidConnection(const string &name) : Connection(name,true) {
   }
 
-  void ConnectionRigid::init() {
+  void RigidConnection::init() {
     Connection::init();
 
     for(int i=0; i<2; i++) {
@@ -47,7 +47,7 @@ namespace MBSim {
     fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
   }
 
-  void ConnectionRigid::updateKinetics(double dt) {
+  void RigidConnection::updateKinetics(double dt) {
     if(KOSYID) {
       fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
       fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
@@ -56,22 +56,22 @@ namespace MBSim {
     }
   }
 
-  void ConnectionRigid::updateW(double t) {
+  void RigidConnection::updateW(double t) {
     W[0] += trans(port[0]->getWJP())*fF[0] + trans(port[0]->getWJR())*(fM[0]+tilde(WrP0P1)*fF[0]);
     W[1] += trans(port[1]->getWJP())*fF[1] + trans(port[1]->getWJR())*fM[1];
   }
 
-  void ConnectionRigid::updateb(double t) {
+  void RigidConnection::updateb(double t) {
     b(0,Wf.cols()-1) += trans(Wf)*(port[1]->getWjP() - port[0]->getWjP() + crossProduct(WrP0P1,port[0]->getWjR()) + crossProduct(WrP0P1,port[0]->getWjR()) + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrP0P1)) - 2*crossProduct(port[0]->getWomegaP(),WvP0P1));
     b(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getWjR()-port[0]->getWjR() - crossProduct(port[0]->getWomegaP(),WomP0P1));
   }
 
-  void ConnectionRigid::projectJ(double dt) {
+  void RigidConnection::projectJ(double dt) {
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) 
       la(i) -= rFactor(i)*s(i);
   }
 
-  void ConnectionRigid::projectGS(double dt) {
+  void RigidConnection::projectGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -85,7 +85,7 @@ namespace MBSim {
     }
   }
 
-  void ConnectionRigid::solveGS(double dt) {
+  void RigidConnection::solveGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -99,7 +99,7 @@ namespace MBSim {
     }
   }
 
-  void ConnectionRigid::updaterFactors() {
+  void RigidConnection::updaterFactors() {
     if(active) {
       double *a = mbs->getGs()();
       int *ia = mbs->getGs().Ip();
@@ -119,7 +119,7 @@ namespace MBSim {
       }
     }
   }
-  void ConnectionRigid::residualProj(double dt) {
+  void RigidConnection::residualProj(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -133,13 +133,13 @@ namespace MBSim {
     }
   }
 
-  void ConnectionRigid::residualProjJac(double dt) {
+  void RigidConnection::residualProjJac(double dt) {
     for(int i=laInd; i<laInd+forceDir.cols() + momentDir.cols(); i++) 
       for(int j=0; j<mbs->getG().size(); j++)  
 	mbs->getJprox()(i,j) = mbs->getG()(i,j);
   }
 
-  void ConnectionRigid::checkForTermination(double dt) {
+  void RigidConnection::checkForTermination(double dt) {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -158,7 +158,7 @@ namespace MBSim {
     }
   }
 
-  std::string ConnectionRigid::getTerminationInfo(double dt) {
+  std::string RigidConnection::getTerminationInfo(double dt) {
     std::string s;
     int j=-1;
     s= Link::getTerminationInfo(dt);

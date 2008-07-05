@@ -37,7 +37,6 @@ class Object;
    * */
   class Tree : public Object {
     friend class Object;
-    friend class BodyRigid;
 
     protected:
     vector<Object*> object;
