@@ -59,6 +59,7 @@ namespace MBSim {
       void connect(CoordinateSystem *port1);
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
+      void updateh(double t);
 
       void initDataInterfaceBase(MultiBodySystem *parentmbs);
   };

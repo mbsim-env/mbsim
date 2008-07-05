@@ -122,16 +122,17 @@ namespace MBSim {
       facLLM_ = &BodyRigid::facLLMNotConst;
 
       if(cb) {
-	  cout << "Benüzte körperfestes KOSY für Rot" << endl;
-	  if(iRef == 0) {
+	 // cout << "Benüzte körperfestes KOSY für Rot" << endl;
+	  if(iRef == 0 && false) {
 	    updateM_ = &BodyRigid::updateMConst;
 	    Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
 	    LLM = facLL(Mbuf);
 	    facLLM_ = &BodyRigid::facLLMConst;
 	  }
-	fPJR = new PJRTest(port[iRef],PJR);
+	  PJR0 = PJR;
+	  //fPJR = new PJRTest(port[iRef],portParent,PJR);
       } else {
-	cout << "Benüzte Parent-KOSY für Rot" << endl;
+	//cout << "Benüzte Parent-KOSY für Rot" << endl;
       }
     }
 
@@ -143,13 +144,22 @@ namespace MBSim {
     for(int i=0; i<uSize; i++) 
       T(i,i) = 1;
 
+  //  cout << name <<endl;
+  //  cout << hInd <<endl;
+  //  cout << uSize <<endl;
+  //  cout << hSize <<endl;
+ //   hSize = portParent->getWJP().cols()+uSize;
     for(unsigned int i=0; i<port.size(); i++) {
-      port[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
-      port[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
+      //port[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
+      //port[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
+      port[i]->getWJP().resize(3,hSize);
+      port[i]->getWJR().resize(3,hSize);
     }
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
-      contour[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
+      contour[i]->getWJP().resize(3,hSize);
+      contour[i]->getWJR().resize(3,hSize);
+      //contour[i]->getWJP().resize(3,portParent->getWJP().cols()+uSize);
+      //contour[i]->getWJR().resize(3,portParent->getWJR().cols()+uSize);
     }
       
   }
@@ -183,6 +193,8 @@ namespace MBSim {
 
   void BodyRigid::updateMConst(double t) {
       M += Mbuf;
+      //cout << "update" <<endl;
+      //M += m*JTJ(port[0]->getWJP()) + JTMJ(WThetaS,port[0]->getWJR());
   }
 
   void BodyRigid::updateMNotConst(double t) {
@@ -209,8 +221,10 @@ namespace MBSim {
 
     port[iRef]->getWJP()(Index(0,2),Index(0,portParent->getWJP().cols()-1)) = portParent->getWJP() - tWrPK*portParent->getWJR();
     port[iRef]->getWJR()(Index(0,2),Index(0,portParent->getWJR().cols()-1)) = portParent->getWJR();
-    port[iRef]->getWJP()(Index(0,2),Index(portParent->getWJP().cols(),portParent->getWJP().cols()+uSize-1)) = portParent->getAWP()*PJT;
-    port[iRef]->getWJR()(Index(0,2),Index(portParent->getWJR().cols(),portParent->getWJR().cols()+uSize-1)) = portParent->getAWP()*PJR;
+    port[iRef]->getWJP()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJT;
+    port[iRef]->getWJR()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJR;
+    //cout << name << endl;
+    //cout << port[iRef]->getWJR() <<endl;
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
@@ -253,6 +267,15 @@ namespace MBSim {
     Vec WM = crossProduct(WThetaS*port[0]->getWomegaP(),port[0]->getWomegaP()) - WThetaS*port[0]->getWjR();
 
     h += trans(port[0]->getWJP())*WF +  trans(port[0]->getWJR())*WM;
+
+   // cout << name <<endl;
+   // cout << trans(port[iRef]->getAWP())*port[iRef]->getWJP()<<endl;
+   // cout << trans(port[iRef]->getAWP())*port[iRef]->getWJR()<<endl;
+   // cout << port[iRef]->getWJP()<<endl;
+   // cout << port[iRef]->getWJR()<<endl;
+   // cout << port[0]->getWJP()<<endl;
+   // cout << port[0]->getWJR()<<endl;
+   // cout << h <<endl;
   }
 
  void BodyRigid::plot(double t, double dt) {
@@ -329,8 +352,15 @@ namespace MBSim {
 
     // Kinematik des Referenz-KOSY updaten
     port[iRef]->setAWP(portParent->getAWP()*APK);
+
+    if(cb) {
+      PJR = trans(portParent->getAWP())*port[iRef]->getAWP()*PJR0;
+    }
+
     WrPK = portParent->getAWP()*PrPK;
     WomPK = portParent->getAWP()*(PJR*u + PjR);
+    //cout << name << endl;
+    //cout << WomPK <<endl;
     WvPKrel = portParent->getAWP()*(PJT*u + PjT);
     port[iRef]->setWomegaP(portParent->getWomegaP() + WomPK);
     port[iRef]->setWrOP(WrPK + portParent->getWrOP());

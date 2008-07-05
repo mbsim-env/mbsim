@@ -223,21 +223,22 @@ namespace MBSim {
        }
   };
 
-  class PJRTest : public Jacobian {
-    private:
-      Mat KJR;
-      CoordinateSystem *port;
-
-    public:
-      PJRTest(CoordinateSystem* port_, const Mat &KJR_) : port(port_) {
-	KJR = KJR_;
-      }
-      int getuSize() const {return KJR.cols();}
-
-      virtual Mat operator()(const Vec &q, double t) {
-	return port->getAWP()*KJR;
-       }
-  };
+//  class PJRTest : public Jacobian {
+//    private:
+//      Mat KJR;
+//      CoordinateSystem *portRef, portParent;
+//
+//    public:
+//      PJRTest(CoordinateSystem* portRef_,CoordinateSystem* portParent_, const Mat &KJR_) : portRef(portRef_), portParent(portParent_) {
+//	KJR = KJR_;
+//      }
+//      int getuSize() const {return KJR.cols();}
+//
+//      virtual Mat operator()(const Vec &q, double t) {
+//	return trans(portParent->getAWP()*portRef->getAWP()*KJR;
+//	return port->getAWP()*KJR;
+//       }
+//  };
 
   /*! \brief Class for rigid bodies with relative coordinates 
    *
@@ -257,9 +258,10 @@ namespace MBSim {
     Mat PJT, PJR, PdJT, PdJR;
     Vec PjT, PjR, PdjT, PdjR;
 
+    Mat PJR0;
+
     SqrMat APK;
     Vec PrPK, WrPK, WvPKrel, WomPK;
-    Index IuT, IuR, iI;
     CoordinateSystem *portParent;
     vector<SqrMat> ASK;
     vector<Vec> SrSK, WrSK;
@@ -306,17 +308,17 @@ namespace MBSim {
     public:
     BodyRigid(const string &name);
 
-    void setCoordinateSystemBody(bool cb_) {cb = cb_;}
-    void setfPrPK(Translation* fPrPK_) { fPrPK = fPrPK_;}
-    void setfAPK(Rotation* fAPK_) { fAPK = fAPK_;}
-    void setfPJT(Jacobian* fPJT_) { fPJT = fPJT_;}
-    void setfPJR(Jacobian* fPJR_) { fPJR = fPJR_;}
-    void setfPdJT(DerJac* fPdJT_) { fPdJT = fPdJT_;}
-    void setfPdJR(DerJac* fPdJR_) { fPdJR = fPdJR_;}
-    void setfPjT(TimeDep* fPjT_) { fPjT = fPjT_;}
-    void setfPjR(TimeDep* fPjR_) { fPjR = fPjR_;}
-    void setfPdjT(TimeDep* fPdjT_) { fPdjT = fPdjT_;}
-    void setfPdjR(TimeDep* fPdjR_) { fPdjR = fPdjR_;}
+    void useCoordinateSystemOfBodyForRotation(bool cb_) {cb = cb_;}
+    void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
+    void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
+    void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
+    void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
+    void setDerivativeOfJacobianOfTranslation(DerJac* fPdJT_) { fPdJT = fPdJT_;}
+    void setDerivativeOfJacobianOfRotation(DerJac* fPdJR_) { fPdJR = fPdJR_;}
+    void setGuidingVelocityOfTranslation(TimeDep* fPjT_) { fPjT = fPjT_;}
+    void setGuidingVelocityOfRotation(TimeDep* fPjR_) { fPjR = fPjR_;}
+    void setDerivativeOfGuidingVelocityOfTranslation(TimeDep* fPdjT_) { fPdjT = fPdjT_;}
+    void setDerivativeOfGuidingVelocityOfRotation(TimeDep* fPdjR_) { fPdjR = fPdjR_;}
 
     /*! define the mass of the body
       \param m mass
@@ -328,7 +330,7 @@ namespace MBSim {
      * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
      \param I martix of inertia
      */
-    void setInertia(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
+    void setMomentOfInertia(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
       if(refCoordinateSystem)
 	i4I = portIndex(refCoordinateSystem);
       else
@@ -349,15 +351,10 @@ namespace MBSim {
 
     void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
     
-    void setRefCoordinateSystem(CoordinateSystem *port) {
+    void setReferenceCoordinateSystem(CoordinateSystem *port) {
       iRef = portIndex(port);
       assert(iRef > -1);
     }
-
-    void calcSize();
-
-    const Index& getIuT() const {return IuT;}
-    const Index& getIuR() const {return IuR;}
 
     void setParentCoordinateSystem(CoordinateSystem *port) {portParent = port;};
 
@@ -367,6 +364,7 @@ namespace MBSim {
 
     void init();
     void initPlotFiles();
+    void calcSize();
 
   };
 
