@@ -1,113 +1,123 @@
 #include "system.h"
 #include "rigid_body.h"
-#include "tree.h"
-#include "cuboid.h"
-#include "contour.h"
-#include "flexible_connection.h"
+#include "userfunction.h"
+#include "springs.h"
 #include "load.h"
+#include "cuboid.h"
 #include "cube.h"
+#include "coilspring.h"
 
 using namespace AMVis;
 
-class Moment : public UserFunction {
-  public:
-    Vec operator()(double t) {
-      Vec a(3);
-      a(0) = 0.001*cos(t);
-      a(1) = 0.0005*sin(t);
-      //a(2) = 0.15*sin(t+M_PI/8);
-      return a;
-    }
-};
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {
- // Gravitation
-  Vec grav(3);
-  grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
- // Parameters
-  double l = 0.1;              		
-  double h =  0.1;
-  double d = 0.1;
-  double m = 0.7;
-  SymMat Theta(3);
-  Theta(1,1) = m*l*l/12.;
-  Theta(2,2) = Theta(1,1);
-  double alpha = 3.0 * M_PI/180.; 
-  double deltax = 0.2;           
-  double mu  = 0.3;
+  setProjectDirectory("plot");
 
-  CoordinateSystem* origin = new CoordinateSystem("O");
-  Vec WrOK(3);
-  WrOK(2) = d/2;;
-  origin->setWrOP(WrOK);
+  // Erdbeschleungigung definieren
+  Vec g(3);
+  g(1)=-9.81*0;
+  setAccelerationOfGravity(g);
 
-  //TreeTest *tree = new TreeTest("Baum"); 
-  //addObject(tree);
-  
-  BodyRigid* body = new BodyRigid("Body1");
-  addObject(body);
-  //tree->addObject(body);
+  // Parameter der Körper
+  double m1 = 5;
+  double m2 = 2;
+  SymMat Theta1(3,EYE);
+  SymMat Theta2(3,EYE);
+  double h1 = 0.5;
+  double h2 = 0.5;
 
-  body->setParentCoordinateSystem(origin);
-  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
-  body->setMass(m);
-  body->setMomentOfInertia(Theta);
-  body->setTranslation(new LinearTranslation("[1; 0; 0]"));
-  //body->setfAPK(new RotationAxis(Vec("[0;0;1]")));
-  //body->setfPJT(new ConstJacobian("[1, 0, 0; 0, 1, 0; 0, 0, 0]"));
-  //body->setfPJT(new ConstJacobian("[1, 0; 0, 1; 0, 0]"));
-  //body->setfPJR(new ConstJacobian("[0, 0, 0; 0, 0, 0; 0, 0, 1]"));
+  // Parameter der Federn
+  double c1 = 1e3;
+  double c2 = 1e2;
+  double d1 = 0;
+  double d2 = 0;
+  double l01 = 0.5;
+  double l02 = 0.5;
 
- // Initial translation and rotation
-  SqrMat A(3);
-  A(0,0) = 1;
-  A(1,1) = 1;
-  A(2,2) = 1;
+  // ----------------------- Definition des 1. Körpers --------------------  
+  BodyRigid *box1 = new BodyRigid("Box1");
+  addObject(box1);
+ 
+  // Masse und Trägheit definieren
+  box1->setMass(m1);
+  box1->setMomentOfInertia(Theta1);
 
-  Vec KrSC(3);
-  KrSC(0) = l/2;
-  body->addCoordinateSystem("P",KrSC,A);
+  // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
+  // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
+  box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box1->setParentCoordinateSystem(getCoordinateSystem("O"));
+  box1->setReferenceCoordinateSystem(box1->getCoordinateSystem("COG"));
 
 
-  // Visualisation with AMVis
-  Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
-  cubeoid->setSize(l,h,d);
-  cubeoid->setColor(0);
+  // ----------------------- Definition des 2. Körpers --------------------  
+  BodyRigid *box2 = new BodyRigid("Box2");
+  addObject(box2);
 
-  body->setAMVisBody(cubeoid);
-  BodyRigid *body2 = new BodyRigid("Body2");
-  addObject(body2);
+  // Masse und Trägheit definieren
+  box2->setMass(m2);
+  box2->setMomentOfInertia(Theta2);
 
-  body2->setParentCoordinateSystem(origin);
-  body2->setReferenceCoordinateSystem(body2->getCoordinateSystem("COG"));
-  body2->setMass(m);
-  body2->setMomentOfInertia(Theta);
-  body2->setTranslation(new LinearTranslation("[1; 0; 0]"));
-  body2->setq0(Vec(1,INIT,2*l));
-  body2->setu0(Vec(1,INIT,1));
+  // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
+  // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
+  box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
+  box2->setParentCoordinateSystem(getCoordinateSystem("O"));
+  box2->setReferenceCoordinateSystem(box2->getCoordinateSystem("COG"));
 
-  KrSC(0) = -l/2;
-  body2->addCoordinateSystem("P",KrSC,A);
+  // ----------------------- Anschlusspunkte der Federn --------------------  
+  Vec SrSP(3);
+  SqrMat ASP(3,EYE);
 
-  ConnectionFlexible* cf = new ConnectionFlexible("Verbindung_U");
-  addLink(cf);
-  cf->connect(getCoordinateSystem("O"),body->getCoordinateSystem("P"));
-  cf->setTranslationalStiffness(10);
-  cf->setTranslationalDamping(0.1);
-  cf->setForceDirection("[1;0;0]");
+  // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
+  SrSP(1) = h1/2.;
+  box1->addCoordinateSystem("P1",-SrSP,ASP); 
+  box1->addCoordinateSystem("P2",SrSP,ASP);
 
-  cf = new ConnectionFlexible("Verbindung_K");
-  addLink(cf);
-  cf->connect(body->getCoordinateSystem("P"),body2->getCoordinateSystem("P"));
-  cf->setTranslationalStiffness(10);
-  cf->setTranslationalDamping(0.1);
-  cf->setForceDirection("[1;0;0]");
+  // Federanschlusspunkt P1 auf Körper 2 definieren
+  SrSP(1) = h2/2.;
+  box2->addCoordinateSystem("P1",-SrSP,ASP);
 
-  cubeoid = new Cuboid(body2->getFullName(),1,false);
-  cubeoid->setSize(l,h,d);
-  cubeoid->setColor(0.5);
-  body2->setAMVisBody(cubeoid);
+  // ----------------------- Definition der 1. Feder --------------------  
+  Spring *spring1 = new Spring("Feder1");
+  addLink(spring1);
+  spring1->setStiffness(c1);
+  spring1->setDamping(d1);
+  spring1->setl0(l01);
+  spring1->connect(box1->getCoordinateSystem("P1"),getCoordinateSystem("O"));
+
+  // ----------------------- Definition der 2. Feder --------------------  
+  Spring *spring2 = new Spring("Feder2");
+  addLink(spring2);
+  spring2->setStiffness(c2);
+  spring2->setDamping(d2);
+  spring2->setl0(l02);
+  spring2->connect(box1->getCoordinateSystem("P2"),box2->getCoordinateSystem("P1"));
+
+  // ----------------------- Anfangsbedingungen der Körper -------------------  
+  box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));
+  box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
+
+  // ----------------------- Visualisierung in AMVis --------------------  
+  Cube * cuboid = new Cube(box1->getFullName(),1,false);
+  cuboid->setLength(h1);
+  cuboid->setColor(0.5);
+  box1->setAMVisBody(cuboid);
+
+  cuboid = new Cube(box2->getFullName(),1,false);
+  cuboid->setLength(h2);
+  cuboid->setColor(0.2);
+  box2->setAMVisBody(cuboid);
+
+  CoilSpring *coilspring = new CoilSpring(spring1->getFullName(),1,false);
+  coilspring->setRadius(0.1);
+  coilspring->setRadiusCrossSection(0.01);
+  coilspring->setNumberOfCoils(5);
+  spring1->setAMVisSpring(coilspring);
+
+  coilspring = new CoilSpring(spring2->getFullName(),1,false);
+  coilspring->setRadius(0.1);
+  coilspring->setRadiusCrossSection(0.01);
+  coilspring->setNumberOfCoils(5);
+  spring2->setAMVisSpring(coilspring);
+
 
 }
-

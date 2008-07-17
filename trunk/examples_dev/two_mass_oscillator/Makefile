@@ -1,5 +1,5 @@
 CC = g++
-sources = main.cc system.cc 
+sources = main.cc system.cc springs.cc
 libsources = 
 objects = $(sources:.cc=.o) 
 CPPFLAGS= -g3 `pkg-config --cflags mbsim` 
