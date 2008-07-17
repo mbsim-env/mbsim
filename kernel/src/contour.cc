@@ -233,7 +233,7 @@ namespace MBSim {
     {
       AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
       sphere->setRadius(r);
-      bodyAMVis = sphere;
+      setAMVisBody(sphere);
     }
 #endif
   }
