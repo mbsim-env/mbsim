@@ -250,20 +250,20 @@ namespace MBSim {
   }
 
   void TreeFlexRoot::initFlexibleStage2() {
-    int k=0;
-    for(unsigned int i=0; i<flexible->linkSetValued.size(); i++) {
-      int linkID = -1;
-      for(unsigned int j=0; j<linkSetValued.size(); j++)
-	if(linkSetValued[j] == linkSetValued[i])
-	  linkID = j;
-      Index iJ(0,flexible->linkSetValued[i]->getlaSize()-1);
-      if(linkID > -1) {
-	flexible->W[i].resize() >> W[linkID](Iflexible,iJ);
-      } else {
-	flexible->W[i].resize() >> W[k](Iflexible,iJ);
-	k++;
-      }
-    }
+	int k=0;
+	for(unsigned int i=0; i<flexible->linkSetValued.size(); i++) {
+	  int linkID = -1;
+	  for(unsigned int j=0; j<linkSetValued.size(); j++)
+		if(linkSetValued[j] == flexible->linkSetValued[i]) // ?!?!?!? was ist denn nun das: 16.06.2008, auf Roberts Rat hin flexible->...[i]
+		  linkID = j;
+	  Index iJ(0,flexible->linkSetValued[i]->getlaSize()-1);
+	  if(linkID > -1) {
+		flexible->W[i].resize() >> W[linkID](Iflexible,iJ);
+	  } else {
+		flexible->W[i].resize() >> W[k](Iflexible,iJ);
+		k++;
+	  }
+	}
   }
 
 
