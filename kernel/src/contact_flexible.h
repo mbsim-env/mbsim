@@ -42,7 +42,7 @@ namespace MBSim {
 	  /*! Initialises the contact */
       void init();
 	  /*! Evaluates the fully functional force law */
-      void updateKinetics(double t);
+      virtual void updateKinetics(double t);
 	  /*! Set stiffness with appropriate potential */
       void setStiffness(double c_);
       /*! Set stiffness function with correct sign according to potential and signed gap (acting against) */

@@ -52,9 +52,9 @@ namespace MBSim {
       /*! Connect two Contours and select the contact kinematics */
       void connect(Contour *contour1, Contour* contour2);
 	  /*! First step of calculating the contact kinematics */
-      void updateStage1(double t);
+      virtual void updateStage1(double t);
       /*! Second step of calculating the contact kinematics */
-      void updateStage2(double t);
+      virtual void updateStage2(double t);
       /*! Define force directions and evaluate kinetical values in updateStage2 */
       virtual void updateKinetics(double t) = 0;
 	  /*! Set number of friction directions: 0,1,2 */

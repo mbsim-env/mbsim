@@ -390,9 +390,9 @@ namespace MBSim {
 	    /*! Calls updateGb for children */
 	    void updateGb(double t);
 	    /*! Calls updateLinksStage1 for children */
-	    void updateLinksStage1(double t);
+	    virtual void updateLinksStage1(double t);
 	    /*! Calls updateLinksStage2 for children */
-	    void updateLinksStage2(double t);
+	    virtual void updateLinksStage2(double t);
 	    /*! Decide which constraints are active */
 	    void checkActiveConstraints();
 	    /*! Set if the number of active constraints has changed */

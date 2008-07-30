@@ -3,6 +3,7 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					point_line.cc\
 					point_cylinderflexible.cc\
 					point_contour1s.cc\
+					point_circlesolid.cc\
 					point_contourinterpolation.cc\
 					line_contour1s.cc\
 					circlesolid_circlehollow.cc\
@@ -26,4 +27,5 @@ contactkinematicsincludedir = $(includedir)/mbsim
 INCLUDES = $(DEPS_CFLAGS) 
 LDADD = $(DEPS_LIBS) 
 
-contactkinematicsinclude_HEADERS = 	contact_kinematics.h
+contactkinematicsinclude_HEADERS = 	contact_kinematics.h\
+					point_contour1s.h
