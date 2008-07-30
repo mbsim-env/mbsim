@@ -21,28 +21,25 @@
  *
  */
 
-#ifndef _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_
-#define _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_
+#ifndef _CONTACT_KINEMATICS_POINT_CIRCLESOLID_H_
+#define _CONTACT_KINEMATICS_POINT_CIRCLESOLID_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class Point;
-  class Contour1s;
-  class FuncPairContour1sPoint;
+  class Point; 
+  class CircleSolid; 
 
-  /** pairing Point to Contour1s; author: Roland Zander */
-  class ContactKinematicsPointContour1s: public ContactKinematics {
-    protected:
-      int ipoint, icontour;
+  /** pairing Point to CircleSolid; author: Roland Zander / Martin Foerg */
+  class ContactKinematicsPointCircleSolid : public ContactKinematics {
+    private:
+      int ipoint, icircle;
       Point *point;
-      Contour1s *contour1s;
-      FuncPairContour1sPoint *func;
+      CircleSolid *circle;
     public:
-      ~ContactKinematicsPointContour1s();
-      virtual void stage1(Vec &g, vector<ContourPointData> &cpData);
-      virtual void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+      void stage1(Vec &g, vector<ContourPointData> &cpData);
+      void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData);
 
       void assignContours(const vector<Contour*> &contour);
   };

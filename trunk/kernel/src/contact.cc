@@ -35,6 +35,7 @@
 #include "circlesolid_plane.h"
 #include "point_plane.h"
 #include "point_area.h"
+#include "point_circlesolid.h"
 #include "edge_edge.h"
 #include "circlehollow_cylinderflexible.h"
 #include "point_cylinderflexible.h"
@@ -106,6 +107,8 @@ namespace MBSim {
       contactKinematics = new ContactKinematicsCircleSolidPlane;
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointPlane;
+    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<CircleSolid*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<CircleSolid*>(contour[0]))) 
+      contactKinematics = new ContactKinematicsPointCircleSolid;
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Area*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Area*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointArea;
     else if(dynamic_cast<Edge*>(contour[0]) && dynamic_cast<Edge*>(contour[1])) 
