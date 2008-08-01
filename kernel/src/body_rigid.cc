@@ -48,10 +48,8 @@ namespace MBSim {
 
   BodyRigid::~BodyRigid() {
 #   ifdef HAVE_AMVIS
-    if (bodyAMVis) {
-      delete bodyAMVis;
-      delete bodyAMVisUserFunctionColor;
-    }
+      if(AMVisInstance==0) delete bodyAMVis; bodyAMVis=NULL;
+      delete bodyAMVisUserFunctionColor; bodyAMVisUserFunctionColor=NULL;
 #   endif
   }
 

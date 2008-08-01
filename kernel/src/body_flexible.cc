@@ -43,9 +43,9 @@ namespace MBSim {
   { }
 
   BodyFlexible::~BodyFlexible() {
-#ifdef HAVE_AMVIS
-    if (bodyAMVis) delete bodyAMVis;
-#endif
+#  ifdef HAVE_AMVIS
+      delete bodyAMVis; bodyAMVis=NULL;
+#  endif
   }
 
   void BodyFlexible::init() {
