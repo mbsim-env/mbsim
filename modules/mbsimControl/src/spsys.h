@@ -17,7 +17,7 @@
  *
  *
  * Contact:
- *   mbachmayer@gmx.de
+ *   mbachmayer@users.berlios.de
  *
  */ 
 #ifndef _SPSYS_H_

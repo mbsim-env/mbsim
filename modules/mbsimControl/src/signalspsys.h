@@ -17,7 +17,7 @@
  *
  *
  * Contact:
- *   mbachmayer@gmx.de
+ *   mbachmayer@users.berlios.de
  *
  */ 
 #ifndef _SIGNALSPSYS_H_
