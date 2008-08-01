@@ -1,23 +1,11 @@
-/* Copyright (C) 2006  Mathias Bachmayer
- 
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+/* Copyright (C) 2006 Mathias Bachmayer
+ *
+ * Institute of Applied Mechanics
+ * Technical University of Munich
 
  *
- *
  * Contact:
- *   mbachmayer@gmx.de
+ *   bachmayer@amm.mw.tum.de
  *
  */ 
 #ifndef _NLTRANSFERSYS_
@@ -25,6 +13,7 @@
 
 #include "spsys.h"
 #include "port.h"
+#include "polynome.h"
 
 class NLTransferSys : public SPSys {
   protected:
@@ -49,6 +38,15 @@ class NLTransferSys : public SPSys {
     
     // UserFunction* SigU(){return TFOutputSignal;} 
     
+};
+
+class Multiplier :public NLTransferSys{
+
+    protected:
+	Vec SystemOutput(double t, Vec U);
+    public:
+	Multiplier(const string& name);
+	void setSumInputs(){cout<<"Sum Inputs not allowed for a Multiplier!"<<endl;}
 };
 
 #endif

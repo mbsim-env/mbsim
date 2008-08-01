@@ -6,6 +6,8 @@ libmbsimControl_la_SOURCES = mectosignal.cc\
 nltransfersys.cc\
 signalspsys.cc\
 spsys.cc\
+polynome.cc\
+polynomutils.cc\
 transfersys.cc
 
 libmbsimControl_la_LIBADD = 
@@ -17,6 +19,8 @@ mbsimControlinclude_HEADERS = mectosignal.h\
 nltransfersys.h\
 signalspsys.h\
 spsys.h\
+polynome.h\
+polynomutils.h\
 transfersys.h
 
 

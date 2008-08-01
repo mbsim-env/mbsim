@@ -1,23 +1,11 @@
-/* Copyright (C) 2006  Mathias Bachmayer
- 
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+/* Copyright (C) 2006 Mathias Bachmayer
+ *
+ * Institute of Applied Mechanics
+ * Technical University of Munich
 
  *
- *
  * Contact:
- *   mbachmayer@gmx.de
+ *   bachmayer@amm.mw.tum.de
  *
  */ 
 #include <config.h>
@@ -99,16 +87,40 @@ void NLTransferSys::plot(double t, double dt){
   double eingang;
   eingang=(this->*Uin)(t)(0);
   Element::plot(t,dt);
+ //Vec Zwerg=y;
+  //for (int k=0;k<Zwerg.rows();k++)
+  //{
   plotfile<<" "<<y(0);
+  //}
   plotfile<<" "<<eingang;
 
 }
 
 void NLTransferSys::initPlotFiles() {
   Element::initPlotFiles();
+ //Vec TestVec;
+ //Vec Dussl(100);
+ // TestVec=(this->*OutForm)(1,Dussl,(this->*Uin)(1));
+ // for (int k=0;k<TestVec.rows();k++){
 plotfile <<"# "<< plotNr++ << ": OutputSignal " << endl;
+ // }
 plotfile <<"# "<< plotNr++ << ": Inputsignal        " << endl;
 plotfile <<"#  Objekt "<<name<<" befindet sich im "<<modus<<endl;
+ // plotfile<<"# System hat "<<TestVec.rows()<<" Ausgangssignale."<<endl;
 }
 //Plot Defs Ende--------------------------------------------------------------------
+//
+//
+
+Multiplier::Multiplier(const string& name): NLTransferSys(name){
+    Single_Input=false;
+    cout<<"You are using Multiplier, it should actually be removed in the near future! Report it, to stop it! " <<endl;
+}
+
+Vec Multiplier::SystemOutput(double t, Vec U){
+Vec Out(1,INIT,1);
+    for(int k=0;k<U.size();k++){
+	Out(0)=Out(0)*U(k);
+    }
+}
 
