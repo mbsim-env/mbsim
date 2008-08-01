@@ -39,8 +39,8 @@ namespace MBSim {
   Link::~Link() { 
 #ifdef HAVE_AMVIS   
     for(unsigned int i=0; i<arrowAMVis.size(); i++) {
-      delete arrowAMVis[i];
-      delete arrowAMVisUserFunctionColor[i];
+      if(AMVisInstance[i]) delete arrowAMVis[i]; arrowAMVis[i]=NULL;
+      delete arrowAMVisUserFunctionColor[i]; arrowAMVisUserFunctionColor[i]=NULL;
     }
 #endif
   }

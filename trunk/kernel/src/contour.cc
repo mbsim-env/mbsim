@@ -54,9 +54,9 @@ namespace MBSim {
 
   Contour::~Contour() 
   {
-#ifdef HAVE_AMVIS
-    if (bodyAMVis) delete bodyAMVis;
-#endif
+#   ifdef HAVE_AMVIS
+      if(AMVisInstance==0) delete bodyAMVis; bodyAMVis=NULL;
+#   endif
   }
 
   void Contour::init() 
