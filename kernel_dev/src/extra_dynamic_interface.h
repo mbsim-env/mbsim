@@ -27,10 +27,14 @@
 
 namespace MBSim {
 
+  class Subsystem;
+
   /*! base class for all subsystems with own dynamics not being solid-mechanics or hydraulics */
   class ExtraDynamicInterface : public Element {
 
     protected:
+      Subsystem* parent;
+
       Vec x, xd, x0;
       int xSize;
       int xInd;
@@ -53,6 +57,7 @@ namespace MBSim {
       virtual void updatexd(double t) {};
       void plot(double t, double dt=1);
       void initPlotFiles();
+      void setParent(Subsystem *parent_) {parent = parent_;}
 
       void setx0(Vec x_){x0=x_;}
   };

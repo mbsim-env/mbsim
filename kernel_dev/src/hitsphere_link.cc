@@ -30,7 +30,7 @@ namespace MBSim {
   }
 
   void HitSphereLink::init() {
-    mbs = obj[0]->getMbs();
+    //mbs = obj[0]->getMbs();
   }
 
   void HitSphereLink::setParents(Object *obj0, Object *obj1, Link* link) {

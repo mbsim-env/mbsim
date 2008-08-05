@@ -49,8 +49,6 @@ namespace MBSim {
   class Element {
 
     protected:
-	  /* Multibodysystem */
-      MultiBodySystem *mbs;
       /* Short name of Element */
       string name;
       /* Full name of Element */
@@ -106,9 +104,9 @@ namespace MBSim {
       /*! Set element name \param str */
       virtual void setName(const string &str) {name = str;}
 	  /*! Get element multibody system \return mbs */
-      MultiBodySystem* getMbs() {return mbs;}
+      //MultiBodySystem* getMbs() {return mbs;}
       /*! Set element multibody system \param mbs */
-      virtual void setMbs(MultiBodySystem* mbs_) {mbs=mbs_;}
+      //virtual void setMbs(MultiBodySystem* mbs_) {mbs=mbs_;}
 	  
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};

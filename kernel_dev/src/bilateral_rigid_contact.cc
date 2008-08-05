@@ -32,19 +32,19 @@ namespace MBSim {
   }
 
   void BilateralRigidContact::projectGS(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     gdn(0) = s(0);
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*mbs->getla()(ja[j]);
+      gdn(0) += a[j]*parent->getla()(ja[j]);
 
     la(0) -= rFactor(0)*gdn(0);
 
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
     }
     if(nFric==1) 
       la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
@@ -54,19 +54,19 @@ namespace MBSim {
 
   void BilateralRigidContact::solveGS(double dt) {
     assert(nFric <= 1);
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     gdn(0) = s(0);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*mbs->getla()(ja[j]);
+      gdn(0) += a[j]*parent->getla()(ja[j]);
 
     la(0) = -gdn(0)/a[ia[laInd]];
 
     if(nFric) {
       gdn(1) = s(1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	gdn(1) += a[j]*mbs->getla()(ja[j]);
+	gdn(1) += a[j]*parent->getla()(ja[j]);
 
       double laNmue = fabs(la(0))*mue;
       double sdG = -gdn(1)/a[ia[laInd+1]];
@@ -79,13 +79,13 @@ namespace MBSim {
   }
 
   void BilateralRigidContact::residualProj(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
     }
 
     res(0) = gdn(0);
@@ -101,8 +101,8 @@ namespace MBSim {
   }
 
   void BilateralRigidContact::residualProjJac(double dt) {
-    SqrMat Jprox = mbs->getJprox();
-    SymMat G = mbs->getG();
+    SqrMat Jprox = parent->getJprox();
+    SymMat G = parent->getG();
 
     RowVec jp1=Jprox.row(laInd);
     for(int i=0; i<G.size(); i++)
@@ -169,19 +169,19 @@ namespace MBSim {
 
   void BilateralRigidContact::checkForTermination(double dt) {
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
     }
 
     if(fabs(gdn(0)) <= gdTol)
       ;
     else {
-      mbs->setTermination(false);
+      parent->setTermination(false);
       return;
     }
 
@@ -192,7 +192,7 @@ namespace MBSim {
       else if(fabs(la(1)) <= mue*fabs(la(0)) && fabs(gdn(1)) <= gdTol)
 	;
       else {
-	mbs->setTermination(false);
+	parent->setTermination(false);
 	return;
       }
 
@@ -203,7 +203,7 @@ namespace MBSim {
       else if(nrm2(la(1,2)) <= mue*fabs(la(0)) && nrm2(gdn(1,2)) <= gdTol)
 	;
       else {
-	mbs->setTermination(false);
+	parent->setTermination(false);
 	return;
       }
     }

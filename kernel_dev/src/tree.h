@@ -23,7 +23,7 @@
 #ifndef _TREE_H_
 #define _TREE_H_
 
-#include "object.h"
+#include "subsystem.h"
 
 
 using namespace std;
@@ -35,7 +35,7 @@ class Object;
   /*! \brief class for tree-structured systems with only rigid bodies
    *
    * */
-  class Tree : public Object {
+  class Tree : public Subsystem {
     friend class Object;
 
     protected:
@@ -56,7 +56,7 @@ class Object;
     void calcSize();
     void calchSize();
 
-    void setMbs(MultiBodySystem* mbs_);
+    //void setMbs(MultiBodySystem* mbs_);
     void setFullName(const string &name);
 
     void addObject(Object* object);
@@ -76,8 +76,6 @@ class Object;
 
     double computePotentialEnergy();
 
-    CoordinateSystem* getCoordinateSystem(const string &pName);
-    Contour* getContour(const string &cName);
   };
 
 }

@@ -57,6 +57,7 @@ namespace MBSim {
       parafile.open((dirName+fullName+".para").c_str(), ios::out);
     }
   } 
+
   void Element::closePlotFiles() {
     if(plotLevel) {
       plotfile.close();

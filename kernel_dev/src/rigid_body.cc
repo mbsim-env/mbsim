@@ -251,7 +251,7 @@ namespace MBSim {
     //WThetaS = SymMat(port[0]->getAWP()*SThetaS*trans(port[0]->getAWP()));
     WThetaS = JTMJ(SThetaS,trans(port[0]->getAWP()));
 
-    Vec WF = m*mbs->getGrav() - m*port[0]->getWjP();
+    Vec WF = m*parent->getAccelerationOfGravity() - m*port[0]->getWjP();
     Vec WM = crossProduct(WThetaS*port[0]->getWomegaP(),port[0]->getWomegaP()) - WThetaS*port[0]->getWjR();
 
     h += trans(port[0]->getWJP())*WF +  trans(port[0]->getWJR())*WM;

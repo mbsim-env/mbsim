@@ -172,7 +172,7 @@ namespace MBSim {
       Object* obj0 = contour0->getObject();
       Object* obj1 = contour1->getObject();
 
-      HSLink = mbs->getHitSphereLink(obj0,obj1);
+      HSLink = parent->getHitSphereLink(obj0,obj1);
       HSLink->setParents(obj0,obj1,this);
     }
   }
