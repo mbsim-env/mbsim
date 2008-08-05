@@ -8,6 +8,9 @@ using namespace MBSim;
 int main (int argc, char* argv[]) {
 
   Woodpecker sys("WP");
+  if(argc==2) {
+	sys.setProjectDirectory(argv[argc-1]);
+  }
   sys.init();
 
   TimeSteppingIntegrator integrator;
