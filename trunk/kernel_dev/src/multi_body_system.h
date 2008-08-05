@@ -25,7 +25,7 @@
 #define _MULTI_BODY_SYSTEM_H_
 
 #include <string>
-#include "object.h"
+#include "group.h"
 #include "hitsphere_link.h"
 #include "sparse_matrix.h"
 
@@ -50,22 +50,11 @@ namespace MBSim {
   /*! Comment
    *
    * */
-  class MultiBodySystem : public Object {
+  class MultiBodySystem : public Group {
 
-    friend class HitSphereLink;
 
     protected:
-    vector<Object*> objects;
-    vector<Link*> links;
-    vector<ExtraDynamicInterface*> EDI;
-    vector<DataInterfaceBase*> DIBs;
-
-    vector<Link*> linkSingleValued;
-    vector<Link*> linkSetValued;
-    vector<Link*> linkSetValuedActive;
-
-    vector<HitSphereLink*> HSLinks;
-
+   
     vector<Object*>                objects2plot;
     vector<Link*>                  links2plot;
     vector<Contour*>               contours2plot;
@@ -73,23 +62,8 @@ namespace MBSim {
     vector<ExtraDynamicInterface*> EDIs2plot;
 
     bool term;
-    int gSize;
-    int gInd;
     Matrix<Sparse, double> Gs;
     SqrMat Jprox;
-    Vec la;
-    Vec dla;
-    Vec s;
-    Vec res;
-    Vec rFactor;
-    Vec g, gd;
-    int laSize, laInd;
-    int rFactorSize, rFactorInd;
-
-    int svSize;
-    int svInd;
-    Vec sv;
-    Vector<int> jsv;
 
     SymMat MParent;
     SymMat LLMParent;
@@ -128,9 +102,6 @@ namespace MBSim {
     Vector<int> decreaseLevels;
     Vector<int> checkTermLevels;
 
-    int nHSLinksSetValuedFixed;
-    int nHSLinksSingleValuedFixed;
-
     bool checkGSize;
     int limitGSize;
 
@@ -149,12 +120,7 @@ namespace MBSim {
     void updatejsvRef(const Vector<int> &jsvExt);
 
     void updaterFactors();
-    void updatezd(double t);
-    void updatedx(double t, double dt);
-    void updatedu(double t, double dt);
-    void updatedq(double t, double dt);
     void computeConstraintForces(double t);
-    void updateStopVector(double t);
 
     /* Name of directory where output is processed */
     string directoryName;
@@ -168,26 +134,20 @@ namespace MBSim {
     Integrator *preIntegrator;
 
     public:
+      const Vec& getAccelerationOfGravity() const {return grav;}
+
     /*! References multibody children to multibody parent states and external states \param zExt and collects data */
     void updatezRef(const Vec &zExt);
     /*! Calls updater for children at time \param t */
     void updater(double t);
-    /*! Calls updateKinematics for children at time \param t */
-    void updateKinematics(double t);
-    void updateLinksStage1(double t);
-    /*! Calls updateLinksStage2 for children at time \param t */
-    void updateLinksStage2(double t);   
     /*! Calls updateh for children at time \param t */
     void updateh(double t);
     /*! Calls updateM for children at time \param t */
     void updateM(double t);
-    void facLLM();
     /*! Calls updateW for children at time \param t */
     void updateW(double t);
     void updateG(double t);
     void updateb(double t);
-    /*! Calls updateT for children at time \param t */
-    void updateT(double t);
 	/*! Constructor */
     MultiBodySystem();
     /*! Constructor */
@@ -242,39 +202,18 @@ namespace MBSim {
     void savela();
     void initla();
 
-    void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
-
-    void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
-
-    void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
-
-    void plot(double t, double dt=1);
+    using Subsystem::plot;
     void plotParameters();
-    void initPlotFiles();
-    void closePlotFiles();
 
     /*! Compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems */
     double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
     /* ! Compute potential energy of entire multibody system */
     double computePotentialEnergy();
 
-    Object* getObject(const string &name,bool check=true);
-    Link* getLink(const string &name,bool check=true);
-    /*! Returns an extra dynamic interface */
-    ExtraDynamicInterface* getEDI(const string &name,bool check=true);
-    DataInterfaceBase* getDataInterfaceBase(const string &name, bool check=true);
-    /*! Adds an \param object to multibody system */
-    void addObject(Object *object);
-    void addLink(Link *connection);
-    void addEDI(ExtraDynamicInterface *edi_);
-    /* Add a data_interface_base \param dib_ to the DataInterfaceBase-vector */
-    void addDataInterfaceBase(DataInterfaceBase* dib_);
     /* Method to add any element \param element_ (Link,Object,ExtraDynamicInterface) by dynamic casting */
     void addElement(Element *element_);
     /* Returns the pointer to an element \param name */
     Element* getElement(const string &name); 
-
-    HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);
 
     int getzSize() const {return Object::getzSize();}
     int getsvSize() const {return svSize;}
@@ -286,6 +225,8 @@ namespace MBSim {
     void setgInd(int ind) {gInd = ind;}
     const Matrix<Sparse, double>& getGs() const {return Gs;}
     Matrix<Sparse, double>& getGs() {return Gs;}
+    const SymMat& getG() const {return G;}
+    SymMat& getG() {return G;}
     const SqrMat& getJprox() const {return Jprox;}
     SqrMat& getJprox() {return Jprox;}
     const Vec& getla() const {return la;}
@@ -339,7 +280,7 @@ namespace MBSim {
     void setCheckGSize(bool checkGSize_) {checkGSize = checkGSize_;}
     void setLimitGSize(int limitGSize_) {limitGSize = limitGSize_; checkGSize = false;}
 
-    MultiBodySystem* getMultiBodySystem() const {return mbs;};
+    //MultiBodySystem* getMultiBodySystem() const {return mbs;};
 
 	/*! Solves prox-functions at time \param t depending on solver settings */
     virtual int solve(double dt); 
@@ -353,8 +294,6 @@ namespace MBSim {
     void residualProj(double dt); 
     void checkForTermination(double dt); 
     void residualProjJac(double dt);
-
-    using Object::addCoordinateSystem;
 
     void writez();
     void readz0();
@@ -380,6 +319,10 @@ namespace MBSim {
     void initDataInterfaceBase();
 
     void updateJh(double t);
+
+    int getlaIndTotal() const {return 0;}
+    const Vec& getlaTotal() const {return la;}
+    Vec& getlaTotal() {return la;}
   };
 
 }

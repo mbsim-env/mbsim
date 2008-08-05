@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  Tree::Tree(const string &projectName) : Object(projectName) {
+  Tree::Tree(const string &projectName) : Subsystem(projectName) {
   }
 
   Tree::~Tree() {
@@ -134,17 +134,15 @@ namespace MBSim {
       object[j]->sethSize(hSize);
       else
       object[j]->sethSize(object[j+1]->gethSize() - object[j+1]->getuSize());
-      cout << object[j]->getFullName()<<endl;
-      cout << object[j]->gethSize()<<endl;
       object[j]->calchSize();
     }
   }
 
-  void Tree::setMbs(MultiBodySystem* mbs_) {
-    Element::setMbs(mbs_);
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->setMbs(mbs);
-  }
+ // void Tree::setMbs(MultiBodySystem* mbs_) {
+ //   //Element::setMbs(mbs_);
+ //   for(unsigned i=0; i<object.size(); i++)
+ //     object[i]->setMbs(mbs);
+ // }
 
   void Tree::init() {
     for(unsigned i=0; i<object.size(); i++)
@@ -181,7 +179,7 @@ namespace MBSim {
   void Tree::addObject(Object* obj) {
     obj->setParent(this);
     object.push_back(obj);
-    obj->setMbs(mbs);
+    //obj->setMbs(mbs);
     obj->setFullName(getFullName()+"."+obj->getFullName());
   } 
 
@@ -208,13 +206,4 @@ namespace MBSim {
   //  return Vtemp;
   //}
 
-  CoordinateSystem* Tree::getCoordinateSystem(const string &pName) {
-    return 0;
-  //  return root->getCoordinateSystem(pName);
-  }
-
-  Contour* Tree::getContour(const string &cName) {
-    return 0;
-  //  return root->getContour(cName);
-  }
 }

@@ -72,28 +72,28 @@ namespace MBSim {
   }
 
   void RigidConnection::projectGS(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
 
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
 
       la(i) -= rFactor(i)*gdn(i);
     }
   }
 
   void RigidConnection::solveGS(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
 
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
 
       la(i) = -gdn(i)/a[ia[laInd+i]];
     }
@@ -101,9 +101,9 @@ namespace MBSim {
 
   void RigidConnection::updaterFactors() {
     if(active) {
-      double *a = mbs->getGs()();
-      int *ia = mbs->getGs().Ip();
-//      int *ja = mbs->getGs().Jp(); // unused
+      double *a = parent->getGs()();
+      int *ia = parent->getGs().Ip();
+//      int *ja = parent->getGs().Jp(); // unused
       for(int i=0; i<rFactorSize; i++) {
 	double sum = 0;
 	for(int j=ia[laInd+i]+1; j<ia[laInd+i+1]; j++)
@@ -120,14 +120,14 @@ namespace MBSim {
     }
   }
   void RigidConnection::residualProj(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
 
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
 
       res(i) = gdn(i);
     }
@@ -135,24 +135,24 @@ namespace MBSim {
 
   void RigidConnection::residualProjJac(double dt) {
     for(int i=laInd; i<laInd+forceDir.cols() + momentDir.cols(); i++) 
-      for(int j=0; j<mbs->getG().size(); j++)  
-	mbs->getJprox()(i,j) = mbs->getG()(i,j);
+      for(int j=0; j<parent->getG().size(); j++)  
+	parent->getJprox()(i,j) = parent->getG()(i,j);
   }
 
   void RigidConnection::checkForTermination(double dt) {
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     for(int i=0; i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
 
       if(fabs(gdn(i)) <= gdTol)
 	;
       else {
-	mbs->setTermination(false);
+	parent->setTermination(false);
 	return;
       }
     }

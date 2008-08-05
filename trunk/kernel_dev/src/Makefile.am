@@ -7,6 +7,8 @@ link.cc\
 hitsphere_link.cc\
 object.cc\
 multi_body_system.cc\
+subsystem.cc\
+group.cc\
 rigid_body.cc\
 connection.cc\
 flexible_connection.cc\
@@ -38,6 +40,8 @@ link.h\
 hitsphere_link.h\
 object.h\
 multi_body_system.h\
+subsystem.h\
+group.h\
 rigid_body.h\
 connection.h\
 flexible_connection.h\

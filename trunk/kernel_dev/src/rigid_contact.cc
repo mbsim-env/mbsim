@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -71,7 +71,7 @@ namespace MBSim {
     Contact::checkActive();
 
     if(active != active_old)
-      mbs->setActiveConstraintsChanged(true);
+      parent->setActiveConstraintsChanged(true);
   }
 
   void RigidContact::projectJ(double dt) {
@@ -84,12 +84,17 @@ namespace MBSim {
   }
 
   void RigidContact::projectGS(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
+    int laInd = getlaIndTotal();
+    Vec &laT = parent->getlaTotal();
     gdn(0) = s(0);
+    //cout << "projectGS" << endl;
+    //cout << fullName << endl;
+    //cout << parent->getlaTotal() << endl;
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*mbs->getla()(ja[j]);
+      gdn(0) += a[j]*laT(ja[j]);
 
     if(fabs(gd(0)) > gd_grenz)
       gdn(0) += epsilonN*gd(0);
@@ -99,7 +104,7 @@ namespace MBSim {
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*laT(ja[j]);
     }
     if(nFric==1) 
       la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
@@ -110,12 +115,12 @@ namespace MBSim {
   void RigidContact::solveGS(double dt) {
     assert(nFric <= 1);
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     gdn(0) = s(0);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*mbs->getla()(ja[j]);
+      gdn(0) += a[j]*parent->getla()(ja[j]);
 
     if(fabs(gd(0)) > gd_grenz)
       gdn(0) += epsilonN*gd(0);
@@ -132,7 +137,7 @@ namespace MBSim {
     if(nFric) {
       gdn(1) = s(1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	gdn(1) += a[j]*mbs->getla()(ja[j]);
+	gdn(1) += a[j]*parent->getla()(ja[j]);
 
       double laNmue = fabs(la(0))*mue;
       double sdG = -gdn(1)/a[ia[laInd+1]];
@@ -147,13 +152,13 @@ namespace MBSim {
 
 
   void RigidContact::residualProj(double dt) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*parent->getla()(ja[j]);
     }
 
     if(fabs(gd(0)) > gd_grenz)
@@ -172,11 +177,11 @@ namespace MBSim {
     }
   }
 
-    
+
   void RigidContact::residualProjJac(double dt) {
 
-    SqrMat Jprox = mbs->getJprox();
-    SymMat G = mbs->getG();
+    SqrMat Jprox = parent->getJprox();
+    SymMat G = parent->getG();
 
     double rfac0 = rFactor(0);
     RowVec jp1=Jprox.row(laInd);
@@ -231,15 +236,23 @@ namespace MBSim {
     }
   }
 
-void RigidContact::checkForTermination(double dt) {
+  void RigidContact::checkForTermination(double dt) {
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
+    //cout << "checkForTermination" << endl;
+    //cout << fullName << endl;
+//    cout << getlaInd() << endl;
+//    cout << laInd << endl;
+//    cout << parent->getlaInd() << endl;
+//    cout << parent->getName() << endl;
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    int *ja = parent->getGs().Jp();
+    int laInd = getlaIndTotal();
+    Vec &laT = parent->getlaTotal();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*mbs->getla()(ja[j]);
+	gdn(i) += a[j]*laT(ja[j]);
     }
 
     if(fabs(gd(0)) > gd_grenz)
@@ -250,7 +263,7 @@ void RigidContact::checkForTermination(double dt) {
     else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
       ;
     else {
-      mbs->setTermination(false);
+      parent->setTermination(false);
       return;
     }
 
@@ -260,7 +273,7 @@ void RigidContact::checkForTermination(double dt) {
       else if(fabs(la(1)) <= mue*fabs(la(0))+laTol*dt && fabs(gdn(1)) <= gdTol)
 	;
       else {
-	mbs->setTermination(false);
+	parent->setTermination(false);
 	return;
       }
     } else if(nFric==2) {
@@ -269,17 +282,17 @@ void RigidContact::checkForTermination(double dt) {
       else if(nrm2(la(1,2)) <= mue*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
 	;
       else {
-	mbs->setTermination(false);
+	parent->setTermination(false);
 	return;
       }
     }
 
   }
 
-void RigidContact::updaterFactors() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-//    int *ja = mbs->getGs().Jp(); // unused
+  void RigidContact::updaterFactors() {
+    double *a = parent->getGs()();
+    int *ia = parent->getGs().Ip();
+    //    int *ja = parent->getGs().Jp(); // unused
     double sumN = 0;
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       sumN += fabs(a[j]);
@@ -330,7 +343,7 @@ void RigidContact::updaterFactors() {
   std::string RigidContact::getTerminationInfo(double dt){
     std::string s= "RigidContact " + getName();
     bool NormalDirectionFailed= false;
-    
+
     if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
       ;
     else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
@@ -350,8 +363,8 @@ void RigidContact::updaterFactors() {
 	if (NormalDirectionFailed) s += "\n";
 	s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
 	s= s+ ")\n    stick: abs(laT) - mue abs(laN) = " + numtostr(fabs(la(1)/dt)- mue*fabs(la(0)/dt));
-        s= s+ "\n     slip: abs(laT - mue laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0)))/dt); 
-        s= s+ " (laTol= " + numtostr(laTol) + ")";
+	s= s+ "\n     slip: abs(laT - mue laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0)))/dt); 
+	s= s+ " (laTol= " + numtostr(laTol) + ")";
       }
     } else if(nFric==2) {
       if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt)
@@ -362,11 +375,15 @@ void RigidContact::updaterFactors() {
 	if (NormalDirectionFailed) s += "\n";
 	s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
 	s= s+ ")\n    stick: abs(laT) - mue abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mue*fabs(la(0))/dt);
-        s= s+ " \n    slip: abs(laT -mue laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0)))/dt);
-        s= s+  "  (laTol= " + numtostr(laTol) + ")";
+	s= s+ " \n    slip: abs(laT -mue laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0)))/dt);
+	s= s+  "  (laTol= " + numtostr(laTol) + ")";
       }
     }
     return s;
+  }
+
+  int RigidContact::getlaIndTotal() const {
+    return parent->getlaIndTotal() + laInd;
   }
 }
 

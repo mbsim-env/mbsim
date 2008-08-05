@@ -27,6 +27,7 @@
 #include "link.h"
 #include "multi_body_system.h"
 #include "eps.h"
+#include "subsystem.h"
 
 namespace MBSim {
 
@@ -54,6 +55,7 @@ namespace MBSim {
     osu << u;
     osu.close();
   }
+
   void Object::readu0()
   {
     string fname="PREINTEG/"+fullName+".u0.asc";  
@@ -62,6 +64,7 @@ namespace MBSim {
     else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
     isu.close();
   }
+
   void Object::writex()
   {
     string fname="PREINTEG/"+fullName+".x0.asc";  
@@ -69,6 +72,7 @@ namespace MBSim {
     osx << x;
     osx.close();
   }
+
   void Object::readx0()
   {
     string fname="PREINTEG/"+fullName+".x0.asc";  
@@ -78,18 +82,16 @@ namespace MBSim {
     isx.close();
   }
 
-  Object::~Object()
-  {
-  	// Destructs port and contour pointers
-    vector<CoordinateSystem*>::iterator iP;
-    for(iP = port.begin(); iP != port.end(); ++iP) delete *iP;
-    vector<Contour*>::iterator iC;
-    for(iC = contour.begin(); iC != contour.end(); ++iC) delete *iC;
+  Object::~Object() {
+    // Destructs port and contour pointers
+    for(vector<CoordinateSystem*>::iterator i = port.begin(); i != port.end(); ++i) 
+      delete *i;
+    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
+      delete *i;
   }
 
-  void Object::updatezRef() 
-  {
-  	// UPDATEZREF references to positions, velocities and TODO DOC of multibody system parent
+  void Object::updatezRef() {
+    // UPDATEZREF references to positions, velocities and TODO DOC of multibody system parent
     updateqRef();
     updateuRef();
     updatexRef();
@@ -97,7 +99,7 @@ namespace MBSim {
 
   void Object::updatezdRef() 
   {
-  	// UPDATEZDREF references to differentiated positions, velocities and TODO DOC of multibody system parent
+    // UPDATEZDREF references to differentiated positions, velocities and TODO DOC of multibody system parent
     updateqdRef();
     updateudRef();
     updatexdRef();
@@ -105,25 +107,25 @@ namespace MBSim {
 
   void Object::updateqRef() 
   {
-  	// UPDATEQREF references to positions of multibody system parent
+    // UPDATEQREF references to positions of multibody system parent
     q>>(parent->getq()(qInd,qInd+qSize-1));
   }
 
   void Object::updateqdRef()
   {
-  	// UPDATEQDREF references to differentiated positions of multibody system parent
+    // UPDATEQDREF references to differentiated positions of multibody system parent
     qd>>(parent->getqd()(qInd,qInd+qSize-1));
   }
 
   void Object::updateuRef()
   {
-  	// UPDATEUREF references to velocities of multibody system parent
+    // UPDATEUREF references to velocities of multibody system parent
     u>>(parent->getu()(uInd,uInd+uSize-1));
   }
 
   void Object::updateudRef()
   {
-  	// UPDATEUDREF references to differentiated velocities of multibody system parent
+    // UPDATEUDREF references to differentiated velocities of multibody system parent
     ud>>(parent->getud()(uInd,uInd+uSize-1));
   }
 
@@ -139,16 +141,16 @@ namespace MBSim {
 
   void Object::updatehRef()
   {
-  	// UPDATEHREF references to smooth force vector of multibody system
-	// parent
+    // UPDATEHREF references to smooth force vector of multibody system
+    // parent
     //h>>(parent->geth()(uInd,uInd+uSize-1));
     h>>(parent->geth()(hInd,hInd+hSize-1));
   }
 
   void Object::updaterRef()
   {
-  	// UPDATERREF references to smooth force vector of multibody system
-	// parent
+    // UPDATERREF references to smooth force vector of multibody system
+    // parent
     r>>(parent->getr()(uInd,uInd+uSize-1));
   }
 
@@ -159,14 +161,14 @@ namespace MBSim {
 
   void Object::updateMRef()
   {
-  	// UPDATEMREF references to mass matrix of multibody system parent
+    // UPDATEMREF references to mass matrix of multibody system parent
     Index Iu = Index(hInd,hInd+hSize-1);
     M>>parent->getM()(Iu);
   }
 
   void Object::updateTRef()
   {
-  	// UPDATETREF references to T-matrix of multibody system parent
+    // UPDATETREF references to T-matrix of multibody system parent
     Index Iu = Index(uInd,uInd+uSize-1);
     Index Iq = Index(qInd,qInd+qSize-1);
     T>>parent->getT()(Iq,Iu);
@@ -174,7 +176,7 @@ namespace MBSim {
 
   void Object::updateLLMRef()
   {
-  	// UPDATELLMREF references to cholesky decomposition of mass matrix of multibody system parent
+    // UPDATELLMREF references to cholesky decomposition of mass matrix of multibody system parent
     Index Iu = Index(hInd,hInd+hSize-1);
     LLM>>parent->getLLM()(Iu);
   }
@@ -189,36 +191,27 @@ namespace MBSim {
 
   void Object::initz()
   {
-  	// INITZ initialises the Object state
+    // INITZ initialises the Object state
     q = q0;
     u = u0;
     x = x0;
   }
 
-  //void Object::plot(double t) {
-  //  Element::plot(t);
-  //
-  //  if(plotLevel>1) {
-  //    for(int i=0; i<qSize; ++i)
-  //      plotfile<<" "<<q(i);
-  //    for(int i=0; i<uSize; ++i)
-  //      plotfile<<" "<<v(i);
-  //    for(int i=0; i<uSize; ++i)
-  //      plotfile<<" "<<u(i);
-  //    if(plotLevel>2) {
-  //      for(int i=0; i<qSize; ++i)
-  //	plotfile<<" "<<qd(i);
-  //      for(int i=0; i<uSize; ++i)
-  //	plotfile<<" "<<ud(i);
-  //      for(int i=0; i<uSize; ++i)
-  //	plotfile<<" "<<ud(i);
-  //      for(int i=0; i<uSize; ++i)
-  //	plotfile<<" "<<h(i);
-  //      for(int i=0; i<uSize; ++i)
-  //	plotfile<<" "<<r(i);
-  //    }
-  //  }
-  //}
+  void Object::plotParameters() {
+    if(port.size()>0) {
+      parafile << "\ncoordinate systems:" << endl;
+      for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
+	Vec WrOPtemp = (**i).getWrOP();
+	parafile << "#  WrOP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
+      } 
+    }
+    // all Contours of environment
+    if(contour.size()>0) {
+      parafile << "\ncontours:" << endl;
+      for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
+	parafile << "#  " << (**i).getName() << endl;
+    }
+  }
 
   void Object::plot(double t, double dt) {
     Element::plot(t);
@@ -356,7 +349,7 @@ namespace MBSim {
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) (*i)->init();
   }
 
-   void Object::updatedq(double t, double dt) {
+  void Object::updatedq(double t, double dt) {
     qd = T*u*dt;
   }
 
@@ -377,96 +370,96 @@ namespace MBSim {
   }
 
   void Object::updateJh(double t) {
-   // static const double eps = epsroot();
-   // Vec hOld = geth().copy();
-   // int pos = getqInd();
-   // for(int j=0;j<q.size();j++) {
-   //   Vec Jhcol = parent->getJh().col(pos+j);
-   //   double qSave = q(j);
-   //   q(j) += eps;
-   //   updateKinematics(t);
-   //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-   //     linkSingleValued[i]->updateStage1(t); 
-   //     linkSingleValued[i]->updateStage2(t); 
-   //   }
-   //   updateh(t);
-   //   Jhcol(Iu) += (geth()-hOld)/eps;
-   //   for(unsigned int i=0; i<linkSingleValuedCoordinateSysteCoordinateSystema.size(); i++) {
-   //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
-   //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
-   //     for(unsigned int b=0; b<ports.size(); b++) {
-   //       Object *obj = ports[b]->getObject()->getResponsible();
-   //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-   //         Vec hOld = obj->geth().copy();
-   //         obj->updateh(t);
-   //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-   //         obj->geth() = hOld;
-   //       }
-   //     }
-   //   }
-   //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-   //     LinkContour* l = linkSingleValuedContourData[i].link;
-   //     vector<Contour*> contours = l->getContours();
-   //     for(unsigned int b=0; b<contours.size(); b++) {
-   //       Object *obj = contours[b]->getObject()->getResponsible();
-   //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-   //         Vec hOld = obj->geth().copy();
-   //         obj->updateh(t);
-   //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-   //         obj->geth() = hOld;
-   //       }
-   //     }
-   //   }
-   //   q(j) = qSave;
-   // }
+    // static const double eps = epsroot();
+    // Vec hOld = geth().copy();
+    // int pos = getqInd();
+    // for(int j=0;j<q.size();j++) {
+    //   Vec Jhcol = parent->getJh().col(pos+j);
+    //   double qSave = q(j);
+    //   q(j) += eps;
+    //   updateKinematics(t);
+    //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
+    //     linkSingleValued[i]->updateStage1(t); 
+    //     linkSingleValued[i]->updateStage2(t); 
+    //   }
+    //   updateh(t);
+    //   Jhcol(Iu) += (geth()-hOld)/eps;
+    //   for(unsigned int i=0; i<linkSingleValuedCoordinateSysteCoordinateSystema.size(); i++) {
+    //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
+    //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
+    //     for(unsigned int b=0; b<ports.size(); b++) {
+    //       Object *obj = ports[b]->getObject()->getResponsible();
+    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+    //         Vec hOld = obj->geth().copy();
+    //         obj->updateh(t);
+    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+    //         obj->geth() = hOld;
+    //       }
+    //     }
+    //   }
+    //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
+    //     LinkContour* l = linkSingleValuedContourData[i].link;
+    //     vector<Contour*> contours = l->getContours();
+    //     for(unsigned int b=0; b<contours.size(); b++) {
+    //       Object *obj = contours[b]->getObject()->getResponsible();
+    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+    //         Vec hOld = obj->geth().copy();
+    //         obj->updateh(t);
+    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+    //         obj->geth() = hOld;
+    //       }
+    //     }
+    //   }
+    //   q(j) = qSave;
+    // }
 
-   // pos = getuInd();
-   // for(int j=0;j<u.size();j++) {
-   //   Vec Jhcol = parent->getJh().col(parent->getqSize()+pos+j);
-   //   double uSave = u(j);
-   //   u(j) += eps;
-   //   updateKinematics(t);
-   //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-   //     linkSingleValued[i]->updateStage1(t); linkSingleValued[i]->updateStage2(t); 
-   //   }
-   //   updateh(t);
-   //   Jhcol(Iu) += (geth()-hOld)/eps;
-   //   for(unsigned int i=0; i<linkSingleValuedCoordinateSystemData.size(); i++) {
-   //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
-   //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
-   //     for(unsigned int b=0; b<ports.size(); b++) {
-   //       Object *obj = ports[b]->getObject()->getResponsible();
-   //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-   //         Vec hOld = obj->geth().copy();
-   //         obj->updateh(t);
-   //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-   //         obj->geth() = hOld;
-   //       }
-   //     }
-   //   }
-   //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-   //     LinkContour* l = linkSingleValuedContourData[i].link;
-   //     vector<Contour*> contours = l->getContours();
-   //     for(unsigned int b=0; b<contours.size(); b++) {
-   //       Object *obj = contours[b]->getObject()->getResponsible();
-   //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-   //         Vec hOld = obj->geth().copy();
-   //         obj->updateh(t);
-   //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-   //         obj->geth() = hOld;
-   //       }
-   //     }
-   //   }
-   //   u(j) = uSave;
-   // }
-   // updateKinematics(t);
-   // for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-   //   linkSingleValued[i]->updateStage1(t); 
-   //   linkSingleValued[i]->updateStage2(t); 
-   // }
-   // h=hOld;
+    // pos = getuInd();
+    // for(int j=0;j<u.size();j++) {
+    //   Vec Jhcol = parent->getJh().col(parent->getqSize()+pos+j);
+    //   double uSave = u(j);
+    //   u(j) += eps;
+    //   updateKinematics(t);
+    //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
+    //     linkSingleValued[i]->updateStage1(t); linkSingleValued[i]->updateStage2(t); 
+    //   }
+    //   updateh(t);
+    //   Jhcol(Iu) += (geth()-hOld)/eps;
+    //   for(unsigned int i=0; i<linkSingleValuedCoordinateSystemData.size(); i++) {
+    //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
+    //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
+    //     for(unsigned int b=0; b<ports.size(); b++) {
+    //       Object *obj = ports[b]->getObject()->getResponsible();
+    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+    //         Vec hOld = obj->geth().copy();
+    //         obj->updateh(t);
+    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+    //         obj->geth() = hOld;
+    //       }
+    //     }
+    //   }
+    //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
+    //     LinkContour* l = linkSingleValuedContourData[i].link;
+    //     vector<Contour*> contours = l->getContours();
+    //     for(unsigned int b=0; b<contours.size(); b++) {
+    //       Object *obj = contours[b]->getObject()->getResponsible();
+    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+    //         Vec hOld = obj->geth().copy();
+    //         obj->updateh(t);
+    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+    //         obj->geth() = hOld;
+    //       }
+    //     }
+    //   }
+    //   u(j) = uSave;
+    // }
+    // updateKinematics(t);
+    // for(unsigned int i=0; i<linkSingleValued.size(); i++) {
+    //   linkSingleValued[i]->updateStage1(t); 
+    //   linkSingleValued[i]->updateStage2(t); 
+    // }
+    // h=hOld;
   }
-  
+
 
   double Object::computeKineticEnergy() {
     return 0.5*trans(u)*M*u;

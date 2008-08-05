@@ -31,6 +31,7 @@ using namespace std;
 
 namespace MBSim {
 
+  class Subsystem;
   class Link;
   class CoordinateSystem;
   class Contour;
@@ -41,7 +42,7 @@ namespace MBSim {
     friend class MultiBodySystem;
 
     protected:
-    Object* parent;
+    Subsystem* parent;
 
     public: 
 
@@ -118,7 +119,7 @@ namespace MBSim {
     virtual void updatezd(double t);
     virtual void updatedu(double t, double dt);
 
-    virtual void setParent(Object *p) {parent = p;}
+    virtual void setParent(Subsystem *p) {parent = p;}
 
     /*! Initialize object at start of simulation with respect to contours and ports */
     virtual void init();
@@ -161,8 +162,6 @@ namespace MBSim {
     Mat& getJh() {return Jh;}
     const Vec& getb() const {return b;}
     Vec& getb() {return b;}
-    const SymMat& getG() const {return G;}
-    SymMat& getG() {return G;}
     const Mat& getW() const {return W;}
     Mat& getW() {return W;}
 
@@ -248,6 +247,7 @@ namespace MBSim {
     //void plot(double t); 
     void plot(double t, double dt = 1); 
     void initPlotFiles();
+    void plotParameters();
 
     virtual void addCoordinateSystem(CoordinateSystem * port);
     virtual void addContour(Contour* contour);
@@ -255,7 +255,9 @@ namespace MBSim {
     int portIndex(const CoordinateSystem *port_) const;
 
     virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
+    const vector<CoordinateSystem*>& getCoordinateSystems() const {return port;}
     virtual Contour* getContour(const string &name, bool check=true);
+    const vector<Contour*>& getContours() const {return contour;}
 
     void   setWrHitSphere(const Vec &WrOS)     {WrOHitSphere = WrOS;}
     const Vec&    getWrHitSphere()  const      {return WrOHitSphere;}

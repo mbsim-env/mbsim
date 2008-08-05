@@ -117,6 +117,9 @@ namespace MBSim {
   }
 
   void Connection::updatexd(double t) {
+    //cout << gd<<endl;
+    //cout << IR.start()<<endl;
+    //cout << IR.end()<<endl;
     xd = gd(IR);
   }
 

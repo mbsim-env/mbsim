@@ -26,6 +26,7 @@
 #include "contour.h"
 #include "object.h"
 #include "multi_body_system.h"
+#include "subsystem.h"
 
 #ifdef HAVE_AMVIS
 #include "arrow.h"
@@ -61,22 +62,24 @@ namespace MBSim {
     gdn.resize(laSize);
     s.resize(laSize);
     res.resize(laSize);
+    cout << name << endl;
+    cout << laSize << endl;
   }
 
   void Link::updatexRef() {
-    x >> mbs->getx()(xInd,xInd+xSize-1);
+    x >> parent->getx()(xInd,xInd+xSize-1);
   }
 
   void Link::updatexdRef() {
-    xd >> mbs->getxd()(xInd,xInd+xSize-1);
+    xd >> parent->getxd()(xInd,xInd+xSize-1);
   }
 
   void Link::updatesvRef() {
-    sv >> mbs->getsv()(svInd,svInd+svSize-1);
+    sv >> parent->getsv()(svInd,svInd+svSize-1);
   }
 
   void Link::updatejsvRef() {
-    jsv >> mbs->getjsv()(svInd,svInd+svSize-1);
+    jsv >> parent->getjsv()(svInd,svInd+svSize-1);
   }
 
   void Link::plot(double t, double dt) {
@@ -162,11 +165,11 @@ namespace MBSim {
   }
 
   void Link::updatelaRef() {
-    la >> mbs->getla()(laInd,laInd+laSize-1);
+    la >> parent->getla()(laInd,laInd+laSize-1);
   }
 
   void Link::updategRef() {
-    g >> mbs->getg()(gInd,gInd+gSize-1);
+    g >> parent->getg()(gInd,gInd+gSize-1);
   }
 
   void Link::updateRef() {
@@ -181,23 +184,23 @@ namespace MBSim {
   }
 
   void Link::updatebRef() {
-    b >> mbs->getb()(laInd,laInd+laSize-1);
+    b >> parent->getb()(laInd,laInd+laSize-1);
   }
 
   void Link::updategdRef() {
-    gd >> mbs->getgd()(laInd,laInd+laSize-1);
+    gd >> parent->getgd()(laInd,laInd+laSize-1);
   }
 
   void Link::updatesRef() {
-    s >> mbs->gets()(laInd,laInd+laSize-1);
+    s >> parent->gets()(laInd,laInd+laSize-1);
   }
 
   void Link::updateresRef() {
-    res >> mbs->getres()(laInd,laInd+laSize-1);
+    res >> parent->getres()(laInd,laInd+laSize-1);
   }
 
   void Link::updaterFactorRef() {
-    rFactor >> mbs->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
+    rFactor >> parent->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
   }
 
   void Link::savela() {

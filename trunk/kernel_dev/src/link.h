@@ -38,6 +38,7 @@ namespace MBSim {
   class MultiBodySystem;
   class HitSphereLink;
   class UserFunction;
+  class Subsystem;
   struct ContourPointData;
   /*! 
    *  \brief This is a general link to one or more objects.
@@ -46,7 +47,7 @@ namespace MBSim {
   class Link : public Element {
 
     protected:
-      Object* parent;
+      Subsystem* parent;
 
       /** Internal integrable State Variables */
       Vec x;
@@ -119,7 +120,7 @@ namespace MBSim {
       Link(const string &name, bool setValued);
       ~Link();
 
-      void setParent(Object *parent_) {parent = parent_;}
+      void setParent(Subsystem *parent_) {parent = parent_;}
 
       const vector<Mat>& getW() const {return W;}
       const vector<Vec>& geth() const {return h;}

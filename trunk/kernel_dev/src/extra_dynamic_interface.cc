@@ -60,11 +60,11 @@ namespace MBSim {
   }
 
   void ExtraDynamicInterface::updatexRef() {
-    x >> mbs->getx()(xInd,xInd+xSize-1);
+    x >> parent->getx()(xInd,xInd+xSize-1);
   }
 
   void ExtraDynamicInterface::updatexdRef() {
-    xd >> mbs->getxd()(xInd,xInd+xSize-1);
+    xd >> parent->getxd()(xInd,xInd+xSize-1);
   }
 
 
