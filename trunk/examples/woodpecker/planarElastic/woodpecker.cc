@@ -13,6 +13,9 @@
 using namespace AMVis;
 
 Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName) {
+
+  setProjectDirectory("plot");
+
   // Gravitation
   Vec grav(3,INIT,0.0);
   grav(1)=-9.81;
@@ -25,12 +28,9 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   Vec JR(3);
   JR(2) = 1;
 
-
 // Stange -------------------------------------
   int Elements = 4;
   double     L = 1.0;
-
-  setProjectDirectory("plot");
 
   BodyFlexible1s21RCM *balken = new BodyFlexible1s21RCM("Balken",true);
 //  BodyFlexible1s21ANCF *balken = new BodyFlexible1s21ANCF("Balken",true);
@@ -41,6 +41,7 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
 
   balken->setLength(L);
   balken->setEModul(7.e10);
+//  balken->setMassProportionalDamping(20.);
 
   double h = 7.5e-3;
   double d = 7.5e-3;
@@ -216,6 +217,7 @@ Woodpecker::Woodpecker(const string &projectName) : MultiBodySystem(projectName)
   u0(2) = -5;
   specht->setu0(u0);
  
+  this->setPlotLevel(4);
   specht->setPlotLevel(2);
   balken->setPlotLevel(2);
   muffe ->setPlotLevel(2);
