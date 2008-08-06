@@ -181,14 +181,6 @@ namespace MBSim {
     LLM>>parent->getLLM()(Iu);
   }
 
-  void Object::calcSize() {
-    cout << "warning: " << getFullName() << " did not implement updatezSize" <<endl;
-  }
-
-  void Object::calchSize() {
-    cout << "warning: " << getFullName() << " did not implement updatehSize" <<endl;
-  }
-
   void Object::initz()
   {
     // INITZ initialises the Object state

@@ -261,8 +261,8 @@ namespace MBSim {
  void RigidBody::plot(double t, double dt) {
    Body::plot(t,dt);
    //Vec WrOS = computeWrOS();
-   SqrMat AWK = port[0]->getAWP();
-   Vec WrOS = port[0]->getWrOP();
+   SqrMat AWK = cosyAMVis->getAWP();
+   Vec WrOS = cosyAMVis->getWrOP();
 #ifdef HAVE_AMVIS
     if(plotLevel>0 || bodyAMVis)
 #else

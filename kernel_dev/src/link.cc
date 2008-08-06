@@ -62,8 +62,6 @@ namespace MBSim {
     gdn.resize(laSize);
     s.resize(laSize);
     res.resize(laSize);
-    cout << name << endl;
-    cout << laSize << endl;
   }
 
   void Link::updatexRef() {

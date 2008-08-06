@@ -301,7 +301,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
       DataInterfaceBase* bodyAMVisUserFunctionColor;
-      bool AMVisDataRel;
+      CoordinateSystem* cosyAMVis;
 #endif
 
 
@@ -340,7 +340,7 @@ namespace MBSim {
     }
 
 #ifdef HAVE_AMVIS
-    void setAMVisBody(AMVis::CRigidBody *body, DataInterfaceBase* funcColor=0) {bodyAMVis= body; bodyAMVisUserFunctionColor= funcColor;}
+    void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
 #endif
 
     void plot(double t, double dt=1);

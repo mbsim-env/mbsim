@@ -155,7 +155,6 @@ namespace MBSim {
     /*! Destructor */
     ~MultiBodySystem();
 	/*! Adds \param mbs to multibody system */
-    void addMbs(MultiBodySystem* mbs);
 
     void init();
     void checkActiveConstraints();

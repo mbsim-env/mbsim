@@ -264,8 +264,8 @@ namespace MBSim {
     void   setRadiusHitSphere(const double &R) {RHitSphere = R;}
     const double& getRadiusHitSphere() const   {return RHitSphere;}
 
-    virtual void calcSize();
-    virtual void calchSize();
+    virtual void calcSize() {};
+    virtual void calchSize() {};
 
     /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
     virtual double computeKineticEnergy();

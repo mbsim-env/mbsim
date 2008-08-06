@@ -112,37 +112,27 @@ namespace MBSim {
       object[i]->updateTRef();
   }
 
-  void Tree::calcSize() {
-
-    for(unsigned i=0; i<object.size(); i++) {
-      object[i]->calcSize();
-      object[i]->setqInd(qSize);
-      object[i]->setuInd(uSize);
-      object[i]->setxInd(xSize);
-
-      qSize += object[i]->getqSize();
-      uSize += object[i]->getuSize();
-      xSize += object[i]->getxSize();
-    }
-  }
-
   void Tree::calchSize() {
 
+  //  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+  //    (*i)->sethSize(hSize);
+  //    (*i)->calchSize();
+  //  }
     for(unsigned i=0; i<object.size(); i++) {
       int j = object.size()-1-i;
       if(i==0)
-      object[j]->sethSize(hSize);
+        object[j]->sethSize(hSize);
       else
-      object[j]->sethSize(object[j+1]->gethSize() - object[j+1]->getuSize());
+        object[j]->sethSize(object[j+1]->gethSize() - object[j+1]->getuSize());
       object[j]->calchSize();
     }
   }
 
- // void Tree::setMbs(MultiBodySystem* mbs_) {
- //   //Element::setMbs(mbs_);
- //   for(unsigned i=0; i<object.size(); i++)
- //     object[i]->setMbs(mbs);
- // }
+  // void Tree::setMbs(MultiBodySystem* mbs_) {
+  //   //Element::setMbs(mbs_);
+  //   for(unsigned i=0; i<object.size(); i++)
+  //     object[i]->setMbs(mbs);
+  // }
 
   void Tree::init() {
     for(unsigned i=0; i<object.size(); i++)
@@ -184,12 +174,12 @@ namespace MBSim {
   } 
 
   double Tree::computePotentialEnergy() {
-   // double Vtemp = 0.0;
-   // if(root) {
-   //   Vtemp = computePotentialEnergyBranch(root);
-   // }
-   // return Vtemp;
-   return -1;
+    // double Vtemp = 0.0;
+    // if(root) {
+    //   Vtemp = computePotentialEnergyBranch(root);
+    // }
+    // return Vtemp;
+    return -1;
   }
 
   //double Tree::computePotentialEnergyBranch(Object* body) {
