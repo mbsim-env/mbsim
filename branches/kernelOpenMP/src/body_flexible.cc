@@ -201,8 +201,8 @@ namespace MBSim {
   //-------------------------------------------
 
   void BodyFlexible::updateWj(double t) {
-    static Index IF(0,2);
-    static Index IM(3,5);
+    static const Index IF(0,2);
+    static const Index IM(3,5);
 
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 
@@ -263,7 +263,7 @@ namespace MBSim {
 
 
   Mat BodyFlexible::computeJp(const ContourPointData &data) {
-    static double eps = epsroot();
+    static const double eps = epsroot;
     Vec qAct     = q.copy();
 
     ContourPointData dataMod;
@@ -290,7 +290,7 @@ namespace MBSim {
   }
 
   Mat BodyFlexible::computeDrDs(const ContourPointData &data) {
-    static double eps = epsroot();
+    static const double eps = epsroot;
 
     ContourPointData dataMod;
     dataMod.type  = data.type;
@@ -308,7 +308,7 @@ namespace MBSim {
     return DrDs;
   }
   Mat BodyFlexible::computeDrDsp(const ContourPointData &data) {
-    static double eps = epsroot();
+    static const double eps = epsroot;
 
     ContourPointData dataMod;
     dataMod.type  = data.type;
@@ -336,7 +336,7 @@ namespace MBSim {
   }
 
 /*  Mat BodyFlexible::computeDrDsp(const ContourPointData &data) {
-    static double eps = epsroot();
+    static const double eps = epsroot;
     Vec qAct     = q.copy();
 
     ContourPointData dataMod;
@@ -376,7 +376,7 @@ updateKinematics(0.0);
 */
 
   Mat BodyFlexible::computeK(const ContourPointData &cp) {
-    static const double eps = epsroot();
+    static const double eps = epsroot;
     Mat K(3,cp.alphap.size(),NONINIT);
     SqrMat AWP = computeAWK(cp);
     ContourPointData cpMod;
@@ -395,7 +395,7 @@ updateKinematics(0.0);
     return K;
   }
   Mat BodyFlexible::computeKp(const ContourPointData &cp) {
-    static const double eps = epsroot();
+    static const double eps = epsroot;
 //    Vec qAct     = q.copy();
 
     Mat Kp(3,cp.alphap.size(),INIT,0.0);
@@ -420,7 +420,7 @@ updateKinematics(0.0);
   }
 
   SqrMat BodyFlexible::computeAWKp(const ContourPointData &data) {
-    static double eps = epsroot();
+    static const double eps = epsroot;
 
     ContourPointData dataMod;
     dataMod.type   = data.type;

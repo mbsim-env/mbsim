@@ -88,7 +88,7 @@ namespace MBSim {
 
     if(cpData[0].Wt.cols()) {
       //    cpData[icontour].Wt = contour1s->computeWt(cpData[icontour].alpha(0))(0,0,2,iT.end()-1);
-      static Index iT(1,cpData[0].Wt.cols());
+      static const Index iT(1,cpData[0].Wt.cols());
       cpData[iline].Wt    = line->computeWt()(0,0,2,iT.end()-1);
       cpData[icontour].Wt = -cpData[iline].Wt; 
       gd(iT) = trans(cpData[icontour].Wt)*WvD;

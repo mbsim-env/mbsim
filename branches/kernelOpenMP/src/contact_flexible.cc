@@ -55,7 +55,7 @@ namespace MBSim {
   }
 
   void ContactFlexible::updateKinetics(double t) {
-  	static const double eps = epsroot();
+  	static const double eps = epsroot;
   	if(flag_c)
     	if(gd(0)<0) la(0) = ((*c_fun)(g(0)))(0) + ((*d_fun)(gd(0)))(0); // normal direction
     	else la(0) = ((*c_fun)(g(0)))(0);

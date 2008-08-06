@@ -48,7 +48,7 @@ namespace MBSim {
 
     public:
       /*! Constructor */
-      UserFunction() : delta(epsroot()), sqrtdelta(sqrt(delta)) {}
+      UserFunction() : delta(epsroot), sqrtdelta(sqrt(delta)) {}
       /*! Destructor */
       virtual ~UserFunction() {}
       

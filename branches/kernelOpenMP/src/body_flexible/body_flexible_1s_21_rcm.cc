@@ -199,7 +199,7 @@ namespace MBSim {
   }
 
   Mat BodyFlexible1s21RCM::computeJacobianMatrix(const ContourPointData &S_) {
-    static Index All(0,3-1);
+    static const Index All(0,3-1);
 	Mat Jacobian(qSize,3,INIT,0.0);
 
 	// ForceElement on continuum
@@ -231,7 +231,7 @@ namespace MBSim {
   }
 
   Mat BodyFlexible1s21RCM::computeJp(const ContourPointData &S_) {
-    static Index All(0,3-1);
+    static const Index All(0,3-1);
     Mat Jp(qSize,3,INIT,0.0);
 
     // ForceElement on continuum
@@ -303,7 +303,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s21RCM::updateh(double t) {
-    static int i,j;
+    int i,j;
 
     M.init(0.0);
     h.init(0.0);
@@ -371,7 +371,7 @@ namespace MBSim {
 
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21RCM::BuildElement(const int& ENumber) {
-    //static int ENumberOld = -1;
+    //int ENumberOld = -1;
     //if( ENumber != ENumberOld ) {
 //      ENumberOld = ENumber;
       // Grenzen testen
@@ -404,9 +404,9 @@ namespace MBSim {
   }
 
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
-	static double sGlobalOld = -1.0;
-	static double sLokal = 0;
-	static int Element = 0;
+	double sGlobalOld = -1.0;
+	double sLokal = 0;
+	int Element = 0;
 	if (sGlobal != sGlobalOld ) {
 	  sGlobalOld = sGlobal;
 

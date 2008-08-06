@@ -168,7 +168,7 @@ namespace MBSim {
 
   Mat BodyFlexible1s23BTA::computeJacobianMatrix(const ContourPointData &S_) {
     //     cout << "BodyFlexible1s23BTA::updatePorts" << endl;
-    static Index All(0,5-1);
+    static const Index All(0,5-1);
     Mat Jacobian(qSize,5);
 
     // ForceElement on continuum
@@ -189,7 +189,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s23BTA::updateh(double t) {
-    static int i;
+    int i;
 
     M.init(0.0);
     h.init(0.0);

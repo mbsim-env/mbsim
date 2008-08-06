@@ -112,7 +112,7 @@ namespace MBSim {
       void BuildJacobi(Vec&,Vec&,SqrMat&,SqrMat&);
 
       // Balkenort
-      Vec LocateLokalBalken(Vec&,Vec&,double&,bool);
+      Vec LocateLokalBalken(Vec&,const Vec&,double&,bool);
       Vec LocateLokalBalken(Vec&,Vec&,double&);
 
       // Jacobis für impliziete Integratoren

@@ -139,7 +139,7 @@ namespace MBSim {
   }
 
   Mat BodyFlexible1s21ANCF::computeJacobianMatrix(const ContourPointData &data) {
-    static Index All(0,3-1);
+    static const Index All(0,3-1);
     Mat Jacobian(qSize,3);
 
     if(data.type == CONTINUUM) {
@@ -239,7 +239,7 @@ namespace MBSim {
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21ANCF::BuildElement(const int& ENumber) {
     CurrentElement = ENumber;
-    static int n;
+    int n;
     n = NodeDOFs * ENumber ;
 
     if  ( ENumber < Elements-1  || openStructure==true) {
@@ -334,31 +334,31 @@ namespace MBSim {
 
   ////----------------------------------------------------------------------
   //Vec BodyFlexible1s21ANCF::computeWt  (const double &s) {
-  //    static ContourPointData cdTemp;
+  //    ContourPointData cdTemp;
   //    cdTemp.alpha = Vec(1,INIT,s);
   //    return computeWt(cdTemp).col(0);
   //}
   //
   //Vec BodyFlexible1s21ANCF::computeWn  (const double &s) {
-  //    static ContourPointData cdTemp;
+  //    ContourPointData cdTemp;
   //    cdTemp.alpha = Vec(1,INIT,s);
   //    return computeWn(cdTemp);
   //}
   //
   //Vec BodyFlexible1s21ANCF::computeWrOC(const double &s) {
-  //    static ContourPointData cdTemp;
+  //    ContourPointData cdTemp;
   //    cdTemp.alpha = Vec(1,INIT,s);
   //    return computeWrOC(cdTemp);
   //}
   //
   //Vec BodyFlexible1s21ANCF::computeWvC (const double &s) {
-  //    static ContourPointData cdTemp;
+  //    ContourPointData cdTemp;
   //    cdTemp.alpha = Vec(1,INIT,s);
   //    return computeWvC(cdTemp);
   //}
   //
   //Vec BodyFlexible1s21ANCF::computeWomega(const double &s) {
-  //    static ContourPointData cdTemp;
+  //    ContourPointData cdTemp;
   //    cdTemp.alpha = Vec(1,INIT,s);
   //    return computeWomega(cdTemp);
   //}

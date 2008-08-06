@@ -24,9 +24,9 @@
 
 namespace MBSim {
 
-  double macheps();
+  extern const double macheps;
 
-  double epsroot();
+  extern const double epsroot;
 
 }
 

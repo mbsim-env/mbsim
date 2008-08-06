@@ -29,7 +29,7 @@
 namespace MBSim {
 
   BodyRigidConstrainedAcc::BodyRigidConstrainedAcc(const string &name) : BodyRigidAbs(name), pos(0), vel(0), acc(0) {
-    delta = epsroot();
+    delta = epsroot;
     sqrtdelta = sqrt(delta);
     m = 1.0;	//Default Mass values; Otherwise BodyRigidAbs::init() : inv(M) not defined!
     I(0,0) = 1.0;
@@ -120,7 +120,7 @@ namespace MBSim {
   }
 
   BodyRigidConstrainedVel::BodyRigidConstrainedVel(const string &name) : BodyRigidAbs(name), pos(0), vel(0), overwriteqWithpos(0) {
-    delta = epsroot();
+    delta = epsroot;
     sqrtdelta = sqrt(delta);
     m = 1.0;	//Default Mass values; Otherwise BodyRigidAbs::init() : inv(M) not defined!
     I(0,0) = 1.0;

@@ -68,7 +68,7 @@ namespace MBSim {
       cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);
 	  cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
 	  cpData[ipoint].Wt= -cpData[iplane].Wt;
-	  static Index iT(1,cpData[ipoint].Wt.cols());
+	  static const Index iT(1,cpData[ipoint].Wt.cols());
 	  gd(iT) = trans(cpData[iplane].Wt)*WvD;
     }
   } 

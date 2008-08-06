@@ -43,7 +43,7 @@ namespace MBSim {
   void ContactKinematicsCircleSolidCircleHollow::stage1(Vec &g, vector<ContourPointData> &cpData) {
     Vec WrD = circle1->getWrOP() - circle0->getWrOP();
     double Abs_WrD = nrm2(WrD);
-    if (Abs_WrD > epsroot()) {
+    if (Abs_WrD > epsroot) {
       cpData[icircle1].Wn = - WrD/Abs_WrD;
       cpData[icircle0].Wn = - cpData[icircle1].Wn;
       g(0) = circle1->getRadius() - trans(cpData[icircle0].Wn)*WrD - circle0->getRadius();
@@ -70,7 +70,7 @@ namespace MBSim {
     if(cpData[icircle0].Wt.cols()) {
       cpData[icircle0].Wt = crossProduct(circle0->computeWb(),cpData[icircle0].Wn);
       cpData[icircle1].Wt = -cpData[icircle0].Wt;
-      static Index iT(1,cpData[icircle1].Wt.cols());
+      static const Index iT(1,cpData[icircle1].Wt.cols());
       gd(iT) = trans(cpData[icircle1].Wt)*WvD;
     }
   }

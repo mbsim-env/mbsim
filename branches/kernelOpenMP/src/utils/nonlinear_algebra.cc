@@ -83,7 +83,7 @@ namespace MBSim {
       if(jac)
 	J = (*jac)(x);
       else {
-	double delta = epsroot();
+	double delta = epsroot;
 	//Prüfen: sollte unnötig sein
 	//double f_old = (*fct)(x);
 	double f_new;
@@ -152,7 +152,7 @@ namespace MBSim {
 	for(int j=0; j<x.size(); j++) {
 	  xj = x(j);
 
-	  dx = (epsroot() * 0.5);
+	  dx = (epsroot * 0.5);
 	  do {                   
 	    dx += dx;
 	  } while (xj + dx == x(j));

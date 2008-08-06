@@ -404,7 +404,7 @@ namespace MBSim {
   Vec FiniteElement1s23BTA::ElementData(Vec qElement, Vec qpElement)
   {
     // Rueckgabedaten
-    static Vec Data(8,fmatvec::INIT,0.0);
+    Vec Data(8);
     // 0:  eps
     // 1:  epsp
     // 2:  xS
@@ -414,21 +414,21 @@ namespace MBSim {
     // 6:  delta_phi      = bL  + bR
     // 7:  delta_phip     = bLp + bRp
 
-    static Vec qLokal(8,fmatvec::INIT,0.0), qpLokal(8,fmatvec::INIT,0.0);
-    static SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp(8,fmatvec::INIT,0.0);
+    Vec qLokal(8,fmatvec::INIT,0.0), qpLokal(8);
+    SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp(8,fmatvec::INIT,0.0);
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    static double &xS     = qLokal(0);      static double &yS     = qLokal(1);
-    //    static double &phiS   = qLokal(2);  unused
-    static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    double &xS     = qLokal(0);      double &yS     = qLokal(1);
+    //    double &phiS   = qLokal(2);  unused
+    double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
     //
-    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-    //    static double &phiSp  = qpLokal(2); unused
-    static double &epsp  = qpLokal(3);
-    static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-    static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
+    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+    //    double &phiSp  = qpLokal(2); unused
+    double &epsp  = qpLokal(3);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
 
 
     //lokale Koordinate-----------------------------------------------------------

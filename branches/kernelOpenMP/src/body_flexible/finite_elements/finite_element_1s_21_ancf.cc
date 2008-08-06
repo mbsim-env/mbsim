@@ -164,8 +164,8 @@ namespace MBSim {
     double &dx2 = qElement(6);    double &dy2 = qElement(7);
 
     // Gravitation !!!!TODO -> Vorzeichen in Mathematica-Routine aendern!!!!!!!!!1
-    static double gx = g(0);
-    static double gy = g(1);
+    double gx = g(0);
+    double gy = g(1);
 
     double lh1     =      (Power(x1 - x2,2) + Power(y1 - y2,2))  ;
     double sqrtlh1 = sqrt(lh1);

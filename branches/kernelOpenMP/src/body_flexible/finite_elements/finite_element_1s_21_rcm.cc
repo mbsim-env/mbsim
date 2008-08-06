@@ -88,11 +88,11 @@ namespace MBSim {
   //------------------------------------------------------------------------------
   int FiniteElement1s21RCM::berechne(Vec qElement, Vec qpElement)
   {
-    static Vec    qLokal(8,fmatvec::INIT,0.0), qpLokal(8,fmatvec::INIT,0.0);
+    Vec    qLokal(8), qpLokal(8);
 
-    static SymMat MLokal(8,fmatvec::INIT,0.0);
-    static SqrMat Jeg   (8,fmatvec::INIT,0.0), Jegp   (8,fmatvec::INIT,0.0);
-    static Vec    hLokal(8,fmatvec::INIT,0.0), hdLokal(8,fmatvec::INIT,0.0); // Daempungsanteil
+    SymMat MLokal(8);
+    SqrMat Jeg   (8), Jegp   (8);
+    Vec    hLokal(8), hdLokal(8,fmatvec::INIT,0.0); // Daempungsanteil
 
     //--- globale Koordinaten, Geschwingigkeiten
     /*    double &x1   = qElement(0);     double &y1  = qElement(1);    
@@ -109,20 +109,20 @@ namespace MBSim {
     */
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    //    static double &xS     = qLokal(0);    // unused  
-    //    static double &yS     = qLokal(1);
-    static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    //    double &xS     = qLokal(0);    // unused  
+    //    double &yS     = qLokal(1);
+    double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
     //
-    //    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-    static double &phiSp  = qpLokal(2);     static double &epsp  = qpLokal(3);
-    static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-    static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
+    //    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+    double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
 
     // Gravitation
-    static double gx = g(0);
-    static double gy = g(1);
+    double gx = g(0);
+    double gy = g(1);
 
     //lokale Koordinate-----------------------------------------------------------
     BuildqLokal(qElement,qLokal);
@@ -135,7 +135,7 @@ namespace MBSim {
 
     //MassenMatrix----------------------------------------------------------------
     MLokal(0,0) = Arho*l0;
-    //MLokal(0,1) = 0;
+    MLokal(0,1) = 0;
     MLokal(0,2) = (Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) - 60*(1 + eps)*l0*(sin(bL - phiS) + sin(bR + phiS))))/480.;
     MLokal(0,3) = (Arho*l0h2*(-cos(bL - phiS) + cos(bR + phiS)))/8.;
     MLokal(0,4) = (Arho*l0*(-13*sin(bL - phiS) + sin(bR + phiS)))/60.;
@@ -162,9 +162,9 @@ namespace MBSim {
     //MLokal(3,1) = MLokal(1,3);
     //MLokal(3,2) = MLokal(2,3);
     MLokal(3,3) = (Arho*l0h3)/12.;
-    //MLokal(3,4) = 0;
+    MLokal(3,4) = 0;
     MLokal(3,5) = (Arho*l0h2*(152*aL + 8*aR + 13*bL*l0 - 3*bR*l0))/1920.;
-    //MLokal(3,6) = 0;
+    MLokal(3,6) = 0;
     MLokal(3,7) = (Arho*l0h2*(8*aL + 152*aR - 3*bL*l0 + 13*bR*l0))/1920.;
     //MLokal(4,0) = MLokal(0,4);
     //MLokal(4,1) = MLokal(1,4);
@@ -229,14 +229,14 @@ namespace MBSim {
     // ab ins globale System
     M << JTMJ(MLokal,Jeg);// trans(Jeg) * MLokal * Jeg );
 
-    static Vec hZwischen(8,fmatvec::INIT,0.0);
+    Vec hZwischen(8);
     hZwischen << hLokal + hdLokal  -   MLokal * Jegp * qpElement;
     h << trans(Jeg) * hZwischen;
 
     // für die Impliziten Integratoren
     if(implicit)
     {
-      static Mat Dhz(16,8,fmatvec::INIT,0.0);
+      Mat Dhz(16,8);
       Dhz   = hFullJacobi(qElement,qpElement,qLokal,qpLokal,Jeg,Jegp,MLokal,hZwischen);
       Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
       Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
@@ -260,7 +260,7 @@ namespace MBSim {
     double &phi2 = qElement(7);
 
     // Rechenaufwand senken durch "Zentralisierung"
-    static double dphih, sphih;
+    double dphih, sphih;
     dphih = (phi1 - phi2)/2.0;
     sphih = (phi1 + phi2)/2.0;
     //    one_p_cos_dphi = (1 + cos(phi1 - phi2));
@@ -291,7 +291,7 @@ namespace MBSim {
     double &phi2 = qElement(7);
 
     // Rechenaufwand senken durch "Zentralisierung"
-    static double one_p_cos_dphi;
+    double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
 
     //JacobiMatrix
@@ -379,32 +379,32 @@ namespace MBSim {
     double &phi2p = qpElement(7);
 
     // Rechenaufwand senken durch "Zentralisierung"
-    static double one_p_cos_dphi;
+    double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
 
     BuildJacobi(qElement,Jeg);
 
-    //Jegp(0,0) = 0;
+    Jegp(0,0) = 0;
     Jegp(0,1) = (phi1p - phi2p)/(2.*one_p_cos_dphi);
     Jegp(0,2) = (Power(Sec((phi1 - phi2)/2.),2)*(36*(y1p - y2p) - 64*(a1p + a2p)*cos(phi2) + 64*(a1 + a2)*phi2p*sin(phi2) + 5*l0*(phi1p*(cos(phi1) + cos(phi2)) + (-phi1 + phi2)*phi2p*sin(phi2)) + (phi1p - phi2p)*(36*(y1 - y2) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*cos(phi2) + 5*l0*(sin(phi1) + sin(phi2)))*tan((phi1 - phi2)/2.)))/144.;
     Jegp(0,3) = (-8*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(9.*one_p_cos_dphi);
     Jegp(0,4) = (-8*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(9.*one_p_cos_dphi);
-    //Jegp(0,5) = 0;
+    Jegp(0,5) = 0;
     Jegp(0,6) = (-phi1p + phi2p)/(2.*one_p_cos_dphi);
     Jegp(0,7) = -(one_p_cos_dphi*(36*(y1p - y2p) + (64*(a1p + a2p) + 5*l0*phi2p)*cos(phi1) - 64*(a1 + a2)*phi1p*sin(phi1) + 5*l0*(phi2p*cos(phi2) + phi1p*(phi1 - phi2)*sin(phi1))) + (phi1p - phi2p)*sin(phi1 - phi2)*(36*(y1 - y2) + (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*cos(phi1) + 5*l0*(sin(phi1) + sin(phi2))))/(72.*Power(1 + cos(phi1 - phi2),2));
     Jegp(1,0) = (-phi1p + phi2p)/(2.*one_p_cos_dphi);
-    //Jegp(1,1) = 0;
+    Jegp(1,1) = 0;
     Jegp(1,2) = (-((phi1p - phi2p)*sin(phi1 - phi2)*(36*(x1 - x2) + 64*(a1 + a2)*sin(phi2) + 5*l0*(cos(phi1) + cos(phi2) + (-phi1 + phi2)*sin(phi2)))) + one_p_cos_dphi*(36*(-x1p + x2p) - 64*(a1 + a2)*phi2p*cos(phi2) - 64*(a1p + a2p)*sin(phi2) + 5*l0*((phi1 - phi2)*phi2p*cos(phi2) + phi1p*(sin(phi1) + sin(phi2)))))/(72.*Power(1 + cos(phi1 - phi2),2));
     Jegp(1,3) = (-8*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(9.*one_p_cos_dphi);
     Jegp(1,4) = (-8*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(9.*one_p_cos_dphi);
     Jegp(1,5) = (phi1p - phi2p)/(2.*one_p_cos_dphi);
-    //Jegp(1,6) = 0;
+    Jegp(1,6) = 0;
     Jegp(1,7) = ((phi1p - phi2p)*(36*(x1 - x2) - 64*(a1 + a2)*sin(phi1) + 5*l0*(cos(phi1) + cos(phi2) + (phi1 - phi2)*sin(phi1)))*sin(phi1 - phi2) + one_p_cos_dphi*(36*(x1p - x2p) - 64*(a1 + a2)*phi1p*cos(phi1) - 64*(a1p + a2p)*sin(phi1) + 5*l0*(phi1p*(phi1 - phi2)*cos(phi1) - phi2p*(sin(phi1) + sin(phi2)))))/(72.*Power(1 + cos(phi1 - phi2),2));
     Jegp(2,0) = (11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(2,1) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(2,2) = (11*(cos(phi2)*((x1p - x2p + phi2p*y1 - phi2p*y2)*one_p_cos_dphi + (phi1p - phi2p)*(x1 - x2)*sin(phi1 - phi2)) + (-((phi2p*(x1 - x2) - y1p + y2p)*one_p_cos_dphi) + (phi1p - phi2p)*(y1 - y2)*sin(phi1 - phi2))*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
-    //Jegp(2,3) = 0;
-    //Jegp(2,4) = 0;
+    Jegp(2,3) = 0;
+    Jegp(2,4) = 0;
     Jegp(2,5) = (-11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(2,6) = (-11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(2,7) = (11*(one_p_cos_dphi*((x1p - x2p + phi1p*y1 - phi1p*y2)*cos(phi1) + (phi1p*(-x1 + x2) + y1p - y2p)*sin(phi1)) + (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
@@ -419,32 +419,32 @@ namespace MBSim {
     Jegp(4,0) = (phi2p*cos(phi1) + phi1p*cos(phi2))/(2.*one_p_cos_dphi);
     Jegp(4,1) = (phi2p*sin(phi1) + phi1p*sin(phi2))/(2.*one_p_cos_dphi);
     Jegp(4,2) = (cos(phi2)*((x1p - x2p + phi2p*y1 - phi2p*y2)*one_p_cos_dphi + (phi1p - phi2p)*(x1 - x2)*sin(phi1 - phi2)) + (-((phi2p*(x1 - x2) - y1p + y2p)*one_p_cos_dphi) + (phi1p - phi2p)*(y1 - y2)*sin(phi1 - phi2))*sin(phi2))/(2.*Power(1 + cos(phi1 - phi2),2));
-    //Jegp(4,3) = 0;
-    //Jegp(4,4) = 0;
+    Jegp(4,3) = 0;
+    Jegp(4,4) = 0;
     Jegp(4,5) = -(phi2p*cos(phi1) + phi1p*cos(phi2))/(2.*one_p_cos_dphi);
     Jegp(4,6) = -(phi2p*sin(phi1) + phi1p*sin(phi2))/(2.*one_p_cos_dphi);
     Jegp(4,7) = (one_p_cos_dphi*((x1p - x2p + phi1p*y1 - phi1p*y2)*cos(phi1) + (phi1p*(-x1 + x2) + y1p - y2p)*sin(phi1)) + (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2))/(2.*Power(1 + cos(phi1 - phi2),2));
     Jegp(5,0) = (11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(5,1) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(5,2) = (11*(cos(phi2)*((x1p - x2p + phi2p*y1 - phi2p*y2)*one_p_cos_dphi + (phi1p - phi2p)*(x1 - x2)*sin(phi1 - phi2)) + (-((phi2p*(x1 - x2) - y1p + y2p)*one_p_cos_dphi) + (phi1p - phi2p)*(y1 - y2)*sin(phi1 - phi2))*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
-    //Jegp(5,3) = 0;
-    //Jegp(5,4) = 0;
+    Jegp(5,3) = 0;
+    Jegp(5,4) = 0;
     Jegp(5,5) = (-11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(5,6) = (-11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(5,7) = (11*(one_p_cos_dphi*((x1p - x2p + phi1p*y1 - phi1p*y2)*cos(phi1) + (phi1p*(-x1 + x2) + y1p - y2p)*sin(phi1)) + (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
     Jegp(6,0) = -(phi2p*cos(phi1) + phi1p*cos(phi2))/(2.*one_p_cos_dphi);
     Jegp(6,1) = -(phi2p*sin(phi1) + phi1p*sin(phi2))/(2.*one_p_cos_dphi);
     Jegp(6,2) = (cos(phi2)*(-((x1p - x2p + phi2p*y1 - phi2p*y2)*one_p_cos_dphi) + (-phi1p + phi2p)*(x1 - x2)*sin(phi1 - phi2)) + ((phi2p*(x1 - x2) - y1p + y2p)*one_p_cos_dphi + (-phi1p + phi2p)*(y1 - y2)*sin(phi1 - phi2))*sin(phi2))/(2.*Power(1 + cos(phi1 - phi2),2));
-    //Jegp(6,3) = 0;
-    //Jegp(6,4) = 0;
+    Jegp(6,3) = 0;
+    Jegp(6,4) = 0;
     Jegp(6,5) = (phi2p*cos(phi1) + phi1p*cos(phi2))/(2.*one_p_cos_dphi);
     Jegp(6,6) = (phi2p*sin(phi1) + phi1p*sin(phi2))/(2.*one_p_cos_dphi);
     Jegp(6,7) = (one_p_cos_dphi*((-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (phi1p*(x1 - x2) - y1p + y2p)*sin(phi1)) - (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2))/(2.*Power(1 + cos(phi1 - phi2),2));
     Jegp(7,0) = (-11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(7,1) = (-11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(7,2) = (-11*(cos(phi2)*((x1p - x2p + phi2p*y1 - phi2p*y2)*one_p_cos_dphi + (phi1p - phi2p)*(x1 - x2)*sin(phi1 - phi2)) + (-((phi2p*(x1 - x2) - y1p + y2p)*one_p_cos_dphi) + (phi1p - phi2p)*(y1 - y2)*sin(phi1 - phi2))*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
-    //Jegp(7,3) = 0;
-    //Jegp(7,4) = 0;
+    Jegp(7,3) = 0;
+    Jegp(7,4) = 0;
     Jegp(7,5) = (11*(phi2p*cos(phi1) + phi1p*cos(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(7,6) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(4.*l0*one_p_cos_dphi);
     Jegp(7,7) = (11*(one_p_cos_dphi*((-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (phi1p*(x1 - x2) - y1p + y2p)*sin(phi1)) - (phi1p - phi2p)*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1))*sin(phi1 - phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
@@ -461,15 +461,15 @@ namespace MBSim {
     return LocateLokalBalken( qLokal, qpLokal, s, true );
   }
   // Balkenort ermitteln aus lokalen Lagen 
-  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, Vec& qpLokal, double& s, bool calcAll)
+  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, const Vec& qpLokal, double& s, bool calcAll)
   {
     Vec X(6); // x,y und phi | und | xp,yp und phip !!!
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    //     static double &xS     = qLokal(0);      static double &yS    = qLokal(1);
-    //     static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    //     static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    //     static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    //     double &xS     = qLokal(0);      double &yS    = qLokal(1);
+    //     double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    //     double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    //     double &aR     = qLokal(6);      double &bR    = qLokal(7);
 
     // Aenderung 30.11.2005 - keine static Definitionen mehr
     double &xS     = qLokal(0);      double &yS    = qLokal(1);
@@ -477,10 +477,10 @@ namespace MBSim {
     double &aL     = qLokal(4);      double &bL    = qLokal(5);
     double &aR     = qLokal(6);      double &bR    = qLokal(7);
 
-    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
-    double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
-    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
-    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
+    const double &xSp    = qpLokal(0);     const double &ySp   = qpLokal(1);
+    const double &phiSp  = qpLokal(2);     const double &epsp  = qpLokal(3);
+    const double &aLp    = qpLokal(4);     const double &bLp   = qpLokal(5);
+    const double &aRp    = qpLokal(6);     const double &bRp   = qpLokal(7);
 
     if (s < 0) // linker Teilbereich
     {
@@ -514,8 +514,8 @@ namespace MBSim {
   // Balkenort ermitteln aus globalen Lagen 
   Vec FiniteElement1s21RCM::LocateBalken(Vec& qElement, double& s)
   {
-    static Vec  qLokal     (8,fmatvec::INIT,0.0);
-    static Vec qpLokalDummy(8,fmatvec::INIT,0.0);
+    Vec  qLokal     (8);
+    static const Vec qpLokalDummy(8,fmatvec::INIT,0.0);
 
     //lokale Koordinate
     BuildqLokal(qElement,qLokal);
@@ -527,10 +527,10 @@ namespace MBSim {
   // Balkenzustand ermitteln aus globalen Lagen, Geschwindigkeit
   Vec FiniteElement1s21RCM::StateBalken(Vec& qElement, Vec& qpElement, double& s)
   {
-    static Vec  qLokal(8,fmatvec::INIT,0.0);
-    static Vec qpLokal(8,fmatvec::INIT,0.0);
-    static SqrMat  Jeg(8,fmatvec::INIT,0.0);
-    static SqrMat Jegp(8,fmatvec::INIT,0.0);
+    Vec  qLokal(8);
+    Vec qpLokal(8);
+    SqrMat  Jeg(8);
+    SqrMat Jegp(8);
 
     //lokale Koordinate
     BuildqLokal(qElement,qLokal);
@@ -547,14 +547,14 @@ namespace MBSim {
     // Rueckgagewert J: JacobiMatrix
     Mat J(8,3);
 
-    static Vec  qLokal(8);
-    //    static Vec qpElementDummy(8,fmatvec::INIT,0.0);
+    Vec  qLokal(8);
+    //    Vec qpElementDummy(8,fmatvec::INIT,0.0);
     //lokale Koordinate
     BuildqLokal(qElement,qLokal);
-//    static double &xS     = qLokal(0);      static double &yS    = qLokal(1);
-    static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+//    double &xS     = qLokal(0);      double &yS    = qLokal(1);
+    double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
 
     if( s < 0 ) // Linker Teilbereich
     {
@@ -620,7 +620,7 @@ namespace MBSim {
   //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // JacobiMatrix der Lage des Balkenquerschnittes bei s (dx/dq,dy/dq,dphi/dq)^T in internen Koordinaten
   Mat FiniteElement1s21RCM::JGeneralized(Vec& qElement,const double& s) {
-    static SqrMat Jeg(8); // vermutlich schneller (mal wieder) als gleich die Transformierte zu implementieren
+    SqrMat Jeg(8); // vermutlich schneller (mal wieder) als gleich die Transformierte zu implementieren
     BuildJacobi(qElement,Jeg);
     return trans(Jeg)*JGeneralizedInternal(qElement,s);
   }
@@ -806,7 +806,7 @@ namespace MBSim {
   //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   Mat FiniteElement1s21RCM::hFullJacobi(Vec& qElement, Vec& qpElement, Vec& qLokal, Vec& qpLokal, SqrMat& Jeg, SqrMat& Jegp, SymMat& MLokal, Vec& hZwischen)
   {
-    static Mat Dhz(16,8,fmatvec::INIT,0.0);
+    Mat Dhz(16,8);
 
     //--- globale Koordinaten, Geschwingigkeiten
     double &x1   = qElement(0);     double &y1  = qElement(1);    
@@ -822,44 +822,44 @@ namespace MBSim {
     double &phi2p = qpElement(7);
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    //    static double &xS     = qLokal(0);	    static double &yS    = qLokal(1);
-    static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    //    double &xS     = qLokal(0);	    double &yS    = qLokal(1);
+    double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
     //
-    //    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-    static double &phiSp  = qpLokal(2);     static double &epsp  = qpLokal(3);
-    static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-    static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
+    //    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+    double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
     //
 
     //--- Zwischenergebnisse
-    static double &hZ1    = hZwischen(0);   static double &hZ2   = hZwischen(1);
-    static double &hZ3    = hZwischen(2);   static double &hZ4   = hZwischen(3);
-    static double &hZ5    = hZwischen(4);   static double &hZ6   = hZwischen(5);
-    static double &hZ7    = hZwischen(6);   static double &hZ8   = hZwischen(7);
+    double &hZ1    = hZwischen(0);   double &hZ2   = hZwischen(1);
+    double &hZ3    = hZwischen(2);   double &hZ4   = hZwischen(3);
+    double &hZ5    = hZwischen(4);   double &hZ6   = hZwischen(5);
+    double &hZ7    = hZwischen(6);   double &hZ8   = hZwischen(7);
     //
-    static Vec JpqpG(8,fmatvec::INIT,0.0);
+    Vec JpqpG(8);
     JpqpG = Jegp*qpElement;
-    static double &JpqpG1     = JpqpG(0);        static double &JpqpG2     = JpqpG(1);    
-    static double &JpqpG3     = JpqpG(2);        static double &JpqpG4     = JpqpG(3);    
-    static double &JpqpG5     = JpqpG(4);        static double &JpqpG6     = JpqpG(5);    
-    static double &JpqpG7     = JpqpG(6);        static double &JpqpG8     = JpqpG(7);    
+    double &JpqpG1     = JpqpG(0);        double &JpqpG2     = JpqpG(1);    
+    double &JpqpG3     = JpqpG(2);        double &JpqpG4     = JpqpG(3);    
+    double &JpqpG5     = JpqpG(4);        double &JpqpG6     = JpqpG(5);    
+    double &JpqpG7     = JpqpG(6);        double &JpqpG8     = JpqpG(7);    
 
     // Rechenaufwand senken durch "Zentralisierung"
-    static double one_p_cos_dphi;
+    double one_p_cos_dphi;
     one_p_cos_dphi = (1 + cos(phi1 - phi2));
 
     // Gravitation
-    static double gx = g(0);
-//    static double gy = g(1);
+    double gx = g(0);
+//    double gy = g(1);
 cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
 
     // die Komponenten
     // Alb. nach q
-    static SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);
+    SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);
     // Alb. nach qp
-    static SqrMat dhLqp(8,fmatvec::INIT,0.0), dhLqpJp(8,fmatvec::INIT,0.0);
+    SqrMat dhLqp(8,fmatvec::INIT,0.0), dhLqpJp(8,fmatvec::INIT,0.0);
 
     // Aus der Herleitungsroutine
 
@@ -1271,7 +1271,7 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
   Vec FiniteElement1s21RCM::ElementData(Vec qElement, Vec qpElement)
   {
     // Rueckgabedaten
-    static Vec Data(8,fmatvec::INIT,0.0);
+    Vec Data(8);
     // 0:  eps
     // 1:  epsp
     // 2:  xS
@@ -1281,21 +1281,21 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
     // 6:  delta_phi      = bL  + bR
     // 7:  delta_phip     = bLp + bRp
 
-    static Vec qLokal(8,fmatvec::INIT,0.0), qpLokal(8,fmatvec::INIT,0.0);
-    static SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp(8,fmatvec::INIT,0.0);
+    Vec qLokal(8), qpLokal(8);
+    SqrMat Jeg(8), Jegp(8);
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    static double &xS     = qLokal(0);      static double &yS     = qLokal(1);
-    //    static double &phiS   = qLokal(2);  unused
-    static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    double &xS     = qLokal(0);      double &yS     = qLokal(1);
+    //    double &phiS   = qLokal(2);  unused
+    double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
     //
-    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-    //    static double &phiSp  = qpLokal(2); unused
-    static double &epsp  = qpLokal(3);
-    static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-    static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
+    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+    //    double &phiSp  = qpLokal(2); unused
+    double &epsp  = qpLokal(3);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
 
 
     //lokale Koordinate-----------------------------------------------------------
@@ -1319,25 +1319,25 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
 
   //Energien
   double FiniteElement1s21RCM::computeT(Vec qElement, Vec qpElement) {
-    static Vec    qLokal(8,fmatvec::NONINIT), qpLokal(8,fmatvec::NONINIT);
+    Vec    qLokal(8), qpLokal(8);
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    //    static double &xS     = qLokal(0);    // unused  
-    //    static double &yS     = qLokal(1);
-    static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    //    double &xS     = qLokal(0);    // unused  
+    //    double &yS     = qLokal(1);
+    double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
     //
-    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
-    static double &phiSp  = qpLokal(2);     static double &epsp  = qpLokal(3);
-    static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
-    static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
+    double &xSp    = qpLokal(0);     double &ySp   = qpLokal(1);
+    double &phiSp  = qpLokal(2);     double &epsp  = qpLokal(3);
+    double &aLp    = qpLokal(4);     double &bLp   = qpLokal(5);
+    double &aRp    = qpLokal(6);     double &bRp   = qpLokal(7);
 
     //lokale Koordinate-----------------------------------------------------------
     BuildqLokal(qElement,qLokal);
 
     //JacobiMatrizen--------------------------------------------------------------
-    static SqrMat Jeg   (8,fmatvec::INIT,0.0), Jegp   (8,fmatvec::INIT,0.0);
+    SqrMat Jeg(8), Jegp(8);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
     // Lokale Geschwindigkeit-----------------------------------------------------
@@ -1347,18 +1347,18 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
   }
 
   double FiniteElement1s21RCM::computeV(Vec qElement) {
-    static Vec    qLokal(8,fmatvec::NONINIT);
+    Vec    qLokal(8);
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    static double &xS     = qLokal(0);    // unused  
-    static double &yS     = qLokal(1);
-    static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
+    double &xS     = qLokal(0);    // unused  
+    double &yS     = qLokal(1);
+    double &phiS   = qLokal(2);      double &eps   = qLokal(3);
+    double &aL     = qLokal(4);      double &bL    = qLokal(5);
+    double &aR     = qLokal(6);      double &bR    = qLokal(7);
 
     // Gravitation
-    static double gx = g(0);
-    static double gy = g(1);
+    double gx = g(0);
+    double gy = g(1);
 
     //lokale Koordinate-----------------------------------------------------------
     BuildqLokal(qElement,qLokal);

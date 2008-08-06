@@ -95,7 +95,7 @@ namespace MBSim {
     gd(0)  = trans(cpData[ipoint].Wn)*WvD;
 
     if(cpData[0].Wt.cols()) {
-      static Index iT(1,cpData[0].Wt.cols());
+      static const Index iT(1,cpData[0].Wt.cols());
       cpData[icylinder].Wt.col(0) = -(cylinder->computeWt(cpData[icylinder])).col(0);
       cpData[icylinder].Wt.col(1) = crossProduct(cpData[icylinder].Wn,cpData[icylinder].Wt.col(0));
       cpData[ipoint].Wt           = - cpData[icylinder].Wt;

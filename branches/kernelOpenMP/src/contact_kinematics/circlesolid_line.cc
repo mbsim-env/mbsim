@@ -61,7 +61,7 @@ namespace MBSim {
     if(cpData[iline].Wt.cols()) {
       cpData[iline].Wt = crossProduct(line->computeWb(),cpData[iline].Wn);
       cpData[icircle].Wt = -cpData[iline].Wt;
-      static Index iT(1,cpData[iline].Wt.cols());
+      static const Index iT(1,cpData[iline].Wt.cols());
       gd(iT) = trans(cpData[iline].Wt)*WvD;
     }
   }

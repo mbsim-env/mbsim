@@ -61,7 +61,7 @@ namespace MBSim {
   }
  
   void BodyRigidRelOnFlex::updateM(double t) {
-    static Index AllCartesian(0,5);
+    static const Index AllCartesian(0,5);
     
     SymMat MTree  = tree->getM();
 
@@ -84,8 +84,8 @@ namespace MBSim {
     l(0,2) = trans(AWK)*WF - m*crossProduct(KomegaK,crossProduct(KomegaK,KrKS));
     l(3,5) = trans(AWK)*WM + crossProduct(I*KomegaK,KomegaK);
 
-    static Vec f(6,NONINIT);
-    static Index AllCartesian(0,5);
+    Vec f(6,NONINIT);
+    static const Index AllCartesian(0,5);
 
 // ---  KomegaK  = trans(AWK)*precessor->computeWomega(cp) + JR*u(iR);
 // ---           = trans(AWK)*precessor->computeJacobianMatrix(iR)*precessor->u + JR*u(iR);
@@ -140,9 +140,9 @@ namespace MBSim {
   }
 
   void BodyRigidRelOnFlex::updateWj(double t) {
-    static Index IF(0,2);
-    static Index IM(3,5);
-    static Index AllCartesian(0,5);
+    static const Index IF(0,2);
+    static const Index IM(3,5);
+    static const Index AllCartesian(0,5);
 
     vector<LinkPortData>::iterator it1=linkSetValuedPortData.begin(); 
     vector<LinkContourData>::iterator it2=linkSetValuedContourData.begin(); 

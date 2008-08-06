@@ -25,30 +25,18 @@
 
 namespace MBSim {
 
-  double macheps() {
+  double calcmacheps() {
+    double eps = 0.;
 
-    static double eps = 0.;
-    static bool alreadyCalculated = false;
+    for (eps = 1.; (1.0 + eps)>1.0; )
+      eps *= 0.5;
+    eps *= 2.0;
 
-    if (!alreadyCalculated) {
-      for (eps = 1.; (1.0 + eps)>1.0; )
-	eps *= 0.5;
-      eps *= 2.0;
-      alreadyCalculated = true;
-    }
     return eps;
   }
 
-  double epsroot() { 
+  const double macheps=calcmacheps();
 
-    static double epsroot = 0.;
-    static bool alreadyCalculated = false;
-
-    if (!alreadyCalculated) {
-      epsroot = sqrt(macheps());
-      alreadyCalculated = true;
-    }
-    return epsroot;
-  }
+  const double epsroot=sqrt(macheps);
 
 }

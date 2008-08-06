@@ -102,7 +102,7 @@ namespace MBSim {
 			      cpData[ipoint].Wt.col(0) = computeTangential(cpData[ipoint].Wn);
 			      cpData[ipoint].Wt.col(1) = crossProduct(cpData[ipoint].Wn,cpData[ipoint].Wt.col(0));
 			      cpData[ifrustum].Wt = -cpData[ipoint].Wt;
-			      static Index iT(1,cpData[ipoint].Wt.cols());
+			      static const Index iT(1,cpData[ipoint].Wt.cols());
 			      gd(iT) = trans(cpData[ipoint].Wt)*WvD;
 		    }
 	  }

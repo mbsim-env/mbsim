@@ -98,7 +98,7 @@ namespace MBSim {
     if(cpData[0].Wt.cols()) {
       cpData[idinterpol].Wt = cinterpol->computeWt(cpData[idinterpol]);
       cpData[ipoint].Wt     = -cpData[idinterpol].Wt;
-      static Index iT(1,cpData[0].Wt.cols());
+      static const Index iT(1,cpData[0].Wt.cols());
       gd(iT) = trans(cpData[idinterpol].Wt)*WvD;
     }
 

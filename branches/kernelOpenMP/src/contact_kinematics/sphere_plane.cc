@@ -66,7 +66,7 @@ namespace MBSim {
       if(cpData[iplane].Wt.cols()==2) 
 	cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
       cpData[isphere].Wt = -cpData[iplane].Wt; 
-      static Index iT(1,cpData[iplane].Wt.cols());
+      static const Index iT(1,cpData[iplane].Wt.cols());
       gd(iT) = trans(cpData[iplane].Wt)*WvD;
     }
   }

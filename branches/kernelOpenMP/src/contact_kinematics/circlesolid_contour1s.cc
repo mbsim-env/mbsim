@@ -89,7 +89,7 @@ namespace MBSim {
     Vec WvD = WvC[icontour] - WvC[icircle];
 
     if(cpData[0].Wt.cols()) {
-      static Index iT(1,cpData[0].Wt.cols());
+      static const Index iT(1,cpData[0].Wt.cols());
       cpData[icontour].Wt = (contour1d->computeWt(cpData[icontour].alpha(0)))(0,0,2,iT.end()-1);
       cpData[icircle].Wt = -cpData[icontour].Wt;
       gd(iT) = trans(cpData[icontour].Wt)*WvD;

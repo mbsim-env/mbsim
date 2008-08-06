@@ -376,7 +376,7 @@ namespace MBSim {
   }
 
   void Object::updateJh(double t) {
-    static const double eps = epsroot();
+    static const double eps = epsroot;
     Vec hOld = geth().copy();
     
     int pos = getqInd(); // q-part of h
