@@ -39,7 +39,6 @@ class Object;
     friend class Object;
 
     protected:
-    vector<Object*> object;
 
     //double computePotentialEnergyBranch(Object* body);
 
@@ -53,7 +52,6 @@ class Object;
     void updateh(double t);
     void updateM(double t);
 
-    void calcSize();
     void calchSize();
 
     //void setMbs(MultiBodySystem* mbs_);
