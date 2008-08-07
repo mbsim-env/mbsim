@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -30,7 +30,7 @@ using namespace std;
 
 namespace MBSim {
   class BodyRigidRel;
-
+  class Object;
   /*! \brief class for tree-structured systems with only rigid bodies
    *
    * */
@@ -49,8 +49,8 @@ namespace MBSim {
     TreeRigid(const string &projectName);
     ~TreeRigid();
 
-	Body* getRoot();
-	void plotParameters();
+    Body* getRoot();
+    void plotParameters();
 
     void updateKinematics(double t);
     void updateT(double t);
@@ -63,14 +63,14 @@ namespace MBSim {
     void updatedq(double t, double dt);
     void updatedu(double t, double dt);
 
- //   const Vec& getl() const {return l;}
- //   Vec& getl() {return l;}
- //   const Mat& getJ() const {return J;}
- //   Mat& getJ() {return J;}
- //   const SymMat& getMh() const {return Mh;}
- //   SymMat& getMh() {return Mh;}
- //   const Vec& getInvMh() const {return invMh;}
- //   Vec& getInvMh() {return invMh;}
+    //   const Vec& getl() const {return l;}
+    //   Vec& getl() {return l;}
+    //   const Mat& getJ() const {return J;}
+    //   Mat& getJ() {return J;}
+    //   const SymMat& getMh() const {return Mh;}
+    //   SymMat& getMh() {return Mh;}
+    //   const Vec& getInvMh() const {return invMh;}
+    //   Vec& getInvMh() {return invMh;}
 
     void calcSize();
 
@@ -92,8 +92,7 @@ namespace MBSim {
 
     double computePotentialEnergy();
 
-    Port* getPort(const string &pName);
-    Contour* getContour(const string &cName);
+    virtual Object* getObject(const string &name);
   };
 
 }
