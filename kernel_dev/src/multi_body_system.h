@@ -319,9 +319,9 @@ namespace MBSim {
 
     void updateJh(double t);
 
-    int getlaIndTotal() const {return 0;}
-    const Vec& getlaTotal() const {return la;}
-    Vec& getlaTotal() {return la;}
+    int getlaIndMBS() const {return 0;}
+    const Vec& getlaMBS() const {return la;}
+    Vec& getlaMBS() {return la;}
   };
 
 }

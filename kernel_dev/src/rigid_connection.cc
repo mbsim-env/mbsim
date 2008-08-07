@@ -48,12 +48,10 @@ namespace MBSim {
   }
 
   void RigidConnection::updateKinetics(double dt) {
-    if(KOSYID) {
-      fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-      fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
-      fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
-      fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
-    }
+    fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
+    fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
+    fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
+    fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
   }
 
   void RigidConnection::updateW(double t) {
@@ -75,11 +73,13 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
-
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
+  
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*parent->getla()(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) -= rFactor(i)*gdn(i);
     }
@@ -89,11 +89,13 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
-
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
+  
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*parent->getla()(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = -gdn(i)/a[ia[laInd+i]];
     }
@@ -103,7 +105,8 @@ namespace MBSim {
     if(active) {
       double *a = parent->getGs()();
       int *ia = parent->getGs().Ip();
-//      int *ja = parent->getGs().Jp(); // unused
+      int laInd = getlaIndMBS();
+
       for(int i=0; i<rFactorSize; i++) {
 	double sum = 0;
 	for(int j=ia[laInd+i]+1; j<ia[laInd+i+1]; j++)
@@ -123,17 +126,20 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
-
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
+  
     for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*parent->getla()(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       res(i) = gdn(i);
     }
   }
 
   void RigidConnection::residualProjJac(double dt) {
+    int laInd = getlaIndMBS();
     for(int i=laInd; i<laInd+forceDir.cols() + momentDir.cols(); i++) 
       for(int j=0; j<parent->getG().size(); j++)  
 	parent->getJprox()(i,j) = parent->getG()(i,j);
@@ -144,10 +150,13 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
+
     for(int i=0; i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*parent->getla()(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       if(fabs(gdn(i)) <= gdTol)
 	;

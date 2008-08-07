@@ -131,6 +131,7 @@ namespace MBSim {
 
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};
+      int getlaIndMBS() const;
 
       int getxSize() const {return xSize;}
       int getsvSize() const {return svSize;}

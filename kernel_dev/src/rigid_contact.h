@@ -50,8 +50,6 @@ namespace MBSim {
 
       void init();
 
-      int getlaIndTotal() const;
-
       /*! for time integration with projection methods for constraint and contact treatment */
       void projectJ(double dt);
       /*! for time integration with projection methods for constraint and contact treatment */

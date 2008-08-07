@@ -165,18 +165,18 @@ namespace MBSim {
 #endif
 
     if(plotLevel>0) {
-      plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
-      plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
-      plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
-      plotfile <<"# "<< plotNr++ << ": alpha" << endl;
-      plotfile <<"# "<< plotNr++ << ": beta" << endl;
-      plotfile <<"# "<< plotNr++ << ": gamma" <<endl;
+    //  plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
+    //  plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
+    //  plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
+    //  plotfile <<"# "<< plotNr++ << ": alpha" << endl;
+    //  plotfile <<"# "<< plotNr++ << ": beta" << endl;
+    //  plotfile <<"# "<< plotNr++ << ": gamma" <<endl;
 
-      if(plotLevel>2) {
-	plotfile <<"# "<< plotNr++ << ": T" << endl;
-	plotfile <<"# "<< plotNr++ << ": V" << endl;
-	plotfile <<"# "<< plotNr++ << ": E" << endl;
-      }
+    //  if(plotLevel>2) {
+    //    plotfile <<"# "<< plotNr++ << ": T" << endl;
+    //    plotfile <<"# "<< plotNr++ << ": V" << endl;
+    //    plotfile <<"# "<< plotNr++ << ": E" << endl;
+    //  }
 
     }
 
@@ -260,42 +260,40 @@ namespace MBSim {
 
  void RigidBody::plot(double t, double dt) {
    Body::plot(t,dt);
-   //Vec WrOS = computeWrOS();
-   SqrMat AWK = cosyAMVis->getAWP();
-   Vec WrOS = cosyAMVis->getWrOP();
 #ifdef HAVE_AMVIS
     if(plotLevel>0 || bodyAMVis)
 #else
       if(plotLevel>0)
 #endif
       {
-	double alpha;
-	double beta=asin(AWK(0,2));
-	double gamma;
-	double nenner=cos(beta);
-	if (nenner>1e-10) {
-	  alpha=atan2(-AWK(1,2),AWK(2,2));
-	  gamma=atan2(-AWK(0,1),AWK(0,0));
-	} else {
-	  alpha=0;
-	  gamma=atan2(AWK(1,0),AWK(1,1));
-	}
-
 	if(plotLevel>0) {
-	  plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
-	  plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
+	 // plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
+	 // plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
 
-	  if(plotLevel>2) {
-	    double Ttemp = computeKineticEnergy();
-	    double Vtemp = computePotentialEnergy();
-	    plotfile <<" "<<  Ttemp;
-	    plotfile <<" "<<  Vtemp;
-	    plotfile <<" "<< Ttemp+Vtemp;
-	  }
+	 // if(plotLevel>2) {
+	 //   double Ttemp = computeKineticEnergy();
+	 //   double Vtemp = computePotentialEnergy();
+	 //   plotfile <<" "<<  Ttemp;
+	 //   plotfile <<" "<<  Vtemp;
+	 //   plotfile <<" "<< Ttemp+Vtemp;
+	 // }
 	}
 
 #ifdef HAVE_AMVIS
 	if(bodyAMVis) {
+	  SqrMat AWK = cosyAMVis->getAWP();
+	  Vec WrOS = cosyAMVis->getWrOP();
+	  double alpha;
+	  double beta=asin(AWK(0,2));
+	  double gamma;
+	  double nenner=cos(beta);
+	  if (nenner>1e-10) {
+	    alpha=atan2(-AWK(1,2),AWK(2,2));
+	    gamma=atan2(-AWK(0,1),AWK(0,0));
+	  } else {
+	    alpha=0;
+	    gamma=atan2(AWK(1,0),AWK(1,1));
+	  }
 	  bodyAMVis->setTime(t);
 	  bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
 	  bodyAMVis->setRotation(alpha,beta,gamma);
