@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkCoordinateSystem(name,setValued), KOSYID(1), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
+  Connection::Connection(const string &name, bool setValued) : LinkCoordinateSystem(name,setValued), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
   }
 
   Connection::~Connection() { 
@@ -66,22 +66,14 @@ namespace MBSim {
     }
   }
 
-  void Connection::setKOSY(int id) {
-    KOSYID = id;
-    assert(KOSYID >= 0);
-    assert(KOSYID <= 2);
-  }
-
   void Connection::connect(CoordinateSystem *port0, CoordinateSystem* port1) {
     LinkCoordinateSystem::connect(port0,0);
     LinkCoordinateSystem::connect(port1,1);
   }
 
   void Connection::updateStage1(double t) {
-    if(KOSYID) {
-      Wf = port[0]->getAWP()*forceDir;
-      Wm = port[0]->getAWP()*momentDir;
-    }
+    Wf = port[0]->getAWP()*forceDir;
+    Wm = port[0]->getAWP()*momentDir;
     WrP0P1 = port[1]->getWrOP()-port[0]->getWrOP();
     g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
@@ -90,10 +82,7 @@ namespace MBSim {
   void Connection::updateStage2(double t) {
     WvP0P1 = port[1]->getWvP()-port[0]->getWvP();
     WomP0P1 = port[1]->getWomegaP()-port[0]->getWomegaP();
-    if(KOSYID) 
-      gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
-    else
-      gd(IT) = trans(Wf)*(WvP0P1);
+    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
     gd(IR) = trans(Wm)*WomP0P1;
     updateKinetics(t);
   }
@@ -138,7 +127,6 @@ namespace MBSim {
     }
 #endif
   }
-
 
   void Connection::plot(double t,double dt) {
     LinkCoordinateSystem::plot(t,dt);

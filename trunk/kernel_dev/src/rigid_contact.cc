@@ -87,14 +87,12 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
-    int laInd = getlaIndTotal();
-    Vec &laT = parent->getlaTotal();
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
+
     gdn(0) = s(0);
-    //cout << "projectGS" << endl;
-    //cout << fullName << endl;
-    //cout << parent->getlaTotal() << endl;
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*laT(ja[j]);
+      gdn(0) += a[j]*laMBS(ja[j]);
 
     if(fabs(gd(0)) > gd_grenz)
       gdn(0) += epsilonN*gd(0);
@@ -104,7 +102,7 @@ namespace MBSim {
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*laT(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
     }
     if(nFric==1) 
       la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
@@ -118,9 +116,11 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
     gdn(0) = s(0);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*parent->getla()(ja[j]);
+      gdn(0) += a[j]*laMBS(ja[j]);
 
     if(fabs(gd(0)) > gd_grenz)
       gdn(0) += epsilonN*gd(0);
@@ -137,7 +137,7 @@ namespace MBSim {
     if(nFric) {
       gdn(1) = s(1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	gdn(1) += a[j]*parent->getla()(ja[j]);
+	gdn(1) += a[j]*laMBS(ja[j]);
 
       double laNmue = fabs(la(0))*mue;
       double sdG = -gdn(1)/a[ia[laInd+1]];
@@ -155,10 +155,12 @@ namespace MBSim {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*parent->getla()(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
     if(fabs(gd(0)) > gd_grenz)
@@ -182,7 +184,8 @@ namespace MBSim {
 
     SqrMat Jprox = parent->getJprox();
     SymMat G = parent->getG();
-
+    int laInd = getlaIndMBS();
+  
     double rfac0 = rFactor(0);
     RowVec jp1=Jprox.row(laInd);
     if(argN < 0.) {
@@ -238,21 +241,15 @@ namespace MBSim {
 
   void RigidContact::checkForTermination(double dt) {
 
-    //cout << "checkForTermination" << endl;
-    //cout << fullName << endl;
-//    cout << getlaInd() << endl;
-//    cout << laInd << endl;
-//    cout << parent->getlaInd() << endl;
-//    cout << parent->getName() << endl;
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
     int *ja = parent->getGs().Jp();
-    int laInd = getlaIndTotal();
-    Vec &laT = parent->getlaTotal();
+    int laInd = getlaIndMBS();
+    Vec &laMBS = parent->getlaMBS();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
-	gdn(i) += a[j]*laT(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
     if(fabs(gd(0)) > gd_grenz)
@@ -292,8 +289,9 @@ namespace MBSim {
   void RigidContact::updaterFactors() {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
-    //    int *ja = parent->getGs().Jp(); // unused
     double sumN = 0;
+    int laInd = getlaIndMBS();
+
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       sumN += fabs(a[j]);
     double aN = a[ia[laInd]];
@@ -382,8 +380,5 @@ namespace MBSim {
     return s;
   }
 
-  int RigidContact::getlaIndTotal() const {
-    return parent->getlaIndTotal() + laInd;
-  }
 }
 

@@ -183,8 +183,8 @@ namespace MBSim {
 
       virtual const SymMat& getG() const {return parent->getG();}
       virtual SymMat& getG() {return parent->getG();}
-      virtual const Vec& getlaTotal() const {return parent->getlaTotal();}
-      virtual Vec& getlaTotal() {return parent->getlaTotal();}
+      virtual const Vec& getlaMBS() const {return parent->getlaMBS();}
+      virtual Vec& getlaMBS() {return parent->getlaMBS();}
       virtual const Matrix<Sparse, double>& getGs() const {return parent->getGs();}
       virtual Matrix<Sparse, double>& getGs() {return parent->getGs();}
       virtual const SqrMat& getJprox() const {return parent->getJprox();}
@@ -199,7 +199,7 @@ namespace MBSim {
       virtual void checkForTermination(double dt);
       virtual void updaterFactors();
 
-      virtual int getlaIndTotal() const {return parent->getlaIndTotal() + laInd;}
+      virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
 
   };
 }

@@ -221,6 +221,10 @@ namespace MBSim {
     r[1] += W[1]*la;
   }
 
+  int Link::getlaIndMBS() const {
+    return parent->getlaIndMBS() + laInd;
+  }
+
 #ifdef HAVE_AMVIS
   void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
     assert(ID >= 0);

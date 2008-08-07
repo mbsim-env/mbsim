@@ -42,7 +42,6 @@ namespace MBSim {
       Index IT, IR;
       Mat forceDir, momentDir;
       Mat Wf, Wm;
-      int KOSYID;
       Vec WrP0P1, WvP0P1, WomP0P1;
 #ifdef HAVE_AMVIS
       AMVis::CoilSpring *coilspringAMVis;
@@ -58,7 +57,6 @@ namespace MBSim {
       void calcSize();
       void init();
 
-      void setKOSY(int);
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
       void updateStage1(double t);
