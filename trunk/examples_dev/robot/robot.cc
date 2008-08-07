@@ -6,10 +6,24 @@
 #include "cuboid.h"
 #include "cylinder.h"
 #include "objobject.h"
-//#include "transfersys.h"
+#include "transfersys.h"
 #include "tree.h"
 
 using namespace AMVis;
+
+class Pos : public UserFunction {
+  private:
+    double T1, T2;
+    BodyRigid *body;
+  public:
+    Pos(BodyRigid *body_) : T1(2), T2(4), body(body_) {}
+    
+    Vec operator()(double t) {
+      Vec pos(1);
+      pos(0) = body->getq()(0);
+      return pos;
+    };
+};
 
 Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
 
@@ -69,7 +83,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   arm->addCoordinateSystem("R",-KrKS,A);
   arm->setParentCoordinateSystem(basis->getCoordinateSystem("P"));
   arm->setReferenceCoordinateSystem(arm->getCoordinateSystem("R"));
-  arm->setq0(Vec("[0.3]"));
+  //arm->setq0(Vec("[0.3]"));
 
   arm->setMass(mA);
   Theta(0,0) = mA*rA*rA;
@@ -86,12 +100,63 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(0,0) = mS*rS*rS;
   Theta(1,1) = 1./2.*mS*rS*rS;
   Theta(2,2) = mS*rS*rS;
+  PrPK0(1) = lA;
+  arm->addCoordinateSystem("Q",PrPK0,SqrMat(3,EYE),arm->getCoordinateSystem("R"));
   spitze->setMomentOfInertia(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
-  spitze->setParentCoordinateSystem(arm->getCoordinateSystem("COG"));
+  spitze->setParentCoordinateSystem(arm->getCoordinateSystem("Q"));
   spitze->setReferenceCoordinateSystem(spitze->getCoordinateSystem("COG"));
-  spitze->setq0(Vec(1,INIT,lA/2));
-  
+  //spitze->setq0(Vec(1,INIT,lA/2));
+
+    // --------------------------- Setup Control ----------------------------
+
+  FuncTable *basisSoll=new FuncTable;
+  basisSoll->setFile("Soll_Basis.tab");   
+
+  TransferSys *tf = new TransferSys("ReglerBasis");
+  addEDI(tf);
+  tf->setInSignalnWeight(new Pos(basis),-1);
+  tf->setInSignalnWeight(basisSoll,1);
+  tf->setPID(4000,0,200);
+
+  Load *motorBasis = new Load("MotorBasis");
+  addLink(motorBasis);
+  motorBasis->setUserFunction(tf->SigOut());
+  motorBasis->setMomentDirection("[0;1;0]");
+  motorBasis->connect(basis->getCoordinateSystem("COG"));
+
+  FuncTable *spitzeSoll=new FuncTable;
+  spitzeSoll->setFile("Soll_Spitze.tab");   
+
+  tf = new TransferSys("ReglerSpitze");
+  addEDI(tf);
+  tf->setInSignalnWeight(new Pos(spitze),-1);
+  tf->setInSignalnWeight(spitzeSoll,1);
+  tf->setPID(40000,1000,200);
+
+  Load *motorSpitze = new Load("MotorSpitze");
+  addLink(motorSpitze);
+  motorSpitze->setUserFunction(tf->SigOut());
+  motorSpitze->setForceDirection("[0;1;0]");
+  motorSpitze->connect(spitze->getCoordinateSystem("COG"));
+  motorSpitze->setKOSY(1);
+
+  FuncTable *armSoll=new FuncTable;
+  armSoll->setFile("Soll_Arm.tab");   
+
+  tf = new TransferSys("ReglerArm");
+  addEDI(tf);
+  tf->setInSignalnWeight(new Pos(arm),-1);
+  tf->setInSignalnWeight(armSoll,1);
+  tf->setPID(4000,0,200);
+
+  Load *motorArm = new Load("MotorArm");
+  addLink(motorArm);
+  motorArm->setUserFunction(tf->SigOut());
+  motorArm->setMomentDirection("[0;0;1]");
+  motorArm->connect(arm->getCoordinateSystem("COG"));
+  motorArm->setKOSY(1);
+
   // --------------------------- Setup Visualisation ----------------------------
   ObjObject *obj = new ObjObject(basis->getName(),1,false);
   obj->setObjFilename("objects/basis.obj");
