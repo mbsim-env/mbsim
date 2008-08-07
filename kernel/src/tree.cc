@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -29,8 +29,8 @@ namespace MBSim {
   }
 
   Tree::~Tree() { 
-  port.clear();			//sonst: object Destructor loescht Ports, zweiter delete Aufruf (z.B. ~BodyRigidRel) liefert segmentation fault
-  contour.clear();
+    port.clear();			//sonst: object Destructor loescht Ports, zweiter delete Aufruf (z.B. ~BodyRigidRel) liefert segmentation fault
+    contour.clear();
   }
 
   void Tree::addPort(Port * port_)  {
@@ -42,8 +42,8 @@ namespace MBSim {
   }
 
   void Tree::plotParameterFiles() {
-	Object::plotParameterFiles();
-	getRoot()->plotParameterFiles();
+    Object::plotParameterFiles();
+    getRoot()->plotParameterFiles();
   }
 
 }

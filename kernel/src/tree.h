@@ -90,9 +90,6 @@ namespace MBSim {
     void setxSize(int xSize_) { xSize = xSize_; }
     void setlSize(int lSize_) { lSize = lSize_; }
 
-    virtual Port* getPort(const string &pName) = 0;
-    virtual Contour* getContour(const string &cName) = 0;
-
     void addPort(Port * port_);	
     void addContour(Contour* contour_);
     //  tree::vector<Port*> port:    list of all ports of all single Bodies of the whole tree are temporary stored (the tree itself has no port)
