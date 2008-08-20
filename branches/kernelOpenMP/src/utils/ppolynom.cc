@@ -38,7 +38,7 @@ namespace MBSim {
     	calculatePLinear(x,f);
     }
     else {
-      cout << "No valid method to calculate pp-form" << endl;
+      cout << "ERROR (PPolynom::setXF): No valid method to calculate pp-form" << endl;
       exit(-1);
     }
     
@@ -50,11 +50,11 @@ namespace MBSim {
   Vec PPolynom::operator()(double x)
   {
     if(x>breaks(nPoly)) {
-      cout << "PPEVAL: x out of range! x= " << x << ", upper bound= " << breaks(nPoly) << endl;
+      cout << "ERROR (PPolynom::operator()): x out of range! x= " << x << ", upper bound= " << breaks(nPoly) << endl;
       throw 54;
     }   
     if(x<breaks(0)) {
-      cout << "PPEVAL: x out of range! x= " << x << ", lower bound= " << breaks(0) << endl;
+      cout << "ERROR (PPolynom::operator()): x out of range! x= " << x << ", lower bound= " << breaks(0) << endl;
       throw 54;
     }   
     if(!(x>breaks(index) && x<breaks(index+1))) { // saved index still OK? otherwise search
@@ -73,11 +73,11 @@ namespace MBSim {
   Vec PPolynom::diff1(double x)
   {
     if(x>breaks(nPoly)) {
-      cout << "PPEVAL_S: x out of range! x= "  << x << ", upper bound= " << breaks(nPoly) << endl;
+      cout << "ERROR (PPolynom::diff1): x out of range! x= "  << x << ", upper bound= " << breaks(nPoly) << endl;
       throw 54;
     }  
     if(x<breaks(0)) {
-      cout << "PPEVAL_S: x out of range!   x= "  << x << " lower bound= " << breaks(0) << endl;
+      cout << "ERROR (PPolynom::diff1): x out of range!   x= "  << x << " lower bound= " << breaks(0) << endl;
       throw 54;
     }  
     if(!(x>breaks(index) && x<breaks(index+1))) { // saved index still OK? otherwise search
@@ -95,12 +95,12 @@ namespace MBSim {
 
   Vec PPolynom::diff2(double x) {
     if(x>breaks(nPoly)){
-      cout << "PPEVAL_SS: x out of range!   x= "  << x << " upper bound= " << breaks(nPoly) << endl;
+      cout << "ERROR (PPolynom::diff2): x out of range!   x= "  << x << " upper bound= " << breaks(nPoly) << endl;
       throw 54;
     }
     
     if(x<breaks(0)) {
-      cout << "PPEVAL_SS: x out of range!   x= "  << x << " lower bound= " << breaks(0) << endl;
+      cout << "ERROR (PPolynom::diff2): x out of range!   x= "  << x << " lower bound= " << breaks(0) << endl;
       throw 54;
     }
     
@@ -124,7 +124,7 @@ namespace MBSim {
     int i;
     int N = x.size();
     if(f(0)!=f(f.size()-1)) {
-      cout << "PPolynom::calculateSplinePeriodic: f(0)= " << f(0) << "!=" << f(f.size()-1) << " =f(end)" << endl;
+      cout << "ERROR (PPolynom::calculateSplinePeriodic): f(0)= " << f(0) << "!=" << f(f.size()-1) << " =f(end)" << endl;
       throw 50;
     }
     SqrMat C(N-1,N-1,INIT,0.0);

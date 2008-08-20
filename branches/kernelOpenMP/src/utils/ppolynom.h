@@ -128,7 +128,7 @@ namespace MBSim {
    * (c) 2008 Thorsten Schindler
    * Contact: schindler@amm.mw.tum.de
    * 
-   * VERSION 21.05.08
+   * VERSION 08.08.08
    */
   class MDPPolynom : public UserFunction {
     protected:
@@ -141,7 +141,7 @@ namespace MBSim {
       /*! Constructor */
       MDPPolynom() {}
       /*! Destructor */
-      virtual ~MDPPolynom() {}
+      virtual ~MDPPolynom() {for(int i=0;i<M;i++) delete components[i];}
       
       /*! setXF: Interpolation
        * @param xf matrix of rowwise ordered x and corresponding f values arranged in a vector
