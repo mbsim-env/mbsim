@@ -28,7 +28,7 @@ namespace MBSim {
   string Element::dirName = "./";
 
 
-  Element::Element(const string &name_) : name(name_), fullName(name_), plotNr(1), plotLevel(1), plotPrec(6) {
+  Element::Element(const string &name_) : name(name_), fullName(name_), plotNr(1), plotLevel(1), plotPrec(6), INFO(true), DEBUG(false), warnLevel(0) {
   }
 
   Element::~Element() {

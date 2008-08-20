@@ -37,9 +37,9 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
+  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
 
   MultiBodySystem::~MultiBodySystem() {
     vector<Object*>::iterator i;
@@ -79,7 +79,7 @@ namespace MBSim {
       if(pO) return pO;
     }
     if(check){
-      if(!(i<objects.size())) cout << "Error: The MultiBodySystem " << this->name << " comprises no object " << name << "!" << endl; 
+      if(!(i<objects.size())) cout << "ERROR (MultiBodySystem:getObject): The MultiBodySystem " << this->name << " comprises no object " << name << "!" << endl; 
       assert(i<objects.size());
     }
     return NULL;
@@ -94,7 +94,7 @@ namespace MBSim {
       if(links[i]->getFullName() == name) return links[i];
     }
     if(check){
-      if(!(i<links.size())) cout << "Error: The MultiBodySystem " << this->name << " comprises no link " << name << "!" << endl; 
+      if(!(i<links.size())) cout << "ERROR (MultiBodySystem:getLink): The MultiBodySystem " << this->name << " comprises no link " << name << "!" << endl; 
       assert(i<links.size());
     }
     return NULL;
@@ -106,7 +106,7 @@ namespace MBSim {
       if(port[i]->getName() == name || port[i]->getFullName()== name) return port[i];
     }
     if(check){
-      if(!(i<port.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no port " << name << "!" << endl; 
+      if(!(i<port.size())) cout << "ERROR (MultiBodySystem:getPort): The MultiBodySystem " << this->name <<" comprises no port " << name << "!" << endl; 
       assert(i<port.size());
     }
     return NULL;
@@ -118,7 +118,7 @@ namespace MBSim {
       if(contour[i]->getName() == name || contour[i]->getFullName()== name) return contour[i];
     }
     if(check){
-      if(!(i<contour.size())) cout << "Error: The MultiBodySystem " << this->name << " comprises no contour " << name << "!" << endl; 
+      if(!(i<contour.size())) cout << "ERROR (MultiBodySystem:getContour): The MultiBodySystem " << this->name << " comprises no contour " << name << "!" << endl; 
       assert(i<contour.size());
     }
     return NULL;
@@ -134,7 +134,7 @@ namespace MBSim {
       if(EDI[i]->getFullName() == name) return EDI[i];
     }
     if(check) {
-      if(!(i<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
+      if(!(i<EDI.size())) cout << "ERROR (MultiBodySystem:getEDI): The MultiBodySystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
       assert(i<EDI.size());
     }
     return NULL; 
@@ -146,7 +146,7 @@ namespace MBSim {
       if(DIBs[i]->getName() == name_ || DIBs[i]->getName()== fullName+"."+name_ || DIBs[i]->getName() == name_+".SigOut" || DIBs[i]->getName()== fullName+"."+name_+".SigOut") return DIBs[i];
     }
     if(check){
-      if(!(i<DIBs.size())) cout << "Error: The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
+      if(!(i<DIBs.size())) cout << "ERROR (MultiBodySystem:getDataInterfaceBase): The MultiBodySystem " << name <<" comprises no DIB " << name_ << "!" << endl; 
       assert(i<DIBs.size());
     } 
     return NULL;
@@ -183,7 +183,7 @@ namespace MBSim {
   void MultiBodySystem::addObject(Object *object) 
   {
     if(getObject(object->getFullName(),false)) {
-      cout << "Error: The MultiBodySystem " << name << " can only comprise one Object by the name " <<  object->getFullName() << "!" << endl;
+      cout << "ERROR (MultiBodySystem:addObject): " << name << " can only comprise one Object by the name " <<  object->getFullName() << "!" << endl;
       assert(getObject(object->getFullName(),false) == NULL); 
     }
     objects.push_back(object);
@@ -204,7 +204,7 @@ namespace MBSim {
 
   void MultiBodySystem::addLink(Link *link) {
     if(getLink(link->getFullName(),false)) {
-      cout << "Error: The MultiBodySystem " << name << " can only comprise one Link by the name " <<  link->getFullName() << "!" << endl;
+      cout << "ERROR (MultiBodySystem:addLink): " << name << " can only comprise one Link by the name " <<  link->getFullName() << "!" << endl;
       assert(getLink(link->getFullName(),false) == NULL);
     }
     links.push_back(link);
@@ -236,7 +236,7 @@ namespace MBSim {
 
   void MultiBodySystem::addEDI(ExtraDynamicInterface *edi_) {
     if(getEDI(edi_->getFullName(),false)) {
-      cout << "Error: The MultiBodySystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getFullName() << "!" << endl;
+      cout << "ERROR (MultiBodySystem:addEDI): " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getFullName() << "!" << endl;
       assert(getEDI(edi_->getFullName(),false) == NULL);
     }
     EDI.push_back(edi_);
@@ -246,7 +246,7 @@ namespace MBSim {
 
   void MultiBodySystem::addDataInterfaceBase(DataInterfaceBase* dib_){
     if(getDataInterfaceBase(dib_->getName(),false)) {
-      cout << "Error: The MultiBodySystem " << name << " can only comprise one DataInterfaceBase by the name " <<  dib_->getName() << "!" << endl;
+      cout << "ERROR (MultiBodySystem:addDataInterfaceBase): " << name << " can only comprise one DataInterfaceBase by the name " <<  dib_->getName() << "!" << endl;
       assert(getDataInterfaceBase(dib_->getName(),false) == NULL);
     }
     DIBs.push_back(dib_);
@@ -263,7 +263,7 @@ namespace MBSim {
       if(object_) addObject(object_);
       else if(link_) addLink(link_);
       else if(edi_) addEDI(edi_);
-      else{ cout << "Error: MultiBodySystem: addElement(): No such type of Element to add!" << endl; throw 50;}
+      else{ cout << "ERROR (MultiBodySystem:addElement): MultiBodySystem: addElement(): No such type of Element to add!" << endl; throw 50;}
     }
   }   
 
@@ -278,12 +278,12 @@ namespace MBSim {
 
   void MultiBodySystem::init() 
   {
-    cout << endl << "Initialising MultiBodySystem " << fullName << " ......" << endl;
+    if(INFO) cout << endl << "Initialising MultiBodySystem " << fullName << " ......" << endl;
     setDirectory();
 
-    cout << "  setting dimensions of ..." << endl;
+    if(INFO) cout << "  setting dimensions of ..." << endl;
     // Objects
-    if(objects.size()>0)  cout << "      Object parameters" << endl;
+    if(objects.size()>0 && INFO)  cout << "      Object parameters" << endl;
 
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) {
@@ -297,7 +297,7 @@ namespace MBSim {
     }
 
     // Links
-    if(links.size()>0) cout << "      Link parameters" << endl;
+    if(links.size()>0 && INFO) cout << "      Link parameters" << endl;
 
     for(vector<Link*>::iterator il = links.begin(); il != links.end(); ++il) {
       (*il)->calcSize();
@@ -318,7 +318,7 @@ namespace MBSim {
     }
 
     // EDIs
-    if(EDI.size()>0) cout << "      EDI parameters" << endl;
+    if(EDI.size()>0 && INFO) cout << "      EDI parameters" << endl;
 
     vector<ExtraDynamicInterface*>::iterator iF;
     for(iF = EDI.begin(); iF!= EDI.end(); ++iF) {
@@ -365,12 +365,12 @@ namespace MBSim {
     Jh.resize(getuSize(),getzSize());
 
     // single components
-    cout << "  initialising ..." << endl;
-    if(objects.size()>0)  cout << "      " << objects.size() << " Objects" << endl;
+    if(INFO) cout << "  initialising ..." << endl;
+    if(objects.size()>0 && INFO)  cout << "      " << objects.size() << " Objects" << endl;
     Object::init();
     for (vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) (**i).init();
 
-    if(links.size()>0)    cout << "      " << links.size()   << " Links" << endl;
+    if(links.size()>0 && INFO)    cout << "      " << links.size()   << " Links" << endl;
     for(vector<Link*>::iterator i = links.begin(); i != links.end(); ++i) {
       (**i).init();
       if(!(*i)->getHitSphereCheck()) {
@@ -385,11 +385,11 @@ namespace MBSim {
       }
     }
 
-    if(EDI.size()>0)    cout << "      " << EDI.size()   << " EDIs" << endl;
+    if(EDI.size()>0 && INFO)    cout << "      " << EDI.size()   << " EDIs" << endl;
     for (vector<ExtraDynamicInterface*>::iterator i=EDI.begin(); i !=EDI.end(); ++i) (**i).init();
 
     // HitSphereLink
-    if(HSLinks.size()>0) cout << "  building " << HSLinks.size() << " HitSphereLinks between Objects" << endl;
+    if(HSLinks.size()>0 && INFO) cout << "  building " << HSLinks.size() << " HitSphereLinks between Objects" << endl;
     for(vector<HitSphereLink*>::iterator i = HSLinks.begin(); i != HSLinks.end(); ++i) (**i).init();
 
     for(vector<Link*>::iterator ic = links.begin(); ic != links.end(); ++ic) {
@@ -398,7 +398,7 @@ namespace MBSim {
     checkActiveConstraints();
 
     // solver specific settings
-    cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+    if(INFO) cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
     if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
     else if(solver == LinearEquations) {
       solve_ = &MultiBodySystem::solveLinearEquations;
@@ -408,19 +408,19 @@ namespace MBSim {
     else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
     else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
     else {
-      cout << "Error: unknown solver" << endl;
+      cout << "ERROR (MultiBodySystem:init): unknown solver" << endl;
       throw 5;
     }
 
-    cout << "  building plot lists, ";
+    if(INFO) cout << "  building plot lists, ";
     initPlotLists();
-    cout << "writing parameter-files, ";
+    if(INFO) cout << "writing parameter-files, ";
     plotParameterFiles();
 
-    cout << "initialising plot-files ..." << endl;
+    if(INFO) cout << "initialising plot-files ..." << endl;
     initPlotFiles();
 
-    cout << "...... done initialising." << endl << endl;
+    if(INFO) cout << "...... done initialising." << endl << endl;
   }
 
   void MultiBodySystem::initz(Vec& z) 
@@ -619,14 +619,14 @@ namespace MBSim {
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<< endl;
       if(stopIfNoConvergence) {
-	if(dropContactInfo) dropContactMatrices();
-	assert(iter < maxIter);
+		if(dropContactInfo) dropContactMatrices();
+		assert(iter < maxIter);
       }
       cout << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)
-      cerr << endl << "Warning: high number of iterations: " << iter << endl;
+      cerr << endl << "WARNING (MultiBodySystem:solve): high number of iterations: " << iter << endl;
 
     if(useOldla) savela();
 
@@ -675,10 +675,9 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-	level++;
-	decreaserFactors();
-	cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
-	if(warnLevel>=2) cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
+		level++;
+		decreaserFactors();
+		if(warnLevel>=2) cout << endl << "WARNING (MultiBodySystem:solveFixpointSingle): decreasing r-factors at iter = " << iter << endl;
       }
       for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (*ic)->projectGS(dt);
 
@@ -712,9 +711,9 @@ namespace MBSim {
       }
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-	level++;
-	decreaserFactors();
-	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter<<endl;
+		level++;
+		decreaserFactors();
+		if(warnLevel>=2) cout << endl << "WARNING (MultiBodySystem:solveFixpointTotal): decreasing r-factors at iter = " << iter<<endl;
       }
 
       for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (*ic)->projectJ(dt);
@@ -1111,15 +1110,15 @@ namespace MBSim {
     if(preIntegrator){
       setProjectDirectory(name+".preInteg");
       setGrav(parent->getGrav()); //TODO gravitation has to be set for preintegration
-      cout << "Initialisation of " << name << " for Preintegration..." << endl;
+      if(INFO) cout << "Initialisation of " << name << " for Preintegration..." << endl;
       init();  
-      cout << "Preintegration..." << endl;
+      if(INFO) cout << "Preintegration..." << endl;
       preIntegrator->integrate(*this);
       closePlotFiles();
       writez();
       delete preIntegrator;
       preIntegrator=NULL; 
-      cout << "Finished." << endl;
+      if(INFO) cout << "Finished." << endl;
     }  
   }
 
@@ -1360,7 +1359,7 @@ namespace MBSim {
 
     } 
     else {
-      cout << "Unknown strategy" << endl;
+      cout << "ERROR (MultiBodySystem:updaterFactors): Unknown strategy" << endl;
       throw 5;
     }
   }
@@ -1419,23 +1418,23 @@ namespace MBSim {
 
     if(directoryName == name) { // numered directories
       for(i=0; i<=99; i++) {
-	stringstream number;
-	number << "." << setw(2) << setfill('0') << i;
-	projectDirectory = directoryName + number.str();
-	int ret = mkdir(projectDirectory.c_str(),0777);
-	if(ret == 0) break;
+		stringstream number;
+		number << "." << setw(2) << setfill('0') << i;
+		projectDirectory = directoryName + number.str();
+		int ret = mkdir(projectDirectory.c_str(),0777);
+		if(ret == 0) break;
       }
-      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+      if(INFO) cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
     }
     else { // always the same directory
       projectDirectory = string(directoryName);
 
       int ret = mkdir(projectDirectory.c_str(),0777);
       if(ret == 0) {
-	cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+		if(INFO) cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
       }
       else {
-	cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+		if(INFO) cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
       }
     }
 
@@ -1445,10 +1444,10 @@ namespace MBSim {
       string preDir="PREINTEG";
       int ret=mkdir(preDir.c_str(),0777);
       if(ret==0) {
-	cout << "Make directory " << preDir << " for Preintegration results." << endl;
+		if(INFO) cout << "Make directory " << preDir << " for Preintegration results." << endl;
       }
       else {
-	cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+		if(INFO) cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
       }
     }
   } 
