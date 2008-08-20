@@ -65,9 +65,18 @@ namespace MBSim {
     
     SymMat MTree  = tree->getM();
 
-    MTree(Iflexible)    += JTMJ(Mh,J(AllCartesian,Iflexible));
-    MTree(Iu,Iflexible) += trans(J(AllCartesian,Iu))*Mh*J(AllCartesian,Iflexible);
-    MTree(      Iu)     += JTMJ(Mh,J(AllCartesian,Iu));
+    //MTree(Iflexible)    += JTMJ(Mh,J(AllCartesian,Iflexible));
+    //MTree(Iu,Iflexible) += trans(J(AllCartesian,Iu))*Mh*J(AllCartesian,Iflexible);
+    //MTree(      Iu)     += JTMJ(Mh,J(AllCartesian,Iu));
+    SymMat M1=JTMJ(Mh,J(AllCartesian,Iflexible));
+    Mat M2=trans(J(AllCartesian,Iu))*Mh*J(AllCartesian,Iflexible);
+    SymMat M3=JTMJ(Mh,J(AllCartesian,Iu));
+#   pragma omp critical (mbsim_BodyRigidRelOnFlex_updateM)
+    {
+      MTree(Iflexible)    += M1;
+      MTree(Iu,Iflexible) += M2;
+      MTree(      Iu)     += M3;
+    }
 
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateM(t);

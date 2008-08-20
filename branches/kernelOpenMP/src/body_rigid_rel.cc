@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -291,12 +291,12 @@ namespace MBSim {
   }
 
   void BodyRigidRel::updateT(double t) {
-  BodyRigid::updateT(t);
+    BodyRigid::updateT(t);
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateT(t);
     }
   }
- 
+
   void BodyRigidRel::updateh(double t) {
     sumUpForceElements(t);
     Vec KF = trans(AWK)*WF;
@@ -317,28 +317,28 @@ namespace MBSim {
 
       l -= Mh*j;
 
-//      BodyRigidRel* nextBody = precessor;
-//      while(nextBody) {
-//	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
-//	nextBody = nextBody->getPrecessor();
-//      }
-//
-// TODO: ist nur eine voruebergehende Lsg, bis mir was besseres einfaellt...
-       J(Index(0,5),Index(0,precessor->getIuR().end())) = C*precessor->getJ();
-// ...!
+      //      BodyRigidRel* nextBody = precessor;
+      //      while(nextBody) {
+      //	J(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end())) = C*precessor->getJ()(Index(0,5),Index(nextBody->getIuT().start(),nextBody->getIuR().end()));
+      //	nextBody = nextBody->getPrecessor();
+      //      }
+      //
+      // TODO: ist nur eine voruebergehende Lsg, bis mir was besseres einfaellt...
+      J(Index(0,5),Index(0,precessor->getIuR().end())) = C*precessor->getJ();
+      // ...!
 
     }
     J(Index(0,2),IuT) = trans(APK)*JT;
     J(Index(3,5),IuR) = JR;
 
-//cout << getFullName() << endl << J << endl;
+    //cout << getFullName() << endl << J << endl;
 
     tree->geth()(Index(0,uInd+uSize-1)) += trans(J)*l;
 
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->updateh(t);
     }
-//    if(successor.size()==0) throw 1;
+    //    if(successor.size()==0) throw 1;
   }
 
   void BodyRigidRel::updateCenterOfGravity(double t) {
@@ -469,7 +469,7 @@ namespace MBSim {
   double BodyRigidRel::computeKineticEnergy() {
     return 0.5 * (m*trans(KvK)*(KvK + 2*crossProduct(KomegaK,KrKS)) + trans(KomegaK)*I*KomegaK);
   }
-  
+
   double BodyRigidRel::computeKineticEnergyBranch() {
     double Ttemp = computeKineticEnergy();
     for(unsigned int i=0; i<successor.size(); i++)
@@ -500,26 +500,12 @@ namespace MBSim {
     }
   }
 
-  Port* BodyRigidRel::getPort(const string &pName) {
-     // Auf sich selber suchen
-    for(unsigned int i=0;i<port.size();i++)
-      if(port[i]->getName() == pName)
-        return port[i];
+  Object* BodyRigidRel::getObject(const string &name) {
+    Object* pO = Object::getObject(name);
+    if(pO) return pO;
     for(unsigned int i=0;i<successor.size();i++) {
-      Port* p = successor[i]->getPort(pName);
-      if(p) return p;
-    }
-    return NULL;
-  }
-
-  Contour* BodyRigidRel::getContour(const string &cName) {
-     // Auf sich selber suchen
-    for(unsigned int i=0;i<contour.size();i++)
-      if(contour[i]->getName() == cName)
-        return contour[i];
-    for(unsigned int i=0;i<successor.size();i++) {
-      Contour* c = successor[i]->getContour(cName);
-      if(c) return c;
+      pO = successor[i]->getObject(name);
+      if(pO) return pO;
     }
     return NULL;
   }
@@ -575,7 +561,7 @@ namespace MBSim {
   }
 
   void BodyRigidRel::plotNameToStream(ostream& os, string indent) {
-	os << indent << getName() << endl;
+    os << indent << getName() << endl;
     for(unsigned int i=0; i<successor.size(); i++) {
       successor[i]->plotNameToStream(os,indent+"  ");
     }

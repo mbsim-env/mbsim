@@ -71,9 +71,9 @@ namespace MBSim {
 
   void TreeFlexRoot::updateM(double t) {
     flexible->updateM(t);
-    for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib) {
-	  (*ib)->updateM(t);
-	}
+#   pragma omp parallel for
+    for(int i=0; i<(int)rigid.size(); i++)
+      rigid[i]->updateM(t);
   }
 
 
@@ -326,18 +326,6 @@ namespace MBSim {
     for(vector<BodyRigidRelOnFlex*>::iterator ib = rigid.begin(); ib != rigid.end(); ++ib)
       Vtemp += (*ib)->computePotentialEnergyBranch();
     return Vtemp;
-  }
-
-  Port* TreeFlexRoot::getPort(const string &pName) {
-//    return root->getPort(pName);
-    cout << "\n  method TreeFlexRoot::getPort(const string &pName) needs to be implemented!!!" << endl;
-    throw 1;
-  }
-
-  Contour* TreeFlexRoot::getContour(const string &cName) {
-//    return root->getContour(cName);
-    cout << "\n  method TreeFlexRoot::getContour(const string &pName) needs to be implemented!!!" << endl;
-    throw 1;
   }
 
   void TreeFlexRoot::plotParameterFiles() {

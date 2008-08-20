@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -119,8 +119,7 @@ namespace MBSim {
     void setTree(Tree *tree);
     void updateFullName();
 
-    Port* getPort(const string &pName);
-    Contour* getContour(const string &cName);
+    virtual Object* getObject(const string &name);
 
     Object* getResponsible() {return tree;}
 
@@ -129,7 +128,7 @@ namespace MBSim {
 
     virtual void addContour(Contour* contour, const Vec &KrKC_=Vec(3,INIT,0.0), const SqrMat &AKC_=SqrMat(3,EYE));
 
-	void plotNameToStream(ostream& os, string indent="");
+    void plotNameToStream(ostream& os, string indent="");
 
   };
 

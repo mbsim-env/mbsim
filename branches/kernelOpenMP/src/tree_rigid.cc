@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -202,17 +202,13 @@ namespace MBSim {
     return Vtemp;
   }
 
-  Port* TreeRigid::getPort(const string &pName) {
-    return root->getPort(pName);
-  }
-
-  Contour* TreeRigid::getContour(const string &cName) {
-    return root->getContour(cName);
+  Object* TreeRigid::getObject(const string &name) {
+    return root->getObject(name);
   }
 
   void TreeRigid::plotParameters() {
-	parafile << "TreeRigid" << endl<<endl;
-	parafile << "# BodyList:" << endl;
-	root->plotNameToStream(parafile);
+    parafile << "TreeRigid" << endl<<endl;
+    parafile << "# BodyList:" << endl;
+    root->plotNameToStream(parafile);
   }
 }

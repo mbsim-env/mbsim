@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -57,12 +57,12 @@ namespace MBSim {
 
   void MultiBodySystem::setGrav(const Vec& g) 
   {
-  	grav = g;
+    grav = g;
   }
 
   double MultiBodySystem::computePotentialEnergy()
   {
-  	double Vpot = 0.0;
+    double Vpot = 0.0;
 
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) Vpot += (**i).computePotentialEnergy();
@@ -71,14 +71,12 @@ namespace MBSim {
     for(ic = links.begin(); ic != links.end(); ++ic) Vpot += (**ic).computePotentialEnergy();
     return Vpot;
   }
-  
+
   Object* MultiBodySystem::getObject(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<objects.size(); i++) {
-      if(objects[i]->getName() == name) return objects[i];
-    }
-    for(i=0; i<objects.size(); i++) {
-      if(objects[i]->getFullName() == name) return objects[i];
+      Object* pO = objects[i]->getObject(name);
+      if(pO) return pO;
     }
     if(check){
       if(!(i<objects.size())) cout << "Error: The MultiBodySystem " << this->name << " comprises no object " << name << "!" << endl; 
@@ -86,7 +84,7 @@ namespace MBSim {
     }
     return NULL;
   }
-  
+
   Link* MultiBodySystem::getLink(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<links.size(); i++) {
@@ -128,7 +126,7 @@ namespace MBSim {
 
   ExtraDynamicInterface* MultiBodySystem::getEDI(const string &name,bool check) 
   {
-  	unsigned int i;
+    unsigned int i;
     for(i=0; i<EDI.size(); i++) {
       if(EDI[i]->getName() == name) return EDI[i];
     }
@@ -156,7 +154,7 @@ namespace MBSim {
 
   Element* MultiBodySystem::getElement(const string &name) 
   {
-  	unsigned int i1;
+    unsigned int i1;
     for(i1=0; i1<objects.size(); i1++) {
       if(objects[i1]->getName() == name) return (Element*)objects[i1];
     }
@@ -184,7 +182,7 @@ namespace MBSim {
 
   void MultiBodySystem::addObject(Object *object) 
   {
-  	if(getObject(object->getFullName(),false)) {
+    if(getObject(object->getFullName(),false)) {
       cout << "Error: The MultiBodySystem " << name << " can only comprise one Object by the name " <<  object->getFullName() << "!" << endl;
       assert(getObject(object->getFullName(),false) == NULL); 
     }
@@ -196,7 +194,7 @@ namespace MBSim {
 
   void MultiBodySystem::addMbs(MultiBodySystem* mbs)
   {
-	for(unsigned int i=0; i<mbs->port.size(); i++) Object::addPort(mbs->port[i]);
+    for(unsigned int i=0; i<mbs->port.size(); i++) Object::addPort(mbs->port[i]);
     for(unsigned int i=0; i<mbs->contour.size(); i++) Object::addContour(mbs->contour[i]);
     for(unsigned int i=0; i<mbs->objects.size(); i++) addObject(mbs->objects[i]);
     for(unsigned int i=0; i<mbs->links.size(); i++) addLink(mbs->links[i]);
@@ -214,7 +212,7 @@ namespace MBSim {
     link->setFullName(getFullName()+"."+link->getFullName());
 
   }
-  
+
   void MultiBodySystem::addPort(const string &name, const Vec &WrOP) {
     Port *port = new Port(name);
     addPort(port,WrOP);
@@ -235,7 +233,7 @@ namespace MBSim {
     contour->setWrOP(WrOP);
     contour->setAWC(AWC);
   }
-  
+
   void MultiBodySystem::addEDI(ExtraDynamicInterface *edi_) {
     if(getEDI(edi_->getFullName(),false)) {
       cout << "Error: The MultiBodySystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getFullName() << "!" << endl;
@@ -245,7 +243,7 @@ namespace MBSim {
     edi_->setMbs(this);
     edi_->setFullName(getFullName()+"."+edi_->getFullName());
   }
-  
+
   void MultiBodySystem::addDataInterfaceBase(DataInterfaceBase* dib_){
     if(getDataInterfaceBase(dib_->getName(),false)) {
       cout << "Error: The MultiBodySystem " << name << " can only comprise one DataInterfaceBase by the name " <<  dib_->getName() << "!" << endl;
@@ -254,7 +252,7 @@ namespace MBSim {
     DIBs.push_back(dib_);
     dib_->setName(getFullName()+"."+dib_->getName());
   }
-  
+
   void MultiBodySystem::addElement(Element *element_) {
     MultiBodySystem* mbs_=dynamic_cast<MultiBodySystem*>(element_);
     if(mbs_) addMbs(mbs_);
@@ -304,12 +302,12 @@ namespace MBSim {
     for(vector<Link*>::iterator il = links.begin(); il != links.end(); ++il) {
       (*il)->calcSize();
       if((*il)->isSetValued()) {
-		(*il)->setgInd(gSize);
-		(*il)->setlaInd(laSize);
-		(*il)->setrFactorInd(rFactorSize);
-		gSize += (*il)->getgSize();
-		laSize += (*il)->getlaSize();
-		rFactorSize += (*il)->getrFactorSize();
+	(*il)->setgInd(gSize);
+	(*il)->setlaInd(laSize);
+	(*il)->setrFactorInd(rFactorSize);
+	gSize += (*il)->getgSize();
+	laSize += (*il)->getlaSize();
+	rFactorSize += (*il)->getrFactorSize();
       }
 
       (*il)->setxInd(xSize);
@@ -365,7 +363,7 @@ namespace MBSim {
     updatezdRef(zdParent);
 
     Jh.resize(getuSize(),getzSize());
- 
+
     // single components
     cout << "  initialising ..." << endl;
     if(objects.size()>0)  cout << "      " << objects.size() << " Objects" << endl;
@@ -376,14 +374,14 @@ namespace MBSim {
     for(vector<Link*>::iterator i = links.begin(); i != links.end(); ++i) {
       (**i).init();
       if(!(*i)->getHitSphereCheck()) {
-		if((*i)->isSetValued()) {
-		  nHSLinksSetValuedFixed++;
-		  linkSetValued.push_back(*i);
-		}
-		else {
-		  nHSLinksSingleValuedFixed++;
-		  linkSingleValued.push_back(*i);
-		}
+	if((*i)->isSetValued()) {
+	  nHSLinksSetValuedFixed++;
+	  linkSetValued.push_back(*i);
+	}
+	else {
+	  nHSLinksSingleValuedFixed++;
+	  linkSingleValued.push_back(*i);
+	}
       }
     }
 
@@ -401,17 +399,17 @@ namespace MBSim {
 
     // solver specific settings
     cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
-	if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
-	else if(solver == LinearEquations) {
-	  solve_ = &MultiBodySystem::solveLinearEquations;
-	  cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
-	}
-	else if(solver == FixedPointSingle) solve_ = &MultiBodySystem::solveFixpointSingle;
-	else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
-	else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
-	else {
-	  cout << "Error: unknown solver" << endl;
-	  throw 5;
+    if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
+    else if(solver == LinearEquations) {
+      solve_ = &MultiBodySystem::solveLinearEquations;
+      cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+    }
+    else if(solver == FixedPointSingle) solve_ = &MultiBodySystem::solveFixpointSingle;
+    else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
+    else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
+    else {
+      cout << "Error: unknown solver" << endl;
+      throw 5;
     }
 
     cout << "  building plot lists, ";
@@ -427,29 +425,29 @@ namespace MBSim {
 
   void MultiBodySystem::initz(Vec& z) 
   {
-  	updatezRef(z);
+    updatezRef(z);
     for(vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) (**i).initz();
     for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) (**iF).initz();
   }
 
   Vec MultiBodySystem::deltau(const Vec &zParent, double t, double dt) 
   {
-  	if(q()!=zParent()) updatezRef(zParent);
-    
+    if(q()!=zParent()) updatezRef(zParent);
+
     // TODO update somewhere else
     updater(t); 
     updatedu(t,dt);
     return ud;
   }
-  
+
   Vec MultiBodySystem::deltaq(const Vec &zParent, double t, double dt)
   {
-  	if(q()!=zParent()) updatezRef(zParent);
+    if(q()!=zParent()) updatezRef(zParent);
     updatedq(t,dt);
-    
+
     return qd;
   }
-  
+
   Vec MultiBodySystem::deltax(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -457,11 +455,11 @@ namespace MBSim {
     updatedx(t,dt);
     return xd;
   }
-  
+
   void MultiBodySystem::update(const Vec &zParent, double t)
   {
     if(q()!=zParent()) updatezRef(zParent);
-       
+
     updateKinematics(t);
     updateLinksStage1(t);
     checkActiveConstraints();
@@ -473,35 +471,35 @@ namespace MBSim {
     updateW(t); 
     updateGb(t); 
   }
-  
+
   void MultiBodySystem::updateKinematics(double t)
   {
-	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (*i)->updateKinematics(t);
   }
-  
+
   void MultiBodySystem::updateT(double t) {
-  	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updateT(t);
   }
-  
+
   void MultiBodySystem::facLLM() {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) 
       (**i).facLLM();
   }
-  
+
   void MultiBodySystem::updateh(double t) 
   {
-  	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updateh(t);
   }
-  
+
   void MultiBodySystem::updateW(double t) {
-	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updateW(t);
   }
-  
+
   void MultiBodySystem::updatew(double t) {
     vector<Link*>::iterator il;
     for(il = links.begin(); il!= links.end(); ++il)
@@ -527,10 +525,10 @@ namespace MBSim {
     }
     Gs << G;
   }
-  
+
   void MultiBodySystem::updateLinksStage1(double t)
   {
-	if(!HSLinks.empty()) {
+    if(!HSLinks.empty()) {
       linkSingleValued.erase(linkSingleValued.begin()+nHSLinksSingleValuedFixed,linkSingleValued.end());
       linkSetValued.erase(linkSetValued.begin()+nHSLinksSetValuedFixed,linkSetValued.end());
       for(vector<HitSphereLink*>::iterator iHS = HSLinks.begin(); iHS != HSLinks.end(); ++iHS) (*iHS)->checkActive();
@@ -542,7 +540,7 @@ namespace MBSim {
 
   void MultiBodySystem::updateLinksStage2(double t) 
   {
-	for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) (*iF)->updateStage2(t);
+    for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) (*iF)->updateStage2(t);
     for(vector<Link*>::iterator iL = linkSingleValued.begin(); iL != linkSingleValued.end(); ++iL) if((*iL)->isActive()) (*iL)->updateStage2(t); // only for active links! (TS, 09.05.2008)
     for(vector<Link*>::iterator iL = linkSetValuedActive.begin(); iL != linkSetValuedActive.end(); ++iL) (*iL)->updateStage2(t);
   }
@@ -556,13 +554,13 @@ namespace MBSim {
 
       vector<Link*>::iterator ic;
       for(ic = linkSetValued.begin(); ic != linkSetValued.end(); ++ic) {
-		if((*ic)->isActive()) {
-		  linkSetValuedActive.push_back(*ic);
-		  (*ic)->setlaInd(laSize);
-		  (*ic)->setrFactorInd(rFactorSize);
-		  laSize += (*ic)->getlaSize();
-		  rFactorSize += (*ic)->getrFactorSize();
-		}
+	if((*ic)->isActive()) {
+	  linkSetValuedActive.push_back(*ic);
+	  (*ic)->setlaInd(laSize);
+	  (*ic)->setrFactorInd(rFactorSize);
+	  laSize += (*ic)->getlaSize();
+	  rFactorSize += (*ic)->getrFactorSize();
+	}
       }
 
       W.resize() >> WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1));
@@ -582,10 +580,10 @@ namespace MBSim {
       G.init(0);
     }
   }
-  
+
   void MultiBodySystem::updatezRef(const Vec &zParent) 
   {
-	q >> ( zParent(0,qSize-1) );
+    q >> ( zParent(0,qSize-1) );
     u >> ( zParent(qSize,qSize+uSize-1) );
     x >> ( zParent(qSize+uSize,qSize+uSize+xSize-1) );
 
@@ -598,16 +596,16 @@ namespace MBSim {
     vector<ExtraDynamicInterface*>::iterator iF;
     for(iF = EDI.begin(); iF != EDI.end(); ++iF) (**iF).updatexRef();
   }
-  
+
   void MultiBodySystem::updater(double t)
   {
-  	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updater(t);
   }
-  
+
   int MultiBodySystem::solve(double dt) 
   {
-	if(la.size()==0) return 0;
+    if(la.size()==0) return 0;
 
     if(useOldla) initla();
     else la.init(0);
@@ -621,8 +619,8 @@ namespace MBSim {
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<< endl;
       if(stopIfNoConvergence) {
-		if(dropContactInfo) dropContactMatrices();
-		assert(iter < maxIter);
+	if(dropContactInfo) dropContactMatrices();
+	assert(iter < maxIter);
       }
       cout << "Anyway, continuing integration..."<< endl;
     }
@@ -634,10 +632,10 @@ namespace MBSim {
 
     return iter;
   }
-  
+
   int MultiBodySystem::solveGaussSeidel(double dt) 
   {
-	s = getgd() + getb()*dt; // new gd before \Lambda adaptation
+    s = getgd() + getb()*dt; // new gd before \Lambda adaptation
 
     checkForTermination(dt);
     if(term) return 0 ;
@@ -648,23 +646,23 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
       for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS(dt);
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-		checkTermLevel++;
-		checkForTermination(dt);
-		if(term) break;
+	checkTermLevel++;
+	checkForTermination(dt);
+	if(term) break;
       }
     }
     return iter;
   }
-  
+
   int MultiBodySystem::solveLinearEquations(double dt)
   {
-	la = slvLL(G,-(getgd() + getb()*dt)); // new gd == 0 (only bilateral constraints)
+    la = slvLL(G,-(getgd() + getb()*dt)); // new gd == 0 (only bilateral constraints)
     return 1;
   }
 
   int MultiBodySystem::solveFixpointSingle(double dt)
   {
-	updaterFactors();
+    updaterFactors();
 
     s = getgd() + getb()*dt ;
 
@@ -677,17 +675,17 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-		level++;
-		decreaserFactors();
-		cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
-		if(warnLevel>=2) cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
+	level++;
+	decreaserFactors();
+	cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
+	if(warnLevel>=2) cout << endl << "Warning: decreasing r-factors at iter = " << iter << endl;
       }
       for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (*ic)->projectGS(dt);
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-		checkTermLevel++;
-		checkForTermination(dt);
-		if(term) break;
+	checkTermLevel++;
+	checkForTermination(dt);
+	if(term) break;
       }
     }
     return iter;
@@ -695,7 +693,7 @@ namespace MBSim {
 
   int MultiBodySystem::solveFixpointTotal(double dt)
   {
-	updaterFactors();
+    updaterFactors();
 
     Vec s0 = getgd() + getb()*dt ;
     s = s0;
@@ -710,13 +708,13 @@ namespace MBSim {
       int *ia = getGs().Ip();
       int *ja = getGs().Jp();
       for(int i=0; i < G.size(); i++) {
-		for(int j=ia[i]; j<ia[1+i]; j++) s(i) += a[j]*la(ja[j]);
+	for(int j=ia[i]; j<ia[1+i]; j++) s(i) += a[j]*la(ja[j]);
       }
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-		level++;
-		decreaserFactors();
-		if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter<<endl;
+	level++;
+	decreaserFactors();
+	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter<<endl;
       }
 
       for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (*ic)->projectJ(dt);
@@ -730,7 +728,7 @@ namespace MBSim {
 
   int MultiBodySystem::solveRootFinding(double dt)
   {
-	updaterFactors();
+    updaterFactors();
 
     s = getgd() + getb()*dt;
     int iter;
@@ -749,27 +747,27 @@ namespace MBSim {
       if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
 
       if(numJac) {
-		double dx, xj;
-	
-		for(int j=0; j<la.size(); j++) {
-		  xj = la(j);
-	
-		  dx = (epsroot * 0.5);
-		  do dx += dx;
-		  while (xj + dx == la(j));
-	
-		  la(j) += dx;
-		  residualProj(dt);
-		  la(j) = xj;
-		  Jprox.col(j) = (res-res0)/dx;
-		}
+	double dx, xj;
+
+	for(int j=0; j<la.size(); j++) {
+	  xj = la(j);
+
+	  dx = (epsroot * 0.5);
+	  do dx += dx;
+	  while (xj + dx == la(j));
+
+	  la(j) += dx;
+	  residualProj(dt);
+	  la(j) = xj;
+	  Jprox.col(j) = (res-res0)/dx;
+	}
       } 
       else residualProjJac(dt);
       Vec dx;
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
-		SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-		dx >> slvLL(J,trans(Jprox)*res0);
+	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+	dx >> slvLL(J,trans(Jprox)*res0);
       }
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
@@ -780,20 +778,20 @@ namespace MBSim {
 
       double nrmf = 1;
       for(int k=0; k<maxDampingSteps; k++) {
-		la = La_old - alpha*dx;
-		residualProj(dt);
-		nrmf = nrm2(res);
-		if(nrmf < nrmf0) break;
-	
-		alpha = 0.5*alpha;  
+	la = La_old - alpha*dx;
+	residualProj(dt);
+	nrmf = nrm2(res);
+	if(nrmf < nrmf0) break;
+
+	alpha = 0.5*alpha;  
       }
       nrmf0 = nrmf;
       res0 = res;
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-		checkTermLevel++;
-		checkForTermination(dt);
-		if(term) break;
+	checkTermLevel++;
+	checkForTermination(dt);
+	if(term) break;
       }
     }
     return iter;
@@ -821,7 +819,7 @@ namespace MBSim {
 
   void MultiBodySystem::dropContactMatrices() 
   {
-  	cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
+    cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");   
 
     contactDrop << "constraint functions g" << endl << trans(g) << endl << endl;
@@ -835,13 +833,13 @@ namespace MBSim {
     contactDrop << "Lagrange multipliers la" << endl << trans(la) << endl << endl;
     contactDrop.close();
   }
-  
+
   void MultiBodySystem::updateM(double t) 
   {
-	vector<Object*>::iterator i;
-	for(i = objects.begin(); i != objects.end(); ++i) {
-	  (**i).updateM(t);
-	}
+    vector<Object*>::iterator i;
+    for(i = objects.begin(); i != objects.end(); ++i) {
+      (**i).updateM(t);
+    }
   }
 
   void MultiBodySystem::savela() {
@@ -865,13 +863,13 @@ namespace MBSim {
     for(i = links.begin(); i!= links.end(); ++i)
       (**i).setScaleTolp(scaleTolp);
   }
-  
+
   void MultiBodySystem::setgdTol(double tol) {
     vector<Link*>::iterator i;
     for(i = links.begin(); i!= links.end(); ++i)
       (**i).setgdTol(tol);
   }
-  
+
   void MultiBodySystem::setlaTol(double tol) {
     vector<Link*>::iterator i;
     for(i = links.begin(); i!= links.end(); ++i)
@@ -891,7 +889,7 @@ namespace MBSim {
 
   string MultiBodySystem::getSolverInfo() 
   {
-  	stringstream info;
+    stringstream info;
 
     // Solver-Name
     if(solver == GaussSeidel) info << "GaussSeidel";
@@ -910,10 +908,10 @@ namespace MBSim {
 
       // linear algebra for RootFinding only
       if(solver == RootFinding) {
-		info << ",";
-		if(linAlg==LUDecomposition) info << "LU";
-		else if(linAlg==LevenbergMarquardt) info << "LM";
-		else if(linAlg==PseudoInverse) info << "PI";
+	info << ",";
+	if(linAlg==LUDecomposition) info << "LU";
+	else if(linAlg==LevenbergMarquardt) info << "LM";
+	else if(linAlg==PseudoInverse) info << "PI";
       }
       info << ")";
     }
@@ -923,14 +921,14 @@ namespace MBSim {
   void MultiBodySystem::initPlotLists() {
     // plot-Listen aufbauen
     //  vector<Object*>::iterator i;
-	for(vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) {
-	  if((**i).getPlotLevel()>0) objects2plot.push_back((*i));
-	  for(vector<Contour*>::iterator i4 = (**i).contour.begin(); i4!= (**i).contour.end(); ++i4)
-		if((**i4).getPlotLevel()>0) contours2plot.push_back((*i4));
-	  for(vector<Port*>::iterator i5 = (**i).port.begin(); i5!= (**i).port.end(); ++i5)
-		// jetzt in Port::init()      (**i5).setFullName((**i).getFullName()+ "."+ (**i5).getFullName()); // etl. problem. bei Namens-Aufloesungen durch Vergleiche: pruefen
-		if((**i5).getPlotLevel()>0) ports2plot.push_back((*i5));
-	}
+    for(vector<Object*>::iterator i = objects.begin(); i != objects.end(); ++i) {
+      if((**i).getPlotLevel()>0) objects2plot.push_back((*i));
+      for(vector<Contour*>::iterator i4 = (**i).contour.begin(); i4!= (**i).contour.end(); ++i4)
+	if((**i4).getPlotLevel()>0) contours2plot.push_back((*i4));
+      for(vector<Port*>::iterator i5 = (**i).port.begin(); i5!= (**i).port.end(); ++i5)
+	// jetzt in Port::init()      (**i5).setFullName((**i).getFullName()+ "."+ (**i5).getFullName()); // etl. problem. bei Namens-Aufloesungen durch Vergleiche: pruefen
+	if((**i5).getPlotLevel()>0) ports2plot.push_back((*i5));
+    }
 
     for(vector<Link*>::iterator i2 = links.begin(); i2!= links.end(); ++i2)
       if((**i2).getPlotLevel()>0) links2plot.push_back((*i2));
@@ -983,29 +981,29 @@ namespace MBSim {
     parafile << "#solver\n" << getSolverInfo() << endl;
 
     // all Objects of MultibodySystem
-	if(objects.size()>0) {
-	  parafile << "\n#Objects" << endl;
-	  for(vector<Object*>::iterator i = objects2plot.begin();  i != objects2plot.end();  ++i)
-		parafile << "  " << (**i).getName() << endl;
-	}
+    if(objects.size()>0) {
+      parafile << "\n#Objects" << endl;
+      for(vector<Object*>::iterator i = objects2plot.begin();  i != objects2plot.end();  ++i)
+	parafile << "  " << (**i).getName() << endl;
+    }
     // all Ports to environment
-	if(port.size()>0) {
-	  parafile << "\n#environmental ports" << endl;
-	  for(vector<Port*>::iterator i = port.begin();  i != port.end();  ++i) {
-		Vec WrOPtemp = (**i).getWrOP();
-		parafile << "  KrSP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
+    if(port.size()>0) {
+      parafile << "\n#environmental ports" << endl;
+      for(vector<Port*>::iterator i = port.begin();  i != port.end();  ++i) {
+	Vec WrOPtemp = (**i).getWrOP();
+	parafile << "  KrSP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
       } 
     }
     // all Contours of environment
-	if(contour.size()>0) {
-	  parafile << "\n#environmental contours" << endl;
-	  for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
-		parafile << "  " << (**i).getName() << endl;
-	}
+    if(contour.size()>0) {
+      parafile << "\n#environmental contours" << endl;
+      for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
+	parafile << "  " << (**i).getName() << endl;
+    }
   }
 
   void MultiBodySystem::plotParameterFiles() {
-	Object::plotParameterFiles();
+    Object::plotParameterFiles();
     for(vector<Object*>::iterator  i = objects2plot.begin();  i != objects2plot.end();  ++i) (**i).plotParameterFiles();
     for(vector<Link*>::iterator    i = links2plot.begin();    i != links2plot.end();    ++i) (**i).plotParameterFiles();
     for(vector<Contour*>::iterator i = contours2plot.begin(); i != contours2plot.end(); ++i) (**i).plotParameterFiles();
@@ -1067,45 +1065,45 @@ namespace MBSim {
 
   void MultiBodySystem::projectViolatedConstraints(double t) 
   {
-  	if(laSize) {
-	    Vec nu(uSize);
-	    int gASize = 0;
-	    for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) gASize += linkSetValuedActive[i]->getgSize();
-	    SymMat Gv(gASize,NONINIT);
-	    Mat Wv(W.rows(),gASize,NONINIT);
-	    Vec gv(gASize,NONINIT);
-	    int gAIndi = 0;
-	    for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
-	      Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
-	      Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
-	      Wv(Index(0,Wv.rows()-1),Iv) = W(Index(0,W.rows()-1),I1);
-	      gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
-	
-	      Gv(Iv) = G(I1);
-	      int gAIndj = 0;
-	      for(unsigned int j = 0; j<i; j++) {
-			Index Jv = Index(gAIndj,gAIndj+linkSetValuedActive[j]->getgSize()-1);
-			Index J1 = Index(linkSetValuedActive[j]->getlaInd(),linkSetValuedActive[j]->getlaInd()+linkSetValuedActive[j]->getgSize()-1);
-			Gv(Jv,Iv) = G(J1,I1);
-			gAIndj+=linkSetValuedActive[j]->getgSize();
-	      }
-	      gAIndi+=linkSetValuedActive[i]->getgSize();
-	    }
-	    while(nrmInf(gv) >= 1e-8) {
-	      Vec mu = slvLL(Gv, -gv+trans(Wv)*nu);
-	      Vec dnu = slvLLFac(LLM,Wv*mu- M*nu);
-	      nu += dnu;
-	      q += T*dnu;
-	      updateKinematics(t);
-	      updateLinksStage1(t);
-	      int gAIndi = 0;
-	      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
-			Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
-			Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
-			gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
-			gAIndi+=linkSetValuedActive[i]->getgSize();
-	      }
-	    }
+    if(laSize) {
+      Vec nu(uSize);
+      int gASize = 0;
+      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) gASize += linkSetValuedActive[i]->getgSize();
+      SymMat Gv(gASize,NONINIT);
+      Mat Wv(W.rows(),gASize,NONINIT);
+      Vec gv(gASize,NONINIT);
+      int gAIndi = 0;
+      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
+	Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
+	Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
+	Wv(Index(0,Wv.rows()-1),Iv) = W(Index(0,W.rows()-1),I1);
+	gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
+
+	Gv(Iv) = G(I1);
+	int gAIndj = 0;
+	for(unsigned int j = 0; j<i; j++) {
+	  Index Jv = Index(gAIndj,gAIndj+linkSetValuedActive[j]->getgSize()-1);
+	  Index J1 = Index(linkSetValuedActive[j]->getlaInd(),linkSetValuedActive[j]->getlaInd()+linkSetValuedActive[j]->getgSize()-1);
+	  Gv(Jv,Iv) = G(J1,I1);
+	  gAIndj+=linkSetValuedActive[j]->getgSize();
+	}
+	gAIndi+=linkSetValuedActive[i]->getgSize();
+      }
+      while(nrmInf(gv) >= 1e-8) {
+	Vec mu = slvLL(Gv, -gv+trans(Wv)*nu);
+	Vec dnu = slvLLFac(LLM,Wv*mu- M*nu);
+	nu += dnu;
+	q += T*dnu;
+	updateKinematics(t);
+	updateLinksStage1(t);
+	int gAIndi = 0;
+	for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
+	  Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
+	  Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
+	  gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
+	  gAIndi+=linkSetValuedActive[i]->getgSize();
+	}
+      }
     }
   }
 
@@ -1144,18 +1142,18 @@ namespace MBSim {
   }
 
   void MultiBodySystem::plot(const Vec& zParent, double t, double dt) {   
-	    if(q()!=zParent()) updatezRef(zParent);
-	    if(qd()!=zdParent()) updatezdRef(zdParent);
-	    updateKinematics(t);
-	    updateLinksStage1(t);
-	    if(t==0.) checkActiveConstraints(); // gaps depend on t and q
-	    updateLinksStage2(t);
-	    updateh(t); // TODO necessary for ODE-Integration with high plotlevel
-	    updateM(t); 
-	    //updateG(t); 
-	    //computeConstraintForces(t); 
-	    //updater(t); 
-	    //updatezd(t);
+    if(q()!=zParent()) updatezRef(zParent);
+    if(qd()!=zdParent()) updatezdRef(zdParent);
+    updateKinematics(t);
+    updateLinksStage1(t);
+    if(t==0.) checkActiveConstraints(); // gaps depend on t and q
+    updateLinksStage2(t);
+    updateh(t); // TODO necessary for ODE-Integration with high plotlevel
+    updateM(t); 
+    //updateG(t); 
+    //computeConstraintForces(t); 
+    //updater(t); 
+    //updatezd(t);
 
     plot(t,dt);
   }
@@ -1192,7 +1190,7 @@ namespace MBSim {
     if(qd()!=zdParent()) updatezdRef(zdParent);
     zdot(zParent,t);
   }
-  
+
   void MultiBodySystem::getsv(const Vec& zParent, Vec& svExt, double t) 
   {
     if(sv()!=svExt()) updatesvRef(svExt);
@@ -1220,7 +1218,7 @@ namespace MBSim {
     vector<ExtraDynamicInterface*>::iterator ie1;
     for(ie1 = EDI.begin(); ie1 != EDI.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
-  
+
   void MultiBodySystem::updatezdRef(const Vec &zdParent) {
 
     qd >> ( zdParent(0,qSize-1) );
@@ -1245,7 +1243,7 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updateqRef();
   }
-  
+
   void MultiBodySystem::updateqdRef(const Vec &qdExt) 
   {
 
@@ -1292,7 +1290,7 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updaterRef();
   }
-  
+
   void MultiBodySystem::updatefRef(const Vec &fParent) {
 
     f >> fParent;
@@ -1308,7 +1306,7 @@ namespace MBSim {
     vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updateTRef();
   }
-  
+
   void MultiBodySystem::updateMRef(const SymMat &MParent) {
 
     M >> MParent;
@@ -1343,16 +1341,16 @@ namespace MBSim {
 
   void MultiBodySystem::updaterFactors()
   {
-  	if(strategy == global) {
+    if(strategy == global) {
       double rFac;
       if(G.size() == 1) rFac = 1./G(0,0);
       else {
-		Vec eta = eigvalSel(G,1,G.size());
-		double etaMax = eta(G.size()-1);
-		double etaMin = eta(0);
-		int i=1;
-		while(abs(etaMin) < 1e-8 && i<G.size()) etaMin = eta(i++);
-		rFac = 2./(etaMax + etaMin);
+	Vec eta = eigvalSel(G,1,G.size());
+	double etaMax = eta(G.size()-1);
+	double etaMin = eta(0);
+	int i=1;
+	while(abs(etaMin) < 1e-8 && i<G.size()) etaMin = eta(i++);
+	rFac = 2./(etaMax + etaMin);
       }
       rFactor.init(rFac);
 
@@ -1366,7 +1364,7 @@ namespace MBSim {
       throw 5;
     }
   }
-  
+
   void MultiBodySystem::updatezd(double t)
   {
 
@@ -1379,7 +1377,7 @@ namespace MBSim {
     vector<ExtraDynamicInterface*>::iterator iF;
     for(iF = EDI.begin(); iF!= EDI.end(); ++iF) (**iF).updatexd(t);
   }
-  
+
   void MultiBodySystem::updatedx(double t, double dt) {
     // TODO set limits to list
     vector<Object*>::iterator io;
@@ -1395,13 +1393,13 @@ namespace MBSim {
     for(iF = EDI.begin(); iF!= EDI.end(); ++iF)
       (**iF).updatedx(t,dt);
   }
-  
+
   void MultiBodySystem::updatedu(double t, double dt) 
   {
-	vector<Object*>::iterator i;
+    vector<Object*>::iterator i;
     for(i = objects.begin(); i != objects.end(); ++i) (**i).updatedu(t,dt);
   }
-  
+
   void MultiBodySystem::updatedq(double t, double dt)
   {
     vector<Object*>::iterator i;
@@ -1413,32 +1411,32 @@ namespace MBSim {
     vector<Link*>::iterator ic;
     for(ic = links.begin(); ic != links.end(); ++ic) (*ic)->updateStopVector(t); 
   }
-  
+
   void MultiBodySystem::setDirectory() 
   {
-  	int i;
+    int i;
     string projectDirectory;
 
     if(directoryName == name) { // numered directories
       for(i=0; i<=99; i++) {
-        stringstream number;
-        number << "." << setw(2) << setfill('0') << i;
-        projectDirectory = directoryName + number.str();
-        int ret = mkdir(projectDirectory.c_str(),0777);
-        if(ret == 0) break;
+	stringstream number;
+	number << "." << setw(2) << setfill('0') << i;
+	projectDirectory = directoryName + number.str();
+	int ret = mkdir(projectDirectory.c_str(),0777);
+	if(ret == 0) break;
       }
       cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
     }
     else { // always the same directory
-       projectDirectory = string(directoryName);
+      projectDirectory = string(directoryName);
 
-       int ret = mkdir(projectDirectory.c_str(),0777);
-       if(ret == 0) {
-         cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-       }
-       else {
-         cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
-       }
+      int ret = mkdir(projectDirectory.c_str(),0777);
+      if(ret == 0) {
+	cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+      }
+      else {
+	cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+      }
     }
 
     dirName = projectDirectory+"/";
@@ -1447,10 +1445,10 @@ namespace MBSim {
       string preDir="PREINTEG";
       int ret=mkdir(preDir.c_str(),0777);
       if(ret==0) {
-        cout << "Make directory " << preDir << " for Preintegration results." << endl;
+	cout << "Make directory " << preDir << " for Preintegration results." << endl;
       }
       else {
-        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+	cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
       }
     }
   } 

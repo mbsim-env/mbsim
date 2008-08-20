@@ -95,9 +95,6 @@ namespace MBSim {
 
     double computePotentialEnergy();
 //    double computeKineticEnergy();
-
-    Port* getPort(const string &pName);
-    Contour* getContour(const string &cName);
    };
 
 }

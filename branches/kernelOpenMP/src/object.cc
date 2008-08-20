@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -39,7 +39,7 @@ namespace MBSim {
     osq << q;
     osq.close();
   }
-  
+
   void Object::readq0()
   {
     string fname="PREINTEG/"+fullName+".q0.asc";  
@@ -48,7 +48,7 @@ namespace MBSim {
     else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
     isq.close();
   }
-  
+
   void Object::writeu()
   {
     string fname="PREINTEG/"+fullName+".u0.asc";  
@@ -56,7 +56,7 @@ namespace MBSim {
     osu << u;
     osu.close();
   }
-  
+
   void Object::readu0()
   {
     string fname="PREINTEG/"+fullName+".u0.asc";  
@@ -65,7 +65,7 @@ namespace MBSim {
     else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
     isu.close();
   }
-  
+
   void Object::writex()
   {
     string fname="PREINTEG/"+fullName+".x0.asc";  
@@ -73,7 +73,7 @@ namespace MBSim {
     osx << x;
     osx.close();
   }
-  
+
   void Object::readx0()
   {
     string fname="PREINTEG/"+fullName+".x0.asc";  
@@ -85,7 +85,7 @@ namespace MBSim {
 
   Object::~Object()
   {
-  	vector<Port*>::iterator iP;
+    vector<Port*>::iterator iP;
     for(iP = port.begin(); iP != port.end(); ++iP) delete *iP;
     vector<Contour*>::iterator iC;
     for(iC = contour.begin(); iC != contour.end(); ++iC) delete *iC;
@@ -93,36 +93,36 @@ namespace MBSim {
 
   void Object::updatezRef() 
   {
-  	updateqRef();
+    updateqRef();
     updateuRef();
     updatexRef();
   }
 
   void Object::updatezdRef() 
   {
-  	updateqdRef();
+    updateqdRef();
     updateudRef();
     updatexdRef();
   }
 
   void Object::updateqRef() 
   {
-  	q>>(mbs->getq()(qInd,qInd+qSize-1));
+    q>>(mbs->getq()(qInd,qInd+qSize-1));
   }
 
   void Object::updateqdRef()
   {
-  	qd>>(mbs->getqd()(qInd,qInd+qSize-1));
+    qd>>(mbs->getqd()(qInd,qInd+qSize-1));
   }
 
   void Object::updateuRef()
   {
-  	u>>(mbs->getu()(uInd,uInd+uSize-1));
+    u>>(mbs->getu()(uInd,uInd+uSize-1));
   }
 
   void Object::updateudRef()
   {
-  	ud>>(mbs->getud()(uInd,uInd+uSize-1));
+    ud>>(mbs->getud()(uInd,uInd+uSize-1));
   }
 
   void Object::updatexRef()
@@ -137,7 +137,7 @@ namespace MBSim {
 
   void Object::updatehRef()
   {
-  	h>>(mbs->geth()(uInd,uInd+uSize-1));
+    h>>(mbs->geth()(uInd,uInd+uSize-1));
   }
 
   void Object::updaterRef()
@@ -158,14 +158,14 @@ namespace MBSim {
 
   void Object::updateTRef()
   {
-  	Index Iu = getuIndex();
+    Index Iu = getuIndex();
     Index Iq = Index(qInd,qInd+qSize-1);
     T>>mbs->getT()(Iq,Iu);
   }
 
   void Object::updateLLMRef()
   {
-  	Index I = getuIndex();
+    Index I = getuIndex();
     LLM>>mbs->getLLM()(I);
   }
 
@@ -184,16 +184,16 @@ namespace MBSim {
       for(int i=0; i<uSize; ++i) plotfile<<" "<<u(i);
       for(int i=0; i<xSize; ++i) plotfile<<" "<<x(i);
       if(plotLevel>2) {
-		for(int i=0; i<qSize; ++i) plotfile<<" "<<qd(i)/dt;
-		for(int i=0; i<uSize; ++i) plotfile<<" "<<ud(i)/dt;
-		for(int i=0; i<xSize; ++i) plotfile<<" "<<xd(i)/dt;
-		for(int i=0; i<uSize; ++i) plotfile<<" "<<h(i);
-		for(int i=0; i<uSize; ++i) plotfile<<" "<<r(i)/dt;
-		if(plotLevel>3) {
-	  		for(unsigned int j=0; j<port.size(); j++) {
-	    		for(int i=0; i<3; i++) plotfile<< " " << port[j]->getWrOP()(i);
-	  		}    
-		}
+	for(int i=0; i<qSize; ++i) plotfile<<" "<<qd(i)/dt;
+	for(int i=0; i<uSize; ++i) plotfile<<" "<<ud(i)/dt;
+	for(int i=0; i<xSize; ++i) plotfile<<" "<<xd(i)/dt;
+	for(int i=0; i<uSize; ++i) plotfile<<" "<<h(i);
+	for(int i=0; i<uSize; ++i) plotfile<<" "<<r(i)/dt;
+	if(plotLevel>3) {
+	  for(unsigned int j=0; j<port.size(); j++) {
+	    for(int i=0; i<3; i++) plotfile<< " " << port[j]->getWrOP()(i);
+	  }    
+	}
       }
     }
   }
@@ -207,17 +207,17 @@ namespace MBSim {
       for(int i=0; i<xSize; ++i) plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
 
       if(plotLevel>2) {
-		for(int i=0; i<qSize; ++i) plotfile <<"# "<< plotNr++ << ": qd(" << i << ")" << endl;
-		for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": ud("<<i<<")" << endl;
-		for(int i=0; i<xSize; ++i) plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
-		for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": h("<<i<<")" << endl;
-		for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
+	for(int i=0; i<qSize; ++i) plotfile <<"# "<< plotNr++ << ": qd(" << i << ")" << endl;
+	for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": ud("<<i<<")" << endl;
+	for(int i=0; i<xSize; ++i) plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
+	for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": h("<<i<<")" << endl;
+	for(int i=0; i<uSize; ++i) plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
 
-		if (plotLevel>3) {
-	  		for(unsigned int j=0; j<port.size(); j++) {
-	    		for(int i=0; i<3; i++) plotfile<< "# " << plotNr++ <<": WrOP ("<<port[j]->getName()<<")" << endl;
-	  		}    
-		}   
+	if (plotLevel>3) {
+	  for(unsigned int j=0; j<port.size(); j++) {
+	    for(int i=0; i<3; i++) plotfile<< "# " << plotNr++ <<": WrOP ("<<port[j]->getName()<<")" << endl;
+	  }    
+	}   
       }
     }
   }
@@ -280,6 +280,11 @@ namespace MBSim {
     return NULL;
   }
 
+  Object* Object::getObject(const string &name) {
+    if((getName() == name) || (getFullName() == name)) return this;
+    return NULL;
+  }
+
   void Object::init() 
   {
     vector<Mat>::iterator itW=W.begin(); 
@@ -297,7 +302,7 @@ namespace MBSim {
       w.push_back(Vec(linkSetValuedContourData[i].link->getlaSize())); 
       itW++; itw++;
     }
-    
+
     for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) { // SingleValued
       linkSingleValued.push_back(linkSingleValuedPortData[i].link);
     }
@@ -311,8 +316,8 @@ namespace MBSim {
     r.init(0);
     for(vector<Link*>::iterator i=linkSetValued.begin(); i!=linkSetValued.end(); i++) {
       if((*i)->isActive()) {
-		Index I = (*i)->getlaIndex();
-		r += mbs->getW()(getuIndex(),I)*(*i)->getla();
+	Index I = (*i)->getlaIndex();
+	r += mbs->getW()(getuIndex(),I)*(*i)->getla();
       }
     }
   }
@@ -323,9 +328,9 @@ namespace MBSim {
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
     for(unsigned int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
-		Index I = (*it1)->getlaIndex();
-		Mat Wi = (*itW);
-		mbs->getW()(getuIndex(),I) = Wi; 
+	Index I = (*it1)->getlaIndex();
+	Mat Wi = (*itW);
+	mbs->getW()(getuIndex(),I) = Wi; 
       }
       it1++; itW++; 
     }
@@ -333,7 +338,7 @@ namespace MBSim {
 
   void Object::facLLM()
   {
-   	LLM = facLL(M); 
+    LLM = facLL(M); 
   }
 
   void Object::updatew(double t) {
@@ -342,8 +347,8 @@ namespace MBSim {
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
     for(unsigned int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
-        Index I = (*it1)->getlaIndex();
-        mbs->getb()(I) += *itw; 
+	Index I = (*it1)->getlaIndex();
+	mbs->getb()(I) += *itw; 
       }
       it1++; itw++;
     }
@@ -356,20 +361,20 @@ namespace MBSim {
     vector<Link*>::iterator jt1, it1=linkSetValued.begin(); 
     for(unsigned int i=0; i<linkSetValued.size(); i++) {
       if((*it1)->isActive()) {
-        Index I = (*it1)->getlaIndex();
-        Mat Wi = (*itW);
-        mbs->getb()(I) += trans(Wi)*iMh; 
-        Mat iMWi = slvLLFac(LLM,Wi);
-        mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
-        jt1 = linkSetValued.begin(); 
-        jtW = W.begin(); 
-        for(unsigned int j=0; j<i; j++) {
-          if((*jt1)->isActive()) {
-            Index J =  (*jt1)->getlaIndex();
-            mbs->getG()(J,I) += trans((*jtW))*iMWi; 
-          }
-          jt1++; jtW++;
-        }
+	Index I = (*it1)->getlaIndex();
+	Mat Wi = (*itW);
+	mbs->getb()(I) += trans(Wi)*iMh; 
+	Mat iMWi = slvLLFac(LLM,Wi);
+	mbs->getG()(I) += SymMat(trans(Wi)*iMWi); 
+	jt1 = linkSetValued.begin(); 
+	jtW = W.begin(); 
+	for(unsigned int j=0; j<i; j++) {
+	  if((*jt1)->isActive()) {
+	    Index J =  (*jt1)->getlaIndex();
+	    mbs->getG()(J,I) += trans((*jtW))*iMWi; 
+	  }
+	  jt1++; jtW++;
+	}
       }
       it1++; itW++; itw++;
     }
@@ -378,7 +383,7 @@ namespace MBSim {
   void Object::updateJh(double t) {
     static const double eps = epsroot;
     Vec hOld = geth().copy();
-    
+
     int pos = getqInd(); // q-part of h
     for(int j=0;j<q.size();j++) {
       Vec Jhcol = mbs->getJh().col(pos+j);
@@ -386,36 +391,36 @@ namespace MBSim {
       q(j) += eps;
       updateKinematics(t);
       for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-		linkSingleValued[i]->updateStage1(t);
-		if(linkSingleValued[i]->isActive()) linkSingleValued[i]->updateStage2(t); 
+	linkSingleValued[i]->updateStage1(t);
+	if(linkSingleValued[i]->isActive()) linkSingleValued[i]->updateStage2(t); 
       }
       updateh(t);
       Jhcol(Iu) += (geth()-hOld)/eps;
       for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
-		LinkPort* l = linkSingleValuedPortData[i].link;
-		vector<Port*> ports = l->getPorts();
-		for(unsigned int b=0; b<ports.size(); b++) {
-		  Object *obj = ports[b]->getObject()->getResponsible();
-		  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-		    Vec hOld = obj->geth().copy();
-		    obj->updateh(t);
-		    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-		    obj->geth() = hOld;
-		  }
-		}
+	LinkPort* l = linkSingleValuedPortData[i].link;
+	vector<Port*> ports = l->getPorts();
+	for(unsigned int b=0; b<ports.size(); b++) {
+	  Object *obj = ports[b]->getObject()->getResponsible();
+	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	    Vec hOld = obj->geth().copy();
+	    obj->updateh(t);
+	    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+	    obj->geth() = hOld;
+	  }
+	}
       }
       for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-		LinkContour* l = linkSingleValuedContourData[i].link;
-		vector<Contour*> contours = l->getContours();
-		for(unsigned int b=0; b<contours.size(); b++) {
-		  Object *obj = contours[b]->getObject()->getResponsible();
-		  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-		    Vec hOld = obj->geth().copy();
-		    obj->updateh(t);
-		    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-		    obj->geth() = hOld;
-		  }
-		}
+	LinkContour* l = linkSingleValuedContourData[i].link;
+	vector<Contour*> contours = l->getContours();
+	for(unsigned int b=0; b<contours.size(); b++) {
+	  Object *obj = contours[b]->getObject()->getResponsible();
+	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	    Vec hOld = obj->geth().copy();
+	    obj->updateh(t);
+	    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+	    obj->geth() = hOld;
+	  }
+	}
       }
       q(j) = qSave;
     }
@@ -427,40 +432,40 @@ namespace MBSim {
       u(j) += eps;
       updateKinematics(t);
       for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-		linkSingleValued[i]->updateStage1(t);
-		if(linkSingleValued[i]->isActive()) linkSingleValued[i]->updateStage2(t); 
+	linkSingleValued[i]->updateStage1(t);
+	if(linkSingleValued[i]->isActive()) linkSingleValued[i]->updateStage2(t); 
       }
       updateh(t);
       Jhcol(Iu) += (geth()-hOld)/eps;
       for(unsigned int i=0; i<linkSingleValuedPortData.size(); i++) {
-		LinkPort* l = linkSingleValuedPortData[i].link;
-		vector<Port*> ports = l->getPorts();
-		for(unsigned int b=0; b<ports.size(); b++) {
-		  Object *obj = ports[b]->getObject()->getResponsible();
-		  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-		    Vec hOld = obj->geth().copy();
-		    obj->updateh(t);
-		    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-		    obj->geth() = hOld;
-		  }
-		}
+	LinkPort* l = linkSingleValuedPortData[i].link;
+	vector<Port*> ports = l->getPorts();
+	for(unsigned int b=0; b<ports.size(); b++) {
+	  Object *obj = ports[b]->getObject()->getResponsible();
+	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	    Vec hOld = obj->geth().copy();
+	    obj->updateh(t);
+	    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+	    obj->geth() = hOld;
+	  }
+	}
       }
       for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-		LinkContour* l = linkSingleValuedContourData[i].link;
-		vector<Contour*> contours = l->getContours();
-		for(unsigned int b=0; b<contours.size(); b++) {
-		  Object *obj = contours[b]->getObject()->getResponsible();
-		  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-		    Vec hOld = obj->geth().copy();
-		    obj->updateh(t);
-		    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-		    obj->geth() = hOld;
-		  }
-		}
+	LinkContour* l = linkSingleValuedContourData[i].link;
+	vector<Contour*> contours = l->getContours();
+	for(unsigned int b=0; b<contours.size(); b++) {
+	  Object *obj = contours[b]->getObject()->getResponsible();
+	  if(obj != mbs && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
+	    Vec hOld = obj->geth().copy();
+	    obj->updateh(t);
+	    Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
+	    obj->geth() = hOld;
+	  }
+	}
       }
       u(j) = uSave;
     }
-    
+
     updateKinematics(t);
     for(unsigned int i=0; i<linkSingleValued.size(); i++) {
       linkSingleValued[i]->updateStage1(t); 
@@ -468,7 +473,7 @@ namespace MBSim {
     }
     h=hOld;
   }
-  
+
   double Object::computeKineticEnergy() {
     return 0.5*trans(u)*M*u;
   }
