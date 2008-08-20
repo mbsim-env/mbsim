@@ -169,8 +169,6 @@ namespace MBSim {
     int maxIter, highIter, maxDampingSteps;
     /** Levenberg Marquard parameter */
     double lmParm;
-    /** warnLevel for output */
-    int warnLevel;
     /** termination FLAG for constrained iteration */
     bool term;
     /** constraint solver */

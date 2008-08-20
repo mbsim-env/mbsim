@@ -49,31 +49,37 @@ namespace MBSim {
   class Element {
 
     protected:
-	  /* MultiBodySystem */
+	  /** multiBodySystem */
       MultiBodySystem *mbs;
-      /* Short name of Element */
+      /** short name of Element */
       string name;
-      /* Full name of Element */
+      /** full name of Element */
       string fullName;
-      /* Name of the output directory */
+      /** name of the output directory */
       static string dirName;
-      /* File used for output of time dependent data, specified using Element::plotLevel */
+      /** file used for output of time dependent data, specified using Element::plotLevel */
       ofstream plotfile;
-      /* Counter for enumeration of output data in Element::plotfile */
+      /** counter for enumeration of output data in Element::plotfile */
       int plotNr;
-      /*
-       * Specify Plot Level:\n
+      /**
+       * specify Plot Level:\n
        * 0: plot only time\n
        * 1: plot position\n
        * 2: ...
        */ 
       int plotLevel;
-      /* Output-precision of ostream */
+      /** output-precision of ostream */
       int plotPrec;
-      /* File used for output of element parameters, e.g. mass ... */
+      /** file used for output of element parameters, e.g. mass ... */
       ofstream parafile;
-      /* Vector for Data Interface Base References */
+      /** vector for Data Interface Base References */
       vector<string> DIBRefs;
+      /** information output */
+	  bool INFO;
+	  /** debug output */
+	  bool DEBUG;
+	  /** warnLevel for output */
+	  int warnLevel;
 
     public:
 	  /*! Constructor */	
@@ -111,12 +117,21 @@ namespace MBSim {
       MultiBodySystem* getMbs() {return mbs;}
       /*! Set element multibody system \param mbs */
       virtual void setMbs(MultiBodySystem* mbs_) {mbs=mbs_;}
-	  
+      /*! Set information output */
+      virtual void setInfo(bool INFO_); 
+      /*! Set debug output */
+      virtual void setDebug(bool DEBUG_);
+      /*! Set warnLevel for output */
+      virtual void setWarnLevel(int warnLevel_); 
+       
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
   };
 
 inline void Element::closePlotFiles() {if(plotLevel) plotfile.close();}
+inline void Element::setInfo(bool INFO_) {INFO=INFO_;}
+inline void Element::setDebug(bool DEBUG_) {DEBUG=DEBUG_;}
+inline void Element::setWarnLevel(int warnLevel_) {warnLevel=warnLevel_;}
 }
 
 #endif
