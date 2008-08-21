@@ -88,8 +88,8 @@ namespace MBSim {
 
   inline void Contact::setFrictionDirections(int nFric_) {nFric = nFric_;}
   inline int Contact::getFrictionDirections() const {return nFric;}
-  inline void Contact::setFrictionCoefficient(double mue_) {cout << "Warning (Contact::setFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use setFrictionCoefficientFunction instead." << endl; delete mue_fun; mue_fun = new FuncConst(Vec(1,INIT,mue_));}
-  inline double Contact::getFrictionCoefficient() const {cout << "Warning (Contact::getFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use getFrictionCoefficientFunction instead." << endl; return ((*mue_fun)(0.))(0);}
+  inline void Contact::setFrictionCoefficient(double mue_) {if(warnLevel>0) cout << "WARNING (Contact::setFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use setFrictionCoefficientFunction instead." << endl; delete mue_fun; mue_fun = new FuncConst(Vec(1,INIT,mue_));}
+  inline double Contact::getFrictionCoefficient() const {if(warnLevel>0) cout << "WARNING (Contact::getFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use getFrictionCoefficientFunction instead." << endl; return ((*mue_fun)(0.))(0);}
   inline void Contact::setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_) {delete mue_fun; mue_fun = mue_fun_;}
   inline const DataInterfaceBase* Contact::getFrictionCoefficientFunction() const {return mue_fun;}
   inline void Contact::setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
