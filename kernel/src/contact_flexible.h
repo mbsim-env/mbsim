@@ -69,10 +69,10 @@ namespace MBSim {
       bool flag_c;
   };
   
-  inline void ContactFlexible::setStiffness(double c_) {cout << "Warning (ContactFlexible::setStiffness): Deprecated function and only valid for linear contact law. Use setPotential and setStiffnessFunction instead." << endl; delete c_fun; c_fun = new FuncLinear(Vec(1,INIT,-c_),Vec(1,INIT,0.)); delete V_fun; V_fun = new FuncQuadratic(Vec(1,INIT,0.5*c_),Vec(1,INIT,0.),Vec(1,INIT,0.)); flag_c = true;}
+  inline void ContactFlexible::setStiffness(double c_) {if(warnLevel>0) cout << "WARNING (ContactFlexible::setStiffness): Deprecated function and only valid for linear contact law. Use setPotential and setStiffnessFunction instead." << endl; delete c_fun; c_fun = new FuncLinear(Vec(1,INIT,-c_),Vec(1,INIT,0.)); delete V_fun; V_fun = new FuncQuadratic(Vec(1,INIT,0.5*c_),Vec(1,INIT,0.),Vec(1,INIT,0.)); flag_c = true;}
   inline void ContactFlexible::setStiffnessFunction(MBSim::DataInterfaceBase *c_fun_) {delete c_fun; c_fun = c_fun_; flag_c = true;}
   inline void ContactFlexible::setPotential(MBSim::DataInterfaceBase *V_fun_) {delete V_fun; V_fun = V_fun_;}
-  inline void ContactFlexible::setDamping(double d_) {cout << "Warning (ContactFlexible::setDamping) Deprecated function and only valid for linear contact law. Use setDampingFunction instead." << endl; delete d_fun; d_fun = new FuncLinear(Vec(1,INIT,-d_),Vec(1,INIT,0.));}
+  inline void ContactFlexible::setDamping(double d_) {if(warnLevel>0) cout << "WARNING (ContactFlexible::setDamping) Deprecated function and only valid for linear contact law. Use setDampingFunction instead." << endl; delete d_fun; d_fun = new FuncLinear(Vec(1,INIT,-d_),Vec(1,INIT,0.));}
   inline void ContactFlexible::setDampingFunction(MBSim::DataInterfaceBase *d_fun_) {delete d_fun; d_fun = d_fun_;}
   inline void ContactFlexible::setMarginalVelocity(double v) {gdT_grenz = v;}
 }
