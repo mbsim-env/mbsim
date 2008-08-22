@@ -50,8 +50,8 @@ namespace MBSim {
     int n = nq + nu + nx;
 
     Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
+    Index Ix(nq,nq+nx-1);
+    Index Iu(nq+nx,n-1);
     Vec z(n);
     Vec q(z(Iq));
     Vec u(z(Iu));

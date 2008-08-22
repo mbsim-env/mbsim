@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -36,7 +36,7 @@ namespace MBSim {
 
   void TimeSteppingIntegrator::integrate(MultiBodySystem& system) 
   {
-  	assert(dtPlot >= dt);
+    assert(dtPlot >= dt);
 
     double t = 0.; // starting time without restriction because of flow property of dynamical systems
 
@@ -46,8 +46,8 @@ namespace MBSim {
     int n = nq + nu + nx;
 
     Index Iq(0,nq-1);
-    Index Iu(nq,nq+nu-1);
-    Index Ix(nq+nu,n-1);
+    Index Ix(nq,nq+nx-1);
+    Index Iu(nx+nq, n-1);
     Vec z(n);
     Vec q(z(Iq));
     Vec u(z(Iu));
@@ -59,74 +59,40 @@ namespace MBSim {
     double tPlot = 0.;
     ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
-//	int stepPlot =(int) (1./dtPlot);
+    //	int stepPlot =(int) (1./dtPlot);
 
     int stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
 
     int iter = 0;
-//    double dt0 = dt;
     int step = 0;   
     int integrationSteps = 0;
     int maxIter = 0;
     int sumIter = 0;
 
-    // unsigned long s0 = clock();
     double s0 = clock();
     double time = 0;
-    // ofstream rzeit("rzeit.asc");
     while(t<tEnd) {
-      // rzeit << "Zeit: " << t << endl;
-      // long clock1 = clock();
       integrationSteps++;
       if( (step*stepPlot - integrationSteps) < 0) { // effort can be neglected with factor between dt and dtPlot
-		step++;
-		system.plot(z,t,dt); // is executed with current data t_i,q_i,u_i
-		double s1 = clock();
-		time += (s1-s0)/CLOCKS_PER_SEC;
-		s0 = s1; 
-		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-		tPlot += dtPlot;
+	step++;
+	system.plot(z,t,dt); // is executed with current data t_i,q_i,u_i
+	double s1 = clock();
+	time += (s1-s0)/CLOCKS_PER_SEC;
+	s0 = s1; 
+	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+	if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+	tPlot += dtPlot;
       }
-////      if((t+dt)*stepPlot >= step) { // plotten
-////		step++;
-////		system.plot(z,t,dt);
-////		double s1 = clock();
-////		time += (s1-s0)/CLOCKS_PER_SEC;
-////		s0 = s1; 
-////		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-////		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
-////		tPlot += dtPlot;
-////      }
-      // long clock1b = clock();
-
-      // if(fabs(tPlot-t)*dt < 1e-14) {
-      // 	// Interpolation macht wahrscheinlich keinen Sinn
-      //    // Vec zPlot = z + (z-zOld)/(t-tOld)*(t-tPlot)
-      //    system.plot(z,t,dt);
-      //    integPlot<< t << " " << dt << " " <<  iter << " " << (clock()-s0)/CLOCKS_PER_SEC << " "<< dt <<endl;
-      //    if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(4) << setiosflags(ios::left) << iter <<  "\r" << flush;
-      //    tPlot += dtPlot;
-      // }
-
-      // if ((tPlot-(t+dt))*dt < -1e-14) {
-      //    cout << "Warning " << t << " " << tPlot << " " << t+dt << " "<< t+dt - tPlot << endl;
-      //    dt = t+dt - tPlot;
-      // } 
-      // else dt = dt0;
 
       q += system.deltaq(z,t,dt);
-      
+
       t += dt;
-      // long clock2 = clock();
 
       system.update(z,t); // is executed with t_{i+1},q_{i+1},u_i
-      // long clock3 = clock();
 
       iter = system.solve(dt);
-      // long clock4 = clock();
 
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;
