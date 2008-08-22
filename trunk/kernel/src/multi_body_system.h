@@ -59,10 +59,14 @@ namespace MBSim {
     vector<Link*> links;
     /** vector of included single valued links */
     vector<Link*> linkSingleValued;
-    /** vector of included set valued links */
-    vector<Link*> linkSetValued;
-    /** vector of included active set valued links */
-    vector<Link*> linkSetValuedActive;
+    /** vector of included set valued bilateral links */
+    vector<Link*> linkSetValuedBilateral;
+    /** vector of included set valued unilateral links */
+    vector<Link*> linkSetValuedUnilateral;
+    /** vector of included active set valued bilateral links */
+    vector<Link*> linkSetValuedBilateralActive;
+    /** vector of included active set valued unilateral links */
+    vector<Link*> linkSetValuedUnilateralActive;
     /** vector of included extra dynamic interfaces */
     vector<ExtraDynamicInterface*> EDI;
     /** vector of included data interface bases */
@@ -100,26 +104,37 @@ namespace MBSim {
 
     /** gaps and gap velocities */
     Vec g, gd;
-    /** dimension and index of gaps */
-    int gSize, gInd;
+    /** dimension of gaps */
+    int gSize;
+    /** index of gaps of setvalued links*/
+    Index gIndBilateral, gIndUnilateral;
     /** constraint forces */
     Vec la;
-    /** dimension and index of constraint forces */
-    int laSize, laInd;
+    /** dimension of constraint forces */
+    int laSize;
+    /** index of uni- and bilateral setvalued constraint forces */
+    Index laIndBilateral, laIndUnilateral;
     /** rFactors */
     Vec rFactor;
     /** dimension and index of rFactor */
     int rFactorSize, rFactorInd;
 
+    /** size of stopvector sv */
     int svSize;
     int svInd;
     Vec sv;
     Vector<int> jsv;
 
+    /** size of constraints from unilateral links e.g. for DAE integration */
+    int constraintSize;    
+
+    vector<Link*> linksInitialActive;		// links used as constraints for assembling system
+    Vector<int> qVarIndex;			// Index of q which may change while assembling system
+
     /** Jacobian of smooth right hand side */
     Mat Jh;
 
-    int nHSLinksSetValuedFixed;
+    int nHSLinksSetValuedUnilateralFixed;
     int nHSLinksSingleValuedFixed;
 
     bool checkGSize;
@@ -334,16 +349,16 @@ namespace MBSim {
     Vec& getla() {return la;}
     /*! Get number of contact loads */
     int getlaSize() const {return laSize;}
-    /*! Set index of contact loads */
-    void setlaInd(int ind) {laInd = ind;}
+    /*! Get number of bilateral contact loads */
+    int getlaBilateralSize() const {return laIndBilateral.end()-laIndBilateral.start() +1;}
+    /*! Get Index of unilateral gaps */
+    Index getgIndUnilateral() {return gIndUnilateral;}
     /*! Get gaps */
     const Vec& getg() const {return g;}
     /*! Get gaps */
     Vec& getg() {return g;}
     /*! Get number of gaps */
     int getgSize() const {return gSize;}
-    /*! Set index of gaps */
-    void setgInd(int ind) {gInd = ind;}
     /*! Get gap velocities */
     const Vec& getgd() const {return gd;}
     /*! Get gap velocities */
@@ -370,7 +385,7 @@ namespace MBSim {
     /*! Updates order one gap for current time with state and time step */
     Vec deltax(const Vec &zParent, double t, double dt);
     /*! Updates the state depending structures for multibody system */
-    void update(const Vec &zParent, double t);  
+    bool update(const Vec &zParent, double t);  
     /*! Calls updateKinematics for children */
     void updateKinematics(double t);
     /*! Calls updateT for children */
@@ -483,6 +498,10 @@ namespace MBSim {
     /*! Read state from file for preintegration */
     void readz0();
 
+    /*! Assembling MBS */
+    void assembleSystem(double t0=0);
+    void assembleSystem_calculateg(const Vec & qVar, Vec &g_constrain,double t0);
+
     /*!Define directory name for simulation output.
      * Default is Element::(fullName+i) with i used for enumeration 
      */
@@ -491,6 +510,8 @@ namespace MBSim {
     const string& getDirectoryName() {return dirName;}
     /*! Plots interesting data */
     void plot(const Vec& z, double t, double dt=1);
+    /*! Plots interesting data for DAE solver */
+    void plotDAE(const Vec &Y, double t, int DAEIndex);
     /*! Plots interesting data */
     void plot(double t, double dt=1);
     /*! Plot parameter file */
@@ -522,13 +543,21 @@ namespace MBSim {
     void zdot(const Vec& z, Vec& zd, double t);
     // Calculates differentiated state for ODE integrator */
     Vec zdot(const Vec& z, double t);
-
-
-
-
-
-
-
+    // Calculates F=[zdot; gd/g] for DAE Integrator (e.g. Radau5) */
+    void F_DAE(const Vec& YParent, Vec& F, double t, int DAEIndex);
+    // Jacobian dF/dY (G=[f(z,t); gdot] Y=[z;la]
+    void JacF_DAE(double t, const Vec &YParent, Mat &Jac, int DAEIndex); 
+    // root function for event detection 
+    void root_DAE(const Vec &YParent, Vec &rt, double t);
+    // save status (e.g. active, stick/slip) of unilateral links and update size StopVector (svSize) and constraintSize (for e.g. DAE)*/
+    void saveUnilaterLinkStatus();
+    // get size of unilateral constraints (use saveUnilaterLinkStatus before to update constraints) (for e.g. DAE)*/
+    int getSizeUnilateralConstraints() {return constraintSize;}
+    // get and set all la of all links stored in linkSetValuedBilateral / linkSetValuedUnilateral */
+    Vec getAllBilateralla();
+    void setAllBilateralla(const Vec laAllBi);
+    Vec getAllUnilateralla();
+    void setAllUnilateralla(const Vec laAllUni);
 
     virtual void shift(Vec& z, const Vector<int>& jsv, double t) {}
     bool driftCompensation(Vec& z, double t) { return false; }

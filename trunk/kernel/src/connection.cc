@@ -36,13 +36,14 @@ namespace MBSim {
     , coilspringAMVis(0), coilspringAMVisUserFunctionColor(0)
 #endif
   {
+    bilateral=true;
   }
 
   Connection::~Connection() { 
-#   ifdef HAVE_AMVIS   
-      delete coilspringAMVis; coilspringAMVis=NULL;
-      delete coilspringAMVisUserFunctionColor; coilspringAMVisUserFunctionColor=NULL;
-#   endif
+#ifdef HAVE_AMVIS   
+    delete coilspringAMVis; coilspringAMVis=NULL;
+    delete coilspringAMVisUserFunctionColor; coilspringAMVisUserFunctionColor=NULL;
+#endif
   }
   void Connection::calcSize() {
     LinkPort::calcSize();

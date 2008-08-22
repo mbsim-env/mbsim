@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -27,19 +27,32 @@
 #include <string>
 #include "fmatvec.h"
 
+
 using namespace fmatvec;
 
 namespace MBSim {
 
+  class MultiBodySystem;
+
   /*! \brief Template class for Functions */
   template<class Ret, class Arg> class Function {
-      public:
-        /*! Destructor */
-		virtual ~Function() {}
-		/*! Functional operator */
-		virtual Ret operator()(const Arg& x) = 0;
+    public:
+      /*! Destructor */
+      virtual ~Function() {}
+      /*! Functional operator */
+      virtual Ret operator()(const Arg& x) = 0;
   };
-  
+
+  class MBSCalculateConstraints_g : public Function<Vec,Vec> {
+    private:
+      MultiBodySystem *system;
+      double t0;
+    public:
+      MBSCalculateConstraints_g(MultiBodySystem *sys_, double t0_) : system(sys_), t0(t0_) {}
+      Vec operator()(const Vec &qVar_);
+  };
+
+
   /*! Conversion of integer to String */
   std::string numtostr(int i);   
   /*! Conversion of double to String */

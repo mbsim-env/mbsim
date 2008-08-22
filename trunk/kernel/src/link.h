@@ -57,6 +57,8 @@ namespace MBSim {
       Vector<int> jsv;
       /** set valued or functional link? */
       bool setValued;
+      /** uni or bilateral link? */
+      bool bilateral;
 
       /** dimension and start index of gap parameters */
       int gSize, gInd;
@@ -78,6 +80,8 @@ namespace MBSim {
 
       /** is a link active such that is has to be included in the kinetical balance */
       bool active;
+      /** should this link be considered as constraint while assembling the system (g(q0)=0 or gd(q0,u0)=0) */
+      bool activeForAssembling;
       /** Index of gaps and loads */
       Index Ig, Ila;
       /** saved force parameters */
@@ -119,6 +123,8 @@ namespace MBSim {
       void setsvInd(int svInd_) {svInd = svInd_;};
       /*! Get dimension of internal Link state */
       int getxSize() const {return xSize;}
+      /*! Update size stopvector sv */
+      virtual void updatesvSize() {};
       int getsvSize() const {return svSize;}
       /*! Activate HitSphereLink-check for the Link before updateStage1(), only usefull for Contacts */
       void setHitSphereCheck(bool checkHSLink_) {checkHSLink=checkHSLink_;}
@@ -140,8 +146,15 @@ namespace MBSim {
       virtual void updatedx(double t, double dt) {};
       /*! Supplies the time derivative of x to a variable step solver */
       virtual void updatexd(double t) {};
-
-      virtual void updateStopVector(double t) {}
+      /*! Update stop vector sv */
+      virtual void updateStopVector(double t) {};
+      /*! get constraints e.g. for DAE integrator */
+      virtual void getConstraints(Vec &constr, int index) {};
+      virtual int getSizeConstraints() {return 0;}
+      /*! set lagrange multiplier corresponding to constraints  e.g. for DAE integrator*/
+      virtual void setLagrangeMultiplier(const Vec &lm){};
+      /*! save stauts of link */
+      virtual void saveStatus() {};
       /*! Get internal state variables of a Link */
       const Vec& getx() const {return x;}
       /*! Get internal state velocities of a Link */
@@ -154,6 +167,8 @@ namespace MBSim {
       void initPlotFiles();
       /*! Returns FLAG for setvalued or functional relationship */
       bool isSetValued() const; 
+      /*! Returns FLAG for bi- or unilateral link */
+      bool isBilateral() {return bilateral;}
       /*! Returns the actual load supplied by the Link to the Port connected by it */
       const Vec& getLoad(int id) const { return load[id];}
       /*! Returns the load directions */
@@ -182,6 +197,10 @@ namespace MBSim {
       const Index& getlaIndex() const {return Ila;}
       /*! Get FLAG if Link is active */
       bool isActive() const {return active;}
+      /*! Get FLAG if Link should be used as constraint while Assembling System */
+      bool isActiveforAssembling() const {return activeForAssembling;}
+      /*! Set FLAG if Link should be used as constraint while Assembling System */
+      void ActivateForAssembling(bool flag=true) {activeForAssembling= flag;}
       /*! Saves force parameter */
       void savela();
       /*! Initialises force parameter to saved value */

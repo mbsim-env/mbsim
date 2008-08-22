@@ -70,6 +70,19 @@ void RADAU5(int*,void(*)(int*,double*,double*,double*,double*,int*),double*,doub
     void(*)(int*,double*,double*,double*,double*,int*,int*,double*,int*,int*),
     int*,double*,int*,int*,int*,double*,int*,int*);
 
+#define DDASPK F77_FUNC(ddaspk, DDASPK)
+void DDASPK(void(*)(double*, double*, double*, double*, double*, int*, double*, int*), int*, double*, double*, double*, double*,
+            int*, double*, double*, int*, double*, int*, int*, int*, double*, int*, 
+            void(*)(double*, double*, double*, double*, double*, double*, int*),
+            void(*)(int*, double*, double*, double*, double*, double*, double*, double*, double*, int*, double*, double*, int*, double*, int*));
+
+#define DDASKR F77_FUNC(ddaskr, DDASKR)
+void DDASKR(void(*)(double*, double*, double*, double*, double*, int*, double*, int*), int*, double*, double*, double*, double*,
+            int*, double*, double*, int*, double*, int*, int*, int*, double*, int*, 
+            void(*)(double*, double*, double*, double*, double*, double*, int*),
+            void(*)(int*, double*, double*, double*, double*, double*, double*, double*, double*, int*, double*, double*, int*, double*, int*),
+            void(*)(int*, double*, double*, double*, int*, double*, double*, int*), int*, int*);
+
 #define CONTR5 F77_FUNC(contr5,CONTR5)
 double CONTR5(int*,double*,double*,int*);
 

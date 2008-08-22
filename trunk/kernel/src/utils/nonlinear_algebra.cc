@@ -24,6 +24,7 @@
 #include<cmath>
 #include "nonlinear_algebra.h"
 #include "eps.h"
+#include "wrapper.h"
 
 namespace MBSim {
 
@@ -162,9 +163,14 @@ namespace MBSim {
 	  x(j)=xj;
 	  J.col(j) = (f2-f)/dx;
 	}
-      }
-
-      Vec dx = slvLU(J,f);
+      } 		// slvLU
+      SqrMat B;
+      B = J.copy();
+      Vec dx = f.copy();
+      int *ipiv = new int[B.size()];
+      info = dgesv(B.blasOrder(), B.size(), 1, B(), B.ldim(), ipiv, dx(), dx.ldim());
+      delete [] ipiv;
+      if (info) {info = -2; return rc;}	// slvLU via dgesv failed!
 
       double nrmf = 1;
       double alpha = 1;

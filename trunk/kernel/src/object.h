@@ -87,6 +87,8 @@ namespace MBSim {
     Vec q, u, x;
     /** initial values */
     Vec q0,u0,x0;
+    /** indices of fixed initial values, which are not modified to fullfill constraints */
+    Vector<int> q0fixed;
     /** velocities */
     Vec qd,ud,xd;
     /** smooth, set-valued and control vector */
@@ -256,6 +258,8 @@ namespace MBSim {
     Vec& getx() {return x;};
     /*! Get initial positions */
     const Vec& getq0() const {return q0;};
+    /*! Get indices of Object::q0 which are fixed while assembling system */
+    const Vector<int>& getq0fixed() const {return q0fixed;};
     /*! Get initial velocities */
     const Vec& getu0() const {return u0;};
     /*! Set initial order one parameters */
@@ -286,6 +290,8 @@ namespace MBSim {
     void setx(Vec x_) { x = x_; }	
     /*! Set initial positions */
     void setq0(Vec q0_) { q0 = q0_; }
+    /*! Set indices for fixed initial values q0 */
+    void setq0fixed(Vector<int> q0fixed_) {q0fixed = q0fixed_; }
     /*! Set initial velocities */
     void setu0(Vec u0_) { u0 = u0_; }
     /*! Set initial order one parameters */
@@ -300,6 +306,8 @@ namespace MBSim {
     virtual int getWSize() const { return uSize; }
     /*! Get W */
     vector<Mat>& getWs() {return W;}
+    /*! q is stored in q0 */
+    void storeq0() {q0=q;}
 
     /*! Plots intereseting data */ 
     void plot(double t, double dt = 1);

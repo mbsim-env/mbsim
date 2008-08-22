@@ -31,8 +31,13 @@
 #include "dop853_integrator.h"
 #include "odex_integrator.h"
 #include "radau5_integrator.h"
+#include "radau5dae_integrator.h"
+#include "daspk_integrator.h"
+#include "daskr_integrator.h"
+#include "dae_ts_integrator.h"
 #include "time_stepping_integrator.h"
 #include "theta_time_stepping_integrator.h"
+#include "time_stepping_ssc_integrator.h"
 #include "euler_explicit_integrator.h"
 
 #endif  /* INTEGRATORS_H_ */
