@@ -26,6 +26,7 @@
 namespace MBSim {
 
   ConnectionFlexible::ConnectionFlexible(const string &name) : Connection(name,false), cT(0), dT(0), cR(0), dR(0) {
+    activeForAssembling = true;
     for(int i=0; i<2 ; i++) {
       load.push_back(Vec(6));
       WF[i] >> load[i](Index(0,2));

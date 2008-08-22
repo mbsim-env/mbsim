@@ -8,7 +8,12 @@ libintegrators_la_SOURCES = integrator.cc\
 			     dop853_integrator.cc \
 			     odex_integrator.cc \
 			     radau5_integrator.cc \
+			     radau5dae_integrator.cc \
+			     daspk_integrator.cc \
+                             daskr_integrator.cc \
+			     dae_ts_integrator.cc \
 			     time_stepping_integrator.cc \
+			     time_stepping_ssc_integrator.cc \
 			     theta_time_stepping_integrator.cc \
 			     euler_explicit_integrator.cc \
 			     fortran/opkda1.f\
@@ -19,7 +24,10 @@ libintegrators_la_SOURCES = integrator.cc\
 			     fortran/odex.f\
 			     fortran/radau5.f\
 			     fortran/dc_lapack.f\
-			     fortran/rksuite.f
+			     fortran/rksuite.f\
+                             fortran/ddaspk.f\
+                             fortran/ddaskr.f\
+			     fortran/daux.f
 
 
 libintegrators_la_CPPFLAGS = -Ifortran -I..
@@ -31,6 +39,7 @@ LDADD = $(DEPS_LIBS)
 integratorsinclude_HEADERS = integrator.h \
 			      integrators.h \
 			      time_stepping_integrator.h \
+			      time_stepping_ssc_integrator.h \
 			      theta_time_stepping_integrator.h \
 			      euler_explicit_integrator.h \
 			      lsodar_integrator.h \
@@ -41,5 +50,9 @@ integratorsinclude_HEADERS = integrator.h \
 			      dop853_integrator.h \
 			      odex_integrator.h \
 			      radau5_integrator.h \
+			      radau5dae_integrator.h \
+			      daspk_integrator.h \
+                              daskr_integrator.h \
+			      dae_ts_integrator.h \
 			      fortran/fortran_wrapper.h
 

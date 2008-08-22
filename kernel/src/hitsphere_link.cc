@@ -51,7 +51,8 @@ namespace MBSim {
     if(nrm2(WrOC[0] - WrOC[1]) < R[0] + R[1] ) {
       for(vector<Link*>::iterator iL = linkList.begin(); iL != linkList.end(); ++iL) {
 		if((*iL)->isSetValued()) {
-		  mbs->linkSetValued.push_back(*iL); 
+                  if ((*iL)->isBilateral()) mbs->linkSetValuedBilateral.push_back(*iL); 
+		  else mbs->linkSetValuedUnilateral.push_back(*iL); 
 		}
 		else {
 		  mbs->linkSingleValued.push_back(*iL);
