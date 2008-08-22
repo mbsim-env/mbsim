@@ -35,6 +35,11 @@ namespace MBSim {
     APK0(1,1)=1.0;
     APK0(2,2)=1.0;
   }
+  BodyRigidRel::~BodyRigidRel() {
+    for(unsigned int i=0; i<successor.size(); i++) {
+      delete successor[i];
+    }
+  }
 
   void BodyRigidRel::calcSize() {
     BodyRigid::calcSize();
