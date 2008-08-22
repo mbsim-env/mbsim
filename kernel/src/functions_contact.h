@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin F�rg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -35,12 +35,12 @@ namespace MBSim {
   template<class Ret, class Arg>
     class DistanceFunction : public Function<Ret,Arg> {
       public:
-		/*! Calculation of root-function at Contour-parameter x */
-		virtual Ret operator()(const Arg& x) = 0;
-		/*! Calculation of possible contact-distance at Contour-parameter x (default: norm of computeWrD(const Arg& x)) */
-		virtual double operator[](const Arg& x) {return nrm2(computeWrD(x));};	
-		/*! Compute helping distance-vector at Contour-parameter x */
-		virtual Vec computeWrD(const Arg& x) = 0;
+	/*! Calculation of root-function at Contour-parameter x */
+	virtual Ret operator()(const Arg& x) = 0;
+	/*! Calculation of possible contact-distance at Contour-parameter x (default: norm of computeWrD(const Arg& x)) */
+	virtual double operator[](const Arg& x) {return nrm2(computeWrD(x));};	
+	/*! Compute helping distance-vector at Contour-parameter x */
+	virtual Vec computeWrD(const Arg& x) = 0;
     };
 
 
@@ -72,23 +72,23 @@ namespace MBSim {
     private:
       Contour1s *contour;      
       CircleHollow *circle;
-      
+
     public:
       /*! Constructor */
       FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
       /*! Returns value of the root-function at parameter alpha */
       double operator()(const double &alpha)
       {
-		Vec Wt = circle->computeWb();
-		Vec WrOC[2];
-		WrOC[0] = circle->getWrOP();
-		WrOC[1] = contour->computeWrOC(alpha);
-		Vec Wd = WrOC[1] - WrOC[0];
-		return trans(Wt)*Wd;
+	Vec Wt = circle->computeWb();
+	Vec WrOC[2];
+	WrOC[0] = circle->getWrOP();
+	WrOC[1] = contour->computeWrOC(alpha);
+	Vec Wd = WrOC[1] - WrOC[0];
+	return trans(Wt)*Wd;
       }
       /*! Returns distance-vector of cylinder possible contact point and circle midpoint at parameter alpha */
       Vec computeWrD(const double &alpha) {return circle->getWrOP() - contour->computeWrOC(alpha);}
-//      double operator[](const double &alpha) {return nrm2(computeWrD(alpha));}
+      //      double operator[](const double &alpha) {return nrm2(computeWrD(alpha));}
   };
 
 
@@ -111,44 +111,44 @@ namespace MBSim {
 	return contour->computeWrOC(alpha) - point->getWrOP();
       }
   };
-  
+
   /*! \brief Base Root function for planar pairing Cone-Section and Circle 
    * 
    * Author:  Thorsten Schindler
    */
   class FuncPairConeSectionCircle : public DistanceFunction<double,double> {
-   public:
+    public:
       /*! Constructor with \default el_IN_ci=true to distinguish relative position of ellipse */
       FuncPairConeSectionCircle(double R_,double a_,double b_) : R(R_), a(a_), b(b_), sec_IN_ci(true) {}
       /*! Constructor */
       FuncPairConeSectionCircle(double R_,double a_,double b_,bool sec_IN_ci_) : R(R_), a(a_), b(b_), sec_IN_ci(sec_IN_ci_) {}
-      
+
       /*! Set distance vector of circle- and cone-section midpoint M_S-M_C */
       void setDiffVec(Vec d_);
       /*! Set the normed base-vectors of the cone-section */
       void setSectionCOS(Vec b1_,Vec b2_);
-      
+
       /*! Return value of the root-function at cone-section-parameter */
       virtual double operator()(const double &phi) = 0;
       /*! Return distance-vector of cone-section possible contact point and circle midpoint at cone-section-parameter */
       virtual Vec computeWrD(const double &phi) = 0;
       /*! Return distance of cone-section- and circle possible contact points at cone-section-parameter */ 
       double operator[](const double &phi);
-      
-  	protected:
-  	  /** radius of circle as well as length in b1- and b2-dirction */
+
+    protected:
+      /** radius of circle as well as length in b1- and b2-dirction */
       double R, a, b;
-      
+
       /** cone-section in circle */
       bool sec_IN_ci;
-      
+
       /** normed base-vectors of cone-section */
       Vec b1, b2;
-      
+
       /** distance-vector of circle- and cone-section-midpoint */
       Vec d;  
   };
-  
+
   inline void FuncPairConeSectionCircle::setDiffVec(Vec d_) {d=d_;}
   inline void FuncPairConeSectionCircle::setSectionCOS(Vec b1_,Vec b2_) {b1=b1_; b2=b2_;}
   inline double FuncPairConeSectionCircle::operator[](const double &phi) {if(sec_IN_ci) return R - nrm2(computeWrD(phi)); else return nrm2(computeWrD(phi)) - R;}
@@ -158,25 +158,25 @@ namespace MBSim {
    * Authors: Roland Zander and Thorsten Schindler
    */
   class FuncPairEllipseCircle : public FuncPairConeSectionCircle {
-   public:
+    public:
       /*! Constructor with \default el_IN_ci=true to distinguish relative position of ellipse */
       FuncPairEllipseCircle(double R_,double a_,double b_) : FuncPairConeSectionCircle(R_,a_,b_) {}
       /*! Constructor */
       FuncPairEllipseCircle(double R_,double a_,double b_,bool el_IN_ci_) : FuncPairConeSectionCircle(R_,a_,b_,el_IN_ci_) {}
-      
+
       /*! Set the normed base-vectors of the ellipse */
       void setEllipseCOS(Vec b1e_,Vec b2e_);
-      
+
       /*! Return value of the root-function at ellipse-parameter */
       double operator()(const double &phi);
       /*! Return distance-vector of ellipse possible contact point and circle midpoint at ellipse-parameter */
       Vec computeWrD(const double &phi);
   };
-  
+
   inline void FuncPairEllipseCircle::setEllipseCOS(Vec b1e_,Vec b2e_) {setSectionCOS(b1e_,b2e_);}
   inline double FuncPairEllipseCircle::operator()(const double &phi) {return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cos(phi) + 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sin(phi) + ((a*a) - (b*b))*sin(2*phi);}
   inline Vec FuncPairEllipseCircle::computeWrD(const double &phi) {return d + b1*a*cos(phi) + b2*b*sin(phi);}
-  
+
   /*! \brief Root function for planar pairing Hyperbola and Circle 
    * 
    * Author: Bastian Esefeld
@@ -184,20 +184,20 @@ namespace MBSim {
   class FuncPairHyperbolaCircle : public FuncPairConeSectionCircle {
 
     public:
-	  /*! Constructor with \default hy_in_ci=true to distinguish relative position of ellipse */
-	  FuncPairHyperbolaCircle(double R_, double a_, double b_) : FuncPairConeSectionCircle(R_,a_,b_) {}
-	  /*! Constructor */
-	  FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) : FuncPairConeSectionCircle(R_,a_,b_,hy_IN_ci_) {}
-	  
-	  /*! Return value of the root-function at hyperbola-parameter */
-	  double operator()(const double &phi);
-	  /*! Return distance-vector of hyperbola possible contact point and circle midpoint at hyperbola-parameter */
+      /*! Constructor with \default hy_in_ci=true to distinguish relative position of ellipse */
+      FuncPairHyperbolaCircle(double R_, double a_, double b_) : FuncPairConeSectionCircle(R_,a_,b_) {}
+      /*! Constructor */
+      FuncPairHyperbolaCircle(double R_, double a_, double b_, bool hy_IN_ci_) : FuncPairConeSectionCircle(R_,a_,b_,hy_IN_ci_) {}
+
+      /*! Return value of the root-function at hyperbola-parameter */
+      double operator()(const double &phi);
+      /*! Return distance-vector of hyperbola possible contact point and circle midpoint at hyperbola-parameter */
       Vec computeWrD(const double &phi);
   };
-  
+
   inline double FuncPairHyperbolaCircle::operator()(const double &phi) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cosh(phi) - 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sinh(phi) - ((a*a) + (b*b))*sinh(2*phi);}
   inline Vec FuncPairHyperbolaCircle::computeWrD(const double &phi) {return d + b1*a*cosh(phi) + b2*b*sinh(phi);}
-  
+
   /*! Root function for pairing Contour1s and Line */
   class FuncPairContour1sLine : public DistanceFunction<double,double> {
     private:
@@ -258,13 +258,13 @@ namespace MBSim {
     private:
       /** initial value for Newton method */
       double s0;
-      
+
       /** nodes defining search-areas for Regula-Falsi */
       Vec nodes;
-      
+
       /** distance-function holding all information for contact-search */
       DistanceFunction<double,double> *func;
-      
+
       /** all area searching by Regular-Falsi or known initial value for Newton-Method? */
       bool searchAll;
 

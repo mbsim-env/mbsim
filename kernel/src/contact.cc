@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -27,6 +27,7 @@
 #include "functions_contact.h"
 #include "multi_body_system.h"
 #include "nonlinear_algebra.h"
+#include "userfunction.h"
 
 // --- List of contact kinematic implementations - BEGIN ---
 #include "point_line.h"
@@ -57,20 +58,39 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : LinkContour(name,setValued), nFric(0), contactKinematics(0) {
+  Contact::Contact(const string &name, bool setValued) : LinkContour(name,setValued), DeleteDIB(true), nFric(0), contactKinematics(0) {
     mue_fun = new FuncConst(Vec(1,INIT,0.));
     active = false;
+    bilateral = false;
   }
 
   Contact::Contact(const Contact *master, const string &name) : LinkContour(name,master->setValued), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
-  	mue_fun = master->mue_fun;
-    active = false;
+    mue_fun = master->mue_fun;
+    DeleteDIB = false;
+    active   = false;
+    bilateral= false;
   }
 
   Contact::~Contact() {
     if(contactKinematics) delete contactKinematics;
+    if((mue_fun)&&(DeleteDIB)) delete mue_fun;
   }
-  
+
+  void Contact::setFrictionCoefficient(double mue_) {
+    if (DeleteDIB) delete mue_fun; 
+    mue_fun = new FuncConst(Vec(1,INIT,mue_));
+  }
+
+  void Contact::setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_, bool DeleteDIB_) {
+    if (DeleteDIB) delete mue_fun; 
+    mue_fun = mue_fun_;
+    DeleteDIB = DeleteDIB_;
+  }
+
+  double Contact::getFrictionCoefficient() const {
+    return ((*mue_fun)(0.))(0);
+  }
+
   void Contact::calcSize() {
     LinkContour::calcSize();
     gSize = 1;
@@ -166,7 +186,11 @@ namespace MBSim {
   }
 
   void Contact::checkActive() {
-    if(g(0)>0) active = false;
+    if(g(0)>0) {
+      active = false;
+      la.init(0.0);
+      gd.init(0.0);
+    }
     else active = true;
   }
 

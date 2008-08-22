@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin F�rg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -30,6 +30,7 @@
 namespace MBSim {
 
   class ContactKinematics;
+  class DataInterfaceBase;
 
   /*! \brief Class for contacts
    *
@@ -41,9 +42,9 @@ namespace MBSim {
       Contact(const string &name, bool setValued);
       /*! Clone constructor with new name, but same parameters */
       Contact(const Contact *master, const string &name_);
-	  /*! Destructor */
+      /*! Destructor */
       virtual ~Contact();
-	  /*! Calculates dimension of needed force, gap vectors */
+      /*! Calculates dimension of needed force, gap vectors */
       void calcSize();
       /*! Initialises the needed contour description */
       void init();
@@ -51,48 +52,43 @@ namespace MBSim {
       void connectHitSpheres(Contour *contour1, Contour* contour2);
       /*! Connect two Contours and select the contact kinematics */
       void connect(Contour *contour1, Contour* contour2);
-	  /*! First step of calculating the contact kinematics */
+      /*! First step of calculating the contact kinematics */
       virtual void updateStage1(double t);
       /*! Second step of calculating the contact kinematics */
       virtual void updateStage2(double t);
       /*! Define force directions and evaluate kinetical values in updateStage2 */
       virtual void updateKinetics(double t) = 0;
-	  /*! Set number of friction directions: 0,1,2 */
-      void setFrictionDirections(int nFric_);
+      /*! Set number of friction directions: 0,1,2 */
+      void setFrictionDirections(int nFric_) {nFric = nFric_;}
       /*! Get number of friction directions */
-      int getFrictionDirections() const;
+      int getFrictionDirections() const {return nFric;}
       /*! Set friction coefficent */
       void setFrictionCoefficient(double mue_);
       /*! Get friction coefficent */
       double getFrictionCoefficient() const;	  
       /*! Set friction coefficient function with norm of relativ tangential velocity as argument */
-      void setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_);
+      void setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_, bool DeleteDIB_=true);
       /*! Get friction coefficient function */
-      const DataInterfaceBase* getFrictionCoefficientFunction() const;
+      const DataInterfaceBase* getFrictionCoefficientFunction() const {return mue_fun;}
       /*! Set kinematical relationships between contact partners */
-      void setContactKinematics(ContactKinematics* ck);
+      void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
+
       using LinkContour::connect;
-      
+
     protected:
       /** friction coefficient function */
       DataInterfaceBase *mue_fun;
+      /** flag: delete DataInterfaceBase in destruktor */
+      bool DeleteDIB;
       /** index for tangential directions in projection matrices */
       Index iT;
       /** number of friction directions: 0 = frictionless, 1 = planar friction, 2 = spatial friction */
       int nFric;
-	  /** kinematical description of the contact relationship between two partners */
-	  ContactKinematics *contactKinematics;
-	  /*! Tests, if a contact is closed (=active) or not */
+      /** kinematical description of the contact relationship between two partners */
+      ContactKinematics *contactKinematics;
+      /*! Tests, if a contact is closed (=active) or not */
       virtual void checkActive();
   };
-
-  inline void Contact::setFrictionDirections(int nFric_) {nFric = nFric_;}
-  inline int Contact::getFrictionDirections() const {return nFric;}
-  inline void Contact::setFrictionCoefficient(double mue_) {if(warnLevel>0) cout << "WARNING (Contact::setFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use setFrictionCoefficientFunction instead." << endl; delete mue_fun; mue_fun = new FuncConst(Vec(1,INIT,mue_));}
-  inline double Contact::getFrictionCoefficient() const {if(warnLevel>0) cout << "WARNING (Contact::getFrictionCoefficient): Deprecated function and only valid for Coulomb friction. Use getFrictionCoefficientFunction instead." << endl; return ((*mue_fun)(0.))(0);}
-  inline void Contact::setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_) {delete mue_fun; mue_fun = mue_fun_;}
-  inline const DataInterfaceBase* Contact::getFrictionCoefficientFunction() const {return mue_fun;}
-  inline void Contact::setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
 }
 
 #endif /* _CONTACT_H_ */
