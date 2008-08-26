@@ -38,6 +38,14 @@ namespace MBSim {
       Vec argT;
       /** current friction coefficient for Newton */
       double mue;
+      /** status of link (active or not) can be saved in statusActive */
+      bool statusActive;
+      /** status of link (stick or slip) can be saved in statusStick */
+      bool statusStick;
+      /** size of lagrange multiplier */
+      int lmSize;
+      /** direction of friction must be stored if nrm2(gd) aprrox zero (for DAE) */
+      Vec dirFric;
       /*! Tests, if a contact is closed (=active) or not */
       void checkActive();
       /*! Updates friction coefficient with norm of relative tangential velocity */
@@ -69,6 +77,15 @@ namespace MBSim {
       void checkForTermination(double dt);
       /*! Return information about constraint iteration */
       std::string getTerminationInfo(double dt);
+      /*! Update stopvector sv */
+      void updateStopVector(double t);
+      /*! get constraints e.g. for DAE integrator */
+      void getConstraints(Vec &constr, int index);
+      int getSizeConstraints() {return lmSize;}
+      /*! set lagrange multiplier corresponding to constraints  e.g. for DAE integrator*/
+      void setLagrangeMultiplier(const Vec &lm);
+      /*! save stauts of link */  
+      void saveStatus();
       /*! Set the contact directions */
       void updateKinetics(double t);
   };

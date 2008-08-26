@@ -65,6 +65,7 @@ namespace MBSim {
 
     public:
     BodyRigidRel(const string &name);
+    ~BodyRigidRel();
 
     void calcSize();
     void setlInd(int lInd_) { lInd = lInd_; Il = Index(lInd,lInd+lSize-1); }

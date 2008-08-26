@@ -30,6 +30,7 @@
 namespace MBSim {
 
   ConnectionRigid::ConnectionRigid(const string &name) : Connection(name,true) {
+    activeForAssembling = true;
   }
 
   void ConnectionRigid::init() {

@@ -21,8 +21,15 @@
  */
 #include<config.h>
 #include "function.h"
+#include "multi_body_system.h"
 
 namespace MBSim {
+
+Vec MBSCalculateConstraints_g::operator()(const Vec &qVar_) {
+	Vec g_;
+	system->assembleSystem_calculateg(qVar_, g_, t0); 
+	return g_;
+      }
 
   std::string numtostr(int i) {
     std::ostringstream oss;
