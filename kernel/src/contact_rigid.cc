@@ -340,8 +340,7 @@ namespace MBSim {
 	if (statusStick) la(1,nFric) = lm(1,nFric);
 	else {
 	  double normgdT =0;
-	  if (nFric==1) normgdT = fabs(gd(1));
-	  else normgdT = nrm2(gd(1,2));
+          normgdT = nrm2(gd(1,nFric));
 	  updateFrictionCoefficient(normgdT);
 	  double laR = fabs(la(0))*mue;
 	  if (normgdT>gdTol) {
