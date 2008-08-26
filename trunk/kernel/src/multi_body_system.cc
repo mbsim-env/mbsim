@@ -39,9 +39,9 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
+  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
 
   MultiBodySystem::~MultiBodySystem() {
     vector<Object*>::iterator i;
@@ -411,7 +411,10 @@ namespace MBSim {
       (**i).init();
       if(!(*i)->getHitSphereCheck()) {
 	if((*i)->isSetValued()) {
-	  if((*i)->isBilateral()) linkSetValuedBilateral.push_back(*i);
+	  if((*i)->isBilateral()) {
+           linkSetValuedBilateral.push_back(*i);
+           nHSLinksSetValuedBilateralFixed++;
+          }
 	  else {
 	    linkSetValuedUnilateral.push_back(*i);
 	    nHSLinksSetValuedUnilateralFixed++;
@@ -576,6 +579,8 @@ namespace MBSim {
     if(!HSLinks.empty()) {
       linkSingleValued.erase(linkSingleValued.begin()+nHSLinksSingleValuedFixed,linkSingleValued.end());
       linkSetValuedUnilateral.erase(linkSetValuedUnilateral.begin()+nHSLinksSetValuedUnilateralFixed,linkSetValuedUnilateral.end());
+      linkSetValuedBilateral.erase(linkSetValuedBilateral.begin()+nHSLinksSetValuedBilateralFixed,linkSetValuedBilateral.end());
+
       for(vector<HitSphereLink*>::iterator iHS = HSLinks.begin(); iHS != HSLinks.end(); ++iHS) (*iHS)->checkActive();
     }
     for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) (*iF)->updateStage1(t);

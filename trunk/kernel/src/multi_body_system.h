@@ -135,6 +135,7 @@ namespace MBSim {
     Mat Jh;
 
     int nHSLinksSetValuedUnilateralFixed;
+    int nHSLinksSetValuedBilateralFixed;
     int nHSLinksSingleValuedFixed;
 
     bool checkGSize;
