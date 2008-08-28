@@ -77,12 +77,16 @@ namespace MBSim {
   }
 
   void Contact::setFrictionCoefficient(double mue_) {
-    if (DeleteDIB) delete mue_fun; 
+  	if(warnLevel>0) {
+  		cout << "WARNING (Contact::setFrictionCoefficient) Deprecated function and only valid for Coulomb friction."  << endl;
+    	cout << "Use setFrictionCoefficientFunction instead." << endl;
+  	}
+    if(DeleteDIB) delete mue_fun; 
     mue_fun = new FuncConst(Vec(1,INIT,mue_));
   }
 
   void Contact::setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_, bool DeleteDIB_) {
-    if (DeleteDIB) delete mue_fun; 
+    if(DeleteDIB) delete mue_fun; 
     mue_fun = mue_fun_;
     DeleteDIB = DeleteDIB_;
   }

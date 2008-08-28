@@ -231,30 +231,30 @@ namespace MBSim {
 
     for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       if(it2->link->isActive()) {
-	const int &ID        = it2->ID;       // ID der Contour in der Koerper-Daten-Verwaltung des Body
-	const int &objectID  = it2->objectID; // ID der Contour innerhalb der LinkContour-Paarung
-	Mat ld = it2->link->getLoadDirections(objectID);
-
-	Index LoadDirCols(0,ld.cols()-1);
-	Mat fd = ld(IF,LoadDirCols);
-	Mat md = ld(IM,LoadDirCols);
-
-	ContourPointData Stmp = it2->link->getContourPointData(objectID);
-
-	// Kraefte und Momente in Dimension des Modells bringen
-	Mat ldTmp( JT.cols() + JR.cols(), ld.cols() );
-	if(JT.cols()) ldTmp(IndexForce,LoadDirCols)  = trans(JT) * fd;
-	if(JR.cols()) {
-	  Vec WrSC = Stmp.WrOC - computeWrOC(Stmp);
-	  ldTmp(IndexMoment,LoadDirCols) = trans(JR) * (md + tilde(WrSC)*fd);
-	}
-
-	if(!constContourPosition[ID])   // alle relevanten Daten kommen aus dem Link
-	  (*itW) = computeJacobianMatrix(Stmp) * ldTmp;
-	else                            // hinzugefuegte Contour: nutze Aufhaenge-Daten (cpData) der Contour auf dem Body
-	  (*itW) = computeJacobianMatrix(S_Contour[ID]) * ldTmp;
-
-	//           (*itW) = computeJacobianMatrix(Stmp) * ldTmp;
+		const int &ID        = it2->ID;       // ID der Contour in der Koerper-Daten-Verwaltung des Body
+		const int &objectID  = it2->objectID; // ID der Contour innerhalb der LinkContour-Paarung
+		Mat ld = it2->link->getLoadDirections(objectID);
+	
+		Index LoadDirCols(0,ld.cols()-1);
+		Mat fd = ld(IF,LoadDirCols);
+		Mat md = ld(IM,LoadDirCols);
+	
+		ContourPointData Stmp = it2->link->getContourPointData(objectID);
+	
+		// Kraefte und Momente in Dimension des Modells bringen
+		Mat ldTmp( JT.cols() + JR.cols(), ld.cols() );
+		if(JT.cols()) ldTmp(IndexForce,LoadDirCols)  = trans(JT) * fd;
+		if(JR.cols()) {
+		  Vec WrSC = Stmp.WrOC - computeWrOC(Stmp);
+		  ldTmp(IndexMoment,LoadDirCols) = trans(JR) * (md + tilde(WrSC)*fd);
+		}
+	
+		if(!constContourPosition[ID])   // alle relevanten Daten kommen aus dem Link
+		  (*itW) = computeJacobianMatrix(Stmp) * ldTmp;
+		else                            // hinzugefuegte Contour: nutze Aufhaenge-Daten (cpData) der Contour auf dem Body
+		  (*itW) = computeJacobianMatrix(S_Contour[ID]) * ldTmp;
+	
+		//           (*itW) = computeJacobianMatrix(Stmp) * ldTmp;
       }
 
       it2++; itW++; itw++;
