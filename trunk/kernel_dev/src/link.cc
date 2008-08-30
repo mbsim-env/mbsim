@@ -64,6 +64,10 @@ namespace MBSim {
     res.resize(laSize);
   }
 
+  string Link::getFullName() const {
+    return parent->getFullName() + "." + name;
+  }
+
   void Link::updatexRef() {
     x >> parent->getx()(xInd,xInd+xSize-1);
   }

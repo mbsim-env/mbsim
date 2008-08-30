@@ -47,7 +47,6 @@ namespace MBSim {
    */
   class Contour : public Element {
     protected:
-      int id;
       Object* parent;
       Vec WrOP, WvP, WomegaC;
       SqrMat AWC;
@@ -68,6 +67,8 @@ namespace MBSim {
       Contour(const string &name);
       virtual ~Contour();	
 
+      string getFullName() const; 
+
       virtual void init();
       void initPlotFiles();
 
@@ -80,8 +81,6 @@ namespace MBSim {
       void setParent(Object* parent_) {parent = parent_;}
       Object* getObject() {return parent;}
       void setObject(Object* object) {parent = object;}
-      void setID(int id_) {id = id_;}
-      int getID() const {return id;}
 
       void setWrOP(const Vec &WrOP_) {WrOP = WrOP_;}
       const Vec& getWrOP() const {return WrOP;}

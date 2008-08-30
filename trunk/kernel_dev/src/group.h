@@ -39,6 +39,7 @@ namespace MBSim {
       void updatezd(double t);
       void updatedu(double t, double dt);
 
+      virtual string getType() const {return "Group";}
   };
 }
 

@@ -46,13 +46,13 @@ namespace MBSim {
     x=x0;
   }
   void ExtraDynamicInterface::writex(){
-    string fname="PREINTEG/"+fullName+".x0.asc";  
+    string fname="PREINTEG/"+getFullName()+".x0.asc";  
     ofstream osx(fname.c_str(), ios::out);
     osx << x;
     osx.close();
   }
   void ExtraDynamicInterface::readx0(){
-    string fname="PREINTEG/"+fullName+".x0.asc";  
+    string fname="PREINTEG/"+getFullName()+".x0.asc";  
     ifstream isx(fname.c_str());
     if(isx) isx >> x0;
     else {cout << "EDI " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;} 

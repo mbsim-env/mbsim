@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3),iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3), iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 
     APK(0,0)=1.0;
     APK(1,1)=1.0;
@@ -181,6 +181,43 @@ namespace MBSim {
     }
 
   }
+
+  void RigidBody::plotParameters() {
+    Body::plotParameters();
+    // all CoordinateSystem of Object
+    
+
+
+    for(unsigned int i=0; i<SrSK.size(); i++) {
+      parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+      parafile << SrSK[i] << endl;
+      parafile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
+      parafile << ASK[i] << endl;
+    }
+
+    for(unsigned int i=0; i<SrSC.size(); i++) {
+      parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
+      parafile << SrSC[i] << endl;
+      parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
+      parafile << ASC[i] << endl;
+    }
+
+    parafile << "# Translation:" << endl;
+
+    LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+    if(fPrPK_) 
+      parafile << fPrPK_->getPJT() << endl;
+    else
+      parafile << "Unknown" << endl;
+
+    parafile << "# Rotation:" << endl;
+    RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+    if(fAPK_) 
+      parafile << fAPK_->getAxis() << endl;
+    else
+      parafile << "Unknown" << endl;
+  }
+
 
   void RigidBody::updateMConst(double t) {
       M += Mbuf;

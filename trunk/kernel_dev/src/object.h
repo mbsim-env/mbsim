@@ -248,11 +248,14 @@ namespace MBSim {
     void plot(double t, double dt = 1); 
     void initPlotFiles();
     void plotParameters();
+    void load(ifstream &inputfile);
 
     virtual void addCoordinateSystem(CoordinateSystem * port);
     virtual void addContour(Contour* contour);
 
     int portIndex(const CoordinateSystem *port_) const;
+
+    string getFullName() const; 
 
     virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
     const vector<CoordinateSystem*>& getCoordinateSystems() const {return port;}
@@ -273,6 +276,8 @@ namespace MBSim {
     virtual double computePotentialEnergy() {return 0; }
     /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
     virtual void updateJh(double t);
+
+    virtual string getType() const {return "Object";}
   };
 
 }

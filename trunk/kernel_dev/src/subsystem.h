@@ -46,6 +46,13 @@ namespace MBSim {
       vector<Link*> linkSetValuedActive;
       vector<HitSphereLink*> HSLink;
 
+      vector<SqrMat> AIK;
+      vector<Vec> IrOK;
+      vector<SqrMat> AIC;
+      vector<Vec> IrOC;
+      //vector<SqrMat> AIS;
+      //vector<Vec> IrOS;
+
       int gSize;
       int gInd;
       Vec la;
@@ -65,6 +72,11 @@ namespace MBSim {
       int nHSLinkSetValuedFixed;
       int nHSLinkSingleValuedFixed;
       Index Ig, Ila;
+
+      Vec PrPK;
+      SqrMat APK;
+      int iRef;
+      CoordinateSystem *portParent;
  
    public:
       /*! Constructor */
@@ -111,6 +123,7 @@ namespace MBSim {
       void plot(double t, double dt=1);
       void plotParameters();
       void closePlotFiles();
+      void load(ifstream &inputfile);
 
       void updateKinematics(double t);
       void updateLinksStage1(double t);
@@ -154,6 +167,14 @@ namespace MBSim {
       using Object::addCoordinateSystem;
       using Object::addContour;
 
+      void setTranslation(const Vec& PrPK_) { PrPK = PrPK_;}
+      void setRotation(const SqrMat& APK_) { APK = APK_;}
+      void setReferenceCoordinateSystem(CoordinateSystem *port) {portParent = port;};
+      void setKinematicsCoordinateSystem(CoordinateSystem *port) {
+	iRef = portIndex(port);
+	assert(iRef > -1);
+    }
+
       //void addContour(Contour* contour);
       //void addCoordinateSystem(CoordinateSystem* port);
       //CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
@@ -165,10 +186,12 @@ namespace MBSim {
 
       void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
 
-      void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
+      //void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
+      void addSubsystem(Subsystem *subsystem);
 
       void addObject(Object *object);
       void addLink(Link *connection);
+      Subsystem* getSubsystem(const string &name,bool check=true);
       Object* getObject(const string &name,bool check=true);
       Link* getLink(const string &name,bool check=true);
       /*! Returns an extra dynamic interface */
@@ -200,6 +223,8 @@ namespace MBSim {
       virtual void updaterFactors();
 
       virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
+
+      virtual string getType() const {return "Subsystem";}
 
   };
 }

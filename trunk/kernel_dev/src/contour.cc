@@ -61,9 +61,11 @@ namespace MBSim {
 #endif
   }
 
-  void Contour::init() 
-  {
-    setFullName(parent->getFullName()+"."+name);
+  string Contour::getFullName() const {
+    return parent->getFullName() + "." + name;
+  }
+
+  void Contour::init() {
   }
 
   void Contour::initPlotFiles() 
@@ -110,7 +112,9 @@ namespace MBSim {
 #endif
   }
 
-  void Contour::plotParameters() {parafile << "Contour" << endl;}
+  void Contour::plotParameters() {
+    Element::plotParameters();
+  }
 
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
@@ -209,7 +213,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     if(boolAMVis && !bodyAMVis) 
     {
-      AMVis::Area *area = new AMVis::Area(fullName,1,boolAMVisBinary);
+      AMVis::Area *area = new AMVis::Area(getFullName(),1,boolAMVisBinary);
       area->setBase1(Cd1(0),Cd1(1),Cd1(2));
       area->setLimit1(lim1);
       area->setBase2(Cd2(0),Cd2(1),Cd2(2));
@@ -232,7 +236,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     if(boolAMVis && !bodyAMVis) 
     {
-      AMVis::Sphere *sphere = new AMVis::Sphere(fullName,1,boolAMVisBinary);
+      AMVis::Sphere *sphere = new AMVis::Sphere(getFullName(),1,boolAMVisBinary);
       sphere->setRadius(r);
       bodyAMVis = sphere;
     }
@@ -328,7 +332,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     if(boolAMVis && !bodyAMVis) 
     {
-      AMVis::Quad *quad = new AMVis::Quad(fullName,1,boolAMVisBinary);		
+      AMVis::Quad *quad = new AMVis::Quad(getFullName(),1,boolAMVisBinary);		
       bodyAMVis = quad;
     }
 #endif

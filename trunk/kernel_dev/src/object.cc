@@ -35,51 +35,51 @@ namespace MBSim {
 
   void Object::writeq()
   {
-    string fname="PREINTEG/"+fullName+".q0.asc";  
-    ofstream osq(fname.c_str(), ios::out);
-    osq << q;
-    osq.close();
+//    string fname="PREINTEG/"+fullName+".q0.asc";  
+//    ofstream osq(fname.c_str(), ios::out);
+//    osq << q;
+//    osq.close();
   }
   void Object::readq0()
   {
-    string fname="PREINTEG/"+fullName+".q0.asc";  
-    ifstream isq(fname.c_str());
-    if(isq) isq >> q0;
-    else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
-    isq.close();
+//    string fname="PREINTEG/"+fullName+".q0.asc";  
+//    ifstream isq(fname.c_str());
+//    if(isq) isq >> q0;
+//    else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
+//    isq.close();
   }
   void Object::writeu()
   {
-    string fname="PREINTEG/"+fullName+".u0.asc";  
-    ofstream osu(fname.c_str(), ios::out);
-    osu << u;
-    osu.close();
+ //   string fname="PREINTEG/"+fullName+".u0.asc";  
+ //   ofstream osu(fname.c_str(), ios::out);
+ //   osu << u;
+ //   osu.close();
   }
 
   void Object::readu0()
   {
-    string fname="PREINTEG/"+fullName+".u0.asc";  
-    ifstream isu(fname.c_str());
-    if(isu) isu >> u0;
-    else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
-    isu.close();
+ //   string fname="PREINTEG/"+fullName+".u0.asc";  
+ //   ifstream isu(fname.c_str());
+ //   if(isu) isu >> u0;
+ //   else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
+ //   isu.close();
   }
 
   void Object::writex()
   {
-    string fname="PREINTEG/"+fullName+".x0.asc";  
-    ofstream osx(fname.c_str(), ios::out);
-    osx << x;
-    osx.close();
+ //   string fname="PREINTEG/"+fullName+".x0.asc";  
+ //   ofstream osx(fname.c_str(), ios::out);
+ //   osx << x;
+ //   osx.close();
   }
 
   void Object::readx0()
   {
-    string fname="PREINTEG/"+fullName+".x0.asc";  
-    ifstream isx(fname.c_str());
-    if(isx) isx >> x0;
-    else {cout << "Object " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;}
-    isx.close();
+ //   string fname="PREINTEG/"+fullName+".x0.asc";  
+ //   ifstream isx(fname.c_str());
+ //   if(isx) isx >> x0;
+ //   else {cout << "Object " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;}
+ //   isx.close();
   }
 
   Object::~Object() {
@@ -189,24 +189,60 @@ namespace MBSim {
     x = x0;
   }
 
+  string Object::getFullName() const {
+    return parent->getFullName() + "." + name;
+  }
+
   void Object::plotParameters() {
-    if(port.size()>0) {
-      parafile << "\ncoordinate systems:" << endl;
-      for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
-	Vec WrOPtemp = (**i).getWrOP();
-	parafile << "#  WrOP: (port:  name= "<<(**i).getName()<<",  ID= "<<(**i).getID()<<") = (" << WrOPtemp(0) <<","<< WrOPtemp(1) <<","<< WrOPtemp(2) << ")" << endl;
-      } 
-    }
-    // all Contours of environment
-    if(contour.size()>0) {
-      parafile << "\ncontours:" << endl;
-      for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
-	parafile << "#  " << (**i).getName() << endl;
-    }
+    Element::plotParameters();
+    // all CoordinateSystem of Object
+    parafile << "# Coordinate systems:" << endl;
+    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i)
+      parafile << (**i).getName() << endl;
+    // all Contours of Object
+    parafile << "# Contours:" << endl;
+    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
+      parafile << (**i).getName() << endl;
+
+    parafile << "# q0:" << endl;
+    parafile << q0 << endl;
+    parafile << "# u0:" << endl;
+    parafile << u0 << endl;
+
+    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) 
+      (**i).plotParameters();
+    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) 
+      (**i).plotParameters();
+  }
+
+  void Object::load(ifstream& inputfile) {
+    Element::load(inputfile);
+    cout << name << endl;
+    char dummy[10000];
+    inputfile.getline(dummy,10000); // # CoSy
+    inputfile.getline(dummy,10000); // O
+    inputfile.getline(dummy,10000); // # Contours
+    inputfile.getline(dummy,10000); // # q0
+    inputfile >> q0; // # q0
+    inputfile.getline(dummy,10000); // # u0
+    inputfile >> u0; // # q0
+    cout << q0 << endl;
+    cout << u0 << endl;
+    cout << dummy << endl;
+//    name = dummy;
+//    inputfile.getline(dummy,10000);
+//    inputfile.getline(dummy,10000);
   }
 
   void Object::plot(double t, double dt) {
     Element::plot(t);
+
+    for(unsigned int j=0; j<port.size(); j++) {
+      port[j]->plot(t,dt);
+    }    
+    for(unsigned int j=0; j<contour.size(); j++) {
+      contour[j]->plot(t,dt);
+    }    
 
     if(plotLevel>1) {
       for(int i=0; i<qSize; ++i)
@@ -226,18 +262,19 @@ namespace MBSim {
 	  plotfile<<" "<<h(i);
 	for(int i=0; i<uSize; ++i)
 	  plotfile<<" "<<r(i)/dt;
-	if(plotLevel>3) {							//HR 04.01.07
-	  for(unsigned int j=0; j<port.size(); j++) {
-	    for(int i=0; i<3; i++)
-	      plotfile<< " " << port[j]->getWrOP()(i);
-	  }    
-	}
       }
     }
   }
 
   void Object::initPlotFiles() {
     Element::initPlotFiles();
+
+    for(unsigned int j=0; j<port.size(); j++) {
+      port[j]->initPlotFiles();
+    }    
+    for(unsigned int j=0; j<contour.size(); j++) {
+      contour[j]->initPlotFiles();
+    }    
 
     if(plotLevel>1) {
       for(int i=0; i<qSize; ++i)
@@ -284,23 +321,21 @@ namespace MBSim {
   }
 
   void Object::addContour(Contour* contour_) {
-    if(getContour(contour_->getFullName(),false)) { //Contourname exists already
-      cout << "Error: The Object " << name << " can only comprise one Contour by the name " <<  contour_->getFullName() << "!" << endl;
-      assert(getContour(contour_->getFullName(),false)==NULL);
+    if(getContour(contour_->getName(),false)) { //Contourname exists already
+      cout << "Error: The Object " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
+      assert(getContour(contour_->getName(),false)==NULL);
     }
-    contour_->setID(contour.size());
-    contour_->setFullName(getFullName()+"."+contour_->getFullName());
+    //contour_->setFullName(getFullName()+"."+contour_->getFullName());
     contour.push_back(contour_);
     contour_->setObject(this);
   }
 
   void Object::addCoordinateSystem(CoordinateSystem* port_) {
-    if(getCoordinateSystem(port_->getFullName(),false)) { //Contourname exists already
-      cout << "Error: The Object " << name << " can only comprise one CoordinateSystem by the name " <<  port_->getFullName() << "!" << endl;
-      assert(getCoordinateSystem(port_->getFullName(),false)==NULL);
+    if(getCoordinateSystem(port_->getName(),false)) { //Contourname exists already
+      cout << "Error: The Object " << name << " can only comprise one CoordinateSystem by the name " <<  port_->getName() << "!" << endl;
+      assert(getCoordinateSystem(port_->getName(),false)==NULL);
     }
-    port_->setID(port.size());
-    port_->setFullName(getFullName()+"."+port_->getFullName());
+    //port_->setFullName(getFullName()+"."+port_->getFullName());
     port.push_back(port_);
     port_->setObject(this);
   }
@@ -308,9 +343,8 @@ namespace MBSim {
   CoordinateSystem* Object::getCoordinateSystem(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<port.size(); i++) {
-      if((port[i]->getName() == name) || (port[i]->getFullName()== name)) {
+      if(port[i]->getName() == name)
 	return port[i];
-      }
     }             
     if(check) {
       if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
@@ -322,7 +356,7 @@ namespace MBSim {
   Contour* Object::getContour(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<contour.size(); i++) {
-      if((contour[i]->getName() == name) || (contour[i]->getFullName() == name))
+      if(contour[i]->getName() == name)
 	return contour[i];
     }
     if(check) {

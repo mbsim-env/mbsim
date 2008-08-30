@@ -122,6 +122,8 @@ namespace MBSim {
 
       void setParent(Subsystem *parent_) {parent = parent_;}
 
+      string getFullName() const; 
+
       const vector<Mat>& getW() const {return W;}
       const vector<Vec>& geth() const {return h;}
 
@@ -211,7 +213,7 @@ namespace MBSim {
 
       virtual void residualProj(double dt) { cout << "\nresidualProj not implemented." << endl; throw 50; }
       virtual void checkForTermination(double dt) { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
-      virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getFullName());}
+      virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getName());}
       virtual void residualProjJac(double dt) { cout << "\nresidualProjJac not implemented." << endl; throw 50; }
 
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }

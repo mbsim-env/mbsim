@@ -29,11 +29,19 @@
 
 namespace MBSim {
 
-  Subsystem::Subsystem(const string &name) : Object(name), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0) {
+  Subsystem::Subsystem(const string &name) : Object(name), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
+
     CoordinateSystem *cosy = new CoordinateSystem("O");
     Object::addCoordinateSystem(cosy);
+
+    IrOK.push_back(Vec(3));
+    AIK.push_back(SqrMat(3,EYE));
+
     cosy->setWrOP(Vec(3));
     cosy->setAWP(SqrMat(3,EYE));
+
+    portParent = 0;
+
   }
 
   Subsystem::~Subsystem() {
@@ -50,6 +58,34 @@ namespace MBSim {
   }
 
   void Subsystem::init() {
+
+    if(iRef == -1)
+      iRef = 0;
+    if(parent) {
+      if(portParent == 0)
+	portParent = parent->getCoordinateSystem("O");
+      port[iRef]->setWrOP(portParent->getWrOP() +  portParent->getAWP()*PrPK);
+      port[iRef]->setAWP(portParent->getAWP()*APK);
+    }
+
+    if(iRef != 0)  {
+      port[0]->setAWP(port[iRef]->getAWP()*trans(AIK[iRef]));
+      port[0]->setWrOP(port[iRef]->getWrOP() - port[0]->getAWP()*IrOK[iRef]);
+    }
+
+    // Kinematik der anderen KOSY (außer Ursprung- und Referenz-) updaten, ausgehend vom Ursprung-KOSY
+    for(unsigned int i=1; i<port.size(); i++) {
+      if(i!=unsigned(iRef)) {
+	port[i]->setWrOP(port[0]->getWrOP() + port[0]->getAWP()*IrOK[i]);
+	port[i]->setAWP(port[0]->getAWP()*AIK[i]);
+      }
+    }
+    // Kinematik der Konturen updaten, ausgehend vom Ursprung-KOSY
+    for(unsigned int i=0; i<contour.size(); i++) {
+      contour[i]->setWrOP(port[0]->getWrOP() + port[0]->getAWP()*IrOC[i]);
+      contour[i]->setAWC(port[0]->getAWP()*AIC[i]);
+    }
+
     for(unsigned i=0; i<object.size(); i++)
       object[i]->init();
 
@@ -65,6 +101,15 @@ namespace MBSim {
 	}
       }
     }
+
+    if(EDI.size()>0)    cout << "      " << EDI.size()   << " EDIs" << endl;
+    for (vector<ExtraDynamicInterface*>::iterator i=EDI.begin(); i !=EDI.end(); ++i)
+      (**i).init();
+
+    // HitSphereLink
+    if(HSLink.size()>0) cout << "  building " << HSLink.size() << " HitSphereLinks between Objects" << endl;
+    for (vector<HitSphereLink*>::iterator i = HSLink.begin(); i != HSLink.end(); ++i)
+      (**i).init();
 
     Object::init();
   }
@@ -122,101 +167,136 @@ namespace MBSim {
   }
 
   void Subsystem::plotParameters() {
+
     Object::plotParameters();
+
     // all Objects of MultibodySystem
-    if(object.size()>0) {
-      parafile << "\nObjects:" << endl;
-      for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i)
-	parafile << "#  " << (**i).getName() << endl;
+    
+    parafile << "# Objects:" << endl;
+    for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i)
+      parafile << (**i).getName() << endl;
+    parafile << "# Links:" << endl;
+    for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i)
+      parafile << (**i).getName() << endl;
+    parafile << "# EDIs:" << endl;
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i)
+      parafile << (**i).getName() << endl;
+
+
+    for(unsigned int i=0; i<IrOK.size(); i++) {
+      parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+      parafile << IrOK[i] << endl;
+      parafile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
+      parafile << AIK[i] << endl;
     }
+
+    for(unsigned int i=0; i<IrOC.size(); i++) {
+      parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
+      parafile << IrOC[i] << endl;
+      parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
+      parafile << AIC[i] << endl;
+    }
+
+    if(parent) {
+    parafile << "# Reference coordinate system:" << endl;
+      parafile << port[iRef]->getName() << endl;
+
+    parafile << "# Parent:" << endl;
+      parafile << parent->getName() << endl;
+
+    parafile << "# Parent coordinate system:" << endl;
+      parafile << portParent->getName() << endl;
+
+    parafile << "# Translation:" << endl;
+      parafile << PrPK << endl;
+
+    parafile << "# Rotation:" << endl;
+      parafile << APK << endl;
+    }
+
     for(unsigned i=0; i<object.size(); i++)
       object[i]->plotParameters();
     for(unsigned i=0; i<link.size(); i++)
       link[i]->plotParameters();
     for(unsigned i=0; i<EDI.size(); i++)
       EDI[i]->plotParameters();
+
   }
 
-  void Subsystem::addSubsystem(Subsystem *system, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) 
-  {
-    //object->setFullName(getFullName()+"."+subsystem->getFullName());
+  void Subsystem::load(ifstream& inputfile) {
+    Object::load(inputfile);
+
+    char dummy[10000];
+    inputfile.getline(dummy,10000); // # Objects
+    inputfile.getline(dummy,10000); // 1. Object
+    cout << dummy <<endl;
+    inputfile.getline(dummy,10000); // 2. Object
+    cout << dummy <<endl;
+    
+  }
+
+  //void Subsystem::addSubsystem(Subsystem *system, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) 
+  
+  void Subsystem::addSubsystem(Subsystem *system) {
     subsystem.push_back(system);
     object.push_back(system);
-    //object->setMbs(this);
     system->setParent(this);
-
-    int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
-
-    system->getCoordinateSystems()[0]->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
-    system->getCoordinateSystems()[0]->setAWP(port[i]->getAWP()*ARC);
-    for(unsigned int i=1; i<system->getCoordinateSystems().size(); i++) {
-      system->getCoordinateSystems()[i]->setWrOP(system->getCoordinateSystems()[0]->getWrOP() + system->getCoordinateSystems()[0]->getAWP()*system->getCoordinateSystems()[i]->getWrOP() );
-      system->getCoordinateSystems()[i]->setAWP(system->getCoordinateSystems()[0]->getAWP()*system->getCoordinateSystems()[i]->getAWP());
-    }
-
-    for(unsigned int i=0; i<system->getContours().size(); i++) {
-      system->getContours()[i]->setWrOP(system->getCoordinateSystems()[0]->getWrOP() + system->getCoordinateSystems()[0]->getAWP()*system->getContours()[i]->getWrOP() );
-      system->getContours()[i]->setAWC(system->getCoordinateSystems()[0]->getAWP()*system->getContours()[i]->getAWC());
-    }
   }
 
-  void Subsystem::addObject(Object *obj) 
-  {
+  void Subsystem::addObject(Object *obj) {
     // ADDOBJECT adds an object
-    if(getObject(obj->getFullName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getFullName() << "!" << endl;
-      assert(getObject(obj->getFullName(),false) == NULL); 
+    if(getObject(obj->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
+      assert(getObject(obj->getName(),false) == NULL); 
     }
-    obj->setFullName(getFullName()+"."+obj->getFullName());
+    //obj->setFullName(getFullName()+"."+obj->getFullName());
     object.push_back(obj);
     //obj->setMbs(this);
     obj->setParent(this);
   }
 
   void Subsystem::addLink(Link *lnk) {
-    if(getLink(lnk->getFullName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Link by the name " <<  lnk->getFullName() << "!" << endl;
-      assert(getLink(lnk->getFullName(),false) == NULL);
+    if(getLink(lnk->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
+      assert(getLink(lnk->getName(),false) == NULL);
     }
     link.push_back(lnk);
     //lnk->setMbs(this);
     lnk->setParent(this);
-    lnk->setFullName(getFullName()+"."+lnk->getFullName());
+    //lnk->setFullName(getFullName()+"."+lnk->getFullName());
 
+  }
+
+  Subsystem* Subsystem::getSubsystem(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<subsystem.size(); i++) {
+      if(subsystem[i]->getName() == name)
+	return subsystem[i];
+    }
+    if(check){
+      if(!(i<subsystem.size())) cout << "Error: The Subsystem " << this->name <<" comprises no subsystem " << name << "!" << endl; 
+      assert(i<subsystem.size());
+    }
+    return NULL;
   }
 
   Object* Subsystem::getObject(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<object.size(); i++) {
-      //cout << object[i]->getName() << " " << name << endl;
       if(object[i]->getName() == name)
-	return object[i];
-    }
-    for(i=0; i<object.size(); i++) {
-      //cout << object[i]->getFullName() << " " << name << endl;
-      if(object[i]->getFullName() == name)
 	return object[i];
     }
     if(check){
       if(!(i<object.size())) cout << "Error: The Subsystem " << this->name <<" comprises no object " << name << "!" << endl; 
       assert(i<object.size());
     }
-    //    else return NULL;
     return NULL;
   }
 
   Link* Subsystem::getLink(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<link.size(); i++) {
-      //cout << link[i]->getName() << " " << name << endl;
       if(link[i]->getName() == name)
-	return link[i];
-    }
-    for(i=0; i<link.size(); i++) {
-      //cout << link[i]->getFullName() << " " << name << endl;
-      if(link[i]->getFullName() == name)
 	return link[i];
     }
     if(check){
@@ -224,7 +304,6 @@ namespace MBSim {
       assert(i<link.size());
     }
     return NULL;
-    //    else return NULL;
   }
 
 
@@ -617,15 +696,18 @@ namespace MBSim {
   }
 
 
-  void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
+  void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
 
     Object::addCoordinateSystem(cosy);
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
 
-    cosy->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
-    cosy->setAWP(port[i]->getAWP()*ARC);
+    IrOK.push_back(IrOK[i] + AIK[i]*RrRK);
+    AIK.push_back(AIK[i]*ARK);
+
+    //cosy->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRK);
+    //cosy->setAWP(port[i]->getAWP()*ARK);
   }
 
   void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
@@ -639,8 +721,11 @@ namespace MBSim {
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
 
-    contour->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
-    contour->setAWC(port[i]->getAWP()*ARC);
+    IrOC.push_back(IrOK[i] + AIK[i]*RrRC);
+    AIC.push_back(AIK[i]*ARC);
+
+    //contour->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
+    //contour->setAWC(port[i]->getAWP()*ARC);
   }
 
   void Subsystem::calchSize() {
@@ -760,9 +845,6 @@ namespace MBSim {
     for(i=0; i<EDI.size(); i++) {
       if(EDI[i]->getName() == name) return EDI[i];
     }
-    for(i=0; i<EDI.size(); i++) {
-      if(EDI[i]->getFullName() == name) return EDI[i];
-    }
     if(check) {
       if(!(i<EDI.size())) cout << "Error: The Subsystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
       assert(i<EDI.size());
@@ -771,21 +853,21 @@ namespace MBSim {
   }    
 
   void Subsystem::addEDI(ExtraDynamicInterface *edi_) {
-    if(getEDI(edi_->getFullName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getFullName() << "!" << endl;
-      assert(getEDI(edi_->getFullName(),false) == NULL);
+    if(getEDI(edi_->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getName() << "!" << endl;
+      assert(getEDI(edi_->getName(),false) == NULL);
     }
     EDI.push_back(edi_);
     //edi_->setMbs(this);
     edi_->setParent(this);
-    edi_->setFullName(getFullName()+"."+edi_->getFullName());
+    //edi_->setFullName(getFullName()+"."+edi_->getFullName());
   }
 
 
   DataInterfaceBase* Subsystem::getDataInterfaceBase(const string &name_, bool check) {
     unsigned int i;
     for(i=0; i<DIB.size(); i++) {
-      if(DIB[i]->getName() == name_ || DIB[i]->getName()== fullName+"."+name_ || DIB[i]->getName() == name_+".SigOut" || DIB[i]->getName()== fullName+"."+name_+".SigOut")
+      if(DIB[i]->getName() == name_ || DIB[i]->getName() == name_+".SigOut")
 	return DIB[i];
     }
     if(check){
@@ -801,7 +883,7 @@ namespace MBSim {
       assert(getDataInterfaceBase(dib_->getName(),false) == NULL);
     }
     DIB.push_back(dib_);
-    dib_->setName(getFullName()+"."+dib_->getName());
+   // dib_->setName(getFullName()+"."+dib_->getName());
   }
 
   int Subsystem::solveFixpointSingle(double dt) {

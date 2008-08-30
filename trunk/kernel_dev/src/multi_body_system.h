@@ -173,6 +173,7 @@ namespace MBSim {
     void setProjectDirectory(const string &directoryName_) {directoryName = directoryName_;}
     void setPreInteg(Integrator *preInteg_) {preIntegrator = preInteg_;}
     const string& getDirectoryName() {return dirName;}
+    string getFullName() const {return name;}
 
     // Implementation of the ODERootFindingSystemInterface (Integratores)
     void zdot(const Vec& z, Vec& zd, double t);
@@ -203,6 +204,8 @@ namespace MBSim {
 
     using Subsystem::plot;
     void plotParameters();
+
+    void load(string dirName);
 
     /*! Compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems */
     double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
@@ -322,6 +325,8 @@ namespace MBSim {
     int getlaIndMBS() const {return 0;}
     const Vec& getlaMBS() const {return la;}
     Vec& getlaMBS() {return la;}
+
+    string getType() const {return "MultiBodySystem";}
   };
 
 }

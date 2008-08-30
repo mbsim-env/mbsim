@@ -44,8 +44,11 @@ bodyAMVis = NULL;
     plotLevel= 0;
   }
 
+  string CoordinateSystem::getFullName() const {
+    return parent->getFullName() + "." + name;
+  }
+
   void CoordinateSystem::init() {
-    setFullName(parent->getName()+"."+name);
   }
 
 #ifdef HAVE_AMVIS
@@ -61,8 +64,9 @@ bodyAMVis = NULL;
     if (plotLevel > 0) {
       for(int i=0; i<3; i++)
 	plotfile<<" "<< WrOP(i);
+      Vec AlpBetGam = AIK2Cardan(AWP);
       for(int i=0; i<3; i++)
-	plotfile<<" "<< WvP(i);
+	plotfile<<" "<< AlpBetGam(i);
     }
 #ifdef HAVE_AMVIS
     if (bodyAMVis) {
@@ -92,16 +96,14 @@ bodyAMVis = NULL;
     if(plotLevel > 0) {
       for(int i=0; i<3; i++)
 	plotfile <<"# "<< plotNr++ <<": WrOP("<<i<<")" << endl;
-      for(int i=0; i<3; i++)
-	plotfile <<"# "<< plotNr++ <<": WvP("<<i<<")" << endl;
+      plotfile <<"# "<< plotNr++ <<": alpha" << endl;
+      plotfile <<"# "<< plotNr++ <<": beta" << endl;
+      plotfile <<"# "<< plotNr++ <<": gamma" << endl;
     }
   }
 
   void CoordinateSystem::plotParameters() {					// HR 03.01.07
-    if (plotLevel) {
-      parafile << "CoordinateSystem :" <<name<<endl;
-      parafile << "from object:" <<getObject()->getName() <<endl;
-    }
+    Element::plotParameters();
   }
 
 }

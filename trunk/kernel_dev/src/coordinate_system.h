@@ -41,7 +41,6 @@ namespace MBSim {
    * */
   class CoordinateSystem : public Element {
     protected:
-      int id;
       Object* parent;
 
       Vec WrOP, WvP, WomegaP;
@@ -56,10 +55,11 @@ namespace MBSim {
 
     public:
       CoordinateSystem(const string &name);
+
+      string getFullName() const; 
+
       Object* getObject() {return parent;}
       void setObject(Object *object) {parent = object;}
-      void setID(int id_) {id = id_;}
-      int getID() const {return id;}
 
       Object* getParent() {return parent;}
       void setParent(Object *parent_) {parent = parent_;}
