@@ -19,7 +19,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
   tree->addObject(pendel1);
 
-  pendel1->getRod1()->setParentCoordinateSystem(getCoordinateSystem("O"));
   Vec x(3);
   x(0) = 0.15;
 
@@ -31,6 +30,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
   tree->addObject(pendel2);
-  pendel2->getRod1()->setParentCoordinateSystem(pendel1->getRod2()->getCoordinateSystem("P"));
+  pendel2->getRod1()->setReferenceCoordinateSystem(pendel1->getRod2()->getCoordinateSystem("P"));
 }
 
