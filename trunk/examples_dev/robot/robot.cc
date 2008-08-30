@@ -49,6 +49,9 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   // System with tree-structure
   Tree *tree = new Tree("Baum");
   addObject(tree);
+  tree->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  tree->setKinematicsCoordinateSystem(tree->getCoordinateSystem("O"));
+ 
 
   BodyRigid *basis = new BodyRigid("Basis");
   tree->addObject(basis);
@@ -70,8 +73,8 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrSP(3);
   KrSP(1) = hB/2;
   basis->addCoordinateSystem("R",-KrKS,A);
-  basis->setParentCoordinateSystem(getCoordinateSystem("O"));
-  basis->setReferenceCoordinateSystem(basis->getCoordinateSystem("R"));
+  basis->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  basis->setKinematicsCoordinateSystem(basis->getCoordinateSystem("R"));
 
   BodyRigid *arm = new BodyRigid("Arm");
   tree->addObject(arm);
@@ -81,8 +84,8 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   KrKS.init(0);
   KrKS(1) = lA/2;
   arm->addCoordinateSystem("R",-KrKS,A);
-  arm->setParentCoordinateSystem(basis->getCoordinateSystem("P"));
-  arm->setReferenceCoordinateSystem(arm->getCoordinateSystem("R"));
+  arm->setReferenceCoordinateSystem(basis->getCoordinateSystem("P"));
+  arm->setKinematicsCoordinateSystem(arm->getCoordinateSystem("R"));
   //arm->setq0(Vec("[0.3]"));
 
   arm->setMass(mA);
@@ -104,8 +107,8 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   arm->addCoordinateSystem("Q",PrPK0,SqrMat(3,EYE),arm->getCoordinateSystem("R"));
   spitze->setMomentOfInertia(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
-  spitze->setParentCoordinateSystem(arm->getCoordinateSystem("Q"));
-  spitze->setReferenceCoordinateSystem(spitze->getCoordinateSystem("COG"));
+  spitze->setReferenceCoordinateSystem(arm->getCoordinateSystem("Q"));
+  spitze->setKinematicsCoordinateSystem(spitze->getCoordinateSystem("COG"));
   //spitze->setq0(Vec(1,INIT,lA/2));
 
     // --------------------------- Setup Control ----------------------------

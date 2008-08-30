@@ -42,8 +42,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setRotation(new RotationAxis(Vec("[0;0;1]")));
 
 
-  box1->setParentCoordinateSystem(getCoordinateSystem("O"));
-  box1->setReferenceCoordinateSystem(box1->getCoordinateSystem("COG"));
+  box1->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  box1->setKinematicsCoordinateSystem(box1->getCoordinateSystem("COG"));
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
@@ -82,8 +82,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setq0(q0);
 
   addCoordinateSystem("Os","[0;0;0.04]",E);
-  box2->setParentCoordinateSystem(getCoordinateSystem("Os"));
-  box2->setReferenceCoordinateSystem(box2->getCoordinateSystem("COG"));
+  box2->setReferenceCoordinateSystem(getCoordinateSystem("Os"));
+  box2->setKinematicsCoordinateSystem(box2->getCoordinateSystem("COG"));
 
   ConnectionRigid *ls = new ConnectionRigid("Gelenk1");
   addLink(ls);

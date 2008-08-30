@@ -45,8 +45,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box1->setParentCoordinateSystem(getCoordinateSystem("O"));
-  box1->setReferenceCoordinateSystem(box1->getCoordinateSystem("COG"));
+  box1->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  box1->setKinematicsCoordinateSystem(box1->getCoordinateSystem("COG"));
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
@@ -60,8 +60,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box2->setParentCoordinateSystem(getCoordinateSystem("O"));
-  box2->setReferenceCoordinateSystem(box2->getCoordinateSystem("COG"));
+  box2->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  box2->setKinematicsCoordinateSystem(box2->getCoordinateSystem("COG"));
 
   // ----------------------- Anschlusspunkte der Federn --------------------  
   Vec SrSP(3);

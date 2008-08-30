@@ -1,5 +1,7 @@
 main.o main.d : main.cc system.h \
   /home/foerg/install//include/mbsim/multi_body_system.h \
+  /home/foerg/install//include/mbsim/group.h \
+  /home/foerg/install//include/mbsim/subsystem.h \
   /home/foerg/install//include/mbsim/object.h \
   /home/foerg/install//include/mbsim/element.h \
   /home/foerg/install//include/fmatvec/fmatvec.h \

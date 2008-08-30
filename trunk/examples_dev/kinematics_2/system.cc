@@ -88,8 +88,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   BodyRigid* body = new BodyRigid("Rod");
 
   tree->addObject(body);
-  body->setParentCoordinateSystem(getCoordinateSystem("O"));
-  body->setReferenceCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  body->setKinematicsCoordinateSystem(body->getCoordinateSystem("COG"));
   body->setMass(m);
   body->setMomentOfInertia(Theta);
   body->setTranslation(new MyPos);
