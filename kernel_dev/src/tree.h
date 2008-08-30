@@ -57,7 +57,6 @@ class Object;
     //void setMbs(MultiBodySystem* mbs_);
     void setFullName(const string &name);
 
-    void addObject(Object* object);
     void updateMRef();
     void updateLLMRef();
     void updateqRef();
@@ -67,10 +66,6 @@ class Object;
     void updatehRef();
     void updaterRef();
     void updateTRef();
-    void init();
-    void initz();
-    void initPlotFiles();
-    void plot(double t, double dt=1);
 
     double computePotentialEnergy();
 

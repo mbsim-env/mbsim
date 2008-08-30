@@ -21,7 +21,6 @@ libintegrators_la_SOURCES = integrator.cc\
 			     fortran/dc_lapack.f\
 			     fortran/rksuite.f
 
-
 libintegrators_la_CPPFLAGS = -Ifortran -I..
 integratorsincludedir = $(includedir)/mbsim
 

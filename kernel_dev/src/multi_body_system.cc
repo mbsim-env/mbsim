@@ -52,7 +52,7 @@ namespace MBSim {
 
   void MultiBodySystem::init() 
   {
-    cout << endl << "Initialising MultiBodySystem " << fullName << " ......" << endl;
+    cout << endl << "Initialising MultiBodySystem " << name << " ......" << endl;
     setDirectory(); // output directory
 
     // Vektor-Dimensionierung
@@ -102,33 +102,34 @@ namespace MBSim {
     // Init der einzelenen Komponenten
     cout << "  initialising ..." << endl;
 
-    if(object.size()>0)  cout << "      " << object.size() << " Objects" << endl;
-    Object::init();
-    for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).init();
+    Subsystem::init();
+ //   if(object.size()>0)  cout << "      " << object.size() << " Objects" << endl;
+ //   Object::init();
+ //   for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+ //     (**i).init();
 
-    if(link.size()>0)    cout << "      " << link.size()   << " Links" << endl;
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
-      (**i).init();
-      if(!(*i)->getHitSphereCheck()) {
-	if((*i)->isSetValued()) {
-	  nHSLinkSetValuedFixed++;
-	  linkSetValued.push_back(*i);
-	} else {
-	  nHSLinkSingleValuedFixed++;
-	  linkSingleValued.push_back(*i);
-	}
-      }
-    }
+//    if(link.size()>0)    cout << "      " << link.size()   << " Links" << endl;
+//    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+//      (**i).init();
+//      if(!(*i)->getHitSphereCheck()) {
+//	if((*i)->isSetValued()) {
+//	  nHSLinkSetValuedFixed++;
+//	  linkSetValued.push_back(*i);
+//	} else {
+//	  nHSLinkSingleValuedFixed++;
+//	  linkSingleValued.push_back(*i);
+//	}
+//      }
+//    }
 
-    if(EDI.size()>0)    cout << "      " << EDI.size()   << " EDIs" << endl;
-    for (vector<ExtraDynamicInterface*>::iterator i=EDI.begin(); i !=EDI.end(); ++i)
-      (**i).init();
+ //   if(EDI.size()>0)    cout << "      " << EDI.size()   << " EDIs" << endl;
+ //   for (vector<ExtraDynamicInterface*>::iterator i=EDI.begin(); i !=EDI.end(); ++i)
+ //     (**i).init();
 
-    // HitSphereLink
-    if(HSLink.size()>0) cout << "  building " << HSLink.size() << " HitSphereLinks between Objects" << endl;
-    for (vector<HitSphereLink*>::iterator i = HSLink.begin(); i != HSLink.end(); ++i)
-      (**i).init();
+ //   // HitSphereLink
+ //   if(HSLink.size()>0) cout << "  building " << HSLink.size() << " HitSphereLinks between Objects" << endl;
+ //   for (vector<HitSphereLink*>::iterator i = HSLink.begin(); i != HSLink.end(); ++i)
+ //     (**i).init();
 
     for(vector<Link*>::iterator ic = link.begin(); ic != link.end(); ++ic) {
       if((*ic)->isSetValued()) 
@@ -174,7 +175,7 @@ namespace MBSim {
     int i;
     string projectDirectory;
 
-    if(directoryName == name) { // numered directories
+    if(false) { // TODO: introduce flag "overwriteDirectory"
       for(i=0; i<=99; i++) {
 	stringstream number;
 	number << "." << setw(2) << setfill('0') << i;
@@ -639,9 +640,19 @@ namespace MBSim {
   }
 
   void MultiBodySystem::plotParameters() {
-    parafile << "MultibodySystem: \t" << fullName << endl;
-    parafile << "solver: \t\t" << getSolverInfo() << endl;
+    //parafile << "MultibodySystem: \t" << name << endl;
+    //parafile << "solver: \t\t" << getSolverInfo() << endl;
     Group::plotParameters();
+    parafile << "# Acceleration of gravity:" << endl;
+    parafile << grav << endl;
+  }
+
+  void MultiBodySystem::load(string model) {
+    ifstream inputfile(model.c_str(), ios::in);
+
+    Group::load(inputfile);
+    //parafile << "# Acceleration of gravity:" << endl;
+    //parafile << grav << endl;
   }
 
   void MultiBodySystem::computeConstraintForces(double t) {
@@ -753,30 +764,30 @@ namespace MBSim {
   }
 
   Element* MultiBodySystem::getElement(const string &name) {
-    // GETELEMENT returns element
-    unsigned int i1;
-    for(i1=0; i1<object.size(); i1++) {
-      if(object[i1]->getName() == name) return (Element*)object[i1];
-    }
-    for(i1=0; i1<object.size(); i1++) {
-      if(object[i1]->getFullName() == name) return (Element*)object[i1];
-    }
-    unsigned int i2;
-    for(i2=0; i2<link.size(); i2++) {
-      if(link[i2]->getName() == name) return (Element*)link[i2];
-    }
-    for(i2=0; i2<link.size(); i2++) {
-      if(link[i2]->getFullName() == name) return (Element*)link[i2];
-    }
-    unsigned int i3;
-    for(i3=0; i3<EDI.size(); i3++) {
-      if(EDI[i3]->getName() == name) return (Element*)EDI[i3];
-    }
-    for(i3=0; i3<EDI.size(); i3++) {
-      if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
-    }
-    if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
-    assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
+ //   // GETELEMENT returns element
+ //   unsigned int i1;
+ //   for(i1=0; i1<object.size(); i1++) {
+ //     if(object[i1]->getName() == name) return (Element*)object[i1];
+ //   }
+ //   for(i1=0; i1<object.size(); i1++) {
+ //     if(object[i1]->getFullName() == name) return (Element*)object[i1];
+ //   }
+ //   unsigned int i2;
+ //   for(i2=0; i2<link.size(); i2++) {
+ //     if(link[i2]->getName() == name) return (Element*)link[i2];
+ //   }
+ //   for(i2=0; i2<link.size(); i2++) {
+ //     if(link[i2]->getFullName() == name) return (Element*)link[i2];
+ //   }
+ //   unsigned int i3;
+ //   for(i3=0; i3<EDI.size(); i3++) {
+ //     if(EDI[i3]->getName() == name) return (Element*)EDI[i3];
+ //   }
+ //   for(i3=0; i3<EDI.size(); i3++) {
+ //     if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
+ //   }
+ //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
+ //   assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
     return NULL;
   }
 

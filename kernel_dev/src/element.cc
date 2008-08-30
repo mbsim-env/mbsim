@@ -28,7 +28,7 @@ namespace MBSim {
   string Element::dirName = "./";
 
 
-  Element::Element(const string &name_) : name(name_), fullName(name_), plotNr(1), plotLevel(1), plotPrec(6) {
+  Element::Element(const string &name_) : name(name_), plotNr(1), plotLevel(1), plotPrec(6) {
   }
 
   Element::~Element() {
@@ -52,23 +52,35 @@ namespace MBSim {
   void Element::initPlotFiles() {
     // generate plotfile for time history
     if(plotLevel) {
-      plotfile.open((dirName+fullName+".plt").c_str(), ios::out);
+      plotfile.open((dirName+getFullName()+".plt").c_str(), ios::out);
       plotfile <<"# " << plotNr++ << ": t" << endl;
-      parafile.open((dirName+fullName+".para").c_str(), ios::out);
     }
+    parafile.open((dirName+getFullName()+".para").c_str(), ios::out);
   } 
 
   void Element::closePlotFiles() {
     if(plotLevel) {
       plotfile.close();
-      parafile.close();
     }
+    parafile.close();
   } 
 
   void Element::plotParameters() {
-    if(plotLevel) 
-      parafile << "Element" << endl;
+      parafile << "# Name:" << endl;
+      parafile << name << endl;
+      parafile << "# Type:" << endl;
+      parafile << getType() << endl;
   }
+
+  void Element::load(ifstream& inputfile) {
+    //ifstream inputfile(model.c_str(), ios::in);
+    char dummy[10000];
+    inputfile.getline(dummy,10000);
+    inputfile.getline(dummy,10000);
+    name = dummy;
+    inputfile.getline(dummy,10000);
+    inputfile.getline(dummy,10000);
+ }
 
   void Element::addDataInterfaceBaseRef(const string& DIBRef_){
     DIBRefs.push_back(DIBRef_);

@@ -351,12 +351,12 @@ namespace MBSim {
 
     void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
     
-    void setReferenceCoordinateSystem(CoordinateSystem *port) {
+    void setKinematicsCoordinateSystem(CoordinateSystem *port) {
       iRef = portIndex(port);
       assert(iRef > -1);
     }
 
-    void setParentCoordinateSystem(CoordinateSystem *port) {portParent = port;};
+    void setReferenceCoordinateSystem(CoordinateSystem *port) {portParent = port;};
 
     double computeKineticEnergy();
     double computeKineticEnergyBranch();
@@ -364,7 +364,10 @@ namespace MBSim {
 
     void init();
     void initPlotFiles();
+    void plotParameters();
     void calcSize();
+
+    virtual string getType() const {return "RigidBody";}
 
   };
 

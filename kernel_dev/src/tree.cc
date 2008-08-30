@@ -128,51 +128,6 @@ namespace MBSim {
     }
   }
 
-  // void Tree::setMbs(MultiBodySystem* mbs_) {
-  //   //Element::setMbs(mbs_);
-  //   for(unsigned i=0; i<object.size(); i++)
-  //     object[i]->setMbs(mbs);
-  // }
-
-  void Tree::init() {
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->init();
-
-    Object::init();
-  }
-
-  void Tree::initz() {
-    Object::initz();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->initz();
-  }
-
-  void Tree::initPlotFiles() {
-    Object::initPlotFiles();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->initPlotFiles();
-  }
-
-  void Tree::plot(double t, double dt) {
-    Object::plot(t,dt);
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->plot(t,dt);
-  }
-
-  void Tree::setFullName(const string &name) {
-    Element::setFullName(name);
-    for(unsigned i = 0; i<object.size(); i++) {
-      object[i]->setFullName(getFullName()+"."+object[i]->getFullName());
-    }
-  }
-
-  void Tree::addObject(Object* obj) {
-    obj->setParent(this);
-    object.push_back(obj);
-    //obj->setMbs(mbs);
-    obj->setFullName(getFullName()+"."+obj->getFullName());
-  } 
-
   double Tree::computePotentialEnergy() {
     // double Vtemp = 0.0;
     // if(root) {
