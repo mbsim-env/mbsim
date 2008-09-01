@@ -187,7 +187,7 @@ namespace MBSim {
       void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
 
       //void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
-      void addSubsystem(Subsystem *subsystem);
+      //void addSubsystem(Subsystem *subsystem);
 
       void addObject(Object *object);
       void addLink(Link *connection);

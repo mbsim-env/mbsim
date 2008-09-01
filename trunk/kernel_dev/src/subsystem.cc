@@ -37,8 +37,8 @@ namespace MBSim {
     IrOK.push_back(Vec(3));
     AIK.push_back(SqrMat(3,EYE));
 
-    cosy->setWrOP(Vec(3));
-    cosy->setAWP(SqrMat(3,EYE));
+    cosy->setPosition(Vec(3));
+    cosy->setOrientation(SqrMat(3,EYE));
 
     portParent = 0;
 
@@ -64,26 +64,26 @@ namespace MBSim {
     if(parent) {
       if(portParent == 0)
 	portParent = parent->getCoordinateSystem("I");
-      port[iRef]->setWrOP(portParent->getWrOP() +  portParent->getAWP()*PrPK);
-      port[iRef]->setAWP(portParent->getAWP()*APK);
+      port[iRef]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
+      port[iRef]->setOrientation(portParent->getOrientation()*APK);
     }
 
     if(iRef != 0)  {
-      port[0]->setAWP(port[iRef]->getAWP()*trans(AIK[iRef]));
-      port[0]->setWrOP(port[iRef]->getWrOP() - port[0]->getAWP()*IrOK[iRef]);
+      port[0]->setOrientation(port[iRef]->getOrientation()*trans(AIK[iRef]));
+      port[0]->setPosition(port[iRef]->getPosition() - port[0]->getOrientation()*IrOK[iRef]);
     }
 
     // Kinematik der anderen KOSY (außer Ursprung- und Referenz-) updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
-	port[i]->setWrOP(port[0]->getWrOP() + port[0]->getAWP()*IrOK[i]);
-	port[i]->setAWP(port[0]->getAWP()*AIK[i]);
+	port[i]->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOK[i]);
+	port[i]->setOrientation(port[0]->getOrientation()*AIK[i]);
       }
     }
     // Kinematik der Konturen updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->setWrOP(port[0]->getWrOP() + port[0]->getAWP()*IrOC[i]);
-      contour[i]->setAWC(port[0]->getAWP()*AIC[i]);
+      contour[i]->setWrOP(port[0]->getPosition() + port[0]->getOrientation()*IrOC[i]);
+      contour[i]->setAWC(port[0]->getOrientation()*AIC[i]);
     }
 
     for(unsigned i=0; i<object.size(); i++)
@@ -237,12 +237,6 @@ namespace MBSim {
 
   //void Subsystem::addSubsystem(Subsystem *system, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) 
   
-  void Subsystem::addSubsystem(Subsystem *system) {
-    subsystem.push_back(system);
-    object.push_back(system);
-    system->setParent(this);
-  }
-
   void Subsystem::addObject(Object *obj) {
     // ADDOBJECT adds an object
     if(getObject(obj->getName(),false)) {
@@ -253,6 +247,9 @@ namespace MBSim {
     object.push_back(obj);
     //obj->setMbs(this);
     obj->setParent(this);
+    Subsystem* sys = dynamic_cast<Subsystem*>(obj);
+    if(sys)
+      subsystem.push_back(sys);
   }
 
   void Subsystem::addLink(Link *lnk) {
@@ -706,8 +703,8 @@ namespace MBSim {
     IrOK.push_back(IrOK[i] + AIK[i]*RrRK);
     AIK.push_back(AIK[i]*ARK);
 
-    //cosy->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRK);
-    //cosy->setAWP(port[i]->getAWP()*ARK);
+    //cosy->setPosition(port[i]->getPosition() + port[i]->getOrientation()*RrRK);
+    //cosy->setOrientation(port[i]->getOrientation()*ARK);
   }
 
   void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
@@ -724,8 +721,8 @@ namespace MBSim {
     IrOC.push_back(IrOK[i] + AIK[i]*RrRC);
     AIC.push_back(AIK[i]*ARC);
 
-    //contour->setWrOP(port[i]->getWrOP() + port[i]->getAWP()*RrRC);
-    //contour->setAWC(port[i]->getAWP()*ARC);
+    //contour->setPosition(port[i]->getPosition() + port[i]->getOrientation()*RrRC);
+    //contour->setAWC(port[i]->getOrientation()*ARC);
   }
 
   void Subsystem::calchSize() {

@@ -145,8 +145,8 @@ namespace MBSim {
       T(i,i) = 1;
 
     for(unsigned int i=0; i<port.size(); i++) {
-      port[i]->getWJP().resize(3,hSize);
-      port[i]->getWJR().resize(3,hSize);
+      port[i]->getJacobianOfTranslation().resize(3,hSize);
+      port[i]->getJacobianOfRotation().resize(3,hSize);
     }
     for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->getWJP().resize(3,hSize);
@@ -221,11 +221,11 @@ namespace MBSim {
 
   void RigidBody::updateMConst(double t) {
       M += Mbuf;
-      //M += m*JTJ(port[0]->getWJP()) + JTMJ(WThetaS,port[0]->getWJR());
+      //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateMNotConst(double t) {
-      M += m*JTJ(port[0]->getWJP()) + JTMJ(WThetaS,port[0]->getWJR());
+      M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateJacobians(double t) {
@@ -243,41 +243,41 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    port[iRef]->setWjP(portParent->getWjP() - tWrPK*portParent->getWjR() + portParent->getAWP()*(PdJT*u + PdjT) + crossProduct(portParent->getWomegaP(), 2*WvPKrel+crossProduct(portParent->getWomegaP(),WrPK)));
-    port[iRef]->setWjR(portParent->getWjR() + portParent->getAWP()*(PdJR*u + PdjR) + crossProduct(portParent->getWomegaP(), WomPK));
+    port[iRef]->setGyroscopicAccelerationOfTranslation(portParent->getGyroscopicAccelerationOfTranslation() - tWrPK*portParent->getGyroscopicAccelerationOfRotation() + portParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(portParent->getAngularVelocity(), 2*WvPKrel+crossProduct(portParent->getAngularVelocity(),WrPK)));
+    port[iRef]->setGyroscopicAccelerationOfRotation(portParent->getGyroscopicAccelerationOfRotation() + portParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(portParent->getAngularVelocity(), WomPK));
 
-    port[iRef]->getWJP()(Index(0,2),Index(0,portParent->getWJP().cols()-1)) = portParent->getWJP() - tWrPK*portParent->getWJR();
-    port[iRef]->getWJR()(Index(0,2),Index(0,portParent->getWJR().cols()-1)) = portParent->getWJR();
-    port[iRef]->getWJP()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJT;
-    port[iRef]->getWJR()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getAWP()*PJR;
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,portParent->getJacobianOfTranslation().cols()-1)) = portParent->getJacobianOfTranslation() - tWrPK*portParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJT;
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJR;
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
       SqrMat tWrSK = tilde(WrSK[iRef]);
-      port[0]->setWJP(port[iRef]->getWJP() + tWrSK*port[iRef]->getWJR());
-      port[0]->setWJR(port[iRef]->getWJR());
-      port[0]->setWjP(port[iRef]->getWjP() + tWrSK*port[iRef]->getWjR() + crossProduct(port[iRef]->getWomegaP(),crossProduct(port[iRef]->getWomegaP(),-WrSK[iRef])));
-      port[0]->setWjR(port[iRef]->getWjR());
+      port[0]->setJacobianOfTranslation(port[iRef]->getJacobianOfTranslation() + tWrSK*port[iRef]->getJacobianOfRotation());
+      port[0]->setJacobianOfRotation(port[iRef]->getJacobianOfRotation());
+      port[0]->setGyroscopicAccelerationOfTranslation(port[iRef]->getGyroscopicAccelerationOfTranslation() + tWrSK*port[iRef]->getGyroscopicAccelerationOfRotation() + crossProduct(port[iRef]->getAngularVelocity(),crossProduct(port[iRef]->getAngularVelocity(),-WrSK[iRef])));
+      port[0]->setGyroscopicAccelerationOfRotation(port[iRef]->getGyroscopicAccelerationOfRotation());
     }
 
     // Jacobi der anderen KOSY (außer Schwerpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
 	SqrMat tWrSK = tilde(WrSK[i]);
-	port[i]->setWJP(port[0]->getWJP() - tWrSK*port[0]->getWJR());
-	port[i]->setWJR(port[0]->getWJR());
-	port[i]->setWjP(port[0]->getWjP() - tWrSK*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSK[i])));
-	port[i]->setWjR(port[0]->getWjR());
+	port[i]->setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrSK*port[0]->getJacobianOfRotation());
+	port[i]->setJacobianOfRotation(port[0]->getJacobianOfRotation());
+	port[i]->setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSK[i])));
+	port[i]->setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
       }
     }
 
      // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat tWrSC = tilde(WrSC[i]);
-      contour[i]->setWJP(port[0]->getWJP() - tWrSC*port[0]->getWJR());
-      contour[i]->setWJR(port[0]->getWJR());
-      contour[i]->setWjP(port[0]->getWjP() - tWrSC*port[0]->getWjR() + crossProduct(port[0]->getWomegaP(),crossProduct(port[0]->getWomegaP(),WrSC[i])));
-      contour[i]->setWjR(port[0]->getWjR());
+      contour[i]->setWJP(port[0]->getJacobianOfTranslation() - tWrSC*port[0]->getJacobianOfRotation());
+      contour[i]->setWJR(port[0]->getJacobianOfRotation());
+      contour[i]->setWjP(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSC[i])));
+      contour[i]->setWjR(port[0]->getGyroscopicAccelerationOfRotation());
     }
   }
 
@@ -285,13 +285,14 @@ namespace MBSim {
     updateJacobians(t);
 
     // Trägheitstensor auf Welt-System umrechnen
-    //WThetaS = SymMat(port[0]->getAWP()*SThetaS*trans(port[0]->getAWP()));
-    WThetaS = JTMJ(SThetaS,trans(port[0]->getAWP()));
+    //WThetaS =
+    //SymMat(port[0]->getOrientation()*SThetaS*trans(port[0]->getOrientation()));
+    WThetaS = JTMJ(SThetaS,trans(port[0]->getOrientation()));
 
-    Vec WF = m*parent->getAccelerationOfGravity() - m*port[0]->getWjP();
-    Vec WM = crossProduct(WThetaS*port[0]->getWomegaP(),port[0]->getWomegaP()) - WThetaS*port[0]->getWjR();
+    Vec WF = m*parent->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
+    Vec WM = crossProduct(WThetaS*port[0]->getAngularVelocity(),port[0]->getAngularVelocity()) - WThetaS*port[0]->getGyroscopicAccelerationOfRotation();
 
-    h += trans(port[0]->getWJP())*WF +  trans(port[0]->getWJR())*WM;
+    h += trans(port[0]->getJacobianOfTranslation())*WF +  trans(port[0]->getJacobianOfRotation())*WM;
 
   }
 
@@ -318,8 +319,8 @@ namespace MBSim {
 
 #ifdef HAVE_AMVIS
 	if(bodyAMVis) {
-	  SqrMat AWK = cosyAMVis->getAWP();
-	  Vec WrOS = cosyAMVis->getWrOP();
+	  SqrMat AWK = cosyAMVis->getOrientation();
+	  Vec WrOS = cosyAMVis->getPosition();
 	  double alpha;
 	  double beta=asin(AWK(0,2));
 	  double gamma;
@@ -366,55 +367,55 @@ namespace MBSim {
       PrPK = (*fPrPK)(q,t);
 
     // Kinematik des Referenz-KOSY updaten
-    port[iRef]->setAWP(portParent->getAWP()*APK);
+    port[iRef]->setOrientation(portParent->getOrientation()*APK);
 
     if(cb) {
-      PJR = trans(portParent->getAWP())*port[iRef]->getAWP()*PJR0;
+      PJR = trans(portParent->getOrientation())*port[iRef]->getOrientation()*PJR0;
     }
 
-    WrPK = portParent->getAWP()*PrPK;
-    WomPK = portParent->getAWP()*(PJR*u + PjR);
-    WvPKrel = portParent->getAWP()*(PJT*u + PjT);
-    port[iRef]->setWomegaP(portParent->getWomegaP() + WomPK);
-    port[iRef]->setWrOP(WrPK + portParent->getWrOP());
-    port[iRef]->setWvP(portParent->getWvP() + WvPKrel + crossProduct(portParent->getWomegaP(),WrPK));
+    WrPK = portParent->getOrientation()*PrPK;
+    WomPK = portParent->getOrientation()*(PJR*u + PjR);
+    WvPKrel = portParent->getOrientation()*(PJT*u + PjT);
+    port[iRef]->setAngularVelocity(portParent->getAngularVelocity() + WomPK);
+    port[iRef]->setPosition(WrPK + portParent->getPosition());
+    port[iRef]->setVelocity(portParent->getVelocity() + WvPKrel + crossProduct(portParent->getAngularVelocity(),WrPK));
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Drehmatrix des Schwerpunkt-KOSY updaten
     if(iRef != 0)
-      port[0]->setAWP(port[iRef]->getAWP()*trans(ASK[iRef]));
+      port[0]->setOrientation(port[iRef]->getOrientation()*trans(ASK[iRef]));
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu anderen KOSY im Welt-KOSY 
     for(unsigned int i=1; i<port.size(); i++) {
-      WrSK[i] = port[0]->getAWP()*SrSK[i];
+      WrSK[i] = port[0]->getOrientation()*SrSK[i];
     }
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu Konturen im Welt-KOSY 
     for(unsigned int i=0; i<contour.size(); i++) {
-      WrSC[i] = port[0]->getAWP()*SrSC[i];
+      WrSC[i] = port[0]->getOrientation()*SrSC[i];
     }
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Kinematik des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
-      port[0]->setWrOP(port[iRef]->getWrOP() - WrSK[iRef]);
-      port[0]->setWvP(port[iRef]->getWvP() - crossProduct(port[iRef]->getWomegaP(), WrSK[iRef]));
-      port[0]->setWomegaP(port[iRef]->getWomegaP());
+      port[0]->setPosition(port[iRef]->getPosition() - WrSK[iRef]);
+      port[0]->setVelocity(port[iRef]->getVelocity() - crossProduct(port[iRef]->getAngularVelocity(), WrSK[iRef]));
+      port[0]->setAngularVelocity(port[iRef]->getAngularVelocity());
     }
 
     // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
-	port[i]->setWrOP(port[0]->getWrOP() + WrSK[i]);
-	port[i]->setWvP(port[0]->getWvP() + crossProduct(port[0]->getWomegaP(), WrSK[i]));
-	port[i]->setWomegaP(port[0]->getWomegaP());
-	port[i]->setAWP(port[0]->getAWP()*ASK[i]);
+	port[i]->setPosition(port[0]->getPosition() + WrSK[i]);
+	port[i]->setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSK[i]));
+	port[i]->setAngularVelocity(port[0]->getAngularVelocity());
+	port[i]->setOrientation(port[0]->getOrientation()*ASK[i]);
       }
     }
     // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->setWrOP(port[0]->getWrOP() + WrSC[i]);
-      contour[i]->setWvP(port[0]->getWvP() + crossProduct(port[0]->getWomegaP(), WrSC[i]));
-      contour[i]->setWomegaC(port[0]->getWomegaP());
-      contour[i]->setAWC(port[0]->getAWP()*ASC[i]);
+      contour[i]->setWrOP(port[0]->getPosition() + WrSC[i]);
+      contour[i]->setWvP(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSC[i]));
+      contour[i]->setWomegaC(port[0]->getAngularVelocity());
+      contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
     }
   }
 
