@@ -8,12 +8,12 @@ Spring::Spring(const string &name) : ConnectionFlexible(name) {
 }
 
 void Spring::updateStage1(double t) {
-  WrP0P1=port[1]->getWrOP() - port[0]->getWrOP();
+  WrP0P1=port[1]->getPosition() - port[0]->getPosition();
   Vec forceDir;
   forceDir = WrP0P1/nrm2(WrP0P1);
   Wf = forceDir;
   g(0) = trans(forceDir)*WrP0P1;
-  gd(0) = trans(forceDir)*(port[1]->getWvP() - port[0]->getWvP());  
+  gd(0) = trans(forceDir)*(port[1]->getVelocity() - port[0]->getVelocity());  
 
 } 
 
