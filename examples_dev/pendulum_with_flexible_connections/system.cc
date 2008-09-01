@@ -39,9 +39,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->addCoordinateSystem("PunktO",KrSP,E);
 
   box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box1->setRotation(new RotationAxis(Vec("[0;0;1]")));
-  box1->setReferenceCoordinateSystem(getCoordinateSystem("O"));
-  box1->setKinematicsCoordinateSystem(box1->getCoordinateSystem("COG"));
+  box1->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  box1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
 
   Vec q0(3);
   q0(0) = a1;
@@ -60,7 +60,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   KrSP(1) = a2;
   box2->addCoordinateSystem("Punkt",KrSP,E);
   box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box2->setRotation(new RotationAxis(Vec("[0;0;1]")));
+  box2->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);
@@ -81,15 +81,15 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setq0(q0);
 
   addCoordinateSystem("Os","[0;0;0.04]",E);
-  box2->setReferenceCoordinateSystem(getCoordinateSystem("Os"));
-  box2->setKinematicsCoordinateSystem(box2->getCoordinateSystem("COG"));
+  box2->setReferenceSystemForKinematics(getCoordinateSystem("Os"));
+  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
 
   ConnectionFlexible *ls = new ConnectionFlexible("Gelenk1");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setTranslationalStiffness(1e7);
   ls->setTranslationalDamping(1);
   addLink(ls);
-  ls->connect(getCoordinateSystem("O"),box1->getCoordinateSystem("PunktO"));
+  ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
 
   ls = new ConnectionFlexible("Gelenk2");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));

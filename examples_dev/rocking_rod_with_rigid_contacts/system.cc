@@ -44,12 +44,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   BodyRigid* body = new BodyRigid("Rod");
   addObject(body);
 
-  body->setReferenceCoordinateSystem(getCoordinateSystem("O"));
-  body->setKinematicsCoordinateSystem(body->getCoordinateSystem("COG"));
+  body->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
   body->setMass(m);
   body->setMomentOfInertia(Theta);
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationAxis(Vec("[0;0;1]")));
+  body->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
 
  // Initial translation and rotation
   Vec q0(3);

@@ -45,8 +45,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box1->setReferenceCoordinateSystem(getCoordinateSystem("O"));
-  box1->setKinematicsCoordinateSystem(box1->getCoordinateSystem("COG"));
+  box1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
@@ -60,8 +60,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box2->setReferenceCoordinateSystem(getCoordinateSystem("O"));
-  box2->setKinematicsCoordinateSystem(box2->getCoordinateSystem("COG"));
+  box2->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
 
   // ----------------------- Anschlusspunkte der Federn --------------------  
   Vec SrSP(3);
@@ -82,7 +82,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   spring1->setStiffness(c1);
   spring1->setDamping(d1);
   spring1->setl0(l01);
-  spring1->connect(box1->getCoordinateSystem("P1"),getCoordinateSystem("O"));
+  spring1->connect(box1->getCoordinateSystem("P1"),getCoordinateSystem("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
   Spring *spring2 = new Spring("Feder2");
