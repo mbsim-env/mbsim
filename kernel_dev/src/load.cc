@@ -78,15 +78,15 @@ namespace MBSim {
 
     la = (*func)(t);
     if(KOSYID) {
-      Wf = port[0]->getAWP()*forceDir;
-      Wm = port[0]->getAWP()*momentDir;
+      Wf = port[0]->getOrientation()*forceDir;
+      Wm = port[0]->getOrientation()*momentDir;
     }
     WF = Wf*la(IT);
     WM = Wm*la(IR);
   } 
   
   void Load::updateh(double t) {
-    h[0] += trans(port[0]->getWJP())*WF + trans(port[0]->getWJR())*WM;
+    h[0] += trans(port[0]->getJacobianOfTranslation())*WF + trans(port[0]->getJacobianOfRotation())*WM;
   }
 
   void Load::setUserFunction(DataInterfaceBase *func_) {

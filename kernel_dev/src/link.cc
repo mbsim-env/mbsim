@@ -259,9 +259,9 @@ namespace MBSim {
     for(unsigned i=0; i<port.size(); i++) {
       //W.push_back(Mat(port[i]->getParent()->gethSize(),laSize));
       //h.push_back(Vec(port[i]->getParent()->gethSize()));
-      W.push_back(Mat(port[i]->getWJP().cols(),laSize));
-      h.push_back(Vec(port[i]->getWJP().cols()));
-      r.push_back(Vec(port[i]->getWJP().cols()));
+      W.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
+      h.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
+      r.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
     }
   }
 
@@ -275,7 +275,7 @@ namespace MBSim {
   void LinkCoordinateSystem::updateWRef() {
     for(unsigned i=0; i<port.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getWJP().cols()-1);
+      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
 	W[i]>>parent->getW()(I,J);
     }
   } 
@@ -285,14 +285,14 @@ namespace MBSim {
 
   void LinkCoordinateSystem::updatehRef() {
     for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getWJP().cols()-1);
+      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>parent->geth()(I);
     }
   } 
 
   void LinkCoordinateSystem::updaterRef() {
     for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getWJP().cols()-1);
+      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
       r[i]>>parent->getr()(I);
     }
   } 
@@ -304,7 +304,7 @@ namespace MBSim {
     Vec WrOToPoint;
     Vec LoadArrow;
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      WrOToPoint = port[arrowAMVisID[i]]->getWrOP();
+      WrOToPoint = port[arrowAMVisID[i]]->getPosition();
       if(setValued){ 
 	if (active) 
 	  LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;

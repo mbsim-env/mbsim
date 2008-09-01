@@ -72,17 +72,17 @@ namespace MBSim {
   }
 
   void Connection::updateStage1(double t) {
-    Wf = port[0]->getAWP()*forceDir;
-    Wm = port[0]->getAWP()*momentDir;
-    WrP0P1 = port[1]->getWrOP()-port[0]->getWrOP();
+    Wf = port[0]->getOrientation()*forceDir;
+    Wm = port[0]->getOrientation()*momentDir;
+    WrP0P1 = port[1]->getPosition()-port[0]->getPosition();
     g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
   }
 
   void Connection::updateStage2(double t) {
-    WvP0P1 = port[1]->getWvP()-port[0]->getWvP();
-    WomP0P1 = port[1]->getWomegaP()-port[0]->getWomegaP();
-    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getWomegaP(), WrP0P1));
+    WvP0P1 = port[1]->getVelocity()-port[0]->getVelocity();
+    WomP0P1 = port[1]->getAngularVelocity()-port[0]->getAngularVelocity();
+    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getAngularVelocity(), WrP0P1));
     gd(IR) = trans(Wm)*WomP0P1;
     updateKinetics(t);
   }
@@ -136,8 +136,8 @@ namespace MBSim {
       Vec WrOToPoint;
       Vec WrOFromPoint;
 
-      WrOFromPoint = port[0]->getWrOP();
-      WrOToPoint   = port[1]->getWrOP();
+      WrOFromPoint = port[0]->getPosition();
+      WrOToPoint   = port[1]->getPosition();
       if (coilspringAMVisUserFunctionColor) {
 	double color;
 	color = ((*coilspringAMVisUserFunctionColor)(t))(0);

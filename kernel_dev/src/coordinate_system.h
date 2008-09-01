@@ -66,28 +66,28 @@ namespace MBSim {
 
       virtual void init();
 
-      const Vec& getWrOP() const {return WrOP;}
-      const Vec& getWvP() const {return WvP;} 
-      const Vec& getWomegaP() const {return WomegaP;}
-      const SqrMat& getAWP() const {return AWP;}
+      const Vec& getPosition() const {return WrOP;}
+      const Vec& getVelocity() const {return WvP;} 
+      const Vec& getAngularVelocity() const {return WomegaP;}
+      const SqrMat& getOrientation() const {return AWP;}
 
-      void setWrOP(const Vec &v) {WrOP = v;}
-      void setWvP(const Vec &v) {WvP = v;} 
-      void setWomegaP(const Vec &v) {WomegaP = v;}
-      void setAWP(const SqrMat &AWP_) {AWP = AWP_;}
+      void setPosition(const Vec &v) {WrOP = v;}
+      void setVelocity(const Vec &v) {WvP = v;} 
+      void setAngularVelocity(const Vec &v) {WomegaP = v;}
+      void setOrientation(const SqrMat &AWP_) {AWP = AWP_;}
       
-      void setWJP(const Mat &WJP_) {WJP=WJP_;}
-      void setWjP(const Vec &WjP_) {WjP=WjP_;}
-      void setWJR(const Mat &WJR_) {WJR=WJR_;}
-      void setWjR(const Vec &WjR_) {WjR=WjR_;}
-      const Mat& getWJP() const {return WJP;}
-      const Mat& getWJR() const {return WJR;}
-      Mat& getWJP() {return WJP;}
-      Mat& getWJR() {return WJR;}
-      const Vec& getWjP() const {return WjP;}
-      const Vec& getWjR() const {return WjR;}
-      Vec& getWjP() {return WjP;}
-      Vec& getWjR() {return WjR;}
+      void setJacobianOfTranslation(const Mat &WJP_) {WJP=WJP_;}
+      void setGyroscopicAccelerationOfTranslation(const Vec &WjP_) {WjP=WjP_;}
+      void setJacobianOfRotation(const Mat &WJR_) {WJR=WJR_;}
+      void setGyroscopicAccelerationOfRotation(const Vec &WjR_) {WjR=WjR_;}
+      const Mat& getJacobianOfTranslation() const {return WJP;}
+      const Mat& getJacobianOfRotation() const {return WJR;}
+      Mat& getJacobianOfTranslation() {return WJP;}
+      Mat& getJacobianOfRotation() {return WJR;}
+      const Vec& getGyroscopicAccelerationOfTranslation() const {return WjP;}
+      const Vec& getGyroscopicAccelerationOfRotation() const {return WjR;}
+      Vec& getGyroscopicAccelerationOfTranslation() {return WjP;}
+      Vec& getGyroscopicAccelerationOfRotation() {return WjR;}
 
       void plot(double t, double dt=1);					// HR 03.01.07
       void initPlotFiles();
