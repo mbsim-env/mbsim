@@ -98,13 +98,13 @@ namespace MBSim {
   };
 
 
-  class RotationAxis: public Rotation {
+  class RotationWithConstantAxis: public Rotation {
     private:
       SqrMat APK;
       Vec a;
     public:
-      RotationAxis() : APK(3), a(3) {}
-      RotationAxis(const Vec &a_) : APK(3) { a = a_; } 
+      RotationWithConstantAxis() : APK(3), a(3) {}
+      RotationWithConstantAxis(const Vec &a_) : APK(3) { a = a_; } 
 
       const Vec& getAxis() const {return a;}
       virtual int getqSize() const {return 1;}
@@ -351,12 +351,12 @@ namespace MBSim {
 
     void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
     
-    void setKinematicsCoordinateSystem(CoordinateSystem *port) {
+    void setCoordinateSystemForKinematics(CoordinateSystem *port) {
       iRef = portIndex(port);
       assert(iRef > -1);
     }
 
-    void setReferenceCoordinateSystem(CoordinateSystem *port) {portParent = port;};
+    void setReferenceSystemForKinematics(CoordinateSystem *port) {portParent = port;};
 
     double computeKineticEnergy();
     double computeKineticEnergyBranch();

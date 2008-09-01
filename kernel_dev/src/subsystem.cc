@@ -31,7 +31,7 @@ namespace MBSim {
 
   Subsystem::Subsystem(const string &name) : Object(name), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
 
-    CoordinateSystem *cosy = new CoordinateSystem("O");
+    CoordinateSystem *cosy = new CoordinateSystem("I");
     Object::addCoordinateSystem(cosy);
 
     IrOK.push_back(Vec(3));
@@ -63,7 +63,7 @@ namespace MBSim {
       iRef = 0;
     if(parent) {
       if(portParent == 0)
-	portParent = parent->getCoordinateSystem("O");
+	portParent = parent->getCoordinateSystem("I");
       port[iRef]->setWrOP(portParent->getWrOP() +  portParent->getAWP()*PrPK);
       port[iRef]->setAWP(portParent->getAWP()*APK);
     }

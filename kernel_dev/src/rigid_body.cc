@@ -43,7 +43,7 @@ namespace MBSim {
 
     portParent = 0;
 
-    Object::addCoordinateSystem(new CoordinateSystem("COG"));
+    Object::addCoordinateSystem(new CoordinateSystem("S"));
 
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
@@ -100,7 +100,7 @@ namespace MBSim {
       Mat JR;
       JR.resize(3,0);
       {
-	RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+	RotationWithConstantAxis* fAPK_ = dynamic_cast<RotationWithConstantAxis*>(fAPK);
 	if(fAPK_) 
 	  JR.resize() = fAPK_->getAxis();
       }
@@ -211,7 +211,7 @@ namespace MBSim {
       parafile << "Unknown" << endl;
 
     parafile << "# Rotation:" << endl;
-    RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+    RotationWithConstantAxis* fAPK_ = dynamic_cast<RotationWithConstantAxis*>(fAPK);
     if(fAPK_) 
       parafile << fAPK_->getAxis() << endl;
     else
