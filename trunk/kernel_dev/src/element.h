@@ -98,7 +98,7 @@ namespace MBSim {
       /*! Set element name \param str */
       virtual void setName(const string &str) {name = str;}
       /*! Get element \return fullname */
-      virtual string getFullName() const = 0;
+      virtual string getFullName() const {return name;}
 
       void load(ifstream &inputfile);
  

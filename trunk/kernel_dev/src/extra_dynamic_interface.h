@@ -58,7 +58,6 @@ namespace MBSim {
       void plot(double t, double dt=1);
       void initPlotFiles();
       void setParent(Subsystem *parent_) {parent = parent_;}
-      virtual string getFullName() const {return "0";}
 
       void setx0(Vec x_){x0=x_;}
   };
