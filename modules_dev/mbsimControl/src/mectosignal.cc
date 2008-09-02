@@ -25,10 +25,10 @@
 #include "rigid_body.h"
 
 Vec PosInterface::operator()(double t)  { 
-  return trans(JT)*port->getWrOP();
+  return trans(JT)*port->getPosition();
 }
 Vec RotVelInterface::operator()(double t)  { 
-  return trans(JR)*port->getWomegaP();
+  return trans(JR)*port->getAngularVelocity();
 }
 AngularInterface::AngularInterface(Body *body_) {
   body=body_;
