@@ -100,9 +100,9 @@ namespace MBSim {
       Mat JR;
       JR.resize(3,0);
       {
-	RotationWithConstantAxis* fAPK_ = dynamic_cast<RotationWithConstantAxis*>(fAPK);
+	RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
 	if(fAPK_) 
-	  JR.resize() = fAPK_->getAxis();
+	  JR.resize() = fAPK_->getAxisOfRotation();
       }
       {
 	CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
@@ -211,9 +211,9 @@ namespace MBSim {
       parafile << "Unknown" << endl;
 
     parafile << "# Rotation:" << endl;
-    RotationWithConstantAxis* fAPK_ = dynamic_cast<RotationWithConstantAxis*>(fAPK);
+    RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
     if(fAPK_) 
-      parafile << fAPK_->getAxis() << endl;
+      parafile << fAPK_->getAxisOfRotation() << endl;
     else
       parafile << "Unknown" << endl;
   }

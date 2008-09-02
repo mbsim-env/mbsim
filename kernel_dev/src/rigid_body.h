@@ -98,18 +98,18 @@ namespace MBSim {
   };
 
 
-  class RotationWithConstantAxis: public Rotation {
+  class RotationAboutFixedAxis: public Rotation {
     private:
       SqrMat APK;
       Vec a;
     public:
-      RotationWithConstantAxis() : APK(3), a(3) {}
-      RotationWithConstantAxis(const Vec &a_) : APK(3) { a = a_; } 
+      RotationAboutFixedAxis() : APK(3), a(3) {}
+      RotationAboutFixedAxis(const Vec &a_) : APK(3) { a = a_; } 
 
-      const Vec& getAxis() const {return a;}
+      const Vec& getAxisOfRotation() const {return a;}
       virtual int getqSize() const {return 1;}
 
-      void setAxis(const Vec& a_) {a = a_;}
+      void setAxisOfRotation(const Vec& a_) {a = a_;}
 
       SqrMat operator()(const Vec &q, double t) {
 	int i = q.size()-1;
@@ -330,7 +330,7 @@ namespace MBSim {
      * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
      \param I martix of inertia
      */
-    void setMomentOfInertia(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
+    void setInertiaTensor(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
       if(refCoordinateSystem)
 	i4I = portIndex(refCoordinateSystem);
       else
