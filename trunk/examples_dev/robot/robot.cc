@@ -49,7 +49,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   // System with tree-structure
   Tree *tree = new Tree("Baum");
   addObject(tree);
-  tree->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  tree->setFrameOfReference(getCoordinateSystem("I"));
   tree->setCoordinateSystemForKinematics(tree->getCoordinateSystem("I"));
  
 
@@ -73,7 +73,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrSP(3);
   KrSP(1) = hB/2;
   basis->addCoordinateSystem("R",-KrKS,A);
-  basis->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  basis->setFrameOfReference(getCoordinateSystem("I"));
   basis->setCoordinateSystemForKinematics(basis->getCoordinateSystem("R"));
 
   BodyRigid *arm = new BodyRigid("Arm");
@@ -84,7 +84,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   KrKS.init(0);
   KrKS(1) = lA/2;
   arm->addCoordinateSystem("R",-KrKS,A);
-  arm->setReferenceSystemForKinematics(basis->getCoordinateSystem("P"));
+  arm->setFrameOfReference(basis->getCoordinateSystem("P"));
   arm->setCoordinateSystemForKinematics(arm->getCoordinateSystem("R"));
   //arm->setq0(Vec("[0.3]"));
 
@@ -107,7 +107,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   arm->addCoordinateSystem("Q",PrPK0,SqrMat(3,EYE),arm->getCoordinateSystem("R"));
   spitze->setInertiaTensor(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
-  spitze->setReferenceSystemForKinematics(arm->getCoordinateSystem("Q"));
+  spitze->setFrameOfReference(arm->getCoordinateSystem("Q"));
   spitze->setCoordinateSystemForKinematics(spitze->getCoordinateSystem("S"));
   //spitze->setq0(Vec(1,INIT,lA/2));
 

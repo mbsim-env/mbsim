@@ -26,7 +26,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 
   stab1->addCoordinateSystem("Ref",-KrKS,A);
   stab1->setCoordinateSystemForKinematics(stab1->getCoordinateSystem("Ref"));
-  stab1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  stab1->setFrameOfReference(getCoordinateSystem("I"));
 
   stab1->setqSize(1);
   stab1->setuSize(1);
@@ -55,7 +55,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   addObject(stab2);
   stab2->setqSize(1);
   stab2->setuSize(1);
-  stab2->setReferenceSystemForKinematics(stab1->getCoordinateSystem("P"));
+  stab2->setFrameOfReference(stab1->getCoordinateSystem("P"));
   stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
