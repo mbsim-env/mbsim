@@ -37,7 +37,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
 
   stab1->addCoordinateSystem("Ref",-KrKS,A);
 
-  stab1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  stab1->setFrameOfReference(getCoordinateSystem("I"));
   stab1->setCoordinateSystemForKinematics(stab1->getCoordinateSystem("Ref"));
 
   stab1->setMass(mStab);
@@ -64,7 +64,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab1->addCoordinateSystem("P",WrOK-KrKS,A);
   KrKS(0) = a2;
   stab2->addCoordinateSystem("R",-KrKS,A);
-  stab2->setReferenceSystemForKinematics(stab1->getCoordinateSystem("P"));
+  stab2->setFrameOfReference(stab1->getCoordinateSystem("P"));
   stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;

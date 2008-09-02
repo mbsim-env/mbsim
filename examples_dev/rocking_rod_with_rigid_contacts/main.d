@@ -1,9 +1,9 @@
 main.o main.d : main.cc system.h \
-  /home/foerg/install//include/mbsim/multi_body_system.h \
-  /home/foerg/install//include/mbsim/group.h \
-  /home/foerg/install//include/mbsim/subsystem.h \
-  /home/foerg/install//include/mbsim/object.h \
-  /home/foerg/install//include/mbsim/element.h \
+  /home/foerg/install/include/mbsim/multi_body_system.h \
+  /home/foerg/install/include/mbsim/group.h \
+  /home/foerg/install/include/mbsim/subsystem.h \
+  /home/foerg/install/include/mbsim/object.h \
+  /home/foerg/install/include/mbsim/element.h \
   /home/foerg/install//include/fmatvec/fmatvec.h \
   /home/foerg/install//include/fmatvec/linear_algebra.h \
   /home/foerg/install//include/fmatvec/square_matrix.h \
@@ -18,21 +18,21 @@ main.o main.d : main.cc system.h \
   /home/foerg/install//include/fmatvec/diagonal_matrix.h \
   /home/foerg/install//include/fmatvec/symmetric_matrix.h \
   /home/foerg/install//include/fmatvec/band_matrix.h \
-  /home/foerg/install//include/mbsim/hitsphere_link.h \
-  /home/foerg/install//include/mbsim/link.h \
-  /home/foerg/install//include/mbsim/contour_pdata.h \
+  /home/foerg/install/include/mbsim/hitsphere_link.h \
+  /home/foerg/install/include/mbsim/link.h \
+  /home/foerg/install/include/mbsim/contour_pdata.h \
   /home/foerg/install//include/fmatvec/sparse_matrix.h \
-  /home/foerg/install//include/mbsim/integrators.h \
-  /home/foerg/install//include/mbsim/lsodar_integrator.h \
-  /home/foerg/install//include/mbsim/integrator.h \
+  /home/foerg/install/include/mbsim/integrators.h \
+  /home/foerg/install/include/mbsim/lsodar_integrator.h \
+  /home/foerg/install/include/mbsim/integrator.h \
   /home/foerg/install//include/fmatvec/fmatvec.h \
-  /home/foerg/install//include/mbsim/lsoder_integrator.h \
-  /home/foerg/install//include/mbsim/lsode_integrator.h \
-  /home/foerg/install//include/mbsim/rksuite_integrator.h \
-  /home/foerg/install//include/mbsim/dopri5_integrator.h \
-  /home/foerg/install//include/mbsim/dop853_integrator.h \
-  /home/foerg/install//include/mbsim/odex_integrator.h \
-  /home/foerg/install//include/mbsim/radau5_integrator.h \
-  /home/foerg/install//include/mbsim/time_stepping_integrator.h \
-  /home/foerg/install//include/mbsim/theta_time_stepping_integrator.h \
-  /home/foerg/install//include/mbsim/euler_explicit_integrator.h
+  /home/foerg/install/include/mbsim/lsoder_integrator.h \
+  /home/foerg/install/include/mbsim/lsode_integrator.h \
+  /home/foerg/install/include/mbsim/rksuite_integrator.h \
+  /home/foerg/install/include/mbsim/dopri5_integrator.h \
+  /home/foerg/install/include/mbsim/dop853_integrator.h \
+  /home/foerg/install/include/mbsim/odex_integrator.h \
+  /home/foerg/install/include/mbsim/radau5_integrator.h \
+  /home/foerg/install/include/mbsim/time_stepping_integrator.h \
+  /home/foerg/install/include/mbsim/theta_time_stepping_integrator.h \
+  /home/foerg/install/include/mbsim/euler_explicit_integrator.h

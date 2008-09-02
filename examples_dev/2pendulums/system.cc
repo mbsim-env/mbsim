@@ -30,6 +30,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
   tree->addObject(pendel2);
-  pendel2->getRod1()->setReferenceSystemForKinematics(pendel1->getRod2()->getCoordinateSystem("P"));
+  pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getCoordinateSystem("P"));
 }
 

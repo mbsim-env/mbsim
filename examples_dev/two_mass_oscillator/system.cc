@@ -45,7 +45,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  box1->setFrameOfReference(getCoordinateSystem("I"));
   box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
 
 
@@ -60,7 +60,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box2->setReferenceSystemForKinematics(getCoordinateSystem("I"));
+  box2->setFrameOfReference(getCoordinateSystem("I"));
   box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
 
   // ----------------------- Anschlusspunkte der Federn --------------------  
