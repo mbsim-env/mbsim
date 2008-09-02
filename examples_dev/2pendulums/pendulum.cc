@@ -33,8 +33,8 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 
   stab1->setMass(mStab);
   Theta(2,2) = JStab;
-  stab1->setMomentOfInertia(Theta);
-  stab1->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  stab1->setInertiaTensor(Theta);
+  stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   ObjObject * obj = new ObjObject(name+stab1->getName(),1,false);
   obj->setObjFilename("objects/pendel1.obj");
   stab1->setAMVisBody(obj);
@@ -59,8 +59,8 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setMomentOfInertia(Theta,stab2->getCoordinateSystem("S"));
-  stab2->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  stab2->setInertiaTensor(Theta,stab2->getCoordinateSystem("S"));
+  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
   obj = new ObjObject(name+stab2->getName(),1,false);

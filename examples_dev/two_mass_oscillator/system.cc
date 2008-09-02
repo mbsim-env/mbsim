@@ -40,7 +40,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
  
   // Masse und Trägheit definieren
   box1->setMass(m1);
-  box1->setMomentOfInertia(Theta1);
+  box1->setInertiaTensor(Theta1);
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
@@ -55,7 +55,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   // Masse und Trägheit definieren
   box2->setMass(m2);
-  box2->setMomentOfInertia(Theta2);
+  box2->setInertiaTensor(Theta2);
 
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)

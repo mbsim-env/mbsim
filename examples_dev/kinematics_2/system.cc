@@ -91,7 +91,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setReferenceSystemForKinematics(getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
   body->setMass(m);
-  body->setMomentOfInertia(Theta);
+  body->setInertiaTensor(Theta);
   body->setTranslation(new MyPos);
   body->setJacobianOfTranslation(new JacobianT);
   body->setDerivativeOfJacobianOfTranslation(new MyDerT);

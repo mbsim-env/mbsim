@@ -60,7 +60,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(0,0) = mB*rB*rB;
   Theta(1,1) = 1./2.*mB*rB*rB;
   Theta(2,2) = mB*rB*rB;
-  basis->setMomentOfInertia(Theta);
+  basis->setInertiaTensor(Theta);
 
   SqrMat A(3);
   for(int i=0; i<3; i++)
@@ -69,7 +69,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
 
   Vec KrKS(3);
   KrKS(1) = hB/2;
-  basis->setRotation(new RotationWithConstantAxis(Vec("[0;1;0]")));
+  basis->setRotation(new RotationAboutFixedAxis(Vec("[0;1;0]")));
   Vec KrSP(3);
   KrSP(1) = hB/2;
   basis->addCoordinateSystem("R",-KrKS,A);
@@ -92,8 +92,8 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(0,0) = mA*rA*rA;
   Theta(1,1) = 1./2.*mA*rA*rA;
   Theta(2,2) = mA*rA*rA;
-  arm->setMomentOfInertia(Theta);
-  arm->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  arm->setInertiaTensor(Theta);
+  arm->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   KrSP(1) = -lA/2;
   KrSP(1) = lA/2;
 
@@ -105,7 +105,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(2,2) = mS*rS*rS;
   PrPK0(1) = lA;
   arm->addCoordinateSystem("Q",PrPK0,SqrMat(3,EYE),arm->getCoordinateSystem("R"));
-  spitze->setMomentOfInertia(Theta);
+  spitze->setInertiaTensor(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
   spitze->setReferenceSystemForKinematics(arm->getCoordinateSystem("Q"));
   spitze->setCoordinateSystemForKinematics(spitze->getCoordinateSystem("S"));
