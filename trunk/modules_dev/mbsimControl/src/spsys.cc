@@ -59,12 +59,12 @@ Vec SPSys::NoInput(double t){
 
 Vec SPSys::SinglePosition(double t){
   Vec D(1);
-  D(0)=kPos(0)*(PositionInputs[0]->getWrOP()(xyzPos[0]));
+  D(0)=kPos(0)*(PositionInputs[0]->getPosition()(xyzPos[0]));
   return D;
 }
 Vec SPSys::SingleVelocity(double t){
   Vec D(1);
-  D(0)=kVin(0)*(VInputs[0]->getWvP()(xyzVin[0]));
+  D(0)=kVin(0)*(VInputs[0]->getVelocity()(xyzVin[0]));
   return D;
 }
 Vec SPSys::SingleUF(double t){
@@ -82,11 +82,11 @@ Vec SPSys::MultiInputs_MI(double t){
   }
   for (int k=0;k<kPos.rows();k++)
   {
-    D(k+kTF.rows())=kPos(k)*(PositionInputs[k]->getWrOP()(xyzPos[k]));
+    D(k+kTF.rows())=kPos(k)*(PositionInputs[k]->getPosition()(xyzPos[k]));
   }
   for (int k=0;k<kVin.rows();k++)
   {
-    D(k+kTF.rows()+kPos.rows())=kVin(k)*(VInputs[k]->getWvP()(xyzVin[k]));
+    D(k+kTF.rows()+kPos.rows())=kVin(k)*(VInputs[k]->getVelocity()(xyzVin[k]));
   }
   return D;
 }
@@ -99,11 +99,11 @@ Vec SPSys::MultiInputs_SI(double t){
   }
   for(int k=0;k<kPos.rows();k++)
   {
-    D(0)=D(0)+kPos(k)*(PositionInputs[k]->getWrOP()(xyzPos[k]));
+    D(0)=D(0)+kPos(k)*(PositionInputs[k]->getPosition()(xyzPos[k]));
   }
   for(int k=0;k<kVin.rows();k++)
   {
-    D(0)=D(0)+kVin(k)*(VInputs[k]->getWvP()(xyzVin[k]));
+    D(0)=D(0)+kVin(k)*(VInputs[k]->getVelocity()(xyzVin[k]));
   }
   return D;
 }
