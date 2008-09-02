@@ -169,7 +169,7 @@ namespace MBSim {
 
       void setTranslation(const Vec& PrPK_) { PrPK = PrPK_;}
       void setRotation(const SqrMat& APK_) { APK = APK_;}
-      void setReferenceSystemForKinematics(CoordinateSystem *port) {portParent = port;};
+      void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
       void setCoordinateSystemForKinematics(CoordinateSystem *port) {
 	iRef = portIndex(port);
 	assert(iRef > -1);
