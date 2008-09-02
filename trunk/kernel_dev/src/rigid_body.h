@@ -356,7 +356,7 @@ namespace MBSim {
       assert(iRef > -1);
     }
 
-    void setReferenceSystemForKinematics(CoordinateSystem *port) {portParent = port;};
+    void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
 
     double computeKineticEnergy();
     double computeKineticEnergyBranch();
