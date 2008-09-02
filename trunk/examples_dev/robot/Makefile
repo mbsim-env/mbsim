@@ -2,7 +2,7 @@ CC = g++
 sources = main.cc robot.cc
 libsources = 
 objects = $(sources:.cc=.o) 
-CPPFLAGS= -g3 -Wall `pkg-config --cflags mbsimControl` 
+CPPFLAGS= -g3  `pkg-config --cflags mbsimControl` 
 
 
 

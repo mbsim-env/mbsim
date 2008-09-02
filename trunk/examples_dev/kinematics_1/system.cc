@@ -86,7 +86,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setReferenceSystemForKinematics(getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
   body->setMass(m);
-  body->setMomentOfInertia(Theta);
+  body->setInertiaTensor(Theta);
   body->setTranslation(new MyPos);
   body->setGuidingVelocityOfTranslation(new jT);
   body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
@@ -102,7 +102,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setReferenceSystemForKinematics(getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
   body->setMass(m);
-  body->setMomentOfInertia(Theta);
+  body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[0; 1; 0]"));
 }
 

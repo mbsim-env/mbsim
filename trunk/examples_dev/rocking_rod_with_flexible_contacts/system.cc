@@ -42,9 +42,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setReferenceSystemForKinematics(getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
   body->setMass(m);
-  body->setMomentOfInertia(Theta);
+  body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  body->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
  // Initial translation and rotation
   Vec q0(3);

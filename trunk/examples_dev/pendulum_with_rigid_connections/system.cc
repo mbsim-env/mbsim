@@ -30,7 +30,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setMass(m1);
   SymMat Theta(3);
   Theta(2,2) = 1./12.*m1*l1*l1;
-  box1->setMomentOfInertia(Theta);
+  box1->setInertiaTensor(Theta);
 
   SqrMat E(3);
   E << DiagMat(3,INIT,1);
@@ -39,7 +39,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->addCoordinateSystem("PunktO",KrSP,E);
 
   box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box1->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  box1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
 
   box1->setReferenceSystemForKinematics(getCoordinateSystem("I"));
@@ -56,12 +56,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addObject(box2);
   box2->setMass(m2);
   Theta(2,2) = 1./12.*m2*l2*l2;
-  box2->setMomentOfInertia(Theta);
+  box2->setInertiaTensor(Theta);
 
   KrSP(1) = a2;
   box2->addCoordinateSystem("Punkt",KrSP,E);
   box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
-  box2->setRotation(new RotationWithConstantAxis(Vec("[0;0;1]")));
+  box2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
   SqrMat A1(3);
   A1(0,0) = cos(phi1);
