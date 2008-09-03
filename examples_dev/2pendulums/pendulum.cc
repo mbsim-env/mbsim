@@ -59,7 +59,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertiaTensor(Theta,stab2->getCoordinateSystem("S"));
+  stab2->setInertiaTensor(Theta,stab2->getCoordinateSystem("C"));
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 

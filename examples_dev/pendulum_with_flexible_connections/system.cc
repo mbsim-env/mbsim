@@ -41,7 +41,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   box1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
+  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
 
   Vec q0(3);
   q0(0) = a1;
@@ -82,7 +82,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   addCoordinateSystem("Os","[0;0;0.04]",E);
   box2->setFrameOfReference(getCoordinateSystem("Os"));
-  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
+  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
   ConnectionFlexible *ls = new ConnectionFlexible("Gelenk1");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
