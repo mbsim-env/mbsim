@@ -46,7 +46,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
   box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
+  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
@@ -61,7 +61,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
   box2->setFrameOfReference(getCoordinateSystem("I"));
-  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
+  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
   // ----------------------- Anschlusspunkte der Federn --------------------  
   Vec SrSP(3);

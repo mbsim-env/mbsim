@@ -43,7 +43,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
 
   box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("S"));
+  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
@@ -83,7 +83,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   addCoordinateSystem("Os","[0;0;0.04]",E);
   box2->setFrameOfReference(getCoordinateSystem("Os"));
-  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("S"));
+  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
   ConnectionRigid *ls = new ConnectionRigid("Gelenk1");
   addLink(ls);

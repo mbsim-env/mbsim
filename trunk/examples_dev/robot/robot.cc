@@ -108,7 +108,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   spitze->setInertiaTensor(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
   spitze->setFrameOfReference(arm->getCoordinateSystem("Q"));
-  spitze->setCoordinateSystemForKinematics(spitze->getCoordinateSystem("S"));
+  spitze->setCoordinateSystemForKinematics(spitze->getCoordinateSystem("C"));
   //spitze->setq0(Vec(1,INIT,lA/2));
 
     // --------------------------- Setup Control ----------------------------
@@ -126,7 +126,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorBasis);
   motorBasis->setUserFunction(tf->SigOut());
   motorBasis->setMomentDirection("[0;1;0]");
-  motorBasis->connect(basis->getCoordinateSystem("S"));
+  motorBasis->connect(basis->getCoordinateSystem("C"));
 
   FuncTable *spitzeSoll=new FuncTable;
   spitzeSoll->setFile("Soll_Spitze.tab");   
@@ -141,7 +141,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorSpitze);
   motorSpitze->setUserFunction(tf->SigOut());
   motorSpitze->setForceDirection("[0;1;0]");
-  motorSpitze->connect(spitze->getCoordinateSystem("S"));
+  motorSpitze->connect(spitze->getCoordinateSystem("C"));
   motorSpitze->setKOSY(1);
 
   FuncTable *armSoll=new FuncTable;
@@ -157,7 +157,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorArm);
   motorArm->setUserFunction(tf->SigOut());
   motorArm->setMomentDirection("[0;0;1]");
-  motorArm->connect(arm->getCoordinateSystem("S"));
+  motorArm->connect(arm->getCoordinateSystem("C"));
   motorArm->setKOSY(1);
 
   // --------------------------- Setup Visualisation ----------------------------

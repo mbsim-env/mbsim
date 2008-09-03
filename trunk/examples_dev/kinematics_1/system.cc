@@ -84,7 +84,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addObject(body);
 
   body->setFrameOfReference(getCoordinateSystem("I"));
-  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
+  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
   body->setTranslation(new MyPos);
@@ -100,7 +100,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body = new BodyRigid("Rod2");
   addObject(body);
   body->setFrameOfReference(getCoordinateSystem("I"));
-  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("S"));
+  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[0; 1; 0]"));
