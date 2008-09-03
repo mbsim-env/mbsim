@@ -43,7 +43,7 @@ namespace MBSim {
 
     portParent = 0;
 
-    Object::addCoordinateSystem(new CoordinateSystem("S"));
+    Object::addCoordinateSystem(new CoordinateSystem("C"));
 
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
