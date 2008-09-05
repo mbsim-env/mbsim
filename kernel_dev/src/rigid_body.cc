@@ -79,6 +79,11 @@ namespace MBSim {
   }
 
   void RigidBody::init() {
+    if(iRef == -1)
+      iRef = 0;
+    if(portParent == 0)
+      portParent = parent->getCoordinateSystem("I");
+    
     Object::init();
 
     PJT.resize(3,uSize);
