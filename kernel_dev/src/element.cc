@@ -66,10 +66,10 @@ namespace MBSim {
   } 
 
   void Element::plotParameters() {
-      parafile << "# Name:" << endl;
-      parafile << name << endl;
       parafile << "# Type:" << endl;
       parafile << getType() << endl;
+      parafile << "# Name:" << endl;
+      parafile << name << endl;
   }
 
   void Element::load(ifstream& inputfile) {
@@ -77,9 +77,10 @@ namespace MBSim {
     char dummy[10000];
     inputfile.getline(dummy,10000);
     inputfile.getline(dummy,10000);
+    inputfile.getline(dummy,10000);
+    inputfile.getline(dummy,10000);
     name = dummy;
-    inputfile.getline(dummy,10000);
-    inputfile.getline(dummy,10000);
+    cout << "Element name = " << name << endl;
  }
 
   void Element::addDataInterfaceBaseRef(const string& DIBRef_){
