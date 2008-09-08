@@ -29,9 +29,9 @@ namespace MBSim {
 
   Load::Load(const string &name) : LinkCoordinateSystem(name,false), func(0), KOSYID(0) {
 
-    load.push_back(Vec(6));
-    WF >> load[0](Index(0,2));
-    WM >> load[0](Index(3,5));
+    L.push_back(Vec(6));
+    WF >> L[0](Index(0,2));
+    WM >> L[0](Index(3,5));
   }
 
   Load::~Load() {

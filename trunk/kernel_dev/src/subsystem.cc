@@ -26,6 +26,7 @@
 #include "link.h"
 #include "contour.h"
 #include "coordinate_system.h"
+#include "class_factory.h"
 
 namespace MBSim {
 
@@ -224,15 +225,44 @@ namespace MBSim {
   }
 
   void Subsystem::load(ifstream& inputfile) {
+    cout << "in Subsystem::load"<<endl;
     Object::load(inputfile);
 
     char dummy[10000];
+    string basename("../test_group3/plot/");
+    basename = basename+ getFullName() + ".";
+
     inputfile.getline(dummy,10000); // # Objects
-    inputfile.getline(dummy,10000); // 1. Object
-    cout << dummy <<endl;
-    inputfile.getline(dummy,10000); // 2. Object
-    cout << dummy <<endl;
-    
+    int no=getNumberOfElements(inputfile);
+    for(int i=0; i<no; i++) {
+      inputfile.getline(dummy,10000); // # Objects
+      string newname = basename+  dummy+".para";
+      ifstream newinputfile(newname.c_str(), ios::in);
+      newinputfile.getline(dummy,10000);
+      newinputfile.getline(dummy,10000);
+      ClassFactory cf;
+      cout << "create Object " << dummy << endl;
+      Object * newobject = cf.getObject(dummy);
+      addObject(newobject);
+      newinputfile.seekg(0,ios::beg);
+      newobject->load(newinputfile);
+    }
+    inputfile.getline(dummy,10000); // # Links
+    no=getNumberOfElements(inputfile);
+    for(int i=0; i<no; i++) {
+      inputfile.getline(dummy,10000); // # Links
+      string newname = basename+  dummy+".para";
+      ifstream newinputfile(newname.c_str(), ios::in);
+      newinputfile.getline(dummy,10000);
+      newinputfile.getline(dummy,10000);
+      ClassFactory cf;
+      cout << "create Link " << dummy << endl;
+      Link * newlink = cf.getLink(dummy);
+      addLink(newlink);
+      newinputfile.seekg(0,ios::beg);
+      newlink->load(newinputfile);
+    }
+
   }
 
   //void Subsystem::addSubsystem(Subsystem *system, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) 

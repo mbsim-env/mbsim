@@ -29,10 +29,14 @@ using namespace std;
 
 namespace MBSim {
   class Object;
+  class Link;
+  class Contour;
 
   class ClassFactory {
     public:
       Object* getObject(const string &type);
+      Link* getLink(const string &type);
+      Contour* getContour(const string &type);
   };
 
 }

@@ -229,6 +229,11 @@ namespace MBSim {
     return parent->getlaIndMBS() + laInd;
   }
 
+  void Link::load(ifstream& inputfile) {
+    cout << "in Link::load"<<endl;
+    Element::load(inputfile);
+  }
+
 #ifdef HAVE_AMVIS
   void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
     assert(ID >= 0);
@@ -314,7 +319,7 @@ namespace MBSim {
 	}
       }
       else
-	LoadArrow = load[arrowAMVisID[i]];
+	LoadArrow = L[arrowAMVisID[i]];
       // Scaling: 1KN or 1KNm scaled to arrowlenght one
       LoadArrow= LoadArrow/1000*arrowAMVisScale[i];
 
@@ -339,6 +344,10 @@ namespace MBSim {
     }
 #endif
   }
+
+  //void LinkCoordinateSystem::load(ifstream& inputfile) {
+   // Element::load(inputfile);
+ // }
 
   LinkContour::LinkContour(const string &name, bool setValued) : Link(name,setValued) {
   }
@@ -404,7 +413,7 @@ namespace MBSim {
 	}
       }
       else
-	LoadArrow = load[arrowAMVisID[i]];
+	LoadArrow = L[arrowAMVisID[i]];
       // Scaling: 1KN or 1KNm scaled to arrowlenght one
       LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i];
 

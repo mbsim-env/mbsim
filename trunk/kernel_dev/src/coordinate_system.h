@@ -92,6 +92,8 @@ namespace MBSim {
       void plot(double t, double dt=1);					// HR 03.01.07
       void initPlotFiles();
       void plotParameters();
+      string getType() const {return "CoordinateSystem";}
+
 #ifdef HAVE_AMVIS
       void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
 #endif

@@ -100,12 +100,14 @@ namespace MBSim {
       /*! Get element \return fullname */
       virtual string getFullName() const {return name;}
 
-      void load(ifstream &inputfile);
+      virtual void load(ifstream &inputfile);
  
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
 
       virtual string getType() const {return "Element";}
+
+      static int getNumberOfElements(ifstream &inputfile);
   };
 
 }

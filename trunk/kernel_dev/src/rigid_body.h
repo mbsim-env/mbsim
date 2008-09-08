@@ -369,6 +369,8 @@ namespace MBSim {
 
     virtual string getType() const {return "RigidBody";}
 
+    void load(ifstream &inputfile);
+
   };
 
   typedef RigidBody BodyRigid;

@@ -22,15 +22,37 @@
 #include <config.h>
 #include "class_factory.h"
 #include "object.h"
+#include "rigid_contact.h"
+#include "flexible_contact.h"
+#include "contour.h"
 #include "group.h"
+#include "rigid_body.h"
 
 namespace MBSim {
   Object* ClassFactory::getObject(const string &type) {
     if(type == "Group")
       return new Group("NoName");
+    else if(type == "RigidBody")
+      return new RigidBody("NoName");
     return 0;
   }
+  Link* ClassFactory::getLink(const string &type) {
+    if(type == "RigidContact")
+      return new RigidContact("NoName");
+    else if(type == "FlexibleContact")
+      return new FlexibleContact("NoName");
+    return 0;
+  }
+  Contour* ClassFactory::getContour(const string &type) {
+    if(type == "Point")
+      return new Point("NoName");
+    else if(type == "Line")
+      return new Line("NoName");
+    return 0;
+  }
+
 }
+
 
 
 

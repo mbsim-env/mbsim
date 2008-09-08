@@ -94,6 +94,8 @@ namespace MBSim {
       double getFrictionCoefficient() {return mue;}
 
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
+      string getType() const {return "Contact";}
+
       using LinkContour::connect;
   };
 
