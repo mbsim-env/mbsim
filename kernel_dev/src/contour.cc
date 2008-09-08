@@ -124,6 +124,24 @@ namespace MBSim {
   Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {}
   void Line::setCn(const Vec &n) {Cn = n/nrm2(n);}
   void Line::setCb(const Vec &b) {Cb = b/nrm2(b);}
+  void Line::plotParameters() {
+    Contour::plotParameters();
+    parafile << "# Cn = " << endl;
+    parafile << Cn << endl;
+    parafile << "# Cb = " << endl;
+    parafile << Cb << endl;
+  }
+
+  void Line::load(ifstream &inputfile) {
+    Contour::load(inputfile);
+    char dummy[10000];
+    inputfile.getline(dummy,10000); // # Cn
+    inputfile >> Cn;
+    cout << Cn << endl;
+    inputfile.getline(dummy,10000); // # Cb
+    inputfile >> Cb;
+    cout << Cb << endl;
+  }
 
   /* Circle Solid */
   CircleSolid::CircleSolid(const string &name) : Contour(name), Cb(3) {}

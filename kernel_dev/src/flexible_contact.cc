@@ -39,9 +39,9 @@ namespace MBSim {
   void FlexibleContact::init() {
     Contact::init();
     for(int i=0; i<2 ; i++) {
-      load.push_back(Vec(6));
-      WF[i] >> load[i](Index(0,2));
-      WM[i] >> load[i](Index(3,5));
+      L.push_back(Vec(6));
+      WF[i] >> L[i](Index(0,2));
+      WM[i] >> L[i](Index(3,5));
     }
   }
 

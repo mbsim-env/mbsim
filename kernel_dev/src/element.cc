@@ -87,4 +87,16 @@ namespace MBSim {
     DIBRefs.push_back(DIBRef_);
   }
 
+  int Element::getNumberOfElements(ifstream &inputfile) {
+    char dummy[10000];
+    int num=0;
+    int n = inputfile.tellg();
+    do {
+      num++;
+      inputfile.getline(dummy,10000); // Object
+    } while(dummy[0]!='#');
+    num--;
+    inputfile.seekg(n);
+    return num;
+  }
 }

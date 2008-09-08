@@ -70,6 +70,8 @@ namespace MBSim {
 
       void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
 
+      string getType() const {return "RigidContact";}
+
   };
 
   typedef RigidContact ContactRigid;

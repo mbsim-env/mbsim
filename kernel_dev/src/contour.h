@@ -108,6 +108,8 @@ namespace MBSim {
       */
       virtual void adjustParentHitSphere(const Vec &CrC);
 
+      string getType() const {return "Contour";}
+
 #ifdef HAVE_AMVIS
       /*! activate output for AMVis
 	\param binary_ for binary or ASCII data format in pos-file
@@ -125,6 +127,8 @@ namespace MBSim {
       Point(const string &name);
       /*! Deconstructor */
       ~Point();
+
+      string getType() const {return "Point";}
   };
 
   /*! \brief unbounded line with constant normal */
@@ -143,6 +147,12 @@ namespace MBSim {
       Vec computeWb() {return AWC*Cb;}
       Vec computeWn() {return AWC*Cn;}
       Vec computeWt() {return AWC*crossProduct(Cn,Cb);}
+
+      void plotParameters();
+
+      string getType() const {return "Line";}
+
+      void load(ifstream &inputfile); 
   };
 
   /*! \brief Circular Contour with material included inside */

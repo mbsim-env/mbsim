@@ -474,4 +474,58 @@ namespace MBSim {
     // HitSphere anpassen !!!
     contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
   }
+
+  void RigidBody::load(ifstream& inputfile) {
+    cout << "in RigidBody::load"<<endl;
+    Body::load(inputfile);
+    char dummy[10000];
+
+    for(unsigned int i=0; i<port.size(); i++) {
+      SrSC.push_back(Vec(3));
+      WrSC.push_back(Vec(3));
+      ASC.push_back(SqrMat(3));
+    }
+
+    inputfile.getline(dummy,10000); // # Translation C-System
+    inputfile >> SrSC[0];
+    inputfile.getline(dummy,10000); // # Rotation C-System
+    inputfile >> ASC[0];
+
+    for(unsigned int i=1; i<port.size(); i++) {
+      inputfile.getline(dummy,10000); // # Translation cosy 
+      inputfile >> SrSC[i];
+      inputfile.getline(dummy,10000); // # Rotation cosy
+      inputfile >> ASC[0];
+    }
+    //for(unsigned int i=0; i<port.size(); i++) {
+    //  cout << SrSC[i] << endl;
+    //  cout << ASC[i] << endl;
+    //}
+
+    for(unsigned int i=0; i<contour.size(); i++) {
+      SrSK.push_back(Vec(3));
+      WrSK.push_back(Vec(3));
+      ASC.push_back(SqrMat(3));
+    }
+    for(unsigned int i=0; i<contour.size(); i++) {
+      inputfile.getline(dummy,10000); // # Translation contour 
+      inputfile >> SrSK[i];
+      inputfile.getline(dummy,10000); // # Rotation contour
+      inputfile >> ASK[0];
+    }
+    //for(unsigned int i=0; i<contour.size(); i++) {
+    //  cout << SrSK[i] << endl;
+    //  cout << ASK[i] << endl;
+    //}
+    inputfile.getline(dummy,10000); // # Translation 
+    Mat buf;
+    inputfile >> buf;
+    cout << buf<<endl;
+    inputfile.getline(dummy,10000); // # Rotation
+    Vec rot;
+    inputfile >> rot;
+    cout << rot<<endl;
+
+  }
+
 }

@@ -67,7 +67,7 @@ namespace MBSim {
       int gSize, gInd;
       int laSize, laInd;
 
-      vector<Vec> load;
+      vector<Vec> L;
       vector<Mat> loadDir;
 
       int rFactorSize, rFactorInd;
@@ -174,7 +174,7 @@ namespace MBSim {
       bool isSetValued() const; 
 
       /*! Returns the actual load supplied by the Link to the CoordinateSystem connected by it*/
-      const Vec& getLoad(int id) const { return load[id];}
+      const Vec& getLoad(int id) const { return L[id];}
       const Mat& getLoadDirections(int id) const {return loadDir[id];}
 
       const Vec& getla() const {return la;}
@@ -228,6 +228,10 @@ namespace MBSim {
       /*! Defines the maximal r-factor. */  
       virtual void setrMax(double rMax_) {rMax = rMax_;}
 
+      string getType() const {return "Link";}
+
+      void load(ifstream &inputfile);
+
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
        * @param ID ID of load and corresponding CoordinateSystem/Contour (ID=0 or 1)
@@ -268,6 +272,8 @@ namespace MBSim {
       void plot(double t, double dt=1);
 
       vector<CoordinateSystem*> getCoordinateSystems() { return port; }
+
+      string getType() const {return "LinkCoordinateSystem";}
   };
 
   /*! 
@@ -304,6 +310,8 @@ namespace MBSim {
       const Vec& getalpha(int id) const { return cpData[id].alpha; }
       /*! Returns the actual data to Contourpoint, ContourPointData holding position-vector, contour-parameter etc... */
       const ContourPointData& getContourPointData(int id) const { return cpData[id]; }
+
+      string getType() const {return "LinkContour";}
   };
 
 }
