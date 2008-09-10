@@ -91,7 +91,14 @@ namespace MBSim {
       vector<Vec> r;
       Vec b;
 
-     // vector<Object*> object;
+      /*! Array in which all ports are listed, connecting bodies via a Link.
+      */
+      vector<CoordinateSystem*> port;
+
+      /** Array in which all contours linked by LinkContour are managed.*/
+      vector<Contour*> contour;
+
+      vector<ContourPointData> cpData;
 
 #ifdef HAVE_AMVIS
       vector<AMVis::Arrow*> arrowAMVis;
@@ -108,13 +115,13 @@ namespace MBSim {
       virtual void updatesvRef();
       virtual void updatejsvRef();
 
-      virtual void updateW(double t) = 0;
-      virtual void updateWRef() = 0;
-      virtual void updateh(double t) = 0;
-      virtual void updatehRef() = 0;
       virtual void updater(double t);
-      virtual void updaterRef() = 0;
       virtual void updateb(double t) {}
+      virtual void updateW(double t) {};
+      virtual void updateh(double t) {};
+      virtual void updateWRef();
+      virtual void updatehRef();
+      virtual void updaterRef();
       virtual void updatebRef();
 
       Link(const string &name, bool setValued);
@@ -228,6 +235,13 @@ namespace MBSim {
       /*! Defines the maximal r-factor. */  
       virtual void setrMax(double rMax_) {rMax = rMax_;}
 
+      virtual void connect(CoordinateSystem *port1, int id);
+
+      /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
+      virtual void connect(Contour *port1, int id);
+
+      const ContourPointData& getContourPointData(int id) const { return cpData[id]; }
+
       string getType() const {return "Link";}
 
       void load(ifstream &inputfile);
@@ -244,76 +258,6 @@ namespace MBSim {
       virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
 #endif
   };
-
-
-  /*! 
-   *  \brief This is a general link via CoordinateSystem to one or more objects.
-   * 
-   * */
-  class LinkCoordinateSystem : public Link {
-
-    protected:
-      /*! Array in which all ports are listed, connecting bodies via a Link.
-      */
-      vector<CoordinateSystem*> port;
-     
-    public:
-      LinkCoordinateSystem(const string &name, bool setValued);
-
-      void init();
-
-      void updateW(double t);
-      void updateh(double t);
-      void updateWRef();
-      void updatehRef();
-      void updaterRef();
-
-      virtual void connect(CoordinateSystem *port1, int id);
-      void plot(double t, double dt=1);
-
-      vector<CoordinateSystem*> getCoordinateSystems() { return port; }
-
-      string getType() const {return "LinkCoordinateSystem";}
-  };
-
-  /*! 
-   *  \brief This is a general Link via Contour to one or more objects.
-   * 
-   * */
-  class LinkContour : public Link {
-
-    protected:
-      /** Array in which all contours linked by LinkContour are managed.*/
-      vector<Contour*> contour;
-
-      vector<ContourPointData> cpData;
-
-    public:
-      LinkContour(const string &name, bool setValued);
-      void plot(double t, double dt=1);
-
-      void init();
-
-      void updateW(double t);
-      void updateWRef();
-      void updateh(double t);
-      void updatehRef();
-      void updaterRef();
-
-      /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
-      virtual void connect(Contour *port1, int id);
-      Contour* getContour(int id) { return contour[id]; }
-      vector<Contour*> getContours() { return contour; }
-
-      /*! Returns the actual vector from world inertia to Contourpoint. */
-      const Vec& getWrOC(int id) const { return cpData[id].WrOC; }
-      const Vec& getalpha(int id) const { return cpData[id].alpha; }
-      /*! Returns the actual data to Contourpoint, ContourPointData holding position-vector, contour-parameter etc... */
-      const ContourPointData& getContourPointData(int id) const { return cpData[id]; }
-
-      string getType() const {return "LinkContour";}
-  };
-
 }
 
 #endif

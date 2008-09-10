@@ -38,7 +38,7 @@ namespace MBSim {
    * Basis class for Contacts between Contours, mainly implementing geometrical informations of ContactPairings
    *
    * */
-  class Contact: public LinkContour {
+  class Contact: public Link {
 
     protected:
       /** friction coefficinet */
@@ -96,7 +96,7 @@ namespace MBSim {
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
       string getType() const {return "Contact";}
 
-      using LinkContour::connect;
+      using Link::connect;
   };
 
 }

@@ -32,7 +32,7 @@ namespace MBSim {
   /*! Comment
    *
    * */
-  class Load : public LinkCoordinateSystem {
+  class Load : public Link {
 
     protected:
       Vec WF, WM;

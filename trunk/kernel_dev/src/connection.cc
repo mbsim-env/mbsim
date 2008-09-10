@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Connection::Connection(const string &name, bool setValued) : LinkCoordinateSystem(name,setValued), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
+  Connection::Connection(const string &name, bool setValued) : Link(name,setValued), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
   }
 
   Connection::~Connection() { 
@@ -41,7 +41,7 @@ namespace MBSim {
 #endif
   }
   void Connection::calcSize() {
-    LinkCoordinateSystem::calcSize();
+    Link::calcSize();
     gSize = forceDir.cols()+momentDir.cols();
     laSize = gSize;
     rFactorSize = setValued?laSize:0;
@@ -49,7 +49,7 @@ namespace MBSim {
   }
 
   void Connection::init() {
-    LinkCoordinateSystem::init();
+    Link::init();
     IT = Index(0,forceDir.cols()-1);
     IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
     if(forceDir.cols()) 
@@ -67,8 +67,8 @@ namespace MBSim {
   }
 
   void Connection::connect(CoordinateSystem *port0, CoordinateSystem* port1) {
-    LinkCoordinateSystem::connect(port0,0);
-    LinkCoordinateSystem::connect(port1,1);
+    Link::connect(port0,0);
+    Link::connect(port1,1);
   }
 
   void Connection::updateStage1(double t) {
@@ -119,7 +119,7 @@ namespace MBSim {
 
   void Connection::initPlotFiles() {
 
-    LinkCoordinateSystem::initPlotFiles();
+    Link::initPlotFiles();
 
 #ifdef HAVE_AMVIS
     if (coilspringAMVis) {
@@ -129,7 +129,7 @@ namespace MBSim {
   }
 
   void Connection::plot(double t,double dt) {
-    LinkCoordinateSystem::plot(t,dt);
+    Link::plot(t,dt);
 
 #ifdef HAVE_AMVIS
     if (coilspringAMVis) {

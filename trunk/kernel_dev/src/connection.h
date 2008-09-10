@@ -36,7 +36,7 @@ namespace MBSim {
   /*! \brief Class for connections: Constraints on CoordinateSystems
    *
    * */
-  class Connection: public LinkCoordinateSystem {
+  class Connection: public Link {
 
     protected:
       Index IT, IR;

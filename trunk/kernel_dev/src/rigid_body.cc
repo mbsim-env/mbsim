@@ -207,19 +207,28 @@ namespace MBSim {
       parafile << ASC[i] << endl;
     }
 
+    parafile << "# Coordinate system for kinematics:" << endl;
+    parafile << port[iRef]->getName() << endl;
+
+    parafile << "# Frame of Reference:" << endl;
+    parafile << portParent->getName() << endl;
+    parafile << portParent->getParent()->getName() << endl;
+
     parafile << "# Translation:" << endl;
 
     LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-    if(fPrPK_) 
+    if(fPrPK_) {
+      parafile << "LinearTranslation" << endl;
       parafile << fPrPK_->getPJT() << endl;
-    else
+    } else
       parafile << "Unknown" << endl;
 
     parafile << "# Rotation:" << endl;
     RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-    if(fAPK_) 
+    if(fAPK_) {
+      parafile << "RotationAboutFixedAxis" << endl;
       parafile << fAPK_->getAxisOfRotation() << endl;
-    else
+    } else
       parafile << "Unknown" << endl;
   }
 
@@ -517,14 +526,45 @@ namespace MBSim {
     //  cout << SrSK[i] << endl;
     //  cout << ASK[i] << endl;
     //}
+    
+    inputfile.getline(dummy,10000); // # Coordinate system for kinematics
+    inputfile.getline(dummy,10000); // Coordinate system for kinematics
+    setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+    inputfile.getline(dummy,10000); // # Frame of reference
+
+    char dummy2[10000];
+    inputfile.getline(dummy2,10000); // Frame of reference (coordinate system)
+    inputfile.getline(dummy,10000); // Frame of reference (object)
+    if(parent->getName() == dummy)
+      setFrameOfReference(parent->getCoordinateSystem(dummy2));
+    else if(parent->getObject(dummy))
+      setFrameOfReference(parent->getObject(dummy)->getCoordinateSystem(dummy2));
+    else {
+      cout << "Cannot find frame of reference" << endl;
+      throw 5;
+    }
+
     inputfile.getline(dummy,10000); // # Translation 
-    Mat buf;
-    inputfile >> buf;
-    cout << buf<<endl;
+    inputfile.getline(dummy,10000); // Type of translation 
+    if(string(dummy) == "LinearTranslation") {
+      Mat buf;
+      inputfile >> buf;
+      setTranslation(new LinearTranslation(buf));
+    } else {
+      cout << "Unknown translation" << endl;
+      throw 5;
+    }
+
     inputfile.getline(dummy,10000); // # Rotation
-    Vec rot;
-    inputfile >> rot;
-    cout << rot<<endl;
+    inputfile.getline(dummy,10000); // Type of rotation
+    if(string(dummy) == "RotationAboutFixedAxis") {
+      Vec buf;
+      inputfile >> buf;
+      setRotation(new RotationAboutFixedAxis(buf));
+    } else {
+      cout << "Unknown rotation" << endl;
+      throw 5;
+    }
 
   }
 
