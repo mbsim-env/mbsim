@@ -56,12 +56,12 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : LinkContour(name,setValued), mue(0), nFric(0), contactKinematics(0) {
+  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), mue(0), nFric(0), contactKinematics(0) {
 
     active = false;
   }
 
-  Contact::Contact(const Contact *master, const string &name) : LinkContour(name,master->setValued), mue(0), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
+  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), mue(0), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
 
     mue = master->mue;
 
@@ -72,14 +72,14 @@ namespace MBSim {
     if (contactKinematics) delete contactKinematics;
   }
   void Contact::calcSize() {
-    LinkContour::calcSize();
+    Link::calcSize();
     gSize = 1;
     laSize = 1+nFric;
     rFactorSize = setValued?1+min(nFric,1):0;
   }
 
   void Contact::init() {
-    LinkContour::init();
+    Link::init();
     ContourPointData cpd[2];
     cpData.push_back(cpd[0]);
     cpData.push_back(cpd[1]);
@@ -95,8 +95,8 @@ namespace MBSim {
   }
 
   void Contact::connect(Contour *contour0, Contour* contour1) {
-    LinkContour::connect(contour0,0);
-    LinkContour::connect(contour1,1);
+    Link::connect(contour0,0);
+    Link::connect(contour1,1);
 
     if(contactKinematics);
 

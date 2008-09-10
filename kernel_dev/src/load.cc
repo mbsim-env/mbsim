@@ -27,7 +27,7 @@
 
 namespace MBSim {
 
-  Load::Load(const string &name) : LinkCoordinateSystem(name,false), func(0), KOSYID(0) {
+  Load::Load(const string &name) : Link(name,false), func(0), KOSYID(0) {
 
     L.push_back(Vec(6));
     WF >> L[0](Index(0,2));
@@ -39,7 +39,7 @@ namespace MBSim {
   }
 
   void Load::calcSize() {
-    LinkCoordinateSystem::calcSize();
+    Link::calcSize();
     gSize = 0;
     laSize = forceDir.cols()+momentDir.cols();
     rFactorSize = 0;
@@ -47,7 +47,7 @@ namespace MBSim {
   }
 
   void Load::init() {
-    LinkCoordinateSystem::init();
+    Link::init();
     IT = Index(0,forceDir.cols()-1);
     IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
     if(forceDir.cols()) 
@@ -65,7 +65,7 @@ namespace MBSim {
   }
 
   void Load::connect(CoordinateSystem *port_) {
-    LinkCoordinateSystem::connect(port_,0);
+    Link::connect(port_,0);
   }
 
   void Load::setKOSY(int id) {
