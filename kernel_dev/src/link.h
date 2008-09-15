@@ -253,6 +253,10 @@ namespace MBSim {
        * default: Red arrow for Forces and green one for Moments
        * */
 
+      virtual void plotParameters();
+
+      virtual MultiBodySystem* getMultiBodySystem(); 
+
 #ifdef HAVE_AMVIS
       virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
       virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);

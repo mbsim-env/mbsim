@@ -532,4 +532,8 @@ namespace MBSim {
     return 0.5*trans(u)*M*u;
   }
 
+  MultiBodySystem* Object::getMultiBodySystem() {
+    return parent->getMultiBodySystem();
+  }
+
 }

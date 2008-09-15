@@ -31,10 +31,9 @@ using namespace std;
 
 namespace MBSim {
 
-  class Subsystem;
-  class Link;
   class CoordinateSystem;
   class Contour;
+  class Subsystem;
 
   /*! \brief Node class for all Objects having own dynamics and mass */
   class Object : public Element {
@@ -278,6 +277,7 @@ namespace MBSim {
     virtual void updateJh(double t);
 
     virtual string getType() const {return "Object";}
+    virtual MultiBodySystem* getMultiBodySystem(); 
   };
 
 }

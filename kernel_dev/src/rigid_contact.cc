@@ -76,9 +76,9 @@ namespace MBSim {
 
   void RigidContact::projectJ(double dt) {
     if(nFric==1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*s(1),mue*fabs(la(0)));
+      la(1) = proxCT2D(la(1)-rFactor(1)*s(1),mu*fabs(la(0)));
     else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*s(1,2),mue*fabs(la(0)));
+      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*s(1,2),mu*fabs(la(0)));
 
     la(0) = proxCN(la(0)-rFactor(0)*s(0));
   }
@@ -105,9 +105,9 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
     if(nFric==1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
+      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mu*fabs(la(0)));
     else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
+      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mu*fabs(la(0)));
   }
 
   void RigidContact::solveGS(double dt) {
@@ -139,13 +139,13 @@ namespace MBSim {
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdn(1) += a[j]*laMBS(ja[j]);
 
-      double laNmue = fabs(la(0))*mue;
+      double laNmu = fabs(la(0))*mu;
       double sdG = -gdn(1)/a[ia[laInd+1]];
 
-      if(fabs(sdG)<=laNmue) 
+      if(fabs(sdG)<=laNmu) 
 	buf = sdG;
       else 
-	buf = (laNmue<=sdG) ? laNmue : -laNmue;
+	buf = (laNmu<=sdG) ? laNmu : -laNmu;
       la(1) += om*(buf - la(1));;
     }
   }
@@ -171,11 +171,11 @@ namespace MBSim {
 
     if(nFric==1) {
       argT(0) = la(1) - rFactor(1)*gdn(1);
-      res(1) = la(1) - proxCT2D(argT(0),mue*fabs(la(0)));
+      res(1) = la(1) - proxCT2D(argT(0),mu*fabs(la(0)));
 
     } else if(nFric == 2) {
       argT = la(1,2) - rFactor(1)*gdn(1,2);
-      res(1,2) = la(1,2) - proxCT3D(argT,mue*fabs(la(0)));
+      res(1,2) = la(1,2) - proxCT3D(argT,mu*fabs(la(0)));
     }
   }
 
@@ -200,24 +200,24 @@ namespace MBSim {
     if(nFric == 1) {
       RowVec jp2=Jprox.row(laInd+1);
       double rfac1 = rFactor(1);
-      double laNmue = fabs(la(0))*mue;
-      if(fabs(argT(0))<=laNmue) {
+      double laNmu = fabs(la(0))*mu;
+      if(fabs(argT(0))<=laNmu) {
 	for(int i=0; i<G.size(); i++) {
 	  jp2(i) = rfac1*G(laInd+1,i);
 	}
       } else {
 	jp2.init(0);
 	jp2(laInd+1) = 1;
-	jp2(laInd) = -sign(argT(0))*sign(la(0))*mue;
+	jp2(laInd) = -sign(argT(0))*sign(la(0))*mu;
       }
     } else if(nFric == 2) {
       RowVec jp2=Jprox.row(laInd+1);
       RowVec jp3=Jprox.row(laInd+2);
       double LaT = pow(argT(0),2)+pow(argT(1),2);
       double fabsLaT = sqrt(LaT);
-      double laNmue = fabs(la(0))*mue;
+      double laNmu = fabs(la(0))*mu;
       double rFac1 = rFactor(1);
-      if(fabsLaT <=  laNmue) {
+      if(fabsLaT <=  laNmu) {
 	for(int i=0; i<G.size(); i++) {
 	  jp2(i) = rFac1*G(laInd+1,i);
 	  jp3(i) = rFac1*G(laInd+2,i);
@@ -229,11 +229,11 @@ namespace MBSim {
 	dfda(0,1) = -argT(0)*argT(1)/LaT;
 
 	for(int i=0; i<G.size(); i++) {
-	  double e1 = (i==laInd) ? sign(la(0))*mue : 0;
+	  double e1 = (i==laInd) ? sign(la(0))*mu : 0;
 	  double e2 = (i==laInd+1?1.0:0.0);
 	  double e3 = (i==laInd+2?1.0:0.0);
-	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmue + e1*argT(0))/fabsLaT;
-	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmue + e1*argT(1))/fabsLaT;
+	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(0))/fabsLaT;
+	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(1))/fabsLaT;
 	}
       }
     }
@@ -265,18 +265,18 @@ namespace MBSim {
     }
 
     if(nFric==1) {
-      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt)
+      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol*dt)
 	;
-      else if(fabs(la(1)) <= mue*fabs(la(0))+laTol*dt && fabs(gdn(1)) <= gdTol)
+      else if(fabs(la(1)) <= mu*fabs(la(0))+laTol*dt && fabs(gdn(1)) <= gdTol)
 	;
       else {
 	parent->setTermination(false);
 	return;
       }
     } else if(nFric==2) {
-      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt)
+      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol*dt)
 	;
-      else if(nrm2(la(1,2)) <= mue*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
+      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
 	;
       else {
 	parent->setTermination(false);
@@ -353,27 +353,27 @@ namespace MBSim {
     }
 
     if(nFric==1) {
-      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt)  // Gleiten
+      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol*dt)  // Gleiten
 	; 
-      else if(fabs(la(1)) <= mue*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
+      else if(fabs(la(1)) <= mu*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
 	;
       else {
 	if (NormalDirectionFailed) s += "\n";
 	s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
-	s= s+ ")\n    stick: abs(laT) - mue abs(laN) = " + numtostr(fabs(la(1)/dt)- mue*fabs(la(0)/dt));
-	s= s+ "\n     slip: abs(laT - mue laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0)))/dt); 
+	s= s+ ")\n    stick: abs(laT) - mu abs(laN) = " + numtostr(fabs(la(1)/dt)- mu*fabs(la(0)/dt));
+	s= s+ "\n     slip: abs(laT - mu laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0)))/dt); 
 	s= s+ " (laTol= " + numtostr(laTol) + ")";
       }
     } else if(nFric==2) {
-      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt)
+      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol*dt)
 	;
-      else if(nrm2(la(1,2)) <= mue*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
+      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
 	;
       else {
 	if (NormalDirectionFailed) s += "\n";
 	s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
-	s= s+ ")\n    stick: abs(laT) - mue abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mue*fabs(la(0))/dt);
-	s= s+ " \n    slip: abs(laT -mue laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0)))/dt);
+	s= s+ ")\n    stick: abs(laT) - mu abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mu*fabs(la(0))/dt);
+	s= s+ " \n    slip: abs(laT -mu laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0)))/dt);
 	s= s+  "  (laTol= " + numtostr(laTol) + ")";
       }
     }

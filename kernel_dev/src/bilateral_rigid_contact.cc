@@ -47,9 +47,9 @@ namespace MBSim {
 	gdn(i) += a[j]*parent->getla()(ja[j]);
     }
     if(nFric==1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mue*fabs(la(0)));
+      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mu*fabs(la(0)));
     else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mue*fabs(la(0)));
+      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mu*fabs(la(0)));
   }
 
   void BilateralRigidContact::solveGS(double dt) {
@@ -68,13 +68,13 @@ namespace MBSim {
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdn(1) += a[j]*parent->getla()(ja[j]);
 
-      double laNmue = fabs(la(0))*mue;
+      double laNmu = fabs(la(0))*mu;
       double sdG = -gdn(1)/a[ia[laInd+1]];
 
-      if(fabs(sdG)<=laNmue) 
+      if(fabs(sdG)<=laNmu) 
 	la(1) = sdG;
       else 
-	la(1) = (laNmue<=sdG) ? laNmue : -laNmue;
+	la(1) = (laNmu<=sdG) ? laNmu : -laNmu;
     }
   }
 
@@ -92,11 +92,11 @@ namespace MBSim {
 
     if(nFric==1) {
       argT(0) = la(1) - rFactor(1)*gdn(1);
-      res(1) = la(1) - proxCT2D(argT(0),mue*fabs(la(0)));
+      res(1) = la(1) - proxCT2D(argT(0),mu*fabs(la(0)));
 
     } else if(nFric == 2) {
       argT = la(1,2) - rFactor(1)*gdn(1,2);
-      res(1,2) = la(1,2) - proxCT3D(argT,mue*fabs(la(0)));
+      res(1,2) = la(1,2) - proxCT3D(argT,mu*fabs(la(0)));
     }
   }
 
@@ -111,8 +111,8 @@ namespace MBSim {
     if(nFric == 1) {
       RowVec jp2=Jprox.row(laInd+1);
       double rfac1 = rFactor(1);
-      double laNmue = fabs(la(0))*mue;
-      if(fabs(argT(0))<=laNmue) {
+      double laNmu = fabs(la(0))*mu;
+      if(fabs(argT(0))<=laNmu) {
 	for(int i=0; i<G.size(); i++) {
 	  jp2(i) = rfac1*G(laInd+1,i);
 	}
@@ -121,14 +121,14 @@ namespace MBSim {
 	jp2(laInd+1) = 1;
 	if(argT(0)>=0) {
 	  if(la(0) >= 0)
-	    jp2(laInd) = -mue;
+	    jp2(laInd) = -mu;
 	  else
-	    jp2(laInd) = mue;
+	    jp2(laInd) = mu;
 	} else {
 	  if(la(0) >= 0)
-	    jp2(laInd) = mue;
+	    jp2(laInd) = mu;
 	  else
-	    jp2(laInd) = -mue;
+	    jp2(laInd) = -mu;
 	}
       }
     } else if(nFric == 2) {
@@ -136,9 +136,9 @@ namespace MBSim {
       RowVec jp3=Jprox.row(laInd+2);
       double LaT = pow(argT(0),2)+pow(argT(1),2);
       double fabsLaT = sqrt(LaT);
-      double laNmue = fabs(la(0))*mue;
+      double laNmu = fabs(la(0))*mu;
       double rFac1 = rFactor(1);
-      if(fabsLaT <=  laNmue) {
+      if(fabsLaT <=  laNmu) {
 	for(int i=0; i<G.size(); i++) {
 	  jp2(i) = rFac1*G(laInd+1,i);
 	  jp3(i) = rFac1*G(laInd+2,i);
@@ -153,15 +153,15 @@ namespace MBSim {
 	  double e1;
 	  if(i==laInd)
 	    if(la(0)>=0)
-	      e1 = mue;
+	      e1 = mu;
 	    else
-	      e1 = -mue;
+	      e1 = -mu;
 	  else
 	    e1 = 0;
 	  double e2 = (i==laInd+1?1.0:0.0);
 	  double e3 = (i==laInd+2?1.0:0.0);
-	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmue + e1*argT(0))/fabsLaT;
-	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmue + e1*argT(1))/fabsLaT;
+	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(0))/fabsLaT;
+	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(1))/fabsLaT;
 	}
       }
     }
@@ -187,9 +187,9 @@ namespace MBSim {
 
     if(nFric==1) {
 
-      if(fabs(gdn(1)) > 0 && fabs(la(1) + gdn(1)/fabs(gdn(1))*mue*fabs(la(0))) <= laTol*dt)
+      if(fabs(gdn(1)) > 0 && fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol*dt)
 	;
-      else if(fabs(la(1)) <= mue*fabs(la(0)) && fabs(gdn(1)) <= gdTol)
+      else if(fabs(la(1)) <= mu*fabs(la(0)) && fabs(gdn(1)) <= gdTol)
 	;
       else {
 	parent->setTermination(false);
@@ -198,9 +198,9 @@ namespace MBSim {
 
     } else if(nFric==2) {
 
-      if(nrm2(gdn(1,2)) > 0 && nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mue*fabs(la(0))) <= laTol*dt)
+      if(nrm2(gdn(1,2)) > 0 && nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol*dt)
 	;
-      else if(nrm2(la(1,2)) <= mue*fabs(la(0)) && nrm2(gdn(1,2)) <= gdTol)
+      else if(nrm2(la(1,2)) <= mu*fabs(la(0)) && nrm2(gdn(1,2)) <= gdTol)
 	;
       else {
 	parent->setTermination(false);

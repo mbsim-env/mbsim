@@ -46,7 +46,7 @@ namespace MBSim {
   }
 
   void FlexibleContact::updateKinetics(double t) {
-    double mue0 = mue;
+    double mu0 = mu;
 
     if(gd(0)<0) 
       la(0) = -c*g(0) - d*gd(0);
@@ -55,15 +55,15 @@ namespace MBSim {
 
     if(nFric == 1) { 
       if(fabs(gd(1)) < gdT_grenz)
-	la(1) = -la(0)*mue0*gd(1)/gdT_grenz;
+	la(1) = -la(0)*mu0*gd(1)/gdT_grenz;
       else
-	la(1) = gd(1)>0?-la(0)*mue:la(0)*mue;
+	la(1) = gd(1)>0?-la(0)*mu:la(0)*mu;
     } else if(nFric == 2) {
       double norm_gdT = nrm2(gd(1,2));
       if(norm_gdT < gdT_grenz)
-	la(1,2) = gd(1,2)*(-la(0)*mue0/gdT_grenz);
+	la(1,2) = gd(1,2)*(-la(0)*mu0/gdT_grenz);
       else
-	la(1,2) = gd(1,2)*(-la(0)*mue/norm_gdT);
+	la(1,2) = gd(1,2)*(-la(0)*mu/norm_gdT);
     }
 
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);

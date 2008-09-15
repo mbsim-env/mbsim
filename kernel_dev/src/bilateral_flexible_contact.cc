@@ -31,15 +31,15 @@ namespace MBSim {
   }
 
   void BilateralFlexibleContact::updateKinetics(double t) {
-    double mue0 = mue;
+    double mu0 = mu;
 
     la(0) = -c*g(0) - d*gd(0);
 
     for(int i=1; i<=nFric; i++) {
       if(fabs(gd(i)) < 0.01)
-	la(i) = -fabs(la(0))*mue0*gd(i)/0.01;
+	la(i) = -fabs(la(0))*mu0*gd(i)/0.01;
       else
-	la(i) = gd(i)>0?-la(0)*mue:fabs(la(0))*mue;
+	la(i) = gd(i)>0?-la(0)*mu:fabs(la(0))*mu;
     }
 
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
