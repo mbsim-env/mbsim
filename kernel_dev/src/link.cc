@@ -316,23 +316,24 @@ namespace MBSim {
   }
 
   void Link::load(ifstream& inputfile) {
-    cout << "in Link::load"<<endl;
     Element::load(inputfile);
-    char dummy[10000];
-    //string dummy;
-    //getline(inputfile,dummy); // # Connected cosy
-    inputfile.getline(dummy,10000); // # Connected cosy
+    string dummy;
+
+    getline(inputfile,dummy); // # Connected cosy
     int n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
-      inputfile.getline(dummy,10000); // Connected cosy
+      getline(inputfile,dummy); // Connected cosy
       connect(getMultiBodySystem()->findCoordinateSystem(dummy),i);
     }
-    inputfile.getline(dummy,10000); // # Connected contours
+    getline(inputfile,dummy); // newline
+
+    getline(inputfile,dummy); // # Connected contours
     n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
-      inputfile.getline(dummy,10000); // Connected contour
+      getline(inputfile,dummy); // Connected contour
       connect(getMultiBodySystem()->findContour(dummy),i);
     }
+    getline(inputfile,dummy); // newline
   }
 
 #ifdef HAVE_AMVIS
@@ -407,10 +408,13 @@ namespace MBSim {
     for(unsigned int i=0; i<port.size(); i++) {
       parafile << port[i]->getFullName() << endl;
     }
+    parafile << endl;
+
     parafile << "# Connected contours:" << endl;
     for(unsigned int i=0; i<contour.size(); i++) {
       parafile << contour[i]->getFullName() << endl;
     }
+    parafile << endl;
   }
 
   MultiBodySystem* Link::getMultiBodySystem() {

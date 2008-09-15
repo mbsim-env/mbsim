@@ -134,13 +134,15 @@ namespace MBSim {
 
   void Line::load(ifstream &inputfile) {
     Contour::load(inputfile);
-    char dummy[10000];
-    inputfile.getline(dummy,10000); // # Cn
+    string dummy;
+
+    getline(inputfile,dummy); // # Cn
     inputfile >> Cn;
-    cout << Cn << endl;
-    inputfile.getline(dummy,10000); // # Cb
+    getline(inputfile,dummy); // Rest of line
+
+    getline(inputfile,dummy); // # Cb
     inputfile >> Cb;
-    cout << Cb << endl;
+    getline(inputfile,dummy); // Rest of line
   }
 
   /* Circle Solid */
