@@ -327,6 +327,10 @@ namespace MBSim {
     Vec& getlaMBS() {return la;}
 
     string getType() const {return "MultiBodySystem";}
+
+    CoordinateSystem* findCoordinateSystem(const string &name);
+    Contour* findContour(const string &name);
+    MultiBodySystem* getMultiBodySystem() {return this;}
   };
 
 }

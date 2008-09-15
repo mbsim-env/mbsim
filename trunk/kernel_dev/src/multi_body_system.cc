@@ -1126,4 +1126,53 @@ namespace MBSim {
     for (vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) (**i).updateJh(t);
   }
 
+
+  CoordinateSystem* MultiBodySystem::findCoordinateSystem(const string &name) {
+
+    istringstream stream(name);
+
+    char dummy[10000];
+    vector<string> l;
+    do {
+      stream.getline(dummy,10000,'.');
+      l.push_back(dummy);
+    } while(!stream.eof());
+
+    if(l.size() == 1)
+      throw 5;
+
+    if(l.size() == 2)
+      return getCoordinateSystem(l[1]);
+
+    Subsystem *sys = this;
+    for(unsigned int i=1; i<l.size()-2; i++) {
+      sys = static_cast<Subsystem*>(sys->getObject(l[i]));
+    }
+    return sys->getObject(l[l.size()-2])->getCoordinateSystem(l[l.size()-1]);
+  }
+
+  Contour* MultiBodySystem::findContour(const string &name) {
+
+    istringstream stream(name);
+
+    char dummy[10000];
+    vector<string> l;
+    do {
+      stream.getline(dummy,10000,'.');
+      l.push_back(dummy);
+    } while(!stream.eof());
+
+    if(l.size() == 1)
+      throw 5;
+
+    if(l.size() == 2)
+      return getContour(l[1]);
+
+    Subsystem *sys = this;
+    for(unsigned int i=1; i<l.size()-2; i++) {
+      sys = static_cast<Subsystem*>(sys->getObject(l[i]));
+    }
+    return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
+  }
+
 }

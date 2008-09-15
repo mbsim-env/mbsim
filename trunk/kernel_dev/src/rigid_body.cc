@@ -48,6 +48,7 @@ namespace MBSim {
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
     ASK.push_back(SqrMat(3,EYE));
+    cout << "Sollte 1 sein" << endl;
   }
 
   void RigidBody::calcSize() {
@@ -191,9 +192,13 @@ namespace MBSim {
     Body::plotParameters();
     // all CoordinateSystem of Object
     
-
-
     for(unsigned int i=0; i<SrSK.size(); i++) {
+      parafile << "# Mass: " << endl;
+      parafile << m << endl;
+
+      parafile << "# Inertia tensor: " << endl;
+      parafile << SThetaS << endl;
+
       parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
       parafile << SrSK[i] << endl;
       parafile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
@@ -211,11 +216,9 @@ namespace MBSim {
     parafile << port[iRef]->getName() << endl;
 
     parafile << "# Frame of Reference:" << endl;
-    parafile << portParent->getName() << endl;
-    parafile << portParent->getParent()->getName() << endl;
+    parafile << portParent->getFullName() << endl;
 
     parafile << "# Translation:" << endl;
-
     LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
     if(fPrPK_) {
       parafile << "LinearTranslation" << endl;
@@ -489,60 +492,55 @@ namespace MBSim {
     Body::load(inputfile);
     char dummy[10000];
 
-    for(unsigned int i=0; i<port.size(); i++) {
+    inputfile.getline(dummy,10000); // # Translation C-System
+    inputfile >> m;
+    // TODO
+
+    inputfile.getline(dummy,10000); // # TODO gehört weg
+    inputfile.getline(dummy,10000); // # Translation C-System
+    Mat buf;
+    inputfile >> buf;
+    SThetaS = SymMat(buf);
+    cout << SThetaS << endl;
+    i4I = 0;
+
+    for(unsigned int i=1; i<port.size(); i++) { // all except C-System
+      SrSK.push_back(Vec(3));
+      WrSK.push_back(Vec(3));
+      ASK.push_back(SqrMat(3));
+    }
+
+    inputfile.getline(dummy,10000); // # Translation C-System
+    inputfile >> SrSK[0];
+    inputfile.getline(dummy,10000); // # Rotation C-System
+    inputfile >> ASK[0];
+
+    for(unsigned int i=1; i<port.size(); i++) {
+      inputfile.getline(dummy,10000); // # Translation cosy 
+      inputfile >> SrSK[i];
+      inputfile.getline(dummy,10000); // # Rotation cosy
+      inputfile >> ASK[i];
+    }
+
+    for(unsigned int i=0; i<contour.size(); i++) {
       SrSC.push_back(Vec(3));
       WrSC.push_back(Vec(3));
       ASC.push_back(SqrMat(3));
     }
-
-    inputfile.getline(dummy,10000); // # Translation C-System
-    inputfile >> SrSC[0];
-    inputfile.getline(dummy,10000); // # Rotation C-System
-    inputfile >> ASC[0];
-
-    for(unsigned int i=1; i<port.size(); i++) {
-      inputfile.getline(dummy,10000); // # Translation cosy 
-      inputfile >> SrSC[i];
-      inputfile.getline(dummy,10000); // # Rotation cosy
-      inputfile >> ASC[0];
-    }
-    //for(unsigned int i=0; i<port.size(); i++) {
-    //  cout << SrSC[i] << endl;
-    //  cout << ASC[i] << endl;
-    //}
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      SrSK.push_back(Vec(3));
-      WrSK.push_back(Vec(3));
-      ASC.push_back(SqrMat(3));
-    }
     for(unsigned int i=0; i<contour.size(); i++) {
       inputfile.getline(dummy,10000); // # Translation contour 
-      inputfile >> SrSK[i];
+      inputfile >> SrSC[i];
       inputfile.getline(dummy,10000); // # Rotation contour
-      inputfile >> ASK[0];
+      inputfile >> ASC[i];
     }
-    //for(unsigned int i=0; i<contour.size(); i++) {
-    //  cout << SrSK[i] << endl;
-    //  cout << ASK[i] << endl;
-    //}
     
     inputfile.getline(dummy,10000); // # Coordinate system for kinematics
     inputfile.getline(dummy,10000); // Coordinate system for kinematics
     setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
-    inputfile.getline(dummy,10000); // # Frame of reference
 
-    char dummy2[10000];
-    inputfile.getline(dummy2,10000); // Frame of reference (coordinate system)
-    inputfile.getline(dummy,10000); // Frame of reference (object)
-    if(parent->getName() == dummy)
-      setFrameOfReference(parent->getCoordinateSystem(dummy2));
-    else if(parent->getObject(dummy))
-      setFrameOfReference(parent->getObject(dummy)->getCoordinateSystem(dummy2));
-    else {
-      cout << "Cannot find frame of reference" << endl;
-      throw 5;
-    }
+    inputfile.getline(dummy,10000); // # Frame of reference
+    inputfile.getline(dummy,10000); // Coordinate system for kinematics
+    setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
 
     inputfile.getline(dummy,10000); // # Translation 
     inputfile.getline(dummy,10000); // Type of translation 
