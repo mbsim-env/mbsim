@@ -177,13 +177,17 @@ namespace MBSim {
     parafile << "# Objects:" << endl;
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i)
       parafile << (**i).getName() << endl;
+    parafile << endl;
+
     parafile << "# Links:" << endl;
     for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i)
       parafile << (**i).getName() << endl;
+    parafile << endl;
+
     parafile << "# EDIs:" << endl;
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i)
       parafile << (**i).getName() << endl;
-
+    parafile << endl;
 
     for(unsigned int i=0; i<IrOK.size(); i++) {
       parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
@@ -223,7 +227,6 @@ namespace MBSim {
   }
 
   void Subsystem::load(ifstream& inputfile) {
-    cout << "in Subsystem::load of "<< name <<endl;
     Object::load(inputfile);
 
     char dummy[10000];
@@ -239,14 +242,14 @@ namespace MBSim {
       newinputfile.getline(dummy,10000);
       newinputfile.getline(dummy,10000);
       ClassFactory cf;
-      cout << "create Object " << dummy << endl;
       Object * newobject = cf.getObject(dummy);
       addObject(newobject);
       newinputfile.seekg(0,ios::beg);
       newobject->load(newinputfile);
     }
+    inputfile.getline(dummy,10000); // newline
+
     inputfile.getline(dummy,10000); // # Links
-    cout << dummy << endl;
     no=getNumberOfElements(inputfile);
     for(int i=0; i<no; i++) {
       inputfile.getline(dummy,10000); // # Links
@@ -255,68 +258,61 @@ namespace MBSim {
       newinputfile.getline(dummy,10000);
       newinputfile.getline(dummy,10000);
       ClassFactory cf;
-      cout << "create Link " << dummy << endl;
       Link * newlink = cf.getLink(dummy);
       addLink(newlink);
       newinputfile.seekg(0,ios::beg);
       newlink->load(newinputfile);
     }
+    inputfile.getline(dummy,10000); // newline
+
     inputfile.getline(dummy,10000); // # EDIs
-    cout << dummy << endl;
+    inputfile.getline(dummy,10000); // newline
 
-    for(unsigned int i=1; i<port.size(); i++) {
-      IrOK.push_back(Vec(3));
-      AIK.push_back(SqrMat(3));
-    }
-
-    inputfile.getline(dummy,10000); // # Translation C-System
-    cout << dummy << endl;
-    inputfile >> IrOK[0];
-    inputfile.getline(dummy,10000); // # Rotation C-System
-    cout << dummy << endl;
-    inputfile >> AIK[0];
-
-    for(unsigned int i=1; i<port.size(); i++) {
+    for(unsigned int i=0; i<port.size(); i++) {
+      if(i>0) {
+	IrOK.push_back(Vec(3));
+	AIK.push_back(SqrMat(3));
+      }
       inputfile.getline(dummy,10000); // # Translation cosy 
-    cout << dummy << endl;
       inputfile >> IrOK[i];
+      inputfile.getline(dummy,10000); // Rest of line
       inputfile.getline(dummy,10000); // # Rotation cosy
-    cout << dummy << endl;
       inputfile >> AIK[i];
+      inputfile.getline(dummy,10000); // Rest of line
     }
 
-    cout << contour.size() << endl;
     for(unsigned int i=0; i<contour.size(); i++) {
       IrOC.push_back(Vec(3));
       AIC.push_back(SqrMat(3));
-    }
-    for(unsigned int i=0; i<contour.size(); i++) {
       inputfile.getline(dummy,10000); // # Translation contour 
       inputfile >> IrOC[i];
+      inputfile.getline(dummy,10000); // Rest of line
       inputfile.getline(dummy,10000); // # Rotation contour
       inputfile >> AIC[i];
+      inputfile.getline(dummy,10000); // Rest of line
     }
 
     if(parent) {
-    inputfile.getline(dummy,10000); // # Coordinate system for kinematics
-    inputfile.getline(dummy,10000); // Coordinate system for kinematics
-    setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+      inputfile.getline(dummy,10000); // # Coordinate system for kinematics
+      inputfile.getline(dummy,10000); // Coordinate system for kinematics
+      setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
 
-    inputfile.getline(dummy,10000); // # Frame of reference
-    inputfile.getline(dummy,10000); // Coordinate system for kinematics
-    setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+      inputfile.getline(dummy,10000); // # Frame of reference
+      inputfile.getline(dummy,10000); // Coordinate system for kinematics
+      setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
 
-    inputfile.getline(dummy,10000); // # Translation 
-    Vec r;
-    inputfile >> r;
-    setTranslation(r);
+      inputfile.getline(dummy,10000); // # Translation 
+      Vec r;
+      inputfile >> r;
+      inputfile.getline(dummy,10000); // Rest of line
+      setTranslation(r);
 
-    inputfile.getline(dummy,10000); // # Rotation
-    SqrMat A;
-    inputfile >> A;
-    setRotation(A);
+      inputfile.getline(dummy,10000); // # Rotation
+      SqrMat A;
+      inputfile >> A;
+      inputfile.getline(dummy,10000); // Rest of line
+      setRotation(A);
     }
-    cout << "End Subsystem::load of "<< name <<endl;
 
   }
 

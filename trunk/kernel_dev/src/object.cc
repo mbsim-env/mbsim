@@ -196,19 +196,23 @@ namespace MBSim {
 
   void Object::plotParameters() {
     Element::plotParameters();
+
     // all CoordinateSystem of Object
     parafile << "# Coordinate systems:" << endl;
     for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i)
       parafile << (**i).getName() << endl;
+    parafile << endl;
+
     // all Contours of Object
     parafile << "# Contours:" << endl;
     for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
       parafile << (**i).getName() << endl;
+    parafile << endl;
 
     parafile << "# q0:" << endl;
-    parafile << q0 << endl;
+    parafile << q0 << endl << endl;
     parafile << "# u0:" << endl;
-    parafile << u0 << endl;
+    parafile << u0 << endl << endl;
 
     for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) 
       (**i).plotParameters();
@@ -217,62 +221,56 @@ namespace MBSim {
   }
 
   void Object::load(ifstream& inputfile) {
-    cout << "in Object::load"<<endl;
     Element::load(inputfile);
-    char dummy[10000];
-    inputfile.getline(dummy,10000); // # CoSy
-    inputfile.getline(dummy,10000); // I-System
+    string dummy;
 
     string basename("../test_group3/plot/");
     basename = basename+ getFullName() + ".";
 
-    int no=getNumberOfElements(inputfile);
-    for(int i=0; i<no; i++) {
-      inputfile.getline(dummy,10000); // CoSy
+    getline(inputfile,dummy); // # CoSy
+    unsigned int no=getNumberOfElements(inputfile);
+    cout << dummy << endl;
+    cout << no << endl;
+    for(unsigned int i=0; i<no; i++) {
+      getline(inputfile,dummy); // CoSy
       string newname = basename+  dummy+".para";
       ifstream newinputfile(newname.c_str(), ios::in);
-      newinputfile.getline(dummy,10000);
-      newinputfile.getline(dummy,10000);
-      cout << "create CoordinateSystem " << dummy << endl;
-      CoordinateSystem * newcosy = new CoordinateSystem("NoName");
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
-      addCoordinateSystem(newcosy);
-      newcosy->load(newinputfile);
-
-      //cout << "add Cosy " << dummy<<endl;
-      //CoordinateSystem *newcosy = new CoordinateSystem(dummy);
-      //addCoordinateSystem(new CoordinateSystem(dummy));
+      if(i>=port.size())
+	addCoordinateSystem(new CoordinateSystem("NoName"));
+      port[i]->load(newinputfile);
     }
+    getline(inputfile,dummy); // # newline
 
-    inputfile.getline(dummy,10000); // # Contour
+    getline(inputfile,dummy); // # Contour
     no=getNumberOfElements(inputfile);
-    for(int i=0; i<no; i++) {
-      inputfile.getline(dummy,10000); // contour
+    cout << dummy << endl;
+    cout << no << endl;
+    for(unsigned int i=0; i<no; i++) {
+      getline(inputfile,dummy); // contour
       string newname = basename+  dummy+".para";
       ifstream newinputfile(newname.c_str(), ios::in);
-      newinputfile.getline(dummy,10000);
-      newinputfile.getline(dummy,10000);
-      ClassFactory cf;
-      cout << "create Contour " << dummy << endl;
-      Contour * newcontour = cf.getContour(dummy);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
-      addContour(newcontour);
-      newcontour->load(newinputfile);
-
-      //cout << "TODO: add Contour " << dummy<<endl;
+      ClassFactory cf;
+      if(i>=contour.size())
+	addContour(cf.getContour(dummy));
+      contour[i]->load(newinputfile);
     }
+    getline(inputfile,dummy); // newline
 
-
-    inputfile.getline(dummy,10000); // # q0
+    getline(inputfile,dummy); // # q0
     inputfile >> q0; // # q0
-    inputfile.getline(dummy,10000); // # u0
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+
+    getline(inputfile,dummy); // # u0
     inputfile >> u0; // # q0
-    cout << "Object: q0 = " <<endl << q0 << endl;
-    cout << "Object: u0 = " <<endl << u0 << endl;
-    //cout << dummy << endl;
-//    name = dummy;
-//    inputfile.getline(dummy,10000);
-//    inputfile.getline(dummy,10000);
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
   }
 
   void Object::plot(double t, double dt) {

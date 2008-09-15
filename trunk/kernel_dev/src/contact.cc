@@ -200,26 +200,29 @@ namespace MBSim {
 
   void Contact::plotParameters() {
     Link::plotParameters();
+
     parafile << "# Number of friction directions:" << endl;
     parafile << nFric << endl;
+    parafile << endl;
+
     parafile << "# Friction coefficient:" << endl;
     parafile << mu << endl;
+    parafile << endl;
   }
 
   void Contact::load(ifstream &inputfile) {
-    cout << "in Contact::load"<<endl;
     Link::load(inputfile);
-    char dummy[10000];
-    inputfile.getline(dummy,10000); // # Number of friction directions
-    cout << dummy <<endl;
+    string dummy;
+
+    getline(inputfile,dummy); // # Number of friction directions
     inputfile >> nFric;
-    inputfile.getline(dummy,10000); // TODO gehört weg
-    cout << nFric <<endl;
-    inputfile.getline(dummy,10000); // # Friction coefficient
-    cout << dummy <<endl;
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+
+    getline(inputfile,dummy); // # Friction coefficient
     inputfile >> mu;
-    inputfile.getline(dummy,10000); // TODO gehört weg
-    cout << mu <<endl;
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
   }
 }
 
