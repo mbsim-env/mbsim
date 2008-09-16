@@ -187,56 +187,6 @@ namespace MBSim {
 
   }
 
-  void RigidBody::plotParameters() {
-    Body::plotParameters();
-    // all CoordinateSystem of Object
-    
-    parafile << "# Mass: " << endl;
-    parafile << m << endl << endl;
-
-    parafile << "# Inertia tensor: " << endl;
-    parafile << SThetaS << endl << endl;
-
-    for(unsigned int i=1; i<port.size(); i++) {
-      parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
-      parafile << SrSK[i] << endl << endl;
-      parafile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
-      parafile << ASK[i] << endl << endl;
-    }
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << SrSC[i] << endl << endl;
-      parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << ASC[i] << endl << endl;
-    }
-
-    parafile << "# Coordinate system for kinematics:" << endl;
-    parafile << port[iRef]->getName() << endl << endl;
-
-    parafile << "# Frame of Reference:" << endl;
-    parafile << portParent->getFullName() << endl << endl;
-
-    parafile << "# Type of translation:" << endl;
-    LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-    if(fPrPK_) {
-      parafile << "LinearTranslation" << endl << endl;
-      parafile << "# Translation matrix:" << endl;
-      parafile << fPrPK_->getPJT() << endl << endl;
-    } else
-      parafile << "Unknown" << endl << endl;
-
-    parafile << "# Type of rotation:" << endl;
-    RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-    if(fAPK_) {
-      parafile << "RotationAboutFixedAxis" << endl << endl;
-      parafile << "# Axis of rotation:" << endl;
-      parafile << fAPK_->getAxisOfRotation() << endl << endl;
-    } else
-      parafile << "Unknown" << endl << endl;
-  }
-
-
   void RigidBody::updateMConst(double t) {
       M += Mbuf;
       //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
@@ -486,6 +436,55 @@ namespace MBSim {
 
     // HitSphere anpassen !!!
     contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
+  }
+
+  void RigidBody::save(const string &path, ofstream& outputfile) {
+    Body::save(path,outputfile);
+    // all CoordinateSystem of Object
+    
+    outputfile << "# Mass: " << endl;
+    outputfile << m << endl << endl;
+
+    outputfile << "# Inertia tensor: " << endl;
+    outputfile << SThetaS << endl << endl;
+
+    for(unsigned int i=1; i<port.size(); i++) {
+      outputfile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+      outputfile << SrSK[i] << endl << endl;
+      outputfile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
+      outputfile << ASK[i] << endl << endl;
+    }
+
+    for(unsigned int i=0; i<contour.size(); i++) {
+      outputfile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
+      outputfile << SrSC[i] << endl << endl;
+      outputfile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
+      outputfile << ASC[i] << endl << endl;
+    }
+
+    outputfile << "# Coordinate system for kinematics:" << endl;
+    outputfile << port[iRef]->getName() << endl << endl;
+
+    outputfile << "# Frame of Reference:" << endl;
+    outputfile << portParent->getFullName() << endl << endl;
+
+    outputfile << "# Type of translation:" << endl;
+    LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+    if(fPrPK_) {
+      outputfile << "LinearTranslation" << endl << endl;
+      outputfile << "# Translation matrix:" << endl;
+      outputfile << fPrPK_->getPJT() << endl << endl;
+    } else
+      outputfile << "Unknown" << endl << endl;
+
+    outputfile << "# Type of rotation:" << endl;
+    RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
+    if(fAPK_) {
+      outputfile << "RotationAboutFixedAxis" << endl << endl;
+      outputfile << "# Axis of rotation:" << endl;
+      outputfile << fAPK_->getAxisOfRotation() << endl << endl;
+    } else
+      outputfile << "Unknown" << endl << endl;
   }
 
   void RigidBody::load(const string &path, ifstream& inputfile) {

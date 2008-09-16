@@ -226,7 +226,6 @@ namespace MBSim {
        */
       void plot(double t, double dt);
       /*! basic prototype plotting basic class name "BodyFlexible" */
-      void plotParameters();
 
       /* alle geerbt */
       void updateMRef(SymMat M_) { M  >> M_ ;}

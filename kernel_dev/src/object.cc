@@ -194,30 +194,35 @@ namespace MBSim {
     return parent->getFullName() + "." + name;
   }
 
-  void Object::plotParameters() {
-    Element::plotParameters();
+  void Object::save(const string &path, ofstream &outputfile) {
+    Element::save(path,outputfile);
 
     // all CoordinateSystem of Object
-    parafile << "# Coordinate systems:" << endl;
-    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i)
-      parafile << (**i).getName() << endl;
-    parafile << endl;
+    outputfile << "# Coordinate systems:" << endl;
+    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str());
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
 
     // all Contours of Object
-    parafile << "# Contours:" << endl;
-    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i)
-      parafile << (**i).getName() << endl;
-    parafile << endl;
+    outputfile << "# Contours:" << endl;
+    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str());
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
 
-    parafile << "# q0:" << endl;
-    parafile << q0 << endl << endl;
-    parafile << "# u0:" << endl;
-    parafile << u0 << endl << endl;
-
-    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) 
-      (**i).plotParameters();
-    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) 
-      (**i).plotParameters();
+    outputfile << "# q0:" << endl;
+    outputfile << q0 << endl << endl;
+    outputfile << "# u0:" << endl;
+    outputfile << u0 << endl << endl;
   }
 
   void Object::load(const string &path, ifstream& inputfile) {
@@ -230,7 +235,7 @@ namespace MBSim {
     unsigned int no=getNumberOfElements(inputfile);
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // CoSy
-      string newname = basename + dummy + ".para";
+      string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
@@ -238,6 +243,7 @@ namespace MBSim {
       if(i>=port.size())
 	addCoordinateSystem(new CoordinateSystem("NoName"));
       port[i]->load(path, newinputfile);
+      newinputfile.close();
     }
     getline(inputfile,dummy); // # newline
 
@@ -245,7 +251,7 @@ namespace MBSim {
     no=getNumberOfElements(inputfile);
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // contour
-      string newname = basename + dummy + ".para";
+      string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
@@ -254,6 +260,7 @@ namespace MBSim {
       if(i>=contour.size())
 	addContour(cf.getContour(dummy));
       contour[i]->load(path, newinputfile);
+      newinputfile.close();
     }
     getline(inputfile,dummy); // newline
 

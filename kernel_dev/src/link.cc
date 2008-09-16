@@ -315,6 +315,22 @@ namespace MBSim {
     return parent->getlaIndMBS() + laInd;
   }
 
+  void Link::save(const string &path, ofstream& outputfile) {
+    Element::save(path,outputfile);
+
+    outputfile << "# Connected coordinate sytems:" << endl;
+    for(unsigned int i=0; i<port.size(); i++) {
+      outputfile << port[i]->getFullName() << endl;
+    }
+    outputfile << endl;
+
+    outputfile << "# Connected contours:" << endl;
+    for(unsigned int i=0; i<contour.size(); i++) {
+      outputfile << contour[i]->getFullName() << endl;
+    }
+    outputfile << endl;
+  }
+
   void Link::load(const string &path, ifstream& inputfile) {
     Element::load(path, inputfile);
     string dummy;
@@ -400,21 +416,6 @@ namespace MBSim {
 
   void Link::connect(Contour *contour_, int id) {
     contour.push_back(contour_);
-  }
-
-  void Link::plotParameters() {
-    Element::plotParameters();
-    parafile << "# Connected coordinate sytems:" << endl;
-    for(unsigned int i=0; i<port.size(); i++) {
-      parafile << port[i]->getFullName() << endl;
-    }
-    parafile << endl;
-
-    parafile << "# Connected contours:" << endl;
-    for(unsigned int i=0; i<contour.size(); i++) {
-      parafile << contour[i]->getFullName() << endl;
-    }
-    parafile << endl;
   }
 
   MultiBodySystem* Link::getMultiBodySystem() {

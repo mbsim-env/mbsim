@@ -245,6 +245,7 @@ namespace MBSim {
       string getType() const {return "Link";}
 
       void load(const string& path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
 
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
@@ -252,8 +253,6 @@ namespace MBSim {
        * @param funcColor Userfunction to manipulate Color of Arrow at each TimeStep
        * default: Red arrow for Forces and green one for Moments
        * */
-
-      virtual void plotParameters();
 
       virtual MultiBodySystem* getMultiBodySystem(); 
 
