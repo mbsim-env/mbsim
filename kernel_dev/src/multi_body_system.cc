@@ -659,7 +659,6 @@ namespace MBSim {
   void MultiBodySystem::save(const string &path, MultiBodySystem* mbs) {
 
     string model = path + "/" + mbs->getName() + ".mdl";
-    cout << model << endl;
 
     ofstream outputfile(model.c_str(), ios::out);
 
