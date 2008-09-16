@@ -74,19 +74,18 @@ namespace MBSim {
       parafile << getFullName() << endl<<endl;
   }
 
-  void Element::load(ifstream& inputfile) {
-    //ifstream inputfile(model.c_str(), ios::in);
-    char dummy[10000];
-    inputfile.getline(dummy,10000); // # Type
-    inputfile.getline(dummy,10000); // Type
-    inputfile.getline(dummy,10000); // newline
-    inputfile.getline(dummy,10000); // # Name
-    inputfile.getline(dummy,10000); // Name
+  void Element::load(const string &path, ifstream& inputfile) {
+    string dummy;
+    getline(inputfile,dummy); // # Type
+    getline(inputfile,dummy); // Type
+    getline(inputfile,dummy); // newline
+    getline(inputfile,dummy); // # Name
+    getline(inputfile,dummy); // Name
     name = dummy;
-    inputfile.getline(dummy,10000); // newline
-    inputfile.getline(dummy,10000); // # Full name
-    inputfile.getline(dummy,10000); // full name
-    inputfile.getline(dummy,10000); // newline
+    getline(inputfile,dummy); // newline
+    getline(inputfile,dummy); // # Full name
+    getline(inputfile,dummy); // full name
+    getline(inputfile,dummy); // newline
  }
 
   void Element::addDataInterfaceBaseRef(const string& DIBRef_){

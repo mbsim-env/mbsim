@@ -244,7 +244,7 @@ namespace MBSim {
 
       string getType() const {return "Link";}
 
-      void load(ifstream &inputfile);
+      void load(const string& path, ifstream &inputfile);
 
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one

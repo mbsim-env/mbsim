@@ -152,7 +152,7 @@ namespace MBSim {
 
       string getType() const {return "Line";}
 
-      void load(ifstream &inputfile); 
+      void load(const string& path, ifstream &inputfile); 
   };
 
   /*! \brief Circular Contour with material included inside */

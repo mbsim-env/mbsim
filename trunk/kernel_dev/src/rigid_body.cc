@@ -191,47 +191,49 @@ namespace MBSim {
     Body::plotParameters();
     // all CoordinateSystem of Object
     
-    for(unsigned int i=0; i<SrSK.size(); i++) {
-      parafile << "# Mass: " << endl;
-      parafile << m << endl;
+    parafile << "# Mass: " << endl;
+    parafile << m << endl << endl;
 
-      parafile << "# Inertia tensor: " << endl;
-      parafile << SThetaS << endl;
+    parafile << "# Inertia tensor: " << endl;
+    parafile << SThetaS << endl << endl;
 
+    for(unsigned int i=1; i<port.size(); i++) {
       parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
-      parafile << SrSK[i] << endl;
+      parafile << SrSK[i] << endl << endl;
       parafile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
-      parafile << ASK[i] << endl;
+      parafile << ASK[i] << endl << endl;
     }
 
-    for(unsigned int i=0; i<SrSC.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << SrSC[i] << endl;
+      parafile << SrSC[i] << endl << endl;
       parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << ASC[i] << endl;
+      parafile << ASC[i] << endl << endl;
     }
 
     parafile << "# Coordinate system for kinematics:" << endl;
-    parafile << port[iRef]->getName() << endl;
+    parafile << port[iRef]->getName() << endl << endl;
 
     parafile << "# Frame of Reference:" << endl;
-    parafile << portParent->getFullName() << endl;
+    parafile << portParent->getFullName() << endl << endl;
 
-    parafile << "# Translation:" << endl;
+    parafile << "# Type of translation:" << endl;
     LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
     if(fPrPK_) {
-      parafile << "LinearTranslation" << endl;
-      parafile << fPrPK_->getPJT() << endl;
+      parafile << "LinearTranslation" << endl << endl;
+      parafile << "# Translation matrix:" << endl;
+      parafile << fPrPK_->getPJT() << endl << endl;
     } else
-      parafile << "Unknown" << endl;
+      parafile << "Unknown" << endl << endl;
 
-    parafile << "# Rotation:" << endl;
+    parafile << "# Type of rotation:" << endl;
     RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
     if(fAPK_) {
-      parafile << "RotationAboutFixedAxis" << endl;
-      parafile << fAPK_->getAxisOfRotation() << endl;
+      parafile << "RotationAboutFixedAxis" << endl << endl;
+      parafile << "# Axis of rotation:" << endl;
+      parafile << fAPK_->getAxisOfRotation() << endl << endl;
     } else
-      parafile << "Unknown" << endl;
+      parafile << "Unknown" << endl << endl;
   }
 
 
@@ -486,78 +488,90 @@ namespace MBSim {
     contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
   }
 
-  void RigidBody::load(ifstream& inputfile) {
-    Body::load(inputfile);
-    char dummy[10000];
+  void RigidBody::load(const string &path, ifstream& inputfile) {
+    Body::load(path,inputfile);
+    string dummy;
 
-    inputfile.getline(dummy,10000); // # Mass
+    getline(inputfile,dummy); // # Mass
     inputfile >> m;
-    inputfile.getline(dummy,10000); // Rest of line
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
 
-    inputfile.getline(dummy,10000); // # Inertia tensor
+    getline(inputfile,dummy); // # Inertia tensor
     Mat buf;
     inputfile >> buf;
-    inputfile.getline(dummy,10000); // Rest of line
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
     SThetaS = SymMat(buf);
     i4I = 0;
 
-    for(unsigned int i=0; i<port.size(); i++) {
-      if(i>0) {
-	SrSK.push_back(Vec(3));
-	WrSK.push_back(Vec(3));
-	ASK.push_back(SqrMat(3));
-      }
-      inputfile.getline(dummy,10000); // # Translation cosy 
+    for(unsigned int i=1; i<port.size(); i++) {
+      SrSK.push_back(Vec(3));
+      WrSK.push_back(Vec(3));
+      ASK.push_back(SqrMat(3));
+      getline(inputfile,dummy); // # Translation cosy 
       inputfile >> SrSK[i];
-      inputfile.getline(dummy,10000); // Rest of line
-      inputfile.getline(dummy,10000); // # Rotation cosy
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // Newline
+      getline(inputfile,dummy); // # Rotation cosy
       inputfile >> ASK[i];
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // Newline
     }
 
     for(unsigned int i=0; i<contour.size(); i++) {
       SrSC.push_back(Vec(3));
       WrSC.push_back(Vec(3));
       ASC.push_back(SqrMat(3));
-      inputfile.getline(dummy,10000); // # Translation contour 
+      getline(inputfile,dummy); // # Translation contour 
       inputfile >> SrSC[i];
-      inputfile.getline(dummy,10000); // Rest of line
-      inputfile.getline(dummy,10000); // # Rotation contour
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // Newline
+      getline(inputfile,dummy); // # Rotation contour
       inputfile >> ASC[i];
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // Newline
     }
     
-    inputfile.getline(dummy,10000); // # Coordinate system for kinematics
-    inputfile.getline(dummy,10000); // Coordinate system for kinematics
+    getline(inputfile,dummy); // # Coordinate system for kinematics
+    getline(inputfile,dummy); // Coordinate system for kinematics
     setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+    getline(inputfile,dummy); // Newline
 
-    inputfile.getline(dummy,10000); // # Frame of reference
-    inputfile.getline(dummy,10000); // Coordinate system for kinematics
+    getline(inputfile,dummy); // # Frame of reference
+    getline(inputfile,dummy); // Coordinate system for kinematics
     setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+    getline(inputfile,dummy); // Newline
 
-    inputfile.getline(dummy,10000); // # Translation 
-    inputfile.getline(dummy,10000); // Type of translation 
+    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // Type of translation 
     if(string(dummy) == "LinearTranslation") {
+      getline(inputfile,dummy); // Newline
+      getline(inputfile,dummy); // # Translation matrix:
       Mat buf;
       inputfile >> buf;
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
       setTranslation(new LinearTranslation(buf));
     } else {
       cout << "Unknown translation" << endl;
       throw 5;
     }
+    getline(inputfile,dummy); // Newline
 
-    inputfile.getline(dummy,10000); // # Rotation
-    inputfile.getline(dummy,10000); // Type of rotation
+    getline(inputfile,dummy); // # Type of rotation:
+    getline(inputfile,dummy); // Type of rotation
     if(string(dummy) == "RotationAboutFixedAxis") {
+      getline(inputfile,dummy); // Newline
+      getline(inputfile,dummy); // #  Axis of rotation:
       Vec buf;
       inputfile >> buf;
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
       setRotation(new RotationAboutFixedAxis(buf));
     } else {
       cout << "Unknown rotation" << endl;
       throw 5;
     }
+    getline(inputfile,dummy); // Newline
 
   }
 

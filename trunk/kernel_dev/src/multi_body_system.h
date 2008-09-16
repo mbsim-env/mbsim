@@ -205,8 +205,6 @@ namespace MBSim {
     using Subsystem::plot;
     void plotParameters();
 
-    void load(string dirName);
-
     /*! Compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems */
     double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
     /* ! Compute potential energy of entire multibody system */
@@ -331,6 +329,8 @@ namespace MBSim {
     CoordinateSystem* findCoordinateSystem(const string &name);
     Contour* findContour(const string &name);
     MultiBodySystem* getMultiBodySystem() {return this;}
+    void load(const string &path, ifstream& inputfile);
+    static MultiBodySystem* load(const string &path);
   };
 
 }
