@@ -29,6 +29,7 @@
 #include "integrator.h"
 #include "body_flexible.h"
 #include "eps.h"
+#include "dirent.h"
 #ifndef MINGW
 #  include<sys/stat.h>
 #else
@@ -644,15 +645,49 @@ namespace MBSim {
     //parafile << "solver: \t\t" << getSolverInfo() << endl;
     Group::plotParameters();
     parafile << "# Acceleration of gravity:" << endl;
-    parafile << grav << endl;
+    parafile << grav << endl << endl;;
   }
 
-  void MultiBodySystem::load(string model) {
+  void MultiBodySystem::load(const string &path, ifstream& inputfile) {
+
+    Group::load(path, inputfile);
+
+    string dummy;
+
+    getline(inputfile,dummy); // #  Acceleration of gravity:
+    inputfile >> grav;
+    getline(inputfile,dummy); // # Rest of line
+    getline(inputfile,dummy); // # Newline
+  }
+
+  MultiBodySystem* MultiBodySystem::load(const string &path) {
+    DIR* dir = opendir(path.c_str());
+    dirent *first;
+    first = readdir(dir); // .
+    first = readdir(dir); // ..
+    string name;
+    while(first){
+      first = readdir(dir);
+      if(first) {
+	name= first->d_name;
+	unsigned int s = name.rfind(".para");
+	if(s<name.size()) {
+	  string buf = name.substr(0,s);
+	  if(buf.find(".")>buf.size())
+	    break;
+	}
+      }
+    }
+    cout << name << endl;
+
+    string model = path + "/" + name;
+
     ifstream inputfile(model.c_str(), ios::in);
 
-    Group::load(inputfile);
-    //parafile << "# Acceleration of gravity:" << endl;
-    //parafile << grav << endl;
+    MultiBodySystem* mbs = new MultiBodySystem("NoName");
+
+    mbs->load(path, inputfile);
+    return mbs;
   }
 
   void MultiBodySystem::computeConstraintForces(double t) {

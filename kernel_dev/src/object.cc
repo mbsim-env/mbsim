@@ -220,37 +220,32 @@ namespace MBSim {
       (**i).plotParameters();
   }
 
-  void Object::load(ifstream& inputfile) {
-    Element::load(inputfile);
+  void Object::load(const string &path, ifstream& inputfile) {
+    Element::load(path, inputfile);
     string dummy;
 
-    string basename("../test_group3/plot/");
-    basename = basename+ getFullName() + ".";
+    string basename = path + "/" + getFullName() + ".";
 
     getline(inputfile,dummy); // # CoSy
     unsigned int no=getNumberOfElements(inputfile);
-    cout << dummy << endl;
-    cout << no << endl;
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // CoSy
-      string newname = basename+  dummy+".para";
+      string newname = basename + dummy + ".para";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
       if(i>=port.size())
 	addCoordinateSystem(new CoordinateSystem("NoName"));
-      port[i]->load(newinputfile);
+      port[i]->load(path, newinputfile);
     }
     getline(inputfile,dummy); // # newline
 
     getline(inputfile,dummy); // # Contour
     no=getNumberOfElements(inputfile);
-    cout << dummy << endl;
-    cout << no << endl;
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // contour
-      string newname = basename+  dummy+".para";
+      string newname = basename + dummy + ".para";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
@@ -258,7 +253,7 @@ namespace MBSim {
       ClassFactory cf;
       if(i>=contour.size())
 	addContour(cf.getContour(dummy));
-      contour[i]->load(newinputfile);
+      contour[i]->load(path, newinputfile);
     }
     getline(inputfile,dummy); // newline
 

@@ -315,8 +315,8 @@ namespace MBSim {
     return parent->getlaIndMBS() + laInd;
   }
 
-  void Link::load(ifstream& inputfile) {
-    Element::load(inputfile);
+  void Link::load(const string &path, ifstream& inputfile) {
+    Element::load(path, inputfile);
     string dummy;
 
     getline(inputfile,dummy); // # Connected cosy

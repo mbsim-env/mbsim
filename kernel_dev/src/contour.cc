@@ -132,8 +132,8 @@ namespace MBSim {
     parafile << Cb << endl;
   }
 
-  void Line::load(ifstream &inputfile) {
-    Contour::load(inputfile);
+  void Line::load(const string& path, ifstream &inputfile) {
+    Contour::load(path,inputfile);
     string dummy;
 
     getline(inputfile,dummy); // # Cn

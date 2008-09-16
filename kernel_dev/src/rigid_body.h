@@ -369,7 +369,7 @@ namespace MBSim {
 
     virtual string getType() const {return "RigidBody";}
 
-    void load(ifstream &inputfile);
+    void load(const string &path, ifstream &inputfile);
 
   };
 

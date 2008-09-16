@@ -97,7 +97,7 @@ namespace MBSim {
       string getType() const {return "Contact";}
 
       void plotParameters();
-      void load(ifstream &inputfile);
+      void load(const string& path, ifstream &inputfile);
 
       using Link::connect;
   };

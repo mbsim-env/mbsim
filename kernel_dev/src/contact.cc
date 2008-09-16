@@ -210,8 +210,8 @@ namespace MBSim {
     parafile << endl;
   }
 
-  void Contact::load(ifstream &inputfile) {
-    Link::load(inputfile);
+  void Contact::load(const string& path, ifstream &inputfile) {
+    Link::load(path,inputfile);
     string dummy;
 
     getline(inputfile,dummy); // # Number of friction directions

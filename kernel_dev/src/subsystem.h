@@ -123,7 +123,7 @@ namespace MBSim {
       void plot(double t, double dt=1);
       void plotParameters();
       void closePlotFiles();
-      void load(ifstream &inputfile);
+      void load(const string &path, ifstream &inputfile);
 
       void updateKinematics(double t);
       void updateLinksStage1(double t);

@@ -189,32 +189,40 @@ namespace MBSim {
       parafile << (**i).getName() << endl;
     parafile << endl;
 
-    for(unsigned int i=0; i<IrOK.size(); i++) {
+    for(unsigned int i=1; i<port.size(); i++) {
       parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
       parafile << IrOK[i] << endl;
+      parafile << endl;
       parafile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
       parafile << AIK[i] << endl;
+      parafile << endl;
     }
 
-    for(unsigned int i=0; i<IrOC.size(); i++) {
+    for(unsigned int i=0; i<contour.size(); i++) {
       parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
       parafile << IrOC[i] << endl;
+      parafile << endl;
       parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
       parafile << AIC[i] << endl;
+      parafile << endl;
     }
 
     if(parent) {
       parafile << "# Reference coordinate system:" << endl;
       parafile << port[iRef]->getName() << endl;
+      parafile << endl;
 
       parafile << "# Parent coordinate system:" << endl;
       parafile << portParent->getFullName() << endl;
+      parafile << endl;
 
       parafile << "# Translation:" << endl;
       parafile << PrPK << endl;
+      parafile << endl;
 
       parafile << "# Rotation:" << endl;
       parafile << APK << endl;
+      parafile << endl;
     }
 
     for(unsigned i=0; i<object.size(); i++)
@@ -226,91 +234,96 @@ namespace MBSim {
 
   }
 
-  void Subsystem::load(ifstream& inputfile) {
-    Object::load(inputfile);
+  void Subsystem::load(const string &path, ifstream& inputfile) {
+    Object::load(path,inputfile);
 
-    char dummy[10000];
-    string basename("../test_group3/plot/");
-    basename = basename+ getFullName() + ".";
+    string dummy;
+    string basename = path + "/" + getFullName() + ".";
 
-    inputfile.getline(dummy,10000); // # Objects
+    getline(inputfile,dummy); // # Objects
     int no=getNumberOfElements(inputfile);
     for(int i=0; i<no; i++) {
-      inputfile.getline(dummy,10000); // # Objects
-      string newname = basename+  dummy+".para";
+      getline(inputfile,dummy); // # Objects
+      string newname = basename + dummy + ".para";
       ifstream newinputfile(newname.c_str(), ios::in);
-      newinputfile.getline(dummy,10000);
-      newinputfile.getline(dummy,10000);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
       ClassFactory cf;
       Object * newobject = cf.getObject(dummy);
       addObject(newobject);
       newinputfile.seekg(0,ios::beg);
-      newobject->load(newinputfile);
+      newobject->load(path,newinputfile);
     }
-    inputfile.getline(dummy,10000); // newline
+    getline(inputfile,dummy); // newline
 
-    inputfile.getline(dummy,10000); // # Links
+    getline(inputfile,dummy); // # Links
     no=getNumberOfElements(inputfile);
     for(int i=0; i<no; i++) {
-      inputfile.getline(dummy,10000); // # Links
-      string newname = basename+  dummy+".para";
+      getline(inputfile,dummy); // # Links
+      string newname = basename + dummy + ".para";
       ifstream newinputfile(newname.c_str(), ios::in);
-      newinputfile.getline(dummy,10000);
-      newinputfile.getline(dummy,10000);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
       ClassFactory cf;
       Link * newlink = cf.getLink(dummy);
       addLink(newlink);
       newinputfile.seekg(0,ios::beg);
-      newlink->load(newinputfile);
+      newlink->load(path,newinputfile);
     }
-    inputfile.getline(dummy,10000); // newline
+    getline(inputfile,dummy); // newline
 
-    inputfile.getline(dummy,10000); // # EDIs
-    inputfile.getline(dummy,10000); // newline
+    getline(inputfile,dummy); // # EDIs
+    getline(inputfile,dummy); // newline
 
-    for(unsigned int i=0; i<port.size(); i++) {
-      if(i>0) {
-	IrOK.push_back(Vec(3));
-	AIK.push_back(SqrMat(3));
-      }
-      inputfile.getline(dummy,10000); // # Translation cosy 
+    for(unsigned int i=1; i<port.size(); i++) {
+      IrOK.push_back(Vec(3));
+      AIK.push_back(SqrMat(3));
+      getline(inputfile,dummy); // # Translation cosy 
       inputfile >> IrOK[i];
-      inputfile.getline(dummy,10000); // Rest of line
-      inputfile.getline(dummy,10000); // # Rotation cosy
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
+      getline(inputfile,dummy); // # Rotation cosy
       inputfile >> AIK[i];
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
     }
 
     for(unsigned int i=0; i<contour.size(); i++) {
       IrOC.push_back(Vec(3));
       AIC.push_back(SqrMat(3));
-      inputfile.getline(dummy,10000); // # Translation contour 
+      getline(inputfile,dummy); // # Translation contour 
       inputfile >> IrOC[i];
-      inputfile.getline(dummy,10000); // Rest of line
-      inputfile.getline(dummy,10000); // # Rotation contour
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
+      getline(inputfile,dummy); // # Rotation contour
       inputfile >> AIC[i];
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
     }
 
     if(parent) {
-      inputfile.getline(dummy,10000); // # Coordinate system for kinematics
-      inputfile.getline(dummy,10000); // Coordinate system for kinematics
+      getline(inputfile,dummy); // # Coordinate system for kinematics
+      getline(inputfile,dummy); // Coordinate system for kinematics
       setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+      getline(inputfile,dummy); // newline
 
-      inputfile.getline(dummy,10000); // # Frame of reference
-      inputfile.getline(dummy,10000); // Coordinate system for kinematics
+      getline(inputfile,dummy); // # Frame of reference
+      getline(inputfile,dummy); // Coordinate system for kinematics
       setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+      getline(inputfile,dummy); // newline
 
-      inputfile.getline(dummy,10000); // # Translation 
+      getline(inputfile,dummy); // # Translation 
       Vec r;
       inputfile >> r;
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
       setTranslation(r);
 
-      inputfile.getline(dummy,10000); // # Rotation
+      getline(inputfile,dummy); // # Rotation
       SqrMat A;
       inputfile >> A;
-      inputfile.getline(dummy,10000); // Rest of line
+      getline(inputfile,dummy); // Rest of line
+      getline(inputfile,dummy); // newline
       setRotation(A);
     }
 
