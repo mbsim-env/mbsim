@@ -162,8 +162,6 @@ namespace MBSim {
     // if(plotting) {
     cout << "  initialising plot-files ..." << endl;
     initPlotFiles();
-    cout << "  writing parameter-files ..." << endl;
-    plotParameters();
     // }
 
     cout << "...... done initialising." << endl << endl;
@@ -640,12 +638,10 @@ namespace MBSim {
     return ud;
   }
 
-  void MultiBodySystem::plotParameters() {
-    //parafile << "MultibodySystem: \t" << name << endl;
-    //parafile << "solver: \t\t" << getSolverInfo() << endl;
-    Group::plotParameters();
-    parafile << "# Acceleration of gravity:" << endl;
-    parafile << grav << endl << endl;;
+  void MultiBodySystem::save(const string &path, ofstream& outputfile) {
+    Group::save(path,outputfile);
+    outputfile << "# Acceleration of gravity:" << endl;
+    outputfile << grav << endl << endl;;
   }
 
   void MultiBodySystem::load(const string &path, ifstream& inputfile) {
@@ -660,6 +656,18 @@ namespace MBSim {
     getline(inputfile,dummy); // # Newline
   }
 
+  void MultiBodySystem::save(const string &path, MultiBodySystem* mbs) {
+
+    string model = path + "/" + mbs->getName() + ".mdl";
+    cout << model << endl;
+
+    ofstream outputfile(model.c_str(), ios::out);
+
+    mbs->save(path, outputfile);
+
+    outputfile.close();
+  }
+
   MultiBodySystem* MultiBodySystem::load(const string &path) {
     DIR* dir = opendir(path.c_str());
     dirent *first;
@@ -670,7 +678,7 @@ namespace MBSim {
       first = readdir(dir);
       if(first) {
 	name= first->d_name;
-	unsigned int s = name.rfind(".para");
+	unsigned int s = name.rfind(".mdl");
 	if(s<name.size()) {
 	  string buf = name.substr(0,s);
 	  if(buf.find(".")>buf.size())
@@ -678,7 +686,7 @@ namespace MBSim {
 	}
       }
     }
-    cout << name << endl;
+    closedir(dir);
 
     string model = path + "/" + name;
 
@@ -687,6 +695,9 @@ namespace MBSim {
     MultiBodySystem* mbs = new MultiBodySystem("NoName");
 
     mbs->load(path, inputfile);
+
+    inputfile.close();
+
     return mbs;
   }
 

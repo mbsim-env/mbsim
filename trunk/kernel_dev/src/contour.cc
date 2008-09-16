@@ -112,10 +112,6 @@ namespace MBSim {
 #endif
   }
 
-  void Contour::plotParameters() {
-    Element::plotParameters();
-  }
-
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
   Point::~Point() {}
@@ -124,12 +120,13 @@ namespace MBSim {
   Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {}
   void Line::setCn(const Vec &n) {Cn = n/nrm2(n);}
   void Line::setCb(const Vec &b) {Cb = b/nrm2(b);}
-  void Line::plotParameters() {
-    Contour::plotParameters();
-    parafile << "# Cn = " << endl;
-    parafile << Cn << endl;
-    parafile << "# Cb = " << endl;
-    parafile << Cb << endl;
+
+  void Line::save(const string& path, ofstream &outputfile) {
+    Contour::save(path,outputfile);
+    outputfile << "# Cn = " << endl;
+    outputfile << Cn << endl;
+    outputfile << "# Cb = " << endl;
+    outputfile << Cb << endl;
   }
 
   void Line::load(const string& path, ifstream &inputfile) {

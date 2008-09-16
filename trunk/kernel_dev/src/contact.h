@@ -96,8 +96,8 @@ namespace MBSim {
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
       string getType() const {return "Contact";}
 
-      void plotParameters();
       void load(const string& path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
 
       using Link::connect;
   };

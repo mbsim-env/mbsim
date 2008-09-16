@@ -102,8 +102,4 @@ bodyAMVis = NULL;
     }
   }
 
-  void CoordinateSystem::plotParameters() {					// HR 03.01.07
-    Element::plotParameters();
-  }
-
 }

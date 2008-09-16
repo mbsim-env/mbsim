@@ -73,8 +73,6 @@ namespace MBSim {
       void initPlotFiles();
 
       /* geerbt */
-      void plotParameters();
-      /* geerbt */
       void plot(double t, double dt);
 
       Object* getParent() {return parent;}
@@ -148,11 +146,10 @@ namespace MBSim {
       Vec computeWn() {return AWC*Cn;}
       Vec computeWt() {return AWC*crossProduct(Cn,Cb);}
 
-      void plotParameters();
-
       string getType() const {return "Line";}
 
       void load(const string& path, ifstream &inputfile); 
+      void save(const string &path, ofstream &outputfile);
   };
 
   /*! \brief Circular Contour with material included inside */

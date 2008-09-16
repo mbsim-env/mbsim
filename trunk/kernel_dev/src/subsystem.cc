@@ -168,70 +168,79 @@ namespace MBSim {
 
   }
 
-  void Subsystem::plotParameters() {
+  void Subsystem::save(const string &path, ofstream& outputfile) {
 
-    Object::plotParameters();
+    Object::save(path,outputfile);
 
     // all Objects of MultibodySystem
     
-    parafile << "# Objects:" << endl;
-    for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i)
-      parafile << (**i).getName() << endl;
-    parafile << endl;
+    outputfile << "# Objects:" << endl;
+    for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str());
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
 
-    parafile << "# Links:" << endl;
-    for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i)
-      parafile << (**i).getName() << endl;
-    parafile << endl;
+    outputfile << "# Links:" << endl;
+    for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str());
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
 
-    parafile << "# EDIs:" << endl;
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i)
-      parafile << (**i).getName() << endl;
-    parafile << endl;
+    outputfile << endl;
+
+    outputfile << "# EDIs:" << endl;
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str());
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+
+    outputfile << endl;
 
     for(unsigned int i=1; i<port.size(); i++) {
-      parafile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
-      parafile << IrOK[i] << endl;
-      parafile << endl;
-      parafile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
-      parafile << AIK[i] << endl;
-      parafile << endl;
+      outputfile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+      outputfile << IrOK[i] << endl;
+      outputfile << endl;
+      outputfile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
+      outputfile << AIK[i] << endl;
+      outputfile << endl;
     }
 
     for(unsigned int i=0; i<contour.size(); i++) {
-      parafile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << IrOC[i] << endl;
-      parafile << endl;
-      parafile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
-      parafile << AIC[i] << endl;
-      parafile << endl;
+      outputfile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
+      outputfile << IrOC[i] << endl;
+      outputfile << endl;
+      outputfile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
+      outputfile << AIC[i] << endl;
+      outputfile << endl;
     }
 
     if(parent) {
-      parafile << "# Reference coordinate system:" << endl;
-      parafile << port[iRef]->getName() << endl;
-      parafile << endl;
+      outputfile << "# Reference coordinate system:" << endl;
+      outputfile << port[iRef]->getName() << endl;
+      outputfile << endl;
 
-      parafile << "# Parent coordinate system:" << endl;
-      parafile << portParent->getFullName() << endl;
-      parafile << endl;
+      outputfile << "# Parent coordinate system:" << endl;
+      outputfile << portParent->getFullName() << endl;
+      outputfile << endl;
 
-      parafile << "# Translation:" << endl;
-      parafile << PrPK << endl;
-      parafile << endl;
+      outputfile << "# Translation:" << endl;
+      outputfile << PrPK << endl;
+      outputfile << endl;
 
-      parafile << "# Rotation:" << endl;
-      parafile << APK << endl;
-      parafile << endl;
+      outputfile << "# Rotation:" << endl;
+      outputfile << APK << endl;
+      outputfile << endl;
     }
-
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->plotParameters();
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->plotParameters();
-    for(unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->plotParameters();
-
   }
 
   void Subsystem::load(const string &path, ifstream& inputfile) {
@@ -244,7 +253,7 @@ namespace MBSim {
     int no=getNumberOfElements(inputfile);
     for(int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Objects
-      string newname = basename + dummy + ".para";
+      string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
@@ -253,6 +262,7 @@ namespace MBSim {
       addObject(newobject);
       newinputfile.seekg(0,ios::beg);
       newobject->load(path,newinputfile);
+      newinputfile.close();
     }
     getline(inputfile,dummy); // newline
 
@@ -260,7 +270,7 @@ namespace MBSim {
     no=getNumberOfElements(inputfile);
     for(int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Links
-      string newname = basename + dummy + ".para";
+      string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::in);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
@@ -269,6 +279,7 @@ namespace MBSim {
       addLink(newlink);
       newinputfile.seekg(0,ios::beg);
       newlink->load(path,newinputfile);
+      newinputfile.close();
     }
     getline(inputfile,dummy); // newline
 

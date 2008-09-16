@@ -66,8 +66,6 @@ namespace MBSim {
       int plotLevel;
       /* Output-precision of ostream */
       int plotPrec;
-      /* File used for output of element parameters, e.g. mass ... */
-      ofstream parafile;
       /* Vector for Data Interface Base References */
       vector<string> DIBRefs;
 
@@ -81,8 +79,6 @@ namespace MBSim {
        * Do not overload without explicit call to parent class; otherwise previous outputs will be lost
        */
       virtual void plot(double t, double dt = 1);
-      /*! Predefinition for output of system parameters in Element:parafile */
-      virtual void plotParameters();
 	  /*! Initialises plotfiles */
       virtual void initPlotFiles();
       /*! Closes plotfiles */
@@ -101,6 +97,7 @@ namespace MBSim {
       virtual string getFullName() const {return name;}
 
       virtual void load(const string &path, ifstream &inputfile);
+      virtual void save(const string &path, ofstream &outputfile);
  
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};

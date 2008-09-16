@@ -364,12 +364,12 @@ namespace MBSim {
 
     void init();
     void initPlotFiles();
-    void plotParameters();
     void calcSize();
 
     virtual string getType() const {return "RigidBody";}
 
     void load(const string &path, ifstream &inputfile);
+    void save(const string &path, ofstream &outputfile);
 
   };
 

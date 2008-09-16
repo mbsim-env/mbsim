@@ -246,8 +246,8 @@ namespace MBSim {
     //void plot(double t); 
     void plot(double t, double dt = 1); 
     void initPlotFiles();
-    void plotParameters();
     void load(const string &path, ifstream &inputfile);
+    void save(const string &path, ofstream &outputfile);
 
     virtual void addCoordinateSystem(CoordinateSystem * port);
     virtual void addContour(Contour* contour);

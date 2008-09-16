@@ -33,7 +33,6 @@ namespace MBSim {
 
   Element::~Element() {
     plotfile.close();
-    parafile.close();
   }
 
   void Element::plot(double t, double dt) {
@@ -55,23 +54,21 @@ namespace MBSim {
       plotfile.open((dirName+getFullName()+".plt").c_str(), ios::out);
       plotfile <<"# " << plotNr++ << ": t" << endl;
     }
-    parafile.open((dirName+getFullName()+".para").c_str(), ios::out);
   } 
 
   void Element::closePlotFiles() {
     if(plotLevel) {
       plotfile.close();
     }
-    parafile.close();
   } 
 
-  void Element::plotParameters() {
-      parafile << "# Type:" << endl;
-      parafile << getType() << endl<<endl;
-      parafile << "# Name:" << endl;
-      parafile << name << endl<<endl;
-      parafile << "# Full name:" << endl;
-      parafile << getFullName() << endl<<endl;
+  void Element::save(const string &path, ofstream& outputfile) {
+      outputfile << "# Type:" << endl;
+      outputfile << getType() << endl<<endl;
+      outputfile << "# Name:" << endl;
+      outputfile << name << endl<<endl;
+      outputfile << "# Full name:" << endl;
+      outputfile << getFullName() << endl<<endl;
   }
 
   void Element::load(const string &path, ifstream& inputfile) {

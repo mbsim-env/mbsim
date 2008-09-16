@@ -198,16 +198,16 @@ namespace MBSim {
     }
   }
 
-  void Contact::plotParameters() {
-    Link::plotParameters();
+  void Contact::save(const string& path, ofstream &outputfile) {
+    Link::save(path, outputfile);
 
-    parafile << "# Number of friction directions:" << endl;
-    parafile << nFric << endl;
-    parafile << endl;
+    outputfile << "# Number of friction directions:" << endl;
+    outputfile << nFric << endl;
+    outputfile << endl;
 
-    parafile << "# Friction coefficient:" << endl;
-    parafile << mu << endl;
-    parafile << endl;
+    outputfile << "# Friction coefficient:" << endl;
+    outputfile << mu << endl;
+    outputfile << endl;
   }
 
   void Contact::load(const string& path, ifstream &inputfile) {
