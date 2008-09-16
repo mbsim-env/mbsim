@@ -342,13 +342,6 @@ namespace MBSim {
 
 	for(int i=0; i<uSize; ++i)
 	  plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
-
-	if (plotLevel>3) {									//HR 04.01.2007
-	  for(unsigned int j=0; j<port.size(); j++) {
-	    for(int i=0; i<3; i++)
-	      plotfile<< "# " << plotNr++ <<": WrOP ("<<port[j]->getName()<<")" << endl;
-	  }    
-	}   
       }
     }
   }
