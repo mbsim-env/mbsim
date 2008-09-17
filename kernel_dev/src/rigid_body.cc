@@ -26,6 +26,7 @@
 #include "link.h"
 #include "tree.h"
 #include "multi_body_system.h"
+#include "class_factory.h"
 #ifdef HAVE_AMVIS
 #include "crigidbody.h"
 #include "data_interface_base.h"
@@ -468,24 +469,10 @@ namespace MBSim {
     outputfile << "# Frame of Reference:" << endl;
     outputfile << portParent->getFullName() << endl << endl;
 
-    outputfile << "# Type of translation:" << endl;
-    LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-    if(fPrPK_) {
-      outputfile << "LinearTranslation" << endl << endl;
-      outputfile << "# Translation matrix:" << endl;
-      outputfile << fPrPK_->getPJT() << endl << endl;
-    } else
-      outputfile << "Unknown" << endl << endl;
+    fPrPK->save(path,outputfile);
 
-    outputfile << "# Type of rotation:" << endl;
-    RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-    if(fAPK_) {
-      outputfile << "RotationAboutFixedAxis" << endl << endl;
-      outputfile << "# Axis of rotation:" << endl;
-      outputfile << fAPK_->getAxisOfRotation() << endl << endl;
-    } else
-      outputfile << "Unknown" << endl << endl;
-  }
+    fAPK->save(path,outputfile);
+   }
 
   void RigidBody::load(const string &path, ifstream& inputfile) {
     Body::load(path,inputfile);
@@ -542,35 +529,20 @@ namespace MBSim {
     setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
     getline(inputfile,dummy); // Newline
 
+    int s = inputfile.tellg();
     getline(inputfile,dummy); // # Type of Translation:
     getline(inputfile,dummy); // Type of translation 
-    if(string(dummy) == "LinearTranslation") {
-      getline(inputfile,dummy); // Newline
-      getline(inputfile,dummy); // # Translation matrix:
-      Mat buf;
-      inputfile >> buf;
-      getline(inputfile,dummy); // Rest of line
-      setTranslation(new LinearTranslation(buf));
-    } else {
-      cout << "Unknown translation" << endl;
-      throw 5;
-    }
-    getline(inputfile,dummy); // Newline
+    inputfile.seekg(s,ios::beg);
+    ClassFactory cf;
+    setTranslation(cf.getTranslation(dummy));
+    fPrPK->load(path, inputfile);
 
+    s = inputfile.tellg();
     getline(inputfile,dummy); // # Type of rotation:
     getline(inputfile,dummy); // Type of rotation
-    if(string(dummy) == "RotationAboutFixedAxis") {
-      getline(inputfile,dummy); // Newline
-      getline(inputfile,dummy); // #  Axis of rotation:
-      Vec buf;
-      inputfile >> buf;
-      getline(inputfile,dummy); // Rest of line
-      setRotation(new RotationAboutFixedAxis(buf));
-    } else {
-      cout << "Unknown rotation" << endl;
-      throw 5;
-    }
-    getline(inputfile,dummy); // Newline
+    inputfile.seekg(s,ios::beg);
+    setRotation(cf.getRotation(dummy));
+    fAPK->load(path, inputfile);
 
   }
 

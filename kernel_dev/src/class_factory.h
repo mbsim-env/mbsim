@@ -31,12 +31,16 @@ namespace MBSim {
   class Object;
   class Link;
   class Contour;
+  class Translation;
+  class Rotation;
 
   class ClassFactory {
     public:
       Object* getObject(const string &type);
       Link* getLink(const string &type);
       Contour* getContour(const string &type);
+      Translation* getTranslation(const string &type);
+      Rotation* getRotation(const string &type);
   };
 
 }
