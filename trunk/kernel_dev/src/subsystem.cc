@@ -178,7 +178,7 @@ namespace MBSim {
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str());
+      ofstream newoutputfile(newname.c_str(), ios::binary);
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
@@ -188,7 +188,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str());
+      ofstream newoutputfile(newname.c_str(), ios::binary);
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
@@ -199,7 +199,7 @@ namespace MBSim {
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str());
+      ofstream newoutputfile(newname.c_str(), ios::binary);
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
@@ -254,7 +254,7 @@ namespace MBSim {
     for(int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Objects
       string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::in);
+      ifstream newinputfile(newname.c_str(), ios::binary);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       ClassFactory cf;
@@ -271,7 +271,7 @@ namespace MBSim {
     for(int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Links
       string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::in);
+      ifstream newinputfile(newname.c_str(), ios::binary);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       ClassFactory cf;
