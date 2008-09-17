@@ -660,7 +660,7 @@ namespace MBSim {
 
     string model = path + "/" + mbs->getName() + ".mdl";
 
-    ofstream outputfile(model.c_str(), ios::out);
+    ofstream outputfile(model.c_str(), ios::binary);
 
     mbs->save(path, outputfile);
 
@@ -689,7 +689,7 @@ namespace MBSim {
 
     string model = path + "/" + name;
 
-    ifstream inputfile(model.c_str(), ios::in);
+    ifstream inputfile(model.c_str(), ios::binary);
 
     MultiBodySystem* mbs = new MultiBodySystem("NoName");
 

@@ -202,7 +202,7 @@ namespace MBSim {
     for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str());
+      ofstream newoutputfile(newname.c_str(), ios::binary);
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
@@ -213,7 +213,7 @@ namespace MBSim {
     for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str());
+      ofstream newoutputfile(newname.c_str(), ios::binary);
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
@@ -236,7 +236,7 @@ namespace MBSim {
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // CoSy
       string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::in);
+      ifstream newinputfile(newname.c_str(), ios::binary);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
@@ -252,7 +252,7 @@ namespace MBSim {
     for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // contour
       string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::in);
+      ifstream newinputfile(newname.c_str(), ios::binary);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
