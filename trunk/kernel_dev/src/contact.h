@@ -41,8 +41,11 @@ namespace MBSim {
   class Contact: public Link {
 
     protected:
-      /** friction coefficinet */
-      double mu;
+      /** friction characteristics */
+      //UserFunction *mu;
+      /** friction coefficient */
+      double mu, mu0;
+
       /** index for tangential directions in projection matrices */
       Index iT;
 
@@ -89,8 +92,9 @@ namespace MBSim {
       int getFrictionDirections() const {return nFric;}
 
       /*! set one friction coefficinet for directions tangential to contact */
+      //void setFrictionCharacteristics(UserFunction *mu_) {mu = mu_;}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
-      /*! get friction coefficinet */
+      ///*! get friction coefficinet */
       double getFrictionCoefficient() {return mu;}
 
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}

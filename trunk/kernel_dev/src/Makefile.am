@@ -28,7 +28,8 @@ extra_dynamic_interface.cc\
 userfunction.cc\
 userfunction_contour.cc\
 functions_contact.cc\
-class_factory.cc
+class_factory.cc\
+kinematics.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la 
 
@@ -63,5 +64,6 @@ extra_dynamic_interface.h\
 userfunction.h\
 userfunction_contour.h\
 functions_contact.h\
-class_factory.h
+class_factory.h\
+kinematics.h
 

@@ -50,6 +50,18 @@ namespace MBSim {
       return new Line("NoName");
     return 0;
   }
+  Translation* ClassFactory::getTranslation(const string &type) {
+    if(type == "LinearTranslation")
+      return new LinearTranslation;
+    return 0;
+  }
+  Rotation* ClassFactory::getRotation(const string &type) {
+    if(type == "RotationAboutFixedAxis")
+      return new RotationAboutFixedAxis;
+    else if(type == "CardanAngles")
+      return new CardanAngles;
+    return 0;
+  }
 
 }
 
