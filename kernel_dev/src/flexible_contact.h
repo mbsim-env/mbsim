@@ -23,6 +23,7 @@
 #define _FLEXIBLE_CONTACT_H_
 
 #include "contact.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
 
@@ -35,7 +36,9 @@ namespace MBSim {
       Vec WF[2], WM[2];
 
       double c, d;
-      double gdT_grenz;
+
+      RegularizedContactLaw *fcl;
+      RegularizedFrictionLaw *ffl;
 
     public: 
       FlexibleContact(const string &name);
@@ -43,14 +46,18 @@ namespace MBSim {
       FlexibleContact(const FlexibleContact *master,const string &name_);
 
       void init();
+      void calcSize();
 
       void updateKinetics(double t);
       void updateh(double t);
 
-      void setStiffness(double c_) {c = c_;}
-      void setDamping(double d_) {d = d_;}
+      void setContactLaw(RegularizedContactLaw *fcl_) {fcl = fcl_;}
+      void setFrictionLaw(RegularizedFrictionLaw *ffl_) {ffl = ffl_;}
 
-      void setMarginalVelocity(double v) {gdT_grenz = v;}
+      string getType() const {return "FlexibleContact";}
+
+      bool isActive() const { return fcl->isActive(g(0));}
+      //void setMarginalVelocity(double v) {gdT_grenz = v;}
   };
 
   typedef FlexibleContact ContactFlexible;

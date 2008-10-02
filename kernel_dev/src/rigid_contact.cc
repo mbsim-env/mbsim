@@ -25,6 +25,7 @@
 #include "utils/nonsmooth_algebra.h"
 #include "multi_body_system.h"
 #include "function.h"
+#include "class_factory.h"
 
 namespace MBSim {
 
@@ -38,7 +39,7 @@ namespace MBSim {
     // return x>=0?1:-1;
   }
 
-  RigidContact::RigidContact(const string &name) : Contact(name,true), argT(2), epsilonN(0), gd_grenz(1e-2) {
+  RigidContact::RigidContact(const string &name) : Contact(name,true), argT(2), fcl(0), fdf(0) {
   }
 
   void RigidContact::init() {
@@ -49,11 +50,44 @@ namespace MBSim {
     }
   }
 
+  void RigidContact::calcSize() {
+    if(fdf)
+      nFric = fdf->getFrictionDirections();
+    else
+      nFric = 0;
+    Contact::calcSize();
+  }
+
+  void RigidContact::save(const string& path, ofstream &outputfile) {
+    Contact::save(path, outputfile);
+
+    fcl->save(path,outputfile);
+    fdf->save(path,outputfile);
+  }
+
+  void RigidContact::load(const string& path, ifstream &inputfile) {
+    Contact::load(path,inputfile);
+    string dummy;
+    int s = inputfile.tellg();
+    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // Type of translation 
+    inputfile.seekg(s,ios::beg);
+    ClassFactory cf;
+    setContactLaw(cf.getContactLaw(dummy));
+    fcl->load(path, inputfile);
+
+    s = inputfile.tellg();
+    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // Type of translation 
+    inputfile.seekg(s,ios::beg);
+    setFrictionLaw(cf.getFrictionLaw(dummy));
+    fdf->load(path, inputfile);
+  }
+
   void RigidContact::updateKinetics(double t) {
     fF[0].col(0) = getContourPointData(0).Wn;
     fF[0](Index(0,2),iT) = getContourPointData(0).Wt;
     fF[1] = -fF[0];
-
   }
 
   void RigidContact::updateW(double t) {
@@ -74,15 +108,6 @@ namespace MBSim {
       parent->setActiveConstraintsChanged(true);
   }
 
-  void RigidContact::projectJ(double dt) {
-    if(nFric==1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*s(1),mu*fabs(la(0)));
-    else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*s(1,2),mu*fabs(la(0)));
-
-    la(0) = proxCN(la(0)-rFactor(0)*s(0));
-  }
-
   void RigidContact::projectGS(double dt) {
     double *a = parent->getGs()();
     int *ia = parent->getGs().Ip();
@@ -94,20 +119,19 @@ namespace MBSim {
     for(int j=ia[laInd]; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
-    if(fabs(gd(0)) > gd_grenz)
-      gdn(0) += epsilonN*gd(0);
-
-    la(0) = proxCN(la(0)-rFactor(0)*gdn(0));
+    //la(0) = ((*fcl)(la, gdn, gd, rFactor))(0);
+    la(0) = (*fcl)(la(0), gdn(0), gd(0), rFactor(0));
 
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
-    if(nFric==1) 
-      la(1) = proxCT2D(la(1)-rFactor(1)*gdn(1),mu*fabs(la(0)));
-    else if(nFric == 2) 
-      la(1,2) = proxCT3D(la(1,2)-rFactor(1)*gdn(1,2),mu*fabs(la(0)));
+
+    if(fdf)
+      la(1,nFric) = (*fdf)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
+      //la(1,nFric) = (*fdf)(la, gdn, gd, rFactor);
+      //la(1,nFric) = (*fdf)(la, gdn, rFactor(1));
   }
 
   void RigidContact::solveGS(double dt) {
@@ -122,31 +146,22 @@ namespace MBSim {
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
-    if(fabs(gd(0)) > gd_grenz)
-      gdn(0) += epsilonN*gd(0);
-
     double om = 1.0;
-    double buf;
-    if(gdn(0) >= 0)
-      buf = 0;
-    else {
-      buf = -gdn(0)/a[ia[laInd]];
-    }
-    la(0) += om*(buf - la(0));;
+    double buf = fcl->solve(a[ia[laInd]], gdn(0), gd(0));
+    //Vec buf = fcl->solve(parent->getG()(Index(laInd,laInd)), gdn, gd);
+    la(0) += om*(buf - la(0));
 
     if(nFric) {
       gdn(1) = s(1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdn(1) += a[j]*laMBS(ja[j]);
 
-      double laNmu = fabs(la(0))*mu;
-      double sdG = -gdn(1)/a[ia[laInd+1]];
-
-      if(fabs(sdG)<=laNmu) 
-	buf = sdG;
-      else 
-	buf = (laNmu<=sdG) ? laNmu : -laNmu;
-      la(1) += om*(buf - la(1));;
+      if(fdf) {
+	//Vec buf = fdf->solve(a[ia[laInd+1]], la(0), gdn(1));
+	//Vec buf = fdf->solve(parent->getG()(Index(laInd,laInd+1)), la, gdn, gd);
+	Vec buf = fdf->solve(parent->getG()(Index(laInd+1,laInd+nFric)), gdn(1,nFric), gd(1,nFric), la(0));
+	la(1,nFric) += om*(buf - la(1,nFric));
+      }
     }
   }
 
@@ -163,20 +178,12 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    if(fabs(gd(0)) > gd_grenz)
-      gdn(0) += epsilonN*gd(0);
-
-    argN = la(0) - rFactor(0)*gdn(0);
-    res(0) = la(0) - proxCN(argN);
-
-    if(nFric==1) {
-      argT(0) = la(1) - rFactor(1)*gdn(1);
-      res(1) = la(1) - proxCT2D(argT(0),mu*fabs(la(0)));
-
-    } else if(nFric == 2) {
-      argT = la(1,2) - rFactor(1)*gdn(1,2);
-      res(1,2) = la(1,2) - proxCT3D(argT,mu*fabs(la(0)));
-    }
+    //res(0) = la(0) - ((*fcl)(la, gdn, gd, rFactor))(0);
+    res(0) = la(0) - (*fcl)(la(0), gdn(0), gd(0), rFactor(0));
+    if(fdf) 
+      //res(1,nFric) = la(1,nFric) - (*fdf)(la, gdn, rFactor(1));
+      //res(1,nFric) = la(1,nFric) - (*fdf)(la, gdn, gd, rFactor);
+      res(1,nFric) = la(1,nFric) - (*fdf)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
   }
 
 
@@ -185,57 +192,69 @@ namespace MBSim {
     SqrMat Jprox = parent->getJprox();
     SymMat G = parent->getG();
     int laInd = getlaIndMBS();
-  
-    double rfac0 = rFactor(0);
+
     RowVec jp1=Jprox.row(laInd);
-    if(argN < 0.) {
-      jp1.init(0);
-      jp1(laInd) = 1;
-    } else {
-      for(int i=0; i<G.size(); i++) {
-	jp1(i) = rfac0*G(laInd,i);
-      }
-    }
+    RowVec e1(jp1.size());
+    e1(laInd) = 1;
+    //Vec diff = fcl->diff(la, gdn, gd, rFactor);
+    Vec diff = fcl->diff(la(0), gdn(0), gd(0), rFactor(0));
+
+    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd)
+    for(int i=0; i<G.size(); i++) 
+      jp1(i) -= diff(1)*G(laInd,i);
 
     if(nFric == 1) {
+      //Mat diff = fdf->diff(la, gdn, gd, rFactor);
+      Mat diff = fdf->diff(la(1,1), gdn(1,1), gd(1,1), la(0), rFactor(1));
       RowVec jp2=Jprox.row(laInd+1);
-      double rfac1 = rFactor(1);
-      double laNmu = fabs(la(0))*mu;
-      if(fabs(argT(0))<=laNmu) {
-	for(int i=0; i<G.size(); i++) {
-	  jp2(i) = rfac1*G(laInd+1,i);
-	}
-      } else {
-	jp2.init(0);
-	jp2(laInd+1) = 1;
-	jp2(laInd) = -sign(argT(0))*sign(la(0))*mu;
-      }
-    } else if(nFric == 2) {
-      RowVec jp2=Jprox.row(laInd+1);
-      RowVec jp3=Jprox.row(laInd+2);
-      double LaT = pow(argT(0),2)+pow(argT(1),2);
-      double fabsLaT = sqrt(LaT);
-      double laNmu = fabs(la(0))*mu;
-      double rFac1 = rFactor(1);
-      if(fabsLaT <=  laNmu) {
-	for(int i=0; i<G.size(); i++) {
-	  jp2(i) = rFac1*G(laInd+1,i);
-	  jp3(i) = rFac1*G(laInd+2,i);
-	}
-      } else {
-	SymMat dfda(2,NONINIT);
-	dfda(0,0) = 1-argT(0)*argT(0)/LaT;
-	dfda(1,1) = 1-argT(1)*argT(1)/LaT;
-	dfda(0,1) = -argT(0)*argT(1)/LaT;
+      RowVec e2(jp2.size());
+      e2(laInd+1) = 1;
+      Mat e(2,jp2.size());
+      e(0,laInd) = 1;
+      e(1,laInd+1) = 1;
+      jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laInd)
+      //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laInd)
+      for(int i=0; i<G.size(); i++) 
+	jp2(i) -= diff(0,1)*G(laInd+1,i);
 
-	for(int i=0; i<G.size(); i++) {
-	  double e1 = (i==laInd) ? sign(la(0))*mu : 0;
-	  double e2 = (i==laInd+1?1.0:0.0);
-	  double e3 = (i==laInd+2?1.0:0.0);
-	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(0))/fabsLaT;
-	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu + e1*argT(1))/fabsLaT;
-	}
+    } else if(nFric == 2) {
+      Mat diff = fdf->diff(la(1,2), gdn(1,2), gd(1,2), la(0), rFactor(1));
+      //Mat diff = fdf->diff(la, gdn, gd, rFactor);
+      Mat jp2=Jprox(Index(laInd+1,laInd+2),Index(0,Jprox.cols()));
+      Mat e2(2,jp2.cols());
+      e2(0,laInd+1) = 1;
+      e2(1,laInd+2) = 1;
+      jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laInd+1,laInd+2),Index(0,G.size()-1))
+      for(int i=0; i<G.size(); i++) {
+	jp2(0,i) = diff(0,2)*G(laInd+1,i)+diff(0,3)*G(laInd+2,i);
+	jp2(1,i) = diff(1,2)*G(laInd+1,i)+diff(1,3)*G(laInd+2,i);
       }
+
+//      RowVec jp2=Jprox.row(laInd+1);
+//      RowVec jp3=Jprox.row(laInd+2);
+//      double LaT = pow(argT(0),2)+pow(argT(1),2);
+//      double fabsLaT = sqrt(LaT);
+//      double laNmu0 = fabs(la(0))*mu0;
+//      double rFac1 = rFactor(1);
+//      if(fabsLaT <=  laNmu0) {
+//	for(int i=0; i<G.size(); i++) {
+//	  jp2(i) = rFac1*G(laInd+1,i);
+//	  jp3(i) = rFac1*G(laInd+2,i);
+//	}
+//      } else {
+//	SymMat dfda(2,NONINIT);
+//	dfda(0,0) = 1-argT(0)*argT(0)/LaT;
+//	dfda(1,1) = 1-argT(1)*argT(1)/LaT;
+//	dfda(0,1) = -argT(0)*argT(1)/LaT;
+//
+//	for(int i=0; i<G.size(); i++) {
+//	  double e1 = (i==laInd) ? sign(la(0))*mu0 : 0;
+//	  double e2 = (i==laInd+1?1.0:0.0);
+//	  double e3 = (i==laInd+2?1.0:0.0);
+//	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(0,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu0 + e1*argT(0))/fabsLaT;
+//	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laInd+1,i)) + dfda(1,1)*(e3 - rFac1*G(laInd+2,i)))*laNmu0 + e1*argT(1))/fabsLaT;
+//	}
+//    }
     }
   }
 
@@ -252,38 +271,17 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    if(fabs(gd(0)) > gd_grenz)
-      gdn(0) += epsilonN*gd(0);
-
-    if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
-      ;
-    else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
-      ;
-    else {
+    if(!fcl->isFullfield(la(0),gdn(0),gd(0),laTol*dt,gdTol)) {
+    //if(!fcl->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
       parent->setTermination(false);
       return;
     }
-
-    if(nFric==1) {
-      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol*dt)
-	;
-      else if(fabs(la(1)) <= mu*fabs(la(0))+laTol*dt && fabs(gdn(1)) <= gdTol)
-	;
-      else {
+    if(fdf) 
+      //if(!fdf->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
+      if(!fdf->isFullfield(la(1,nFric),gdn(1,nFric),gd(1,nFric),la(0),laTol*dt,gdTol)) {
 	parent->setTermination(false);
 	return;
       }
-    } else if(nFric==2) {
-      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol*dt)
-	;
-      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
-	;
-      else {
-	parent->setTermination(false);
-	return;
-      }
-    }
-
   }
 
   void RigidContact::updaterFactors() {
@@ -340,43 +338,43 @@ namespace MBSim {
 
   std::string RigidContact::getTerminationInfo(double dt){
     std::string s= "RigidContact " + getName();
-    bool NormalDirectionFailed= false;
+ //   bool NormalDirectionFailed= false;
 
-    if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
-      ;
-    else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
-      ;
-    else {
-      s= s+" (normal): no convergence  gdn= " + numtostr(gdn(0)) + " (gdTol= " + numtostr(gdTol);
-      s= s+ ")     la(0)= " + numtostr(la(0)/dt) + " (laTol= " + numtostr(laTol) + ")";
-      NormalDirectionFailed= true;
-    }
+ //   if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
+ //     ;
+ //   else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
+ //     ;
+ //   else {
+ //     s= s+" (normal): no convergence  gdn= " + numtostr(gdn(0)) + " (gdTol= " + numtostr(gdTol);
+ //     s= s+ ")     la(0)= " + numtostr(la(0)/dt) + " (laTol= " + numtostr(laTol) + ")";
+ //     NormalDirectionFailed= true;
+ //   }
 
-    if(nFric==1) {
-      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol*dt)  // Gleiten
-	; 
-      else if(fabs(la(1)) <= mu*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
-	;
-      else {
-	if (NormalDirectionFailed) s += "\n";
-	s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
-	s= s+ ")\n    stick: abs(laT) - mu abs(laN) = " + numtostr(fabs(la(1)/dt)- mu*fabs(la(0)/dt));
-	s= s+ "\n     slip: abs(laT - mu laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0)))/dt); 
-	s= s+ " (laTol= " + numtostr(laTol) + ")";
-      }
-    } else if(nFric==2) {
-      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol*dt)
-	;
-      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
-	;
-      else {
-	if (NormalDirectionFailed) s += "\n";
-	s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
-	s= s+ ")\n    stick: abs(laT) - mu abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mu*fabs(la(0))/dt);
-	s= s+ " \n    slip: abs(laT -mu laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0)))/dt);
-	s= s+  "  (laTol= " + numtostr(laTol) + ")";
-      }
-    }
+ //   if(nFric==1) {
+ //     if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0))) <= laTol*dt)  // Gleiten
+ //       ; 
+ //     else if(fabs(la(1)) <= mu0*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
+ //       ;
+ //     else {
+ //       if (NormalDirectionFailed) s += "\n";
+ //       s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
+ //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN) = " + numtostr(fabs(la(1)/dt)- mu0*fabs(la(0)/dt));
+ //       s= s+ "\n     slip: abs(laT - mu0 laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0)))/dt); 
+ //       s= s+ " (laTol= " + numtostr(laTol) + ")";
+ //     }
+ //   } else if(nFric==2) {
+ //     if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0))) <= laTol*dt)
+ //       ;
+ //     else if(nrm2(la(1,2)) <= mu0*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
+ //       ;
+ //     else {
+ //       if (NormalDirectionFailed) s += "\n";
+ //       s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
+ //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mu0*fabs(la(0))/dt);
+ //       s= s+ " \n    slip: abs(laT -mu0 laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0)))/dt);
+ //       s= s+  "  (laTol= " + numtostr(laTol) + ")";
+ //     }
+ //   }
     return s;
   }
 

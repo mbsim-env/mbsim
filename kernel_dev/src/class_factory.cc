@@ -27,6 +27,7 @@
 #include "contour.h"
 #include "group.h"
 #include "rigid_body.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
   Object* ClassFactory::getObject(const string &type) {
@@ -60,6 +61,16 @@ namespace MBSim {
       return new RotationAboutFixedAxis;
     else if(type == "CardanAngles")
       return new CardanAngles;
+    return 0;
+  }
+  ContactLaw* ClassFactory::getContactLaw(const string &type) {
+    if(type == "UnilateralContact")
+      return new UnilateralContact;
+    return 0;
+  }
+  DryFriction* ClassFactory::getFrictionLaw(const string &type) {
+    if(type == "PlanarCoulombFriction")
+      return new PlanarCoulombFriction;
     return 0;
   }
 

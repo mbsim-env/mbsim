@@ -15,9 +15,7 @@ flexible_connection.cc\
 rigid_connection.cc\
 contact.cc\
 rigid_contact.cc\
-bilateral_rigid_contact.cc\
 flexible_contact.cc\
-bilateral_flexible_contact.cc\
 load.cc\
 element.cc\
 tree.cc\
@@ -29,7 +27,8 @@ userfunction.cc\
 userfunction_contour.cc\
 functions_contact.cc\
 class_factory.cc\
-kinematics.cc
+kinematics.cc\
+constitutive_laws.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la 
 
@@ -50,9 +49,7 @@ flexible_connection.h\
 rigid_connection.h\
 contact.h\
 rigid_contact.h\
-bilateral_rigid_contact.h\
 flexible_contact.h\
-bilateral_flexible_contact.h\
 load.h\
 element.h\
 tree.h\
@@ -65,5 +62,6 @@ userfunction.h\
 userfunction_contour.h\
 functions_contact.h\
 class_factory.h\
-kinematics.h
+kinematics.h\
+constitutive_laws.h
 

@@ -24,9 +24,10 @@
 #define _RIGID_CONTACT_H_
 
 #include "contact.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
-
+ 
   /*! \brief Class for rigid contacts
    *
    * */
@@ -37,9 +38,11 @@ namespace MBSim {
       Mat fF[2], fM[2];
       double argN;
       Vec argT;
-      double epsilonN, gd_grenz;
 
       void checkActive();
+
+      ContactLaw *fcl;
+      DryFriction *fdf;
 
     public: 
 
@@ -49,9 +52,13 @@ namespace MBSim {
       RigidContact(const RigidContact *master, const string &name_) : Contact(master,name_) {}
 
       void init();
+      void calcSize();
+
+      void load(const string& path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
 
       /*! for time integration with projection methods for constraint and contact treatment */
-      void projectJ(double dt);
+      void projectJ(double dt) {}
       /*! for time integration with projection methods for constraint and contact treatment */
       void projectGS(double dt);
       /*! for time integration with projection methods for constraint and contact treatment */
@@ -68,10 +75,15 @@ namespace MBSim {
       void updateKinetics(double t);
       void updateW(double t);
 
-      void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
+   //   void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
+
+      void setContactLaw(ContactLaw *fcl_) {fcl = fcl_;}
+      void setFrictionLaw(DryFriction *fdf_) {fdf = fdf_;}
 
       string getType() const {return "RigidContact";}
 
+      //bool isActive() const { return fcl->isActive(g);}
+      bool isActive() const { return fcl->isActive(g(0));}
   };
 
   typedef RigidContact ContactRigid;
