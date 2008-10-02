@@ -87,7 +87,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ConnectionFlexible *ls = new ConnectionFlexible("Gelenk1");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   //ls->setForceLaw(new LinearRegularizedConnection(SqrMat(2,EYE)*1e7, SqrMat(2,INIT,1)));
-  ls->setForceLaw(new SpringDamperConnection(1e7, 1));
+  ls->setForceLaw(new SimpleLinearRegularizedConnection(1e7, 1));
   //ls->setTranslationalStiffness(1e7);
   //ls->setTranslationalDamping(1);
   addLink(ls);
@@ -96,7 +96,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ls = new ConnectionFlexible("Gelenk2");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   //ls->setForceLaw(new LinearRegularizedConnection(SqrMat(2,EYE)*1e7, SqrMat(2,INIT,1)));
-  ls->setForceLaw(new SpringDamperConnection(1e7, 1));
+  ls->setForceLaw(new SimpleLinearRegularizedConnection(1e7, 1));
   //ls->setTranslationalStiffness(1e7);
   //ls->setTranslationalDamping(1);
   addLink(ls);
