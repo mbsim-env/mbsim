@@ -275,24 +275,24 @@ namespace MBSim {
       }
   };
 
- // class StiffConnection {
- //   public:
- //     StiffConnection() {};
- //     virtual ~StiffConnection() {};
- //     virtual Vec operator()(const Vec &la ,const Vec &g, const Vec& r);
- //     virtual Vec diff(const Vec& la, const Vec &gdn, const Vec& r);
- //     virtual double solve(const SymMat& G, const Vec& gdn);
- //     virtual bool isFullfield(const Vec& la, const Vec& gdn, double tolgd);
- // };
-
-  class RegularizedConnection {
+  class ConnectionLaw {
     public:
-      RegularizedConnection() {};
-      virtual ~RegularizedConnection() {};
+      ConnectionLaw() {};
+      virtual ~ConnectionLaw() {};
+      virtual Vec operator()(const Vec &la ,const Vec &g, const Vec& r);
+      virtual Mat diff(const Vec& la, const Vec &gdn, const Vec& r);
+      virtual Vec solve(const SymMat& G, const Vec& gdn);
+      virtual bool isFullfield(const Vec& la, const Vec& gdn, double tolgd);
+  };
+
+  class RegularizedConnectionLaw {
+    public:
+      RegularizedConnectionLaw() {};
+      virtual ~RegularizedConnectionLaw() {};
       virtual Vec operator()(const Vec &g, const Vec &gd) = 0;
   };
 
-  class LinearRegularizedConnection : public RegularizedConnection {
+  class LinearRegularizedConnection : public RegularizedConnectionLaw {
     public:
       SqrMat C, D;
       LinearRegularizedConnection() {};
@@ -303,12 +303,12 @@ namespace MBSim {
       }
   };
 
-  class SpringDamperConnection : public RegularizedConnection {
+  class SimpleLinearRegularizedConnection : public RegularizedConnectionLaw {
     public:
       double c, d;
-      SpringDamperConnection() {};
-      SpringDamperConnection(double c_, double d_) : c(c_), d(d_) {};
-      virtual ~SpringDamperConnection() {};
+      SimpleLinearRegularizedConnection() {};
+      SimpleLinearRegularizedConnection(double c_, double d_) : c(c_), d(d_) {};
+      virtual ~SimpleLinearRegularizedConnection() {};
       void setStiffness(double c_) {c = c_;}
       void setDamping(double d_) {d = d_;}
       Vec operator()(const Vec &g, const Vec &gd) {

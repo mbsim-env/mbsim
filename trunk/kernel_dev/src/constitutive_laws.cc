@@ -363,10 +363,37 @@ namespace MBSim {
       return false;
   }
 
-  //Vec StiffConnection::operator()(const Vec &la ,const Vec &g, const Vec& r);
-  //Vec StiffConnection::diff(const Vec& la, const Vec &gdn, const Vec& r);
-  //double StiffConnection::solve(const SymMat& G, const Vec& gdn);
-  //bool StiffConnection::isFullfield(const Vec& la, const Vec& gdn, double tolgd);
+  Vec ConnectionLaw::operator()(const Vec &la ,const Vec &s, const Vec& r) {
+    Vec res(s.size(),NONINIT);
+    for(int i=0; i<s.size(); i++)
+     res(i) = la(i) - r(i)*s(i);
+    return res;
+  }
+
+  Mat ConnectionLaw::diff(const Vec& la, const Vec &s, const Vec& r) {
+    Mat d(la.size(),la.size()+s.size(),NONINIT);
+    for(int i=0; i<la.size(); i++)
+      for(int j=0; j<la.size(); j++) {
+	d(i,j) = 1;
+	d(i,la.size()+j) = -r(i);
+      }
+    return d;
+  }
+
+  Vec ConnectionLaw::solve(const SymMat& G, const Vec& s) {
+    Vec res(s.size(),NONINIT);
+    for(int i=0; i<s.size(); i++)
+      res(i) = -s(i)/G(i,i);
+    return res;
+  }
+
+  bool ConnectionLaw::isFullfield(const Vec& la, const Vec& s, double gdTol) {
+
+    for(int i=0; i<s.size(); i++)
+      if(fabs(s(i)) > gdTol)
+	return false;
+    return true;
+ }
 
 }
 

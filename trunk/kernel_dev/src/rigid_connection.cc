@@ -29,7 +29,7 @@
 
 namespace MBSim {
 
-  RigidConnection::RigidConnection(const string &name) : Connection(name,true) {
+  RigidConnection::RigidConnection(const string &name) : Connection(name,true) { //, ffl(0), fml(0)
   }
 
   void RigidConnection::init() {
