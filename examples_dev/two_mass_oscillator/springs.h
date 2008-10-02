@@ -5,9 +5,9 @@
 #include "data_interface_base.h"
 
 namespace MBSim {
-class Spring : public ConnectionFlexible {
+class Spring : public FlexibleConnection {
   protected:
-    double l0;
+    double l0, cT, dT;
   public:
     Spring(const string &name);
     void updateStage1(double t);

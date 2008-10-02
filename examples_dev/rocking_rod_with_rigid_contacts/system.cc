@@ -44,8 +44,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   BodyRigid* body = new BodyRigid("Rod");
   addObject(body);
 
-  body->setFrameOfReference(getCoordinateSystem("I"));
-  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
+  //body->setFrameOfReference(getCoordinateSystem("I"));
+  //body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
@@ -82,14 +82,18 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Contacts
   //ContactRigid *cr1S = new ImpactRigid("Contact1"); 
   ContactRigid *cr1S = new ContactRigid("Contact1"); 
-  cr1S->setFrictionDirections(1);
-  cr1S->setFrictionCoefficient(mu);
+  //cr1S->setFrictionDirections(0);
+  //cr1S->setFrictionCharacteristics(new FuncConst(Vec(1,INIT,mu)));
+  cr1S->setContactLaw(new UnilateralContact);
+  //cr1S->setFrictionLaw(new CoulombFriction(mu));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
   ContactRigid *cr2S = new ContactRigid("Contact2");
-  cr2S->setFrictionDirections(1);
-  cr2S->setFrictionCoefficient(mu);
+  //cr2S->setFrictionDirections(1);
+  cr2S->setContactLaw(new UnilateralContact);
+  cr2S->setFrictionLaw(new PlanarCoulombFriction(mu));
+  //cr2S->setFrictionCharacteristics(new FuncConst(Vec(1,INIT,mu)));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
 
