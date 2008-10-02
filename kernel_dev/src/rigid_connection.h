@@ -24,6 +24,7 @@
 #define _RIGID_CONNECTION_H_
 
 #include "connection.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
 
@@ -36,11 +37,16 @@ namespace MBSim {
 
       Mat fF[2], fM[2];
 
+      // ConnectionLaw *ffl, *fml;
+
     public:
 
       RigidConnection(const string &name);
 
       void init();
+
+      // void setForceLaw(ConnectionLaw * rc) {ffl = rc;}
+      // void setMomentLaw(ConnectionLaw * rc) {fml = rc;}
 
       void updateKinetics(double t);
       void updateW(double t);
