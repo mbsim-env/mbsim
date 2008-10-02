@@ -26,11 +26,11 @@
 
 namespace MBSim {
 
-  FlexibleContact::FlexibleContact(const string &name) : Contact(name,false), gdT_grenz(0.1) {
+  FlexibleContact::FlexibleContact(const string &name) : Contact(name,false), fcl(0), ffl(0) {
     active = false;
   }
 
-  FlexibleContact::FlexibleContact(const FlexibleContact *master,const string &name_) : Contact(master,name_), gdT_grenz(0.1) {
+  FlexibleContact::FlexibleContact(const FlexibleContact *master,const string &name_) : Contact(master,name_) {
     c = master->c;
     d = master->d;
     active = false;
@@ -45,27 +45,20 @@ namespace MBSim {
     }
   }
 
-  void FlexibleContact::updateKinetics(double t) {
-    double mu0 = mu;
-
-    if(gd(0)<0) 
-      la(0) = -c*g(0) - d*gd(0);
+  void FlexibleContact::calcSize() {
+    if(ffl)
+      nFric = ffl->getFrictionDirections();
     else
-      la(0) = -c*g(0);
+      nFric = 0;
+    Contact::calcSize();
+  }
 
-    if(nFric == 1) { 
-      if(fabs(gd(1)) < gdT_grenz)
-	la(1) = -la(0)*mu0*gd(1)/gdT_grenz;
-      else
-	la(1) = gd(1)>0?-la(0)*mu:la(0)*mu;
-    } else if(nFric == 2) {
-      double norm_gdT = nrm2(gd(1,2));
-      if(norm_gdT < gdT_grenz)
-	la(1,2) = gd(1,2)*(-la(0)*mu0/gdT_grenz);
-      else
-	la(1,2) = gd(1,2)*(-la(0)*mu/norm_gdT);
-    }
+  void FlexibleContact::updateKinetics(double t) {
 
+    la(0) = (*fcl)(g(0),gd(0));
+    if(ffl)
+      la(1,nFric) = (*ffl)(gd(1,nFric),fabs(la(0)));
+    
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
     WF[1] = -WF[0];
   }

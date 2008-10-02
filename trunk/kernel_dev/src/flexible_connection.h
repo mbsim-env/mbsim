@@ -24,6 +24,7 @@
 #define _FLEXIBLE_CONNECTION_H_
 
 #include "connection.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
 
@@ -35,18 +36,17 @@ namespace MBSim {
     protected:
       Vec WF[2], WM[2];
 
-      double cT, dT, cR, dR;
+      RegularizedConnection *ffl, *fml;
 
     public:
 
       FlexibleConnection(const string &name);
 
+      void setForceLaw(RegularizedConnection * rc) {ffl = rc;}
+      void setMomentLaw(RegularizedConnection * rc) {fml = rc;}
+
       void updateKinetics(double t);
       void updateh(double t);
-      void setTranslationalStiffness(double c) {cT = c;}
-      void setTranslationalDamping(double d) {dT = d;}
-      void setRotationalStiffness(double c) {cR = c;}
-      void setRotationalDamping(double d) {dR = d;}
 
       double computePotentialEnergy();
   };

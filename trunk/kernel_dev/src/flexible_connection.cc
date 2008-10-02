@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  FlexibleConnection::FlexibleConnection(const string &name) : Connection(name,false), cT(0), dT(0), cR(0), dR(0) {
+  FlexibleConnection::FlexibleConnection(const string &name) : Connection(name,false), ffl(0), fml(0) {
     for(int i=0; i<2 ; i++) {
       L.push_back(Vec(6));
       WF[i] >> L[i](Index(0,2));
@@ -34,8 +34,10 @@ namespace MBSim {
   }
 
   void FlexibleConnection::updateKinetics(double t) {
-    la(IT) = -cT*g(IT) - dT*gd(IT);
-    la(IR) = -cR*g(IR) - dR*gd(IR);
+    if(ffl)
+      la(IT) = (*ffl)(g(IT),gd(IT));
+    if(fml)
+      la(IR) = (*fml)(g(IR),gd(IR));
     WF[1] = Wf*la(IT);
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];

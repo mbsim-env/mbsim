@@ -33,6 +33,8 @@ namespace MBSim {
   class Contour;
   class Translation;
   class Rotation;
+  class ContactLaw;
+  class DryFriction;
 
   class ClassFactory {
     public:
@@ -41,6 +43,8 @@ namespace MBSim {
       Contour* getContour(const string &type);
       Translation* getTranslation(const string &type);
       Rotation* getRotation(const string &type);
+      ContactLaw* getContactLaw(const string &type);
+      DryFriction* getFrictionLaw(const string &type);
   };
 
 }

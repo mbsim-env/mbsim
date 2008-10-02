@@ -307,8 +307,12 @@ namespace MBSim {
   }
 
   void Link::updater(double t) {
-    r[0] += W[0]*la;
-    r[1] += W[1]*la;
+    for(unsigned i=0; i<port.size(); i++) {
+      r[i] += W[i]*la;
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      r[i] += W[i]*la;
+    }
   }
 
   int Link::getlaIndMBS() const {

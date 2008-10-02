@@ -56,14 +56,14 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), mu(0), nFric(0), contactKinematics(0) {
+  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), nFric(0), contactKinematics(0) {
 
     active = false;
   }
 
-  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), mu(0), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
+  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
 
-    mu = master->mu;
+   // mu = master->mu; TODO
 
     active = false;
   }
@@ -71,6 +71,7 @@ namespace MBSim {
   Contact::~Contact() {
     if (contactKinematics) delete contactKinematics;
   }
+  
   void Contact::calcSize() {
     Link::calcSize();
     gSize = 1;
@@ -80,7 +81,8 @@ namespace MBSim {
 
   void Contact::init() {
     Link::init();
-      if(contactKinematics);
+
+    if(contactKinematics);
 
     else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Line*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Line*>(contour[0]))) 
       contactKinematics = new ContactKinematicsPointLine; 
@@ -152,10 +154,10 @@ namespace MBSim {
     cpData.push_back(cpd[1]);
     cpData[0].type = CONTINUUM; // default-Wert
     cpData[0].Wn.resize(3,1);
-    cpData[0].Wt.resize(3,getFrictionDirections());
+    cpData[0].Wt.resize(3,nFric);
     cpData[1].type = CONTINUUM; // default-Wert
     cpData[1].Wn.resize(3,1);
-    cpData[1].Wt.resize(3,getFrictionDirections());
+    cpData[1].Wt.resize(3,nFric);
     iT = Index(1,nFric);
     connectHitSpheres(contour[0],contour[1]);
     contactKinematics->assignContours(contour);
@@ -164,8 +166,7 @@ namespace MBSim {
   void Contact::connect(Contour *contour0, Contour* contour1) {
     Link::connect(contour0,0);
     Link::connect(contour1,1);
-
-    }
+  }
 
   void Contact::connectHitSpheres(Contour *contour0, Contour* contour1) {
     // wird eh erst im init() ausgefuehrt
@@ -189,40 +190,39 @@ namespace MBSim {
       updateKinetics(t);
   }
 
-
   void Contact::checkActive() {
-    if(g(0)>0)
-      active = false;
-    else {
+    if(isActive())
       active = true;
+    else {
+      active = false;
     }
   }
 
   void Contact::save(const string& path, ofstream &outputfile) {
     Link::save(path, outputfile);
 
-    outputfile << "# Number of friction directions:" << endl;
-    outputfile << nFric << endl;
-    outputfile << endl;
+   // outputfile << "# Number of friction directions:" << endl;
+   // outputfile << nFric << endl;
+   // outputfile << endl;
 
-    outputfile << "# Friction coefficient:" << endl;
-    outputfile << mu << endl;
-    outputfile << endl;
+   // outputfile << "# Friction coefficient:" << endl;
+   // //outputfile << mu << endl;
+   // outputfile << endl;
   }
 
   void Contact::load(const string& path, ifstream &inputfile) {
     Link::load(path,inputfile);
-    string dummy;
+   // string dummy;
 
-    getline(inputfile,dummy); // # Number of friction directions
-    inputfile >> nFric;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
+   // getline(inputfile,dummy); // # Number of friction directions
+   // inputfile >> nFric;
+   // getline(inputfile,dummy); // Rest of line
+   // getline(inputfile,dummy); // Newline
 
-    getline(inputfile,dummy); // # Friction coefficient
-    inputfile >> mu;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
+   // getline(inputfile,dummy); // # Friction coefficient
+   // //inputfile >> mu;
+   // getline(inputfile,dummy); // Rest of line
+   // getline(inputfile,dummy); // Newline
   }
 }
 

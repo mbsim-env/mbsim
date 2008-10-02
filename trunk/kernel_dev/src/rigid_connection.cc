@@ -65,8 +65,8 @@ namespace MBSim {
   }
 
   void RigidConnection::projectJ(double dt) {
-    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) 
-      la(i) -= rFactor(i)*s(i);
+//    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) 
+//      la(i) -= rFactor(i)*s(i);
   }
 
   void RigidConnection::projectGS(double dt) {
