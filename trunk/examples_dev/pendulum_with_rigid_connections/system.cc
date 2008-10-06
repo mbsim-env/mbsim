@@ -88,12 +88,16 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ConnectionRigid *ls = new ConnectionRigid("Gelenk1");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
+  ls->setForceLaw(new BilateralConstraint);
+  ls->setImpactForceLaw(new BilateralImpact);
   ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
   ls->setPlotLevel(2);
 
   ls = new ConnectionRigid("Gelenk2");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
+  ls->setForceLaw(new BilateralConstraint);
+  ls->setImpactForceLaw(new BilateralImpact);
   ls->connect(box1->getCoordinateSystem("PunktU"),box2->getCoordinateSystem("Punkt"));
   ls->setPlotLevel(2);
 
