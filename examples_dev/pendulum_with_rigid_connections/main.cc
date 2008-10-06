@@ -10,6 +10,8 @@ int main (int argc, char* argv[])
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->setProjectDirectory("plot");
+  //sys->setSolver(GaussSeidel);
+  //sys->setSolver(RootFinding);
   sys->init();
   
   //LSODARIntegrator integrator;
