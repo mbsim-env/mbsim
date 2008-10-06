@@ -29,7 +29,7 @@
 
 namespace MBSim {
 
-  RigidConnection::RigidConnection(const string &name) : Connection(name,true) { //, ffl(0), fml(0)
+  RigidConnection::RigidConnection(const string &name) : Connection(name,true), ffl(0), fml(0), fifl(0), fiml(0) {
   }
 
   void RigidConnection::init() {
@@ -76,12 +76,19 @@ namespace MBSim {
     int laInd = getlaIndMBS();
     Vec &laMBS = parent->getlaMBS();
   
-    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
+    for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) -= rFactor(i)*gdn(i);
+      la(i) = (*ffl)(la(i), gdn(i), rFactor(i));
+    }
+    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+      gdn(i) = s(i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
+	gdn(i) += a[j]*laMBS(ja[j]);
+
+      la(i) = (*fml)(la(i), gdn(i), rFactor(i));
     }
   }
 
@@ -92,12 +99,21 @@ namespace MBSim {
     int laInd = getlaIndMBS();
     Vec &laMBS = parent->getlaMBS();
   
-    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
+    for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = -gdn(i)/a[ia[laInd+i]];
+      //la(i) = ffl->solve(a[ia[laInd+i]], gdn(i));
+      la(i) = fifl->solve(a[ia[laInd+i]], gdn(i), gd(i));
+    }
+    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+      gdn(i) = s(i);
+      for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
+	gdn(i) += a[j]*laMBS(ja[j]);
+
+      //la(i) = fml->solve(a[ia[laInd+i]], gdn(i));
+      la(i) = fiml->solve(a[ia[laInd+i]], gdn(i), gd(i));
     }
   }
 
@@ -129,20 +145,53 @@ namespace MBSim {
     int laInd = getlaIndMBS();
     Vec &laMBS = parent->getlaMBS();
   
-    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) {
+    for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = gdn(i);
+      //res(i) = la(i) - (*ffl)(la(i), gdn(i), rFactor(i));
+      res(i) = la(i) - (*fifl)(la(i), gdn(i), gd(i), rFactor(i));
+    }
+    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+      gdn(i) = s(i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
+	gdn(i) += a[j]*laMBS(ja[j]);
+
+      //res(i) = la(i) - (*fml)(la(i), gdn(i), rFactor(i));
+      res(i) = la(i) - (*fiml)(la(i), gdn(i), gd(i), rFactor(i));
     }
   }
 
   void RigidConnection::residualProjJac(double dt) {
+    SqrMat Jprox = parent->getJprox();
+    SymMat G = parent->getG();
     int laInd = getlaIndMBS();
-    for(int i=laInd; i<laInd+forceDir.cols() + momentDir.cols(); i++) 
-      for(int j=0; j<parent->getG().size(); j++)  
-	parent->getJprox()(i,j) = parent->getG()(i,j);
+
+    for(int i=0; i<forceDir.cols(); i++) {
+      RowVec jp1=Jprox.row(laInd+i);
+      RowVec e1(jp1.size());
+      e1(laInd+i) = 1;
+      //Vec diff = ffl->diff(la(i), gdn(i), rFactor(i));
+      Vec diff = fifl->diff(la(i), gdn(i), gd(i), rFactor(i));
+
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
+      for(int j=0; j<G.size(); j++) 
+	jp1(j) -= diff(1)*G(laInd+i,j);
+    }
+
+    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+
+      RowVec jp1=Jprox.row(laInd+i);
+      RowVec e1(jp1.size());
+      e1(laInd+i) = 1;
+      //Vec diff = fml->diff(la(i), gdn(i), rFactor(i));
+      Vec diff = fiml->diff(la(i), gdn(i), gd(i), rFactor(i));
+
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
+      for(int j=0; j<G.size(); j++) 
+	jp1(j) -= diff(1)*G(laInd+i,j);
+    }
   }
 
   void RigidConnection::checkForTermination(double dt) {
@@ -153,14 +202,24 @@ namespace MBSim {
     int laInd = getlaIndMBS();
     Vec &laMBS = parent->getlaMBS();
 
-    for(int i=0; i < forceDir.cols() + momentDir.cols(); i++) {
+    for(int i=0; i < forceDir.cols(); i++) {
       gdn(i) = s(i);
       for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      if(fabs(gdn(i)) <= gdTol)
-	;
-      else {
+      //if(!ffl->isFullfield(la(i),gdn(i),laTol*dt,gdTol)) {
+      if(!fifl->isFullfield(la(i),gdn(i),gd(i),laTol*dt,gdTol)) {
+	parent->setTermination(false);
+	return;
+      }
+    }
+    for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+      gdn(i) = s(i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
+	gdn(i) += a[j]*laMBS(ja[j]);
+
+      //if(!fml->isFullfield(la(i),gdn(i),laTol*dt,gdTol)) {
+      if(!fiml->isFullfield(la(i),gdn(i),gd(i),laTol*dt,gdTol)) {
 	parent->setTermination(false);
 	return;
       }

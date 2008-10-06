@@ -41,8 +41,10 @@ namespace MBSim {
 
       void checkActive();
 
-      ContactLaw *fcl;
+      ConstraintLaw *fcl;
       DryFriction *fdf;
+      NormalImpactLaw *fnil;
+      TangentialImpactLaw *ftil;
 
     public: 
 
@@ -77,7 +79,9 @@ namespace MBSim {
 
    //   void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
 
-      void setContactLaw(ContactLaw *fcl_) {fcl = fcl_;}
+      void setNormalImpactLaw(NormalImpactLaw *fnil_) {fnil = fnil_;}
+      void setTangentialImpactLaw(TangentialImpactLaw *ftil_) {ftil = ftil_;}
+      void setContactLaw(ConstraintLaw *fcl_) {fcl = fcl_;}
       void setFrictionLaw(DryFriction *fdf_) {fdf = fdf_;}
 
       string getType() const {return "RigidContact";}

@@ -63,14 +63,24 @@ namespace MBSim {
       return new CardanAngles;
     return 0;
   }
-  ContactLaw* ClassFactory::getContactLaw(const string &type) {
-    if(type == "UnilateralContact")
-      return new UnilateralContact;
+  ConstraintLaw* ClassFactory::getConstraintLaw(const string &type) {
+    if(type == "UnilateralConstraint")
+      return new UnilateralConstraint;
     return 0;
   }
   DryFriction* ClassFactory::getFrictionLaw(const string &type) {
     if(type == "PlanarCoulombFriction")
       return new PlanarCoulombFriction;
+    return 0;
+  }
+  NormalImpactLaw* ClassFactory::getNormalImpactLaw(const string &type) {
+    if(type == "UnilateralNewtonImpact")
+      return new UnilateralNewtonImpact;
+    return 0;
+  }
+  TangentialImpactLaw* ClassFactory::getTangentialImpactLaw(const string &type) {
+    if(type == "PlanarCoulombImpact")
+      return new PlanarCoulombImpact;
     return 0;
   }
 
