@@ -1,0 +1,63 @@
+# Type:
+MultiBodySystem
+
+# Name:
+MBS
+
+# Full name:
+MBS
+
+# Coordinate systems:
+I
+
+# Contours:
+Point1
+Point2
+
+# q0:
+0 x 1
+[  ]
+
+# u0:
+0 x 1
+[  ]
+
+# Objects:
+Rod
+
+# Links:
+Contact1
+Contact2
+
+# EDIs:
+
+# Translation of contour Point1:
+3 x 1
+[           -0.1
+               0
+               0 ]
+
+# Rotation of contour Point1:
+3 x 3
+[              1             0             0
+               0             1             0
+               0             0             1 ]
+
+# Translation of contour Point2:
+3 x 1
+[            0.1
+               0
+               0 ]
+
+# Rotation of contour Point2:
+3 x 3
+[              1             0             0
+               0             1             0
+               0             0             1 ]
+
+# Acceleration of gravity:
+3 x 1
+[              0
+           -9.81
+               0 ]
+

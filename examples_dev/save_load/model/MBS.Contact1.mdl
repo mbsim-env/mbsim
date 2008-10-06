@@ -1,0 +1,39 @@
+# Type:
+RigidContact
+
+# Name:
+Contact1
+
+# Full name:
+MBS.Contact1
+
+# Connected coordinate sytems:
+
+# Connected contours:
+MBS.Point1
+MBS.Rod.Line
+
+# Type of constraint law:
+UnilateralConstraint
+
+# Type of friction law:
+PlanarCoulombFriction
+
+# Friction coefficient:
+0.3
+
+# Type of impact law:
+UnilateralNewtonImpact
+
+# Restitution coefficient:
+0
+
+# Marginal velocity:
+0.01
+
+# Type of friction law:
+PlanarCoulombImpact
+
+# Friction coefficient:
+0.3
+
