@@ -37,7 +37,7 @@ namespace MBSim {
 
       double c, d;
 
-      RegularizedContactLaw *fcl;
+      RegularizedConstraintLaw *fcl;
       RegularizedFrictionLaw *ffl;
 
     public: 
@@ -51,7 +51,7 @@ namespace MBSim {
       void updateKinetics(double t);
       void updateh(double t);
 
-      void setContactLaw(RegularizedContactLaw *fcl_) {fcl = fcl_;}
+      void setContactLaw(RegularizedConstraintLaw *fcl_) {fcl = fcl_;}
       void setFrictionLaw(RegularizedFrictionLaw *ffl_) {ffl = ffl_;}
 
       string getType() const {return "FlexibleContact";}

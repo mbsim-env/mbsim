@@ -37,7 +37,8 @@ namespace MBSim {
 
       Mat fF[2], fM[2];
 
-      // ConnectionLaw *ffl, *fml;
+      ConstraintLaw *ffl, *fml;
+      NormalImpactLaw *fifl, *fiml;
 
     public:
 
@@ -45,8 +46,10 @@ namespace MBSim {
 
       void init();
 
-      // void setForceLaw(ConnectionLaw * rc) {ffl = rc;}
-      // void setMomentLaw(ConnectionLaw * rc) {fml = rc;}
+      void setForceLaw(ConstraintLaw * rc) {ffl = rc;}
+      void setMomentLaw(ConstraintLaw * rc) {fml = rc;}
+      void setImpactForceLaw(NormalImpactLaw * rc) {fifl = rc;}
+      void setImpactMomentLaw(NormalImpactLaw * rc) {fiml = rc;}
 
       void updateKinetics(double t);
       void updateW(double t);

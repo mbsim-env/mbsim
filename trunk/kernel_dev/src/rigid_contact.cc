@@ -39,7 +39,7 @@ namespace MBSim {
     // return x>=0?1:-1;
   }
 
-  RigidContact::RigidContact(const string &name) : Contact(name,true), argT(2), fcl(0), fdf(0) {
+  RigidContact::RigidContact(const string &name) : Contact(name,true), argT(2), fcl(0), fdf(0), fnil(0), ftil(0) {
   }
 
   void RigidContact::init() {
@@ -63,6 +63,8 @@ namespace MBSim {
 
     fcl->save(path,outputfile);
     fdf->save(path,outputfile);
+    fnil->save(path,outputfile);
+    ftil->save(path,outputfile);
   }
 
   void RigidContact::load(const string& path, ifstream &inputfile) {
@@ -73,7 +75,7 @@ namespace MBSim {
     getline(inputfile,dummy); // Type of translation 
     inputfile.seekg(s,ios::beg);
     ClassFactory cf;
-    setContactLaw(cf.getContactLaw(dummy));
+    setContactLaw(cf.getConstraintLaw(dummy));
     fcl->load(path, inputfile);
 
     s = inputfile.tellg();
@@ -82,6 +84,20 @@ namespace MBSim {
     inputfile.seekg(s,ios::beg);
     setFrictionLaw(cf.getFrictionLaw(dummy));
     fdf->load(path, inputfile);
+
+    s = inputfile.tellg();
+    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // Type of translation 
+    inputfile.seekg(s,ios::beg);
+    setNormalImpactLaw(cf.getNormalImpactLaw(dummy));
+    fnil->load(path, inputfile);
+
+    s = inputfile.tellg();
+    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // Type of translation 
+    inputfile.seekg(s,ios::beg);
+    setTangentialImpactLaw(cf.getTangentialImpactLaw(dummy));
+    ftil->load(path, inputfile);
   }
 
   void RigidContact::updateKinetics(double t) {
@@ -120,7 +136,8 @@ namespace MBSim {
       gdn(0) += a[j]*laMBS(ja[j]);
 
     //la(0) = ((*fcl)(la, gdn, gd, rFactor))(0);
-    la(0) = (*fcl)(la(0), gdn(0), gd(0), rFactor(0));
+    //la(0) = (*fcl)(la(0), gdn(0), rFactor(0));
+    la(0) = (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
 
     for(int i=1; i<=nFric; i++) {
       gdn(i) = s(i);
@@ -128,8 +145,9 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    if(fdf)
-      la(1,nFric) = (*fdf)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
+    if(ftil)
+      la(1,nFric) = (*ftil)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
+      //la(1,nFric) = (*fdf)(la(1,nFric), gdn(1,nFric), la(0), rFactor(1));
       //la(1,nFric) = (*fdf)(la, gdn, gd, rFactor);
       //la(1,nFric) = (*fdf)(la, gdn, rFactor(1));
   }
@@ -147,8 +165,9 @@ namespace MBSim {
       gdn(0) += a[j]*laMBS(ja[j]);
 
     double om = 1.0;
-    double buf = fcl->solve(a[ia[laInd]], gdn(0), gd(0));
     //Vec buf = fcl->solve(parent->getG()(Index(laInd,laInd)), gdn, gd);
+    //double buf = fcl->solve(a[ia[laInd]], gdn(0));
+    double buf = fnil->solve(a[ia[laInd]], gdn(0), gd(0));
     la(0) += om*(buf - la(0));
 
     if(nFric) {
@@ -156,10 +175,11 @@ namespace MBSim {
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdn(1) += a[j]*laMBS(ja[j]);
 
-      if(fdf) {
+      if(ftil) {
 	//Vec buf = fdf->solve(a[ia[laInd+1]], la(0), gdn(1));
 	//Vec buf = fdf->solve(parent->getG()(Index(laInd,laInd+1)), la, gdn, gd);
-	Vec buf = fdf->solve(parent->getG()(Index(laInd+1,laInd+nFric)), gdn(1,nFric), gd(1,nFric), la(0));
+	//Vec buf = fdf->solve(parent->getG()(Index(laInd+1,laInd+nFric)), gdn(1,nFric), la(0));
+	Vec buf = ftil->solve(parent->getG()(Index(laInd+1,laInd+nFric)), gdn(1,nFric), gd(1,nFric), la(0));
 	la(1,nFric) += om*(buf - la(1,nFric));
       }
     }
@@ -179,11 +199,13 @@ namespace MBSim {
     }
 
     //res(0) = la(0) - ((*fcl)(la, gdn, gd, rFactor))(0);
-    res(0) = la(0) - (*fcl)(la(0), gdn(0), gd(0), rFactor(0));
-    if(fdf) 
+    //res(0) = la(0) - (*fcl)(la(0), gdn(0), rFactor(0));
+    res(0) = la(0) - (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
+    if(ftil) 
       //res(1,nFric) = la(1,nFric) - (*fdf)(la, gdn, rFactor(1));
       //res(1,nFric) = la(1,nFric) - (*fdf)(la, gdn, gd, rFactor);
-      res(1,nFric) = la(1,nFric) - (*fdf)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
+      //res(1,nFric) = la(1,nFric) - (*fdf)(la(1,nFric), gdn(1,nFric), la(0), rFactor(1));
+      res(1,nFric) = la(1,nFric) - (*ftil)(la(1,nFric), gdn(1,nFric), gd(1,nFric), la(0), rFactor(1));
   }
 
 
@@ -197,7 +219,8 @@ namespace MBSim {
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     //Vec diff = fcl->diff(la, gdn, gd, rFactor);
-    Vec diff = fcl->diff(la(0), gdn(0), gd(0), rFactor(0));
+    //Vec diff = fcl->diff(la(0), gdn(0), rFactor(0));
+    Vec diff = fnil->diff(la(0), gdn(0), gd(0), rFactor(0));
 
     jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd)
     for(int i=0; i<G.size(); i++) 
@@ -205,7 +228,8 @@ namespace MBSim {
 
     if(nFric == 1) {
       //Mat diff = fdf->diff(la, gdn, gd, rFactor);
-      Mat diff = fdf->diff(la(1,1), gdn(1,1), gd(1,1), la(0), rFactor(1));
+      //Mat diff = fdf->diff(la(1,1), gdn(1,1), la(0), rFactor(1));
+      Mat diff = ftil->diff(la(1,1), gdn(1,1), gd(1,1), la(0), rFactor(1));
       RowVec jp2=Jprox.row(laInd+1);
       RowVec e2(jp2.size());
       e2(laInd+1) = 1;
@@ -218,7 +242,8 @@ namespace MBSim {
 	jp2(i) -= diff(0,1)*G(laInd+1,i);
 
     } else if(nFric == 2) {
-      Mat diff = fdf->diff(la(1,2), gdn(1,2), gd(1,2), la(0), rFactor(1));
+      Mat diff = ftil->diff(la(1,2), gdn(1,2), gd(1,2), la(0), rFactor(1));
+      //Mat diff = fdf->diff(la(1,2), gdn(1,2), la(0), rFactor(1));
       //Mat diff = fdf->diff(la, gdn, gd, rFactor);
       Mat jp2=Jprox(Index(laInd+1,laInd+2),Index(0,Jprox.cols()));
       Mat e2(2,jp2.cols());
@@ -271,14 +296,16 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    if(!fcl->isFullfield(la(0),gdn(0),gd(0),laTol*dt,gdTol)) {
+    //if(!fcl->isFullfield(la(0),gdn(0),laTol*dt,gdTol)) {
     //if(!fcl->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
+    if(!fnil->isFullfield(la(0),gdn(0),gd(0),laTol*dt,gdTol)) {
       parent->setTermination(false);
       return;
     }
-    if(fdf) 
+    if(ftil) 
       //if(!fdf->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
-      if(!fdf->isFullfield(la(1,nFric),gdn(1,nFric),gd(1,nFric),la(0),laTol*dt,gdTol)) {
+      //if(!fdf->isFullfield(la(1,nFric),gdn(1,nFric),la(0),laTol*dt,gdTol)) {
+      if(!ftil->isFullfield(la(1,nFric),gdn(1,nFric),gd(1,nFric),la(0),laTol*dt,gdTol)) {
 	parent->setTermination(false);
 	return;
       }

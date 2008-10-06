@@ -34,10 +34,12 @@ namespace MBSim {
   }
 
   void FlexibleConnection::updateKinetics(double t) {
-    if(ffl)
-      la(IT) = (*ffl)(g(IT),gd(IT));
-    if(fml)
-      la(IR) = (*fml)(g(IR),gd(IR));
+    for(int i=0; i<forceDir.cols(); i++) 
+      la(i) = (*ffl)(g(i), gd(i));
+    
+    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++)
+      la(i) = (*fml)(g(i), gd(i));
+
     WF[1] = Wf*la(IT);
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];

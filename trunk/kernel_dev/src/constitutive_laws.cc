@@ -67,49 +67,35 @@ namespace MBSim {
 //      return false;
 //    
 //  }
-  void ContactLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of contact law:" << endl;
+  void ConstraintLaw::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of constraint law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
-  void ContactLaw::load(const string &path, ifstream& inputfile) {
+  void ConstraintLaw::load(const string &path, ifstream& inputfile) {
     string dummy;
-    getline(inputfile,dummy); // # Type of contact law:
-    getline(inputfile,dummy); // Type of contact law 
+    getline(inputfile,dummy); // # Type of constraint law:
+    getline(inputfile,dummy); // Type of constraint law 
     getline(inputfile,dummy); // Newline
   }
 
-  void UnilateralContact::load(const string& path, ifstream &inputfile) {
+  void UnilateralConstraint::load(const string& path, ifstream &inputfile) {
     string dummy;
-    getline(inputfile,dummy); // # Type of contact law:
-    getline(inputfile,dummy); // Type of contact law 
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Restitution coefficient:
-    inputfile >> epsilon;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Marginal velocity:
-    inputfile >> gd_limit;
-    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // # Type of constraint law:
+    getline(inputfile,dummy); // Type of constraint law 
     getline(inputfile,dummy); // Newline
   }
 
-  void UnilateralContact::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of contact law:" << endl;
-    outputfile << "UnilateralContact" << endl << endl;
-    outputfile << "# Restitution coefficient:" << endl;
-    outputfile << epsilon << endl << endl;
-    outputfile << "# Marginal velocity:" << endl;
-    outputfile << gd_limit << endl << endl;
+  void UnilateralConstraint::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of constraint law:" << endl;
+    outputfile << "UnilateralConstraint" << endl << endl;
   }
 
-  double UnilateralContact::operator()(double la, double gdn, double gda, double r) {
-    if(fabs(gda) > gd_limit)
-      gdn += epsilon*gda;
+  double UnilateralConstraint::operator()(double la, double gdn, double r) {
     return proxCN(la-r*gdn);
   }
 
-  Vec UnilateralContact::diff(double la, double gdn, double gda, double r) {
+  Vec UnilateralConstraint::diff(double la, double gdn, double r) {
     Vec d(2,NONINIT);
     if(la-r*gdn < 0) {
       d.init(0);
@@ -120,19 +106,14 @@ namespace MBSim {
     return d;
   }
 
-  double UnilateralContact::solve(double G, double gdn, double gda) {
-    if(fabs(gda) > gd_limit)
-      gdn += epsilon*gda;
-
+  double UnilateralConstraint::solve(double G, double gdn) {
     if(gdn >= 0)
       return 0;
     else 
       return -gdn/G;
   }
 
-  bool UnilateralContact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
-    if(fabs(gda) > gd_limit)
-      gdn += epsilon*gda;
+  bool UnilateralConstraint::isFullfield(double la, double gdn, double laTol, double gdTol) {
     if(gdn >= -gdTol && fabs(la) <= laTol)
       return true;
     else if(la >= -laTol && fabs(gdn) <= gdTol)
@@ -157,22 +138,116 @@ namespace MBSim {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
-  double BilateralContact::operator()(double la, double gdn, double gda, double r) {
+  double BilateralConstraint::operator()(double la, double gdn, double r) {
     return la-r*gdn;
   }
 
-  Vec BilateralContact::diff(double la, double gdn, double gda, double r) {
+  Vec BilateralConstraint::diff(double la, double gdn, double r) {
     Vec d(2,NONINIT);
     d(0) = 1;
     d(1) = -r;
     return d;
   }
 
-  double BilateralContact::solve(double G, double gdn, double gda) {
+  double BilateralConstraint::solve(double G, double gdn) {
     return -gdn/G;
   }
 
-  bool BilateralContact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
+  bool BilateralConstraint::isFullfield(double la, double gdn, double laTol, double gdTol) {
+    return fabs(gdn) <= gdTol;
+  }
+
+  void NormalImpactLaw::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of impact law:" << endl;
+    outputfile << "Unkown" << endl << endl;
+  }
+
+  void NormalImpactLaw::load(const string &path, ifstream& inputfile) {
+    string dummy;
+    getline(inputfile,dummy); // # Type of impact law:
+    getline(inputfile,dummy); // Type of impact law 
+    getline(inputfile,dummy); // Newline
+  }
+
+  double UnilateralNewtonImpact::operator()(double la, double gdn, double gda, double r) {
+    if(fabs(gda) > gd_limit)
+      gdn += epsilon*gda;
+    return proxCN(la-r*gdn);
+  }
+
+  Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r) {
+    Vec d(2,NONINIT);
+    if(la-r*gdn < 0) {
+      d.init(0);
+    } else {
+      d(0) = 1;
+      d(1) = -r;
+    }
+    return d;
+  }
+
+  double UnilateralNewtonImpact::solve(double G, double gdn, double gda) {
+    if(fabs(gda) > gd_limit)
+      gdn += epsilon*gda;
+
+    if(gdn >= 0)
+      return 0;
+    else 
+      return -gdn/G;
+  }
+
+  bool UnilateralNewtonImpact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
+    if(fabs(gda) > gd_limit)
+      gdn += epsilon*gda;
+    
+    if(gdn >= -gdTol && fabs(la) <= laTol)
+      return true;
+    else if(la >= -laTol && fabs(gdn) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+
+ void UnilateralNewtonImpact::load(const string& path, ifstream &inputfile) {
+    string dummy;
+    getline(inputfile,dummy); // # Type of impact law:
+    getline(inputfile,dummy); // Type of impact law 
+    getline(inputfile,dummy); // Newline
+    getline(inputfile,dummy); // # Restitution coefficient:
+    inputfile >> epsilon;
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+    getline(inputfile,dummy); // # Marginal velocity:
+    inputfile >> gd_limit;
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+  }
+
+  void UnilateralNewtonImpact::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of impact law:" << endl;
+    outputfile << "UnilateralNewtonImpact" << endl << endl;
+    outputfile << "# Restitution coefficient:" << endl;
+    outputfile << epsilon << endl << endl;
+    outputfile << "# Marginal velocity:" << endl;
+    outputfile << gd_limit << endl << endl;
+  }
+
+  double BilateralImpact::operator()(double la, double gdn, double gda, double r) {
+    return la-r*gdn;
+  }
+
+  Vec BilateralImpact::diff(double la, double gdn, double gda, double r) {
+    Vec d(2,NONINIT);
+    d(0) = 1;
+    d(1) = -r;
+    return d;
+  }
+
+  double BilateralImpact::solve(double G, double gdn, double gda) {
+    return -gdn/G;
+  }
+
+  bool BilateralImpact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
     return fabs(gdn) <= gdTol;
   }
 
@@ -206,11 +281,11 @@ namespace MBSim {
     outputfile << mu << endl << endl;
   }
 
-  Vec PlanarCoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Vec PlanarCoulombFriction::operator()(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
   }
 
-  Mat PlanarCoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Mat PlanarCoulombFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
     double argT = la(0)-r*gdn(0);
     Mat d(1,3,NONINIT);
     if(abs(argT) < mu*fabs(laN)) {
@@ -226,7 +301,7 @@ namespace MBSim {
     return d;
   }
 
-  Vec PlanarCoulombFriction::solve(const SymMat& G, const Vec& gdn, const Vec &gda, double laN) {
+  Vec PlanarCoulombFriction::solve(const SymMat& G, const Vec& gdn, double laN) {
     double laNmu = fabs(laN)*mu;
     double sdG = -gdn(0)/G(0,0);
     if(fabs(sdG)<=laNmu) 
@@ -235,7 +310,7 @@ namespace MBSim {
       return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
   }
 
-  bool PlanarCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+  bool PlanarCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
     if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
       return true;
     else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
@@ -244,7 +319,7 @@ namespace MBSim {
       return false;
   }
 
-  //Vec CoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
+  //Vec CoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& r) {
   //  int nFric = gdn.size()-1;
   ////Vec lan(la.size()-1);
   //  if(nFric==1) 
@@ -252,7 +327,7 @@ namespace MBSim {
   //  else //if(nFric == 2) 
   //    return proxCT3D(la(1,nFric)-r(1)*gdn(1,nFric),mu*fabs(la(0)));
   //}
-  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn, const Vec &gda) {
+  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn) {
   //  double laNmu = fabs(laN(0))*mu;
   //  double sdG = -gdn(1)/G(1,1);
   //  if(fabs(sdG)<=laNmu) 
@@ -260,7 +335,7 @@ namespace MBSim {
   //  else 
   //    return Vec(1,INIT, (laNmu<=sdG) ? laNmu : -laNmu);
   //}
-  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn, const Vec &gda, double laN) {
+  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn, double laN) {
   //  double laNmu = fabs(laN)*mu;
   //  double sdG = -gdn(0)/G(0,0);
   //  if(fabs(sdG)<=laNmu) 
@@ -268,7 +343,7 @@ namespace MBSim {
   //  else 
   //    return (laNmu<=sdG) ? laNmu : -laNmu;
   //}
-//    Mat CoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
+//    Mat CoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& r) {
 //    int nFric = gdn.size()-1;
 //  //Vec lan(la.size()-1);
 //    if(nFric==1) {
@@ -307,7 +382,7 @@ namespace MBSim {
 //      return d;
 //    }
 //  }
-// bool CoulombFriction::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
+// bool CoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laTol, double gdTol) {
 //    int nFric = gdn.size()-1;
 //    if(nFric == 1) {
 //      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol)
@@ -327,11 +402,11 @@ namespace MBSim {
 //    return false;
 //  }
 
-  Vec SpatialCoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Vec SpatialCoulombFriction::operator()(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la-r*gdn,mu*fabs(laN));
   }
 
-  Mat SpatialCoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Mat SpatialCoulombFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
     Vec argT = la-r*gdn;
     Mat E(2,2,EYE);
     Mat d(2,5,NONINIT);
@@ -349,12 +424,12 @@ namespace MBSim {
     return d;
   }
 
-  Vec SpatialCoulombFriction::solve(const SymMat& G, const Vec& gdn, const Vec &gda, double laN) {
+  Vec SpatialCoulombFriction::solve(const SymMat& G, const Vec& gdn, double laN) {
     cout << "solve is not implemented for spatial Coulomb friction" << endl;
     throw 5;
   }
 
-  bool SpatialCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+  bool SpatialCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
     if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
       return true;
     else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
@@ -363,37 +438,110 @@ namespace MBSim {
       return false;
   }
 
-  Vec ConnectionLaw::operator()(const Vec &la ,const Vec &s, const Vec& r) {
-    Vec res(s.size(),NONINIT);
-    for(int i=0; i<s.size(); i++)
-     res(i) = la(i) - r(i)*s(i);
-    return res;
+  void TangentialImpactLaw::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of tangential impact law:" << endl;
+    outputfile << "Unkown" << endl << endl;
   }
 
-  Mat ConnectionLaw::diff(const Vec& la, const Vec &s, const Vec& r) {
-    Mat d(la.size(),la.size()+s.size(),NONINIT);
-    for(int i=0; i<la.size(); i++)
-      for(int j=0; j<la.size(); j++) {
-	d(i,j) = 1;
-	d(i,la.size()+j) = -r(i);
-      }
+  void TangentialImpactLaw::load(const string &path, ifstream& inputfile) {
+    string dummy;
+    getline(inputfile,dummy); // # Type of friction law:
+    getline(inputfile,dummy); // Type of friction law 
+    getline(inputfile,dummy); // Newline
+  }
+
+  Vec PlanarCoulombImpact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
+  }
+
+  Mat PlanarCoulombImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    double argT = la(0)-r*gdn(0);
+    Mat d(1,3,NONINIT);
+    if(abs(argT) < mu*fabs(laN)) {
+      //d_dargT = Mat(2,2,EYE);
+      d(0,0) = 1;
+      d(0,1) = -r;
+      d(0,2) = 0;
+    } else {
+      d(0,0) = 0;
+      d(0,1) = 0;
+      d(0,2) = sign(argT)*sign(laN)*mu;
+    }
     return d;
   }
 
-  Vec ConnectionLaw::solve(const SymMat& G, const Vec& s) {
-    Vec res(s.size(),NONINIT);
-    for(int i=0; i<s.size(); i++)
-      res(i) = -s(i)/G(i,i);
-    return res;
+  Vec PlanarCoulombImpact::solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN) {
+    double laNmu = fabs(laN)*mu;
+    double sdG = -gdn(0)/G(0,0);
+    if(fabs(sdG)<=laNmu) 
+      return Vec(1,INIT,sdG);
+    else 
+      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
   }
 
-  bool ConnectionLaw::isFullfield(const Vec& la, const Vec& s, double gdTol) {
+  bool PlanarCoulombImpact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
+      return true;
+    else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
 
-    for(int i=0; i<s.size(); i++)
-      if(fabs(s(i)) > gdTol)
-	return false;
-    return true;
- }
+  void PlanarCoulombImpact::load(const string& path, ifstream &inputfile) {
+    string dummy;
+    getline(inputfile,dummy); // # Type of tangential impact law:
+    getline(inputfile,dummy); // Type of tangential impact law 
+    getline(inputfile,dummy); // Newline
+    getline(inputfile,dummy); // # Impact coefficient:
+    inputfile >> mu;
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+  }
+
+  void PlanarCoulombImpact::save(const string &path, ofstream &outputfile) {
+    outputfile << "# Type of friction law:" << endl;
+    outputfile << "PlanarCoulombImpact" << endl << endl;
+    outputfile << "# Friction coefficient:" << endl;
+    outputfile << mu << endl << endl;
+  }
+
+  Vec SpatialCoulombImpact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    return proxCT3D(la-r*gdn,mu*fabs(laN));
+  }
+
+  Mat SpatialCoulombImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    Vec argT = la-r*gdn;
+    Mat E(2,2,EYE);
+    Mat d(2,5,NONINIT);
+    if(nrm2(argT) < mu*fabs(laN)) {
+      //d_dargT = Mat(2,2,EYE);
+      d(Index(0,1),Index(0,1)) = E;
+      d(Index(0,1),Index(2,3)) = -r*E;
+      d(Index(0,1),Index(4,4)).init(0);
+    } else {
+      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
+      d(Index(0,1),Index(0,1)) = d_dargT;
+      d(Index(0,1),Index(2,3)) = -r*d_dargT;
+      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*mu;
+    }
+    return d;
+  }
+
+  Vec SpatialCoulombImpact::solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN) {
+    cout << "solve is not implemented for spatial Coulomb friction" << endl;
+    throw 5;
+  }
+
+  bool SpatialCoulombImpact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
+      return true;
+    else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+
 
 }
 
