@@ -76,14 +76,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   // Contacts
   ContactFlexible *cr1S = new ContactFlexible("Contact1"); 
-  cr1S->setContactLaw(new LinearRegularizedUnilateralContact(1e5,1e4));
+  cr1S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
   cr1S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
-  //cr1S->setRegularizedFrictionLaw(new LinearRegularizedStribeckFriction(new FuncConst(Vec(1,INIT,mu))));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
   ContactFlexible *cr2S = new ContactFlexible("Contact2");
-  cr2S->setContactLaw(new LinearRegularizedUnilateralContact(1e5,1e4));
+  cr2S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
   cr2S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
