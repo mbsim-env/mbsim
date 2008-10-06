@@ -79,21 +79,17 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Point* point2 = new Point("Point2");
   addContour(point2,delta2,SqrMat(3,EYE));
 
-  // Contacts
-  //ContactRigid *cr1S = new ImpactRigid("Contact1"); 
   ContactRigid *cr1S = new ContactRigid("Contact1"); 
-  //cr1S->setFrictionDirections(0);
-  //cr1S->setFrictionCharacteristics(new FuncConst(Vec(1,INIT,mu)));
-  cr1S->setContactLaw(new UnilateralContact);
-  //cr1S->setFrictionLaw(new CoulombFriction(mu));
+  cr1S->setContactLaw(new UnilateralConstraint);
+  cr1S->setNormalImpactLaw(new UnilateralNewtonImpact);
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
   ContactRigid *cr2S = new ContactRigid("Contact2");
-  //cr2S->setFrictionDirections(1);
-  cr2S->setContactLaw(new UnilateralContact);
+  cr2S->setContactLaw(new UnilateralConstraint);
+  cr2S->setNormalImpactLaw(new UnilateralNewtonImpact);
   cr2S->setFrictionLaw(new PlanarCoulombFriction(mu));
-  //cr2S->setFrictionCharacteristics(new FuncConst(Vec(1,INIT,mu)));
+  cr2S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
 
