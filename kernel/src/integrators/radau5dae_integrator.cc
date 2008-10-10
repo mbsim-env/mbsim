@@ -20,12 +20,13 @@
  *
  */
 
-#include <config.h>
+#include<config.h>
+#include<ctime>
+#include<fstream>
 #include "multi_body_system.h"
 #include "fortran_wrapper.h"
 #include "radau5dae_integrator.h"
 #include "eps.h"
-#include <fstream>
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -140,7 +141,7 @@ namespace MBSim {
     Vector<int> iWork(liWork);
     Vec work(lWork);
 
-    work(0) = macheps();  		// rounding unit
+    work(0) = macheps;  		// rounding unit
     if(dtMax) work(6) = dtMax;
 
     iWork(1)=maxSteps;					//Maximum Step Numbers
