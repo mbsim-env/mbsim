@@ -35,10 +35,8 @@ namespace MBSim {
   class Load : public Link {
 
     protected:
-      Vec WF, WM;
       Index IT, IR;
-      Mat forceDir, momentDir;
-      Mat Wf, Wm;
+      Mat forceDir, momentDir, Wf, Wm;
 
       DataInterfaceBase *func;
       int KOSYID;
@@ -59,7 +57,6 @@ namespace MBSim {
       void connect(CoordinateSystem *port1);
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
-      void updateh(double t);
 
       void initDataInterfaceBase(MultiBodySystem *parentmbs);
   };

@@ -33,8 +33,6 @@ namespace MBSim {
   class FlexibleContact : public Contact {
 
     protected:
-      Vec WF[2], WM[2];
-
       double c, d;
 
       RegularizedConstraintLaw *fcl;
@@ -49,7 +47,6 @@ namespace MBSim {
       void calcSize();
 
       void updateKinetics(double t);
-      void updateh(double t);
 
       void setContactLaw(RegularizedConstraintLaw *fcl_) {fcl = fcl_;}
       void setFrictionLaw(RegularizedFrictionLaw *ffl_) {ffl = ffl_;}

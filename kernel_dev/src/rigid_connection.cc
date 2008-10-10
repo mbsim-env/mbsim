@@ -35,12 +35,6 @@ namespace MBSim {
   void RigidConnection::init() {
     Connection::init();
 
-    for(int i=0; i<2; i++) {
-      loadDir.push_back(Mat(6,laSize));
-      fF[i] >> loadDir[i](Index(0,2),Index(0,laSize-1));
-      fM[i] >> loadDir[i](Index(3,5),Index(0,laSize-1));
-    }
-
     fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
     fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
     fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
@@ -49,19 +43,18 @@ namespace MBSim {
 
   void RigidConnection::updateKinetics(double dt) {
     fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-    fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
     fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
+    fM[0](Index(0,2),Index(0,Wf.cols()-1)) = -tilde(WrP0P1)*Wf;
+    fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
     fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
   }
 
-  void RigidConnection::updateW(double t) {
-    W[0] += trans(port[0]->getJacobianOfTranslation())*fF[0] + trans(port[0]->getJacobianOfRotation())*(fM[0]+tilde(WrP0P1)*fF[0]);
-    W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
-  }
-
   void RigidConnection::updateb(double t) {
-    b(0,Wf.cols()-1) += trans(Wf)*(port[1]->getGyroscopicAccelerationOfTranslation() - port[0]->getGyroscopicAccelerationOfTranslation() + crossProduct(WrP0P1,port[0]->getGyroscopicAccelerationOfRotation()) + crossProduct(WrP0P1,port[0]->getGyroscopicAccelerationOfRotation()) + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
-    b(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getGyroscopicAccelerationOfRotation()-port[0]->getGyroscopicAccelerationOfRotation() - crossProduct(port[0]->getAngularVelocity(),WomP0P1));
+
+    Connection::updateb(t);
+
+    b(0,Wf.cols()-1) += trans(Wf)*(crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
+    b(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  - trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
   }
 
   void RigidConnection::projectJ(double dt) {

@@ -28,10 +28,6 @@
 namespace MBSim {
 
   Load::Load(const string &name) : Link(name,false), func(0), KOSYID(0) {
-
-    L.push_back(Vec(6));
-    WF >> L[0](Index(0,2));
-    WM >> L[0](Index(3,5));
   }
 
   Load::~Load() {
@@ -81,14 +77,10 @@ namespace MBSim {
       Wf = port[0]->getOrientation()*forceDir;
       Wm = port[0]->getOrientation()*momentDir;
     }
-    WF = Wf*la(IT);
-    WM = Wm*la(IR);
+    WF[0] = Wf*la(IT);
+    WM[0] = Wm*la(IR);
   } 
   
-  void Load::updateh(double t) {
-    h[0] += trans(port[0]->getJacobianOfTranslation())*WF + trans(port[0]->getJacobianOfRotation())*WM;
-  }
-
   void Load::setUserFunction(DataInterfaceBase *func_) {
     cout<<"!!!HINT!!!You are using the obsolete Method setUserFunction in Load "<<name<<endl;
     cout<<"Use Method setSignal instead! This Method will be removed."<<endl;

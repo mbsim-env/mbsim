@@ -44,10 +44,6 @@ namespace MBSim {
 
   void RigidContact::init() {
     Contact::init();
-    for(int i=0; i<2; i++) {
-      loadDir.push_back(Mat(6,laSize));
-      fF[i] >> loadDir[i](Index(0,2),Index(0,laSize-1));
-    }
   }
 
   void RigidContact::calcSize() {
@@ -62,42 +58,60 @@ namespace MBSim {
     Contact::save(path, outputfile);
 
     fcl->save(path,outputfile);
-    fdf->save(path,outputfile);
+    if(fdf)
+      fdf->save(path,outputfile);
+    else {
+      outputfile << "# Type of friction law:" << endl << endl;
+    }
     fnil->save(path,outputfile);
-    ftil->save(path,outputfile);
+    if(ftil)
+      ftil->save(path,outputfile);
+    else {
+      outputfile << "# Type of tangential impact law:" << endl << endl;
+    }
   }
 
   void RigidContact::load(const string& path, ifstream &inputfile) {
     Contact::load(path,inputfile);
     string dummy;
     int s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of Translation:
-    getline(inputfile,dummy); // Type of translation 
+    getline(inputfile,dummy); // # Type of contact law:
+    getline(inputfile,dummy); // Type of contact law 
     inputfile.seekg(s,ios::beg);
     ClassFactory cf;
     setContactLaw(cf.getConstraintLaw(dummy));
     fcl->load(path, inputfile);
 
     s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of Translation:
-    getline(inputfile,dummy); // Type of translation 
+    getline(inputfile,dummy); // # Type of friction law:
+    getline(inputfile,dummy); // Type of friction law 
     inputfile.seekg(s,ios::beg);
-    setFrictionLaw(cf.getFrictionLaw(dummy));
-    fdf->load(path, inputfile);
+    if(dummy.empty()) {
+      getline(inputfile,dummy); // # Type of friction law
+      getline(inputfile,dummy); // End of line
+    } else {
+      setFrictionLaw(cf.getFrictionLaw(dummy));
+      fdf->load(path, inputfile);
+    }
 
     s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of Translation:
-    getline(inputfile,dummy); // Type of translation 
+    getline(inputfile,dummy); // # Type of normal impact law:
+    getline(inputfile,dummy); // Type of normal impact law 
     inputfile.seekg(s,ios::beg);
     setNormalImpactLaw(cf.getNormalImpactLaw(dummy));
     fnil->load(path, inputfile);
 
     s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of Translation:
-    getline(inputfile,dummy); // Type of translation 
+    getline(inputfile,dummy); // # Type of tangential impact law:
+    getline(inputfile,dummy); // Type of tangential impact law 
     inputfile.seekg(s,ios::beg);
-    setTangentialImpactLaw(cf.getTangentialImpactLaw(dummy));
-    ftil->load(path, inputfile);
+    if(dummy.empty()) {
+      getline(inputfile,dummy); // # Type of friction law
+      getline(inputfile,dummy); // End of line
+    } else {
+      setTangentialImpactLaw(cf.getTangentialImpactLaw(dummy));
+      ftil->load(path, inputfile);
+    }
   }
 
   void RigidContact::updateKinetics(double t) {
@@ -106,12 +120,8 @@ namespace MBSim {
     fF[1] = -fF[0];
   }
 
-  void RigidContact::updateW(double t) {
-    Vec WrPC[2];
-    WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
-    WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
-    W[0] += trans(contour[0]->getWJP())*fF[0] + trans(contour[0]->getWJR())*(tilde(WrPC[0])*fF[0]);
-    W[1] += trans(contour[1]->getWJP())*fF[1] + trans(contour[1]->getWJR())*(tilde(WrPC[1])*fF[1]);
+  void RigidContact::updateb(double t) {
+    Contact::updateb(t);
   }
 
   void RigidContact::checkActive() {

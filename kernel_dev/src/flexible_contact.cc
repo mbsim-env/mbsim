@@ -38,11 +38,6 @@ namespace MBSim {
 
   void FlexibleContact::init() {
     Contact::init();
-    for(int i=0; i<2 ; i++) {
-      L.push_back(Vec(6));
-      WF[i] >> L[i](Index(0,2));
-      WM[i] >> L[i](Index(3,5));
-    }
   }
 
   void FlexibleContact::calcSize() {
@@ -54,23 +49,25 @@ namespace MBSim {
   }
 
   void FlexibleContact::updateKinetics(double t) {
+    Vec WrPC[2];
+    WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
+    WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
 
     la(0) = (*fcl)(g(0),gd(0));
     if(ffl)
       la(1,nFric) = (*ffl)(gd(1,nFric),fabs(la(0)));
     
     WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
+    WM[0] = crossProduct(WrPC[0],WF[0]);
     WF[1] = -WF[0];
+    WM[1] = crossProduct(WrPC[1],WF[1]);
   }
 
-  void FlexibleContact::updateh(double t) {
-    if(active) {
-    Vec WrPC[2];
-    WrPC[0] = cpData[0].WrOC - contour[0]->getWrOP();
-    WrPC[1] = cpData[1].WrOC - contour[1]->getWrOP();
-    h[0] += trans(contour[0]->getWJP())*WF[0] + trans(contour[0]->getWJR())*(crossProduct(WrPC[0],WF[0]));
-    h[1] += trans(contour[1]->getWJP())*WF[1] + trans(contour[1]->getWJR())*(crossProduct(WrPC[1],WF[1]));
-  }
-  }
+  //void FlexibleContact::updateh(double t) {
+  //  if(active) {
+  //   h[0] += trans(contour[0]->getWJP())*WF[0] + trans(contour[0]->getWJR())*WM[0];
+  //   h[1] += trans(contour[1]->getWJP())*WF[1] + trans(contour[1]->getWJR())*WM[1];
+  //}
+  //}
 
 }

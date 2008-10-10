@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), WrOP(3), WvP(3), WomegaP(3), AWP(3), WJP(3,6), WJR(3,6), WjP(3), WjR(3) {
+  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 #ifdef HAVE_AMVIS
 bodyAMVisUserFunctionColor= NULL;
 bodyAMVis = NULL;
