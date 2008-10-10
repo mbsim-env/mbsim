@@ -342,8 +342,10 @@ namespace MBSim {
     if(active) {
       for(unsigned int i=0; i<port.size(); i++)
 	h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
-      for(unsigned int i=0; i<contour.size(); i++)
-	h[i] += trans(contour[i]->getWJP())*WF[i] + trans(contour[i]->getWJR())*WM[i];
+      for(unsigned int i=0; i<contour.size(); i++) {
+	contour[i]->updateMovingFrame(t, cpData[i]);
+	h[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*WF[i] + trans(contour[i]->getMovingFrame()->getJacobianOfRotation())*WM[i];
+      }
     }
   }
 
@@ -351,6 +353,7 @@ namespace MBSim {
     for(unsigned int i=0; i<port.size(); i++)
       W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
     for(unsigned int i=0; i<contour.size(); i++) {
+      contour[i]->updateMovingFrame(t, cpData[i]);
       W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i] + trans(contour[i]->getMovingFrame()->getJacobianOfRotation())*fM[i];
     }
   }

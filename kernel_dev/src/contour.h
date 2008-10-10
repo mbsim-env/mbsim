@@ -49,10 +49,6 @@ namespace MBSim {
   class Contour : public Element {
     protected:
       Object* parent;
-   //   Vec WrOP, WvP, WomegaC;
-   //   SqrMat AWC;
-   //   Mat WJP, WJR;
-   //   Vec WjP, WjR;
       CoordinateSystem R, C;
 
 
@@ -81,7 +77,7 @@ namespace MBSim {
       void setParent(Object* parent_) {parent = parent_;}
       Object* getObject() {return parent;}
       void setObject(Object* object) {parent = object;}
-      CoordinateSystem* getFrameOfReference() {return &R;}
+      CoordinateSystem* getFixedFrame() {return &R;}
       CoordinateSystem* getMovingFrame() {return &C;}
 
       virtual void updateMovingFrame(double t, ContourPointData& cpdata);
