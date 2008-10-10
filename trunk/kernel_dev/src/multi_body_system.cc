@@ -238,6 +238,29 @@ namespace MBSim {
     }
   }
 
+  //Vec MultiBodySystem::zdot_alt(const Vec &zParent, double t) {
+  //  if(q()!=zParent()) {
+  //    updatezRef(zParent);
+  //  }
+  //  updateKinematics(t);
+  //  updateLinksStage1(t);
+  //  updateLinksStage2(t);
+
+  //  updateT(t); 
+  //  updateh(t); 
+  //  updateM(t); 
+  //  facLLM(); 
+  //  if(laSize) {
+  //    updateW(t); 
+  //    updateG(t); 
+  //    updateb(t); 
+  //    computeConstraintForces(t); 
+  //    updater(t); 
+  //  }
+  //  updatezd(t);
+  //  return zdParent;
+  //}
+
   Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -250,27 +273,14 @@ namespace MBSim {
     updateh(t); 
     updateM(t); 
     facLLM(); 
-    //cout << "MBS" << endl;
-    //cout << q << endl;
-    //cout << u << endl;
-    //cout << M << endl;
-    //cout << h << endl;
     if(laSize) {
       updateW(t); 
       updateG(t); 
-      //cout << G << endl;
       updateb(t); 
-      //cout << b << endl;
       computeConstraintForces(t); 
       updater(t); 
     }
     updatezd(t);
-    //cout << qd << endl;
-    //cout << ud << endl;
-    //cout << "end" << endl;
-
-    //cout << qd << endl;
-    //cout << ud << endl;
     return zdParent;
   }
 

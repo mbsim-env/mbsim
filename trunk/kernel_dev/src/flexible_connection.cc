@@ -26,11 +26,6 @@
 namespace MBSim {
 
   FlexibleConnection::FlexibleConnection(const string &name) : Connection(name,false), ffl(0), fml(0) {
-    for(int i=0; i<2 ; i++) {
-      L.push_back(Vec(6));
-      WF[i] >> L[i](Index(0,2));
-      WM[i] >> L[i](Index(3,5));
-    }
   }
 
   void FlexibleConnection::updateKinetics(double t) {
@@ -43,13 +38,13 @@ namespace MBSim {
     WF[1] = Wf*la(IT);
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];
-    WM[0] = -WM[1];
+    WM[0] = -WM[1]+crossProduct(WrP0P1,WF[0]);
   }
 
-  void FlexibleConnection::updateh(double t) {
-    h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*(WM[0]+crossProduct(WrP0P1,WF[0]));
-    h[1] += trans(port[1]->getJacobianOfTranslation())*WF[1] + trans(port[1]->getJacobianOfRotation())*WM[1];
-  }
+  //void FlexibleConnection::updateh(double t) {
+  //  h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*WM[0];
+  //  h[1] += trans(port[1]->getJacobianOfTranslation())*WF[1] + trans(port[1]->getJacobianOfRotation())*WM[1];
+  //}
 
   double FlexibleConnection::computePotentialEnergy() {
     double V = 0.5* (trans(la)*g);

@@ -27,6 +27,7 @@
 #include "element.h"
 #include "userfunction_contour.h"
 #include "contour_pdata.h"
+#include "coordinate_system.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class CBody; class CRigidBody;}
@@ -48,10 +49,11 @@ namespace MBSim {
   class Contour : public Element {
     protected:
       Object* parent;
-      Vec WrOP, WvP, WomegaC;
-      SqrMat AWC;
-      Mat WJP, WJR;
-      Vec WjP, WjR;
+   //   Vec WrOP, WvP, WomegaC;
+   //   SqrMat AWC;
+   //   Mat WJP, WJR;
+   //   Vec WjP, WjR;
+      CoordinateSystem R, C;
 
 
 #ifdef HAVE_AMVIS
@@ -79,28 +81,32 @@ namespace MBSim {
       void setParent(Object* parent_) {parent = parent_;}
       Object* getObject() {return parent;}
       void setObject(Object* object) {parent = object;}
+      CoordinateSystem* getFrameOfReference() {return &R;}
+      CoordinateSystem* getMovingFrame() {return &C;}
 
-      void setWrOP(const Vec &WrOP_) {WrOP = WrOP_;}
-      const Vec& getWrOP() const {return WrOP;}
-      void setWvP(const Vec &WvP_) {WvP = WvP_;}
-      const Vec& getWvP() const {return WvP;}
-      void setWomegaC(const Vec &WomegaC_) {WomegaC = WomegaC_;}
-      const Vec& getWomegaC() const {return WomegaC;}
-      void setAWC(const SqrMat &AWC_) {AWC = AWC_;}
-      const SqrMat& getAWC() const {return AWC;}
+      virtual void updateMovingFrame(double t, ContourPointData& cpdata);
 
-      void setWJP(const Mat &WJP_) {WJP=WJP_;}
-      void setWjP(const Vec &WjP_) {WjP=WjP_;}
-      void setWJR(const Mat &WJR_) {WJR=WJR_;}
-      void setWjR(const Vec &WjR_) {WjR=WjR_;}
-      const Mat& getWJP() const {return WJP;}
-      const Mat& getWJR() const {return WJR;}
-      Mat& getWJP() {return WJP;}
-      Mat& getWJR() {return WJR;}
-      const Vec& getWjP() const {return WjP;}
-      const Vec& getWjR() const {return WjR;}
-      Vec& getWjP() {return WjP;}
-      Vec& getWjR() {return WjR;}
+      void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
+      const Vec& getWrOP() const {return R.getPosition();}
+      void setWvP(const Vec &WvP) {R.setVelocity(WvP);}
+      const Vec& getWvP() const {return R.getVelocity();}
+      void setWomegaC(const Vec &WomegaC) {R.setAngularVelocity(WomegaC);}
+      const Vec& getWomegaC() const {return R.getAngularVelocity();}
+      void setAWC(const SqrMat &AWC) {R.setOrientation(AWC);}
+      const SqrMat& getAWC() const {return R.getOrientation();}
+
+      void setWJP(const Mat &WJP) {R.setJacobianOfTranslation(WJP);}
+      void setWjP(const Vec &WjP) {R.setGyroscopicAccelerationOfTranslation(WjP);}
+      void setWJR(const Mat &WJR) {R.setJacobianOfRotation(WJR);}
+      void setWjR(const Vec &WjR) {R.setGyroscopicAccelerationOfRotation(WjR);}
+      const Mat& getWJP() const {return R.getJacobianOfTranslation();}
+      const Mat& getWJR() const {return R.getJacobianOfRotation();}
+      Mat& getWJP() {return R.getJacobianOfTranslation();}
+      Mat& getWJR() {return R.getJacobianOfRotation();}
+      const Vec& getWjP() const {return R.getGyroscopicAccelerationOfTranslation();}
+      const Vec& getWjR() const {return R.getGyroscopicAccelerationOfRotation();}
+      Vec& getWjP() {return R.getGyroscopicAccelerationOfTranslation();}
+      Vec& getWjR() {return R.getGyroscopicAccelerationOfRotation();}
 
       /*! adjust HitSphere of parent body
       */
@@ -142,9 +148,9 @@ namespace MBSim {
       void setCn(const Vec& Cn_);
       void setCb(const Vec& Cb_);
 
-      Vec computeWb() {return AWC*Cb;}
-      Vec computeWn() {return AWC*Cn;}
-      Vec computeWt() {return AWC*crossProduct(Cn,Cb);}
+      Vec computeWb() {return R.getOrientation()*Cb;}
+      Vec computeWn() {return R.getOrientation()*Cn;}
+      Vec computeWt() {return R.getOrientation()*crossProduct(Cn,Cb);}
 
       string getType() const {return "Line";}
 
@@ -169,7 +175,7 @@ namespace MBSim {
 	  /*! Set binormal in local FR */ 
       void setCb(const Vec& Cb_);
 	  /*! Compute binormal in inertial FR */
-      Vec computeWb() {return AWC*Cb;}
+      Vec computeWb() {return R.getOrientation()*Cb;}
   };
 
 
@@ -187,7 +193,7 @@ namespace MBSim {
 
       void setCb(const Vec& Cb_);
 
-      Vec computeWb() {return AWC*Cb;}
+      Vec computeWb() {return R.getOrientation()*Cb;}
   };
 
   /*! \brief Planar slice of a Frustum
@@ -213,7 +219,7 @@ namespace MBSim {
       const Vec& getCb() const {return Cb;} 
       void setCb(const Vec& Cb_);
 
-      Vec computeWb() {return AWC*Cb;}
+      Vec computeWb() {return R.getOrientation()*Cb;}
 
   };
 
@@ -270,12 +276,12 @@ namespace MBSim {
 	Mat Ctb(3,2);
 	Ctb.col(0)= funcCrPC->computeT(alpha);
 	Ctb.col(1)= Cb; 
-	return AWC*Ctb;
+	return R.getOrientation()*Ctb;
       }
-      Vec computeWn(double alpha) {return AWC*(funcCrPC->computeN(alpha));}
-      Vec computeWb(double alpha) {Cb= funcCrPC->computeB(alpha); return AWC*Cb;}
-      Vec computeWrOC(double alpha) {return WrOP + AWC*(*funcCrPC)(alpha);}
-      Vec computeWvC(double alpha) {return WvP + crossProduct(WomegaC,AWC*(*funcCrPC)(alpha));}
+      Vec computeWn(double alpha) {return R.getOrientation()*(funcCrPC->computeN(alpha));}
+      Vec computeWb(double alpha) {Cb= funcCrPC->computeB(alpha); return R.getOrientation()*Cb;}
+      Vec computeWrOC(double alpha) {return R.getPosition() + R.getOrientation()*(*funcCrPC)(alpha);}
+      Vec computeWvC(double alpha) {return R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(alpha));}
       Vec computeWomega(double alpha) {return Vec(3);} // dummy
 
       double computeRadius(double alpha) {
@@ -293,7 +299,7 @@ namespace MBSim {
     public:
       Contour1sFlexible(const string &name);
 
-      Vec computeWb  (double s) {return AWC*Cb;}
+      Vec computeWb  (double s) {return R.getOrientation()*Cb;}
 
       Vec computeWn    (double alpha);
       Mat computeWt    (double alpha);
@@ -342,7 +348,7 @@ namespace MBSim {
       /*! Set normal of the Plane in local FR */
       void setCn(const Vec& Cn_);
       /*! Compute normal of the Plane in inertial FR */
-      Vec computeWn() {return AWC*Cn;}
+      Vec computeWn() {return R.getOrientation()*Cn;}
   };
 
   /*! \brief Contour Area */
@@ -363,9 +369,9 @@ namespace MBSim {
       double getLimit1() const {return lim1;}
       double getLimit2() const {return lim2;}
 
-      Vec computeWn() {return AWC*Cn;}
-      Vec computeWd1() {return AWC*Cd1;}
-      Vec computeWd2() {return AWC*Cd2;}
+      Vec computeWn() {return R.getOrientation()*Cn;}
+      Vec computeWd1() {return R.getOrientation()*Cd1;}
+      Vec computeWd2() {return R.getOrientation()*Cd2;}
   };
 
   /*! \brief Contour Edge */
@@ -384,9 +390,9 @@ namespace MBSim {
       //void init();
       double getLimit() const {return lim;}
 
-      // Vec computeWn() {return AWC*Cn;}
-      Vec computeWe() {return AWC*Ce;}
-      Vec computeWd() {return AWC*Cd;}
+      // Vec computeWn() {return R.getOrientation()*Cn;}
+      Vec computeWe() {return R.getOrientation()*Ce;}
+      Vec computeWd() {return R.getOrientation()*Cd;}
   };
 
   /*! \brief Contour Sphere */

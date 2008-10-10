@@ -67,11 +67,19 @@ namespace MBSim {
       W.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
       h.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
       r.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
+      WF.push_back(Vec(3));
+      WM.push_back(Vec(3));
+      fF.push_back(Mat(3,laSize));
+      fM.push_back(Mat(3,laSize));
     }
     for(unsigned i=0; i<contour.size(); i++) {
       W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
       h.push_back(Vec(contour[i]->getWJP().cols()));
       r.push_back(Vec(contour[i]->getWJP().cols()));
+      WF.push_back(Vec(3));
+      WM.push_back(Vec(3));
+      fF.push_back(Mat(3,laSize));
+      fM.push_back(Mat(3,laSize));
     }
   }
 
@@ -144,19 +152,23 @@ namespace MBSim {
 
 #ifdef HAVE_AMVIS
     Vec WrOToPoint;
-    Vec LoadArrow;
+    Vec LoadArrow(6,NONINIT);
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = port[arrowAMVisID[i]]->getPosition();
       if(setValued){ 
-	if (active) 
-	  LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
+	if (active) {
+	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
+	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
+	}
 	else {
 	  LoadArrow = Vec(6,INIT,0.0);
 	  WrOToPoint= Vec(3,INIT,0.0);
 	}
       }
-      else
-	LoadArrow = L[arrowAMVisID[i]];
+      else {
+	LoadArrow(0,2) = WF[arrowAMVisID[i]];
+	LoadArrow(3,5) = WM[arrowAMVisID[i]];
+      }
       // Scaling: 1KN or 1KNm scaled to arrowlenght one
       LoadArrow= LoadArrow/1000*arrowAMVisScale[i];
 
@@ -182,16 +194,20 @@ namespace MBSim {
 
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
-      if(setValued){ 
-	if (active) 
-	  LoadArrow = loadDir[arrowAMVisID[i]]*la/dt;
+      if(setValued) { 
+	if (active) {
+	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
+	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
+	}
 	else {
 	  LoadArrow = Vec(6,INIT,0.0);
 	  WrOToPoint= Vec(3,INIT,0.0);
 	}
       }
-      else
-	LoadArrow = L[arrowAMVisID[i]];
+      else {
+	LoadArrow(0,2) = WF[arrowAMVisID[i]];
+	LoadArrow(3,5) = WM[arrowAMVisID[i]];
+      }
       // Scaling: 1KN or 1KNm scaled to arrowlenght one
       LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i];
 
@@ -307,11 +323,35 @@ namespace MBSim {
   }
 
   void Link::updater(double t) {
-    for(unsigned i=0; i<port.size(); i++) {
+
+    for(unsigned i=0; i<port.size(); i++) 
       r[i] += W[i]*la;
+    
+    for(unsigned i=0; i<contour.size(); i++) 
+      r[i] += W[i]*la;
+  }
+
+  void Link::updateb(double t) {
+    for(unsigned i=0; i<port.size(); i++) 
+      b += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
+    for(unsigned i=0; i<contour.size(); i++) 
+      b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfRotation();
+  }
+
+  void Link::updateh(double t) {
+    if(active) {
+      for(unsigned int i=0; i<port.size(); i++)
+	h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
+      for(unsigned int i=0; i<contour.size(); i++)
+	h[i] += trans(contour[i]->getWJP())*WF[i] + trans(contour[i]->getWJR())*WM[i];
     }
-    for(unsigned i=0; i<contour.size(); i++) {
-      r[i] += W[i]*la;
+  }
+
+  void Link::updateW(double t) {
+    for(unsigned int i=0; i<port.size(); i++)
+      W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
+    for(unsigned int i=0; i<contour.size(); i++) {
+      W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i] + trans(contour[i]->getMovingFrame()->getJacobianOfRotation())*fM[i];
     }
   }
 

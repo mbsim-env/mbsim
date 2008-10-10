@@ -186,8 +186,14 @@ namespace MBSim {
 
   void Contact::updateStage2(double t) {
     contactKinematics->stage2(g,gd,cpData);
-    if(active)
+    if(active) 
       updateKinetics(t);
+  }
+
+  void Contact::updateW(double t) {
+    contour[0]->updateMovingFrame(t, cpData[0]);
+    contour[1]->updateMovingFrame(t, cpData[1]);
+    Link::updateW(t);
   }
 
   void Contact::checkActive() {

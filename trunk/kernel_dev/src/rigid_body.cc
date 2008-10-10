@@ -469,9 +469,15 @@ namespace MBSim {
     outputfile << "# Frame of Reference:" << endl;
     outputfile << portParent->getFullName() << endl << endl;
 
-    fPrPK->save(path,outputfile);
+    if(fPrPK)
+      fPrPK->save(path,outputfile);
+    else
+      outputfile << "# Type of translation:" << endl << endl;
 
-    fAPK->save(path,outputfile);
+    if(fAPK)
+      fAPK->save(path,outputfile);
+    else
+      outputfile << "# Type of rotation:" << endl << endl;
    }
 
   void RigidBody::load(const string &path, ifstream& inputfile) {
@@ -530,19 +536,29 @@ namespace MBSim {
     getline(inputfile,dummy); // Newline
 
     int s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of Translation:
+    getline(inputfile,dummy); // # Type of translation:
     getline(inputfile,dummy); // Type of translation 
     inputfile.seekg(s,ios::beg);
     ClassFactory cf;
-    setTranslation(cf.getTranslation(dummy));
-    fPrPK->load(path, inputfile);
+    if(dummy.empty()) {
+      getline(inputfile,dummy); // # Type of translation 
+      getline(inputfile,dummy); // End of line
+    } else {
+      setTranslation(cf.getTranslation(dummy));
+      fPrPK->load(path, inputfile);
+    }
 
     s = inputfile.tellg();
     getline(inputfile,dummy); // # Type of rotation:
     getline(inputfile,dummy); // Type of rotation
     inputfile.seekg(s,ios::beg);
-    setRotation(cf.getRotation(dummy));
-    fAPK->load(path, inputfile);
+    if(dummy.empty()) {
+      getline(inputfile,dummy); // # Type of rotation 
+      getline(inputfile,dummy); // End of line
+    } else {
+      setRotation(cf.getRotation(dummy));
+      fAPK->load(path, inputfile);
+    }
 
   }
 

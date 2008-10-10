@@ -35,8 +35,6 @@ namespace MBSim {
 
     protected:
 
-      Mat fF[2], fM[2];
-
       ConstraintLaw *ffl, *fml;
       NormalImpactLaw *fifl, *fiml;
 
@@ -52,7 +50,6 @@ namespace MBSim {
       void setImpactMomentLaw(NormalImpactLaw * rc) {fiml = rc;}
 
       void updateKinetics(double t);
-      void updateW(double t);
       void projectJ(double dt);
       void projectGS(double dt);
       void solveGS(double dt);

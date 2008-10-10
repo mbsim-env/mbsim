@@ -158,7 +158,7 @@ namespace MBSim {
   }
 
   void NormalImpactLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of impact law:" << endl;
+    outputfile << "# Type of normal impact law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
@@ -224,7 +224,7 @@ namespace MBSim {
   }
 
   void UnilateralNewtonImpact::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of impact law:" << endl;
+    outputfile << "# Type of normal impact law:" << endl;
     outputfile << "UnilateralNewtonImpact" << endl << endl;
     outputfile << "# Restitution coefficient:" << endl;
     outputfile << epsilon << endl << endl;
@@ -500,7 +500,7 @@ namespace MBSim {
   }
 
   void PlanarCoulombImpact::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of friction law:" << endl;
+    outputfile << "# Type of tangential impact law:" << endl;
     outputfile << "PlanarCoulombImpact" << endl << endl;
     outputfile << "# Friction coefficient:" << endl;
     outputfile << mu << endl << endl;

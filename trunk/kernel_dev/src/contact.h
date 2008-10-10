@@ -82,6 +82,7 @@ namespace MBSim {
 
       void updateStage1(double t);
       void updateStage2(double t);
+      void updateW(double t);
 
       /*! define force dircetions and evaluate kinematical values */
       virtual void updateKinetics(double t) = 0;

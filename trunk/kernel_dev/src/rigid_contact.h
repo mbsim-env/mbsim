@@ -35,7 +35,6 @@ namespace MBSim {
 
     protected:
 
-      Mat fF[2], fM[2];
       double argN;
       Vec argT;
 
@@ -75,9 +74,7 @@ namespace MBSim {
       std::string getTerminationInfo(double dt);
 
       void updateKinetics(double t);
-      void updateW(double t);
-
-   //   void setNormalRestitutionCoefficient(double e) {epsilonN = e;}
+      void updateb(double t);
 
       void setNormalImpactLaw(NormalImpactLaw *fnil_) {fnil = fnil_;}
       void setTangentialImpactLaw(TangentialImpactLaw *ftil_) {ftil = ftil_;}

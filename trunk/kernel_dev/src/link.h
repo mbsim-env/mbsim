@@ -67,8 +67,8 @@ namespace MBSim {
       int gSize, gInd;
       int laSize, laInd;
 
-      vector<Vec> L;
-      vector<Mat> loadDir;
+      vector<Vec> WF, WM;
+      vector<Mat> fF, fM;
 
       int rFactorSize, rFactorInd;
       Vec g, gd, gdn, la, s, res;
@@ -116,9 +116,9 @@ namespace MBSim {
       virtual void updatejsvRef();
 
       virtual void updater(double t);
-      virtual void updateb(double t) {}
-      virtual void updateW(double t) {};
-      virtual void updateh(double t) {};
+      virtual void updateb(double t);
+      virtual void updateW(double t);
+      virtual void updateh(double t);
       virtual void updateWRef();
       virtual void updatehRef();
       virtual void updaterRef();
@@ -179,10 +179,6 @@ namespace MBSim {
 
       //bool isSetValued() const {return setValued;} 
       bool isSetValued() const; 
-
-      /*! Returns the actual load supplied by the Link to the CoordinateSystem connected by it*/
-      const Vec& getLoad(int id) const { return L[id];}
-      const Mat& getLoadDirections(int id) const {return loadDir[id];}
 
       const Vec& getla() const {return la;}
       Vec& getla() {return la;}

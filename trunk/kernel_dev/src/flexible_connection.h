@@ -34,7 +34,6 @@ namespace MBSim {
   class FlexibleConnection : public Connection {
 
     protected:
-      Vec WF[2], WM[2];
 
       RegularizedConstraintLaw *ffl, *fml;
 
@@ -46,7 +45,6 @@ namespace MBSim {
       void setMomentLaw(RegularizedConstraintLaw * rc) {fml = rc;}
 
       void updateKinetics(double t);
-      void updateh(double t);
 
       double computePotentialEnergy();
   };
