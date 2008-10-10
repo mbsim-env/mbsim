@@ -33,7 +33,6 @@ namespace MBSim {
   class FlexibleContact : public Contact {
 
     protected:
-      double c, d;
 
       RegularizedConstraintLaw *fcl;
       RegularizedFrictionLaw *ffl;
