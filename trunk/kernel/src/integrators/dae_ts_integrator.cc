@@ -21,6 +21,7 @@
  */
 
 #include<config.h>
+#include<ctime>
 #include "multi_body_system.h"
 #include "dae_ts_integrator.h"
 #include "integrators.h"

@@ -21,6 +21,7 @@
  */
 
 #include<config.h>
+#include<ctime>
 #include<multi_body_system.h>
 #include "time_stepping_integrator.h"
 
