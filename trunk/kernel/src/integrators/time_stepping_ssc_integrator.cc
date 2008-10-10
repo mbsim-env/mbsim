@@ -41,7 +41,7 @@ namespace MBSim {
   TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : dt(1e-6), dtMax(1e-2),driftCompensation(false), StepsWithUnchangedConstraints(-1), FlagSSC(true), aTol(1,INIT,1e-5), rTol(1,INIT,1e-4), gapTol(0), maxGainSSC(2.5), safetyFactorSSC(0.6), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), plotEveryStep(false), outputInterpolation(true), optimisedtforgaps(false), time(0.0), iter(0), maxIter(0), sumIter(0), integrationSteps(0), refusedSteps(0)
   {
     name = "TimeStepperSSC";
-    dtMin = epsroot;
+    dtMin = epsroot();
     safetyFactorGapControl = 1.0 + rTol(0)*10.0*2.0;
   }
 
@@ -285,7 +285,8 @@ namespace MBSim {
     EstErrorLocal = z2e -z1e;
 
     bool testOK = true;
-    double dtNewRel, dtNewRel_i;
+    double dtNewRel=0;
+	double dtNewRel_i;
     double ResTol_i;
     for (int i=0; i< zSize; i++) {
       EstErrorLocal(i) = fabs(EstErrorLocal(i));

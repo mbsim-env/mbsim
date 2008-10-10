@@ -141,7 +141,7 @@ namespace MBSim {
     Vector<int> iWork(liWork);
     Vec work(lWork);
 
-    work(0) = macheps;  		// rounding unit
+    work(0) = macheps();  		// rounding unit
     if(dtMax) work(6) = dtMax;
 
     iWork(1)=maxSteps;					//Maximum Step Numbers
