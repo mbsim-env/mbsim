@@ -338,12 +338,12 @@ namespace MBSim {
     }
     gIndUnilateral = Index(gSizeTmp, gSize-1);
     laIndUnilateral= Index(laSizeTmp, laSize-1);
-    if(gSize) {
+    if(gSize && INFO) {
       cout << "           gSize : " << gSize;
       cout << " (" << gIndBilateral.end()-gIndBilateral.start() +1 <<" bilateral and ";
       cout << gIndUnilateral.end()-gIndUnilateral.start()+1 <<" unilateral)"<<endl;
     }
-    if(laSize) {
+    if(laSize && INFO) {
       cout << "           laSize: " << laSize;
       cout << " (" << laIndBilateral.end()-laIndBilateral.start() +1 <<" bilateral and ";
       cout << laIndUnilateral.end()-laIndUnilateral.start()+1 <<" unilateral)"<<endl;
@@ -396,9 +396,9 @@ namespace MBSim {
 
     Jh.resize(getuSize(),getzSize());
 
-    if (xSize) cout<<"      xSize: " << xSize << endl;
-    if (qSize) cout<<"      qSize: " << qSize << endl;
-    if (uSize) cout<<"      uSize: " << uSize << endl;
+    if(xSize && INFO) cout<<"      xSize: " << xSize << endl;
+    if(qSize && INFO) cout<<"      qSize: " << qSize << endl;
+    if(uSize && INFO) cout<<"      uSize: " << uSize << endl;
 
     // single components
     if(INFO) cout << "  initialising ..." << endl;
@@ -567,7 +567,7 @@ namespace MBSim {
 
     if(checkGSize) Gs.resize();
     else if(Gs.cols() != G.size()) {
-      double facSizeGs = 1;
+      static double facSizeGs = 1;
       if(G.size()>limitGSize && facSizeGs == 1) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
       Gs.resize(G.size(),G.size(),int(G.size()*G.size()*facSizeGs));
     }
@@ -825,7 +825,7 @@ namespace MBSim {
 	for(int j=0; j<la.size(); j++) {
 	  xj = la(j);
 
-	  dx = (epsroot * 0.5);
+	  dx = (epsroot() * 0.5);
 	  do dx += dx;
 	  while (xj + dx == la(j));
 
@@ -1396,7 +1396,7 @@ namespace MBSim {
     int YSize = YParent.size();
     int zSize = getzSize();
     int laBilateralSize = getlaBilateralSize();
-    double deltaEPS = epsroot;
+    double deltaEPS = epsroot();
     double delta;
     static Vec F(YSize);
     static Vec Y(YSize);
