@@ -155,8 +155,10 @@ namespace MBSim {
       port[i]->getJacobianOfRotation().resize(3,hSize);
     }
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->getWJP().resize(3,hSize);
-      contour[i]->getWJR().resize(3,hSize);
+      contour[i]->getFixedFrame()->getJacobianOfTranslation().resize(3,hSize);
+      contour[i]->getFixedFrame()->getJacobianOfRotation().resize(3,hSize);
+      contour[i]->getMovingFrame()->getJacobianOfTranslation().resize(3,hSize);
+      contour[i]->getMovingFrame()->getJacobianOfRotation().resize(3,hSize);
     }
       
   }

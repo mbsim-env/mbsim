@@ -89,12 +89,10 @@ namespace MBSim {
 
    Vec WrPC = C.getPosition() - R.getPosition();
    Mat tWrPC = tilde(WrPC);
-   if(R.getJacobianOfTranslation().cols() > 0) { // TODO über fmatvec void-handling nachdenken !!!
-     C.getJacobianOfTranslation().resize()=(R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
-     C.getJacobianOfRotation().resize()=(R.getJacobianOfRotation());
-   }
-    C.setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
-    C.setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
+   C.setJacobianOfTranslation(R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
+   C.setJacobianOfRotation(R.getJacobianOfRotation());
+   C.setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
+   C.setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
   }
 
   void Contour::adjustParentHitSphere(const Vec &CrC) 
