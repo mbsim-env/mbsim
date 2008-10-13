@@ -44,14 +44,16 @@ namespace MBSim {
   }
 
   ContactFlexible::~ContactFlexible() {
-    if (DeleteDIB_c) delete c_fun;
-    if (DeleteDIB_d) delete d_fun; 
-    if (DeleteDIB_V) delete V_fun; 
+    if(DeleteDIB_c) delete c_fun;
+    if(DeleteDIB_d) delete d_fun; 
+    if(DeleteDIB_V) delete V_fun; 
   }
 
   void ContactFlexible::setStiffness(double c_) {
-    //cout << "Warning (ContactFlexible::setStiffness): Deprecated function and only valid for linear contact law."
-    //cout << "Use setPotential and setStiffnessFunction instead." << endl; 
+  	if(warnLevel>0) {
+    	cout << "WARNING (ContactFlexible::setStiffness): Deprecated function and only valid for linear contact law." << endl;
+    	cout << "Use setPotential and setStiffnessFunction instead." << endl;
+  	}
     if (DeleteDIB_c) delete c_fun; 
     c_fun = new FuncLinear(Vec(1,INIT,-c_),Vec(1,INIT,0.)); 
     DeleteDIB_c = true;
@@ -61,29 +63,31 @@ namespace MBSim {
     DeleteDIB_V = true;
   }
   void ContactFlexible::setStiffnessFunction(DataInterfaceBase *c_fun_, bool DeleteDIB_c_) {
-    if (DeleteDIB_c) delete c_fun; 
+    if(DeleteDIB_c) delete c_fun; 
     c_fun = c_fun_;
     DeleteDIB_c = DeleteDIB_c_;
     flag_c = true;
   }
 
   void ContactFlexible::setPotential(DataInterfaceBase *V_fun_, bool DeleteDIB_V_) {
-    if (DeleteDIB_V) delete V_fun; 
+    if(DeleteDIB_V) delete V_fun; 
     V_fun = V_fun_;
     DeleteDIB_V = DeleteDIB_V_;
   }
 
   void ContactFlexible::setDamping(double d_) {
-    //cout << "Warning (ContactFlexible::setDamping) Deprecated function and only valid for linear contact law. "
-    //cout << "Use setDampingFunction instead." << endl; 
-    if (DeleteDIB_d) delete d_fun; 
+    if(warnLevel>0) {
+    	cout << "WARNING (ContactFlexible::setDamping) Deprecated function and only valid for linear contact law." << endl;
+    	cout << "Use setDampingFunction instead." << endl;
+    }
+    if(DeleteDIB_d) delete d_fun; 
     d_fun = new FuncLinear(Vec(1,INIT,-d_),Vec(1,INIT,0.));
     DeleteDIB_d = true;
   }
 
 
   void ContactFlexible::setDampingFunction(DataInterfaceBase *d_fun_, bool DeleteDIB_d_) {
-    if (DeleteDIB_d) delete d_fun;
+    if(DeleteDIB_d) delete d_fun;
     d_fun = d_fun_;
     DeleteDIB_d = DeleteDIB_d_;
   }
@@ -108,13 +112,13 @@ namespace MBSim {
 
 
       if(nFric == 1) { // tangential directions
-	if(fabs(gd(1)) < gdT_grenz) la(1) = -la(0)*((*mue_fun)(gdT_grenz))(0)*gd(1)/gdT_grenz;
-	else la(1) = gd(1)>0?-la(0)*((*mue_fun)(gd(1)))(0):la(0)*((*mue_fun)(-gd(1)))(0);
+		if(fabs(gd(1)) < gdT_grenz) la(1) = -la(0)*((*mue_fun)(gdT_grenz))(0)*gd(1)/gdT_grenz;
+		else la(1) = gd(1)>0?-la(0)*((*mue_fun)(gd(1)))(0):la(0)*((*mue_fun)(-gd(1)))(0);
       }
       else if(nFric == 2) {
-	double norm_gdT = nrm2(gd(1,2));
-	if(norm_gdT < gdT_grenz) la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(gdT_grenz))(0)/gdT_grenz);
-	else la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(norm_gdT))(0)/norm_gdT);
+		double norm_gdT = nrm2(gd(1,2));
+		if(norm_gdT < gdT_grenz) la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(gdT_grenz))(0)/gdT_grenz);
+		else la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(norm_gdT))(0)/norm_gdT);
       }
 
       WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);

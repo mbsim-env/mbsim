@@ -21,6 +21,7 @@
  */
 
 #include<config.h>
+#include<ctime>
 #include<multi_body_system.h>
 #include "time_stepping_ssc_integrator.h"
 #include "eps.h"
@@ -284,7 +285,8 @@ namespace MBSim {
     EstErrorLocal = z2e -z1e;
 
     bool testOK = true;
-    double dtNewRel, dtNewRel_i;
+    double dtNewRel=0;
+	double dtNewRel_i;
     double ResTol_i;
     for (int i=0; i< zSize; i++) {
       EstErrorLocal(i) = fabs(EstErrorLocal(i));

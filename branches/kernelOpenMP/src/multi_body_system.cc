@@ -273,7 +273,7 @@ namespace MBSim {
 
   HitSphereLink* MultiBodySystem::getHitSphereLink(Object* obj0, Object* obj1) {
     for(vector<HitSphereLink*>::iterator hsl = HSLinks.begin();hsl < HSLinks.end();hsl++)
-      if((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1 || (*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0) return  (*hsl);
+      if(((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1) || ((*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0)) return  (*hsl);
 
     HitSphereLink *HSLink = new HitSphereLink(); // create new hitsphere link if none is found
     HSLinks.push_back(HSLink);
@@ -338,12 +338,12 @@ namespace MBSim {
     }
     gIndUnilateral = Index(gSizeTmp, gSize-1);
     laIndUnilateral= Index(laSizeTmp, laSize-1);
-    if(gSize) {
+    if(gSize && INFO) {
       cout << "           gSize : " << gSize;
       cout << " (" << gIndBilateral.end()-gIndBilateral.start() +1 <<" bilateral and ";
       cout << gIndUnilateral.end()-gIndUnilateral.start()+1 <<" unilateral)"<<endl;
     }
-    if(laSize) {
+    if(laSize && INFO) {
       cout << "           laSize: " << laSize;
       cout << " (" << laIndBilateral.end()-laIndBilateral.start() +1 <<" bilateral and ";
       cout << laIndUnilateral.end()-laIndUnilateral.start()+1 <<" unilateral)"<<endl;
@@ -396,9 +396,9 @@ namespace MBSim {
 
     Jh.resize(getuSize(),getzSize());
 
-    if (xSize) cout<<"      xSize: " << xSize << endl;
-    if (qSize) cout<<"      qSize: " << qSize << endl;
-    if (uSize) cout<<"      uSize: " << uSize << endl;
+    if(xSize && INFO) cout<<"      xSize: " << xSize << endl;
+    if(qSize && INFO) cout<<"      qSize: " << qSize << endl;
+    if(uSize && INFO) cout<<"      uSize: " << uSize << endl;
 
     // single components
     if(INFO) cout << "  initialising ..." << endl;
