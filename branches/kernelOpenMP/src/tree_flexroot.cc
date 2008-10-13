@@ -26,6 +26,10 @@
 #include "multi_body_system.h"
 #include "body_flexible.h"
 #include "body_rigid_rel_onflex.h"
+///////////////////////////
+#include <omp.h>
+unsigned long int timemeasureepoch();
+///////////////////////////
 
 namespace MBSim {
   TreeFlexRoot::TreeFlexRoot(const string &projectName) : Tree(projectName), flexible(NULL) {
@@ -71,9 +75,20 @@ namespace MBSim {
 
   void TreeFlexRoot::updateM(double t) {
     flexible->updateM(t);
+///////////////////
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1005000);
 #   pragma omp parallel for
-    for(int i=0; i<(int)rigid.size(); i++)
+    for(int i=0; i<(int)rigid.size(); i++) {
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1006001+omp_get_thread_num());
       rigid[i]->updateM(t);
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1007001+omp_get_thread_num());
+    }
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1004000);
+///////////////////
+//#   pragma omp parallel for
+//    for(int i=0; i<(int)rigid.size(); i++)
+//      rigid[i]->updateM(t);
+////////////////////////////
   }
 
 

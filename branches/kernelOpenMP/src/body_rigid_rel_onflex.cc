@@ -30,6 +30,19 @@
 #include "tree_rigid.h"
 #include "tree_flexroot.h"
 #include "body_flexible.h"
+///////////////////
+#include <omp.h>
+unsigned long int timemeasureepoch();
+#include <sys/time.h>
+unsigned long int timemeasureepoch() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  unsigned long int sec, usec;
+  sec=tv.tv_sec;
+  usec=tv.tv_usec;
+  return sec*1000000l+usec;
+}
+///////////////////
 
 namespace MBSim {
 
@@ -71,11 +84,23 @@ namespace MBSim {
     SymMat M1=JTMJ(Mh,J(AllCartesian,Iflexible));
     Mat M2=trans(J(AllCartesian,Iu))*Mh*J(AllCartesian,Iflexible);
     SymMat M3=JTMJ(Mh,J(AllCartesian,Iu));
+///////////////////
+int thread=omp_get_thread_num();
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1001001+thread);
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1007001+thread);
+///////////////////
 #   pragma omp critical (mbsim_BodyRigidRelOnFlex_updateM)
     {
+///////////////////
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1002001+thread);
+///////////////////
       MTree(Iflexible)    += M1;
       MTree(Iu,Iflexible) += M2;
       MTree(      Iu)     += M3;
+///////////////////
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1003001+thread);
+fprintf(stderr,"%ld %d\n",timemeasureepoch(),1006001+thread);
+///////////////////
     }
 
     for(unsigned int i=0; i<successor.size(); i++) {
