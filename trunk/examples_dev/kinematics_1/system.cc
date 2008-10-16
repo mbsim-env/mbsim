@@ -41,7 +41,7 @@ class MyPos : public Translation {
     }; 
 };
 
-class jT : public TimeDep {
+class jT : public TimeDependentFunction {
   public:
     Vec operator()(double t) {
       Vec j(3);
@@ -52,7 +52,7 @@ class jT : public TimeDep {
     }
 };
 
-class djT : public TimeDep {
+class djT : public TimeDependentFunction {
   public:
     Vec operator()(double t) {
       Vec dj(3);
