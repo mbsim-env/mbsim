@@ -64,6 +64,19 @@ namespace MBSim {
       gd(iT) = trans(cpData[iline].Wt)*WvD;
     }
   }
+  
+  void ContactKinematicsPointLine::updateb(Vec &b, vector<ContourPointData> &cpData) {
+    double kappa[2], sd[2];
+    double kappa_sd_ipoint = trans(line->getCb())*(line->getWomegaC() - point->getWomegaC());
+    sd[iline] = trans(cpData[iline].Wt.col(0))*(point->getWvP() - line->getWvP());
+    sd[ipoint] = 0;
+    kappa[iline] = 0;
+    //kappa[ipoint] = inf;
+    //b(0) += trans(cpData[iline].Wn)*(sd[iline]*crossProduct(line->getWomegaC(),cpData[iline].Wt.col(0)) - sd[ipoint]*crossProduct(point->getWomegaC(),cpData[ipoint].Wt.col(0)) + crossProduct(line->getWomegaC(),line->getWrOP()) - crossProduct(point->getWomegaC(),point->getWrOP())) + trans(cpData[iline].Wt.col(0))*(kappa[iline]*sd[iline]*line->getWvP() - kappa[ipoint]*sd[ipoint]*point->getWvP()) ;
+  b(0) -= trans(cpData[iline].Wn)*(crossProduct(line->getWomegaC(),line->getWrOP()) - crossProduct(point->getWomegaC(),point->getWrOP()))
+    + trans(cpData[iline].Wt.col(0))*( - kappa_sd_ipoint*point->getWvP()) 
+    - trans(line->getCb())*(sd[iline]*line->getWomegaC());
+  }
 
 }
 

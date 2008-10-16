@@ -26,6 +26,7 @@
 #include "multi_body_system.h"
 #include "function.h"
 #include "class_factory.h"
+#include "contact_kinematics.h"
 
 namespace MBSim {
 
@@ -122,6 +123,7 @@ namespace MBSim {
 
   void RigidContact::updateb(double t) {
     Contact::updateb(t);
+    contactKinematics->updateb(b,cpData);
   }
 
   void RigidContact::checkActive() {
