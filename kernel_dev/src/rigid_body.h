@@ -71,12 +71,12 @@ namespace MBSim {
     Rotation *fAPK;
     Jacobian *fPJT;
     Jacobian *fPJR;
-    DerJac *fPdJT;
-    DerJac *fPdJR;
-    TimeDep *fPjT;
-    TimeDep *fPjR;
-    TimeDep *fPdjT;
-    TimeDep *fPdjR;
+    DerivativeOfJacobian *fPdJT;
+    DerivativeOfJacobian *fPdJR;
+    TimeDependentFunction *fPjT;
+    TimeDependentFunction *fPjR;
+    TimeDependentFunction *fPdjT;
+    TimeDependentFunction *fPdjR;
 
     virtual void updateh(double t);
     virtual void updateJacobians(double t);
@@ -109,12 +109,12 @@ namespace MBSim {
     void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
     void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
     void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
-    void setDerivativeOfJacobianOfTranslation(DerJac* fPdJT_) { fPdJT = fPdJT_;}
-    void setDerivativeOfJacobianOfRotation(DerJac* fPdJR_) { fPdJR = fPdJR_;}
-    void setGuidingVelocityOfTranslation(TimeDep* fPjT_) { fPjT = fPjT_;}
-    void setGuidingVelocityOfRotation(TimeDep* fPjR_) { fPjR = fPjR_;}
-    void setDerivativeOfGuidingVelocityOfTranslation(TimeDep* fPdjT_) { fPdjT = fPdjT_;}
-    void setDerivativeOfGuidingVelocityOfRotation(TimeDep* fPdjR_) { fPdjR = fPdjR_;}
+    void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
+    void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
+    void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
+    void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
+    void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
+    void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
 
     /*! define the mass of the body
       \param m mass
