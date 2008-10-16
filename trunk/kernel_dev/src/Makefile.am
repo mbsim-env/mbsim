@@ -63,5 +63,14 @@ userfunction_contour.h\
 functions_contact.h\
 class_factory.h\
 kinematics.h\
-constitutive_laws.h
+constitutive_laws.h\
+compatibility_classes/body_rigid.h\
+compatibility_classes/body_rigid_abs.h\
+compatibility_classes/body_rigid_rel.h\
+compatibility_classes/tree_rigid.h\
+compatibility_classes/contact_rigid.h\
+compatibility_classes/impact_rigid.h\
+compatibility_classes/contact_flexible.h\
+compatibility_classes/connection_rigid.h\
+compatibility_classes/connection_flexible.h
 
