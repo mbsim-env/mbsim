@@ -75,26 +75,26 @@ namespace MBSim {
       virtual Mat operator()(const Vec &q, double t) = 0; 
   };
 
-  class ConstJacobian : public Jacobian {
+  class ConstantJacobian : public Jacobian {
     private:
       Mat J;
     public:
       virtual int getuSize() const {return J.cols();}
-      ConstJacobian(const Mat &J_) {J = J_;}
+      ConstantJacobian(const Mat &J_) {J = J_;}
 
     public:
        virtual Mat operator()(const Vec &q, double t) {return J;} 
   };
 
-  class DerJac {
+  class DerivativeOfJacobian {
     public:
-      virtual ~DerJac() {}
+      virtual ~DerivativeOfJacobian() {}
       virtual Mat operator()(const Vec &qd, const Vec &q, double t) = 0; 
   };
 
-  class TimeDep {
+  class TimeDependentFunction {
     public:
-      virtual ~TimeDep() {}
+      virtual ~TimeDependentFunction() {}
       virtual Vec operator()(double t) = 0; 
   };
 
