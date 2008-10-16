@@ -49,6 +49,8 @@ bodyAMVis = NULL;
   }
 
   void CoordinateSystem::init() {
+    getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
+    getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
   }
 
 #ifdef HAVE_AMVIS

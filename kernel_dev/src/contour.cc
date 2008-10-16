@@ -63,6 +63,10 @@ namespace MBSim {
   }
 
   void Contour::init() {
+    getFixedFrame()->getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
+    getFixedFrame()->getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
+    getMovingFrame()->getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
+    getMovingFrame()->getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
   }
 
   void Contour::initPlotFiles() 

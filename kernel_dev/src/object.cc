@@ -406,7 +406,10 @@ namespace MBSim {
     Ix = Index(xInd,xInd+xSize-1);
     Ih = Index(hInd,hInd+hSize-1);
 
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) (*i)->init();
+    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
+      (*i)->init();
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
+      (*i)->init();
   }
 
   void Object::updatedq(double t, double dt) {
