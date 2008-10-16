@@ -169,8 +169,6 @@ namespace MBSim {
 
   };
 
-  typedef RigidBody BodyRigid;
-
 }
 
 #endif

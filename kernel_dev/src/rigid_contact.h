@@ -87,8 +87,6 @@ namespace MBSim {
       bool isActive() const { return fcl->isActive(g(0));}
   };
 
-  typedef RigidContact ContactRigid;
-
 }
 
 #endif   
