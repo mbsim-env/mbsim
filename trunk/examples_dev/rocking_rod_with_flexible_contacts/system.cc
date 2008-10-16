@@ -36,7 +36,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double deltax = 0.2;           
   double mu  = 0.3;
 
-  BodyRigid* body = new BodyRigid("Rod");
+  RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
   body->setFrameOfReference(getCoordinateSystem("I"));
@@ -75,13 +75,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addContour(point2,delta2,SqrMat(3,EYE));
 
   // Contacts
-  ContactFlexible *cr1S = new ContactFlexible("Contact1"); 
+  FlexibleContact *cr1S = new FlexibleContact("Contact1"); 
   cr1S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
   cr1S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
-  ContactFlexible *cr2S = new ContactFlexible("Contact2");
+  FlexibleContact *cr2S = new FlexibleContact("Contact2");
   cr2S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
   cr2S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   cr2S->connect(point2,body->getContour("Line"));

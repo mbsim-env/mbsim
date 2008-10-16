@@ -14,9 +14,9 @@ using namespace AMVis;
 class Pos : public UserFunction {
   private:
     double T1, T2;
-    BodyRigid *body;
+    RigidBody *body;
   public:
-    Pos(BodyRigid *body_) : T1(2), T2(4), body(body_) {}
+    Pos(RigidBody *body_) : T1(2), T2(4), body(body_) {}
     
     Vec operator()(double t) {
       Vec pos(1);
@@ -53,7 +53,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   tree->setCoordinateSystemForKinematics(tree->getCoordinateSystem("I"));
  
 
-  BodyRigid *basis = new BodyRigid("Basis");
+  RigidBody *basis = new RigidBody("Basis");
   tree->addObject(basis);
   basis->setMass(mB);
   SymMat Theta(3);
@@ -76,7 +76,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   basis->setFrameOfReference(getCoordinateSystem("I"));
   basis->setCoordinateSystemForKinematics(basis->getCoordinateSystem("R"));
 
-  BodyRigid *arm = new BodyRigid("Arm");
+  RigidBody *arm = new RigidBody("Arm");
   tree->addObject(arm);
   Vec PrPK0(3);
   PrPK0(1) = hB;
@@ -97,7 +97,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   KrSP(1) = -lA/2;
   KrSP(1) = lA/2;
 
-  BodyRigid *spitze = new BodyRigid("Spitze");
+  RigidBody *spitze = new RigidBody("Spitze");
   tree->addObject(spitze);
   spitze->setMass(mS);
   Theta(0,0) = mS*rS*rS;

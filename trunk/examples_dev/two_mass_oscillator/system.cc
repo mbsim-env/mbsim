@@ -35,7 +35,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double l02 = 0.5;
 
   // ----------------------- Definition des 1. Körpers --------------------  
-  BodyRigid *box1 = new BodyRigid("Box1");
+  RigidBody *box1 = new RigidBody("Box1");
   addObject(box1);
  
   // Masse und Trägheit definieren
@@ -50,7 +50,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
-  BodyRigid *box2 = new BodyRigid("Box2");
+  RigidBody *box2 = new RigidBody("Box2");
   addObject(box2);
 
   // Masse und Trägheit definieren

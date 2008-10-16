@@ -16,7 +16,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   Vec KrKS(3);
   SymMat Theta(3);
 
-  stab1 = new BodyRigid("Stab1");
+  stab1 = new RigidBody("Stab1");
   addObject(stab1);
   KrKS(0) = a1;
   SqrMat A(3);
@@ -46,7 +46,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   obj-> setAngleEPS(M_PI*2/9);
 
   if(1) {
-  stab2 = new BodyRigid("Stab2");
+  stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
   stab1->addCoordinateSystem("P",WrOK-KrKS,A);

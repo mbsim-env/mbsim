@@ -26,7 +26,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrKS(3);
   SymMat Theta(3);
 
-  BodyRigid* stab1 = new BodyRigid("Stab1");
+  RigidBody* stab1 = new RigidBody("Stab1");
   stab1->setuSize(1);
   stab1->setqSize(1);
   tree->addObject(stab1);
@@ -55,7 +55,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj-> setNormalEPS(1e-5);
   obj-> setAngleEPS(M_PI*2/9);
 
-  BodyRigid* stab2 = new BodyRigid("Stab2");
+  RigidBody* stab2 = new RigidBody("Stab2");
   tree->addObject(stab2);
   stab2->setuSize(1);
   stab2->setqSize(1);
