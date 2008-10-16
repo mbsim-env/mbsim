@@ -63,7 +63,6 @@ namespace MBSim {
       void updaterFactors();
   };
 
-  typedef RigidConnection ConnectionRigid;
 }
 
 #endif

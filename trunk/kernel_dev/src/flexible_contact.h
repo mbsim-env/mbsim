@@ -56,7 +56,6 @@ namespace MBSim {
       //void setMarginalVelocity(double v) {gdT_grenz = v;}
   };
 
-  typedef FlexibleContact ContactFlexible;
 }
 
 #endif

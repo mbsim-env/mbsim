@@ -49,7 +49,6 @@ namespace MBSim {
       double computePotentialEnergy();
   };
 
-  typedef FlexibleConnection ConnectionFlexible;
 }
 
 #endif
