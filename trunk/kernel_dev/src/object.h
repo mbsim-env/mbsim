@@ -129,8 +129,6 @@ namespace MBSim {
     /*! Perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
     virtual void facLLM();
 
-    //virtual Object* getResponsible() {return this;}
-
 ////    /*! compute Jacobian of right-hand side for parts depending only on this bodies coordinates
 ////    */
 ////    //virtual void updateJh_internal(double t);
@@ -278,6 +276,8 @@ namespace MBSim {
 
     virtual string getType() const {return "Object";}
     virtual MultiBodySystem* getMultiBodySystem(); 
+
+    virtual int getDegreesOfFreedom() const {return hSize;}
   };
 
 }

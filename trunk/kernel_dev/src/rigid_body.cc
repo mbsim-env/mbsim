@@ -150,17 +150,6 @@ namespace MBSim {
     for(int i=0; i<uSize; i++) 
       T(i,i) = 1;
 
-    for(unsigned int i=0; i<port.size(); i++) {
-      port[i]->getJacobianOfTranslation().resize(3,hSize);
-      port[i]->getJacobianOfRotation().resize(3,hSize);
-    }
-    for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->getFixedFrame()->getJacobianOfTranslation().resize(3,hSize);
-      contour[i]->getFixedFrame()->getJacobianOfRotation().resize(3,hSize);
-      contour[i]->getMovingFrame()->getJacobianOfTranslation().resize(3,hSize);
-      contour[i]->getMovingFrame()->getJacobianOfRotation().resize(3,hSize);
-    }
-      
   }
 
   void RigidBody::initPlotFiles() {

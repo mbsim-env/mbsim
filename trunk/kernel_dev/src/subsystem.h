@@ -226,6 +226,7 @@ namespace MBSim {
 
       virtual string getType() const {return "Subsystem";}
 
+      int getDegreesOfFreedom() const {return 0;}
   };
 }
 
