@@ -25,7 +25,7 @@ Group2::Group2(const string &name) : Group(name) {
   double l02 = 0.5;
 
   // ----------------------- Definition des 1. Körpers --------------------  
-  BodyRigid *box1 = new BodyRigid(name+"_Box1");
+  RigidBody *box1 = new RigidBody(name+"_Box1");
   addObject(box1);
  
   // Masse und Trägheit definieren

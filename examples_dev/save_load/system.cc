@@ -41,7 +41,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   //WrOK(2) = d/2;;
   //origin->setWrOP(WrOK);
 
-  BodyRigid* body = new BodyRigid("Rod");
+  RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
   //body->setFrameOfReference(getCoordinateSystem("I"));
@@ -79,15 +79,15 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Point* point2 = new Point("Point2");
   addContour(point2,delta2,SqrMat(3,EYE));
 
-  ContactRigid *cr1S = new ContactRigid("Contact1"); 
+  RigidContact *cr1S = new RigidContact("Contact1"); 
   cr1S->setContactLaw(new UnilateralConstraint);
   cr1S->setNormalImpactLaw(new UnilateralNewtonImpact);
-  cr1S->setFrictionLaw(new PlanarCoulombFriction(mu));
-  cr1S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  //cr1S->setFrictionLaw(new PlanarCoulombFriction(mu));
+  //cr1S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
-  ContactRigid *cr2S = new ContactRigid("Contact2");
+  RigidContact *cr2S = new RigidContact("Contact2");
   cr2S->setContactLaw(new UnilateralConstraint);
   cr2S->setNormalImpactLaw(new UnilateralNewtonImpact);
   cr2S->setFrictionLaw(new PlanarCoulombFriction(mu));

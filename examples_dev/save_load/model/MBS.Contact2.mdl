@@ -22,7 +22,7 @@ PlanarCoulombFriction
 # Friction coefficient:
 0.3
 
-# Type of impact law:
+# Type of normal impact law:
 UnilateralNewtonImpact
 
 # Restitution coefficient:
@@ -31,7 +31,7 @@ UnilateralNewtonImpact
 # Marginal velocity:
 0.01
 
-# Type of friction law:
+# Type of tangential impact law:
 PlanarCoulombImpact
 
 # Friction coefficient:

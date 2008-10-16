@@ -80,7 +80,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double deltax = 0.2;           
   double mu  = 0.3;
 
-  BodyRigid* body = new BodyRigid("Rod");
+  RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
   body->setFrameOfReference(getCoordinateSystem("I"));
@@ -97,7 +97,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setAMVisBody(cubeoid);
 
   // Just to have somtething to integrate ;-)
-  body = new BodyRigid("Rod2");
+  body = new RigidBody("Rod2");
   addObject(body);
   body->setFrameOfReference(getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));

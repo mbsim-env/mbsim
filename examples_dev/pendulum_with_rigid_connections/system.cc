@@ -25,7 +25,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double phi1 = -M_PI/2;
   double phi2 = -M_PI/4;
 
-  BodyRigid *box1 = new BodyRigid("Stab1");
+  RigidBody *box1 = new RigidBody("Stab1");
   addObject(box1);
   box1->setMass(m1);
   SymMat Theta(3);
@@ -52,7 +52,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   KrSP(1) = -b1;
   box1->addCoordinateSystem("PunktU",KrSP,E);
 
-  BodyRigid *box2 = new BodyRigid("Stab2");
+  RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);
   box2->setMass(m2);
   Theta(2,2) = 1./12.*m2*l2*l2;
@@ -85,7 +85,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setFrameOfReference(getCoordinateSystem("Os"));
   box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
-  ConnectionRigid *ls = new ConnectionRigid("Gelenk1");
+  RigidConnection *ls = new RigidConnection("Gelenk1");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new BilateralConstraint);
@@ -93,7 +93,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
   ls->setPlotLevel(2);
 
-  ls = new ConnectionRigid("Gelenk2");
+  ls = new RigidConnection("Gelenk2");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new BilateralConstraint);

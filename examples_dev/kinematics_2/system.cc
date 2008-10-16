@@ -85,7 +85,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   Tree *tree = new Tree("Baum"); 
   addObject(tree);
-  BodyRigid* body = new BodyRigid("Rod");
+  RigidBody* body = new RigidBody("Rod");
 
   tree->addObject(body);
   body->setFrameOfReference(getCoordinateSystem("I"));
