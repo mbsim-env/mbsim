@@ -48,7 +48,7 @@ class JacobianR : public Jacobian {
     }
 };
 
-class MyDerT : public DerJac {
+class MyDerT : public DerivativeOfJacobian {
   public:
     Mat operator()(const Vec &qd, const Vec& q, double t) {
       Mat J(3,1);
@@ -58,7 +58,7 @@ class MyDerT : public DerJac {
     }
 };
 
-class MyDerR : public DerJac {
+class MyDerR : public DerivativeOfJacobian {
   public:
     Mat operator()(const Vec &qd, const Vec& q, double t) {
       Mat J(3,1);
