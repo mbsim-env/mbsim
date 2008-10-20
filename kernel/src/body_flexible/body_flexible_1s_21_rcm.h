@@ -1,5 +1,5 @@
 /* Copyright (C) 2005-2006  Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -47,143 +47,144 @@ namespace MBSim {
    * */
   class BodyFlexible1s21RCM : public BodyFlexible1s {
 
-    protected:
-      /** the one finite element used for all calculations */
-      FiniteElement1s21RCM *balken;
+	protected:
+	  /** the one finite element used for all calculations */
+	  // FiniteElement1s21RCM *balken;
 
-      /** number of finite elements used for discretisation */
-      int Elements;
-      /** length of beam */ 
-      double L;
-      /** modulus of linear elasticity */
-      double E;
-      /** cross-section area */
-      double A;
-      /** moment of inertia of cross-section */
-      double I;
-      /** meterial density */
-      double rho;
-      /** curle radius */
-      double rc;
-      /** coefficient of material damping */
-      double dm;
-      /** coefficient of Lehr-damping */
-      double dl;
-      /** flag for open (cantilever beam) or closed (rings) structures */ 
-      bool openStructure;
-      /** true if terms for implicit time integration shall be computed, unused so far */ 
-      bool implicit;
+	  /** number of finite elements used for discretisation */
+	  int Elements;
+	  /** length of beam */ 
+	  double L;
+	  /** length of one element */
+	  double l0;
+	  /** modulus of linear elasticity */
+	  double E;
+	  /** cross-section area */
+	  double A;
+	  /** moment of inertia of cross-section */
+	  double I;
+	  /** meterial density */
+	  double rho;
+	  /** curle radius */
+	  double rc;
+	  /** coefficient of material damping */
+	  double dm;
+	  /** coefficient of Lehr-damping */
+	  double dl;
+	  /** flag for open (cantilever beam) or closed (rings) structures */ 
+	  bool openStructure;
+	  /** true if terms for implicit time integration shall be computed, unused so far */ 
+	  bool implicit;
 
-      Vec qElement,uElement;
-      int CurrentElement;
-      SqrMat Dhq, Dhqp;
+	  int CurrentElement;
+	  SqrMat Dhq, Dhqp;
 
-      // KOS-Definition und Lage des ersten Knoten im Weltsystem
-      Vec WrON00,WrON0;
+	  // KOS-Definition und Lage des ersten Knoten im Weltsystem
+	  Vec WrON00,WrON0;
 
-      void   BuildElement(const int&);
-      double BuildElement(const double&);
+	  void   BuildElements();
+	  double BuildElement(const double&);
 
-      /* geerbt */
-      void updateKinematics(double t);
-      /* geerbt */
-      void updatePorts(double t);
-      /* geerbt */
-       void updateh(double t);
+	  /* geerbt */
+	  void updateKinematics(double t);
+	  /* geerbt */
+	  void updatePorts(double t);
+	  /* geerbt */
+	  void GlobalMatrixContribution(int n);
 
-      /* geerbt */
-      void init();
-      bool initialized;
-      double alphaRelax0, alphaRelax;
+	  /* geerbt */
+	  void init();
+	  bool initialized;
+	  double alphaRelax0, alphaRelax;
 
-      double sTangent;
-      Vec Wt, Wn, WrOC, WvC, Womega;
+	  double sTangent;
+	  Vec Wt, Wn, WrOC, WvC, Womega;
 
-      /** right and left side contour of body: defined using binormal of contour */
-      Contour1sFlexible *contourR, *contourL;
+	  /** right and left side contour of body: defined using binormal of contour */
+	  Contour1sFlexible *contourR, *contourL;
 
-      void updateJh_internal(double t);
+	  void updateJh_internal(double t);
 
 #ifdef HAVE_AMVIS
-      float AMVisRadius, AMVisBreadth, AMVisHeight;
+	  float AMVisRadius, AMVisBreadth, AMVisHeight;
 #endif
 
-    public:
-      /*! Constructor:
-       * \param name body name
-       * \param openStructure bool to specify open (catilever) = true or closed (ring) = false structure
-       * */
-      BodyFlexible1s21RCM(const string &name, bool openStructure); 
+	public:
+	  /*! Constructor:
+	   * \param name body name
+	   * \param openStructure bool to specify open (catilever) = true or closed (ring) = false structure
+	   * */
+	  BodyFlexible1s21RCM(const string &name, bool openStructure); 
 
-      /*! set number of Elements used for discretisation */
-      void setNumberElements(int n); 
-      /*! set lenght of beam */
-      void setLength(double L_)             {L = L_;}
-      /*! set modulus of elasticity */
-      void setEModul(double E_)             {E = E_;}
-      /*! set area of cross-section */
-      void setCrossSectionalArea(double A_) {A = A_;}
-      /*! set moment of inertia of cross-section */
-      void setMomentInertia(double I_)      {I = I_;}
-      /*! set homogenous density */
-      void setDensity(double rho_)          {rho = rho_;}
-      /*! set radius of undeformed shape */
-      void setCurleRadius(double r);
-      /*! set material damping coeffizient */
-      void setMaterialDamping(double d);
-      /*! set damping as Lehr-coefficient */
-      void setLehrDamping(double d);
+	  /*! set number of Elements used for discretisation */
+	  void setNumberElements(int n); 
+	  /*! set lenght of beam */
+	  void setLength(double L_)             {L = L_;}
+	  /*! set modulus of elasticity */
+	  void setEModul(double E_)             {E = E_;}
+	  /*! set area of cross-section */
+	  void setCrossSectionalArea(double A_) {A = A_;}
+	  /*! set moment of inertia of cross-section */
+	  void setMomentInertia(double I_)      {I = I_;}
+	  /*! set homogenous density */
+	  void setDensity(double rho_)          {rho = rho_;}
+	  /*! set radius of undeformed shape */
+	  void setCurleRadius(double r);
+	  /*! set material damping coeffizient */
+	  void setMaterialDamping(double d);
+	  /*! set damping as Lehr-coefficient */
+	  void setLehrDamping(double d);
 
-      using BodyFlexible1s::addPort;
-      /*! add Port 
-       * \param name name of Port for referenzation
-       * \param node number of FE node
-       */
-      void addPort(const string &name, const int &node);
+	  using BodyFlexible1s::addPort;
+	  /*! add Port 
+	   * \param name name of Port for referenzation
+	   * \param node number of FE node
+	   */
+	  void addPort(const string &name, const int &node);
 
-      /* geerbt */
-      Mat computeJacobianMatrix(const ContourPointData &S);
-      /* geerbt */
-      Mat computeJp(const ContourPointData &S);
-      /* geerbt */
-      Mat computeK    (const ContourPointData &data);
-      Mat computeKp   (const ContourPointData &data);
-      Mat computeDrDs (const ContourPointData &data);
-      Mat computeDrDsp(const ContourPointData &data);
-      /* geerbt */
-      Mat computeWt  (const ContourPointData &S_);
-      Vec computeWn  (const ContourPointData &S_);
-      Vec computeWrOC(const ContourPointData &S_);
-      Vec computeWvC (const ContourPointData &S_);
-      Vec computeWomega(const ContourPointData &S_);
+	  /* geerbt */
+	  Mat computeJacobianMatrix(const ContourPointData &S);
+	  /* geerbt */
+	  Mat computeJp(const ContourPointData &S);
+	  /* geerbt */
+	  Mat computeK    (const ContourPointData &data);
+	  Mat computeKp   (const ContourPointData &data);
+	  Mat computeDrDs (const ContourPointData &data);
+	  Mat computeDrDsp(const ContourPointData &data);
+	  /* geerbt */
+	  Mat computeWt  (const ContourPointData &S_);
+	  Vec computeWn  (const ContourPointData &S_);
+	  Vec computeWrOC(const ContourPointData &S_);
+	  Vec computeWvC (const ContourPointData &S_);
+	  Vec computeWomega(const ContourPointData &S_);
 
-      /*! compute state (position and velocities) of cross-section at \f$$\vs$\f$
-       * \param s contour parameter
-       * */
-      Vec computeState(const double &s);
+	  /*! compute state (position and velocities) of cross-section at \f$$\vs$\f$
+	   * \param s contour parameter
+	   * */
+	  Vec computeState(const double &s);
 
-      /* geerbt */
-      double computePotentialEnergy();
-      /* geerbt */
-      bool hasConstMass() const {return false;}
+	  /* geerbt */
+	  double computePotentialEnergy();
+	  /* geerbt */
+	  bool hasConstMass() const {return false;}
 
-      /* geerbt */
-      void setJT(const Mat &JT_) {assert(JT_.cols()==2); JT = JT_;};
-      void setJR(const Mat &JR_) {assert(JR_.cols()==1); JR = JR_;};
+	  /* geerbt */
+	  void setJT(const Mat &JT_) {assert(JT_.cols()==2); JT = JT_;};
+	  void setJR(const Mat &JR_) {assert(JR_.cols()==1); JR = JR_;};
 
-      /*! define origin of describing coordinate system in world coordinates 
-       * */
-      void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
-      void initRelaxed(double alpha);
+	  /*! define origin of describing coordinate system in world coordinates 
+	   * */
+	  void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
+	  void initRelaxed(double alpha);
 
-      /* geerbt */
-      void plotParameters();
+	  /* geerbt */
+	  void plotParameters();
 
 #ifdef HAVE_AMVIS
-      /*! set radius of cylinder for AMVis-visualization */
-      void setAMVisCylinder(float r) {boolAMVis=true;AMVisRadius=r;}
-      /*! set radius of cylinder for AMVis-visualization */
-      void setAMVisCuboid(float breadth, float height) {boolAMVis=true;AMVisBreadth=breadth;AMVisHeight=height;}
+	  /*! set radius of cylinder for AMVis-visualization */
+	  void setAMVisCylinder(float r) {boolAMVis=true;AMVisRadius=r;}
+	  /*! set radius of cylinder for AMVis-visualization */
+	  void setAMVisCuboid(float breadth, float height) {boolAMVis=true;AMVisBreadth=breadth;AMVisHeight=height;}
 #endif
 
   };
