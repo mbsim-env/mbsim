@@ -44,27 +44,14 @@ namespace MBSim {
   class BodyFlexibleLinearExternal : public BodyFlexible {
 
     protected:
-      /** constant mass matrix \f$\vM\f$, used as buffer before init() where dimensions of M are set */ 
-      SymMat Mread;
-      /** constant stiffness matrix \f$\vK\f$*/ 
-      SqrMat K;
-      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
-      SqrMat D; 
-      /** constant for damping matrix, see setProportionalDamping()*/ 
-      double alpha;
-      /** constant for damping matrix, see setProportionalDamping()*/ 
-      double  beta;
-
       /** number of Contours directly asoziated to body */
       int nContours;
+	  
+	  /** vector of ContourPointData controlling type of interface: node/interpolation */
+      vector<ContourPointData> contourType;
 
       /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
       Vec WrON00;
-
-      /** container holding constant JACOBIAN-matrizes of all Port s and Contour s */
-      vector<Mat> J;
-      /** container holding undeformed positions in body coordinate system of all Port s and Contour s */
-      vector<Vec> KrP;
 
       /* geerbt */
       void init();
@@ -90,12 +77,6 @@ namespace MBSim {
        */
       void updateContours(double t);
 
-      /*! 
-       * update \f$\vh= -(\vK \vq + \vD \vu)\f$
-       * \param t time
-       */
-      void updateh(double t);
-
       /*! create interface in form of ContourPointData based on file
        * \return cpData for refering to Port or Contour added
        * \param jacbifilename file containing interface data
@@ -103,14 +84,16 @@ namespace MBSim {
       ContourPointData addInterface(const string &jacbifilename);
       /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
        * \return cpData for refering to Port or Contour added
-       * \param J_ Jacobian matrix
-       * \param r_ undeformed position in body coordinate system
+       * \param J Jacobian matrix
+       * \param r undeformed position in body coordinate system
        */
-      ContourPointData addInterface(const Mat &J_, const Vec &r_);
+      ContourPointData addInterface(const Mat &J, const Vec &r);
 
       /* empty function since mass, damping and stiffness matrices are constant !!! */
       void updateJh_internal(double t);
 
+	  void GlobalMatrixContribution(int i=0);
+		
     public:
       BodyFlexibleLinearExternal(const string &name); 
 
@@ -154,10 +137,7 @@ namespace MBSim {
        * \param a_ \f$\alpha\f$
        * \param b_ \f$\beta \f$
        */
-      void setProportionalDamping(const double &a_, const double &b_){alpha = a_; beta = b_;}
-
-      /* geerbt */
-      double computePotentialEnergy();
+	  inline void setProportionalDamping(const double &a, const double &b);
 
       /*! plot parameters of "BodyFlexibleLinearExternal"
       */

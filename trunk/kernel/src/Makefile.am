@@ -51,6 +51,7 @@ body_rigid_abs.h\
 body_rigid_rel.h\
 body_rigid_rel_onflex.h\
 body_rigid_constrained.h\
+discretization_interface.h\
 body_flexible.h\
 connection.h\
 connection_flexible.h\

@@ -23,6 +23,7 @@
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
 #include "fmatvec.h"
+#include "discretization_interface.h"
 using namespace fmatvec;
 
 namespace MBSim {
@@ -39,18 +40,20 @@ namespace MBSim {
    *
    * \see BodyFlexible1s21RCM
    */
-  class FiniteElement1s21RCM
+  class FiniteElement1s21RCM : public DiscretizationInterface
   {
     protected:
-
-    public:
       double l0, Arho, EA, EI;
       double wss0;
       double depsilon;
       Vec g;
+      SymMat M;
+      Vec h;
 
+    public:
       FiniteElement1s21RCM(){};
       //    ~FiniteElement1s21RCM();
+
       //        (double l0, double Arho, double EA, double EI, double g);
       /*! full quallified constructor 
        * \param l0_   undeformed lenght of %element
@@ -61,18 +64,23 @@ namespace MBSim {
        */
       FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, Vec g_);
 
+	  fmatvec::SymMat getMassMatrix() const {return M;}
+	  fmatvec::Vec    getGeneralizedForceVector() const {return h;}
+
+	  fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const {return Dhq;}    
+	  fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const {return Dhqp;}
+	  int getSizeOfPositions() const {return 8;}
+	  int getSizeOfVelocities() const {return 8;}
+
       /*! update mass-matrix and vector of generalised force directions
        * \param qElement  generalised positions of element
        * \param qpElement generalised velocities of element
        */
-      int berechne(Vec qElement, Vec qpElement);
+      void computeEquationsOfMotion(const Vec& qElement,const Vec& qpElement);
 
       void setCurleRadius(double);
       void setMaterialDamping(double);//, const double&);
       void setLehrDamping(double);
-
-      SymMat M;
-      Vec h;
 
       bool implicit;
       void Implicit(bool implicit_) {implicit = implicit_;}
@@ -81,13 +89,21 @@ namespace MBSim {
       SqrMat Damp;
 
       // Balkenort
-      Vec LocateBalken(Vec&,double&);      // globale Koordinaten
-      Vec StateBalken (Vec&,Vec&,double&); // Zustand - global
+      Vec LocateBalken (const Vec&q, const double &s);      // globale Koordinaten
+      Vec StateBalken  (const Vec&q, const Vec&u, const double &s); // Zustand - global
+// TODO TODO TODO TODO: die drei sind nur pro-forma implementier, um lauffaehigkeit zu
+// erreichen; das MUSS angepasst werden, gleichzeitig management von Jacobis JT und JR
+// des gesamten BodyFlexible...
+	  Vec computeTranslation(const Vec&q, const ContourPointData& cp) {return LocateBalken(q,cp.alpha(0));}
+	  SqrMat computeOrientation(const Vec&q, const ContourPointData& cp) {return SqrMat(0,INIT,0.);}
+	  Vec computeTranslationalVelocity (const Vec&q, const Vec&u, const ContourPointData& cp) {return LocateBalken(q,cp.alpha(0));}
+	  Vec computeAngularVelocity(const Vec&q, const Vec&u, const ContourPointData& cp) {return LocateBalken(q,cp.alpha(0));}
 
       // Eingriffsmatrizen
-      Mat JGeneralizedInternal(Vec&,const double&);
-      Mat JGeneralized (Vec&,const double&);
-      Mat JpGeneralized(Vec&,Vec&,const double&,const double&);
+      Mat JGeneralizedInternal(const Vec&,const double&);
+      Mat JGeneralized (const Vec&,const double&);
+	  Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q,const ContourPointData& cp) {return JGeneralized(q,cp.alpha(0));}
+      Mat JpGeneralized(const Vec&,const Vec&,const double&,const double&);
 
       Vec DrDs (Vec&,const double&);
       Vec DrDsp(Vec&,Vec&,const double&,const double&);
@@ -98,25 +114,26 @@ namespace MBSim {
       Vec ElementData(Vec qElement, Vec qpElement);
 
       //kinetische Energie berechenen
-      double computeT(Vec qElement, Vec qpElement);
+      double computeKineticEnergy(const Vec& qElement, const Vec& qpElement);
 
       //potentielle Energie berechenen
-      double computeV(Vec qElement);
+      double computeV(const Vec& qElement);
+      double computeElasticEnergy(const Vec& qElement);
+      double computeGravitationalEnergy(const Vec& qElement);
 
     private:
       //              (qGlobal,->qIntern)
-      void BuildqLokal(Vec&,Vec&);
+      void BuildqLokal(const Vec&,Vec&);
       //              (qIntern,->Jeg)
-      void BuildJacobi(Vec&,SqrMat&);
+      void BuildJacobi(const Vec&,SqrMat&);
       //              (qIntern,qpIntern,->Jeg,->Jegp)
-      void BuildJacobi(Vec&,Vec&,SqrMat&,SqrMat&);
+      void BuildJacobi(const Vec&,const Vec&,SqrMat&,SqrMat&);
 
       // Balkenort
-      Vec LocateLokalBalken(Vec&,Vec&,double&,bool);
-      Vec LocateLokalBalken(Vec&,Vec&,double&);
+      Vec LocateLokalBalken(const Vec& qLokal, const Vec& qpLokal, const double& s, const bool calcAll=true);
 
       // Jacobis für impliziete Integratoren
-      Mat hFullJacobi(Vec&,Vec&,Vec&,Vec&,SqrMat&,SqrMat&,SymMat&,Vec&);
+      Mat hFullJacobi(const Vec&,const Vec&,const Vec&,const Vec&,const SqrMat&,const SqrMat&,const SymMat&,const Vec&);
 
       double l0h2, l0h3, l0h4, l0h5, l0h7, l0h8;
 

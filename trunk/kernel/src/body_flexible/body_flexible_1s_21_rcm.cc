@@ -38,8 +38,8 @@ using namespace AMVis;
 namespace MBSim {
 
   BodyFlexible1s21RCM::BodyFlexible1s21RCM(const string &name, bool openStructure_) :BodyFlexible1s(name), 
-  L(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), 
-  implicit(false), qElement(8), uElement(8), 
+  L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), 
+  implicit(false),
   WrON00(3), WrON0(3), 
   initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0),
   Wt(3), Wn(3), WrOC(3), WvC(3)
@@ -54,7 +54,6 @@ namespace MBSim {
 	  ContourPointData cpTmp;
 	  BodyFlexible::addContour(contourR,cpTmp,false);
 	  BodyFlexible::addContour(contourL,cpTmp,false);
-
   }
 
   void BodyFlexible1s21RCM::init() {
@@ -88,22 +87,26 @@ namespace MBSim {
       contourL->setNodes(userContourNodes);
     }
 
-    double l0 = L/Elements;
+    l0 = L/Elements;
     Vec g = trans(JT)*mbs->getGrav();
-    balken = new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g);
+    for(int i=0;i<Elements;i++) {
+	  qElement.push_back(Vec(8,INIT,0.));
+	  uElement.push_back(Vec(8,INIT,0.));
+	  discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
+	  if(rc != 0) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurleRadius(rc);
+	  dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
+	  dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+	}
+	// balken = new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g);
 
     if(alphaRelax != alphaRelax0) initRelaxed(alphaRelax);
-
-    if(rc != 0) balken->setCurleRadius(rc);
-    balken->setMaterialDamping(dm);
-    balken->setLehrDamping(dl);
 
 #ifdef HAVE_AMVIS
 
     // wenn ein file fuer AMVis geschrieben werden soll
     if(boolAMVis) {
       ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(fullName,Elements,openStructure,1,boolAMVisBinary);
-      RCMbody->setElementLength(balken->l0);
+      RCMbody->setElementLength(l0);
 
       float amvisJT[3][2], amvisJR[3];
       for(int i=0;i<3;i++) {
@@ -133,9 +136,9 @@ namespace MBSim {
     u0.resize(uSize);
   }
 
-  void BodyFlexible1s21RCM::setCurleRadius(double r)     {rc = r;if(initialized) balken->setCurleRadius(rc);}
-  void BodyFlexible1s21RCM::setMaterialDamping(double d) {dm = d;if(initialized) balken->setMaterialDamping(dm);}
-  void BodyFlexible1s21RCM::setLehrDamping(double d)     {dl = d;if(initialized) balken->setLehrDamping(dl);}
+  void BodyFlexible1s21RCM::setCurleRadius(double r) {rc = r;if(initialized) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurleRadius(rc);}
+  void BodyFlexible1s21RCM::setMaterialDamping(double d) {dm = d;if(initialized) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);}
+  void BodyFlexible1s21RCM::setLehrDamping(double d)     {dl = d;if(initialized) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);}
 
 
   void BodyFlexible1s21RCM::plotParameters() {
@@ -170,7 +173,8 @@ namespace MBSim {
   //-----------------------------------------------------------------------------------
 
   void BodyFlexible1s21RCM::updateKinematics(double t) {
-    sTangent = -balken->l0;
+	BuildElements();
+    sTangent = -l0;
 
     WrON0 = WrON00 + JT*q(Index(0,1));
     updatePorts(t);
@@ -183,7 +187,7 @@ namespace MBSim {
       if(S_Port[i].type == CONTINUUM) { // ForceElement on continuum
 	const double     &s = S_Port[i].alpha(0);// globaler KontParameter
 	double sLokal = BuildElement(s);
-	Vec Z = balken->StateBalken(qElement,uElement,sLokal);
+	Vec Z = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBalken(qElement[CurrentElement],uElement[CurrentElement],sLokal);
 	port[i]->setWrOP(WrON00 + JT * Z(0,1));//q(5*node+0,5*node+1));
 	port[i]->setWvP (         JT * Z(3,4));//u(5*node+0,5*node+1));
 	port[i]->setWomegaP(      JR * Z(5,5));//u(5*node+2,5*node+2));
@@ -207,7 +211,7 @@ namespace MBSim {
 	{
 	  double s = S_.alpha(0); // globaler KontParameter
 	  double sLokal = BuildElement(s);
-	  Mat Jtmp = balken->JGeneralized(qElement,sLokal);
+	  Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLokal);
 
 	  if(CurrentElement<Elements-1 || openStructure) {
 		Index Dofs(5*CurrentElement,5*CurrentElement+7);
@@ -242,7 +246,7 @@ namespace MBSim {
       if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
       double sLokal = BuildElement(s);
 
-      Mat Jtmp = balken->JpGeneralized(qElement,uElement,sLokal,sp);
+      Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JpGeneralized(qElement[CurrentElement],uElement[CurrentElement],sLokal,sp);
 
       if(CurrentElement<Elements-1 || openStructure) {
 	Index Dofs(5*CurrentElement,5*CurrentElement+7);
@@ -273,20 +277,20 @@ namespace MBSim {
   Mat BodyFlexible1s21RCM::computeK    (const ContourPointData &S_) {
     double s  = S_.alpha(0);
     double sLokal = BuildElement(s);
-    return JR*balken->Kcurvature(qElement,sLokal);
+    return JR*dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->Kcurvature(qElement[CurrentElement],sLokal);
   } 
   Mat BodyFlexible1s21RCM::computeKp   (const ContourPointData &S_){
     double s  = S_.alpha(0);
     double sp = 0;
     if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
     double sLokal = BuildElement(s);
-    return JR*balken->Kpcurvature(qElement,uElement,sLokal,sp);
+    return JR*dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->Kpcurvature(qElement[CurrentElement],uElement[CurrentElement],sLokal,sp);
   }
 
   Mat BodyFlexible1s21RCM::computeDrDs (const ContourPointData &S_) {
     double s  = S_.alpha(0);
     double sLokal = BuildElement(s);
-    Vec DrDs = balken->DrDs(qElement,sLokal);
+    Vec DrDs = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->DrDs(qElement[CurrentElement],sLokal);
     return JT*DrDs;
   }
 
@@ -295,118 +299,91 @@ namespace MBSim {
     double sp = 0;
     if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
     double sLokal = BuildElement(s);
-    Vec DrDsp = balken->DrDsp(qElement,uElement,sLokal,sp);
+    Vec DrDsp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->DrDsp(qElement[CurrentElement],uElement[CurrentElement],sLokal,sp);
 /// cout << "---------------------------" << endl;
 /// cout << "DrDsp.analytisch = " << trans(JT*DrDsp) << endl;
 /// cout << "DrDsp.numerisch  = " << trans(BodyFlexible::computeDrDsp(S_)) << endl;
     return JT*DrDsp;
   }
 
-  void BodyFlexible1s21RCM::updateh(double t) {
-    static int i,j;
+  void BodyFlexible1s21RCM::GlobalMatrixContribution(int n) {
+	int j = 5 * n;
 
-    M.init(0.0);
-    h.init(0.0);
+	if ( n < Elements - 1 || openStructure==true) {
+	  // * Matrizen berechnen
+	  M(Index(j,j+7)) +=  discretization[n]->getMassMatrix();
+	  h(j,j+7)       += discretization[n]->getGeneralizedForceVector();
 
-    if(implicit) {
-      Dhq .init(0.0);
-      Dhqp.init(0.0);
-    }
+	  //if(implicit) {
+	  //  Dhq (j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition;
+	  //  Dhqp(j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity;
+	  //}
+	} else {
+	  // * Matrizen berechnen
 
-    // Alle Elemente ausser (n-1,0)
-    for ( i = 0; i < Elements ; i++ ) {
-      // * Koordinaten Sortieren
-      BuildElement(i);
-      j = 5 * i;
+	  // Ringschluss durch Element (nEnde,1), Achtung!!! Winkelunterschied: 2*pi;
+	  M(Index(j,j+4)) +=  discretization[n]->getMassMatrix()(Index(0,4));
+	  M(Index(j,j+4),Index(0,2)) += discretization[n]->getMassMatrix()(Index(0,4),Index(5,7));
+	  // M(0,j,  2,j+4) += discretization[n]->getM()(5,0,7,4); Symmetrie
+	  M(Index(0,2)) += discretization[n]->getMassMatrix()(Index(5,7));
 
-      balken->berechne(qElement, uElement);
+	  h(j,j+4)       += discretization[n]->getGeneralizedForceVector()(0,4);
+	  h(0,  2)       += discretization[n]->getGeneralizedForceVector()(5,7);
 
-      if ( i < Elements - 1 || openStructure==true) {
-	// * Matrizen berechnen
-	M(Index(j,j+7)) +=  balken->M;
-	h(j,j+7)       += balken->h;
+	  //if(implicit) {
+	  //  Dhq (j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,0,4,4);
+	  //  Dhq (j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,5,4,7);
+	  //  Dhq (0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,0,7,4);
+	  //  Dhq (0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,5,7,7);
 
-	if(implicit) {
-	  Dhq (j,j,j+7,j+7) += balken->Dhq;
-	  Dhqp(j,j,j+7,j+7) += balken->Dhqp;
+	  //  Dhqp(j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,0,4,4);
+	  //  Dhqp(j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,5,4,7);
+	  //  Dhqp(0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,0,7,4);
+	  //  Dhqp(0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,5,7,7);
+	  //}
 	}
-      } else {
-	// * Matrizen berechnen
-
-	// Ringschluss durch Element (nEnde,1), Achtung!!! Winkelunterschied: 2*pi;
-	M(Index(j,j+4)) +=  balken->M(Index(0,4));
-	M(Index(j,j+4),Index(0,2)) += balken->M(Index(0,4),Index(5,7));
-	// M(0,j,  2,j+4) += balken->M(5,0,7,4); Symmetrie
-	M(Index(0,2)) += balken->M(Index(5,7));
-
-	h(j,j+4)       += balken->h(0,4);
-	h(0,  2)       += balken->h(5,7);
-
-	if(implicit) {
-	  Dhq (j,j,j+4,j+4) += balken->Dhq(0,0,4,4);
-	  Dhq (j,0,j+4,  2) += balken->Dhq(0,5,4,7);
-	  Dhq (0,j,  2,j+4) += balken->Dhq(5,0,7,4);
-	  Dhq (0,0,  2,  2) += balken->Dhq(5,5,7,7);
-
-	  Dhqp(j,j,j+4,j+4) += balken->Dhqp(0,0,4,4);
-	  Dhqp(j,0,j+4,  2) += balken->Dhqp(0,5,4,7);
-	  Dhqp(0,j,  2,j+4) += balken->Dhqp(5,0,7,4);
-	  Dhqp(0,0,  2,  2) += balken->Dhqp(5,5,7,7);
-	}
-      }
-    }
-
-//    if(autoInvM) {LLM = facLL(M); cout << "BodyFlexible1s21RCM::LLM->yes" << endl;}
-//    else         {LLM.init(0.0);  cout << "BodyFlexible1s21RCM::LLM->NO!" << endl;}
-
-    sumUpForceElements(t);
   }
 
   void BodyFlexible1s21RCM::updateJh_internal(double t) {
-    if(!implicit) { implicit = true; balken->Implicit(implicit); Dhq.resize(uSize,qSize);Dhqp.resize(uSize,uSize); updateh(t); }
-    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
-    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << Dhq;
-    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << Dhqp;
+	if(!implicit) { 
+	  implicit = true;
+	  for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->Implicit(implicit);
+	  Dhq.resize(uSize,qSize);
+	  Dhqp.resize(uSize,uSize);
+	  updateh(t);
+	}
+	Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+	Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << Dhq;
+	Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << Dhqp;
   }
 
   //-----------------------------------------------------------------------------------
-  void BodyFlexible1s21RCM::BuildElement(const int& ENumber) {
-    //static int ENumberOld = -1;
-    //if( ENumber != ENumberOld ) {
-//      ENumberOld = ENumber;
-      // Grenzen testen
-      assert(ENumber >= 0       );
-      assert(ENumber <  Elements);
+  void BodyFlexible1s21RCM::BuildElements() {
+	for(int i=0;i<Elements;i++) {
 
-      CurrentElement = ENumber;
-      int n = 5 * ENumber ;
+	  int n = 5 * i ;
 
-      if  ( ENumber < Elements-1  || openStructure==true) {
-	// Standard-Elemente
-	qElement << q (n,n+7);
-	uElement << u(n,n+7);
-      } else if (ENumber == Elements-1) {
-	// Ringschluss durch Einbeziehnung des Ersten Referenzpunktes als zweiten Knoten
-	qElement(0,4) << q (n,n+4);
-	uElement(0,4) << u(n,n+4);
-	qElement(5,7) << q (0,  2);
-	if(qElement(2)-q(2)>0.0) 
-	  qElement(7)   += 2*M_PI;
-	else
-	  qElement(7)   -= 2*M_PI;
-	uElement(5,7) << u(0,  2);
-      } else {
-	qElement.init(0.0);uElement.init(0.0);
-	cout << "\nKein Element " <<ENumber<< " vorhanden. Nur 0, 1 ...  " <<Elements-1<< " Elemente definiert!\n";
-	throw(1);
-      }
- //   }
+	  if(i<Elements-1 || openStructure==true) {
+		// Standard-Elemente
+		qElement[i] << q (n,n+7);
+		uElement[i] << u(n,n+7);
+	  }
+	  else { // i == Elements-1 und Ringschluss
+		qElement[i](0,4) << q (n,n+4);
+		uElement[i](0,4) << u(n,n+4);
+		qElement[i](5,7) << q (0,  2);
+		if(qElement[i](2)-q(2)>0.0) 
+		  qElement[i](7)   += 2*M_PI;
+		else
+		  qElement[i](7)   -= 2*M_PI;
+		uElement[i](5,7) << u(0,  2);
+	  } 
+	}
   }
 
   double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
 	static double sGlobalOld = -1.0;
 	static double sLokal = 0;
-	static int Element = 0;
 	if (sGlobal != sGlobalOld ) {
 	  sGlobalOld = sGlobal;
 
@@ -417,20 +394,19 @@ namespace MBSim {
 	  }
 //  double remainder = fmod(sGlobal,L);
 //	  if(remainder<0.0) remainder += L;
-	  Element = int(remainder/balken->l0);
-	  sLokal = remainder - ( 0.5 + Element ) * balken->l0;
+	  CurrentElement = int(remainder/l0);
+	  sLokal = remainder - ( 0.5 + CurrentElement ) * l0;
 
-	  if(Element >= Elements) {
-		if(openStructure) { Element =  Elements-1; sLokal += balken->l0;} /*somehow buggy, but who cares?!?*/
-		else              { Element -= Elements;}                         /* start at the beginning again  */
+	  if(CurrentElement >= Elements) {
+		if(openStructure) { CurrentElement =  Elements-1; sLokal += l0;} /*somehow buggy, but who cares?!?*/
+		else              { CurrentElement -= Elements;}                         /* start at the beginning again  */
 	  }
-	  else if( Element <0 )   {
-		if(openStructure) { Element =  0;           sLokal -= balken->l0;} /*somehow buggy, but who cares?!?*/
-		else              { Element += Elements;}                         /* start at the beginning again  */
+	  else if( CurrentElement <0 )   {
+		if(openStructure) { CurrentElement =  0;           sLokal -= l0;} /*somehow buggy, but who cares?!?*/
+		else              { CurrentElement += Elements;}                         /* start at theqElement[i]in  */
 	  }
 
 	}
-	BuildElement(Element);
 	return sLokal;
   }
 
@@ -446,7 +422,7 @@ namespace MBSim {
     Vec X(12);
 
     double sLokal = BuildElement(s);
-    Vec Xlokal = balken->StateBalken(qElement,uElement,sLokal);
+    Vec Xlokal = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBalken(qElement[CurrentElement],uElement[CurrentElement],sLokal);
 
     // Lagen 
     X(Index(0, 2)) = WrON00 +                  JT*Xlokal(Index(0,1)) ;
@@ -464,7 +440,7 @@ namespace MBSim {
     if(S_.alpha(0) != sTangent) { //update noetig
       sTangent      = S_.alpha(0); // nur CONTINUUM implementiert TODO: nodes
       double sLokal = BuildElement(sTangent);
-      Vec X = balken->StateBalken(qElement,uElement,sLokal); // x,y,phi und xp,yp,phip
+      Vec X = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBalken(qElement[CurrentElement],uElement[CurrentElement],sLokal); // x,y,phi und xp,yp,phip
       double phi = X(2);
 
       Vec tangente(2); tangente(0) =     cos(phi); tangente(1) =    sin(phi);
@@ -503,7 +479,7 @@ namespace MBSim {
     double V = 0.0;
     for(int i=0;i<Elements;i++) {
       BuildElement(i);
-      V += balken->computeV(qElement);
+      V += dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->computeV(qElement[i]);
     }
     return V;
   }
@@ -525,7 +501,7 @@ namespace MBSim {
 	}
       } else {
 	double R  = L/(2*M_PI);
-	double a_ = sqrt(R*R + (balken->l0*balken->l0)/16.) - R;
+	double a_ = sqrt(R*R + (l0*l0)/16.) - R;
 
 	for(int i=0;i<Elements;i++) {
 	  double alpha_ = i*(2*M_PI)/Elements;
