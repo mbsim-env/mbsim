@@ -15,9 +15,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(g);
 
   Group2 *group1 = new Group2("Hauptgruppe1");
-  addObject(group1);
-  //group1->setKinematicsCoordinateSystem(group1->getCoordinateSystem("O"));
-  //group1->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  addSubsystem(group1);
+  group1->setFrameOfReference(getCoordinateSystem("I"));
 
   Group2 *group2 = new Group2("Hauptgruppe2");
   Vec r(3);
@@ -29,9 +28,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  addObject(group2);
-  //group2->setKinematicsCoordinateSystem(group2->getCoordinateSystem("O"));
-  //group2->setReferenceCoordinateSystem(getCoordinateSystem("O"));
+  addSubsystem(group2);
+  group2->setFrameOfReference(getCoordinateSystem("I"));
   group2->setTranslation(r);
   group2->setRotation(A);
 

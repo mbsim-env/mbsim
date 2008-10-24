@@ -15,8 +15,8 @@ int main (int argc, char* argv[])
   // LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;
   // RADAU5Integrator integrator;
-  // TimeSteppingIntegrator integrator;
-  // integrator.setdt(1e-4);
+   //TimeSteppingIntegrator integrator;
+   //integrator.setdt(1e-4);
   //
   DOPRI5Integrator integrator;
 

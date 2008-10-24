@@ -9,6 +9,8 @@ using namespace AMVis;
 
 int main (int argc, char* argv[])
 {
+  cout << "Example currently not available" << endl;
+  return 1;
   // build up model
   MultiBodySystem *sys = new System("MBS");
   sys->init();

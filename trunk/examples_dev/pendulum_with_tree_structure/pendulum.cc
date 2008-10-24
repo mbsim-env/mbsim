@@ -14,7 +14,9 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree *tree = new Tree("Baum"); 
-  addObject(tree);
+  tree->setFrameOfReference(getCoordinateSystem("I"));
+  //tree->setCoordinateSystemForKinematics(tree->getCoordinateSystem("O"));
+  addSubsystem(tree);
 
   double mStab = 0.2;
   double lStab = 0.3;
@@ -45,7 +47,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
-  ObjObject * obj = new ObjObject(stab1->getFullName(),1,false);
+  ObjObject * obj = new ObjObject(getName() + "." + stab1->getName(),1,false);
   obj->setObjFilename("objects/pendel1.obj");
   stab1->setAMVisBody(obj);
   obj->setScaleFactor(0.1*0.3);
@@ -72,7 +74,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
-  obj = new ObjObject(stab2->getFullName(),1,false);
+  obj = new ObjObject(getName() + "." + stab2->getName(),1,false);
   obj->setObjFilename("objects/pendel2.obj");
   stab2->setAMVisBody(obj);
   obj->setScaleFactor(0.1*0.3);

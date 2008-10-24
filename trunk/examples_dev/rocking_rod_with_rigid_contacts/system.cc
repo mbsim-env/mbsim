@@ -44,8 +44,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
-  //body->setFrameOfReference(getCoordinateSystem("I"));
-  //body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
+  body->setFrameOfReference(getCoordinateSystem("I"));
+  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
@@ -94,7 +94,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addLink(cr2S);
 
   // Visualisation with AMVis
-  ObjObject *obj = new ObjObject(body->getFullName(),1,false);
+  ObjObject *obj = new ObjObject(getName() + "." + body->getName(),1,false);
   obj->setObjFilename("objects/rod.obj");
   body->setAMVisBody(obj);
   obj->setInitialRotation(M_PI/2,0,0);

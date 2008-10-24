@@ -14,10 +14,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree* tree = new Tree("Master");
-  addObject(tree);
+  addSubsystem(tree);
+  tree->setFrameOfReference(getCoordinateSystem("I"));
 
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
-  tree->addObject(pendel1);
+  tree->addSubsystem(pendel1);
+  pendel1->setFrameOfReference(tree->getCoordinateSystem("I"));
 
   Vec x(3);
   x(0) = 0.15;
@@ -29,7 +31,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   pendel1->getRod2()->addCoordinateSystem("P",x,A,pendel1->getRod2()->getCoordinateSystem("R"));
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
-  tree->addObject(pendel2);
+  tree->addSubsystem(pendel2);
+  pendel2->setFrameOfReference(tree->getCoordinateSystem("I"));
   pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getCoordinateSystem("P"));
 }
 

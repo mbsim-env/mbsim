@@ -36,6 +36,7 @@ Group1::Group1(const string &name) : Group(name) {
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
   box1->setFrameOfReference(getCoordinateSystem("I"));
   box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
+  box1->setFrameOfReference(getCoordinateSystem("I"));
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
