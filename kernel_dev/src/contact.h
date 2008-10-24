@@ -42,15 +42,19 @@ namespace MBSim {
   class Contact: public Link {
 
     protected:
+      bool hca, nhca, closed, sticking;
 
       /** index for tangential directions in projection matrices */
       Index iT;
 
       /** number of friction directions: 0 = frictionless, 1 = planar friction, 2 = spatial friction */
-      int nFric;
+      //int nFric;
 
-      virtual void checkActive();
-      virtual bool isActive() const {return true;}
+      //virtual void checkActive();
+      //virtual bool isActive() const {return true;}
+      
+      virtual bool isClosed() const = 0;
+      virtual bool isSticking() const = 0;
 
       ContactKinematics *contactKinematics;
 
@@ -66,7 +70,13 @@ namespace MBSim {
 
       virtual ~Contact();
 
-      void calcSize();
+      void calcxSize();
+
+      void calclaSize();
+      void calcgSize();
+      void calcgdSize();
+      void calcrFactorSize();
+
       /*geerbt*/
       void init();
 
@@ -80,11 +90,13 @@ namespace MBSim {
 	*/
       void connect(Contour *contour1, Contour* contour2);
 
-      void updateStage1(double t);
-      void updateStage2(double t);
+      void updateg(double t);
+      void updategd(double t);
+      void updateb(double t);
+      void updater(double t);
 
-      /*! define force dircetions and evaluate kinematical values */
-      virtual void updateKinetics(double t) = 0;
+      void updateWRef(const Mat &ref);
+      void updateVRef(const Mat &ref);
 
       /*! set one friction coefficinet for directions tangential to contact */
       //void setFrictionCharacteristics(UserFunction *fmu_) {fmu = fmu_;}
@@ -92,11 +104,20 @@ namespace MBSim {
       ///*! get friction coefficinet */
       //double getFrictionCoefficient() {return mu;}
 
+      virtual int getFrictionDirections() {return 0;}
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
       string getType() const {return "Contact";}
 
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
+
+      bool isActive() const {return hca;}
+      void checkHolonomicConstraints() { isClosed() ? hca = true : hca = false; }
+      void checkNonHolonomicConstraints() { isSticking() ? nhca = true : nhca = false; }
+
+      bool activeConstraintsChanged();
+      bool activeHolonomicConstraintsChanged();
+      bool activeNonHolonomicConstraintsChanged();
 
       using Link::connect;
   };

@@ -47,12 +47,13 @@ namespace MBSim {
   class Link : public Element {
 
     protected:
-      Subsystem* parent;
+      //Subsystem* parent;
 
       /** Internal integrable State Variables */
       Vec x;
       /** Internal integrable State Variables velocities ud \see updatedu(double t, double dt), updateud(double t) */
       Vec xd;
+      Vec x0;
 
       int xSize;
       int xInd;
@@ -65,7 +66,9 @@ namespace MBSim {
       bool setValued;
 
       int gSize, gInd;
+      int gdSize, gdInd;
       int laSize, laInd;
+      int laIndMBS;
 
       vector<Vec> WF, WM;
       vector<Mat> fF, fM;
@@ -76,7 +79,7 @@ namespace MBSim {
       Vec rFactor;
       Vector<int> rFactorUnsure;
 
-      bool active;
+      //bool active;
       Index Ig, Ila;
       Vec la0;
 
@@ -87,6 +90,7 @@ namespace MBSim {
       bool checkHSLink;
 
       vector<Mat> W;
+      vector<Mat> V;
       vector<Vec> h;
       vector<Vec> r;
       Vec b;
@@ -110,28 +114,30 @@ namespace MBSim {
 
     public:
 
-      virtual void updatexRef();
-      virtual void updatexdRef();
-      virtual void updatesvRef();
-      virtual void updatejsvRef();
+      //virtual void updatesvRef();
+      //virtual void updatejsvRef();
 
       virtual void updater(double t);
       virtual void updateb(double t);
       virtual void updateW(double t);
+      virtual void updateV(double t) {}
       virtual void updateh(double t);
-      virtual void updateWRef();
-      virtual void updatehRef();
-      virtual void updaterRef();
-      virtual void updatebRef();
+      virtual void updateWRef(const Mat& ref);
+      virtual void updateVRef(const Mat& ref);
+      virtual void updatehRef(const Vec &ref);
+      virtual void updaterRef(const Vec &ref);
+      virtual void updatebRef(const Vec &ref);
+      virtual void updatefRef(const Vec &ref) {};
 
       Link(const string &name, bool setValued);
       ~Link();
 
-      void setParent(Subsystem *parent_) {parent = parent_;}
+      //void setParent(Subsystem *parent_) {parent = parent_;}
 
-      string getFullName() const; 
+      //string getFullName() const; 
 
       const vector<Mat>& getW() const {return W;}
+      const vector<Mat>& getV() const {return V;}
       const vector<Vec>& geth() const {return h;}
 
      // Object* getObject(int id) { return object[id]; }
@@ -140,7 +146,9 @@ namespace MBSim {
 
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};
-      int getlaIndMBS() const;
+
+      int getlaIndMBS() const {return laIndMBS;}
+      void setlaIndMBS(int laIndParent) { laIndMBS = laInd + laIndParent; }
 
       int getxSize() const {return xSize;}
       int getsvSize() const {return svSize;}
@@ -152,11 +160,19 @@ namespace MBSim {
       /*! \return HSLink for MultiBodySystem
        *  */
       bool getHitSphereCheck() {return checkHSLink;}
-      virtual void calcSize() {}
-      virtual void init();
 
-      virtual void updateStage1(double t) = 0;
-      virtual void updateStage2(double t) {}
+      virtual void calcxSize() {xSize = 0;}
+      virtual void calcsvSize() {svSize = 0;}
+      virtual void calclaSize() {laSize = 0;}
+      virtual void calcgSize() {gSize = 0;}
+      virtual void calcgdSize() {gdSize = 0;}
+      virtual void calcrFactorSize() {rFactorSize = 0;}
+
+      virtual void init();
+      virtual void initz();
+
+      virtual void updateg(double t) = 0;
+      virtual void updategd(double t) = 0; 
 
       /*! compute potential energy, holding every potential!!!
       */
@@ -187,26 +203,34 @@ namespace MBSim {
       //void setg(const Vec& g_) {g = g_;}
       //void setgd(const Vec& gd_) {gd = gd_;}
       int getgSize() const {return gSize;} 
+      int getgdSize() const {return gdSize;} 
       int getlaSize() const {return laSize;} 
+      int getgdInd() const {return gdInd;} 
       int getlaInd() const {return laInd;} 
       int getrFactorSize() const {return rFactorSize;} 
       const Index& getgIndex() const {return Ig;}
       const Index& getlaIndex() const {return Ila;}
-      bool isActive() const {return active;}
+      virtual bool isActive() const = 0;
+      virtual bool activeConstraintsChanged() = 0;
+      virtual bool activeHolonomicConstraintsChanged() = 0;
+      virtual bool activeNonHolonomicConstraintsChanged() = 0;
+
       void savela();
       void initla();
 
       const Vector<int>& getrFactorUnsure() const {return rFactorUnsure;}
 
-      virtual void updatelaRef();
-      virtual void updategRef();
-      virtual void updategdRef();
-      virtual void updatesRef();
-      virtual void updateresRef();
-      virtual void updaterFactorRef();
-      virtual void updateRef();
+      virtual void updatexRef(const Vec& ref);
+      virtual void updatexdRef(const Vec& ref);
+      virtual void updatelaRef(const Vec& ref);
+      virtual void updategRef(const Vec& ref);
+      virtual void updategdRef(const Vec& ref);
+      virtual void updatesRef(const Vec& ref);
+      virtual void updateresRef(const Vec& ref);
+      virtual void updaterFactorRef(const Vec& ref);
 
       void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);} 
+      void setgdInd(int gdInd_) {gdInd = gdInd_;} 
       void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
       void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
 
@@ -243,15 +267,20 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
+
+      //virtual MultiBodySystem* getMultiBodySystem(); 
+
+      virtual void checkNonHolonomicConstraints() = 0;
+      virtual void checkHolonomicConstraints() = 0;
+
+      //virtual int getNumberOfConstraints() const {return laSize;} 
+      
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
        * @param ID ID of load and corresponding CoordinateSystem/Contour (ID=0 or 1)
        * @param funcColor Userfunction to manipulate Color of Arrow at each TimeStep
        * default: Red arrow for Forces and green one for Moments
        * */
-
-      virtual MultiBodySystem* getMultiBodySystem(); 
-
 #ifdef HAVE_AMVIS
       virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
       virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);

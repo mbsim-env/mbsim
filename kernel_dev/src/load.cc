@@ -34,12 +34,9 @@ namespace MBSim {
     delete func;
   }
 
-  void Load::calcSize() {
-    Link::calcSize();
-    gSize = 0;
+  void Load::calclaSize() {
+    Link::calclaSize();
     laSize = forceDir.cols()+momentDir.cols();
-    rFactorSize = 0;
-    xSize = 0;
   }
 
   void Load::init() {
@@ -70,7 +67,7 @@ namespace MBSim {
     assert(KOSYID <= 1);
   }
 
-  void Load::updateStage2(double t) {
+  void Load::updateh(double t) {
 
     la = (*func)(t);
     if(KOSYID) {
@@ -79,6 +76,7 @@ namespace MBSim {
     }
     WF[0] = Wf*la(IT);
     WM[0] = Wm*la(IR);
+    h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*WM[0];
   } 
   
   void Load::setUserFunction(DataInterfaceBase *func_) {

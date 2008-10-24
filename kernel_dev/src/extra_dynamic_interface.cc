@@ -59,12 +59,12 @@ namespace MBSim {
     isx.close();
   }
 
-  void ExtraDynamicInterface::updatexRef() {
-    x >> parent->getx()(xInd,xInd+xSize-1);
+  void ExtraDynamicInterface::updatexRef(const Vec& xParent) {
+    x >> xParent(xInd,xInd+xSize-1);
   }
 
-  void ExtraDynamicInterface::updatexdRef() {
-    xd >> parent->getxd()(xInd,xInd+xSize-1);
+  void ExtraDynamicInterface::updatexdRef(const Vec& xdParent) {
+    xd >> xdParent(xInd,xInd+xSize-1);
   }
 
 

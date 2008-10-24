@@ -65,11 +65,14 @@ namespace MBSim {
     Matrix<Sparse, double> Gs;
     SqrMat Jprox;
 
+    SqrMat G;
+
     SymMat MParent;
     SymMat LLMParent;
     Mat TParent;
-    SymMat GParent;
+    SqrMat GParent;
     Mat WParent;
+    Mat VParent;
     Vec bParent;
     Vec laParent;
     Vec dlaParent;
@@ -86,7 +89,7 @@ namespace MBSim {
     Vector<int> jsvParent;
     /** gravitation common for all components */
     Vec grav;
-    bool activeConstraintsChanged;
+    //bool activeConstraintsChanged;
 
 
     int maxIter, highIter, maxDampingSteps;
@@ -104,20 +107,9 @@ namespace MBSim {
 
     bool checkGSize;
     int limitGSize;
-
-    void updatezdRef(const Vec &zdExt);
-    void updateqRef(const Vec &qExt);
-    void updateqdRef(const Vec &qdExt);
-    void updateuRef(const Vec &uExt);
-    void updatexRef(const Vec &xExt);
-    void updatehRef(const Vec &hExt);
-    void updaterRef(const Vec &rExt);
-    void updatefRef(const Vec &fExt);
-    void updateTRef(const Mat &TExt);
-    void updateMRef(const SymMat &MExt);
-    void updateLLMRef(const SymMat &LLMExt);
-    void updatesvRef(const Vec &svExt);
-    void updatejsvRef(const Vector<int> &jsvExt);
+    void updateGRef(const SqrMat &ext);
+    void updatezRef(const Vec &ext);
+    void updatezdRef(const Vec &ext);
 
     void updaterFactors();
     void computeConstraintForces(double t);
@@ -136,8 +128,6 @@ namespace MBSim {
     public:
       const Vec& getAccelerationOfGravity() const {return grav;}
 
-    /*! References multibody children to multibody parent states and external states \param zExt and collects data */
-    void updatezRef(const Vec &zExt);
     /*! Calls updater for children at time \param t */
     void updater(double t);
     /*! Calls updateh for children at time \param t */
@@ -146,6 +136,8 @@ namespace MBSim {
     void updateM(double t);
     /*! Calls updateW for children at time \param t */
     void updateW(double t);
+    /*! Calls updateV for children at time \param t */
+    void updateV(double t);
     void updateG(double t);
     void updateb(double t);
 	/*! Constructor */
@@ -157,8 +149,8 @@ namespace MBSim {
 	/*! Adds \param mbs to multibody system */
 
     void init();
-    void checkActiveConstraints();
-    void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
+    //void checkActiveConstraints();
+    //void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
     virtual void preInteg(MultiBodySystem *parent);
 	/*! Projects state at time \param t, such that constraints are not violated */
     void projectViolatedConstraints(double t);
@@ -214,34 +206,14 @@ namespace MBSim {
     /* Returns the pointer to an element \param name */
     Element* getElement(const string &name); 
 
-    int getzSize() const {return Object::getzSize();}
-    int getsvSize() const {return svSize;}
-    int getrFactorSize() const {return rFactorSize;}
-    int getgSize() const {return gSize;}
-    int getlaSize() const {return laSize;}
-    void setrFactorInd(int ind) {rFactorInd = ind;}
-    void setlaInd(int ind) {laInd = ind;}
-    void setgInd(int ind) {gInd = ind;}
     const Matrix<Sparse, double>& getGs() const {return Gs;}
     Matrix<Sparse, double>& getGs() {return Gs;}
-    const SymMat& getG() const {return G;}
-    SymMat& getG() {return G;}
+    const SqrMat& getG() const {return G;}
+    SqrMat& getG() {return G;}
     const SqrMat& getJprox() const {return Jprox;}
     SqrMat& getJprox() {return Jprox;}
-    const Vec& getla() const {return la;}
-    Vec& getla() {return la;}
     const Vec& getdla() const {return dla;}
     Vec& getdla() {return dla;}
-    const Vec& gets() const {return s;}
-    Vec& gets() {return s;}
-    const Vec& getres() const {return res;}
-    Vec& getres() {return res;}
-    const Vec& getg() const {return g;}
-    Vec& getg() {return g;}
-    const Vec& getgd() const {return gd;}
-    Vec& getgd() {return gd;}
-    const Vec& getrFactor() const {return rFactor;}
-    Vec& getrFactor() {return rFactor;}
 
     void setTermination(bool term_) {term = term_;}
 
@@ -316,12 +288,6 @@ namespace MBSim {
     HydFluid *getFluid(){return fl;}  
 
     void initDataInterfaceBase();
-
-    void updateJh(double t);
-
-    int getlaIndMBS() const {return 0;}
-    const Vec& getlaMBS() const {return la;}
-    Vec& getlaMBS() {return la;}
 
     string getType() const {return "MultiBodySystem";}
 

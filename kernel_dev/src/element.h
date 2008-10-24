@@ -51,6 +51,8 @@ namespace MBSim {
     protected:
       /* Short name of Element */
       string name;
+      /* Short fullname of Element */
+      string fullName;
       /* Name of the output directory */
       static string dirName;
       /* File used for output of time dependent data, specified using Element::plotLevel */
@@ -68,6 +70,8 @@ namespace MBSim {
       int plotPrec;
       /* Vector for Data Interface Base References */
       vector<string> DIBRefs;
+
+      MultiBodySystem *mbs;
 
     public:
 	  /*! Constructor */	
@@ -92,9 +96,11 @@ namespace MBSim {
 	  /*! Get element short \return name */
       const string& getName() const { return name; }
       /*! Set element name \param str */
-      virtual void setName(const string &str) {name = str;}
+      void setName(const string &str) {name = str;}
       /*! Get element \return fullname */
-      virtual string getFullName() const {return name;}
+      const string& getFullName() const {return fullName;}
+      /*! Set element name \param str */
+      virtual void setFullName(const string &str) {fullName = str;}
 
       virtual void load(const string &path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
@@ -105,6 +111,9 @@ namespace MBSim {
       virtual string getType() const {return "Element";}
 
       static int getNumberOfElements(ifstream &inputfile);
+
+      MultiBodySystem* getMultiBodySystem() {return mbs;}
+      virtual void setMultiBodySystem(MultiBodySystem *sys) {mbs = sys;}
   };
 
 }

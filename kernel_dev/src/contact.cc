@@ -56,31 +56,85 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), nFric(0), contactKinematics(0) {
+  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), hca(true), nhca(true), closed(true), sticking(true), contactKinematics(0) {
 
-    active = false;
+    //active = false;
   }
 
-  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), iT(1,master->iT.end()), nFric(master->iT.end()), contactKinematics(0) {
+  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), iT(1,master->iT.end()), contactKinematics(0) {
 
    // mu = master->mu; TODO
 
-    active = false;
+    //active = false;
   }
 
   Contact::~Contact() {
     if (contactKinematics) delete contactKinematics;
   }
   
-  void Contact::calcSize() {
-    Link::calcSize();
-    gSize = 1;
-    laSize = 1+nFric;
-    rFactorSize = setValued?1+min(nFric,1):0;
+  void Contact::calcxSize() {
+    Link::calcxSize();
+    xSize = 0;
+    //gSize = 1;
+    //gdSize = 1+getFrictionDirections();
+    //laSize = 1+getFrictionDirections();
+    //rFactorSize = setValued?1+min(getFrictionDirections(),1):0;
+  }
+
+  void Contact::calclaSize() {
+    Link::calclaSize();
+    laSize = hca ? (nhca ? 1+getFrictionDirections() : 1) : 0;
+  }
+
+  void Contact::calcgSize() {
+    Link::calcgSize();
+    gSize = hca ? 1 : 0;
+  }
+
+  void Contact::calcgdSize() {
+    Link::calcgdSize();
+    gdSize = hca ? (nhca ? 1+getFrictionDirections() : 1) : 0;
+  }
+
+  void Contact::calcrFactorSize() {
+    Link::calcrFactorSize();
+    rFactorSize = setValued ? (hca ? (nhca ? 1+min(getFrictionDirections(),1) : 1) : 0) : 0;
+  }
+
+  void Contact::updateWRef(const Mat& WParent) {
+   for(unsigned i=0; i<contour.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->gethSize()-1);
+      W[i]>>WParent(I,J);
+    }
+  } 
+
+  void Contact::updateVRef(const Mat& VParent) {
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      V[i]>>VParent(I,J);
+    }
+  } 
+
+  void Contact::updater(double t) {
+
+    for(unsigned i=0; i<contour.size(); i++) 
+      r[i] += V[i]*la;
+      //r[i] += (W[i]+V[i])*la;
+  }
+
+  void Contact::updateb(double t) {
+    for(unsigned i=0; i<contour.size(); i++) 
+      b += trans(fF[i](Index(0,2),Index(0,laSize-1)))*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
   }
 
   void Contact::init() {
     Link::init();
+
+    g.resize(1);
+    gd.resize(1+getFrictionDirections());
+    la.resize(1+getFrictionDirections());
 
     if(contactKinematics);
 
@@ -154,11 +208,11 @@ namespace MBSim {
     cpData.push_back(cpd[1]);
     cpData[0].type = CONTINUUM; // default-Wert
     cpData[0].Wn.resize(3,1);
-    cpData[0].Wt.resize(3,nFric);
+    cpData[0].Wt.resize(3,getFrictionDirections());
     cpData[1].type = CONTINUUM; // default-Wert
     cpData[1].Wn.resize(3,1);
-    cpData[1].Wt.resize(3,nFric);
-    iT = Index(1,nFric);
+    cpData[1].Wt.resize(3,getFrictionDirections());
+    iT = Index(1,getFrictionDirections());
     connectHitSpheres(contour[0],contour[1]);
     contactKinematics->assignContours(contour);
   }
@@ -170,32 +224,39 @@ namespace MBSim {
 
   void Contact::connectHitSpheres(Contour *contour0, Contour* contour1) {
     // wird eh erst im init() ausgefuehrt
-    if(checkHSLink) {
-      Object* obj0 = contour0->getObject();
-      Object* obj1 = contour1->getObject();
+   // if(checkHSLink) {
+   //   Object* obj0 = contour0->getObject();
+   //   Object* obj1 = contour1->getObject();
 
-      HSLink = parent->getHitSphereLink(obj0,obj1);
-      HSLink->setParents(obj0,obj1,this);
-    }
+   //   HSLink = parent->getHitSphereLink(obj0,obj1);
+   //   HSLink->setParents(obj0,obj1,this);
+   // }
   }
 
-  void Contact::updateStage1(double t) {
+  void Contact::updateg(double t) {
     contactKinematics->stage1(g,cpData);
-    checkActive();
   }
 
-  void Contact::updateStage2(double t) {
+  void Contact::updategd(double t) {
     contactKinematics->stage2(g,gd,cpData);
-    if(active) 
-      updateKinetics(t);
   }
 
-  void Contact::checkActive() {
-    if(isActive())
-      active = true;
-    else {
-      active = false;
+  bool Contact::activeConstraintsChanged() {
+    return activeHolonomicConstraintsChanged() || activeNonHolonomicConstraintsChanged();
+  }
+
+  bool Contact::activeNonHolonomicConstraintsChanged() {
+    bool changed = false;
+    if(getFrictionDirections()) {
+      changed = sticking != isSticking();
+      sticking = isSticking();
     }
+    return changed;
+  }
+  bool Contact::activeHolonomicConstraintsChanged() {
+    bool changed = closed != isClosed();
+    closed = isClosed();
+    return changed;
   }
 
   void Contact::save(const string& path, ofstream &outputfile) {

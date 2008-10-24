@@ -31,7 +31,7 @@ namespace MBSim {
   class ExtraDynamicInterface;
   class DataInterfaceBase;
 
-  class Subsystem : public Object {
+  class Subsystem : public Element {
 
     friend class HitSphereLink;
 
@@ -50,22 +50,35 @@ namespace MBSim {
       vector<Vec> IrOK;
       vector<SqrMat> AIC;
       vector<Vec> IrOC;
-      //vector<SqrMat> AIS;
-      //vector<Vec> IrOS;
 
-      int gSize;
-      int gInd;
+      int qSize, qInd;
+      int uSize, uInd;
+      int xSize, xInd;
+      int hSize, hInd;
+      int gSize, gInd;
+      int gdSize, gdInd;
+      int laSize, laInd;
+      int rFactorSize, rFactorInd;
+      int svSize, svInd;
+      /** linear relation matrix \f$\boldsymbol{T}\f$ of position and velocity parameters */
+      Mat T;
+      /** mass matrix \f$\boldsymbol{M}\f$*/
+      SymMat M;
+      /** LU-decomposition of mass matrix \f$\boldsymbol{M}\f$*/
+      SymMat LLM;
+      Vec q, qd, q0;
+      Vec u, ud, u0;
+      Vec x, xd, x0;
+      Vec h, r, f;
+      Mat W, V;
       Vec la;
       Vec dla;
       Vec s;
       Vec g, gd;
-      int laSize, laInd;
+      Vec b;
       Vec res;
       Vec rFactor;
-      int rFactorSize, rFactorInd;
 
-      int svSize;
-      int svInd;
       Vec sv;
       Vector<int> jsv;
 
@@ -77,7 +90,11 @@ namespace MBSim {
       SqrMat APK;
       int iRef;
       CoordinateSystem *portParent;
+
+      vector<CoordinateSystem*> port;
+      vector<Contour*> contour;
  
+
    public:
       /*! Constructor */
       Subsystem(const string &name);
@@ -86,10 +103,23 @@ namespace MBSim {
 
       void init();
       void initz();
-      void calcSize();
-      void calchSize();
+      void calcqSize();
+      void calcuSize();
+      void calcxSize();
+      void calcsvSize();
+      virtual void calchSize();
       void calclaSize();
-      void checkActiveConstraints();
+      void calcgSize();
+      void calcgdSize();
+      void calcrFactorSize();
+      void checkActiveLinks();
+      void checkHolonomicConstraints();
+      void checkNonHolonomicConstraints();
+
+    const Mat& getW() const {return W;}
+    Mat& getW() {return W;}
+    const Mat& getV() const {return V;}
+    Mat& getV() {return V;}
 
       Vec& getsv() {return sv;}
       const Vec& getsv() const {return sv;}
@@ -108,16 +138,38 @@ namespace MBSim {
       const Vec& getrFactor() const {return rFactor;}
       Vec& getrFactor() {return rFactor;}
 
-      void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);} 
-      void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
-      void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
+      void setrFactorInd(int ind) {rFactorInd = ind;}
+      void setlaInd(int ind) {laInd = ind;}
+      void setgInd(int ind) {gInd = ind;}
+      void setgdInd(int ind) {gdInd = ind;}
+
+      //void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);} 
+      //void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
+      //void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
       void setsvInd(int svInd_) {svInd = svInd_;};
       int getgSize() const {return gSize;} 
+      int getgdSize() const {return gdSize;} 
       int getlaSize() const {return laSize;} 
       int getlaInd() const {return laInd;} 
       int getrFactorSize() const {return rFactorSize;} 
-      int getxSize() const {return xSize;}
       int getsvSize() const {return svSize;}
+
+      int getqSize() const {return qSize;}
+      int getuSize() const {return uSize;}
+      int getxSize() const {return xSize;}
+      int getzSize() const { return qSize + uSize + xSize; }
+      int gethSize() const { return hSize; }
+
+      /*! Get mass matrix */
+      const SymMat& getM() const {return M;};
+      /*! Get T-matrix */
+      const Mat& getT() const {return T;};
+      /*! Get Cholesky decomposition of the mass matrix */
+      const SymMat& getLLM() const {return LLM;};
+      const Vec& geth() const {return h;};
+
+      const Vec& getq() const {return q;};
+      const Vec& getu() const {return u;};
 
       void initPlotFiles();
       void plot(double t, double dt=1);
@@ -125,47 +177,54 @@ namespace MBSim {
       void load(const string &path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-      void updateKinematics(double t);
-      void updateLinksStage1(double t);
-      void updateLinksStage2(double t);
-      void updateT(double t); 
-      void updateh(double t); 
-      void updateM(double t); 
-      void updateW(double t); 
-      void updateG(double t); 
-      void updateb(double t); 
-      void updater(double t); 
-      void updateStopVector(double t); 
-      void updatedq(double t, double dt); 
-      void updatedx(double t, double dt); 
-      void updateqRef(); 
-      void updateqdRef(); 
-      void updateuRef(); 
-      void updateudRef(); 
-      void updatexRef(); 
-      void updatexdRef(); 
-      void updatezRef(); 
-      void updatezdRef(); 
-      void updatehRef();
-      void updatefRef();
-      void updaterRef();
-      void updateTRef();
-      void updateMRef();
-      void updateLLMRef();
-      void updatesvRef();
-      void updatejsvRef();
-      void updategRef();
-      void updateRef();
-      void updateWRef();
-      void updatelaRef();
-      void updategdRef();
-      void updatebRef();
-      void updatesRef();
-      void updateresRef();
-      void updaterFactorRef();
+      virtual void updateKinematics(double t);
+      virtual void updateg(double t);
+      virtual void updategd(double t);
+      virtual void updateT(double t); 
+      virtual void updateh(double t); 
+      virtual void updateM(double t); 
+      virtual void updateW(double t); 
+      virtual void updateV(double t); 
+      virtual void updateb(double t); 
+      virtual void updater(double t); 
+      virtual void updateStopVector(double t); 
+      virtual void facLLM() = 0;
+      virtual void updatedq(double t, double dt); 
+      virtual void updatedx(double t, double dt); 
+      virtual void updatedu(double t, double dt) = 0;
+      virtual void updatezd(double t) = 0;
+      virtual void updatexd(double t);
 
-      using Object::addCoordinateSystem;
-      using Object::addContour;
+      void updateqRef(const Vec &ref); 
+      void updateqdRef(const Vec &ref); 
+      void updateuRef(const Vec &ref); 
+      void updateudRef(const Vec &ref); 
+      void updatexRef(const Vec &ref); 
+      void updatexdRef(const Vec &ref); 
+      //void updatezRef(const Vec &ref); 
+      //void updatezdRef(const Vec &ref); 
+      void updatehRef(const Vec &ref);
+      void updatefRef(const Vec &ref);
+      void updaterRef(const Vec &ref);
+      void updateTRef(const Mat &ref);
+      void updateMRef(const SymMat &ref);
+      void updateLLMRef(const SymMat &ref);
+      //void updatesvRef(const Vec& ref);
+      //void updatejsvRef(const Vector<int> &ref);
+      void updategRef(const Vec &ref);
+      void updategdRef(const Vec &ref);
+      void updateWRef(const Mat &ref);
+      void updateVRef(const Mat &ref);
+      void updatelaRef(const Vec &ref);
+      void updatebRef(const Vec &ref);
+      void updatesRef(const Vec &ref);
+      void updateresRef(const Vec &ref);
+      void updaterFactorRef(const Vec &ref);
+
+      void addCoordinateSystem(CoordinateSystem * port);
+      void addContour(Contour* contour);
+
+      int portIndex(const CoordinateSystem *port_) const;
 
       void setTranslation(const Vec& PrPK_) { PrPK = PrPK_;}
       void setRotation(const SqrMat& APK_) { APK = APK_;}
@@ -173,12 +232,10 @@ namespace MBSim {
       void setCoordinateSystemForKinematics(CoordinateSystem *port) {
 	iRef = portIndex(port);
 	assert(iRef > -1);
-    }
+      }
 
-      //void addContour(Contour* contour);
-      //void addCoordinateSystem(CoordinateSystem* port);
-      //CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
-      //Contour* getContour(const string &name, bool check);
+      virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
+      virtual Contour* getContour(const string &name, bool check=true);
 
       void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
 
@@ -190,6 +247,7 @@ namespace MBSim {
       //void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
       //void addSubsystem(Subsystem *subsystem);
 
+      void addSubsystem(Subsystem *subsystem);
       void addObject(Object *object);
       void addLink(Link *connection);
       Subsystem* getSubsystem(const string &name,bool check=true);
@@ -203,31 +261,63 @@ namespace MBSim {
       /* Add a data_interface_base \param dib_ to the DataInterfaceBase-vector */
       void addDataInterfaceBase(DataInterfaceBase* dib_);
 
-      virtual const Vec& getAccelerationOfGravity() const {return parent->getAccelerationOfGravity();}
+      //virtual const SqrMat& getG() const {return parent->getG();}
+      //virtual SqrMat& getG() {return parent->getG();}
+      //virtual const Vec& getlaMBS() const {return parent->getlaMBS();}
+      //virtual Vec& getlaMBS() {return parent->getlaMBS();}
+      //      virtual const Matrix<Sparse, double>& getGs() const {return parent->getGs();}
+      //      virtual Matrix<Sparse, double>& getGs() {return parent->getGs();}
+      //      virtual const SqrMat& getJprox() const {return parent->getJprox();}
+      //      virtual SqrMat& getJprox() {return parent->getJprox();}
+      //      virtual void setTermination(bool term) {parent->setTermination(term);}
 
-      virtual const SymMat& getG() const {return parent->getG();}
-      virtual SymMat& getG() {return parent->getG();}
-      virtual const Vec& getlaMBS() const {return parent->getlaMBS();}
-      virtual Vec& getlaMBS() {return parent->getlaMBS();}
-      virtual const Matrix<Sparse, double>& getGs() const {return parent->getGs();}
-      virtual Matrix<Sparse, double>& getGs() {return parent->getGs();}
-      virtual const SqrMat& getJprox() const {return parent->getJprox();}
-      virtual SqrMat& getJprox() {return parent->getJprox();}
-      virtual void setTermination(bool term) {parent->setTermination(term);}
+      const Vec& getb() const {return b;}
+      Vec& getb() {return b;}
+      const Vec& getx() const {return x;};
+      Vec& getx() {return x;};
+      void setx(const Vec& x_) { x = x_; }
+      void setx0(const Vec &x0_) { x0 = x0_; }
+      void setx0(double x0_) { x0 = Vec(1,INIT,x0_); }
+      Vec& getxd() {return xd;};
+      Vec& getx0() {return x0;};
+      const Vec& getx0() const {return x0;};
+      const Vec& getxd() const {return xd;};
+
+      int  getxInd() { return xInd; }
+      const Vec& getf() const {return f;};
+      Vec& getf() {return f;};
+
+
+      void setqSize(int qSize_) { qSize = qSize_; }
+      void setqInd(int qInd_) { qInd = qInd_; }
+      void setuSize(int uSize_) { uSize = uSize_; }
+      void setuInd(int uInd_) { uInd = uInd_; }
+      void setxSize(int xSize_) { xSize = xSize_; }
+      void setxInd(int xInd_) { xInd = xInd_; }
+      void sethSize(int hSize_) { hSize = hSize_; }
+      void sethInd(int hInd_) { hInd = hInd_; }
+      int  getqInd() { return qInd; }
+      int  getuInd() { return uInd; }
+      int  gethInd() { return hInd; }
 
       virtual HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);
-      virtual void setActiveConstraintsChanged(bool b) {parent->setActiveConstraintsChanged(b);}
 
+      //virtual void setActiveConstraintsChanged(bool b) {parent->setActiveConstraintsChanged(b);}
+      //
+      bool activeConstraintsChanged();
+      bool activeHolonomicConstraintsChanged();
 
       virtual int solveFixpointSingle(double dt);
       virtual void checkForTermination(double dt);
       virtual void updaterFactors();
 
-      virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
+      //virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
+      //
+      void setMultiBodySystem(MultiBodySystem* sys);
+      void setFullName(const string &str);
+      void setlaIndMBS(int laIndParent);
 
       virtual string getType() const {return "Subsystem";}
-
-      int getDegreesOfFreedom() const {return 0;}
   };
 }
 

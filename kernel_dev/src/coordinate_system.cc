@@ -31,7 +31,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
+  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), hSize(0), hInd(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 #ifdef HAVE_AMVIS
 bodyAMVisUserFunctionColor= NULL;
 bodyAMVis = NULL;
@@ -44,13 +44,13 @@ bodyAMVis = NULL;
     plotLevel= 0;
   }
 
-  string CoordinateSystem::getFullName() const {
-    return parent->getFullName() + "." + name;
-  }
+ // string CoordinateSystem::getFullName() const {
+ //   return parent->getFullName() + "." + name;
+ // }
 
   void CoordinateSystem::init() {
-    getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
-    getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
+    getJacobianOfTranslation().resize(3,hSize);
+    getJacobianOfRotation().resize(3,hSize);
   }
 
 #ifdef HAVE_AMVIS

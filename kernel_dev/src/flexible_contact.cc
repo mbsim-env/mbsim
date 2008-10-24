@@ -27,34 +27,32 @@
 namespace MBSim {
 
   FlexibleContact::FlexibleContact(const string &name) : Contact(name,false), fcl(0), ffl(0) {
-    active = false;
+    //active = false;
   }
 
   FlexibleContact::FlexibleContact(const FlexibleContact *master,const string &name_) : Contact(master,name_) {
     //c = master->c;
     //d = master->d;
-    active = false;
+    //active = false;
   }
 
   void FlexibleContact::init() {
     Contact::init();
   }
 
-  void FlexibleContact::calcSize() {
-    if(ffl)
-      nFric = ffl->getFrictionDirections();
-    else
-      nFric = 0;
-    Contact::calcSize();
+  void FlexibleContact::updateh(double t) {
+    if(isActive()) {
+      la(0) = (*fcl)(g(0),gd(0));
+      if(ffl)
+	la(1,getFrictionDirections()) = (*ffl)(gd(1,getFrictionDirections()),fabs(la(0)));
+
+      WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
+      WF[1] = -WF[0];
+      for(unsigned int i=0; i<contour.size(); i++) {
+	contour[i]->updateMovingFrame(t, cpData[i]);
+	h[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*WF[i];
+      }
+    }
   }
 
-  void FlexibleContact::updateKinetics(double t) {
-
-    la(0) = (*fcl)(g(0),gd(0));
-    if(ffl)
-      la(1,nFric) = (*ffl)(gd(1,nFric),fabs(la(0)));
-    
-    WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);
-    WF[1] = -WF[0];
-  }
 }

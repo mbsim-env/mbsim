@@ -53,7 +53,6 @@ namespace MBSim {
       RigidContact(const RigidContact *master, const string &name_) : Contact(master,name_) {}
 
       void init();
-      void calcSize();
 
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
@@ -73,7 +72,8 @@ namespace MBSim {
       void checkForTermination(double dt);
       std::string getTerminationInfo(double dt);
 
-      void updateKinetics(double t);
+      void updateW(double t);
+      void updateV(double t);
       void updateb(double t);
 
       void setNormalImpactLaw(NormalImpactLaw *fnil_) {fnil = fnil_;}
@@ -81,10 +81,22 @@ namespace MBSim {
       void setContactLaw(ConstraintLaw *fcl_) {fcl = fcl_;}
       void setFrictionLaw(DryFriction *fdf_) {fdf = fdf_;}
 
+      int getFrictionDirections() {return fdf ? fdf->getFrictionDirections() : 0;}
+
       string getType() const {return "RigidContact";}
 
+     // void updateWRef();
+     // void updatelaRef();
+     // void updategdRef();
+     // void updatesRef();
+     // void updateresRef();
+     // void updatebRef();
+
       //bool isActive() const { return fcl->isActive(g);}
-      bool isActive() const { return fcl->isActive(g(0));}
+      bool isClosed() const { return fcl->isClosed(g(0));}
+      bool isSticking() const { return fdf->isSticking(gd(iT));}
+      //int getNumberOfConstraints() const {return isActive() ? 1 : 0;} 
+      //int getNumberOfConstraints() const {return isActive() ? (isSliding() ? 1 : laSize) : 0;} 
   };
 
 }

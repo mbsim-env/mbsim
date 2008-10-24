@@ -82,6 +82,7 @@ namespace MBSim {
     getline(inputfile,dummy); // newline
     getline(inputfile,dummy); // # Full name
     getline(inputfile,dummy); // full name
+    fullName = dummy;
     getline(inputfile,dummy); // newline
  }
 

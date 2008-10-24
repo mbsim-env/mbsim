@@ -54,18 +54,30 @@ namespace MBSim {
       ~Connection();
       virtual void connect(CoordinateSystem *port1, CoordinateSystem* port2);
 
-      void calcSize();
+      void calcxSize();
+      void calcgSize();
+      void calcgdSize();
+      void calclaSize();
+      void calcrFactorSize();
+
       void init();
 
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
-      void updateStage1(double t);
-      void updateStage2(double t);
-      virtual void updateKinetics(double t) = 0;
+      void updateg(double t);
+      void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
       void initPlotFiles(); 
       void plot(double t, double dt=1);
+
+      bool isActive() const {return true;}
+      void checkHolonomicConstraints() {}
+      void checkNonHolonomicConstraints() {}
+
+      bool activeConstraintsChanged() {return false;}
+      bool activeHolonomicConstraintsChanged() {return false;}
+      bool activeNonHolonomicConstraintsChanged() {return false;}
 
 #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}

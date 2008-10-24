@@ -28,6 +28,7 @@
 using namespace std;
 
 namespace MBSim {
+  class Subsystem;
   class Object;
   class Link;
   class Contour;
@@ -40,6 +41,7 @@ namespace MBSim {
 
   class ClassFactory {
     public:
+      Subsystem* getSubsystem(const string &type);
       Object* getObject(const string &type);
       Link* getLink(const string &type);
       Contour* getContour(const string &type);

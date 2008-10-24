@@ -32,33 +32,29 @@
 
 namespace MBSim {
 
-  Object::Object(const string &name_) : Element(name_), parent(0), qSize(0), uSize(0), xSize(0), hSize(0), qInd(0), uInd(0), xInd(0), hInd(0), q0(qSize), u0(uSize), x0(xSize), WrOHitSphere(3), RHitSphere(0) {}
+  Object::Object(const string &name) : Element(name), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize),  WrOHitSphere(3), RHitSphere(0) {} //, parent(0)
 
-  void Object::writeq()
-  {
+  void Object::writeq() {
 //    string fname="PREINTEG/"+fullName+".q0.asc";  
 //    ofstream osq(fname.c_str(), ios::out);
 //    osq << q;
 //    osq.close();
   }
-  void Object::readq0()
-  {
+  void Object::readq0() {
 //    string fname="PREINTEG/"+fullName+".q0.asc";  
 //    ifstream isq(fname.c_str());
 //    if(isq) isq >> q0;
 //    else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
 //    isq.close();
   }
-  void Object::writeu()
-  {
+  void Object::writeu() {
  //   string fname="PREINTEG/"+fullName+".u0.asc";  
  //   ofstream osu(fname.c_str(), ios::out);
  //   osu << u;
  //   osu.close();
   }
 
-  void Object::readu0()
-  {
+  void Object::readu0() {
  //   string fname="PREINTEG/"+fullName+".u0.asc";  
  //   ifstream isu(fname.c_str());
  //   if(isu) isu >> u0;
@@ -66,16 +62,14 @@ namespace MBSim {
  //   isu.close();
   }
 
-  void Object::writex()
-  {
+  void Object::writex() {
  //   string fname="PREINTEG/"+fullName+".x0.asc";  
  //   ofstream osx(fname.c_str(), ios::out);
  //   osx << x;
  //   osx.close();
   }
 
-  void Object::readx0()
-  {
+  void Object::readx0() {
  //   string fname="PREINTEG/"+fullName+".x0.asc";  
  //   ifstream isx(fname.c_str());
  //   if(isx) isx >> x0;
@@ -91,108 +85,60 @@ namespace MBSim {
       delete *i;
   }
 
-  void Object::updatezRef() {
-    // UPDATEZREF references to positions, velocities and TODO DOC of multibody system parent
-    updateqRef();
-    updateuRef();
-    updatexRef();
-  }
-
-  void Object::updatezdRef() 
-  {
-    // UPDATEZDREF references to differentiated positions, velocities and TODO DOC of multibody system parent
-    updateqdRef();
-    updateudRef();
-    updatexdRef();
-  }
-
-  void Object::updateqRef() 
-  {
+  void Object::updateqRef(const Vec &qParent) {
     // UPDATEQREF references to positions of multibody system parent
-    q>>(parent->getq()(qInd,qInd+qSize-1));
+    q>>qParent(qInd,qInd+qSize-1);
   }
 
-  void Object::updateqdRef()
-  {
+  void Object::updateqdRef(const Vec &qdParent) {
     // UPDATEQDREF references to differentiated positions of multibody system parent
-    qd>>(parent->getqd()(qInd,qInd+qSize-1));
+    qd>>qdParent(qInd,qInd+qSize-1);
   }
 
-  void Object::updateuRef()
-  {
+  void Object::updateuRef(const Vec &uParent) {
     // UPDATEUREF references to velocities of multibody system parent
-    u>>(parent->getu()(uInd,uInd+uSize-1));
+    u>>uParent(uInd,uInd+uSize-1);
   }
 
-  void Object::updateudRef()
-  {
+  void Object::updateudRef(const Vec &udParent) {
     // UPDATEUDREF references to differentiated velocities of multibody system parent
-    ud>>(parent->getud()(uInd,uInd+uSize-1));
+    ud>>udParent(uInd,uInd+uSize-1);
   }
 
-  void Object::updatexRef()
-  {
-    x>>(parent->getx()(xInd,xInd+xSize-1));
-  }
-
-  void Object::updatexdRef()
-  {
-    xd>>(parent->getxd()(xInd,xInd+xSize-1));
-  }
-
-  void Object::updatehRef()
-  {
+  void Object::updatehRef(const Vec& hParent) {
     // UPDATEHREF references to smooth force vector of multibody system
-    // parent
-    //h>>(parent->geth()(uInd,uInd+uSize-1));
-    h>>(parent->geth()(hInd,hInd+hSize-1));
+    h>>hParent(hInd,hInd+hSize-1);
   }
 
-  void Object::updaterRef()
-  {
+  void Object::updaterRef(const Vec& rParent) {
     // UPDATERREF references to smooth force vector of multibody system
-    // parent
-    r>>(parent->getr()(uInd,uInd+uSize-1));
+    r>>rParent(uInd,uInd+uSize-1);
   }
 
-  void Object::updatefRef()
-  {
-    f>>(parent->getf()(xInd,xInd+xSize-1));
-  }
-
-  void Object::updateMRef()
-  {
+  void Object::updateMRef(const SymMat &MParent) {
     // UPDATEMREF references to mass matrix of multibody system parent
-    Index Iu = Index(hInd,hInd+hSize-1);
-    M>>parent->getM()(Iu);
+    M>>MParent(Index(hInd,hInd+hSize-1));
   }
 
-  void Object::updateTRef()
-  {
+  void Object::updateTRef(const Mat &TParent) {
     // UPDATETREF references to T-matrix of multibody system parent
-    Index Iu = Index(uInd,uInd+uSize-1);
-    Index Iq = Index(qInd,qInd+qSize-1);
-    T>>parent->getT()(Iq,Iu);
+    T>>TParent(Index(qInd,qInd+qSize-1),Index(uInd,uInd+uSize-1));
   }
 
-  void Object::updateLLMRef()
-  {
+  void Object::updateLLMRef(const SymMat &LLMParent) {
     // UPDATELLMREF references to cholesky decomposition of mass matrix of multibody system parent
-    Index Iu = Index(hInd,hInd+hSize-1);
-    LLM>>parent->getLLM()(Iu);
+    LLM>>LLMParent(Index(hInd,hInd+hSize-1));
   }
 
-  void Object::initz()
-  {
+  void Object::initz() {
     // INITZ initialises the Object state
     q = q0;
     u = u0;
-    x = x0;
   }
 
-  string Object::getFullName() const {
-    return parent->getFullName() + "." + name;
-  }
+  //string Object::getFullName() const {
+  //  return parent->getFullName() + "." + name;
+  //}
 
   void Object::save(const string &path, ofstream &outputfile) {
     Element::save(path,outputfile);
@@ -290,15 +236,11 @@ namespace MBSim {
 	plotfile<<" "<<q(i);
       for(int i=0; i<uSize; ++i)
 	plotfile<<" "<<u(i);
-      for(int i=0; i<xSize; ++i)
-	plotfile<<" "<<x(i);
       if(plotLevel>2) {
 	for(int i=0; i<qSize; ++i)
 	  plotfile<<" "<<qd(i)/dt;
 	for(int i=0; i<uSize; ++i)
 	  plotfile<<" "<<ud(i)/dt;
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<xd(i)/dt;
 	for(int i=0; i<uSize; ++i)
 	  plotfile<<" "<<h(i);
 	for(int i=0; i<uSize; ++i)
@@ -324,18 +266,12 @@ namespace MBSim {
       for(int i=0; i<uSize; ++i)
 	plotfile <<"# "<< plotNr++ <<": u("<<i<<")" << endl;
 
-      for(int i=0; i<xSize; ++i)
-	plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
-
       if(plotLevel>2) {
 	for(int i=0; i<qSize; ++i)
 	  plotfile <<"# "<< plotNr++ << ": qd(" << i << ")" << endl;
 
 	for(int i=0; i<uSize; ++i)
 	  plotfile <<"# "<< plotNr++ <<": ud("<<i<<")" << endl;
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
 
 	for(int i=0; i<uSize; ++i)
 	  plotfile <<"# "<< plotNr++ <<": h("<<i<<")" << endl;
@@ -361,7 +297,7 @@ namespace MBSim {
     }
     //contour_->setFullName(getFullName()+"."+contour_->getFullName());
     contour.push_back(contour_);
-    contour_->setObject(this);
+    //contour_->setObject(this);
   }
 
   void Object::addCoordinateSystem(CoordinateSystem* port_) {
@@ -371,7 +307,7 @@ namespace MBSim {
     }
     //port_->setFullName(getFullName()+"."+port_->getFullName());
     port.push_back(port_);
-    port_->setObject(this);
+    //port_->setObject(this);
   }
 
   CoordinateSystem* Object::getCoordinateSystem(const string &name, bool check) {
@@ -400,10 +336,20 @@ namespace MBSim {
     return NULL;
   }
 
-  void Object::init() 
-  {  
+  void Object::calchSize() {  
+
+    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) {
+      (*i)->sethSize(hSize);
+      (*i)->sethInd(hInd);
+    }
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) {
+      (*i)->sethSize(hSize);
+      (*i)->sethInd(hInd);
+    }
+  }
+
+  void Object::init() {  
     Iu = Index(uInd,uInd+uSize-1);
-    Ix = Index(xInd,xInd+xSize-1);
     Ih = Index(hInd,hInd+hSize-1);
 
     for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
@@ -421,10 +367,20 @@ namespace MBSim {
     ud = slvLLFac(LLM, h*dt+r);
   }
 
-  void Object::updatezd(double t) {
+  void Object::updateqd(double t) {
 
     qd = T*u;
+  }
+
+  void Object::updateud(double t) {
+
     ud =  slvLLFac(LLM, h+r);
+  }
+
+  void Object::updatezd(double t) {
+
+    updateqd(t);
+    updateud(t);
   }
 
   void Object::facLLM() {
@@ -432,104 +388,28 @@ namespace MBSim {
     LLM = facLL(M); 
   }
 
-  void Object::updateJh(double t) {
-    // static const double eps = epsroot();
-    // Vec hOld = geth().copy();
-    // int pos = getqInd();
-    // for(int j=0;j<q.size();j++) {
-    //   Vec Jhcol = parent->getJh().col(pos+j);
-    //   double qSave = q(j);
-    //   q(j) += eps;
-    //   updateKinematics(t);
-    //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-    //     linkSingleValued[i]->updateStage1(t); 
-    //     linkSingleValued[i]->updateStage2(t); 
-    //   }
-    //   updateh(t);
-    //   Jhcol(Iu) += (geth()-hOld)/eps;
-    //   for(unsigned int i=0; i<linkSingleValuedCoordinateSysteCoordinateSystema.size(); i++) {
-    //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
-    //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
-    //     for(unsigned int b=0; b<ports.size(); b++) {
-    //       Object *obj = ports[b]->getObject()->getResponsible();
-    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-    //         Vec hOld = obj->geth().copy();
-    //         obj->updateh(t);
-    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-    //         obj->geth() = hOld;
-    //       }
-    //     }
-    //   }
-    //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-    //     LinkContour* l = linkSingleValuedContourData[i].link;
-    //     vector<Contour*> contours = l->getContours();
-    //     for(unsigned int b=0; b<contours.size(); b++) {
-    //       Object *obj = contours[b]->getObject()->getResponsible();
-    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-    //         Vec hOld = obj->geth().copy();
-    //         obj->updateh(t);
-    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-    //         obj->geth() = hOld;
-    //       }
-    //     }
-    //   }
-    //   q(j) = qSave;
-    // }
-
-    // pos = getuInd();
-    // for(int j=0;j<u.size();j++) {
-    //   Vec Jhcol = parent->getJh().col(parent->getqSize()+pos+j);
-    //   double uSave = u(j);
-    //   u(j) += eps;
-    //   updateKinematics(t);
-    //   for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-    //     linkSingleValued[i]->updateStage1(t); linkSingleValued[i]->updateStage2(t); 
-    //   }
-    //   updateh(t);
-    //   Jhcol(Iu) += (geth()-hOld)/eps;
-    //   for(unsigned int i=0; i<linkSingleValuedCoordinateSystemData.size(); i++) {
-    //     LinkCoordinateSystem* l = linkSingleValuedCoordinateSystemData[i].link;
-    //     vector<CoordinateSystem*> ports = l->getCoordinateSystems();
-    //     for(unsigned int b=0; b<ports.size(); b++) {
-    //       Object *obj = ports[b]->getObject()->getResponsible();
-    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-    //         Vec hOld = obj->geth().copy();
-    //         obj->updateh(t);
-    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-    //         obj->geth() = hOld;
-    //       }
-    //     }
-    //   }
-    //   for(unsigned int i=0; i<linkSingleValuedContourData.size(); i++) {
-    //     LinkContour* l = linkSingleValuedContourData[i].link;
-    //     vector<Contour*> contours = l->getContours();
-    //     for(unsigned int b=0; b<contours.size(); b++) {
-    //       Object *obj = contours[b]->getObject()->getResponsible();
-    //       if(obj != parent && obj != this) { // Achtung: unser MBS ist auch ein Object, hat aber selber (als eigenstängiges System) keine Freiheiten sondern ruht inertial
-    //         Vec hOld = obj->geth().copy();
-    //         obj->updateh(t);
-    //         Jhcol(obj->Iu) += (obj->geth()-hOld)/eps;
-    //         obj->geth() = hOld;
-    //       }
-    //     }
-    //   }
-    //   u(j) = uSave;
-    // }
-    // updateKinematics(t);
-    // for(unsigned int i=0; i<linkSingleValued.size(); i++) {
-    //   linkSingleValued[i]->updateStage1(t); 
-    //   linkSingleValued[i]->updateStage2(t); 
-    // }
-    // h=hOld;
-  }
-
-
   double Object::computeKineticEnergy() {
     return 0.5*trans(u)*M*u;
   }
 
-  MultiBodySystem* Object::getMultiBodySystem() {
-    return parent->getMultiBodySystem();
+//  MultiBodySystem* Object::getMultiBodySystem() {
+//    return parent->getMultiBodySystem();
+//  }
+
+  void Object::setMultiBodySystem(MultiBodySystem* sys) {
+    Element::setMultiBodySystem(sys);
+    for(unsigned i=0; i<port.size(); i++)
+      port[i]->setMultiBodySystem(sys);
+    for(unsigned i=0; i<contour.size(); i++)
+      contour[i]->setMultiBodySystem(sys);
+  }
+
+  void Object::setFullName(const string &str) {
+    Element::setFullName(str);
+    for(unsigned i=0; i<port.size(); i++)
+      port[i]->setFullName(getFullName() + "." + port[i]->getName());
+    for(unsigned i=0; i<contour.size(); i++)
+      contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
   }
 
 }

@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), laSize(0), rFactorSize(0), active(true), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {
+  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
   }
 
   Link::~Link() { 
@@ -53,18 +53,12 @@ namespace MBSim {
   }
 
   void Link::init() {
-    rFactor.resize(rFactorSize);
+    gdn.resize(gdSize);
     rFactorUnsure.resize(rFactorSize);
-    la.resize(laSize);
-    la0.resize(laSize);
-    g.resize(gSize);
-    gd.resize(laSize);
-    gdn.resize(laSize);
-    s.resize(laSize);
-    res.resize(laSize);
 
     for(unsigned i=0; i<port.size(); i++) {
       W.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
+      V.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
       h.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
       r.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
       WF.push_back(Vec(3));
@@ -74,6 +68,7 @@ namespace MBSim {
     }
     for(unsigned i=0; i<contour.size(); i++) {
       W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
+      V.push_back(Mat(contour[i]->getWJP().cols(),laSize));
       h.push_back(Vec(contour[i]->getWJP().cols()));
       r.push_back(Vec(contour[i]->getWJP().cols()));
       WF.push_back(Vec(3));
@@ -83,24 +78,48 @@ namespace MBSim {
     }
   }
 
-  string Link::getFullName() const {
-    return parent->getFullName() + "." + name;
+  void Link::initz() {
+    x=x0;
   }
 
-  void Link::updatexRef() {
-    x >> parent->getx()(xInd,xInd+xSize-1);
+  //string Link::getFullName() const {
+  //  return parent->getFullName() + "." + name;
+  //}
+
+ // void Link::updatesvRef() {
+ //   sv >> parent->getsv()(svInd,svInd+svSize-1);
+ // }
+
+ // void Link::updatejsvRef() {
+ //   jsv >> parent->getjsv()(svInd,svInd+svSize-1);
+ // }
+
+  void Link::updatelaRef(const Vec& laParent) {
+    la.resize() >> laParent(laInd,laInd+laSize-1);
   }
 
-  void Link::updatexdRef() {
-    xd >> parent->getxd()(xInd,xInd+xSize-1);
+  void Link::updategRef(const Vec& gParent) {
+    g.resize() >> gParent(gInd,gInd+gSize-1);
   }
 
-  void Link::updatesvRef() {
-    sv >> parent->getsv()(svInd,svInd+svSize-1);
+  void Link::updategdRef(const Vec& gdParent) {
+    gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
   }
 
-  void Link::updatejsvRef() {
-    jsv >> parent->getjsv()(svInd,svInd+svSize-1);
+  void Link::updatebRef(const Vec& bParent) {
+    b.resize() >> bParent(laInd,laInd+laSize-1);
+  }
+
+  void Link::updatesRef(const Vec& sParent) {
+    s.resize() >> sParent(gdInd,gdInd+gdSize-1);
+  }
+
+  void Link::updateresRef(const Vec& resParent) {
+    res.resize() >> resParent(laInd,laInd+laSize-1);
+  }
+
+  void Link::updaterFactorRef(const Vec& rFactorParent) {
+    rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
   }
 
   void Link::plot(double t, double dt) {
@@ -120,7 +139,7 @@ namespace MBSim {
 	plotfile<<" "<<g(i);
 
     }
-    if(active || plotLevel > 2) {
+    if(isActive() || plotLevel > 2) {
 
       if(plotLevel>0) {
 	if(plotLevel>1) {
@@ -156,7 +175,7 @@ namespace MBSim {
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = port[arrowAMVisID[i]]->getPosition();
       if(setValued){ 
-	if (active) {
+	if (isActive()) {
 	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
 	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
 	}
@@ -195,7 +214,7 @@ namespace MBSim {
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
       WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
       if(setValued) { 
-	if (active) {
+	if (isActive()) {
 	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
 	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
 	}
@@ -268,45 +287,6 @@ namespace MBSim {
     }
   }
 
-  void Link::updatelaRef() {
-    la >> parent->getla()(laInd,laInd+laSize-1);
-  }
-
-  void Link::updategRef() {
-    g >> parent->getg()(gInd,gInd+gSize-1);
-  }
-
-  void Link::updateRef() {
-    updateWRef();
-    updatelaRef();
-    updategdRef();
-    updatebRef();
-    updatesRef();
-    // TODO Nur bei Newton
-    updateresRef();
-    updaterFactorRef();
-  }
-
-  void Link::updatebRef() {
-    b >> parent->getb()(laInd,laInd+laSize-1);
-  }
-
-  void Link::updategdRef() {
-    gd >> parent->getgd()(laInd,laInd+laSize-1);
-  }
-
-  void Link::updatesRef() {
-    s >> parent->gets()(laInd,laInd+laSize-1);
-  }
-
-  void Link::updateresRef() {
-    res >> parent->getres()(laInd,laInd+laSize-1);
-  }
-
-  void Link::updaterFactorRef() {
-    rFactor >> parent->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
-  }
-
   void Link::savela() {
     la0 = la;
   }
@@ -335,16 +315,17 @@ namespace MBSim {
     for(unsigned i=0; i<port.size(); i++) 
       b += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
     for(unsigned i=0; i<contour.size(); i++) 
-      b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfRotation();
+      b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
+      //b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfRotation();
   }
 
   void Link::updateh(double t) {
-    if(active) {
+    if(isActive()) {
       for(unsigned int i=0; i<port.size(); i++)
 	h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
       for(unsigned int i=0; i<contour.size(); i++) {
 	contour[i]->updateMovingFrame(t, cpData[i]);
-	h[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*WF[i] + trans(contour[i]->getMovingFrame()->getJacobianOfRotation())*WM[i];
+	h[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*WF[i];
       }
     }
   }
@@ -354,13 +335,13 @@ namespace MBSim {
       W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
     for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->updateMovingFrame(t, cpData[i]);
-      W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i] + trans(contour[i]->getMovingFrame()->getJacobianOfRotation())*fM[i];
+      W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i];
     }
   }
 
-  int Link::getlaIndMBS() const {
-    return parent->getlaIndMBS() + laInd;
-  }
+  //int Link::getlaIndMBS() const {
+  //  return parent->getlaIndMBS() + laInd;
+  //}
 
   void Link::save(const string &path, ofstream& outputfile) {
     Element::save(path,outputfile);
@@ -425,48 +406,72 @@ namespace MBSim {
     port.push_back(port_);
   }
 
-  void Link::updateWRef() {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
-	W[i]>>parent->getW()(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->getParent()->gethInd(),contour[i]->getParent()->gethInd()+contour[i]->getWJP().cols()-1);
-      W[i]>>parent->getW()(I,J);
-    }
-  } 
-
-  void Link::updatehRef() {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
-      h[i]>>parent->geth()(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->getParent()->gethInd(),contour[i]->getParent()->gethInd()+contour[i]->getWJP().cols()-1);
-      h[i]>>parent->geth()(I);
-    }
-  } 
-
-  void Link::updaterRef() {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(),port[i]->getParent()->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
-      r[i]>>parent->getr()(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->getParent()->gethInd(),contour[i]->getParent()->gethInd()+contour[i]->getWJP().cols()-1);
-      r[i]>>parent->getr()(I);
-    }
-  } 
-
-
   void Link::connect(Contour *contour_, int id) {
     contour.push_back(contour_);
+  //  W.push_back(Mat());
+  //  V.push_back(Mat());
+  //  h.push_back(Vec());
+  //  r.push_back(Vec());
+  //  WF.push_back(Vec(3));
+  //  WM.push_back(Vec(3));
+  //  fF.push_back(Mat());
+  //  fM.push_back(Mat());
   }
 
-  MultiBodySystem* Link::getMultiBodySystem() {
-    return parent->getMultiBodySystem();
-  }
+  void Link::updatexRef(const Vec &xParent) {
+    x >> xParent(xInd,xInd+xSize-1);
+  } 
+
+  void Link::updatexdRef(const Vec &xdParent) {
+    xd >> xdParent(xInd,xInd+xSize-1);
+  } 
+
+  void Link::updateVRef(const Mat& VParent) {
+    for(unsigned i=0; i<port.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      V[i]>>VParent(I,J);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      V[i]>>VParent(I,J);
+    }
+  } 
+
+  void Link::updateWRef(const Mat& WParent) {
+    for(unsigned i=0; i<port.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->gethSize()-1);
+      W[i]>>WParent(I,J);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->gethSize()-1);
+      W[i]>>WParent(I,J);
+    }
+  } 
+
+  void Link::updatehRef(const Vec &hParent) {
+    for(unsigned i=0; i<port.size(); i++) {
+      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      h[i]>>hParent(I);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      h[i]>>hParent(I);
+    }
+  } 
+
+  void Link::updaterRef(const Vec &rParent) {
+    for(unsigned i=0; i<port.size(); i++) {
+      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      r[i]>>rParent(I);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      r[i]>>rParent(I);
+    }
+  } 
 
 }

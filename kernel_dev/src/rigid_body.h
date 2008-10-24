@@ -160,7 +160,8 @@ namespace MBSim {
 
     void init();
     void initPlotFiles();
-    void calcSize();
+    void calcqSize();
+    void calcuSize();
 
     virtual string getType() const {return "RigidBody";}
 

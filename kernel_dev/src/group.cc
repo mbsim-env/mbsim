@@ -33,13 +33,18 @@ namespace MBSim {
   }
 
   void Group::facLLM() {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->facLLM();
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
+      (*i)->facLLM();
+
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).facLLM();
   }
 
   void Group::updatezd(double t) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updatezd(t);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatezd(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updatezd(t);
@@ -53,7 +58,9 @@ namespace MBSim {
   }
 
   void Group::updatedu(double t, double dt) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updatedu(t,dt);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatedu(t,dt);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updatedu(t,dt);

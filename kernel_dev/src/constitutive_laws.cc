@@ -43,7 +43,7 @@ namespace MBSim {
   //  }
   //  return d;
   //}
-  //Vec UnilateralContact::solve(const SymMat& G, const Vec& gdn, const Vec& gda) {
+  //Vec UnilateralContact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda) {
   //  //if(fabs(gda(0)) > gd_limit)
   //    //gdn(0) += epsilon*gda(0);
   //  if(gdn(0) >= 0)
@@ -131,7 +131,7 @@ namespace MBSim {
   //  d(1) = -r(0);
   //  return d;
   //}
-  //Vec BilateralContact::solve(const SymMat& G, const Vec& gdn, const Vec& gda) {
+  //Vec BilateralContact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda) {
   //  return Vec(1,INIT,-gdn(0)/G(0,0));
   //}
   //bool BilateralContact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
@@ -301,7 +301,7 @@ namespace MBSim {
     return d;
   }
 
-  Vec PlanarCoulombFriction::solve(const SymMat& G, const Vec& gdn, double laN) {
+  Vec PlanarCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
     double laNmu = fabs(laN)*mu;
     double sdG = -gdn(0)/G(0,0);
     if(fabs(sdG)<=laNmu) 
@@ -319,6 +319,10 @@ namespace MBSim {
       return false;
   }
 
+ Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+    return Vec(1,INIT,-mu*sign(gd(0)));
+  }
+
   //Vec CoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& r) {
   //  int nFric = gdn.size()-1;
   ////Vec lan(la.size()-1);
@@ -327,7 +331,7 @@ namespace MBSim {
   //  else //if(nFric == 2) 
   //    return proxCT3D(la(1,nFric)-r(1)*gdn(1,nFric),mu*fabs(la(0)));
   //}
-  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn) {
+  //Vec CoulombFriction::solve(const SqrMat& G, const Vec& laN, const Vec& gdn) {
   //  double laNmu = fabs(laN(0))*mu;
   //  double sdG = -gdn(1)/G(1,1);
   //  if(fabs(sdG)<=laNmu) 
@@ -335,7 +339,7 @@ namespace MBSim {
   //  else 
   //    return Vec(1,INIT, (laNmu<=sdG) ? laNmu : -laNmu);
   //}
-  //Vec CoulombFriction::solve(const SymMat& G, const Vec& laN, const Vec& gdn, double laN) {
+  //Vec CoulombFriction::solve(const SqrMat& G, const Vec& laN, const Vec& gdn, double laN) {
   //  double laNmu = fabs(laN)*mu;
   //  double sdG = -gdn(0)/G(0,0);
   //  if(fabs(sdG)<=laNmu) 
@@ -424,7 +428,7 @@ namespace MBSim {
     return d;
   }
 
-  Vec SpatialCoulombFriction::solve(const SymMat& G, const Vec& gdn, double laN) {
+  Vec SpatialCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
     cout << "solve is not implemented for spatial Coulomb friction" << endl;
     throw 5;
   }
@@ -436,6 +440,10 @@ namespace MBSim {
       return true;
     else 
       return false;
+  }
+
+ Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+    return -mu*gd/nrm2(gd);
   }
 
   void TangentialImpactLaw::save(const string &path, ofstream &outputfile) {
@@ -470,7 +478,7 @@ namespace MBSim {
     return d;
   }
 
-  Vec PlanarCoulombImpact::solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN) {
+  Vec PlanarCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
     double laNmu = fabs(laN)*mu;
     double sdG = -gdn(0)/G(0,0);
     if(fabs(sdG)<=laNmu) 
@@ -528,7 +536,7 @@ namespace MBSim {
     return d;
   }
 
-  Vec SpatialCoulombImpact::solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN) {
+  Vec SpatialCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
     cout << "solve is not implemented for spatial Coulomb friction" << endl;
     throw 5;
   }

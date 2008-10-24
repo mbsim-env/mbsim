@@ -44,7 +44,7 @@ namespace MBSim {
       void setForceLaw(RegularizedConstraintLaw * rc) {ffl = rc;}
       void setMomentLaw(RegularizedConstraintLaw * rc) {fml = rc;}
 
-      void updateKinetics(double t);
+      void updateh(double t);
 
       double computePotentialEnergy();
   };
