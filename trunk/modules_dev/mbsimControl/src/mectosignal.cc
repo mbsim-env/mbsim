@@ -33,10 +33,10 @@ Vec RotVelInterface::operator()(double t)  {
 AngularInterface::AngularInterface(Body *body_) {
   body=body_;
   index=-1;
-  BodyRigid* b11=dynamic_cast<BodyRigid*>(body);
-  BodyRigid* b12=dynamic_cast<BodyRigid*>(body); 
-  BodyRigid* b13=dynamic_cast<BodyRigid*>(body); 
-  BodyRigid* b21=dynamic_cast<BodyRigid*>(body);
+  RigidBody* b11=dynamic_cast<RigidBody*>(body);
+  RigidBody* b12=dynamic_cast<RigidBody*>(body); 
+  RigidBody* b13=dynamic_cast<RigidBody*>(body); 
+  RigidBody* b21=dynamic_cast<RigidBody*>(body);
   if(b11||b12||b13) index=0; 
   if(b21) index=2;
   if(index==-1) {

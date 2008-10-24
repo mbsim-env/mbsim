@@ -40,7 +40,7 @@ SPSys::SPSys(const string &name) : ExtraDynamicInterface(name){
 }
 
 Vec SPSys::operator()(double Zeit){
-  if (talt!=Zeit){updateStage1(Zeit);
+  if (talt!=Zeit){updateg(Zeit);
     talt=Zeit;
   }
   return y;

@@ -52,7 +52,7 @@ class TransferSys : public SPSys {
     TransferSys(const string& name);
     void updatedx(double t, double dt);
     void updatexd(double t);
-    void updateStage1(double t);
+    void updateg(double t);
     void initPlotFiles();
     void plot(double t,double dt);
     void showABCD();

@@ -40,7 +40,7 @@ void TransferSys::updatexd(double t){
   xd=A*x+B*(this->*Uin)(t);
 }
 
-void TransferSys::updateStage1(double t){
+void TransferSys::updateg(double t){
   y=(this->*OutForm)(t);
 }
 //OUTCD SYS DEFINITIONEN ***************************************************
