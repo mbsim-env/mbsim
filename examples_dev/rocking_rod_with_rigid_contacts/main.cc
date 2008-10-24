@@ -9,9 +9,10 @@ int main (int argc, char* argv[])
   // Einzelne Bausteine des MKS erschaffen
   MultiBodySystem *sys = new System("TS");
 
- sys->setSolver(GaussSeidel);
+// sys->setSolver(GaussSeidel);
  //sys->setSolver(RootFinding);
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
+  //sys->setUseOldla(false);
   sys->init();
   
   // LSODEIntegrator integrator;

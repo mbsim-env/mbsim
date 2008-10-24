@@ -51,6 +51,22 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   KrSP(1) = -b1;
   box1->addCoordinateSystem("PunktU",KrSP,E);
+  ////////////////////// Visualisierung in AMVis ////////////////////////
+  Cylinder * cylinder = new Cylinder(getName() + "." + box1->getName(),1,false);
+  cylinder->setTopRadius(0.02);
+  cylinder->setBaseRadius(0.02);
+  cylinder->setHeight(l1);
+  cylinder->setColor(0.5);
+  box1->setAMVisBody(cylinder);
+  cylinder -> setInitialTranslation(0,-0.5,0);
+  cylinder -> setInitialRotation(1.5708,0,0);
+  RigidConnection *ls = new RigidConnection("Gelenk1");
+  addLink(ls);
+  ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
+  ls->setForceLaw(new BilateralConstraint);
+  ls->setImpactForceLaw(new BilateralImpact);
+  ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
+  ls->setPlotLevel(2);
 
   RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);
@@ -85,13 +101,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setFrameOfReference(getCoordinateSystem("Os"));
   box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
-  RigidConnection *ls = new RigidConnection("Gelenk1");
-  addLink(ls);
-  ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  ls->setForceLaw(new BilateralConstraint);
-  ls->setImpactForceLaw(new BilateralImpact);
-  ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
-  ls->setPlotLevel(2);
 
   ls = new RigidConnection("Gelenk2");
   addLink(ls);
@@ -101,18 +110,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ls->connect(box1->getCoordinateSystem("PunktU"),box2->getCoordinateSystem("Punkt"));
   ls->setPlotLevel(2);
 
-  ////////////////////// Visualisierung in AMVis ////////////////////////
-  Cylinder * cylinder = new Cylinder(box1->getFullName(),1,false);
-  cylinder->setTopRadius(0.02);
-  cylinder->setBaseRadius(0.02);
-  cylinder->setHeight(l1);
-  cylinder->setColor(0.5);
-  box1->setAMVisBody(cylinder);
-  cylinder -> setInitialTranslation(0,-0.5,0);
-  cylinder -> setInitialRotation(1.5708,0,0);
 
 
-  cylinder = new Cylinder(box2->getFullName(),1,false);
+  cylinder = new Cylinder(getName() + "." + box2->getName(),1,false);
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l2);

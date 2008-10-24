@@ -97,7 +97,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ls->connect(box1->getCoordinateSystem("PunktU"),box2->getCoordinateSystem("Punkt"));
 
   ////////////////////// Visualisierung in AMVis ////////////////////////
-  Cylinder * cylinder = new Cylinder(box1->getFullName(),1,false);
+  Cylinder * cylinder = new Cylinder(getName() + "." + box1->getName(),1,false);
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l1);
@@ -107,7 +107,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   cylinder -> setInitialRotation(1.5708,0,0);
 
 
-  cylinder = new Cylinder(box2->getFullName(),1,false);
+  cylinder = new Cylinder(getName() + "." + box2->getName(),1,false);
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l2);

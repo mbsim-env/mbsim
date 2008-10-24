@@ -107,13 +107,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   cuboid->setColor(0.2);
   box2->setAMVisBody(cuboid);
 
-  CoilSpring *coilspring = new CoilSpring(spring1->getFullName(),1,false);
+  CoilSpring *coilspring = new CoilSpring(name + "." + spring1->getName(),1,false);
   coilspring->setRadius(0.1);
   coilspring->setRadiusCrossSection(0.01);
   coilspring->setNumberOfCoils(5);
   spring1->setAMVisSpring(coilspring);
 
-  coilspring = new CoilSpring(spring2->getFullName(),1,false);
+  coilspring = new CoilSpring(name + "." + spring2->getName(),1,false);
   coilspring->setRadius(0.1);
   coilspring->setRadiusCrossSection(0.01);
   coilspring->setNumberOfCoils(5);
