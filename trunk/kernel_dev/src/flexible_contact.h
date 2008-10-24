@@ -43,16 +43,19 @@ namespace MBSim {
       FlexibleContact(const FlexibleContact *master,const string &name_);
 
       void init();
-      void calcSize();
 
-      void updateKinetics(double t);
+      void updateh(double t);
 
       void setContactLaw(RegularizedConstraintLaw *fcl_) {fcl = fcl_;}
       void setFrictionLaw(RegularizedFrictionLaw *ffl_) {ffl = ffl_;}
 
+      int getFrictionDirections() {return ffl ? ffl->getFrictionDirections() : 0;}
+
       string getType() const {return "FlexibleContact";}
 
-      bool isActive() const { return fcl->isActive(g(0));}
+      bool isClosed() const { return fcl->isClosed(g(0));}
+      bool isSticking() const { return ffl->isSticking(gd(iT));}
+   // bool isActive() const { return fcl->isClosed(g(0));}
       //void setMarginalVelocity(double v) {gdT_grenz = v;}
   };
 

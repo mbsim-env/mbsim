@@ -40,16 +40,37 @@ namespace MBSim {
     delete coilspringAMVisUserFunctionColor;
 #endif
   }
-  void Connection::calcSize() {
-    Link::calcSize();
-    gSize = forceDir.cols()+momentDir.cols();
-    laSize = gSize;
-    rFactorSize = setValued?laSize:0;
+  void Connection::calcxSize() {
+    Link::calcxSize();
     xSize = momentDir.cols();
+  }
+
+  void Connection::calcgSize() {
+    Link::calcgSize();
+    gSize = forceDir.cols()+momentDir.cols();
+  }
+
+  void Connection::calcgdSize() {
+    Link::calcgdSize();
+    gdSize = forceDir.cols()+momentDir.cols();
+  }
+
+  void Connection::calclaSize() {
+    Link::calclaSize();
+    laSize = forceDir.cols()+momentDir.cols();
+  }
+
+  void Connection::calcrFactorSize() {
+    Link::calcrFactorSize();
+    rFactorSize = setValued ? forceDir.cols()+momentDir.cols() : 0;
   }
 
   void Connection::init() {
     Link::init();
+    g.resize(forceDir.cols()+momentDir.cols());
+    gd.resize(forceDir.cols()+momentDir.cols());
+    la.resize(forceDir.cols()+momentDir.cols());
+
     IT = Index(0,forceDir.cols()-1);
     IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
     if(forceDir.cols()) 
@@ -71,7 +92,7 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  void Connection::updateStage1(double t) {
+  void Connection::updateg(double t) {
     Wf = port[0]->getOrientation()*forceDir;
     Wm = port[0]->getOrientation()*momentDir;
     WrP0P1 = port[1]->getPosition()-port[0]->getPosition();
@@ -79,12 +100,11 @@ namespace MBSim {
     g(IR) = x;
   }
 
-  void Connection::updateStage2(double t) {
+  void Connection::updategd(double t) {
     WvP0P1 = port[1]->getVelocity()-port[0]->getVelocity();
     WomP0P1 = port[1]->getAngularVelocity()-port[0]->getAngularVelocity();
     gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getAngularVelocity(), WrP0P1));
     gd(IR) = trans(Wm)*WomP0P1;
-    updateKinetics(t);
   }
 
   void Connection::setForceDirection(const Mat &fd) {
@@ -106,16 +126,12 @@ namespace MBSim {
   }
 
   void Connection::updatexd(double t) {
-    //cout << gd<<endl;
-    //cout << IR.start()<<endl;
-    //cout << IR.end()<<endl;
     xd = gd(IR);
   }
 
   void Connection::updatedx(double t, double dt) {
     xd = gd(IR)*dt;
   }
-
 
   void Connection::initPlotFiles() {
 

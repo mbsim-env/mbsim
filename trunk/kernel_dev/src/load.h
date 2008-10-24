@@ -41,15 +41,23 @@ namespace MBSim {
       DataInterfaceBase *func;
       int KOSYID;
 
-      void updateStage1(double t) {}
-      void updateStage2(double t);
+      void updateg(double t) {}
+      void updategd(double t) {}
+      void updateh(double t);
 
     public: 
       Load(const string &name);
       virtual ~Load();
 
-      void calcSize();
+      void calclaSize();
       void init();
+      bool isActive() const {return true;}
+      void checkHolonomicConstraints() {}
+      void checkNonHolonomicConstraints() {}
+      bool activeConstraintsChanged() {return false;}
+      bool activeHolonomicConstraintsChanged() {return false;}
+      bool activeNonHolonomicConstraintsChanged() {return false;}
+
 
       void setKOSY(int);
       void setUserFunction(DataInterfaceBase *func_);

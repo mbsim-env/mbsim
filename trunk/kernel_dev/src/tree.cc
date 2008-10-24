@@ -22,6 +22,7 @@
 #include "tree.h"
 #include "multi_body_system.h"
 #include "coordinate_system.h"
+#include "extra_dynamic_interface.h"
 
 namespace MBSim {
 
@@ -31,93 +32,17 @@ namespace MBSim {
   Tree::~Tree() {
   }
 
-  void Tree::updateKinematics(double t) {
-
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateKinematics(t);
-  }
-
-  void Tree::updateT(double t) { 
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateT(t);
-  }
-
-  void Tree::updateh(double t) {
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateh(t);
-  }
-
-  void Tree::updateM(double t) {
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateM(t);
-  }
-
-  void Tree::updateqRef() {
-
-    Object::updateqRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateqRef();
-  }
-
-  void Tree::updateMRef() {
-    Object::updateMRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateMRef();
-  }
-  void Tree::updateLLMRef() {
-    Object::updateLLMRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateLLMRef();
-  }
-
-  void Tree::updateqdRef() {
-
-    Object::updateqdRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateqdRef();
-  }
-
-  void Tree::updatezdRef() {
-
-    Object::updatezdRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updatezdRef();
-  }
-
-  void Tree::updateuRef() {
-
-    Object::updateuRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateuRef();
-  }
-
-  void Tree::updatehRef() {
-
-    Object::updatehRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updatehRef();
-  }
-
-  void Tree::updaterRef() {
-
-    Object::updaterRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updaterRef();
-  }
-
-  void Tree::updateTRef() {
-
-    Object::updateTRef();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->updateTRef();
-  }
-
   void Tree::calchSize() {
 
-  //  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-  //    (*i)->sethSize(hSize);
-  //    (*i)->calchSize();
-  //  }
+    for(unsigned i=0; i<subsystem.size(); i++) {
+      int j = subsystem.size()-1-i;
+      if(i==0)
+        subsystem[j]->sethSize(hSize);
+      else
+        subsystem[j]->sethSize(subsystem[j+1]->gethSize() - subsystem[j+1]->getuSize());
+      subsystem[j]->calchSize();
+    }
+
     for(unsigned i=0; i<object.size(); i++) {
       int j = object.size()-1-i;
       if(i==0)
@@ -126,6 +51,31 @@ namespace MBSim {
         object[j]->sethSize(object[j+1]->gethSize() - object[j+1]->getuSize());
       object[j]->calchSize();
     }
+  } 
+  
+  void Tree::updatedu(double t, double dt) {
+
+    ud = slvLLFac(LLM, h*dt+r);
+  }
+
+  void Tree::updatezd(double t) {
+
+    qd = T*u;
+    ud =  slvLLFac(LLM, h+r);
+    
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatexd(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatexd(t);
+
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+      (**i).updatexd(t);
+  }
+
+  void Tree::facLLM() {
+    // FACLLM computes Cholesky decomposition of the mass matrix
+    LLM = facLL(M); 
   }
 
   double Tree::computePotentialEnergy() {

@@ -26,14 +26,20 @@
 #include "flexible_contact.h"
 #include "contour.h"
 #include "group.h"
+#include "tree.h"
 #include "rigid_body.h"
 #include "constitutive_laws.h"
 
 namespace MBSim {
-  Object* ClassFactory::getObject(const string &type) {
+  Subsystem* ClassFactory::getSubsystem(const string &type) {
     if(type == "Group")
       return new Group("NoName");
-    else if(type == "RigidBody")
+    else if(type == "Tree")
+      return new Tree("NoName");
+    return 0;
+  }
+  Object* ClassFactory::getObject(const string &type) {
+    if(type == "RigidBody")
       return new RigidBody("NoName");
     return 0;
   }

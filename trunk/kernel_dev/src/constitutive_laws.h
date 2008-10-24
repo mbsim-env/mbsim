@@ -35,17 +35,17 @@ namespace MBSim {
     public:
       ConstraintLaw() {};
       virtual ~ConstraintLaw() {};
-      virtual bool isActive(double g) = 0;
+      virtual bool isClosed(double g) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual double operator()(double la, double gdn, double r) = 0;
       virtual Vec diff(double la, double gdn, double r) = 0;
       virtual double solve(double G, double gdn) = 0;
       virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) = 0;
-      //virtual bool isActive(const Vec& g) {return g(0)<=0;}
+      //virtual bool isClosed(const Vec& g) {return g(0)<=0;}
       //virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& r) = 0;
       //virtual Vec diff(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Vec solve(const SymMat& G, const Vec& gdn) = 0;
+      //virtual Vec solve(const SqrMat& G, const Vec& gdn) = 0;
       //virtual bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd) = 0;
   };
 
@@ -53,7 +53,7 @@ namespace MBSim {
     public:
       UnilateralConstraint() {};
       virtual ~UnilateralConstraint() {};
-      bool isActive(double g) {return g<=0;}
+      bool isClosed(double g) {return g<=0;}
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double r);
@@ -62,7 +62,7 @@ namespace MBSim {
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
       //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& r);
       //Vec diff(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec solve(const SymMat& G, const Vec& gdn);
+      //Vec solve(const SqrMat& G, const Vec& gdn);
       //bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd);
   };
 
@@ -70,17 +70,17 @@ namespace MBSim {
     public:
       BilateralConstraint() {};
       virtual ~BilateralConstraint() {};
-      bool isActive(double g) {return true;}
+      bool isClosed(double g) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double r);
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
-      //bool isActive(const Vec& g) {return true;}
+      //bool isClosed(const Vec& g) {return true;}
       //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& r);
       //Vec diff(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec solve(const SymMat& G, const Vec& gdn);
+      //Vec solve(const SqrMat& G, const Vec& gdn);
       //bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd);
   };
 
@@ -88,7 +88,7 @@ namespace MBSim {
     public:
       NormalImpactLaw() {};
       virtual ~NormalImpactLaw() {};
-      virtual bool isActive(double g) = 0;
+      virtual bool isClosed(double g) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual double operator()(double la, double gdn, double gda, double r) = 0;
@@ -105,7 +105,7 @@ namespace MBSim {
       UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
       UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
       virtual ~UnilateralNewtonImpact() {};
-      bool isActive(double g) {return g<=0;}
+      bool isClosed(double g) {return g<=0;}
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double gda, double r);
@@ -114,7 +114,7 @@ namespace MBSim {
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
       //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& gda, const Vec& r);
       //Vec diff(const Vec& la,  const Vec& gdn, const Vec& gda, const Vec& r);
-      //Vec solve(const SymMat& G, const Vec& gdn, const Vec& gda);
+      //Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda);
       //bool isFullfield(const Vec& la,  const Vec& gdn, const Vec& gda, double tolla, double tolgd);
   };
 
@@ -122,7 +122,7 @@ namespace MBSim {
     public:
       BilateralImpact() {};
       virtual ~BilateralImpact() {};
-      bool isActive(double g) {return true;}
+      bool isClosed(double g) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double gda, double r);
@@ -132,20 +132,23 @@ namespace MBSim {
   };
 
   class FrictionLaw {
+    protected:
+      double gdEps;
     public:
-      FrictionLaw() {};
+      FrictionLaw() : gdEps(1e-6) {};
       virtual ~FrictionLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       //virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& r) = 0;
       //virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Vec solve(const SymMat& G, const Vec& laN, const Vec& gdn) = 0;
+      //virtual Vec solve(const SqrMat& G, const Vec& laN, const Vec& gdn) = 0;
       //virtual bool isFullfield(const Vec& la, const Vec& gdn, double tolla, double tolgd) = 0;
       virtual Vec operator()(const Vec& la, const Vec& gdn, double laN, double r) = 0;
       virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) = 0;
-      virtual Vec solve(const SymMat& G, const Vec& gdn, double laN) = 0;
+      virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) = 0;
       virtual bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd) = 0;
       virtual int getFrictionDirections() = 0;
+      virtual Vec dlaTdlaN(const Vec& gd, double laN) = 0;
   };
 
   class DryFriction : public FrictionLaw {
@@ -153,6 +156,7 @@ namespace MBSim {
       DryFriction() {};
       virtual ~DryFriction() {};
       virtual double getFrictionCoefficient(double gd) = 0; 
+      virtual bool isSticking(const Vec& gd) = 0;
   };
 
   class PlanarCoulombFriction : public DryFriction {
@@ -168,9 +172,11 @@ namespace MBSim {
       double getFrictionCoefficient(double gd) {return mu;}
       Vec operator()(const Vec& la, const Vec& gdn, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
-      Vec solve(const SymMat& G, const Vec& gdn, double laN);
+      Vec solve(const SqrMat& G, const Vec& gdn, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
+      bool isSticking(const Vec& gd) {return abs(gd(0)) < gdEps;}
+      Vec dlaTdlaN(const Vec& gd, double laN);
   };
 
   class SpatialCoulombFriction : public DryFriction {
@@ -184,13 +190,15 @@ namespace MBSim {
       double getFrictionCoefficient(double gd) {return mu;}
       //Vec operator()(const Vec& la, const Vec& gdn, const Vec& r); 
       //Mat diff(const Vec& la, const Vec& gdn, const Vec& r);
-      //Vec solve(const SymMat& G, const Vec& laN, const Vec& gdn);
+      //Vec solve(const SqrMat& G, const Vec& laN, const Vec& gdn);
       //bool isFullfield(const Vec& la, const Vec& gdn, double tolla, double tolgd);
       Vec operator()(const Vec& la, const Vec& gdn, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
-      Vec solve(const SymMat& G, const Vec& gdn, double laN);
+      Vec solve(const SqrMat& G, const Vec& gdn, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
+      bool isSticking(const Vec& gd) {return nrm2(gd(0,1)) < gdEps;}
+      Vec dlaTdlaN(const Vec& gd, double laN);
   };
 
   class TangentialImpactLaw {
@@ -201,7 +209,7 @@ namespace MBSim {
       virtual void save(const string &path, ofstream &outputfile);
       virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
       virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
-      virtual Vec solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN) = 0;
+      virtual Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) = 0;
       virtual bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int getFrictionDirections() = 0;
   };
@@ -226,7 +234,7 @@ namespace MBSim {
       double getFrictionCoefficient(double gd) {return mu;}
       Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Vec solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN);
+      Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
   };
@@ -242,7 +250,7 @@ namespace MBSim {
       double getFrictionCoefficient(double gd) {return mu;}
       Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Vec solve(const SymMat& G, const Vec& gdn, const Vec& gda, double laN);
+      Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
   };
@@ -252,21 +260,21 @@ namespace MBSim {
       RegularizedConstraintLaw() {};
       virtual ~RegularizedConstraintLaw() {};
       virtual double operator()(double g,  double gd) = 0;
-      virtual bool isActive(double gN) = 0;
+      virtual bool isClosed(double gN) = 0;
   };
 
   class RegularizedUnilateralConstraint : public RegularizedConstraintLaw {
     public:
       RegularizedUnilateralConstraint() {};
       virtual ~RegularizedUnilateralConstraint() {};
-      virtual bool isActive(double gN) {return gN<=0;}
+      virtual bool isClosed(double gN) {return gN<=0;}
   };
 
   class RegularizedBilateralConstraint : public RegularizedConstraintLaw {
     public:
       RegularizedBilateralConstraint() {};
       virtual ~RegularizedBilateralConstraint() {};
-      virtual bool isActive(double gN) {return true;}
+      virtual bool isClosed(double gN) {return true;}
   };
 
   class LinearRegularizedUnilateralConstraint: public RegularizedUnilateralConstraint {
@@ -306,6 +314,7 @@ namespace MBSim {
       virtual ~RegularizedFrictionLaw() {};
       virtual Vec operator()(const Vec &gd, double laN) = 0; 
       virtual int getFrictionDirections() = 0;
+      virtual bool isSticking(const Vec& gd) = 0;
   };
 
   class RegularizedDryFriction : public RegularizedFrictionLaw {
@@ -324,6 +333,7 @@ namespace MBSim {
       virtual ~LinearRegularizedPlanarCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 1;}
+      bool isSticking(const Vec& gd) {return abs(gd(0)) < 1e-4;}
       Vec operator()(const Vec &gd, double laN) { 
 	if(fabs(gd(0)) < gdT_grenz)
 	  return Vec(1,INIT,-laN*mu*gd(0)/gdT_grenz);
@@ -340,6 +350,7 @@ namespace MBSim {
       virtual ~LinearRegularizedSpatialCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 2;}
+      bool isSticking(const Vec& gd) {return nrm2(gd(0,1)) < 1e-4;}
       Vec operator()(const Vec &gd, double laN) { 
 	double norm_gdT = nrm2(gd);
 	if(norm_gdT < gdT_grenz)
@@ -357,6 +368,7 @@ namespace MBSim {
       LinearRegularizedStribeckFriction(UserFunction *fmu_) : fmu(fmu_) {};
       virtual ~LinearRegularizedStribeckFriction() {};
       void setFrictionCharacteristics(UserFunction *fmu_) {fmu = fmu_;}
+      bool isSticking(const Vec& gd) {return nrm2(gd(0,1)) < 1e-4;}
       Vec operator()(const Vec &gd, double laN) { 
 	int nFric = gd.size();
 	Vec la(nFric,NONINIT);

@@ -49,7 +49,7 @@ namespace MBSim {
       void setImpactForceLaw(NormalImpactLaw * rc) {fifl = rc;}
       void setImpactMomentLaw(NormalImpactLaw * rc) {fiml = rc;}
 
-      void updateKinetics(double t);
+      void updateW(double t);
       void projectJ(double dt);
       void projectGS(double dt);
       void solveGS(double dt);

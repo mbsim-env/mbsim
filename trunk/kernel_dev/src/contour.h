@@ -36,6 +36,7 @@ namespace AMVis {class CBody; class CRigidBody;}
 namespace MBSim {
 
   class Object;
+  class BodyFlexible;
   struct ContourPointData;
 
   // perhaps helpfull when debugging
@@ -48,7 +49,8 @@ namespace MBSim {
    */
   class Contour : public Element {
     protected:
-      Object* parent;
+      int hSize, hInd;
+      //Object* parent;
       CoordinateSystem R, C;
 
 
@@ -65,7 +67,7 @@ namespace MBSim {
       Contour(const string &name);
       virtual ~Contour();	
 
-      string getFullName() const; 
+      //string getFullName() const; 
 
       virtual void init();
       void initPlotFiles();
@@ -73,10 +75,16 @@ namespace MBSim {
       /* geerbt */
       void plot(double t, double dt);
 
-      Object* getParent() {return parent;}
-      void setParent(Object* parent_) {parent = parent_;}
-      Object* getObject() {return parent;}
-      void setObject(Object* object) {parent = object;}
+      //Object* getParent() {return parent;}
+      //void setParent(Object* parent_) {parent = parent_;}
+      //Object* getObject() {return parent;}
+      //void setObject(Object* object) {parent = object;}
+      
+      int gethSize() const {return hSize;}
+      int gethInd() const {return hInd;}
+      void sethSize(int size) {hSize = size;}
+      void sethInd(int ind) {hInd = ind;}
+
       CoordinateSystem* getFixedFrame() {return &R;}
       CoordinateSystem* getMovingFrame() {return &C;}
 
@@ -104,9 +112,9 @@ namespace MBSim {
       Vec& getWjP() {return R.getGyroscopicAccelerationOfTranslation();}
       Vec& getWjR() {return R.getGyroscopicAccelerationOfRotation();}
 
-      /*! adjust HitSphere of parent body
-      */
-      virtual void adjustParentHitSphere(const Vec &CrC);
+     // /*! adjust HitSphere of parent body
+     // */
+     // virtual void adjustParentHitSphere(const Vec &CrC);
 
       string getType() const {return "Contour";}
 
@@ -291,6 +299,7 @@ namespace MBSim {
   /*! \brief 1s flexible */
   class Contour1sFlexible : public Contour1s {
     protected:
+      BodyFlexible* parent;
 
     public:
       Contour1sFlexible(const string &name);

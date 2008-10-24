@@ -47,25 +47,10 @@ class Object;
     Tree(const string &projectName);
     ~Tree();
 
-    void updateKinematics(double t);
-    void updateT(double t);
-    void updateh(double t);
-    void updateM(double t);
-
+    void facLLM(); 
+    void updatezd(double t);
+    void updatedu(double t, double dt);
     void calchSize();
-
-    //void setMbs(MultiBodySystem* mbs_);
-    void setFullName(const string &name);
-
-    void updateMRef();
-    void updateLLMRef();
-    void updateqRef();
-    void updateqdRef();
-    void updatezdRef();
-    void updateuRef();
-    void updatehRef();
-    void updaterRef();
-    void updateTRef();
 
     double computePotentialEnergy();
 

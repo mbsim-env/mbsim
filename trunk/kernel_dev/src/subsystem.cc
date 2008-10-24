@@ -31,10 +31,10 @@
 
 namespace MBSim {
 
-  Subsystem::Subsystem(const string &name) : Object(name), gSize(0), laSize(0), rFactorSize(0), svSize(0), svInd(0), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
+  Subsystem::Subsystem(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
 
     CoordinateSystem *cosy = new CoordinateSystem("I");
-    Object::addCoordinateSystem(cosy);
+    addCoordinateSystem(cosy);
 
     IrOK.push_back(Vec(3));
     AIK.push_back(SqrMat(3,EYE));
@@ -59,13 +59,57 @@ namespace MBSim {
       delete *i;
   }
 
+  void Subsystem::setMultiBodySystem(MultiBodySystem* sys) {
+    Element::setMultiBodySystem(sys);
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->setMultiBodySystem(sys);
+
+    for(unsigned i=0; i<object.size(); i++)
+      object[i]->setMultiBodySystem(sys);
+
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->setMultiBodySystem(sys);
+
+    for (unsigned i=0; i<EDI.size(); i++)
+      EDI[i]->setMultiBodySystem(sys);
+  }
+
+  void Subsystem::setlaIndMBS(int laIndParent) {
+    int newlaInd = laInd + laIndParent;
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->setlaIndMBS(newlaInd);
+
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->setlaIndMBS(newlaInd);
+ }
+
+  void Subsystem::setFullName(const string &str) {
+    Element::setFullName(str);
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->setFullName(getFullName() + "." + subsystem[i]->getName());
+
+    for(unsigned i=0; i<object.size(); i++)
+      object[i]->setFullName(getFullName() + "." + object[i]->getName());
+
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->setFullName(getFullName() + "." + link[i]->getName());
+
+    for (unsigned i=0; i<EDI.size(); i++)
+      EDI[i]->setFullName(getFullName() + "." + EDI[i]->getName());
+
+    for(unsigned i=0; i<port.size(); i++)
+      port[i]->setFullName(getFullName() + "." + port[i]->getName());
+    for(unsigned i=0; i<contour.size(); i++)
+      contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
+ }
+
   void Subsystem::init() {
 
     if(iRef == -1)
       iRef = 0;
-    if(parent) {
-      if(portParent == 0)
-	portParent = parent->getCoordinateSystem("I");
+    if(mbs != this) {
+//      if(portParent == 0)
+//	portParent = parent->getCoordinateSystem("I");
       port[iRef]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
       port[iRef]->setOrientation(portParent->getOrientation()*APK);
     }
@@ -88,42 +132,37 @@ namespace MBSim {
       contour[i]->setAWC(port[0]->getOrientation()*AIC[i]);
     }
 
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->init();
+
     for(unsigned i=0; i<object.size(); i++)
       object[i]->init();
 
-    for (vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
-      (**i).init();
-      if(!(*i)->getHitSphereCheck()) {
-	if((*i)->isSetValued()) {
-	  nHSLinkSetValuedFixed++;
-	  linkSetValued.push_back(*i);
-	} else {
-	  nHSLinkSingleValuedFixed++;
-	  linkSingleValued.push_back(*i);
-	}
-      }
-    }
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->init();
 
-    if(EDI.size()>0)    cout << "      " << EDI.size()   << " EDIs" << endl;
-    for (vector<ExtraDynamicInterface*>::iterator i=EDI.begin(); i !=EDI.end(); ++i)
-      (**i).init();
-
-    // HitSphereLink
-    if(HSLink.size()>0) cout << "  building " << HSLink.size() << " HitSphereLinks between Objects" << endl;
-    for (vector<HitSphereLink*>::iterator i = HSLink.begin(); i != HSLink.end(); ++i)
-      (**i).init();
-
-    Object::init();
+    for (unsigned i=0; i<EDI.size(); i++)
+      EDI[i]->init();
   }
 
   void Subsystem::initz() {
-    Object::initz();
+    q = q0;
+    u = u0;
+    x = x0;
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->initz();
     for(unsigned i=0; i<object.size(); i++)
       object[i]->initz();
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->initz();
+    for(unsigned i=0; i<EDI.size(); i++)
+      EDI[i]->initz();
   }
 
   void Subsystem::closePlotFiles() {
-    Object::closePlotFiles();
+    Element::closePlotFiles();
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->closePlotFiles();
     for(unsigned i=0; i<object.size(); i++)
       object[i]->closePlotFiles();
     for(unsigned i=0; i<link.size(); i++)
@@ -133,7 +172,9 @@ namespace MBSim {
   }
 
   void Subsystem::initPlotFiles() {
-    Object::initPlotFiles();
+    Element::initPlotFiles();
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->initPlotFiles();
     for(unsigned i=0; i<object.size(); i++)
       object[i]->initPlotFiles();
     for(unsigned i=0; i<link.size(); i++)
@@ -150,7 +191,9 @@ namespace MBSim {
   }
 
   void Subsystem::plot(double t, double dt) {
-    Object::plot(t,dt);
+    Element::plot(t,dt);
+    for(unsigned i=0; i<subsystem.size(); i++)
+      subsystem[i]->plot(t,dt);
     for(unsigned i=0; i<object.size(); i++)
       object[i]->plot(t,dt);
     for(unsigned i=0; i<link.size(); i++)
@@ -170,9 +213,47 @@ namespace MBSim {
 
   void Subsystem::save(const string &path, ofstream& outputfile) {
 
-    Object::save(path,outputfile);
+    Element::save(path,outputfile);
 
-    // all Objects of MultibodySystem
+    // all CoordinateSystem of Object
+    outputfile << "# Coordinate systems:" << endl;
+    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str(), ios::binary);
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
+
+    // all Contours of Object
+    outputfile << "# Contours:" << endl;
+    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str(), ios::binary);
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
+
+    outputfile << "# q0:" << endl;
+    outputfile << q0 << endl << endl;
+    outputfile << "# u0:" << endl;
+    outputfile << u0 << endl << endl;
+
+  // all Subsystems of Subsystems
+    outputfile << "# Subsystems:" << endl;
+    for(vector<Subsystem*>::iterator i = subsystem.begin();  i != subsystem.end();  ++i) {
+      outputfile << (**i).getName() << endl;
+      string newname = path + "/" + (**i).getFullName() + ".mdl";
+      ofstream newoutputfile(newname.c_str(), ios::binary);
+      (**i).save(path,newoutputfile);
+      newoutputfile.close();
+    }
+    outputfile << endl;
+
+  // all Objects of Subsystems
     
     outputfile << "# Objects:" << endl;
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
@@ -184,6 +265,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
+  // all Links of Subsystems
     outputfile << "# Links:" << endl;
     for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -192,9 +274,9 @@ namespace MBSim {
       (**i).save(path,newoutputfile);
       newoutputfile.close();
     }
-
     outputfile << endl;
 
+  // all EDIs of Subsystems
     outputfile << "# EDIs:" << endl;
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -224,7 +306,7 @@ namespace MBSim {
       outputfile << endl;
     }
 
-    if(parent) {
+    if(mbs != this) {
       outputfile << "# Reference coordinate system:" << endl;
       outputfile << port[iRef]->getName() << endl;
       outputfile << endl;
@@ -244,14 +326,78 @@ namespace MBSim {
   }
 
   void Subsystem::load(const string &path, ifstream& inputfile) {
-    Object::load(path,inputfile);
-
+    Element::load(path, inputfile);
     string dummy;
+
     string basename = path + "/" + getFullName() + ".";
 
+    cout << name << endl;
+    cout << fullName << endl;
+    getline(inputfile,dummy); // # CoSy
+    unsigned int no=getNumberOfElements(inputfile);
+    for(unsigned int i=0; i<no; i++) {
+      getline(inputfile,dummy); // CoSy
+      string newname = basename + dummy + ".mdl";
+      ifstream newinputfile(newname.c_str(), ios::binary);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
+      newinputfile.seekg(0,ios::beg);
+      if(i>=port.size())
+	addCoordinateSystem(new CoordinateSystem("NoName"));
+      port[i]->load(path, newinputfile);
+      newinputfile.close();
+    }
+    getline(inputfile,dummy); // # newline
+
+    getline(inputfile,dummy); // # Contour
+    no=getNumberOfElements(inputfile);
+    for(unsigned int i=0; i<no; i++) {
+      getline(inputfile,dummy); // contour
+      string newname = basename + dummy + ".mdl";
+      ifstream newinputfile(newname.c_str(), ios::binary);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
+      newinputfile.seekg(0,ios::beg);
+      ClassFactory cf;
+      if(i>=contour.size())
+	addContour(cf.getContour(dummy));
+      contour[i]->load(path, newinputfile);
+      newinputfile.close();
+    }
+    getline(inputfile,dummy); // newline
+
+    cout << dummy << endl;
+    getline(inputfile,dummy); // # q0
+    cout << dummy << endl;
+    inputfile >> q0; // # q0
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+
+    getline(inputfile,dummy); // # u0
+    inputfile >> u0; // # q0
+    getline(inputfile,dummy); // Rest of line
+    getline(inputfile,dummy); // Newline
+
+    getline(inputfile,dummy); // # Subsystems
+    no=getNumberOfElements(inputfile);
+    for(unsigned int i=0; i<no; i++) {
+      getline(inputfile,dummy); // # Subsystems
+      string newname = basename + dummy + ".mdl";
+      ifstream newinputfile(newname.c_str(), ios::binary);
+      getline(newinputfile,dummy);
+      getline(newinputfile,dummy);
+      ClassFactory cf;
+      Subsystem * newobject = cf.getSubsystem(dummy);
+      addSubsystem(newobject);
+      newinputfile.seekg(0,ios::beg);
+      newobject->load(path,newinputfile);
+      newinputfile.close();
+    }
+    getline(inputfile,dummy); // newline
+
     getline(inputfile,dummy); // # Objects
-    int no=getNumberOfElements(inputfile);
-    for(int i=0; i<no; i++) {
+    no=getNumberOfElements(inputfile);
+    for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Objects
       string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::binary);
@@ -268,7 +414,7 @@ namespace MBSim {
 
     getline(inputfile,dummy); // # Links
     no=getNumberOfElements(inputfile);
-    for(int i=0; i<no; i++) {
+    for(unsigned int i=0; i<no; i++) {
       getline(inputfile,dummy); // # Links
       string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::binary);
@@ -312,7 +458,7 @@ namespace MBSim {
       getline(inputfile,dummy); // newline
     }
 
-    if(parent) {
+    if(mbs != this) {
       getline(inputfile,dummy); // # Coordinate system for kinematics
       getline(inputfile,dummy); // Coordinate system for kinematics
       setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
@@ -340,8 +486,18 @@ namespace MBSim {
 
   }
 
-  //void Subsystem::addSubsystem(Subsystem *system, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) 
-  
+  void Subsystem::addSubsystem(Subsystem *sys) {
+    // ADDOBJECT adds an subsystem
+    if(getSubsystem(sys->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
+      assert(getSubsystem(sys->getName(),false) == NULL); 
+    }
+    //sys->setFullName(getFullName()+"."+sys->getFullName());
+    subsystem.push_back(sys);
+    //sys->setMbs(this);
+    //sys->setParent(this);
+  }
+
   void Subsystem::addObject(Object *obj) {
     // ADDOBJECT adds an object
     if(getObject(obj->getName(),false)) {
@@ -351,10 +507,7 @@ namespace MBSim {
     //obj->setFullName(getFullName()+"."+obj->getFullName());
     object.push_back(obj);
     //obj->setMbs(this);
-    obj->setParent(this);
-    Subsystem* sys = dynamic_cast<Subsystem*>(obj);
-    if(sys)
-      subsystem.push_back(sys);
+    //obj->setParent(this);
   }
 
   void Subsystem::addLink(Link *lnk) {
@@ -362,11 +515,16 @@ namespace MBSim {
       cout << "Error: The Subsystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
       assert(getLink(lnk->getName(),false) == NULL);
     }
-    link.push_back(lnk);
-    //lnk->setMbs(this);
-    lnk->setParent(this);
-    //lnk->setFullName(getFullName()+"."+lnk->getFullName());
 
+    link.push_back(lnk);
+    if(lnk->isSetValued()) {
+      linkSetValued.push_back(lnk);
+      linkSetValuedActive.push_back(lnk);
+    }
+    else 
+      linkSingleValued.push_back(lnk);
+
+    //lnk->setParent(this);
   }
 
   Subsystem* Subsystem::getSubsystem(const string &name, bool check) {
@@ -410,12 +568,14 @@ namespace MBSim {
 
 
   void Subsystem::updateKinematics(double t) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updateKinematics(t);
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateKinematics(t);
+
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (*i)->updateKinematics(t);
   }
 
-  void Subsystem::updateLinksStage1(double t) {
+  void Subsystem::updateg(double t) {
     if(!HSLink.empty()) {
       linkSingleValued.erase(linkSingleValued.begin()+nHSLinkSingleValuedFixed,linkSingleValued.end());
       linkSetValued.erase(linkSetValued.begin()+nHSLinkSetValuedFixed,linkSetValued.end());
@@ -423,24 +583,25 @@ namespace MBSim {
     }
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateLinksStage1(t);
+      (*i)->updateg(t);
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (*i)->updateStage1(t);
+      (*i)->updateg(t);
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
-      (*i)->updateStage1(t);
+      (*i)->updateg(t);
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-      (*i)->updateStage1(t);
+      (*i)->updateg(t);
   }
 
-  void Subsystem::updateLinksStage2(double t) {
+  void Subsystem::updategd(double t) {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateLinksStage2(t);
+      (*i)->updategd(t);
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (*i)->updateStage2(t);
+      (*i)->updategd(t);
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
-      (*i)->updateStage2(t);
+      (*i)->updategd(t);
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->updateStage2(t);
+      (*i)->updategd(t);
   }
 
   void Subsystem::updateStopVector(double t) {
@@ -451,7 +612,9 @@ namespace MBSim {
   }   
 
   void Subsystem::updateh(double t) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updateh(t);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateh(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updateh(t);
@@ -461,18 +624,25 @@ namespace MBSim {
   }
 
   void Subsystem::updateT(double t) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updateT(t);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateT(t);
+
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updateT(t);
   }
 
   void Subsystem::updateM(double t) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updateM(t);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateM(t);
+
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updateM(t);
   }
 
   void Subsystem::updateW(double t) {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (**i).updateW(t);
 
@@ -480,23 +650,49 @@ namespace MBSim {
       (**i).updateW(t);
   }
 
+  void Subsystem::updateV(double t) {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateV(t);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (**i).updateV(t);
+  }
+
+
   void Subsystem::updateb(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updateb(t);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateb(t);
+
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updateb(t);
   }
 
   void Subsystem::updater(double t) {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
       (**i).updater(t);
+
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updater(t);
   }
 
-  void Subsystem::updatedx(double t, double dt) {
-    // for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updatedx(t,dt);
+  void Subsystem::updatexd(double t) {
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updatexd(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (**i).updatexd(t);
+
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+      (**i).updatexd(t);
+  }
+
+  void Subsystem::updatedx(double t, double dt) {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (**i).updatedx(t,dt);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
@@ -508,299 +704,320 @@ namespace MBSim {
   }
 
   void Subsystem::updatedq(double t, double dt) {
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->updatedq(t,dt);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
+      (**i).updatedq(t,dt);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updatedq(t,dt);
 
   }
 
-  void Subsystem::updateqRef() {
+  void Subsystem::updateqRef(const Vec &qParent) {
 
-    Object::updateqRef();
+    q >> qParent(qInd,qInd+qSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateqRef(q);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateqRef();
+      (**i).updateqRef(q);
   }
 
-  void Subsystem::updateqdRef() {
+  void Subsystem::updateqdRef(const Vec &qdParent) {
 
-    Object::updateqdRef();
+    qd >> qdParent(qInd,qInd+qSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateqdRef(qd);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateqdRef();
+      (**i).updateqdRef(qd);
   }
 
-  void Subsystem::updateuRef() {
+  void Subsystem::updateuRef(const Vec &uParent) {
 
-    Object::updateuRef();
+    u >> uParent(uInd,uInd+uSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateuRef(u);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateuRef();
+      (**i).updateuRef(u);
   }
 
-  void Subsystem::updateudRef() {
+  void Subsystem::updateudRef(const Vec &udParent) {
 
-    Object::updateudRef();
+    ud >> udParent(uInd,uInd+uSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updateudRef(ud);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateudRef();
+      (**i).updateudRef(ud);
   }
 
-  void Subsystem::updatexRef() {
+  void Subsystem::updatexRef(const Vec &xParent) {
 
-    Object::updatexRef();
+    x >> xParent(xInd,xInd+xSize-1);
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatexRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updatexRef(x);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexRef();
+      (**i).updatexRef(x);
 
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (**i).updatexRef();
-
+      (**i).updatexRef(x);
   }
 
-  void Subsystem::updatexdRef() {
+  void Subsystem::updatexdRef(const Vec &xdParent) {
 
-    Object::updatexdRef();
+    xd >> xdParent(xInd,xInd+xSize-1);
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatexdRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updatexdRef(xd);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexdRef();
+      (**i).updatexdRef(xd);
 
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (**i).updatexdRef();
-
+      (**i).updatexdRef(xd);
   }
 
-  void Subsystem::updatezRef() {
+  void Subsystem::updatehRef(const Vec &hParent) {
 
-    Object::updatezRef();
+    h >> hParent(hInd,hInd+hSize-1);
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatezRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexRef();
-
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (**i).updatexRef();
-
-  }
-
-  void Subsystem::updatezdRef() {
-
-    Object::updatezdRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updatehRef(h);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatezdRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexdRef();
-
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (**i).updatexdRef();
-
-  }
-
-  void Subsystem::updatehRef() {
-
-    Object::updatehRef();
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef();
+      (**i).updatehRef(h);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatehRef();
-
+      (**i).updatehRef(h);
   }
 
-  void Subsystem::updaterRef() {
+  void Subsystem::updaterRef(const Vec &rParent) {
 
-    Object::updaterRef();
+    r >> rParent(hInd,hInd+hSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updaterRef(r);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updaterRef();
+      (**i).updaterRef(r);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (**i).updaterRef();
-
+      (**i).updaterRef(r);
   }
 
-  void Subsystem::updatefRef() {
+  void Subsystem::updatefRef(const Vec &fParent) {
+    f >> fParent(xInd,xInd+xSize-1);
 
-    Object::updatefRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (**i).updatefRef(f);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (**i).updatefRef(f);
+  }
+
+  //void Subsystem::updatesvRef() {
+
+  //  sv >> parent->getsv()(svInd,svInd+svSize-1);
+
+  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+  //    (*i)->updatesvRef();
+
+  //  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+  //    (**i).updatesvRef();
+  //}
+
+  //void Subsystem::updatejsvRef() {
+
+  //  jsv >> parent->getjsv()(svInd,svInd+svSize-1);
+
+  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+  //    (*i)->updatejsvRef();
+
+  //  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+  //    (**i).updatejsvRef();
+  //}
+
+  void Subsystem::updateMRef(const SymMat& MParent) {
+
+    M >> MParent(Index(hInd,hInd+hSize-1));
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateMRef(M);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatefRef();
+      (*i)->updateMRef(M);
   }
 
-  void Subsystem::updatesvRef() {
+  void Subsystem::updateLLMRef(const SymMat& LLMParent) {
 
-    sv >> parent->getsv()(svInd,svInd+svSize-1);
+    LLM >> LLMParent(Index(hInd,hInd+hSize-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatesvRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatesvRef();
-  }
-
-  void Subsystem::updatejsvRef() {
-
-    jsv >> parent->getjsv()(svInd,svInd+svSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatejsvRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatejsvRef();
-  }
-
-  void Subsystem::updateMRef() {
-
-    Object::updateMRef();
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateMRef();
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateMRef();
-  }
-
-  void Subsystem::updateLLMRef() {
-
-    Object::updateLLMRef();
+      (*i)->updateLLMRef(LLM);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateLLMRef();
+      (*i)->updateLLMRef(LLM);
   }
 
-  void Subsystem::updateTRef() {
+  void Subsystem::updateTRef(const Mat& TParent) {
 
-    Object::updateTRef();
+    T >> TParent(Index(qInd,qInd+qSize-1),Index(uInd,uInd+uSize-1));
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateTRef(T);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateTRef();
+      (*i)->updateTRef(T);
   }
 
-  void Subsystem::updategRef() {
-    g >> parent->getg()(gInd,gInd+gSize-1);
+  void Subsystem::updategRef(const Vec& gParent) {
+    g.resize() >> gParent(gInd,gInd+gSize-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updategRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      if((*i)->isSetValued()) 
-	(**i).updategRef();
-  }
-
-  void Subsystem::updateWRef() {
-    W >> parent->getW()(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateWRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updateWRef();
-  }
-
-  void Subsystem::updatelaRef() {
-    la >> parent->getla()(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatelaRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatelaRef();
-  }
-
-  void Subsystem::updategdRef() {
-    gd >> parent->getgd()(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updategdRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updategdRef();
-  }
-
-  void Subsystem::updatebRef() {
-    b >> parent->getb()(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatebRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatebRef();
-  }
-
-  void Subsystem::updatesRef() {
-    s >> parent->getgd()(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatesRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatesRef();
-  }
-  void Subsystem::updateresRef() {
-    res >> parent->getgd()(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateresRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updateresRef();
-  }
-
-  void Subsystem::updaterFactorRef() {
-    rFactor >> parent->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updaterFactorRef();
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updaterFactorRef();
-  }
-
-  void Subsystem::updateRef() {
-    //cout << parent->getW()<<endl;
-    //cout << parent->getla()<<endl;
-    //cout << uInd<<endl;
-    //cout << uSize<<endl;
-    //cout << laInd<<endl;
-    //cout << laSize<<endl;
-    //cout << W <<endl;
-    W.resize() >> parent->getW()(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
-    la.resize() >> parent->getla()(laInd,laInd+laSize-1);
-    gd.resize() >> parent->getgd()(laInd,laInd+laSize-1);
-    b.resize() >> parent->getb()(laInd,laInd+laSize-1);
-    s.resize() >> parent->gets()(laInd,laInd+laSize-1);
-    res.resize() >> parent->getres()(laInd,laInd+laSize-1);
-    rFactor.resize() >> parent->getrFactor()(rFactorInd,rFactorInd+rFactorSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateRef();
+      (*i)->updategRef(g);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateRef();
-    //updateWRef();
-    //updatelaRef();
-    //updategdRef();
-    //updatebRef();
-    //updatesRef();
-    //updateresRef();
-    //updaterFactorRef();
+      (**i).updategRef(g);
   }
 
+  void Subsystem::updategdRef(const Vec& gdParent) {
+
+    gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updategdRef(gd);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updategdRef(gd);
+  }
+
+  void Subsystem::updateVRef(const Mat &VParent) {
+
+    V.resize() >> VParent(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateVRef(V);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updateVRef(V);
+  }
+
+  void Subsystem::updateWRef(const Mat &WParent) {
+    W.resize() >> WParent(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateWRef(W);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updateWRef(W);
+  }
+
+  void Subsystem::updatelaRef(const Vec &laParent) {
+    la.resize() >> laParent(laInd,laInd+laSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatelaRef(la);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updatelaRef(la);
+  }
+
+  void Subsystem::updatebRef(const Vec &bParent) {
+    b.resize() >> bParent(laInd,laInd+laSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatebRef(b);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updatebRef(b);
+  }
+
+  void Subsystem::updatesRef(const Vec &sParent) {
+    s.resize() >> sParent(gdInd,gdInd+gdSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatesRef(s);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updatesRef(s);
+  }
+
+  void Subsystem::updateresRef(const Vec &resParent) {
+    res.resize() >> resParent(laInd,laInd+laSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateresRef(res);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updateresRef(res);
+  }
+
+  void Subsystem::updaterFactorRef(const Vec &rFactorParent) {
+
+    rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updaterFactorRef(rFactor);
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (**i).updaterFactorRef(rFactor);
+  }
+
+  int Subsystem::portIndex(const CoordinateSystem *port_) const {
+    for(unsigned int i=0; i<port.size(); i++) {
+      if(port_==port[i])
+	return i;
+    }
+    return -1;
+  }
+
+  CoordinateSystem* Subsystem::getCoordinateSystem(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<port.size(); i++) {
+      if(port[i]->getName() == name)
+	return port[i];
+    }             
+    if(check) {
+      if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
+      assert(i<port.size());
+    }
+    return NULL;
+  }
+
+  Contour* Subsystem::getContour(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<contour.size(); i++) {
+      if(contour[i]->getName() == name)
+	return contour[i];
+    }
+    if(check) {
+      if(!(i<contour.size())) cout << "Error: The object " << this->name <<" comprises no contour " << name << "!" << endl; 
+      assert(i<contour.size());
+    }
+    return NULL;
+  }
+
+  void Subsystem::addCoordinateSystem(CoordinateSystem* cosy) {
+
+     if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
+      cout << "Error: The Subsystem " << name << " can only comprise one CoordinateSystem by the name " <<  cosy->getName() << "!" << endl;
+      assert(getCoordinateSystem(cosy->getName(),false)==NULL);
+    }
+    port.push_back(cosy);
+  }
 
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
 
-    Object::addCoordinateSystem(cosy);
+    addCoordinateSystem(cosy);
+        
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
@@ -815,24 +1032,36 @@ namespace MBSim {
   void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
     addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
+  
+  void Subsystem::addContour(Contour* contour_) {
+
+     if(getContour(contour_->getName(),false)) { //Contourname exists already
+      cout << "Error: The Subsystem " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
+      assert(getContour(contour_->getName(),false)==NULL);
+    }
+    contour.push_back(contour_);
+  }
 
   void Subsystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
 
-    Object::addContour(contour);
+    addContour(contour);
+    
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
 
     IrOC.push_back(IrOK[i] + AIK[i]*RrRC);
     AIC.push_back(AIK[i]*ARC);
-
-    //contour->setPosition(port[i]->getPosition() + port[i]->getOrientation()*RrRC);
-    //contour->setAWC(port[i]->getOrientation()*ARC);
   }
 
   void Subsystem::calchSize() {
 
     hSize = uSize;
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->sethSize((*i)->getuSize());
+      (*i)->sethInd((*i)->getuInd());
+      (*i)->calchSize();
+    }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->sethSize((*i)->getuSize());
       (*i)->sethInd((*i)->getuInd());
@@ -840,91 +1069,193 @@ namespace MBSim {
     }
   }
 
-  void Subsystem::calcSize() {
+  void Subsystem::calcsvSize() {
+    svSize = 0;
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->calcSize();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcsvSize();
+      (*i)->setsvInd(qSize);
+      svSize += (*i)->getsvSize();
+    }
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+      (*i)->calcsvSize();
+      (*i)->setsvInd(xSize);
+      svSize += (*i)->getsvSize();
+    }
+  }
+
+  void Subsystem::calcqSize() {
+    qSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcqSize();
       (*i)->setqInd(qSize);
-      (*i)->setuInd(uSize);
-      (*i)->setxInd(xSize);
       qSize += (*i)->getqSize();
+    }
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->calcqSize();
+      (*i)->setqInd(qSize);
+      qSize += (*i)->getqSize();
+    }
+  }
+
+  void Subsystem::calcuSize() {
+    uSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcuSize();
+      (*i)->setuInd(uSize);
       uSize += (*i)->getuSize();
+    }
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->calcuSize();
+      (*i)->setuInd(uSize);
+      uSize += (*i)->getuSize();
+    }
+  }
+
+  void Subsystem::calcxSize() {
+    xSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcxSize();
+      (*i)->setxInd(xSize);
+      xSize += (*i)->getxSize();
+    }
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+      (*i)->calcxSize();
+      (*i)->setxInd(xSize);
+      xSize += (*i)->getxSize();
+    }
+
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) {
+      (*i)->calcxSize();
+      (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
     }
   }
 
   void Subsystem::calclaSize() {
+    laSize = 0;
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
       (*i)->calclaSize();
-      (*i)->setgInd(gSize);
       (*i)->setlaInd(laSize);
-      (*i)->setrFactorInd(rFactorSize);
-      gSize += (*i)->getgSize();
       laSize += (*i)->getlaSize();
-      rFactorSize += (*i)->getrFactorSize();
-
-      (*i)->setxInd(xSize);
-      xSize += (*i)->getxSize();
-
-      (*i)->setsvInd(svSize);
-      svSize += (*i)->getsvSize();
     }
 
-    for(vector<Link*>::iterator il = link.begin(); il != link.end(); ++il) {
-      (*il)->calcSize();
-      if((*il)->isSetValued()) {
-	(*il)->setgInd(gSize);
-	(*il)->setlaInd(laSize);
-	(*il)->setrFactorInd(rFactorSize);
-	gSize += (*il)->getgSize();
-	laSize += (*il)->getlaSize();
-	rFactorSize += (*il)->getrFactorSize();
-      }
-
-      (*il)->setxInd(xSize);
-      xSize += (*il)->getxSize();
-
-      (*il)->setsvInd(svSize);
-      svSize += (*il)->getsvSize();
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calclaSize();
+      (*i)->setlaInd(laSize);
+      laSize += (*i)->getlaSize();
     }
-
-    for( vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) {
-      (*i)->setxInd(xSize);
-      xSize += (*i)->getxSize();
-    }
-
   }
 
-  void Subsystem::checkActiveConstraints() {
+  void Subsystem::calcgSize() {
+    gSize = 0;
 
-    linkSetValuedActive.clear();
-    laSize = 0;
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcgSize();
+      (*i)->setgInd(gSize);
+      gSize += (*i)->getgSize();
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calcgSize();
+      (*i)->setgInd(gSize);
+      gSize += (*i)->getgSize();
+    }
+  }
+
+  void Subsystem::calcgdSize() {
+    gdSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcgdSize();
+      (*i)->setgdInd(gdSize);
+      gdSize += (*i)->getgdSize();
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calcgdSize();
+      (*i)->setgdInd(gdSize);
+      gdSize += (*i)->getgdSize();
+    }
+  }
+
+  void Subsystem::calcrFactorSize() {
     rFactorSize = 0;
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
-      (*i)->checkActiveConstraints();
-      (*i)->setlaInd(laSize);
+      (*i)->calcrFactorSize();
       (*i)->setrFactorInd(rFactorSize);
-      laSize += (*i)->getlaSize();
       rFactorSize += (*i)->getrFactorSize();
     }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calcrFactorSize();
+      (*i)->setrFactorInd(rFactorSize);
+      rFactorSize += (*i)->getrFactorSize();
+    }
+  }
+
+  bool Subsystem::activeConstraintsChanged() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      if ((*i)->activeConstraintsChanged())
+	return true;
+    
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+      if ((*i)->activeConstraintsChanged())
+	return true;
+
+    return false;
+  }
+
+  bool Subsystem::activeHolonomicConstraintsChanged() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      if ((*i)->activeHolonomicConstraintsChanged())
+	return true;
+    
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+      if ((*i)->activeHolonomicConstraintsChanged())
+	return true;
+
+    return false;
+  }
+
+  void Subsystem::checkActiveLinks() {
+
+    linkSetValuedActive.clear();
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkActiveLinks();
+    
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       if((*i)->isActive()) {
 	linkSetValuedActive.push_back(*i);
-	(*i)->setlaInd(laSize);
-	(*i)->setrFactorInd(rFactorSize);
-	laSize += (*i)->getlaSize();
-	rFactorSize += (*i)->getrFactorSize();
       }
     }
+  }
 
-    //updateRef();
+  void Subsystem::checkHolonomicConstraints() {
 
-    //for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-    //(**i).updateRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkHolonomicConstraints();
 
-    //for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-    //(*i)->updateRef();
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (*i)->checkHolonomicConstraints();
+  }
+
+  void Subsystem::checkNonHolonomicConstraints() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkNonHolonomicConstraints();
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (*i)->checkNonHolonomicConstraints();
   }
 
   HitSphereLink* Subsystem::getHitSphereLink(Object* obj0, Object* obj1) {
@@ -989,17 +1320,21 @@ namespace MBSim {
   }
 
   int Subsystem::solveFixpointSingle(double dt) {
-    // SOLVEFIXEDPOINTSINGLE solves constraint equations with single step iteration
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) (*i)->solveFixpointSingle(dt); 
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) (*i)->projectGS(dt);
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveFixpointSingle(dt); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->projectGS(dt);
 
     return 0;
   }
 
   void Subsystem::updaterFactors() {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updaterFactors(); 
+
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updaterFactors();
   }
@@ -1009,37 +1344,8 @@ namespace MBSim {
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->checkForTermination(dt); 
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).checkForTermination(dt);
-      //  if(term == false) return;
-    }
   }
-
-  // CoordinateSystem* Subsystem::getCoordinateSystem(const string &name,bool check) {
-  // unsigned int i;
-  // for(i=0; i<port.size(); i++) {
-  //   if(port[i]->getName() == name || port[i]->getFullName()== name) return port[i];
-  // }
-  // if(check){
-  //   if(!(i<port.size())) cout << "Error: The Subsystem " << this->name <<" comprises no port " << name << "!" << endl; 
-  //   assert(i<port.size());
-  // }
-  //   else return NULL;
-  // return NULL;
-  // }
-  //
-  //
-  //Contour* Subsystem::getContour(const string &name,bool check) {
-  //  unsigned int i;
-  //  for(i=0; i<contour.size(); i++) {
-  //    if(contour[i]->getName() == name || contour[i]->getFullName()== name) return contour[i];
-  //  }
-  //  if(check){
-  //    if(!(i<contour.size())) cout << "Error: The Subsystem " << this->name <<" comprises no contour " << name << "!" << endl; 
-  //    assert(i<contour.size());
-  //  }
-  //    else return NULL;
-  //  return NULL;
-  //}
 
 }

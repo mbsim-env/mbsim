@@ -51,15 +51,20 @@ namespace MBSim {
     ASK.push_back(SqrMat(3,EYE));
   }
 
-  void RigidBody::calcSize() {
+  void RigidBody::calcqSize() {
 
-    Body::calcSize();
+    Body::calcqSize();
     qSize = 0;
-    uSize = 0;
     if(fPrPK)
       qSize += fPrPK->getqSize();
     if(fAPK)
       qSize += fAPK->getqSize();
+  }
+
+  void RigidBody::calcuSize() {
+
+    Body::calcuSize();
+    uSize = 0;
     if(fPJT==0) {
       LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
       if(fPrPK_) 
@@ -76,14 +81,13 @@ namespace MBSim {
 	//uSize += fAPK->getqSize();
     } else
       uSize += fPJR->getuSize();
-
   }
 
   void RigidBody::init() {
     if(iRef == -1)
       iRef = 0;
-    if(portParent == 0)
-      portParent = parent->getCoordinateSystem("I");
+    //if(portParent == 0)
+   //   portParent = parent->getCoordinateSystem("I");
     
     Object::init();
 
@@ -180,12 +184,12 @@ namespace MBSim {
   }
 
   void RigidBody::updateMConst(double t) {
-      M += Mbuf;
+    M += Mbuf;
       //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateMNotConst(double t) {
-      M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
+    M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateJacobians(double t) {
@@ -249,7 +253,7 @@ namespace MBSim {
     //SymMat(port[0]->getOrientation()*SThetaS*trans(port[0]->getOrientation()));
     WThetaS = JTMJ(SThetaS,trans(port[0]->getOrientation()));
 
-    Vec WF = m*parent->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
+    Vec WF = m*mbs->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*port[0]->getAngularVelocity(),port[0]->getAngularVelocity()) - WThetaS*port[0]->getGyroscopicAccelerationOfRotation();
 
     h += trans(port[0]->getJacobianOfTranslation())*WF +  trans(port[0]->getJacobianOfRotation())*WM;
@@ -427,7 +431,7 @@ namespace MBSim {
     ASC.push_back(ASK[i]*ARC);
 
     // HitSphere anpassen !!!
-    contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
+    //contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
   }
 
   void RigidBody::save(const string &path, ofstream& outputfile) {

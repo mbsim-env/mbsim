@@ -102,9 +102,9 @@ namespace MBSim {
 
       // TODO T updaten (passiert sonst in deltaq)
       system.updateKinematics(t);
-      system.updateLinksStage1(t);
-      system.checkActiveConstraints();
-      system.updateLinksStage2(t);
+      system.updateg(t);
+      //system.checkActiveConstraints();
+      system.updategd(t);
       system.updateT(t); 
       system.updateM(t); 
       system.updateh(t); 
@@ -114,8 +114,8 @@ namespace MBSim {
       Mat W = system.getW().copy();
       Vec h = system.geth().copy();
       Mat T = system.getT().copy();
-      system.updateJh(t);
-      Mat Jh = system.getJh();
+      //system.updateJh(t);
+      //Mat Jh = system.getJh();
 
       // Global computation of Jacobian only for validation of function getJh
 //Mat Jh(nu,n);
@@ -133,11 +133,11 @@ namespace MBSim {
 //}
 
       Vector<int> ipiv(M.size());
-      SqrMat luMeff = SqrMat(facLU(M - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*T,ipiv));
+      SqrMat luMeff;// = SqrMat(facLU(M - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*T,ipiv));
       SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,W,ipiv));
       system.getGs().resize();
       system.getGs() << Geff;
-      system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
+      //system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
 
       iter = system.solve(dt);
       if(iter>maxIter)
@@ -145,9 +145,9 @@ namespace MBSim {
       sumIter += iter;
 
       system.updater(t);
-      Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
-      q += T*(u+theta*du)*dt;
-      u += du;
+      //Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
+      //q += T*(u+theta*du)*dt;
+      //u += du;
       x += system.deltax(z,t,dt);
 
 //if(abs(nrmInf(Jh)-nrmInf(Jh2)) > 1e-10) {

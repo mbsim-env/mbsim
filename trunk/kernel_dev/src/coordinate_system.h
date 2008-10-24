@@ -41,7 +41,8 @@ namespace MBSim {
    * */
   class CoordinateSystem : public Element {
     protected:
-      Object* parent;
+    //  Object* parent;
+      int hSize, hInd;
 
       Vec WrOP, WvP, WomegaP;
       SqrMat AWP;
@@ -56,13 +57,18 @@ namespace MBSim {
     public:
       CoordinateSystem(const string &name);
 
-      string getFullName() const; 
+      //string getFullName() const; 
 
-      Object* getObject() {return parent;}
-      void setObject(Object *object) {parent = object;}
+    //  Object* getObject() {return parent;}
+    //  void setObject(Object *object) {parent = object;}
 
-      Object* getParent() {return parent;}
-      void setParent(Object *parent_) {parent = parent_;}
+    //  Object* getParent() {return parent;}
+    //  void setParent(Object *parent_) {parent = parent_;}
+
+      int gethSize() const {return hSize;}
+      int gethInd() const {return hInd;}
+      void sethSize(int size) {hSize = size;}
+      void sethInd(int ind) {hInd = ind;}
 
       virtual void init();
 

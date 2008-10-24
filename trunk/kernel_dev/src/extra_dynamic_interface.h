@@ -45,14 +45,16 @@ namespace MBSim {
       ExtraDynamicInterface(const string &name, int xSize_);
       virtual void writex();
       virtual void readx0(); 
-      virtual void updatexRef();
-      virtual void updatexdRef();
+      virtual void updatexRef(const Vec& ref);
+      virtual void updatexdRef(const Vec& ref);
       void setxInd(int xInd_) {xInd = xInd_;};
       int getxSize() const {return xSize;}
       virtual void init();
       virtual void initz();
-      virtual void updateStage1(double t) {};
-      virtual void updateStage2(double t) {};
+      virtual void calcxSize() {};
+      virtual void updateg(double t) {};
+      virtual void updategd(double t) {};
+      virtual void updateKinetics(double t) {};
       virtual void updatedx(double t, double dt) {};
       virtual void updatexd(double t) {};
       void plot(double t, double dt=1);

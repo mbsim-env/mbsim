@@ -38,7 +38,7 @@
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), R("R"), C("C")
+  Contour::Contour(const string &name) : Element(name), hSize(0), hInd(0), R("R"), C("C")
 # ifdef HAVE_AMVIS
 					 ,
 					 bodyAMVis(NULL)
@@ -58,15 +58,11 @@ namespace MBSim {
 #endif
   }
 
-  string Contour::getFullName() const {
-    return parent->getFullName() + "." + name;
-  }
-
   void Contour::init() {
-    getFixedFrame()->getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
-    getFixedFrame()->getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
-    getMovingFrame()->getJacobianOfTranslation().resize(3,parent->getDegreesOfFreedom());
-    getMovingFrame()->getJacobianOfRotation().resize(3,parent->getDegreesOfFreedom());
+    getFixedFrame()->getJacobianOfTranslation().resize(3,hSize);
+    getFixedFrame()->getJacobianOfRotation().resize(3,hSize);
+    getMovingFrame()->getJacobianOfTranslation().resize(3,hSize);
+    getMovingFrame()->getJacobianOfRotation().resize(3,hSize);
   }
 
   void Contour::initPlotFiles() 
@@ -99,11 +95,11 @@ namespace MBSim {
    C.setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
   }
 
-  void Contour::adjustParentHitSphere(const Vec &CrC) 
-  {
-    double R = nrm2(CrC);
-    if(R>parent->getRadiusHitSphere()) parent->setRadiusHitSphere(R);
-  }
+  //void Contour::adjustParentHitSphere(const Vec &CrC) 
+  //{
+  //  double R = nrm2(CrC);
+  //  if(R>parent->getRadiusHitSphere()) parent->setRadiusHitSphere(R);
+  //}
 
   void Contour::plot(double t, double dt) 
   {
