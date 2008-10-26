@@ -84,11 +84,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double mu  = 0.3;
 
   Tree *tree = new Tree("Baum"); 
-  addObject(tree);
+  addSubsystem(tree);
+  tree->setFrameOfReference(getCoordinateSystem("I"));
   RigidBody* body = new RigidBody("Rod");
 
   tree->addObject(body);
-  body->setFrameOfReference(getCoordinateSystem("I"));
+  body->setFrameOfReference(tree->getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
