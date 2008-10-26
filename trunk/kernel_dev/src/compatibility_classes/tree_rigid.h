@@ -9,10 +9,18 @@ namespace MBSim {
   class TreeRigid : public Tree {
 
     protected:
+      Subsystem* parent;
 
     public:
       TreeRigid(const string &name) : Tree(name) { }
+      void setParent(Subsystem *sys) {parent = sys;}
       void setRoot(BodyRigidRel *body) { addObject(body); }
+      void calchSize() {
+	if(portParent == 0)
+	  setFrameOfReference(parent->getCoordinateSystem("I"));
+	Tree::calchSize();
+
+      }
   };
 
 }

@@ -14,7 +14,7 @@ namespace MBSim {
       void setFrictionCoefficient(double mu_) { mu = mu_; }
       void setFrictionDirections(int nFric_) { nFric = nFric_; }
 
-      void calcSize() {
+      void calclaSize() {
 	if(nFric==1) {
 	  setFrictionLaw(new PlanarCoulombFriction(mu));
 	  setTangentialImpactLaw(new PlanarCoulombImpact(mu));
@@ -25,7 +25,7 @@ namespace MBSim {
 	setContactLaw(new UnilateralConstraint);
 	setNormalImpactLaw(new UnilateralNewtonImpact);
 
-	RigidContact::calcSize();
+	RigidContact::calclaSize();
       }
       void init() {
 	RigidContact::init();

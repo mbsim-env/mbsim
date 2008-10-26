@@ -29,6 +29,9 @@
 #include "class_factory.h"
 #include "multi_body_system.h"
 
+#include "compatibility_classes/tree_rigid.h"
+#include "compatibility_classes/body_rigid.h"
+
 namespace MBSim {
 
   Subsystem::Subsystem(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
@@ -1348,4 +1351,19 @@ namespace MBSim {
       (**i).checkForTermination(dt);
   }
 
+  void Subsystem::addObject(TreeRigid *tree) {
+    tree->setFullName(name+"."+tree->getName());
+    tree->setParent(this);
+    addSubsystem(tree);
+  }
+  void Subsystem::addObject(BodyRigid *body) {
+     // ADDOBJECT adds an object
+    body->setFullName(name+"."+body->getName());
+    body->setParent(this);
+    if(getObject(body->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  body->getName() << "!" << endl;
+      assert(getObject(body->getName(),false) == NULL); 
+    }
+    object.push_back(body);
+  }
 }

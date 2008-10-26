@@ -31,6 +31,10 @@ namespace MBSim {
   class ExtraDynamicInterface;
   class DataInterfaceBase;
 
+  // Compatibility classes
+  class TreeRigid;
+  class BodyRigid;
+
   class Subsystem : public Element {
 
     friend class HitSphereLink;
@@ -246,6 +250,10 @@ namespace MBSim {
 
       //void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
       //void addSubsystem(Subsystem *subsystem);
+
+      // Compatibility functions
+      void addObject(TreeRigid *tree);
+      void addObject(BodyRigid *body);
 
       void addSubsystem(Subsystem *subsystem);
       void addObject(Object *object);

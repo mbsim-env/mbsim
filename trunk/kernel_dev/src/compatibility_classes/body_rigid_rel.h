@@ -20,7 +20,7 @@ namespace MBSim {
       void addChild(BodyRigidRel* body) {  parent->addObject(body); body->setPredecessor(this); }
       void setPredecessor(BodyRigidRel* predecessor_) { predecessor = predecessor_;}
 
-      void calcSize() {
+      void calcqSize() {
 
 	string cosyname = string("B_") + name;
 	if(predecessor) {
@@ -31,7 +31,7 @@ namespace MBSim {
 	  setFrameOfReference(parent->getCoordinateSystem(cosyname));
 	}
 
-	BodyRigid::calcSize();
+	BodyRigid::calcqSize();
       }
 
   };

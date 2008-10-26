@@ -17,13 +17,13 @@ namespace MBSim {
       void setAWK0(const SqrMat &AWK0_) { AWK0 = AWK0_; }
       void setWrOK0(const Vec &WrOK0_) { WrOK0 = WrOK0_; }
 
-      void calcSize() {
+      void calcqSize() {
 
 	string cosyname = string("B_") + name;
 	parent->addCoordinateSystem(cosyname,WrOK0,AWK0);
 	setFrameOfReference(parent->getCoordinateSystem(cosyname));
 
-	BodyRigid::calcSize();
+	BodyRigid::calcqSize();
       }
 
   };

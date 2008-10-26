@@ -17,10 +17,12 @@ namespace MBSim {
       Vec KrKS;
       Rot rot;
       bool I_COG;
+      Subsystem *parent;
 
     public:
-      BodyRigid(const string &name) : RigidBody(name), I(3), KrKS(3), rot(cardanAngles), I_COG(false) { }
+      BodyRigid(const string &name) : RigidBody(name), I(3), KrKS(3), rot(cardanAngles), I_COG(false), parent(0) { }
      
+      void setParent(Subsystem *sys) {parent = sys;}
       void setRotationalParameters(Rot rot_) {rot = rot_;}
       void setInertia(const SymMat &I_, bool I_COG_ = false) { I = I_; I_COG = I_COG_;}
       void setJT(const Mat &JT_) { JT = JT_; }
@@ -31,9 +33,10 @@ namespace MBSim {
       void addPort(const string &str, const Vec &r) { RigidBody::addCoordinateSystem(str,r,SqrMat(3,EYE)); }
       void addContour(Contour* contour, const Vec &r) { RigidBody::addContour(contour,r,SqrMat(3,EYE)); }
 
-      string getFullName() const {return parent ? RigidBody::getFullName() : name;}
+      //string getFullName() const {return mbs ? RigidBody::getFullName() : name;}
+      //void setFullName(const string &str) {Element::setFullName(str);}
 
-      void calcSize() {
+      void calcqSize() {
 
 	if(JT.cols() > 0)
 	  RigidBody::setTranslation(new LinearTranslation(JT)); 
@@ -60,7 +63,7 @@ namespace MBSim {
 	else
 	  RigidBody::setInertiaTensor(I,getCoordinateSystem("B"));
 
-	RigidBody::calcSize();
+	RigidBody::calcqSize();
       }
 
      };
