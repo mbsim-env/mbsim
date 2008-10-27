@@ -48,10 +48,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   
   // System with tree-structure
   Tree *tree = new Tree("Baum");
-  addSubsystem(tree);
-  tree->setFrameOfReference(getCoordinateSystem("I"));
-  tree->setCoordinateSystemForKinematics(tree->getCoordinateSystem("I"));
- 
+  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
 
   RigidBody *basis = new RigidBody("Basis");
   tree->addObject(basis);

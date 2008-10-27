@@ -84,8 +84,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double mu  = 0.3;
 
   Tree *tree = new Tree("Baum"); 
-  addSubsystem(tree);
-  tree->setFrameOfReference(getCoordinateSystem("I"));
+  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
   RigidBody* body = new RigidBody("Rod");
 
   tree->addObject(body);
@@ -97,7 +96,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setJacobianOfTranslation(new JacobianT);
   body->setDerivativeOfJacobianOfTranslation(new MyDerT);
 
-   Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
+   Cuboid *cubeoid = new Cuboid(getName() + "." + body->getName(),1,false);
    cubeoid->setSize(l,h,d);
    cubeoid->setColor(0);
    body->setAMVisBody(cubeoid);
