@@ -50,10 +50,8 @@ namespace MBSim {
       vector<Link*> linkSetValuedActive;
       vector<HitSphereLink*> HSLink;
 
-      vector<SqrMat> AIK;
-      vector<Vec> IrOK;
-      vector<SqrMat> AIC;
-      vector<Vec> IrOC;
+      vector<Vec> IrOK, IrOC, IrOS;
+      vector<SqrMat> AIK, AIC, AIS;
 
       int qSize, qInd;
       int uSize, uInd;
@@ -86,18 +84,8 @@ namespace MBSim {
       Vec sv;
       Vector<int> jsv;
 
-      int nHSLinkSetValuedFixed;
-      int nHSLinkSingleValuedFixed;
-      Index Ig, Ila;
-
-      Vec PrPK;
-      SqrMat APK;
-      int iRef;
-      CoordinateSystem *portParent;
-
       vector<CoordinateSystem*> port;
       vector<Contour*> contour;
- 
 
    public:
       /*! Constructor */
@@ -120,10 +108,10 @@ namespace MBSim {
       void checkHolonomicConstraints();
       void checkNonHolonomicConstraints();
 
-    const Mat& getW() const {return W;}
-    Mat& getW() {return W;}
-    const Mat& getV() const {return V;}
-    Mat& getV() {return V;}
+      const Mat& getW() const {return W;}
+      Mat& getW() {return W;}
+      const Mat& getV() const {return V;}
+      Mat& getV() {return V;}
 
       Vec& getsv() {return sv;}
       const Vec& getsv() const {return sv;}
@@ -147,9 +135,6 @@ namespace MBSim {
       void setgInd(int ind) {gInd = ind;}
       void setgdInd(int ind) {gdInd = ind;}
 
-      //void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);} 
-      //void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
-      //void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
       void setsvInd(int svInd_) {svInd = svInd_;};
       int getgSize() const {return gSize;} 
       int getgdSize() const {return gdSize;} 
@@ -230,14 +215,6 @@ namespace MBSim {
 
       int portIndex(const CoordinateSystem *port_) const;
 
-      void setTranslation(const Vec& PrPK_) { PrPK = PrPK_;}
-      void setRotation(const SqrMat& APK_) { APK = APK_;}
-      void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
-      void setCoordinateSystemForKinematics(CoordinateSystem *port) {
-	iRef = portIndex(port);
-	assert(iRef > -1);
-      }
-
       virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
       virtual Contour* getContour(const string &name, bool check=true);
 
@@ -248,14 +225,11 @@ namespace MBSim {
       void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
       void addContour(Contour* contour, const Vec &RrRC, const CoordinateSystem* refCoordinateSystem=0) {addContour(contour,RrRC,SqrMat(3,EYE));}
 
-      //void addSubsystem(Subsystem *subsystem, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
-      //void addSubsystem(Subsystem *subsystem);
-
       // Compatibility functions
       void addObject(TreeRigid *tree);
       void addObject(BodyRigid *body);
 
-      void addSubsystem(Subsystem *subsystem);
+      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0);
       void addObject(Object *object);
       void addLink(Link *connection);
       Subsystem* getSubsystem(const string &name,bool check=true);

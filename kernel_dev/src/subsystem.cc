@@ -34,7 +34,7 @@
 
 namespace MBSim {
 
-  Subsystem::Subsystem(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize), nHSLinkSetValuedFixed(0), nHSLinkSingleValuedFixed(0), PrPK(3,INIT,0), APK(3,EYE), iRef(-1) {
+  Subsystem::Subsystem(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize) {
 
     CoordinateSystem *cosy = new CoordinateSystem("I");
     addCoordinateSystem(cosy);
@@ -44,9 +44,6 @@ namespace MBSim {
 
     cosy->setPosition(Vec(3));
     cosy->setOrientation(SqrMat(3,EYE));
-
-    portParent = 0;
-
   }
 
   Subsystem::~Subsystem() {
@@ -108,35 +105,28 @@ namespace MBSim {
 
   void Subsystem::init() {
 
-    if(iRef == -1)
-      iRef = 0;
-    if(mbs != this) {
-//      if(portParent == 0)
-//	portParent = parent->getCoordinateSystem("I");
-      port[iRef]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
-      port[iRef]->setOrientation(portParent->getOrientation()*APK);
-    }
-
-    if(iRef != 0)  {
-      port[0]->setOrientation(port[iRef]->getOrientation()*trans(AIK[iRef]));
-      port[0]->setPosition(port[iRef]->getPosition() - port[0]->getOrientation()*IrOK[iRef]);
-    }
+   // if(mbs != this) {
+   //   port[0]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
+   //   port[0]->setOrientation(portParent->getOrientation()*APK);
+   // }
 
     // Kinematik der anderen KOSY (außer Ursprung- und Referenz-) updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
-      if(i!=unsigned(iRef)) {
-	port[i]->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOK[i]);
-	port[i]->setOrientation(port[0]->getOrientation()*AIK[i]);
-      }
+      port[i]->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOK[i]);
+      port[i]->setOrientation(port[0]->getOrientation()*AIK[i]);
     }
     // Kinematik der Konturen updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->setWrOP(port[0]->getPosition() + port[0]->getOrientation()*IrOC[i]);
       contour[i]->setAWC(port[0]->getOrientation()*AIC[i]);
+      contour[i]->init();
     }
-
-    for(unsigned i=0; i<subsystem.size(); i++)
+    // Kinematik der Konturen updaten, ausgehend vom Ursprung-KOSY
+    for(unsigned int i=0; i<subsystem.size(); i++) {
+      subsystem[i]->getCoordinateSystem("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
+      subsystem[i]->getCoordinateSystem("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
       subsystem[i]->init();
+    }
 
     for(unsigned i=0; i<object.size(); i++)
       object[i]->init();
@@ -309,23 +299,23 @@ namespace MBSim {
       outputfile << endl;
     }
 
-    if(mbs != this) {
-      outputfile << "# Reference coordinate system:" << endl;
-      outputfile << port[iRef]->getName() << endl;
-      outputfile << endl;
+ //   if(mbs != this) {
+ //     outputfile << "# Reference coordinate system:" << endl;
+ //     outputfile << port[iRef]->getName() << endl;
+ //     outputfile << endl;
 
-      outputfile << "# Parent coordinate system:" << endl;
-      outputfile << portParent->getFullName() << endl;
-      outputfile << endl;
+ //     outputfile << "# Parent coordinate system:" << endl;
+ //     outputfile << portParent->getFullName() << endl;
+ //     outputfile << endl;
 
-      outputfile << "# Translation:" << endl;
-      outputfile << PrPK << endl;
-      outputfile << endl;
+ //     outputfile << "# Translation:" << endl;
+ //     outputfile << PrPK << endl;
+ //     outputfile << endl;
 
-      outputfile << "# Rotation:" << endl;
-      outputfile << APK << endl;
-      outputfile << endl;
-    }
+ //     outputfile << "# Rotation:" << endl;
+ //     outputfile << APK << endl;
+ //     outputfile << endl;
+ //   }
   }
 
   void Subsystem::load(const string &path, ifstream& inputfile) {
@@ -391,7 +381,7 @@ namespace MBSim {
       getline(newinputfile,dummy);
       ClassFactory cf;
       Subsystem * newobject = cf.getSubsystem(dummy);
-      addSubsystem(newobject);
+      //addSubsystem(newobject);
       newinputfile.seekg(0,ios::beg);
       newobject->load(path,newinputfile);
       newinputfile.close();
@@ -464,12 +454,12 @@ namespace MBSim {
     if(mbs != this) {
       getline(inputfile,dummy); // # Coordinate system for kinematics
       getline(inputfile,dummy); // Coordinate system for kinematics
-      setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+      //setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
       getline(inputfile,dummy); // newline
 
       getline(inputfile,dummy); // # Frame of reference
       getline(inputfile,dummy); // Coordinate system for kinematics
-      setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+      //setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
       getline(inputfile,dummy); // newline
 
       getline(inputfile,dummy); // # Translation 
@@ -477,28 +467,16 @@ namespace MBSim {
       inputfile >> r;
       getline(inputfile,dummy); // Rest of line
       getline(inputfile,dummy); // newline
-      setTranslation(r);
+      //setTranslation(r);
 
       getline(inputfile,dummy); // # Rotation
       SqrMat A;
       inputfile >> A;
       getline(inputfile,dummy); // Rest of line
       getline(inputfile,dummy); // newline
-      setRotation(A);
+      //setRotation(A);
     }
 
-  }
-
-  void Subsystem::addSubsystem(Subsystem *sys) {
-    // ADDOBJECT adds an subsystem
-    if(getSubsystem(sys->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
-      assert(getSubsystem(sys->getName(),false) == NULL); 
-    }
-    //sys->setFullName(getFullName()+"."+sys->getFullName());
-    subsystem.push_back(sys);
-    //sys->setMbs(this);
-    //sys->setParent(this);
   }
 
   void Subsystem::addObject(Object *obj) {
@@ -579,11 +557,11 @@ namespace MBSim {
   }
 
   void Subsystem::updateg(double t) {
-    if(!HSLink.empty()) {
-      linkSingleValued.erase(linkSingleValued.begin()+nHSLinkSingleValuedFixed,linkSingleValued.end());
-      linkSetValued.erase(linkSetValued.begin()+nHSLinkSetValuedFixed,linkSetValued.end());
-      for(vector<HitSphereLink*>::iterator iHS = HSLink.begin(); iHS != HSLink.end(); ++iHS) (*iHS)->checkActive();
-    }
+    //if(!HSLink.empty()) {
+    //  linkSingleValued.erase(linkSingleValued.begin()+nHSLinkSingleValuedFixed,linkSingleValued.end());
+    //  linkSetValued.erase(linkSetValued.begin()+nHSLinkSetValuedFixed,linkSetValued.end());
+    //  for(vector<HitSphereLink*>::iterator iHS = HSLink.begin(); iHS != HSLink.end(); ++iHS) (*iHS)->checkActive();
+    //}
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updateg(t);
@@ -1008,6 +986,22 @@ namespace MBSim {
     return NULL;
   }
 
+  void Subsystem::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
+    // ADDOBJECT adds an subsystem
+    if(getSubsystem(sys->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
+      assert(getSubsystem(sys->getName(),false) == NULL); 
+    }
+    subsystem.push_back(sys);
+
+    int i = 0;
+    if(refCoordinateSystem)
+      i = portIndex(refCoordinateSystem);
+
+    IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
+    AIS.push_back(AIK[i]*ARS);
+  }
+
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy) {
 
      if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
@@ -1027,9 +1021,6 @@ namespace MBSim {
 
     IrOK.push_back(IrOK[i] + AIK[i]*RrRK);
     AIK.push_back(AIK[i]*ARK);
-
-    //cosy->setPosition(port[i]->getPosition() + port[i]->getOrientation()*RrRK);
-    //cosy->setOrientation(port[i]->getOrientation()*ARK);
   }
 
   void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
@@ -1354,7 +1345,7 @@ namespace MBSim {
   void Subsystem::addObject(TreeRigid *tree) {
     tree->setFullName(name+"."+tree->getName());
     tree->setParent(this);
-    addSubsystem(tree);
+    addSubsystem(tree,Vec(3),SqrMat(3,EYE));
   }
   void Subsystem::addObject(BodyRigid *body) {
      // ADDOBJECT adds an object
