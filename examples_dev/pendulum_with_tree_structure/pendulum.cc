@@ -14,9 +14,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree *tree = new Tree("Baum"); 
-  tree->setFrameOfReference(getCoordinateSystem("I"));
-  //tree->setCoordinateSystemForKinematics(tree->getCoordinateSystem("O"));
-  addSubsystem(tree);
+  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
 
   double mStab = 0.2;
   double lStab = 0.3;

@@ -91,7 +91,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setGuidingVelocityOfTranslation(new jT);
   body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
-  Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
+  Cuboid *cubeoid = new Cuboid(getName() + "." + body->getName(),1,false);
   cubeoid->setSize(l,h,d);
   cubeoid->setColor(0);
   body->setAMVisBody(cubeoid);

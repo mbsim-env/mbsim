@@ -40,7 +40,6 @@ Group2::Group2(const string &name) : Group(name) {
   box1->setu0("[0.1]");
 
   Group1 *group = new Group1(name+"_Untergruppe");
-  group->setFrameOfReference(getCoordinateSystem("I"));
   Vec r(3);
   r(0) = 1;
   SqrMat A(3);
@@ -50,9 +49,7 @@ Group2::Group2(const string &name) : Group(name) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  addSubsystem(group);
-  group->setTranslation(r);
-  group->setRotation(A);
+  addSubsystem(group,r,A);
 
 
   {
