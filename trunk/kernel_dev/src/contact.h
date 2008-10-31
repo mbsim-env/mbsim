@@ -55,9 +55,9 @@ namespace MBSim {
       //virtual void checkActive();
       //virtual bool isActive() const {return true;}
       
-      virtual bool isClosed() const = 0;
-      virtual bool remainsClosed() const = 0;
-      virtual bool isSticking() const = 0;
+     // virtual bool isClosed() const = 0;
+     // virtual bool remainsClosed() const = 0;
+     // virtual bool isSticking() const = 0;
 
       ContactKinematics *contactKinematics;
 
@@ -111,11 +111,6 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-      bool isActive() const {return gActive;}
-      void checkActiveg() { gActive = isClosed() ? 1 : 0; }
-      void checkActivegd() { gdActive[0] = gActive ? (remainsClosed() ? 1 : 0) : 0; gdActive[1] = gdActive[0] ? (isSticking() ? 1 : 0) : 0; }
-    
-      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = gdActive[0] ? 1 : 0; }
 
       //bool activeConstraintsChanged();
       bool gActiveChanged();

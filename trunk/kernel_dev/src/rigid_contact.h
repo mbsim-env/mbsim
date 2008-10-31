@@ -72,7 +72,6 @@ namespace MBSim {
 
       void checkActivegdn();
       void checkActivegdd(); 
-      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; }//cout << name << " " << gActive << " " << gdActive[0] << " " << gdActive[1]<<endl;  }
 
       /*! for time integration with projection methods for constraint and contact treatment */
       void residualProj(double dt);
@@ -96,19 +95,11 @@ namespace MBSim {
 
       string getType() const {return "RigidContact";}
 
-     // void updateWRef();
-     // void updatelaRef();
-     // void updategdRef();
-     // void updatesRef();
-     // void updateresRef();
-     // void updatebRef();
-
-      //bool isActive() const { return fcl->isActive(g);}
-      bool isClosed() const { return fcl->isClosed(g(0));}
-      bool remainsClosed() const { return fcl->remainsClosed(gd(0));}
-      bool isSticking() const { return fdf->isSticking(gd(iT));}
-      //int getNumberOfConstraints() const {return isActive() ? 1 : 0;} 
-      //int getNumberOfConstraints() const {return isActive() ? (isSliding() ? 1 : laSize) : 0;} 
+      bool isActive() const {return gActive;}
+      void checkActiveg() { gActive = fcl->isClosed(g(0),0) ? 1 : 0; }
+      void checkActivegd() { gdActive[0] = gActive ? (fcl->remainsClosed(gd(0),gdTol) ? 1 : 0) : 0; gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gd(1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; }
+    
+      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; }
   };
 
 }

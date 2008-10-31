@@ -50,13 +50,9 @@ namespace MBSim {
       int getFrictionDirections() {return ffl ? ffl->getFrictionDirections() : 0;}
 
       string getType() const {return "FlexibleContact";}
+      bool isActive() const {return gActive;}
+      bool gActiveChanged() {return false;}
 
-      bool isClosed() const { return fcl->isClosed(g(0));}
-      bool remainsClosed() const { return fcl->remainsClosed(gd(0));}
-      bool isSticking() const { return ffl->isSticking(gd(iT));}
-      void updateCondition() {}
-   // bool isActive() const { return fcl->isClosed(g(0));}
-      //void setMarginalVelocity(double v) {gdT_grenz = v;}
   };
 
 }
