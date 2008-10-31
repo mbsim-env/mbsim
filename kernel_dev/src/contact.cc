@@ -56,16 +56,15 @@ namespace MBSim {
     return i<j?i:j;
   }
 
-  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), hca(true), nhca(true), closed(true), sticking(true), contactKinematics(0) {
+  Contact::Contact(const string &name, bool setValued) : Link(name,setValued), contactKinematics(0) {
 
-    //active = false;
-  }
+    gActive = 1;
+    gdActive[0] = 1;
+    gdActive[1] = 1;
 
-  Contact::Contact(const Contact *master, const string &name) : Link(name,master->setValued), iT(1,master->iT.end()), contactKinematics(0) {
-
-   // mu = master->mu; TODO
-
-    //active = false;
+    gActive0 = 1;
+    gdActive0[0] = 1;
+    gdActive0[1] = 1;
   }
 
   Contact::~Contact() {
@@ -75,37 +74,33 @@ namespace MBSim {
   void Contact::calcxSize() {
     Link::calcxSize();
     xSize = 0;
-    //gSize = 1;
-    //gdSize = 1+getFrictionDirections();
-    //laSize = 1+getFrictionDirections();
-    //rFactorSize = setValued?1+min(getFrictionDirections(),1):0;
   }
 
   void Contact::calclaSize() {
     Link::calclaSize();
-    laSize = hca ? (nhca ? 1+getFrictionDirections() : 1) : 0;
+    laSize = gdActive[0]+gdActive[1]*getFrictionDirections();
   }
 
   void Contact::calcgSize() {
     Link::calcgSize();
-    gSize = hca ? 1 : 0;
+    gSize = gActive;
   }
 
   void Contact::calcgdSize() {
     Link::calcgdSize();
-    gdSize = hca ? (nhca ? 1+getFrictionDirections() : 1) : 0;
+    gdSize = gdActive[0]+gdActive[1]*getFrictionDirections();
   }
 
   void Contact::calcrFactorSize() {
     Link::calcrFactorSize();
-    rFactorSize = setValued ? (hca ? (nhca ? 1+min(getFrictionDirections(),1) : 1) : 0) : 0;
+    rFactorSize = gdActive[0]+min(getFrictionDirections(),1)*gdActive[1];
   }
 
   void Contact::updateWRef(const Mat& WParent) {
    for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->gethSize()-1);
-      W[i]>>WParent(I,J);
+      W[i].resize()>>WParent(I,J);
     }
   } 
 
@@ -113,7 +108,7 @@ namespace MBSim {
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
-      V[i]>>VParent(I,J);
+      V[i].resize()>>VParent(I,J);
     }
   } 
 
@@ -121,12 +116,13 @@ namespace MBSim {
 
     for(unsigned i=0; i<contour.size(); i++) 
       r[i] += V[i]*la;
-      //r[i] += (W[i]+V[i])*la;
   }
 
   void Contact::updateb(double t) {
-    for(unsigned i=0; i<contour.size(); i++) 
+    for(unsigned i=0; i<contour.size(); i++) {
+      contour[i]->updateMovingFrame(t, cpData[i]);
       b += trans(fF[i](Index(0,2),Index(0,laSize-1)))*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
+    }
   }
 
   void Contact::init() {
@@ -241,21 +237,26 @@ namespace MBSim {
     contactKinematics->stage2(g,gd,cpData);
   }
 
-  bool Contact::activeConstraintsChanged() {
-    return activeHolonomicConstraintsChanged() || activeNonHolonomicConstraintsChanged();
-  }
+//  bool Contact::activeConstraintsChanged() {
+//    return activeHolonomicConstraintsChanged() || activeNonHolonomicConstraintsChanged();
+//  }
 
-  bool Contact::activeNonHolonomicConstraintsChanged() {
-    bool changed = false;
-    if(getFrictionDirections()) {
-      changed = sticking != isSticking();
-      sticking = isSticking();
-    }
-    return changed;
-  }
-  bool Contact::activeHolonomicConstraintsChanged() {
-    bool changed = closed != isClosed();
-    closed = isClosed();
+//  bool Contact::activeConstraintsChanged() {
+//    bool changed = gActive0 != gActive;
+//    gActive0 = gActive;
+//    bool changed2 = false;
+//    bool changed1 = gdActive0[0] != gdActive[0];
+//    gdActive0[0] = gdActive[0];
+//    if(getFrictionDirections()) {
+//      changed2= gdActive0[1] != gdActive[1];
+//      gdActive0[1] = gdActive[1];
+//    }
+//    return changed || changed1 || changed2;
+//  }
+
+  bool Contact::gActiveChanged() {
+    bool changed = gActive0 != gActive;
+    gActive0 = gActive;
     return changed;
   }
 

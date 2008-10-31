@@ -30,12 +30,6 @@ namespace MBSim {
     //active = false;
   }
 
-  FlexibleContact::FlexibleContact(const FlexibleContact *master,const string &name_) : Contact(master,name_) {
-    //c = master->c;
-    //d = master->d;
-    //active = false;
-  }
-
   void FlexibleContact::init() {
     Contact::init();
   }

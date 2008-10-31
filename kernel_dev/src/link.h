@@ -84,7 +84,7 @@ namespace MBSim {
       Vec la0;
 
       double scaleTolQ,scaleTolp;
-      double gdTol, laTol, rMax;
+      double gdTol, gddTol, laTol, LaTol, rMax;
 
       HitSphereLink* HSLink;
       bool checkHSLink;
@@ -113,9 +113,6 @@ namespace MBSim {
 #endif
 
     public:
-
-      //virtual void updatesvRef();
-      //virtual void updatejsvRef();
 
       virtual void updater(double t);
       virtual void updateb(double t);
@@ -211,9 +208,10 @@ namespace MBSim {
       const Index& getgIndex() const {return Ig;}
       const Index& getlaIndex() const {return Ila;}
       virtual bool isActive() const = 0;
-      virtual bool activeConstraintsChanged() = 0;
-      virtual bool activeHolonomicConstraintsChanged() = 0;
-      virtual bool activeNonHolonomicConstraintsChanged() = 0;
+      //virtual bool activeConstraintsChanged() = 0;
+      virtual bool gActiveChanged() = 0;
+      //virtual bool activeHolonomicConstraintsChanged() = 0;
+      //virtual bool activeNonHolonomicConstraintsChanged() = 0;
 
       void savela();
       void initla();
@@ -228,6 +226,8 @@ namespace MBSim {
       virtual void updatesRef(const Vec& ref);
       virtual void updateresRef(const Vec& ref);
       virtual void updaterFactorRef(const Vec& ref);
+      virtual void updatesvRef(const Vec &sv);
+      virtual void updatejsvRef(const Vector<int> &jsvParent);
 
       void setgInd(int gInd_) {gInd = gInd_;Ig=Index(gInd,gInd+gSize-1);} 
       void setgdInd(int gdInd_) {gdInd = gdInd_;} 
@@ -237,6 +237,7 @@ namespace MBSim {
       virtual void projectJ(double dt) { cout << "\nprojectJ not implemented." << endl; throw 50; }
       virtual void projectGS(double dt) { cout << "\nprojectGS not implemented." << endl; throw 50; }
       virtual void solveGS(double dt) { cout << "\nsolveGS not implemented." << endl; throw 50; }
+      virtual void solveGS() { cout << "\nsolveGS not implemented." << endl; throw 50; }
 
       virtual void residualProj(double dt) { cout << "\nresidualProj not implemented." << endl; throw 50; }
       virtual void checkForTermination(double dt) { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
@@ -245,6 +246,7 @@ namespace MBSim {
 
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }
       void decreaserFactors();
+      virtual void checkForTermination() { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
 
       /*! Defines the maximum error radius lambdas have to match. */  
       virtual void setlaTol(double tol) {laTol = tol;}
@@ -270,8 +272,12 @@ namespace MBSim {
 
       //virtual MultiBodySystem* getMultiBodySystem(); 
 
-      virtual void checkNonHolonomicConstraints() = 0;
-      virtual void checkHolonomicConstraints() = 0;
+      virtual void checkActiveg() {};
+      virtual void checkActivegd() {};
+      virtual void checkActivegdn() {}
+      virtual void checkActivegdd() {}
+      virtual void checkAllgd() {};
+      virtual void updateCondition() {};
 
       //virtual int getNumberOfConstraints() const {return laSize;} 
       

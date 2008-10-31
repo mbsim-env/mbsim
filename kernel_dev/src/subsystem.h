@@ -105,8 +105,13 @@ namespace MBSim {
       void calcgdSize();
       void calcrFactorSize();
       void checkActiveLinks();
-      void checkHolonomicConstraints();
-      void checkNonHolonomicConstraints();
+      void checkActiveg();
+      void checkActivegd();
+      void checkActivegdn();
+      void checkActivegdd();
+      void checkAllgd();
+
+      void updateCondition();
 
       const Mat& getW() const {return W;}
       Mat& getW() {return W;}
@@ -198,8 +203,8 @@ namespace MBSim {
       void updateTRef(const Mat &ref);
       void updateMRef(const SymMat &ref);
       void updateLLMRef(const SymMat &ref);
-      //void updatesvRef(const Vec& ref);
-      //void updatejsvRef(const Vector<int> &ref);
+      void updatesvRef(const Vec& ref);
+      void updatejsvRef(const Vector<int> &ref);
       void updategRef(const Vec &ref);
       void updategdRef(const Vec &ref);
       void updateWRef(const Mat &ref);
@@ -286,13 +291,15 @@ namespace MBSim {
 
       //virtual void setActiveConstraintsChanged(bool b) {parent->setActiveConstraintsChanged(b);}
       //
-      bool activeConstraintsChanged();
-      bool activeHolonomicConstraintsChanged();
+      //bool activeConstraintsChanged();
+      bool gActiveChanged();
+      //bool activeHolonomicConstraintsChanged();
 
       virtual int solveFixpointSingle(double dt);
       virtual void checkForTermination(double dt);
       virtual void updaterFactors();
 
+      virtual void checkForTermination();
       //virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
       //
       void setMultiBodySystem(MultiBodySystem* sys);

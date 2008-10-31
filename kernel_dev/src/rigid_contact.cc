@@ -44,36 +44,17 @@ namespace MBSim {
   }
 
   void RigidContact::init() {
+    gdd.resize(gdSize);
     Contact::init();
+    // TODO: schöner lösen
+    if(getFrictionDirections() == 0)
+      gdActive[1] = false;
   }
 
- // void RigidContact::updatebRef() {
- //   b.resize() >> mbs->getb()(laInd,laInd+getNumberOfConstraints()-1);
- // }
-
- // void RigidContact::updatesRef() {
- //   s.resize() >> parent->gets()(laInd,laInd+getNumberOfConstraints()-1);
- // }
-
- // void RigidContact::updateresRef() {
- //   res.resize() >> parent->getres()(laInd,laInd+getNumberOfConstraints()-1);
- // }
-
- // void RigidContact::updategdRef() {
- //   gd.resize() >> parent->getgd()(laInd,laInd+laSize-1);
- // }
-
- // void RigidContact::updatelaRef() {
- //   la.resize() >> parent->getla()(laInd,laInd+getNumberOfConstraints()-1);
- // }
-
-//  void RigidContact::updateWRef() {
-//    for(unsigned i=0; i<contour.size(); i++) {
-//      Index J = Index(laInd,laInd+getNumberOfConstraints()-1);
-//      Index I = Index(contour[i]->getParent()->gethInd(),contour[i]->getParent()->gethInd()+contour[i]->getWJP().cols()-1);
-//      W[i].resize()>>parent->getW()(I,J);
-//    }
-//  } 
+  void RigidContact::calcsvSize() {
+    Contact::calcsvSize();
+    svSize = 1+getFrictionDirections();
+  }
 
   void RigidContact::save(const string& path, ofstream &outputfile) {
     Contact::save(path, outputfile);
@@ -136,8 +117,10 @@ namespace MBSim {
   }
 
   void RigidContact::updateb(double t) {
+    //if(gActive) {
     Contact::updateb(t);
-    contactKinematics->updateb(b,cpData);
+    contactKinematics->updateb(b,g,cpData);
+    //}
   }
 
   void RigidContact::updateW(double t) {
@@ -154,10 +137,112 @@ namespace MBSim {
   }
 
   void RigidContact::updateV(double t) {
-    if(!nhca)
+    if(getFrictionDirections() && !gdActive[1]) { // TODO laSize > 1
       for(unsigned int i=0; i<contour.size(); i++) {
 	V[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i](Index(0,2),iT)*fdf->dlaTdlaN(gd(1,getFrictionDirections()), la(0));
       }
+    }
+  }
+
+  void RigidContact::checkActivegdn() { 
+   // cout << name << endl;
+   // cout <<"gdn = "<< gdn << endl;
+   // cout <<"la = "<< la << endl;
+    if(gActive) {
+      if(gdn(0) <= gdTol) {
+	gActive = true;
+	gdActive[0] = true;
+      } 
+      else {
+	gActive = false;
+	gdActive[0] = false;
+      }
+    }
+  //  else { // Ist wahrscheinlich unnötig
+  //    gActive = false;
+  //    gdActive[0] = false;
+  //  }
+    if(getFrictionDirections())
+      if(gdActive[0])
+	if(nrm2(gdn(1,getFrictionDirections())) <= gdTol)
+	  gdActive[1] = true;
+	else
+	  gdActive[1] = false;
+      else
+	  gdActive[1] = false;
+  }
+
+  void RigidContact::checkActivegdd() { 
+    //cout << name << endl;
+    //cout <<"gdd = "<< gdd << endl;
+    //cout <<"la = "<< la << endl;
+    if(gdActive[0]) {
+      if(gdd(0) <= gddTol) {
+	gActive = true;
+	gdActive[0] = true;
+      }
+      else {
+	gActive = false;
+	gdActive[0] = false;
+      }
+    }
+    if(getFrictionDirections())
+      if(gdActive[0]) 
+	if(gdActive[1]) 
+	  if(nrm2(gdd(1,getFrictionDirections())) <= gddTol)
+	    gdActive[1] = true;
+	  else
+	    gdActive[1] = false;
+	else 
+	  gdActive[1] = false;
+  }
+
+  void RigidContact::updateCondition() {
+
+    //cout<<"before " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
+    if(jsv(0)) {
+      if(gActive) {
+	gActive = false;
+	gdActive[0] = false;
+	if(getFrictionDirections())
+	  gdActive[1] = false;
+	return;
+      }
+      else {// if(gd(0)<=0) { // evtl. zur Abfrage zur Vermeidung von Schein-Kollisionen wegen Eindringen
+	gActive = true;
+	gdActive[0] = true;
+	if(getFrictionDirections())
+	  gdActive[1] = true;
+	mbs->setImpact(true);
+	return;
+      }
+    }
+    if(getFrictionDirections())
+      if(jsv(1)) {
+	if(gdActive[1]) {
+	  gdActive[1] = false;
+	} 
+	else {
+	  gdActive[1] = true;
+	  mbs->setSticking(true);
+	}
+      }
+  //  cout<<"after " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
+  }
+
+  void RigidContact::updateStopVector(double t) {
+    if(gActive) {
+      sv(0) = la(0);
+      if(gdActive[1]) {
+	sv(1) = nrm2(la(1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gd(1,getFrictionDirections())))*la(0);
+      } 
+      else
+	sv(1,getFrictionDirections()) = gd(1,getFrictionDirections());
+    }
+    else {
+      sv(0) = g(0);
+      sv(1,getFrictionDirections()).init(1);
+    }
   }
 
   //void RigidContact::updateW(double t) {
@@ -175,15 +260,15 @@ namespace MBSim {
   //  }
   //}
 
-//  void RigidContact::checkActive() {
-//
-//    bool active_old = active;
-//
-//    Contact::checkActive();
-//
-//    if(active != active_old)
-//      parent->setActiveConstraintsChanged(true);
-//  }
+  //  void RigidContact::checkActive() {
+  //
+  //    bool active_old = active;
+  //
+  //    Contact::checkActive();
+  //
+  //    if(active != active_old)
+  //      parent->setActiveConstraintsChanged(true);
+  //  }
 
   void RigidContact::projectGS(double dt) {
     double *a = mbs->getGs()();
@@ -210,9 +295,37 @@ namespace MBSim {
 
     if(ftil)
       la(1,getFrictionDirections()) = (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
-      //la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), la(0), rFactor(1));
-      //la(1,getFrictionDirections()) = (*fdf)(la, gdn, gd, rFactor);
-      //la(1,getFrictionDirections()) = (*fdf)(la, gdn, rFactor(1));
+    //la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), la(0), rFactor(1));
+    //la(1,getFrictionDirections()) = (*fdf)(la, gdn, gd, rFactor);
+    //la(1,getFrictionDirections()) = (*fdf)(la, gdn, rFactor(1));
+  }
+
+  void RigidContact::solveGS() {
+    assert(getFrictionDirections() <= 1);
+
+    double *a = mbs->getGs()();
+    int *ia = mbs->getGs().Ip();
+    int *ja = mbs->getGs().Jp();
+    int laInd = laIndMBS;
+    Vec &laMBS = mbs->getla();
+    gdd(0) = s(0);
+    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
+      gdd(0) += a[j]*laMBS(ja[j]);
+
+    double om = 1.0;
+    double buf = fcl->solve(a[ia[laInd]], gdd(0));
+    la(0) += om*(buf - la(0));
+
+    if(getFrictionDirections() && gdActive[1]) {
+      gdd(1) = s(1);
+      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
+	gdd(1) += a[j]*laMBS(ja[j]);
+
+      if(fdf) {
+	Vec buf = fdf->solve(mbs->getG()(Index(laInd+1,laInd+getFrictionDirections())), gdd(1,getFrictionDirections()), la(0));
+	la(1,getFrictionDirections()) += om*(buf - la(1,getFrictionDirections()));
+      }
+    }
   }
 
   void RigidContact::solveGS(double dt) {
@@ -316,32 +429,56 @@ namespace MBSim {
 	jp2(1,i) = diff(1,2)*G(laIndMBS+1,i)+diff(1,3)*G(laIndMBS+2,i);
       }
 
-//      RowVec jp2=Jprox.row(laIndMBS+1);
-//      RowVec jp3=Jprox.row(laIndMBS+2);
-//      double LaT = pow(argT(0),2)+pow(argT(1),2);
-//      double fabsLaT = sqrt(LaT);
-//      double laNmu0 = fabs(la(0))*mu0;
-//      double rFac1 = rFactor(1);
-//      if(fabsLaT <=  laNmu0) {
-//	for(int i=0; i<G.size(); i++) {
-//	  jp2(i) = rFac1*G(laIndMBS+1,i);
-//	  jp3(i) = rFac1*G(laIndMBS+2,i);
-//	}
-//      } else {
-//	SymMat dfda(2,NONINIT);
-//	dfda(0,0) = 1-argT(0)*argT(0)/LaT;
-//	dfda(1,1) = 1-argT(1)*argT(1)/LaT;
-//	dfda(0,1) = -argT(0)*argT(1)/LaT;
-//
-//	for(int i=0; i<G.size(); i++) {
-//	  double e1 = (i==laIndMBS) ? sign(la(0))*mu0 : 0;
-//	  double e2 = (i==laIndMBS+1?1.0:0.0);
-//	  double e3 = (i==laIndMBS+2?1.0:0.0);
-//	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(0,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(0))/fabsLaT;
-//	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(1,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(1))/fabsLaT;
-//	}
-//    }
+      //      RowVec jp2=Jprox.row(laIndMBS+1);
+      //      RowVec jp3=Jprox.row(laIndMBS+2);
+      //      double LaT = pow(argT(0),2)+pow(argT(1),2);
+      //      double fabsLaT = sqrt(LaT);
+      //      double laNmu0 = fabs(la(0))*mu0;
+      //      double rFac1 = rFactor(1);
+      //      if(fabsLaT <=  laNmu0) {
+      //	for(int i=0; i<G.size(); i++) {
+      //	  jp2(i) = rFac1*G(laIndMBS+1,i);
+      //	  jp3(i) = rFac1*G(laIndMBS+2,i);
+      //	}
+      //      } else {
+      //	SymMat dfda(2,NONINIT);
+      //	dfda(0,0) = 1-argT(0)*argT(0)/LaT;
+      //	dfda(1,1) = 1-argT(1)*argT(1)/LaT;
+      //	dfda(0,1) = -argT(0)*argT(1)/LaT;
+      //
+      //	for(int i=0; i<G.size(); i++) {
+      //	  double e1 = (i==laIndMBS) ? sign(la(0))*mu0 : 0;
+      //	  double e2 = (i==laIndMBS+1?1.0:0.0);
+      //	  double e3 = (i==laIndMBS+2?1.0:0.0);
+      //	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(0,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(0))/fabsLaT;
+      //	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(1,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(1))/fabsLaT;
+      //	}
+      //    }
     }
+  }
+
+  void RigidContact::checkForTermination() {
+
+    double *a = mbs->getGs()();
+    int *ia = mbs->getGs().Ip();
+    int *ja = mbs->getGs().Jp();
+    Vec &laMBS = mbs->getla();
+
+    for(unsigned int i=0; i < 1+ gdActive[1]*getFrictionDirections(); i++) {
+      gdd(i) = s(i);
+      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	gdd(i) += a[j]*laMBS(ja[j]);
+    }
+
+    if(!fcl->isFullfield(la(0),gdd(0),laTol,gddTol)) {
+      mbs->setTermination(false);
+      return;
+    }
+    if(fdf && gdActive[1]) 
+      if(!fdf->isFullfield(la(1,getFrictionDirections()),gdd(1,getFrictionDirections()),la(0),laTol,gddTol)) {
+	mbs->setTermination(false);
+	return;
+      }
   }
 
   void RigidContact::checkForTermination(double dt) {
@@ -425,45 +562,45 @@ namespace MBSim {
 
   std::string RigidContact::getTerminationInfo(double dt){
     std::string s= "RigidContact " + getName();
- //   bool NormalDirectionFailed= false;
+    //   bool NormalDirectionFailed= false;
 
- //   if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
- //     ;
- //   else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
- //     ;
- //   else {
- //     s= s+" (normal): no convergence  gdn= " + numtostr(gdn(0)) + " (gdTol= " + numtostr(gdTol);
- //     s= s+ ")     la(0)= " + numtostr(la(0)/dt) + " (laTol= " + numtostr(laTol) + ")";
- //     NormalDirectionFailed= true;
- //   }
+    //   if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt)
+    //     ;
+    //   else if(la(0) >= -laTol*dt && fabs(gdn(0)) <= gdTol)
+    //     ;
+    //   else {
+    //     s= s+" (normal): no convergence  gdn= " + numtostr(gdn(0)) + " (gdTol= " + numtostr(gdTol);
+    //     s= s+ ")     la(0)= " + numtostr(la(0)/dt) + " (laTol= " + numtostr(laTol) + ")";
+    //     NormalDirectionFailed= true;
+    //   }
 
- //   if(getFrictionDirections()==1) {
- //     if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0))) <= laTol*dt)  // Gleiten
- //       ; 
- //     else if(fabs(la(1)) <= mu0*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
- //       ;
- //     else {
- //       if (NormalDirectionFailed) s += "\n";
- //       s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
- //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN) = " + numtostr(fabs(la(1)/dt)- mu0*fabs(la(0)/dt));
- //       s= s+ "\n     slip: abs(laT - mu0 laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0)))/dt); 
- //       s= s+ " (laTol= " + numtostr(laTol) + ")";
- //     }
- //   } else if(getFrictionDirections()==2) {
- //     if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0))) <= laTol*dt)
- //       ;
- //     else if(nrm2(la(1,2)) <= mu0*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
- //       ;
- //     else {
- //       if (NormalDirectionFailed) s += "\n";
- //       s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
- //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mu0*fabs(la(0))/dt);
- //       s= s+ " \n    slip: abs(laT -mu0 laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0)))/dt);
- //       s= s+  "  (laTol= " + numtostr(laTol) + ")";
- //     }
- //   }
+    //   if(getFrictionDirections()==1) {
+    //     if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0))) <= laTol*dt)  // Gleiten
+    //       ; 
+    //     else if(fabs(la(1)) <= mu0*fabs(la(0)) + laTol*dt && fabs(gdn(1)) <= gdTol)  // Haften
+    //       ;
+    //     else {
+    //       if (NormalDirectionFailed) s += "\n";
+    //       s= s+" (1D tangential): no convergence gdT= " + numtostr(gdn(1)) + " (gdTol= "+ numtostr(gdTol);
+    //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN) = " + numtostr(fabs(la(1)/dt)- mu0*fabs(la(0)/dt));
+    //       s= s+ "\n     slip: abs(laT - mu0 laN)       = " + numtostr(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu0*fabs(la(0)))/dt); 
+    //       s= s+ " (laTol= " + numtostr(laTol) + ")";
+    //     }
+    //   } else if(getFrictionDirections()==2) {
+    //     if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0))) <= laTol*dt)
+    //       ;
+    //     else if(nrm2(la(1,2)) <= mu0*fabs(la(0))+laTol*dt && nrm2(gdn(1,2)) <= gdTol)
+    //       ;
+    //     else {
+    //       if (NormalDirectionFailed) s += "\n";
+    //       s= s+" (2D tangential): no convergence gdT= " + numtostr(nrm2(gdn(1,2))) + " (gdTol= "+ numtostr(gdTol);
+    //       s= s+ ")\n    stick: abs(laT) - mu0 abs(laN)  = " + numtostr(nrm2(la(1,2))/dt- mu0*fabs(la(0))/dt);
+    //       s= s+ " \n    slip: abs(laT -mu0 laN)         = " + numtostr(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu0*fabs(la(0)))/dt);
+    //       s= s+  "  (laTol= " + numtostr(laTol) + ")";
+    //     }
+    //   }
     return s;
   }
 
-}
+  }
 

@@ -39,11 +39,11 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL)  { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false) { //, activeConstraintsChanged(true)
 
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL)  { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false)  { //, activeConstraintsChanged(true)
 
   }
 
@@ -58,21 +58,23 @@ namespace MBSim {
 
     setDirectory(); // output directory
 
-    Subsystem::calcqSize();
-    Subsystem::calcuSize();
-    Subsystem::calcxSize();
-    Subsystem::calchSize();
-    Subsystem::calclaSize();
-    Subsystem::calcgSize();
-    Subsystem::calcgdSize();
-    Subsystem::calcrFactorSize();
+    calcqSize();
+    calcuSize();
+    calcxSize();
+    calchSize();
+    calclaSize();
+    calcgSize();
+    calcgdSize();
+    calcrFactorSize();
+    calcsvSize();
 
-    cout<<"qSize = " << qSize<<endl;
-    cout<<"uSize = " << uSize<<endl;
-    cout<<"xSize = " << xSize<<endl;
-    cout<<"gSize = " << gSize<<endl;
-    cout<<"qdSize = " << gdSize<<endl;
-    cout<<"laSize = " << laSize<<endl;
+    cout << "qSize = " << qSize <<endl;
+    cout << "uSize = " << uSize <<endl;
+    cout << "xSize = " << xSize <<endl;
+    cout << "gSize = " << gSize <<endl;
+    cout << "qdSize = " << gdSize <<endl;
+    cout << "laSize = " << laSize <<endl;
+    cout << "svSize = " << svSize <<endl;
 
     setlaIndMBS(laInd);
 
@@ -106,8 +108,8 @@ namespace MBSim {
 
     Subsystem::init();
 
-    //updatesvRef(svParent);
-    //updatejsvRef(jsvParent);
+    updatesvRef(svParent);
+    updatejsvRef(jsvParent);
     updateGRef(GParent);
     updatezdRef(zdParent);
     updatelaRef(laParent);
@@ -146,6 +148,7 @@ namespace MBSim {
     // }
 
     cout << "...... done initialising." << endl << endl;
+
   }
 
   void MultiBodySystem::setDirectory() 
@@ -193,30 +196,34 @@ namespace MBSim {
     return;
   }
 
+  void MultiBodySystem::computeInitialCondition() {
+    updateKinematics(0);
+    updateg(0);
+    checkActiveg();
+    updategd(0);
+    checkActivegd();
+    checkActiveLinks();
+    //cout <<endl<< "activeConstraintsChanged at t = " << 0 << endl<<endl;
+    calclaSize();
+    calcrFactorSize();
+    setlaIndMBS(laInd);
+    updateGRef(GParent(Index(0,getlaSize()-1)));
+    updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updatelaRef(laParent(0,laSize-1));
+    updatesRef(sParent(0,laSize-1)); // Neu
+    updatebRef(bParent(0,laSize-1));
+    updaterFactorRef(rFactorParent(0,rFactorSize-1));
+    //cout << laSize<<endl;
+  }
+
   Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
     updateKinematics(t);
     updateg(t);
-    checkHolonomicConstraints();
-    checkActiveLinks();
     updategd(t);
-    checkNonHolonomicConstraints();
-    if(activeConstraintsChanged()) {
-      cout <<endl<< "activeConstraintsChanged at t = " << t << endl<<endl;
-      calclaSize();
-      calcrFactorSize();
-      setlaIndMBS(laInd);
-      updateGRef(GParent(Index(0,getlaSize()-1)));
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updatebRef(bParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      cout << laSize<<endl;
-   }
-
     updateT(t); 
     updateh(t); 
     updateM(t); 
@@ -226,7 +233,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updateb(t); 
-      computeConstraintForces(t); 
+      computeConstraintForces(t); // Alt
     }
     updater(t); 
     updatezd(t);
@@ -325,8 +332,7 @@ namespace MBSim {
     Subsystem::initz();
   }
 
-  double MultiBodySystem::computePotentialEnergy()
-  {
+  double MultiBodySystem::computePotentialEnergy() {
     // COMPUTEPOTENTIALENERGY computes potential energy
     double Vpot = 0.0;
 
@@ -338,27 +344,31 @@ namespace MBSim {
     return Vpot;
   }
 
-  void MultiBodySystem::getsv(const Vec& zParent, Vec& svExt, double t) 
-  {  // PASST SCHO
+  void MultiBodySystem::getsv(const Vec& zParent, Vec& svExt, double t) { 
     if(sv()!=svExt()) {
-      //updatesvRef(svExt);
+      updatesvRef(svExt);
       //sv.init(1);
     }
-    if(q()!=zParent()) {
+
+    if(q()!=zParent())
       updatezRef(zParent);
-    }
 
     if(qd()!=zdParent()) 
       updatezdRef(zdParent);
+
     updateKinematics(t);
     updateg(t);
     updategd(t);
+    updateT(t); 
     updateh(t); 
-    if(linkSetValued.size()) {
+    updateM(t); 
+    facLLM(); 
+    if(laSize) {
       updateW(t); 
+      updateV(t); 
       updateG(t); 
       updateb(t); 
-      computeConstraintForces(t); // Berechnet die Zwangskrafte aus der Bewegungsgleichung
+      computeConstraintForces(t); // Alt
     }
     updateStopVector(t);
   }
@@ -375,18 +385,19 @@ namespace MBSim {
 
     updateKinematics(t);
     updateg(t);
-    checkHolonomicConstraints();
+    checkActiveg();
     checkActiveLinks();
-    if(activeHolonomicConstraintsChanged()) {
-      cout << "activeConstraintsChanged at t = " << t << endl;
+    if(gActiveChanged()) {
+      //cout << "activeConstraintsChanged at t = " << t << endl;
 
+      checkAllgd(); // Prüfen ob nötig
       calcgdSize();
       calclaSize();
       calcrFactorSize();
 
       setlaIndMBS(laInd);
 
-      cout << laSize << endl;
+      //cout << laSize << endl;
       updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
@@ -581,7 +592,8 @@ namespace MBSim {
   }
 
   void MultiBodySystem::computeConstraintForces(double t) {
-    la = slvLU(G, -b);
+    //la = slvLU(G, -b);
+    la = slvLS(G, -b);
   }
 
   void MultiBodySystem::projectViolatedConstraints(double t) 
@@ -749,15 +761,55 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  int MultiBodySystem::solveLinearEquations(double dt)
-  {
+  int MultiBodySystem::solveLinearEquations(double dt) {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
     la = slvLU(G,-(getgd() + getb()*dt));
     return 1;
   }
 
-  int MultiBodySystem::solveGaussSeidel(double dt) 
-  {
+  int MultiBodySystem::solveGaussSeidel() {
+    // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
+    s = getb();
+
+    checkForTermination();
+    if(term) return 0 ;
+
+    int iter;
+    int checkTermLevel = 0;
+
+    for(iter = 1; iter<=maxIter; iter++) {
+      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS();
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkForTermination();
+	if(term) break;
+      }
+    }
+    return iter;
+  }
+
+  int MultiBodySystem::solveImpact() {
+    // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
+    s = getgd();
+
+    checkForTermination(1);
+    if(term) return 0 ;
+
+    int iter;
+    int checkTermLevel = 0;
+
+    for(iter = 1; iter<=maxIter; iter++) {
+      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS(1);
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkForTermination(1);
+	if(term) break;
+      }
+    }
+    return iter;
+  }
+
+  int MultiBodySystem::solveGaussSeidel(double dt) {
     // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
     s = getgd() + getb()*dt ;
 
@@ -857,8 +909,7 @@ namespace MBSim {
     for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).residualProj(dt);
   }
 
-  void MultiBodySystem::checkForTermination(double dt) 
-  {
+  void MultiBodySystem::checkForTermination(double dt) {
 
     term = true;
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
@@ -870,6 +921,18 @@ namespace MBSim {
     }
   }
 
+  void MultiBodySystem::checkForTermination() {
+
+    term = true;
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkForTermination(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (**i).checkForTermination();
+      if(term == false) return;
+    }
+  }
+
   void MultiBodySystem::residualProjJac(double dt) {
 
     for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) {
@@ -877,8 +940,39 @@ namespace MBSim {
     }
   }
 
-  int MultiBodySystem::solve(double dt) 
-  {
+  int MultiBodySystem::solve() {
+    // SOLVE solves prox-functions depending on solver settings
+    // INPUT t	time
+
+    if(la.size()==0) return 0;
+
+    if(useOldla)initla();
+    else la.init(0);
+
+    int iter;
+    Vec laOld;
+    laOld = la;
+    iter = solveGaussSeidel(); // solver election
+    if(iter >= maxIter) {
+      cout << endl;
+      cout << "Iterations: " << iter << endl;
+      cout << "\nError: no convergence."<< endl;
+      if(stopIfNoConvergence) {
+	if(dropContactInfo) dropContactMatrices();
+	assert(iter < maxIter);
+      }
+      cout << "Anyway, continuing integration..."<< endl;
+    }
+
+    if(warnLevel>=1 && iter>highIter)
+      cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
+
+    if(useOldla) savela();
+
+    return iter;
+  }
+
+  int MultiBodySystem::solve(double dt) {
     // SOLVE solves prox-functions depending on solver settings
     // INPUT t	time
 
@@ -1095,4 +1189,156 @@ namespace MBSim {
     return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
   }
 
+  void MultiBodySystem::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
+    if(q()!=zParent()) {
+      updatezRef(zParent);
+    }
+    jsv = jsv_;
+    //cout <<endl<< "event at time t = " << t << endl<<endl;
+    //cout<< "sv = " << trans(sv) << endl;
+    //cout << "jsv = "<< trans(jsv) << endl;
+
+    updateCondition(); // Entscheide, welche Bindungen dazukommen bzw. entfallen
+    checkActiveLinks(); // Liste mit aktiven Links (g<=0) neu anlegen
+    //cout <<"impact = "<< impact <<endl;
+    //cout <<"sticking = "<< sticking <<endl;
+
+    if(impact) {
+
+      checkAllgd(); // Es müssen alle geschlossenen Kontakte berücksichtigt werden
+      calcgdSize(); // 
+      updategdRef(gdParent(0,gdSize-1));
+      calclaSize();
+      calcrFactorSize();
+      setlaIndMBS(laInd);
+      updateGRef(GParent(Index(0,getlaSize()-1)));
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updatelaRef(laParent(0,laSize-1));
+      updatesRef(sParent(0,laSize-1)); // Neu
+      updatebRef(bParent(0,laSize-1));
+      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
+
+      updateKinematics(t); // prüfen, ob nötig
+      updateg(t); // prüfen, ob nötig
+      updategd(t); // wichtig wegen updategdRef
+      //updateh(t); // h-Vektor geht nicht in Stoß ein
+      updateW(t); // wichtig wegen updateWRef
+      updateV(t); // ..
+      updateG(t); // ..
+      //updateb(t); // unnötig, weil kein h-Vektor und keine Beschl., vielleicht nochmal prüfen, ob rein zeitabhängige anteile berechnet werden
+      int iter;
+      iter = solveImpact();
+      //cout <<"Iterations = "<< iter << endl;
+      u += deltau(zParent,t,0);
+
+      //saveActive();
+      checkActivegdn(); // Prüfen welche Kontakte nach Stoß aufgehen bzw. geschlossen bleiben
+      checkActiveLinks(); // Liste mit aktiven Links (g<=0) neu anlegen
+
+      //calcgdSize(); Darf nicht aufgerufen werden
+      //updategdRef(); Darf nicht aufgerufen werden
+
+      calclaSize();
+      calcrFactorSize();
+      setlaIndMBS(laInd);
+      updateGRef(GParent(Index(0,getlaSize()-1)));
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updatelaRef(laParent(0,laSize-1));
+      updatesRef(sParent(0,laSize-1)); // Neu
+      updatebRef(bParent(0,laSize-1));
+      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      //cout << "laSize wrt gd (impact) = " << laSize<< " gdSize = " << gdSize <<endl;
+
+      if(laSize) {
+
+	updateKinematics(t); // Nötig da Geschwindigkeitsänderung
+	// updateg(t); Unnötig, da keine Lageänderung
+	updategd(t); // Nötig da Geschwindigkeitsänderung
+	updateh(t); 
+	updateW(t); 
+	updateV(t); 
+	updateG(t); 
+	updateb(t); 
+	//cout << "Iterations = " << solve() << endl;
+	checkActivegdd();
+	checkActiveLinks();
+	calclaSize();
+	calcrFactorSize();
+	setlaIndMBS(laInd);
+	updateGRef(GParent(Index(0,getlaSize()-1)));
+	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+	updatelaRef(laParent(0,laSize-1));
+	updatesRef(sParent(0,laSize-1)); // Neu
+	updatebRef(bParent(0,laSize-1));
+	updaterFactorRef(rFactorParent(0,rFactorSize-1));
+	//cout << "laSize wrt gdd (impact) = " << laSize<< " " << gdSize << endl;
+      }
+    } 
+    else if(sticking) {
+
+      calclaSize();
+      calcrFactorSize();
+      setlaIndMBS(laInd);
+      updateGRef(GParent(Index(0,getlaSize()-1)));
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updatelaRef(laParent(0,laSize-1));
+      updatesRef(sParent(0,laSize-1)); // Neu
+      updatebRef(bParent(0,laSize-1));
+      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      //cout << " laSize before sticking = " << laSize << " gdSize = " << gdSize <<endl;
+
+      if(laSize) {
+
+	updateKinematics(t); // Prüfen ob nötig
+	updateg(t); // Prüfen ob nötig
+	updategd(t); // Prüfen ob nötig
+	updateT(t);  // Prüfen ob nötig
+	updateh(t);  // Prüfen ob nötig
+	updateM(t);  // Prüfen ob nötig
+	facLLM();  // Prüfen ob nötig
+	updateW(t);  // Prüfen ob nötig
+	updateV(t);  // Prüfen ob nötig
+	updateG(t);  // Prüfen ob nötig
+	updateb(t);  // Prüfen ob nötig
+	int iter;
+	iter = solve();
+	//cout << "Iter (sticking) = " << iter << endl;
+	checkActivegdd();
+	checkActiveLinks();
+	calclaSize();
+	calcrFactorSize();
+	setlaIndMBS(laInd);
+	updateGRef(GParent(Index(0,getlaSize()-1)));
+	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+	updatelaRef(laParent(0,laSize-1));
+	updatesRef(sParent(0,laSize-1)); // Neu
+	updatebRef(bParent(0,laSize-1));
+	updaterFactorRef(rFactorParent(0,rFactorSize-1));
+	//cout << "laSize wrt gdd (Sticking) = " << laSize<< " " << gdSize << endl;
+      }
+    } 
+    else {
+
+      checkActiveLinks();
+      calclaSize();
+      calcrFactorSize();
+      setlaIndMBS(laInd);
+      updateGRef(GParent(Index(0,getlaSize()-1)));
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updatelaRef(laParent(0,laSize-1));
+      updatesRef(sParent(0,laSize-1)); // Neu
+      updatebRef(bParent(0,laSize-1));
+      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      //cout << "laSize wrt gdd (smooth) = " << laSize<< " " << gdSize << endl;
+    }
+    impact = false;
+    sticking = false;
+  }
 }

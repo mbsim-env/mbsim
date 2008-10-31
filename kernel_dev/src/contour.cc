@@ -84,10 +84,11 @@ namespace MBSim {
   void Contour::updateMovingFrame(double t, ContourPointData& cpdata) {
    C.setPosition(cpdata.WrOC);
    C.setOrientation(R.getOrientation());
-   C.setVelocity(R.getVelocity());
-   C.setAngularVelocity(R.getAngularVelocity());
 
    Vec WrPC = C.getPosition() - R.getPosition();
+   C.setVelocity(R.getVelocity()+crossProduct(R.getAngularVelocity(),WrPC));
+   C.setAngularVelocity(R.getAngularVelocity());
+
    Mat tWrPC = tilde(WrPC);
    C.setJacobianOfTranslation(R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
    C.setJacobianOfRotation(R.getJacobianOfRotation());

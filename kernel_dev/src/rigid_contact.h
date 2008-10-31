@@ -45,14 +45,15 @@ namespace MBSim {
       NormalImpactLaw *fnil;
       TangentialImpactLaw *ftil;
 
+      Vec gdd;
+
     public: 
 
       RigidContact(const string &name);
 
-      /*! clone constructor with new name ! same parameters ! */
-      RigidContact(const RigidContact *master, const string &name_) : Contact(master,name_) {}
-
       void init();
+
+      void calcsvSize();
 
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
@@ -63,18 +64,28 @@ namespace MBSim {
       void projectGS(double dt);
       /*! for time integration with projection methods for constraint and contact treatment */
       void solveGS(double dt);
+      void solveGS();
       /*! for time integration with projection methods for constraint and contact treatment */
       void updaterFactors();
+
+      void updateCondition();
+
+      void checkActivegdn();
+      void checkActivegdd(); 
+      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; }//cout << name << " " << gActive << " " << gdActive[0] << " " << gdActive[1]<<endl;  }
 
       /*! for time integration with projection methods for constraint and contact treatment */
       void residualProj(double dt);
       void residualProjJac(double dt);
       void checkForTermination(double dt);
+      void checkForTermination();
       std::string getTerminationInfo(double dt);
 
       void updateW(double t);
       void updateV(double t);
       void updateb(double t);
+
+      void updateStopVector(double t);
 
       void setNormalImpactLaw(NormalImpactLaw *fnil_) {fnil = fnil_;}
       void setTangentialImpactLaw(TangentialImpactLaw *ftil_) {ftil = ftil_;}
@@ -94,6 +105,7 @@ namespace MBSim {
 
       //bool isActive() const { return fcl->isActive(g);}
       bool isClosed() const { return fcl->isClosed(g(0));}
+      bool remainsClosed() const { return fcl->remainsClosed(gd(0));}
       bool isSticking() const { return fdf->isSticking(gd(iT));}
       //int getNumberOfConstraints() const {return isActive() ? 1 : 0;} 
       //int getNumberOfConstraints() const {return isActive() ? (isSliding() ? 1 : laSize) : 0;} 

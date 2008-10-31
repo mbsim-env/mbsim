@@ -804,27 +804,27 @@ namespace MBSim {
       (**i).updatefRef(f);
   }
 
-  //void Subsystem::updatesvRef() {
+  void Subsystem::updatesvRef(const Vec &svParent) {
 
-  //  sv >> parent->getsv()(svInd,svInd+svSize-1);
+    sv >> svParent(svInd,svInd+svSize-1);
 
-  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-  //    (*i)->updatesvRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatesvRef(sv);
 
-  //  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-  //    (**i).updatesvRef();
-  //}
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (**i).updatesvRef(sv);
+  }
 
-  //void Subsystem::updatejsvRef() {
+  void Subsystem::updatejsvRef(const Vector<int> &jsvParent) {
 
-  //  jsv >> parent->getjsv()(svInd,svInd+svSize-1);
+    jsv >> jsvParent(svInd,svInd+svSize-1);
 
-  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-  //    (*i)->updatejsvRef();
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatejsvRef(jsv);
 
-  //  for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-  //    (**i).updatejsvRef();
-  //}
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (**i).updatejsvRef(jsv);
+  }
 
   void Subsystem::updateMRef(const SymMat& MParent) {
 
@@ -922,7 +922,7 @@ namespace MBSim {
   }
 
   void Subsystem::updatesRef(const Vec &sParent) {
-    s.resize() >> sParent(gdInd,gdInd+gdSize-1);
+    s.resize() >> sParent(laInd,laInd+laSize-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updatesRef(s);
@@ -1068,12 +1068,12 @@ namespace MBSim {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
       (*i)->calcsvSize();
-      (*i)->setsvInd(qSize);
+      (*i)->setsvInd(svSize);
       svSize += (*i)->getsvSize();
     }
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcsvSize();
-      (*i)->setsvInd(xSize);
+      (*i)->setsvInd(svSize);
       svSize += (*i)->getsvSize();
     }
   }
@@ -1194,31 +1194,44 @@ namespace MBSim {
     }
   }
 
-  bool Subsystem::activeConstraintsChanged() {
+  //bool Subsystem::activeConstraintsChanged() {
+
+  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+  //    if ((*i)->activeConstraintsChanged())
+  //      return true;
+  //  
+  //  for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+  //    if ((*i)->activeConstraintsChanged())
+  //      return true;
+
+  //  return false;
+  //}
+  
+  bool Subsystem::gActiveChanged() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      if ((*i)->activeConstraintsChanged())
+      if ((*i)->gActiveChanged())
 	return true;
     
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-      if ((*i)->activeConstraintsChanged())
+      if ((*i)->gActiveChanged())
 	return true;
 
     return false;
   }
 
-  bool Subsystem::activeHolonomicConstraintsChanged() {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      if ((*i)->activeHolonomicConstraintsChanged())
-	return true;
-    
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-      if ((*i)->activeHolonomicConstraintsChanged())
-	return true;
-
-    return false;
-  }
+//  bool Subsystem::activeHolonomicConstraintsChanged() {
+//
+//    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+//      if ((*i)->activeHolonomicConstraintsChanged())
+//	return true;
+//    
+//    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+//      if ((*i)->activeHolonomicConstraintsChanged())
+//	return true;
+//
+//    return false;
+//  }
 
   void Subsystem::checkActiveLinks() {
 
@@ -1234,22 +1247,58 @@ namespace MBSim {
     }
   }
 
-  void Subsystem::checkHolonomicConstraints() {
+  void Subsystem::checkActiveg() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkHolonomicConstraints();
+      (*i)->checkActiveg();
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
-      (*i)->checkHolonomicConstraints();
+      (*i)->checkActiveg();
   }
 
-  void Subsystem::checkNonHolonomicConstraints() {
+  void Subsystem::checkActivegd() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkNonHolonomicConstraints();
+      (*i)->checkActivegd();
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (*i)->checkNonHolonomicConstraints();
+      (*i)->checkActivegd();
+  }
+
+  void Subsystem::checkActivegdn() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkActivegdn();
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (*i)->checkActivegdn();
+  }
+
+  void Subsystem::checkActivegdd() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkActivegdd();
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (*i)->checkActivegdd();
+  }
+
+  void Subsystem::checkAllgd() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkAllgd();
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (*i)->checkAllgd();
+  }
+
+  void Subsystem::updateCondition() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateCondition();
+
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (*i)->updateCondition();
   }
 
   HitSphereLink* Subsystem::getHitSphereLink(Object* obj0, Object* obj1) {
@@ -1340,6 +1389,15 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).checkForTermination(dt);
+  }
+
+  void Subsystem::checkForTermination() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkForTermination(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (**i).checkForTermination();
   }
 
   void Subsystem::addObject(TreeRigid *tree) {

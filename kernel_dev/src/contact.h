@@ -42,7 +42,9 @@ namespace MBSim {
   class Contact: public Link {
 
     protected:
-      bool hca, nhca, closed, sticking;
+      //bool hca, nhca, closed, sticking;
+      unsigned int gActive, gdActive[2];
+      unsigned int gActive0, gdActive0[2];
 
       /** index for tangential directions in projection matrices */
       Index iT;
@@ -54,6 +56,7 @@ namespace MBSim {
       //virtual bool isActive() const {return true;}
       
       virtual bool isClosed() const = 0;
+      virtual bool remainsClosed() const = 0;
       virtual bool isSticking() const = 0;
 
       ContactKinematics *contactKinematics;
@@ -64,9 +67,6 @@ namespace MBSim {
 	\param setValued true, if force law is set-valued, else false for functional law
 	*/      
       Contact(const string &name, bool setValued);
-
-      /*! clone constructor with new name ! same parameters ! */
-      Contact(const Contact *master, const string &name_);
 
       virtual ~Contact();
 
@@ -111,13 +111,16 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-      bool isActive() const {return hca;}
-      void checkHolonomicConstraints() { isClosed() ? hca = true : hca = false; }
-      void checkNonHolonomicConstraints() { isSticking() ? nhca = true : nhca = false; }
+      bool isActive() const {return gActive;}
+      void checkActiveg() { gActive = isClosed() ? 1 : 0; }
+      void checkActivegd() { gdActive[0] = gActive ? (remainsClosed() ? 1 : 0) : 0; gdActive[1] = gdActive[0] ? (isSticking() ? 1 : 0) : 0; }
+    
+      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = gdActive[0] ? 1 : 0; }
 
-      bool activeConstraintsChanged();
-      bool activeHolonomicConstraintsChanged();
-      bool activeNonHolonomicConstraintsChanged();
+      //bool activeConstraintsChanged();
+      bool gActiveChanged();
+      //bool activeHolonomicConstraintsChanged();
+      //bool activeNonHolonomicConstraintsChanged();
 
       using Link::connect;
   };

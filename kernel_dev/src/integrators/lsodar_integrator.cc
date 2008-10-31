@@ -59,6 +59,7 @@ namespace MBSim {
       z = z0;
     else
       system->initz(z);
+    system->computeInitialCondition();
     double t=0.0;
     double tPlot=t+dtPlot;
 
@@ -76,9 +77,10 @@ namespace MBSim {
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
+    dt0 = 1e-13;
     rWork(4) = dt0; // integrator chooses the step size (dont use dt0)
-    rWork(5) = dtMax;
-    rWork(6) = dtMin;
+    rWork(5) = 1e-2;
+    rWork(6) = 1e-14;
     int liWork=(20+zSize)                             *10;//////////////;
     Vector<int> iWork(liWork);
     iWork(5) = 10000;
@@ -118,9 +120,9 @@ namespace MBSim {
       }
       if(istate==3) {
 	system->shift(z, jsv, t);
-	//system->plot(z, t);
+	system->plot(z, t);
 	istate=1;
-	rWork(4)=0;
+	rWork(4)=dt0;
       }
       if(istate<0) exit(istate);
     }

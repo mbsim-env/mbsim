@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
+  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
   }
 
   Link::~Link() { 
@@ -86,13 +86,13 @@ namespace MBSim {
   //  return parent->getFullName() + "." + name;
   //}
 
- // void Link::updatesvRef() {
- //   sv >> parent->getsv()(svInd,svInd+svSize-1);
- // }
+  void Link::updatesvRef(const Vec &svParent) {
+    sv >> svParent(svInd,svInd+svSize-1);
+  }
 
- // void Link::updatejsvRef() {
- //   jsv >> parent->getjsv()(svInd,svInd+svSize-1);
- // }
+  void Link::updatejsvRef(const Vector<int> &jsvParent) {
+    jsv >> jsvParent(svInd,svInd+svSize-1);
+  }
 
   void Link::updatelaRef(const Vec& laParent) {
     la.resize() >> laParent(laInd,laInd+laSize-1);
@@ -111,7 +111,7 @@ namespace MBSim {
   }
 
   void Link::updatesRef(const Vec& sParent) {
-    s.resize() >> sParent(gdInd,gdInd+gdSize-1);
+    s.resize() >> sParent(laInd,laInd+laSize-1);
   }
 
   void Link::updateresRef(const Vec& resParent) {
@@ -143,7 +143,7 @@ namespace MBSim {
 
       if(plotLevel>0) {
 	if(plotLevel>1) {
-	  for(int i=0; i<laSize; ++i)
+	  for(int i=0; i<gdSize; ++i)
 	    plotfile<<" "<<gd(i);
 	}
 	if(setValued)
@@ -288,12 +288,15 @@ namespace MBSim {
   }
 
   void Link::savela() {
-    la0 = la;
+    la0.resize() = la;
   }
 
   void Link::initla() {
     // TODO Prufen ob initilisierung auf 0 besser, wenn vorher inaktiv
-    la = la0;
+    if(la0.size() == la.size())
+      la = la0;
+    else
+      la.init(0);
   }
 
   void Link::decreaserFactors() {

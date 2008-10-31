@@ -72,12 +72,11 @@ namespace MBSim {
       void plot(double t, double dt=1);
 
       bool isActive() const {return true;}
-      void checkHolonomicConstraints() {}
-      void checkNonHolonomicConstraints() {}
+      void checkActiveg() {}
+      void checkActivegd() {}
 
       bool activeConstraintsChanged() {return false;}
-      bool activeHolonomicConstraintsChanged() {return false;}
-      bool activeNonHolonomicConstraintsChanged() {return false;}
+      bool gActiveChanged() {return false;}
 
 #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
