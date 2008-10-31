@@ -207,11 +207,8 @@ namespace MBSim {
       int getrFactorSize() const {return rFactorSize;} 
       const Index& getgIndex() const {return Ig;}
       const Index& getlaIndex() const {return Ila;}
-      virtual bool isActive() const = 0;
-      //virtual bool activeConstraintsChanged() = 0;
+      virtual bool isActive() const = 0; 
       virtual bool gActiveChanged() = 0;
-      //virtual bool activeHolonomicConstraintsChanged() = 0;
-      //virtual bool activeNonHolonomicConstraintsChanged() = 0;
 
       void savela();
       void initla();

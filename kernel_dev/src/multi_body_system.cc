@@ -295,7 +295,6 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
- 
   void MultiBodySystem::updateGRef(const SqrMat &GParent) {
 
     G.resize() >> GParent;
