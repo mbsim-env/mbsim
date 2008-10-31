@@ -40,8 +40,6 @@ namespace MBSim {
     public: 
       FlexibleContact(const string &name);
 
-      FlexibleContact(const FlexibleContact *master,const string &name_);
-
       void init();
 
       void updateh(double t);
@@ -54,7 +52,9 @@ namespace MBSim {
       string getType() const {return "FlexibleContact";}
 
       bool isClosed() const { return fcl->isClosed(g(0));}
+      bool remainsClosed() const { return fcl->remainsClosed(gd(0));}
       bool isSticking() const { return ffl->isSticking(gd(iT));}
+      void updateCondition() {}
    // bool isActive() const { return fcl->isClosed(g(0));}
       //void setMarginalVelocity(double v) {gdT_grenz = v;}
   };

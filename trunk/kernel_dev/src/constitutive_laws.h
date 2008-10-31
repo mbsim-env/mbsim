@@ -36,6 +36,7 @@ namespace MBSim {
       ConstraintLaw() {};
       virtual ~ConstraintLaw() {};
       virtual bool isClosed(double g) = 0;
+      virtual bool remainsClosed(double gd) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual double operator()(double la, double gdn, double r) = 0;
@@ -50,10 +51,13 @@ namespace MBSim {
   };
 
   class UnilateralConstraint : public ConstraintLaw {
+    protected:
+      double gEps, gdEps;
     public:
-      UnilateralConstraint() {};
+      UnilateralConstraint() : gEps(0), gdEps(1e-8) {};
       virtual ~UnilateralConstraint() {};
-      bool isClosed(double g) {return g<=0;}
+      bool isClosed(double g) {return g<=gEps;}
+      bool remainsClosed(double gd) {return gd<=gdEps;}
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double r);
@@ -71,6 +75,7 @@ namespace MBSim {
       BilateralConstraint() {};
       virtual ~BilateralConstraint() {};
       bool isClosed(double g) {return true;}
+      bool remainsClosed(double gd) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double r);
@@ -88,7 +93,8 @@ namespace MBSim {
     public:
       NormalImpactLaw() {};
       virtual ~NormalImpactLaw() {};
-      virtual bool isClosed(double g) = 0;
+      //virtual bool isClosed(double g) = 0;
+      //virtual bool remainsClosed(double gd) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual double operator()(double la, double gdn, double gda, double r) = 0;
@@ -105,7 +111,8 @@ namespace MBSim {
       UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
       UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
       virtual ~UnilateralNewtonImpact() {};
-      bool isClosed(double g) {return g<=0;}
+      //bool isClosed(double g) {return g<=0;}
+      //bool remainsClosed(double g) {return g<=0;}
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double gda, double r);
@@ -122,7 +129,7 @@ namespace MBSim {
     public:
       BilateralImpact() {};
       virtual ~BilateralImpact() {};
-      bool isClosed(double g) {return true;}
+      //bool isClosed(double g) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
       double operator()(double la, double gdn, double gda, double r);
@@ -135,7 +142,7 @@ namespace MBSim {
     protected:
       double gdEps;
     public:
-      FrictionLaw() : gdEps(1e-6) {};
+      FrictionLaw() : gdEps(1e-8) {};
       virtual ~FrictionLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
@@ -261,20 +268,25 @@ namespace MBSim {
       virtual ~RegularizedConstraintLaw() {};
       virtual double operator()(double g,  double gd) = 0;
       virtual bool isClosed(double gN) = 0;
+      virtual bool remainsClosed(double gd) = 0;
   };
 
   class RegularizedUnilateralConstraint : public RegularizedConstraintLaw {
+    protected:
+      double gEps, gdEps;
     public:
-      RegularizedUnilateralConstraint() {};
+      RegularizedUnilateralConstraint() : gEps(0), gdEps(0) {};
       virtual ~RegularizedUnilateralConstraint() {};
-      virtual bool isClosed(double gN) {return gN<=0;}
+      bool isClosed(double g) {return g<=gEps;}
+      bool remainsClosed(double gd) {return gd<=gdEps;}
   };
 
   class RegularizedBilateralConstraint : public RegularizedConstraintLaw {
     public:
       RegularizedBilateralConstraint() {};
       virtual ~RegularizedBilateralConstraint() {};
-      virtual bool isClosed(double gN) {return true;}
+      bool isClosed(double g) {return true;}
+      bool remainsClosed(double gd) {return true;}
   };
 
   class LinearRegularizedUnilateralConstraint: public RegularizedUnilateralConstraint {
