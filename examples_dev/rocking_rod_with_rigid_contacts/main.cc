@@ -4,45 +4,32 @@
 using namespace std;
 using namespace MBSim;
 
-int main (int argc, char* argv[])
-{
-  // Einzelne Bausteine des MKS erschaffen
+int main (int argc, char* argv[]) {
+
   MultiBodySystem *sys = new System("TS");
 
-// sys->setSolver(GaussSeidel);
- //sys->setSolver(RootFinding);
-  // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
-  //sys->setUseOldla(false);
+  sys->setSolver(GaussSeidel);
+
   sys->init();
   
-  // LSODEIntegrator integrator;
-  // RKSuiteIntegrator integrator;
-  // RADAU5Integrator integrator;
-  // TimeSteppingIntegrator integrator;
-  // integrator.setdt(1e-4);
-  //
-  //DOPRI5Integrator integrator;
+  bool eventDriven = true;
 
-  //integrator.settEnd(10.0);
-  //integrator.setdtPlot(1e-3);
+  if(eventDriven) { // Event driven time integration
+    LSODARIntegrator integrator;
+    integrator.setdtPlot(1e-2);
+    integrator.settEnd(2.5);
+    integrator.integrate(*sys);
+  } 
+  else { // time stepping integration
+    sys->setlaTol(1e-2);
+    sys->setgdTol(1e-8);
+    TimeSteppingIntegrator integrator;
+    integrator.setdt(1e-4);
+    integrator.setdtPlot(1e-2);
+    integrator.settEnd(2.5);
+    integrator.integrate(*sys);
+  }
 
-  TimeSteppingIntegrator integrator;
-   integrator.setdt(1e-4);
-   integrator.setdtPlot(1e-2);
-   integrator.settEnd(2.5);
-
- // Vec z(4);
- // z(0) = 0.13;
- // z(1) = -1.13;
- // z(2) = -1.1;
- // z(3) = 3.1;
-
- // cout << sys->zdot(z,0)<< endl;
- // cout << sys->getM()<<endl;
- // cout << sys->geth()<<endl;
- // throw 5;
-  
-  integrator.integrate(*sys);
   cout << "finished"<<endl;
 
   delete sys;
