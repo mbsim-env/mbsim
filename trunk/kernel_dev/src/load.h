@@ -52,12 +52,11 @@ namespace MBSim {
       void calclaSize();
       void init();
       bool isActive() const {return true;}
-      void checkHolonomicConstraints() {}
-      void checkNonHolonomicConstraints() {}
-      bool activeConstraintsChanged() {return false;}
-      bool activeHolonomicConstraintsChanged() {return false;}
-      bool activeNonHolonomicConstraintsChanged() {return false;}
+      void checkActiveg() {}
+      void checkActivegd() {}
 
+      bool activeConstraintsChanged() {return false;}
+      bool gActiveChanged() {return false;}
 
       void setKOSY(int);
       void setUserFunction(DataInterfaceBase *func_);

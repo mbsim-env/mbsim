@@ -31,8 +31,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  class ContourPointData;
+  class CoordinateSystem;
   class Contour;
+  class ContourPointData;
 
   /*! Computes a perpendicular vector \result t to the normal \param n */	
   Vec computeTangential(const Vec &n);
@@ -53,7 +54,9 @@ namespace MBSim {
        * \param g        normal distance
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
-      virtual void stage1(Vec &g, vector<ContourPointData> &cpData) = 0;
+      //virtual void stage1(Vec &g) = 0;
+      virtual void updateg(Vec &g, vector<CoordinateSystem*> &cosy) {cout << "updateg not implemented" << endl; throw 5;}
+      //virtual double computeg() = 0;
 
       /*! compute \f$\dot{\boldsymbol{g}}\f$, force directions, ... must be up-to-date at end of method
        * \param contour  vector of Contour holding both contours
@@ -63,12 +66,16 @@ namespace MBSim {
        * \param gd       contact velocities
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
-      virtual void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) = 0;
+      //virtual void stage2(const Vec& g, Vec &gd) = 0;
+      virtual void updategd(const Vec& g, Vec &gd, vector<CoordinateSystem*> &cosy) {cout << "updategd not implemented" << endl; throw 5;}
+      //virtual Vec computegd(const Vec& g) = 0;
+
+      virtual void updatewb(Vec &wb, const Vec &g, vector<CoordinateSystem*> &cosy) {};
+
 	  /*! Treats ordering of contours \param contour */
       virtual void assignContours(const vector<Contour*> &contour) = 0;
       /*! Treats ordering of contours \param contour1 and \param contour2 */
       void assignContours(Contour *contour1, Contour *contour2) {vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
-      virtual void updatewb(Vec &wb, const Vec &g, vector<ContourPointData> &cpData) {};
   };
 
 }

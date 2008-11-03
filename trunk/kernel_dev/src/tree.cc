@@ -20,7 +20,8 @@
  *
  */
 #include "tree.h"
-#include "multi_body_system.h"
+#include "object.h"
+#include "link.h"
 #include "coordinate_system.h"
 #include "extra_dynamic_interface.h"
 

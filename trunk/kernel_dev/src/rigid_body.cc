@@ -246,7 +246,6 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t) {
-    updateJacobians(t);
 
     // Trägheitstensor auf Welt-System umrechnen
     //WThetaS =
@@ -381,6 +380,8 @@ namespace MBSim {
       contour[i]->setWomegaC(port[0]->getAngularVelocity());
       contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
     }
+
+    updateJacobians(t);
   }
 
   double RigidBody::computeKineticEnergy() {

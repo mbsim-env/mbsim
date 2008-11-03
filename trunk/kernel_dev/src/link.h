@@ -95,14 +95,14 @@ namespace MBSim {
       vector<Vec> r;
       Vec wb;
 
+      vector<CoordinateSystem*> cosy;
+
       /*! Array in which all ports are listed, connecting bodies via a Link.
       */
       vector<CoordinateSystem*> port;
 
       /** Array in which all contours linked by LinkContour are managed.*/
       vector<Contour*> contour;
-
-      vector<ContourPointData> cpData;
 
 #ifdef HAVE_AMVIS
       vector<AMVis::Arrow*> arrowAMVis;
@@ -262,8 +262,6 @@ namespace MBSim {
 
       /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
       virtual void connect(Contour *port1, int id);
-
-      const ContourPointData& getContourPointData(int id) const { return cpData[id]; }
 
       string getType() const {return "Link";}
 

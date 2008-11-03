@@ -74,6 +74,11 @@ namespace MBSim {
       WM.push_back(Vec(3));
       fF.push_back(Mat(3,laSize));
       fM.push_back(Mat(3,laSize));
+      ostringstream os;
+      os << i;
+      cosy.push_back(new CoordinateSystem(os.str()));
+      cosy[i]->getJacobianOfTranslation().resize(3,contour[i]->getWJP().cols());
+      cosy[i]->getJacobianOfRotation().resize(3,contour[i]->getWJR().cols());
     }
   }
 
@@ -207,7 +212,7 @@ namespace MBSim {
     }
 
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
+      //WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
       if(setValued) { 
 	if (isActive()) {
 	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
@@ -313,7 +318,7 @@ namespace MBSim {
     for(unsigned i=0; i<port.size(); i++) 
       wb += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
     for(unsigned i=0; i<contour.size(); i++) 
-      wb += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
+      wb += trans(fF[i])*cosy[i]->getGyroscopicAccelerationOfTranslation();
   }
 
   void Link::updateh(double t) {
@@ -321,8 +326,8 @@ namespace MBSim {
       for(unsigned int i=0; i<port.size(); i++)
 	h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
       for(unsigned int i=0; i<contour.size(); i++) {
-	contour[i]->updateMovingFrame(t, cpData[i]);
-	h[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*WF[i];
+	//contour[i]->updateMovingFrame(t, cpData[i]);
+	h[i] += trans(cosy[i]->getJacobianOfTranslation())*WF[i];
       }
     }
   }
@@ -331,8 +336,8 @@ namespace MBSim {
     for(unsigned int i=0; i<port.size(); i++)
       W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->updateMovingFrame(t, cpData[i]);
-      W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i];
+      //contour[i]->updateMovingFrame(t, cpData[i]);
+      W[i] += trans(cosy[i]->getJacobianOfTranslation())*fF[i];
     }
   }
 

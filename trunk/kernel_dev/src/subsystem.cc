@@ -55,8 +55,6 @@ namespace MBSim {
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
-    for(vector<HitSphereLink*>::iterator i =  HSLink.begin(); i != HSLink.end(); ++i)
-      delete *i;
   }
 
   void Subsystem::setMultiBodySystem(MultiBodySystem* sys) {
@@ -1337,20 +1335,6 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->updateCondition();
-  }
-
-  HitSphereLink* Subsystem::getHitSphereLink(Object* obj0, Object* obj1) {
-    // test for existing HitSphereLinks
-    for(vector<HitSphereLink*>::iterator hsl = HSLink.begin();hsl < HSLink.end();hsl++)
-      if((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1 || (*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0)
-	return  (*hsl);
-
-    //     cout << "Creating new HitSphereLink for " << obj0->getName() << "<->" << obj1->getName() << endl;
-
-    // create new if none is found
-    HitSphereLink *HSLnk = new HitSphereLink();
-    HSLink.push_back(HSLnk);
-    return HSLnk;
   }
 
   ExtraDynamicInterface* Subsystem::getEDI(const string &name,bool check) {
