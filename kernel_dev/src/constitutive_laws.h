@@ -39,15 +39,10 @@ namespace MBSim {
       virtual bool remainsClosed(double s, double sTol) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual double operator()(double la, double gdn, double r) = 0;
+      virtual double project(double la, double gdn, double r) = 0;
       virtual Vec diff(double la, double gdn, double r) = 0;
       virtual double solve(double G, double gdn) = 0;
       virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) = 0;
-      //virtual bool isClosed(const Vec& g) {return g(0)<=0;}
-      //virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Vec diff(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Vec solve(const SqrMat& G, const Vec& gdn) = 0;
-      //virtual bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd) = 0;
   };
 
   class UnilateralConstraint : public ConstraintLaw {
@@ -59,14 +54,10 @@ namespace MBSim {
       bool remainsClosed(double s, double sTol) {return s<=sTol;}  // s = gd/gdd
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
-      double operator()(double la, double gdn, double r);
+      double project(double la, double gdn, double r);
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
-      //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec diff(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec solve(const SqrMat& G, const Vec& gdn);
-      //bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd);
   };
 
   class BilateralConstraint : public ConstraintLaw {
@@ -77,15 +68,10 @@ namespace MBSim {
       bool remainsClosed(double s, double sTol) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
-      double operator()(double la, double gdn, double r);
+      double project(double la, double gdn, double r);
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
-      //bool isClosed(const Vec& g) {return true;}
-      //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec diff(const Vec& la,  const Vec& gdn, const Vec& r);
-      //Vec solve(const SqrMat& G, const Vec& gdn);
-      //bool isFullfield(const Vec& la,  const Vec& gdn, double tolla, double tolgd);
   };
 
   class NormalImpactLaw {
@@ -96,7 +82,7 @@ namespace MBSim {
       //virtual bool remainsClosed(double gd) = 0;
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual double operator()(double la, double gdn, double gda, double r) = 0;
+      virtual double project(double la, double gdn, double gda, double r) = 0;
       virtual Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
@@ -110,28 +96,19 @@ namespace MBSim {
       UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
       UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
       virtual ~UnilateralNewtonImpact() {};
-      //bool isClosed(double g) {return g<=0;}
-      //bool remainsClosed(double g) {return g<=0;}
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
-      double operator()(double la, double gdn, double gda, double r);
+      double project(double la, double gdn, double gda, double r);
       Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
-      //Vec operator()(const Vec& la,  const Vec& gdn, const Vec& gda, const Vec& r);
-      //Vec diff(const Vec& la,  const Vec& gdn, const Vec& gda, const Vec& r);
-      //Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda);
-      //bool isFullfield(const Vec& la,  const Vec& gdn, const Vec& gda, double tolla, double tolgd);
   };
 
   class BilateralImpact : public NormalImpactLaw {
     public:
       BilateralImpact() {};
       virtual ~BilateralImpact() {};
-      //bool isClosed(double g) {return true;}
-      //void load(const string& path, ifstream &inputfile);
-      //void save(const string &path, ofstream &outputfile);
-      double operator()(double la, double gdn, double gda, double r);
+      double project(double la, double gdn, double gda, double r);
       Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
@@ -145,11 +122,7 @@ namespace MBSim {
       virtual ~FrictionLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      //virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& r) = 0;
-      //virtual Vec solve(const SqrMat& G, const Vec& laN, const Vec& gdn) = 0;
-      //virtual bool isFullfield(const Vec& la, const Vec& gdn, double tolla, double tolgd) = 0;
-      virtual Vec operator()(const Vec& la, const Vec& gdn, double laN, double r) = 0;
+      virtual Vec project(const Vec& la, const Vec& gdn, double laN, double r) = 0;
       virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) = 0;
       virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) = 0;
       virtual bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd) = 0;
@@ -176,7 +149,7 @@ namespace MBSim {
       virtual void save(const string &path, ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec operator()(const Vec& la, const Vec& gdn, double laN, double r);
+      Vec project(const Vec& la, const Vec& gdn, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
       Vec solve(const SqrMat& G, const Vec& gdn, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
@@ -194,11 +167,7 @@ namespace MBSim {
       virtual ~SpatialCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      //Vec operator()(const Vec& la, const Vec& gdn, const Vec& r); 
-      //Mat diff(const Vec& la, const Vec& gdn, const Vec& r);
-      //Vec solve(const SqrMat& G, const Vec& laN, const Vec& gdn);
-      //bool isFullfield(const Vec& la, const Vec& gdn, double tolla, double tolgd);
-      Vec operator()(const Vec& la, const Vec& gdn, double laN, double r);
+      Vec project(const Vec& la, const Vec& gdn, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
       Vec solve(const SqrMat& G, const Vec& gdn, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
@@ -213,7 +182,7 @@ namespace MBSim {
       virtual ~TangentialImpactLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
+      virtual Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
       virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
       virtual Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) = 0;
       virtual bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd) = 0;
@@ -238,7 +207,7 @@ namespace MBSim {
       virtual void save(const string &path, ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
+      Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);
@@ -254,7 +223,7 @@ namespace MBSim {
       virtual ~SpatialCoulombImpact() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
+      Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
       Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);

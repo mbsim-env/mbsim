@@ -77,14 +77,14 @@ namespace MBSim {
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = (*ffl)(la(i), gdd(i), rFactor(i));
+      la(i) = ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = (*fml)(la(i), gdd(i), rFactor(i));
+      la(i) = fml->project(la(i), gdd(i), rFactor(i));
     }
   }
 
@@ -100,14 +100,14 @@ namespace MBSim {
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = (*fifl)(la(i), gdn(i), gd(i), rFactor(i));
+      la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = (*fiml)(la(i), gdn(i), gd(i), rFactor(i));
+      la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
     }
   }
 
@@ -169,14 +169,14 @@ namespace MBSim {
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - (*ffl)(la(i), gdd(i), rFactor(i));
+      res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - (*fml)(la(i), gdd(i), rFactor(i));
+      res(i) = la(i) - fml->project(la(i), gdd(i), rFactor(i));
     }
   }
   void RigidConnection::solveImpactsRootFinding() {
@@ -191,14 +191,14 @@ namespace MBSim {
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - (*fifl)(la(i), gdn(i), gd(i), rFactor(i));
+      res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - (*fiml)(la(i), gdn(i), gd(i), rFactor(i));
+      res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
     }
   }
 

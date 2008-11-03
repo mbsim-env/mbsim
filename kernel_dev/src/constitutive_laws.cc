@@ -27,7 +27,7 @@ namespace MBSim {
 
   double sign(double x);
 
-  //Vec UnilateralContact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
+  //Vec UnilateralContact::project(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
   //  if(fabs(gda(0)) > gd_limit)
   //    return Vec(1,INIT,proxCN(la(0)-r(0)*(gdn(0)+epsilon*gda(0))));
   //  else
@@ -91,7 +91,7 @@ namespace MBSim {
     outputfile << "UnilateralConstraint" << endl << endl;
   }
 
-  double UnilateralConstraint::operator()(double la, double gdn, double r) {
+  double UnilateralConstraint::project(double la, double gdn, double r) {
     return proxCN(la-r*gdn);
   }
 
@@ -122,7 +122,7 @@ namespace MBSim {
       return false;
   }
 
-  //Vec BilateralContact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
+  //Vec BilateralContact::project(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
   //  return Vec(1,INIT,la(0)-r(0)*gdn(0));
   //}
   //Vec BilateralContact::diff(const Vec& la,  const Vec& gdn, const Vec& gda, const Vec& r) {
@@ -138,7 +138,7 @@ namespace MBSim {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
-  double BilateralConstraint::operator()(double la, double gdn, double r) {
+  double BilateralConstraint::project(double la, double gdn, double r) {
     return la-r*gdn;
   }
 
@@ -169,7 +169,7 @@ namespace MBSim {
     getline(inputfile,dummy); // Newline
   }
 
-  double UnilateralNewtonImpact::operator()(double la, double gdn, double gda, double r) {
+  double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
     return proxCN(la-r*gdn);
@@ -232,7 +232,7 @@ namespace MBSim {
     outputfile << gd_limit << endl << endl;
   }
 
-  double BilateralImpact::operator()(double la, double gdn, double gda, double r) {
+  double BilateralImpact::project(double la, double gdn, double gda, double r) {
     return la-r*gdn;
   }
 
@@ -281,7 +281,7 @@ namespace MBSim {
     outputfile << mu << endl << endl;
   }
 
-  Vec PlanarCoulombFriction::operator()(const Vec& la, const Vec& gdn, double laN, double r) {
+  Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
   }
 
@@ -323,7 +323,7 @@ namespace MBSim {
     return Vec(1,INIT,-mu*sign(gd(0)));
   }
 
-  //Vec CoulombFriction::operator()(const Vec& la, const Vec& gdn, const Vec& r) {
+  //Vec CoulombFriction::project(const Vec& la, const Vec& gdn, const Vec& r) {
   //  int nFric = gdn.size()-1;
   ////Vec lan(la.size()-1);
   //  if(nFric==1) 
@@ -406,7 +406,7 @@ namespace MBSim {
 //    return false;
 //  }
 
-  Vec SpatialCoulombFriction::operator()(const Vec& la, const Vec& gdn, double laN, double r) {
+  Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la-r*gdn,mu*fabs(laN));
   }
 
@@ -458,7 +458,7 @@ namespace MBSim {
     getline(inputfile,dummy); // Newline
   }
 
-  Vec PlanarCoulombImpact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
   }
 
@@ -514,7 +514,7 @@ namespace MBSim {
     outputfile << mu << endl << endl;
   }
 
-  Vec SpatialCoulombImpact::operator()(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+  Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la-r*gdn,mu*fabs(laN));
   }
 

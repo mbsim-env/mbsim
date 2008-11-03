@@ -275,7 +275,7 @@ namespace MBSim {
     for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
       gdd(0) += a[j]*laMBS(ja[j]);
 
-    la(0) = (*fcl)(la(0), gdd(0), rFactor(0));
+    la(0) = fcl->project(la(0), gdd(0), rFactor(0));
 
     for(int i=1; i<=getFrictionDirections(); i++) {
       gdd(i) = b(laIndMBS+i);
@@ -284,7 +284,7 @@ namespace MBSim {
     }
 
     if(fdf)
-      la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+      la(1,getFrictionDirections()) = fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
   } 
   
   void RigidContact::solveImpactsFixpointSingle() {
@@ -299,7 +299,7 @@ namespace MBSim {
     for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
-    la(0) = (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
+    la(0) = fnil->project(la(0), gdn(0), gd(0), rFactor(0));
 
     for(int i=1; i<=getFrictionDirections(); i++) {
       gdn(i) = b(laIndMBS+i);
@@ -308,7 +308,7 @@ namespace MBSim {
     }
 
     if(ftil)
-      la(1,getFrictionDirections()) = (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
+      la(1,getFrictionDirections()) = ftil->project(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
 
@@ -385,9 +385,9 @@ namespace MBSim {
 	gdd(i) += a[j]*laMBS(ja[j]);
     }
 
-    res(0) = la(0) - (*fcl)(la(0), gdd(0), rFactor(0));
+    res(0) = la(0) - fcl->project(la(0), gdd(0), rFactor(0));
     if(fdf) 
-      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
   void RigidContact::solveImpactsRootFinding() {
@@ -403,9 +403,9 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    res(0) = la(0) - (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
+    res(0) = la(0) - fnil->project(la(0), gdn(0), gd(0), rFactor(0));
     if(ftil) 
-      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
+      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - ftil->project(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
   void RigidContact::jacobianConstraints() {
