@@ -86,8 +86,7 @@ namespace MBSim {
     LLMParent.resize(getuSize());
     WParent.resize(getuSize(),getlaSize());
     VParent.resize(getuSize(),getlaSize());
-    GParent.resize(getlaSize());
-    bParent.resize(getlaSize());
+    wbParent.resize(getlaSize());
     laParent.resize(getlaSize());
     dlaParent.resize(getlaSize());
     rFactorParent.resize(getlaSize());
@@ -110,17 +109,15 @@ namespace MBSim {
 
     updatesvRef(svParent);
     updatejsvRef(jsvParent);
-    updateGRef(GParent);
     updatezdRef(zdParent);
     updatelaRef(laParent);
     updategRef(gParent);
     updategdRef(gdParent);
-    updatesRef(sParent);
     updatehRef(hParent);
     updaterRef(rParent);
     updateWRef(WParent);
     updateVRef(VParent);
-    updatebRef(bParent);
+    updatewbRef(wbParent);
     updategRef(gParent);
     updategdRef(gdParent);
     updatelaRef(laParent);
@@ -219,12 +216,10 @@ namespace MBSim {
     calclaSize();
     calcrFactorSize();
     setlaIndMBS(laInd);
-    updateGRef(GParent(Index(0,getlaSize()-1)));
     updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updatelaRef(laParent(0,laSize-1));
-    updatesRef(sParent(0,laSize-1)); // Neu
-    updatebRef(bParent(0,laSize-1));
+    updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
     //cout << laSize<<endl;
   }
@@ -244,7 +239,7 @@ namespace MBSim {
       updateW(t); 
       updateV(t); 
       updateG(t); 
-      updateb(t); 
+      updatewb(t); 
       computeConstraintForces(t); // Alt
     }
     updater(t); 
@@ -305,11 +300,6 @@ namespace MBSim {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
-  }
-
-  void MultiBodySystem::updateGRef(const SqrMat &GParent) {
-
-    G.resize() >> GParent;
   }
 
   void MultiBodySystem::plot(const Vec& zParent, double t, double dt) {
@@ -378,7 +368,7 @@ namespace MBSim {
       updateW(t); 
       updateV(t); 
       updateG(t); 
-      updateb(t); 
+      updatewb(t); 
       computeConstraintForces(t); // Alt
     }
     updateStopVector(t);
@@ -409,13 +399,10 @@ namespace MBSim {
       setlaIndMBS(laInd);
 
       //cout << laSize << endl;
-      updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updategdRef(gdParent(0,gdSize-1));
-      updatebRef(bParent(0,laSize-1));
-      updatesRef(sParent(0,laSize-1));
       updateresRef(resParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -429,7 +416,6 @@ namespace MBSim {
     updateW(t); 
     updateV(t); 
     updateG(t); 
-    b = trans(W)*slvLLFac(LLM,h); 
   }
 
   void MultiBodySystem::updaterFactors() {
@@ -485,7 +471,7 @@ namespace MBSim {
 
   void MultiBodySystem::updateG(double t) {
 
-    G = SqrMat(trans(W)*slvLLFac(LLM,V)); 
+    G.resize() = SqrMat(trans(W)*slvLLFac(LLM,V)); 
 
     if(checkGSize) Gs.resize();
     else if(Gs.cols() != G.size()) {
@@ -496,9 +482,9 @@ namespace MBSim {
     Gs << G;
   }
 
-  void MultiBodySystem::updateb(double t) {
-    b = trans(W)*slvLLFac(LLM,h); 
-    Group::updateb(t);
+  void MultiBodySystem::updatewb(double t) {
+    wb.init(0);
+    Group::updatewb(t);
   }
 
   void MultiBodySystem::updater(double t) {
@@ -604,12 +590,11 @@ namespace MBSim {
   }
 
   void MultiBodySystem::computeConstraintForces(double t) {
-    //la = slvLU(G, -b);
-    la = slvLS(G, -b);
+    //la = slvLU(G, -(trans(W)*slvLLFac(LLM,h) + wb));
+    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb));
   }
 
-  void MultiBodySystem::projectViolatedConstraints(double t) 
-  {
+  void MultiBodySystem::projectViolatedConstraints(double t) {
     // PROJECTVIOLATEDCONSTRAINTS projects state, such that constraints are not violated
 
     if(laSize) {
@@ -744,19 +729,19 @@ namespace MBSim {
 
   int MultiBodySystem::solveContactLinearEquations() {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
-    la = slvLU(G,-getb());
+    la = slvLU(G,-(trans(W)*slvLLFac(LLM,h) + wb));
     return 1;
   }
 
   int MultiBodySystem::solveImpactLinearEquations(double dt) {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
-    la = slvLU(G,-(getgd() + getb()*dt));
+    la = slvLU(G,-(gd + trans(W)*slvLLFac(LLM,h)*dt));
     return 1;
   }
 
   int MultiBodySystem::solveContactGaussSeidel() {
     // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
-    s = getb();
+    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
 
     checkContactForTermination();
     if(term) return 0 ;
@@ -777,7 +762,7 @@ namespace MBSim {
 
   int MultiBodySystem::solveImpactGaussSeidel(double dt) {
     // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
-    s = getgd() + getb()*dt ;
+    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
 
     checkImpactForTermination();
     if(term) return 0 ;
@@ -801,7 +786,7 @@ namespace MBSim {
 
     updaterFactors();
 
-    s = getb();
+    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
 
     checkContactForTermination();
     if(term) return 0;
@@ -835,7 +820,7 @@ namespace MBSim {
 
     updaterFactors();
 
-    s = getgd() + getb()*dt;
+    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
 
     checkImpactForTermination();
     if(term) return 0;
@@ -863,6 +848,155 @@ namespace MBSim {
     return iter;
   }
 
+  int MultiBodySystem::solveContactRootFinding() {
+    // SOLVEROOTFINDING solves constraint equations with general Newton method
+
+    updaterFactors();
+
+    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
+
+    int iter;
+    //    int prim = 0;
+    int checkTermLevel = 0;
+
+    Group::solveContactRootFinding(); 
+    double nrmf0 = nrm2(res);
+    Vec res0 = res.copy();
+
+    checkContactForTermination();
+    if(term)
+      return 0 ;
+
+    DiagMat I(la.size(),INIT,1);
+    for(iter=1; iter<maxIter; iter++) {
+
+      if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
+
+      if(numJac) {
+	double dx, xj;
+
+	for(int j=0; j<la.size(); j++) {
+	  xj = la(j);
+
+	  dx = (epsroot() * 0.5);
+	  do dx += dx;
+	  while (xj + dx == la(j));
+
+	  la(j) += dx;
+	  Group::solveContactRootFinding(); 
+	  la(j) = xj;
+	  Jprox.col(j) = (res-res0)/dx;
+	}
+      } 
+      else jacobianContact();
+      Vec dx;
+      if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
+      else if(linAlg == LevenbergMarquardt) {
+	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+	dx >> slvLL(J,trans(Jprox)*res0);
+      }
+      else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
+      else throw 5;
+
+      double alpha = 1;       
+
+      Vec La_old = la.copy();
+
+      double nrmf = 1;
+      for (int k=0; k<maxDampingSteps; k++) {
+	la = La_old - alpha*dx;
+	solveContactRootFinding();
+	nrmf = nrm2(res);
+	if(nrmf < nrmf0) break;
+
+	alpha = 0.5*alpha;  
+      }
+      nrmf0 = nrmf;
+      res0 = res;
+
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkContactForTermination();
+	if(term) break;
+      }
+    }
+    return iter;
+  }
+
+  int MultiBodySystem::solveImpactRootFinding(double dt) {
+    // SOLVEROOTFINDING solves constraint equations with general Newton method
+
+    updaterFactors();
+
+    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
+
+    int iter;
+    //    int prim = 0;
+    int checkTermLevel = 0;
+
+    Group::solveImpactRootFinding(); 
+    double nrmf0 = nrm2(res);
+    Vec res0 = res.copy();
+
+    checkImpactForTermination();
+    if(term)
+      return 0 ;
+
+    DiagMat I(la.size(),INIT,1);
+    for(iter=1; iter<maxIter; iter++) {
+
+      if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
+
+      if(numJac) {
+	double dx, xj;
+
+	for(int j=0; j<la.size(); j++) {
+	  xj = la(j);
+
+	  dx = (epsroot() * 0.5);
+	  do dx += dx;
+	  while (xj + dx == la(j));
+
+	  la(j) += dx;
+	  Group::solveImpactRootFinding(); 
+	  la(j) = xj;
+	  Jprox.col(j) = (res-res0)/dx;
+	}
+      } 
+      else jacobianImpact();
+      Vec dx;
+      if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
+      else if(linAlg == LevenbergMarquardt) {
+	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+	dx >> slvLL(J,trans(Jprox)*res0);
+      }
+      else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
+      else throw 5;
+
+      double alpha = 1;       
+
+      Vec La_old = la.copy();
+
+      double nrmf = 1;
+      for (int k=0; k<maxDampingSteps; k++) {
+	la = La_old - alpha*dx;
+	solveImpactRootFinding();
+	nrmf = nrm2(res);
+	if(nrmf < nrmf0) break;
+
+	alpha = 0.5*alpha;  
+      }
+      nrmf0 = nrmf;
+      res0 = res;
+
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkImpactForTermination();
+	if(term) break;
+      }
+    }
+    return iter;
+  }
   void MultiBodySystem::checkContactForTermination() {
 
     term = true;
@@ -955,156 +1089,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveContactRootFinding() {
-    // SOLVEROOTFINDING solves constraint equations with general Newton method
-
-    updaterFactors();
-
-    s = getb();
-    int iter;
-    //    int prim = 0;
-    int checkTermLevel = 0;
-
-    Group::solveContactRootFinding(); 
-    double nrmf0 = nrm2(res);
-    Vec res0 = res.copy();
-
-    checkContactForTermination();
-    if(term)
-      return 0 ;
-
-    DiagMat I(la.size(),INIT,1);
-    for(iter=1; iter<maxIter; iter++) {
-
-      if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
-
-      if(numJac) {
-	double dx, xj;
-
-	for(int j=0; j<la.size(); j++) {
-	  xj = la(j);
-
-	  dx = (epsroot() * 0.5);
-	  do dx += dx;
-	  while (xj + dx == la(j));
-
-	  la(j) += dx;
-	  Group::solveContactRootFinding(); 
-	  la(j) = xj;
-	  Jprox.col(j) = (res-res0)/dx;
-	}
-      } 
-      else jacobianContact();
-      Vec dx;
-      if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
-      else if(linAlg == LevenbergMarquardt) {
-	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-	dx >> slvLL(J,trans(Jprox)*res0);
-      }
-      else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
-      else throw 5;
-
-      double alpha = 1;       
-
-      Vec La_old = la.copy();
-
-      double nrmf = 1;
-      for (int k=0; k<maxDampingSteps; k++) {
-	la = La_old - alpha*dx;
-	solveContactRootFinding();
-	nrmf = nrm2(res);
-	if(nrmf < nrmf0) break;
-
-	alpha = 0.5*alpha;  
-      }
-      nrmf0 = nrmf;
-      res0 = res;
-
-      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkContactForTermination();
-	if(term) break;
-      }
-    }
-    return iter;
-  }
-
-  int MultiBodySystem::solveImpactRootFinding(double dt) {
-    // SOLVEROOTFINDING solves constraint equations with general Newton method
-
-    updaterFactors();
-
-    s = getgd() + getb()*dt;
-    int iter;
-    //    int prim = 0;
-    int checkTermLevel = 0;
-
-    Group::solveImpactRootFinding(); 
-    double nrmf0 = nrm2(res);
-    Vec res0 = res.copy();
-
-    checkImpactForTermination();
-    if(term)
-      return 0 ;
-
-    DiagMat I(la.size(),INIT,1);
-    for(iter=1; iter<maxIter; iter++) {
-
-      if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
-
-      if(numJac) {
-	double dx, xj;
-
-	for(int j=0; j<la.size(); j++) {
-	  xj = la(j);
-
-	  dx = (epsroot() * 0.5);
-	  do dx += dx;
-	  while (xj + dx == la(j));
-
-	  la(j) += dx;
-	  Group::solveImpactRootFinding(); 
-	  la(j) = xj;
-	  Jprox.col(j) = (res-res0)/dx;
-	}
-      } 
-      else jacobianImpact();
-      Vec dx;
-      if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
-      else if(linAlg == LevenbergMarquardt) {
-	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-	dx >> slvLL(J,trans(Jprox)*res0);
-      }
-      else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
-      else throw 5;
-
-      double alpha = 1;       
-
-      Vec La_old = la.copy();
-
-      double nrmf = 1;
-      for (int k=0; k<maxDampingSteps; k++) {
-	la = La_old - alpha*dx;
-	solveImpactRootFinding();
-	nrmf = nrm2(res);
-	if(nrmf < nrmf0) break;
-
-	alpha = 0.5*alpha;  
-      }
-      nrmf0 = nrmf;
-      res0 = res;
-
-      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkImpactForTermination();
-	if(term) break;
-      }
-    }
-    return iter;
-  }
-
-  void MultiBodySystem::dropContactMatrices() 
-  {
+  void MultiBodySystem::dropContactMatrices() {
     // DROPCONTACTMATRICES writes a file with relevant matrices for debugging
 
     cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
@@ -1234,12 +1219,9 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
       setlaIndMBS(laInd);
-      updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
-      updatesRef(sParent(0,laSize-1)); // Neu
-      updatebRef(bParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
       //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
 
@@ -1250,7 +1232,7 @@ namespace MBSim {
       updateW(t); // wichtig wegen updateWRef
       updateV(t); // ..
       updateG(t); // ..
-      //updateb(t); // unnötig, weil kein h-Vektor und keine Beschl., vielleicht nochmal prüfen, ob rein zeitabhängige anteile berechnet werden
+
       int iter;
       iter = solveImpact();
       //cout <<"Iterations = "<< iter << endl;
@@ -1266,12 +1248,10 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
       setlaIndMBS(laInd);
-      updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
-      updatesRef(sParent(0,laSize-1)); // Neu
-      updatebRef(bParent(0,laSize-1));
+      updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
       //cout << "laSize wrt gd (impact) = " << laSize<< " gdSize = " << gdSize <<endl;
 
@@ -1284,19 +1264,18 @@ namespace MBSim {
 	updateW(t); 
 	updateV(t); 
 	updateG(t); 
-	updateb(t); 
-	//cout << "Iterations = " << solve() << endl;
+	updatewb(t); 
+	int iter;
+	iter = solveContact();
 	checkActivegdd();
 	checkActiveLinks();
 	calclaSize();
 	calcrFactorSize();
 	setlaIndMBS(laInd);
-	updateGRef(GParent(Index(0,getlaSize()-1)));
 	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
 	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
 	updatelaRef(laParent(0,laSize-1));
-	updatesRef(sParent(0,laSize-1)); // Neu
-	updatebRef(bParent(0,laSize-1));
+	updatewbRef(wbParent(0,laSize-1));
 	updaterFactorRef(rFactorParent(0,rFactorSize-1));
 	//cout << "laSize wrt gdd (impact) = " << laSize<< " " << gdSize << endl;
       }
@@ -1306,12 +1285,10 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
       setlaIndMBS(laInd);
-      updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
-      updatesRef(sParent(0,laSize-1)); // Neu
-      updatebRef(bParent(0,laSize-1));
+      updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
       //cout << " laSize before sticking = " << laSize << " gdSize = " << gdSize <<endl;
 
@@ -1327,21 +1304,18 @@ namespace MBSim {
 	updateW(t);  // Prüfen ob nötig
 	updateV(t);  // Prüfen ob nötig
 	updateG(t);  // Prüfen ob nötig
-	updateb(t);  // Prüfen ob nötig
+	updatewb(t);  // Prüfen ob nötig
 	int iter;
 	iter = solveContact();
-	//cout << "Iter (sticking) = " << iter << endl;
 	checkActivegdd();
 	checkActiveLinks();
 	calclaSize();
 	calcrFactorSize();
 	setlaIndMBS(laInd);
-	updateGRef(GParent(Index(0,getlaSize()-1)));
 	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
 	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
 	updatelaRef(laParent(0,laSize-1));
-	updatesRef(sParent(0,laSize-1)); // Neu
-	updatebRef(bParent(0,laSize-1));
+	updatewbRef(wbParent(0,laSize-1));
 	updaterFactorRef(rFactorParent(0,rFactorSize-1));
 	//cout << "laSize wrt gdd (Sticking) = " << laSize<< " " << gdSize << endl;
       }
@@ -1352,12 +1326,10 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
       setlaIndMBS(laInd);
-      updateGRef(GParent(Index(0,getlaSize()-1)));
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
-      updatesRef(sParent(0,laSize-1)); // Neu
-      updatebRef(bParent(0,laSize-1));
+      updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
       //cout << "laSize wrt gdd (smooth) = " << laSize<< " " << gdSize << endl;
     }

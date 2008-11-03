@@ -68,13 +68,9 @@ namespace MBSim {
     }
   }
   
-  void ContactKinematicsPointLine::updateb(Vec &b, const Vec &g, vector<ContourPointData> &cpData) {
+  void ContactKinematicsPointLine::updatewb(Vec &wb, const Vec &g, vector<ContourPointData> &cpData) {
 
-    //double sd2 = 0; // point
-    //double kappa1 = 0; // line
-    //Mat Wt = cpData[iline].Wt;
-    Vec b1 = line->computeWb(); // Mit - hat es funktioniert
-    //cout << b1 << endl;
+    Vec b1 = line->computeWb(); 
     Vec Wn1 = cpData[iline].Wn;
     Vec Wn2 = cpData[ipoint].Wn;
     Vec Wt1 = crossProduct(Wn1,b1);
@@ -84,27 +80,12 @@ namespace MBSim {
     Vec Om1 = line->getMovingFrame()->getAngularVelocity();
     Vec Om2 = point->getMovingFrame()->getAngularVelocity();
 
-    if(true) {
       double kappa_sd2 = -trans(b1)*(Om2 - Om1);
       double sd1 = trans(Wt1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
-      //cout<< "b0 = " << b << endl;
-      b(0) += trans(Wn1)*(-crossProduct(Om1,vC1)) + sd1 * trans(b1) * Om1
+      wb(0) += trans(Wn1)*(-crossProduct(Om1,vC1)) + sd1 * trans(b1) * Om1
 	    + trans(Wn2)*(-crossProduct(Om2,vC2)) - kappa_sd2*trans(Wt2)*vC2;
-      if(b.size() > 1)
-	b(1) += trans(Wt1)*(-crossProduct(Om1,vC1)) + trans(Wt2)*(-crossProduct(Om2,vC2)) + kappa_sd2*trans(Wn2)*vC2;
-      //cout<< "b1 = " << b << endl;
-      //cout << "vc1 = " <<vC1 << endl;
-      //cout<< "t1 = " << trans(Wt1)*(-crossProduct(Om1,vC1)) << endl;
-      //cout<< "t2 = " << trans(Wt2)*(-crossProduct(Om2,vC2)) << endl;
-      //cout<< "t3 = " <<  kappa_sd2*trans(Wn2)*vC2 << endl;
-    } 
-    else {
-      //b(0) -= trans(cpData[iline].Wn)*(crossProduct(line->getMovingFrame()->getAngularVelocity(),line->getMovingFrame()->getVelocity()) - crossProduct(point->getMovingFrame()->getAngularVelocity(),point->getMovingFrame()->getVelocity())) - trans(line->getCb())*(sd[iline]*line->getMovingFrame()->getAngularVelocity());
-//cout <<"Here = "<< trans(line->computeWb())*(sd[iline]*line->getMovingFrame()->getAngularVelocity()) << endl;
-    }
+      if(wb.size() > 1)
+	wb(1) += trans(Wt1)*(-crossProduct(Om1,vC1)) + trans(Wt2)*(-crossProduct(Om2,vC2)) + kappa_sd2*trans(Wn2)*vC2;
   }
-    //kappa[ipoint] = inf;
-    //b(0) += trans(cpData[iline].Wn)*(sd[iline]*crossProduct(line->getWomegaC(),cpData[iline].Wt.col(0)) - sd[ipoint]*crossProduct(point->getWomegaC(),cpData[ipoint].Wt.col(0)) + crossProduct(line->getWomegaC(),line->getWrOP()) - crossProduct(point->getWomegaC(),point->getWrOP())) + trans(cpData[iline].Wt.col(0))*(kappa[iline]*sd[iline]*line->getWvP() - kappa[ipoint]*sd[ipoint]*point->getWvP()) ;
-
 }
 

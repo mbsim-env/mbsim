@@ -68,7 +68,7 @@ namespace MBSim {
       virtual void assignContours(const vector<Contour*> &contour) = 0;
       /*! Treats ordering of contours \param contour1 and \param contour2 */
       void assignContours(Contour *contour1, Contour *contour2) {vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
-      virtual void updateb(Vec &b, const Vec &g, vector<ContourPointData> &cpData) {};
+      virtual void updatewb(Vec &wb, const Vec &g, vector<ContourPointData> &cpData) {};
   };
 
 }

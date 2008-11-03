@@ -118,13 +118,6 @@ namespace MBSim {
       r[i] += V[i]*la;
   }
 
-  void Contact::updateb(double t) {
-    for(unsigned i=0; i<contour.size(); i++) {
-      contour[i]->updateMovingFrame(t, cpData[i]);
-      b += trans(fF[i](Index(0,2),Index(0,laSize-1)))*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
-    }
-  }
-
   void Contact::init() {
     Link::init();
 

@@ -75,9 +75,9 @@ namespace MBSim {
       Mat W, V;
       Vec la;
       Vec dla;
-      Vec s;
       Vec g, gd;
-      Vec b;
+      Vec wb;
+      Vec b; // TODO: löschen
       Vec res;
       Vec rFactor;
 
@@ -124,8 +124,6 @@ namespace MBSim {
       const Vector<int>& getjsv() const {return jsv;}
       const Vec& getla() const {return la;}
       Vec& getla() {return la;}
-      const Vec& gets() const {return s;}
-      Vec& gets() {return s;}
       const Vec& getres() const {return res;}
       Vec& getres() {return res;}
       const Vec& getg() const {return g;}
@@ -179,7 +177,7 @@ namespace MBSim {
       virtual void updateM(double t); 
       virtual void updateW(double t); 
       virtual void updateV(double t); 
-      virtual void updateb(double t); 
+      virtual void updatewb(double t); 
       virtual void updater(double t); 
       virtual void updateStopVector(double t); 
       virtual void facLLM() = 0;
@@ -210,8 +208,7 @@ namespace MBSim {
       void updateWRef(const Mat &ref);
       void updateVRef(const Mat &ref);
       void updatelaRef(const Vec &ref);
-      void updatebRef(const Vec &ref);
-      void updatesRef(const Vec &ref);
+      void updatewbRef(const Vec &ref);
       void updateresRef(const Vec &ref);
       void updaterFactorRef(const Vec &ref);
 

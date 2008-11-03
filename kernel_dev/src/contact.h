@@ -85,7 +85,6 @@ namespace MBSim {
 
       void updateg(double t);
       void updategd(double t);
-      void updateb(double t);
       void updater(double t);
 
       void updateWRef(const Mat &ref);
