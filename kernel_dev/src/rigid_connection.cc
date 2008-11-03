@@ -60,11 +60,6 @@ namespace MBSim {
     b(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  - trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
   }
 
-  void RigidConnection::projectJ(double dt) {
-//    for(int i=0; i<forceDir.cols() + momentDir.cols(); i++) 
-//      la(i) -= rFactor(i)*s(i);
-  }
-
   void RigidConnection::projectGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();

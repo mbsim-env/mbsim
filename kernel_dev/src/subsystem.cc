@@ -81,7 +81,56 @@ namespace MBSim {
 
     for(unsigned i=0; i<link.size(); i++)
       link[i]->setlaIndMBS(newlaInd);
- }
+  }
+
+  void Subsystem::setlaTol(double tol) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setlaTol(tol);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setlaTol(tol);
+  }
+
+  void Subsystem::setLaTol(double tol) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setLaTol(tol);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setLaTol(tol);
+  }
+
+  void Subsystem::setgdTol(double tol) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setgdTol(tol);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setgdTol(tol);
+  }
+
+  void Subsystem::setgddTol(double tol) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setgddTol(tol);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setgddTol(tol);
+  }
+
+  void Subsystem::setrMax(double rMax) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setrMax(rMax);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setrMax(rMax);
+  }
+
+  void Subsystem::setScaleTolQ(double scaleTolQ) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setScaleTolQ(scaleTolQ);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setScaleTolQ(scaleTolQ);
+  }
+
+  void Subsystem::setScaleTolp(double scaleTolp) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i!= subsystem.end(); ++i)
+      (**i).setScaleTolp(scaleTolp);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setScaleTolp(scaleTolp);
+  }
 
   void Subsystem::setFullName(const string &str) {
     Element::setFullName(str);
@@ -101,14 +150,14 @@ namespace MBSim {
       port[i]->setFullName(getFullName() + "." + port[i]->getName());
     for(unsigned i=0; i<contour.size(); i++)
       contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
- }
+  }
 
   void Subsystem::init() {
 
-   // if(mbs != this) {
-   //   port[0]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
-   //   port[0]->setOrientation(portParent->getOrientation()*APK);
-   // }
+    // if(mbs != this) {
+    //   port[0]->setPosition(portParent->getPosition() +  portParent->getOrientation()*PrPK);
+    //   port[0]->setOrientation(portParent->getOrientation()*APK);
+    // }
 
     // Kinematik der anderen KOSY (außer Ursprung- und Referenz-) updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
@@ -235,7 +284,7 @@ namespace MBSim {
     outputfile << "# u0:" << endl;
     outputfile << u0 << endl << endl;
 
-  // all Subsystems of Subsystems
+    // all Subsystems of Subsystems
     outputfile << "# Subsystems:" << endl;
     for(vector<Subsystem*>::iterator i = subsystem.begin();  i != subsystem.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -246,8 +295,8 @@ namespace MBSim {
     }
     outputfile << endl;
 
-  // all Objects of Subsystems
-    
+    // all Objects of Subsystems
+
     outputfile << "# Objects:" << endl;
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -258,7 +307,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
-  // all Links of Subsystems
+    // all Links of Subsystems
     outputfile << "# Links:" << endl;
     for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -269,7 +318,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
-  // all EDIs of Subsystems
+    // all EDIs of Subsystems
     outputfile << "# EDIs:" << endl;
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -299,23 +348,23 @@ namespace MBSim {
       outputfile << endl;
     }
 
- //   if(mbs != this) {
- //     outputfile << "# Reference coordinate system:" << endl;
- //     outputfile << port[iRef]->getName() << endl;
- //     outputfile << endl;
+    //   if(mbs != this) {
+    //     outputfile << "# Reference coordinate system:" << endl;
+    //     outputfile << port[iRef]->getName() << endl;
+    //     outputfile << endl;
 
- //     outputfile << "# Parent coordinate system:" << endl;
- //     outputfile << portParent->getFullName() << endl;
- //     outputfile << endl;
+    //     outputfile << "# Parent coordinate system:" << endl;
+    //     outputfile << portParent->getFullName() << endl;
+    //     outputfile << endl;
 
- //     outputfile << "# Translation:" << endl;
- //     outputfile << PrPK << endl;
- //     outputfile << endl;
+    //     outputfile << "# Translation:" << endl;
+    //     outputfile << PrPK << endl;
+    //     outputfile << endl;
 
- //     outputfile << "# Rotation:" << endl;
- //     outputfile << APK << endl;
- //     outputfile << endl;
- //   }
+    //     outputfile << "# Rotation:" << endl;
+    //     outputfile << APK << endl;
+    //     outputfile << endl;
+    //   }
   }
 
   void Subsystem::load(const string &path, ifstream& inputfile) {
@@ -1004,7 +1053,7 @@ namespace MBSim {
 
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy) {
 
-     if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
+    if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
       cout << "Error: The Subsystem " << name << " can only comprise one CoordinateSystem by the name " <<  cosy->getName() << "!" << endl;
       assert(getCoordinateSystem(cosy->getName(),false)==NULL);
     }
@@ -1014,7 +1063,7 @@ namespace MBSim {
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
 
     addCoordinateSystem(cosy);
-        
+
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
@@ -1026,10 +1075,10 @@ namespace MBSim {
   void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
     addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
   }
-  
+
   void Subsystem::addContour(Contour* contour_) {
 
-     if(getContour(contour_->getName(),false)) { //Contourname exists already
+    if(getContour(contour_->getName(),false)) { //Contourname exists already
       cout << "Error: The Subsystem " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
       assert(getContour(contour_->getName(),false)==NULL);
     }
@@ -1039,7 +1088,7 @@ namespace MBSim {
   void Subsystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
 
     addContour(contour);
-    
+
     int i = 0;
     if(refCoordinateSystem)
       i = portIndex(refCoordinateSystem);
@@ -1206,13 +1255,13 @@ namespace MBSim {
 
   //  return false;
   //}
-  
+
   bool Subsystem::gActiveChanged() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       if ((*i)->gActiveChanged())
 	return true;
-    
+
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       if ((*i)->gActiveChanged())
 	return true;
@@ -1220,18 +1269,18 @@ namespace MBSim {
     return false;
   }
 
-//  bool Subsystem::activeHolonomicConstraintsChanged() {
-//
-//    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-//      if ((*i)->activeHolonomicConstraintsChanged())
-//	return true;
-//    
-//    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-//      if ((*i)->activeHolonomicConstraintsChanged())
-//	return true;
-//
-//    return false;
-//  }
+  //  bool Subsystem::activeHolonomicConstraintsChanged() {
+  //
+  //    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+  //      if ((*i)->activeHolonomicConstraintsChanged())
+  //	return true;
+  //    
+  //    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+  //      if ((*i)->activeHolonomicConstraintsChanged())
+  //	return true;
+  //
+  //    return false;
+  //  }
 
   void Subsystem::checkActiveLinks() {
 
@@ -1239,7 +1288,7 @@ namespace MBSim {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->checkActiveLinks();
-    
+
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       if((*i)->isActive()) {
 	linkSetValuedActive.push_back(*i);
@@ -1359,16 +1408,93 @@ namespace MBSim {
       assert(getDataInterfaceBase(dib_->getName(),false) == NULL);
     }
     DIB.push_back(dib_);
-   // dib_->setName(getFullName()+"."+dib_->getName());
+    // dib_->setName(getFullName()+"."+dib_->getName());
   }
 
-  int Subsystem::solveFixpointSingle(double dt) {
+  int Subsystem::solveContactFixpointSingle() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveFixpointSingle(dt); 
+      (*i)->solveContactFixpointSingle(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->projectGS(dt);
+      (*i)->solveContactFixpointSingle();
+
+    return 0;
+  }
+
+  int Subsystem::solveImpactFixpointSingle() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveImpactFixpointSingle(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->solveImpactFixpointSingle();
+
+    return 0;
+  }
+
+  int Subsystem::solveContactGaussSeidel() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveContactGaussSeidel(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->solveContactGaussSeidel();
+
+    return 0;
+  }
+
+  int Subsystem::solveImpactGaussSeidel() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveImpactGaussSeidel(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->solveImpactGaussSeidel();
+
+    return 0;
+  }
+
+  int Subsystem::solveContactRootFinding() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveContactRootFinding(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->solveContactRootFinding();
+
+    return 0;
+  }
+
+  int Subsystem::solveImpactRootFinding() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->solveImpactRootFinding(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->solveImpactRootFinding();
+
+    return 0;
+  }
+
+  int Subsystem::jacobianContact() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->jacobianContact(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->jacobianContact();
+
+    return 0;
+  }
+
+  int Subsystem::jacobianImpact() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->jacobianImpact(); 
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+      (*i)->jacobianImpact();
 
     return 0;
   }
@@ -1382,22 +1508,22 @@ namespace MBSim {
       (**i).updaterFactors();
   }
 
-  void Subsystem::checkForTermination(double dt) {
+  void Subsystem::checkContactForTermination() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkForTermination(dt); 
+      (*i)->checkContactForTermination(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkForTermination(dt);
+      (**i).checkContactForTermination();
   }
 
-  void Subsystem::checkForTermination() {
+  void Subsystem::checkImpactForTermination() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkForTermination(); 
+      (*i)->checkImpactForTermination(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkForTermination();
+      (**i).checkImpactForTermination();
   }
 
   void Subsystem::addObject(TreeRigid *tree) {
@@ -1406,7 +1532,7 @@ namespace MBSim {
     addSubsystem(tree,Vec(3),SqrMat(3,EYE));
   }
   void Subsystem::addObject(BodyRigid *body) {
-     // ADDOBJECT adds an object
+    // ADDOBJECT adds an object
     body->setFullName(name+"."+body->getName());
     body->setParent(this);
     if(getObject(body->getName(),false)) {

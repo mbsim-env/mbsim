@@ -231,23 +231,28 @@ namespace MBSim {
       void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
       void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
 
-      virtual void projectJ(double dt) { cout << "\nprojectJ not implemented." << endl; throw 50; }
-      virtual void projectGS(double dt) { cout << "\nprojectGS not implemented." << endl; throw 50; }
-      virtual void solveGS(double dt) { cout << "\nsolveGS not implemented." << endl; throw 50; }
-      virtual void solveGS() { cout << "\nsolveGS not implemented." << endl; throw 50; }
-
-      virtual void residualProj(double dt) { cout << "\nresidualProj not implemented." << endl; throw 50; }
-      virtual void checkForTermination(double dt) { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
-      virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getName());}
-      virtual void residualProjJac(double dt) { cout << "\nresidualProjJac not implemented." << endl; throw 50; }
-
+      virtual void solveImpactFixpointSingle() { cout << "\nsolveImpactFixpointSingle not implemented." << endl; throw 50; }
+      virtual void solveContactFixpointSingle() { cout << "\nsolveContactFixpointSingle not implemented." << endl; throw 50; }
+      virtual void solveImpactGaussSeidel() { cout << "\nsolveImpactGaussSeidel not implemented." << endl; throw 50; }
+      virtual void solveContactGaussSeidel() { cout << "\nsolveContactGaussSeidel not implemented." << endl; throw 50; }
+      virtual void solveContactRootFinding() { cout << "\nsolveContactRootFinding not implemented." << endl; throw 50; }
+      virtual void solveImpactRootFinding() { cout << "\nsolveImpactRootFinding not implemented." << endl; throw 50; }
+      virtual void jacobianContact() { cout << "\njacobianContact not implemented." << endl; throw 50; }
+      virtual void jacobianImpact() { cout << "\njacobianContact not implemented." << endl; throw 50; }
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }
+
+      virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getName());}
+
       void decreaserFactors();
-      virtual void checkForTermination() { cout << "\ncheckForTermination not implemented." << endl; throw 50; }
+
+      virtual void checkContactForTermination() { cout << "\ncheckContactForTermination not implemented." << endl; throw 50; }
+      virtual void checkImpactForTermination() { cout << "\ncheckImpactForTermination not implemented." << endl; throw 50; }
 
       /*! Defines the maximum error radius lambdas have to match. */  
       virtual void setlaTol(double tol) {laTol = tol;}
+      virtual void setLaTol(double tol) {LaTol = tol;}
       virtual void setgdTol(double tol) {gdTol = tol;}
+      virtual void setgddTol(double tol) {gddTol = tol;}
       virtual void setScaleTolQ(double scaleTolQ_) {scaleTolQ = scaleTolQ_;}
       virtual void setScaleTolp(double scaleTolp_) {scaleTolp = scaleTolp_;}
 

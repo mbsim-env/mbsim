@@ -52,13 +52,6 @@ namespace MBSim {
       /** number of friction directions: 0 = frictionless, 1 = planar friction, 2 = spatial friction */
       //int nFric;
 
-      //virtual void checkActive();
-      //virtual bool isActive() const {return true;}
-      
-     // virtual bool isClosed() const = 0;
-     // virtual bool remainsClosed() const = 0;
-     // virtual bool isSticking() const = 0;
-
       ContactKinematics *contactKinematics;
 
     public:

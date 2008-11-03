@@ -215,6 +215,16 @@ namespace MBSim {
       void updateresRef(const Vec &ref);
       void updaterFactorRef(const Vec &ref);
 
+      /*! set scale factor for Flow Quantity Tolerances tolQ=tol*scaleTolQ */
+      void setScaleTolQ(double scaleTolQ);
+      /*! set scale factor for Pressure Quantity Tolerances tolp=tol*scaleTolp */
+      void setScaleTolp(double scaleTolp);
+      void setgdTol(double tol);
+      void setgddTol(double tol);
+      void setlaTol(double tol);
+      void setLaTol(double tol);
+      void setrMax(double rMax);
+
       void addCoordinateSystem(CoordinateSystem * port);
       void addContour(Contour* contour);
 
@@ -289,19 +299,22 @@ namespace MBSim {
 
       virtual HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);
 
-      //virtual void setActiveConstraintsChanged(bool b) {parent->setActiveConstraintsChanged(b);}
-      //
-      //bool activeConstraintsChanged();
       bool gActiveChanged();
-      //bool activeHolonomicConstraintsChanged();
 
-      virtual int solveFixpointSingle(double dt);
-      virtual void checkForTermination(double dt);
+      virtual int solveContactFixpointSingle();
+      virtual int solveImpactFixpointSingle();
+      virtual int solveContactGaussSeidel();
+      virtual int solveImpactGaussSeidel();
+      virtual int solveContactRootFinding();
+      virtual int solveImpactRootFinding();
+      virtual int jacobianContact();
+      virtual int jacobianImpact();
+
       virtual void updaterFactors();
 
-      virtual void checkForTermination();
-      //virtual int getlaIndMBS() const {return parent->getlaIndMBS() + laInd;}
-      //
+      virtual void checkContactForTermination();
+      virtual void checkImpactForTermination();
+
       void setMultiBodySystem(MultiBodySystem* sys);
       void setFullName(const string &str);
       void setlaIndMBS(int laIndParent);

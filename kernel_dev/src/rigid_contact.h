@@ -58,26 +58,23 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-      /*! for time integration with projection methods for constraint and contact treatment */
-      void projectJ(double dt) {}
-      /*! for time integration with projection methods for constraint and contact treatment */
-      void projectGS(double dt);
-      /*! for time integration with projection methods for constraint and contact treatment */
-      void solveGS(double dt);
-      void solveGS();
-      /*! for time integration with projection methods for constraint and contact treatment */
+      void solveImpactFixpointSingle();
+      void solveContactFixpointSingle();
+      void solveImpactGaussSeidel();
+      void solveContactGaussSeidel();
+      void solveImpactRootFinding();
+      void solveContactRootFinding();
+      void jacobianContact();
+      void jacobianImpact();
+
       void updaterFactors();
 
       void updateCondition();
 
-      void checkActivegdn();
-      void checkActivegdd(); 
+      
+      void checkContactForTermination();
+      void checkImpactForTermination();
 
-      /*! for time integration with projection methods for constraint and contact treatment */
-      void residualProj(double dt);
-      void residualProjJac(double dt);
-      void checkForTermination(double dt);
-      void checkForTermination();
       std::string getTerminationInfo(double dt);
 
       void updateW(double t);
@@ -96,10 +93,12 @@ namespace MBSim {
       string getType() const {return "RigidContact";}
 
       bool isActive() const {return gActive;}
-      void checkActiveg() { gActive = fcl->isClosed(g(0),0) ? 1 : 0; }
-      void checkActivegd() { gdActive[0] = gActive ? (fcl->remainsClosed(gd(0),gdTol) ? 1 : 0) : 0; gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gd(1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; }
-    
-      void checkAllgd() { gdActive[0] = gActive ? 1 : 0; gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; }
+
+      void checkActiveg();
+      void checkActivegd();
+      void checkActivegdn();
+      void checkActivegdd(); 
+      void checkAllgd();
   };
 
 }
