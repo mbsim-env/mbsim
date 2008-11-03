@@ -50,7 +50,6 @@ namespace MBSim {
       void setImpactMomentLaw(NormalImpactLaw * rc) {fiml = rc;}
 
       void updateW(double t);
-      void projectJ(double dt);
       void projectGS(double dt);
       void solveGS(double dt);
       void checkForTermination(double dt);

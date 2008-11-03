@@ -39,11 +39,11 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false) { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false) { //, activeConstraintsChanged(true)
 
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false)  { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false)  { //, activeConstraintsChanged(true)
 
   }
 
@@ -106,7 +106,7 @@ namespace MBSim {
     updateTRef(TParent);
     updateLLMRef(LLMParent);
 
-    Subsystem::init();
+    Group::init();
 
     updatesvRef(svParent);
     updatejsvRef(jsvParent);
@@ -127,18 +127,31 @@ namespace MBSim {
     updaterFactorRef(rFactorParent);
 
 
-    // solver specific settings
-    cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
-    if(solver == GaussSeidel) solve_ = &MultiBodySystem::solveGaussSeidel;
-    else if(solver == LinearEquations) {
-      solve_ = &MultiBodySystem::solveLinearEquations;
+    // contact solver specific settings
+    cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+    if(contactSolver == GaussSeidel) solveContact_ = &MultiBodySystem::solveContactGaussSeidel; 
+    else if(contactSolver == LinearEquations) {
+      solveContact_ = &MultiBodySystem::solveContactLinearEquations;
       cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
     }
-    else if(solver == FixedPointSingle) solve_ = &MultiBodySystem::solveFixpointSingle;
-    else if(solver == FixedPointTotal) solve_ = &MultiBodySystem::solveFixpointTotal;
-    else if(solver == RootFinding)solve_ = &MultiBodySystem::solveRootFinding;
+    else if(contactSolver == FixedPointSingle) solveContact_ = &MultiBodySystem::solveContactFixpointSingle;
+    else if(contactSolver == RootFinding)solveContact_ = &MultiBodySystem::solveContactRootFinding;
     else {
-      cout << "Error: unknown solver" << endl;
+      cout << "Error: unknown contact solver" << endl;
+      throw 5;
+    }
+
+    // impact solver specific settings
+    cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
+    if(impactSolver == GaussSeidel) solveImpact_ = &MultiBodySystem::solveImpactGaussSeidel; 
+    else if(impactSolver == LinearEquations) {
+      solveImpact_ = &MultiBodySystem::solveImpactLinearEquations;
+      cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+    }
+    else if(impactSolver == FixedPointSingle) solveImpact_ = &MultiBodySystem::solveImpactFixpointSingle;
+    else if(impactSolver == RootFinding)solveImpact_ = &MultiBodySystem::solveImpactRootFinding;
+    else {
+      cout << "Error: unknown impact solver" << endl;
       throw 5;
     }
 
@@ -151,8 +164,7 @@ namespace MBSim {
 
   }
 
-  void MultiBodySystem::setDirectory() 
-  {
+  void MultiBodySystem::setDirectory() {
     // SETDIRECTORY creates directories for outputs
 
     int i;
@@ -328,7 +340,7 @@ namespace MBSim {
   void MultiBodySystem::initz(Vec& z) {
     // INITZ initialises the state of object and EDIs for whole multibody system
     updatezRef(z);
-    Subsystem::initz();
+    Group::initz();
   }
 
   double MultiBodySystem::computePotentialEnergy() {
@@ -415,6 +427,7 @@ namespace MBSim {
     updateM(t); 
     facLLM(); 
     updateW(t); 
+    updateV(t); 
     updateG(t); 
     b = trans(W)*slvLLFac(LLM,h); 
   }
@@ -436,7 +449,7 @@ namespace MBSim {
 
     }
     else if(strategy == local) {
-      Subsystem::updaterFactors();
+      Group::updaterFactors();
     } 
     else {
       cout << "Unknown strategy" << endl;
@@ -463,10 +476,10 @@ namespace MBSim {
   void MultiBodySystem::updateW(double t) {
     W.init(0);
     Group::updateW(t);
-    V = W;
   }
 
   void MultiBodySystem::updateV(double t) {
+    V = W;
     Group::updateV(t);
   }
 
@@ -653,7 +666,7 @@ namespace MBSim {
       (**i).initla();
   }
 
-  void MultiBodySystem::preInteg(MultiBodySystem *parent){
+  void MultiBodySystem::preInteg(MultiBodySystem *parent) {
     if(preIntegrator){
       setProjectDirectory(name+".preInteg");
       setAccelerationOfGravity(parent->getGrav()); //TODO bedeutet, dass fuer Vorintegration der gravitationsvektor im MBS parent schon gesetzt sein muss.
@@ -729,153 +742,68 @@ namespace MBSim {
     return NULL;
   }
 
-
-  void MultiBodySystem::setlaTol(double tol) {
-    vector<Link*>::iterator i;
-    for(i = link.begin(); i!= link.end(); ++i)
-      (**i).setlaTol(tol);
+  int MultiBodySystem::solveContactLinearEquations() {
+    // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
+    la = slvLU(G,-getb());
+    return 1;
   }
 
-  void MultiBodySystem::setgdTol(double tol) {
-    vector<Link*>::iterator i;
-    for(i = link.begin(); i!= link.end(); ++i)
-      (**i).setgdTol(tol);
-  }
-
-  void MultiBodySystem::setScaleTolQ(double scaleTolQ) {
-    vector<Link*>::iterator i;
-    for(i = link.begin(); i!= link.end(); ++i)
-      (**i).setScaleTolQ(scaleTolQ);
-  }
-
-  void MultiBodySystem::setScaleTolp(double scaleTolp) {
-    vector<Link*>::iterator i;
-    for(i = link.begin(); i!= link.end(); ++i)
-      (**i).setScaleTolp(scaleTolp);
-  }
-
-  void MultiBodySystem::setrMax(double rMax) {
-    vector<Link*>::iterator i;
-    for(i = link.begin(); i!= link.end(); ++i)
-      (**i).setrMax(rMax);
-  }
-
-  int MultiBodySystem::solveLinearEquations(double dt) {
+  int MultiBodySystem::solveImpactLinearEquations(double dt) {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
     la = slvLU(G,-(getgd() + getb()*dt));
     return 1;
   }
 
-  int MultiBodySystem::solveGaussSeidel() {
+  int MultiBodySystem::solveContactGaussSeidel() {
     // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
     s = getb();
 
-    checkForTermination();
+    checkContactForTermination();
     if(term) return 0 ;
 
     int iter;
     int checkTermLevel = 0;
 
     for(iter = 1; iter<=maxIter; iter++) {
-      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS();
+      Group::solveContactGaussSeidel();
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
 	checkTermLevel++;
-	checkForTermination();
+	checkContactForTermination();
 	if(term) break;
       }
     }
     return iter;
   }
 
-  int MultiBodySystem::solveImpact() {
-    // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
-    s = getgd();
-
-    checkForTermination(1);
-    if(term) return 0 ;
-
-    int iter;
-    int checkTermLevel = 0;
-
-    for(iter = 1; iter<=maxIter; iter++) {
-      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS(1);
-      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkForTermination(1);
-	if(term) break;
-      }
-    }
-    return iter;
-  }
-
-  int MultiBodySystem::solveGaussSeidel(double dt) {
+  int MultiBodySystem::solveImpactGaussSeidel(double dt) {
     // SOLVEGAUSSSEIDEL solves constraint equations with Gauss-Seidel scheme
     s = getgd() + getb()*dt ;
 
-    checkForTermination(dt);
+    checkImpactForTermination();
     if(term) return 0 ;
 
     int iter;
     int checkTermLevel = 0;
 
     for(iter = 1; iter<=maxIter; iter++) {
-      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).solveGS(dt);
+      Group::solveImpactGaussSeidel();
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
 	checkTermLevel++;
-	checkForTermination(dt);
+	checkImpactForTermination();
 	if(term) break;
       }
     }
     return iter;
   }
 
-  int MultiBodySystem::solveFixpointTotal(double dt)
-  {
-    // SOLVEFIXEDPOINTTOTAL solves constraint equations with total step iteration
-
-    updaterFactors();
-
-    Vec s0 = getgd() + getb()*dt ;
-    s = s0;
-
-    checkForTermination(dt);
-    if(term) return 0 ;
-
-    int iter, level = 0;
-    //    int checkTermLevel = 0;
-
-    for(iter = 1; iter<=maxIter; iter++) {
-      double *a = getGs()();
-      int *ia = getGs().Ip();
-      int *ja = getGs().Jp();
-      for(int i=0; i < G.size(); i++) {
-	for(int j=ia[i]; j<ia[1+i]; j++) s(i) += a[j]*la(ja[j]);
-      }
-
-      if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-	level++;
-	decreaserFactors();
-	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter<<endl;
-      }
-
-      for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (*ic)->projectJ(dt);
-
-      s = s0;
-      checkForTermination(dt);
-      if(term) break;
-    }
-    return iter;
-  }
-
-  int MultiBodySystem::solveFixpointSingle(double dt)
-  {
+  int MultiBodySystem::solveContactFixpointSingle() {
     // SOLVEFIXEDPOINTSINGLE solves constraint equations with single step iteration
 
     updaterFactors();
 
-    s = getgd() + getb()*dt;
+    s = getb();
 
-    checkForTermination(dt);
+    checkContactForTermination();
     if(term) return 0;
 
     int iter, level = 0;
@@ -890,11 +818,11 @@ namespace MBSim {
 	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
       }
 
-      Subsystem::solveFixpointSingle(dt);
+      Group::solveContactFixpointSingle();
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
 	checkTermLevel++;
-	checkForTermination(dt);
+	checkContactForTermination();
 	if(term) break;
       }
     }
@@ -902,123 +830,146 @@ namespace MBSim {
   }
 
 
-  void MultiBodySystem::residualProj(double dt) 
-  {
-
-    for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) (**ic).residualProj(dt);
-  }
-
-  void MultiBodySystem::checkForTermination(double dt) {
-
-    term = true;
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkForTermination(dt); 
-
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
-      (**i).checkForTermination(dt);
-      if(term == false) return;
-    }
-  }
-
-  void MultiBodySystem::checkForTermination() {
-
-    term = true;
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkForTermination(); 
-
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
-      (**i).checkForTermination();
-      if(term == false) return;
-    }
-  }
-
-  void MultiBodySystem::residualProjJac(double dt) {
-
-    for(vector<Link*>::iterator ic = linkSetValuedActive.begin(); ic != linkSetValuedActive.end(); ++ic) {
-      (**ic).residualProjJac(dt);
-    }
-  }
-
-  int MultiBodySystem::solve() {
-    // SOLVE solves prox-functions depending on solver settings
-    // INPUT t	time
-
-    if(la.size()==0) return 0;
-
-    if(useOldla)initla();
-    else la.init(0);
-
-    int iter;
-    Vec laOld;
-    laOld = la;
-    iter = solveGaussSeidel(); // solver election
-    if(iter >= maxIter) {
-      cout << endl;
-      cout << "Iterations: " << iter << endl;
-      cout << "\nError: no convergence."<< endl;
-      if(stopIfNoConvergence) {
-	if(dropContactInfo) dropContactMatrices();
-	assert(iter < maxIter);
-      }
-      cout << "Anyway, continuing integration..."<< endl;
-    }
-
-    if(warnLevel>=1 && iter>highIter)
-      cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
-
-    if(useOldla) savela();
-
-    return iter;
-  }
-
-  int MultiBodySystem::solve(double dt) {
-    // SOLVE solves prox-functions depending on solver settings
-    // INPUT t	time
-
-    if(la.size()==0) return 0;
-
-    if(useOldla)initla();
-    else la.init(0);
-
-    int iter;
-    Vec laOld;
-    laOld = la;
-    iter = (this->*solve_)(dt); // solver election
-    if(iter >= maxIter) {
-      cout << endl;
-      cout << "Iterations: " << iter << endl;
-      cout << "\nError: no convergence."<< endl;
-      if(stopIfNoConvergence) {
-	if(dropContactInfo) dropContactMatrices();
-	assert(iter < maxIter);
-      }
-      cout << "Anyway, continuing integration..."<< endl;
-    }
-
-    if(warnLevel>=1 && iter>highIter)
-      cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
-
-    if(useOldla) savela();
-
-    return iter;
-  }
-
-  int MultiBodySystem::solveRootFinding(double dt)
-  {
-    // SOLVEROOTFINDING solves constraint equations with general Newton method
+  int MultiBodySystem::solveImpactFixpointSingle(double dt) {
+    // SOLVEFIXEDPOINTSINGLE solves constraint equations with single step iteration
 
     updaterFactors();
 
     s = getgd() + getb()*dt;
+
+    checkImpactForTermination();
+    if(term) return 0;
+
+    int iter, level = 0;
+    int checkTermLevel = 0;
+
+    for(iter = 1; iter<=maxIter; iter++) {
+
+      if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
+	level++;
+	decreaserFactors();
+	cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+      }
+
+      Group::solveImpactFixpointSingle();
+
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkImpactForTermination();
+	if(term) break;
+      }
+    }
+    return iter;
+  }
+
+  void MultiBodySystem::checkContactForTermination() {
+
+    term = true;
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) { 
+      (*i)->checkContactForTermination(); 
+      if(term == false) return;
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (**i).checkContactForTermination();
+      if(term == false) return;
+    }
+  }
+
+  void MultiBodySystem::checkImpactForTermination() {
+
+    term = true;
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->checkImpactForTermination(); 
+      if(term == false) return;
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (**i).checkImpactForTermination();
+      if(term == false) return;
+    }
+  }
+
+  int MultiBodySystem::solveContact() {
+    // SOLVE solves prox-functions depending on solver settings
+    // INPUT t	time
+
+    if(la.size()==0) return 0;
+
+    if(useOldla)initla();
+    else la.init(0);
+
+    int iter;
+    Vec laOld;
+    laOld = la;
+    iter = (this->*solveContact_)(); // solver election
+    if(iter >= maxIter) {
+      cout << endl;
+      cout << "Iterations: " << iter << endl;
+      cout << "\nError: no convergence."<< endl;
+      if(stopIfNoConvergence) {
+	if(dropContactInfo) dropContactMatrices();
+	assert(iter < maxIter);
+      }
+      cout << "Anyway, continuing integration..."<< endl;
+    }
+
+    if(warnLevel>=1 && iter>highIter)
+      cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
+
+    if(useOldla) savela();
+
+    return iter;
+  }
+
+  int MultiBodySystem::solveImpact(double dt) {
+    // SOLVE solves prox-functions depending on solver settings
+    // INPUT t	time
+
+    if(la.size()==0) return 0;
+
+    if(useOldla)initla();
+    else la.init(0);
+
+    int iter;
+    Vec laOld;
+    laOld = la;
+    iter = (this->*solveImpact_)(dt); // solver election
+    if(iter >= maxIter) {
+      cout << endl;
+      cout << "Iterations: " << iter << endl;
+      cout << "\nError: no convergence."<< endl;
+      if(stopIfNoConvergence) {
+	if(dropContactInfo) dropContactMatrices();
+	assert(iter < maxIter);
+      }
+      cout << "Anyway, continuing integration..."<< endl;
+    }
+
+    if(warnLevel>=1 && iter>highIter)
+      cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
+
+    if(useOldla) savela();
+
+    return iter;
+  }
+
+  int MultiBodySystem::solveContactRootFinding() {
+    // SOLVEROOTFINDING solves constraint equations with general Newton method
+
+    updaterFactors();
+
+    s = getb();
     int iter;
     //    int prim = 0;
     int checkTermLevel = 0;
 
-    residualProj(dt); 
+    Group::solveContactRootFinding(); 
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
 
-    checkForTermination(dt);
+    checkContactForTermination();
     if(term)
       return 0 ;
 
@@ -1038,12 +989,12 @@ namespace MBSim {
 	  while (xj + dx == la(j));
 
 	  la(j) += dx;
-	  residualProj(dt);
+	  Group::solveContactRootFinding(); 
 	  la(j) = xj;
 	  Jprox.col(j) = (res-res0)/dx;
 	}
       } 
-      else residualProjJac(dt);
+      else jacobianContact();
       Vec dx;
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
@@ -1060,7 +1011,7 @@ namespace MBSim {
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
 	la = La_old - alpha*dx;
-	residualProj(dt);
+	solveContactRootFinding();
 	nrmf = nrm2(res);
 	if(nrmf < nrmf0) break;
 
@@ -1071,7 +1022,81 @@ namespace MBSim {
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
 	checkTermLevel++;
-	checkForTermination(dt);
+	checkContactForTermination();
+	if(term) break;
+      }
+    }
+    return iter;
+  }
+
+  int MultiBodySystem::solveImpactRootFinding(double dt) {
+    // SOLVEROOTFINDING solves constraint equations with general Newton method
+
+    updaterFactors();
+
+    s = getgd() + getb()*dt;
+    int iter;
+    //    int prim = 0;
+    int checkTermLevel = 0;
+
+    Group::solveImpactRootFinding(); 
+    double nrmf0 = nrm2(res);
+    Vec res0 = res.copy();
+
+    checkImpactForTermination();
+    if(term)
+      return 0 ;
+
+    DiagMat I(la.size(),INIT,1);
+    for(iter=1; iter<maxIter; iter++) {
+
+      if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
+
+      if(numJac) {
+	double dx, xj;
+
+	for(int j=0; j<la.size(); j++) {
+	  xj = la(j);
+
+	  dx = (epsroot() * 0.5);
+	  do dx += dx;
+	  while (xj + dx == la(j));
+
+	  la(j) += dx;
+	  Group::solveImpactRootFinding(); 
+	  la(j) = xj;
+	  Jprox.col(j) = (res-res0)/dx;
+	}
+      } 
+      else jacobianImpact();
+      Vec dx;
+      if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
+      else if(linAlg == LevenbergMarquardt) {
+	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+	dx >> slvLL(J,trans(Jprox)*res0);
+      }
+      else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
+      else throw 5;
+
+      double alpha = 1;       
+
+      Vec La_old = la.copy();
+
+      double nrmf = 1;
+      for (int k=0; k<maxDampingSteps; k++) {
+	la = La_old - alpha*dx;
+	solveImpactRootFinding();
+	nrmf = nrm2(res);
+	if(nrmf < nrmf0) break;
+
+	alpha = 0.5*alpha;  
+      }
+      nrmf0 = nrmf;
+      res0 = res;
+
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+	checkTermLevel++;
+	checkImpactForTermination();
 	if(term) break;
       }
     }
@@ -1097,21 +1122,20 @@ namespace MBSim {
     contactDrop.close();
   }
 
-  string MultiBodySystem::getSolverInfo() 
-  {
+  string MultiBodySystem::getSolverInfo() {
     // GETSOLVERINFO returns solver information
 
     stringstream info;
 
     // Solver-Name
-    if(solver == GaussSeidel) info << "GaussSeidel";
-    else if(solver == LinearEquations) info << "LinearEquations";
-    else if(solver == FixedPointSingle) info << "FixedPointSingle";
-    else if(solver == FixedPointTotal) info << "FixedPointTotal";
-    else if(solver == RootFinding) info << "RootFinding";
+    if(impactSolver == GaussSeidel) info << "GaussSeidel";
+    else if(impactSolver == LinearEquations) info << "LinearEquations";
+    else if(impactSolver == FixedPointSingle) info << "FixedPointSingle";
+    else if(impactSolver == FixedPointTotal) info << "FixedPointTotal";
+    else if(impactSolver == RootFinding) info << "RootFinding";
 
     // Gauss-Seidel & solveLL do not depend on the following ...
-    if(solver!=GaussSeidel && solver!=LinearEquations) {
+    if(impactSolver!=GaussSeidel && impactSolver!=LinearEquations) {
       info << "(";
 
       // r-Factor strategy
@@ -1119,7 +1143,7 @@ namespace MBSim {
       else if(strategy==local) info << "local";
 
       // linear algebra for RootFinding only
-      if(solver == RootFinding) {
+      if(impactSolver == RootFinding) {
 	info << ",";
 	if(linAlg==LUDecomposition) info << "LU";
 	else if(linAlg==LevenbergMarquardt) info << "LM";
@@ -1305,7 +1329,7 @@ namespace MBSim {
 	updateG(t);  // Prüfen ob nötig
 	updateb(t);  // Prüfen ob nötig
 	int iter;
-	iter = solve();
+	iter = solveContact();
 	//cout << "Iter (sticking) = " << iter << endl;
 	checkActivegdd();
 	checkActiveLinks();

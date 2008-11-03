@@ -95,7 +95,7 @@ namespace MBSim {
       int maxIter, highIter, maxDampingSteps;
       double lmParm;
       int warnLevel;
-      Solver solver;
+      Solver contactSolver, impactSolver;
       Strategy strategy;
       LinAlg linAlg;
       bool stopIfNoConvergence;
@@ -224,20 +224,14 @@ namespace MBSim {
 
       void setTermination(bool term_) {term = term_;}
 
-      /*! set scale factor for Flow Quantity Tolerances tolQ=tol*scaleTolQ */
-      void setScaleTolQ(double scaleTolQ);
-      /*! set scale factor for Pressure Quantity Tolerances tolp=tol*scaleTolp */
-      void setScaleTolp(double scaleTolp);
-      void setgdTol(double tol);
-      void setlaTol(double tol);
-      void setrMax(double rMax);
       void setNumJacProj(bool numJac_) {numJac = numJac_;}
       void setMaxIter(int iter) {maxIter = iter;}
       void setHighIter(int iter) {highIter = iter;}
       void setMaxDampingSteps(int maxDSteps) {maxDampingSteps = maxDSteps;}
       void setLevenbergMarquardtParam(double lmParm_) {lmParm = lmParm_;}
       /*! Set Solver for treatment of constraint problems */
-      void setSolver(Solver solver_) {solver = solver_;}                         
+      void setContactSolver(Solver solver_) {contactSolver = solver_;}                         
+      void setImpactSolver(Solver solver_) {impactSolver = solver_;}                         
       void setLinAlg(LinAlg linAlg_) {linAlg = linAlg_;}                         
       void setStrategy(Strategy strategy_) {strategy = strategy_;}
       /*! Returns information \return string for solver including strategy and linear algebra */
@@ -261,21 +255,25 @@ namespace MBSim {
       //MultiBodySystem* getMultiBodySystem() const {return mbs;};
 
       /*! Solves prox-functions at time \param t depending on solver settings */
-      virtual int solve(double dt); 
-      virtual int solve(); 
-      virtual int solveImpact(); 
-      int (MultiBodySystem::*solve_)(double dt);
-      int solveGaussSeidel(double dt);
-      int solveGaussSeidel();
-      /*! Solves constraint equations at time \param t with Cholesky decomposition */
-      int solveLinearEquations(double dt); 
-      int solveFixpointSingle(double dt); 
-      int solveFixpointTotal(double dt); 
-      int solveRootFinding(double dt); 
-      void residualProj(double dt); 
-      void checkForTermination(double dt); 
-      void checkForTermination(); 
-      void residualProjJac(double dt);
+      virtual int solveContact(); 
+      virtual int solveImpact(double dt = 0); 
+      int (MultiBodySystem::*solveContact_)();
+      int (MultiBodySystem::*solveImpact_)(double dt);
+
+      int solveContactGaussSeidel();
+      int solveImpactGaussSeidel(double dt = 0);
+
+      int solveContactFixpointSingle(); 
+      int solveImpactFixpointSingle(double dt = 0); 
+
+      int solveContactRootFinding(); 
+      int solveImpactRootFinding(double dt = 0); 
+
+      int solveContactLinearEquations(); 
+      int solveImpactLinearEquations(double dt = 0); 
+
+      void checkContactForTermination(); 
+      void checkImpactForTermination(); 
 
       // Just for testing
       void setPartialEventDrivenSolver(bool peds_) {peds = peds_;}

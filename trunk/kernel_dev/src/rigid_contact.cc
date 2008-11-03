@@ -56,6 +56,20 @@ namespace MBSim {
     svSize = 1+getFrictionDirections();
   }
 
+  void RigidContact::checkActiveg() { 
+    gActive = fcl->isClosed(g(0),0) ? 1 : 0; 
+  }
+
+  void RigidContact::checkActivegd() { 
+    gdActive[0] = gActive ? (fcl->remainsClosed(gd(0),gdTol) ? 1 : 0) : 0; 
+    gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gd(1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; 
+  }
+
+  void RigidContact::checkAllgd() { 
+    gdActive[0] = gActive ? 1 : 0; 
+    gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; 
+  }
+
   void RigidContact::save(const string& path, ofstream &outputfile) {
     Contact::save(path, outputfile);
 
@@ -137,7 +151,7 @@ namespace MBSim {
   }
 
   void RigidContact::updateV(double t) {
-    if(getFrictionDirections() && !gdActive[1]) { // TODO laSize > 1
+    if(getFrictionDirections() && !gdActive[1]) { 
       for(unsigned int i=0; i<contour.size(); i++) {
 	V[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i](Index(0,2),iT)*fdf->dlaTdlaN(gd(1,getFrictionDirections()), la(0));
       }
@@ -245,46 +259,40 @@ namespace MBSim {
     }
   }
 
-  //void RigidContact::updateW(double t) {
-  //  fF[0].resize(3,laSize,NONINIT);
-  //  fF[0].col(0) = getContourPointData(0).Wn;
-  //  if(nhca)
-  //    fF[0](Index(0,2),iT) = getContourPointData(0).Wt;
+  void RigidContact::solveContactFixpointSingle() {
 
-  //  //fF[0] = fF;
-  //  fF[1].resize() = -fF[0];
-
-  //  for(unsigned int i=0; i<contour.size(); i++) {
-  //    contour[i]->updateMovingFrame(t, cpData[i]);
-  //    W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i];
-  //  }
-  //}
-
-  //  void RigidContact::checkActive() {
-  //
-  //    bool active_old = active;
-  //
-  //    Contact::checkActive();
-  //
-  //    if(active != active_old)
-  //      parent->setActiveConstraintsChanged(true);
-  //  }
-
-  void RigidContact::projectGS(double dt) {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
-    //cout << name << endl;
-    //cout <<"laInd = "<< laInd << endl;
-    //cout <<"laIndMBS = "<< laIndMBS << endl;
+
+    gdd(0) = s(0);
+    for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
+      gdd(0) += a[j]*laMBS(ja[j]);
+
+    la(0) = (*fcl)(la(0), gdd(0), rFactor(0));
+
+    for(int i=1; i<=getFrictionDirections(); i++) {
+      gdd(i) = s(i);
+      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	gdd(i) += a[j]*laMBS(ja[j]);
+    }
+
+    if(fdf)
+      la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+  } 
+  
+  void RigidContact::solveImpactFixpointSingle() {
+
+    double *a = mbs->getGs()();
+    int *ia = mbs->getGs().Ip();
+    int *ja = mbs->getGs().Jp();
+    Vec &laMBS = mbs->getla();
 
     gdn(0) = s(0);
     for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
-    //la(0) = ((*fcl)(la, gdn, gd, rFactor))(0);
-    //la(0) = (*fcl)(la(0), gdn(0), rFactor(0));
     la(0) = (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
 
     for(int i=1; i<=getFrictionDirections(); i++) {
@@ -295,12 +303,10 @@ namespace MBSim {
 
     if(ftil)
       la(1,getFrictionDirections()) = (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
-    //la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), la(0), rFactor(1));
-    //la(1,getFrictionDirections()) = (*fdf)(la, gdn, gd, rFactor);
-    //la(1,getFrictionDirections()) = (*fdf)(la, gdn, rFactor(1));
   }
 
-  void RigidContact::solveGS() {
+
+  void RigidContact::solveContactGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     double *a = mbs->getGs()();
@@ -328,7 +334,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::solveGS(double dt) {
+  void RigidContact::solveImpactGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     double *a = mbs->getGs()();
@@ -341,8 +347,6 @@ namespace MBSim {
       gdn(0) += a[j]*laMBS(ja[j]);
 
     double om = 1.0;
-    //Vec buf = fcl->solve(parent->getG()(Index(laInd,laInd)), gdn, gd);
-    //double buf = fcl->solve(a[ia[laInd]], gdn(0));
     double buf = fnil->solve(a[ia[laInd]], gdn(0), gd(0));
     la(0) += om*(buf - la(0));
 
@@ -352,17 +356,29 @@ namespace MBSim {
 	gdn(1) += a[j]*laMBS(ja[j]);
 
       if(ftil) {
-	//Vec buf = fdf->solve(a[ia[laInd+1]], la(0), gdn(1));
-	//Vec buf = fdf->solve(parent->getG()(Index(laInd,laInd+1)), la, gdn, gd);
-	//Vec buf = fdf->solve(parent->getG()(Index(laInd+1,laInd+getFrictionDirections())), gdn(1,getFrictionDirections()), la(0));
 	Vec buf = ftil->solve(mbs->getG()(Index(laInd+1,laInd+getFrictionDirections())), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0));
 	la(1,getFrictionDirections()) += om*(buf - la(1,getFrictionDirections()));
       }
     }
   }
 
+  void RigidContact::solveContactRootFinding() {
+    double *a = mbs->getGs()();
+    int *ia = mbs->getGs().Ip();
+    int *ja = mbs->getGs().Jp();
+    Vec &laMBS = mbs->getla();
+    for(int i=0; i < 1+getFrictionDirections(); i++) {
+      gdd(i) = s(i);
+      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	gdd(i) += a[j]*laMBS(ja[j]);
+    }
 
-  void RigidContact::residualProj(double dt) {
+    res(0) = la(0) - (*fcl)(la(0), gdd(0), rFactor(0));
+    if(fdf) 
+      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+  }
+
+  void RigidContact::solveImpactRootFinding() {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -373,18 +389,12 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    //res(0) = la(0) - ((*fcl)(la, gdn, gd, rFactor))(0);
-    //res(0) = la(0) - (*fcl)(la(0), gdn(0), rFactor(0));
     res(0) = la(0) - (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
     if(ftil) 
-      //res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la, gdn, rFactor(1));
-      //res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la, gdn, gd, rFactor);
-      //res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), la(0), rFactor(1));
       res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
-
-  void RigidContact::residualProjJac(double dt) {
+  void RigidContact::jacobianContact() {
 
     SqrMat Jprox = mbs->getJprox();
     SqrMat G = mbs->getG();
@@ -392,8 +402,47 @@ namespace MBSim {
     RowVec jp1=Jprox.row(laIndMBS);
     RowVec e1(jp1.size());
     e1(laIndMBS) = 1;
-    //Vec diff = fcl->diff(la, gdn, gd, rFactor);
-    //Vec diff = fcl->diff(la(0), gdn(0), rFactor(0));
+    Vec diff = fcl->diff(la(0), gdd(0), rFactor(0));
+
+    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS)
+    for(int i=0; i<G.size(); i++) 
+      jp1(i) -= diff(1)*G(laIndMBS,i);
+
+    if(getFrictionDirections() == 1) {
+      Mat diff = fdf->diff(la(1,1), gdd(1,1), la(0), rFactor(1));
+      RowVec jp2=Jprox.row(laIndMBS+1);
+      RowVec e2(jp2.size());
+      e2(laIndMBS+1) = 1;
+      Mat e(2,jp2.size());
+      e(0,laIndMBS) = 1;
+      e(1,laIndMBS+1) = 1;
+      jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndMBS)
+      //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndMBS)
+      for(int i=0; i<G.size(); i++) 
+	jp2(i) -= diff(0,1)*G(laIndMBS+1,i);
+
+    } else if(getFrictionDirections() == 2) {
+      Mat diff = ftil->diff(la(1,2), gdd(1,2), gd(1,2), la(0), rFactor(1));
+      Mat jp2=Jprox(Index(laIndMBS+1,laIndMBS+2),Index(0,Jprox.cols()));
+      Mat e2(2,jp2.cols());
+      e2(0,laIndMBS+1) = 1;
+      e2(1,laIndMBS+2) = 1;
+      jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndMBS+1,laIndMBS+2),Index(0,G.size()-1))
+      for(int i=0; i<G.size(); i++) {
+	jp2(0,i) = diff(0,2)*G(laIndMBS+1,i)+diff(0,3)*G(laIndMBS+2,i);
+	jp2(1,i) = diff(1,2)*G(laIndMBS+1,i)+diff(1,3)*G(laIndMBS+2,i);
+      }
+    }
+  }
+
+  void RigidContact::jacobianImpact() {
+
+    SqrMat Jprox = mbs->getJprox();
+    SqrMat G = mbs->getG();
+
+    RowVec jp1=Jprox.row(laIndMBS);
+    RowVec e1(jp1.size());
+    e1(laIndMBS) = 1;
     Vec diff = fnil->diff(la(0), gdn(0), gd(0), rFactor(0));
 
     jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS)
@@ -401,8 +450,6 @@ namespace MBSim {
       jp1(i) -= diff(1)*G(laIndMBS,i);
 
     if(getFrictionDirections() == 1) {
-      //Mat diff = fdf->diff(la, gdn, gd, rFactor);
-      //Mat diff = fdf->diff(la(1,1), gdn(1,1), la(0), rFactor(1));
       Mat diff = ftil->diff(la(1,1), gdn(1,1), gd(1,1), la(0), rFactor(1));
       RowVec jp2=Jprox.row(laIndMBS+1);
       RowVec e2(jp2.size());
@@ -417,8 +464,6 @@ namespace MBSim {
 
     } else if(getFrictionDirections() == 2) {
       Mat diff = ftil->diff(la(1,2), gdn(1,2), gd(1,2), la(0), rFactor(1));
-      //Mat diff = fdf->diff(la(1,2), gdn(1,2), la(0), rFactor(1));
-      //Mat diff = fdf->diff(la, gdn, gd, rFactor);
       Mat jp2=Jprox(Index(laIndMBS+1,laIndMBS+2),Index(0,Jprox.cols()));
       Mat e2(2,jp2.cols());
       e2(0,laIndMBS+1) = 1;
@@ -428,36 +473,10 @@ namespace MBSim {
 	jp2(0,i) = diff(0,2)*G(laIndMBS+1,i)+diff(0,3)*G(laIndMBS+2,i);
 	jp2(1,i) = diff(1,2)*G(laIndMBS+1,i)+diff(1,3)*G(laIndMBS+2,i);
       }
-
-      //      RowVec jp2=Jprox.row(laIndMBS+1);
-      //      RowVec jp3=Jprox.row(laIndMBS+2);
-      //      double LaT = pow(argT(0),2)+pow(argT(1),2);
-      //      double fabsLaT = sqrt(LaT);
-      //      double laNmu0 = fabs(la(0))*mu0;
-      //      double rFac1 = rFactor(1);
-      //      if(fabsLaT <=  laNmu0) {
-      //	for(int i=0; i<G.size(); i++) {
-      //	  jp2(i) = rFac1*G(laIndMBS+1,i);
-      //	  jp3(i) = rFac1*G(laIndMBS+2,i);
-      //	}
-      //      } else {
-      //	SymMat dfda(2,NONINIT);
-      //	dfda(0,0) = 1-argT(0)*argT(0)/LaT;
-      //	dfda(1,1) = 1-argT(1)*argT(1)/LaT;
-      //	dfda(0,1) = -argT(0)*argT(1)/LaT;
-      //
-      //	for(int i=0; i<G.size(); i++) {
-      //	  double e1 = (i==laIndMBS) ? sign(la(0))*mu0 : 0;
-      //	  double e2 = (i==laIndMBS+1?1.0:0.0);
-      //	  double e3 = (i==laIndMBS+2?1.0:0.0);
-      //	  jp2(i) = e2 - ((dfda(0,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(0,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(0))/fabsLaT;
-      //	  jp3(i) = e3 - ((dfda(1,0)*(e2 - rFac1*G(laIndMBS+1,i)) + dfda(1,1)*(e3 - rFac1*G(laIndMBS+2,i)))*laNmu0 + e1*argT(1))/fabsLaT;
-      //	}
-      //    }
     }
   }
 
-  void RigidContact::checkForTermination() {
+  void RigidContact::checkContactForTermination() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -481,7 +500,7 @@ namespace MBSim {
       }
   }
 
-  void RigidContact::checkForTermination(double dt) {
+  void RigidContact::checkImpactForTermination() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -494,16 +513,12 @@ namespace MBSim {
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    //if(!fcl->isFullfield(la(0),gdn(0),laTol*dt,gdTol)) {
-    //if(!fcl->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
-    if(!fnil->isFullfield(la(0),gdn(0),gd(0),laTol*dt,gdTol)) {
+    if(!fnil->isFullfield(la(0),gdn(0),gd(0),LaTol,gdTol)) {
       mbs->setTermination(false);
       return;
     }
     if(ftil) 
-      //if(!fdf->isFullfield(la,gdn,gd,laTol*dt,gdTol)) {
-      //if(!fdf->isFullfield(la(1,getFrictionDirections()),gdn(1,getFrictionDirections()),la(0),laTol*dt,gdTol)) {
-      if(!ftil->isFullfield(la(1,getFrictionDirections()),gdn(1,getFrictionDirections()),gd(1,getFrictionDirections()),la(0),laTol*dt,gdTol)) {
+      if(!ftil->isFullfield(la(1,getFrictionDirections()),gdn(1,getFrictionDirections()),gd(1,getFrictionDirections()),la(0),LaTol,gdTol)) {
 	mbs->setTermination(false);
 	return;
       }
