@@ -126,7 +126,7 @@ namespace MBSim {
       system.update(z,t); 
       // long clock3 = clock();
 
-      iter = system.solveImpact(dt);
+      iter = system.solveImpacts(dt);
       // long clock4 = clock();
 
       if(iter>maxIter) maxIter = iter;

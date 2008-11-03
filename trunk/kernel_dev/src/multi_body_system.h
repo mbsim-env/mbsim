@@ -74,7 +74,6 @@ namespace MBSim {
       Mat VParent;
       Vec wbParent;
       Vec laParent;
-      Vec dlaParent;
       Vec rFactorParent;
       Vec sParent;
       Vec resParent;
@@ -217,8 +216,6 @@ namespace MBSim {
       SqrMat& getG() {return G;}
       const SqrMat& getJprox() const {return Jprox;}
       SqrMat& getJprox() {return Jprox;}
-      const Vec& getdla() const {return dla;}
-      Vec& getdla() {return dla;}
 
       void setTermination(bool term_) {term = term_;}
 
@@ -228,7 +225,7 @@ namespace MBSim {
       void setMaxDampingSteps(int maxDSteps) {maxDampingSteps = maxDSteps;}
       void setLevenbergMarquardtParam(double lmParm_) {lmParm = lmParm_;}
       /*! Set Solver for treatment of constraint problems */
-      void setContactSolver(Solver solver_) {contactSolver = solver_;}                         
+      void setConstraintSolver(Solver solver_) {contactSolver = solver_;}                         
       void setImpactSolver(Solver solver_) {impactSolver = solver_;}                         
       void setLinAlg(LinAlg linAlg_) {linAlg = linAlg_;}                         
       void setStrategy(Strategy strategy_) {strategy = strategy_;}
@@ -253,25 +250,25 @@ namespace MBSim {
       //MultiBodySystem* getMultiBodySystem() const {return mbs;};
 
       /*! Solves prox-functions at time \param t depending on solver settings */
-      virtual int solveContact(); 
-      virtual int solveImpact(double dt = 0); 
-      int (MultiBodySystem::*solveContact_)();
-      int (MultiBodySystem::*solveImpact_)(double dt);
+      virtual int solveConstraints(); 
+      virtual int solveImpacts(double dt = 0); 
+      int (MultiBodySystem::*solveConstraints_)();
+      int (MultiBodySystem::*solveImpacts_)(double dt);
 
-      int solveContactGaussSeidel();
-      int solveImpactGaussSeidel(double dt = 0);
+      int solveConstraintsGaussSeidel();
+      int solveImpactsGaussSeidel(double dt = 0);
 
-      int solveContactFixpointSingle(); 
-      int solveImpactFixpointSingle(double dt = 0); 
+      int solveConstraintsFixpointSingle(); 
+      int solveImpactsFixpointSingle(double dt = 0); 
 
-      int solveContactRootFinding(); 
-      int solveImpactRootFinding(double dt = 0); 
+      int solveConstraintsRootFinding(); 
+      int solveImpactsRootFinding(double dt = 0); 
 
-      int solveContactLinearEquations(); 
-      int solveImpactLinearEquations(double dt = 0); 
+      int solveConstraintsLinearEquations(); 
+      int solveImpactsLinearEquations(double dt = 0); 
 
-      void checkContactForTermination(); 
-      void checkImpactForTermination(); 
+      void checkConstraintsForTermination(); 
+      void checkImpactsForTermination(); 
 
       // Just for testing
       void setPartialEventDrivenSolver(bool peds_) {peds = peds_;}

@@ -1400,90 +1400,90 @@ namespace MBSim {
     // dib_->setName(getFullName()+"."+dib_->getName());
   }
 
-  int Subsystem::solveContactFixpointSingle() {
+  int Subsystem::solveConstraintsFixpointSingle() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveContactFixpointSingle(); 
+      (*i)->solveConstraintsFixpointSingle(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveContactFixpointSingle();
+      (*i)->solveConstraintsFixpointSingle();
 
     return 0;
   }
 
-  int Subsystem::solveImpactFixpointSingle() {
+  int Subsystem::solveImpactsFixpointSingle() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveImpactFixpointSingle(); 
+      (*i)->solveImpactsFixpointSingle(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactFixpointSingle();
+      (*i)->solveImpactsFixpointSingle();
 
     return 0;
   }
 
-  int Subsystem::solveContactGaussSeidel() {
+  int Subsystem::solveConstraintsGaussSeidel() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveContactGaussSeidel(); 
+      (*i)->solveConstraintsGaussSeidel(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveContactGaussSeidel();
+      (*i)->solveConstraintsGaussSeidel();
 
     return 0;
   }
 
-  int Subsystem::solveImpactGaussSeidel() {
+  int Subsystem::solveImpactsGaussSeidel() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveImpactGaussSeidel(); 
+      (*i)->solveImpactsGaussSeidel(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactGaussSeidel();
+      (*i)->solveImpactsGaussSeidel();
 
     return 0;
   }
 
-  int Subsystem::solveContactRootFinding() {
+  int Subsystem::solveConstraintsRootFinding() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveContactRootFinding(); 
+      (*i)->solveConstraintsRootFinding(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveContactRootFinding();
+      (*i)->solveConstraintsRootFinding();
 
     return 0;
   }
 
-  int Subsystem::solveImpactRootFinding() {
+  int Subsystem::solveImpactsRootFinding() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->solveImpactRootFinding(); 
+      (*i)->solveImpactsRootFinding(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactRootFinding();
+      (*i)->solveImpactsRootFinding();
 
     return 0;
   }
 
-  int Subsystem::jacobianContact() {
+  int Subsystem::jacobianConstraints() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->jacobianContact(); 
+      (*i)->jacobianConstraints(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->jacobianContact();
+      (*i)->jacobianConstraints();
 
     return 0;
   }
 
-  int Subsystem::jacobianImpact() {
+  int Subsystem::jacobianImpacts() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->jacobianImpact(); 
+      (*i)->jacobianImpacts(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->jacobianImpact();
+      (*i)->jacobianImpacts();
 
     return 0;
   }
@@ -1497,22 +1497,22 @@ namespace MBSim {
       (**i).updaterFactors();
   }
 
-  void Subsystem::checkContactForTermination() {
+  void Subsystem::checkConstraintsForTermination() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkContactForTermination(); 
+      (*i)->checkConstraintsForTermination(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkContactForTermination();
+      (**i).checkConstraintsForTermination();
   }
 
-  void Subsystem::checkImpactForTermination() {
+  void Subsystem::checkImpactsForTermination() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->checkImpactForTermination(); 
+      (*i)->checkImpactsForTermination(); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkImpactForTermination();
+      (**i).checkImpactsForTermination();
   }
 
   void Subsystem::addObject(TreeRigid *tree) {
