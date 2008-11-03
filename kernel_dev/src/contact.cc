@@ -192,17 +192,19 @@ namespace MBSim {
       throw 5;
     }
 
-    ContourPointData cpd[2];
-    cpData.push_back(cpd[0]);
-    cpData.push_back(cpd[1]);
-    cpData[0].type = CONTINUUM; // default-Wert
-    cpData[0].Wn.resize(3,1);
-    cpData[0].Wt.resize(3,getFrictionDirections());
-    cpData[1].type = CONTINUUM; // default-Wert
-    cpData[1].Wn.resize(3,1);
-    cpData[1].Wt.resize(3,getFrictionDirections());
+    //ContourPointData cpd[2];
+    //cpData.push_back(cpd[0]);
+    //cpData.push_back(cpd[1]);
+    //cpData[0].type = CONTINUUM; // default-Wert
+    //cpData[0].Wn.resize(3,1);
+    //cpData[0].Wt.resize(3,getFrictionDirections());
+    //cpData[1].type = CONTINUUM; // default-Wert
+    //cpData[1].Wn.resize(3,1);
+    //cpData[1].Wt.resize(3,getFrictionDirections());
+    //
+    //connectHitSpheres(contour[0],contour[1]);
+
     iT = Index(1,getFrictionDirections());
-    connectHitSpheres(contour[0],contour[1]);
     contactKinematics->assignContours(contour);
   }
 
@@ -223,11 +225,11 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    contactKinematics->stage1(g,cpData);
+    contactKinematics->updateg(g,cosy);
   }
 
   void Contact::updategd(double t) {
-    contactKinematics->stage2(g,gd,cpData);
+    contactKinematics->updategd(g,gd,cosy);
   }
 
 //  bool Contact::activeConstraintsChanged() {

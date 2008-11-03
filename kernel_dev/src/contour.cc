@@ -38,15 +38,12 @@
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), hSize(0), hInd(0), R("R"), C("C")
+  Contour::Contour(const string &name) : Element(name), hSize(0), hInd(0), R("R")
 # ifdef HAVE_AMVIS
 					 ,
 					 bodyAMVis(NULL)
 # endif
  {
-   //C.getJacobianOfTranslation().resize();
-   //C.getJacobianOfRotation().resize();
-
    // Contouren standardmaessig nicht ausgeben...
    plotLevel = 0;
  }
@@ -59,10 +56,8 @@ namespace MBSim {
   }
 
   void Contour::init() {
-    getFixedFrame()->getJacobianOfTranslation().resize(3,hSize);
-    getFixedFrame()->getJacobianOfRotation().resize(3,hSize);
-    getMovingFrame()->getJacobianOfTranslation().resize(3,hSize);
-    getMovingFrame()->getJacobianOfRotation().resize(3,hSize);
+    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize);
+    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize);
   }
 
   void Contour::initPlotFiles() 
@@ -80,21 +75,6 @@ namespace MBSim {
     if (!plotLevel) plotLevel=1;
   }
 #endif
-
-  void Contour::updateMovingFrame(double t, ContourPointData& cpdata) {
-   C.setPosition(cpdata.WrOC);
-   C.setOrientation(R.getOrientation());
-
-   Vec WrPC = C.getPosition() - R.getPosition();
-   C.setVelocity(R.getVelocity()+crossProduct(R.getAngularVelocity(),WrPC));
-   C.setAngularVelocity(R.getAngularVelocity());
-
-   Mat tWrPC = tilde(WrPC);
-   C.setJacobianOfTranslation(R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
-   C.setJacobianOfRotation(R.getJacobianOfRotation());
-   C.setGyroscopicAccelerationOfTranslation(R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
-   C.setGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
-  }
 
   //void Contour::adjustParentHitSphere(const Vec &CrC) 
   //{

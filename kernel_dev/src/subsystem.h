@@ -23,13 +23,15 @@
 #ifndef _SUBSYSTEM_H_
 #define _SUBSYSTEM_H_
 
-#include "object.h"
-#include "hitsphere_link.h"
+#include "element.h"
 
 namespace MBSim {
   class CoordinateSystem;
+  class Contour;
   class ExtraDynamicInterface;
   class DataInterfaceBase;
+  class Object;
+  class Link;
 
   // Compatibility classes
   class TreeRigid;
@@ -48,7 +50,6 @@ namespace MBSim {
       vector<Link*> linkSingleValued;
       vector<Link*> linkSetValued;
       vector<Link*> linkSetValuedActive;
-      vector<HitSphereLink*> HSLink;
 
       vector<Vec> IrOK, IrOC, IrOS;
       vector<SqrMat> AIK, AIC, AIS;
@@ -293,8 +294,6 @@ namespace MBSim {
       int  getqInd() { return qInd; }
       int  getuInd() { return uInd; }
       int  gethInd() { return hInd; }
-
-      virtual HitSphereLink* getHitSphereLink(Object* obj0, Object* obj1);
 
       bool gActiveChanged();
 

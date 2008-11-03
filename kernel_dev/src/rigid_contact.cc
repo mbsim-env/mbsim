@@ -134,32 +134,33 @@ namespace MBSim {
   }
 
   void RigidContact::updatewb(double t) {
-    for(unsigned i=0; i<contour.size(); i++) {
-      contour[i]->updateMovingFrame(t, cpData[i]);
-      wb += trans(fF[i](Index(0,2),Index(0,laSize-1)))*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
-    }
-    contactKinematics->updatewb(wb,g,cpData);
+
+    for(unsigned i=0; i<contour.size(); i++) 
+      wb += trans(fF[i](Index(0,2),Index(0,laSize-1)))*cosy[i]->getGyroscopicAccelerationOfTranslation();
+
+    contactKinematics->updatewb(wb,g,cosy);
   }
 
   void RigidContact::updateW(double t) {
-    //fF[0].resize(3,laSize,NONINIT);
-    fF[0].col(0) = getContourPointData(0).Wn;
-    fF[0](Index(0,2),iT) = getContourPointData(0).Wt;
+    
+    fF[0].col(0) = cosy[0]->getOrientation().col(1);
+    if(getFrictionDirections()) {
+      fF[0].col(1) = cosy[0]->getOrientation().col(0);
+      if(getFrictionDirections() > 1)
+	fF[0].col(2) = cosy[0]->getOrientation().col(2);
+    }
 
     fF[1] = -fF[0];
 
-    for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->updateMovingFrame(t, cpData[i]);
-      W[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i](Index(0,2),Index(0,laSize-1));
-    }
+    for(unsigned int i=0; i<contour.size(); i++) 
+      W[i] += trans(cosy[i]->getJacobianOfTranslation())*fF[i](Index(0,2),Index(0,laSize-1));
   }
 
   void RigidContact::updateV(double t) {
-    if(getFrictionDirections() && !gdActive[1]) { 
-      for(unsigned int i=0; i<contour.size(); i++) {
-	V[i] += trans(contour[i]->getMovingFrame()->getJacobianOfTranslation())*fF[i](Index(0,2),iT)*fdf->dlaTdlaN(gd(1,getFrictionDirections()), la(0));
-      }
-    }
+
+    if(getFrictionDirections() && !gdActive[1]) 
+      for(unsigned int i=0; i<contour.size(); i++) 
+	V[i] += trans(cosy[i]->getJacobianOfTranslation())*fF[i](Index(0,2),iT)*fdf->dlaTdlaN(gd(1,getFrictionDirections()), la(0));
   }
 
   void RigidContact::checkActivegdn() { 

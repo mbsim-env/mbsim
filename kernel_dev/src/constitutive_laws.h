@@ -235,8 +235,8 @@ namespace MBSim {
       RegularizedConstraintLaw() {};
       virtual ~RegularizedConstraintLaw() {};
       virtual double operator()(double g,  double gd) = 0;
-      virtual bool isClosed(double gN) = 0;
-      virtual bool remainsClosed(double gd) = 0;
+      virtual bool isClosed(double g, double gTol) = 0;
+      virtual bool remainsClosed(double s, double sTol) = 0;
   };
 
   class RegularizedUnilateralConstraint : public RegularizedConstraintLaw {

@@ -26,7 +26,6 @@
 
 #include <string>
 #include "group.h"
-#include "hitsphere_link.h"
 #include "sparse_matrix.h"
 
 using namespace std;

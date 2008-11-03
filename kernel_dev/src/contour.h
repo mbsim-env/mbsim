@@ -51,7 +51,7 @@ namespace MBSim {
     protected:
       int hSize, hInd;
       //Object* parent;
-      CoordinateSystem R, C;
+      CoordinateSystem R;
 
 
 #ifdef HAVE_AMVIS
@@ -63,11 +63,8 @@ namespace MBSim {
 #endif
 
     public:
-      //Contour(const string &name, ContourType type);
       Contour(const string &name);
       virtual ~Contour();	
-
-      //string getFullName() const; 
 
       virtual void init();
       void initPlotFiles();
@@ -75,20 +72,12 @@ namespace MBSim {
       /* geerbt */
       void plot(double t, double dt);
 
-      //Object* getParent() {return parent;}
-      //void setParent(Object* parent_) {parent = parent_;}
-      //Object* getObject() {return parent;}
-      //void setObject(Object* object) {parent = object;}
-      
       int gethSize() const {return hSize;}
       int gethInd() const {return hInd;}
       void sethSize(int size) {hSize = size;}
       void sethInd(int ind) {hInd = ind;}
 
-      CoordinateSystem* getFixedFrame() {return &R;}
-      CoordinateSystem* getMovingFrame() {return &C;}
-
-      virtual void updateMovingFrame(double t, ContourPointData& cpdata);
+      CoordinateSystem* getCoordinateSystem() {return &R;}
 
       void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
       const Vec& getWrOP() const {return R.getPosition();}

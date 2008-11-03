@@ -22,6 +22,8 @@
 
 #include <config.h>
 #include "group.h"
+#include "object.h"
+#include "link.h"
 #include "extra_dynamic_interface.h"
 
 namespace MBSim {
@@ -38,7 +40,7 @@ namespace MBSim {
       (*i)->facLLM();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).facLLM();
+      (*i)->facLLM();
   }
 
   void Group::updatezd(double t) {
@@ -47,13 +49,13 @@ namespace MBSim {
       (*i)->updatezd(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatezd(t);
+      (*i)->updatezd(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexd(t);
+      (*i)->updatexd(t);
 
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (**i).updatexd(t);
+      (*i)->updatexd(t);
 
   }
 
@@ -63,7 +65,7 @@ namespace MBSim {
       (*i)->updatedu(t,dt);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updatedu(t,dt);
+      (*i)->updatedu(t,dt);
 
   }
 
