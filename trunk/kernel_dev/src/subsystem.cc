@@ -689,14 +689,13 @@ namespace MBSim {
       (**i).updateV(t);
   }
 
-
-  void Subsystem::updateb(double t) {
+  void Subsystem::updatewb(double t) {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateb(t);
+      (*i)->updatewb(t);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updateb(t);
+      (**i).updatewb(t);
   }
 
   void Subsystem::updater(double t) {
@@ -960,24 +959,14 @@ namespace MBSim {
       (**i).updatelaRef(la);
   }
 
-  void Subsystem::updatebRef(const Vec &bParent) {
-    b.resize() >> bParent(laInd,laInd+laSize-1);
+  void Subsystem::updatewbRef(const Vec &wbParent) {
+    wb.resize() >> wbParent(laInd,laInd+laSize-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatebRef(b);
+      (*i)->updatewbRef(wb);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updatebRef(b);
-  }
-
-  void Subsystem::updatesRef(const Vec &sParent) {
-    s.resize() >> sParent(laInd,laInd+laSize-1);
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatesRef(s);
-
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updatesRef(s);
+      (**i).updatewbRef(wb);
   }
 
   void Subsystem::updateresRef(const Vec &resParent) {

@@ -74,7 +74,7 @@ namespace MBSim {
       vector<Mat> fF, fM;
 
       int rFactorSize, rFactorInd;
-      Vec g, gd, gdn, la, s, res;
+      Vec g, gd, gdn, la, res;
 
       Vec rFactor;
       Vector<int> rFactorUnsure;
@@ -93,7 +93,7 @@ namespace MBSim {
       vector<Mat> V;
       vector<Vec> h;
       vector<Vec> r;
-      Vec b;
+      Vec wb;
 
       /*! Array in which all ports are listed, connecting bodies via a Link.
       */
@@ -115,7 +115,7 @@ namespace MBSim {
     public:
 
       virtual void updater(double t);
-      virtual void updateb(double t);
+      virtual void updatewb(double t);
       virtual void updateW(double t);
       virtual void updateV(double t) {}
       virtual void updateh(double t);
@@ -123,7 +123,7 @@ namespace MBSim {
       virtual void updateVRef(const Mat& ref);
       virtual void updatehRef(const Vec &ref);
       virtual void updaterRef(const Vec &ref);
-      virtual void updatebRef(const Vec &ref);
+      virtual void updatewbRef(const Vec &ref);
       virtual void updatefRef(const Vec &ref) {};
 
       Link(const string &name, bool setValued);
@@ -220,7 +220,6 @@ namespace MBSim {
       virtual void updatelaRef(const Vec& ref);
       virtual void updategRef(const Vec& ref);
       virtual void updategdRef(const Vec& ref);
-      virtual void updatesRef(const Vec& ref);
       virtual void updateresRef(const Vec& ref);
       virtual void updaterFactorRef(const Vec& ref);
       virtual void updatesvRef(const Vec &sv);

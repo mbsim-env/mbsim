@@ -52,12 +52,13 @@ namespace MBSim {
       W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
   }
 
-  void RigidConnection::updateb(double t) {
+  void RigidConnection::updatewb(double t) {
 
-    Connection::updateb(t);
+    for(unsigned i=0; i<port.size(); i++) 
+      wb += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
 
-    b(0,Wf.cols()-1) += trans(Wf)*(crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
-    b(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  - trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
+    wb(0,Wf.cols()-1) += trans(Wf)*(crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
+    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
   }
 
   void RigidConnection::projectGS(double dt) {
@@ -65,16 +66,17 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
   
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = (*ffl)(la(i), gdn(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -87,9 +89,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
   
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -97,7 +100,7 @@ namespace MBSim {
       la(i) = fifl->solve(a[ia[laIndMBS+i]], gdn(i), gd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -131,9 +134,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
   
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -141,7 +145,7 @@ namespace MBSim {
       res(i) = la(i) - (*fifl)(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -186,9 +190,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
 
     for(int i=0; i < forceDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -199,7 +204,7 @@ namespace MBSim {
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
 

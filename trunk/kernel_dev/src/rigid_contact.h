@@ -79,7 +79,7 @@ namespace MBSim {
 
       void updateW(double t);
       void updateV(double t);
-      void updateb(double t);
+      void updatewb(double t);
 
       void updateStopVector(double t);
 

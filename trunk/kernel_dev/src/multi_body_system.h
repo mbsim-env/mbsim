@@ -70,10 +70,9 @@ namespace MBSim {
       SymMat MParent;
       SymMat LLMParent;
       Mat TParent;
-      SqrMat GParent;
       Mat WParent;
       Mat VParent;
-      Vec bParent;
+      Vec wbParent;
       Vec laParent;
       Vec dlaParent;
       Vec rFactorParent;
@@ -107,7 +106,6 @@ namespace MBSim {
 
       bool checkGSize;
       int limitGSize;
-      void updateGRef(const SqrMat &ext);
       void updatezRef(const Vec &ext);
       void updatezdRef(const Vec &ext);
 
@@ -146,7 +144,7 @@ namespace MBSim {
       /*! Calls updateV for children at time \param t */
       void updateV(double t);
       void updateG(double t);
-      void updateb(double t);
+      void updatewb(double t);
       /*! Constructor */
       MultiBodySystem();
       /*! Constructor */

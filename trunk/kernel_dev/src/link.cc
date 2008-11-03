@@ -106,12 +106,8 @@ namespace MBSim {
     gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
   }
 
-  void Link::updatebRef(const Vec& bParent) {
-    b.resize() >> bParent(laInd,laInd+laSize-1);
-  }
-
-  void Link::updatesRef(const Vec& sParent) {
-    s.resize() >> sParent(laInd,laInd+laSize-1);
+  void Link::updatewbRef(const Vec& wbParent) {
+    wb.resize() >> wbParent(laInd,laInd+laSize-1);
   }
 
   void Link::updateresRef(const Vec& resParent) {
@@ -314,12 +310,11 @@ namespace MBSim {
       r[i] += W[i]*la;
   }
 
-  void Link::updateb(double t) {
+  void Link::updatewb(double t) {
     for(unsigned i=0; i<port.size(); i++) 
-      b += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
+      wb += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
     for(unsigned i=0; i<contour.size(); i++) 
-      b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
-      //b += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfRotation();
+      wb += trans(fF[i])*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
   }
 
   void Link::updateh(double t) {

@@ -130,11 +130,12 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::updateb(double t) {
-    //if(gActive) {
-    Contact::updateb(t);
-    contactKinematics->updateb(b,g,cpData);
-    //}
+  void RigidContact::updatewb(double t) {
+    for(unsigned i=0; i<contour.size(); i++) {
+      contour[i]->updateMovingFrame(t, cpData[i]);
+      wb += trans(fF[i](Index(0,2),Index(0,laSize-1)))*contour[i]->getMovingFrame()->getGyroscopicAccelerationOfTranslation();
+    }
+    contactKinematics->updatewb(wb,g,cpData);
   }
 
   void RigidContact::updateW(double t) {
@@ -265,15 +266,16 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
 
-    gdd(0) = s(0);
+    gdd(0) = b(laIndMBS);
     for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
       gdd(0) += a[j]*laMBS(ja[j]);
 
     la(0) = (*fcl)(la(0), gdd(0), rFactor(0));
 
     for(int i=1; i<=getFrictionDirections(); i++) {
-      gdd(i) = s(i);
+      gdd(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
     }
@@ -288,15 +290,16 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
 
-    gdn(0) = s(0);
+    gdn(0) = b(laIndMBS);
     for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
     la(0) = (*fnil)(la(0), gdn(0), gd(0), rFactor(0));
 
     for(int i=1; i<=getFrictionDirections(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
@@ -314,7 +317,9 @@ namespace MBSim {
     int *ja = mbs->getGs().Jp();
     int laInd = laIndMBS;
     Vec &laMBS = mbs->getla();
-    gdd(0) = s(0);
+    Vec &b = mbs->getb();
+
+    gdd(0) = b(laIndMBS);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdd(0) += a[j]*laMBS(ja[j]);
 
@@ -323,7 +328,7 @@ namespace MBSim {
     la(0) += om*(buf - la(0));
 
     if(getFrictionDirections() && gdActive[1]) {
-      gdd(1) = s(1);
+      gdd(1) = b(laIndMBS+1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdd(1) += a[j]*laMBS(ja[j]);
 
@@ -342,7 +347,9 @@ namespace MBSim {
     int *ja = mbs->getGs().Jp();
     int laInd = laIndMBS;
     Vec &laMBS = mbs->getla();
-    gdn(0) = s(0);
+    Vec &b = mbs->getb();
+
+    gdn(0) = b(laIndMBS);
     for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
       gdn(0) += a[j]*laMBS(ja[j]);
 
@@ -351,7 +358,7 @@ namespace MBSim {
     la(0) += om*(buf - la(0));
 
     if(getFrictionDirections()) {
-      gdn(1) = s(1);
+      gdn(1) = b(laIndMBS+1);
       for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
 	gdn(1) += a[j]*laMBS(ja[j]);
 
@@ -367,8 +374,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
+
     for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdd(i) = s(i);
+      gdd(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
     }
@@ -383,8 +392,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
+
     for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
@@ -482,9 +493,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
 
     for(unsigned int i=0; i < 1+ gdActive[1]*getFrictionDirections(); i++) {
-      gdd(i) = s(i);
+      gdd(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdd(i) += a[j]*laMBS(ja[j]);
     }
@@ -506,9 +518,10 @@ namespace MBSim {
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
     Vec &laMBS = mbs->getla();
+    Vec &b = mbs->getb();
 
     for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdn(i) = s(i);
+      gdn(i) = b(laIndMBS+i);
       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
 	gdn(i) += a[j]*laMBS(ja[j]);
     }
