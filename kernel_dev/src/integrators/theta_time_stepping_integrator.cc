@@ -139,7 +139,7 @@ namespace MBSim {
       system.getGs() << Geff;
       //system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
 
-      iter = system.solveImpact(dt);
+      iter = system.solveImpacts(dt);
       if(iter>maxIter)
 	maxIter = iter;
       sumIter += iter;

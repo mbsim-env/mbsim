@@ -44,7 +44,10 @@ namespace MBSim {
   }
 
   void RigidContact::init() {
+
     gdd.resize(gdSize);
+    gdn.resize(gdSize);
+
     Contact::init();
     // TODO: schöner lösen
     if(getFrictionDirections() == 0)
@@ -260,7 +263,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::solveContactFixpointSingle() {
+  void RigidContact::solveConstraintsFixpointSingle() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -284,7 +287,7 @@ namespace MBSim {
       la(1,getFrictionDirections()) = (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
   } 
   
-  void RigidContact::solveImpactFixpointSingle() {
+  void RigidContact::solveImpactsFixpointSingle() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -309,7 +312,7 @@ namespace MBSim {
   }
 
 
-  void RigidContact::solveContactGaussSeidel() {
+  void RigidContact::solveConstraintsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     double *a = mbs->getGs()();
@@ -339,7 +342,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::solveImpactGaussSeidel() {
+  void RigidContact::solveImpactsGaussSeidel() {
     assert(getFrictionDirections() <= 1);
 
     double *a = mbs->getGs()();
@@ -369,7 +372,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::solveContactRootFinding() {
+  void RigidContact::solveConstraintsRootFinding() {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -387,7 +390,7 @@ namespace MBSim {
       res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*fdf)(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
-  void RigidContact::solveImpactRootFinding() {
+  void RigidContact::solveImpactsRootFinding() {
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
     int *ja = mbs->getGs().Jp();
@@ -405,7 +408,7 @@ namespace MBSim {
       res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - (*ftil)(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
   }
 
-  void RigidContact::jacobianContact() {
+  void RigidContact::jacobianConstraints() {
 
     SqrMat Jprox = mbs->getJprox();
     SqrMat G = mbs->getG();
@@ -446,7 +449,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::jacobianImpact() {
+  void RigidContact::jacobianImpacts() {
 
     SqrMat Jprox = mbs->getJprox();
     SqrMat G = mbs->getG();
@@ -487,7 +490,7 @@ namespace MBSim {
     }
   }
 
-  void RigidContact::checkContactForTermination() {
+  void RigidContact::checkConstraintsForTermination() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();
@@ -512,7 +515,7 @@ namespace MBSim {
       }
   }
 
-  void RigidContact::checkImpactForTermination() {
+  void RigidContact::checkImpactsForTermination() {
 
     double *a = mbs->getGs()();
     int *ia = mbs->getGs().Ip();

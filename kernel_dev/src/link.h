@@ -74,7 +74,7 @@ namespace MBSim {
       vector<Mat> fF, fM;
 
       int rFactorSize, rFactorInd;
-      Vec g, gd, gdn, la, res;
+      Vec g, gd, la, res;
 
       Vec rFactor;
       Vector<int> rFactorUnsure;
@@ -230,22 +230,22 @@ namespace MBSim {
       void setlaInd(int laInd_) {laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
       void setrFactorInd(int rFactorInd_) {rFactorInd = rFactorInd_; } 
 
-      virtual void solveImpactFixpointSingle() { cout << "\nsolveImpactFixpointSingle not implemented." << endl; throw 50; }
-      virtual void solveContactFixpointSingle() { cout << "\nsolveContactFixpointSingle not implemented." << endl; throw 50; }
-      virtual void solveImpactGaussSeidel() { cout << "\nsolveImpactGaussSeidel not implemented." << endl; throw 50; }
-      virtual void solveContactGaussSeidel() { cout << "\nsolveContactGaussSeidel not implemented." << endl; throw 50; }
-      virtual void solveContactRootFinding() { cout << "\nsolveContactRootFinding not implemented." << endl; throw 50; }
-      virtual void solveImpactRootFinding() { cout << "\nsolveImpactRootFinding not implemented." << endl; throw 50; }
-      virtual void jacobianContact() { cout << "\njacobianContact not implemented." << endl; throw 50; }
-      virtual void jacobianImpact() { cout << "\njacobianContact not implemented." << endl; throw 50; }
+      virtual void solveImpactsFixpointSingle() { cout << "\nsolveImpactsFixpointSingle not implemented." << endl; throw 50; }
+      virtual void solveConstraintsFixpointSingle() { cout << "\nsolveConstraintsFixpointSingle not implemented." << endl; throw 50; }
+      virtual void solveImpactsGaussSeidel() { cout << "\nsolveImpactsGaussSeidel not implemented." << endl; throw 50; }
+      virtual void solveConstraintsGaussSeidel() { cout << "\nsolveConstraintsGaussSeidel not implemented." << endl; throw 50; }
+      virtual void solveConstraintsRootFinding() { cout << "\nsolveConstraintsRootFinding not implemented." << endl; throw 50; }
+      virtual void solveImpactsRootFinding() { cout << "\nsolveImpactsRootFinding not implemented." << endl; throw 50; }
+      virtual void jacobianConstraints() { cout << "\njacobianConstraints not implemented." << endl; throw 50; }
+      virtual void jacobianImpacts() { cout << "\njacobianConstraints not implemented." << endl; throw 50; }
       virtual void updaterFactors() { cout << "\nupdaterFactors not implemented." << endl; throw 50; }
 
       virtual std::string getTerminationInfo(double dt) {return ("No Convergence within " + getName());}
 
       void decreaserFactors();
 
-      virtual void checkContactForTermination() { cout << "\ncheckContactForTermination not implemented." << endl; throw 50; }
-      virtual void checkImpactForTermination() { cout << "\ncheckImpactForTermination not implemented." << endl; throw 50; }
+      virtual void checkConstraintsForTermination() { cout << "\ncheckConstraintsForTermination not implemented." << endl; throw 50; }
+      virtual void checkImpactsForTermination() { cout << "\ncheckImpactForTermination not implemented." << endl; throw 50; }
 
       /*! Defines the maximum error radius lambdas have to match. */  
       virtual void setlaTol(double tol) {laTol = tol;}

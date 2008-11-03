@@ -298,19 +298,19 @@ namespace MBSim {
 
       bool gActiveChanged();
 
-      virtual int solveContactFixpointSingle();
-      virtual int solveImpactFixpointSingle();
-      virtual int solveContactGaussSeidel();
-      virtual int solveImpactGaussSeidel();
-      virtual int solveContactRootFinding();
-      virtual int solveImpactRootFinding();
-      virtual int jacobianContact();
-      virtual int jacobianImpact();
+      virtual int solveConstraintsFixpointSingle();
+      virtual int solveImpactsFixpointSingle();
+      virtual int solveConstraintsGaussSeidel();
+      virtual int solveImpactsGaussSeidel();
+      virtual int solveConstraintsRootFinding();
+      virtual int solveImpactsRootFinding();
+      virtual int jacobianConstraints();
+      virtual int jacobianImpacts();
 
       virtual void updaterFactors();
 
-      virtual void checkContactForTermination();
-      virtual void checkImpactForTermination();
+      virtual void checkConstraintsForTermination();
+      virtual void checkImpactsForTermination();
 
       void setMultiBodySystem(MultiBodySystem* sys);
       void setFullName(const string &str);

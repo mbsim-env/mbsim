@@ -53,7 +53,6 @@ namespace MBSim {
   }
 
   void Link::init() {
-    gdn.resize(gdSize);
     rFactorUnsure.resize(rFactorSize);
 
     for(unsigned i=0; i<port.size(); i++) {

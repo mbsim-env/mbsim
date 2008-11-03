@@ -45,7 +45,7 @@ namespace MBSim {
       NormalImpactLaw *fnil;
       TangentialImpactLaw *ftil;
 
-      Vec gdd;
+      Vec gdn, gdd;
 
     public: 
 
@@ -58,22 +58,21 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-      void solveImpactFixpointSingle();
-      void solveContactFixpointSingle();
-      void solveImpactGaussSeidel();
-      void solveContactGaussSeidel();
-      void solveImpactRootFinding();
-      void solveContactRootFinding();
-      void jacobianContact();
-      void jacobianImpact();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianConstraints();
+      void jacobianImpacts();
 
       void updaterFactors();
 
       void updateCondition();
 
-      
-      void checkContactForTermination();
-      void checkImpactForTermination();
+      void checkConstraintsForTermination();
+      void checkImpactsForTermination();
 
       std::string getTerminationInfo(double dt);
 

@@ -38,6 +38,8 @@ namespace MBSim {
       ConstraintLaw *ffl, *fml;
       NormalImpactLaw *fifl, *fiml;
 
+      Vec gdn, gdd;
+
     public:
 
       RigidConnection(const string &name);
@@ -50,16 +52,24 @@ namespace MBSim {
       void setImpactMomentLaw(NormalImpactLaw * rc) {fiml = rc;}
 
       void updateW(double t);
-      void projectGS(double dt);
-      void solveGS(double dt);
-      void checkForTermination(double dt);
       void updatewb(double t);
-      std::string getTerminationInfo(double dt);
 
-      void residualProj(double dt);
-      void residualProjJac(double dt);
+      void solveConstraintsFixpointSingle();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianConstraints();
+      void jacobianImpacts();
 
       void updaterFactors();
+      
+      void checkConstraintsForTermination();
+      void checkImpactsForTermination();
+
+      std::string getTerminationInfo(double dt);
+
   };
 
 }
