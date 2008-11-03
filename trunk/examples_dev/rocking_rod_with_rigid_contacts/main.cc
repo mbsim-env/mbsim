@@ -8,7 +8,8 @@ int main (int argc, char* argv[]) {
 
   MultiBodySystem *sys = new System("TS");
 
-  sys->setSolver(GaussSeidel);
+  //sys->setContactSolver(GaussSeidel);
+  //sys->setImpactSolver(GaussSeidel);
 
   sys->init();
   
@@ -21,10 +22,11 @@ int main (int argc, char* argv[]) {
     integrator.integrate(*sys);
   } 
   else { // time stepping integration
-    sys->setlaTol(1e-2);
+    double dt = 1e-4;
+    sys->setLaTol(1e-2*dt);
     sys->setgdTol(1e-8);
     TimeSteppingIntegrator integrator;
-    integrator.setdt(1e-4);
+    integrator.setdt(dt);
     integrator.setdtPlot(1e-2);
     integrator.settEnd(2.5);
     integrator.integrate(*sys);
