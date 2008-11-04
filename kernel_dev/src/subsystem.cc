@@ -371,8 +371,6 @@ namespace MBSim {
 
     string basename = path + "/" + getFullName() + ".";
 
-    cout << name << endl;
-    cout << fullName << endl;
     getline(inputfile,dummy); // # CoSy
     unsigned int no=getNumberOfElements(inputfile);
     for(unsigned int i=0; i<no; i++) {
@@ -406,9 +404,7 @@ namespace MBSim {
     }
     getline(inputfile,dummy); // newline
 
-    cout << dummy << endl;
     getline(inputfile,dummy); // # q0
-    cout << dummy << endl;
     inputfile >> q0; // # q0
     getline(inputfile,dummy); // Rest of line
     getline(inputfile,dummy); // Newline
@@ -427,10 +423,11 @@ namespace MBSim {
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       ClassFactory cf;
-      Subsystem * newobject = cf.getSubsystem(dummy);
-      //addSubsystem(newobject);
+      Subsystem * newsubsystem = cf.getSubsystem(dummy);
+      //addSubsystem(newsubsystem); TODO
       newinputfile.seekg(0,ios::beg);
-      newobject->load(path,newinputfile);
+      newsubsystem->setMultiBodySystem(mbs);
+      newsubsystem->load(path,newinputfile);
       newinputfile.close();
     }
     getline(inputfile,dummy); // newline
@@ -447,6 +444,7 @@ namespace MBSim {
       Object * newobject = cf.getObject(dummy);
       addObject(newobject);
       newinputfile.seekg(0,ios::beg);
+      newobject->setMultiBodySystem(mbs);
       newobject->load(path,newinputfile);
       newinputfile.close();
     }
@@ -464,6 +462,7 @@ namespace MBSim {
       Link * newlink = cf.getLink(dummy);
       addLink(newlink);
       newinputfile.seekg(0,ios::beg);
+      newlink->setMultiBodySystem(mbs);
       newlink->load(path,newinputfile);
       newinputfile.close();
     }

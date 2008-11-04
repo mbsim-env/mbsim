@@ -309,17 +309,17 @@ namespace MBSim {
   void Link::save(const string &path, ofstream& outputfile) {
     Element::save(path,outputfile);
 
-  //  outputfile << "# Connected coordinate sytems:" << endl;
-  //  for(unsigned int i=0; i<port.size(); i++) {
-  //    outputfile << port[i]->getFullName() << endl;
-  //  }
-  //  outputfile << endl;
+    outputfile << "# Connected coordinate sytems:" << endl;
+    for(unsigned int i=0; i<port.size(); i++) {
+      outputfile << port[i]->getFullName() << endl;
+    }
+    outputfile << endl;
 
-  //  outputfile << "# Connected contours:" << endl;
-  //  for(unsigned int i=0; i<contour.size(); i++) {
-  //    outputfile << contour[i]->getFullName() << endl;
-  //  }
-  //  outputfile << endl;
+    outputfile << "# Connected contours:" << endl;
+    for(unsigned int i=0; i<contour.size(); i++) {
+      outputfile << contour[i]->getFullName() << endl;
+    }
+    outputfile << endl;
   }
 
   void Link::load(const string &path, ifstream& inputfile) {
