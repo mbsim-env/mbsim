@@ -7,10 +7,8 @@ using namespace std;
 using namespace MBSim;
 using namespace AMVis;
 
-int main (int argc, char* argv[])
-{
-  cout << "Example currently not available" << endl;
-  return 1;
+int main (int argc, char* argv[]) {
+
   // build up model
   MultiBodySystem *sys = new System("MBS");
   sys->init();
@@ -39,9 +37,12 @@ int main (int argc, char* argv[])
   sys->init();
 
   TimeSteppingIntegrator integrator;
-  integrator.setdt(1e-4);
+  double dt = 1e-4;
+  integrator.setdt(dt);
   integrator.setdtPlot(1e-2);
   integrator.settEnd(2.5);
+  sys->setLaTol(1e-2*dt);
+  sys->setgdTol(1e-8);
 
   integrator.integrate(*sys);
   cout << "finished"<<endl;
