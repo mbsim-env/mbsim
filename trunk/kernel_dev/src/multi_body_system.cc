@@ -536,6 +536,8 @@ namespace MBSim {
 
   void MultiBodySystem::load(const string &path, ifstream& inputfile) {
 
+    setMultiBodySystem(this);
+
     Group::load(path, inputfile);
 
     string dummy;
