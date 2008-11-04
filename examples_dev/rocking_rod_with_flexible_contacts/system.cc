@@ -57,11 +57,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrSC(3);
   KrSC(1) = -0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
-  Vec n(3,INIT,0.0), b(3,INIT,0.0);
-  b(2) =  1;
-  n(1) = 1;
-  line->setCn(n);
-  line->setCb(b);
 
   // Obstacles
   Vec delta1(3); 
