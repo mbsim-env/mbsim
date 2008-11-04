@@ -7,15 +7,17 @@
 
 
 /*
+ * - Use english names.
+ *
  * - A class name starts with a uppercase character.
- *   The second and more words starts with uppercase characters.
+ *   The second and more words start with uppercase characters.
  *   Don't use underscores.
  * 
  * - A function name starts with a lowercase character.
- *   The second and more words starts with uppercase characters.
+ *   The second and more words start with uppercase characters.
  *   Don't use underscores.
  * 
- * - A indent consists of 2 spaces.
+ * - An indent consists of 2 spaces.
  *   (Use "set cindent shiftwidth=2" in .vimrc)
  * 
  * - Don't use tabs at all. So 4 indents are 8 spaces and NOT 1 tab.
@@ -52,7 +54,7 @@ class Foo : public Bar {
 };
 
 
-// (Elemnet) Funktion:
+// (Element) Funktion:
 void Foo::foo() {
   bar();
 }
