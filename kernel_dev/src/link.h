@@ -25,21 +25,16 @@
 
 #include <vector>
 #include "element.h"
-#include "contour_pdata.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class Arrow;}
 #endif
 
 namespace MBSim {
-  class Object;
   class CoordinateSystem;
   class Contour;
-  class MultiBodySystem;
   class HitSphereLink;
   class UserFunction;
-  class Subsystem;
-  struct ContourPointData;
   /*! 
    *  \brief This is a general link to one or more objects.
    * 
@@ -47,7 +42,6 @@ namespace MBSim {
   class Link : public Element {
 
     protected:
-      //Subsystem* parent;
 
       /** Internal integrable State Variables */
       Vec x;
@@ -95,8 +89,6 @@ namespace MBSim {
       vector<Vec> r;
       Vec wb;
 
-      vector<CoordinateSystem*> cosy;
-
       /*! Array in which all ports are listed, connecting bodies via a Link.
       */
       vector<CoordinateSystem*> port;
@@ -115,10 +107,10 @@ namespace MBSim {
     public:
 
       virtual void updater(double t);
-      virtual void updatewb(double t);
-      virtual void updateW(double t);
-      virtual void updateV(double t) {}
-      virtual void updateh(double t);
+      virtual void updatewb(double t) {};
+      virtual void updateW(double t) {};
+      virtual void updateV(double t) {};
+      virtual void updateh(double t) {};
       virtual void updateWRef(const Mat& ref);
       virtual void updateVRef(const Mat& ref);
       virtual void updatehRef(const Vec &ref);
@@ -129,17 +121,9 @@ namespace MBSim {
       Link(const string &name, bool setValued);
       ~Link();
 
-      //void setParent(Subsystem *parent_) {parent = parent_;}
-
-      //string getFullName() const; 
-
       const vector<Mat>& getW() const {return W;}
       const vector<Mat>& getV() const {return V;}
       const vector<Vec>& geth() const {return h;}
-
-     // Object* getObject(int id) { return object[id]; }
-     // void addObject(Object* obj) { object.push_back(obj); }
-     // int getNumObjects() const { return object.size(); }
 
       void setxInd(int xInd_) {xInd = xInd_;};
       void setsvInd(int svInd_) {svInd = svInd_;};

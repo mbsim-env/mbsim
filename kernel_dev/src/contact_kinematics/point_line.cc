@@ -39,80 +39,43 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointLine::updateg(Vec &g, vector<CoordinateSystem*> &cosy) {
-    Vec Wn;
+  void ContactKinematicsPointLine::updateg(Vec &g, ContourPointData *cpData) {
 
-    cosy[iline]->setOrientation(line->getCoordinateSystem()->getOrientation());
-    cosy[ipoint]->setOrientation(-line->getCoordinateSystem()->getOrientation());
+    cpData[iline].cosy.setOrientation(line->getCoordinateSystem()->getOrientation());
+    cpData[ipoint].cosy.getOrientation().col(0) = -line->getCoordinateSystem()->getOrientation().col(0);
+    cpData[ipoint].cosy.getOrientation().col(1) = -line->getCoordinateSystem()->getOrientation().col(1);
+    cpData[ipoint].cosy.getOrientation().col(2) = line->getCoordinateSystem()->getOrientation().col(2);
 
-    Wn = cosy[iline]->getOrientation().col(1);
+    Vec Wn = cpData[iline].cosy.getOrientation().col(1);
 
     Vec Wd =  line->getCoordinateSystem()->getPosition() - point->getCoordinateSystem()->getPosition();
 
     g(0) = trans(Wn)*Wd;
 
-    cosy[ipoint]->setPosition(point->getCoordinateSystem()->getPosition());
-    cosy[iline]->setPosition(cosy[ipoint]->getPosition() + Wn*g(0));
+    cpData[ipoint].cosy.setPosition(point->getCoordinateSystem()->getPosition());
+    cpData[iline].cosy.setPosition(cpData[ipoint].cosy.getPosition() + Wn*g(0));
   }
 
-  void ContactKinematicsPointLine::updategd(const Vec& g, Vec &gd, vector<CoordinateSystem*> &cosy) {
-    Vec WrPC[2];
-    Vec Wn = cosy[iline]->getOrientation().col(1);
-
-    WrPC[iline] = cosy[iline]->getPosition() - line->getCoordinateSystem()->getPosition();
-    WrPC[ipoint] = Vec(3);
-
-    cosy[ipoint]->setVelocity(point->getCoordinateSystem()->getVelocity());
-    cosy[iline]->setVelocity(line->getCoordinateSystem()->getVelocity() + crossProduct(line->getCoordinateSystem()->getAngularVelocity(),WrPC[iline]));
-   cosy[iline]->setAngularVelocity(line->getCoordinateSystem()->getAngularVelocity());
-   cosy[ipoint]->setAngularVelocity(point->getCoordinateSystem()->getAngularVelocity());
-
-    Vec WvD = cosy[iline]->getVelocity() - cosy[ipoint]->getVelocity();
-
-    gd(0) = trans(Wn)*WvD;
-
-    if(gd.size()>1) {
-      Mat Wt(3,gd.size()-1);
-      Wt.col(0) = cosy[iline]->getOrientation().col(0);
-      if(gd.size() > 2)
-	Wt.col(1) = cosy[iline]->getOrientation().col(2);
-
-      gd(1,gd.size()-1) = trans(Wt)*WvD;
-    }
-
-   Mat tWrPC[2];
-   tWrPC[iline] = tilde(WrPC[iline]);
-   tWrPC[ipoint] = tilde(WrPC[ipoint]);
-
-   cosy[iline]->setJacobianOfTranslation(line->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC[iline]*line->getCoordinateSystem()->getJacobianOfRotation());
-   cosy[iline]->setJacobianOfRotation(line->getCoordinateSystem()->getJacobianOfRotation());
-   cosy[iline]->setGyroscopicAccelerationOfTranslation(line->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC[iline]*line->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(line->getCoordinateSystem()->getAngularVelocity(),crossProduct(line->getCoordinateSystem()->getAngularVelocity(),WrPC[iline])));
-   cosy[iline]->setGyroscopicAccelerationOfRotation(line->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
-
-   cosy[ipoint]->setJacobianOfTranslation(point->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC[ipoint]*point->getCoordinateSystem()->getJacobianOfRotation());
-   cosy[ipoint]->setJacobianOfRotation(point->getCoordinateSystem()->getJacobianOfRotation());
-   cosy[ipoint]->setGyroscopicAccelerationOfTranslation(point->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC[ipoint]*point->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(point->getCoordinateSystem()->getAngularVelocity(),crossProduct(point->getCoordinateSystem()->getAngularVelocity(),WrPC[ipoint])));
-   cosy[ipoint]->setGyroscopicAccelerationOfRotation(point->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
-  }
+  void ContactKinematicsPointLine::updategd(const Vec& g, Vec &gd, ContourPointData *cpData) {}
   
-  void ContactKinematicsPointLine::updatewb(Vec &wb, const Vec &g, vector<CoordinateSystem*> &cosy) {
+  void ContactKinematicsPointLine::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
 
-    Vec b1 = cosy[iline]->getOrientation().col(2);
-    Vec Wn1 = cosy[iline]->getOrientation().col(1);
-    Vec Wn2 = cosy[ipoint]->getOrientation().col(1);
-    Vec Wt1 = cosy[iline]->getOrientation().col(0);
-    Vec Wt2 = cosy[ipoint]->getOrientation().col(0);
-    Vec vC1 = cosy[iline]->getVelocity();
-    Vec vC2 = cosy[ipoint]->getVelocity();
-    Vec Om1 = cosy[iline]->getAngularVelocity();
-    Vec Om2 = cosy[ipoint]->getAngularVelocity();
+    Vec b1 = cpData[iline].cosy.getOrientation().col(2);
+    Vec n1 = cpData[iline].cosy.getOrientation().col(1);
+    Vec n2 = cpData[ipoint].cosy.getOrientation().col(1);
+    Vec t1 = cpData[iline].cosy.getOrientation().col(0);
+    Vec t2 = cpData[ipoint].cosy.getOrientation().col(0);
+    Vec vC1 = cpData[iline].cosy.getVelocity();
+    Vec vC2 = cpData[ipoint].cosy.getVelocity();
+    Vec Om1 = cpData[iline].cosy.getAngularVelocity();
+    Vec Om2 = cpData[ipoint].cosy.getAngularVelocity();
 
-    double kappa_sd2 = -trans(b1)*(Om2 - Om1);
-    double sd1 = trans(Wt1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
-    wb(0) += trans(Wn1)*(-crossProduct(Om1,vC1)) + sd1 * trans(b1) * Om1
-      + trans(Wn2)*(-crossProduct(Om2,vC2)) - kappa_sd2*trans(Wt2)*vC2;
+    double kapsd2 = -trans(b1)*(Om2 - Om1);
+    double sd1 = trans(t1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
+    wb(0) += trans(n1)*(-crossProduct(Om1,vC1)) + sd1 * trans(b1) * Om1
+      + trans(n2)*(-crossProduct(Om2,vC2)) - kapsd2*trans(t2)*vC2;
     if(wb.size() > 1)
-      wb(1) += trans(Wt1)*(-crossProduct(Om1,vC1)) + trans(Wt2)*(-crossProduct(Om2,vC2)) + kappa_sd2*trans(Wn2)*vC2;
+      wb(1) += trans(t1)*(-crossProduct(Om1,vC1)) + trans(t2)*(-crossProduct(Om2,vC2)) + kapsd2*trans(n2)*vC2;
   }
 }
 

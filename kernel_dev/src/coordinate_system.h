@@ -76,6 +76,10 @@ namespace MBSim {
       const Vec& getVelocity() const {return WvP;} 
       const Vec& getAngularVelocity() const {return WomegaP;}
       const SqrMat& getOrientation() const {return AWP;}
+      Vec& getPosition() {return WrOP;}
+      Vec& getVelocity() {return WvP;} 
+      Vec& getAngularVelocity() {return WomegaP;}
+      SqrMat& getOrientation() {return AWP;}
 
       void setPosition(const Vec &v) {WrOP = v;}
       void setVelocity(const Vec &v) {WvP = v;} 

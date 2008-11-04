@@ -24,6 +24,7 @@
 #define _CONTOUR_PDATA_H_
 
 #include "fmatvec.h"
+#include "coordinate_system.h"
 #include <vector>
 
 using namespace fmatvec;
@@ -38,7 +39,8 @@ namespace MBSim {
   /*! \brief struct for data-management for single point on a Contour
   */
   struct ContourPointData {
-    /* --------- used for all bodies, sufficient inforomation for rigid bodies ------------------ */
+    /* --------- used for all bodies, sufficient information for rigid bodies ------------------ */
+    ContourPointData() : cosy("Dummy") {}
 
     /** kartesian coordinates of contact point in world system*/
     Vec WrOC;
@@ -61,6 +63,8 @@ namespace MBSim {
 
     Vec Wn;
     Mat Wt;
+
+    CoordinateSystem cosy;
   };
 
 }

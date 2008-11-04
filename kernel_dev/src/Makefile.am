@@ -4,7 +4,6 @@ lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = body.cc\
 link.cc\
-hitsphere_link.cc\
 object.cc\
 multi_body_system.cc\
 subsystem.cc\
@@ -38,7 +37,6 @@ LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
 link.h\
-hitsphere_link.h\
 object.h\
 multi_body_system.h\
 subsystem.h\

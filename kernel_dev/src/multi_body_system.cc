@@ -432,6 +432,8 @@ namespace MBSim {
  //     }
  //     rFactor.init(rFac);
 
+      cout << "Global r-Factor strategy not currently not available." << endl;
+      throw 5;
     }
     else if(strategy == local) {
       Group::updaterFactors();

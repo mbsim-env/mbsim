@@ -67,6 +67,7 @@ namespace MBSim {
 
   void Connection::init() {
     Link::init();
+
     g.resize(forceDir.cols()+momentDir.cols());
     gd.resize(forceDir.cols()+momentDir.cols());
     la.resize(forceDir.cols()+momentDir.cols());

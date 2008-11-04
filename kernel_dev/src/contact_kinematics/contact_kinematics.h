@@ -55,7 +55,7 @@ namespace MBSim {
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
       //virtual void stage1(Vec &g) = 0;
-      virtual void updateg(Vec &g, vector<CoordinateSystem*> &cosy) {cout << "updateg not implemented" << endl; throw 5;}
+      virtual void updateg(Vec &g, ContourPointData *cpData) {cout << "updateg not implemented" << endl; throw 5;}
       //virtual double computeg() = 0;
 
       /*! compute \f$\dot{\boldsymbol{g}}\f$, force directions, ... must be up-to-date at end of method
@@ -67,10 +67,10 @@ namespace MBSim {
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
       //virtual void stage2(const Vec& g, Vec &gd) = 0;
-      virtual void updategd(const Vec& g, Vec &gd, vector<CoordinateSystem*> &cosy) {cout << "updategd not implemented" << endl; throw 5;}
+      virtual void updategd(const Vec& g, Vec &gd, ContourPointData* cpData) {cout << "updategd not implemented" << endl; throw 5;}
       //virtual Vec computegd(const Vec& g) = 0;
 
-      virtual void updatewb(Vec &wb, const Vec &g, vector<CoordinateSystem*> &cosy) {};
+      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {};
 
 	  /*! Treats ordering of contours \param contour */
       virtual void assignContours(const vector<Contour*> &contour) = 0;

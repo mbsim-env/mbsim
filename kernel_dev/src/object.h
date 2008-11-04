@@ -84,8 +84,6 @@ namespace MBSim {
     virtual void readu0();
     virtual void writex();
     virtual void readx0();
-    Vec  WrOHitSphere;
-    double RHitSphere;
     virtual void updateqRef(const Vec& ref);
     virtual void updateqdRef(const Vec& ref);
     virtual void updateuRef(const Vec& ref);
@@ -213,11 +211,6 @@ namespace MBSim {
     const vector<CoordinateSystem*>& getCoordinateSystems() const {return port;}
     virtual Contour* getContour(const string &name, bool check=true);
     const vector<Contour*>& getContours() const {return contour;}
-
-    void   setWrHitSphere(const Vec &WrOS)     {WrOHitSphere = WrOS;}
-    const Vec&    getWrHitSphere()  const      {return WrOHitSphere;}
-    void   setRadiusHitSphere(const double &R) {RHitSphere = R;}
-    const double& getRadiusHitSphere() const   {return RHitSphere;}
 
     virtual void calcqSize() {};
     virtual void calcuSize() {};

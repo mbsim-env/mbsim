@@ -192,16 +192,22 @@ namespace MBSim {
       throw 5;
     }
 
-    //ContourPointData cpd[2];
-    //cpData.push_back(cpd[0]);
-    //cpData.push_back(cpd[1]);
-    //cpData[0].type = CONTINUUM; // default-Wert
-    //cpData[0].Wn.resize(3,1);
-    //cpData[0].Wt.resize(3,getFrictionDirections());
-    //cpData[1].type = CONTINUUM; // default-Wert
-    //cpData[1].Wn.resize(3,1);
-    //cpData[1].Wt.resize(3,getFrictionDirections());
-    //
+    //cpData.push_back(new ContourPointData);
+    //cpData.push_back(new ContourPointData);
+    cpData[0].type = CONTINUUM; // default-Wert
+    cpData[0].Wn.resize(3,1);
+    cpData[0].Wt.resize(3,getFrictionDirections());
+    cpData[1].type = CONTINUUM; // default-Wert
+    cpData[1].Wn.resize(3,1);
+    cpData[1].Wt.resize(3,getFrictionDirections());
+    
+    cpData[0].cosy.setName("0");
+    cpData[1].cosy.setName("1");
+    cpData[0].cosy.getJacobianOfTranslation().resize(3,contour[0]->getWJP().cols());
+    cpData[0].cosy.getJacobianOfRotation().resize(3,contour[0]->getWJR().cols());
+    cpData[1].cosy.getJacobianOfTranslation().resize(3,contour[1]->getWJP().cols());
+    cpData[1].cosy.getJacobianOfRotation().resize(3,contour[1]->getWJR().cols());
+
     //connectHitSpheres(contour[0],contour[1]);
 
     iT = Index(1,getFrictionDirections());
@@ -225,12 +231,40 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    contactKinematics->updateg(g,cosy);
+    contactKinematics->updateg(g,cpData);
+      for(unsigned int i=0; i<2; i++) {
+      Vec WrPC = cpData[i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
+
+      cpData[i].cosy.setAngularVelocity(contour[i]->getCoordinateSystem()->getAngularVelocity());
+      cpData[i].cosy.setVelocity(contour[i]->getCoordinateSystem()->getVelocity() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC));
+
+      Mat tWrPC = tilde(WrPC);
+      cpData[i].cosy.setJacobianOfTranslation(contour[i]->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getJacobianOfRotation());
+      cpData[i].cosy.setJacobianOfRotation(contour[i]->getCoordinateSystem()->getJacobianOfRotation());
+      cpData[i].cosy.setGyroscopicAccelerationOfTranslation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC)));
+      cpData[i].cosy.setGyroscopicAccelerationOfRotation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
+    }
+
   }
 
   void Contact::updategd(double t) {
-    contactKinematics->updategd(g,gd,cosy);
-  }
+  
+    Vec Wn = cpData[1].cosy.getOrientation().col(1);
+
+    Vec WvD = cpData[1].cosy.getVelocity() - cpData[0].cosy.getVelocity();
+
+    gd(0) = trans(Wn)*WvD;
+
+    if(gd.size()>1) {
+      Mat Wt(3,gd.size()-1);
+      Wt.col(0) = cpData[1].cosy.getOrientation().col(0);
+      if(gd.size() > 2)
+	Wt.col(1) = cpData[1].cosy.getOrientation().col(2);
+
+      gd(1,gd.size()-1) = trans(Wt)*WvD;
+    }
+
+   }
 
 //  bool Contact::activeConstraintsChanged() {
 //    return activeHolonomicConstraintsChanged() || activeNonHolonomicConstraintsChanged();

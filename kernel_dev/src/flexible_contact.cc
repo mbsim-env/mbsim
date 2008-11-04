@@ -40,15 +40,15 @@ namespace MBSim {
       if(ffl)
 	la(1,getFrictionDirections()) = (*ffl)(gd(1,getFrictionDirections()),fabs(la(0)));
 
-      WF[0] =  cosy[0]->getOrientation().col(1)*la(0);
+      WF[0] =  cpData[0].cosy.getOrientation().col(1)*la(0);
       if(getFrictionDirections()) {
-	WF[0] += cosy[0]->getOrientation().col(0)*la(1);
+	WF[0] += cpData[0].cosy.getOrientation().col(0)*la(1);
 	if(getFrictionDirections() > 1)
-	  WF[0] += cosy[0]->getOrientation().col(2)*la(2);
+	  WF[0] += cpData[0].cosy.getOrientation().col(2)*la(2);
       }
       WF[1] = -WF[0];
       for(unsigned int i=0; i<contour.size(); i++)
-	h[i] += trans(cosy[i]->getJacobianOfTranslation())*WF[i];
+	h[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*WF[i];
     }
   }
 
