@@ -25,9 +25,8 @@
 #define _CONTACT_H_
 
 #include "link.h"
-//#include "hitsphere_link.h"  \TODO Warum brauchen wir das nicht?
 #include "contour.h"
-
+#include "contour_pdata.h"
 
 namespace MBSim {
 
@@ -42,7 +41,7 @@ namespace MBSim {
   class Contact: public Link {
 
     protected:
-      //bool hca, nhca, closed, sticking;
+
       unsigned int gActive, gdActive[2];
       unsigned int gActive0, gdActive0[2];
 
@@ -53,6 +52,8 @@ namespace MBSim {
       //int nFric;
 
       ContactKinematics *contactKinematics;
+
+      ContourPointData cpData[2];
 
     public:
       /*!

@@ -39,11 +39,11 @@ namespace MBSim {
       Line *line;
 
     public:
-      void updateg(Vec &g, vector<CoordinateSystem*> &cosy);
-      void updategd(const Vec &g, Vec &gd, vector<CoordinateSystem*> &cosy);
+      void updateg(Vec &g, ContourPointData *cpData);
+      void updategd(const Vec &g, Vec &gd, ContourPointData *cpData);
 
       void assignContours(const vector<Contour*> &contour);
-      void updatewb(Vec &wb, const Vec &g, vector<CoordinateSystem*> &cosy);
+      void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
   };
 
 }

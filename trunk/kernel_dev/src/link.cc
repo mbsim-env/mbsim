@@ -65,6 +65,7 @@ namespace MBSim {
       fF.push_back(Mat(3,laSize));
       fM.push_back(Mat(3,laSize));
     }
+
     for(unsigned i=0; i<contour.size(); i++) {
       W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
       V.push_back(Mat(contour[i]->getWJP().cols(),laSize));
@@ -74,11 +75,6 @@ namespace MBSim {
       WM.push_back(Vec(3));
       fF.push_back(Mat(3,laSize));
       fM.push_back(Mat(3,laSize));
-      ostringstream os;
-      os << i;
-      cosy.push_back(new CoordinateSystem(os.str()));
-      cosy[i]->getJacobianOfTranslation().resize(3,contour[i]->getWJP().cols());
-      cosy[i]->getJacobianOfRotation().resize(3,contour[i]->getWJR().cols());
     }
   }
 
@@ -212,7 +208,7 @@ namespace MBSim {
     }
 
     for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      //WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
+     // WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
       if(setValued) { 
 	if (isActive()) {
 	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
@@ -305,41 +301,6 @@ namespace MBSim {
 	rFactor(i) *= 0.9;
   }
 
-  void Link::updater(double t) {
-
-    for(unsigned i=0; i<port.size(); i++) 
-      r[i] += W[i]*la;
-    
-    for(unsigned i=0; i<contour.size(); i++) 
-      r[i] += W[i]*la;
-  }
-
-  void Link::updatewb(double t) {
-    for(unsigned i=0; i<port.size(); i++) 
-      wb += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
-    for(unsigned i=0; i<contour.size(); i++) 
-      wb += trans(fF[i])*cosy[i]->getGyroscopicAccelerationOfTranslation();
-  }
-
-  void Link::updateh(double t) {
-    if(isActive()) {
-      for(unsigned int i=0; i<port.size(); i++)
-	h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
-      for(unsigned int i=0; i<contour.size(); i++) {
-	//contour[i]->updateMovingFrame(t, cpData[i]);
-	h[i] += trans(cosy[i]->getJacobianOfTranslation())*WF[i];
-      }
-    }
-  }
-
-  void Link::updateW(double t) {
-    for(unsigned int i=0; i<port.size(); i++)
-      W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
-    for(unsigned int i=0; i<contour.size(); i++) {
-      //contour[i]->updateMovingFrame(t, cpData[i]);
-      W[i] += trans(cosy[i]->getJacobianOfTranslation())*fF[i];
-    }
-  }
 
   //int Link::getlaIndMBS() const {
   //  return parent->getlaIndMBS() + laInd;
@@ -348,17 +309,17 @@ namespace MBSim {
   void Link::save(const string &path, ofstream& outputfile) {
     Element::save(path,outputfile);
 
-    outputfile << "# Connected coordinate sytems:" << endl;
-    for(unsigned int i=0; i<port.size(); i++) {
-      outputfile << port[i]->getFullName() << endl;
-    }
-    outputfile << endl;
+  //  outputfile << "# Connected coordinate sytems:" << endl;
+  //  for(unsigned int i=0; i<port.size(); i++) {
+  //    outputfile << port[i]->getFullName() << endl;
+  //  }
+  //  outputfile << endl;
 
-    outputfile << "# Connected contours:" << endl;
-    for(unsigned int i=0; i<contour.size(); i++) {
-      outputfile << contour[i]->getFullName() << endl;
-    }
-    outputfile << endl;
+  //  outputfile << "# Connected contours:" << endl;
+  //  for(unsigned int i=0; i<contour.size(); i++) {
+  //    outputfile << contour[i]->getFullName() << endl;
+  //  }
+  //  outputfile << endl;
   }
 
   void Link::load(const string &path, ifstream& inputfile) {
@@ -410,14 +371,6 @@ namespace MBSim {
 
   void Link::connect(Contour *contour_, int id) {
     contour.push_back(contour_);
-  //  W.push_back(Mat());
-  //  V.push_back(Mat());
-  //  h.push_back(Vec());
-  //  r.push_back(Vec());
-  //  WF.push_back(Vec(3));
-  //  WM.push_back(Vec(3));
-  //  fF.push_back(Mat());
-  //  fM.push_back(Mat());
   }
 
   void Link::updatexRef(const Vec &xParent) {
@@ -475,5 +428,14 @@ namespace MBSim {
       r[i]>>rParent(I);
     }
   } 
+
+  void Link::updater(double t) {
+
+    for(unsigned i=0; i<port.size(); i++) 
+      r[i] += W[i]*la;
+    
+    for(unsigned i=0; i<contour.size(); i++) 
+      r[i] += W[i]*la;
+  }
 
 }

@@ -198,31 +198,32 @@ namespace MBSim {
   inline double FuncPairHyperbolaCircle::operator()(const double &phi) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cosh(phi) - 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sinh(phi) - ((a*a) + (b*b))*sinh(2*phi);}
   inline Vec FuncPairHyperbolaCircle::computeWrD(const double &phi) {return d + b1*a*cosh(phi) + b2*b*sinh(phi);}
   
-  /*! Root function for pairing Contour1s and Line */
-  class FuncPairContour1sLine : public DistanceFunction<double,double> {
-    private:
-      Contour1s *contour;
-      Line *line;
-    public:
-      FuncPairContour1sLine(Line* line_, Contour1s *contour_) : contour(contour_), line(line_) {}
-      double operator()(const double &s) {
-	Vec WtC = (contour->computeWt(s)).col(0);
-	Vec WnL = line->computeWn();
-	return trans(WtC)*WnL;
-      }
-      Vec computeWrD(const double &s) {
-	Vec WrOCContour =  contour->computeWrOC(s);
-	Vec Wn = contour->computeWn(s);
-	double g =trans(Wn)*(WrOCContour-line->getWrOP()); 
-	//Vec WrOCLine = WrOCContour-Wn*g; 
-	//return WrOCContour-WrOCLine;
-	//cout << "FuncPairContour1sLine::distanceVector(s)" << endl;
-	return Wn*g;
-      }
-      double operator[](const double &s) {
-	return nrm2(computeWrD(s));
-      }
-  };
+ /// TODO: An neues Design anpassen
+//////      /*! Root function for pairing Contour1s and Line */
+//////      class FuncPairContour1sLine : public DistanceFunction<double,double> {
+//////        private:
+//////          Contour1s *contour;
+//////          Line *line;
+//////        public:
+//////          FuncPairContour1sLine(Line* line_, Contour1s *contour_) : contour(contour_), line(line_) {}
+//////          double operator()(const double &s) {
+//////    	Vec WtC = (contour->computeWt(s)).col(0);
+//////    	Vec WnL = line->computeWn();
+//////    	return trans(WtC)*WnL;
+//////          }
+//////          Vec computeWrD(const double &s) {
+//////    	Vec WrOCContour =  contour->computeWrOC(s);
+//////    	Vec Wn = contour->computeWn(s);
+//////    	double g =trans(Wn)*(WrOCContour-line->getWrOP()); 
+//////    	//Vec WrOCLine = WrOCContour-Wn*g; 
+//////    	//return WrOCContour-WrOCLine;
+//////    	//cout << "FuncPairContour1sLine::distanceVector(s)" << endl;
+//////    	return Wn*g;
+//////          }
+//////          double operator[](const double &s) {
+//////    	return nrm2(computeWrD(s));
+//////          }
+//////      };
 
   /*! Root function for pairing Contour1s and Circle */
   class FuncPairContour1sCircleSolid : public DistanceFunction<double,double> {

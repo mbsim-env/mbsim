@@ -109,33 +109,20 @@ namespace MBSim {
   Point::~Point() {}
 
   /* Line */
-  Line::Line(const string &name) : Contour(name), Cn(3), Cb(3) {}
-  void Line::setCn(const Vec &n) {Cn = n/nrm2(n);}
-  void Line::setCb(const Vec &b) {Cb = b/nrm2(b);}
+  Line::Line(const string &name) : Contour(name) {}
+  Line::~Line() {}
 
   void Line::save(const string& path, ofstream &outputfile) {
     Contour::save(path,outputfile);
-    outputfile << "# Cn = " << endl;
-    outputfile << Cn << endl;
-    outputfile << "# Cb = " << endl;
-    outputfile << Cb << endl;
   }
 
   void Line::load(const string& path, ifstream &inputfile) {
     Contour::load(path,inputfile);
-    string dummy;
-
-    getline(inputfile,dummy); // # Cn
-    inputfile >> Cn;
-    getline(inputfile,dummy); // Rest of line
-
-    getline(inputfile,dummy); // # Cb
-    inputfile >> Cb;
-    getline(inputfile,dummy); // Rest of line
   }
 
   /* Circle Solid */
-  CircleSolid::CircleSolid(const string &name) : Contour(name), Cb(3) {}
+  CircleSolid::CircleSolid(const string &name) : Contour(name), r(0), Cb(3) {}
+  CircleSolid::CircleSolid(const string &name, double r_) : Contour(name), r(r_), Cb(3) {}
   void CircleSolid::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
 
   /* Circle Hollow */

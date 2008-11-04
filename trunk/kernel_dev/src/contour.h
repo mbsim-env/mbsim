@@ -132,18 +132,9 @@ namespace MBSim {
   class Line : public Contour {
 
     protected:
-      Vec Cn, Cb;
     public:
       Line(const string &name);
-
-      const Vec& getCb() const {return Cb;} 
-      const Vec& getCn() const {return Cn;} 
-      void setCn(const Vec& Cn_);
-      void setCb(const Vec& Cb_);
-
-      Vec computeWb() {return R.getOrientation()*Cb;}
-      Vec computeWn() {return R.getOrientation()*Cn;}
-      Vec computeWt() {return R.getOrientation()*crossProduct(Cn,Cb);}
+      ~Line();
 
       string getType() const {return "Line";}
 
@@ -161,6 +152,8 @@ namespace MBSim {
     public:
       /*! Constructor */
       CircleSolid(const string &name);
+      /*! Constructor */
+      CircleSolid(const string &name, double r);
       /*! Set radius */
       void setRadius(double r_) {r = r_;}
       /*! Get radius */

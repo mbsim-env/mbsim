@@ -39,31 +39,48 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidLine::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData) {
 
-    Vec Wd = line->getWrOP() - circlesolid->getWrOP();
-    cpData[iline].Wn = line->computeWn();
-    cpData[icircle].Wn = -cpData[iline].Wn;
-    g(0) = trans(cpData[iline].Wn)*Wd - circlesolid->getRadius();
+    cpData[iline].cosy.setOrientation(line->getCoordinateSystem()->getOrientation());
+    cpData[icircle].cosy.getOrientation().col(0) = -line->getCoordinateSystem()->getOrientation().col(0);
+    cpData[icircle].cosy.getOrientation().col(1) = -line->getCoordinateSystem()->getOrientation().col(1);
+    cpData[icircle].cosy.getOrientation().col(2) = line->getCoordinateSystem()->getOrientation().col(2);
+
+    Vec Wn = cpData[iline].cosy.getOrientation().col(1);
+
+    Vec Wd = line->getCoordinateSystem()->getPosition() - circlesolid->getCoordinateSystem()->getPosition();
+
+    g(0) = trans(Wn)*Wd - circlesolid->getRadius();
+
+    cpData[icircle].cosy.setPosition(circlesolid->getCoordinateSystem()->getPosition() + Wn*circlesolid->getRadius());
+    cpData[iline].cosy.setPosition(cpData[icircle].cosy.getPosition() + Wn*g(0));
   }
 
-  void ContactKinematicsCircleSolidLine::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
+  void ContactKinematicsCircleSolidLine::updategd(const Vec &g, Vec &gd, ContourPointData *cpData) {}
 
-    Vec WrPC[2], WvC[2];
-    WrPC[icircle] = cpData[iline].Wn*circlesolid->getRadius();
-    cpData[icircle].WrOC = circlesolid->getWrOP() + WrPC[icircle];
-    cpData[iline].WrOC = cpData[icircle].WrOC + cpData[iline].Wn*g;
-    WrPC[iline] = cpData[iline].WrOC - line->getWrOP();
-    WvC[icircle] = circlesolid->getWvP()+crossProduct(circlesolid->getWomegaC(),WrPC[icircle]);
-    WvC[iline] = line->getWvP()+crossProduct(line->getWomegaC(),WrPC[iline]);
-    Vec WvD = WvC[iline] - WvC[icircle];
-    gd(0) = trans(cpData[iline].Wn)*WvD;
-    if(cpData[iline].Wt.cols()) {
-      cpData[iline].Wt = crossProduct(line->computeWb(),cpData[iline].Wn);
-      cpData[icircle].Wt = -cpData[iline].Wt;
-      static Index iT(1,cpData[iline].Wt.cols());
-      gd(iT) = trans(cpData[iline].Wt)*WvD;
-    }
+  void ContactKinematicsCircleSolidLine::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+
+    Vec b1 = cpData[iline].cosy.getOrientation().col(2);
+    Vec b2 = cpData[icircle].cosy.getOrientation().col(2);
+    Vec n1 = cpData[iline].cosy.getOrientation().col(1);
+    Vec n2 = cpData[icircle].cosy.getOrientation().col(1);
+    Vec t1 = cpData[iline].cosy.getOrientation().col(0);
+    Vec t2 = cpData[icircle].cosy.getOrientation().col(0);
+    Vec vC1 = cpData[iline].cosy.getVelocity();
+    Vec vC2 = cpData[icircle].cosy.getVelocity();
+    Vec Om1 = cpData[iline].cosy.getAngularVelocity();
+    Vec Om2 = cpData[icircle].cosy.getAngularVelocity();
+
+    double kap1 = 0; // Gerade
+    double kap2 = 1.0/circlesolid->getRadius(); // Kreis
+
+    //double sd1 = trans(t1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
+    double sd1 = (kap2*trans(t1)*(vC2-vC1)+trans(b1)*(Om2-Om1))/(kap1+kap2);
+    double sd2 = (kap1*trans(t2)*(vC1-vC2)+trans(b2)*(Om1-Om2))/(kap1+kap2);
+
+    wb(0) += trans(n1)*(-crossProduct(Om1,vC1)) - kap1*sd1*trans(t1)*vC1 + sd1*trans(b1)*Om1 + trans(n2)*(-crossProduct(Om2,vC2)) - kap2*sd2*trans(t2)*vC2 + sd2*trans(b1)*Om2;
+    if(wb.size() > 1)
+      wb(1) += trans(t1)*(-crossProduct(Om1,vC1)) + kap1*sd1*trans(n1)*vC1 + trans(t2)*(-crossProduct(Om2,vC2)) + kap2*sd2*trans(n2)*vC2;
   }
 
 }

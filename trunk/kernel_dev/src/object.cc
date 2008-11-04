@@ -24,15 +24,12 @@
 #include "object.h"
 #include "coordinate_system.h"
 #include "contour.h"
-#include "link.h"
-#include "multi_body_system.h"
 #include "eps.h"
-#include "subsystem.h"
 #include "class_factory.h"
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize),  WrOHitSphere(3), RHitSphere(0) {} //, parent(0)
+  Object::Object(const string &name) : Element(name), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize) {} //, parent(0)
 
   void Object::writeq() {
 //    string fname="PREINTEG/"+fullName+".q0.asc";  
@@ -135,10 +132,6 @@ namespace MBSim {
     q = q0;
     u = u0;
   }
-
-  //string Object::getFullName() const {
-  //  return parent->getFullName() + "." + name;
-  //}
 
   void Object::save(const string &path, ofstream &outputfile) {
     Element::save(path,outputfile);

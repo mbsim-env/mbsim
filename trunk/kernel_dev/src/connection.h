@@ -39,6 +39,7 @@ namespace MBSim {
   class Connection: public Link {
 
     protected:
+
       Index IT, IR;
       Mat forceDir, momentDir;
       Mat Wf, Wm;

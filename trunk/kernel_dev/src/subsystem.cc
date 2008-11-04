@@ -604,11 +604,6 @@ namespace MBSim {
   }
 
   void Subsystem::updateg(double t) {
-    //if(!HSLink.empty()) {
-    //  linkSingleValued.erase(linkSingleValued.begin()+nHSLinkSingleValuedFixed,linkSingleValued.end());
-    //  linkSetValued.erase(linkSetValued.begin()+nHSLinkSetValuedFixed,linkSetValued.end());
-    //  for(vector<HitSphereLink*>::iterator iHS = HSLink.begin(); iHS != HSLink.end(); ++iHS) (*iHS)->checkActive();
-    //}
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updateg(t);
