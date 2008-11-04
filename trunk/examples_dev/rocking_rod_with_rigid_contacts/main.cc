@@ -8,8 +8,8 @@ int main (int argc, char* argv[]) {
 
   MultiBodySystem *sys = new System("TS");
 
-  //sys->setContactSolver(GaussSeidel);
-  //sys->setImpactSolver(GaussSeidel);
+  sys->setConstraintSolver(GaussSeidel);
+  sys->setImpactSolver(GaussSeidel);
 
   sys->init();
   

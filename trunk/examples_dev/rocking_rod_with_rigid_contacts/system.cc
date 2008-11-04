@@ -8,17 +8,6 @@
 
 using namespace AMVis;
 
-class Moment : public UserFunction {
-  public:
-    Vec operator()(double t) {
-      Vec a(3);
-      a(0) = 0.001*cos(t);
-      a(1) = 0.0005*sin(t);
-      //a(2) = 0.15*sin(t+M_PI/8);
-      return a;
-    }
-};
-
 System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Gravitation
   Vec grav(3);
@@ -35,11 +24,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double alpha = 3.0 * M_PI/180.; 
   double deltax = 0.2;           
   double mu  = 0.3;
-
-  //CoSy* origin = new CoSy("O");
-  //Vec WrOK(3);
-  //WrOK(2) = d/2;;
-  //origin->setWrOP(WrOK);
 
   RigidBody* body = new RigidBody("Rod");
   addObject(body);
@@ -62,11 +46,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrSC(3);
   KrSC(1) = -0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
-  Vec n(3,INIT,0.0), b(3,INIT,0.0);
-  b(2) =  1;
-  n(1) = 1;
-  line->setCn(n);
-  line->setCb(b);
 
   // Obstacles
   Vec delta1(3); 
@@ -91,6 +70,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   cr2S->setFrictionLaw(new PlanarCoulombFriction(mu));
   cr2S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
   cr2S->connect(point2,body->getContour("Line"));
+  cr2S->setPlotLevel(2);
   addLink(cr2S);
 
   // Visualisation with AMVis
