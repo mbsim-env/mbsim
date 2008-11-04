@@ -51,7 +51,7 @@ namespace MBSim {
 
 	  Mat computeJacobianMatrix(const ContourPointData &data);
 
-	  Vec computeWn(const ContourPointData &S_){return computeAWK(S_).col(1);}
+	  Vec computeWn(const ContourPointData &S_) {return computeAWK(S_).col(1);}
 	  Mat computeWt(const ContourPointData &S_);
 	  Vec computeWrOC(const ContourPointData &S_);
 	  Vec computeWvC(const ContourPointData &S_);

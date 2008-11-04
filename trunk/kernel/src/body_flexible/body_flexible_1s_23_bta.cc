@@ -168,13 +168,12 @@ namespace MBSim {
 	// }
   }
 
-  //-----------------------------------------------------------------------------------
   void BodyFlexible1s23BTA::BuildElements() {
-	for(int i=0;i<Elements;i++) {
-	activeElement = Index( discretization[i]->getSizeOfVelocities()/2*i , discretization[i]->getSizeOfVelocities()/2*(i+2) -1 );
-	qElement[i] = q(activeElement);
-	uElement[i] = u(activeElement);
-	}
+    for(int i=0;i<Elements;i++) {
+      activeElement = Index( discretization[i]->getSizeOfVelocities()/2*i , discretization[i]->getSizeOfVelocities()/2*(i+2) -1 );
+      qElement[i] = q(activeElement);
+      uElement[i] = u(activeElement);
+    }
   }
 
   double BodyFlexible1s23BTA::BuildElement(const double& sGlobal) {
