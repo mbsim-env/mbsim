@@ -1,7 +1,8 @@
 #include "system.h"
 #include "rigid_body.h"
 #include "userfunction.h"
-#include "flexible_connection.h"
+#include "joint.h"
+#include "constitutive_laws.h"
 #include "load.h"
 #include "cuboid.h"
 #include "cylinder.h"
@@ -84,13 +85,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setFrameOfReference(getCoordinateSystem("Os"));
   box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
-  FlexibleConnection *ls = new FlexibleConnection("Gelenk1");
+  Joint *ls = new Joint("Gelenk1");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new LinearRegularizedBilateralConstraint(1e7, 1));
   addLink(ls);
   ls->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
 
-  ls = new FlexibleConnection("Gelenk2");
+  ls = new Joint("Gelenk2");
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new LinearRegularizedBilateralConstraint(1e7, 1));
   addLink(ls);
