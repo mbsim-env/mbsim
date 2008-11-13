@@ -2,7 +2,8 @@
 #include "rigid_body.h"
 #include "cylinder.h"
 #include "contour.h"
-#include "flexible_contact.h"
+#include "constitutive_laws.h"
+#include "contact.h"
 #include "load.h"
 #include "cube.h"
 
@@ -55,9 +56,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   A(2,2) = 1;
   addContour(new Line("Line"),Vec(3),A);
 
-  FlexibleContact *rc = new FlexibleContact("Contact");
-  rc->setContactLaw(new LinearRegularizedUnilateralConstraint(1e6,1e4));
-  rc->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+  Contact *rc = new Contact("Contact");
+  rc->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e6,1e4));
+  rc->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   rc->connect(getContour("Line"),body->getContour("Circle"));
   rc->setPlotLevel(2);
   addLink(rc);
