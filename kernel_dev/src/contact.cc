@@ -340,13 +340,18 @@ namespace MBSim {
     if(fdf)
       fdf->save(path,outputfile);
     else {
-      outputfile << "# Type of friction law:" << endl << endl;
+      outputfile << "# Type of friction force law:" << endl << endl;
     }
-    //fnil->save(path,outputfile);
+
+    if(fnil)
+      fnil->save(path,outputfile);
+    else
+      outputfile << "# Type of contact impact law:" << endl << endl;
+
     if(ftil)
       ftil->save(path,outputfile);
     else {
-      outputfile << "# Type of tangential impact law:" << endl << endl;
+      outputfile << "# Type of friction impact law:" << endl << endl;
     }
   }
 
@@ -358,7 +363,7 @@ namespace MBSim {
     getline(inputfile,dummy); // Type of contact law 
     inputfile.seekg(s,ios::beg);
     ClassFactory cf;
-    //setContactLaw(cf.getConstraintLaw(dummy));
+    setContactForceLaw(cf.getGeneralizedForceLaw(dummy));
     fcl->load(path, inputfile);
 
     s = inputfile.tellg();
@@ -375,10 +380,12 @@ namespace MBSim {
 
     s = inputfile.tellg();
     getline(inputfile,dummy); // # Type of normal impact law:
+    cout << dummy << endl;
     getline(inputfile,dummy); // Type of normal impact law 
+    cout << dummy << endl;
     inputfile.seekg(s,ios::beg);
-    //setNormalImpactLaw(cf.getNormalImpactLaw(dummy));
-    //fnil->load(path, inputfile);
+    setContactImpactLaw(cf.getGeneralizedImpactLaw(dummy));
+    fnil->load(path, inputfile);
 
     s = inputfile.tellg();
     getline(inputfile,dummy); // # Type of tangential impact law:
