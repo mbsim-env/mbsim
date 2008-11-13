@@ -1,7 +1,8 @@
 #include "system.h"
 #include "rigid_body.h"
 #include "userfunction.h"
-#include "rigid_connection.h"
+#include "joint.h"
+#include "constitutive_laws.h"
 #include "load.h"
 #include "cuboid.h"
 #include "cylinder.h"
@@ -60,7 +61,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setAMVisBody(cylinder);
   cylinder -> setInitialTranslation(0,-0.5,0);
   cylinder -> setInitialRotation(1.5708,0,0);
-  RigidConnection *ls = new RigidConnection("Gelenk1");
+  Joint *ls = new Joint("Gelenk1");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new BilateralConstraint);
@@ -102,7 +103,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
 
 
-  ls = new RigidConnection("Gelenk2");
+  ls = new Joint("Gelenk2");
   addLink(ls);
   ls->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   ls->setForceLaw(new BilateralConstraint);

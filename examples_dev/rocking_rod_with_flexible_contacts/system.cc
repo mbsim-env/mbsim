@@ -2,9 +2,10 @@
 #include "rigid_body.h"
 #include "objobject.h"
 #include "contour.h"
-#include "flexible_contact.h"
+#include "contact.h"
 #include "load.h"
 #include "cube.h"
+#include "constitutive_laws.h"
 
 using namespace AMVis;
 
@@ -70,15 +71,15 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addContour(point2,delta2,SqrMat(3,EYE));
 
   // Contacts
-  FlexibleContact *cr1S = new FlexibleContact("Contact1"); 
-  cr1S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-  cr1S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+  Contact *cr1S = new Contact("Contact1"); 
+  cr1S->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
+  cr1S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
-  FlexibleContact *cr2S = new FlexibleContact("Contact2");
-  cr2S->setContactLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-  cr2S->setFrictionLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+  Contact *cr2S = new Contact("Contact2");
+  cr2S->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
+  cr2S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
 

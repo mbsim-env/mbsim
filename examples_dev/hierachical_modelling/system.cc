@@ -29,6 +29,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   A(1,0) = -sin(a);
   addSubsystem(group2,r,A);
 
-  //cout << findCoordinateSystem("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName();
+  //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;
+  //cout << findCoordinateSystem("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;
 
 }
