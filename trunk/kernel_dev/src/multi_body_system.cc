@@ -52,6 +52,7 @@ namespace MBSim {
   } 
 
   void MultiBodySystem::init() {
+    setUpLinks();
 
     setMultiBodySystem(this);
     setFullName(name);

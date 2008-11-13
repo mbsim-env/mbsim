@@ -27,7 +27,7 @@
 
 #include "element.h"
 #include "contact.h"
-#include "rigid_contact.h"
+//#include "rigid_contact.h"
 #include "contour.h"
 #include "multi_body_system.h"
 

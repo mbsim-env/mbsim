@@ -35,14 +35,14 @@ namespace MBSim {
 
     protected:
 
-      RegularizedConstraintLaw *ffl, *fml;
+      GeneralizedForceLaw *ffl, *fml;
 
     public:
 
       FlexibleConnection(const string &name);
 
-      void setForceLaw(RegularizedConstraintLaw * rc) {ffl = rc;}
-      void setMomentLaw(RegularizedConstraintLaw * rc) {fml = rc;}
+      void setForceLaw(GeneralizedForceLaw * rc) {ffl = rc;}
+      void setMomentLaw(GeneralizedForceLaw * rc) {fml = rc;}
 
       void updateh(double t);
 

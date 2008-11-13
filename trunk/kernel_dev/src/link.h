@@ -119,6 +119,7 @@ namespace MBSim {
       virtual void updatefRef(const Vec &ref) {};
 
       Link(const string &name, bool setValued);
+      Link(const string &name);
       ~Link();
 
       const vector<Mat>& getW() const {return W;}
@@ -175,7 +176,7 @@ namespace MBSim {
       void initPlotFiles();
 
       //bool isSetValued() const {return setValued;} 
-      bool isSetValued() const; 
+      virtual bool isSetValued() const {return false;}
 
       const Vec& getla() const {return la;}
       Vec& getla() {return la;}

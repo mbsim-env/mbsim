@@ -34,10 +34,10 @@ namespace MBSim {
   class Contour;
   class Translation;
   class Rotation;
-  class ConstraintLaw;
-  class DryFriction;
-  class NormalImpactLaw;
-  class TangentialImpactLaw;
+  class GeneralizedForceLaw;
+  class FrictionForceLaw;
+  class GeneralizedImpactLaw;
+  class FrictionImpactLaw;
 
   class ClassFactory {
     public:
@@ -47,10 +47,10 @@ namespace MBSim {
       Contour* getContour(const string &type);
       Translation* getTranslation(const string &type);
       Rotation* getRotation(const string &type);
-      ConstraintLaw* getConstraintLaw(const string &type);
-      DryFriction* getFrictionLaw(const string &type);
-      NormalImpactLaw* getNormalImpactLaw(const string &type);
-      TangentialImpactLaw* getTangentialImpactLaw(const string &type);
+      GeneralizedForceLaw* getGeneralizedForceLaw(const string &type);
+      FrictionForceLaw* getFrictionForceLaw(const string &type);
+      GeneralizedImpactLaw* getGeneralizedImpactLaw(const string &type);
+      FrictionImpactLaw* getFrictionImpactLaw(const string &type);
   };
 
 }

@@ -67,12 +67,12 @@ namespace MBSim {
 //      return false;
 //    
 //  }
-  void ConstraintLaw::save(const string &path, ofstream &outputfile) {
+  void GeneralizedForceLaw::save(const string &path, ofstream &outputfile) {
     outputfile << "# Type of constraint law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
-  void ConstraintLaw::load(const string &path, ifstream& inputfile) {
+  void GeneralizedForceLaw::load(const string &path, ifstream& inputfile) {
     string dummy;
     getline(inputfile,dummy); // # Type of constraint law:
     getline(inputfile,dummy); // Type of constraint law 
@@ -157,12 +157,12 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
-  void NormalImpactLaw::save(const string &path, ofstream &outputfile) {
+  void GeneralizedImpactLaw::save(const string &path, ofstream &outputfile) {
     outputfile << "# Type of normal impact law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
-  void NormalImpactLaw::load(const string &path, ifstream& inputfile) {
+  void GeneralizedImpactLaw::load(const string &path, ifstream& inputfile) {
     string dummy;
     getline(inputfile,dummy); // # Type of impact law:
     getline(inputfile,dummy); // Type of impact law 
@@ -251,12 +251,12 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
-  void FrictionLaw::save(const string &path, ofstream &outputfile) {
+  void FrictionForceLaw::save(const string &path, ofstream &outputfile) {
     outputfile << "# Type of friction law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
-  void FrictionLaw::load(const string &path, ifstream& inputfile) {
+  void FrictionForceLaw::load(const string &path, ifstream& inputfile) {
     string dummy;
     getline(inputfile,dummy); // # Type of friction law:
     getline(inputfile,dummy); // Type of friction law 
@@ -446,12 +446,12 @@ namespace MBSim {
     return -mu*gd/nrm2(gd);
   }
 
-  void TangentialImpactLaw::save(const string &path, ofstream &outputfile) {
+  void FrictionImpactLaw::save(const string &path, ofstream &outputfile) {
     outputfile << "# Type of tangential impact law:" << endl;
     outputfile << "Unkown" << endl << endl;
   }
 
-  void TangentialImpactLaw::load(const string &path, ifstream& inputfile) {
+  void FrictionImpactLaw::load(const string &path, ifstream& inputfile) {
     string dummy;
     getline(inputfile,dummy); // # Type of friction law:
     getline(inputfile,dummy); // Type of friction law 

@@ -23,7 +23,6 @@
 #include "rigid_body.h"
 #include "coordinate_system.h"
 #include "contour.h"
-#include "link.h"
 #include "tree.h"
 #include "multi_body_system.h"
 #include "class_factory.h"

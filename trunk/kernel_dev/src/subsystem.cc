@@ -537,6 +537,17 @@ namespace MBSim {
     //obj->setParent(this);
   }
 
+  void Subsystem::setUpLinks() {
+    for(unsigned int i=0; i<link.size(); i++) {
+      if(link[i]->isSetValued()) {
+	linkSetValued.push_back(link[i]);
+	linkSetValuedActive.push_back(link[i]);
+      }
+    else 
+      linkSingleValued.push_back(link[i]);
+    }
+  }
+
   void Subsystem::addLink(Link *lnk) {
     if(getLink(lnk->getName(),false)) {
       cout << "Error: The Subsystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
@@ -544,12 +555,6 @@ namespace MBSim {
     }
 
     link.push_back(lnk);
-    if(lnk->isSetValued()) {
-      linkSetValued.push_back(lnk);
-      linkSetValuedActive.push_back(lnk);
-    }
-    else 
-      linkSingleValued.push_back(lnk);
 
     //lnk->setParent(this);
   }

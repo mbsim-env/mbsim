@@ -32,6 +32,10 @@ namespace MBSim {
 
 
   class ContactKinematics;
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
+  class FrictionForceLaw;
+  class FrictionImpactLaw;
 
   /*! \brief Class for contacts
    *
@@ -55,14 +59,29 @@ namespace MBSim {
 
       ContourPointData cpData[2];
 
+      double argN;
+      Vec argT;
+
+      void checkActive();
+
+      GeneralizedForceLaw *fcl;
+      FrictionForceLaw *fdf;
+      GeneralizedImpactLaw *fnil;
+      FrictionImpactLaw *ftil;
+
+      Vec gdn, gdd;
+
     public:
       /*!
 	\param name name of Contact
 	\param setValued true, if force law is set-valued, else false for functional law
 	*/      
-      Contact(const string &name, bool setValued);
+      Contact(const string &name);
+      Contact(const string &name, bool flag) : Link(name,flag) {}
 
       virtual ~Contact();
+
+      bool isSetValued() const;
 
       void calcxSize();
 
@@ -70,6 +89,19 @@ namespace MBSim {
       void calcgSize();
       void calcgdSize();
       void calcrFactorSize();
+      void calcsvSize();
+
+      void load(const string& path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
+
+      void solveImpactsFixpointSingle();
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianConstraints();
+      void jacobianImpacts();
 
       /*geerbt*/
       void init();
@@ -87,28 +119,39 @@ namespace MBSim {
       void updateg(double t);
       void updategd(double t);
       void updater(double t);
+      void updateW(double t);
+      void updateV(double t);
+      void updatewb(double t);
+      void updateh(double t);
+      void updaterFactors();
+
 
       void updateWRef(const Mat &ref);
       void updateVRef(const Mat &ref);
 
-      /*! set one friction coefficinet for directions tangential to contact */
-      //void setFrictionCharacteristics(UserFunction *fmu_) {fmu = fmu_;}
-      //void setFrictionCoefficient(double mu_) {mu = mu_;}
-      ///*! get friction coefficinet */
-      //double getFrictionCoefficient() {return mu;}
+      void updateStopVector(double t);
 
-      virtual int getFrictionDirections() {return 0;}
+      void setContactForceLaw(GeneralizedForceLaw *fcl_) {fcl = fcl_;}
+      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) {fnil = fnil_;}
+      void setFrictionForceLaw(FrictionForceLaw *fdf_) {fdf = fdf_;}
+      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {ftil = ftil_;}
+
+      virtual int getFrictionDirections(); 
       void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
       string getType() const {return "Contact";}
 
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
-
-
-      //bool activeConstraintsChanged();
       bool gActiveChanged();
-      //bool activeHolonomicConstraintsChanged();
-      //bool activeNonHolonomicConstraintsChanged();
+      bool isActive() const {return gActive;}
+
+      void checkActiveg();
+      void checkActivegd();
+      void checkActivegdn();
+      void checkActivegdd(); 
+      void checkAllgd();
+
+      void updateCondition();
+      void checkConstraintsForTermination();
+      void checkImpactsForTermination();
 
       using Link::connect;
   };

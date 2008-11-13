@@ -9,12 +9,8 @@ multi_body_system.cc\
 subsystem.cc\
 group.cc\
 rigid_body.cc\
-connection.cc\
-flexible_connection.cc\
-rigid_connection.cc\
+joint.cc\
 contact.cc\
-rigid_contact.cc\
-flexible_contact.cc\
 load.cc\
 element.cc\
 tree.cc\
@@ -42,12 +38,8 @@ multi_body_system.h\
 subsystem.h\
 group.h\
 rigid_body.h\
-connection.h\
-flexible_connection.h\
-rigid_connection.h\
+joint.h\
 contact.h\
-rigid_contact.h\
-flexible_contact.h\
 load.h\
 element.h\
 tree.h\

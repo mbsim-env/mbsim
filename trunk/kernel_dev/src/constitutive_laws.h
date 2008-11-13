@@ -31,26 +31,28 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  class ConstraintLaw {
+  class GeneralizedForceLaw {
     public:
-      ConstraintLaw() {};
-      virtual ~ConstraintLaw() {};
-      virtual bool isClosed(double g, double gTol) = 0;
-      virtual bool remainsClosed(double s, double sTol) = 0;
+      GeneralizedForceLaw() {};
+      virtual ~GeneralizedForceLaw() {};
+      virtual bool isActive(double g, double gTol) {return true;}
+      virtual bool remainsActive(double s, double sTol) {return true;}
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual double project(double la, double gdn, double r) = 0;
-      virtual Vec diff(double la, double gdn, double r) = 0;
-      virtual double solve(double G, double gdn) = 0;
-      virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) = 0;
+      virtual double project(double la, double gdn, double r) {return 0;}
+      virtual Vec diff(double la, double gdn, double r) {return Vec(2);}
+      virtual double solve(double G, double gdn) {return 0;}
+      virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) {return true;}
+      virtual double operator()(double g,  double gd) {return 0;}
+      virtual bool isSetValued() const = 0;
   };
 
-  class UnilateralConstraint : public ConstraintLaw {
+  class UnilateralConstraint : public GeneralizedForceLaw {
     protected:
     public:
       UnilateralConstraint() {};
       virtual ~UnilateralConstraint() {};
-      bool isClosed(double g, double gTol) {return g<=gTol;}
+      bool isActive(double g, double gTol) {return g<=gTol;}
       bool remainsClosed(double s, double sTol) {return s<=sTol;}  // s = gd/gdd
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
@@ -58,13 +60,14 @@ namespace MBSim {
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
+      bool isSetValued() const {return true;}
   };
 
-  class BilateralConstraint : public ConstraintLaw {
+  class BilateralConstraint : public GeneralizedForceLaw {
     public:
       BilateralConstraint() {};
       virtual ~BilateralConstraint() {};
-      bool isClosed(double g, double gTol) {return true;}
+      bool isActive(double g, double gTol) {return true;}
       bool remainsClosed(double s, double sTol) {return true;}
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
@@ -72,14 +75,13 @@ namespace MBSim {
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
+      bool isSetValued() const {return true;}
   };
 
-  class NormalImpactLaw {
+  class GeneralizedImpactLaw {
     public:
-      NormalImpactLaw() {};
-      virtual ~NormalImpactLaw() {};
-      //virtual bool isClosed(double g) = 0;
-      //virtual bool remainsClosed(double gd) = 0;
+      GeneralizedImpactLaw() {};
+      virtual ~GeneralizedImpactLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual double project(double la, double gdn, double gda, double r) = 0;
@@ -88,7 +90,7 @@ namespace MBSim {
       virtual bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
   };
 
-  class UnilateralNewtonImpact : public NormalImpactLaw {
+  class UnilateralNewtonImpact : public GeneralizedImpactLaw {
     protected:
       double epsilon, gd_limit;
     public:
@@ -104,7 +106,7 @@ namespace MBSim {
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
   };
 
-  class BilateralImpact : public NormalImpactLaw {
+  class BilateralImpact : public GeneralizedImpactLaw {
     public:
       BilateralImpact() {};
       virtual ~BilateralImpact() {};
@@ -114,31 +116,27 @@ namespace MBSim {
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
   };
 
-  class FrictionLaw {
+  class FrictionForceLaw {
     protected:
-      double gdEps;
+      double gdLim;
     public:
-      FrictionLaw() : gdEps(1e-8) {};
-      virtual ~FrictionLaw() {};
+      FrictionForceLaw() : gdLim(0.1) {};
+      virtual ~FrictionForceLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual Vec project(const Vec& la, const Vec& gdn, double laN, double r) = 0;
-      virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) = 0;
-      virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) = 0;
-      virtual bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd) = 0;
+      virtual Vec project(const Vec& la, const Vec& gdn, double laN, double r) {return Vec(2);}
+      virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) {return Mat(2,2);}
+      virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) {return Vec(2);}
+      virtual bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd) {return true;}
+      virtual Vec dlaTdlaN(const Vec& gd, double laN) {return Vec(2);}
+      virtual Vec operator()(const Vec &gd, double laN) {return Vec(2);}
       virtual int getFrictionDirections() = 0;
-      virtual Vec dlaTdlaN(const Vec& gd, double laN) = 0;
-  };
-
-  class DryFriction : public FrictionLaw {
-    public:
-      DryFriction() {};
-      virtual ~DryFriction() {};
-      virtual double getFrictionCoefficient(double gd) = 0; 
       virtual bool isSticking(const Vec& s, double sTol) = 0;
+      virtual double getFrictionCoefficient(double gd) {return 0;}
+      virtual bool isSetValued() const = 0;
   };
 
-  class PlanarCoulombFriction : public DryFriction {
+  class PlanarCoulombFriction : public FrictionForceLaw {
     protected:
       double mu;
     public:
@@ -156,9 +154,10 @@ namespace MBSim {
       int getFrictionDirections() {return 1;}
       bool isSticking(const Vec& s, double sTol) {return abs(s(0)) <= sTol;}
       Vec dlaTdlaN(const Vec& gd, double laN);
+      bool isSetValued() const {return true;}
   };
 
-  class SpatialCoulombFriction : public DryFriction {
+  class SpatialCoulombFriction : public FrictionForceLaw {
     protected:
       double mu;
     public:
@@ -174,12 +173,13 @@ namespace MBSim {
       int getFrictionDirections() {return 2;}
       bool isSticking(const Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
       Vec dlaTdlaN(const Vec& gd, double laN);
+      bool isSetValued() const {return true;}
   };
 
-  class TangentialImpactLaw {
+  class FrictionImpactLaw {
     public:
-      TangentialImpactLaw() {};
-      virtual ~TangentialImpactLaw() {};
+      FrictionImpactLaw() {};
+      virtual ~FrictionImpactLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
       virtual Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
@@ -189,14 +189,7 @@ namespace MBSim {
       virtual int getFrictionDirections() = 0;
   };
 
- class DryFrictionImpact : public TangentialImpactLaw {
-    public:
-      DryFrictionImpact() {};
-      virtual ~DryFrictionImpact() {};
-      virtual double getFrictionCoefficient(double gd) = 0; 
-  };
-
-  class PlanarCoulombImpact : public DryFrictionImpact {
+  class PlanarCoulombImpact : public FrictionImpactLaw {
     protected:
       double mu;
     public:
@@ -214,7 +207,7 @@ namespace MBSim {
       int getFrictionDirections() {return 1;}
   };
 
-  class SpatialCoulombImpact : public DryFrictionImpact {
+  class SpatialCoulombImpact : public FrictionImpactLaw {
     protected:
       double mu;
     public:
@@ -230,29 +223,22 @@ namespace MBSim {
       int getFrictionDirections() {return 2;}
   };
 
-  class RegularizedConstraintLaw {
-    public:
-      RegularizedConstraintLaw() {};
-      virtual ~RegularizedConstraintLaw() {};
-      virtual double operator()(double g,  double gd) = 0;
-      virtual bool isClosed(double g, double gTol) = 0;
-      virtual bool remainsClosed(double s, double sTol) = 0;
-  };
-
-  class RegularizedUnilateralConstraint : public RegularizedConstraintLaw {
+  class RegularizedUnilateralConstraint : public GeneralizedForceLaw {
     public:
       RegularizedUnilateralConstraint() {};
       virtual ~RegularizedUnilateralConstraint() {};
-      bool isClosed(double g, double gTol) {return g<=gTol;}
-      bool remainsClosed(double s, double sTol) {return s<=sTol;}
+      bool isActive(double g, double gTol) {return g<=gTol;}
+      bool remainsActive(double s, double sTol) {return s<=sTol;}
+      bool isSetValued() const {return false;}
   };
 
-  class RegularizedBilateralConstraint : public RegularizedConstraintLaw {
+  class RegularizedBilateralConstraint : public GeneralizedForceLaw {
     public:
       RegularizedBilateralConstraint() {};
       virtual ~RegularizedBilateralConstraint() {};
-      bool isClosed(double g, double gTol) {return true;}
-      bool remainsClosed(double s, double sTol) {return true;}
+      bool isActive(double g, double gTol) {return true;}
+      bool remainsActive(double s, double sTol) {return true;}
+      bool isSetValued() const {return false;}
   };
 
   class LinearRegularizedUnilateralConstraint: public RegularizedUnilateralConstraint {
@@ -284,25 +270,7 @@ namespace MBSim {
       }
   };
 
-  class RegularizedFrictionLaw {
-    protected:
-      double gdT_grenz;
-    public:
-      RegularizedFrictionLaw() : gdT_grenz(0.1) {};
-      virtual ~RegularizedFrictionLaw() {};
-      virtual Vec operator()(const Vec &gd, double laN) = 0; 
-      virtual int getFrictionDirections() = 0;
-      virtual bool isSticking(const Vec& s, double sTol) = 0;
-  };
-
-  class RegularizedDryFriction : public RegularizedFrictionLaw {
-    protected:
-    public:
-      RegularizedDryFriction() {};
-      virtual ~RegularizedDryFriction() {};
- };
-
-  class LinearRegularizedPlanarCoulombFriction : public RegularizedDryFriction {
+  class LinearRegularizedPlanarCoulombFriction : public FrictionForceLaw {
     private:
       double mu;
     public:
@@ -313,13 +281,15 @@ namespace MBSim {
       int getFrictionDirections() {return 1;}
       bool isSticking(const Vec& s, double sTol) {return abs(s(0)) <= sTol;}
       Vec operator()(const Vec &gd, double laN) { 
-	if(fabs(gd(0)) < gdT_grenz)
-	  return Vec(1,INIT,-laN*mu*gd(0)/gdT_grenz);
+	if(fabs(gd(0)) < gdLim)
+	  return Vec(1,INIT,-laN*mu*gd(0)/gdLim);
 	else
 	  return Vec(1,INIT,gd(0)>0?-laN*mu:laN*mu);
       }
+      bool isSetValued() const {return false;}
   };
-  class LinearRegularizedSpatialCoulombFriction : public RegularizedDryFriction {
+
+  class LinearRegularizedSpatialCoulombFriction : public FrictionForceLaw {
     private:
       double mu;
     public:
@@ -330,15 +300,16 @@ namespace MBSim {
       int getFrictionDirections() {return 2;}
       bool isSticking(const Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
       Vec operator()(const Vec &gd, double laN) { 
-	double norm_gdT = nrm2(gd);
-	if(norm_gdT < gdT_grenz)
-	  return gd*(-laN*mu/gdT_grenz);
+	double normgd = nrm2(gd);
+	if(normgd < gdLim)
+	  return gd*(-laN*mu/gdLim);
 	else
-	  return gd*(-laN*mu/norm_gdT);
+	  return gd*(-laN*mu/normgd);
       }
+      bool isSetValued() const {return false;}
   };
 
-  class LinearRegularizedStribeckFriction : public RegularizedDryFriction {
+  class LinearRegularizedStribeckFriction : public FrictionForceLaw {
     private:
       UserFunction *fmu;
     public:
@@ -350,16 +321,17 @@ namespace MBSim {
       Vec operator()(const Vec &gd, double laN) { 
 	int nFric = gd.size();
 	Vec la(nFric,NONINIT);
-	double norm_gdT = nrm2(gd(0,nFric-1));
-	if(norm_gdT < gdT_grenz) {
+	double normgd = nrm2(gd(0,nFric-1));
+	if(normgd < gdLim) {
 	  double mu0 = (*fmu)(0)(0);
-	  la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu0/gdT_grenz);
+	  la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu0/gdLim);
 	} else {
-	  double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdT_grenz)(0); //oder (*fmu)(nrm2(gd(0,nFric-1)))(0)
-	  la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/norm_gdT);
+	  double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdLim)(0); //oder (*fmu)(nrm2(gd(0,nFric-1)))(0)
+	  la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
 	}
 	return la;
       }
+      bool isSetValued() const {return false;}
   };
 
 }
