@@ -19,6 +19,17 @@ namespace MBSim {
     la.resize(1);
   }
 
+  void Spring::initPlotFiles() {
+
+    Link::initPlotFiles();
+
+#ifdef HAVE_AMVIS
+    if (coilspringAMVis) {
+      coilspringAMVis->writeBodyFile();
+    }
+#endif
+  }
+
   void Spring::updateg(double t) {
     Vec WrP0P1=port[1]->getPosition() - port[0]->getPosition();
     forceDir = WrP0P1/nrm2(WrP0P1);
