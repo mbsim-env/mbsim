@@ -538,6 +538,9 @@ namespace MBSim {
   }
 
   void Subsystem::setUpLinks() {
+    for(unsigned int i=0; i<subsystem.size(); i++) 
+      subsystem[i]->setUpLinks();
+
     for(unsigned int i=0; i<link.size(); i++) {
       if(link[i]->isSetValued()) {
 	linkSetValued.push_back(link[i]);
