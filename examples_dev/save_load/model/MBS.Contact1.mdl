@@ -1,5 +1,5 @@
 # Type:
-RigidContact
+Contact
 
 # Name:
 Contact1
@@ -16,7 +16,7 @@ MBS.Rod.Line
 # Type of constraint law:
 UnilateralConstraint
 
-# Type of friction law:
+# Type of friction force law:
 
 # Type of normal impact law:
 UnilateralNewtonImpact
@@ -27,5 +27,5 @@ UnilateralNewtonImpact
 # Marginal velocity:
 0.01
 
-# Type of tangential impact law:
+# Type of friction impact law:
 

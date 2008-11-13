@@ -2,7 +2,8 @@
 #include "rigid_body.h"
 #include "objobject.h"
 #include "contour.h"
-#include "rigid_contact.h"
+#include "contact.h"
+#include "constitutive_laws.h"
 #include "load.h"
 #include "cube.h"
 
@@ -74,19 +75,17 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Point* point2 = new Point("Point2");
   addContour(point2,delta2,SqrMat(3,EYE));
 
-  RigidContact *cr1S = new RigidContact("Contact1"); 
-  cr1S->setContactLaw(new UnilateralConstraint);
-  cr1S->setNormalImpactLaw(new UnilateralNewtonImpact);
-  //cr1S->setFrictionLaw(new PlanarCoulombFriction(mu));
-  //cr1S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  Contact *cr1S = new Contact("Contact1"); 
+  cr1S->setContactForceLaw(new UnilateralConstraint);
+  cr1S->setContactImpactLaw(new UnilateralNewtonImpact);
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
-  RigidContact *cr2S = new RigidContact("Contact2");
-  cr2S->setContactLaw(new UnilateralConstraint);
-  cr2S->setNormalImpactLaw(new UnilateralNewtonImpact);
-  cr2S->setFrictionLaw(new PlanarCoulombFriction(mu));
-  cr2S->setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+  Contact *cr2S = new Contact("Contact2");
+  cr2S->setContactForceLaw(new UnilateralConstraint);
+  cr2S->setContactImpactLaw(new UnilateralNewtonImpact);
+  cr2S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
+  cr2S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
 
