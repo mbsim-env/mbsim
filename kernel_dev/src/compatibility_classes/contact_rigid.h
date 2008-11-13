@@ -1,34 +1,35 @@
 #ifndef _CONTACT_RIGID_H_
 #define _CONTACT_RIGID_H_
 
-#include "rigid_contact.h"
+#include "contact.h"
+#include "constitutive_laws.h"
 
 namespace MBSim {
 
-  class ContactRigid : public RigidContact {
+  class ContactRigid : public Contact {
     protected:
       double mu;
       int nFric;
     public:
-      ContactRigid(const string &name) : RigidContact(name), mu(0), nFric(0) { }
+      ContactRigid(const string &name) : Contact(name), mu(0), nFric(0) { }
       void setFrictionCoefficient(double mu_) { mu = mu_; }
       void setFrictionDirections(int nFric_) { nFric = nFric_; }
 
       void calclaSize() {
 	if(nFric==1) {
-	  setFrictionLaw(new PlanarCoulombFriction(mu));
-	  setTangentialImpactLaw(new PlanarCoulombImpact(mu));
+	  setFrictionForceLaw(new PlanarCoulombFriction(mu));
+	  setFrictionImpactImpactLaw(new PlanarCoulombImpact(mu));
 	} else if(nFric==2) {
-	  setFrictionLaw(new SpatialCoulombFriction(mu));
-	  setTangentialImpactLaw(new SpatialCoulombImpact(mu));
+	  setFrictionForceLaw(new SpatialCoulombFriction(mu));
+	  setFrictionImpactLaw(new SpatialCoulombImpact(mu));
 	}
-	setContactLaw(new UnilateralConstraint);
-	setNormalImpactLaw(new UnilateralNewtonImpact);
+	setContactForceLaw(new UnilateralConstraint);
+	setContactImpactLaw(new UnilateralNewtonImpact);
 
-	RigidContact::calclaSize();
+	Contact::calclaSize();
       }
       void init() {
-	RigidContact::init();
+	Contact::init();
       }
   };
 

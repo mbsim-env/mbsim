@@ -256,6 +256,8 @@ namespace MBSim {
       /* Add a data_interface_base \param dib_ to the DataInterfaceBase-vector */
       void addDataInterfaceBase(DataInterfaceBase* dib_);
 
+      void setUpLinks();
+
       //virtual const SqrMat& getG() const {return parent->getG();}
       //virtual SqrMat& getG() {return parent->getG();}
       //virtual const Vec& getlaMBS() const {return parent->getlaMBS();}

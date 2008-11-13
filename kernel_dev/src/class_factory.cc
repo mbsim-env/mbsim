@@ -22,11 +22,10 @@
 #include <config.h>
 #include "class_factory.h"
 #include "object.h"
-#include "rigid_contact.h"
-#include "flexible_contact.h"
 #include "contour.h"
 #include "group.h"
 #include "tree.h"
+#include "contact.h"
 #include "rigid_body.h"
 #include "constitutive_laws.h"
 
@@ -44,10 +43,8 @@ namespace MBSim {
     return 0;
   }
   Link* ClassFactory::getLink(const string &type) {
-    if(type == "RigidContact")
-      return new RigidContact("NoName");
-    else if(type == "FlexibleContact")
-      return new FlexibleContact("NoName");
+    if(type == "Contact")
+      return new Contact("NoName");
     return 0;
   }
   Contour* ClassFactory::getContour(const string &type) {
@@ -69,22 +66,22 @@ namespace MBSim {
       return new CardanAngles;
     return 0;
   }
-  ConstraintLaw* ClassFactory::getConstraintLaw(const string &type) {
+  GeneralizedForceLaw* ClassFactory::getGeneralizedForceLaw(const string &type) {
     if(type == "UnilateralConstraint")
       return new UnilateralConstraint;
     return 0;
   }
-  DryFriction* ClassFactory::getFrictionLaw(const string &type) {
+  FrictionForceLaw* ClassFactory::getFrictionForceLaw(const string &type) {
     if(type == "PlanarCoulombFriction")
       return new PlanarCoulombFriction;
     return 0;
   }
-  NormalImpactLaw* ClassFactory::getNormalImpactLaw(const string &type) {
+  GeneralizedImpactLaw* ClassFactory::getGeneralizedImpactLaw(const string &type) {
     if(type == "UnilateralNewtonImpact")
       return new UnilateralNewtonImpact;
     return 0;
   }
-  TangentialImpactLaw* ClassFactory::getTangentialImpactLaw(const string &type) {
+  FrictionImpactLaw* ClassFactory::getFrictionImpactLaw(const string &type) {
     if(type == "PlanarCoulombImpact")
       return new PlanarCoulombImpact;
     return 0;

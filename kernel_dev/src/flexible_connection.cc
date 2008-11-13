@@ -28,24 +28,5 @@ namespace MBSim {
   FlexibleConnection::FlexibleConnection(const string &name) : Connection(name,false), ffl(0), fml(0) {
   }
 
-  void FlexibleConnection::updateh(double t) {
-    for(int i=0; i<forceDir.cols(); i++) 
-      la(i) = (*ffl)(g(i), gd(i));
-    
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++)
-      la(i) = (*fml)(g(i), gd(i));
-
-    WF[1] = Wf*la(IT);
-    WM[1] = Wm*la(IR);
-    WF[0] = -WF[1];
-    WM[0] = -WM[1]+crossProduct(WrP0P1,WF[0]);
-    for(unsigned int i=0; i<port.size(); i++)
-      h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
-  }
-
-  double FlexibleConnection::computePotentialEnergy() {
-    double V = 0.5* (trans(la)*g);
-    return V;
-  }
-
+ 
 }

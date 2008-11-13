@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _CONNECTION_H_
-#define _CONNECTION_H_
+#ifndef _JOINT_H_
+#define _JOINT_H_
 
 #include "link.h"
 
@@ -32,11 +32,15 @@ namespace AMVis {class CoilSpring;}
 namespace MBSim {
 
   class DataInterfaceBase;
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
+  class FrictionForceLaw;
+  class FrictionImpactLaw;
 
   /*! \brief Class for connections: Constraints on CoordinateSystems
    *
    * */
-  class Connection: public Link {
+  class Joint: public Link {
 
     protected:
 
@@ -44,6 +48,11 @@ namespace MBSim {
       Mat forceDir, momentDir;
       Mat Wf, Wm;
       Vec WrP0P1, WvP0P1, WomP0P1;
+
+      GeneralizedForceLaw *ffl, *fml;
+      GeneralizedImpactLaw *fifl, *fiml;
+
+      Vec gdn, gdd;
 #ifdef HAVE_AMVIS
       AMVis::CoilSpring *coilspringAMVis;
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
@@ -51,8 +60,8 @@ namespace MBSim {
 
 
     public: 
-      Connection(const string &name, bool setValued);
-      ~Connection();
+      Joint(const string &name);
+      ~Joint();
       virtual void connect(CoordinateSystem *port1, CoordinateSystem* port2);
 
       void calcxSize();
@@ -78,6 +87,30 @@ namespace MBSim {
 
       bool activeConstraintsChanged() {return false;}
       bool gActiveChanged() {return false;}
+
+      void updateW(double t);
+      void updatewb(double t);
+      void updateh(double t);
+
+      void solveConstraintsFixpointSingle();
+      void solveImpactsFixpointSingle();
+      void solveConstraintsGaussSeidel();
+      void solveImpactsGaussSeidel();
+      void solveImpactsRootFinding();
+      void solveConstraintsRootFinding();
+      void jacobianConstraints();
+      void jacobianImpacts();
+      bool isSetValued() const;
+
+      void updaterFactors();
+      
+      void checkConstraintsForTermination();
+      void checkImpactsForTermination();
+
+      void setForceLaw(GeneralizedForceLaw * rc) {ffl = rc;}
+      void setMomentLaw(GeneralizedForceLaw * rc) {fml = rc;}
+      void setImpactForceLaw(GeneralizedImpactLaw * rc) {fifl = rc;}
+      void setImpactMomentLaw(GeneralizedImpactLaw * rc) {fiml = rc;}
 
 #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
