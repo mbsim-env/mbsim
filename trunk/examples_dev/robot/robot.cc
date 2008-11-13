@@ -1,7 +1,6 @@
 #include "robot.h"
 #include "rigid_body.h"
 #include "userfunction.h"
-#include "flexible_connection.h"
 #include "load.h"
 #include "cuboid.h"
 #include "cylinder.h"
