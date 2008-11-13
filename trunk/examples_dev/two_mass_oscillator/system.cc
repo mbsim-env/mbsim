@@ -97,12 +97,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
   // ----------------------- Visualisierung in AMVis --------------------  
-  Cube * cuboid = new Cube(box1->getFullName(),1,false);
+  Cube * cuboid = new Cube(box1->getName(),1,false);
   cuboid->setLength(h1);
   cuboid->setColor(0.5);
   box1->setAMVisBody(cuboid);
 
-  cuboid = new Cube(box2->getFullName(),1,false);
+  cuboid = new Cube(box2->getName(),1,false);
   cuboid->setLength(h2);
   cuboid->setColor(0.2);
   box2->setAMVisBody(cuboid);

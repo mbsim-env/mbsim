@@ -22,6 +22,7 @@ class Spring : public Link {
   public:
     Spring(const string &name);
     void init();
+    void initPlotFiles();
     void updateg(double t);
     void updategd(double t); 
     void updateh(double t); 
