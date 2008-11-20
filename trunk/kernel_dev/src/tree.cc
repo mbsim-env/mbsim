@@ -27,17 +27,17 @@
 
 namespace MBSim {
 
-  void TreeElement::addChild(TreeElement* child_) {
+  void Node::addChild(Node* child_) {
     child.push_back(child_);
   }
 
-  void TreeElement::updateKinematics(double t) {
+  void Node::updateKinematics(double t) {
    obj->updateKinematics(t);
    for(unsigned int i=0; i<child.size(); i++)
      child[i]->updateKinematics(t);
   }
 
-  int TreeElement::sethSize(int hSize) {
+  int Node::sethSize(int hSize) {
 
     for(int i=child.size()-1; i>=0; i--)
      hSize = child[i]->sethSize(hSize);
@@ -46,7 +46,7 @@ namespace MBSim {
     return hSize - obj->getuSize();
   }
 
-  void TreeElement::calcqSize(int &qSize) {
+  void Node::calcqSize(int &qSize) {
 
     obj->calcqSize();
     obj->setqInd(qSize);
@@ -56,7 +56,7 @@ namespace MBSim {
       child[i]->calcqSize(qSize);
   }
 
-  void TreeElement::calcuSize(int &uSize) {
+  void Node::calcuSize(int &uSize) {
 
     obj->calcuSize();
     obj->setuInd(uSize);
@@ -72,14 +72,14 @@ namespace MBSim {
   Tree::~Tree() {
   }
 
-  TreeElement* Tree::addObject(TreeElement* tree, Object* obj) {
+  Node* Tree::addObject(Node* tree, Object* obj) {
     if(getObject(obj->getName(),false)) {
       cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
       assert(getObject(obj->getName(),false) == NULL); 
     }
     object.push_back(obj);
 
-    TreeElement *treeEle = new TreeElement(obj);
+    Node *treeEle = new Node(obj);
     if(tree)
       tree->addChild(treeEle);
     else
@@ -87,7 +87,7 @@ namespace MBSim {
     return treeEle;
   }
 
-  TreeElement* Tree::addSubsystem(TreeElement* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
+  Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
     // ADDOBJECT adds an subsystem
     if(getSubsystem(sys->getName(),false)) {
       cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
@@ -102,7 +102,7 @@ namespace MBSim {
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);
 
-    TreeElement *treeEle = new TreeElement(sys);
+    Node *treeEle = new Node(sys);
     if(tree)
       tree->addChild(treeEle);
     else

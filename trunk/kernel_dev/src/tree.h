@@ -33,14 +33,14 @@ namespace MBSim {
 
   class Tree;
 
-  class TreeElement {
+  class Node {
     protected:
-      vector<TreeElement*> child;
+      vector<Node*> child;
       ObjectInterface *obj;
     public:
-      TreeElement(ObjectInterface* obj_) : obj(obj_) {}
-      ~TreeElement() {}
-      void addChild(TreeElement* child); 
+      Node(ObjectInterface* obj_) : obj(obj_) {}
+      ~Node() {}
+      void addChild(Node* child); 
       void updateKinematics(double t);
       void calcqSize(int &s);
       void calcuSize(int &s);
@@ -54,7 +54,7 @@ namespace MBSim {
   class Tree : public Subsystem {
 
     protected:
-      TreeElement* root;
+      Node* root;
 
     public:
 
@@ -72,8 +72,8 @@ namespace MBSim {
 
     double computePotentialEnergy();
 
-    TreeElement* addObject(TreeElement* node, Object* obj);
-    TreeElement* addSubsystem(TreeElement* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem=0);
+    Node* addObject(Node* node, Object* obj);
+    Node* addSubsystem(Node* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem=0);
 
   };
 
