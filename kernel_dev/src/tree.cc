@@ -81,12 +81,12 @@ namespace MBSim {
     }
     object.push_back(obj);
 
-    Node *treeEle = new Node(obj);
+    Node *node = new Node(obj);
     if(tree)
-      tree->addChild(treeEle);
+      tree->addChild(node);
     else
-      root = treeEle;
-    return treeEle;
+      root = node;
+    return node;
   }
 
   Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
@@ -104,12 +104,12 @@ namespace MBSim {
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);
 
-    Node *treeEle = new Node(sys);
+    Node *node = new Node(sys);
     if(tree)
-      tree->addChild(treeEle);
+      tree->addChild(node);
     else
-      root = treeEle;
-    return treeEle;
+      root = node;
+    return node;
   }
 
   void Tree::calcqSize() {
@@ -124,18 +124,12 @@ namespace MBSim {
 
   void Tree::sethSize(int hSize_) {
 
-    cout << getName() << endl;
     hSize = hSize_;
     root->sethSize(hSize_);
   } 
 
   void Tree::updateKinematics(double t) {
     root->updateKinematics(t);
-    //   for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-    //     (*i)->updateKinematics(t);
-
-    //   for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-    //     (*i)->updateKinematics(t);
   }
 
   void Tree::updatedu(double t, double dt) {
@@ -159,10 +153,6 @@ namespace MBSim {
   }
 
   void Tree::facLLM() {
-    // FACLLM computes Cholesky decomposition of the mass matrix
-    //cout << M << endl;
-    //cout << qSize << endl;
-    //cout << uSize << endl;
     LLM = facLL(M); 
   }
 
