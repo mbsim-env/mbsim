@@ -62,7 +62,8 @@ namespace MBSim {
     calcqSize();
     calcuSize();
     calcxSize();
-    calchSize();
+    sethSize(uSize);
+
     calclaSize();
     calcgSize();
     calcgdSize();

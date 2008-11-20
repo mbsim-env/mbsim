@@ -330,15 +330,23 @@ namespace MBSim {
   }
 
   void Object::calchSize() {  
+  //  hSize = uSize;
+  }
 
-    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) {
+  void Object::sethSize(int hSize_) {
+    hSize = hSize_;
+    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++)
       (*i)->sethSize(hSize);
-      (*i)->sethInd(hInd);
-    }
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) {
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->sethSize(hSize);
+  }
+
+  void Object::sethInd(int hInd_) {
+    hInd = hInd_;
+    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
       (*i)->sethInd(hInd);
-    }
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
+      (*i)->sethInd(hInd);
   }
 
   void Object::init() {  
@@ -385,9 +393,9 @@ namespace MBSim {
     return 0.5*trans(u)*M*u;
   }
 
-//  MultiBodySystem* Object::getMultiBodySystem() {
-//    return parent->getMultiBodySystem();
-//  }
+  //  MultiBodySystem* Object::getMultiBodySystem() {
+  //    return parent->getMultiBodySystem();
+  //  }
 
   void Object::setMultiBodySystem(MultiBodySystem* sys) {
     Element::setMultiBodySystem(sys);

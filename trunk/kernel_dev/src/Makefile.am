@@ -54,6 +54,7 @@ functions_contact.h\
 class_factory.h\
 kinematics.h\
 constitutive_laws.h\
+interfaces.h\
 compatibility_classes/body_rigid.h\
 compatibility_classes/body_rigid_abs.h\
 compatibility_classes/body_rigid_rel.h\

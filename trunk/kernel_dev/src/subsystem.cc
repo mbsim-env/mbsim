@@ -175,8 +175,16 @@ namespace MBSim {
       subsystem[i]->init();
     }
 
-    for(unsigned i=0; i<object.size(); i++)
+    for(unsigned i=0; i<object.size(); i++) {
       object[i]->init();
+      cout << object[i]->getName()<<endl;;
+      cout << object[i]->getqSize()<<endl;;
+      cout << object[i]->getuSize()<<endl;;
+      cout << object[i]->gethSize()<<endl;;
+      cout << object[i]->getqInd()<<endl;;
+      cout << object[i]->getuInd()<<endl;;
+      cout << object[i]->gethInd()<<endl;;
+    }
 
     for(unsigned i=0; i<link.size(); i++)
       link[i]->init();
@@ -251,292 +259,7 @@ namespace MBSim {
 
   }
 
-  void Subsystem::save(const string &path, ofstream& outputfile) {
-
-    Element::save(path,outputfile);
-
-    // all CoordinateSystem of Object
-    outputfile << "# Coordinate systems:" << endl;
-    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    // all Contours of Object
-    outputfile << "# Contours:" << endl;
-    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    outputfile << "# q0:" << endl;
-    outputfile << q0 << endl << endl;
-    outputfile << "# u0:" << endl;
-    outputfile << u0 << endl << endl;
-
-    // all Subsystems of Subsystems
-    outputfile << "# Subsystems:" << endl;
-    for(vector<Subsystem*>::iterator i = subsystem.begin();  i != subsystem.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    // all Objects of Subsystems
-
-    outputfile << "# Objects:" << endl;
-    for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    // all Links of Subsystems
-    outputfile << "# Links:" << endl;
-    for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    // all EDIs of Subsystems
-    outputfile << "# EDIs:" << endl;
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-
-    outputfile << endl;
-
-    for(unsigned int i=1; i<port.size(); i++) {
-      outputfile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
-      outputfile << IrOK[i] << endl;
-      outputfile << endl;
-      outputfile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
-      outputfile << AIK[i] << endl;
-      outputfile << endl;
-    }
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      outputfile << "# Translation of contour " << contour[i]->getName() <<":" << endl;
-      outputfile << IrOC[i] << endl;
-      outputfile << endl;
-      outputfile << "# Rotation of contour " << contour[i]->getName() <<":" << endl;
-      outputfile << AIC[i] << endl;
-      outputfile << endl;
-    }
-
-    //   if(mbs != this) {
-    //     outputfile << "# Reference coordinate system:" << endl;
-    //     outputfile << port[iRef]->getName() << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Parent coordinate system:" << endl;
-    //     outputfile << portParent->getFullName() << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Translation:" << endl;
-    //     outputfile << PrPK << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Rotation:" << endl;
-    //     outputfile << APK << endl;
-    //     outputfile << endl;
-    //   }
-  }
-
-  void Subsystem::load(const string &path, ifstream& inputfile) {
-    Element::load(path, inputfile);
-    string dummy;
-
-    string basename = path + "/" + getFullName() + ".";
-
-    getline(inputfile,dummy); // # CoSy
-    unsigned int no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // CoSy
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      newinputfile.seekg(0,ios::beg);
-      if(i>=port.size())
-	addCoordinateSystem(new CoordinateSystem("NoName"));
-      port[i]->load(path, newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // # newline
-
-    getline(inputfile,dummy); // # Contour
-    no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // contour
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      newinputfile.seekg(0,ios::beg);
-      ClassFactory cf;
-      if(i>=contour.size())
-	addContour(cf.getContour(dummy));
-      contour[i]->load(path, newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # q0
-    inputfile >> q0; // # q0
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-
-    getline(inputfile,dummy); // # u0
-    inputfile >> u0; // # q0
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-
-    getline(inputfile,dummy); // # Subsystems
-    no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // # Subsystems
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      ClassFactory cf;
-      Subsystem * newsubsystem = cf.getSubsystem(dummy);
-      //addSubsystem(newsubsystem); TODO
-      newinputfile.seekg(0,ios::beg);
-      newsubsystem->setMultiBodySystem(mbs);
-      newsubsystem->load(path,newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # Objects
-    no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // # Objects
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      ClassFactory cf;
-      Object * newobject = cf.getObject(dummy);
-      addObject(newobject);
-      newinputfile.seekg(0,ios::beg);
-      newobject->setMultiBodySystem(mbs);
-      newobject->load(path,newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # Links
-    no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // # Links
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      ClassFactory cf;
-      Link * newlink = cf.getLink(dummy);
-      addLink(newlink);
-      newinputfile.seekg(0,ios::beg);
-      newlink->setMultiBodySystem(mbs);
-      newlink->load(path,newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # EDIs
-    getline(inputfile,dummy); // newline
-
-    for(unsigned int i=1; i<port.size(); i++) {
-      IrOK.push_back(Vec(3));
-      AIK.push_back(SqrMat(3));
-      getline(inputfile,dummy); // # Translation cosy 
-      inputfile >> IrOK[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-      getline(inputfile,dummy); // # Rotation cosy
-      inputfile >> AIK[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-    }
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      IrOC.push_back(Vec(3));
-      AIC.push_back(SqrMat(3));
-      getline(inputfile,dummy); // # Translation contour 
-      inputfile >> IrOC[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-      getline(inputfile,dummy); // # Rotation contour
-      inputfile >> AIC[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-    }
-
-    if(mbs != this) {
-      getline(inputfile,dummy); // # Coordinate system for kinematics
-      getline(inputfile,dummy); // Coordinate system for kinematics
-      //setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
-      getline(inputfile,dummy); // newline
-
-      getline(inputfile,dummy); // # Frame of reference
-      getline(inputfile,dummy); // Coordinate system for kinematics
-      //setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
-      getline(inputfile,dummy); // newline
-
-      getline(inputfile,dummy); // # Translation 
-      Vec r;
-      inputfile >> r;
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-      //setTranslation(r);
-
-      getline(inputfile,dummy); // # Rotation
-      SqrMat A;
-      inputfile >> A;
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // newline
-      //setRotation(A);
-    }
-
-  }
-
-  void Subsystem::addObject(Object *obj) {
-    // ADDOBJECT adds an object
-    if(getObject(obj->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
-      assert(getObject(obj->getName(),false) == NULL); 
-    }
-    //obj->setFullName(getFullName()+"."+obj->getFullName());
-    object.push_back(obj);
-    //obj->setMbs(this);
-    //obj->setParent(this);
-  }
-
+  
   void Subsystem::setUpLinks() {
     for(unsigned int i=0; i<subsystem.size(); i++) 
       subsystem[i]->setUpLinks();
@@ -602,13 +325,6 @@ namespace MBSim {
   }
 
 
-  void Subsystem::updateKinematics(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateKinematics(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateKinematics(t);
-  }
 
   void Subsystem::updateg(double t) {
 
@@ -739,7 +455,6 @@ namespace MBSim {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (**i).updatedq(t,dt);
-
   }
 
   void Subsystem::updateqRef(const Vec &qParent) {
@@ -1024,22 +739,6 @@ namespace MBSim {
     return NULL;
   }
 
-  void Subsystem::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
-    // ADDOBJECT adds an subsystem
-    if(getSubsystem(sys->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
-      assert(getSubsystem(sys->getName(),false) == NULL); 
-    }
-    subsystem.push_back(sys);
-
-    int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
-
-    IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
-    AIS.push_back(AIK[i]*ARS);
-  }
-
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy) {
 
     if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
@@ -1086,20 +785,45 @@ namespace MBSim {
     AIC.push_back(AIK[i]*ARC);
   }
 
-  void Subsystem::calchSize() {
+  void Subsystem::sethSize(int hSize_) {
 
-    hSize = uSize;
+    hSize = hSize_;
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
       (*i)->sethSize((*i)->getuSize());
       (*i)->sethInd((*i)->getuInd());
-      (*i)->calchSize();
-    }
+  }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->sethSize((*i)->getuSize());
       (*i)->sethInd((*i)->getuInd());
-      (*i)->calchSize();
     }
   }
+
+  //void Subsystem::calchSize() {
+
+  //// hSize = 0;
+
+  ////  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+  ////    (*i)->calchSize();
+  ////    (*i)->sethInd(hSize);
+  ////    hSize += (*i)->gethSize();
+  ////  }
+  ////  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+  ////    (*i)->sethSize((*i)->getuSize());
+  ////    (*i)->sethInd(hSize);
+  ////    hSize += (*i)->gethSize();
+  ////  }
+  //  hSize = uSize;
+  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+  //    (*i)->sethSize((*i)->getuSize());
+  //    (*i)->sethInd((*i)->getuInd());
+  //    (*i)->calchSize();
+  //  }
+  //  for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+  //    (*i)->sethSize((*i)->getuSize());
+  //    (*i)->sethInd((*i)->getuInd());
+  //    (*i)->calchSize();
+  //  }
+  //}
 
   void Subsystem::calcsvSize() {
     svSize = 0;
@@ -1501,19 +1225,4 @@ namespace MBSim {
       (**i).checkImpactsForTermination();
   }
 
-  void Subsystem::addObject(TreeRigid *tree) {
-    tree->setFullName(name+"."+tree->getName());
-    tree->setParent(this);
-    addSubsystem(tree,Vec(3),SqrMat(3,EYE));
-  }
-  void Subsystem::addObject(BodyRigid *body) {
-    // ADDOBJECT adds an object
-    body->setFullName(name+"."+body->getName());
-    body->setParent(this);
-    if(getObject(body->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  body->getName() << "!" << endl;
-      assert(getObject(body->getName(),false) == NULL); 
-    }
-    object.push_back(body);
-  }
 }

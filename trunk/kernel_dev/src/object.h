@@ -26,6 +26,7 @@
 #include<string>
 #include<vector>
 #include "element.h"
+#include "interfaces.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ namespace MBSim {
   class Subsystem;
 
   /*! \brief Node class for all Objects having own dynamics and mass */
-  class Object : public Element {
+  class Object : public Element, public ObjectInterface {
 
     friend class MultiBodySystem;
 
@@ -84,6 +85,7 @@ namespace MBSim {
     virtual void readu0();
     virtual void writex();
     virtual void readx0();
+
     virtual void updateqRef(const Vec& ref);
     virtual void updateqdRef(const Vec& ref);
     virtual void updateuRef(const Vec& ref);
@@ -94,15 +96,14 @@ namespace MBSim {
     virtual void updateMRef(const SymMat &ref);
     virtual void updateLLMRef(const SymMat &ref);
 
-    virtual void updateT(double t) {};
-    virtual void updateh(double t) {};
-    virtual void updateM(double t) {};
-    virtual void updateKinematics(double t) = 0;
-    virtual void updatedq(double t, double dt);
-    virtual void updatedu(double t, double dt);
-    virtual void updateud(double t);
-    virtual void updateqd(double t);
-    virtual void updatezd(double t);
+    void updateT(double t) {};
+    void updateh(double t) {};
+    void updateM(double t) {};
+    void updatedq(double t, double dt);
+    void updatedu(double t, double dt);
+    void updateud(double t);
+    void updateqd(double t);
+    void updatezd(double t);
 
     //virtual void setParent(Subsystem *p) {parent = p;}
 
@@ -123,10 +124,10 @@ namespace MBSim {
   
     void setqSize(int qSize_) { qSize = qSize_; }
     void setuSize(int uSize_) { uSize = uSize_; }
-    void sethSize(int hSize_) { hSize = hSize_; }
+    void sethSize(int hSize_);// { hSize = hSize_; }
     void setqInd(int qInd_) { qInd = qInd_; }
     void setuInd(int uInd_) { uInd = uInd_; }
-    void sethInd(int hInd_) { hInd = hInd_; }
+    void sethInd(int hInd_); // { hInd = hInd_; }
     int  getqInd() { return qInd; }
     int  getuInd() { return uInd; }
     int  gethInd() { return hInd; }

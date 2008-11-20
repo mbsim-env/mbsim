@@ -25,6 +25,7 @@
 
 #include <vector>
 #include "element.h"
+#include "interfaces.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class Arrow;}
@@ -39,7 +40,7 @@ namespace MBSim {
    *  \brief This is a general link to one or more objects.
    * 
    * */
-  class Link : public Element {
+  class Link : public Element, public LinkInterface {
 
     protected:
 
@@ -111,6 +112,10 @@ namespace MBSim {
       virtual void updateW(double t) {};
       virtual void updateV(double t) {};
       virtual void updateh(double t) {};
+      virtual void updatedx(double t, double dt) {}
+      virtual void updatexd(double t) {}
+      virtual void updateStopVector(double t) {}
+
       virtual void updateWRef(const Mat& ref);
       virtual void updateVRef(const Mat& ref);
       virtual void updatehRef(const Vec &ref);
@@ -153,19 +158,11 @@ namespace MBSim {
       virtual void init();
       virtual void initz();
 
-      virtual void updateg(double t) = 0;
-      virtual void updategd(double t) = 0; 
 
       /*! compute potential energy, holding every potential!!!
       */
       virtual double computePotentialEnergy() {return 0;}
 
-      /*! Supplies time variation of x to a fixed step solver.*/
-      virtual void updatedx(double t, double dt) {};
-      /*! Supplies the time derivative of x to a variable step solver.*/
-      virtual void updatexd(double t) {};
-
-      virtual void updateStopVector(double t) {}
 
       const Vec& getx() const {return x;}
       const Vec& getxd() const {return xd;}

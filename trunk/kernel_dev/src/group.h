@@ -38,6 +38,17 @@ namespace MBSim {
       void facLLM(); 
       void updatezd(double t);
       void updatedu(double t, double dt);
+      void updateKinematics(double t);
+      void load(const string &path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
+
+      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0);
+      void addObject(Object *object);
+
+      // Compatibility functions
+      void addObject(TreeRigid *tree);
+      void addObject(BodyRigid *body);
+
 
       virtual string getType() const {return "Group";}
   };

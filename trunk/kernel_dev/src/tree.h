@@ -30,29 +30,50 @@ using namespace std;
 
 
 namespace MBSim {
-class Object;
+
+  class Tree;
+
+  class TreeElement {
+    protected:
+      vector<TreeElement*> child;
+      ObjectInterface *obj;
+    public:
+      TreeElement(ObjectInterface* obj_) : obj(obj_) {}
+      ~TreeElement() {}
+      void addChild(TreeElement* child); 
+      void updateKinematics(double t);
+      void calcqSize(int &s);
+      void calcuSize(int &s);
+   int sethSize(int hSize);
+  //  void sethSize(int &hSize);
+  };
 
   /*! \brief class for tree-structured systems with only rigid bodies
    *
    * */
   class Tree : public Subsystem {
-    friend class Object;
 
     protected:
-
-    //double computePotentialEnergyBranch(Object* body);
+      TreeElement* root;
 
     public:
 
     Tree(const string &projectName);
     ~Tree();
 
+    void calcqSize();
+    void calcuSize();
+    void sethSize(int h);
+
     void facLLM(); 
     void updatezd(double t);
     void updatedu(double t, double dt);
-    void calchSize();
+    void updateKinematics(double t);
 
     double computePotentialEnergy();
+
+    TreeElement* addObject(TreeElement* node, Object* obj);
+    TreeElement* addSubsystem(TreeElement* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem=0);
 
   };
 
