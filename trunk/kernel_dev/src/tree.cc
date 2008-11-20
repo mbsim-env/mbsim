@@ -37,13 +37,15 @@ namespace MBSim {
      child[i]->updateKinematics(t);
   }
 
-  int Node::sethSize(int hSize) {
+  void Node::sethSize(int &hSize) {
 
     for(int i=child.size()-1; i>=0; i--)
-     hSize = child[i]->sethSize(hSize);
+      child[i]->sethSize(hSize);
+     //hSize = child[i]->sethSize(hSize);
 
     obj->sethSize(hSize);
-    return hSize - obj->getuSize();
+    hSize -= obj->getuSize();
+    //return hSize - obj->getuSize();
   }
 
   void Node::calcqSize(int &qSize) {
@@ -124,7 +126,7 @@ namespace MBSim {
 
     cout << getName() << endl;
     hSize = hSize_;
-    root->sethSize(hSize);
+    root->sethSize(hSize_);
   } 
 
   void Tree::updateKinematics(double t) {

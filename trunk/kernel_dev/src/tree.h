@@ -42,10 +42,9 @@ namespace MBSim {
       ~Node() {}
       void addChild(Node* child); 
       void updateKinematics(double t);
-      void calcqSize(int &s);
-      void calcuSize(int &s);
-   int sethSize(int hSize);
-  //  void sethSize(int &hSize);
+      void calcqSize(int &size);
+      void calcuSize(int &size);
+      void sethSize(int &size);
   };
 
   /*! \brief class for tree-structured systems with only rigid bodies
