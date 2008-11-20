@@ -12,13 +12,13 @@ int main (int argc, char* argv[])
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->init();
   
-  // LSODEIntegrator integrator;
+   LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;
   // RADAU5Integrator integrator;
   // TimeSteppingIntegrator integrator;
   // integrator.setdt(1e-4);
   //
-  DOPRI5Integrator integrator;
+//  DOPRI5Integrator integrator;
 
   integrator.settEnd(4.0);
   integrator.setdtPlot(1e-3);

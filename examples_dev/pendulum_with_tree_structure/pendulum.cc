@@ -29,7 +29,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   RigidBody* stab1 = new RigidBody("Stab1");
   stab1->setuSize(1);
   stab1->setqSize(1);
-  TreeElement* te = tree->addObject(0,stab1);
+  Node* node = tree->addObject(0,stab1);
   KrKS(0) = a1;
   SqrMat A(3);
   for(int i=0; i<3; i++)
@@ -56,7 +56,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj-> setAngleEPS(M_PI*2/9);
 
   RigidBody* stab2 = new RigidBody("Stab2");
-  tree->addObject(te,stab2);
+  tree->addObject(node,stab2);
   stab2->setuSize(1);
   stab2->setqSize(1);
   WrOK(0) = lStab/2;
