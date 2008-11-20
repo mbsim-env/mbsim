@@ -50,7 +50,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addSubsystem(tree,Vec(3),SqrMat(3,EYE));
 
   RigidBody *basis = new RigidBody("Basis");
-  TreeElement *te = tree->addObject(0,basis);
+  Node *node = tree->addObject(0,basis);
   basis->setMass(mB);
   SymMat Theta(3);
   Theta(0,0) = mB*rB*rB;
@@ -73,7 +73,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   basis->setCoordinateSystemForKinematics(basis->getCoordinateSystem("R"));
 
   RigidBody *arm = new RigidBody("Arm");
-  te = tree->addObject(te,arm);
+  node = tree->addObject(node,arm);
   Vec PrPK0(3);
   PrPK0(1) = hB;
   basis->addCoordinateSystem("P",PrPK0,A,basis->getCoordinateSystem("R"));
@@ -94,7 +94,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   KrSP(1) = lA/2;
 
   RigidBody *spitze = new RigidBody("Spitze");
-  te = tree->addObject(te,spitze);
+  tree->addObject(node,spitze);
   spitze->setMass(mS);
   Theta(0,0) = mS*rS*rS;
   Theta(1,1) = 1./2.*mS*rS*rS;
