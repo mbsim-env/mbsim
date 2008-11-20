@@ -254,22 +254,9 @@ namespace MBSim {
     u >> ( zParent(qSize,qSize+uSize-1) );
     x >> ( zParent(qSize+uSize,qSize+uSize+xSize-1) );
 
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
-      (**i).updateqRef(q);
-      (**i).updateuRef(u);
-      (**i).updatexRef(x);
-    }
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (**i).updateqRef(q);
-      (**i).updateuRef(u);
-    }
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatexRef(x);
-
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (**i).updatexRef(x);
+    updateqRef(q);
+    updateuRef(u);
+    updatexRef(x);
   }
 
   void MultiBodySystem::updatezdRef(const Vec &zdParent) {
@@ -278,22 +265,9 @@ namespace MBSim {
     ud >> ( zdParent(qSize,qSize+uSize-1) );
     xd >> ( zdParent(qSize+uSize,qSize+uSize+xSize-1) );
 
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
-      (**i).updateqdRef(qd);
-      (**i).updateudRef(ud);
-      (**i).updatexdRef(xd);
-    }
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (**i).updateqdRef(qd);
-      (**i).updateudRef(ud);
-    }
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatexdRef(xd);
-
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (**i).updatexdRef(xd);
+    updateqdRef(qd);
+    updateudRef(ud);
+    updatexdRef(xd);
   }
 
   void MultiBodySystem::zdot(const Vec &zParent, Vec &zdParent, double t) {
