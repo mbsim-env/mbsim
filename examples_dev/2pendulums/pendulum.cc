@@ -17,7 +17,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   SymMat Theta(3);
 
   stab1 = new RigidBody("Stab1");
-  addObject(stab1);
+  TreeElement* te = addObject(0,stab1);
   KrKS(0) = a1;
   SqrMat A(3);
   for(int i=0; i<3; i++)
@@ -52,7 +52,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab1->addCoordinateSystem("P",WrOK-KrKS,A);
   KrKS(0) = a2;
   stab2->addCoordinateSystem("R",-KrKS,A);
-  addObject(stab2);
+  addObject(te,stab2);
   stab2->setqSize(1);
   stab2->setuSize(1);
   stab2->setFrameOfReference(stab1->getCoordinateSystem("P"));
