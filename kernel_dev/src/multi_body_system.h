@@ -65,6 +65,7 @@ namespace MBSim {
       SqrMat Jprox;
 
       SqrMat G;
+      Vec b;
 
       SymMat MParent;
       SymMat LLMParent;
@@ -213,6 +214,8 @@ namespace MBSim {
       Matrix<Sparse, double>& getGs() {return Gs;}
       const SqrMat& getG() const {return G;}
       SqrMat& getG() {return G;}
+      const Vec& getb() const {return b;}
+      Vec& getb() {return b;}
       const SqrMat& getJprox() const {return Jprox;}
       SqrMat& getJprox() {return Jprox;}
 

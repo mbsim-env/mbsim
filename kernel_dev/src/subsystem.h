@@ -24,6 +24,7 @@
 #define _SUBSYSTEM_H_
 
 #include "element.h"
+#include "interfaces.h"
 
 namespace MBSim {
   class CoordinateSystem;
@@ -37,7 +38,7 @@ namespace MBSim {
   class TreeRigid;
   class BodyRigid;
 
-  class Subsystem : public Element {
+  class Subsystem : public Element, public ObjectInterface, public LinkInterface {
 
     friend class HitSphereLink;
 
@@ -78,7 +79,6 @@ namespace MBSim {
       Vec dla;
       Vec g, gd;
       Vec wb;
-      Vec b; // TODO: löschen
       Vec res;
       Vec rFactor;
 
@@ -100,7 +100,7 @@ namespace MBSim {
       void calcuSize();
       void calcxSize();
       void calcsvSize();
-      virtual void calchSize();
+      //void calchSize();
       void calclaSize();
       void calcgSize();
       void calcgdSize();
@@ -167,26 +167,27 @@ namespace MBSim {
       void initPlotFiles();
       void plot(double t, double dt=1);
       void closePlotFiles();
-      void load(const string &path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
 
-      virtual void updateKinematics(double t);
-      virtual void updateg(double t);
-      virtual void updategd(double t);
-      virtual void updateT(double t); 
-      virtual void updateh(double t); 
-      virtual void updateM(double t); 
-      virtual void updateW(double t); 
-      virtual void updateV(double t); 
-      virtual void updatewb(double t); 
-      virtual void updater(double t); 
-      virtual void updateStopVector(double t); 
+      void updateT(double t); 
+      void updateh(double t); 
+      void updateM(double t); 
+      void updatedq(double t, double dt); 
+      void updatedu(double t, double dt) = 0;
+      void updateqd(double t) {throw 5;}
+      void updateud(double t) {throw 5;}
+
+      void updater(double t); 
+      void updatewb(double t); 
+      void updateW(double t); 
+      void updateV(double t); 
+      //void updateh(double t); see above
+      void updateg(double t);
+      void updategd(double t);
+      void updatedx(double t, double dt); 
+      void updatexd(double t);
+      void updateStopVector(double t); 
+
       virtual void facLLM() = 0;
-      virtual void updatedq(double t, double dt); 
-      virtual void updatedx(double t, double dt); 
-      virtual void updatedu(double t, double dt) = 0;
-      virtual void updatezd(double t) = 0;
-      virtual void updatexd(double t);
 
       void updateqRef(const Vec &ref); 
       void updateqdRef(const Vec &ref); 
@@ -238,12 +239,6 @@ namespace MBSim {
       void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
       void addContour(Contour* contour, const Vec &RrRC, const CoordinateSystem* refCoordinateSystem=0) {addContour(contour,RrRC,SqrMat(3,EYE));}
 
-      // Compatibility functions
-      void addObject(TreeRigid *tree);
-      void addObject(BodyRigid *body);
-
-      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0);
-      void addObject(Object *object);
       void addLink(Link *connection);
       Subsystem* getSubsystem(const string &name,bool check=true);
       Object* getObject(const string &name,bool check=true);
@@ -258,18 +253,6 @@ namespace MBSim {
 
       void setUpLinks();
 
-      //virtual const SqrMat& getG() const {return parent->getG();}
-      //virtual SqrMat& getG() {return parent->getG();}
-      //virtual const Vec& getlaMBS() const {return parent->getlaMBS();}
-      //virtual Vec& getlaMBS() {return parent->getlaMBS();}
-      //      virtual const Matrix<Sparse, double>& getGs() const {return parent->getGs();}
-      //      virtual Matrix<Sparse, double>& getGs() {return parent->getGs();}
-      //      virtual const SqrMat& getJprox() const {return parent->getJprox();}
-      //      virtual SqrMat& getJprox() {return parent->getJprox();}
-      //      virtual void setTermination(bool term) {parent->setTermination(term);}
-
-      const Vec& getb() const {return b;}
-      Vec& getb() {return b;}
       const Vec& getx() const {return x;};
       Vec& getx() {return x;};
       void setx(const Vec& x_) { x = x_; }
@@ -291,7 +274,8 @@ namespace MBSim {
       void setuInd(int uInd_) { uInd = uInd_; }
       void setxSize(int xSize_) { xSize = xSize_; }
       void setxInd(int xInd_) { xInd = xInd_; }
-      void sethSize(int hSize_) { hSize = hSize_; }
+      //void sethSize(int hSize_) { hSize = hSize_; }
+      void sethSize(int hSize_);
       void sethInd(int hInd_) { hInd = hInd_; }
       int  getqInd() { return qInd; }
       int  getuInd() { return uInd; }

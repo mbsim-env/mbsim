@@ -17,12 +17,12 @@ namespace MBSim {
       Vec KrKS;
       Rot rot;
       bool I_COG;
-      Subsystem *parent;
+      Group *parent;
 
     public:
       BodyRigid(const string &name) : RigidBody(name), I(3), KrKS(3), rot(cardanAngles), I_COG(false), parent(0) { }
      
-      void setParent(Subsystem *sys) {parent = sys;}
+      void setParent(Group *sys) {parent = sys;}
       void setRotationalParameters(Rot rot_) {rot = rot_;}
       void setInertia(const SymMat &I_, bool I_COG_ = false) { I = I_; I_COG = I_COG_;}
       void setJT(const Mat &JT_) { JT = JT_; }
