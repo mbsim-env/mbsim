@@ -245,21 +245,25 @@ namespace MBSim {
   } 
 
   void Contact::updateh(double t) {
-    if(isActive()) {
+ //   if(isActive()) {
       la(0) = (*fcl)(g(0),gd(0));
       if(fdf)
 	la(1,getFrictionDirections()) = (*fdf)(gd(1,getFrictionDirections()),fabs(la(0)));
 
-      WF[0] =  cpData[0].cosy.getOrientation().col(1)*la(0);
+      WF[1] =  cpData[1].cosy.getOrientation().col(1)*la(0);
       if(getFrictionDirections()) {
-	WF[0] += cpData[0].cosy.getOrientation().col(0)*la(1);
+	WF[1] += cpData[1].cosy.getOrientation().col(0)*la(1);
 	if(getFrictionDirections() > 1)
-	  WF[0] += cpData[0].cosy.getOrientation().col(2)*la(2);
+	  WF[1] += cpData[1].cosy.getOrientation().col(2)*la(2);
       }
-      WF[1] = -WF[0];
+      WF[0] = -WF[1];
       for(unsigned int i=0; i<contour.size(); i++)
 	h[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*WF[i];
-    }
+  //    cout << t << endl;
+  //    cout << g << endl;
+  //    cout << name << endl;
+  //    cout << la << endl;
+  //  }
   }
 
   void Contact::updater(double t) {
@@ -271,7 +275,7 @@ namespace MBSim {
 
   void Contact::updateg(double t) {
     contactKinematics->updateg(g,cpData);
-      for(unsigned int i=0; i<2; i++) {
+    for(unsigned int i=0; i<2; i++) {
       Vec WrPC = cpData[i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
 
       cpData[i].cosy.setAngularVelocity(contour[i]->getCoordinateSystem()->getAngularVelocity());
@@ -411,14 +415,14 @@ namespace MBSim {
 
   void Contact::updateW(double t) {
     
-    fF[0].col(0) = cpData[0].cosy.getOrientation().col(1);
+    fF[1].col(0) = cpData[1].cosy.getOrientation().col(1);
     if(getFrictionDirections()) {
-      fF[0].col(1) = cpData[0].cosy.getOrientation().col(0);
+      fF[1].col(1) = cpData[1].cosy.getOrientation().col(0);
       if(getFrictionDirections() > 1)
-	fF[0].col(2) = cpData[0].cosy.getOrientation().col(2);
+	fF[1].col(2) = cpData[1].cosy.getOrientation().col(2);
     }
 
-    fF[1] = -fF[0];
+    fF[0] = -fF[1];
 
     for(unsigned int i=0; i<contour.size(); i++) 
       W[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*fF[i](Index(0,2),Index(0,laSize-1));

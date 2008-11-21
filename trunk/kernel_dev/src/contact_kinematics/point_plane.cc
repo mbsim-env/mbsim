@@ -43,34 +43,22 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::stage1(Vec &g, vector<ContourPointData> &cpData)
+  void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData)
   {
-  	Vec Wd = plane->getWrOP() - point->getWrOP();
-    cpData[iplane].Wn = plane->computeWn();
-    cpData[ipoint].Wn = -cpData[iplane].Wn;
-    g(0) = trans(cpData[iplane].Wn)*Wd;
-  }
+      cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
+    cpData[ipoint].cosy.getOrientation().col(0) = -plane->getCoordinateSystem()->getOrientation().col(0);
+    cpData[ipoint].cosy.getOrientation().col(1) = -plane->getCoordinateSystem()->getOrientation().col(1);
+    cpData[ipoint].cosy.getOrientation().col(2) = plane->getCoordinateSystem()->getOrientation().col(2);
+   Vec Wn = cpData[iplane].cosy.getOrientation().col(1);
 
-  void ContactKinematicsPointPlane::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData)
-  {
-  	Vec WrPC[2], WvC[2];
+    Vec Wd =  plane->getCoordinateSystem()->getPosition() - point->getCoordinateSystem()->getPosition();
 
-    cpData[ipoint].WrOC = point->getWrOP();
-    cpData[iplane].WrOC = cpData[ipoint].WrOC+cpData[iplane].Wn*g;
-    WrPC[iplane] = cpData[iplane].WrOC - plane->getWrOP();
-    WvC[ipoint] = point->getWvP();
-    WvC[iplane] = plane->getWvP()+crossProduct(plane->getWomegaC(),WrPC[iplane]);
-    Vec WvD = WvC[iplane] - WvC[ipoint]; 
-    gd(0) = trans(cpData[iplane].Wn)*WvD;
+    g(0) = trans(Wn)*Wd;
 
-    if(cpData[iplane].Wt.cols()) {
-// ToDo: Pruefen: macht alles nur sinn bei exakt ZWEI Reibrichtungen!!!!!!!!!!!!
-      cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);
-	  cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
-	  cpData[ipoint].Wt= -cpData[iplane].Wt;
-	  static Index iT(1,cpData[ipoint].Wt.cols());
-	  gd(iT) = trans(cpData[iplane].Wt)*WvD;
-    }
-  } 
+    cpData[ipoint].cosy.setPosition(point->getCoordinateSystem()->getPosition());
+    cpData[iplane].cosy.setPosition(cpData[ipoint].cosy.getPosition() + Wn*g(0));
+ }
+
+  void ContactKinematicsPointPlane::updategd(const Vec& g, Vec &gd, ContourPointData *cpData) {}
 
 }

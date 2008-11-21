@@ -175,8 +175,13 @@ namespace MBSim {
       subsystem[i]->init();
     }
 
-    for(unsigned i=0; i<object.size(); i++) 
+    for(unsigned i=0; i<object.size(); i++)  {
       object[i]->init();
+      cout << object[i]->getName() << endl;
+      cout << "uSize = " << object[i]->getuSize() << endl;
+      cout << "uInd = " << object[i]->getuInd() << endl;
+      cout << "hSize = " << object[i]->gethSize() << endl;
+    }
 
     for(unsigned i=0; i<link.size(); i++)
       link[i]->init();

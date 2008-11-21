@@ -43,9 +43,9 @@ namespace MBSim {
 
     public:
       /*! Compute normal distance in contact point */
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
+      void updateg(Vec &g, ContourPointData* cpData);
       /*! Compute tangential directions and normal velocities */
-      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+      void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
       /*! Treat ordering of contacting bodies in connect-call */
       void assignContours(const vector<Contour*> &contour);
   };
