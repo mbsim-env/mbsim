@@ -60,8 +60,10 @@ namespace MBSim {
 
   void Node::calcuSize(int &uSize) {
 
+    cout << dynamic_cast<Element*>(obj)->getName()<<endl;
     obj->calcuSize();
     obj->setuInd(uSize);
+    cout<<"uInd = " << uSize<<endl;
     uSize += obj->getuSize();
 
     for(unsigned int i=0; i<child.size(); i++)

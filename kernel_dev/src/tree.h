@@ -31,8 +31,6 @@ using namespace std;
 
 namespace MBSim {
 
-  class Tree;
-
   class Node {
     protected:
       vector<Node*> child;
