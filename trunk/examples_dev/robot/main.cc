@@ -20,7 +20,7 @@ int main (int argc, char* argv[])
 // TimeSteppingIntegrator integrator;
 
   integrator.settEnd(14.0);
-  integrator.setdtPlot(1e-3);
+  integrator.setdtPlot(1e-2);
  // integrator.setdt(1e-5);
   //integrator.setrTol(1e-8);
   //integrator.setaTol(1e-8);

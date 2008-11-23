@@ -2,6 +2,7 @@
 #include "rigid_body.h"
 #include "userfunction.h"
 #include "load.h"
+#include "actuator.h"
 #include "cuboid.h"
 #include "cylinder.h"
 #include "objobject.h"
@@ -10,12 +11,11 @@
 
 using namespace AMVis;
 
-class Pos : public UserFunction {
+class PositionSensor : public UserFunction {
   private:
-    double T1, T2;
     RigidBody *body;
   public:
-    Pos(RigidBody *body_) : T1(2), T2(4), body(body_) {}
+    PositionSensor(RigidBody *body_) : body(body_) {}
     
     Vec operator()(double t) {
       Vec pos(1);
@@ -62,7 +62,6 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   for(int i=0; i<3; i++)
     A(i,i) = 1;
 
-
   Vec KrKS(3);
   KrKS(1) = hB/2;
   basis->setRotation(new RotationAboutFixedAxis(Vec("[0;1;0]")));
@@ -82,7 +81,6 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   arm->addCoordinateSystem("R",-KrKS,A);
   arm->setFrameOfReference(basis->getCoordinateSystem("P"));
   arm->setCoordinateSystemForKinematics(arm->getCoordinateSystem("R"));
-  //arm->setq0(Vec("[0.3]"));
 
   arm->setMass(mA);
   Theta(0,0) = mA*rA*rA;
@@ -114,47 +112,46 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
 
   TransferSys *tf = new TransferSys("ReglerBasis");
   addEDI(tf);
-  tf->setInSignalnWeight(new Pos(basis),-1);
-  tf->setInSignalnWeight(basisSoll,1);
+  tf->setInSignalnWeight(new PositionSensor(basis),1);
+  tf->setInSignalnWeight(basisSoll,-1);
   tf->setPID(4000,0,200);
 
-  Load *motorBasis = new Load("MotorBasis");
+  Actuator *motorBasis = new Actuator("MotorBasis");
   addLink(motorBasis);
   motorBasis->setUserFunction(tf->SigOut());
   motorBasis->setMomentDirection("[0;1;0]");
-  motorBasis->connect(basis->getCoordinateSystem("C"));
-
-  FuncTable *spitzeSoll=new FuncTable;
-  spitzeSoll->setFile("Soll_Spitze.tab");   
-
-  tf = new TransferSys("ReglerSpitze");
-  addEDI(tf);
-  tf->setInSignalnWeight(new Pos(spitze),-1);
-  tf->setInSignalnWeight(spitzeSoll,1);
-  tf->setPID(40000,1000,200);
-
-  Load *motorSpitze = new Load("MotorSpitze");
-  addLink(motorSpitze);
-  motorSpitze->setUserFunction(tf->SigOut());
-  motorSpitze->setForceDirection("[0;1;0]");
-  motorSpitze->connect(spitze->getCoordinateSystem("C"));
-  motorSpitze->setKOSY(1);
+  motorBasis->connect(getCoordinateSystem("I"),basis->getCoordinateSystem("R"));
 
   FuncTable *armSoll=new FuncTable;
   armSoll->setFile("Soll_Arm.tab");   
 
   tf = new TransferSys("ReglerArm");
   addEDI(tf);
-  tf->setInSignalnWeight(new Pos(arm),-1);
-  tf->setInSignalnWeight(armSoll,1);
+  tf->setInSignalnWeight(new PositionSensor(arm),1);
+  tf->setInSignalnWeight(armSoll,-1);
   tf->setPID(4000,0,200);
 
-  Load *motorArm = new Load("MotorArm");
+  Actuator *motorArm = new Actuator("MotorArm");
   addLink(motorArm);
   motorArm->setUserFunction(tf->SigOut());
   motorArm->setMomentDirection("[0;0;1]");
-  motorArm->connect(arm->getCoordinateSystem("C"));
-  motorArm->setKOSY(1);
+  motorArm->connect(basis->getCoordinateSystem("P"),arm->getCoordinateSystem("R"));
+
+  FuncTable *spitzeSoll=new FuncTable;
+  spitzeSoll->setFile("Soll_Spitze.tab");   
+
+  tf = new TransferSys("ReglerSpitze");
+  addEDI(tf);
+  tf->setInSignalnWeight(new PositionSensor(spitze),1);
+  tf->setInSignalnWeight(spitzeSoll,-1);
+  tf->setPID(4000,0,200);
+
+  Actuator *motorSpitze = new Actuator("MotorSpitze");
+  addLink(motorSpitze);
+  motorSpitze->setUserFunction(tf->SigOut());
+  motorSpitze->setForceDirection("[0;1;0]");
+  motorSpitze->connect(arm->getCoordinateSystem("Q"),spitze->getCoordinateSystem("C"));
+
 
   // --------------------------- Setup Visualisation ----------------------------
   ObjObject *obj = new ObjObject(basis->getName(),1,false);
