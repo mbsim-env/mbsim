@@ -12,6 +12,7 @@ rigid_body.cc\
 joint.cc\
 contact.cc\
 load.cc\
+actuator.cc\
 element.cc\
 tree.cc\
 contour.cc\
@@ -41,6 +42,7 @@ rigid_body.h\
 joint.h\
 contact.h\
 load.h\
+actuator.h\
 element.h\
 tree.h\
 coordinate_system.h\
