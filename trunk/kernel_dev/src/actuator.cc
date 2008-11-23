@@ -8,6 +8,10 @@ namespace MBSim {
   Actuator::Actuator(const string &name) : Link(name,false), func(0), KOSYID(1) {
  }
 
+  Actuator::~Actuator() {
+    delete func;
+  }
+
   void Actuator::calclaSize() {
     Link::calclaSize();
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
@@ -46,12 +50,12 @@ namespace MBSim {
     cout<<"!!!HINT!!!You are using the obsolete Method setUserFunction in Actuator "<<name<<endl;
     cout<<"Use Method setSignal instead! This Method will be removed."<<endl;
     func = func_;
-    // assert((*func)(0).size() == forceDir.cols()+momentDir.cols());
   }
+
   void Actuator::setSignal(DataInterfaceBase *func_) {
     func = func_;
-    // assert((*func)(0).size() == forceDir.cols()+momentDir.cols()); 
   }
+
   void Actuator::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 

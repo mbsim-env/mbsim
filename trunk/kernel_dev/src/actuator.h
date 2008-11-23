@@ -26,12 +26,15 @@ namespace MBSim {
 
     public: 
       Actuator(const string &name);
+      ~Actuator();
       bool isActive() const {return true;}
       bool gActiveChanged() {return false;}
 
       void calclaSize();
       void init();
 
+      void initPlotFiles() {}
+      void plot(double t, double dt=1) {}
       void setKOSY(int);
       void setUserFunction(DataInterfaceBase *func_);
       void setSignal(DataInterfaceBase *func_);
