@@ -279,17 +279,8 @@ namespace MBSim {
     contactKinematics->updateg(g,cpData);
     for(unsigned int i=0; i<2; i++) {
       Vec WrPC = cpData[i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
-
-      cpData[i].cosy.setAngularVelocity(contour[i]->getCoordinateSystem()->getAngularVelocity());
-      cpData[i].cosy.setVelocity(contour[i]->getCoordinateSystem()->getVelocity() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC));
-
-      Mat tWrPC = tilde(WrPC);
-      cpData[i].cosy.setJacobianOfTranslation(contour[i]->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getJacobianOfRotation());
-      cpData[i].cosy.setJacobianOfRotation(contour[i]->getCoordinateSystem()->getJacobianOfRotation());
-      cpData[i].cosy.setGyroscopicAccelerationOfTranslation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC)));
-      cpData[i].cosy.setGyroscopicAccelerationOfRotation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
+      transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[i].cosy);
     }
-
   }
 
   void Contact::updategd(double t) {

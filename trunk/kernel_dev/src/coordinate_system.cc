@@ -32,10 +32,22 @@ using namespace AMVis;
 
 namespace MBSim {
 
+  void transformCoordinateSystem(CoordinateSystem &cosy1, const Vec &r, CoordinateSystem &cosy2) {
+    cosy2.setAngularVelocity(cosy1.getAngularVelocity());
+    cosy2.setVelocity(cosy1.getVelocity() + crossProduct(cosy1.getAngularVelocity(),r));
+
+    Mat tr = tilde(r);
+    cosy2.setJacobianOfTranslation(cosy1.getJacobianOfTranslation() - tr*cosy1.getJacobianOfRotation());
+    cosy2.setJacobianOfRotation(cosy1.getJacobianOfRotation());
+    cosy2.setGyroscopicAccelerationOfTranslation(cosy1.getGyroscopicAccelerationOfTranslation() - tr*cosy1.getGyroscopicAccelerationOfRotation() + crossProduct(cosy1.getAngularVelocity(),crossProduct(cosy1.getAngularVelocity(),r)));
+    cosy2.setGyroscopicAccelerationOfRotation(cosy1.getGyroscopicAccelerationOfRotation());
+  }
+
+
   CoordinateSystem::CoordinateSystem(const string &name) : Element(name), parent(0), hSize(0), hInd(0), adress(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 #ifdef HAVE_AMVIS
-bodyAMVisUserFunctionColor= NULL;
-bodyAMVis = NULL;
+    bodyAMVisUserFunctionColor= NULL;
+    bodyAMVis = NULL;
 #endif
     AWP(0,0) = 1;
     AWP(1,1) = 1;
@@ -45,18 +57,18 @@ bodyAMVis = NULL;
     plotLevel= 0;
   }
 
- // string CoordinateSystem::getFullName() const {
- //   return parent->getFullName() + "." + name;
- // }
+  // string CoordinateSystem::getFullName() const {
+  //   return parent->getFullName() + "." + name;
+  // }
 
   void CoordinateSystem::init() {
     getJacobianOfTranslation().resize(3,hSize);
     getJacobianOfRotation().resize(3,hSize);
   }
 
- //int CoordinateSystem::gethInd(Subsystem* sys) {
+  //int CoordinateSystem::gethInd(Subsystem* sys) {
   //  return parent->gethInd(sys);
- // }
+  // }
 
 
 #ifdef HAVE_AMVIS

@@ -24,6 +24,7 @@
 #define _JOINT_H_
 
 #include "link.h"
+#include "coordinate_system.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class CoilSpring;}
@@ -58,6 +59,7 @@ namespace MBSim {
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
 #endif
 
+      CoordinateSystem C;
 
     public: 
       Joint(const string &name);
