@@ -33,7 +33,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Joint::Joint(const string &name) : Link(name), ffl(0), fml(0), fifl(0), fiml(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0) {
+  Joint::Joint(const string &name) : Link(name), ffl(0), fml(0), fifl(0), fiml(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0), C("C") {
   }
 
   Joint::~Joint() { 
@@ -90,11 +90,9 @@ namespace MBSim {
       momentDir.resize(3,0);
       Wm.resize(3,0);
     }
-    //fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-    //fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
-    //fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
-    //fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
-  }
+    C.getJacobianOfTranslation().resize(3,port[0]->getJacobianOfTranslation().cols());
+    C.getJacobianOfRotation().resize(3,port[0]->getJacobianOfRotation().cols());
+ }
 
   bool Joint::isSetValued() const {
     bool flag = false;
@@ -118,12 +116,14 @@ namespace MBSim {
     WrP0P1 = port[1]->getPosition()-port[0]->getPosition();
     g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
+
+    transformCoordinateSystem(*port[0],WrP0P1,C);
   }
 
   void Joint::updategd(double t) {
-    WvP0P1 = port[1]->getVelocity()-port[0]->getVelocity();
-    WomP0P1 = port[1]->getAngularVelocity()-port[0]->getAngularVelocity();
-    gd(IT) = trans(Wf)*(WvP0P1 - crossProduct(port[0]->getAngularVelocity(), WrP0P1));
+    WvP0P1 = port[1]->getVelocity()-C.getVelocity();
+    WomP0P1 = port[1]->getAngularVelocity()-C.getAngularVelocity();
+    gd(IT) = trans(Wf)*WvP0P1;
     gd(IR) = trans(Wm)*WomP0P1;
   }
 
@@ -190,316 +190,314 @@ namespace MBSim {
 #endif
 
    void Joint::updateW(double t) {
-    fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-    fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
-    fM[0](Index(0,2),Index(0,Wf.cols()-1)) = -tilde(WrP0P1)*Wf;
-    fF[1](Index(0,2),Index(0,Wf.cols()-1)) = Wf;
-    fM[1](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = Wm;
+     fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
+     fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
+     fF[1] = -fF[0];
+     fM[1] = -fM[0];
 
-    for(unsigned int i=0; i<port.size(); i++) 
-      W[i] += trans(port[i]->getJacobianOfTranslation())*fF[i] + trans(port[i]->getJacobianOfRotation())*fM[i];
-  }
+     W[0] += trans(C.getJacobianOfTranslation())*fF[0] + trans(C.getJacobianOfRotation())*fM[0];
+     W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
+   }
 
-  void Joint::updatewb(double t) {
+   void Joint::updatewb(double t) {
 
-    for(unsigned i=0; i<port.size(); i++) 
-      wb += trans(fF[i])*port[i]->getGyroscopicAccelerationOfTranslation() + trans(fM[i])*port[i]->getGyroscopicAccelerationOfRotation();
+     wb(0,Wf.cols()-1) += trans(Wf)*(port[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - 2*crossProduct(C.getAngularVelocity(),WvP0P1));
+     wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
+   }
 
-    wb(0,Wf.cols()-1) += trans(Wf)*(crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
-    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
-  }
+   void Joint::solveConstraintsFixpointSingle() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-  void Joint::solveConstraintsFixpointSingle() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdd(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = ffl->project(la(i), gdd(i), rFactor(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+       la(i) = ffl->project(la(i), gdd(i), rFactor(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdd(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fml->project(la(i), gdd(i), rFactor(i));
-    }
-  }
+       la(i) = fml->project(la(i), gdd(i), rFactor(i));
+     }
+   }
 
-  void Joint::solveImpactsFixpointSingle() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+   void Joint::solveImpactsFixpointSingle() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-      la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdn(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
-    }
-  }
+       la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdn(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-  void Joint::solveConstraintsGaussSeidel() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+       la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
+     }
+   }
 
-      la(i) = ffl->solve(a[ia[laIndMBS+i]], gdd(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
-      for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+   void Joint::solveConstraintsGaussSeidel() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-      la(i) = fml->solve(a[ia[laIndMBS+i]], gdd(i));
-    }
-  }
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdd(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-  void Joint::solveImpactsGaussSeidel() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+       la(i) = ffl->solve(a[ia[laIndMBS+i]], gdd(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdd(i) = b(i);
+       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fifl->solve(a[ia[laIndMBS+i]], gdn(i), gd(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
-      for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+       la(i) = fml->solve(a[ia[laIndMBS+i]], gdd(i));
+     }
+   }
 
-      la(i) = fiml->solve(a[ia[laIndMBS+i]], gdn(i), gd(i));
-    }
-  }
+   void Joint::solveImpactsGaussSeidel() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-  void Joint::solveConstraintsRootFinding() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdn(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+       la(i) = fifl->solve(a[ia[laIndMBS+i]], gdn(i), gd(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdn(i) = b(i);
+       for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-      res(i) = la(i) - fml->project(la(i), gdd(i), rFactor(i));
-    }
-  }
-  void Joint::solveImpactsRootFinding() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-  
-    for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+       la(i) = fiml->solve(a[ia[laIndMBS+i]], gdn(i), gd(i));
+     }
+   }
 
-      res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
-    }
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+   void Joint::solveConstraintsRootFinding() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-      res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
-    }
-  }
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdd(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-  void Joint::jacobianConstraints() {
-    SqrMat Jprox = mbs->getJprox();
-    SqrMat G = mbs->getG();
+       res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdd(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-    for(int i=0; i<forceDir.cols(); i++) {
-      RowVec jp1=Jprox.row(laIndMBS+i);
-      RowVec e1(jp1.size());
-      e1(laIndMBS+i) = 1;
-      Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
+       res(i) = la(i) - fml->project(la(i), gdd(i), rFactor(i));
+     }
+   }
+   void Joint::solveImpactsRootFinding() {
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
-      for(int j=0; j<G.size(); j++) 
-	jp1(j) -= diff(1)*G(laIndMBS+i,j);
-    }
+     for(int i=0; i<forceDir.cols(); i++) {
+       gdn(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
+     }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       gdn(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-      RowVec jp1=Jprox.row(laIndMBS+i);
-      RowVec e1(jp1.size());
-      e1(laIndMBS+i) = 1;
-      Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
+       res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
+     }
+   }
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
-      for(int j=0; j<G.size(); j++) 
-	jp1(j) -= diff(1)*G(laIndMBS+i,j);
-    }
-  }
+   void Joint::jacobianConstraints() {
+     SqrMat Jprox = mbs->getJprox();
+     SqrMat G = mbs->getG();
 
-  void Joint::jacobianImpacts() {
-    SqrMat Jprox = mbs->getJprox();
-    SqrMat G = mbs->getG();
+     for(int i=0; i<forceDir.cols(); i++) {
+       RowVec jp1=Jprox.row(laIndMBS+i);
+       RowVec e1(jp1.size());
+       e1(laIndMBS+i) = 1;
+       Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
 
-    for(int i=0; i<forceDir.cols(); i++) {
-      RowVec jp1=Jprox.row(laIndMBS+i);
-      RowVec e1(jp1.size());
-      e1(laIndMBS+i) = 1;
-      Vec diff = fifl->diff(la(i), gdn(i), gd(i), rFactor(i));
+       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
+       for(int j=0; j<G.size(); j++) 
+	 jp1(j) -= diff(1)*G(laIndMBS+i,j);
+     }
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
-      for(int j=0; j<G.size(); j++) 
-	jp1(j) -= diff(1)*G(laIndMBS+i,j);
-    }
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
 
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
+       RowVec jp1=Jprox.row(laIndMBS+i);
+       RowVec e1(jp1.size());
+       e1(laIndMBS+i) = 1;
+       Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
 
-      RowVec jp1=Jprox.row(laIndMBS+i);
-      RowVec e1(jp1.size());
-      e1(laIndMBS+i) = 1;
-      Vec diff = fiml->diff(la(i), gdn(i), gd(i), rFactor(i));
+       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
+       for(int j=0; j<G.size(); j++) 
+	 jp1(j) -= diff(1)*G(laIndMBS+i,j);
+     }
+   }
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
-      for(int j=0; j<G.size(); j++) 
-	jp1(j) -= diff(1)*G(laIndMBS+i,j);
-    }
-  }
+   void Joint::jacobianImpacts() {
+     SqrMat Jprox = mbs->getJprox();
+     SqrMat G = mbs->getG();
 
-  void Joint::updaterFactors() {
-    if(isActive()) {
-      double *a = mbs->getGs()();
-      int *ia = mbs->getGs().Ip();
+     for(int i=0; i<forceDir.cols(); i++) {
+       RowVec jp1=Jprox.row(laIndMBS+i);
+       RowVec e1(jp1.size());
+       e1(laIndMBS+i) = 1;
+       Vec diff = fifl->diff(la(i), gdn(i), gd(i), rFactor(i));
 
-      for(int i=0; i<rFactorSize; i++) {
-	double sum = 0;
-	for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+i+1]; j++)
-	  sum += fabs(a[j]);
-	double ai = a[ia[laIndMBS+i]];
-	if(ai > sum) {
-	  rFactorUnsure(i) = 0;
-	  rFactor(i) = 1.0/ai;
-	} else {
-	  rFactorUnsure(i) = 1;
-	  rFactor(i) = 1.0/ai;
-	}
-      }
-    }
-  }
+       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
+       for(int j=0; j<G.size(); j++) 
+	 jp1(j) -= diff(1)*G(laIndMBS+i,j);
+     }
 
-  void Joint::checkConstraintsForTermination() {
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
+       RowVec jp1=Jprox.row(laIndMBS+i);
+       RowVec e1(jp1.size());
+       e1(laIndMBS+i) = 1;
+       Vec diff = fiml->diff(la(i), gdn(i), gd(i), rFactor(i));
 
-    for(int i=0; i < forceDir.cols(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+i)
+       for(int j=0; j<G.size(); j++) 
+	 jp1(j) -= diff(1)*G(laIndMBS+i,j);
+     }
+   }
 
-      if(!ffl->isFullfield(la(i),gdd(i),laTol,gddTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-    }
-    for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
+   void Joint::updaterFactors() {
+     if(isActive()) {
+       double *a = mbs->getGs()();
+       int *ia = mbs->getGs().Ip();
 
-      if(!fml->isFullfield(la(i),gdd(i),laTol,gddTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-    }
-  }
+       for(int i=0; i<rFactorSize; i++) {
+	 double sum = 0;
+	 for(int j=ia[laIndMBS+i]+1; j<ia[laIndMBS+i+1]; j++)
+	   sum += fabs(a[j]);
+	 double ai = a[ia[laIndMBS+i]];
+	 if(ai > sum) {
+	   rFactorUnsure(i) = 0;
+	   rFactor(i) = 1.0/ai;
+	 } else {
+	   rFactorUnsure(i) = 1;
+	   rFactor(i) = 1.0/ai;
+	 }
+       }
+     }
+   }
 
-  void Joint::checkImpactsForTermination() {
+   void Joint::checkConstraintsForTermination() {
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-    for(int i=0; i < forceDir.cols(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+     for(int i=0; i < forceDir.cols(); i++) {
+       gdd(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-      if(!fifl->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-    }
-    for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
+       if(!ffl->isFullfield(la(i),gdd(i),laTol,gddTol)) {
+	 mbs->setTermination(false);
+	 return;
+       }
+     }
+     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+       gdd(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdd(i) += a[j]*laMBS(ja[j]);
 
-      if(!fiml->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-    }
-  }
+       if(!fml->isFullfield(la(i),gdd(i),laTol,gddTol)) {
+	 mbs->setTermination(false);
+	 return;
+       }
+     }
+   }
 
-  void Joint::updateh(double t) {
-    for(int i=0; i<forceDir.cols(); i++) 
-      la(i) = (*ffl)(g(i), gd(i));
+   void Joint::checkImpactsForTermination() {
 
-    for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++)
-      la(i) = (*fml)(g(i), gd(i));
+     double *a = mbs->getGs()();
+     int *ia = mbs->getGs().Ip();
+     int *ja = mbs->getGs().Jp();
+     Vec &laMBS = mbs->getla();
+     Vec &b = mbs->getb();
 
-    WF[1] = Wf*la(IT);
-    WM[1] = Wm*la(IR);
-    WF[0] = -WF[1];
-    WM[0] = -WM[1]+crossProduct(WrP0P1,WF[0]);
-    for(unsigned int i=0; i<port.size(); i++)
-      h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
-  }
+     for(int i=0; i < forceDir.cols(); i++) {
+       gdn(i) = b(laIndMBS+i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
 
-  //double Joint::computePotentialEnergy() {
-  //  return 0.5*trans(la)*g;
-  //}
+       if(!fifl->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
+	 mbs->setTermination(false);
+	 return;
+       }
+     }
+     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
+       gdn(i) = b(i);
+       for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	 gdn(i) += a[j]*laMBS(ja[j]);
+
+       if(!fiml->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
+	 mbs->setTermination(false);
+	 return;
+       }
+     }
+   }
+
+   void Joint::updateh(double t) {
+     for(int i=0; i<forceDir.cols(); i++) 
+       la(i) = (*ffl)(g(i), gd(i));
+
+     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++)
+       la(i) = (*fml)(g(i), gd(i));
+
+     WF[1] = Wf*la(IT);
+     WM[1] = Wm*la(IR);
+     WF[0] = -WF[1];
+     WM[0] = -WM[1];
+     //WM[0] = -WM[1]+crossProduct(WrP0P1,WF[0]);
+     //h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i] + trans(port[i]->getJacobianOfRotation())*WM[i];
+     h[0] += trans(C.getJacobianOfTranslation())*WF[0] + trans(C.getJacobianOfRotation())*WM[0];
+     h[1] += trans(port[1]->getJacobianOfTranslation())*WF[1] + trans(port[1]->getJacobianOfRotation())*WM[1];
+   }
+
+   //double Joint::computePotentialEnergy() {
+   //  return 0.5*trans(la)*g;
+   //}
 
 }
