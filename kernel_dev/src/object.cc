@@ -26,10 +26,15 @@
 #include "contour.h"
 #include "eps.h"
 #include "class_factory.h"
+#include "subsystem.h"
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize) {} //, parent(0)
+  Object::Object(const string &name) : Element(name), parent(0), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize) {} //, parent(0)
+
+  int Object::gethInd(Subsystem* sys) {
+    return (parent == sys) ? hInd : hInd + parent->gethInd(sys);
+  }
 
   void Object::writeq() {
 //    string fname="PREINTEG/"+fullName+".q0.asc";  
@@ -290,7 +295,7 @@ namespace MBSim {
     }
     //contour_->setFullName(getFullName()+"."+contour_->getFullName());
     contour.push_back(contour_);
-    //contour_->setObject(this);
+    contour_->setParent(this);
   }
 
   void Object::addCoordinateSystem(CoordinateSystem* port_) {
@@ -300,7 +305,7 @@ namespace MBSim {
     }
     //port_->setFullName(getFullName()+"."+port_->getFullName());
     port.push_back(port_);
-    //port_->setObject(this);
+    port_->setParent(this);
   }
 
   CoordinateSystem* Object::getCoordinateSystem(const string &name, bool check) {

@@ -39,10 +39,7 @@ namespace MBSim {
   /*! \brief Node class for all Objects having own dynamics and mass */
   class Object : public Element, public ObjectInterface {
 
-    friend class MultiBodySystem;
-
-    protected:
-    //Subsystem* parent;
+//    friend class MultiBodySystem;
 
     public: 
 
@@ -50,6 +47,8 @@ namespace MBSim {
     vector<Contour*> contour;
 
     protected:
+
+    Subsystem* parent;
 
     /** Size of object positions */
     int qSize;
@@ -105,8 +104,6 @@ namespace MBSim {
     void updateqd(double t);
     void updatezd(double t);
 
-    //virtual void setParent(Subsystem *p) {parent = p;}
-
     /*! Initialize object at start of simulation with respect to contours and ports */
     virtual void init();
     
@@ -122,6 +119,9 @@ namespace MBSim {
     /*! Destructor */
     virtual ~Object();
   
+    Subsystem* getParent() {return parent;}
+    void setParent(Subsystem* sys) {parent = sys;}
+
     void setqSize(int qSize_) { qSize = qSize_; }
     void setuSize(int uSize_) { uSize = uSize_; }
     void sethSize(int hSize_);// { hSize = hSize_; }
@@ -131,6 +131,8 @@ namespace MBSim {
     int  getqInd() { return qInd; }
     int  getuInd() { return uInd; }
     int  gethInd() { return hInd; }
+
+    int gethInd(Subsystem* sys); 
 
     /*! Get size of position vector Object::q \return Object::qSize */
     int getqSize() const { return qSize; }

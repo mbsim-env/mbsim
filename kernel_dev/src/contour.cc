@@ -38,7 +38,7 @@
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), hSize(0), hInd(0), R("R")
+  Contour::Contour(const string &name) : Element(name), parent(0), hSize(0), hInd(0), R("R")
 # ifdef HAVE_AMVIS
 					 ,
 					 bodyAMVis(NULL)

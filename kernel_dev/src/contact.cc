@@ -229,17 +229,19 @@ namespace MBSim {
   }
 
   void Contact::updateWRef(const Mat& WParent) {
-   for(unsigned i=0; i<contour.size(); i++) {
+    for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->gethSize()-1);
+      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
       W[i].resize()>>WParent(I,J);
     }
   } 
 
   void Contact::updateVRef(const Mat& VParent) {
     for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
       V[i].resize()>>VParent(I,J);
     }
   } 

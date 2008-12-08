@@ -43,6 +43,8 @@ namespace MBSim {
     friend class HitSphereLink;
 
     protected:
+      Subsystem *parent;
+
       vector<Object*> object;
       vector<Link*> link;
       vector<ExtraDynamicInterface*> EDI;
@@ -113,6 +115,9 @@ namespace MBSim {
       void checkAllgd();
 
       void updateCondition();
+
+      Subsystem* getParent() {return parent;}
+      void setParent(Subsystem* sys) {parent = sys;}
 
       const Mat& getW() const {return W;}
       Mat& getW() {return W;}
@@ -280,6 +285,8 @@ namespace MBSim {
       int  getqInd() { return qInd; }
       int  getuInd() { return uInd; }
       int  gethInd() { return hInd; }
+
+      int gethInd(Subsystem* sys); 
 
       bool gActiveChanged();
 

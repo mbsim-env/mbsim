@@ -24,6 +24,7 @@
 #define _COSY_H_
 
 #include "element.h"
+#include "interfaces.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class CRigidBody;}
@@ -41,8 +42,10 @@ namespace MBSim {
    * */
   class CoordinateSystem : public Element {
     protected:
-    //  Object* parent;
+      ObjectInterface* parent;
+    
       int hSize, hInd;
+      double *adress;
 
       Vec WrOP, WvP, WomegaP;
       SqrMat AWP;
@@ -57,18 +60,15 @@ namespace MBSim {
     public:
       CoordinateSystem(const string &name);
 
-      //string getFullName() const; 
-
-    //  Object* getObject() {return parent;}
-    //  void setObject(Object *object) {parent = object;}
-
-    //  Object* getParent() {return parent;}
-    //  void setParent(Object *parent_) {parent = parent_;}
+      ObjectInterface* getParent() {return parent;}
+      void setParent(ObjectInterface* parent_) {parent = parent_;}
 
       int gethSize() const {return hSize;}
       int gethInd() const {return hInd;}
       void sethSize(int size) {hSize = size;}
       void sethInd(int ind) {hInd = ind;}
+
+      //int gethInd(Subsystem* sys);
 
       virtual void init();
 

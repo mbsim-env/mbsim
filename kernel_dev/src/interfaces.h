@@ -25,6 +25,8 @@
 
 namespace MBSim {
 
+  class Subsystem;
+
   class ObjectInterface {
     public:
       virtual ~ObjectInterface() {}
@@ -47,6 +49,8 @@ namespace MBSim {
       virtual void calcuSize() = 0;
       virtual void setqInd(int i) = 0;
       virtual void setuInd(int i) = 0;
+
+      virtual int gethInd(Subsystem* sys) = 0;
   };
 
   class LinkInterface {

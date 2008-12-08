@@ -22,6 +22,7 @@
 #include <config.h>
 #include "coordinate_system.h"
 #include "object.h"
+#include "subsystem.h"
 #ifdef HAVE_AMVIS
 #include "crigidbody.h"
 #include "data_interface_base.h"
@@ -31,7 +32,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), hSize(0), hInd(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
+  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), parent(0), hSize(0), hInd(0), adress(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 #ifdef HAVE_AMVIS
 bodyAMVisUserFunctionColor= NULL;
 bodyAMVis = NULL;
@@ -52,6 +53,11 @@ bodyAMVis = NULL;
     getJacobianOfTranslation().resize(3,hSize);
     getJacobianOfRotation().resize(3,hSize);
   }
+
+ //int CoordinateSystem::gethInd(Subsystem* sys) {
+  //  return parent->gethInd(sys);
+ // }
+
 
 #ifdef HAVE_AMVIS
   void CoordinateSystem::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor){

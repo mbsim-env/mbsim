@@ -44,6 +44,8 @@ namespace MBSim {
 
     protected:
 
+      Subsystem* parent;
+
       /** Internal integrable State Variables */
       Vec x;
       /** Internal integrable State Variables velocities ud \see updatedu(double t, double dt), updateud(double t) */
@@ -126,6 +128,9 @@ namespace MBSim {
       Link(const string &name, bool setValued);
       Link(const string &name);
       ~Link();
+
+      Subsystem* getParent() {return parent;}
+      void setParent(Subsystem* sys) {parent = sys;}
 
       const vector<Mat>& getW() const {return W;}
       const vector<Mat>& getV() const {return V;}
