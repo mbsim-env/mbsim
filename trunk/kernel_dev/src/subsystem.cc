@@ -34,16 +34,15 @@
 
 namespace MBSim {
 
-  Subsystem::Subsystem(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize) {
+  Subsystem::Subsystem(const string &name) : Element(name), parent(0), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize) {
 
-    CoordinateSystem *cosy = new CoordinateSystem("I");
-    addCoordinateSystem(cosy);
+    addCoordinateSystem(new CoordinateSystem("I"));
 
     IrOK.push_back(Vec(3));
     AIK.push_back(SqrMat(3,EYE));
 
-    cosy->setPosition(Vec(3));
-    cosy->setOrientation(SqrMat(3,EYE));
+    port[0]->setPosition(Vec(3));
+    port[0]->setOrientation(SqrMat(3,EYE));
   }
 
   Subsystem::~Subsystem() {
@@ -56,6 +55,11 @@ namespace MBSim {
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
   }
+
+  int Subsystem::gethInd(Subsystem* sys) {
+    return (this == sys) ? 0 : ((parent == this) ? hInd : hInd + parent->gethInd(sys));
+  }
+
 
   void Subsystem::setMultiBodySystem(MultiBodySystem* sys) {
     Element::setMultiBodySystem(sys);
@@ -278,8 +282,7 @@ namespace MBSim {
     }
 
     link.push_back(lnk);
-
-    //lnk->setParent(this);
+    lnk->setParent(this);
   }
 
   Subsystem* Subsystem::getSubsystem(const string &name, bool check) {
@@ -743,6 +746,9 @@ namespace MBSim {
       assert(getCoordinateSystem(cosy->getName(),false)==NULL);
     }
     port.push_back(cosy);
+    cosy->setParent(this);
+    cout << cosy->getName() << endl;
+    cout << cosy->getParent() << endl;
   }
 
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
@@ -768,6 +774,7 @@ namespace MBSim {
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
+    contour_->setParent(this);
   }
 
   void Subsystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {

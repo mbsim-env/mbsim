@@ -82,6 +82,7 @@ namespace MBSim {
       assert(getObject(obj->getName(),false) == NULL); 
     }
     object.push_back(obj);
+    obj->setParent(this);
 
     Node *node = new Node(obj);
     if(tree)
@@ -98,6 +99,7 @@ namespace MBSim {
       assert(getSubsystem(sys->getName(),false) == NULL); 
     }
     subsystem.push_back(sys);
+    sys->setParent(this);
 
     int i = 0;
     if(refCoordinateSystem)

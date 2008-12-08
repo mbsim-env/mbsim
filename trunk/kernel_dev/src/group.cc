@@ -323,6 +323,7 @@ namespace MBSim {
       assert(getSubsystem(sys->getName(),false) == NULL); 
     }
     subsystem.push_back(sys);
+    sys->setParent(this);
 
     int i = 0;
     if(refCoordinateSystem)
@@ -338,10 +339,11 @@ namespace MBSim {
       cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
       assert(getObject(obj->getName(),false) == NULL); 
     }
-    //obj->setFullName(getFullName()+"."+obj->getFullName());
     object.push_back(obj);
+    obj->setParent(this);
+
+    //obj->setFullName(getFullName()+"."+obj->getFullName());
     //obj->setMbs(this);
-    //obj->setParent(this);
   }
 
   void Group::addObject(TreeRigid *tree) {

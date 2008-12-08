@@ -35,10 +35,10 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
+  Link::Link(const string &name, bool setValued_) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
   }
 
-  Link::Link(const string &name) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
+  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
   }
 
   Link::~Link() { 
@@ -386,48 +386,56 @@ namespace MBSim {
 
   void Link::updateVRef(const Mat& VParent) {
     for(unsigned i=0; i<port.size(); i++) {
+      int hInd =  port[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
       V[i]>>VParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
       V[i]>>VParent(I,J);
     }
   } 
 
   void Link::updateWRef(const Mat& WParent) {
     for(unsigned i=0; i<port.size(); i++) {
+      int hInd =  port[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->gethSize()-1);
+      Index I = Index(hInd,hInd+port[i]->gethSize()-1);
       W[i]>>WParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->gethSize()-1);
+      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
       W[i]>>WParent(I,J);
     }
   } 
 
   void Link::updatehRef(const Vec &hParent) {
     for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      int hInd =  port[i]->getParent()->gethInd(parent);
+      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      int hInd =  contour[i]->getParent()->gethInd(parent);
+      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
       h[i]>>hParent(I);
     }
   } 
 
   void Link::updaterRef(const Vec &rParent) {
     for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->gethInd(),port[i]->gethInd()+port[i]->getJacobianOfTranslation().cols()-1);
+      int hInd =  port[i]->getParent()->gethInd(parent);
+      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
       r[i]>>rParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->gethInd(),contour[i]->gethInd()+contour[i]->getWJP().cols()-1);
+      int hInd =  contour[i]->getParent()->gethInd(parent);
+      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
       r[i]>>rParent(I);
     }
   } 

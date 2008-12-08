@@ -49,8 +49,9 @@ namespace MBSim {
    */
   class Contour : public Element {
     protected:
+      ObjectInterface* parent;
+
       int hSize, hInd;
-      //Object* parent;
       CoordinateSystem R;
 
 
@@ -76,6 +77,9 @@ namespace MBSim {
       int gethInd() const {return hInd;}
       void sethSize(int size) {hSize = size;}
       void sethInd(int ind) {hInd = ind;}
+
+      ObjectInterface* getParent() {return parent;}
+      void setParent(ObjectInterface* parent_) {parent = parent_;}
 
       CoordinateSystem* getCoordinateSystem() {return &R;}
 

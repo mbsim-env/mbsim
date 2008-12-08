@@ -72,6 +72,8 @@ namespace MBSim {
 
     double kapsd2 = -trans(b1)*(Om2 - Om1);
     double sd1 = trans(t1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
+    //cout << g(0) << " "<< g(0)*trans(b1)*Om1<<endl;
+    //double sd1 = trans(t1)*(vC2 - vC1);
     wb(0) += trans(n1)*(-crossProduct(Om1,vC1)) + sd1 * trans(b1) * Om1
       + trans(n2)*(-crossProduct(Om2,vC2)) - kapsd2*trans(t2)*vC2;
     if(wb.size() > 1)
