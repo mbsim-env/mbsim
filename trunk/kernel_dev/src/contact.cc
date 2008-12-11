@@ -277,13 +277,13 @@ namespace MBSim {
 
   void Contact::updateg(double t) {
     contactKinematics->updateg(g,cpData);
+  }
+
+  void Contact::updategd(double t) {
     for(unsigned int i=0; i<2; i++) {
       Vec WrPC = cpData[i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
       transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[i].cosy);
     }
-  }
-
-  void Contact::updategd(double t) {
   
     Vec Wn = cpData[1].cosy.getOrientation().col(1);
 
