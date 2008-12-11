@@ -73,13 +73,18 @@ namespace MBSim {
     //double kapsd2 = -trans(b1)*(Om2 - Om1);
     //double sd1 = trans(t1)*(vC2 - vC1) - g(0)*trans(b1)*Om1;
     //cout << g(0) << " "<< g(0)*trans(b1)*Om1<<endl;
-    //double sd1 = trans(t1)*(vC2 - vC1);
+    double sd1 = trans(t1)*(vC2 - vC1);
     //double sd1 = 0;
     if(wb.size()==1) { 
       //sd1 = trans(t1)*(vC2 - vC1);
-      wb(0) += 2*trans(n1)*(crossProduct(Om2,vC2) - crossProduct(Om1,vC1)); 
+      //wb(0) += 2*trans(n1)*(crossProduct(Om2,vC2) - crossProduct(Om1,vC1)); 
+      wb(0) += -2*trans(n1)*(-crossProduct(Om1,t1*sd1));
+ //   cout << trans(n1)*(crossProduct(Om2,vC2)-crossProduct(Om1,vC1)) << endl;
+ //   cout << trans(n1)*(-crossProduct(Om1,t1*sd1)) << endl;
     }
- //   cout << "nla = " << wb.size() << endl;
+    //cout << "nla = " << wb.size() << endl;
+    //cout << trans(t1)*(crossProduct(Om2,vC2)-crossProduct(Om1,vC1)) << endl;
+    //cout << trans(t1)*(-crossProduct(Om1,t1*sd1)) << endl;
  //   cout << t1 << endl;
  //   cout << vC2 - vC1 << endl;
  //   cout << trans(n1)*(vC2 - vC1) << endl;
@@ -88,7 +93,8 @@ namespace MBSim {
  //     + trans(n2)*(-crossProduct(Om2,vC2)) - kapsd2*trans(t2)*vC2 << endl;
  //   cout <<  kapsd2*trans(n2)*vC2 << endl;
     if(wb.size() > 1)
-      wb(1) += trans(t1)*(crossProduct(Om2,vC2)-crossProduct(Om1,vC1));
+     // wb(1) += trans(t1)*(crossProduct(Om2,vC2)-crossProduct(Om1,vC1));
+     wb(1) += -trans(t1)*(-crossProduct(Om1,t1*sd1));
   }
 }
 
