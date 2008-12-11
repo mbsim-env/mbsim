@@ -39,6 +39,7 @@ namespace MBSim {
       void updatezd(double t);
       void updatedu(double t, double dt);
       void updateKinematics(double t);
+      void updateJacobians(double t);
       void load(const string &path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 

@@ -37,6 +37,12 @@ namespace MBSim {
      child[i]->updateKinematics(t);
   }
 
+  void Node::updateJacobians(double t) {
+   obj->updateJacobians(t);
+   for(unsigned int i=0; i<child.size(); i++)
+     child[i]->updateJacobians(t);
+  }
+
   void Node::sethSize(int &hSize) {
 
     for(int i=child.size()-1; i>=0; i--)
@@ -134,6 +140,10 @@ namespace MBSim {
 
   void Tree::updateKinematics(double t) {
     root->updateKinematics(t);
+  }
+
+  void Tree::updateJacobians(double t) {
+    root->updateJacobians(t);
   }
 
   void Tree::updatedu(double t, double dt) {
