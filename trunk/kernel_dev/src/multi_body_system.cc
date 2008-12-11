@@ -1239,7 +1239,7 @@ namespace MBSim {
       if(laSize) {
 
 	updateKinematics(t); // Nötig da Geschwindigkeitsänderung
-	// updateg(t); Unnötig, da keine Lageänderung
+	updateg(t); // Unnötig, da keine Lageänderung, aber update von Koordinatensysteme!!!
 	updategd(t); // Nötig da Geschwindigkeitsänderung
 	updateh(t); 
 	updateW(t); 
