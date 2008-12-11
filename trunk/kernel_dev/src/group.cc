@@ -380,6 +380,14 @@ namespace MBSim {
       (*i)->updateKinematics(t);
   }
 
+  void Group::updateJacobians(double t) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateJacobians(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateJacobians(t);
+  }
+
   void Group::updatezd(double t) {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 

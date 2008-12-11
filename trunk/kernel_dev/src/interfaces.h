@@ -34,6 +34,7 @@ namespace MBSim {
       virtual void updateh(double t) = 0;
       virtual void updateM(double t) = 0;
       virtual void updateKinematics(double t) = 0;
+      virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt) = 0;
       virtual void updatedu(double t, double dt) = 0;
       virtual void updateud(double t) = 0;

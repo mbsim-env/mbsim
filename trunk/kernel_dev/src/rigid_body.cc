@@ -379,8 +379,6 @@ namespace MBSim {
       contour[i]->setWomegaC(port[0]->getAngularVelocity());
       contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
     }
-
-    updateJacobians(t);
   }
 
   double RigidBody::computeKineticEnergy() {

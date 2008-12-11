@@ -40,6 +40,7 @@ namespace MBSim {
       ~Node() {}
       void addChild(Node* child); 
       void updateKinematics(double t);
+      void updateJacobians(double t);
       void calcqSize(int &size);
       void calcuSize(int &size);
       void sethSize(int &size);
@@ -66,6 +67,7 @@ namespace MBSim {
     void updatezd(double t);
     void updatedu(double t, double dt);
     void updateKinematics(double t);
+    void updateJacobians(double t);
 
     double computePotentialEnergy();
 

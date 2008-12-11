@@ -210,6 +210,7 @@ namespace MBSim {
 
   void MultiBodySystem::computeInitialCondition() {
     updateKinematics(0);
+    updateJacobians(0);
     updateg(0);
     checkActiveg();
     updategd(0);
@@ -232,6 +233,7 @@ namespace MBSim {
       updatezRef(zParent);
     }
     updateKinematics(t);
+    updateJacobians(t);
     updateg(t);
     updategd(t);
     updateT(t); 
@@ -288,6 +290,7 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     updateKinematics(t);
+    updateJacobians(t);
     updateg(t);
     updategd(t);
     // TODO nötig für ODE-Integration und hohem plotLevel
@@ -335,6 +338,7 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     updateKinematics(t);
+    updateJacobians(t);
     updateg(t);
     updategd(t);
     updateT(t); 
@@ -362,6 +366,7 @@ namespace MBSim {
     if(q()!=zParent()) updatezRef(zParent);
 
     updateKinematics(t);
+    updateJacobians(t);
     updateg(t);
     checkActiveg();
     checkActiveLinks();
@@ -608,6 +613,7 @@ namespace MBSim {
 	nu += dnu;
 	q += T*dnu;
 	updateKinematics(t);
+	updateJacobians(t);
 	updateg(t);
 	int gAIndi = 0;
 	for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
@@ -1207,6 +1213,7 @@ namespace MBSim {
       //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
 
       updateKinematics(t); // prüfen, ob nötig
+      updateJacobians(t);
       updateg(t); // prüfen, ob nötig
       updategd(t); // wichtig wegen updategdRef
       //updateh(t); // h-Vektor geht nicht in Stoß ein
@@ -1239,6 +1246,7 @@ namespace MBSim {
       if(laSize) {
 
 	updateKinematics(t); // Nötig da Geschwindigkeitsänderung
+	updateJacobians(t);
 	//updateg(t); // Unnötig, da keine Lageänderung
 	updategd(t); // Nötig da Geschwindigkeitsänderung
 	updateh(t); 
@@ -1276,6 +1284,7 @@ namespace MBSim {
       if(laSize) {
 
 	updateKinematics(t); // Prüfen ob nötig
+	updateJacobians(t);
 	updateg(t); // Prüfen ob nötig
 	updategd(t); // Prüfen ob nötig
 	updateT(t);  // Prüfen ob nötig
