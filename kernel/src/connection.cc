@@ -22,6 +22,9 @@
 #include <config.h>
 #include "connection.h"
 #include "port.h"
+#include "multi_body_system.h"
+#include "tree_rigid.h"
+#include "body.h"
 #include "data_interface_base.h"
 
 #ifdef HAVE_AMVIS
@@ -82,6 +85,55 @@ namespace MBSim {
   void Connection::connect(Port *port0, Port* port1) {
     LinkPort::connect(port0,0);
     LinkPort::connect(port1,1);
+  }
+
+  void Connection::connect(const string &port0Name, const string &port1Name) {
+    if(!mbs) {
+      cout << "Method only valid, if connection already added to the parent mbs!" << endl;
+      throw(123);
+    }
+    Port * port0=NULL;
+    Port * port1=NULL;
+    for (int i=0; i<2; i++) {
+      Port * port=NULL;
+      vector<string> name;
+
+      string portName;
+      if(i==0) portName=port0Name;
+      else if(i==1) portName=port1Name;
+      while(portName.find(".")!= string::npos) {
+	name.push_back(portName.substr(0, portName.find_first_of(".")));
+	portName=portName.substr(portName.find_first_of(".")+1, portName.length()-portName.find_first_of(".")-1);
+      }
+      name.push_back(portName);
+
+      portName=name[1]; // Port of a MultiBodySystem
+      if(name.size()==2)
+	port=mbs->getPort(portName, false);
+      if(!port) { // Port of a BodyRigidAbs
+	string objectName=name[0];
+	for (unsigned int i=1; i<name.size()-1; i++)
+	  objectName+="."+name[i];
+	portName=name.back();
+	if(dynamic_cast<Body*>(mbs->getObject(objectName, false)))
+	  port=(mbs->getObject(objectName, false))->getPort(portName, false);
+      }
+      if(!port) { // Port of a BodyRigidRel
+	string treeName=name[0];
+	string objectName= name[name.size()-2];
+	for (unsigned int i=1; i<name.size()-2; i++)
+	  treeName+="."+name[i];
+	if(dynamic_cast<TreeRigid*>(mbs->getObject(treeName, false)))
+	  port=static_cast<TreeRigid*>(mbs->getObject(treeName, false))->getObject(objectName)->getPort(portName, false);
+      }
+      if (!port) {
+	cout << "No port \"" << portName << "\" was found. Check input." << endl;
+	throw(123);
+      }
+      if(i==0) port0=port;
+      else if(i==1) port1=port;
+    }
+    connect(port0, port1);
   }
 
   void Connection::updateStage1(double t) {
