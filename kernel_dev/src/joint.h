@@ -48,6 +48,7 @@ namespace MBSim {
       Index IT, IR;
       Mat forceDir, momentDir;
       Mat Wf, Wm;
+      Mat JT;
       Vec WrP0P1, WvP0P1, WomP0P1;
 
       GeneralizedForceLaw *ffl, *fml;
