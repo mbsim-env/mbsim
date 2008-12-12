@@ -54,6 +54,7 @@ namespace MBSim {
       Connection(const string &name, bool setValued);
       ~Connection();
       virtual void connect(Port *port1, Port* port2);
+      void connect(const string &port1, const string &port2);
 
       void calcSize();
       void init();
