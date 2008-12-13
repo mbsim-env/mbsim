@@ -47,12 +47,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->addContour(new CircleSolid("Circle",d),Vec(3),SqrMat(3,EYE));
 
   // Obstacles
-  double phi = M_PI*0.9;
+  double phi = M_PI*0.6; //0.9; // pos. revolution about z-axis
   SqrMat A(3);
   A(0,0) = cos(phi);
-  A(0,1) = sin(phi);
+  A(0,1) = -sin(phi);
   A(1,1) = cos(phi);
-  A(1,0) = -sin(phi);
+  A(1,0) = sin(phi);
   A(2,2) = 1;
   addContour(new Line("Line"),Vec(3),A);
 
