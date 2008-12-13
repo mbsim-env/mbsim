@@ -17,6 +17,8 @@ int main (int argc, char* argv[]) {
 
   if(eventDriven) { // Event driven time integration
     LSODARIntegrator integrator;
+    //sys->setLaTol(1e-8);
+    //sys->setgdTol(1e-8);
     integrator.setdtPlot(1e-2);
     integrator.settEnd(2.5);
     integrator.integrate(*sys);

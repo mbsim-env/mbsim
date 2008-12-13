@@ -39,13 +39,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Initial translation and rotation
   Vec q0(3);
   q0(1) = .5;
-  q0(2) = alpha;
+  q0(2) = alpha-M_PI/2;
   body->setq0(q0);
 
   // Contour definition
   Line *line = new Line("Line");
   Vec KrSC(3);
-  KrSC(1) = -0.5*h;
+  KrSC(0) = 0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
 
   // Obstacles
@@ -62,6 +62,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   Contact *cr1S = new Contact("Contact1"); 
   cr1S->setContactForceLaw(new UnilateralConstraint);
   cr1S->setContactImpactLaw(new UnilateralNewtonImpact);
+  cr1S->setFrictionForceLaw(new PlanarCoulombFriction(mu));
+  cr1S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   cr1S->connect(point1,body->getContour("Line"));
   addLink(cr1S);
 
@@ -78,7 +80,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ObjObject *obj = new ObjObject(getName() + "." + body->getName(),1,false);
   obj->setObjFilename("objects/rod.obj");
   body->setAMVisBody(obj);
-  obj->setInitialRotation(M_PI/2,0,0);
+  obj->setInitialRotation(M_PI/2,M_PI/2,0);
   obj->setScaleFactor(0.1);
   obj->setCalculationOfNormals(3);
   obj->setVertexEPS(1e-5);
