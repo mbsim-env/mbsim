@@ -252,20 +252,15 @@ namespace MBSim {
       if(fdf)
 	la(1,getFrictionDirections()) = (*fdf)(gd(1,getFrictionDirections()),fabs(la(0)));
 
-      WF[1] =  cpData[1].cosy.getOrientation().col(1)*la(0);
+      WF[1] =  cpData[0].cosy.getOrientation().col(0)*la(0);
       if(getFrictionDirections()) {
-	WF[1] += cpData[1].cosy.getOrientation().col(0)*la(1);
+	WF[1] += cpData[0].cosy.getOrientation().col(1)*la(1);
 	if(getFrictionDirections() > 1)
-	  WF[1] += cpData[1].cosy.getOrientation().col(2)*la(2);
+	  WF[1] += cpData[0].cosy.getOrientation().col(2)*la(2);
       }
       WF[0] = -WF[1];
       for(unsigned int i=0; i<contour.size(); i++)
 	h[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*WF[i];
-  //    cout << t << endl;
-  //    cout << g << endl;
-  //    cout << name << endl;
-  //    cout << la << endl;
-  //  }
   }
 
   void Contact::updater(double t) {
@@ -285,7 +280,7 @@ namespace MBSim {
       transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[i].cosy);
     }
   
-    Vec Wn = cpData[1].cosy.getOrientation().col(1);
+    Vec Wn = cpData[0].cosy.getOrientation().col(0);
 
     Vec WvD = cpData[1].cosy.getVelocity() - cpData[0].cosy.getVelocity();
 
@@ -293,9 +288,9 @@ namespace MBSim {
 
     if(gd.size()>1) {
       Mat Wt(3,gd.size()-1);
-      Wt.col(0) = cpData[1].cosy.getOrientation().col(0);
+      Wt.col(0) = cpData[0].cosy.getOrientation().col(1);
       if(gd.size() > 2)
-	Wt.col(1) = cpData[1].cosy.getOrientation().col(2);
+	Wt.col(1) = cpData[0].cosy.getOrientation().col(2);
 
       gd(1,gd.size()-1) = trans(Wt)*WvD;
     }
@@ -397,7 +392,6 @@ namespace MBSim {
     }
   }
 
-
   void Contact::updatewb(double t) {
 
     for(unsigned i=0; i<contour.size(); i++) 
@@ -408,11 +402,11 @@ namespace MBSim {
 
   void Contact::updateW(double t) {
     
-    fF[1].col(0) = cpData[1].cosy.getOrientation().col(1);
+    fF[1].col(0) = cpData[0].cosy.getOrientation().col(0);
     if(getFrictionDirections()) {
-      fF[1].col(1) = cpData[1].cosy.getOrientation().col(0);
+      fF[1].col(1) = cpData[0].cosy.getOrientation().col(1);
       if(getFrictionDirections() > 1)
-	fF[1].col(2) = cpData[1].cosy.getOrientation().col(2);
+	fF[1].col(2) = cpData[0].cosy.getOrientation().col(2);
     }
 
     fF[0] = -fF[1];
