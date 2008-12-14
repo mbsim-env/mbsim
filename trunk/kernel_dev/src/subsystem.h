@@ -96,7 +96,7 @@ namespace MBSim {
       /*! Destructor */
       ~Subsystem();
 
-      void init();
+      virtual void init();
       void initz();
       void calcqSize();
       void calcuSize();
