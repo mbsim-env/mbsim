@@ -43,21 +43,22 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData)
-  {
-      cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
+  void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData) {
+
+    cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
     cpData[ipoint].cosy.getOrientation().col(0) = -plane->getCoordinateSystem()->getOrientation().col(0);
     cpData[ipoint].cosy.getOrientation().col(1) = -plane->getCoordinateSystem()->getOrientation().col(1);
     cpData[ipoint].cosy.getOrientation().col(2) = plane->getCoordinateSystem()->getOrientation().col(2);
-   Vec Wn = cpData[iplane].cosy.getOrientation().col(1);
 
-    Vec Wd =  plane->getCoordinateSystem()->getPosition() - point->getCoordinateSystem()->getPosition();
+    Vec Wn = cpData[iplane].cosy.getOrientation().col(0);
+
+    Vec Wd =  point->getCoordinateSystem()->getPosition() - plane->getCoordinateSystem()->getPosition();
 
     g(0) = trans(Wn)*Wd;
 
     cpData[ipoint].cosy.setPosition(point->getCoordinateSystem()->getPosition());
-    cpData[iplane].cosy.setPosition(cpData[ipoint].cosy.getPosition() + Wn*g(0));
- }
+    cpData[iplane].cosy.setPosition(cpData[ipoint].cosy.getPosition() - Wn*g(0));
+  }
 
   void ContactKinematicsPointPlane::updategd(const Vec& g, Vec &gd, ContourPointData *cpData) {}
 

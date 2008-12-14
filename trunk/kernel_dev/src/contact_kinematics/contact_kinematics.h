@@ -70,7 +70,7 @@ namespace MBSim {
       virtual void updategd(const Vec& g, Vec &gd, ContourPointData* cpData) {cout << "updategd not implemented" << endl; throw 5;}
       //virtual Vec computegd(const Vec& g) = 0;
 
-      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {};
+      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {cout << "updatewb not implemented" << endl; throw 5;};
 
 	  /*! Treats ordering of contours \param contour */
       virtual void assignContours(const vector<Contour*> &contour) = 0;

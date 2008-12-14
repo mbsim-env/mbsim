@@ -36,6 +36,7 @@ namespace MBSim {
    * Author: Martin Foerg
    */
   class ContactKinematicsPointPlane : public ContactKinematics {
+
     private:
       int ipoint, iplane;
       Point *point;
@@ -44,7 +45,7 @@ namespace MBSim {
     public:
       /*! Compute normal distance in contact point */
       void updateg(Vec &g, ContourPointData* cpData);
-      /*! Compute tangential directions and normal velocities */
+      /*! Compute normal and tangential velocities */
       void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
       /*! Treat ordering of contacting bodies in connect-call */
       void assignContours(const vector<Contour*> &contour);
