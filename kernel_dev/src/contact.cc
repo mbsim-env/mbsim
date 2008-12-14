@@ -111,7 +111,8 @@ namespace MBSim {
 
   void Contact::calcsvSize() {
     Link::calcsvSize();
-    svSize = 1+getFrictionDirections();
+   // svSize = 1+getFrictionDirections();
+    svSize = 1+min(getFrictionDirections(),1);
   }
 
   void Contact::init() {
@@ -509,18 +510,37 @@ namespace MBSim {
   }
 
   void Contact::updateStopVector(double t) {
+    double eps = 1e-6;
     if(gActive) {
       sv(0) = la(0);
       if(gdActive[1]) {
 	sv(1) = nrm2(la(1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gd(1,getFrictionDirections())))*la(0);
       } 
-      else
-	sv(1,getFrictionDirections()) = gd(1,getFrictionDirections());
+      else {
+	//sv(1,getFrictionDirections()) = gd(1,getFrictionDirections());
+	if(getFrictionDirections() == 1)
+	  sv(1) = gd(1);
+	else if(getFrictionDirections() == 2) {
+
+	  if(abs(gd(1)) <= eps && abs(gd(2)) > eps)
+	    sv(1) = gd(2);
+	  else if(abs(gd(1)) > eps && abs(gd(2)) <= eps)
+	    sv(1) = gd(1);
+	  //else if(abs(gd(1)) > eps && abs(gd(2)) > eps)
+	  else 
+	    sv(1) = sqrt(gd(1)*gd(1) + gd(2)*gd(2));
+	   }
+      }
     }
     else {
       sv(0) = g(0);
-      sv(1,getFrictionDirections()).init(1);
+      //sv(1,getFrictionDirections()).init(1);
+      if(getFrictionDirections())
+	sv(1) = 1;
     }
+   // cout << t << endl;
+   // cout << gd << endl;
+   // cout << sv << endl;
   }
 
   void Contact::solveConstraintsFixpointSingle() {
@@ -537,14 +557,16 @@ namespace MBSim {
 
     la(0) = fcl->project(la(0), gdd(0), rFactor(0));
 
-    for(int i=1; i<=getFrictionDirections(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
-    }
+    if(gdActive[1]) {
+      for(int i=1; i<=getFrictionDirections(); i++) {
+	gdd(i) = b(laIndMBS+i);
+	for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
+	  gdd(i) += a[j]*laMBS(ja[j]);
+      }
 
-    if(fdf)
-      la(1,getFrictionDirections()) = fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+      if(fdf)
+	la(1,getFrictionDirections()) = fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
+    }
   } 
   
   void Contact::solveImpactsFixpointSingle() {
@@ -818,36 +840,38 @@ namespace MBSim {
     double sumT1 = 0;
     double sumT2 = 0;
     double aT1, aT2;
-    if(getFrictionDirections() == 1) {
-      for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
-	sumT1 += fabs(a[j]);
-      aT1 = a[ia[laIndMBS+1]];
-      if(aT1 > sumT1) {
-	rFactorUnsure(1)=0;
-	rFactor(1) = 1.0/aT1;
-      } else {
-	rFactorUnsure(1)=1;
-	rFactor(1) = rMax/aT1;
-      }
-    } else if(getFrictionDirections() == 2) {
-      for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
-	sumT1 += fabs(a[j]);
-      for(int j=ia[laIndMBS+2]+1; j<ia[laIndMBS+3]; j++)
-	sumT2 += fabs(a[j]);
-      aT1 = a[ia[laIndMBS+1]];
-      aT2 = a[ia[laIndMBS+2]];
-
-      // TODO rFactorUnsure
-      if(aT1 - sumT1 >= aT2 - sumT2) 
-	if(aT1 + sumT1 >= aT2 + sumT2) 
-	  rFactor(1) = 2.0/(aT1+aT2+sumT1-sumT2);
-	else 
-	  rFactor(1) = 1.0/aT2;
-      else 
-	if(aT1 + sumT1 < aT2 + sumT2) 
-	  rFactor(1) = 2.0/(aT1+aT2-sumT1+sumT2);
-	else 
+    if(fdf && gdActive[1]) {
+      if(getFrictionDirections() == 1) {
+	for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
+	  sumT1 += fabs(a[j]);
+	aT1 = a[ia[laIndMBS+1]];
+	if(aT1 > sumT1) {
+	  rFactorUnsure(1)=0;
 	  rFactor(1) = 1.0/aT1;
+	} else {
+	  rFactorUnsure(1)=1;
+	  rFactor(1) = rMax/aT1;
+	}
+      } else if(getFrictionDirections() == 2) {
+	for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
+	  sumT1 += fabs(a[j]);
+	for(int j=ia[laIndMBS+2]+1; j<ia[laIndMBS+3]; j++)
+	  sumT2 += fabs(a[j]);
+	aT1 = a[ia[laIndMBS+1]];
+	aT2 = a[ia[laIndMBS+2]];
+
+	// TODO rFactorUnsure
+	if(aT1 - sumT1 >= aT2 - sumT2) 
+	  if(aT1 + sumT1 >= aT2 + sumT2) 
+	    rFactor(1) = 2.0/(aT1+aT2+sumT1-sumT2);
+	  else 
+	    rFactor(1) = 1.0/aT2;
+	else 
+	  if(aT1 + sumT1 < aT2 + sumT2) 
+	    rFactor(1) = 2.0/(aT1+aT2-sumT1+sumT2);
+	  else 
+	    rFactor(1) = 1.0/aT1;
+      }
     }
   }
 

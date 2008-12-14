@@ -35,7 +35,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0) {
+  LSODARIntegrator::LSODARIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }
 
   void LSODARIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -120,7 +120,8 @@ namespace MBSim {
       }
       if(istate==3) {
 	system->shift(z, jsv, t);
-	system->plot(z, t);
+	if(plotOnRoot)
+	  system->plot(z, t);
 	istate=1;
 	rWork(4)=dt0;
       }

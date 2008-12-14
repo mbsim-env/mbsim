@@ -25,4 +25,16 @@
 
 namespace MBSim {
 
+  double computeAngleOnUnitCircle(const Vec& r) {
+    return r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0));
+  }
+
+  Vec computeAnglesOnUnitSphere(const Vec& r) {
+    Vec zeta(2,NONINIT);
+    double l = sqrt(r(0)*r(0) + r(1)*r(1));
+    zeta(0)= r(1)>=0 ? acos(r(0)/l) : 2*M_PI-acos(r(0)/l);
+    zeta(1)= asin(r(2));
+    return zeta;
+  }
+
 }

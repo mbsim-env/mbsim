@@ -1,4 +1,4 @@
-/* Copyright (C) 2006  Roland Zander
+/* Copyright (C) 2006  Roland Zander, Martin Förg
  
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,6 +17,7 @@
  *
  * Contact:
  *   rzander@users.berlios.de
+ *   mfoerg@users.berlios.de
  *
  */
 
@@ -32,6 +33,9 @@
 #include "multi_body_system.h"
 
 namespace MBSim {
+
+  double computeAngleOnUnitCircle(const Vec& r);
+  Vec computeAnglesOnUnitSphere(const Vec& r);
 
   /*!
     apply contact between ContourInterploation surfaces, using node-to-surface pairings, with both as master

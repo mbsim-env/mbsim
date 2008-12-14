@@ -33,13 +33,19 @@ namespace MBSim {
 
   /** pairing Shpere to Plane; author: Martin Foerg */
   class ContactKinematicsSpherePlane : public ContactKinematics {
+
     private:
       int isphere, iplane;
       Sphere *sphere;
       Plane *plane;
+
     public:
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+      /*! Compute normal distance in contact point */
+      void updateg(Vec &g, ContourPointData* cpData);
+      /*! Compute normal and tangential velocities */
+      void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
+
+      void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
 
       void assignContours(const vector<Contour*> &contour);
   };

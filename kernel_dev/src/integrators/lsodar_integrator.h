@@ -47,6 +47,8 @@ namespace MBSim {
       /** step size for the first step */
       double dt0;
 
+      bool plotOnRoot;
+
     public:
 
       LSODARIntegrator();
@@ -58,6 +60,8 @@ namespace MBSim {
       void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
       void setrTol(double rTol_) {rTol = rTol_;}
       void setdt0(double dt0_) {dt0 = dt0_;}
+
+      void setPlotOnRoot(double b) {plotOnRoot = b;}
 
       void integrate(MultiBodySystem& system);
 
