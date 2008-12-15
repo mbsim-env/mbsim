@@ -11,7 +11,6 @@ int main (int argc, char* argv[])
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->init();
-  cout << sys->getzSize()<<endl;
   
   // LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;

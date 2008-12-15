@@ -27,15 +27,10 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   SymMat Theta(3);
 
   RigidBody* stab1 = new RigidBody("Stab1");
-  stab1->setuSize(1);
-  stab1->setqSize(1);
   Node* node = tree->addObject(0,stab1);
   KrKS(0) = a1;
-  SqrMat A(3);
-  for(int i=0; i<3; i++)
-    A(i,i) = 1;
 
-  stab1->addCoordinateSystem("Ref",-KrKS,A);
+  stab1->addCoordinateSystem("Ref",-KrKS,SqrMat(3,EYE));
 
   stab1->setFrameOfReference(getCoordinateSystem("I"));
   stab1->setCoordinateSystemForKinematics(stab1->getCoordinateSystem("Ref"));
@@ -57,13 +52,11 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
 
   RigidBody* stab2 = new RigidBody("Stab2");
   tree->addObject(node,stab2);
-  stab2->setuSize(1);
-  stab2->setqSize(1);
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
-  stab1->addCoordinateSystem("P",WrOK-KrKS,A);
+  stab1->addCoordinateSystem("P",WrOK-KrKS,SqrMat(3,EYE));
   KrKS(0) = a2;
-  stab2->addCoordinateSystem("R",-KrKS,A);
+  stab2->addCoordinateSystem("R",-KrKS,SqrMat(3,EYE));
   stab2->setFrameOfReference(stab1->getCoordinateSystem("P"));
   stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
   stab2->setMass(mStab);
