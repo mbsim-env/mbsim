@@ -66,10 +66,8 @@ namespace MBSim {
 
   void Node::calcuSize(int &uSize) {
 
-    cout << dynamic_cast<Element*>(obj)->getName()<<endl;
     obj->calcuSize();
     obj->setuInd(uSize);
-    cout<<"uInd = " << uSize<<endl;
     uSize += obj->getuSize();
 
     for(unsigned int i=0; i<child.size(); i++)
@@ -83,12 +81,8 @@ namespace MBSim {
   }
 
   Node* Tree::addObject(Node* tree, Object* obj) {
-    if(getObject(obj->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
-      assert(getObject(obj->getName(),false) == NULL); 
-    }
-    object.push_back(obj);
-    obj->setParent(this);
+
+    Subsystem::addObject(obj);
 
     Node *node = new Node(obj);
     if(tree)
@@ -99,13 +93,8 @@ namespace MBSim {
   }
 
   Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
-    // ADDOBJECT adds an subsystem
-    if(getSubsystem(sys->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
-      assert(getSubsystem(sys->getName(),false) == NULL); 
-    }
-    subsystem.push_back(sys);
-    sys->setParent(this);
+
+    Subsystem::addSubsystem(sys);
 
     int i = 0;
     if(refCoordinateSystem)

@@ -179,13 +179,8 @@ namespace MBSim {
       subsystem[i]->init();
     }
 
-    for(unsigned i=0; i<object.size(); i++)  {
+    for(unsigned i=0; i<object.size(); i++)
       object[i]->init();
-      cout << object[i]->getName() << endl;
-      cout << "uSize = " << object[i]->getuSize() << endl;
-      cout << "uInd = " << object[i]->getuInd() << endl;
-      cout << "hSize = " << object[i]->gethSize() << endl;
-    }
 
     for(unsigned i=0; i<link.size(); i++)
       link[i]->init();
@@ -273,6 +268,26 @@ namespace MBSim {
     else 
       linkSingleValued.push_back(link[i]);
     }
+  }
+
+  void Subsystem::addSubsystem(Subsystem *sys) {
+    // ADDOBJECT adds an subsystem
+    if(getSubsystem(sys->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
+      assert(getSubsystem(sys->getName(),false) == NULL); 
+    }
+    subsystem.push_back(sys);
+    sys->setParent(this);
+  }
+
+  void Subsystem::addObject(Object *obj) {
+    // ADDOBJECT adds an object
+    if(getObject(obj->getName(),false)) {
+      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
+      assert(getObject(obj->getName(),false) == NULL); 
+    }
+    object.push_back(obj);
+    obj->setParent(this);
   }
 
   void Subsystem::addLink(Link *lnk) {
@@ -747,8 +762,6 @@ namespace MBSim {
     }
     port.push_back(cosy);
     cosy->setParent(this);
-    cout << cosy->getName() << endl;
-    cout << cosy->getParent() << endl;
   }
 
   void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
