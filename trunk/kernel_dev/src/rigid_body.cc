@@ -35,7 +35,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3), iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3), iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), WrPK(3), WvPKrel(3), WomPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 
     APK(0,0)=1.0;
     APK(1,1)=1.0;
@@ -191,7 +191,7 @@ namespace MBSim {
     M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
-  void RigidBody::updateJacobians(double t) {
+  void RigidBody::updateJacobiansForSelectedCoordinateSystem(double t) {
    // TODO: Abfrage ob Inertiales System zur Performancesteigerung
   
     if(fPdJT)
@@ -213,6 +213,9 @@ namespace MBSim {
     port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
     port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJT;
     port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJR;
+  }
+
+  void RigidBody::updateJacobiansForRemainingCoordinateSystemsAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
@@ -309,7 +312,7 @@ namespace MBSim {
       }
   }
 
-  void RigidBody::updateKinematics(double t) {
+  void RigidBody::updateKinematicsForSelectedCoordinateSystem(double t) {
 
     // TODO: Abfrage ob Inertiales System zur Performancesteigerung
     
@@ -341,6 +344,9 @@ namespace MBSim {
     port[iRef]->setAngularVelocity(portParent->getAngularVelocity() + WomPK);
     port[iRef]->setPosition(WrPK + portParent->getPosition());
     port[iRef]->setVelocity(portParent->getVelocity() + WvPKrel + crossProduct(portParent->getAngularVelocity(),WrPK));
+  }
+
+  void RigidBody::updateKinematicsForRemainingCoordinateSystemsAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Drehmatrix des Schwerpunkt-KOSY updaten
     if(iRef != 0)

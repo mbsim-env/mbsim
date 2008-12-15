@@ -43,6 +43,10 @@ namespace MBSim {
 
       ExtraDynamicInterface(const string &name);
       ExtraDynamicInterface(const string &name, int xSize_);
+
+      const Vec& getx() const {return x;}
+      Vec& getx() {return x;}
+
       virtual void writex();
       virtual void readx0(); 
       virtual void updatexRef(const Vec& ref);

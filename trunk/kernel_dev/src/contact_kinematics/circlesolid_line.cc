@@ -64,33 +64,25 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidLine::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
 
-    Vec b1 = cpData[iline].cosy.getOrientation().col(2);
-    Vec b2 = cpData[icircle].cosy.getOrientation().col(2);
+    Vec v2 = cpData[icircle].cosy.getOrientation().col(2);
     Vec n1 = cpData[iline].cosy.getOrientation().col(0);
     Vec n2 = cpData[icircle].cosy.getOrientation().col(0);
-    Vec t1 = cpData[iline].cosy.getOrientation().col(1);
-    Vec t2 = cpData[icircle].cosy.getOrientation().col(1);
+    Vec u1 = cpData[iline].cosy.getOrientation().col(1);
+    Vec u2 = cpData[icircle].cosy.getOrientation().col(1);
     Vec vC1 = cpData[iline].cosy.getVelocity();
     Vec vC2 = cpData[icircle].cosy.getVelocity();
     Vec Om1 = cpData[iline].cosy.getAngularVelocity();
     Vec Om2 = cpData[icircle].cosy.getAngularVelocity();
+    double r = circlesolid->getRadius();
 
-    double ad2 = -trans(b2)*(Om2-Om1);
-    double ad1 = trans(t1)*(vC2-vC1) - circlesolid->getRadius()*ad2;
-    Vec s2 = t2*circlesolid->getRadius();
+    double ad2 = -trans(v2)*(Om2-Om1);
+    double ad1 = trans(u1)*(vC2-vC1) - r*ad2;
+    Vec s2 = u2*r;
 
-    //double kap1 = 0; // Gerade
-    //double kap2 = 1.0/circlesolid->getRadius(); // Kreis
-    //double sd1 = (kap2*trans(t1)*(vC2-vC1)+trans(b1)*(Om2-Om1))/(kap1+kap2);
-    //double sd2 = (kap1*trans(t2)*(vC1-vC2)+trans(b2)*(Om1-Om2))/(kap1+kap2);
-
-    wb(0) += trans(n1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,t1)*ad1 + crossProduct(Om2,s2)*ad2);
-    //wb(0) += trans(n1)*(-crossProduct(Om1,vC1)) - kap1*sd1*trans(t1)*vC1 + sd1*trans(b1)*Om1 + trans(n2)*(-crossProduct(Om2,vC2)) - kap2*sd2*trans(t2)*vC2 + sd2*trans(b1)*Om2;
+    wb(0) += trans(n1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     
     if(wb.size() > 1) 
-      wb(1) += trans(t1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,t1)*ad1 + crossProduct(Om2,s2)*ad2);
-     // wb(1) += trans(t1)*(-crossProduct(Om1,vC1)) + kap1*sd1*trans(n1)*vC1 + trans(t2)*(-crossProduct(Om2,vC2)) + kap2*sd2*trans(n2)*vC2;
-    
+      wb(1) += trans(u1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
   }
 
 }

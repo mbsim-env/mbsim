@@ -78,21 +78,15 @@ namespace MBSim {
     TimeDependentFunction *fPdjT;
     TimeDependentFunction *fPdjR;
 
-    virtual void updateh(double t);
-    virtual void updateJacobians(double t);
-    virtual void updateKinematics(double t);
 
-    void updateM(double t) {(this->*updateM_)(t);}
     void (RigidBody::*updateM_)(double t);
     void updateMConst(double t);
     void updateMNotConst(double t); 
 
-    void facLLM() {(this->*facLLM_)();}
     void (RigidBody::*facLLM_)();
     void facLLMConst() {};
     void facLLMNotConst() {Object::facLLM();}
 
-    void updateT(double t) {if(fT) T = (*fT)(q,t);}
 
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
@@ -135,9 +129,17 @@ namespace MBSim {
       SThetaS = RThetaR;
     }
 
-#ifdef HAVE_AMVIS
-    void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
-#endif
+    virtual void updateKinematicsForSelectedCoordinateSystem(double t);
+    virtual void updateJacobiansForSelectedCoordinateSystem(double t);
+    virtual void updateKinematicsForRemainingCoordinateSystemsAndContours(double t);
+    virtual void updateJacobiansForRemainingCoordinateSystemsAndContours(double t);
+
+    void updateh(double t);
+    void updateKinematics(double t) {updateKinematicsForSelectedCoordinateSystem(t); updateKinematicsForRemainingCoordinateSystemsAndContours(t);}
+    void updateJacobians(double t) {updateJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
+    void updateM(double t) {(this->*updateM_)(t);}
+    void updateT(double t) {if(fT) T = (*fT)(q,t);}
+    void facLLM() {(this->*facLLM_)();}
 
     void plot(double t, double dt=1);
 
@@ -167,6 +169,10 @@ namespace MBSim {
 
     void load(const string &path, ifstream &inputfile);
     void save(const string &path, ofstream &outputfile);
+
+#ifdef HAVE_AMVIS
+    void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
+#endif
 
   };
 
