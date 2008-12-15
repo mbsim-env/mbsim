@@ -317,13 +317,8 @@ namespace MBSim {
 
 
   void Group::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
-    // ADDOBJECT adds an subsystem
-    if(getSubsystem(sys->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  sys->getName() << "!" << endl;
-      assert(getSubsystem(sys->getName(),false) == NULL); 
-    }
-    subsystem.push_back(sys);
-    sys->setParent(this);
+
+    Subsystem::addSubsystem(sys);
 
     int i = 0;
     if(refCoordinateSystem)
@@ -334,16 +329,8 @@ namespace MBSim {
   }
 
   void Group::addObject(Object *obj) {
-    // ADDOBJECT adds an object
-    if(getObject(obj->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
-      assert(getObject(obj->getName(),false) == NULL); 
-    }
-    object.push_back(obj);
-    obj->setParent(this);
 
-    //obj->setFullName(getFullName()+"."+obj->getFullName());
-    //obj->setMbs(this);
+    Subsystem::addObject(obj);
   }
 
   void Group::addObject(TreeRigid *tree) {

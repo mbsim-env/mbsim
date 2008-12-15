@@ -90,6 +90,9 @@ namespace MBSim {
       vector<CoordinateSystem*> port;
       vector<Contour*> contour;
 
+      void addSubsystem(Subsystem *subsystem);
+      void addObject(Object *object);
+
    public:
       /*! Constructor */
       Subsystem(const string &name);
