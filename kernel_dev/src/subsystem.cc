@@ -973,44 +973,19 @@ namespace MBSim {
     }
   }
 
-  //bool Subsystem::activeConstraintsChanged() {
-
-  //  for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-  //    if ((*i)->activeConstraintsChanged())
-  //      return true;
-  //  
-  //  for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-  //    if ((*i)->activeConstraintsChanged())
-  //      return true;
-
-  //  return false;
-  //}
-
   bool Subsystem::gActiveChanged() {
+    bool changed = false;
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       if ((*i)->gActiveChanged())
-	return true;
+	changed = true;
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       if ((*i)->gActiveChanged())
-	return true;
+	changed = true;
 
-    return false;
+    return changed;
   }
-
-  //  bool Subsystem::activeHolonomicConstraintsChanged() {
-  //
-  //    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-  //      if ((*i)->activeHolonomicConstraintsChanged())
-  //	return true;
-  //    
-  //    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-  //      if ((*i)->activeHolonomicConstraintsChanged())
-  //	return true;
-  //
-  //    return false;
-  //  }
 
   void Subsystem::checkActiveLinks() {
 
