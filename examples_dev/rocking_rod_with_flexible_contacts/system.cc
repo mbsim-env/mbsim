@@ -9,17 +9,6 @@
 
 using namespace AMVis;
 
-class Moment : public UserFunction {
-  public:
-    Vec operator()(double t) {
-      Vec a(3);
-      a(0) = 0.001*cos(t);
-      a(1) = 0.0005*sin(t);
-      //a(2) = 0.15*sin(t+M_PI/8);
-      return a;
-    }
-};
-
 System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Gravitation
   Vec grav(3);
@@ -50,13 +39,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Initial translation and rotation
   Vec q0(3);
   q0(1) = .3;
-  q0(2) = alpha;
+  q0(2) = alpha-M_PI/2;
   body->setq0(q0);
 
   // Contour definition
   Line *line = new Line("Line");
   Vec KrSC(3);
-  KrSC(1) = -0.5*h;
+  KrSC(0) = 0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
 
   // Obstacles
@@ -87,8 +76,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   ObjObject *obj = new ObjObject(getName() + "." + body->getName(),1,false);
   obj->setObjFilename("objects/rod.obj");
   body->setAMVisBody(obj);
-  obj->setInitialRotation(M_PI/2,0,0);
-  obj->setScaleFactor(0.1);
+  obj->setInitialRotation(M_PI/2,M_PI/2,0);
+   obj->setScaleFactor(0.1);
   obj->setCalculationOfNormals(3);
   obj->setVertexEPS(1e-5);
   obj-> setNormalEPS(1e-5);
