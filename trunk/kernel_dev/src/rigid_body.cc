@@ -240,10 +240,10 @@ namespace MBSim {
      // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat tWrSC = tilde(WrSC[i]);
-      contour[i]->setWJP(port[0]->getJacobianOfTranslation() - tWrSC*port[0]->getJacobianOfRotation());
       contour[i]->setWJR(port[0]->getJacobianOfRotation());
-      contour[i]->setWjP(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSC[i])));
       contour[i]->setWjR(port[0]->getGyroscopicAccelerationOfRotation());
+      contour[i]->setWJP(port[0]->getJacobianOfTranslation() - tWrSC*port[0]->getJacobianOfRotation());
+      contour[i]->setWjP(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSC[i])));
     }
   }
 
@@ -380,10 +380,10 @@ namespace MBSim {
     }
     // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
+      contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
+      contour[i]->setWomegaC(port[0]->getAngularVelocity());
       contour[i]->setWrOP(port[0]->getPosition() + WrSC[i]);
       contour[i]->setWvP(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSC[i]));
-      contour[i]->setWomegaC(port[0]->getAngularVelocity());
-      contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
     }
   }
 

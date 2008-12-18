@@ -388,4 +388,119 @@ namespace MBSim {
     return crossProduct(tTemp.col(1),tTemp.col(0)); // Achtung: Interpoation mit einem Konturparameter-> t.col(1) = Cb;
   }
 
+  CompoundContour::CompoundContour(const string &name) : Contour(name) {
+  }
+
+  void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {
+    element.push_back(c);
+    Kr.push_back(Kr_);
+    Wr.push_back(Vec(3));
+  }
+
+  void CompoundContour::setWrOP(const Vec &WrOP) {
+    Contour::setWrOP(WrOP);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWrOP(R.getPosition() + Wr[i]);
+  }
+
+  void CompoundContour::setWvP(const Vec &WvP) {
+    Contour::setWvP(WvP);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWvP(R.getVelocity() + crossProduct(R.getAngularVelocity(), Wr[i]));
+  }
+
+  void CompoundContour::setWomegaC(const Vec &WomegaC) {
+    Contour::setWomegaC(WomegaC);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWomegaC(R.getAngularVelocity());
+  }
+
+  void CompoundContour::setAWC(const SqrMat &AWC) {
+    Contour::setAWC(AWC);
+    for(unsigned int i=0; i<element.size(); i++) {
+      element[i]->setAWC(R.getOrientation());
+      Wr[i] = R.getOrientation()*Kr[i];
+    }
+  }
+
+  void CompoundContour::setWJP(const Mat &WJP) {
+    Contour::setWJP(WJP);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWJP(R.getJacobianOfTranslation() - tilde(Wr[i])*R.getJacobianOfRotation());
+  }
+
+  void CompoundContour::setWjP(const Vec &WjP) {
+    Contour::setWjP(WjP);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWjP(R.getGyroscopicAccelerationOfTranslation() - tilde(Wr[i])*R.getGyroscopicAccelerationOfRotation() + crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),Wr[i])));
+  }
+
+  void CompoundContour::setWJR(const Mat &WJR) {
+    Contour::setWJR(WJR);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWJR(R.getJacobianOfRotation());
+  }
+
+  void CompoundContour::setWjR(const Vec &WjR) {
+    Contour::setWjR(WjR);
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->setWjR(R.getGyroscopicAccelerationOfRotation());
+  }
+
+  void CompoundContour::init() {
+    Contour::init();
+    for(unsigned int i=0; i<element.size(); i++) {
+      element[i]->sethSize(hSize);
+      element[i]->init();
+    }
+  }
+
+  Cuboid::Cuboid(const string &name) : CompoundContour(name) {
+  }
+
+  void Cuboid::preinit() {
+    Vec Kr[8];
+    for(int i=0; i<8; i++) {
+      Kr[i] = Vec(3);
+    }
+    Kr[0](0) = l/2;
+    Kr[0](1) = d/2;
+    Kr[0](2) = h/2;
+
+    Kr[1](0) = -l/2.0;
+    Kr[1](1) = d/2.0;
+    Kr[1](2) = h/2.0;
+
+    Kr[2](0) = -l/2.0;
+    Kr[2](1) = -d/2.0;
+    Kr[2](2) = h/2.0;
+
+    Kr[3](0) = l/2.0;
+    Kr[3](1) = -d/2.0;
+    Kr[3](2) = h/2.0;
+
+    Kr[4](0) = l/2.0;
+    Kr[4](1) = d/2.0;
+    Kr[4](2) = -h/2.0;
+
+    Kr[5](0) = -l/2.0;
+    Kr[5](1) = d/2.0;
+    Kr[5](2) = -h/2.0;
+
+    Kr[6](0) = -l/2.0;
+    Kr[6](1) = -d/2.0;
+    Kr[6](2) = -h/2.0;
+
+    Kr[7](0) = l/2.0;
+    Kr[7](1) = -d/2.0;
+    Kr[7](2) = -h/2.0;
+
+    for(int i=0; i<8; i++) {
+      stringstream s;
+      s << i+1;
+      addContourElement(new Point(s.str()),Kr[i]);
+    }
+  }
+
+
 }

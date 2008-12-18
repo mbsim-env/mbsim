@@ -154,6 +154,21 @@ namespace MBSim {
       contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
   }
 
+  void Subsystem::preinit() {
+
+    for(unsigned int i=0; i<subsystem.size(); i++) 
+      subsystem[i]->preinit();
+
+    for(unsigned i=0; i<object.size(); i++)
+      object[i]->preinit();
+
+    for(unsigned i=0; i<link.size(); i++)
+      link[i]->preinit();
+
+    for (unsigned i=0; i<EDI.size(); i++)
+      EDI[i]->preinit();
+  }
+
   void Subsystem::init() {
 
     // if(mbs != this) {

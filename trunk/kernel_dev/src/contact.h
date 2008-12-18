@@ -46,8 +46,9 @@ namespace MBSim {
 
     protected:
 
-      unsigned int gActive, gdActive[2];
-      unsigned int gActive0, gdActive0[2];
+      vector<unsigned int> gActive, gActive0;
+      vector<unsigned int> gdCActive, gdCActive0;
+      vector<unsigned int> gdFActive, gdFActive0;
 
       /** index for tangential directions in projection matrices */
       Index iT;
@@ -57,7 +58,7 @@ namespace MBSim {
 
       ContactKinematics *contactKinematics;
 
-      ContourPointData cpData[2];
+      vector< ContourPointData* > cpData;
 
       double argN;
       Vec argT;
@@ -70,6 +71,13 @@ namespace MBSim {
       FrictionImpactLaw *ftil;
 
       Vec gdn, gdd;
+
+      vector<Vec> gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
+      vector<Vector<int> > jsvk;
+      vector<Mat*> fF;
+      vector<Vec*> WF;
+      vector<Mat*> Vk, Wk;
+      vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
 
     public:
       /*!
@@ -105,6 +113,7 @@ namespace MBSim {
 
       /*geerbt*/
       void init();
+      void preinit();
 
       /*! define wether HitSpheres are tested or ignored
       */
@@ -126,8 +135,16 @@ namespace MBSim {
       void updaterFactors();
 
 
+      void updatelaRef(const Vec& ref);
+      void updategRef(const Vec& ref);
+      void updategdRef(const Vec& ref);
       void updateWRef(const Mat &ref);
+      void updatewbRef(const Vec &ref);
       void updateVRef(const Mat &ref);
+      void updatehRef(const Vec &ref);
+      void updatesvRef(const Vec &ref);
+      void updatejsvRef(const Vector<int> &ref);
+      void updaterFactorRef(const Vec &ref);
 
       void updateStopVector(double t);
 
@@ -141,7 +158,7 @@ namespace MBSim {
       string getType() const {return "Contact";}
 
       bool gActiveChanged();
-      bool isActive() const {return gActive;}
+      bool isActive() const;
 
       void checkActiveg();
       void checkActivegd();
