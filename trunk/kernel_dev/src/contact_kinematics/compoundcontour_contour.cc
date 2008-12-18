@@ -53,13 +53,13 @@ namespace MBSim {
 	numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
       }
     }
-    cout << numberOfPotentialContactPoints << endl;
   }
 
   void ContactKinematicsCompoundContourContour::updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {
-    for(unsigned int i=0; i<contactKinematics.size(); i++) 
-      contactKinematics[i]->updateg(g[i], cpData[i]);
-
+    for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updateg(g[k], cpData[i]);
+      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+    }
   }
 
   void ContactKinematicsCompoundContourContour::updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) {
