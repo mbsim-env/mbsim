@@ -86,6 +86,7 @@ namespace MBSim {
 
       virtual void updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {updateg(g[0],cpData[0]);}
       virtual void updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) {updategd(g[0],gd[0],cpData[0]);}
+      virtual void updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData) {updatewb(wb[0],g[0],cpData[0]);}
 
       int getNumberOfPotentialContactPoints() const {return numberOfPotentialContactPoints;}
   };

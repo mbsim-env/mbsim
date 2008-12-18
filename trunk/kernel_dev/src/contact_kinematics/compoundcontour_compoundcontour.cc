@@ -46,14 +46,24 @@ namespace MBSim {
   }
 
   void ContactKinematicsCompoundContourCompoundContour::updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {
-    for(unsigned int i=0; i<contactKinematics.size(); i++) 
-      contactKinematics[i]->updateg(g[i], cpData[i]);
-
+   for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updateg(g[k], cpData[k]);
+      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+   }
   }
 
   void ContactKinematicsCompoundContourCompoundContour::updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) {
-    for(unsigned int i=0; i<contactKinematics.size(); i++) 
-      contactKinematics[i]->updategd(g[i], gd[i], cpData[i]);
+    for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updategd(g[k], gd[k], cpData[k]);
+      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+    }
   }
 
-}
+  void ContactKinematicsCompoundContourCompoundContour::updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData) {
+    for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updatewb(wb[k], g[k], cpData[k]);
+      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+    }
+  }
+
+  }
