@@ -43,6 +43,7 @@ namespace MBSim {
     public:
       void updateg(vector<Vec> &g, vector<ContourPointData*> &cpData);
       void updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData);
+      void updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData);
 
       void assignContours(const vector<Contour*> &contour);
     };
