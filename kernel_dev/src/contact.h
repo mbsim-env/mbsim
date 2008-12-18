@@ -47,8 +47,7 @@ namespace MBSim {
     protected:
 
       vector<unsigned int> gActive, gActive0;
-      vector<unsigned int> gdCActive, gdCActive0;
-      vector<unsigned int> gdFActive, gdFActive0;
+      vector<unsigned int*> gdActive, gdActive0;
 
       /** index for tangential directions in projection matrices */
       Index iT;
