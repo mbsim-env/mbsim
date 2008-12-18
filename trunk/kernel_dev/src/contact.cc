@@ -349,7 +349,7 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+    //for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
       contactKinematics->updateg(gk,cpData);
   }
 
