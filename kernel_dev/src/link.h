@@ -161,6 +161,7 @@ namespace MBSim {
       virtual void calcrFactorSize() {rFactorSize = 0;}
 
       virtual void init();
+      virtual void preinit() {}
       virtual void initz();
 
 

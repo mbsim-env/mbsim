@@ -106,6 +106,9 @@ namespace MBSim {
 
     /*! Initialize object at start of simulation with respect to contours and ports */
     virtual void init();
+
+    /*! Initialize object at start of simulation with respect to contours and ports */
+    virtual void preinit();
     
     /*! Initialize state of object at start of simulation */
     virtual void initz();

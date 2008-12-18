@@ -74,6 +74,7 @@ namespace MBSim {
 
 	//int gethInd(Subsystem* sys);
 
+	virtual void preinit() {}
 	virtual void init();
 
 	const Vec& getPosition() const {return WrOP;}

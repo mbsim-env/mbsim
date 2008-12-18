@@ -61,6 +61,8 @@ namespace MBSim {
 
     setDirectory(); // output directory
 
+    Group::preinit();
+
     calcqSize();
     calcuSize();
     calcxSize();
@@ -371,6 +373,7 @@ namespace MBSim {
     checkActiveg();
     checkActiveLinks();
     if(gActiveChanged()) {
+
       //cout << "activeConstraintsChanged at t = " << t << endl;
 
       checkAllgd(); // Prüfen ob nötig

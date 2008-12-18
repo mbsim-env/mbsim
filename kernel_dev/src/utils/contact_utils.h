@@ -37,6 +37,8 @@ namespace MBSim {
   double computeAngleOnUnitCircle(const Vec& r);
   Vec computeAnglesOnUnitSphere(const Vec& r);
 
+  ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1);
+
   /*!
     apply contact between ContourInterploation surfaces, using node-to-surface pairings, with both as master
     */

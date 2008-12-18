@@ -1,5 +1,5 @@
 /* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -44,7 +44,14 @@ namespace MBSim {
    *  Per default no data is stored or managed within this class
    */
   class ContactKinematics {
-  	public:
+
+    protected:
+
+      int numberOfPotentialContactPoints;
+
+    public:
+
+      ContactKinematics() : numberOfPotentialContactPoints(1) {}
       virtual ~ContactKinematics() {}
 
       /*! compute \f$\boldsymbol{g}_N\f$, which MUST be provided, others optional$
@@ -72,10 +79,15 @@ namespace MBSim {
 
       virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {cout << "updatewb not implemented" << endl; throw 5;};
 
-	  /*! Treats ordering of contours \param contour */
+      /*! Treats ordering of contours \param contour */
       virtual void assignContours(const vector<Contour*> &contour) = 0;
       /*! Treats ordering of contours \param contour1 and \param contour2 */
       void assignContours(Contour *contour1, Contour *contour2) {vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
+
+      virtual void updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {updateg(g[0],cpData[0]);}
+      virtual void updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) {updategd(g[0],gd[0],cpData[0]);}
+
+      int getNumberOfPotentialContactPoints() const {return numberOfPotentialContactPoints;}
   };
 
 }

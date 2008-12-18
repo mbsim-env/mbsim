@@ -354,6 +354,13 @@ namespace MBSim {
       (*i)->sethInd(hInd);
   }
 
+  void Object::preinit() {  
+    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
+      (*i)->preinit();
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
+      (*i)->preinit();
+  }
+
   void Object::init() {  
     Iu = Index(uInd,uInd+uSize-1);
     Ih = Index(hInd,hInd+hSize-1);

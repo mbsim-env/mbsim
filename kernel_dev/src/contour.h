@@ -67,7 +67,9 @@ namespace MBSim {
       Contour(const string &name);
       virtual ~Contour();	
 
+      virtual void preinit() {}
       virtual void init();
+
       void initPlotFiles();
 
       /* geerbt */
@@ -83,19 +85,19 @@ namespace MBSim {
 
       CoordinateSystem* getCoordinateSystem() {return &R;}
 
-      void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
+      virtual void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
       const Vec& getWrOP() const {return R.getPosition();}
-      void setWvP(const Vec &WvP) {R.setVelocity(WvP);}
+      virtual void setWvP(const Vec &WvP) {R.setVelocity(WvP);}
       const Vec& getWvP() const {return R.getVelocity();}
-      void setWomegaC(const Vec &WomegaC) {R.setAngularVelocity(WomegaC);}
+      virtual void setWomegaC(const Vec &WomegaC) {R.setAngularVelocity(WomegaC);}
       const Vec& getWomegaC() const {return R.getAngularVelocity();}
-      void setAWC(const SqrMat &AWC) {R.setOrientation(AWC);}
+      virtual void setAWC(const SqrMat &AWC) {R.setOrientation(AWC);}
       const SqrMat& getAWC() const {return R.getOrientation();}
 
-      void setWJP(const Mat &WJP) {R.setJacobianOfTranslation(WJP);}
-      void setWjP(const Vec &WjP) {R.setGyroscopicAccelerationOfTranslation(WjP);}
-      void setWJR(const Mat &WJR) {R.setJacobianOfRotation(WJR);}
-      void setWjR(const Vec &WjR) {R.setGyroscopicAccelerationOfRotation(WjR);}
+      virtual void setWJP(const Mat &WJP) {R.setJacobianOfTranslation(WJP);}
+      virtual void setWjP(const Vec &WjP) {R.setGyroscopicAccelerationOfTranslation(WjP);}
+      virtual void setWJR(const Mat &WJR) {R.setJacobianOfRotation(WJR);}
+      virtual void setWjR(const Vec &WjR) {R.setGyroscopicAccelerationOfRotation(WjR);}
       const Mat& getWJP() const {return R.getJacobianOfTranslation();}
       const Mat& getWJR() const {return R.getJacobianOfRotation();}
       Mat& getWJP() {return R.getJacobianOfTranslation();}
@@ -279,6 +281,7 @@ namespace MBSim {
       }
       void setUserFunction(UserFunctionContour1s* f) {funcCrPC = f;}
       UserFunctionContour1s* getUserFunction() {return funcCrPC;}
+
       virtual void init();
   };
 
@@ -567,6 +570,42 @@ namespace MBSim {
       double computePointWeight(const Vec &s, int i, int diff);
 
       Vec computeWn(const ContourPointData &cp);
+  };
+
+  /*! \brief Contour consisting of primitive contour elements */
+  class CompoundContour : public Contour {
+    private:
+      vector<Contour*> element;
+      vector<Vec> Kr, Wr;
+    public:
+      /*! Constructor */
+      CompoundContour(const string &name);
+      void init();
+      Contour* getContourElement(int i) {return element[i];}
+      void addContourElement(Contour* ce, const Vec& re);
+      unsigned int getNumberOfElements() {return element.size();}
+      void setWrOP(const Vec &WrOP);
+      void setWvP(const Vec &WvP);
+      void setWomegaC(const Vec &WomegaC);
+      void setAWC(const SqrMat &AWC);
+      void setWJP(const Mat &WJP);
+      void setWjP(const Vec &WjP);
+      void setWJR(const Mat &WJR);
+      void setWjR(const Vec &WjR);
+  };
+
+
+  /*! \brief Cuboid with 8 vertices, 12 edges and 6 faces */
+  class Cuboid : public CompoundContour {
+    private:
+      double l,h,d;
+    public:
+      /*! Constructor */
+      Cuboid(const string &name);
+      void setLength(double l_) {l = l_;}
+      void setHeight(double h_) {h = h_;}
+      void setDepth(double d_) {d = d_;}
+      void preinit();
   };
 
 }

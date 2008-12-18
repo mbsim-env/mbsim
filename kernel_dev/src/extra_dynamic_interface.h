@@ -54,6 +54,7 @@ namespace MBSim {
       void setxInd(int xInd_) {xInd = xInd_;};
       int getxSize() const {return xSize;}
       virtual void init();
+      virtual void preinit() {}
       virtual void initz();
       virtual void calcxSize() {};
       virtual void updateg(double t) {};

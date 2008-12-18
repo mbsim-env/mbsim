@@ -100,6 +100,7 @@ namespace MBSim {
       ~Subsystem();
 
       virtual void init();
+      virtual void preinit();
       void initz();
       void calcqSize();
       void calcuSize();

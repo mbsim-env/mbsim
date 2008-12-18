@@ -28,29 +28,9 @@
 #include "multi_body_system.h"
 #include "nonlinear_algebra.h"
 #include "constitutive_laws.h"
+#include "contact_kinematics.h"
+#include "contact_utils.h"
 #include "class_factory.h"
-
-// --- List of contact kinematic implementations - BEGIN ---
-#include "point_line.h"
-#include "circlesolid_contour1s.h"
-#include "circlesolid_line.h"
-#include "circlesolid_plane.h"
-#include "point_plane.h"
-#include "point_area.h"
-#include "edge_edge.h"
-#include "circlehollow_cylinderflexible.h"
-#include "point_cylinderflexible.h"
-#include "sphere_plane.h"
-#include "point_contourinterpolation.h"
-#include "point_contour1s.h"
-#include "line_contour1s.h"
-#include "circlesolid_circlehollow.h"
-#include "circlesolid_circlesolid.h"
-#include "sphere_sphere.h"
-#include "sphere_frustum.h"
-#include "point_frustum.h"
-#include "circlesolid_frustum2d.h"
-// --- List of contact kinematic implementations -  END  ---
 
 namespace MBSim {
 
@@ -71,13 +51,6 @@ namespace MBSim {
 
   Contact::Contact(const string &name) : Link(name), contactKinematics(0), argT(2), fcl(0), fdf(0), fnil(0), ftil(0) {
 
-    gActive = 1;
-    gdActive[0] = 1;
-    gdActive[1] = 1;
-
-    gActive0 = 1;
-    gdActive0[0] = 1;
-    gdActive0[1] = 1;
   }
 
   Contact::~Contact() {
@@ -91,130 +64,171 @@ namespace MBSim {
 
   void Contact::calclaSize() {
     Link::calclaSize();
-    laSize = gdActive[0]+gdActive[1]*getFrictionDirections();
+    laSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      laIndk[i] = laSize;
+      laSizek[i] = gdCActive[i]+gdFActive[i]*getFrictionDirections();
+      laSize += laSizek[i];
+    }
   }
 
   void Contact::calcgSize() {
     Link::calcgSize();
-    gSize = gActive;
+    gSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gIndk[i] = gSize;
+      gSizek[i] = gActive[i];
+      gSize += gSizek[i];
+    }
   }
 
   void Contact::calcgdSize() {
     Link::calcgdSize();
-    gdSize = gdActive[0]+gdActive[1]*getFrictionDirections();
+    gdSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gdIndk[i] = gdSize;
+      gdSizek[i] = gdCActive[i]+gdFActive[i]*getFrictionDirections();
+      gdSize += gdSizek[i];
+    }
   }
 
   void Contact::calcrFactorSize() {
     Link::calcrFactorSize();
-    rFactorSize = gdActive[0]+min(getFrictionDirections(),1)*gdActive[1];
+    rFactorSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      rFactorIndk[i] = rFactorSize;
+      rFactorSizek[i] = gdCActive[i]+min(getFrictionDirections(),1)*gdFActive[i];
+      rFactorSize += rFactorSizek[i];
+    }
   }
 
   void Contact::calcsvSize() {
     Link::calcsvSize();
-   // svSize = 1+getFrictionDirections();
-    svSize = 1+min(getFrictionDirections(),1);
+    // svSize = 1+getFrictionDirections();
+    svSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      svIndk[i] = svSize;
+      svSizek[i] = 1+min(getFrictionDirections(),1);
+      svSize += svSizek[i];
+    }
   }
 
-  void Contact::init() {
-    Link::init();
+  void Contact::preinit() {
 
-    gdd.resize(gdSize);
-    gdn.resize(gdSize);
-
-    g.resize(1);
-    gd.resize(1+getFrictionDirections());
-    la.resize(1+getFrictionDirections());
-
-    if(getFrictionDirections() == 0)
-      gdActive[1] = false;
+    Link::preinit();
 
     if(contactKinematics);
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Line*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Line*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsPointLine; 
-
-    else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Line*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Line*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsCircleSolidLine;
-
-    else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsCircleSolidPlane;
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsPointPlane;
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Area*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Area*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsPointArea;
-
-    else if(dynamic_cast<Edge*>(contour[0]) && dynamic_cast<Edge*>(contour[1])) 
-      contactKinematics = new ContactKinematicsEdgeEdge;
-
-    else if((dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Plane*>(contour[1])) || (dynamic_cast<Sphere*>(contour[1]) && dynamic_cast<Plane*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsSpherePlane;
-
-    // INTERPOLATIONSGESCHICHTEN - Interpol-Point
-    else if((dynamic_cast<Point*>(contour[0]) &&  dynamic_cast<ContourInterpolation*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) &&  dynamic_cast<ContourInterpolation*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsPointContourInterpolation;
-    // INTERPOLATIONSGESCHICHTEN
-
-    else if((dynamic_cast<CircleHollow*>(contour[0]) && dynamic_cast<CylinderFlexible*>(contour[1])) || (dynamic_cast<CircleHollow*>(contour[1]) && dynamic_cast<CylinderFlexible*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsCircleHollowCylinderFlexible;
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<CylinderFlexible*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<CylinderFlexible*>(contour[0])))
-      contactKinematics = new ContactKinematicsPointCylinderFlexible;
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsPointContour1s;
-
-    else if((dynamic_cast<Line*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<Line*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsLineContour1s;
-
-    else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Contour1s*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Contour1s*>(contour[0])))
-      contactKinematics = new ContactKinematicsCircleSolidContour1s;
-
-
-    else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<CircleHollow*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<CircleHollow*>(contour[0])))
-      contactKinematics = new ContactKinematicsCircleSolidCircleHollow;
-
-    else if(dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<CircleSolid*>(contour[1]))
-      contactKinematics = new ContactKinematicsCircleSolidCircleSolid;
-
-    else if(dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Sphere*>(contour[1]))
-      contactKinematics = new ContactKinematicsSphereSphere;
-
-    else if((dynamic_cast<Sphere*>(contour[0]) && dynamic_cast<Frustum*>(contour[1])) || (dynamic_cast<Sphere*>(contour[1]) && dynamic_cast<Frustum*>(contour[0])))
-      contactKinematics = new ContactKinematicsSphereFrustum;
-
-    else if((dynamic_cast<CircleSolid*>(contour[0]) && dynamic_cast<Frustum2D*>(contour[1])) || (dynamic_cast<CircleSolid*>(contour[1]) && dynamic_cast<Frustum2D*>(contour[0]))) 
-      contactKinematics = new ContactKinematicsCircleSolidFrustum2D;
-
-    else if((dynamic_cast<Point*>(contour[0]) && dynamic_cast<Frustum*>(contour[1])) || (dynamic_cast<Point*>(contour[1]) && dynamic_cast<Frustum*>(contour[0])))
-      contactKinematics = new ContactKinematicsPointFrustum;  
-
-    else {
-      cout << "Unkown contact pairing" <<endl;
+    else contactKinematics = findContactPairing(contour[0],contour[1]);
+    if(contactKinematics==0) {
+      cout << "unknown contact pairing" << endl;
       throw 5;
     }
 
-    //cpData.push_back(new ContourPointData);
-    //cpData.push_back(new ContourPointData);
-    cpData[0].type = CONTINUUM; // default-Wert
-    cpData[0].Wn.resize(3,1);
-    cpData[0].Wt.resize(3,getFrictionDirections());
-    cpData[1].type = CONTINUUM; // default-Wert
-    cpData[1].Wn.resize(3,1);
-    cpData[1].Wt.resize(3,getFrictionDirections());
-    
-    cpData[0].cosy.setName("0");
-    cpData[1].cosy.setName("1");
-    cpData[0].cosy.getJacobianOfTranslation().resize(3,contour[0]->getWJP().cols());
-    cpData[0].cosy.getJacobianOfRotation().resize(3,contour[0]->getWJR().cols());
-    cpData[1].cosy.getJacobianOfTranslation().resize(3,contour[1]->getWJP().cols());
-    cpData[1].cosy.getJacobianOfRotation().resize(3,contour[1]->getWJR().cols());
+    contactKinematics->assignContours(contour[0],contour[1]);
+
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gActive.push_back(int(1));
+      gActive0.push_back(int(1));
+      gdCActive.push_back(int(1));
+      gdCActive0.push_back(int(1));
+      gdFActive.push_back(int(1));
+      gdFActive0.push_back(int(1));
+      gk.push_back(Vec(1));
+      gdk.push_back(Vec(1));
+      gdnk.push_back(Vec(1));
+      gddk.push_back(Vec(1));
+      lak.push_back(Vec());
+      wbk.push_back(Vec());
+      svk.push_back(Vec());
+      jsvk.push_back(Vector<int>());
+      rFactork.push_back(Vec());
+      laSizek.push_back(int(0));
+      laIndk.push_back(int(0));
+      gSizek.push_back(int(0));
+      gIndk.push_back(int(0));
+      gdSizek.push_back(int(0));
+      gdIndk.push_back(int(0));
+      svSizek.push_back(int(0));
+      svIndk.push_back(int(0));
+      rFactorSizek.push_back(int(0));
+      rFactorIndk.push_back(int(0));
+    }
+  }
+
+  void Contact::init() {
+
+    Link::init();
+
+
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+
+      if(getFrictionDirections() == 0)
+	gdFActive[i] = false;
+
+      cpData.push_back(new ContourPointData[2]);
+
+      cpData[i][0].type = CONTINUUM; // default-Wert
+      cpData[i][0].Wn.resize(3,1);
+      cpData[i][0].Wt.resize(3,getFrictionDirections());
+      cpData[i][1].type = CONTINUUM; // default-Wert
+      cpData[i][1].Wn.resize(3,1);
+      cpData[i][1].Wt.resize(3,getFrictionDirections());
+
+      cpData[i][0].cosy.setName("0");
+      cpData[i][1].cosy.setName("1");
+      cpData[i][0].cosy.getJacobianOfTranslation().resize(3,contour[0]->getWJP().cols());
+      cpData[i][0].cosy.getJacobianOfRotation().resize(3,contour[0]->getWJR().cols());
+      cpData[i][1].cosy.getJacobianOfTranslation().resize(3,contour[1]->getWJP().cols());
+      cpData[i][1].cosy.getJacobianOfRotation().resize(3,contour[1]->getWJR().cols());
+
+      int laSizek = gdCActive[i]+gdFActive[i]*getFrictionDirections();
+
+      Wk.push_back(new Mat[2]);
+      Wk[i][0].resize(contour[0]->gethSize(),laSizek);
+      Wk[i][1].resize(contour[1]->gethSize(),laSizek);
+
+      Vk.push_back(new Mat[2]);
+      Vk[i][0].resize(contour[0]->gethSize(),laSizek);
+      Vk[i][1].resize(contour[1]->gethSize(),laSizek);
+
+      fF.push_back(new Mat[2]);
+      fF[i][0].resize(3,laSizek);
+      fF[i][1].resize(3,laSizek);
+
+      WF.push_back(new Vec[2]);
+      WF[i][0].resize(3);
+      WF[i][1].resize(3);
+
+    }
 
     //connectHitSpheres(contour[0],contour[1]);
 
     iT = Index(1,getFrictionDirections());
-    contactKinematics->assignContours(contour);
+
+    int n = contactKinematics->getNumberOfPotentialContactPoints();
+
+    la.resize(n*(1+getFrictionDirections()));
+    g.resize(n);
+    gd.resize(n*(1+getFrictionDirections()));
+    gdd.resize(gd.size());
+    gdn.resize(gd.size());
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      lak[k].resize() >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+      gdk[k].resize() >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+      gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+      gddk[k].resize() >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+      gk[k].resize() >> g(k,k);
+    }
+
+  }
+
+  bool Contact::isActive() const {
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      if(gActive[i])
+	return true;
+    }
+    return false;
   }
 
   int Contact::getFrictionDirections() {
@@ -229,39 +243,102 @@ namespace MBSim {
     Link::connect(contour1,1);
   }
 
+  void Contact::updatelaRef(const Vec& laParent) {
+    Link::updatelaRef(laParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      lak[k].resize() >> la(laIndk[k],laIndk[k]+laSizek[k]-1);
+  }
+
+  void Contact::updategRef(const Vec& gParent) {
+    Link::updategRef(gParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      gk[k].resize() >> g(gIndk[k],gIndk[k]+gSizek[k]-1);
+  }
+
+  void Contact::updategdRef(const Vec& gdParent) {
+    Link::updategdRef(gdParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      gdk[k].resize() >> gd(gdIndk[k],gdIndk[k]+gdSizek[k]-1);
+  }
+
+  void Contact::updatesvRef(const Vec &svParent) {
+    Link::updatesvRef(svParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      svk[k] >> sv(svIndk[k],svIndk[k]+svSizek[k]-1);
+  }
+
+  void Contact::updatejsvRef(const Vector<int> &jsvParent) {
+    Link::updatejsvRef(jsvParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      jsvk[k] >> jsv(svIndk[k],svIndk[k]+svSizek[k]-1);
+  }
+
   void Contact::updateWRef(const Mat& WParent) {
-    for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
-      W[i].resize()>>WParent(I,J);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      for(unsigned i=0; i<contour.size(); i++) {
+	int hInd =  contour[i]->getParent()->gethInd(parent);
+	Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
+	Index J = Index(laInd,laInd+laSize-1);
+	W[i].resize()>>WParent(I,J);
+	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
+	Wk[k][i].resize()>>W[i](I,Jk);
+      }
     }
   } 
 
   void Contact::updateVRef(const Mat& VParent) {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      for(unsigned i=0; i<contour.size(); i++) {
+	int hInd =  contour[i]->getParent()->gethInd(parent);
+	Index J = Index(laInd,laInd+laSize-1);
+	Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
+	V[i].resize()>>VParent(I,J);
+	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
+	Vk[k][i].resize()>>V[i](I,Jk);
+      }
+    } 
+  }
+
+  void Contact::updatehRef(const Vec& hParent) {
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
-      V[i].resize()>>VParent(I,J);
+      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
+      h[i].resize()>>hParent(I);
     }
   } 
 
-  void Contact::updateh(double t) {
- //   if(isActive()) {
-      la(0) = (*fcl)(g(0),gd(0));
-      if(fdf)
-	la(1,getFrictionDirections()) = (*fdf)(gd(1,getFrictionDirections()),fabs(la(0)));
+  void Contact::updatewbRef(const Vec& wbParent) {
+    Link::updatewbRef(wbParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      wbk[k].resize() >> wb(laIndk[k],laIndk[k]+laSizek[k]-1);
+  }
 
-      WF[1] =  cpData[0].cosy.getOrientation().col(0)*la(0);
+  void Contact::updaterFactorRef(const Vec& rFactorParent) {
+    Link::updaterFactorRef(rFactorParent);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      rFactork[k].resize() >> rFactor(rFactorIndk[k],rFactorIndk[k]+rFactorSizek[k]-1);
+  }
+
+  void Contact::updateh(double t) {
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      // TODO: prüfen
+      //if(gActive[k]) {
+      lak[k](0) = (*fcl)(gk[k](0),gdk[k](0));
+      if(fdf)
+	lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
+
+      WF[k][1] =  cpData[k][0].cosy.getOrientation().col(0)*lak[k](0);
       if(getFrictionDirections()) {
-	WF[1] += cpData[0].cosy.getOrientation().col(1)*la(1);
+	WF[k][1] += cpData[k][0].cosy.getOrientation().col(1)*lak[k](1);
 	if(getFrictionDirections() > 1)
-	  WF[1] += cpData[0].cosy.getOrientation().col(2)*la(2);
+	  WF[k][1] += cpData[k][0].cosy.getOrientation().col(2)*lak[k](2);
       }
-      WF[0] = -WF[1];
+      WF[k][0] = -WF[k][1];
       for(unsigned int i=0; i<contour.size(); i++)
-	h[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*WF[i];
+	h[i] += trans(cpData[k][i].cosy.getJacobianOfTranslation())*WF[k][i];
+      //}
+    }
   }
 
   void Contact::updater(double t) {
@@ -270,53 +347,64 @@ namespace MBSim {
       r[i] += V[i]*la;
   }
 
-
   void Contact::updateg(double t) {
-    contactKinematics->updateg(g,cpData);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      contactKinematics->updateg(gk,cpData);
   }
 
   void Contact::updategd(double t) {
-    for(unsigned int i=0; i<2; i++) {
-      Vec WrPC = cpData[i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
-      transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[i].cosy);
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	for(unsigned int i=0; i<2; i++) {
+	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
+	  transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[k][i].cosy);
+	}
+
+	Vec Wn = cpData[k][0].cosy.getOrientation().col(0);
+
+	Vec WvD = cpData[k][1].cosy.getVelocity() - cpData[k][0].cosy.getVelocity();
+
+	gdk[k](0) = trans(Wn)*WvD;
+
+	if(gdk[k].size()>1) {
+	  Mat Wt(3,gdk[k].size()-1);
+	  Wt.col(0) = cpData[k][0].cosy.getOrientation().col(1);
+	  if(gdk[k].size() > 2)
+	    Wt.col(1) = cpData[k][0].cosy.getOrientation().col(2);
+
+	  gdk[k](1,gdk[k].size()-1) = trans(Wt)*WvD;
+	}
+      }
     }
-  
-    Vec Wn = cpData[0].cosy.getOrientation().col(0);
-
-    Vec WvD = cpData[1].cosy.getVelocity() - cpData[0].cosy.getVelocity();
-
-    gd(0) = trans(Wn)*WvD;
-
-    if(gd.size()>1) {
-      Mat Wt(3,gd.size()-1);
-      Wt.col(0) = cpData[0].cosy.getOrientation().col(1);
-      if(gd.size() > 2)
-	Wt.col(1) = cpData[0].cosy.getOrientation().col(2);
-
-      gd(1,gd.size()-1) = trans(Wt)*WvD;
-    }
-
-   }
+  }
 
   bool Contact::gActiveChanged() {
-    bool changed = gActive0 != gActive;
-    gActive0 = gActive;
+    bool changed = false;
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive0[k] != gActive[k])
+	changed = true;
+      gActive0[k] = gActive[k];
+    }
     return changed;
   }
 
-
   void Contact::checkActiveg() { 
-    gActive = fcl->isActive(g(0),0) ? 1 : 0; 
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
+      gActive[k] = fcl->isActive(gk[k](0),0) ? 1 : 0; 
   }
 
   void Contact::checkActivegd() { 
-    gdActive[0] = gActive ? (fcl->remainsActive(gd(0),gdTol) ? 1 : 0) : 0; 
-    gdActive[1] = getFrictionDirections() && gdActive[0] ? (fdf->isSticking(gd(1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; 
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gdCActive[i] = gActive[i] ? (fcl->remainsActive(gdk[i](0),gdTol) ? 1 : 0) : 0; 
+      gdFActive[i] = getFrictionDirections() && gdCActive[i] ? (fdf->isSticking(gdk[i](1,getFrictionDirections()),gdTol) ? 1 : 0) : 0; 
+    }
   }
 
   void Contact::checkAllgd() { 
-    gdActive[0] = gActive ? 1 : 0; 
-    gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; 
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gdCActive[i] = gActive[i] ? 1 : 0; 
+      gdFActive[i] = getFrictionDirections() && gActive[i] ? 1 : 0; 
+    }
   }
 
   bool Contact::isSetValued() const {
@@ -395,523 +483,558 @@ namespace MBSim {
 
   void Contact::updatewb(double t) {
 
-    for(unsigned i=0; i<contour.size(); i++) 
-      wb += trans(fF[i](Index(0,2),Index(0,laSize-1)))*cpData[i].cosy.getGyroscopicAccelerationOfTranslation();
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	for(unsigned i=0; i<contour.size(); i++) 
+	  wbk[k] += trans(fF[k][i](Index(0,2),Index(0,laSizek[k]-1)))*cpData[k][i].cosy.getGyroscopicAccelerationOfTranslation();
 
-    contactKinematics->updatewb(wb,g,cpData);
+	contactKinematics->updatewb(wb,g,cpData[k]);
+      }
+    }
   }
 
   void Contact::updateW(double t) {
-    
-    fF[1].col(0) = cpData[0].cosy.getOrientation().col(0);
-    if(getFrictionDirections()) {
-      fF[1].col(1) = cpData[0].cosy.getOrientation().col(1);
-      if(getFrictionDirections() > 1)
-	fF[1].col(2) = cpData[0].cosy.getOrientation().col(2);
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	fF[k][1].col(0) = cpData[k][0].cosy.getOrientation().col(0);
+	if(getFrictionDirections()) {
+	  fF[k][1].col(1) = cpData[k][0].cosy.getOrientation().col(1);
+	  if(getFrictionDirections() > 1)
+	    fF[k][1].col(2) = cpData[k][0].cosy.getOrientation().col(2);
+	}
+
+	fF[k][0] = -fF[k][1];
+
+	for(unsigned int i=0; i<contour.size(); i++) 
+	  Wk[k][i] += trans(cpData[k][i].cosy.getJacobianOfTranslation())*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
+      }
     }
-
-    fF[0] = -fF[1];
-
-    for(unsigned int i=0; i<contour.size(); i++) 
-      W[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*fF[i](Index(0,2),Index(0,laSize-1));
   }
 
   void Contact::updateV(double t) {
 
-    if(getFrictionDirections() && !gdActive[1]) 
-      for(unsigned int i=0; i<contour.size(); i++) 
-	V[i] += trans(cpData[i].cosy.getJacobianOfTranslation())*fF[i](Index(0,2),iT)*fdf->dlaTdlaN(gd(1,getFrictionDirections()), la(0));
+    if(getFrictionDirections()) {
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k] && !gdFActive[k]) {
+	  for(unsigned int i=0; i<contour.size(); i++) 
+	    Vk[k][i] += trans(cpData[k][i].cosy.getJacobianOfTranslation())*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
+	}
+      }
+    }
   }
 
   void Contact::checkActivegdn() { 
-   // cout << name << endl;
-   // cout <<"gdn = "<< gdn << endl;
-   // cout <<"la = "<< la << endl;
-    if(gActive) {
-      if(gdn(0) <= gdTol) {
-	gActive = true;
-	gdActive[0] = true;
-      } 
-      else {
-	gActive = false;
-	gdActive[0] = false;
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	if(gdnk[k](0) <= gdTol) {
+	  gActive[k] = true;
+	  gdCActive[k] = true;
+	} 
+	else {
+	  gActive[k] = false;
+	  gdCActive[k] = false;
+	}
       }
-    }
-  //  else { // Ist wahrscheinlich unnötig
-  //    gActive = false;
-  //    gdActive[0] = false;
-  //  }
-    if(getFrictionDirections())
-      if(gdActive[0])
-	if(nrm2(gdn(1,getFrictionDirections())) <= gdTol)
-	  gdActive[1] = true;
+      //  else { // Ist wahrscheinlich unnötig
+      //    gActive = false;
+      //    gdActive[0] = false;
+      //  }
+      if(getFrictionDirections())
+	if(gdCActive[k])
+	  if(nrm2(gdnk[k](1,getFrictionDirections())) <= gdTol)
+	    gdFActive[k] = true;
+	  else
+	    gdFActive[k] = false;
 	else
-	  gdActive[1] = false;
-      else
-	  gdActive[1] = false;
+	  gdFActive[k] = false;
+    }
   }
 
   void Contact::checkActivegdd() { 
-    //cout << name << endl;
-    //cout <<"gdd = "<< gdd << endl;
-    //cout <<"la = "<< la << endl;
-    if(gdActive[0]) {
-      if(gdd(0) <= gddTol) {
-	gActive = true;
-	gdActive[0] = true;
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gdCActive[k]) {
+	if(gddk[k](0) <= gddTol) {
+	  gActive[k] = true;
+	  gdCActive[k] = true;
+	}
+	else {
+	  gActive[k] = false;
+	  gdCActive[k] = false;
+	}
       }
-      else {
-	gActive = false;
-	gdActive[0] = false;
-      }
+      if(getFrictionDirections())
+	if(gdCActive[k]) 
+	  if(gdFActive[k]) 
+	    if(nrm2(gddk[k](1,getFrictionDirections())) <= gddTol)
+	      gdFActive[k] = true;
+	    else
+	      gdFActive[k] = false;
+	  else 
+	    gdFActive[k] = false;
     }
-    if(getFrictionDirections())
-      if(gdActive[0]) 
-	if(gdActive[1]) 
-	  if(nrm2(gdd(1,getFrictionDirections())) <= gddTol)
-	    gdActive[1] = true;
-	  else
-	    gdActive[1] = false;
-	else 
-	  gdActive[1] = false;
   }
 
   void Contact::updateCondition() {
 
-    //cout<<"before " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
-    if(jsv(0)) {
-      if(gActive) {
-	gActive = false;
-	gdActive[0] = false;
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      //cout<<"before " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
+      if(jsvk[k](0)) {
+	if(gActive[k]) {
+	  gActive[k] = false;
+	  gdCActive[k] = false;
+	  if(getFrictionDirections())
+	    gdFActive[k] = false;
+	  return;
+	}
+	else {// if(gdk[k](0)<=0) { // evtl. zur Abfrage zur Vermeidung von Schein-Kollisionen wegen Eindringen
+	  gActive[k] = true;
+	  gdCActive[k] = true;
+	  if(getFrictionDirections())
+	    gdFActive[k] = true;
+	  mbs->setImpact(true);
+	  return;
+	}
+	}
 	if(getFrictionDirections())
-	  gdActive[1] = false;
-	return;
-      }
-      else {// if(gd(0)<=0) { // evtl. zur Abfrage zur Vermeidung von Schein-Kollisionen wegen Eindringen
-	gActive = true;
-	gdActive[0] = true;
-	if(getFrictionDirections())
-	  gdActive[1] = true;
-	mbs->setImpact(true);
-	return;
+	  if(jsvk[k](1)) {
+	    if(gdFActive[k]) {
+	      gdFActive[k] = false;
+	    } 
+	    else {
+	      gdFActive[k] = true;
+	      mbs->setSticking(true);
+	    }
+	  }
+	//  cout<<"after " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
       }
     }
-    if(getFrictionDirections())
-      if(jsv(1)) {
-	if(gdActive[1]) {
-	  gdActive[1] = false;
-	} 
+
+    void Contact::updateStopVector(double t) {
+      double eps = 1e-6;
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+	  svk[k](0) = lak[k](0);
+	  if(gdFActive[k]) {
+	    svk[k](1) = nrm2(lak[k](1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gdk[k](1,getFrictionDirections())))*lak[k](0);
+	  } 
+	  else {
+	    //svk[k](1,getFrictionDirections()) = gdk[k](1,getFrictionDirections());
+	    if(getFrictionDirections() == 1)
+	      svk[k](1) = gdk[k](1);
+	    else if(getFrictionDirections() == 2) {
+
+	      if(abs(gdk[k](1)) <= eps && abs(gdk[k](2)) > eps)
+		svk[k](1) = gdk[k](2);
+	      else if(abs(gdk[k](1)) > eps && abs(gdk[k](2)) <= eps)
+		svk[k](1) = gdk[k](1);
+	      //else if(abs(gdk[k](1)) > eps && abs(gdk[k](2)) > eps)
+	      else 
+		svk[k](1) = sqrt(gdk[k](1)*gdk[k](1) + gdk[k](2)*gdk[k](2));
+	    }
+	  }
+	}
 	else {
-	  gdActive[1] = true;
-	  mbs->setSticking(true);
+	  svk[k](0) = gk[k](0);
+	  //sv(1,getFrictionDirections()).init(1);
+	  if(getFrictionDirections())
+	    svk[k](1) = 1;
 	}
       }
-  //  cout<<"after " << "gA = " << gActive << " gd0 = " << gdActive[0] << " gd1 = " << gdActive[1] << endl;
-  }
-
-  void Contact::updateStopVector(double t) {
-    double eps = 1e-6;
-    if(gActive) {
-      sv(0) = la(0);
-      if(gdActive[1]) {
-	sv(1) = nrm2(la(1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gd(1,getFrictionDirections())))*la(0);
-      } 
-      else {
-	//sv(1,getFrictionDirections()) = gd(1,getFrictionDirections());
-	if(getFrictionDirections() == 1)
-	  sv(1) = gd(1);
-	else if(getFrictionDirections() == 2) {
-
-	  if(abs(gd(1)) <= eps && abs(gd(2)) > eps)
-	    sv(1) = gd(2);
-	  else if(abs(gd(1)) > eps && abs(gd(2)) <= eps)
-	    sv(1) = gd(1);
-	  //else if(abs(gd(1)) > eps && abs(gd(2)) > eps)
-	  else 
-	    sv(1) = sqrt(gd(1)*gd(1) + gd(2)*gd(2));
-	   }
-      }
-    }
-    else {
-      sv(0) = g(0);
-      //sv(1,getFrictionDirections()).init(1);
-      if(getFrictionDirections())
-	sv(1) = 1;
-    }
-   // cout << t << endl;
-   // cout << gd << endl;
-   // cout << sv << endl;
-  }
-
-  void Contact::solveConstraintsFixpointSingle() {
-
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    gdd(0) = b(laIndMBS);
-    for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
-      gdd(0) += a[j]*laMBS(ja[j]);
-
-    la(0) = fcl->project(la(0), gdd(0), rFactor(0));
-
-    if(gdActive[1]) {
-      for(int i=1; i<=getFrictionDirections(); i++) {
-	gdd(i) = b(laIndMBS+i);
-	for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	  gdd(i) += a[j]*laMBS(ja[j]);
-      }
-
-      if(fdf)
-	la(1,getFrictionDirections()) = fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
-    }
-  } 
-  
-  void Contact::solveImpactsFixpointSingle() {
-
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    gdn(0) = b(laIndMBS);
-    for(int j=ia[laIndMBS]; j<ia[laIndMBS+1]; j++)
-      gdn(0) += a[j]*laMBS(ja[j]);
-
-    la(0) = fnil->project(la(0), gdn(0), gd(0), rFactor(0));
-
-    for(int i=1; i<=getFrictionDirections(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
     }
 
-    if(ftil)
-      la(1,getFrictionDirections()) = ftil->project(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
-  }
+    void Contact::solveConstraintsFixpointSingle() {
 
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
 
-  void Contact::solveConstraintsGaussSeidel() {
-    assert(getFrictionDirections() <= 1);
+	double *a = mbs->getGs()();
+	int *ia = mbs->getGs().Ip();
+	int *ja = mbs->getGs().Jp();
+	Vec &laMBS = mbs->getla();
+	Vec &b = mbs->getb();
 
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    int laInd = laIndMBS;
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
+	gddk[k](0) = b(laIndMBS+laIndk[k]);
+	for(int j=ia[laIndMBS+laIndk[k]]; j<ia[laIndMBS+laIndk[k]+1]; j++)
+	  gddk[k](0) += a[j]*laMBS(ja[j]);
 
-    gdd(0) = b(laIndMBS);
-    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdd(0) += a[j]*laMBS(ja[j]);
+	lak[k](0) = fcl->project(lak[k](0), gddk[k](0), rFactork[k](0));
 
-    double om = 1.0;
-    double buf = fcl->solve(a[ia[laInd]], gdd(0));
-    la(0) += om*(buf - la(0));
+	if(gdFActive[k]) {
+	  for(int i=1; i<=getFrictionDirections(); i++) {
+	    gddk[k](i) = b(laIndMBS+laIndk[k]+i);
+	    for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	      gddk[k](i) += a[j]*laMBS(ja[j]);
+	  }
 
-    if(getFrictionDirections() && gdActive[1]) {
-      gdd(1) = b(laIndMBS+1);
-      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	gdd(1) += a[j]*laMBS(ja[j]);
-
-      if(fdf) {
-	Vec buf = fdf->solve(mbs->getG()(Index(laInd+1,laInd+getFrictionDirections())), gdd(1,getFrictionDirections()), la(0));
-	la(1,getFrictionDirections()) += om*(buf - la(1,getFrictionDirections()));
-      }
-    }
-  }
-
-  void Contact::solveImpactsGaussSeidel() {
-    assert(getFrictionDirections() <= 1);
-
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    int laInd = laIndMBS;
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    gdn(0) = b(laIndMBS);
-    for(int j=ia[laInd]+1; j<ia[laInd+1]; j++)
-      gdn(0) += a[j]*laMBS(ja[j]);
-
-    double om = 1.0;
-    double buf = fnil->solve(a[ia[laInd]], gdn(0), gd(0));
-    la(0) += om*(buf - la(0));
-
-    if(getFrictionDirections()) {
-      gdn(1) = b(laIndMBS+1);
-      for(int j=ia[laInd+1]+1; j<ia[laInd+2]; j++)
-	gdn(1) += a[j]*laMBS(ja[j]);
-
-      if(ftil) {
-	Vec buf = ftil->solve(mbs->getG()(Index(laInd+1,laInd+getFrictionDirections())), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0));
-	la(1,getFrictionDirections()) += om*(buf - la(1,getFrictionDirections()));
-      }
-    }
-  }
-
-  void Contact::solveConstraintsRootFinding() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
-    }
-
-    res(0) = la(0) - fcl->project(la(0), gdd(0), rFactor(0));
-    if(fdf) 
-      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - fdf->project(la(1,getFrictionDirections()), gdd(1,getFrictionDirections()), la(0), rFactor(1));
-  }
-
-  void Contact::solveImpactsRootFinding() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
-    }
-
-    res(0) = la(0) - fnil->project(la(0), gdn(0), gd(0), rFactor(0));
-    if(ftil) 
-      res(1,getFrictionDirections()) = la(1,getFrictionDirections()) - ftil->project(la(1,getFrictionDirections()), gdn(1,getFrictionDirections()), gd(1,getFrictionDirections()), la(0), rFactor(1));
-  }
-
-  void Contact::jacobianConstraints() {
-
-    SqrMat Jprox = mbs->getJprox();
-    SqrMat G = mbs->getG();
-
-    RowVec jp1=Jprox.row(laIndMBS);
-    RowVec e1(jp1.size());
-    e1(laIndMBS) = 1;
-    Vec diff = fcl->diff(la(0), gdd(0), rFactor(0));
-
-    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS)
-    for(int i=0; i<G.size(); i++) 
-      jp1(i) -= diff(1)*G(laIndMBS,i);
-
-    if(getFrictionDirections() == 1) {
-      Mat diff = fdf->diff(la(1,1), gdd(1,1), la(0), rFactor(1));
-      RowVec jp2=Jprox.row(laIndMBS+1);
-      RowVec e2(jp2.size());
-      e2(laIndMBS+1) = 1;
-      Mat e(2,jp2.size());
-      e(0,laIndMBS) = 1;
-      e(1,laIndMBS+1) = 1;
-      jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndMBS)
-      //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndMBS)
-      for(int i=0; i<G.size(); i++) 
-	jp2(i) -= diff(0,1)*G(laIndMBS+1,i);
-
-    } else if(getFrictionDirections() == 2) {
-      Mat diff = ftil->diff(la(1,2), gdd(1,2), gd(1,2), la(0), rFactor(1));
-      Mat jp2=Jprox(Index(laIndMBS+1,laIndMBS+2),Index(0,Jprox.cols()));
-      Mat e2(2,jp2.cols());
-      e2(0,laIndMBS+1) = 1;
-      e2(1,laIndMBS+2) = 1;
-      jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndMBS+1,laIndMBS+2),Index(0,G.size()-1))
-      for(int i=0; i<G.size(); i++) {
-	jp2(0,i) = diff(0,2)*G(laIndMBS+1,i)+diff(0,3)*G(laIndMBS+2,i);
-	jp2(1,i) = diff(1,2)*G(laIndMBS+1,i)+diff(1,3)*G(laIndMBS+2,i);
-      }
-    }
-  }
-
-  void Contact::jacobianImpacts() {
-
-    SqrMat Jprox = mbs->getJprox();
-    SqrMat G = mbs->getG();
-
-    RowVec jp1=Jprox.row(laIndMBS);
-    RowVec e1(jp1.size());
-    e1(laIndMBS) = 1;
-    Vec diff = fnil->diff(la(0), gdn(0), gd(0), rFactor(0));
-
-    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS)
-    for(int i=0; i<G.size(); i++) 
-      jp1(i) -= diff(1)*G(laIndMBS,i);
-
-    if(getFrictionDirections() == 1) {
-      Mat diff = ftil->diff(la(1,1), gdn(1,1), gd(1,1), la(0), rFactor(1));
-      RowVec jp2=Jprox.row(laIndMBS+1);
-      RowVec e2(jp2.size());
-      e2(laIndMBS+1) = 1;
-      Mat e(2,jp2.size());
-      e(0,laIndMBS) = 1;
-      e(1,laIndMBS+1) = 1;
-      jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndMBS)
-      //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndMBS)
-      for(int i=0; i<G.size(); i++) 
-	jp2(i) -= diff(0,1)*G(laIndMBS+1,i);
-
-    } else if(getFrictionDirections() == 2) {
-      Mat diff = ftil->diff(la(1,2), gdn(1,2), gd(1,2), la(0), rFactor(1));
-      Mat jp2=Jprox(Index(laIndMBS+1,laIndMBS+2),Index(0,Jprox.cols()));
-      Mat e2(2,jp2.cols());
-      e2(0,laIndMBS+1) = 1;
-      e2(1,laIndMBS+2) = 1;
-      jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndMBS+1,laIndMBS+2),Index(0,G.size()-1))
-      for(int i=0; i<G.size(); i++) {
-	jp2(0,i) = diff(0,2)*G(laIndMBS+1,i)+diff(0,3)*G(laIndMBS+2,i);
-	jp2(1,i) = diff(1,2)*G(laIndMBS+1,i)+diff(1,3)*G(laIndMBS+2,i);
-      }
-    }
-  }
-
-  void Contact::checkConstraintsForTermination() {
-
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    for(unsigned int i=0; i < 1+ gdActive[1]*getFrictionDirections(); i++) {
-      gdd(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdd(i) += a[j]*laMBS(ja[j]);
-    }
-
-    if(!fcl->isFullfield(la(0),gdd(0),laTol,gddTol)) {
-      mbs->setTermination(false);
-      return;
-    }
-    if(fdf && gdActive[1]) 
-      if(!fdf->isFullfield(la(1,getFrictionDirections()),gdd(1,getFrictionDirections()),la(0),laTol,gddTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-  }
-
-  void Contact::checkImpactsForTermination() {
-
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    int *ja = mbs->getGs().Jp();
-    Vec &laMBS = mbs->getla();
-    Vec &b = mbs->getb();
-
-    for(int i=0; i < 1+getFrictionDirections(); i++) {
-      gdn(i) = b(laIndMBS+i);
-      for(int j=ia[laIndMBS+i]; j<ia[laIndMBS+1+i]; j++)
-	gdn(i) += a[j]*laMBS(ja[j]);
-    }
-
-    if(!fnil->isFullfield(la(0),gdn(0),gd(0),LaTol,gdTol)) {
-      mbs->setTermination(false);
-      return;
-    }
-    if(ftil) 
-      if(!ftil->isFullfield(la(1,getFrictionDirections()),gdn(1,getFrictionDirections()),gd(1,getFrictionDirections()),la(0),LaTol,gdTol)) {
-	mbs->setTermination(false);
-	return;
-      }
-  }
-
-  void Contact::updaterFactors() {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
-    double sumN = 0;
-
-    for(int j=ia[laIndMBS]+1; j<ia[laIndMBS+1]; j++)
-      sumN += fabs(a[j]);
-    double aN = a[ia[laIndMBS]];
-    if(aN > sumN) {
-      rFactorUnsure(0) = 0;
-      rFactor(0) = 1.0/aN;
-    } else {
-      rFactorUnsure(0) = 1;
-      rFactor(0) = rMax/aN;
-    }
-    double sumT1 = 0;
-    double sumT2 = 0;
-    double aT1, aT2;
-    if(fdf && gdActive[1]) {
-      if(getFrictionDirections() == 1) {
-	for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
-	  sumT1 += fabs(a[j]);
-	aT1 = a[ia[laIndMBS+1]];
-	if(aT1 > sumT1) {
-	  rFactorUnsure(1)=0;
-	  rFactor(1) = 1.0/aT1;
-	} else {
-	  rFactorUnsure(1)=1;
-	  rFactor(1) = rMax/aT1;
+	  if(fdf)
+	    lak[k](1,getFrictionDirections()) = fdf->project(lak[k](1,getFrictionDirections()), gddk[k](1,getFrictionDirections()), lak[k](0), rFactork[k](1));
 	}
-      } else if(getFrictionDirections() == 2) {
-	for(int j=ia[laIndMBS+1]+1; j<ia[laIndMBS+2]; j++)
-	  sumT1 += fabs(a[j]);
-	for(int j=ia[laIndMBS+2]+1; j<ia[laIndMBS+3]; j++)
-	  sumT2 += fabs(a[j]);
-	aT1 = a[ia[laIndMBS+1]];
-	aT2 = a[ia[laIndMBS+2]];
+      }
+      }
+    } 
 
-	// TODO rFactorUnsure
-	if(aT1 - sumT1 >= aT2 - sumT2) 
-	  if(aT1 + sumT1 >= aT2 + sumT2) 
-	    rFactor(1) = 2.0/(aT1+aT2+sumT1-sumT2);
-	  else 
-	    rFactor(1) = 1.0/aT2;
-	else 
-	  if(aT1 + sumT1 < aT2 + sumT2) 
-	    rFactor(1) = 2.0/(aT1+aT2-sumT1+sumT2);
-	  else 
-	    rFactor(1) = 1.0/aT1;
+    void Contact::solveImpactsFixpointSingle() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	  double *a = mbs->getGs()();
+	  int *ia = mbs->getGs().Ip();
+	  int *ja = mbs->getGs().Jp();
+	  Vec &laMBS = mbs->getla();
+	  Vec &b = mbs->getb();
+
+	  gdnk[k](0) = b(laIndMBS+laIndk[k]);
+	  for(int j=ia[laIndMBS+laIndk[k]]; j<ia[laIndMBS+laIndk[k]+1]; j++)
+	    gdnk[k](0) += a[j]*laMBS(ja[j]);
+
+	  lak[k](0) = fnil->project(lak[k](0), gdnk[k](0), gdk[k](0), rFactork[k](0));
+
+	  for(int i=1; i<=getFrictionDirections(); i++) {
+	    gdnk[k](i) = b(laIndMBS+laIndk[k]+i);
+	    for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	      gdnk[k](i) += a[j]*laMBS(ja[j]);
+	  }
+
+	  if(ftil)
+	    lak[k](1,getFrictionDirections()) = ftil->project(lak[k](1,getFrictionDirections()), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0), rFactork[k](1));
+	}
+      }
+    }
+
+
+    void Contact::solveConstraintsGaussSeidel() {
+
+      assert(getFrictionDirections() <= 1);
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	double *a = mbs->getGs()();
+	int *ia = mbs->getGs().Ip();
+	int *ja = mbs->getGs().Jp();
+	Vec &laMBS = mbs->getla();
+	Vec &b = mbs->getb();
+
+	gddk[k](0) = b(laIndMBS+laIndk[k]);
+	for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
+	  gddk[k](0) += a[j]*laMBS(ja[j]);
+
+	double om = 1.0;
+	double buf = fcl->solve(a[ia[laIndMBS+laIndk[k]]], gddk[k](0));
+	lak[k](0) += om*(buf - lak[k](0));
+
+	if(getFrictionDirections() && gdFActive[k]) {
+	  gddk[k](1) = b(laIndMBS+laIndk[k]+1);
+	  for(int j=ia[laIndMBS+laIndk[k]+1]+1; j<ia[laIndMBS+laIndk[k]+2]; j++)
+	    gddk[k](1) += a[j]*laMBS(ja[j]);
+
+	  if(fdf) {
+	    Vec buf = fdf->solve(mbs->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gddk[k](1,getFrictionDirections()), lak[k](0));
+	    lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
+	  }
+	}
+      }
+      }
+    }
+
+    void Contact::solveImpactsGaussSeidel() {
+      assert(getFrictionDirections() <= 1);
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	double *a = mbs->getGs()();
+	int *ia = mbs->getGs().Ip();
+	int *ja = mbs->getGs().Jp();
+	Vec &laMBS = mbs->getla();
+	Vec &b = mbs->getb();
+
+	gdnk[k](0) = b(laIndMBS+laIndk[k]);
+	for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
+	  gdnk[k](0) += a[j]*laMBS(ja[j]);
+
+	double om = 1.0;
+	double buf = fnil->solve(a[ia[laIndMBS+laIndk[k]]], gdnk[k](0), gdk[k](0));
+	lak[k](0) += om*(buf - lak[k](0));
+
+	if(getFrictionDirections()) {
+	  gdnk[k](1) = b(laIndMBS+laIndk[k]+1);
+	  for(int j=ia[laIndMBS+laIndk[k]+1]+1; j<ia[laIndMBS+laIndk[k]+2]; j++)
+	    gdnk[k](1) += a[j]*laMBS(ja[j]);
+
+	  if(ftil) {
+	    Vec buf = ftil->solve(mbs->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0));
+	    lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
+	  }
+	}
+	}
+      }
+    }
+
+    void Contact::solveConstraintsRootFinding() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	double *a = mbs->getGs()();
+	int *ia = mbs->getGs().Ip();
+	int *ja = mbs->getGs().Jp();
+	Vec &laMBS = mbs->getla();
+	Vec &b = mbs->getb();
+
+	for(int i=0; i < 1+getFrictionDirections(); i++) {
+	  gddk[k](i) = b(laIndMBS+laIndk[k]+i);
+	  for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	    gddk[k](i) += a[j]*laMBS(ja[j]);
+	}
+
+	res(0) = lak[k](0) - fcl->project(lak[k](0), gddk[k](0), rFactork[k](0));
+	if(fdf) 
+	  res(1,getFrictionDirections()) = lak[k](1,getFrictionDirections()) - fdf->project(lak[k](1,getFrictionDirections()), gddk[k](1,getFrictionDirections()), lak[k](0), rFactork[k](1));
+      }
+      }
+    }
+
+    void Contact::solveImpactsRootFinding() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	double *a = mbs->getGs()();
+	int *ia = mbs->getGs().Ip();
+	int *ja = mbs->getGs().Jp();
+	Vec &laMBS = mbs->getla();
+	Vec &b = mbs->getb();
+
+	for(int i=0; i < 1+getFrictionDirections(); i++) {
+	  gdnk[k](i) = b(laIndMBS+laIndk[k]+i);
+	  for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	    gdnk[k](i) += a[j]*laMBS(ja[j]);
+	}
+
+	res(0) = lak[k](0) - fnil->project(lak[k](0), gdnk[k](0), gdk[k](0), rFactork[k](0));
+	if(ftil) 
+	  res(1,getFrictionDirections()) = lak[k](1,getFrictionDirections()) - ftil->project(lak[k](1,getFrictionDirections()), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0), rFactork[k](1));
+      }
+      }
+    }
+
+    void Contact::jacobianConstraints() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	SqrMat Jprox = mbs->getJprox();
+	SqrMat G = mbs->getG();
+
+	RowVec jp1=Jprox.row(laIndMBS+laIndk[k]);
+	RowVec e1(jp1.size());
+	e1(laIndMBS+laIndk[k]) = 1;
+	Vec diff = fcl->diff(lak[k](0), gddk[k](0), rFactork[k](0));
+
+	jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	for(int i=0; i<G.size(); i++) 
+	  jp1(i) -= diff(1)*G(laIndMBS+laIndk[k],i);
+
+	if(getFrictionDirections() == 1) {
+	  Mat diff = fdf->diff(lak[k](1,1), gddk[k](1,1), lak[k](0), rFactork[k](1));
+	  RowVec jp2=Jprox.row(laIndMBS+laIndk[k]+1);
+	  RowVec e2(jp2.size());
+	  e2(laIndMBS+laIndk[k]+1) = 1;
+	  Mat e(2,jp2.size());
+	  e(0,laIndMBS+laIndk[k]) = 1;
+	  e(1,laIndMBS+laIndk[k]+1) = 1;
+	  jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	  //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	  for(int i=0; i<G.size(); i++) 
+	    jp2(i) -= diff(0,1)*G(laIndMBS+laIndk[k]+1,i);
+
+	} else if(getFrictionDirections() == 2) {
+	  Mat diff = ftil->diff(lak[k](1,2), gddk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
+	  Mat jp2=Jprox(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+2),Index(0,Jprox.cols()));
+	  Mat e2(2,jp2.cols());
+	  e2(0,laIndMBS+laIndk[k]+1) = 1;
+	  e2(1,laIndMBS+laIndk[k]+2) = 1;
+	  jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+2),Index(0,G.size()-1))
+	  for(int i=0; i<G.size(); i++) {
+	    jp2(0,i) = diff(0,2)*G(laIndMBS+laIndk[k]+1,i)+diff(0,3)*G(laIndMBS+laIndk[k]+2,i);
+	    jp2(1,i) = diff(1,2)*G(laIndMBS+laIndk[k]+1,i)+diff(1,3)*G(laIndMBS+laIndk[k]+2,i);
+	  }
+	}
+      }
+      }
+    }
+
+    void Contact::jacobianImpacts() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	SqrMat Jprox = mbs->getJprox();
+	SqrMat G = mbs->getG();
+
+	RowVec jp1=Jprox.row(laIndMBS+laIndk[k]);
+	RowVec e1(jp1.size());
+	e1(laIndMBS+laIndk[k]) = 1;
+	Vec diff = fnil->diff(lak[k](0), gdnk[k](0), gdk[k](0), rFactork[k](0));
+
+	jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	for(int i=0; i<G.size(); i++) 
+	  jp1(i) -= diff(1)*G(laIndMBS+laIndk[k],i);
+
+	if(getFrictionDirections() == 1) {
+	  Mat diff = ftil->diff(lak[k](1,1), gdnk[k](1,1), gdk[k](1,1), lak[k](0), rFactork[k](1));
+	  RowVec jp2=Jprox.row(laIndMBS+laIndk[k]+1);
+	  RowVec e2(jp2.size());
+	  e2(laIndMBS+laIndk[k]+1) = 1;
+	  Mat e(2,jp2.size());
+	  e(0,laIndMBS+laIndk[k]) = 1;
+	  e(1,laIndMBS+laIndk[k]+1) = 1;
+	  jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	  //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndMBS+laIndk[k])
+	  for(int i=0; i<G.size(); i++) 
+	    jp2(i) -= diff(0,1)*G(laIndMBS+laIndk[k]+1,i);
+
+	} else if(getFrictionDirections() == 2) {
+	  Mat diff = ftil->diff(lak[k](1,2), gdnk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
+	  Mat jp2=Jprox(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+2),Index(0,Jprox.cols()));
+	  Mat e2(2,jp2.cols());
+	  e2(0,laIndMBS+laIndk[k]+1) = 1;
+	  e2(1,laIndMBS+laIndk[k]+2) = 1;
+	  jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+2),Index(0,G.size()-1))
+	  for(int i=0; i<G.size(); i++) {
+	    jp2(0,i) = diff(0,2)*G(laIndMBS+laIndk[k]+1,i)+diff(0,3)*G(laIndMBS+laIndk[k]+2,i);
+	    jp2(1,i) = diff(1,2)*G(laIndMBS+laIndk[k]+1,i)+diff(1,3)*G(laIndMBS+laIndk[k]+2,i);
+	  }
+	}
+      }
+      }
+    }
+
+    void Contact::checkConstraintsForTermination() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	// TODO Prüfen ob gdCActive[k]
+	if(gActive[k]) {
+
+	  double *a = mbs->getGs()();
+	  int *ia = mbs->getGs().Ip();
+	  int *ja = mbs->getGs().Jp();
+	  Vec &laMBS = mbs->getla();
+	  Vec &b = mbs->getb();
+
+	  for(unsigned int i=0; i < 1+ gdFActive[k]*getFrictionDirections(); i++) {
+	    gddk[k](i) = b(laIndMBS+laIndk[k]+i);
+	    for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	      gddk[k](i) += a[j]*laMBS(ja[j]);
+	  }
+
+	  if(!fcl->isFullfield(lak[k](0),gddk[k](0),laTol,gddTol)) {
+	    mbs->setTermination(false);
+	    return;
+	  }
+	  if(fdf && gdFActive[k]) 
+	    if(!fdf->isFullfield(lak[k](1,getFrictionDirections()),gddk[k](1,getFrictionDirections()),lak[k](0),laTol,gddTol)) {
+	      mbs->setTermination(false);
+	      return;
+	    }
+	}
+      }
+    }
+
+    void Contact::checkImpactsForTermination() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	  double *a = mbs->getGs()();
+	  int *ia = mbs->getGs().Ip();
+	  int *ja = mbs->getGs().Jp();
+	  Vec &laMBS = mbs->getla();
+	  Vec &b = mbs->getb();
+
+	  for(int i=0; i < 1+getFrictionDirections(); i++) {
+	    gdnk[k](i) = b(laIndMBS+laIndk[k]+i);
+	    for(int j=ia[laIndMBS+laIndk[k]+i]; j<ia[laIndMBS+laIndk[k]+1+i]; j++)
+	      gdnk[k](i) += a[j]*laMBS(ja[j]);
+	  }
+
+	  if(!fnil->isFullfield(lak[k](0),gdnk[k](0),gdk[k](0),LaTol,gdTol)) {
+	    mbs->setTermination(false);
+	    return;
+	  }
+	  if(ftil) 
+	    if(!ftil->isFullfield(lak[k](1,getFrictionDirections()),gdnk[k](1,getFrictionDirections()),gdk[k](1,getFrictionDirections()),lak[k](0),LaTol,gdTol)) {
+	      mbs->setTermination(false);
+	      return;
+	    }
+	}
+      }
+    }
+
+    void Contact::updaterFactors() {
+
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	if(gActive[k]) {
+
+	  double *a = mbs->getGs()();
+	  int *ia = mbs->getGs().Ip();
+	  double sumN = 0;
+
+	  for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
+	    sumN += fabs(a[j]);
+	  double aN = a[ia[laIndMBS+laIndk[k]]];
+	  if(aN > sumN) {
+	    rFactorUnsure(0) = 0;
+	    rFactork[k](0) = 1.0/aN;
+	  } else {
+	    rFactorUnsure(0) = 1;
+	    rFactork[k](0) = rMax/aN;
+	  }
+	  double sumT1 = 0;
+	  double sumT2 = 0;
+	  double aT1, aT2;
+	  if(fdf && gdFActive[k]) {
+	    if(getFrictionDirections() == 1) {
+	      for(int j=ia[laIndMBS+laIndk[k]+1]+1; j<ia[laIndMBS+laIndk[k]+2]; j++)
+		sumT1 += fabs(a[j]);
+	      aT1 = a[ia[laIndMBS+laIndk[k]+1]];
+	      if(aT1 > sumT1) {
+		rFactorUnsure(1)=0;
+		rFactork[k](1) = 1.0/aT1;
+	      } else {
+		rFactorUnsure(1)=1;
+		rFactork[k](1) = rMax/aT1;
+	      }
+	    } else if(getFrictionDirections() == 2) {
+	      for(int j=ia[laIndMBS+laIndk[k]+1]+1; j<ia[laIndMBS+laIndk[k]+2]; j++)
+		sumT1 += fabs(a[j]);
+	      for(int j=ia[laIndMBS+laIndk[k]+2]+1; j<ia[laIndMBS+laIndk[k]+3]; j++)
+		sumT2 += fabs(a[j]);
+	      aT1 = a[ia[laIndMBS+laIndk[k]+1]];
+	      aT2 = a[ia[laIndMBS+laIndk[k]+2]];
+
+	      // TODO rFactorUnsure
+	      if(aT1 - sumT1 >= aT2 - sumT2) 
+		if(aT1 + sumT1 >= aT2 + sumT2) 
+		  rFactork[k](1) = 2.0/(aT1+aT2+sumT1-sumT2);
+		else 
+		  rFactork[k](1) = 1.0/aT2;
+	      else 
+		if(aT1 + sumT1 < aT2 + sumT2) 
+		  rFactork[k](1) = 2.0/(aT1+aT2-sumT1+sumT2);
+		else 
+		  rFactork[k](1) = 1.0/aT1;
+	    }
+	  }
+	}
       }
     }
   }
 
-}
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ZUR NUMERISCHEN BESTIMMUNG DER GENERALISIERTEN KRAFTRICHTUNGEN WN
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//       if (false) {
-// // Numerische Ableitung gp(0) -> WN    
-//     static bool rootCall = true;
-//     static double eps = 5.e-9;
-
-//     if(rootCall) {
-// 	rootCall = false;
-
-// 	int WNSize = cylinder->getObject()->getqSize();
-// 	Mat WN(WNSize,1);
-// 	const double gAlt = g(0);
-
-// 	for(int i=0;i<WNSize;i++) {
-// 	    Vec qTemp = cylinder->getObject()->getq();
-// 	    qTemp(i) += eps;
-// 	    cylinder->getObject()->setq(qTemp);
-// 	    pairingCircleHollowCylinderFlexibleStage1(icircle,icylinder);
-// 	    WN(i,0) = (g(0) - gAlt) / eps ;
-// 	    qTemp(i) -= eps;
-// 	    cylinder->getObject()->setq(qTemp);
-// 	}
-
-// 	// reset
-// 	pairingCircleHollowCylinderFlexibleStage2(icircle,icylinder);
-
-// // 	cout << "numerisches WN = " << trans(WN) << endl;
-
-// 	rootCall = true;
-//     }
-
-//       }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
