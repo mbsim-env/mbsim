@@ -614,7 +614,7 @@ namespace MBSim {
     }
 
     void Contact::updateStopVector(double t) {
-      double eps = 1e-6;
+
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
 	if(gActive[k]) {
 	  svk[k](0) = lak[k](0);
@@ -622,19 +622,10 @@ namespace MBSim {
 	    svk[k](1) = nrm2(lak[k](1,getFrictionDirections())) - fdf->getFrictionCoefficient(nrm2(gdk[k](1,getFrictionDirections())))*lak[k](0);
 	  } 
 	  else {
-	    //svk[k](1,getFrictionDirections()) = gdk[k](1,getFrictionDirections());
 	    if(getFrictionDirections() == 1)
 	      svk[k](1) = gdk[k](1);
-	    else if(getFrictionDirections() == 2) {
-
-	      if(abs(gdk[k](1)) <= eps && abs(gdk[k](2)) > eps)
-		svk[k](1) = gdk[k](2);
-	      else if(abs(gdk[k](1)) > eps && abs(gdk[k](2)) <= eps)
-		svk[k](1) = gdk[k](1);
-	      //else if(abs(gdk[k](1)) > eps && abs(gdk[k](2)) > eps)
-	      else 
-		svk[k](1) = sqrt(gdk[k](1)*gdk[k](1) + gdk[k](2)*gdk[k](2));
-	    }
+	    else if(getFrictionDirections() == 2) 
+	      svk[k](1) = gdk[k](1)+gdk[k](2);
 	  }
 	}
 	else {
