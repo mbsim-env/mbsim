@@ -43,15 +43,19 @@ namespace MBSim {
      child[i]->updateJacobians(t);
   }
 
-  void Node::sethSize(int &hSize) {
+  void Node::updateSecondJacobians(double t) {
+   obj->updateSecondJacobians(t);
+   for(unsigned int i=0; i<child.size(); i++)
+     child[i]->updateSecondJacobians(t);
+  }
+
+  void Node::sethSize(int &hSize, int j) {
 
     for(int i=child.size()-1; i>=0; i--)
-      child[i]->sethSize(hSize);
-     //hSize = child[i]->sethSize(hSize);
+      child[i]->sethSize(hSize,j);
 
-    obj->sethSize(hSize);
-    hSize -= obj->getuSize();
-    //return hSize - obj->getuSize();
+    obj->sethSize(hSize,j);
+    hSize -= obj->getuSize(j);
   }
 
   void Node::calcqSize(int &qSize) {
@@ -64,14 +68,14 @@ namespace MBSim {
       child[i]->calcqSize(qSize);
   }
 
-  void Node::calcuSize(int &uSize) {
+  void Node::calcuSize(int &uSize, int j) {
 
-    obj->calcuSize();
-    obj->setuInd(uSize);
-    uSize += obj->getuSize();
+    obj->calcuSize(j);
+    obj->setuInd(uSize,j);
+    uSize += obj->getuSize(j);
 
     for(unsigned int i=0; i<child.size(); i++)
-      child[i]->calcuSize(uSize);
+      child[i]->calcuSize(uSize,j);
   }
 
   Tree::Tree(const string &projectName) : Subsystem(projectName) {
@@ -116,15 +120,15 @@ namespace MBSim {
     root->calcqSize(qSize);
   }
 
-  void Tree::calcuSize() {
-    uSize = 0;
-    root->calcuSize(uSize);
+  void Tree::calcuSize(int j) {
+    uSize[j] = 0;
+    root->calcuSize(uSize[j],j);
   }
 
-  void Tree::sethSize(int hSize_) {
+  void Tree::sethSize(int hSize_, int j) {
 
-    hSize = hSize_;
-    root->sethSize(hSize_);
+    hSize[j] = hSize_;
+    root->sethSize(hSize_,j);
   } 
 
   void Tree::updateKinematics(double t) {
@@ -133,6 +137,16 @@ namespace MBSim {
 
   void Tree::updateJacobians(double t) {
     root->updateJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->updateJacobians(t);
+  }
+
+  void Tree::updateSecondJacobians(double t) {
+    root->updateSecondJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->updateJacobians(t);
   }
 
   void Tree::updatedu(double t, double dt) {

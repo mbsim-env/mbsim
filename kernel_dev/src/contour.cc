@@ -38,7 +38,7 @@
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), parent(0), hSize(0), hInd(0), R("R")
+  Contour::Contour(const string &name) : Element(name), parent(0), R("R")
 # ifdef HAVE_AMVIS
 					 ,
 					 bodyAMVis(NULL)
@@ -46,22 +46,33 @@ namespace MBSim {
  {
    // Contouren standardmaessig nicht ausgeben...
    plotLevel = 0;
+   hSize[0] = 0;
+   hSize[1] = 0;
+   hInd[0] = 0;
+   hInd[1] = 0;
  }
 
-  Contour::~Contour() 
-  {
+  Contour::~Contour() {
+
 #ifdef HAVE_AMVIS
     if (bodyAMVis) delete bodyAMVis;
 #endif
   }
 
   void Contour::init() {
-    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize);
-    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize);
+
+    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize[0]);
+    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize[0]);
   }
 
-  void Contour::initPlotFiles() 
-  {
+  void Contour::resizeJacobians(int j) {
+
+    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize[j]);
+    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize[j]);
+  }
+
+  void Contour::initPlotFiles() {
+
     Element::initPlotFiles();
 #ifdef HAVE_AMVIS
     if(bodyAMVis) bodyAMVis->writeBodyFile();
@@ -450,7 +461,7 @@ namespace MBSim {
   void CompoundContour::init() {
     Contour::init();
     for(unsigned int i=0; i<element.size(); i++) {
-      element[i]->sethSize(hSize);
+      element[i]->sethSize(hSize[0]);
       element[i]->init();
     }
   }

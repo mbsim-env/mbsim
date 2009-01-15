@@ -274,11 +274,11 @@ namespace MBSim {
       jsvk[k] >> jsv(svIndk[k],svIndk[k]+svSizek[k]-1);
   }
 
-  void Contact::updateWRef(const Mat& WParent) {
+  void Contact::updateWRef(const Mat& WParent, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       for(unsigned i=0; i<contour.size(); i++) {
-	int hInd =  contour[i]->getParent()->gethInd(parent);
-	Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
+	int hInd =  contour[i]->getParent()->gethInd(parent,j);
+	Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
 	Index J = Index(laInd,laInd+laSize-1);
 	W[i].resize()>>WParent(I,J);
 	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
@@ -287,12 +287,12 @@ namespace MBSim {
     }
   } 
 
-  void Contact::updateVRef(const Mat& VParent) {
+  void Contact::updateVRef(const Mat& VParent, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       for(unsigned i=0; i<contour.size(); i++) {
-	int hInd =  contour[i]->getParent()->gethInd(parent);
+	int hInd =  contour[i]->getParent()->gethInd(parent,j);
 	Index J = Index(laInd,laInd+laSize-1);
-	Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
+	Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
 	V[i].resize()>>VParent(I,J);
 	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
 	Vk[k][i].resize()>>V[i](I,Jk);
@@ -300,10 +300,10 @@ namespace MBSim {
     } 
   }
 
-  void Contact::updatehRef(const Vec& hParent) {
+  void Contact::updatehRef(const Vec& hParent, int j) {
     for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
+      int hInd =  contour[i]->getParent()->gethInd(parent,j);
+      Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
       h[i].resize()>>hParent(I);
     }
   } 
@@ -358,7 +358,8 @@ namespace MBSim {
       if(gActive[k]) {
 	for(unsigned int i=0; i<2; i++) {
 	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
-	  transformCoordinateSystem(*(contour[i]->getCoordinateSystem()),WrPC,cpData[k][i].cosy);
+	  cpData[k][i].cosy.setAngularVelocity(contour[i]->getCoordinateSystem()->getAngularVelocity());
+	  cpData[k][i].cosy.setVelocity(contour[i]->getCoordinateSystem()->getVelocity() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC));
 	}
 
 	Vec Wn = cpData[k][0].cosy.getOrientation().col(0);
@@ -375,6 +376,31 @@ namespace MBSim {
 
 	  gdk[k](1,gdk[k].size()-1) = trans(Wt)*WvD;
 	}
+      }
+    }
+  }
+
+  void Contact::updateJacobians(double t) {
+
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	for(unsigned int i=0; i<2; i++) {
+	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
+	  Mat tWrPC = tilde(WrPC);
+	  cpData[k][i].cosy.setJacobianOfTranslation(contour[i]->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getJacobianOfRotation());
+	  cpData[k][i].cosy.setJacobianOfRotation(contour[i]->getCoordinateSystem()->getJacobianOfRotation());
+	  cpData[k][i].cosy.setGyroscopicAccelerationOfTranslation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC)));
+	  cpData[k][i].cosy.setGyroscopicAccelerationOfRotation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
+	}
+      }
+    }
+  }
+
+  void Contact::resizeJacobians(int j) {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) {
+	for(unsigned int i=0; i<2; i++) 
+	  cpData[k][i].cosy.resizeJacobians(j);
       }
     }
   }

@@ -100,7 +100,7 @@ namespace MBSim {
       cout << "TODO: 1 Force Direction not yet implemented" << endl;
       throw 5;
     }
- }
+  }
 
   bool Joint::isSetValued() const {
     bool flag = false;
@@ -145,20 +145,34 @@ namespace MBSim {
   }
 
   void Joint::updateg(double t) {
+
     Wf = port[0]->getOrientation()*forceDir;
     Wm = port[0]->getOrientation()*momentDir;
+
     WrP0P1 = port[1]->getPosition()-port[0]->getPosition();
+
     g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
-
-    transformCoordinateSystem(*port[0],WrP0P1,C);
   }
 
   void Joint::updategd(double t) {
+    C.setAngularVelocity(port[0]->getAngularVelocity());
+    C.setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(),WrP0P1));
+
     WvP0P1 = port[1]->getVelocity()-C.getVelocity();
     WomP0P1 = port[1]->getAngularVelocity()-C.getAngularVelocity();
+
     gd(IT) = trans(Wf)*WvP0P1;
     gd(IR) = trans(Wm)*WomP0P1;
+  }
+
+  void Joint::updateJacobians(double t) {
+
+    Mat tWrP0P1 = tilde(WrP0P1);
+    C.setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrP0P1*port[0]->getJacobianOfRotation());
+    C.setJacobianOfRotation(port[0]->getJacobianOfRotation());
+    C.setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrP0P1*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)));
+    C.setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
   }
 
   void Joint::updateh(double t) {
@@ -185,6 +199,7 @@ namespace MBSim {
     W[0] += trans(C.getJacobianOfTranslation())*fF[0] + trans(C.getJacobianOfRotation())*fM[0];
     W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
   }
+
   void Joint::updatewb(double t) {
 
     Mat WJT = port[0]->getOrientation()*JT;
@@ -236,6 +251,11 @@ namespace MBSim {
   //    wb(0,Wf.cols()-1) += trans(Wf)*(crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)) - 2*crossProduct(port[0]->getAngularVelocity(),WvP0P1));
   //    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) -=  trans(Wm)*crossProduct(port[0]->getAngularVelocity(),WomP0P1);
   //  }
+
+  void Joint::resizeJacobians(int j) {
+    C.resizeJacobians(); // TODO: hSize von KOSY C nicht gesetzt
+  }
+
 
   void Joint::initPlotFiles() {
 

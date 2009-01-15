@@ -360,6 +360,7 @@ namespace MBSim {
   }
 
   void Group::updateKinematics(double t) {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updateKinematics(t);
 
@@ -368,10 +369,26 @@ namespace MBSim {
   }
 
   void Group::updateJacobians(double t) {
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updateJacobians(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->updateJacobians(t);
+  }
+
+  void Group::updateSecondJacobians(double t) {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateSecondJacobians(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateSecondJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->updateJacobians(t);
   }
 
@@ -398,7 +415,6 @@ namespace MBSim {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (*i)->updatedu(t,dt);
-
   }
 
 }

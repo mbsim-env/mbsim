@@ -118,9 +118,9 @@ namespace MBSim {
       virtual void updatexd(double t) {}
       virtual void updateStopVector(double t) {}
 
-      virtual void updateWRef(const Mat& ref);
-      virtual void updateVRef(const Mat& ref);
-      virtual void updatehRef(const Vec &ref);
+      virtual void updateWRef(const Mat& ref, int i=0);
+      virtual void updateVRef(const Mat& ref, int i=0);
+      virtual void updatehRef(const Vec &ref, int i=0);
       virtual void updaterRef(const Vec &ref);
       virtual void updatewbRef(const Vec &ref);
       virtual void updatefRef(const Vec &ref) {};
@@ -256,18 +256,17 @@ namespace MBSim {
       void load(const string& path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
-
-      //virtual MultiBodySystem* getMultiBodySystem(); 
-
-      virtual void checkActiveg() {};
-      virtual void checkActivegd() {};
+      virtual void checkActiveg() {}
+      virtual void checkActivegd() {}
       virtual void checkActivegdn() {}
       virtual void checkActivegdd() {}
-      virtual void checkAllgd() {};
-      virtual void updateCondition() {};
+      virtual void checkAllgd() {}
+      virtual void updateCondition() {}
 
-      //virtual int getNumberOfConstraints() const {return laSize;} 
-      
+      void updateJacobians(double t) {}
+
+      virtual void resizeJacobians(int j) {}
+
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
        * @param ID ID of load and corresponding CoordinateSystem/Contour (ID=0 or 1)

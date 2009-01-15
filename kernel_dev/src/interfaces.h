@@ -41,17 +41,19 @@ namespace MBSim {
       virtual void updateqd(double t) = 0;
       virtual void updatezd(double t) = 0;
 
-      virtual void sethSize(int hSize) = 0;
-      virtual int gethSize() const = 0;
+      virtual void sethSize(int hSize, int i=0) = 0;
+      virtual int gethSize(int i=0) const = 0;
       virtual int getqSize() const = 0;
-      virtual int getuSize() const = 0;
+      virtual int getuSize(int i=0) const = 0;
       //virtual void calchSize() = 0;
       virtual void calcqSize() = 0;
-      virtual void calcuSize() = 0;
-      virtual void setqInd(int i) = 0;
-      virtual void setuInd(int i) = 0;
+      virtual void calcuSize(int j=0) = 0;
+      virtual void setqInd(int ind) = 0;
+      virtual void setuInd(int ind, int i=0) = 0;
 
-      virtual int gethInd(Subsystem* sys) = 0;
+      virtual int gethInd(Subsystem* sys, int i=0) = 0;
+
+      virtual void updateSecondJacobians(double t) = 0;
   };
 
   class LinkInterface {
@@ -67,6 +69,7 @@ namespace MBSim {
       virtual void updatedx(double t, double dt) = 0;
       virtual void updatexd(double t) = 0;
       virtual void updateStopVector(double t) = 0;
+      virtual void updateJacobians(double t) = 0;
   };
 
 

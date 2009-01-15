@@ -26,6 +26,8 @@
 #include "tree.h"
 #include "multi_body_system.h"
 #include "class_factory.h"
+#include "joint.h"
+#include "constitutive_laws.h"
 #ifdef HAVE_AMVIS
 #include "crigidbody.h"
 #include "data_interface_base.h"
@@ -60,26 +62,50 @@ namespace MBSim {
       qSize += fAPK->getqSize();
   }
 
-  void RigidBody::calcuSize() {
+  void RigidBody::calcuSize(int j) {
 
-    Body::calcuSize();
-    uSize = 0;
-    if(fPJT==0) {
-      LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-      if(fPrPK_) 
-	uSize += fPrPK->getqSize();
-    } else
-      uSize += fPJT->getuSize();
-    if(fPJR==0) {
-      //TODO  Euler-Parameter
-      //RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
-      if(fAPK)
-	uSize += fAPK->getqSize();
-      //CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-      //if(fAPK_)
+    Body::calcuSize(j);
+    if(j==0) {
+      uSize[j] = 0;
+      if(fPJT==0) {
+	LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+	if(fPrPK_) 
+	  uSize[j] += fPrPK->getqSize();
+      } else
+	uSize[j] += fPJT->getuSize();
+      if(fPJR==0) {
+	//TODO  Euler-Parameter
+	//RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+	if(fAPK)
+	  uSize[j] += fAPK->getqSize();
+	//CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+	//if(fAPK_)
 	//uSize += fAPK->getqSize();
-    } else
-      uSize += fPJR->getuSize();
+      } else
+	uSize[j] += fPJR->getuSize();
+    } else {
+      uSize[j] = uSize[0];
+      uSize[j] += forceDir.cols();
+      uSize[j] += momentDir.cols();
+    }
+  }
+
+  void RigidBody::setForceDirection(const Mat &fd) {
+    assert(fd.rows() == 3);
+
+    forceDir = fd;
+
+    for(int i=0; i<fd.cols(); i++)
+      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
+  }
+
+  void RigidBody::setMomentDirection(const Mat &md) {
+    assert(md.rows() == 3);
+
+    momentDir = md;
+
+    for(int i=0; i<md.cols(); i++)
+      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
   }
 
   void RigidBody::init() {
@@ -90,11 +116,15 @@ namespace MBSim {
     
     Object::init();
 
-    PJT.resize(3,uSize);
-    PJR.resize(3,uSize);
+    PJT.resize(3,uSize[0]);
+    PJR.resize(3,uSize[0]);
 
-    PdJT.resize(3,uSize);
-    PdJR.resize(3,uSize);
+    PdJT.resize(3,uSize[0]);
+    PdJR.resize(3,uSize[0]);
+
+    PJTs.resize(3,uSize[1]);
+    PJRs.resize(3,uSize[1]);
+
     if(fPJT==0) {
       Mat JT;
       LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
@@ -102,8 +132,10 @@ namespace MBSim {
 	JT = fPrPK_->getPJT();
       } else
 	JT.resize(3,0);
-      Mat JTT(3, uSize);
+      Mat JTT(3, uSize[0]);
       PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
+      PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
+      PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
     }
     if(fPJR==0) {
       Mat JR;
@@ -118,14 +150,16 @@ namespace MBSim {
 	if(fAPK_) {
 	  JR.resize() << DiagMat(3,INIT,1);
 	  if(cb) {
-	    fT = new TCardanAngles2(qSize,uSize);
+	    fT = new TCardanAngles2(qSize,uSize[0]);
 	  } else {
-	    fT = new TCardanAngles(qSize,uSize);
+	    fT = new TCardanAngles(qSize,uSize[0]);
 	  }
 	}
       }
-      Mat JRR(3, uSize);
-      PJR(Index(0,2), Index(uSize-JR.cols(),uSize-1)) = JR;
+      Mat JRR(3, uSize[0]);
+      PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
+      PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
+      PJRs(Index(0,2), Index(uSize[1]-momentDir.cols(),uSize[1]-1)) = momentDir;
 
       updateM_ = &RigidBody::updateMNotConst;
       facLLM_ = &RigidBody::facLLMNotConst;
@@ -150,7 +184,7 @@ namespace MBSim {
     if(i4I != 0)
       SThetaS = SymMat(ASK[i4I]*SThetaS*trans(ASK[i4I])) - m*JTJ(tilde(SrSK[i4I]));
 
-    for(int i=0; i<uSize; i++) 
+    for(int i=0; i<uSize[0]; i++) 
       T(i,i) = 1;
 
   }
@@ -211,8 +245,42 @@ namespace MBSim {
 
     port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,portParent->getJacobianOfTranslation().cols()-1)) = portParent->getJacobianOfTranslation() - tWrPK*portParent->getJacobianOfRotation();
     port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJT;
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize-uSize,hSize-1)) = portParent->getOrientation()*PJR;
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = portParent->getOrientation()*PJT;
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = portParent->getOrientation()*PJR;
+  }
+
+  void RigidBody::updateSecondJacobiansForSelectedCoordinateSystem(double t) {
+  //  if(uSize == usSize)
+  //    updateJacobiansForSelectedCoordinateSystem(t);
+  //  else 
+  //  {
+ //  // TODO: Abfrage ob Inertiales System zur Performancesteigerung
+ // 
+ //   if(fPdJT)
+ //     PdJT = (*fPdJT)(T*u,q,t);
+ //   if(fPdJR)
+ //     PdJR = (*fPdJR)(T*u,q,t);
+
+ //   if(fPdjT)
+ //     PdjT = (*fPdjT)(t);
+ //   if(fPdjR)
+ //     PdjR = (*fPdjR)(t);
+
+    // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
+    SqrMat tWrPK = tilde(WrPK);
+    port[iRef]->setGyroscopicAccelerationOfTranslation(portParent->getGyroscopicAccelerationOfTranslation() - tWrPK*portParent->getGyroscopicAccelerationOfRotation() + crossProduct(portParent->getAngularVelocity(), 2*WvPKrel+crossProduct(portParent->getAngularVelocity(),WrPK)));
+    port[iRef]->setGyroscopicAccelerationOfRotation(portParent->getGyroscopicAccelerationOfRotation() + crossProduct(portParent->getAngularVelocity(), WomPK));
+
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,portParent->getJacobianOfTranslation().cols()-1)) = portParent->getJacobianOfTranslation() - tWrPK*portParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = portParent->getOrientation()*PJTs;
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = portParent->getOrientation()*PJRs;
+    //cout << name << endl;
+    //cout << usSize << endl;
+    //cout << hsSize << endl;
+    //cout << PJTs << endl;
+    //cout << PJRs << endl;
+  //  }
   }
 
   void RigidBody::updateJacobiansForRemainingCoordinateSystemsAndContours(double t) {
@@ -261,8 +329,87 @@ namespace MBSim {
 
   }
 
- void RigidBody::plot(double t, double dt) {
-   Body::plot(t,dt);
+  void RigidBody::resizeJacobians(int j) {
+
+    for(unsigned int i=0; i<port.size(); i++) 
+      port[i]->resizeJacobians(j);
+
+    for(unsigned int i=0; i<contour.size(); i++)
+      contour[i]->resizeJacobians(j);
+  }
+
+  void RigidBody::checkForConstraints() {
+    cout << "in checkForConstraints:"<<endl;
+    if(uSize[1] > uSize[0]) {
+      Joint *joint = new Joint(string("Joint.")+name);
+      cout << joint->getName() << endl;
+      parent->addLink(joint);
+      if(forceDir.cols()) {
+	joint->setForceDirection(forceDir);
+	joint->setForceLaw(new BilateralConstraint);
+	joint->setImpactForceLaw(new BilateralImpact);
+      }
+      if(momentDir.cols()) {
+	joint->setMomentDirection(momentDir);
+	joint->setMomentLaw(new BilateralConstraint);
+	joint->setImpactMomentLaw(new BilateralImpact);
+      }
+      joint->connect(portParent,port[iRef]);
+    }
+  }
+
+
+  //  void RigidBody::updateVRef(const Mat& VParent) {
+  //    CoordinateSystem* cos[2];
+  //    cos[0] = portParent;
+  //    cos[1] = port[0];
+  //    for(unsigned i=0; i<22; i++) {
+  //      int hInd = cos[i]->getParent()->gethInd(parent);
+  //      Index J = Index(laInd,laInd+laSize-1);
+  //      Index I = Index(hInd,hInd+cos[i]->gethSize()-1);
+  //      V[i]>>VParent(I,J);
+  //    }
+  //  } 
+  //
+  //  void RigidBody::updateWRef(const Mat& WParent) {
+  //    CoordinateSystem* cos[2];
+  //    cos[0] = portParent;
+  //    cos[1] = port[0];
+  //    for(unsigned i=0; i<22; i++) {
+  //      int hInd = cos[i]->getParent()->gethInd(parent);
+  //      Index J = Index(laInd,laInd+laSize-1);
+  //      Index I = Index(hInd,hInd+cos[i]->gethSize()-1);
+  //      W[i]>>WParent(I,J);
+  //    }
+  //  } 
+  //
+  //  void RigidBody::updatewbRef(const Vec& wbParent) {
+  //    wb.resize() >> wbParent(laInd,laInd+laSize-1);
+  //  }
+  //
+  //  void RigidBody::updateW(double t) {
+  //    fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
+  //    fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
+  //    fF[1] = -fF[0];
+  //    fM[1] = -fM[0];
+  //
+  //    W[0] += trans(C.getJacobianOfTranslation())*fF[0] + trans(C.getJacobianOfRotation())*fM[0];
+  //    W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
+  //  }
+  //
+  //  void RigidBody::updatewb(double t) {
+  //
+  //    Mat WJT = port[0]->getOrientation()*JT;
+  //    Vec sdT = trans(WJT)*(WvP0P1);
+  //
+  //    wb(0,Wf.cols()-1) += trans(Wf)*(port[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
+  //    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
+  //  }
+  //
+
+
+  void RigidBody::plot(double t, double dt) {
+    Body::plot(t,dt);
 #ifdef HAVE_AMVIS
     if(plotLevel>0 || bodyAMVis)
 #else
@@ -270,16 +417,16 @@ namespace MBSim {
 #endif
       {
 	if(plotLevel>0) {
-	 // plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
-	 // plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
+	  // plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
+	  // plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
 
-	 // if(plotLevel>2) {
-	 //   double Ttemp = computeKineticEnergy();
-	 //   double Vtemp = computePotentialEnergy();
-	 //   plotfile <<" "<<  Ttemp;
-	 //   plotfile <<" "<<  Vtemp;
-	 //   plotfile <<" "<< Ttemp+Vtemp;
-	 // }
+	  // if(plotLevel>2) {
+	  //   double Ttemp = computeKineticEnergy();
+	  //   double Vtemp = computePotentialEnergy();
+	  //   plotfile <<" "<<  Ttemp;
+	  //   plotfile <<" "<<  Vtemp;
+	  //   plotfile <<" "<< Ttemp+Vtemp;
+	  // }
 	}
 
 #ifdef HAVE_AMVIS
@@ -315,7 +462,7 @@ namespace MBSim {
   void RigidBody::updateKinematicsForSelectedCoordinateSystem(double t) {
 
     // TODO: Abfrage ob Inertiales System zur Performancesteigerung
-    
+
     if(fPJT)
       PJT = (*fPJT)(q,t);
     if(fPJR)
@@ -391,21 +538,21 @@ namespace MBSim {
     //return 0.5 * (m*trans(KvK)*(KvK + 2*crossProduct(KomegaK,KrKS)) + trans(KomegaK)*I*KomegaK);
     return 0;
   }
-  
+
   double RigidBody::computeKineticEnergyBranch() {
-   // double Ttemp = computeKineticEnergy();
-   // for(unsigned int i=0; i<successor.size(); i++)
-   //   Ttemp += successor[i]->computeKineticEnergyBranch();
-   // return Ttemp;
-   return -1;
+    // double Ttemp = computeKineticEnergy();
+    // for(unsigned int i=0; i<successor.size(); i++)
+    //   Ttemp += successor[i]->computeKineticEnergyBranch();
+    // return Ttemp;
+    return -1;
   }
 
   double RigidBody::computePotentialEnergyBranch() {
-  //  double Vbranch = this->computePotentialEnergy();
-  //  for(unsigned int i=0; i<successor.size(); i++)
-  //    Vbranch += successor[i]->computePotentialEnergy();
-  //  return Vbranch;
-  return -1;
+    //  double Vbranch = this->computePotentialEnergy();
+    //  for(unsigned int i=0; i<successor.size(); i++)
+    //    Vbranch += successor[i]->computePotentialEnergy();
+    //  return Vbranch;
+    return -1;
   }
 
   void RigidBody::addCoordinateSystem(CoordinateSystem *cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
@@ -441,7 +588,7 @@ namespace MBSim {
   void RigidBody::save(const string &path, ofstream& outputfile) {
     Body::save(path,outputfile);
     // all CoordinateSystem of Object
-    
+
     outputfile << "# Mass: " << endl;
     outputfile << m << endl << endl;
 
@@ -477,7 +624,7 @@ namespace MBSim {
       fAPK->save(path,outputfile);
     else
       outputfile << "# Type of rotation:" << endl << endl;
-   }
+  }
 
   void RigidBody::load(const string &path, ifstream& inputfile) {
     Body::load(path,inputfile);
@@ -523,7 +670,7 @@ namespace MBSim {
       getline(inputfile,dummy); // Rest of line
       getline(inputfile,dummy); // Newline
     }
-    
+
     getline(inputfile,dummy); // # Coordinate system for kinematics
     getline(inputfile,dummy); // Coordinate system for kinematics
     setCoordinateSystemForKinematics(getCoordinateSystem(dummy));

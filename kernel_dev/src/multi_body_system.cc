@@ -54,19 +54,24 @@ namespace MBSim {
   } 
 
   void MultiBodySystem::init() {
-    setUpLinks();
 
-    setMultiBodySystem(this);
-    setFullName(name);
+
 
     setDirectory(); // output directory
 
     Group::preinit();
 
     calcqSize();
-    calcuSize();
+    calcuSize(0);
+    calcuSize(1);
+    sethSize(uSize[0]);
+    sethSize(uSize[1],1);
+    checkForConstraints(); // TODO: nach preinit verschieben
+    setUpLinks();
+    setMultiBodySystem(this);
+    setFullName(name);
+
     calcxSize();
-    sethSize(uSize);
 
     calclaSize();
     calcgSize();
@@ -74,24 +79,29 @@ namespace MBSim {
     calcrFactorSize();
     calcsvSize();
 
+
     cout << "qSize = " << qSize <<endl;
-    cout << "uSize = " << uSize <<endl;
+    cout << "uSize = " << uSize[0] <<endl;
     cout << "xSize = " << xSize <<endl;
     cout << "gSize = " << gSize <<endl;
     cout << "qdSize = " << gdSize <<endl;
     cout << "laSize = " << laSize <<endl;
     cout << "svSize = " << svSize <<endl;
+    cout << "hSize = " << hSize[0] <<endl;
+
+    cout << "uSize[1] = " << uSize[1] <<endl;
+    cout << "hSize[1] = " << hSize[1] <<endl;
 
     setlaIndMBS(laInd);
 
     // TODO Speicherproblem bei vielen moeglichen Kontakten
     if(laSize>8000)
       laSize=8000;
-    MParent.resize(getuSize());
+    MParent.resize(getuSize(1));
     TParent.resize(getqSize(),getuSize());
-    LLMParent.resize(getuSize());
-    WParent.resize(getuSize(),getlaSize());
-    VParent.resize(getuSize(),getlaSize());
+    LLMParent.resize(getuSize(1));
+    WParent.resize(getuSize(1),getlaSize());
+    VParent.resize(getuSize(1),getlaSize());
     wbParent.resize(getlaSize());
     laParent.resize(getlaSize());
     rFactorParent.resize(getlaSize());
@@ -100,7 +110,7 @@ namespace MBSim {
     gParent.resize(getgSize());
     gdParent.resize(getgdSize());
     zdParent.resize(getzSize());
-    hParent.resize(getuSize());
+    hParent.resize(getuSize(1));
     rParent.resize(getuSize());
     fParent.resize(getxSize());
     svParent.resize(getsvSize());
@@ -212,12 +222,12 @@ namespace MBSim {
 
   void MultiBodySystem::computeInitialCondition() {
     updateKinematics(0);
-    updateJacobians(0);
     updateg(0);
     checkActiveg();
     updategd(0);
     checkActivegd();
     checkActiveLinks();
+    updateJacobians(0);
     //cout <<endl<< "activeConstraintsChanged at t = " << 0 << endl<<endl;
     calclaSize();
     calcrFactorSize();
@@ -230,35 +240,101 @@ namespace MBSim {
     //cout << laSize<<endl;
   }
 
+  //Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
+  //  if(q()!=zParent()) {
+  //    updatezRef(zParent);
+  //  }
+  //  updateKinematics(t);
+  //  updateg(t);
+  //  updategd(t);
+  //  updateT(t); 
+  //  updateJacobians(t);
+  //  updateh(t); 
+  //  updateM(t); 
+  //  facLLM(); 
+  //  if(laSize) {
+  //    updateW(t); 
+  //    updateV(t); 
+  //    updateG(t); 
+  //    updatewb(t); 
+  //    computeConstraintForces(t); // Alt
+  //  }
+  //  updater(t); 
+  //  updatezd(t);
+  //  return zdParent;
+  //}
+
   Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-    updateKinematics(t);
-    updateJacobians(t);
-    updateg(t);
-    updategd(t);
-    updateT(t); 
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-    if(laSize) {
-      updateW(t); 
-      updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      computeConstraintForces(t); // Alt
+    if(uSize[0] == uSize[1]) {
+      updateKinematics(t);
+      updateg(t);
+      updategd(t);
+      updateT(t); 
+      updateJacobians(t);
+      updateh(t); 
+      updateM(t); 
+      facLLM(); 
+      if(laSize) {
+	updateW(t); 
+	updateV(t); 
+	updateG(t); 
+	updatewb(t); 
+	computeConstraintForces(t); // Alt
+      }
+      updater(t); 
+      updatezd(t);
     }
-    updater(t); 
-    updatezd(t);
+    else
+    {
+      updateKinematics(t);
+      updateg(t);
+      updategd(t);
+      updateT(t); 
+      resizeJacobians(1);
+      updateSecondJacobians(t);
+      updatehRef(hParent,1);
+      updateh(t); 
+      updateMRef(MParent,1);
+      updateM(t); 
+      //cout << M << endl;
+      updateLLMRef(LLMParent,1);
+      facLLM(); 
+      if(laSize) {
+	updateLLMRef(LLMParent,1);
+	updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+	updateW(t); 
+	updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+	updateV(t); 
+	updateG(t); 
+	updatewb(t); 
+	computeConstraintForces(t); // Alt
+      }
+      resizeJacobians(0);
+      updateJacobians(t);
+      updatehRef(hParent);
+      updateh(t); 
+      updateMRef(MParent);
+      updateM(t); 
+      updateWRef(WParent);
+      updateW(t); 
+      updateVRef(VParent);
+      updateV(t); 
+      updateLLMRef(LLMParent);
+      facLLM(); 
+      //updater(t); 
+      updatezd(t);
+    }
     return zdParent;
   }
 
   void MultiBodySystem::updatezRef(const Vec &zParent) {
 
     q >> ( zParent(0,qSize-1) );
-    u >> ( zParent(qSize,qSize+uSize-1) );
-    x >> ( zParent(qSize+uSize,qSize+uSize+xSize-1) );
+    u >> ( zParent(qSize,qSize+uSize[0]-1) );
+    x >> ( zParent(qSize+uSize[0],qSize+uSize[0]+xSize-1) );
 
     updateqRef(q);
     updateuRef(u);
@@ -268,8 +344,8 @@ namespace MBSim {
   void MultiBodySystem::updatezdRef(const Vec &zdParent) {
 
     qd >> ( zdParent(0,qSize-1) );
-    ud >> ( zdParent(qSize,qSize+uSize-1) );
-    xd >> ( zdParent(qSize+uSize,qSize+uSize+xSize-1) );
+    ud >> ( zdParent(qSize,qSize+uSize[0]-1) );
+    xd >> ( zdParent(qSize+uSize[0],qSize+uSize[0]+xSize-1) );
 
     updateqdRef(qd);
     updateudRef(ud);
@@ -292,12 +368,12 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     updateKinematics(t);
-    updateJacobians(t);
     updateg(t);
     updategd(t);
     // TODO nötig für ODE-Integration und hohem plotLevel
     // for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
     //  (*iL)->updateStage2(t);
+    updateJacobians(t);
     updateh(t); 
     updateM(t); 
     //updateG(t); 
@@ -340,10 +416,10 @@ namespace MBSim {
       updatezdRef(zdParent);
 
     updateKinematics(t);
-    updateJacobians(t);
     updateg(t);
     updategd(t);
     updateT(t); 
+    updateJacobians(t);
     updateh(t); 
     updateM(t); 
     facLLM(); 
@@ -368,7 +444,6 @@ namespace MBSim {
     if(q()!=zParent()) updatezRef(zParent);
 
     updateKinematics(t);
-    updateJacobians(t);
     updateg(t);
     checkActiveg();
     checkActiveLinks();
@@ -395,6 +470,7 @@ namespace MBSim {
     updategd(t);
 
     updateT(t); 
+    updateJacobians(t);
     updateh(t); 
     updateM(t); 
     facLLM(); 
@@ -406,17 +482,17 @@ namespace MBSim {
   void MultiBodySystem::updaterFactors() {
     // UPDATERFACTORS updates r-factors for children
     if(strategy == global) {
- //     double rFac;
- //     if(G.size() == 1) rFac = 1./G(0,0);
- //     else {
- //       Vec eta = eigvalSel(G,1,G.size());
- //       double etaMax = eta(G.size()-1);
- //       double etaMin = eta(0);
- //       int i=1;
- //       while(abs(etaMin) < 1e-8 && i<G.size()) etaMin = eta(i++);
- //       rFac = 2./(etaMax + etaMin);
- //     }
- //     rFactor.init(rFac);
+      //     double rFac;
+      //     if(G.size() == 1) rFac = 1./G(0,0);
+      //     else {
+      //       Vec eta = eigvalSel(G,1,G.size());
+      //       double etaMax = eta(G.size()-1);
+      //       double etaMin = eta(0);
+      //       int i=1;
+      //       while(abs(etaMin) < 1e-8 && i<G.size()) etaMin = eta(i++);
+      //       rFac = 2./(etaMax + etaMin);
+      //     }
+      //     rFactor.init(rFac);
 
       cout << "Global r-Factor strategy not currently not available." << endl;
       throw 5;
@@ -587,7 +663,7 @@ namespace MBSim {
     // PROJECTVIOLATEDCONSTRAINTS projects state, such that constraints are not violated
 
     if(laSize) {
-      Vec nu(uSize);
+      Vec nu(getuSize());
       int gASize = 0;
       for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) gASize += linkSetValuedActive[i]->getgSize();
       SqrMat Gv(gASize,NONINIT);
@@ -616,7 +692,6 @@ namespace MBSim {
 	nu += dnu;
 	q += T*dnu;
 	updateKinematics(t);
-	updateJacobians(t);
 	updateg(t);
 	int gAIndi = 0;
 	for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
@@ -690,30 +765,30 @@ namespace MBSim {
   }
 
   Element* MultiBodySystem::getElement(const string &name) {
- //   // GETELEMENT returns element
- //   unsigned int i1;
- //   for(i1=0; i1<object.size(); i1++) {
- //     if(object[i1]->getName() == name) return (Element*)object[i1];
- //   }
- //   for(i1=0; i1<object.size(); i1++) {
- //     if(object[i1]->getFullName() == name) return (Element*)object[i1];
- //   }
- //   unsigned int i2;
- //   for(i2=0; i2<link.size(); i2++) {
- //     if(link[i2]->getName() == name) return (Element*)link[i2];
- //   }
- //   for(i2=0; i2<link.size(); i2++) {
- //     if(link[i2]->getFullName() == name) return (Element*)link[i2];
- //   }
- //   unsigned int i3;
- //   for(i3=0; i3<EDI.size(); i3++) {
- //     if(EDI[i3]->getName() == name) return (Element*)EDI[i3];
- //   }
- //   for(i3=0; i3<EDI.size(); i3++) {
- //     if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
- //   }
- //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
- //   assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
+    //   // GETELEMENT returns element
+    //   unsigned int i1;
+    //   for(i1=0; i1<object.size(); i1++) {
+    //     if(object[i1]->getName() == name) return (Element*)object[i1];
+    //   }
+    //   for(i1=0; i1<object.size(); i1++) {
+    //     if(object[i1]->getFullName() == name) return (Element*)object[i1];
+    //   }
+    //   unsigned int i2;
+    //   for(i2=0; i2<link.size(); i2++) {
+    //     if(link[i2]->getName() == name) return (Element*)link[i2];
+    //   }
+    //   for(i2=0; i2<link.size(); i2++) {
+    //     if(link[i2]->getFullName() == name) return (Element*)link[i2];
+    //   }
+    //   unsigned int i3;
+    //   for(i3=0; i3<EDI.size(); i3++) {
+    //     if(EDI[i3]->getName() == name) return (Element*)EDI[i3];
+    //   }
+    //   for(i3=0; i3<EDI.size(); i3++) {
+    //     if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
+    //   }
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
     return NULL;
   }
 
@@ -1216,10 +1291,10 @@ namespace MBSim {
       //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
 
       updateKinematics(t); // prüfen, ob nötig
-      updateJacobians(t);
       updateg(t); // prüfen, ob nötig
       updategd(t); // wichtig wegen updategdRef
       //updateh(t); // h-Vektor geht nicht in Stoß ein
+      updateJacobians(t);
       updateW(t); // wichtig wegen updateWRef
       updateV(t); // ..
       updateG(t); // ..
@@ -1249,9 +1324,9 @@ namespace MBSim {
       if(laSize) {
 
 	updateKinematics(t); // Nötig da Geschwindigkeitsänderung
-	updateJacobians(t);
 	//updateg(t); // Unnötig, da keine Lageänderung
 	updategd(t); // Nötig da Geschwindigkeitsänderung
+	updateJacobians(t);
 	updateh(t); 
 	updateW(t); 
 	updateV(t); 
@@ -1287,10 +1362,10 @@ namespace MBSim {
       if(laSize) {
 
 	updateKinematics(t); // Prüfen ob nötig
-	updateJacobians(t);
 	updateg(t); // Prüfen ob nötig
 	updategd(t); // Prüfen ob nötig
 	updateT(t);  // Prüfen ob nötig
+	updateJacobians(t);
 	updateh(t);  // Prüfen ob nötig
 	updateM(t);  // Prüfen ob nötig
 	facLLM();  // Prüfen ob nötig

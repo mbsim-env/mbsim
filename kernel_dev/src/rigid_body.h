@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2008  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -44,48 +44,51 @@ namespace MBSim {
   class RigidBody : public Body {
 
     protected:
-    bool cb;
-    double m;
-    SymMat SThetaS, WThetaS;
-    int iRef, i4I;
-    Mat H, TH;
-    SymMat Mbuf;
+      bool cb;
+      double m;
+      SymMat SThetaS, WThetaS;
+      int iRef, i4I;
+      Mat H, TH;
+      SymMat Mbuf;
 
-    Mat PJT, PJR, PdJT, PdJR;
-    Vec PjT, PjR, PdjT, PdjR;
+      Mat PJT, PJR, PdJT, PdJR;
+      Vec PjT, PjR, PdjT, PdjR;
 
-    Mat PJR0;
+      Mat PJR0;
 
-    SqrMat APK;
-    Vec PrPK, WrPK, WvPKrel, WomPK;
-    CoordinateSystem *portParent;
-    vector<SqrMat> ASK;
-    vector<Vec> SrSK, WrSK;
+      Mat PJTs, PJRs;
 
-    vector<SqrMat> ASC;
-    vector<Vec> SrSC, WrSC;
+      SqrMat APK;
+      Vec PrPK, WrPK, WvPKrel, WomPK;
+      CoordinateSystem *portParent;
+      vector<SqrMat> ASK;
+      vector<Vec> SrSK, WrSK;
 
-    Jacobian *fT;
+      vector<SqrMat> ASC;
+      vector<Vec> SrSC, WrSC;
 
-    Translation *fPrPK;
-    Rotation *fAPK;
-    Jacobian *fPJT;
-    Jacobian *fPJR;
-    DerivativeOfJacobian *fPdJT;
-    DerivativeOfJacobian *fPdJR;
-    TimeDependentFunction *fPjT;
-    TimeDependentFunction *fPjR;
-    TimeDependentFunction *fPdjT;
-    TimeDependentFunction *fPdjR;
+      Jacobian *fT;
 
+      Translation *fPrPK;
+      Rotation *fAPK;
+      Jacobian *fPJT;
+      Jacobian *fPJR;
+      DerivativeOfJacobian *fPdJT;
+      DerivativeOfJacobian *fPdJR;
+      TimeDependentFunction *fPjT;
+      TimeDependentFunction *fPjR;
+      TimeDependentFunction *fPdjT;
+      TimeDependentFunction *fPdjR;
 
-    void (RigidBody::*updateM_)(double t);
-    void updateMConst(double t);
-    void updateMNotConst(double t); 
+      Mat forceDir, momentDir;
 
-    void (RigidBody::*facLLM_)();
-    void facLLMConst() {};
-    void facLLMNotConst() {Object::facLLM();}
+      void (RigidBody::*updateM_)(double t);
+      void updateMConst(double t);
+      void updateMNotConst(double t); 
+
+      void (RigidBody::*facLLM_)();
+      void facLLMConst() {};
+      void facLLMNotConst() {Object::facLLM();}
 
 
 #ifdef HAVE_AMVIS
@@ -94,84 +97,92 @@ namespace MBSim {
       CoordinateSystem* cosyAMVis;
 #endif
 
-
     public:
-    RigidBody(const string &name);
+      RigidBody(const string &name);
 
-    void useCoordinateSystemOfBodyForRotation(bool cb_) {cb = cb_;}
-    void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
-    void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
-    void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
-    void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
-    void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
-    void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
-    void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
-    void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
-    void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
-    void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
+      void setForceDirection(const Mat& fd);
+      void setMomentDirection(const Mat& md);
 
-    /*! define the mass of the body
-      \param m mass
-      */
-    void setMass(double m_) {m = m_;}
+      void useCoordinateSystemOfBodyForRotation(bool cb_) {cb = cb_;}
+      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
+      void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
+      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
+      void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
+      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
+      void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
+      void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
+      void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
+      void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
 
-    /*! \brief matrix of inertia
-     * define the matrix of inertia with respect to the point of reference if
-     * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
-     \param I martix of inertia
-     */
-    void setInertiaTensor(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
-      if(refCoordinateSystem)
-	i4I = portIndex(refCoordinateSystem);
-      else
-	i4I = 0;
-      // hier nur zwischenspeichern
-      SThetaS = RThetaR;
-    }
+      /*! define the mass of the body
+	\param m mass
+	*/
+      void setMass(double m_) {m = m_;}
 
-    virtual void updateKinematicsForSelectedCoordinateSystem(double t);
-    virtual void updateJacobiansForSelectedCoordinateSystem(double t);
-    virtual void updateKinematicsForRemainingCoordinateSystemsAndContours(double t);
-    virtual void updateJacobiansForRemainingCoordinateSystemsAndContours(double t);
+      /*! \brief matrix of inertia
+       * define the matrix of inertia with respect to the point of reference if
+       * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
+       \param I martix of inertia
+       */
+      void setInertiaTensor(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
+	if(refCoordinateSystem)
+	  i4I = portIndex(refCoordinateSystem);
+	else
+	  i4I = 0;
+	// hier nur zwischenspeichern
+	SThetaS = RThetaR;
+      }
 
-    void updateh(double t);
-    void updateKinematics(double t) {updateKinematicsForSelectedCoordinateSystem(t); updateKinematicsForRemainingCoordinateSystemsAndContours(t);}
-    void updateJacobians(double t) {updateJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
-    void updateM(double t) {(this->*updateM_)(t);}
-    void updateT(double t) {if(fT) T = (*fT)(q,t);}
-    void facLLM() {(this->*facLLM_)();}
+      virtual void updateKinematicsForSelectedCoordinateSystem(double t);
+      virtual void updateJacobiansForSelectedCoordinateSystem(double t);
+      virtual void updateKinematicsForRemainingCoordinateSystemsAndContours(double t);
+      virtual void updateJacobiansForRemainingCoordinateSystemsAndContours(double t);
 
-    void plot(double t, double dt=1);
+      virtual void updateSecondJacobiansForSelectedCoordinateSystem(double t);
+      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
 
-    void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
+      void updateh(double t);
+      void updateKinematics(double t) {updateKinematicsForSelectedCoordinateSystem(t); updateKinematicsForRemainingCoordinateSystemsAndContours(t);}
+      void updateJacobians(double t) {updateJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
+      void updateM(double t) {(this->*updateM_)(t);}
+      void updateT(double t) {if(fT) T = (*fT)(q,t);}
+      void facLLM() {(this->*facLLM_)();}
 
-    void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
+      void resizeJacobians(int j);
+      virtual void checkForConstraints();
 
-    void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
-    
-    void setCoordinateSystemForKinematics(CoordinateSystem *port) {
-      iRef = portIndex(port);
-      assert(iRef > -1);
-    }
+      void plot(double t, double dt=1);
 
-    void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
+      void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
 
-    double computeKineticEnergy();
-    double computeKineticEnergyBranch();
-    double computePotentialEnergyBranch();
+      void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
 
-    void init();
-    void initPlotFiles();
-    void calcqSize();
-    void calcuSize();
+      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
 
-    virtual string getType() const {return "RigidBody";}
+      void setCoordinateSystemForKinematics(CoordinateSystem *port) {
+	iRef = portIndex(port);
+	assert(iRef > -1);
+      }
 
-    void load(const string &path, ifstream &inputfile);
-    void save(const string &path, ofstream &outputfile);
+      void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
+
+      double computeKineticEnergy();
+      double computeKineticEnergyBranch();
+      double computePotentialEnergyBranch();
+
+      void init();
+      void initPlotFiles();
+      void calcqSize();
+      void calcuSize(int j=0);
+
+      virtual string getType() const {return "RigidBody";}
+
+      void load(const string &path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
 
 #ifdef HAVE_AMVIS
-    void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
+      void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
 #endif
 
   };

@@ -41,9 +41,10 @@ namespace MBSim {
       void addChild(Node* child); 
       void updateKinematics(double t);
       void updateJacobians(double t);
+      void updateSecondJacobians(double t);
       void calcqSize(int &size);
-      void calcuSize(int &size);
-      void sethSize(int &size);
+      void calcuSize(int &size, int j=0);
+      void sethSize(int &size, int j=0);
   };
 
   /*! \brief class for tree-structured systems with only rigid bodies
@@ -60,14 +61,15 @@ namespace MBSim {
     ~Tree();
 
     void calcqSize();
-    void calcuSize();
-    void sethSize(int h);
+    void calcuSize(int j=0);
+    void sethSize(int h, int j=0);
 
     void facLLM(); 
     void updatezd(double t);
     void updatedu(double t, double dt);
     void updateKinematics(double t);
     void updateJacobians(double t);
+    void updateSecondJacobians(double t);
 
     double computePotentialEnergy();
 
