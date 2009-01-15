@@ -54,18 +54,21 @@ namespace MBSim {
       vector<Link*> linkSetValued;
       vector<Link*> linkSetValuedActive;
 
+      vector<Link*> specialLink;
+
       vector<Vec> IrOK, IrOC, IrOS;
       vector<SqrMat> AIK, AIC, AIS;
 
       int qSize, qInd;
-      int uSize, uInd;
+      int uSize[2], uInd[2];
       int xSize, xInd;
-      int hSize, hInd;
+      int hSize[2], hInd[2];
       int gSize, gInd;
       int gdSize, gdInd;
       int laSize, laInd;
       int rFactorSize, rFactorInd;
       int svSize, svInd;
+
       /** linear relation matrix \f$\boldsymbol{T}\f$ of position and velocity parameters */
       Mat T;
       /** mass matrix \f$\boldsymbol{M}\f$*/
@@ -103,7 +106,7 @@ namespace MBSim {
       virtual void preinit();
       void initz();
       void calcqSize();
-      void calcuSize();
+      void calcuSize(int j=0);
       void calcxSize();
       void calcsvSize();
       //void calchSize();
@@ -157,10 +160,10 @@ namespace MBSim {
       int getsvSize() const {return svSize;}
 
       int getqSize() const {return qSize;}
-      int getuSize() const {return uSize;}
+      int getuSize(int i=0) const {return uSize[i];}
       int getxSize() const {return xSize;}
-      int getzSize() const { return qSize + uSize + xSize; }
-      int gethSize() const { return hSize; }
+      int getzSize() const { return qSize + uSize[0] + xSize; }
+      int gethSize(int i=0) const { return hSize[i]; }
 
       /*! Get mass matrix */
       const SymMat& getM() const {return M;};
@@ -184,6 +187,11 @@ namespace MBSim {
       void updatedu(double t, double dt) = 0;
       void updateqd(double t) {throw 5;}
       void updateud(double t) {throw 5;}
+      void updateJacobians(double t) = 0; 
+      void updateSecondJacobians(double t) = 0; 
+
+      void resizeJacobians(int j); 
+      void checkForConstraints();
 
       void updater(double t); 
       void updatewb(double t); 
@@ -206,18 +214,18 @@ namespace MBSim {
       void updatexdRef(const Vec &ref); 
       //void updatezRef(const Vec &ref); 
       //void updatezdRef(const Vec &ref); 
-      void updatehRef(const Vec &ref);
+      void updatehRef(const Vec &ref, int i=0);
       void updatefRef(const Vec &ref);
       void updaterRef(const Vec &ref);
       void updateTRef(const Mat &ref);
-      void updateMRef(const SymMat &ref);
-      void updateLLMRef(const SymMat &ref);
+      void updateMRef(const SymMat &ref, int i=0);
+      void updateLLMRef(const SymMat &ref, int i=0);
       void updatesvRef(const Vec& ref);
       void updatejsvRef(const Vector<int> &ref);
       void updategRef(const Vec &ref);
       void updategdRef(const Vec &ref);
-      void updateWRef(const Mat &ref);
-      void updateVRef(const Mat &ref);
+      void updateWRef(const Mat &ref, int i=0);
+      void updateVRef(const Mat &ref, int i=0);
       void updatelaRef(const Vec &ref);
       void updatewbRef(const Vec &ref);
       void updateresRef(const Vec &ref);
@@ -248,7 +256,8 @@ namespace MBSim {
       void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
       void addContour(Contour* contour, const Vec &RrRC, const CoordinateSystem* refCoordinateSystem=0) {addContour(contour,RrRC,SqrMat(3,EYE));}
 
-      void addLink(Link *connection);
+      void addLink(Link *link);
+      
       Subsystem* getSubsystem(const string &name,bool check=true);
       Object* getObject(const string &name,bool check=true);
       Link* getLink(const string &name,bool check=true);
@@ -279,18 +288,20 @@ namespace MBSim {
 
       void setqSize(int qSize_) { qSize = qSize_; }
       void setqInd(int qInd_) { qInd = qInd_; }
-      void setuSize(int uSize_) { uSize = uSize_; }
-      void setuInd(int uInd_) { uInd = uInd_; }
+      void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
+      void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       void setxSize(int xSize_) { xSize = xSize_; }
       void setxInd(int xInd_) { xInd = xInd_; }
       //void sethSize(int hSize_) { hSize = hSize_; }
-      void sethSize(int hSize_);
-      void sethInd(int hInd_) { hInd = hInd_; }
+      void sethSize(int hSize_, int i=0);
+      void sethInd(int hInd_, int i=0) { hInd[i] = hInd_; }
       int  getqInd() { return qInd; }
-      int  getuInd() { return uInd; }
-      int  gethInd() { return hInd; }
+      int  getuInd(int i=0) { return uInd[i]; }
+      int  gethInd(int i=0) { return hInd[i]; }
 
-      int gethInd(Subsystem* sys); 
+      void sethsSize(int hsSize_);
+
+      int gethInd(Subsystem* sys, int i=0); 
 
       bool gActiveChanged();
 

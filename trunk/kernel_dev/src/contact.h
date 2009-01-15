@@ -132,15 +132,17 @@ namespace MBSim {
       void updatewb(double t);
       void updateh(double t);
       void updaterFactors();
+      void updateJacobians(double t);
 
+      void resizeJacobians(int j); 
 
       void updatelaRef(const Vec& ref);
       void updategRef(const Vec& ref);
       void updategdRef(const Vec& ref);
-      void updateWRef(const Mat &ref);
+      void updateWRef(const Mat &ref, int j=0);
       void updatewbRef(const Vec &ref);
-      void updateVRef(const Mat &ref);
-      void updatehRef(const Vec &ref);
+      void updateVRef(const Mat &ref, int j=0);
+      void updatehRef(const Vec &ref, int j=0);
       void updatesvRef(const Vec &ref);
       void updatejsvRef(const Vector<int> &ref);
       void updaterFactorRef(const Vec &ref);

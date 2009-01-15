@@ -43,6 +43,8 @@ namespace MBSim {
       void load(const string &path, ifstream &inputfile);
       void save(const string &path, ofstream &outputfile);
 
+      void updateSecondJacobians(double t);
+
       void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0);
       void addObject(Object *object);
 

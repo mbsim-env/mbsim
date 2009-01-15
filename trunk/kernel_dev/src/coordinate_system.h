@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -32,87 +32,85 @@ namespace AMVis {class CRigidBody;}
 
 namespace MBSim {
 
-
   class CoordinateSystem;
-  void transformCoordinateSystem(CoordinateSystem &cosy1, const Vec &r, CoordinateSystem &cosy2); 
-
-    class Object;
+  class Object;
 #ifdef HAVE_AMVIS
-    class DataInterfaceBase;
+  class DataInterfaceBase;
 #endif
 
-    /*! Cosy on Bodies, used for application of e.g. Links and Loads
-     *
-     * */
-    class CoordinateSystem : public Element {
-      protected:
-	ObjectInterface* parent;
+  /*! Cosy on Bodies, used for application of e.g. Links and Loads
+   *
+   * */
+  class CoordinateSystem : public Element {
+    protected:
+      ObjectInterface* parent;
 
-	int hSize, hInd;
-	double *adress;
+      int hSize[2], hInd[2];
+      double *adress;
 
-	Vec WrOP, WvP, WomegaP;
-	SqrMat AWP;
-	Mat WJP, WJR;
-	Vec WjP, WjR;
-
-#ifdef HAVE_AMVIS
-	AMVis::CRigidBody *bodyAMVis;
-	DataInterfaceBase* bodyAMVisUserFunctionColor;
-#endif
-
-      public:
-	CoordinateSystem(const string &name);
-
-	ObjectInterface* getParent() {return parent;}
-	void setParent(ObjectInterface* parent_) {parent = parent_;}
-
-	int gethSize() const {return hSize;}
-	int gethInd() const {return hInd;}
-	void sethSize(int size) {hSize = size;}
-	void sethInd(int ind) {hInd = ind;}
-
-	//int gethInd(Subsystem* sys);
-
-	virtual void preinit() {}
-	virtual void init();
-
-	const Vec& getPosition() const {return WrOP;}
-	const Vec& getVelocity() const {return WvP;} 
-	const Vec& getAngularVelocity() const {return WomegaP;}
-	const SqrMat& getOrientation() const {return AWP;}
-	Vec& getPosition() {return WrOP;}
-	Vec& getVelocity() {return WvP;} 
-	Vec& getAngularVelocity() {return WomegaP;}
-	SqrMat& getOrientation() {return AWP;}
-
-	void setPosition(const Vec &v) {WrOP = v;}
-	void setVelocity(const Vec &v) {WvP = v;} 
-	void setAngularVelocity(const Vec &v) {WomegaP = v;}
-	void setOrientation(const SqrMat &AWP_) {AWP = AWP_;}
-
-	void setJacobianOfTranslation(const Mat &WJP_) {WJP=WJP_;}
-	void setGyroscopicAccelerationOfTranslation(const Vec &WjP_) {WjP=WjP_;}
-	void setJacobianOfRotation(const Mat &WJR_) {WJR=WJR_;}
-	void setGyroscopicAccelerationOfRotation(const Vec &WjR_) {WjR=WjR_;}
-	const Mat& getJacobianOfTranslation() const {return WJP;}
-	const Mat& getJacobianOfRotation() const {return WJR;}
-	Mat& getJacobianOfTranslation() {return WJP;}
-	Mat& getJacobianOfRotation() {return WJR;}
-	const Vec& getGyroscopicAccelerationOfTranslation() const {return WjP;}
-	const Vec& getGyroscopicAccelerationOfRotation() const {return WjR;}
-	Vec& getGyroscopicAccelerationOfTranslation() {return WjP;}
-	Vec& getGyroscopicAccelerationOfRotation() {return WjR;}
-
-	void plot(double t, double dt=1);					// HR 03.01.07
-	void initPlotFiles();
-	string getType() const {return "CoordinateSystem";}
+      Vec WrOP, WvP, WomegaP;
+      SqrMat AWP;
+      Mat WJP, WJR;
+      Vec WjP, WjR;
 
 #ifdef HAVE_AMVIS
-	void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+      AMVis::CRigidBody *bodyAMVis;
+      DataInterfaceBase* bodyAMVisUserFunctionColor;
 #endif
 
-    };
+    public:
+      CoordinateSystem(const string &name);
+
+      ObjectInterface* getParent() {return parent;}
+      void setParent(ObjectInterface* parent_) {parent = parent_;}
+
+      int gethSize(int i=0) const {return hSize[i];}
+      int gethInd(int i=0) const {return hInd[i];}
+      void sethSize(int size, int i=0) {hSize[i] = size;}
+      void sethInd(int ind, int i=0) {hInd[i] = ind;}
+
+      void resizeJacobians(int j);
+      void resizeJacobians();
+
+      virtual void preinit() {}
+      virtual void init();
+
+      const Vec& getPosition() const {return WrOP;}
+      const Vec& getVelocity() const {return WvP;} 
+      const Vec& getAngularVelocity() const {return WomegaP;}
+      const SqrMat& getOrientation() const {return AWP;}
+      Vec& getPosition() {return WrOP;}
+      Vec& getVelocity() {return WvP;} 
+      Vec& getAngularVelocity() {return WomegaP;}
+      SqrMat& getOrientation() {return AWP;}
+
+      void setPosition(const Vec &v) {WrOP = v;}
+      void setVelocity(const Vec &v) {WvP = v;} 
+      void setAngularVelocity(const Vec &v) {WomegaP = v;}
+      void setOrientation(const SqrMat &AWP_) {AWP = AWP_;}
+
+      void setJacobianOfTranslation(const Mat &WJP_) {WJP=WJP_;}
+      void setGyroscopicAccelerationOfTranslation(const Vec &WjP_) {WjP=WjP_;}
+      void setJacobianOfRotation(const Mat &WJR_) {WJR=WJR_;}
+      void setGyroscopicAccelerationOfRotation(const Vec &WjR_) {WjR=WjR_;}
+      const Mat& getJacobianOfTranslation() const {return WJP;}
+      const Mat& getJacobianOfRotation() const {return WJR;}
+      Mat& getJacobianOfTranslation() {return WJP;}
+      Mat& getJacobianOfRotation() {return WJR;}
+      const Vec& getGyroscopicAccelerationOfTranslation() const {return WjP;}
+      const Vec& getGyroscopicAccelerationOfRotation() const {return WjR;}
+      Vec& getGyroscopicAccelerationOfTranslation() {return WjP;}
+      Vec& getGyroscopicAccelerationOfRotation() {return WjR;}
+
+      void plot(double t, double dt=1);					// HR 03.01.07
+      void initPlotFiles();
+      string getType() const {return "CoordinateSystem";}
+
+#ifdef HAVE_AMVIS
+      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+#endif
+
+  };
 
 }
 

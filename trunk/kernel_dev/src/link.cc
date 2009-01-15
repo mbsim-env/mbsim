@@ -384,45 +384,39 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   } 
 
-  void Link::updateVRef(const Mat& VParent) {
+  void Link::updateVRef(const Mat& VParent, int j) {
     for(unsigned i=0; i<port.size(); i++) {
-      int hInd =  port[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
-      V[i]>>VParent(I,J);
+      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
+      V[i].resize()>>VParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
       V[i]>>VParent(I,J);
     }
   } 
 
-  void Link::updateWRef(const Mat& WParent) {
+  void Link::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<port.size(); i++) {
-      int hInd =  port[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+port[i]->gethSize()-1);
-      W[i]>>WParent(I,J);
+      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
+      W[i].resize()>>WParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(hInd,hInd+contour[i]->gethSize()-1);
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->gethSize(j)-1);
       W[i]>>WParent(I,J);
     }
   } 
 
-  void Link::updatehRef(const Vec &hParent) {
+  void Link::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<port.size(); i++) {
-      int hInd =  port[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
+      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
       h[i]>>hParent(I);
     }
   } 

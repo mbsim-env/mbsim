@@ -51,7 +51,8 @@ namespace MBSim {
     protected:
       ObjectInterface* parent;
 
-      int hSize, hInd;
+      int hSize[2], hInd[2];
+
       CoordinateSystem R;
 
 
@@ -75,10 +76,10 @@ namespace MBSim {
       /* geerbt */
       void plot(double t, double dt);
 
-      int gethSize() const {return hSize;}
-      int gethInd() const {return hInd;}
-      void sethSize(int size) {hSize = size;}
-      void sethInd(int ind) {hInd = ind;}
+      int gethSize(int i=0) const {return hSize[i];}
+      int gethInd(int i=0) const {return hInd[i];}
+      void sethSize(int size, int i=0) {hSize[i] = size;}
+      void sethInd(int ind, int i=0) {hInd[i] = ind;}
 
       ObjectInterface* getParent() {return parent;}
       void setParent(ObjectInterface* parent_) {parent = parent_;}
@@ -106,6 +107,8 @@ namespace MBSim {
       const Vec& getWjR() const {return R.getGyroscopicAccelerationOfRotation();}
       Vec& getWjP() {return R.getGyroscopicAccelerationOfTranslation();}
       Vec& getWjR() {return R.getGyroscopicAccelerationOfRotation();}
+
+      void resizeJacobians(int j);
 
      // /*! adjust HitSphere of parent body
      // */

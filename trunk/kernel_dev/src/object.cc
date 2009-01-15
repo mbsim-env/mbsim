@@ -30,10 +30,19 @@
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), parent(0), qSize(0), uSize(0), hSize(0), qInd(0), uInd(0), hInd(0), q0(qSize), u0(uSize) {} //, parent(0)
+  Object::Object(const string &name) : Element(name), parent(0), qSize(0), qInd(0) {
+    uSize[0] = 0;
+    uSize[1] = 0;
+    hSize[0] = 0;
+    hSize[1] = 0;
+    uInd[0] = 0;
+    uInd[1] = 0;
+    hInd[0] = 0;
+    hInd[1] = 0;
+  } //, parent(0)
 
-  int Object::gethInd(Subsystem* sys) {
-    return (parent == sys) ? hInd : hInd + parent->gethInd(sys);
+  int Object::gethInd(Subsystem* sys ,int i) {
+    return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
   }
 
   void Object::writeq() {
@@ -99,37 +108,37 @@ namespace MBSim {
 
   void Object::updateuRef(const Vec &uParent) {
     // UPDATEUREF references to velocities of multibody system parent
-    u>>uParent(uInd,uInd+uSize-1);
+    u>>uParent(uInd[0],uInd[0]+uSize[0]-1);
   }
 
   void Object::updateudRef(const Vec &udParent) {
     // UPDATEUDREF references to differentiated velocities of multibody system parent
-    ud>>udParent(uInd,uInd+uSize-1);
+    ud>>udParent(uInd[0],uInd[0]+uSize[0]-1);
   }
 
-  void Object::updatehRef(const Vec& hParent) {
+  void Object::updatehRef(const Vec& hParent, int i) {
     // UPDATEHREF references to smooth force vector of multibody system
-    h>>hParent(hInd,hInd+hSize-1);
+    h.resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updaterRef(const Vec& rParent) {
     // UPDATERREF references to smooth force vector of multibody system
-    r>>rParent(uInd,uInd+uSize-1);
+    r>>rParent(uInd[0],uInd[0]+uSize[0]-1);
   }
 
-  void Object::updateMRef(const SymMat &MParent) {
+  void Object::updateMRef(const SymMat &MParent, int i) {
     // UPDATEMREF references to mass matrix of multibody system parent
-    M>>MParent(Index(hInd,hInd+hSize-1));
+    M.resize()>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::updateTRef(const Mat &TParent) {
     // UPDATETREF references to T-matrix of multibody system parent
-    T>>TParent(Index(qInd,qInd+qSize-1),Index(uInd,uInd+uSize-1));
+    T>>TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
   }
 
-  void Object::updateLLMRef(const SymMat &LLMParent) {
+  void Object::updateLLMRef(const SymMat &LLMParent, int i) {
     // UPDATELLMREF references to cholesky decomposition of mass matrix of multibody system parent
-    LLM>>LLMParent(Index(hInd,hInd+hSize-1));
+    LLM.resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::initz() {
@@ -232,16 +241,16 @@ namespace MBSim {
     if(plotLevel>1) {
       for(int i=0; i<qSize; ++i)
 	plotfile<<" "<<q(i);
-      for(int i=0; i<uSize; ++i)
+      for(int i=0; i<uSize[0]; ++i)
 	plotfile<<" "<<u(i);
       if(plotLevel>2) {
 	for(int i=0; i<qSize; ++i)
 	  plotfile<<" "<<qd(i)/dt;
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<uSize[0]; ++i)
 	  plotfile<<" "<<ud(i)/dt;
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<uSize[0]; ++i)
 	  plotfile<<" "<<h(i);
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<uSize[0]; ++i)
 	  plotfile<<" "<<r(i)/dt;
       }
     }
@@ -261,20 +270,20 @@ namespace MBSim {
       for(int i=0; i<qSize; ++i)
 	plotfile <<"# "<< plotNr++ << ": q(" << i << ")" << endl;
 
-      for(int i=0; i<uSize; ++i)
+      for(int i=0; i<uSize[0]; ++i)
 	plotfile <<"# "<< plotNr++ <<": u("<<i<<")" << endl;
 
       if(plotLevel>2) {
 	for(int i=0; i<qSize; ++i)
 	  plotfile <<"# "<< plotNr++ << ": qd(" << i << ")" << endl;
 
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<uSize[0]; ++i)
 	  plotfile <<"# "<< plotNr++ <<": ud("<<i<<")" << endl;
 
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<uSize[0]; ++i)
 	  plotfile <<"# "<< plotNr++ <<": h("<<i<<")" << endl;
 
-	for(int i=0; i<uSize; ++i)
+	for(int i=0; i<getuSize(); ++i)
 	  plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
       }
     }
@@ -334,24 +343,25 @@ namespace MBSim {
     return NULL;
   }
 
-  void Object::calchSize() {  
+  void Object::calchSize(int j) {  
   //  hSize = uSize;
   }
 
-  void Object::sethSize(int hSize_) {
-    hSize = hSize_;
+  void Object::sethSize(int hSize_, int j) {
+
+    hSize[j] = hSize_;
     for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++)
-      (*i)->sethSize(hSize);
+      (*i)->sethSize(hSize[j],j);
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethSize(hSize);
+      (*i)->sethSize(hSize[j],j);
   }
 
-  void Object::sethInd(int hInd_) {
-    hInd = hInd_;
+  void Object::sethInd(int hInd_, int j) {
+    hInd[j] = hInd_;
     for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
-      (*i)->sethInd(hInd);
+      (*i)->sethInd(hInd[j],j);
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethInd(hInd);
+      (*i)->sethInd(hInd[j],j);
   }
 
   void Object::preinit() {  
@@ -362,8 +372,8 @@ namespace MBSim {
   }
 
   void Object::init() {  
-    Iu = Index(uInd,uInd+uSize-1);
-    Ih = Index(hInd,hInd+hSize-1);
+    Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
+    Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
 
     for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
       (*i)->init();

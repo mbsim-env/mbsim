@@ -77,10 +77,6 @@ namespace MBSim {
 
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
-      void updateg(double t);
-      void updategd(double t);
-      void updatexd(double t);
-      void updatedx(double t, double dt);
       void initPlotFiles(); 
       void plot(double t, double dt=1);
 
@@ -91,9 +87,18 @@ namespace MBSim {
       bool activeConstraintsChanged() {return false;}
       bool gActiveChanged() {return false;}
 
+      void updateg(double t);
+      void updategd(double t);
+      void updatexd(double t);
+      void updatedx(double t, double dt);
       void updateW(double t);
       void updatewb(double t);
       void updateh(double t);
+      void updateJacobians(double t);
+      
+      void resizeJacobians(int j); 
+
+      void updaterFactors();
 
       void solveConstraintsFixpointSingle();
       void solveImpactsFixpointSingle();
@@ -105,8 +110,6 @@ namespace MBSim {
       void jacobianImpacts();
       bool isSetValued() const;
 
-      void updaterFactors();
-      
       void checkConstraintsForTermination();
       void checkImpactsForTermination();
 

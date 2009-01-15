@@ -53,11 +53,11 @@ namespace MBSim {
     /** Size of object positions */
     int qSize;
     /** Size of object velocities */
-    int uSize;
+    int uSize[2];
     /** Size of object h-vector (columns of J) */
-    int hSize;
+    int hSize[2];
 
-    int qInd, uInd, hInd;
+    int qInd, uInd[2], hInd[2];
 
     /** Object positions */
     Vec q;
@@ -89,11 +89,11 @@ namespace MBSim {
     virtual void updateqdRef(const Vec& ref);
     virtual void updateuRef(const Vec& ref);
     virtual void updateudRef(const Vec& ref);
-    virtual void updatehRef(const Vec& ref);
+    virtual void updatehRef(const Vec& ref, int i=0);
     virtual void updaterRef(const Vec& ref);
     virtual void updateTRef(const Mat &ref);
-    virtual void updateMRef(const SymMat &ref);
-    virtual void updateLLMRef(const SymMat &ref);
+    virtual void updateMRef(const SymMat &ref, int i=0);
+    virtual void updateLLMRef(const SymMat &ref, int i=0);
 
     void updateT(double t) {};
     void updateh(double t) {};
@@ -126,26 +126,25 @@ namespace MBSim {
     void setParent(Subsystem* sys) {parent = sys;}
 
     void setqSize(int qSize_) { qSize = qSize_; }
-    void setuSize(int uSize_) { uSize = uSize_; }
-    void sethSize(int hSize_);// { hSize = hSize_; }
+    void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
+    void sethSize(int hSize_, int i=0);// { hSize = hSize_; }
     void setqInd(int qInd_) { qInd = qInd_; }
-    void setuInd(int uInd_) { uInd = uInd_; }
-    void sethInd(int hInd_); // { hInd = hInd_; }
+    void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
+    void sethInd(int hInd_, int i=0); // { hInd = hInd_; }
     int  getqInd() { return qInd; }
-    int  getuInd() { return uInd; }
-    int  gethInd() { return hInd; }
+    int  getuInd(int i=0) { return uInd[i]; }
+    int  gethInd(int i=0) { return hInd[i]; }
 
-    int gethInd(Subsystem* sys); 
+    int gethInd(Subsystem* sys,int i=0); 
 
     /*! Get size of position vector Object::q \return Object::qSize */
     int getqSize() const { return qSize; }
     /*! Get size of velocity vector Object::u \return Object::uSize */
-    int getuSize() const { return uSize; }
+    int getuSize(int i=0) const { return uSize[i]; }
     /*! Get number of state variables \return Object::qSize + Object::uSize */
-    int getzSize() const { return qSize + uSize; }
+    int getzSize() const { return qSize + uSize[0]; }
     /*! Get size of Jacobian matrix Object::h \return Object::hSize */
-    int gethSize() const { return hSize; }
-    virtual int getWSize() const { return uSize; }
+    int gethSize(int i=0) const { return hSize[i]; }
 
     const Index& getuIndex() const { return Iu;}
     const Index& gethIndex() const { return Ih;}
@@ -219,14 +218,17 @@ namespace MBSim {
     const vector<Contour*>& getContours() const {return contour;}
 
     virtual void calcqSize() {};
-    virtual void calcuSize() {};
-    virtual void calchSize();
+    virtual void calcuSize(int j) {};
+    virtual void calchSize(int j);
 
     /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
     virtual double computeKineticEnergy();
     /*! Compute potential energy */
     virtual double computePotentialEnergy() {return 0; }
     /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
+
+    virtual void resizeJacobians(int j) {}
+    virtual void checkForConstraints() {}
 
     virtual string getType() const {return "Object";}
     //virtual MultiBodySystem* getMultiBodySystem(); 

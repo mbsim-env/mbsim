@@ -34,7 +34,16 @@
 
 namespace MBSim {
 
-  Subsystem::Subsystem(const string &name) : Element(name), parent(0), qSize(0), qInd(0), uSize(0), uInd(0), xSize(0), xInd(0), hSize(0), hInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(uSize), x0(xSize) {
+  Subsystem::Subsystem(const string &name) : Element(name), parent(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), q0(qSize), u0(0), x0(xSize) {
+
+    uSize[0] = 0;
+    uSize[1] = 0;
+    uInd[0] = 0;
+    uInd[1] = 0;
+    hSize[0] = 0;
+    hSize[1] = 0;
+    hInd[0] = 0;
+    hInd[1] = 0;
 
     addCoordinateSystem(new CoordinateSystem("I"));
 
@@ -56,10 +65,9 @@ namespace MBSim {
       delete *i;
   }
 
-  int Subsystem::gethInd(Subsystem* sys) {
-    return (this == sys) ? 0 : ((parent == this) ? hInd : hInd + parent->gethInd(sys));
+  int Subsystem::gethInd(Subsystem* sys, int i) {
+    return (this == sys) ? 0 : ((parent == this) ? hInd[i] : hInd[i] + parent->gethInd(sys,i));
   }
-
 
   void Subsystem::setMultiBodySystem(MultiBodySystem* sys) {
     Element::setMultiBodySystem(sys);
@@ -511,7 +519,7 @@ namespace MBSim {
 
   void Subsystem::updateuRef(const Vec &uParent) {
 
-    u >> uParent(uInd,uInd+uSize-1);
+    u >> uParent(uInd[0],uInd[0]+uSize[0]-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (**i).updateuRef(u);
@@ -522,7 +530,7 @@ namespace MBSim {
 
   void Subsystem::updateudRef(const Vec &udParent) {
 
-    ud >> udParent(uInd,uInd+uSize-1);
+    ud >> udParent(uInd[0],uInd[0]+uSize[0]-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (**i).updateudRef(ud);
@@ -559,15 +567,15 @@ namespace MBSim {
       (**i).updatexdRef(xd);
   }
 
-  void Subsystem::updatehRef(const Vec &hParent) {
+  void Subsystem::updatehRef(const Vec &hParent, int j) {
 
-    h >> hParent(hInd,hInd+hSize-1);
+    h.resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (**i).updatehRef(h);
+      (**i).updatehRef(h,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef(h);
+      (**i).updatehRef(h,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatehRef(h);
@@ -575,7 +583,7 @@ namespace MBSim {
 
   void Subsystem::updaterRef(const Vec &rParent) {
 
-    r >> rParent(hInd,hInd+hSize-1);
+    r >> rParent(hInd[0],hInd[0]+hSize[0]-1);
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (**i).updaterRef(r);
@@ -619,31 +627,31 @@ namespace MBSim {
       (**i).updatejsvRef(jsv);
   }
 
-  void Subsystem::updateMRef(const SymMat& MParent) {
+  void Subsystem::updateMRef(const SymMat& MParent, int j) {
 
-    M >> MParent(Index(hInd,hInd+hSize-1));
+    M.resize() >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateMRef(M);
+      (*i)->updateMRef(M,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateMRef(M);
+      (*i)->updateMRef(M,j);
   }
 
-  void Subsystem::updateLLMRef(const SymMat& LLMParent) {
+  void Subsystem::updateLLMRef(const SymMat& LLMParent, int j) {
 
-    LLM >> LLMParent(Index(hInd,hInd+hSize-1));
+    LLM.resize() >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateLLMRef(LLM);
+      (*i)->updateLLMRef(LLM,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateLLMRef(LLM);
+      (*i)->updateLLMRef(LLM,j);
   }
 
   void Subsystem::updateTRef(const Mat& TParent) {
 
-    T >> TParent(Index(qInd,qInd+qSize-1),Index(uInd,uInd+uSize-1));
+    T >> TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
       (*i)->updateTRef(T);
@@ -673,25 +681,26 @@ namespace MBSim {
       (**i).updategdRef(gd);
   }
 
-  void Subsystem::updateVRef(const Mat &VParent) {
+  void Subsystem::updateVRef(const Mat &VParent, int j) {
 
-    V.resize() >> VParent(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
+    V.resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateVRef(V);
+      (*i)->updateVRef(V,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateVRef(V);
+      (**i).updateVRef(V,j);
   }
 
-  void Subsystem::updateWRef(const Mat &WParent) {
-    W.resize() >> WParent(Index(uInd,uInd+uSize-1),Index(laInd,laInd+laSize-1));
+  void Subsystem::updateWRef(const Mat &WParent, int j) {
+
+    W.resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateWRef(W);
+      (*i)->updateWRef(W,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateWRef(W);
+      (**i).updateWRef(W,j);
   }
 
   void Subsystem::updatelaRef(const Vec &laParent) {
@@ -817,17 +826,45 @@ namespace MBSim {
     AIC.push_back(AIK[i]*ARC);
   }
 
-  void Subsystem::sethSize(int hSize_) {
+  void Subsystem::sethSize(int hSize_, int j) {
 
-    hSize = hSize_;
+    hSize[j] = hSize_;
+
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
-      (*i)->sethSize((*i)->getuSize());
-      (*i)->sethInd((*i)->getuInd());
-  }
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->sethSize((*i)->getuSize());
-      (*i)->sethInd((*i)->getuInd());
+      (*i)->sethSize((*i)->getuSize(j),j);
+      (*i)->sethInd((*i)->getuInd(j),j);
     }
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->sethSize((*i)->getuSize(j),j);
+      (*i)->sethInd((*i)->getuInd(j),j);
+    }
+
+   // for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+   //   (*i)->sethSize((*i)->getuSize());
+   //   (*i)->sethInd((*i)->getuInd());
+   // }
+  }
+
+  void Subsystem::resizeJacobians(int j) {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->resizeJacobians(j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->resizeJacobians(j);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->resizeJacobians(j);
+  }
+
+  void Subsystem::checkForConstraints() {
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->checkForConstraints();
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->checkForConstraints();
   }
 
   //void Subsystem::calchSize() {
@@ -887,18 +924,18 @@ namespace MBSim {
     }
   }
 
-  void Subsystem::calcuSize() {
-    uSize = 0;
+  void Subsystem::calcuSize(int j) {
+    uSize[j] = 0;
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
-      (*i)->calcuSize();
-      (*i)->setuInd(uSize);
-      uSize += (*i)->getuSize();
+      (*i)->calcuSize(j);
+      (*i)->setuInd(uSize[j],j);
+      uSize[j] += (*i)->getuSize(j);
     }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->calcuSize();
-      (*i)->setuInd(uSize);
-      uSize += (*i)->getuSize();
+      (*i)->calcuSize(j);
+      (*i)->setuInd(uSize[j],j);
+      uSize[j] += (*i)->getuSize(j);
     }
   }
 
