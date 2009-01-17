@@ -275,27 +275,29 @@ namespace MBSim {
   }
 
   void Contact::updateWRef(const Mat& WParent, int j) {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      for(unsigned i=0; i<contour.size(); i++) {
-	int hInd =  contour[i]->getParent()->gethInd(parent,j);
-	Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-	Index J = Index(laInd,laInd+laSize-1);
-	W[i].resize()>>WParent(I,J);
+    for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent,j);
+      Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
+      Index J = Index(laInd,laInd+laSize-1);
+      W[i].resize()>>WParent(I,J);
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	Index Ik = Index(0,W[i].rows()-1);
 	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-	Wk[k][i].resize()>>W[i](I,Jk);
+	Wk[k][i].resize()>>W[i](Ik,Jk);
       }
     }
   } 
 
   void Contact::updateVRef(const Mat& VParent, int j) {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      for(unsigned i=0; i<contour.size(); i++) {
-	int hInd =  contour[i]->getParent()->gethInd(parent,j);
-	Index J = Index(laInd,laInd+laSize-1);
-	Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-	V[i].resize()>>VParent(I,J);
+    for(unsigned i=0; i<contour.size(); i++) {
+      int hInd =  contour[i]->getParent()->gethInd(parent,j);
+      Index J = Index(laInd,laInd+laSize-1);
+      Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
+      V[i].resize()>>VParent(I,J);
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+	Index Ik = Index(0,V[i].rows()-1);
 	Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-	Vk[k][i].resize()>>V[i](I,Jk);
+	Vk[k][i].resize()>>V[i](Ik,Jk);
       }
     } 
   }
