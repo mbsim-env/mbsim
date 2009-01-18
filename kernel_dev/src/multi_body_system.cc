@@ -551,8 +551,9 @@ namespace MBSim {
   }
 
   void MultiBodySystem::updater(double t) {
-    r.init(0);
-    Group::updater(t);
+    r = V*la;
+    //r.init(0);
+    //Group::updater(t);
   }
 
   Vec MultiBodySystem::deltax(const Vec &zParent, double t, double dt) {
