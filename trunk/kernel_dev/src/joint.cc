@@ -96,6 +96,7 @@ namespace MBSim {
     if(forceDir.cols() == 2)
       JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
     else if(forceDir.cols() == 3);
+    else if(forceDir.cols() == 0);
     else {
       cout << "TODO: 1 Force Direction not yet implemented" << endl;
       throw 5;
@@ -108,8 +109,7 @@ namespace MBSim {
       flag |= ffl->isSetValued();
     if(fml) 
       flag |= fml->isSetValued();
-    cout << name << endl;
-    cout << ffl->isSetValued() << endl;
+
     return flag;
   }
 
