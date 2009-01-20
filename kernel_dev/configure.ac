@@ -6,10 +6,10 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/element.h])
 AC_PROG_LIBTOOL
 AC_PROG_CXX
-AC_PROG_F77
+AC_PROG_FC
 AC_PROG_CXXCPP
 AC_LANG([C++])
-AC_F77_WRAPPERS
+AC_FC_WRAPPERS
 
 AC_C_CONST
 
@@ -56,7 +56,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile src/body_flexible/Makefile src/body_flexible/finite_elements/Makefile src/integrators/Makefile src/contact_kinematics/Makefile src/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc])
+AC_CONFIG_FILES([Makefile src/Makefile src/integrators/Makefile src/contact_kinematics/Makefile src/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc])
 
 AC_OUTPUT
 
