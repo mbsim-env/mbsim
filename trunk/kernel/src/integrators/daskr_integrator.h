@@ -26,6 +26,7 @@
 using namespace fmatvec;
 
 #include "integrator.h"
+#include "stopwatch.h"
 
 namespace MBSim {
 
@@ -34,7 +35,7 @@ namespace MBSim {
   class DASKRIntegrator : public Integrator {
 
     friend class DAETSIntegrator;
-
+ 
     private:
       static void residuum(double* t, double* Y_, double* Ydot_, double* CJ, double* res_, int* ires, double* rpar, int* ipar);
       static void jac(double* t, double* Y_, double* Ydot_, double* PD, double* CJ, double* rpar, int* ipar); 
@@ -94,7 +95,7 @@ namespace MBSim {
       int LRW;
       int LIW;
       int nrt;
-      double s0;
+      StopWatch Timer;
       int IntSteps, RefusedSteps, FuncEvals, JacEval, RootEvals;
 
     public:

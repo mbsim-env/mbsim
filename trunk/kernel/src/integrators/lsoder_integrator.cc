@@ -120,7 +120,6 @@ namespace MBSim {
 	  istate=1;
       }
       if(istate==3) {
-	system->shift(z, jsv, t);
 	//system->plot(z, t);
 	istate=1;
 	rWork(4)=0;

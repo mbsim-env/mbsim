@@ -50,6 +50,7 @@ namespace MBSim {
       double dt0;
       /**  maximum number of steps allowed during one call to the solver. (default 10000) */
       int maxSteps;
+      int maxOrder;
       /** use stiff (BDF) method */
       bool stiff;
 
@@ -65,6 +66,7 @@ namespace MBSim {
       void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
       void setdt0(double dt0_) {dt0 = dt0_;}
       void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
+      void setMaxOrder(int maxOrder_) {maxOrder = maxOrder_;}
       void setStiff(bool flag) {stiff = flag;}
 
       void integrate(MultiBodySystem& system);
