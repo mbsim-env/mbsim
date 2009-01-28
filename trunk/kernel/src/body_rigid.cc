@@ -81,9 +81,8 @@ namespace MBSim {
     Mh(2,2) = m;
 
     Mat tKrKS = tilde(KrKS);
-    if(inertiaWithRespectToCOG)
-      I += m*JTJ(tKrKS);
     Mh(Index(3,5)) = I;
+    if (inertiaWithRespectToCOG) Mh(Index(3,5)) +=  m*JTJ(tKrKS);
     Mh(Index(0,2),Index(3,5)) = m*trans(tKrKS);
 
     iT = Index(0,JT.cols()-1);

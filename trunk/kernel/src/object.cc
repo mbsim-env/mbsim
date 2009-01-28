@@ -30,7 +30,7 @@
 
 namespace MBSim {
 
-  Object::Object(const string &name_) : Element(name_),  qSize(0), uSize(0), xSize(0), qInd(0), uInd(0), xInd(0), q0(qSize), u0(uSize), x0(xSize),q0fixed(0), WrOHitSphere(3), RHitSphere(0) {}
+  Object::Object(const string &name_) : Element(name_),  qSize(0), uSize(0), xSize(0), qInd(0), uInd(0), xInd(0), q0(qSize), u0(uSize), x0(xSize), q0fixed(0), WrOHitSphere(3), RHitSphere(0) {}
 
   void Object::writeq()
   {
@@ -287,6 +287,10 @@ namespace MBSim {
 
   void Object::init() 
   {
+    W.clear();
+    w.clear();
+    linkSetValued.clear();
+    linkSingleValued.clear();
     vector<Mat>::iterator itW=W.begin(); 
     vector<Vec>::iterator itw=w.begin(); 
 
@@ -337,7 +341,7 @@ namespace MBSim {
   }
 
   void Object::facLLM()
-  {
+  { 
     LLM = facLL(M); 
   }
 

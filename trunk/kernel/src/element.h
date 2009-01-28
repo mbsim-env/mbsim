@@ -96,7 +96,7 @@ namespace MBSim {
 	  /*! Initialises plotfiles */
       virtual void initPlotFiles();
       /*! Closes time-history plotfile */
-      virtual void closePlotFiles();
+      virtual void closePlotFiles() {if(plotLevel) plotfile.close();}
       /*! Closes parameter plotfile */
       virtual void plotParameterFiles();
       /*! Set Element::plotLevel \param level and therewith specifiy outputs in plot-files */
@@ -118,20 +118,17 @@ namespace MBSim {
       /*! Set element multibody system \param mbs */
       virtual void setMbs(MultiBodySystem* mbs_) {mbs=mbs_;}
       /*! Set information output */
-      virtual void setInfo(bool INFO_); 
+      virtual void setInfo(bool INFO_) {INFO = INFO_;} 
       /*! Set debug output */
-      virtual void setDebug(bool DEBUG_);
+      virtual void setDebug(bool DEBUG_) {DEBUG = DEBUG_;}
       /*! Set warnLevel for output */
-      virtual void setWarnLevel(int warnLevel_); 
-       
+      virtual void setWarnLevel(int warnLevel_) {warnLevel = warnLevel_;} 
+      /*! Get warnLevel for output */
+      int getWarnLevel() {return warnLevel;}
       void addDataInterfaceBaseRef(const string& DIBRef_);
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
   };
 
-inline void Element::closePlotFiles() {if(plotLevel) plotfile.close();}
-inline void Element::setInfo(bool INFO_) {INFO=INFO_;}
-inline void Element::setDebug(bool DEBUG_) {DEBUG=DEBUG_;}
-inline void Element::setWarnLevel(int warnLevel_) {warnLevel=warnLevel_;}
 }
 
 #endif

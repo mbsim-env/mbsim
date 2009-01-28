@@ -21,11 +21,11 @@
  */
 
 #include<config.h>
-#include<ctime>
 #include<multi_body_system.h>
 #include "time_stepping_ssc_integrator.h"
 #include "eps.h"
-
+#include "stopwatch.h"
+#include "/usr/users/fermat/huber/huber/MBSim/mbsim/examples/woodpecker/planarElastic/woodpecker.h"
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -38,44 +38,90 @@ using namespace fmatvec;
 namespace MBSim {
 
 
-  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : dt(1e-6), dtMax(1e-2),driftCompensation(false), StepsWithUnchangedConstraints(-1), FlagSSC(true), aTol(1,INIT,1e-5), rTol(1,INIT,1e-4), gapTol(0), maxGainSSC(2.5), safetyFactorSSC(0.6), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), plotEveryStep(false), outputInterpolation(true), optimisedtforgaps(false), time(0.0), iter(0), maxIter(0), sumIter(0), integrationSteps(0), refusedSteps(0)
+  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : dt(1e-6), dtMin(0), dtMax(1e-4),driftCompensation(false), StepsWithUnchangedConstraints(-1),  FlagErrorTest(2), aTol(1,INIT,1e-5), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), gapTol(0), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), time(0.0), iter(0), maxIterUsed(0), sumIter(0), integrationSteps(0), refusedSteps(0)
   {
-    name = "TimeStepperSSC";
-    dtMin = epsroot();
-    safetyFactorGapControl = 1.0 + rTol(0)*10.0*2.0;
+    order = maxOrder;
+    optimisedtforgaps=false;
   }
 
-  void TimeSteppingSSCIntegrator::integrate(MultiBodySystem& system_) { 
-    initIntegrator(system_);
+  void TimeSteppingSSCIntegrator::setFlagErrorTest(int Flag) {
+    FlagErrorTest = Flag;
+    assert(FlagErrorTest>=0);		// =0	control errors locally on all variables
+    assert(FlagErrorTest<4);		// =2   u is scaled with stepsize
+    assert(FlagErrorTest!=1);           // =3   exclude u from error test
+  }
+
+  void TimeSteppingSSCIntegrator::setMaxOrder(int order_) {
+    maxOrder = order_;
+    if (maxOrder>2) maxOrder=2;
+    if (maxOrder<1) maxOrder=1;
+    assert(maxOrder>0);
+    assert(maxOrder<3);
+    order = maxOrder;
+  }
+
+  void TimeSteppingSSCIntegrator::integrate(MultiBodySystem& system_) {
+    integrate(system_, system_, system_); 
+  }
+
+ void TimeSteppingSSCIntegrator::integrate(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_) { 
+    initIntegrator(systemA_, systemB_, systemC_);
     IntegrationStep();
     closeIntegrator();
   }
+  
+  void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem& system_) {
+   initIntegrator(system_,system_,system_);
+  }
 
-  void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem &system_) {
-    system = &system_;
-    int nq = system->getqSize(); // size of positions, velocities, state
-    int nu = system->getuSize();
-    int nx = system->getxSize();
-    zSize = nq + nu + nx;
+  void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_) {
 
-    Index Iq(0,nq-1);
-    Index Ix(nq,nq+nx-1);
-    Index Iu(nx+nq, zSize-1);
+    systemA = &systemA_;
+    systemB = &systemB_;
+    systemC = &systemC_;
 
-    z.resize(zSize);
-    q.resize() >> z(Iq);
-    x.resize() >> z(Ix);
-    u.resize() >> z(Iu);
+    if (dtMin==0) dtMin = epsroot()*maxOrder*2.0;
+
+   
+    if (FlagSSC) safetyFactorGapControl = 1.0 + nrmInf(rTol)*10.0;
+    else safetyFactorGapControl = 1.001;
+
+    qSize = systemA->getqSize(); // size of positions, velocities, state
+    int uSize = systemA->getuSize();
+    xSize = systemA->getxSize();
+    zSize = qSize + uSize + xSize;
+
+    Index Iq(0,qSize-1);
+    Index Ix(qSize,qSize+xSize-1);
+    Index Iu(xSize+qSize, zSize-1);
+
+    zA.resize(zSize);
+    qA.resize() >> zA(Iq);
+    xA.resize() >> zA(Ix);
+    uA.resize() >> zA(Iu);
+
+    zB.resize(zSize);
+    qB.resize() >> zB(Iq);
+    xB.resize() >> zB(Ix);
+    uB.resize() >> zB(Iu);
+
+    zC.resize(zSize);
+    qC.resize() >> zC(Iq);
+    xC.resize() >> zC(Ix);
+    uC.resize() >> zC(Iu);
 
     zi.resize(zSize,INIT,0.0); 	// starting value for ith step
-    z1e.resize(zSize);		// one step integration
-    z2e.resize(zSize);  	// end of two step integration
 
-    iter = 0;
-    integrationSteps = 0;
+    maxIter = systemA->getMaxIter();
+    iter= 0;
+    integrationSteps= 0;
+    integrationStepsOrder1= 0;
+    integrationStepsOrder2= 0;
+    integrationStepswithChange =0;
     refusedSteps = 0;
-    maxIter = 0;
+    maxIterUsed = 0;
     sumIter = 0;
+    StepTrials=0;
     maxdtUsed = dtMin;
     mindtUsed = dtMax;
 
@@ -84,305 +130,434 @@ namespace MBSim {
     assert(aTol.size() == zSize);
     assert(rTol.size() == zSize);
 
-    if (dtPlot) plotEveryStep = false; 
-    else plotEveryStep = true;  
+    if (dtPlot==0) FlagPlotEveryStep = true;
+    else FlagPlotEveryStep = false;
 
     cout.setf(ios::scientific, ios::floatfield);
     if (FlagPlotIntegrator) {
-      integPlot.open((system->getDirectoryName() + name + ".plt").c_str());
+      integPlot.open((systemA->getDirectoryName() + name + ".plt").c_str());
       integPlot << "#1 t [s]:" << endl; 
-      integPlot << "#2 dt [s]:" << endl; 
-      integPlot << "#3 iter  :" << endl;      
-      integPlot << "#4 laSize:" << endl;
-      integPlot << "#5 calculation time [s]:" << endl;
+      integPlot << "#2 dt [s]:" << endl;
+      integPlot << "#3 order :" << endl; 
+      integPlot << "#4 iter  :" << endl;      
+      integPlot << "#5 laSize:" << endl;
+      integPlot << "#6 calculation time [s]:" << endl;
     }
   }
 
   void TimeSteppingSSCIntegrator::IntegrationStep() {
-    s0 = clock();
+    Timer.start();
     t = tStart;
     tPlot = tStart;
     if(z0.size()) zi = z0; 					// define initial state
-    else system->initz(zi); 
+    else systemA->initz(zi); 
     if (outputInterpolation) {
-      laiBi.resize()  = system->getAllBilateralla();		// la = LA/dt [N]
-      laiUni.resize() = system->getAllUnilateralla();
-      laiBi.init(0.0);
-      laiUni.init(0.0);
-    }
-    if(optimisedtforgaps) {
-      z = zi;
-      z2e = zi;
-      system->updatezRef(z);
-      system->updateKinematics(t);
-      system->updateLinksStage1(t);
-      Vec g_0;
-      g_0 = system->getg();        
-      bool finished;
-      do {
-	finished = gapControl(g_0);
-      }
-      while(! finished);
+      laBi.resize((systemA->getAllBilateralla()).size(),INIT,0.0);		// la = LA/dt [N]
+      laUni.resize((systemA->getAllUnilateralla()).size(),INIT,0.0);
+      laBi.init(0.0);
+      laUni.init(0.0);
     }
 
     int StepFinished = 0;
     bool ExitIntegration = (t>=tEnd);
     int UnchangedSteps =0;
-    bool ConstraintsChanged;
-     
-    while(! ExitIntegration) {
-      while(StepFinished==0) {
-	// two step integration
-	double dtHalf = dt/2.0;
-	if (FlagSSC) {
-	  z  << zi;
-	  q += system->deltaq(z,t,dtHalf);
-	  system->update(z,t+dtHalf);
-	  iter  = system->solve(dtHalf);
-	  u += system->deltau(z,t+dtHalf,dtHalf);
-	  x += system->deltax(z,t+dtHalf,dtHalf);
 
-	  q += system->deltaq(z,t+dtHalf,dtHalf);
-	  system->update(z,t+dt);
-	  iter  += system->solve(dtHalf);
-	  u += system->deltau(z,t+dt,dtHalf);
-	  x += system->deltax(z,t+dt,dtHalf);
-	  z2e << z;
-	} 
-	// one step integration
-	z  << zi;
-	q += system->deltaq(z,t,dt);
-	ConstraintsChanged = system->update(z,t+dt);
-	iter  = system->solve(dt);
-	u += system->deltau(z,t+dt,dt);
-	x += system->deltax(z,t+dt,dt);
-	z1e << z;
-	if (! FlagSSC) z2e >> z1e; 
+    LS.resize() = systemA->getLinkStatus();
+
+    while(! ExitIntegration) 
+    {
+      while(StepFinished==0) 
+      {
+	// Block 1 
+	// one step integration (A)
+	zA  << zi;
+	systemA->setActiveConstraintsChanged(true);
+	qA += systemA->deltaq(zA,t,dt);
+	systemA->update(zA,t+dt);
+	iterA  = systemA->solve(dt);
+        la1dBi.resize()  = systemA->getAllBilateralla()/dt;
+	la1dUni.resize() = systemA->getAllUnilateralla()/dt;
+	uA += systemA->deltau(zA,t+dt,dt);
+	xA += systemA->deltax(zA,t+dt,dt);
+	systemA->updateLinkStatus();
+	LSA = systemA->getLinkStatus();
+	ConstraintsChangedA = (LSA != LS);
+	ConstraintsChanged = ConstraintsChangedA;
+	z1d << zA;
+
+	ConstraintsChangedBlock1 = false;
+
+	// two step integration (first step) (B1)
+	double dtHalf = dt/2.0;
+	if (FlagSSC || (maxOrder==2)) {
+	  zB  << zi;
+	  systemB->setActiveConstraintsChanged(true);
+	  qB += systemB->deltaq(zB,t,dtHalf);
+	  systemB->update(zB,t+dtHalf);
+	  iterB1  = systemB->solve(dtHalf);
+          la2bBi.resize()  = systemB->getAllBilateralla()/dtHalf;
+	  la2bUni.resize() = systemB->getAllUnilateralla()/dtHalf;
+	  uB += systemB->deltau(zB,t+dtHalf,dtHalf);
+	  xB += systemB->deltax(zB,t+dtHalf,dtHalf); 
+	  systemB->updateLinkStatus();
+	  LSB1=systemB->getLinkStatus() ;
+	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSB1 != LS);
+	  z2b << zB; 
+	}
+
+	// four step integration (first two steps)
+	double dtQuarter = dt/4.0;
+	if (FlagSSC && (maxOrder==2)) {
+	  zC  << zi;
+	  systemC->setActiveConstraintsChanged(true);
+	  qC += systemC->deltaq(zC,t,dtQuarter);
+	  systemC->update(zC,t+dtQuarter);
+	  iterC1 = systemC->solve(dtQuarter);
+	  uC += systemC->deltau(zC,t+dtQuarter,dtQuarter);
+	  xC += systemC->deltax(zC,t+dtQuarter,dtQuarter);
+	  systemC->updateLinkStatus();
+	  LSC1 = systemC->getLinkStatus();
+	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSC1 != LS);
+
+	  qC += systemC->deltaq(zC,t+dtQuarter,dtQuarter);
+	  systemC->update(zC,t+dtHalf);
+	  iterC2 = systemC->solve(dtQuarter);
+	  uC += systemC->deltau(zC,t+dtHalf,dtQuarter);
+	  xC += systemC->deltax(zC,t+dtHalf,dtQuarter);
+	  systemC->updateLinkStatus();
+	  LSC2 = systemC->getLinkStatus();
+	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSC2!=LSC1);
+	  ConstraintsChanged = ConstraintsChanged|| ConstraintsChangedBlock1;
+	  z4b << zC;
+	}
+
+	ConstraintsChangedBlock2 = false;        
+
+	// Block 2
+
+	// two step integration (B2 and B2RE) (starting with z2b or 2*z4b-z2b)
+	if ((FlagSSC && (maxOrder==1))||(FlagSSC && !ConstraintsChangedBlock1)||(!FlagSSC && (maxOrder==2))) {
+	  zA  << z2b;
+	  systemA->setActiveConstraintsChanged(true);
+	  qA += systemA->deltaq(zA,t+dtHalf,dtHalf);
+	  systemA->update(zA,t+dt);
+	  iterB2  = systemA->solve(dtHalf);
+	  uA += systemA->deltau(zA,t+dt,dtHalf);
+	  xA += systemA->deltax(zA,t+dt,dtHalf);
+	  systemA->updateLinkStatus();
+	  LSB2 = systemA->getLinkStatus();
+	  ConstraintsChangedBlock2 = (LSB2!=LSB1);
+	  z2d << zA; 
+	}
+
+	if (FlagSSC && (maxOrder==2) && !ConstraintsChangedBlock1) { //B2RE
+	  zB << 2.0*z4b - z2b;
+	  systemB->setActiveConstraintsChanged(true);
+	  qB += systemB->deltaq(zB,t+dtHalf,dtHalf);
+	  systemB->update(zB,t+dt);
+	  iterB2RE  = systemB->solve(dtHalf);
+	  uB += systemB->deltau(zB,t+dt,dtHalf);
+	  xB += systemB->deltax(zB,t+dt,dtHalf);
+	  z2dRE << zB;
+
+	  // four step integration (C3 and C4) (last two steps )
+	  zC <<  2.0*z4b - z2b;
+	  systemC->setActiveConstraintsChanged(true);
+	  qC += systemC->deltaq(zC,t+dtHalf,dtQuarter);
+	  systemC->update(zC,t+dtHalf+dtQuarter);
+	  iterC3  = systemC->solve(dtQuarter);
+	  uC += systemC->deltau(zC,t+dtHalf+dtQuarter,dtQuarter);
+	  xC += systemC->deltax(zC,t+dtHalf+dtQuarter,dtQuarter);
+	  systemC->updateLinkStatus();
+	  LSC3 = systemC->getLinkStatus();
+
+	  qC += systemC->deltaq(zC,t+dtHalf+dtQuarter,dtQuarter);
+	  systemC->update(zC,t+dt);
+	  iterC4  = systemC->solve(dtQuarter);
+	  uC += systemC->deltau(zC,t+dt,dtQuarter);
+	  xC += systemC->deltax(zC,t+dt,dtQuarter);
+	  systemC->updateLinkStatus();
+	  LSC4 = systemC->getLinkStatus();
+	  ConstraintsChangedBlock2 = ConstraintsChangedBlock2 || (LSC2 !=LSC3) || (LSC3 !=LSC4);
+	  ConstraintsChanged = ConstraintsChanged || ConstraintsChangedBlock2;
+	  z4dRE << zC;
+	}
+
 	dtOld = dt;
-        Vec g0_;
-        g0_ = system->getg(); 
 	if (testTolerances()) {
-          StepFinished = 1;
+	  StepFinished = 1;
 	  sumIter += iter;
-	  if(iter > maxIter) maxIter = iter;
+	  if(iter > maxIterUsed) maxIterUsed = iter;
 	  if (maxdtUsed < dtOld) maxdtUsed = dtOld;
 	  if (mindtUsed > dtOld) mindtUsed = dtOld;
-          if(outputInterpolation) {
-	    la1eBi.resize()  = system->getAllBilateralla()/dtOld;
-	    la1eUni.resize() = system->getAllUnilateralla()/dtOld;
-	  }
-	  if(driftCompensation) {
-	    system->updatezRef(z2e);
-	    system->projectViolatedConstraints(t+dtOld);
-	  }
 	}
 	else {
 	  refusedSteps++;
+	  StepTrials++;
 	  if (dtOld == dtMin) {
 	    StepFinished = -1;
 	    cout << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
 	    //exit(StepFinished);
 	  }
 	}
-	if (optimisedtforgaps) {
-	  bool finished;
-	  do {
-	    finished = gapControl(g0_);
-	  }
-	  while(! finished);
-	}
       }
 
+      StepTrials=0;
       StepFinished = 0;
-      integrationSteps++;
-      ti = t;
-      t += dtOld;
+      integrationSteps++; 
+      if(order==1)integrationStepsOrder1++;
+      if(order==2)integrationStepsOrder2++;
+      t += dte;
+
       plot();
-      zi << z2e; 
-      ExitIntegration = (t>=tEnd);
+     
+      zi << ze;
+      LS << LSe;
       if (outputInterpolation) {
-	if (laiBi.size() != la1eBi.size()) laiBi.resize();
-	laiBi = la1eBi;
-	if (laiUni.size() != la1eUni.size()) laiUni.resize();
-	laiUni = la1eUni;
+	if (laBi.size() != laeBi.size()) laBi.resize();
+	laBi = laeBi;
+	if (laUni.size() != laeUni.size()) laUni.resize();
+	laUni = laeUni;
       }
-     if (StepsWithUnchangedConstraints>=0) {
-       if (! ConstraintsChanged) UnchangedSteps++;
-       else UnchangedSteps =0;
-       if (UnchangedSteps >= StepsWithUnchangedConstraints) ExitIntegration = true;
-     }
+
+      if(ConstraintsChanged) integrationStepswithChange++;
+      ExitIntegration = (t>=tEnd);
+
+      if (StepsWithUnchangedConstraints>=0) {
+	if (! ConstraintsChanged) UnchangedSteps++;
+	else UnchangedSteps =0;
+	if (UnchangedSteps >= StepsWithUnchangedConstraints) ExitIntegration = true;
+      }
     }
   }
 
   void TimeSteppingSSCIntegrator::plot() {
-    if ((plotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
+    if ((FlagPlotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
       tPlot+=dtPlot;
-      z = z2e;
-      system->plot(z,t,dtOld);
-    } 
-    else if ((t>=tPlot) && outputInterpolation) {
-      while (t>=tPlot) { 
-	if (laiBi.size() > la1eBi.size()) laiBi.resize()  = laiBi(0,la1eBi.size()-1);
-	if (laiBi.size() < la1eBi.size()) la1eBi.resize() = la1eBi(0,laiBi.size()-1);
-	if (laiUni.size() > la1eUni.size()) laiUni.resize()  = laiUni(0,la1eUni.size()-1);
-	if (laiUni.size() < la1eUni.size()) la1eUni.resize() = la1eUni(0,laiUni.size()-1);
-	Vec laBi, laUni;
-	z = zi + (z1e-zi)*(tPlot-ti)/dtOld;
-	laBi  = laiBi + (la1eBi-laiBi)*(tPlot-ti)/dtOld;
-	laUni = laiUni + (la1eUni-laiUni)*(tPlot-ti)/dtOld;
-	system->setAllBilateralla(laBi);
-	system->setAllUnilateralla(laUni);
-	system->plot(z,tPlot,1);			// la [N] !! (la!=N*s)
-	tPlot +=dtPlot;
+      zA << ze;
+      systemA->setAllBilateralla(laBi);
+      systemA->setAllUnilateralla(laUni);
+      systemA->plot(zA,t,1);
+    }
+    if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
+      while (t>tPlot) {
+        if (laBi.size()  > laeBi.size())  laBi.resize()   = laBi(0,laeBi.size()-1);
+        if (laBi.size()  < laeBi.size())  laeBi.resize()  = laeBi(0,laBi.size()-1);
+        if (laUni.size() > laeUni.size()) laUni.resize()  = laUni(0,laeUni.size()-1);
+        if (laUni.size() < laeUni.size()) laeUni.resize() = laeUni(0,laUni.size()-1);
+        double ratio = (tPlot -(t-dte))/dte;
+        zA << zi + (ze-zi)*ratio;
+        systemA->setAllBilateralla(laBi+(laeBi-laBi)*ratio);
+        systemA->setAllUnilateralla(laUni+(laeUni-laUni)*ratio);
+        systemA->plot(zA,tPlot,1);
+        tPlot += dtPlot;
       }
     }
-    else return;
+
     if (FlagPlotIntegrator) {
-      double s1 = clock();
-      time += (s1-s0)/CLOCKS_PER_SEC;
-      s0 = s1; 
-      integPlot<< t << " " << dtOld << " " <<  iter << " " << system->getlaSize()  << " "<< time  <<endl;
+      time += Timer.stop();
+      integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << systemA->getlaSize()  << " "<< time  <<endl;
     }
-    if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<  "\r"<<flush;
+    if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
   }
 
   void TimeSteppingSSCIntegrator::closeIntegrator() {
-    double s1 = clock();
-    time += (s1-s0)/CLOCKS_PER_SEC;
+    time += Timer.stop();
     cout.unsetf(ios::scientific);
     if (FlagPlotIntegrator) integPlot.close();
     if (FlagPlotIntegrationSum) {
-      ofstream integSum((system->getDirectoryName() + name + ".sum").c_str());
+      ofstream integSum((systemA->getDirectoryName() + name + ".sum").c_str());
       integSum << "Integration time: " << time << endl;
       integSum << "Integration steps: " << integrationSteps << endl;
-      if (FlagSSC) {
-        integSum << "Refused steps: " << refusedSteps << endl;
-        integSum << "Maximum step size: " << maxdtUsed << endl;
-        integSum << "Minimum step size: " << mindtUsed << endl;
+      integSum << "Steps with impacts: " << integrationStepswithChange<< endl;
+      if (maxOrder==2) {
+	integSum<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+	integSum<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
       }
-      integSum << "Maximum number of iterations: " << maxIter << endl;
+      if (FlagSSC){
+	integSum << "Refused steps: " << refusedSteps << endl;
+	integSum << "Maximum step size: " << maxdtUsed << endl;
+	integSum << "Minimum step size: " << mindtUsed << endl;
+        integSum << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
+      }
+      integSum << "Maximum number of iterations: " << maxIterUsed << endl;
       integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
       integSum.close();
-    }   
-    if (FlagCoutInfo) {
-      if (output) cout << endl <<endl;
-      cout << "Summary Integration with TimeStepperSSC: "<<endl;
-      cout << "Integration time: " << time << endl;
-      cout << "Integration steps: " << integrationSteps << endl;
-      if (FlagSSC) {
-        cout << "Refused steps: " << refusedSteps << endl;
-        cout << "Maximum step size: " << maxdtUsed << endl;
-        cout << "Minimum step size: " << mindtUsed << endl;
-      }
-      cout << "Maximum number of iterations: " << maxIter << endl;
-      cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-    }
-  }
-
-  bool TimeSteppingSSCIntegrator::testTolerances() {
-    if (! FlagSSC) return true;
-    Vec EstErrorLocal;
-    EstErrorLocal = z2e -z1e;
-
-    bool testOK = true;
-    double dtNewRel=0;
-	double dtNewRel_i;
-    double ResTol_i;
-    for (int i=0; i< zSize; i++) {
-      EstErrorLocal(i) = fabs(EstErrorLocal(i));
-      ResTol_i   = aTol(i) + rTol(i)*fabs(zi(i));
-      dtNewRel_i = ResTol_i / EstErrorLocal(i);
-      if (! i) dtNewRel = dtNewRel_i;
-      else if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
-      if ((testOK)&&(EstErrorLocal(i)> ResTol_i)) testOK = false;
-    }
-    if(dtNewRel > maxGainSSC) dtNewRel=maxGainSSC;   //  0.6 oder 0.7 und 2.5 oder 2
-    if(dtNewRel < 1.0/maxGainSSC) dtNewRel = 1/maxGainSSC;
-    dt = dt*safetyFactorSSC*dtNewRel;
-    if (dt > dtMax) dt = dtMax;
-    if (dt < dtMin) dt = dtMin;
-
-    return testOK;
-  }
-
-  bool TimeSteppingSSCIntegrator::gapControl(const Vec &g) {
-    Index gInd = system->getgIndUnilateral();
-    Vec g0,ge;
-    int gSize;
-    
-    g0 = g(gInd);
-    gSize = g0.size();
-    z << z2e;
-    q += system->deltaq(z,t+dtOld,dt);
-    system->updateKinematics(t+dtOld+dt);
-    system->updateLinksStage1(t+dtOld+dt);
-    ge = system->getg()(gInd);
-    if (ge.size()<gSize) gSize = ge.size();
-
-    Mat DTiMatTmp(gSize,2,INIT,-1.0);
-    double DTiGTdtMin = 10*dt;
-    int iDTiGTdtMin = -1;
-    int tiSize=0;
-    for(int i=0; i<gSize; i++) {
-      if ((g0(i)>0)&&(1.5*ge(i)-0.5*g0(i)<0)) {
-	double DTi = g0(i)*dt/(g0(i)-ge(i));
-	if ((DTi>dt)&&(DTi<DTiGTdtMin)) {
-	  DTiGTdtMin = DTi;
-	  iDTiGTdtMin = i; 
+      }   
+      if (FlagCoutInfo) {
+	if (output) cout << endl <<endl;
+	cout << "Summary Integration with TimeStepperSSC: "<<endl;
+	cout << "Integration time: " << time << endl;
+	cout << "Integration steps: " << integrationSteps << endl;
+	cout << "Steps with impacts: " << integrationStepswithChange<< endl;
+        if (maxOrder==2) {
+	cout<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+	cout<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
+        }
+	if (FlagSSC) {
+	  cout << "Refused steps: " << refusedSteps << endl;
+	  cout << "Maximum step size: " << maxdtUsed << endl;
+	  cout << "Minimum step size: " << mindtUsed << endl;
+          cout << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
 	}
-	if (DTi<=dt) {
-	  DTiMatTmp(tiSize,0)= DTi;
-	  DTiMatTmp(tiSize,1)= i;
-	  tiSize++;
+	cout << "Maximum number of iterations: " << maxIterUsed << endl;
+	cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
 	}
       }
-    }
-    if (iDTiGTdtMin>-1) {
-      DTiMatTmp(tiSize,0)= DTiGTdtMin;
-      DTiMatTmp(tiSize,1)= iDTiGTdtMin;
-      tiSize++;
-    }
 
-    if (tiSize) {
-      if (tiSize == 1) {
-	if (DTiMatTmp(0,0) <= dt) dt= DTiMatTmp(0,0)* safetyFactorGapControl;
-	else dt = DTiMatTmp(0,0)/1.9;
-      }
-      else {
-	Mat DTiAndIndex = quickSortMedian(DTiMatTmp(0,0,tiSize-1,1),0);
-	int iOpt = 0;
-	double Grading = (ge(int(DTiAndIndex(0,1)))-g0(int(DTiAndIndex(0,1))))*DTiAndIndex(0,0)*(DTiAndIndex(1,0)-DTiAndIndex(0,0));
-	for(int i=1; i<tiSize-1; i++) {
-	  double GradingTMP = (ge(int(DTiAndIndex(i,1)))-g0(int(DTiAndIndex(i,1))))*DTiAndIndex(i,0)*(DTiAndIndex(i+1,0)-DTiAndIndex(i,0));
-	  if (GradingTMP>Grading) {
-	    Grading = GradingTMP;
-	    iOpt = i;
+
+      bool TimeSteppingSSCIntegrator::testTolerances() 
+      {
+        double dtNewRel; 
+	bool testOK;
+	bool IterConvergenceBlock1=true;
+	bool IterConvergenceBlock2=true;
+	IterConvergence = (iterA<maxIter);
+
+	Vec EstErrorLocal;
+
+	if (!FlagSSC) {
+	  if (maxOrder==1) {LSe << LSA;     ze << z1d;          }
+	  if (maxOrder==2) {
+            LSe << LSB2;    
+            if (!ConstraintsChanged) {
+              ze << 2.0*z2d - z1d; order=2;} 
+            else {ze<<z2d; order=1;}
+          }
+	  dte = dt;
+	  return true;
+	}
+	else {
+	  if (maxOrder==1) {
+	    IterConvergenceBlock1 = (iterB1<<maxIter);
+	    IterConvergenceBlock2 = (iterB2<<maxIter);
+	    EstErrorLocal = z2d-z1d;
+	    dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+	    testOK = (dtNewRel>=1.0);
+	    dtNewRel = sqrt(dtNewRel);
+	    dte = dt;
+	    ze  << z2d;
+	    LSe << LSB2;
+	  }
+	  if (maxOrder==2) {
+	    IterConvergenceBlock1 = (iterB1<maxIter) && (iterC1<maxIter) && (iterC2<maxIter);
+	    if (ConstraintsChangedBlock1) {
+	      IterConvergence=true;
+	      order=1;
+	      EstErrorLocal = z2b-z4b;
+	      dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+	      testOK = (dtNewRel>=1.0);
+	      dtNewRel = sqrt(dtNewRel);
+	      dte= dt/2.0;
+	      ze  << z4b;
+	      LSe << LSC2;
+	    }
+	    else {
+	      IterConvergenceBlock2 = (iterB2<maxIter) && (iterB2RE<maxIter) && (iterC3<maxIter) && (iterC4<maxIter);
+	      if (ConstraintsChanged) {
+		EstErrorLocal = z2b-z4b;			// Pruefe auf Einhaltung der Toleranz im Block1 (kein Stoss)
+		dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+		testOK = (dtNewRel>=1);
+		dtNewRel = sqrt(dtNewRel);
+		dte = dt/2.0;
+		ze  << 2.0*z4b-z2b;
+		LSe << LSC2;
+		order = 2;
+		if (testOK) {
+		  EstErrorLocal = z2dRE-z4dRE;
+		  double dtNewRelTmp = calculatedtNewRel(EstErrorLocal,dt);
+		  if (dtNewRelTmp>=1) {
+		    dtNewRel = sqrt(dtNewRelTmp);
+		    testOK = true;
+		    dte = dt;
+		    ze  << z4dRE;
+		    LSe << LSC4;
+		    order =1;
+		  }
+		  else {IterConvergence=true; IterConvergenceBlock2=true;}
+		}
+	      }
+	      else {
+		order = 2;
+		EstErrorLocal = (2.0*z2d-z1d - 2.0*z4dRE+z2dRE)/3.0;
+		dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+		testOK = (dtNewRel>=1.0);
+		dtNewRel = pow(dtNewRel,1.0/3.0);  
+		ze  << 2.0*z4dRE - z2dRE;
+		LSe << LSC4;
+		dte=dt;
+		// order 2 hat mehrfach versagt! Teste auf order 1
+		if (!testOK && (StepTrials>1)) {
+		  double dtNewRelTmp1 = calculatedtNewRel(z2b - z4b, dt);
+		  double dtNewRelTmp2 = calculatedtNewRel(z4dRE-z2dRE, dt);
+		  if (dtNewRelTmp1>=1.0) {
+		    order = 1;
+		    testOK= true;
+		    if (dtNewRelTmp2>=1.0) {
+		      dtNewRel= sqrt(dtNewRelTmp2);
+		      ze << z4dRE;
+		    }
+		    else {
+                      dtNewRel= sqrt(dtNewRelTmp1);  
+                      ze << z2b; 
+                      dte= dt/2.0;
+                    }
+		  }
+		}
+	      }
+	    }
 	  }
 	}
-	dt = safetyFactorGapControl*DTiAndIndex(iOpt,0);
-      }
-    }
-    // Prüfe ob gapTol eingehalten wurde
-    bool gapsOK = true;
-    if (gapTol) {
-      z << z2e;
-      q += system->deltaq(z,t+dtOld,dt);
-      system->updateKinematics(t+dtOld+dt);
-      system->updateLinksStage1(t+dtOld+dt);
-      ge.resize() = system->getg()(gInd);
-      for(int i=0; i<tiSize; i++) {
-	if (ge(int(DTiMatTmp(i,1))) < -gapTol) {
-	  gapsOK = false;
-	  break;
-	}
-      }
-      if (! gapsOK) {
-	if (dt/2.0 <= dtMin) gapsOK=true;
-	else dt=dt/2.0;
-	if (dt<dtMin*0.9) dt = dtMin*0.9;
-      }
-    }
-    return gapsOK;
-  }
 
-}
+        if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
+          laeUni.resize() = la2bUni;
+          laeBi.resize()  = la2bBi;
+          iter = iterB1;
+          ConstraintsChanged=ConstraintsChangedBlock1;
+        }
+        else {
+          laeUni.resize() = la1dUni;
+          laeBi.resize()  = la1dBi;        
+          iter = iterA;
+        }
+
+	IterConvergence = IterConvergence && IterConvergenceBlock1 && IterConvergenceBlock2;
+	if ((! IterConvergence)&&(testOK)) {
+	  if (dt/2.0>dtMin) {
+	    testOK= false; 
+	    dt=dt/2.0;
+	  }
+	  else {
+	    cout<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
+	  }
+	}
+	else {
+	  if(dtNewRel<0.5/safetyFactorSSC) dtNewRel = 0.5/safetyFactorSSC;
+	  if(dtNewRel > maxGainSSC) dtNewRel=maxGainSSC;   //  0.6 oder 0.7 und 2.5 oder 2  (0.7/2.2 in ...SSC3.h)
+	  dt = dt*dtNewRel*safetyFactorSSC;
+	}  
+
+	if (dt > dtMax) dt = dtMax;
+	if (dt < dtMin) dt = dtMin;
+
+	return testOK;
+      }
+
+      double TimeSteppingSSCIntegrator::calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H) {
+	double dtNewRel=1.0e10; 
+	double dtNewRel_i;
+	double ResTol_i;
+	int ErrorSize = ErrorLocal.size();
+        if (FlagErrorTest==3) ErrorSize = qSize+xSize;
+ 
+	for (int i=0; i< ErrorSize; i++) {
+	  if ((i>=qSize+xSize)&&(FlagErrorTest==2))
+	    ResTol_i = aTol(i)/H+  rTol(i)*fabs(zi(i));
+	  else ResTol_i = aTol(i) + rTol(i)*fabs(zi(i));
+	  dtNewRel_i = ResTol_i / fabs(ErrorLocal(i));
+	  if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
+	}
+	return dtNewRel;
+      }
+
+    }

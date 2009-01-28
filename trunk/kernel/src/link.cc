@@ -34,7 +34,7 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), bilateral(false), gSize(0), laSize(0), rFactorSize(0), active(true), activeForAssembling(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {}
+  Link::Link(const string &name, bool setValued_) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), bilateral(false), gSize(0), laSize(0), rFactorSize(0), active(true), activeForAssembling(0), LinkStatusSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-8), laTol(1e-2), rMax(1.0), HSLink(0), checkHSLink(false) {}
 
   Link::~Link() { 
 #ifdef HAVE_AMVIS   
@@ -76,9 +76,11 @@ namespace MBSim {
   void Link::updatejsvRef() {
     jsv >> mbs->getjsv()(svInd,svInd+svSize-1);
   }
+  void Link::updateLinkStatusRef() {
+    LinkStatus >>mbs->getLinkStatus()(LinkStatusIndex,LinkStatusIndex+LinkStatusSize-1);
+  }
 
   void Link::plot(double t, double dt) {
-
     Element::plot(t,dt);
 
     if(plotfile>0) {

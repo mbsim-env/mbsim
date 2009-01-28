@@ -73,6 +73,8 @@ namespace MBSim {
     vector<DataInterfaceBase*> DIBs;
     /** vector of included hitspheres */
     vector<HitSphereLink*> HSLinks;
+    /** Status of all unilateral setvalued links*/
+    Vector<int> LinkStatus;
     /** ingredients to plot */
     vector<Object*> objects2plot;
     vector<Link*> links2plot;
@@ -121,8 +123,9 @@ namespace MBSim {
 
     /** size of stopvector sv */
     int svSize;
-    int svInd;
+    /** Stopvector sv */
     Vec sv;
+    /** Integrator Output (commonly named JROOT): indicates which components of the stopvector have a root */
     Vector<int> jsv;
 
     /** size of constraints from unilateral links e.g. for DAE integration */
@@ -469,6 +472,7 @@ namespace MBSim {
     void setNumJacProj(bool numJac_) {numJac = numJac_;}
     /*! Set maximum number of contact iterations for errors */
     void setMaxIter(int iter) {maxIter = iter;}
+    int  getMaxIter() {return maxIter;}
     /*! Set high number of contact iterations for warnings */
     void setHighIter(int iter) {highIter = iter;}
     /*! Set maximum damping steps for Newton */
@@ -552,6 +556,8 @@ namespace MBSim {
     void root_DAE(const Vec &YParent, Vec &rt, double t);
     // save status (e.g. active, stick/slip) of unilateral links and update size StopVector (svSize) and constraintSize (for e.g. DAE)*/
     void saveUnilaterLinkStatus();
+    // release saved link status 
+    void deleteUnilaterLinkStatus();
     // get size of unilateral constraints (use saveUnilaterLinkStatus before to update constraints) (for e.g. DAE)*/
     int getSizeUnilateralConstraints() {return constraintSize;}
     // get and set all la of all links stored in linkSetValuedBilateral / linkSetValuedUnilateral */
@@ -560,7 +566,6 @@ namespace MBSim {
     Vec getAllUnilateralla();
     void setAllUnilateralla(const Vec laAllUni);
 
-    virtual void shift(Vec& z, const Vector<int>& jsv, double t) {}
     bool driftCompensation(Vec& z, double t) { return false; }
 
     void getsv(const Vec&, Vec&, double);
@@ -568,6 +573,11 @@ namespace MBSim {
     const Vec& getsv() const {return sv;}
     Vector<int>& getjsv() {return jsv;}
     const Vector<int>& getjsv() const {return jsv;}
+    const Vector<int>& getLinkStatus() const {return LinkStatus;};
+    Vector<int>& getLinkStatus() {return LinkStatus;};
+    void updateLinkStatus();
+    void updateLinkStatusRef(const Vector<int> &LinkStatusParent);
+ 
     int getsvSize() const {return svSize;}
     int getzSize() const {return Object::getzSize();}
 
