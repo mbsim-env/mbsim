@@ -48,7 +48,6 @@ namespace MBSim {
       TSIntegrator->setOutputInterpolation(true);
       TSIntegrator->optimiseDtForGaps(false);
       TSIntegrator->setDriftCompensation(false);
-      TSIntegrator->setplotEveryStep(false);
       TSIntegrator->StepsWithUnchangedConstraints = 4;
       DAEIntegrator->DAEIndex = 2;
       DAEIntegrator->FlagErrorTest = 2;
@@ -118,14 +117,13 @@ namespace MBSim {
 
   void DAETSIntegrator::initIntegrator(MultiBodySystem &system_) {
     system = &system_;
-    s0 = clock();
+    Timer.start();
     TSIntegrator->initIntegrator(*system);
     DAEIntegrator->initIntegrator(*system);
   }
 
   void DAETSIntegrator::closeIntegrator() {
-    double s1 = clock();
-    double time = (s1-s0)/CLOCKS_PER_SEC;
+    time = Timer.stop();
     TSIntegrator->closeIntegrator();
     DAEIntegrator->closeIntegrator();
     cout << endl<< endl<< "Integration time = " << time << endl;
@@ -137,6 +135,7 @@ namespace MBSim {
     while (! ExitIntegration) {
       DAEIntegrator->tStart = t;
       DAEIntegrator->z0 = z0;
+      system->saveUnilaterLinkStatus();
       DAEIntegrator->refreshIntegratorSetups();
       int errorCodeInitCond = DAEIntegrator->computeInitialConditions(false,false);
       if (errorCodeInitCond>0) {
@@ -147,6 +146,8 @@ namespace MBSim {
         if ((DAEIntegrator->idid == 5)&& (outputRoots)) cout << endl << "root at t= "<<t<<endl;
       }
       else ExitIntegration = true;
+
+      system->deleteUnilaterLinkStatus();
 
       if (! ExitIntegration) {
         TSIntegrator->tStart= t;

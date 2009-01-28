@@ -38,7 +38,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), maxSteps(10000), stiff(false) {
+  LSODEIntegrator::LSODEIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), maxSteps(10000), maxOrder(0), stiff(false) {
   }
 
   void LSODEIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -84,6 +84,7 @@ namespace MBSim {
     rWork(6) = dtMin;
     int liWork=(20+zSize)                             *10;//////////////;
     Vector<int> iWork(liWork);
+    if(maxOrder) iWork(4) = maxOrder;
     iWork(5) = maxSteps;
 
     system->plot(z, t);
@@ -102,9 +103,6 @@ namespace MBSim {
       MF = 22; // Stiff (BDF) method, internally generated full Jacobian.
     else
       MF = 10; // Nonstiff (Adams) method, no Jacobian used.
-
-    Vector<int> jsv(nsv);  
-//    bool donedrift;
 
     cout.setf(ios::scientific, ios::floatfield);
     while(t<tEnd) {

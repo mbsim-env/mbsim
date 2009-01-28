@@ -25,19 +25,20 @@
 
 #include<fmatvec.h>
 #include "integrator.h"
-//#include "integrators.h"
-//#include "daskr_integrator.h"
-//#include "time_stepping_ssc_integrator.h"
+#include "stopwatch.h"
+#include "integrators.h"
 
 namespace MBSim {
 
   class TimeSteppingSSCIntegrator;
   class DASKRIntegrator;
-
+  
   /*! Event driven DAE and TimeStepping Integration  (DAE solver: DASKR)*/
   class DAETSIntegrator : public Integrator { 
+
     protected :
-      double s0;
+      StopWatch Timer;
+      double time;
       bool outputRoots;
  
     public :  

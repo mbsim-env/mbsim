@@ -71,6 +71,7 @@ namespace MBSim {
     Vec Y(*(ipar+2), Y_);
     Vec rval(*nrt,rval_);
     system->root_DAE(Y,rval,*t);
+    //cout << "root evaluation t= "<<*t<<endl;
   }
 
   void DASKRIntegrator::setFlagErrorTest(int Flag) {
@@ -104,13 +105,14 @@ namespace MBSim {
     }
   }
 
-  void DASKRIntegrator::refreshIntegratorSetups() {
+  void DASKRIntegrator::refreshIntegratorSetups() 
+  {
     int zSize= system->getzSize();
-    system->saveUnilaterLinkStatus();
     int laBiSize = system->getlaBilateralSize();
     int laUniSize= system->getSizeUnilateralConstraints();
-    YSize    = zSize + laBiSize + laUniSize;
+    YSize = zSize + laBiSize + laUniSize;
     nrt = system->getsvSize();
+    
     if (DAEIndex==21) YSize += laBiSize;		//TODO
     if (DAEIndex==1)  YSize = zSize;			//TODO
 
@@ -174,7 +176,8 @@ namespace MBSim {
 
 
   int DASKRIntegrator::computeInitialConditions(bool FlagPlot0, bool FlagCoutInfo_) {
-    info(10)= 1; 			// calculate consistent initial values
+    info(10)= 1; 		
+    info(17)= 1;
     // calculate initial conditions
     DDASKR(residuum, &YSize, &t, Y(), Ydot(), &tEnd,
 	info(), rTol(), aTol(), &idid, rwork(), &LRW, iwork(), &LIW, rPar(), iPar(), jac, 0, rt, &nrt, jroot());
@@ -189,7 +192,7 @@ namespace MBSim {
 
   void DASKRIntegrator::IntegrationStep() 
   {
-    s0 = clock();
+    Timer.start();
     double tOut = t+dtPlot;
     if (tOut>tEnd) tOut = tEnd;
     bool ExitIntegration = (t>=tEnd);
@@ -210,12 +213,10 @@ namespace MBSim {
 
 	  system->plotDAE(Y,t,DAEIndex);
 	}
+
 	if (output) 
 	  cout << "   t = " <<  t << ",\tdt = "<< rwork(6) << ",\torder = "<<iwork(7)<<"\r"<<flush;
 	if (FlagPlotIntegrator) {
-	  double s1 = clock();
-	  time += (s1-s0)/CLOCKS_PER_SEC;
-	  s0 = s1; 
 	  integPlot<< t << " " << rwork(6) << " "<<iwork(7)<< " " << idid << " "<< time << endl;
 	}
       }
@@ -233,13 +234,12 @@ namespace MBSim {
    FuncEvals    += iwork(11);
    JacEval      += iwork(12);
    RootEvals    += iwork(35);
+   time += Timer.stop();
   }
 
 
   void DASKRIntegrator::closeIntegrator() {
     cout.unsetf (ios::scientific);
-    double s1 = clock();
-    time += (s1-s0)/CLOCKS_PER_SEC;
     if (FlagPlotIntegrator) integPlot.close();
     if (FlagPlotIntegrationSum) {
       ofstream integSum((system->getDirectoryName() + name + ".sum").c_str());
