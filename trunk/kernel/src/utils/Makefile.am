@@ -5,6 +5,7 @@ libutils_la_SOURCES = eps.cc\
 		      function.cc\
 		      ppolynom.cc\
 		      contact_utils.cc\
+                      stopwatch.cc\
 		      rotarymatrices.cc
 
 libutils_la_CPPFLAGS = -I..
@@ -19,4 +20,5 @@ utilsinclude_HEADERS = eps.h\
 		       function.h\
 		       ppolynom.h\
 	               contact_utils.h\
+                       stopwatch.h\
 		       rotarymatrices.h
