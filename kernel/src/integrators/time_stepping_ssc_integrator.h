@@ -20,38 +20,48 @@
  *
  */
 
-#ifndef _TIME_STEPPING_SSC_INTEGRATOR_H_ 
-#define _TIME_STEPPING_SSC_INTEGRATOR_H_
+#ifndef _TIME_STEPPING_SSC_INTEGRATOR4_H_ 
+#define _TIME_STEPPING_SSC_INTEGRATOR4_H_
 
 #include<fmatvec.h>
 #include "integrator.h"
+#include "stopwatch.h"
 
 namespace MBSim {
 
-  /*! brief Half-explicit time-stepping integrator of first order with StepSize Control (SSC)*/
+  /*! brief Half-explicit time-stepping integrator of first or 2nd order with StepSize Control (SSC)*/
   class TimeSteppingSSCIntegrator : public Integrator { 
 
     friend class DAETSIntegrator;
 
-    private:
-      double dt, dtOld;
+    protected:
+      MultiBodySystem* systemA;
+      MultiBodySystem* systemB;
+      MultiBodySystem* systemC;
+
+      double dt, dtOld, dte;
       double dtMin, dtMax;
       bool driftCompensation;
-      double t, ti, tPlot;
-      int zSize;
-      Vec z, zi, z1e, z2e;
-      Vec laiBi, laiUni, la1eBi, la1eUni;
-      Vec q;
-      Vec u;
-      Vec x;
+      double t, tPlot;
+      int qSize, xSize, zSize;
+      Vec ze, zi, zA, zB, zC, z1d, z2d, z2dRE, z4dRE, z2b, z4b;
+      Vector<int> LS, LSe, LSA, LSB1, LSB2, LSC1, LSC2, LSC3, LSC4;
+      Vec laBi, laUni, laeBi, laeUni, la1dBi, la1dUni, la2bBi, la2bUni;
+      Vec qA, qB, qC;
+      Vec uA, uB, uC;
+      Vec xA, xB, xC;
       int StepsWithUnchangedConstraints;
-      /** Flag if stepsize control is used */
-      bool FlagSSC;
+      /** include (0) or exclude (3) variable u or scale (2) with stepsize for error test*/
+      int FlagErrorTest;
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
       fmatvec::Vec rTol;
-      /** Tolernaz for closing gaps */
+      /** activate step size control*/
+      bool FlagSSC;
+      /** maximum order of integration scheme (1 or 2) */
+      int maxOrder;
+      /** Toleranz for closing gaps */
       double gapTol;
       /** maximal gain factor for increasing dt by stepsize control (default 2.5; maxGain * safetyFactor must be GT 1)*/
       double maxGainSSC;
@@ -65,8 +75,8 @@ namespace MBSim {
       bool FlagPlotIntegrationSum;
       /** Flag: write integration info (integ. summary) to cout  (default true)*/
       bool FlagCoutInfo;
-      /** every successful integration step is ploted (set dtPlot=0 to activate plotEveryStep) (default false)*/
-      bool plotEveryStep;
+      /** every successful integration step is ploted (set dtPlot=0 to activate FlagPlotEveryStep) (default false)*/
+      bool FlagPlotEveryStep;
       /** Flag interpolate z and la for plotting (default true)*/
       bool outputInterpolation;
       /** dt is optimised to minimize penetration; no test with gapTol is applied (set gapTol>,0 to ensure gapTol) default false*/
@@ -76,10 +86,16 @@ namespace MBSim {
       /** computaional time*/
       double time;
       /** for internal use (start clock, integration info ...) */
-      double s0;
-      int iter, maxIter, sumIter;
-      int integrationSteps, refusedSteps;
+      StopWatch Timer;
+      int iter, iterA, iterB1, iterB2, iterC1, iterC2, iterC3, iterC4, iterB2RE, maxIterUsed, maxIter, sumIter;
+      int integrationSteps, integrationStepswithChange, refusedSteps;
       double maxdtUsed, mindtUsed;      
+      bool IterConvergence;
+      bool ConstraintsChanged, ConstraintsChangedBlock1, ConstraintsChangedBlock2, ConstraintsChangedA;
+      int integrationStepsOrder1;
+      int integrationStepsOrder2;
+      int order;
+      int StepTrials;
 
     public:
       /*! Constructor with \default dt(1e-5), \default driftCompensation(false) */
@@ -90,23 +106,32 @@ namespace MBSim {
       void setdt(double dt_) {dt = dt_;}
       /*! Set maximal step size */
       void setdtMax(double dtMax_) {dtMax = dtMax_;}
+      /*! Set minimal step size (default 2*maxOrder*epsroot() */
+      void setdtMin(double dtMin_) {dtMin = dtMin_;}
       /*! Set maximal gain for increasing dt by stepsize control */
       void setmaxGainSSC(double maxGain) {maxGainSSC = maxGain;}
       /*! safety factor for stepsize estimation: dt = dt_estimate * safetyFactorSSC (]0;1]; default 0.6)*/
       void setsafetyFactorSSC(double sfactor) {safetyFactorSSC=sfactor;}
-      /*! Deactivate stepsize control */
-      void deactivateSSC(bool flag=false) {FlagSSC = flag;}
       /*! Set Flag for output interpolation */
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
       /*! Set Flag to plot every successful integration step*/
-      void setplotEveryStep(bool flag=true) {plotEveryStep = flag;}
+      void plotEveryStep() {dtPlot =0;}
       /*! Set Flag to optimise dt for minmal penetration of unilateral links*/
       void optimiseDtForGaps(bool flag=true) {optimisedtforgaps=flag;}
       /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
+      
+      /*! set maximum order of integration scheme (1 or 2)*/  
+      void setMaxOrder(int order_);
+      /* activate step size control */
+      void deactivateSSC(bool flag=false) {FlagSSC=flag;}
+      /*! Set Flag vor ErrorTest (default 0: all variables are tested;  2: u is scaled with dt;  3: exclude u*/
+      void setFlagErrorTest(int Flag);
+
 
       /*! Start the integration */
-      void integrate(MultiBodySystem& system);
+      void integrate(MultiBodySystem& system_);
+      void integrate(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_);
 
       void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
       void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
@@ -115,11 +140,12 @@ namespace MBSim {
       void setgapTol(double gTol) {gapTol = gTol;}
 
       /** subroutines for integrate function */
-      void initIntegrator(MultiBodySystem &system_);
+      void initIntegrator(MultiBodySystem& system_);
+      void initIntegrator(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_);
       void IntegrationStep();
       void closeIntegrator();
       bool testTolerances();
-      bool gapControl(const Vec &g);
+      double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 
   };

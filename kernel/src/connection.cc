@@ -72,6 +72,7 @@ namespace MBSim {
       momentDir.resize(3,0);
       Wm.resize(3,0);
     }
+    w.clear();
     for(int i=0; i<2 ; i++) 
       w.push_back(Vec(laSize));
   }

@@ -39,9 +39,8 @@ namespace MBSim {
   /* Contour */
   Contour::Contour(const string &name) : Element(name), WrOP(3), WvP(3), WomegaC(3), AWC(3)
 # ifdef HAVE_AMVIS
-					 ,
-					 bodyAMVis(NULL),
-                                         AMVisInstance(0)
+					 ,bodyAMVis(NULL), bodyAMVisUserFunctionColor(NULL), boolAMVis(0), 
+                                          boolAMVisBinary(0), AMVisInstance(0)
 # endif
  {
    AWC(0,0) = 1;

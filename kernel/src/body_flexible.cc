@@ -43,8 +43,10 @@ namespace MBSim {
 												   { }
 
   BodyFlexible::~BodyFlexible() {
-	for(unsigned int i=0; i<discretization.size(); i++)
-	  discretization[i]->~DiscretizationInterface();
+	for(unsigned int i=0; i<discretization.size(); i++) {
+          delete discretization[i];
+          discretization[i] = NULL;
+        }
 #  ifdef HAVE_AMVIS
 	delete bodyAMVis; bodyAMVis=NULL;
 #  endif

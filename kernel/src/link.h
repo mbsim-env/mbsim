@@ -80,13 +80,17 @@ namespace MBSim {
 
       /** is a link active such that is has to be included in the kinetical balance */
       bool active;
+      /** */
       /** should this link be considered as constraint while assembling the system (g(q0)=0 or gd(q0,u0)=0) */
       bool activeForAssembling;
       /** Index of gaps and loads */
       Index Ig, Ila;
       /** saved force parameters */
       Vec la0;
-
+      /** Status of Link */
+      Vector<int> LinkStatus;
+      int LinkStatusIndex;
+      int LinkStatusSize;
       /** scale factor for flow and pressure quantity tolerances */
       double scaleTolQ,scaleTolp;
       /** tolerances and maximum rFactor */
@@ -153,8 +157,14 @@ namespace MBSim {
       virtual int getSizeConstraints() {return 0;}
       /*! set lagrange multiplier corresponding to constraints  e.g. for DAE integrator*/
       virtual void setLagrangeMultiplier(const Vec &lm){};
-      /*! save stauts of link */
+      /*! save stauts of link (e.g. open/closed, stick/slip...) and calculates new sizes of constraints and stopvector*/
       virtual void saveStatus() {};
+      /*! status of links must be deleted, if the saved status should not be used further on */
+      virtual void deleteStatus() {};
+      virtual void updateLinkStatus() {};
+      virtual void updateLinkStatusRef();
+      void setLinkStatusIndex(int index_) {LinkStatusIndex = index_;}
+      int getLinkStatusSize() {return LinkStatusSize;}
       /*! Get internal state variables of a Link */
       const Vec& getx() const {return x;}
       /*! Get internal state velocities of a Link */
@@ -183,6 +193,10 @@ namespace MBSim {
       const Vec& getg() const {return g;}
       /*! Get gaps */
       Vec& getg() {return g;}
+      /*! Get gap velocities */
+      const Vec& getgd() const {return gd;}
+      /*! Get gap velocities */
+      Vec& getgd() {return gd;}
       /*! Get number of gaps */
       int getgSize() const {return gSize;}
       /*! Get number of loads */

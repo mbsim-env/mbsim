@@ -50,11 +50,7 @@ namespace MBSim {
   }
 
   void ContactFlexible::setStiffness(double c_) {
-  	if(warnLevel>0) {
-    	cout << "WARNING (ContactFlexible::setStiffness): Deprecated function and only valid for linear contact law." << endl;
-    	cout << "Use setPotential and setStiffnessFunction instead." << endl;
-  	}
-    if (DeleteDIB_c) delete c_fun; 
+    if(DeleteDIB_c) delete c_fun; 
     c_fun = new FuncLinear(Vec(1,INIT,-c_),Vec(1,INIT,0.)); 
     DeleteDIB_c = true;
     if (DeleteDIB_V) delete V_fun; 
@@ -76,10 +72,6 @@ namespace MBSim {
   }
 
   void ContactFlexible::setDamping(double d_) {
-    if(warnLevel>0) {
-    	cout << "WARNING (ContactFlexible::setDamping) Deprecated function and only valid for linear contact law." << endl;
-    	cout << "Use setDampingFunction instead." << endl;
-    }
     if(DeleteDIB_d) delete d_fun; 
     d_fun = new FuncLinear(Vec(1,INIT,-d_),Vec(1,INIT,0.));
     DeleteDIB_d = true;
@@ -94,6 +86,7 @@ namespace MBSim {
 
   void ContactFlexible::init() {
     Contact::init();
+    load.clear();
     for(int i=0; i<2 ; i++) {
       load.push_back(Vec(6));
       WF[i] >> load[i](Index(0,2));
@@ -112,13 +105,13 @@ namespace MBSim {
 
 
       if(nFric == 1) { // tangential directions
-		if(fabs(gd(1)) < gdT_grenz) la(1) = -la(0)*((*mue_fun)(gdT_grenz))(0)*gd(1)/gdT_grenz;
-		else la(1) = gd(1)>0?-la(0)*((*mue_fun)(gd(1)))(0):la(0)*((*mue_fun)(-gd(1)))(0);
+	if(fabs(gd(1)) < gdT_grenz) la(1) = -la(0)*((*mue_fun)(gdT_grenz))(0)*gd(1)/gdT_grenz;
+	else la(1) = gd(1)>0?-la(0)*((*mue_fun)(gd(1)))(0):la(0)*((*mue_fun)(-gd(1)))(0);
       }
       else if(nFric == 2) {
-		double norm_gdT = nrm2(gd(1,2));
-		if(norm_gdT < gdT_grenz) la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(gdT_grenz))(0)/gdT_grenz);
-		else la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(norm_gdT))(0)/norm_gdT);
+	double norm_gdT = nrm2(gd(1,2));
+	if(norm_gdT < gdT_grenz) la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(gdT_grenz))(0)/gdT_grenz);
+	else la(1,2) = gd(1,2)*(-la(0)*((*mue_fun)(norm_gdT))(0)/norm_gdT);
       }
 
       WF[0] = getContourPointData(0).Wn*la(0) + getContourPointData(0).Wt*la(iT);

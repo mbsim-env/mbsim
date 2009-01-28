@@ -34,16 +34,18 @@ namespace MBSim {
     else return 0;
   }
 
-  ContactRigid::ContactRigid(const string &name) : Contact(name,true), argT(2) {}
+  ContactRigid::ContactRigid(const string &name) : Contact(name,true), argT(2), useSavedStatus(false) { }
 
   void ContactRigid::init() {
     Contact::init();
+    loadDir.clear();
     for(int i=0; i<2; i++) {
       loadDir.push_back(Mat(6,laSize));
       fF[i] >> loadDir[i](Index(0,2),Index(0,laSize-1));
     }
    dirFric.resize(nFric);
-   if (nFric) dirFric(0)=1; 
+   if (nFric) dirFric(0)=1;
+   LinkStatusSize=1;
   }
 
   void ContactRigid::updateKinetics(double t) {
@@ -53,9 +55,14 @@ namespace MBSim {
   }
 
   void ContactRigid::checkActive() {
-    bool active_old = active;
-    Contact::checkActive();
-    if(active != active_old) mbs->setActiveConstraintsChanged(true);
+    if (! useSavedStatus) {
+      bool active_old = active;
+      Contact::checkActive();
+      if(active != active_old) {
+       mbs->setActiveConstraintsChanged(true);
+      }
+    }
+    else active = statusActive;
   }
 
   void ContactRigid::projectJ(double dt) {
@@ -235,7 +242,8 @@ namespace MBSim {
     int *ja = mbs->getGs().Jp();
     for(int i=0; i < 1+nFric; i++) {
       gdn(i) = s(i);
-      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++) gdn(i) += a[j]*mbs->getla()(ja[j]);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++) 
+        gdn(i) += a[j]*mbs->getla()(ja[j]);
     }
 
     if(gdn(0) >= -gdTol && fabs(la(0)) <= laTol*dt);
@@ -305,31 +313,43 @@ namespace MBSim {
     if(mue_fun != 0) mue = ((*mue_fun)(vel))(0);
   }
 
+
+ void ContactRigid::updateLinkStatus() 
+ {
+   if (!active ) LinkStatus(0) = 0;
+   else {
+     LinkStatus(0) = 1;
+     if (nFric) if (nrm2(gdn(1,nFric)) <= gdTol) LinkStatus(0)=2;
+   }
+ }
+
   void ContactRigid::saveStatus() 
-  {
+  { 
     if (active) {
       statusActive = true;
-      double normgdT =0;
-      if (nFric==1) normgdT = fabs(gd(1));
-      else normgdT = nrm2(gd(1,2));
-      if (normgdT <= gdTol) statusStick = true;
-      else statusStick = false;
-  }
-    else statusActive = false;
-
-    svSize = 1;						
-    lmSize = 0;
-    if (statusActive) {
-      lmSize++;
+      statusStick = false;
+      lmSize = 1;
+      svSize = 1;
       if (nFric) {
-	if (statusStick)  {
-	  svSize++;
-	  lmSize += nFric;
+	svSize++;
+	double normgdT = nrm2(gd(1,nFric));
+	if (normgdT <= gdTol) {
+	  statusStick = true;
+	  lmSize+= nFric;
 	}
-	else svSize += nFric;
+	else {
+         statusStick = false;
+         dirFric.resize(nFric) =  - gd(1,nFric)/normgdT;
+        }
       }
     }
-    sv.resize(svSize); 
+    else {
+      statusActive = false;
+      lmSize = 0;
+      svSize = 1;
+    }
+    sv.resize(svSize);
+    useSavedStatus = true; 
   }
 
   void ContactRigid::setLagrangeMultiplier(const Vec &lm) 
@@ -344,8 +364,11 @@ namespace MBSim {
 	  updateFrictionCoefficient(normgdT);
 	  double laR = fabs(la(0))*mue;
 	  if (normgdT>gdTol) {
-	    dirFric(0) = - gd(1)/normgdT;
-	    if (nFric==2) dirFric(1) = - gd(2)/normgdT;
+            Vec dirNew = -gd(1,nFric)/normgdT;
+            double cosPhi = scalarProduct(dirFric,dirNew);
+            if (cosPhi>=0) dirFric = dirNew;
+            else dirFric = -dirNew;
+	    dirFric(0,nFric-1) = - gd(1,nFric)/normgdT;
 	  }
 	  la(1,nFric) = laR * dirFric;
 	}
@@ -361,8 +384,8 @@ namespace MBSim {
     if (statusActive) {
       if (index==3) constr = g;
       if (index==2) {
-        constr(0) = gd(0);
-        if (statusStick) constr(1,nFric) = gd(1,nFric);
+        if (statusStick && nFric) constr = gd;
+        else constr = gd(0,0);
       }
     }
   }
@@ -372,14 +395,20 @@ namespace MBSim {
     if (statusActive) {
       sv(0) = la(0);
       if (nFric) {
-        if (statusStick) {			// stick
-	double mueRel;
-	double laN = fabs(la(0));
-	if (nFric==1) mueRel = fabs(la(1))/laN;
-	else mueRel = sqrt(la(1)*la(1) + la(2)*la(2))/laN;
-	sv(1) = getFrictionCoefficient()-mueRel;
-      }
-      else  sv(1,nFric)= gd(1,nFric);
+	if (statusStick) {			// stick
+	  double mueRel;
+	  double laN = fabs(la(0));
+	  if (nFric==1) mueRel = fabs(la(1))/laN;
+	  else mueRel = sqrt(la(1)*la(1) + la(2)*la(2))/laN;
+	  sv(1) = getFrictionCoefficient()-mueRel;
+	}
+	else  {					// slip
+	  if (nFric==1) sv(1)= gd(1);
+          else {
+           sv(1) = nrm2(gd(1,nFric));
+           if (scalarProduct(dirFric,gd(1,nFric))>0) sv(1)*=-1.0;
+         }
+	}
       }
     }
     else sv(0) = g(0);

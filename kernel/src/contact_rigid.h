@@ -42,6 +42,8 @@ namespace MBSim {
       bool statusActive;
       /** status of link (stick or slip) can be saved in statusStick */
       bool statusStick;
+      /** flag if saved status is used or active or not depends on g<0 */
+      bool useSavedStatus;
       /** size of lagrange multiplier */
       int lmSize;
       /** direction of friction must be stored if nrm2(gd) aprrox zero (for DAE) */
@@ -84,8 +86,11 @@ namespace MBSim {
       int getSizeConstraints() {return lmSize;}
       /*! set lagrange multiplier corresponding to constraints  e.g. for DAE integrator*/
       void setLagrangeMultiplier(const Vec &lm);
-      /*! save stauts of link */  
+      /*! save status of link */  
       void saveStatus();
+      /*! delete status of link; */
+      void deleteStatus() {useSavedStatus=false;}
+      void updateLinkStatus();
       /*! Set the contact directions */
       void updateKinetics(double t);
   };

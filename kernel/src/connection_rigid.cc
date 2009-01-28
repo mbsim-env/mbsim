@@ -35,7 +35,7 @@ namespace MBSim {
 
   void ConnectionRigid::init() {
     Connection::init();
-
+    loadDir.clear();
     for(int i=0; i<2; i++) {
       loadDir.push_back(Mat(6,laSize));
       fF[i] >> loadDir[i](Index(0,2),Index(0,Wf.cols()-1));

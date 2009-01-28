@@ -145,13 +145,13 @@ namespace MBSim {
 
     for(unsigned int i=0; i<linkSetValuedContourData.size(); i++) {
       if(it2->link->isActive()) {
-		int objectID = it2->objectID;
-		Mat ld = it2->link->getLoadDirections(objectID);
-		Vec WrKC = it2->link->getWrOC(objectID)-WrOK;
-		Index iJ(0,ld.cols()-1);
-		(*itW).resize(uSize,ld.cols(),NONINIT);
-		(*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
-		(*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKC)*ld(IF,iJ)));
+	int objectID = it2->objectID;
+	Mat ld = it2->link->getLoadDirections(objectID);
+	Vec WrKC = it2->link->getWrOC(objectID)-WrOK;
+	Index iJ(0,ld.cols()-1);
+	(*itW).resize(uSize,ld.cols(),NONINIT);
+	(*itW)(iT,iJ) = trans(JT)*ld(IF,iJ);
+	(*itW)(iR,iJ) = trans(JR)*(trans(AWK)*(ld(IM,iJ)+tilde(WrKC)*ld(IF,iJ)));
       }
       it2++; itW++; 
     }

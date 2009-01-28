@@ -39,9 +39,9 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
+  MultiBodySystem::MultiBodySystem() : Object("Default"), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName("Default"), preIntegrator(NULL) {} 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), svInd(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Object(projectName), grav(3), gSize(0), gIndBilateral(0), gIndUnilateral(0), laSize(0), laIndBilateral(0), laIndUnilateral(0), rFactorSize(0), svSize(0), nHSLinksSetValuedUnilateralFixed(0),nHSLinksSetValuedBilateralFixed(0), nHSLinksSingleValuedFixed(0), checkGSize(true), limitGSize(500), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), solver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), activeConstraintsChanged(true), dropContactInfo(false), useOldla(true), numJac(false), directoryName(projectName), preIntegrator(NULL) {}
 
   MultiBodySystem::~MultiBodySystem() {
     vector<Object*>::iterator i;
@@ -273,7 +273,7 @@ namespace MBSim {
 
   HitSphereLink* MultiBodySystem::getHitSphereLink(Object* obj0, Object* obj1) {
     for(vector<HitSphereLink*>::iterator hsl = HSLinks.begin();hsl < HSLinks.end();hsl++)
-      if(((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1) || ((*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0)) return  (*hsl);
+      if((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1 || (*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0) return  (*hsl);
 
     HitSphereLink *HSLink = new HitSphereLink(); // create new hitsphere link if none is found
     HSLinks.push_back(HSLink);
@@ -301,11 +301,10 @@ namespace MBSim {
     }
 
     if(links.size()>0 && INFO) cout << "      Link parameters" " (" << links.size() <<")"<< endl;
-
-
-    int gSizeTmp, laSizeTmp;
-    laSizeTmp = laSize;
-    gSizeTmp = gSize;
+    gSize=0;
+    laSize=0;
+    rFactorSize=0;
+    svSize=0;
     for(vector<Link*>::iterator il = links.begin(); il != links.end(); ++il) {
       (*il)->calcSize();
       if((*il)->isSetValued() && (*il)->isBilateral()) {
@@ -321,11 +320,11 @@ namespace MBSim {
       (*il)->setsvInd(svSize);
       svSize += (*il)->getsvSize();
     }
-    gIndBilateral = Index(gSizeTmp, gSize-1);
-    laIndBilateral= Index(laSizeTmp, laSize-1);
+    gIndBilateral = Index(0, gSize-1);
+    laIndBilateral= Index(0, laSize-1);
 
-    gSizeTmp = gSize;
-    laSizeTmp = laSize;
+    int gSizeTmp = gSize;
+    int laSizeTmp = laSize;
     for(vector<Link*>::iterator il = links.begin(); il != links.end(); ++il) {
       if((*il)->isSetValued() && (! (*il)->isBilateral())) {
 	(*il)->setgInd(gSize);
@@ -359,7 +358,7 @@ namespace MBSim {
     }
 
     // TODO memory problem with many contacts
-    if(laSize>8000) laSize=8000;
+    //if(laSize>8000) laSize=8000;
     MParent.resize(getuSize());
     TParent.resize(getqSize(),getuSize());
     LLMParent.resize(getuSize());
@@ -443,6 +442,17 @@ namespace MBSim {
       if((*ic)->isSetValued()) (**ic).updategRef();
     }
     checkActiveConstraints();
+
+    int iLS =0;
+    for(vector<Link*>::iterator ic = linkSetValuedUnilateral.begin(); ic != linkSetValuedUnilateral.end(); ++ic) 
+      iLS += (*ic)->getLinkStatusSize();
+    LinkStatus.resize(iLS,INIT,0);
+    iLS =0;   
+    for(vector<Link*>::iterator ic = linkSetValuedUnilateral.begin(); ic != linkSetValuedUnilateral.end(); ++ic) {
+      (*ic)->setLinkStatusIndex(iLS);
+      (*ic)->updateLinkStatusRef();
+      iLS += (*ic)->getLinkStatusSize();
+    }
 
     // solver specific settings
     if(INFO) cout << "  use solver \'" << getSolverInfo() << "\' for contact situations" << endl;
@@ -585,7 +595,7 @@ namespace MBSim {
     }
     for(vector<ExtraDynamicInterface*>::iterator iF = EDI.begin(); iF != EDI.end(); ++iF) (*iF)->updateStage1(t);
     for(vector<Link*>::iterator iL = linkSingleValued.begin(); iL != linkSingleValued.end(); ++iL) (*iL)->updateStage1(t);
-    for(vector<Link*>::iterator iL = linkSetValuedBilateral.begin();  iL != linkSetValuedBilateral.end(); ++iL)  (*iL)->updateStage1(t);
+    for(vector<Link*>::iterator iL = linkSetValuedBilateral.begin();  iL != linkSetValuedBilateral.end(); ++iL) (*iL)->updateStage1(t);
     for(vector<Link*>::iterator iL = linkSetValuedUnilateral.begin(); iL != linkSetValuedUnilateral.end(); ++iL) (*iL)->updateStage1(t);
   }
 
@@ -599,6 +609,19 @@ namespace MBSim {
       (*iL)->updateStage2(t);
     for(vector<Link*>::iterator iL = linkSetValuedUnilateralActive.begin(); iL != linkSetValuedUnilateralActive.end(); ++iL)
       (*iL)->updateStage2(t);
+  }
+
+  void MultiBodySystem::updateLinkStatus() {
+    for(vector<Link*>::iterator iL = linkSetValuedUnilateral.begin(); iL != linkSetValuedUnilateral.end(); ++iL) (*iL)->updateLinkStatus();
+  }
+
+  void MultiBodySystem::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
+    LinkStatus >> LinkStatusParent;
+    for(vector<Link*>::iterator ic = linkSetValuedUnilateral.begin(); ic != linkSetValuedUnilateral.end(); ++ic) {
+      (*ic)->updateLinkStatusRef();
+    }
+
+
   }
 
   void MultiBodySystem::checkActiveConstraints() {
@@ -618,6 +641,12 @@ namespace MBSim {
 	  laSize += (*ic)->getlaSize();
 	  rFactorSize += (*ic)->getrFactorSize();
 	}
+        else {
+          int icSize = (*ic)->getlaSize();
+	  Vec zeros(icSize,INIT,0.0);
+	  (*ic)->getla()>> zeros;
+	  (*ic)->getgd()>> zeros;
+	}
       }
       laIndBilateral = Index(0,laSize-1);
       for(ic = linkSetValuedUnilateral.begin(); ic != linkSetValuedUnilateral.end(); ++ic) {
@@ -627,7 +656,14 @@ namespace MBSim {
 	  (*ic)->setrFactorInd(rFactorSize);
 	  laSize += (*ic)->getlaSize();
 	  rFactorSize += (*ic)->getrFactorSize();
-	}        
+	}  
+	else {
+	  int icSize = (*ic)->getlaSize();
+	  Vec zeros(icSize,INIT,0.0);
+	  (*ic)->getla()>> zeros;
+	  (*ic)->getgd()>> zeros;
+	}
+
       }
       laIndUnilateral = Index(laIndBilateral.end()+1,laSize-1);
 
@@ -679,24 +715,26 @@ namespace MBSim {
     if(useOldla) initla();
     else la.init(0);
     int iter;
-    Vec laOld;
+    Vec laOld(la.size());
     laOld = la;
     iter = (this->*solve_)(dt); // solver evaluation (election in init())
     if(iter >= maxIter) {
-      cout << endl;
-      cout << "Iterations: " << iter << endl;
-      cout << "\nError: no convergence."<< endl;
+      if(warnLevel>=0) {
+        cout << endl;
+        cout << "Iterations: " << iter << endl;
+        cout << "\nError: no convergence."<< endl;
+      }
       if(stopIfNoConvergence) {
 	if(dropContactInfo) dropContactMatrices();
 	assert(iter < maxIter);
       }
-      cout << "Anyway, continuing integration..."<< endl;
+      if(warnLevel>=0) cout << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)
       cerr << endl << "WARNING (MultiBodySystem:solve): high number of iterations: " << iter << endl;
 
-    if(useOldla) savela();
+    if((useOldla)&&(iter<maxIter)) savela();
 
     return iter;
   }
@@ -1106,7 +1144,6 @@ namespace MBSim {
     for(vector<ExtraDynamicInterface*>::iterator i = EDIs2plot.begin();     i != EDIs2plot.end(); ++i)     (**i).plot(t,dt);
 
     Object::plot(t,dt);
-
     /* Gesamtsystem Energien */
     if(plotLevel>=3) {
       double Ttemp = this->computeKineticEnergy();
@@ -1215,7 +1252,7 @@ namespace MBSim {
     for(unsigned int i=0; i<EDI.size(); i++) EDI[i]->readx0();
   }
 
-  void MultiBodySystem::plot(const Vec& zParent, double t, double dt) {   
+  void MultiBodySystem::plot(const Vec& zParent, double t, double dt) { 
     if(q()!=zParent()) updatezRef(zParent);
     if(qd()!=zdParent()) updatezdRef(zdParent);
     updateKinematics(t);
@@ -1228,7 +1265,6 @@ namespace MBSim {
     //computeConstraintForces(t); 
     //updater(t); 
     //updatezd(t);
-
     plot(t,dt);
   }
 
@@ -1332,6 +1368,10 @@ namespace MBSim {
     sv.resize(svSize);
   }
 
+  void MultiBodySystem::deleteUnilaterLinkStatus() {
+    for(vector<Link*>::iterator ic = linkSetValuedUnilateral.begin(); ic != linkSetValuedUnilateral.end(); ++ic) 
+      (*ic)->deleteStatus();
+  }
 
   void MultiBodySystem::F_DAE(const Vec &YParent, Vec &F, double t, int DAEIndex)   // F=[zdot; g(dot)] z.B. fuer Radau5
   {
@@ -1347,7 +1387,7 @@ namespace MBSim {
     }
     updateKinematics(t);
     updateLinksStage1(t);
-    checkActiveConstraints(); // nicht notwendig bei reinen zweiseitigen DAE; aber erforderlich bei einseitigen Bindungen und
+    //checkActiveConstraints(); // nicht notwendig bei reinen zweiseitigen DAE; aber erforderlich bei einseitigen Bindungen und
     updateLinksStage2(t);     // und Schaltpunktsuche: zur Schaltpunktsuche integriert Integrator auch ueber g=0 hinaus
     updateT(t); 	      // dann wird contact auf aktiv gesetzt und in nachfolgenden Routinen z.B. update W werden
     updateh(t); 	      // daten aus updatestage2 benoetig; updatestage2 wird aber nur durchgeführt, wenn link

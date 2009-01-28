@@ -82,7 +82,7 @@ namespace MBSim {
 
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
-      DataInterfaceBase* bodyAMVisUserFunctionColor;
+      DataInterfaceBase *bodyAMVisUserFunctionColor;
       bool AMVisDataRel;
       int AMVisInstance;
 #endif

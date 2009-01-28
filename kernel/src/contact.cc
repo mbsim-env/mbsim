@@ -77,16 +77,12 @@ namespace MBSim {
   }
 
   void Contact::setFrictionCoefficient(double mue_) {
-  	if(warnLevel>0) {
-  		cout << "WARNING (Contact::setFrictionCoefficient) Deprecated function and only valid for Coulomb friction."  << endl;
-    	cout << "Use setFrictionCoefficientFunction instead." << endl;
-  	}
-    if(DeleteDIB) delete mue_fun; 
+    if (DeleteDIB) delete mue_fun; 
     mue_fun = new FuncConst(Vec(1,INIT,mue_));
   }
 
   void Contact::setFrictionCoefficientFunction(DataInterfaceBase *mue_fun_, bool DeleteDIB_) {
-    if(DeleteDIB) delete mue_fun; 
+    if (DeleteDIB) delete mue_fun; 
     mue_fun = mue_fun_;
     DeleteDIB = DeleteDIB_;
   }
@@ -105,6 +101,7 @@ namespace MBSim {
   void Contact::init() {
     LinkContour::init();
     ContourPointData cpd[2];
+    cpData.clear();
     cpData.push_back(cpd[0]);
     cpData.push_back(cpd[1]);
     cpData[0].type = CONTINUUM; // default-Wert
@@ -190,11 +187,7 @@ namespace MBSim {
   }
 
   void Contact::checkActive() {
-    if(g(0)>0) {
-      active = false;
-      la.init(0.0);
-      gd.init(0.0);
-    }
+    if(g(0)>0) active = false;
     else active = true;
   }
 
