@@ -25,7 +25,6 @@
 #include "time_stepping_ssc_integrator.h"
 #include "eps.h"
 #include "stopwatch.h"
-#include "/usr/users/fermat/huber/huber/MBSim/mbsim/examples/woodpecker/planarElastic/woodpecker.h"
 
 #ifndef NO_ISO_14882
 using namespace std;
