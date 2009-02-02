@@ -53,11 +53,9 @@ namespace MBSim {
   void  RADAU5Integrator::plot(int* nr, double* told, double* t, double* z, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
 
     while(*t >= tPlot) {
-      for(int i=1; i<=*n; i++)
-	zInp(i-1) = CONTR5(&i,&tPlot,cont,lrc);
+      for(int i=1; i<=*n; i++) zInp(i-1) = CONTR5(&i,&tPlot,cont,lrc);
       system->plot(zInp, tPlot);
-      if(output_)
-	cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
+      if(output_) cout << "   t = " <<  tPlot << ",\tdt = "<< *t-*told << "\r"<<flush;
 
       double s1 = clock();
       time += (s1-s0)/CLOCKS_PER_SEC;
