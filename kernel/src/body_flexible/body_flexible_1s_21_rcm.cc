@@ -1,5 +1,5 @@
 /* Copyright (C) 2005-2006  Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -37,23 +37,18 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  BodyFlexible1s21RCM::BodyFlexible1s21RCM(const string &name, bool openStructure_) :BodyFlexible1s(name), 
-  L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), 
-  implicit(false),
-  WrON00(3), WrON0(3), 
-  initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0),
-  Wt(3), Wn(3), WrOC(3), WvC(3)
+  BodyFlexible1s21RCM::BodyFlexible1s21RCM(const string &name, bool openStructure_) :BodyFlexible1s(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), implicit(false), WrON00(3), WrON0(3), initialized(false), alphaRelax0(-99999.99999), alphaRelax(alphaRelax0), Wt(3), Wn(3), WrOC(3), WvC(3)
 #ifdef HAVE_AMVIS
-  ,
-  AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
+										     ,
+										     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
 #endif
 
- { 
-	  contourR = new Contour1sFlexible("R");
-	  contourL = new Contour1sFlexible("L");
-	  ContourPointData cpTmp;
-	  BodyFlexible::addContour(contourR,cpTmp,false);
-	  BodyFlexible::addContour(contourL,cpTmp,false);
+  { 
+    contourR = new Contour1sFlexible("R");
+    contourL = new Contour1sFlexible("L");
+    ContourPointData cpTmp;
+    BodyFlexible::addContour(contourR,cpTmp,false);
+    BodyFlexible::addContour(contourL,cpTmp,false);
   }
 
   void BodyFlexible1s21RCM::init() {
@@ -90,14 +85,14 @@ namespace MBSim {
     l0 = L/Elements;
     Vec g = trans(JT)*mbs->getGrav();
     for(int i=0;i<Elements;i++) {
-	  qElement.push_back(Vec(8,INIT,0.));
-	  uElement.push_back(Vec(8,INIT,0.));
-	  discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
-	  if(rc != 0) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurleRadius(rc);
-	  dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
-	  dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
-	}
-	// balken = new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g);
+      qElement.push_back(Vec(8,INIT,0.));
+      uElement.push_back(Vec(8,INIT,0.));
+      discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
+      if(rc != 0) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurleRadius(rc);
+      dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
+      dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+    }
+    // balken = new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g);
 
     if(alphaRelax != alphaRelax0) initRelaxed(alphaRelax);
 
@@ -118,7 +113,7 @@ namespace MBSim {
       RCMbody->setCylinder(AMVisRadius);
       RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
       RCMbody->setColor(AMVisColor);
- 
+
       bodyAMVis = RCMbody;
     } 
 #endif
@@ -173,7 +168,7 @@ namespace MBSim {
   //-----------------------------------------------------------------------------------
 
   void BodyFlexible1s21RCM::updateKinematics(double t) {
-	BuildElements();
+    BuildElements();
     sTangent = -l0;
 
     WrON0 = WrON00 + JT*q(Index(0,1));
@@ -203,39 +198,37 @@ namespace MBSim {
   }
 
   Mat BodyFlexible1s21RCM::computeJacobianMatrix(const ContourPointData &S_) {
-    static Index All(0,3-1);
-	Mat Jacobian(qSize,3,INIT,0.0);
+    Index All(0,3-1);
+    Mat Jacobian(qSize,3,INIT,0.0);
 
-	// ForceElement on continuum
-	if(S_.type == CONTINUUM)
-	{
-	  double s = S_.alpha(0); // globaler KontParameter
-	  double sLokal = BuildElement(s);
-	  Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLokal);
+    // ForceElement on continuum
+    if(S_.type == CONTINUUM)
+    {
+      double s = S_.alpha(0); // globaler KontParameter
+      double sLokal = BuildElement(s);
+      Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLokal);
+      if(CurrentElement<Elements-1 || openStructure) {
+	Index Dofs(5*CurrentElement,5*CurrentElement+7);
+	Jacobian(Dofs,All) = Jtmp;
+      }
+      else { // Ringschluss
+	Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
+	Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
+      }
 
-	  if(CurrentElement<Elements-1 || openStructure) {
-		Index Dofs(5*CurrentElement,5*CurrentElement+7);
-		Jacobian(Dofs,All) = Jtmp;
-	  }
-	  else { // Ringschluss
-		Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
-		Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
-	  }
-
-	}
-	// ForceElement on node
-	else if(S_.type == NODE)
-	{
-	  int node = S_.ID;
-	  Index Dofs(5*node,5*node+2);
-	  Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
     }
-
+    // ForceElement on node
+    else if(S_.type == NODE)
+    {
+      int node = S_.ID;
+      Index Dofs(5*node,5*node+2);
+      Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
+    }
     return Jacobian;
   }
 
   Mat BodyFlexible1s21RCM::computeJp(const ContourPointData &S_) {
-    static Index All(0,3-1);
+    Index All(0,3-1);
     Mat Jp(qSize,3,INIT,0.0);
 
     // ForceElement on continuum
@@ -259,17 +252,17 @@ namespace MBSim {
 
     }
 
-/// cout << "BodyFlexible1s21RCM::computeJp" << endl;
-/// cout << "   BodyFlexible1s21RCM::Jp = " << trans(Jp) <<  endl;
-/// cout << "          BodyFlexible::Jp = " << trans(BodyFlexible::computeJp(S_)) <<  endl;
+    /// cout << "BodyFlexible1s21RCM::computeJp" << endl;
+    /// cout << "   BodyFlexible1s21RCM::Jp = " << trans(Jp) <<  endl;
+    /// cout << "          BodyFlexible::Jp = " << trans(BodyFlexible::computeJp(S_)) <<  endl;
 
-//    // ForceElement on node
-//    else if(S_.type == NODE)
-//    {
-//      int node = S_.ID;
-//      Index Dofs(5*node,5*node+2);
-//      Jp(Dofs,All) << DiagMat(3,INIT,0.0);
-//    }
+    //    // ForceElement on node
+    //    else if(S_.type == NODE)
+    //    {
+    //      int node = S_.ID;
+    //      Index Dofs(5*node,5*node+2);
+    //      Jp(Dofs,All) << DiagMat(3,INIT,0.0);
+    //    }
     return Jp;
   }
 
@@ -300,115 +293,135 @@ namespace MBSim {
     if(S_.alphap.size()>0) sp = S_.alphap(0); // globale  KontGeschwindigkeit
     double sLokal = BuildElement(s);
     Vec DrDsp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->DrDsp(qElement[CurrentElement],uElement[CurrentElement],sLokal,sp);
-/// cout << "---------------------------" << endl;
-/// cout << "DrDsp.analytisch = " << trans(JT*DrDsp) << endl;
-/// cout << "DrDsp.numerisch  = " << trans(BodyFlexible::computeDrDsp(S_)) << endl;
+    /// cout << "---------------------------" << endl;
+    /// cout << "DrDsp.analytisch = " << trans(JT*DrDsp) << endl;
+    /// cout << "DrDsp.numerisch  = " << trans(BodyFlexible::computeDrDsp(S_)) << endl;
     return JT*DrDsp;
   }
 
   void BodyFlexible1s21RCM::GlobalMatrixContribution(int n) {
-	int j = 5 * n;
+    int j = 5 * n;
 
-	if ( n < Elements - 1 || openStructure==true) {
-	  // * Matrizen berechnen
-	  M(Index(j,j+7)) +=  discretization[n]->getMassMatrix();
-	  h(j,j+7)       += discretization[n]->getGeneralizedForceVector();
+    if ( n < Elements - 1 || openStructure==true) {
+      // * Matrizen berechnen
+      M(Index(j,j+7)) +=  discretization[n]->getMassMatrix();
+      h(j,j+7)       += discretization[n]->getGeneralizedForceVector();
 
-	  //if(implicit) {
-	  //  Dhq (j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition;
-	  //  Dhqp(j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity;
-	  //}
-	} else {
-	  // * Matrizen berechnen
+      //if(implicit) {
+      //  Dhq (j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition;
+      //  Dhqp(j,j,j+7,j+7) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity;
+      //}
+    } else {
+      // * Matrizen berechnen
 
-	  // Ringschluss durch Element (nEnde,1), Achtung!!! Winkelunterschied: 2*pi;
-	  M(Index(j,j+4)) +=  discretization[n]->getMassMatrix()(Index(0,4));
-	  M(Index(j,j+4),Index(0,2)) += discretization[n]->getMassMatrix()(Index(0,4),Index(5,7));
-	  // M(0,j,  2,j+4) += discretization[n]->getM()(5,0,7,4); Symmetrie
-	  M(Index(0,2)) += discretization[n]->getMassMatrix()(Index(5,7));
+      // Ringschluss durch Element (nEnde,1), Achtung!!! Winkelunterschied: 2*pi;
+      M(Index(j,j+4)) +=  discretization[n]->getMassMatrix()(Index(0,4));
+      M(Index(j,j+4),Index(0,2)) += discretization[n]->getMassMatrix()(Index(0,4),Index(5,7));
+      // M(0,j,  2,j+4) += discretization[n]->getM()(5,0,7,4); Symmetrie
+      M(Index(0,2)) += discretization[n]->getMassMatrix()(Index(5,7));
 
-	  h(j,j+4)       += discretization[n]->getGeneralizedForceVector()(0,4);
-	  h(0,  2)       += discretization[n]->getGeneralizedForceVector()(5,7);
+      h(j,j+4)       += discretization[n]->getGeneralizedForceVector()(0,4);
+      h(0,  2)       += discretization[n]->getGeneralizedForceVector()(5,7);
 
-	  //if(implicit) {
-	  //  Dhq (j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,0,4,4);
-	  //  Dhq (j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,5,4,7);
-	  //  Dhq (0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,0,7,4);
-	  //  Dhq (0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,5,7,7);
+      //if(implicit) {
+      //  Dhq (j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,0,4,4);
+      //  Dhq (j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(0,5,4,7);
+      //  Dhq (0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,0,7,4);
+      //  Dhq (0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingPosition(5,5,7,7);
 
-	  //  Dhqp(j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,0,4,4);
-	  //  Dhqp(j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,5,4,7);
-	  //  Dhqp(0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,0,7,4);
-	  //  Dhqp(0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,5,7,7);
-	  //}
-	}
+      //  Dhqp(j,j,j+4,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,0,4,4);
+      //  Dhqp(j,0,j+4,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(0,5,4,7);
+      //  Dhqp(0,j,  2,j+4) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,0,7,4);
+      //  Dhqp(0,0,  2,  2) += discretization[n]->getJacobianForImplicitIntegrationRegardingVelocity(5,5,7,7);
+      //}
+    }
   }
 
   void BodyFlexible1s21RCM::updateJh_internal(double t) {
-	if(!implicit) { 
-	  implicit = true;
-	  for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->Implicit(implicit);
-	  Dhq.resize(uSize,qSize);
-	  Dhqp.resize(uSize,uSize);
-	  updateh(t);
-	}
-	Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
-	Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << Dhq;
-	Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << Dhqp;
+    if(!implicit) { 
+      implicit = true;
+      for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->Implicit(implicit);
+      Dhq.resize(uSize,qSize);
+      Dhqp.resize(uSize,uSize);
+      updateh(t);
+    }
+    Mat Jh = mbs->getJh()(Iu,Index(0,mbs->getzSize()-1));
+    Jh(Index(0,uSize-1),Index(    0,qSize      -1)) << Dhq;
+    Jh(Index(0,uSize-1),Index(qSize,qSize+uSize-1)) << Dhqp;
   }
 
   //-----------------------------------------------------------------------------------
   void BodyFlexible1s21RCM::BuildElements() {
-	for(int i=0;i<Elements;i++) {
+    for(int i=0;i<Elements;i++) {
 
-	  int n = 5 * i ;
+      int n = 5 * i ;
 
-	  if(i<Elements-1 || openStructure==true) {
-		// Standard-Elemente
-		qElement[i] << q (n,n+7);
-		uElement[i] << u(n,n+7);
-	  }
-	  else { // i == Elements-1 und Ringschluss
-		qElement[i](0,4) << q (n,n+4);
-		uElement[i](0,4) << u(n,n+4);
-		qElement[i](5,7) << q (0,  2);
-		if(qElement[i](2)-q(2)>0.0) 
-		  qElement[i](7)   += 2*M_PI;
-		else
-		  qElement[i](7)   -= 2*M_PI;
-		uElement[i](5,7) << u(0,  2);
-	  } 
-	}
+      if(i<Elements-1 || openStructure==true) {
+	// Standard-Elemente
+	qElement[i] << q (n,n+7);
+	uElement[i] << u(n,n+7);
+      }
+      else { // i == Elements-1 und Ringschluss
+	qElement[i](0,4) << q (n,n+4);
+	uElement[i](0,4) << u(n,n+4);
+	qElement[i](5,7) << q (0,  2);
+	if(qElement[i](2)-q(2)>0.0) 
+	  qElement[i](7)   += 2*M_PI;
+	else
+	  qElement[i](7)   -= 2*M_PI;
+	uElement[i](5,7) << u(0,  2);
+      } 
+    }
   }
 
-  double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) {
-	static double sGlobalOld = -1.0;
-	static double sLokal = 0;
-	if (sGlobal != sGlobalOld ) {
-	  sGlobalOld = sGlobal;
+  double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) 
+  {
+    double remainder = fmod(sGlobal,L);
+    if(sGlobal<0.) remainder += L; // project into periodic structure 
 
-	  double remainder = sGlobal;
-	  if(!openStructure) {
-		remainder = fmod(sGlobal,L);
-		if(sGlobal<0.) remainder += L; // project into periodic structure 
-	  }
-//  double remainder = fmod(sGlobal,L);
-//	  if(remainder<0.0) remainder += L;
-	  CurrentElement = int(remainder/l0);
-	  sLokal = remainder - ( 0.5 + CurrentElement ) * l0;
+    CurrentElement = int(remainder/l0);   
+    double sLokal = remainder - (0.5 + CurrentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
-	  if(CurrentElement >= Elements) {
-		if(openStructure) { CurrentElement =  Elements-1; sLokal += l0;} /*somehow buggy, but who cares?!?*/
-		else              { CurrentElement -= Elements;}                         /* start at the beginning again  */
-	  }
-	  else if( CurrentElement <0 )   {
-		if(openStructure) { CurrentElement =  0;           sLokal -= l0;} /*somehow buggy, but who cares?!?*/
-		else              { CurrentElement += Elements;}                         /* start at theqElement[i]in  */
-	  }
-
-	}
-	return sLokal;
+    if(CurrentElement >= Elements) { // contact solver computes to large sGlobal at the end of the entire beam
+      if(openStructure) { 
+	CurrentElement =  Elements-1;
+	sLokal += l0;
+      }
+      else
+	CurrentElement -= Elements;
+    }
+    return sLokal;
   }
+
+
+  //  double BodyFlexible1s21RCM::BuildElement(const double& sGlobal) { 	/* removed because of static and and because I CARE !!
+  //	static double sGlobalOld = -1.0;				           BodyFlexible1s33RCM::BuildElement used instead */
+  //	static double sLokal = 0;                                       // HR 04.02.2009
+  //
+  //	if (sGlobal != sGlobalOld ) {
+  //	  sGlobalOld = sGlobal;
+  //
+  //	  double remainder = sGlobal;
+  //	  if(!openStructure) {
+  //		remainder = fmod(sGlobal,L);
+  //		if(sGlobal<0.) remainder += L; // project into periodic structure 
+  //	  }
+  ////  double remainder = fmod(sGlobal,L);
+  ////	  if(remainder<0.0) remainder += L;
+  //	  CurrentElement = int(remainder/l0);
+  //	  sLokal = remainder - ( 0.5 + CurrentElement ) * l0;
+  //
+  //	  if(CurrentElement >= Elements) {
+  //		if(openStructure) { CurrentElement =  Elements-1; sLokal += l0;} /*somehow buggy, but who cares?!?*/
+  //		else              { CurrentElement -= Elements;}                         /* start at the beginning again  */
+  //	  }
+  //	  else if( CurrentElement <0 )   {
+  //		if(openStructure) { CurrentElement =  0;           sLokal -= l0;} /*somehow buggy, but who cares?!?*/
+  //		else              { CurrentElement += Elements;}                         /* start at theqElement[i]in  */
+  //	  }
+  //	}
+  //	return sLokal;
+  //  }
 
   void BodyFlexible1s21RCM::addPort(const string &name, const int &node) {
     Port *port = new Port(name);
