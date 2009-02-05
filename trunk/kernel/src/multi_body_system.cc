@@ -1438,8 +1438,8 @@ namespace MBSim {
     int laBilateralSize = getlaBilateralSize();
     double deltaEPS = epsroot();
     double delta;
-    static Vec F(YSize);
-    static Vec Y(YSize);
+    Vec F(YSize);
+    Vec Y(YSize);
     Vec F0(YSize);
     Vec Fdelta(YSize);
     Vec Ydelta(YSize,NONINIT);
