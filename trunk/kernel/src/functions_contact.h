@@ -198,6 +198,68 @@ namespace MBSim {
   inline double FuncPairHyperbolaCircle::operator()(const double &phi) { return -2*b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*cosh(phi) - 2*a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*sinh(phi) - ((a*a) + (b*b))*sinh(2*phi);}
   inline Vec FuncPairHyperbolaCircle::computeWrD(const double &phi) {return d + b1*a*cosh(phi) + b2*b*sinh(phi);}
 
+
+  /*! \brief Base Jacobian of Root function for planar pairing Cone-Section and Circle 
+   * 
+   * Author:  Thorsten Schindler
+   */
+  class JacobianPairConeSectionCircle : public Function<double,double> {
+    public:
+      /*! Constructor */
+      JacobianPairConeSectionCircle(double a_, double b_) : a(a_), b(b_) {}
+
+      /*! Set distance vector of circle- and cone-section midpoint M_S-M_C */
+      void setDiffVec(Vec d_);
+      /*! Set the normed base-vectors of the cone-section */
+      void setSectionCOS(Vec b1_,Vec b2_);
+
+      /*! Return value of the Jacobian at cone-section-parameter */
+      virtual double operator()(const double &phi) = 0;
+
+    protected:
+      /** radius of circle as well as length in b1- and b2-dirction */
+      double a, b;
+
+      /** normed base-vectors of cone-section */
+      Vec b1, b2;
+
+      /** distance-vector of circle- and cone-section-midpoint */
+      Vec d;
+  };
+
+  inline void JacobianPairConeSectionCircle::setDiffVec(Vec d_) {d=d_;}
+  inline void JacobianPairConeSectionCircle::setSectionCOS(Vec b1_,Vec b2_) {b1=b1_; b2=b2_;}
+
+  /*! \brief Jacobian of Root function for planar pairing Ellipse and Circle 
+   * 
+   * Author:  Thorsten Schindler
+   */
+  class JacobianPairEllipseCircle : public JacobianPairConeSectionCircle {
+    public:
+      /*! Constructor */
+      JacobianPairEllipseCircle(double a_, double b_) : JacobianPairConeSectionCircle(a_,b_) {}
+
+      /*! Return value of the Jacobian at ellipse-parameter */
+      double operator()(const double &phi);
+  };
+  
+  inline double JacobianPairEllipseCircle::operator()(const double &phi) {return 2.*(b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*sin(phi) + a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*cos(phi) + ((a*a) - (b*b))*cos(2*phi));}
+
+  /*! \brief Jacobian of Root function for planar pairing Hyperbola and Circle 
+   * 
+   * Author:  Thorsten Schindler
+   */
+  class JacobianPairHyperbolaCircle : public JacobianPairConeSectionCircle {
+    public:
+      /*! Constructor */
+      JacobianPairHyperbolaCircle(double a_,double b_) : JacobianPairConeSectionCircle(a_,b_) {}
+
+      /*! Return value of the Jacobian at hyperbola-parameter */
+      double operator()(const double &phi);
+  };
+
+  inline double JacobianPairHyperbolaCircle::operator()(const double &phi) { return -2*(b*(b2(0)*d(0) + b2(1)*d(1) + b2(2)*d(2))*sinh(phi) + a*(b1(0)*d(0) + b1(1)*d(1) + b1(2)*d(2))*cosh(phi) + ((a*a) + (b*b))*cosh(2*phi));}
+
   /*! Root function for pairing Contour1s and Line */
   class FuncPairContour1sLine : public DistanceFunction<double,double> {
     private:
@@ -265,12 +327,17 @@ namespace MBSim {
       /** distance-function holding all information for contact-search */
       DistanceFunction<double,double> *func;
 
+      /** Jacobian of root function part of distance function */
+      Function<double,double> *jac;
+
       /** all area searching by Regular-Falsi or known initial value for Newton-Method? */
       bool searchAll;
 
     public:
-      /*! Constructor with \default searchAll = false */
-      Contact1sSearch(DistanceFunction<double,double> *func_) : s0(0.),func(func_),searchAll(false) {}
+      /*! Constructor with numerical Jacobian and \default searchAll = false */
+      Contact1sSearch(DistanceFunction<double,double> *func_) : s0(0.),func(func_),jac(0),searchAll(false) {}
+      /*! Constructor with analytical Jacobian and \default searchAll = false */
+      Contact1sSearch(DistanceFunction<double,double> *func_,Function<double,double> *jac_) : s0(0.),func(func_),jac(jac_),searchAll(false) {}
       /*! Set nodes defining search-areas for Regula-Falsi */
       void setNodes(const Vec &nodes_) {nodes=nodes_;}
       /*! Set equally distanced nodes beginning in \param x0 with \param n search areas and width \param dx, respectively	*/
