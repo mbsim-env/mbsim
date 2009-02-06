@@ -41,7 +41,7 @@ namespace MBSim {
     
     if(!searchAll) {
 //      if(INFO) {cout << "INFO: Using Newton-Method with Initial Value s0 = "<< s0 << endl;}
-      NewtonMethod rf(func);
+      NewtonMethod rf(func,jac);
       alphaC(0) = rf.slv(s0);
       if(rf.getInfo() == 0 && alphaC(0) >= nodes(0) && alphaC(0) <= nodes(nodes.size()-1)) { // converged
 		nRoots = 1;
