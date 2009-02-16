@@ -37,18 +37,17 @@ namespace MBSim {
    */
   class ContactKinematicsCircleSolidPlane : public ContactKinematics {
     public:
-      /*! Compute normal distance in contact point */
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      /*! Compute tangential directions and normal velocities in contact points */
-      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
-	  /*! Treat ordering of contacting bodies in connect-call */
+       /*! Compute normal distance in contact point */
+      void updateg(Vec &g, ContourPointData* cpData);
+      /*! Compute normal and tangential velocities */
+      void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
+
       void assignContours(const vector<Contour*> &contour);
       
    	private:
       int icircle, iplane;
       CircleSolid *circlesolid;
       Plane *plane;
-      Vec genBuf;
   };
 
 }
