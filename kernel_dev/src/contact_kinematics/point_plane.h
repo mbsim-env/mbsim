@@ -47,6 +47,9 @@ namespace MBSim {
       void updateg(Vec &g, ContourPointData* cpData);
       /*! Compute normal and tangential velocities */
       void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
+
+      void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
+
       /*! Treat ordering of contacting bodies in connect-call */
       void assignContours(const vector<Contour*> &contour);
   };

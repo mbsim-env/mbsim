@@ -62,4 +62,40 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::updategd(const Vec& g, Vec &gd, ContourPointData *cpData) {}
 
+  void ContactKinematicsPointPlane::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
+    if(wb.size()) { // check whether contact is closed
+
+      Vec v1 = cpData[iplane].cosy.getOrientation().col(2);
+      Vec n1 = cpData[iplane].cosy.getOrientation().col(0);
+      Vec u1 = cpData[iplane].cosy.getOrientation().col(1);
+      Vec vC1 = cpData[iplane].cosy.getVelocity();
+      Vec vC2 = cpData[ipoint].cosy.getVelocity();
+      Vec Om1 = cpData[iplane].cosy.getAngularVelocity();
+
+      Vec s1 = u1;
+      Vec t1 = v1;
+
+      Mat R1(3,2);
+      R1.col(0) = s1;
+      R1.col(1) = t1;
+
+      SqrMat A(2,2,NONINIT);
+      A(Index(0,0),Index(0,1)) = -trans(u1)*R1;
+      A(Index(1,1),Index(0,1)) = -trans(v1)*R1;
+
+      Vec b(2,NONINIT);
+      b(0) = -trans(u1)*(vC2-vC1);
+      b(1) = -trans(v1)*(vC2-vC1);
+      Vec zetad1 =  slvLU(A,b);
+
+      Mat tOm1 = tilde(Om1);
+      wb(0) += trans(n1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+
+      if(wb.size() > 1) {
+	wb(1) += trans(u1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+	wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+      }
+    }
+  }
+
 }
