@@ -134,7 +134,7 @@ namespace MBSim {
 	for(int i=0; i<xSize; ++i)
 	  plotfile<<" "<<xd(i)/dt;
       }
-      for(int i=0; i<gSize; ++i)
+      for(int i=0; i<g.size(); ++i)
 	plotfile<<" "<<g(i);
 
     }
@@ -142,14 +142,16 @@ namespace MBSim {
 
       if(plotLevel>0) {
 	if(plotLevel>1) {
+	  for(int i=0; i<sv.size(); ++i)
+	    plotfile<<" "<<sv(i);
 	  for(int i=0; i<gdSize; ++i)
 	    plotfile<<" "<<gd(i);
 	}
 	if(setValued)
-	  for(int i=0; i<laSize; ++i)
+	  for(int i=0; i<la.size(); ++i)
 	    plotfile<<" "<<la(i)/dt;
 	else
-	  for(int i=0; i<laSize; ++i)
+	  for(int i=0; i<la.size(); ++i)
 	    plotfile<<" "<<la(i);
       }
     } else {
@@ -269,15 +271,17 @@ namespace MBSim {
 	  plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
 
       }
-      for(int i=0; i<gSize; ++i)
+      for(int i=0; i<g.size(); ++i)
 	plotfile <<"# "<< plotNr++ << ": g(" << i << ")" << endl;
 
       if(plotLevel>1) {
+	for(int i=0; i<sv.size(); ++i)
+	  plotfile <<"# "<< plotNr++ << ": sv(" << i << ")" << endl;
 	for(int i=0; i<laSize; ++i)
 	  plotfile <<"# "<< plotNr++ << ": gd(" << i << ")" << endl;
       }
 
-      for(int i=0; i<laSize; ++i)
+      for(int i=0; i<la.size(); ++i)
 	plotfile <<"# "<< plotNr++ << ": la(" << i << ")" << endl;
 
       if(plotLevel>2) {
