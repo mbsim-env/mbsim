@@ -108,7 +108,7 @@ namespace MBSim {
     svSize = 0;
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       svIndk[i] = svSize;
-      svSizek[i] = 1+min(getFrictionDirections(),1);
+      svSizek[i] = isSetValued() ? 1+min(getFrictionDirections(),1) : 0;
       svSize += svSizek[i];
     }
   }
@@ -517,9 +517,10 @@ namespace MBSim {
 	for(unsigned i=0; i<contour.size(); i++) 
 	  wbk[k] += trans(fF[k][i](Index(0,2),Index(0,laSizek[k]-1)))*cpData[k][i].cosy.getGyroscopicAccelerationOfTranslation();
 
-	contactKinematics->updatewb(wb,g,cpData[k]);
+//	contactKinematics->updatewb(wb,g,cpData[k]);
       }
     }
+    contactKinematics->updatewb(wbk,gk,cpData);
   }
 
   void Contact::updateW(double t) {
@@ -554,6 +555,9 @@ namespace MBSim {
   }
 
   void Contact::checkActivegdn() { 
+    //cout << name << endl;
+    //cout << gdnk[0] << endl;
+    //cout << lak[0] << endl;
 
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
@@ -579,10 +583,12 @@ namespace MBSim {
 	else
 	  gdActive[k][1] = false;
     }
+    //cout << "gd active: " << gActive[0] << " " << gdActive[0][0] << " " << gdActive[0][1] << endl;
   }
 
   void Contact::checkActivegdd() { 
 
+    //cout << name << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gdActive[k][0]) {
 	if(gddk[k](0) <= gddTol) {
@@ -604,6 +610,9 @@ namespace MBSim {
 	  else 
 	    gdActive[k][1] = false;
     }
+    //cout << gddk[0] << endl;
+    //cout << lak[0] << endl;
+    //cout << "gdd active: " << gActive[0] << " " << gdActive[0][0] << " " << gdActive[0][1] << endl;
   }
 
   void Contact::updateCondition() {
