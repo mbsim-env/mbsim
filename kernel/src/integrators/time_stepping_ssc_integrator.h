@@ -35,21 +35,21 @@ namespace MBSim {
     friend class DAETSIntegrator;
 
     protected:
-      MultiBodySystem* systemA;
-      MultiBodySystem* systemB;
-      MultiBodySystem* systemC;
+      MultiBodySystem* systemT1;
+      MultiBodySystem* systemT2;
+      MultiBodySystem* systemT3;
 
       double dt, dtOld, dte;
       double dtMin, dtMax;
       bool driftCompensation;
       double t, tPlot;
       int qSize, xSize, zSize;
-      Vec ze, zi, zA, zB, zC, z1d, z2d, z2dRE, z4dRE, z2b, z4b;
+      Vec ze, zi, zT1, zT2, zT3, z1d, z2d, z2dRE, z4dRE, z2b, z4b;
       Vector<int> LS, LSe, LSA, LSB1, LSB2, LSC1, LSC2, LSC3, LSC4;
       Vec laBi, laUni, laeBi, laeUni, la1dBi, la1dUni, la2bBi, la2bUni;
-      Vec qA, qB, qC;
-      Vec uA, uB, uC;
-      Vec xA, xB, xC;
+      Vec qT1, qT2, qT3;
+      Vec uT1, uT2, uT3;
+      Vec xT1, xT2, xT3;
       int StepsWithUnchangedConstraints;
       /** include (0) or exclude (3) variable u or scale (2) with stepsize for error test*/
       int FlagErrorTest;
@@ -88,10 +88,10 @@ namespace MBSim {
       /** for internal use (start clock, integration info ...) */
       StopWatch Timer;
       int iter, iterA, iterB1, iterB2, iterC1, iterC2, iterC3, iterC4, iterB2RE, maxIterUsed, maxIter, sumIter;
-      int integrationSteps, integrationStepswithChange, refusedSteps;
+      int integrationSteps, integrationStepswithChange, refusedSteps, refusedStepsWithImpact;
       double maxdtUsed, mindtUsed;      
       bool IterConvergence;
-      bool ConstraintsChanged, ConstraintsChangedBlock1, ConstraintsChangedBlock2, ConstraintsChangedA;
+      bool ConstraintsChanged, ConstraintsChangedBlock1, ConstraintsChangedBlock2;
       int integrationStepsOrder1;
       int integrationStepsOrder2;
       int order;
@@ -116,11 +116,12 @@ namespace MBSim {
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
       /*! Set Flag to plot every successful integration step*/
       void plotEveryStep() {dtPlot =0;}
+      /*! set Flag for  writing integrator info at each step to a file (default true)*/
+      void setFlagPlotIntegrator(bool flag=true) {FlagPlotIntegrator = flag;}
       /*! Set Flag to optimise dt for minmal penetration of unilateral links*/
       void optimiseDtForGaps(bool flag=true) {optimisedtforgaps=flag;}
       /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
-      
       /*! set maximum order of integration scheme (1 or 2)*/  
       void setMaxOrder(int order_);
       /* activate step size control */
@@ -131,7 +132,7 @@ namespace MBSim {
 
       /*! Start the integration */
       void integrate(MultiBodySystem& system_);
-      void integrate(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_);
+      void integrate(MultiBodySystem& systemT1_, MultiBodySystem& systemT2_, MultiBodySystem& systemT3_);
 
       void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
       void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
@@ -141,7 +142,7 @@ namespace MBSim {
 
       /** subroutines for integrate function */
       void initIntegrator(MultiBodySystem& system_);
-      void initIntegrator(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_);
+      void initIntegrator(MultiBodySystem& systemT1_, MultiBodySystem& systemT2_, MultiBodySystem& systemT3_);
       void IntegrationStep();
       void closeIntegrator();
       bool testTolerances();
