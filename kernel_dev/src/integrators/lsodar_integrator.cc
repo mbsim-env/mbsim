@@ -71,17 +71,15 @@ namespace MBSim {
       assert (aTol.size() >= zSize);
     }
 
-//    int i, one=1, zero=0, two=2, istate=1;
     int one=1, two=2, istate=1;
 
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
-    dt0 = 1e-13;
-    rWork(4) = dt0; // integrator chooses the step size (dont use dt0)
+    rWork(4) = dt0; 
     rWork(5) = 1e-2;
     rWork(6) = 1e-14;
-    int liWork=(20+zSize)                             *10;//////////////;
+    int liWork=(20+zSize)*10;
     Vector<int> iWork(liWork);
     iWork(5) = 10000;
 
