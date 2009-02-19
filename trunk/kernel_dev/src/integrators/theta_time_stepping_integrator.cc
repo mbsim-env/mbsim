@@ -157,7 +157,7 @@ namespace MBSim {
 //}
 
       if(driftCompensation)
-	system.projectViolatedConstraints(t);
+	system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();

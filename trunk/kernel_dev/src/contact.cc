@@ -72,8 +72,28 @@ namespace MBSim {
     }
   }
 
+  void Contact::calclaSizeForActiveg() {
+    Link::calclaSizeForActiveg();
+    laSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      laIndk[i] = laSize;
+      laSizek[i] = gActive[i];
+      laSize += laSizek[i];
+    }
+  }
+
   void Contact::calcgSize() {
     Link::calcgSize();
+    gSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gIndk[i] = gSize;
+      gSizek[i] = 1;
+      gSize += gSizek[i];
+    }
+  }
+
+  void Contact::calcgSizeActive() {
+    Link::calcgSizeActive();
     gSize = 0;
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       gIndk[i] = gSize;
@@ -82,8 +102,19 @@ namespace MBSim {
     }
   }
 
+  // TODO: noch nicht konsistent
   void Contact::calcgdSize() {
     Link::calcgdSize();
+    gdSize = 0;
+    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+      gdIndk[i] = gdSize;
+      gdSizek[i] = gdActive[i][0]*(1+getFrictionDirections());
+      gdSize += gdSizek[i];
+    }
+  }
+
+  void Contact::calcgdSizeActive() {
+    Link::calcgdSizeActive();
     gdSize = 0;
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       gdIndk[i] = gdSize;

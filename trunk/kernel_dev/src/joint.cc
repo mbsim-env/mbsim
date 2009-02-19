@@ -52,14 +52,26 @@ namespace MBSim {
     gSize = forceDir.cols()+momentDir.cols();
   }
 
+  void Joint::calcgSizeActive() {
+    calcgSize();
+  }
+
   void Joint::calcgdSize() {
     Link::calcgdSize();
     gdSize = forceDir.cols()+momentDir.cols();
   }
 
+  void Joint::calcgdSizeActive() {
+    calcgdSize();
+  }
+
   void Joint::calclaSize() {
     Link::calclaSize();
     laSize = forceDir.cols()+momentDir.cols();
+  }
+
+  void Joint::calclaSizeForActiveg() {
+    calclaSize();
   }
 
   void Joint::calcrFactorSize() {

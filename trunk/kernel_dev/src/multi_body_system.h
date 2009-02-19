@@ -124,6 +124,8 @@ namespace MBSim {
 
       bool peds, impact, sticking;
 
+      int k;
+
     public:
       const Vec& getAccelerationOfGravity() const {return grav;}
 
@@ -157,7 +159,8 @@ namespace MBSim {
       //void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
       virtual void preInteg(MultiBodySystem *parent);
       /*! Projects state at time \param t, such that constraints are not violated */
-      void projectViolatedConstraints(double t);
+      void projectGeneralizedPositions(double t);
+      void projectGeneralizedVelocities(double t);
       /*! Return vector of gravitational acceleration \return g in world system */
       const Vec& getGrav() const {return grav;};
       /*! Define vector of gravitational acceleration \param g in world system */

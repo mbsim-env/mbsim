@@ -156,8 +156,11 @@ namespace MBSim {
       virtual void calcxSize() {xSize = 0;}
       virtual void calcsvSize() {svSize = 0;}
       virtual void calclaSize() {laSize = 0;}
+      virtual void calclaSizeForActiveg() {laSize = 0;}
       virtual void calcgSize() {gSize = 0;}
+      virtual void calcgSizeActive() {gSize = 0;}
       virtual void calcgdSize() {gdSize = 0;}
+      virtual void calcgdSizeActive() {gdSize = 0;}
       virtual void calcrFactorSize() {rFactorSize = 0;}
 
       virtual void init();

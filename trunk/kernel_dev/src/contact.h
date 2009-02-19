@@ -93,8 +93,11 @@ namespace MBSim {
       void calcxSize();
 
       void calclaSize();
+      void calclaSizeForActiveg();
       void calcgSize();
+      void calcgSizeActive();
       void calcgdSize();
+      void calcgdSizeActive();
       void calcrFactorSize();
       void calcsvSize();
 

@@ -961,6 +961,22 @@ namespace MBSim {
     }
   }
 
+  void Subsystem::calclaSizeForActiveg() {
+    laSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calclaSizeForActiveg();
+      (*i)->setlaInd(laSize);
+      laSize += (*i)->getlaSize();
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calclaSizeForActiveg();
+      (*i)->setlaInd(laSize);
+      laSize += (*i)->getlaSize();
+    }
+  }
+
   void Subsystem::calclaSize() {
     laSize = 0;
 
@@ -977,6 +993,22 @@ namespace MBSim {
     }
   }
 
+  void Subsystem::calcgSizeActive() {
+    gSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcgSizeActive();
+      (*i)->setgInd(gSize);
+      gSize += (*i)->getgSize();
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calcgSizeActive();
+      (*i)->setgInd(gSize);
+      gSize += (*i)->getgSize();
+    }
+  }
+
   void Subsystem::calcgSize() {
     gSize = 0;
 
@@ -986,10 +1018,26 @@ namespace MBSim {
       gSize += (*i)->getgSize();
     }
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (*i)->calcgSize();
       (*i)->setgInd(gSize);
       gSize += (*i)->getgSize();
+    }
+  }
+
+  void Subsystem::calcgdSizeActive() {
+    gdSize = 0;
+
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+      (*i)->calcgdSizeActive();
+      (*i)->setgdInd(gdSize);
+      gdSize += (*i)->getgdSize();
+    }
+
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+      (*i)->calcgdSizeActive();
+      (*i)->setgdInd(gdSize);
+      gdSize += (*i)->getgdSize();
     }
   }
 
@@ -1002,7 +1050,7 @@ namespace MBSim {
       gdSize += (*i)->getgdSize();
     }
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
       (*i)->calcgdSize();
       (*i)->setgdInd(gdSize);
       gdSize += (*i)->getgdSize();
