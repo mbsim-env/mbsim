@@ -165,6 +165,7 @@ namespace MBSim {
     int UnchangedSteps =0;
     double dtHalf;
     double dtQuarter;
+    bool ConstraintsChangedA;
     bool ConstraintsChangedB;
     bool ConstraintsChangedC;
 
