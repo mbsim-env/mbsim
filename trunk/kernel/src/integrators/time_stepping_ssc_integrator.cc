@@ -25,6 +25,9 @@
 #include "time_stepping_ssc_integrator.h"
 #include "eps.h"
 #include "stopwatch.h"
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #ifndef NO_ISO_14882
 using namespace std;
@@ -37,7 +40,7 @@ using namespace fmatvec;
 namespace MBSim {
 
 
-  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : dt(1e-6), dtMin(0), dtMax(1e-4),driftCompensation(false), StepsWithUnchangedConstraints(-1),  FlagErrorTest(2), aTol(1,INIT,1e-5), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), gapTol(0), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), time(0.0), iter(0), maxIterUsed(0), sumIter(0), integrationSteps(0), refusedSteps(0)
+  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : dt(1e-6), dtMin(0), dtMax(1e-4),driftCompensation(false), StepsWithUnchangedConstraints(-1),  FlagErrorTest(2), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), gapTol(0), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), time(0.0), iter(0), maxIterUsed(0), sumIter(0), integrationSteps(0), refusedSteps(0), refusedStepsWithImpact(0)
   {
     order = maxOrder;
     optimisedtforgaps=false;
@@ -63,55 +66,55 @@ namespace MBSim {
     integrate(system_, system_, system_); 
   }
 
- void TimeSteppingSSCIntegrator::integrate(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_) { 
-    initIntegrator(systemA_, systemB_, systemC_);
+  void TimeSteppingSSCIntegrator::integrate(MultiBodySystem& systemT1_, MultiBodySystem& systemT2_, MultiBodySystem& systemT3_) { 
+    initIntegrator(systemT1_, systemT2_, systemT3_);
     IntegrationStep();
     closeIntegrator();
   }
-  
+
   void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem& system_) {
-   initIntegrator(system_,system_,system_);
+    initIntegrator(system_,system_,system_);
   }
 
-  void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem& systemA_, MultiBodySystem& systemB_, MultiBodySystem& systemC_) {
+  void TimeSteppingSSCIntegrator::initIntegrator(MultiBodySystem& systemT1_, MultiBodySystem& systemT2_, MultiBodySystem& systemT3_) {
 
-    systemA = &systemA_;
-    systemB = &systemB_;
-    systemC = &systemC_;
+    systemT1 = &systemT1_;
+    systemT2 = &systemT2_;
+    systemT3 = &systemT3_;
 
     if (dtMin==0) dtMin = epsroot()*maxOrder*2.0;
 
-   
+
     if (FlagSSC) safetyFactorGapControl = 1.0 + nrmInf(rTol)*10.0;
     else safetyFactorGapControl = 1.001;
 
-    qSize = systemA->getqSize(); // size of positions, velocities, state
-    int uSize = systemA->getuSize();
-    xSize = systemA->getxSize();
+    qSize = systemT1->getqSize(); // size of positions, velocities, state
+    int uSize = systemT1->getuSize();
+    xSize = systemT1->getxSize();
     zSize = qSize + uSize + xSize;
 
     Index Iq(0,qSize-1);
     Index Ix(qSize,qSize+xSize-1);
     Index Iu(xSize+qSize, zSize-1);
 
-    zA.resize(zSize);
-    qA.resize() >> zA(Iq);
-    xA.resize() >> zA(Ix);
-    uA.resize() >> zA(Iu);
+    zT1.resize(zSize);
+    qT1.resize() >> zT1(Iq);
+    xT1.resize() >> zT1(Ix);
+    uT1.resize() >> zT1(Iu);
 
-    zB.resize(zSize);
-    qB.resize() >> zB(Iq);
-    xB.resize() >> zB(Ix);
-    uB.resize() >> zB(Iu);
+    zT2.resize(zSize);
+    qT2.resize() >> zT2(Iq);
+    xT2.resize() >> zT2(Ix);
+    uT2.resize() >> zT2(Iu);
 
-    zC.resize(zSize);
-    qC.resize() >> zC(Iq);
-    xC.resize() >> zC(Ix);
-    uC.resize() >> zC(Iu);
+    zT3.resize(zSize);
+    qT3.resize() >> zT3(Iq);
+    xT3.resize() >> zT3(Ix);
+    uT3.resize() >> zT3(Iu);
 
     zi.resize(zSize,INIT,0.0); 	// starting value for ith step
 
-    maxIter = systemA->getMaxIter();
+    maxIter = systemT1->getMaxIter();
     iter= 0;
     integrationSteps= 0;
     integrationStepsOrder1= 0;
@@ -134,7 +137,7 @@ namespace MBSim {
 
     cout.setf(ios::scientific, ios::floatfield);
     if (FlagPlotIntegrator) {
-      integPlot.open((systemA->getDirectoryName() + name + ".plt").c_str());
+      integPlot.open((systemT1->getDirectoryName() + name + ".plt").c_str());
       integPlot << "#1 t [s]:" << endl; 
       integPlot << "#2 dt [s]:" << endl;
       integPlot << "#3 order :" << endl; 
@@ -149,10 +152,10 @@ namespace MBSim {
     t = tStart;
     tPlot = tStart;
     if(z0.size()) zi = z0; 					// define initial state
-    else systemA->initz(zi); 
+    else systemT1->initz(zi); 
     if (outputInterpolation) {
-      laBi.resize((systemA->getAllBilateralla()).size(),INIT,0.0);		// la = LA/dt [N]
-      laUni.resize((systemA->getAllUnilateralla()).size(),INIT,0.0);
+      laBi.resize((systemT1->getAllBilateralla()).size(),INIT,0.0);		// la = LA/dt [N]
+      laUni.resize((systemT1->getAllUnilateralla()).size(),INIT,0.0);
       laBi.init(0.0);
       laUni.init(0.0);
     }
@@ -160,403 +163,470 @@ namespace MBSim {
     int StepFinished = 0;
     bool ExitIntegration = (t>=tEnd);
     int UnchangedSteps =0;
+    double dtHalf;
+    double dtQuarter;
+    bool ConstraintsChangedB;
+    bool ConstraintsChangedC;
 
-    LS.resize() = systemA->getLinkStatus();
+    bool calcJobB1 = FlagSSC || (maxOrder>1);
+    bool calcJobC12  = (FlagSSC && (maxOrder>1)) || (maxOrder>2); 
+    bool calcJobB2;
+    bool calcJobB2RE;
+    bool calcJobC34;
+
+    LS.resize() = systemT1->getLinkStatus();
 
     while(! ExitIntegration) 
     {
       while(StepFinished==0) 
       {
-	// Block 1 
-	// one step integration (A)
-	zA  << zi;
-	systemA->setActiveConstraintsChanged(true);
-	qA += systemA->deltaq(zA,t,dt);
-	systemA->update(zA,t+dt);
-	iterA  = systemA->solve(dt);
-        la1dBi.resize()  = systemA->getAllBilateralla()/dt;
-	la1dUni.resize() = systemA->getAllUnilateralla()/dt;
-	uA += systemA->deltau(zA,t+dt,dt);
-	xA += systemA->deltax(zA,t+dt,dt);
-	systemA->updateLinkStatus();
-	LSA = systemA->getLinkStatus();
-	ConstraintsChangedA = (LSA != LS);
-	ConstraintsChanged = ConstraintsChangedA;
-	z1d << zA;
+        dtHalf     = dt/2.0;
+        dtQuarter  = dt/4.0;
+        ConstraintsChangedB = false;
+        ConstraintsChangedC = false;
+        // Block 1 
 
-	ConstraintsChangedBlock1 = false;
+#pragma omp parallel num_threads(2)
+        {
+#pragma omp sections
+          {
+#pragma omp section           //thread 1
+            {
+              // one step integration (A)
+              zT1 << zi;
+              systemT1->setActiveConstraintsChanged(true);
+              qT1 += systemT1->deltaq(zT1,t,dt);
+              systemT1->update(zT1,t+dt);
+              iterA  = systemT1->solve(dt);
+              la1dBi.resize()  = systemT1->getAllBilateralla()/dt;
+              la1dUni.resize() = systemT1->getAllUnilateralla()/dt;
+              uT1 += systemT1->deltau(zT1,t+dt,dt);
+              xT1 += systemT1->deltax(zT1,t+dt,dt);
+              systemT1->updateLinkStatus();
+              LSA = systemT1->getLinkStatus();
+              ConstraintsChangedA = (LSA != LS);
+              z1d << zT1;
 
-	// two step integration (first step) (B1)
-	double dtHalf = dt/2.0;
-	if (FlagSSC || (maxOrder==2)) {
-	  zB  << zi;
-	  systemB->setActiveConstraintsChanged(true);
-	  qB += systemB->deltaq(zB,t,dtHalf);
-	  systemB->update(zB,t+dtHalf);
-	  iterB1  = systemB->solve(dtHalf);
-          la2bBi.resize()  = systemB->getAllBilateralla()/dtHalf;
-	  la2bUni.resize() = systemB->getAllUnilateralla()/dtHalf;
-	  uB += systemB->deltau(zB,t+dtHalf,dtHalf);
-	  xB += systemB->deltax(zB,t+dtHalf,dtHalf); 
-	  systemB->updateLinkStatus();
-	  LSB1=systemB->getLinkStatus() ;
-	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSB1 != LS);
-	  z2b << zB; 
-	}
+              // two step integration (first step) (B1) (Thread 1 if dtQuarter steps are performed; else ->Thread 2)
+              if (calcJobB1 && calcJobC12) {
+                zT1  << zi;
+                systemT1->setActiveConstraintsChanged(true);
+                qT1 += systemT1->deltaq(zT1,t,dtHalf);
+                systemT1->update(zT1,t+dtHalf);
+                iterB1  = systemT1->solve(dtHalf);
+                la2bBi.resize()  = systemT1->getAllBilateralla()/dtHalf;
+                la2bUni.resize() = systemT1->getAllUnilateralla()/dtHalf;
+                uT1 += systemT1->deltau(zT1,t+dtHalf,dtHalf);
+                xT1 += systemT1->deltax(zT1,t+dtHalf,dtHalf); 
+                systemT1->updateLinkStatus();
+                LSB1=systemT1->getLinkStatus() ;
+                ConstraintsChangedB = (LSB1 != LS);
+                z2b << zT1;
+              }
+            }  // close omp thread 1
 
-	// four step integration (first two steps)
-	double dtQuarter = dt/4.0;
-	if (FlagSSC && (maxOrder==2)) {
-	  zC  << zi;
-	  systemC->setActiveConstraintsChanged(true);
-	  qC += systemC->deltaq(zC,t,dtQuarter);
-	  systemC->update(zC,t+dtQuarter);
-	  iterC1 = systemC->solve(dtQuarter);
-	  uC += systemC->deltau(zC,t+dtQuarter,dtQuarter);
-	  xC += systemC->deltax(zC,t+dtQuarter,dtQuarter);
-	  systemC->updateLinkStatus();
-	  LSC1 = systemC->getLinkStatus();
-	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSC1 != LS);
+#pragma omp section	        //thread 2
+            {
+              // two step integration (first step) (B1) (Thread 1 if dtQuarter steps are performed; else ->Thread 2)
+              if (calcJobB1 && !calcJobC12) {
+                zT2  << zi;
+                systemT2->setActiveConstraintsChanged(true);
+                qT2 += systemT2->deltaq(zT2,t,dtHalf);
+                systemT2->update(zT2,t+dtHalf);
+                iterB1  = systemT2->solve(dtHalf);
+                la2bBi.resize()  = systemT2->getAllBilateralla()/dtHalf;
+                la2bUni.resize() = systemT2->getAllUnilateralla()/dtHalf;
+                uT2 += systemT2->deltau(zT2,t+dtHalf,dtHalf);
+                xT2 += systemT2->deltax(zT2,t+dtHalf,dtHalf); 
+                systemT2->updateLinkStatus();
+                LSB1=systemT2->getLinkStatus() ;
+                ConstraintsChangedB = (LSB1 != LS);
+                z2b << zT2;
+              }
 
-	  qC += systemC->deltaq(zC,t+dtQuarter,dtQuarter);
-	  systemC->update(zC,t+dtHalf);
-	  iterC2 = systemC->solve(dtQuarter);
-	  uC += systemC->deltau(zC,t+dtHalf,dtQuarter);
-	  xC += systemC->deltax(zC,t+dtHalf,dtQuarter);
-	  systemC->updateLinkStatus();
-	  LSC2 = systemC->getLinkStatus();
-	  ConstraintsChangedBlock1 = ConstraintsChangedBlock1 || (LSC2!=LSC1);
-	  ConstraintsChanged = ConstraintsChanged|| ConstraintsChangedBlock1;
-	  z4b << zC;
-	}
+              // four step integration (first two steps)
+              if (calcJobC12) {
+                zT2  << zi;
+                systemT2->setActiveConstraintsChanged(true);
+                qT2 += systemT2->deltaq(zT2,t,dtQuarter);
+                systemT2->update(zT2,t+dtQuarter);
+                iterC1 = systemT2->solve(dtQuarter);
+                uT2 += systemT2->deltau(zT2,t+dtQuarter,dtQuarter);
+                xT2 += systemT2->deltax(zT2,t+dtQuarter,dtQuarter);
+                systemT2->updateLinkStatus();
+                LSC1 = systemT2->getLinkStatus();
+                ConstraintsChangedC =  (LSC1 != LS);
 
-	ConstraintsChangedBlock2 = false;        
+                qT2 += systemT2->deltaq(zT2,t+dtQuarter,dtQuarter);
+                systemT2->update(zT2,t+dtHalf);
+                iterC2 = systemT2->solve(dtQuarter);
+                uT2 += systemT2->deltau(zT2,t+dtHalf,dtQuarter);
+                xT2 += systemT2->deltax(zT2,t+dtHalf,dtQuarter);
+                systemT2->updateLinkStatus();
+                LSC2 = systemT2->getLinkStatus();
+                ConstraintsChangedC = ConstraintsChangedC || (LSC2!=LSC1);
+                z4b << zT2;
+              }
+            }  // close omp thread 2
+          }  // close omp sections (first sections)
 
-	// Block 2
+#pragma omp single
+          {
+            ConstraintsChangedBlock1 = ConstraintsChangedB || ConstraintsChangedC;
+            ConstraintsChanged       = ConstraintsChangedA || ConstraintsChangedBlock1;
 
-	// two step integration (B2 and B2RE) (starting with z2b or 2*z4b-z2b)
-	if ((FlagSSC && (maxOrder==1))||(FlagSSC && !ConstraintsChangedBlock1)||(!FlagSSC && (maxOrder==2))) {
-	  zA  << z2b;
-	  systemA->setActiveConstraintsChanged(true);
-	  qA += systemA->deltaq(zA,t+dtHalf,dtHalf);
-	  systemA->update(zA,t+dt);
-	  iterB2  = systemA->solve(dtHalf);
-	  uA += systemA->deltau(zA,t+dt,dtHalf);
-	  xA += systemA->deltax(zA,t+dt,dtHalf);
-	  systemA->updateLinkStatus();
-	  LSB2 = systemA->getLinkStatus();
-	  ConstraintsChangedBlock2 = (LSB2!=LSB1);
-	  z2d << zA; 
-	}
+            ConstraintsChangedA = false;
+            ConstraintsChangedB = false;
+            ConstraintsChangedC = false;
+            ConstraintsChangedBlock2 = false;        
 
-	if (FlagSSC && (maxOrder==2) && !ConstraintsChangedBlock1) { //B2RE
-	  zB << 2.0*z4b - z2b;
-	  systemB->setActiveConstraintsChanged(true);
-	  qB += systemB->deltaq(zB,t+dtHalf,dtHalf);
-	  systemB->update(zB,t+dt);
-	  iterB2RE  = systemB->solve(dtHalf);
-	  uB += systemB->deltau(zB,t+dt,dtHalf);
-	  xB += systemB->deltax(zB,t+dt,dtHalf);
-	  z2dRE << zB;
-
-	  // four step integration (C3 and C4) (last two steps )
-	  zC <<  2.0*z4b - z2b;
-	  systemC->setActiveConstraintsChanged(true);
-	  qC += systemC->deltaq(zC,t+dtHalf,dtQuarter);
-	  systemC->update(zC,t+dtHalf+dtQuarter);
-	  iterC3  = systemC->solve(dtQuarter);
-	  uC += systemC->deltau(zC,t+dtHalf+dtQuarter,dtQuarter);
-	  xC += systemC->deltax(zC,t+dtHalf+dtQuarter,dtQuarter);
-	  systemC->updateLinkStatus();
-	  LSC3 = systemC->getLinkStatus();
-
-	  qC += systemC->deltaq(zC,t+dtHalf+dtQuarter,dtQuarter);
-	  systemC->update(zC,t+dt);
-	  iterC4  = systemC->solve(dtQuarter);
-	  uC += systemC->deltau(zC,t+dt,dtQuarter);
-	  xC += systemC->deltax(zC,t+dt,dtQuarter);
-	  systemC->updateLinkStatus();
-	  LSC4 = systemC->getLinkStatus();
-	  ConstraintsChangedBlock2 = ConstraintsChangedBlock2 || (LSC2 !=LSC3) || (LSC3 !=LSC4);
-	  ConstraintsChanged = ConstraintsChanged || ConstraintsChangedBlock2;
-	  z4dRE << zC;
-	}
-
-	dtOld = dt;
-	if (testTolerances()) {
-	  StepFinished = 1;
-	  sumIter += iter;
-	  if(iter > maxIterUsed) maxIterUsed = iter;
-	  if (maxdtUsed < dtOld) maxdtUsed = dtOld;
-	  if (mindtUsed > dtOld) mindtUsed = dtOld;
-	}
-	else {
-	  refusedSteps++;
-	  StepTrials++;
-	  if (dtOld == dtMin) {
-	    StepFinished = -1;
-	    cout << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
-	    //exit(StepFinished);
-	  }
-	}
-      }
-
-      StepTrials=0;
-      StepFinished = 0;
-      integrationSteps++; 
-      if(order==1)integrationStepsOrder1++;
-      if(order==2)integrationStepsOrder2++;
-      t += dte;
-
-      plot();
-     
-      zi << ze;
-      LS << LSe;
-      if (outputInterpolation) {
-	if (laBi.size() != laeBi.size()) laBi.resize();
-	laBi = laeBi;
-	if (laUni.size() != laeUni.size()) laUni.resize();
-	laUni = laeUni;
-      }
-
-      if(ConstraintsChanged) integrationStepswithChange++;
-      ExitIntegration = (t>=tEnd);
-
-      if (StepsWithUnchangedConstraints>=0) {
-	if (! ConstraintsChanged) UnchangedSteps++;
-	else UnchangedSteps =0;
-	if (UnchangedSteps >= StepsWithUnchangedConstraints) ExitIntegration = true;
-      }
-    }
-  }
-
-  void TimeSteppingSSCIntegrator::plot() {
-    if ((FlagPlotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
-      tPlot+=dtPlot;
-      zA << ze;
-      systemA->setAllBilateralla(laBi);
-      systemA->setAllUnilateralla(laUni);
-      systemA->plot(zA,t,1);
-    }
-    if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
-      while (t>tPlot) {
-        if (laBi.size()  > laeBi.size())  laBi.resize()   = laBi(0,laeBi.size()-1);
-        if (laBi.size()  < laeBi.size())  laeBi.resize()  = laeBi(0,laBi.size()-1);
-        if (laUni.size() > laeUni.size()) laUni.resize()  = laUni(0,laeUni.size()-1);
-        if (laUni.size() < laeUni.size()) laeUni.resize() = laeUni(0,laUni.size()-1);
-        double ratio = (tPlot -(t-dte))/dte;
-        zA << zi + (ze-zi)*ratio;
-        systemA->setAllBilateralla(laBi+(laeBi-laBi)*ratio);
-        systemA->setAllUnilateralla(laUni+(laeUni-laUni)*ratio);
-        systemA->plot(zA,tPlot,1);
-        tPlot += dtPlot;
-      }
-    }
-
-    if (FlagPlotIntegrator) {
-      time += Timer.stop();
-      integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << systemA->getlaSize()  << " "<< time  <<endl;
-    }
-    if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
-  }
-
-  void TimeSteppingSSCIntegrator::closeIntegrator() {
-    time += Timer.stop();
-    cout.unsetf(ios::scientific);
-    if (FlagPlotIntegrator) integPlot.close();
-    if (FlagPlotIntegrationSum) {
-      ofstream integSum((systemA->getDirectoryName() + name + ".sum").c_str());
-      integSum << "Integration time: " << time << endl;
-      integSum << "Integration steps: " << integrationSteps << endl;
-      integSum << "Steps with impacts: " << integrationStepswithChange<< endl;
-      if (maxOrder==2) {
-	integSum<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
-	integSum<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
-      }
-      if (FlagSSC){
-	integSum << "Refused steps: " << refusedSteps << endl;
-	integSum << "Maximum step size: " << maxdtUsed << endl;
-	integSum << "Minimum step size: " << mindtUsed << endl;
-        integSum << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
-      }
-      integSum << "Maximum number of iterations: " << maxIterUsed << endl;
-      integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-      integSum.close();
-      }   
-      if (FlagCoutInfo) {
-	if (output) cout << endl <<endl;
-	cout << "Summary Integration with TimeStepperSSC: "<<endl;
-	cout << "Integration time: " << time << endl;
-	cout << "Integration steps: " << integrationSteps << endl;
-	cout << "Steps with impacts: " << integrationStepswithChange<< endl;
-        if (maxOrder==2) {
-	cout<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
-	cout<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
-        }
-	if (FlagSSC) {
-	  cout << "Refused steps: " << refusedSteps << endl;
-	  cout << "Maximum step size: " << maxdtUsed << endl;
-	  cout << "Minimum step size: " << mindtUsed << endl;
-          cout << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
-	}
-	cout << "Maximum number of iterations: " << maxIterUsed << endl;
-	cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
-	}
-      }
-
-
-      bool TimeSteppingSSCIntegrator::testTolerances() 
-      {
-        double dtNewRel; 
-	bool testOK;
-	bool IterConvergenceBlock1=true;
-	bool IterConvergenceBlock2=true;
-	IterConvergence = (iterA<maxIter);
-
-	Vec EstErrorLocal;
-
-	if (!FlagSSC) {
-	  if (maxOrder==1) {LSe << LSA;     ze << z1d;          }
-	  if (maxOrder==2) {
-            LSe << LSB2;    
-            if (!ConstraintsChanged) {
-              ze << 2.0*z2d - z1d; order=2;} 
-            else {ze<<z2d; order=1;}
+            calcJobB2 =  FlagSSC && ((maxOrder==1) || (maxOrder>1 && !ConstraintsChangedBlock1));
+            calcJobB2 = calcJobB2 || (!FlagSSC && (maxOrder==2));
+            calcJobB2RE = FlagSSC && (maxOrder==2) && !ConstraintsChangedBlock1; 
+            calcJobC34  = (FlagSSC && (maxOrder>1)) || (maxOrder>2) && !ConstraintsChangedBlock1;
+                
           }
-	  dte = dt;
-	  return true;
-	}
-	else {
-	  if (maxOrder==1) {
-	    IterConvergenceBlock1 = (iterB1<<maxIter);
-	    IterConvergenceBlock2 = (iterB2<<maxIter);
-	    EstErrorLocal = z2d-z1d;
-	    dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
-	    testOK = (dtNewRel>=1.0);
-	    dtNewRel = sqrt(dtNewRel);
-	    dte = dt;
-	    ze  << z2d;
-	    LSe << LSB2;
-	  }
-	  if (maxOrder==2) {
-	    IterConvergenceBlock1 = (iterB1<maxIter) && (iterC1<maxIter) && (iterC2<maxIter);
-	    if (ConstraintsChangedBlock1) {
-	      IterConvergence=true;
-	      order=1;
-	      EstErrorLocal = z2b-z4b;
-	      dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
-	      testOK = (dtNewRel>=1.0);
-	      dtNewRel = sqrt(dtNewRel);
-	      dte= dt/2.0;
-	      ze  << z4b;
-	      LSe << LSC2;
-	    }
-	    else {
-	      IterConvergenceBlock2 = (iterB2<maxIter) && (iterB2RE<maxIter) && (iterC3<maxIter) && (iterC4<maxIter);
-	      if (ConstraintsChanged) {
-		EstErrorLocal = z2b-z4b;			// Pruefe auf Einhaltung der Toleranz im Block1 (kein Stoss)
-		dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
-		testOK = (dtNewRel>=1);
-		dtNewRel = sqrt(dtNewRel);
-		dte = dt/2.0;
-		ze  << 2.0*z4b-z2b;
-		LSe << LSC2;
-		order = 2;
-		if (testOK) {
-		  EstErrorLocal = z2dRE-z4dRE;
-		  double dtNewRelTmp = calculatedtNewRel(EstErrorLocal,dt);
-		  if (dtNewRelTmp>=1) {
-		    dtNewRel = sqrt(dtNewRelTmp);
-		    testOK = true;
-		    dte = dt;
-		    ze  << z4dRE;
-		    LSe << LSC4;
-		    order =1;
-		  }
-		  else {IterConvergence=true; IterConvergenceBlock2=true;}
-		}
-	      }
-	      else {
-		order = 2;
-		EstErrorLocal = (2.0*z2d-z1d - 2.0*z4dRE+z2dRE)/3.0;
-		dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
-		testOK = (dtNewRel>=1.0);
-		dtNewRel = pow(dtNewRel,1.0/3.0);  
-		ze  << 2.0*z4dRE - z2dRE;
-		LSe << LSC4;
-		dte=dt;
-		// order 2 hat mehrfach versagt! Teste auf order 1
-		if (!testOK && (StepTrials>1)) {
-		  double dtNewRelTmp1 = calculatedtNewRel(z2b - z4b, dt);
-		  double dtNewRelTmp2 = calculatedtNewRel(z4dRE-z2dRE, dt);
-		  if (dtNewRelTmp1>=1.0) {
-		    order = 1;
-		    testOK= true;
-		    if (dtNewRelTmp2>=1.0) {
-		      dtNewRel= sqrt(dtNewRelTmp2);
-		      ze << z4dRE;
-		    }
-		    else {
-                      dtNewRel= sqrt(dtNewRelTmp1);  
-                      ze << z2b; 
-                      dte= dt/2.0;
-                    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
+          // Block 2
+#pragma omp sections
+          {
+#pragma omp section                     // thread 1
+            {
+              // two step integration (B2 and B2RE) (starting with z2b or 2*z4b-z2b)
+              if (calcJobB2) {
+                zT1  << z2b;
+                systemT1->setActiveConstraintsChanged(true);
+                qT1 += systemT1->deltaq(zT1,t+dtHalf,dtHalf);
+                systemT1->update(zT1,t+dt);
+                iterB2  = systemT1->solve(dtHalf);
+                uT1 += systemT1->deltau(zT1,t+dt,dtHalf);
+                xT1 += systemT1->deltax(zT1,t+dt,dtHalf);
+                systemT1->updateLinkStatus();
+                LSB2 = systemT1->getLinkStatus();
+                ConstraintsChangedB = (LSB2!=LSB1);
+                z2d << zT1; 
+              }
+              if (calcJobB2RE) { //B2RE
+                zT1 << 2.0*z4b - z2b;
+                systemT1->setActiveConstraintsChanged(true);
+                qT1 += systemT1->deltaq(zT1,t+dtHalf,dtHalf);
+                systemT1->update(zT1,t+dt);
+                iterB2RE  = systemT1->solve(dtHalf);
+                uT1 += systemT1->deltau(zT1,t+dt,dtHalf);
+                xT1 += systemT1->deltax(zT1,t+dt,dtHalf);
+                z2dRE << zT1;
+              }
+            }  // close omp thread 1
 
-        if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
-          laeUni.resize() = la2bUni;
-          laeBi.resize()  = la2bBi;
-          iter = iterB1;
-          ConstraintsChanged=ConstraintsChangedBlock1;
+            // four step integration (C3 and C4) (last two steps )
+#pragma omp section                   // thread 2
+            {
+              if (calcJobC34) { 
+                zT2 <<  2.0*z4b - z2b;
+                systemT2->setActiveConstraintsChanged(true);
+                qT2 += systemT2->deltaq(zT2,t+dtHalf,dtQuarter);
+                systemT2->update(zT2,t+dtHalf+dtQuarter);
+                iterC3  = systemT2->solve(dtQuarter);
+                uT2 += systemT2->deltau(zT2,t+dtHalf+dtQuarter,dtQuarter);
+                xT2 += systemT2->deltax(zT2,t+dtHalf+dtQuarter,dtQuarter);
+                systemT2->updateLinkStatus();
+                LSC3 = systemT2->getLinkStatus();
+
+                qT2 += systemT2->deltaq(zT2,t+dtHalf+dtQuarter,dtQuarter);
+                systemT2->update(zT2,t+dt);
+                iterC4 = systemT2->solve(dtQuarter);
+                uT2 += systemT2->deltau(zT2,t+dt,dtQuarter);
+                xT2 += systemT2->deltax(zT2,t+dt,dtQuarter);
+                systemT2->updateLinkStatus();
+                LSC4 = systemT2->getLinkStatus();
+                ConstraintsChangedC = (LSC2 !=LSC3) || (LSC3 !=LSC4);
+                z4dRE << zT2;
+              }
+            }  // close omp thread 2
+          }  // close omp sections (second sections)
+      }  // close omp parallel
+
+
+      ConstraintsChangedBlock2 = ConstraintsChangedB || ConstraintsChangedC;
+      ConstraintsChanged = ConstraintsChanged || ConstraintsChangedBlock2;
+
+      dtOld = dt;
+      if (testTolerances()) {
+        StepFinished = 1;
+        sumIter += iter;
+        if(iter > maxIterUsed) maxIterUsed = iter;
+        if (maxdtUsed < dtOld) maxdtUsed = dtOld;
+        if (mindtUsed > dtOld) mindtUsed = dtOld;
+      }
+      else {
+        refusedSteps++;
+        if (ConstraintsChanged) refusedStepsWithImpact++;
+        StepTrials++;
+        if (dtOld == dtMin) {
+          StepFinished = -1;
+          cout << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
+          //exit(StepFinished);
+        }
+      }
+    }
+
+    StepTrials=0;
+    StepFinished = 0;
+    integrationSteps++; 
+    if(order==1)integrationStepsOrder1++;
+    if(order==2)integrationStepsOrder2++;
+    t += dte;
+    plot();
+
+    zi << ze;
+    LS << LSe;
+    if (outputInterpolation) {
+      if (laBi.size() != laeBi.size()) laBi.resize();
+      laBi = laeBi;
+      if (laUni.size() != laeUni.size()) laUni.resize();
+      laUni = laeUni;
+    }
+
+    if(ConstraintsChanged) integrationStepswithChange++;
+    ExitIntegration = (t>=tEnd);
+
+    if (StepsWithUnchangedConstraints>=0) {
+      if (! ConstraintsChanged) UnchangedSteps++;
+      else UnchangedSteps =0;
+      if (UnchangedSteps >= StepsWithUnchangedConstraints) ExitIntegration = true;
+    }
+  }
+}
+
+void TimeSteppingSSCIntegrator::plot() {
+  if ((FlagPlotEveryStep) || ((t>=tPlot)&&(outputInterpolation==false))) {
+    tPlot+=dtPlot;
+    zT1 << ze;
+    systemT1->setAllBilateralla(laBi);
+    systemT1->setAllUnilateralla(laUni);
+    systemT1->plot(zT1,t,1);
+  }
+  if ((t>=tPlot) && outputInterpolation && !FlagPlotEveryStep) {
+    while (t>tPlot) {
+      if (laBi.size()  > laeBi.size())  laBi.resize()   = laBi(0,laeBi.size()-1);
+      if (laBi.size()  < laeBi.size())  laeBi.resize()  = laeBi(0,laBi.size()-1);
+      if (laUni.size() > laeUni.size()) laUni.resize()  = laUni(0,laeUni.size()-1);
+      if (laUni.size() < laeUni.size()) laeUni.resize() = laeUni(0,laUni.size()-1);
+      double ratio = (tPlot -(t-dte))/dte;
+      zT1 << zi + (ze-zi)*ratio;
+      systemT1->setAllBilateralla(laBi+(laeBi-laBi)*ratio);
+      systemT1->setAllUnilateralla(laUni+(laeUni-laUni)*ratio);
+      systemT1->plot(zT1,tPlot,1);
+      tPlot += dtPlot;
+    }
+  }
+
+  if (FlagPlotIntegrator) {
+    time += Timer.stop();
+    integPlot<< t << " " << dtOld << " " <<order << " " << iter << " " << systemT1->getlaSize()  << " "<< time  <<endl;
+  }
+  if(output) cout << "   t = " <<  t << ",\tdt = "<< dtOld << ",\titer = "<<setw(5)<<setiosflags(ios::left) <<iter<<",\torder = "<<order << "\r"<<flush;
+}
+
+void TimeSteppingSSCIntegrator::closeIntegrator() {
+  time += Timer.stop();
+  cout.unsetf(ios::scientific);
+  if (FlagPlotIntegrator) integPlot.close();
+  if (FlagPlotIntegrationSum) {
+    ofstream integSum((systemT1->getDirectoryName() + name + ".sum").c_str());
+    integSum << "Integration time: " << time << endl;
+    integSum << "Integration steps: " << integrationSteps << endl;
+    integSum << "Steps with impacts: " << integrationStepswithChange<< endl;
+    if (maxOrder==2) {
+      integSum<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+      integSum<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
+    }
+    if (FlagSSC){
+      integSum << "Refused steps: " << refusedSteps << endl;
+      integSum << "Refused steps with impact: " << refusedStepsWithImpact << endl;
+      integSum << "Maximum step size: " << maxdtUsed << endl;
+      integSum << "Minimum step size: " << mindtUsed << endl;
+      integSum << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
+    }
+    integSum << "Maximum number of iterations: " << maxIterUsed << endl;
+    integSum << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+    integSum.close();
+  }   
+  if (FlagCoutInfo) {
+    if (output) cout << endl <<endl;
+    cout << "Summary Integration with TimeStepperSSC: "<<endl;
+    cout << "Integration time: " << time << endl;
+    cout << "Integration steps: " << integrationSteps << endl;
+    cout << "Steps with impacts: " << integrationStepswithChange<< endl;
+    if (maxOrder==2) {
+      cout<<"Integration steps order 1: "<<integrationStepsOrder1<<endl;
+      cout<<"Integration steps order 2: "<<integrationStepsOrder2<<endl;
+    }
+    if (FlagSSC) {
+      cout << "Refused steps: " << refusedSteps << endl;
+      cout << "Refused steps with impact: " << refusedStepsWithImpact << endl;
+      cout << "Maximum step size: " << maxdtUsed << endl;
+      cout << "Minimum step size: " << mindtUsed << endl;
+      cout << "Average step size: " << (tEnd-tStart)/integrationSteps << endl;
+    }
+    cout << "Maximum number of iterations: " << maxIterUsed << endl;
+    cout << "Average number of iterations: " << double(sumIter)/integrationSteps << endl;
+  }
+}
+
+
+bool TimeSteppingSSCIntegrator::testTolerances() 
+{
+  double dtNewRel = 1; 
+  bool testOK = true;
+  bool IterConvergenceBlock1=true;
+  bool IterConvergenceBlock2=true;
+  IterConvergence = (iterA<maxIter);
+  iter =iterA;
+
+  Vec EstErrorLocal;
+
+  if (!FlagSSC) {
+    if (maxOrder==1) {LSe << LSA;     ze << z1d;          }
+    if (maxOrder==2) {
+      LSe << LSB2;    
+      if (!ConstraintsChanged) {
+        ze << 2.0*z2d - z1d; order=2;} 
+      else {ze<<z2d; order=1;}
+    }
+    dte = dt;
+    return true;
+  }
+  else {
+    if (maxOrder==1) {
+      IterConvergenceBlock1 = (iterB1<maxIter);
+      IterConvergenceBlock2 = (iterB2<maxIter);
+      EstErrorLocal = z2d-z1d;
+      dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+      testOK = (dtNewRel>=1.0);
+      dtNewRel = sqrt(dtNewRel);
+      dte = dt;
+      ze  << z2d;
+      LSe << LSB2;
+    }
+    if (maxOrder==2) {
+      IterConvergenceBlock1 = (iterB1<maxIter) && (iterC1<maxIter) && (iterC2<maxIter);
+      if (ConstraintsChangedBlock1) {
+        IterConvergence=true;
+        order=1;
+        EstErrorLocal = z2b-z4b;
+        dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+        testOK = (dtNewRel>=1.0);
+        dtNewRel = sqrt(dtNewRel);
+        dte= dt/2.0;
+        ze  << z4b;
+        LSe << LSC2;
+      }
+      else {
+        IterConvergenceBlock2 = (iterB2<maxIter) && (iterB2RE<maxIter) && (iterC3<maxIter) && (iterC4<maxIter);
+        if (ConstraintsChanged) {
+          EstErrorLocal = z2b-z4b;			// Pruefe auf Einhaltung der Toleranz im Block1 (kein Stoss)
+          dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+          testOK = (dtNewRel>=1);
+          dtNewRel = sqrt(dtNewRel);
+          dte = dt/2.0;
+          ze  << 2.0*z4b-z2b;
+          LSe << LSC2;
+          order = 2;
+          if (testOK) {
+            EstErrorLocal = z2dRE-z4dRE;
+            double dtNewRelTmp = calculatedtNewRel(EstErrorLocal,dt);
+            if (dtNewRelTmp>=1) {
+              dtNewRel = sqrt(dtNewRelTmp);
+              testOK = true;
+              dte = dt;
+              ze  << z4dRE;
+              LSe << LSC4;
+              order =1;
+            }
+            else {IterConvergence=true; IterConvergenceBlock2=true;}
+          }
         }
         else {
-          laeUni.resize() = la1dUni;
-          laeBi.resize()  = la1dBi;        
-          iter = iterA;
+          order = 2;
+          EstErrorLocal = (2.0*z2d-z1d - 2.0*z4dRE+z2dRE)/3.0;
+          dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
+          testOK = (dtNewRel>=1.0);
+          dtNewRel = pow(dtNewRel,1.0/3.0);  
+          ze  << 2.0*z4dRE - z2dRE;
+          LSe << LSC4;
+          dte=dt;
+          // order 2 hat mehrfach versagt! Teste auf order 1
+          if (!testOK && (StepTrials>2)) {
+            double dtNewRelTmp1 = calculatedtNewRel(z2b - z4b, dt);
+            double dtNewRelTmp2 = calculatedtNewRel(z4dRE-z2dRE, dt);
+            if (dtNewRelTmp1>=1.0) {
+              order = 1;
+              testOK= true;
+              if (dtNewRelTmp2>=1.0) {
+                dtNewRel= sqrt(dtNewRelTmp2);
+                ze << z4dRE;
+              }
+              else {
+                dtNewRel= sqrt(dtNewRelTmp1);  
+                ze << z2b; 
+                dte= dt/2.0;
+              }
+            }
+          }
         }
-
-	IterConvergence = IterConvergence && IterConvergenceBlock1 && IterConvergenceBlock2;
-	if ((! IterConvergence)&&(testOK)) {
-	  if (dt/2.0>dtMin) {
-	    testOK= false; 
-	    dt=dt/2.0;
-	  }
-	  else {
-	    cout<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
-	  }
-	}
-	else {
-	  if(dtNewRel<0.5/safetyFactorSSC) dtNewRel = 0.5/safetyFactorSSC;
-	  if(dtNewRel > maxGainSSC) dtNewRel=maxGainSSC;   //  0.6 oder 0.7 und 2.5 oder 2  (0.7/2.2 in ...SSC3.h)
-	  dt = dt*dtNewRel*safetyFactorSSC;
-	}  
-
-	if (dt > dtMax) dt = dtMax;
-	if (dt < dtMin) dt = dtMin;
-
-	return testOK;
       }
-
-      double TimeSteppingSSCIntegrator::calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H) {
-	double dtNewRel=1.0e10; 
-	double dtNewRel_i;
-	double ResTol_i;
-	int ErrorSize = ErrorLocal.size();
-        if (FlagErrorTest==3) ErrorSize = qSize+xSize;
- 
-	for (int i=0; i< ErrorSize; i++) {
-	  if ((i>=qSize+xSize)&&(FlagErrorTest==2))
-	    ResTol_i = aTol(i)/H+  rTol(i)*fabs(zi(i));
-	  else ResTol_i = aTol(i) + rTol(i)*fabs(zi(i));
-	  dtNewRel_i = ResTol_i / fabs(ErrorLocal(i));
-	  if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
-	}
-	return dtNewRel;
-      }
-
     }
+  }
+
+  if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
+    laeUni.resize() = la2bUni;
+    laeBi.resize()  = la2bBi;
+    iter = iterB1;
+    ConstraintsChanged=ConstraintsChangedBlock1;
+  }
+  else {
+    laeUni.resize() = la1dUni;
+    laeBi.resize()  = la1dBi;        
+    iter = iterA;
+  }
+
+  IterConvergence = IterConvergence && IterConvergenceBlock1 && IterConvergenceBlock2;
+  if ((! IterConvergence)&&(testOK)) {
+    if (dt/2.0>dtMin) {
+      testOK= false; 
+      dt=dt/2.0;
+    }
+    else {
+      cout<<"Error: no convergence despite minimum stepsize("<<maxIter<<" iterations) Anyway, continuing integration..."<<endl;
+    }
+  }
+  else {
+    if(dtNewRel<0.5/safetyFactorSSC) dtNewRel = 0.5/safetyFactorSSC;
+    if(dtNewRel > maxGainSSC) dtNewRel=maxGainSSC;   //  0.6 oder 0.7 und 2.5 oder 2  (0.7/2.2 in ...SSC3.h)
+    dt = dt*dtNewRel*safetyFactorSSC;
+  }  
+
+  if (dt > dtMax) dt = dtMax;
+  if (dt < dtMin) dt = dtMin;
+
+  return testOK;
+}
+
+double TimeSteppingSSCIntegrator::calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H) {
+  double dtNewRel=1.0e10; 
+  double dtNewRel_i;
+  double ResTol_i;
+  int ErrorSize = ErrorLocal.size();
+  if (FlagErrorTest==3) ErrorSize = qSize+xSize;
+
+  for (int i=0; i< ErrorSize; i++) {
+    if ((i>=qSize+xSize)&&(FlagErrorTest==2))
+      ResTol_i = aTol(i)/H+  rTol(i)*fabs(zi(i));
+    else ResTol_i = aTol(i) + rTol(i)*fabs(zi(i));
+    dtNewRel_i = ResTol_i / fabs(ErrorLocal(i));
+    if (dtNewRel_i < dtNewRel) dtNewRel = dtNewRel_i;
+  }
+  return dtNewRel;
+}
+
+}
