@@ -52,7 +52,6 @@ namespace MBSim {
     system->getsv(z, sv, *t);
   }
 
-
   void LSODERIntegrator::integrate(MultiBodySystem& system_) {
     system = &system_;
 
@@ -62,6 +61,7 @@ namespace MBSim {
       z = z0;
     else
       system->initz(z);
+    system->computeInitialCondition();
     double t=0.0;
     double tPlot=t+dtPlot;
 
@@ -74,7 +74,7 @@ namespace MBSim {
     }
 
     int one=1, two=2, istate=1;
-   
+
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
@@ -86,6 +86,7 @@ namespace MBSim {
     iWork(5) = 10000;
 
     system->plot(z, t);
+
     double s0 = clock();
     double time = 0;
     int integrationSteps = 0;
