@@ -39,12 +39,12 @@
 
 namespace MBSim {
 
-  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false) { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { //, activeConstraintsChanged(true)
 
     //parent = this;
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false)  { //, activeConstraintsChanged(true)
+  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { //, activeConstraintsChanged(true)
 
     //parent = this;
   }
@@ -78,6 +78,7 @@ namespace MBSim {
     calcgdSize();
     calcrFactorSize();
     calcsvSize();
+    svSize += 1;
 
 
     cout << "qSize = " << qSize <<endl;
@@ -370,17 +371,18 @@ namespace MBSim {
     updateKinematics(t);
     updateg(t);
     updategd(t);
-    // TODO nötig für ODE-Integration und hohem plotLevel
-    // for(vector<Link*>::iterator iL = linkSetValued.begin(); iL != linkSetValued.end(); ++iL) 
-    //  (*iL)->updateStage2(t);
     updateJacobians(t);
+    updateT(t);
     updateh(t); 
     updateM(t); 
-    //updateG(t); 
-    //computeConstraintForces(t); 
-    //updater(t); 
-    //updatezd(t); 
-
+    facLLM(); 
+    updateW(t); 
+  //  projectGeneralizedPositions(t);
+  //  updategd(t);
+  //  projectGeneralizedVelocities(t);
+  //  updateKinematics(t);
+  //  updateg(t);
+  //  updategd(t);
 
     plot(t,dt);
   }
@@ -431,6 +433,11 @@ namespace MBSim {
       computeConstraintForces(t); // Alt
     }
     updateStopVector(t);
+    sv(sv.size()-1) = k*1e-1-t;
+    //projectGeneralizedPositions(t);
+    //cout << g << endl;
+    //cout << sv << endl;
+    //cout << "end update stop" << endl;
   }
 
   void MultiBodySystem::setAccelerationOfGravity(const Vec& g) {
@@ -452,7 +459,7 @@ namespace MBSim {
       //cout << "activeConstraintsChanged at t = " << t << endl;
 
       checkAllgd(); // Prüfen ob nötig
-      calcgdSize();
+      calcgdSizeActive();
       calclaSize();
       calcrFactorSize();
 
@@ -477,6 +484,7 @@ namespace MBSim {
     updateW(t); 
     updateV(t); 
     updateG(t); 
+    projectGeneralizedPositions(t);
   }
 
   void MultiBodySystem::updaterFactors() {
@@ -658,50 +666,51 @@ namespace MBSim {
   void MultiBodySystem::computeConstraintForces(double t) {
     //la = slvLU(G, -(trans(W)*slvLLFac(LLM,h) + wb));
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb));
-  }
-
-  void MultiBodySystem::projectViolatedConstraints(double t) {
-    // PROJECTVIOLATEDCONSTRAINTS projects state, such that constraints are not violated
+  } 
+  
+  void MultiBodySystem::projectGeneralizedVelocities(double t) {
 
     if(laSize) {
+      calcgdSizeActive();
+      updategdRef(gdParent(0,gdSize-1));
+      updategd(t);
       Vec nu(getuSize());
-      int gASize = 0;
-      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) gASize += linkSetValuedActive[i]->getgSize();
-      SqrMat Gv(gASize,NONINIT);
-      Mat Wv(W.rows(),gASize,NONINIT);
-      Vec gv(gASize,NONINIT);
-      int gAIndi = 0;
-      for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
-	Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
-	Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
-	Wv(Index(0,Wv.rows()-1),Iv) = W(Index(0,W.rows()-1),I1);
-	gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
 
-	Gv(Iv,Iv) = G(I1,I1);
-	int gAIndj = 0;
-	for(unsigned int j = 0; j<i; j++) {
-	  Index Jv = Index(gAIndj,gAIndj+linkSetValuedActive[j]->getgSize()-1);
-	  Index J1 = Index(linkSetValuedActive[j]->getlaInd(),linkSetValuedActive[j]->getlaInd()+linkSetValuedActive[j]->getgSize()-1);
-	  Gv(Jv,Iv) = G(J1,I1);
-	  gAIndj+=linkSetValuedActive[j]->getgSize();
-	}
-	gAIndi+=linkSetValuedActive[i]->getgSize();
-      }
-      while(nrmInf(gv) >= 1e-8) {
-	Vec mu = slvLU(Gv, -gv+trans(Wv)*nu);
-	Vec dnu = slvLLFac(LLM,Wv*mu- M*nu);
+      SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
+      Vec mu = slvLS(Gv,-gd);
+      u += slvLLFac(LLM,W*mu);
+      calcgdSize();
+      updategdRef(gdParent(0,gdSize-1));
+    }
+  }
+
+  void MultiBodySystem::projectGeneralizedPositions(double t) {
+
+    if(laSize) {
+      calcgSizeActive();
+      updategRef(gParent(0,gSize-1));
+      updateg(t);
+      Vec nu(getuSize());
+      calclaSizeForActiveg();
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateW(t);
+      Vec corr;
+      corr = g;
+      corr.init(1e-14);
+      SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
+      // TODO: Wv*T prüfen
+      while(nrmInf(g-corr) >= 1e-14) {
+	Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
+	Vec dnu = slvLLFac(LLM,W*mu)-nu;
 	nu += dnu;
 	q += T*dnu;
 	updateKinematics(t);
 	updateg(t);
-	int gAIndi = 0;
-	for(unsigned int i = 0; i<linkSetValuedActive.size(); i++) {
-	  Index I1 = Index(linkSetValuedActive[i]->getlaInd(),linkSetValuedActive[i]->getlaInd()+linkSetValuedActive[i]->getgSize()-1);
-	  Index Iv = Index(gAIndi,gAIndi+linkSetValuedActive[i]->getgSize()-1);
-	  gv(Iv) = g(linkSetValuedActive[i]->getgIndex());
-	  gAIndi+=linkSetValuedActive[i]->getgSize();
-	}
       }
+      calclaSize();
+      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      calcgSize();
+      updategRef(gParent(0,gSize-1));
     }
   }
 
@@ -1271,16 +1280,55 @@ namespace MBSim {
     //cout <<endl<< "event at time t = " << t << endl<<endl;
     //cout<< "sv = " << trans(sv) << endl;
     //cout << "jsv = "<< trans(jsv) << endl;
+    if (jsv(sv.size()-1)) {
+      k++;
+      //  cout << "projeziere"  << endl;
+      updateKinematics(t);
+      updateg(t);
+      updateT(t); 
+      updateJacobians(t);
+      updateM(t); 
+      facLLM(); 
+      updateW(t); 
+      projectGeneralizedPositions(t);
+      updategd(t);
+      updateT(t); 
+      updateJacobians(t);
+      updateM(t); 
+      facLLM(); 
+      updateW(t); 
+      projectGeneralizedVelocities(t);
+    }
+    //cout << "projeziere"  << endl;
+    updateKinematics(t);
+    updateg(t);
+    //updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    //updateh(t); 
+    updateM(t); 
+    facLLM(); 
+    updateW(t); 
+    //updateG(t); // ..
+
+    // cout << g << endl;
+    //cout << gd << endl;
+    projectGeneralizedPositions(t);
+    //   //projectGeneralizedVelocities(t);
+    // cout << g << endl;
+    // cout << gd << endl;
+
+    //  cout << "fertig"  << endl;
 
     updateCondition(); // Entscheide, welche Bindungen dazukommen bzw. entfallen
     checkActiveLinks(); // Liste mit aktiven Links (g<=0) neu anlegen
-    //cout <<"impact = "<< impact <<endl;
+    // cout <<"impact = "<< impact <<endl;
     //cout <<"sticking = "<< sticking <<endl;
 
     if(impact) {
 
       checkAllgd(); // Es müssen alle geschlossenen Kontakte berücksichtigt werden
-      calcgdSize(); // 
+      calcgdSizeActive(); // 
       updategdRef(gdParent(0,gdSize-1));
       calclaSize();
       calcrFactorSize();
@@ -1300,6 +1348,7 @@ namespace MBSim {
       updateV(t); // ..
       updateG(t); // ..
 
+      projectGeneralizedPositions(t);
       int iter;
       iter = solveImpacts();
       //cout <<"Iterations = "<< iter << endl;
@@ -1390,7 +1439,6 @@ namespace MBSim {
       }
     } 
     else {
-
       checkActiveLinks();
       calclaSize();
       calcrFactorSize();
@@ -1404,5 +1452,27 @@ namespace MBSim {
     }
     impact = false;
     sticking = false;
+    updateKinematics(t);
+    updateg(t);
+    //updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    //updateh(t); 
+    updateM(t); 
+    facLLM(); 
+    updateW(t); 
+    //updateG(t); // ..
+
+    // cout << g << endl;
+    //cout << gd << endl;
+    projectGeneralizedPositions(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    //updateh(t); 
+    updateM(t); 
+    facLLM(); 
+    updateW(t); 
+    projectGeneralizedVelocities(t);
   }
 }

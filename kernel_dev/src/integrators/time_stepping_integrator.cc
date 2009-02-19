@@ -135,7 +135,8 @@ namespace MBSim {
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
 
-      if(driftCompensation) system.projectViolatedConstraints(t);
+      if(driftCompensation) 
+	system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();

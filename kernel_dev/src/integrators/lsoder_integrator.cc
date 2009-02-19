@@ -37,7 +37,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LSODERIntegrator::LSODERIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0) {
+  LSODERIntegrator::LSODERIntegrator() : dtMax(0), dtMin(0), aTol(1,INIT,1e-6), rTol(1e-6), dt0(0), plotOnRoot(true) {
   }
 
   void LSODERIntegrator::fzdot(int* zSize, double* t, double* z_, double* zd_) {
@@ -79,9 +79,10 @@ namespace MBSim {
     int nsv=system->getsvSize();
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
+    dt0 = 1e-13;
     rWork(4) = dt0; // integrator chooses the step size (dont use dt0)
-    rWork(5) = dtMax;
-    rWork(6) = dtMin;
+    rWork(5) = 1e-2;
+    rWork(6) = 1e-14;
     int liWork=(20+zSize)                             *10;//////////////;
     Vector<int> iWork(liWork);
     iWork(5) = 10000;
@@ -100,9 +101,9 @@ namespace MBSim {
 
     while(t<tEnd) {
 
-       integrationSteps++;
+      integrationSteps++;
 
-       DLSODER(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+      DLSODER(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
 	  &istate, &one, rWork(), &lrWork, iWork(),
 	  &liWork, NULL, &two, fsv, &nsv, jsv());
       if(istate==2 || t==tPlot) {
@@ -120,14 +121,15 @@ namespace MBSim {
       }
       if(istate==3) {
 	system->shift(z, jsv, t);
-	//system->plot(z, t);
+	if(plotOnRoot)
+	  system->plot(z, t);
 	istate=1;
-	rWork(4)=0;
+	rWork(4)=dt0;
       }
       if(istate<0) exit(istate);
     }
     integPlot.close();
- 
+
     ofstream integSum((system->getDirectoryName() + name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
@@ -135,5 +137,5 @@ namespace MBSim {
 
     cout.unsetf (ios::scientific);
     cout << endl;
- }
+  }
 }

@@ -111,8 +111,11 @@ namespace MBSim {
       void calcsvSize();
       //void calchSize();
       void calclaSize();
+      void calclaSizeForActiveg();
       void calcgSize();
+      void calcgSizeActive();
       void calcgdSize();
+      void calcgdSizeActive();
       void calcrFactorSize();
       void checkActiveLinks();
       void checkActiveg();
