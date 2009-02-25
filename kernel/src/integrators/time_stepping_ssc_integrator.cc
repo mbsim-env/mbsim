@@ -175,7 +175,8 @@ namespace MBSim {
     bool calcJobB2RE;
     bool calcJobC34;
 
-    LS.resize() = systemT1->getLinkStatus();
+    LS.resize(0,0);
+    LS = systemT1->getLinkStatus();
 
     while(! ExitIntegration) 
     {
