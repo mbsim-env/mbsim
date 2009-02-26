@@ -21,7 +21,7 @@ int main (int argc, char* argv[])
   DOPRI5Integrator integrator;
 
   integrator.settEnd(10.0);
-  integrator.setdtPlot(1e-3);
+  integrator.setdtPlot(1e-2);
 
  // Vec z(4);
  // z(0) = 0.13;
