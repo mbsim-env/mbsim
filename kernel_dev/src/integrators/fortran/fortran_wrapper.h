@@ -78,6 +78,10 @@ void DDASKR(void(*)(double*,double*,double*,double*,double*, double*,int*), int*
         int*, double*, int*, int*, int*, double*, int*, void(*)(double*, double*, double*, double*, double*, double*, int*), double*,
         void(*)(int*,double*,double*,double*,int*, double*,double*,int*),int*, int*);
 
+#define MEXX FC_FUNC(mexx,MEXX)
+  void mexx_(int *np,int *nv,int *nl,int *ng,int *nu,void fprob(int *np, int *nv, int *nl, int *ng, int *nu, double *t, double *p, double *v, double *u, double *rlam, int *lda, int *ldg, int *ldf, double *am, double *gp, double *fl, double *f, double *pdot, double *udot, double *g, double *gi, int *lflag, int *ifail), double *t,double *tfin, double *p,double *v,double *u,double *a,double *rlam,int *itol,double *rtol,double *atol,double *h,int *mxjob,int *ierr,int *liwk,int *iwk,int *lrwk,double *rwk,void solout(int *nr, int *np, int *nv, int *nu, int *nl,double *t , double *p, double *v, double *u, double *a, double *rlam, int *irtrn),void denout(int *nr, int *icall, int *ipol, double *t, int *nd, double *yip, int *irtrn),int *nswit,void fswit(int *np,int *nv,int *nu,int *nl,double* t,double* p,double* v,double* u,double *a,double* rlam,int *nswit,double *g),int *iswit);
+
+
 // END: Define as extern "C" if using a C++ compiler
 #ifdef __cplusplus
 }
