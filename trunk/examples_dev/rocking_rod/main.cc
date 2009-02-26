@@ -37,9 +37,9 @@ int main (int argc, char* argv[]) {
     integrator = new LSODEIntegrator;
   } 
   else if(eventDriven) { // Event driven time integration
-    integrator = new LSODERIntegrator;
-    static_cast<LSODERIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODERIntegrator*>(integrator)->setdt0(1e-13);
+    integrator = new LSODARIntegrator;
+    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
+    static_cast<LSODARIntegrator*>(integrator)->setdt0(1e-13);
   } 
   else { // time stepping integration
     sys->setLaTol(1e-2*dt);
