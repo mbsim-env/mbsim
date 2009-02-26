@@ -9,7 +9,6 @@ bool rigidContacts;
 int main (int argc, char* argv[]) {
 
   char dummy[10000];
-  string linAlg, solver, strategy, useOldla;
   double tEnd, dt, dtPlot;
   bool eventDriven;
 
