@@ -21,6 +21,9 @@ libintegrators_la_SOURCES = integrator.cc\
 			     fortran/dc_lapack.f\
 			     fortran/rksuite.f
 
+#fortran/mexax.f
+#mexax_integrator.cc 
+
 libintegrators_la_CPPFLAGS = -Ifortran -I..
 integratorsincludedir = $(includedir)/mbsim
 
@@ -41,4 +44,6 @@ integratorsinclude_HEADERS = integrator.h \
 			      odex_integrator.h \
 			      radau5_integrator.h \
 			      fortran/fortran_wrapper.h
+
+# mexax_integrator.h 
 

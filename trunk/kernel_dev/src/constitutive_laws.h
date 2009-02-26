@@ -120,7 +120,7 @@ namespace MBSim {
     protected:
       double gdLim;
     public:
-      FrictionForceLaw() : gdLim(0.1) {};
+      FrictionForceLaw(double gdLim_ = 0.01) : gdLim(gdLim_) {};
       virtual ~FrictionForceLaw() {};
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
@@ -134,6 +134,7 @@ namespace MBSim {
       virtual bool isSticking(const Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) {return 0;}
       virtual bool isSetValued() const = 0;
+      void setMarginalVelocity(double gdLim_) {gdLim = gdLim_;}
   };
 
   class PlanarCoulombFriction : public FrictionForceLaw {
@@ -274,8 +275,8 @@ namespace MBSim {
     private:
       double mu;
     public:
-      LinearRegularizedPlanarCoulombFriction() {};
-      LinearRegularizedPlanarCoulombFriction(double mu_) : mu(mu_) {};
+      LinearRegularizedPlanarCoulombFriction() : mu(0) {};
+      LinearRegularizedPlanarCoulombFriction(double mu_, double gdLim=0.01) : FrictionForceLaw(gdLim), mu(mu_) {};
       virtual ~LinearRegularizedPlanarCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 1;}
@@ -293,8 +294,8 @@ namespace MBSim {
     private:
       double mu;
     public:
-      LinearRegularizedSpatialCoulombFriction() {};
-      LinearRegularizedSpatialCoulombFriction(double mu_) : mu(mu_) {};
+      LinearRegularizedSpatialCoulombFriction() : mu(0) {};
+      LinearRegularizedSpatialCoulombFriction(double mu_, double gdLim=0.01) : FrictionForceLaw(gdLim), mu(mu_) {};
       virtual ~LinearRegularizedSpatialCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 2;}
