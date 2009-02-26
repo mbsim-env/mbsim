@@ -55,8 +55,6 @@ namespace MBSim {
 
   void MultiBodySystem::init() {
 
-
-
     setDirectory(); // output directory
 
     Group::preinit();
@@ -78,20 +76,24 @@ namespace MBSim {
     calcgdSize();
     calcrFactorSize();
     calcsvSize();
-    svSize += 1;
-
+    svSize += 1; // TODO: Nur vorübergehend gelöst. Zusätzlicher Schaltpunkt für Driftkorrektur
 
     cout << "qSize = " << qSize <<endl;
-    cout << "uSize = " << uSize[0] <<endl;
+    cout << "uSize[0] = " << uSize[0] <<endl;
     cout << "xSize = " << xSize <<endl;
     cout << "gSize = " << gSize <<endl;
     cout << "qdSize = " << gdSize <<endl;
     cout << "laSize = " << laSize <<endl;
     cout << "svSize = " << svSize <<endl;
-    cout << "hSize = " << hSize[0] <<endl;
+    cout << "hSize[0] = " << hSize[0] <<endl;
 
     cout << "uSize[1] = " << uSize[1] <<endl;
     cout << "hSize[1] = " << hSize[1] <<endl;
+
+    if(uSize[0] == uSize[1]) 
+      zdot_ = &MultiBodySystem::zdotStandard;
+    else
+      zdot_ = &MultiBodySystem::zdotResolveConstraints;
 
     setlaIndMBS(laInd);
 
@@ -168,13 +170,10 @@ namespace MBSim {
       throw 5;
     }
 
-    // if(plotting) {
     cout << "  initialising plot-files ..." << endl;
     initPlotFiles();
-    // }
 
     cout << "...... done initialising." << endl << endl;
-
   }
 
   void MultiBodySystem::setDirectory() {
@@ -221,6 +220,8 @@ namespace MBSim {
     return;
   }
 
+  // Wird für ereignisbasierte Integration benötigt. Berechnet gültigen
+  // Anfangszustand der Links.
   void MultiBodySystem::computeInitialCondition() {
     updateKinematics(0);
     updateg(0);
@@ -229,7 +230,6 @@ namespace MBSim {
     checkActivegd();
     checkActiveLinks();
     updateJacobians(0);
-    //cout <<endl<< "activeConstraintsChanged at t = " << 0 << endl<<endl;
     calclaSize();
     calcrFactorSize();
     setlaIndMBS(laInd);
@@ -238,96 +238,74 @@ namespace MBSim {
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    //cout << laSize<<endl;
   }
 
-  //Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
-  //  if(q()!=zParent()) {
-  //    updatezRef(zParent);
-  //  }
-  //  updateKinematics(t);
-  //  updateg(t);
-  //  updategd(t);
-  //  updateT(t); 
-  //  updateJacobians(t);
-  //  updateh(t); 
-  //  updateM(t); 
-  //  facLLM(); 
-  //  if(laSize) {
-  //    updateW(t); 
-  //    updateV(t); 
-  //    updateG(t); 
-  //    updatewb(t); 
-  //    computeConstraintForces(t); // Alt
-  //  }
-  //  updater(t); 
-  //  updatezd(t);
-  //  return zdParent;
-  //}
-
-  Vec MultiBodySystem::zdot(const Vec &zParent, double t) {
+  Vec MultiBodySystem::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-    if(uSize[0] == uSize[1]) {
-      updateKinematics(t);
-      updateg(t);
-      updategd(t);
-      updateT(t); 
-      updateJacobians(t);
-      updateh(t); 
-      updateM(t); 
-      facLLM(); 
-      if(laSize) {
-	updateW(t); 
-	updateV(t); 
-	updateG(t); 
-	updatewb(t); 
-	computeConstraintForces(t); // Alt
-      }
-      updater(t); 
-      updatezd(t);
-    }
-    else
-    {
-      updateKinematics(t);
-      updateg(t);
-      updategd(t);
-      updateT(t); 
-      resizeJacobians(1);
-      updateSecondJacobians(t);
-      updatehRef(hParent,1);
-      updateh(t); 
-      updateMRef(MParent,1);
-      updateM(t); 
-      //cout << M << endl;
-      updateLLMRef(LLMParent,1);
-      facLLM(); 
-      if(laSize) {
-	updateLLMRef(LLMParent,1);
-	updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-	updateW(t); 
-	updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-	updateV(t); 
-	updateG(t); 
-	updatewb(t); 
-	computeConstraintForces(t); // Alt
-      }
-      resizeJacobians(0);
-      updateJacobians(t);
-      updatehRef(hParent);
-      updateh(t); 
-      updateMRef(MParent);
-      updateM(t); 
-      updateWRef(WParent);
+    updateKinematics(t);
+    updateg(t);
+    updategd(t);
+    updateT(t); 
+    updateJacobians(t);
+    updateh(t); 
+    updateM(t); 
+    facLLM(); 
+    if(laSize) {
       updateW(t); 
-      updateVRef(VParent);
       updateV(t); 
-      updateLLMRef(LLMParent);
-      facLLM(); 
-      //updater(t); 
-      updatezd(t);
+      updateG(t); 
+      updatewb(t); 
+      computeConstraintForces(t); // Alt
     }
+    updater(t); 
+    updatezd(t);
+
+    return zdParent;
+  }
+
+  Vec MultiBodySystem::zdotResolveConstraints(const Vec &zParent, double t) {
+    if(q()!=zParent()) {
+      updatezRef(zParent);
+    }
+    updateKinematics(t);
+    updateg(t);
+    updategd(t);
+    updateT(t); 
+    resizeJacobians(1);
+    updateSecondJacobians(t);
+    updatehRef(hParent,1);
+    updateh(t); 
+    updateMRef(MParent,1);
+    updateM(t); 
+    //cout << M << endl;
+    updateLLMRef(LLMParent,1);
+    facLLM(); 
+    if(laSize) {
+      updateLLMRef(LLMParent,1);
+      updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updateW(t); 
+      updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updateV(t); 
+      updateG(t); 
+      updatewb(t); 
+      computeConstraintForces(t); // Alt
+    }
+    resizeJacobians(0);
+    updateJacobians(t);
+    updatehRef(hParent);
+    updateh(t); 
+    updateMRef(MParent);
+    updateM(t); 
+    updateWRef(WParent);
+    updateW(t); 
+    updateVRef(VParent);
+    updateV(t); 
+    updateLLMRef(LLMParent);
+    facLLM(); 
+    //updater(t); 
+    updatezd(t);
     return zdParent;
   }
 
@@ -377,12 +355,12 @@ namespace MBSim {
     updateM(t); 
     facLLM(); 
     updateW(t); 
-  //  projectGeneralizedPositions(t);
-  //  updategd(t);
-  //  projectGeneralizedVelocities(t);
-  //  updateKinematics(t);
-  //  updateg(t);
-  //  updategd(t);
+    //  projectGeneralizedPositions(t);
+    //  updategd(t);
+    //  projectGeneralizedVelocities(t);
+    //  updateKinematics(t);
+    //  updateg(t);
+    //  updategd(t);
 
     plot(t,dt);
   }
@@ -667,7 +645,7 @@ namespace MBSim {
     //la = slvLU(G, -(trans(W)*slvLLFac(LLM,h) + wb));
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb));
   } 
-  
+
   void MultiBodySystem::projectGeneralizedVelocities(double t) {
 
     if(laSize) {

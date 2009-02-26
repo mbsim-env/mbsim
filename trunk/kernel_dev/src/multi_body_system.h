@@ -126,6 +126,10 @@ namespace MBSim {
 
       int k;
 
+      Vec (MultiBodySystem::*zdot_)(const Vec &zParent, double t);
+      Vec zdotStandard(const Vec &zParent, double t);
+      Vec zdotResolveConstraints(const Vec &zParent, double t);
+
     public:
       const Vec& getAccelerationOfGravity() const {return grav;}
 
@@ -176,7 +180,7 @@ namespace MBSim {
 
       // Implementation of the ODERootFindingSystemInterface (Integratores)
       void zdot(const Vec& z, Vec& zd, double t);
-      Vec zdot(const Vec& z, double t);
+      Vec zdot(const Vec& z, double t) {return (this->*zdot_)(z,t);}
       void getsv(const Vec&, Vec&, double);
       virtual void shift(Vec& z, const Vector<int>& jsv, double t);
 
