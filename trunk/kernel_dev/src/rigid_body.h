@@ -33,12 +33,9 @@
 namespace AMVis {class CRigidBody;}
 #endif
 
-// Projektive Newton-Euler-Gleichungen bzgl. COG
-
-
 namespace MBSim {
 
-  /*! \brief Class for rigid bodies with relative coordinates 
+  /*! \brief Class for rigid bodies with arbitrary kinematics 
    *
    * */
   class RigidBody : public Body {

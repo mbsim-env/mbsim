@@ -240,6 +240,8 @@ namespace MBSim {
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
   }
 
+  // Standard zdot-Aufruf. Zwangskräfte aufgrund von Relativkinematik wird NICHT
+  // berechnet
   Vec MultiBodySystem::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -257,7 +259,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      computeConstraintForces(t); // Alt
+      computeConstraintForces(t); 
     }
     updater(t); 
     updatezd(t);
@@ -265,6 +267,8 @@ namespace MBSim {
     return zdParent;
   }
 
+  // Erweiterter zdot-Aufruf. Zwangskräfte aufgrund von Relativkinematik werden
+  // berechnet
   Vec MultiBodySystem::zdotResolveConstraints(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -338,6 +342,7 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
+  // TODO: plot muss komplett überarbeitet werden
   void MultiBodySystem::plot(const Vec& zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -355,12 +360,6 @@ namespace MBSim {
     updateM(t); 
     facLLM(); 
     updateW(t); 
-    //  projectGeneralizedPositions(t);
-    //  updategd(t);
-    //  projectGeneralizedVelocities(t);
-    //  updateKinematics(t);
-    //  updateg(t);
-    //  updategd(t);
 
     plot(t,dt);
   }
@@ -371,6 +370,7 @@ namespace MBSim {
     Group::initz();
   }
 
+  // TODO: Muss überarbeitet werden
   double MultiBodySystem::computePotentialEnergy() {
     // COMPUTEPOTENTIALENERGY computes potential energy
     double Vpot = 0.0;
@@ -383,10 +383,10 @@ namespace MBSim {
     return Vpot;
   }
 
+  // Wertet Stoppvektor aus
   void MultiBodySystem::getsv(const Vec& zParent, Vec& svExt, double t) { 
     if(sv()!=svExt()) {
       updatesvRef(svExt);
-      //sv.init(1);
     }
 
     if(q()!=zParent())
@@ -408,14 +408,10 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      computeConstraintForces(t); // Alt
+      computeConstraintForces(t); 
     }
     updateStopVector(t);
-    sv(sv.size()-1) = k*1e-1-t;
-    //projectGeneralizedPositions(t);
-    //cout << g << endl;
-    //cout << sv << endl;
-    //cout << "end update stop" << endl;
+    sv(sv.size()-1) = k*1e-1-t; // TODO: Muss überarbeitet werden. Zusätzlicher Stopp für Driftkorrektur
   }
 
   void MultiBodySystem::setAccelerationOfGravity(const Vec& g) {
@@ -423,6 +419,7 @@ namespace MBSim {
     grav = g;
   }
 
+  // Update für Time-Stepping-Integrator
   void MultiBodySystem::update(const Vec &zParent, double t) {
     // UPDATE updates the position depending structures for multibody system
 
@@ -434,8 +431,6 @@ namespace MBSim {
     checkActiveLinks();
     if(gActiveChanged()) {
 
-      //cout << "activeConstraintsChanged at t = " << t << endl;
-
       checkAllgd(); // Prüfen ob nötig
       calcgdSizeActive();
       calclaSize();
@@ -443,7 +438,6 @@ namespace MBSim {
 
       setlaIndMBS(laInd);
 
-      //cout << laSize << endl;
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -465,6 +459,7 @@ namespace MBSim {
     projectGeneralizedPositions(t);
   }
 
+  // TODO: Globale r-Faktor momentan deaktiviert, da G nicht mehr symmetrisch
   void MultiBodySystem::updaterFactors() {
     // UPDATERFACTORS updates r-factors for children
     if(strategy == global) {
@@ -538,8 +533,6 @@ namespace MBSim {
 
   void MultiBodySystem::updater(double t) {
     r = V*la;
-    //r.init(0);
-    //Group::updater(t);
   }
 
   Vec MultiBodySystem::deltax(const Vec &zParent, double t, double dt) {
@@ -573,16 +566,17 @@ namespace MBSim {
     // TODO update auslagern
     updater(t); 
     updatedu(t,dt);
-    // cout <<"Zeit : " << t  <<" "<< ud << endl;
     return ud;
   }
 
+  // TODO: Soll durch XML ersetzt werden
   void MultiBodySystem::save(const string &path, ofstream& outputfile) {
     Group::save(path,outputfile);
     outputfile << "# Acceleration of gravity:" << endl;
     outputfile << grav << endl << endl;;
   }
 
+  // TODO: Soll durch XML ersetzt werden
   void MultiBodySystem::load(const string &path, ifstream& inputfile) {
 
     setMultiBodySystem(this);
@@ -643,9 +637,10 @@ namespace MBSim {
 
   void MultiBodySystem::computeConstraintForces(double t) {
     //la = slvLU(G, -(trans(W)*slvLLFac(LLM,h) + wb));
-    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb));
+    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
 
+  // Projektion der Geschwindigkeiten
   void MultiBodySystem::projectGeneralizedVelocities(double t) {
 
     if(laSize) {
@@ -662,6 +657,7 @@ namespace MBSim {
     }
   }
 
+  // Projektion der Lagen
   void MultiBodySystem::projectGeneralizedPositions(double t) {
 
     if(laSize) {
@@ -692,13 +688,13 @@ namespace MBSim {
     }
   }
 
-  // TODO auch in Subsystem
+  // TODO: auch im Subsystem bereitstellen
   void MultiBodySystem::savela() {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).savela();
   }
 
-  // TODO auch in Subsystem
+  // TODO: auch im Subsystem bereitstellen
   void MultiBodySystem::initla() {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).initla();
@@ -742,6 +738,7 @@ namespace MBSim {
     }
   }
 
+  // TODO: Prüfen ob Funktion notwendig!
   void MultiBodySystem::addElement(Element *element_) {
     Object* object_=dynamic_cast<Object*>(element_);
     Link* link_=dynamic_cast<Link*>(element_);
@@ -752,6 +749,7 @@ namespace MBSim {
     else{ cout << "Error: MultiBodySystem: addElement(): No such type of Element to add!"<<endl; throw 50;}
   }
 
+  // TODO: Momentan deaktiviert. Überarbeiten!
   Element* MultiBodySystem::getElement(const string &name) {
     //   // GETELEMENT returns element
     //   unsigned int i1;
@@ -782,13 +780,13 @@ namespace MBSim {
 
   int MultiBodySystem::solveConstraintsLinearEquations() {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
-    la = slvLU(G,-(trans(W)*slvLLFac(LLM,h) + wb));
+    la = slvLS(G,-(trans(W)*slvLLFac(LLM,h) + wb));
     return 1;
   }
 
   int MultiBodySystem::solveImpactsLinearEquations(double dt) {
     // SOLVELINEAREQUATIONS solves constraint equations with Cholesky decomposition
-    la = slvLU(G,-(gd + trans(W)*slvLLFac(LLM,h)*dt));
+    la = slvLS(G,-(gd + trans(W)*slvLLFac(LLM,h)*dt));
     return 1;
   }
 
@@ -1192,8 +1190,8 @@ namespace MBSim {
     return info.str();
   }
 
-  void MultiBodySystem::initDataInterfaceBase() 
-  {
+  void MultiBodySystem::initDataInterfaceBase() {
+
     vector<Link*>::iterator il1;
     for(il1 = link.begin(); il1 != link.end(); ++il1) (*il1)->initDataInterfaceBase(this);
     vector<Object*>::iterator io1;
@@ -1202,6 +1200,8 @@ namespace MBSim {
     for(ie1 = EDI.begin(); ie1 != EDI.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
+  // TODO: Konzept überdenken!
+  // Sucht im gesamten MKS nach einem Koordinatensystem mit Hilfe des fullName
   CoordinateSystem* MultiBodySystem::findCoordinateSystem(const string &name) {
 
     istringstream stream(name);
@@ -1226,6 +1226,8 @@ namespace MBSim {
     return sys->getObject(l[l.size()-2])->getCoordinateSystem(l[l.size()-1]);
   }
 
+  // TODO: Konzept überdenken!
+  // Sucht im gesamten MKS nach einer Contour mit Hilfe des fullName
   Contour* MultiBodySystem::findContour(const string &name) {
 
     istringstream stream(name);
@@ -1250,17 +1252,20 @@ namespace MBSim {
     return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
   }
 
+  // Funktion für Reaktion auf Schaltpunkt (Stoss, Haft-Gleit-Übergang, Abheben,
+  // Driftkorrektur)
   void MultiBodySystem::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
     jsv = jsv_;
+
     //cout <<endl<< "event at time t = " << t << endl<<endl;
     //cout<< "sv = " << trans(sv) << endl;
     //cout << "jsv = "<< trans(jsv) << endl;
-    if (jsv(sv.size()-1)) {
+    
+    if (jsv(sv.size()-1)) { // Führe Projektion durch
       k++;
-      //  cout << "projeziere"  << endl;
       updateKinematics(t);
       updateg(t);
       updateT(t); 
@@ -1277,7 +1282,7 @@ namespace MBSim {
       updateW(t); 
       projectGeneralizedVelocities(t);
     }
-    //cout << "projeziere"  << endl;
+
     updateKinematics(t);
     updateg(t);
     //updategd(t);
@@ -1289,21 +1294,15 @@ namespace MBSim {
     updateW(t); 
     //updateG(t); // ..
 
-    // cout << g << endl;
-    //cout << gd << endl;
     projectGeneralizedPositions(t);
-    //   //projectGeneralizedVelocities(t);
-    // cout << g << endl;
-    // cout << gd << endl;
-
-    //  cout << "fertig"  << endl;
 
     updateCondition(); // Entscheide, welche Bindungen dazukommen bzw. entfallen
     checkActiveLinks(); // Liste mit aktiven Links (g<=0) neu anlegen
-    // cout <<"impact = "<< impact <<endl;
+
+    //cout <<"impact = "<< impact <<endl;
     //cout <<"sticking = "<< sticking <<endl;
 
-    if(impact) {
+    if(impact) { // Kontakt schließt, Stoss
 
       checkAllgd(); // Es müssen alle geschlossenen Kontakte berücksichtigt werden
       calcgdSizeActive(); // 
@@ -1372,10 +1371,9 @@ namespace MBSim {
 	updatelaRef(laParent(0,laSize-1));
 	updatewbRef(wbParent(0,laSize-1));
 	updaterFactorRef(rFactorParent(0,rFactorSize-1));
-	//cout << "laSize wrt gdd (impact) = " << laSize<< " " << gdSize << endl;
       }
     } 
-    else if(sticking) {
+    else if(sticking) { // Haft-Gleit-Übergang
 
       calclaSize();
       calcrFactorSize();
@@ -1385,7 +1383,6 @@ namespace MBSim {
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      //cout << " laSize before sticking = " << laSize << " gdSize = " << gdSize <<endl;
 
       if(laSize) {
 
@@ -1413,10 +1410,9 @@ namespace MBSim {
 	updatelaRef(laParent(0,laSize-1));
 	updatewbRef(wbParent(0,laSize-1));
 	updaterFactorRef(rFactorParent(0,rFactorSize-1));
-	//cout << "laSize wrt gdd (Sticking) = " << laSize<< " " << gdSize << endl;
       }
     } 
-    else {
+    else { // Kontakt öffnet
       checkActiveLinks();
       calclaSize();
       calcrFactorSize();
@@ -1426,7 +1422,6 @@ namespace MBSim {
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      //cout << "laSize wrt gdd (smooth) = " << laSize<< " " << gdSize << endl;
     }
     impact = false;
     sticking = false;
@@ -1441,8 +1436,9 @@ namespace MBSim {
     updateW(t); 
     //updateG(t); // ..
 
-    // cout << g << endl;
+    //cout << g << endl;
     //cout << gd << endl;
+    
     projectGeneralizedPositions(t);
     updategd(t);
     updateT(t); 

@@ -36,6 +36,7 @@ namespace MBSim {
   class Contour;
   class HitSphereLink;
   class UserFunction;
+
   /*! 
    *  \brief This is a general link to one or more objects.
    * 
