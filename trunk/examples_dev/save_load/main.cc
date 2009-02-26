@@ -26,7 +26,7 @@ int main (int argc, char* argv[]) {
   ObjObject *obj = new ObjObject(sys->getObject("Rod")->getFullName(),1,false);
   obj->setObjFilename("objects/rod.obj");
   static_cast<RigidBody*>(sys->getObject("Rod"))->setAMVisBody(obj);
-  obj->setInitialRotation(M_PI/2,0,0);
+  obj->setInitialRotation(M_PI/2,M_PI/2,0);
   obj->setScaleFactor(0.1);
   obj->setCalculationOfNormals(3);
   obj->setVertexEPS(1e-5);

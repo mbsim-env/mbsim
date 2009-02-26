@@ -17,10 +17,10 @@ Line
 3 x 1
 [              0
              0.5
-       0.0523599 ]
+        -1.51844 ]
 
 # u0:
-0 x 1
+0 x 0
 [  ]
 
 # Mass: 
@@ -34,8 +34,8 @@ Line
 
 # Translation of contour Line:
 3 x 1
-[              0
-           -0.01
+[           0.01
+               0
                0 ]
 
 # Rotation of contour Line:

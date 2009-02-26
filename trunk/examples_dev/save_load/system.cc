@@ -9,17 +9,6 @@
 
 using namespace AMVis;
 
-class Moment : public UserFunction {
-  public:
-    Vec operator()(double t) {
-      Vec a(3);
-      a(0) = 0.001*cos(t);
-      a(1) = 0.0005*sin(t);
-      //a(2) = 0.15*sin(t+M_PI/8);
-      return a;
-    }
-};
-
 System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Gravitation
   Vec grav(3);
@@ -37,11 +26,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double deltax = 0.2;           
   double mu  = 0.3;
 
-  //CoSy* origin = new CoSy("O");
-  //Vec WrOK(3);
-  //WrOK(2) = d/2;;
-  //origin->setWrOP(WrOK);
-
   RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
@@ -55,13 +39,13 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Initial translation and rotation
   Vec q0(3);
   q0(1) = .5;
-  q0(2) = alpha;
+  q0(2) = alpha-M_PI/2;
   body->setq0(q0);
 
   // Contour definition
   Line *line = new Line("Line");
   Vec KrSC(3);
-  KrSC(1) = -0.5*h;
+  KrSC(0) = 0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
 
   // Obstacles
@@ -88,21 +72,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   cr2S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   cr2S->connect(point2,body->getContour("Line"));
   addLink(cr2S);
-
-  // Visualisation with AMVis
-  ObjObject *obj = new ObjObject(body->getFullName(),1,false);
-  obj->setObjFilename("objects/rod.obj");
-  body->setAMVisBody(obj);
-  obj->setInitialRotation(M_PI/2,0,0);
-  obj->setScaleFactor(0.1);
-  obj->setCalculationOfNormals(3);
-  obj->setVertexEPS(1e-5);
-  obj-> setNormalEPS(1e-5);
-  obj-> setAngleEPS(M_PI*2/9);
-  // Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
-  // cubeoid->setSize(l,h,d);
-  // cubeoid->setColor(0);
-  // body->setAMVisBody(cubeoid);
 
 }
 
