@@ -36,10 +36,10 @@ namespace MBSim {
 
   BodyRigid::BodyRigid(const string &name) : Body(name), m(0), I(3), Mh(6), WrOK(3), WvK(3), WomegaK(3), KomegaK(3), KrKS(3), AWK(3), AK0K(3), l(6), WF(3), WM(3), WLtmp(6), WFtmp(WLtmp(0,2)), WMtmp(WLtmp(3,5)), rot(cardanAngles), inertiaWithRespectToCOG(false) 
 # ifdef HAVE_AMVIS
-					     ,
-					     bodyAMVis(0), AMVisDataRel(false), AMVisInstance(0)
+					     ,bodyAMVis(0), bodyAMVisUserFunctionColor(0), AMVisDataRel(false), AMVisInstance(0)
 # endif
   {
+
     AK0K(0,0)=1.0;
     AK0K(1,1)=1.0;
     AK0K(2,2)=1.0;
