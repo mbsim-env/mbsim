@@ -285,7 +285,7 @@ namespace MBSim {
             calcJobB2 =  FlagSSC && ((maxOrder==1) || (maxOrder>1 && !ConstraintsChangedBlock1));
             calcJobB2 = calcJobB2 || (!FlagSSC && (maxOrder==2));
             calcJobB2RE = FlagSSC && (maxOrder==2) && !ConstraintsChangedBlock1; 
-            calcJobC34  = (FlagSSC && (maxOrder>1)) || (maxOrder>2) && !ConstraintsChangedBlock1;
+            calcJobC34  = ((FlagSSC && (maxOrder>1)) || (maxOrder>2)) && !ConstraintsChangedBlock1;
                 
           }
           // Block 2
@@ -584,7 +584,6 @@ bool TimeSteppingSSCIntegrator::testTolerances()
     laeUni.resize() = la2bUni;
     laeBi.resize()  = la2bBi;
     iter = iterB1;
-    ConstraintsChanged=ConstraintsChangedBlock1;
   }
   else {
     laeUni.resize() = la1dUni;
