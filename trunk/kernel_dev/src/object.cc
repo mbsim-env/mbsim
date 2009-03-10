@@ -27,6 +27,7 @@
 #include "eps.h"
 #include "class_factory.h"
 #include "subsystem.h"
+#include "function.h"
 
 namespace MBSim {
 
@@ -228,64 +229,79 @@ namespace MBSim {
     getline(inputfile,dummy); // Newline
   }
 
-  void Object::plot(double t, double dt) {
-    Element::plot(t);
+  void Object::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
 
-    for(unsigned int j=0; j<port.size(); j++) {
-      port[j]->plot(t,dt);
-    }    
-    for(unsigned int j=0; j<contour.size(); j++) {
-      contour[j]->plot(t,dt);
-    }    
-
-    if(plotLevel>1) {
-      for(int i=0; i<qSize; ++i)
-	plotfile<<" "<<q(i);
-      for(int i=0; i<uSize[0]; ++i)
-	plotfile<<" "<<u(i);
-      if(plotLevel>2) {
-	for(int i=0; i<qSize; ++i)
-	  plotfile<<" "<<qd(i)/dt;
-	for(int i=0; i<uSize[0]; ++i)
-	  plotfile<<" "<<ud(i)/dt;
-	for(int i=0; i<uSize[0]; ++i)
-	  plotfile<<" "<<h(i);
-	for(int i=0; i<uSize[0]; ++i)
-	  plotfile<<" "<<r(i)/dt;
+      if(getPlotFeature(state)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotVector.push_back(q(i));
+        for(int i=0; i<uSize[0]; ++i)
+          plotVector.push_back(u(i));
       }
+      if(getPlotFeature(stateDerivative)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotVector.push_back(qd(i)/dt);
+        for(int i=0; i<uSize[0]; ++i)
+          plotVector.push_back(ud(i)/dt);
+      }
+      if(getPlotFeature(rightHandSide)==enabled) {
+        for(int i=0; i<uSize[0]; ++i)
+          plotVector.push_back(h(i));
+        for(int i=0; i<uSize[0]; ++i)
+          plotVector.push_back(r(i)/dt);
+      }
+
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+
+      for(unsigned int j=0; j<port.size(); j++)
+        port[j]->plot(t,dt);
+      /*for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->plot(t,dt);*/
     }
   }
 
-  void Object::initPlotFiles() {
-    Element::initPlotFiles();
+  void Object::initPlot(bool top) {
+    Element::initPlot(parent, true, false);
 
-    for(unsigned int j=0; j<port.size(); j++) {
-      port[j]->initPlotFiles();
-    }    
-    for(unsigned int j=0; j<contour.size(); j++) {
-      contour[j]->initPlotFiles();
-    }    
-
-    if(plotLevel>1) {
-      for(int i=0; i<qSize; ++i)
-	plotfile <<"# "<< plotNr++ << ": q(" << i << ")" << endl;
-
-      for(int i=0; i<uSize[0]; ++i)
-	plotfile <<"# "<< plotNr++ <<": u("<<i<<")" << endl;
-
-      if(plotLevel>2) {
-	for(int i=0; i<qSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": qd(" << i << ")" << endl;
-
-	for(int i=0; i<uSize[0]; ++i)
-	  plotfile <<"# "<< plotNr++ <<": ud("<<i<<")" << endl;
-
-	for(int i=0; i<uSize[0]; ++i)
-	  plotfile <<"# "<< plotNr++ <<": h("<<i<<")" << endl;
-
-	for(int i=0; i<getuSize(); ++i)
-	  plotfile <<"# "<< plotNr++ <<": r("<<i<<")" << endl;
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotColumns.push_back("q("+numtostr(i)+")");
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("u("+numtostr(i)+")");
       }
+      if(getPlotFeature(stateDerivative)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotColumns.push_back("qd("+numtostr(i)+")");
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("ud("+numtostr(i)+")");
+      }
+      if(getPlotFeature(rightHandSide)==enabled) {
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("h("+numtostr(i)+")");
+        for(int i=0; i<getuSize(); ++i)
+          plotColumns.push_back("r("+numtostr(i)+")");
+      }
+
+      if(top) createDefaultPlot();
+
+      for(unsigned int j=0; j<port.size(); j++)
+        port[j]->initPlot();
+      /*for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->initPlotFiles();*/
+    }
+  }
+
+  void Object::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for(unsigned int j=0; j<port.size(); j++)
+        port[j]->closePlot();
+      /*for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->closePlot();*/
+
+      Element::closePlot();
     }
   }
 

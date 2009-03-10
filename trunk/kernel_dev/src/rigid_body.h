@@ -149,8 +149,6 @@ namespace MBSim {
       void resizeJacobians(int j);
       virtual void checkForConstraints();
 
-      void plot(double t, double dt=1);
-
       void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
 
       void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
@@ -169,7 +167,8 @@ namespace MBSim {
       double computePotentialEnergyBranch();
 
       void init();
-      void initPlotFiles();
+      void plot(double t, double dt=1, bool top=true);
+      void initPlot(bool top=true);
       void calcqSize();
       void calcuSize(int j=0);
 

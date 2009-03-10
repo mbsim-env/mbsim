@@ -269,7 +269,7 @@ namespace MBSim {
   }
 
 
-  void Joint::initPlotFiles() {
+  /*void Joint::initPlotFiles() {
 
     Link::initPlotFiles();
 
@@ -278,9 +278,9 @@ namespace MBSim {
       coilspringAMVis->writeBodyFile();
     }
 #endif
-  }
+  }*/
 
-  void Joint::plot(double t,double dt) {
+  /*void Joint::plot(double t,double dt) {
     Link::plot(t,dt);
 
 #ifdef HAVE_AMVIS
@@ -302,8 +302,8 @@ namespace MBSim {
       coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
       coilspringAMVis->appendDataset(0);
     }
-  }
 #endif
+  }*/
 
   void Joint::solveConstraintsFixpointSingle() {
     double *a = mbs->getGs()();

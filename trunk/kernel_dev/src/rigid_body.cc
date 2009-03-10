@@ -33,6 +33,7 @@
 #include "data_interface_base.h"
 using namespace AMVis;
 #endif
+#include "rotarymatrices.h"
 
 
 namespace MBSim {
@@ -189,32 +190,65 @@ namespace MBSim {
 
   }
 
-  void RigidBody::initPlotFiles() {
+  void RigidBody::initPlot(bool top) {
+    Body::initPlot(false);
 
-      Body::initPlotFiles();
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(globalPosition)==enabled) {
+        plotColumns.push_back("WxOS");
+        plotColumns.push_back("WyOS");
+        plotColumns.push_back("WzOS");
+        plotColumns.push_back("alpha");
+        plotColumns.push_back("beta");
+        plotColumns.push_back("gamma");
+      }
+
+      if(top) createDefaultPlot();
 
 #ifdef HAVE_AMVIS
-    if(bodyAMVis)
-      bodyAMVis->writeBodyFile();
+      if(bodyAMVis && getPlotFeature(amvis)==enabled)
+        bodyAMVis->writeBodyFile();
 #endif
-
-    if(plotLevel>0) {
-    //  plotfile <<"# "<< plotNr++ << ": WxOS" << endl;
-    //  plotfile <<"# "<< plotNr++ << ": WyOS" << endl;
-    //  plotfile <<"# "<< plotNr++ << ": WzOS" << endl;
-    //  plotfile <<"# "<< plotNr++ << ": alpha" << endl;
-    //  plotfile <<"# "<< plotNr++ << ": beta" << endl;
-    //  plotfile <<"# "<< plotNr++ << ": gamma" <<endl;
-
-    //  if(plotLevel>2) {
-    //    plotfile <<"# "<< plotNr++ << ": T" << endl;
-    //    plotfile <<"# "<< plotNr++ << ": V" << endl;
-    //    plotfile <<"# "<< plotNr++ << ": E" << endl;
-    //  }
-
     }
-
   }
+
+  void RigidBody::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Body::plot(t,dt, false);
+
+      if(getPlotFeature(globalPosition)==enabled) {
+        Vec WrOS=cosyAMVis->getPosition();
+        Vec cardan=AIK2Cardan(cosyAMVis->getOrientation());
+        plotVector.push_back(WrOS(0));
+        plotVector.push_back(WrOS(1));
+        plotVector.push_back(WrOS(2));
+        plotVector.push_back(cardan(0));
+        plotVector.push_back(cardan(1));
+        plotVector.push_back(cardan(2));
+      }
+
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+
+#ifdef HAVE_AMVIS
+      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
+        Vec WrOS=cosyAMVis->getPosition();
+        Vec cardan=AIK2Cardan(cosyAMVis->getOrientation());
+        bodyAMVis->setTime(t);
+        bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
+        bodyAMVis->setRotation(cardan(0),cardan(1),cardan(2));
+        if(bodyAMVisUserFunctionColor) {
+          double color=(*bodyAMVisUserFunctionColor)(t)(0);
+          if(color>1) color=1;
+          if(color<0) color=0;
+          bodyAMVis->setColor(color);
+        }
+        bodyAMVis->appendDataset(0);
+      }
+#endif
+    }
+  }
+
 
   void RigidBody::updateMConst(double t) {
     M += Mbuf;
@@ -407,57 +441,6 @@ namespace MBSim {
   //  }
   //
 
-
-  void RigidBody::plot(double t, double dt) {
-    Body::plot(t,dt);
-#ifdef HAVE_AMVIS
-    if(plotLevel>0 || bodyAMVis)
-#else
-      if(plotLevel>0)
-#endif
-      {
-	if(plotLevel>0) {
-	  // plotfile<<" "<<WrOS(0)<<" "<<WrOS(1)<<" "<<WrOS(2);
-	  // plotfile<<" "<<alpha<<" "<<beta<<" "<<gamma; 
-
-	  // if(plotLevel>2) {
-	  //   double Ttemp = computeKineticEnergy();
-	  //   double Vtemp = computePotentialEnergy();
-	  //   plotfile <<" "<<  Ttemp;
-	  //   plotfile <<" "<<  Vtemp;
-	  //   plotfile <<" "<< Ttemp+Vtemp;
-	  // }
-	}
-
-#ifdef HAVE_AMVIS
-	if(bodyAMVis) {
-	  SqrMat AWK = cosyAMVis->getOrientation();
-	  Vec WrOS = cosyAMVis->getPosition();
-	  double alpha;
-	  double beta=asin(AWK(0,2));
-	  double gamma;
-	  double nenner=cos(beta);
-	  if (nenner>1e-10) {
-	    alpha=atan2(-AWK(1,2),AWK(2,2));
-	    gamma=atan2(-AWK(0,1),AWK(0,0));
-	  } else {
-	    alpha=0;
-	    gamma=atan2(AWK(1,0),AWK(1,1));
-	  }
-	  bodyAMVis->setTime(t);
-	  bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
-	  bodyAMVis->setRotation(alpha,beta,gamma);
-	  if (bodyAMVisUserFunctionColor) {
-	    double color = (*bodyAMVisUserFunctionColor)(t)(0);
-	    if (color>1) color =1;
-	    if (color<0) color =0;
-	    bodyAMVis->setColor(color);
-	  }
-	  bodyAMVis->appendDataset(0);
-	}
-#endif
-      }
-  }
 
   void RigidBody::updateKinematicsForSelectedCoordinateSystem(double t) {
 

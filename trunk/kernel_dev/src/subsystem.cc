@@ -226,57 +226,6 @@ namespace MBSim {
       EDI[i]->initz();
   }
 
-  void Subsystem::closePlotFiles() {
-    Element::closePlotFiles();
-    for(unsigned i=0; i<subsystem.size(); i++)
-      subsystem[i]->closePlotFiles();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->closePlotFiles();
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->closePlotFiles();
-    for(unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->closePlotFiles();
-  }
-
-  void Subsystem::initPlotFiles() {
-    Element::initPlotFiles();
-    for(unsigned i=0; i<subsystem.size(); i++)
-      subsystem[i]->initPlotFiles();
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->initPlotFiles();
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->initPlotFiles();
-    for(unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->initPlotFiles();
-
-    //   // Energieterme
-    //   if(plotLevel>=3) {
-    //     plotfile <<"# " << plotNr++ << ": T" << endl;
-    //     plotfile <<"# " << plotNr++ << ": V" << endl;
-    //     plotfile <<"# " << plotNr++ << ": E" << endl;
-    //   }   
-  }
-
-  void Subsystem::plot(double t, double dt) {
-    Element::plot(t,dt);
-    for(unsigned i=0; i<subsystem.size(); i++)
-      subsystem[i]->plot(t,dt);
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->plot(t,dt);
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->plot(t,dt);
-    for(unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->plot(t,dt);
-
-    //   if(plotLevel>=3) {
-    //     double Ttemp = this->computeKineticEnergy();
-    //     double Vtemp = this->computePotentialEnergy();
-    //     plotfile<<" "<< Ttemp;
-    //     plotfile<<" "<< Vtemp;
-    //     plotfile<<" "<< Ttemp + Vtemp;
-    //   }
-
-  }
 
   
   void Subsystem::setUpLinks() {
@@ -1315,6 +1264,51 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).checkImpactsForTermination();
+  }
+
+  void Subsystem::initPlot(bool top) {
+    Element::initPlot(parent, false, false);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for(unsigned i=0; i<subsystem.size(); i++)
+        subsystem[i]->initPlot();
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->initPlot();
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->initPlot();
+      for(unsigned i=0; i<EDI.size(); i++)
+        EDI[i]->initPlot();
+    }
+  }
+
+  void Subsystem::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for(unsigned i=0; i<subsystem.size(); i++)
+        subsystem[i]->closePlot();
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->closePlot();
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->closePlot();
+      for(unsigned i=0; i<EDI.size(); i++)
+        EDI[i]->closePlot();
+
+      Element::closePlot();
+    }
+  }
+
+  void Subsystem::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
+
+      for(unsigned i=0; i<subsystem.size(); i++)
+        subsystem[i]->plot(t,dt);
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->plot(t,dt);
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->plot(t,dt);
+      for(unsigned i=0; i<EDI.size(); i++)
+        EDI[i]->plot(t,dt);
+    }
   }
 
 }

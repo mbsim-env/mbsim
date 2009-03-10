@@ -80,8 +80,8 @@ namespace MBSim {
 
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
-      void initPlotFiles(); 
-      void plot(double t, double dt=1);
+      //void initPlotFiles(); 
+      //void plot(double t, double dt=1);
 
       bool isActive() const {return true;}
       void checkActiveg() {}

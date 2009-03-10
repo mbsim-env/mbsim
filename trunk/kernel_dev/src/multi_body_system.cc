@@ -36,6 +36,8 @@
 #  include<io.h>
 #  define mkdir(a,b) mkdir(a)
 #endif
+#include <H5Cpp.h>
+#include <hdf5serie/simpleattribute.h>
 
 namespace MBSim {
 
@@ -171,7 +173,7 @@ namespace MBSim {
     }
 
     cout << "  initialising plot-files ..." << endl;
-    initPlotFiles();
+    initPlot();
 
     cout << "...... done initialising." << endl << endl;
   }
@@ -203,8 +205,6 @@ namespace MBSim {
 	cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
       }
     }
-
-    dirName = projectDirectory+"/";
 
     if(preIntegrator) {
       string preDir="PREINTEG";
@@ -340,6 +340,40 @@ namespace MBSim {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
+  }
+
+  void MultiBodySystem::initPlot(bool top) {
+    setPlotFeatureRecursive(plotRecursive, enabled);
+    setPlotFeatureRecursive(state, enabled);
+    setPlotFeatureRecursive(stateDerivative, disabled);
+    setPlotFeatureRecursive(rightHandSide, disabled);
+    setPlotFeatureRecursive(globalPosition, disabled);
+    setPlotFeatureRecursive(contact, enabled);
+    setPlotFeatureRecursive(amvis, enabled);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotFile=new H5::H5File(name+".mbsim.h5", H5F_ACC_TRUNC);
+
+      plotGroup=new H5::Group(plotFile->createGroup(name));
+      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+
+      for(unsigned i=0; i<subsystem.size(); i++)
+        subsystem[i]->initPlot();
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->initPlot();
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->initPlot();
+      for(unsigned i=0; i<EDI.size(); i++)
+        EDI[i]->initPlot();
+    }
+  }
+
+  void MultiBodySystem::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Group::closePlot();
+
+      delete plotFile;
+    }
   }
 
   // TODO: plot muss komplett überarbeitet werden
@@ -708,7 +742,7 @@ namespace MBSim {
       init();  
       cout << "Preintegration..."<<endl;
       preIntegrator->integrate(*this);
-      closePlotFiles();
+      closePlot();
       writez();
       delete preIntegrator;
       preIntegrator=NULL; 

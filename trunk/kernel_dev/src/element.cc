@@ -22,45 +22,19 @@
  */
 #include <config.h>
 #include "element.h"
+#include "interfaces.h"
 
 namespace MBSim {
 
-  string Element::dirName = "./";
-
-
-  Element::Element(const string &name_) : name(name_), plotNr(1), plotLevel(1), plotPrec(6) {
+  Element::Element(const string &name_) : name(name_) {
+    for(int i=0; i<LASTPLOTFEATURE; i++) {
+      plotFeature[(PlotFeature)i]=unset;
+      plotFeatureForChildren[(PlotFeature)i]=unset;
+    }
   }
 
   Element::~Element() {
-    plotfile.close();
   }
-
-  void Element::plot(double t, double dt) {
-    if(plotLevel) {
-      plotfile << endl;
-      plotfile <<showpos<<setw(16)<< t;
-      plotfile.precision(plotPrec);
-    }
-  }
-
-  void Element::setPlotPrecision(int prec) {
-   plotPrec = prec;
-   if(plotfile.is_open()) plotfile.precision(plotPrec);
-  }
-
-  void Element::initPlotFiles() {
-    // generate plotfile for time history
-    if(plotLevel) {
-      plotfile.open((dirName+getFullName()+".plt").c_str(), ios::out);
-      plotfile <<"# " << plotNr++ << ": t" << endl;
-    }
-  } 
-
-  void Element::closePlotFiles() {
-    if(plotLevel) {
-      plotfile.close();
-    }
-  } 
 
   void Element::save(const string &path, ofstream& outputfile) {
       outputfile << "# Type:" << endl;
@@ -102,4 +76,50 @@ namespace MBSim {
     inputfile.seekg(n);
     return num;
   }
+
+  void Element::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.clear();
+      plotVector.push_back(t);
+
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+    }
+  }
+
+  void Element::initPlot(ObjectInterface* parent, bool createDefault, bool top) {
+    for(int i=0; i<LASTPLOTFEATURE; i++) {
+      if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+      if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+    }
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+
+      if(createDefault) {
+        plotColumns.clear();
+        plotColumns.push_back("Time");
+        plotVectorSerie=new H5::VectorSerie<double>;
+
+        if(top) createDefaultPlot();
+      } else
+        plotVectorSerie=NULL;
+    }
+  }
+  
+  void Element::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotVectorSerie) delete plotVectorSerie;
+      delete plotGroup;
+    }
+  }
+
+  void Element::createDefaultPlot() {
+    if(plotColumns.size()>1) {
+      plotVectorSerie->create(*plotGroup,"data",plotColumns);
+      plotVectorSerie->setDescription("Default dataset for class: "+getType());
+    }
+  }
+
 }

@@ -23,6 +23,11 @@
 #ifndef _OBJECT_INTERFACE_H_
 #define _OBJECT_INTERFACE_H_
 
+namespace H5 {
+  class CommonFG;
+  class Group;
+}
+
 namespace MBSim {
 
   class Subsystem;
@@ -54,6 +59,9 @@ namespace MBSim {
       virtual int gethInd(Subsystem* sys, int i=0) = 0;
 
       virtual void updateSecondJacobians(double t) = 0;
+      virtual H5::Group *getPlotGroup()=0;
+      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp)=0;
+      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp)=0;
   };
 
   class LinkInterface {

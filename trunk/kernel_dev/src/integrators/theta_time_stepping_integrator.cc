@@ -64,7 +64,7 @@ namespace MBSim {
 
     double tPlot = 0.0;
 
-    ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
+    ofstream integPlot((name + ".plt").c_str());
 
     int iter = 0;
 
@@ -85,7 +85,7 @@ namespace MBSim {
       integrationSteps++;
       if( (step*stepPlot - integrationSteps) < 0) {
 	step++;
-	system.plot(t,dt);
+	//system.plot(t,dt);
 	double s1 = clock();
 	time += (s1-s0)/CLOCKS_PER_SEC;
 	s0 = s1; 
@@ -162,7 +162,7 @@ namespace MBSim {
 
     integPlot.close();
 
-    ofstream integSum((system.getDirectoryName() + name + ".sum").c_str());
+    ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum << "Maximum number of iterations: " << maxIter << endl;

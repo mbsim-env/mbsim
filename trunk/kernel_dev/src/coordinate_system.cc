@@ -23,11 +23,13 @@
 #include "coordinate_system.h"
 #include "object.h"
 #include "subsystem.h"
+#include "function.h"
 #ifdef HAVE_AMVIS
-#include "crigidbody.h"
+#include "kos.h"
 #include "data_interface_base.h"
 #include "rotarymatrices.h"
 using namespace AMVis;
+int MBSim::CoordinateSystem::kosAMVisCounter=0;
 #endif
 
 namespace MBSim {
@@ -35,8 +37,7 @@ namespace MBSim {
   CoordinateSystem::CoordinateSystem(const string &name) : Element(name), parent(0), adress(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 
 #ifdef HAVE_AMVIS
-    bodyAMVisUserFunctionColor= NULL;
-    bodyAMVis = NULL;
+    kosAMVis = NULL;
 #endif
 
     hSize[0] = 0;
@@ -48,7 +49,6 @@ namespace MBSim {
     AWP(2,2) = 1;
     WJP.resize(3,0);
     WJR.resize(3,0);
-    plotLevel= 0;
   }
 
   // string CoordinateSystem::getFullName() const {
@@ -79,56 +79,68 @@ namespace MBSim {
 
 
 #ifdef HAVE_AMVIS
-  void CoordinateSystem::setAMVisBody(CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
-
-    bodyAMVis = AMVisBody;
-    bodyAMVisUserFunctionColor = funcColor;
-    if (!plotLevel) plotLevel=1;
+  void CoordinateSystem::setAMVisKosSize(double size) {
+    if(size>0) {
+      kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
+      kosAMVisCounter++;
+      kosAMVis->setSize(size);
+    }
   }
 #endif
 
-  void CoordinateSystem::plot(double t, double dt) {				// HR 03.01.07
+  void CoordinateSystem::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
 
-    Element::plot(t,dt);
-
-    if (plotLevel > 0) {
-      for(int i=0; i<3; i++)
-	plotfile<<" "<< WrOP(i);
-      Vec AlpBetGam = AIK2Cardan(AWP);
-      for(int i=0; i<3; i++)
-	plotfile<<" "<< AlpBetGam(i);
-    }
-#ifdef HAVE_AMVIS
-    if (bodyAMVis) {
-      Vec AlpBetGam;
-      AlpBetGam = AIK2Cardan(AWP);
-      if (bodyAMVisUserFunctionColor) {
-	double color = (*bodyAMVisUserFunctionColor)(t)(0);
-	if (color>1)   color =1;
-	if (color<0) color =0;
-	bodyAMVis->setColor(color);
+      if(getPlotFeature(globalPosition)==enabled) {
+        for(int i=0; i<3; i++)
+          plotVector.push_back(WrOP(i));
+        Vec cardan=AIK2Cardan(AWP);
+        for(int i=0; i<3; i++)
+          plotVector.push_back(cardan(i));
       }
-      bodyAMVis->setTime(t);
-      bodyAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
-      bodyAMVis->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
-      bodyAMVis->appendDataset(0);
-    }
+
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+
+#ifdef HAVE_AMVIS
+      if(kosAMVis && getPlotFeature(amvis)==enabled) {
+        Vec cardan=AIK2Cardan(AWP);
+        kosAMVis->setTime(t);
+        kosAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
+        kosAMVis->setRotation(cardan(0),cardan(1),cardan(2));
+        kosAMVis->appendDataset(0);
+      }
 #endif
+    }
   }
 
-  void CoordinateSystem::initPlotFiles() {					// HR 03.01.07
-#ifdef HAVE_AMVIS
-    if(bodyAMVis)
-      bodyAMVis->writeBodyFile();  
-#endif
+  void CoordinateSystem::initPlot(bool top) {
+    Element::initPlot(parent, true, false);
 
-    Element::initPlotFiles();
-    if(plotLevel > 0) {
-      for(int i=0; i<3; i++)
-	plotfile <<"# "<< plotNr++ <<": WrOP("<<i<<")" << endl;
-      plotfile <<"# "<< plotNr++ <<": alpha" << endl;
-      plotfile <<"# "<< plotNr++ <<": beta" << endl;
-      plotfile <<"# "<< plotNr++ <<": gamma" << endl;
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(globalPosition)==enabled) {
+        for(int i=0; i<3; i++)
+          plotColumns.push_back("WrOP("+numtostr(i)+")");
+        plotColumns.push_back("alpha");
+        plotColumns.push_back("beta");
+        plotColumns.push_back("gamma");
+      }
+
+      if(top) createDefaultPlot();
+
+#ifdef HAVE_AMVIS
+      if(kosAMVis && getPlotFeature(amvis)==enabled) {
+        kosAMVis->writeBodyFile();  
+        kosAMVis->setColor(0);
+      }
+#endif
+    }
+  }
+
+  void CoordinateSystem::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
     }
   }
 

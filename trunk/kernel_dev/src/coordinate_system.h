@@ -25,9 +25,10 @@
 
 #include "element.h"
 #include "interfaces.h"
+#include "hdf5serie/vectorserie.h"
 
 #ifdef HAVE_AMVIS
-namespace AMVis {class CRigidBody;}
+namespace AMVis {class Kos;}
 #endif
 
 namespace MBSim {
@@ -54,8 +55,8 @@ namespace MBSim {
       Vec WjP, WjR;
 
 #ifdef HAVE_AMVIS
-      AMVis::CRigidBody *bodyAMVis;
-      DataInterfaceBase* bodyAMVisUserFunctionColor;
+      AMVis::Kos *kosAMVis;
+      static int kosAMVisCounter;
 #endif
 
     public:
@@ -102,12 +103,14 @@ namespace MBSim {
       Vec& getGyroscopicAccelerationOfTranslation() {return WjP;}
       Vec& getGyroscopicAccelerationOfRotation() {return WjR;}
 
-      void plot(double t, double dt=1);					// HR 03.01.07
-      void initPlotFiles();
+      virtual void plot(double t, double dt = 1, bool top=true); 
+      virtual void initPlot(bool top=true);
+      virtual void closePlot(); 
+
       string getType() const {return "CoordinateSystem";}
 
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
+      void setAMVisKosSize(double size);
 #endif
 
   };

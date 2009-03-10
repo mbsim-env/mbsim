@@ -57,7 +57,7 @@ namespace MBSim {
     else system.initz(z);
 
     double tPlot = 0.;
-    ofstream integPlot((system.getDirectoryName() + name + ".plt").c_str());
+    ofstream integPlot((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 //	int stepPlot =(int) (1./dtPlot);
 
@@ -141,7 +141,7 @@ namespace MBSim {
 
     integPlot.close();
 
-    ofstream integSum((system.getDirectoryName() + name + ".sum").c_str());
+    ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum << "Maximum number of iterations: " << maxIter << endl;

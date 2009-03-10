@@ -131,7 +131,7 @@ namespace MBSim {
 
     zInp.resize(zSize);
 
-    integPlot.open((system->getDirectoryName() + name + ".plt").c_str());
+    integPlot.open((name + ".plt").c_str());
 
     integPlot << "#1 t [s]:" << endl; 
     integPlot << "#1 dt [s]:" << endl; 
@@ -152,7 +152,7 @@ namespace MBSim {
 
     integPlot.close();
 
-    ofstream integSum((system->getDirectoryName() + name + ".sum").c_str());
+    ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     //integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
