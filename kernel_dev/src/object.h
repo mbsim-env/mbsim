@@ -75,7 +75,7 @@ namespace MBSim {
     /** LU-decomposition of mass matrix \f$\boldsymbol{M}\f$*/
     SymMat LLM;
     Index Iu, Ih;
-
+    
     public: // TODO nur zum Testen
 
     virtual void writeq();
@@ -200,8 +200,6 @@ namespace MBSim {
     void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
     void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
 
-    void plot(double t, double dt = 1); 
-    void initPlotFiles();
     void load(const string &path, ifstream &inputfile);
     void save(const string &path, ofstream &outputfile);
 
@@ -235,6 +233,13 @@ namespace MBSim {
 
     void setMultiBodySystem(MultiBodySystem *sys);
     void setFullName(const string &str);
+
+    virtual void plot(double t, double dt = 1, bool top=true); 
+    virtual void initPlot(bool top=true);
+    virtual void closePlot();
+    H5::Group *getPlotGroup() { return plotGroup; }
+    PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
+    PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
   };
 
 }

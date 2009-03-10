@@ -71,10 +71,10 @@ namespace MBSim {
       virtual void preinit() {}
       virtual void init();
 
-      void initPlotFiles();
+      //void initPlotFiles();
 
       /* geerbt */
-      void plot(double t, double dt);
+      //void plot(double t, double dt);
 
       int gethSize(int i=0) const {return hSize[i];}
       int gethInd(int i=0) const {return hInd[i];}
@@ -120,7 +120,7 @@ namespace MBSim {
       /*! activate output for AMVis
 	\param binary_ for binary or ASCII data format in pos-file
 	*/
-      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_; plotLevel = 1;}
+      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_;}
 
       void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
 #endif
@@ -505,7 +505,7 @@ namespace MBSim {
     public:
       ContourInterpolation(const string &name, int parameters_, int nPoints_);
 
-      void plot(double t, double dt);
+      //void plot(double t, double dt);
 
       //    Object* getObject() {return iPoints[0]->getObject();} // ACHTUNG: das kann in die Hose gehen, wenn iPoints noch nicht initzialisiert...
 

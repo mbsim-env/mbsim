@@ -27,6 +27,7 @@
 #include "object.h"
 #include "multi_body_system.h"
 #include "subsystem.h"
+#include "function.h"
 
 #ifdef HAVE_AMVIS
 #include "arrow.h"
@@ -121,172 +122,165 @@ namespace MBSim {
     rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
   }
 
-  void Link::plot(double t, double dt) {
+  void Link::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
 
-    Element::plot(t,dt);
-
-    if(plotfile>0) {
-      if(plotLevel > 1) {
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<x(i);
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<xd(i)/dt;
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(x(i));
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(xd(i)/dt);
+      if(getPlotFeature(contact)==enabled) {
+        for(int i=0; i<g.size(); ++i)
+          plotVector.push_back(g(i));
+        if(isActive()) {
+          for(int i=0; i<sv.size(); ++i)
+            plotVector.push_back(sv(i));
+          // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
+          //for(int i=0; i<gdSize; ++i)
+          //  plotVector.push_back(gd(i));
+          //if(setValued)
+          //  for(int i=0; i<la.size(); ++i)
+          //    plotVector.push_back(la(i)/dt);
+          //else
+          //  for(int i=0; i<la.size(); ++i)
+          //    plotVector.push_back(la(i));
+        } else {
+          for(int i=0; i<sv.size(); ++i)
+            plotVector.push_back(sv(i));
+          // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
+          //for(int i=0; i<gdSize; ++i)
+          //  plotVector.push_back(gd(i));
+          //for(int i=0; i<la.size(); ++i)
+          //  plotVector.push_back(0);
+        }
+        plotVector.push_back(computePotentialEnergy()); 
       }
-      for(int i=0; i<g.size(); ++i)
-	plotfile<<" "<<g(i);
 
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+
+/*#ifdef HAVE_AMVIS
+      Vec WrOToPoint;
+      Vec LoadArrow(6,NONINIT);
+      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
+        WrOToPoint = port[arrowAMVisID[i]]->getPosition();
+        if(setValued){ 
+          if (isActive()) {
+            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
+            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
+          }
+          else {
+            LoadArrow = Vec(6,INIT,0.0);
+            WrOToPoint= Vec(3,INIT,0.0);
+          }
+        }
+        else {
+          LoadArrow(0,2) = WF[arrowAMVisID[i]];
+          LoadArrow(3,5) = WM[arrowAMVisID[i]];
+        }
+        // Scaling: 1KN or 1KNm scaled to arrowlenght one
+        LoadArrow= LoadArrow/1000*arrowAMVisScale[i];
+
+        arrowAMVis[i]->setTime(t);
+        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
+        double color;
+        if (arrowAMVisMoment[i]) {
+          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
+          color=0.5;
+        }
+        else {
+          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
+          color =1.0;
+        }
+        if (arrowAMVisUserFunctionColor[i]) {
+          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
+          if (color>1) color=1;
+          if (color<0) color=0;
+        }  
+        arrowAMVis[i]->setColor(color);
+        arrowAMVis[i]->appendDataset(0);
+      }
+
+      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
+       // WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
+        if(setValued) { 
+          if (isActive()) {
+            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
+            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
+          }
+          else {
+            LoadArrow = Vec(6,INIT,0.0);
+            WrOToPoint= Vec(3,INIT,0.0);
+          }
+        }
+        else {
+          LoadArrow(0,2) = WF[arrowAMVisID[i]];
+          LoadArrow(3,5) = WM[arrowAMVisID[i]];
+        }
+        // Scaling: 1KN or 1KNm scaled to arrowlenght one
+        LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i];
+
+        arrowAMVis[i]->setTime(t);
+        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
+        double color;
+        if (arrowAMVisMoment[i]) {
+          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
+          color=0.5;
+        }
+        else {
+          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
+          color =1.0;
+        }
+        if (arrowAMVisUserFunctionColor[i]) {
+          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
+          if (color>1) color=1;
+          if (color<0) color=0;
+        }  
+        arrowAMVis[i]->setColor(color);
+        arrowAMVis[i]->appendDataset(0);
+      }
+#endif*/
     }
-    if(isActive() || plotLevel > 2) {
-
-      if(plotLevel>0) {
-	if(plotLevel>1) {
-	  for(int i=0; i<sv.size(); ++i)
-	    plotfile<<" "<<sv(i);
-	  for(int i=0; i<gdSize; ++i)
-	    plotfile<<" "<<gd(i);
-	}
-	if(setValued)
-	  for(int i=0; i<la.size(); ++i)
-	    plotfile<<" "<<la(i)/dt;
-	else
-	  for(int i=0; i<la.size(); ++i)
-	    plotfile<<" "<<la(i);
-      }
-    } else {
-
-      if(plotLevel>0) {
-	if(plotLevel>1) {
-	  for(int i=0; i<laSize; ++i)
-	    plotfile<<" "<<0;
-	}
-	for(int i=0; i<laSize; ++i)
-	  plotfile<<" "<<0;
-
-      }
-    }
-    if(plotLevel>2) {
-      plotfile<<" "<<computePotentialEnergy(); 
-    }
-
-#ifdef HAVE_AMVIS
-    Vec WrOToPoint;
-    Vec LoadArrow(6,NONINIT);
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      WrOToPoint = port[arrowAMVisID[i]]->getPosition();
-      if(setValued){ 
-	if (isActive()) {
-	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-	}
-	else {
-	  LoadArrow = Vec(6,INIT,0.0);
-	  WrOToPoint= Vec(3,INIT,0.0);
-	}
-      }
-      else {
-	LoadArrow(0,2) = WF[arrowAMVisID[i]];
-	LoadArrow(3,5) = WM[arrowAMVisID[i]];
-      }
-      // Scaling: 1KN or 1KNm scaled to arrowlenght one
-      LoadArrow= LoadArrow/1000*arrowAMVisScale[i];
-
-      arrowAMVis[i]->setTime(t);
-      arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-      double color;
-      if (arrowAMVisMoment[i]) {
-	arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-	color=0.5;
-      }
-      else {
-	arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-	color =1.0;
-      }
-      if (arrowAMVisUserFunctionColor[i]) {
-	color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
-      }  
-      arrowAMVis[i]->setColor(color);
-      arrowAMVis[i]->appendDataset(0);
-    }
-
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-     // WrOToPoint = cpData[arrowAMVisID[i]].WrOC;
-      if(setValued) { 
-	if (isActive()) {
-	  LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-	  LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-	}
-	else {
-	  LoadArrow = Vec(6,INIT,0.0);
-	  WrOToPoint= Vec(3,INIT,0.0);
-	}
-      }
-      else {
-	LoadArrow(0,2) = WF[arrowAMVisID[i]];
-	LoadArrow(3,5) = WM[arrowAMVisID[i]];
-      }
-      // Scaling: 1KN or 1KNm scaled to arrowlenght one
-      LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i];
-
-      arrowAMVis[i]->setTime(t);
-      arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-      double color;
-      if (arrowAMVisMoment[i]) {
-	arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-	color=0.5;
-      }
-      else {
-	arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-	color =1.0;
-      }
-      if (arrowAMVisUserFunctionColor[i]) {
-	color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
-      }  
-      arrowAMVis[i]->setColor(color);
-      arrowAMVis[i]->appendDataset(0);
-    }
-#endif
-
   }
 
-  void Link::initPlotFiles() {
+  void Link::initPlot(bool top) {
+    Element::initPlot(parent, true, false);
 
-    Element::initPlotFiles();
-
-#ifdef HAVE_AMVIS
-    for (unsigned int i=0; i<arrowAMVis.size(); i++)
-      arrowAMVis[i]->writeBodyFile();
-#endif
-
-    if(plotLevel>0) {
-      if(plotLevel>1) {
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
-
-      }
-      for(int i=0; i<g.size(); ++i)
-	plotfile <<"# "<< plotNr++ << ": g(" << i << ")" << endl;
-
-      if(plotLevel>1) {
-	for(int i=0; i<sv.size(); ++i)
-	  plotfile <<"# "<< plotNr++ << ": sv(" << i << ")" << endl;
-	for(int i=0; i<laSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": gd(" << i << ")" << endl;
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotColumns.push_back("x("+numtostr(i)+")");
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotColumns.push_back("xd("+numtostr(i)+")");
+      if(getPlotFeature(contact)==enabled) {
+        for(int i=0; i<g.size(); ++i)
+          plotColumns.push_back("g("+numtostr(i)+")");
+        for(int i=0; i<sv.size(); ++i)
+          plotColumns.push_back("sv("+numtostr(i)+")");
+        // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
+        //for(int i=0; i<gdSize; ++i)
+        //  plotColumns.push_back("gd("+numtostr(i)+")");
+        //for(int i=0; i<laSize; ++i)
+        //  plotColumns.push_back("la("+numtostr(i)+")");
+        plotColumns.push_back("V");
       }
 
-      for(int i=0; i<la.size(); ++i)
-	plotfile <<"# "<< plotNr++ << ": la(" << i << ")" << endl;
+      if(top) createDefaultPlot();
 
-      if(plotLevel>2) {
-	plotfile <<"# "<< plotNr++ << ": V" << endl;
-      }
+/*#ifdef HAVE_AMVIS
+      for (unsigned int i=0; i<arrowAMVis.size(); i++)
+        arrowAMVis[i]->writeBodyFile();
+#endif*/
+    }
+  }
+  
+  void Link::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
     }
   }
 

@@ -27,6 +27,7 @@
 #include "fmatvec.h"
 #include<string>
 #include<vector>
+#include<hdf5serie/vectorserie.h>
 
 #ifdef NO_ISO_14882
 #include<fstream.h>
@@ -37,62 +38,53 @@
 using namespace std;
 using namespace fmatvec;
 
+namespace H5 {
+  class Group;
+}
+
 /*! \brief Namespace MBSim */
 namespace MBSim {
+
+  class ObjectInterface;
+
+  enum PlotFeatureStatus {
+    enabled, disabled, unset
+  };
+
+  enum PlotFeature {
+    plotRecursive=0, state, stateDerivative, rightHandSide, globalPosition, contact, amvis, LASTPLOTFEATURE
+  };
 
   class MultiBodySystem;
   /*! 
    * \brief THE basic class of MBSim
    *
-   * Used for definitions of general element parameters and general interactions (e.g. plotting)
+   * Used for definitions of general element parameters and general interactions
    */
   class Element {
+    private:
+      PlotFeatureStatus plotFeature[LASTPLOTFEATURE], plotFeatureForChildren[LASTPLOTFEATURE];
 
     protected:
       /* Short name of Element */
       string name;
       /* Short fullname of Element */
       string fullName;
-      /* Name of the output directory */
-      static string dirName;
-      /* File used for output of time dependent data, specified using Element::plotLevel */
-      ofstream plotfile;
-      /* Counter for enumeration of output data in Element::plotfile */
-      int plotNr;
-      /*
-       * Specify Plot Level:\n
-       * 0: plot only time\n
-       * 1: plot position\n
-       * 2: ...
-       */ 
-      int plotLevel;
-      /* Output-precision of ostream */
-      int plotPrec;
       /* Vector for Data Interface Base References */
       vector<string> DIBRefs;
 
       MultiBodySystem *mbs;
+
+      H5::VectorSerie<double> *plotVectorSerie;
+      std::vector<double> plotVector;
+      std::vector<std::string> plotColumns;
+      H5::Group *plotGroup;
 
     public:
 	  /*! Constructor */	
       Element(const string &name);
       /*! Destructor */
       virtual ~Element();
-      /*! 
-       * First definition of plot routine to Element::plotfile\n plotting time
-       * Do not overload without explicit call to parent class; otherwise previous outputs will be lost
-       */
-      virtual void plot(double t, double dt = 1);
-	  /*! Initialises plotfiles */
-      virtual void initPlotFiles();
-      /*! Closes plotfiles */
-      virtual void closePlotFiles();
-      /*! Set Element::plotLevel \param level and therewith specifiy outputs in plot-files */
-      void setPlotLevel(int level) {plotLevel = level;}
-      /*! Set Element::plotPrec \param prec for output precision */
-      void setPlotPrecision(int prec);
-      /*! Get \return Element::plotLevel */
-      int getPlotLevel() {return plotLevel;}
 	  /*! Get element short \return name */
       const string& getName() const { return name; }
       /*! Set element name \param str */
@@ -114,6 +106,30 @@ namespace MBSim {
 
       MultiBodySystem* getMultiBodySystem() {return mbs;}
       virtual void setMultiBodySystem(MultiBodySystem *sys) {mbs = sys;}
+
+      virtual void plot(double t, double dt = 1, bool top=true);
+      void initPlot(ObjectInterface* parent, bool createDefault, bool top=true); // Element has no access to a parent, so give parent as parameter
+      void createDefaultPlot();
+      virtual void closePlot();
+      H5::Group *getPlotGroup() { return plotGroup; }
+
+      /*! Set a plot feature.
+       * Set the plot feature pf of this object to enabled, disabled or unset.
+       * If unset, this object uses the value of the plot feature pf of its parent object.
+       */
+      void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
+
+      /*! Set a plot feature for the children of this object.
+       * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
+       */
+      void setPlotFeatureForChildren(PlotFeature pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
+
+      /*! Set a plot feature for this object and the children of this object.
+       * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
+       */
+      void setPlotFeatureRecursive(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
+      PlotFeatureStatus getPlotFeature(PlotFeature pf) { return plotFeature[pf]; }
+      PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
   };
 
 }

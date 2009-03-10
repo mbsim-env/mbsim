@@ -29,6 +29,7 @@
 #include "contour.h"
 #include "class_factory.h"
 #include "multi_body_system.h"
+#include "hdf5serie/simpleattribute.h"
 
 #include "compatibility_classes/tree_rigid.h"
 #include "compatibility_classes/body_rigid.h"

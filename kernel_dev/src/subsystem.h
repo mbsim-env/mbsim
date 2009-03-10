@@ -26,6 +26,10 @@
 #include "element.h"
 #include "interfaces.h"
 
+namespace H5 {
+  class Group;
+}
+
 namespace MBSim {
   class CoordinateSystem;
   class Contour;
@@ -179,10 +183,6 @@ namespace MBSim {
       const Vec& getq() const {return q;};
       const Vec& getu() const {return u;};
 
-      void initPlotFiles();
-      void plot(double t, double dt=1);
-      void closePlotFiles();
-
       void updateT(double t); 
       void updateh(double t); 
       void updateM(double t); 
@@ -327,6 +327,13 @@ namespace MBSim {
       void setlaIndMBS(int laIndParent);
 
       virtual string getType() const {return "Subsystem";}
+
+      virtual void plot(double t, double dt, bool top=true);
+      virtual void initPlot(bool top=true);
+      virtual void closePlot();
+      virtual H5::Group *getPlotGroup() { return plotGroup; }
+      PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
+      PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
   };
 }
 

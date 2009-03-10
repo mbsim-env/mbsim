@@ -27,6 +27,7 @@
 #include "extra_dynamic_interface.h"
 #include "object.h"
 #include "multi_body_system.h"
+#include "function.h"
 
 namespace MBSim {
 
@@ -67,37 +68,40 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   }
 
+  void ExtraDynamicInterface::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
 
-  void ExtraDynamicInterface::plot(double t, double dt) {
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(x(i));
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotVector.push_back(xd(i)/dt);
 
-    Element::plot(t,dt);
-
-    if(plotfile>0) {
-      if(plotLevel > 1) {
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<x(i);
-
-	for(int i=0; i<xSize; ++i)
-	  plotfile<<" "<<xd(i)/dt;
-
-      }
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
     }
-
   }
 
-  void ExtraDynamicInterface::initPlotFiles() {
+  void ExtraDynamicInterface::initPlot(bool top) {
+    Element::initPlot(parent, true, false);
 
-    Element::initPlotFiles();
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotColumns.push_back("x("+numtostr(i)+")");
+      if(getPlotFeature(stateDerivative)==enabled)
+        for(int i=0; i<xSize; ++i)
+          plotColumns.push_back("xd("+numtostr(i)+")");
 
-    if(plotLevel>0) {
-      if(plotLevel>1) {
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ << ": x(" << i << ")" << endl;
-	for(int i=0; i<xSize; ++i)
-	  plotfile <<"# "<< plotNr++ <<": xd("<<i<<")" << endl;
+      if(top) createDefaultPlot();
+    }
+  }
 
-      }
+  void ExtraDynamicInterface::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
     }
   }
 

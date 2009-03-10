@@ -13,8 +13,8 @@ AC_FC_WRAPPERS
 
 AC_C_CONST
 
-requires="fmatvec"
-PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1)
+requires="fmatvec hdf5serie"
+PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1  hdf5serie)
 PKG_CHECK_MODULES(AMVIS, amvisc++interface >= 2.2.0,[requires="$requires amvisc++interface";amvis_compilerflag="-DHAVE_AMVIS";AC_DEFINE([HAVE_AMVIS],[1],[linking with AMVis])],[echo "no"])
 
 AC_SUBST([requires])
@@ -48,7 +48,7 @@ AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -I$(pwd)/src/body_flexible -I$(pwd)/src/body_flexible/finite_elements -I$(pwd)/src/integrators -I$(pwd)/src/contact_kinematics -I$(pwd)/src/utils"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -I$(pwd)/src/body_flexible -I$(pwd)/src/body_flexible/finite_elements -I$(pwd)/src/integrators -I$(pwd)/src/contact_kinematics -I$(pwd)/src/utils"
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
@@ -67,7 +67,10 @@ Configuration for $PACKAGE $VERSION :
  Source code location ....: $srcdir
  Host System Type ........: $host
  Preprocessor ............: $CC $CPPFLAGS
- Compiler ................: $CC $CFLAGS $LIBFLAC_CFLAGS
+ C Compiler ..............: $CC $CFLAGS $LIBFLAC_CFLAGS
+ C++ Compiler ............: $CXX $CXXFLAGS
+ Fortran 77 Compiler .....: $F77 $FFLAGS
+ Fortran 90 Compiler .....: $FC $FCFLAGS
  Linker ..................: $CC $LDFLAGS $LIBS $LIBFLAC_LIBS
  Install path ............: $prefix
 

@@ -219,12 +219,12 @@ namespace MBSim {
       void addContour(Contour *contour, const ContourPointData &S_, bool constPosition=true);
 
       /*! write header for Element::plotfile */
-      void initPlotFiles();
+      //void initPlotFiles();
       /*! write generalised state of BodyFlexible, initially calls Element::plot(double t, double dt) to flush ostream and write time
        *  \param t  time of evaluation
        *  \param dt time step size
        */
-      void plot(double t, double dt);
+      //void plot(double t, double dt);
       /*! basic prototype plotting basic class name "BodyFlexible" */
 
       /* alle geerbt */

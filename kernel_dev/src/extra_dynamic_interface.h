@@ -24,6 +24,7 @@
 #ifndef _EDInterface_H_
 #define _EDInterface_H_
 #include "element.h"
+#include "hdf5serie/vectorserie.h"
 
 namespace MBSim {
 
@@ -39,6 +40,7 @@ namespace MBSim {
       int xSize;
       int xInd;
       Vec y;
+
     public:
 
       ExtraDynamicInterface(const string &name);
@@ -62,8 +64,11 @@ namespace MBSim {
       virtual void updateKinetics(double t) {};
       virtual void updatedx(double t, double dt) {};
       virtual void updatexd(double t) {};
-      void plot(double t, double dt=1);
-      void initPlotFiles();
+
+      virtual void plot(double t, double dt = 1, bool top=true); 
+      virtual void initPlot(bool top=true);
+      virtual void closePlot(); 
+
       void setParent(Subsystem *parent_) {parent = parent_;}
 
       void setx0(Vec x_){x0=x_;}

@@ -26,6 +26,11 @@
 #include <vector>
 #include "element.h"
 #include "interfaces.h"
+#include "hdf5serie/vectorserie.h"
+
+namespace H5 {
+  class Group;
+}
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class Arrow;}
@@ -179,8 +184,9 @@ namespace MBSim {
       /*! Sets the internal states of a Link.*/
       void setx(const Vec &x_) {x = x_;}
 
-      void plot(double t, double dt=1);
-      void initPlotFiles();
+      virtual void plot(double t, double dt = 1, bool top=true);
+      virtual void initPlot(bool top=true);
+      virtual void closePlot();
 
       //bool isSetValued() const {return setValued;} 
       virtual bool isSetValued() const {return false;}

@@ -28,7 +28,7 @@
 namespace MBSim {
 
   class Group : public Subsystem {
-    protected:
+   protected:
 
    public:
       /*! Constructor */

@@ -89,7 +89,7 @@ namespace MBSim {
     double time = 0;
     int integrationSteps = 0;
 
-    ofstream integPlot((system->getDirectoryName() + name + ".plt").c_str());
+    ofstream integPlot((name + ".plt").c_str());
 
     Vector<int> jsv(nsv);  
     bool donedrift;
@@ -128,7 +128,7 @@ namespace MBSim {
 
     integPlot.close();
 
-    ofstream integSum((system->getDirectoryName() + name + ".sum").c_str());
+    ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();

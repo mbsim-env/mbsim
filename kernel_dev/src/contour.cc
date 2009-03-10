@@ -45,7 +45,6 @@ namespace MBSim {
 # endif
  {
    // Contouren standardmaessig nicht ausgeben...
-   plotLevel = 0;
    hSize[0] = 0;
    hSize[1] = 0;
    hInd[0] = 0;
@@ -71,19 +70,18 @@ namespace MBSim {
     getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize[j]);
   }
 
-  void Contour::initPlotFiles() {
+  /*void Contour::initPlotFiles() {
 
     Element::initPlotFiles();
 #ifdef HAVE_AMVIS
     if(bodyAMVis) bodyAMVis->writeBodyFile();
 #endif
-  }
+  }*/
 
 #ifdef HAVE_AMVIS
   void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
     bodyAMVis = AMVisBody;
     bodyAMVisUserFunctionColor = funcColor;
-    if (!plotLevel) plotLevel=1;
   }
 #endif
 
@@ -93,7 +91,7 @@ namespace MBSim {
   //  if(R>parent->getRadiusHitSphere()) parent->setRadiusHitSphere(R);
   //}
 
-  void Contour::plot(double t, double dt) 
+  /*void Contour::plot(double t, double dt) 
   {
 #ifdef HAVE_AMVIS
     if(bodyAMVis) {
@@ -113,7 +111,7 @@ namespace MBSim {
       static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
     }
 #endif
-  }
+  }*/
 
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
@@ -307,7 +305,7 @@ namespace MBSim {
     return t;
   }
 
-  void ContourInterpolation::plot(double t, double dt) {
+/*  void ContourInterpolation::plot(double t, double dt) {
 #ifdef HAVE_AMVIS
     if(bodyAMVis) 
     {
@@ -321,7 +319,7 @@ namespace MBSim {
       static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
     }
 #endif
-  }
+  }*/
 
   Vec ContourInterpolation::computeWrOC(const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);}
   Vec ContourInterpolation::computeWvC (const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);}

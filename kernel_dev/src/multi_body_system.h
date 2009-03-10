@@ -27,6 +27,7 @@
 #include <string>
 #include "group.h"
 #include "sparse_matrix.h"
+#include "H5Cpp.h"
 
 using namespace std;
 
@@ -54,11 +55,11 @@ namespace MBSim {
 
     protected:
 
-      vector<Object*>                objects2plot;
+      /*vector<Object*>                objects2plot;
       vector<Link*>                  links2plot;
       vector<Contour*>               contours2plot;
       vector<CoordinateSystem*>                  ports2plot;
-      vector<ExtraDynamicInterface*> EDIs2plot;
+      vector<ExtraDynamicInterface*> EDIs2plot;*/
 
       bool term;
       Matrix<Sparse, double> Gs;
@@ -126,6 +127,8 @@ namespace MBSim {
 
       int k;
 
+      H5::H5File *plotFile;
+
       Vec (MultiBodySystem::*zdot_)(const Vec &zParent, double t);
       Vec zdotStandard(const Vec &zParent, double t);
       Vec zdotResolveConstraints(const Vec &zParent, double t);
@@ -175,7 +178,6 @@ namespace MBSim {
        */
       void setProjectDirectory(const string &directoryName_) {directoryName = directoryName_;}
       void setPreInteg(Integrator *preInteg_) {preIntegrator = preInteg_;}
-      const string& getDirectoryName() {return dirName;}
       string getFullName() const {return name;}
 
       // Implementation of the ODERootFindingSystemInterface (Integratores)
@@ -184,6 +186,8 @@ namespace MBSim {
       void getsv(const Vec&, Vec&, double);
       virtual void shift(Vec& z, const Vector<int>& jsv, double t);
 
+      virtual void initPlot(bool top=true);
+      virtual void closePlot();
       void plot(const Vec& z, double t, double dt=1);
       /* Updates the position depending structures for multibody system */
       void update(const Vec &zParent, double t);
@@ -205,7 +209,7 @@ namespace MBSim {
       void savela();
       void initla();
 
-      using Subsystem::plot;
+      using Group::plot;
 
       /*! Compute kinetic energy of entire multibodysystem, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all systems */
       double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
