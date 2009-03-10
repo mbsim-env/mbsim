@@ -6,7 +6,6 @@
 #include "load.h"
 #include "cube.h"
 
-using namespace AMVis;
 
 class Moment : public UserFunction {
   public:
@@ -91,7 +90,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setGuidingVelocityOfTranslation(new jT);
   body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
-  Cuboid *cubeoid = new Cuboid(getName() + "." + body->getName(),1,false);
+  AMVis::Cuboid *cubeoid = new AMVis::Cuboid(getName() + "." + body->getName(),1,false);
   cubeoid->setSize(l,h,d);
   cubeoid->setColor(0);
   body->setAMVisBody(cubeoid);

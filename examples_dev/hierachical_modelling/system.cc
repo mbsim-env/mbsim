@@ -18,6 +18,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addSubsystem(group1,Vec(3),SqrMat(3,EYE));
 
   Group2 *group2 = new Group2("Hauptgruppe2");
+  group2->setPlotFeatureRecursive(stateDerivative, enabled);
   Vec r(3);
   r(0) = 2;
   SqrMat A(3);

@@ -67,7 +67,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   Contact *cr2S = new Contact("Contact2");
   cr2S->connect(point2,body->getContour("Line"));
-  cr2S->setPlotLevel(2);
+  //cr2S->setPlotLevel(2);
   addLink(cr2S);
 
   if(rigidContacts) {

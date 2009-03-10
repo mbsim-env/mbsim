@@ -19,9 +19,11 @@ namespace MBSim {
     la.resize(1);
   }
 
-  void Spring::initPlotFiles() {
+  void Spring::initPlot(bool top) {
 
-    Link::initPlotFiles();
+    Link::initPlot(false);
+
+    if(top) createDefaultPlot();
 
 #ifdef HAVE_AMVIS
     if (coilspringAMVis) {
@@ -53,8 +55,11 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  void Spring::plot(double t,double dt) {
-    Link::plot(t,dt);
+  void Spring::plot(double t,double dt, bool top) {
+    Link::plot(t,dt,false);
+
+    if(top)
+      plotVectorSerie->append(plotVector);
 
 #ifdef HAVE_AMVIS
     if (coilspringAMVis) {
@@ -75,7 +80,7 @@ namespace MBSim {
       coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
       coilspringAMVis->appendDataset(0);
     }
-  }
 #endif
+  }
 
 }

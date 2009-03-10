@@ -29,7 +29,13 @@ int main (int argc, char* argv[])
 //   integrator.settEnd(2.0);
 //
 
+  system("date +%s.%N");
   integrator.integrate(*sys);
+  system("date +%s.%N");
+  cout << "finished"<<endl;
+
+  cout << "closePlot"<<endl;
+  sys->closePlot();
   cout << "finished"<<endl;
 
   delete sys;
