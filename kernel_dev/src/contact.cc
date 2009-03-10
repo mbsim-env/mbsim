@@ -605,7 +605,7 @@ namespace MBSim {
       //    gActive = false;
       //    gdActive[0] = false;
       //  }
-      if(getFrictionDirections())
+      if(getFrictionDirections()) {
 	if(gdActive[k][0])
 	  if(nrm2(gdnk[k](1,getFrictionDirections())) <= gdTol)
 	    gdActive[k][1] = true;
@@ -613,6 +613,7 @@ namespace MBSim {
 	    gdActive[k][1] = false;
 	else
 	  gdActive[k][1] = false;
+      }
     }
     //cout << "gd active: " << gActive[0] << " " << gdActive[0][0] << " " << gdActive[0][1] << endl;
   }
@@ -632,7 +633,7 @@ namespace MBSim {
 	}
       }
       if(getFrictionDirections())
-	if(gdActive[k][0]) 
+	if(gdActive[k][0]) {
 	  if(gdActive[k][1]) 
 	    if(nrm2(gddk[k](1,getFrictionDirections())) <= gddTol)
 	      gdActive[k][1] = true;
@@ -640,6 +641,7 @@ namespace MBSim {
 	      gdActive[k][1] = false;
 	  else 
 	    gdActive[k][1] = false;
+        }
     }
     //cout << gddk[0] << endl;
     //cout << lak[0] << endl;
