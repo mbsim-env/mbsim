@@ -233,16 +233,25 @@ void TransferSys::setGain(double P){
 }
 
 //Plot Defs Anfang************************************************************
-void TransferSys::plot(double t, double dt){
-  Element::plot(t,dt);
-  plotfile<<" "<<y(0)<<" "<<(this->*Uin)(t)(0);
+void TransferSys::plot(double t, double dt, bool top){
+  if(getPlotFeature(plotRecursive)==enabled) {
+    SPSys::plot(t,dt,false);
 
+    plotVector.push_back(y(0));
+    plotVector.push_back((this->*Uin)(t)(0));
+
+    if(top && plotColumns.size()>1)
+      plotVectorSerie->append(plotVector);
+  }
 }
 
-void TransferSys::initPlotFiles() {
+void TransferSys::initPlot(bool top) {
+  SPSys::initPlot(false);
 
-  Element::initPlotFiles();
-  plotfile <<"# "<< plotNr++ << ": Sigout	" << endl;
-  plotfile <<"# "<< plotNr++ << ": Sigin        " << endl;
-  plotfile <<"#  Object "<<name<<" is in "<<modus<<endl;
+  if(getPlotFeature(plotRecursive)==enabled) {
+    plotColumns.push_back("Sigout");
+    plotColumns.push_back("Sigin");
+
+    if(top) createDefaultPlot();
+  }
 }

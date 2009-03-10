@@ -40,12 +40,14 @@ class NLTransferSys : public SPSys {
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateStage1(double t);
-    void initPlotFiles();
-    void plot(double t,double dt);
+    void initPlot(bool top=true);
+    void plot(double t,double dt, bool top=true);
     
     void setMinMaxOut(double MinOut,double MaxOut);
     void activateDynamics();
     void setxNull(Vec xNull_){xNull=xNull_;}
+
+    virtual string getType() const {return "NLTransferSys";}
     
     // UserFunction* SigU(){return TFOutputSignal;} 
     

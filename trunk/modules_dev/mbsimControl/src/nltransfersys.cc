@@ -95,20 +95,29 @@ void NLTransferSys::activateDynamics(){
 
 
 //Plot Def Anfang************************************************************
-void NLTransferSys::plot(double t, double dt){
-  double eingang;
-  eingang=(this->*Uin)(t)(0);
-  Element::plot(t,dt);
-  plotfile<<" "<<y(0);
-  plotfile<<" "<<eingang;
+void NLTransferSys::plot(double t, double dt, bool top){
+  if(getPlotFeature(plotRecursive)==enabled) {
+    SPSys::plot(t,dt,false);
 
+    plotVector.push_back(y(0));
+    double eingang;
+    eingang=(this->*Uin)(t)(0);
+    plotVector.push_back(eingang);
+
+    if(top && plotColumns.size()>1)
+      plotVectorSerie->append(plotVector);
+  }
 }
 
-void NLTransferSys::initPlotFiles() {
-  Element::initPlotFiles();
-plotfile <<"# "<< plotNr++ << ": OutputSignal " << endl;
-plotfile <<"# "<< plotNr++ << ": Inputsignal        " << endl;
-plotfile <<"#  Objekt "<<name<<" befindet sich im "<<modus<<endl;
+void NLTransferSys::initPlot(bool top) {
+  SPSys::initPlot(false);
+
+  if(getPlotFeature(plotRecursive)==enabled) {
+    plotColumns.push_back("OutputSignal");
+    plotColumns.push_back("Inputsignal");
+
+    if(top) createDefaultPlot();
+  }
 }
 //Plot Defs Ende--------------------------------------------------------------------
 
