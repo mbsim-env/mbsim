@@ -53,8 +53,8 @@ class TransferSys : public SPSys {
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateg(double t);
-    void initPlotFiles();
-    void plot(double t,double dt);
+    void initPlot(bool top=true);
+    void plot(double t,double dt, bool top=true);
     void showABCD();
     
    
@@ -65,6 +65,8 @@ class TransferSys : public SPSys {
     void setI2(double OutputGain);
     void setPT1(double P, double T);
     void setGain(double P);
+
+    virtual string getType() const {return "TransferSys";}
 };
 
 #endif
