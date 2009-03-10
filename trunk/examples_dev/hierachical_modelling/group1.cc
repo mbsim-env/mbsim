@@ -41,6 +41,8 @@ Group1::Group1(const string &name) : Group(name) {
 
   // ----------------------- Definition des 2. Körpers --------------------  
   RigidBody *box2 = new RigidBody("Box2");
+  box2->setPlotFeature(stateDerivative, disabled);
+  //box2->setPlotFeatureForChildren(plotRecursive, disabled);
   addObject(box2);
 
   // Masse und Trägheit definieren
@@ -60,6 +62,7 @@ Group1::Group1(const string &name) : Group(name) {
   // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
   SrSP(1) = h1/2.;
   box1->addCoordinateSystem("P1",-SrSP,ASP); 
+  box1->getCoordinateSystem("P1")->setAMVisKosSize(0.5);
   box1->addCoordinateSystem("P2",SrSP,ASP);
 
   // Federanschlusspunkt P1 auf Körper 2 definieren

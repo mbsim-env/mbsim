@@ -19,7 +19,7 @@ namespace MBSim {
     la.resize(1);
   }
 
-  void Spring::initPlotFiles() {
+  /*void Spring::initPlotFiles() {
 
     Link::initPlotFiles();
 
@@ -28,7 +28,7 @@ namespace MBSim {
       coilspringAMVis->writeBodyFile();
     }
 #endif
-  }
+  }*/
 
   void Spring::updateg(double t) {
     Vec WrP0P1=port[1]->getPosition() - port[0]->getPosition();
@@ -53,7 +53,7 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  void Spring::plot(double t,double dt) {
+  /*void Spring::plot(double t,double dt) {
     Link::plot(t,dt);
 
 #ifdef HAVE_AMVIS
@@ -75,7 +75,7 @@ namespace MBSim {
       coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
       coilspringAMVis->appendDataset(0);
     }
-  }
 #endif
+  }*/
 
 }

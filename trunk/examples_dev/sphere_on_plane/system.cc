@@ -68,7 +68,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
     cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.1));
     cnf->connect(getContour("Plane"), body->getContour("Sphere"));
     // cnf->setFrictionCoefficient(0.3);
-    cnf->setPlotLevel(2);
+    //cnf->setPlotLevel(2);
     addLink(cnf);
 
     AMVis::Sphere *obj = new AMVis::Sphere(body->getName(),1,false);

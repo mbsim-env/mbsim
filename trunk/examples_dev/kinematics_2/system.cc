@@ -6,8 +6,6 @@
 #include "load.h"
 #include "cube.h"
 
-using namespace AMVis;
-
 class Moment : public UserFunction {
   public:
     Vec operator()(double t) {
@@ -87,7 +85,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addSubsystem(tree,Vec(3),SqrMat(3,EYE));
   RigidBody* body = new RigidBody("Rod");
 
-  tree->addObject(body);
+  tree->addObject(0, body);
   body->setFrameOfReference(tree->getCoordinateSystem("I"));
   body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
   body->setMass(m);
@@ -96,10 +94,10 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setJacobianOfTranslation(new JacobianT);
   body->setDerivativeOfJacobianOfTranslation(new MyDerT);
 
-   Cuboid *cubeoid = new Cuboid(getName() + "." + body->getName(),1,false);
-   cubeoid->setSize(l,h,d);
-   cubeoid->setColor(0);
-   body->setAMVisBody(cubeoid);
+  AMVis::Cuboid *cubeoid = new AMVis::Cuboid(getName() + "." + body->getName(),1,false);
+  cubeoid->setSize(l,h,d);
+  cubeoid->setColor(0);
+  body->setAMVisBody(cubeoid);
 
 
 }

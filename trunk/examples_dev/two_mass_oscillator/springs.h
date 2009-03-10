@@ -22,7 +22,7 @@ class Spring : public Link {
   public:
     Spring(const string &name);
     void init();
-    void initPlotFiles();
+    void initPlot(bool top);
     void updateg(double t);
     void updategd(double t); 
     void updateh(double t); 
@@ -32,7 +32,7 @@ class Spring : public Link {
     bool isActive() const {return true;}
     bool gActiveChanged() {return false;}
     virtual void connect(CoordinateSystem *port1, CoordinateSystem* port2);
-    void plot(double t,double dt=1); 
+    void plot(double t,double dt=1, bool top=true); 
  #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
 #endif
