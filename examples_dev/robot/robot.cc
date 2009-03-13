@@ -67,20 +67,20 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   basis->setRotation(new RotationAboutFixedAxis(Vec("[0;1;0]")));
   Vec KrSP(3);
   KrSP(1) = hB/2;
-  basis->addCoordinateSystem("R",-KrKS,A);
-  basis->setFrameOfReference(getCoordinateSystem("I"));
-  basis->setCoordinateSystemForKinematics(basis->getCoordinateSystem("R"));
+  basis->addFrame("R",-KrKS,A);
+  basis->setFrameOfReference(getFrame("I"));
+  basis->setFrameForKinematics(basis->getFrame("R"));
 
   RigidBody *arm = new RigidBody("Arm");
   node = tree->addObject(node,arm);
   Vec PrPK0(3);
   PrPK0(1) = hB;
-  basis->addCoordinateSystem("P",PrPK0,A,basis->getCoordinateSystem("R"));
+  basis->addFrame("P",PrPK0,A,basis->getFrame("R"));
   KrKS.init(0);
   KrKS(1) = lA/2;
-  arm->addCoordinateSystem("R",-KrKS,A);
-  arm->setFrameOfReference(basis->getCoordinateSystem("P"));
-  arm->setCoordinateSystemForKinematics(arm->getCoordinateSystem("R"));
+  arm->addFrame("R",-KrKS,A);
+  arm->setFrameOfReference(basis->getFrame("P"));
+  arm->setFrameForKinematics(arm->getFrame("R"));
 
   arm->setMass(mA);
   Theta(0,0) = mA*rA*rA;
@@ -98,11 +98,11 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   Theta(1,1) = 1./2.*mS*rS*rS;
   Theta(2,2) = mS*rS*rS;
   PrPK0(1) = lA;
-  arm->addCoordinateSystem("Q",PrPK0,SqrMat(3,EYE),arm->getCoordinateSystem("R"));
+  arm->addFrame("Q",PrPK0,SqrMat(3,EYE),arm->getFrame("R"));
   spitze->setInertiaTensor(Theta);
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
-  spitze->setFrameOfReference(arm->getCoordinateSystem("Q"));
-  spitze->setCoordinateSystemForKinematics(spitze->getCoordinateSystem("C"));
+  spitze->setFrameOfReference(arm->getFrame("Q"));
+  spitze->setFrameForKinematics(spitze->getFrame("C"));
   //spitze->setq0(Vec(1,INIT,lA/2));
 
     // --------------------------- Setup Control ----------------------------
@@ -120,7 +120,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorBasis);
   motorBasis->setUserFunction(tf->SigOut());
   motorBasis->setMomentDirection("[0;1;0]");
-  motorBasis->connect(getCoordinateSystem("I"),basis->getCoordinateSystem("R"));
+  motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
   FuncTable *armSoll=new FuncTable;
   armSoll->setFile("Soll_Arm.tab");   
@@ -135,7 +135,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorArm);
   motorArm->setUserFunction(tf->SigOut());
   motorArm->setMomentDirection("[0;0;1]");
-  motorArm->connect(basis->getCoordinateSystem("P"),arm->getCoordinateSystem("R"));
+  motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
   FuncTable *spitzeSoll=new FuncTable;
   spitzeSoll->setFile("Soll_Spitze.tab");   
@@ -150,7 +150,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   addLink(motorSpitze);
   motorSpitze->setUserFunction(tf->SigOut());
   motorSpitze->setForceDirection("[0;1;0]");
-  motorSpitze->connect(arm->getCoordinateSystem("Q"),spitze->getCoordinateSystem("C"));
+  motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 
   // --------------------------- Setup Visualisation ----------------------------

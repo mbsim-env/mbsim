@@ -35,8 +35,8 @@ Group2::Group2(const string &name) : Group(name) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity C) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
+  box1->setFrameOfReference(getFrame("I"));
+  box1->setFrameForKinematics(box1->getFrame("C"));
   box1->setu0("[0.1]");
 
   Group1 *group = new Group1(name+"_Untergruppe");

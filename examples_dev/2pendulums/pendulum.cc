@@ -24,9 +24,9 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
     A(i,i) = 1;
 
 
-  stab1->addCoordinateSystem("Ref",-KrKS,A);
-  stab1->setCoordinateSystemForKinematics(stab1->getCoordinateSystem("Ref"));
-  stab1->setFrameOfReference(getCoordinateSystem("I"));
+  stab1->addFrame("Ref",-KrKS,A);
+  stab1->setFrameForKinematics(stab1->getFrame("Ref"));
+  stab1->setFrameOfReference(getFrame("I"));
 
   stab1->setqSize(1);
   stab1->setuSize(1);
@@ -49,17 +49,17 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
-  stab1->addCoordinateSystem("P",WrOK-KrKS,A);
+  stab1->addFrame("P",WrOK-KrKS,A);
   KrKS(0) = a2;
-  stab2->addCoordinateSystem("R",-KrKS,A);
+  stab2->addFrame("R",-KrKS,A);
   addObject(node,stab2);
   stab2->setqSize(1);
   stab2->setuSize(1);
-  stab2->setFrameOfReference(stab1->getCoordinateSystem("P"));
-  stab2->setCoordinateSystemForKinematics(stab2->getCoordinateSystem("R"));
+  stab2->setFrameOfReference(stab1->getFrame("P"));
+  stab2->setFrameForKinematics(stab2->getFrame("R"));
   stab2->setMass(mStab);
   Theta(2,2) = JStab;
-  stab2->setInertiaTensor(Theta,stab2->getCoordinateSystem("C"));
+  stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
