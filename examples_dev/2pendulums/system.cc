@@ -1,5 +1,5 @@
 #include "system.h"
-#include "rigid_body.h"
+#include "mbsim/rigid_body.h"
 #include "objobject.h"
 #include "pendulum.h"
 

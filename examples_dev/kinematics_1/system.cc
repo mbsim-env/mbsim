@@ -1,9 +1,9 @@
 #include "system.h"
-#include "rigid_body.h"
-#include "tree.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/tree.h"
 #include "cuboid.h"
-#include "contour.h"
-#include "load.h"
+#include "mbsim/contour.h"
+#include "mbsim/load.h"
 #include "cube.h"
 
 

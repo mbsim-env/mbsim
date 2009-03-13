@@ -1,11 +1,11 @@
 #include "system.h"
-#include "rigid_body.h"
+#include "mbsim/rigid_body.h"
 #include "objobject.h"
-#include "contour.h"
-#include "contact.h"
-#include "load.h"
+#include "mbsim/contour.h"
+#include "mbsim/contact.h"
+#include "mbsim/load.h"
 #include "cube.h"
-#include "constitutive_laws.h"
+#include "mbsim/constitutive_laws.h"
 
 using namespace AMVis;
 

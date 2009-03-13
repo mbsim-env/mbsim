@@ -1,13 +1,13 @@
 #include "robot.h"
-#include "rigid_body.h"
-#include "userfunction.h"
-#include "load.h"
-#include "actuator.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/userfunction.h"
+#include "mbsim/load.h"
+#include "mbsim/actuator.h"
 #include "cuboid.h"
 #include "cylinder.h"
 #include "objobject.h"
-#include "transfersys.h"
-#include "tree.h"
+#include "mbsimControl/transfersys.h"
+#include "mbsim/tree.h"
 
 using namespace AMVis;
 

@@ -1,7 +1,7 @@
 #ifndef _GROUP2_H
 #define _GROUP2_H
 
-#include "group.h"
+#include "mbsim/group.h"
 #include <string>
 
 

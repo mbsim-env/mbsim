@@ -1,5 +1,5 @@
 #include "pendulum.h"
-#include <integrators.h>
+#include <mbsim/integrators/integrators.h>
 
 using namespace std;
 using namespace MBSim;
