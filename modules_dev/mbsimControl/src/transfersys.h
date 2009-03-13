@@ -25,7 +25,7 @@
 #define _TRANSFERSYS_
 
 #include "spsys.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 using namespace MBSim;
 
