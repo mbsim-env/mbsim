@@ -24,7 +24,7 @@
 #define _SPSYS_H_
 
 #include <string>
-#include "coordinate_system.h"
+#include "frame.h"
 #include "signalspsys.h"
 #include "data_interface_base.h"
 #include "extra_dynamic_interface.h"
@@ -40,8 +40,8 @@ class SPSys : public ExtraDynamicInterface {
     string modus; //String Variable, fuer Betriebsarteintrag in Plot File des Objekts 
     // Container & Vars fuer Inputfunktionen Anfang
     vector<DataInterfaceBase*> SigInputs;
-    vector<CoordinateSystem*> PositionInputs;
-    vector<CoordinateSystem*> VInputs;
+    vector<Frame*> PositionInputs;
+    vector<Frame*> VInputs;
     Vec kTF,kPos,kVin;
     vector<int> xyzVin;
     vector<int> xyzPos;	
@@ -74,8 +74,8 @@ class SPSys : public ExtraDynamicInterface {
     SPSys(const string &name);
     void setInSignalnWeight(SPSys *In_,double wichtung);
     void setInSignalnWeight(DataInterfaceBase *In_,double wichtung);
-    void setInPositionnWeight(CoordinateSystem *Inport,char XYZ,double wichtung);
-    void setInVelocitynWeight(CoordinateSystem *Inport,char XYZ,double wichtung);
+    void setInPositionnWeight(Frame *Inport,char XYZ,double wichtung);
+    void setInVelocitynWeight(Frame *Inport,char XYZ,double wichtung);
     void setNoInput();
     
     virtual void setSumInputs();	

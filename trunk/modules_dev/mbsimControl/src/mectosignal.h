@@ -23,7 +23,7 @@
 #ifndef MECTOSIGNAL_H_
 #define MECTOSIGNAL_H_
 
-#include "coordinate_system.h"
+#include "frame.h"
 #include "data_interface_base.h"
 #include "spsys.h"
 #include "body.h"
@@ -36,10 +36,10 @@ using namespace MBSim;
  * */  
 class PosInterface : public DataInterfaceBase {
 protected:
-  CoordinateSystem* port;
+  Frame* port;
   Mat JT;
 public:
-  PosInterface(CoordinateSystem *port_, const Mat& JT_) {port=port_; JT=JT_;}
+  PosInterface(Frame *port_, const Mat& JT_) {port=port_; JT=JT_;}
   ~PosInterface() {}
   Vec operator()(double t); 
 };  
@@ -49,10 +49,10 @@ public:
  * */  
 class RotVelInterface : public DataInterfaceBase {
 protected:
-  CoordinateSystem* port;
+  Frame* port;
   Mat JR;
 public:
-  RotVelInterface(CoordinateSystem *port_, const Mat& JR_) {port=port_; JR=JR_;}
+  RotVelInterface(Frame *port_, const Mat& JR_) {port=port_; JR=JR_;}
   ~RotVelInterface() {}
   Vec operator()(double t); 
 };  

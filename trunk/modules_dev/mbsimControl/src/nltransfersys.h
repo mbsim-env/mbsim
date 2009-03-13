@@ -24,7 +24,7 @@
 #define _NLTRANSFERSYS_
 
 #include "spsys.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 class NLTransferSys : public SPSys {
   protected:
