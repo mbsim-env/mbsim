@@ -21,7 +21,7 @@
  *
  */ 
 #include <config.h>
-#include "nltransfersys.h"
+#include "mbsimControl/nltransfersys.h"
 
 
 NLTransferSys::NLTransferSys(const string& name) : SPSys(name) {

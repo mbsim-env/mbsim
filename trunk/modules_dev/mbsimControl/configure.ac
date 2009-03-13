@@ -3,7 +3,7 @@ AC_PREREQ([2.57])
 AC_INIT([mbsimControl],[0.0.1],[rzander@users.berlios.de])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/Makefile.am])
+AC_CONFIG_SRCDIR([mbsimControl/Makefile.am])
 AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_F77
@@ -38,7 +38,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile doc/Makefile mbsimControl.pc])
+AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/Makefile mbsimControl.pc])
 
 AC_OUTPUT
 

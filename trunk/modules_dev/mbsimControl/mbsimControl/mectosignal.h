@@ -23,10 +23,10 @@
 #ifndef MECTOSIGNAL_H_
 #define MECTOSIGNAL_H_
 
-#include "frame.h"
-#include "data_interface_base.h"
-#include "spsys.h"
-#include "body.h"
+#include "mbsim/frame.h"
+#include "mbsim/data_interface_base.h"
+#include "mbsimControl/spsys.h"
+#include "mbsim/body.h"
 
 using namespace fmatvec;
 using namespace MBSim;
