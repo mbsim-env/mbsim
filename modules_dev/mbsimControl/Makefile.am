@@ -1,6 +1,6 @@
-SUBDIRS = src
+SUBDIRS = mbsimControl
 
-DIST_SUBDIRS = src doc
+DIST_SUBDIRS = mbsimControl doc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimControl.pc

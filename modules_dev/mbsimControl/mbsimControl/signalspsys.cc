@@ -20,30 +20,12 @@
  *   mbachmayer@gmx.de
  *
  */ 
-#ifndef _SIGNALSPSYS_H_
-#define _SIGNALSPSYS_H_
+#include <config.h>
+#include "mbsimControl/signalspsys.h" 
+#include <fstream>
+#include "mbsimControl/spsys.h"
 
-#include "fmatvec.h"
-#include "data_interface_base.h"
-#include <vector>
+Vec SignalSPSys::operator()(double t){
+return (*Mother)(t);
+}
 
-using namespace fmatvec;
-using namespace MBSim;
-/*! 
- *  A controlsignal is the medium required for data transfer where SPSYS
- *  objects are involved 
- * */
-class SPSys;
-
-class SignalSPSys : public DataInterfaceBase {
-    protected:
-      SPSys *Mother;
-    public:
-        SignalSPSys() {}  // default value 
-        ~SignalSPSys() {}
-	void setMother(SPSys *Mother_){Mother=Mother_;}
-	Vec operator()(double t);
-};
-
-           
-#endif

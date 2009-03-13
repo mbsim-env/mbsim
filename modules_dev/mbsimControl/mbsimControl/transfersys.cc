@@ -21,7 +21,7 @@
  *
  */ 
 #include <config.h>
-#include "transfersys.h"
+#include "mbsimControl/transfersys.h"
 
 TransferSys::TransferSys(const string& name) : SPSys(name) {
   ABCDdefined=false;

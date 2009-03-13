@@ -20,53 +20,37 @@
  *   mbachmayer@gmx.de
  *
  */ 
+#ifndef _NLTRANSFERSYS_
+#define _NLTRANSFERSYS_
 
-#ifndef _TRANSFERSYS_
-#define _TRANSFERSYS_
+#include "mbsimControl/spsys.h"
+#include "mbsim/frame.h"
 
-#include "spsys.h"
-#include "frame.h"
-
-using namespace MBSim;
-
-class TransferSys : public SPSys {
+class NLTransferSys : public SPSys {
   protected:
-    Mat A,B,C,D;// Sysmatrizen   
-
-    Vec DFactor; 
-    double R1,R2,c; // Vars fuer interne Differenzierer Bandbreite
-
-    Vec dz;
-    double Tt;
-    Vec Dd;
-    bool ABCDdefined;
-    Vec (TransferSys::*OutForm)(double); // Zeiger zum Umschalten bzgl der Ausgangsfunktion
-
-    // Anfang - Deklaration möglicher Systemausgänge 
-    Vec OutC(double t);
-    Vec OutD(double t);
-    Vec OutCD(double t);
-    // Ende - Deklaration möglicher Systemausgänge
-    
+    //OutputSignal *TFOutputSignal; 
+    Vec xNull;
+    Vec (NLTransferSys::*OutForm)(double,Vec); // Zeiger zum Umschalten bzgl der Ausgangsfunktion
+    Vec Saturation(double t, Vec U);
+    virtual Vec DE(double t,  Vec U);
+    virtual Vec SystemOutput(double t,Vec U);
+    double MaxLimit,MinLimit;
   public:   
-    TransferSys(const string& name);
+    NLTransferSys(const string& name);
     void updatedx(double t, double dt);
     void updatexd(double t);
-    void updateg(double t);
+    void updateStage1(double t);
     void initPlot(bool top=true);
     void plot(double t,double dt, bool top=true);
-    void showABCD();
     
-   
-    void setPID(double P_, double I_, double D_);
-    void setABCD(Mat A_,Mat B_,Mat C_,Mat D_);
-    void setBandwidth(double Hz_fg);
-    void setIntegrator(double OutputGain);
-    void setI2(double OutputGain);
-    void setPT1(double P, double T);
-    void setGain(double P);
+    void setMinMaxOut(double MinOut,double MaxOut);
+    void activateDynamics();
+    void setxNull(Vec xNull_){xNull=xNull_;}
 
-    virtual string getType() const {return "TransferSys";}
+    virtual string getType() const {return "NLTransferSys";}
+    
+    // UserFunction* SigU(){return TFOutputSignal;} 
+    
 };
 
 #endif

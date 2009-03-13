@@ -24,10 +24,10 @@
 #define _SPSYS_H_
 
 #include <string>
-#include "frame.h"
-#include "signalspsys.h"
-#include "data_interface_base.h"
-#include "extra_dynamic_interface.h"
+#include "mbsim/frame.h"
+#include "mbsimControl/signalspsys.h"
+#include "mbsim/data_interface_base.h"
+#include "mbsim/extra_dynamic_interface.h"
 #include <vector>
 
 using namespace MBSim;

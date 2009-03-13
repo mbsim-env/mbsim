@@ -22,9 +22,9 @@
  */ 
 
 #include <config.h>
-#include "spsys.h"
-#include "object.h"
-#include "multi_body_system.h"
+#include "mbsimControl/spsys.h"
+#include "mbsim/object.h"
+#include "mbsim/multi_body_system.h"
 
 SPSys::SPSys(const string &name) : ExtraDynamicInterface(name){
   Uin=&SPSys::InputDummie;

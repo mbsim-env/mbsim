@@ -21,11 +21,30 @@
  *
  */ 
 #include <config.h>
-#include "signalspsys.h" 
-#include <fstream>
-#include "spsys.h"
+#include "mbsimControl/mectosignal.h"
+#include "mbsim/rigid_body.h"
 
-Vec SignalSPSys::operator()(double t){
-return (*Mother)(t);
+Vec PosInterface::operator()(double t)  { 
+  return trans(JT)*port->getPosition();
 }
+Vec RotVelInterface::operator()(double t)  { 
+  return trans(JR)*port->getAngularVelocity();
+}
+AngularInterface::AngularInterface(Body *body_) {
+  body=body_;
+  index=-1;
+  RigidBody* b11=dynamic_cast<RigidBody*>(body);
+  RigidBody* b12=dynamic_cast<RigidBody*>(body); 
+  RigidBody* b13=dynamic_cast<RigidBody*>(body); 
+  RigidBody* b21=dynamic_cast<RigidBody*>(body);
+  if(b11||b12||b13) index=0; 
+  if(b21) index=2;
+  if(index==-1) {
+    cout << "AngularInterface: Error: AngularInterface for this Type of Body not possible." << endl; 
+    throw 50;
+  }
+}
+Vec AngularInterface::operator()(double t)  { 
+  return Vec(1,INIT,body->getq()(index));
+}  
 

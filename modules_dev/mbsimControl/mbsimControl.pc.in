@@ -8,6 +8,6 @@ Description: mbsimControl is an add-on for controlled systems to the mbsim-kerne
 Requires: mbsim
 Version: @VERSION@
 Libs: -L${libdir} -lmbsimControl
-Cflags: -I${includedir}/mbsimControl
+Cflags: -I${includedir}
 
 
