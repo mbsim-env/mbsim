@@ -24,11 +24,11 @@ namespace MBSim {
 
 	string cosyname = string("B_") + name;
 	if(predecessor) {
-	  predecessor->addCoordinateSystem(cosyname,PrPK0,APK0,predecessor->getCoordinateSystem("B"));
-	  setFrameOfReference(predecessor->getCoordinateSystem(cosyname));
+	  predecessor->addFrame(cosyname,PrPK0,APK0,predecessor->getFrame("B"));
+	  setFrameOfReference(predecessor->getFrame(cosyname));
 	} else {
-	  parent->addCoordinateSystem(cosyname,PrPK0,APK0);
-	  setFrameOfReference(parent->getCoordinateSystem(cosyname));
+	  parent->addFrame(cosyname,PrPK0,APK0);
+	  setFrameOfReference(parent->getFrame(cosyname));
 	}
 
 	BodyRigid::calcqSize();

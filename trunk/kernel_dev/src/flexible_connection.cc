@@ -21,7 +21,7 @@
  */
 #include <config.h>
 #include "flexible_connection.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 namespace MBSim {
 

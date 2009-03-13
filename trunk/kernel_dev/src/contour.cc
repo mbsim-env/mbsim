@@ -24,7 +24,7 @@
 #include "contour.h"
 #include "object.h"
 #include "body_flexible.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 #ifdef HAVE_AMVIS
 #include "cbody.h"
@@ -60,14 +60,14 @@ namespace MBSim {
 
   void Contour::init() {
 
-    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize[0]);
-    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize[0]);
+    getFrame()->getJacobianOfTranslation().resize(3,hSize[0]);
+    getFrame()->getJacobianOfRotation().resize(3,hSize[0]);
   }
 
   void Contour::resizeJacobians(int j) {
 
-    getCoordinateSystem()->getJacobianOfTranslation().resize(3,hSize[j]);
-    getCoordinateSystem()->getJacobianOfRotation().resize(3,hSize[j]);
+    getFrame()->getJacobianOfTranslation().resize(3,hSize[j]);
+    getFrame()->getJacobianOfRotation().resize(3,hSize[j]);
   }
 
   /*void Contour::initPlotFiles() {

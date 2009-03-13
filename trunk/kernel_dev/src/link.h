@@ -37,7 +37,7 @@ namespace AMVis {class Arrow;}
 #endif
 
 namespace MBSim {
-  class CoordinateSystem;
+  class Frame;
   class Contour;
   class HitSphereLink;
   class UserFunction;
@@ -100,7 +100,7 @@ namespace MBSim {
 
       /*! Array in which all ports are listed, connecting bodies via a Link.
       */
-      vector<CoordinateSystem*> port;
+      vector<Frame*> port;
 
       /** Array in which all contours linked by LinkContour are managed.*/
       vector<Contour*> contour;
@@ -256,7 +256,7 @@ namespace MBSim {
       /*! Defines the maximal r-factor. */  
       virtual void setrMax(double rMax_) {rMax = rMax_;}
 
-      virtual void connect(CoordinateSystem *port1, int id);
+      virtual void connect(Frame *port1, int id);
 
       /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
       virtual void connect(Contour *port1, int id);
@@ -279,7 +279,7 @@ namespace MBSim {
 
       /*! \brief Set AMVisbody Arrow do display the link load (fore or Moment)
        * @param scale scalefactor (default=1) scale=1 means 1KN or 1KNM is equivalent to arrowlength one
-       * @param ID ID of load and corresponding CoordinateSystem/Contour (ID=0 or 1)
+       * @param ID ID of load and corresponding Frame/Contour (ID=0 or 1)
        * @param funcColor Userfunction to manipulate Color of Arrow at each TimeStep
        * default: Red arrow for Forces and green one for Moments
        * */

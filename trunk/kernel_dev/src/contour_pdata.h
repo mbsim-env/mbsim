@@ -24,7 +24,7 @@
 #define _CONTOUR_PDATA_H_
 
 #include "fmatvec.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include <vector>
 
 using namespace fmatvec;
@@ -64,7 +64,7 @@ namespace MBSim {
     Vec Wn;
     Mat Wt;
 
-    CoordinateSystem cosy;
+    Frame cosy;
   };
 
 }

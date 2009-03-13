@@ -45,18 +45,18 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData) {
 
-    cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
-    cpData[ipoint].cosy.getOrientation().col(0) = -plane->getCoordinateSystem()->getOrientation().col(0);
-    cpData[ipoint].cosy.getOrientation().col(1) = -plane->getCoordinateSystem()->getOrientation().col(1);
-    cpData[ipoint].cosy.getOrientation().col(2) = plane->getCoordinateSystem()->getOrientation().col(2);
+    cpData[iplane].cosy.setOrientation(plane->getFrame()->getOrientation());
+    cpData[ipoint].cosy.getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
+    cpData[ipoint].cosy.getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
+    cpData[ipoint].cosy.getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
 
     Vec Wn = cpData[iplane].cosy.getOrientation().col(0);
 
-    Vec Wd =  point->getCoordinateSystem()->getPosition() - plane->getCoordinateSystem()->getPosition();
+    Vec Wd =  point->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
     g(0) = trans(Wn)*Wd;
 
-    cpData[ipoint].cosy.setPosition(point->getCoordinateSystem()->getPosition());
+    cpData[ipoint].cosy.setPosition(point->getFrame()->getPosition());
     cpData[iplane].cosy.setPosition(cpData[ipoint].cosy.getPosition() - Wn*g(0));
   }
 

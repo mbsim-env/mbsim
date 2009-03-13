@@ -26,7 +26,7 @@
 #include "body.h"
 #include "fmatvec.h"
 #include <vector>
-#include "coordinate_system.h"
+#include "frame.h"
 #include "userfunction.h"
 #include "kinematics.h"
 #ifdef HAVE_AMVIS
@@ -57,7 +57,7 @@ namespace MBSim {
 
       SqrMat APK;
       Vec PrPK, WrPK, WvPKrel, WomPK;
-      CoordinateSystem *portParent;
+      Frame *portParent;
       vector<SqrMat> ASK;
       vector<Vec> SrSK, WrSK;
 
@@ -91,7 +91,7 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
       DataInterfaceBase* bodyAMVisUserFunctionColor;
-      CoordinateSystem* cosyAMVis;
+      Frame* cosyAMVis;
 #endif
 
     public:
@@ -100,7 +100,7 @@ namespace MBSim {
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
 
-      void useCoordinateSystemOfBodyForRotation(bool cb_) {cb = cb_;}
+      void useFrameOfBodyForRotation(bool cb_) {cb = cb_;}
       void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
       void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
@@ -122,26 +122,26 @@ namespace MBSim {
        * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
        \param I martix of inertia
        */
-      void setInertiaTensor(const SymMat& RThetaR, const CoordinateSystem* refCoordinateSystem=0) {
-	if(refCoordinateSystem)
-	  i4I = portIndex(refCoordinateSystem);
+      void setInertiaTensor(const SymMat& RThetaR, const Frame* refFrame=0) {
+	if(refFrame)
+	  i4I = portIndex(refFrame);
 	else
 	  i4I = 0;
 	// hier nur zwischenspeichern
 	SThetaS = RThetaR;
       }
 
-      virtual void updateKinematicsForSelectedCoordinateSystem(double t);
-      virtual void updateJacobiansForSelectedCoordinateSystem(double t);
-      virtual void updateKinematicsForRemainingCoordinateSystemsAndContours(double t);
-      virtual void updateJacobiansForRemainingCoordinateSystemsAndContours(double t);
+      virtual void updateKinematicsForSelectedFrame(double t);
+      virtual void updateJacobiansForSelectedFrame(double t);
+      virtual void updateKinematicsForRemainingFramesAndContours(double t);
+      virtual void updateJacobiansForRemainingFramesAndContours(double t);
 
-      virtual void updateSecondJacobiansForSelectedCoordinateSystem(double t);
-      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
+      virtual void updateSecondJacobiansForSelectedFrame(double t);
+      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
 
       void updateh(double t);
-      void updateKinematics(double t) {updateKinematicsForSelectedCoordinateSystem(t); updateKinematicsForRemainingCoordinateSystemsAndContours(t);}
-      void updateJacobians(double t) {updateJacobiansForSelectedCoordinateSystem(t); updateJacobiansForRemainingCoordinateSystemsAndContours(t);}
+      void updateKinematics(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
+      void updateJacobians(double t) {updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
       void updateM(double t) {(this->*updateM_)(t);}
       void updateT(double t) {if(fT) T = (*fT)(q,t);}
       void facLLM() {(this->*facLLM_)();}
@@ -149,18 +149,18 @@ namespace MBSim {
       void resizeJacobians(int j);
       virtual void checkForConstraints();
 
-      void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
+      void addFrame(Frame *port_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0); 
 
-      void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
+      void addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame=0);
 
-      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
+      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
 
-      void setCoordinateSystemForKinematics(CoordinateSystem *port) {
+      void setFrameForKinematics(Frame *port) {
 	iRef = portIndex(port);
 	assert(iRef > -1);
       }
 
-      void setFrameOfReference(CoordinateSystem *port) {portParent = port;};
+      void setFrameOfReference(Frame *port) {portParent = port;};
 
       double computeKineticEnergy();
       double computeKineticEnergyBranch();
@@ -178,7 +178,7 @@ namespace MBSim {
       void save(const string &path, ofstream &outputfile);
 
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, CoordinateSystem* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
+      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
 #endif
 
   };

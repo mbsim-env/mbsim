@@ -29,8 +29,8 @@ namespace MBSim {
       void setJR(const Mat &JR_) { JR = JR_; }
       void setKrKS(const Vec &KrKS_) { KrKS = KrKS_; }
 
-      CoordinateSystem* getPort(const string &str) { return RigidBody::getCoordinateSystem(str); }
-      void addPort(const string &str, const Vec &r) { RigidBody::addCoordinateSystem(str,r,SqrMat(3,EYE)); }
+      Frame* getPort(const string &str) { return RigidBody::getFrame(str); }
+      void addPort(const string &str, const Vec &r) { RigidBody::addFrame(str,r,SqrMat(3,EYE)); }
       void addContour(Contour* contour, const Vec &r) { RigidBody::addContour(contour,r,SqrMat(3,EYE)); }
 
       //string getFullName() const {return mbs ? RigidBody::getFullName() : name;}
@@ -55,13 +55,13 @@ namespace MBSim {
 	  }
 	}
 
-	addCoordinateSystem("B",-KrKS,SqrMat(3,EYE));
-	setCoordinateSystemForKinematics(getCoordinateSystem("B"));
+	addFrame("B",-KrKS,SqrMat(3,EYE));
+	setFrameForKinematics(getFrame("B"));
 
 	if(I_COG == true)
 	  RigidBody::setInertiaTensor(I);
 	else
-	  RigidBody::setInertiaTensor(I,getCoordinateSystem("B"));
+	  RigidBody::setInertiaTensor(I,getFrame("B"));
 
 	RigidBody::calcqSize();
       }

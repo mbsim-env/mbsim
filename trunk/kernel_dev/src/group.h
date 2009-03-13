@@ -45,7 +45,7 @@ namespace MBSim {
 
       void updateSecondJacobians(double t);
 
-      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0);
+      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0);
       void addObject(Object *object);
 
       // Compatibility functions

@@ -20,7 +20,7 @@
  *
  */
 #include <config.h>
-#include "coordinate_system.h"
+#include "frame.h"
 #include "object.h"
 #include "subsystem.h"
 #include "function.h"
@@ -29,12 +29,12 @@
 #include "data_interface_base.h"
 #include "rotarymatrices.h"
 using namespace AMVis;
-int MBSim::CoordinateSystem::kosAMVisCounter=0;
+int MBSim::Frame::kosAMVisCounter=0;
 #endif
 
 namespace MBSim {
 
-  CoordinateSystem::CoordinateSystem(const string &name) : Element(name), parent(0), adress(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
+  Frame::Frame(const string &name) : Element(name), parent(0), adress(0), WrOP(3), WvP(3), WomegaP(3), AWP(3), WjP(3), WjR(3) {
 
 #ifdef HAVE_AMVIS
     kosAMVis = NULL;
@@ -51,35 +51,35 @@ namespace MBSim {
     WJR.resize(3,0);
   }
 
-  // string CoordinateSystem::getFullName() const {
+  // string Frame::getFullName() const {
   //   return parent->getFullName() + "." + name;
   // }
 
-  void CoordinateSystem::init() {
+  void Frame::init() {
 
     getJacobianOfTranslation().resize(3,hSize[0]);
     getJacobianOfRotation().resize(3,hSize[0]);
   }
 
-  void CoordinateSystem::resizeJacobians() {
+  void Frame::resizeJacobians() {
 
     getJacobianOfTranslation().resize();
     getJacobianOfRotation().resize();
   }
 
-  void CoordinateSystem::resizeJacobians(int j) {
+  void Frame::resizeJacobians(int j) {
 
     getJacobianOfTranslation().resize(3,hSize[j]);
     getJacobianOfRotation().resize(3,hSize[j]);
   }
 
-  //int CoordinateSystem::gethInd(Subsystem* sys) {
+  //int Frame::gethInd(Subsystem* sys) {
   //  return parent->gethInd(sys);
   // }
 
 
 #ifdef HAVE_AMVIS
-  void CoordinateSystem::setAMVisKosSize(double size) {
+  void Frame::setAMVisKosSize(double size) {
     if(size>0) {
       kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
       kosAMVisCounter++;
@@ -88,7 +88,7 @@ namespace MBSim {
   }
 #endif
 
-  void CoordinateSystem::plot(double t, double dt, bool top) {
+  void Frame::plot(double t, double dt, bool top) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::plot(t,dt,false);
 
@@ -115,7 +115,7 @@ namespace MBSim {
     }
   }
 
-  void CoordinateSystem::initPlot(bool top) {
+  void Frame::initPlot(bool top) {
     Element::initPlot(parent, true, false);
 
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -138,7 +138,7 @@ namespace MBSim {
     }
   }
 
-  void CoordinateSystem::closePlot() {
+  void Frame::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::closePlot();
     }

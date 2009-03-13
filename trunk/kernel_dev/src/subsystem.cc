@@ -25,7 +25,7 @@
 #include "extra_dynamic_interface.h"
 #include "link.h"
 #include "contour.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "class_factory.h"
 #include "multi_body_system.h"
 
@@ -45,7 +45,7 @@ namespace MBSim {
     hInd[0] = 0;
     hInd[1] = 0;
 
-    addCoordinateSystem(new CoordinateSystem("I"));
+    addFrame(new Frame("I"));
 
     IrOK.push_back(Vec(3));
     AIK.push_back(SqrMat(3,EYE));
@@ -197,8 +197,8 @@ namespace MBSim {
     }
     // Kinematik der Konturen updaten, ausgehend vom Ursprung-KOSY
     for(unsigned int i=0; i<subsystem.size(); i++) {
-      subsystem[i]->getCoordinateSystem("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
-      subsystem[i]->getCoordinateSystem("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
+      subsystem[i]->getFrame("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
+      subsystem[i]->getFrame("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
       subsystem[i]->init();
     }
 
@@ -693,7 +693,7 @@ namespace MBSim {
       (**i).updaterFactorRef(rFactor);
   }
 
-  int Subsystem::portIndex(const CoordinateSystem *port_) const {
+  int Subsystem::portIndex(const Frame *port_) const {
     for(unsigned int i=0; i<port.size(); i++) {
       if(port_==port[i])
 	return i;
@@ -701,7 +701,7 @@ namespace MBSim {
     return -1;
   }
 
-  CoordinateSystem* Subsystem::getCoordinateSystem(const string &name, bool check) {
+  Frame* Subsystem::getFrame(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name)
@@ -727,30 +727,30 @@ namespace MBSim {
     return NULL;
   }
 
-  void Subsystem::addCoordinateSystem(CoordinateSystem* cosy) {
+  void Subsystem::addFrame(Frame* cosy) {
 
-    if(getCoordinateSystem(cosy->getName(),false)) { //Contourname exists already
-      cout << "Error: The Subsystem " << name << " can only comprise one CoordinateSystem by the name " <<  cosy->getName() << "!" << endl;
-      assert(getCoordinateSystem(cosy->getName(),false)==NULL);
+    if(getFrame(cosy->getName(),false)) { //Contourname exists already
+      cout << "Error: The Subsystem " << name << " can only comprise one Frame by the name " <<  cosy->getName() << "!" << endl;
+      assert(getFrame(cosy->getName(),false)==NULL);
     }
     port.push_back(cosy);
     cosy->setParent(this);
   }
 
-  void Subsystem::addCoordinateSystem(CoordinateSystem* cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
+  void Subsystem::addFrame(Frame* cosy, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame) {
 
-    addCoordinateSystem(cosy);
+    addFrame(cosy);
 
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     IrOK.push_back(IrOK[i] + AIK[i]*RrRK);
     AIK.push_back(AIK[i]*ARK);
   }
 
-  void Subsystem::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
-    addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
+  void Subsystem::addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame) {
+    addFrame(new Frame(str),SrSK,ASK,refFrame);
   }
 
   void Subsystem::addContour(Contour* contour_) {
@@ -763,13 +763,13 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void Subsystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
+  void Subsystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
 
     addContour(contour);
 
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     IrOC.push_back(IrOK[i] + AIK[i]*RrRC);
     AIC.push_back(AIK[i]*ARC);

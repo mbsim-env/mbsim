@@ -21,7 +21,7 @@
  */
 #include <config.h>
 #include "joint.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "data_interface_base.h"
 #include "constitutive_laws.h"
 #include "multi_body_system.h"
@@ -125,7 +125,7 @@ namespace MBSim {
     return flag;
   }
 
-  void Joint::connect(CoordinateSystem *port0, CoordinateSystem* port1) {
+  void Joint::connect(Frame *port0, Frame* port1) {
     Link::connect(port0,0);
     Link::connect(port1,1);
   }

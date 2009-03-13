@@ -22,7 +22,7 @@
  */
 #include<config.h>
 #include "multi_body_system.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "contour.h"
 #include "link.h"
 #include "extra_dynamic_interface.h"
@@ -1236,7 +1236,7 @@ namespace MBSim {
 
   // TODO: Konzept überdenken!
   // Sucht im gesamten MKS nach einem Koordinatensystem mit Hilfe des fullName
-  CoordinateSystem* MultiBodySystem::findCoordinateSystem(const string &name) {
+  Frame* MultiBodySystem::findFrame(const string &name) {
 
     istringstream stream(name);
 
@@ -1251,13 +1251,13 @@ namespace MBSim {
       throw 5;
 
     if(l.size() == 2)
-      return getCoordinateSystem(l[1]);
+      return getFrame(l[1]);
 
     Subsystem *sys = this;
     for(unsigned int i=1; i<l.size()-2; i++) {
       sys = static_cast<Subsystem*>(sys->getSubsystem(l[i]));
     }
-    return sys->getObject(l[l.size()-2])->getCoordinateSystem(l[l.size()-1]);
+    return sys->getObject(l[l.size()-2])->getFrame(l[l.size()-1]);
   }
 
   // TODO: Konzept überdenken!

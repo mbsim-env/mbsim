@@ -78,7 +78,7 @@ namespace MBSim {
     double computePotentialEnergy();
 
     Node* addObject(Node* node, Object* obj);
-    Node* addSubsystem(Node* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem=0);
+    Node* addSubsystem(Node* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame=0);
     virtual string getType() const {return "Tree";}
   };
 
