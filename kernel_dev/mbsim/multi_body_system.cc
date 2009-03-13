@@ -27,7 +27,7 @@
 #include <mbsim/link.h>
 #include <mbsim/extra_dynamic_interface.h>
 #include <mbsim/integrators/integrator.h>
-#include <mbsim/body_flexible.h>
+#include <mbsim/flexible_body.h>
 #include <mbsim/utils/eps.h>
 #include "dirent.h"
 #ifndef MINGW

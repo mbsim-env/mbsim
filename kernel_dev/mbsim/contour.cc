@@ -23,7 +23,7 @@
 #include <config.h>
 #include <mbsim/contour.h>
 #include <mbsim/object.h>
-#include <mbsim/body_flexible.h>
+#include <mbsim/flexible_body.h>
 #include <mbsim/frame.h>
 
 #ifdef HAVE_AMVIS
