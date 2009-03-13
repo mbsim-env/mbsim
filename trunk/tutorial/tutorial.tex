@@ -1,0 +1,53 @@
+\documentclass[a4,english]{AMpaper}
+\usepackage[latin1]{inputenc}
+\usepackage{moreverb}
+\usepackage{psfrag}
+\usepackage[ps2pdf]{hyperref}
+\usepackage{listings}
+
+\graphicspath{{Figures/}}
+
+%% \setcounter{secnumdepth}{3}
+\setcounter{tocdepth}   {2}
+
+\newcommand{\MBSim}{\href{http://mbsim.berlios.de}{\textsf{MBSim}}}
+\newcommand{\AMVis}{\href{http://www.amm.mw.tum.de}{\textsf{AMVis}}}
+\newcommand{\FMatVec}{\href{http://fmatvec.berlios.de}{\textsc{FMatVec}}}
+
+% Document
+
+\begin{document}
+\title{\MBSim-A Kind Introduction}
+\author{by \MBSim Development Team\\
+  Bastian Esefeld\\
+  Martin F\"org\\
+  Robert Huber\\
+  Thorsten Schindler\\
+  Markus Schneider}
+\date{13.03.2009}
+\maketitle
+
+\begin{abstract}
+  This manual explains how to install \MBSim{} and introduces easy examples not considering the mathematical background of the equations of motion.
+\end{abstract}
+
+\noindent\hrulefill
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\include{basics}
+\include{install}
+%\include{components}
+%\include{examples}
+%\appendix
+%\include{appendix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{plain}
+\bibliography{Literatur}
+\end{document}

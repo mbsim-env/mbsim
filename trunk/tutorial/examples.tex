@@ -1,0 +1,124 @@
+\section{Beispiele}
+
+%%------------------------------------------------------------ SUBSECTION ---------------------
+\subsection{Beispiel: Einmassenschwinger}
+
+\hspace*{0.2\hsize}
+  \psfrag{x} [cc][cc]{$x$}
+  \psfrag{K} [lc][lc]{Körper}
+  \psfrag{m} [cc][cc]{$m$}
+  \psfrag{c} [cc][cc]{Feder $c$}
+  \psfrag{S} [cc][cc]{$S$}
+  \psfrag{K} [lc][lc]{Körper mit Schwerpunkt/KOS}
+  \psfrag{pb}[lc][lc]{Port auf Körper}
+  \psfrag{pe}[lc][lc]{Port auf Umwelt}
+  \includegraphics[width=0.45\hsize]{Einmassenschwinger}
+
+%%------------------------------------------------------------ SUBSUBSECTION ---------------------
+\subsubsection{Das "`physikalische"' System -- System}
+
+\paragraph{Header}
+
+\listinginput{1}{C++/einmassen.h}
+
+\begin{tabular}{r|p{0.85\hsize}}
+  1,2,16 & verhindert, dass Header mehrfach eingebunden werden\\
+  4,5,7,8  & \emph{includes} und \emph{Namespaces}\\
+  10 & Klassendefinition für den Einmassenschwinger, der in direkter Ableitung zu
+       \texttt{MultiBodySystem} steht und keine zusätzliche Funktionalität implementiert\\
+  13 & Konstruktor
+\end{tabular}
+
+%------------------------------------------------------------
+\paragraph{Quellcode}
+
+\listinginput{1}{C++/einmassen.cc}
+
+\begin{tabular}{r|p{0.85\hsize}}
+  10  & Standardmäßig werden Verzeichnisse gemäß \texttt{Projektname00, Projektname01, \dots
+  Projektnamexy, \dots Projektname99} angelegt; mit \texttt{setProjectDirectory} wird ein
+  fester Verzeichnisname angegeben, in inkrementelles Benennen findet nun nicht mehr statt.\\
+  40 & \texttt{setTranslationalStiffness} ist unabh\"angig von der Kraftrichtung\\
+  41 & \texttt{setTranslationalDamping} setzt die Materiald\"ampfung\\
+  53 & \emph{Cuboid} muss initial verschoben werden, da \AMVis{} und \MBSim{} unterschiedliche KOSY verwenden; das zweite Argument bezeichnet die Instanzen, das dritte Argument die Auswahl eines bin\"aren pos-files oder eines textbasierten
+  \end{tabular}
+
+%%------------------------------------------------------------ SUBSUBSECTION ---------------------
+\subsubsection{Zeitintergation -- main}
+
+\listinginput{1}{C++/main.cc}
+
+%%------------------------------------------------------------ SUBSUBSECTION ---------------------
+\subsubsection{Makefile} \enlargethispage{5mm}
+Die Erstellung eines lauffähigen Programmes wird durch ein Makefile gesteuert:
+\listinginput{1}{C++/Makefile}
+
+%%--------------------------------------------------------------- SUBSECTION --
+\subsection{2D-Schubkurbel}
+Für die Modellierung ist nach folgendem Plan vorzugehen.
+\begin{enumerate}
+\item Starr-Körper definieren durch
+\begin{itemize}
+\item \emph{bodyRigidAbs} für Kurbel, Kolben und Block
+\item Masse/ Länge/ Breite/ MTM
+\item Jacobi-Matrizen (translatorischen dof und rotatorischen dof festlegen, um auf diese beschreibenden Koordinaten zu projizieren und Reibung und Kontaktkräfte zu berücksichtigen)
+\item WrOS0 (Abstand Ursprung - Körper-KOSY (Schwerpunkt))
+\item \AMVis{}-Körper (evtl. ist eine initiale Verschiebung anzugeben, da \AMVis{}-Körper z.T. nicht vom Schwerpunkt als Referenz ausgehen)
+\end{itemize}
+
+\item Elastisches Pleuel definieren durch
+\begin{itemize}
+\item \emph{bodyflexible21}
+\item Länge/ Breite/ Höhe (Querschnitt)/ E-Modul (10e8)/ Flächenträgheitsmoment (bez. Schwerpunkt (Biegelinie) der Querschnittsfläche) als Geometriegröße)/ Dichte/ Dämpfung
+\item Elementzahl
+\item Jacobimatrizen (Körper-KOSY definieren)
+\item WrON00 (Vektor Ursprung Körper-KOSY (Bogenlängen-0-Punkt))
+\item initRelaxed (Winkel Körper-KOSY - Balken zur Zeit 0)
+\item CreateAMVis
+\end{itemize}
+
+\item Ports/ Contours im Körper-KOSY definieren
+\item Links (Feder hätte Abstandsrichtung)/ Impacts (mind. Punkt-Linie-Kontakt; Normale in Koerper; $0\leq\mu<\infty$)/ Contacts (Impact mit $\epsilon=0$) definieren
+\item Externe Anregung definieren
+\item Alles dem MBS hinzufügen
+\item Integrator/ Schrittweite wählen (bei Divergenz Schrittweite verkleinern)
+\item Analyse
+	\begin{itemize}
+	\item \AMVis{}
+	\item GVim
+		\begin{itemize}
+		\item $\vg\left(0\right)\rightarrow$ Gap-Vektor-Komponente 0 (Normalgap/ KOSY-Gap)
+		\item $\vg\left(1\right)\rightarrow$ Gap-Vektor-Komponente 1 (KOSY-Gap)
+		\item Rechtssystem Normale/ Binormale/ Tangente
+		\item $\vlambda\left(0\right)\rightarrow$ mittlerer Normalkraftparameter bez. Contournormale
+		und Integrationsschrittweite (für exakte Darstellung müssen Plotzeiten stimmen, insbesondere bei Starrkörpern
+		mit Starrkörperkontakten und elastischen Stößen)
+	\item $\vlambda\left(1\right)\rightarrow$ Tangentialkraftparameter
+	\item Pleueldaten für ein FE-Element sind\\
+	$q_1=x_1$, $q_2=x_2$, $q_3=\varphi_1$, $q_4=a_1$, $q_5=a_2$, $q_6=x_3$, $q_7=x_4$, $q_8=\varphi_2$
+	\end{itemize}
+\item Gnuplot
+\end{itemize}
+\end{enumerate}
+
+%%--------------------------------------------------------------- SUBSECTION --
+\subsection{3D-Schubkurbel}
+Für die Modellierung ist nach folgendem Plan vorzugehen.
+\begin{enumerate}
+\item Starr-Körper definieren durch
+\begin{itemize}
+\item \emph{bodyRigidAbs} für Kurbel, Pleuel, Kolben und Block
+\item Masse/ Länge/ Breite/ MTM
+\item Jacobi-Matrizen (Starrkörperkoordinatenauswahl)
+\item WrOS0 (Abstand Ursprung - Körper-KOSY (Schwerpunkt))
+\item \AMVis{}-Körper
+\end{itemize}
+
+\item Ports/ Contours im Körper-KOSY definieren
+\item Links/ Impacts definieren
+\item Externe Anregung definieren
+\item Alles dem MBS hinzufügen
+\item Integrator/ Schrittweite wählen
+\end{enumerate}
+
+
