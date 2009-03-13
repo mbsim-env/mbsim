@@ -33,7 +33,7 @@ using namespace std;
 
 namespace MBSim {
 
-  class CoordinateSystem;
+  class Frame;
   class HydFluid;
   class ExtraDynamicInterface;
   class DataInterfaceBase;
@@ -58,7 +58,7 @@ namespace MBSim {
       /*vector<Object*>                objects2plot;
       vector<Link*>                  links2plot;
       vector<Contour*>               contours2plot;
-      vector<CoordinateSystem*>                  ports2plot;
+      vector<Frame*>                  ports2plot;
       vector<ExtraDynamicInterface*> EDIs2plot;*/
 
       bool term;
@@ -311,7 +311,7 @@ namespace MBSim {
 
       string getType() const {return "MultiBodySystem";}
 
-      CoordinateSystem* findCoordinateSystem(const string &name);
+      Frame* findFrame(const string &name);
       Contour* findContour(const string &name);
       MultiBodySystem* getMultiBodySystem() {return this;}
       void load(const string &path, ifstream& inputfile);

@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSim {
 
-  class CoordinateSystem;
+  class Frame;
   class Contour;
   class Subsystem;
 
@@ -43,7 +43,7 @@ namespace MBSim {
 
     public: 
 
-    vector<CoordinateSystem*> port;
+    vector<Frame*> port;
     vector<Contour*> contour;
 
     protected:
@@ -203,15 +203,15 @@ namespace MBSim {
     void load(const string &path, ifstream &inputfile);
     void save(const string &path, ofstream &outputfile);
 
-    virtual void addCoordinateSystem(CoordinateSystem * port);
+    virtual void addFrame(Frame * port);
     virtual void addContour(Contour* contour);
 
-    int portIndex(const CoordinateSystem *port_) const;
+    int portIndex(const Frame *port_) const;
 
     //string getFullName() const; 
 
-    virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
-    const vector<CoordinateSystem*>& getCoordinateSystems() const {return port;}
+    virtual Frame* getFrame(const string &name, bool check=true);
+    const vector<Frame*>& getFrames() const {return port;}
     virtual Contour* getContour(const string &name, bool check=true);
     const vector<Contour*>& getContours() const {return contour;}
 

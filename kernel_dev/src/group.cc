@@ -25,7 +25,7 @@
 #include "object.h"
 #include "link.h"
 #include "extra_dynamic_interface.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "contour.h"
 #include "class_factory.h"
 #include "multi_body_system.h"
@@ -58,7 +58,7 @@ namespace MBSim {
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
       if(i>=port.size())
-	addCoordinateSystem(new CoordinateSystem("NoName"));
+	addFrame(new Frame("NoName"));
       port[i]->load(path, newinputfile);
       newinputfile.close();
     }
@@ -177,12 +177,12 @@ namespace MBSim {
     if(mbs != this) {
       getline(inputfile,dummy); // # Coordinate system for kinematics
       getline(inputfile,dummy); // Coordinate system for kinematics
-      //setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+      //setFrameForKinematics(getFrame(dummy));
       getline(inputfile,dummy); // newline
 
       getline(inputfile,dummy); // # Frame of reference
       getline(inputfile,dummy); // Coordinate system for kinematics
-      //setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+      //setFrameOfReference(getMultiBodySystem()->findFrame(dummy));
       getline(inputfile,dummy); // newline
 
       getline(inputfile,dummy); // # Translation 
@@ -206,9 +206,9 @@ namespace MBSim {
 
     Element::save(path,outputfile);
 
-    // all CoordinateSystem of Object
+    // all Frame of Object
     outputfile << "# Coordinate systems:" << endl;
-    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
+    for(vector<Frame*>::iterator i = port.begin();  i != port.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
       ofstream newoutputfile(newname.c_str(), ios::binary);
@@ -317,13 +317,13 @@ namespace MBSim {
   }
 
 
-  void Group::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
+  void Group::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
 
     Subsystem::addSubsystem(sys);
 
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);

@@ -45,18 +45,18 @@ namespace MBSim {
 
   void ContactKinematicsCircleSolidLine::updateg(Vec &g, ContourPointData *cpData) {
 
-    cpData[iline].cosy.setOrientation(line->getCoordinateSystem()->getOrientation());
-    cpData[icircle].cosy.getOrientation().col(0) = -line->getCoordinateSystem()->getOrientation().col(0);
-    cpData[icircle].cosy.getOrientation().col(1) = -line->getCoordinateSystem()->getOrientation().col(1);
-    cpData[icircle].cosy.getOrientation().col(2) = line->getCoordinateSystem()->getOrientation().col(2);
+    cpData[iline].cosy.setOrientation(line->getFrame()->getOrientation());
+    cpData[icircle].cosy.getOrientation().col(0) = -line->getFrame()->getOrientation().col(0);
+    cpData[icircle].cosy.getOrientation().col(1) = -line->getFrame()->getOrientation().col(1);
+    cpData[icircle].cosy.getOrientation().col(2) = line->getFrame()->getOrientation().col(2);
 
     Vec Wn = cpData[iline].cosy.getOrientation().col(0);
 
-    Vec Wd = circlesolid->getCoordinateSystem()->getPosition() - line->getCoordinateSystem()->getPosition();
+    Vec Wd = circlesolid->getFrame()->getPosition() - line->getFrame()->getPosition();
 
     g(0) = trans(Wn)*Wd - circlesolid->getRadius();
 
-    cpData[icircle].cosy.setPosition(circlesolid->getCoordinateSystem()->getPosition() - Wn*circlesolid->getRadius());
+    cpData[icircle].cosy.setPosition(circlesolid->getFrame()->getPosition() - Wn*circlesolid->getRadius());
     cpData[iline].cosy.setPosition(cpData[icircle].cosy.getPosition() - Wn*g(0));
   }
 

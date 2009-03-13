@@ -22,7 +22,7 @@
 #include<config.h>
 #include<stdexcept>
 #include "object.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "contour.h"
 #include "eps.h"
 #include "class_factory.h"
@@ -91,7 +91,7 @@ namespace MBSim {
 
   Object::~Object() {
     // Destructs port and contour pointers
-    for(vector<CoordinateSystem*>::iterator i = port.begin(); i != port.end(); ++i) 
+    for(vector<Frame*>::iterator i = port.begin(); i != port.end(); ++i) 
       delete *i;
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       delete *i;
@@ -151,9 +151,9 @@ namespace MBSim {
   void Object::save(const string &path, ofstream &outputfile) {
     Element::save(path,outputfile);
 
-    // all CoordinateSystem of Object
+    // all Frame of Object
     outputfile << "# Coordinate systems:" << endl;
-    for(vector<CoordinateSystem*>::iterator i = port.begin();  i != port.end();  ++i) {
+    for(vector<Frame*>::iterator i = port.begin();  i != port.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
       ofstream newoutputfile(newname.c_str(), ios::binary);
@@ -195,7 +195,7 @@ namespace MBSim {
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
       if(i>=port.size())
-	addCoordinateSystem(new CoordinateSystem("NoName"));
+	addFrame(new Frame("NoName"));
       port[i]->load(path, newinputfile);
       newinputfile.close();
     }
@@ -305,7 +305,7 @@ namespace MBSim {
     }
   }
 
-  int Object::portIndex(const CoordinateSystem *port_) const {
+  int Object::portIndex(const Frame *port_) const {
     for(unsigned int i=0; i<port.size(); i++) {
       if(port_==port[i])
 	return i;
@@ -323,17 +323,17 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void Object::addCoordinateSystem(CoordinateSystem* port_) {
-    if(getCoordinateSystem(port_->getName(),false)) { //Contourname exists already
-      cout << "Error: The Object " << name << " can only comprise one CoordinateSystem by the name " <<  port_->getName() << "!" << endl;
-      assert(getCoordinateSystem(port_->getName(),false)==NULL);
+  void Object::addFrame(Frame* port_) {
+    if(getFrame(port_->getName(),false)) { //Contourname exists already
+      cout << "Error: The Object " << name << " can only comprise one Frame by the name " <<  port_->getName() << "!" << endl;
+      assert(getFrame(port_->getName(),false)==NULL);
     }
     //port_->setFullName(getFullName()+"."+port_->getFullName());
     port.push_back(port_);
     port_->setParent(this);
   }
 
-  CoordinateSystem* Object::getCoordinateSystem(const string &name, bool check) {
+  Frame* Object::getFrame(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<port.size(); i++) {
       if(port[i]->getName() == name)
@@ -366,7 +366,7 @@ namespace MBSim {
   void Object::sethSize(int hSize_, int j) {
 
     hSize[j] = hSize_;
-    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++)
+    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++)
       (*i)->sethSize(hSize[j],j);
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->sethSize(hSize[j],j);
@@ -374,14 +374,14 @@ namespace MBSim {
 
   void Object::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
-    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
+    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
       (*i)->sethInd(hInd[j],j);
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->sethInd(hInd[j],j);
   }
 
   void Object::preinit() {  
-    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
+    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
       (*i)->preinit();
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->preinit();
@@ -391,7 +391,7 @@ namespace MBSim {
     Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
     Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
 
-    for(vector<CoordinateSystem*>::iterator i=port.begin(); i!=port.end(); i++) 
+    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
       (*i)->init();
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->init();

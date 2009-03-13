@@ -27,7 +27,7 @@
 #include "element.h"
 #include "userfunction_contour.h"
 #include "contour_pdata.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class CBody; class CRigidBody;}
@@ -53,7 +53,7 @@ namespace MBSim {
 
       int hSize[2], hInd[2];
 
-      CoordinateSystem R;
+      Frame R;
 
 
 #ifdef HAVE_AMVIS
@@ -84,7 +84,7 @@ namespace MBSim {
       ObjectInterface* getParent() {return parent;}
       void setParent(ObjectInterface* parent_) {parent = parent_;}
 
-      CoordinateSystem* getCoordinateSystem() {return &R;}
+      Frame* getFrame() {return &R;}
 
       virtual void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
       const Vec& getWrOP() const {return R.getPosition();}

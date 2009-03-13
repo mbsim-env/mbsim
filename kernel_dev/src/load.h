@@ -61,7 +61,7 @@ namespace MBSim {
       void setKOSY(int);
       void setUserFunction(DataInterfaceBase *func_);
       void setSignal(DataInterfaceBase *func_);
-      void connect(CoordinateSystem *port1);
+      void connect(Frame *port1);
       void setForceDirection(const Mat& fd);
       void setMomentDirection(const Mat& md);
 

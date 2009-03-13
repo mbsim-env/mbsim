@@ -16,7 +16,7 @@ actuator.cc\
 element.cc\
 tree.cc\
 contour.cc\
-coordinate_system.cc\
+frame.cc\
 data_interface_base.cc\
 extra_dynamic_interface.cc\
 userfunction.cc\
@@ -45,7 +45,7 @@ load.h\
 actuator.h\
 element.h\
 tree.h\
-coordinate_system.h\
+frame.h\
 contour.h\
 contour_pdata.h\
 data_interface_base.h\

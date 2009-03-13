@@ -23,7 +23,7 @@
 #include "actuator.h"
 #include "data_interface_base.h"
 #include "multi_body_system.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 namespace MBSim {
 
@@ -57,7 +57,7 @@ namespace MBSim {
     }
   }
 
-  void Actuator::connect(CoordinateSystem *port0, CoordinateSystem* port1) {
+  void Actuator::connect(Frame *port0, Frame* port1) {
     Link::connect(port0,0);
     Link::connect(port1,1);
   }

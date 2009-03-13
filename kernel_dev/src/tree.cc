@@ -22,7 +22,7 @@
 #include "tree.h"
 #include "object.h"
 #include "link.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "extra_dynamic_interface.h"
 
 namespace MBSim {
@@ -96,13 +96,13 @@ namespace MBSim {
     return node;
   }
 
-  Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const CoordinateSystem* refCoordinateSystem) {
+  Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
 
     Subsystem::addSubsystem(sys);
 
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);

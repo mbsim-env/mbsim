@@ -21,7 +21,7 @@
  */
 #include <config.h>
 #include "rigid_body.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "contour.h"
 #include "tree.h"
 #include "multi_body_system.h"
@@ -46,7 +46,7 @@ namespace MBSim {
 
     portParent = 0;
 
-    Object::addCoordinateSystem(new CoordinateSystem("C"));
+    Object::addFrame(new Frame("C"));
 
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
@@ -113,7 +113,7 @@ namespace MBSim {
     if(iRef == -1)
       iRef = 0;
     //if(portParent == 0)
-   //   portParent = parent->getCoordinateSystem("I");
+   //   portParent = parent->getFrame("I");
     
     Object::init();
 
@@ -259,7 +259,7 @@ namespace MBSim {
     M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
-  void RigidBody::updateJacobiansForSelectedCoordinateSystem(double t) {
+  void RigidBody::updateJacobiansForSelectedFrame(double t) {
    // TODO: Abfrage ob Inertiales System zur Performancesteigerung
   
     if(fPdJT)
@@ -283,9 +283,9 @@ namespace MBSim {
     port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = portParent->getOrientation()*PJR;
   }
 
-  void RigidBody::updateSecondJacobiansForSelectedCoordinateSystem(double t) {
+  void RigidBody::updateSecondJacobiansForSelectedFrame(double t) {
   //  if(uSize == usSize)
-  //    updateJacobiansForSelectedCoordinateSystem(t);
+  //    updateJacobiansForSelectedFrame(t);
   //  else 
   //  {
  //  // TODO: Abfrage ob Inertiales System zur Performancesteigerung
@@ -317,7 +317,7 @@ namespace MBSim {
   //  }
   }
 
-  void RigidBody::updateJacobiansForRemainingCoordinateSystemsAndContours(double t) {
+  void RigidBody::updateJacobiansForRemainingFramesAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
@@ -394,7 +394,7 @@ namespace MBSim {
 
 
   //  void RigidBody::updateVRef(const Mat& VParent) {
-  //    CoordinateSystem* cos[2];
+  //    Frame* cos[2];
   //    cos[0] = portParent;
   //    cos[1] = port[0];
   //    for(unsigned i=0; i<22; i++) {
@@ -406,7 +406,7 @@ namespace MBSim {
   //  } 
   //
   //  void RigidBody::updateWRef(const Mat& WParent) {
-  //    CoordinateSystem* cos[2];
+  //    Frame* cos[2];
   //    cos[0] = portParent;
   //    cos[1] = port[0];
   //    for(unsigned i=0; i<22; i++) {
@@ -442,7 +442,7 @@ namespace MBSim {
   //
 
 
-  void RigidBody::updateKinematicsForSelectedCoordinateSystem(double t) {
+  void RigidBody::updateKinematicsForSelectedFrame(double t) {
 
     // TODO: Abfrage ob Inertiales System zur Performancesteigerung
 
@@ -476,7 +476,7 @@ namespace MBSim {
     port[iRef]->setVelocity(portParent->getVelocity() + WvPKrel + crossProduct(portParent->getAngularVelocity(),WrPK));
   }
 
-  void RigidBody::updateKinematicsForRemainingCoordinateSystemsAndContours(double t) {
+  void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Drehmatrix des Schwerpunkt-KOSY updaten
     if(iRef != 0)
@@ -538,27 +538,27 @@ namespace MBSim {
     return -1;
   }
 
-  void RigidBody::addCoordinateSystem(CoordinateSystem *cosy, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem) {
-    Object::addCoordinateSystem(cosy);
+  void RigidBody::addFrame(Frame *cosy, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame) {
+    Object::addFrame(cosy);
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     SrSK.push_back(SrSK[i] + ASK[i]*RrRK);
     WrSK.push_back(Vec(3));
     ASK.push_back(ASK[i]*ARK);
   }
 
-  void RigidBody::addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem) {
-    addCoordinateSystem(new CoordinateSystem(str),SrSK,ASK,refCoordinateSystem);
+  void RigidBody::addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame) {
+    addFrame(new Frame(str),SrSK,ASK,refFrame);
   }
 
-  void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem) {
+  void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
     Object::addContour(contour);
 
     int i = 0;
-    if(refCoordinateSystem)
-      i = portIndex(refCoordinateSystem);
+    if(refFrame)
+      i = portIndex(refFrame);
 
     SrSC.push_back(SrSK[i] + ASK[i]*RrRC);
     WrSC.push_back(Vec(3));
@@ -570,7 +570,7 @@ namespace MBSim {
 
   void RigidBody::save(const string &path, ofstream& outputfile) {
     Body::save(path,outputfile);
-    // all CoordinateSystem of Object
+    // all Frame of Object
 
     outputfile << "# Mass: " << endl;
     outputfile << m << endl << endl;
@@ -656,12 +656,12 @@ namespace MBSim {
 
     getline(inputfile,dummy); // # Coordinate system for kinematics
     getline(inputfile,dummy); // Coordinate system for kinematics
-    setCoordinateSystemForKinematics(getCoordinateSystem(dummy));
+    setFrameForKinematics(getFrame(dummy));
     getline(inputfile,dummy); // Newline
 
     getline(inputfile,dummy); // # Frame of reference
     getline(inputfile,dummy); // Coordinate system for kinematics
-    setFrameOfReference(getMultiBodySystem()->findCoordinateSystem(dummy));
+    setFrameOfReference(getMultiBodySystem()->findFrame(dummy));
     getline(inputfile,dummy); // Newline
 
     int s = inputfile.tellg();

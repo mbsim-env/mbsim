@@ -31,7 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  class CoordinateSystem;
+  class Frame;
   class Contour;
   class ContourPointData;
 

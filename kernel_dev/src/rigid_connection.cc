@@ -23,7 +23,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 #include <config.h>
 #include "rigid_connection.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "multi_body_system.h"
 #include "function.h"
 

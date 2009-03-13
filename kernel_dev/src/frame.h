@@ -33,7 +33,7 @@ namespace AMVis {class Kos;}
 
 namespace MBSim {
 
-  class CoordinateSystem;
+  class Frame;
   class Object;
 #ifdef HAVE_AMVIS
   class DataInterfaceBase;
@@ -42,7 +42,7 @@ namespace MBSim {
   /*! Cosy on Bodies, used for application of e.g. Links and Loads
    *
    * */
-  class CoordinateSystem : public Element {
+  class Frame : public Element {
     protected:
       ObjectInterface* parent;
 
@@ -60,7 +60,7 @@ namespace MBSim {
 #endif
 
     public:
-      CoordinateSystem(const string &name);
+      Frame(const string &name);
 
       ObjectInterface* getParent() {return parent;}
       void setParent(ObjectInterface* parent_) {parent = parent_;}
@@ -107,7 +107,7 @@ namespace MBSim {
       virtual void initPlot(bool top=true);
       virtual void closePlot(); 
 
-      string getType() const {return "CoordinateSystem";}
+      string getType() const {return "Frame";}
 
 #ifdef HAVE_AMVIS
       void setAMVisKosSize(double size);

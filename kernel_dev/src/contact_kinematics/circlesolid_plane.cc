@@ -44,14 +44,14 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleSolidPlane::updateg(Vec &g, ContourPointData *cpData) {
-    cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
-    cpData[icircle].cosy.getOrientation().col(0) = -plane->getCoordinateSystem()->getOrientation().col(0);
-    cpData[icircle].cosy.getOrientation().col(1) = -plane->getCoordinateSystem()->getOrientation().col(1);
-    cpData[icircle].cosy.getOrientation().col(2) = plane->getCoordinateSystem()->getOrientation().col(2);
+    cpData[iplane].cosy.setOrientation(plane->getFrame()->getOrientation());
+    cpData[icircle].cosy.getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
+    cpData[icircle].cosy.getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
+    cpData[icircle].cosy.getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
 
     Vec Wd;
     Vec Wn = cpData[iplane].cosy.getOrientation().col(0);
-    Vec Wb = circlesolid->getCoordinateSystem()->getOrientation().col(2);
+    Vec Wb = circlesolid->getFrame()->getOrientation().col(2);
     double t_EC = trans(Wn)*Wb;
     if(t_EC>0) {
       Wb *= -1.;
@@ -62,17 +62,17 @@ namespace MBSim {
     Vec z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
-      Wd = circlesolid->getCoordinateSystem()->getPosition() - plane->getCoordinateSystem()->getPosition();
+      Wd = circlesolid->getFrame()->getPosition() - plane->getFrame()->getPosition();
     } 
     else { // exactly one possible contact point
-      Wd =  (circlesolid->getCoordinateSystem()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC) - plane->getCoordinateSystem()->getPosition();
+      Wd =  (circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC) - plane->getFrame()->getPosition();
     }
     //cout << z_EC<<endl;
     //cout << Wd << endl;
     //cout << Wn << endl;
     g(0) = trans(Wn)*Wd;
     //cout << g(0) << endl;
-    cpData[icircle].cosy.setPosition(circlesolid->getCoordinateSystem()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
+    cpData[icircle].cosy.setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
     cpData[iplane].cosy.setPosition(cpData[icircle].cosy.getPosition() - Wn*g(0));
 
   }

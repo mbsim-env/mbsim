@@ -390,9 +390,9 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 	for(unsigned int i=0; i<2; i++) {
-	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
-	  cpData[k][i].cosy.setAngularVelocity(contour[i]->getCoordinateSystem()->getAngularVelocity());
-	  cpData[k][i].cosy.setVelocity(contour[i]->getCoordinateSystem()->getVelocity() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC));
+	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getFrame()->getPosition();
+	  cpData[k][i].cosy.setAngularVelocity(contour[i]->getFrame()->getAngularVelocity());
+	  cpData[k][i].cosy.setVelocity(contour[i]->getFrame()->getVelocity() + crossProduct(contour[i]->getFrame()->getAngularVelocity(),WrPC));
 	}
 
 	Vec Wn = cpData[k][0].cosy.getOrientation().col(0);
@@ -418,12 +418,12 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 	for(unsigned int i=0; i<2; i++) {
-	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getCoordinateSystem()->getPosition();
+	  Vec WrPC = cpData[k][i].cosy.getPosition() - contour[i]->getFrame()->getPosition();
 	  Mat tWrPC = tilde(WrPC);
-	  cpData[k][i].cosy.setJacobianOfTranslation(contour[i]->getCoordinateSystem()->getJacobianOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getJacobianOfRotation());
-	  cpData[k][i].cosy.setJacobianOfRotation(contour[i]->getCoordinateSystem()->getJacobianOfRotation());
-	  cpData[k][i].cosy.setGyroscopicAccelerationOfTranslation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfTranslation() - tWrPC*contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation() + crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),crossProduct(contour[i]->getCoordinateSystem()->getAngularVelocity(),WrPC)));
-	  cpData[k][i].cosy.setGyroscopicAccelerationOfRotation(contour[i]->getCoordinateSystem()->getGyroscopicAccelerationOfRotation());
+	  cpData[k][i].cosy.setJacobianOfTranslation(contour[i]->getFrame()->getJacobianOfTranslation() - tWrPC*contour[i]->getFrame()->getJacobianOfRotation());
+	  cpData[k][i].cosy.setJacobianOfRotation(contour[i]->getFrame()->getJacobianOfRotation());
+	  cpData[k][i].cosy.setGyroscopicAccelerationOfTranslation(contour[i]->getFrame()->getGyroscopicAccelerationOfTranslation() - tWrPC*contour[i]->getFrame()->getGyroscopicAccelerationOfRotation() + crossProduct(contour[i]->getFrame()->getAngularVelocity(),crossProduct(contour[i]->getFrame()->getAngularVelocity(),WrPC)));
+	  cpData[k][i].cosy.setGyroscopicAccelerationOfRotation(contour[i]->getFrame()->getGyroscopicAccelerationOfRotation());
 	}
       }
     }

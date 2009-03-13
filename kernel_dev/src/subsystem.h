@@ -31,7 +31,7 @@ namespace H5 {
 }
 
 namespace MBSim {
-  class CoordinateSystem;
+  class Frame;
   class Contour;
   class ExtraDynamicInterface;
   class DataInterfaceBase;
@@ -94,7 +94,7 @@ namespace MBSim {
       Vec sv;
       Vector<int> jsv;
 
-      vector<CoordinateSystem*> port;
+      vector<Frame*> port;
       vector<Contour*> contour;
 
       void addSubsystem(Subsystem *subsystem);
@@ -244,20 +244,20 @@ namespace MBSim {
       void setLaTol(double tol);
       void setrMax(double rMax);
 
-      void addCoordinateSystem(CoordinateSystem * port);
+      void addFrame(Frame * port);
       void addContour(Contour* contour);
 
-      int portIndex(const CoordinateSystem *port_) const;
+      int portIndex(const Frame *port_) const;
 
-      virtual CoordinateSystem* getCoordinateSystem(const string &name, bool check=true);
+      virtual Frame* getFrame(const string &name, bool check=true);
       virtual Contour* getContour(const string &name, bool check=true);
 
-      void addCoordinateSystem(CoordinateSystem *port_, const Vec &RrRK, const SqrMat &ARK, const CoordinateSystem* refCoordinateSystem=0); 
+      void addFrame(Frame *port_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0); 
 
-      void addCoordinateSystem(const string &str, const Vec &SrSK, const SqrMat &ASK, const CoordinateSystem* refCoordinateSystem=0);
+      void addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame=0);
 
-      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const CoordinateSystem* refCoordinateSystem=0);
-      void addContour(Contour* contour, const Vec &RrRC, const CoordinateSystem* refCoordinateSystem=0) {addContour(contour,RrRC,SqrMat(3,EYE));}
+      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const Vec &RrRC, const Frame* refFrame=0) {addContour(contour,RrRC,SqrMat(3,EYE));}
 
       void addLink(Link *link);
       

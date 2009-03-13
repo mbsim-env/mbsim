@@ -57,8 +57,8 @@ namespace MBSim {
       /** temporary martix of generalised moment directions */
       Vec WMtmp;
 
-      /** vector of ContourPointData, e.g. contourparameters, each describing a CoordinateSystem */
-      vector<ContourPointData> S_CoordinateSystem;
+      /** vector of ContourPointData, e.g. contourparameters, each describing a Frame */
+      vector<ContourPointData> S_Frame;
       /** specify wether Contour is native or added with specific S_Contour */
       vector<bool> constContourPosition;
       /** vector of ContourPointData, e.g. contourparameters, each describing a Contour */
@@ -96,13 +96,13 @@ namespace MBSim {
       /** indices of moments in load vectors, finally defined classes in derived and specified classes/bodies */
       Index IndexMoment;
 
-      /*! sum up forces acting on CoordinateSystem and Contour interfaces, collects JACOBIAN-matrizes of implementations
+      /*! sum up forces acting on Frame and Contour interfaces, collects JACOBIAN-matrizes of implementations
        * of computeJacobianMatrix() to distrubute loads
        *  \param t time of evaluation
        */
       virtual void sumUpForceElements(double t);
 
-      /*! update generalised force directions \f$\vW\f$ for set-valued interactions on CoordinateSystem and Contour interfaces,
+      /*! update generalised force directions \f$\vW\f$ for set-valued interactions on Frame and Contour interfaces,
        *  therefor collects JACOBIAN-matrizes of implementations of computeJacobianMatrix()
        *  \param t  time of evaluation
        */
@@ -196,21 +196,21 @@ namespace MBSim {
        */
       virtual Vec computeWomega(const ContourPointData& s) = 0;
 
-      /*! return a CoordinateSystem, usable for Connection s, etc.
-       * \param name used for access to CoordinateSystem
-       * \return CoordinateSystem
+      /*! return a Frame, usable for Connection s, etc.
+       * \param name used for access to Frame
+       * \return Frame
        */
-      virtual CoordinateSystem* getCoordinateSystem(const string &name);
-      /*! define a CoordinateSystem
-       * \param name used for access to CoordinateSystem
+      virtual Frame* getFrame(const string &name);
+      /*! define a Frame
+       * \param name used for access to Frame
        * \param S_   contour parameter of port location
        */
-      void addCoordinateSystem(CoordinateSystem *port, const ContourPointData &S_);
+      void addFrame(Frame *port, const ContourPointData &S_);
       /*! 
-       *  \param name name of CoordinateSystem to access
-       *  \return pointer to accessed CoordinateSystem 
+       *  \param name name of Frame to access
+       *  \return pointer to accessed Frame 
        */
-      void addCoordinateSystem(const string &name, const ContourPointData &S_);
+      void addFrame(const string &name, const ContourPointData &S_);
       /*! add additional Contour
        * \param contour to add
        * \param S_ ContourPointData, used only in default case of constPosition=true
@@ -251,12 +251,12 @@ namespace MBSim {
       /*! \param name  name of body */
       BodyFlexible1s(const string &name); 
 
-      /*! add CoordinateSystem at Contour parameter s
-       *  \param name of CoordinateSystem
-       *  \param s    position of CoordinateSystem
+      /*! add Frame at Contour parameter s
+       *  \param name of Frame
+       *  \param s    position of Frame
        */
-      void addCoordinateSystem(const string &name, const double &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addCoordinateSystem(name,temp); }
-      using BodyFlexible::addCoordinateSystem;
+      void addFrame(const string &name, const double &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addFrame(name,temp); }
+      using BodyFlexible::addFrame;
       /*! add additional Contour at specified position
        * \param contour Contour to add
        * \param s       position of Contour reference point
@@ -306,12 +306,12 @@ namespace MBSim {
 	  /*! \param name  name of body */
 	  BodyFlexible2s(const string &name); 
 
-      /*! add CoordinateSystem at Contour parameter s
-       *  \param name of CoordinateSystem
-       *  \param s    position of CoordinateSystem
+      /*! add Frame at Contour parameter s
+       *  \param name of Frame
+       *  \param s    position of Frame
        */
-      void addCoordinateSystem(const string &name, const Vec &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addCoordinateSystem(name,temp); }
-      using BodyFlexible::addCoordinateSystem;
+      void addFrame(const string &name, const Vec &s);// { ContourPointData temp; temp.type = CONTINUUM; temp.alpha = Vec(1,INIT,s); addFrame(name,temp); }
+      using BodyFlexible::addFrame;
       /*! add additional Contour at specified position
        * \param contour Contour to add
        * \param s       position of Contour reference point

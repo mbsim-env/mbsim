@@ -24,7 +24,7 @@
 #define _JOINT_H_
 
 #include "link.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 #ifdef HAVE_AMVIS
 namespace AMVis {class CoilSpring;}
@@ -38,7 +38,7 @@ namespace MBSim {
   class FrictionForceLaw;
   class FrictionImpactLaw;
 
-  /*! \brief Class for connections: Constraints on CoordinateSystems
+  /*! \brief Class for connections: Constraints on Frames
    *
    * */
   class Joint: public Link {
@@ -60,12 +60,12 @@ namespace MBSim {
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
 #endif
 
-      CoordinateSystem C;
+      Frame C;
 
     public: 
       Joint(const string &name);
       ~Joint();
-      virtual void connect(CoordinateSystem *port1, CoordinateSystem* port2);
+      virtual void connect(Frame *port1, Frame* port2);
 
       void calcxSize();
       void calcgSize();

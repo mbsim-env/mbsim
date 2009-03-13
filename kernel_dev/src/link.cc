@@ -22,7 +22,7 @@
 #include <config.h>
 #include <string.h>
 #include "link.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #include "contour.h"
 #include "object.h"
 #include "multi_body_system.h"
@@ -331,7 +331,7 @@ namespace MBSim {
     int n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
       getline(inputfile,dummy); // Connected cosy
-      connect(getMultiBodySystem()->findCoordinateSystem(dummy),i);
+      connect(getMultiBodySystem()->findFrame(dummy),i);
     }
     getline(inputfile,dummy); // newline
 
@@ -366,7 +366,7 @@ namespace MBSim {
   }
 #endif
 
-  void Link::connect(CoordinateSystem *port_, int id) {
+  void Link::connect(Frame *port_, int id) {
     port.push_back(port_);
   }
 

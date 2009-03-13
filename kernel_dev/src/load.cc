@@ -23,7 +23,7 @@
 #include "load.h"
 #include "data_interface_base.h"
 #include "multi_body_system.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 namespace MBSim {
 
@@ -57,7 +57,7 @@ namespace MBSim {
     }
   }
 
-  void Load::connect(CoordinateSystem *port_) {
+  void Load::connect(Frame *port_) {
     Link::connect(port_,0);
   }
 

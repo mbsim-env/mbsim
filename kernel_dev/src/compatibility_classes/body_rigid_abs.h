@@ -20,8 +20,8 @@ namespace MBSim {
       void calcqSize() {
 
 	string cosyname = string("B_") + name;
-	parent->addCoordinateSystem(cosyname,WrOK0,AWK0);
-	setFrameOfReference(parent->getCoordinateSystem(cosyname));
+	parent->addFrame(cosyname,WrOK0,AWK0);
+	setFrameOfReference(parent->getFrame(cosyname));
 
 	BodyRigid::calcqSize();
       }

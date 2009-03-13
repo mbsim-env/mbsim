@@ -42,18 +42,18 @@ namespace MBSim {
 
   void ContactKinematicsSpherePlane::updateg(Vec &g, ContourPointData *cpData) {
 
-    cpData[iplane].cosy.setOrientation(plane->getCoordinateSystem()->getOrientation());
-    cpData[isphere].cosy.getOrientation().col(0) = -plane->getCoordinateSystem()->getOrientation().col(0);
-    cpData[isphere].cosy.getOrientation().col(1) = -plane->getCoordinateSystem()->getOrientation().col(1);
-    cpData[isphere].cosy.getOrientation().col(2) = plane->getCoordinateSystem()->getOrientation().col(2);
+    cpData[iplane].cosy.setOrientation(plane->getFrame()->getOrientation());
+    cpData[isphere].cosy.getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
+    cpData[isphere].cosy.getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
+    cpData[isphere].cosy.getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
 
     Vec Wn = cpData[iplane].cosy.getOrientation().col(0);
 
-    Vec Wd = sphere->getCoordinateSystem()->getPosition() - plane->getCoordinateSystem()->getPosition();
+    Vec Wd = sphere->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
     g(0) = trans(Wn)*Wd - sphere->getRadius();
 
-    cpData[isphere].cosy.setPosition(sphere->getCoordinateSystem()->getPosition() - Wn*sphere->getRadius());
+    cpData[isphere].cosy.setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
     cpData[iplane].cosy.setPosition(cpData[isphere].cosy.getPosition() - Wn*g(0));
   }
 
@@ -102,7 +102,7 @@ namespace MBSim {
     Vec Om1 = cpData[iplane].cosy.getAngularVelocity();
     Vec Om2 = cpData[isphere].cosy.getAngularVelocity();
 
-    Vec KrPC2 = trans(sphere->getCoordinateSystem()->getOrientation())*(cpData[isphere].cosy.getPosition() - sphere->getCoordinateSystem()->getPosition());
+    Vec KrPC2 = trans(sphere->getFrame()->getOrientation())*(cpData[isphere].cosy.getPosition() - sphere->getFrame()->getPosition());
     Vec zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
     double a2 = zeta2(0);
     double b2 = zeta2(1);
@@ -122,8 +122,8 @@ namespace MBSim {
     Kt2(1) = -r*sin(a2)*sin(b2);
     Kt2(2) = r*cos(b2);
 
-    Vec s2 = sphere->getCoordinateSystem()->getOrientation()*Ks2;
-    Vec t2 = sphere->getCoordinateSystem()->getOrientation()*Kt2;
+    Vec s2 = sphere->getFrame()->getOrientation()*Ks2;
+    Vec t2 = sphere->getFrame()->getOrientation()*Kt2;
     Vec u2 = s2/nrm2(s2);
     Vec v2 = crossProduct(n2,u2);
 
@@ -151,8 +151,8 @@ namespace MBSim {
     KV2(1,1) = -sin(a2)*cos(b2);
     KV2(2,1) = -sin(b2);
 
-    Mat U2 = sphere->getCoordinateSystem()->getOrientation()*KU2;
-    Mat V2 = sphere->getCoordinateSystem()->getOrientation()*KV2;
+    Mat U2 = sphere->getFrame()->getOrientation()*KU2;
+    Mat V2 = sphere->getFrame()->getOrientation()*KV2;
 
     //cout << u1 << endl;
     //cout << R1 << endl;
@@ -195,8 +195,8 @@ namespace MBSim {
     //Vec KU2(3);
     //KU2(0) = -cos(a2);
     //KU2(1) = -sin(a2);
-    //Vec R2 = sphere->getCoordinateSystem()->getOrientation()*KR2;
-    //Vec U2 = sphere->getCoordinateSystem()->getOrientation()*KU2;
+    //Vec R2 = sphere->getFrame()->getOrientation()*KR2;
+    //Vec U2 = sphere->getFrame()->getOrientation()*KU2;
     //Vec u1 = t1;
     //SqrMat A(2,2);
     //A(0,0) = -trans(u1)*R1;
