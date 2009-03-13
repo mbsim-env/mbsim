@@ -1,7 +1,7 @@
 #ifndef _PENDULUM_H
 #define _PENDULUM_H
 
-#include "tree.h"
+#include "mbsim/tree.h"
 #include <string>
 
 

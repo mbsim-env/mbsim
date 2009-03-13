@@ -1,7 +1,7 @@
 #ifndef _WERKZEUGMASCHINE_H
 #define _WERKZEUGMASCHINE_H
 
-#include "multi_body_system.h"
+#include "mbsim/multi_body_system.h"
 #include <string>
 
 

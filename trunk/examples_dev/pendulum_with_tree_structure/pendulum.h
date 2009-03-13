@@ -1,7 +1,7 @@
 #ifndef _PENDULUM_H
 #define _PENDULUM_H
 
-#include "multi_body_system.h"
+#include "mbsim/multi_body_system.h"
 #include <string>
 
 

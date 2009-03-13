@@ -1,5 +1,5 @@
 #include "group1.h"
-#include "rigid_body.h"
+#include "mbsim/rigid_body.h"
 #include "springs.h"
 #include "cube.h"
 #include "coilspring.h"

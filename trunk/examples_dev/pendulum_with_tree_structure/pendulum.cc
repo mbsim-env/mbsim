@@ -1,6 +1,6 @@
 #include "pendulum.h"
-#include "rigid_body.h"
-#include "tree.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/tree.h"
 #include "objobject.h"
 
 using namespace AMVis;

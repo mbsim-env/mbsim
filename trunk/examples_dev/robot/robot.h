@@ -1,7 +1,7 @@
 #ifndef _ROBOT_H_
 #define _ROBOT_H_
 
-#include "multi_body_system.h"
+#include "mbsim/multi_body_system.h"
 #include <string>
 
 

@@ -1,8 +1,8 @@
 #ifndef SPRINGS_H_
 #define SPRINGS_H_
 
-#include "link.h"
-#include "data_interface_base.h"
+#include "mbsim/link.h"
+#include "mbsim/data_interface_base.h"
 
 
 #ifdef HAVE_AMVIS

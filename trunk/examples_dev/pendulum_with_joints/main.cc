@@ -1,5 +1,5 @@
 #include "system.h"
-#include <integrators.h>
+#include <mbsim/integrators/integrators.h>
 
 using namespace std;
 

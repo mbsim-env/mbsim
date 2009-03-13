@@ -1,5 +1,5 @@
 #include "springs.h"
-#include "frame.h"
+#include "mbsim/frame.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;

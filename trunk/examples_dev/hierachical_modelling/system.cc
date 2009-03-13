@@ -1,7 +1,7 @@
 #include "system.h"
 #include "group2.h"
-#include "load.h"
-#include "frame.h"
+#include "mbsim/load.h"
+#include "mbsim/frame.h"
 
 using namespace AMVis;
 
