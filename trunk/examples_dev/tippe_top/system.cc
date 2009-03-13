@@ -17,7 +17,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
 
-  addCoordinateSystem("Os",Vec(3),SqrMat(3,EYE));
+  addFrame("Os",Vec(3),SqrMat(3,EYE));
 
   Plane *plane = new Plane("Plane");
   double phi = M_PI/2;
@@ -32,8 +32,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   RigidBody* body = new RigidBody("Body");
   addObject(body);
 
-  body->setFrameOfReference(getCoordinateSystem("I"));
-  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
+  body->setFrameOfReference(getFrame("I"));
+  body->setFrameForKinematics(body->getFrame("C"));
 
   Mat J("[1,0,0;0,1,0;0,0,1]");
   body->setTranslation(new LinearTranslation(J));

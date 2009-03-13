@@ -31,8 +31,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   RigidBody* body = new RigidBody("Rod");
   addObject(body);
 
-  body->setFrameOfReference(getCoordinateSystem("I"));
-  body->setCoordinateSystemForKinematics(body->getCoordinateSystem("C"));
+  body->setFrameOfReference(getFrame("I"));
+  body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));

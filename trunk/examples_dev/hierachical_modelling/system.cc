@@ -1,7 +1,7 @@
 #include "system.h"
 #include "group2.h"
 #include "load.h"
-#include "coordinate_system.h"
+#include "frame.h"
 
 using namespace AMVis;
 
@@ -31,6 +31,6 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   addSubsystem(group2,r,A);
 
   //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;
-  //cout << findCoordinateSystem("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;
+  //cout << findFrame("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;
 
 }

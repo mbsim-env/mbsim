@@ -26,10 +26,10 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   for(int i=0; i<3; i++)
     A(i,i) = 1;
 
-  pendel1->getRod2()->addCoordinateSystem("P",x,A,pendel1->getRod2()->getCoordinateSystem("R"));
+  pendel1->getRod2()->addFrame("P",x,A,pendel1->getRod2()->getFrame("R"));
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
   tree->addSubsystem(node,pendel2,Vec(3),SqrMat(3,EYE));
-  pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getCoordinateSystem("P"));
+  pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getFrame("P"));
 }
 

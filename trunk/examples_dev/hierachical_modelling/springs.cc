@@ -1,5 +1,5 @@
 #include "springs.h"
-#include "coordinate_system.h"
+#include "frame.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
@@ -48,7 +48,7 @@ namespace MBSim {
       h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i];
   }    
 
-  void Spring::connect(CoordinateSystem *port0, CoordinateSystem* port1) {
+  void Spring::connect(Frame *port0, Frame* port1) {
     Link::connect(port0,0);
     Link::connect(port1,1);
   }

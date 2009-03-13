@@ -45,8 +45,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box1->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
+  box1->setFrameOfReference(getFrame("I"));
+  box1->setFrameForKinematics(box1->getFrame("C"));
 
 
   // ----------------------- Definition des 2. Körpers --------------------  
@@ -60,8 +60,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // Kinematik: Bewegung des Schwerpunktes (Center of Gravity COG) 
   // entlang der y-Richtung ausgehend vom I-System (Ursprung O)
   box2->setTranslation(new LinearTranslation("[0; 1; 0]"));
-  box2->setFrameOfReference(getCoordinateSystem("I"));
-  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
+  box2->setFrameOfReference(getFrame("I"));
+  box2->setFrameForKinematics(box2->getFrame("C"));
 
   // ----------------------- Anschlusspunkte der Federn --------------------  
   Vec SrSP(3);
@@ -69,12 +69,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 
   // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
   SrSP(1) = h1/2.;
-  box1->addCoordinateSystem("P1",-SrSP,ASP); 
-  box1->addCoordinateSystem("P2",SrSP,ASP);
+  box1->addFrame("P1",-SrSP,ASP); 
+  box1->addFrame("P2",SrSP,ASP);
 
   // Federanschlusspunkt P1 auf Körper 2 definieren
   SrSP(1) = h2/2.;
-  box2->addCoordinateSystem("P1",-SrSP,ASP);
+  box2->addFrame("P1",-SrSP,ASP);
 
   // ----------------------- Definition der 1. Feder --------------------  
   Spring *spring1 = new Spring("Feder1");
@@ -82,7 +82,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   spring1->setStiffness(c1);
   spring1->setDamping(d1);
   spring1->setl0(l01);
-  spring1->connect(box1->getCoordinateSystem("P1"),getCoordinateSystem("I"));
+  spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
   Spring *spring2 = new Spring("Feder2");
@@ -90,7 +90,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   spring2->setStiffness(c2);
   spring2->setDamping(d2);
   spring2->setl0(l02);
-  spring2->connect(box1->getCoordinateSystem("P2"),box2->getCoordinateSystem("P1"));
+  spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  
   box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));

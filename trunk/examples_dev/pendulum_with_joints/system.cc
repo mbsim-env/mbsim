@@ -38,20 +38,20 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   E << DiagMat(3,INIT,1);
   Vec KrSP(3);
   KrSP(1) = a1;
-  box1->addCoordinateSystem("PunktO",KrSP,E);
+  box1->addFrame("PunktO",KrSP,E);
 
   box1->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   box1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
-  box1->setFrameOfReference(getCoordinateSystem("I"));
-  box1->setCoordinateSystemForKinematics(box1->getCoordinateSystem("C"));
+  box1->setFrameOfReference(getFrame("I"));
+  box1->setFrameForKinematics(box1->getFrame("C"));
   Vec q0(3);
   q0(0) = a1;
   q0(2) = -phi1;
   box1->setq0(q0);
 
   KrSP(1) = -b1;
-  box1->addCoordinateSystem("PunktU",KrSP,E);
+  box1->addFrame("PunktU",KrSP,E);
 
   RigidBody *box2 = new RigidBody("Stab2");
   addObject(box2);
@@ -60,7 +60,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box2->setInertiaTensor(Theta);
 
   KrSP(1) = a2;
-  box2->addCoordinateSystem("Punkt",KrSP,E);
+  box2->addFrame("Punkt",KrSP,E);
   box2->setTranslation( new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   box2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
@@ -82,19 +82,19 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   q0(2) = -phi2;
   box2->setq0(q0);
 
-  addCoordinateSystem("Os","[0;0;0.04]",E);
-  box2->setFrameOfReference(getCoordinateSystem("Os"));
-  box2->setCoordinateSystemForKinematics(box2->getCoordinateSystem("C"));
+  addFrame("Os","[0;0;0.04]",E);
+  box2->setFrameOfReference(getFrame("Os"));
+  box2->setFrameForKinematics(box2->getFrame("C"));
 
   Joint *joint1 = new Joint("Gelenk1");
   addLink(joint1);
   joint1->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  joint1->connect(getCoordinateSystem("I"),box1->getCoordinateSystem("PunktO"));
+  joint1->connect(getFrame("I"),box1->getFrame("PunktO"));
 
   Joint *joint2 = new Joint("Gelenk2");
   addLink(joint2);
   joint2->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  joint2->connect(box1->getCoordinateSystem("PunktU"),box2->getCoordinateSystem("Punkt"));
+  joint2->connect(box1->getFrame("PunktU"),box2->getFrame("Punkt"));
 
   if(rigidJoints) {
     joint1->setForceLaw(new BilateralConstraint);
