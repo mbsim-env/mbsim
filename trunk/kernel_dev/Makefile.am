@@ -1,7 +1,7 @@
-SUBDIRS = src
+SUBDIRS = mbsim
 
-DIST_SUBDIRS = src  doc
-EXTRA_DIST = src/contact_kinematics/*.h doc/macros.sty
+DIST_SUBDIRS = mbsim doc
+EXTRA_DIST = doc/macros.sty
 
 #bin_SCRIPTS = mbsim-config
 
