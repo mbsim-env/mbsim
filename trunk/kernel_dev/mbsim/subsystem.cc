@@ -1267,9 +1267,27 @@ namespace MBSim {
   }
 
   void Subsystem::initPlot(bool top) {
-    Element::initPlot(parent, false, false);
+    if(parent)
+      for(int i=0; i<LASTPLOTFEATURE; i++) {
+        if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+        if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+      }
 
     if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(separateFilePerSubsystem)==enabled) {
+        // create symbolic link in parent plot file if exist
+        if(parent) H5Lcreate_external((getFullName()+".mbsim.h5").c_str(), "/",
+                                      parent->getPlotGroup()->getId(), name.c_str(),
+                                      H5P_DEFAULT, H5P_DEFAULT);
+        // create new plot file (cast needed because of the inadequacy of the HDF5 C++ inteface?)
+        plotGroup=(H5::Group*)new H5::H5File(getFullName()+".mbsim.h5", H5F_ACC_TRUNC);
+      }
+      else
+        plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+      
+      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+      plotVectorSerie=NULL;
+
       for(unsigned i=0; i<subsystem.size(); i++)
         subsystem[i]->initPlot();
       for(unsigned i=0; i<object.size(); i++)

@@ -44,16 +44,30 @@ namespace MBSim {
   MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { //, activeConstraintsChanged(true)
 
     //parent = this;
+    constructor();
   } 
 
   MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default") , preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { //, activeConstraintsChanged(true)
 
     //parent = this;
+    constructor();
   }
 
   MultiBodySystem::~MultiBodySystem() {
     if (preIntegrator) delete preIntegrator;
   } 
+
+  void MultiBodySystem::constructor() {
+    setPlotFeatureRecursive(plotRecursive, enabled);
+    setPlotFeature(separateFilePerSubsystem, enabled);
+    setPlotFeatureForChildren(separateFilePerSubsystem, disabled);
+    setPlotFeatureRecursive(state, enabled);
+    setPlotFeatureRecursive(stateDerivative, disabled);
+    setPlotFeatureRecursive(rightHandSide, disabled);
+    setPlotFeatureRecursive(globalPosition, disabled);
+    setPlotFeatureRecursive(contact, enabled);
+    setPlotFeatureRecursive(amvis, enabled);
+  }
 
   void MultiBodySystem::init() {
 
@@ -343,36 +357,12 @@ namespace MBSim {
   }
 
   void MultiBodySystem::initPlot(bool top) {
-    setPlotFeatureRecursive(plotRecursive, enabled);
-    setPlotFeatureRecursive(state, enabled);
-    setPlotFeatureRecursive(stateDerivative, disabled);
-    setPlotFeatureRecursive(rightHandSide, disabled);
-    setPlotFeatureRecursive(globalPosition, disabled);
-    setPlotFeatureRecursive(contact, enabled);
-    setPlotFeatureRecursive(amvis, enabled);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotFile=new H5::H5File(name+".mbsim.h5", H5F_ACC_TRUNC);
-
-      plotGroup=new H5::Group(plotFile->createGroup(name));
-      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
-
-      for(unsigned i=0; i<subsystem.size(); i++)
-        subsystem[i]->initPlot();
-      for(unsigned i=0; i<object.size(); i++)
-        object[i]->initPlot();
-      for(unsigned i=0; i<link.size(); i++)
-        link[i]->initPlot();
-      for(unsigned i=0; i<EDI.size(); i++)
-        EDI[i]->initPlot();
-    }
+    Subsystem::initPlot(false);
   }
 
   void MultiBodySystem::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
-
-      delete plotFile;
     }
   }
 

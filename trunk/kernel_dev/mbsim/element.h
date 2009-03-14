@@ -52,7 +52,7 @@ namespace MBSim {
   };
 
   enum PlotFeature {
-    plotRecursive=0, state, stateDerivative, rightHandSide, globalPosition, contact, amvis, LASTPLOTFEATURE
+    plotRecursive=0, separateFilePerSubsystem, state, stateDerivative, rightHandSide, globalPosition, contact, amvis, LASTPLOTFEATURE
   };
 
   class MultiBodySystem;
