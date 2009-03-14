@@ -52,6 +52,8 @@ namespace MBSim {
    * */
   class MultiBodySystem : public Group {
 
+    private:
+      void constructor();
 
     protected:
 
@@ -126,8 +128,6 @@ namespace MBSim {
       bool peds, impact, sticking;
 
       int k;
-
-      H5::H5File *plotFile;
 
       Vec (MultiBodySystem::*zdot_)(const Vec &zParent, double t);
       Vec zdotStandard(const Vec &zParent, double t);
