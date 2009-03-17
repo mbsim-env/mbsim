@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg, Roland Zander, Felix Kahr
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,21 +13,18 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
- *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * 
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _ELEMENT_H_
 #define _ELEMENT_H_
 
 #include "fmatvec.h"
-#include<string>
-#include<vector>
-#include<hdf5serie/vectorserie.h>
+#include <string>
+#include <vector>
+#include <hdf5serie/vectorserie.h>
 
 #ifdef NO_ISO_14882
 #include<fstream.h>
@@ -42,7 +39,9 @@ namespace H5 {
   class Group;
 }
 
-/*! \brief Namespace MBSim */
+/**
+ * \brief namespace MBSim
+ */
 namespace MBSim {
 
   class ObjectInterface;
@@ -56,80 +55,200 @@ namespace MBSim {
   };
 
   class MultiBodySystem;
-  /*! 
-   * \brief THE basic class of MBSim
-   *
-   * Used for definitions of general element parameters and general interactions
+
+  /** 
+   * \brief basic class of MBSim mainly for plotting
+   * \author Martin Foerg
+   * \date 17.03.09
    */
   class Element {
-    private:
-      PlotFeatureStatus plotFeature[LASTPLOTFEATURE], plotFeatureForChildren[LASTPLOTFEATURE];
-
-    protected:
-      /* Short name of Element */
-      string name;
-      /* Short fullname of Element */
-      string fullName;
-      /* Vector for Data Interface Base References */
-      vector<string> DIBRefs;
-
-      MultiBodySystem *mbs;
-
-      H5::VectorSerie<double> *plotVectorSerie;
-      std::vector<double> plotVector;
-      std::vector<std::string> plotColumns;
-      H5::Group *plotGroup;
-
     public:
-	  /*! Constructor */	
+      /**
+       * \brief constructor
+       */	
       Element(const string &name);
-      /*! Destructor */
-      virtual ~Element();
-	  /*! Get element short \return name */
-      const string& getName() const { return name; }
-      /*! Set element name \param str */
-      void setName(const string &str) {name = str;}
-      /*! Get element \return fullname */
-      const string& getFullName() const {return fullName;}
-      /*! Set element name \param str */
-      virtual void setFullName(const string &str) {fullName = str;}
 
+      /** 
+       * \brief destructor
+       */
+      virtual ~Element();
+
+      /* INTERFACE */
+      /**
+       * \param element fullname
+       */
+      virtual void setFullName(const string &str) { fullName = str; }
+
+      /**
+       * \brief load topology
+       * \param path TODO
+       * \param inputfile
+       */
       virtual void load(const string &path, ifstream &inputfile);
+
+      /**
+       * \brief save topology
+       * \param path TODO
+       * \param outputfile
+       */
       virtual void save(const string &path, ofstream &outputfile);
- 
-      void addDataInterfaceBaseRef(const string& DIBRef_);
+
+      /**
+       * \brief TODO
+       */
       virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
 
-      virtual string getType() const {return "Element";}
+      /**
+       * \return string representation
+       */
+      virtual string getType() const { return "Element"; }
 
+      /**
+       * \param TODO
+       */
+      virtual void setMultiBodySystem(MultiBodySystem *sys) { mbs = sys; }
+
+      /**
+       * \brief plots time dependent data
+       * \param simulation time
+       * \param simulation time step size for derivative calculation
+       * \param order of plot invocations
+       */
+      virtual void plot(double t, double dt = 1, bool top=true);
+
+      /**
+       * \brief closes plot file
+       */
+      virtual void closePlot();
+      /***************************************************/
+
+      /**
+       * \return element name
+       */
+      const string& getName() const { return name; }
+
+      /**
+       * \param element name
+       */
+      void setName(const string &str) { name = str; }
+
+      /**
+       * \return element fullname
+       */
+      const string& getFullName() const { return fullName; }
+
+      /** 
+       * \param input file
+       * \return number of elements in topology of input file
+       */
       static int getNumberOfElements(ifstream &inputfile);
 
-      MultiBodySystem* getMultiBodySystem() {return mbs;}
-      virtual void setMultiBodySystem(MultiBodySystem *sys) {mbs = sys;}
+      /**
+       * \return multibody system
+       */
+      MultiBodySystem* getMultiBodySystem() { return mbs; }
 
-      virtual void plot(double t, double dt = 1, bool top=true);
-      void initPlot(ObjectInterface* parent, bool createDefault, bool top=true); // Element has no access to a parent, so give parent as parameter
+      /**
+       * \param name of data interface base
+       */
+      void addDataInterfaceBaseRef(const string& DIBRef_);
+
+      /**
+       * \brief plots time series header
+       * \param invocing parent class
+       * \param flag for creation of default plot
+       * \param order of plot invocation
+       */
+      void initPlot(ObjectInterface* parent, bool createDefault, bool top=true); 
+
+      /**
+       * \brief creates default plot
+       */
       void createDefaultPlot();
-      virtual void closePlot();
+
+      /**
+       * \return associated plot group
+       */
       H5::Group *getPlotGroup() { return plotGroup; }
 
-      /*! Set a plot feature.
+      /**
+       * \brief Set a plot feature
+       * 
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
       void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
 
-      /*! Set a plot feature for the children of this object.
+      /**
+       * \brief Set a plot feature for the children of this object
+       * 
        * Set the plot feature pf of all children which plot feature is unset to enabled, disabled or unset.
        */
       void setPlotFeatureForChildren(PlotFeature pf, PlotFeatureStatus value) { plotFeatureForChildren[pf]=value; }
 
-      /*! Set a plot feature for this object and the children of this object.
+      /**
+       * \brief Set a plot feature for this object and the children of this object.
+       * 
        * This is a convenience function. It simply calls setPlotFeature and setPlotFeatureForChildren.
        */
       void setPlotFeatureRecursive(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; plotFeatureForChildren[pf]=value; }
+
+      /**
+       * \return plot feature
+       */
       PlotFeatureStatus getPlotFeature(PlotFeature pf) { return plotFeature[pf]; }
+
+      /**
+       * \return plot feature for derived classes
+       */
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
+
+    protected:
+      /** 
+       * \brief name of element 
+       */
+      string name;
+
+      /** 
+       * \brief fullname of element
+       */
+      string fullName;
+
+      /** 
+       * \brief vector for data interface base references
+       */
+      vector<string> DIBRefs;
+
+      /**
+       * \brief multibody system
+       */
+      MultiBodySystem *mbs;
+
+      /**
+       * \brief time series
+       */
+      H5::VectorSerie<double> *plotVectorSerie;
+
+      /**
+       * \brief one entry of time series
+       */
+      std::vector<double> plotVector;
+
+      /**
+       * \brief columns of time series
+       */
+      std::vector<std::string> plotColumns;
+
+      /**
+       * \brief associated plot group
+       */
+      H5::Group *plotGroup;
+
+    private:
+      /**
+       * \brief plot feature
+       */
+      PlotFeatureStatus plotFeature[LASTPLOTFEATURE], plotFeatureForChildren[LASTPLOTFEATURE];
   };
 
 }

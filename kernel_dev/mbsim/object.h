@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,18 +13,15 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
-#include<string>
-#include<vector>
+#include <string>
+#include <vector>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
 
@@ -36,212 +33,325 @@ namespace MBSim {
   class Contour;
   class Subsystem;
 
-  /*! \brief Node class for all Objects having own dynamics and mass */
+  /** 
+   * \brief class for all objects having own dynamics and mass
+   * \author Martin Foerg
+   * \date 17.03.09
+   */
   class Object : public Element, public ObjectInterface {
-
-//    friend class MultiBodySystem;
-
     public: 
+      /**
+       * \brief constructor
+       */
+      Object(const string &name);
 
-    vector<Frame*> port;
-    vector<Contour*> contour;
+      /**
+       * \brief destructor
+       */
+      virtual ~Object();
+
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      void updateT(double t) {};
+      void updateh(double t) {};
+      void updateM(double t) {};
+      void updatedq(double t, double dt);
+      void updatedu(double t, double dt);
+      void updateud(double t);
+      void updateqd(double t);
+      void updatezd(double t);
+      void sethSize(int hSize_, int i=0);
+      int gethSize(int i=0) const { return hSize[i]; }
+      int getqSize() const { return qSize; }
+      int getuSize(int i=0) const { return uSize[i]; }
+      virtual void calcqSize() {};
+      virtual void calcuSize(int j) {};
+      void setqInd(int qInd_) { qInd = qInd_; }
+      void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
+      int gethInd(Subsystem* sys,int i=0); 
+      H5::Group *getPlotGroup() { return plotGroup; }
+      PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
+      PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      /*******************************************************/ 
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt = 1, bool top=true); 
+      virtual void initPlot(bool top=true);
+      virtual void closePlot();
+      virtual string getType() const {return "Object";}
+      void setMultiBodySystem(MultiBodySystem *sys);
+      void setFullName(const string &str);
+      void load(const string &path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
+      /*******************************************************/ 
+
+      /* INTERFACE */
+      virtual void writeq(); // TODO the following: only testing
+      virtual void readq0();
+      virtual void writeu();
+      virtual void readu0();
+      virtual void writex();
+      virtual void readx0();
+
+      /**
+       * \brief references to positions of multibody system parent
+       * \param vector to be referenced
+       */
+      virtual void updateqRef(const Vec& ref);
+
+      /**
+       * \brief references to differentiated positions of multibody system parent
+       * \param vector to be referenced
+       */
+      virtual void updateqdRef(const Vec& ref);
+
+      /**
+       * \brief references to velocities of multibody system parent
+       * \param vector to be referenced
+       */
+      virtual void updateuRef(const Vec& ref);
+
+      /**
+       * \brief references to differentiated velocities of multibody system parent
+       * \param vector to be referenced
+       */
+      virtual void updateudRef(const Vec& ref);
+
+      /**
+       * \brief references to smooth force vector of multibody system parent
+       * \param vector to be referenced
+       * \param TODO
+       */
+      virtual void updatehRef(const Vec& ref, int i=0);
+
+      /**
+       * \brief references to nonsmooth force vector of multibody system parent
+       * \param vector to be referenced
+       */
+      virtual void updaterRef(const Vec& ref);
+
+      /**
+       * \brief references to linear transformation matrix between differentiated positions and velocities of multibody system parent
+       * \param matrix to be referenced
+       */
+      virtual void updateTRef(const Mat &ref);
+
+      /**
+       * \brief references to mass matrix of multibody system parent
+       * \param vector to be referenced
+       * \param TODO
+       */
+      virtual void updateMRef(const SymMat &ref, int i=0);
+
+      /**
+       * \brief references to Cholesky decomposition of multibody system parent
+       * \param vector to be referenced
+       * \param TODO
+       */
+      virtual void updateLLMRef(const SymMat &ref, int i=0);
+
+
+      /**
+       * \brief initialize object at start of simulation with respect to contours and ports
+       */
+      virtual void init();
+
+      /**
+       * \brief initialize object at start of simulation with respect to contours and ports TODO
+       */
+      virtual void preinit();
+
+      /**
+       * initialize state of object at start of simulation
+       */
+      virtual void initz();
+
+      /**
+       * \brief perform Cholesky decomposition of mass martix
+       */
+      virtual void facLLM();
+
+      /**
+       * \brief calculates size of right hand side
+       * \param index of normal usage and inverse kinetics TODO
+       */
+      virtual void calchSize(int j) {}
+
+      /**
+       * \return kinetic energy 
+       */
+      virtual double computeKineticEnergy();
+
+      /**
+       * \return potential energy
+       */
+      virtual double computePotentialEnergy() { return 0; }
+
+      /**
+       * \brief TODO
+       */
+      virtual void resizeJacobians(int j) {}
+
+      /**
+       * \brief TODO
+       */
+      virtual void checkForConstraints() {}
+
+      /**
+       * \param contour to add
+       */
+      virtual void addContour(Contour* contour);
+
+      /**
+       * \param frame to add
+       */
+      virtual void addFrame(Frame * port);
+
+      /**
+       * \param name of the contour
+       * \param flag for checking existence
+       * \return contour
+       */
+      virtual Contour* getContour(const string &name, bool check=true);
+
+      /**
+       * \param name of the frame
+       * \param flag for checking existence
+       * \return frame
+       */
+      virtual Frame* getFrame(const string &name, bool check=true);
+      /*****************************************************/
+
+      /* GETTER / SETTER */
+      Subsystem* getParent() { return parent; }
+      void setParent(Subsystem* sys) { parent = sys; }
+
+      void setqSize(int qSize_) { qSize = qSize_; }
+      void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
+      int getzSize() const { return qSize + uSize[0]; }
+
+      void sethInd(int hInd_, int i=0); 
+      int getqInd() { return qInd; }
+      int getuInd(int i=0) { return uInd[i]; }
+      int gethInd(int i=0) { return hInd[i]; }
+
+      const Index& getuIndex() const { return Iu;}
+      const Index& gethIndex() const { return Ih;}
+
+      const Vec& geth() const { return h; };
+      Vec& geth() { return h; };
+      const Vec& getr() const { return r; };
+      Vec& getr() { return r; };
+      const SymMat& getM() const { return M; };
+      SymMat& getM() { return M; };
+      const Mat& getT() const { return T; };
+      Mat& getT() { return T; };
+      const SymMat& getLLM() const { return LLM; };
+      SymMat& getLLM() { return LLM; };
+
+      const Vec& getq() const { return q; };
+      const Vec& getu() const { return u; };
+      Vec& getq() { return q; };
+      Vec& getu() { return u; };
+
+      const Vec& getq0() const { return q0; };
+      const Vec& getu0() const { return u0; };
+      Vec& getq0() { return q0; };
+      Vec& getu0() { return u0; };
+
+      const Vec& getqd() const { return qd; };
+      const Vec& getud() const { return ud; };
+      Vec& getqd() { return qd; };
+      Vec& getud() { return ud; };
+
+      void setq(const Vec &q_) { q = q_; }
+      void setu(const Vec &u_) { u = u_; }
+
+      void setq0(const Vec &q0_) { q0 = q0_; }
+      void setu0(const Vec &u0_) { u0 = u0_; }
+      void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
+      void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
+
+      const vector<Frame*>& getFrames() const { return port; }
+      const vector<Contour*>& getContours() const { return contour; }
+      /*****************************************************/
+
+      /**
+       * \param frame
+       * \return index of frame TODO rename
+       */
+      int portIndex(const Frame *port_) const;
+
+      vector<Frame*> port;
+      vector<Contour*> contour;
 
     protected:
+      /**
+       * \brief subsystem, object belongs to
+       */
+      Subsystem* parent;
 
-    Subsystem* parent;
+      /**
+       * \brief size of object positions
+       */
+      int qSize;
 
-    /** Size of object positions */
-    int qSize;
-    /** Size of object velocities */
-    int uSize[2];
-    /** Size of object h-vector (columns of J) */
-    int hSize[2];
+      /** 
+       * \brief size of object velocities
+       */
+      int uSize[2];
 
-    int qInd, uInd[2], hInd[2];
+      /**
+       * \brief size of object h-vector (columns of J)
+       */
+      int hSize[2];
 
-    /** Object positions */
-    Vec q;
-    /** Object velocities */
-    Vec u;
-    /** Object order one parameters */
-    Vec q0,u0;
-    Vec qd,ud;
-    Vec h, r;
+      /**
+       * \brief indices of positions, velocities, right hand side
+       */
+      int qInd, uInd[2], hInd[2];
 
-    /** linear relation matrix \f$\boldsymbol{T}\f$ of position and velocity parameters */
-    Mat T;
-    /** mass matrix \f$\boldsymbol{M}\f$*/
-    SymMat M;
-    /** LU-decomposition of mass matrix \f$\boldsymbol{M}\f$*/
-    SymMat LLM;
-    Index Iu, Ih;
-    
-    public: // TODO nur zum Testen
+      /** 
+       * \brief positions, velocities
+       */
+      Vec q, u;
 
-    virtual void writeq();
-    virtual void readq0();
-    virtual void writeu();
-    virtual void readu0();
-    virtual void writex();
-    virtual void readx0();
+      /**
+       * \brief initial position, velocity
+       */
+      Vec q0,u0;
 
-    virtual void updateqRef(const Vec& ref);
-    virtual void updateqdRef(const Vec& ref);
-    virtual void updateuRef(const Vec& ref);
-    virtual void updateudRef(const Vec& ref);
-    virtual void updatehRef(const Vec& ref, int i=0);
-    virtual void updaterRef(const Vec& ref);
-    virtual void updateTRef(const Mat &ref);
-    virtual void updateMRef(const SymMat &ref, int i=0);
-    virtual void updateLLMRef(const SymMat &ref, int i=0);
+      /**
+       * \brief differentiated positions, velocities
+       */
+      Vec qd,ud;
 
-    void updateT(double t) {};
-    void updateh(double t) {};
-    void updateM(double t) {};
-    void updatedq(double t, double dt);
-    void updatedu(double t, double dt);
-    void updateud(double t);
-    void updateqd(double t);
-    void updatezd(double t);
+      /** 
+       * \brief smooth and nonsmooth right hand side
+       */
+      Vec h, r;
 
-    /*! Initialize object at start of simulation with respect to contours and ports */
-    virtual void init();
+      /** 
+       * \brief linear relation matrix of differentiated position and velocity parameters
+       */
+      Mat T;
 
-    /*! Initialize object at start of simulation with respect to contours and ports */
-    virtual void preinit();
-    
-    /*! Initialize state of object at start of simulation */
-    virtual void initz();
+      /** 
+       * \brief mass matrix 
+       */
+      SymMat M;
 
-    /*! Perform LL-decomposition of mass martix \f$\boldsymbol{M}\f$*/
-    virtual void facLLM();
+      /**
+       * \brief LU-decomposition of mass matrix 
+       */
+      SymMat LLM;
 
-    public:
-    /*! Constructor */
-    Object(const string &name);
-    /*! Destructor */
-    virtual ~Object();
-  
-    Subsystem* getParent() {return parent;}
-    void setParent(Subsystem* sys) {parent = sys;}
-
-    void setqSize(int qSize_) { qSize = qSize_; }
-    void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
-    void sethSize(int hSize_, int i=0);// { hSize = hSize_; }
-    void setqInd(int qInd_) { qInd = qInd_; }
-    void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-    void sethInd(int hInd_, int i=0); // { hInd = hInd_; }
-    int  getqInd() { return qInd; }
-    int  getuInd(int i=0) { return uInd[i]; }
-    int  gethInd(int i=0) { return hInd[i]; }
-
-    int gethInd(Subsystem* sys,int i=0); 
-
-    /*! Get size of position vector Object::q \return Object::qSize */
-    int getqSize() const { return qSize; }
-    /*! Get size of velocity vector Object::u \return Object::uSize */
-    int getuSize(int i=0) const { return uSize[i]; }
-    /*! Get number of state variables \return Object::qSize + Object::uSize */
-    int getzSize() const { return qSize + uSize[0]; }
-    /*! Get size of Jacobian matrix Object::h \return Object::hSize */
-    int gethSize(int i=0) const { return hSize[i]; }
-
-    const Index& getuIndex() const { return Iu;}
-    const Index& gethIndex() const { return Ih;}
-    /*! Get smooth force vector */
-    const Vec& geth() const {return h;};
-    /*! Get smooth force vector */
-    Vec& geth() {return h;};
-    /*! Get setvalued force vector */
-    const Vec& getr() const {return r;};
-    /*! Get setvalued force vector */
-    Vec& getr() {return r;};
-
-
-     /*! Get mass matrix */
-    const SymMat& getM() const {return M;};
-    /*! Get mass matrix */
-    SymMat& getM() {return M;};
-    /*! Get T-matrix */
-    const Mat& getT() const {return T;};
-    /*! Get T-matrix */
-    Mat& getT() {return T;};
-    /*! Get Cholesky decomposition of the mass matrix */
-    const SymMat& getLLM() const {return LLM;};
-    /*! Get Cholesky decomposition of the mass matrix */
-    SymMat& getLLM() {return LLM;};
-
-    const Vec& getq() const {return q;};
-    const Vec& getu() const {return u;};
-
-    Vec& getq() {return q;};
-    Vec& getu() {return u;};
-
-    const Vec& getq0() const {return q0;};
-    const Vec& getu0() const {return u0;};
-
-    Vec& getq0() {return q0;};
-    Vec& getu0() {return u0;};
-
-    const Vec& getqd() const {return qd;};
-    const Vec& getud() const {return ud;};
-
-    Vec& getqd() {return qd;};
-    Vec& getud() {return ud;};
-
-    void setq(const Vec &q_) { q = q_; }
-    void setu(const Vec &u_) { u = u_; }
-	
-    /*! Set initial positions with \param q0_ */
-    void setq0(const Vec &q0_) { q0 = q0_; }
-    /*! Set initial velocities with \param u0_ */
-    void setu0(const Vec &u0_) { u0 = u0_; }
-
-    void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
-    void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
-
-    void load(const string &path, ifstream &inputfile);
-    void save(const string &path, ofstream &outputfile);
-
-    virtual void addFrame(Frame * port);
-    virtual void addContour(Contour* contour);
-
-    int portIndex(const Frame *port_) const;
-
-    //string getFullName() const; 
-
-    virtual Frame* getFrame(const string &name, bool check=true);
-    const vector<Frame*>& getFrames() const {return port;}
-    virtual Contour* getContour(const string &name, bool check=true);
-    const vector<Contour*>& getContours() const {return contour;}
-
-    virtual void calcqSize() {};
-    virtual void calcuSize(int j) {};
-    virtual void calchSize(int j);
-
-    /*! Compute kinetic energy, which is the quadratic form \f$\frac{1}{2}\boldsymbol{u}^T\boldsymbol{M}\boldsymbol{u}\f$ for all bodies */
-    virtual double computeKineticEnergy();
-    /*! Compute potential energy */
-    virtual double computePotentialEnergy() {return 0; }
-    /*! Compute Jacobian \f$\boldsymbol{J}={\partial\boldsymbol{h}}/{\partial\boldsymbol{z}}\f$ of generalized force vector */
-
-    virtual void resizeJacobians(int j) {}
-    virtual void checkForConstraints() {}
-
-    virtual string getType() const {return "Object";}
-    //virtual MultiBodySystem* getMultiBodySystem(); 
-
-    void setMultiBodySystem(MultiBodySystem *sys);
-    void setFullName(const string &str);
-
-    virtual void plot(double t, double dt = 1, bool top=true); 
-    virtual void initPlot(bool top=true);
-    virtual void closePlot();
-    H5::Group *getPlotGroup() { return plotGroup; }
-    PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
-    PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      /**
+       * \brief indices for velocities and right hand side
+       */
+      Index Iu, Ih;
   };
 
 }
 
 #endif
+
