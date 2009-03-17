@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,13 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
+
 #include <config.h>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
@@ -36,15 +34,6 @@ namespace MBSim {
   Element::~Element() {
   }
 
-  void Element::save(const string &path, ofstream& outputfile) {
-      outputfile << "# Type:" << endl;
-      outputfile << getType() << endl<<endl;
-      outputfile << "# Name:" << endl;
-      outputfile << name << endl<<endl;
-      outputfile << "# Full name:" << endl;
-      outputfile << getFullName() << endl<<endl;
-  }
-
   void Element::load(const string &path, ifstream& inputfile) {
     string dummy;
     getline(inputfile,dummy); // # Type
@@ -58,10 +47,32 @@ namespace MBSim {
     getline(inputfile,dummy); // full name
     fullName = dummy;
     getline(inputfile,dummy); // newline
- }
+  }
 
-  void Element::addDataInterfaceBaseRef(const string& DIBRef_){
-    DIBRefs.push_back(DIBRef_);
+  void Element::save(const string &path, ofstream& outputfile) {
+    outputfile << "# Type:" << endl;
+    outputfile << getType() << endl<<endl;
+    outputfile << "# Name:" << endl;
+    outputfile << name << endl<<endl;
+    outputfile << "# Full name:" << endl;
+    outputfile << getFullName() << endl<<endl;
+  }
+
+  void Element::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.clear();
+      plotVector.push_back(t);
+
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
+    }
+  }
+
+  void Element::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(plotVectorSerie) delete plotVectorSerie;
+      delete plotGroup;
+    }
   }
 
   int Element::getNumberOfElements(ifstream &inputfile) {
@@ -77,14 +88,8 @@ namespace MBSim {
     return num;
   }
 
-  void Element::plot(double t, double dt, bool top) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.clear();
-      plotVector.push_back(t);
-
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
-    }
+  void Element::addDataInterfaceBaseRef(const string& DIBRef_){
+    DIBRefs.push_back(DIBRef_);
   }
 
   void Element::initPlot(ObjectInterface* parent, bool createDefault, bool top) {
@@ -107,13 +112,6 @@ namespace MBSim {
         plotVectorSerie=NULL;
     }
   }
-  
-  void Element::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(plotVectorSerie) delete plotVectorSerie;
-      delete plotGroup;
-    }
-  }
 
   void Element::createDefaultPlot() {
     if(plotColumns.size()>1) {
@@ -123,3 +121,4 @@ namespace MBSim {
   }
 
 }
+
