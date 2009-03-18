@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <config.h>
@@ -27,12 +23,7 @@
 
 namespace MBSim {
 
-  Vec computeTangential(const Vec &n)
-  {
-  	// COMPUTETANGENTIAL computes a perpendicular vector to the normal n
-  	// INPUT	n	Normal
-  	// OUTPUT	t	Tangente
-  	
+  Vec computeTangential(const Vec &n) {
     Vec t(3,NONINIT);
     if(fabs(n(0))+fabs(n(1)) > 1e-12) {
       t(2)=0;
@@ -52,3 +43,4 @@ namespace MBSim {
   }
 
 }
+
