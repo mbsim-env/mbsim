@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
+ *          thschindler@users.berlios.de
  */
+
 #ifndef _FINITE_ELEMENT_1S_21_RCM_H_
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
@@ -27,29 +26,25 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  /*! \brief
-   * Finite %Element for 2D-Beam using Redundant Coordinate Method(RCM) 
-   * 
-   * Roland Zander, Lehrstuhl fuer Angewandte Mechanik, TU Muenchen\par
+  /**
+   * \brief finite element for planar beam using Redundant Coordinate Method (RCM)
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 18.03.09
    *
    * read:\n
-   * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures withconstraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers,2005 \n
-   * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems inMultibody System Contacts Stuttgart, Germany, 2006  \n
-   * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison ofmodels, III European Conference on Comutational Mechanics Lissbon,Portugal, 2006  
-   *
-   * \see BodyFlexible1s21RCM
+   * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005\n
+   * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006\n
+   * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FiniteElement1s21RCM
-  {
-    protected:
-
+  class FiniteElement1s21RCM {
     public:
       double l0, Arho, EA, EI;
       double wss0;
       double depsilon;
       Vec g;
 
-      FiniteElement1s21RCM(){};
+      FiniteElement1s21RCM() {};
       //    ~FiniteElement1s21RCM();
       //        (double l0, double Arho, double EA, double EI, double g);
       /*! full quallified constructor 
@@ -67,7 +62,7 @@ namespace MBSim {
        */
       int berechne(Vec qElement, Vec qpElement);
 
-      void setCurleRadius(double);
+      void setCurlRadius(double);
       void setMaterialDamping(double);//, const double&);
       void setLehrDamping(double);
 

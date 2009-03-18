@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,17 +13,16 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
+ *          thschindler@users.berlios.de
  */
+
 #include <config.h>
 #define FMATVEC_NO_INITIALIZATION
 #define FMATVEC_NO_BOUNDS_CHECK
 
-#include "finite_element_1s_21_rcm.h"
+#include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
 #include <fstream>
 using namespace std;
 
@@ -59,81 +58,53 @@ namespace MBSim {
   }
 
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  void FiniteElement1s21RCM::setCurleRadius(double R)
-  {
-    if (R == 0.0) {cout << "CurleRadius muss ungleich 0 sein!\n"; throw(1);}
+  void FiniteElement1s21RCM::setCurlRadius(double R) {
+    if (R == 0.0) { cout << "ERROR (FiniteElement1s21RCM::setCurlRadius): CurlRadius must not be 0!\n"; throw(1); }
     wss0 = 1/R;
   }
-  void FiniteElement1s21RCM::setMaterialDamping(double depsilons)//, const double& dws)
-  {
+
+  void FiniteElement1s21RCM::setMaterialDamping(double depsilons) {
     depsilon  = depsilons;
     Damp(3,3) = -depsilon;
   }
-  void FiniteElement1s21RCM::setLehrDamping(double D)
-  {
-    // Longitudinaleifenfrequenz
-    double weps = sqrt(12.*EA/(Arho*l0h2));
-    // Biegeeigenfrequenz
-    //    double wbL  = sqrt(1260.*128.*EI/(197.*Arho*l0h4));
 
+  void FiniteElement1s21RCM::setLehrDamping(double D) {
+    double weps = sqrt(12.*EA/(Arho*l0h2)); // longitudinal eigen frequency
     depsilon  = 2.0 * D * weps * (     Arho*l0h3/12.  );
     Damp(3,3) = -depsilon;
-    //    dw       = 0.0 * D * wbL  * (197.*Arho*l0h3/1260.);
-
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  int FiniteElement1s21RCM::berechne(Vec qElement, Vec qpElement)
-  {
+  int FiniteElement1s21RCM::berechne(Vec qElement, Vec qpElement) {
     static Vec    qLokal(8,fmatvec::INIT,0.0), qpLokal(8,fmatvec::INIT,0.0);
 
     static SymMat MLokal(8,fmatvec::INIT,0.0);
     static SqrMat Jeg   (8,fmatvec::INIT,0.0), Jegp   (8,fmatvec::INIT,0.0);
     static Vec    hLokal(8,fmatvec::INIT,0.0), hdLokal(8,fmatvec::INIT,0.0); // Daempungsanteil
 
-    //--- globale Koordinaten, Geschwingigkeiten
-    /*    double &x1   = qElement(0);     double &y1  = qElement(1);    
-	  double &phi1 = qElement(2);    
-	  double &a1   = qElement(3);     double &a2  = qElement(4);
-	  double &x2   = qElement(5);     double &y2  = qElement(6);
-	  double &phi2 = qElement(7);
-    //
-    double &x1p   = qpElement(0);     double &y1p  = qpElement(1);    
-    double &phi1p = qpElement(2);    
-    double &a1p   = qpElement(3);     double &a2p  = qpElement(4);
-    double &x2p   = qpElement(5);     double &y2p  = qpElement(6);
-    double &phi2p = qpElement(7);
-    */
-
-    //--- lokale  Koordinaten, Geschwingigkeiten
-    //    static double &xS     = qLokal(0);    // unused  
-    //    static double &yS     = qLokal(1);
+    // local coordinates
     static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
     static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
     static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
-    //
-    //    static double &xSp    = qpLokal(0);     static double &ySp   = qpLokal(1);
+    
+    // local velocities
     static double &phiSp  = qpLokal(2);     static double &epsp  = qpLokal(3);
     static double &aLp    = qpLokal(4);     static double &bLp   = qpLokal(5);
     static double &aRp    = qpLokal(6);     static double &bRp   = qpLokal(7);
 
-    // Gravitation
+    // gravitation
     static double gx = g(0);
     static double gy = g(1);
 
-    //lokale Koordinate-----------------------------------------------------------
+    // local coordinates
     BuildqLokal(qElement,qLokal);
 
-    //JacobiMatrizen--------------------------------------------------------------
+    // Jacobian
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
-    // Lokale Geschwindigkeit-----------------------------------------------------
+    // locale velocities 
     qpLokal << Jeg * qpElement;
 
-    //MassenMatrix----------------------------------------------------------------
+    // mass
     MLokal(0,0) = Arho*l0;
     //MLokal(0,1) = 0;
     MLokal(0,2) = (Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) - 60*(1 + eps)*l0*(sin(bL - phiS) + sin(bR + phiS))))/480.;
@@ -142,7 +113,7 @@ namespace MBSim {
     MLokal(0,5) = -(Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + 3*l0*(-5*(3 + 4*eps)*sin(bL - phiS) + sin(bR + phiS))))/480.;
     MLokal(0,6) = -(Arho*l0*(sin(bL - phiS) - 13*sin(bR + phiS)))/60.;
     MLokal(0,7) = (Arho*l0*((8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) + 3*l0*(sin(bL - phiS) - 5*(3 + 4*eps)*sin(bR + phiS))))/480.;
-    //MLokal(1,0) = MLokal(0,1);
+    // MLokal(1,0) = MLokal(0,1);
     MLokal(1,1) = Arho*l0;
     MLokal(1,2) = (Arho*l0*(-60*(1 + eps)*l0*cos(bL - phiS) + 60*(1 + eps)*l0*cos(bR + phiS) + (-104*aL - 8*aR + 3*(-5*bL + bR)*l0)*sin(bL - phiS) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
     MLokal(1,3) = (Arho*l0h2*(sin(bL - phiS) + sin(bR + phiS)))/8.;
@@ -150,65 +121,56 @@ namespace MBSim {
     MLokal(1,5) = (Arho*l0*(3*l0*(5*(3 + 4*eps)*cos(bL - phiS) + cos(bR + phiS)) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS)))/480.;
     MLokal(1,6) = -(Arho*l0*(cos(bL - phiS) + 13*cos(bR + phiS)))/60.;
     MLokal(1,7) = (Arho*l0*(3*l0*(cos(bL - phiS) + 5*(3 + 4*eps)*cos(bR + phiS)) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
-    //MLokal(2,0) = MLokal(0,2);
-    //MLokal(2,1) = MLokal(1,2);
+    // MLokal(2,0) = MLokal(0,2);
+    // MLokal(2,1) = MLokal(1,2);
     MLokal(2,2) = (Arho*l0*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0)))/20160.;
     MLokal(2,3) = -(Arho*l0h2*(9*aL - 9*aR + (bL - bR)*l0))/120.;
     MLokal(2,4) = (3*Arho*(1 + eps)*l0h2)/40.;
     MLokal(2,5) = -(Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
     MLokal(2,6) = (-3*Arho*(1 + eps)*l0h2)/40.;
     MLokal(2,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
-    //MLokal(3,0) = MLokal(0,3);
-    //MLokal(3,1) = MLokal(1,3);
-    //MLokal(3,2) = MLokal(2,3);
+    // MLokal(3,0) = MLokal(0,3);
+    // MLokal(3,1) = MLokal(1,3);
+    // MLokal(3,2) = MLokal(2,3);
     MLokal(3,3) = (Arho*l0h3)/12.;
-    //MLokal(3,4) = 0;
+    // MLokal(3,4) = 0;
     MLokal(3,5) = (Arho*l0h2*(152*aL + 8*aR + 13*bL*l0 - 3*bR*l0))/1920.;
-    //MLokal(3,6) = 0;
+    // MLokal(3,6) = 0;
     MLokal(3,7) = (Arho*l0h2*(8*aL + 152*aR - 3*bL*l0 + 13*bR*l0))/1920.;
-    //MLokal(4,0) = MLokal(0,4);
-    //MLokal(4,1) = MLokal(1,4);
-    //MLokal(4,2) = MLokal(2,4);
-    ////MLokal(4,3) = MLokal(3,4);
+    // MLokal(4,0) = MLokal(0,4);
+    // MLokal(4,1) = MLokal(1,4);
+    // MLokal(4,2) = MLokal(2,4);
+    // MLokal(4,3) = MLokal(3,4);
     MLokal(4,4) = (197*Arho*l0)/1260.;
     MLokal(4,5) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
     MLokal(4,6) = (17*Arho*l0)/1260.;
     MLokal(4,7) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
-    //MLokal(5,0) = MLokal(0,5);
-    //MLokal(5,1) = MLokal(1,5);
-    //MLokal(5,2) = MLokal(2,5);
-    //MLokal(5,3) = MLokal(3,5);
-    //MLokal(5,4) = MLokal(4,5);
+    // MLokal(5,0) = MLokal(0,5);
+    // MLokal(5,1) = MLokal(1,5);
+    // MLokal(5,2) = MLokal(2,5);
+    // MLokal(5,3) = MLokal(3,5);
+    // MLokal(5,4) = MLokal(4,5);
     MLokal(5,5) = (Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
     MLokal(5,6) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
     MLokal(5,7) = (Arho*(2 + 3*eps)*l0h3)/960.;
-    //MLokal(6,0) = MLokal(0,6);
-    //MLokal(6,1) = MLokal(1,6);
-    //MLokal(6,2) = MLokal(2,6);
-    ////MLokal(6,3) = MLokal(3,6);
-    //MLokal(6,4) = MLokal(4,6);
-    //MLokal(6,5) = MLokal(5,6);
+    // MLokal(6,0) = MLokal(0,6);
+    // MLokal(6,1) = MLokal(1,6);
+    // MLokal(6,2) = MLokal(2,6);
+    // MLokal(6,3) = MLokal(3,6);
+    // MLokal(6,4) = MLokal(4,6);
+    // MLokal(6,5) = MLokal(5,6);
     MLokal(6,6) = (197*Arho*l0)/1260.;
     MLokal(6,7) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
-    //MLokal(7,0) = MLokal(0,7);
-    //MLokal(7,1) = MLokal(1,7);
-    //MLokal(7,2) = MLokal(2,7);
-    //MLokal(7,3) = MLokal(3,7);
-    //MLokal(7,4) = MLokal(4,7);
-    //MLokal(7,5) = MLokal(5,7);
-    //MLokal(7,6) = MLokal(6,7);
+    // MLokal(7,0) = MLokal(0,7);
+    // MLokal(7,1) = MLokal(1,7);
+    // MLokal(7,2) = MLokal(2,7);
+    // MLokal(7,3) = MLokal(3,7);
+    // MLokal(7,4) = MLokal(4,7);
+    // MLokal(7,5) = MLokal(5,7);
+    // MLokal(7,6) = MLokal(6,7);
     MLokal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
 
-    // //h-Vektor--------------------------------------------------------------------
-    //     hLokal(0) = -(Arho*l0*(2*(bLp - phiSp)*(-104*aLp - 8*aRp + 3*l0*(5*bLp + bRp + 10*bLp*eps - 10*(1 + eps)*phiSp))*cos(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*cos(bR + phiS) + (3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*sin(bL - phiS) - (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*sin(bR + phiS)))/480.;
-    //     hLokal(1) = -(Arho*g*l0) - (Arho*l0*((3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*cos(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*cos(bR + phiS) + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*sin(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*sin(bR + phiS)))/480.;
-    //     hLokal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*l0h2 - 42*Power(bLp,2)*bR*l0h2 - 51*bL*bLp*bRp*l0h2 + 51*bLp*bR*bRp*l0h2 + 42*bL*Power(bRp,2)*l0h2 - 211*bR*Power(bRp,2)*l0h2 + 3360*bLp*epsp*l0h2 - 3360*bRp*epsp*l0h2 + 3360*bLp*eps*epsp*l0h2 - 3360*bRp*eps*epsp*l0h2 - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*g*(60*(1 + eps)*l0*cos(bL - phiS) - 60*(1 + eps)*l0*cos(bR + phiS) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS) - (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*sin(bR + phiS))))/40320.;
-    //     hLokal(3) = -(EA*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2)) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*l0 + 3*(140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*l0h2)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(176400.*l0h3) - (aLp*Arho*l0h2*(19*bLp + bRp - 18*phiSp))/120. - (Arho*aRp*l0h2*(bLp + 19*bRp + 18*phiSp))/120. + (Arho*l0h3*(67*Power(bLp,2) + 6*bLp*bRp + 67*Power(bRp,2) + 80*Power(bLp,2)*eps + 80*Power(bRp,2)*eps - 16*(bLp - bRp)*(9 + 10*eps)*phiSp + 160*(1 + eps)*Power(phiSp,2)))/1920. - (Arho*l0h3*(13*Power(bLp,2) - 2*bLp*(3*bRp + 8*phiSp) + bRp*(13*bRp + 16*phiSp)))/1920. - (Arho*g*l0h2*sin(bL - phiS))/8. - (Arho*g*l0h2*sin(bR + phiS))/8.;
-    //     hLokal(4) = -(282240*EI*(160*aL - 32*aR - 43*bL*l0 + 11*bR*l0) + 8*EA*(1 + eps)*(272*aL - 16*aR - 24*bL*l0 + 9*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(19*bLp + bRp - 18*phiSp))/240. + (aL*Arho*l0*(196*Power(bLp,2) + Power(bRp,2) - 392*bLp*phiSp + 2*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(205*bL*Power(bLp,2) - 51*Power(bLp,2)*bR - 6*bL*Power(bRp,2) + 28*bR*Power(bRp,2) + 1596*bLp*epsp + 84*bRp*epsp - 2*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp)*phiSp + (199*bL - 23*bR)*Power(phiSp,2)))/20160. + (17*aR*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. + (Arho*g*l0*(13*cos(bL - phiS) + cos(bR + phiS)))/60.;  //(13*Arho*l0*(bLp - phiSp)*xSp*cos(bL - phiS))/60. + (13*Arho*l0*(-bLp + phiSp)*xSp*cos(bL - phiS))/60. + 
-    //     hLokal(5) = -(-835584*Power(aL,3)*EA*Power(1 + eps,2) + 313344*Power(aR,3)*EA*Power(1 + eps,2) + 2304*Power(aR,2)*(213*bL - 92*bR)*EA*Power(1 + eps,2)*l0 + 3072*Power(aL,2)*EA*Power(1 + eps,2)*(134*aR + 201*bL*l0 - 69*bR*l0) - 4*aL*(24272640*EI + 218112*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(8*bL - 9*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(36*Power(bL,2) - 25*bL*bR + 15*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(6272*aLp*(bLp - phiSp) + 272*aRp*(bLp - phiSp) + l0*(205*Power(bLp,2) - 102*bLp*bRp + 6*Power(bRp,2) + 114*bRp*phiSp - 199*Power(phiSp,2))))) + 4*aR*(6209280*EI + l0h2*(432*EA*(1 + eps)*(140*eps + (3*bL - 5*bR)*(9*bL - 5*bR)*(1 + eps)) + 35*Arho*l0*(272*aLp*(bLp - phiSp) + 32*aRp*(bLp - phiSp) + l0*(28*Power(bLp,2) - 12*bLp*bRp + 51*Power(bRp,2) + 114*bRp*phiSp + 23*Power(phiSp,2))))) + l0*(23328*Power(bL,3)*EA*Power(1 + eps,2)*l0h2 - 23328*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h2 + bL*(32175360*EI + l0h2*(2592*EA*(1 + eps)*(140*eps + 11*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(1640*aLp*(bLp - phiSp) + 224*aRp*(bLp - phiSp) + l0*(211*Power(bLp,2) - 84*bLp*bRp - 9*Power(bRp,2) + 66*bRp*phiSp - 220*Power(phiSp,2))))) - 6*(1296*Power(bR,3)*EA*Power(1 + eps,2)*l0h2 + 35*bR*(40320*EI + l0h2*(576*EA*eps*(1 + eps) + Arho*l0*(68*aLp*(bLp - phiSp) + 8*aRp*(bLp - phiSp) + l0*(7*Power(bLp,2) - 3*bLp*bRp - 7*Power(bRp,2) - 11*bRp*phiSp - 14*Power(phiSp,2))))) + 490*l0*(Arho*epsp*l0h3*(-3*bRp - bLp*(67 + 80*eps) + 64*phiSp + 80*eps*phiSp) + 960*EI*wss0))) + 5880*Arho*g*l0h3*(3*l0*(5*(3 + 4*eps)*cos(bL - phiS) + cos(bR + phiS)) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS)))/(2.8224e6*l0h2);
-    //     hLokal(6) = (282240*EI*(32*aL - 160*aR - 11*bL*l0 + 43*bR*l0) + 8*EA*(1 + eps)*(16*aL - 272*aR - 9*bL*l0 + 24*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(bLp + 19*bRp + 18*phiSp))/240. + (aR*Arho*l0*(Power(bLp,2) + 196*Power(bRp,2) - 2*bLp*phiSp + 392*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(28*bL*Power(bLp,2) - 6*Power(bLp,2)*bR - 51*bL*Power(bRp,2) + 205*bR*Power(bRp,2) + 84*bLp*epsp + 1596*bRp*epsp + 2*(-28*bL*bLp + 6*bLp*bR - 51*bL*bRp + 205*bR*bRp + 756*epsp)*phiSp + (-23*bL + 199*bR)*Power(phiSp,2)))/20160. + (17*aL*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. + (Arho*g*l0*(cos(bL - phiS) + 13*cos(bR + phiS)))/60.; //(Arho*l0*(bLp - phiSp)*xSp*cos(bL - phiS))/60. + (Arho*l0*(-bLp + phiSp)*xSp*cos(bL - phiS))/60. + 
-    //     hLokal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 + 5880*Arho*g*l0h3*(3*l0*(cos(bL - phiS) + 5*(3 + 4*eps)*cos(bR + phiS)) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
-    //h-Vektor
+    // right hand side 
     hLokal(0) = (Arho*l0*(480*gx + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*cos(bL - phiS) + 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*cos(bR + phiS) - (3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*sin(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*sin(bR + phiS)))/480.;
     hLokal(1) = Arho*gy*l0 - (Arho*l0*((3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*cos(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*cos(bR + phiS) + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*sin(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*sin(bR + phiS)))/480.;
     hLokal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*l0h2 - 42*Power(bLp,2)*bR*l0h2 - 51*bL*bLp*bRp*l0h2 + 51*bLp*bR*bRp*l0h2 + 42*bL*Power(bRp,2)*l0h2 - 211*bR*Power(bRp,2)*l0h2 + 3360*bLp*epsp*l0h2 - 3360*bRp*epsp*l0h2 + 3360*bLp*eps*epsp*l0h2 - 3360*bRp*eps*epsp*l0h2 - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*((8*(13*aL + aR)*gx + 3*(5*bL*gx - bR*gx - 20*(1 + eps)*gy)*l0)*cos(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*cos(bR + phiS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*sin(bL - phiS) + (8*(aL + 13*aR)*gy - 3*(20*(1 + eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS))))/40320.;
@@ -219,23 +181,18 @@ namespace MBSim {
     hLokal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 - 5880*Arho*l0h3*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
 
 
-    // Daempfung------------------------------------------------------------------
-    //    hdLokal.init(0.0); beim Initialisieren
+    // damping
     hdLokal(3) = - depsilon * epsp; // eps
 
-    //     cout <<endl<< trans(qElement) <<endl<< trans(qLokal) << endl;
-    //     cout << MLokal << endl;
-
-    // ab ins globale System
-    M << JTMJ(MLokal,Jeg);// trans(Jeg) * MLokal * Jeg );
+    // global transformation
+    M << JTMJ(MLokal,Jeg);
 
     static Vec hZwischen(8,fmatvec::INIT,0.0);
     hZwischen << hLokal + hdLokal  -   MLokal * Jegp * qpElement;
     h << trans(Jeg) * hZwischen;
 
-    // für die Impliziten Integratoren
-    if(implicit)
-    {
+    // implicit integration
+    if(implicit) {
       static Mat Dhz(16,8,fmatvec::INIT,0.0);
       Dhz   = hFullJacobi(qElement,qpElement,qLokal,qpLokal,Jeg,Jegp,MLokal,hZwischen);
       Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
@@ -245,9 +202,6 @@ namespace MBSim {
 
     return 0;
   }
-
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
 
   // Bestimmung der lokalen Koordinaten aus qElement
   void FiniteElement1s21RCM::BuildqLokal(Vec& qElement,Vec& qLokal)
@@ -263,7 +217,6 @@ namespace MBSim {
     static double dphih, sphih;
     dphih = (phi1 - phi2)/2.0;
     sphih = (phi1 + phi2)/2.0;
-    //    one_p_cos_dphi = (1 + cos(phi1 - phi2));
 
     //lokale Koordinate
     qLokal(0) = (Sec(dphih)*(36*(x1 + x2)*cos(dphih) + 36*(y1 - y2)*sin(dphih) - (64*a1 + 64*a2 - 5*l0*phi1 + 5*l0*phi2)*sin(sphih)))/72.;
@@ -274,15 +227,10 @@ namespace MBSim {
     qLokal(5) = (2*(-8*a1 + 8*a2 + l0*(-2.*dphih)) + 11*Sec(dphih)*((-y1 + y2)*cos(sphih) + (x1 - x2)*sin(sphih)))/(4.*l0);
     qLokal(6) = (64*a1 + 64*a2 + 5*l0*(-2.*dphih)  + 36*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/72.;
     qLokal(7) = (2*(8*a1 - 8*a2 +  l0*(-2.*dphih)) + 11*Sec(dphih)*((y1 - y2)*cos(sphih) + (-x1 + x2)*sin(sphih)))/(4.*l0);
-
   }
 
-  //------------------------------------------------------------------------------
-  //------------------------------------------------------------------------------
-
   // Bestimmung der Jacobimatrix und ihres zeitl. Diff aus qElement und qpElement
-  void FiniteElement1s21RCM::BuildJacobi(Vec& qElement, SqrMat& Jeg)
-  {
+  void FiniteElement1s21RCM::BuildJacobi(Vec& qElement, SqrMat& Jeg) {
     //--- globale Koordinaten
     double &x1   = qElement(0);     double &y1  = qElement(1);    
     double &phi1 = qElement(2);    
@@ -361,7 +309,6 @@ namespace MBSim {
     Jeg(7,7) = (4*l0 - (22*((x1 - x2)*cos(phi1) + (y1 - y2)*sin(phi1)))/one_p_cos_dphi)/(8.*l0);
   }
 
-  //------------------------------------------------------------------------------
   // Bestimmung der Jacobimatrix und ihres zeitl. Diff aus qElement und qpElement
   void FiniteElement1s21RCM::BuildJacobi(Vec& qElement, Vec& qpElement, SqrMat& Jeg, SqrMat& Jegp)
   {
@@ -451,27 +398,16 @@ namespace MBSim {
 
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------------------------------------------------------------------------------------
-
   // Balkenort ermitteln aus lokalen Lagen 
-  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, Vec& qpLokal, double& s)
-  {
+  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, Vec& qpLokal, double& s) {
     return LocateLokalBalken( qLokal, qpLokal, s, true );
   }
+
   // Balkenort ermitteln aus lokalen Lagen 
-  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, Vec& qpLokal, double& s, bool calcAll)
-  {
+  Vec FiniteElement1s21RCM::LocateLokalBalken(Vec& qLokal, Vec& qpLokal, double& s, bool calcAll) {
     Vec X(6); // x,y und phi | und | xp,yp und phip !!!
 
     //--- lokale  Koordinaten, Geschwingigkeiten
-    //     static double &xS     = qLokal(0);      static double &yS    = qLokal(1);
-    //     static double &phiS   = qLokal(2);      static double &eps   = qLokal(3);
-    //     static double &aL     = qLokal(4);      static double &bL    = qLokal(5);
-    //     static double &aR     = qLokal(6);      static double &bR    = qLokal(7);
-
-    // Aenderung 30.11.2005 - keine static Definitionen mehr
     double &xS     = qLokal(0);      double &yS    = qLokal(1);
     double &phiS   = qLokal(2);      double &eps   = qLokal(3);
     double &aL     = qLokal(4);      double &bL    = qLokal(5);
@@ -510,10 +446,8 @@ namespace MBSim {
     return X;
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // Balkenort ermitteln aus globalen Lagen 
-  Vec FiniteElement1s21RCM::LocateBalken(Vec& qElement, double& s)
-  {
+  Vec FiniteElement1s21RCM::LocateBalken(Vec& qElement, double& s) {
     static Vec  qLokal     (8,fmatvec::INIT,0.0);
     static Vec qpLokalDummy(8,fmatvec::INIT,0.0);
 
@@ -523,10 +457,8 @@ namespace MBSim {
     return (LocateLokalBalken(qLokal,qpLokalDummy,s,false))(0,2);// Liefert nur einen Teil(Lagen) des Zustands (Geschwindigkeiten werden eh NICHT berechnet!!! gleich 0)
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // Balkenzustand ermitteln aus globalen Lagen, Geschwindigkeit
-  Vec FiniteElement1s21RCM::StateBalken(Vec& qElement, Vec& qpElement, double& s)
-  {
+  Vec FiniteElement1s21RCM::StateBalken(Vec& qElement, Vec& qpElement, double& s) {
     static Vec  qLokal(8,fmatvec::INIT,0.0);
     static Vec qpLokal(8,fmatvec::INIT,0.0);
     static SqrMat  Jeg(8,fmatvec::INIT,0.0);
@@ -541,7 +473,6 @@ namespace MBSim {
     return LocateLokalBalken(qLokal,qpLokal,s,true);
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // JacobiMatrix der Lage des Balkenquerschnittes bei s (dx/dq,dy/dq,dphi/dq)^T
   Mat FiniteElement1s21RCM::JGeneralizedInternal(Vec& qElement,const double& s) {
     // Rueckgagewert J: JacobiMatrix
@@ -585,8 +516,7 @@ namespace MBSim {
       J(6,2) = (-8*s*(l0 + 2*s)*(l0 + 4*s))/l0h4;
       J(7,2) = (3*s*(l0 + 2*s)*(l0 + 4*s))/l0h3;
     }
-    else
-    {
+    else {
       // Translation
       J(0,0) = 1;
       J(0,1) = 0;
@@ -617,14 +547,12 @@ namespace MBSim {
     return J;
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // JacobiMatrix der Lage des Balkenquerschnittes bei s (dx/dq,dy/dq,dphi/dq)^T in internen Koordinaten
   Mat FiniteElement1s21RCM::JGeneralized(Vec& qElement,const double& s) {
     static SqrMat Jeg(8); // vermutlich schneller (mal wieder) als gleich die Transformierte zu implementieren
     BuildJacobi(qElement,Jeg);
     return trans(Jeg)*JGeneralizedInternal(qElement,s);
   }
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
   // zeitliche Ableitung der JacobiMatrix der Lage des Balkenquerschnittes bei s (dx/dq,dy/dq,dphi/dq)^T
   Mat FiniteElement1s21RCM::JpGeneralized(Vec& qElement, Vec& qpElement,const double& s, const double& sp) {
     // Rueckgagewert J: JacobiMatrix
@@ -725,7 +653,8 @@ namespace MBSim {
       dr(0) = ((1 + eps)*l0h4*cos(bL - phiS) + (l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*sin(bL - phiS))/l0h4;
       dr(1) = ((l0 + 2*s)*(bL*l0*(l0 - 4*s)*(l0 + 5*s) + s*(-8*aL*(l0 - 8*s) - (8*aR - 3*bR*l0)*(l0 + 4*s)))*cos(bL - phiS) - (1 + eps)*l0h4*sin(bL - phiS))/l0h4;
 
-    } else {
+    } 
+    else {
       //DrDsR
       dr(0) = ((1 + eps)*l0h4*cos(bR + phiS) + (l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*sin(bR + phiS))/l0h4;
       dr(1) = (-((l0 - 2*s)*(bR*l0*(l0 - 5*s)*(l0 + 4*s) + s*(8*aL*(l0 - 4*s) - 3*bL*l0*(l0 - 4*s) + 8*aR*(l0 + 8*s)))*cos(bR + phiS)) + (1 + eps)*l0h4*sin(bR + phiS))/l0h4;
@@ -733,6 +662,7 @@ namespace MBSim {
     }
     return dr;
   }
+
   Vec FiniteElement1s21RCM::DrDsp(Vec &qElement,Vec &qpElement,const double &s,const double &sp) {
     Vec drp(2);
     Vec  qLokal(8,fmatvec::NONINIT);
@@ -764,6 +694,7 @@ namespace MBSim {
     }
     return drp;
   }
+
   double FiniteElement1s21RCM::Kcurvature (Vec &qElement,const double &s) {
     double Kc;
     Vec  qLokal(8,fmatvec::NONINIT);
@@ -780,6 +711,7 @@ namespace MBSim {
       Kc = (l0h2*(-8*(aL + aR) + 3*(bL + bR)*l0) - 12*l0*(-8*aL + 8*aR + 3*(bL - bR)*l0)*s - 24*(8*aL - 16*aR - 3*bL*l0 + 5*bR*l0)*Power(s,2))/ l0h4;
     return Kc;
   }
+
   double FiniteElement1s21RCM::Kpcurvature(Vec &qElement,Vec &qpElement,const double &s,const double &sp) {
     double Kcp;
     Vec  qLokal(8,fmatvec::NONINIT);
@@ -802,10 +734,7 @@ namespace MBSim {
     return Kcp;
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  Mat FiniteElement1s21RCM::hFullJacobi(Vec& qElement, Vec& qpElement, Vec& qLokal, Vec& qpLokal, SqrMat& Jeg, SqrMat& Jegp, SymMat& MLokal, Vec& hZwischen)
-  {
+  Mat FiniteElement1s21RCM::hFullJacobi(Vec& qElement, Vec& qpElement, Vec& qLokal, Vec& qpLokal, SqrMat& Jeg, SqrMat& Jegp, SymMat& MLokal, Vec& hZwischen) {
     static Mat Dhz(16,8,fmatvec::INIT,0.0);
 
     //--- globale Koordinaten, Geschwingigkeiten
@@ -1264,12 +1193,8 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
     return Dhz;
   }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-
   // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
-  Vec FiniteElement1s21RCM::ElementData(Vec qElement, Vec qpElement)
-  {
+  Vec FiniteElement1s21RCM::ElementData(Vec qElement, Vec qpElement) {
     // Rueckgabedaten
     static Vec Data(8,fmatvec::INIT,0.0);
     // 0:  eps
@@ -1368,5 +1293,3 @@ cout << "\nIMPORTANT -- addapt to arbitrary gravitation Vec g(2)\n" << endl;
 
 }
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------

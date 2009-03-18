@@ -6,7 +6,6 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					compoundcontour_contour.cc\
 					compoundcontour_compoundcontour.cc\
 					circlesolid_line.cc\
-					point_cylinderflexible.cc\
 					point_contour1s.cc\
 					point_contourinterpolation.cc\
 					line_contour1s.cc\
@@ -15,7 +14,6 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					circlesolid_frustum2d.cc\
 					circlesolid_plane.cc\
 					circlesolid_contour1s.cc\
-					circlehollow_cylinderflexible.cc\
 					edge_edge.cc\
 					point_area.cc\
 					point_frustum.cc\
@@ -28,7 +26,6 @@ INCLUDES = $(DEPS_CFLAGS)
 LDADD = $(DEPS_LIBS) 
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h \
-  circlehollow_cylinderflexible.h \
   circlesolid_circlehollow.h \
   circlesolid_circlesolid.h \
   circlesolid_contour1s.h \
@@ -42,7 +39,6 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h \
   point_area.h \
   point_contour1s.h \
   point_contourinterpolation.h \
-  point_cylinderflexible.h \
   point_frustum.h \
   point_line.h \
   point_plane.h \
