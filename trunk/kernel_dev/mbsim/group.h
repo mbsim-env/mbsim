@@ -27,6 +27,11 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief Group TODO
+   * \author Martin Foerg
+   * \date xy.03.09
+   */
   class Group : public Subsystem {
    protected:
 
