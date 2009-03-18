@@ -88,6 +88,12 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
+      /** 
+       * \brief insert 'local' information in global matrices
+       * \param number of finite element
+       */
+      virtual void GlobalMatrixContribution(int CurrentElement) = 0;
+
       /**
        * \param contour parameters specifing location
        * \return JACOBIAN-matrix of system dimensions (size of positions x cartesian degree of freedom) 
@@ -98,25 +104,7 @@ namespace MBSim {
        * \param contour parameter
        * \return absolute position in world system to body contour
        */
-      virtual Vec computeWrOC(const ContourPointData &data) = 0;
-
-      /**
-       * \param contour parameter
-       * \return trafo matrix from contour to world system
-       */
-      virtual SqrMat computeAWK(const ContourPointData &data) = 0;
-
-      /**
-       * \param contour parameter
-       * \return absolute velocity in world system to body contour
-       */
-      virtual Vec computeWvC(const ContourPointData &data) = 0;
-
-      /**
-       * \param contour parameter
-       * \return absolute angular velocity in world to body contour
-       */
-      virtual Vec computeWomega(const ContourPointData& s) = 0;
+      virtual Frame* computeKinematicsForFrame(const ContourPointData &data) = 0;
       /***************************************************/
 
       /**
@@ -190,11 +178,10 @@ namespace MBSim {
        */
       vector<ContourPointData> S_Frame;
 
-      /** 
-       * \brief insert 'local' information in global matrices
-       * \param number of finite element
+      /**
+       * \brief last computed frame for contour parameter
        */
-      virtual void GlobalMatrixContribution(int CurrentElement) = 0;
+      Frame *lastContourFrame;
 
 #ifdef HAVE_AMVIS
       /** 
@@ -232,36 +219,6 @@ namespace MBSim {
       virtual ~FlexibleBody1s() {}
 
       /**
-       *  \param name of frame
-       *  \param frame location
-       */
-      void addFrame(const string &name, const double &s);
-
-      /**
-       * \param contour parameter
-       * \return absolute position in world system to body contour
-       */
-      Vec computeWrOC(const double &alpha);
-
-      /**
-       * \param contour parameter
-       * \return trafo matrix from contour to world system
-       */
-      SqrMat computeAWK(const double &alpha);
-
-      /**
-       * \param contour parameter
-       * \return absolute velocity in world system to body contour
-       */
-      Vec computeWvC(const double &alpha);
-
-      /**
-       * \param contour parameter
-       * \return absolute angular velocity in world to body contour
-       */
-      Vec computeWomega(const double &alpha);
-
-      /**
        * \param nodes for search-fields of contact-search
        */
       void setContourNodes(const Vec& nodes) { userContourNodes = nodes; }
@@ -292,36 +249,6 @@ namespace MBSim {
        * \brief destructor
        */
       virtual ~FlexibleBody2s() {}
-
-      /**
-       *  \param name of frame
-       *  \param frame location
-       */
-      void addFrame(const string &name, const Vec &s);
-
-      /**
-       * \param contour parameter
-       * \return absolute position in world system to body contour
-       */
-      Vec computeWrOC(const Vec &alpha); 
-
-      /**
-       * \param contour parameter
-       * \return trafo matrix from contour to world system
-       */
-      SqrMat computeAWK(const Vec &alpha);
-
-      /**
-       * \param contour parameter
-       * \return absolute velocity in world system to body contour
-       */
-      Vec computeWvC(const Vec &alpha); 
-
-      /**
-       * \param contour parameter
-       * \return absolute angular velocity in world to body contour
-       */
-      Vec computeWomega(const Vec &alpha); 
 
       /**
        * \param nodes for search-fields of contact-search

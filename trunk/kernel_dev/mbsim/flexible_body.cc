@@ -61,10 +61,12 @@ namespace MBSim {
 
   void FlexibleBody::updateKinematics(double t) {
     for(unsigned int i=0; i<port.size(); i++) { // frames
-      port[i]->setPosition(computeWrOC(S_Frame[i])); 
-      port[i]->setOrientation(computeAWK(S_Frame[i]));
-      port[i]->setVelocity(computeWvC(S_Frame[i]));
-      port[i]->setAngularVelocity(computeWomega(S_Frame[i]));
+      frametmp = computeKinematicsForFrame(S_Frame[i]);
+
+      port[i]->setPosition(frametmp->getPosition()); 
+      port[i]->setOrientation(frametmp->getOrientation());
+      port[i]->setVelocity(frametmp->getVelocity());
+      port[i]->setAngularVelocity(frametmp->getAngularVelocity());
     }
     // TODO contour non native?
   }
@@ -72,8 +74,8 @@ namespace MBSim {
   void FlexibleBody::updateJacobians(double t) {
     for(unsigned int i=0; i<port.size(); i++) { // frames
       Mat Jactmp = computeJacobianMatrix(S_Frame[i]); // temporial Jacobian matrix
-      port[i]->setJacobianOfTranslation(Jactmp*trans(JT)); // TODO sparse structure / port in frame
-      port[i]->setJacobianOfRotation(Jactmp*trans(JR));
+      port[i]->setJacobianOfTranslation(Jactmp*trans(JT)*trans(frameParent->getOrientation())); // TODO sparse structure / port in frame
+      port[i]->setJacobianOfRotation(Jactmp*trans(JR)*trans(frameParent->getOrientation()));
       // port[i]->setGyroscopicAccelerationOfTranslation(); TODO
       // port[i]->setGyroscopicAccelerationOfRotation(); TODO
     }
@@ -155,76 +157,6 @@ namespace MBSim {
 
   FlexibleBody1s::FlexibleBody1s(const string &name) : FlexibleBody(name), userContourNodes(0) {}
 
-  void FlexibleBody1s::addFrame(const string &name, const double &s) {
-    ContourPointData temp;
-    temp.type  = CONTINUUM;
-    temp.alpha = Vec(1,INIT,s);
-    FlexibleBody::addFrame(name,temp); 
-  }
-
-  Vec FlexibleBody1s::computeWrOC(const double &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = Vec(1,INIT,alpha); 
-    return FlexibleBody::computeWrOC(temp); 
-  }
-
-  SqrMat FlexibleBody1s::computeAWK(const double &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = Vec(1,INIT,alpha); 
-    return FlexibleBody::computeAWK(temp); 
-  }
-
-  Vec FlexibleBody1s::computeWvC(const double &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = Vec(1,INIT,alpha); 
-    return FlexibleBody::computeWvC(temp); 
-  }
-
-  Vec FlexibleBody1s::computeWomega(const double &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = Vec(1,INIT,alpha); 
-    return FlexibleBody::computeWomega(temp); 
-  }
-
   FlexibleBody2s::FlexibleBody2s(const string &name) :FlexibleBody(name) {}
-
-  void FlexibleBody2s::addFrame(const string &name, const Vec &alpha) {
-    ContourPointData temp;
-    temp.type  = CONTINUUM;
-    temp.alpha = alpha;
-    FlexibleBody::addFrame(name,temp); 
-  }
-
-  Vec FlexibleBody2s::computeWrOC(const Vec &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = alpha; 
-    return FlexibleBody::computeWrOC(temp); 
-  }
-
-  SqrMat FlexibleBody2s::computeAWK(const Vec &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM; 
-    temp.alpha = alpha; 
-    return FlexibleBody::computeAWK(temp); 
-  }
-
-  Vec FlexibleBody2s::computeWvC(const Vec &alpha) {
-    ContourPointData temp;
-    temp.type = CONTINUUM;
-    temp.alpha = alpha;
-    return FlexibleBody::computeWvC(temp); 
-  }
-
-  Vec FlexibleBody2s::computeWomega(const Vec &alpha) { 
-    ContourPointData temp; 
-    temp.type = CONTINUUM;
-    temp.alpha = alpha; 
-    return FlexibleBody::computeWomega(temp);
-  }
 }
 

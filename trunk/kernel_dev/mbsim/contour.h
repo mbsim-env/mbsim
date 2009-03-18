@@ -289,48 +289,48 @@ namespace MBSim {
   };
 
   /*! \brief 1s flexible */
-  class Contour1sFlexible : public Contour1s {
-    protected:
-      BodyFlexible* parent;
+  // class Contour1sFlexible : public Contour1s {
+  //   protected:
+  //     BodyFlexible* parent;
 
-    public:
-      Contour1sFlexible(const string &name);
+  //   public:
+  //     Contour1sFlexible(const string &name);
 
-      Vec computeWb  (double s) {return R.getOrientation()*Cb;}
+  //     Vec computeWb  (double s) {return R.getOrientation()*Cb;}
 
-      Vec computeWn    (double alpha);
-      Mat computeWt    (double alpha);
-      Vec computeWrOC  (double alpha);
-      Vec computeWvC   (double alpha);
-      Vec computeWomega(double alpha);
+  //     Vec computeWn    (double alpha);
+  //     Mat computeWt    (double alpha);
+  //     Vec computeWrOC  (double alpha);
+  //     Vec computeWvC   (double alpha);
+  //     Vec computeWomega(double alpha);
 
-      Mat computeWt  (const ContourPointData &cp);
-      Vec computeWn  (const ContourPointData &cp);
-      Vec computeWb  (const ContourPointData &cp);
-      Vec computeWrOC(const ContourPointData &cp);
-      Vec computeWvC (const ContourPointData &cp);
+  //     Mat computeWt  (const ContourPointData &cp);
+  //     Vec computeWn  (const ContourPointData &cp);
+  //     Vec computeWb  (const ContourPointData &cp);
+  //     Vec computeWrOC(const ContourPointData &cp);
+  //     Vec computeWvC (const ContourPointData &cp);
 
-      Vec computeWomega(const ContourPointData &cp) {return Vec(3);}
-      // TODO
-      double computeRadius(double alpha) {return 1;}
-  };
+  //     Vec computeWomega(const ContourPointData &cp) {return Vec(3);}
+  //     // TODO
+  //     double computeRadius(double alpha) {return 1;}
+  // };
 
-  /*! \brief Flexible cylinder for elastic 3D bending structure with one contour parameter
-  */
-  class CylinderFlexible : public Contour1sFlexible {
-    protected:
-      double r;
+  // /*! \brief Flexible cylinder for elastic 3D bending structure with one contour parameter
+  // */
+  // class CylinderFlexible : public Contour1sFlexible {
+  //   protected:
+  //     double r;
 
-    public:
-      CylinderFlexible(const string &name);
-      void setRadius(double r_) {r = r_;}
-      double getRadius() const  {return r;}
+  //   public:
+  //     CylinderFlexible(const string &name);
+  //     void setRadius(double r_) {r = r_;}
+  //     double getRadius() const  {return r;}
 
-      /*     Mat computeWt    (double s); */
-      Vec computeWn    (const ContourPointData& cp) {return Vec(3);}
+  //     /*     Mat computeWt    (double s); */
+  //     Vec computeWn    (const ContourPointData& cp) {return Vec(3);}
 
-      Vec computeWomega(const ContourPointData &cp);
-  };
+  //     Vec computeWomega(const ContourPointData &cp);
+  // };
 
   /*! \brief Contour Plane without borders */
   class Plane : public Contour {

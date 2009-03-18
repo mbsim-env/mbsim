@@ -87,11 +87,11 @@ namespace MBSim {
       return new ContactKinematicsPointContourInterpolation;
     // INTERPOLATIONSGESCHICHTEN
 
-    else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
-      return new ContactKinematicsCircleHollowCylinderFlexible;
+    // else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
+    //   return new ContactKinematicsCircleHollowCylinderFlexible;
 
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0)))
-      return new ContactKinematicsPointCylinderFlexible;
+    // else if((dynamic_cast<Point*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0)))
+    //   return new ContactKinematicsPointCylinderFlexible;
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
       return new ContactKinematicsPointContour1s;
