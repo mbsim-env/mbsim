@@ -39,12 +39,116 @@ namespace MBSim {
    *
    * */
   class RigidBody : public Body {
+    public:
+      RigidBody(const string &name);
 
+      void setForceDirection(const Mat& fd);
+      void setMomentDirection(const Mat& md);
+
+      /**
+       * \param body fixed frame for rotation
+       */
+      void useFrameOfBodyForRotation(bool cb_) {cb = cb_;}
+      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
+      void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
+      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
+      void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
+      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
+      void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
+      void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
+      void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
+      void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
+
+      /*! define the mass of the body
+        \param m mass
+        */
+      void setMass(double m_) {m = m_;}
+
+      /*! \brief matrix of inertia
+       * define the matrix of inertia with respect to the point of reference if
+       * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
+       \param I martix of inertia
+       */
+      void setInertiaTensor(const SymMat& RThetaR, const Frame* refFrame=0) {
+        if(refFrame)
+          i4I = portIndex(refFrame);
+        else
+          i4I = 0;
+        // hier nur zwischenspeichern
+        SThetaS = RThetaR;
+      }
+
+      virtual void updateKinematicsForSelectedFrame(double t);
+      virtual void updateJacobiansForSelectedFrame(double t);
+      virtual void updateKinematicsForRemainingFramesAndContours(double t);
+      virtual void updateJacobiansForRemainingFramesAndContours(double t);
+
+      virtual void updateSecondJacobiansForSelectedFrame(double t);
+      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
+
+      void updateh(double t);
+      void updateKinematics(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
+      void updateJacobians(double t) {updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
+      void updateM(double t) {(this->*updateM_)(t);}
+      void updateT(double t) {if(fT) T = (*fT)(q,t);}
+      void facLLM() {(this->*facLLM_)();}
+
+      void resizeJacobians(int j);
+      virtual void checkForConstraints();
+
+      void addFrame(Frame *port_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0); 
+
+      void addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame=0);
+
+      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
+
+      void setFrameForKinematics(Frame *frame) {
+        iRef = portIndex(frame);
+        assert(iRef > -1);
+      }
+
+      /**
+       * \param frame of reference
+       */
+      void setFrameOfReference(Frame *frame) { frameParent = frame; };
+
+      double computeKineticEnergy();
+      double computeKineticEnergyBranch();
+      double computePotentialEnergyBranch();
+
+      void init();
+      void plot(double t, double dt=1, bool top=true);
+      void initPlot(bool top=true);
+      void calcqSize();
+      void calcuSize(int j=0);
+
+      virtual string getType() const {return "RigidBody";}
+
+      void load(const string &path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
+
+#ifdef HAVE_AMVIS
+      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
+#endif
+    
     protected:
+      /**
+       * \brief body fixed frame for rotation
+       */
       bool cb;
+
+      /**
+       * \brief mass
+       */
       double m;
       SymMat SThetaS, WThetaS;
+
+      /**
+       * \brief frame indices for reference and kinematics (inertia)
+       */
       int iRef, i4I;
+
       Mat H, TH;
       SymMat Mbuf;
 
@@ -57,7 +161,12 @@ namespace MBSim {
 
       SqrMat APK;
       Vec PrPK, WrPK, WvPKrel, WomPK;
-      Frame *portParent;
+
+      /**
+       * \brief frame of reference of the rigid body
+       */
+      Frame *frameParent;
+
       vector<SqrMat> ASK;
       vector<Vec> SrSK, WrSK;
 
@@ -94,92 +203,6 @@ namespace MBSim {
       Frame* cosyAMVis;
 #endif
 
-    public:
-      RigidBody(const string &name);
-
-      void setForceDirection(const Mat& fd);
-      void setMomentDirection(const Mat& md);
-
-      void useFrameOfBodyForRotation(bool cb_) {cb = cb_;}
-      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
-      void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
-      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
-      void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
-      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
-      void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
-      void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
-      void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
-      void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
-
-      /*! define the mass of the body
-	\param m mass
-	*/
-      void setMass(double m_) {m = m_;}
-
-      /*! \brief matrix of inertia
-       * define the matrix of inertia with respect to the point of reference if
-       * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
-       \param I martix of inertia
-       */
-      void setInertiaTensor(const SymMat& RThetaR, const Frame* refFrame=0) {
-	if(refFrame)
-	  i4I = portIndex(refFrame);
-	else
-	  i4I = 0;
-	// hier nur zwischenspeichern
-	SThetaS = RThetaR;
-      }
-
-      virtual void updateKinematicsForSelectedFrame(double t);
-      virtual void updateJacobiansForSelectedFrame(double t);
-      virtual void updateKinematicsForRemainingFramesAndContours(double t);
-      virtual void updateJacobiansForRemainingFramesAndContours(double t);
-
-      virtual void updateSecondJacobiansForSelectedFrame(double t);
-      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
-
-      void updateh(double t);
-      void updateKinematics(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
-      void updateJacobians(double t) {updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
-      void updateM(double t) {(this->*updateM_)(t);}
-      void updateT(double t) {if(fT) T = (*fT)(q,t);}
-      void facLLM() {(this->*facLLM_)();}
-
-      void resizeJacobians(int j);
-      virtual void checkForConstraints();
-
-      void addFrame(Frame *port_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0); 
-
-      void addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame=0);
-
-      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
-
-      void setFrameForKinematics(Frame *port) {
-	iRef = portIndex(port);
-	assert(iRef > -1);
-      }
-
-      void setFrameOfReference(Frame *port) {portParent = port;};
-
-      double computeKineticEnergy();
-      double computeKineticEnergyBranch();
-      double computePotentialEnergyBranch();
-
-      void init();
-      void plot(double t, double dt=1, bool top=true);
-      void initPlot(bool top=true);
-      void calcqSize();
-      void calcuSize(int j=0);
-
-      virtual string getType() const {return "RigidBody";}
-
-      void load(const string &path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
-
-#ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
-#endif
 
   };
 

@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _BODY_H_
@@ -27,16 +24,20 @@
 
 namespace MBSim {
 
-  /*! 
+  /** 
    *  \brief base class for all mechanical bodies with mass and generalised coordinates
-   * 
-   * */
+   *  \author Martin Foerg
+   *  \date 18.03.09
+   */
   class Body : public Object {
-
-    protected:
-
     public:
+      /**
+       * \brief constructor
+       * \param name of body
+       */
       Body(const string &name);
+
+      /* INHERITED INTERFACE */
       void init();
 
   };
@@ -44,3 +45,4 @@ namespace MBSim {
 }
 
 #endif
+

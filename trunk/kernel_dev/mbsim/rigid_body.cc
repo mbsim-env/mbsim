@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2008  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -44,7 +44,7 @@ namespace MBSim {
     APK(1,1)=1.0;
     APK(2,2)=1.0;
 
-    portParent = 0;
+    frameParent = 0;
 
     Object::addFrame(new Frame("C"));
 
@@ -69,21 +69,21 @@ namespace MBSim {
     if(j==0) {
       uSize[j] = 0;
       if(fPJT==0) {
-	LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-	if(fPrPK_) 
-	  uSize[j] += fPrPK->getqSize();
+        LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+        if(fPrPK_) 
+          uSize[j] += fPrPK->getqSize();
       } else
-	uSize[j] += fPJT->getuSize();
+        uSize[j] += fPJT->getuSize();
       if(fPJR==0) {
-	//TODO  Euler-Parameter
-	//RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
-	if(fAPK)
-	  uSize[j] += fAPK->getqSize();
-	//CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-	//if(fAPK_)
-	//uSize += fAPK->getqSize();
+        //TODO  Euler-Parameter
+        //RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+        if(fAPK)
+          uSize[j] += fAPK->getqSize();
+        //CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+        //if(fAPK_)
+        //uSize += fAPK->getqSize();
       } else
-	uSize[j] += fPJR->getuSize();
+        uSize[j] += fPJR->getuSize();
     } else {
       uSize[j] = uSize[0];
       uSize[j] += forceDir.cols();
@@ -112,9 +112,9 @@ namespace MBSim {
   void RigidBody::init() {
     if(iRef == -1)
       iRef = 0;
-    //if(portParent == 0)
-   //   portParent = parent->getFrame("I");
-    
+    //if(frameParent == 0)
+    //   frameParent = parent->getFrame("I");
+
     Object::init();
 
     PJT.resize(3,uSize[0]);
@@ -130,9 +130,9 @@ namespace MBSim {
       Mat JT;
       LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
       if(fPrPK_) {
-	JT = fPrPK_->getPJT();
+        JT = fPrPK_->getPJT();
       } else
-	JT.resize(3,0);
+        JT.resize(3,0);
       Mat JTT(3, uSize[0]);
       PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
       PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
@@ -142,20 +142,20 @@ namespace MBSim {
       Mat JR;
       JR.resize(3,0);
       {
-	RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-	if(fAPK_) 
-	  JR.resize() = fAPK_->getAxisOfRotation();
+        RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
+        if(fAPK_) 
+          JR.resize() = fAPK_->getAxisOfRotation();
       }
       {
-	CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-	if(fAPK_) {
-	  JR.resize() << DiagMat(3,INIT,1);
-	  if(cb) {
-	    fT = new TCardanAngles2(qSize,uSize[0]);
-	  } else {
-	    fT = new TCardanAngles(qSize,uSize[0]);
-	  }
-	}
+        CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+        if(fAPK_) {
+          JR.resize() << DiagMat(3,INIT,1);
+          if(cb) {
+            fT = new TCardanAngles2(qSize,uSize[0]);
+          } else {
+            fT = new TCardanAngles(qSize,uSize[0]);
+          }
+        }
       }
       Mat JRR(3, uSize[0]);
       PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
@@ -166,17 +166,17 @@ namespace MBSim {
       facLLM_ = &RigidBody::facLLMNotConst;
 
       if(cb) {
-	 // cout << "Benüzte körperfestes KOSY für Rot" << endl;
-	  if(iRef == 0 && false) {
-	    updateM_ = &RigidBody::updateMConst;
-	    Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
-	    LLM = facLL(Mbuf);
-	    facLLM_ = &RigidBody::facLLMConst;
-	  }
-	  PJR0 = PJR;
-	  //fPJR = new PJRTest(port[iRef],portParent,PJR);
+        // cout << "Benüzte körperfestes KOSY für Rot" << endl;
+        if(iRef == 0 && false) {
+          updateM_ = &RigidBody::updateMConst;
+          Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
+          LLM = facLL(Mbuf);
+          facLLM_ = &RigidBody::facLLMConst;
+        }
+        PJR0 = PJR;
+        //fPJR = new PJRTest(port[iRef],frameParent,PJR);
       } else {
-	//cout << "Benüzte Parent-KOSY für Rot" << endl;
+        //cout << "Benüzte Parent-KOSY für Rot" << endl;
       }
     }
 
@@ -252,7 +252,7 @@ namespace MBSim {
 
   void RigidBody::updateMConst(double t) {
     M += Mbuf;
-      //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
+    //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateMNotConst(double t) {
@@ -260,8 +260,8 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobiansForSelectedFrame(double t) {
-   // TODO: Abfrage ob Inertiales System zur Performancesteigerung
-  
+    // TODO: Abfrage ob Inertiales System zur Performancesteigerung
+
     if(fPdJT)
       PdJT = (*fPdJT)(T*u,q,t);
     if(fPdJR)
@@ -274,47 +274,47 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    port[iRef]->setGyroscopicAccelerationOfTranslation(portParent->getGyroscopicAccelerationOfTranslation() - tWrPK*portParent->getGyroscopicAccelerationOfRotation() + portParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(portParent->getAngularVelocity(), 2*WvPKrel+crossProduct(portParent->getAngularVelocity(),WrPK)));
-    port[iRef]->setGyroscopicAccelerationOfRotation(portParent->getGyroscopicAccelerationOfRotation() + portParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(portParent->getAngularVelocity(), WomPK));
+    port[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
+    port[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(frameParent->getAngularVelocity(), WomPK));
 
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,portParent->getJacobianOfTranslation().cols()-1)) = portParent->getJacobianOfTranslation() - tWrPK*portParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = portParent->getOrientation()*PJT;
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = portParent->getOrientation()*PJR;
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJT;
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJR;
   }
 
   void RigidBody::updateSecondJacobiansForSelectedFrame(double t) {
-  //  if(uSize == usSize)
-  //    updateJacobiansForSelectedFrame(t);
-  //  else 
-  //  {
- //  // TODO: Abfrage ob Inertiales System zur Performancesteigerung
- // 
- //   if(fPdJT)
- //     PdJT = (*fPdJT)(T*u,q,t);
- //   if(fPdJR)
- //     PdJR = (*fPdJR)(T*u,q,t);
+    //  if(uSize == usSize)
+    //    updateJacobiansForSelectedFrame(t);
+    //  else 
+    //  {
+    //  // TODO: Abfrage ob Inertiales System zur Performancesteigerung
+    // 
+    //   if(fPdJT)
+    //     PdJT = (*fPdJT)(T*u,q,t);
+    //   if(fPdJR)
+    //     PdJR = (*fPdJR)(T*u,q,t);
 
- //   if(fPdjT)
- //     PdjT = (*fPdjT)(t);
- //   if(fPdjR)
- //     PdjR = (*fPdjR)(t);
+    //   if(fPdjT)
+    //     PdjT = (*fPdjT)(t);
+    //   if(fPdjR)
+    //     PdjR = (*fPdjR)(t);
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    port[iRef]->setGyroscopicAccelerationOfTranslation(portParent->getGyroscopicAccelerationOfTranslation() - tWrPK*portParent->getGyroscopicAccelerationOfRotation() + crossProduct(portParent->getAngularVelocity(), 2*WvPKrel+crossProduct(portParent->getAngularVelocity(),WrPK)));
-    port[iRef]->setGyroscopicAccelerationOfRotation(portParent->getGyroscopicAccelerationOfRotation() + crossProduct(portParent->getAngularVelocity(), WomPK));
+    port[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
+    port[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), WomPK));
 
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,portParent->getJacobianOfTranslation().cols()-1)) = portParent->getJacobianOfTranslation() - tWrPK*portParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,portParent->getJacobianOfRotation().cols()-1)) = portParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = portParent->getOrientation()*PJTs;
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = portParent->getOrientation()*PJRs;
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
+    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJTs;
+    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJRs;
     //cout << name << endl;
     //cout << usSize << endl;
     //cout << hsSize << endl;
     //cout << PJTs << endl;
     //cout << PJRs << endl;
-  //  }
+    //  }
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t) {
@@ -331,15 +331,15 @@ namespace MBSim {
     // Jacobi der anderen KOSY (außer Schwerpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
-	SqrMat tWrSK = tilde(WrSK[i]);
-	port[i]->setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrSK*port[0]->getJacobianOfRotation());
-	port[i]->setJacobianOfRotation(port[0]->getJacobianOfRotation());
-	port[i]->setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSK[i])));
-	port[i]->setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
+        SqrMat tWrSK = tilde(WrSK[i]);
+        port[i]->setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrSK*port[0]->getJacobianOfRotation());
+        port[i]->setJacobianOfRotation(port[0]->getJacobianOfRotation());
+        port[i]->setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSK[i])));
+        port[i]->setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
       }
     }
 
-     // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
+    // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat tWrSC = tilde(WrSC[i]);
       contour[i]->setWJR(port[0]->getJacobianOfRotation());
@@ -379,23 +379,23 @@ namespace MBSim {
       cout << joint->getName() << endl;
       parent->addLink(joint);
       if(forceDir.cols()) {
-	joint->setForceDirection(forceDir);
-	joint->setForceLaw(new BilateralConstraint);
-	joint->setImpactForceLaw(new BilateralImpact);
+        joint->setForceDirection(forceDir);
+        joint->setForceLaw(new BilateralConstraint);
+        joint->setImpactForceLaw(new BilateralImpact);
       }
       if(momentDir.cols()) {
-	joint->setMomentDirection(momentDir);
-	joint->setMomentLaw(new BilateralConstraint);
-	joint->setImpactMomentLaw(new BilateralImpact);
+        joint->setMomentDirection(momentDir);
+        joint->setMomentLaw(new BilateralConstraint);
+        joint->setImpactMomentLaw(new BilateralImpact);
       }
-      joint->connect(portParent,port[iRef]);
+      joint->connect(frameParent,port[iRef]);
     }
   }
 
 
   //  void RigidBody::updateVRef(const Mat& VParent) {
   //    Frame* cos[2];
-  //    cos[0] = portParent;
+  //    cos[0] = frameParent;
   //    cos[1] = port[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
@@ -407,7 +407,7 @@ namespace MBSim {
   //
   //  void RigidBody::updateWRef(const Mat& WParent) {
   //    Frame* cos[2];
-  //    cos[0] = portParent;
+  //    cos[0] = frameParent;
   //    cos[1] = port[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
@@ -462,18 +462,18 @@ namespace MBSim {
       PrPK = (*fPrPK)(q,t);
 
     // Kinematik des Referenz-KOSY updaten
-    port[iRef]->setOrientation(portParent->getOrientation()*APK);
+    port[iRef]->setOrientation(frameParent->getOrientation()*APK);
 
     if(cb) {
-      PJR = trans(portParent->getOrientation())*port[iRef]->getOrientation()*PJR0;
+      PJR = trans(frameParent->getOrientation())*port[iRef]->getOrientation()*PJR0;
     }
 
-    WrPK = portParent->getOrientation()*PrPK;
-    WomPK = portParent->getOrientation()*(PJR*u + PjR);
-    WvPKrel = portParent->getOrientation()*(PJT*u + PjT);
-    port[iRef]->setAngularVelocity(portParent->getAngularVelocity() + WomPK);
-    port[iRef]->setPosition(WrPK + portParent->getPosition());
-    port[iRef]->setVelocity(portParent->getVelocity() + WvPKrel + crossProduct(portParent->getAngularVelocity(),WrPK));
+    WrPK = frameParent->getOrientation()*PrPK;
+    WomPK = frameParent->getOrientation()*(PJR*u + PjR);
+    WvPKrel = frameParent->getOrientation()*(PJT*u + PjT);
+    port[iRef]->setAngularVelocity(frameParent->getAngularVelocity() + WomPK);
+    port[iRef]->setPosition(WrPK + frameParent->getPosition());
+    port[iRef]->setVelocity(frameParent->getVelocity() + WvPKrel + crossProduct(frameParent->getAngularVelocity(),WrPK));
   }
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
@@ -502,10 +502,10 @@ namespace MBSim {
     // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<port.size(); i++) {
       if(i!=unsigned(iRef)) {
-	port[i]->setPosition(port[0]->getPosition() + WrSK[i]);
-	port[i]->setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSK[i]));
-	port[i]->setAngularVelocity(port[0]->getAngularVelocity());
-	port[i]->setOrientation(port[0]->getOrientation()*ASK[i]);
+        port[i]->setPosition(port[0]->getPosition() + WrSK[i]);
+        port[i]->setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSK[i]));
+        port[i]->setAngularVelocity(port[0]->getAngularVelocity());
+        port[i]->setOrientation(port[0]->getOrientation()*ASK[i]);
       }
     }
     // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
@@ -596,7 +596,7 @@ namespace MBSim {
     outputfile << port[iRef]->getName() << endl << endl;
 
     outputfile << "# Frame of Reference:" << endl;
-    outputfile << portParent->getFullName() << endl << endl;
+    outputfile << frameParent->getFullName() << endl << endl;
 
     if(fPrPK)
       fPrPK->save(path,outputfile);
