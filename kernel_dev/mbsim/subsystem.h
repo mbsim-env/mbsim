@@ -42,6 +42,11 @@ namespace MBSim {
   class TreeRigid;
   class BodyRigid;
 
+  /*!
+   * \brief Subsystem TODO
+   * \author Martin Foerg
+   * \date xy.03.09
+   */
   class Subsystem : public Element, public ObjectInterface, public LinkInterface {
 
     friend class HitSphereLink;

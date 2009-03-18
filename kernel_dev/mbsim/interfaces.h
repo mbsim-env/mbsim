@@ -34,7 +34,7 @@ namespace MBSim {
   class ContourPointData;
   class Subsystem;
 
-  /**
+  /*!
    * \brief interface for objects for usage in tree structures
    * \author Martin Foerg
    * \date 17.03.09
@@ -187,7 +187,7 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) = 0;
   };
 
-  /**
+  /*!
    * \brief interface for links
    * \author Martin Foerg
    * \date 17.03.09
@@ -271,7 +271,7 @@ namespace MBSim {
       virtual void updateJacobians(double t) = 0;
   };
 
-  /**
+  /*!
    * \brief discretization interface for flexible systems
    * \author Thorsten Schindler
    * \author Roland Zander
