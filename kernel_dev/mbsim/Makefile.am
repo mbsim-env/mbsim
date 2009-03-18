@@ -24,7 +24,8 @@ userfunction_contour.cc\
 functions_contact.cc\
 class_factory.cc\
 kinematics.cc\
-constitutive_laws.cc
+constitutive_laws.cc\
+flexible_body.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la 
 
@@ -56,6 +57,7 @@ functions_contact.h\
 class_factory.h\
 kinematics.h\
 constitutive_laws.h\
+flexible_body.h\
 interfaces.h\
 compatibility_classes/body_rigid.h\
 compatibility_classes/body_rigid_abs.h\
