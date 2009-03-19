@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
-
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,10 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
+
 #include <config.h>
 #include <mbsim/frame.h>
 #include <mbsim/object.h>
@@ -50,44 +48,7 @@ namespace MBSim {
     WJP.resize(3,0);
     WJR.resize(3,0);
   }
-
-  // string Frame::getFullName() const {
-  //   return parent->getFullName() + "." + name;
-  // }
-
-  void Frame::init() {
-
-    getJacobianOfTranslation().resize(3,hSize[0]);
-    getJacobianOfRotation().resize(3,hSize[0]);
-  }
-
-  void Frame::resizeJacobians() {
-
-    getJacobianOfTranslation().resize();
-    getJacobianOfRotation().resize();
-  }
-
-  void Frame::resizeJacobians(int j) {
-
-    getJacobianOfTranslation().resize(3,hSize[j]);
-    getJacobianOfRotation().resize(3,hSize[j]);
-  }
-
-  //int Frame::gethInd(Subsystem* sys) {
-  //  return parent->gethInd(sys);
-  // }
-
-
-#ifdef HAVE_AMVIS
-  void Frame::setAMVisKosSize(double size) {
-    if(size>0) {
-      kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
-      kosAMVisCounter++;
-      kosAMVis->setSize(size);
-    }
-  }
-#endif
-
+  
   void Frame::plot(double t, double dt, bool top) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::plot(t,dt,false);
@@ -115,6 +76,12 @@ namespace MBSim {
     }
   }
 
+  void Frame::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
+    }
+  }
+
   void Frame::initPlot(bool top) {
     Element::initPlot(parent, true, false);
 
@@ -138,10 +105,37 @@ namespace MBSim {
     }
   }
 
-  void Frame::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Element::closePlot();
-    }
+  void Frame::resizeJacobians() {
+    getJacobianOfTranslation().resize();
+    getJacobianOfRotation().resize();
   }
 
+  void Frame::resizeJacobians(int j) {
+    getJacobianOfTranslation().resize(3,hSize[j]);
+    getJacobianOfRotation().resize(3,hSize[j]);
+  }
+
+  void Frame::init() {
+    getJacobianOfTranslation().resize(3,hSize[0]);
+    getJacobianOfRotation().resize(3,hSize[0]);
+  }
+
+#ifdef HAVE_AMVIS
+  void Frame::setAMVisKosSize(double size) {
+    if(size>0) {
+      kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
+      kosAMVisCounter++;
+      kosAMVis->setSize(size);
+    }
+  }
+#endif
+
+  // string Frame::getFullName() const {
+  //   return parent->getFullName() + "." + name;
+  // }
+
+  //int Frame::gethInd(Subsystem* sys) {
+  //  return parent->gethInd(sys);
+  // }
 }
+
