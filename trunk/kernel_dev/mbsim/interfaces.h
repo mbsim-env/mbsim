@@ -23,6 +23,7 @@
 #define _INTERFACES_H_
 
 #include <fmatvec.h>
+#include <mbsim/element.h>
 
 namespace H5 {
   class CommonFG;
@@ -37,7 +38,8 @@ namespace MBSim {
   /*!
    * \brief interface for objects for usage in tree structures
    * \author Martin Foerg
-   * \date 17.03.09
+   * \date 2009-03-09 some comments (Thorsten Schindler)
+   * \date 2009-03-19 element.h added (Thorsten Schindler)
    */
   class ObjectInterface {
     public:
@@ -190,7 +192,7 @@ namespace MBSim {
   /*!
    * \brief interface for links
    * \author Martin Foerg
-   * \date 17.03.09
+   * \date 2009-03-09 some comments (Thorsten Schindler)
    */
   class LinkInterface {
     public:
@@ -275,7 +277,7 @@ namespace MBSim {
    * \brief discretization interface for flexible systems
    * \author Thorsten Schindler
    * \author Roland Zander
-   * \date 16.03.09
+   * \date 2009-03-09 initial commit in kernel_dev (Thorsten Schindler)
    * 
    * interface for the desription of flexible systems using global and FE ansatz functions
    */
