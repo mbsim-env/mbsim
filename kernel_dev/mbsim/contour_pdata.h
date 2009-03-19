@@ -1,5 +1,4 @@
-/* Copyright (C) 2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +12,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
  */
 
 #ifndef _CONTOUR_PDATA_H_
@@ -36,37 +32,61 @@ namespace MBSim {
 
   enum ContourParameterType {NODE, CONTINUUM, EXTINTERPOL};
 
-  /*! \brief struct for data-management for single point on a Contour
-  */
+  /**
+   * \brief struct for data-management for single point on a contour to describe contact kinematics
+   * \author Roland Zander
+   * \date 2009-03-19 some comments (Thorsten Schindler)
+   */
   struct ContourPointData {
-    /* --------- used for all bodies, sufficient information for rigid bodies ------------------ */
+    /* -- used for all bodies, sufficient information for rigid bodies -- */
     ContourPointData() : cosy("Dummy") {}
 
-    /** kartesian coordinates of contact point in world system*/
-    Vec WrOC;
+    /**
+     * \brief accompanying frame
+     */
+    Frame cosy;
 
-    /* --------- used for elastic bodies ------------------ */
-
-    /** Type of data representation: node, continuum, interpolation (extinterpol) */
+    /* ------------------------ used for elastic bodies ----------------- */
+    /** 
+     * \brief type of data representation: node, continuum, interpolation (extinterpol) 
+     */
     ContourParameterType type;
-    /** ID of node or other discret interface within body -> FiniteElements */
+
+    /** 
+     * \brief ID of node or other discret interface within body -> FiniteElements
+     */
     int ID;
-    /** contour parameter(s) */
+
+    /**
+     * \brief contour parameter(s)
+     */
     Vec alpha;
-    /** contour parameter(s) velocities */
+
+    /**
+     * \brief contour parameter(s) velocities
+     */
     Vec alphap;
-    /** interpolation weights */
+
+    /** 
+     * \brief interpolation weights
+     */
     Vec iWeights;
-    /*! list of nodes used in interpolation 
-      The (Body specific ID) can be accessed using ->iPoint[NNumber]->getID(); */
+
+    /**
+     * \brief list of nodes used in interpolation
+     *
+     * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
+     */
     vector<Point*> iPoints;
 
+    // obsolete TODO
     Vec Wn;
     Mat Wt;
+    Vec WrOC;
 
-    Frame cosy;
   };
 
 }
 
 #endif
+
