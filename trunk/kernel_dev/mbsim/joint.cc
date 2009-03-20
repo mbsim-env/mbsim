@@ -33,7 +33,11 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Joint::Joint(const string &name) : Link(name), ffl(0), fml(0), fifl(0), fiml(0), coilspringAMVis(0), coilspringAMVisUserFunctionColor(0), C("C") {
+  Joint::Joint(const string &name) : Link(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
+#ifdef HAVE_AMVIS
+    coilspringAMVis=0;
+    coilspringAMVisUserFunctionColor=0;
+#endif
   }
 
   Joint::~Joint() { 
