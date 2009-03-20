@@ -22,10 +22,10 @@
 #include <mbsim/object.h>
 #include <mbsim/subsystem.h>
 #include <mbsim/utils/function.h>
+#include <mbsim/utils/rotarymatrices.h>
 #ifdef HAVE_AMVIS
 #include "kos.h"
 #include <mbsim/data_interface_base.h>
-#include <mbsim/utils/rotarymatrices.h>
 using namespace AMVis;
 int MBSim::Frame::kosAMVisCounter=0;
 #endif

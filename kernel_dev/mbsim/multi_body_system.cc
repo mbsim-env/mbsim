@@ -357,7 +357,7 @@ namespace MBSim {
   }
 
   void MultiBodySystem::initPlot(bool top) {
-    Subsystem::initPlot(false);
+    plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
 
   void MultiBodySystem::closePlot() {

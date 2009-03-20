@@ -217,8 +217,8 @@ namespace MBSim {
       Body::plot(t,dt, false);
 
       if(getPlotFeature(globalPosition)==enabled) {
-        Vec WrOS=cosyAMVis->getPosition();
-        Vec cardan=AIK2Cardan(cosyAMVis->getOrientation());
+        Vec WrOS=getFrame("C")->getPosition();
+        Vec cardan=AIK2Cardan(getFrame("C")->getOrientation());
         plotVector.push_back(WrOS(0));
         plotVector.push_back(WrOS(1));
         plotVector.push_back(WrOS(2));

@@ -52,7 +52,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Frame();
+      virtual ~Frame() {}
 
       /* INHERITED INTERFACE */
       string getType() const { return "Frame"; }
