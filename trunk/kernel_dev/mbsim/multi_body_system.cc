@@ -37,9 +37,16 @@
 #  define mkdir(a,b) mkdir(a)
 #endif
 #include <H5Cpp.h>
+#include <hdf5serie/fileserie.h>
 #include <hdf5serie/simpleattribute.h>
+#ifdef HAVE_ANSICSIGNAL
+#  include <signal.h>
+#endif
+
 
 namespace MBSim {
+
+  bool MultiBodySystem::exitRequest=false;
 
   MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), warnLevel(0), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), directoryName("Default"), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { //, activeConstraintsChanged(true)
 
@@ -58,6 +65,7 @@ namespace MBSim {
   } 
 
   void MultiBodySystem::constructor() {
+    integratorExitRequest=false;
     setPlotFeatureRecursive(plotRecursive, enabled);
     setPlotFeature(separateFilePerSubsystem, enabled);
     setPlotFeatureForChildren(separateFilePerSubsystem, disabled);
@@ -190,6 +198,18 @@ namespace MBSim {
     initPlot();
 
     cout << "...... done initialising." << endl << endl;
+
+#ifdef HAVE_ANSICSIGNAL
+    signal(SIGINT, sigTermHandler);
+    signal(SIGHUP, sigTermHandler);
+    signal(SIGTERM, sigTermHandler);
+#endif
+
+  }
+
+  void MultiBodySystem::sigTermHandler(int) {
+    cout<<"MBSim: Received terminate signal!"<<endl;
+    exitRequest=true;
   }
 
   void MultiBodySystem::setDirectory() {
@@ -354,10 +374,6 @@ namespace MBSim {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
-  }
-
-  void MultiBodySystem::initPlot(bool top) {
-    plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
 
   void MultiBodySystem::closePlot() {
@@ -1472,5 +1488,22 @@ namespace MBSim {
     facLLM(); 
     updateW(t); 
     projectGeneralizedVelocities(t);
+  }
+
+  // This function is called ones every time step by every integrator
+  void MultiBodySystem::updateKinematics(double t) {
+    Group::updateKinematics(t);
+
+    // if the integrator has not exit after a integratorExitRequest, exit the hard way
+    if(integratorExitRequest) {
+      cout<<"MBSim: Integrator has not stopped integration! Terminate NOW the hard way!"<<endl;
+      _exit(1);
+    }
+    // on exitRequest flush plot files and ask the integrator to exit
+    if(exitRequest) {
+      cout<<"MBSim: Flushing HDF5 files and ask integrator to terminate!"<<endl;
+      H5::FileSerie::sigUSR2Handler(0);
+      integratorExitRequest=true;
+    }
   }
 }

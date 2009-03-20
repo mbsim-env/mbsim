@@ -54,6 +54,11 @@ namespace MBSim {
 
     private:
       void constructor();
+    private:
+      bool integratorExitRequest;
+      static bool exitRequest;
+    public:
+      bool getIntegratorExitRequest() { return integratorExitRequest; }
 
     protected:
 
@@ -162,6 +167,8 @@ namespace MBSim {
       /*! Adds \param mbs to multibody system */
 
       void init();
+      static void sigTermHandler(int);
+
       //void checkActiveConstraints();
       //void setActiveConstraintsChanged(bool b) {activeConstraintsChanged = b;}
       virtual void preInteg(MultiBodySystem *parent);
@@ -186,11 +193,13 @@ namespace MBSim {
       void getsv(const Vec&, Vec&, double);
       virtual void shift(Vec& z, const Vector<int>& jsv, double t);
 
-      virtual void initPlot(bool top=true);
       virtual void closePlot();
       void plot(const Vec& z, double t, double dt=1);
       /* Updates the position depending structures for multibody system */
       void update(const Vec &zParent, double t);
+
+      void updateKinematics(double t);
+
       /*! Computes velocity difference for current time \param t with state \param zParent and time step \param dt */
       Vec deltau(const Vec &uParent, double t, double dt);
       /*! Updates position gap for current time \param t with state \param zParent and time step \param dt*/

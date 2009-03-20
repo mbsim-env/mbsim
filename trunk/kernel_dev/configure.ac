@@ -33,6 +33,20 @@ if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MINGW], [1], [Host System is MinGW/MSys])
 fi
 
+
+dnl Check for ANSI C Signal Handling
+AC_SUBST([DEFINES])
+AC_MSG_CHECKING([for ANSI c signal SIGTERM]); AC_COMPILE_IFELSE([
+#include <signal.h>
+int main() {
+  signal(SIGTERM, 0);
+  return 0;
+}
+], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
+   [AC_MSG_RESULT([no])])
+
+
+
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
 dnl revision: 	The implementation number of the current interface. 

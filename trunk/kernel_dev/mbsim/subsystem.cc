@@ -28,6 +28,7 @@
 #include <mbsim/frame.h>
 #include <mbsim/class_factory.h>
 #include <mbsim/multi_body_system.h>
+#include <hdf5serie/fileserie.h>
 
 #include "compatibility_classes/tree_rigid.h"
 #include "compatibility_classes/body_rigid.h"
@@ -1280,7 +1281,7 @@ namespace MBSim {
                                       parent->getPlotGroup()->getId(), name.c_str(),
                                       H5P_DEFAULT, H5P_DEFAULT);
         // create new plot file (cast needed because of the inadequacy of the HDF5 C++ inteface?)
-        plotGroup=(H5::Group*)new H5::H5File(getFullName()+".mbsim.h5", H5F_ACC_TRUNC);
+        plotGroup=(H5::Group*)new H5::FileSerie(getFullName()+".mbsim.h5", H5F_ACC_TRUNC);
       }
       else
         plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
@@ -1297,6 +1298,7 @@ namespace MBSim {
       for(unsigned i=0; i<EDI.size(); i++)
         EDI[i]->initPlot();
     }
+    plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
 
   void Subsystem::closePlot() {
