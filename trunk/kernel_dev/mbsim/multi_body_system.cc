@@ -1502,8 +1502,11 @@ namespace MBSim {
     // on exitRequest flush plot files and ask the integrator to exit
     if(exitRequest) {
       cout<<"MBSim: Flushing HDF5 files and ask integrator to terminate!"<<endl;
-      H5::FileSerie::sigUSR2Handler(0);
+      H5::FileSerie::flushAllFiles();
       integratorExitRequest=true;
     }
+
+    // flush files ones if requested
+    if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles();
   }
 }
