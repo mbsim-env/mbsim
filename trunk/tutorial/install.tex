@@ -3,7 +3,7 @@ This section summarizes the necessary steps to install \MBSim{} \cite{Foer06}.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
-The source code of \MBSim{} together with some examples and the necessary \FMatVec{} program can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} at \url{http://www.hdfgroup.org} and a wrapper being only locally available from Markus Friedrich. \AMVis{} can be downloaded from \url{www.amm.mw.tum.de}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL} (see file~\texttt{COPYING}, respectively).\\
+The source code of \MBSim{} together with some examples, the necessary \FMatVec{} program and a \HDF{} wrapper can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} at \url{http://www.hdfgroup.org}. \AMVis{} can be downloaded from \url{www.amm.mw.tum.de}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL} (see file~\texttt{COPYING}, respectively).\\
 First, one should create a directory~\texttt{MBSim} and a directory \texttt{MBSim/Install} for the libraries being installed. For calculations on 64- and 32-bit computers the following steps have to be accomplished on both operating systems. Thereby, it is reasonable to have only one copy of the source code and to use soft links for compiling the different binary installations (\texttt{cp -rs} with absolute path information).
 
 %%------------------------------------------------------------ SUBSUBSECTION --
@@ -149,12 +149,11 @@ to gain overall access to the command \texttt{amvis}.
 \end{verbatim}
 and \textsc{install} in the directory \texttt{MBSim/hdf5-1.8.2}.
 
-{\small At the institute one can use the subversion checkout for the \HDF wrapper
+The \HDF wrapper is available by
 \begin{verbatim}
- svn checkout http://zeiss/repos/SVN--rep/user/Friedrich/trunk/HDF5Serie
+ svn checkout http://svn.berlios.de/svnroot/repos/hdf5serie/trunk HDF5Serie
 \end{verbatim}
- and use the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/HDF5Series}.
-}
+as well as the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/HDF5Series}.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
