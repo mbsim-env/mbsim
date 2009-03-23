@@ -1,13 +1,18 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "objobject.h"
 #include "mbsim/contour.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
-#include "cube.h"
 #include "mbsim/constitutive_laws.h"
 
+#ifdef HAVE_AMVIS
 using namespace AMVis;
+#include "cube.h"
+#include "objobject.h"
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/objobject.h"
+#endif
 
 extern bool rigidContacts;
 
@@ -87,6 +92,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
     cr2S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   }
 
+#ifdef HAVE_AMVIS
   // Visualisation with AMVis
   ObjObject *obj = new ObjObject(getName() + "." + body->getName(),1,false);
   obj->setObjFilename("objects/rod.obj");
@@ -101,6 +107,18 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // cubeoid->setSize(l,h,d);
   // cubeoid->setColor(0);
   // body->setAMVisBody(cubeoid);
-
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  // Visualisation with AMVis
+  AMVis::ObjObject *obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/rod.obj");
+  obj->setInitialRotation(M_PI/2,M_PI/2,0);
+  obj->setScaleFactor(0.1);
+  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setEpsVertex(1e-5);
+  obj->setEpsNormal(1e-5);
+  obj->setSmoothBarrier(M_PI*2/9);
+  body->setAMVisRigidBody(obj);
+#endif
 }
 

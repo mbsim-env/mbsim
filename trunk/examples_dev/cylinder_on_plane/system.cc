@@ -1,13 +1,18 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "cylinder.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
-#include "cube.h"
 
+#ifdef HAVE_AMVIS
+#include "cube.h"
+#include "cylinder.h"
 using namespace AMVis;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/invisiblebody.h>
+#endif
 
 extern bool rigidContact;
 
@@ -46,7 +51,11 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   u0(2) = -M_PI*10;
   body->setu0(u0);
 
-  body->addContour(new CircleSolid("Circle",d),Vec(3),SqrMat(3,EYE));
+  CircleSolid *circlecontour=new CircleSolid("Circle",d);
+  body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
+#ifdef HAVE_AMVISCPPINTERFACE
+  circlecontour->enableAMVis();
+#endif
 
   double phi = M_PI*0.6; 
   SqrMat A(3);
@@ -71,6 +80,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
     rc->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   }
 
+#ifdef HAVE_AMVIS
   // Visualisation with AMVis
   Cylinder *cubeoid = new Cylinder(getName() + "." + body->getName(),1,false);
   cubeoid->setBaseRadius(d);
@@ -78,6 +88,12 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   cubeoid->setHeight(0.03);
   cubeoid->setColor(0);
   body->setAMVisBody(cubeoid);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  body->getFrame("C")->enableAMVis(1.2*d);
+  AMVis::InvisibleBody* dummy=new AMVis::InvisibleBody;
+  body->setAMVisRigidBody(dummy);
+#endif
 
 }
 

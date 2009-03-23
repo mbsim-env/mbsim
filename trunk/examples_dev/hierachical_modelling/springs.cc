@@ -1,5 +1,6 @@
 #include "springs.h"
 #include "mbsim/frame.h"
+#include "mbsim/subsystem.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
@@ -19,16 +20,15 @@ namespace MBSim {
     la.resize(1);
   }
 
-  /*void Spring::initPlotFiles() {
-
-    Link::initPlotFiles();
-
-#ifdef HAVE_AMVIS
-    if (coilspringAMVis) {
-      coilspringAMVis->writeBodyFile();
+  void Spring::initPlot(bool top) {
+    Link::initPlot(true);
+#ifdef HAVE_AMVISCPPINTERFACE
+    if(coilspringAMVis) {
+      coilspringAMVis->setName(name);
+      parent->getAMVisGrp()->addObject(coilspringAMVis);
     }
 #endif
-  }*/
+  }
 
   void Spring::updateg(double t) {
     Vec WrP0P1=port[1]->getPosition() - port[0]->getPosition();
@@ -53,29 +53,28 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  /*void Spring::plot(double t,double dt) {
-    Link::plot(t,dt);
+  void Spring::plot(double t,double dt, bool top) {
+    Link::plot(t,dt,true);
 
-#ifdef HAVE_AMVIS
+#ifdef HAVE_AMVISCPPINTERFACE
     if (coilspringAMVis) {
       Vec WrOToPoint;
       Vec WrOFromPoint;
 
       WrOFromPoint = port[0]->getPosition();
       WrOToPoint   = port[1]->getPosition();
-      if (coilspringAMVisUserFunctionColor) {
-	double color;
-	color = ((*coilspringAMVisUserFunctionColor)(t))(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
-	coilspringAMVis->setColor(color);
-      } 
-      coilspringAMVis->setTime(t); 
-      coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
-      coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
-      coilspringAMVis->appendDataset(0);
+      vector<double> data;
+      data.push_back(t); 
+      data.push_back(WrOFromPoint(0));
+      data.push_back(WrOFromPoint(1));
+      data.push_back(WrOFromPoint(2));
+      data.push_back(WrOToPoint(0));
+      data.push_back(WrOToPoint(1));
+      data.push_back(WrOToPoint(2));
+      data.push_back(0);
+      coilspringAMVis->append(data);
     }
 #endif
-  }*/
+  }
 
 }

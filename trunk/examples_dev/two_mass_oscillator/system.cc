@@ -3,11 +3,17 @@
 #include "mbsim/userfunction.h"
 #include "springs.h"
 #include "mbsim/load.h"
+
+#ifdef HAVE_AMVIS
 #include "cuboid.h"
 #include "cube.h"
 #include "coilspring.h"
-
 using namespace AMVis;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/cube.h"
+#include "amviscppinterface/coilspring.h"
+#endif
 
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {
@@ -96,6 +102,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));
   box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
+#ifdef HAVE_AMVIS
   // ----------------------- Visualisierung in AMVis --------------------  
   Cube * cuboid = new Cube(box1->getName(),1,false);
   cuboid->setLength(h1);
@@ -118,6 +125,28 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   coilspring->setRadiusCrossSection(0.01);
   coilspring->setNumberOfCoils(5);
   spring2->setAMVisSpring(coilspring);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  // ----------------------- Visualisierung in AMVis --------------------  
+  AMVis::Cube *cuboid=new AMVis::Cube;
+  cuboid->setLength(h1);
+  box1->setAMVisRigidBody(cuboid);
 
+  cuboid=new AMVis::Cube;
+  cuboid->setLength(h2);
+  box2->setAMVisRigidBody(cuboid);
+
+  AMVis::CoilSpring* amvisspring1=new AMVis::CoilSpring;
+  amvisspring1->setSpringRadius(0.1);
+  amvisspring1->setCrossSectionRadius(0.01);
+  amvisspring1->setNumberOfCoils(5);
+  spring1->setAMVisSpring(amvisspring1);
+
+  AMVis::CoilSpring* amvisspring2=new AMVis::CoilSpring;
+  amvisspring2->setSpringRadius(0.1);
+  amvisspring2->setCrossSectionRadius(0.01);
+  amvisspring2->setNumberOfCoils(5);
+  spring2->setAMVisSpring(amvisspring2);
+#endif
 
 }

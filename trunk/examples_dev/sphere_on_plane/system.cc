@@ -1,12 +1,18 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "objobject.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
+
+#ifdef HAVE_AMVIS
 #include "cube.h"
 #include "sphere.h"
+#include "objobject.h"
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/invisiblebody.h>
+#endif
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {
  // Gravitation
@@ -57,6 +63,9 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setInertiaTensor(Theta);
   Sphere *sphere = new Sphere("Sphere");
   sphere->setRadius(r);
+#ifdef HAVE_AMVISCPPINTERFACE
+  sphere->enableAMVis();
+#endif
   body->addContour(sphere,Vec(3),SqrMat(3,EYE));
 
     Contact *cnf = new Contact("Contact");
@@ -71,8 +80,15 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
     //cnf->setPlotLevel(2);
     addLink(cnf);
 
+#ifdef HAVE_AMVIS
     AMVis::Sphere *obj = new AMVis::Sphere(body->getName(),1,false);
     body->setAMVisBody(obj);
     obj->setRadius(r);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+    AMVis::InvisibleBody *obj=new AMVis::InvisibleBody;
+    body->setAMVisRigidBody(obj);
+    body->getFrame("C")->enableAMVis(2*r*1.2,0);
+#endif
 }
 

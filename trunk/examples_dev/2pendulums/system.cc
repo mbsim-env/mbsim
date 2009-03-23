@@ -1,9 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "objobject.h"
 #include "pendulum.h"
-
-using namespace AMVis;
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {
 

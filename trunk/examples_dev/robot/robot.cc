@@ -3,13 +3,18 @@
 #include "mbsim/userfunction.h"
 #include "mbsim/load.h"
 #include "mbsim/actuator.h"
-#include "cuboid.h"
-#include "cylinder.h"
-#include "objobject.h"
 #include "mbsimControl/transfersys.h"
 #include "mbsim/tree.h"
 
+#ifdef HAVE_AMVIS
+#include "cuboid.h"
+#include "cylinder.h"
+#include "objobject.h"
 using namespace AMVis;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/objobject.h"
+#endif
 
 class PositionSensor : public UserFunction {
   private:
@@ -153,6 +158,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 
 
+#ifdef HAVE_AMVIS
   // --------------------------- Setup Visualisation ----------------------------
   ObjObject *obj = new ObjObject(basis->getName(),1,false);
   obj->setObjFilename("objects/basis.obj");
@@ -186,4 +192,39 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   obj->setVertexEPS(1e-5);
   obj-> setNormalEPS(1e-5);
   obj-> setAngleEPS(M_PI*2/9);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  AMVis::ObjObject *obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/basis.obj");
+  obj->setScaleFactor(0.2);
+  obj->setInitialTranslation(0,0.25,0);
+  obj->setInitialRotation(-M_PI/2,0,0);
+  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setEpsVertex(1e-5);
+  obj->setEpsNormal(1e-5);
+  obj->setSmoothBarrier(M_PI*2/9);
+  basis->setAMVisRigidBody(obj);
+
+  obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/arm.obj");
+  obj->setScaleFactor(0.2);
+  obj->setInitialTranslation(0,0.08,0);
+  obj->setInitialRotation(-M_PI/2,0,0);
+  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setEpsVertex(1e-5);
+  obj->setEpsNormal(1e-5);
+  obj->setSmoothBarrier(M_PI*2/9);
+  arm->setAMVisRigidBody(obj);
+
+  obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/spitze.obj");
+  obj->setScaleFactor(0.2);
+  obj->setInitialTranslation(0,-0.3,0);
+  obj->setInitialRotation(-M_PI/2,0,0);
+  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setEpsVertex(1e-5);
+  obj->setEpsNormal(1e-5);
+  obj->setSmoothBarrier(M_PI*2/9);
+  spitze->setAMVisRigidBody(obj);
+#endif
 }

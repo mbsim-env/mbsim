@@ -2,10 +2,15 @@
 #include "group1.h"
 #include "mbsim/rigid_body.h"
 #include "springs.h"
+#ifdef HAVE_AMVIS
 #include "cube.h"
 #include "coilspring.h"
 
 using namespace AMVis;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/cuboid.h>
+#endif
 
 Group2::Group2(const string &name) : Group(name) {
  // Parameter der Körper
@@ -52,6 +57,7 @@ Group2::Group2(const string &name) : Group(name) {
   addSubsystem(group,r,A);
 
 
+#ifdef HAVE_AMVIS
   {
   ostringstream os;
   os <<name<< "." << box1->getName();
@@ -60,6 +66,13 @@ Group2::Group2(const string &name) : Group(name) {
   cuboid->setColor(0.5);
   box1->setAMVisBody(cuboid);
   }
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  AMVis::Cuboid* body1=new AMVis::Cuboid;
+  body1->setLength(Vec(3,INIT,1)*h1);
+  box1->setAMVisRigidBody(body1);
+  box1->getFrame("C")->enableAMVis();
+#endif
 
 
 }
