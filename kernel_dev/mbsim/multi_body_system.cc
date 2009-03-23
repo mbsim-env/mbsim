@@ -376,6 +376,13 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
+  void MultiBodySystem::initPlot(bool top) {
+    Subsystem::initPlot(false);
+#ifdef HAVE_AMVISCPPINTERFACE
+    amvisGrp->initialize();
+#endif
+  }
+
   void MultiBodySystem::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();

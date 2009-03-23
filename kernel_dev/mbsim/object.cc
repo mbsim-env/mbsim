@@ -37,6 +37,10 @@ namespace MBSim {
     uInd[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
+#ifdef HAVE_AMVISCPPINTERFACE
+    amvisBody=0;
+    amvisGrp=0;
+#endif
   } 
 
   Object::~Object() {
@@ -103,8 +107,8 @@ namespace MBSim {
 
       for(unsigned int j=0; j<port.size(); j++)
         port[j]->plot(t,dt);
-      /*for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->plot(t,dt);*/
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->plot(t,dt);
     }
   }
 
@@ -133,10 +137,20 @@ namespace MBSim {
 
       if(top) createDefaultPlot();
 
+#ifdef HAVE_AMVISCPPINTERFACE
+      amvisGrp=new AMVis::Group();
+      amvisGrp->setName(name);
+      parent->getAMVisGrp()->addObject(amvisGrp);
+      if(getPlotFeature(amvis)==enabled && amvisBody) {
+        amvisBody->setName(name);
+        amvisGrp->addObject(amvisBody);
+      }
+#endif
+
       for(unsigned int j=0; j<port.size(); j++)
         port[j]->initPlot();
-      /*for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->initPlotFiles();*/
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->initPlot();
     }
   }
 
@@ -144,8 +158,8 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       for(unsigned int j=0; j<port.size(); j++)
         port[j]->closePlot();
-      /*for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->closePlot();*/
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->closePlot();
 
       Element::closePlot();
     }
@@ -418,6 +432,14 @@ namespace MBSim {
   int Object::portIndex(const Frame *port_) const {
     for(unsigned int i=0; i<port.size(); i++) {
       if(port_==port[i])
+        return i;
+    }
+    return -1;
+  }
+
+  int Object::contourIndex(const Contour *contour_) const {
+    for(unsigned int i=0; i<contour.size(); i++) {
+      if(contour_==contour[i])
         return i;
     }
     return -1;

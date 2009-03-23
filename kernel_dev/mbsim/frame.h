@@ -27,6 +27,9 @@
 #ifdef HAVE_AMVIS
 namespace AMVis {class Kos;}
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/frame.h>
+#endif
 
 namespace MBSim {
 
@@ -64,6 +67,9 @@ namespace MBSim {
       /* GETTER / SETTER */
       ObjectInterface* getParent() { return parent; }
       void setParent(ObjectInterface* parent_) { parent = parent_; }
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Frame* amvisFrame;
+#endif
 
       int gethSize(int i=0) const { return hSize[i]; }
       int gethInd(int i=0) const { return hInd[i]; }
@@ -124,6 +130,10 @@ namespace MBSim {
        * TODO
        */
       void setAMVisKosSize(double size);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      // disableAMVis if size<0
+      void enableAMVis(double size=1, double offset=1);
 #endif
 
     protected:

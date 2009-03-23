@@ -25,6 +25,9 @@
 
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/group.h>
+#endif
 
 namespace H5 {
   class Group;
@@ -104,6 +107,9 @@ namespace MBSim {
 
       void addSubsystem(Subsystem *subsystem);
       void addObject(Object *object);
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* amvisGrp;
+#endif
 
    public:
       /*! Constructor */
@@ -339,6 +345,9 @@ namespace MBSim {
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return amvisGrp; }
+#endif
   };
 }
 

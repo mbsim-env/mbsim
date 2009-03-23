@@ -19,6 +19,7 @@
  *   mfoerg@users.berlios.de
  *
  */
+#include <config.h>
 #include <mbsim/tree.h>
 #include <mbsim/object.h>
 #include <mbsim/link.h>
