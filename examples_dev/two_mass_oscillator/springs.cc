@@ -1,10 +1,14 @@
 #include "springs.h"
+#include "mbsim/subsystem.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
 #endif
-
+#ifdef HAVE_AMVIS
+#include "coilspring.h"
+using namespace AMVis;
+#endif
 
 namespace MBSim {
 
@@ -28,6 +32,12 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
     if (coilspringAMVis) {
       coilspringAMVis->writeBodyFile();
+    }
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+    if(coilspringAMVis) {
+      coilspringAMVis->setName(name);
+      parent->getAMVisGrp()->addObject(coilspringAMVis);
     }
 #endif
   }
@@ -79,6 +89,25 @@ namespace MBSim {
       coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
       coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
       coilspringAMVis->appendDataset(0);
+    }
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+    if (coilspringAMVis) {
+      Vec WrOToPoint;
+      Vec WrOFromPoint;
+
+      WrOFromPoint = port[0]->getPosition();
+      WrOToPoint   = port[1]->getPosition();
+      vector<double> data;
+      data.push_back(t);
+      data.push_back(WrOFromPoint(0));
+      data.push_back(WrOFromPoint(1));
+      data.push_back(WrOFromPoint(2));
+      data.push_back(WrOToPoint(0));
+      data.push_back(WrOToPoint(1));
+      data.push_back(WrOToPoint(2));
+      data.push_back(0);
+      coilspringAMVis->append(data);
     }
 #endif
   }

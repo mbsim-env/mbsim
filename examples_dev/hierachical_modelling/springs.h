@@ -3,6 +3,9 @@
 
 #include "mbsim/link.h"
 #include "mbsim/data_interface_base.h"
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/coilspring.h>
+#endif
 
 
 #ifdef HAVE_AMVIS
@@ -19,10 +22,14 @@ class Spring : public Link {
       AMVis::CoilSpring *coilspringAMVis;
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::CoilSpring *coilspringAMVis;
+#endif
   public:
     Spring(const string &name);
     void init();
-    //void initPlotFiles();
+    void initPlot(bool top=true);
+    void plot(double t,double dt=1, bool top=true); 
     void updateg(double t);
     void updategd(double t); 
     void updateh(double t); 
@@ -32,9 +39,11 @@ class Spring : public Link {
     bool isActive() const {return true;}
     bool gActiveChanged() {return false;}
     virtual void connect(Frame *port1, Frame* port2);
-    //void plot(double t,double dt=1); 
  #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      void setAMVisSpring(AMVis::CoilSpring *spring_) {coilspringAMVis=spring_;}
 #endif
   };
   

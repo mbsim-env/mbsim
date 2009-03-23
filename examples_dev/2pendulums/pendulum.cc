@@ -1,8 +1,14 @@
 #include "pendulum.h"
 #include "mbsim/rigid_body.h"
-#include "objobject.h"
 
+#ifdef HAVE_AMVIS
+#include "objobject.h"
 using namespace AMVis;
+#endif
+
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/objobject.h>
+#endif
 
 Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 
@@ -35,6 +41,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+#if HAVE_AMVIS
   ObjObject * obj = new ObjObject(name+stab1->getName(),1,false);
   obj->setObjFilename("objects/pendel1.obj");
   stab1->setAMVisBody(obj);
@@ -44,6 +51,14 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   obj->setVertexEPS(1e-5);
   obj-> setNormalEPS(1e-5);
   obj-> setAngleEPS(M_PI*2/9);
+#endif
+#if HAVE_AMVISCPPINTERFACE
+  AMVis::ObjObject* obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/pendel1.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  stab1->setAMVisRigidBody(obj);
+#endif
 
   if(1) {
   stab2 = new RigidBody("Stab2");
@@ -63,6 +78,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
+#if HAVE_AMVIS
   obj = new ObjObject(name+stab2->getName(),1,false);
   obj->setObjFilename("objects/pendel2.obj");
   stab2->setAMVisBody(obj);
@@ -72,6 +88,14 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
   obj->setVertexEPS(1e-5);
   obj-> setNormalEPS(1e-5);
   obj-> setAngleEPS(M_PI*2/9);
+#endif
+#if HAVE_AMVISCPPINTERFACE
+  AMVis::ObjObject* obj=new AMVis::ObjObject;
+  obj->setObjFileName("objects/pendel2.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+  stab2->setAMVisRigidBody(obj);
+#endif
   }
 
 }

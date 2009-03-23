@@ -1,13 +1,20 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "objobject.h"
 #include "mbsim/contour.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
+
+#ifdef HAVE_AMVIS
 #include "cube.h"
 #include "sphere.h"
 #include "compoundprimitivebody.h"
+#include "objobject.h"
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/sphere.h"
+#include "amviscppinterface/invisiblebody.h"
+#endif
 
 extern bool rigidContact;
 
@@ -60,10 +67,17 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   sphere->setRadius(r1);
   Vec rSM(3);
   rSM(1) = a1;
+#ifdef HAVE_AMVISCPPINTERFACE
+  sphere->enableAMVis();
+#endif
   body->addContour(sphere,rSM,SqrMat(3,EYE));
   sphere = new Sphere("Sphere2");
   sphere->setRadius(r2);
   rSM(1) = a2;
+#ifdef HAVE_AMVISCPPINTERFACE
+  sphere->enableAMVis();
+  body->getFrame("C")->enableAMVis(2*1.2*r1,0);
+#endif
   body->addContour(sphere,rSM,SqrMat(3,EYE));
 
   double mu = 0.2;
@@ -95,6 +109,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
     cnf2->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   }
 
+#ifdef HAVE_AMVIS
   AMVis::Sphere *obj1 = new AMVis::Sphere();
   body->setAMVisBody(obj1);
   obj1->setRadius(r1);
@@ -111,7 +126,11 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   obj ->addBody(obj1);
   obj ->addBody(obj2);
   body->setAMVisBody(obj); 
-
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  AMVis::InvisibleBody *obj1=new AMVis::InvisibleBody;
+  body->setAMVisRigidBody(obj1);
+#endif
 
 }
 

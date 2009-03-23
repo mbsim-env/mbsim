@@ -8,6 +8,9 @@
 #ifdef HAVE_AMVIS
 namespace AMVis {class CoilSpring;}
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/coilspring.h>
+#endif
 
 namespace MBSim {
 
@@ -18,6 +21,9 @@ class Spring : public Link {
 #ifdef HAVE_AMVIS
       AMVis::CoilSpring *coilspringAMVis;
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::CoilSpring *coilspringAMVis;
 #endif
   public:
     Spring(const string &name);
@@ -36,6 +42,10 @@ class Spring : public Link {
  #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+    void setAMVisSpring(AMVis::CoilSpring *spring_) {coilspringAMVis=spring_;}
+#endif
+
   };
   
 }

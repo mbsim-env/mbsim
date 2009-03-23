@@ -3,7 +3,9 @@
 #include "mbsim/load.h"
 #include "mbsim/frame.h"
 
+#ifdef HAVE_AMVIS
 using namespace AMVis;
+#endif
 
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {

@@ -1,10 +1,16 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
-#include "cuboid.h"
 #include "mbsim/contour.h"
 #include "mbsim/load.h"
+
+#ifdef HAVE_AMVIS
 #include "cube.h"
+#include "cuboid.h"
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/cuboid.h>
+#endif
 
 
 class Moment : public UserFunction {
@@ -90,10 +96,17 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setGuidingVelocityOfTranslation(new jT);
   body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
+#ifdef HAVE_AMVIS
   AMVis::Cuboid *cubeoid = new AMVis::Cuboid(getName() + "." + body->getName(),1,false);
   cubeoid->setSize(l,h,d);
   cubeoid->setColor(0);
   body->setAMVisBody(cubeoid);
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+  AMVis::Cuboid *cuboid=new AMVis::Cuboid;
+  cuboid->setLength(l,h,d);
+  body->setAMVisRigidBody(cuboid);
+#endif
 
   // Just to have somtething to integrate ;-)
   body = new RigidBody("Rod2");
