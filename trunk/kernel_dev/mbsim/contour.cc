@@ -25,6 +25,7 @@
 #include <mbsim/object.h>
 #include <mbsim/flexible_body.h>
 #include <mbsim/frame.h>
+#include <mbsim/utils/rotarymatrices.h>
 
 #ifdef HAVE_AMVIS
 #include "cbody.h"
@@ -34,6 +35,12 @@
 #include "quad.h"
 #include <mbsim/utils/rotarymatrices.h>
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <rigid_body.h>
+#include <amviscppinterface/group.h>
+#include <amviscppinterface/cylinder.h>
+#include <amviscppinterface/sphere.h>
+#endif
 
 namespace MBSim {
 
@@ -42,6 +49,9 @@ namespace MBSim {
 # ifdef HAVE_AMVIS
 					 ,
 					 bodyAMVis(NULL)
+# endif
+# ifdef HAVE_AMVIS
+   , amvisBody(0)
 # endif
  {
    // Contouren standardmaessig nicht ausgeben...
@@ -77,6 +87,49 @@ namespace MBSim {
     if(bodyAMVis) bodyAMVis->writeBodyFile();
 #endif
   }*/
+
+  void Contour::plot(double t, double dt, bool top) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt,false);
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisRigidBody && !amvisRigidBody->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        amvisRigidBody->append(data);
+      }
+#endif
+    }
+  }
+
+  void Contour::initPlot(bool top) {
+    Element::initPlot(parent, true, false);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisRigidBody) {
+        amvisRigidBody->setName(name+"#contour");
+        RigidBody *rigidBody;
+        parent->getAMVisGrp()->addObject(amvisRigidBody);
+        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
+          if(rigidBody->amvisBody==0) {
+            cout<<"To visualize a contour on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
+            _exit(1);
+          }
+          amvisRigidBody->setHDF5LinkTarget(rigidBody->amvisBody);
+          amvisRigidBody->setInitialTranslation(rigidBody->SrSC[rigidBody->contourIndex(this)]);
+          amvisRigidBody->setInitialRotation(AIK2Cardan(rigidBody->ASC[rigidBody->contourIndex(this)]));
+        }
+      }
+#endif
+    }
+  }
 
 #ifdef HAVE_AMVIS
   void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
@@ -133,6 +186,17 @@ namespace MBSim {
   CircleSolid::CircleSolid(const string &name) : Contour(name), r(0), Cb(3) {}
   CircleSolid::CircleSolid(const string &name, double r_) : Contour(name), r(r_), Cb(3) {}
   void CircleSolid::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
+#ifdef HAVE_AMVISCPPINTERFACE
+  void CircleSolid::enableAMVis(bool enable) {
+    if(enable) {
+      amvisRigidBody=new AMVis::Cylinder;
+      ((AMVis::Cylinder*)amvisRigidBody)->setBaseRadius(r);
+      ((AMVis::Cylinder*)amvisRigidBody)->setTopRadius(r);
+      ((AMVis::Cylinder*)amvisRigidBody)->setHeight(0);
+    }
+    else amvisRigidBody=0;
+  }
+#endif
 
   /* Circle Hollow */
   CircleHollow::CircleHollow(const string &name) : Contour(name), r(0.), Cb(3) {}
@@ -247,6 +311,15 @@ namespace MBSim {
     }
 #endif
   }
+#ifdef HAVE_AMVISCPPINTERFACE
+  void Sphere::enableAMVis(bool enable) {
+    if(enable) {
+      amvisRigidBody=new AMVis::Sphere;
+      ((AMVis::Sphere*)amvisRigidBody)->setRadius(r);
+    }
+    else amvisRigidBody=0;
+  }
+#endif
 
   /* Frustum */
   Frustum::Frustum(const string &name) : Contour(name), a(3), r(2), h(0.), outCont(false) {}

@@ -23,6 +23,7 @@
 #include <mbsim/subsystem.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
+#include <mbsim/rigid_body.h>
 #ifdef HAVE_AMVIS
 #include "kos.h"
 #include <mbsim/data_interface_base.h>
@@ -47,6 +48,9 @@ namespace MBSim {
     AWP(2,2) = 1;
     WJP.resize(3,0);
     WJR.resize(3,0);
+#ifdef HAVE_AMVISCPPINTERFACE
+    amvisFrame=0;
+#endif
   }
   
   void Frame::plot(double t, double dt, bool top) {
@@ -71,6 +75,21 @@ namespace MBSim {
         kosAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
         kosAMVis->setRotation(cardan(0),cardan(1),cardan(2));
         kosAMVis->appendDataset(0);
+      }
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisFrame && !amvisFrame->isHDF5Link()) {
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(WrOP(0));
+        data.push_back(WrOP(1));
+        data.push_back(WrOP(2));
+        Vec cardan=AIK2Cardan(AWP);
+        data.push_back(cardan(0));
+        data.push_back(cardan(1));
+        data.push_back(cardan(2));
+        data.push_back(0);
+        amvisFrame->append(data);
       }
 #endif
     }
@@ -102,6 +121,22 @@ namespace MBSim {
         kosAMVis->setColor(0);
       }
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisFrame) {
+        amvisFrame->setName(name+"#frame");
+        RigidBody *rigidBody;
+        parent->getAMVisGrp()->addObject(amvisFrame);
+        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
+          if(rigidBody->amvisBody==0) {
+            cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
+            _exit(1);
+          }
+          amvisFrame->setHDF5LinkTarget(rigidBody->amvisBody);
+          amvisFrame->setInitialTranslation(rigidBody->SrSK[rigidBody->portIndex(this)]);
+          amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASK[rigidBody->portIndex(this)]));
+        }
+      }
+#endif
     }
   }
 
@@ -130,6 +165,16 @@ namespace MBSim {
   }
 #endif
 
+#ifdef HAVE_AMVISCPPINTERFACE
+  void Frame::enableAMVis(double size, double offset) {
+    if(size>=0) {
+      amvisFrame=new AMVis::Frame;
+      amvisFrame->setSize(size);
+      amvisFrame->setOffset(offset);
+    }
+    else amvisFrame=0;
+  }
+#endif
   // string Frame::getFullName() const {
   //   return parent->getFullName() + "." + name;
   // }

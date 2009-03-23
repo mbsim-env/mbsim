@@ -30,6 +30,12 @@ namespace H5 {
   class Group;
 }
 
+#ifdef HAVE_AMVISCPPINTERFACE
+namespace AMVis {
+  class Group;
+}
+#endif
+
 namespace MBSim {
 
   class ContourPointData;
@@ -187,6 +193,10 @@ namespace MBSim {
        * \return plot feature for derived classes
        */
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) = 0;
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      virtual AMVis::Group* getAMVisGrp()=0;
+#endif
   };
 
   /*!

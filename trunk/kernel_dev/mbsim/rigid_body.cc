@@ -34,6 +34,9 @@
 using namespace AMVis;
 #endif
 #include <mbsim/utils/rotarymatrices.h>
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/rigidbody.h>
+#endif
 
 
 namespace MBSim {
@@ -230,6 +233,22 @@ namespace MBSim {
       if(top && plotColumns.size()>1)
         plotVectorSerie->append(plotVector);
 
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisBody) {
+        vector<double> data;
+        data.push_back(t);
+        Vec WrOS=getFrame("C")->getPosition();
+        Vec cardan=AIK2Cardan(getFrame("C")->getOrientation());
+        data.push_back(WrOS(0));
+        data.push_back(WrOS(1));
+        data.push_back(WrOS(2));
+        data.push_back(cardan(0));
+        data.push_back(cardan(1));
+        data.push_back(cardan(2));
+        data.push_back(0);
+        ((AMVis::RigidBody*)amvisBody)->append(data);
+      }
+#endif
 #ifdef HAVE_AMVIS
       if(bodyAMVis && getPlotFeature(amvis)==enabled) {
         Vec WrOS=cosyAMVis->getPosition();

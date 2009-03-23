@@ -32,6 +32,9 @@
 #ifdef HAVE_AMVIS
 namespace AMVis {class CBody; class CRigidBody;}
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/rigidbody.h>
+#endif
 
 namespace MBSim {
 
@@ -63,6 +66,9 @@ namespace MBSim {
       /* Flag to allow for activation of AMVis output during Init-Routines */
       bool boolAMVis, boolAMVisBinary;
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::RigidBody *amvisRigidBody;
+#endif
 
     public:
       Contour(const string &name);
@@ -75,6 +81,8 @@ namespace MBSim {
 
       /* geerbt */
       //void plot(double t, double dt);
+      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt = 1, bool top=true); 
 
       int gethSize(int i=0) const {return hSize[i];}
       int gethInd(int i=0) const {return hInd[i];}
@@ -171,6 +179,10 @@ namespace MBSim {
       void setCb(const Vec& Cb_);
 	  /*! Compute binormal in inertial FR */
       Vec computeWb() {return R.getOrientation()*Cb;}
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      void enableAMVis(bool enable=true);
+#endif
   };
 
 
@@ -403,6 +415,9 @@ namespace MBSim {
       void setRadius(double r_) {r = r_;}
       double getRadius() const {return r;}
       virtual void init();
+#ifdef HAVE_AMVISCPPINTERFACE
+      void enableAMVis(bool enable=true);
+#endif
   };
 
  /*! \brief Frustum

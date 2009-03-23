@@ -24,6 +24,9 @@
 #include <vector>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/body.h>
+#endif
 
 using namespace std;
 
@@ -281,8 +284,18 @@ namespace MBSim {
        */
       int portIndex(const Frame *port_) const;
 
+      /**
+       * \param contour
+       * \return index of contour TODO rename
+       */
+      int contourIndex(const Contour *contour_) const;
+
       vector<Frame*> port;
       vector<Contour*> contour;
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return amvisGrp; }
+#endif
 
     protected:
       /**
@@ -349,6 +362,11 @@ namespace MBSim {
        * \brief indices for velocities and right hand side
        */
       Index Iu, Ih;
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Body* amvisBody;
+      AMVis::Group* amvisGrp;
+#endif
   };
 
 }

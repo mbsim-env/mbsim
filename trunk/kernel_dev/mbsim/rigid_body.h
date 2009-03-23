@@ -32,6 +32,9 @@
 #ifdef HAVE_AMVIS
 namespace AMVis {class CRigidBody;}
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include <amviscppinterface/rigidbody.h>
+#endif
 
 namespace MBSim {
 
@@ -39,6 +42,8 @@ namespace MBSim {
    *
    * */
   class RigidBody : public Body {
+    friend class Frame;
+    friend class Contour;
     public:
       RigidBody(const string &name);
 
@@ -131,7 +136,10 @@ namespace MBSim {
 #ifdef HAVE_AMVIS
       void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
 #endif
-    
+#ifdef HAVE_AMVISCPPINTERFACE
+      void setAMVisRigidBody(AMVis::RigidBody* body) { amvisBody=body; }
+#endif
+
     protected:
       /**
        * \brief body fixed frame for rotation

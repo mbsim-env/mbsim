@@ -53,6 +53,10 @@ namespace MBSim {
 
     port[0]->setPosition(Vec(3));
     port[0]->setOrientation(SqrMat(3,EYE));
+#ifdef HAVE_AMVISCPPINTERFACE
+    if(amvisGrp) amvisGrp=0;
+#endif
+
   }
 
   Subsystem::~Subsystem() {
@@ -64,6 +68,9 @@ namespace MBSim {
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
+#ifdef HAVE_AMVISCPPINTERFACE
+    delete amvisGrp;
+#endif
   }
 
   int Subsystem::gethInd(Subsystem* sys, int i) {
@@ -1288,6 +1295,14 @@ namespace MBSim {
       
       H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
       plotVectorSerie=NULL;
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      amvisGrp=new AMVis::Group();
+      amvisGrp->setName(name);
+      if(parent) parent->amvisGrp->addObject(amvisGrp);
+      if(getPlotFeature(separateFilePerSubsystem)==enabled)
+        amvisGrp->setSeparateFile(true);
+#endif
 
       for(unsigned i=0; i<subsystem.size(); i++)
         subsystem[i]->initPlot();
