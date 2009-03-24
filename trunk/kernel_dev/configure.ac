@@ -23,10 +23,7 @@ AC_SUBST([amvis_compilerflag])
 ####################################
 # New amviscppinterface (currently redundant with old)
 # Don't touch this at the moment!!!
-AC_ARG_ENABLE([newamvis],[  --enable-newamvis],[],[])
-if test $enable_newamvis = "yes"; then
-  PKG_CHECK_MODULES(AMVISCPPINTERFACE, amviscppinterface >= 3.0.0,[requires="$requires amviscppinterface";amvis_compilerflag="-DHAVE_AMVISCPPINTERFACE";AC_DEFINE([HAVE_AMVISCPPINTERFACE],[1],[linking with AMVisCppInterface])],[echo "no"])
-fi
+PKG_CHECK_MODULES(AMVISCPPINTERFACE, amviscppinterface >= 3.0.0,[requires="$requires amviscppinterface";amvis_compilerflag="-DHAVE_AMVISCPPINTERFACE";AC_DEFINE([HAVE_AMVISCPPINTERFACE],[1],[linking with AMVisCppInterface])],[echo "no"])
 ####################################
 
 dnl By autoscan
