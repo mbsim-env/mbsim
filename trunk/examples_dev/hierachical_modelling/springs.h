@@ -28,8 +28,8 @@ class Spring : public Link {
   public:
     Spring(const string &name);
     void init();
-    void initPlot(bool top=true);
-    void plot(double t,double dt=1, bool top=true); 
+    void initPlot();
+    void plot(double t,double dt=1); 
     void updateg(double t);
     void updategd(double t); 
     void updateh(double t); 

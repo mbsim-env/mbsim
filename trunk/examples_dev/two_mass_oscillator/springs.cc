@@ -23,23 +23,23 @@ namespace MBSim {
     la.resize(1);
   }
 
-  void Spring::initPlot(bool top) {
+  void Spring::initPlot() {
+    updatePlotFeatures(parent);
 
-    Link::initPlot(false);
-
-    if(top) createDefaultPlot();
-
+    if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVIS
-    if (coilspringAMVis) {
-      coilspringAMVis->writeBodyFile();
-    }
+      if (coilspringAMVis) {
+        coilspringAMVis->writeBodyFile();
+      }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
-    if(coilspringAMVis) {
-      coilspringAMVis->setName(name);
-      parent->getAMVisGrp()->addObject(coilspringAMVis);
-    }
+      if(coilspringAMVis) {
+        coilspringAMVis->setName(name);
+        parent->getAMVisGrp()->addObject(coilspringAMVis);
+      }
 #endif
+      Link::initPlot();
+    }
   }
 
   void Spring::updateg(double t) {
@@ -65,51 +65,49 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  void Spring::plot(double t,double dt, bool top) {
-    Link::plot(t,dt,false);
-
-    if(top)
-      plotVectorSerie->append(plotVector);
-
+  void Spring::plot(double t,double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVIS
-    if (coilspringAMVis) {
-      Vec WrOToPoint;
-      Vec WrOFromPoint;
+      if (coilspringAMVis) {
+        Vec WrOToPoint;
+        Vec WrOFromPoint;
 
-      WrOFromPoint = port[0]->getPosition();
-      WrOToPoint   = port[1]->getPosition();
-      if (coilspringAMVisUserFunctionColor) {
-	double color;
-	color = ((*coilspringAMVisUserFunctionColor)(t))(0);
-	if (color>1) color=1;
-	if (color<0) color=0;
-	coilspringAMVis->setColor(color);
-      } 
-      coilspringAMVis->setTime(t); 
-      coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
-      coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
-      coilspringAMVis->appendDataset(0);
-    }
+        WrOFromPoint = port[0]->getPosition();
+        WrOToPoint   = port[1]->getPosition();
+        if (coilspringAMVisUserFunctionColor) {
+          double color;
+          color = ((*coilspringAMVisUserFunctionColor)(t))(0);
+          if (color>1) color=1;
+          if (color<0) color=0;
+          coilspringAMVis->setColor(color);
+        } 
+        coilspringAMVis->setTime(t); 
+        coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
+        coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
+        coilspringAMVis->appendDataset(0);
+      }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
-    if (coilspringAMVis) {
-      Vec WrOToPoint;
-      Vec WrOFromPoint;
+      if (coilspringAMVis) {
+        Vec WrOToPoint;
+        Vec WrOFromPoint;
 
-      WrOFromPoint = port[0]->getPosition();
-      WrOToPoint   = port[1]->getPosition();
-      vector<double> data;
-      data.push_back(t);
-      data.push_back(WrOFromPoint(0));
-      data.push_back(WrOFromPoint(1));
-      data.push_back(WrOFromPoint(2));
-      data.push_back(WrOToPoint(0));
-      data.push_back(WrOToPoint(1));
-      data.push_back(WrOToPoint(2));
-      data.push_back(0);
-      coilspringAMVis->append(data);
-    }
+        WrOFromPoint = port[0]->getPosition();
+        WrOToPoint   = port[1]->getPosition();
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(WrOFromPoint(0));
+        data.push_back(WrOFromPoint(1));
+        data.push_back(WrOFromPoint(2));
+        data.push_back(WrOToPoint(0));
+        data.push_back(WrOToPoint(1));
+        data.push_back(WrOToPoint(2));
+        data.push_back(0);
+        coilspringAMVis->append(data);
+      }
 #endif
+      Link::plot(t,dt);
+    }
   }
 
 }
