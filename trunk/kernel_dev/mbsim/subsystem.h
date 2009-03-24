@@ -339,8 +339,8 @@ namespace MBSim {
 
       virtual string getType() const {return "Subsystem";}
 
-      virtual void plot(double t, double dt, bool top=true);
-      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt);
+      virtual void initPlot();
       virtual void closePlot();
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };

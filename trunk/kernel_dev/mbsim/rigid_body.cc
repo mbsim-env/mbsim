@@ -193,8 +193,8 @@ namespace MBSim {
 
   }
 
-  void RigidBody::initPlot(bool top) {
-    Body::initPlot(false);
+  void RigidBody::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
@@ -206,19 +206,16 @@ namespace MBSim {
         plotColumns.push_back("gamma");
       }
 
-      if(top) createDefaultPlot();
-
 #ifdef HAVE_AMVIS
       if(bodyAMVis && getPlotFeature(amvis)==enabled)
         bodyAMVis->writeBodyFile();
 #endif
+      Body::initPlot();
     }
   }
 
-  void RigidBody::plot(double t, double dt, bool top) {
+  void RigidBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Body::plot(t,dt, false);
-
       if(getPlotFeature(globalPosition)==enabled) {
         Vec WrOS=getFrame("C")->getPosition();
         Vec cardan=AIK2Cardan(getFrame("C")->getOrientation());
@@ -229,9 +226,6 @@ namespace MBSim {
         plotVector.push_back(cardan(1));
         plotVector.push_back(cardan(2));
       }
-
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
 
 #ifdef HAVE_AMVISCPPINTERFACE
       if(getPlotFeature(amvis)==enabled && amvisBody) {
@@ -265,6 +259,7 @@ namespace MBSim {
         bodyAMVis->appendDataset(0);
       }
 #endif
+      Body::plot(t,dt);
     }
   }
 

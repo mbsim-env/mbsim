@@ -65,8 +65,8 @@ namespace MBSim {
       virtual void updateSecondJacobians(double t); 
 
       /* ELEMENT */
-      virtual void plot(double t, double dt=1, bool top=true);
-      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt=1);
+      virtual void initPlot();
       virtual string getType() const { return "FlexibleBody"; }
       virtual void load(const string &path, ifstream& inputfile) { Body::load(path, inputfile); }
       virtual void save(const string &path, ofstream &outputfile) { Body::save(path, outputfile); }

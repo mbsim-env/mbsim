@@ -65,8 +65,8 @@ namespace MBSim {
       virtual void updatedx(double t, double dt) {};
       virtual void updatexd(double t) {};
 
-      virtual void plot(double t, double dt = 1, bool top=true); 
-      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt = 1); 
+      virtual void initPlot();
       virtual void closePlot(); 
 
       void setParent(Subsystem *parent_) {parent = parent_;}

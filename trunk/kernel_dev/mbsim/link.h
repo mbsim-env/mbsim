@@ -181,8 +181,8 @@ namespace MBSim {
       /*! Sets the internal states of a Link.*/
       void setx(const Vec &x_) {x = x_;}
 
-      virtual void plot(double t, double dt = 1, bool top=true);
-      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt = 1);
+      virtual void initPlot();
       virtual void closePlot();
 
       virtual bool isSetValued() const { return false; }

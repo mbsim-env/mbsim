@@ -79,10 +79,8 @@ namespace MBSim {
       (*i)->sethSize(hSize[j],j);
   }
 
-  void Object::plot(double t, double dt, bool top) {
+  void Object::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
-
       if(getPlotFeature(state)==enabled) {
         for(int i=0; i<qSize; ++i)
           plotVector.push_back(q(i));
@@ -109,8 +107,7 @@ namespace MBSim {
         plotVector.push_back(Ttemp + Vtemp);
       }
 
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
+      Element::plot(t,dt);
 
       for(unsigned int j=0; j<port.size(); j++)
         port[j]->plot(t,dt);
@@ -119,8 +116,8 @@ namespace MBSim {
     }
   }
 
-  void Object::initPlot(bool top) {
-    Element::initPlot(parent, true, false);
+  void Object::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled) {
@@ -147,8 +144,6 @@ namespace MBSim {
         plotColumns.push_back("E");
       }
 
-      if(top) createDefaultPlot();
-
 #ifdef HAVE_AMVISCPPINTERFACE
       amvisGrp=new AMVis::Group();
       amvisGrp->setName(name);
@@ -158,6 +153,8 @@ namespace MBSim {
         amvisGrp->addObject(amvisBody);
       }
 #endif
+
+      Element::initPlot(parent);
 
       for(unsigned int j=0; j<port.size(); j++)
         port[j]->initPlot();

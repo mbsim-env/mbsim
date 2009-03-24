@@ -53,10 +53,8 @@ namespace MBSim {
 #endif
   }
   
-  void Frame::plot(double t, double dt, bool top) {
+  void Frame::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
-
       if(getPlotFeature(globalPosition)==enabled) {
         for(int i=0; i<3; i++)
           plotVector.push_back(WrOP(i));
@@ -64,10 +62,6 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
-
 #ifdef HAVE_AMVIS
       if(kosAMVis && getPlotFeature(amvis)==enabled) {
         Vec cardan=AIK2Cardan(AWP);
@@ -92,6 +86,7 @@ namespace MBSim {
         amvisFrame->append(data);
       }
 #endif
+      Element::plot(t,dt);
     }
   }
 
@@ -101,8 +96,8 @@ namespace MBSim {
     }
   }
 
-  void Frame::initPlot(bool top) {
-    Element::initPlot(parent, true, false);
+  void Frame::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
@@ -112,8 +107,6 @@ namespace MBSim {
         plotColumns.push_back("beta");
         plotColumns.push_back("gamma");
       }
-
-      if(top) createDefaultPlot();
 
 #ifdef HAVE_AMVIS
       if(kosAMVis && getPlotFeature(amvis)==enabled) {
@@ -137,6 +130,7 @@ namespace MBSim {
         }
       }
 #endif
+      Element::initPlot(parent);
     }
   }
 

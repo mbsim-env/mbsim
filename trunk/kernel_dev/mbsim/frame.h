@@ -59,9 +59,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       string getType() const { return "Frame"; }
-      virtual void plot(double t, double dt = 1, bool top=true); 
+      virtual void plot(double t, double dt = 1); 
       virtual void closePlot(); 
-      virtual void initPlot(bool top=true);
+      virtual void initPlot();
       /***************************************************/
 
       /* GETTER / SETTER */

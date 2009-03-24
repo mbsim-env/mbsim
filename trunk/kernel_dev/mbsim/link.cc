@@ -115,10 +115,8 @@ namespace MBSim {
     rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
   }
 
-  void Link::plot(double t, double dt, bool top) {
+  void Link::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
-
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(x(i));
@@ -151,9 +149,6 @@ namespace MBSim {
         }
         plotVector.push_back(computePotentialEnergy()); 
       }
-
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
 
 /*#ifdef HAVE_AMVIS
       Vec WrOToPoint;
@@ -236,11 +231,12 @@ namespace MBSim {
         arrowAMVis[i]->appendDataset(0);
       }
 #endif*/
+      Element::plot(t,dt);
     }
   }
 
-  void Link::initPlot(bool top) {
-    Element::initPlot(parent, true, false);
+  void Link::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
@@ -262,12 +258,11 @@ namespace MBSim {
         plotColumns.push_back("V");
       }
 
-      if(top) createDefaultPlot();
-
 /*#ifdef HAVE_AMVIS
       for (unsigned int i=0; i<arrowAMVis.size(); i++)
         arrowAMVis[i]->writeBodyFile();
 #endif*/
+      Element::initPlot(parent);
     }
   }
   

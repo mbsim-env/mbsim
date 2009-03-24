@@ -123,8 +123,8 @@ namespace MBSim {
       double computePotentialEnergyBranch();
 
       void init();
-      void plot(double t, double dt=1, bool top=true);
-      void initPlot(bool top=true);
+      void plot(double t, double dt=1);
+      void initPlot();
       void calcqSize();
       void calcuSize(int j=0);
 
