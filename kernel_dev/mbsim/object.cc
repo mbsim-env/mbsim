@@ -101,6 +101,13 @@ namespace MBSim {
         for(int i=0; i<uSize[0]; ++i)
           plotVector.push_back(r(i)/dt);
       }
+      if(getPlotFeature(energy)==enabled) {
+        double Ttemp = computeKineticEnergy();
+        double Vtemp = computePotentialEnergy();
+        plotVector.push_back(Ttemp);
+        plotVector.push_back(Vtemp);
+        plotVector.push_back(Ttemp + Vtemp);
+      }
 
       if(top && plotColumns.size()>1)
         plotVectorSerie->append(plotVector);
@@ -133,6 +140,11 @@ namespace MBSim {
           plotColumns.push_back("h("+numtostr(i)+")");
         for(int i=0; i<getuSize(); ++i)
           plotColumns.push_back("r("+numtostr(i)+")");
+      }
+      if(getPlotFeature(energy)==enabled) {
+        plotColumns.push_back("T");
+        plotColumns.push_back("V");
+        plotColumns.push_back("E");
       }
 
       if(top) createDefaultPlot();

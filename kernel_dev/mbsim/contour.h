@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,17 +13,15 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTOUR_H_
 #define _CONTOUR_H_
 
+#include <mbsim/flexible_body.h>
 #include <mbsim/element.h>
 #include <mbsim/userfunction_contour.h>
 #include <mbsim/contour_pdata.h>
@@ -46,103 +44,169 @@ namespace MBSim {
   //                0    , 1   , 2          , 3           , 4        , 5    , 6     , 7      , 8   , 9   , 10       , 11       , 12              , 13
   enum ContourType {point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation};
 
-  /*! 
-   * \brief Basic class for contour definition for rigid (which do not know about their shape) 
-   *  and flexible (they know how they look like) bodies
+  /** 
+   * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies
+   * \author Martin Foerg
+   * \date 2009-03-23 some comments (Thorsten Schindler)
+   *
+   * kinematics is stored in coordinate system class and is individually evaluated in specific contact kinematics 
    */
-  class Contour : public Element {
-    protected:
-      ObjectInterface* parent;
-
-      int hSize[2], hInd[2];
-
-      Frame R;
-
-
-#ifdef HAVE_AMVIS
-      /* Body for AMVis */
-      AMVis::CBody *bodyAMVis;
-      DataInterfaceBase* bodyAMVisUserFunctionColor;
-      /* Flag to allow for activation of AMVis output during Init-Routines */
-      bool boolAMVis, boolAMVisBinary;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::RigidBody *amvisRigidBody;
-#endif
-
+  class Contour : public Element { 
     public:
+      /** 
+       * \brief constructor
+       * \param name of contour
+       */
       Contour(const string &name);
+
+      /**
+       * \brief destructor
+       */
       virtual ~Contour();	
 
       virtual void preinit() {}
       virtual void init();
 
-      //void initPlotFiles();
-
-      /* geerbt */
-      //void plot(double t, double dt);
       virtual void initPlot(bool top=true);
       virtual void plot(double t, double dt = 1, bool top=true); 
 
-      int gethSize(int i=0) const {return hSize[i];}
-      int gethInd(int i=0) const {return hInd[i];}
-      void sethSize(int size, int i=0) {hSize[i] = size;}
-      void sethInd(int ind, int i=0) {hInd[i] = ind;}
+      int gethSize(int i=0) const { return hSize[i]; }
+      int gethInd(int i=0) const { return hInd[i]; }
+      void sethSize(int size, int i=0) { hSize[i] = size; }
+      void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      ObjectInterface* getParent() {return parent;}
-      void setParent(ObjectInterface* parent_) {parent = parent_;}
+      ObjectInterface* getParent() { return parent; }
+      void setParent(ObjectInterface* parent_) { parent = parent_; }
 
-      Frame* getFrame() {return &R;}
+      /**
+       * \return whole kinematics of contour
+       */
+      Frame* getFrame() { return &R; }
 
-      virtual void setWrOP(const Vec &WrOP) {R.setPosition(WrOP);}
-      const Vec& getWrOP() const {return R.getPosition();}
-      virtual void setWvP(const Vec &WvP) {R.setVelocity(WvP);}
-      const Vec& getWvP() const {return R.getVelocity();}
-      virtual void setWomegaC(const Vec &WomegaC) {R.setAngularVelocity(WomegaC);}
-      const Vec& getWomegaC() const {return R.getAngularVelocity();}
-      virtual void setAWC(const SqrMat &AWC) {R.setOrientation(AWC);}
-      const SqrMat& getAWC() const {return R.getOrientation();}
+      /**
+       * \param position of contour in inertial frame
+       */
+      virtual void setWrOP(const Vec &WrOP) { R.setPosition(WrOP); }
 
-      virtual void setWJP(const Mat &WJP) {R.setJacobianOfTranslation(WJP);}
-      virtual void setWjP(const Vec &WjP) {R.setGyroscopicAccelerationOfTranslation(WjP);}
-      virtual void setWJR(const Mat &WJR) {R.setJacobianOfRotation(WJR);}
-      virtual void setWjR(const Vec &WjR) {R.setGyroscopicAccelerationOfRotation(WjR);}
-      const Mat& getWJP() const {return R.getJacobianOfTranslation();}
-      const Mat& getWJR() const {return R.getJacobianOfRotation();}
-      Mat& getWJP() {return R.getJacobianOfTranslation();}
-      Mat& getWJR() {return R.getJacobianOfRotation();}
-      const Vec& getWjP() const {return R.getGyroscopicAccelerationOfTranslation();}
-      const Vec& getWjR() const {return R.getGyroscopicAccelerationOfRotation();}
-      Vec& getWjP() {return R.getGyroscopicAccelerationOfTranslation();}
-      Vec& getWjR() {return R.getGyroscopicAccelerationOfRotation();}
+      /**
+       * \return position of contour in inertial frame
+       */
+      const Vec& getWrOP() const { return R.getPosition(); }
+
+      /**
+       * \param velocity of contour in inertial frame
+       */
+      virtual void setWvP(const Vec &WvP) { R.setVelocity(WvP); }
+
+      /**
+       * \return velocity of contour in inertial frame
+       */
+      const Vec& getWvP() const { return R.getVelocity(); }
+
+      /**
+       * \param angular velocity of contour in inertial frame
+       */
+      virtual void setWomegaC(const Vec &WomegaC) { R.setAngularVelocity(WomegaC); }
+
+      /**
+       * \return angular velocity of contour in inertial frame
+       */
+      const Vec& getWomegaC() const { return R.getAngularVelocity(); }
+
+      /**
+       * \param orientation of contour to inertial frame
+       */
+      virtual void setAWC(const SqrMat &AWC) { R.setOrientation(AWC); }
+
+      /**
+       * \return orientation of contour to inertial frame
+       */
+      const SqrMat& getAWC() const { return R.getOrientation(); }
+
+      virtual void setWJP(const Mat &WJP) { R.setJacobianOfTranslation(WJP); }
+      virtual void setWjP(const Vec &WjP) { R.setGyroscopicAccelerationOfTranslation(WjP); }
+      virtual void setWJR(const Mat &WJR) { R.setJacobianOfRotation(WJR); }
+      virtual void setWjR(const Vec &WjR) { R.setGyroscopicAccelerationOfRotation(WjR); }
+      const Mat& getWJP() const { return R.getJacobianOfTranslation(); }
+      const Mat& getWJR() const { return R.getJacobianOfRotation(); }
+      Mat& getWJP() { return R.getJacobianOfTranslation(); }
+      Mat& getWJR() { return R.getJacobianOfRotation(); }
+      const Vec& getWjP() const { return R.getGyroscopicAccelerationOfTranslation(); }
+      const Vec& getWjR() const { return R.getGyroscopicAccelerationOfRotation(); }
+      Vec& getWjP() { return R.getGyroscopicAccelerationOfTranslation(); }
+      Vec& getWjR() { return R.getGyroscopicAccelerationOfRotation(); }
 
       void resizeJacobians(int j);
 
-     // /*! adjust HitSphere of parent body
-     // */
-     // virtual void adjustParentHitSphere(const Vec &CrC);
+      // /*! adjust HitSphere of parent body
+      // */
+      // virtual void adjustParentHitSphere(const Vec &CrC);
 
-      string getType() const {return "Contour";}
+      /**
+       * return string representation
+       */
+      string getType() const { return "Contour"; }
 
 #ifdef HAVE_AMVIS
-      /*! activate output for AMVis
-	\param binary_ for binary or ASCII data format in pos-file
-	*/
+      /**
+       * \brief activate output for AMVis
+       * \param binary or ASCII data format in pos-file
+       */
       void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_;}
 
       void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
 #endif
+
+    protected:
+      ObjectInterface* parent;
+
+      int hSize[2], hInd[2];
+
+      /**
+       * coordinate system of contour
+       */
+      Frame R;
+
+
+#ifdef HAVE_AMVIS
+      /**
+       * \brief body for AMVis
+       */
+      AMVis::CBody *bodyAMVis;
+
+      DataInterfaceBase* bodyAMVisUserFunctionColor;
+
+      /**
+       * \brief flag to allow for activation of AMVis output during init-routines
+       */
+      bool boolAMVis, boolAMVisBinary;
+#endif
+
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::RigidBody *amvisRigidBody;
+#endif
   };
 
-  /*! \brief Most primitive Contour: the Point (no extention) */
+  /**
+   * \brief most primitive contour: the point (no extention)
+   * \author Martin Foerg
+   * \date 2009-03-19 comments (Thorsten Schindler)
+   */
   class Point : public Contour {
     public:
-      /*! Constructor */
+      /**
+       * \brief constructor
+       * \param name of contour
+       */
       Point(const string &name);
-      /*! Deconstructor */
-      ~Point();
 
-      string getType() const {return "Point";}
+      /**
+       * \brief destructor
+       */
+      virtual ~Point();
+
+      /* INHERITED INTERFACE */
+      string getType() const { return "Point"; }
   };
 
   /*! \brief unbounded line with constant normal */
@@ -175,9 +239,9 @@ namespace MBSim {
       void setRadius(double r_) {r = r_;}
       /*! Get radius */
       double getRadius() const {return r;}
-	  /*! Set binormal in local FR */ 
+      /*! Set binormal in local FR */ 
       void setCb(const Vec& Cb_);
-	  /*! Compute binormal in inertial FR */
+      /*! Compute binormal in inertial FR */
       Vec computeWb() {return R.getOrientation()*Cb;}
 
 #ifdef HAVE_AMVISCPPINTERFACE
@@ -279,11 +343,11 @@ namespace MBSim {
       /*! \todo Cache !!!
       */
       Mat computeWt(double alpha) {
-	Cb= funcCrPC->computeB(alpha);
-	Mat Ctb(3,2);
-	Ctb.col(0)= funcCrPC->computeT(alpha);
-	Ctb.col(1)= Cb; 
-	return R.getOrientation()*Ctb;
+        Cb= funcCrPC->computeB(alpha);
+        Mat Ctb(3,2);
+        Ctb.col(0)= funcCrPC->computeT(alpha);
+        Ctb.col(1)= Cb; 
+        return R.getOrientation()*Ctb;
       }
       Vec computeWn(double alpha) {return R.getOrientation()*(funcCrPC->computeN(alpha));}
       Vec computeWb(double alpha) {Cb= funcCrPC->computeB(alpha); return R.getOrientation()*Cb;}
@@ -292,7 +356,7 @@ namespace MBSim {
       Vec computeWomega(double alpha) {return Vec(3);} // dummy
 
       double computeRadius(double alpha) {
-	return funcCrPC->computeR(alpha);
+        return funcCrPC->computeR(alpha);
       }
       void setUserFunction(UserFunctionContour1s* f) {funcCrPC = f;}
       UserFunctionContour1s* getUserFunction() {return funcCrPC;}
@@ -300,64 +364,107 @@ namespace MBSim {
       virtual void init();
   };
 
-  /*! \brief 1s flexible */
-  // class Contour1sFlexible : public Contour1s {
-  //   protected:
-  //     BodyFlexible* parent;
-
-  //   public:
-  //     Contour1sFlexible(const string &name);
-
-  //     Vec computeWb  (double s) {return R.getOrientation()*Cb;}
-
-  //     Vec computeWn    (double alpha);
-  //     Mat computeWt    (double alpha);
-  //     Vec computeWrOC  (double alpha);
-  //     Vec computeWvC   (double alpha);
-  //     Vec computeWomega(double alpha);
-
-  //     Mat computeWt  (const ContourPointData &cp);
-  //     Vec computeWn  (const ContourPointData &cp);
-  //     Vec computeWb  (const ContourPointData &cp);
-  //     Vec computeWrOC(const ContourPointData &cp);
-  //     Vec computeWvC (const ContourPointData &cp);
-
-  //     Vec computeWomega(const ContourPointData &cp) {return Vec(3);}
-  //     // TODO
-  //     double computeRadius(double alpha) {return 1;}
-  // };
-
-  // /*! \brief Flexible cylinder for elastic 3D bending structure with one contour parameter
-  // */
-  // class CylinderFlexible : public Contour1sFlexible {
-  //   protected:
-  //     double r;
-
-  //   public:
-  //     CylinderFlexible(const string &name);
-  //     void setRadius(double r_) {r = r_;}
-  //     double getRadius() const  {return r;}
-
-  //     /*     Mat computeWt    (double s); */
-  //     Vec computeWn    (const ContourPointData& cp) {return Vec(3);}
-
-  //     Vec computeWomega(const ContourPointData &cp);
-  // };
-
-  /*! \brief Contour Plane without borders */
-  class Plane : public Contour {
-    private:
-      Vec Cn;
-
+  /** 
+   * \brief flexible neutral fiber for one dimensional flexible bodies
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 18.03.09
+   */
+  class Contour1sFlexible : public Contour1s {
     public:
-      /*! Constructor */
+      /**
+       * \brief constructor
+       * \param name of contour
+       */
+      Contour1sFlexible(const string &name) : Contour1s(name) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~Contour1sFlexible() {}
+
+      /* INHERITED INTERFACE */
+      Vec computeWb(double s) { throw(1); } // TODO
+      Vec computeWn(double alpha) { throw(1); }
+      Mat computeWt(double alpha) { throw(1); }
+      Vec computeWrOC(double alpha) { throw(1); }
+      Vec computeWvC(double alpha) { throw(1); }
+      Vec computeWomega(double alpha) { throw(1); }
+      double computeRadius(double alpha) { throw(1); }
+
+      void updateKinematicsForFrame(ContourPointData &cp, Frame *frame=0) { parent->updateKinematicsForFrame(cp,frame); }
+
+    protected:
+      FlexibleBody<Vec>* parent;
+  };
+
+  /** 
+   * \brief flexible cylinder for one dimensional flexible bodies
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 18.03.09
+   */
+  class CylinderFlexible : public Contour1sFlexible {
+    public:
+      /**
+       * \brief constructor
+       * \param name of contour
+       */
+      CylinderFlexible(const string &name) : Contour1sFlexible(name) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~CylinderFlexible() {}
+
+      /* GETTER / SETTER */
+      void setRadius(double r_) { r = r_; }
+      double getRadius() const  { return r; }
+
+    protected:
+      /**
+       * \brief radius
+       */
+      double r;
+  };
+
+  /** 
+   * \brief plane without borders
+   * \author Martin Foerg
+   * \date 09.03.09 some comments (Thorsten Schindler)
+   *
+   * normal equals first column in orientation matrix
+   */
+  class Plane : public Contour {
+    public:
+      /**
+       * \brief constructor
+       */
       Plane(const string &name);
-      /*! Get normal of the Plane in local FR */
-      const Vec& getCn() const {return Cn;}
-      /*! Set normal of the Plane in local FR */
+
+      /** 
+       * \return normal of the plane in local frame of reference
+       * TODO obsolete
+       */
+      const Vec& getCn() const { return Cn; }
+
+      /**
+       * \param normal of the plane in local frame of reference
+       * TODO obsolete
+       */
       void setCn(const Vec& Cn_);
-      /*! Compute normal of the Plane in inertial FR */
+
+      /** 
+       * \return normal of the plane in inertial frame of reference
+       * TODO obsolete
+       */
       Vec computeWn() {return R.getOrientation()*Cn;}
+
+    private:
+      /**
+       * \brief normal of the plane in local frame of reference
+       */
+      Vec Cn;
   };
 
   /*! \brief Contour Area */
@@ -409,7 +516,7 @@ namespace MBSim {
     protected:
       /** radius */
       double r;
-      
+
     public:
       Sphere(const string &name);
       void setRadius(double r_) {r = r_;}
@@ -420,50 +527,50 @@ namespace MBSim {
 #endif
   };
 
- /*! \brief Frustum
-  *
-  *  Authors: Martin Foerg, Thorsten Schindler
-  */
- class Frustum : public Contour {
-	    public:
-	    	  /*! Constructor with \default outCont=false */
-		      Frustum(const string &name);
-		      /*! Constructor */
-		      Frustum(const string &name, bool outCont_);
-		      
-		      /*! Deconstructor */
-		      ~Frustum();
-		      /*! Set Radii of the Frustum */
-		      void setRadii(const Vec &r_);
-		      /*! Get Radii of the Frustum */
-		      const Vec& getRadii() const;
-		      /*! Set Axis of the Frustum in contour FR */
-		      void setAxis(const Vec &a_);
-		      /*! Get Axis of the Frustum in contour FR */
-		      const Vec& getAxis() const; 
-		      /*! Set Height of the Frustum */
-		      void setHeight(double h_);
-		      /*! Get Height of the Frustum */
-		      double getHeight() const;
-		      /*! Set Contact on outer surface of the Frustum */
-		      void setOutCont(bool outCont_);
-		      /*! Get Contact outcont on outer surface of the Frustum */
-		      bool getOutCont() const;
-		      
-		private:
-	    	  /** axis (contour FR) */
-		      Vec a;
-		      
-		      /** upper r(1) and lower radius r(0) in direction of the axis */
-		      Vec r;
-		      
-		      /** height */
-		      double h;
-		      
-		      /** contact on outer or inner surface? */
-		      bool outCont;
+  /*! \brief Frustum
+   *
+   *  Authors: Martin Foerg, Thorsten Schindler
+   */
+  class Frustum : public Contour {
+    public:
+      /*! Constructor with \default outCont=false */
+      Frustum(const string &name);
+      /*! Constructor */
+      Frustum(const string &name, bool outCont_);
+
+      /*! Deconstructor */
+      ~Frustum();
+      /*! Set Radii of the Frustum */
+      void setRadii(const Vec &r_);
+      /*! Get Radii of the Frustum */
+      const Vec& getRadii() const;
+      /*! Set Axis of the Frustum in contour FR */
+      void setAxis(const Vec &a_);
+      /*! Get Axis of the Frustum in contour FR */
+      const Vec& getAxis() const; 
+      /*! Set Height of the Frustum */
+      void setHeight(double h_);
+      /*! Get Height of the Frustum */
+      double getHeight() const;
+      /*! Set Contact on outer surface of the Frustum */
+      void setOutCont(bool outCont_);
+      /*! Get Contact outcont on outer surface of the Frustum */
+      bool getOutCont() const;
+
+    private:
+      /** axis (contour FR) */
+      Vec a;
+
+      /** upper r(1) and lower radius r(0) in direction of the axis */
+      Vec r;
+
+      /** height */
+      double h;
+
+      /** contact on outer or inner surface? */
+      bool outCont;
   };
-  
+
   inline void Frustum::setRadii(const Vec &r_) {r = r_;}
   inline const Vec& Frustum::getRadii() const {return r;}
   inline void Frustum::setAxis(const Vec &a_) {a = a_/nrm2(a_);}
@@ -486,9 +593,9 @@ namespace MBSim {
       Contour2s(const string &name);
 
       Vec computeWn(const Vec& alpha) {
-	Mat Wt = computeWt(alpha);
-	if(Cb(2) < 0.0 ) return   crossProduct(Wt.col(0),Wt.col(1));
-	else             return - crossProduct(Wt.col(0),Wt.col(1));
+        Mat Wt = computeWt(alpha);
+        if(Cb(2) < 0.0 ) return   crossProduct(Wt.col(0),Wt.col(1));
+        else             return - crossProduct(Wt.col(0),Wt.col(1));
       }
       virtual Mat computeWt  (const Vec& alpha) = 0;
       virtual Vec computeWrOC(const Vec& alpha) = 0;
@@ -525,9 +632,9 @@ namespace MBSim {
       //    Object* getObject() {return iPoints[0]->getObject();} // ACHTUNG: das kann in die Hose gehen, wenn iPoints noch nicht initzialisiert...
 
       /*! set Point for interpolation
-	\param pointN Point to use
-	\param position in iPoints, Point-number
-	*/
+        \param pointN Point to use
+        \param position in iPoints, Point-number
+        */
       void setPoint(Point *pointN, int n);
       /*! get list of Point s */
       vector<Point*> getPoints()   const {return iPoints;}
@@ -539,23 +646,23 @@ namespace MBSim {
       int getNContourParameters() const {return contourParameters;}
 
       /*! prototype for test if Contour-point given is inside or outside defined contour area
-	\param cp Contour-point
-	\return true, if cp is inside boundaries, else false
-	*/ 
+        \param cp Contour-point
+        \return true, if cp is inside boundaries, else false
+        */ 
       virtual bool testInsideBounds(const ContourPointData &cp) = 0;
 
       /*! prototype of method giving weights of all Point s 
-	\param s Contour-parameter(s)
-	\param i Point number
-	\return weight of Point i at s
-	*/
+        \param s Contour-parameter(s)
+        \param i Point number
+        \return weight of Point i at s
+        */
       virtual double computePointWeight(const Vec &s, int i) = 0;
       /*! prototype of method giving first derivatives with respect to the diff-th Contour-parameters of all Point s 
-	\param s Contour-parameter(s)
-	\param i Point number
-	\param diff -th derivative
-	\return weight/derivative of Point i at s
-	*/
+        \param s Contour-parameter(s)
+        \param i Point number
+        \param diff -th derivative
+        \return weight/derivative of Point i at s
+        */
       virtual double computePointWeight(const Vec &s, int i, int diff) = 0;
 
       /*! compute all weights for nodes */

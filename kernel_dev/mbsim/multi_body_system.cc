@@ -74,6 +74,7 @@ namespace MBSim {
     setPlotFeatureRecursive(rightHandSide, disabled);
     setPlotFeatureRecursive(globalPosition, disabled);
     setPlotFeatureRecursive(contact, enabled);
+    setPlotFeatureRecursive(energy, disabled);
     setPlotFeatureRecursive(amvis, enabled);
   }
 

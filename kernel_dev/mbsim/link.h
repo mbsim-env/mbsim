@@ -66,8 +66,6 @@ namespace MBSim {
       int svInd;
       Vector<int> jsv;
 
-      bool setValued;
-
       int gSize, gInd;
       int gdSize, gdInd;
       int laSize, laInd;
@@ -131,7 +129,6 @@ namespace MBSim {
       virtual void updatewbRef(const Vec &ref);
       virtual void updatefRef(const Vec &ref) {};
 
-      Link(const string &name, bool setValued);
       Link(const string &name);
       ~Link();
 
@@ -188,8 +185,7 @@ namespace MBSim {
       virtual void initPlot(bool top=true);
       virtual void closePlot();
 
-      //bool isSetValued() const {return setValued;} 
-      virtual bool isSetValued() const {return false;}
+      virtual bool isSetValued() const { return false; }
 
       const Vec& getla() const {return la;}
       Vec& getla() {return la;}

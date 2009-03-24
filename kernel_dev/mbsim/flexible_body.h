@@ -21,31 +21,30 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include <vector>
 #include <mbsim/body.h>
+#include <mbsim/contour_pdata.h>
+#include <vector>
 
 #ifdef HAVE_AMVIS
-namespace AMVis {class ElasticBody;}
+namespace AMVis { class ElasticBody; }
 #endif
 
 namespace MBSim {
 
-  class ContourPointData;
-
   /**
-   * \brief upmost class for flexible body implementation
+   * \brief upmost class for flexible body implementation using template for definition of contour nodes
    * \author Roland Zander
    * \author Thorsten Schindler
-   * \date 17.03.09
+   * \date 2009-03-24 changes for new MBSim (Thorsten Schindler)
    */
-  class FlexibleBody : public Body {
+  template <class AT> class FlexibleBody : public Body {
     public:
       /**
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody(const string &name); 
-
+      FlexibleBody(const string &name);
+      
       /**
        * \brief destructor
        */
@@ -59,7 +58,7 @@ namespace MBSim {
        */
       virtual void updatedq(double t, double dt) { qd = u*dt; }
       virtual void updateqd(double t) { qd = u; }
-      virtual void updateh(double t);
+      virtual void updateM(double t);
       virtual void updateKinematics(double t);
       virtual void updateJacobians(double t);
       virtual void updateSecondJacobians(double t); 
@@ -72,22 +71,28 @@ namespace MBSim {
       virtual void save(const string &path, ofstream &outputfile) { Body::save(path, outputfile); }
 
       /* OBJECT */
-      virtual void updateqRef(Vec q_) { q  >> q_ ; }
-      virtual void updateqdRef(Vec qd_) { qd >> qd_; }
-      virtual void updateuRef(Vec u_) { u  >> u_ ; }
-      virtual void updateudRef(Vec ud_) { ud >> ud_; }
-      virtual void updatehRef(Vec h_) { h  >> h_ ; }
-      virtual void updaterRef(Vec r_) { r  >> r_ ; }
-      virtual void updateMRef(SymMat M_) { M  >> M_ ; }
+      //virtual void updateqRef(Vec q_) { q  >> q_ ; }
+      //virtual void updateqdRef(Vec qd_) { qd >> qd_; }
+      //virtual void updateuRef(Vec u_) { u  >> u_ ; }
+      //virtual void updateudRef(Vec ud_) { ud >> ud_; }
+      //virtual void updatehRef(Vec h_) { h  >> h_ ; }
+      //virtual void updaterRef(Vec r_) { r  >> r_ ; }
+      //virtual void updateMRef(SymMat M_) { M  >> M_ ; }
       // TODO TRef, LLMRef?
 
       virtual void init();
+      virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
       void setq0(Vec q0_) { Body::setq0(q0_); q>>q0; }
       void setu0(Vec u0_) { Body::setu0(u0_); u>>u0; }
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
+      /**
+       * \brief references finite element coordinates to assembled coordinates
+       */
+      virtual void BuildElements() = 0;
+
       /** 
        * \brief insert 'local' information in global matrices
        * \param number of finite element
@@ -95,27 +100,25 @@ namespace MBSim {
       virtual void GlobalMatrixContribution(int CurrentElement) = 0;
 
       /**
-       * \param contour parameters specifing location
-       * \return JACOBIAN-matrix of system dimensions (size of positions x cartesian degree of freedom) 
+       * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
+       * \param contour parameter
+       * \param possible external frame, otherwise contour parameters are changed
        */
-      virtual Mat computeJacobianMatrix(const ContourPointData &data) = 0; 
+      virtual void updateKinematicsForFrame(ContourPointData &data, Frame *frame=0) = 0;
 
       /**
+       * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
        * \param contour parameter
-       * \return absolute position in world system to body contour
+       * \param possible external frame, otherwise contour parameters are changed
        */
-      virtual Frame* computeKinematicsForFrame(const ContourPointData &data) = 0;
+      virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0) = 0;
       /***************************************************/
 
-      /**
-       * \param stationary frame of reference
-       */
+      /* GETTER / SETTER */
       void setStationaryFrameOfReference(Frame *frame) { frameParent = frame; }
-
-      /** 
-       * \param mass proportional damping factor 
-       */
       void setMassProportionalDamping(const double d_) { d_massproportional = d_; }
+      void setContourNodes(const AT& nodes) { userContourNodes = nodes; }
+      /***************************************************/
 
       /** 
        *  \param name of frame
@@ -134,7 +137,7 @@ namespace MBSim {
        * \brief activate output for AMVis
        * \param binary or ASCII data format in pos-file
        */
-      void createAMVisBody(bool binary_) { boolAMVis = true; boolAMVisBinary = binary_; }
+      void createAMVisBody(bool binary_) { boolAMVisBinary = binary_; }
 
       /**
        * \param color float in [0;1] (blue - green - red)
@@ -163,25 +166,20 @@ namespace MBSim {
        */
       vector<Vec> uElement;
 
-      /** 
-       * \brief JACOBIAN-matrix of translations and rotations
-       */
-      Mat JT, JR;
-
       /**
        * \brief mass proportion damping factor
        */
       double d_massproportional;
 
+      /**
+       * \brief grid for contact point detection
+       */
+      AT userContourNodes;
+
       /** 
        * \brief vector of contour parameters each describing a frame
        */
       vector<ContourPointData> S_Frame;
-
-      /**
-       * \brief last computed frame for contour parameter
-       */
-      Frame *lastContourFrame;
 
 #ifdef HAVE_AMVIS
       /** 
@@ -190,9 +188,9 @@ namespace MBSim {
       AMVis::ElasticBody *bodyAMVis;
 
       /** 
-       * \brief flag to allow for activation of AMVis output during init-routines
+       * \brief flag to allow for binary output file for AMVis
        */
-      bool boolAMVis, boolAMVisBinary;
+      bool boolAMVisBinary;
 
       /**
        * \brief float to pass to AMVis-object
@@ -202,67 +200,7 @@ namespace MBSim {
 
   };
 
-  /**
-   * \brief flexible bodies defined by one material (or LAGRANGE) coordinate
-   * \author Roland Zander
-   * \author Thorsten Schindler
-   * \date 17.03.09
-   */
-  class FlexibleBody1s : public FlexibleBody {
-    public:
-      /** 
-       * \brief constructor
-       * \param name of body
-       */
-      FlexibleBody1s(const string &name);
-
-      virtual ~FlexibleBody1s() {}
-
-      /**
-       * \param nodes for search-fields of contact-search
-       */
-      void setContourNodes(const Vec& nodes) { userContourNodes = nodes; }
-
-    protected:
-      /**
-       * \brief grid for contact point detection
-       */
-      Vec userContourNodes;
-
-  };
-
-  /**
-   * \brief flexible bodies defined by two material (or LAGRANGE) coordinates
-   * \author Roland Zander
-   * \author Thorsten Schindler
-   * \date 17.03.09
-   */
-  class FlexibleBody2s : public FlexibleBody {
-    public:
-      /**
-       * \brief constructor
-       * \param name of body
-       */
-      FlexibleBody2s(const string &name);
-
-      /**
-       * \brief destructor
-       */
-      virtual ~FlexibleBody2s() {}
-
-      /**
-       * \param nodes for search-fields of contact-search
-       */
-      void setContourNodes(const Mat& nodes) { userContourNodes = nodes; }
-
-    protected:
-      /**
-       * \brief grid for contact point detection
-       */
-      Mat userContourNodes;
-  };
-
 }
 
-#endif
+#endif /* _FLEXIBLE_BODY_H_ */
 

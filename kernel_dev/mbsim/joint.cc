@@ -80,7 +80,7 @@ namespace MBSim {
 
   void Joint::calcrFactorSize() {
     Link::calcrFactorSize();
-    rFactorSize = setValued ? forceDir.cols()+momentDir.cols() : 0;
+    rFactorSize = isSetValued() ? forceDir.cols()+momentDir.cols() : 0;
   }
 
   void Joint::init() {

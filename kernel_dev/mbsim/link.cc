@@ -36,9 +36,6 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  Link::Link(const string &name, bool setValued_) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), setValued(setValued_), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
-  }
-
   Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), scaleTolQ(1e-9), scaleTolp(1e-5), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rMax(1.0), HSLink(0), checkHSLink(false) { // , active(true), parent(0), 
   }
 
@@ -51,10 +48,6 @@ namespace MBSim {
 #endif
 
   }
-
-//  bool Link::isSetValued() const {
-//    return setValued;
-//  }
 
   void Link::init() {
     rFactorUnsure.resize(rFactorSize);
