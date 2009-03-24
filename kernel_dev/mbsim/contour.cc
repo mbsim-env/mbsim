@@ -50,8 +50,8 @@ namespace MBSim {
 					 ,
 					 bodyAMVis(NULL)
 # endif
-# ifdef HAVE_AMVIS
-   , amvisBody(0)
+# ifdef HAVE_AMVISCPPINTERFACE
+   , amvisRigidBody(0)
 # endif
  {
    // Contouren standardmaessig nicht ausgeben...
