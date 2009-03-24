@@ -1274,12 +1274,9 @@ namespace MBSim {
       (**i).checkImpactsForTermination();
   }
 
-  void Subsystem::initPlot(bool top) {
+  void Subsystem::initPlot() {
     if(parent)
-      for(int i=0; i<LASTPLOTFEATURE; i++) {
-        if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
-        if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
-      }
+      updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(separateFilePerSubsystem)==enabled) {
@@ -1331,9 +1328,9 @@ namespace MBSim {
     }
   }
 
-  void Subsystem::plot(double t, double dt, bool top) {
+  void Subsystem::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
+      Element::plot(t,dt);
 
       for(unsigned i=0; i<subsystem.size(); i++)
         subsystem[i]->plot(t,dt);

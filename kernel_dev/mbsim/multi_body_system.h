@@ -328,7 +328,7 @@ namespace MBSim {
       static MultiBodySystem* load(const string &path);
       static void save(const string &path, MultiBodySystem* mbs);
 
-      void initPlot(bool top=true);
+      void initPlot();
   };
 
 }

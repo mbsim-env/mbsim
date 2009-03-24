@@ -77,8 +77,8 @@ namespace MBSim {
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt = 1, bool top=true); 
-      virtual void initPlot(bool top=true);
+      virtual void plot(double t, double dt = 1); 
+      virtual void initPlot();
       virtual void closePlot();
       virtual string getType() const {return "Object";}
       void setMultiBodySystem(MultiBodySystem *sys);

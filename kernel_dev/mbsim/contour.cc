@@ -87,10 +87,8 @@ namespace MBSim {
 #endif
   }*/
 
-  void Contour::plot(double t, double dt, bool top) {
+  void Contour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
-
 #ifdef HAVE_AMVISCPPINTERFACE
       if(getPlotFeature(amvis)==enabled && amvisRigidBody && !amvisRigidBody->isHDF5Link()) {
         vector<double> data;
@@ -104,11 +102,12 @@ namespace MBSim {
         amvisRigidBody->append(data);
       }
 #endif
+      Element::plot(t,dt);
     }
   }
 
-  void Contour::initPlot(bool top) {
-    Element::initPlot(parent, true, false);
+  void Contour::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVISCPPINTERFACE
@@ -127,6 +126,7 @@ namespace MBSim {
         }
       }
 #endif
+      Element::initPlot(parent);
     }
   }
 

@@ -67,8 +67,8 @@ namespace MBSim {
       virtual void preinit() {}
       virtual void init();
 
-      virtual void initPlot(bool top=true);
-      virtual void plot(double t, double dt = 1, bool top=true); 
+      virtual void initPlot();
+      virtual void plot(double t, double dt = 1); 
 
       int gethSize(int i=0) const { return hSize[i]; }
       int gethInd(int i=0) const { return hInd[i]; }

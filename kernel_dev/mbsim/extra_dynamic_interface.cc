@@ -68,10 +68,8 @@ namespace MBSim {
     xd >> xdParent(xInd,xInd+xSize-1);
   }
 
-  void ExtraDynamicInterface::plot(double t, double dt, bool top) {
+  void ExtraDynamicInterface::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false);
-
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(x(i));
@@ -79,13 +77,12 @@ namespace MBSim {
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
 
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
+      Element::plot(t,dt);
     }
   }
 
-  void ExtraDynamicInterface::initPlot(bool top) {
-    Element::initPlot(parent, true, false);
+  void ExtraDynamicInterface::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
@@ -95,7 +92,7 @@ namespace MBSim {
         for(int i=0; i<xSize; ++i)
           plotColumns.push_back("xd("+numtostr(i)+")");
 
-      if(top) createDefaultPlot();
+      Element::initPlot(parent);
     }
   }
 

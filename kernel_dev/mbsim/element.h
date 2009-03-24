@@ -114,7 +114,7 @@ namespace MBSim {
        * \param simulation time step size for derivative calculation
        * \param order of plot invocations
        */
-      virtual void plot(double t, double dt = 1, bool top=true);
+      virtual void plot(double t, double dt = 1);
 
       /**
        * \brief closes plot file
@@ -156,15 +156,8 @@ namespace MBSim {
       /**
        * \brief plots time series header
        * \param invocing parent class
-       * \param flag for creation of default plot
-       * \param order of plot invocation
        */
-      void initPlot(ObjectInterface* parent, bool createDefault, bool top=true); 
-
-      /**
-       * \brief creates default plot
-       */
-      void createDefaultPlot();
+      void initPlot(ObjectInterface* parent); 
 
       /**
        * \return associated plot group
@@ -232,17 +225,19 @@ namespace MBSim {
       /**
        * \brief one entry of time series
        */
-      std::vector<double> plotVector;
+      std::deque<double> plotVector;
 
       /**
        * \brief columns of time series
        */
-      std::vector<std::string> plotColumns;
+      std::deque<std::string> plotColumns;
 
       /**
        * \brief associated plot group
        */
       H5::Group *plotGroup;
+
+      void updatePlotFeatures(ObjectInterface* parent);
 
     private:
       /**

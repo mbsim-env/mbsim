@@ -58,13 +58,15 @@ namespace MBSim {
     outputfile << getFullName() << endl<<endl;
   }
 
-  void Element::plot(double t, double dt, bool top) {
+  void Element::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.clear();
-      plotVector.push_back(t);
+      plotVector.push_front(t);
 
-      if(top && plotColumns.size()>1)
+      if(plotColumns.size()>1) {
+        assert(plotColumns.size()==plotVector.size());
         plotVectorSerie->append(plotVector);
+        plotVector.clear();
+      }
     }
   }
 
@@ -92,31 +94,28 @@ namespace MBSim {
     DIBRefs.push_back(DIBRef_);
   }
 
-  void Element::initPlot(ObjectInterface* parent, bool createDefault, bool top) {
-    for(int i=0; i<LASTPLOTFEATURE; i++) {
-      if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
-      if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
-    }
+  void Element::initPlot(ObjectInterface* parent) {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
       plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
       H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
 
-      if(createDefault) {
-        plotColumns.clear();
-        plotColumns.push_back("Time");
+      plotColumns.push_front("Time");
+      if(plotColumns.size()>1) {
         plotVectorSerie=new H5::VectorSerie<double>;
-
-        if(top) createDefaultPlot();
-      } else
-        plotVectorSerie=NULL;
+        // copy plotColumns to a std::vector
+        vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
+        plotVectorSerie->create(*plotGroup,"data",dummy);
+        plotVectorSerie->setDescription("Default dataset for class: "+getType());
+      }
     }
   }
 
-  void Element::createDefaultPlot() {
-    if(plotColumns.size()>1) {
-      plotVectorSerie->create(*plotGroup,"data",plotColumns);
-      plotVectorSerie->setDescription("Default dataset for class: "+getType());
+  void Element::updatePlotFeatures(ObjectInterface* parent) {
+    for(int i=0; i<LASTPLOTFEATURE; i++) {
+      if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
+      if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
     }
   }
 

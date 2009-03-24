@@ -377,8 +377,8 @@ namespace MBSim {
     zdot(zParent,t);
   }
 
-  void MultiBodySystem::initPlot(bool top) {
-    Subsystem::initPlot(false);
+  void MultiBodySystem::initPlot() {
+    Group::initPlot();
 #ifdef HAVE_AMVISCPPINTERFACE
     amvisGrp->initialize();
 #endif

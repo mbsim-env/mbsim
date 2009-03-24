@@ -76,15 +76,10 @@ namespace MBSim {
     throw new MBSimError("ERROR (FlexibleBody::updateSecondJacobians): Not implemented!");
   }
 
-  template <class AT> void FlexibleBody<AT>::plot(double t, double dt, bool top) {
+  template <class AT> void FlexibleBody<AT>::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Body::plot(t,dt,false); 
-
-      if(top && plotColumns.size()>1)
-        plotVectorSerie->append(plotVector);
-
 #ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
+      if(boolAMVis) {
         float *qDummy = (float*) malloc(qSize*sizeof(float));
         for(int i=0;i<qSize;i++) qDummy[i] = q(i);
         bodyAMVis->setTime(t);
@@ -93,19 +88,20 @@ namespace MBSim {
         free(qDummy);
       }
 #endif
+      Body::plot(t,dt);
     }
   }
 
-  template <class AT> void FlexibleBody<AT>::initPlot(bool top) {
-    Body::initPlot(false); 
+  template <class AT> void FlexibleBody<AT>::initPlot() {
+    updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(top) createDefaultPlot();
-
 #ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled)
+      if(boolAMVis && getPlotFeature(amvis)==enabled)
         bodyAMVis->writeBodyFile();
 #endif
+
+      Body::initPlot();
     }
   }
 
