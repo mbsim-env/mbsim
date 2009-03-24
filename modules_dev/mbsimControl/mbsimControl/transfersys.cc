@@ -21,6 +21,7 @@
  *
  */ 
 #include <config.h>
+#include "mbsim/subsystem.h"
 #include "mbsimControl/transfersys.h"
 
 TransferSys::TransferSys(const string& name) : SPSys(name) {
@@ -233,25 +234,21 @@ void TransferSys::setGain(double P){
 }
 
 //Plot Defs Anfang************************************************************
-void TransferSys::plot(double t, double dt, bool top){
+void TransferSys::plot(double t, double dt) {
   if(getPlotFeature(plotRecursive)==enabled) {
-    SPSys::plot(t,dt,false);
-
     plotVector.push_back(y(0));
     plotVector.push_back((this->*Uin)(t)(0));
 
-    if(top && plotColumns.size()>1)
-      plotVectorSerie->append(plotVector);
+    SPSys::plot(t,dt);
   }
 }
 
-void TransferSys::initPlot(bool top) {
-  SPSys::initPlot(false);
-
+void TransferSys::initPlot() {
+  updatePlotFeatures(parent);
   if(getPlotFeature(plotRecursive)==enabled) {
     plotColumns.push_back("Sigout");
     plotColumns.push_back("Sigin");
 
-    if(top) createDefaultPlot();
+    SPSys::initPlot();
   }
 }

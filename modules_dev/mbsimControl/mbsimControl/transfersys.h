@@ -53,8 +53,8 @@ class TransferSys : public SPSys {
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateg(double t);
-    void initPlot(bool top=true);
-    void plot(double t,double dt, bool top=true);
+    void initPlot();
+    void plot(double t,double dt);
     void showABCD();
     
    
