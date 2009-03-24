@@ -31,6 +31,7 @@ Group2::Group2(const string &name) : Group(name) {
 
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody(name+"_Box1");
+  box1->setPlotFeature(globalPosition, enabled);
   addObject(box1);
  
   // Masse und Trägheit definieren

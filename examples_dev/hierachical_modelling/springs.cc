@@ -20,12 +20,16 @@ namespace MBSim {
     la.resize(1);
   }
 
-  void Spring::initPlot(bool top) {
-    Link::initPlot(true);
+  void Spring::initPlot() {
+    updatePlotFeatures(parent);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVISCPPINTERFACE
-    if(coilspringAMVis) {
-      coilspringAMVis->setName(name);
-      parent->getAMVisGrp()->addObject(coilspringAMVis);
+      if(coilspringAMVis) {
+        coilspringAMVis->setName(name);
+        parent->getAMVisGrp()->addObject(coilspringAMVis);
+      }
+      Link::initPlot();
     }
 #endif
   }
@@ -53,28 +57,29 @@ namespace MBSim {
     Link::connect(port1,1);
   }
 
-  void Spring::plot(double t,double dt, bool top) {
-    Link::plot(t,dt,true);
-
+  void Spring::plot(double t,double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVISCPPINTERFACE
-    if (coilspringAMVis) {
-      Vec WrOToPoint;
-      Vec WrOFromPoint;
+      if (coilspringAMVis) {
+        Vec WrOToPoint;
+        Vec WrOFromPoint;
 
-      WrOFromPoint = port[0]->getPosition();
-      WrOToPoint   = port[1]->getPosition();
-      vector<double> data;
-      data.push_back(t); 
-      data.push_back(WrOFromPoint(0));
-      data.push_back(WrOFromPoint(1));
-      data.push_back(WrOFromPoint(2));
-      data.push_back(WrOToPoint(0));
-      data.push_back(WrOToPoint(1));
-      data.push_back(WrOToPoint(2));
-      data.push_back(0);
-      coilspringAMVis->append(data);
-    }
+        WrOFromPoint = port[0]->getPosition();
+        WrOToPoint   = port[1]->getPosition();
+        vector<double> data;
+        data.push_back(t); 
+        data.push_back(WrOFromPoint(0));
+        data.push_back(WrOFromPoint(1));
+        data.push_back(WrOFromPoint(2));
+        data.push_back(WrOToPoint(0));
+        data.push_back(WrOToPoint(1));
+        data.push_back(WrOToPoint(2));
+        data.push_back(0);
+        coilspringAMVis->append(data);
+      }
 #endif
+      Link::plot(t,dt);
+    }
   }
 
 }
