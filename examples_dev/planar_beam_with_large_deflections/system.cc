@@ -7,6 +7,8 @@ using namespace AMVis;
 
 System::System(const string &projectName) : MultiBodySystem(projectName) {
 
+  this->setAccelerationOfGravity(Vec("[0; -10; 0]"));
+
   Vec q02D, u02D;
 
   double l0 = 1.5; // length
@@ -48,8 +50,11 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   joint2D->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
   joint2D->setForceLaw(new BilateralConstraint);
   joint2D->setImpactForceLaw(new BilateralImpact);
+  joint2D->setMomentDirection("[0; 0; 1]");
+  joint2D->setMomentLaw(new BilateralConstraint);
+  joint2D->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint2D);
-  
+ 
   rod2D->setq0(q02D);
   rod2D->setu0(u02D);
   rod2D->createAMVisBody(true);
