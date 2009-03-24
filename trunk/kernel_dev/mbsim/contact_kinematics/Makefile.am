@@ -14,6 +14,8 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					circlesolid_frustum2d.cc\
 					circlesolid_plane.cc\
 					circlesolid_contour1s.cc\
+					circlehollow_cylinderflexible.cc \
+  					point_cylinderflexible.cc \
 					edge_edge.cc\
 					point_area.cc\
 					point_frustum.cc\
@@ -22,8 +24,8 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
-INCLUDES = $(DEPS_CFLAGS) 
-LDADD = $(DEPS_LIBS) 
+INCLUDES = $(DEPS_CFLAGS)
+LDADD = $(DEPS_LIBS)
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h \
   circlesolid_circlehollow.h \
@@ -32,6 +34,8 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h \
   circlesolid_frustum2d.h \
   circlesolid_line.h \
   circlesolid_plane.h \
+  circlehollow_cylinderflexible.h \
+  point_cylinderflexible.h \
   compoundcontour_compoundcontour.h \
   compoundcontour_contour.h \
   edge_edge.h \

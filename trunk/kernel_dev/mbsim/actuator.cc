@@ -27,7 +27,7 @@
 
 namespace MBSim {
 
-  Actuator::Actuator(const string &name) : Link(name,false), func(0), KOSYID(1) {
+  Actuator::Actuator(const string &name) : Link(name), func(0), KOSYID(1) {
  }
 
   Actuator::~Actuator() {

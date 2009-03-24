@@ -39,7 +39,7 @@ namespace MBSim {
   /** 
    * \brief class for all objects having own dynamics and mass
    * \author Martin Foerg
-   * \date 17.03.09
+   * \date 2009-03-24 plot energy added (Thorsten Schindler)
    */
   class Object : public Element, public ObjectInterface {
     public: 
@@ -154,12 +154,12 @@ namespace MBSim {
 
 
       /**
-       * \brief initialize object at start of simulation with respect to contours and ports
+       * \brief initialize object at start of simulation with respect to contours and frames
        */
       virtual void init();
 
       /**
-       * \brief initialize object at start of simulation with respect to contours and ports TODO
+       * \brief initialize object at start of simulation with respect to contours and frames TODO
        */
       virtual void preinit();
 
@@ -290,9 +290,6 @@ namespace MBSim {
        */
       int contourIndex(const Contour *contour_) const;
 
-      vector<Frame*> port;
-      vector<Contour*> contour;
-
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return amvisGrp; }
 #endif
@@ -362,6 +359,12 @@ namespace MBSim {
        * \brief indices for velocities and right hand side
        */
       Index Iu, Ih;
+
+      /**
+       * \brief vector of frames and contours
+       */
+      vector<Frame*> port;
+      vector<Contour*> contour;
 
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Body* amvisBody;

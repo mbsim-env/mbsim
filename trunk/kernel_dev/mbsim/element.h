@@ -51,7 +51,7 @@ namespace MBSim {
   };
 
   enum PlotFeature {
-    plotRecursive=0, separateFilePerSubsystem, state, stateDerivative, rightHandSide, globalPosition, contact, amvis, LASTPLOTFEATURE
+    plotRecursive=0, separateFilePerSubsystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, amvis, LASTPLOTFEATURE
   };
 
   class MultiBodySystem;
@@ -59,7 +59,7 @@ namespace MBSim {
   /** 
    * \brief basic class of MBSim mainly for plotting
    * \author Martin Foerg
-   * \date 17.03.09
+   * \date 2009-03-24 plot feature energy (Thorsten Schindler)
    */
   class Element {
     public:

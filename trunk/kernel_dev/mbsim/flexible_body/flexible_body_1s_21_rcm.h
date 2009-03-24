@@ -34,14 +34,14 @@ namespace MBSim {
    * \brief model for planar beams with large deflection using Redundant Coordinate Method (RCM)
    * \author Roland Zander
    * \author Thorsten Schindler
-   * \date 18.03.09
+   * \date 2009-03-23 initial kernel_dev commit (Thorsten Schindler)
    *
    * read:\n
    * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005 \n
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006 \n
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FlexibleBody1s21RCM : public FlexibleBody1s {
+  class FlexibleBody1s21RCM : public FlexibleBody<Vec> {
     public:
       /**
        * \brief constructor:
@@ -57,16 +57,13 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       /* FLEXIBLEBODY */
+      virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
-      virtual Mat computeJacobianMatrix(const ContourPointData &S);
-      virtual Frame* computeKinematicsForFrame(const ContourPointData &S_);
+      virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);
+      virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
 
       /* OBJECT */
       virtual void init();
-      virtual double computePotentialEnergy();
-
-      /* OBJECTINTERFACE */
-      virtual void updateKinematics(double t);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -82,23 +79,11 @@ namespace MBSim {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
-
-      /**
-       * \param name of frame
-       * \param node number of finite element
-       */
-      void addFrame(const string &name, const int &node);
       /***************************************************/
 
       /**
-       * \param contour parameter
-       * \return state (position and velocities) of cross-section
-       */
-      Vec computeState(const double &s);
-
-      /**
-       * \brief initialise beam state concerning a straight cantilever setting
-       * \param TODO
+       * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
+       * \param angle of slope in case of cantilever
        */
       void initRelaxed(double alpha);
 
@@ -106,16 +91,22 @@ namespace MBSim {
       /**
        * \param radius of cylinder for AMVis visualisation
        */
-      void setAMVisCylinder(float r) { boolAMVis=true; AMVisRadius=r; }
+      void setAMVisCylinder(float r) { setPlotFeature(amvis, enabled); AMVisRadius=r; }
 
       /**
        * \param breadth of cuboid for AMVis visualisation
        * \param height of cuboid for AMVis visualisation
        */
-      void setAMVisCuboid(float breadth, float height) { boolAMVis=true; AMVisBreadth=breadth; AMVisHeight=height; }
+      void setAMVisCuboid(float breadth, float height) { setPlotFeature(amvis, enabled); AMVisBreadth=breadth; AMVisHeight=height; }
 #endif
 
     protected:
+      /**
+       * \brief detect current finite element
+       * \param global parametrisation
+       */
+      double BuildElement(const double& sGlobal);
+
       /** 
        * \brief number of finite elements used for discretisation
        */
@@ -171,29 +162,25 @@ namespace MBSim {
        */ 
       bool openStructure;
 
-      /** 
-       * \brief true if terms for implicit time integration shall be computed, unused so far
-       */ 
-      bool implicit;
-
+      /**
+       * \brief current finite element being evaluated
+       */
       int CurrentElement;
-      SqrMat Dhq, Dhqp;
 
-      void BuildElements();
-      double BuildElement(const double&);
-
-
+      /**
+       * \brief flag for testing if beam is initialised
+       */
       bool initialized;
-      double alphaRelax0, alphaRelax;
 
-      double sTangent;
-
-      /** right and left side contour of body: defined using binormal of contour */
+      /** 
+       * \brief right and left side contour of body
+       */
       Contour1sFlexible *contourR, *contourL;
 
-      void updateJh_internal(double t);
-
 #ifdef HAVE_AMVIS
+      /** 
+       * \brief AMVis visualisation for cylinder and cuboid
+       */
       float AMVisRadius, AMVisBreadth, AMVisHeight;
 #endif
 

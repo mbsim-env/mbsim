@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: thschindler@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_CYLINDERFLEXIBLE_H_
@@ -32,19 +29,43 @@ namespace MBSim {
   class CylinderFlexible;
   class FuncPairContour1sPoint;
 
-  /** pairing Point to CylinderFlexible; author: Roland Zander */
+  /**
+   * \brief pairing point to cylinder flexible
+   * \author: Roland Zander
+   * \date 2009-03-19 changes for new kernel (Thorsten Schindler)
+   */
   class ContactKinematicsPointCylinderFlexible : public ContactKinematics {
+    public:
+      /**
+       * \brief constructor
+       */
+      ContactKinematicsPointCylinderFlexible() {}
+      
+      /**
+       * \brief destructor
+       */
+      ~ContactKinematicsPointCylinderFlexible();
+
+      /* INHERITED INTERFACE */
+      void assignContours(const vector<Contour*> &contour);
+      void updateg(Vec &g, ContourPointData *cpData);
+
     private:
+      /**
+       * \brief index for point and cylinder
+       */
       int ipoint, icylinder;
+      
+      /** 
+       * \brief pointer to point and cylinder
+       */
       Point *point;
       CylinderFlexible *cylinder;
+      
+      /**
+       * \brief root function
+       */
       FuncPairContour1sPoint *func;
-    public:
-      ~ContactKinematicsPointCylinderFlexible();
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
-
-      void assignContours(const vector<Contour*> &contour);
   };
 
 }

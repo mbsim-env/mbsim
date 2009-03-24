@@ -21,8 +21,9 @@
 #include <config.h>
 #include <mbsim/flexible_body.h>
 #include <mbsim/subsystem.h>
-#include <mbsim/contour_pdata.h>
 #include <mbsim/frame.h>
+#include <mbsim/utils/function.h>
+#include <mbsim/mbsim_event.h>
 
 #ifdef HAVE_AMVIS
 #include "elastic.h"
@@ -31,13 +32,13 @@ using namespace AMVis;
 
 namespace MBSim {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
+  template <class AT> FlexibleBody<AT>::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
 # ifdef HAVE_AMVIS
-                                                   , bodyAMVis(NULL), boolAMVis(false), boolAMVisBinary(true), AMVisColor(0.)
+                                                                           , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
 # endif
-                                                   {}
+                                                                           {}
 
-  FlexibleBody::~FlexibleBody() {
+  template <class AT> FlexibleBody<AT>::~FlexibleBody() {
     for(unsigned int i=0; i<discretization.size(); i++) {
       delete discretization[i]; discretization[i] = NULL;
     }
@@ -46,10 +47,7 @@ namespace MBSim {
 #  endif
   }
 
-  void FlexibleBody::updateh(double t) {
-    M.init(0.);
-    h.init(0.);
-
+  template <class AT> void FlexibleBody<AT>::updateM(double t) {
     for(unsigned int i=0;i<discretization.size();i++) {
       discretization[i]->computeEquationsOfMotion(qElement[i],uElement[i]); // compute attributes of finite element
 
@@ -59,85 +57,76 @@ namespace MBSim {
     if(d_massproportional) h -= d_massproportional*(M*u); // mass proportional damping
   }
 
-  void FlexibleBody::updateKinematics(double t) {
+  template <class AT> void FlexibleBody<AT>::updateKinematics(double t) {
+    BuildElements();
     for(unsigned int i=0; i<port.size(); i++) { // frames
-      frametmp = computeKinematicsForFrame(S_Frame[i]);
-
-      port[i]->setPosition(frametmp->getPosition()); 
-      port[i]->setOrientation(frametmp->getOrientation());
-      port[i]->setVelocity(frametmp->getVelocity());
-      port[i]->setAngularVelocity(frametmp->getAngularVelocity());
+      updateKinematicsForFrame(S_Frame[i],port[i]); 
     }
     // TODO contour non native?
   }
 
-  void FlexibleBody::updateJacobians(double t) {
+  template <class AT> void FlexibleBody<AT>::updateJacobians(double t) {
     for(unsigned int i=0; i<port.size(); i++) { // frames
-      Mat Jactmp = computeJacobianMatrix(S_Frame[i]); // temporial Jacobian matrix
-      port[i]->setJacobianOfTranslation(Jactmp*trans(JT)*trans(frameParent->getOrientation())); // TODO sparse structure / port in frame
-      port[i]->setJacobianOfRotation(Jactmp*trans(JR)*trans(frameParent->getOrientation()));
-      // port[i]->setGyroscopicAccelerationOfTranslation(); TODO
-      // port[i]->setGyroscopicAccelerationOfRotation(); TODO
+      updateJacobiansForFrame(S_Frame[i],port[i]);
     }
     // TODO contour non native?
   }
 
-  void FlexibleBody::updateSecondJacobians(double t) {}
-
-  void FlexibleBody::plot(double t, double dt, bool top) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt,false); // only time
-
-      if(getPlotFeature(globalPosition)==enabled) {
-        for(int i=0; i<qSize; ++i) plotVector.push_back(q(i));
-        for(int i=0; i<uSize[0]; ++i) plotVector.push_back(u(i));
-        double Ttemp = computeKineticEnergy();
-        double Vtemp = computePotentialEnergy();
-        plotVector.push_back(Ttemp);
-        plotVector.push_back(Vtemp);
-        plotVector.push_back(Ttemp + Vtemp);
-      }
-    }
-
-#ifdef HAVE_AMVIS
-    if(boolAMVis) {
-      float *qDummy = (float*) malloc(qSize*sizeof(float));
-      for(int i=0;i<qSize;i++) qDummy[i] = q(i);
-      bodyAMVis->setTime(t);
-      bodyAMVis->setCoordinates(qDummy);
-      bodyAMVis->appendDataset(0);
-      free(qDummy);
-    }
-#endif
+  template <class AT> void FlexibleBody<AT>::updateSecondJacobians(double t) {
+    throw new MBSimError("ERROR (FlexibleBody::updateSecondJacobians): Not implemented!");
   }
 
-  void FlexibleBody::initPlot(bool top) {
-    Element::initPlot(parent, true, false); // only time
-
+  template <class AT> void FlexibleBody<AT>::plot(double t, double dt, bool top) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(globalPosition)==enabled) {
-        for(int i=0; i<qSize; ++i) { stringstream index; index << "q(" << i << ")"; plotColumns.push_back(index.str()); }
-        for(int i=0; i<uSize[0]; ++i) { stringstream index; index << "u(" << i << ")"; plotColumns.push_back(index.str()); }
-        plotColumns.push_back("T");
-        plotColumns.push_back("V");
-        plotColumns.push_back("E");
-      }
-    }
+      Body::plot(t,dt,false); 
 
-    if(top) createDefaultPlot();
+      if(top && plotColumns.size()>1)
+        plotVectorSerie->append(plotVector);
 
 #ifdef HAVE_AMVIS
-    if(boolAMVis && getPlotFeature(amvis)==enabled)
-      bodyAMVis->writeBodyFile();
+      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
+        float *qDummy = (float*) malloc(qSize*sizeof(float));
+        for(int i=0;i<qSize;i++) qDummy[i] = q(i);
+        bodyAMVis->setTime(t);
+        bodyAMVis->setCoordinates(qDummy);
+        bodyAMVis->appendDataset(0);
+        free(qDummy);
+      }
 #endif
+    }
   }
 
-  void FlexibleBody::init() {
+  template <class AT> void FlexibleBody<AT>::initPlot(bool top) {
+    Body::initPlot(false); 
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(top) createDefaultPlot();
+
+#ifdef HAVE_AMVIS
+      if(bodyAMVis && getPlotFeature(amvis)==enabled)
+        bodyAMVis->writeBodyFile();
+#endif
+    }
+  }
+
+  template <class AT> void FlexibleBody<AT>::init() {
     Body::init();
     T = SqrMat(qSize,fmatvec::EYE);
+    for(unsigned int i=0; i<port.size(); i++) { // frames
+      S_Frame[i].cosy.getJacobianOfTranslation().resize(3,uSize[0]);
+      S_Frame[i].cosy.getJacobianOfRotation().resize(3,uSize[0]);
+    }
   }
 
-  double FlexibleBody::computePotentialEnergy() {
+  template <class AT> double FlexibleBody<AT>::computeKineticEnergy() {
+    double T = 0.;
+    for(unsigned int i=0; i<discretization.size(); i++) {
+      T += discretization[i]->computeKineticEnergy(qElement[i],uElement[i]);
+    }
+    return T;
+  }
+
+  template <class AT> double FlexibleBody<AT>::computePotentialEnergy() {
     double V = 0.;
     for(unsigned int i=0; i<discretization.size(); i++) {
       V += discretization[i]->computeElasticEnergy(qElement[i]) + discretization[i]->computeGravitationalEnergy(qElement[i]);
@@ -145,18 +134,17 @@ namespace MBSim {
     return V;
   }
 
-  void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
+  template <class AT> void FlexibleBody<AT>::addFrame(const string &name, const ContourPointData &S_) {
     Frame *port = new Frame(name);
     addFrame(port,S_);
   }
 
-  void FlexibleBody::addFrame(Frame* port, const ContourPointData &S_) {
+  template <class AT> void FlexibleBody<AT>::addFrame(Frame* port, const ContourPointData &S_) {
     Body::addFrame(port);
     S_Frame.push_back(S_);
   }
 
-  FlexibleBody1s::FlexibleBody1s(const string &name) : FlexibleBody(name), userContourNodes(0) {}
-
-  FlexibleBody2s::FlexibleBody2s(const string &name) :FlexibleBody(name) {}
+  template class FlexibleBody<Vec>;
+  template class FlexibleBody<Mat>;
 }
 

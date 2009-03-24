@@ -84,7 +84,6 @@ namespace MBSim {
 	\param setValued true, if force law is set-valued, else false for functional law
 	*/      
       Contact(const string &name);
-      Contact(const string &name, bool flag) : Link(name,flag) {}
 
       virtual ~Contact();
 

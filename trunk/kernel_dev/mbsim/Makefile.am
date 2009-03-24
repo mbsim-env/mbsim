@@ -1,8 +1,9 @@
-SUBDIRS =  utils integrators contact_kinematics .
+SUBDIRS =  utils integrators contact_kinematics flexible_body .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = body.cc\
+mbsim_event.cc\
 link.cc\
 object.cc\
 multi_body_system.cc\
@@ -24,15 +25,17 @@ userfunction_contour.cc\
 functions_contact.cc\
 class_factory.cc\
 kinematics.cc\
-constitutive_laws.cc
+constitutive_laws.cc\
+flexible_body.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la 
+libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la
 
 INCLUDES = $(DEPS_CFLAGS) $(AMVIS_CFLAGS)
 LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
+mbsim_event.h\
 link.h\
 object.h\
 multi_body_system.h\
@@ -57,6 +60,7 @@ class_factory.h\
 kinematics.h\
 constitutive_laws.h\
 interfaces.h\
+flexible_body.h\
 compatibility_classes/body_rigid.h\
 compatibility_classes/body_rigid_abs.h\
 compatibility_classes/body_rigid_rel.h\

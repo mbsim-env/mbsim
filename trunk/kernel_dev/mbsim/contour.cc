@@ -23,7 +23,6 @@
 #include <config.h>
 #include <mbsim/contour.h>
 #include <mbsim/object.h>
-#include <mbsim/flexible_body.h>
 #include <mbsim/frame.h>
 #include <mbsim/utils/rotarymatrices.h>
 
@@ -168,6 +167,7 @@ namespace MBSim {
 
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
+
   Point::~Point() {}
 
   /* Line */
@@ -227,43 +227,6 @@ namespace MBSim {
     funcCrPC->init(s);
     Cb = funcCrPC->computeB(s);
   }
-
-  /* Contour1sFlexible */
-  //Contour1sFlexible::Contour1sFlexible(const string &name) : Contour1s(name) {}
-  //Vec Contour1sFlexible::computeWn    (double alpha) {ContourPointData cp; cp.type=CONTINUUM; cp.alpha=Vec(1,INIT,alpha);return computeWn(cp);}
-  //Mat Contour1sFlexible::computeWt    (double alpha) {ContourPointData cp; cp.type=CONTINUUM; cp.alpha=Vec(1,INIT,alpha);return computeWt(cp);}
-  //Vec Contour1sFlexible::computeWrOC  (double alpha) {ContourPointData cp; cp.type=CONTINUUM; cp.alpha=Vec(1,INIT,alpha);return computeWrOC(cp);}
-  //Vec Contour1sFlexible::computeWvC   (double alpha) {ContourPointData cp; cp.type=CONTINUUM; cp.alpha=Vec(1,INIT,alpha);return computeWvC(cp);}
-  //Vec Contour1sFlexible::computeWomega(double alpha) {ContourPointData cp; cp.type=CONTINUUM; cp.alpha=Vec(1,INIT,alpha);return computeWomega(cp);}
-  //Mat Contour1sFlexible::computeWt  (const ContourPointData &cp)
-  //{
-  //  if(Cb(2) < 0.0 ) 
-  //    return   (static_cast<FlexibleBody1s*>(parent)->computeWt(cp));
-  //  else
-  //    return - (static_cast<FlexibleBody1s*>(parent)->computeWt(cp));
-  //}
-  //Vec Contour1sFlexible::computeWn  (const ContourPointData &cp)
-  //{
-  //  if(Cb(2) < 0.0 ) 
-  //    return   (static_cast<FlexibleBody1s*>(parent))->computeWn(cp);
-  //  else
-  //    return - (static_cast<FlexibleBody1s*>(parent))->computeWn(cp);
-  //}
-  //Vec Contour1sFlexible::computeWrOC(const ContourPointData &cp)
-  //{
-  //  return (static_cast<FlexibleBody1s*>(parent))->computeWrOC(cp);
-  //}
-  //Vec Contour1sFlexible::computeWvC (const ContourPointData &cp)
-  //{
-  //  return (static_cast<FlexibleBody1s*>(parent))->computeWvC(cp);
-  //}
-
-  ///* CylinderFlexible */
-  //CylinderFlexible::CylinderFlexible(const string &name) : Contour1sFlexible(name) {}
-  //Vec CylinderFlexible::computeWomega(const ContourPointData &cp)
-  //{
-  //  return (static_cast<FlexibleBody1s*>(parent))->computeWomega(cp);
-  //}
 
   /* Plane */
   Plane::Plane(const string &name) : Contour(name), Cn(3) {}
