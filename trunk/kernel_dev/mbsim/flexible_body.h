@@ -37,7 +37,8 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-03-24 changes for new MBSim (Thorsten Schindler)
    */
-  template <class AT> class FlexibleBody : public Body {
+  template <class AT>
+    class FlexibleBody : public Body {
     public:
       /**
        * \brief constructor
@@ -71,15 +72,6 @@ namespace MBSim {
       virtual void save(const string &path, ofstream &outputfile) { Body::save(path, outputfile); }
 
       /* OBJECT */
-      //virtual void updateqRef(Vec q_) { q  >> q_ ; }
-      //virtual void updateqdRef(Vec qd_) { qd >> qd_; }
-      //virtual void updateuRef(Vec u_) { u  >> u_ ; }
-      //virtual void updateudRef(Vec ud_) { ud >> ud_; }
-      //virtual void updatehRef(Vec h_) { h  >> h_ ; }
-      //virtual void updaterRef(Vec r_) { r  >> r_ ; }
-      //virtual void updateMRef(SymMat M_) { M  >> M_ ; }
-      // TODO TRef, LLMRef?
-
       virtual void init();
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
