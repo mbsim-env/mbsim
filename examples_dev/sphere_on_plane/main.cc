@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
 
   sys->init();
   
-  bool eventDriven = true;
+  bool eventDriven = false;
 
   if(eventDriven) { // Event driven time integration
     LSODARIntegrator integrator;
@@ -23,6 +23,8 @@ int main (int argc, char* argv[])
     double dt = 1e-4;
     sys->setLaTol(1e-2*dt);
     sys->setgdTol(1e-8);
+    sys->setConstraintSolver(RootFinding);
+    sys->setImpactSolver(RootFinding);
     TimeSteppingIntegrator integrator;
     integrator.setdt(dt);
     integrator.setdtPlot(1e-2);
