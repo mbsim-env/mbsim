@@ -79,7 +79,7 @@ namespace MBSim {
   template <class AT> void FlexibleBody<AT>::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVIS
-      if(boolAMVis) {
+      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
         float *qDummy = (float*) malloc(qSize*sizeof(float));
         for(int i=0;i<qSize;i++) qDummy[i] = q(i);
         bodyAMVis->setTime(t);
@@ -97,7 +97,7 @@ namespace MBSim {
 
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVIS
-      if(boolAMVis && getPlotFeature(amvis)==enabled)
+      if(bodyAMVis && getPlotFeature(amvis)==enabled)
         bodyAMVis->writeBodyFile();
 #endif
 

@@ -30,8 +30,8 @@ namespace MBSim {
         parent->getAMVisGrp()->addObject(coilspringAMVis);
       }
       Link::initPlot();
-    }
 #endif
+  }
   }
 
   void Spring::updateg(double t) {
@@ -83,3 +83,4 @@ namespace MBSim {
   }
 
 }
+

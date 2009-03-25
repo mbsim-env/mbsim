@@ -1,23 +1,20 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
  * version 2.1 of the License, or (at your option) any later version. 
- *  
+ * 
  * This library is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details. 
- *  
+ *
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _LINK_H_
@@ -42,77 +39,25 @@ namespace MBSim {
   class HitSphereLink;
   class UserFunction;
 
-  /*! 
-   *  \brief This is a general link to one or more objects.
-   * 
-   * */
+  /** 
+   * \brief general link to one or more objects
+   * \author Martin Foerg
+   * \date 2009-03-25 some comments (Thorsten Schindler)
+   */
   class Link : public Element, public LinkInterface {
-
-    protected:
-
-      Subsystem* parent;
-
-      /** Internal integrable State Variables */
-      Vec x;
-      /** Internal integrable State Variables velocities ud \see updatedu(double t, double dt), updateud(double t) */
-      Vec xd;
-      Vec x0;
-
-      int xSize;
-      int xInd;
-
-      int svSize;
-      Vec sv;
-      int svInd;
-      Vector<int> jsv;
-
-      int gSize, gInd;
-      int gdSize, gdInd;
-      int laSize, laInd;
-      int laIndMBS;
-
-      vector<Vec> WF, WM;
-      vector<Mat> fF, fM;
-
-      int rFactorSize, rFactorInd;
-      Vec g, gd, la, res;
-
-      Vec rFactor;
-      Vector<int> rFactorUnsure;
-
-      //bool active;
-      Index Ig, Ila;
-      Vec la0;
-
-      double scaleTolQ,scaleTolp;
-      double gdTol, gddTol, laTol, LaTol, rMax;
-
-      HitSphereLink* HSLink;
-      bool checkHSLink;
-
-      vector<Mat> W;
-      vector<Mat> V;
-      vector<Vec> h;
-      vector<Vec> r;
-      Vec wb;
-
-      /*! Array in which all ports are listed, connecting bodies via a Link.
-      */
-      vector<Frame*> port;
-
-      /** Array in which all contours linked by LinkContour are managed.*/
-      vector<Contour*> contour;
-
-#ifdef HAVE_AMVIS
-      vector<AMVis::Arrow*> arrowAMVis;
-      vector<double> arrowAMVisScale;
-      vector<int> arrowAMVisID;
-      vector<bool> arrowAMVisMoment;
-      vector<UserFunction*> arrowAMVisUserFunctionColor;
-#endif
-
     public:
-
+      /**
+       * \brief constructor
+       * \param name of link
+       */
+      Link(const string &name);
+      
+      /**
+       * \brief destructor
+       */
+      virtual ~Link();
+      
+      /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater(double t);
       virtual void updatewb(double t) {};
       virtual void updateW(double t) {};
@@ -121,16 +66,25 @@ namespace MBSim {
       virtual void updatedx(double t, double dt) {}
       virtual void updatexd(double t) {}
       virtual void updateStopVector(double t) {}
+      /***************************************************/
 
+      /* INHERITED INTERFACE OF ELEMENT */
+      void load(const string& path, ifstream &inputfile);
+      void save(const string &path, ofstream &outputfile);
+      string getType() const { return "Link"; }
+      virtual void plot(double t, double dt = 1);
+      virtual void closePlot();
+      /***************************************************/
+
+      /* INTERFACE */
       virtual void updateWRef(const Mat& ref, int i=0);
       virtual void updateVRef(const Mat& ref, int i=0);
       virtual void updatehRef(const Vec &ref, int i=0);
       virtual void updaterRef(const Vec &ref);
       virtual void updatewbRef(const Vec &ref);
       virtual void updatefRef(const Vec &ref) {};
+      /***************************************************/
 
-      Link(const string &name);
-      ~Link();
 
       Subsystem* getParent() {return parent;}
       void setParent(Subsystem* sys) {parent = sys;}
@@ -181,9 +135,7 @@ namespace MBSim {
       /*! Sets the internal states of a Link.*/
       void setx(const Vec &x_) {x = x_;}
 
-      virtual void plot(double t, double dt = 1);
       virtual void initPlot();
-      virtual void closePlot();
 
       virtual bool isSetValued() const { return false; }
 
@@ -257,10 +209,6 @@ namespace MBSim {
       /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
       virtual void connect(Contour *port1, int id);
 
-      string getType() const {return "Link";}
-
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
 
       virtual void checkActiveg() {}
       virtual void checkActivegd() {}
@@ -283,6 +231,69 @@ namespace MBSim {
       virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
       virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
 #endif
+    
+    protected:
+      Subsystem* parent;
+
+      /** Internal integrable State Variables */
+      Vec x;
+      /** Internal integrable State Variables velocities ud \see updatedu(double t, double dt), updateud(double t) */
+      Vec xd;
+      Vec x0;
+
+      int xSize;
+      int xInd;
+
+      int svSize;
+      Vec sv;
+      int svInd;
+      Vector<int> jsv;
+
+      int gSize, gInd;
+      int gdSize, gdInd;
+      int laSize, laInd;
+      int laIndMBS;
+
+      vector<Vec> WF, WM;
+      vector<Mat> fF, fM;
+
+      int rFactorSize, rFactorInd;
+      Vec g, gd, la, res;
+
+      Vec rFactor;
+      Vector<int> rFactorUnsure;
+
+      //bool active;
+      Index Ig, Ila;
+      Vec la0;
+
+      double scaleTolQ,scaleTolp;
+      double gdTol, gddTol, laTol, LaTol, rMax;
+
+      HitSphereLink* HSLink;
+      bool checkHSLink;
+
+      vector<Mat> W;
+      vector<Mat> V;
+      vector<Vec> h;
+      vector<Vec> r;
+      Vec wb;
+
+      /*! Array in which all ports are listed, connecting bodies via a Link.
+      */
+      vector<Frame*> port;
+
+      /** Array in which all contours linked by LinkContour are managed.*/
+      vector<Contour*> contour;
+
+#ifdef HAVE_AMVIS
+      vector<AMVis::Arrow*> arrowAMVis;
+      vector<double> arrowAMVisScale;
+      vector<int> arrowAMVisID;
+      vector<bool> arrowAMVisMoment;
+      vector<UserFunction*> arrowAMVisUserFunctionColor;
+#endif
+
   };
 }
 

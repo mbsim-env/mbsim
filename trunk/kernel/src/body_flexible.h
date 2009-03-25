@@ -158,8 +158,8 @@ namespace MBSim {
 	void setMassProportionalDamping(const double d_) {d_massproportional=d_;}
 
 #ifdef HAVE_AMVIS
-	/*! activate output for AMVis
-	*/
+	/*! activate output for AMVis*
+     * /
 	void createAMVisBody() {boolAMVis = true;  boolAMVisBinary = true;}
 
 	/*! activate output for AMVis
