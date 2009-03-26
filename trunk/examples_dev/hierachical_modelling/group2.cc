@@ -30,7 +30,7 @@ Group2::Group2(const string &name) : Group(name) {
   double l02 = 0.5;
 
   // ----------------------- Definition des 1. Körpers --------------------  
-  RigidBody *box1 = new RigidBody(name+"_Box1");
+  RigidBody *box1 = new RigidBody("Box1");
   box1->setPlotFeature(globalPosition, enabled);
   addObject(box1);
  
@@ -45,7 +45,7 @@ Group2::Group2(const string &name) : Group(name) {
   box1->setFrameForKinematics(box1->getFrame("C"));
   box1->setu0("[0.1]");
 
-  Group1 *group = new Group1(name+"_Untergruppe");
+  Group1 *group = new Group1("Untergruppe");
   Vec r(3);
   r(0) = 1;
   SqrMat A(3);
