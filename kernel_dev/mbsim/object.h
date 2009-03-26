@@ -96,59 +96,59 @@ namespace MBSim {
       virtual void readx0();
 
       /**
-       * \brief references to positions of multibody system parent
+       * \brief references to positions of subsystem parent
        * \param vector to be referenced
        */
       virtual void updateqRef(const Vec& ref);
 
       /**
-       * \brief references to differentiated positions of multibody system parent
+       * \brief references to differentiated positions of subsystem parent
        * \param vector to be referenced
        */
       virtual void updateqdRef(const Vec& ref);
 
       /**
-       * \brief references to velocities of multibody system parent
+       * \brief references to velocities of subsystem parent
        * \param vector to be referenced
        */
       virtual void updateuRef(const Vec& ref);
 
       /**
-       * \brief references to differentiated velocities of multibody system parent
+       * \brief references to differentiated velocities of subsystem parent
        * \param vector to be referenced
        */
       virtual void updateudRef(const Vec& ref);
 
       /**
-       * \brief references to smooth force vector of multibody system parent
+       * \brief references to smooth force vector of subsystem parent
        * \param vector to be referenced
-       * \param TODO
+       * \param index of normal usage and inverse kinetics
        */
       virtual void updatehRef(const Vec& ref, int i=0);
 
       /**
-       * \brief references to nonsmooth force vector of multibody system parent
+       * \brief references to nonsmooth force vector of subsystem parent
        * \param vector to be referenced
        */
       virtual void updaterRef(const Vec& ref);
 
       /**
-       * \brief references to linear transformation matrix between differentiated positions and velocities of multibody system parent
+       * \brief references to linear transformation matrix between differentiated positions and velocities of subsystem parent
        * \param matrix to be referenced
        */
       virtual void updateTRef(const Mat &ref);
 
       /**
-       * \brief references to mass matrix of multibody system parent
+       * \brief references to mass matrix of subsystem parent
        * \param vector to be referenced
-       * \param TODO
+       * \param index of normal usage and inverse kinetics
        */
       virtual void updateMRef(const SymMat &ref, int i=0);
 
       /**
-       * \brief references to Cholesky decomposition of multibody system parent
+       * \brief references to Cholesky decomposition of subsystem parent
        * \param vector to be referenced
-       * \param TODO
+       * \param index of normal usage and inverse kinetics
        */
       virtual void updateLLMRef(const SymMat &ref, int i=0);
 
