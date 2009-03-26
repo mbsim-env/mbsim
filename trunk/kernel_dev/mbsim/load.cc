@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -77,7 +77,7 @@ namespace MBSim {
     WM[0] = Wm*la(IR);
     h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*WM[0];
   } 
-  
+
   void Load::setUserFunction(DataInterfaceBase *func_) {
     cout<<"!!!HINT!!!You are using the obsolete Method setUserFunction in Load "<<name<<endl;
     cout<<"Use Method setSignal instead! This Method will be removed."<<endl;

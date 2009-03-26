@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -80,9 +80,9 @@ namespace MBSim {
 
     public:
       /*!
-	\param name name of Contact
-	\param setValued true, if force law is set-valued, else false for functional law
-	*/      
+        \param name name of Contact
+        \param setValued true, if force law is set-valued, else false for functional law
+        */      
       Contact(const string &name);
 
       virtual ~Contact();
@@ -121,9 +121,9 @@ namespace MBSim {
       void connectHitSpheres(Contour *contour1, Contour* contour2);
 
       /*! connect two Contour s
-	\param contour1 first contour
-	\param contour2 second contour
-	*/
+        \param contour1 first contour
+        \param contour2 second contour
+        */
       void connect(Contour *contour1, Contour* contour2);
 
       void updateg(double t);

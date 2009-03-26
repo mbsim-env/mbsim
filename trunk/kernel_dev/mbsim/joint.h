@@ -98,7 +98,7 @@ namespace MBSim {
       void updatewb(double t);
       void updateh(double t);
       void updateJacobians(double t);
-      
+
       void resizeJacobians(int j); 
 
       void updaterFactors();
