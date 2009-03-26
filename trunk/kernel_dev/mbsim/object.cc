@@ -146,7 +146,7 @@ namespace MBSim {
 
 #ifdef HAVE_AMVISCPPINTERFACE
       amvisGrp=new AMVis::Group();
-      amvisGrp->setName(name);
+      amvisGrp->setName(name+"#Group");
       parent->getAMVisGrp()->addObject(amvisGrp);
       if(getPlotFeature(amvis)==enabled && amvisBody) {
         amvisBody->setName(name);

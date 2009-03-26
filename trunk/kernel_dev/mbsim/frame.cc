@@ -116,7 +116,7 @@ namespace MBSim {
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
       if(getPlotFeature(amvis)==enabled && amvisFrame) {
-        amvisFrame->setName(name+"#frame");
+        amvisFrame->setName(name);
         RigidBody *rigidBody;
         parent->getAMVisGrp()->addObject(amvisFrame);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
