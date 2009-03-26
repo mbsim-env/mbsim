@@ -61,8 +61,8 @@ namespace MBSim {
   }    
 
   void Spring::connect(Frame *port0, Frame* port1) {
-    Link::connect(port0,0);
-    Link::connect(port1,1);
+    Link::connect(port0);
+    Link::connect(port1);
   }
 
   void Spring::plot(double t,double dt) {
