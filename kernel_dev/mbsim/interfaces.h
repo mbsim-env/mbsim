@@ -46,6 +46,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-09 some comments (Thorsten Schindler)
    * \date 2009-03-19 element.h added (Thorsten Schindler)
+   * \date 2009-03-26 some comments (Thorsten Schindler)
    */
   class ObjectInterface {
     public:
@@ -123,12 +124,12 @@ namespace MBSim {
 
       /**
        * \param size of right hand side
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        */
       virtual void sethSize(int hSize, int i=0) = 0;
       
       /**
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        * \return size of right hand side
        */
       virtual int gethSize(int i=0) const = 0;
@@ -139,7 +140,7 @@ namespace MBSim {
       virtual int getqSize() const = 0;
 
       /**
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        * \return size of velocities
        */
       virtual int getuSize(int i=0) const = 0;
@@ -151,7 +152,7 @@ namespace MBSim {
       
       /**
        * \brief calculates size of velocities
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        */
       virtual void calcuSize(int j=0) = 0;
 
@@ -162,13 +163,13 @@ namespace MBSim {
 
       /**
        * \param index of velocities
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        */
       virtual void setuInd(int ind, int i=0) = 0;
 
       /**
        * \param subsystem
-       * \param index for normal usage and inverse kinetics TODO
+       * \param index for normal usage and inverse kinetics 
        * \return index of right hand side
        */
       virtual int gethInd(Subsystem* sys, int i=0) = 0;
@@ -235,7 +236,7 @@ namespace MBSim {
       virtual void updateW(double t) = 0;
 
       /**
-       * \brief TODO
+       * \brief updates condensed JACOBIAN matrix between condensed Lagrangian multipliers and generalised velocities
        * \param simulation time
        */
       virtual void updateV(double t) = 0;
@@ -271,7 +272,7 @@ namespace MBSim {
       virtual void updatexd(double t) = 0;
 
       /**
-       * \brief update TODO
+       * \brief update stop vector (root functions for event driven integration)
        * \param simulation time
        */
       virtual void updateStopVector(double t) = 0;

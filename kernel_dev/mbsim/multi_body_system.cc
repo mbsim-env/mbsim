@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg, Roland Zander
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -221,11 +221,11 @@ namespace MBSim {
 
     if(false) { // TODO: introduce flag "overwriteDirectory"
       for(i=0; i<=99; i++) {
-	stringstream number;
-	number << "." << setw(2) << setfill('0') << i;
-	projectDirectory = directoryName + number.str();
-	int ret = mkdir(projectDirectory.c_str(),0777);
-	if(ret == 0) break;
+        stringstream number;
+        number << "." << setw(2) << setfill('0') << i;
+        projectDirectory = directoryName + number.str();
+        int ret = mkdir(projectDirectory.c_str(),0777);
+        if(ret == 0) break;
       }
       cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
     }
@@ -234,10 +234,10 @@ namespace MBSim {
 
       int ret = mkdir(projectDirectory.c_str(),0777);
       if(ret == 0) {
-	cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
       }
       else {
-	cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
       }
     }
 
@@ -245,10 +245,10 @@ namespace MBSim {
       string preDir="PREINTEG";
       int ret=mkdir(preDir.c_str(),0777);
       if(ret==0) {
-	cout << "Make directory " << preDir << " for Preintegration results." << endl;
+        cout << "Make directory " << preDir << " for Preintegration results." << endl;
       }
       else {
-	cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
       }
     }
 
@@ -469,8 +469,6 @@ namespace MBSim {
 
   // Update für Time-Stepping-Integrator
   void MultiBodySystem::update(const Vec &zParent, double t) {
-    // UPDATE updates the position depending structures for multibody system
-
     if(q()!=zParent()) updatezRef(zParent);
 
     updateKinematics(t);
@@ -659,13 +657,13 @@ namespace MBSim {
     while(first){
       first = readdir(dir);
       if(first) {
-	name= first->d_name;
-	unsigned int s = name.rfind(".mdl");
-	if(s<name.size()) {
-	  string buf = name.substr(0,s);
-	  if(buf.find(".")>buf.size())
-	    break;
-	}
+        name= first->d_name;
+        unsigned int s = name.rfind(".mdl");
+        if(s<name.size()) {
+          string buf = name.substr(0,s);
+          if(buf.find(".")>buf.size())
+            break;
+        }
       }
     }
     closedir(dir);
@@ -722,12 +720,12 @@ namespace MBSim {
       SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
       // TODO: Wv*T prüfen
       while(nrmInf(g-corr) >= 1e-14) {
-	Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
-	Vec dnu = slvLLFac(LLM,W*mu)-nu;
-	nu += dnu;
-	q += T*dnu;
-	updateKinematics(t);
-	updateg(t);
+        Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
+        Vec dnu = slvLLFac(LLM,W*mu)-nu;
+        nu += dnu;
+        q += T*dnu;
+        updateKinematics(t);
+        updateg(t);
       }
       calclaSize();
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
@@ -851,9 +849,9 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
       Group::solveConstraintsGaussSeidel();
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkConstraintsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkConstraintsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -872,9 +870,9 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
       Group::solveImpactsGaussSeidel();
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkImpactsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkImpactsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -896,18 +894,18 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-	level++;
-	decreaserFactors();
-	cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
-	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        level++;
+        decreaserFactors();
+        cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkConstraintsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkConstraintsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -930,18 +928,18 @@ namespace MBSim {
     for(iter = 1; iter<=maxIter; iter++) {
 
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
-	level++;
-	decreaserFactors();
-	cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
-	if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        level++;
+        decreaserFactors();
+        cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle();
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkImpactsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkImpactsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -972,27 +970,27 @@ namespace MBSim {
       if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
 
       if(numJac) {
-	double dx, xj;
+        double dx, xj;
 
-	for(int j=0; j<la.size(); j++) {
-	  xj = la(j);
+        for(int j=0; j<la.size(); j++) {
+          xj = la(j);
 
-	  dx = (epsroot() * 0.5);
-	  do dx += dx;
-	  while (xj + dx == la(j));
+          dx = (epsroot() * 0.5);
+          do dx += dx;
+          while (xj + dx == la(j));
 
-	  la(j) += dx;
-	  Group::solveConstraintsRootFinding(); 
-	  la(j) = xj;
-	  Jprox.col(j) = (res-res0)/dx;
-	}
+          la(j) += dx;
+          Group::solveConstraintsRootFinding(); 
+          la(j) = xj;
+          Jprox.col(j) = (res-res0)/dx;
+        }
       } 
       else jacobianConstraints();
       Vec dx;
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
-	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-	dx >> slvLL(J,trans(Jprox)*res0);
+        SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+        dx >> slvLL(J,trans(Jprox)*res0);
       }
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
@@ -1003,20 +1001,20 @@ namespace MBSim {
 
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
-	la = La_old - alpha*dx;
-	solveConstraintsRootFinding();
-	nrmf = nrm2(res);
-	if(nrmf < nrmf0) break;
+        la = La_old - alpha*dx;
+        solveConstraintsRootFinding();
+        nrmf = nrm2(res);
+        if(nrmf < nrmf0) break;
 
-	alpha = 0.5*alpha;  
+        alpha = 0.5*alpha;  
       }
       nrmf0 = nrmf;
       res0 = res;
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkConstraintsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkConstraintsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -1047,27 +1045,27 @@ namespace MBSim {
       if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
 
       if(numJac) {
-	double dx, xj;
+        double dx, xj;
 
-	for(int j=0; j<la.size(); j++) {
-	  xj = la(j);
+        for(int j=0; j<la.size(); j++) {
+          xj = la(j);
 
-	  dx = (epsroot() * 0.5);
-	  do dx += dx;
-	  while (xj + dx == la(j));
+          dx = (epsroot() * 0.5);
+          do dx += dx;
+          while (xj + dx == la(j));
 
-	  la(j) += dx;
-	  Group::solveImpactsRootFinding(); 
-	  la(j) = xj;
-	  Jprox.col(j) = (res-res0)/dx;
-	}
+          la(j) += dx;
+          Group::solveImpactsRootFinding(); 
+          la(j) = xj;
+          Jprox.col(j) = (res-res0)/dx;
+        }
       } 
       else jacobianImpacts();
       Vec dx;
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
-	SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-	dx >> slvLL(J,trans(Jprox)*res0);
+        SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
+        dx >> slvLL(J,trans(Jprox)*res0);
       }
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
@@ -1078,20 +1076,20 @@ namespace MBSim {
 
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
-	la = La_old - alpha*dx;
-	solveImpactsRootFinding();
-	nrmf = nrm2(res);
-	if(nrmf < nrmf0) break;
+        la = La_old - alpha*dx;
+        solveImpactsRootFinding();
+        nrmf = nrm2(res);
+        if(nrmf < nrmf0) break;
 
-	alpha = 0.5*alpha;  
+        alpha = 0.5*alpha;  
       }
       nrmf0 = nrmf;
       res0 = res;
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-	checkTermLevel++;
-	checkImpactsForTermination();
-	if(term) break;
+        checkTermLevel++;
+        checkImpactsForTermination();
+        if(term) break;
       }
     }
     return iter;
@@ -1142,8 +1140,8 @@ namespace MBSim {
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<< endl;
       if(stopIfNoConvergence) {
-	if(dropContactInfo) dropContactMatrices();
-	assert(iter < maxIter);
+        if(dropContactInfo) dropContactMatrices();
+        assert(iter < maxIter);
       }
       cout << "Anyway, continuing integration..."<< endl;
     }
@@ -1174,8 +1172,8 @@ namespace MBSim {
       cout << "Iterations: " << iter << endl;
       cout << "\nError: no convergence."<< endl;
       if(stopIfNoConvergence) {
-	if(dropContactInfo) dropContactMatrices();
-	assert(iter < maxIter);
+        if(dropContactInfo) dropContactMatrices();
+        assert(iter < maxIter);
       }
       cout << "Anyway, continuing integration..."<< endl;
     }
@@ -1228,10 +1226,10 @@ namespace MBSim {
 
       // linear algebra for RootFinding only
       if(impactSolver == RootFinding) {
-	info << ",";
-	if(linAlg==LUDecomposition) info << "LU";
-	else if(linAlg==LevenbergMarquardt) info << "LM";
-	else if(linAlg==PseudoInverse) info << "PI";
+        info << ",";
+        if(linAlg==LUDecomposition) info << "LU";
+        else if(linAlg==LevenbergMarquardt) info << "LM";
+        else if(linAlg==PseudoInverse) info << "PI";
       }
       info << ")";
     }
@@ -1311,7 +1309,7 @@ namespace MBSim {
     //cout <<endl<< "event at time t = " << t << endl<<endl;
     //cout<< "sv = " << trans(sv) << endl;
     //cout << "jsv = "<< trans(jsv) << endl;
-    
+
     if (jsv(sv.size()-1)) { // Führe Projektion durch
       k++;
       updateKinematics(t);
@@ -1398,27 +1396,27 @@ namespace MBSim {
 
       if(laSize) {
 
-	updateKinematics(t); // Nötig da Geschwindigkeitsänderung
-	//updateg(t); // Unnötig, da keine Lageänderung
-	updategd(t); // Nötig da Geschwindigkeitsänderung
-	updateJacobians(t);
-	updateh(t); 
-	updateW(t); 
-	updateV(t); 
-	updateG(t); 
-	updatewb(t); 
-	int iter;
-	iter = solveConstraints();
-	checkActivegdd();
-	checkActiveLinks();
-	calclaSize();
-	calcrFactorSize();
-	setlaIndMBS(laInd);
-	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updatelaRef(laParent(0,laSize-1));
-	updatewbRef(wbParent(0,laSize-1));
-	updaterFactorRef(rFactorParent(0,rFactorSize-1));
+        updateKinematics(t); // Nötig da Geschwindigkeitsänderung
+        //updateg(t); // Unnötig, da keine Lageänderung
+        updategd(t); // Nötig da Geschwindigkeitsänderung
+        updateJacobians(t);
+        updateh(t); 
+        updateW(t); 
+        updateV(t); 
+        updateG(t); 
+        updatewb(t); 
+        int iter;
+        iter = solveConstraints();
+        checkActivegdd();
+        checkActiveLinks();
+        calclaSize();
+        calcrFactorSize();
+        setlaIndMBS(laInd);
+        updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updatelaRef(laParent(0,laSize-1));
+        updatewbRef(wbParent(0,laSize-1));
+        updaterFactorRef(rFactorParent(0,rFactorSize-1));
       }
     } 
     else if(sticking) { // Haft-Gleit-Übergang
@@ -1434,30 +1432,30 @@ namespace MBSim {
 
       if(laSize) {
 
-	updateKinematics(t); // Prüfen ob nötig
-	updateg(t); // Prüfen ob nötig
-	updategd(t); // Prüfen ob nötig
-	updateT(t);  // Prüfen ob nötig
-	updateJacobians(t);
-	updateh(t);  // Prüfen ob nötig
-	updateM(t);  // Prüfen ob nötig
-	facLLM();  // Prüfen ob nötig
-	updateW(t);  // Prüfen ob nötig
-	updateV(t);  // Prüfen ob nötig
-	updateG(t);  // Prüfen ob nötig
-	updatewb(t);  // Prüfen ob nötig
-	int iter;
-	iter = solveConstraints();
-	checkActivegdd();
-	checkActiveLinks();
-	calclaSize();
-	calcrFactorSize();
-	setlaIndMBS(laInd);
-	updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-	updatelaRef(laParent(0,laSize-1));
-	updatewbRef(wbParent(0,laSize-1));
-	updaterFactorRef(rFactorParent(0,rFactorSize-1));
+        updateKinematics(t); // Prüfen ob nötig
+        updateg(t); // Prüfen ob nötig
+        updategd(t); // Prüfen ob nötig
+        updateT(t);  // Prüfen ob nötig
+        updateJacobians(t);
+        updateh(t);  // Prüfen ob nötig
+        updateM(t);  // Prüfen ob nötig
+        facLLM();  // Prüfen ob nötig
+        updateW(t);  // Prüfen ob nötig
+        updateV(t);  // Prüfen ob nötig
+        updateG(t);  // Prüfen ob nötig
+        updatewb(t);  // Prüfen ob nötig
+        int iter;
+        iter = solveConstraints();
+        checkActivegdd();
+        checkActiveLinks();
+        calclaSize();
+        calcrFactorSize();
+        setlaIndMBS(laInd);
+        updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updatelaRef(laParent(0,laSize-1));
+        updatewbRef(wbParent(0,laSize-1));
+        updaterFactorRef(rFactorParent(0,rFactorSize-1));
       }
     } 
     else { // Kontakt öffnet
@@ -1486,7 +1484,7 @@ namespace MBSim {
 
     //cout << g << endl;
     //cout << gd << endl;
-    
+
     projectGeneralizedPositions(t);
     updategd(t);
     updateT(t); 

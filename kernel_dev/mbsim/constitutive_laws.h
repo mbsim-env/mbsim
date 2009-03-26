@@ -1,49 +1,70 @@
-/* Copyright (C) 2004-2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
  * version 2.1 of the License, or (at your option) any later version. 
- *  
+ * 
  * This library is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details. 
- *  
+ *
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _CONSTITUTIVE_LAWS_H_
 #define _CONSTITUTIVE_LAWS_H_
 
 #include <fmatvec.h>
-#include <fstream>
 #include <mbsim/userfunction.h>
+#include <fstream>
 
 using namespace fmatvec;
 
 namespace MBSim {
 
+  /**
+   * \brief TODO
+   * \author Martin Foerg
+   * \date 2009-03-26 some comments (Thorsten Schindler)
+   */
   class GeneralizedForceLaw {
     public:
+      /**
+       * \brief constructor
+       */
       GeneralizedForceLaw() {};
+      
+      /**
+       * \brief destructor
+       */
       virtual ~GeneralizedForceLaw() {};
-      virtual bool isActive(double g, double gTol) {return true;}
-      virtual bool remainsActive(double s, double sTol) {return true;}
+      virtual bool isActive(double g, double gTol) { return true; }
+      virtual bool remainsActive(double s, double sTol) { return true; }
       virtual void load(const string& path, ifstream &inputfile);
       virtual void save(const string &path, ofstream &outputfile);
-      virtual double project(double la, double gdn, double r) {return 0;}
-      virtual Vec diff(double la, double gdn, double r) {return Vec(2);}
-      virtual double solve(double G, double gdn) {return 0;}
-      virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) {return true;}
-      virtual double operator()(double g,  double gd) {return 0;}
+      virtual double project(double la, double gdn, double r) { return 0; }
+      virtual Vec diff(double la, double gdn, double r) { return Vec(2); }
+      virtual double solve(double G, double gdn) { return 0; }
+
+      /**
+       * \param contact force parameter
+       * \param contact relative velocity
+       * \param tolerance for contact force parameters
+       * \param tolerance for relative velocity
+       * \return flag if the force law is valid given the parameters
+       */
+      virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) { return true; }
+      virtual double operator()(double g,  double gd) { return 0; }
+
+      /**
+       * \return flag if the force law is setvalued
+       */
       virtual bool isSetValued() const = 0;
   };
 
