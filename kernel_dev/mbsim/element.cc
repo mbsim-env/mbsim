@@ -60,7 +60,7 @@ namespace MBSim {
 
   void Element::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_front(t);
+      plotVector.insert(plotVector.begin(), t);
 
       if(plotColumns.size()>1) {
         assert(plotColumns.size()==plotVector.size());
@@ -101,7 +101,7 @@ namespace MBSim {
       plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
       H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
 
-      plotColumns.push_front("Time");
+      plotColumns.insert(plotColumns.begin(), "Time");
       if(plotColumns.size()>1) {
         plotVectorSerie=new H5::VectorSerie<double>;
         // copy plotColumns to a std::vector
@@ -109,6 +109,8 @@ namespace MBSim {
         plotVectorSerie->create(*plotGroup,"data",dummy);
         plotVectorSerie->setDescription("Default dataset for class: "+getType());
       }
+
+      plotVector.reserve(plotColumns.size()); // preallocation
     }
   }
 

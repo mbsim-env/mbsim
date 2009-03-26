@@ -317,7 +317,7 @@ namespace MBSim {
     int n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
       getline(inputfile,dummy); // Connected cosy
-      connect(getMultiBodySystem()->findFrame(dummy),i);
+      connect(getMultiBodySystem()->findFrame(dummy));
     }
     getline(inputfile,dummy); // newline
 
@@ -325,7 +325,7 @@ namespace MBSim {
     n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
       getline(inputfile,dummy); // Connected contour
-      connect(getMultiBodySystem()->findContour(dummy),i);
+      connect(getMultiBodySystem()->findContour(dummy));
     }
     getline(inputfile,dummy); // newline
   }
@@ -352,11 +352,11 @@ namespace MBSim {
   }
 #endif
 
-  void Link::connect(Frame *port_, int id) {
+  void Link::connect(Frame *port_) {
     port.push_back(port_);
   }
 
-  void Link::connect(Contour *contour_, int id) {
+  void Link::connect(Contour *contour_) {
     contour.push_back(contour_);
   }
 

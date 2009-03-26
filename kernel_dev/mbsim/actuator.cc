@@ -58,8 +58,8 @@ namespace MBSim {
   }
 
   void Actuator::connect(Frame *port0, Frame* port1) {
-    Link::connect(port0,0);
-    Link::connect(port1,1);
+    Link::connect(port0);
+    Link::connect(port1);
   }
 
   void Actuator::setKOSY(int id) {

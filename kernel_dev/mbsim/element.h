@@ -225,12 +225,12 @@ namespace MBSim {
       /**
        * \brief one entry of time series
        */
-      std::deque<double> plotVector;
+      std::vector<double> plotVector;
 
       /**
        * \brief columns of time series
        */
-      std::deque<std::string> plotColumns;
+      std::vector<std::string> plotColumns;
 
       /**
        * \brief associated plot group

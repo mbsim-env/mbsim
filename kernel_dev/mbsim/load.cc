@@ -57,7 +57,7 @@ namespace MBSim {
   }
 
   void Load::connect(Frame *port_) {
-    Link::connect(port_,0);
+    Link::connect(port_);
   }
 
   void Load::setKOSY(int id) {

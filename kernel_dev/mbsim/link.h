@@ -204,10 +204,10 @@ namespace MBSim {
       /*! Defines the maximal r-factor. */  
       virtual void setrMax(double rMax_) {rMax = rMax_;}
 
-      virtual void connect(Frame *port1, int id);
+      virtual void connect(Frame *port1);
 
       /*! Adds contours of other bodies, as constraints for ports connected to a LinkContour. */
-      virtual void connect(Contour *port1, int id);
+      virtual void connect(Contour *port1);
 
 
       virtual void checkActiveg() {}
