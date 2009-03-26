@@ -130,8 +130,8 @@ namespace MBSim {
   }
 
   void Joint::connect(Frame *port0, Frame* port1) {
-    Link::connect(port0,0);
-    Link::connect(port1,1);
+    Link::connect(port0);
+    Link::connect(port1);
   }
 
   void Joint::setForceDirection(const Mat &fd) {

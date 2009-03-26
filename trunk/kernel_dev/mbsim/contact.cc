@@ -271,8 +271,8 @@ namespace MBSim {
   }
 
   void Contact::connect(Contour *contour0, Contour* contour1) {
-    Link::connect(contour0,0);
-    Link::connect(contour1,1);
+    Link::connect(contour0);
+    Link::connect(contour1);
   }
 
   void Contact::updatelaRef(const Vec& laParent) {
