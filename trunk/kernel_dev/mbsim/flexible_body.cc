@@ -34,7 +34,7 @@ namespace MBSim {
 
   template <class AT> FlexibleBody<AT>::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
 # ifdef HAVE_AMVIS
-                                                                           , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
+                                                                           , boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
 # endif
                                                                            {}
 

@@ -108,6 +108,11 @@ namespace MBSim {
 
         /* GETTER / SETTER */
         void setStationaryFrameOfReference(Frame *frame) { frameParent = frame; }
+		/*! 
+		 * damping matrix computation, updated with changes in mass matrix \f$\vM\f$: \f$\vh_d=-d_{pm}\vM\vu\f$ 
+		 * \brief set mass proportional damping
+		 * \param d_ coefficient \f$d_{pm}\f$
+		 */
         void setMassProportionalDamping(const double d_) { d_massproportional = d_; }
         void setContourNodes(const AT& nodes) { userContourNodes = nodes; }
         /***************************************************/
@@ -125,11 +130,11 @@ namespace MBSim {
         void addFrame(Frame *frame, const ContourPointData &S_);
 
 #ifdef HAVE_AMVIS
-        /** 
-         * \brief activate output for AMVis
-         * \param binary or ASCII data format in pos-file
-         */
-        void createAMVisBody(bool binary_) { boolAMVisBinary = binary_; }
+		/** 
+		 * \brief activate output for AMVis
+		 * \param binary or ASCII data format in pos-file
+		 */
+		void createAMVisBody(bool binary_) { boolAMVis = true; boolAMVisBinary = binary_; }
 
         /**
          * \param color float in [0;1] (blue - green - red)
@@ -144,23 +149,23 @@ namespace MBSim {
         Frame *frameParent;
 
         /** 
-         * \brief discretization
+         * \brief stl-vector of discretizations/finite elements
          */
         vector<DiscretizationInterface*> discretization;
 
         /** 
-         * \brief finite element wise positions
+         * \brief stl-vector of finite element wise positions
          */
         vector<Vec> qElement;
 
         /** 
-         * \brief finite element wise velocities
+         * \brief stl-vector of finite element wise velocities
          */
         vector<Vec> uElement;
 
-        /**
-         * \brief mass proportion damping factor
-         */
+        /** 
+         * \brief damping factor for mass proportion, see BodyFlexible::setMassProportionalDamping()
+		 */
         double d_massproportional;
 
         /**
@@ -174,6 +179,7 @@ namespace MBSim {
         vector<ContourPointData> S_Frame;
 
 #ifdef HAVE_AMVIS
+		bool boolAMVis;
         /** 
          * \brief body for AMVis
          */
