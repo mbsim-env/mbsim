@@ -30,11 +30,12 @@ namespace MBSim {
   class FiniteElement1s21RCM;
   class Contour1sFlexible;
 
-  /**
+  /*!
    * \brief model for planar beams with large deflection using Redundant Coordinate Method (RCM)
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-03-23 initial kernel_dev commit (Thorsten Schindler)
+   * \date 2009-03-26 cosmetics on doxygen (*! **) and alignements; some renames (Roland Zander)
    *
    * read:\n
    * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005 \n
@@ -43,20 +44,21 @@ namespace MBSim {
    */
   class FlexibleBody1s21RCM : public FlexibleBody<Vec> {
     public:
-      /**
+      /*!
        * \brief constructor:
        * \param name of body
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
       FlexibleBody1s21RCM(const string &name, bool openStructure);
 
-      /**
+      /*!
        * \brief destructor
        */
       virtual ~FlexibleBody1s21RCM() {}
 
       /* INHERITED INTERFACE */
       /* FLEXIBLEBODY */
+      virtual string getType() const { return "FlexibleBody1s21RCM"; }
       virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
       virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);

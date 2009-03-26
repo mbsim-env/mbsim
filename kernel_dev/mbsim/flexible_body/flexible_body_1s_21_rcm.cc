@@ -86,62 +86,62 @@ namespace MBSim {
     }
   }
 
-  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &S_, Frame *frame) {
-    if(S_.type == CONTINUUM) { // frame on continuum
-      const double &s = S_.alpha(0); 
+  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, Frame *frame) {
+    if(cp.type == CONTINUUM) { // frame on continuum
+      const double &s = cp.alpha(0); 
       double sLocal = BuildElement(s);
       Vec Z = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
 
       Vec tmp(3,NONINIT); tmp(0) = Z(0); tmp(1) = Z(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      S_.cosy.setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
+      cp.cosy.setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
 
       tmp(0) = cos(Z(2)); tmp(1) = sin(Z(2)); 
-      S_.cosy.getOrientation().col(1) = frameParent->getOrientation() * tmp; // tangent
+      cp.cosy.getOrientation().col(1) = frameParent->getOrientation() * tmp; // tangent
 
       tmp(0) = -sin(Z(2)); tmp(1) = cos(Z(2));
-      S_.cosy.getOrientation().col(0) = frameParent->getOrientation() * tmp; // normal
-      S_.cosy.getOrientation().col(2) = -frameParent->getOrientation().col(2); // binormal (cartesian system)
+      cp.cosy.getOrientation().col(0) = frameParent->getOrientation() * tmp; // normal
+      cp.cosy.getOrientation().col(2) = -frameParent->getOrientation().col(2); // binormal (cartesian system)
 
       tmp(0) = Z(3); tmp(1) = Z(4);
-      S_.cosy.setVelocity(frameParent->getOrientation() * tmp);
+      cp.cosy.setVelocity(frameParent->getOrientation() * tmp);
 
       tmp(0) = 0.; tmp(1) = 0.; tmp(2) = Z(5);
-      S_.cosy.setAngularVelocity(frameParent->getOrientation() * tmp);
+      cp.cosy.setAngularVelocity(frameParent->getOrientation() * tmp);
     }
-    else if(S_.type == NODE) { // frame on node
-      const int &node = S_.ID;
+    else if(cp.type == NODE) { // frame on node
+      const int &node = cp.ID;
 
       Vec tmp(3,NONINIT); tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      S_.cosy.setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
+      cp.cosy.setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
 
-      tmp(0) = cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
-      S_.cosy.getOrientation().col(1) = frameParent->getOrientation() * tmp; // tangent
+      tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
+      cp.cosy.getOrientation().col(1)    = frameParent->getOrientation() * tmp; // tangent
 
       tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2));
-      S_.cosy.getOrientation().col(0) = frameParent->getOrientation() * tmp; // normal
-      S_.cosy.getOrientation().col(2) = -frameParent->getOrientation().col(2); // binormal (cartesian system)
+      cp.cosy.getOrientation().col(0)    =  frameParent->getOrientation() * tmp; // normal
+      cp.cosy.getOrientation().col(2)    = -frameParent->getOrientation().col(2); // binormal (cartesian system)
 
       tmp(0) = u(5*node+0); tmp(1) = u(5*node+1);
-      S_.cosy.setVelocity(frameParent->getOrientation() * tmp);
+      cp.cosy.setVelocity(frameParent->getOrientation() * tmp);
 
       tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
-      S_.cosy.setAngularVelocity(frameParent->getOrientation() * tmp);
+      cp.cosy.setAngularVelocity(frameParent->getOrientation() * tmp);
     }
 
     if(frame!=0) { // frame should be linked to contour point data
-      frame->setPosition(S_.cosy.getPosition());
-      frame->setOrientation(S_.cosy.getOrientation());
-      frame->setVelocity(S_.cosy.getVelocity());
-      frame->setAngularVelocity(S_.cosy.getAngularVelocity());
+      frame->setPosition       (cp.cosy.getPosition());
+      frame->setOrientation    (cp.cosy.getOrientation());
+      frame->setVelocity       (cp.cosy.getVelocity());
+      frame->setAngularVelocity(cp.cosy.getAngularVelocity());
     }
   }
 
-  void FlexibleBody1s21RCM::updateJacobiansForFrame(ContourPointData &S_, Frame *frame) {
+  void FlexibleBody1s21RCM::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
     Index All(0,3-1);
     Mat Jacobian(qSize,3,INIT,0.);
 
-    if(S_.type == CONTINUUM) { // frame on continuum
-      double s = S_.alpha(0); 
+    if(cp.type == CONTINUUM) { // frame on continuum
+      double s = cp.alpha(0); 
       double sLocal = BuildElement(s);
       Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLocal);
       if(CurrentElement<Elements-1 || openStructure) {
@@ -153,22 +153,22 @@ namespace MBSim {
         Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
       }
     }
-    else if(S_.type == NODE) { // frame on node
-      int node = S_.ID;
+    else if(cp.type == NODE) { // frame on node
+      int node = cp.ID;
       Index Dofs(5*node,5*node+2);
       Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
     }
 
-    S_.cosy.setJacobianOfTranslation(frameParent->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
-    S_.cosy.setJacobianOfRotation(frameParent->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
-    // S_.cosy.setGyroscopicAccelerationOfTranslation(TODO)
-    // S_.cosy.setGyroscopicAccelerationOfRotation(TODO)
+    cp.cosy.setJacobianOfTranslation(frameParent->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
+    cp.cosy.setJacobianOfRotation   (frameParent->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
+    // cp.cosy.setGyroscopicAccelerationOfTranslation(TODO)
+    // cp.cosy.setGyroscopicAccelerationOfRotation(TODO)
 
     if(frame!=0) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(S_.cosy.getJacobianOfTranslation());
-      frame->setJacobianOfRotation(S_.cosy.getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(S_.cosy.getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation(S_.cosy.getGyroscopicAccelerationOfRotation());
+      frame->setJacobianOfTranslation(cp.cosy.getJacobianOfTranslation());
+      frame->setJacobianOfRotation   (cp.cosy.getJacobianOfRotation());
+      frame->setGyroscopicAccelerationOfTranslation(cp.cosy.getGyroscopicAccelerationOfTranslation());
+      frame->setGyroscopicAccelerationOfRotation   (cp.cosy.getGyroscopicAccelerationOfRotation());
     }   
   }
   
