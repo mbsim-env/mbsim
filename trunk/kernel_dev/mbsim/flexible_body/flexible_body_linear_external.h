@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -23,7 +23,7 @@
 #ifndef _BODY_FLEXIBLE_LINEAR_EXTERNAL_H_
 #define _BODY_FLEXIBLE_LINEAR_EXTERNAL_H_
 
-#include "body_flexible.h"
+#include "mbsim/flexible_body.h"
 #include <fstream>
 
 namespace MBSim {
@@ -32,56 +32,32 @@ namespace MBSim {
 
 
   /*! 
-   * \brief
-   * Linear models from external preprocessing, e.g. Finite %Element model.
-   *
-   * All inputs follow fmatvec syntax, e.g. MatLab syntax.
+   * \brief Linear models from external preprocessing, e.g. Finite %Element model.
+   * \author Roland Zander
+   * \date 2009-03-26 initial kernel_dev commit (Roland Zander)
    *
    * Systems equation of motion:
    * \f[ \vM{\rm d}\vu = -( \vK \vq + \vD \vu){\rm d}t - \vW{\rm d}\vLambda \f]
    * with constant matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
    * */
-  class BodyFlexibleLinearExternal : public BodyFlexible {
+  class FlexibleBodyLinearExternal : public FlexibleBody<int> {
 
     protected:
-      /** constant mass matrix \f$\vM\f$, used as buffer before init() where dimensions of M are set */ 
-      SymMat Mread;
-      /** constant stiffness matrix \f$\vK\f$*/ 
-      SqrMat K;
-      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
-      SqrMat D; 
-      /** constant for damping matrix, see setProportionalDamping()*/ 
-      double alpha;
-      /** constant for damping matrix, see setProportionalDamping()*/ 
-      double  beta;
-
       /** number of Contours directly asoziated to body */
       int nContours;
+	  
+	  /** vector of ContourPointData controlling type of interface: node/interpolation */
+      vector<ContourPointData> contourType;
 
       /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
       Vec WrON00;
 
-      /** container holding constant JACOBIAN-matrizes of all Port s and Contour s */
-      vector<Mat> J;
-      /** container holding undeformed positions in body coordinate system of all Port s and Contour s */
-      vector<Vec> KrP;
-
-      /* geerbt */
-      void init();
-
       /*! update kinematical values\n
-       * Call to updatePorts(double t)
+       * Call to updateFrames(double t)
        * and updateContours(double t)
        * \param t time
        */
       void updateKinematics(double t);
-      /*!
-       * Kinematical update of postition and velocities of every Port:
-       * \f[ \vr_{P} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
-       * \param t time
-       * \todo angular kinematics
-       */
-      void updatePorts(double t);
       /*!
        * Kinematical update of postition and velocities of every Contour:
        * \f[ \vr_{C} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
@@ -90,12 +66,6 @@ namespace MBSim {
        */
       void updateContours(double t);
 
-      /*! 
-       * update \f$\vh= -(\vK \vq + \vD \vu)\f$
-       * \param t time
-       */
-      void updateh(double t);
-
       /*! create interface in form of ContourPointData based on file
        * \return cpData for refering to Port or Contour added
        * \param jacbifilename file containing interface data
@@ -103,16 +73,41 @@ namespace MBSim {
       ContourPointData addInterface(const string &jacbifilename);
       /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
        * \return cpData for refering to Port or Contour added
-       * \param J_ Jacobian matrix
-       * \param r_ undeformed position in body coordinate system
+       * \param J Jacobian matrix
+       * \param r undeformed position in body coordinate system
        */
-      ContourPointData addInterface(const Mat &J_, const Vec &r_);
+      ContourPointData addInterface(const Mat &J, const Vec &r);
 
       /* empty function since mass, damping and stiffness matrices are constant !!! */
       void updateJh_internal(double t);
 
     public:
-      BodyFlexibleLinearExternal(const string &name); 
+	  /*!
+	   * \brief constructor
+	   * \param name of body
+	   */
+      FlexibleBodyLinearExternal(const string &name); 
+      /*!
+       * \brief destructor
+       */
+      virtual ~FlexibleBodyLinearExternal() {}
+
+      /* inherited interface */
+      /* FlexibleBody */
+      virtual string getType() const { return "FlexibleBodyLinearExternal"; }
+      virtual void BuildElements();
+      virtual void GlobalMatrixContribution(int n);
+      /*!
+       * Kinematical update of postition and velocities of every attached Frame:
+       * \f[ \vr_{P} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
+       * \param t time
+       * \todo angular kinematics
+       */
+      virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);
+      virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
+
+      /* Object */
+      virtual void init();
 
       /*! \return true
       */
@@ -154,16 +149,13 @@ namespace MBSim {
        * \param a_ \f$\alpha\f$
        * \param b_ \f$\beta \f$
        */
-      void setProportionalDamping(const double &a_, const double &b_){alpha = a_; beta = b_;}
+	  inline void setProportionalDamping(const double &a, const double &b);
 
-      /* geerbt */
-      double computePotentialEnergy();
+//      /*! plot parameters of "BodyFlexibleLinearExternal"
+//      */
+//      void plotParameters();
 
-      /*! plot parameters of "BodyFlexibleLinearExternal"
-      */
-      void plotParameters();
-
-      using BodyFlexible::addPort;
+      using FlexibleBody<int>::addFrame;
       /*!
        * add Port using JACOBIAN matrix and port location form given file
        * n x d   \n   [1.0  \n  0.0 ] \n
@@ -172,7 +164,7 @@ namespace MBSim {
        * \param name name of Port create
        * \param jacobifilename name of file holding matrices
        */
-      void addPort(const string &name, const string &jacobifilename);
+//      void addFrame(const string &name, const string &jacobifilename);
 
       /*!
        * add Port using JACOBIAN matrix and location of reference point
@@ -180,14 +172,14 @@ namespace MBSim {
        * \param J Jacobian matrix create
        * \param r undeformed reference point in body coordinate system
        */
-      void addPort(const string &name, const Mat &J_, const Vec &r_);
+//      void addFrame(const string &name, const Mat &J_, const Vec &r_);
 
       /*!
        * add Contour using information given in file for JACOBIAN matrix and location of reference point
        * \param contour Contour to add
        * \param jacobifilename name of file holding matrices
        */
-      void addContour(Contour *contour, const string &jacobifilename);
+//      void addContour(Contour *contour, const string &jacobifilename);
 
       /*!
        * add Contour using JACOBIAN matrix and location of reference point
@@ -195,10 +187,10 @@ namespace MBSim {
        * \param J Jacobian matrix
        * \param r undeformed reference point in body coordinate system
        */
-      void addContour(Contour *contour, const Mat &J_, const Vec &r_);
+//      void addContour(Contour *contour, const Mat &J_, const Vec &r_);
 
       /*! add a ContourInterpolation, no additional information needed */
-      void addContourInterpolation(ContourInterpolation *contour);
+//      void addContourInterpolation(ContourInterpolation *contour);
 
       /*! set origin BodyFlexibleLinearExternal::WrON00, \f$\rs{_W}[_K0]{\vr}\f$ of model
       */
@@ -206,32 +198,6 @@ namespace MBSim {
 
       /* geerbt */
       Mat computeJacobianMatrix(const ContourPointData &CP);
-
-      /*! \return zero matrix, BodyFlexibleLinearExternal does not hold any contour, no tangent defined
-      */
-      Mat computeWt  (const ContourPointData& CP) {return Mat(3,2);};
-      /*! \return zero matrix, BodyFlexibleLinearExternal does not hold any contour, no normal defined 
-      */ 
-      Vec computeWn  (const ContourPointData& CP) {return Vec(3);}
-      /*! compute position \f$\rs{_W}[_{CP}]{\vr}\f$ of Contour-Point
-	\param ContourPointData& C
-	\return \f$\rs{_W}[_{CP}]{\vr}\f$
-	*/
-      Vec computeWrOC(const ContourPointData& CP);
-      /*! compute absolut velocity \f$\rs{_W}[_{P}]{\vv}\f$ of Contour-Point
-	\param ContourPointData& C
-	\return \f$\rs{_W}[_P]{\vv}\f$
-	*/
-      Vec computeWvC (const ContourPointData& CP);
-      /*! compute absolut angular velocity \f$\rs{_W}[_{P}]{\boldsymbol{\omega}}\f$ of Contour-Point
-	\param ContourPointData& C
-	\return \f$\rs{_W}[_P]{\boldsymbol{\omega}}\f$
-	*/
-      Vec computeWomega(const ContourPointData& CP);
-
-      /* inherted */ 
-      SqrMat computeAWK (const ContourPointData &data) {return SqrMat(3,INIT,0.0);} 
-      SqrMat computeAWKp(const ContourPointData &data) {return SqrMat(3,INIT,0.0);} 
    };
 
 }
