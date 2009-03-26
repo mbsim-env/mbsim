@@ -217,8 +217,8 @@ namespace MBSim {
   void RigidBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
-        Vec WrOS=getFrame("C")->getPosition();
-        Vec cardan=AIK2Cardan(getFrame("C")->getOrientation());
+        Vec WrOS=port[0]->getPosition();
+        Vec cardan=AIK2Cardan(port[0]->getOrientation());
         plotVector.push_back(WrOS(0));
         plotVector.push_back(WrOS(1));
         plotVector.push_back(WrOS(2));
@@ -231,8 +231,8 @@ namespace MBSim {
       if(getPlotFeature(amvis)==enabled && amvisBody) {
         vector<double> data;
         data.push_back(t);
-        Vec WrOS=getFrame("C")->getPosition();
-        Vec cardan=AIK2Cardan(getFrame("C")->getOrientation());
+        Vec WrOS=port[0]->getPosition();
+        Vec cardan=AIK2Cardan(port[0]->getOrientation());
         data.push_back(WrOS(0));
         data.push_back(WrOS(1));
         data.push_back(WrOS(2));

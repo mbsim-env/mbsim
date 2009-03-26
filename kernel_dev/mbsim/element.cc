@@ -110,6 +110,7 @@ namespace MBSim {
         plotVectorSerie->setDescription("Default dataset for class: "+getType());
       }
 
+      plotVector.clear();
       plotVector.reserve(plotColumns.size()); // preallocation
     }
   }

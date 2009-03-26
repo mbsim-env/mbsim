@@ -112,7 +112,7 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVISCPPINTERFACE
       if(getPlotFeature(amvis)==enabled && amvisRigidBody) {
-        amvisRigidBody->setName(name+"#contour");
+        amvisRigidBody->setName(name);
         RigidBody *rigidBody;
         parent->getAMVisGrp()->addObject(amvisRigidBody);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
