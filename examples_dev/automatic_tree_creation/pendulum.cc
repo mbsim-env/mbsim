@@ -46,6 +46,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
+#ifdef HAVE_AMVISCPPINTERFACE
   AMVis::ObjObject *obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel1.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -55,6 +56,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab1->setAMVisRigidBody(obj);
+#endif
 
   SpecialRigidBody* stab2 = new SpecialRigidBody("Stab2");
   tree->addObject(stab2);
@@ -72,6 +74,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
+#ifdef HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -81,6 +84,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab2->setAMVisRigidBody(obj);
+#endif
 
   SpecialRigidBody* stab3 = new SpecialRigidBody("Stab3");
   tree->addObject(stab3);
@@ -98,6 +102,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab3->setq0(Vec("[-1.6]"));
 
+#ifdef HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -107,6 +112,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab3->setAMVisRigidBody(obj);
+#endif
 
   SpecialRigidBody* stab4 = new SpecialRigidBody("Stab4");
   tree->addObject(stab4);
@@ -122,6 +128,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   stab4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab4->setu0(Vec("[-1.6]"));
 
+#ifdef HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -131,6 +138,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab4->setAMVisRigidBody(obj);
+#endif
 
 
 }
