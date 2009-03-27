@@ -142,5 +142,6 @@ namespace MBSim {
 
   template class FlexibleBody<Vec>;
   template class FlexibleBody<Mat>;
+  template class FlexibleBody<int>;
 }
 

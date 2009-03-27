@@ -24,6 +24,7 @@
 #define _BODY_FLEXIBLE_LINEAR_EXTERNAL_H_
 
 #include "mbsim/flexible_body.h"
+#include "mbsim/mbsim_event.h"
 #include <fstream>
 
 namespace MBSim {
@@ -95,7 +96,7 @@ namespace MBSim {
       /* inherited interface */
       /* FlexibleBody */
       virtual string getType() const { return "FlexibleBodyLinearExternal"; }
-      virtual void BuildElements();
+      virtual void BuildElements() { new MBSimError("BITTE INITIALISIEREN!"); } 
       virtual void GlobalMatrixContribution(int n);
       /*!
        * Kinematical update of postition and velocities of every attached Frame:
@@ -107,7 +108,7 @@ namespace MBSim {
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
 
       /* Object */
-      virtual void init();
+      virtual void init() { new MBSimError("BITTE INITIALISIEREN!"); }
 
       /*! \return true
       */
