@@ -21,6 +21,7 @@
  *
  */
 
+#include <config.h>
 #include "theta_time_stepping_integrator.h"
 #include <mbsim/multi_body_system.h>
 

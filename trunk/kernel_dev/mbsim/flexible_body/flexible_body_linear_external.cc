@@ -22,7 +22,7 @@
 #include <config.h>
 #include "mbsim/flexible_body/flexible_body_linear_external.h"
 #include "mbsim/flexible_body/finite_elements/superelement_linear_external.h"
-#include "mbsim/port.h"
+#include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/multi_body_system.h"
 

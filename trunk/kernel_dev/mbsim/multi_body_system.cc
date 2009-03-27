@@ -202,8 +202,6 @@ namespace MBSim {
 
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigTermHandler);
-    signal(SIGHUP, sigTermHandler);
-    signal(SIGTERM, sigTermHandler);
 #endif
 
   }
@@ -387,6 +385,9 @@ namespace MBSim {
   void MultiBodySystem::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
+#ifdef HAVE_AMVISCPPINTERFACE
+      amvisGrp->terminate();
+#endif
     }
   }
 
@@ -1503,6 +1504,7 @@ namespace MBSim {
     // if the integrator has not exit after a integratorExitRequest, exit the hard way
     if(integratorExitRequest) {
       cout<<"MBSim: Integrator has not stopped integration! Terminate NOW the hard way!"<<endl;
+      H5::FileSerie::deletePIDFiles();
       _exit(1);
     }
     // on exitRequest flush plot files and ask the integrator to exit

@@ -287,8 +287,6 @@ namespace MBSim {
 
   void Subsystem::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Element::plot(t,dt);
-
       for(unsigned i=0; i<subsystem.size(); i++)
         subsystem[i]->plot(t,dt);
       for(unsigned i=0; i<object.size(); i++)
@@ -311,7 +309,10 @@ namespace MBSim {
       for(unsigned i=0; i<EDI.size(); i++)
         EDI[i]->closePlot();
 
-      Element::closePlot();
+      if(getPlotFeature(separateFilePerSubsystem)==enabled)
+        delete (H5::FileSerie*)plotGroup;
+      else
+        delete (H5::Group*)plotGroup;
     }
   }
 
