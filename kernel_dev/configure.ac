@@ -32,6 +32,7 @@ AC_CHECK_FUNCS([pow])
 AC_CHECK_FUNCS([sqrt])
 AC_C_INLINE
 AC_HEADER_STDBOOL
+AC_FUNC_CLOSEDIR_VOID
 
 dnl Check for MinGW
 AC_CANONICAL_HOST
@@ -42,10 +43,10 @@ fi
 
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
-AC_MSG_CHECKING([for ANSI c signal SIGTERM]); AC_COMPILE_IFELSE([
+AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([
 #include <signal.h>
 int main() {
-  signal(SIGTERM, 0);
+  signal(SIGINT, 0);
   return 0;
 }
 ], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
