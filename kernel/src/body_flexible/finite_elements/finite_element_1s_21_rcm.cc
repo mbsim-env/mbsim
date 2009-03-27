@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
- *
+/* Copyright (C) 2005-2006  Roland Zander
+ 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,16 +13,17 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
- *
- * Contact: rzander@users.berlios.de
- *          thschindler@users.berlios.de
- */
 
+ *
+ * Contact:
+ *   rzander@users.berlios.de
+ *
+ */
 #include <config.h>
 #define FMATVEC_NO_INITIALIZATION
 #define FMATVEC_NO_BOUNDS_CHECK
 
-#include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
+#include "finite_element_1s_21_rcm.h"
 #include <fstream>
 
 using namespace std;
