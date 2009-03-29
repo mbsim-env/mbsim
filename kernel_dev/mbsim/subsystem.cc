@@ -343,8 +343,11 @@ namespace MBSim {
   }
 
   void Subsystem::preinit() {
-    for(unsigned int i=0; i<subsystem.size(); i++) 
+    for(unsigned int i=0; i<subsystem.size(); i++) {
+      subsystem[i]->getFrame("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
+      subsystem[i]->getFrame("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
       subsystem[i]->preinit();
+    }
 
     for(unsigned i=0; i<object.size(); i++)
       object[i]->preinit();
@@ -1288,5 +1291,12 @@ namespace MBSim {
     obj->setParent(this);
   }
 
+  void Subsystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
+    for(unsigned int i=0; i<object.size(); i++)
+      obj.push_back(object[i]);
+    if(recursive)
+      for(unsigned int i=0; i<subsystem.size(); i++)
+	subsystem[i]->buildListOfObjects(obj,recursive);
+  }
 }
 
