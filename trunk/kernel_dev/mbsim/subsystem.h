@@ -201,6 +201,8 @@ namespace MBSim {
       Subsystem* getParent() { return parent; }
       void setParent(Subsystem* sys) { parent = sys; }
 
+      void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
+
       const Vec& getq() const { return q; };
       const Vec& getu() const { return u; };
       const Vec& getx() const { return x; };
