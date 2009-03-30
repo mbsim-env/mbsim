@@ -32,7 +32,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   Vec KrRP(3), KrCR(3);
   SymMat Theta(3);
 
-  SpecialRigidBody* stab1 = new SpecialRigidBody("Stab1");
+  RigidBody* stab1 = new RigidBody("Stab1");
   mbs->addObject(stab1);
   //Node* node = mbs->addObject(0,stab1);
   KrCR(0) = a1;
@@ -57,7 +57,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setSmoothBarrier(M_PI*2/9);
   stab1->setAMVisRigidBody(obj);
 
-  SpecialRigidBody* stab2 = new SpecialRigidBody("Stab2");
+  RigidBody* stab2 = new RigidBody("Stab2");
   mbs->addObject(stab2);
   //mbs->addObject(node,stab2);
   KrRP(0) = lStab/2;
@@ -83,7 +83,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setSmoothBarrier(M_PI*2/9);
   stab2->setAMVisRigidBody(obj);
 
-  SpecialRigidBody* stab3 = new SpecialRigidBody("Stab3");
+  RigidBody* stab3 = new RigidBody("Stab3");
   mbs->addObject(stab3);
   //mbs->addObject(node,stab3);
   KrRP(0) = lStab/2;
@@ -109,7 +109,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   obj->setSmoothBarrier(M_PI*2/9);
   stab3->setAMVisRigidBody(obj);
 
-  SpecialRigidBody* stab4 = new SpecialRigidBody("Stab4");
+  RigidBody* stab4 = new RigidBody("Stab4");
   mbs->addObject(stab4);
   //mbs->addObject(node,stab4);
   KrRP(0) = lStab/2;
