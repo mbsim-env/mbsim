@@ -25,7 +25,7 @@ void SpecialGroup::preinit() {
     cout << A.size() << endl;
     for(unsigned int i=0; i<objList.size(); i++) {
 
-      SpecialRigidBody *body = static_cast<SpecialRigidBody*>(objList[i]);
+      RigidBody *body = static_cast<RigidBody*>(objList[i]);
       Frame* frame =  body->getFrameOfReference();
       Subsystem* parentSys = dynamic_cast<Subsystem*>(frame->getParent());
       Body* parentBody = dynamic_cast<Body*>(frame->getParent());
@@ -54,21 +54,20 @@ void SpecialGroup::preinit() {
     }
     // Matrix der Abhängigkeiten
     cout << "A=" << A << endl;
-    // Puffer-Liste für Körper mit Absolutkinematik
-    vector<Object*> bufObject;
-    // Puffer-Liste für Subsysteme ohne Verbindungen zu Körpern
-    vector<Subsystem*> bufSys;
+    // Tree Liste
     vector<Tree*> bufTree;
-    // Lege unsichtbare Trees an und starte Aufbau
     int nt = 0;
+    // Lege unsichtbare Group an 
     Group* group = new Group("InvisibleGroup");
     object.clear(); // Alte Object-Liste löschen
-    subsystem.clear(); // Alte Object-Liste löschen
+    subsystem.clear(); // Alte Subsystem-Liste löschen
+    // Starte Aufbau
     for(unsigned int i=0; i<A.size(); i++) {
       double a = max(trans(A).col(i));
       if(a==1) { // Root einer Relativkinematik
 	stringstream str;
 	str << "InvisibleTree" << nt++;
+	// Lege unsichtbaren Tree an 
 	Tree *tree = new Tree(str.str());
 	bufTree.push_back(tree);
 	//addSubsystem(tree,Vec(3),SqrMat(3));

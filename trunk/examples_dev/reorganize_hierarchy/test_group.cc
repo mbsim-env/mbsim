@@ -13,7 +13,7 @@ TestGroup::TestGroup(const string &projectName) : SpecialGroup(projectName) {
   Vec KrKS(3);
   SymMat Theta(3);
 
-  stab1 = new SpecialRigidBody("Stab1");
+  stab1 = new RigidBody("Stab1");
   addObject(stab1);
   KrKS(0) = a1;
   SqrMat A(3);
@@ -38,7 +38,7 @@ TestGroup::TestGroup(const string &projectName) : SpecialGroup(projectName) {
   obj->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
   stab1->setAMVisRigidBody(obj);
 
-  stab2 = new SpecialRigidBody("Stab2");
+  stab2 = new RigidBody("Stab2");
   WrOK(0) = lStab/2;
   WrOK(2) = 0.006;
   stab1->addFrame("P",WrOK-KrKS,A);

@@ -10,15 +10,6 @@
 using namespace std;
 using namespace MBSim;
 
-// Test-RigidBody mit kleinen Erweiterungen
-class SpecialRigidBody : public RigidBody {
-
-  public:
-    SpecialRigidBody(const string &name) : RigidBody(name) {} 
-    Frame* getFrameForKinematics() { return port[iRef]; };
-    Frame* getFrameOfReference() { return frameParent; };
-};
-
 // Test-Gruppe mit Intelligenz zum Anlegen von "unsichtbaren Trees"
 class SpecialGroup : public Group {
 

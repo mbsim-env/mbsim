@@ -5,12 +5,12 @@
 
 class TestGroup : public SpecialGroup {
   private:
-    SpecialRigidBody *stab1, *stab2;
+    RigidBody *stab1, *stab2;
   public:
     TestGroup(const string &projectName); 
 
-    SpecialRigidBody* getRod1() {return stab1;}
-    SpecialRigidBody* getRod2() {return stab2;}
+    RigidBody* getRod1() {return stab1;}
+    RigidBody* getRod2() {return stab2;}
     
  
 };
