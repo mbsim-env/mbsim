@@ -117,6 +117,9 @@ namespace MBSim {
        * \param frame of reference
        */
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
+      
+      Frame* getFrameForKinematics() { return port[iRef]; };
+      Frame* getFrameOfReference() { return frameParent; };
 
       double computeKineticEnergy();
       double computeKineticEnergyBranch();
