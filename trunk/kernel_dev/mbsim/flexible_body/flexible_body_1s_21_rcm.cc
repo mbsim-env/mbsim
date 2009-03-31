@@ -201,7 +201,7 @@ namespace MBSim {
     }
 
     l0 = L/Elements;
-    Vec g = trans(frameParent->getOrientation()(0,0,2,1))*mbs->getGrav();
+    Vec g = trans(frameParent->getOrientation()(0,0,2,1))*mbs->getAccelerationOfGravity();
     for(int i=0;i<Elements;i++) {
       qElement.push_back(Vec(8,INIT,0.));
       uElement.push_back(Vec(8,INIT,0.));

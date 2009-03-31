@@ -62,10 +62,9 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
       virtual void updateh(double t); 
-      virtual void updateM(double t); 
-      virtual void updateJacobians(double t) = 0; 
+      virtual void updateM(double t);
+      virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt); 
-      virtual void updatedu(double t, double dt) = 0;
       virtual void updateud(double t) { throw new MBSimError("ERROR (Subsystem::updateud): Not implemented!"); }
       virtual void updateqd(double t) { throw new MBSimError("ERROR (Subsystem::updateud): Not implemented!"); }
       virtual void sethSize(int hSize_, int i=0);
@@ -77,7 +76,6 @@ namespace MBSim {
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual int gethInd(Subsystem* sys, int i=0); 
-      virtual void updateSecondJacobians(double t) = 0; 
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -200,8 +198,6 @@ namespace MBSim {
       /* GETTER / SETTER */
       Subsystem* getParent() { return parent; }
       void setParent(Subsystem* sys) { parent = sys; }
-
-      void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
 
       const Vec& getq() const { return q; };
       const Vec& getu() const { return u; };
@@ -412,6 +408,11 @@ namespace MBSim {
        * \brief initialises state variables
        */
       void initz();
+
+      /**
+       * \brief TODO
+       */
+      void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
 
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
@@ -800,12 +801,12 @@ namespace MBSim {
       int svSize, svInd;
 
       /**
-       * \brief inertial position of frames, contours and TODO
+       * \brief inertial position of frames, contours and subsystems (see group.h / tree.h)
        */
       vector<Vec> IrOK, IrOC, IrOS;
 
       /**
-       * \brief orientation to inertial frame of frames, contours and TODO
+       * \brief orientation to inertial frame of frames, contours and subsystems (see group.h / tree.h)
        */
       vector<SqrMat> AIK, AIC, AIS;
 

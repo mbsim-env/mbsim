@@ -1,5 +1,4 @@
-/* Copyright (C) 2004-2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,75 +12,161 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
+
 
 #ifndef _TREE_H_
 #define _TREE_H_
 
-#include <mbsim/subsystem.h>
+#include "mbsim/subsystem.h"
 
 namespace H5 {
   class Group;
 }
 
-
 using namespace std;
-
 
 namespace MBSim {
 
+  /**
+   * \brief recursive standard tree structure
+   * \author Martin Foerg
+   * \date 2009-03-26 some comments (Thorsten Schindler)
+   */
   class Node {
-    protected:
-      vector<Node*> child;
-      ObjectInterface *obj;
     public:
+      /**
+       * \brief constructor
+       * \param object interface
+       */
       Node(ObjectInterface* obj_) : obj(obj_) {}
-      ~Node() {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~Node() {}
+
+      /**
+       * \param child node to add
+       */
       void addChild(Node* child); 
+      
+      /**
+       * \brief recursive kinematics update
+       * \param time
+       */
       void updateKinematics(double t);
+
+      /**
+       * \brief recursive JACOBIAN for acceleration description update
+       * \param time
+       */
       void updateJacobians(double t);
+
+      /**
+       * \brief recursive JACOBIAN for inverse kinetics update
+       * \param time
+       */
       void updateSecondJacobians(double t);
-      void calcqSize(int &size);
-      void calcuSize(int &size, int j=0);
-      void sethSize(int &size, int j=0);
+
+      /**
+       * \brief recursive calculation of position size
+       * \param position size
+       */
+      void calcqSize(int &qsize);
+
+      /**
+       * \brief recursive calculation of velocity size
+       * \param velocity size
+       * \param index for normal usage and inverse kinetics
+       */
+      void calcuSize(int &usize, int j=0);
+
+      /**
+       * \brief recursive setting of smooth right hand side size
+       * \param smooth right hand side size
+       * \param index for normal usage and inverse kinetics
+       */
+      void sethSize(int &hsize, int j=0);
+
+    protected:
+      /**
+       * \brief vector of node pointer for recursive structure
+       */
+      vector<Node*> child;
+
+      /**
+       * \brief pointer of object interface
+       */
+      ObjectInterface *obj;
   };
 
-  /*! \brief class for tree-structured systems with only rigid bodies
-   *
-   * */
+  /**
+   * \brief class for tree-structured mechanical systems with recursive and flat memory mechanism
+   * \author Martin Foerg
+   * \date 2009-03-26 some comments (Thorsten Schindler)
+   */
   class Tree : public Subsystem {
+    public:
+      /**
+       * \brief constructor
+       * \param name of tree
+       */
+      Tree(const string &name);
+
+      /**
+       * \brief destructor
+       */
+      virtual ~Tree();
+
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateKinematics(double t);
+      virtual void updatedu(double t, double dt);
+      virtual void updatezd(double t);
+      virtual void sethSize(int h, int j=0);
+      virtual void calcqSize();
+      virtual void calcuSize(int j=0);
+      virtual void updateSecondJacobians(double t);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual string getType() const { return "Tree"; }
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF SUBSYSTEM */
+      virtual void updateJacobians(double t);
+      void facLLM(); 
+      /***************************************************/
+
+      /**
+       * \brief add new object to tree
+       * \param tree
+       * \param object
+       * \return new node of object
+       */
+      Node* addObject(Node* tree, Object* obj);
+
+      /**
+       * \brief add new subsystem to tree
+       * \param tree
+       * \param subsystem
+       * \param relative translation to reference frame
+       * \param relative orientation to reference frame
+       * \param reference frame
+       * \return new node of subsystem
+       */
+      Node* addSubsystem(Node* tree, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame=0);
 
     protected:
+      /**
+       * \brief root node of tree
+       */
       Node* root;
-
-    public:
-
-    Tree(const string &projectName);
-    ~Tree();
-
-    void calcqSize();
-    void calcuSize(int j=0);
-    void sethSize(int h, int j=0);
-
-    void facLLM(); 
-    void updatezd(double t);
-    void updatedu(double t, double dt);
-    void updateKinematics(double t);
-    void updateJacobians(double t);
-    void updateSecondJacobians(double t);
-
-    double computePotentialEnergy();
-
-    Node* addObject(Node* node, Object* obj);
-    Node* addSubsystem(Node* node, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame=0);
-    virtual string getType() const {return "Tree";}
   };
 
 }
 
 #endif
+

@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _GROUP_H_
@@ -27,38 +24,54 @@
 
 namespace MBSim {
 
-  /*!
-   * \brief Group TODO
+  /**
+   * \brief group ingredients do not depend on each other
    * \author Martin Foerg
-   * \date xy.03.09
+   * \date 2009-03-26 some comments (Thorsten Schindler)
    */
   class Group : public Subsystem {
-   protected:
-
-   public:
-      /*! Constructor */
+    public:
+      /**
+       * \brief constructor
+       * \param name of group
+       */
       Group(const string &name);
-      /*! Destructor */
-      ~Group();
-      void facLLM(); 
-      void updatezd(double t);
-      void updatedu(double t, double dt);
-      void updateKinematics(double t);
-      void updateJacobians(double t);
-      void load(const string &path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
 
-      void updateSecondJacobians(double t);
+      /**
+       * \brief destructor
+       */
+      virtual ~Group();
 
+      /* INHERITED INTERFACE OF SUBSYSTEM */
+      virtual void updateJacobians(double t);
+      virtual void facLLM();
+      using Subsystem::addObject;
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateKinematics(double t);
+      virtual void updatedu(double t, double dt);
+      virtual void updatezd(double t);
+      virtual void updateSecondJacobians(double t);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void load(const string &path, ifstream &inputfile);
+      virtual void save(const string &path, ofstream &outputfile);
+      virtual string getType() const { return "Group"; }
+      /***************************************************/
+
+      /**
+       * \param subsystem to add
+       * \param relative position of subsystem
+       * \param relative orientation of subsystem
+       * \param relation frame
+       */
       void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0);
-      void addObject(Object *object);
 
-      // Compatibility functions
+      // TODO delete compatibility functions
       void addObject(TreeRigid *tree);
       void addObject(BodyRigid *body);
-
-
-      virtual string getType() const {return "Group";}
   };
 }
 

@@ -802,6 +802,14 @@ namespace MBSim {
       EDI[i]->initz();
   }
 
+  void Subsystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
+    for(unsigned int i=0; i<object.size(); i++)
+      obj.push_back(object[i]);
+    if(recursive)
+      for(unsigned int i=0; i<subsystem.size(); i++)
+	subsystem[i]->buildListOfObjects(obj,recursive);
+  }
+
   void Subsystem::updateCondition() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
@@ -1291,12 +1299,5 @@ namespace MBSim {
     obj->setParent(this);
   }
 
-  void Subsystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
-    for(unsigned int i=0; i<object.size(); i++)
-      obj.push_back(object[i]);
-    if(recursive)
-      for(unsigned int i=0; i<subsystem.size(); i++)
-	subsystem[i]->buildListOfObjects(obj,recursive);
-  }
 }
 
