@@ -1,25 +1,62 @@
 #! /bin/sh
 
+if [ $# -eq 1 -a "$1" = "-h" ]; then
+  echo "Usage:"
+  echo ""
+  echo "This script must be executed in the current directory!"
+  echo ""
+  echo "runexamples.sh (run all examples with default RTOL=1e-6)"
+  echo "runexamples.sh 1e-3 (run all examples with RTOL=1e-3)"
+  echo "runexamples.sh robot (run robot example with default RTOL=1e-6)"
+  echo "runexamples.sh robot 1e-3 (run robot example with RTOL=1e-3)"
+  echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution)"
+  echo "runexamples.sh install (install the reference.tar.bz2 reference file from"
+  echo "                        the berlios server)"
+  echo "runexamples.sh install ../myref/ref.tar.bz2 (install the ../myref/ref.tar.bz2"
+  echo "                                            reference file)"
+  exit
+fi
+
 RTOL=1e-6
-if [ $# -gt 0 ]; then
-  if [ $1 = "dist" ]; then
+EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\.")
+if [ $# -eq 1 ]; then
+  if [ "$1" = "dist" ]; then
     echo "Making a distribution of reference files: reference.tar.bz2"
     tar -cjf reference.tar.bz2 $(find -name "reference")
     exit
-  elif [ $1 = "install" -a $# -eq 2 ]; then
-    echo "Install the reference file: $2"
-    tar -xjf $2
+  fi
+  if [ "$1" = "install" ]; then
+    echo "Download reference file"
+    rm reference.tar.bz2
+    wget http://download.berlios.de/mbsim/reference.tar.bz2
+    echo "Install the reference file"
+    tar -xjf reference.tar.bz2
     exit
+  fi
+  if cd $1; then
+    EXAMPLES=$1
   else
     RTOL=$1
   fi
 fi
+if [ $# -eq 2 ]; then
+  if [ "$1" = "install" ]; then
+    echo "Install the reference file: $2"
+    tar -xjf $2
+    exit
+  fi
+  EXAMPLES=$1
+  RTOL=$2
+fi
+
+
+# RUN EXAMPLES
 
 FAILED=""
 DIFF=""
 find -name "*.d" -exec rm -f {} \;
 
-for D in $(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\."); do
+for D in $EXAMPLES; do
   echo "RUNNING EXAMPLE $D"
   cd $D
 
