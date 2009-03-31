@@ -481,11 +481,11 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(separateFilePerSubsystem)==enabled) {
         // create symbolic link in parent plot file if exist
-        if(parent) H5Lcreate_external((getFullName()+".mbsim.h5").c_str(), "/",
+        if(parent) H5Lcreate_external((getPath()+".mbsim.h5").c_str(), "/",
             parent->getPlotGroup()->getId(), name.c_str(),
             H5P_DEFAULT, H5P_DEFAULT);
         // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-        plotGroup=(H5::Group*)new H5::FileSerie(getFullName()+".mbsim.h5", H5F_ACC_TRUNC);
+        plotGroup=(H5::Group*)new H5::FileSerie(getPath()+".mbsim.h5", H5F_ACC_TRUNC);
       }
       else
         plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));

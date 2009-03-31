@@ -24,6 +24,7 @@
 #include <vector>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
+#include <mbsim/subsystem.h>
 #ifdef HAVE_AMVISCPPINTERFACE
 #include <amviscppinterface/body.h>
 #endif
@@ -289,6 +290,13 @@ namespace MBSim {
        * \return index of contour TODO rename
        */
       int contourIndex(const Contour *contour_) const;
+
+      /** 
+       * Return the full path of the object. This function replaces the getFullName
+       * which is deprecated.
+       * \param pathDelim The delimiter of the path
+       */
+      std::string getPath(char pathDelim='.') { return parent?parent->getPath()+pathDelim+name:name; }
 
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return amvisGrp; }

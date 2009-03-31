@@ -82,6 +82,12 @@ namespace MBSim {
 #ifdef HAVE_AMVISCPPINTERFACE
       virtual AMVis::Group* getAMVisGrp() { return amvisGrp; }
 #endif
+      /** 
+       * Return the full path of the object. This function replaces the getFullName
+       * which is deprecated.
+       * \param pathDelim The delimiter of the path
+       */
+      std::string getPath(char pathDelim='.') { return parent?parent->getPath()+pathDelim+name:name; }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -97,6 +103,7 @@ namespace MBSim {
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
+      /** DEPRECATED */
       virtual void setFullName(const string &str);
       virtual string getType() const { return "Subsystem"; }
       virtual void setMultiBodySystem(MultiBodySystem* sys);
