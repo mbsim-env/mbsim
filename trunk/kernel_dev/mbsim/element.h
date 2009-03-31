@@ -75,7 +75,7 @@ namespace MBSim {
 
       /* INTERFACE */
       /**
-       * \param element fullname
+       * \param element fullname DEPRECATED
        */
       virtual void setFullName(const string &str) { fullName = str; }
 

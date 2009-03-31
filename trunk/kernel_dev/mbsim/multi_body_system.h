@@ -105,6 +105,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
+      /** DEPRECATED */
       virtual string getFullName() const { return name; }
       virtual void load(const string &path, ifstream& inputfile); // TODO replace with XML
       virtual void save(const string &path, ofstream& outputfile);
