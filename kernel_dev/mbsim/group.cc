@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,22 +13,19 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <config.h>
-#include <mbsim/group.h>
-#include <mbsim/object.h>
-#include <mbsim/link.h>
-#include <mbsim/extra_dynamic_interface.h>
-#include <mbsim/frame.h>
-#include <mbsim/contour.h>
-#include <mbsim/class_factory.h>
-#include <mbsim/multi_body_system.h>
+#include "mbsim/group.h"
+#include "mbsim/object.h"
+#include "mbsim/link.h"
+#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/frame.h"
+#include "mbsim/contour.h"
+#include "mbsim/class_factory.h"
+#include "mbsim/multi_body_system.h"
 #include "hdf5serie/simpleattribute.h"
 
 #include "compatibility_classes/tree_rigid.h"
@@ -36,10 +33,68 @@
 
 namespace MBSim {
 
-  Group::Group(const string &name) : Subsystem(name) {
+  Group::Group(const string &name) : Subsystem(name) {}
+
+  Group::~Group() {}
+
+  void Group::facLLM() {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
+      (*i)->facLLM();
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->facLLM();
   }
 
-  Group::~Group() {
+  void Group::updateKinematics(double t) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateKinematics(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateKinematics(t);
+  }
+
+  void Group::updateJacobians(double t) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateJacobians(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->updateJacobians(t);
+  }
+
+  void Group::updatedu(double t, double dt) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatedu(t,dt);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (*i)->updatedu(t,dt);
+  }
+
+  void Group::updatezd(double t) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updatezd(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updatezd(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
+      (*i)->updatexd(t);
+
+    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+      (*i)->updatexd(t);
+  }
+
+  void Group::updateSecondJacobians(double t) {
+    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+      (*i)->updateSecondJacobians(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateSecondJacobians(t);
+
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+      (*i)->updateJacobians(t);
   }
 
   void Group::load(const string &path, ifstream& inputfile) {
@@ -58,7 +113,7 @@ namespace MBSim {
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
       if(i>=port.size())
-	addFrame(new Frame("NoName"));
+        addFrame(new Frame("NoName"));
       port[i]->load(path, newinputfile);
       newinputfile.close();
     }
@@ -75,7 +130,7 @@ namespace MBSim {
       newinputfile.seekg(0,ios::beg);
       ClassFactory cf;
       if(i>=contour.size())
-	addContour(cf.getContour(dummy));
+        addContour(cf.getContour(dummy));
       contour[i]->load(path, newinputfile);
       newinputfile.close();
     }
@@ -203,7 +258,6 @@ namespace MBSim {
   }
 
   void Group::save(const string &path, ofstream& outputfile) {
-
     Element::save(path,outputfile);
 
     // all Frame of Object
@@ -245,7 +299,6 @@ namespace MBSim {
     outputfile << endl;
 
     // all Objects of Subsystems
-
     outputfile << "# Objects:" << endl;
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -296,29 +349,9 @@ namespace MBSim {
       outputfile << AIC[i] << endl;
       outputfile << endl;
     }
-
-    //   if(mbs != this) {
-    //     outputfile << "# Reference coordinate system:" << endl;
-    //     outputfile << port[iRef]->getName() << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Parent coordinate system:" << endl;
-    //     outputfile << portParent->getFullName() << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Translation:" << endl;
-    //     outputfile << PrPK << endl;
-    //     outputfile << endl;
-
-    //     outputfile << "# Rotation:" << endl;
-    //     outputfile << APK << endl;
-    //     outputfile << endl;
-    //   }
   }
 
-
   void Group::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
-
     Subsystem::addSubsystem(sys);
 
     int i = 0;
@@ -329,11 +362,6 @@ namespace MBSim {
     AIS.push_back(AIK[i]*ARS);
   }
 
-  void Group::addObject(Object *obj) {
-
-    Subsystem::addObject(obj);
-  }
-
   void Group::addObject(TreeRigid *tree) {
     tree->setFullName(name+"."+tree->getName());
     tree->setParent(this);
@@ -341,7 +369,6 @@ namespace MBSim {
   }
 
   void Group::addObject(BodyRigid *body) {
-    // ADDOBJECT adds an object
     body->setFullName(name+"."+body->getName());
     body->setParent(this);
     if(getObject(body->getName(),false)) {
@@ -351,71 +378,5 @@ namespace MBSim {
     object.push_back(body);
   }
 
-  void Group::facLLM() {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
-      (*i)->facLLM();
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->facLLM();
-  }
-
-  void Group::updateKinematics(double t) {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateKinematics(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateKinematics(t);
-  }
-
-  void Group::updateJacobians(double t) {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateJacobians(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateJacobians(t);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
-  }
-
-  void Group::updateSecondJacobians(double t) {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updateSecondJacobians(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateSecondJacobians(t);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
-  }
-
-  void Group::updatezd(double t) {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatezd(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updatezd(t);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (*i)->updatexd(t);
-
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
-      (*i)->updatexd(t);
-
-  }
-
-  void Group::updatedu(double t, double dt) {
-
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
-      (*i)->updatedu(t,dt);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (*i)->updatedu(t,dt);
-  }
-
 }
+
