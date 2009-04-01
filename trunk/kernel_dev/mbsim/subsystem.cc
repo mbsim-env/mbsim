@@ -810,6 +810,22 @@ namespace MBSim {
 	subsystem[i]->buildListOfObjects(obj,recursive);
   }
 
+  void Subsystem::buildListOfLinks(vector<Link*> &lnk, bool recursive) {
+    for(unsigned int i=0; i<link.size(); i++)
+      lnk.push_back(link[i]);
+    if(recursive)
+      for(unsigned int i=0; i<subsystem.size(); i++)
+	subsystem[i]->buildListOfLinks(lnk,recursive);
+  }
+
+  void Subsystem::buildListOfEDIs(vector<ExtraDynamicInterface*> &edi, bool recursive) {
+    for(unsigned int i=0; i<EDI.size(); i++)
+      edi.push_back(EDI[i]);
+    if(recursive)
+      for(unsigned int i=0; i<subsystem.size(); i++)
+	subsystem[i]->buildListOfEDIs(edi,recursive);
+  }
+
   void Subsystem::updateCondition() {
 
     for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 

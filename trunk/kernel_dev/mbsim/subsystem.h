@@ -419,7 +419,15 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
+      virtual void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
+      /**
+       * \brief TODO
+       */
+      virtual void buildListOfLinks(vector<Link*> &lnk, bool recursive=false);
+      /**
+       * \brief TODO
+       */
+      virtual void buildListOfEDIs(vector<ExtraDynamicInterface*> &edi, bool recursive=false);
 
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
