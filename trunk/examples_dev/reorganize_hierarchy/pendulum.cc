@@ -1,6 +1,6 @@
 #include "pendulum.h"
 #include "mbsim/rigid_body.h"
-#include "special_classes.h"
+#include "mbsim/special_classes.h"
 #include "test_group.h"
 
 #ifdef HAVE_AMVIS

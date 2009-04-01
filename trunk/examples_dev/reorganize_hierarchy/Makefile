@@ -1,5 +1,5 @@
 CC = g++
-sources = main.cc pendulum.cc special_classes.cc test_group.cc
+sources = main.cc pendulum.cc test_group.cc
 libsources = 
 objects = $(sources:.cc=.o) 
 CPPFLAGS= -g3  `pkg-config --cflags mbsim` 

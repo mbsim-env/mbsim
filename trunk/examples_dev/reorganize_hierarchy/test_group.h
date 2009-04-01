@@ -1,7 +1,7 @@
 #ifndef _TEST_GROUP_H_
 #define _TEST_GROUP_H_
 
-#include "special_classes.h"
+#include "mbsim/special_classes.h"
 
 class TestGroup : public SpecialGroup {
   private:
