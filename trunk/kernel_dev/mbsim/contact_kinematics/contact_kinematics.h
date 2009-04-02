@@ -58,21 +58,21 @@ namespace MBSim {
        * \brief treats ordering of contours 
        * \param contour vector
        */
-      virtual void assignContours(const vector<Contour*> &contour) = 0;
+      virtual void assignContours(const std::vector<Contour*> &contour) = 0;
 
       /** 
        * \brief treats ordering of contours
        * \param first contour
        * \param second contour
        */
-      void assignContours(Contour *contour1, Contour *contour2) { vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c); }
+      void assignContours(Contour *contour1, Contour *contour2) { std::vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c); }
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updateg(Vec &g, ContourPointData *cpData) { cout << "ERROR (ContactKinematics::updateg): not implemented" << endl; throw 5; }
+      virtual void updateg(Vec &g, ContourPointData *cpData) { std::cout << "ERROR (ContactKinematics::updateg): not implemented" << std::endl; throw 5; }
 
       /** 
        * \brief compute normal and tangential relative velocities, velocity and angular velocity of possible contact point if necessary (cf. contact.cc)
@@ -80,7 +80,7 @@ namespace MBSim {
        * \param relative velocity vector (normal and tangential)
        * \param contact point parametrisation
        */
-      virtual void updategd(const Vec& g, Vec &gd, ContourPointData* cpData) { cout << "ERROR (ContactKinematics::updategd): not implemented" << endl; throw 5; }
+      virtual void updategd(const Vec& g, Vec &gd, ContourPointData* cpData) { std::cout << "ERROR (ContactKinematics::updategd): not implemented" << std::endl; throw 5; }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -88,14 +88,14 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) { cout << "ERROR (ContactKinematics::updatewb): not implemented" << endl; throw 5;};
+      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) { std::cout << "ERROR (ContactKinematics::updatewb): not implemented" << std::endl; throw 5;};
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
+      virtual void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
 
       /** 
        * \brief compute normal and tangential relative velocities, velocity and angular velocity of possible contact point if necessary for several possible contact points (cf. contact.cc)
@@ -103,7 +103,7 @@ namespace MBSim {
        * \param relative velocity vector (normal and tangential)
        * \param contact point parametrisation
        */
-      virtual void updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) { updategd(g[0],gd[0],cpData[0]); }
+      virtual void updategd(std::vector<Vec> &g, std::vector<Vec> &gd, std::vector<ContourPointData*> &cpData) { updategd(g[0],gd[0],cpData[0]); }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
@@ -111,7 +111,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
+      virtual void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
 
       /**
        * \return number of potential contact points

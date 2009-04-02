@@ -42,7 +42,7 @@ namespace MBSim {
       void updateg(Vec &g, ContourPointData *cpData);
       void updategd(const Vec &g, Vec &gd, ContourPointData *cpData);
 
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
       void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
   };
 

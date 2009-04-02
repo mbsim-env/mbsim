@@ -40,7 +40,7 @@ namespace MBSim {
       fmatvec::Vec z0;
       int warnLevel;
       bool output;
-      string name;
+      std::string name;
 
     public:
       /*! Constructor with \default tStart(0.), \default tEnd(1.), \default dtPlot(1e-4), \default warnLevel(0), \default output(true), \default name("Integrator") */

@@ -33,12 +33,12 @@ namespace MBSim {
     protected:
       double SigSize;// angedacht fuer Fähigkeit Signale zu muxen
       //virtual Vec y; // hinfällig wenn Ports etc. instantan über Dimension verfügen
-      string name;
+      std::string name;
     public:
       DataInterfaceBase(){}
       virtual ~DataInterfaceBase() {}
-      const string& getName() {return name;}
-      void setName(const string& name_) {name=name_;}
+      const std::string& getName() {return name;}
+      void setName(const std::string& name_) {name=name_;}
       virtual Vec operator()(double t) = 0;
       double  getSigSize(){return SigSize;}
       virtual void update(double t) {}

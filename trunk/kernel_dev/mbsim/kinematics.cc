@@ -22,6 +22,8 @@
 #include <config.h>
 #include <mbsim/kinematics.h>
 
+using namespace std;
+
 namespace MBSim {
 
   void Translation::save(const string &path, ofstream& outputfile) {

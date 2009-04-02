@@ -38,11 +38,11 @@ namespace MBSim {
 	class ContactKinematicsPointFrustum : public ContactKinematics {     
 	    public:
 	    	  /*! Compute normal distance in contact point */
-		      void stage1(Vec &g, vector<ContourPointData> &cpData);
+		      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
 		      /*! Compute tangential directions and normal velocities in contact points */
-		      void stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData);
+		      void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
 		      /*! Treat ordering of contacting bodies in connect-call */
-		      void assignContours(const vector<Contour*> &contour);
+		      void assignContours(const std::vector<Contour*> &contour);
 		      
 		private:
 		      int ipoint, ifrustum; 
