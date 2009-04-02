@@ -387,7 +387,6 @@ namespace MBSim {
   }
 
   void RigidBody::checkForConstraints() {
-    cout << "in checkForConstraints:"<<endl;
     if(uSize[1] > uSize[0]) {
       Joint *joint = new Joint(string("Joint.")+name);
       cout << joint->getName() << endl;

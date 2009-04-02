@@ -45,15 +45,24 @@ void SpecialGroup::preinit() {
     cout << "object List:" << endl;
     for(unsigned int i=0; i<objList.size(); i++) {
       cout << objList[i]->getName() << endl;
+      stringstream str;
+      str << objList[i]->getName() << "#" << i;
+      objList[i]->setName(str.str());
     }
     cout << "link List:" << endl;
     for(unsigned int i=0; i<lnkList.size(); i++) {
       cout << lnkList[i]->getName() << endl;
+      stringstream str;
+      str << lnkList[i]->getName() << "#" << i;
+      lnkList[i]->setName(str.str());
       addLink(lnkList[i]);
     }
     cout << "edi List:" << endl;
     for(unsigned int i=0; i<ediList.size(); i++) {
       cout << ediList[i]->getName() << endl;
+      stringstream str;
+      str << ediList[i]->getName() << "#" << i;
+      ediList[i]->setName(str.str());
       addEDI(ediList[i]);
     }
     // Matrix anlegen, zeigt die Abhängigkeiten der Körper
@@ -106,15 +115,14 @@ void SpecialGroup::preinit() {
 	// Lege unsichtbaren Tree an 
 	Tree *tree = new Tree(str.str());
 	bufTree.push_back(tree);
-	//addSubsystem(tree,Vec(3),SqrMat(3));
 	addToTree(tree, 0, A, i, objList);
       } 
       else if(a==0) // Absolutkinematik
 	group->addObject(objList[i]);
     }
 
-
     addSubsystem(group,Vec(3),SqrMat(3));
+    
     for(unsigned int i=0; i<bufTree.size(); i++) {
       addSubsystem(bufTree[i],Vec(3),SqrMat(3));
     }
@@ -126,11 +134,7 @@ void SpecialGroup::preinit() {
 
 void SpecialGroup::addToTree(Tree* tree, Node* node, SqrMat &A, int i, vector<Object*>& objList) {
 
-  Node *nextNode;
-  stringstream str;
-  str << objList[i]->getName() << i;
-  objList[i]->setName(str.str());
-  nextNode = tree->addObject(node,objList[i]);
+  Node *nextNode = tree->addObject(node,objList[i]);
 
   for(int j=0; j<A.cols(); j++)
     if(A(i,j) == 1) // Child node of object i
