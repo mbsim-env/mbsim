@@ -118,7 +118,8 @@ void SpecialGroup::preinit() {
 	addToTree(tree, 0, A, i, objList);
       } 
       else if(a==0) // Absolutkinematik
-	group->addObject(objList[i]);
+	addObject(objList[i]);
+	//group->addObject(objList[i]);
     }
 
     addSubsystem(group,Vec(3),SqrMat(3));
