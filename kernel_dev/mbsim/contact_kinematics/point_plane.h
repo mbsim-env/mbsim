@@ -51,7 +51,7 @@ namespace MBSim {
       void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
 
       /*! Treat ordering of contacting bodies in connect-call */
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
   };
 
 }

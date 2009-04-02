@@ -42,7 +42,7 @@ namespace MBSim {
       /*! Compute normal and tangential velocities */
       void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
 
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
       
    	private:
       int icircle, iplane;

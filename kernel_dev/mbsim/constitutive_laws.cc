@@ -23,6 +23,8 @@
 #include <mbsim/constitutive_laws.h>
 #include "utils/nonsmooth_algebra.h"
 
+using namespace std;
+
 namespace MBSim {
 
   double sign(double x);

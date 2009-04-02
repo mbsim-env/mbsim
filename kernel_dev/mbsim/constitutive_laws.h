@@ -46,8 +46,8 @@ namespace MBSim {
       virtual ~GeneralizedForceLaw() {};
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double r) { return 0; }
       virtual Vec diff(double la, double gdn, double r) { return Vec(2); }
       virtual double solve(double G, double gdn) { return 0; }
@@ -75,8 +75,8 @@ namespace MBSim {
       virtual ~UnilateralConstraint() {};
       bool isActive(double g, double gTol) {return g<=gTol;}
       bool remainsClosed(double s, double sTol) {return s<=sTol;}  // s = gd/gdd
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
+      void load(const std::string& path, std::ifstream &inputfile);
+      void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double r);
       Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
@@ -103,8 +103,8 @@ namespace MBSim {
     public:
       GeneralizedImpactLaw() {};
       virtual ~GeneralizedImpactLaw() {};
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double gda, double r) = 0;
       virtual Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
@@ -119,8 +119,8 @@ namespace MBSim {
       UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
       UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
       virtual ~UnilateralNewtonImpact() {};
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
+      void load(const std::string& path, std::ifstream &inputfile);
+      void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double gda, double r);
       Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
@@ -143,8 +143,8 @@ namespace MBSim {
     public:
       FrictionForceLaw(double gdLim_ = 0.01) : gdLim(gdLim_) {};
       virtual ~FrictionForceLaw() {};
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual Vec project(const Vec& la, const Vec& gdn, double laN, double r) {return Vec(2);}
       virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) {return Mat(2,2);}
       virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) {return Vec(2);}
@@ -165,8 +165,8 @@ namespace MBSim {
       PlanarCoulombFriction() : mu(0) {};
       PlanarCoulombFriction(double mu_) : mu(mu_) {};
       virtual ~PlanarCoulombFriction() {}
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
       Vec project(const Vec& la, const Vec& gdn, double laN, double r);
@@ -174,7 +174,7 @@ namespace MBSim {
       Vec solve(const SqrMat& G, const Vec& gdn, double laN);
       bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
-      bool isSticking(const Vec& s, double sTol) {return abs(s(0)) <= sTol;}
+      bool isSticking(const Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
       Vec dlaTdlaN(const Vec& gd, double laN);
       bool isSetValued() const {return true;}
   };
@@ -202,8 +202,8 @@ namespace MBSim {
     public:
       FrictionImpactLaw() {};
       virtual ~FrictionImpactLaw() {};
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
       virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
       virtual Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) = 0;
@@ -218,8 +218,8 @@ namespace MBSim {
       PlanarCoulombImpact() : mu(0) {};
       PlanarCoulombImpact(double mu_) : mu(mu_) {};
       virtual ~PlanarCoulombImpact() {}
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
       Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
@@ -301,7 +301,7 @@ namespace MBSim {
       virtual ~LinearRegularizedPlanarCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 1;}
-      bool isSticking(const Vec& s, double sTol) {return abs(s(0)) <= sTol;}
+      bool isSticking(const Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
       Vec operator()(const Vec &gd, double laN) { 
 	if(fabs(gd(0)) < gdLim)
 	  return Vec(1,INIT,-laN*mu*gd(0)/gdLim);

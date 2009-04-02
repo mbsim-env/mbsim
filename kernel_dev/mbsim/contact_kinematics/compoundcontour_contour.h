@@ -38,14 +38,14 @@ namespace MBSim {
       int icompound, icontour;
       CompoundContour *compound;
       Contour *contour;
-      vector<ContactKinematics*> contactKinematics;
+      std::vector<ContactKinematics*> contactKinematics;
 
     public:
-      void updateg(vector<Vec> &g, vector<ContourPointData*> &cpData);
-      void updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData);
-      void updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData);
+      void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
+      void updategd(std::vector<Vec> &g, std::vector<Vec> &gd, std::vector<ContourPointData*> &cpData);
+      void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
 
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
     };
 
 }

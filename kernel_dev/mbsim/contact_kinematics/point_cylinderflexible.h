@@ -47,7 +47,7 @@ namespace MBSim {
       ~ContactKinematicsPointCylinderFlexible();
 
       /* INHERITED INTERFACE */
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
       void updateg(Vec &g, ContourPointData *cpData);
 
     private:
