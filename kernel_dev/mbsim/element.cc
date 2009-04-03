@@ -24,7 +24,7 @@
 
 namespace MBSim {
 
-  Element::Element(const string &name_) : name(name_) {
+  Element::Element(const string &name_) : name(name_), plotVectorSerie(0), plotGroup(0) {
     for(int i=0; i<LASTPLOTFEATURE; i++) {
       plotFeature[(PlotFeature)i]=unset;
       plotFeatureForChildren[(PlotFeature)i]=unset;
