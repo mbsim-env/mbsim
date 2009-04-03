@@ -7,7 +7,7 @@
 
 
 /*
- * - Use english names.
+ * - Use english names and comments.
  *
  * - A class name starts with a uppercase character.
  *   The second and more words start with uppercase characters.
@@ -22,6 +22,20 @@
  * 
  * - Don't use tabs at all. So 4 indents are 8 spaces and NOT 1 tab.
  *   (Use "set expandtab" in .vimrc)
+ *
+ * - Use const where possible.
+ *
+ * - Implementation in the same order like declaration.
+ *
+ * - Set pointers to NULL after declaration and delete.
+ *
+ * - & and * belongs to the variable, so leave no space in between
+ *
+ * - no using namespace in h-file
+ *
+ * - for all new features there should exist a test case with reference data in the examples directory for automatic compilation / running / comparison with reference data
+ *
+ * - before new svn commit: svn update -> solve conflicts in compiling -> run test script to also avoid link and conceptional problems  
 */
 
 
@@ -40,17 +54,52 @@
 // short comment only one line
 
 
-// Class:
+// Class with doxygen comment:
+
+/**
+ * \brief short description of the class
+ * \author author of the first version
+ * \date yyyy-mm-dd changelog description (name of author)
+ * \todo possible improvements TODO
+ */
 class Foo : public Bar {
   public:
+    // constructor
+    // virtual destructor
+
+    /* INHERITED INTERFACE */
+    virtual void foo(); // which interface, no doxygen comments necessary?
+    /*****************************************************/
+
+    /* INTERFACE */
+    virtual void foo();
+    /*****************************************************/
+
+    /* GETTER / SETTER */
+    const string& getName() const; // getter
+    string& getName() const; // getter
+    setName(string &s); //setter
+    bool hasBoolean() const; // boolean
+    bool isBoolean() const;
+    /*****************************************************/
+    
     void foo();
+
   protected:
+    /**
+     * \brief description of the function
+     * \param parameter description in the order of the function syntax
+     * \return return value description
+     */
     int bar(int i, double x); // some comment
     float inlineFoo() { return 5.3; }
     float inlineBar() {
       foo();
       return 5.2;
     }
+
+    string s;
+    bool bl;
 };
 
 
@@ -59,6 +108,11 @@ void Foo::foo() {
   bar();
 }
 
+// namespace
+namespace Fritz { Oskar; }
+namespace Fritz {
+  Oskar;
+}
 
 // short if:
 if(i==4) printf("test\n");
@@ -91,6 +145,16 @@ else {
   printf("test2b\n");
 }
 
+// short for
+for(int i=0;i<5;i++) cout << "bla" << endl;
+// or
+for(int i=0;i<5;i++) 
+    cout << "bla" << endl;
+
+// long for
+for(int i=0;i<5;i++) {
+  cout << "bla" << endl;
+}
 
 // short while:
 while(i!=4) printf("test2a\n");
@@ -149,3 +213,4 @@ switch(a) {
   bar1();
   bar2();
 #endif // FOO
+
