@@ -1,11 +1,13 @@
 #include "springs.h"
 #include "mbsim/frame.h"
-#include "mbsim/subsystem.h"
+#include "mbsim/dynamic_system.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
 #endif
 
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -31,7 +33,7 @@ namespace MBSim {
       }
       Link::initPlot();
 #endif
-  }
+    }
   }
 
   void Spring::updateg(double t) {

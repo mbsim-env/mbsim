@@ -4,22 +4,10 @@
 #include "mbsim/group.h"
 #include <string>
 
-
-namespace MBSim {
-//class RigidBody;
-}
-
-using namespace std;
-using namespace MBSim;
-
-class Group1 : public Group {
- private:
-    //RigidBody *stab1, *stab2;
+class Group1 : public MBSim::Group {
   public:
-    Group1(const string &projectName); 
-
-//    RigidBody* getRod1() {return stab1;}
- //   RigidBody* getRod2() {return stab2;}
+    Group1(const std::string &projectName); 
 };
 
 #endif
+

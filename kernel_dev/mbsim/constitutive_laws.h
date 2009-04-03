@@ -24,8 +24,6 @@
 #include <mbsim/userfunction.h>
 #include <fstream>
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   /**
@@ -49,7 +47,7 @@ namespace MBSim {
       virtual void load(const std::string& path, std::ifstream &inputfile);
       virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double r) { return 0; }
-      virtual Vec diff(double la, double gdn, double r) { return Vec(2); }
+      virtual fmatvec::Vec diff(double la, double gdn, double r) { return fmatvec::Vec(2); }
       virtual double solve(double G, double gdn) { return 0; }
 
       /**
@@ -78,7 +76,7 @@ namespace MBSim {
       void load(const std::string& path, std::ifstream &inputfile);
       void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double r);
-      Vec diff(double la, double gdn, double r);
+      fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
       bool isSetValued() const {return true;}
@@ -93,7 +91,7 @@ namespace MBSim {
       //void load(const string& path, ifstream &inputfile);
       //void save(const string &path, ofstream &outputfile);
       double project(double la, double gdn, double r);
-      Vec diff(double la, double gdn, double r);
+      fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
       bool isFullfield(double la,  double gdn, double tolla, double tolgd);
       bool isSetValued() const {return true;}
@@ -106,7 +104,7 @@ namespace MBSim {
       virtual void load(const std::string& path, std::ifstream &inputfile);
       virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double gda, double r) = 0;
-      virtual Vec diff(double la, double gdn, double gda, double r) = 0;
+      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
   };
@@ -122,7 +120,7 @@ namespace MBSim {
       void load(const std::string& path, std::ifstream &inputfile);
       void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double gda, double r);
-      Vec diff(double la, double gdn, double gda, double r);
+      fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
   };
@@ -132,7 +130,7 @@ namespace MBSim {
       BilateralImpact() {};
       virtual ~BilateralImpact() {};
       double project(double la, double gdn, double gda, double r);
-      Vec diff(double la, double gdn, double gda, double r);
+      fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
   };
@@ -145,14 +143,14 @@ namespace MBSim {
       virtual ~FrictionForceLaw() {};
       virtual void load(const std::string& path, std::ifstream &inputfile);
       virtual void save(const std::string &path, std::ofstream &outputfile);
-      virtual Vec project(const Vec& la, const Vec& gdn, double laN, double r) {return Vec(2);}
-      virtual Mat diff(const Vec& la, const Vec& gdn, double laN, double r) {return Mat(2,2);}
-      virtual Vec solve(const SqrMat& G, const Vec& gdn, double laN) {return Vec(2);}
-      virtual bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd) {return true;}
-      virtual Vec dlaTdlaN(const Vec& gd, double laN) {return Vec(2);}
-      virtual Vec operator()(const Vec &gd, double laN) {return Vec(2);}
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Vec(2);}
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Mat(2,2);}
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) {return fmatvec::Vec(2);}
+      virtual bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) {return true;}
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN) {return fmatvec::Vec(2);}
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) {return fmatvec::Vec(2);}
       virtual int getFrictionDirections() = 0;
-      virtual bool isSticking(const Vec& s, double sTol) = 0;
+      virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) {return 0;}
       virtual bool isSetValued() const = 0;
       void setMarginalVelocity(double gdLim_) {gdLim = gdLim_;}
@@ -169,13 +167,13 @@ namespace MBSim {
       virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec project(const Vec& la, const Vec& gdn, double laN, double r);
-      Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
-      Vec solve(const SqrMat& G, const Vec& gdn, double laN);
-      bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
+      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
-      bool isSticking(const Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
-      Vec dlaTdlaN(const Vec& gd, double laN);
+      bool isSticking(const fmatvec::Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
+      fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
       bool isSetValued() const {return true;}
   };
 
@@ -188,13 +186,13 @@ namespace MBSim {
       virtual ~SpatialCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec project(const Vec& la, const Vec& gdn, double laN, double r);
-      Mat diff(const Vec& la, const Vec& gdn, double laN, double r);
-      Vec solve(const SqrMat& G, const Vec& gdn, double laN);
-      bool isFullfield(const Vec& la, const Vec& gdn, double laN, double tolla, double tolgd);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
+      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
-      bool isSticking(const Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
-      Vec dlaTdlaN(const Vec& gd, double laN);
+      bool isSticking(const fmatvec::Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
+      fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
       bool isSetValued() const {return true;}
   };
 
@@ -204,10 +202,10 @@ namespace MBSim {
       virtual ~FrictionImpactLaw() {};
       virtual void load(const std::string& path, std::ifstream &inputfile);
       virtual void save(const std::string &path, std::ofstream &outputfile);
-      virtual Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
-      virtual Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) = 0;
-      virtual Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) = 0;
-      virtual bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd) = 0;
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN) = 0;
+      virtual bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int getFrictionDirections() = 0;
   };
 
@@ -222,10 +220,10 @@ namespace MBSim {
       virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
-      bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
+      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
   };
 
@@ -238,10 +236,10 @@ namespace MBSim {
       virtual ~SpatialCoulombImpact() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
-      Vec project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Mat diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r);
-      Vec solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN);
-      bool isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double tolla, double tolgd);
+      fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
+      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
   };
 
@@ -301,12 +299,12 @@ namespace MBSim {
       virtual ~LinearRegularizedPlanarCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 1;}
-      bool isSticking(const Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
-      Vec operator()(const Vec &gd, double laN) { 
+      bool isSticking(const fmatvec::Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
 	if(fabs(gd(0)) < gdLim)
-	  return Vec(1,INIT,-laN*mu*gd(0)/gdLim);
+	  return fmatvec::Vec(1,fmatvec::INIT,-laN*mu*gd(0)/gdLim);
 	else
-	  return Vec(1,INIT,gd(0)>0?-laN*mu:laN*mu);
+	  return fmatvec::Vec(1,fmatvec::INIT,gd(0)>0?-laN*mu:laN*mu);
       }
       bool isSetValued() const {return false;}
   };
@@ -320,8 +318,8 @@ namespace MBSim {
       virtual ~LinearRegularizedSpatialCoulombFriction() {}
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       int getFrictionDirections() {return 2;}
-      bool isSticking(const Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
-      Vec operator()(const Vec &gd, double laN) { 
+      bool isSticking(const fmatvec::Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
 	double normgd = nrm2(gd);
 	if(normgd < gdLim)
 	  return gd*(-laN*mu/gdLim);
@@ -339,10 +337,10 @@ namespace MBSim {
       LinearRegularizedStribeckFriction(UserFunction *fmu_) : fmu(fmu_) {};
       virtual ~LinearRegularizedStribeckFriction() {};
       void setFrictionCharacteristics(UserFunction *fmu_) {fmu = fmu_;}
-      bool isSticking(const Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
-      Vec operator()(const Vec &gd, double laN) { 
+      bool isSticking(const fmatvec::Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
 	int nFric = gd.size();
-	Vec la(nFric,NONINIT);
+    fmatvec::Vec la(nFric,fmatvec::NONINIT);
 	double normgd = nrm2(gd(0,nFric-1));
 	if(normgd < gdLim) {
 	  double mu0 = (*fmu)(0)(0);

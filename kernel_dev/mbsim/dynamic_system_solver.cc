@@ -19,7 +19,7 @@
  */
 
 #include<config.h>
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
@@ -41,25 +41,28 @@
 #  include <signal.h>
 #endif
 
+using namespace std;
+using namespace fmatvec;
+
 namespace MBSim {
 
-  bool MultiBodySystem::exitRequest=false;
+  bool DynamicSystemSolver::exitRequest=false;
 
-  MultiBodySystem::MultiBodySystem() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default"), pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default"), pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
 
     constructor();
   } 
 
-  MultiBodySystem::MultiBodySystem(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default") , pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default") , pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
 
     constructor();
   }
 
-  MultiBodySystem::~MultiBodySystem() {
+  DynamicSystemSolver::~DynamicSystemSolver() {
     if (preIntegrator) delete preIntegrator;
   } 
 
-  void MultiBodySystem::init() {
+  void DynamicSystemSolver::init() {
 
     setDirectory(); // output directory
 
@@ -72,7 +75,7 @@ namespace MBSim {
     sethSize(uSize[1],1);
     checkForConstraints(); // TODO for preinit
     setUpLinks();
-    setMultiBodySystem(this);
+    setDynamicSystemSolver(this);
     setFullName(name);
 
     calcxSize();
@@ -97,9 +100,9 @@ namespace MBSim {
     cout << "hSize[1] = " << hSize[1] <<endl;
 
     if(uSize[0] == uSize[1]) 
-      zdot_ = &MultiBodySystem::zdotStandard;
+      zdot_ = &DynamicSystemSolver::zdotStandard;
     else
-      zdot_ = &MultiBodySystem::zdotResolveConstraints;
+      zdot_ = &DynamicSystemSolver::zdotResolveConstraints;
 
     setlaIndMBS(laInd);
 
@@ -149,13 +152,13 @@ namespace MBSim {
 
     // contact solver specific settings
     cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
-    if(contactSolver == GaussSeidel) solveConstraints_ = &MultiBodySystem::solveConstraintsGaussSeidel; 
+    if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
     else if(contactSolver == LinearEquations) {
-      solveConstraints_ = &MultiBodySystem::solveConstraintsLinearEquations;
+      solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
       cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
     }
-    else if(contactSolver == FixedPointSingle) solveConstraints_ = &MultiBodySystem::solveConstraintsFixpointSingle;
-    else if(contactSolver == RootFinding)solveConstraints_ = &MultiBodySystem::solveConstraintsRootFinding;
+    else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
+    else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
     else {
       cout << "Error: unknown contact solver" << endl;
       throw 5;
@@ -163,13 +166,13 @@ namespace MBSim {
 
     // impact solver specific settings
     cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
-    if(impactSolver == GaussSeidel) solveImpacts_ = &MultiBodySystem::solveImpactsGaussSeidel; 
+    if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
     else if(impactSolver == LinearEquations) {
-      solveImpacts_ = &MultiBodySystem::solveImpactsLinearEquations;
+      solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
       cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
     }
-    else if(impactSolver == FixedPointSingle) solveImpacts_ = &MultiBodySystem::solveImpactsFixpointSingle;
-    else if(impactSolver == RootFinding)solveImpacts_ = &MultiBodySystem::solveImpactsRootFinding;
+    else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
+    else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
     else {
       cout << "Error: unknown impact solver" << endl;
       throw 5;
@@ -186,7 +189,7 @@ namespace MBSim {
 
   }
 
-  int MultiBodySystem::solveConstraintsFixpointSingle() {
+  int DynamicSystemSolver::solveConstraintsFixpointSingle() {
     updaterFactors();
 
     b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
@@ -217,7 +220,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveImpactsFixpointSingle(double dt) {
+  int DynamicSystemSolver::solveImpactsFixpointSingle(double dt) {
     updaterFactors();
 
     b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
@@ -248,7 +251,7 @@ namespace MBSim {
     return iter;
   }
   
-  int MultiBodySystem::solveConstraintsGaussSeidel() {
+  int DynamicSystemSolver::solveConstraintsGaussSeidel() {
     b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
 
     checkConstraintsForTermination();
@@ -268,7 +271,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveImpactsGaussSeidel(double dt) {
+  int DynamicSystemSolver::solveImpactsGaussSeidel(double dt) {
     b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
 
     checkImpactsForTermination();
@@ -288,7 +291,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveConstraintsRootFinding() {
+  int DynamicSystemSolver::solveConstraintsRootFinding() {
     updaterFactors();
 
     b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
@@ -360,7 +363,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveImpactsRootFinding(double dt) {
+  int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     updaterFactors();
 
     b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
@@ -432,9 +435,9 @@ namespace MBSim {
     return iter;
   }
 
-  void MultiBodySystem::checkConstraintsForTermination() {
+  void DynamicSystemSolver::checkConstraintsForTermination() {
     term = true;
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) { 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) { 
       (*i)->checkConstraintsForTermination(); 
       if(term == false) return;
     }
@@ -445,9 +448,9 @@ namespace MBSim {
     }
   }
 
-  void MultiBodySystem::checkImpactsForTermination() {
+  void DynamicSystemSolver::checkImpactsForTermination() {
     term = true;
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->checkImpactsForTermination(); 
       if(term == false) return;
     }
@@ -458,24 +461,24 @@ namespace MBSim {
     }
   }
   
-  void MultiBodySystem::initPlot() {
+  void DynamicSystemSolver::initPlot() {
     Group::initPlot();
 #ifdef HAVE_AMVISCPPINTERFACE
     amvisGrp->initialize();
 #endif
   }
 
-  void MultiBodySystem::updateh(double t) {
+  void DynamicSystemSolver::updateh(double t) {
     h.init(0);
     Group::updateh(t);
   }
 
-  void MultiBodySystem::updateM(double t) {
+  void DynamicSystemSolver::updateM(double t) {
     M.init(0);
     Group::updateM(t);
   }
 
-  void MultiBodySystem::updateKinematics(double t) {
+  void DynamicSystemSolver::updateKinematics(double t) {
     Group::updateKinematics(t);
 
     // if the integrator has not exit after a integratorExitRequest, exit the hard way
@@ -495,27 +498,27 @@ namespace MBSim {
     if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles();
   }
   
-  void MultiBodySystem::updater(double t) {
+  void DynamicSystemSolver::updater(double t) {
     r = V*la;
   }
 
-  void MultiBodySystem::updatewb(double t) {
+  void DynamicSystemSolver::updatewb(double t) {
     wb.init(0);
     Group::updatewb(t);
   }
 
-  void MultiBodySystem::updateW(double t) {
+  void DynamicSystemSolver::updateW(double t) {
     W.init(0);
     Group::updateW(t);
   }
 
-  void MultiBodySystem::updateV(double t) {
+  void DynamicSystemSolver::updateV(double t) {
     V = W;
     Group::updateV(t);
   }
 
-  void MultiBodySystem::load(const string &path, ifstream& inputfile) {
-    setMultiBodySystem(this);
+  void DynamicSystemSolver::load(const string &path, ifstream& inputfile) {
+    setDynamicSystemSolver(this);
 
     Group::load(path, inputfile);
 
@@ -527,17 +530,17 @@ namespace MBSim {
     getline(inputfile,dummy); // # Newline
   }
 
-  void MultiBodySystem::save(const string &path, MultiBodySystem* mbs) {
-    string model = path + "/" + mbs->getName() + ".mdl";
+  void DynamicSystemSolver::save(const string &path, DynamicSystemSolver* ds) {
+    string model = path + "/" + ds->getName() + ".mdl";
 
     ofstream outputfile(model.c_str(), ios::binary);
 
-    mbs->save(path, outputfile);
+    ds->save(path, outputfile);
 
     outputfile.close();
   }
   
-  void MultiBodySystem::plot(const Vec& zParent, double t, double dt) {
+  void DynamicSystemSolver::plot(const Vec& zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -558,13 +561,13 @@ namespace MBSim {
     plot(t,dt);
   }
   
-  void MultiBodySystem::closePlot() {
+  void DynamicSystemSolver::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
     }
   }
   
-  void MultiBodySystem::preInteg(MultiBodySystem *parent) {
+  void DynamicSystemSolver::preInteg(DynamicSystemSolver *parent) {
     if(preIntegrator){
       setProjectDirectory(name+".preInteg");
       setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
@@ -580,7 +583,7 @@ namespace MBSim {
     }  
   }
 
-  int MultiBodySystem::solveConstraints() {
+  int DynamicSystemSolver::solveConstraints() {
     if(la.size()==0) return 0;
 
     if(useOldla)initla();
@@ -609,7 +612,7 @@ namespace MBSim {
     return iter;
   }
 
-  int MultiBodySystem::solveImpacts(double dt) {
+  int DynamicSystemSolver::solveImpacts(double dt) {
     if(la.size()==0) return 0;
 
     if(useOldla)initla();
@@ -638,7 +641,7 @@ namespace MBSim {
     return iter;
   }
 
-  void MultiBodySystem::computeInitialCondition() {
+  void DynamicSystemSolver::computeInitialCondition() {
     updateKinematics(0);
     updateg(0);
     checkActiveg();
@@ -656,7 +659,7 @@ namespace MBSim {
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
   }
 
-  Vec MultiBodySystem::deltau(const Vec &zParent, double t, double dt) {
+  Vec DynamicSystemSolver::deltau(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) updatezRef(zParent);
 
     updater(t); // TODO update should be outside
@@ -664,14 +667,14 @@ namespace MBSim {
     return ud;
   }
   
-  Vec MultiBodySystem::deltaq(const Vec &zParent, double t, double dt) {
+  Vec DynamicSystemSolver::deltaq(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) updatezRef(zParent);
     updatedq(t,dt);
 
     return qd;
   }
   
-  Vec MultiBodySystem::deltax(const Vec &zParent, double t, double dt) {
+  Vec DynamicSystemSolver::deltax(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -679,22 +682,22 @@ namespace MBSim {
     return xd;
   }
 
-  void MultiBodySystem::initz(Vec& z) {
+  void DynamicSystemSolver::initz(Vec& z) {
     updatezRef(z);
     Group::initz();
   }
   
-  int MultiBodySystem::solveConstraintsLinearEquations() {
+  int DynamicSystemSolver::solveConstraintsLinearEquations() {
     la = slvLS(G,-(trans(W)*slvLLFac(LLM,h) + wb));
     return 1;
   }
 
-  int MultiBodySystem::solveImpactsLinearEquations(double dt) {
+  int DynamicSystemSolver::solveImpactsLinearEquations(double dt) {
     la = slvLS(G,-(gd + trans(W)*slvLLFac(LLM,h)*dt));
     return 1;
   }
 
-  void MultiBodySystem::updateG(double t) {
+  void DynamicSystemSolver::updateG(double t) {
     G.resize() = SqrMat(trans(W)*slvLLFac(LLM,V)); 
 
     if(checkGSize) Gs.resize();
@@ -706,13 +709,13 @@ namespace MBSim {
     Gs << G;
   }
   
-  void MultiBodySystem::decreaserFactors() {
+  void DynamicSystemSolver::decreaserFactors() {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->decreaserFactors();
   }
   
-  void MultiBodySystem::update(const Vec &zParent, double t) {
+  void DynamicSystemSolver::update(const Vec &zParent, double t) {
     if(q()!=zParent()) updatezRef(zParent);
 
     updateKinematics(t);
@@ -746,10 +749,10 @@ namespace MBSim {
     updateW(t); 
     updateV(t); 
     updateG(t); 
-    projectGeneralizedPositions(t);
+    //projectGeneralizedPositions(t);
   }
   
-  void MultiBodySystem::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
+  void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -942,14 +945,14 @@ namespace MBSim {
     projectGeneralizedVelocities(t);
   }
   
-  void MultiBodySystem::zdot(const Vec &zParent, Vec &zdParent, double t) {
+  void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {
     if(qd()!=zdParent()) {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
   }
   
-  void MultiBodySystem::getsv(const Vec& zParent, Vec& svExt, double t) { 
+  void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -979,7 +982,7 @@ namespace MBSim {
     sv(sv.size()-1) = k*1e-1-t; 
   }
 
-  void MultiBodySystem::projectGeneralizedPositions(double t) {
+  void DynamicSystemSolver::projectGeneralizedPositions(double t) {
     if(laSize) {
       calcgSizeActive();
       updategRef(gParent(0,gSize-1));
@@ -1008,7 +1011,7 @@ namespace MBSim {
     }
   }
 
-  void MultiBodySystem::projectGeneralizedVelocities(double t) {
+  void DynamicSystemSolver::projectGeneralizedVelocities(double t) {
     if(laSize) {
       calcgdSizeActive();
       updategdRef(gdParent(0,gdSize-1));
@@ -1023,17 +1026,17 @@ namespace MBSim {
     }
   }
 
-  void MultiBodySystem::savela() {
+  void DynamicSystemSolver::savela() {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).savela();
   }
 
-  void MultiBodySystem::initla() {
+  void DynamicSystemSolver::initla() {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).initla();
   }
 
-  double MultiBodySystem::computePotentialEnergy() {
+  double DynamicSystemSolver::computePotentialEnergy() {
     double Vpot = 0.0;
 
     vector<Object*>::iterator i;
@@ -1044,17 +1047,17 @@ namespace MBSim {
     return Vpot;
   }
   
-  void MultiBodySystem::addElement(Element *element_) {
+  void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_=dynamic_cast<Object*>(element_);
     Link* link_=dynamic_cast<Link*>(element_);
     ExtraDynamicInterface* edi_=dynamic_cast<ExtraDynamicInterface*>(element_);
     if(object_) addObject(object_);
     else if(link_) addLink(link_);
     else if(edi_) addEDI(edi_);
-    else{ cout << "Error: MultiBodySystem: addElement(): No such type of Element to add!"<<endl; throw 50;}
+    else{ cout << "Error: DynamicSystemSolver: addElement(): No such type of Element to add!"<<endl; throw 50;}
   }
 
-  Element* MultiBodySystem::getElement(const string &name) {
+  Element* DynamicSystemSolver::getElement(const string &name) {
     //   unsigned int i1;
     //   for(i1=0; i1<object.size(); i1++) {
     //     if(object[i1]->getName() == name) return (Element*)object[i1];
@@ -1076,12 +1079,12 @@ namespace MBSim {
     //   for(i3=0; i3<EDI.size(); i3++) {
     //     if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
     //   }
-    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The MultiBodySystem " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
     //   assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
     return NULL;
   }
 
-  string MultiBodySystem::getSolverInfo() {
+  string DynamicSystemSolver::getSolverInfo() {
     stringstream info;
 
     if(impactSolver == GaussSeidel) info << "GaussSeidel";
@@ -1110,7 +1113,7 @@ namespace MBSim {
     return info.str();
   }
 
-  void MultiBodySystem::dropContactMatrices() {
+  void DynamicSystemSolver::dropContactMatrices() {
     cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");   
 
@@ -1126,7 +1129,7 @@ namespace MBSim {
     contactDrop.close();
   }
 
-  void MultiBodySystem::initDataInterfaceBase() {
+  void DynamicSystemSolver::initDataInterfaceBase() {
     vector<Link*>::iterator il1;
     for(il1 = link.begin(); il1 != link.end(); ++il1) (*il1)->initDataInterfaceBase(this);
     vector<Object*>::iterator io1;
@@ -1135,7 +1138,7 @@ namespace MBSim {
     for(ie1 = EDI.begin(); ie1 != EDI.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
-  Frame* MultiBodySystem::findFrame(const string &name) {
+  Frame* DynamicSystemSolver::findFrame(const string &name) {
     istringstream stream(name);
 
     char dummy[10000];
@@ -1151,14 +1154,14 @@ namespace MBSim {
     if(l.size() == 2)
       return getFrame(l[1]);
 
-    Subsystem *sys = this;
+    DynamicSystem *sys = this;
     for(unsigned int i=1; i<l.size()-2; i++) {
-      sys = static_cast<Subsystem*>(sys->getSubsystem(l[i]));
+      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
     }
     return sys->getObject(l[l.size()-2])->getFrame(l[l.size()-1]);
   }
 
-  Contour* MultiBodySystem::findContour(const string &name) {
+  Contour* DynamicSystemSolver::findContour(const string &name) {
     istringstream stream(name);
 
     char dummy[10000];
@@ -1174,14 +1177,14 @@ namespace MBSim {
     if(l.size() == 2)
       return getContour(l[1]);
 
-    Subsystem *sys = this;
+    DynamicSystem *sys = this;
     for(unsigned int i=1; i<l.size()-2; i++) {
-      sys = static_cast<Subsystem*>(sys->getSubsystem(l[i]));
+      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
     }
     return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
   }
 
-  MultiBodySystem* MultiBodySystem::load(const string &path) {
+  DynamicSystemSolver* DynamicSystemSolver::load(const string &path) {
     DIR* dir = opendir(path.c_str());
     dirent *first;
     first = readdir(dir); // .
@@ -1205,27 +1208,27 @@ namespace MBSim {
 
     ifstream inputfile(model.c_str(), ios::binary);
 
-    MultiBodySystem* mbs = new MultiBodySystem("NoName");
+    DynamicSystemSolver* ds = new DynamicSystemSolver("NoName");
 
-    mbs->load(path, inputfile);
+    ds->load(path, inputfile);
 
     inputfile.close();
 
-    return mbs;
+    return ds;
   }
   
-  void MultiBodySystem::save(const string &path, ofstream& outputfile) {
+  void DynamicSystemSolver::save(const string &path, ofstream& outputfile) {
     Group::save(path,outputfile);
     outputfile << "# Acceleration of gravity:" << endl;
     outputfile << grav << endl << endl;;
   }
 
-  void MultiBodySystem::sigTermHandler(int) {
+  void DynamicSystemSolver::sigTermHandler(int) {
     cout<<"MBSim: Received terminate signal!"<<endl;
     exitRequest=true;
   }
 
-  void MultiBodySystem::writez(){
+  void DynamicSystemSolver::writez(){
     for(unsigned int i=0; i<object.size(); i++)  {
       object[i]->writeq();
       object[i]->writeu();
@@ -1236,7 +1239,7 @@ namespace MBSim {
     }
   }
 
-  void MultiBodySystem::readz0(){
+  void DynamicSystemSolver::readz0(){
     for(unsigned int i=0; i<object.size(); i++)  {
       object[i]->readq0();
       object[i]->readu0();
@@ -1247,7 +1250,7 @@ namespace MBSim {
     }
   }
   
-  void MultiBodySystem::updatezRef(const Vec &zParent) {
+  void DynamicSystemSolver::updatezRef(const Vec &zParent) {
 
     q >> ( zParent(0,qSize-1) );
     u >> ( zParent(qSize,qSize+uSize[0]-1) );
@@ -1258,7 +1261,7 @@ namespace MBSim {
     updatexRef(x);
   }
 
-  void MultiBodySystem::updatezdRef(const Vec &zdParent) {
+  void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
 
     qd >> ( zdParent(0,qSize-1) );
     ud >> ( zdParent(qSize,qSize+uSize[0]-1) );
@@ -1269,7 +1272,7 @@ namespace MBSim {
     updatexdRef(xd);
   }
 
-  void MultiBodySystem::updaterFactors() {
+  void DynamicSystemSolver::updaterFactors() {
     if(strategy == global) {
       //     double rFac;
       //     if(G.size() == 1) rFac = 1./G(0,0);
@@ -1295,11 +1298,11 @@ namespace MBSim {
     }
   }
 
-  void MultiBodySystem::computeConstraintForces(double t) {
+  void DynamicSystemSolver::computeConstraintForces(double t) {
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
 
-  void MultiBodySystem::setDirectory() {
+  void DynamicSystemSolver::setDirectory() {
     int i;
     string projectDirectory;
 
@@ -1339,7 +1342,7 @@ namespace MBSim {
     return;
   }
 
-  Vec MultiBodySystem::zdotStandard(const Vec &zParent, double t) {
+  Vec DynamicSystemSolver::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1364,7 +1367,7 @@ namespace MBSim {
     return zdParent;
   }
 
-  Vec MultiBodySystem::zdotResolveConstraints(const Vec &zParent, double t) {
+  Vec DynamicSystemSolver::zdotResolveConstraints(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1407,11 +1410,11 @@ namespace MBSim {
     return zdParent;
   }
 
-  void MultiBodySystem::constructor() {
+  void DynamicSystemSolver::constructor() {
     integratorExitRequest=false;
     setPlotFeatureRecursive(plotRecursive, enabled);
-    setPlotFeature(separateFilePerSubsystem, enabled);
-    setPlotFeatureForChildren(separateFilePerSubsystem, disabled);
+    setPlotFeature(separateFilePerDynamicSystem, enabled);
+    setPlotFeatureForChildren(separateFilePerDynamicSystem, disabled);
     setPlotFeatureRecursive(state, enabled);
     setPlotFeatureRecursive(stateDerivative, disabled);
     setPlotFeatureRecursive(rightHandSide, disabled);

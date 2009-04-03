@@ -6,10 +6,10 @@ using namespace MBSim;
 
 int main (int argc, char* argv[])
 {
-  MultiBodySystem *sys = new System("TS");
+  DynamicSystemSolver *sys = new System("TS");
 
   sys->init();
-  
+
   bool eventDriven = false;
 
   if(eventDriven) { // Event driven time integration
@@ -41,15 +41,15 @@ int main (int argc, char* argv[])
 
   //integrator.settEnd(10.0);
 
-//  TimeSteppingIntegrator integrator;
-//  integrator.setdt(1e-4);
-//  integrator.setdtPlot(1e-2);
-//  integrator.settEnd(1.8);
-//
-//  integrator.integrate(*sys);
-//  cout << "finished"<<endl;
-//  cout << sys->getq() << endl;
-//  cout << sys->getu() << endl;
+  //  TimeSteppingIntegrator integrator;
+  //  integrator.setdt(1e-4);
+  //  integrator.setdtPlot(1e-2);
+  //  integrator.settEnd(1.8);
+  //
+  //  integrator.integrate(*sys);
+  //  cout << "finished"<<endl;
+  //  cout << sys->getq() << endl;
+  //  cout << sys->getu() << endl;
   delete sys;
 
   return 0;

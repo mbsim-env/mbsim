@@ -21,7 +21,7 @@
  */
 
 #include <config.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include "fortran_wrapper.h"
 #include "rksuite_integrator.h"
 #include <fstream>
@@ -29,6 +29,8 @@
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
+
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -43,7 +45,7 @@ namespace MBSim {
     system->zdot(z, zd, *t);
   }
 
-  void RKSuiteIntegrator::integrate(MultiBodySystem& system_) {
+  void RKSuiteIntegrator::integrate(DynamicSystemSolver& system_) {
 
     system = &system_;
     zSize=system->getzSize();

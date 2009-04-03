@@ -7,7 +7,11 @@
 using namespace AMVis;
 #endif
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   this->setAccelerationOfGravity(Vec("[0; -10; 0]"));
 
@@ -58,7 +62,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   joint2D->setMomentLaw(new BilateralConstraint);
   joint2D->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint2D);
- 
+
   rod2D->setq0(q02D);
   rod2D->setu0(u02D);
 #ifdef HAVE_AMVIS

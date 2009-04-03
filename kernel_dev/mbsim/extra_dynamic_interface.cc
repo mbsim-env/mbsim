@@ -26,8 +26,11 @@
 #include <config.h>
 #include <mbsim/extra_dynamic_interface.h>
 #include <mbsim/object.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/function.h>
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 

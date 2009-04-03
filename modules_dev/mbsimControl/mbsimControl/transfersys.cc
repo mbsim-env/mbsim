@@ -21,8 +21,11 @@
  *
  */ 
 #include <config.h>
-#include "mbsim/subsystem.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsimControl/transfersys.h"
+
+using namespace std;
+using namespace fmatvec;
 
 TransferSys::TransferSys(const string& name) : SPSys(name) {
   ABCDdefined=false;

@@ -24,18 +24,16 @@
 #include <vector>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
-#include <mbsim/subsystem.h>
+#include <mbsim/dynamic_system.h>
 #ifdef HAVE_AMVISCPPINTERFACE
 #include <amviscppinterface/body.h>
 #endif
-
-using namespace std;
 
 namespace MBSim {
 
   class Frame;
   class Contour;
-  class Subsystem;
+  class DynamicSystem;
 
   /** 
    * \brief class for all objects having own dynamics and mass
@@ -47,7 +45,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      Object(const string &name);
+      Object(const std::string &name);
 
       /**
        * \brief destructor
@@ -71,7 +69,7 @@ namespace MBSim {
       virtual void calcuSize(int j) {};
       void setqInd(int qInd_) { qInd = qInd_; }
       void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      int gethInd(Subsystem* sys,int i=0); 
+      int gethInd(DynamicSystem* sys,int i=0); 
       H5::Group *getPlotGroup() { return plotGroup; }
       PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -81,11 +79,11 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1); 
       virtual void initPlot();
       virtual void closePlot();
-      virtual string getType() const {return "Object";}
-      void setMultiBodySystem(MultiBodySystem *sys);
-      void setFullName(const string &str);
-      void load(const string &path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
+      virtual std::string getType() const {return "Object";}
+      void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      void setFullName(const std::string &str);
+      void load(const std::string &path, std::ifstream &inputfile);
+      void save(const std::string &path, std::ofstream &outputfile);
       /*******************************************************/ 
 
       /* INTERFACE */
@@ -97,61 +95,61 @@ namespace MBSim {
       virtual void readx0();
 
       /**
-       * \brief references to positions of subsystem parent
+       * \brief references to positions of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updateqRef(const Vec& ref);
+      virtual void updateqRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to differentiated positions of subsystem parent
+       * \brief references to differentiated positions of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updateqdRef(const Vec& ref);
+      virtual void updateqdRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to velocities of subsystem parent
+       * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updateuRef(const Vec& ref);
+      virtual void updateuRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to differentiated velocities of subsystem parent
+       * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updateudRef(const Vec& ref);
+      virtual void updateudRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to smooth force vector of subsystem parent
+       * \brief references to smooth force vector of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updatehRef(const Vec& ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& ref, int i=0);
 
       /**
-       * \brief references to nonsmooth force vector of subsystem parent
+       * \brief references to nonsmooth force vector of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updaterRef(const Vec& ref);
+      virtual void updaterRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to linear transformation matrix between differentiated positions and velocities of subsystem parent
+       * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
        * \param matrix to be referenced
        */
-      virtual void updateTRef(const Mat &ref);
+      virtual void updateTRef(const fmatvec::Mat &ref);
 
       /**
-       * \brief references to mass matrix of subsystem parent
+       * \brief references to mass matrix of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateMRef(const SymMat &ref, int i=0);
+      virtual void updateMRef(const fmatvec::SymMat &ref, int i=0);
 
       /**
-       * \brief references to Cholesky decomposition of subsystem parent
+       * \brief references to Cholesky decomposition of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateLLMRef(const SymMat &ref, int i=0);
+      virtual void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
 
 
       /**
@@ -215,19 +213,19 @@ namespace MBSim {
        * \param flag for checking existence
        * \return contour
        */
-      virtual Contour* getContour(const string &name, bool check=true);
+      virtual Contour* getContour(const std::string &name, bool check=true);
 
       /**
        * \param name of the frame
        * \param flag for checking existence
        * \return frame
        */
-      virtual Frame* getFrame(const string &name, bool check=true);
+      virtual Frame* getFrame(const std::string &name, bool check=true);
       /*****************************************************/
 
       /* GETTER / SETTER */
-      Subsystem* getParent() { return parent; }
-      void setParent(Subsystem* sys) { parent = sys; }
+      DynamicSystem* getParent() { return parent; }
+      void setParent(DynamicSystem* sys) { parent = sys; }
 
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
@@ -238,45 +236,45 @@ namespace MBSim {
       int getuInd(int i=0) { return uInd[i]; }
       int gethInd(int i=0) { return hInd[i]; }
 
-      const Index& getuIndex() const { return Iu;}
-      const Index& gethIndex() const { return Ih;}
+      const fmatvec::Index& getuIndex() const { return Iu;}
+      const fmatvec::Index& gethIndex() const { return Ih;}
 
-      const Vec& geth() const { return h; };
-      Vec& geth() { return h; };
-      const Vec& getr() const { return r; };
-      Vec& getr() { return r; };
-      const SymMat& getM() const { return M; };
-      SymMat& getM() { return M; };
-      const Mat& getT() const { return T; };
-      Mat& getT() { return T; };
-      const SymMat& getLLM() const { return LLM; };
-      SymMat& getLLM() { return LLM; };
+      const fmatvec::Vec& geth() const { return h; };
+      fmatvec::Vec& geth() { return h; };
+      const fmatvec::Vec& getr() const { return r; };
+      fmatvec::Vec& getr() { return r; };
+      const fmatvec::SymMat& getM() const { return M; };
+      fmatvec::SymMat& getM() { return M; };
+      const fmatvec::Mat& getT() const { return T; };
+      fmatvec::Mat& getT() { return T; };
+      const fmatvec::SymMat& getLLM() const { return LLM; };
+      fmatvec::SymMat& getLLM() { return LLM; };
 
-      const Vec& getq() const { return q; };
-      const Vec& getu() const { return u; };
-      Vec& getq() { return q; };
-      Vec& getu() { return u; };
+      const fmatvec::Vec& getq() const { return q; };
+      const fmatvec::Vec& getu() const { return u; };
+      fmatvec::Vec& getq() { return q; };
+      fmatvec::Vec& getu() { return u; };
 
-      const Vec& getq0() const { return q0; };
-      const Vec& getu0() const { return u0; };
-      Vec& getq0() { return q0; };
-      Vec& getu0() { return u0; };
+      const fmatvec::Vec& getq0() const { return q0; };
+      const fmatvec::Vec& getu0() const { return u0; };
+      fmatvec::Vec& getq0() { return q0; };
+      fmatvec::Vec& getu0() { return u0; };
 
-      const Vec& getqd() const { return qd; };
-      const Vec& getud() const { return ud; };
-      Vec& getqd() { return qd; };
-      Vec& getud() { return ud; };
+      const fmatvec::Vec& getqd() const { return qd; };
+      const fmatvec::Vec& getud() const { return ud; };
+      fmatvec::Vec& getqd() { return qd; };
+      fmatvec::Vec& getud() { return ud; };
 
-      void setq(const Vec &q_) { q = q_; }
-      void setu(const Vec &u_) { u = u_; }
+      void setq(const fmatvec::Vec &q_) { q = q_; }
+      void setu(const fmatvec::Vec &u_) { u = u_; }
 
-      void setq0(const Vec &q0_) { q0 = q0_; }
-      void setu0(const Vec &u0_) { u0 = u0_; }
-      void setq0(double q0_) { q0 = Vec(1,INIT,q0_); }
-      void setu0(double u0_) { u0 = Vec(1,INIT,u0_); }
+      void setq0(const fmatvec::Vec &q0_) { q0 = q0_; }
+      void setu0(const fmatvec::Vec &u0_) { u0 = u0_; }
+      void setq0(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
+      void setu0(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
-      const vector<Frame*>& getFrames() const { return port; }
-      const vector<Contour*>& getContours() const { return contour; }
+      const std::vector<Frame*>& getFrames() const { return port; }
+      const std::vector<Contour*>& getContours() const { return contour; }
       /*****************************************************/
 
       /**
@@ -304,9 +302,9 @@ namespace MBSim {
 
     protected:
       /**
-       * \brief subsystem, object belongs to
+       * \brief dynamic system, object belongs to
        */
-      Subsystem* parent;
+      DynamicSystem* parent;
 
       /**
        * \brief size of object positions
@@ -331,48 +329,48 @@ namespace MBSim {
       /** 
        * \brief positions, velocities
        */
-      Vec q, u;
+      fmatvec::Vec q, u;
 
       /**
        * \brief initial position, velocity
        */
-      Vec q0,u0;
+      fmatvec::Vec q0,u0;
 
       /**
        * \brief differentiated positions, velocities
        */
-      Vec qd,ud;
+      fmatvec::Vec qd,ud;
 
       /** 
        * \brief smooth and nonsmooth right hand side
        */
-      Vec h, r;
+      fmatvec::Vec h, r;
 
       /** 
        * \brief linear relation matrix of differentiated position and velocity parameters
        */
-      Mat T;
+      fmatvec::Mat T;
 
       /** 
        * \brief mass matrix 
        */
-      SymMat M;
+      fmatvec::SymMat M;
 
       /**
        * \brief LU-decomposition of mass matrix 
        */
-      SymMat LLM;
+      fmatvec::SymMat LLM;
 
       /**
        * \brief indices for velocities and right hand side
        */
-      Index Iu, Ih;
+      fmatvec::Index Iu, Ih;
 
       /**
        * \brief vector of frames and contours
        */
-      vector<Frame*> port;
-      vector<Contour*> contour;
+      std::vector<Frame*> port;
+      std::vector<Contour*> contour;
 
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Body* amvisBody;

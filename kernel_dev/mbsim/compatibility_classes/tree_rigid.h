@@ -13,7 +13,7 @@ namespace MBSim {
       Group* parent;
 
     public:
-      TreeRigid(const string &name) : Tree(name) { }
+      TreeRigid(const std::string &name) : Tree(name) { }
       void setParent(Group *sys) {parent = sys;}
       //void setRoot(BodyRigidRel *body) { addObject(body); }
   };

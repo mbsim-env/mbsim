@@ -15,8 +15,11 @@ using namespace AMVis;
 #include "amviscppinterface/coilspring.h"
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setProjectDirectory("plot");
 
   // Erdbeschleungigung definieren
@@ -43,7 +46,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");
   addObject(box1);
- 
+
   // Masse und Trägheit definieren
   box1->setMass(m1);
   box1->setInertiaTensor(Theta1);

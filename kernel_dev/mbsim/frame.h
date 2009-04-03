@@ -50,7 +50,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of coordinate system
        */
-      Frame(const string &name = "dummy");
+      Frame(const std::string &name = "dummy");
 
       /**
        * \brief destructor
@@ -58,7 +58,7 @@ namespace MBSim {
       virtual ~Frame() {}
 
       /* INHERITED INTERFACE */
-      string getType() const { return "Frame"; }
+      std::string getType() const { return "Frame"; }
       virtual void plot(double t, double dt = 1); 
       virtual void closePlot(); 
       virtual void initPlot();
@@ -76,32 +76,32 @@ namespace MBSim {
       void sethSize(int size, int i=0) { hSize[i] = size; }
       void sethInd(int ind, int i=0) { hInd[i] = ind; }
       
-      const Vec& getPosition() const { return WrOP; }
-      const Vec& getVelocity() const { return WvP; } 
-      const Vec& getAngularVelocity() const { return WomegaP; }
-      const SqrMat& getOrientation() const { return AWP; }
-      Vec& getPosition() { return WrOP; }
-      Vec& getVelocity() { return WvP; } 
-      Vec& getAngularVelocity() { return WomegaP; }
-      SqrMat& getOrientation() { return AWP; }
+      const fmatvec::Vec& getPosition() const { return WrOP; }
+      const fmatvec::Vec& getVelocity() const { return WvP; } 
+      const fmatvec::Vec& getAngularVelocity() const { return WomegaP; }
+      const fmatvec::SqrMat& getOrientation() const { return AWP; }
+      fmatvec::Vec& getPosition() { return WrOP; }
+      fmatvec::Vec& getVelocity() { return WvP; } 
+      fmatvec::Vec& getAngularVelocity() { return WomegaP; }
+      fmatvec::SqrMat& getOrientation() { return AWP; }
 
-      void setPosition(const Vec &v) { WrOP = v; }
-      void setVelocity(const Vec &v) { WvP = v; } 
-      void setAngularVelocity(const Vec &v) { WomegaP = v; }
-      void setOrientation(const SqrMat &AWP_) { AWP = AWP_; }
+      void setPosition(const fmatvec::Vec &v) { WrOP = v; }
+      void setVelocity(const fmatvec::Vec &v) { WvP = v; } 
+      void setAngularVelocity(const fmatvec::Vec &v) { WomegaP = v; }
+      void setOrientation(const fmatvec::SqrMat &AWP_) { AWP = AWP_; }
 
-      void setJacobianOfTranslation(const Mat &WJP_) { WJP=WJP_; }
-      void setGyroscopicAccelerationOfTranslation(const Vec &WjP_) { WjP=WjP_; }
-      void setJacobianOfRotation(const Mat &WJR_) { WJR=WJR_; }
-      void setGyroscopicAccelerationOfRotation(const Vec &WjR_) { WjR=WjR_; }
-      const Mat& getJacobianOfTranslation() const { return WJP; }
-      const Mat& getJacobianOfRotation() const { return WJR; }
-      Mat& getJacobianOfTranslation() { return WJP; }
-      Mat& getJacobianOfRotation() { return WJR; }
-      const Vec& getGyroscopicAccelerationOfTranslation() const { return WjP; }
-      const Vec& getGyroscopicAccelerationOfRotation() const { return WjR; }
-      Vec& getGyroscopicAccelerationOfTranslation() { return WjP; }
-      Vec& getGyroscopicAccelerationOfRotation() { return WjR; }
+      void setJacobianOfTranslation(const fmatvec::Mat &WJP_) { WJP=WJP_; }
+      void setGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP_) { WjP=WjP_; }
+      void setJacobianOfRotation(const fmatvec::Mat &WJR_) { WJR=WJR_; }
+      void setGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR_) { WjR=WjR_; }
+      const fmatvec::Mat& getJacobianOfTranslation() const { return WJP; }
+      const fmatvec::Mat& getJacobianOfRotation() const { return WJR; }
+      fmatvec::Mat& getJacobianOfTranslation() { return WJP; }
+      fmatvec::Mat& getJacobianOfRotation() { return WJR; }
+      const fmatvec::Vec& getGyroscopicAccelerationOfTranslation() const { return WjP; }
+      const fmatvec::Vec& getGyroscopicAccelerationOfRotation() const { return WjR; }
+      fmatvec::Vec& getGyroscopicAccelerationOfTranslation() { return WjP; }
+      fmatvec::Vec& getGyroscopicAccelerationOfRotation() { return WjR; }
       /***************************************************/
 
       /**
@@ -155,22 +155,22 @@ namespace MBSim {
       /**
        * \brief position, velocity, angular velocity of coordinate system in inertial frame of reference
        */
-      Vec WrOP, WvP, WomegaP;
+      fmatvec::Vec WrOP, WvP, WomegaP;
 
       /**
        * \brief transformation matrix in inertial frame of reference
        */
-      SqrMat AWP;
+      fmatvec::SqrMat AWP;
 
       /** 
        * \brief Jacobians of translation and rotation from coordinate system to inertial frame
        */
-      Mat WJP, WJR;
+      fmatvec::Mat WJP, WJR;
 
       /**
        * translational and rotational acceleration not linear in the generalised velocity derivatives
        */
-      Vec WjP, WjR;
+      fmatvec::Vec WjP, WjR;
 
 #ifdef HAVE_AMVIS
       /**

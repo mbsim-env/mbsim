@@ -6,8 +6,8 @@ libmbsim_la_SOURCES = body.cc\
 mbsim_event.cc\
 link.cc\
 object.cc\
-multi_body_system.cc\
-subsystem.cc\
+dynamic_system_solver.cc\
+dynamic_system.cc\
 group.cc\
 rigid_body.cc\
 joint.cc\
@@ -39,8 +39,8 @@ mbsiminclude_HEADERS = body.h\
 mbsim_event.h\
 link.h\
 object.h\
-multi_body_system.h\
-subsystem.h\
+dynamic_system_solver.h\
+dynamic_system.h\
 group.h\
 rigid_body.h\
 joint.h\
@@ -62,14 +62,5 @@ kinematics.h\
 constitutive_laws.h\
 interfaces.h\
 flexible_body.h\
-special_classes.h\
-compatibility_classes/body_rigid.h\
-compatibility_classes/body_rigid_abs.h\
-compatibility_classes/body_rigid_rel.h\
-compatibility_classes/tree_rigid.h\
-compatibility_classes/contact_rigid.h\
-compatibility_classes/impact_rigid.h\
-compatibility_classes/contact_flexible.h\
-compatibility_classes/connection_rigid.h\
-compatibility_classes/connection_flexible.h
+special_classes.h
 

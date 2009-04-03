@@ -26,12 +26,6 @@
 #include <iostream>
 #include <mbsim/userfunction.h>
 
-#ifndef NO_ISO_14882
-using namespace std;
-#endif
-
-using namespace fmatvec;
-
 namespace MBSim {
 
   //////////////////////////////////////////////////
@@ -45,14 +39,14 @@ namespace MBSim {
   /** class for piecewise-polynominal (PPolynom) forms and cubic Spline Interpolation*/
   class PPolynom : public UserFunction {
     protected:   // Attribute
-      Mat coefs; 		/** Matrix of Polynom Coefficents*/
-      Vec breaks;		/** Vector of breaks (intervall boundarys)*/
+      fmatvec::Mat coefs; 		/** Matrix of Polynom Coefficents*/
+      fmatvec::Vec breaks;		/** Vector of breaks (intervall boundarys)*/
       int nPoly;		/** Number of defined piecewise Polynoms*/
       int order;		/** Order of Poly. (3 for cubic Poly.)*/
       int index;          /** for internal use in ppeval functions*/
       // Methoden zum Berechnen der pp-Form (werden von Konstruktor aufgerufen)  
-      void calculateSplinePeriodic(const Vec &x, const Vec &f); 
-      void calculateSplineNatural(const Vec &x, const Vec &f); 
+      void calculateSplinePeriodic(const fmatvec::Vec &x, const fmatvec::Vec &f); 
+      void calculateSplineNatural(const fmatvec::Vec &x, const fmatvec::Vec &f); 
     public:
       /**@name Konstrukoren */
       //@{
@@ -65,21 +59,21 @@ namespace MBSim {
 	'csplineNat' -> Cubic Spline with natural end conditions (d2fdx2=0 at the boundaries)
 Bemerkung: erster und letzter Wert von f muessen ueberein- 
 stimmen, damit sich glatte Kontur ergibt (z.B. Nockenkontur) */
-      void setXF(const Vec &x, const Vec &f, std::string InterpolationMethod); 
+      void setXF(const fmatvec::Vec &x, const fmatvec::Vec &f, std::string InterpolationMethod); 
       //@}
       /** @name Evaluate piecewise polynomial*/
       //@{ /** function evaluation */
-      Vec operator()(double x);
+      fmatvec::Vec operator()(double x);
       /** first derivativ    d/ dx */
-      Vec diff1(double x);
+      fmatvec::Vec diff1(double x);
       /** second derivative  d^2 / dx^2*/
-      Vec diff2(double x);	
+      fmatvec::Vec diff2(double x);	
       //@}
       /** @name Standardmethoden zur Manipulation der Attribute*/
       //@{
-      Mat getCoefs() {return coefs;}
-      Vec getBreaks(){return breaks;}
-      void setPP(const Mat &coefs_u, const Vec &breaks_u) {
+      fmatvec::Mat getCoefs() {return coefs;}
+      fmatvec::Vec getBreaks(){return breaks;}
+      void setPP(const fmatvec::Mat &coefs_u, const fmatvec::Vec &breaks_u) {
 	coefs = coefs_u; 
 	breaks = breaks_u;
 	index=0;

@@ -22,6 +22,9 @@
 #include <config.h>
 #include "ppolynom.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   //   Info zu Splines / PP-Form (pieceweise Polonominal Form)

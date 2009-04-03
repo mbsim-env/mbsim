@@ -35,7 +35,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of body
        */
-      Body(const string &name);
+      Body(const std::string &name);
 
       /* INHERITED INTERFACE */
       void init();

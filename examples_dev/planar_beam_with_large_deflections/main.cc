@@ -1,16 +1,17 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
 
+using namespace MBSim;
 using namespace std;
 
 int main (int argc, char* argv[]) {
 
-  MultiBodySystem *sys = new System("MBS");
+  DynamicSystemSolver *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
   sys->init();
 
-  
+
   TimeSteppingIntegrator integrator;
 
   integrator.settEnd(5);

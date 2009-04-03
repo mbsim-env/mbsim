@@ -1,19 +1,14 @@
 #ifndef _WERKZEUGMASCHINE_H
 #define _WERKZEUGMASCHINE_H
 
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-
-using namespace std;
-using namespace MBSim;
-
-class System : public MultiBodySystem {
+class System : public MBSim::DynamicSystemSolver {
   private:
   public:
-    System(const string &projectName); 
-    
- 
+    System(const std::string &projectName); 
 };
 
 #endif
+

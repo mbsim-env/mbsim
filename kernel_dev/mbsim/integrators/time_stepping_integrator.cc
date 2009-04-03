@@ -21,7 +21,7 @@
  */
 
 #include<config.h>
-#include<mbsim/multi_body_system.h>
+#include<mbsim/dynamic_system_solver.h>
 #include "time_stepping_integrator.h"
 
 #ifndef NO_ISO_14882
@@ -34,7 +34,7 @@ namespace MBSim {
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {}
 
-  void TimeSteppingIntegrator::integrate(MultiBodySystem& system) 
+  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) 
   {
   	assert(dtPlot >= dt);
 

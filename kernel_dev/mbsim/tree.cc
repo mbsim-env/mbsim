@@ -23,6 +23,9 @@
 #include "mbsim/frame.h"
 #include "mbsim/extra_dynamic_interface.h"
 
+using namespace fmatvec; 
+using namespace std;
+
 namespace MBSim {
 
   void Node::addChild(Node* child_) {
@@ -76,7 +79,7 @@ namespace MBSim {
   }
 
 
-  Tree::Tree(const string &projectName) : Subsystem(projectName) {}
+  Tree::Tree(const string &projectName) : DynamicSystem(projectName) {}
 
   Tree::~Tree() {}
 
@@ -99,7 +102,7 @@ namespace MBSim {
     qd = T*u;
     ud =  slvLLFac(LLM, h+r);
 
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
@@ -136,7 +139,7 @@ namespace MBSim {
   }
 
   Node* Tree::addObject(Node* tree, Object* obj) {
-    Subsystem::addObject(obj);
+    DynamicSystem::addObject(obj);
 
     Node *node = new Node(obj);
     if(tree)
@@ -146,8 +149,8 @@ namespace MBSim {
     return node;
   }
 
-  Node* Tree::addSubsystem(Node* tree, Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
-    Subsystem::addSubsystem(sys);
+  Node* Tree::addDynamicSystem(Node* tree, DynamicSystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
+    DynamicSystem::addDynamicSystem(sys);
 
     int i = 0;
     if(refFrame)

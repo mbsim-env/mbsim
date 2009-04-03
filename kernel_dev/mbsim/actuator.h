@@ -35,10 +35,10 @@ namespace MBSim {
   class Actuator : public Link {
 
     protected:
-      Index IT, IR;
-      Mat forceDir, momentDir; // Richtungen (noch Kosy-unabhängig)
-      Mat Wf, Wm; // Richtungen im Weltsystem 
-      Mat WF[2], WM[2]; // 2 Richtungen im Weltsystem (für jeden Körper eine)
+      fmatvec::Index IT, IR;
+      fmatvec::Mat forceDir, momentDir; // Richtungen (noch Kosy-unabhängig)
+      fmatvec::Mat Wf, Wm; // Richtungen im Weltsystem 
+      fmatvec::Mat WF[2], WM[2]; // 2 Richtungen im Weltsystem (für jeden Körper eine)
 
       DataInterfaceBase *func;
       int KOSYID; // Welches KOSY
@@ -47,8 +47,8 @@ namespace MBSim {
       void updategd(double t) {}
 
     public: 
-      Actuator(const string &name);
-      ~Actuator();
+      Actuator(const std::string &name);
+      virtual ~Actuator();
       bool isActive() const {return true;}
       bool gActiveChanged() {return false;}
 
@@ -59,10 +59,10 @@ namespace MBSim {
       void setUserFunction(DataInterfaceBase *func_);
       void setSignal(DataInterfaceBase *func_);
       void connect(Frame *port1, Frame *port2);
-      void setForceDirection(const Mat& fd);
-      void setMomentDirection(const Mat& md);
+      void setForceDirection(const fmatvec::Mat& fd);
+      void setMomentDirection(const fmatvec::Mat& md);
 
-      void initDataInterfaceBase(MultiBodySystem *parentmbs);
+      void initDataInterfaceBase(DynamicSystemSolver *parentds);
 
       void updateh(double t);
   };

@@ -42,14 +42,14 @@ namespace MBSim {
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006 \n
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FlexibleBody1s21RCM : public FlexibleBody<Vec> {
+  class FlexibleBody1s21RCM : public FlexibleBody<fmatvec::Vec> {
     public:
       /*!
        * \brief constructor:
        * \param name of body
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
-      FlexibleBody1s21RCM(const string &name, bool openStructure);
+      FlexibleBody1s21RCM(const std::string &name, bool openStructure);
 
       /*!
        * \brief destructor
@@ -58,7 +58,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       /* FLEXIBLEBODY */
-      virtual string getType() const { return "FlexibleBody1s21RCM"; }
+      virtual std::string getType() const { return "FlexibleBody1s21RCM"; }
       virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
       virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);

@@ -26,7 +26,6 @@
 #include <fmatvec.h>
 #include <fstream>
 
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -34,24 +33,24 @@ namespace MBSim {
     public:
       virtual ~Translation() {}
       virtual int getqSize() const = 0;
-      virtual Vec operator()(const Vec &q, double t) = 0; 
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
       virtual void save(const std::string &path, std::ofstream& outputfile);
       virtual void load(const std::string &path, std::ifstream& outputfile);
   };
 
   class LinearTranslation : public Translation {
     private:
-      Mat PJT;
+      fmatvec::Mat PJT;
     public:
       LinearTranslation() {} 
-      LinearTranslation(const Mat &PJT_) { PJT = PJT_; } 
+      LinearTranslation(const fmatvec::Mat &PJT_) { PJT = PJT_; } 
 
-      const Mat& getPJT() const {return PJT;}
-      void setPJT(const Mat &PJT_) {PJT = PJT_;}
+      const fmatvec::Mat& getPJT() const {return PJT;}
+      void setPJT(const fmatvec::Mat &PJT_) {PJT = PJT_;}
 
       int getqSize() const {return PJT.cols();}
 
-      Vec operator()(const Vec &q, double t) {
+      fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
 	return PJT*q(0,PJT.cols()-1);
       }; 
 
@@ -63,7 +62,7 @@ namespace MBSim {
     public:
       virtual ~Rotation() {}
       virtual int getqSize() const = 0;
-      virtual SqrMat operator()(const Vec &q, double t) = 0; 
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t) = 0; 
       virtual void save(const std::string &path, std::ofstream& outputfile);
       virtual void load(const std::string &path, std::ifstream& outputfile);
   };
@@ -72,47 +71,47 @@ namespace MBSim {
     public:
       virtual ~Jacobian() {}
       virtual int getuSize() const = 0;
-      virtual Mat operator()(const Vec &q, double t) = 0; 
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) = 0; 
   };
 
   class ConstantJacobian : public Jacobian {
     private:
-      Mat J;
+      fmatvec::Mat J;
     public:
       virtual int getuSize() const {return J.cols();}
-      ConstantJacobian(const Mat &J_) {J = J_;}
+      ConstantJacobian(const fmatvec::Mat &J_) {J = J_;}
 
     public:
-       virtual Mat operator()(const Vec &q, double t) {return J;} 
+       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) {return J;} 
   };
 
   class DerivativeOfJacobian {
     public:
       virtual ~DerivativeOfJacobian() {}
-      virtual Mat operator()(const Vec &qd, const Vec &q, double t) = 0; 
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec &q, double t) = 0; 
   };
 
   class TimeDependentFunction {
     public:
       virtual ~TimeDependentFunction() {}
-      virtual Vec operator()(double t) = 0; 
+      virtual fmatvec::Vec operator()(double t) = 0; 
   };
 
 
   class RotationAboutFixedAxis: public Rotation {
     private:
-      SqrMat APK;
-      Vec a;
+      fmatvec::SqrMat APK;
+      fmatvec::Vec a;
     public:
       RotationAboutFixedAxis() : APK(3), a(3) {}
-      RotationAboutFixedAxis(const Vec &a_) : APK(3) { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec &a_) : APK(3) { a = a_; } 
 
-      const Vec& getAxisOfRotation() const {return a;}
+      const fmatvec::Vec& getAxisOfRotation() const {return a;}
       virtual int getqSize() const {return 1;}
 
-      void setAxisOfRotation(const Vec& a_) {a = a_;}
+      void setAxisOfRotation(const fmatvec::Vec& a_) {a = a_;}
 
-      SqrMat operator()(const Vec &q, double t);
+      fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
 
       void save(const std::string &path, std::ofstream& outputfile);
       void load(const std::string &path, std::ifstream& outputfile);
@@ -120,41 +119,41 @@ namespace MBSim {
 
   class CardanAngles: public Rotation {
     private:
-      SqrMat APK;
-      Vec a;
+      fmatvec::SqrMat APK;
+      fmatvec::Vec a;
     public:
       CardanAngles() : APK(3), a(3) {}
-      CardanAngles(const Vec &a_) : APK(3) { a = a_; } 
+      CardanAngles(const fmatvec::Vec &a_) : APK(3) { a = a_; } 
 
       virtual int getqSize() const {return 3;}
 
-      SqrMat operator()(const Vec &q, double t);
+      fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
   };
 
   class TCardanAngles : public Jacobian {
     private:
       int qSize, uSize;
-      Mat T;
+      fmatvec::Mat T;
 
     public:
-      TCardanAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,EYE) {}
+      TCardanAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {}
 
       int getuSize() const {return uSize;}
 
-      virtual Mat operator()(const Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
   };
 
   class TCardanAngles2 : public Jacobian {
     private:
       int qSize, uSize;
-      Mat T;
+      fmatvec::Mat T;
 
     public:
-      TCardanAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,EYE) {}
+      TCardanAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {}
 
       int getuSize() const {return uSize;}
 
-      virtual Mat operator()(const Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
   };
 
 }

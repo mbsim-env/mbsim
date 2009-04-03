@@ -23,6 +23,9 @@
 #include "point_frustum.h"
 #include "mbsim/contour.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsPointFrustum::assignContours(const vector<Contour*> &contour) {

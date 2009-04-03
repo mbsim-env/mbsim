@@ -26,8 +26,6 @@
 #include "function.h"
 #include "fmatvec.h"
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   /*! Regular Falsi for one-dimensional root-finding
@@ -72,18 +70,18 @@ namespace MBSim {
    * */
   class MultiDimNewtonMethod {
     private:
-      Function<Vec,Vec> *fct;
-      Function<SqrMat,Vec> *jac;
+      Function<fmatvec::Vec,fmatvec::Vec> *fct;
+      Function<fmatvec::SqrMat,fmatvec::Vec> *jac;
 
       int itmax, iter, prim, kmax, rc, info;
       double tol;
     public:
-      MultiDimNewtonMethod(Function<Vec,Vec> *fct_, Function<SqrMat,Vec> *jac_=0);
+      MultiDimNewtonMethod(Function<fmatvec::Vec,fmatvec::Vec> *fct_, Function<fmatvec::SqrMat,fmatvec::Vec> *jac_=0);
       int getIter() const {return iter;}
       int getInfo() const {return info;}
       void setMaxIter(int itmax_) {itmax = itmax_;}
       void setTol(double tol_) {tol = tol_;}
-      Vec slv(const Vec &x);
+      fmatvec::Vec slv(const fmatvec::Vec &x);
       int nit() const {return iter;};
   };
 

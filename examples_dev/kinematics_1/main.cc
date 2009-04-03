@@ -7,11 +7,11 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
-  MultiBodySystem *sys = new System("TS");
+  DynamicSystemSolver *sys = new System("TS");
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->init();
-  
+
   // LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;
   // RADAU5Integrator integrator;
@@ -23,10 +23,10 @@ int main (int argc, char* argv[])
   integrator.settEnd(5.0);
   integrator.setdtPlot(1e-3);
 
-//  TimeSteppingIntegrator integrator;
-//   integrator.setdt(1e-3);
-//   integrator.setdtPlot(1e-2);
-//   integrator.settEnd(2.0);
+  //  TimeSteppingIntegrator integrator;
+  //   integrator.setdt(1e-3);
+  //   integrator.setdtPlot(1e-2);
+  //   integrator.settEnd(2.0);
 
   integrator.integrate(*sys);
   cout << "finished"<<endl;

@@ -22,7 +22,7 @@
  */
 #include <config.h>
 #include <mbsim/hitsphere_link.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 
 namespace MBSim {
 

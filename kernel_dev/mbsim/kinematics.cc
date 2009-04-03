@@ -23,6 +23,7 @@
 #include <mbsim/kinematics.h>
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 

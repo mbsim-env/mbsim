@@ -25,6 +25,9 @@
 #include "circlesolid_plane.h"
 #include <mbsim/contour.h>
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour) {

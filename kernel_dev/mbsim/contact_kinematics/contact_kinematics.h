@@ -23,8 +23,6 @@
 #include "fmatvec.h"
 #include <vector>
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   class Contour;
@@ -34,7 +32,7 @@ namespace MBSim {
    * \return perpendicular vector
    * \param input vector 
    */	
-  Vec computeTangential(const Vec &n);
+  fmatvec::Vec computeTangential(const fmatvec::Vec &n);
 
   /** 
    * \brief basic class for contact kinematical calculations
@@ -73,7 +71,7 @@ namespace MBSim {
        * \param contact point parametrisation
        * \todo function should be pure virtual TODO
        */
-      virtual void updateg(Vec &g, ContourPointData *cpData) { std::cout << "ERROR (ContactKinematics::updateg): not implemented" << std::endl; throw 5; }
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { std::cout << "ERROR (ContactKinematics::updateg): not implemented" << std::endl; throw 5; }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -82,14 +80,14 @@ namespace MBSim {
        * \param contact point parametrisation
        * \todo function should be pure virtual TODO
        */
-      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) { std::cout << "ERROR (ContactKinematics::updatewb): not implemented" << std::endl; throw 5;};
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { std::cout << "ERROR (ContactKinematics::updatewb): not implemented" << std::endl; throw 5;};
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
+      virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
@@ -97,7 +95,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
+      virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
 
       /**
        * \return number of potential contact points

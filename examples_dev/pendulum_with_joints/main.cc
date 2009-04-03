@@ -1,6 +1,7 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
 
+using namespace MBSim;
 using namespace std;
 
 bool rigidJoints;
@@ -21,10 +22,10 @@ int main (int argc, char* argv[]) {
   is.getline(dummy,10000);
   is.close();
 
-  MultiBodySystem *sys = new System("MBS");
+  DynamicSystemSolver *sys = new System("MBS");
 
   sys->init();
-  
+
   DOPRI5Integrator integrator;
 
   integrator.settEnd(tEnd);

@@ -22,12 +22,15 @@
 #include <mbsim/object.h>
 #include <mbsim/contour.h>
 #include <mbsim/functions_contact.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/class_factory.h>
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -483,11 +486,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         gdnk[k](0) = b(laIndMBS+laIndk[k]);
         for(int j=ia[laIndMBS+laIndk[k]]; j<ia[laIndMBS+laIndk[k]+1]; j++)
@@ -512,11 +515,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         gddk[k](0) = b(laIndMBS+laIndk[k]);
         for(int j=ia[laIndMBS+laIndk[k]]; j<ia[laIndMBS+laIndk[k]+1]; j++)
@@ -544,11 +547,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         gdnk[k](0) = b(laIndMBS+laIndk[k]);
         for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
@@ -564,7 +567,7 @@ namespace MBSim {
             gdnk[k](1) += a[j]*laMBS(ja[j]);
 
           if(ftil) {
-            Vec buf = ftil->solve(mbs->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0));
+            Vec buf = ftil->solve(ds->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0));
             lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
           }
         }
@@ -579,11 +582,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         gddk[k](0) = b(laIndMBS+laIndk[k]);
         for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
@@ -599,7 +602,7 @@ namespace MBSim {
             gddk[k](1) += a[j]*laMBS(ja[j]);
 
           if(fdf) {
-            Vec buf = fdf->solve(mbs->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gddk[k](1,getFrictionDirections()), lak[k](0));
+            Vec buf = fdf->solve(ds->getG()(Index(laIndMBS+laIndk[k]+1,laIndMBS+laIndk[k]+getFrictionDirections())), gddk[k](1,getFrictionDirections()), lak[k](0));
             lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
           }
         }
@@ -612,11 +615,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gdnk[k](i) = b(laIndMBS+laIndk[k]+i);
@@ -636,11 +639,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gddk[k](i) = b(laIndMBS+laIndk[k]+i);
@@ -660,8 +663,8 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        SqrMat Jprox = mbs->getJprox();
-        SqrMat G = mbs->getG();
+        SqrMat Jprox = ds->getJprox();
+        SqrMat G = ds->getG();
 
         RowVec jp1=Jprox.row(laIndMBS+laIndk[k]);
         RowVec e1(jp1.size());
@@ -707,8 +710,8 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        SqrMat Jprox = mbs->getJprox();
-        SqrMat G = mbs->getG();
+        SqrMat Jprox = ds->getJprox();
+        SqrMat G = ds->getG();
 
         RowVec jp1=Jprox.row(laIndMBS+laIndk[k]);
         RowVec e1(jp1.size());
@@ -753,8 +756,8 @@ namespace MBSim {
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
-          double *a = mbs->getGs()();
-          int *ia = mbs->getGs().Ip();
+          double *a = ds->getGs()();
+          int *ia = ds->getGs().Ip();
           double sumN = 0;
 
           for(int j=ia[laIndMBS+laIndk[k]]+1; j<ia[laIndMBS+laIndk[k]+1]; j++)
@@ -812,11 +815,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) { // TODO check if gdActive[k][0]
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         for(unsigned int i=0; i < 1+ gdActive[k][1]*getFrictionDirections(); i++) {
           gddk[k](i) = b(laIndMBS+laIndk[k]+i);
@@ -825,12 +828,12 @@ namespace MBSim {
         }
 
         if(!fcl->isFullfield(lak[k](0),gddk[k](0),laTol,gddTol)) {
-          mbs->setTermination(false);
+          ds->setTermination(false);
           return;
         }
         if(fdf && gdActive[k][1]) 
           if(!fdf->isFullfield(lak[k](1,getFrictionDirections()),gddk[k](1,getFrictionDirections()),lak[k](0),laTol,gddTol)) {
-            mbs->setTermination(false);
+            ds->setTermination(false);
             return;
           }
       }
@@ -842,11 +845,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = mbs->getGs()();
-        int *ia = mbs->getGs().Ip();
-        int *ja = mbs->getGs().Jp();
-        Vec &laMBS = mbs->getla();
-        Vec &b = mbs->getb();
+        double *a = ds->getGs()();
+        int *ia = ds->getGs().Ip();
+        int *ja = ds->getGs().Jp();
+        Vec &laMBS = ds->getla();
+        Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gdnk[k](i) = b(laIndMBS+laIndk[k]+i);
@@ -855,12 +858,12 @@ namespace MBSim {
         }
 
         if(!fnil->isFullfield(lak[k](0),gdnk[k](0),gdk[k](0),LaTol,gdTol)) {
-          mbs->setTermination(false);
+          ds->setTermination(false);
           return;
         }
         if(ftil) 
           if(!ftil->isFullfield(lak[k](1,getFrictionDirections()),gdnk[k](1,getFrictionDirections()),gdk[k](1,getFrictionDirections()),lak[k](0),LaTol,gdTol)) {
-            mbs->setTermination(false);
+            ds->setTermination(false);
             return;
           }
       }
@@ -951,7 +954,7 @@ namespace MBSim {
           gdActive[k][0] = true;
           if(getFrictionDirections())
             gdActive[k][1] = true;
-          mbs->setImpact(true);
+          ds->setImpact(true);
           return;
         }
         }
@@ -962,7 +965,7 @@ namespace MBSim {
             } 
             else {
               gdActive[k][1] = true;
-              mbs->setSticking(true);
+              ds->setSticking(true);
             }
           }
       }

@@ -16,10 +16,14 @@
 #include "amviscppinterface/invisiblebody.h"
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 extern bool rigidContact;
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
- // Gravitation
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+  // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);

@@ -20,7 +20,7 @@
 #include <config.h>
 #include <mbsim/frame.h>
 #include <mbsim/object.h>
-#include <mbsim/subsystem.h>
+#include <mbsim/dynamic_system.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/utils/rotarymatrices.h>
 #include <mbsim/rigid_body.h>
@@ -30,6 +30,9 @@
 using namespace AMVis;
 int MBSim::Frame::kosAMVisCounter=0;
 #endif
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 

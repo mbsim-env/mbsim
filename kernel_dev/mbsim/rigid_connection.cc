@@ -24,7 +24,7 @@
 #include <config.h>
 #include <mbsim/rigid_connection.h>
 #include <mbsim/frame.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/function.h>
 
 namespace MBSim {

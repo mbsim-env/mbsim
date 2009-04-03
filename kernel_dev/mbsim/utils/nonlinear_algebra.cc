@@ -25,6 +25,8 @@
 #include "eps.h"
 #include <cmath>
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   RegulaFalsi::RegulaFalsi(Function<double,double> *f) : func(f), itmax(10000), tol(1e-10) {

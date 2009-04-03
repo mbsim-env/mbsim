@@ -39,8 +39,8 @@ namespace MBSim {
 
       static double tPlot;
       static double dtOut;
-      static Vec zInp;
-      static ofstream integPlot;
+      static fmatvec::Vec zInp;
+      static std::ofstream integPlot;
       static double s0; 
       static double time; 
       static bool output_; 
@@ -59,14 +59,14 @@ namespace MBSim {
       ODEXIntegrator();
       ~ODEXIntegrator() {}
 
-      void setaTol(const Vec &aTol_) {aTol.resize() = aTol_;}
-      void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
-      void setrTol(const Vec &rTol_) {rTol.resize() = rTol_;}
-      void setrTol(double rTol_) {rTol.resize() = Vec(1,INIT,rTol_);}
+      void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+      void setaTol(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setrTol(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
+      void setrTol(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setdt0(double dt0_) {dt0 = dt0_;}
 
 
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
 
   };
 

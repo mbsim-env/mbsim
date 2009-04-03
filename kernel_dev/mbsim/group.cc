@@ -25,20 +25,23 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/class_factory.h"
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
 
 #include "compatibility_classes/tree_rigid.h"
 #include "compatibility_classes/body_rigid.h"
 
+using namespace std;
+using namespace fmatvec;
+
 namespace MBSim {
 
-  Group::Group(const string &name) : Subsystem(name) {}
+  Group::Group(const string &name) : DynamicSystem(name) {}
 
   Group::~Group() {}
 
   void Group::facLLM() {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i)
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (*i)->facLLM();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
@@ -46,7 +49,7 @@ namespace MBSim {
   }
 
   void Group::updateKinematics(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateKinematics(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
@@ -54,7 +57,7 @@ namespace MBSim {
   }
 
   void Group::updateJacobians(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateJacobians(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
@@ -65,7 +68,7 @@ namespace MBSim {
   }
 
   void Group::updatedu(double t, double dt) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatedu(t,dt);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
@@ -73,7 +76,7 @@ namespace MBSim {
   }
 
   void Group::updatezd(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatezd(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
@@ -87,7 +90,7 @@ namespace MBSim {
   }
 
   void Group::updateSecondJacobians(double t) {
-    for(vector<Subsystem*>::iterator i = subsystem.begin(); i != subsystem.end(); ++i) 
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateSecondJacobians(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
@@ -146,20 +149,20 @@ namespace MBSim {
     getline(inputfile,dummy); // Rest of line
     getline(inputfile,dummy); // Newline
 
-    getline(inputfile,dummy); // # Subsystems
+    getline(inputfile,dummy); // # DynamicSystems
     no=getNumberOfElements(inputfile);
     for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // # Subsystems
+      getline(inputfile,dummy); // # DynamicSystems
       string newname = basename + dummy + ".mdl";
       ifstream newinputfile(newname.c_str(), ios::binary);
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       ClassFactory cf;
-      Subsystem * newsubsystem = cf.getSubsystem(dummy);
-      //addSubsystem(newsubsystem); TODO
+      DynamicSystem * newdynamicsystem = cf.getDynamicSystem(dummy);
+      //addDynamicSystem(newdynamicsystem); TODO
       newinputfile.seekg(0,ios::beg);
-      newsubsystem->setMultiBodySystem(mbs);
-      newsubsystem->load(path,newinputfile);
+      newdynamicsystem->setDynamicSystemSolver(ds);
+      newdynamicsystem->load(path,newinputfile);
       newinputfile.close();
     }
     getline(inputfile,dummy); // newline
@@ -176,7 +179,7 @@ namespace MBSim {
       Object * newobject = cf.getObject(dummy);
       addObject(newobject);
       newinputfile.seekg(0,ios::beg);
-      newobject->setMultiBodySystem(mbs);
+      newobject->setDynamicSystemSolver(ds);
       newobject->load(path,newinputfile);
       newinputfile.close();
     }
@@ -194,7 +197,7 @@ namespace MBSim {
       Link * newlink = cf.getLink(dummy);
       addLink(newlink);
       newinputfile.seekg(0,ios::beg);
-      newlink->setMultiBodySystem(mbs);
+      newlink->setDynamicSystemSolver(ds);
       newlink->load(path,newinputfile);
       newinputfile.close();
     }
@@ -229,7 +232,7 @@ namespace MBSim {
       getline(inputfile,dummy); // newline
     }
 
-    if(mbs != this) {
+    if(ds != this) {
       getline(inputfile,dummy); // # Coordinate system for kinematics
       getline(inputfile,dummy); // Coordinate system for kinematics
       //setFrameForKinematics(getFrame(dummy));
@@ -237,7 +240,7 @@ namespace MBSim {
 
       getline(inputfile,dummy); // # Frame of reference
       getline(inputfile,dummy); // Coordinate system for kinematics
-      //setFrameOfReference(getMultiBodySystem()->findFrame(dummy));
+      //setFrameOfReference(getDynamicSystemSolver()->findFrame(dummy));
       getline(inputfile,dummy); // newline
 
       getline(inputfile,dummy); // # Translation 
@@ -287,9 +290,9 @@ namespace MBSim {
     outputfile << "# u0:" << endl;
     outputfile << u0 << endl << endl;
 
-    // all Subsystems of Subsystems
-    outputfile << "# Subsystems:" << endl;
-    for(vector<Subsystem*>::iterator i = subsystem.begin();  i != subsystem.end();  ++i) {
+    // all DynamicSystems of DynamicSystems
+    outputfile << "# DynamicSystems:" << endl;
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin();  i != dynamicsystem.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
       ofstream newoutputfile(newname.c_str(), ios::binary);
@@ -298,7 +301,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
-    // all Objects of Subsystems
+    // all Objects of DynamicSystems
     outputfile << "# Objects:" << endl;
     for(vector<Object*>::iterator i = object.begin();  i != object.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -309,7 +312,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
-    // all Links of Subsystems
+    // all Links of DynamicSystems
     outputfile << "# Links:" << endl;
     for(vector<Link*>::iterator i = link.begin();  i != link.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -320,7 +323,7 @@ namespace MBSim {
     }
     outputfile << endl;
 
-    // all EDIs of Subsystems
+    // all EDIs of DynamicSystems
     outputfile << "# EDIs:" << endl;
     for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
       outputfile << (**i).getName() << endl;
@@ -351,8 +354,8 @@ namespace MBSim {
     }
   }
 
-  void Group::addSubsystem(Subsystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
-    Subsystem::addSubsystem(sys);
+  void Group::addDynamicSystem(DynamicSystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
+    DynamicSystem::addDynamicSystem(sys);
 
     int i = 0;
     if(refFrame)
@@ -361,22 +364,5 @@ namespace MBSim {
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);
   }
-
-  void Group::addObject(TreeRigid *tree) {
-    tree->setFullName(name+"."+tree->getName());
-    tree->setParent(this);
-    addSubsystem(tree,Vec(3),SqrMat(3,EYE));
-  }
-
-  void Group::addObject(BodyRigid *body) {
-    body->setFullName(name+"."+body->getName());
-    body->setParent(this);
-    if(getObject(body->getName(),false)) {
-      cout << "Error: The Subsystem " << name << " can only comprise one Object by the name " <<  body->getName() << "!" << endl;
-      assert(getObject(body->getName(),false) == NULL); 
-    }
-    object.push_back(body);
-  }
-
 }
 

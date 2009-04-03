@@ -42,7 +42,7 @@ namespace MBSim {
 
       void setdt(double dt_) {dt = dt_;}
 
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
 
   };
 

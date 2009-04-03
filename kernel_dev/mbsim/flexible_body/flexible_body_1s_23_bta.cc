@@ -23,7 +23,7 @@
 #include "finite_element_1s_23_bta.h"
 #include "body_flexible_1s_23_bta.h"
 #include "port.h"
-#include "multi_body_system.h"
+#include "dynamic_system_solver.h"
 #include "contact_flexible.h"
 #include "contact_rigid.h"
 #include "contour.h"

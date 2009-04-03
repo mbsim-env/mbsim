@@ -35,8 +35,8 @@ namespace MBSim {
   class Load : public Link {
 
     protected:
-      Index IT, IR;
-      Mat forceDir, momentDir, Wf, Wm;
+      fmatvec::Index IT, IR;
+      fmatvec::Mat forceDir, momentDir, Wf, Wm;
 
       DataInterfaceBase *func;
       int KOSYID;
@@ -46,7 +46,7 @@ namespace MBSim {
       void updateh(double t);
 
     public: 
-      Load(const string &name);
+      Load(const std::string &name);
       virtual ~Load();
 
       void calclaSize();
@@ -62,10 +62,10 @@ namespace MBSim {
       void setUserFunction(DataInterfaceBase *func_);
       void setSignal(DataInterfaceBase *func_);
       void connect(Frame *port1);
-      void setForceDirection(const Mat& fd);
-      void setMomentDirection(const Mat& md);
+      void setForceDirection(const fmatvec::Mat& fd);
+      void setMomentDirection(const fmatvec::Mat& md);
 
-      void initDataInterfaceBase(MultiBodySystem *parentmbs);
+      void initDataInterfaceBase(DynamicSystemSolver *parentds);
   };
 
 }

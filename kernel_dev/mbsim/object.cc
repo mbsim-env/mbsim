@@ -23,8 +23,11 @@
 #include <mbsim/contour.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/class_factory.h>
-#include <mbsim/subsystem.h>
+#include <mbsim/dynamic_system.h>
 #include <mbsim/utils/function.h>
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -174,12 +177,12 @@ namespace MBSim {
     }
   }
 
-  void Object::setMultiBodySystem(MultiBodySystem* sys) {
-    Element::setMultiBodySystem(sys);
+  void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
+    Element::setDynamicSystemSolver(sys);
     for(unsigned i=0; i<port.size(); i++)
-      port[i]->setMultiBodySystem(sys);
+      port[i]->setDynamicSystemSolver(sys);
     for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setMultiBodySystem(sys);
+      contour[i]->setDynamicSystemSolver(sys);
   }
 
   void Object::setFullName(const string &str) {
@@ -350,7 +353,7 @@ namespace MBSim {
     LLM.resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
-  int Object::gethInd(Subsystem* sys ,int i) {
+  int Object::gethInd(DynamicSystem* sys ,int i) {
     return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
   }
 

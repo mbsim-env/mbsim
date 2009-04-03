@@ -15,9 +15,13 @@ using namespace AMVis;
 #include <amviscppinterface/cylinder.h>
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 extern bool rigidJoints;
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;

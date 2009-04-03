@@ -51,7 +51,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of link
        */
-      Link(const string &name);
+      Link(const std::string &name);
 
       /**
        * \brief destructor
@@ -71,88 +71,88 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
-      string getType() const { return "Link"; }
+      void load(const std::string& path, std::ifstream &inputfile);
+      void save(const std::string &path, std::ofstream &outputfile);
+      std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
       /**
-       * \brief references to contact force direction matrix of subsystem parent
+       * \brief references to contact force direction matrix of dynamic system parent
        */
-      virtual void updateWRef(const Mat& ref, int i=0);
+      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
 
       /**
-       * \brief references to condensed contact force direction matrix of subsystem parent
+       * \brief references to condensed contact force direction matrix of dynamic system parent
        */
-      virtual void updateVRef(const Mat& ref, int i=0);
+      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
 
       /**
-       * \brief references to smooth force vector of subsystem parent
+       * \brief references to smooth force vector of dynamic system parent
        */
-      virtual void updatehRef(const Vec &ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec &ref, int i=0);
 
       /**
-       * \brief references to nonsmooth force vector of subsystem parent
+       * \brief references to nonsmooth force vector of dynamic system parent
        */
-      virtual void updaterRef(const Vec &ref);
+      virtual void updaterRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to TODO of subsystem parent
+       * \brief references to TODO of dynamic system parent
        */
-      virtual void updatewbRef(const Vec &ref);
+      virtual void updatewbRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to TODO of subsystem parent
+       * \brief references to TODO of dynamic system parent
        */
-      virtual void updatefRef(const Vec &ref) {};
+      virtual void updatefRef(const fmatvec::Vec &ref) {};
 
       /**
-       * \brief references to order one parameter of subsystem parent
+       * \brief references to order one parameter of dynamic system parent
        */
-      virtual void updatexRef(const Vec& ref);
+      virtual void updatexRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to order one parameter derivatives of subsystem parent
+       * \brief references to order one parameter derivatives of dynamic system parent
        */
-      virtual void updatexdRef(const Vec& ref);
+      virtual void updatexdRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to contact force parameter of subsystem parent
+       * \brief references to contact force parameter of dynamic system parent
        */
-      virtual void updatelaRef(const Vec& ref);
+      virtual void updatelaRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to contact relative distances of subsystem parent
+       * \brief references to contact relative distances of dynamic system parent
        */
-      virtual void updategRef(const Vec& ref);
+      virtual void updategRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to contact relative velocities of subsystem parent
+       * \brief references to contact relative velocities of dynamic system parent
        */
-      virtual void updategdRef(const Vec& ref);
+      virtual void updategdRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to residuum of nonlinear contact equations of subsystem parent
+       * \brief references to residuum of nonlinear contact equations of dynamic system parent
        */
-      virtual void updateresRef(const Vec& ref);
+      virtual void updateresRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to rfactors of subsystem parent
+       * \brief references to rfactors of dynamic system parent
        */
-      virtual void updaterFactorRef(const Vec& ref);
+      virtual void updaterFactorRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to stopvector of subsystem parent (root function for event driven integration)
+       * \brief references to stopvector of dynamic system parent (root function for event driven integration)
        */
-      virtual void updatesvRef(const Vec &sv);
+      virtual void updatesvRef(const fmatvec::Vec &sv);
 
       /**
-       * \brief references to stopvector evaluation of subsystem parent (root detection with corresponding bool array by event driven integrator)
+       * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
-      virtual void updatejsvRef(const Vector<int> &jsvParent);
+      virtual void updatejsvRef(const fmatvec::Vector<int> &jsvParent);
 
       /**
        * \brief calculates size of order one parameters
@@ -361,44 +361,44 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      Subsystem* getParent() { return parent; }
-      void setParent(Subsystem* sys) { parent = sys; }
+      DynamicSystem* getParent() { return parent; }
+      void setParent(DynamicSystem* sys) { parent = sys; }
 
-      const vector<Mat>& getW() const { return W; }
-      const vector<Mat>& getV() const { return V; }
-      const vector<Vec>& geth() const { return h; }
+      const std::vector<fmatvec::Mat>& getW() const { return W; }
+      const std::vector<fmatvec::Mat>& getV() const { return V; }
+      const std::vector<fmatvec::Vec>& geth() const { return h; }
 
-      void setx(const Vec &x_) { x = x_; }
-      const Vec& getx() const { return x; }
-      const Vec& getxd() const { return xd; }
+      void setx(const fmatvec::Vec &x_) { x = x_; }
+      const fmatvec::Vec& getx() const { return x; }
+      const fmatvec::Vec& getxd() const { return xd; }
       void setxInd(int xInd_) { xInd = xInd_; };
       int getxSize() const { return xSize; }
       
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
 
-      const Vec& getla() const { return la; }
-      Vec& getla() { return la; }
-      void setlaInd(int laInd_) { laInd = laInd_;Ila=Index(laInd,laInd+laSize-1); } 
+      const fmatvec::Vec& getla() const { return la; }
+      fmatvec::Vec& getla() { return la; }
+      void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); } 
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
-      const Index& getlaIndex() const { return Ila; }
+      const fmatvec::Index& getlaIndex() const { return Ila; }
       int getlaIndMBS() const { return laIndMBS; }
       void setlaIndMBS(int laIndParent) { laIndMBS = laInd + laIndParent; }
 
-      const Vec& getg() const { return g; }
-      Vec& getg() { return g; }
-      void setgInd(int gInd_) { gInd = gInd_; Ig=Index(gInd,gInd+gSize-1); } 
+      const fmatvec::Vec& getg() const { return g; }
+      fmatvec::Vec& getg() { return g; }
+      void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::Index(gInd,gInd+gSize-1); } 
       void setgdInd(int gdInd_) { gdInd = gdInd_; } 
       int getgdInd() const { return gdInd; } 
       int getgSize() const { return gSize; } 
       int getgdSize() const { return gdSize; } 
-      const Index& getgIndex() const { return Ig; }
+      const fmatvec::Index& getgIndex() const { return Ig; }
       
       void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; } 
       int getrFactorSize() const { return rFactorSize; } 
       
-      const Vector<int>& getrFactorUnsure() const { return rFactorUnsure; }
+      const fmatvec::Vector<int>& getrFactorUnsure() const { return rFactorUnsure; }
 
       /**
        * \brief saves contact force parameters for use as starting value in next time step
@@ -419,22 +419,22 @@ namespace MBSim {
       /**
        * \brief parent of link 
        */
-      Subsystem* parent;
+      DynamicSystem* parent;
 
       /** 
        * \brief order one parameters
        */
-      Vec x;
+      fmatvec::Vec x;
 
       /** 
        * \brief differentiated order one parameters 
        */
-      Vec xd;
+      fmatvec::Vec xd;
 
       /**
        * \brief order one initial value
        */
-      Vec x0;
+      fmatvec::Vec x0;
 
       /**
        * \brief size  and local index of order one parameters
@@ -444,12 +444,12 @@ namespace MBSim {
       /**
        * \brief stop vector for event driven integration (root function)
        */
-      Vec sv;
+      fmatvec::Vec sv;
 
       /**
        * \brief evaluation of roots of stop vector with a boolean vector
        */
-      Vector<int> jsv;
+      fmatvec::Vector<int> jsv;
 
       /**
        * \brief size and local index of stop vector
@@ -459,7 +459,7 @@ namespace MBSim {
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */
-      Vec g, gd, la;
+      fmatvec::Vec g, gd, la;
       
       /**
        * \brief size and local index of relative distances
@@ -479,7 +479,7 @@ namespace MBSim {
       /**
        * \brief local index of relative distances and contact force parameters
        */
-      Index Ig, Ila;
+      fmatvec::Index Ig, Ila;
       
       /**
        * \brief tolerance for relative velocity, relative acceleration, force and impact  
@@ -489,17 +489,17 @@ namespace MBSim {
       /**
        * \brief attribute to save contact force parameter of previous time step
        */
-      Vec la0;
+      fmatvec::Vec la0;
 
       /**
        * \brief vector of rfactors for relaxation of contact equations
        */
-      Vec rFactor;
+      fmatvec::Vec rFactor;
 
       /**
        * \brief boolean vector defining if rfactor belongs to not diagonal dominant mass action matrix (cf. Foerg Dissertation, page 80 et seq.)
        */
-      Vector<int> rFactorUnsure;
+      fmatvec::Vector<int> rFactorUnsure;
 
       /**
        * \brief size and local index of rfactors
@@ -519,43 +519,43 @@ namespace MBSim {
       /**
        * residuum of nonlinear contact equations
        */
-      Vec res;
+      fmatvec::Vec res;
 
 
       /** 
        * \brief force direction matrix for nonsmooth right hand side
        */
-      vector<Mat> W;
+      std::vector<fmatvec::Mat> W;
 
       /**
        * \brief reduced force direction matrix for nonsmooth right hand side
        */
-      vector<Mat> V;
+      std::vector<fmatvec::Mat> V;
       
       /**
        * \brief smooth right hand side
        */
-      vector<Vec> h;
+      std::vector<fmatvec::Vec> h;
       
       /**
        * \brief nonsmooth right hand side
        */
-      vector<Vec> r;
+      std::vector<fmatvec::Vec> r;
       
       /**
        * \brief TODO
        */
-      Vec wb;
+      fmatvec::Vec wb;
 
       /** 
        * \brief force and moment direction for smooth right hand side
        */
-      vector<Vec> WF, WM;
+      std::vector<fmatvec::Vec> WF, WM;
       
       /**
        * \brief force and moment direction matrix for nonsmooth right hand side
        */
-      vector<Mat> fF, fM;
+      std::vector<fmatvec::Mat> fF, fM;
 
       /**
        * \brief scale factor for flow and pressure quantity tolerances tolQ/tolp=tol*scaleTolQ/scaleTolp TODO necessary?
@@ -565,19 +565,19 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      vector<Frame*> port;
+      std::vector<Frame*> port;
 
       /** 
        * \brief array in which all contours are listed, connecting bodies via link
        */
-      vector<Contour*> contour;
+      std::vector<Contour*> contour;
 
 #ifdef HAVE_AMVIS
-      vector<AMVis::Arrow*> arrowAMVis;
-      vector<double> arrowAMVisScale;
-      vector<int> arrowAMVisID;
-      vector<bool> arrowAMVisMoment;
-      vector<UserFunction*> arrowAMVisUserFunctionColor;
+      std::vector<AMVis::Arrow*> arrowAMVis;
+      std::vector<double> arrowAMVisScale;
+      std::vector<int> arrowAMVisID;
+      std::vector<bool> arrowAMVisMoment;
+      std::vector<UserFunction*> arrowAMVisUserFunctionColor;
 #endif
   };
 }

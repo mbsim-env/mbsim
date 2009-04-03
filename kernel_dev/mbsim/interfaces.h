@@ -39,7 +39,7 @@ namespace AMVis {
 namespace MBSim {
 
   class ContourPointData;
-  class Subsystem;
+  class DynamicSystem;
 
   /*!
    * \brief interface for objects for usage in tree structures
@@ -168,11 +168,11 @@ namespace MBSim {
       virtual void setuInd(int ind, int i=0) = 0;
 
       /**
-       * \param subsystem
+       * \param dynamic system
        * \param index for normal usage and inverse kinetics 
        * \return index of right hand side
        */
-      virtual int gethInd(Subsystem* sys, int i=0) = 0;
+      virtual int gethInd(DynamicSystem* sys, int i=0) = 0;
 
       /**
        * \brief update JACOBIAN for inverse kinetics TODO

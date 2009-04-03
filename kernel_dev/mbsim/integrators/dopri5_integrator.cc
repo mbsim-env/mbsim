@@ -21,7 +21,7 @@
  */
 
 #include <config.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include "fortran_wrapper.h"
 #include "dopri5_integrator.h"
 #include <fstream>
@@ -29,6 +29,8 @@
 #ifndef NO_ISO_14882
 using namespace std;
 #endif
+
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -68,7 +70,7 @@ namespace MBSim {
     }
   }
 
-  void DOPRI5Integrator::integrate(MultiBodySystem& system_) {
+  void DOPRI5Integrator::integrate(DynamicSystemSolver& system_) {
 
     system = &system_;
     int zSize=system->getzSize();

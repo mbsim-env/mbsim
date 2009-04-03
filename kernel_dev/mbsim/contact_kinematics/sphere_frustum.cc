@@ -22,6 +22,9 @@
 #include "sphere_frustum.h"
 #include "mbsim/contour.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsSphereFrustum::assignContours(const vector<Contour*> &contour) {

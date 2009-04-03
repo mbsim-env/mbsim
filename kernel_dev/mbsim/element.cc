@@ -22,6 +22,8 @@
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
 
+using namespace std;
+
 namespace MBSim {
 
   Element::Element(const string &name_) : name(name_), plotVectorSerie(0), plotGroup(0) {

@@ -28,14 +28,14 @@
 
 namespace MBSim {
 
-  class MultiBodySystem;
+  class DynamicSystemSolver;
 
 
-  /*! \brief Integrator-interface for multi-body systems */
+  /*! \brief Integrator-interface for dynamic systems */
   class Integrator {
 
     protected:
-      static MultiBodySystem* system;
+      static DynamicSystemSolver* system;
       double tStart, tEnd, dtPlot;
       fmatvec::Vec z0;
       int warnLevel;
@@ -60,7 +60,7 @@ namespace MBSim {
       /*! Set integration start time \param tStart_ */
       void settStart(double tStart_){tStart=tStart_;}
       /*! Start the integration for \param system */
-      virtual void integrate(MultiBodySystem& system) = 0;
+      virtual void integrate(DynamicSystemSolver& system) = 0;
   };
 
 }

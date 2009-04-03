@@ -12,6 +12,9 @@
 #include <amviscppinterface/cuboid.h>
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
 
 class Moment : public UserFunction {
   public:
@@ -29,7 +32,7 @@ class MyRot : public Rotation {
     virtual SqrMat operator()(const Vec &q, double t) {
       SqrMat A(3);
       for(int i=0; i<3; i++)
-	A(i,i) = 1;
+        A(i,i) = 1;
       return A;
     }; 
 };
@@ -68,7 +71,7 @@ class djT : public TimeDependentFunction {
     }
 };
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   Vec grav(3);
   grav(1)=-9.81;

@@ -22,7 +22,7 @@
 
 #include <config.h>
 #include <fmatvec.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include "fortran_wrapper.h"
 #include "lsodar_integrator.h"
 #include <fstream>
@@ -50,7 +50,7 @@ namespace MBSim {
     system->getsv(z, sv, *t);
   }
 
-  void LSODARIntegrator::integrate(MultiBodySystem& system_) {
+  void LSODARIntegrator::integrate(DynamicSystemSolver& system_) {
     system = &system_;
 
     int zSize=system->getzSize();

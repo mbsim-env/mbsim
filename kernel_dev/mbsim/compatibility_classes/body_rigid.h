@@ -12,29 +12,29 @@ namespace MBSim {
   class BodyRigid : public RigidBody {
 
     protected:
-      SymMat I;
-      Mat JT, JR;
-      Vec KrKS;
+      fmatvec::SymMat I;
+      fmatvec::Mat JT, JR;
+      fmatvec::Vec KrKS;
       Rot rot;
       bool I_COG;
       Group *parent;
 
     public:
-      BodyRigid(const string &name) : RigidBody(name), I(3), KrKS(3), rot(cardanAngles), I_COG(false), parent(0) { }
+      BodyRigid(const std::string &name) : RigidBody(name), I(3), KrKS(3), rot(cardanAngles), I_COG(false), parent(0) { }
      
       void setParent(Group *sys) {parent = sys;}
       void setRotationalParameters(Rot rot_) {rot = rot_;}
-      void setInertia(const SymMat &I_, bool I_COG_ = false) { I = I_; I_COG = I_COG_;}
-      void setJT(const Mat &JT_) { JT = JT_; }
-      void setJR(const Mat &JR_) { JR = JR_; }
-      void setKrKS(const Vec &KrKS_) { KrKS = KrKS_; }
+      void setInertia(const fmatvec::SymMat &I_, bool I_COG_ = false) { I = I_; I_COG = I_COG_;}
+      void setJT(const fmatvec::Mat &JT_) { JT = JT_; }
+      void setJR(const fmatvec::Mat &JR_) { JR = JR_; }
+      void setKrKS(const fmatvec::Vec &KrKS_) { KrKS = KrKS_; }
 
-      Frame* getPort(const string &str) { return RigidBody::getFrame(str); }
-      void addPort(const string &str, const Vec &r) { RigidBody::addFrame(str,r,SqrMat(3,EYE)); }
-      void addContour(Contour* contour, const Vec &r) { RigidBody::addContour(contour,r,SqrMat(3,EYE)); }
+      Frame* getPort(const std::string &str) { return RigidBody::getFrame(str); }
+      void addPort(const std::string &str, const fmatvec::Vec &r) { RigidBody::addFrame(str,r,fmatvec::SqrMat(3,fmatvec::EYE)); }
+      void addContour(Contour* contour, const fmatvec::Vec &r) { RigidBody::addContour(contour,r,fmatvec::SqrMat(3,fmatvec::EYE)); }
 
-      //string getFullName() const {return mbs ? RigidBody::getFullName() : name;}
-      //void setFullName(const string &str) {Element::setFullName(str);}
+      //std::string getFullName() const {return mbs ? RigidBody::getFullName() : name;}
+      //void setFullName(const std::string &str) {Element::setFullName(str);}
 
       void calcqSize() {
 
@@ -42,20 +42,20 @@ namespace MBSim {
 	  RigidBody::setTranslation(new LinearTranslation(JT)); 
 
 	if(JR.cols() == 1)
-	  RigidBody::setRotation(new RotationAboutFixedAxis(Vec(JR)));
+	  RigidBody::setRotation(new RotationAboutFixedAxis(fmatvec::Vec(JR)));
 	else if(JR.cols() == 3) {
 	  if(rot == cardanAngles)
 	    RigidBody::setRotation(new CardanAngles());
 	  else if(rot == eulerParameters) {
-	    cout << "TODO: Euler Parameters" << endl;
+        std::cout << "TODO: Euler Parameters" << std::endl;
 	    throw 5;
 	  } else {
-	    cout << "Error: Unkown Rotation" << endl;
+        std::cout << "Error: Unkown Rotation" << std::endl;
 	    throw 5;
 	  }
 	}
 
-	addFrame("B",-KrKS,SqrMat(3,EYE));
+	addFrame("B",-KrKS,fmatvec::SqrMat(3,fmatvec::EYE));
 	setFrameForKinematics(getFrame("B"));
 
 	if(I_COG == true)

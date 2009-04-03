@@ -16,8 +16,8 @@
  * Contact: mfoerg@users.berlios.de
  */
 
-#ifndef _SUBSYSTEM_H_
-#define _SUBSYSTEM_H_
+#ifndef _DYNAMIC_SYSTEM_H_
+#define _DYNAMIC_SYSTEM_H_
 
 #include "mbsim/element.h"
 #include "mbsim/interfaces.h"
@@ -43,21 +43,21 @@ namespace MBSim {
   class BodyRigid;
 
   /**
-   * \brief subsystem as topmost hierarchical level
+   * \brief dynamic system as topmost hierarchical level
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    */
-  class Subsystem : public Element, public ObjectInterface, public LinkInterface {
+  class DynamicSystem : public Element, public ObjectInterface, public LinkInterface {
     public:
       /** 
        * \brief constructor
        */
-      Subsystem(const string &name);
+      DynamicSystem(const std::string &name);
 
       /**
        * \brief destructor
        */
-      virtual ~Subsystem();
+      virtual ~DynamicSystem();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
@@ -65,8 +65,8 @@ namespace MBSim {
       virtual void updateM(double t);
       virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt); 
-      virtual void updateud(double t) { throw new MBSimError("ERROR (Subsystem::updateud): Not implemented!"); }
-      virtual void updateqd(double t) { throw new MBSimError("ERROR (Subsystem::updateud): Not implemented!"); }
+      virtual void updateud(double t) { throw new MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateqd(double t) { throw new MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -75,7 +75,7 @@ namespace MBSim {
       virtual void calcuSize(int j=0);
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      virtual int gethInd(Subsystem* sys, int i=0); 
+      virtual int gethInd(DynamicSystem* sys, int i=0); 
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -104,9 +104,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
-      virtual void setFullName(const string &str);
-      virtual string getType() const { return "Subsystem"; }
-      virtual void setMultiBodySystem(MultiBodySystem* sys);
+      virtual void setFullName(const std::string &str);
+      virtual std::string getType() const { return "DynamicSystem"; }
+      virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot(double t, double dt);
       virtual void closePlot();
       /*****************************************************/
@@ -183,7 +183,7 @@ namespace MBSim {
       virtual void updaterFactors();
 
       /**
-       * \brief plots time series headers and manages HDF5 files of subsystems
+       * \brief plots time series headers and manages HDF5 files of dynamic systems
        */
       virtual void initPlot();
 
@@ -192,59 +192,59 @@ namespace MBSim {
        * \param check for existence of frame
        * \return frame
        */
-      virtual Frame* getFrame(const string &name, bool check=true);
+      virtual Frame* getFrame(const std::string &name, bool check=true);
 
       /**
        * \param name of the contour
        * \param check for existence of contour
        * \return contour
        */
-      virtual Contour* getContour(const string &name, bool check=true);
+      virtual Contour* getContour(const std::string &name, bool check=true);
       /*****************************************************/
 
       /* GETTER / SETTER */
-      Subsystem* getParent() { return parent; }
-      void setParent(Subsystem* sys) { parent = sys; }
+      DynamicSystem* getParent() { return parent; }
+      void setParent(DynamicSystem* sys) { parent = sys; }
 
-      const Vec& getq() const { return q; };
-      const Vec& getu() const { return u; };
-      const Vec& getx() const { return x; };
-      Vec& getx() { return x; };
-      const Vec& getxd() const { return xd; };
-      Vec& getxd() { return xd; };
-      const Vec& getx0() const { return x0; };
-      Vec& getx0() { return x0; };
+      const fmatvec::Vec& getq() const { return q; };
+      const fmatvec::Vec& getu() const { return u; };
+      const fmatvec::Vec& getx() const { return x; };
+      fmatvec::Vec& getx() { return x; };
+      const fmatvec::Vec& getxd() const { return xd; };
+      fmatvec::Vec& getxd() { return xd; };
+      const fmatvec::Vec& getx0() const { return x0; };
+      fmatvec::Vec& getx0() { return x0; };
 
-      const Mat& getT() const { return T; };
-      const SymMat& getM() const { return M; };
-      const SymMat& getLLM() const { return LLM; };
-      const Vec& geth() const { return h; };
-      const Vec& getf() const { return f; };
-      Vec& getf() { return f; };
+      const fmatvec::Mat& getT() const { return T; };
+      const fmatvec::SymMat& getM() const { return M; };
+      const fmatvec::SymMat& getLLM() const { return LLM; };
+      const fmatvec::Vec& geth() const { return h; };
+      const fmatvec::Vec& getf() const { return f; };
+      fmatvec::Vec& getf() { return f; };
 
-      const Mat& getW() const { return W; }
-      Mat& getW() { return W; }
-      const Mat& getV() const { return V; }
-      Mat& getV() { return V; }
+      const fmatvec::Mat& getW() const { return W; }
+      fmatvec::Mat& getW() { return W; }
+      const fmatvec::Mat& getV() const { return V; }
+      fmatvec::Mat& getV() { return V; }
 
-      const Vec& getla() const { return la; }
-      Vec& getla() { return la; }
-      const Vec& getg() const { return g; }
-      Vec& getg() { return g; }
-      const Vec& getgd() const { return gd; }
-      Vec& getgd() { return gd; }
-      const Vec& getrFactor() const { return rFactor; }
-      Vec& getrFactor() { return rFactor; }
-      Vec& getsv() { return sv; }
-      const Vec& getsv() const { return sv; }
-      Vector<int>& getjsv() { return jsv; }
-      const Vector<int>& getjsv() const { return jsv; }
-      const Vec& getres() const { return res; }
-      Vec& getres() { return res; }
+      const fmatvec::Vec& getla() const { return la; }
+      fmatvec::Vec& getla() { return la; }
+      const fmatvec::Vec& getg() const { return g; }
+      fmatvec::Vec& getg() { return g; }
+      const fmatvec::Vec& getgd() const { return gd; }
+      fmatvec::Vec& getgd() { return gd; }
+      const fmatvec::Vec& getrFactor() const { return rFactor; }
+      fmatvec::Vec& getrFactor() { return rFactor; }
+      fmatvec::Vec& getsv() { return sv; }
+      const fmatvec::Vec& getsv() const { return sv; }
+      fmatvec::Vector<int>& getjsv() { return jsv; }
+      const fmatvec::Vector<int>& getjsv() const { return jsv; }
+      const fmatvec::Vec& getres() const { return res; }
+      fmatvec::Vec& getres() { return res; }
 
-      void setx(const Vec& x_) { x = x_; }
-      void setx0(const Vec &x0_) { x0 = x0_; }
-      void setx0(double x0_) { x0 = Vec(1,INIT,x0_); }
+      void setx(const fmatvec::Vec& x_) { x = x_; }
+      void setx0(const fmatvec::Vec &x0_) { x0 = x0_; }
+      void setx0(double x0_) { x0 = fmatvec::Vec(1,fmatvec::INIT,x0_); }
 
       int getxInd() { return xInd; }
       int getlaInd() const { return laInd; } 
@@ -275,141 +275,141 @@ namespace MBSim {
       /*****************************************************/
 
       /**
-       * \brief references to positions of subsystem parent
+       * \brief references to positions of dynamic system parent
        * \param vector to be referenced
        */
-      void updateqRef(const Vec &ref); 
+      void updateqRef(const fmatvec::Vec &ref); 
       
       /**
-       * \brief references to differentiated positions of subsystem parent
+       * \brief references to differentiated positions of dynamic system parent
        * \param vector to be referenced
        */
-      void updateqdRef(const Vec &ref);
+      void updateqdRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to velocities of subsystem parent
+       * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateuRef(const Vec &ref);
+      void updateuRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to differentiated velocities of subsystem parent
+       * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudRef(const Vec &ref);
+      void updateudRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to order one parameters of subsystem parent
+       * \brief references to order one parameters of dynamic system parent
        * \param vector to be referenced
        */
-      void updatexRef(const Vec &ref);
+      void updatexRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to differentiated order one parameters of subsystem parent
+       * \brief references to differentiated order one parameters of dynamic system parent
        * \param vector to be referenced
        */
-      void updatexdRef(const Vec &ref);
+      void updatexdRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to smooth right hand side of subsystem parent
+       * \brief references to smooth right hand side of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updatehRef(const Vec &ref, int i=0);
+      void updatehRef(const fmatvec::Vec &ref, int i=0);
       
       /**
-       * \brief references to order one right hand side of subsystem parent
+       * \brief references to order one right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updatefRef(const Vec &ref);
+      void updatefRef(const fmatvec::Vec &ref);
       
       /**
-       * \brief references to nonsmooth right hand side of subsystem parent
+       * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterRef(const Vec &ref);
+      void updaterRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to linear transformation matrix between differentiated positions and velocities of subsystem parent
+       * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
        * \param matrix to be referenced
        */
-      void updateTRef(const Mat &ref);
+      void updateTRef(const fmatvec::Mat &ref);
 
       /**
-       * \brief references to mass matrix of subsystem parent
-       * \param matrix to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updateMRef(const SymMat &ref, int i=0);
-
-      /**
-       * \brief references to Cholesky decomposition of subsystem parent
+       * \brief references to mass matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateLLMRef(const SymMat &ref, int i=0);
+      void updateMRef(const fmatvec::SymMat &ref, int i=0);
 
       /**
-       * \brief references to relative distances of subsystem parent
-       * \param vector to be referenced
+       * \brief references to Cholesky decomposition of dynamic system parent
+       * \param matrix to be referenced
+       * \param index of normal usage and inverse kinetics
        */
-      void updategRef(const Vec &ref);
-      
-      /**
-       * \brief references to relative velocities of subsystem parent
-       * \param vector to be referenced
-       */
-      void updategdRef(const Vec &ref);
-      
-      /**
-       * \brief references to contact force parameters of subsystem parent
-       * \param vector to be referenced
-       */
-      void updatelaRef(const Vec &ref);
+      void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
 
       /**
-       * \brief references to TODO of subsystem parent
+       * \brief references to relative distances of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updategRef(const fmatvec::Vec &ref);
+      
+      /**
+       * \brief references to relative velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updategdRef(const fmatvec::Vec &ref);
+      
+      /**
+       * \brief references to contact force parameters of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updatelaRef(const fmatvec::Vec &ref);
+
+      /**
+       * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
        */      
-      void updatewbRef(const Vec &ref);
+      void updatewbRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to contact force direction matrix of subsystem parent
+       * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWRef(const Mat &ref, int i=0);
+      void updateWRef(const fmatvec::Mat &ref, int i=0);
 
       /**
-       * \brief references to condensed contact force direction matrix of subsystem parent
+       * \brief references to condensed contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateVRef(const Mat &ref, int i=0);
+      void updateVRef(const fmatvec::Mat &ref, int i=0);
 
       /**
-       * \brief references to stopvector (rootfunction for event driven integrator) of subsystem parent
+       * \brief references to stopvector (rootfunction for event driven integrator) of dynamic system parent
        * \param vector to be referenced
        */
-      void updatesvRef(const Vec& ref);
+      void updatesvRef(const fmatvec::Vec& ref);
 
       /**
-       * \brief references to boolean evaluation of stopvector concerning roots of subsystem parent
+       * \brief references to boolean evaluation of stopvector concerning roots of dynamic system parent
        * \param vector to be referenced
        */
-      void updatejsvRef(const Vector<int> &ref);
+      void updatejsvRef(const fmatvec::Vector<int> &ref);
 
       /**
-       * \brief references to residuum of contact equations of subsystem parent
+       * \brief references to residuum of contact equations of dynamic system parent
        * \param vector to be referenced
        */
-      void updateresRef(const Vec &ref);
+      void updateresRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief references to relaxation factors for contact equations of subsystem parent
+       * \brief references to relaxation factors for contact equations of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterFactorRef(const Vec &ref);
+      void updaterFactorRef(const fmatvec::Vec &ref);
 
       /**
        * \brief initialises state variables
@@ -419,15 +419,15 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      virtual void buildListOfObjects(vector<Object*> &obj, bool recursive=false);
+      virtual void buildListOfObjects(std::vector<Object*> &obj, bool recursive=false);
       /**
        * \brief TODO
        */
-      virtual void buildListOfLinks(vector<Link*> &lnk, bool recursive=false);
+      virtual void buildListOfLinks(std::vector<Link*> &lnk, bool recursive=false);
       /**
        * \brief TODO
        */
-      virtual void buildListOfEDIs(vector<ExtraDynamicInterface*> &edi, bool recursive=false);
+      virtual void buildListOfEDIs(std::vector<ExtraDynamicInterface*> &edi, bool recursive=false);
 
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
@@ -441,7 +441,7 @@ namespace MBSim {
       void resizeJacobians(int j);
 
       /**
-       * \brief analyse constraints of subsystems for usage in inverse kinetics
+       * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void checkForConstraints();
 
@@ -581,7 +581,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -589,7 +589,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(const string &str, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
 
       /**
        * \param contour to add
@@ -602,14 +602,14 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       /**
        * \param contour to add
        * \param relative position of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const Vec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,SqrMat(3,EYE)); }
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE)); }
 
       /**
        * \param frame
@@ -618,16 +618,16 @@ namespace MBSim {
       int portIndex(const Frame *frame_) const;
 
       /**
-       * \param subsystem to add
+       * \param dynamic system to add
        */
-      void addSubsystem(Subsystem *subsystem);
+      void addDynamicSystem(DynamicSystem *dynamicsystem);
 
       /**
-       * \param name of the subsystem
-       * \param check for existence of subsystem
-       * \return subsystem
+       * \param name of the dynamic system
+       * \param check for existence of dynamic system
+       * \return dynamic system
        */
-      Subsystem* getSubsystem(const string &name,bool check=true);
+      DynamicSystem* getDynamicSystem(const std::string &name,bool check=true);
       
       /**
        * \param object to add
@@ -639,7 +639,7 @@ namespace MBSim {
        * \param check for existence of object
        * \return object
        */
-      Object* getObject(const string &name,bool check=true);
+      Object* getObject(const std::string &name,bool check=true);
 
       /**
        * \param link to add
@@ -651,7 +651,7 @@ namespace MBSim {
        * \param check for existence of link
        * \return link
        */
-      Link* getLink(const string &name,bool check=true);
+      Link* getLink(const std::string &name,bool check=true);
       
       /**
        * \param extra dynamic interface to add
@@ -663,7 +663,7 @@ namespace MBSim {
        * \param check for existence of extra dynamic interface
        * \return extra dynamic interface
        */
-      ExtraDynamicInterface* getEDI(const string &name,bool check=true);
+      ExtraDynamicInterface* getEDI(const std::string &name,bool check=true);
 
       /**
        * \param data interface base to add
@@ -675,100 +675,100 @@ namespace MBSim {
        * \param check for existence of data interface interface
        * \return data interface interface
        */
-      DataInterfaceBase* getDataInterfaceBase(const string &name, bool check=true);
+      DataInterfaceBase* getDataInterfaceBase(const std::string &name, bool check=true);
 
     protected:
       /**
-       * \brief parent subsystem
+       * \brief parent dynamic system
        */
-      Subsystem *parent;
+      DynamicSystem *parent;
 
       /** 
        * \brief container for possible ingredients
        */
-      vector<Object*> object;
-      vector<Link*> link;
-      vector<ExtraDynamicInterface*> EDI;
-      vector<DataInterfaceBase*> DIB;
-      vector<Subsystem*> subsystem;
-      vector<Link*> linkSingleValued;
-      vector<Link*> linkSetValued;
-      vector<Link*> linkSetValuedActive;
+      std::vector<Object*> object;
+      std::vector<Link*> link;
+      std::vector<ExtraDynamicInterface*> EDI;
+      std::vector<DataInterfaceBase*> DIB;
+      std::vector<DynamicSystem*> dynamicsystem;
+      std::vector<Link*> linkSingleValued;
+      std::vector<Link*> linkSetValued;
+      std::vector<Link*> linkSetValuedActive;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters
        */
-      Mat T;
+      fmatvec::Mat T;
 
       /**
        * \brief mass matrix
        */
-      SymMat M;
+      fmatvec::SymMat M;
 
       /** 
        * \brief Cholesky decomposition of mass matrix
        */
-      SymMat LLM;
+      fmatvec::SymMat LLM;
 
       /**
        * \brief positions, differentiated positions, initial positions
        */
-      Vec q, qd, q0;
+      fmatvec::Vec q, qd, q0;
 
       /**
        * \brief velocities, differentiated velocities, initial velocities
        */
-      Vec u, ud, u0;
+      fmatvec::Vec u, ud, u0;
 
       /**
        * \brief order one parameters, differentiated order one parameters, initial order one parameters
        */
-      Vec x, xd, x0;
+      fmatvec::Vec x, xd, x0;
 
       /**
        * \brief smooth, nonsmooth and order one right hand side
        */
-      Vec h, r, f;
+      fmatvec::Vec h, r, f;
 
       /**
        * \brief 
        */
-      Mat W, V;
+      fmatvec::Mat W, V;
 
       /**
        * \brief contact force parameters
        */
-      Vec la;
+      fmatvec::Vec la;
 
       /** 
        * \brief relative distances and velocities
        */
-      Vec g, gd;
+      fmatvec::Vec g, gd;
 
       /**
        * \brief TODO
        */
-      Vec wb;
+      fmatvec::Vec wb;
 
       /**
        * \brief residuum of nonlinear contact equations for Newton scheme
        */
-      Vec res;
+      fmatvec::Vec res;
 
       /**
        * \brief rfactors for relaxation nonlinear contact equations
        */
-      Vec rFactor;
+      fmatvec::Vec rFactor;
 
       /**
        * \brief stop vector (root functions for event driven integration
        */
-      Vec sv;
+      fmatvec::Vec sv;
 
       /**
        * \brief boolean evaluation of stop vector concerning roots
        */
-      Vector<int> jsv;
+      fmatvec::Vector<int> jsv;
 
       /** 
        * \brief size and local start index of positions
@@ -816,20 +816,20 @@ namespace MBSim {
       int svSize, svInd;
 
       /**
-       * \brief inertial position of frames, contours and subsystems (see group.h / tree.h)
+       * \brief inertial position of frames, contours and dynamic systems (see group.h / tree.h)
        */
-      vector<Vec> IrOK, IrOC, IrOS;
+      std::vector<fmatvec::Vec> IrOK, IrOC, IrOS;
 
       /**
-       * \brief orientation to inertial frame of frames, contours and subsystems (see group.h / tree.h)
+       * \brief orientation to inertial frame of frames, contours and dynamic systems (see group.h / tree.h)
        */
-      vector<SqrMat> AIK, AIC, AIS;
+      std::vector<fmatvec::SqrMat> AIK, AIC, AIS;
 
       /**
        * \brief vector of frames and contours
        */
-      vector<Frame*> port;
-      vector<Contour*> contour;
+      std::vector<Frame*> port;
+      std::vector<Contour*> contour;
 
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* amvisGrp;

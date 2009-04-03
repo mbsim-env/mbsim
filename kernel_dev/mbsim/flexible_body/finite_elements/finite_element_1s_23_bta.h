@@ -24,7 +24,6 @@
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
 #include "fmatvec.h"
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -38,45 +37,45 @@ namespace MBSim {
     public:
       double l0, Arho, EIyy, EIzz, Itrho, GIt;
       double depsilon;
-      Vec g;
+      fmatvec::Vec g;
 
       //                  (double l0, double Arho, double EIyy, double EIzz, double Itrho, double GIt, double g);
-      FiniteElement1s23BTA(double   , double     , double     , double     , double      , double    , Vec     );
+      FiniteElement1s23BTA(double   , double     , double     , double     , double      , double    , fmatvec::Vec     );
       //    ~FiniteElement1s23BTA();
 
-      //              (Vec qElement, Vec qpElement);
-      int update(Vec &, Vec &);
+      //              (fmatvec::Vec qElement, fmatvec::Vec qpElement);
+      int update(fmatvec::Vec &, fmatvec::Vec &);
 
       void setMaterialDamping(double){}
       void setLehrDamping(double){}
 
-      SymMat M;
-      Vec h;
+      fmatvec::SymMat M;
+      fmatvec::Vec h;
 
       double gN, gTp;
-      Mat WN, WT;
-      Vec n, t;
+      fmatvec::Mat WN, WT;
+      fmatvec::Vec n, t;
 
       bool implicit;
       void Implicit(bool implicit_) {implicit = implicit_;}
-      SqrMat Dhq, Dhqp;
+      fmatvec::SqrMat Dhq, Dhqp;
 
-      SqrMat Damp;
-
-      // Tangent
-      Vec Tangent (Vec &q, double &s);
+      fmatvec::SqrMat Damp;
 
       // Tangent
-      SqrMat AWK (Vec &q, double &s);
+      fmatvec::Vec Tangent (fmatvec::Vec &q, double &s);
+
+      // Tangent
+      fmatvec::SqrMat AWK (fmatvec::Vec &q, double &s);
 
       // Balkenort
-      Vec StateAxis (Vec &q, Vec &v, double &s); // Zustand - global
+      fmatvec::Vec StateAxis (fmatvec::Vec &q, fmatvec::Vec &v, double &s); // Zustand - global
 
       // Eingriffsmatrizen
-      Mat JGeneralized(Vec &, const double&);
+      fmatvec::Mat JGeneralized(fmatvec::Vec &, const double&);
 
       // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
-      Vec ElementData(Vec qElement, Vec qpElement);
+      fmatvec::Vec ElementData(fmatvec::Vec qElement, fmatvec::Vec qpElement);
 
       static const int nodalDOFs;
 

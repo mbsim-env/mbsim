@@ -22,10 +22,8 @@
 
 #include <string>
 
-using namespace std;
-
 namespace MBSim {
-  class Subsystem;
+  class DynamicSystem;
   class Object;
   class Link;
   class Contour;
@@ -44,16 +42,16 @@ namespace MBSim {
   class ClassFactory {
     public:
       /* GETTER */
-      Subsystem* getSubsystem(const string &type);
-      Object* getObject(const string &type);
-      Link* getLink(const string &type);
-      Contour* getContour(const string &type);
-      Translation* getTranslation(const string &type);
-      Rotation* getRotation(const string &type);
-      GeneralizedForceLaw* getGeneralizedForceLaw(const string &type);
-      FrictionForceLaw* getFrictionForceLaw(const string &type);
-      GeneralizedImpactLaw* getGeneralizedImpactLaw(const string &type);
-      FrictionImpactLaw* getFrictionImpactLaw(const string &type);
+      DynamicSystem* getDynamicSystem(const std::string &type);
+      Object* getObject(const std::string &type);
+      Link* getLink(const std::string &type);
+      Contour* getContour(const std::string &type);
+      Translation* getTranslation(const std::string &type);
+      Rotation* getRotation(const std::string &type);
+      GeneralizedForceLaw* getGeneralizedForceLaw(const std::string &type);
+      FrictionForceLaw* getFrictionForceLaw(const std::string &type);
+      GeneralizedImpactLaw* getGeneralizedImpactLaw(const std::string &type);
+      FrictionImpactLaw* getFrictionImpactLaw(const std::string &type);
   };
 
 }

@@ -26,8 +26,6 @@
 #include "H5Cpp.h"
 #include <string>
 
-using namespace std;
-
 namespace MBSim {
 
   class Frame;
@@ -52,27 +50,27 @@ namespace MBSim {
   enum LinAlg {LUDecomposition,LevenbergMarquardt,PseudoInverse};
 
   /**
-   * \brief solver interface for modelling and simulation of multibody systeme
+   * \brief solver interface for modelling and simulation of dynamic systeme
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
    */
-  class MultiBodySystem : public Group {
+  class DynamicSystemSolver : public Group {
     public:
       /** 
        * \brief constructor
        */
-      MultiBodySystem();
+      DynamicSystemSolver();
 
       /**
        * \brief constructor
-       * \param name of multibody system
+       * \param name of dynamic system
        */
-      MultiBodySystem(const string &projectName);
+      DynamicSystemSolver(const std::string &projectName);
 
       /**
        * \brief destructor
        */
-      virtual ~MultiBodySystem();
+      virtual ~DynamicSystemSolver();
 
       /* INHERITED INTERFACE OF GROUP */
       void init();
@@ -106,19 +104,19 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
-      virtual string getFullName() const { return name; }
-      virtual void load(const string &path, ifstream& inputfile); // TODO replace with XML
-      virtual void save(const string &path, ofstream& outputfile);
-      virtual string getType() const { return "MultiBodySystem"; }
-      virtual void plot(const Vec& z, double t, double dt=1); // TODO completely rearrange
+      virtual std::string getFullName() const { return name; }
+      virtual void load(const std::string &path, std::ifstream& inputfile); // TODO replace with XML
+      virtual void save(const std::string &path, std::ofstream& outputfile);
+      virtual std::string getType() const { return "DynamicSystemSolver"; }
+      virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
       virtual void closePlot();
       /***************************************************/
 
       /* INHERITED INTERFACE FOR DERIVED CLASS */
       /**
-       * \param multibody system to preintegrate
+       * \param dynamic system to preintegrate
        */
-      virtual void preInteg(MultiBodySystem *parent);
+      virtual void preInteg(DynamicSystemSolver *parent);
 
       /**
        * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
@@ -132,10 +130,10 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setAccelerationOfGravity(const Vec& g) { grav = g; }
-      const Vec& getAccelerationOfGravity() const { return grav; }
+      void setAccelerationOfGravity(const fmatvec::Vec& g) { grav = g; }
+      const fmatvec::Vec& getAccelerationOfGravity() const { return grav; }
 
-      void setProjectDirectory(const string &directoryName_) { directoryName = directoryName_; }
+      void setProjectDirectory(const std::string &directoryName_) { directoryName = directoryName_; }
       void setPreInteg(Integrator *preInteg_) { preIntegrator = preInteg_; }
 
       void setImpact(bool impact_) { impact = impact_; }
@@ -153,8 +151,8 @@ namespace MBSim {
       void setLinAlg(LinAlg linAlg_) { linAlg = linAlg_; }                         
 
       void setUseOldla(bool flag) { useOldla = flag; }
-      void setDecreaseLevels(const Vector<int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
-      void setCheckTermLevels(const Vector<int> &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
+      void setDecreaseLevels(const fmatvec::Vector<int> &decreaseLevels_) { decreaseLevels = decreaseLevels_; }
+      void setCheckTermLevels(const fmatvec::Vector<int> &checkTermLevels_) { checkTermLevels = checkTermLevels_; }
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
@@ -163,16 +161,16 @@ namespace MBSim {
       void setFluid(HydFluid *fl_) { fl=fl_; }
       HydFluid *getFluid(){ return fl; }  
 
-      const Matrix<Sparse, double>& getGs() const { return Gs; }
-      Matrix<Sparse, double>& getGs() { return Gs; }
-      const SqrMat& getG() const { return G; }
-      SqrMat& getG() { return G; }
-      const Vec& getb() const { return b; }
-      Vec& getb() { return b; }
-      const SqrMat& getJprox() const { return Jprox; }
-      SqrMat& getJprox() { return Jprox; }
+      const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
+      fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
+      const fmatvec::SqrMat& getG() const { return G; }
+      fmatvec::SqrMat& getG() { return G; }
+      const fmatvec::Vec& getb() const { return b; }
+      fmatvec::Vec& getb() { return b; }
+      const fmatvec::SqrMat& getJprox() const { return Jprox; }
+      fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      MultiBodySystem* getMultiBodySystem() { return this; }
+      DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
       /***************************************************/
 
@@ -187,7 +185,7 @@ namespace MBSim {
        * \param time step
        * \return velocity difference for current time 
        */
-      Vec deltau(const Vec &zParent, double t, double dt);
+      fmatvec::Vec deltau(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
        * \return position difference for current time 
@@ -195,7 +193,7 @@ namespace MBSim {
        * \param time
        * \param time step
        */
-      Vec deltaq(const Vec &zParent, double t, double dt);
+      fmatvec::Vec deltaq(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
        * \brief TODO
@@ -203,33 +201,33 @@ namespace MBSim {
        * \param time
        * \param time step
        */
-      Vec deltax(const Vec &zParent, double t, double dt);
+      fmatvec::Vec deltax(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
        * \brief initialises state variables
        */
-      void initz(Vec& z0);
+      void initz(fmatvec::Vec& z0);
 
       /**
        * \return successful flag for function pointer for election of prox-solver on acceleration level
        */
-      int (MultiBodySystem::*solveConstraints_)();
+      int (DynamicSystemSolver::*solveConstraints_)();
 
       /**
        * \return successful flag for function pointer for election of prox-solver on velocity level
        * \param time step
        */
-      int (MultiBodySystem::*solveImpacts_)(double dt);
+      int (DynamicSystemSolver::*solveImpacts_)(double dt);
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on acceleration level
-       * TODO subsystem?
+       * TODO dynamic system?
        */
       int solveConstraintsLinearEquations(); 
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on velocity level
-       * TODO subsystem?
+       * TODO dynamic system?
        */
       int solveImpactsLinearEquations(double dt = 0); 
 
@@ -245,11 +243,11 @@ namespace MBSim {
       void decreaserFactors();
 
       /**
-       * \brief update of multibody system for time-stepping integrator
+       * \brief update of dynamic system for time-stepping integrator
        * \param state
        * \param time
        */
-      void update(const Vec &z, double t);
+      void update(const fmatvec::Vec &z, double t);
 
       /**
        * \brief update for event driven integrator for event
@@ -257,7 +255,7 @@ namespace MBSim {
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual void shift(Vec& z, const Vector<int>& jsv, double t);
+      virtual void shift(fmatvec::Vec& z, const fmatvec::Vector<int>& jsv, double t);
 
       /**
        * \brief update for event driven integrator during smooth phase
@@ -265,7 +263,7 @@ namespace MBSim {
        * \param differentiated state (return)
        * \param time
        */
-      void zdot(const Vec& z, Vec& zd, double t);
+      void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
 
       /**
        * \brief evaluation of stop vector
@@ -273,14 +271,14 @@ namespace MBSim {
        * \param TODO
        * \param time
        */
-      void getsv(const Vec& z, Vec& svExt, double t);
+      void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
 
       /**
        * \brief update for event driven integrator during smooth phase
        * \param state
        * \param time
        */
-      Vec zdot(const Vec& z, double t) { return (this->*zdot_)(z,t); }
+      fmatvec::Vec zdot(const fmatvec::Vec& z, double t) { return (this->*zdot_)(z,t); }
 
       /**
        * \brief drift projection for positions
@@ -297,20 +295,20 @@ namespace MBSim {
       /**
        * save contact force parameter for use as starting value in next time step
        */
-      void savela(); // TODO put in subsystem 
+      void savela(); // TODO put in dynamic system 
 
       /**
        * load contact force parameter for use as starting value
        */
-      void initla(); // TODO put in subsystem
+      void initla(); // TODO put in dynamic system
 
       /** 
-       * \brief compute kinetic energy of entire multibodysystem
+       * \brief compute kinetic energy of entire dynamic system
        */
       double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
 
       /** 
-       * \brief compute potential energy of entire multibody system TODO change
+       * \brief compute potential energy of entire dynamic system TODO change
        */
       double computePotentialEnergy();
 
@@ -325,12 +323,12 @@ namespace MBSim {
        * \return the pointer to an element
        * TODO not activated
        */
-      Element* getElement(const string &name); 
+      Element* getElement(const std::string &name); 
 
       /**
        * \return information for solver including strategy and linear algebra
        */
-      string getSolverInfo();
+      std::string getSolverInfo();
 
       /**
        * \param specify whether time integration should be stopped in case of no convergence of constraint-problem
@@ -349,30 +347,30 @@ namespace MBSim {
       void initDataInterfaceBase();
 
       /**
-       * \param name of frame to find in multibody system
+       * \param name of frame to find in dynamic system
        * TODO concept
        */
-      Frame* findFrame( const string &name );
+      Frame* findFrame( const std::string &name );
       
       /**
-       * \param name of contour to find in multibody system
+       * \param name of contour to find in dynamic system
        *
        * TODO concept
        */
-      Contour* findContour( const string &name );
+      Contour* findContour( const std::string &name );
 
       /**
        * \param path of topology
-       * \return multibody system 
+       * \return dynamic system 
        */
-      static MultiBodySystem* load(const string &path);
+      static DynamicSystemSolver* load(const std::string &path);
       
       /**
-       * \brief save multibody system topology
+       * \brief save dynamic system topology
        * \param path of topology
-       * \param multibody system pointer
+       * \param dynamic system pointer
        */
-      static void save(const string &path, MultiBodySystem* mbs);
+      static void save(const std::string &path, DynamicSystemSolver* ds);
 
       /**
        * \brief handler for signals
@@ -381,7 +379,7 @@ namespace MBSim {
       static void sigTermHandler(int);
 
       // TODO necessary?
-      bool driftCompensation(Vec& z, double t) { return false; } 
+      bool driftCompensation(fmatvec::Vec& z, double t) { return false; } 
 
       // TODO just for testing
       void setPartialEventDrivenSolver(bool peds_) { peds = peds_; }
@@ -394,117 +392,117 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      SymMat MParent;
+      fmatvec::SymMat MParent;
       
       /**
        * \brief Cholesky decomposition of mass matrix
        */
-      SymMat LLMParent;
+      fmatvec::SymMat LLMParent;
 
       /**
        * \brief matrix of linear relation between differentiated positions and velocities
        */
-      Mat TParent;
+      fmatvec::Mat TParent;
 
       /**
        * \brief contact force directions
        */
-      Mat WParent;
+      fmatvec::Mat WParent;
 
       /**
        * \brief condensed contact force directions
        */
-      Mat VParent;
+      fmatvec::Mat VParent;
 
       /**
        * \brief TODO
        */
-      Vec wbParent;
+      fmatvec::Vec wbParent;
 
       /**
        * \brief contact force parameters
        */
-      Vec laParent;
+      fmatvec::Vec laParent;
 
       /**
        * \brief relaxation parameters for contact equations
        */
-      Vec rFactorParent;
+      fmatvec::Vec rFactorParent;
 
       /**
        * \brief TODO
        */
-      Vec sParent;
+      fmatvec::Vec sParent;
 
       /**
        * \brief residuum of contact equations
        */
-      Vec resParent;
+      fmatvec::Vec resParent;
 
       /**
        * \brief relative distances
        */
-      Vec gParent;
+      fmatvec::Vec gParent;
 
       /**
        * \brief relative velocities
        */
-      Vec gdParent;
+      fmatvec::Vec gdParent;
 
       /**
        * \brief differentiated state
        */
-      Vec zdParent;
+      fmatvec::Vec zdParent;
 
       /**
        * \brief smooth right hand side
        */
-      Vec hParent;
+      fmatvec::Vec hParent;
 
       /**
        * \brief nonsmooth right hand side
        */
-      Vec rParent;
+      fmatvec::Vec rParent;
 
       /**
        * \brief right hand side of order one parameters
        */
-      Vec fParent;
+      fmatvec::Vec fParent;
 
       /**
        * \brief stopvector (rootfunctions for event driven integration
        */
-      Vec svParent;
+      fmatvec::Vec svParent;
 
       /**
        * \brief boolean evaluation of stopvector
        */
-      Vector<int> jsvParent;
+      fmatvec::Vector<int> jsvParent;
       
       /** 
        * \brief gravitation common for all components
        */
-      Vec grav;
+      fmatvec::Vec grav;
 
       /**
        * \brief sparse mass action matrix
        */
-      Matrix<Sparse, double> Gs;
+      fmatvec::Matrix<fmatvec::Sparse, double> Gs;
 
       /**
        * \brief JACOBIAN of contact equations for Newton scheme
        */
-      SqrMat Jprox;
+      fmatvec::SqrMat Jprox;
 
       /**
        * \brief mass action matrix
        */
-      SqrMat G;
+      fmatvec::SqrMat G;
 
       /**
        * \brief TODO
        */
-      Vec b;
+      fmatvec::Vec b;
 
       /**
        * \brief boolean to check for termination of contact equations solution
@@ -559,12 +557,12 @@ namespace MBSim {
       /**
        * \brief decreasing relaxation factors is done in levels containing the number of contact iterations as condition
        */
-      Vector<int> decreaseLevels;
+      fmatvec::Vector<int> decreaseLevels;
 
       /**
        * \brief TODO
        */
-      Vector<int> checkTermLevels;
+      fmatvec::Vector<int> checkTermLevels;
 
       /**
        * \brief boolean if force action matrix should be resized in each step
@@ -584,7 +582,7 @@ namespace MBSim {
       /** 
        * \brief name of directory where output is processed
        */
-      string directoryName;
+      std::string directoryName;
       
       /**
        * \brief hydraulic fluid, only for hydraulic systems TODO
@@ -616,13 +614,13 @@ namespace MBSim {
        * \brief references to external state
        * \param external state
        */
-      void updatezRef(const Vec &ext);
+      void updatezRef(const fmatvec::Vec &ext);
 
       /**
        * \brief references to differentiated external state
        * \param differentiated external state
        */
-      void updatezdRef(const Vec &ext);
+      void updatezdRef(const fmatvec::Vec &ext);
       
       /**
        * \brief update relaxation factors for contact equations
@@ -643,21 +641,21 @@ namespace MBSim {
       /**
        * \brief function pointer for election of smooth update for event driven integrator
        */
-      Vec (MultiBodySystem::*zdot_)(const Vec &zParent, double t);
+      fmatvec::Vec (DynamicSystemSolver::*zdot_)(const fmatvec::Vec &zParent, double t);
 
       /**
        * \brief standard invocation of smooth update for event driven integration without inverse kinetics
        * \param state
        * \param time
        */
-      Vec zdotStandard(const Vec &zParent, double t);
+      fmatvec::Vec zdotStandard(const fmatvec::Vec &zParent, double t);
 
       /**
        * \brief invocation of smooth update for event driven integration with inverse kinetics
        * \param state
        * \param time
        */
-      Vec zdotResolveConstraints(const Vec &zParent, double t);
+      fmatvec::Vec zdotResolveConstraints(const fmatvec::Vec &zParent, double t);
 
     private:
       /**

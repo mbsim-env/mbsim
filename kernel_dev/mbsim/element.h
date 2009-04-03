@@ -32,9 +32,6 @@
 #include<fstream>
 #endif
 
-using namespace std;
-using namespace fmatvec;
-
 namespace H5 {
   class Group;
 }
@@ -51,10 +48,10 @@ namespace MBSim {
   };
 
   enum PlotFeature {
-    plotRecursive=0, separateFilePerSubsystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, amvis, LASTPLOTFEATURE
+    plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, amvis, LASTPLOTFEATURE
   };
 
-  class MultiBodySystem;
+  class DynamicSystemSolver;
 
   /** 
    * \brief basic class of MBSim mainly for plotting
@@ -66,7 +63,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */	
-      Element(const string &name);
+      Element(const std::string &name);
 
       /** 
        * \brief destructor
@@ -77,36 +74,36 @@ namespace MBSim {
       /**
        * \param element fullname DEPRECATED
        */
-      virtual void setFullName(const string &str) { fullName = str; }
+      virtual void setFullName(const std::string &str) { fullName = str; }
 
       /**
        * \brief load topology
        * \param path TODO
        * \param inputfile
        */
-      virtual void load(const string &path, ifstream &inputfile);
+      virtual void load(const std::string &path, std::ifstream &inputfile);
 
       /**
        * \brief save topology
        * \param path TODO
        * \param outputfile
        */
-      virtual void save(const string &path, ofstream &outputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
 
       /**
        * \brief TODO
        */
-      virtual void initDataInterfaceBase(MultiBodySystem *parentmbs) {};
+      virtual void initDataInterfaceBase(DynamicSystemSolver *parentds) {};
 
       /**
-       * \return string representation
+       * \return std::string representation
        */
-      virtual string getType() const { return "Element"; }
+      virtual std::string getType() const { return "Element"; }
 
       /**
        * \param TODO
        */
-      virtual void setMultiBodySystem(MultiBodySystem *sys) { mbs = sys; }
+      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys) { ds = sys; }
 
       /**
        * \brief plots time dependent data
@@ -125,33 +122,33 @@ namespace MBSim {
       /**
        * \return element name
        */
-      const string& getName() const { return name; }
+      const std::string& getName() const { return name; }
 
       /**
        * \param element name
        */
-      void setName(const string &str) { name = str; }
+      void setName(const std::string &str) { name = str; }
 
       /**
        * \return element fullname
        */
-      const string& getFullName() const { return fullName; }
+      const std::string& getFullName() const { return fullName; }
 
       /** 
        * \param input file
        * \return number of elements in topology of input file
        */
-      static int getNumberOfElements(ifstream &inputfile);
+      static int getNumberOfElements(std::ifstream &inputfile);
 
       /**
-       * \return multibody system
+       * \return dynamic system
        */
-      MultiBodySystem* getMultiBodySystem() { return mbs; }
+      DynamicSystemSolver* getDynamicSystemSolver() { return ds; }
 
       /**
        * \param name of data interface base
        */
-      void addDataInterfaceBaseRef(const string& DIBRef_);
+      void addDataInterfaceBaseRef(const std::string& DIBRef_);
 
       /**
        * \brief plots time series header
@@ -200,22 +197,22 @@ namespace MBSim {
       /** 
        * \brief name of element 
        */
-      string name;
+      std::string name;
 
       /** 
        * \brief fullname of element
        */
-      string fullName;
+      std::string fullName;
 
       /** 
        * \brief vector for data interface base references
        */
-      vector<string> DIBRefs;
+      std::vector<std::string> DIBRefs;
 
       /**
-       * \brief multibody system
+       * \brief dynamic system
        */
-      MultiBodySystem *mbs;
+      DynamicSystemSolver *ds;
 
       /**
        * \brief time series

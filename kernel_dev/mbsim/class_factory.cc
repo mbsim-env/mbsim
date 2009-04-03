@@ -27,8 +27,10 @@
 #include <mbsim/rigid_body.h>
 #include <mbsim/constitutive_laws.h>
 
+using namespace std;
+
 namespace MBSim {
-  Subsystem* ClassFactory::getSubsystem(const string &type) {
+  DynamicSystem* ClassFactory::getDynamicSystem(const string &type) {
     if(type == "Group")
       return new Group("NoName");
     else if(type == "Tree")

@@ -22,7 +22,7 @@
 #include <mbsim/flexible_body/flexible_body_1s_21_rcm.h>
 #include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
 #include <mbsim/mbsim_event.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/contour.h>
 
 #define FMATVEC_DEEP_COPY
@@ -31,6 +31,9 @@
 #include "elastic1s21rcm.h"
 using namespace AMVis;
 #endif
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 
@@ -201,7 +204,7 @@ namespace MBSim {
     }
 
     l0 = L/Elements;
-    Vec g = trans(frameParent->getOrientation()(0,0,2,1))*mbs->getAccelerationOfGravity();
+    Vec g = trans(frameParent->getOrientation()(0,0,2,1))*ds->getAccelerationOfGravity();
     for(int i=0;i<Elements;i++) {
       qElement.push_back(Vec(8,INIT,0.));
       uElement.push_back(Vec(8,INIT,0.));

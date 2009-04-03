@@ -12,7 +12,11 @@ using namespace AMVis;
 #include "amviscppinterface/objobject.h"
 #endif
 
-Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
+Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
 
   setProjectDirectory("plot");
 

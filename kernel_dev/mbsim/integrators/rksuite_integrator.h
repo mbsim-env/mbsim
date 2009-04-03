@@ -53,12 +53,12 @@ namespace MBSim {
 
       void setMethod(int method_) {method = method_;}
       void setrTol(double rTol_) {rTol = rTol_;}
-      void setThreshold(const Vec &thres_) {thres.resize() = thres_;}
-      void setThreshold(double thres_) {thres.resize() = Vec(1,INIT,thres_);}
+      void setThreshold(const fmatvec::Vec &thres_) {thres.resize() = thres_;}
+      void setThreshold(double thres_) {thres.resize() = fmatvec::Vec(1,fmatvec::INIT,thres_);}
       void setdt0(double dt0_) {dt0 = dt0_;}
 
 
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
 
   };
 

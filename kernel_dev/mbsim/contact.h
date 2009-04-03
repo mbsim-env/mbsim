@@ -44,7 +44,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contact
        */      
-      Contact(const string &name);
+      Contact(const std::string &name);
 
       /**
        * \brief destructor
@@ -64,16 +64,16 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      virtual void updateWRef(const Mat &ref, int j=0);
-      virtual void updateVRef(const Mat &ref, int j=0);
-      virtual void updatehRef(const Vec &ref, int j=0);
-      virtual void updatewbRef(const Vec &ref);
-      virtual void updatelaRef(const Vec& ref);
-      virtual void updategRef(const Vec& ref);
-      virtual void updategdRef(const Vec& ref);
-      virtual void updaterFactorRef(const Vec &ref);
-      virtual void updatesvRef(const Vec &ref);
-      virtual void updatejsvRef(const Vector<int> &ref);
+      virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
+      virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
+      virtual void updatehRef(const fmatvec::Vec &ref, int j=0);
+      virtual void updatewbRef(const fmatvec::Vec &ref);
+      virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updategRef(const fmatvec::Vec& ref);
+      virtual void updategdRef(const fmatvec::Vec& ref);
+      virtual void updaterFactorRef(const fmatvec::Vec &ref);
+      virtual void updatesvRef(const fmatvec::Vec &ref);
+      virtual void updatejsvRef(const fmatvec::Vector<int> &ref);
       virtual void calcxSize();
       virtual void calclaSize();
       virtual void calclaSizeForActiveg();
@@ -110,9 +110,9 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void load(const string& path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
-      virtual string getType() const { return "Contact"; }
+      virtual void load(const std::string& path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
+      virtual std::string getType() const { return "Contact"; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -151,57 +151,57 @@ namespace MBSim {
       /**
        * \brief vector of frames for definition of relative contact situation
        */
-      vector<ContourPointData*> cpData;
+      std::vector<ContourPointData*> cpData;
 
       /** 
        * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
        */
-      vector<unsigned int> gActive, gActive0;
+      std::vector<unsigned int> gActive, gActive0;
       
       /** 
        * \brief boolean vector symbolising activity of contacts on velocity level
        */
-      vector<unsigned int*> gdActive; 
+      std::vector<unsigned int*> gdActive; 
 
       /** 
        * \brief index for tangential directions in projection matrices
        */
-      Index iT;
+      fmatvec::Index iT;
 
       /**
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
-      Vec gdn, gdd;
+      fmatvec::Vec gdn, gdd;
 
       /**
        * \brief vectors of relative distance, velocity, velocity after impact in event driven scheme, acceleration in event driven scheme, force parameters, acceleration description with respect to contour parameters, stop vector, relaxation factors for possible contact points
        */
-      vector<Vec> gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
+      std::vector<fmatvec::Vec> gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
 
       /**
        * \brief boolean evaluation of stop vector for possible contact points
        */
-      vector<Vector<int> > jsvk;
+      std::vector<fmatvec::Vector<int> > jsvk;
       
       /**
        * \brief single-valued forces for possible contact points
        */
-      vector<Mat*> fF;
+      std::vector<fmatvec::Mat*> fF;
 
       /**
        * \brief set-valued forces for possible contact points
        */
-      vector<Vec*> WF;
+      std::vector<fmatvec::Vec*> WF;
 
       /**
        * \brief condensed and full force direction matrix for possible contact points
        */
-      vector<Mat*> Vk, Wk;
+      std::vector<fmatvec::Mat*> Vk, Wk;
 
       /**
        * \brief size and index of force parameters, relative distances, relative velocities, stop vector and relaxation factors for possible contact points
        */
-      vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
+      std::vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
   };
 
 }

@@ -22,6 +22,9 @@
 #include "circlesolid_line.h"
 #include "mbsim/contact.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   double computeAngleOnUnitSphere(const Vec& r) {

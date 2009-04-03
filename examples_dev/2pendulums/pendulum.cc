@@ -10,6 +10,10 @@ using namespace AMVis;
 #include <amviscppinterface/objobject.h>
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 
   double mStab = 0.2;
@@ -61,40 +65,40 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
 #endif
 
   if(1) {
-  stab2 = new RigidBody("Stab2");
-  WrOK(0) = lStab/2;
-  WrOK(2) = 0.006;
-  stab1->addFrame("P",WrOK-KrKS,A);
-  KrKS(0) = a2;
-  stab2->addFrame("R",-KrKS,A);
-  addObject(node,stab2);
-  stab2->setqSize(1);
-  stab2->setuSize(1);
-  stab2->setFrameOfReference(stab1->getFrame("P"));
-  stab2->setFrameForKinematics(stab2->getFrame("R"));
-  stab2->setMass(mStab);
-  Theta(2,2) = JStab;
-  stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
-  stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  stab2->setq0(Vec("[-1.6]"));
+    stab2 = new RigidBody("Stab2");
+    WrOK(0) = lStab/2;
+    WrOK(2) = 0.006;
+    stab1->addFrame("P",WrOK-KrKS,A);
+    KrKS(0) = a2;
+    stab2->addFrame("R",-KrKS,A);
+    addObject(node,stab2);
+    stab2->setqSize(1);
+    stab2->setuSize(1);
+    stab2->setFrameOfReference(stab1->getFrame("P"));
+    stab2->setFrameForKinematics(stab2->getFrame("R"));
+    stab2->setMass(mStab);
+    Theta(2,2) = JStab;
+    stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
+    stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+    stab2->setq0(Vec("[-1.6]"));
 
 #if HAVE_AMVIS
-  obj = new ObjObject(name+stab2->getName(),1,false);
-  obj->setObjFilename("objects/pendel2.obj");
-  stab2->setAMVisBody(obj);
-  obj->setScaleFactor(0.1*0.3);
-  obj -> setInitialRotation(0,0,M_PI/2);
-  obj->setCalculationOfNormals(3);
-  obj->setVertexEPS(1e-5);
-  obj-> setNormalEPS(1e-5);
-  obj-> setAngleEPS(M_PI*2/9);
+    obj = new ObjObject(name+stab2->getName(),1,false);
+    obj->setObjFilename("objects/pendel2.obj");
+    stab2->setAMVisBody(obj);
+    obj->setScaleFactor(0.1*0.3);
+    obj -> setInitialRotation(0,0,M_PI/2);
+    obj->setCalculationOfNormals(3);
+    obj->setVertexEPS(1e-5);
+    obj-> setNormalEPS(1e-5);
+    obj-> setAngleEPS(M_PI*2/9);
 #endif
 #if HAVE_AMVISCPPINTERFACE
-  AMVis::ObjObject* obj=new AMVis::ObjObject;
-  obj->setObjFileName("objects/pendel2.obj");
-  obj->setScaleFactor(0.1*0.3);
-  obj->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
-  stab2->setAMVisRigidBody(obj);
+    AMVis::ObjObject* obj=new AMVis::ObjObject;
+    obj->setObjFileName("objects/pendel2.obj");
+    obj->setScaleFactor(0.1*0.3);
+    obj->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+    stab2->setAMVisRigidBody(obj);
 #endif
   }
 

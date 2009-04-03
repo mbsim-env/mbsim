@@ -4,9 +4,8 @@
 #include "mbsim/tree.h"
 #include <string>
 
-
 namespace MBSim {
-class RigidBody;
+  class RigidBody;
 }
 
 using namespace std;
@@ -20,8 +19,8 @@ class Pendulum : public Tree {
 
     RigidBody* getRod1() {return stab1;}
     RigidBody* getRod2() {return stab2;}
-    
- 
+
 };
 
 #endif
+

@@ -24,6 +24,9 @@
 #include "mbsimControl/mectosignal.h"
 #include "mbsim/rigid_body.h"
 
+using namespace std;
+using namespace fmatvec;
+
 Vec PosInterface::operator()(double t)  { 
   return trans(JT)*port->getPosition();
 }

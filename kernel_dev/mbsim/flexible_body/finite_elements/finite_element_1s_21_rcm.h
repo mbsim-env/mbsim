@@ -25,7 +25,6 @@
 #include <mbsim/contour_pdata.h>
 #include <mbsim/mbsim_event.h>
 #include "fmatvec.h"
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -55,7 +54,7 @@ namespace MBSim {
        * \param bending stiffness
        * \param vector of gravitational acceleration
        */
-      FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, Vec g_);
+      FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, fmatvec::Vec g_);
 
       /**
        * \destructor
@@ -69,15 +68,15 @@ namespace MBSim {
       fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const { return Dhqp; }
       int getSizeOfPositions() const { return 8; }
       int getSizeOfVelocities() const { return 8; }
-      void computeEquationsOfMotion(const Vec& qElement, const Vec& qpElement);
-      double computeKineticEnergy(const Vec& qElement, const Vec& qpElement);
-      double computeGravitationalEnergy(const Vec& qElement);
-      double computeElasticEnergy(const Vec& qElement);
-      Vec computeTranslation(const Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslation): not implemented!"); }
-      SqrMat computeOrientation(const Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      Vec computeTranslationalVelocity (const Vec&q, const Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslationalVelocity): not implemented!"); }
-      Vec computeAngularVelocity(const Vec&q, const Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
+      void computeEquationsOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
+      double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
+      double computeGravitationalEnergy(const fmatvec::Vec& qElement);
+      double computeElasticEnergy(const fmatvec::Vec& qElement);
+      fmatvec::Vec computeTranslation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslation): not implemented!"); }
+      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+      fmatvec::Vec computeTranslationalVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslationalVelocity): not implemented!"); }
+      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -92,7 +91,7 @@ namespace MBSim {
        * \param contour point
        * \return positional beam state
        */
-      Vec LocateBeam(const Vec&q, const double &s);
+      fmatvec::Vec LocateBeam(const fmatvec::Vec&q, const double &s);
 
       /**
        * \param global positions
@@ -100,21 +99,21 @@ namespace MBSim {
        * \param contour point
        * \return beam state
        */
-      Vec StateBeam(const Vec&q, const Vec&u, const double &s);
+      fmatvec::Vec StateBeam(const fmatvec::Vec&q, const fmatvec::Vec&u, const double &s);
 
       /**
        * \param global positions
        * \param contour point
        * \return JACOBIAN of beam cross section position with respect to generalised position in global coordinates
        */
-      Mat JGeneralizedInternal(const Vec& qElement, const double& s);
+      fmatvec::Mat JGeneralizedInternal(const fmatvec::Vec& qElement, const double& s);
 
       /**
        * \param global positions
        * \param contour point
        * \return JACOBIAN of beam cross section position with respect to generalised position in local coordinates
        */
-      Mat JGeneralized (const Vec& qElement, const double& s);
+      fmatvec::Mat JGeneralized (const fmatvec::Vec& qElement, const double& s);
 
       /**
        * \param global positions
@@ -123,14 +122,14 @@ namespace MBSim {
        * \param TODO
        * \return derivative of JACOBIAN of beam cross section position with respect to generalised position in local coordinates
        */
-      Mat JpGeneralized(const Vec& qElement, const Vec& qpElement, const double& s,const double& sp);
+      fmatvec::Mat JpGeneralized(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const double& s,const double& sp);
 
       /**
        * \param global positions
        * \param global velocities
        * \return elongation, elongational velocity, cog position, cog velocity, bending angle sum, bending velocity sum
        */
-      Vec ElementData(Vec qElement, Vec qpElement);
+      fmatvec::Vec ElementData(fmatvec::Vec qElement, fmatvec::Vec qpElement);
 
     protected:
       /** 
@@ -151,27 +150,27 @@ namespace MBSim {
       /**
        * \brief gravitation
        */
-      Vec g;
+      fmatvec::Vec g;
 
       /**
        * \brief mass matrix
        */
-      SymMat M;
+      fmatvec::SymMat M;
 
       /**
        * \brief right hand side
        */
-      Vec h;
+      fmatvec::Vec h;
 
       /**
        * \brief derivative of right hand side with respect to positions and velocities
        */
-      SqrMat Dhq, Dhqp;
+      fmatvec::SqrMat Dhq, Dhqp;
 
       /**
        * \brief damping matrix
        */
-      SqrMat Damp;
+      fmatvec::SqrMat Damp;
 
       /**
        * \brief FLAG for implicit integration
@@ -184,14 +183,14 @@ namespace MBSim {
        * \param global coordinates
        * \param local coordinates
        */
-      void BuildqLocal(const Vec& qGlobal, Vec& qLocal);
+      void BuildqLocal(const fmatvec::Vec& qGlobal, fmatvec::Vec& qLocal);
 
       /**
        * \brief calculates the JACOBIAN of transformation
        * \param local beam coordinates
        * \param JACOBIAN ot transformation
        */
-      void BuildJacobi(const Vec& qLocal, SqrMat& Jeg);
+      void BuildJacobi(const fmatvec::Vec& qLocal, fmatvec::SqrMat& Jeg);
 
       /**
        * \brief calculates the JACOBIAN of transformation and its time derivative 
@@ -200,7 +199,7 @@ namespace MBSim {
        * \param JACOBIAN of transformation
        * \param time derivative of JACOBIAN of transformation
        */
-      void BuildJacobi(const Vec& qLocal, const Vec& qpIntern, SqrMat& Jeg, SqrMat& Jegp);
+      void BuildJacobi(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpIntern, fmatvec::SqrMat& Jeg, fmatvec::SqrMat& Jegp);
 
       /** 
        * \param local positions
@@ -209,7 +208,7 @@ namespace MBSim {
        * \param flag to calculate velocities
        * \return beam state
        */
-      Vec LocateLocalBeam(const Vec& qLocal, const Vec& qpLocal, const double& s, const bool calcAll=true);
+      fmatvec::Vec LocateLocalBeam(const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const double& s, const bool calcAll=true);
 
       /**
        * \param global positions
@@ -222,7 +221,7 @@ namespace MBSim {
        * \param local right hand side
        * \return JACOBIAN for implicit integration
        */
-      Mat hFullJacobi(const Vec& qElement, const Vec& qpElement, const Vec& qLocal, const Vec& qpLocal, const SqrMat& Jeg, const SqrMat& Jegp, const SymMat& MLocal, const Vec& hIntermediate);
+      fmatvec::Mat hFullJacobi(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, const fmatvec::Vec& qLocal, const fmatvec::Vec& qpLocal, const fmatvec::SqrMat& Jeg, const fmatvec::SqrMat& Jegp, const fmatvec::SymMat& MLocal, const fmatvec::Vec& hIntermediate);
 
       /**
        * \brief powers of the beam length

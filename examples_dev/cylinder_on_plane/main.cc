@@ -26,7 +26,7 @@ int main (int argc, char* argv[]) {
   is.getline(dummy,10000);
   is.close();
 
-  MultiBodySystem *sys = new System("TS");
+  DynamicSystemSolver *sys = new System("TS");
 
   sys->init();
 

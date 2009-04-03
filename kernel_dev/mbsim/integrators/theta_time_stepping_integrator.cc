@@ -23,7 +23,7 @@
 
 #include <config.h>
 #include "theta_time_stepping_integrator.h"
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 
 #include <mbsim/utils/eps.h>
 #include <cmath>
@@ -39,7 +39,7 @@ namespace MBSim {
   ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), driftCompensation(false) {
   }
 
-  void ThetaTimeSteppingIntegrator::integrate(MultiBodySystem& system) {
+  void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
     assert(dtPlot >= dt);
 
     double t0 = 0.0;

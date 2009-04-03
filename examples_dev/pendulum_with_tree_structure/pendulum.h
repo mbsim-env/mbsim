@@ -1,19 +1,13 @@
 #ifndef _PENDULUM_H
 #define _PENDULUM_H
 
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-
-using namespace std;
-using namespace MBSim;
-
-class Pendulum : public MultiBodySystem {
-  private:
+class Pendulum : public MBSim::DynamicSystemSolver {
   public:
-    Pendulum(const string &projectName); 
-    
- 
+    Pendulum(const std::string &projectName); 
 };
 
 #endif
+
