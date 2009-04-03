@@ -153,7 +153,12 @@ The \HDF wrapper is available by
 \begin{verbatim}
  svn checkout http://svn.berlios.de/svnroot/repos/hdf5serie/trunk HDF5Serie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/HDF5Series}.
+as well as the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/HDF5Series}. Last, \texttt{.bashrc} can be extended with
+\begin{verbatim}
+alias h5lsserie="MBSim/HDF5Serie/hdf5serie/dump/h5lsserie"
+alias h5dumpserie="MBSim/HDF5Serie/hdf5serie/dump/h5dumpserie"
+\end{verbatim}
+to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpserie}.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
@@ -183,5 +188,8 @@ in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, conf
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim Examples}
-The usage of the examples is explained by means of the double pendulum. At the moment this is a test for successful installation.\\
-In the directory~\texttt{MBSim/mbsim/examples/pendulum} one creates an executable by typing \texttt{make}. Then the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{amvis}.
+The examples are used for testing successful installation. There are two possibilities:
+\begin{enumerate}
+\item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{amvis} and plotted with the commands from section~\ref{sec:plot}.
+\item Use the script \texttt{./runexamples.sh} in the upmost examples directory even to compare with reference data. See \texttt{./runexamples.sh -h} for the syntax. The \HDF{} executables must be available in the search path.
+\end{enumerate}
