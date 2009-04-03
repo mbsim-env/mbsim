@@ -100,14 +100,20 @@
 %\end{enumerate}
 
 %%------------------------------------------------------------ SUBSECTION --
-\subsection{Plot Routines}
+\subsection{Plot Routines}\label{sec:plot}
 
 \subsubsection{Usage}
 For getting data from \MBSim{} a \HDF{} wrapper is used. Viewing the multibody system parts can be done with
 \begin{verbatim}
     h5lsserie <h5-file>
 \end{verbatim}
-Several possible options are explained by typing \texttt{-h}. The specific names in \HDF{} format are specialised by reading from right to left. The url to specific data is given by a path and can be used in
+Several possible options are explained by typing \texttt{-h}:
+\begin{enumerate}
+\item[\texttt{-d}] shows the description of the data to plot\\
+\item[\texttt{-l}] shows the column labels of the data to plot\\
+\item[\texttt{-f}] follows external links in a set of \HDF{}-files to avoid redundant data (\HDF{} is possible per DynamicSystem)
+\end{enumerate}
+The specific names in \HDF{} format are specialised by reading from right to left. The url to specific data is given by a path and can be used in
 \begin{verbatim}
     h5dumpserie <path>
 \end{verbatim}
@@ -121,5 +127,5 @@ or in \textsf{MatLab} by
 \end{verbatim}
 
 \subsubsection{Implementation}
-In \MBSim{} plotting is done using \texttt{plotFeatures} being defined in \texttt{element.h}. The FLAG \texttt{top} is used for defining the order of plot invocations. One plot-file comprises time-series of rowvectors with the same data type in all entries.
+In \MBSim{} plotting is done using \texttt{plotFeatures} being defined in \texttt{element.h} and set in \texttt{multi\_body\_system.cc}. One plot-file comprises time-series of rowvectors with the same data type in all entries.
 
