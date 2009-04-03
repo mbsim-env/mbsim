@@ -1,4 +1,65 @@
-\section{Components}
+\section{\MBSim - Program Overview}
+\MBSim{} is written in the object-orientated programming language C++. 
+
+Fig.~\ref{fig:objects} shows a class diagram.
+\begin{figure}
+	\centering
+  	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} % TODO
+  	\caption{object structure in \MBSim}
+  	\label{fig:objects}
+\end{figure}
+
+\subsection{Description of the Components}
+
+\subsection{Program Flow}
+Conceptionally the program flow is defined by the election of the integration scheme.
+
+\subsubsection{Timestepping Integration}
+Timestepping integration solves the whole equations of the system including the contacts on velocity level with fixed time step size. In detail one has the following work flow.
+\begin{enumerate}
+\item $\text{\texttt{DSS::plot}}\left(t,\vq,\vu\right)$
+\item $\vq\leftarrow\vq+\text{\texttt{DS::deltaq}}\left(t,\vq,\vu\right)$
+\item $t\leftarrow t+\Delta t$
+\item $\text{\texttt{DSS::update}}\left(t,\vq,\vu\right)$
+    \begin{enumerate}
+    \item \texttt{DSS::updateStateDependentVariables}\\
+      update variables depending on the generalised state of the system and the structure of one independent group and several trees
+    \item \texttt{DSS::updateg}\\
+      update of the relative position kinematics independent of the object structure\\
+      \texttt{Link} $\rightarrow$ \texttt{Joint}, \texttt{Contact} $\rightarrow$ \texttt{ContactKinematics}\\
+      several contacts points are possible from the kinematical point of view, whereby the maximum number is calculated in \texttt{ContactKinematics}\\
+      convention: in the contact cartesian frame matrix the first column is the outpointing normal, the second column sign is different for the two contacting bodies 
+    \end{enumerate}
+\item $\text{\texttt{DSS::solveImpacts}}\left(t,\vq,\vu\right)$
+\item $\vu\leftarrow\vu+\text{\texttt{DSS::deltau}}$
+\item $\vx\leftarrow\vx+\text{\texttt{DSS::deltax}}$
+\item \texttt{DSS::projectGeneralizedPositions}
+\end{enumerate}
+
+\subsubsection{Event-Driven Integration}
+
+%exemplarisch ein System aus Umwelt und zwei Körpern. Angedeutet sind Wechselwirkungen
+%dieser untereinander über Kontakte und Verbindungen sowie eine äußere Last.
+%
+%Ein Körper~(\texttt{Body...}) ist in \MBSim{} durch seine Lagen~$\vq$ und
+%Geschwindigkeiten~$\vu$ parametrisiert. Die Parameter der beschreibenden
+%Differentialgleichung sind bei starren Körpern~(\texttt{BodyRigid...}) immer Masse~$m$ und
+%Tragheitstensor~$\vTheta$. Die Modelle für flexible Körper~(\texttt{Bodyflexible...}) sind in der
+%Parametrisierung jeweils sehr speziell -- für sie sei auf die jeweiligen Implementierungen
+%und die zugehörigen Dokumentationen verwiesen.
+%
+%Die Umwelt kann wie auch alle Körper Konturen~(\texttt{Contour}) sowie
+%Anschlüsse~(\texttt{Port}) aufnehmen, auf denen Kontakte sowie diskrete Wechselwirkungen
+%definiert werden können. Zudem ist Gravitation über die Umwelt definiert.
+%
+%Kontakte zwischen den Konturen unterschiedlicher Körper können sowohl als
+%Starrkörperkontakt~(\texttt{ContactRigid}, mengenwertig, nicht-glatte Dynamik) als auch
+%als nachgiebiger Kontakt~(\texttt{ContactFlexible}, funktional, lokale Steifigkeit)
+%definiert werden. Reibung wird hierbei jeweils durch die Angabe der auszuwertenden
+%Reibrichtungen eingebunden. Verbindungen zwischen zwei Anschlüssen können sowohl starr
+%(\texttt{ConnectionRigid}) als auch mit Nachgiebigkeit~(\texttt{ConnectionFlexible})
+%modelliert werden. Für äussere Lasten~(\texttt{Load}) können beliebige Vorschriften
+%angegeben werden.
 %%------------------------------------------------------------ SUBSECTION --
 %\subsection{M\"oglichkeiten der Modellierung}
 %Bei der Modellierung in \MBSim{} kann auf folgende Klassen des Kernes
