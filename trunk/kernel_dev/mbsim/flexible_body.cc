@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include <mbsim/flexible_body.h>
-#include <mbsim/subsystem.h>
+#include <mbsim/dynamic_system.h>
 #include <mbsim/frame.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
@@ -29,6 +29,9 @@
 #include "elastic.h"
 using namespace AMVis;
 #endif
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 

@@ -37,41 +37,41 @@ class SPSys : public ExtraDynamicInterface {
   protected:
     SignalSPSys *Signal;
     double talt; // Variable um letzten Update Zeitpunkt zu merken  
-    string modus; //String Variable, fuer Betriebsarteintrag in Plot File des Objekts 
+    std::string modus; //String Variable, fuer Betriebsarteintrag in Plot File des Objekts 
     // Container & Vars fuer Inputfunktionen Anfang
-    vector<DataInterfaceBase*> SigInputs;
-    vector<Frame*> PositionInputs;
-    vector<Frame*> VInputs;
-    Vec kTF,kPos,kVin;
-    vector<int> xyzVin;
-    vector<int> xyzPos;	
+    std::vector<DataInterfaceBase*> SigInputs;
+    std::vector<Frame*> PositionInputs;
+    std::vector<Frame*> VInputs;
+    fmatvec::Vec kTF,kPos,kVin;
+    std::vector<int> xyzVin;
+    std::vector<int> xyzPos;	
     int NumberofInputs;
     int DGL_INPUT_DIMENSION;
-    Vec (SPSys::*Uin)(double); //Zeiger auf Inputfunktionen
-    virtual Vec SingleUF(double t);
-    virtual Vec SinglePosition(double t);
-    virtual Vec SingleVelocity(double t);
-    virtual Vec MultiInputs_SI(double t); // SI = Single Input
-    virtual Vec MultiInputs_MI(double t); // MI = Many Inputs
-    Vec InputDummie(double t);
-    Vec NoInput(double t);
+    fmatvec::Vec (SPSys::*Uin)(double); //Zeiger auf Inputfunktionen
+    virtual fmatvec::Vec SingleUF(double t);
+    virtual fmatvec::Vec SinglePosition(double t);
+    virtual fmatvec::Vec SingleVelocity(double t);
+    virtual fmatvec::Vec MultiInputs_SI(double t); // SI = Single Input
+    virtual fmatvec::Vec MultiInputs_MI(double t); // MI = Many Inputs
+    fmatvec::Vec InputDummie(double t);
+    fmatvec::Vec NoInput(double t);
     bool Single_Input; // Bool entscheidet ob MultiInputs_SI oder MultiInputs_MI verwendet wird
  
     // Container & Vars fuer Inputfunktionen Ende
     // Test Funktionen
     bool Testgesetzt;
-    Vec Step(double t);
-    Vec Sine(double t);
-    Vec RampDXDT(double t);
-    Vec Parabel(double t);
-    Vec Puls(double t);
+    fmatvec::Vec Step(double t);
+    fmatvec::Vec Sine(double t);
+    fmatvec::Vec RampDXDT(double t);
+    fmatvec::Vec Parabel(double t);
+    fmatvec::Vec Puls(double t);
     // Ende Test Funktionsgeneratoren
     double Hz;
     double dxdt;
 
   public:
 
-    SPSys(const string &name);
+    SPSys(const std::string &name);
     void setInSignalnWeight(SPSys *In_,double wichtung);
     void setInSignalnWeight(DataInterfaceBase *In_,double wichtung);
     void setInPositionnWeight(Frame *Inport,char XYZ,double wichtung);
@@ -86,7 +86,7 @@ class SPSys : public ExtraDynamicInterface {
     void TestParabel();
     void TestPulsMode();
 
-    Vec operator()(double Zeit);
+    fmatvec::Vec operator()(double Zeit);
     SignalSPSys* SigOut(){return Signal;} 
 };
 

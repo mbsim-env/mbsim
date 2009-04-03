@@ -23,7 +23,7 @@
 #define FMATVEC_DEEP_COPY
 #include "body_flexible_1s_01_torsion.h"
 #include "port.h"
-#include "multi_body_system.h"
+#include "dynamic_system_solver.h"
 #include "contact_flexible.h"
 #include "contact_rigid.h"
 #include "contour.h"

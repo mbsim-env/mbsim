@@ -24,6 +24,8 @@
 #include <mbsim/functions_contact.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   void Contact1sSearch::setEqualSpacing(const int &n, const double &x0, const double &dx)

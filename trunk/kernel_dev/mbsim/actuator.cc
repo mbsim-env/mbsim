@@ -22,8 +22,11 @@
 #include <config.h>
 #include <mbsim/actuator.h>
 #include <mbsim/data_interface_base.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/frame.h>
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 
@@ -96,9 +99,9 @@ namespace MBSim {
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
   }
 
-  void Actuator::initDataInterfaceBase(MultiBodySystem *parentmbs) {
+  void Actuator::initDataInterfaceBase(DynamicSystemSolver *parentds) {
     if(DIBRefs.size()==1){
-      DataInterfaceBase* in_=parentmbs->getDataInterfaceBase(DIBRefs[0]); 
+      DataInterfaceBase* in_=parentds->getDataInterfaceBase(DIBRefs[0]); 
       setSignal(in_); 
     }
   }

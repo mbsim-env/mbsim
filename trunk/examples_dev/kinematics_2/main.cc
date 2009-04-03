@@ -7,11 +7,11 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
-  MultiBodySystem *sys = new System("TS");
+  DynamicSystemSolver *sys = new System("TS");
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->init();
-  
+
   // LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;
   // RADAU5Integrator integrator;

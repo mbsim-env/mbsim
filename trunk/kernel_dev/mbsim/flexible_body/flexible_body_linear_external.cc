@@ -24,7 +24,10 @@
 #include "mbsim/flexible_body/finite_elements/superelement_linear_external.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 

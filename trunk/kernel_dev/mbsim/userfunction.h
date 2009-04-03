@@ -32,8 +32,6 @@
 #include <vector>
 #include <mbsim/data_interface_base.h>
 
-using namespace fmatvec;
-
 namespace MBSim {
   class PPolynom;
 
@@ -47,11 +45,11 @@ namespace MBSim {
     public:
       UserFunction() : delta(epsroot()), sqrtdelta(sqrt(delta)) {}
       virtual ~UserFunction() {}
-      virtual Vec operator()(double t) = 0; 
-      virtual Vec diff1(double t) { 
+      virtual fmatvec::Vec operator()(double t) = 0; 
+      virtual fmatvec::Vec diff1(double t) { 
 	return (operator()(t+delta)-operator()(t-delta))/(2.0*delta);
       } 
-      virtual Vec diff2(double t) {
+      virtual fmatvec::Vec diff2(double t) {
 	return (operator()(t+sqrtdelta)+operator()(t-sqrtdelta)-2*operator()(t))/(sqrtdelta*sqrtdelta);
       }; 
   };
@@ -60,28 +58,28 @@ namespace MBSim {
 
   class FuncTable : public UserFunction {
     protected:
-      Mat table;
+      fmatvec::Mat table;
       int oldi;
     public:
       FuncTable() {oldi=0;}
       ~FuncTable() {}
-      Vec operator()(double alpha) ; 
-      // Vec diff1(double alpha) ; 
-      // Vec diff2(double alpha) ; 
-      void setTable(const Mat &tab) {table = tab;}
-      void setXY(const Vec& X,const Mat& Y);
+      fmatvec::Vec operator()(double alpha) ; 
+      // fmatvec::Vec diff1(double alpha) ; 
+      // fmatvec::Vec diff2(double alpha) ; 
+      void setTable(const fmatvec::Mat &tab) {table = tab;}
+      void setXY(const fmatvec::Vec& X,const fmatvec::Mat& Y);
       void setFile(const std::string &filename); 
   };
 
   class FuncTablePer : public UserFunction {
     protected:
-      Mat table;
+      fmatvec::Mat table;
     public:
       FuncTablePer() {}
       ~FuncTablePer() {}
-      Vec operator()(double alpha) ; 
-      // Vec diff1(double alpha) ; 
-      // Vec diff2(double alpha) ; 
+      fmatvec::Vec operator()(double alpha) ; 
+      // fmatvec::Vec diff1(double alpha) ; 
+      // fmatvec::Vec diff2(double alpha) ; 
 
       void setFile(const std::string &filename); 
   };
@@ -97,39 +95,39 @@ namespace MBSim {
       ~FuncSum();
       void addInput(DataInterfaceBase* func_,double c_,int dim);
       void addInput(DataInterfaceBase* func_,double c_=1);
-      Vec operator()(double x) ;      
+      fmatvec::Vec operator()(double x) ;      
   };
   class FuncConst : public UserFunction {
     protected:
-      Vec c;
+      fmatvec::Vec c;
     public:
-      FuncConst(const Vec& c_);
-      Vec operator()(double x) {return c;} 
+      FuncConst(const fmatvec::Vec& c_);
+      fmatvec::Vec operator()(double x) {return c;} 
   };
   class FuncLinear : public UserFunction {
     protected:
-      Vec a,b;
+      fmatvec::Vec a,b;
     public:
-      FuncLinear(const Vec& a_,const Vec& b_);
-      Vec operator()(double x) {return a*x+b;} 
+      FuncLinear(const fmatvec::Vec& a_,const fmatvec::Vec& b_);
+      fmatvec::Vec operator()(double x) {return a*x+b;} 
   };  
   class FuncHarmonic : public UserFunction {
     protected:
-      Vec A,offset;
+      fmatvec::Vec A,offset;
       double om, phi;
     public:
-      FuncHarmonic(const Vec& A_,double om_, double phi_, const Vec& offset_) {A=A_; om=om_; phi=phi_; offset=offset_;}
-      Vec operator()(double x) {return A*sin(om*x+phi)+offset;} 
+      FuncHarmonic(const fmatvec::Vec& A_,double om_, double phi_, const fmatvec::Vec& offset_) {A=A_; om=om_; phi=phi_; offset=offset_;}
+      fmatvec::Vec operator()(double x) {return A*sin(om*x+phi)+offset;} 
   };  
   class FuncGainOffset : public UserFunction {
     protected:
       double a;
-      Vec b;
+      fmatvec::Vec b;
       DataInterfaceBase *f;
     public:
       /** gain*(f(x)+offset)*/
-      FuncGainOffset(DataInterfaceBase *f_,double gain_,const Vec& offset_);
-      Vec operator()(double x) {return a*((*f)(x)+b);} 
+      FuncGainOffset(DataInterfaceBase *f_,double gain_,const fmatvec::Vec& offset_);
+      fmatvec::Vec operator()(double x) {return a*((*f)(x)+b);} 
   };  
   class FuncFunction : public UserFunction {
     protected:
@@ -139,7 +137,7 @@ namespace MBSim {
       /** f(g(x)) nur für skalare Funktionen g(x) TODO, unsauber!!!
       */
       FuncFunction(UserFunction *f_, DataInterfaceBase *g_);
-      Vec operator()(double x) {return (*f)(((*g)(x))(0));} 
+      fmatvec::Vec operator()(double x) {return (*f)(((*g)(x))(0));} 
   };
  
 }

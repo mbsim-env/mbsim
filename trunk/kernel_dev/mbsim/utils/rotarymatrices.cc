@@ -23,6 +23,8 @@
 #include "rotarymatrices.h"
 #include <cmath>
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   // Wie im TMKernfach Skript

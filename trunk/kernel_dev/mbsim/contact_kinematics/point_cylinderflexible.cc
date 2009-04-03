@@ -23,6 +23,9 @@
 #include <mbsim/contour.h>
 #include <mbsim/functions_contact.h>
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   ContactKinematicsPointCylinderFlexible::~ContactKinematicsPointCylinderFlexible() {

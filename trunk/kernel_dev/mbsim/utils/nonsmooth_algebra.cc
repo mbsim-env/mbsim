@@ -22,6 +22,8 @@
 #include <config.h>
 #include "nonsmooth_algebra.h"
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   double proxCN(double arg) {

@@ -14,14 +14,18 @@ using namespace AMVis;
 #include <amviscppinterface/invisiblebody.h>
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 extern bool rigidContact;
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
- // Gravitation
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+  // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
- // Parameters
+  // Parameters
   double l = 0.8;              		
   double h =  0.02;
   double d = 0.1;
@@ -43,7 +47,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
   body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
- // Initial translation and rotation
+  // Initial translation and rotation
   Vec q0(3);
   q0(1) = .3;
   body->setq0(q0);

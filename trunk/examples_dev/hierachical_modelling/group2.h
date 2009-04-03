@@ -4,18 +4,10 @@
 #include "mbsim/group.h"
 #include <string>
 
-
-namespace MBSim {
-//class RigidBody;
-}
-
-using namespace std;
-using namespace MBSim;
-
-class Group2 : public Group {
- private:
+class Group2 : public MBSim::Group {
   public:
-    Group2(const string &projectName); 
+    Group2(const std::string &projectName); 
 };
 
 #endif
+

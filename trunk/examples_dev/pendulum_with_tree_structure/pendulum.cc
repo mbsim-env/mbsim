@@ -11,7 +11,11 @@ using namespace AMVis;
 #include "amviscppinterface/objobject.h"
 #endif
 
-Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
+Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
 
   setProjectDirectory("plot");
 
@@ -20,7 +24,7 @@ Pendulum::Pendulum(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree *tree = new Tree("Baum"); 
-  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
 
   double mStab = 0.2;
   double lStab = 0.3;

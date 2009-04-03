@@ -26,6 +26,7 @@
 #include "mbsim/flexible_body/finite_elements/superelement_linear_external.h"
 #include <fstream>
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
   //-------------------------------------------------------------------------

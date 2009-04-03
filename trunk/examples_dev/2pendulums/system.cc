@@ -2,7 +2,11 @@
 #include "mbsim/rigid_body.h"
 #include "pendulum.h"
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   setProjectDirectory("plot");
 
@@ -11,10 +15,10 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree* tree = new Tree("Master");
-  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
 
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
-  Node* node = tree->addSubsystem(0,pendel1,Vec(3),SqrMat(3,EYE));
+  Node* node = tree->addDynamicSystem(0,pendel1,Vec(3),SqrMat(3,EYE));
 
   Vec x(3);
   x(0) = 0.15;
@@ -26,7 +30,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   pendel1->getRod2()->addFrame("P",x,A,pendel1->getRod2()->getFrame("R"));
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
-  tree->addSubsystem(node,pendel2,Vec(3),SqrMat(3,EYE));
+  tree->addDynamicSystem(node,pendel2,Vec(3),SqrMat(3,EYE));
   pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getFrame("P"));
 }
 

@@ -12,8 +12,12 @@ using namespace AMVis;
 #include <amviscppinterface/cuboid.h>
 #endif
 
+using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+
 Group2::Group2(const string &name) : Group(name) {
- // Parameter der Körper
+  // Parameter der Körper
   double m1 = 5;
   double m2 = 2;
   SymMat Theta1(3,EYE);
@@ -33,7 +37,7 @@ Group2::Group2(const string &name) : Group(name) {
   RigidBody *box1 = new RigidBody("Box1");
   box1->setPlotFeature(globalPosition, enabled);
   addObject(box1);
- 
+
   // Masse und Trägheit definieren
   box1->setMass(m1);
   box1->setInertiaTensor(Theta1);
@@ -55,17 +59,17 @@ Group2::Group2(const string &name) : Group(name) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  addSubsystem(group,r,A);
+  addDynamicSystem(group,r,A);
 
 
 #ifdef HAVE_AMVIS
   {
-  ostringstream os;
-  os <<name<< "." << box1->getName();
-  Cube * cuboid = new Cube(os.str(),1,false);
-  cuboid->setLength(h1);
-  cuboid->setColor(0.5);
-  box1->setAMVisBody(cuboid);
+    ostringstream os;
+    os <<name<< "." << box1->getName();
+    Cube * cuboid = new Cube(os.str(),1,false);
+    cuboid->setLength(h1);
+    cuboid->setColor(0.5);
+    box1->setAMVisBody(cuboid);
   }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE

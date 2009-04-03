@@ -24,6 +24,7 @@
 #include "utils/nonsmooth_algebra.h"
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 

@@ -36,7 +36,7 @@ class NLTransferSys : public SPSys {
     virtual Vec SystemOutput(double t,Vec U);
     double MaxLimit,MinLimit;
   public:   
-    NLTransferSys(const string& name);
+    NLTransferSys(const std::string& name);
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateStage1(double t);
@@ -47,7 +47,7 @@ class NLTransferSys : public SPSys {
     void activateDynamics();
     void setxNull(Vec xNull_){xNull=xNull_;}
 
-    virtual string getType() const {return "NLTransferSys";}
+    virtual std::string getType() const {return "NLTransferSys";}
     
     // UserFunction* SigU(){return TFOutputSignal;} 
     

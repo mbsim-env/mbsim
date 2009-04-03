@@ -23,8 +23,6 @@
 #include "mbsim/frame.h"
 #include <vector>
 
-using namespace fmatvec;
-using namespace std;
 
 namespace MBSim {
 
@@ -55,12 +53,12 @@ namespace MBSim {
       const ContourParameterType& getContourParameterType() const { return type; }
       int& getNodeNumber() { return ID; }
       const int& getNodeNumber() const { return ID; }
-      Vec& getLagrangeParameterPosition() { return alpha; }
-      const Vec& getLagrangeParameterPosition() const { return alpha; }
-      Vec& getLagrangeParameterVelocity() { return alphap; }
-      const Vec& getLagrangeParameterVelocity() const { return alphap; }
-      Vec& getInterpolationWeights() { return iWeights; }
-      const Vec& getInterpolationWeights() const { return iWeights; }
+      fmatvec::Vec& getLagrangeParameterPosition() { return alpha; }
+      const fmatvec::Vec& getLagrangeParameterPosition() const { return alpha; }
+      fmatvec::Vec& getLagrangeParameterVelocity() { return alphap; }
+      const fmatvec::Vec& getLagrangeParameterVelocity() const { return alphap; }
+      fmatvec::Vec& getInterpolationWeights() { return iWeights; }
+      const fmatvec::Vec& getInterpolationWeights() const { return iWeights; }
       Frame& getFrameOfReference() { return cosy; }
       const Frame& getFrameOfReference() const { return cosy; }
       /***************************************************/
@@ -79,24 +77,24 @@ namespace MBSim {
       /**
        * \brief contour parameter(s)
        */
-      Vec alpha;
+      fmatvec::Vec alpha;
 
       /**
        * \brief contour parameter(s) velocities
        */
-      Vec alphap;
+      fmatvec::Vec alphap;
 
       /** 
        * \brief interpolation weights
        */
-      Vec iWeights;
+      fmatvec::Vec iWeights;
 
       /**
        * \brief list of nodes used in interpolation
        *
        * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
        */
-      vector<Point*> iPoints;
+      std::vector<Point*> iPoints;
 
       /**
        * \brief accompanying frame

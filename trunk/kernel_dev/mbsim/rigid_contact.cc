@@ -23,7 +23,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 #include <mbsim/rigid_contact.h>
 #include "utils/nonsmooth_algebra.h"
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/class_factory.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>

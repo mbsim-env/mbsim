@@ -27,6 +27,9 @@
 #include <mbsim/functions_contact.h>
 #include <mbsim/utils/nonlinear_algebra.h>
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsPointContourInterpolation::assignContours(const vector<Contour*> &contour) {

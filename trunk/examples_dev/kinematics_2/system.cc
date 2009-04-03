@@ -12,6 +12,10 @@
 #include <amviscppinterface/cuboid.h>
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 class Moment : public UserFunction {
   public:
     Vec operator()(double t) {
@@ -24,15 +28,15 @@ class Moment : public UserFunction {
 };
 
 class MyPos : public Translation {
-    public:
-      int getqSize() const {return 1;} 
-      Vec operator()(const Vec &q, double t) {
-	Vec PrPK(3);
-	PrPK(0) = cos(q(0));
-	PrPK(1) = sin(q(0));
-	return PrPK;
-      }; 
-  };
+  public:
+    int getqSize() const {return 1;} 
+    Vec operator()(const Vec &q, double t) {
+      Vec PrPK(3);
+      PrPK(0) = cos(q(0));
+      PrPK(1) = sin(q(0));
+      return PrPK;
+    }; 
+};
 
 class JacobianT : public Jacobian {
   public:
@@ -70,12 +74,12 @@ class MyDerR : public DerivativeOfJacobian {
     }
 };
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
- // Gravitation
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+  // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
- // Parameters
+  // Parameters
   double l = 0.8;              		
   double h =  0.02;
   double d = 0.1;
@@ -88,7 +92,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   double mu  = 0.3;
 
   Tree *tree = new Tree("Baum"); 
-  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
   RigidBody* body = new RigidBody("Rod");
 
   tree->addObject(0, body);

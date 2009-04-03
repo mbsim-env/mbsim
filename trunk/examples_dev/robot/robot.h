@@ -1,19 +1,13 @@
 #ifndef _ROBOT_H_
 #define _ROBOT_H_
 
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-
-using namespace std;
-using namespace MBSim;
-
-class Robot : public MultiBodySystem {
-  private:
+class Robot : public MBSim::DynamicSystemSolver {
   public:
-    Robot(const string &projectName); 
-    
- 
+    Robot(const std::string &projectName); 
 };
 
 #endif
+

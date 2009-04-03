@@ -16,12 +16,16 @@ using namespace AMVis;
 #include "amviscppinterface/objobject.h"
 #endif
 
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
 class PositionSensor : public UserFunction {
   private:
     RigidBody *body;
   public:
     PositionSensor(RigidBody *body_) : body(body_) {}
-    
+
     Vec operator()(double t) {
       Vec pos(1);
       pos(0) = body->getq()(0);
@@ -29,7 +33,7 @@ class PositionSensor : public UserFunction {
     };
 };
 
-Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
+Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // Gravitation
   Vec grav(3);
@@ -49,10 +53,10 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   double rS= 0.05;
 
   // --------------------------- Setup MBS ----------------------------
-  
+
   // System with tree-structure
   Tree *tree = new Tree("Baum");
-  addSubsystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
 
   RigidBody *basis = new RigidBody("Basis");
   Node *node = tree->addObject(0,basis);
@@ -110,7 +114,7 @@ Robot::Robot(const string &projectName) : MultiBodySystem(projectName) {
   spitze->setFrameForKinematics(spitze->getFrame("C"));
   //spitze->setq0(Vec(1,INIT,lA/2));
 
-    // --------------------------- Setup Control ----------------------------
+  // --------------------------- Setup Control ----------------------------
 
   FuncTable *basisSoll=new FuncTable;
   basisSoll->setFile("Soll_Basis.tab");   

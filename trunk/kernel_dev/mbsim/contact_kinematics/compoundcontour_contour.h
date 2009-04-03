@@ -36,8 +36,8 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
-      virtual void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
+      virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
+      virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
       /***************************************************/
 
     private:

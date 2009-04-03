@@ -22,7 +22,7 @@
 #include <config.h>
 #define FMATVEC_NO_BOUNDS_CHECK
 #include <mbsim/flexible_contact.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 
 namespace MBSim {
 

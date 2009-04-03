@@ -24,12 +24,15 @@
 #include <mbsim/frame.h>
 #include <mbsim/data_interface_base.h>
 #include <mbsim/constitutive_laws.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
 #endif
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -310,11 +313,11 @@ coilspringAMVis->appendDataset(0);
 }*/
 
 void Joint::solveConstraintsFixpointSingle() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdd(i) = b(laIndMBS+i);
@@ -333,11 +336,11 @@ void Joint::solveConstraintsFixpointSingle() {
 }
 
 void Joint::solveImpactsFixpointSingle() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdn(i) = b(laIndMBS+i);
@@ -356,11 +359,11 @@ void Joint::solveImpactsFixpointSingle() {
 }
 
 void Joint::solveConstraintsGaussSeidel() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdd(i) = b(laIndMBS+i);
@@ -379,11 +382,11 @@ void Joint::solveConstraintsGaussSeidel() {
 }
 
 void Joint::solveImpactsGaussSeidel() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdn(i) = b(laIndMBS+i);
@@ -402,11 +405,11 @@ void Joint::solveImpactsGaussSeidel() {
 }
 
 void Joint::solveConstraintsRootFinding() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdd(i) = b(laIndMBS+i);
@@ -424,11 +427,11 @@ void Joint::solveConstraintsRootFinding() {
   }
 }
 void Joint::solveImpactsRootFinding() {
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i<forceDir.cols(); i++) {
     gdn(i) = b(laIndMBS+i);
@@ -447,8 +450,8 @@ void Joint::solveImpactsRootFinding() {
 }
 
 void Joint::jacobianConstraints() {
-  SqrMat Jprox = mbs->getJprox();
-  SqrMat G = mbs->getG();
+  SqrMat Jprox = ds->getJprox();
+  SqrMat G = ds->getG();
 
   for(int i=0; i<forceDir.cols(); i++) {
     RowVec jp1=Jprox.row(laIndMBS+i);
@@ -475,8 +478,8 @@ void Joint::jacobianConstraints() {
 }
 
 void Joint::jacobianImpacts() {
-  SqrMat Jprox = mbs->getJprox();
-  SqrMat G = mbs->getG();
+  SqrMat Jprox = ds->getJprox();
+  SqrMat G = ds->getG();
 
   for(int i=0; i<forceDir.cols(); i++) {
     RowVec jp1=Jprox.row(laIndMBS+i);
@@ -504,8 +507,8 @@ void Joint::jacobianImpacts() {
 
 void Joint::updaterFactors() {
   if(isActive()) {
-    double *a = mbs->getGs()();
-    int *ia = mbs->getGs().Ip();
+    double *a = ds->getGs()();
+    int *ia = ds->getGs().Ip();
 
     for(int i=0; i<rFactorSize; i++) {
       double sum = 0;
@@ -525,11 +528,11 @@ void Joint::updaterFactors() {
 
 void Joint::checkConstraintsForTermination() {
 
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i < forceDir.cols(); i++) {
     gdd(i) = b(laIndMBS+i);
@@ -537,7 +540,7 @@ void Joint::checkConstraintsForTermination() {
       gdd(i) += a[j]*laMBS(ja[j]);
 
     if(!ffl->isFullfield(la(i),gdd(i),laTol,gddTol)) {
-      mbs->setTermination(false);
+      ds->setTermination(false);
       return;
     }
   }
@@ -547,7 +550,7 @@ void Joint::checkConstraintsForTermination() {
       gdd(i) += a[j]*laMBS(ja[j]);
 
     if(!fml->isFullfield(la(i),gdd(i),laTol,gddTol)) {
-      mbs->setTermination(false);
+      ds->setTermination(false);
       return;
     }
   }
@@ -555,11 +558,11 @@ void Joint::checkConstraintsForTermination() {
 
 void Joint::checkImpactsForTermination() {
 
-  double *a = mbs->getGs()();
-  int *ia = mbs->getGs().Ip();
-  int *ja = mbs->getGs().Jp();
-  Vec &laMBS = mbs->getla();
-  Vec &b = mbs->getb();
+  double *a = ds->getGs()();
+  int *ia = ds->getGs().Ip();
+  int *ja = ds->getGs().Jp();
+  Vec &laMBS = ds->getla();
+  Vec &b = ds->getb();
 
   for(int i=0; i < forceDir.cols(); i++) {
     gdn(i) = b(laIndMBS+i);
@@ -567,7 +570,7 @@ void Joint::checkImpactsForTermination() {
       gdn(i) += a[j]*laMBS(ja[j]);
 
     if(!fifl->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-      mbs->setTermination(false);
+      ds->setTermination(false);
       return;
     }
   }
@@ -577,7 +580,7 @@ void Joint::checkImpactsForTermination() {
       gdn(i) += a[j]*laMBS(ja[j]);
 
     if(!fiml->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-      mbs->setTermination(false);
+      ds->setTermination(false);
       return;
     }
   }

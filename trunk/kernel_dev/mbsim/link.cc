@@ -23,14 +23,17 @@
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
 #include "mbsim/utils/function.h"
-#include "mbsim/multi_body_system.h"
-#include "mbsim/subsystem.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/dynamic_system.h"
 #include <string.h>
 
 #ifdef HAVE_AMVIS
 #include "arrow.h"
 using namespace AMVis;
 #endif
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 
@@ -64,7 +67,7 @@ namespace MBSim {
     int n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
       getline(inputfile,dummy); // Connected cosy
-      connect(getMultiBodySystem()->findFrame(dummy));
+      connect(getDynamicSystemSolver()->findFrame(dummy));
     }
     getline(inputfile,dummy); // newline
 
@@ -72,7 +75,7 @@ namespace MBSim {
     n = getNumberOfElements(inputfile);
     for(int i=0; i<n; i++) {
       getline(inputfile,dummy); // Connected contour
-      connect(getMultiBodySystem()->findContour(dummy));
+      connect(getDynamicSystemSolver()->findContour(dummy));
     }
     getline(inputfile,dummy); // newline
   }

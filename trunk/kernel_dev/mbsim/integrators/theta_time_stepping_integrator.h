@@ -44,7 +44,7 @@ namespace MBSim {
 
       void setdt(double dt_) {dt = dt_;}
       void settheta(double theta_ ) {theta  = theta_;}
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };
 

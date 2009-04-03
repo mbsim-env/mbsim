@@ -14,8 +14,12 @@ using namespace AMVis;
 #include <amviscppinterface/coilspring.h>
 #endif
 
+using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+
 Group1::Group1(const string &name) : Group(name) {
- // Parameter der Körper
+  // Parameter der Körper
   double m1 = 5;
   double m2 = 2;
   SymMat Theta1(3,EYE);
@@ -34,7 +38,7 @@ Group1::Group1(const string &name) : Group(name) {
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");
   addObject(box1);
- 
+
   // Masse und Trägheit definieren
   box1->setMass(m1);
   box1->setInertiaTensor(Theta1);
@@ -102,41 +106,41 @@ Group1::Group1(const string &name) : Group(name) {
   // ----------------------- Visualisierung in AMVis --------------------  
 #ifdef HAVE_AMVIS  
   {
-  ostringstream os;
-  os <<name<< "." << box1->getName();
-  Cube * cuboid = new Cube(os.str(),1,false);
-  cuboid->setLength(h1);
-  cuboid->setColor(0.5);
-  box1->setAMVisBody(cuboid);
+    ostringstream os;
+    os <<name<< "." << box1->getName();
+    Cube * cuboid = new Cube(os.str(),1,false);
+    cuboid->setLength(h1);
+    cuboid->setColor(0.5);
+    box1->setAMVisBody(cuboid);
   }
 
   {
-  ostringstream os;
-  os <<name<< "." << box2->getName();
-  Cube* cuboid = new Cube(os.str(),1,false);
-  cuboid->setLength(h2);
-  cuboid->setColor(0.2);
-  box2->setAMVisBody(cuboid);
+    ostringstream os;
+    os <<name<< "." << box2->getName();
+    Cube* cuboid = new Cube(os.str(),1,false);
+    cuboid->setLength(h2);
+    cuboid->setColor(0.2);
+    box2->setAMVisBody(cuboid);
   }
 
   {
-  ostringstream os;
-  os <<name<< "." << spring1->getName();
-  CoilSpring *coilspring = new CoilSpring(os.str(),1,false);
-  coilspring->setRadius(0.1);
-  coilspring->setRadiusCrossSection(0.01);
-  coilspring->setNumberOfCoils(5);
-  spring1->setAMVisSpring(coilspring);
+    ostringstream os;
+    os <<name<< "." << spring1->getName();
+    CoilSpring *coilspring = new CoilSpring(os.str(),1,false);
+    coilspring->setRadius(0.1);
+    coilspring->setRadiusCrossSection(0.01);
+    coilspring->setNumberOfCoils(5);
+    spring1->setAMVisSpring(coilspring);
   }
 
   {
-  ostringstream os;
-  os <<name<< "." << spring2->getName();
-  CoilSpring* coilspring = new CoilSpring(os.str(),1,false);
-  coilspring->setRadius(0.1);
-  coilspring->setRadiusCrossSection(0.01);
-  coilspring->setNumberOfCoils(5);
-  spring2->setAMVisSpring(coilspring);
+    ostringstream os;
+    os <<name<< "." << spring2->getName();
+    CoilSpring* coilspring = new CoilSpring(os.str(),1,false);
+    coilspring->setRadius(0.1);
+    coilspring->setRadiusCrossSection(0.01);
+    coilspring->setNumberOfCoils(5);
+    spring2->setAMVisSpring(coilspring);
   }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE

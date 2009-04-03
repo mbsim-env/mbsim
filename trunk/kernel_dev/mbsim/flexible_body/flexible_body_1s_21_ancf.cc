@@ -23,7 +23,7 @@
 #include "finite_element_1s_21_ancf.h"
 #include "body_flexible_1s_21_ancf.h"
 #include "port.h"
-#include "multi_body_system.h"
+#include "dynamic_system_solver.h"
 #include "contact.h"
 #include "contour.h"
 

@@ -21,6 +21,9 @@
 #include "point_line.h"
 #include "mbsim/contour.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsPointLine::assignContours(const vector<Contour*> &contour) {

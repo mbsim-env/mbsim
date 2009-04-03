@@ -24,14 +24,14 @@
 #include "mbsim/element.h"
 #include "mbsim/contact.h"
 #include "mbsim/contour.h"
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 
 #include <vector>
 
 namespace MBSim {
 
-  double computeAngleOnUnitCircle(const Vec& r);
-  Vec computeAnglesOnUnitSphere(const Vec& r);
+  double computeAngleOnUnitCircle(const fmatvec::Vec& r);
+  fmatvec::Vec computeAnglesOnUnitSphere(const fmatvec::Vec& r);
 
   ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1);
 
@@ -39,19 +39,19 @@ namespace MBSim {
     apply contact between ContourInterploation surfaces, using node-to-surface pairings, with both as master
     */
   template <class T>
-    void ContactContourInterpolation(MultiBodySystem *mbs, T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1) {
-      ContactContourInterpolation(mbs,contact,contour0,contour1,0);
+    void ContactContourInterpolation(DynamicSystemSolver *ds, T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1) {
+      ContactContourInterpolation(ds,contact,contour0,contour1,0);
     }
   /*!
     apply contact between ContourInterploation surfaces, using node-to-surface pairings, defining master contour 1 or 2, default 0 for both
     */
   template <class T>
-    void ContactContourInterpolation(MultiBodySystem *mbs, const T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1, int master) {
+    void ContactContourInterpolation(DynamicSystemSolver *ds, const T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1, int master) {
       ContourInterpolation *contour[2];
       contour[0] = contour0;
       contour[1] = contour1;
 
-      string contactName = contact->getName();
+      std::string contactName = contact->getName();
 
       int cStart, cEnd;
       switch(master) {
@@ -75,16 +75,16 @@ namespace MBSim {
           /* 	    cout << "\n-------------\nprocessing point " << contour[c]->getPoint(i)->getName()  << endl; */
 
           // Namensgebung
-          stringstream number;
+          std::stringstream number;
           /* 	    number << "." << contourName << "." << contour[c]->getPoint(i)->getName(); */
-          string name = contactName + number.str();
+          std::string name = contactName + number.str();
 
           // von Vorlage abschreiben
           T *newContact = new T( contact , name );//
 
           // Verbinden
           newContact->connect(contour[c]->getPoint(i),contour[1-c]);
-          mbs->addLink(newContact);
+          ds->addLink(newContact);
 
           /* 	    cout << "added contact \"" << newContact->getName() << "\"" << endl; */
         }

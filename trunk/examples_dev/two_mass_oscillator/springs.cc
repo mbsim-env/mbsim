@@ -1,5 +1,5 @@
 #include "springs.h"
-#include "mbsim/subsystem.h"
+#include "mbsim/dynamic_system.h"
 #include "mbsim/frame.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
@@ -9,6 +9,9 @@ using namespace AMVis;
 #include "coilspring.h"
 using namespace AMVis;
 #endif
+
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 

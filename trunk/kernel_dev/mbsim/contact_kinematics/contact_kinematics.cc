@@ -21,6 +21,8 @@
 #include <mbsim/contact.h>
 #include "contact_kinematics.h"
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   Vec computeTangential(const Vec &n) {

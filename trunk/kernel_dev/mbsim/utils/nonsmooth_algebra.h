@@ -24,15 +24,13 @@
 
 #include "fmatvec.h"
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   double proxCN(double arg);
 
   double proxCT2D(double arg, double LaNmue);
 
-  Vec proxCT3D(const Vec& arg, double laNmue);
+  fmatvec::Vec proxCT3D(const fmatvec::Vec& arg, double laNmue);
 
   double proxCN(double arg,double boundary);
 

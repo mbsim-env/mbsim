@@ -21,7 +21,7 @@
  */
 
 #include <config.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include "euler_explicit_integrator.h"
 #include <fstream>
 
@@ -36,7 +36,7 @@ namespace MBSim {
   EulerExplicitIntegrator::EulerExplicitIntegrator() : dt(1e-3) {
   }
 
-  void EulerExplicitIntegrator::integrate(MultiBodySystem& system) {
+  void EulerExplicitIntegrator::integrate(DynamicSystemSolver& system) {
 
     assert(dtPlot >= dt);
 

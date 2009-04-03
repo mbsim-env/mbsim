@@ -22,6 +22,9 @@
 #include "circlesolid_circlehollow.h"
 #include "mbsim/contact.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsCircleSolidCircleHollow::assignContours(const vector<Contour*> &contour) {

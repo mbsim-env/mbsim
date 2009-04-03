@@ -27,8 +27,6 @@
 #include <string>
 #include "fmatvec.h"
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   /*! \brief Template class for Funtions

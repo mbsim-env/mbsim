@@ -22,6 +22,9 @@
 #include "point_contour1s.h"
 #include "mbsim/functions_contact.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {

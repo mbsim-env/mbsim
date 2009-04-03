@@ -24,7 +24,7 @@
 #include <mbsim/frame.h>
 #include <mbsim/contour.h>
 #include <mbsim/tree.h>
-#include <mbsim/multi_body_system.h>
+#include <mbsim/dynamic_system_solver.h>
 #include <mbsim/class_factory.h>
 #include <mbsim/joint.h>
 #include <mbsim/constitutive_laws.h>
@@ -38,6 +38,8 @@ using namespace AMVis;
 #include <amviscppinterface/rigidbody.h>
 #endif
 
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -370,7 +372,7 @@ namespace MBSim {
     //SymMat(port[0]->getOrientation()*SThetaS*trans(port[0]->getOrientation()));
     WThetaS = JTMJ(SThetaS,trans(port[0]->getOrientation()));
 
-    Vec WF = m*mbs->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
+    Vec WF = m*ds->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*port[0]->getAngularVelocity(),port[0]->getAngularVelocity()) - WThetaS*port[0]->getGyroscopicAccelerationOfRotation();
 
     h += trans(port[0]->getJacobianOfTranslation())*WF +  trans(port[0]->getJacobianOfRotation())*WM;
@@ -674,7 +676,7 @@ namespace MBSim {
 
     getline(inputfile,dummy); // # Frame of reference
     getline(inputfile,dummy); // Coordinate system for kinematics
-    setFrameOfReference(getMultiBodySystem()->findFrame(dummy));
+    setFrameOfReference(getDynamicSystemSolver()->findFrame(dummy));
     getline(inputfile,dummy); // Newline
 
     int s = inputfile.tellg();

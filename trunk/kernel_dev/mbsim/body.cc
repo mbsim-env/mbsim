@@ -20,6 +20,8 @@
 #include <config.h>
 #include <mbsim/body.h>
 
+using namespace std;
+
 namespace MBSim {
 
   Body::Body(const string &name) : Object(name) {} 

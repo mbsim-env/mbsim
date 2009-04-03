@@ -56,14 +56,14 @@ namespace MBSim {
 
       void setdtMax(double dtMax_) {dtMax = dtMax_;}
       void setdtMin(double dtMin_) {dtMin = dtMin_;}
-      void setaTol(const Vec &aTol_) {aTol.resize() = aTol_;}
-      void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
+      void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+      void setaTol(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
       void setrTol(double rTol_) {rTol = rTol_;}
       void setdt0(double dt0_) {dt0 = dt0_;}
 
       void setPlotOnRoot(double b) {plotOnRoot = b;}
 
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
 
   };
 

@@ -48,10 +48,10 @@ namespace MBSim {
       int nContours;
 	  
 	  /** vector of ContourPointData controlling type of interface: node/interpolation */
-      vector<ContourPointData> contourType;
+      std::vector<ContourPointData> contourType;
 
       /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
-      Vec WrON00;
+      fmatvec::Vec WrON00;
 
       /*! update kinematical values\n
        * Call to updateFrames(double t)
@@ -71,13 +71,13 @@ namespace MBSim {
        * \return cpData for refering to Port or Contour added
        * \param jacbifilename file containing interface data
        */
-      ContourPointData addInterface(const string &jacbifilename);
+      ContourPointData addInterface(const std::string &jacbifilename);
       /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
        * \return cpData for refering to Port or Contour added
        * \param J Jacobian matrix
        * \param r undeformed position in body coordinate system
        */
-      ContourPointData addInterface(const Mat &J, const Vec &r);
+      ContourPointData addInterface(const fmatvec::Mat &J, const fmatvec::Vec &r);
 
       /* empty function since mass, damping and stiffness matrices are constant !!! */
       void updateJh_internal(double t);
@@ -87,7 +87,7 @@ namespace MBSim {
 	   * \brief constructor
 	   * \param name of body
 	   */
-      FlexibleBodyLinearExternal(const string &name); 
+      FlexibleBodyLinearExternal(const std::string &name); 
       /*!
        * \brief destructor
        */
@@ -95,7 +95,7 @@ namespace MBSim {
 
       /* inherited interface */
       /* FlexibleBody */
-      virtual string getType() const { return "FlexibleBodyLinearExternal"; }
+      virtual std::string getType() const { return "FlexibleBodyLinearExternal"; }
       virtual void BuildElements() { new MBSimError("BITTE INITIALISIEREN!"); } 
       virtual void GlobalMatrixContribution(int n);
       /*!
@@ -124,25 +124,25 @@ namespace MBSim {
        * 0.0 1.0]
        * \param massfilename name of file holding mass matrix
        */
-      void readMassMatrix(const string &massfilename); 
+      void readMassMatrix(const std::string &massfilename); 
 
       /*! 
        * set mass matrix: 
        * \param mat mass matrix
        */
-      void setMassMatrix(const SymMat &mat); 
+      void setMassMatrix(const fmatvec::SymMat &mat); 
 
       /*!
-       * read stiffness matrix form given file readMassMatrix(const string &massfilename)
+       * read stiffness matrix form given file readMassMatrix(const std::string &massfilename)
        * \param stiffnessfilename name of file holding stiffness matrix
        */
-      void readStiffnessMatrix(const string &stiffnessfilename); 
+      void readStiffnessMatrix(const std::string &stiffnessfilename); 
 
       /*!
        * read stiffness matrix
        * \param mat stiffness matrix 
        */
-      void setStiffnessMatrix(const SqrMat &mat); 
+      void setStiffnessMatrix(const fmatvec::SqrMat &mat); 
 
       /*!
        * set damping \f$\vD\f$ proportional to mass and stiffness
@@ -165,7 +165,7 @@ namespace MBSim {
        * \param name name of Port create
        * \param jacobifilename name of file holding matrices
        */
-//      void addFrame(const string &name, const string &jacobifilename);
+//      void addFrame(const std::string &name, const std::string &jacobifilename);
 
       /*!
        * add Port using JACOBIAN matrix and location of reference point
@@ -173,14 +173,14 @@ namespace MBSim {
        * \param J Jacobian matrix create
        * \param r undeformed reference point in body coordinate system
        */
-//      void addFrame(const string &name, const Mat &J_, const Vec &r_);
+//      void addFrame(const std::string &name, const fmatvec::Mat &J_, const fmatvec::Vec &r_);
 
       /*!
        * add Contour using information given in file for JACOBIAN matrix and location of reference point
        * \param contour Contour to add
        * \param jacobifilename name of file holding matrices
        */
-//      void addContour(Contour *contour, const string &jacobifilename);
+//      void addContour(Contour *contour, const std::string &jacobifilename);
 
       /*!
        * add Contour using JACOBIAN matrix and location of reference point
@@ -188,17 +188,17 @@ namespace MBSim {
        * \param J Jacobian matrix
        * \param r undeformed reference point in body coordinate system
        */
-//      void addContour(Contour *contour, const Mat &J_, const Vec &r_);
+//      void addContour(Contour *contour, const fmatvec::Mat &J_, const fmatvec::Vec &r_);
 
       /*! add a ContourInterpolation, no additional information needed */
 //      void addContourInterpolation(ContourInterpolation *contour);
 
       /*! set origin BodyFlexibleLinearExternal::WrON00, \f$\rs{_W}[_K0]{\vr}\f$ of model
       */
-      void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
+      void setWrON00(const fmatvec::Vec &WrON00_) {WrON00 = WrON00_;}
 
       /* geerbt */
-      Mat computeJacobianMatrix(const ContourPointData &CP);
+      fmatvec::Mat computeJacobianMatrix(const ContourPointData &CP);
    };
 
 }

@@ -24,7 +24,6 @@
 #define _LSODE_INTEGRATOR_H_
 
 #include "integrator.h"
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -61,13 +60,13 @@ namespace MBSim {
       void setdtMax(double dtMax_) {dtMax = dtMax_;}
       void setdtMin(double dtMin_) {dtMin = dtMin_;}
       void setrTol(double rTol_) {rTol = rTol_;}
-      void setaTol(const Vec &aTol_) {aTol.resize() = aTol_;}
-      void setaTol(double aTol_) {aTol.resize() = Vec(1,INIT,aTol_);}
+      void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+      void setaTol(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
       void setdt0(double dt0_) {dt0 = dt0_;}
       void setmaxSteps(int maxSteps_) {maxSteps = maxSteps_;}
       void setStiff(bool flag) {stiff = flag;}
 
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
   };
 
 }

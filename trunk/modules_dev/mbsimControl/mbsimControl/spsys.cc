@@ -24,7 +24,10 @@
 #include <config.h>
 #include "mbsimControl/spsys.h"
 #include "mbsim/object.h"
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
+
+using namespace fmatvec;
+using namespace std;
 
 SPSys::SPSys(const string &name) : ExtraDynamicInterface(name){
   Uin=&SPSys::InputDummie;

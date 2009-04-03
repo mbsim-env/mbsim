@@ -20,13 +20,11 @@
 #ifndef _TREE_H_
 #define _TREE_H_
 
-#include "mbsim/subsystem.h"
+#include "mbsim/dynamic_system.h"
 
 namespace H5 {
   class Group;
 }
-
-using namespace std;
 
 namespace MBSim {
 
@@ -95,7 +93,7 @@ namespace MBSim {
       /**
        * \brief vector of node pointer for recursive structure
        */
-      vector<Node*> child;
+      std::vector<Node*> child;
 
       /**
        * \brief pointer of object interface
@@ -108,13 +106,13 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    */
-  class Tree : public Subsystem {
+  class Tree : public DynamicSystem {
     public:
       /**
        * \brief constructor
        * \param name of tree
        */
-      Tree(const string &name);
+      Tree(const std::string &name);
 
       /**
        * \brief destructor
@@ -132,7 +130,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual string getType() const { return "Tree"; }
+      virtual std::string getType() const { return "Tree"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
@@ -149,15 +147,15 @@ namespace MBSim {
       Node* addObject(Node* tree, Object* obj);
 
       /**
-       * \brief add new subsystem to tree
+       * \brief add new dynamic system to tree
        * \param tree
-       * \param subsystem
+       * \param dynamic system
        * \param relative translation to reference frame
        * \param relative orientation to reference frame
        * \param reference frame
-       * \return new node of subsystem
+       * \return new node of dynamic system
        */
-      Node* addSubsystem(Node* tree, Subsystem* sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame=0);
+      Node* addDynamicSystem(Node* tree, DynamicSystem* sys, const fmatvec::Vec &RrRS, const fmatvec::SqrMat &ARS, const Frame* refFrame=0);
 
     protected:
       /**

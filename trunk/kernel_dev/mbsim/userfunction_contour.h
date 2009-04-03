@@ -28,8 +28,6 @@
 #include "mbsim/contour_pdata.h"
 
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   //================================================================================================================================
@@ -38,19 +36,19 @@ namespace MBSim {
   class  UserFunctionContour1s : public UserFunction {
     public:
       UserFunctionContour1s() {};
-      virtual Vec computeT(double alpha)   { Vec T = diff1(alpha); T/=nrm2(T); return T; }
-      virtual Vec computeB(double alpha)   { Vec B = crossProduct(diff1(alpha), diff2(alpha)); B/=nrm2(B); return B; }
-      virtual Vec computeN(double alpha)   { Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N; }
+      virtual fmatvec::Vec computeT(double alpha)   { fmatvec::Vec T = diff1(alpha); T/=nrm2(T); return T; }
+      virtual fmatvec::Vec computeB(double alpha)   { fmatvec::Vec B = crossProduct(diff1(alpha), diff2(alpha)); B/=nrm2(B); return B; }
+      virtual fmatvec::Vec computeN(double alpha)   { fmatvec::Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N; }
       virtual double computeR(double alpha){ 
-        Vec rs = diff1(alpha);
+        fmatvec::Vec rs = diff1(alpha);
         double nrm2rs = nrm2(rs);
         return nrm2rs*nrm2rs*nrm2rs/nrm2(crossProduct(rs,diff2(alpha)));
       }
 
       virtual void init(double alpha) {};
-      virtual Vec computeT(const ContourPointData &cp)    { return computeT(cp.getLagrangeParameterPosition()(0)); };
-      virtual Vec computeB(const ContourPointData &cp)    { return computeB(cp.getLagrangeParameterPosition()(0)); };
-      virtual Vec computeN(const ContourPointData &cp)    { return computeN(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec computeT(const ContourPointData &cp)    { return computeT(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec computeB(const ContourPointData &cp)    { return computeB(cp.getLagrangeParameterPosition()(0)); };
+      virtual fmatvec::Vec computeN(const ContourPointData &cp)    { return computeN(cp.getLagrangeParameterPosition()(0)); };
       virtual double computeR(const ContourPointData &cp) { return computeR(cp.getLagrangeParameterPosition()(0)); }; 
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); };
 

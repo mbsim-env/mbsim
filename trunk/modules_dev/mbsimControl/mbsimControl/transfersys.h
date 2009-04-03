@@ -33,23 +33,23 @@ class TransferSys : public SPSys {
   protected:
     Mat A,B,C,D;// Sysmatrizen   
 
-    Vec DFactor; 
+    fmatvec::Vec DFactor; 
     double R1,R2,c; // Vars fuer interne Differenzierer Bandbreite
 
-    Vec dz;
+    fmatvec::Vec dz;
     double Tt;
-    Vec Dd;
+    fmatvec::Vec Dd;
     bool ABCDdefined;
-    Vec (TransferSys::*OutForm)(double); // Zeiger zum Umschalten bzgl der Ausgangsfunktion
+    fmatvec::Vec (TransferSys::*OutForm)(double); // Zeiger zum Umschalten bzgl der Ausgangsfunktion
 
     // Anfang - Deklaration möglicher Systemausgänge 
-    Vec OutC(double t);
-    Vec OutD(double t);
-    Vec OutCD(double t);
+    fmatvec::Vec OutC(double t);
+    fmatvec::Vec OutD(double t);
+    fmatvec::Vec OutCD(double t);
     // Ende - Deklaration möglicher Systemausgänge
     
   public:   
-    TransferSys(const string& name);
+    TransferSys(const std::string& name);
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateg(double t);
@@ -66,7 +66,7 @@ class TransferSys : public SPSys {
     void setPT1(double P, double T);
     void setGain(double P);
 
-    virtual string getType() const {return "TransferSys";}
+    virtual std::string getType() const {return "TransferSys";}
 };
 
 #endif

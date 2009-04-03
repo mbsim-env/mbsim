@@ -19,26 +19,38 @@
 #ifndef _SPECIAL_CLASSES_H
 #define _SPECIAL_CLASSES_H
 
-#include "mbsim/multi_body_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
 #include <string>
 
+namespace MBSim {
 
-using namespace std;
-using namespace MBSim;
+  /*! 
+   * \brief class for automatic tree build-up
+   * \author Martin Foerg
+   * \date 2009-04-03 some comments (Thorsten Schindler)
+   */
+  class SpecialGroup : public Group {
+    public:
+      /**
+       * \brief constructor
+       * \param name of group
+       */
+      SpecialGroup(const std::string &name);
 
-/*! \brief Class for multi body systems for automatic tree build-up.
- *
- * */
-class SpecialGroup : public Group {
+      /**
+       * \brief TODO
+       */
+      void preinit();
 
-  public:
-    SpecialGroup(const string &name); 
+      /**
+       * \brief TODO
+       */
+      void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+  };
 
-    void preinit();
-
-    void addToTree(Tree* tree, Node* node, SqrMat &A, int i, vector<Object*> &objList);
-};
+}
 
 #endif
+

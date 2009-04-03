@@ -43,7 +43,7 @@ namespace MBSim {
 	  /*! Set time step size */
       void setdt(double dt_) {dt = dt_;}
       /*! Start the integration */
-      void integrate(MultiBodySystem& system);
+      void integrate(DynamicSystemSolver& system);
       /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };

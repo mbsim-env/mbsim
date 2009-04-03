@@ -25,7 +25,6 @@
 #include "fmatvec.h"
 #include "mbsim/interfaces.h"
 #include "mbsim/contour_pdata.h"
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -36,22 +35,22 @@ namespace MBSim {
   {
     protected:
       int warnLevel;
-      SymMat M;
-      Vec h;
+      fmatvec::SymMat M;
+      fmatvec::Vec h;
 
       /** constant stiffness matrix \f$\vK\f$*/ 
-      SqrMat K;
+      fmatvec::SqrMat K;
       /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
-      SqrMat D; 
+      fmatvec::SqrMat D; 
       /** constant for damping matrix, see setProportionalDamping*/ 
       double alpha;
       /** constant for damping matrix, see setProportionalDamping*/ 
       double  beta;
 
       /** container holding constant JACOBIAN-matrizes of all Port s and Contour s */
-      vector<Mat> J;
+      std::vector<fmatvec::Mat> J;
       /** container holding undeformed positions in body coordinate system of all Port s and Contour s */
-      vector<Vec> KrP;
+      std::vector<fmatvec::Vec> KrP;
 
     public:
       SuperElementLinearExternal(int warnLevel_=0);
@@ -60,11 +59,11 @@ namespace MBSim {
 	  /*! set constant mass matrix \f$\vM\f$
 	   * \param M mass matrix
 	   * */
-	  void setM(const SymMat &M_);
+	  void setM(const fmatvec::SymMat &M_);
 	  /*! set constant stiffness matrix \f$\vK\f$
 	   * \param K stiffness matrix
 	   * */
-	  void setK(const SqrMat &K_);
+	  void setK(const fmatvec::SqrMat &K_);
 	  /*! set coefficients \f$\alpha\f$ and \f$\beta\f$ for proportional damping:
 	   * constant damping matrix \f$\vD\f$ proportional to mass and stiffness
        * \f[ \vD = \alpha * \vM + \beta*\vK \f]
@@ -73,29 +72,29 @@ namespace MBSim {
 	   * */
 	  void setProportionalDamping(double alpha_,double beta_);
 
-	  SymMat getMassMatrix()   const {return M;}
-	  Vec    getGeneralizedForceVector()   const {return h;}
+      fmatvec::SymMat getMassMatrix()   const {return M;}
+      fmatvec::Vec    getGeneralizedForceVector()   const {return h;}
 
-	  SqrMat getJacobianForImplicitIntegrationRegardingPosition() const {return SqrMat(-K);}    
-	  SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const {return SqrMat(-D);}
+      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const {return fmatvec::SqrMat(-K);}    
+      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const {return fmatvec::SqrMat(-D);}
 	  int getSizeOfPositions()  const {return K.size();}
 	  int getSizeOfVelocities()  const {return M.size();}
 
       /*! 
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$, \f$\vM\f$ is constant
        */
-      inline void computeEquationsOfMotion(const Vec& qElement,const Vec& uElement) { h = - K * qElement - D * uElement; }
+      inline void computeEquationsOfMotion(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
       double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*trans(u)*M*u;}
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
       double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}
 
-	  Vec computeTranslationalVelocity       (const Vec&q,const Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-	  Vec computeAngularVelocity    (const Vec&q,const Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-	  Vec computeTranslation      (const Vec&q,const ContourPointData& cp);
-	  SqrMat computeOrientation      (const Vec&q,const ContourPointData& cp) {if(warnLevel>0) cout << "WARNING (SuperElementLinearExternal::computeOrientation): Not Implemented" << endl; return SqrMat(0,INIT,0.);}
-	  Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q,const ContourPointData& cp);
+      fmatvec::Vec computeTranslationalVelocity       (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computeAngularVelocity    (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computeTranslation      (const fmatvec::Vec&q,const ContourPointData& cp);
+      fmatvec::SqrMat computeOrientation      (const fmatvec::Vec&q,const ContourPointData& cp) {if(warnLevel>0) std::cout << "WARNING (SuperElementLinearExternal::computeOrientation): Not Implemented" << std::endl; return fmatvec::SqrMat(0,fmatvec::INIT,0.);}
+      fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q,const ContourPointData& cp);
 
-	  ContourPointData addInterface(Mat J_, Vec KrP_);
+	  ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);
   };
 
 }

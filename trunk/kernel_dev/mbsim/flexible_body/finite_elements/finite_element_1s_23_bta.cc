@@ -23,6 +23,8 @@
 #include <config.h>
 #include "finite_element_1s_23_bta.h"
 
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 

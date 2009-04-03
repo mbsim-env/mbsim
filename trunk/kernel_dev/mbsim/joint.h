@@ -45,16 +45,16 @@ namespace MBSim {
 
     protected:
 
-      Index IT, IR;
-      Mat forceDir, momentDir;
-      Mat Wf, Wm;
-      Mat JT;
-      Vec WrP0P1, WvP0P1, WomP0P1;
+      fmatvec::Index IT, IR;
+      fmatvec::Mat forceDir, momentDir;
+      fmatvec::Mat Wf, Wm;
+      fmatvec::Mat JT;
+      fmatvec::Vec WrP0P1, WvP0P1, WomP0P1;
 
       GeneralizedForceLaw *ffl, *fml;
       GeneralizedImpactLaw *fifl, *fiml;
 
-      Vec gdn, gdd;
+      fmatvec::Vec gdn, gdd;
 #ifdef HAVE_AMVIS
       AMVis::CoilSpring *coilspringAMVis;
       DataInterfaceBase *coilspringAMVisUserFunctionColor;
@@ -63,8 +63,8 @@ namespace MBSim {
       Frame C;
 
     public: 
-      Joint(const string &name);
-      ~Joint();
+      Joint(const std::string &name);
+      virtual ~Joint();
       virtual void connect(Frame *port1, Frame* port2);
 
       void calcxSize();
@@ -78,8 +78,8 @@ namespace MBSim {
 
       void init();
 
-      void setForceDirection(const Mat& fd);
-      void setMomentDirection(const Mat& md);
+      void setForceDirection(const fmatvec::Mat& fd);
+      void setMomentDirection(const fmatvec::Mat& md);
       //void initPlotFiles(); 
       //void plot(double t, double dt=1);
 

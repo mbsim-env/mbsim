@@ -42,8 +42,8 @@ namespace MBSim {
  
     public:
       ~ContactKinematicsLineContour1s();
-      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
+      void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
+      void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
 
       void assignContours(const std::vector<Contour*> &contour);
   };

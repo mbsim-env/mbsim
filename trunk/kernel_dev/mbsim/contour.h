@@ -42,7 +42,7 @@ namespace MBSim {
 
   // perhaps helpfull when debugging
   //                0    , 1   , 2          , 3           , 4        , 5    , 6     , 7      , 8   , 9   , 10       , 11       , 12              , 13
-  enum ContourType {point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation};
+  enum ContourType { point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation };
 
   /** 
    * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies
@@ -57,7 +57,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Contour(const string &name);
+      Contour(const std::string &name);
 
       /**
        * \brief destructor
@@ -86,66 +86,66 @@ namespace MBSim {
       /**
        * \param position of contour in inertial frame
        */
-      virtual void setWrOP(const Vec &WrOP) { R.setPosition(WrOP); }
+      virtual void setWrOP(const fmatvec::Vec &WrOP) { R.setPosition(WrOP); }
 
       /**
        * \return position of contour in inertial frame
        */
-      const Vec& getWrOP() const { return R.getPosition(); }
+      const fmatvec::Vec& getWrOP() const { return R.getPosition(); }
 
       /**
        * \param velocity of contour in inertial frame
        */
-      virtual void setWvP(const Vec &WvP) { R.setVelocity(WvP); }
+      virtual void setWvP(const fmatvec::Vec &WvP) { R.setVelocity(WvP); }
 
       /**
        * \return velocity of contour in inertial frame
        */
-      const Vec& getWvP() const { return R.getVelocity(); }
+      const fmatvec::Vec& getWvP() const { return R.getVelocity(); }
 
       /**
        * \param angular velocity of contour in inertial frame
        */
-      virtual void setWomegaC(const Vec &WomegaC) { R.setAngularVelocity(WomegaC); }
+      virtual void setWomegaC(const fmatvec::Vec &WomegaC) { R.setAngularVelocity(WomegaC); }
 
       /**
        * \return angular velocity of contour in inertial frame
        */
-      const Vec& getWomegaC() const { return R.getAngularVelocity(); }
+      const fmatvec::Vec& getWomegaC() const { return R.getAngularVelocity(); }
 
       /**
        * \param orientation of contour to inertial frame
        */
-      virtual void setAWC(const SqrMat &AWC) { R.setOrientation(AWC); }
+      virtual void setAWC(const fmatvec::SqrMat &AWC) { R.setOrientation(AWC); }
 
       /**
        * \return orientation of contour to inertial frame
        */
-      const SqrMat& getAWC() const { return R.getOrientation(); }
+      const fmatvec::SqrMat& getAWC() const { return R.getOrientation(); }
 
-      virtual void setWJP(const Mat &WJP) { R.setJacobianOfTranslation(WJP); }
-      virtual void setWjP(const Vec &WjP) { R.setGyroscopicAccelerationOfTranslation(WjP); }
-      virtual void setWJR(const Mat &WJR) { R.setJacobianOfRotation(WJR); }
-      virtual void setWjR(const Vec &WjR) { R.setGyroscopicAccelerationOfRotation(WjR); }
-      const Mat& getWJP() const { return R.getJacobianOfTranslation(); }
-      const Mat& getWJR() const { return R.getJacobianOfRotation(); }
-      Mat& getWJP() { return R.getJacobianOfTranslation(); }
-      Mat& getWJR() { return R.getJacobianOfRotation(); }
-      const Vec& getWjP() const { return R.getGyroscopicAccelerationOfTranslation(); }
-      const Vec& getWjR() const { return R.getGyroscopicAccelerationOfRotation(); }
-      Vec& getWjP() { return R.getGyroscopicAccelerationOfTranslation(); }
-      Vec& getWjR() { return R.getGyroscopicAccelerationOfRotation(); }
+      virtual void setWJP(const fmatvec::Mat &WJP) { R.setJacobianOfTranslation(WJP); }
+      virtual void setWjP(const fmatvec::Vec &WjP) { R.setGyroscopicAccelerationOfTranslation(WjP); }
+      virtual void setWJR(const fmatvec::Mat &WJR) { R.setJacobianOfRotation(WJR); }
+      virtual void setWjR(const fmatvec::Vec &WjR) { R.setGyroscopicAccelerationOfRotation(WjR); }
+      const fmatvec::Mat& getWJP() const { return R.getJacobianOfTranslation(); }
+      const fmatvec::Mat& getWJR() const { return R.getJacobianOfRotation(); }
+      fmatvec::Mat& getWJP() { return R.getJacobianOfTranslation(); }
+      fmatvec::Mat& getWJR() { return R.getJacobianOfRotation(); }
+      const fmatvec::Vec& getWjP() const { return R.getGyroscopicAccelerationOfTranslation(); }
+      const fmatvec::Vec& getWjR() const { return R.getGyroscopicAccelerationOfRotation(); }
+      fmatvec::Vec& getWjP() { return R.getGyroscopicAccelerationOfTranslation(); }
+      fmatvec::Vec& getWjR() { return R.getGyroscopicAccelerationOfRotation(); }
 
       void resizeJacobians(int j);
 
       // /*! adjust HitSphere of parent body
       // */
-      // virtual void adjustParentHitSphere(const Vec &CrC);
+      // virtual void adjustParentHitSphere(const fmatvec::Vec &CrC);
 
       /**
-       * return string representation
+       * return std::string representation
        */
-      string getType() const { return "Contour"; }
+      std::string getType() const { return "Contour"; }
 
 #ifdef HAVE_AMVIS
       /**
@@ -198,7 +198,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Point(const string &name);
+      Point(const std::string &name);
 
       /**
        * \brief destructor
@@ -206,7 +206,7 @@ namespace MBSim {
       virtual ~Point();
 
       /* INHERITED INTERFACE */
-      string getType() const { return "Point"; }
+      std::string getType() const { return "Point"; }
   };
 
   /*! \brief unbounded line with constant normal */
@@ -214,13 +214,13 @@ namespace MBSim {
 
     protected:
     public:
-      Line(const string &name);
+      Line(const std::string &name);
       ~Line();
 
-      string getType() const {return "Line";}
+      std::string getType() const {return "Line";}
 
-      void load(const string& path, ifstream &inputfile); 
-      void save(const string &path, ofstream &outputfile);
+      void load(const std::string& path, std::ifstream &inputfile); 
+      void save(const std::string &path, std::ofstream &outputfile);
   };
 
   /*! \brief Circular Contour with material included inside */
@@ -228,21 +228,21 @@ namespace MBSim {
 
     private:
       double r;
-      Vec Cb;
+      fmatvec::Vec Cb;
 
     public:
       /*! Constructor */
-      CircleSolid(const string &name);
+      CircleSolid(const std::string &name);
       /*! Constructor */
-      CircleSolid(const string &name, double r);
+      CircleSolid(const std::string &name, double r);
       /*! Set radius */
       void setRadius(double r_) {r = r_;}
       /*! Get radius */
       double getRadius() const {return r;}
       /*! Set binormal in local FR */ 
-      void setCb(const Vec& Cb_);
+      void setCb(const fmatvec::Vec& Cb_);
       /*! Compute binormal in inertial FR */
-      Vec computeWb() {return R.getOrientation()*Cb;}
+      fmatvec::Vec computeWb() {return R.getOrientation()*Cb;}
 
 #ifdef HAVE_AMVISCPPINTERFACE
       void enableAMVis(bool enable=true);
@@ -255,16 +255,16 @@ namespace MBSim {
 
     protected:
       double r;
-      Vec Cb;
+      fmatvec::Vec Cb;
 
     public:
-      CircleHollow(const string &name);
+      CircleHollow(const std::string &name);
       void setRadius(double r_) {r = r_;}
       double getRadius() const {return r;}
 
-      void setCb(const Vec& Cb_);
+      void setCb(const fmatvec::Vec& Cb_);
 
-      Vec computeWb() {return R.getOrientation()*Cb;}
+      fmatvec::Vec computeWb() {return R.getOrientation()*Cb;}
   };
 
   /*! \brief Planar slice of a Frustum
@@ -273,24 +273,24 @@ namespace MBSim {
   class Frustum2D : public Contour {
     protected:
       /** Normalenvektor der Kontur **/
-      Vec Ka;
-      Vec r;
+      fmatvec::Vec Ka;
+      fmatvec::Vec r;
       double h;
-      Vec Cb;
+      fmatvec::Vec Cb;
       /** Haltepunkt der Kontur **/
     public:
-      Frustum2D(const string &name);
-      void setRadii(const Vec &r_) {r = r_;}
-      const Vec& getRadii() const {return r;} 
-      void setAxis(const Vec &a);
-      const Vec& getAxis() const {return Ka;} 
+      Frustum2D(const std::string &name);
+      void setRadii(const fmatvec::Vec &r_) {r = r_;}
+      const fmatvec::Vec& getRadii() const {return r;} 
+      void setAxis(const fmatvec::Vec &a);
+      const fmatvec::Vec& getAxis() const {return Ka;} 
       void setHeight(double h_) {h = h_;}
       double getHeight() const {return h;} 
 
-      const Vec& getCb() const {return Cb;} 
-      void setCb(const Vec& Cb_);
+      const fmatvec::Vec& getCb() const {return Cb;} 
+      void setCb(const fmatvec::Vec& Cb_);
 
-      Vec computeWb() {return R.getOrientation()*Cb;}
+      fmatvec::Vec computeWb() {return R.getOrientation()*Cb;}
 
   };
 
@@ -299,27 +299,27 @@ namespace MBSim {
     protected:
       double as, ae;
       double width;
-      Vec nodes;
-      Vec Cb;
+      fmatvec::Vec nodes;
+      fmatvec::Vec Cb;
     public:
-      Contour1s(const string &name);
+      Contour1s(const std::string &name);
 
-      virtual Vec computeWn(double alpha) = 0;
-      virtual Mat computeWt(double alpha) = 0;
-      virtual Vec computeWb(double alpha) = 0;
-      virtual Vec computeWrOC(double alpha) = 0;
-      virtual Vec computeWvC(double alpha) = 0;
-      virtual Vec computeWomega(double alpha) = 0;
+      virtual fmatvec::Vec computeWn(double alpha) = 0;
+      virtual fmatvec::Mat computeWt(double alpha) = 0;
+      virtual fmatvec::Vec computeWb(double alpha) = 0;
+      virtual fmatvec::Vec computeWrOC(double alpha) = 0;
+      virtual fmatvec::Vec computeWvC(double alpha) = 0;
+      virtual fmatvec::Vec computeWomega(double alpha) = 0;
       virtual double computeRadius(double alpha) = 0;
 
-      Mat computeWt  (const ContourPointData &cp)   ;// {return computeWt  (cp.alpha(0));}
-      Vec computeWn  (const ContourPointData &cp)   ;// {return computeWn  (cp.alpha(0));}
-      Vec computeWb  (const ContourPointData &cp)   ;// {return computeWb  (cp.alpha(0));}
-      Vec computeWrOC(const ContourPointData &cp)   ;// {return computeWrOC(cp.alpha(0));}
-      Vec computeWvC (const ContourPointData &cp)   ;// {return computeWvC (cp.alpha(0));}
-      Vec computeWomega(const ContourPointData &cp) ;// {return computeWomega(cp.alpha(0));}
+      fmatvec::Mat computeWt  (const ContourPointData &cp)   ;// {return computeWt  (cp.alpha(0));}
+      fmatvec::Vec computeWn  (const ContourPointData &cp)   ;// {return computeWn  (cp.alpha(0));}
+      fmatvec::Vec computeWb  (const ContourPointData &cp)   ;// {return computeWb  (cp.alpha(0));}
+      fmatvec::Vec computeWrOC(const ContourPointData &cp)   ;// {return computeWrOC(cp.alpha(0));}
+      fmatvec::Vec computeWvC (const ContourPointData &cp)   ;// {return computeWvC (cp.alpha(0));}
+      fmatvec::Vec computeWomega(const ContourPointData &cp) ;// {return computeWomega(cp.alpha(0));}
 
-      void setCb(const Vec& Cb);
+      void setCb(const fmatvec::Vec& Cb);
 
       void   setWidth(double width_u) {width= width_u;}
       double getWidth() {return width;}
@@ -328,8 +328,8 @@ namespace MBSim {
       void setAlphaEnd(double ae_) {ae = ae_;}
       double getAlphaStart() const {return as;}
       double getAlphaEnd() const {return ae;}
-      void setNodes(const Vec &nodes_) {nodes = nodes_;}
-      const Vec& getNodes() const {return nodes;}
+      void setNodes(const fmatvec::Vec &nodes_) {nodes = nodes_;}
+      const fmatvec::Vec& getNodes() const {return nodes;}
   };
 
   /*! \brief analytical description of contours */
@@ -337,23 +337,23 @@ namespace MBSim {
     protected:
       UserFunctionContour1s  *funcCrPC;
     public:
-      Contour1sAnalytical(const string &name);
+      Contour1sAnalytical(const std::string &name);
       virtual ~Contour1sAnalytical();
 
       /*! \todo Cache !!!
       */
-      Mat computeWt(double alpha) {
+      fmatvec::Mat computeWt(double alpha) {
         Cb= funcCrPC->computeB(alpha);
-        Mat Ctb(3,2);
+        fmatvec::Mat Ctb(3,2);
         Ctb.col(0)= funcCrPC->computeT(alpha);
         Ctb.col(1)= Cb; 
         return R.getOrientation()*Ctb;
       }
-      Vec computeWn(double alpha) {return R.getOrientation()*(funcCrPC->computeN(alpha));}
-      Vec computeWb(double alpha) {Cb= funcCrPC->computeB(alpha); return R.getOrientation()*Cb;}
-      Vec computeWrOC(double alpha) {return R.getPosition() + R.getOrientation()*(*funcCrPC)(alpha);}
-      Vec computeWvC(double alpha) {return R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(alpha));}
-      Vec computeWomega(double alpha) {return Vec(3);} // dummy
+      fmatvec::Vec computeWn(double alpha) {return R.getOrientation()*(funcCrPC->computeN(alpha));}
+      fmatvec::Vec computeWb(double alpha) {Cb= funcCrPC->computeB(alpha); return R.getOrientation()*Cb;}
+      fmatvec::Vec computeWrOC(double alpha) {return R.getPosition() + R.getOrientation()*(*funcCrPC)(alpha);}
+      fmatvec::Vec computeWvC(double alpha) {return R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(alpha));}
+      fmatvec::Vec computeWomega(double alpha) {return fmatvec::Vec(3);} // dummy
 
       double computeRadius(double alpha) {
         return funcCrPC->computeR(alpha);
@@ -376,7 +376,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sFlexible(const string &name) : Contour1s(name) {}
+      Contour1sFlexible(const std::string &name) : Contour1s(name) {}
 
       /**
        * \brief destructor
@@ -384,18 +384,18 @@ namespace MBSim {
       virtual ~Contour1sFlexible() {}
 
       /* INHERITED INTERFACE */
-      Vec computeWb(double s) { throw(1); } // TODO
-      Vec computeWn(double alpha) { throw(1); }
-      Mat computeWt(double alpha) { throw(1); }
-      Vec computeWrOC(double alpha) { throw(1); }
-      Vec computeWvC(double alpha) { throw(1); }
-      Vec computeWomega(double alpha) { throw(1); }
+      fmatvec::Vec computeWb(double s) { throw(1); } // TODO
+      fmatvec::Vec computeWn(double alpha) { throw(1); }
+      fmatvec::Mat computeWt(double alpha) { throw(1); }
+      fmatvec::Vec computeWrOC(double alpha) { throw(1); }
+      fmatvec::Vec computeWvC(double alpha) { throw(1); }
+      fmatvec::Vec computeWomega(double alpha) { throw(1); }
       double computeRadius(double alpha) { throw(1); }
 
       void updateKinematicsForFrame(ContourPointData &cp, Frame *frame=0) { parent->updateKinematicsForFrame(cp,frame); }
 
     protected:
-      FlexibleBody<Vec>* parent;
+      FlexibleBody<fmatvec::Vec>* parent;
   };
 
   /** 
@@ -410,7 +410,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      CylinderFlexible(const string &name) : Contour1sFlexible(name) {}
+      CylinderFlexible(const std::string &name) : Contour1sFlexible(name) {}
 
       /**
        * \brief destructor
@@ -440,31 +440,31 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      Plane(const string &name);
+      Plane(const std::string &name);
 
       /** 
        * \return normal of the plane in local frame of reference
        * TODO obsolete
        */
-      const Vec& getCn() const { return Cn; }
+      const fmatvec::Vec& getCn() const { return Cn; }
 
       /**
        * \param normal of the plane in local frame of reference
        * TODO obsolete
        */
-      void setCn(const Vec& Cn_);
+      void setCn(const fmatvec::Vec& Cn_);
 
       /** 
        * \return normal of the plane in inertial frame of reference
        * TODO obsolete
        */
-      Vec computeWn() {return R.getOrientation()*Cn;}
+      fmatvec::Vec computeWn() {return R.getOrientation()*Cn;}
 
     private:
       /**
        * \brief normal of the plane in local frame of reference
        */
-      Vec Cn;
+      fmatvec::Vec Cn;
   };
 
   /*! \brief Contour Area */
@@ -472,22 +472,22 @@ namespace MBSim {
 
     protected:
       double lim1, lim2;
-      Vec Cn, Cd1, Cd2;
+      fmatvec::Vec Cn, Cd1, Cd2;
 
     public:
-      Area(const string &name);
+      Area(const std::string &name);
 
       void setLimit1(double l) {lim1 = l;}
       void setLimit2(double l) {lim2 = l;}
-      void setCd1(const Vec& Cd);
-      void setCd2(const Vec& Cd);
+      void setCd1(const fmatvec::Vec& Cd);
+      void setCd2(const fmatvec::Vec& Cd);
       virtual void init();
       double getLimit1() const {return lim1;}
       double getLimit2() const {return lim2;}
 
-      Vec computeWn() {return R.getOrientation()*Cn;}
-      Vec computeWd1() {return R.getOrientation()*Cd1;}
-      Vec computeWd2() {return R.getOrientation()*Cd2;}
+      fmatvec::Vec computeWn() {return R.getOrientation()*Cn;}
+      fmatvec::Vec computeWd1() {return R.getOrientation()*Cd1;}
+      fmatvec::Vec computeWd2() {return R.getOrientation()*Cd2;}
   };
 
   /*! \brief Contour Edge */
@@ -495,20 +495,20 @@ namespace MBSim {
 
     protected:
       double lim;
-      Vec Cn, Cd, Ce;
+      fmatvec::Vec Cn, Cd, Ce;
 
     public:
-      Edge(const string &name);
+      Edge(const std::string &name);
 
       void setLimit(double l) {lim = l;}
-      void setCd(const Vec& Cd);
-      void setCe(const Vec& Ce);
+      void setCd(const fmatvec::Vec& Cd);
+      void setCe(const fmatvec::Vec& Ce);
       //void init();
       double getLimit() const {return lim;}
 
-      // Vec computeWn() {return R.getOrientation()*Cn;}
-      Vec computeWe() {return R.getOrientation()*Ce;}
-      Vec computeWd() {return R.getOrientation()*Cd;}
+      // fmatvec::Vec computeWn() {return R.getOrientation()*Cn;}
+      fmatvec::Vec computeWe() {return R.getOrientation()*Ce;}
+      fmatvec::Vec computeWd() {return R.getOrientation()*Cd;}
   };
 
   /*! \brief Contour Sphere */
@@ -518,7 +518,7 @@ namespace MBSim {
       double r;
 
     public:
-      Sphere(const string &name);
+      Sphere(const std::string &name);
       void setRadius(double r_) {r = r_;}
       double getRadius() const {return r;}
       virtual void init();
@@ -534,20 +534,20 @@ namespace MBSim {
   class Frustum : public Contour {
     public:
       /*! Constructor with \default outCont=false */
-      Frustum(const string &name);
+      Frustum(const std::string &name);
       /*! Constructor */
-      Frustum(const string &name, bool outCont_);
+      Frustum(const std::string &name, bool outCont_);
 
       /*! Deconstructor */
       ~Frustum();
       /*! Set Radii of the Frustum */
-      void setRadii(const Vec &r_);
+      void setRadii(const fmatvec::Vec &r_);
       /*! Get Radii of the Frustum */
-      const Vec& getRadii() const;
+      const fmatvec::Vec& getRadii() const;
       /*! Set Axis of the Frustum in contour FR */
-      void setAxis(const Vec &a_);
+      void setAxis(const fmatvec::Vec &a_);
       /*! Get Axis of the Frustum in contour FR */
-      const Vec& getAxis() const; 
+      const fmatvec::Vec& getAxis() const; 
       /*! Set Height of the Frustum */
       void setHeight(double h_);
       /*! Get Height of the Frustum */
@@ -559,10 +559,10 @@ namespace MBSim {
 
     private:
       /** axis (contour FR) */
-      Vec a;
+      fmatvec::Vec a;
 
       /** upper r(1) and lower radius r(0) in direction of the axis */
-      Vec r;
+      fmatvec::Vec r;
 
       /** height */
       double h;
@@ -571,10 +571,10 @@ namespace MBSim {
       bool outCont;
   };
 
-  inline void Frustum::setRadii(const Vec &r_) {r = r_;}
-  inline const Vec& Frustum::getRadii() const {return r;}
-  inline void Frustum::setAxis(const Vec &a_) {a = a_/nrm2(a_);}
-  inline const Vec& Frustum::getAxis() const {return a;}
+  inline void Frustum::setRadii(const fmatvec::Vec &r_) {r = r_;}
+  inline const fmatvec::Vec& Frustum::getRadii() const {return r;}
+  inline void Frustum::setAxis(const fmatvec::Vec &a_) {a = a_/nrm2(a_);}
+  inline const fmatvec::Vec& Frustum::getAxis() const {return a;}
   inline void Frustum::setHeight(double h_) {h = h_;}
   inline double Frustum::getHeight() const {return h;}
   inline void Frustum::setOutCont(bool outCont_) {outCont = outCont_;}
@@ -585,31 +585,31 @@ namespace MBSim {
    * */
   class Contour2s : public Contour {
     protected:
-      Vec as, ae;
-      Mat nodes;
-      Vec Cb;
+      fmatvec::Vec as, ae;
+      fmatvec::Mat nodes;
+      fmatvec::Vec Cb;
 
     public:
-      Contour2s(const string &name);
+      Contour2s(const std::string &name);
 
-      Vec computeWn(const Vec& alpha) {
-        Mat Wt = computeWt(alpha);
+      fmatvec::Vec computeWn(const fmatvec::Vec& alpha) {
+        fmatvec::Mat Wt = computeWt(alpha);
         if(Cb(2) < 0.0 ) return   crossProduct(Wt.col(0),Wt.col(1));
         else             return - crossProduct(Wt.col(0),Wt.col(1));
       }
-      virtual Mat computeWt  (const Vec& alpha) = 0;
-      virtual Vec computeWrOC(const Vec& alpha) = 0;
-      virtual Vec computeWvC (const Vec& alpha) = 0;
+      virtual fmatvec::Mat computeWt  (const fmatvec::Vec& alpha) = 0;
+      virtual fmatvec::Vec computeWrOC(const fmatvec::Vec& alpha) = 0;
+      virtual fmatvec::Vec computeWvC (const fmatvec::Vec& alpha) = 0;
 
-      //    void setCb(const Vec& Cb);
+      //    void setCb(const fmatvec::Vec& Cb);
 
-      void setAlphaStart(Vec as_) {as = as_;}
-      void setAlphaEnd(Vec ae_) {ae = ae_;}
-      Vec getAlphaStart() const {return as;}
-      Vec getAlphaEnd() const {return ae;}
+      void setAlphaStart(fmatvec::Vec as_) {as = as_;}
+      void setAlphaEnd(fmatvec::Vec ae_) {ae = ae_;}
+      fmatvec::Vec getAlphaStart() const {return as;}
+      fmatvec::Vec getAlphaEnd() const {return ae;}
 
-      void setNodes(const Mat &nodes_) {nodes = nodes_;}
-      const Mat& getNodes() const {return nodes;}
+      void setNodes(const fmatvec::Mat &nodes_) {nodes = nodes_;}
+      const fmatvec::Mat& getNodes() const {return nodes;}
   };
 
   /*! \brief Basis-Class for Contour interpolation between Point s, standard contact Point-ContourInterpolation is implemented
@@ -618,14 +618,14 @@ namespace MBSim {
   class ContourInterpolation : public Contour {
     protected:
       /** list of Point s holding ContourInterpolation */
-      vector<Point*> iPoints;
+      std::vector<Point*> iPoints;
       /** number of Contour-parameters used by ContourInterpolation: 1 for lines, 2 for surfaces */
       int contourParameters;
       /** size of iPoints, number of Point s used for interpolation */
       int numberOfPoints;
 
     public:
-      ContourInterpolation(const string &name, int parameters_, int nPoints_);
+      ContourInterpolation(const std::string &name, int parameters_, int nPoints_);
 
       //void plot(double t, double dt);
 
@@ -637,7 +637,7 @@ namespace MBSim {
         */
       void setPoint(Point *pointN, int n);
       /*! get list of Point s */
-      vector<Point*> getPoints()   const {return iPoints;}
+      std::vector<Point*> getPoints()   const {return iPoints;}
       Point* getPoint(const int n) const {return iPoints[n];}
 
       /*! get number of Point s used for interpolation */
@@ -656,28 +656,28 @@ namespace MBSim {
         \param i Point number
         \return weight of Point i at s
         */
-      virtual double computePointWeight(const Vec &s, int i) = 0;
+      virtual double computePointWeight(const fmatvec::Vec &s, int i) = 0;
       /*! prototype of method giving first derivatives with respect to the diff-th Contour-parameters of all Point s 
         \param s Contour-parameter(s)
         \param i Point number
         \param diff -th derivative
         \return weight/derivative of Point i at s
         */
-      virtual double computePointWeight(const Vec &s, int i, int diff) = 0;
+      virtual double computePointWeight(const fmatvec::Vec &s, int i, int diff) = 0;
 
       /*! compute all weights for nodes */
-      Vec computePointWeights(const Vec &s);
+      fmatvec::Vec computePointWeights(const fmatvec::Vec &s);
 
-      Vec computeWrOC(const Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);};
-      Vec computeWvC (const Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
-      Mat computeWt  (const Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
-      Vec computeWn  (const Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
+      fmatvec::Vec computeWrOC(const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);};
+      fmatvec::Vec computeWvC (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);};
+      fmatvec::Mat computeWt  (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);};
+      fmatvec::Vec computeWn  (const fmatvec::Vec& s);// {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);};
 
-      Vec computeWrOC(const ContourPointData &cp);
-      Vec computeWvC (const ContourPointData &cp);
+      fmatvec::Vec computeWrOC(const ContourPointData &cp);
+      fmatvec::Vec computeWvC (const ContourPointData &cp);
 
-      Mat computeWt  (const ContourPointData &cp);
-      virtual Vec computeWn  (const ContourPointData &cp) = 0;
+      fmatvec::Mat computeWt  (const ContourPointData &cp);
+      virtual fmatvec::Vec computeWn  (const ContourPointData &cp) = 0;
   };
 
   /*! \brief Quad for 3D interpolation  \see{OpenGL-documentation}
@@ -686,37 +686,37 @@ namespace MBSim {
   class ContourQuad : public ContourInterpolation {
     protected:
     public:
-      ContourQuad(const string & name);
+      ContourQuad(const std::string & name);
 
       virtual void init();
 
       bool testInsideBounds(const ContourPointData &cp);
-      double computePointWeight(const Vec &s, int i);
-      double computePointWeight(const Vec &s, int i, int diff);
+      double computePointWeight(const fmatvec::Vec &s, int i);
+      double computePointWeight(const fmatvec::Vec &s, int i, int diff);
 
-      Vec computeWn(const ContourPointData &cp);
+      fmatvec::Vec computeWn(const ContourPointData &cp);
   };
 
   /*! \brief Contour consisting of primitive contour elements */
   class CompoundContour : public Contour {
     private:
-      vector<Contour*> element;
-      vector<Vec> Kr, Wr;
+      std::vector<Contour*> element;
+      std::vector<fmatvec::Vec> Kr, Wr;
     public:
       /*! Constructor */
-      CompoundContour(const string &name);
+      CompoundContour(const std::string &name);
       void init();
       Contour* getContourElement(int i) {return element[i];}
-      void addContourElement(Contour* ce, const Vec& re);
+      void addContourElement(Contour* ce, const fmatvec::Vec& re);
       unsigned int getNumberOfElements() {return element.size();}
-      void setWrOP(const Vec &WrOP);
-      void setWvP(const Vec &WvP);
-      void setWomegaC(const Vec &WomegaC);
-      void setAWC(const SqrMat &AWC);
-      void setWJP(const Mat &WJP);
-      void setWjP(const Vec &WjP);
-      void setWJR(const Mat &WJR);
-      void setWjR(const Vec &WjR);
+      void setWrOP(const fmatvec::Vec &WrOP);
+      void setWvP(const fmatvec::Vec &WvP);
+      void setWomegaC(const fmatvec::Vec &WomegaC);
+      void setAWC(const fmatvec::SqrMat &AWC);
+      void setWJP(const fmatvec::Mat &WJP);
+      void setWjP(const fmatvec::Vec &WjP);
+      void setWJR(const fmatvec::Mat &WJR);
+      void setWjR(const fmatvec::Vec &WjR);
   };
 
 
@@ -726,7 +726,7 @@ namespace MBSim {
       double l,h,d;
     public:
       /*! Constructor */
-      Cuboid(const string &name);
+      Cuboid(const std::string &name);
       void setLength(double l_) {l = l_;}
       void setHeight(double h_) {h = h_;}
       void setDepth(double d_) {d = d_;}

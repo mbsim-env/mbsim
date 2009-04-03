@@ -28,31 +28,31 @@
 
 namespace MBSim {
 
-  class Subsystem;
+  class DynamicSystem;
 
-  /*! base class for all subsystems with own dynamics not being solid-mechanics or hydraulics */
+  /*! base class for all dynamic systems with own dynamics not being solid-mechanics or hydraulics */
   class ExtraDynamicInterface : public Element {
 
     protected:
-      Subsystem* parent;
+      DynamicSystem* parent;
 
-      Vec x, xd, x0;
+      fmatvec::Vec x, xd, x0;
       int xSize;
       int xInd;
-      Vec y;
+      fmatvec::Vec y;
 
     public:
 
-      ExtraDynamicInterface(const string &name);
-      ExtraDynamicInterface(const string &name, int xSize_);
+      ExtraDynamicInterface(const std::string &name);
+      ExtraDynamicInterface(const std::string &name, int xSize_);
 
-      const Vec& getx() const {return x;}
-      Vec& getx() {return x;}
+      const fmatvec::Vec& getx() const {return x;}
+      fmatvec::Vec& getx() {return x;}
 
       virtual void writex();
       virtual void readx0(); 
-      virtual void updatexRef(const Vec& ref);
-      virtual void updatexdRef(const Vec& ref);
+      virtual void updatexRef(const fmatvec::Vec& ref);
+      virtual void updatexdRef(const fmatvec::Vec& ref);
       void setxInd(int xInd_) {xInd = xInd_;};
       int getxSize() const {return xSize;}
       virtual void init();
@@ -69,9 +69,9 @@ namespace MBSim {
       virtual void initPlot();
       virtual void closePlot(); 
 
-      void setParent(Subsystem *parent_) {parent = parent_;}
+      void setParent(DynamicSystem *parent_) {parent = parent_;}
 
-      void setx0(Vec x_){x0=x_;}
+      void setx0(fmatvec::Vec x_){x0=x_;}
   };
 
 }

@@ -41,6 +41,9 @@
 #include <amviscppinterface/sphere.h>
 #endif
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   /* Contour */

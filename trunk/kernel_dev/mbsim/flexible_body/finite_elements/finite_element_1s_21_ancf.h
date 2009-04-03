@@ -24,8 +24,6 @@
 
 #include "fmatvec.h"
 
-using namespace fmatvec;
-
 namespace MBSim {
 
   /*! \brief
@@ -45,43 +43,43 @@ namespace MBSim {
       double l0, Arho, EA, EI;
       double wss0;
       double depsilon;
-      Vec g;
+      fmatvec::Vec g;
 
       double l0h2;
 
       FiniteElement1s21ANCF();
       ~FiniteElement1s21ANCF();
       //        (double l0, double Arho, double EA, double EI, double g);
-      FiniteElement1s21ANCF(double   , double     , double   , double   , Vec  );
+      FiniteElement1s21ANCF(double   , double     , double   , double   , fmatvec::Vec  );
 
-      //              (Vec qElement, Vec qpElement);
+      //              (fmatvec::Vec qElement, fmatvec::Vec qpElement);
       void berechneM();
-      void berechneh(Vec qElement, Vec qpElement);
+      void berechneh(fmatvec::Vec qElement, fmatvec::Vec qpElement);
 
       void setCurleRadius(double){};
       void setMaterialDamping(double){};//, const double&);
       void setLehrDamping(double){};
 
-      SymMat M;
-      Vec h;
+      fmatvec::SymMat M;
+      fmatvec::Vec h;
 
       bool implicit;
       void Implicit(bool implicit_) {implicit = implicit_;}
-      SqrMat Dhq, Dhqp;
+      fmatvec::SqrMat Dhq, Dhqp;
 
-      SqrMat Damp;
+      fmatvec::SqrMat Damp;
 
       // Balkenort
-      Vec LocateBalken(Vec&,double&);      // globale Koordinaten
+      fmatvec::Vec LocateBalken(fmatvec::Vec&,double&);      // globale Koordinaten
 
-      Vec StateBalken (Vec&,Vec&,double&); // Zustand - global
+      fmatvec::Vec StateBalken (fmatvec::Vec&,fmatvec::Vec&,double&); // Zustand - global
       //Tangente an s
-      Vec Tangente    (Vec&,double&);
+      fmatvec::Vec Tangente    (fmatvec::Vec&,double&);
       // Eingriffsmatrizen
-      Mat JGeneralized(Vec&,const double&);
+      fmatvec::Mat JGeneralized(fmatvec::Vec&,const double&);
 
       // Mechanik des Elements mit diesen Koordinaten/Geschwindigkeiten 
-      Vec ElementData(Vec qElement, Vec qpElement) {return Vec(0);}
+      fmatvec::Vec ElementData(fmatvec::Vec qElement, fmatvec::Vec qpElement) {return fmatvec::Vec(0);}
 
     private:
       static const double NumPrec   ;// = 1.e-12;

@@ -14,8 +14,12 @@
 #include <amviscppinterface/invisiblebody.h>
 #endif
 
-System::System(const string &projectName) : MultiBodySystem(projectName) {
- // Gravitation
+using namespace MBSim;
+using namespace fmatvec;
+using namespace std;
+
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
+  // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
@@ -52,7 +56,7 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   //body->setu0("[0;0;0;0;0;-30]");
   body->setu0("[3;0;1;0;0;0]");
   //body->setu0("[0;0;0;20;0;-30]");
- //body->setu0("[0;0;0;20;10;-30]");
+  //body->setu0("[0;0;0;20;10;-30]");
   //body->setu0("[3;0;0;4;-3;2]");
   //body->setu0("[0;0;0;20;10;-30]");
   body->setMass(m);
@@ -68,27 +72,27 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
 #endif
   body->addContour(sphere,Vec(3),SqrMat(3,EYE));
 
-    Contact *cnf = new Contact("Contact");
-    cnf->setContactForceLaw(new UnilateralConstraint);
-    cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
-    //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
-    //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
-    cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.1));
-    cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.1));
-    cnf->connect(getContour("Plane"), body->getContour("Sphere"));
-    // cnf->setFrictionCoefficient(0.3);
-    //cnf->setPlotLevel(2);
-    addLink(cnf);
+  Contact *cnf = new Contact("Contact");
+  cnf->setContactForceLaw(new UnilateralConstraint);
+  cnf->setContactImpactLaw(new UnilateralNewtonImpact(0.0));
+  //cnf->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e-6,100));
+  //cnf->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
+  cnf->setFrictionForceLaw(new SpatialCoulombFriction(0.1));
+  cnf->setFrictionImpactLaw(new SpatialCoulombImpact(0.1));
+  cnf->connect(getContour("Plane"), body->getContour("Sphere"));
+  // cnf->setFrictionCoefficient(0.3);
+  //cnf->setPlotLevel(2);
+  addLink(cnf);
 
 #ifdef HAVE_AMVIS
-    AMVis::Sphere *obj = new AMVis::Sphere(body->getName(),1,false);
-    body->setAMVisBody(obj);
-    obj->setRadius(r);
+  AMVis::Sphere *obj = new AMVis::Sphere(body->getName(),1,false);
+  body->setAMVisBody(obj);
+  obj->setRadius(r);
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
-    AMVis::InvisibleBody *obj=new AMVis::InvisibleBody;
-    body->setAMVisRigidBody(obj);
-    body->getFrame("C")->enableAMVis(2*r*1.2,0);
+  AMVis::InvisibleBody *obj=new AMVis::InvisibleBody;
+  body->setAMVisRigidBody(obj);
+  body->getFrame("C")->enableAMVis(2*r*1.2,0);
 #endif
 }
 

@@ -45,7 +45,7 @@ namespace MBSim {
          * \brief constructor
          * \param name of body
          */
-        FlexibleBody(const string &name);
+        FlexibleBody(const std::string &name);
 
         /**
          * \brief destructor
@@ -67,16 +67,16 @@ namespace MBSim {
         /* INHERITED INTERFACE OF ELEMENT */
         virtual void plot(double t, double dt=1);
         virtual void initPlot();
-        virtual string getType() const { return "FlexibleBody"; }
-        virtual void load(const string &path, ifstream& inputfile) { Body::load(path, inputfile); }
-        virtual void save(const string &path, ofstream &outputfile) { Body::save(path, outputfile); }
+        virtual std::string getType() const { return "FlexibleBody"; }
+        virtual void load(const std::string &path, std::ifstream& inputfile) { Body::load(path, inputfile); }
+        virtual void save(const std::string &path, std::ofstream &outputfile) { Body::save(path, outputfile); }
 
         /* INHERITED INTERFACE OF OBJECT */
         virtual void init();
         virtual double computeKineticEnergy();
         virtual double computePotentialEnergy();
-        void setq0(Vec q0_) { Body::setq0(q0_); q>>q0; }
-        void setu0(Vec u0_) { Body::setu0(u0_); u>>u0; }
+        void setq0(fmatvec::Vec q0_) { Body::setq0(q0_); q>>q0; }
+        void setu0(fmatvec::Vec u0_) { Body::setu0(u0_); u>>u0; }
         /***************************************************/
 
         /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
@@ -121,7 +121,7 @@ namespace MBSim {
          *  \param name of frame
          *  \param frame location
          */
-        void addFrame(const string &name, const ContourPointData &S_);
+        void addFrame(const std::string &name, const ContourPointData &S_);
 
         /**
          * \param name of frame
@@ -151,17 +151,17 @@ namespace MBSim {
         /** 
          * \brief stl-vector of discretizations/finite elements
          */
-        vector<DiscretizationInterface*> discretization;
+        std::vector<DiscretizationInterface*> discretization;
 
         /** 
          * \brief stl-vector of finite element wise positions
          */
-        vector<Vec> qElement;
+        std::vector<fmatvec::Vec> qElement;
 
         /** 
          * \brief stl-vector of finite element wise velocities
          */
-        vector<Vec> uElement;
+        std::vector<fmatvec::Vec> uElement;
 
         /** 
          * \brief damping factor for mass proportion, see BodyFlexible::setMassProportionalDamping()
@@ -176,7 +176,7 @@ namespace MBSim {
         /** 
          * \brief vector of contour parameters each describing a frame
          */
-        vector<ContourPointData> S_Frame;
+        std::vector<ContourPointData> S_Frame;
 
 #ifdef HAVE_AMVIS
 		bool boolAMVis;

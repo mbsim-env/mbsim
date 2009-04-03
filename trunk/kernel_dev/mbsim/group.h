@@ -20,7 +20,7 @@
 #ifndef _GROUP_H_
 #define _GROUP_H_
 
-#include <mbsim/subsystem.h>
+#include <mbsim/dynamic_system.h>
 
 namespace MBSim {
 
@@ -29,13 +29,13 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    */
-  class Group : public Subsystem {
+  class Group : public DynamicSystem {
     public:
       /**
        * \brief constructor
        * \param name of group
        */
-      Group(const string &name);
+      Group(const std::string &name);
 
       /**
        * \brief destructor
@@ -45,7 +45,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF SUBSYSTEM */
       virtual void updateJacobians(double t);
       virtual void facLLM();
-      using Subsystem::addObject;
+      using DynamicSystem::addObject;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -56,22 +56,18 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void load(const string &path, ifstream &inputfile);
-      virtual void save(const string &path, ofstream &outputfile);
-      virtual string getType() const { return "Group"; }
+      virtual void load(const std::string &path, std::ifstream &inputfile);
+      virtual void save(const std::string &path, std::ofstream &outputfile);
+      virtual std::string getType() const { return "Group"; }
       /***************************************************/
 
       /**
-       * \param subsystem to add
-       * \param relative position of subsystem
-       * \param relative orientation of subsystem
+       * \param dynamic system to add
+       * \param relative position of dynamic system
+       * \param relative orientation of dynamic system
        * \param relation frame
        */
-      void addSubsystem(Subsystem *subsystem, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0);
-
-      // TODO delete compatibility functions
-      void addObject(TreeRigid *tree);
-      void addObject(BodyRigid *body);
+      void addDynamicSystem(DynamicSystem *dynamicsystem, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
   };
 }
 

@@ -40,8 +40,8 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
+      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
       /***************************************************/
 
     private:

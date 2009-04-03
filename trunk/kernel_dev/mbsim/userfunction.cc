@@ -24,6 +24,9 @@
 #include <mbsim/utils/ppolynom.h> 
 #include <fstream>
 
+using namespace std;
+using namespace fmatvec;
+
 namespace MBSim {
 
   void FuncTable::setXY(const Vec& X,const Mat& Y) {

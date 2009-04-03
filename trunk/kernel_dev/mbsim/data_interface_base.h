@@ -23,7 +23,6 @@
 #define _DIB_H_
 
 #include "fmatvec.h"
-using namespace fmatvec;
 
 namespace MBSim {
 
@@ -32,14 +31,14 @@ namespace MBSim {
   class DataInterfaceBase { // Data Interface Base
     protected:
       double SigSize;// angedacht fuer Fähigkeit Signale zu muxen
-      //virtual Vec y; // hinfällig wenn Ports etc. instantan über Dimension verfügen
+      //virtual fmatvec::Vec y; // hinfällig wenn Ports etc. instantan über Dimension verfügen
       std::string name;
     public:
       DataInterfaceBase(){}
       virtual ~DataInterfaceBase() {}
       const std::string& getName() {return name;}
       void setName(const std::string& name_) {name=name_;}
-      virtual Vec operator()(double t) = 0;
+      virtual fmatvec::Vec operator()(double t) = 0;
       double  getSigSize(){return SigSize;}
       virtual void update(double t) {}
   };

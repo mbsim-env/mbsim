@@ -45,6 +45,8 @@
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 
+using namespace fmatvec;
+
 namespace MBSim {
 
   double computeAngleOnUnitCircle(const Vec& r) {

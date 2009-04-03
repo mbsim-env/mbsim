@@ -22,6 +22,9 @@
 #include "edge_edge.h"
 #include "mbsim/contour.h"
 
+using namespace fmatvec;
+using namespace std;
+
 namespace MBSim {
 
   void ContactKinematicsEdgeEdge::assignContours(const vector<Contour*> &contour) {

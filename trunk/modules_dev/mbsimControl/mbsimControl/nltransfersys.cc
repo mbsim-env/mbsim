@@ -23,6 +23,8 @@
 #include <config.h>
 #include "mbsimControl/nltransfersys.h"
 
+using namespace std;
+using namespace fmatvec;
 
 NLTransferSys::NLTransferSys(const string& name) : SPSys(name) {
     OutForm=&NLTransferSys::SystemOutput;

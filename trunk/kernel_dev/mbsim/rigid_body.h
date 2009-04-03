@@ -45,10 +45,10 @@ namespace MBSim {
     friend class Frame;
     friend class Contour;
     public:
-      RigidBody(const string &name);
+      RigidBody(const std::string &name);
 
-      void setForceDirection(const Mat& fd);
-      void setMomentDirection(const Mat& md);
+      void setForceDirection(const fmatvec::Mat& fd);
+      void setMomentDirection(const fmatvec::Mat& md);
 
       /**
        * \param body fixed frame for rotation
@@ -75,7 +75,7 @@ namespace MBSim {
        * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
        \param I martix of inertia
        */
-      void setInertiaTensor(const SymMat& RThetaR, const Frame* refFrame=0) {
+      void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
           i4I = portIndex(refFrame);
         else
@@ -102,11 +102,11 @@ namespace MBSim {
       void resizeJacobians(int j);
       virtual void checkForConstraints();
 
-      void addFrame(Frame *port_, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame=0); 
+      void addFrame(Frame *port_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0); 
 
-      void addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec &SrSK, const fmatvec::SqrMat &ASK, const Frame* refFrame=0);
 
-      void addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       void setFrameForKinematics(Frame *frame) {
         iRef = portIndex(frame);
@@ -131,10 +131,10 @@ namespace MBSim {
       void calcqSize();
       void calcuSize(int j=0);
 
-      virtual string getType() const {return "RigidBody";}
+      virtual std::string getType() const {return "RigidBody";}
 
-      void load(const string &path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
+      void load(const std::string &path, std::ifstream &inputfile);
+      void save(const std::string &path, std::ofstream &outputfile);
 
 #ifdef HAVE_AMVIS
       void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
@@ -153,36 +153,36 @@ namespace MBSim {
        * \brief mass
        */
       double m;
-      SymMat SThetaS, WThetaS;
+      fmatvec::SymMat SThetaS, WThetaS;
 
       /**
        * \brief frame indices for reference and kinematics (inertia)
        */
       int iRef, i4I;
 
-      Mat H, TH;
-      SymMat Mbuf;
+      fmatvec::Mat H, TH;
+      fmatvec::SymMat Mbuf;
 
-      Mat PJT, PJR, PdJT, PdJR;
-      Vec PjT, PjR, PdjT, PdjR;
+      fmatvec::Mat PJT, PJR, PdJT, PdJR;
+      fmatvec::Vec PjT, PjR, PdjT, PdjR;
 
-      Mat PJR0;
+      fmatvec::Mat PJR0;
 
-      Mat PJTs, PJRs;
+      fmatvec::Mat PJTs, PJRs;
 
-      SqrMat APK;
-      Vec PrPK, WrPK, WvPKrel, WomPK;
+      fmatvec::SqrMat APK;
+      fmatvec::Vec PrPK, WrPK, WvPKrel, WomPK;
 
       /**
        * \brief frame of reference of the rigid body
        */
       Frame *frameParent;
 
-      vector<SqrMat> ASK;
-      vector<Vec> SrSK, WrSK;
+      std::vector<fmatvec::SqrMat> ASK;
+      std::vector<fmatvec::Vec> SrSK, WrSK;
 
-      vector<SqrMat> ASC;
-      vector<Vec> SrSC, WrSC;
+      std::vector<fmatvec::SqrMat> ASC;
+      std::vector<fmatvec::Vec> SrSC, WrSC;
 
       Jacobian *fT;
 
@@ -197,7 +197,7 @@ namespace MBSim {
       TimeDependentFunction *fPdjT;
       TimeDependentFunction *fPdjR;
 
-      Mat forceDir, momentDir;
+      fmatvec::Mat forceDir, momentDir;
 
       void (RigidBody::*updateM_)(double t);
       void updateMConst(double t);
