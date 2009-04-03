@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_CONTOURINTERPOLATION_H_
@@ -32,19 +29,41 @@ namespace MBSim {
   class ContourInterpolation;
   class FuncPairPointContourInterpolation;
 
-  /** pairing Point to ContourInterpolation; author: Roland Zander */
+  /** 
+   * \brief pairing point to contour interpolation;
+   * \author Roland Zander 
+   * \date 2009-04-02 some comments
+   * \todo change stage to new interface TODO
+   */
   class ContactKinematicsPointContourInterpolation : public ContactKinematics {
+    public:
+      /**
+       * \brief destructor
+       */
+      virtual ~ContactKinematicsPointContourInterpolation();
+
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void stage1(Vec &g, std::vector<ContourPointData> &cpData);
+      virtual void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
+
     private:
+      /**
+       * \brief contour index
+       */
       int ipoint, idinterpol;
+
+      /**
+       * \brief contour classes
+       */
       Point *point;
       ContourInterpolation *cinterpol;
-      FuncPairPointContourInterpolation *func;
-    public:
-      ~ContactKinematicsPointContourInterpolation();
-      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
 
-      void assignContours(const std::vector<Contour*> &contour);
+      /**
+       * \brief root function
+       */
+      FuncPairPointContourInterpolation *func;
+
   };
 
 }

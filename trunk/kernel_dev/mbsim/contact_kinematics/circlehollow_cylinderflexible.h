@@ -31,7 +31,8 @@ namespace MBSim {
   /**
    * \brief pairing CircleHollow to CylinderFlexible
    * \author Roland Zander
-   * \date 18.03.09
+   * \date 2009-04-02 some comments
+   * \todo change stage to new interface TODO
    */
   class ContactKinematicsCircleHollowCylinderFlexible : public ContactKinematics {
     public:
@@ -46,13 +47,25 @@ namespace MBSim {
       virtual ~ContactKinematicsCircleHollowCylinderFlexible();
 
       /* INHERITED INTERFACE */
-      void assignContours(const std::vector<Contour*> &contour);
-      void updateg(Vec &g, ContourPointData *cpData);
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(Vec &g, ContourPointData *cpData);
+      /***************************************************/
     
     private:
+      /**
+       * \brief contour index
+       */
       int icircle, icylinder;
+
+      /**
+       * \brief contour classes
+       */
       CircleHollow *circle;
       CylinderFlexible *cylinder;
+
+      /**
+       * \brief root function
+       */
       FuncPairContour1sCircleHollow *func;
   };
 

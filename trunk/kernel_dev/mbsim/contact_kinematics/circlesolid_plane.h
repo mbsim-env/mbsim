@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_CIRCLESOLID_PLANE_H_
@@ -31,21 +27,27 @@ namespace MBSim {
   class CircleSolid;
   class Plane;
 
-  /*! \brief Pairing CircleSolid to Plane
-   * 
-   * Authors: Martin Foerg, Thorsten Schindler
+  /*! \brief pairing circle outer side to plane
+   * \author Martin Foerg
+   * \author Thorsten Schindler
+   * \date 2009-04-02 some comments (Thorsten Schindler)
    */
   class ContactKinematicsCircleSolidPlane : public ContactKinematics {
     public:
-       /*! Compute normal distance in contact point */
-      void updateg(Vec &g, ContourPointData* cpData);
-      /*! Compute normal and tangential velocities */
-      void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(Vec &g, ContourPointData* cpData);
+      /***************************************************/
 
-      void assignContours(const std::vector<Contour*> &contour);
-      
-   	private:
+    private:
+      /**
+       * \brief contour index
+       */
       int icircle, iplane;
+
+      /**
+       * \brief contour classes
+       */
       CircleSolid *circlesolid;
       Plane *plane;
   };
@@ -53,3 +55,4 @@ namespace MBSim {
 }
 
 #endif /* _CONTACT_KINEMATICS_CIRCLESOLID_PLANE_H_ */
+

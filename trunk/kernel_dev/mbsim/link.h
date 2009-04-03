@@ -205,7 +205,7 @@ namespace MBSim {
       virtual void init();
 
       /**
-       * \brief do tasks before initialisation TODO necessary?
+       * \brief do tasks before initialisation 
        */
       virtual void preinit() {}
 
@@ -560,7 +560,7 @@ namespace MBSim {
       /**
        * \brief scale factor for flow and pressure quantity tolerances tolQ/tolp=tol*scaleTolQ/scaleTolp TODO necessary?
        */
-      double scaleTolQ,scaleTolp;
+      double scaleTolQ, scaleTolp;
 
       /**
        * \brief array in which all frames are listed, connecting bodies via a link

@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_PLANE_H_
@@ -31,29 +28,34 @@ namespace MBSim {
   class Point;
   class Plane; 
 
-  /*! 
-   * Pairing Point to Plane
-   * Author: Martin Foerg
+  /** 
+   * \brief pairing point to plane
+   * \author Martin Foerg
+   * \date 2009-04-02 some comments (Thorsten Schindler)
    */
   class ContactKinematicsPointPlane : public ContactKinematics {
+    public:
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(Vec &g, ContourPointData* cpData);
+      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
+      /***************************************************/
 
     private:
+      /**
+       * \brief contour index
+       */
       int ipoint, iplane;
+
+      /**
+       * \brief contour classes
+       */
       Point *point;
       Plane *plane;
 
-    public:
-      /*! Compute normal distance in contact point */
-      void updateg(Vec &g, ContourPointData* cpData);
-      /*! Compute normal and tangential velocities */
-      void updategd(const Vec& g, Vec &gd, ContourPointData *cpData);
-
-      void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData);
-
-      /*! Treat ordering of contacting bodies in connect-call */
-      void assignContours(const std::vector<Contour*> &contour);
   };
 
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_PLANE_H_ */
+

@@ -109,8 +109,8 @@ namespace MBSim {
     Body::init();
     T = SqrMat(qSize,fmatvec::EYE);
     for(unsigned int i=0; i<port.size(); i++) { // frames
-      S_Frame[i].cosy.getJacobianOfTranslation().resize(3,uSize[0]);
-      S_Frame[i].cosy.getJacobianOfRotation().resize(3,uSize[0]);
+      S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(3,uSize[0]);
+      S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(3,uSize[0]);
     }
   }
 

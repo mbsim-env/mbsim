@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,10 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
+ *          thschindler@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_FRUSTUM_H_
@@ -27,28 +25,39 @@
 #include "contact_kinematics.h"
 
 namespace MBSim {
-	
-  	class Point; 
-  	class Frustum; 
 
-	/*! \brief Pairing Point to Frustum Surface
-	 * 
-	 * Authors: Martin Foerg, Thorsten Schindler
-	 */
-	class ContactKinematicsPointFrustum : public ContactKinematics {     
-	    public:
-	    	  /*! Compute normal distance in contact point */
-		      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
-		      /*! Compute tangential directions and normal velocities in contact points */
-		      void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
-		      /*! Treat ordering of contacting bodies in connect-call */
-		      void assignContours(const std::vector<Contour*> &contour);
-		      
-		private:
-		      int ipoint, ifrustum; 
-		      Point *point;
-		      Frustum *frustum;
-	};
+  class Point; 
+  class Frustum; 
+
+  /**
+   * \brief pairing point to frustum surface
+   * \author Martin Foerg
+   * \author Thorsten Schindler
+   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \todo change stage to new interface TODO
+   */
+  class ContactKinematicsPointFrustum : public ContactKinematics {     
+    public:
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void stage1(Vec &g, std::vector<ContourPointData> &cpData);
+      virtual void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief contour index
+       */
+      int ipoint, ifrustum; 
+
+      /**
+       * \brief contour classes
+       */
+      Point *point;
+      Frustum *frustum;
+  };
+
 }
 
 #endif /* _CONTACT_KINEMATICS_POINT_FRUSTUM_H_ */
+

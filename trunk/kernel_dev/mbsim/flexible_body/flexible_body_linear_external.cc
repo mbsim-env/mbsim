@@ -68,27 +68,27 @@ namespace MBSim {
 
   void FlexibleBodyLinearExternal::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
 	Mat Jacobian;
-	if(cp.type == NODE) {
+	if(cp.getContourParameterType() == NODE) {
 	  Jacobian = discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
-	} else if(cp.type == EXTINTERPOL) {
+	} else if(cp.getContourParameterType() == EXTINTERPOL) {
 //	  for(unsigned int i=0;i<(cp.iPoints).size();i++) {
-//		ContourPointData cpTemp; cpTemp.type=NODE;
-//		cpTemp.ID = cp.iPoints[i]->getID();
+//		ContourPointData cpTemp; cpTemp.getContourParameterType()=NODE;
+//		cpTemp.getNodeNumber() = cp.iPoints[i]->getID();
 //		if(!Jacobian.rows()) Jacobian  = cp.iWeights(i) * ( computeJacobianMatrix (cpTemp) );
 //		else                 Jacobian += cp.iWeights(i) * ( computeJacobianMatrix (cpTemp) );
 //	  }
 	}
 
-    cp.cosy.setJacobianOfTranslation(frameParent->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));// TODO dimensionen der internen Jacobis
-    cp.cosy.setJacobianOfRotation   (frameParent->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
-    // S_.cosy.setGyroscopicAccelerationOfTranslation(TODO)
-    // S_.cosy.setGyroscopicAccelerationOfRotation(TODO)
+    cp.getFrameOfReference().setJacobianOfTranslation(frameParent->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));// TODO dimensionen der internen Jacobis
+    cp.getFrameOfReference().setJacobianOfRotation   (frameParent->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
+    // S_.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
+    // S_.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
     if(frame!=NULL) { // frame should be linked to contour point data
-      frame->setJacobianOfTranslation(cp.cosy.getJacobianOfTranslation());
-      frame->setJacobianOfRotation   (cp.cosy.getJacobianOfRotation());
-      frame->setGyroscopicAccelerationOfTranslation(cp.cosy.getGyroscopicAccelerationOfTranslation());
-      frame->setGyroscopicAccelerationOfRotation   (cp.cosy.getGyroscopicAccelerationOfRotation());
+      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
+      frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
+      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
+      frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
     }   
   }
 
@@ -98,9 +98,9 @@ namespace MBSim {
 ////    //    RHitSphere = 0;
 ////    
 ////        for(unsigned int i=0; i<contour.size(); i++)
-////    	  if(contourType[i].type==NODE) {
+////    	  if(contourType[i].getContourParameterType()==NODE) {
 ////    	  ContourPointData cp;
-////    	  cp.ID = contour[i]->getID();
+////    	  cp.getNodeNumber() = contour[i]->getID();
 ////    	  Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
 ////    //TODO		contour[i]->setWrOP(WrON00  + JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslation(qElement[0],cp)            );
 ////    //	TODO	contour[i]->setWvP (          JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslationalVelocity (qElement[0],uElement[0],cp));
@@ -152,28 +152,28 @@ namespace MBSim {
 //  void FlexibleBodyLinearExternal::addFrame(const string &name, const Mat &J_, const Vec &r_) {
 //	ContourPointData cp = addInterface(J_,r_);
 //    Port *port_ = new Port(name);
-//    port_->setID(cp.ID); // Stelle, an der die Jacobi steht
+//    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
 //    FlexibleBody<int>::addFrame(port_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addFrame(const string &name, const string &jacobifile) {
 //    ContourPointData cp = addInterface(jacobifile);
 //    Port *port_ = new Port(name);
-//    port_->setID(cp.ID); // Stelle, an der die Jacobi steht
+//    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
 //    FlexibleBody<int>::addFrame(port_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addContour(Contour *contour_, const Mat &J_, const Vec &r_) {
 //	ContourPointData cp = addInterface(J_,r_);
 //	contourType.push_back(cp);
-//    contour_->setID(cp.ID); // Stelle, an der die Jacobi steht
+//    contour_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
 //    FlexibleBody<int>::addContour(contour_, cp );
 //    nContours++;
 //  }
 //  void FlexibleBodyLinearExternal::addContour(Contour *contour_, const string &jacobifile) {
 //	ContourPointData cp = addInterface(jacobifile);
 //	contourType.push_back(cp);
-//    contour_->setID(cp.ID); // Stelle, an der die Jacobi steht
+//    contour_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
 //    FlexibleBody<int>::addContour(contour_, cp );
 //    nContours++;
 //  }
@@ -181,7 +181,7 @@ namespace MBSim {
 //  void FlexibleBodyLinearExternal::addContourInterpolation(ContourInterpolation *contour_) {
 //    contour_->setID(contourType.size()); // Stelle, an der die Jacobi steht
 //    ContourPointData cpData;
-//    cpData.type=EXTINTERPOL;
+//    cpData.getContourParameterType()=EXTINTERPOL;
 //	contourType.push_back(cpData);
 //    FlexibleBody<int>::addContour(contour_,cpData,false); 
 //  }
@@ -223,13 +223,13 @@ namespace MBSim {
 //
 //    if(port.size()>0) parafile << "\nports:" <<endl;
 //    for(unsigned int i=0; i<port.size(); i++) { 
-//	  ContourPointData cp; cp.ID=port[i]->getID();
+//	  ContourPointData cp; cp.getNodeNumber()=port[i]->getID();
 //      parafile << "# J: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") \n"<<discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp)<<endl;
 //    }
 //
 //	if(contour.size()>0) parafile << "\ncontours:" <<endl;
 //	for(unsigned int i=0; i<contour.size(); i++) {
-//	  if(contourType[i].type!=EXTINTERPOL) {
+//	  if(contourType[i].getContourParameterType()!=EXTINTERPOL) {
 //		parafile << "# J: (contour:  name= "<< contour[i]->getName()<<",  ID= "<<contour[i]->getID()<<")"<< endl;
 //		parafile << discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],contourType[i])<<endl;
 //	  } else {

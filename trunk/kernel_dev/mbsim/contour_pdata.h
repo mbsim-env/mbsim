@@ -20,7 +20,7 @@
 #define _CONTOUR_PDATA_H_
 
 #include "fmatvec.h"
-#include <mbsim/frame.h>
+#include "mbsim/frame.h"
 #include <vector>
 
 using namespace fmatvec;
@@ -30,60 +30,78 @@ namespace MBSim {
 
   class Point;
 
-  enum ContourParameterType {NODE, CONTINUUM, EXTINTERPOL};
+  enum ContourParameterType { NODE, CONTINUUM, EXTINTERPOL };
 
   /**
    * \brief struct for data-management for single point on a contour to describe contact kinematics
    * \author Roland Zander
    * \date 2009-03-19 some comments (Thorsten Schindler)
+   * \date 2009-04-02 Wn / Wt / WrOC deleted (Thorsten Schindler)
    */
-  struct ContourPointData {
-    /* -- used for all bodies, sufficient information for rigid bodies -- */
-    ContourPointData() : cosy("Dummy") {}
+  class ContourPointData {
+    public:
+      /**
+       * \brief constructor
+       */
+      ContourPointData() : type(CONTINUUM), ID(0) {}
 
-    /**
-     * \brief accompanying frame
-     */
-    Frame cosy;
+      /**
+       * \brief destructor
+       */
+      virtual ~ContourPointData() {}
 
-    /* ------------------------ used for elastic bodies ----------------- */
-    /** 
-     * \brief type of data representation: node, continuum, interpolation (extinterpol) 
-     */
-    ContourParameterType type;
+      /* GETTER / SETTER */
+      ContourParameterType& getContourParameterType() { return type; }
+      const ContourParameterType& getContourParameterType() const { return type; }
+      int& getNodeNumber() { return ID; }
+      const int& getNodeNumber() const { return ID; }
+      Vec& getLagrangeParameterPosition() { return alpha; }
+      const Vec& getLagrangeParameterPosition() const { return alpha; }
+      Vec& getLagrangeParameterVelocity() { return alphap; }
+      const Vec& getLagrangeParameterVelocity() const { return alphap; }
+      Vec& getInterpolationWeights() { return iWeights; }
+      const Vec& getInterpolationWeights() const { return iWeights; }
+      Frame& getFrameOfReference() { return cosy; }
+      const Frame& getFrameOfReference() const { return cosy; }
+      /***************************************************/
 
-    /** 
-     * \brief ID of node or other discret interface within body -> FiniteElements
-     */
-    int ID;
+    private:
+      /** 
+       * \brief type of data representation: node, continuum, interpolation (extinterpol) 
+       */
+      ContourParameterType type;
 
-    /**
-     * \brief contour parameter(s)
-     */
-    Vec alpha;
+      /** 
+       * \brief ID of node or other discret interface within body -> FiniteElements
+       */
+      int ID;
 
-    /**
-     * \brief contour parameter(s) velocities
-     */
-    Vec alphap;
+      /**
+       * \brief contour parameter(s)
+       */
+      Vec alpha;
 
-    /** 
-     * \brief interpolation weights
-     */
-    Vec iWeights;
+      /**
+       * \brief contour parameter(s) velocities
+       */
+      Vec alphap;
 
-    /**
-     * \brief list of nodes used in interpolation
-     *
-     * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
-     */
-    vector<Point*> iPoints;
+      /** 
+       * \brief interpolation weights
+       */
+      Vec iWeights;
 
-    // obsolete TODO
-    Vec Wn;
-    Mat Wt;
-    Vec WrOC;
+      /**
+       * \brief list of nodes used in interpolation
+       *
+       * the (body specific) ID can be accessed using ->iPoint[NNumber]->getID();
+       */
+      vector<Point*> iPoints;
 
+      /**
+       * \brief accompanying frame
+       */
+      Frame cosy;
   };
 
 }
