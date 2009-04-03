@@ -33,7 +33,7 @@ For the installation of one of the three projects the following procedures have 
 	\end{itemize}
 \end{itemize}
 All procedures belong to the GNU-Build-System (Figure \ref{fig:GNUBuild}).\par
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	
     \psfrag{acinclude.m4}{\textsf{\small acinclude.m4}}
@@ -54,7 +54,7 @@ All procedures belong to the GNU-Build-System (Figure \ref{fig:GNUBuild}).\par
     \psfrag{make}{\textsf{\small make}}
     \psfrag{Makefile ...}{\textsf{\small Makefile}}
   	\includegraphics[width=12cm]{Figures/GNUBuildSystem.eps}
-  	\caption{GNU-Build-System}
+  	\caption{GNU build system}
   	\label{fig:GNUBuild}
 \end{figure}
 The role of the procedures can be summarized as follows.\footnote{in detail: \url{www.gnu.org/software/[autoconf,automake,libtool]/manual}}\par\nopagebreak
@@ -190,6 +190,6 @@ in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, conf
 \subsection{\MBSim Examples}
 The examples are used for testing successful installation. There are two possibilities:
 \begin{enumerate}
-\item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{amvis} and plotted with the commands from section~\ref{sec:plot}.
+\item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{amvis} and plotted with the commands from Sec.~\ref{sec:plot}.
 \item Use the script \texttt{./runexamples.sh} in the upmost examples directory even to compare with reference data. See \texttt{./runexamples.sh -h} for the syntax. The \HDF{} executables must be available in the search path.
 \end{enumerate}

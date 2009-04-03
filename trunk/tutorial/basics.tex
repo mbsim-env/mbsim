@@ -1,44 +1,4 @@
-\section{Theoretische Grundlagen}
-Martin Förg hat in seiner MKS-Vorlesung sowie in seiner Dissertationsschrift
-\cite{Foer06,Foer07} die theoretische Basis und den mathematischen Hintergrund für
-\MBSim{} ausführlich erklärt. Hier soll nur ein kurzer Einblick in die Objektorientierung
-und Code-Struktur von \MBSim{} gegeben werden -- frei von der Mathematik und Mechanik, die
-zur jeweiligen Beschreibung verwendet wird. Abbildung~\ref{fig:objects} zeigt hierzu
-exemplarisch ein System aus Umwelt und zwei Körpern. Angedeutet sind Wechselwirkungen
-dieser untereinander über Kontakte und Verbindungen sowie eine äußere Last.
-
-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
-\begin{figure}[htb]
-  \centering
-  \psfrag{Port}[lc][lc]{\textsf{\small Port}}
-  \psfrag{Body}[lc][lc]{\textsf{\small Body}}
-  \psfrag{Connection}[lc][lc]{\textsf{\small Connection}}
-  \psfrag{Contact}[lc][lc]{\textsf{\small Contact}}
-  \psfrag{Contour}[lc][lc]{\textsf{\small Contour}}
-  \psfrag{Load}[lc][lc]{\textsf{\small Load}}
-  \includegraphics[width=0.8\hsize]{objectorientationMBSim.eps}
-  \caption{Objekt-Strukturierung in \MBSim{}}
-  \label{fig:objects}
-\end{figure}
-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%
-
-Ein Körper~(\texttt{Body...}) ist in \MBSim{} durch seine Lagen~$\vq$ und
-Geschwindigkeiten~$\vu$ parametrisiert. Die Parameter der beschreibenden
-Differentialgleichung sind bei starren Körpern~(\texttt{BodyRigid...}) immer Masse~$m$ und
-Tragheitstensor~$\vTheta$. Die Modelle für flexible Körper~(\texttt{Bodyflexible...}) sind in der
-Parametrisierung jeweils sehr speziell -- für sie sei auf die jeweiligen Implementierungen
-und die zugehörigen Dokumentationen verwiesen.
-
-Die Umwelt kann wie auch alle Körper Konturen~(\texttt{Contour}) sowie
-Anschlüsse~(\texttt{Port}) aufnehmen, auf denen Kontakte sowie diskrete Wechselwirkungen
-definiert werden können. Zudem ist Gravitation über die Umwelt definiert.
-
-Kontakte zwischen den Konturen unterschiedlicher Körper können sowohl als
-Starrkörperkontakt~(\texttt{ContactRigid}, mengenwertig, nicht-glatte Dynamik) als auch
-als nachgiebiger Kontakt~(\texttt{ContactFlexible}, funktional, lokale Steifigkeit)
-definiert werden. Reibung wird hierbei jeweils durch die Angabe der auszuwertenden
-Reibrichtungen eingebunden. Verbindungen zwischen zwei Anschlüssen können sowohl starr
-(\texttt{ConnectionRigid}) als auch mit Nachgiebigkeit~(\texttt{ConnectionFlexible})
-modelliert werden. Für äussere Lasten~(\texttt{Load}) können beliebige Vorschriften
-angegeben werden.
+\section{Introduction}
+\MBSim{} is a simulation tool to analyse the dynamic phenomenons of dynamical systems. Its root is the modelling of nonsmooth multibody system explaining the program name \MBSim{}. The mathematical background has been developed over years at the Institute of Applied Mechanics of the Technische Universit\"at M\"unchen. The last summary concerning rigid body dynamics was given in the PhD thesis and the lecture of Martin F\"org~\cite{Foer06,Foer07} as well as the PhD thesis of Roland Zander~\cite{Zan08a} introduces the theory of flexible bodies. The Ref.~\cite{Zan08} shows an overview about the research at the institute in the last decades concerning nonsmooth mechanics. This reference also includes simulation results of academic and industrial examples. Extensions regarding hydraulics and signal processing as well as parallelisation and cosimulation are unique in the field of nonsmooth dynamical systems.\par
+The goal of this introduction is to motivate the use of \MBSim{}. It shows the installation of the necessary program parts, the components and program flow and some examples. 
 
