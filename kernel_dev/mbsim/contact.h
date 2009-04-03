@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg, Roland Zander
-
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _CONTACT_H_
@@ -30,152 +26,185 @@
 
 namespace MBSim {
 
-
   class ContactKinematics;
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
 
-  /*! \brief Class for contacts
+  /*! \brief class for contacts
+   * \author Martin Foerg
+   * \date 2009-04-02 some comments (Thorsten Schindler)
    *
-   * Basis class for Contacts between Contours, mainly implementing geometrical informations of ContactPairings
-   *
-   * */
+   * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
+   */
   class Contact: public Link {
+    public:
+      /*!
+       * \brief constructor
+       * \param name of contact
+       */      
+      Contact(const string &name);
+
+      /**
+       * \brief destructor
+       */
+      virtual ~Contact();
+
+      /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updater(double t);
+      virtual void updatewb(double t);
+      virtual void updateW(double t);
+      virtual void updateV(double t);
+      virtual void updateh(double t);
+      virtual void updateg(double t);
+      virtual void updategd(double t);
+      virtual void updateStopVector(double t);
+      virtual void updateJacobians(double t);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF LINK */
+      virtual void updateWRef(const Mat &ref, int j=0);
+      virtual void updateVRef(const Mat &ref, int j=0);
+      virtual void updatehRef(const Vec &ref, int j=0);
+      virtual void updatewbRef(const Vec &ref);
+      virtual void updatelaRef(const Vec& ref);
+      virtual void updategRef(const Vec& ref);
+      virtual void updategdRef(const Vec& ref);
+      virtual void updaterFactorRef(const Vec &ref);
+      virtual void updatesvRef(const Vec &ref);
+      virtual void updatejsvRef(const Vector<int> &ref);
+      virtual void calcxSize();
+      virtual void calclaSize();
+      virtual void calclaSizeForActiveg();
+      virtual void calcgSize();
+      virtual void calcgSizeActive();
+      virtual void calcgdSize(); // TODO not consistent
+      virtual void calcgdSizeActive();
+      virtual void calcrFactorSize();
+      virtual void calcsvSize();
+      virtual void init();
+      virtual void preinit();
+      virtual bool isSetValued() const;
+      virtual bool isActive() const;
+      virtual bool gActiveChanged();
+      virtual void solveImpactsFixpointSingle();
+      virtual void solveConstraintsFixpointSingle();
+      virtual void solveImpactsGaussSeidel();
+      virtual void solveConstraintsGaussSeidel();
+      virtual void solveImpactsRootFinding();
+      virtual void solveConstraintsRootFinding();
+      virtual void jacobianConstraints();
+      virtual void jacobianImpacts();
+      virtual void updaterFactors();
+      virtual void checkConstraintsForTermination();
+      virtual void checkImpactsForTermination();
+      using Link::connect;
+      virtual void checkActiveg();
+      virtual void checkActivegd();
+      virtual void checkActivegdn();
+      virtual void checkActivegdd(); 
+      virtual void checkAllgd();
+      virtual void updateCondition();
+      virtual void resizeJacobians(int j); 
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void load(const string& path, ifstream &inputfile);
+      virtual void save(const string &path, ofstream &outputfile);
+      virtual string getType() const { return "Contact"; }
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      void setContactForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
+      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
+      void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
+      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
+      void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
+      /***************************************************/
+
+      /**
+       * \return number of considered friction directions
+       */
+      virtual int getFrictionDirections(); 
+
+      /*! connect two contours
+       * \param first contour
+       * \param second contour
+       */
+      void connect(Contour *contour1, Contour* contour2);
 
     protected:
-
-      vector<unsigned int> gActive, gActive0;
-      vector<unsigned int*> gdActive, gdActive0;
-
-      /** index for tangential directions in projection matrices */
-      Index iT;
-
-      /** number of friction directions: 0 = frictionless, 1 = planar friction, 2 = spatial friction */
-      //int nFric;
-
+      /**
+       * \brief used contact kinematics
+       */
       ContactKinematics *contactKinematics;
 
-      vector< ContourPointData* > cpData;
-
-      double argN;
-      Vec argT;
-
-      void checkActive();
-
+      /**
+       * \brief force laws in normal and tangential direction on acceleration and velocity level
+       */
       GeneralizedForceLaw *fcl;
       FrictionForceLaw *fdf;
       GeneralizedImpactLaw *fnil;
       FrictionImpactLaw *ftil;
 
+      /**
+       * \brief vector of frames for definition of relative contact situation
+       */
+      vector<ContourPointData*> cpData;
+
+      /** 
+       * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
+       */
+      vector<unsigned int> gActive, gActive0;
+      
+      /** 
+       * \brief boolean vector symbolising activity of contacts on velocity level
+       */
+      vector<unsigned int*> gdActive; 
+
+      /** 
+       * \brief index for tangential directions in projection matrices
+       */
+      Index iT;
+
+      /**
+       * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
+       */
       Vec gdn, gdd;
 
+      /**
+       * \brief vectors of relative distance, velocity, velocity after impact in event driven scheme, acceleration in event driven scheme, force parameters, acceleration description with respect to contour parameters, stop vector, relaxation factors for possible contact points
+       */
       vector<Vec> gk, gdk, gdnk, gddk, lak, wbk, svk, rFactork;
+
+      /**
+       * \brief boolean evaluation of stop vector for possible contact points
+       */
       vector<Vector<int> > jsvk;
+      
+      /**
+       * \brief single-valued forces for possible contact points
+       */
       vector<Mat*> fF;
+
+      /**
+       * \brief set-valued forces for possible contact points
+       */
       vector<Vec*> WF;
+
+      /**
+       * \brief condensed and full force direction matrix for possible contact points
+       */
       vector<Mat*> Vk, Wk;
+
+      /**
+       * \brief size and index of force parameters, relative distances, relative velocities, stop vector and relaxation factors for possible contact points
+       */
       vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
-
-    public:
-      /*!
-        \param name name of Contact
-        \param setValued true, if force law is set-valued, else false for functional law
-        */      
-      Contact(const string &name);
-
-      virtual ~Contact();
-
-      bool isSetValued() const;
-
-      void calcxSize();
-
-      void calclaSize();
-      void calclaSizeForActiveg();
-      void calcgSize();
-      void calcgSizeActive();
-      void calcgdSize();
-      void calcgdSizeActive();
-      void calcrFactorSize();
-      void calcsvSize();
-
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
-
-      void solveImpactsFixpointSingle();
-      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      void solveConstraintsRootFinding();
-      void jacobianConstraints();
-      void jacobianImpacts();
-
-      /*geerbt*/
-      void init();
-      void preinit();
-
-      /*! define wether HitSpheres are tested or ignored
-      */
-      void connectHitSpheres(Contour *contour1, Contour* contour2);
-
-      /*! connect two Contour s
-        \param contour1 first contour
-        \param contour2 second contour
-        */
-      void connect(Contour *contour1, Contour* contour2);
-
-      void updateg(double t);
-      void updategd(double t);
-      void updater(double t);
-      void updateW(double t);
-      void updateV(double t);
-      void updatewb(double t);
-      void updateh(double t);
-      void updaterFactors();
-      void updateJacobians(double t);
-
-      void resizeJacobians(int j); 
-
-      void updatelaRef(const Vec& ref);
-      void updategRef(const Vec& ref);
-      void updategdRef(const Vec& ref);
-      void updateWRef(const Mat &ref, int j=0);
-      void updatewbRef(const Vec &ref);
-      void updateVRef(const Mat &ref, int j=0);
-      void updatehRef(const Vec &ref, int j=0);
-      void updatesvRef(const Vec &ref);
-      void updatejsvRef(const Vector<int> &ref);
-      void updaterFactorRef(const Vec &ref);
-
-      void updateStopVector(double t);
-
-      void setContactForceLaw(GeneralizedForceLaw *fcl_) {fcl = fcl_;}
-      void setContactImpactLaw(GeneralizedImpactLaw *fnil_) {fnil = fnil_;}
-      void setFrictionForceLaw(FrictionForceLaw *fdf_) {fdf = fdf_;}
-      void setFrictionImpactLaw(FrictionImpactLaw *ftil_) {ftil = ftil_;}
-
-      virtual int getFrictionDirections(); 
-      void setContactKinematics(ContactKinematics* ck) {contactKinematics = ck;}
-      string getType() const {return "Contact";}
-
-      bool gActiveChanged();
-      bool isActive() const;
-
-      void checkActiveg();
-      void checkActivegd();
-      void checkActivegdn();
-      void checkActivegdd(); 
-      void checkAllgd();
-
-      void updateCondition();
-      void checkConstraintsForTermination();
-      void checkImpactsForTermination();
-
-      using Link::connect;
   };
 
 }
 
 #endif
+

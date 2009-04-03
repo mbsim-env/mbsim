@@ -1,5 +1,5 @@
-/* Copyright (C) 2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,17 +13,14 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <config.h> 
 #include "compoundcontour_compoundcontour.h"
-#include <mbsim/contour.h>
-#include <mbsim/utils/contact_utils.h>
+#include "mbsim/contour.h"
+#include "mbsim/utils/contact_utils.h"
 
 namespace MBSim {
 
@@ -35,26 +32,19 @@ namespace MBSim {
     numberOfPotentialContactPoints = 0;
     for(unsigned int i=0; i<contour0->getNumberOfElements(); i++) {
       for(unsigned int j=0; i<contour1->getNumberOfElements(); j++) {
-	ContactKinematics *tmp = findContactPairing(contour0->getContourElement(i),contour1->getContourElement(j));
-	if(tmp) {
-	  contactKinematics.push_back(tmp); 
-	  tmp->assignContours(contour0->getContourElement(i),contour1->getContourElement(j));
-	  numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
-	}
+        ContactKinematics *tmp = findContactPairing(contour0->getContourElement(i),contour1->getContourElement(j));
+        if(tmp) {
+          contactKinematics.push_back(tmp); 
+          tmp->assignContours(contour0->getContourElement(i),contour1->getContourElement(j));
+          numberOfPotentialContactPoints += tmp->getNumberOfPotentialContactPoints();
+        }
       }
     }
   }
 
   void ContactKinematicsCompoundContourCompoundContour::updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {
-   for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
-      contactKinematics[i]->updateg(g[k], cpData[k]);
-      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
-   }
-  }
-
-  void ContactKinematicsCompoundContourCompoundContour::updategd(vector<Vec> &g, vector<Vec> &gd, vector<ContourPointData*> &cpData) {
     for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
-      contactKinematics[i]->updategd(g[k], gd[k], cpData[k]);
+      contactKinematics[i]->updateg(g[k], cpData[k]);
       k += contactKinematics[i]->getNumberOfPotentialContactPoints();
     }
   }
@@ -66,4 +56,5 @@ namespace MBSim {
     }
   }
 
-  }
+}
+

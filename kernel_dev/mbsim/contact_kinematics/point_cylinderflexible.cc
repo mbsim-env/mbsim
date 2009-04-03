@@ -45,34 +45,34 @@ namespace MBSim {
 
   void ContactKinematicsPointCylinderFlexible::updateg(Vec &g, ContourPointData *cpData) {
 
-    cpData[ipoint].cosy.setPosition(point->getFrame()->getPosition());
+    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
 
     // contact search on cylinder flexible
     Contact1sSearch search(func);
     search.setNodes(cylinder->getNodes());
 
-    if(cpData[icylinder].alpha.size()==1) {
-      search.setInitialValue(cpData[icylinder].alpha(0));
+    if(cpData[icylinder].getLagrangeParameterPosition().size()==1) {
+      search.setInitialValue(cpData[icylinder].getLagrangeParameterPosition()(0));
     }
     else {
       search.setSearchAll(true);
-      cpData[icylinder].alpha = Vec(1,INIT,0.);
+      cpData[icylinder].getLagrangeParameterPosition() = Vec(1,INIT,0.);
     }
 
-    cpData[icylinder].alpha(0) = search.slv();
+    cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
     cylinder->updateKinematicsForFrame(cpData[icylinder]); // TODO enum for kinematic election
-    Vec WrD = cpData[ipoint].cosy.getPosition() - cpData[icylinder].cosy.getPosition();
+    Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 
-    if(cpData[icylinder].alpha(0) < cylinder->getAlphaStart() || cpData[icylinder].alpha(0) > cylinder->getAlphaEnd() ) g(0) = 1.;
+    if(cpData[icylinder].getLagrangeParameterPosition()(0) < cylinder->getAlphaStart() || cpData[icylinder].getLagrangeParameterPosition()(0) > cylinder->getAlphaEnd() ) g(0) = 1.;
     else {
-      cpData[ipoint].cosy.getOrientation().col(0) = -WrD/nrm2(WrD); // outpointing normal
-      cpData[icylinder].cosy.getOrientation().col(0) = -cpData[ipoint].cosy.getOrientation().col(0);
-      cpData[icylinder].cosy.getOrientation().col(2) = crossProduct(cpData[icylinder].cosy.getOrientation().col(0),cpData[icylinder].cosy.getOrientation().col(1));
-      cpData[ipoint].cosy.getOrientation().col(1) = - cpData[icylinder].cosy.getOrientation().col(1);
-      cpData[ipoint].cosy.getOrientation().col(2) = cpData[icylinder].cosy.getOrientation().col(2);
-      g(0) = trans(cpData[ipoint].cosy.getOrientation().col(0))*WrD - cylinder->getRadius();
+      cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -WrD/nrm2(WrD); // outpointing normal
+      cpData[icylinder].getFrameOfReference().getOrientation().col(0) = -cpData[ipoint].getFrameOfReference().getOrientation().col(0);
+      cpData[icylinder].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1));
+      cpData[ipoint].getFrameOfReference().getOrientation().col(1) = - cpData[icylinder].getFrameOfReference().getOrientation().col(1);
+      cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icylinder].getFrameOfReference().getOrientation().col(2);
+      g(0) = trans(cpData[ipoint].getFrameOfReference().getOrientation().col(0))*WrD - cylinder->getRadius();
     }
   }
 

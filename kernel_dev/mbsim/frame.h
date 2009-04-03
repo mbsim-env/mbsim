@@ -40,7 +40,7 @@ namespace MBSim {
 #endif
 
   /**
-   * \brief frame on bodies used for application of e.g. links and loads
+   * \brief cartesian frame on bodies used for application of e.g. links and loads
    * \author Martin Foerg
    * \date 2009-03-19 some comments (Thorsten Schindler)
    */
@@ -50,7 +50,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of coordinate system
        */
-      Frame(const string &name);
+      Frame(const string &name = "dummy");
 
       /**
        * \brief destructor

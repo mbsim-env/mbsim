@@ -1,5 +1,5 @@
-/* Copyright (C) 2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_COMPOUNDCONTOUR_COMPOUNDCONTOUR_H_
@@ -27,26 +24,37 @@
 
 namespace MBSim {
 
-  class Cuboid;
-  class Plane; 
   class CompoundContour;
   class Contour;
 
-    class ContactKinematicsCompoundContourCompoundContour : public ContactKinematics {
+  /**
+   * \brief contact paring between set of contours and set of contours
+   * \author Martin Foerg
+   * \date 2009-04-02 some comments (Thorsten Schindler)
+   */
+  class ContactKinematicsCompoundContourCompoundContour : public ContactKinematics {
+    public:
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
+      virtual void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
+      /***************************************************/
 
     private:
+      /**
+       * \brief contour classes
+       */
       CompoundContour *contour0;
       CompoundContour *contour1;
+
+      /**
+       * \brief contact kinematics possibilities between compound contours
+       */
       std::vector<ContactKinematics*> contactKinematics;
 
-    public:
-      void updateg(std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
-      void updategd(std::vector<Vec> &g, std::vector<Vec> &gd, std::vector<ContourPointData*> &cpData);
-      void updatewb(std::vector<Vec> &wb, std::vector<Vec> &g, std::vector<ContourPointData*> &cpData);
-
-      void assignContours(const std::vector<Contour*> &contour);
   };
 
 }
 
 #endif
+

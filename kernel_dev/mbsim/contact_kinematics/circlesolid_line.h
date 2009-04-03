@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_CIRCLESOLID_LINE_H_
@@ -31,17 +28,30 @@ namespace MBSim {
   class CircleSolid;
   class Line;
 
-  /** pairing CircleSolid to Line; author: Martin Foerg */
+  /** 
+   * \brief pairing circle outer surface to line
+   * \author Martin Foerg
+   * \date 2009-04-02 some comments (Thorsten Schindler)
+   */
   class ContactKinematicsCircleSolidLine : public ContactKinematics {
+    public:
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(Vec &g, ContourPointData *cpData);
+      virtual void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData); 
+      /***************************************************/
+    
     private:
+      /**
+       * \brief contour index
+       */
       int icircle, iline;
+      
+      /**
+       * \brief contour classes
+       */
       CircleSolid *circlesolid;
       Line *line;
-    public:
-      void updateg(Vec &g, ContourPointData *cpData);
-      void updategd(const Vec &g, Vec &gd, ContourPointData *cpData);
-      void updatewb(Vec &wb, const Vec &g, ContourPointData *cpData); 
-      void assignContours(const std::vector<Contour*> &contour);
   };
 
 }

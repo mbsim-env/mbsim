@@ -210,12 +210,12 @@ namespace MBSim {
   /* Contour1s */
   Contour1s::Contour1s(const string &name) : Contour(name), Cb(3) {width = 0.0;}
   void Contour1s::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
-  Mat Contour1s::computeWt  (const ContourPointData &cp)   {return computeWt  (cp.alpha(0));}
-  Vec Contour1s::computeWn  (const ContourPointData &cp)   {return computeWn  (cp.alpha(0));}
-  Vec Contour1s::computeWb  (const ContourPointData &cp)   {return computeWb  (cp.alpha(0));}
-  Vec Contour1s::computeWrOC(const ContourPointData &cp)   {return computeWrOC(cp.alpha(0));}
-  Vec Contour1s::computeWvC (const ContourPointData &cp)   {return computeWvC (cp.alpha(0));}
-  Vec Contour1s::computeWomega(const ContourPointData &cp) {return computeWomega(cp.alpha(0));}
+  Mat Contour1s::computeWt  (const ContourPointData &cp)   {return computeWt  (cp.getLagrangeParameterPosition()(0));}
+  Vec Contour1s::computeWn  (const ContourPointData &cp)   {return computeWn  (cp.getLagrangeParameterPosition()(0));}
+  Vec Contour1s::computeWb  (const ContourPointData &cp)   {return computeWb  (cp.getLagrangeParameterPosition()(0));}
+  Vec Contour1s::computeWrOC(const ContourPointData &cp)   {return computeWrOC(cp.getLagrangeParameterPosition()(0));}
+  Vec Contour1s::computeWvC (const ContourPointData &cp)   {return computeWvC (cp.getLagrangeParameterPosition()(0));}
+  Vec Contour1s::computeWomega(const ContourPointData &cp) {return computeWomega(cp.getLagrangeParameterPosition()(0));}
 
   /* Contour1sAnalytical */
   Contour1sAnalytical::Contour1sAnalytical(const string &name) : Contour1s(name) {}
@@ -314,7 +314,7 @@ namespace MBSim {
 
   Vec ContourInterpolation::computeWrOC(const ContourPointData &cp) 
   {
-    const Vec &s = cp.alpha;
+    const Vec &s = cp.getLagrangeParameterPosition();
     Vec r(3,INIT,0.0);
     for(int i=0; i<numberOfPoints;i++) r += computePointWeight(s,i) * iPoints[i]->getWrOP();
     return r;
@@ -322,7 +322,7 @@ namespace MBSim {
 
   Vec ContourInterpolation::computeWvC(const ContourPointData &cp) 
   {
-    const Vec &s = cp.alpha;
+    const Vec &s = cp.getLagrangeParameterPosition();
     Vec v(3,INIT,0.0);
     for(int i=0; i<numberOfPoints;i++) v += computePointWeight(s,i) * iPoints[i]->getWvP();
     return v;
@@ -330,7 +330,7 @@ namespace MBSim {
 
   Mat ContourInterpolation::computeWt(const ContourPointData &cp) 
   {
-    const Vec &s = cp.alpha;
+    const Vec &s = cp.getLagrangeParameterPosition();
     Mat t(3,contourParameters,INIT,0.0);
 
     for(int i=0; i<contourParameters; i++) {
@@ -357,10 +357,10 @@ namespace MBSim {
 #endif
   }*/
 
-  Vec ContourInterpolation::computeWrOC(const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWrOC(cp);}
-  Vec ContourInterpolation::computeWvC (const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWvC (cp);}
-  Mat ContourInterpolation::computeWt  (const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWt  (cp);}
-  Vec ContourInterpolation::computeWn  (const Vec& s) {ContourPointData cp; cp.type=EXTINTERPOL;cp.alpha=s; return computeWn  (cp);}
+  Vec ContourInterpolation::computeWrOC(const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
+  Vec ContourInterpolation::computeWvC (const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
+  Mat ContourInterpolation::computeWt  (const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWt  (cp);}
+  Vec ContourInterpolation::computeWn  (const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWn  (cp);}
 
 
   /* ContourQuad */
@@ -381,11 +381,11 @@ namespace MBSim {
 
   bool ContourQuad::testInsideBounds(const ContourPointData &cp) 
   {
-    if( cp.alpha.size()!=2 ) {
+    if( cp.getLagrangeParameterPosition().size()!=2 ) {
       //	    cout << "ContourQuad::testInsideBounds(const ContourPointData &cp) failed due to invalid contour data!" << endl;
       return false;
     }
-    if( 0 <= cp.alpha(0) && cp.alpha(0) <= 1 && 0 <= cp.alpha(1) && cp.alpha(1) <= 1) return true;
+    if( 0 <= cp.getLagrangeParameterPosition()(0) && cp.getLagrangeParameterPosition()(0) <= 1 && 0 <= cp.getLagrangeParameterPosition()(1) && cp.getLagrangeParameterPosition()(1) <= 1) return true;
     else return false;
   }
 
@@ -428,7 +428,7 @@ namespace MBSim {
 
   Vec ContourQuad::computeWn(const ContourPointData &cp) 
   {
-    const Vec &s = cp.alpha;
+    const Vec &s = cp.getLagrangeParameterPosition();
     Mat tTemp = computeWt(s);
     return crossProduct(tTemp.col(1),tTemp.col(0)); // Achtung: Interpoation mit einem Konturparameter-> t.col(1) = Cb;
   }

@@ -27,8 +27,7 @@
 
 namespace MBSim {
 
-  void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour)
-  {
+  void ContactKinematicsCircleSolidPlane::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<CircleSolid*>(contour[0])) {
       icircle = 0;
       iplane = 1;
@@ -44,13 +43,13 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleSolidPlane::updateg(Vec &g, ContourPointData *cpData) {
-    cpData[iplane].cosy.setOrientation(plane->getFrame()->getOrientation());
-    cpData[icircle].cosy.getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
-    cpData[icircle].cosy.getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
-    cpData[icircle].cosy.getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
+    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
+    cpData[icircle].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
+    cpData[icircle].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
+    cpData[icircle].getFrameOfReference().getOrientation().col(2) = plane->getFrame()->getOrientation().col(2);
 
     Vec Wd;
-    Vec Wn = cpData[iplane].cosy.getOrientation().col(0);
+    Vec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
     Vec Wb = circlesolid->getFrame()->getOrientation().col(2);
     double t_EC = trans(Wn)*Wb;
     if(t_EC>0) {
@@ -72,64 +71,10 @@ namespace MBSim {
     //cout << Wn << endl;
     g(0) = trans(Wn)*Wd;
     //cout << g(0) << endl;
-    cpData[icircle].cosy.setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
-    cpData[iplane].cosy.setPosition(cpData[icircle].cosy.getPosition() - Wn*g(0));
+    cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
+    cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g(0));
 
   }
 
-  void ContactKinematicsCircleSolidPlane::updategd(const Vec& g, Vec &gd, ContourPointData *cpData) {}
-
-
-  //  void ContactKinematicsCircleSolidPlane::stage1(Vec &g, vector<ContourPointData> &cpData) 
-  //  {
-  //	Vec Wd;
-  //	Vec Wbcircle = circlesolid->computeWb();
-  //    cpData[iplane].Wn = plane->computeWn();
-  //    cpData[icircle].Wn = -cpData[iplane].Wn;
-  //   
-  //	double t_EC = trans(cpData[iplane].Wn)*Wbcircle;
-  //	if(t_EC>0) {
-  //		Wbcircle *= -1.;
-  //		t_EC *= -1;	
-  //	}
-  //	Vec z_EC = cpData[iplane].Wn - t_EC*Wbcircle;
-  //	double z_EC_nrm2 = nrm2(z_EC);
-  //	
-  //    if(z_EC_nrm2 <= 1e-8) { // infinite possible contact points
-  //      Wd = plane->getWrOP() - circlesolid->getWrOP();
-  //      genBuf = Vec(3); // 0-Vector
-  //    } 
-  //    else { // exactly one possible contact point
-  //      genBuf = (circlesolid->getRadius()/z_EC_nrm2)*z_EC;
-  //      Wd = plane->getWrOP() - (circlesolid->getWrOP() + genBuf);
-  //    }
-  //    g(0) = trans(cpData[iplane].Wn)*Wd;
-  //  }
-  //
-  //  void ContactKinematicsCircleSolidPlane::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) 
-  //  {
-  //	Vec WrPC[2], WvC[2];
-  //    WrPC[icircle] = genBuf;
-  //    cpData[icircle].WrOC = circlesolid->getWrOP() + WrPC[icircle];
-  //    cpData[iplane].WrOC  = cpData[icircle].WrOC + cpData[iplane].Wn*g(0);
-  //    WrPC[iplane]  = cpData[iplane].WrOC - plane->getWrOP();
-  //    WvC[icircle] = circlesolid->getWvP() + crossProduct(circlesolid->getWomegaC(),WrPC[icircle]);
-  //    WvC[iplane] = plane->getWvP() + crossProduct(plane->getWomegaC(),WrPC[iplane]);
-  //    Vec WvD = WvC[iplane] - WvC[icircle];
-  //
-  //    gd(0) = trans(cpData[iplane].Wn)*WvD;
-  //
-  //    if(cpData[iplane].Wt.cols()) {
-  //      if(cpData[iplane].Wt.cols() == 1) {
-  //    	  	cout << "ERROR: Two tangential contact directions necessary for spatial contact!" << endl;
-  //			throw(1);
-  //   	  }
-  //      cpData[iplane].Wt.col(0) = computeTangential(cpData[iplane].Wn);            
-  //      cpData[iplane].Wt.col(1) = crossProduct(cpData[iplane].Wn,cpData[iplane].Wt.col(0));
-  //      cpData[icircle].Wt = -cpData[iplane].Wt;
-  //      static Index iT(1,cpData[iplane].Wt.cols());
-  //      gd(iT) = trans(cpData[iplane].Wt)*WvD;
-  //    }
-  //  }
-
 }
+

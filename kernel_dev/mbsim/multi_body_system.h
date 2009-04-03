@@ -121,12 +121,12 @@ namespace MBSim {
       virtual void preInteg(MultiBodySystem *parent);
 
       /**
-       * \brief solves prox-functions on acceleration level
+       * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
        */
       virtual int solveConstraints(); 
 
       /**
-       * \brief solves prox-functions on velocity level
+       * \brief solves prox-functions on velocity level using sparsity structure but not decoupled
        */
       virtual int solveImpacts(double dt = 0); 
       /***************************************************/

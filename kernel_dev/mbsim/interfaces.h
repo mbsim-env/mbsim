@@ -274,6 +274,8 @@ namespace MBSim {
       /*!
        * \brief update relative velocity
        * \param simulation time
+       *
+       * compute normal and tangential relative velocities, velocity and angular velocity of possible contact point if necessary
        */
       virtual void updategd(double t) = 0;
 

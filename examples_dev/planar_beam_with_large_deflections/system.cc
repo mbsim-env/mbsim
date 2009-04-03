@@ -46,8 +46,8 @@ System::System(const string &projectName) : MultiBodySystem(projectName) {
   }
 
   ContourPointData cpdata;
-  cpdata.alpha = Vec(1,INIT,0.);
-  cpdata.type = CONTINUUM;
+  cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
+  cpdata.getContourParameterType() = CONTINUUM;
   rod2D->addFrame("RJ",cpdata);
   Joint *joint2D = new Joint("Clamping_2D");
   joint2D->connect(this->getFrame("I"),rod2D->getFrame("RJ")); 

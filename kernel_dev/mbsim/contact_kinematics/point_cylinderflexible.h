@@ -40,28 +40,29 @@ namespace MBSim {
        * \brief constructor
        */
       ContactKinematicsPointCylinderFlexible() {}
-      
+
       /**
        * \brief destructor
        */
-      ~ContactKinematicsPointCylinderFlexible();
+      virtual ~ContactKinematicsPointCylinderFlexible();
 
       /* INHERITED INTERFACE */
-      void assignContours(const std::vector<Contour*> &contour);
-      void updateg(Vec &g, ContourPointData *cpData);
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(Vec &g, ContourPointData *cpData);
+      /***************************************************/
 
     private:
       /**
        * \brief index for point and cylinder
        */
       int ipoint, icylinder;
-      
+
       /** 
        * \brief pointer to point and cylinder
        */
       Point *point;
       CylinderFlexible *cylinder;
-      
+
       /**
        * \brief root function
        */

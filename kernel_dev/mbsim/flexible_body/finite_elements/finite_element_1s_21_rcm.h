@@ -77,7 +77,7 @@ namespace MBSim {
       SqrMat computeOrientation(const Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
       Vec computeTranslationalVelocity (const Vec&q, const Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslationalVelocity): not implemented!"); }
       Vec computeAngularVelocity(const Vec&q, const Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.alpha(0)); }
+      Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
       /* GETTER / SETTER */

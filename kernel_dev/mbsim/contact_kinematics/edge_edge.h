@@ -1,5 +1,5 @@
-/* Copyright (C) 2007  Martin Förg, Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_EDGE_EDGE_H_
@@ -30,18 +27,35 @@ namespace MBSim {
 
   class Edge;
 
-  /** pairing Edge to Edge; author: Martin Foerg */
+  /** 
+   * \brief pairing edge (bounded line) to edge
+   * \author Martin Foerg
+   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \todo change stage to new interface TODO
+   */
   class ContactKinematicsEdgeEdge : public ContactKinematics {
+    public:
+      /* INHERITED INTERFACE */
+      virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void stage1(Vec &g, std::vector<ContourPointData> &cpData);
+      virtual void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
+      /***************************************************/
+
     private:
+      /**
+       * \brief contour index
+       */
       int iedge0, iedge1;
+      
+      /**
+       * \brief contour classes
+       */
       Edge *edge0;
       Edge *edge1;
-      Vec WrPC[2];
-    public:
-      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
-      void stage2(const Vec &g, Vec &gd, std::vector<ContourPointData> &cpData);
 
-      void assignContours(const std::vector<Contour*> &contour);
+      // delete TODO
+      Vec WrPC[2];
+
   };
 
 }
