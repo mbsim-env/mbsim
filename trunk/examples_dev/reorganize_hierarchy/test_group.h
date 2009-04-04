@@ -3,14 +3,14 @@
 
 #include "mbsim/special_classes.h"
 
-class TestGroup : public SpecialGroup {
+class TestGroup : public MBSim::SpecialGroup {
   private:
-    RigidBody *stab1, *stab2;
+    MBSim::RigidBody *stab1, *stab2;
   public:
     TestGroup(const string &projectName); 
 
-    RigidBody* getRod1() {return stab1;}
-    RigidBody* getRod2() {return stab2;}
+    MBSim::RigidBody* getRod1() {return stab1;}
+    MBSim::RigidBody* getRod2() {return stab2;}
     
  
 };
