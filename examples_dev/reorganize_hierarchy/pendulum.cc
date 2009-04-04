@@ -25,7 +25,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   setAccelerationOfGravity(grav);
 
   SpecialGroup *mbs = new SpecialGroup("MehrfachPendel"); 
-  addSubsystem(mbs,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(mbs,Vec(3),SqrMat(3,EYE));
 
   double mStab = 0.2;
   double lStab = 0.3;
@@ -138,14 +138,14 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setAMVisRigidBody(obj);
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
-  mbs->addSubsystem(group,Vec(3),SqrMat(3,EYE));
+  mbs->addDynamicSystem(group,Vec(3),SqrMat(3,EYE));
   stab3->addFrame("P",KrRP,SqrMat(3,EYE),stab3->getFrame("R"));
   group->getRod1()->setFrameOfReference(stab3->getFrame("P"));
 
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  mbs->addSubsystem(group,r,SqrMat(3,EYE));
+  mbs->addDynamicSystem(group,r,SqrMat(3,EYE));
   KrRP(0) = lStab/2;
   KrRP(2) = -0.006;
 }

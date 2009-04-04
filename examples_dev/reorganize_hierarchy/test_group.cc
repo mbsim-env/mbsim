@@ -1,6 +1,9 @@
 #include "test_group.h"
 #include <amviscppinterface/objobject.h>
 
+using namespace MBSim;
+using namespace fmatvec;
+
 TestGroup::TestGroup(const string &projectName) : SpecialGroup(projectName) {
 
   double mStab = 0.2;
