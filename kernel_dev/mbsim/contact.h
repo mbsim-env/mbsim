@@ -144,8 +144,14 @@ namespace MBSim {
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
       GeneralizedForceLaw *fcl;
+	  /** force law defining relation between tangential velocities and tangential forces
+	   */
       FrictionForceLaw *fdf;
+	  /** force law defining relation between penetration velocity and resulting normal impulses
+	   */
       GeneralizedImpactLaw *fnil;
+	  /** force law defining relation between tangential velocities and forces impulses
+	   */
       FrictionImpactLaw *ftil;
 
       /**
