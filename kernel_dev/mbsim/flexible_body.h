@@ -32,13 +32,13 @@ namespace AMVis { class ElasticBody; }
 namespace MBSim {
 
   /**
-   * \brief upmost class for flexible body implementation using template for definition of contour nodes
+   * \brief upmost class for flexible body implementation
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-03-24 changes for new MBSim (Thorsten Schindler)
    * \date 2009-03-25 conflicts solved (Thorsten Schindler)
+   * \date 2009-04-05 changed to non-template definition (Schindler / Zander)
    */
-  template <class AT>
     class FlexibleBody : public Body {
       public:
         /**
@@ -114,7 +114,6 @@ namespace MBSim {
 		 * \param d_ coefficient \f$d_{pm}\f$
 		 */
         void setMassProportionalDamping(const double d_) { d_massproportional = d_; }
-        void setContourNodes(const AT& nodes) { userContourNodes = nodes; }
         /***************************************************/
 
         /** 
@@ -134,7 +133,7 @@ namespace MBSim {
 		 * \brief activate output for AMVis
 		 * \param binary or ASCII data format in pos-file
 		 */
-		void createAMVisBody(bool binary_) { boolAMVis = true; boolAMVisBinary = binary_; }
+		void createAMVisBody(bool binary_) { boolAMVisBinary = binary_; }
 
         /**
          * \param color float in [0;1] (blue - green - red)
@@ -168,18 +167,12 @@ namespace MBSim {
 		 */
         double d_massproportional;
 
-        /**
-         * \brief grid for contact point detection
-         */
-        AT userContourNodes;
-
         /** 
          * \brief vector of contour parameters each describing a frame
          */
         std::vector<ContourPointData> S_Frame;
 
 #ifdef HAVE_AMVIS
-		bool boolAMVis;
         /** 
          * \brief body for AMVis
          */
@@ -198,6 +191,34 @@ namespace MBSim {
 
     };
 
+  /**
+   * \brief flexible body entirely described within MBSim holding all infromations
+   * about continuum approximations
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 2009-04-05 initial definition (Schindler / Zander)
+   */
+  template <class AT>
+	class FlexibleBodyContinuum : public FlexibleBody {
+	  public:
+        FlexibleBodyContinuum<AT>(const std::string &name) : FlexibleBody(name){}
+
+		using FlexibleBody::addFrame;
+		void addFrame(const std::string &name, const AT& alpha) {
+		  ContourPointData cp(alpha);
+		  FlexibleBody::addFrame(name,cp);
+		}
+		void addFrame(Frame *frame, const AT& alpha) {
+		  ContourPointData cp(alpha);
+		  FlexibleBody::addFrame(frame,cp);
+		}
+		void setContourNodes(const vector<AT> nodes) { userContourNodes = nodes; }
+	  protected:
+		/**
+		 * \brief grid for contact point detection
+		 */
+		vector<AT> userContourNodes;
+	};
 }
 
 #endif /* _FLEXIBLE_BODY_H_ */

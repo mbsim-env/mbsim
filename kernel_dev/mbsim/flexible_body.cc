@@ -35,13 +35,13 @@ using namespace std;
 
 namespace MBSim {
 
-  template <class AT> FlexibleBody<AT>::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
 # ifdef HAVE_AMVIS
-                                                                           , boolAMVis(false), bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
+                                                                           , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
 # endif
                                                                            {}
 
-  template <class AT> FlexibleBody<AT>::~FlexibleBody() {
+  FlexibleBody::~FlexibleBody() {
     for(unsigned int i=0; i<discretization.size(); i++) {
       delete discretization[i]; discretization[i] = NULL;
     }
@@ -50,7 +50,7 @@ namespace MBSim {
 #  endif
   }
 
-  template <class AT> void FlexibleBody<AT>::updateM(double t) {
+  void FlexibleBody::updateM(double t) {
     for(unsigned int i=0;i<discretization.size();i++) {
       discretization[i]->computeEquationsOfMotion(qElement[i],uElement[i]); // compute attributes of finite element
 
@@ -60,7 +60,7 @@ namespace MBSim {
     if(d_massproportional) h -= d_massproportional*(M*u); // mass proportional damping
   }
 
-  template <class AT> void FlexibleBody<AT>::updateKinematics(double t) {
+  void FlexibleBody::updateKinematics(double t) {
     BuildElements();
     for(unsigned int i=0; i<port.size(); i++) { // frames
       updateKinematicsForFrame(S_Frame[i],port[i]); 
@@ -68,18 +68,18 @@ namespace MBSim {
     // TODO contour non native?
   }
 
-  template <class AT> void FlexibleBody<AT>::updateJacobians(double t) {
+  void FlexibleBody::updateJacobians(double t) {
     for(unsigned int i=0; i<port.size(); i++) { // frames
       updateJacobiansForFrame(S_Frame[i],port[i]);
     }
     // TODO contour non native?
   }
 
-  template <class AT> void FlexibleBody<AT>::updateSecondJacobians(double t) {
+  void FlexibleBody::updateSecondJacobians(double t) {
     throw new MBSimError("ERROR (FlexibleBody::updateSecondJacobians): Not implemented!");
   }
 
-  template <class AT> void FlexibleBody<AT>::plot(double t, double dt) {
+  void FlexibleBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_AMVIS
       if(bodyAMVis && getPlotFeature(amvis)==enabled) {
@@ -95,7 +95,7 @@ namespace MBSim {
     }
   }
 
-  template <class AT> void FlexibleBody<AT>::initPlot() {
+  void FlexibleBody::initPlot() {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -108,7 +108,7 @@ namespace MBSim {
     }
   }
 
-  template <class AT> void FlexibleBody<AT>::init() {
+  void FlexibleBody::init() {
     Body::init();
     T = SqrMat(qSize,fmatvec::EYE);
     for(unsigned int i=0; i<port.size(); i++) { // frames
@@ -117,7 +117,7 @@ namespace MBSim {
     }
   }
 
-  template <class AT> double FlexibleBody<AT>::computeKineticEnergy() {
+  double FlexibleBody::computeKineticEnergy() {
     double T = 0.;
     for(unsigned int i=0; i<discretization.size(); i++) {
       T += discretization[i]->computeKineticEnergy(qElement[i],uElement[i]);
@@ -125,7 +125,7 @@ namespace MBSim {
     return T;
   }
 
-  template <class AT> double FlexibleBody<AT>::computePotentialEnergy() {
+  double FlexibleBody::computePotentialEnergy() {
     double V = 0.;
     for(unsigned int i=0; i<discretization.size(); i++) {
       V += discretization[i]->computeElasticEnergy(qElement[i]) + discretization[i]->computeGravitationalEnergy(qElement[i]);
@@ -133,18 +133,15 @@ namespace MBSim {
     return V;
   }
 
-  template <class AT> void FlexibleBody<AT>::addFrame(const string &name, const ContourPointData &S_) {
+  void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
     Frame *port = new Frame(name);
     addFrame(port,S_);
   }
 
-  template <class AT> void FlexibleBody<AT>::addFrame(Frame* port, const ContourPointData &S_) {
+  void FlexibleBody::addFrame(Frame* port, const ContourPointData &S_) {
     Body::addFrame(port);
     S_Frame.push_back(S_);
   }
 
-  template class FlexibleBody<Vec>;
-  template class FlexibleBody<Mat>;
-  template class FlexibleBody<int>;
 }
 
