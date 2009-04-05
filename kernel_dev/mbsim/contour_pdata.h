@@ -35,6 +35,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-03-19 some comments (Thorsten Schindler)
    * \date 2009-04-02 Wn / Wt / WrOC deleted (Thorsten Schindler)
+   * \date 2009-04-05 added specific constructors for arguments double and Vec (Schindler / Zander)
    */
   class ContourPointData {
     public:
@@ -42,6 +43,8 @@ namespace MBSim {
        * \brief constructor
        */
       ContourPointData() : type(CONTINUUM), ID(0) {}
+      ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha(1,fmatvec::INIT,alpha_) {}
+      ContourPointData(const fmatvec::Vec &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
 
       /**
        * \brief destructor
