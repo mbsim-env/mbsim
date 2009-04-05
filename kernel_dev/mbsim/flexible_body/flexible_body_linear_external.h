@@ -36,12 +36,13 @@ namespace MBSim {
    * \brief Linear models from external preprocessing, e.g. Finite %Element model.
    * \author Roland Zander
    * \date 2009-03-26 initial kernel_dev commit (Roland Zander)
+   * \date 2009-04-05 minor change: parent class is not template class (Schindler / Zander)
    *
    * Systems equation of motion:
    * \f[ \vM{\rm d}\vu = -( \vK \vq + \vD \vu){\rm d}t - \vW{\rm d}\vLambda \f]
    * with constant matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
    * */
-  class FlexibleBodyLinearExternal : public FlexibleBody<int> {
+  class FlexibleBodyLinearExternal : public FlexibleBody {
 
     protected:
       /** number of Contours directly asoziated to body */
@@ -156,7 +157,7 @@ namespace MBSim {
 //      */
 //      void plotParameters();
 
-      using FlexibleBody<int>::addFrame;
+      using FlexibleBody::addFrame;
       /*!
        * add Port using JACOBIAN matrix and port location form given file
        * n x d   \n   [1.0  \n  0.0 ] \n
