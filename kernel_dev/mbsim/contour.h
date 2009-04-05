@@ -37,8 +37,6 @@ namespace AMVis {class CBody; class CRigidBody;}
 namespace MBSim {
 
   class Object;
-  class BodyFlexible;
-  struct ContourPointData;
 
   // perhaps helpfull when debugging
   //                0    , 1   , 2          , 3           , 4        , 5    , 6     , 7      , 8   , 9   , 10       , 11       , 12              , 13
@@ -368,7 +366,8 @@ namespace MBSim {
    * \brief flexible neutral fiber for one dimensional flexible bodies
    * \author Roland Zander
    * \author Thorsten Schindler
-   * \date 18.03.09
+   * \date 2009-03-18 initial comment (Thorsten Schindler)
+   * \date 2009-04-05 adapted to non-template FlexibleBody (Schindler / Zander)
    */
   class Contour1sFlexible : public Contour1s {
     public:
@@ -395,7 +394,7 @@ namespace MBSim {
       void updateKinematicsForFrame(ContourPointData &cp, Frame *frame=0) { parent->updateKinematicsForFrame(cp,frame); }
 
     protected:
-      FlexibleBody<fmatvec::Vec>* parent;
+      FlexibleBody* parent;
   };
 
   /** 
