@@ -32,7 +32,7 @@ using namespace std;
 namespace MBSim {
 
   FlexibleBodyLinearExternal::FlexibleBodyLinearExternal(const string &name) 
-	:FlexibleBody<int>(name),
+	:FlexibleBody(name),
 	nContours(0), WrON00(Vec(3)) {
 //	  JT << DiagMat(3,INIT,1.0);
 	  discretization.push_back(new SuperElementLinearExternal());
@@ -156,28 +156,28 @@ namespace MBSim {
 //	ContourPointData cp = addInterface(J_,r_);
 //    Port *port_ = new Port(name);
 //    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody<int>::addFrame(port_, cp );
+//    FlexibleBody::addFrame(port_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addFrame(const string &name, const string &jacobifile) {
 //    ContourPointData cp = addInterface(jacobifile);
 //    Port *port_ = new Port(name);
 //    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody<int>::addFrame(port_, cp );
+//    FlexibleBody::addFrame(port_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addContour(Contour *contour_, const Mat &J_, const Vec &r_) {
 //	ContourPointData cp = addInterface(J_,r_);
 //	contourType.push_back(cp);
 //    contour_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody<int>::addContour(contour_, cp );
+//    FlexibleBody::addContour(contour_, cp );
 //    nContours++;
 //  }
 //  void FlexibleBodyLinearExternal::addContour(Contour *contour_, const string &jacobifile) {
 //	ContourPointData cp = addInterface(jacobifile);
 //	contourType.push_back(cp);
 //    contour_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody<int>::addContour(contour_, cp );
+//    FlexibleBody::addContour(contour_, cp );
 //    nContours++;
 //  }
 //
@@ -186,7 +186,7 @@ namespace MBSim {
 //    ContourPointData cpData;
 //    cpData.getContourParameterType()=EXTINTERPOL;
 //	contourType.push_back(cpData);
-//    FlexibleBody<int>::addContour(contour_,cpData,false); 
+//    FlexibleBody::addContour(contour_,cpData,false); 
 //  }
 
 

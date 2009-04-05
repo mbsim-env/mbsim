@@ -36,14 +36,15 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-03-23 initial kernel_dev commit (Thorsten Schindler)
    * \date 2009-03-26 cosmetics on doxygen (*! **) and alignements; some renames (Roland Zander)
+   * \date 2009-04-05 minor change: parent class now is FlexibleBodyContinuum (Schindler / Zander)
    *
    * read:\n
    * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005 \n
    * Zander, R.; Ulbrich, H.: Impacts on beam structures: Interaction of wave propagationand global dynamics, IUTAM Symposium on Multiscale Problems in Multibody System Contacts Stuttgart, Germany, 2006 \n
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
-  class FlexibleBody1s21RCM : public FlexibleBody<fmatvec::Vec> {
-    public:
+  class FlexibleBody1s21RCM : public FlexibleBodyContinuum<double> {
+public:
       /*!
        * \brief constructor:
        * \param name of body
