@@ -192,8 +192,7 @@ namespace MBSim {
     };
 
   /**
-   * \brief flexible body entirely described within MBSim holding all infromations
-   * about continuum approximations
+   * \brief flexible body entirely described within MBSim holding all informations about continuum approximations
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-04-05 initial definition (Schindler / Zander)
@@ -201,23 +200,43 @@ namespace MBSim {
   template <class AT>
 	class FlexibleBodyContinuum : public FlexibleBody {
 	  public:
-        FlexibleBodyContinuum<AT>(const std::string &name) : FlexibleBody(name){}
+        /**
+         * \brief constructor
+         * \param name of flexible body
+         */
+        FlexibleBodyContinuum<AT>(const std::string &name) : FlexibleBody(name) {}
 
-		using FlexibleBody::addFrame;
+        /* INHERITED INTERFACE OF ELEMENT */
+        virtual std::string getType() const { return "FlexibleBodyContinuum"; }
+
+        /* GETTER / SETTER */
+		void setContourNodes(const std::vector<AT> nodes) { userContourNodes = nodes; }
+		
+        using FlexibleBody::addFrame;
+
+        /**
+         * \param name of frame
+         * \param location of frame
+         */
 		void addFrame(const std::string &name, const AT& alpha) {
 		  ContourPointData cp(alpha);
 		  FlexibleBody::addFrame(name,cp);
 		}
+
+        /**
+         * \param frame
+         * \param location of frame
+         */
 		void addFrame(Frame *frame, const AT& alpha) {
 		  ContourPointData cp(alpha);
 		  FlexibleBody::addFrame(frame,cp);
 		}
-		void setContourNodes(const vector<AT> nodes) { userContourNodes = nodes; }
+
 	  protected:
 		/**
 		 * \brief grid for contact point detection
 		 */
-		vector<AT> userContourNodes;
+        std::vector<AT> userContourNodes;
 	};
 }
 
