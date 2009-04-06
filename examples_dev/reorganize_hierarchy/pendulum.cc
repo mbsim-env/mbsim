@@ -5,9 +5,9 @@
 
 #ifdef HAVE_AMVIS
 #include "objobject.h"
-
 using namespace AMVis;
 #endif
+
 #ifdef HAVE_AMVISCPPINTERFACE
 #include "amviscppinterface/objobject.h"
 #endif
@@ -51,6 +51,18 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
+#if HAVE_AMVIS
+  ObjObject *obj = new ObjObject(name+stab1->getName(),1,false);
+  obj->setObjFilename("objects/pendel1.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(0,0,M_PI/2);
+  obj->setCalculationOfNormals(3);
+  obj->setVertexEPS(1e-5);
+  obj->setNormalEPS(1e-5);
+  obj->setAngleEPS(M_PI*2/9);
+  stab1->setAMVisBody(obj);
+#endif
+#if HAVE_AMVISCPPINTERFACE
   AMVis::ObjObject *obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel1.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -60,6 +72,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab1->setAMVisRigidBody(obj);
+#endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
   mbs->addObject(stab2);
@@ -77,6 +90,18 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
+#if HAVE_AMVIS
+  obj = new ObjObject(name+stab2->getName(),1,false);
+  obj->setObjFilename("objects/pendel2.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(0,0,M_PI/2);
+  obj->setCalculationOfNormals(3);
+  obj->setVertexEPS(1e-5);
+  obj->setNormalEPS(1e-5);
+  obj->setAngleEPS(M_PI*2/9);
+  stab2->setAMVisBody(obj);
+#endif
+#if HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -86,6 +111,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab2->setAMVisRigidBody(obj);
+#endif
 
   RigidBody* stab3 = new RigidBody("Stab3");
   mbs->addObject(stab3);
@@ -103,6 +129,18 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab3->setq0(Vec("[-1.6]"));
 
+#if HAVE_AMVIS
+  obj = new ObjObject(name+stab3->getName(),1,false);
+  obj->setObjFilename("objects/pendel2.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(0,0,M_PI/2);
+  obj->setCalculationOfNormals(3);
+  obj->setVertexEPS(1e-5);
+  obj->setNormalEPS(1e-5);
+  obj->setAngleEPS(M_PI*2/9);
+  stab3->setAMVisBody(obj);
+#endif
+#if HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -112,6 +150,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab3->setAMVisRigidBody(obj);
+#endif
 
   RigidBody* stab4 = new RigidBody("Stab4");
   mbs->addObject(stab4);
@@ -127,6 +166,18 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab4->setu0(Vec("[-1.6]"));
 
+#if HAVE_AMVIS
+  obj = new ObjObject(name+stab3->getName(),1,false);
+  obj->setObjFilename("objects/pendel2.obj");
+  obj->setScaleFactor(0.1*0.3);
+  obj->setInitialRotation(0,0,M_PI/2);
+  obj->setCalculationOfNormals(3);
+  obj->setVertexEPS(1e-5);
+  obj->setNormalEPS(1e-5);
+  obj->setAngleEPS(M_PI*2/9);
+  stab4->setAMVisBody(obj);
+#endif
+#if HAVE_AMVISCPPINTERFACE
   obj=new AMVis::ObjObject;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
@@ -136,6 +187,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
   stab4->setAMVisRigidBody(obj);
+#endif
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
   mbs->addDynamicSystem(group,Vec(3),SqrMat(3,EYE));
