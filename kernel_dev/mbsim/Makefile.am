@@ -19,7 +19,7 @@ tree.cc\
 contour.cc\
 frame.cc\
 data_interface_base.cc\
-extra_dynamic_interface.cc\
+order_one_dynamics.cc\
 userfunction.cc\
 userfunction_contour.cc\
 functions_contact.cc\
@@ -53,7 +53,7 @@ frame.h\
 contour.h\
 contour_pdata.h\
 data_interface_base.h\
-extra_dynamic_interface.h\
+order_one_dynamics.h\
 userfunction.h\
 userfunction_contour.h\
 functions_contact.h\

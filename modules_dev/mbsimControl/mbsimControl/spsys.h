@@ -1,5 +1,5 @@
 /* Copyright (C) 2006  Mathias Bachmayer
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -23,16 +23,34 @@
 #ifndef _SPSYS_H_
 #define _SPSYS_H_
 
-#include <string>
 #include "mbsim/frame.h"
 #include "mbsimControl/signalspsys.h"
 #include "mbsim/data_interface_base.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 #include <vector>
+#include <string>
 
 using namespace MBSim;
 
-class SPSys : public ExtraDynamicInterface {
+class SPSys : public OrderOneDynamics {
+  public:
+    SPSys(const std::string &name);
+    void setInSignalnWeight(SPSys *In_,double wichtung);
+    void setInSignalnWeight(DataInterfaceBase *In_,double wichtung);
+    void setInPositionnWeight(Frame *Inport,char XYZ,double wichtung);
+    void setInVelocitynWeight(Frame *Inport,char XYZ,double wichtung);
+    void setNoInput();
+
+    virtual void setSumInputs();	
+
+    void TestStepMode();
+    void TestSineMode(double fHertz);
+    void TestRampDXDT(double DXDT);
+    void TestParabel();
+    void TestPulsMode();
+
+    fmatvec::Vec operator()(double Zeit);
+    SignalSPSys* SigOut(){return Signal;} 
 
   protected:
     SignalSPSys *Signal;
@@ -56,7 +74,7 @@ class SPSys : public ExtraDynamicInterface {
     fmatvec::Vec InputDummie(double t);
     fmatvec::Vec NoInput(double t);
     bool Single_Input; // Bool entscheidet ob MultiInputs_SI oder MultiInputs_MI verwendet wird
- 
+
     // Container & Vars fuer Inputfunktionen Ende
     // Test Funktionen
     bool Testgesetzt;
@@ -68,27 +86,7 @@ class SPSys : public ExtraDynamicInterface {
     // Ende Test Funktionsgeneratoren
     double Hz;
     double dxdt;
-
-  public:
-
-    SPSys(const std::string &name);
-    void setInSignalnWeight(SPSys *In_,double wichtung);
-    void setInSignalnWeight(DataInterfaceBase *In_,double wichtung);
-    void setInPositionnWeight(Frame *Inport,char XYZ,double wichtung);
-    void setInVelocitynWeight(Frame *Inport,char XYZ,double wichtung);
-    void setNoInput();
-    
-    virtual void setSumInputs();	
-
-    void TestStepMode();
-    void TestSineMode(double fHertz);
-    void TestRampDXDT(double DXDT);
-    void TestParabel();
-    void TestPulsMode();
-
-    fmatvec::Vec operator()(double Zeit);
-    SignalSPSys* SigOut(){return Signal;} 
 };
 
-
 #endif
+

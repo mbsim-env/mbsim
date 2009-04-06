@@ -1,5 +1,5 @@
 /* Copyright (C) 2006  Mathias Bachmayer
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -30,6 +30,26 @@
 using namespace MBSim;
 
 class TransferSys : public SPSys {
+  public:   
+    TransferSys(const std::string& name);
+    void updatedx(double t, double dt);
+    void updatexd(double t);
+    void updateg(double t);
+    void initPlot();
+    void plot(double t,double dt);
+    void showABCD();
+
+
+    void setPID(double P_, double I_, double D_);
+    void setABCD(Mat A_,Mat B_,Mat C_,Mat D_);
+    void setBandwidth(double Hz_fg);
+    void setIntegrator(double OutputGain);
+    void setI2(double OutputGain);
+    void setPT1(double P, double T);
+    void setGain(double P);
+
+    virtual std::string getType() const {return "TransferSys";}
+
   protected:
     Mat A,B,C,D;// Sysmatrizen   
 
@@ -47,26 +67,6 @@ class TransferSys : public SPSys {
     fmatvec::Vec OutD(double t);
     fmatvec::Vec OutCD(double t);
     // Ende - Deklaration möglicher Systemausgänge
-    
-  public:   
-    TransferSys(const std::string& name);
-    void updatedx(double t, double dt);
-    void updatexd(double t);
-    void updateg(double t);
-    void initPlot();
-    void plot(double t,double dt);
-    void showABCD();
-    
-   
-    void setPID(double P_, double I_, double D_);
-    void setABCD(Mat A_,Mat B_,Mat C_,Mat D_);
-    void setBandwidth(double Hz_fg);
-    void setIntegrator(double OutputGain);
-    void setI2(double OutputGain);
-    void setPT1(double P, double T);
-    void setGain(double P);
-
-    virtual std::string getType() const {return "TransferSys";}
 };
 
 #endif

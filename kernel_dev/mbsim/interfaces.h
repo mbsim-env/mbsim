@@ -96,7 +96,7 @@ namespace MBSim {
        * \param simulation time step size
        */
       virtual void updatedq(double t, double dt) = 0;
-      
+
       /**
        * \brief update velocity increment
        * \param simulation time 
@@ -127,7 +127,7 @@ namespace MBSim {
        * \param index for normal usage and inverse kinetics 
        */
       virtual void sethSize(int hSize, int i=0) = 0;
-      
+
       /**
        * \param index for normal usage and inverse kinetics 
        * \return size of right hand side
@@ -144,12 +144,12 @@ namespace MBSim {
        * \return size of velocities
        */
       virtual int getuSize(int i=0) const = 0;
-      
+
       /**
        * \brief calculates size of positions
        */
       virtual void calcqSize() = 0;
-      
+
       /**
        * \brief calculates size of velocities
        * \param index for normal usage and inverse kinetics 
@@ -179,7 +179,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateSecondJacobians(double t) = 0;
-      
+
       /**
        * \return associated plot group
        */
@@ -189,7 +189,7 @@ namespace MBSim {
        * \return plot feature
        */
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) = 0;
-      
+
       /**
        * \return plot feature for derived classes
        */
@@ -221,12 +221,12 @@ namespace MBSim {
       virtual ~LinkInterface() {}
 
       /*!
-	   * for links holding non-smooth contributions \f$\dd\vLambda\f$, the respective forces are projected
-	   * into the minimal coordinate representation of the associated Body%s using the
-	   * JACOBIAN matrices \f$\vJ\f$.
-	   * \f[ \vr = \vJ\dd\vLambda \f]
-	   * The JACOBIAN is provided by the connected Frame%s (which might be
-	   * user-defined for Joint%s or internally defined for Contact%s).
+       * for links holding non-smooth contributions \f$\dd\vLambda\f$, the respective forces are projected
+       * into the minimal coordinate representation of the associated Body%s using the
+       * JACOBIAN matrices \f$\vJ\f$.
+       * \f[ \vr = \vJ\dd\vLambda \f]
+       * The JACOBIAN is provided by the connected Frame%s (which might be
+       * user-defined for Joint%s or internally defined for Contact%s).
        * \brief update smooth link force law
        * \param simulation time
        */
@@ -245,21 +245,21 @@ namespace MBSim {
       virtual void updateW(double t) = 0;
 
       /*!
-	   * for event driven integration, \f$\vW\f$ can be condensed regarding dependent
-	   * tangential contacts, where \f$\Lambda_N\f$ also occures in evaluation of tangential
-	   * force when sliding; in this case, \f$\vV\f$ might hold less columns than \f$\vW\f$
+       * for event driven integration, \f$\vW\f$ can be condensed regarding dependent
+       * tangential contacts, where \f$\Lambda_N\f$ also occures in evaluation of tangential
+       * force when sliding; in this case, \f$\vV\f$ might hold less columns than \f$\vW\f$
        * \brief updates condensed JACOBIAN matrix between condensed Lagrangian multipliers and generalised velocities
        * \param simulation time
        */
       virtual void updateV(double t) = 0;
 
       /*!
-	   * for links holding smooth contributions \f$\vF\f$, the respective forces are projected
-	   * into the minimal coordinate representation of the associated Body%s using the
-	   * JACOBIAN matrices \f$\vJ\f$.
-	   * \f[ \vh = \vJ\vF \f]
-	   * The JACOBIAN is provided by the connected Frame%s (which might be
-	   * user-defined for Joint%s or internally defined for Contact%s).
+       * for links holding smooth contributions \f$\vF\f$, the respective forces are projected
+       * into the minimal coordinate representation of the associated Body%s using the
+       * JACOBIAN matrices \f$\vJ\f$.
+       * \f[ \vh = \vJ\vF \f]
+       * The JACOBIAN is provided by the connected Frame%s (which might be
+       * user-defined for Joint%s or internally defined for Contact%s).
        * \brief update smooth link force law
        * \param simulation time
        */
@@ -270,7 +270,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateg(double t) = 0;
-      
+
       /*!
        * \brief update relative velocity
        * \param simulation time
@@ -278,18 +278,6 @@ namespace MBSim {
        * compute normal and tangential relative velocities, velocity and angular velocity of possible contact point if necessary
        */
       virtual void updategd(double t) = 0;
-
-      /*!
-       * \brief update TODO
-       * \param simulation time
-       */
-      virtual void updatedx(double t, double dt) = 0;
-      
-      /*!
-       * \brief update TODO
-       * \param simulation time
-       */
-      virtual void updatexd(double t) = 0;
 
       /*!
        * \brief update stop vector (root functions for event driven integration)
@@ -302,6 +290,90 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateJacobians(double t) = 0;
+  };
+
+  /*!
+   * \brief interface for dynamic systems of the form \f$\dot{x}=f\left(x\right)\f$
+   * \author Thorsten Schindler
+   * \date 2009-04-06 initial commit (Thorsten Schindler)
+   */
+  class ExtraDynamicInterface {
+    public:
+      /*!
+       * \brief constructor 
+       */
+      ExtraDynamicInterface() {}
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~ExtraDynamicInterface() {}
+
+      /*!
+       * \brief update order one parameter increment
+       * \param simulation time
+       * \param simulation step size
+       */
+      virtual void updatedx(double t, double dt) = 0;
+
+      /*!
+       * \brief update differentiated order one parameter
+       * \param simulation time
+       */
+      virtual void updatexd(double t) = 0;
+
+      /**
+       * \brief calculates size of order one parameters
+       */
+      virtual void calcxSize() = 0;
+
+      /**
+       * \return order one parameters
+       */
+      virtual const fmatvec::Vec& getx() const = 0;
+
+      /**
+       * \return order one parameters
+       */
+      virtual fmatvec::Vec& getx() = 0;
+
+      /**
+       * \param order one parameter index
+       */
+      virtual void setxInd(int xInd_) = 0;
+
+      /**
+       * \return size of order one parameters
+       */
+      virtual int getxSize() const = 0;
+
+      /**
+       * \brief references to order one parameter of dynamic system parent
+       * \param vector to be referenced
+       */
+      virtual void updatexRef(const fmatvec::Vec& ref) = 0;
+
+      /**
+       * \brief references to order one parameter derivatives of dynamic system parent
+       * \param vector to be referenced
+       */
+      virtual void updatexdRef(const fmatvec::Vec& ref) = 0;
+
+      /**
+       * \brief initialise extra dynamic interface
+       */
+      virtual void init() = 0;
+
+      /**
+       * \brief do tasks before initialisation 
+       */
+      virtual void preinit() = 0;
+
+      /**
+       * \brief initialise order one parameters
+       */
+      virtual void initz() = 0;
+
   };
 
   /*!
@@ -421,5 +493,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _INTERFACES_H_ */
 

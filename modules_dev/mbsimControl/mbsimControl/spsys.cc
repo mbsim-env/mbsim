@@ -1,5 +1,5 @@
 /* Copyright (C) 2006  Mathias Bachmayer
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -29,7 +29,7 @@
 using namespace fmatvec;
 using namespace std;
 
-SPSys::SPSys(const string &name) : ExtraDynamicInterface(name){
+SPSys::SPSys(const string &name) : OrderOneDynamics(name) {
   Uin=&SPSys::InputDummie;
   Testgesetzt=false;
   if (Single_Input){DGL_INPUT_DIMENSION=1;} else {DGL_INPUT_DIMENSION=0;} // wird in setIn... Routinen NumberofInputs nachgefuehrt werden. 
@@ -208,7 +208,7 @@ void SPSys::setInSignalnWeight(DataInterfaceBase *In_,double wichtung){
     if (NumberofInputs>1) 
     {if (Single_Input){Uin=&SPSys::MultiInputs_SI;}
       else {Uin=&SPSys::MultiInputs_MI;
-	DGL_INPUT_DIMENSION=NumberofInputs;}
+        DGL_INPUT_DIMENSION=NumberofInputs;}
     } 
     else 
     {Uin=&SPSys::SingleUF;}
@@ -231,7 +231,7 @@ void SPSys::setInPositionnWeight(Frame *Inport,char XYZ,double wichtung){
       case 'y':xyzPos.push_back(1);break;
       case 'z':xyzPos.push_back(2);break;
       default:cout<<"ERROR in Object "<<name<<" are the letters x, y or z expected but not provided as Positiondirections! "<<endl;
-	      throw 55;
+              throw 55;
     }
 
 
@@ -246,7 +246,7 @@ void SPSys::setInPositionnWeight(Frame *Inport,char XYZ,double wichtung){
     {if (Single_Input){Uin=&SPSys::MultiInputs_SI;} 
       else 
       {Uin=&SPSys::MultiInputs_MI;
-	DGL_INPUT_DIMENSION=NumberofInputs;}
+        DGL_INPUT_DIMENSION=NumberofInputs;}
     }
     else 
     {Uin=&SPSys::SinglePosition;}
@@ -268,7 +268,7 @@ void SPSys::setInVelocitynWeight(Frame *Inport, char XYZ, double wichtung)
       case 'y':xyzVin.push_back(1);break;
       case 'z':xyzVin.push_back(2);break;
       default:cout<<"ERROR in Object "<<name<<" are the letters x, y or z expected but not provided as Positiondirections! "<<endl;
-	      throw 55;
+              throw 55;
     }
 
     Vec k_(kVin.rows()+1);
@@ -282,10 +282,10 @@ void SPSys::setInVelocitynWeight(Frame *Inport, char XYZ, double wichtung)
     if (NumberofInputs>1) 
     {if (Single_Input){Uin=&SPSys::MultiInputs_SI;}
       else {Uin=&SPSys::MultiInputs_MI;
-	DGL_INPUT_DIMENSION=NumberofInputs; }
+        DGL_INPUT_DIMENSION=NumberofInputs; }
     }
     else 
     {Uin=&SPSys::SingleVelocity;}
   }
-};
+}
 

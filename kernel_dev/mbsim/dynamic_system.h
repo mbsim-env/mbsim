@@ -33,7 +33,7 @@ namespace H5 {
 namespace MBSim {
   class Frame;
   class Contour;
-  class ExtraDynamicInterface;
+  class OrderOneDynamics;
   class DataInterfaceBase;
   class Object;
   class Link;
@@ -46,8 +46,9 @@ namespace MBSim {
    * \brief dynamic system as topmost hierarchical level
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
+   * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
    */
-  class DynamicSystem : public Element, public ObjectInterface, public LinkInterface {
+  class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
     public:
       /** 
        * \brief constructor
@@ -97,9 +98,22 @@ namespace MBSim {
       virtual void updateV(double t); 
       virtual void updateg(double t);
       virtual void updategd(double t);
+      virtual void updateStopVector(double t); 
+      /*****************************************************/
+
+      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       virtual void updatedx(double t, double dt); 
       virtual void updatexd(double t);
-      virtual void updateStopVector(double t); 
+      virtual void calcxSize();
+      const fmatvec::Vec& getx() const { return x; };
+      fmatvec::Vec& getx() { return x; };
+      void setxInd(int xInd_) { xInd = xInd_; }
+      int getxSize() const { return xSize; }
+      void updatexRef(const fmatvec::Vec &ref);
+      void updatexdRef(const fmatvec::Vec &ref);
+      virtual void init();
+      virtual void preinit();
+      virtual void initz();
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -112,16 +126,6 @@ namespace MBSim {
       /*****************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \brief initialisiation of all ingredients
-       */
-      virtual void init();
-
-      /**
-       * \brief do things before initialisation TODO necessary?
-       */
-      virtual void preinit();
-
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
@@ -208,8 +212,6 @@ namespace MBSim {
 
       const fmatvec::Vec& getq() const { return q; };
       const fmatvec::Vec& getu() const { return u; };
-      const fmatvec::Vec& getx() const { return x; };
-      fmatvec::Vec& getx() { return x; };
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
       const fmatvec::Vec& getx0() const { return x0; };
@@ -252,7 +254,6 @@ namespace MBSim {
       int getqInd() { return qInd; }
       int getuInd(int i=0) { return uInd[i]; }
       int gethInd(int i=0) { return hInd[i]; }
-      void setxInd(int xInd_) { xInd = xInd_; }
       void sethInd(int hInd_, int i=0) { hInd[i] = hInd_; }
       void setlaInd(int ind) { laInd = ind; }
       void setgInd(int ind) { gInd = ind; }
@@ -260,7 +261,6 @@ namespace MBSim {
       void setrFactorInd(int ind) { rFactorInd = ind; }
       void setsvInd(int svInd_) { svInd = svInd_; };
 
-      int getxSize() const { return xSize; }
       int getzSize() const { return qSize + uSize[0] + xSize; }
 
       void setqSize(int qSize_) { qSize = qSize_; }
@@ -297,18 +297,6 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updateudRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to order one parameters of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatexRef(const fmatvec::Vec &ref);
-
-      /**
-       * \brief references to differentiated order one parameters of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updatexdRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
@@ -412,11 +400,6 @@ namespace MBSim {
       void updaterFactorRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief initialises state variables
-       */
-      void initz();
-
-      /**
        * \brief TODO
        */
       virtual void buildListOfObjects(std::vector<Object*> &obj, bool recursive=false);
@@ -427,7 +410,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      virtual void buildListOfEDIs(std::vector<ExtraDynamicInterface*> &edi, bool recursive=false);
+      virtual void buildListOfOrderOneDynamics(std::vector<OrderOneDynamics*> &ood, bool recursive=false);
 
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
@@ -454,12 +437,7 @@ namespace MBSim {
        * \return flag, if vector of active relative distances has changed
        */
       bool gActiveChanged();
-
-      /**
-       * \brief calculates size of order one parameters
-       */
-      void calcxSize();
-      
+ 
       /**
        * \brief calculates size of stop vector
        */
@@ -654,16 +632,16 @@ namespace MBSim {
       Link* getLink(const std::string &name,bool check=true);
       
       /**
-       * \param extra dynamic interface to add
+       * \param order one dynamics to add
        */
-      void addEDI(ExtraDynamicInterface *edi_);
+      void addOrderOneDynamics(OrderOneDynamics *ood_);
       
       /**
-       * \param name of the extra dynamic interface
-       * \param check for existence of extra dynamic interface
-       * \return extra dynamic interface
+       * \param name of the order one dynamics
+       * \param check for existence of order one dynamics
+       * \return order one dynamics
        */
-      ExtraDynamicInterface* getEDI(const std::string &name,bool check=true);
+      OrderOneDynamics* getOrderOneDynamics(const std::string &name,bool check=true);
 
       /**
        * \param data interface base to add
@@ -688,7 +666,7 @@ namespace MBSim {
        */
       std::vector<Object*> object;
       std::vector<Link*> link;
-      std::vector<ExtraDynamicInterface*> EDI;
+      std::vector<OrderOneDynamics*> orderOneDynamics;
       std::vector<DataInterfaceBase*> DIB;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> linkSingleValued;

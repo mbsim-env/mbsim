@@ -21,7 +21,7 @@
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/frame.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 
 using namespace fmatvec; 
 using namespace std;
@@ -108,7 +108,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexd(t);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (**i).updatexd(t);
   }
 

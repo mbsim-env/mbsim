@@ -1,5 +1,5 @@
-/* Copyright (C) 2006 Mathias Bachmayer
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -14,64 +14,49 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Institute of Applied Mechanics
- * Technical University of Munich
- *
- * 
- * Contact:
- *    rzander@users.berlios.de
- *    
+ * Contact: mbachmayer@gmx.de
  */
 
 #include <config.h>
-#include <mbsim/extra_dynamic_interface.h>
-#include <mbsim/object.h>
-#include <mbsim/dynamic_system_solver.h>
-#include <mbsim/utils/function.h>
+#include "mbsim/order_one_dynamics.h"
+#include "mbsim/object.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/function.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  ExtraDynamicInterface::ExtraDynamicInterface(const string &name) : Element(name){
-    xSize=0;
-    y=Vec(1,INIT,0);
-  }
-  ExtraDynamicInterface::ExtraDynamicInterface(const string &name, int xSize_) : Element(name){
-    xSize=xSize_;
-    y=Vec(1,INIT,0);
+  OrderOneDynamics::OrderOneDynamics(const string &name) : Element(name) {
+    xSize = 0;
+    y = Vec(1,INIT,0);
   }
 
-
-  void ExtraDynamicInterface::init() {
-  }
-  void ExtraDynamicInterface::initz() {
-    x=x0;
-  }
-  void ExtraDynamicInterface::writex(){
-    string fname="PREINTEG/"+getFullName()+".x0.asc";  
-    ofstream osx(fname.c_str(), ios::out);
-    osx << x;
-    osx.close();
-  }
-  void ExtraDynamicInterface::readx0(){
-    string fname="PREINTEG/"+getFullName()+".x0.asc";  
-    ifstream isx(fname.c_str());
-    if(isx) isx >> x0;
-    else {cout << "EDI " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;} 
-    isx.close();
+  OrderOneDynamics::OrderOneDynamics(const string &name, int xSize_) : Element(name) {
+    xSize = xSize_;
+    y = Vec(1,INIT,0);
   }
 
-  void ExtraDynamicInterface::updatexRef(const Vec& xParent) {
+  void OrderOneDynamics::updatexRef(const Vec& xParent) {
     x >> xParent(xInd,xInd+xSize-1);
   }
 
-  void ExtraDynamicInterface::updatexdRef(const Vec& xdParent) {
+  void OrderOneDynamics::updatexdRef(const Vec& xdParent) {
     xd >> xdParent(xInd,xInd+xSize-1);
   }
 
-  void ExtraDynamicInterface::plot(double t, double dt) {
+  void OrderOneDynamics::initz() {
+    x = x0;
+  }
+
+  void OrderOneDynamics::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::closePlot();
+    }
+  }
+
+  void OrderOneDynamics::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
@@ -84,7 +69,7 @@ namespace MBSim {
     }
   }
 
-  void ExtraDynamicInterface::initPlot() {
+  void OrderOneDynamics::initPlot() {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -99,10 +84,21 @@ namespace MBSim {
     }
   }
 
-  void ExtraDynamicInterface::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Element::closePlot();
-    }
+  void OrderOneDynamics::writex(){
+    string fname="PREINTEG/"+getFullName()+".x0.asc";  
+    ofstream osx(fname.c_str(), ios::out);
+    osx << x;
+    osx.close();
   }
 
+  void OrderOneDynamics::readx0(){
+    string fname="PREINTEG/"+getFullName()+".x0.asc";  
+    ifstream isx(fname.c_str());
+    if(isx) isx >> x0;
+    else {cout << "EDI " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;} 
+    isx.close();
+  }
+
+
 }
+
