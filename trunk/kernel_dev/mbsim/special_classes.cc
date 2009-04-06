@@ -20,7 +20,7 @@
 #include "mbsim/special_classes.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 #include "mbsim/frame.h"
 #include "mbsim/tree.h"
 
@@ -39,13 +39,13 @@ namespace MBSim {
 
       vector<Object*>  objList;
       vector<Link*>  lnkList;
-      vector<ExtraDynamicInterface*>  ediList;
+      vector<OrderOneDynamics*>  oodList;
       buildListOfObjects(objList,true);
       buildListOfLinks(lnkList,true);
-      buildListOfEDIs(ediList,true);
+      buildListOfOrderOneDynamics(oodList,true);
 
       link.clear(); // Alte link-Liste löschen
-      EDI.clear(); // Alte edi-Liste löschen
+      orderOneDynamics.clear(); // Alte ood-Liste löschen
       cout << "object List:" << endl;
       for(unsigned int i=0; i<objList.size(); i++) {
         cout << objList[i]->getName() << endl;
@@ -61,13 +61,13 @@ namespace MBSim {
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
       }
-      cout << "edi List:" << endl;
-      for(unsigned int i=0; i<ediList.size(); i++) {
-        cout << ediList[i]->getName() << endl;
+      cout << "ood List:" << endl;
+      for(unsigned int i=0; i<oodList.size(); i++) {
+        cout << oodList[i]->getName() << endl;
         stringstream str;
-        str << ediList[i]->getName() << "#" << i;
-        ediList[i]->setName(str.str());
-        addEDI(ediList[i]);
+        str << oodList[i]->getName() << "#" << i;
+        oodList[i]->setName(str.str());
+        addOrderOneDynamics(oodList[i]);
       }
       // Matrix anlegen, zeigt die Abhängigkeiten der Körper
       SqrMat A(objList.size());

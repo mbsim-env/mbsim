@@ -21,7 +21,7 @@
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/class_factory.h"
@@ -85,7 +85,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (*i)->updatexd(t);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (*i)->updatexd(t);
   }
 
@@ -203,7 +203,7 @@ namespace MBSim {
     }
     getline(inputfile,dummy); // newline
 
-    getline(inputfile,dummy); // # EDIs
+    getline(inputfile,dummy); // # order one dynamics
     getline(inputfile,dummy); // newline
 
     for(unsigned int i=1; i<port.size(); i++) {
@@ -323,9 +323,9 @@ namespace MBSim {
     }
     outputfile << endl;
 
-    // all EDIs of DynamicSystems
-    outputfile << "# EDIs:" << endl;
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin();  i != EDI.end();  ++i) {
+    // all order one dynamics of DynamicSystems
+    outputfile << "# order one dynamics:" << endl;
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin();  i != orderOneDynamics.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
       ofstream newoutputfile(newname.c_str(), ios::binary);

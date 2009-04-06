@@ -1,5 +1,5 @@
 /* Copyright (C) 2006  Mathias Bachmayer
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -27,69 +27,68 @@ using namespace std;
 using namespace fmatvec;
 
 NLTransferSys::NLTransferSys(const string& name) : SPSys(name) {
-    OutForm=&NLTransferSys::SystemOutput;
-    xSize=0;
-    Single_Input=false;
+  OutForm=&NLTransferSys::SystemOutput;
+  xSize=0;
+  Single_Input=false;
 }
 
-
 void NLTransferSys::updatedx(double t, double dt){
-    xd=DE(t,(this->*Uin)(t))*dt;
+  xd=DE(t,(this->*Uin)(t))*dt;
 }
 
 void NLTransferSys::updatexd(double t){
-    xd=DE(t,(this->*Uin)(t));
-    }
+  xd=DE(t,(this->*Uin)(t));
+}
 
 void NLTransferSys::updateStage1(double t){
-    y=(this->*OutForm)(t,(this->*Uin)(t));
-    //TFOutputSignal->setSignal(y);
-    }
+  y=(this->*OutForm)(t,(this->*Uin)(t));
+  //TFOutputSignal->setSignal(y);
+}
 
 //DYNAMIK DEFINITIONEN ANFANG ***************************************************
 
 Vec NLTransferSys::Saturation(double t, Vec U){
-      Vec Input;
-     Input=SystemOutput(t,U);    
-     for (int k=0;k<Input.rows();k++){
-	 if (Input(k)>MaxLimit) {Input(k)=MaxLimit;}
-	if (Input(k)<MinLimit) {Input(k)=MinLimit;}
-     }
-    return Input;
-    }
+  Vec Input;
+  Input=SystemOutput(t,U);    
+  for (int k=0;k<Input.rows();k++){
+    if (Input(k)>MaxLimit) {Input(k)=MaxLimit;}
+    if (Input(k)<MinLimit) {Input(k)=MinLimit;}
+  }
+  return Input;
+}
 
 Vec NLTransferSys::SystemOutput(double t,Vec U){
-	 Vec Y(1);
-	 Y(0)=U(0);
-	return Y;
-     }
+  Vec Y(1);
+  Y(0)=U(0);
+  return Y;
+}
 
 Vec NLTransferSys::DE(double t, Vec U){
-	Vec Dot(xSize);
-	return Dot;
-    }
+  Vec Dot(xSize);
+  return Dot;
+}
 
 void NLTransferSys::setMinMaxOut(double MinOut, double MaxOut){
-	modus="Saturation Mode";
-	if (MinOut>MaxOut){cout<<"ERROR in setMinMaxOut Method of Object "<<name<<"! MinOut > MaxOut !"<<endl; throw 55;}
-	MaxLimit=MaxOut;
-	MinLimit=MinOut;
-	OutForm=&NLTransferSys::Saturation;
-    }
+  modus="Saturation Mode";
+  if (MinOut>MaxOut){cout<<"ERROR in setMinMaxOut Method of Object "<<name<<"! MinOut > MaxOut !"<<endl; throw 55;}
+  MaxLimit=MaxOut;
+  MinLimit=MinOut;
+  OutForm=&NLTransferSys::Saturation;
+}
 
 void NLTransferSys::activateDynamics(){
-    Vec A(100);
-    x=Vec(100);
-    Vec Zwerg;
-    Zwerg=DE(1,A);
-    xSize=Zwerg.rows();
-    x.resize()=Vec(xSize);
-     if (xNull.size()>0)
-	{x=xNull;}
-	else 
-	{x=Vec(xSize,INIT,0);}
-    cout<<"Inner Dynamic of nonlinear System "<<name<<" has "<<xSize<<" States."<<endl;
-    }
+  Vec A(100);
+  x=Vec(100);
+  Vec Zwerg;
+  Zwerg=DE(1,A);
+  xSize=Zwerg.rows();
+  x.resize()=Vec(xSize);
+  if (xNull.size()>0)
+  {x=xNull;}
+  else 
+  {x=Vec(xSize,INIT,0);}
+  cout<<"Inner Dynamic of nonlinear System "<<name<<" has "<<xSize<<" States."<<endl;
+}
 
 //DYNAMIK Definitionen ENDE-----------------------------------------------------------------------
 

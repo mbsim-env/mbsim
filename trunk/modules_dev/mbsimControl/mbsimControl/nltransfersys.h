@@ -1,5 +1,5 @@
 /* Copyright (C) 2006  Mathias Bachmayer
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -27,6 +27,22 @@
 #include "mbsim/frame.h"
 
 class NLTransferSys : public SPSys {
+  public:   
+    NLTransferSys(const std::string& name);
+    void updatedx(double t, double dt);
+    void updatexd(double t);
+    void updateStage1(double t);
+    void initPlot();
+    void plot(double t,double dt);
+
+    void setMinMaxOut(double MinOut,double MaxOut);
+    void activateDynamics();
+    void setxNull(Vec xNull_){xNull=xNull_;}
+
+    virtual std::string getType() const {return "NLTransferSys";}
+
+    // UserFunction* SigU(){return TFOutputSignal;} 
+  
   protected:
     //OutputSignal *TFOutputSignal; 
     Vec xNull;
@@ -35,22 +51,8 @@ class NLTransferSys : public SPSys {
     virtual Vec DE(double t,  Vec U);
     virtual Vec SystemOutput(double t,Vec U);
     double MaxLimit,MinLimit;
-  public:   
-    NLTransferSys(const std::string& name);
-    void updatedx(double t, double dt);
-    void updatexd(double t);
-    void updateStage1(double t);
-    void initPlot();
-    void plot(double t,double dt);
-    
-    void setMinMaxOut(double MinOut,double MaxOut);
-    void activateDynamics();
-    void setxNull(Vec xNull_){xNull=xNull_;}
 
-    virtual std::string getType() const {return "NLTransferSys";}
-    
-    // UserFunction* SigU(){return TFOutputSignal;} 
-    
 };
 
 #endif
+

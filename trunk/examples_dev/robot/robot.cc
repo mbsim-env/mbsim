@@ -120,7 +120,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basisSoll->setFile("Soll_Basis.tab");   
 
   TransferSys *tf = new TransferSys("ReglerBasis");
-  addEDI(tf);
+  addOrderOneDynamics(tf);
   tf->setInSignalnWeight(new PositionSensor(basis),1);
   tf->setInSignalnWeight(basisSoll,-1);
   tf->setPID(4000,0,200);
@@ -135,7 +135,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armSoll->setFile("Soll_Arm.tab");   
 
   tf = new TransferSys("ReglerArm");
-  addEDI(tf);
+  addOrderOneDynamics(tf);
   tf->setInSignalnWeight(new PositionSensor(arm),1);
   tf->setInSignalnWeight(armSoll,-1);
   tf->setPID(4000,0,200);
@@ -150,7 +150,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzeSoll->setFile("Soll_Spitze.tab");   
 
   tf = new TransferSys("ReglerSpitze");
-  addEDI(tf);
+  addOrderOneDynamics(tf);
   tf->setInSignalnWeight(new PositionSensor(spitze),1);
   tf->setInSignalnWeight(spitzeSoll,-1);
   tf->setPID(4000,0,200);

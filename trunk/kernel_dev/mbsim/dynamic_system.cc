@@ -18,7 +18,7 @@
 
 #include <config.h>
 #include "mbsim/dynamic_system.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/frame.h"
@@ -35,7 +35,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0) {
-
     uSize[0] = 0;
     uSize[1] = 0;
     uInd[0] = 0;
@@ -63,7 +62,7 @@ namespace MBSim {
       delete *i;
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i)
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i)
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
@@ -74,7 +73,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateT(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateT(t);
 
@@ -83,7 +81,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateh(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateh(t);
 
@@ -96,7 +93,6 @@ namespace MBSim {
 
 
   void DynamicSystem::updateM(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateM(t);
 
@@ -105,7 +101,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updatedq(t,dt);
 
@@ -114,7 +109,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::sethSize(int hSize_, int j) {
-
     hSize[j] = hSize_;
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
@@ -163,7 +157,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updater(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
       (**i).updater(t);
 
@@ -172,7 +165,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatewb(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatewb(t);
 
@@ -181,7 +173,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateW(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateW(t);
 
@@ -190,7 +181,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateV(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateV(t);
 
@@ -199,11 +189,10 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateg(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateg(t);
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (*i)->updateg(t);
+    //for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) 
+    //  (*i)->updateg(t);
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
       (*i)->updateg(t);
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
@@ -211,11 +200,10 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategd(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updategd(t);
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) 
-      (*i)->updategd(t);
+    //for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) 
+    //  (*i)->updategd(t);
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
       (*i)->updategd(t);
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
@@ -223,27 +211,25 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedx(double t, double dt) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updatedx(t,dt);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatedx(t,dt);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (**i).updatedx(t,dt);
 
   }
 
   void DynamicSystem::updatexd(double t) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updatexd(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexd(t);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (**i).updatexd(t);
   }
 
@@ -265,8 +251,8 @@ namespace MBSim {
     for(unsigned i=0; i<link.size(); i++)
       link[i]->setFullName(getFullName() + "." + link[i]->getName());
 
-    for (unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->setFullName(getFullName() + "." + EDI[i]->getName());
+    for (unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->setFullName(getFullName() + "." + orderOneDynamics[i]->getName());
 
     for(unsigned i=0; i<port.size(); i++)
       port[i]->setFullName(getFullName() + "." + port[i]->getName());
@@ -285,8 +271,8 @@ namespace MBSim {
     for(unsigned i=0; i<link.size(); i++)
       link[i]->setDynamicSystemSolver(sys);
 
-    for (unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->setDynamicSystemSolver(sys);
+    for (unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->setDynamicSystemSolver(sys);
   }
 
   void DynamicSystem::plot(double t, double dt) {
@@ -297,8 +283,8 @@ namespace MBSim {
         object[i]->plot(t,dt);
       for(unsigned i=0; i<link.size(); i++)
         link[i]->plot(t,dt);
-      for(unsigned i=0; i<EDI.size(); i++)
-        EDI[i]->plot(t,dt);
+      for(unsigned i=0; i<orderOneDynamics.size(); i++)
+        orderOneDynamics[i]->plot(t,dt);
     }
   }
 
@@ -310,8 +296,8 @@ namespace MBSim {
         object[i]->closePlot();
       for(unsigned i=0; i<link.size(); i++)
         link[i]->closePlot();
-      for(unsigned i=0; i<EDI.size(); i++)
-        EDI[i]->closePlot();
+      for(unsigned i=0; i<orderOneDynamics.size(); i++)
+        orderOneDynamics[i]->closePlot();
 
       if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
         delete (H5::FileSerie*)plotGroup;
@@ -342,8 +328,8 @@ namespace MBSim {
     for(unsigned i=0; i<link.size(); i++)
       link[i]->init();
 
-    for (unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->init();
+    for (unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->init();
   }
 
   void DynamicSystem::preinit() {
@@ -359,12 +345,11 @@ namespace MBSim {
     for(unsigned i=0; i<link.size(); i++)
       link[i]->preinit();
 
-    for (unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->preinit();
+    for (unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->preinit();
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveConstraintsFixpointSingle(); 
 
@@ -375,7 +360,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsFixpointSingle() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveImpactsFixpointSingle(); 
 
@@ -386,7 +370,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveConstraintsGaussSeidel() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveConstraintsGaussSeidel(); 
 
@@ -397,7 +380,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsGaussSeidel() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveImpactsGaussSeidel(); 
 
@@ -408,7 +390,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveConstraintsRootFinding() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveConstraintsRootFinding(); 
 
@@ -419,7 +400,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsRootFinding() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->solveImpactsRootFinding(); 
 
@@ -430,7 +410,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::jacobianConstraints() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->jacobianConstraints(); 
 
@@ -441,7 +420,6 @@ namespace MBSim {
   }
 
   int DynamicSystem::jacobianImpacts() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->jacobianImpacts(); 
 
@@ -452,7 +430,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkConstraintsForTermination() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkConstraintsForTermination(); 
 
@@ -461,7 +438,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkImpactsForTermination() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkImpactsForTermination(); 
 
@@ -470,7 +446,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterFactors() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updaterFactors(); 
 
@@ -511,8 +486,8 @@ namespace MBSim {
         object[i]->initPlot();
       for(unsigned i=0; i<link.size(); i++)
         link[i]->initPlot();
-      for(unsigned i=0; i<EDI.size(); i++)
-        EDI[i]->initPlot();
+      for(unsigned i=0; i<orderOneDynamics.size(); i++)
+        orderOneDynamics[i]->initPlot();
     }
     plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
@@ -544,7 +519,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateqRef(const Vec &qParent) {
-
     q >> qParent(qInd,qInd+qSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -555,7 +529,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateqdRef(const Vec &qdParent) {
-
     qd >> qdParent(qInd,qInd+qSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -566,7 +539,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateuRef(const Vec &uParent) {
-
     u >> uParent(uInd[0],uInd[0]+uSize[0]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -577,7 +549,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateudRef(const Vec &udParent) {
-
     ud >> udParent(uInd[0],uInd[0]+uSize[0]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -588,7 +559,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatexRef(const Vec &xParent) {
-
     x >> xParent(xInd,xInd+xSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -597,12 +567,11 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(x);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (**i).updatexRef(x);
   }
 
   void DynamicSystem::updatexdRef(const Vec &xdParent) {
-
     xd >> xdParent(xInd,xInd+xSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -611,12 +580,11 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexdRef(xd);
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i!= EDI.end(); ++i) 
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
       (**i).updatexdRef(xd);
   }
 
   void DynamicSystem::updatehRef(const Vec &hParent, int j) {
-
     h.resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -640,7 +608,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent) {
-
     r >> rParent(hInd[0],hInd[0]+hSize[0]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -654,7 +621,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
-
     T >> TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -665,7 +631,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateMRef(const SymMat& MParent, int j) {
-
     M.resize() >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -676,7 +641,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateLLMRef(const SymMat& LLMParent, int j) {
-
     LLM.resize() >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -697,7 +661,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategdRef(const Vec& gdParent) {
-
     gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -728,7 +691,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
-
     W.resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -739,7 +701,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
-
     V.resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -750,7 +711,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatesvRef(const Vec &svParent) {
-
     sv >> svParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -761,7 +721,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatejsvRef(const Vector<int> &jsvParent) {
-
     jsv >> jsvParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -782,7 +741,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterFactorRef(const Vec &rFactorParent) {
-
     rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
@@ -802,8 +760,8 @@ namespace MBSim {
       object[i]->initz();
     for(unsigned i=0; i<link.size(); i++)
       link[i]->initz();
-    for(unsigned i=0; i<EDI.size(); i++)
-      EDI[i]->initz();
+    for(unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->initz();
   }
 
   void DynamicSystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
@@ -822,16 +780,15 @@ namespace MBSim {
 	dynamicsystem[i]->buildListOfLinks(lnk,recursive);
   }
 
-  void DynamicSystem::buildListOfEDIs(vector<ExtraDynamicInterface*> &edi, bool recursive) {
-    for(unsigned int i=0; i<EDI.size(); i++)
-      edi.push_back(EDI[i]);
+  void DynamicSystem::buildListOfOrderOneDynamics(vector<OrderOneDynamics*> &ood, bool recursive) {
+    for(unsigned int i=0; i<orderOneDynamics.size(); i++)
+      ood.push_back(orderOneDynamics[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-	dynamicsystem[i]->buildListOfEDIs(edi,recursive);
+	dynamicsystem[i]->buildListOfOrderOneDynamics(ood,recursive);
   }
 
   void DynamicSystem::updateCondition() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateCondition();
 
@@ -840,7 +797,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::resizeJacobians(int j) {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->resizeJacobians(j);
 
@@ -852,7 +808,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkForConstraints() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkForConstraints();
 
@@ -903,7 +858,7 @@ namespace MBSim {
       xSize += (*i)->getxSize();
     }
 
-    for(vector<ExtraDynamicInterface*>::iterator i = EDI.begin(); i != EDI.end(); ++i) {
+    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) {
       (*i)->calcxSize();
       (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
@@ -1052,7 +1007,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActiveg() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkActiveg();
 
@@ -1061,7 +1015,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActivegd() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkActivegd();
 
@@ -1070,7 +1023,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActivegdn() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkActivegdn();
 
@@ -1079,7 +1031,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActivegdd() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkActivegdd();
 
@@ -1088,7 +1039,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkAllgd() {
-
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkAllgd();
 
@@ -1165,7 +1115,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame) {
-
     addFrame(cosy);
 
     int i = 0;
@@ -1191,7 +1140,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
-
     addContour(contour);
 
     int i = 0;
@@ -1259,25 +1207,25 @@ namespace MBSim {
     return NULL;
   }
 
-  ExtraDynamicInterface* DynamicSystem::getEDI(const string &name,bool check) {
+  OrderOneDynamics* DynamicSystem::getOrderOneDynamics(const string &name,bool check) {
     unsigned int i;
-    for(i=0; i<EDI.size(); i++) {
-      if(EDI[i]->getName() == name) return EDI[i];
+    for(i=0; i<orderOneDynamics.size(); i++) {
+      if(orderOneDynamics[i]->getName() == name) return orderOneDynamics[i];
     }
     if(check) {
-      if(!(i<EDI.size())) cout << "ERROR (DynamicSystem::getEDI): The DynamicSystem " << this->name <<" comprises no EDI " << name << "!" << endl; 
-      assert(i<EDI.size());
+      if(!(i<orderOneDynamics.size())) cout << "ERROR (DynamicSystem::getOrderOneDynamics): The DynamicSystem " << this->name <<" comprises no OrderOneDynamics " << name << "!" << endl; 
+      assert(i<orderOneDynamics.size());
     }
     return NULL; 
   }    
 
-  void DynamicSystem::addEDI(ExtraDynamicInterface *edi_) {
-    if(getEDI(edi_->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addEDI): The DynamicSystem " << name << " can only comprise one ExtraDynamicInterface by the name " <<  edi_->getName() << "!" << endl;
-      assert(getEDI(edi_->getName(),false) == NULL);
+  void DynamicSystem::addOrderOneDynamics(OrderOneDynamics *ood_) {
+    if(getOrderOneDynamics(ood_->getName(),false)) {
+      cout << "ERROR (DynamicSystem::addOrderOneDynamics): The DynamicSystem " << name << " can only comprise one OrderOneDynamics by the name " <<  ood_->getName() << "!" << endl;
+      assert(getOrderOneDynamics(ood_->getName(),false) == NULL);
     }
-    EDI.push_back(edi_);
-    edi_->setParent(this);
+    orderOneDynamics.push_back(ood_);
+    ood_->setParent(this);
   }
 
   void DynamicSystem::addDataInterfaceBase(DataInterfaceBase* dib_) {

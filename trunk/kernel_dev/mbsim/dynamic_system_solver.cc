@@ -23,7 +23,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
-#include "mbsim/extra_dynamic_interface.h"
+#include "mbsim/order_one_dynamics.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/flexible_body.h"
 #include "mbsim/utils/eps.h"
@@ -1050,10 +1050,10 @@ namespace MBSim {
   void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_=dynamic_cast<Object*>(element_);
     Link* link_=dynamic_cast<Link*>(element_);
-    ExtraDynamicInterface* edi_=dynamic_cast<ExtraDynamicInterface*>(element_);
+    OrderOneDynamics* ood_=dynamic_cast<OrderOneDynamics*>(element_);
     if(object_) addObject(object_);
     else if(link_) addLink(link_);
-    else if(edi_) addEDI(edi_);
+    else if(ood_) addOrderOneDynamics(ood_);
     else{ cout << "Error: DynamicSystemSolver: addElement(): No such type of Element to add!"<<endl; throw 50;}
   }
 
@@ -1073,14 +1073,14 @@ namespace MBSim {
     //     if(link[i2]->getFullName() == name) return (Element*)link[i2];
     //   }
     //   unsigned int i3;
-    //   for(i3=0; i3<EDI.size(); i3++) {
-    //     if(EDI[i3]->getName() == name) return (Element*)EDI[i3];
+    //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
+    //     if(orderOneDynamics[i3]->getName() == name) return (Element*)orderOneDynamics[i3];
     //   }
-    //   for(i3=0; i3<EDI.size(); i3++) {
-    //     if(EDI[i3]->getFullName() == name) return (Element*)EDI[i3];
+    //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
+    //     if(orderOneDynamics[i3]->getFullName() == name) return (Element*)orderOneDynamics[i3];
     //   }
-    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<EDI.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
-    //   assert(i1<object.size()||i2<link.size()||!(i3<EDI.size()));
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<orderOneDynamics.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   assert(i1<object.size()||i2<link.size()||!(i3<orderOneDynamics.size()));
     return NULL;
   }
 
@@ -1134,8 +1134,8 @@ namespace MBSim {
     for(il1 = link.begin(); il1 != link.end(); ++il1) (*il1)->initDataInterfaceBase(this);
     vector<Object*>::iterator io1;
     for(io1 = object.begin(); io1 != object.end(); ++io1) (*io1)->initDataInterfaceBase(this);
-    vector<ExtraDynamicInterface*>::iterator ie1;
-    for(ie1 = EDI.begin(); ie1 != EDI.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
+    vector<OrderOneDynamics*>::iterator ie1;
+    for(ie1 = orderOneDynamics.begin(); ie1 != orderOneDynamics.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
   Frame* DynamicSystemSolver::findFrame(const string &name) {
@@ -1234,8 +1234,8 @@ namespace MBSim {
       object[i]->writeu();
       object[i]->writex();
     }
-    for(unsigned int i=0; i<EDI.size(); i++)  {
-      EDI[i]->writex();
+    for(unsigned int i=0; i<orderOneDynamics.size(); i++)  {
+      orderOneDynamics[i]->writex();
     }
   }
 
@@ -1245,8 +1245,8 @@ namespace MBSim {
       object[i]->readu0();
       object[i]->readx0();
     }
-    for(unsigned int i=0; i<EDI.size(); i++)  {
-      EDI[i]->readx0();
+    for(unsigned int i=0; i<orderOneDynamics.size(); i++)  {
+      orderOneDynamics[i]->readx0();
     }
   }
   

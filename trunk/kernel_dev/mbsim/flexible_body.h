@@ -21,8 +21,8 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include <mbsim/body.h>
-#include <mbsim/contour_pdata.h>
+#include "mbsim/body.h"
+#include "mbsim/contour_pdata.h"
 #include <vector>
 
 #ifdef HAVE_AMVIS

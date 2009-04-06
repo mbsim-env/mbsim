@@ -44,8 +44,9 @@ namespace MBSim {
    * \brief general link to one or more objects
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
+   * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
    */
-  class Link : public Element, public LinkInterface {
+  class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
       /**
        * \brief constructor
@@ -64,10 +65,23 @@ namespace MBSim {
       virtual void updateW(double t) {};
       virtual void updateV(double t) {};
       virtual void updateh(double t) {};
-      virtual void updatedx(double t, double dt) {}
-      virtual void updatexd(double t) {}
       virtual void updateStopVector(double t) {}
       virtual void updateJacobians(double t) {}
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
+      virtual void updatedx(double t, double dt) {}
+      virtual void updatexd(double t) {}
+      virtual void calcxSize() { xSize = 0; }
+      virtual const fmatvec::Vec& getx() const { return x; }
+      virtual fmatvec::Vec& getx() { return x; }
+      virtual void setxInd(int xInd_) { xInd = xInd_; };
+      virtual int getxSize() const { return xSize; }
+      virtual void updatexRef(const fmatvec::Vec& ref);
+      virtual void updatexdRef(const fmatvec::Vec& ref);
+      virtual void init();
+      virtual void preinit() {}
+      virtual void initz();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -110,16 +124,6 @@ namespace MBSim {
       virtual void updatefRef(const fmatvec::Vec &ref) {};
 
       /**
-       * \brief references to order one parameter of dynamic system parent
-       */
-      virtual void updatexRef(const fmatvec::Vec& ref);
-
-      /**
-       * \brief references to order one parameter derivatives of dynamic system parent
-       */
-      virtual void updatexdRef(const fmatvec::Vec& ref);
-
-      /**
        * \brief references to contact force parameter of dynamic system parent
        */
       virtual void updatelaRef(const fmatvec::Vec& ref);
@@ -153,11 +157,6 @@ namespace MBSim {
        * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
       virtual void updatejsvRef(const fmatvec::Vector<int> &jsvParent);
-
-      /**
-       * \brief calculates size of order one parameters
-       */
-      virtual void calcxSize() { xSize = 0; }
 
       /**
        * \brief calculates size of contact force parameters
@@ -198,21 +197,6 @@ namespace MBSim {
        * \brief calculates size of stopvector (root function for event driven integration)
        */
       virtual void calcsvSize() { svSize = 0; }
-
-      /**
-       * \brief initialise link
-       */
-      virtual void init();
-
-      /**
-       * \brief do tasks before initialisation 
-       */
-      virtual void preinit() {}
-
-      /**
-       * \brief initialise order one parameters TODO necessary?
-       */
-      virtual void initz();
 
       /**
        * \brief plots time series header
@@ -369,10 +353,7 @@ namespace MBSim {
       const std::vector<fmatvec::Vec>& geth() const { return h; }
 
       void setx(const fmatvec::Vec &x_) { x = x_; }
-      const fmatvec::Vec& getx() const { return x; }
       const fmatvec::Vec& getxd() const { return xd; }
-      void setxInd(int xInd_) { xInd = xInd_; };
-      int getxSize() const { return xSize; }
       
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
