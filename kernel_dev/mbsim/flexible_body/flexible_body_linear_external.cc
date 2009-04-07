@@ -52,7 +52,7 @@ namespace MBSim {
 	return static_cast<SuperElementLinearExternal*>(discretization[0])->addInterface(J,r);
   }
 
-  void FlexibleBodyLinearExternal::updateKinematics(double t) {
+  void FlexibleBodyLinearExternal::updateStateDependentVariables(double t) {
     if(qElement[0]!=q) qElement[0] >> q;
     if(uElement[0]!=u) uElement[0] >> u;
 

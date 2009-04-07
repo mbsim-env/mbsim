@@ -141,7 +141,7 @@ void Inductor::updateM(double t) {
   //cout << hSize[0] << endl;
 }
 
-void Wire::updateKinematics(double t) {
+void Wire::updateStateDependentVariables(double t) {
   Q = J*parent->getq();
   I = J*parent->getu();
 }

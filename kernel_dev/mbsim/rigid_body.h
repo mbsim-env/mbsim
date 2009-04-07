@@ -77,7 +77,7 @@ namespace MBSim {
        */
       void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
-          i4I = portIndex(refFrame);
+          i4I = frameIndex(refFrame);
         else
           i4I = 0;
         // hier nur zwischenspeichern
@@ -93,7 +93,7 @@ namespace MBSim {
       void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
 
       void updateh(double t);
-      void updateKinematics(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
+      void updateStateDependentVariables(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
       void updateJacobians(double t) {updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
       void updateM(double t) {(this->*updateM_)(t);}
       void updateT(double t) {if(fT) T = (*fT)(q,t);}
@@ -102,14 +102,14 @@ namespace MBSim {
       void resizeJacobians(int j);
       virtual void checkForConstraints();
 
-      void addFrame(Frame *port_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0); 
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0); 
 
       void addFrame(const std::string &str, const fmatvec::Vec &SrSK, const fmatvec::SqrMat &ASK, const Frame* refFrame=0);
 
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       void setFrameForKinematics(Frame *frame) {
-        iRef = portIndex(frame);
+        iRef = frameIndex(frame);
         assert(iRef > -1);
       }
 
@@ -118,7 +118,7 @@ namespace MBSim {
        */
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
       
-      Frame* getFrameForKinematics() { return port[iRef]; };
+      Frame* getFrameForKinematics() { return frame[iRef]; };
       Frame* getFrameOfReference() { return frameParent; };
 
       double computeKineticEnergy();
@@ -137,7 +137,7 @@ namespace MBSim {
       void save(const std::string &path, std::ofstream &outputfile);
 
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?port[0]:cosy;}
+      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?frame[0]:cosy;}
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
       void setAMVisRigidBody(AMVis::RigidBody* body) { amvisBody=body; }

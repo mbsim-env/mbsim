@@ -102,7 +102,7 @@ namespace MBSim {
       //q += system.getT()*(u)*dt;
 
       // TODO T updaten (passiert sonst in deltaq)
-      system.updateKinematics(t);
+      system.updateStateDependentVariables(t);
       system.updateg(t);
       //system.checkActiveConstraints();
       system.updategd(t);

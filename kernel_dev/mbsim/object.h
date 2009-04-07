@@ -24,16 +24,11 @@
 #include <vector>
 #include <mbsim/element.h>
 #include <mbsim/interfaces.h>
-#include <mbsim/dynamic_system.h>
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/body.h>
-#endif
 
 namespace MBSim {
 
-  class Frame;
-  class Contour;
   class DynamicSystem;
+  class Frame;
 
   /** 
    * \brief class for all objects having own dynamics and mass
@@ -151,7 +146,6 @@ namespace MBSim {
        */
       virtual void updateLLMRef(const fmatvec::SymMat &ref, int i=0);
 
-
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
        */
@@ -176,12 +170,12 @@ namespace MBSim {
        * \brief calculates size of right hand side
        * \param index of normal usage and inverse kinetics TODO
        */
-      virtual void calchSize(int j) {}
+      virtual void calcSize(int j) {}
 
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy();
+      virtual double computeKineticEnergy() {return 0; }
 
       /**
        * \return potential energy
@@ -198,34 +192,11 @@ namespace MBSim {
        */
       virtual void checkForConstraints() {}
 
-      /**
-       * \param contour to add
-       */
-      virtual void addContour(Contour* contour);
-
-      /**
-       * \param frame to add
-       */
-      virtual void addFrame(Frame * port);
-
-      /**
-       * \param name of the contour
-       * \param flag for checking existence
-       * \return contour
-       */
-      virtual Contour* getContour(const std::string &name, bool check=true);
-
-      /**
-       * \param name of the frame
-       * \param flag for checking existence
-       * \return frame
-       */
-      virtual Frame* getFrame(const std::string &name, bool check=true);
-      /*****************************************************/
-
       /* GETTER / SETTER */
       DynamicSystem* getParent() { return parent; }
       void setParent(DynamicSystem* sys) { parent = sys; }
+      Frame * getStationaryFrameOfReference() { return frameParent; }
+      void setStationaryFrameOfReference(Frame *frame) { frameParent = frame; }
 
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
@@ -273,38 +244,23 @@ namespace MBSim {
       void setq0(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
       void setu0(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
-      const std::vector<Frame*>& getFrames() const { return port; }
-      const std::vector<Contour*>& getContours() const { return contour; }
-      /*****************************************************/
-
-      /**
-       * \param frame
-       * \return index of frame TODO rename
-       */
-      int portIndex(const Frame *port_) const;
-
-      /**
-       * \param contour
-       * \return index of contour TODO rename
-       */
-      int contourIndex(const Contour *contour_) const;
-
       /** 
        * Return the full path of the object. This function replaces the getFullName
        * which is deprecated.
        * \param pathDelim The delimiter of the path
        */
-      std::string getPath(char pathDelim='.') { return parent?parent->getPath()+pathDelim+name:name; }
-
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return amvisGrp; }
-#endif
+      std::string getPath(char pathDelim='.');
 
     protected:
       /**
        * \brief dynamic system, object belongs to
        */
-      DynamicSystem* parent;
+      DynamicSystem * parent;
+
+      /**
+       * \brief inertial frame of reference of the object
+       */
+      Frame * frameParent;
 
       /**
        * \brief size of object positions
@@ -365,17 +321,6 @@ namespace MBSim {
        * \brief indices for velocities and right hand side
        */
       fmatvec::Index Iu, Ih;
-
-      /**
-       * \brief vector of frames and contours
-       */
-      std::vector<Frame*> port;
-      std::vector<Contour*> contour;
-
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Body* amvisBody;
-      AMVis::Group* amvisGrp;
-#endif
   };
 
 }

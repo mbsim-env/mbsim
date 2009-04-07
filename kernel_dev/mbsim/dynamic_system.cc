@@ -49,8 +49,8 @@ namespace MBSim {
     IrOK.push_back(Vec(3));
     AIK.push_back(SqrMat(3,EYE));
 
-    port[0]->setPosition(Vec(3));
-    port[0]->setOrientation(SqrMat(3,EYE));
+    frame[0]->setPosition(Vec(3));
+    frame[0]->setOrientation(SqrMat(3,EYE));
 #ifdef HAVE_AMVISCPPINTERFACE
     if(amvisGrp) amvisGrp=0;
 #endif
@@ -66,7 +66,7 @@ namespace MBSim {
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
-    delete port[0]; // delete frame "I" which is created by constructor
+    delete frame[0]; // delete frame "I" which is created by constructor
 #ifdef HAVE_AMVISCPPINTERFACE
     delete amvisGrp;
 #endif
@@ -254,8 +254,8 @@ namespace MBSim {
     for (unsigned i=0; i<orderOneDynamics.size(); i++)
       orderOneDynamics[i]->setFullName(getFullName() + "." + orderOneDynamics[i]->getName());
 
-    for(unsigned i=0; i<port.size(); i++)
-      port[i]->setFullName(getFullName() + "." + port[i]->getName());
+    for(unsigned i=0; i<frame.size(); i++)
+      frame[i]->setFullName(getFullName() + "." + frame[i]->getName());
     for(unsigned i=0; i<contour.size(); i++)
       contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
   }
@@ -307,18 +307,18 @@ namespace MBSim {
   }
 
   void DynamicSystem::init() {
-    for(unsigned int i=1; i<port.size(); i++) { // kinematics of other frames can be updates from frame I 
-      port[i]->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOK[i]);
-      port[i]->setOrientation(port[0]->getOrientation()*AIK[i]);
+    for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
+      frame[i]->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOK[i]);
+      frame[i]->setOrientation(frame[0]->getOrientation()*AIK[i]);
     }
     for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
-      contour[i]->setWrOP(port[0]->getPosition() + port[0]->getOrientation()*IrOC[i]);
-      contour[i]->setAWC(port[0]->getOrientation()*AIC[i]);
+      contour[i]->setWrOP(frame[0]->getPosition() + frame[0]->getOrientation()*IrOC[i]);
+      contour[i]->setAWC(frame[0]->getOrientation()*AIC[i]);
       contour[i]->init();
     }
     for(unsigned int i=0; i<dynamicsystem.size(); i++) { // kinematics of other dynamicsystems can be updates from frame I
-      dynamicsystem[i]->getFrame("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
-      dynamicsystem[i]->getFrame("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
+      dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOS[i]);
+      dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AIS[i]);
       dynamicsystem[i]->init();
     }
 
@@ -334,8 +334,8 @@ namespace MBSim {
 
   void DynamicSystem::preinit() {
     for(unsigned int i=0; i<dynamicsystem.size(); i++) {
-      dynamicsystem[i]->getFrame("I")->setPosition(port[0]->getPosition() + port[0]->getOrientation()*IrOS[i]);
-      dynamicsystem[i]->getFrame("I")->setOrientation(port[0]->getOrientation()*AIS[i]);
+      dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOS[i]);
+      dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AIS[i]);
       dynamicsystem[i]->preinit();
     }
 
@@ -494,13 +494,13 @@ namespace MBSim {
 
   Frame* DynamicSystem::getFrame(const string &name, bool check) {
     unsigned int i;
-    for(i=0; i<port.size(); i++) {
-      if(port[i]->getName() == name)
-        return port[i];
+    for(i=0; i<frame.size(); i++) {
+      if(frame[i]->getName() == name)
+        return frame[i];
     }             
     if(check) {
-      if(!(i<port.size())) cout << "ERROR (DynamicSystem:getFrame): The object " << this->name <<" comprises no frame " << name << "!" << endl; 
-      assert(i<port.size());
+      if(!(i<frame.size())) cout << "ERROR (DynamicSystem:getFrame): The object " << this->name <<" comprises no frame " << name << "!" << endl; 
+      assert(i<frame.size());
     }
     return NULL;
   }
@@ -1110,7 +1110,7 @@ namespace MBSim {
       cout << "ERROR (DynamicSystem:addFrame): The DynamicSystem " << name << " can only comprise one Frame by the name " <<  cosy->getName() << "!" << endl;
       assert(getFrame(cosy->getName(),false)==NULL);
     }
-    port.push_back(cosy);
+    frame.push_back(cosy);
     cosy->setParent(this);
   }
 
@@ -1119,7 +1119,7 @@ namespace MBSim {
 
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     IrOK.push_back(IrOK[i] + AIK[i]*RrRK);
     AIK.push_back(AIK[i]*ARK);
@@ -1144,15 +1144,15 @@ namespace MBSim {
 
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     IrOC.push_back(IrOK[i] + AIK[i]*RrRC);
     AIC.push_back(AIK[i]*ARC);
   }
 
-  int DynamicSystem::portIndex(const Frame *port_) const {
-    for(unsigned int i=0; i<port.size(); i++) {
-      if(port_==port[i])
+  int DynamicSystem::frameIndex(const Frame *frame_) const {
+    for(unsigned int i=0; i<frame.size(); i++) {
+      if(frame_==frame[i])
         return i;
     }
     return -1;

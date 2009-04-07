@@ -48,7 +48,7 @@ namespace MBSim {
       void init();
       void initMatrizes();
 
-      void updateKinematics(double t);
+      void updateStateDependentVariables(double t);
       void updatePorts(double t);
       //void sumUpForceElements(double t);
       //void updateW(double t);

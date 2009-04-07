@@ -55,7 +55,7 @@ namespace MBSim {
       void   BuildElement(const int&);
       double BuildElement(const double&);
 
-      void updateKinematics(double t);
+      void updateStateDependentVariables(double t);
       void updatePorts(double t);
 
       void updateh(double t);

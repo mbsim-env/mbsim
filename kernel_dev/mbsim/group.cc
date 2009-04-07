@@ -48,12 +48,12 @@ namespace MBSim {
       (*i)->facLLM();
   }
 
-  void Group::updateKinematics(double t) {
+  void Group::updateStateDependentVariables(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateKinematics(t);
+      (*i)->updateStateDependentVariables(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateKinematics(t);
+      (*i)->updateStateDependentVariables(t);
   }
 
   void Group::updateJacobians(double t) {
@@ -115,9 +115,9 @@ namespace MBSim {
       getline(newinputfile,dummy);
       getline(newinputfile,dummy);
       newinputfile.seekg(0,ios::beg);
-      if(i>=port.size())
+      if(i>=frame.size())
         addFrame(new Frame("NoName"));
-      port[i]->load(path, newinputfile);
+      frame[i]->load(path, newinputfile);
       newinputfile.close();
     }
     getline(inputfile,dummy); // # newline
@@ -206,7 +206,7 @@ namespace MBSim {
     getline(inputfile,dummy); // # order one dynamics
     getline(inputfile,dummy); // newline
 
-    for(unsigned int i=1; i<port.size(); i++) {
+    for(unsigned int i=1; i<frame.size(); i++) {
       IrOK.push_back(Vec(3));
       AIK.push_back(SqrMat(3));
       getline(inputfile,dummy); // # Translation cosy 
@@ -265,7 +265,7 @@ namespace MBSim {
 
     // all Frame of Object
     outputfile << "# Coordinate systems:" << endl;
-    for(vector<Frame*>::iterator i = port.begin();  i != port.end();  ++i) {
+    for(vector<Frame*>::iterator i = frame.begin();  i != frame.end();  ++i) {
       outputfile << (**i).getName() << endl;
       string newname = path + "/" + (**i).getFullName() + ".mdl";
       ofstream newoutputfile(newname.c_str(), ios::binary);
@@ -335,11 +335,11 @@ namespace MBSim {
 
     outputfile << endl;
 
-    for(unsigned int i=1; i<port.size(); i++) {
-      outputfile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+    for(unsigned int i=1; i<frame.size(); i++) {
+      outputfile << "# Translation of coordinate system " << frame[i]->getName() <<":" << endl;
       outputfile << IrOK[i] << endl;
       outputfile << endl;
-      outputfile << "# Rotation of coordinate system "  << port[i]->getName() <<":" << endl;
+      outputfile << "# Rotation of coordinate system "  << frame[i]->getName() <<":" << endl;
       outputfile << AIK[i] << endl;
       outputfile << endl;
     }
@@ -359,7 +359,7 @@ namespace MBSim {
 
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);

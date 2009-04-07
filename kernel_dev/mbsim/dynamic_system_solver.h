@@ -92,7 +92,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
       virtual void updateM(double t);
-      virtual void updateKinematics(double t); // this function is called once every time step by every integrator
+      virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -346,18 +346,18 @@ namespace MBSim {
        */
       void initDataInterfaceBase();
 
-      /**
-       * \param name of frame to find in dynamic system
-       * TODO concept
-       */
-      Frame* findFrame( const std::string &name );
-      
-      /**
-       * \param name of contour to find in dynamic system
-       *
-       * TODO concept
-       */
-      Contour* findContour( const std::string &name );
+//      /**
+//       * \param name of frame to find in dynamic system
+//       * TODO concept
+//       */
+//      Frame* findFrame( const std::string &name );
+//      
+//      /**
+//       * \param name of contour to find in dynamic system
+//       *
+//       * TODO concept
+//       */
+//      Contour* findContour( const std::string &name );
 
       /**
        * \param path of topology

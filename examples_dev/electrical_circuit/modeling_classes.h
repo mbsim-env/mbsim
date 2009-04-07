@@ -3,6 +3,9 @@
 
 #include "mbsim/element.h"
 #include <string>
+#include <vector>
+
+using namespace std;
 
 class Component;
 

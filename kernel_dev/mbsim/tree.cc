@@ -32,10 +32,10 @@ namespace MBSim {
     child.push_back(child_);
   }
 
-  void Node::updateKinematics(double t) {
-    obj->updateKinematics(t);
+  void Node::updateStateDependentVariables(double t) {
+    obj->updateStateDependentVariables(t);
     for(unsigned int i=0; i<child.size(); i++)
-      child[i]->updateKinematics(t);
+      child[i]->updateStateDependentVariables(t);
   }
 
   void Node::updateJacobians(double t) {
@@ -83,8 +83,8 @@ namespace MBSim {
 
   Tree::~Tree() {}
 
-  void Tree::updateKinematics(double t) {
-    root->updateKinematics(t);
+  void Tree::updateStateDependentVariables(double t) {
+    root->updateStateDependentVariables(t);
   }
 
   void Tree::updateJacobians(double t) {
@@ -154,7 +154,7 @@ namespace MBSim {
 
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
     AIS.push_back(AIK[i]*ARS);
