@@ -22,7 +22,7 @@
 #include <config.h>
 #include "finite_element_1s_23_bta.h"
 #include "body_flexible_1s_23_bta.h"
-#include "port.h"
+#include "frame.h"
 #include "dynamic_system_solver.h"
 #include "contact_flexible.h"
 #include "contact_rigid.h"
@@ -117,9 +117,9 @@ namespace MBSim {
     parafile << "\n# JT:\n"      << JT   << endl;
     parafile << "\n# JR:\n"      << JR   << endl;
 
-    if(port.size()>0) parafile << "\nports:" <<endl;
-    for(unsigned int i=0; i<port.size(); i++) { 
-      parafile << "# s: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") = ";
+    if(frame.size()>0) parafile << "\nframes:" <<endl;
+    for(unsigned int i=0; i<frame.size(); i++) { 
+      parafile << "# s: (frame:  name= "<< frame[i]->getName()<<",  ID= "<<frame[i]->getID()<<") = ";
       if(S_Port[i].type==CONTINUUM) parafile << S_Port[i].alpha(0) << endl;
       if(S_Port[i].type==NODE     ) parafile << S_Port[i].ID*L/Elements  << endl;
     }
@@ -142,7 +142,7 @@ namespace MBSim {
   }
 
   void BodyFlexible1s23BTA::updatePorts(double t) {
-    for(unsigned int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<frame.size(); i++) {
       if(S_Port[i].type == CONTINUUM) // ForceElement on continuum
       {
 	const double &s = S_Port[i].alpha(0);
@@ -150,18 +150,18 @@ namespace MBSim {
 
 	Vec Z = element[CurrentElement].StateAxis(qElement,uElement,sElement);
 	Z(0) = s;
-	port[i]->setWrOP(WrON00 + JR * Z( 0,2));
-	//	    port[i]->setWaP (         JR * Z( 3,5));
-	port[i]->setWvP (         JR * Z( 6,8));
-	port[i]->setWomegaP(      JR * Z(9,11));
+	frame[i]->setWrOP(WrON00 + JR * Z( 0,2));
+	//	    frame[i]->setWaP (         JR * Z( 3,5));
+	frame[i]->setWvP (         JR * Z( 6,8));
+	frame[i]->setWomegaP(      JR * Z(9,11));
 
       }
       // 	else                   // ForceElement on node
       // 	{
       // 	    int node = int(S_Port[i](0));
-      // 	    port[i]->setWrOP(WrON00 + JT * q(5*node+0,5*node+1));
-      // 	    port[i]->setWvP (         JT * u(5*node+0,5*node+1));
-      // 	    port[i]->setWomegaP(      JR * u(5*node+2,5*node+2));
+      // 	    frame[i]->setWrOP(WrON00 + JT * q(5*node+0,5*node+1));
+      // 	    frame[i]->setWvP (         JT * u(5*node+0,5*node+1));
+      // 	    frame[i]->setWomegaP(      JR * u(5*node+2,5*node+2));
       // 	}
     }
   }
@@ -244,13 +244,13 @@ namespace MBSim {
 
 
   void BodyFlexible1s23BTA::addPort(const string &name, const int &node) {
-    Port *port = new Port(name);
+    Port *frame = new Port(name);
     ContourPointData cpTemp;
     //  cpTemp.type = NODE;
     cpTemp.type = CONTINUUM;
     cpTemp.ID = node;
     cpTemp.alpha = Vec(1,INIT,node*L/Elements);
-    addPort(port,cpTemp);
+    addPort(frame,cpTemp);
   }
 
   //----------------------------------------------------------------------

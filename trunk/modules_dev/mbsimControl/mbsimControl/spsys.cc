@@ -217,13 +217,13 @@ void SPSys::setInSignalnWeight(DataInterfaceBase *In_,double wichtung){
 
 
 
-void SPSys::setInPositionnWeight(Frame *Inport,char XYZ,double wichtung){
+void SPSys::setInPositionnWeight(Frame *Inframe,char XYZ,double wichtung){
   if (Testgesetzt){
     cout<<"Hint: Object "<<name<<" is set up for testmode, input signals disconnected!"<<endl;
   }
   else
   {
-    PositionInputs.push_back(Inport);
+    PositionInputs.push_back(Inframe);
 
     switch (XYZ)
     {
@@ -252,7 +252,7 @@ void SPSys::setInPositionnWeight(Frame *Inport,char XYZ,double wichtung){
     {Uin=&SPSys::SinglePosition;}
   }
 }
-void SPSys::setInVelocitynWeight(Frame *Inport, char XYZ, double wichtung)
+void SPSys::setInVelocitynWeight(Frame *Inframe, char XYZ, double wichtung)
 {
   if (Testgesetzt){
     cout<<"Hint: Object "<<name<<" is set up for testmode, regular input signals are replaced by testinput!"<<endl;
@@ -260,7 +260,7 @@ void SPSys::setInVelocitynWeight(Frame *Inport, char XYZ, double wichtung)
   else
   {
 
-    VInputs.push_back(Inport);
+    VInputs.push_back(Inframe);
 
     switch (XYZ)
     {

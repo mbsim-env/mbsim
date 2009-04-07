@@ -159,7 +159,7 @@ namespace MBSim {
 
       using FlexibleBody::addFrame;
       /*!
-       * add Port using JACOBIAN matrix and port location form given file
+       * add Port using JACOBIAN matrix and frame location form given file
        * n x d   \n   [1.0  \n  0.0 ] \n
        * \n
        * d x 1   \n   [1.0  \n  0.0   \n  0.0 ]

@@ -37,8 +37,8 @@ class SPSys : public OrderOneDynamics {
     SPSys(const std::string &name);
     void setInSignalnWeight(SPSys *In_,double wichtung);
     void setInSignalnWeight(DataInterfaceBase *In_,double wichtung);
-    void setInPositionnWeight(Frame *Inport,char XYZ,double wichtung);
-    void setInVelocitynWeight(Frame *Inport,char XYZ,double wichtung);
+    void setInPositionnWeight(Frame *Inframe,char XYZ,double wichtung);
+    void setInVelocitynWeight(Frame *Inframe,char XYZ,double wichtung);
     void setNoInput();
 
     virtual void setSumInputs();	
