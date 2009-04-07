@@ -72,28 +72,24 @@ void ElectricalCircuit::preinit() {
     cout << pinList[i]->getName()<< " " << pinList[i]->getFlag() << endl;
   }
 
-  Mesh *loop = new Mesh("MeshL");
-  Node* node = addObject(0,loop);
+  Mesh *meshL = new Mesh("MeshL");
+  Node* node = addObject(0,meshL);
 
-  loop = new Mesh("MeshR");
-  node = addObject(node,loop);
+  Mesh *meshR = new Mesh("MeshR");
+  node = addObject(node,meshR);
 
   Wire *wireL = new Wire("WireL");
   node = addObject(node,wireL);
-  Mat J(1,2);
-  J(0,0) = 1;
-  wireL->getJacobian() = J;
-
+  wireL->connect(meshL);
+ 
   Wire* wireM = new Wire("WireM");
   node = addObject(node,wireM);
-  J(0,1) = -1;
-  wireM->getJacobian() = J;
+  wireM->connect(meshL);
+  wireM->connect(meshR);
 
   Wire* wireR = new Wire("WireR");
   node = addObject(node,wireR);
-  J(0,0) = 0;
-  J(0,1) = 1;
-  wireR->getJacobian() = J;
+  wireR->connect(meshR);
 
   Inductor *inductor = new Inductor("InductorL");
   node = addObject(node,inductor);
@@ -123,6 +119,15 @@ void ElectricalCircuit::preinit() {
   //    if(pinList[i]->getFlag())
   //      loop->addPin(pinList[i]);
   //  }
+}
+
+void ElectricalCircuit::facLLM() {
+}
+
+void ElectricalCircuit::init() {
+  Tree::init();
+  updateM(0);
+  LLM = facLL(M);
 }
 
 void ElectricalCircuit::buildListOfPins(std::vector<Pin*> &pinList, bool recursive) {
@@ -179,3 +184,8 @@ void ElectricalLink::updatehRef(const fmatvec::Vec &hParent, int j) {
   h[0]>>hParent(I);
 } 
 
+void Wire::init() {
+  J.resize(1,gethSize());
+  for(int i=0; i<mesh.size(); i++)
+    J(0,mesh[i]->getuInd()) = i==0?1:-1; 
+}

@@ -38,6 +38,7 @@ class Wire : public MBSim::Object {
   protected:
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
+    vector<Mesh*> mesh;
   public:
     Wire(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t);
@@ -49,6 +50,8 @@ class Wire : public MBSim::Object {
     fmatvec::Vec& getCurrent() {return I;}
     const fmatvec::Vec& getCharge() const {return Q;}
     fmatvec::Vec& getCharge() {return Q;}
+    void connect(Mesh *mesh_) {mesh.push_back(mesh_);}
+    void init();
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return 0; }
 #endif
@@ -134,8 +137,9 @@ class ElectricalCircuit : public MBSim::Tree {
     void addPin(const std::string &str);
     Pin* getPin(const std::string &name, bool check=true);
     void preinit();
+    void init();
+    void facLLM();
     void buildListOfPins(std::vector<Pin*> &pin, bool recursive = true);
 };
 
 #endif
-
