@@ -43,19 +43,19 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3), iRef(-1), i4I(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), WrPK(3), WvPKrel(3), WomPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), cb(false), m(0), SThetaS(3), WThetaS(3), iKinematics(-1), iInertia(-1), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), WrPK(3), WvPKrel(3), WomPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 
     APK(0,0)=1.0;
     APK(1,1)=1.0;
     APK(2,2)=1.0;
 
-    frameParent = 0;
+    frameOfReference = 0;
 
     Body::addFrame(new Frame("C"));
 
-    SrSK.push_back(Vec(3));
-    WrSK.push_back(Vec(3));
-    ASK.push_back(SqrMat(3,EYE));
+    SrSF.push_back(Vec(3));
+    WrSF.push_back(Vec(3));
+    ASF.push_back(SqrMat(3,EYE));
   }
 
   void RigidBody::calcqSize() {
@@ -115,10 +115,10 @@ namespace MBSim {
   }
 
   void RigidBody::init() {
-    if(iRef == -1)
-      iRef = 0;
-    //if(frameParent == 0)
-    //   frameParent = parent->getFrame("I");
+    if(iKinematics == -1)
+      iKinematics = 0;
+    //if(frameOfReference == 0)
+    //   frameOfReference = parent->getFrame("I");
 
     Body::init();
 
@@ -172,14 +172,14 @@ namespace MBSim {
 
       if(cb) {
         // cout << "Benüzte körperfestes KOSY für Rot" << endl;
-        if(iRef == 0 && false) {
+        if(iKinematics == 0 && false) {
           updateM_ = &RigidBody::updateMConst;
           Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
           LLM = facLL(Mbuf);
           facLLM_ = &RigidBody::facLLMConst;
         }
         PJR0 = PJR;
-        //fPJR = new PJRTest(frame[iRef],frameParent,PJR);
+        //fPJR = new PJRTest(frame[iKinematics],frameOfReference,PJR);
       } else {
         //cout << "Benüzte Parent-KOSY für Rot" << endl;
       }
@@ -187,8 +187,8 @@ namespace MBSim {
 
     // Umrechnen des Trägheitstensor auf Schwerpunkt im Schwerpunkt-KOSY
     // Eigentlich SThetaS = ASR*RThetaR*ASR' - m*tSrSR'*tSrSR
-    if(i4I != 0)
-      SThetaS = SymMat(ASK[i4I]*SThetaS*trans(ASK[i4I])) - m*JTJ(tilde(SrSK[i4I]));
+    if(iInertia != 0)
+      SThetaS = SymMat(ASF[iInertia]*SThetaS*trans(ASF[iInertia])) - m*JTJ(tilde(SrSF[iInertia]));
 
     for(int i=0; i<uSize[0]; i++) 
       T(i,i) = 1;
@@ -290,13 +290,13 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    frame[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
-    frame[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(frameParent->getAngularVelocity(), WomPK));
+    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*u + PdjT) + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
+    frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*u + PdjR) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
-    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
-    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
-    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJT;
-    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJR;
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameOfReference->getOrientation()*PJT;
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameOfReference->getOrientation()*PJR;
   }
 
   void RigidBody::updateSecondJacobiansForSelectedFrame(double t) {
@@ -318,13 +318,13 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    frame[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
-    frame[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), WomPK));
+    frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
+    frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
-    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
-    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
-    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJTs;
-    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJRs;
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJTs;
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJRs;
     //cout << name << endl;
     //cout << usSize << endl;
     //cout << hsSize << endl;
@@ -336,21 +336,21 @@ namespace MBSim {
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
-    if(iRef != 0) {
-      SqrMat tWrSK = tilde(WrSK[iRef]);
-      frame[0]->setJacobianOfTranslation(frame[iRef]->getJacobianOfTranslation() + tWrSK*frame[iRef]->getJacobianOfRotation());
-      frame[0]->setJacobianOfRotation(frame[iRef]->getJacobianOfRotation());
-      frame[0]->setGyroscopicAccelerationOfTranslation(frame[iRef]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iRef]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[iRef]->getAngularVelocity(),crossProduct(frame[iRef]->getAngularVelocity(),-WrSK[iRef])));
-      frame[0]->setGyroscopicAccelerationOfRotation(frame[iRef]->getGyroscopicAccelerationOfRotation());
+    if(iKinematics != 0) {
+      SqrMat tWrSK = tilde(WrSF[iKinematics]);
+      frame[0]->setJacobianOfTranslation(frame[iKinematics]->getJacobianOfTranslation() + tWrSK*frame[iKinematics]->getJacobianOfRotation());
+      frame[0]->setJacobianOfRotation(frame[iKinematics]->getJacobianOfRotation());
+      frame[0]->setGyroscopicAccelerationOfTranslation(frame[iKinematics]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iKinematics]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[iKinematics]->getAngularVelocity(),crossProduct(frame[iKinematics]->getAngularVelocity(),-WrSF[iKinematics])));
+      frame[0]->setGyroscopicAccelerationOfRotation(frame[iKinematics]->getGyroscopicAccelerationOfRotation());
     }
 
     // Jacobi der anderen KOSY (außer Schwerpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<frame.size(); i++) {
-      if(i!=unsigned(iRef)) {
-        SqrMat tWrSK = tilde(WrSK[i]);
+      if(i!=unsigned(iKinematics)) {
+        SqrMat tWrSK = tilde(WrSF[i]);
         frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSK*frame[0]->getJacobianOfRotation());
         frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation());
-        frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSK[i])));
+        frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSF[i])));
         frame[i]->setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
       }
     }
@@ -403,14 +403,14 @@ namespace MBSim {
         joint->setMomentLaw(new BilateralConstraint);
         joint->setImpactMomentLaw(new BilateralImpact);
       }
-      joint->connect(frameParent,frame[iRef]);
+      joint->connect(frameOfReference,frame[iKinematics]);
     }
   }
 
 
   //  void RigidBody::updateVRef(const Mat& VParent) {
   //    Frame* cos[2];
-  //    cos[0] = frameParent;
+  //    cos[0] = frameOfReference;
   //    cos[1] = frame[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
@@ -422,7 +422,7 @@ namespace MBSim {
   //
   //  void RigidBody::updateWRef(const Mat& WParent) {
   //    Frame* cos[2];
-  //    cos[0] = frameParent;
+  //    cos[0] = frameOfReference;
   //    cos[1] = frame[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
@@ -477,29 +477,29 @@ namespace MBSim {
       PrPK = (*fPrPK)(q,t);
 
     // Kinematik des Referenz-KOSY updaten
-    frame[iRef]->setOrientation(frameParent->getOrientation()*APK);
+    frame[iKinematics]->setOrientation(frameOfReference->getOrientation()*APK);
 
     if(cb) {
-      PJR = trans(frameParent->getOrientation())*frame[iRef]->getOrientation()*PJR0;
+      PJR = trans(frameOfReference->getOrientation())*frame[iKinematics]->getOrientation()*PJR0;
     }
 
-    WrPK = frameParent->getOrientation()*PrPK;
-    WomPK = frameParent->getOrientation()*(PJR*u + PjR);
-    WvPKrel = frameParent->getOrientation()*(PJT*u + PjT);
-    frame[iRef]->setAngularVelocity(frameParent->getAngularVelocity() + WomPK);
-    frame[iRef]->setPosition(WrPK + frameParent->getPosition());
-    frame[iRef]->setVelocity(frameParent->getVelocity() + WvPKrel + crossProduct(frameParent->getAngularVelocity(),WrPK));
+    WrPK = frameOfReference->getOrientation()*PrPK;
+    WomPK = frameOfReference->getOrientation()*(PJR*u + PjR);
+    WvPKrel = frameOfReference->getOrientation()*(PJT*u + PjT);
+    frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
+    frame[iKinematics]->setPosition(WrPK + frameOfReference->getPosition());
+    frame[iKinematics]->setVelocity(frameOfReference->getVelocity() + WvPKrel + crossProduct(frameOfReference->getAngularVelocity(),WrPK));
   }
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Drehmatrix des Schwerpunkt-KOSY updaten
-    if(iRef != 0)
-      frame[0]->setOrientation(frame[iRef]->getOrientation()*trans(ASK[iRef]));
+    if(iKinematics != 0)
+      frame[0]->setOrientation(frame[iKinematics]->getOrientation()*trans(ASF[iKinematics]));
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu anderen KOSY im Welt-KOSY 
     for(unsigned int i=1; i<frame.size(); i++) {
-      WrSK[i] = frame[0]->getOrientation()*SrSK[i];
+      WrSF[i] = frame[0]->getOrientation()*SrSF[i];
     }
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu Konturen im Welt-KOSY 
@@ -508,19 +508,19 @@ namespace MBSim {
     }
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Kinematik des Schwerpunkt-KOSY updaten
-    if(iRef != 0) {
-      frame[0]->setPosition(frame[iRef]->getPosition() - WrSK[iRef]);
-      frame[0]->setVelocity(frame[iRef]->getVelocity() - crossProduct(frame[iRef]->getAngularVelocity(), WrSK[iRef]));
-      frame[0]->setAngularVelocity(frame[iRef]->getAngularVelocity());
+    if(iKinematics != 0) {
+      frame[0]->setPosition(frame[iKinematics]->getPosition() - WrSF[iKinematics]);
+      frame[0]->setVelocity(frame[iKinematics]->getVelocity() - crossProduct(frame[iKinematics]->getAngularVelocity(), WrSF[iKinematics]));
+      frame[0]->setAngularVelocity(frame[iKinematics]->getAngularVelocity());
     }
 
     // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=1; i<frame.size(); i++) {
-      if(i!=unsigned(iRef)) {
-        frame[i]->setPosition(frame[0]->getPosition() + WrSK[i]);
-        frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSK[i]));
+      if(i!=unsigned(iKinematics)) {
+        frame[i]->setPosition(frame[0]->getPosition() + WrSF[i]);
+        frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSF[i]));
         frame[i]->setAngularVelocity(frame[0]->getAngularVelocity());
-        frame[i]->setOrientation(frame[0]->getOrientation()*ASK[i]);
+        frame[i]->setOrientation(frame[0]->getOrientation()*ASF[i]);
       }
     }
     // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
@@ -559,13 +559,13 @@ namespace MBSim {
     if(refFrame)
       i = frameIndex(refFrame);
 
-    SrSK.push_back(SrSK[i] + ASK[i]*RrRK);
-    WrSK.push_back(Vec(3));
-    ASK.push_back(ASK[i]*ARK);
+    SrSF.push_back(SrSF[i] + ASF[i]*RrRK);
+    WrSF.push_back(Vec(3));
+    ASF.push_back(ASF[i]*ARK);
   }
 
-  void RigidBody::addFrame(const string &str, const Vec &SrSK, const SqrMat &ASK, const Frame* refFrame) {
-    addFrame(new Frame(str),SrSK,ASK,refFrame);
+  void RigidBody::addFrame(const string &str, const Vec &SrSF, const SqrMat &ASF, const Frame* refFrame) {
+    addFrame(new Frame(str),SrSF,ASF,refFrame);
   }
 
   void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
@@ -575,12 +575,13 @@ namespace MBSim {
     if(refFrame)
       i = frameIndex(refFrame);
 
-    SrSC.push_back(SrSK[i] + ASK[i]*RrRC);
+    SrSC.push_back(SrSF[i] + ASF[i]*RrRC);
     WrSC.push_back(Vec(3));
-    ASC.push_back(ASK[i]*ARC);
+    ASC.push_back(ASF[i]*ARC);
 
     // HitSphere anpassen !!!
     //contour->adjustParentHitSphere(SrSC[SrSC.size()-1]);
   }
 
 }
+
