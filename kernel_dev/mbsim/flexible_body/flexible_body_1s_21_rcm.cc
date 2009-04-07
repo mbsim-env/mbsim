@@ -216,7 +216,7 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
 
 #ifdef HAVE_AMVIS
     if(getPlotFeature(amvis)==enabled) {
-      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(fullName,Elements,openStructure,1,boolAMVisBinary);
+      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
       RCMbody->setElementLength(l0);
 
       float amvisJT[3][2], amvisJR[3];

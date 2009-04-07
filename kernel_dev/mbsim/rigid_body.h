@@ -39,6 +39,7 @@ namespace AMVis {class CRigidBody;}
 namespace MBSim {
 
   /*! \brief Class for rigid bodies with arbitrary kinematics 
+   * \todo kinetic energy TODO
    *
    * */
   class RigidBody : public Body {
@@ -77,9 +78,9 @@ namespace MBSim {
        */
       void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
-          i4I = frameIndex(refFrame);
+          iInertia = frameIndex(refFrame);
         else
-          i4I = 0;
+          iInertia = 0;
         // hier nur zwischenspeichern
         SThetaS = RThetaR;
       }
@@ -102,26 +103,26 @@ namespace MBSim {
       void resizeJacobians(int j);
       virtual void checkForConstraints();
 
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0); 
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0); 
 
-      void addFrame(const std::string &str, const fmatvec::Vec &SrSK, const fmatvec::SqrMat &ASK, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
 
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       void setFrameForKinematics(Frame *frame) {
-        iRef = frameIndex(frame);
-        assert(iRef > -1);
+        iKinematics = frameIndex(frame);
+        assert(iKinematics > -1);
       }
 
       /**
        * \param frame of reference
        */
-      void setFrameOfReference(Frame *frame) { frameParent = frame; };
+      void setFrameOfReference(Frame *frame) { frameOfReference = frame; };
       
-      Frame* getFrameForKinematics() { return frame[iRef]; };
-      Frame* getFrameOfReference() { return frameParent; };
+      Frame* getFrameForKinematics() { return frame[iKinematics]; };
+      Frame* getFrameOfReference() { return frameOfReference; };
 
-      double computeKineticEnergy();
+      double computeKineticEnergy(); // TODO
       double computeKineticEnergyBranch();
       double computePotentialEnergyBranch();
 
@@ -155,7 +156,7 @@ namespace MBSim {
       /**
        * \brief frame indices for reference and kinematics (inertia)
        */
-      int iRef, i4I;
+      int iKinematics, iInertia;
 
       fmatvec::Mat H, TH;
       fmatvec::SymMat Mbuf;
@@ -173,10 +174,10 @@ namespace MBSim {
       /**
        * \brief frame of reference of the rigid body
        */
-      Frame *frameParent;
+      Frame *frameOfReference;
 
-      std::vector<fmatvec::SqrMat> ASK;
-      std::vector<fmatvec::Vec> SrSK, WrSK;
+      std::vector<fmatvec::SqrMat> ASF;
+      std::vector<fmatvec::Vec> SrSF, WrSF;
 
       std::vector<fmatvec::SqrMat> ASC;
       std::vector<fmatvec::Vec> SrSC, WrSC;

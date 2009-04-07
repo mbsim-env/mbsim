@@ -38,7 +38,7 @@ class Wire : public MBSim::Object {
   protected:
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
-    vector<Mesh*> mesh;
+    std::vector<Mesh*> mesh;
   public:
     Wire(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t);
