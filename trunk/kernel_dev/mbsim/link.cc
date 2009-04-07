@@ -61,23 +61,23 @@ namespace MBSim {
 
   void Link::load(const string &path, ifstream& inputfile) {
     Element::load(path, inputfile);
-    string dummy;
-
-    getline(inputfile,dummy); // # Connected cosy
-    int n = getNumberOfElements(inputfile);
-    for(int i=0; i<n; i++) {
-      getline(inputfile,dummy); // Connected cosy
-      connect(getDynamicSystemSolver()->findFrame(dummy));
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # Connected contours
-    n = getNumberOfElements(inputfile);
-    for(int i=0; i<n; i++) {
-      getline(inputfile,dummy); // Connected contour
-      connect(getDynamicSystemSolver()->findContour(dummy));
-    }
-    getline(inputfile,dummy); // newline
+//    string dummy;
+//
+//    getline(inputfile,dummy); // # Connected cosy
+//    int n = getNumberOfElements(inputfile);
+//    for(int i=0; i<n; i++) {
+//      getline(inputfile,dummy); // Connected cosy
+//      connect(getDynamicSystemSolver()->findFrame(dummy));
+//    }
+//    getline(inputfile,dummy); // newline
+//
+//    getline(inputfile,dummy); // # Connected contours
+//    n = getNumberOfElements(inputfile);
+//    for(int i=0; i<n; i++) {
+//      getline(inputfile,dummy); // Connected contour
+//      connect(getDynamicSystemSolver()->findContour(dummy));
+//    }
+//    getline(inputfile,dummy); // newline
   }
 
   void Link::save(const string &path, ofstream& outputfile) {

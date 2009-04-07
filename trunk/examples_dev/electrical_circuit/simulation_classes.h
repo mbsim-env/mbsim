@@ -24,10 +24,13 @@ class Mesh : public MBSim::Object {
     Mesh(const string &name) : MBSim::Object(name) {}
     void calcqSize() { qSize = 1;}
     void calcuSize(int j) { uSize[0] = 1; uSize[1] = 1;}
-    void updateKinematics(double t) {};
+    void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateSecondJacobians(double t) {};
     void init();
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return 0; }
+#endif
 };
 
 class Wire : public MBSim::Object {
@@ -36,7 +39,7 @@ class Wire : public MBSim::Object {
     fmatvec::Vec Q, I;
   public:
     Wire(const string &name) : Object(name) {}
-    void updateKinematics(double t);
+    void updateStateDependentVariables(double t);
     void updateJacobians(double t) {};
     void updateSecondJacobians(double t) {};
     const fmatvec::Mat& getJacobian() const {return J;}
@@ -45,6 +48,9 @@ class Wire : public MBSim::Object {
     fmatvec::Vec& getCurrent() {return I;}
     const fmatvec::Vec& getCharge() const {return Q;}
     fmatvec::Vec& getCharge() {return Q;}
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return 0; }
+#endif
 };
 
 class ElectricalLink : public MBSim::Link {
@@ -94,12 +100,15 @@ class Inductor : public MBSim::Object {
     vector<Wire*> wire;
   public:
     Inductor(const string &name);
-    void updateKinematics(double t) {};
+    void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateSecondJacobians(double t) {};
     void updateM(double t); 
     void setInductance(double L_) { L = L_;}
     void connect(Wire *wire_) {wire.push_back(wire_);}
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return 0; }
+#endif
 };
 
 class ElectricalCircuit : public MBSim::Tree {

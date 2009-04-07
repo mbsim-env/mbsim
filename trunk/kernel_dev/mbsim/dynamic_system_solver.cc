@@ -478,8 +478,8 @@ namespace MBSim {
     Group::updateM(t);
   }
 
-  void DynamicSystemSolver::updateKinematics(double t) {
-    Group::updateKinematics(t);
+  void DynamicSystemSolver::updateStateDependentVariables(double t) {
+    Group::updateStateDependentVariables(t);
 
     // if the integrator has not exit after a integratorExitRequest, exit the hard way
     if(integratorExitRequest) {
@@ -548,7 +548,7 @@ namespace MBSim {
     if(qd()!=zdParent()) 
       updatezdRef(zdParent);
 
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateJacobians(t);
@@ -642,7 +642,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeInitialCondition() {
-    updateKinematics(0);
+    updateStateDependentVariables(0);
     updateg(0);
     checkActiveg();
     updategd(0);
@@ -718,7 +718,7 @@ namespace MBSim {
   void DynamicSystemSolver::update(const Vec &zParent, double t) {
     if(q()!=zParent()) updatezRef(zParent);
 
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     checkActiveg();
     checkActiveLinks();
@@ -764,7 +764,7 @@ namespace MBSim {
 
     if(jsv(sv.size()-1)) { // projection
       k++;
-      updateKinematics(t);
+      updateStateDependentVariables(t);
       updateg(t);
       updateT(t); 
       updateJacobians(t);
@@ -781,7 +781,7 @@ namespace MBSim {
       projectGeneralizedVelocities(t);
     }
 
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     //updategd(t); // TODO necessary?
     updateT(t); 
@@ -814,7 +814,7 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
       //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
 
-      updateKinematics(t); // TODO necessary?
+      updateStateDependentVariables(t); // TODO necessary?
       updateg(t); // TODO necessary?
       updategd(t); // important because of updategdRef
       updateJacobians(t);
@@ -847,7 +847,7 @@ namespace MBSim {
 
       if(laSize) {
 
-        updateKinematics(t); // necessary because of velocity change 
+        updateStateDependentVariables(t); // necessary because of velocity change 
         updategd(t); // necessary because of velocity change 
         updateJacobians(t);
         updateh(t); 
@@ -881,7 +881,7 @@ namespace MBSim {
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
       if(laSize) {
-        updateKinematics(t); // TODO necessary
+        updateStateDependentVariables(t); // TODO necessary
         updateg(t); // TODO necessary
         updategd(t); // TODO necessary
         updateT(t);  // TODO necessary
@@ -920,7 +920,7 @@ namespace MBSim {
     }
     impact = false;
     sticking = false;
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     //updategd(t); TODO
     updateT(t); 
@@ -963,7 +963,7 @@ namespace MBSim {
     if(qd()!=zdParent()) 
       updatezdRef(zdParent);
 
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t); 
@@ -1001,7 +1001,7 @@ namespace MBSim {
         Vec dnu = slvLLFac(LLM,W*mu)-nu;
         nu += dnu;
         q += T*dnu;
-        updateKinematics(t);
+        updateStateDependentVariables(t);
         updateg(t);
       }
       calclaSize();
@@ -1138,51 +1138,51 @@ namespace MBSim {
     for(ie1 = orderOneDynamics.begin(); ie1 != orderOneDynamics.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
-  Frame* DynamicSystemSolver::findFrame(const string &name) {
-    istringstream stream(name);
-
-    char dummy[10000];
-    vector<string> l;
-    do {
-      stream.getline(dummy,10000,'.');
-      l.push_back(dummy);
-    } while(!stream.eof());
-
-    if(l.size() == 1)
-      throw 5;
-
-    if(l.size() == 2)
-      return getFrame(l[1]);
-
-    DynamicSystem *sys = this;
-    for(unsigned int i=1; i<l.size()-2; i++) {
-      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
-    }
-    return sys->getObject(l[l.size()-2])->getFrame(l[l.size()-1]);
-  }
-
-  Contour* DynamicSystemSolver::findContour(const string &name) {
-    istringstream stream(name);
-
-    char dummy[10000];
-    vector<string> l;
-    do {
-      stream.getline(dummy,10000,'.');
-      l.push_back(dummy);
-    } while(!stream.eof());
-
-    if(l.size() == 1)
-      throw 5;
-
-    if(l.size() == 2)
-      return getContour(l[1]);
-
-    DynamicSystem *sys = this;
-    for(unsigned int i=1; i<l.size()-2; i++) {
-      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
-    }
-    return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
-  }
+//  Frame* DynamicSystemSolver::findFrame(const string &name) {
+//    istringstream stream(name);
+//
+//    char dummy[10000];
+//    vector<string> l;
+//    do {
+//      stream.getline(dummy,10000,'.');
+//      l.push_back(dummy);
+//    } while(!stream.eof());
+//
+//    if(l.size() == 1)
+//      throw 5;
+//
+//    if(l.size() == 2)
+//      return getFrame(l[1]);
+//
+//    DynamicSystem *sys = this;
+//    for(unsigned int i=1; i<l.size()-2; i++) {
+//      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
+//    }
+//    return sys->getObject(l[l.size()-2])->getFrame(l[l.size()-1]);
+//  }
+//
+//  Contour* DynamicSystemSolver::findContour(const string &name) {
+//    istringstream stream(name);
+//
+//    char dummy[10000];
+//    vector<string> l;
+//    do {
+//      stream.getline(dummy,10000,'.');
+//      l.push_back(dummy);
+//    } while(!stream.eof());
+//
+//    if(l.size() == 1)
+//      throw 5;
+//
+//    if(l.size() == 2)
+//      return getContour(l[1]);
+//
+//    DynamicSystem *sys = this;
+//    for(unsigned int i=1; i<l.size()-2; i++) {
+//      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
+//    }
+//    return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
+//  }
 
   DynamicSystemSolver* DynamicSystemSolver::load(const string &path) {
     DIR* dir = opendir(path.c_str());
@@ -1346,7 +1346,7 @@ namespace MBSim {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t); 
@@ -1371,7 +1371,7 @@ namespace MBSim {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-    updateKinematics(t);
+    updateStateDependentVariables(t);
     updateg(t);
     updategd(t);
     updateT(t); 

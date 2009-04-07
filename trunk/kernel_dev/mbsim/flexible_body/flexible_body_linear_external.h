@@ -59,7 +59,7 @@ namespace MBSim {
        * and updateContours(double t)
        * \param t time
        */
-      void updateKinematics(double t);
+      void updateStateDependentVariables(double t);
       /*!
        * Kinematical update of postition and velocities of every Contour:
        * \f[ \vr_{C} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]

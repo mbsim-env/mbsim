@@ -106,7 +106,7 @@ namespace MBSim {
   }
   //-----------------------------------------------------------------------------------
 
-  void BodyFlexible1s21ANCF::updateKinematics(double t) {
+  void BodyFlexible1s21ANCF::updateStateDependentVariables(double t) {
     sTangent = -balken->l0;
 
     WrON0 = WrON00 + JT*q(Index(0,1));

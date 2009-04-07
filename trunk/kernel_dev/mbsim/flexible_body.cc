@@ -35,7 +35,7 @@ using namespace std;
 
 namespace MBSim {
 
-  FlexibleBody::FlexibleBody(const string &name) : Body(name), frameParent(0), d_massproportional(0.)
+  FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.)
 # ifdef HAVE_AMVIS
                                                                            , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
 # endif
@@ -60,17 +60,17 @@ namespace MBSim {
     if(d_massproportional) h -= d_massproportional*(M*u); // mass proportional damping
   }
 
-  void FlexibleBody::updateKinematics(double t) {
+  void FlexibleBody::updateStateDependentVariables(double t) {
     BuildElements();
-    for(unsigned int i=0; i<port.size(); i++) { // frames
-      updateKinematicsForFrame(S_Frame[i],port[i]); 
+    for(unsigned int i=0; i<frame.size(); i++) { // frames
+      updateKinematicsForFrame(S_Frame[i],frame[i]); 
     }
     // TODO contour non native?
   }
 
   void FlexibleBody::updateJacobians(double t) {
-    for(unsigned int i=0; i<port.size(); i++) { // frames
-      updateJacobiansForFrame(S_Frame[i],port[i]);
+    for(unsigned int i=0; i<frame.size(); i++) { // frames
+      updateJacobiansForFrame(S_Frame[i],frame[i]);
     }
     // TODO contour non native?
   }
@@ -111,7 +111,7 @@ namespace MBSim {
   void FlexibleBody::init() {
     Body::init();
     T = SqrMat(qSize,fmatvec::EYE);
-    for(unsigned int i=0; i<port.size(); i++) { // frames
+    for(unsigned int i=0; i<frame.size(); i++) { // frames
       S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(3,uSize[0]);
       S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(3,uSize[0]);
     }
@@ -134,12 +134,12 @@ namespace MBSim {
   }
 
   void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
-    Frame *port = new Frame(name);
-    addFrame(port,S_);
+    Frame *frame = new Frame(name);
+    addFrame(frame,S_);
   }
 
-  void FlexibleBody::addFrame(Frame* port, const ContourPointData &S_) {
-    Body::addFrame(port);
+  void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
+    Body::addFrame(frame);
     S_Frame.push_back(S_);
   }
 

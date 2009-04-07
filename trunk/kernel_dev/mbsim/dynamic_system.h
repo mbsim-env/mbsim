@@ -593,7 +593,7 @@ namespace MBSim {
        * \param frame
        * \return index of frame TODO renaming
        */
-      int portIndex(const Frame *frame_) const;
+      int frameIndex(const Frame *frame_) const;
 
       /**
        * \param dynamic system to add
@@ -806,7 +806,7 @@ namespace MBSim {
       /**
        * \brief vector of frames and contours
        */
-      std::vector<Frame*> port;
+      std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
 #ifdef HAVE_AMVISCPPINTERFACE

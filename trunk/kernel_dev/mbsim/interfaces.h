@@ -79,10 +79,10 @@ namespace MBSim {
       virtual void updateM(double t) = 0;
 
       /**
-       * \brief update kinematics of frames, contours and bodies
+       * \brief update state dependent variables (e.g. kinematics of frames, contours and bodies)
        * \param simulation time
        */
-      virtual void updateKinematics(double t) = 0;
+      virtual void updateStateDependentVariables(double t) = 0;
 
       /**
        * \brief update acceleration description of frames, contours and bodies
@@ -196,7 +196,7 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) = 0;
 
 #ifdef HAVE_AMVISCPPINTERFACE
-      virtual AMVis::Group* getAMVisGrp()=0;
+      virtual AMVis::Group* getAMVisGrp() = 0;
 #endif
   };
 

@@ -90,7 +90,7 @@ namespace MBSim {
   //----------------------------------------------------------------------
   //----------------------------------------------------------------------
 
-  void BodyFlexible1s01Torsion::updateKinematics(double t) {
+  void BodyFlexible1s01Torsion::updateStateDependentVariables(double t) {
     sTangent = Vec(0);
 
     WrON0 = WrON00; // + JT.col(2)*q(0); // verschiebung in z-Richtung

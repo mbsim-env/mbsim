@@ -133,7 +133,7 @@ namespace MBSim {
   }
   //-----------------------------------------------------------------------------------
 
-  void BodyFlexible1s23BTA::updateKinematics(double t) {
+  void BodyFlexible1s23BTA::updateStateDependentVariables(double t) {
     sTangent = -element[0].l0;
 
     //  WrON0 = WrON00 + JT*q(Index(0,1));

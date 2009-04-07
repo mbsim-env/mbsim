@@ -19,11 +19,8 @@
 #include <config.h>
 #include <stdexcept>
 #include <mbsim/object.h>
-#include <mbsim/frame.h>
-#include <mbsim/contour.h>
-#include <mbsim/utils/eps.h>
-#include <mbsim/class_factory.h>
 #include <mbsim/dynamic_system.h>
+#include <mbsim/frame.h>
 #include <mbsim/utils/function.h>
 
 using namespace std;
@@ -31,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), parent(0), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), parent(0), frameParent(0), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -40,17 +37,9 @@ namespace MBSim {
     uInd[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-#ifdef HAVE_AMVISCPPINTERFACE
-    amvisBody=0;
-    amvisGrp=0;
-#endif
   } 
 
   Object::~Object() {
-    for(vector<Frame*>::iterator i = port.begin(); i != port.end(); ++i) 
-      delete *i;
-    for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
-      delete *i;
   }
 
   void Object::updatedq(double t, double dt) {
@@ -76,10 +65,10 @@ namespace MBSim {
 
   void Object::sethSize(int hSize_, int j) {
     hSize[j] = hSize_;
-    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++)
-      (*i)->sethSize(hSize[j],j);
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethSize(hSize[j],j);
+  }
+
+  int Object::gethInd(DynamicSystem* sys ,int i) {
+    return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
   }
 
   void Object::plot(double t, double dt) {
@@ -111,11 +100,6 @@ namespace MBSim {
       }
 
       Element::plot(t,dt);
-
-      for(unsigned int j=0; j<port.size(); j++)
-        port[j]->plot(t,dt);
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->plot(t,dt);
     }
   }
 
@@ -147,131 +131,103 @@ namespace MBSim {
         plotColumns.push_back("E");
       }
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      amvisGrp=new AMVis::Group();
-      amvisGrp->setName(name+"#Group");
-      parent->getAMVisGrp()->addObject(amvisGrp);
-      if(getPlotFeature(amvis)==enabled && amvisBody) {
-        amvisBody->setName(name);
-        amvisGrp->addObject(amvisBody);
-      }
-#endif
-
       Element::initPlot(parent);
-
-      for(unsigned int j=0; j<port.size(); j++)
-        port[j]->initPlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->initPlot();
     }
   }
 
   void Object::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
-      for(unsigned int j=0; j<port.size(); j++)
-        port[j]->closePlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->closePlot();
-
       Element::closePlot();
     }
   }
 
   void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Element::setDynamicSystemSolver(sys);
-    for(unsigned i=0; i<port.size(); i++)
-      port[i]->setDynamicSystemSolver(sys);
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setDynamicSystemSolver(sys);
   }
 
   void Object::setFullName(const string &str) {
     Element::setFullName(str);
-    for(unsigned i=0; i<port.size(); i++)
-      port[i]->setFullName(getFullName() + "." + port[i]->getName());
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
   }
 
   void Object::load(const string &path, ifstream& inputfile) {
     Element::load(path, inputfile);
-    string dummy;
-
-    string basename = path + "/" + getFullName() + ".";
-
-    getline(inputfile,dummy); // # CoSy
-    unsigned int no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // CoSy
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      newinputfile.seekg(0,ios::beg);
-      if(i>=port.size())
-        addFrame(new Frame("NoName"));
-      port[i]->load(path, newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // # newline
-
-    getline(inputfile,dummy); // # Contour
-    no=getNumberOfElements(inputfile);
-    for(unsigned int i=0; i<no; i++) {
-      getline(inputfile,dummy); // contour
-      string newname = basename + dummy + ".mdl";
-      ifstream newinputfile(newname.c_str(), ios::binary);
-      getline(newinputfile,dummy);
-      getline(newinputfile,dummy);
-      newinputfile.seekg(0,ios::beg);
-      ClassFactory cf;
-      if(i>=contour.size())
-        addContour(cf.getContour(dummy));
-      contour[i]->load(path, newinputfile);
-      newinputfile.close();
-    }
-    getline(inputfile,dummy); // newline
-
-    getline(inputfile,dummy); // # q0
-    inputfile >> q0; // # q0
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-
-    getline(inputfile,dummy); // # u0
-    inputfile >> u0; // # q0
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
+    //    string dummy;
+    //
+    //    string basename = path + "/" + getFullName() + ".";
+    //
+    //    getline(inputfile,dummy); // # CoSy
+    //    unsigned int no=getNumberOfElements(inputfile);
+    //    for(unsigned int i=0; i<no; i++) {
+    //      getline(inputfile,dummy); // CoSy
+    //      string newname = basename + dummy + ".mdl";
+    //      ifstream newinputfile(newname.c_str(), ios::binary);
+    //      getline(newinputfile,dummy);
+    //      getline(newinputfile,dummy);
+    //      newinputfile.seekg(0,ios::beg);
+    //      if(i>=frame.size())
+    //        addFrame(new Frame("NoName"));
+    //      frame[i]->load(path, newinputfile);
+    //      newinputfile.close();
+    //    }
+    //    getline(inputfile,dummy); // # newline
+    //
+    //    getline(inputfile,dummy); // # Contour
+    //    no=getNumberOfElements(inputfile);
+    //    for(unsigned int i=0; i<no; i++) {
+    //      getline(inputfile,dummy); // contour
+    //      string newname = basename + dummy + ".mdl";
+    //      ifstream newinputfile(newname.c_str(), ios::binary);
+    //      getline(newinputfile,dummy);
+    //      getline(newinputfile,dummy);
+    //      newinputfile.seekg(0,ios::beg);
+    //      ClassFactory cf;
+    //      if(i>=contour.size())
+    //        addContour(cf.getContour(dummy));
+    //      contour[i]->load(path, newinputfile);
+    //      newinputfile.close();
+    //    }
+    //    getline(inputfile,dummy); // newline
+    //
+    //    getline(inputfile,dummy); // # q0
+    //    inputfile >> q0; // # q0
+    //    getline(inputfile,dummy); // Rest of line
+    //    getline(inputfile,dummy); // Newline
+    //
+    //    getline(inputfile,dummy); // # u0
+    //    inputfile >> u0; // # q0
+    //    getline(inputfile,dummy); // Rest of line
+    //    getline(inputfile,dummy); // Newline
   }
 
   void Object::save(const string &path, ofstream &outputfile) {
     Element::save(path,outputfile);
-
-    // all Frame of Object
-    outputfile << "# Coordinate systems:" << endl;
-    for(vector<Frame*>::iterator i = port.begin();  i != port.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    // all Contours of Object
-    outputfile << "# Contours:" << endl;
-    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
-      outputfile << (**i).getName() << endl;
-      string newname = path + "/" + (**i).getFullName() + ".mdl";
-      ofstream newoutputfile(newname.c_str(), ios::binary);
-      (**i).save(path,newoutputfile);
-      newoutputfile.close();
-    }
-    outputfile << endl;
-
-    outputfile << "# q0:" << endl;
-    outputfile << q0 << endl << endl;
-    outputfile << "# u0:" << endl;
-    outputfile << u0 << endl << endl;
+    //
+    //    // all Frame of Object
+    //    outputfile << "# Coordinate systems:" << endl;
+    //    for(vector<Frame*>::iterator i = frame.begin();  i != frame.end();  ++i) {
+    //      outputfile << (**i).getName() << endl;
+    //      string newname = path + "/" + (**i).getFullName() + ".mdl";
+    //      ofstream newoutputfile(newname.c_str(), ios::binary);
+    //      (**i).save(path,newoutputfile);
+    //      newoutputfile.close();
+    //    }
+    //    outputfile << endl;
+    //
+    //    // all Contours of Object
+    //    outputfile << "# Contours:" << endl;
+    //    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
+    //      outputfile << (**i).getName() << endl;
+    //      string newname = path + "/" + (**i).getFullName() + ".mdl";
+    //      ofstream newoutputfile(newname.c_str(), ios::binary);
+    //      (**i).save(path,newoutputfile);
+    //      newoutputfile.close();
+    //    }
+    //    outputfile << endl;
+    //
+    //    outputfile << "# q0:" << endl;
+    //    outputfile << q0 << endl << endl;
+    //    outputfile << "# u0:" << endl;
+    //    outputfile << u0 << endl << endl;
   }
 
   void Object::writeq() {
@@ -353,25 +309,12 @@ namespace MBSim {
     LLM.resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
-  int Object::gethInd(DynamicSystem* sys ,int i) {
-    return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
-  }
-
   void Object::init() {  
     Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
     Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
-
-    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
-      (*i)->init();
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->init();
   }
 
   void Object::preinit() {  
-    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
-      (*i)->preinit();
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->preinit();
   }
 
   void Object::initz() {
@@ -383,78 +326,12 @@ namespace MBSim {
     LLM = facLL(M); 
   }
 
-  double Object::computeKineticEnergy() {
-    return 0.5*trans(u)*M*u;
-  }
-
-  void Object::addContour(Contour* contour_) {
-    if(getContour(contour_->getName(),false)) { //Contourname exists already
-      cout << "Error: The Object " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
-      assert(getContour(contour_->getName(),false)==NULL);
-    }
-    //contour_->setFullName(getFullName()+"."+contour_->getFullName());
-    contour.push_back(contour_);
-    contour_->setParent(this);
-  }
-
-  void Object::addFrame(Frame* port_) {
-    if(getFrame(port_->getName(),false)) { //Contourname exists already
-      cout << "Error: The Object " << name << " can only comprise one Frame by the name " <<  port_->getName() << "!" << endl;
-      assert(getFrame(port_->getName(),false)==NULL);
-    }
-    //port_->setFullName(getFullName()+"."+port_->getFullName());
-    port.push_back(port_);
-    port_->setParent(this);
-  }
-
-  Contour* Object::getContour(const string &name, bool check) {
-    unsigned int i;
-    for(i=0; i<contour.size(); i++) {
-      if(contour[i]->getName() == name)
-        return contour[i];
-    }
-    if(check) {
-      if(!(i<contour.size())) cout << "Error: The object " << this->name <<" comprises no contour " << name << "!" << endl; 
-      assert(i<contour.size());
-    }
-    return NULL;
-  }
-
-  Frame* Object::getFrame(const string &name, bool check) {
-    unsigned int i;
-    for(i=0; i<port.size(); i++) {
-      if(port[i]->getName() == name)
-        return port[i];
-    }             
-    if(check) {
-      if(!(i<port.size())) cout << "Error: The object " << this->name <<" comprises no port " << name << "!" << endl; 
-      assert(i<port.size());
-    }
-    return NULL;
-  }
-
   void Object::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
-    for(vector<Frame*>::iterator i=port.begin(); i!=port.end(); i++) 
-      (*i)->sethInd(hInd[j],j);
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->sethInd(hInd[j],j);
   }  
 
-  int Object::portIndex(const Frame *port_) const {
-    for(unsigned int i=0; i<port.size(); i++) {
-      if(port_==port[i])
-        return i;
-    }
-    return -1;
-  }
-
-  int Object::contourIndex(const Contour *contour_) const {
-    for(unsigned int i=0; i<contour.size(); i++) {
-      if(contour_==contour[i])
-        return i;
-    }
-    return -1;
+  string Object::getPath(char pathDelim) {
+    return parent?parent->getPath()+pathDelim+name:name;
   }
 
 }

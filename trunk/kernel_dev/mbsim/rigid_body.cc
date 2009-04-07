@@ -51,7 +51,7 @@ namespace MBSim {
 
     frameParent = 0;
 
-    Object::addFrame(new Frame("C"));
+    Body::addFrame(new Frame("C"));
 
     SrSK.push_back(Vec(3));
     WrSK.push_back(Vec(3));
@@ -120,7 +120,7 @@ namespace MBSim {
     //if(frameParent == 0)
     //   frameParent = parent->getFrame("I");
 
-    Object::init();
+    Body::init();
 
     PJT.resize(3,uSize[0]);
     PJR.resize(3,uSize[0]);
@@ -179,7 +179,7 @@ namespace MBSim {
           facLLM_ = &RigidBody::facLLMConst;
         }
         PJR0 = PJR;
-        //fPJR = new PJRTest(port[iRef],frameParent,PJR);
+        //fPJR = new PJRTest(frame[iRef],frameParent,PJR);
       } else {
         //cout << "Benüzte Parent-KOSY für Rot" << endl;
       }
@@ -219,8 +219,8 @@ namespace MBSim {
   void RigidBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(globalPosition)==enabled) {
-        Vec WrOS=port[0]->getPosition();
-        Vec cardan=AIK2Cardan(port[0]->getOrientation());
+        Vec WrOS=frame[0]->getPosition();
+        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
         plotVector.push_back(WrOS(0));
         plotVector.push_back(WrOS(1));
         plotVector.push_back(WrOS(2));
@@ -233,8 +233,8 @@ namespace MBSim {
       if(getPlotFeature(amvis)==enabled && amvisBody) {
         vector<double> data;
         data.push_back(t);
-        Vec WrOS=port[0]->getPosition();
-        Vec cardan=AIK2Cardan(port[0]->getOrientation());
+        Vec WrOS=frame[0]->getPosition();
+        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
         data.push_back(WrOS(0));
         data.push_back(WrOS(1));
         data.push_back(WrOS(2));
@@ -268,11 +268,11 @@ namespace MBSim {
 
   void RigidBody::updateMConst(double t) {
     M += Mbuf;
-    //M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
+    //M += m*JTJ(frame[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateMNotConst(double t) {
-    M += m*JTJ(port[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,port[0]->getJacobianOfRotation());
+    M += m*JTJ(frame[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation());
   }
 
   void RigidBody::updateJacobiansForSelectedFrame(double t) {
@@ -290,13 +290,13 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    port[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
-    port[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(frameParent->getAngularVelocity(), WomPK));
+    frame[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJT*u + PdjT) + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
+    frame[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + frameParent->getOrientation()*(PdJR*u + PdjR) + crossProduct(frameParent->getAngularVelocity(), WomPK));
 
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJT;
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJR;
+    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
+    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
+    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJT;
+    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[0]-uSize[0],hSize[0]-1)) = frameParent->getOrientation()*PJR;
   }
 
   void RigidBody::updateSecondJacobiansForSelectedFrame(double t) {
@@ -318,13 +318,13 @@ namespace MBSim {
 
     // Jacobi des Referenz-KOSY updaten, ausgehend vom Eltern-KOSY
     SqrMat tWrPK = tilde(WrPK);
-    port[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
-    port[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), WomPK));
+    frame[iRef]->setGyroscopicAccelerationOfTranslation(frameParent->getGyroscopicAccelerationOfTranslation() - tWrPK*frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), 2*WvPKrel+crossProduct(frameParent->getAngularVelocity(),WrPK)));
+    frame[iRef]->setGyroscopicAccelerationOfRotation(frameParent->getGyroscopicAccelerationOfRotation() + crossProduct(frameParent->getAngularVelocity(), WomPK));
 
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
-    port[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJTs;
-    port[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJRs;
+    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(0,frameParent->getJacobianOfTranslation().cols()-1)) = frameParent->getJacobianOfTranslation() - tWrPK*frameParent->getJacobianOfRotation();
+    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(0,frameParent->getJacobianOfRotation().cols()-1)) = frameParent->getJacobianOfRotation();
+    frame[iRef]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJTs;
+    frame[iRef]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameParent->getOrientation()*PJRs;
     //cout << name << endl;
     //cout << usSize << endl;
     //cout << hsSize << endl;
@@ -338,30 +338,30 @@ namespace MBSim {
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Jacobi des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
       SqrMat tWrSK = tilde(WrSK[iRef]);
-      port[0]->setJacobianOfTranslation(port[iRef]->getJacobianOfTranslation() + tWrSK*port[iRef]->getJacobianOfRotation());
-      port[0]->setJacobianOfRotation(port[iRef]->getJacobianOfRotation());
-      port[0]->setGyroscopicAccelerationOfTranslation(port[iRef]->getGyroscopicAccelerationOfTranslation() + tWrSK*port[iRef]->getGyroscopicAccelerationOfRotation() + crossProduct(port[iRef]->getAngularVelocity(),crossProduct(port[iRef]->getAngularVelocity(),-WrSK[iRef])));
-      port[0]->setGyroscopicAccelerationOfRotation(port[iRef]->getGyroscopicAccelerationOfRotation());
+      frame[0]->setJacobianOfTranslation(frame[iRef]->getJacobianOfTranslation() + tWrSK*frame[iRef]->getJacobianOfRotation());
+      frame[0]->setJacobianOfRotation(frame[iRef]->getJacobianOfRotation());
+      frame[0]->setGyroscopicAccelerationOfTranslation(frame[iRef]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iRef]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[iRef]->getAngularVelocity(),crossProduct(frame[iRef]->getAngularVelocity(),-WrSK[iRef])));
+      frame[0]->setGyroscopicAccelerationOfRotation(frame[iRef]->getGyroscopicAccelerationOfRotation());
     }
 
     // Jacobi der anderen KOSY (außer Schwerpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
-    for(unsigned int i=1; i<port.size(); i++) {
+    for(unsigned int i=1; i<frame.size(); i++) {
       if(i!=unsigned(iRef)) {
         SqrMat tWrSK = tilde(WrSK[i]);
-        port[i]->setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrSK*port[0]->getJacobianOfRotation());
-        port[i]->setJacobianOfRotation(port[0]->getJacobianOfRotation());
-        port[i]->setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSK[i])));
-        port[i]->setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
+        frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSK*frame[0]->getJacobianOfRotation());
+        frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation());
+        frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSK[i])));
+        frame[i]->setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
       }
     }
 
     // Jacobi der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat tWrSC = tilde(WrSC[i]);
-      contour[i]->setWJR(port[0]->getJacobianOfRotation());
-      contour[i]->setWjR(port[0]->getGyroscopicAccelerationOfRotation());
-      contour[i]->setWJP(port[0]->getJacobianOfTranslation() - tWrSC*port[0]->getJacobianOfRotation());
-      contour[i]->setWjP(port[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrSC[i])));
+      contour[i]->setWJR(frame[0]->getJacobianOfRotation());
+      contour[i]->setWjR(frame[0]->getGyroscopicAccelerationOfRotation());
+      contour[i]->setWJP(frame[0]->getJacobianOfTranslation() - tWrSC*frame[0]->getJacobianOfRotation());
+      contour[i]->setWjP(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])));
     }
   }
 
@@ -369,20 +369,20 @@ namespace MBSim {
 
     // Trägheitstensor auf Welt-System umrechnen
     //WThetaS =
-    //SymMat(port[0]->getOrientation()*SThetaS*trans(port[0]->getOrientation()));
-    WThetaS = JTMJ(SThetaS,trans(port[0]->getOrientation()));
+    //SymMat(frame[0]->getOrientation()*SThetaS*trans(frame[0]->getOrientation()));
+    WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
 
-    Vec WF = m*ds->getAccelerationOfGravity() - m*port[0]->getGyroscopicAccelerationOfTranslation();
-    Vec WM = crossProduct(WThetaS*port[0]->getAngularVelocity(),port[0]->getAngularVelocity()) - WThetaS*port[0]->getGyroscopicAccelerationOfRotation();
+    Vec WF = m*ds->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
+    Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
-    h += trans(port[0]->getJacobianOfTranslation())*WF +  trans(port[0]->getJacobianOfRotation())*WM;
+    h += trans(frame[0]->getJacobianOfTranslation())*WF +  trans(frame[0]->getJacobianOfRotation())*WM;
 
   }
 
   void RigidBody::resizeJacobians(int j) {
 
-    for(unsigned int i=0; i<port.size(); i++) 
-      port[i]->resizeJacobians(j);
+    for(unsigned int i=0; i<frame.size(); i++) 
+      frame[i]->resizeJacobians(j);
 
     for(unsigned int i=0; i<contour.size(); i++)
       contour[i]->resizeJacobians(j);
@@ -403,7 +403,7 @@ namespace MBSim {
         joint->setMomentLaw(new BilateralConstraint);
         joint->setImpactMomentLaw(new BilateralImpact);
       }
-      joint->connect(frameParent,port[iRef]);
+      joint->connect(frameParent,frame[iRef]);
     }
   }
 
@@ -411,7 +411,7 @@ namespace MBSim {
   //  void RigidBody::updateVRef(const Mat& VParent) {
   //    Frame* cos[2];
   //    cos[0] = frameParent;
-  //    cos[1] = port[0];
+  //    cos[1] = frame[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
   //      Index J = Index(laInd,laInd+laSize-1);
@@ -423,7 +423,7 @@ namespace MBSim {
   //  void RigidBody::updateWRef(const Mat& WParent) {
   //    Frame* cos[2];
   //    cos[0] = frameParent;
-  //    cos[1] = port[0];
+  //    cos[1] = frame[0];
   //    for(unsigned i=0; i<22; i++) {
   //      int hInd = cos[i]->getParent()->gethInd(parent);
   //      Index J = Index(laInd,laInd+laSize-1);
@@ -443,16 +443,16 @@ namespace MBSim {
   //    fM[1] = -fM[0];
   //
   //    W[0] += trans(C.getJacobianOfTranslation())*fF[0] + trans(C.getJacobianOfRotation())*fM[0];
-  //    W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
+  //    W[1] += trans(frame[1]->getJacobianOfTranslation())*fF[1] + trans(frame[1]->getJacobianOfRotation())*fM[1];
   //  }
   //
   //  void RigidBody::updatewb(double t) {
   //
-  //    Mat WJT = port[0]->getOrientation()*JT;
+  //    Mat WJT = frame[0]->getOrientation()*JT;
   //    Vec sdT = trans(WJT)*(WvP0P1);
   //
-  //    wb(0,Wf.cols()-1) += trans(Wf)*(port[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
-  //    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
+  //    wb(0,Wf.cols()-1) += trans(Wf)*(frame[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
+  //    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(frame[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
   //  }
   //
 
@@ -477,58 +477,58 @@ namespace MBSim {
       PrPK = (*fPrPK)(q,t);
 
     // Kinematik des Referenz-KOSY updaten
-    port[iRef]->setOrientation(frameParent->getOrientation()*APK);
+    frame[iRef]->setOrientation(frameParent->getOrientation()*APK);
 
     if(cb) {
-      PJR = trans(frameParent->getOrientation())*port[iRef]->getOrientation()*PJR0;
+      PJR = trans(frameParent->getOrientation())*frame[iRef]->getOrientation()*PJR0;
     }
 
     WrPK = frameParent->getOrientation()*PrPK;
     WomPK = frameParent->getOrientation()*(PJR*u + PjR);
     WvPKrel = frameParent->getOrientation()*(PJT*u + PjT);
-    port[iRef]->setAngularVelocity(frameParent->getAngularVelocity() + WomPK);
-    port[iRef]->setPosition(WrPK + frameParent->getPosition());
-    port[iRef]->setVelocity(frameParent->getVelocity() + WvPKrel + crossProduct(frameParent->getAngularVelocity(),WrPK));
+    frame[iRef]->setAngularVelocity(frameParent->getAngularVelocity() + WomPK);
+    frame[iRef]->setPosition(WrPK + frameParent->getPosition());
+    frame[iRef]->setVelocity(frameParent->getVelocity() + WvPKrel + crossProduct(frameParent->getAngularVelocity(),WrPK));
   }
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Drehmatrix des Schwerpunkt-KOSY updaten
     if(iRef != 0)
-      port[0]->setOrientation(port[iRef]->getOrientation()*trans(ASK[iRef]));
+      frame[0]->setOrientation(frame[iRef]->getOrientation()*trans(ASK[iRef]));
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu anderen KOSY im Welt-KOSY 
-    for(unsigned int i=1; i<port.size(); i++) {
-      WrSK[i] = port[0]->getOrientation()*SrSK[i];
+    for(unsigned int i=1; i<frame.size(); i++) {
+      WrSK[i] = frame[0]->getOrientation()*SrSK[i];
     }
 
     // Ortsvektoren vom Schwerpunkt-KOSY zu Konturen im Welt-KOSY 
     for(unsigned int i=0; i<contour.size(); i++) {
-      WrSC[i] = port[0]->getOrientation()*SrSC[i];
+      WrSC[i] = frame[0]->getOrientation()*SrSC[i];
     }
 
     // Nur wenn Referenz-KOSY nicht Schwerpunkt-KOSY, Kinematik des Schwerpunkt-KOSY updaten
     if(iRef != 0) {
-      port[0]->setPosition(port[iRef]->getPosition() - WrSK[iRef]);
-      port[0]->setVelocity(port[iRef]->getVelocity() - crossProduct(port[iRef]->getAngularVelocity(), WrSK[iRef]));
-      port[0]->setAngularVelocity(port[iRef]->getAngularVelocity());
+      frame[0]->setPosition(frame[iRef]->getPosition() - WrSK[iRef]);
+      frame[0]->setVelocity(frame[iRef]->getVelocity() - crossProduct(frame[iRef]->getAngularVelocity(), WrSK[iRef]));
+      frame[0]->setAngularVelocity(frame[iRef]->getAngularVelocity());
     }
 
     // Kinematik der anderen KOSY (außer Scherpunkt- und Referenz-) updaten, ausgehend vom Schwerpuntk-KOSY
-    for(unsigned int i=1; i<port.size(); i++) {
+    for(unsigned int i=1; i<frame.size(); i++) {
       if(i!=unsigned(iRef)) {
-        port[i]->setPosition(port[0]->getPosition() + WrSK[i]);
-        port[i]->setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSK[i]));
-        port[i]->setAngularVelocity(port[0]->getAngularVelocity());
-        port[i]->setOrientation(port[0]->getOrientation()*ASK[i]);
+        frame[i]->setPosition(frame[0]->getPosition() + WrSK[i]);
+        frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSK[i]));
+        frame[i]->setAngularVelocity(frame[0]->getAngularVelocity());
+        frame[i]->setOrientation(frame[0]->getOrientation()*ASK[i]);
       }
     }
     // Kinematik der Konturen updaten, ausgehend vom Schwerpuntk-KOSY
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->setAWC(port[0]->getOrientation()*ASC[i]);
-      contour[i]->setWomegaC(port[0]->getAngularVelocity());
-      contour[i]->setWrOP(port[0]->getPosition() + WrSC[i]);
-      contour[i]->setWvP(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(), WrSC[i]));
+      contour[i]->setAWC(frame[0]->getOrientation()*ASC[i]);
+      contour[i]->setWomegaC(frame[0]->getAngularVelocity());
+      contour[i]->setWrOP(frame[0]->getPosition() + WrSC[i]);
+      contour[i]->setWvP(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSC[i]));
     }
   }
 
@@ -554,10 +554,10 @@ namespace MBSim {
   }
 
   void RigidBody::addFrame(Frame *cosy, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame) {
-    Object::addFrame(cosy);
+    Body::addFrame(cosy);
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     SrSK.push_back(SrSK[i] + ASK[i]*RrRK);
     WrSK.push_back(Vec(3));
@@ -569,11 +569,11 @@ namespace MBSim {
   }
 
   void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
-    Object::addContour(contour);
+    Body::addContour(contour);
 
     int i = 0;
     if(refFrame)
-      i = portIndex(refFrame);
+      i = frameIndex(refFrame);
 
     SrSC.push_back(SrSK[i] + ASK[i]*RrRC);
     WrSC.push_back(Vec(3));
@@ -593,10 +593,10 @@ namespace MBSim {
     outputfile << "# Inertia tensor: " << endl;
     outputfile << SThetaS << endl << endl;
 
-    for(unsigned int i=1; i<port.size(); i++) {
-      outputfile << "# Translation of coordinate system " << port[i]->getName() <<":" << endl;
+    for(unsigned int i=1; i<frame.size(); i++) {
+      outputfile << "# Translation of coordinate system " << frame[i]->getName() <<":" << endl;
       outputfile << SrSK[i] << endl << endl;
-      outputfile << "# Rotation of coordinate system " << port[i]->getName() <<":" << endl;
+      outputfile << "# Rotation of coordinate system " << frame[i]->getName() <<":" << endl;
       outputfile << ASK[i] << endl << endl;
     }
 
@@ -608,7 +608,7 @@ namespace MBSim {
     }
 
     outputfile << "# Coordinate system for kinematics:" << endl;
-    outputfile << port[iRef]->getName() << endl << endl;
+    outputfile << frame[iRef]->getName() << endl << endl;
 
     outputfile << "# Frame of Reference:" << endl;
     outputfile << frameParent->getFullName() << endl << endl;
@@ -626,83 +626,83 @@ namespace MBSim {
 
   void RigidBody::load(const string &path, ifstream& inputfile) {
     Body::load(path,inputfile);
-    string dummy;
-
-    getline(inputfile,dummy); // # Mass
-    inputfile >> m;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-
-    getline(inputfile,dummy); // # Inertia tensor
-    Mat buf;
-    inputfile >> buf;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-    SThetaS = SymMat(buf);
-    i4I = 0;
-
-    for(unsigned int i=1; i<port.size(); i++) {
-      SrSK.push_back(Vec(3));
-      WrSK.push_back(Vec(3));
-      ASK.push_back(SqrMat(3));
-      getline(inputfile,dummy); // # Translation cosy 
-      inputfile >> SrSK[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // Newline
-      getline(inputfile,dummy); // # Rotation cosy
-      inputfile >> ASK[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // Newline
-    }
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      SrSC.push_back(Vec(3));
-      WrSC.push_back(Vec(3));
-      ASC.push_back(SqrMat(3));
-      getline(inputfile,dummy); // # Translation contour 
-      inputfile >> SrSC[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // Newline
-      getline(inputfile,dummy); // # Rotation contour
-      inputfile >> ASC[i];
-      getline(inputfile,dummy); // Rest of line
-      getline(inputfile,dummy); // Newline
-    }
-
-    getline(inputfile,dummy); // # Coordinate system for kinematics
-    getline(inputfile,dummy); // Coordinate system for kinematics
-    setFrameForKinematics(getFrame(dummy));
-    getline(inputfile,dummy); // Newline
-
-    getline(inputfile,dummy); // # Frame of reference
-    getline(inputfile,dummy); // Coordinate system for kinematics
-    setFrameOfReference(getDynamicSystemSolver()->findFrame(dummy));
-    getline(inputfile,dummy); // Newline
-
-    int s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of translation:
-    getline(inputfile,dummy); // Type of translation 
-    inputfile.seekg(s,ios::beg);
-    ClassFactory cf;
-    if(dummy.empty()) {
-      getline(inputfile,dummy); // # Type of translation 
-      getline(inputfile,dummy); // End of line
-    } else {
-      setTranslation(cf.getTranslation(dummy));
-      fPrPK->load(path, inputfile);
-    }
-
-    s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of rotation:
-    getline(inputfile,dummy); // Type of rotation
-    inputfile.seekg(s,ios::beg);
-    if(dummy.empty()) {
-      getline(inputfile,dummy); // # Type of rotation 
-      getline(inputfile,dummy); // End of line
-    } else {
-      setRotation(cf.getRotation(dummy));
-      fAPK->load(path, inputfile);
-    }
+//    string dummy;
+//
+//    getline(inputfile,dummy); // # Mass
+//    inputfile >> m;
+//    getline(inputfile,dummy); // Rest of line
+//    getline(inputfile,dummy); // Newline
+//
+//    getline(inputfile,dummy); // # Inertia tensor
+//    Mat buf;
+//    inputfile >> buf;
+//    getline(inputfile,dummy); // Rest of line
+//    getline(inputfile,dummy); // Newline
+//    SThetaS = SymMat(buf);
+//    i4I = 0;
+//
+//    for(unsigned int i=1; i<frame.size(); i++) {
+//      SrSK.push_back(Vec(3));
+//      WrSK.push_back(Vec(3));
+//      ASK.push_back(SqrMat(3));
+//      getline(inputfile,dummy); // # Translation cosy 
+//      inputfile >> SrSK[i];
+//      getline(inputfile,dummy); // Rest of line
+//      getline(inputfile,dummy); // Newline
+//      getline(inputfile,dummy); // # Rotation cosy
+//      inputfile >> ASK[i];
+//      getline(inputfile,dummy); // Rest of line
+//      getline(inputfile,dummy); // Newline
+//    }
+//
+//    for(unsigned int i=0; i<contour.size(); i++) {
+//      SrSC.push_back(Vec(3));
+//      WrSC.push_back(Vec(3));
+//      ASC.push_back(SqrMat(3));
+//      getline(inputfile,dummy); // # Translation contour 
+//      inputfile >> SrSC[i];
+//      getline(inputfile,dummy); // Rest of line
+//      getline(inputfile,dummy); // Newline
+//      getline(inputfile,dummy); // # Rotation contour
+//      inputfile >> ASC[i];
+//      getline(inputfile,dummy); // Rest of line
+//      getline(inputfile,dummy); // Newline
+//    }
+//
+//    getline(inputfile,dummy); // # Coordinate system for kinematics
+//    getline(inputfile,dummy); // Coordinate system for kinematics
+//    setFrameForKinematics(getFrame(dummy));
+//    getline(inputfile,dummy); // Newline
+//
+//    getline(inputfile,dummy); // # Frame of reference
+//    getline(inputfile,dummy); // Coordinate system for kinematics
+//    setFrameOfReference(getDynamicSystemSolver()->findFrame(dummy));
+//    getline(inputfile,dummy); // Newline
+//
+//    int s = inputfile.tellg();
+//    getline(inputfile,dummy); // # Type of translation:
+//    getline(inputfile,dummy); // Type of translation 
+//    inputfile.seekg(s,ios::beg);
+//    ClassFactory cf;
+//    if(dummy.empty()) {
+//      getline(inputfile,dummy); // # Type of translation 
+//      getline(inputfile,dummy); // End of line
+//    } else {
+//      setTranslation(cf.getTranslation(dummy));
+//      fPrPK->load(path, inputfile);
+//    }
+//
+//    s = inputfile.tellg();
+//    getline(inputfile,dummy); // # Type of rotation:
+//    getline(inputfile,dummy); // Type of rotation
+//    inputfile.seekg(s,ios::beg);
+//    if(dummy.empty()) {
+//      getline(inputfile,dummy); // # Type of rotation 
+//      getline(inputfile,dummy); // End of line
+//    } else {
+//      setRotation(cf.getRotation(dummy));
+//      fAPK->load(path, inputfile);
+//    }
 
   }
 

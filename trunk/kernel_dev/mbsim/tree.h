@@ -55,7 +55,7 @@ namespace MBSim {
        * \brief recursive kinematics update
        * \param time
        */
-      void updateKinematics(double t);
+      void updateStateDependentVariables(double t);
 
       /**
        * \brief recursive JACOBIAN for acceleration description update
@@ -120,7 +120,7 @@ namespace MBSim {
       virtual ~Tree();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateKinematics(double t);
+      virtual void updateStateDependentVariables(double t);
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
       virtual void sethSize(int h, int j=0);

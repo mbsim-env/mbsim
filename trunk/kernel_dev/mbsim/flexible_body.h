@@ -60,7 +60,7 @@ namespace MBSim {
         virtual void updatedq(double t, double dt) { qd = u*dt; }
         virtual void updateqd(double t) { qd = u; }
         virtual void updateM(double t);
-        virtual void updateKinematics(double t);
+        virtual void updateStateDependentVariables(double t);
         virtual void updateJacobians(double t);
         virtual void updateSecondJacobians(double t);
 
@@ -107,7 +107,6 @@ namespace MBSim {
         /***************************************************/
 
         /* GETTER / SETTER */
-        void setStationaryFrameOfReference(Frame *frame) { frameParent = frame; }
 		/*! 
 		 * damping matrix computation, updated with changes in mass matrix \f$\vM\f$: \f$\vh_d=-d_{pm}\vM\vu\f$ 
 		 * \brief set mass proportional damping
@@ -142,11 +141,6 @@ namespace MBSim {
 #endif
 
       protected:
-        /**
-         * \brief inertial frame of reference of the flexible body
-         */
-        Frame *frameParent;
-
         /** 
          * \brief stl-vector of discretizations/finite elements
          */
