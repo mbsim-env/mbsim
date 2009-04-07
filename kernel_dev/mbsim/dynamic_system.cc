@@ -240,26 +240,6 @@ namespace MBSim {
       (*i)->updateStopVector(t); 
   }   
 
-  void DynamicSystem::setFullName(const string &str) {
-    Element::setFullName(str);
-    for(unsigned i=0; i<dynamicsystem.size(); i++)
-      dynamicsystem[i]->setFullName(getFullName() + "." + dynamicsystem[i]->getName());
-
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->setFullName(getFullName() + "." + object[i]->getName());
-
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->setFullName(getFullName() + "." + link[i]->getName());
-
-    for (unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->setFullName(getFullName() + "." + orderOneDynamics[i]->getName());
-
-    for(unsigned i=0; i<frame.size(); i++)
-      frame[i]->setFullName(getFullName() + "." + frame[i]->getName());
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
-  }
-
   void DynamicSystem::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Element::setDynamicSystemSolver(sys);
     for(unsigned i=0; i<dynamicsystem.size(); i++)

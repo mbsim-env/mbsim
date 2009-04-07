@@ -172,9 +172,6 @@ namespace MBSim {
     else amvisFrame=0;
   }
 #endif
-  // string Frame::getFullName() const {
-  //   return parent->getFullName() + "." + name;
-  // }
 
   //int Frame::gethInd(Subsystem* sys) {
   //  return parent->gethInd(sys);

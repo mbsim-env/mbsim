@@ -127,7 +127,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Actuator *motorBasis = new Actuator("MotorBasis");
   addLink(motorBasis);
-  motorBasis->setUserFunction(tf->SigOut());
+  motorBasis->setSignal(tf->SigOut());
   motorBasis->setMomentDirection("[0;1;0]");
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
@@ -142,7 +142,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Actuator *motorArm = new Actuator("MotorArm");
   addLink(motorArm);
-  motorArm->setUserFunction(tf->SigOut());
+  motorArm->setSignal(tf->SigOut());
   motorArm->setMomentDirection("[0;0;1]");
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
@@ -157,7 +157,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Actuator *motorSpitze = new Actuator("MotorSpitze");
   addLink(motorSpitze);
-  motorSpitze->setUserFunction(tf->SigOut());
+  motorSpitze->setSignal(tf->SigOut());
   motorSpitze->setForceDirection("[0;1;0]");
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
 

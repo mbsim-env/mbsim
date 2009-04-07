@@ -145,113 +145,28 @@ namespace MBSim {
     Element::setDynamicSystemSolver(sys);
   }
 
-  void Object::setFullName(const string &str) {
-    Element::setFullName(str);
-  }
-
-  void Object::load(const string &path, ifstream& inputfile) {
-    Element::load(path, inputfile);
-    //    string dummy;
-    //
-    //    string basename = path + "/" + getFullName() + ".";
-    //
-    //    getline(inputfile,dummy); // # CoSy
-    //    unsigned int no=getNumberOfElements(inputfile);
-    //    for(unsigned int i=0; i<no; i++) {
-    //      getline(inputfile,dummy); // CoSy
-    //      string newname = basename + dummy + ".mdl";
-    //      ifstream newinputfile(newname.c_str(), ios::binary);
-    //      getline(newinputfile,dummy);
-    //      getline(newinputfile,dummy);
-    //      newinputfile.seekg(0,ios::beg);
-    //      if(i>=frame.size())
-    //        addFrame(new Frame("NoName"));
-    //      frame[i]->load(path, newinputfile);
-    //      newinputfile.close();
-    //    }
-    //    getline(inputfile,dummy); // # newline
-    //
-    //    getline(inputfile,dummy); // # Contour
-    //    no=getNumberOfElements(inputfile);
-    //    for(unsigned int i=0; i<no; i++) {
-    //      getline(inputfile,dummy); // contour
-    //      string newname = basename + dummy + ".mdl";
-    //      ifstream newinputfile(newname.c_str(), ios::binary);
-    //      getline(newinputfile,dummy);
-    //      getline(newinputfile,dummy);
-    //      newinputfile.seekg(0,ios::beg);
-    //      ClassFactory cf;
-    //      if(i>=contour.size())
-    //        addContour(cf.getContour(dummy));
-    //      contour[i]->load(path, newinputfile);
-    //      newinputfile.close();
-    //    }
-    //    getline(inputfile,dummy); // newline
-    //
-    //    getline(inputfile,dummy); // # q0
-    //    inputfile >> q0; // # q0
-    //    getline(inputfile,dummy); // Rest of line
-    //    getline(inputfile,dummy); // Newline
-    //
-    //    getline(inputfile,dummy); // # u0
-    //    inputfile >> u0; // # q0
-    //    getline(inputfile,dummy); // Rest of line
-    //    getline(inputfile,dummy); // Newline
-  }
-
-  void Object::save(const string &path, ofstream &outputfile) {
-    Element::save(path,outputfile);
-    //
-    //    // all Frame of Object
-    //    outputfile << "# Coordinate systems:" << endl;
-    //    for(vector<Frame*>::iterator i = frame.begin();  i != frame.end();  ++i) {
-    //      outputfile << (**i).getName() << endl;
-    //      string newname = path + "/" + (**i).getFullName() + ".mdl";
-    //      ofstream newoutputfile(newname.c_str(), ios::binary);
-    //      (**i).save(path,newoutputfile);
-    //      newoutputfile.close();
-    //    }
-    //    outputfile << endl;
-    //
-    //    // all Contours of Object
-    //    outputfile << "# Contours:" << endl;
-    //    for(vector<Contour*>::iterator i = contour.begin();  i != contour.end();  ++i) {
-    //      outputfile << (**i).getName() << endl;
-    //      string newname = path + "/" + (**i).getFullName() + ".mdl";
-    //      ofstream newoutputfile(newname.c_str(), ios::binary);
-    //      (**i).save(path,newoutputfile);
-    //      newoutputfile.close();
-    //    }
-    //    outputfile << endl;
-    //
-    //    outputfile << "# q0:" << endl;
-    //    outputfile << q0 << endl << endl;
-    //    outputfile << "# u0:" << endl;
-    //    outputfile << u0 << endl << endl;
-  }
-
   void Object::writeq() {
-    //    string fname="PREINTEG/"+fullName+".q0.asc";  
+    //    string fname="PREINTEG/"+getPath()+".q0.asc";  
     //    ofstream osq(fname.c_str(), ios::out);
     //    osq << q;
     //    osq.close();
   }
   void Object::readq0() {
-    //    string fname="PREINTEG/"+fullName+".q0.asc";  
+    //    string fname="PREINTEG/"+getPath()+".q0.asc";  
     //    ifstream isq(fname.c_str());
     //    if(isq) isq >> q0;
     //    else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
     //    isq.close();
   }
   void Object::writeu() {
-    //   string fname="PREINTEG/"+fullName+".u0.asc";  
+    //   string fname="PREINTEG/"+getPath()+".u0.asc";  
     //   ofstream osu(fname.c_str(), ios::out);
     //   osu << u;
     //   osu.close();
   }
 
   void Object::readu0() {
-    //   string fname="PREINTEG/"+fullName+".u0.asc";  
+    //   string fname="PREINTEG/"+getPath()+".u0.asc";  
     //   ifstream isu(fname.c_str());
     //   if(isu) isu >> u0;
     //   else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
@@ -259,14 +174,14 @@ namespace MBSim {
   }
 
   void Object::writex() {
-    //   string fname="PREINTEG/"+fullName+".x0.asc";  
+    //   string fname="PREINTEG/"+getPath()+".x0.asc";  
     //   ofstream osx(fname.c_str(), ios::out);
     //   osx << x;
     //   osx.close();
   }
 
   void Object::readx0() {
-    //   string fname="PREINTEG/"+fullName+".x0.asc";  
+    //   string fname="PREINTEG/"+getPath()+".x0.asc";  
     //   ifstream isx(fname.c_str());
     //   if(isx) isx >> x0;
     //   else {cout << "Object " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;}

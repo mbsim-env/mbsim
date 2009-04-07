@@ -36,30 +36,6 @@ namespace MBSim {
   Element::~Element() {
   }
 
-  void Element::load(const string &path, ifstream& inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type
-    getline(inputfile,dummy); // Type
-    getline(inputfile,dummy); // newline
-    getline(inputfile,dummy); // # Name
-    getline(inputfile,dummy); // Name
-    name = dummy;
-    getline(inputfile,dummy); // newline
-    getline(inputfile,dummy); // # Full name
-    getline(inputfile,dummy); // full name
-    fullName = dummy;
-    getline(inputfile,dummy); // newline
-  }
-
-  void Element::save(const string &path, ofstream& outputfile) {
-    outputfile << "# Type:" << endl;
-    outputfile << getType() << endl<<endl;
-    outputfile << "# Name:" << endl;
-    outputfile << name << endl<<endl;
-    outputfile << "# Full name:" << endl;
-    outputfile << getFullName() << endl<<endl;
-  }
-
   void Element::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.insert(plotVector.begin(), t);
@@ -77,19 +53,6 @@ namespace MBSim {
       if(plotVectorSerie) delete plotVectorSerie;
       delete plotGroup;
     }
-  }
-
-  int Element::getNumberOfElements(ifstream &inputfile) {
-    string dummy;
-    int num=0;
-    int n = inputfile.tellg();
-    do {
-      num++;
-      getline(inputfile,dummy);
-    } while(!dummy.empty());
-    num--;
-    inputfile.seekg(n);
-    return num;
   }
 
   void Element::addDataInterfaceBaseRef(const string& DIBRef_){

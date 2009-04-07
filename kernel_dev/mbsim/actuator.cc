@@ -77,12 +77,6 @@ namespace MBSim {
     LinkMechanics::connect(frame1);
   }
 
-  void Actuator::setUserFunction(DataInterfaceBase *func_) {
-    cout<<"!!!HINT!!!You are using the obsolete Method setUserFunction in Actuator "<<name<<endl;
-    cout<<"Use Method setSignal instead! This Method will be removed."<<endl;
-    func = func_;
-  }
-
   void Actuator::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 

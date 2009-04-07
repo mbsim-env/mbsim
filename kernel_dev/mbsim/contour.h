@@ -216,9 +216,6 @@ namespace MBSim {
       ~Line();
 
       std::string getType() const {return "Line";}
-
-      void load(const std::string& path, std::ifstream &inputfile); 
-      void save(const std::string &path, std::ofstream &outputfile);
   };
 
   /*! \brief Circular Contour with material included inside */

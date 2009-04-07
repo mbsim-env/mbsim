@@ -56,8 +56,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void load(const std::string &path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual std::string getType() const { return "Group"; }
       /***************************************************/
 

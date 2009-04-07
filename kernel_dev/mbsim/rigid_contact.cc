@@ -73,67 +73,6 @@ namespace MBSim {
     gdActive[1] = getFrictionDirections() && gActive ? 1 : 0; 
   }
 
-  void RigidContact::save(const string& path, ofstream &outputfile) {
-    Contact::save(path, outputfile);
-
-    fcl->save(path,outputfile);
-    if(fdf)
-      fdf->save(path,outputfile);
-    else {
-      outputfile << "# Type of friction law:" << endl << endl;
-    }
-    fnil->save(path,outputfile);
-    if(ftil)
-      ftil->save(path,outputfile);
-    else {
-      outputfile << "# Type of tangential impact law:" << endl << endl;
-    }
-  }
-
-  void RigidContact::load(const string& path, ifstream &inputfile) {
-    Contact::load(path,inputfile);
-    string dummy;
-    int s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of contact law:
-    getline(inputfile,dummy); // Type of contact law 
-    inputfile.seekg(s,ios::beg);
-    ClassFactory cf;
-    setContactLaw(cf.getConstraintLaw(dummy));
-    fcl->load(path, inputfile);
-
-    s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of friction law:
-    getline(inputfile,dummy); // Type of friction law 
-    inputfile.seekg(s,ios::beg);
-    if(dummy.empty()) {
-      getline(inputfile,dummy); // # Type of friction law
-      getline(inputfile,dummy); // End of line
-    } else {
-      setFrictionLaw(cf.getFrictionLaw(dummy));
-      fdf->load(path, inputfile);
-    }
-
-    s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of normal impact law:
-    getline(inputfile,dummy); // Type of normal impact law 
-    inputfile.seekg(s,ios::beg);
-    setNormalImpactLaw(cf.getNormalImpactLaw(dummy));
-    fnil->load(path, inputfile);
-
-    s = inputfile.tellg();
-    getline(inputfile,dummy); // # Type of tangential impact law:
-    getline(inputfile,dummy); // Type of tangential impact law 
-    inputfile.seekg(s,ios::beg);
-    if(dummy.empty()) {
-      getline(inputfile,dummy); // # Type of friction law
-      getline(inputfile,dummy); // End of line
-    } else {
-      setTangentialImpactLaw(cf.getTangentialImpactLaw(dummy));
-      ftil->load(path, inputfile);
-    }
-  }
-
-
   void RigidContact::updatewb(double t) {
 
     for(unsigned i=0; i<contour.size(); i++) 

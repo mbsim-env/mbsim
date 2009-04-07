@@ -133,9 +133,6 @@ namespace MBSim {
 
       virtual std::string getType() const {return "RigidBody";}
 
-      void load(const std::string &path, std::ifstream &inputfile);
-      void save(const std::string &path, std::ofstream &outputfile);
-
 #ifdef HAVE_AMVIS
       void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?frame[0]:cosy;}
 #endif

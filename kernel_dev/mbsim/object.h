@@ -76,9 +76,6 @@ namespace MBSim {
       virtual void closePlot();
       virtual std::string getType() const {return "Object";}
       void setDynamicSystemSolver(DynamicSystemSolver *sys);
-      void setFullName(const std::string &str);
-      void load(const std::string &path, std::ifstream &inputfile);
-      void save(const std::string &path, std::ofstream &outputfile);
       /*******************************************************/ 
 
       /* INTERFACE */
@@ -245,8 +242,7 @@ namespace MBSim {
       void setu0(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
       /** 
-       * Return the full path of the object. This function replaces the getFullName
-       * which is deprecated.
+       * Return the full path of the object.
        * \param pathDelim The delimiter of the path
        */
       std::string getPath(char pathDelim='.');

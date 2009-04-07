@@ -55,9 +55,6 @@ namespace MBSim {
 
       void calcsvSize();
 
-      void load(const string& path, ifstream &inputfile);
-      void save(const string &path, ofstream &outputfile);
-
       void solveImpactsFixpointSingle();
       void solveConstraintsFixpointSingle();
       void solveImpactsGaussSeidel();

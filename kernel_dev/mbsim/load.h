@@ -71,8 +71,6 @@ namespace MBSim {
        */
       void connect(Frame *frame1);
 
-      void setUserFunction(DataInterfaceBase *func_);
-      
       /**
        * \param local force direction
        */

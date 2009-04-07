@@ -44,8 +44,6 @@ namespace MBSim {
       virtual ~GeneralizedForceLaw() {};
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double r) { return 0; }
       virtual fmatvec::Vec diff(double la, double gdn, double r) { return fmatvec::Vec(2); }
       virtual double solve(double G, double gdn) { return 0; }
@@ -73,8 +71,6 @@ namespace MBSim {
       virtual ~UnilateralConstraint() {};
       bool isActive(double g, double gTol) {return g<=gTol;}
       bool remainsClosed(double s, double sTol) {return s<=sTol;}  // s = gd/gdd
-      void load(const std::string& path, std::ifstream &inputfile);
-      void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double r);
       fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
@@ -88,8 +84,6 @@ namespace MBSim {
       virtual ~BilateralConstraint() {};
       bool isActive(double g, double gTol) {return true;}
       bool remainsClosed(double s, double sTol) {return true;}
-      //void load(const string& path, ifstream &inputfile);
-      //void save(const string &path, ofstream &outputfile);
       double project(double la, double gdn, double r);
       fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
@@ -101,8 +95,6 @@ namespace MBSim {
     public:
       GeneralizedImpactLaw() {};
       virtual ~GeneralizedImpactLaw() {};
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual double project(double la, double gdn, double gda, double r) = 0;
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
@@ -117,8 +109,6 @@ namespace MBSim {
       UnilateralNewtonImpact(double epsilon_) : epsilon(epsilon_), gd_limit(1e-2) {};
       UnilateralNewtonImpact(double epsilon_, double gd_limit_) : epsilon(epsilon_), gd_limit(gd_limit_) {};
       virtual ~UnilateralNewtonImpact() {};
-      void load(const std::string& path, std::ifstream &inputfile);
-      void save(const std::string &path, std::ofstream &outputfile);
       double project(double la, double gdn, double gda, double r);
       fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
@@ -141,8 +131,6 @@ namespace MBSim {
     public:
       FrictionForceLaw(double gdLim_ = 0.01) : gdLim(gdLim_) {};
       virtual ~FrictionForceLaw() {};
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Vec(2);}
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Mat(2,2);}
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) {return fmatvec::Vec(2);}
@@ -163,8 +151,6 @@ namespace MBSim {
       PlanarCoulombFriction() : mu(0) {};
       PlanarCoulombFriction(double mu_) : mu(mu_) {};
       virtual ~PlanarCoulombFriction() {}
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
@@ -200,8 +186,6 @@ namespace MBSim {
     public:
       FrictionImpactLaw() {};
       virtual ~FrictionImpactLaw() {};
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN) = 0;
@@ -216,8 +200,6 @@ namespace MBSim {
       PlanarCoulombImpact() : mu(0) {};
       PlanarCoulombImpact(double mu_) : mu(mu_) {};
       virtual ~PlanarCoulombImpact() {}
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
       void setFrictionCoefficient(double mu_) {mu = mu_;}
       double getFrictionCoefficient(double gd) {return mu;}
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
