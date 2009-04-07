@@ -1,7 +1,7 @@
 #ifndef SPRINGS_H_
 #define SPRINGS_H_
 
-#include "mbsim/link.h"
+#include "mbsim/link_mechanics.h"
 #include "mbsim/data_interface_base.h"
 
 #ifdef HAVE_AMVIS
@@ -13,7 +13,7 @@ namespace AMVis {class CoilSpring;}
 
 namespace MBSim {
 
-  class Spring : public Link {
+  class Spring : public LinkMechanics {
     protected:
       double l0, cT, dT;
       fmatvec::Vec forceDir;

@@ -20,7 +20,7 @@
 
 #include <config.h> 
 #include "circlesolid_line.h"
-#include "mbsim/contact.h"
+#include "mbsim/contour.h"
 
 using namespace fmatvec;
 using namespace std;

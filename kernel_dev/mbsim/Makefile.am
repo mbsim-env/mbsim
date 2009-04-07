@@ -5,6 +5,7 @@ libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = body.cc\
 mbsim_event.cc\
 link.cc\
+link_mechanics.cc\
 object.cc\
 dynamic_system_solver.cc\
 dynamic_system.cc\
@@ -38,6 +39,7 @@ mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
 mbsim_event.h\
 link.h\
+link_mechanics.h\
 object.h\
 dynamic_system_solver.h\
 dynamic_system.h\

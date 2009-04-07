@@ -5,6 +5,7 @@
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/userfunction.h"
+#include "mbsim/mbsim_event.h"
 #include "modeling_classes.h"
 #include <string>
 
@@ -21,7 +22,7 @@ class Signal : public MBSim::UserFunction {
 class Mesh : public MBSim::Object {
   protected:
   public:
-    Mesh(const string &name) : MBSim::Object(name) {}
+    Mesh(const std::string &name) : MBSim::Object(name) {}
     void calcqSize() { qSize = 1;}
     void calcuSize(int j) { uSize[0] = 1; uSize[1] = 1;}
     void updateStateDependentVariables(double t) {};
@@ -38,7 +39,7 @@ class Wire : public MBSim::Object {
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
   public:
-    Wire(const string &name) : Object(name) {}
+    Wire(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t);
     void updateJacobians(double t) {};
     void updateSecondJacobians(double t) {};
@@ -55,9 +56,9 @@ class Wire : public MBSim::Object {
 
 class ElectricalLink : public MBSim::Link {
   protected:
-    vector<Wire*> wire;
+    std::vector<Wire*> wire;
   public:
-    ElectricalLink(const string &name);
+    ElectricalLink(const std::string &name);
     void updateg(double t) {}
     void updategd(double t) {}
     void connect(Wire *wire_) {wire.push_back(wire_);}
@@ -65,13 +66,23 @@ class ElectricalLink : public MBSim::Link {
     bool gActiveChanged() {return true;}
     void init();
     void updatehRef(const fmatvec::Vec &hParent, int j=0);
+
+    /* INHERITED INTERFACE OF LINKINTERFACE */
+    virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updater): Not implemented!"); }
+    /*****************************************************/
+    
+    /* INHERITED INTERFACE OF LINK */
+    virtual void updateWRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updateWRef): Not implemented!"); }
+    virtual void updateVRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updateVRef): Not implemented!"); }
+    virtual void updaterRef(const fmatvec::Vec& ref) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updaterRef): Not implemented!"); }
+    /*****************************************************/
 };
 
 class Resistor : public ElectricalLink {
   protected:
     double R;
   public:
-    Resistor(const string &name);
+    Resistor(const std::string &name);
     void updateh(double t);
     void setResistance(double R_) { R = R_;}
 };
@@ -80,7 +91,7 @@ class Capacitor : public ElectricalLink {
   protected:
     double C;
   public:
-    Capacitor(const string &name);
+    Capacitor(const std::string &name);
     void updateh(double t);
     void setCapacity(double C_) { C = C_;}
 };
@@ -89,7 +100,7 @@ class VoltageSource : public ElectricalLink {
   protected:
     MBSim::UserFunction *voltageSignal;
   public:
-    VoltageSource(const string &name);
+    VoltageSource(const std::string &name);
     void updateh(double t);
     void setVoltageSignal(MBSim::UserFunction* f) {voltageSignal = f;}
 };
@@ -97,9 +108,9 @@ class VoltageSource : public ElectricalLink {
 class Inductor : public MBSim::Object {
   protected:
     double L;
-    vector<Wire*> wire;
+    std::vector<Wire*> wire;
   public:
-    Inductor(const string &name);
+    Inductor(const std::string &name);
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateSecondJacobians(double t) {};
@@ -113,17 +124,18 @@ class Inductor : public MBSim::Object {
 
 class ElectricalCircuit : public MBSim::Tree {
   protected:
-    vector<Pin*> pin;
-    vector<Component*> comp;
+    std::vector<Pin*> pin;
+    std::vector<Component*> comp;
   public:
-    ElectricalCircuit(const string &name) : Tree(name) {}
+    ElectricalCircuit(const std::string &name) : Tree(name) {}
     void addComponent(Component *comp);
-    Component* getComponent(const string &name, bool check=true);
+    Component* getComponent(const std::string &name, bool check=true);
     void addPin(Pin *pin);
-    void addPin(const string &str);
-    Pin* getPin(const string &name, bool check=true);
+    void addPin(const std::string &str);
+    Pin* getPin(const std::string &name, bool check=true);
     void preinit();
     void buildListOfPins(std::vector<Pin*> &pin, bool recursive = true);
 };
 
 #endif
+

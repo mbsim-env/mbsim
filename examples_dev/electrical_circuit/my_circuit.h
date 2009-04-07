@@ -6,7 +6,8 @@
 class MyCircuit : public ElectricalCircuit {
  private:
   public:
-    MyCircuit(const string &projectName); 
+    MyCircuit(const std::string &projectName); 
 };
 
 #endif
+

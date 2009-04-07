@@ -5,16 +5,14 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 class Component;
 
 class Pin : public MBSim::Element {
-  vector<Pin*> connectedPin;
+  std::vector<Pin*> connectedPin;
   int flag;
   Component* parent;
   public:
-    Pin(const string &name) : Element(name), flag(0), parent(0) {}
+    Pin(const std::string &name) : Element(name), flag(0), parent(0) {}
     void addConnectedPin(Pin* pin);
     void setFlag(int f) { flag = f; }
     int getFlag() const { return flag; }
@@ -27,15 +25,15 @@ void connectPin(Pin *pin1, Pin *pin2);
 
 class Component : public MBSim::Element {
   protected:
-    vector<Pin*> pin;
+    std::vector<Pin*> pin;
     int qSize, qInd;
     int uSize, uInd;
     int hSize, hInd;
   public:
-    Component(const string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0) {}
+    Component(const std::string &name) : Element(name), qSize(0), qInd(0), uSize(0), uInd(0) {}
     void addPin(Pin *pin);
-    void addPin(const string &str);
-    Pin* getPin(const string &name, bool check=true);
+    void addPin(const std::string &str);
+    Pin* getPin(const std::string &name, bool check=true);
     virtual void calcqSize() {};
     void setqInd(int qInd_) {qInd = qInd_;}
     int getqSize() const {return qSize;}
@@ -52,23 +50,23 @@ class Component : public MBSim::Element {
 
 class CompVoltageSource : public Component {
   public:
-    CompVoltageSource(const string &name);
+    CompVoltageSource(const std::string &name);
 };
 
 class CompInductor : public Component {
   public:
-    CompInductor(const string &name);
+    CompInductor(const std::string &name);
 };
 
 class CompResistor : public Component {
   public:
-    CompResistor(const string &name);
+    CompResistor(const std::string &name);
 };
 
 class CompCapacitor : public Component {
   public:
-    CompCapacitor(const string &name);
+    CompCapacitor(const std::string &name);
 };
 
-
 #endif
+

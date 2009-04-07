@@ -508,16 +508,6 @@ namespace MBSim {
        */
       void checkAllgd();
 
-      /** 
-       * \param scale factor for flow quantity tolerances tolQ=tol*scaleTolQ TODO necessary?
-       */
-      void setScaleTolQ(double scaleTolQ);
-
-      /** 
-       * \param scale factor for pressure quantity tolerances tolp=tol*scaleTolp TODO necessary?
-       */
-      void setScaleTolp(double scaleTolp);
-
       /**
        * \param tolerance for relative velocity
        */
@@ -546,7 +536,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      void setlaIndMBS(int laIndParent);
+      void setlaIndDS(int laIndParent);
 
       /**
        * \param frame to add

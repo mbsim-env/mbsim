@@ -20,9 +20,7 @@
 #ifndef _CONTACT_H_
 #define _CONTACT_H_
 
-#include <mbsim/link.h>
-#include <mbsim/contour.h>
-#include <mbsim/contour_pdata.h>
+#include <mbsim/link_mechanics.h>
 
 namespace MBSim {
 
@@ -31,6 +29,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
+  class ContourPointData;
 
   /*! \brief class for contacts
    * \author Martin Foerg
@@ -38,7 +37,7 @@ namespace MBSim {
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
    */
-  class Contact: public Link {
+  class Contact: public LinkMechanics {
     public:
       /*!
        * \brief constructor
@@ -99,7 +98,7 @@ namespace MBSim {
       virtual void updaterFactors();
       virtual void checkConstraintsForTermination();
       virtual void checkImpactsForTermination();
-      using Link::connect;
+      using LinkMechanics::connect;
       virtual void checkActiveg();
       virtual void checkActivegd();
       virtual void checkActivegdn();
@@ -110,8 +109,8 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void load(const std::string& path, std::ifstream &inputfile);
-      virtual void save(const std::string &path, std::ofstream &outputfile);
+      //virtual void load(const std::string& path, std::ifstream &inputfile);
+      //virtual void save(const std::string &path, std::ofstream &outputfile);
       virtual std::string getType() const { return "Contact"; }
       /***************************************************/
 

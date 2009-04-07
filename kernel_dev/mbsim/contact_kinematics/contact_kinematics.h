@@ -39,6 +39,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-18 some comments (Thorsten Schindler)
    * \date 2009-04-02 velocity part deleted (Thorsten Schindler)
+   * \todo updates should be pure virtual
    */
   class ContactKinematics {
     public:
