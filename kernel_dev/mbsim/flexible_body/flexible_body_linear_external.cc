@@ -62,8 +62,8 @@ namespace MBSim {
 
   void FlexibleBodyLinearExternal::updateKinematicsForFrame(ContourPointData &cp, Frame *frame) {
 	Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
-//TODO  port[i]->setWrOP(WrON00  + JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslation(qElement[0],cp)            );
-//TODO  port[i]->setWvP (          JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslationalVelocity(qElement[0],uElement[0],cp));
+//TODO  frame[i]->setWrOP(WrON00  + JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslation(qElement[0],cp)            );
+//TODO  frame[i]->setWvP (          JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslationalVelocity(qElement[0],uElement[0],cp));
 	if(frame!=NULL) {
 	    // TODO
 	}
@@ -154,16 +154,16 @@ namespace MBSim {
 
 //  void FlexibleBodyLinearExternal::addFrame(const string &name, const Mat &J_, const Vec &r_) {
 //	ContourPointData cp = addInterface(J_,r_);
-//    Port *port_ = new Port(name);
-//    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody::addFrame(port_, cp );
+//    Port *frame_ = new Port(name);
+//    frame_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
+//    FlexibleBody::addFrame(frame_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addFrame(const string &name, const string &jacobifile) {
 //    ContourPointData cp = addInterface(jacobifile);
-//    Port *port_ = new Port(name);
-//    port_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
-//    FlexibleBody::addFrame(port_, cp );
+//    Port *frame_ = new Port(name);
+//    frame_->setID(cp.getNodeNumber()); // Stelle, an der die Jacobi steht
+//    FlexibleBody::addFrame(frame_, cp );
 //  }
 //
 //  void FlexibleBodyLinearExternal::addContour(Contour *contour_, const Mat &J_, const Vec &r_) {
@@ -224,10 +224,10 @@ namespace MBSim {
 ////    parafile << "\n# JT\n"      << JT   << endl;
 ////    parafile << "\n# JR\n"      << JR   << endl;
 //
-//    if(port.size()>0) parafile << "\nports:" <<endl;
-//    for(unsigned int i=0; i<port.size(); i++) { 
-//	  ContourPointData cp; cp.getNodeNumber()=port[i]->getID();
-//      parafile << "# J: (port:  name= "<< port[i]->getName()<<",  ID= "<<port[i]->getID()<<") \n"<<discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp)<<endl;
+//    if(frame.size()>0) parafile << "\nframes:" <<endl;
+//    for(unsigned int i=0; i<frame.size(); i++) { 
+//	  ContourPointData cp; cp.getNodeNumber()=frame[i]->getID();
+//      parafile << "# J: (frame:  name= "<< frame[i]->getName()<<",  ID= "<<frame[i]->getID()<<") \n"<<discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp)<<endl;
 //    }
 //
 //	if(contour.size()>0) parafile << "\ncontours:" <<endl;

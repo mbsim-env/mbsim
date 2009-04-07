@@ -36,10 +36,10 @@ using namespace MBSim;
  * */  
 class PosInterface : public DataInterfaceBase {
 protected:
-  Frame* port;
+  Frame* frame;
   Mat JT;
 public:
-  PosInterface(Frame *port_, const Mat& JT_) {port=port_; JT=JT_;}
+  PosInterface(Frame *frame_, const Mat& JT_) {frame=frame_; JT=JT_;}
   ~PosInterface() {}
   Vec operator()(double t); 
 };  
@@ -49,10 +49,10 @@ public:
  * */  
 class RotVelInterface : public DataInterfaceBase {
 protected:
-  Frame* port;
+  Frame* frame;
   Mat JR;
 public:
-  RotVelInterface(Frame *port_, const Mat& JR_) {port=port_; JR=JR_;}
+  RotVelInterface(Frame *frame_, const Mat& JR_) {frame=frame_; JR=JR_;}
   ~RotVelInterface() {}
   Vec operator()(double t); 
 };  

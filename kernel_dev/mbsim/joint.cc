@@ -52,11 +52,11 @@ namespace MBSim {
   }
 
   void Joint::updatewb(double t) {
-    Mat WJT = port[0]->getOrientation()*JT;
+    Mat WJT = frame[0]->getOrientation()*JT;
     Vec sdT = trans(WJT)*(WvP0P1);
 
-    wb(0,Wf.cols()-1) += trans(Wf)*(port[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
-    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(port[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
+    wb(0,Wf.cols()-1) += trans(Wf)*(frame[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
+    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += trans(Wm)*(frame[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
   }
 
   void Joint::updateW(double t) {
@@ -66,7 +66,7 @@ namespace MBSim {
     fM[1] = -fM[0];
 
     W[0] += trans(C.getJacobianOfTranslation())*fF[0] + trans(C.getJacobianOfRotation())*fM[0];
-    W[1] += trans(port[1]->getJacobianOfTranslation())*fF[1] + trans(port[1]->getJacobianOfRotation())*fM[1];
+    W[1] += trans(frame[1]->getJacobianOfTranslation())*fF[1] + trans(frame[1]->getJacobianOfRotation())*fM[1];
   }
 
   void Joint::updateh(double t) {
@@ -81,25 +81,25 @@ namespace MBSim {
     WF[0] = -WF[1];
     WM[0] = -WM[1];
     h[0] += trans(C.getJacobianOfTranslation())*WF[0] + trans(C.getJacobianOfRotation())*WM[0];
-    h[1] += trans(port[1]->getJacobianOfTranslation())*WF[1] + trans(port[1]->getJacobianOfRotation())*WM[1];
+    h[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
   }
 
   void Joint::updateg(double t) {
-    Wf = port[0]->getOrientation()*forceDir;
-    Wm = port[0]->getOrientation()*momentDir;
+    Wf = frame[0]->getOrientation()*forceDir;
+    Wm = frame[0]->getOrientation()*momentDir;
 
-    WrP0P1 = port[1]->getPosition()-port[0]->getPosition();
+    WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
 
     g(IT) = trans(Wf)*WrP0P1;
     g(IR) = x;
   }
 
   void Joint::updategd(double t) {
-    C.setAngularVelocity(port[0]->getAngularVelocity());
-    C.setVelocity(port[0]->getVelocity() + crossProduct(port[0]->getAngularVelocity(),WrP0P1));
+    C.setAngularVelocity(frame[0]->getAngularVelocity());
+    C.setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(),WrP0P1));
 
-    WvP0P1 = port[1]->getVelocity()-C.getVelocity();
-    WomP0P1 = port[1]->getAngularVelocity()-C.getAngularVelocity();
+    WvP0P1 = frame[1]->getVelocity()-C.getVelocity();
+    WomP0P1 = frame[1]->getAngularVelocity()-C.getAngularVelocity();
 
     gd(IT) = trans(Wf)*WvP0P1;
     gd(IR) = trans(Wm)*WomP0P1;
@@ -107,10 +107,10 @@ namespace MBSim {
 
   void Joint::updateJacobians(double t) {
     Mat tWrP0P1 = tilde(WrP0P1);
-    C.setJacobianOfTranslation(port[0]->getJacobianOfTranslation() - tWrP0P1*port[0]->getJacobianOfRotation());
-    C.setJacobianOfRotation(port[0]->getJacobianOfRotation());
-    C.setGyroscopicAccelerationOfTranslation(port[0]->getGyroscopicAccelerationOfTranslation() - tWrP0P1*port[0]->getGyroscopicAccelerationOfRotation() + crossProduct(port[0]->getAngularVelocity(),crossProduct(port[0]->getAngularVelocity(),WrP0P1)));
-    C.setGyroscopicAccelerationOfRotation(port[0]->getGyroscopicAccelerationOfRotation());
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrP0P1*frame[0]->getJacobianOfRotation());
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation());
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)));
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
   }
 
   void Joint::updatexd(double t) {
@@ -149,8 +149,8 @@ namespace MBSim {
       momentDir.resize(3,0);
       Wm.resize(3,0);
     }
-    C.getJacobianOfTranslation().resize(3,port[0]->getJacobianOfTranslation().cols());
-    C.getJacobianOfRotation().resize(3,port[0]->getJacobianOfRotation().cols());
+    C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
+    C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
     JT.resize(3,3-forceDir.cols());
     if(forceDir.cols() == 2)
       JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));

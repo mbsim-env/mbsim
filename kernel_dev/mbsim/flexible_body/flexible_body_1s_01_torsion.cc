@@ -22,7 +22,7 @@
 #include <config.h>
 #define FMATVEC_DEEP_COPY
 #include "body_flexible_1s_01_torsion.h"
-#include "port.h"
+#include "frame.h"
 #include "dynamic_system_solver.h"
 #include "contact_flexible.h"
 #include "contact_rigid.h"
@@ -99,18 +99,18 @@ namespace MBSim {
   }
 
   void BodyFlexible1s01Torsion::updatePorts(double t) {
-    for(unsigned int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<frame.size(); i++) {
       double s=S_Port[i].alpha(0);
       /* Ermittlung der Position in Achsrichtung  ist konstant */
-      port[i]->setWrOP(WrON00 + Axis*s*l);
+      frame[i]->setWrOP(WrON00 + Axis*s*l);
       /* Ermittlung der Geschwindigkeiten */
-      port[i]->setWvP (Vec(3,INIT,0)); 
+      frame[i]->setWvP (Vec(3,INIT,0)); 
       /* Winkelgeschwindigkeit der Welle
        * am Ort des Ports.
        * Transformierte der Jacobimatrix*generalisierte Geschwindigkeiten
        * Jacobimatrix entspricht den Ansatzfunktionen
        */
-      port[i]->setWomegaP(Axis*trans( computeJacobianMatrix(S_Port[i]) )*u); 
+      frame[i]->setWomegaP(Axis*trans( computeJacobianMatrix(S_Port[i]) )*u); 
     }
   }
 

@@ -46,7 +46,7 @@ namespace MBSim {
 
   void LinkMechanics::updater(double t) {
 
-    for(unsigned i=0; i<port.size(); i++) 
+    for(unsigned i=0; i<frame.size(); i++) 
       r[i] += W[i]*la;
 
     for(unsigned i=0; i<contour.size(); i++) 
@@ -78,8 +78,8 @@ namespace MBSim {
   //  Link::save(path,outputfile);
 
   //  outputfile << "# Connected coordinate sytems:" << endl;
-  //  for(unsigned int i=0; i<port.size(); i++) {
-  //    outputfile << port[i]->getFullName() << endl;
+  //  for(unsigned int i=0; i<frame.size(); i++) {
+  //    outputfile << frame[i]->getFullName() << endl;
   //  }
   //  outputfile << endl;
 
@@ -96,7 +96,7 @@ namespace MBSim {
       //      Vec WrOToPoint;
       //      Vec LoadArrow(6,NONINIT);
       //      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      //        WrOToPoint = port[arrowAMVisID[i]]->getPosition();
+      //        WrOToPoint = frame[arrowAMVisID[i]]->getPosition();
       //        if(setValued){ 
       //          if (isActive()) {
       //            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
@@ -175,9 +175,9 @@ namespace MBSim {
   }
 
   void LinkMechanics::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
+    for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
       W[i].resize()>>WParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
@@ -188,9 +188,9 @@ namespace MBSim {
   } 
 
   void LinkMechanics::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
+    for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
       V[i].resize()>>VParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
@@ -201,8 +201,8 @@ namespace MBSim {
   } 
 
   void LinkMechanics::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
+    for(unsigned i=0; i<frame.size(); i++) {
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
@@ -212,9 +212,9 @@ namespace MBSim {
   } 
 
   void LinkMechanics::updaterRef(const Vec &rParent) {
-    for(unsigned i=0; i<port.size(); i++) {
-      int hInd =  port[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
+    for(unsigned i=0; i<frame.size(); i++) {
+      int hInd =  frame[i]->getParent()->gethInd(parent);
+      Index I = Index(hInd,hInd+frame[i]->getJacobianOfTranslation().cols()-1);
       r[i]>>rParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
@@ -227,11 +227,11 @@ namespace MBSim {
   void LinkMechanics::init() {
     Link::init();
 
-    for(unsigned i=0; i<port.size(); i++) {
-      W.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
-      V.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
-      h.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
-      r.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
+    for(unsigned i=0; i<frame.size(); i++) {
+      W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
+      V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
+      h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+      r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       WF.push_back(Vec(3));
       WM.push_back(Vec(3));
       fF.push_back(Mat(3,laSize));
@@ -263,7 +263,7 @@ namespace MBSim {
   }
 
   void LinkMechanics::connect(Frame *frame_) {
-    port.push_back(frame_);
+    frame.push_back(frame_);
   }
 
   void LinkMechanics::connect(Contour *contour_) {

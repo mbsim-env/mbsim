@@ -28,10 +28,10 @@ using namespace std;
 using namespace fmatvec;
 
 Vec PosInterface::operator()(double t)  { 
-  return trans(JT)*port->getPosition();
+  return trans(JT)*frame->getPosition();
 }
 Vec RotVelInterface::operator()(double t)  { 
-  return trans(JR)*port->getAngularVelocity();
+  return trans(JR)*frame->getAngularVelocity();
 }
 AngularInterface::AngularInterface(Body *body_) {
   body=body_;

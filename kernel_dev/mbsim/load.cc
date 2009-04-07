@@ -37,12 +37,12 @@ namespace MBSim {
   void Load::updateh(double t) {
     la = (*func)(t);
     if(KOSYID) {
-      Wf = port[0]->getOrientation()*forceDir;
-      Wm = port[0]->getOrientation()*momentDir;
+      Wf = frame[0]->getOrientation()*forceDir;
+      Wm = frame[0]->getOrientation()*momentDir;
     }
     WF[0] = Wf*la(IT);
     WM[0] = Wm*la(IR);
-    h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*WM[0];
+    h[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
   } 
 
   void Load::init() {

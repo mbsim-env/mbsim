@@ -37,26 +37,26 @@ namespace MBSim {
   }
 
   void Spring::updateg(double t) {
-    Vec WrP0P1=port[1]->getPosition() - port[0]->getPosition();
+    Vec WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
     forceDir = WrP0P1/nrm2(WrP0P1);
     g(0) = trans(forceDir)*WrP0P1;
   } 
 
   void Spring::updategd(double t) {
-    gd(0) = trans(forceDir)*(port[1]->getVelocity() - port[0]->getVelocity());  
+    gd(0) = trans(forceDir)*(frame[1]->getVelocity() - frame[0]->getVelocity());  
   }    
 
   void Spring::updateh(double t) {
     la(0) = (cT*(g(0)-l0) + dT*gd(0));
     WF[0] = forceDir*la;
     WF[1] = -WF[0];
-    for(unsigned int i=0; i<port.size(); i++)
-      h[i] += trans(port[i]->getJacobianOfTranslation())*WF[i];
+    for(unsigned int i=0; i<frame.size(); i++)
+      h[i] += trans(frame[i]->getJacobianOfTranslation())*WF[i];
   }    
 
-  void Spring::connect(Frame *port0, Frame* port1) {
-    LinkMechanics::connect(port0);
-    LinkMechanics::connect(port1);
+  void Spring::connect(Frame *frame0, Frame* frame1) {
+    LinkMechanics::connect(frame0);
+    LinkMechanics::connect(frame1);
   }
 
   void Spring::plot(double t,double dt) {
@@ -66,8 +66,8 @@ namespace MBSim {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
-        WrOFromPoint = port[0]->getPosition();
-        WrOToPoint   = port[1]->getPosition();
+        WrOFromPoint = frame[0]->getPosition();
+        WrOToPoint   = frame[1]->getPosition();
         vector<double> data;
         data.push_back(t); 
         data.push_back(WrOFromPoint(0));

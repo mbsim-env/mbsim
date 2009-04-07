@@ -124,7 +124,7 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      std::vector<Frame*> port;
+      std::vector<Frame*> frame;
 
       /** 
        * \brief array in which all contours are listed, connecting bodies via link

@@ -37,16 +37,16 @@ namespace MBSim {
   void Actuator::updateh(double t) {
     la = (*func)(t); // norm of force / moment is given by user
     if(KOSYID) { // calculation of force / moment direction
-      Wf = port[KOSYID-1]->getOrientation()*forceDir;
-      Wm = port[KOSYID-1]->getOrientation()*momentDir;
+      Wf = frame[KOSYID-1]->getOrientation()*forceDir;
+      Wm = frame[KOSYID-1]->getOrientation()*momentDir;
     }
     WF[0] = Wf*la(IT);
     WF[1] = -WF[0];
     WM[0] = Wm*la(IR);
     WM[1] = -WM[0];
 
-    h[0] += trans(port[0]->getJacobianOfTranslation())*WF[0] + trans(port[0]->getJacobianOfRotation())*WM[0];
-    h[1] += trans(port[1]->getJacobianOfTranslation())*WF[1] + trans(port[1]->getJacobianOfRotation())*WM[1];
+    h[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
+    h[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
   }
 
   void Actuator::init() {
@@ -72,9 +72,9 @@ namespace MBSim {
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
   }
 
-  void Actuator::connect(Frame *port0, Frame* port1) {
-    LinkMechanics::connect(port0);
-    LinkMechanics::connect(port1);
+  void Actuator::connect(Frame *frame0, Frame* frame1) {
+    LinkMechanics::connect(frame0);
+    LinkMechanics::connect(frame1);
   }
 
   void Actuator::setUserFunction(DataInterfaceBase *func_) {

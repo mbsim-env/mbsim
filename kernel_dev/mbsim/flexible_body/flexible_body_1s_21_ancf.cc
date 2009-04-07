@@ -22,7 +22,7 @@
 #include <config.h>
 #include "finite_element_1s_21_ancf.h"
 #include "body_flexible_1s_21_ancf.h"
-#include "port.h"
+#include "frame.h"
 #include "dynamic_system_solver.h"
 #include "contact.h"
 #include "contour.h"
@@ -116,24 +116,24 @@ namespace MBSim {
 
 
   void BodyFlexible1s21ANCF::updatePorts(double t) {
-    for(unsigned int i=0; i<port.size(); i++) {
+    for(unsigned int i=0; i<frame.size(); i++) {
       if(S_Port[i].type == CONTINUUM) {      // ForceElement on continuum
 	const double &s = S_Port[i].alpha(0);// globaler KontParameter
 	double sLokal = BuildElement(s);
 	Vec Z = balken->StateBalken(qElement,uElement,sLokal);
-	port[i]->setWrOP(WrON00 + JT * Z(0,1));//q(5*node+0,5*node+1));
-	port[i]->setWvP (         JT * Z(3,4));//u(5*node+0,5*node+1));
-	port[i]->setWomegaP(      JR * Z(5,5));//u(5*node+2,5*node+2));
+	frame[i]->setWrOP(WrON00 + JT * Z(0,1));//q(5*node+0,5*node+1));
+	frame[i]->setWvP (         JT * Z(3,4));//u(5*node+0,5*node+1));
+	frame[i]->setWomegaP(      JR * Z(5,5));//u(5*node+2,5*node+2));
       }
       else if(S_Port[i].type == NODE) { // ForceElement on node
 	const int &node = S_Port[i].ID;
-	port[i]->setWrOP(WrON00 + JT * q(NodeDOFs*node+0,NodeDOFs*node+1));//WrOS + WrSP[i]);
-	port[i]->setWvP (         JT * u(NodeDOFs*node+0,NodeDOFs*node+1));//WvS + crossProduct(WomegaK, WrSP[i]));
+	frame[i]->setWrOP(WrON00 + JT * q(NodeDOFs*node+0,NodeDOFs*node+1));//WrOS + WrSP[i]);
+	frame[i]->setWvP (         JT * u(NodeDOFs*node+0,NodeDOFs*node+1));//WvS + crossProduct(WomegaK, WrSP[i]));
 	Vec a  = q(NodeDOFs*node+2,NodeDOFs*node+3); // Winkelgeschwindigkeit bestimmen: tangente an struktur
 	double a_ = nrm2(a);
 	Vec t(2); t(0) = - a(1)/a_; t(1) = a(0)/a_; 
 	Vec w(1); w(0) = trans(t) * u(NodeDOFs*node+2,NodeDOFs*node+3); // Winkelgeschwindigkeit bestimmen
-	port[i]->setWomegaP(      JR * w);
+	frame[i]->setWomegaP(      JR * w);
       }
     }
   }
@@ -276,19 +276,19 @@ namespace MBSim {
   }
 
   void BodyFlexible1s21ANCF::addPort(const string &name, const int &node) {
-    Port *port = new Port(name);
+    Port *frame = new Port(name);
     ContourPointData cpTemp;
     cpTemp.type = NODE;
     cpTemp.ID = node;
-    addPort(port,cpTemp);
+    addPort(frame,cpTemp);
   }
 
   // void BodyFlexible1s21ANCF::addPort(const string &name, const double &s) {
-  //   Port *port = new Port(name);
+  //   Port *frame = new Port(name);
   //   ContourPointData cpTemp;
   //   cpTemp.type  = CONTINUUM;
   //   cpTemp.alpha = Vec(1,INIT,s);
-  //   addPort(port,cpTemp);
+  //   addPort(frame,cpTemp);
   // }
 
   //----------------------------------------------------------------------
