@@ -128,8 +128,8 @@ namespace MBSim {
             _exit(1);
           }
           amvisFrame->setHDF5LinkTarget(rigidBody->amvisBody);
-          amvisFrame->setInitialTranslation(rigidBody->SrSK[rigidBody->frameIndex(this)]);
-          amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASK[rigidBody->frameIndex(this)]));
+          amvisFrame->setInitialTranslation(rigidBody->SrSF[rigidBody->frameIndex(this)]);
+          amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASF[rigidBody->frameIndex(this)]));
         }
       }
 #endif
