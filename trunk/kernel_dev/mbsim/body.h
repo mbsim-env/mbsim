@@ -102,7 +102,6 @@ namespace MBSim {
       int contourIndex(const Contour *contour_) const;
       
       void setDynamicSystemSolver(DynamicSystemSolver *sys);
-      void setFullName(const std::string &str);
       
       virtual void plot(double t, double dt = 1); 
       virtual void initPlot();

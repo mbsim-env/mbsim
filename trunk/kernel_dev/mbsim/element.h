@@ -72,25 +72,6 @@ namespace MBSim {
 
       /* INTERFACE */
       /**
-       * \param element fullname DEPRECATED
-       */
-      virtual void setFullName(const std::string &str) { fullName = str; }
-
-      /**
-       * \brief load topology
-       * \param path TODO
-       * \param inputfile
-       */
-      virtual void load(const std::string &path, std::ifstream &inputfile);
-
-      /**
-       * \brief save topology
-       * \param path TODO
-       * \param outputfile
-       */
-      virtual void save(const std::string &path, std::ofstream &outputfile);
-
-      /**
        * \brief TODO
        */
       virtual void initDataInterfaceBase(DynamicSystemSolver *parentds) {};
@@ -128,17 +109,6 @@ namespace MBSim {
        * \param element name
        */
       void setName(const std::string &str) { name = str; }
-
-      /**
-       * \return element fullname
-       */
-      const std::string& getFullName() const { return fullName; }
-
-      /** 
-       * \param input file
-       * \return number of elements in topology of input file
-       */
-      static int getNumberOfElements(std::ifstream &inputfile);
 
       /**
        * \return dynamic system
@@ -198,11 +168,6 @@ namespace MBSim {
        * \brief name of element 
        */
       std::string name;
-
-      /** 
-       * \brief fullname of element
-       */
-      std::string fullName;
 
       /** 
        * \brief vector for data interface base references

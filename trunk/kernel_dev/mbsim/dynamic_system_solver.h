@@ -104,9 +104,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
-      virtual std::string getFullName() const { return name; }
-      virtual void load(const std::string &path, std::ifstream& inputfile); // TODO replace with XML
-      virtual void save(const std::string &path, std::ofstream& outputfile);
       virtual std::string getType() const { return "DynamicSystemSolver"; }
       virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
       virtual void closePlot();
@@ -345,32 +342,6 @@ namespace MBSim {
        * \brief initialise data interface base
        */
       void initDataInterfaceBase();
-
-//      /**
-//       * \param name of frame to find in dynamic system
-//       * TODO concept
-//       */
-//      Frame* findFrame( const std::string &name );
-//      
-//      /**
-//       * \param name of contour to find in dynamic system
-//       *
-//       * TODO concept
-//       */
-//      Contour* findContour( const std::string &name );
-
-      /**
-       * \param path of topology
-       * \return dynamic system 
-       */
-      static DynamicSystemSolver* load(const std::string &path);
-      
-      /**
-       * \brief save dynamic system topology
-       * \param path of topology
-       * \param dynamic system pointer
-       */
-      static void save(const std::string &path, DynamicSystemSolver* ds);
 
       /**
        * \brief handler for signals

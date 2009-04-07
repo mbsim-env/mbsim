@@ -146,15 +146,6 @@ namespace MBSim {
       contour[i]->setDynamicSystemSolver(sys);
   }
 
-  void Body::setFullName(const string &str) {
-    Object::setFullName(str);
-
-    for(unsigned i=0; i<frame.size(); i++)
-      frame[i]->setFullName(getFullName() + "." + frame[i]->getName());
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setFullName(getFullName() + "." + contour[i]->getName());
-  }
-
   void Body::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Object::plot(t,dt);

@@ -70,29 +70,6 @@ namespace MBSim {
 //      return false;
 //    
 //  }
-  void GeneralizedForceLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of constraint law:" << endl;
-    outputfile << "Unkown" << endl << endl;
-  }
-
-  void GeneralizedForceLaw::load(const string &path, ifstream& inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of constraint law:
-    getline(inputfile,dummy); // Type of constraint law 
-    getline(inputfile,dummy); // Newline
-  }
-
-  void UnilateralConstraint::load(const string& path, ifstream &inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of constraint law:
-    getline(inputfile,dummy); // Type of constraint law 
-    getline(inputfile,dummy); // Newline
-  }
-
-  void UnilateralConstraint::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of constraint law:" << endl;
-    outputfile << "UnilateralConstraint" << endl << endl;
-  }
 
   double UnilateralConstraint::project(double la, double gdn, double r) {
     return proxCN(la-r*gdn);
@@ -160,18 +137,6 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
-  void GeneralizedImpactLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of normal impact law:" << endl;
-    outputfile << "Unkown" << endl << endl;
-  }
-
-  void GeneralizedImpactLaw::load(const string &path, ifstream& inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of impact law:
-    getline(inputfile,dummy); // Type of impact law 
-    getline(inputfile,dummy); // Newline
-  }
-
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
@@ -211,30 +176,6 @@ namespace MBSim {
       return false;
   }
 
- void UnilateralNewtonImpact::load(const string& path, ifstream &inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of impact law:
-    getline(inputfile,dummy); // Type of impact law 
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Restitution coefficient:
-    inputfile >> epsilon;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Marginal velocity:
-    inputfile >> gd_limit;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-  }
-
-  void UnilateralNewtonImpact::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of normal impact law:" << endl;
-    outputfile << "UnilateralNewtonImpact" << endl << endl;
-    outputfile << "# Restitution coefficient:" << endl;
-    outputfile << epsilon << endl << endl;
-    outputfile << "# Marginal velocity:" << endl;
-    outputfile << gd_limit << endl << endl;
-  }
-
   double BilateralImpact::project(double la, double gdn, double gda, double r) {
     return la-r*gdn;
   }
@@ -252,36 +193,6 @@ namespace MBSim {
 
   bool BilateralImpact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
     return fabs(gdn) <= gdTol;
-  }
-
-  void FrictionForceLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of friction law:" << endl;
-    outputfile << "Unkown" << endl << endl;
-  }
-
-  void FrictionForceLaw::load(const string &path, ifstream& inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of friction law:
-    getline(inputfile,dummy); // Type of friction law 
-    getline(inputfile,dummy); // Newline
-  }
-
-  void PlanarCoulombFriction::load(const string& path, ifstream &inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of friction law:
-    getline(inputfile,dummy); // Type of friction law 
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Friction coefficient:
-    inputfile >> mu;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-  }
-
-  void PlanarCoulombFriction::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of friction law:" << endl;
-    outputfile << "PlanarCoulombFriction" << endl << endl;
-    outputfile << "# Friction coefficient:" << endl;
-    outputfile << mu << endl << endl;
   }
 
   Vec PlanarCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
@@ -449,18 +360,6 @@ namespace MBSim {
     return -mu*gd/nrm2(gd);
   }
 
-  void FrictionImpactLaw::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of tangential impact law:" << endl;
-    outputfile << "Unkown" << endl << endl;
-  }
-
-  void FrictionImpactLaw::load(const string &path, ifstream& inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of friction law:
-    getline(inputfile,dummy); // Type of friction law 
-    getline(inputfile,dummy); // Newline
-  }
-
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
   }
@@ -497,24 +396,6 @@ namespace MBSim {
       return true;
     else 
       return false;
-  }
-
-  void PlanarCoulombImpact::load(const string& path, ifstream &inputfile) {
-    string dummy;
-    getline(inputfile,dummy); // # Type of tangential impact law:
-    getline(inputfile,dummy); // Type of tangential impact law 
-    getline(inputfile,dummy); // Newline
-    getline(inputfile,dummy); // # Impact coefficient:
-    inputfile >> mu;
-    getline(inputfile,dummy); // Rest of line
-    getline(inputfile,dummy); // Newline
-  }
-
-  void PlanarCoulombImpact::save(const string &path, ofstream &outputfile) {
-    outputfile << "# Type of tangential impact law:" << endl;
-    outputfile << "PlanarCoulombImpact" << endl << endl;
-    outputfile << "# Friction coefficient:" << endl;
-    outputfile << mu << endl << endl;
   }
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {

@@ -72,12 +72,6 @@ namespace MBSim {
     LinkMechanics::connect(frame_);
   }
 
-  void Load::setUserFunction(DataInterfaceBase *func_) {
-    cout<<"!!!HINT!!!You are using the obsolete Method setUserFunction in Load "<<name<<endl;
-    cout<<"Use Method setSignal instead! This Method will be removed."<<endl;
-    func = func_;
-  }
-
   void Load::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 

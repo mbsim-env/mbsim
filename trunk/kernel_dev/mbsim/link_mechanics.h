@@ -40,7 +40,6 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
-   * \todo delete load/save TODO
    */
   class LinkMechanics : public Link {
     public:
@@ -64,8 +63,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      //void load(const std::string& path, std::ifstream &inputfile);
-      //void save(const std::string &path, std::ofstream &outputfile);
       std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
       /***************************************************/

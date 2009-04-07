@@ -177,14 +177,6 @@ namespace MBSim {
   Line::Line(const string &name) : Contour(name) {}
   Line::~Line() {}
 
-  void Line::save(const string& path, ofstream &outputfile) {
-    Contour::save(path,outputfile);
-  }
-
-  void Line::load(const string& path, ifstream &inputfile) {
-    Contour::load(path,inputfile);
-  }
-
   /* Circle Solid */
   CircleSolid::CircleSolid(const string &name) : Contour(name), r(0), Cb(3) {}
   CircleSolid::CircleSolid(const string &name, double r_) : Contour(name), r(r_), Cb(3) {}
@@ -244,18 +236,6 @@ namespace MBSim {
     Contour::init();
     Cn = crossProduct(Cd1,Cd2);
     Cn = Cn/nrm2(Cn);
-
-#ifdef HAVE_AMVIS
-    if(boolAMVis && !bodyAMVis) 
-    {
-      AMVis::Area *area = new AMVis::Area(getFullName(),1,boolAMVisBinary);
-      area->setBase1(Cd1(0),Cd1(1),Cd1(2));
-      area->setLimit1(lim1);
-      area->setBase2(Cd2(0),Cd2(1),Cd2(2));
-      area->setLimit2(lim2);	
-      bodyAMVis = area;
-    }
-#endif
   }
 
   /* Edge */
@@ -268,14 +248,6 @@ namespace MBSim {
   void Sphere::init() 
   {
     Contour::init();
-#ifdef HAVE_AMVIS
-    if(boolAMVis && !bodyAMVis) 
-    {
-      AMVis::Sphere *sphere = new AMVis::Sphere(getFullName(),1,boolAMVisBinary);
-      sphere->setRadius(r);
-      bodyAMVis = sphere;
-    }
-#endif
   }
 #ifdef HAVE_AMVISCPPINTERFACE
   void Sphere::enableAMVis(bool enable) {
@@ -373,13 +345,6 @@ namespace MBSim {
 
   void ContourQuad::init() {
     Contour::init();
-#ifdef HAVE_AMVIS
-    if(boolAMVis && !bodyAMVis) 
-    {
-      AMVis::Quad *quad = new AMVis::Quad(getFullName(),1,boolAMVisBinary);		
-      bodyAMVis = quad;
-    }
-#endif
   }
 
   bool ContourQuad::testInsideBounds(const ContourPointData &cp) 

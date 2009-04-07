@@ -53,43 +53,6 @@ namespace MBSim {
       r[i] += W[i]*la;
   }
 
-  //void LinkMechanics::load(const string &path, ifstream& inputfile) {
-  //  Link::load(path, inputfile);
-  //  string dummy;
-
-  //  getline(inputfile,dummy); // # Connected cosy
-  //  int n = getNumberOfElements(inputfile);
-  //  for(int i=0; i<n; i++) {
-  //    getline(inputfile,dummy); // Connected cosy
-  //    connect(getDynamicSystemSolver()->findFrame(dummy));
-  //  }
-  //  getline(inputfile,dummy); // newline
-
-  //  getline(inputfile,dummy); // # Connected contours
-  //  n = getNumberOfElements(inputfile);
-  //  for(int i=0; i<n; i++) {
-  //    getline(inputfile,dummy); // Connected contour
-  //    connect(getDynamicSystemSolver()->findContour(dummy));
-  //  }
-  //  getline(inputfile,dummy); // newline
-  //}
-
-  //void LinkMechanics::save(const string &path, ofstream& outputfile) {
-  //  Link::save(path,outputfile);
-
-  //  outputfile << "# Connected coordinate sytems:" << endl;
-  //  for(unsigned int i=0; i<frame.size(); i++) {
-  //    outputfile << frame[i]->getFullName() << endl;
-  //  }
-  //  outputfile << endl;
-
-  //  outputfile << "# Connected contours:" << endl;
-  //  for(unsigned int i=0; i<contour.size(); i++) {
-  //    outputfile << contour[i]->getFullName() << endl;
-  //  }
-  //  outputfile << endl;
-  //}
-
   void LinkMechanics::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       //#ifdef HAVE_AMVIS TODO force visualisation

@@ -68,8 +68,6 @@ namespace MBSim {
         virtual void plot(double t, double dt=1);
         virtual void initPlot();
         virtual std::string getType() const { return "FlexibleBody"; }
-        virtual void load(const std::string &path, std::ifstream& inputfile) { Body::load(path, inputfile); }
-        virtual void save(const std::string &path, std::ofstream &outputfile) { Body::save(path, outputfile); }
 
         /* INHERITED INTERFACE OF OBJECT */
         virtual void init();

@@ -76,7 +76,6 @@ namespace MBSim {
     checkForConstraints(); // TODO for preinit
     setUpLinks();
     setDynamicSystemSolver(this);
-    setFullName(name);
 
     calcxSize();
 
@@ -515,29 +514,6 @@ namespace MBSim {
   void DynamicSystemSolver::updateV(double t) {
     V = W;
     Group::updateV(t);
-  }
-
-  void DynamicSystemSolver::load(const string &path, ifstream& inputfile) {
-    setDynamicSystemSolver(this);
-
-    Group::load(path, inputfile);
-
-    string dummy;
-
-    getline(inputfile,dummy); // #  Acceleration of gravity:
-    inputfile >> grav;
-    getline(inputfile,dummy); // # Rest of line
-    getline(inputfile,dummy); // # Newline
-  }
-
-  void DynamicSystemSolver::save(const string &path, DynamicSystemSolver* ds) {
-    string model = path + "/" + ds->getName() + ".mdl";
-
-    ofstream outputfile(model.c_str(), ios::binary);
-
-    ds->save(path, outputfile);
-
-    outputfile.close();
   }
   
   void DynamicSystemSolver::plot(const Vec& zParent, double t, double dt) {
@@ -1063,21 +1039,21 @@ namespace MBSim {
     //     if(object[i1]->getName() == name) return (Element*)object[i1];
     //   }
     //   for(i1=0; i1<object.size(); i1++) {
-    //     if(object[i1]->getFullName() == name) return (Element*)object[i1];
+    //     if(object[i1]->getPath() == name) return (Element*)object[i1];
     //   }
     //   unsigned int i2;
     //   for(i2=0; i2<link.size(); i2++) {
     //     if(link[i2]->getName() == name) return (Element*)link[i2];
     //   }
     //   for(i2=0; i2<link.size(); i2++) {
-    //     if(link[i2]->getFullName() == name) return (Element*)link[i2];
+    //     if(link[i2]->getPath() == name) return (Element*)link[i2];
     //   }
     //   unsigned int i3;
     //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
     //     if(orderOneDynamics[i3]->getName() == name) return (Element*)orderOneDynamics[i3];
     //   }
     //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
-    //     if(orderOneDynamics[i3]->getFullName() == name) return (Element*)orderOneDynamics[i3];
+    //     if(orderOneDynamics[i3]->getPath() == name) return (Element*)orderOneDynamics[i3];
     //   }
     //   if(!(i1<object.size())||!(i2<link.size())||!(i3<orderOneDynamics.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
     //   assert(i1<object.size()||i2<link.size()||!(i3<orderOneDynamics.size()));
@@ -1136,91 +1112,6 @@ namespace MBSim {
     for(io1 = object.begin(); io1 != object.end(); ++io1) (*io1)->initDataInterfaceBase(this);
     vector<OrderOneDynamics*>::iterator ie1;
     for(ie1 = orderOneDynamics.begin(); ie1 != orderOneDynamics.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
-  }
-
-//  Frame* DynamicSystemSolver::findFrame(const string &name) {
-//    istringstream stream(name);
-//
-//    char dummy[10000];
-//    vector<string> l;
-//    do {
-//      stream.getline(dummy,10000,'.');
-//      l.push_back(dummy);
-//    } while(!stream.eof());
-//
-//    if(l.size() == 1)
-//      throw 5;
-//
-//    if(l.size() == 2)
-//      return getFrame(l[1]);
-//
-//    DynamicSystem *sys = this;
-//    for(unsigned int i=1; i<l.size()-2; i++) {
-//      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
-//    }
-//    return sys->getObject(l[l.size()-2])->getFrame(l[l.size()-1]);
-//  }
-//
-//  Contour* DynamicSystemSolver::findContour(const string &name) {
-//    istringstream stream(name);
-//
-//    char dummy[10000];
-//    vector<string> l;
-//    do {
-//      stream.getline(dummy,10000,'.');
-//      l.push_back(dummy);
-//    } while(!stream.eof());
-//
-//    if(l.size() == 1)
-//      throw 5;
-//
-//    if(l.size() == 2)
-//      return getContour(l[1]);
-//
-//    DynamicSystem *sys = this;
-//    for(unsigned int i=1; i<l.size()-2; i++) {
-//      sys = static_cast<DynamicSystem*>(sys->getDynamicSystem(l[i]));
-//    }
-//    return sys->getObject(l[l.size()-2])->getContour(l[l.size()-1]);
-//  }
-
-  DynamicSystemSolver* DynamicSystemSolver::load(const string &path) {
-    DIR* dir = opendir(path.c_str());
-    dirent *first;
-    first = readdir(dir); // .
-    first = readdir(dir); // ..
-    string name;
-    while(first){
-      first = readdir(dir);
-      if(first) {
-        name= first->d_name;
-        unsigned int s = name.rfind(".mdl");
-        if(s<name.size()) {
-          string buf = name.substr(0,s);
-          if(buf.find(".")>buf.size())
-            break;
-        }
-      }
-    }
-    closedir(dir);
-
-    string model = path + "/" + name;
-
-    ifstream inputfile(model.c_str(), ios::binary);
-
-    DynamicSystemSolver* ds = new DynamicSystemSolver("NoName");
-
-    ds->load(path, inputfile);
-
-    inputfile.close();
-
-    return ds;
-  }
-  
-  void DynamicSystemSolver::save(const string &path, ofstream& outputfile) {
-    Group::save(path,outputfile);
-    outputfile << "# Acceleration of gravity:" << endl;
-    outputfile << grav << endl << endl;;
   }
 
   void DynamicSystemSolver::sigTermHandler(int) {

@@ -34,8 +34,6 @@ namespace MBSim {
       virtual ~Translation() {}
       virtual int getqSize() const = 0;
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
-      virtual void save(const std::string &path, std::ofstream& outputfile);
-      virtual void load(const std::string &path, std::ifstream& outputfile);
   };
 
   class LinearTranslation : public Translation {
@@ -53,9 +51,6 @@ namespace MBSim {
       fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
 	return PJT*q(0,PJT.cols()-1);
       }; 
-
-      void save(const std::string &path, std::ofstream& outputfile);
-      void load(const std::string &path, std::ifstream& outputfile);
   };
 
   class Rotation {
@@ -63,8 +58,6 @@ namespace MBSim {
       virtual ~Rotation() {}
       virtual int getqSize() const = 0;
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t) = 0; 
-      virtual void save(const std::string &path, std::ofstream& outputfile);
-      virtual void load(const std::string &path, std::ifstream& outputfile);
   };
 
   class Jacobian {
@@ -112,9 +105,6 @@ namespace MBSim {
       void setAxisOfRotation(const fmatvec::Vec& a_) {a = a_;}
 
       fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
-
-      void save(const std::string &path, std::ofstream& outputfile);
-      void load(const std::string &path, std::ifstream& outputfile);
   };
 
   class CardanAngles: public Rotation {

@@ -84,8 +84,7 @@ namespace MBSim {
       virtual AMVis::Group* getAMVisGrp() { return amvisGrp; }
 #endif
       /** 
-       * Return the full path of the object. This function replaces the getFullName
-       * which is deprecated.
+       * Return the full path of the object.
        * \param pathDelim The delimiter of the path
        */
       std::string getPath(char pathDelim='.') { return parent?parent->getPath()+pathDelim+name:name; }
@@ -118,7 +117,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       /** DEPRECATED */
-      virtual void setFullName(const std::string &str);
       virtual std::string getType() const { return "DynamicSystem"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot(double t, double dt);
