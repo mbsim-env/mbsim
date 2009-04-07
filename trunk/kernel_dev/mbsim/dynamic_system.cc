@@ -1046,20 +1046,6 @@ namespace MBSim {
       (*i)->checkAllgd();
   }
 
-  void DynamicSystem::setScaleTolQ(double scaleTolQ) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
-      (**i).setScaleTolQ(scaleTolQ);
-    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
-      (**i).setScaleTolQ(scaleTolQ);
-  }
-
-  void DynamicSystem::setScaleTolp(double scaleTolp) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
-      (**i).setScaleTolp(scaleTolp);
-    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
-      (**i).setScaleTolp(scaleTolp);
-  }
-
   void DynamicSystem::setgdTol(double tol) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
       (**i).setgdTol(tol);
@@ -1095,13 +1081,13 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::setlaIndMBS(int laIndParent) {
+  void DynamicSystem::setlaIndDS(int laIndParent) {
     int newlaInd = laInd + laIndParent;
     for(unsigned i=0; i<dynamicsystem.size(); i++)
-      dynamicsystem[i]->setlaIndMBS(newlaInd);
+      dynamicsystem[i]->setlaIndDS(newlaInd);
 
     for(unsigned i=0; i<link.size(); i++)
-      link[i]->setlaIndMBS(newlaInd);
+      link[i]->setlaIndDS(newlaInd);
   }
 
   void DynamicSystem::addFrame(Frame* cosy) {

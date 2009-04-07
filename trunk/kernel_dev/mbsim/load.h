@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,61 +13,110 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _LOAD_H_
 #define _LOAD_H_
 
-#include <mbsim/link.h>
+#include <mbsim/link_mechanics.h>
 
 namespace MBSim {
 
   class DataInterfaceBase;
 
-  /*! Comment
-   *
-   * */
-  class Load : public Link {
-
-    protected:
-      fmatvec::Index IT, IR;
-      fmatvec::Mat forceDir, momentDir, Wf, Wm;
-
-      DataInterfaceBase *func;
-      int KOSYID;
-
-      void updateg(double t) {}
-      void updategd(double t) {}
-      void updateh(double t);
-
+  /*! 
+   * \brief predefines load for one frame with additional possibility of rotation
+   * \author Martin Foerg
+   * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \todo delete and include functionality in actuator TODO
+   */
+  class Load : public LinkMechanics {
     public: 
+      /**
+       * \brief constructor
+       * \param name
+       */
       Load(const std::string &name);
+
+      /**
+       * \brief destructor
+       */
       virtual ~Load();
 
-      void calclaSize();
+      /* INHERITED INTERFACE OF LINKINTERFACE */
+      void updateh(double t);
+      void updateg(double t) {}
+      void updategd(double t) {}
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       void init();
-      bool isActive() const {return true;}
-      void checkActiveg() {}
-      void checkActivegd() {}
+      /***************************************************/
 
-      bool activeConstraintsChanged() {return false;}
-      bool gActiveChanged() {return false;}
+      /* INHERITED INTERFACE OF LINK */
+      void calclaSize();
+      bool isActive() const { return true; }
+      bool gActiveChanged() { return false; }
+      /***************************************************/
 
-      void setKOSY(int);
+      /* GETTER / SETTER */
+      void setKOSY(int id) { KOSYID = id; assert(KOSYID >= 0); assert(KOSYID <= 1); }
+      void setSignal(DataInterfaceBase *func_) { func = func_; }
+      /***************************************************/
+
+      /**
+       * \param frame to connect
+       */
+      void connect(Frame *frame1);
+
       void setUserFunction(DataInterfaceBase *func_);
-      void setSignal(DataInterfaceBase *func_);
-      void connect(Frame *port1);
+      
+      /**
+       * \param local force direction
+       */
       void setForceDirection(const fmatvec::Mat& fd);
+      
+      /**
+       * \param local moment direction
+       */
       void setMomentDirection(const fmatvec::Mat& md);
 
+      /**
+       * \brief initialises signals describing norm of force / moment
+       * \param parent, where to add the signal
+       */
       void initDataInterfaceBase(DynamicSystemSolver *parentds);
+
+    protected:
+      /**
+       * \brief indices of forces and moments
+       */
+      fmatvec::Index IT, IR;
+      
+      /**
+       * \brief local force and moment direction
+       */
+      fmatvec::Mat forceDir, momentDir;
+      
+      /**
+       * \brief global force and moment direction
+       */
+      fmatvec::Mat Wf, Wm;
+
+      /**
+       * \brief force / moment norm function
+       */
+      DataInterfaceBase *func;
+      
+      /**
+       * \brief frame index for rotating forces
+       */
+      int KOSYID;
   };
 
 }
 
 #endif
+

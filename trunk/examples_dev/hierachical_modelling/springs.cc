@@ -11,11 +11,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Spring::Spring(const string &name) : Link(name) {
+  Spring::Spring(const string &name) : LinkMechanics(name) {
   }
 
   void Spring::init() {
-    Link::init();
+    LinkMechanics::init();
 
     g.resize(1);
     gd.resize(1);
@@ -31,7 +31,7 @@ namespace MBSim {
         coilspringAMVis->setName(name);
         parent->getAMVisGrp()->addObject(coilspringAMVis);
       }
-      Link::initPlot();
+      LinkMechanics::initPlot();
 #endif
     }
   }
@@ -55,8 +55,8 @@ namespace MBSim {
   }    
 
   void Spring::connect(Frame *port0, Frame* port1) {
-    Link::connect(port0);
-    Link::connect(port1);
+    LinkMechanics::connect(port0);
+    LinkMechanics::connect(port1);
   }
 
   void Spring::plot(double t,double dt) {
@@ -80,7 +80,7 @@ namespace MBSim {
         coilspringAMVis->append(data);
       }
 #endif
-      Link::plot(t,dt);
+      LinkMechanics::plot(t,dt);
     }
   }
 

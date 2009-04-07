@@ -18,7 +18,6 @@
  */
 
 #include <config.h>
-#include <mbsim/contact.h>
 #include "contact_kinematics.h"
 
 using namespace fmatvec;

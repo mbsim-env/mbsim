@@ -1,8 +1,8 @@
 #include "system.h"
 #include "my_circuit.h"
 
-using namespace AMVis;
 using namespace fmatvec;
+using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setProjectDirectory("plot");
@@ -16,3 +16,4 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addDynamicSystem(elnet,Vec(3),SqrMat(3));
 
 }
+

@@ -19,13 +19,8 @@
 
 #include <config.h>
 #include "mbsim/link.h"
-#include "mbsim/frame.h"
-#include "mbsim/contour.h"
-#include "mbsim/object.h"
 #include "mbsim/utils/function.h"
-#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/dynamic_system.h"
-#include <string.h>
 
 #ifdef HAVE_AMVIS
 #include "arrow.h"
@@ -37,64 +32,7 @@ using namespace std;
 
 namespace MBSim {
 
-  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rFactorSize(0), rFactorInd(0), rMax(1.), laIndMBS(0) {}
-
-  Link::~Link() { 
-
-#ifdef HAVE_AMVIS   
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      delete arrowAMVis[i];
-      delete arrowAMVisUserFunctionColor[i];
-    }
-#endif
-
-  }
-
-  void Link::updater(double t) {
-
-    for(unsigned i=0; i<port.size(); i++) 
-      r[i] += W[i]*la;
-
-    for(unsigned i=0; i<contour.size(); i++) 
-      r[i] += W[i]*la;
-  }
-
-  void Link::load(const string &path, ifstream& inputfile) {
-    Element::load(path, inputfile);
-//    string dummy;
-//
-//    getline(inputfile,dummy); // # Connected cosy
-//    int n = getNumberOfElements(inputfile);
-//    for(int i=0; i<n; i++) {
-//      getline(inputfile,dummy); // Connected cosy
-//      connect(getDynamicSystemSolver()->findFrame(dummy));
-//    }
-//    getline(inputfile,dummy); // newline
-//
-//    getline(inputfile,dummy); // # Connected contours
-//    n = getNumberOfElements(inputfile);
-//    for(int i=0; i<n; i++) {
-//      getline(inputfile,dummy); // Connected contour
-//      connect(getDynamicSystemSolver()->findContour(dummy));
-//    }
-//    getline(inputfile,dummy); // newline
-  }
-
-  void Link::save(const string &path, ofstream& outputfile) {
-    Element::save(path,outputfile);
-
-    outputfile << "# Connected coordinate sytems:" << endl;
-    for(unsigned int i=0; i<port.size(); i++) {
-      outputfile << port[i]->getFullName() << endl;
-    }
-    outputfile << endl;
-
-    outputfile << "# Connected contours:" << endl;
-    for(unsigned int i=0; i<contour.size(); i++) {
-      outputfile << contour[i]->getFullName() << endl;
-    }
-    outputfile << endl;
-  }
+  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rFactorSize(0), rFactorInd(0), rMax(1.), laIndDS(0) {}
 
   void Link::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -130,84 +68,6 @@ namespace MBSim {
         plotVector.push_back(computePotentialEnergy()); 
       }
 
-//#ifdef HAVE_AMVIS TODO force visualisation
-//      Vec WrOToPoint;
-//      Vec LoadArrow(6,NONINIT);
-//      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-//        WrOToPoint = port[arrowAMVisID[i]]->getPosition();
-//        if(setValued){ 
-//          if (isActive()) {
-//            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-//            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-//          }
-//          else {
-//            LoadArrow = Vec(6,INIT,0.0);
-//            WrOToPoint= Vec(3,INIT,0.0);
-//          }
-//        }
-//        else {
-//          LoadArrow(0,2) = WF[arrowAMVisID[i]];
-//          LoadArrow(3,5) = WM[arrowAMVisID[i]];
-//        }
-//        LoadArrow= LoadArrow/1000*arrowAMVisScale[i]; // scaling: 1KN or 1KNm scaled to arrowlenght one
-//
-//        arrowAMVis[i]->setTime(t);
-//        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-//        double color;
-//        if (arrowAMVisMoment[i]) {
-//          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-//          color=0.5;
-//        }
-//        else {
-//          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-//          color =1.0;
-//        }
-//        if (arrowAMVisUserFunctionColor[i]) {
-//          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-//          if (color>1) color=1;
-//          if (color<0) color=0;
-//        }  
-//        arrowAMVis[i]->setColor(color);
-//        arrowAMVis[i]->appendDataset(0);
-//      }
-//
-//      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-//        if(setValued) { 
-//          if (isActive()) {
-//            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-//            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-//          }
-//          else {
-//            LoadArrow = Vec(6,INIT,0.0);
-//            WrOToPoint= Vec(3,INIT,0.0);
-//          }
-//        }
-//        else {
-//          LoadArrow(0,2) = WF[arrowAMVisID[i]];
-//          LoadArrow(3,5) = WM[arrowAMVisID[i]];
-//        }
-//        LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i]; // Scaling: 1KN or 1KNm scaled to arrowlenght one
-//
-//        arrowAMVis[i]->setTime(t);
-//        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-//        double color;
-//        if (arrowAMVisMoment[i]) {
-//          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-//          color=0.5;
-//        }
-//        else {
-//          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-//          color =1.0;
-//        }
-//        if (arrowAMVisUserFunctionColor[i]) {
-//          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-//          if (color>1) color=1;
-//          if (color<0) color=0;
-//        }  
-//        arrowAMVis[i]->setColor(color);
-//        arrowAMVis[i]->appendDataset(0);
-//      }
-//#endif
       Element::plot(t,dt);
     }
   }
@@ -217,57 +77,7 @@ namespace MBSim {
       Element::closePlot();
     }
   }
-
-  void Link::updateWRef(const Mat& WParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
-      W[i].resize()>>WParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->gethSize(j)-1);
-      W[i]>>WParent(I,J);
-    }
-  } 
-
-  void Link::updateVRef(const Mat& VParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
-      V[i].resize()>>VParent(I,J);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
-      V[i]>>VParent(I,J);
-    }
-  } 
-
-  void Link::updatehRef(const Vec &hParent, int j) {
-    for(unsigned i=0; i<port.size(); i++) {
-      Index I = Index(port[i]->getParent()->gethInd(parent,j),port[i]->getParent()->gethInd(parent,j)+port[i]->getJacobianOfTranslation().cols()-1);
-      h[i]>>hParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
-      h[i]>>hParent(I);
-    }
-  } 
-
-  void Link::updaterRef(const Vec &rParent) {
-    for(unsigned i=0; i<port.size(); i++) {
-      int hInd =  port[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+port[i]->getJacobianOfTranslation().cols()-1);
-      r[i]>>rParent(I);
-    }
-    for(unsigned i=0; i<contour.size(); i++) {
-      int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
-      r[i]>>rParent(I);
-    }
-  } 
-
+  
   void Link::updatewbRef(const Vec& wbParent) {
     wb.resize() >> wbParent(laInd,laInd+laSize-1);
   }
@@ -310,28 +120,6 @@ namespace MBSim {
 
   void Link::init() {
     rFactorUnsure.resize(rFactorSize);
-
-    for(unsigned i=0; i<port.size(); i++) {
-      W.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
-      V.push_back(Mat(port[i]->getJacobianOfTranslation().cols(),laSize));
-      h.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
-      r.push_back(Vec(port[i]->getJacobianOfTranslation().cols()));
-      WF.push_back(Vec(3));
-      WM.push_back(Vec(3));
-      fF.push_back(Mat(3,laSize));
-      fM.push_back(Mat(3,laSize));
-    }
-
-    for(unsigned i=0; i<contour.size(); i++) {
-      W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
-      V.push_back(Mat(contour[i]->getWJP().cols(),laSize));
-      h.push_back(Vec(contour[i]->getWJP().cols()));
-      r.push_back(Vec(contour[i]->getWJP().cols()));
-      WF.push_back(Vec(3));
-      WM.push_back(Vec(3));
-      fF.push_back(Mat(3,laSize));
-      fM.push_back(Mat(3,laSize));
-    }
   }
 
   void Link::initz() {
@@ -361,43 +149,9 @@ namespace MBSim {
         plotColumns.push_back("V");
       }
 
-      /*#ifdef HAVE_AMVIS
-        for (unsigned int i=0; i<arrowAMVis.size(); i++)
-        arrowAMVis[i]->writeBodyFile();
-#endif*/
       Element::initPlot(parent);
     }
   }
-
-  void Link::connect(Frame *frame_) {
-    port.push_back(frame_);
-  }
-
-  void Link::connect(Contour *contour_) {
-    contour.push_back(contour_);
-  }
-
-#ifdef HAVE_AMVIS
-  void Link::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
-    assert(ID >= 0);
-    assert(ID < 2);
-    arrowAMVis.push_back(arrow);
-    arrowAMVisScale.push_back(scale);
-    arrowAMVisID.push_back(ID);
-    arrowAMVisUserFunctionColor.push_back(funcColor);
-    arrowAMVisMoment.push_back(false);
-  }
-
-  void Link::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
-    assert(ID >= 0);
-    assert(ID < 2);
-    arrowAMVis.push_back(arrow);
-    arrowAMVisScale.push_back(scale);
-    arrowAMVisID.push_back(ID);
-    arrowAMVisUserFunctionColor.push_back(funcColor);
-    arrowAMVisMoment.push_back(true);
-  }
-#endif
 
   void Link::savela() {
     la0.resize() = la;

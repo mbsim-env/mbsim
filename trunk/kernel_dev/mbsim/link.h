@@ -30,21 +30,13 @@ namespace H5 {
   class Group;
 }
 
-#ifdef HAVE_AMVIS
-namespace AMVis {class Arrow;}
-#endif
-
 namespace MBSim {
-  class Frame;
-  class Contour;
-  class HitSphereLink;
-  class UserFunction;
 
   /** 
    * \brief general link to one or more objects
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
-   * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
+   * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
    */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
@@ -57,10 +49,9 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Link();
+      virtual ~Link() {}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updater(double t);
       virtual void updatewb(double t) {};
       virtual void updateW(double t) {};
       virtual void updateV(double t) {};
@@ -85,8 +76,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      void load(const std::string& path, std::ifstream &inputfile);
-      void save(const std::string &path, std::ofstream &outputfile);
       std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
       virtual void closePlot();
@@ -96,22 +85,22 @@ namespace MBSim {
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) = 0;
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
        */
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) = 0;
 
       /**
        * \brief references to smooth force vector of dynamic system parent
        */
-      virtual void updatehRef(const fmatvec::Vec &ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec &ref, int i=0) = 0;
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
        */
-      virtual void updaterRef(const fmatvec::Vec &ref);
+      virtual void updaterRef(const fmatvec::Vec &ref) = 0;
 
       /**
        * \brief references to TODO of dynamic system parent
@@ -274,16 +263,6 @@ namespace MBSim {
       virtual void checkConstraintsForTermination() { throw MBSimError("ERROR (Link::checkConstraintsForTermination): Not implemented."); }
 
       /**
-       * \param frame to add to link frame vector
-       */
-      virtual void connect(Frame *frame_);
-      
-      /**
-       * \param contour to add to link contour vector
-       */
-      virtual void connect(Contour *contour_);
-
-      /**
        * \brief set possible attribute for active relative distance in derived classes 
        */
       virtual void checkActiveg() {}
@@ -329,19 +308,6 @@ namespace MBSim {
       virtual void setgdTol(double tol) { gdTol = tol; }
       virtual void setgddTol(double tol) { gddTol = tol; }
       virtual void setrMax(double rMax_) { rMax = rMax_; }
-      virtual void setScaleTolQ(double scaleTolQ_) { scaleTolQ = scaleTolQ_; }
-      virtual void setScaleTolp(double scaleTolp_) { scaleTolp = scaleTolp_; }
-
-      /**
-       * \param arrow do display the link load (force or moment)
-       * \param scale scalefactor (default=1): scale=1 means 1KN or 1KNM is equivalent to arrowlength one
-       * \param ID of load and corresponding frame/contour (ID=0 or 1)
-       * \param userfunction to manipulate color of arrow at each timestep (default: red arrow for forces and green one for moments)
-       */
-#ifdef HAVE_AMVIS
-      virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
-      virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
-#endif
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -364,8 +330,8 @@ namespace MBSim {
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
       const fmatvec::Index& getlaIndex() const { return Ila; }
-      int getlaIndMBS() const { return laIndMBS; }
-      void setlaIndMBS(int laIndParent) { laIndMBS = laInd + laIndParent; }
+      int getlaIndDS() const { return laIndDS; }
+      void setlaIndDS(int laIndParent) { laIndDS = laInd + laIndParent; }
 
       const fmatvec::Vec& getg() const { return g; }
       fmatvec::Vec& getg() { return g; }
@@ -495,13 +461,12 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      int laIndMBS;
+      int laIndDS;
       
       /**
        * residuum of nonlinear contact equations
        */
       fmatvec::Vec res;
-
 
       /** 
        * \brief force direction matrix for nonsmooth right hand side
@@ -528,38 +493,6 @@ namespace MBSim {
        */
       fmatvec::Vec wb;
 
-      /** 
-       * \brief force and moment direction for smooth right hand side
-       */
-      std::vector<fmatvec::Vec> WF, WM;
-      
-      /**
-       * \brief force and moment direction matrix for nonsmooth right hand side
-       */
-      std::vector<fmatvec::Mat> fF, fM;
-
-      /**
-       * \brief scale factor for flow and pressure quantity tolerances tolQ/tolp=tol*scaleTolQ/scaleTolp TODO necessary?
-       */
-      double scaleTolQ, scaleTolp;
-
-      /**
-       * \brief array in which all frames are listed, connecting bodies via a link
-       */
-      std::vector<Frame*> port;
-
-      /** 
-       * \brief array in which all contours are listed, connecting bodies via link
-       */
-      std::vector<Contour*> contour;
-
-#ifdef HAVE_AMVIS
-      std::vector<AMVis::Arrow*> arrowAMVis;
-      std::vector<double> arrowAMVisScale;
-      std::vector<int> arrowAMVisID;
-      std::vector<bool> arrowAMVisMoment;
-      std::vector<UserFunction*> arrowAMVisUserFunctionColor;
-#endif
   };
 }
 

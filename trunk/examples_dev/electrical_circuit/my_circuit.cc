@@ -1,6 +1,8 @@
 #include "my_circuit.h"
 #include "modeling_classes.h"
 
+using namespace std;
+
 MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
 
   CompResistor *resistor = new CompResistor("Resistor");
