@@ -65,7 +65,7 @@ namespace MBSim {
        * \param relative orientation of dynamic system
        * \param relation frame
        */
-      void addDynamicSystem(DynamicSystem *dynamicsystem, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
+      void addDynamicSystem(DynamicSystem *dynamicsystem, const fmatvec::Vec &RrRD, const fmatvec::SqrMat &ARD, const Frame* refFrame=0);
   };
 }
 

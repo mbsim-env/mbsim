@@ -18,7 +18,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
 
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
-  Node* node = tree->addDynamicSystem(0,pendel1,Vec(3),SqrMat(3,EYE));
+  Node* node = tree->addTree(0,pendel1);
 
   Vec x(3);
   x(0) = 0.15;
@@ -30,7 +30,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   pendel1->getRod2()->addFrame("P",x,A,pendel1->getRod2()->getFrame("R"));
 
   Pendulum *pendel2 = new Pendulum("Pendel2"); 
-  tree->addDynamicSystem(node,pendel2,Vec(3),SqrMat(3,EYE));
+  tree->addTree(node,pendel2);
   pendel2->getRod1()->setFrameOfReference(pendel1->getRod2()->getFrame("P"));
 }
 

@@ -397,7 +397,12 @@ namespace MBSim {
        * \brief writes column header for plot file
        */
       virtual void initPlot() = 0;
-      
+    
+      /**
+       * return string representation of frame
+       */
+      virtual std::string getType() const = 0;
+
       /**
        * \return size of smooth right hand side
        */
@@ -471,7 +476,7 @@ namespace MBSim {
       /**
        * \return gyroscopic acceleration of translation of frame
        */
-      virtual const fmatvec::Vec& getGyroscopicAccelerationOfTranslation() = 0;
+      virtual const fmatvec::Vec& getGyroscopicAccelerationOfTranslation() const = 0;
 
       /**
        * \return gyroscopic acceleration of rotation of frame

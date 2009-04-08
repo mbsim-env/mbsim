@@ -149,15 +149,8 @@ namespace MBSim {
     return node;
   }
 
-  Node* Tree::addDynamicSystem(Node* tree, DynamicSystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
+  Node* Tree::addTree(Node* tree, Tree *sys) {
     DynamicSystem::addDynamicSystem(sys);
-
-    int i = 0;
-    if(refFrame)
-      i = frameIndex(refFrame);
-
-    IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
-    AIS.push_back(AIK[i]*ARS);
 
     Node *node = new Node(sys);
     if(tree)

@@ -22,6 +22,7 @@
 #include "mbsim/element.h"
 #include "mbsim/interfaces.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsim/frame.h"
 #ifdef HAVE_AMVISCPPINTERFACE
 #include "amviscppinterface/group.h"
 #endif
@@ -194,7 +195,7 @@ namespace MBSim {
        * \param check for existence of frame
        * \return frame
        */
-      virtual Frame* getFrame(const std::string &name, bool check=true);
+      virtual FrameInterface* getFrame(const std::string &name, bool check=true);
 
       /**
        * \param name of the contour
@@ -538,16 +539,11 @@ namespace MBSim {
 
       /**
        * \param frame to add
-       */
-      void addFrame(Frame *frame_);
-
-      /**
-       * \param frame to add
        * \param relative position of frame
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const FrameInterface* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -555,12 +551,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRK, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
-
-      /**
-       * \param contour to add
-       */
-      void addContour(Contour* contour);
+      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const FrameInterface* refFrame=0);
 
       /**
        * \param contour to add
@@ -568,25 +559,20 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const FrameInterface* refFrame=0);
 
       /**
        * \param contour to add
        * \param relative position of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE)); }
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const FrameInterface* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE),refFrame); }
 
       /**
        * \param frame
        * \return index of frame TODO renaming
        */
       int frameIndex(const Frame *frame_) const;
-
-      /**
-       * \param dynamic system to add
-       */
-      void addDynamicSystem(DynamicSystem *dynamicsystem);
 
       /**
        * \param name of the dynamic system
@@ -648,6 +634,11 @@ namespace MBSim {
        * \brief parent dynamic system
        */
       DynamicSystem *parent;
+
+      /**
+       * \brief frame of reference of the dynamic system
+       */
+      StationaryFrame frameOfReference;
 
       /** 
        * \brief container for possible ingredients
@@ -784,12 +775,12 @@ namespace MBSim {
       /**
        * \brief inertial position of frames, contours and dynamic systems (see group.h / tree.h)
        */
-      std::vector<fmatvec::Vec> IrOK, IrOC, IrOS;
+      std::vector<fmatvec::Vec> IrOF, IrOC, IrOD;
 
       /**
        * \brief orientation to inertial frame of frames, contours and dynamic systems (see group.h / tree.h)
        */
-      std::vector<fmatvec::SqrMat> AIK, AIC, AIS;
+      std::vector<fmatvec::SqrMat> AIF, AIC, AID;
 
       /**
        * \brief vector of frames and contours
@@ -800,6 +791,21 @@ namespace MBSim {
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* amvisGrp;
 #endif
+
+      /**
+       * \param frame to add
+       */
+      void addFrame(Frame *frame_);
+
+      /**
+       * \param contour to add
+       */
+      void addContour(Contour* contour);
+
+      /**
+       * \param dynamic system to add
+       */
+      void addDynamicSystem(DynamicSystem *dynamicsystem);
   };
 }
 
