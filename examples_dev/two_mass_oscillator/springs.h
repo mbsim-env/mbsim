@@ -36,7 +36,7 @@ namespace MBSim {
       void setDamping(double d) {dT = d;}
       bool isActive() const {return true;}
       bool gActiveChanged() {return false;}
-      virtual void connect(Frame *frame1, Frame* frame2);
+      virtual void connect(FrameInterface *frame1, FrameInterface* frame2);
       void plot(double t,double dt=1); 
 #ifdef HAVE_AMVIS
       void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}

@@ -26,14 +26,14 @@
 #endif
 
 namespace MBSim {
-  
+
   class Frame;
   class Contour;
 
   /** 
    *  \brief base class for all mechanical bodies with mass and generalised coordinates
    *  \author Martin Foerg
-   *  \date 18.03.09
+   *  \date 2009-04-06 object and body divided (Markus Schneider)
    */
   class Body : public Object {
     public:
@@ -48,20 +48,25 @@ namespace MBSim {
        */
       virtual ~Body();
 
-      /* INHERITED INTERFACE */
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
       void sethSize(int hSize_, int i=0);
       void sethInd(int hInd_, int i=0); 
+      /*******************************************************/ 
 
-      /**
-       * \brief initialize body at start of simulation with respect to contours and frames
-       */
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt = 1); 
+      virtual void closePlot();
+      virtual std::string getType() const { return "Body"; }
+      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      /*******************************************************/ 
+
+      /* INHERITED INTERFACE OF OBJECT */
       virtual void init();
-
-      /**
-       * \brief initialize body at start of simulation with respect to contours and frames TODO
-       */
       virtual void preinit();
+      virtual void initPlot();
+      /*******************************************************/ 
 
+      /* INTERFACE FOR DERIVED CLASSES */
       /**
        * \param contour to add
        */
@@ -85,33 +90,28 @@ namespace MBSim {
        * \return frame
        */
       virtual Frame* getFrame(const std::string &name, bool check=true);
+      /*******************************************************/ 
 
+      /* GETTER / SETTER */
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
+#ifdef HAVE_AMVISCPPINTERFACE
+      AMVis::Group* getAMVisGrp() { return amvisGrp; }
+#endif
+      /*******************************************************/ 
 
       /**
        * \param frame
-       * \return index of frame TODO rename
+       * \return index of frame 
        */
       int frameIndex(const Frame *frame_) const;
 
       /**
        * \param contour
-       * \return index of contour TODO rename
+       * \return index of contour
        */
       int contourIndex(const Contour *contour_) const;
-      
-      void setDynamicSystemSolver(DynamicSystemSolver *sys);
-      
-      virtual void plot(double t, double dt = 1); 
-      virtual void initPlot();
-      virtual void closePlot();
-      virtual std::string getType() const {return "Body";}
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return amvisGrp; }
-#endif
-    
     protected:
       /**
        * \brief vector of frames and contours

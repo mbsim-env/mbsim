@@ -96,39 +96,39 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
       Vec Z = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
 
       Vec tmp(3,NONINIT); tmp(0) = Z(0); tmp(1) = Z(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      cp.getFrameOfReference().setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
 
       tmp(0) = cos(Z(2)); tmp(1) = sin(Z(2)); 
-      cp.getFrameOfReference().getOrientation().col(1) = frameParent->getOrientation() * tmp; // tangent
+      cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
 
       tmp(0) = -sin(Z(2)); tmp(1) = cos(Z(2));
-      cp.getFrameOfReference().getOrientation().col(0) = frameParent->getOrientation() * tmp; // normal
-      cp.getFrameOfReference().getOrientation().col(2) = -frameParent->getOrientation().col(2); // binormal (cartesian system)
+      cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
+      cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
       tmp(0) = Z(3); tmp(1) = Z(4);
-      cp.getFrameOfReference().setVelocity(frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
 
       tmp(0) = 0.; tmp(1) = 0.; tmp(2) = Z(5);
-      cp.getFrameOfReference().setAngularVelocity(frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       const int &node = cp.getNodeNumber();
 
       Vec tmp(3,NONINIT); tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      cp.getFrameOfReference().setPosition(frameParent->getPosition() + frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
 
       tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
-      cp.getFrameOfReference().getOrientation().col(1)    = frameParent->getOrientation() * tmp; // tangent
+      cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
 
       tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2));
-      cp.getFrameOfReference().getOrientation().col(0)    =  frameParent->getOrientation() * tmp; // normal
-      cp.getFrameOfReference().getOrientation().col(2)    = -frameParent->getOrientation().col(2); // binormal (cartesian system)
+      cp.getFrameOfReference().getOrientation().col(0)    =  frameOfReference->getOrientation() * tmp; // normal
+      cp.getFrameOfReference().getOrientation().col(2)    = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
       tmp(0) = u(5*node+0); tmp(1) = u(5*node+1);
-      cp.getFrameOfReference().setVelocity(frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
 
       tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
-      cp.getFrameOfReference().setAngularVelocity(frameParent->getOrientation() * tmp);
+      cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
     }
 
     if(frame!=0) { // frame should be linked to contour point data
@@ -162,8 +162,8 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
       Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
     }
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameParent->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
-    cp.getFrameOfReference().setJacobianOfRotation   (frameParent->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
@@ -180,8 +180,8 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
 
     initialized = true;
 
-    contourR->setAWC(frameParent->getOrientation());
-    contourL->setAWC(frameParent->getOrientation());
+    contourR->setAWC(frameOfReference->getOrientation());
+    contourL->setAWC(frameOfReference->getOrientation());
 
     Vec contourRBinormal(3,INIT,0.0); contourRBinormal(2) = 1.0;
     Vec contourLBinormal = - contourRBinormal;
@@ -204,7 +204,7 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
     }
 
     l0 = L/Elements;
-    Vec g = trans(frameParent->getOrientation()(0,0,2,1))*ds->getAccelerationOfGravity();
+    Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*ds->getAccelerationOfGravity();
     for(int i=0;i<Elements;i++) {
       qElement.push_back(Vec(8,INIT,0.));
       uElement.push_back(Vec(8,INIT,0.));
@@ -221,11 +221,11 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
 
       float amvisJT[3][2], amvisJR[3];
       for(int i=0;i<3;i++) {
-        for(int j=0;j<2;j++) amvisJT[i][j] = frameParent->getOrientation()(i,j);
-        amvisJR[i] = frameParent->getOrientation()(i,0);
+        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
+        amvisJR[i] = frameOfReference->getOrientation()(i,0);
       }
       RCMbody->setJacobians(amvisJT,amvisJR);
-      RCMbody->setInitialTranslation(frameParent->getPosition()(0),frameParent->getPosition()(1),frameParent->getPosition()(2));
+      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
       RCMbody->setCylinder(AMVisRadius);
       RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
       RCMbody->setColor(AMVisColor);

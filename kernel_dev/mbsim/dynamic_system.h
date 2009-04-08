@@ -277,7 +277,7 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updateqRef(const fmatvec::Vec &ref); 
-      
+
       /**
        * \brief references to differentiated positions of dynamic system parent
        * \param vector to be referenced
@@ -302,13 +302,13 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updatehRef(const fmatvec::Vec &ref, int i=0);
-      
+
       /**
        * \brief references to order one right hand side of dynamic system parent
        * \param vector to be referenced
        */
       void updatefRef(const fmatvec::Vec &ref);
-      
+
       /**
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
@@ -340,13 +340,13 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updategRef(const fmatvec::Vec &ref);
-      
+
       /**
        * \brief references to relative velocities of dynamic system parent
        * \param vector to be referenced
        */
       void updategdRef(const fmatvec::Vec &ref);
-      
+
       /**
        * \brief references to contact force parameters of dynamic system parent
        * \param vector to be referenced
@@ -435,7 +435,7 @@ namespace MBSim {
        * \return flag, if vector of active relative distances has changed
        */
       bool gActiveChanged();
- 
+
       /**
        * \brief calculates size of stop vector
        */
@@ -510,7 +510,7 @@ namespace MBSim {
        * \param tolerance for relative velocity
        */
       void setgdTol(double tol);
-      
+
       /**
        * \param tolerance for relative acceleration
        */
@@ -594,12 +594,12 @@ namespace MBSim {
        * \return dynamic system
        */
       DynamicSystem* getDynamicSystem(const std::string &name,bool check=true);
-      
+
       /**
        * \param object to add
        */
       void addObject(Object *object);
-      
+
       /**
        * \param name of the object
        * \param check for existence of object
@@ -618,12 +618,12 @@ namespace MBSim {
        * \return link
        */
       Link* getLink(const std::string &name,bool check=true);
-      
+
       /**
        * \param order one dynamics to add
        */
       void addOrderOneDynamics(OrderOneDynamics *ood_);
-      
+
       /**
        * \param name of the order one dynamics
        * \param check for existence of order one dynamics
@@ -635,7 +635,7 @@ namespace MBSim {
        * \param data interface base to add
        */
       void addDataInterfaceBase(DataInterfaceBase* dib_);
-      
+
       /**
        * \param name of the data interface interface
        * \param check for existence of data interface interface

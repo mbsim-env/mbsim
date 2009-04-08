@@ -1267,7 +1267,7 @@ namespace MBSim {
     updategd(t);
     updateT(t); 
     resizeJacobians(1);
-    updateSecondJacobians(t);
+    updateInverseKineticsJacobians(t);
     updatehRef(hParent,1);
     updateh(t); 
     updateMRef(MParent,1);

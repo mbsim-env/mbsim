@@ -18,10 +18,10 @@
  */
 
 #include <config.h>
-#include <mbsim/body.h>
-#include <mbsim/frame.h>
-#include <mbsim/contour.h>
-#include <mbsim/dynamic_system.h>
+#include "mbsim/body.h"
+#include "mbsim/frame.h"
+#include "mbsim/contour.h"
+#include "mbsim/dynamic_system.h"
 
 using namespace std;
 
@@ -59,6 +59,37 @@ namespace MBSim {
       (*i)->sethInd(hInd[j],j);
   }  
 
+  void Body::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Object::plot(t,dt);
+
+      for(unsigned int j=0; j<frame.size(); j++)
+        frame[j]->plot(t,dt);
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->plot(t,dt);
+    }
+  }
+
+  void Body::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Object::closePlot();
+
+      for(unsigned int j=0; j<frame.size(); j++)
+        frame[j]->closePlot();
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->closePlot();
+    }
+  }
+
+  void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
+    Object::setDynamicSystemSolver(sys);
+
+    for(unsigned i=0; i<frame.size(); i++)
+      frame[i]->setDynamicSystemSolver(sys);
+    for(unsigned i=0; i<contour.size(); i++)
+      contour[i]->setDynamicSystemSolver(sys);
+  }
+
   void Body::init() {
     Object::init();
 
@@ -75,6 +106,30 @@ namespace MBSim {
       (*i)->preinit();
     for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
       (*i)->preinit();
+  }
+
+  void Body::initPlot() {
+    updatePlotFeatures(parent);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_AMVISCPPINTERFACE
+      if(getPlotFeature(amvis)==enabled && amvisBody) {
+        amvisGrp=new AMVis::Group();
+        amvisGrp->setName(name+"#Group");
+        parent->getAMVisGrp()->addObject(amvisGrp);
+        if(getPlotFeature(amvis)==enabled && amvisBody) {
+          amvisBody->setName(name);
+          amvisGrp->addObject(amvisBody);
+        }
+      }
+#endif
+      Object::initPlot();
+
+      for(unsigned int j=0; j<frame.size(); j++)
+        frame[j]->initPlot();
+      for(unsigned int j=0; j<contour.size(); j++)
+        contour[j]->initPlot();
+    }
   }
 
   void Body::addContour(Contour* contour_) {
@@ -135,61 +190,6 @@ namespace MBSim {
         return i;
     }
     return -1;
-  }
-
-  void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
-    Object::setDynamicSystemSolver(sys);
-
-    for(unsigned i=0; i<frame.size(); i++)
-      frame[i]->setDynamicSystemSolver(sys);
-    for(unsigned i=0; i<contour.size(); i++)
-      contour[i]->setDynamicSystemSolver(sys);
-  }
-
-  void Body::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Object::plot(t,dt);
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->plot(t,dt);
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->plot(t,dt);
-    }
-  }
-
-  void Body::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisBody) {
-        amvisGrp=new AMVis::Group();
-        amvisGrp->setName(name+"#Group");
-        parent->getAMVisGrp()->addObject(amvisGrp);
-        if(getPlotFeature(amvis)==enabled && amvisBody) {
-          amvisBody->setName(name);
-          amvisGrp->addObject(amvisBody);
-        }
-      }
-#endif
-      Object::initPlot();
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->initPlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->initPlot();
-    }
-  }
-
-  void Body::closePlot() {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Object::closePlot();
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->closePlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->closePlot();
-    }
   }
 
 }

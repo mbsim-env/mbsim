@@ -21,7 +21,6 @@
 #include "mbsim/actuator.h"
 #include "mbsim/data_interface_base.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/frame.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -72,7 +71,7 @@ namespace MBSim {
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
   }
 
-  void Actuator::connect(Frame *frame0, Frame* frame1) {
+  void Actuator::connect(FrameInterface *frame0, FrameInterface* frame1) {
     LinkMechanics::connect(frame0);
     LinkMechanics::connect(frame1);
   }

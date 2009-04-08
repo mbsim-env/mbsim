@@ -21,7 +21,6 @@
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/order_one_dynamics.h"
-#include "mbsim/frame.h"
 #include "mbsim/tree.h"
 
 using namespace fmatvec;
@@ -75,7 +74,7 @@ namespace MBSim {
       for(unsigned int i=0; i<objList.size(); i++) {
 
         RigidBody *body = static_cast<RigidBody*>(objList[i]);
-        Frame* frame =  body->getFrameOfReference();
+        FrameInterface* frame =  body->getFrameOfReference();
         DynamicSystem* parentSys = dynamic_cast<DynamicSystem*>(frame->getParent());
         Body* parentBody = dynamic_cast<Body*>(frame->getParent());
 

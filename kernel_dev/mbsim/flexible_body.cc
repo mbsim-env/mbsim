@@ -75,8 +75,8 @@ namespace MBSim {
     // TODO contour non native?
   }
 
-  void FlexibleBody::updateSecondJacobians(double t) {
-    throw new MBSimError("ERROR (FlexibleBody::updateSecondJacobians): Not implemented!");
+  void FlexibleBody::updateInverseKineticsJacobians(double t) {
+    throw new MBSimError("ERROR (FlexibleBody::updateInverseKineticsJacobians): Not implemented!");
   }
 
   void FlexibleBody::plot(double t, double dt) {

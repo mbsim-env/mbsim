@@ -46,7 +46,7 @@ namespace MBSim {
 #endif
   }
 
-  void Joint::connect(Frame *frame0, Frame* frame1) {
+  void Joint::connect(FrameInterface *frame0, FrameInterface* frame1) {
     LinkMechanics::connect(frame0);
     LinkMechanics::connect(frame1);
   }

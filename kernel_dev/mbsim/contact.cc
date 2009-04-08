@@ -25,7 +25,6 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
-//#include <mbsim/class_factory.h> TODO
 
 using namespace std;
 using namespace fmatvec;
