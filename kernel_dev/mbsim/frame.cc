@@ -116,11 +116,11 @@ namespace MBSim {
         RigidBody *rigidBody;
         parent->getAMVisGrp()->addObject(amvisFrame);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->amvisBody==0) {
+          if(rigidBody->getAMVisBody()==0) {
             cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
             _exit(1);
           }
-          amvisFrame->setHDF5LinkTarget(rigidBody->amvisBody);
+          amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
           amvisFrame->setInitialTranslation(rigidBody->SrSF[rigidBody->frameIndex(this)]);
           amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASF[rigidBody->frameIndex(this)]));
         }
@@ -238,11 +238,11 @@ namespace MBSim {
         RigidBody *rigidBody;
         parent->getAMVisGrp()->addObject(amvisFrame);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->amvisBody==0) {
+          if(rigidBody->getAMVisBody()==0) {
             cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
             _exit(1);
           }
-          amvisFrame->setHDF5LinkTarget(rigidBody->amvisBody);
+          amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
           amvisFrame->setInitialTranslation(rigidBody->SrSF[rigidBody->frameIndex(this)]);
           amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASF[rigidBody->frameIndex(this)]));
         }

@@ -119,13 +119,13 @@ namespace MBSim {
         RigidBody *rigidBody;
         parent->getAMVisGrp()->addObject(amvisRigidBody);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->amvisBody==0) {
+          if(rigidBody->getAMVisBody()==0) {
             cout<<"To visualize a contour on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
             _exit(1);
           }
-          amvisRigidBody->setHDF5LinkTarget(rigidBody->amvisBody);
-          amvisRigidBody->setInitialTranslation(rigidBody->SrSC[rigidBody->contourIndex(this)]);
-          amvisRigidBody->setInitialRotation(AIK2Cardan(rigidBody->ASC[rigidBody->contourIndex(this)]));
+          amvisRigidBody->setHDF5LinkTarget(rigidBody->getAMVisBody());
+          amvisRigidBody->setInitialTranslation(rigidBody->getContainerOfContourPositions()[rigidBody->contourIndex(this)]);
+          amvisRigidBody->setInitialRotation(AIK2Cardan(rigidBody->getContainerOfContourOrientations()[rigidBody->contourIndex(this)]));
         }
       }
 #endif
