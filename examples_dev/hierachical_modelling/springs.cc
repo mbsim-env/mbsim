@@ -4,6 +4,9 @@
 #include "coilspring.h"
 using namespace AMVis;
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/group.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;

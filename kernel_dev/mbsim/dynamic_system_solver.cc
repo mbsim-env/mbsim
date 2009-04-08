@@ -40,6 +40,9 @@
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/group.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;

@@ -22,6 +22,9 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system.h"
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/group.h"
+#endif
 
 using namespace std;
 

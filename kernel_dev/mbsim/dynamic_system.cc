@@ -24,6 +24,9 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/group.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -144,6 +147,10 @@ namespace MBSim {
   int DynamicSystem::gethInd(DynamicSystem* sys, int i) {
     return (this == sys) ? 0 : ((parent == this) ? hInd[i] : hInd[i] + parent->gethInd(sys,i));
   }
+
+#ifdef HAVE_AMVISCPPINTERFACE
+   AMVis::Group* DynamicSystem::getAMVisGrp() { return amvisGrp; }
+#endif
 
   void DynamicSystem::updater(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
