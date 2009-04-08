@@ -31,7 +31,6 @@ namespace AMVis { class Arrow; }
 #endif
 
 namespace MBSim {
-  class Frame;
   class Contour;
   class UserFunction;
 
@@ -83,7 +82,7 @@ namespace MBSim {
       /**
        * \param frame to add to link frame vector
        */
-      virtual void connect(Frame *frame_);
+      virtual void connect(FrameInterface *frame_);
       
       /**
        * \param contour to add to link contour vector
@@ -121,7 +120,7 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      std::vector<Frame*> frame;
+      std::vector<FrameInterface*> frame;
 
       /** 
        * \brief array in which all contours are listed, connecting bodies via link

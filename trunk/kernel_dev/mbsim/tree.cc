@@ -44,10 +44,10 @@ namespace MBSim {
       child[i]->updateJacobians(t);
   }
 
-  void Node::updateSecondJacobians(double t) {
-    obj->updateSecondJacobians(t);
+  void Node::updateInverseKineticsJacobians(double t) {
+    obj->updateInverseKineticsJacobians(t);
     for(unsigned int i=0; i<child.size(); i++)
-      child[i]->updateSecondJacobians(t);
+      child[i]->updateInverseKineticsJacobians(t);
   }
 
   void Node::calcqSize(int &qSize) {
@@ -127,8 +127,8 @@ namespace MBSim {
     root->calcuSize(uSize[j],j);
   }
 
-  void Tree::updateSecondJacobians(double t) {
-    root->updateSecondJacobians(t);
+  void Tree::updateInverseKineticsJacobians(double t) {
+    root->updateInverseKineticsJacobians(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->updateJacobians(t);

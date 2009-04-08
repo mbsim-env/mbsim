@@ -33,7 +33,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod2D->setCrossSectionalArea(A);
   rod2D->setMomentInertia(I1);
   rod2D->setDensity(rho);
-  rod2D->setStationaryFrameOfReference(this->getFrame("I"));
+  rod2D->setFrameOfReference(this->getFrame("I"));
 
   rod2D->setNumberElements(elements);
 #ifdef HAVE_AMVIS

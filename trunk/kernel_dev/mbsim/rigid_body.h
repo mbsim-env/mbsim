@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2008  Martin Förg
-
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,24 +13,21 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _RIGID_BODY_H_
 #define _RIGID_BODY_H_
 
-#include <mbsim/body.h>
+#include "mbsim/body.h"
 #include "fmatvec.h"
+#include "mbsim/frame.h"
+#include "mbsim/kinematics.h"
 #include <vector>
-#include <mbsim/frame.h>
-#include <mbsim/userfunction.h>
-#include <mbsim/kinematics.h>
 #ifdef HAVE_AMVIS
-namespace AMVis {class CRigidBody;}
+#include "mbsim/data_interface_base.h"
+namespace AMVis { class CRigidBody; }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
 #include <amviscppinterface/rigidbody.h>
@@ -38,23 +35,74 @@ namespace AMVis {class CRigidBody;}
 
 namespace MBSim {
 
-  /*! \brief Class for rigid bodies with arbitrary kinematics 
+  /**
+   * \brief rigid bodies with arbitrary kinematics 
+   * \author Martin Foerg
+   * \date 2009-04-08 some comments (Thorsten Schindler)
    * \todo kinetic energy TODO
+   * \todo Euler parameter TODO
+   * \todo check if inertial system for performance TODO
    *
-   * */
+   * rigid bodies have a predefined canonic frame 'C' in their centre of gravity 
+   */
   class RigidBody : public Body {
-    friend class Frame;
-    friend class Contour;
     public:
+      /**
+       * \brief constructor
+       * \param name of rigid body
+       */
       RigidBody(const std::string &name);
 
-      void setForceDirection(const fmatvec::Mat& fd);
-      void setMomentDirection(const fmatvec::Mat& md);
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
+      virtual void updateh(double t);
+      virtual void updateM(double t) { (this->*updateM_)(t); }
+      virtual void updateStateDependentVariables(double t) { updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t); }
+      virtual void updateJacobians(double t) { updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
+      virtual void calcqSize();
+      virtual void calcuSize(int j=0);
+      virtual void updateInverseKineticsJacobians(double t) { updateInverseKineticsJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
+      /*****************************************************/
+
+      /* INHERITED INTERFACE OF OBJECT */
+      virtual void init();
+      virtual void initPlot();
+      virtual void facLLM() { (this->*facLLM_)(); }
+      virtual void resizeJacobians(int j);
+      virtual void checkForConstraints();
+      /*****************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual std::string getType() const { return "RigidBody"; }
+      virtual void plot(double t, double dt=1);
+      /*****************************************************/
+
+      /* INTERFACE FOR DERIVED CLASSES */
+      /**
+       * \brief updates kinematics of kinematic frame starting from reference frame
+       */
+      virtual void updateKinematicsForSelectedFrame(double t);
+      /**
+       * \brief updates JACOBIAN for kinematics starting from reference frame
+       */
+      virtual void updateJacobiansForSelectedFrame(double t);
 
       /**
-       * \param body fixed frame for rotation
+       * \brief updates kinematics for remaining frames starting with and from cog frame
        */
-      void useFrameOfBodyForRotation(bool cb_) {cb = cb_;}
+      virtual void updateKinematicsForRemainingFramesAndContours(double t);
+
+      /**
+       * \brief updates remaining JACOBIANS for kinematics starting with and from cog frame
+       */
+      virtual void updateJacobiansForRemainingFramesAndContours(double t);
+      /**
+       * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference frame
+       */
+      virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
+      /*****************************************************/
+
+      /* GETTER / SETTER */
       void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
       void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
@@ -65,77 +113,59 @@ namespace MBSim {
       void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
       void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
       void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
+      void setMass(double m_) { m = m_; }
+      void setForceDirection(const fmatvec::Mat& fd);
+      void setMomentDirection(const fmatvec::Mat& md);
+      Frame* getFrameForKinematics() { return frame[iKinematics]; };
+      void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
+      /*****************************************************/
 
-      /*! define the mass of the body
-        \param m mass
-        */
-      void setMass(double m_) {m = m_;}
-
-      /*! \brief matrix of inertia
-       * define the matrix of inertia with respect to the point of reference if
-       * cog = false. If cog = true the inertia has to be defined with respect to the center of gravity
-       \param I martix of inertia
+      /**
+       * \param inertia tensor
+       * \param optional reference frame of inertia tensor, otherwise cog-frame will be used as reference
        */
       void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
           iInertia = frameIndex(refFrame);
         else
           iInertia = 0;
-        // hier nur zwischenspeichern
         SThetaS = RThetaR;
       }
 
-      virtual void updateKinematicsForSelectedFrame(double t);
-      virtual void updateJacobiansForSelectedFrame(double t);
-      virtual void updateKinematicsForRemainingFramesAndContours(double t);
-      virtual void updateJacobiansForRemainingFramesAndContours(double t);
-
-      virtual void updateSecondJacobiansForSelectedFrame(double t);
-      void updateSecondJacobians(double t) {updateSecondJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
-
-      void updateh(double t);
-      void updateStateDependentVariables(double t) {updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t);}
-      void updateJacobians(double t) {updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t);}
-      void updateM(double t) {(this->*updateM_)(t);}
-      void updateT(double t) {if(fT) T = (*fT)(q,t);}
-      void facLLM() {(this->*facLLM_)();}
-
-      void resizeJacobians(int j);
-      virtual void checkForConstraints();
-
+      /**
+       * \param specific frame to add
+       * \param constant relative vector from reference frame to specific frame in reference system
+       * \param constant relative rotation from specific frame to reference frame
+       * \param optional reference frame, otherwise cog-frame will be used as reference
+       */
       void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0); 
 
+      /**
+       * \param name of frame to add
+       * \param constant relative vector from reference frame to specific frame in reference system
+       * \param constant relative rotation from specific frame to reference frame
+       * \param optional reference frame, otherwise cog-frame will be used as reference
+       */
       void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
 
+      /**
+       * \param specific contour to add
+       * \param constant relative vector from reference frame to specific contour in reference system
+       * \param constant relative rotation from specific contour to reference frame
+       * \param optional reference frame, otherwise cog-frame will be used as reference
+       */
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
+      /**
+       * \param frame to be used for kinematical description depending on reference frame and generalised positions / velocities
+       */
       void setFrameForKinematics(Frame *frame) {
         iKinematics = frameIndex(frame);
         assert(iKinematics > -1);
       }
 
-      /**
-       * \param frame of reference
-       */
-      void setFrameOfReference(Frame *frame) { frameOfReference = frame; };
-      
-      Frame* getFrameForKinematics() { return frame[iKinematics]; };
-      Frame* getFrameOfReference() { return frameOfReference; };
-
-      double computeKineticEnergy(); // TODO
-      double computeKineticEnergyBranch();
-      double computePotentialEnergyBranch();
-
-      void init();
-      void plot(double t, double dt=1);
-      void initPlot();
-      void calcqSize();
-      void calcuSize(int j=0);
-
-      virtual std::string getType() const {return "RigidBody";}
-
 #ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) {bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?frame[0]:cosy;}
+      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) { bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?frame[0]:cosy; }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
       void setAMVisRigidBody(AMVis::RigidBody* body) { amvisBody=body; }
@@ -143,68 +173,175 @@ namespace MBSim {
 
     protected:
       /**
-       * \brief body fixed frame for rotation
+       * \brief mass
+       */
+      double m;
+
+      /**
+       * \brief inertia tensor with respect to centre of gravity in centre of gravity and world frame
+       */
+      fmatvec::SymMat SThetaS, WThetaS;
+
+      /**
+       * \brief frame indices for kinematics and inertia description
+       */
+      int iKinematics, iInertia;
+
+      /**
+       * \brief TODO
+       */
+      fmatvec::SymMat Mbuf;
+
+      /**
+       * \brief boolean to use body fixed frame for rotation
        */
       bool cb;
 
       /**
-       * \brief mass
+       * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      double m;
-      fmatvec::SymMat SThetaS, WThetaS;
+      fmatvec::Mat PJT, PJR, PdJT, PdJR;
 
       /**
-       * \brief frame indices for reference and kinematics (inertia)
+       * guiding velocities of translation, rotation and their derivatives in parent system
        */
-      int iKinematics, iInertia;
-
-      fmatvec::Mat H, TH;
-      fmatvec::SymMat Mbuf;
-
-      fmatvec::Mat PJT, PJR, PdJT, PdJR;
       fmatvec::Vec PjT, PjR, PdjT, PdjR;
 
+      /**
+       * \brief TODO
+       */
       fmatvec::Mat PJR0;
 
+      /** 
+       * \brief JACOBIAN of translation and rotation together with additional force and moment directions because of inverse kinetics
+       */
       fmatvec::Mat PJTs, PJRs;
 
+      /**
+       * \brief rotation matrix from kinematic frame to parent frame
+       */
       fmatvec::SqrMat APK;
-      fmatvec::Vec PrPK, WrPK, WvPKrel, WomPK;
 
       /**
-       * \brief frame of reference of the rigid body
+       * \brief translation from parent to kinematic frame in parent and world system
        */
-      Frame *frameOfReference;
+      fmatvec::Vec PrPK, WrPK;
 
+      /**
+       * \brief translational and angular velocity from parent to kinematic frame in world system
+       */
+      fmatvec::Vec WvPKrel, WomPK;
+
+      /** 
+       * \brief vector of rotations from cog-frame to specific frame
+       */
       std::vector<fmatvec::SqrMat> ASF;
+
+      /** 
+       * \brief vector of translations from cog to specific frame in cog- and world-system
+       */
       std::vector<fmatvec::Vec> SrSF, WrSF;
 
+
+      /** 
+       * \brief vector of rotations from cog-frame to specific contour
+       */
       std::vector<fmatvec::SqrMat> ASC;
+
+      /** 
+       * \brief vector of translations from cog to specific contour in cog- and world-system
+       */
       std::vector<fmatvec::Vec> SrSC, WrSC;
 
+      /**
+       * \brief JACOBIAN for linear transformation between differentiated positions and velocities
+       */
       Jacobian *fT;
 
+      /**
+       * \brief translation from parent frame to kinematic frame in parent system
+       */
       Translation *fPrPK;
+
+      /**
+       * \brief rotation from kinematic frame to parent frame
+       */
       Rotation *fAPK;
+
+      /**
+       * \brief JACOBIAN of translation in parent system
+       */
       Jacobian *fPJT;
+
+      /**
+       * \brief JACOBIAN of rotation in parent system
+       */
       Jacobian *fPJR;
+
+      /**
+       * \brief differentiated JACOBIAN of translation in parent system
+       */
       DerivativeOfJacobian *fPdJT;
+
+      /**
+       * \brief differentiated JACOBIAN of rotation in parent system
+       */
       DerivativeOfJacobian *fPdJR;
+
+      /**
+       * \brief guiding vecloity of translation in parent system
+       */
       TimeDependentFunction *fPjT;
+
+      /**
+       * \brief guiding vecloity of rotation in parent system
+       */
       TimeDependentFunction *fPjR;
+
+      /**
+       * \brief differentiated guiding veclocity of translation in parent system
+       */
       TimeDependentFunction *fPdjT;
+
+      /**
+       * \brief differentiated guiding veclocity of rotation in parent system
+       */
       TimeDependentFunction *fPdjR;
 
+      /**
+       * \param force and moment directions for inverse kinetics
+       */
       fmatvec::Mat forceDir, momentDir;
 
+      /**
+       * \brief function pointer to update mass matrix
+       */
       void (RigidBody::*updateM_)(double t);
+
+      /**
+       * \brief update constant mass matrix
+       */
       void updateMConst(double t);
+
+      /**
+       * \brief update time dependend mass matrix
+       */
       void updateMNotConst(double t); 
 
+      /**
+       * \brief function pointer for Cholesky decomposition of mass matrix
+       */
       void (RigidBody::*facLLM_)();
-      void facLLMConst() {};
-      void facLLMNotConst() {Object::facLLM();}
 
+      /**
+       * \brief Cholesky decomposition of constant mass matrix
+       */
+      void facLLMConst() {};
+
+      /**
+       * \brief Cholesky decomposition of time dependent mass matrix
+       */
+      void facLLMNotConst() { Object::facLLM(); }
 
 #ifdef HAVE_AMVIS
       AMVis::CRigidBody *bodyAMVis;
@@ -212,9 +349,9 @@ namespace MBSim {
       Frame* cosyAMVis;
 #endif
 
-
   };
 
 }
 
 #endif
+

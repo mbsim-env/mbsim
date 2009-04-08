@@ -27,7 +27,7 @@ class Mesh : public MBSim::Object {
     void calcuSize(int j) { uSize[0] = 1; uSize[1] = 1;}
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
-    void updateSecondJacobians(double t) {};
+    void updateInverseKineticsJacobians(double t) {};
     void init();
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return 0; }
@@ -43,7 +43,7 @@ class Wire : public MBSim::Object {
     Wire(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t);
     void updateJacobians(double t) {};
-    void updateSecondJacobians(double t) {};
+    void updateInverseKineticsJacobians(double t) {};
     const fmatvec::Mat& getJacobian() const {return J;}
     fmatvec::Mat& getJacobian() {return J;}
     const fmatvec::Vec& getCurrent() const {return I;}
@@ -116,7 +116,7 @@ class Inductor : public MBSim::Object {
     Inductor(const std::string &name);
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
-    void updateSecondJacobians(double t) {};
+    void updateInverseKineticsJacobians(double t) {};
     void updateM(double t); 
     void setInductance(double L_) { L = L_;}
     void connect(Wire *wire_) {wire.push_back(wire_);}

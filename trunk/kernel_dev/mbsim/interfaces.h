@@ -175,10 +175,10 @@ namespace MBSim {
       virtual int gethInd(DynamicSystem* sys, int i=0) = 0;
 
       /**
-       * \brief update JACOBIAN for inverse kinetics TODO
+       * \brief update JACOBIAN for inverse kinetics
        * \param simulation time
        */
-      virtual void updateSecondJacobians(double t) = 0;
+      virtual void updateInverseKineticsJacobians(double t) = 0;
 
       /**
        * \return associated plot group
@@ -377,6 +377,129 @@ namespace MBSim {
   };
 
   /*!
+   * \brief interface for frames
+   * \author Thorsten Schindler
+   * \date 2009-04-08 initial commit (Thorsten Schindler)
+   */
+  class FrameInterface {
+    public:
+      /*!
+       * \brief constructor 
+       */
+      FrameInterface() {}
+
+      /*!
+       * \brief destructor
+       */
+      virtual ~FrameInterface() {}
+
+      /**
+       * \brief writes column header for plot file
+       */
+      virtual void initPlot() = 0;
+      
+      /**
+       * \return size of smooth right hand side
+       */
+      virtual int gethSize(int i=0) const = 0;
+
+      /**
+       * \return index of smooth right hand side
+       */
+      virtual int gethInd(int i=0) const = 0;
+      
+      /**
+       * \return parent object for plotting
+       */
+      virtual ObjectInterface* getParent() = 0;
+
+      /**
+       * \param parent object for plotting
+       */
+      virtual void setParent(ObjectInterface* parent_) = 0;
+      
+      /**
+       * \return position of frame
+       */
+      virtual const fmatvec::Vec& getPosition() const = 0;
+
+      /**
+       * \return orientation of frame
+       */
+      virtual const fmatvec::SqrMat& getOrientation() const  = 0;
+
+      /**
+       * \return position of frame
+       */
+      virtual fmatvec::Vec& getPosition() = 0;
+
+      /**
+       * \return orientation of frame
+       */
+      virtual fmatvec::SqrMat& getOrientation() = 0;
+
+      /**
+       * \param position of frame
+       */
+      virtual void setPosition(const fmatvec::Vec &v) = 0;
+
+      /**
+       * \param orientation of frame
+       */
+      virtual void setOrientation(const fmatvec::SqrMat &AWP_) = 0;
+
+      /**
+       * \return velocity of frame
+       */
+      virtual const fmatvec::Vec& getVelocity() const = 0;
+
+      /**
+       * \return angular velocity of frame
+       */
+      virtual const fmatvec::Vec& getAngularVelocity() const = 0;
+
+      /**
+       * \return JACOBIAN of translation of frame
+       */
+      virtual const fmatvec::Mat& getJacobianOfTranslation() const = 0;
+
+      /**
+       * \return JACOBIAN of translation of frame
+       */
+      virtual const fmatvec::Mat& getJacobianOfRotation() const = 0;
+
+      /**
+       * \return gyroscopic acceleration of translation of frame
+       */
+      virtual const fmatvec::Vec& getGyroscopicAccelerationOfTranslation() = 0;
+
+      /**
+       * \return gyroscopic acceleration of rotation of frame
+       */
+      virtual const fmatvec::Vec& getGyroscopicAccelerationOfRotation() const = 0;
+      
+      /**
+       * \brief do things before initialisation
+       */
+      virtual void preinit() = 0;
+
+      /**
+       * \brief initialize frame
+       */
+      virtual void init() = 0;
+
+#ifdef HAVE_AMVIS
+      /**
+       * TODO
+       */
+      virtual void setAMVisKosSize(double size) = 0;
+#endif
+#ifdef HAVE_AMVISCPPINTERFACE
+      virtual void enableAMVis(double size=1, double offset=1) = 0;
+#endif
+  };
+
+  /*!
    * \brief discretization interface for flexible systems
    * \author Thorsten Schindler
    * \author Roland Zander
@@ -489,7 +612,6 @@ namespace MBSim {
        */
       virtual fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec& q,const ContourPointData &data) = 0;
   };
-
 
 }
 

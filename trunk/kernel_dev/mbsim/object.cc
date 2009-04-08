@@ -17,18 +17,16 @@
  */
 
 #include <config.h>
-#include <stdexcept>
-#include <mbsim/object.h>
-#include <mbsim/dynamic_system.h>
-#include <mbsim/frame.h>
-#include <mbsim/utils/function.h>
+#include "mbsim/object.h"
+#include "mbsim/dynamic_system.h"
+#include "mbsim/utils/function.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), parent(0), frameParent(0), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), parent(0), frameOfReference(0), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -39,8 +37,7 @@ namespace MBSim {
     hInd[1] = 0;
   } 
 
-  Object::~Object() {
-  }
+  Object::~Object() {}
 
   void Object::updatedq(double t, double dt) {
     qd = T*u*dt;
@@ -100,38 +97,6 @@ namespace MBSim {
       }
 
       Element::plot(t,dt);
-    }
-  }
-
-  void Object::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotColumns.push_back("q("+numtostr(i)+")");
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("u("+numtostr(i)+")");
-      }
-      if(getPlotFeature(stateDerivative)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotColumns.push_back("qd("+numtostr(i)+")");
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("ud("+numtostr(i)+")");
-      }
-      if(getPlotFeature(rightHandSide)==enabled) {
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("h("+numtostr(i)+")");
-        for(int i=0; i<getuSize(); ++i)
-          plotColumns.push_back("r("+numtostr(i)+")");
-      }
-      if(getPlotFeature(energy)==enabled) {
-        plotColumns.push_back("T");
-        plotColumns.push_back("V");
-        plotColumns.push_back("E");
-      }
-
-      Element::initPlot(parent);
     }
   }
 
@@ -235,6 +200,38 @@ namespace MBSim {
   void Object::initz() {
     q = q0;
     u = u0;
+  }
+
+  void Object::initPlot() {
+    updatePlotFeatures(parent);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(state)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotColumns.push_back("q("+numtostr(i)+")");
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("u("+numtostr(i)+")");
+      }
+      if(getPlotFeature(stateDerivative)==enabled) {
+        for(int i=0; i<qSize; ++i)
+          plotColumns.push_back("qd("+numtostr(i)+")");
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("ud("+numtostr(i)+")");
+      }
+      if(getPlotFeature(rightHandSide)==enabled) {
+        for(int i=0; i<uSize[0]; ++i)
+          plotColumns.push_back("h("+numtostr(i)+")");
+        for(int i=0; i<getuSize(); ++i)
+          plotColumns.push_back("r("+numtostr(i)+")");
+      }
+      if(getPlotFeature(energy)==enabled) {
+        plotColumns.push_back("T");
+        plotColumns.push_back("V");
+        plotColumns.push_back("E");
+      }
+
+      Element::initPlot(parent);
+    }
   }
 
   void Object::facLLM() {

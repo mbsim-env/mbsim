@@ -1,6 +1,5 @@
 #include "springs.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsim/frame.h"
 #ifdef HAVE_AMVIS
 #include "coilspring.h"
 using namespace AMVis;
@@ -63,7 +62,7 @@ namespace MBSim {
       h[i] += trans(frame[i]->getJacobianOfTranslation())*WF[i];
   }    
 
-  void Spring::connect(Frame *frame0, Frame* frame1) {
+  void Spring::connect(FrameInterface *frame0, FrameInterface* frame1) {
     LinkMechanics::connect(frame0);
     LinkMechanics::connect(frame1);
   }

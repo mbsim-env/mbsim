@@ -52,7 +52,7 @@ namespace MBSim {
       virtual void updateStateDependentVariables(double t);
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
-      virtual void updateSecondJacobians(double t);
+      virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

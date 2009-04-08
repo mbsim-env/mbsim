@@ -21,7 +21,6 @@
 #include "mbsim/load.h"
 #include "mbsim/data_interface_base.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/frame.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -68,7 +67,7 @@ namespace MBSim {
     laSize = forceDir.cols()+momentDir.cols();
   }
 
-  void Load::connect(Frame *frame_) {
+  void Load::connect(FrameInterface *frame_) {
     LinkMechanics::connect(frame_);
   }
 

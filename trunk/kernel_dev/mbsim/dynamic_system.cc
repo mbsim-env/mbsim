@@ -22,12 +22,8 @@
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/frame.h"
-#include "mbsim/class_factory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
-
-#include "compatibility_classes/tree_rigid.h"
-#include "compatibility_classes/body_rigid.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -749,7 +745,7 @@ namespace MBSim {
       obj.push_back(object[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-	dynamicsystem[i]->buildListOfObjects(obj,recursive);
+        dynamicsystem[i]->buildListOfObjects(obj,recursive);
   }
 
   void DynamicSystem::buildListOfLinks(vector<Link*> &lnk, bool recursive) {
@@ -757,7 +753,7 @@ namespace MBSim {
       lnk.push_back(link[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-	dynamicsystem[i]->buildListOfLinks(lnk,recursive);
+        dynamicsystem[i]->buildListOfLinks(lnk,recursive);
   }
 
   void DynamicSystem::buildListOfOrderOneDynamics(vector<OrderOneDynamics*> &ood, bool recursive) {
@@ -765,7 +761,7 @@ namespace MBSim {
       ood.push_back(orderOneDynamics[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-	dynamicsystem[i]->buildListOfOrderOneDynamics(ood,recursive);
+        dynamicsystem[i]->buildListOfOrderOneDynamics(ood,recursive);
   }
 
   void DynamicSystem::updateCondition() {

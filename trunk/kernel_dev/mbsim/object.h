@@ -20,15 +20,14 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
+#include "mbsim/element.h"
+#include "mbsim/interfaces.h"
 #include <string>
 #include <vector>
-#include <mbsim/element.h>
-#include <mbsim/interfaces.h>
 
 namespace MBSim {
 
   class DynamicSystem;
-  class Frame;
 
   /** 
    * \brief class for all objects having own dynamics and mass
@@ -72,13 +71,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt = 1); 
-      virtual void initPlot();
       virtual void closePlot();
-      virtual std::string getType() const {return "Object";}
-      void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      virtual std::string getType() const { return "Object"; }
+      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
 
-      /* INTERFACE */
+      /* INTERFACE FOR DERIVED CLASSES */
       virtual void writeq(); // TODO the following: only testing
       virtual void readq0();
       virtual void writeu();
@@ -159,6 +157,11 @@ namespace MBSim {
       virtual void initz();
 
       /**
+       * \brief plots time series header
+       */
+      virtual void initPlot();
+
+      /**
        * \brief perform Cholesky decomposition of mass martix
        */
       virtual void facLLM();
@@ -172,7 +175,7 @@ namespace MBSim {
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy() {return 0; }
+      virtual double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
 
       /**
        * \return potential energy
@@ -188,12 +191,26 @@ namespace MBSim {
        * \brief TODO
        */
       virtual void checkForConstraints() {}
+      
+      /**
+       * \return frame of reference
+       */
+      virtual FrameInterface *getFrameOfReference() { return frameOfReference; }
+      
+      /**
+       * \return frame of reference
+       */
+      virtual const FrameInterface *getFrameOfReference() const { return frameOfReference; }
+      
+      /**
+       * \param frame of reference
+       */
+      virtual void setFrameOfReference(FrameInterface *frame) { frameOfReference = frame; }
+      /*******************************************************/ 
 
       /* GETTER / SETTER */
       DynamicSystem* getParent() { return parent; }
       void setParent(DynamicSystem* sys) { parent = sys; }
-      Frame * getStationaryFrameOfReference() { return frameParent; }
-      void setStationaryFrameOfReference(Frame *frame) { frameParent = frame; }
 
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
@@ -242,10 +259,11 @@ namespace MBSim {
       void setu0(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
       /** 
-       * Return the full path of the object.
-       * \param pathDelim The delimiter of the path
+       * \return full path of the object
+       * \param delimiter of the path
        */
       std::string getPath(char pathDelim='.');
+      /*******************************************************/ 
 
     protected:
       /**
@@ -254,9 +272,9 @@ namespace MBSim {
       DynamicSystem * parent;
 
       /**
-       * \brief inertial frame of reference of the object
+       * \brief frame of reference of the object
        */
-      Frame * frameParent;
+      FrameInterface * frameOfReference;
 
       /**
        * \brief size of object positions

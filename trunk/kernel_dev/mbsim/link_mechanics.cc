@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/link_mechanics.h"
 #include "mbsim/dynamic_system.h"
-#include "mbsim/frame.h"
 #include "mbsim/contour.h"
 
 #ifdef HAVE_AMVIS
@@ -225,7 +224,7 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::connect(Frame *frame_) {
+  void LinkMechanics::connect(FrameInterface *frame_) {
     frame.push_back(frame_);
   }
 

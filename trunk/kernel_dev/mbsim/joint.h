@@ -102,7 +102,7 @@ namespace MBSim {
        * \brief \param first frame to connect
        * \brief second frame to connect
        */
-      virtual void connect(Frame *frame1, Frame* frame2);
+      virtual void connect(FrameInterface *frame1, FrameInterface* frame2);
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -24,12 +24,8 @@
 #include "mbsim/order_one_dynamics.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
-#include "mbsim/class_factory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
-
-#include "compatibility_classes/tree_rigid.h"
-#include "compatibility_classes/body_rigid.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -89,12 +85,12 @@ namespace MBSim {
       (*i)->updatexd(t);
   }
 
-  void Group::updateSecondJacobians(double t) {
+  void Group::updateInverseKineticsJacobians(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateSecondJacobians(t);
+      (*i)->updateInverseKineticsJacobians(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateSecondJacobians(t);
+      (*i)->updateInverseKineticsJacobians(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->updateJacobians(t);
