@@ -28,6 +28,9 @@ using namespace AMVis;
 int MBSim::Frame::kosAMVisCounter=0;
 int MBSim::StationaryFrame::kosAMVisCounter=0;
 #endif
+#ifdef HAVE_AMVISCPPINTERFACE
+#include "amviscppinterface/group.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -111,20 +114,21 @@ namespace MBSim {
       }
 #endif
 #ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisFrame) {
-        amvisFrame->setName(name);
-        RigidBody *rigidBody;
-        parent->getAMVisGrp()->addObject(amvisFrame);
-        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getAMVisBody()==0) {
-            cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
-            _exit(1);
-          }
-          amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
-          amvisFrame->setInitialTranslation(rigidBody->SrSF[rigidBody->frameIndex(this)]);
-          amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASF[rigidBody->frameIndex(this)]));
-        }
-      }
+//  nicht notwendig, da StationaryFrame
+//      if(getPlotFeature(amvis)==enabled && amvisFrame) {
+//        amvisFrame->setName(name);
+//        RigidBody *rigidBody;
+//        parent->getAMVisGrp()->addObject(amvisFrame);
+//        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
+//          if(rigidBody->getAMVisBody()==0) {
+//            cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
+//            _exit(1);
+//          }
+//          amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
+//          amvisFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
+//          amvisFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations)[rigidBody->frameIndex(this)]));
+//        }
+//      }
 #endif
       Element::initPlot(parent);
     }
@@ -243,8 +247,8 @@ namespace MBSim {
             _exit(1);
           }
           amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
-          amvisFrame->setInitialTranslation(rigidBody->SrSF[rigidBody->frameIndex(this)]);
-          amvisFrame->setInitialRotation(AIK2Cardan(rigidBody->ASF[rigidBody->frameIndex(this)]));
+          amvisFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
+          amvisFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
         }
       }
 #endif

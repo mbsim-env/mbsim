@@ -23,9 +23,6 @@
 #include "mbsim/interfaces.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/frame.h"
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
-#endif
 
 namespace H5 {
   class Group;
@@ -82,7 +79,7 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
 #ifdef HAVE_AMVISCPPINTERFACE
-      virtual AMVis::Group* getAMVisGrp() { return amvisGrp; }
+      virtual AMVis::Group* getAMVisGrp();
 #endif
       /** 
        * Return the full path of the object.

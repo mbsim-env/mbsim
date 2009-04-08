@@ -118,8 +118,10 @@ namespace MBSim {
       void setMomentDirection(const fmatvec::Mat& md);
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
-      const std::vector<fmatvec::SqrMat> getContainerOfContourOrientations() const { return ASC; }
-      const std::vector<fmatvec::Vec> getContainerOfContourPositions() const { return SrSC; }
+      std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const {return ASF; }
+      std::vector<fmatvec::Vec> getContainerForFramePositions() const {return SrSF; }
+      std::vector<fmatvec::SqrMat> getContainerForContourOrientations() const {return ASC; }
+      std::vector<fmatvec::Vec> getContainerForContourPositions() const {return SrSC; }
       /*****************************************************/
 
       /**

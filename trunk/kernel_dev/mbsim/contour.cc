@@ -124,8 +124,8 @@ namespace MBSim {
             _exit(1);
           }
           amvisRigidBody->setHDF5LinkTarget(rigidBody->getAMVisBody());
-          amvisRigidBody->setInitialTranslation(rigidBody->getContainerOfContourPositions()[rigidBody->contourIndex(this)]);
-          amvisRigidBody->setInitialRotation(AIK2Cardan(rigidBody->getContainerOfContourOrientations()[rigidBody->contourIndex(this)]));
+          amvisRigidBody->setInitialTranslation((rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)]);
+          amvisRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]));
         }
       }
 #endif

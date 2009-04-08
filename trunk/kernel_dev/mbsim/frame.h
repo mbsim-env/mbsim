@@ -37,6 +37,7 @@ namespace MBSim {
    * \brief cartesian stationary frame on bodies only having position and orientation
    * \author Thorsten Schindler
    * \date 2009-04-08 initial commit (Thorsten Schindler)
+   * \todo AMVisEnvironmentFrame for StationaryFrame TODO
    */
   class StationaryFrame : public Element, public FrameInterface {
     public:
