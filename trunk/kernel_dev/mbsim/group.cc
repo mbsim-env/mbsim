@@ -96,15 +96,18 @@ namespace MBSim {
       (*i)->updateJacobians(t);
   }
 
-  void Group::addDynamicSystem(DynamicSystem *sys, const Vec &RrRS, const SqrMat &ARS, const Frame* refFrame) {
+  void Group::addDynamicSystem(DynamicSystem *sys, const Vec &RrRD, const SqrMat &ARD, const Frame* refFrame) {
     DynamicSystem::addDynamicSystem(sys);
 
-    int i = 0;
-    if(refFrame)
-      i = frameIndex(refFrame);
-
-    IrOS.push_back(IrOK[i] + AIK[i]*RrRS);
-    AIS.push_back(AIK[i]*ARS);
+    if(refFrame && refFrame->getType() == "Frame") {
+      int i = frameIndex(dynamic_cast<const Frame*>(refFrame));
+      IrOD.push_back(IrOF[i] + AIF[i]*RrRD);
+      AID.push_back(AIF[i]*ARD);
+    }
+    else {
+      IrOD.push_back(RrRD);
+      AID.push_back(ARD);
+    }
   }
 }
 

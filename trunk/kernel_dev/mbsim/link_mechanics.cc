@@ -164,6 +164,8 @@ namespace MBSim {
 
   void LinkMechanics::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
+      Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
+
       Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
     }

@@ -50,7 +50,7 @@ namespace MBSim {
        * \param child node to add
        */
       void addChild(Node* child); 
-      
+
       /**
        * \brief recursive kinematics update
        * \param time
@@ -147,15 +147,12 @@ namespace MBSim {
       Node* addObject(Node* tree, Object* obj);
 
       /**
-       * \brief add new dynamic system to tree
+       * \brief add new tree to tree
        * \param tree
        * \param dynamic system
-       * \param relative translation to reference frame
-       * \param relative orientation to reference frame
-       * \param reference frame
        * \return new node of dynamic system
        */
-      Node* addDynamicSystem(Node* tree, DynamicSystem* sys, const fmatvec::Vec &RrRS, const fmatvec::SqrMat &ARS, const Frame* refFrame=0);
+      Node* addTree(Node* tree, Tree* sys);
 
     protected:
       /**
