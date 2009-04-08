@@ -97,6 +97,7 @@ namespace MBSim {
       const std::vector<Contour*>& getContours() const { return contour; }
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return amvisGrp; }
+      AMVis::Body* getAMVisBody() { return amvisBody; }
 #endif
       /*******************************************************/ 
 
