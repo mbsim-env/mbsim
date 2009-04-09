@@ -9,7 +9,8 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo "runexamples.sh 1e-3 (run all examples with RTOL=1e-3)"
   echo "runexamples.sh robot (run robot example with default RTOL=1e-6)"
   echo "runexamples.sh robot 1e-3 (run robot example with RTOL=1e-3)"
-  echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution)"
+  echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution using"
+  echo "        the data stored in the reference directory of the respective example)"
   echo "runexamples.sh install (install the reference.tar.bz2 reference file from"
   echo "                        the berlios server)"
   echo "runexamples.sh install ../myref/ref.tar.bz2 (install the ../myref/ref.tar.bz2"
@@ -75,15 +76,15 @@ for D in $EXAMPLES; do
 
   if test -d reference; then
     for H5F in $(cd reference && find -name "*.h5"); do
-      for DS in $(../../local/bin/h5lsserie $H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
+      for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie $H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
-        ../../local/bin/h5diff --relative=$RTOL $H5F reference/$H5F $P $P
+        $(pkg-config hdf5serie --variable=hdf5_prefix)/bin/h5diff --relative=$RTOL $H5F reference/$H5F $P $P
         RET=$?
         if [ $RET -ne 0 ]; then
-          echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOULUTION"
+          echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOLUTION"
           DIFF="$DIFF\n$D/$DS"
         else
-          echo "EXAMPLE $DS PASSED DIFF WITH REFERENCE SOULUTION"
+          echo "EXAMPLE $DS PASSED DIFF WITH REFERENCE SOLUTION"
         fi
       done
     done
