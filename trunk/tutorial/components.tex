@@ -17,23 +17,46 @@ Conceptionally the program flow is defined by the election of the integration sc
 \subsubsection{Timestepping Integration}
 Timestepping integration solves the whole equations of the system including the contacts on velocity level with fixed time step size. In detail one has the following work flow.
 \begin{enumerate}
-\item $\text{\texttt{DSS::plot}}\left(t,\vq,\vu\right)$
+\item $\text{\texttt{DS::plot}}\left(t,\vq,\vu\right)$
 \item $\vq\leftarrow\vq+\text{\texttt{DS::deltaq}}\left(t,\vq,\vu\right)$
 \item $t\leftarrow t+\Delta t$
-\item $\text{\texttt{DSS::update}}\left(t,\vq,\vu\right)$
+\item $\text{\texttt{DS::update}}\left(t,\vq,\vu\right)$
     \begin{enumerate}
-    \item \texttt{DSS::updateStateDependentVariables}\\
-      update variables depending on the generalised state of the system and the structure of one independent group and several trees
-    \item \texttt{DSS::updateg}\\
-      update of the relative position kinematics independent of the object structure\\
-      \texttt{Link} $\rightarrow$ \texttt{Joint}, \texttt{Contact} $\rightarrow$ \texttt{ContactKinematics}\\
-      several contacts points are possible from the kinematical point of view, whereby the maximum number is calculated in \texttt{ContactKinematics}\\
-      convention: in the contact cartesian frame matrix the first column is the outpointing normal, the second column sign is different for the two contacting bodies 
+    \item[]\texttt{DS::updateStateDependentVariables}\\
+      update variables depending on the generalised state and the structure of the system with one independent group and several trees
+    \item[]\texttt{DS::updateg}\\
+      \begin{itemize}
+      \item update of the relative position kinematics independent of the system structure using the order
+      \begin{align*}
+        \text{\texttt{Link}}\rightarrow\text{\texttt{LinkMechanics}}\rightarrow\text{\texttt{Joint}, \texttt{Contact}, \texttt{Actuator}}\rightarrow\text{\texttt{ContactKinematics}}
+      \end{align*}
+      \item several contacts points are possible from the kinematical point of view, whereby the maximum number is calculated in \texttt{ContactKinematics}\\
+      \item conventions in the contact frame matrix:
+        \begin{itemize}
+        \item frames are cartesian
+        \item first column is the outpointing normal
+        \item second column sign is different for the two contacting bodies 
+        \end{itemize}
+      \end{itemize}
+    \item[]\texttt{DS::checkActiveg}\\
+      \begin{itemize}
+      \item determine the state of the relative kinematics concerning the activity of links
+      \item redefine global memory references using indices and indents
+      \end{itemize}
+    \item[]\texttt{DS::updategd}\\
+      \begin{itemize}
+      \item update of the relative velocity kinematics independent of the system structure
+      \item can be done in the child classes of \texttt{LinkMechanics}
+      \end{itemize}
+    \item[]\texttt{DS::updateT}\\
+      updates the linear transformation matrix $\dot{\vq}=T\vu$ independent of the system structure
+    \item[]\texttt{updateJacobians}\\
+      updates
     \end{enumerate}
-\item $\text{\texttt{DSS::solveImpacts}}\left(t,\vq,\vu\right)$
-\item $\vu\leftarrow\vu+\text{\texttt{DSS::deltau}}$
-\item $\vx\leftarrow\vx+\text{\texttt{DSS::deltax}}$
-\item \texttt{DSS::projectGeneralizedPositions}
+\item $\text{\texttt{DS::solveImpacts}}\left(t,\vq,\vu\right)$
+\item $\vu\leftarrow\vu+\text{\texttt{DS::deltau}}$
+\item $\vx\leftarrow\vx+\text{\texttt{DS::deltax}}$
+\item \texttt{DS::projectGeneralizedPositions}
 \end{enumerate}
 
 \subsubsection{Event-Driven Integration}
