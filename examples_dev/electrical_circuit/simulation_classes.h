@@ -34,13 +34,16 @@ class Mesh : public MBSim::Object {
 #endif
 };
 
-class Wire : public MBSim::Object {
+class Branch : public MBSim::Object {
   protected:
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
-    std::vector<Mesh*> mesh;
+    vector<Mesh*> mesh;
+    Pin *startPin, *endPin;
+    std::vector<Branch*> connectedBranch;
+    int flag;
   public:
-    Wire(const std::string &name) : Object(name) {}
+    Branch(const std::string &name) : Object(name), flag(0) {}
     void updateStateDependentVariables(double t);
     void updateJacobians(double t) {};
     void updateInverseKineticsJacobians(double t) {};
@@ -51,20 +54,36 @@ class Wire : public MBSim::Object {
     const fmatvec::Vec& getCharge() const {return Q;}
     fmatvec::Vec& getCharge() {return Q;}
     void connect(Mesh *mesh_) {mesh.push_back(mesh_);}
+    int getNumberOfConnectedMeshes() const {return mesh.size();}
+    Mesh* getMesh(int i) {return mesh[i];}
     void init();
+    void setStartPin(Pin* p) {startPin = p;}
+    void setEndPin(Pin* p) {endPin = p;}
+    Pin* getStartPin() {return startPin;}
+    Pin* getEndPin() {return endPin;}
+    void addConnectedBranch(Branch* branch);
+    void buildTreeBranches(Branch* callingBranch, vector<Branch*> &treeBranch, unsigned int nmax);
+//    vector<Mesh*> buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &flag);
+    void buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &foundMesh);
+    void setFlag(int f) { flag = f; }
+    int getFlag() const { return flag; }
+    void initPlot();
+    void plot(double t, double dt);
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return 0; }
 #endif
 };
 
-class ElectricalLink : public MBSim::Link {
+class ElectricalLink : public MBSim::Link, public Component {
   protected:
-    std::vector<Wire*> wire;
+    //std::vector<Branch*> branch;
   public:
-    ElectricalLink(const std::string &name);
+    ElectricalLink(const string &name) : Link(name) {}
+
     void updateg(double t) {}
     void updategd(double t) {}
-    void connect(Wire *wire_) {wire.push_back(wire_);}
+    virtual std::string getName() const {return Link::getName();}
+    virtual void setName(std::string name) {Link::setName(name);}
     bool isActive() const {return true;}
     bool gActiveChanged() {return true;}
     void init();
@@ -108,21 +127,27 @@ class VoltageSource : public ElectricalLink {
     void setVoltageSignal(MBSim::UserFunction* f) {voltageSignal = f;}
 };
 
-class Inductor : public MBSim::Object {
+class ElectricalObject : public MBSim::Object, public Component {
   protected:
-    double L;
-    std::vector<Wire*> wire;
   public:
-    Inductor(const std::string &name);
+    ElectricalObject(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateInverseKineticsJacobians(double t) {};
-    void updateM(double t); 
-    void setInductance(double L_) { L = L_;}
-    void connect(Wire *wire_) {wire.push_back(wire_);}
+    virtual std::string getName() const {return Object::getName();}
+    virtual void setName(std::string name) {Object::setName(name);}
 #ifdef HAVE_AMVISCPPINTERFACE
       AMVis::Group* getAMVisGrp() { return 0; }
 #endif
+};
+class Inductor : public ElectricalObject {
+  protected:
+    double L;
+  public:
+    Inductor(const string &name) : ElectricalObject(name), L(1) {}
+
+    void updateM(double t); 
+    void setInductance(double L_) { L = L_;}
 };
 
 class ElectricalCircuit : public MBSim::Tree {
