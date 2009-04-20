@@ -5,13 +5,8 @@
 #include "mbsim/load.h"
 #include "mbsim/constitutive_laws.h"
 
-#ifdef HAVE_AMVIS
-using namespace AMVis;
-#include "cube.h"
-#include "objobject.h"
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/objobject.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/objbody.h"
 #endif
 
 using namespace MBSim;
@@ -96,33 +91,17 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cr2S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   }
 
-#ifdef HAVE_AMVIS
-  // Visualisation with AMVis
-  ObjObject *obj = new ObjObject(getName() + "." + body->getName(),1,false);
-  obj->setObjFilename("objects/rod.obj");
-  body->setAMVisBody(obj);
-  obj->setInitialRotation(M_PI/2,M_PI/2,0);
-  obj->setScaleFactor(0.1);
-  obj->setCalculationOfNormals(3);
-  obj->setVertexEPS(1e-5);
-  obj-> setNormalEPS(1e-5);
-  obj-> setAngleEPS(M_PI*2/9);
-  // Cuboid *cubeoid = new Cuboid(body->getFullName(),1,false);
-  // cubeoid->setSize(l,h,d);
-  // cubeoid->setColor(0);
-  // body->setAMVisBody(cubeoid);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  // Visualisation with AMVis
-  AMVis::ObjObject *obj=new AMVis::ObjObject;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  // Visualisation with OpenMBV
+  OpenMBV::ObjBody *obj=new OpenMBV::ObjBody;
   obj->setObjFileName("objects/rod.obj");
   obj->setInitialRotation(M_PI/2,M_PI/2,0);
   obj->setScaleFactor(0.1);
-  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
   obj->setEpsVertex(1e-5);
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
-  body->setAMVisRigidBody(obj);
+  body->setOpenMBVRigidBody(obj);
 #endif
 }
 

@@ -4,15 +4,9 @@
 #include "springs.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cuboid.h"
-#include "cube.h"
-#include "coilspring.h"
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/cube.h"
-#include "amviscppinterface/coilspring.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/cube.h"
+#include "openmbvcppinterface/coilspring.h"
 #endif
 
 using namespace MBSim;
@@ -105,51 +99,27 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));
   box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
-#ifdef HAVE_AMVIS
-  // ----------------------- Visualisierung in AMVis --------------------  
-  Cube * cuboid = new Cube(box1->getName(),1,false);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  // ----------------------- Visualisierung in OpenMBV --------------------  
+  OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(h1);
-  cuboid->setColor(0.5);
-  box1->setAMVisBody(cuboid);
+  box1->setOpenMBVRigidBody(cuboid);
 
-  cuboid = new Cube(box2->getName(),1,false);
+  cuboid=new OpenMBV::Cube;
   cuboid->setLength(h2);
-  cuboid->setColor(0.2);
-  box2->setAMVisBody(cuboid);
+  box2->setOpenMBVRigidBody(cuboid);
 
-  CoilSpring *coilspring = new CoilSpring(name + "." + spring1->getName(),1,false);
-  coilspring->setRadius(0.1);
-  coilspring->setRadiusCrossSection(0.01);
-  coilspring->setNumberOfCoils(5);
-  spring1->setAMVisSpring(coilspring);
+  OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
+  openMBVspring1->setSpringRadius(0.1);
+  openMBVspring1->setCrossSectionRadius(0.01);
+  openMBVspring1->setNumberOfCoils(5);
+  spring1->setOpenMBVSpring(openMBVspring1);
 
-  coilspring = new CoilSpring(name + "." + spring2->getName(),1,false);
-  coilspring->setRadius(0.1);
-  coilspring->setRadiusCrossSection(0.01);
-  coilspring->setNumberOfCoils(5);
-  spring2->setAMVisSpring(coilspring);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  // ----------------------- Visualisierung in AMVis --------------------  
-  AMVis::Cube *cuboid=new AMVis::Cube;
-  cuboid->setLength(h1);
-  box1->setAMVisRigidBody(cuboid);
-
-  cuboid=new AMVis::Cube;
-  cuboid->setLength(h2);
-  box2->setAMVisRigidBody(cuboid);
-
-  AMVis::CoilSpring* amvisspring1=new AMVis::CoilSpring;
-  amvisspring1->setSpringRadius(0.1);
-  amvisspring1->setCrossSectionRadius(0.01);
-  amvisspring1->setNumberOfCoils(5);
-  spring1->setAMVisSpring(amvisspring1);
-
-  AMVis::CoilSpring* amvisspring2=new AMVis::CoilSpring;
-  amvisspring2->setSpringRadius(0.1);
-  amvisspring2->setCrossSectionRadius(0.01);
-  amvisspring2->setNumberOfCoils(5);
-  spring2->setAMVisSpring(amvisspring2);
+  OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
+  openMBVspring2->setSpringRadius(0.1);
+  openMBVspring2->setCrossSectionRadius(0.01);
+  openMBVspring2->setNumberOfCoils(5);
+  spring2->setOpenMBVSpring(openMBVspring2);
 #endif
 
 }

@@ -29,8 +29,8 @@ class Mesh : public MBSim::Object {
     void updateJacobians(double t) {};
     void updateInverseKineticsJacobians(double t) {};
     void init();
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return 0; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
 };
 
@@ -69,8 +69,8 @@ class Branch : public MBSim::Object {
     int getFlag() const { return flag; }
     void initPlot();
     void plot(double t, double dt);
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return 0; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
 };
 
@@ -136,8 +136,8 @@ class ElectricalObject : public MBSim::Object, public Component {
     void updateInverseKineticsJacobians(double t) {};
     virtual std::string getName() const {return Object::getName();}
     virtual void setName(std::string name) {Object::setName(name);}
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return 0; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
 };
 class Inductor : public ElectricalObject {

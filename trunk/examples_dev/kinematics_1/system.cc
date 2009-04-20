@@ -4,12 +4,8 @@
 #include "mbsim/contour.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "cuboid.h"
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/cuboid.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/cuboid.h>
 #endif
 
 using namespace MBSim;
@@ -99,16 +95,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setGuidingVelocityOfTranslation(new jT);
   body->setDerivativeOfGuidingVelocityOfTranslation(new djT);
 
-#ifdef HAVE_AMVIS
-  AMVis::Cuboid *cubeoid = new AMVis::Cuboid(getName() + "." + body->getName(),1,false);
-  cubeoid->setSize(l,h,d);
-  cubeoid->setColor(0);
-  body->setAMVisBody(cubeoid);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::Cuboid *cuboid=new AMVis::Cuboid;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Cuboid *cuboid=new OpenMBV::Cuboid;
   cuboid->setLength(l,h,d);
-  body->setAMVisRigidBody(cuboid);
+  body->setOpenMBVRigidBody(cuboid);
 #endif
 
   // Just to have somtething to integrate ;-)

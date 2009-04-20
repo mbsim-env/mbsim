@@ -5,15 +5,9 @@
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "sphere.h"
-#include "compoundprimitivebody.h"
-#include "objobject.h"
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/sphere.h"
-#include "amviscppinterface/invisiblebody.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/sphere.h"
+#include "openmbvcppinterface/invisiblebody.h"
 #endif
 
 using namespace MBSim;
@@ -71,16 +65,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   sphere->setRadius(r1);
   Vec rSM(3);
   rSM(1) = a1;
-#ifdef HAVE_AMVISCPPINTERFACE
-  sphere->enableAMVis();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  sphere->enableOpenMBV();
 #endif
   body->addContour(sphere,rSM,SqrMat(3,EYE));
   sphere = new Sphere("Sphere2");
   sphere->setRadius(r2);
   rSM(1) = a2;
-#ifdef HAVE_AMVISCPPINTERFACE
-  sphere->enableAMVis();
-  body->getFrame("C")->enableAMVis(2*1.2*r1,0);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  sphere->enableOpenMBV();
+  body->getFrame("C")->enableOpenMBV(2*1.2*r1,0);
 #endif
   body->addContour(sphere,rSM,SqrMat(3,EYE));
 
@@ -113,27 +107,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cnf2->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(0.3));
   }
 
-#ifdef HAVE_AMVIS
-  AMVis::Sphere *obj1 = new AMVis::Sphere();
-  body->setAMVisBody(obj1);
-  obj1->setRadius(r1);
-  obj1-> setInitialTranslation(0,a1,0);
-  obj1 -> setInitialRotation(0,0,0);
-  AMVis::Sphere *obj2 = new AMVis::Sphere();
-  body->setAMVisBody(obj2);
-  obj2->setRadius(r2);
-  obj2-> setInitialTranslation(0,a2,0);
-  obj2 -> setInitialRotation(0,0,0);
-
-  AMVis::CompoundPrimitiveBody *obj = new AMVis::CompoundPrimitiveBody(body->getName(),1,false);
-  obj ->setColor(0.5);
-  obj ->addBody(obj1);
-  obj ->addBody(obj2);
-  body->setAMVisBody(obj); 
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::InvisibleBody *obj1=new AMVis::InvisibleBody;
-  body->setAMVisRigidBody(obj1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::InvisibleBody *obj1=new OpenMBV::InvisibleBody;
+  body->setOpenMBVRigidBody(obj1);
 #endif
 
 }

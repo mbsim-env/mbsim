@@ -5,13 +5,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "cylinder.h"
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/invisiblebody.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/invisiblebody.h>
 #endif
 
 using namespace MBSim;
@@ -57,8 +52,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   CircleSolid *circlecontour=new CircleSolid("Circle",d);
   body->addContour(circlecontour,Vec(3),SqrMat(3,EYE));
-#ifdef HAVE_AMVISCPPINTERFACE
-  circlecontour->enableAMVis();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  circlecontour->enableOpenMBV();
 #endif
 
   double phi = M_PI*0.6; 
@@ -84,19 +79,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
   }
 
-#ifdef HAVE_AMVIS
-  // Visualisation with AMVis
-  Cylinder *cubeoid = new Cylinder(getName() + "." + body->getName(),1,false);
-  cubeoid->setBaseRadius(d);
-  cubeoid->setTopRadius(d);
-  cubeoid->setHeight(0.03);
-  cubeoid->setColor(0);
-  body->setAMVisBody(cubeoid);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  body->getFrame("C")->enableAMVis(1.2*d);
-  AMVis::InvisibleBody* dummy=new AMVis::InvisibleBody;
-  body->setAMVisRigidBody(dummy);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  body->getFrame("C")->enableOpenMBV(1.2*d);
+  OpenMBV::InvisibleBody* dummy=new OpenMBV::InvisibleBody;
+  body->setOpenMBVRigidBody(dummy);
 #endif
 
 }

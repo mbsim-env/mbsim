@@ -1,15 +1,7 @@
 #include "springs.h"
 #include "mbsim/dynamic_system.h"
-#ifdef HAVE_AMVIS
-#include "coilspring.h"
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVIS
-#include "coilspring.h"
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -32,15 +24,10 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVIS
-      if (coilspringAMVis) {
-        coilspringAMVis->writeBodyFile();
-      }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(coilspringAMVis) {
-        coilspringAMVis->setName(name);
-        parent->getAMVisGrp()->addObject(coilspringAMVis);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(coilspringOpenMBV) {
+        coilspringOpenMBV->setName(name);
+        parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
 #endif
       LinkMechanics::initPlot();
@@ -72,28 +59,8 @@ namespace MBSim {
 
   void Spring::plot(double t,double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVIS
-      if (coilspringAMVis) {
-        Vec WrOToPoint;
-        Vec WrOFromPoint;
-
-        WrOFromPoint = frame[0]->getPosition();
-        WrOToPoint   = frame[1]->getPosition();
-        if (coilspringAMVisUserFunctionColor) {
-          double color;
-          color = ((*coilspringAMVisUserFunctionColor)(t))(0);
-          if (color>1) color=1;
-          if (color<0) color=0;
-          coilspringAMVis->setColor(color);
-        } 
-        coilspringAMVis->setTime(t); 
-        coilspringAMVis->setFromPoint(WrOFromPoint(0), WrOFromPoint(1), WrOFromPoint(2));
-        coilspringAMVis->setToPoint(WrOToPoint(0), WrOToPoint(1), WrOToPoint(2));
-        coilspringAMVis->appendDataset(0);
-      }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      if (coilspringAMVis) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (coilspringOpenMBV) {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
@@ -108,7 +75,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
         data.push_back(0);
-        coilspringAMVis->append(data);
+        coilspringOpenMBV->append(data);
       }
 #endif
       LinkMechanics::plot(t,dt);

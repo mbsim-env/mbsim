@@ -2,13 +2,8 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
 
-#ifdef HAVE_AMVIS
-#include "objobject.h"
-
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/objobject.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/objbody.h"
 #endif
 
 using namespace MBSim;
@@ -49,27 +44,16 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
-#ifdef HAVE_AMVIS
-  ObjObject * obj = new ObjObject(getName() + "." + stab1->getName(),1,false);
-  obj->setObjFilename("objects/pendel1.obj");
-  stab1->setAMVisBody(obj);
-  obj->setScaleFactor(0.1*0.3);
-  obj -> setInitialRotation(0,0,M_PI/2);
-  obj->setCalculationOfNormals(3);
-  obj->setVertexEPS(1e-5);
-  obj-> setNormalEPS(1e-5);
-  obj-> setAngleEPS(M_PI*2/9);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::ObjObject *obj=new AMVis::ObjObject;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::ObjBody *obj=new OpenMBV::ObjBody;
   obj->setObjFileName("objects/pendel1.obj");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
-  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
   obj->setEpsVertex(1e-5);
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
-  stab1->setAMVisRigidBody(obj);
+  stab1->setOpenMBVRigidBody(obj);
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
@@ -87,27 +71,16 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setq0(Vec("[-1.6]"));
 
-#ifdef HAVE_AMVIS
-  obj = new ObjObject(getName() + "." + stab2->getName(),1,false);
-  obj->setObjFilename("objects/pendel2.obj");
-  stab2->setAMVisBody(obj);
-  obj->setScaleFactor(0.1*0.3);
-  obj -> setInitialRotation(0,0,M_PI/2);
-  obj->setCalculationOfNormals(3);
-  obj->setVertexEPS(1e-5);
-  obj-> setNormalEPS(1e-5);
-  obj-> setAngleEPS(M_PI*2/9);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  obj=new AMVis::ObjObject;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  obj=new OpenMBV::ObjBody;
   obj->setObjFileName("objects/pendel2.obj");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
-  obj->setNormals(AMVis::ObjObject::smoothIfLessBarrier);
+  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
   obj->setEpsVertex(1e-5);
   obj->setEpsNormal(1e-5);
   obj->setSmoothBarrier(M_PI*2/9);
-  stab2->setAMVisRigidBody(obj);
+  stab2->setOpenMBVRigidBody(obj);
 #endif
 
 }

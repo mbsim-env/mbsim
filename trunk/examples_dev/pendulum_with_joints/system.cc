@@ -5,14 +5,8 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cuboid.h"
-#include "cylinder.h"
-
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/cylinder.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frustum.h>
 #endif
 
 using namespace MBSim;
@@ -117,42 +111,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     joint2->setForceLaw(new LinearRegularizedBilateralConstraint(1e7,1));
   }
 
-#ifdef HAVE_AMVIS
-  ////////////////////// Visualisierung in AMVis ////////////////////////
-  Cylinder * cylinder = new Cylinder(getName() + "." + box1->getName(),1,false);
-  cylinder->setTopRadius(0.02);
-  cylinder->setBaseRadius(0.02);
-  cylinder->setHeight(l1);
-  cylinder->setColor(0.5);
-  box1->setAMVisBody(cylinder);
-
-  cylinder -> setInitialTranslation(0,-0.5,0);
-  cylinder -> setInitialRotation(1.5708,0,0);
-  cylinder = new Cylinder(getName() + "." + box2->getName(),1,false);
-  cylinder->setTopRadius(0.02);
-  cylinder->setBaseRadius(0.02);
-  cylinder->setHeight(l2);
-  cylinder->setColor(0.1);
-  box2->setAMVisBody(cylinder);
-  cylinder -> setInitialTranslation(0,-0.5,0);
-  cylinder -> setInitialRotation(1.5708,0,0);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::Cylinder *cylinder=new AMVis::Cylinder;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l1);
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
-  box1->setAMVisRigidBody(cylinder);
+  box1->setOpenMBVRigidBody(cylinder);
 
-  cylinder=new AMVis::Cylinder;
+  cylinder=new OpenMBV::Frustum;
   cylinder->setTopRadius(0.02);
   cylinder->setBaseRadius(0.02);
   cylinder->setHeight(l2);
   cylinder->setInitialTranslation(0,-0.5,0);
   cylinder->setInitialRotation(1.5708,0,0);
-  box2->setAMVisRigidBody(cylinder);
+  box2->setOpenMBVRigidBody(cylinder);
 #endif
 }
 

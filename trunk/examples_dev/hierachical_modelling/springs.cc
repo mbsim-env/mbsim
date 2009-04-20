@@ -1,11 +1,7 @@
 #include "springs.h"
 #include "mbsim/dynamic_system.h"
-#ifdef HAVE_AMVIS
-#include "coilspring.h"
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -28,10 +24,10 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(coilspringAMVis) {
-        coilspringAMVis->setName(name);
-        parent->getAMVisGrp()->addObject(coilspringAMVis);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(coilspringOpenMBV) {
+        coilspringOpenMBV->setName(name);
+        parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
       LinkMechanics::initPlot();
 #endif
@@ -63,8 +59,8 @@ namespace MBSim {
 
   void Spring::plot(double t,double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if (coilspringAMVis) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (coilspringOpenMBV) {
         Vec WrOToPoint;
         Vec WrOFromPoint;
 
@@ -79,7 +75,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
         data.push_back(0);
-        coilspringAMVis->append(data);
+        coilspringOpenMBV->append(data);
       }
 #endif
       LinkMechanics::plot(t,dt);

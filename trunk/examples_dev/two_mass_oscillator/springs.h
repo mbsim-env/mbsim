@@ -4,11 +4,8 @@
 #include "mbsim/link_mechanics.h"
 #include "mbsim/data_interface_base.h"
 
-#ifdef HAVE_AMVIS
-namespace AMVis {class CoilSpring;}
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/coilspring.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/coilspring.h>
 #endif
 
 namespace MBSim {
@@ -17,12 +14,8 @@ namespace MBSim {
     protected:
       double l0, cT, dT;
       fmatvec::Vec forceDir;
-#ifdef HAVE_AMVIS
-      AMVis::CoilSpring *coilspringAMVis;
-      DataInterfaceBase *coilspringAMVisUserFunctionColor;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::CoilSpring *coilspringAMVis;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
     public:
       Spring(const std::string &name);
@@ -38,11 +31,8 @@ namespace MBSim {
       bool gActiveChanged() {return false;}
       virtual void connect(FrameInterface *frame1, FrameInterface* frame2);
       void plot(double t,double dt=1); 
-#ifdef HAVE_AMVIS
-      void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      void setAMVisSpring(AMVis::CoilSpring *spring_) {coilspringAMVis=spring_;}
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
 #endif
 
   };
