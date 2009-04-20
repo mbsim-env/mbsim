@@ -40,8 +40,8 @@
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
 #endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -465,8 +465,8 @@ namespace MBSim {
   
   void DynamicSystemSolver::initPlot() {
     Group::initPlot();
-#ifdef HAVE_AMVISCPPINTERFACE
-    amvisGrp->initialize();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVGrp->initialize();
 #endif
   }
 
@@ -1315,7 +1315,7 @@ namespace MBSim {
     setPlotFeatureRecursive(globalPosition, disabled);
     setPlotFeatureRecursive(contact, enabled);
     setPlotFeatureRecursive(energy, disabled);
-    setPlotFeatureRecursive(amvis, enabled);
+    setPlotFeatureRecursive(openMBV, enabled);
   }
 
 }

@@ -32,8 +32,8 @@ special_classes.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la
 
-INCLUDES = $(DEPS_CFLAGS) $(AMVIS_CFLAGS)
-LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\

@@ -27,10 +27,10 @@
 
 #define FMATVEC_DEEP_COPY
 
-#ifdef HAVE_AMVIS
-#include "elastic1s21rcm.h"
-using namespace AMVis;
-#endif
+//#ifdef HAVE_AMVIS
+//#include "elastic1s21rcm.h"
+//using namespace AMVis;
+//#endif
 
 using namespace fmatvec;
 using namespace std;
@@ -38,10 +38,10 @@ using namespace std;
 namespace MBSim {
 
 FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false)
-#ifdef HAVE_AMVIS
-                                                                                     ,
-                                                                                     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
-#endif
+//#ifdef HAVE_AMVIS
+//                                                                                     ,
+//                                                                                     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
+//#endif
 
                                                                                      { 
                                                                                        contourR = new Contour1sFlexible("R");
@@ -214,25 +214,25 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
       dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
     }
 
-#ifdef HAVE_AMVIS
-    if(getPlotFeature(amvis)==enabled) {
-      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
-      RCMbody->setElementLength(l0);
-
-      float amvisJT[3][2], amvisJR[3];
-      for(int i=0;i<3;i++) {
-        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
-        amvisJR[i] = frameOfReference->getOrientation()(i,0);
-      }
-      RCMbody->setJacobians(amvisJT,amvisJR);
-      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
-      RCMbody->setCylinder(AMVisRadius);
-      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
-      RCMbody->setColor(AMVisColor);
-
-      bodyAMVis = RCMbody;
-    } 
-#endif
+//#ifdef HAVE_AMVIS
+//    if(getPlotFeature(amvis)==enabled) {
+//      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
+//      RCMbody->setElementLength(l0);
+//
+//      float amvisJT[3][2], amvisJR[3];
+//      for(int i=0;i<3;i++) {
+//        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
+//        amvisJR[i] = frameOfReference->getOrientation()(i,0);
+//      }
+//      RCMbody->setJacobians(amvisJT,amvisJR);
+//      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
+//      RCMbody->setCylinder(AMVisRadius);
+//      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
+//      RCMbody->setColor(AMVisColor);
+//
+//      bodyAMVis = RCMbody;
+//    } 
+//#endif
   }
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {

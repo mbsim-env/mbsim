@@ -27,11 +27,8 @@
 #include <mbsim/contour_pdata.h>
 #include <mbsim/frame.h>
 
-#ifdef HAVE_AMVIS
-namespace AMVis {class CBody; class CRigidBody;}
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/rigidbody.h>
+#ifdef HAVE_OPONMBVCPPINTERFACE
+#include <openmbvcppinterface/rigidbody.h>
 #endif
 
 namespace MBSim {
@@ -145,16 +142,6 @@ namespace MBSim {
        */
       std::string getType() const { return "Contour"; }
 
-#ifdef HAVE_AMVIS
-      /**
-       * \brief activate output for AMVis
-       * \param binary or ASCII data format in pos-file
-       */
-      void createAMVisBody(bool binary_=false) {boolAMVis = true; boolAMVisBinary = binary_;}
-
-      void setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor=NULL);
-#endif
-
     protected:
       ObjectInterface* parent;
 
@@ -166,22 +153,8 @@ namespace MBSim {
       Frame R;
 
 
-#ifdef HAVE_AMVIS
-      /**
-       * \brief body for AMVis
-       */
-      AMVis::CBody *bodyAMVis;
-
-      DataInterfaceBase* bodyAMVisUserFunctionColor;
-
-      /**
-       * \brief flag to allow for activation of AMVis output during init-routines
-       */
-      bool boolAMVis, boolAMVisBinary;
-#endif
-
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::RigidBody *amvisRigidBody;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::RigidBody *openMBVRigidBody;
 #endif
   };
 
@@ -239,8 +212,8 @@ namespace MBSim {
       /*! Compute binormal in inertial FR */
       fmatvec::Vec computeWb() {return R.getOrientation()*Cb;}
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      void enableAMVis(bool enable=true);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
 #endif
   };
 
@@ -518,8 +491,8 @@ namespace MBSim {
       void setRadius(double r_) {r = r_;}
       double getRadius() const {return r;}
       virtual void init();
-#ifdef HAVE_AMVISCPPINTERFACE
-      void enableAMVis(bool enable=true);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
 #endif
   };
 

@@ -9,8 +9,8 @@ libutils_la_SOURCES = eps.cc\
 
 utilsincludedir = $(includedir)/mbsim/utils
 
-INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 utilsinclude_HEADERS = eps.h\
 		       nonlinear_algebra.h\

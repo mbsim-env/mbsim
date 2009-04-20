@@ -15,16 +15,11 @@ AC_C_CONST
 
 requires="fmatvec hdf5serie"
 PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1  hdf5serie)
-PKG_CHECK_MODULES(AMVIS, amvisc++interface >= 2.2.0,[requires="$requires amvisc++interface";amvis_compilerflag="-DHAVE_AMVIS";AC_DEFINE([HAVE_AMVIS],[1],[linking with AMVis])],[echo "no"])
 
 AC_SUBST([requires])
-AC_SUBST([amvis_compilerflag])
 
-####################################
-# New amviscppinterface (currently redundant with old)
-# Don't touch this at the moment!!!
-PKG_CHECK_MODULES(AMVISCPPINTERFACE, amviscppinterface >= 3.0.0,[requires="$requires amviscppinterface";amvis_compilerflag="-DHAVE_AMVISCPPINTERFACE";AC_DEFINE([HAVE_AMVISCPPINTERFACE],[1],[linking with AMVisCppInterface])],[echo "no"])
-####################################
+PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[requires="$requires openmbvcppinterface";openmbv_compilerflag="-DHAVE_OPENMBVCPPINTERFACE";AC_DEFINE([HAVE_OPENMBVCPPINTERFACE],[1],[linking with OpenMBVCppInterface])],[echo "no"])
+AC_SUBST([openmbv_compilerflag])
 
 dnl By autoscan
 AC_CHECK_FUNCS([mkdir])

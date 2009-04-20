@@ -48,7 +48,7 @@ namespace MBSim {
   };
 
   enum PlotFeature {
-    plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, amvis, LASTPLOTFEATURE
+    plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, openMBV, LASTPLOTFEATURE
   };
 
   class DynamicSystemSolver;

@@ -24,8 +24,8 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -44,8 +44,8 @@ namespace MBSim {
     hInd[0] = 0;
     hInd[1] = 0;
 
-#ifdef HAVE_AMVISCPPINTERFACE
-    if(amvisGrp) amvisGrp=0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVGrp) openMBVGrp=0;
 #endif
 
   }
@@ -59,8 +59,8 @@ namespace MBSim {
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
-#ifdef HAVE_AMVISCPPINTERFACE
-    delete amvisGrp;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    delete openMBVGrp;
 #endif
   }
 
@@ -148,8 +148,8 @@ namespace MBSim {
     return (this == sys) ? 0 : ((parent == this) ? hInd[i] : hInd[i] + parent->gethInd(sys,i));
   }
 
-#ifdef HAVE_AMVISCPPINTERFACE
-   AMVis::Group* DynamicSystem::getAMVisGrp() { return amvisGrp; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+   OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
   void DynamicSystem::updater(double t) {
@@ -452,12 +452,12 @@ namespace MBSim {
       H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
       plotVectorSerie=NULL;
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      amvisGrp=new AMVis::Group();
-      amvisGrp->setName(name);
-      if(parent) parent->amvisGrp->addObject(amvisGrp);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      openMBVGrp=new OpenMBV::Group();
+      openMBVGrp->setName(name);
+      if(parent) parent->openMBVGrp->addObject(openMBVGrp);
       if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
-        amvisGrp->setSeparateFile(true);
+        openMBVGrp->setSeparateFile(true);
 #endif
 
       for(unsigned i=0; i<dynamicsystem.size(); i++)

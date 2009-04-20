@@ -22,28 +22,15 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
 
-#ifdef HAVE_AMVIS
-#include "coilspring.h"
-using namespace AMVis;
-#endif
-
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
   Joint::Joint(const string &name) : LinkMechanics(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
-#ifdef HAVE_AMVIS
-    coilspringAMVis=0;
-    coilspringAMVisUserFunctionColor=0;
-#endif
   }
 
   Joint::~Joint() { 
-#ifdef HAVE_AMVIS   
-    delete coilspringAMVis;
-    delete coilspringAMVisUserFunctionColor;
-#endif
   }
 
   void Joint::connect(FrameInterface *frame0, FrameInterface* frame1) {

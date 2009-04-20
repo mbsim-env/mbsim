@@ -21,8 +21,8 @@
 #define _BODY_H_
 
 #include <mbsim/object.h>
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/body.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/body.h>
 #endif
 
 namespace MBSim {
@@ -95,9 +95,9 @@ namespace MBSim {
       /* GETTER / SETTER */
       const std::vector<Frame*>& getFrames() const { return frame; }
       const std::vector<Contour*>& getContours() const { return contour; }
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* getAMVisGrp() { return amvisGrp; }
-      AMVis::Body* getAMVisBody() { return amvisBody; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* getOpenMBVGrp() { return openMBVGrp; }
+      OpenMBV::Body* getOpenMBVBody() { return openMBVBody; }
 #endif
       /*******************************************************/ 
 
@@ -120,9 +120,9 @@ namespace MBSim {
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Body* amvisBody;
-      AMVis::Group* amvisGrp;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Body* openMBVBody;
+      OpenMBV::Group* openMBVGrp;
 #endif
   };
 

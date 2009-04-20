@@ -30,8 +30,8 @@ namespace H5 {
   class Group;
 }
 
-#ifdef HAVE_AMVISCPPINTERFACE
-namespace AMVis {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+namespace OpenMBV {
   class Group;
 }
 #endif
@@ -195,8 +195,8 @@ namespace MBSim {
        */
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) = 0;
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      virtual AMVis::Group* getAMVisGrp() = 0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual OpenMBV::Group* getOpenMBVGrp() = 0;
 #endif
   };
 
@@ -493,14 +493,8 @@ namespace MBSim {
        */
       virtual void init() = 0;
 
-#ifdef HAVE_AMVIS
-      /**
-       * TODO
-       */
-      virtual void setAMVisKosSize(double size) = 0;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      virtual void enableAMVis(double size=1, double offset=1) = 0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual void enableOpenMBV(double size=1, double offset=1) = 0;
 #endif
   };
 

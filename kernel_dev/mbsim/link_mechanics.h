@@ -26,10 +26,6 @@ namespace H5 {
   class Group;
 }
 
-#ifdef HAVE_AMVIS
-namespace AMVis { class Arrow; }
-#endif
-
 namespace MBSim {
   class Contour;
   class UserFunction;
@@ -100,10 +96,6 @@ namespace MBSim {
        * \param ID of load and corresponding frame/contour (ID=0 or 1)
        * \param userfunction to manipulate color of arrow at each timestep (default: red arrow for forces and green one for moments)
        */
-#ifdef HAVE_AMVIS
-      virtual void addAMVisForceArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
-      virtual void addAMVisMomentArrow(AMVis::Arrow *arrow,double scale=1, int ID=0, UserFunction *funcColor=0);
-#endif
       /***************************************************/
 
     protected:
@@ -126,14 +118,6 @@ namespace MBSim {
        * \brief array in which all contours are listed, connecting bodies via link
        */
       std::vector<Contour*> contour;
-
-#ifdef HAVE_AMVIS
-      std::vector<AMVis::Arrow*> arrowAMVis;
-      std::vector<double> arrowAMVisScale;
-      std::vector<int> arrowAMVisID;
-      std::vector<bool> arrowAMVisMoment;
-      std::vector<UserFunction*> arrowAMVisUserFunctionColor;
-#endif
   };
 }
 

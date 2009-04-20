@@ -25,12 +25,8 @@
 #include "mbsim/frame.h"
 #include "mbsim/kinematics.h"
 #include <vector>
-#ifdef HAVE_AMVIS
-#include "mbsim/data_interface_base.h"
-namespace AMVis { class CRigidBody; }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/rigidbody.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/rigidbody.h>
 #endif
 
 namespace MBSim {
@@ -168,11 +164,8 @@ namespace MBSim {
         assert(iKinematics > -1);
       }
 
-#ifdef HAVE_AMVIS
-      void setAMVisBody(AMVis::CRigidBody *body, Frame* cosy=0, DataInterfaceBase* funcColor=0) { bodyAMVis=body; bodyAMVisUserFunctionColor=funcColor; cosyAMVis=(cosy==0)?frame[0]:cosy; }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      void setAMVisRigidBody(AMVis::RigidBody* body) { amvisBody=body; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVRigidBody(OpenMBV::RigidBody* body) { openMBVBody=body; }
 #endif
 
     protected:
@@ -346,12 +339,6 @@ namespace MBSim {
        * \brief Cholesky decomposition of time dependent mass matrix
        */
       void facLLMNotConst() { Object::facLLM(); }
-
-#ifdef HAVE_AMVIS
-      AMVis::CRigidBody *bodyAMVis;
-      DataInterfaceBase* bodyAMVisUserFunctionColor;
-      Frame* cosyAMVis;
-#endif
 
   };
 
