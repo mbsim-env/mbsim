@@ -3,10 +3,6 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 
-#ifdef HAVE_AMVIS
-using namespace AMVis;
-#endif
-
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -36,10 +32,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod2D->setFrameOfReference(this->getFrame("I"));
 
   rod2D->setNumberElements(elements);
-#ifdef HAVE_AMVIS
-  rod2D->setAMVisCuboid(b0,b0);
-#endif
-
   q02D = Vec(5*elements+3,INIT,0.);
   for(int i=1;i<=elements;i++) q02D(5*i) = l0*i/elements;
 
@@ -65,9 +57,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rod2D->setq0(q02D);
   rod2D->setu0(u02D);
-#ifdef HAVE_AMVIS
-  rod2D->createAMVisBody(true);
-#endif
   this->addObject(rod2D);
 }
 

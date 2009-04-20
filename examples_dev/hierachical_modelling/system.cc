@@ -3,10 +3,6 @@
 #include "mbsim/load.h"
 #include "mbsim/frame.h"
 
-#ifdef HAVE_AMVIS
-using namespace AMVis;
-#endif
-
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;

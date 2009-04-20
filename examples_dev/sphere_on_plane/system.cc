@@ -5,13 +5,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
 
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "sphere.h"
-#include "objobject.h"
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/invisiblebody.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/invisiblebody.h>
 #endif
 
 using namespace MBSim;
@@ -67,8 +62,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setInertiaTensor(Theta);
   Sphere *sphere = new Sphere("Sphere");
   sphere->setRadius(r);
-#ifdef HAVE_AMVISCPPINTERFACE
-  sphere->enableAMVis();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  sphere->enableOpenMBV();
 #endif
   body->addContour(sphere,Vec(3),SqrMat(3,EYE));
 
@@ -84,15 +79,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   //cnf->setPlotLevel(2);
   addLink(cnf);
 
-#ifdef HAVE_AMVIS
-  AMVis::Sphere *obj = new AMVis::Sphere(body->getName(),1,false);
-  body->setAMVisBody(obj);
-  obj->setRadius(r);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::InvisibleBody *obj=new AMVis::InvisibleBody;
-  body->setAMVisRigidBody(obj);
-  body->getFrame("C")->enableAMVis(2*r*1.2,0);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::InvisibleBody *obj=new OpenMBV::InvisibleBody;
+  body->setOpenMBVRigidBody(obj);
+  body->getFrame("C")->enableOpenMBV(2*r*1.2,0);
 #endif
 }
 

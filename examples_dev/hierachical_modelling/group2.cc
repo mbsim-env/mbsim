@@ -2,14 +2,8 @@
 #include "group1.h"
 #include "mbsim/rigid_body.h"
 #include "springs.h"
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "coilspring.h"
-
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/cuboid.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/cuboid.h>
 #endif
 
 using namespace std;
@@ -62,21 +56,11 @@ Group2::Group2(const string &name) : Group(name) {
   addDynamicSystem(group,r,A);
 
 
-#ifdef HAVE_AMVIS
-  {
-    ostringstream os;
-    os <<name<< "." << box1->getName();
-    Cube * cuboid = new Cube(os.str(),1,false);
-    cuboid->setLength(h1);
-    cuboid->setColor(0.5);
-    box1->setAMVisBody(cuboid);
-  }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::Cuboid* body1=new AMVis::Cuboid;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;
   body1->setLength(Vec(3,INIT,1)*h1);
-  box1->setAMVisRigidBody(body1);
-  box1->getFrame("C")->enableAMVis();
+  box1->setOpenMBVRigidBody(body1);
+  box1->getFrame("C")->enableOpenMBV();
 #endif
 
 

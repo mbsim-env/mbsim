@@ -1,17 +1,9 @@
 #include "group1.h"
 #include "mbsim/rigid_body.h"
 #include "springs.h"
-#ifdef HAVE_AMVIS
-#include "cube.h"
-#include "coilspring.h"
-#endif
-
-#ifdef HAVE_AMVIS
-using namespace AMVis;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/cuboid.h>
-#include <amviscppinterface/coilspring.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/cuboid.h>
+#include <openmbvcppinterface/coilspring.h>
 #endif
 
 using namespace std;
@@ -74,9 +66,6 @@ Group1::Group1(const string &name) : Group(name) {
   // Federanschlusspunkte P1 und P2 auf Körper 1 definieren
   SrSP(1) = h1/2.;
   box1->addFrame("P1",-SrSP,ASP); 
-#ifdef HAVE_AMVIS
-  box1->getFrame("P1")->setAMVisKosSize(0.5);
-#endif
   box1->addFrame("P2",SrSP,ASP);
 
   // Federanschlusspunkt P1 auf Körper 2 definieren
@@ -103,67 +92,27 @@ Group1::Group1(const string &name) : Group(name) {
   box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));
   box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
-  // ----------------------- Visualisierung in AMVis --------------------  
-#ifdef HAVE_AMVIS  
-  {
-    ostringstream os;
-    os <<name<< "." << box1->getName();
-    Cube * cuboid = new Cube(os.str(),1,false);
-    cuboid->setLength(h1);
-    cuboid->setColor(0.5);
-    box1->setAMVisBody(cuboid);
-  }
-
-  {
-    ostringstream os;
-    os <<name<< "." << box2->getName();
-    Cube* cuboid = new Cube(os.str(),1,false);
-    cuboid->setLength(h2);
-    cuboid->setColor(0.2);
-    box2->setAMVisBody(cuboid);
-  }
-
-  {
-    ostringstream os;
-    os <<name<< "." << spring1->getName();
-    CoilSpring *coilspring = new CoilSpring(os.str(),1,false);
-    coilspring->setRadius(0.1);
-    coilspring->setRadiusCrossSection(0.01);
-    coilspring->setNumberOfCoils(5);
-    spring1->setAMVisSpring(coilspring);
-  }
-
-  {
-    ostringstream os;
-    os <<name<< "." << spring2->getName();
-    CoilSpring* coilspring = new CoilSpring(os.str(),1,false);
-    coilspring->setRadius(0.1);
-    coilspring->setRadiusCrossSection(0.01);
-    coilspring->setNumberOfCoils(5);
-    spring2->setAMVisSpring(coilspring);
-  }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-  AMVis::Cuboid* body1=new AMVis::Cuboid;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;
   body1->setLength(Vec(3,INIT,1)*h1);
-  box1->setAMVisRigidBody(body1);
-  box1->getFrame("P1")->enableAMVis(0.5);
+  box1->setOpenMBVRigidBody(body1);
+  box1->getFrame("P1")->enableOpenMBV(0.5);
 
-  AMVis::Cuboid* body2=new AMVis::Cuboid;
+  OpenMBV::Cuboid* body2=new OpenMBV::Cuboid;
   body2->setLength(Vec(3,INIT,1)*h2);
-  box2->setAMVisRigidBody(body2);
-  box2->getFrame("P1")->enableAMVis(0.5);
+  box2->setOpenMBVRigidBody(body2);
+  box2->getFrame("P1")->enableOpenMBV(0.5);
 
-  AMVis::CoilSpring* amvisspring1=new AMVis::CoilSpring;
-  amvisspring1->setSpringRadius(0.1);
-  amvisspring1->setCrossSectionRadius(0.01);
-  amvisspring1->setNumberOfCoils(5);
-  spring1->setAMVisSpring(amvisspring1);
+  OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
+  openMBVspring1->setSpringRadius(0.1);
+  openMBVspring1->setCrossSectionRadius(0.01);
+  openMBVspring1->setNumberOfCoils(5);
+  spring1->setOpenMBVSpring(openMBVspring1);
 
-  AMVis::CoilSpring* amvisspring2=new AMVis::CoilSpring;
-  amvisspring2->setSpringRadius(0.1);
-  amvisspring2->setCrossSectionRadius(0.01);
-  amvisspring2->setNumberOfCoils(5);
-  spring2->setAMVisSpring(amvisspring2);
+  OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
+  openMBVspring2->setSpringRadius(0.1);
+  openMBVspring2->setCrossSectionRadius(0.01);
+  openMBVspring2->setNumberOfCoils(5);
+  spring2->setOpenMBVSpring(openMBVspring2);
 #endif
 }
