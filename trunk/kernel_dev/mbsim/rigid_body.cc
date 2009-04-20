@@ -24,10 +24,6 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
-#ifdef HAVE_AMVIS
-#include "crigidbody.h"
-using namespace AMVis;
-#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -45,12 +41,6 @@ namespace MBSim {
     SrSF.push_back(Vec(3));
     WrSF.push_back(Vec(3));
     ASF.push_back(SqrMat(3,EYE));
-
-#ifdef HAVE_AMVIS
-    bodyAMVis = 0;
-    bodyAMVisUserFunctionColor = 0;
-    cosyAMVis = 0;
-#endif
   }
 
   void RigidBody::updateh(double t) {
@@ -184,11 +174,6 @@ namespace MBSim {
         plotColumns.push_back("beta");
         plotColumns.push_back("gamma");
       }
-
-#ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled)
-        bodyAMVis->writeBodyFile();
-#endif
       Body::initPlot();
     }
   }
@@ -233,8 +218,8 @@ namespace MBSim {
         plotVector.push_back(cardan(2));
       }
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisBody) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
         Vec WrOS=frame[0]->getPosition();
@@ -246,23 +231,7 @@ namespace MBSim {
         data.push_back(cardan(1));
         data.push_back(cardan(2));
         data.push_back(0);
-        ((AMVis::RigidBody*)amvisBody)->append(data);
-      }
-#endif
-#ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
-        Vec WrOS=cosyAMVis->getPosition();
-        Vec cardan=AIK2Cardan(cosyAMVis->getOrientation());
-        bodyAMVis->setTime(t);
-        bodyAMVis->setTranslation(WrOS(0),WrOS(1),WrOS(2));
-        bodyAMVis->setRotation(cardan(0),cardan(1),cardan(2));
-        if(bodyAMVisUserFunctionColor) {
-          double color=(*bodyAMVisUserFunctionColor)(t)(0);
-          if(color>1) color=1;
-          if(color<0) color=0;
-          bodyAMVis->setColor(color);
-        }
-        bodyAMVis->appendDataset(0);
+        ((OpenMBV::RigidBody*)openMBVBody)->append(data);
       }
 #endif
       Body::plot(t,dt);

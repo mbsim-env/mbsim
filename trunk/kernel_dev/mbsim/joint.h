@@ -23,10 +23,6 @@
 #include "mbsim/link_mechanics.h"
 #include "mbsim/frame.h"
 
-#ifdef HAVE_AMVIS
-namespace AMVis {class CoilSpring;}
-#endif
-
 namespace MBSim {
 
   class DataInterfaceBase;
@@ -122,10 +118,6 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
-#ifdef HAVE_AMVIS
-      void setAMVisSpring(AMVis::CoilSpring *spring_, DataInterfaceBase* funcColor=0) {coilspringAMVis= spring_; coilspringAMVisUserFunctionColor= funcColor;}
-#endif
-
     protected:
       /**
        * \brief indices of forces and torques
@@ -162,11 +154,6 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
-
-#ifdef HAVE_AMVIS
-      AMVis::CoilSpring *coilspringAMVis;
-      DataInterfaceBase *coilspringAMVisUserFunctionColor;
-#endif
 
       /**
        * \brief TODO

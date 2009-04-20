@@ -78,8 +78,8 @@ namespace MBSim {
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
-#ifdef HAVE_AMVISCPPINTERFACE
-      virtual AMVis::Group* getAMVisGrp();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual OpenMBV::Group* getOpenMBVGrp();
 #endif
       /** 
        * Return the full path of the object.
@@ -785,8 +785,8 @@ namespace MBSim {
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Group* amvisGrp;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group* openMBVGrp;
 #endif
 
       /**

@@ -341,7 +341,7 @@ MAN_EXTENSION        = .3
 
 ENABLE_PREPROCESSING = YES
 PREPROCESSING = YES
-PREDEFINED = HAVE_AMVIS
+PREDEFINED = HAVE_OPENMBVCPPINTERFACE
  
 # If the MACRO_EXPANSION tag is set to YES Doxygen will expand all macro
 # names in the source code. If set to NO (the default) only conditional 

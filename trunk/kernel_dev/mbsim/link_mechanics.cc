@@ -22,25 +22,12 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
 
-#ifdef HAVE_AMVIS
-#include "arrow.h"
-using namespace AMVis;
-#endif
-
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
 
   LinkMechanics::~LinkMechanics() { 
-
-#ifdef HAVE_AMVIS   
-    for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      delete arrowAMVis[i];
-      delete arrowAMVisUserFunctionColor[i];
-    }
-#endif
-
   }
 
   void LinkMechanics::updater(double t) {
@@ -234,27 +221,27 @@ namespace MBSim {
     contour.push_back(contour_);
   }
 
-#ifdef HAVE_AMVIS
-  void LinkMechanics::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
-    assert(ID >= 0);
-    assert(ID < 2);
-    arrowAMVis.push_back(arrow);
-    arrowAMVisScale.push_back(scale);
-    arrowAMVisID.push_back(ID);
-    arrowAMVisUserFunctionColor.push_back(funcColor);
-    arrowAMVisMoment.push_back(false);
-  }
-
-  void LinkMechanics::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
-    assert(ID >= 0);
-    assert(ID < 2);
-    arrowAMVis.push_back(arrow);
-    arrowAMVisScale.push_back(scale);
-    arrowAMVisID.push_back(ID);
-    arrowAMVisUserFunctionColor.push_back(funcColor);
-    arrowAMVisMoment.push_back(true);
-  }
-#endif
+//#ifdef HAVE_AMVIS
+//  void LinkMechanics::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
+//    assert(ID >= 0);
+//    assert(ID < 2);
+//    arrowAMVis.push_back(arrow);
+//    arrowAMVisScale.push_back(scale);
+//    arrowAMVisID.push_back(ID);
+//    arrowAMVisUserFunctionColor.push_back(funcColor);
+//    arrowAMVisMoment.push_back(false);
+//  }
+//
+//  void LinkMechanics::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
+//    assert(ID >= 0);
+//    assert(ID < 2);
+//    arrowAMVis.push_back(arrow);
+//    arrowAMVisScale.push_back(scale);
+//    arrowAMVisID.push_back(ID);
+//    arrowAMVisUserFunctionColor.push_back(funcColor);
+//    arrowAMVisMoment.push_back(true);
+//  }
+//#endif
 
 }
 

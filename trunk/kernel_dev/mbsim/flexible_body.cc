@@ -25,10 +25,10 @@
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
 
-#ifdef HAVE_AMVIS
-#include "elastic.h"
-using namespace AMVis;
-#endif
+//#ifdef HAVE_AMVIS
+//#include "elastic.h"
+//using namespace AMVis;
+//#endif
 
 using namespace fmatvec;
 using namespace std;
@@ -36,18 +36,18 @@ using namespace std;
 namespace MBSim {
 
   FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.)
-# ifdef HAVE_AMVIS
-                                                                           , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
-# endif
+//# ifdef HAVE_AMVIS
+//                                                                           , bodyAMVis(NULL), boolAMVisBinary(true), AMVisColor(0.)
+//# endif
                                                                            {}
 
   FlexibleBody::~FlexibleBody() {
     for(unsigned int i=0; i<discretization.size(); i++) {
       delete discretization[i]; discretization[i] = NULL;
     }
-#  ifdef HAVE_AMVIS
-    delete bodyAMVis; bodyAMVis = NULL;
-#  endif
+//#  ifdef HAVE_AMVIS
+//    delete bodyAMVis; bodyAMVis = NULL;
+//#  endif
   }
 
   void FlexibleBody::updateM(double t) {
@@ -81,16 +81,16 @@ namespace MBSim {
 
   void FlexibleBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
-        float *qDummy = (float*) malloc(qSize*sizeof(float));
-        for(int i=0;i<qSize;i++) qDummy[i] = q(i);
-        bodyAMVis->setTime(t);
-        bodyAMVis->setCoordinates(qDummy);
-        bodyAMVis->appendDataset(0);
-        free(qDummy);
-      }
-#endif
+//#ifdef HAVE_AMVIS
+//      if(bodyAMVis && getPlotFeature(amvis)==enabled) {
+//        float *qDummy = (float*) malloc(qSize*sizeof(float));
+//        for(int i=0;i<qSize;i++) qDummy[i] = q(i);
+//        bodyAMVis->setTime(t);
+//        bodyAMVis->setCoordinates(qDummy);
+//        bodyAMVis->appendDataset(0);
+//        free(qDummy);
+//      }
+//#endif
       Body::plot(t,dt);
     }
   }
@@ -99,10 +99,10 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVIS
-      if(bodyAMVis && getPlotFeature(amvis)==enabled)
-        bodyAMVis->writeBodyFile();
-#endif
+//#ifdef HAVE_AMVIS
+//      if(bodyAMVis && getPlotFeature(amvis)==enabled)
+//        bodyAMVis->writeBodyFile();
+//#endif
 
       Body::initPlot();
     }

@@ -23,7 +23,7 @@
 
 #include <mbsim/flexible_body.h>
 
-namespace AMVis { class ElasticBody1s21RCM; }
+//namespace AMVis { class ElasticBody1s21RCM; }
 
 namespace MBSim {
 
@@ -90,18 +90,18 @@ public:
        */
       void initRelaxed(double alpha);
 
-#ifdef HAVE_AMVIS
-      /**
-       * \param radius of cylinder for AMVis visualisation
-       */
-      void setAMVisCylinder(float r) { setPlotFeature(amvis, enabled); AMVisRadius=r; }
-
-      /**
-       * \param breadth of cuboid for AMVis visualisation
-       * \param height of cuboid for AMVis visualisation
-       */
-      void setAMVisCuboid(float breadth, float height) { setPlotFeature(amvis, enabled); AMVisBreadth=breadth; AMVisHeight=height; }
-#endif
+//#ifdef HAVE_AMVIS
+//      /**
+//       * \param radius of cylinder for AMVis visualisation
+//       */
+//      void setAMVisCylinder(float r) { setPlotFeature(amvis, enabled); AMVisRadius=r; }
+//
+//      /**
+//       * \param breadth of cuboid for AMVis visualisation
+//       * \param height of cuboid for AMVis visualisation
+//       */
+//      void setAMVisCuboid(float breadth, float height) { setPlotFeature(amvis, enabled); AMVisBreadth=breadth; AMVisHeight=height; }
+//#endif
 
     protected:
       /**
@@ -180,12 +180,12 @@ public:
        */
       Contour1sFlexible *contourR, *contourL;
 
-#ifdef HAVE_AMVIS
-      /** 
-       * \brief AMVis visualisation for cylinder and cuboid
-       */
-      float AMVisRadius, AMVisBreadth, AMVisHeight;
-#endif
+//#ifdef HAVE_AMVIS
+//      /** 
+//       * \brief AMVis visualisation for cylinder and cuboid
+//       */
+//      float AMVisRadius, AMVisBreadth, AMVisHeight;
+//#endif
 
   };
 

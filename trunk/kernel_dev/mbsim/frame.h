@@ -24,11 +24,8 @@
 #include "mbsim/interfaces.h"
 #include "hdf5serie/vectorserie.h"
 
-#ifdef HAVE_AMVIS
-namespace AMVis { class Kos; }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include <amviscppinterface/frame.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frame.h>
 #endif
 
 namespace MBSim {
@@ -78,11 +75,8 @@ namespace MBSim {
       virtual const fmatvec::Vec& getGyroscopicAccelerationOfRotation() const { return WjR; }
       virtual void preinit() {}
       virtual void init() {}
-#ifdef HAVE_AMVIS
-      virtual void setAMVisKosSize(double size);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      virtual void enableAMVis(double size=1, double offset=1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual void enableOpenMBV(double size=1, double offset=1);
 #endif
       /***************************************************/
 
@@ -117,15 +111,8 @@ namespace MBSim {
        */
       fmatvec::Vec WjP, WjR;
 
-#ifdef HAVE_AMVIS
-      /**
-       * TODO
-       */
-      AMVis::Kos *kosAMVis;
-      static int kosAMVisCounter;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Frame* amvisFrame;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Frame* openMBVFrame;
 #endif
   };
 
@@ -174,11 +161,8 @@ namespace MBSim {
       virtual const fmatvec::Vec& getGyroscopicAccelerationOfRotation() const { return WjR; }
       virtual void preinit() {}
       virtual void init();
-#ifdef HAVE_AMVIS
-      virtual void setAMVisKosSize(double size);
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      virtual void enableAMVis(double size=1, double offset=1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual void enableOpenMBV(double size=1, double offset=1);
 #endif
       /***************************************************/
       
@@ -248,15 +232,8 @@ namespace MBSim {
        */
       fmatvec::Vec WjP, WjR;
 
-#ifdef HAVE_AMVIS
-      /**
-       * TODO
-       */
-      AMVis::Kos *kosAMVis;
-      static int kosAMVisCounter;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      AMVis::Frame* amvisFrame;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Frame* openMBVFrame;
 #endif
   };
 

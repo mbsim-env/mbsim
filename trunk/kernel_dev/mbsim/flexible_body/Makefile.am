@@ -13,8 +13,8 @@ libflexiblebody_la_CPPFLAGS = -I.. -Ifinite_elements
 libflexiblebody_la_LIBADD=finite_elements/libfe.la
 flexiblebodyincludedir = $(includedir)/mbsim/flexible_body
 
-INCLUDES = $(DEPS_CFLAGS) $(AMVIS_CFLAGS)
-LDADD = $(DEPS_LIBS) $(AMVIS_LIBS)
+INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 flexiblebodyinclude_HEADERS =	flexible_body_1s_21_rcm.h\
  								flexible_body_linear_external.h

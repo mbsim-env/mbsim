@@ -28,10 +28,10 @@
 #include "contact_rigid.h"
 #include "contour.h"
 
-#ifdef HAVE_AMVIS
-#include "elastic1sbta.h"
-using namespace AMVis;
-#endif
+//#ifdef HAVE_AMVIS
+//#include "elastic1sbta.h"
+//using namespace AMVis;
+//#endif
 
 namespace MBSim {
 
@@ -74,23 +74,23 @@ namespace MBSim {
     else {
       contourCyl->setNodes(userContourNodes);
     }
-#ifdef HAVE_AMVIS
-    // wenn ein file fuer AMVis geschrieben werden soll
-    if(boolAMVis) {
-      ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
-      BTAbody->setElementLength(element[0].l0);
-      BTAbody->setRadius(static_cast<CylinderFlexible*>(contourCyl)->getRadius());
-      BTAbody->setColor(AMVisColor);
-
-      float amvisJ[3][3];
-      for(int i=0;i<3;i++)
-	for(int j=0;j<3;j++) amvisJ[i][j] = JR(i,j);
-      BTAbody->setJacobian(amvisJ);
-      BTAbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
-
-      bodyAMVis = BTAbody;
-    }
-#endif 
+//#ifdef HAVE_AMVIS
+//    // wenn ein file fuer AMVis geschrieben werden soll
+//    if(boolAMVis) {
+//      ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
+//      BTAbody->setElementLength(element[0].l0);
+//      BTAbody->setRadius(static_cast<CylinderFlexible*>(contourCyl)->getRadius());
+//      BTAbody->setColor(AMVisColor);
+//
+//      float amvisJ[3][3];
+//      for(int i=0;i<3;i++)
+//	for(int j=0;j<3;j++) amvisJ[i][j] = JR(i,j);
+//      BTAbody->setJacobian(amvisJ);
+//      BTAbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
+//
+//      bodyAMVis = BTAbody;
+//    }
+//#endif 
   }
 
   void BodyFlexible1s23BTA::setNumberElements(int n) {

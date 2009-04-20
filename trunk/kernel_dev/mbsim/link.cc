@@ -22,11 +22,6 @@
 #include "mbsim/utils/function.h"
 #include "mbsim/dynamic_system.h"
 
-#ifdef HAVE_AMVIS
-#include "arrow.h"
-using namespace AMVis;
-#endif
-
 using namespace fmatvec;
 using namespace std;
 

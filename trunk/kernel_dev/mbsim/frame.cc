@@ -22,14 +22,8 @@
 #include "mbsim/utils/function.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/rigid_body.h"
-#ifdef HAVE_AMVIS
-#include "kos.h"
-using namespace AMVis;
-int MBSim::Frame::kosAMVisCounter=0;
-int MBSim::StationaryFrame::kosAMVisCounter=0;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -44,11 +38,8 @@ namespace MBSim {
     
     WJP.resize(3,0);
     WJR.resize(3,0);
-#ifdef HAVE_AMVIS
-    kosAMVis = NULL;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-    amvisFrame=0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVFrame=0;
 #endif
   }
 
@@ -61,17 +52,8 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-#ifdef HAVE_AMVIS
-      if(kosAMVis && getPlotFeature(amvis)==enabled) {
-        Vec cardan=AIK2Cardan(AWP);
-        kosAMVis->setTime(t);
-        kosAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
-        kosAMVis->setRotation(cardan(0),cardan(1),cardan(2));
-        kosAMVis->appendDataset(0);
-      }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisFrame && !amvisFrame->isHDF5Link()) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVFrame && !openMBVFrame->isHDF5Link()) {
         vector<double> data;
         data.push_back(t);
         data.push_back(WrOP(0));
@@ -82,7 +64,7 @@ namespace MBSim {
         data.push_back(cardan(1));
         data.push_back(cardan(2));
         data.push_back(0);
-        amvisFrame->append(data);
+        openMBVFrame->append(data);
       }
 #endif
       Element::plot(t,dt);
@@ -107,12 +89,6 @@ namespace MBSim {
         plotColumns.push_back("gamma");
       }
 
-#ifdef HAVE_AMVIS
-      if(kosAMVis && getPlotFeature(amvis)==enabled) {
-        kosAMVis->writeBodyFile();  
-        kosAMVis->setColor(0);
-      }
-#endif
 #ifdef HAVE_AMVISCPPINTERFACE
 //  nicht notwendig, da StationaryFrame
 //      if(getPlotFeature(amvis)==enabled && amvisFrame) {
@@ -134,24 +110,14 @@ namespace MBSim {
     }
   }
 
-#ifdef HAVE_AMVIS
-  void StationaryFrame::setAMVisKosSize(double size) {
-    if(size>0) {
-      kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
-      kosAMVisCounter++;
-      kosAMVis->setSize(size);
-    }
-  }
-#endif
-
-#ifdef HAVE_AMVISCPPINTERFACE
-  void StationaryFrame::enableAMVis(double size, double offset) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void StationaryFrame::enableOpenMBV(double size, double offset) {
     if(size>=0) {
-      amvisFrame=new AMVis::Frame;
-      amvisFrame->setSize(size);
-      amvisFrame->setOffset(offset);
+      openMBVFrame=new OpenMBV::Frame;
+      openMBVFrame->setSize(size);
+      openMBVFrame->setOffset(offset);
     }
-    else amvisFrame=0;
+    else openMBVFrame=0;
   }
 #endif
 
@@ -167,11 +133,8 @@ namespace MBSim {
     WJP.resize(3,0);
     WJR.resize(3,0);
 
-#ifdef HAVE_AMVIS
-    kosAMVis = NULL;
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-    amvisFrame=0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVFrame=0;
 #endif
   }
 
@@ -184,17 +147,8 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
-#ifdef HAVE_AMVIS
-      if(kosAMVis && getPlotFeature(amvis)==enabled) {
-        Vec cardan=AIK2Cardan(AWP);
-        kosAMVis->setTime(t);
-        kosAMVis->setTranslation(WrOP(0),WrOP(1),WrOP(2));
-        kosAMVis->setRotation(cardan(0),cardan(1),cardan(2));
-        kosAMVis->appendDataset(0);
-      }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisFrame && !amvisFrame->isHDF5Link()) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVFrame && !openMBVFrame->isHDF5Link()) {
         vector<double> data;
         data.push_back(t);
         data.push_back(WrOP(0));
@@ -205,7 +159,7 @@ namespace MBSim {
         data.push_back(cardan(1));
         data.push_back(cardan(2));
         data.push_back(0);
-        amvisFrame->append(data);
+        openMBVFrame->append(data);
       }
 #endif
       Element::plot(t,dt);
@@ -230,25 +184,19 @@ namespace MBSim {
         plotColumns.push_back("gamma");
       }
 
-#ifdef HAVE_AMVIS
-      if(kosAMVis && getPlotFeature(amvis)==enabled) {
-        kosAMVis->writeBodyFile();  
-        kosAMVis->setColor(0);
-      }
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisFrame) {
-        amvisFrame->setName(name);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
+        openMBVFrame->setName(name);
         RigidBody *rigidBody;
-        parent->getAMVisGrp()->addObject(amvisFrame);
+        parent->getOpenMBVGrp()->addObject(openMBVFrame);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getAMVisBody()==0) {
-            cout<<"To visualize a frame on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
+          if(rigidBody->getOpenMBVBody()==0) {
+            cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
             _exit(1);
           }
-          amvisFrame->setHDF5LinkTarget(rigidBody->getAMVisBody());
-          amvisFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
-          amvisFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
+          openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
+          openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
+          openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
         }
       }
 #endif
@@ -261,24 +209,14 @@ namespace MBSim {
     getJacobianOfRotation().resize(3,hSize[0]);
   }
 
-#ifdef HAVE_AMVIS
-  void Frame::setAMVisKosSize(double size) {
-    if(size>0) {
-      kosAMVis=new Kos("XXX"+numtostr(kosAMVisCounter)+"."+name,1,false);
-      kosAMVisCounter++;
-      kosAMVis->setSize(size);
-    }
-  }
-#endif
-
-#ifdef HAVE_AMVISCPPINTERFACE
-  void Frame::enableAMVis(double size, double offset) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void Frame::enableOpenMBV(double size, double offset) {
     if(size>=0) {
-      amvisFrame=new AMVis::Frame;
-      amvisFrame->setSize(size);
-      amvisFrame->setOffset(offset);
+      openMBVFrame=new OpenMBV::Frame;
+      openMBVFrame->setSize(size);
+      openMBVFrame->setOffset(offset);
     }
-    else amvisFrame=0;
+    else openMBVFrame=0;
   }
 #endif
   void Frame::resizeJacobians() {

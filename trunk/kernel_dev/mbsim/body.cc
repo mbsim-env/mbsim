@@ -22,8 +22,8 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system.h"
-#ifdef HAVE_AMVISCPPINTERFACE
-#include "amviscppinterface/group.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/group.h"
 #endif
 
 using namespace std;
@@ -31,9 +31,9 @@ using namespace std;
 namespace MBSim {
 
   Body::Body(const string &name) : Object(name) {
-#ifdef HAVE_AMVISCPPINTERFACE
-    amvisBody=0;
-    amvisGrp=0;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVBody=0;
+    openMBVGrp=0;
 #endif
   } 
 
@@ -115,14 +115,14 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisBody) {
-        amvisGrp=new AMVis::Group();
-        amvisGrp->setName(name+"#Group");
-        parent->getAMVisGrp()->addObject(amvisGrp);
-        if(getPlotFeature(amvis)==enabled && amvisBody) {
-          amvisBody->setName(name);
-          amvisGrp->addObject(amvisBody);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+        openMBVGrp=new OpenMBV::Group();
+        openMBVGrp->setName(name+"#Group");
+        parent->getOpenMBVGrp()->addObject(openMBVGrp);
+        if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+          openMBVBody->setName(name);
+          openMBVGrp->addObject(openMBVBody);
         }
       }
 #endif

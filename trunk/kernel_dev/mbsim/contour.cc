@@ -26,19 +26,11 @@
 #include <mbsim/frame.h>
 #include <mbsim/utils/rotarymatrices.h>
 
-#ifdef HAVE_AMVIS
-#include "cbody.h"
-//#include "crigidbody.h"
-#include "sphere.h"
-#include "area.h"
-#include "quad.h"
-#include <mbsim/utils/rotarymatrices.h>
-#endif
-#ifdef HAVE_AMVISCPPINTERFACE
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <rigid_body.h>
-#include <amviscppinterface/group.h>
-#include <amviscppinterface/cylinder.h>
-#include <amviscppinterface/sphere.h>
+#include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/frustum.h>
+#include <openmbvcppinterface/sphere.h>
 #endif
 
 using namespace fmatvec;
@@ -48,12 +40,8 @@ namespace MBSim {
 
   /* Contour */
   Contour::Contour(const string &name) : Element(name), parent(0), R("R")
-# ifdef HAVE_AMVIS
-					 ,
-					 bodyAMVis(NULL)
-# endif
-# ifdef HAVE_AMVISCPPINTERFACE
-   , amvisRigidBody(0)
+# ifdef HAVE_OPENMBVCPPINTERFACE
+   , openMBVRigidBody(0)
 # endif
  {
    // Contouren standardmaessig nicht ausgeben...
@@ -64,10 +52,6 @@ namespace MBSim {
  }
 
   Contour::~Contour() {
-
-#ifdef HAVE_AMVIS
-    if (bodyAMVis) delete bodyAMVis;
-#endif
   }
 
   void Contour::init() {
@@ -82,18 +66,10 @@ namespace MBSim {
     getFrame()->getJacobianOfRotation().resize(3,hSize[j]);
   }
 
-  /*void Contour::initPlotFiles() {
-
-    Element::initPlotFiles();
-#ifdef HAVE_AMVIS
-    if(bodyAMVis) bodyAMVis->writeBodyFile();
-#endif
-  }*/
-
   void Contour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisRigidBody && !amvisRigidBody->isHDF5Link()) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody && !openMBVRigidBody->isHDF5Link()) {
         vector<double> data;
         data.push_back(0);
         data.push_back(0);
@@ -102,7 +78,7 @@ namespace MBSim {
         data.push_back(0);
         data.push_back(0);
         data.push_back(0);
-        amvisRigidBody->append(data);
+        openMBVRigidBody->append(data);
       }
 #endif
       Element::plot(t,dt);
@@ -113,19 +89,19 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_AMVISCPPINTERFACE
-      if(getPlotFeature(amvis)==enabled && amvisRigidBody) {
-        amvisRigidBody->setName(name);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+        openMBVRigidBody->setName(name);
         RigidBody *rigidBody;
-        parent->getAMVisGrp()->addObject(amvisRigidBody);
+        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getAMVisBody()==0) {
-            cout<<"To visualize a contour on a rigid body, the body must at least have a AMVis::InvisibleBody!"<<endl;
+          if(rigidBody->getOpenMBVBody()==0) {
+            cout<<"To visualize a contour on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
             _exit(1);
           }
-          amvisRigidBody->setHDF5LinkTarget(rigidBody->getAMVisBody());
-          amvisRigidBody->setInitialTranslation((rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)]);
-          amvisRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]));
+          openMBVRigidBody->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
+          openMBVRigidBody->setInitialTranslation((rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)]);
+          openMBVRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]));
         }
       }
 #endif
@@ -133,40 +109,11 @@ namespace MBSim {
     }
   }
 
-#ifdef HAVE_AMVIS
-  void Contour::setAMVisBody(AMVis::CRigidBody *AMVisBody, DataInterfaceBase *funcColor){
-    bodyAMVis = AMVisBody;
-    bodyAMVisUserFunctionColor = funcColor;
-  }
-#endif
-
   //void Contour::adjustParentHitSphere(const Vec &CrC) 
   //{
   //  double R = nrm2(CrC);
   //  if(R>parent->getRadiusHitSphere()) parent->setRadiusHitSphere(R);
   //}
-
-  /*void Contour::plot(double t, double dt) 
-  {
-#ifdef HAVE_AMVIS
-    if(bodyAMVis) {
-
-      Vec AlpBetGam;
-      AlpBetGam = AIK2Cardan(R.getOrientation());
-
-      if (bodyAMVisUserFunctionColor) {
-	double color = (*bodyAMVisUserFunctionColor)(t)(0);
-	if (color>1)   color =1;
-	if (color<0) color =0;
-	static_cast<AMVis::CRigidBody*>(bodyAMVis)->setColor(color);
-      }
-      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTime(t);
-      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setTranslation(R.getPosition()(0),R.getPosition()(1),R.getPosition()(2));
-      static_cast<AMVis::CRigidBody*>(bodyAMVis)->setRotation(AlpBetGam(0),AlpBetGam(1),AlpBetGam(2));
-      static_cast<AMVis::CRigidBody*>(bodyAMVis)->appendDataset(0);
-    }
-#endif
-  }*/
 
   /* Point */
   Point::Point(const string &name) : Contour(name) {}
@@ -181,15 +128,15 @@ namespace MBSim {
   CircleSolid::CircleSolid(const string &name) : Contour(name), r(0), Cb(3) {}
   CircleSolid::CircleSolid(const string &name, double r_) : Contour(name), r(r_), Cb(3) {}
   void CircleSolid::setCb(const Vec& Cb_) {Cb = Cb_/nrm2(Cb_);}
-#ifdef HAVE_AMVISCPPINTERFACE
-  void CircleSolid::enableAMVis(bool enable) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void CircleSolid::enableOpenMBV(bool enable) {
     if(enable) {
-      amvisRigidBody=new AMVis::Cylinder;
-      ((AMVis::Cylinder*)amvisRigidBody)->setBaseRadius(r);
-      ((AMVis::Cylinder*)amvisRigidBody)->setTopRadius(r);
-      ((AMVis::Cylinder*)amvisRigidBody)->setHeight(0);
+      openMBVRigidBody=new OpenMBV::Frustum;
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
     }
-    else amvisRigidBody=0;
+    else openMBVRigidBody=0;
   }
 #endif
 
@@ -249,13 +196,13 @@ namespace MBSim {
   {
     Contour::init();
   }
-#ifdef HAVE_AMVISCPPINTERFACE
-  void Sphere::enableAMVis(bool enable) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void Sphere::enableOpenMBV(bool enable) {
     if(enable) {
-      amvisRigidBody=new AMVis::Sphere;
-      ((AMVis::Sphere*)amvisRigidBody)->setRadius(r);
+      openMBVRigidBody=new OpenMBV::Sphere;
+      ((OpenMBV::Sphere*)openMBVRigidBody)->setRadius(r);
     }
-    else amvisRigidBody=0;
+    else openMBVRigidBody=0;
   }
 #endif
 
@@ -315,22 +262,6 @@ namespace MBSim {
     }   
     return t;
   }
-
-/*  void ContourInterpolation::plot(double t, double dt) {
-#ifdef HAVE_AMVIS
-    if(bodyAMVis) 
-    {
-      float qQuad[12];
-      for(int i=0;i<4;i++) {
-	Vec WrOPi = iPoints[i]->getWrOP();
-	for(int j=0;j<3;j++) qQuad[3*i+j] = WrOPi(j);
-      }		
-      static_cast<AMVis::ElasticBody*>(bodyAMVis)->setTime(t);
-      static_cast<AMVis::ElasticBody*>(bodyAMVis)->setCoordinates(qQuad);
-      static_cast<AMVis::ElasticBody*>(bodyAMVis)->appendDataset(0);
-    }
-#endif
-  }*/
 
   Vec ContourInterpolation::computeWrOC(const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWrOC(cp);}
   Vec ContourInterpolation::computeWvC (const Vec& s) {ContourPointData cp; cp.getContourParameterType()=EXTINTERPOL;cp.getLagrangeParameterPosition()=s; return computeWvC (cp);}
