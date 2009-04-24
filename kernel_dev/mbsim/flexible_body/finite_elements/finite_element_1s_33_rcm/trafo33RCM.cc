@@ -22,8 +22,9 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -241,8 +242,7 @@ namespace MBSim {
     else be = rf.slv(be);
 
     if(rf.getInfo()!=0) {
-      cout << "ERROR (TRAFO33RCM:computebe): No convergence of Newton method during bending correction.\n" << endl;
-      throw(1);
+      throw new MBSimError("ERROR (TRAFO33RCM:computebe): No convergence of Newton method during bending correction.");
     }
   }
 
