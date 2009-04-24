@@ -283,13 +283,13 @@ namespace MBSim {
   }
 
   void DynamicSystem::init() {
-    for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
+    for(unsigned int i=0; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
       frame[i]->setPosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOF[i]);
       frame[i]->setOrientation(frameOfReference.getOrientation()*AIF[i]);
     }
     for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
-      contour[i]->setWrOP(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOC[i]);
-      contour[i]->setAWC(frameOfReference.getOrientation()*AIC[i]);
+      contour[i]->setReferencePosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOC[i]);
+      contour[i]->setReferenceOrientation(frameOfReference.getOrientation()*AIC[i]);
       contour[i]->init();
     }
     for(unsigned int i=0; i<dynamicsystem.size(); i++) { // kinematics of other dynamicsystems can be updates from frame I
@@ -1099,7 +1099,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::addContour(Contour* contour_) {
-
     if(getContour(contour_->getName(),false)) { 
       cout << "ERROR (DynamicSystem:addContour): The DynamicSystem " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
       assert(getContour(contour_->getName(),false)==NULL);

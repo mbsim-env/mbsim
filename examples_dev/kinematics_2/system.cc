@@ -18,7 +18,6 @@ class Moment : public UserFunction {
       Vec a(3);
       a(0) = 0.001*cos(t);
       a(1) = 0.0005*sin(t);
-      //a(2) = 0.15*sin(t+M_PI/8);
       return a;
     }
 };
@@ -77,15 +76,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setAccelerationOfGravity(grav);
   // Parameters
   double l = 0.8;              		
-  double h =  0.02;
-  double d = 0.1;
   double m = 0.7;
   SymMat Theta(3);
   Theta(1,1) = m*l*l/12.;
   Theta(2,2) = Theta(1,1);
-  double alpha = 3.0 * M_PI/180.; 
-  double deltax = 0.2;           
-  double mu  = 0.3;
 
   Tree *tree = new Tree("Baum"); 
   addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));

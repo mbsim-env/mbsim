@@ -21,7 +21,7 @@
 #ifndef _FLEXIBLE_BODY_1S_21_RCM_H_
 #define _FLEXIBLE_BODY_1S_21_RCM_H_
 
-#include <mbsim/flexible_body.h>
+#include "mbsim/flexible_body.h"
 
 //namespace AMVis { class ElasticBody1s21RCM; }
 
@@ -33,10 +33,12 @@ namespace MBSim {
   /*!
    * \brief model for planar beams with large deflection using Redundant Coordinate Method (RCM)
    * \author Roland Zander
-   * \author Thorsten Schindler
    * \date 2009-03-23 initial kernel_dev commit (Thorsten Schindler)
    * \date 2009-03-26 cosmetics on doxygen (*! **) and alignements; some renames (Roland Zander)
    * \date 2009-04-05 minor change: parent class now is FlexibleBodyContinuum (Schindler / Zander)
+   * \date 2009-04-20 binormals of contours can be time variant
+   * \todo gyroscopic accelerations TODO
+   * \todo inverse kinetics TODO
    *
    * read:\n
    * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005 \n
@@ -44,7 +46,7 @@ namespace MBSim {
    * Zander, R.; Ulbrich, H.: Free plain motion of flexible beams in MBS - A comparison of models, III European Conference on Computational Mechanics Lissbon, Portugal, 2006
    */
   class FlexibleBody1s21RCM : public FlexibleBodyContinuum<double> {
-public:
+    public:
       /*!
        * \brief constructor:
        * \param name of body
@@ -57,15 +59,15 @@ public:
        */
       virtual ~FlexibleBody1s21RCM() {}
 
-      /* INHERITED INTERFACE */
-      /* FLEXIBLEBODY */
+      /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual std::string getType() const { return "FlexibleBody1s21RCM"; }
       virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
-      virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
+      /***************************************************/
 
-      /* OBJECT */
+      /* INHERITED INTERFACE OF OBJECT */
       virtual void init();
       /***************************************************/
 

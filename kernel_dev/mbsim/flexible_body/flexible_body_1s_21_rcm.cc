@@ -37,18 +37,18 @@ using namespace std;
 
 namespace MBSim {
 
-FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false)
-//#ifdef HAVE_AMVIS
-//                                                                                     ,
-//                                                                                     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
-//#endif
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false)
+                                                                                      //#ifdef HAVE_AMVIS
+                                                                                      //                                                                                     ,
+                                                                                      //                                                                                     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
+                                                                                      //#endif
 
-                                                                                     { 
-                                                                                       contourR = new Contour1sFlexible("R");
-                                                                                       contourL = new Contour1sFlexible("L");
-                                                                                       Body::addContour(contourR);
-                                                                                       Body::addContour(contourL);
-                                                                                     }
+  { 
+    contourR = new Contour1sFlexible("R");
+    contourL = new Contour1sFlexible("L");
+    Body::addContour(contourR);
+    Body::addContour(contourL);
+  }
 
   void FlexibleBody1s21RCM::BuildElements() {
     for(int i=0;i<Elements;i++) {
@@ -89,46 +89,68 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
     }
   }
 
-  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, Frame *frame) {
+  void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       const double &s = cp.getLagrangeParameterPosition()(0); 
       double sLocal = BuildElement(s);
       Vec Z = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
 
-      Vec tmp(3,NONINIT); tmp(0) = Z(0); tmp(1) = Z(1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+      Vec tmp(3,NONINIT);
 
-      tmp(0) = cos(Z(2)); tmp(1) = sin(Z(2)); 
-      cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
+      if(ff==position || ff==position_cosy || ff==all) {
+        tmp(0) = Z(0); tmp(1) = Z(1); tmp(2) = 0.; // temporary vector used for compensating planar description
+        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+      }
 
-      tmp(0) = -sin(Z(2)); tmp(1) = cos(Z(2));
-      cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
-      cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        tmp(0) = cos(Z(2)); tmp(1) = sin(Z(2)); 
+        cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
+      }
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        tmp(0) = -sin(Z(2)); tmp(1) = cos(Z(2));
+        cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
+      }
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
-      tmp(0) = Z(3); tmp(1) = Z(4);
-      cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+        tmp(0) = Z(3); tmp(1) = Z(4);
+        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+      }
 
-      tmp(0) = 0.; tmp(1) = 0.; tmp(2) = Z(5);
-      cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = Z(5);
+        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+      }
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       const int &node = cp.getNodeNumber();
 
-      Vec tmp(3,NONINIT); tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
-      cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+      Vec tmp(3,NONINIT);
 
-      tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
-      cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
+      if(ff==position || ff==position_cosy || ff==all) {
+        tmp(0) = q(5*node+0); tmp(1) = q(5*node+1); tmp(2) = 0.; // temporary vector used for compensating planar description
+        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
+      }
 
-      tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2));
-      cp.getFrameOfReference().getOrientation().col(0)    =  frameOfReference->getOrientation() * tmp; // normal
-      cp.getFrameOfReference().getOrientation().col(2)    = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
+        cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
+      }
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2));
+        cp.getFrameOfReference().getOrientation().col(0)    =  frameOfReference->getOrientation() * tmp; // normal
+      }
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
-      tmp(0) = u(5*node+0); tmp(1) = u(5*node+1);
-      cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+      if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        tmp(0) = u(5*node+0); tmp(1) = u(5*node+1);
+        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
+      }
 
-      tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
-      cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = u(5*node+2);
+        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
+      }
     }
 
     if(frame!=0) { // frame should be linked to contour point data
@@ -144,12 +166,11 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
     Mat Jacobian(qSize,3,INIT,0.);
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      double s = cp.getLagrangeParameterPosition()(0); 
-      double sLocal = BuildElement(s);
+
+      double sLocal = BuildElement(cp.getLagrangeParameterPosition()(0));
       Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLocal);
       if(CurrentElement<Elements-1 || openStructure) {
-        Index Dofs(5*CurrentElement,5*CurrentElement+7);
-        Jacobian(Dofs,All) = Jtmp;
+        Jacobian(Index(5*CurrentElement,5*CurrentElement+7),All) = Jtmp;
       }
       else { // ringstructure
         Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
@@ -158,12 +179,12 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       int node = cp.getNodeNumber();
-      Index Dofs(5*node,5*node+2);
-      Jacobian(Dofs,All) << DiagMat(3,INIT,1.0);
+      Jacobian(Index(5*node,5*node+2),All) << DiagMat(3,INIT,1.0);
     }
 
     cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2)));
+
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
@@ -174,20 +195,14 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
       frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
     }   
   }
-  
+
   void FlexibleBody1s21RCM::init() {
     FlexibleBodyContinuum<double>::init();
 
     initialized = true;
 
-    contourR->setAWC(frameOfReference->getOrientation());
-    contourL->setAWC(frameOfReference->getOrientation());
-
-    Vec contourRBinormal(3,INIT,0.0); contourRBinormal(2) = 1.0;
-    Vec contourLBinormal = - contourRBinormal;
-
-    contourR->setCb(contourRBinormal);
-    contourL->setCb(contourLBinormal);
+    contourR->getFrame()->setOrientation(frameOfReference->getOrientation());
+    contourL->getFrame()->setOrientation(frameOfReference->getOrientation());
 
     contourR->setAlphaStart(0); contourR->setAlphaEnd(L);
     contourL->setAlphaStart(0); contourL->setAlphaEnd(L);
@@ -214,25 +229,25 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
       dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
     }
 
-//#ifdef HAVE_AMVIS
-//    if(getPlotFeature(amvis)==enabled) {
-//      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
-//      RCMbody->setElementLength(l0);
-//
-//      float amvisJT[3][2], amvisJR[3];
-//      for(int i=0;i<3;i++) {
-//        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
-//        amvisJR[i] = frameOfReference->getOrientation()(i,0);
-//      }
-//      RCMbody->setJacobians(amvisJT,amvisJR);
-//      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
-//      RCMbody->setCylinder(AMVisRadius);
-//      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
-//      RCMbody->setColor(AMVisColor);
-//
-//      bodyAMVis = RCMbody;
-//    } 
-//#endif
+    //#ifdef HAVE_AMVIS
+    //    if(getPlotFeature(amvis)==enabled) {
+    //      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
+    //      RCMbody->setElementLength(l0);
+    //
+    //      float amvisJT[3][2], amvisJR[3];
+    //      for(int i=0;i<3;i++) {
+    //        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
+    //        amvisJR[i] = frameOfReference->getOrientation()(i,0);
+    //      }
+    //      RCMbody->setJacobians(amvisJT,amvisJR);
+    //      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
+    //      RCMbody->setCylinder(AMVisRadius);
+    //      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
+    //      RCMbody->setColor(AMVisColor);
+    //
+    //      bodyAMVis = RCMbody;
+    //    } 
+    //#endif
   }
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {
@@ -298,18 +313,15 @@ FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_
 
   double FlexibleBody1s21RCM::BuildElement(const double& sGlobal) {
     double remainder = fmod(sGlobal,L);
-    if(sGlobal<0.) remainder += L; // project into periodic structure 
+    if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
+    if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
     CurrentElement = int(remainder/l0);   
     double sLokal = remainder - (0.5 + CurrentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
-    if(CurrentElement >= Elements) { // contact solver computes to large sGlobal at the end of the entire beam
-      if(openStructure) { 
-        CurrentElement =  Elements-1;
-        sLokal += l0;
-      }
-      else
-        CurrentElement -= Elements;
+    if(CurrentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+      CurrentElement =  Elements-1;
+      sLokal += l0;
     }
     return sLokal;
   }

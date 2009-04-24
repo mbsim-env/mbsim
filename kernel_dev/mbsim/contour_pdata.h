@@ -23,7 +23,6 @@
 #include "mbsim/frame.h"
 #include <vector>
 
-
 namespace MBSim {
 
   class Point;
@@ -107,5 +106,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _CONTOUR_PDATA_H_ */
 

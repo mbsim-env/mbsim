@@ -41,7 +41,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updateg(Vec &g, ContourPointData *cpData) {
-
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation());
     cpData[isphere].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
     cpData[isphere].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);
@@ -58,7 +57,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
-
     Vec v1 = cpData[iplane].getFrameOfReference().getOrientation().col(2);
     Vec n1 = cpData[iplane].getFrameOfReference().getOrientation().col(0);
     Vec n2 = cpData[isphere].getFrameOfReference().getOrientation().col(0);
@@ -119,8 +117,6 @@ namespace MBSim {
     Mat U2 = sphere->getFrame()->getOrientation()*KU2;
     Mat V2 = sphere->getFrame()->getOrientation()*KV2;
 
-    //cout << u1 << endl;
-    //cout << R1 << endl;
     SqrMat A(4,4,NONINIT);
     A(Index(0,0),Index(0,1)) = -trans(u1)*R1;
     A(Index(0,0),Index(2,3)) = trans(u1)*R2;
@@ -136,8 +132,6 @@ namespace MBSim {
     b(1) = -trans(v1)*(vC2-vC1);
     b(2) = -trans(v2)*(Om2-Om1);
     b(3) = trans(u2)*(Om2-Om1);
-    //cout << A << endl;
-    //cout << b << endl;
     Vec zetad =  slvLU(A,b);
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
@@ -151,5 +145,6 @@ namespace MBSim {
       wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
     }
   }
+
 }
 

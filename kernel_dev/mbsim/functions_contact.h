@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin F�rg
-
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef FUNCTIONS_CONTACT_H_
@@ -28,67 +26,119 @@
 
 namespace MBSim {
 
-  /*! \brief Class for distances and root functions of contact problems
-   * 
-   * Author: Roland Zander
+  /*! 
+   * \brief class for distances and root functions of contact problems
+   * \author Roland Zander
+   * \date 2009-04-21 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg>
     class DistanceFunction : public Function<Ret,Arg> {
       public:
-        /*! Calculation of root-function at Contour-parameter x */
+        /* INTERFACE FOR DERIVED CLASSES */
+        /*!
+         * \param contour parameter
+         * \return root function evaluation at contour parameter
+         */
         virtual Ret operator()(const Arg& x) = 0;
-        /*! Calculation of possible contact-distance at Contour-parameter x (default: norm of computeWrD(const Arg& x)) */
-        virtual double operator[](const Arg& x) {return nrm2(computeWrD(x));};	
-        /*! Compute helping distance-vector at Contour-parameter x */
+
+        /*!
+         * \param contour parameter
+         * \return possible contact-distance at contour parameter
+         */
+        virtual double operator[](const Arg& x) { return nrm2(computeWrD(x)); };	
+
+        /*!
+         * \param contour parameter
+         * \return helping distance vector at contour parameter
+         */
         virtual fmatvec::Vec computeWrD(const Arg& x) = 0;
+        /*************************************************/
     };
 
-
-  /*! Root function for pairing Contour1s and Point */
+  /*!
+   * \brief root function for pairing Contour1s and Point
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   */
   class FuncPairContour1sPoint : public DistanceFunction<double,double> {
+    public:
+      /**
+       * \brief constructor
+       * \param point contour
+       * \param contour with one contour parameter
+       */
+      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::Vec(1,fmatvec::INIT,0.)) {}
+
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &alpha) {
+        fmatvec::Vec Wd = computeWrD(alpha);
+        fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
+        return trans(Wt)*Wd;
+      }
+
+      fmatvec::Vec computeWrD(const double &alpha) {
+        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
+          cp.getLagrangeParameterPosition()(0) = alpha;
+          contour->computeRootFunctionPosition(cp);
+          contour->computeRootFunctionFirstTangent(cp);
+        }
+        return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
+      }
+      /*************************************************/
+
     private:
+      /**
+       * \brief contours
+       */
       Contour1s *contour;
       Point *point;
-    public:
-      FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_) {}
-      double operator()(const double &alpha) {
-        fmatvec::Vec Wt = (contour->computeWt(alpha)).col(0);
-        fmatvec::Vec WrOC[2];
-        WrOC[0] = point->getWrOP();
-        WrOC[1] = contour->computeWrOC(alpha);
-        fmatvec::Vec Wd = WrOC[1] - WrOC[0];
-        return trans(Wt)*Wd;
-      }
-      fmatvec::Vec computeWrD(const double &alpha) {
-        return point->getWrOP() - contour->computeWrOC(alpha);
-      }
-      /*     double operator[](const double &alpha) { */
-      /* 	return nrm2(computeWrD(alpha)); */
-      /*     } */
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
   };
 
-  /*! Root function for pairing CylinderFlexible and CircleHollow */
+  /*!
+   * \brief root function for pairing CylinderFlexible and CircleHollow
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   */
   class FuncPairContour1sCircleHollow : public DistanceFunction<double,double> {
+    public:
+      /**
+       * \brief constructor
+       * \param circle hollow contour
+       * \param contour with one contour parameter
+       */
+      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
+      
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &alpha) {
+        fmatvec::Vec Wd = computeWrD(alpha);
+        return trans(circle->getReferenceOrientation().col(2))*Wd;
+      }
+
+      fmatvec::Vec computeWrD(const double &alpha) {
+        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
+          cp.getLagrangeParameterPosition()(0) = alpha;
+          contour->computeRootFunctionPosition(cp);
+        }
+        return circle->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
+      }
+      /*************************************************/
+    
     private:
+      /**
+       * \brief contours
+       */
       Contour1s *contour;      
       CircleHollow *circle;
-
-    public:
-      /*! Constructor */
-      FuncPairContour1sCircleHollow(CircleHollow* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
-      /*! Returns value of the root-function at parameter alpha */
-      double operator()(const double &alpha)
-      {
-        fmatvec::Vec Wt = circle->computeWb();
-        fmatvec::Vec WrOC[2];
-        WrOC[0] = circle->getWrOP();
-        WrOC[1] = contour->computeWrOC(alpha);
-        fmatvec::Vec Wd = WrOC[1] - WrOC[0];
-        return trans(Wt)*Wd;
-      }
-      /*! Returns distance-vector of cylinder possible contact point and circle midpoint at parameter alpha */
-      fmatvec::Vec computeWrD(const double &alpha) {return circle->getWrOP() - contour->computeWrOC(alpha);}
-      //      double operator[](const double &alpha) {return nrm2(computeWrD(alpha));}
+      
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
   };
 
 
@@ -102,13 +152,13 @@ namespace MBSim {
       fmatvec::Vec operator()(const fmatvec::Vec &alpha) {
         fmatvec::Mat Wt = contour->computeWt(alpha);
         fmatvec::Vec WrOC[2];
-        WrOC[0] = point->getWrOP();
+        WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
         //      fmatvec::Vec Wd = WrOC[1] - WrOC[0];
         return trans(Wt) * ( WrOC[1] - WrOC[0] ); //Wd;
       }
       fmatvec::Vec computeWrD(const fmatvec::Vec &alpha) {
-        return contour->computeWrOC(alpha) - point->getWrOP();
+        return contour->computeWrOC(alpha) - point->getFrame()->getPosition();
       }
   };
 
@@ -214,10 +264,9 @@ namespace MBSim {
   //////          fmatvec::Vec computeWrD(const double &s) {
   //////    	fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
   //////    	fmatvec::Vec Wn = contour->computeWn(s);
-  //////    	double g =trans(Wn)*(WrOCContour-line->getWrOP()); 
+  //////    	double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition()); 
   //////    	//fmatvec::Vec WrOCLine = WrOCContour-Wn*g; 
   //////    	//return WrOCContour-WrOCLine;
-  //////    	//cout << "FuncPairContour1sLine::distanceVector(s)" << endl;
   //////    	return Wn*g;
   //////          }
   //////          double operator[](const double &s) {
@@ -225,31 +274,57 @@ namespace MBSim {
   //////          }
   //////      };
 
-  /*! Root function for pairing Contour1s and Circle */
+  /*!
+   * \brief root function for pairing Contour1s and Circle
+   * \author Roland Zander
+   * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   */
   class FuncPairContour1sCircleSolid : public DistanceFunction<double,double> {
-    private:
-      Contour1s *contour;
-      CircleSolid *circle;
     public:
+      /**
+       * \brief constructor
+       * \param circle solid contour
+       * \param contour with one contour parameter
+       */
       FuncPairContour1sCircleSolid(CircleSolid* circle_, Contour1s *contour_) : contour(contour_), circle(circle_) {}
-      double operator()(const double &s) {
-        fmatvec::Vec Wt = (contour->computeWt(s)).col(0);
-        return trans(Wt)*computeWrD(s);
+      
+      /* INHERITED INTERFACE OF DISTANCEFUNCTION */
+      double operator()(const double &alpha) {
+        fmatvec::Vec Wd = computeWrD(alpha);
+        fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
+        return trans(Wt)*Wd;
       }
-      fmatvec::Vec computeWrD(const double &s) {
+
+      fmatvec::Vec computeWrD(const double &alpha) {
+        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
+          cp.getLagrangeParameterPosition()(0) = alpha;
+          contour->computeRootFunctionPosition(cp);
+          contour->computeRootFunctionFirstTangent(cp);
+          contour->computeRootFunctionNormal(cp);
+        }
         fmatvec::Vec WrOC[2];
-        WrOC[0] = circle->getWrOP() + circle->getRadius()*contour->computeWn(s);
-        WrOC[1] = contour->computeWrOC(s);
+        WrOC[0] = circle->getFrame()->getPosition() - circle->getRadius()*cp.getFrameOfReference().getOrientation().col(0);
+        WrOC[1] = cp.getFrameOfReference().getPosition();
         return WrOC[1] - WrOC[0];
       }
-      double operator[](const double &s) {
-        return nrm2(computeWrD(s));
-      }
+      /***************************************************/
+    
+    private:
+      /**
+       * \brief contours
+       */
+      Contour1s *contour;
+      CircleSolid *circle;
+      
+      /**
+       * \brief contour point data for saving old values
+       */
+      ContourPointData cp;
   };
 
   /*! 
    * \brief General class for contact search with respect to one Contour-parameter
-   * Author: Roland Zander
+   * \author Roland Zander
    *
    * General remarks:
    * - both operators () and [] are necessary to calculate the root-function "()" and the distance of possible contact points "[]"
@@ -283,5 +358,8 @@ namespace MBSim {
       /*! Find point with minimal distance at contour-parameter */
       double slv();
   };
+
 }
+
 #endif /* FUNCTIONS_CONTACT_H_ */
+

@@ -22,7 +22,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addFrame("Os",Vec(3),SqrMat(3,EYE));
 
   Plane *plane = new Plane("Plane");
-  plane->setCn(Vec("[0;-1;0]"));
   double phi = M_PI/2;
   SqrMat AWK(3);
   AWK(0,0) = cos(phi);

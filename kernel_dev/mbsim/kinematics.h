@@ -180,7 +180,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
-      fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
       /***************************************************/
     
     private:
@@ -194,6 +194,7 @@ namespace MBSim {
    * \brief base class to describe Jacobians along a path
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2009-04-20 some comments (Thorsten Schindler)
    */
   class Jacobian {
     public:
@@ -252,7 +253,7 @@ namespace MBSim {
   };
 
   /**
-   * \brief TODO
+   * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    */
@@ -283,7 +284,7 @@ namespace MBSim {
   };
 
   /**
-   * \brief TODO
+   * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    */

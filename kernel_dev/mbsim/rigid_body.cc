@@ -189,7 +189,6 @@ namespace MBSim {
   void RigidBody::checkForConstraints() {
     if(uSize[1] > uSize[0]) {
       Joint *joint = new Joint(string("Joint.")+name);
-      cout << joint->getName() << endl;
       parent->addLink(joint);
       if(forceDir.cols()) {
         joint->setForceDirection(forceDir);
@@ -316,10 +315,10 @@ namespace MBSim {
       }
     }
     for(unsigned int i=0; i<contour.size(); i++) {
-      contour[i]->setAWC(frame[0]->getOrientation()*ASC[i]);
-      contour[i]->setWomegaC(frame[0]->getAngularVelocity());
-      contour[i]->setWrOP(frame[0]->getPosition() + WrSC[i]);
-      contour[i]->setWvP(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSC[i]));
+      contour[i]->setReferenceOrientation(frame[0]->getOrientation()*ASC[i]);
+      contour[i]->setReferenceAngularVelocity(frame[0]->getAngularVelocity());
+      contour[i]->setReferencePosition(frame[0]->getPosition() + WrSC[i]);
+      contour[i]->setReferenceVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSC[i]));
     }
   }
 
@@ -345,10 +344,10 @@ namespace MBSim {
 
     for(unsigned int i=0; i<contour.size(); i++) {
       SqrMat tWrSC = tilde(WrSC[i]);
-      contour[i]->setWJR(frame[0]->getJacobianOfRotation());
-      contour[i]->setWjR(frame[0]->getGyroscopicAccelerationOfRotation());
-      contour[i]->setWJP(frame[0]->getJacobianOfTranslation() - tWrSC*frame[0]->getJacobianOfRotation());
-      contour[i]->setWjP(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])));
+      contour[i]->setReferenceJacobianOfRotation(frame[0]->getJacobianOfRotation());
+      contour[i]->setReferenceGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
+      contour[i]->setReferenceJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSC*frame[0]->getJacobianOfRotation());
+      contour[i]->setReferenceGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])));
     }
   }
 

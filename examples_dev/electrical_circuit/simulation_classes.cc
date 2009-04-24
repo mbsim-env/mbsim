@@ -73,7 +73,7 @@ void ElectricalCircuit::preinit() {
     cout << nodeList[i]->getName()<< " " << nodeList[i]->getFlag() << " " << nodeList[i]->getNumberOfConnectedPins() << endl;
     //cout << "number of branches " << nodeList[i]->searchForBranches(0)<<endl;
     vector<Branch*> branchs_tmp = nodeList[i]->buildBranches(0,0);
-    for(int j=0; j<branchs_tmp.size(); j++) {
+    for(unsigned int j=0; j<branchs_tmp.size(); j++) {
       branchList.push_back(branchs_tmp[j]);
       stringstream str;
       str << "Branch" << k++;
@@ -227,7 +227,7 @@ void ElectricalLink::updatehRef(const fmatvec::Vec &hParent, int j) {
 
 void Branch::init() {
   J.resize(1,gethSize());
-  for(int i=0; i<mesh.size(); i++)
+  for(unsigned int i=0; i<mesh.size(); i++)
     J(0,mesh[i]->getuInd()) = i==0?1:-1; 
 }
 

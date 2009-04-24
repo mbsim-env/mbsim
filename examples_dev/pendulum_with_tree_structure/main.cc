@@ -1,4 +1,4 @@
-#include "pendulum.h"
+#include "system.h"
 #include <mbsim/integrators/integrators.h>
 
 using namespace std;

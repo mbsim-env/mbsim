@@ -1,4 +1,4 @@
-#include "robot.h"
+#include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/load.h"

@@ -38,7 +38,7 @@ class Branch : public MBSim::Object {
   protected:
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
-    vector<Mesh*> mesh;
+    std::vector<Mesh*> mesh;
     Pin *startPin, *endPin;
     std::vector<Branch*> connectedBranch;
     int flag;
@@ -62,7 +62,7 @@ class Branch : public MBSim::Object {
     Pin* getStartPin() {return startPin;}
     Pin* getEndPin() {return endPin;}
     void addConnectedBranch(Branch* branch);
-    void buildTreeBranches(Branch* callingBranch, vector<Branch*> &treeBranch, unsigned int nmax);
+    void buildTreeBranches(Branch* callingBranch, std::vector<Branch*> &treeBranch, unsigned int nmax);
 //    vector<Mesh*> buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &flag);
     void buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &foundMesh);
     void setFlag(int f) { flag = f; }
@@ -78,7 +78,7 @@ class ElectricalLink : public MBSim::Link, public Component {
   protected:
     //std::vector<Branch*> branch;
   public:
-    ElectricalLink(const string &name) : Link(name) {}
+    ElectricalLink(const std::string &name) : Link(name) {}
 
     void updateg(double t) {}
     void updategd(double t) {}
@@ -144,7 +144,7 @@ class Inductor : public ElectricalObject {
   protected:
     double L;
   public:
-    Inductor(const string &name) : ElectricalObject(name), L(1) {}
+    Inductor(const std::string &name) : ElectricalObject(name), L(1) {}
 
     void updateM(double t); 
     void setInductance(double L_) { L = L_;}

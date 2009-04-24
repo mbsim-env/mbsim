@@ -90,7 +90,7 @@ namespace MBSim {
       }
 
 #ifdef HAVE_AMVISCPPINTERFACE
-//  nicht notwendig, da StationaryFrame
+//      !!!!!!!!!!!not necessary, because of stationary frame!!!!!!!!!!!!!!
 //      if(getPlotFeature(amvis)==enabled && amvisFrame) {
 //        amvisFrame->setName(name);
 //        RigidBody *rigidBody;

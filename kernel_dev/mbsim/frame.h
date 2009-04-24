@@ -31,9 +31,17 @@
 namespace MBSim {
 
   /**
+   * \brief different interest features for frames
+   */
+  enum FrameFeature {
+    position, firstTangent, normal, secondTangent, cosy, position_cosy, velocity, angularVelocity, velocity_cosy, velocities, velocities_cosy, all
+  };
+
+  /**
    * \brief cartesian stationary frame on bodies only having position and orientation
    * \author Thorsten Schindler
    * \date 2009-04-08 initial commit (Thorsten Schindler)
+   * \date 2009-04-20 added FrameFeature (Thorsten Schindler)
    * \todo AMVisEnvironmentFrame for StationaryFrame TODO
    */
   class StationaryFrame : public Element, public FrameInterface {

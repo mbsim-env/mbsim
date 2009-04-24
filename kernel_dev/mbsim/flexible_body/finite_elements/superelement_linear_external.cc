@@ -50,7 +50,7 @@ namespace MBSim {
       cout << "Massmatrix and stiffnessmatrix have unequal sizes!!!" << endl;
   }
 
-  Vec SuperElementLinearExternal::computeTranslation      (const Vec&q,const ContourPointData& cp) {
+  Vec SuperElementLinearExternal::computePosition      (const Vec&q,const ContourPointData& cp) {
     return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*q + KrP[cp.getNodeNumber()];
   }
   Mat SuperElementLinearExternal::computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q,const ContourPointData& cp) {

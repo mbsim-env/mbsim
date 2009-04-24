@@ -105,7 +105,7 @@ namespace MBSim {
        * \param t time
        * \todo angular kinematics
        */
-      virtual void updateKinematicsForFrame(ContourPointData &S_, Frame *frame=0);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
 
       /* Object */

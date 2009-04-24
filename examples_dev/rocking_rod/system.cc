@@ -23,7 +23,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Parameters
   double l = 0.8;              		
   double h =  0.02;
-  double d = 0.1;
   double m = 0.7;
   SymMat Theta(3);
   Theta(1,1) = m*l*l/12.;

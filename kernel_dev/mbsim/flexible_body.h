@@ -39,6 +39,7 @@ namespace MBSim {
    * \date 2009-03-24 changes for new MBSim (Thorsten Schindler)
    * \date 2009-03-25 conflicts solved (Thorsten Schindler)
    * \date 2009-04-05 changed to non-template definition (Schindler / Zander)
+   * \date 2009-04-20 frame concept (Thorsten Schindler)
    */
   class FlexibleBody : public Body {
     public:
@@ -94,9 +95,10 @@ namespace MBSim {
       /**
        * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
        * \param contour parameter
+       * \param selection of specific calculations for frames
        * \param possible external frame, otherwise contour parameters are changed
        */
-      virtual void updateKinematicsForFrame(ContourPointData &data, Frame *frame=0) = 0;
+      virtual void updateKinematicsForFrame(ContourPointData &data, FrameFeature ff, Frame *frame=0) = 0;
 
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class

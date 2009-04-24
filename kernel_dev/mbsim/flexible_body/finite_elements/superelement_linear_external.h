@@ -88,9 +88,9 @@ namespace MBSim {
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
       double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}
 
-      fmatvec::Vec computeTranslationalVelocity       (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computeVelocity       (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
       fmatvec::Vec computeAngularVelocity    (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-      fmatvec::Vec computeTranslation      (const fmatvec::Vec&q,const ContourPointData& cp);
+      fmatvec::Vec computePosition      (const fmatvec::Vec&q,const ContourPointData& cp);
       fmatvec::SqrMat computeOrientation      (const fmatvec::Vec&q,const ContourPointData& cp) {if(warnLevel>0) std::cout << "WARNING (SuperElementLinearExternal::computeOrientation): Not Implemented" << std::endl; return fmatvec::SqrMat(0,fmatvec::INIT,0.);}
       fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q,const ContourPointData& cp);
 

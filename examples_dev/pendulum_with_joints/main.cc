@@ -9,8 +9,7 @@ bool rigidJoints;
 int main (int argc, char* argv[]) {
 
   char dummy[10000];
-  double tEnd, dt, dtPlot;
-  bool eventDriven;
+  double tEnd, dtPlot;
 
   // Beginn input
   ifstream is("input.asc");

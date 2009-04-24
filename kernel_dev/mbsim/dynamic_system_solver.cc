@@ -737,10 +737,6 @@ namespace MBSim {
     }
     jsv = jsv_;
 
-    //cout <<endl<< "event at time t = " << t << endl<<endl;
-    //cout<< "sv = " << trans(sv) << endl;
-    //cout << "jsv = "<< trans(jsv) << endl;
-
     if(jsv(sv.size()-1)) { // projection
       k++;
       updateStateDependentVariables(t);
@@ -776,9 +772,6 @@ namespace MBSim {
     updateCondition(); // decide which constraints should be added and deleted
     checkActiveLinks(); // list with active links (g<=0)
 
-    //cout <<"impact = "<< impact <<endl;
-    //cout <<"sticking = "<< sticking <<endl;
-
     if(impact) { // impact
 
       checkAllgd(); // look at all closed contacts
@@ -791,7 +784,6 @@ namespace MBSim {
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      //cout << "laSize before impact = " << laSize << " gdSize = " << gdSize <<endl;
 
       updateStateDependentVariables(t); // TODO necessary?
       updateg(t); // TODO necessary?
@@ -804,7 +796,6 @@ namespace MBSim {
       projectGeneralizedPositions(t);
       int iter;
       iter = solveImpacts();
-      //cout <<"Iterations = "<< iter << endl;
       u += deltau(zParent,t,0);
 
       //saveActive();
@@ -822,7 +813,6 @@ namespace MBSim {
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      //cout << "laSize wrt gd (impact) = " << laSize<< " gdSize = " << gdSize <<endl;
 
       if(laSize) {
 
@@ -909,9 +899,6 @@ namespace MBSim {
     facLLM(); 
     updateW(t); 
     //updateG(t); TODO
-
-    //cout << g << endl;
-    //cout << gd << endl;
 
     projectGeneralizedPositions(t);
     updategd(t);
