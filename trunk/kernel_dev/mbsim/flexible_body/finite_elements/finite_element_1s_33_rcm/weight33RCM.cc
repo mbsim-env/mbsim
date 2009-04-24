@@ -23,6 +23,7 @@
 
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/weight33RCM.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
+#include "mbsim/mbsim_event.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -123,8 +124,7 @@ namespace MBSim {
         gp(4) = (322.-13.*sqrt(70.))/900.;
         break;
       default:
-        cout << "ERROR (Weight33RCM::setGauss): Maximum of 5 Gauss points supported" << endl;
-        throw(1);
+        throw new MBSimError("ERROR (Weight33RCM::setGauss): Maximum of 5 Gauss points supported");
     }
   }
 
