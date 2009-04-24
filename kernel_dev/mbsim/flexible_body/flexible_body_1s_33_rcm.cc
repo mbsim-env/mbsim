@@ -28,10 +28,10 @@
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/frame.h"
 
-#ifdef HAVE_AMVIS
-#include "elastic1s33rcm.h"
-using namespace AMVis;
-#endif
+//#ifdef HAVE_AMVIS
+//#include "elastic1s33rcm.h"
+//using namespace AMVis;
+//#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -269,23 +269,23 @@ namespace MBSim {
       if(epstD == 0.) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
     }
 
-#ifdef HAVE_AMVIS
-    if(getPlotFeature(amvis)==enabled) {
-      ElasticBody1s33RCM *RCMbody = new ElasticBody1s33RCM(name,Elements,openStructure,1,boolAMVisBinary);
-      RCMbody->setElementLength(l0);
-      float amvisJac[3][3];
-      for(int i=0;i<3;i++) {
-        for(int j=0;j<3;j++) {
-          amvisJac[i][j] = frameOfReference->getOrientation()(i,j);
-        }
-      }
-      RCMbody->setJacobian(amvisJac);
-      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
-      RCMbody->setCylinder(cylinderRadius);
-      RCMbody->setCuboid(cuboidBreadth,cuboidHeight);
-      bodyAMVis = RCMbody;
-    }
-#endif
+//#ifdef HAVE_AMVIS
+//    if(getPlotFeature(amvis)==enabled) {
+//      ElasticBody1s33RCM *RCMbody = new ElasticBody1s33RCM(name,Elements,openStructure,1,boolAMVisBinary);
+//      RCMbody->setElementLength(l0);
+//      float amvisJac[3][3];
+//      for(int i=0;i<3;i++) {
+//        for(int j=0;j<3;j++) {
+//          amvisJac[i][j] = frameOfReference->getOrientation()(i,j);
+//        }
+//      }
+//      RCMbody->setJacobian(amvisJac);
+//      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
+//      RCMbody->setCylinder(cylinderRadius);
+//      RCMbody->setCuboid(cuboidBreadth,cuboidHeight);
+//      bodyAMVis = RCMbody;
+//    }
+//#endif
   }
 
   void FlexibleBody1s33RCM::setNumberElements(int n) {
@@ -300,16 +300,16 @@ namespace MBSim {
   }
 
   void FlexibleBody1s33RCM::setCylinder(double cylinderRadius_) { 
-#ifdef HAVE_AMVIS 
-    setPlotFeature(amvis, enabled);
-#endif
+//#ifdef HAVE_AMVIS 
+//    setPlotFeature(amvis, enabled);
+//#endif
     cylinderRadius = cylinderRadius_; 
   }		
 
   void FlexibleBody1s33RCM::setCuboid(double cuboidBreadth_,double cuboidHeight_) {
-#ifdef HAVE_AMVIS
-    setPlotFeature(amvis, enabled);
-#endif
+//#ifdef HAVE_AMVIS
+//    setPlotFeature(amvis, enabled);
+//#endif
     cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; 
   }
 
