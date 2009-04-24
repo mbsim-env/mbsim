@@ -65,11 +65,11 @@ The role of the procedures can be summarized as follows.\footnote{in detail: \ur
 		\texttt{autoconf} & Compiler for \texttt{configure.ac} to build the executable \textsc{configure} procedure.\\\hline
 		\verb|libtoolize -c --force| & Generates shell and M4 procedures for the system depending shared object files. The option \texttt{-c} forces a local copy of the defining files instead of links. The option \texttt{--force} overwrites already existing procedures.\\\hline
 		\texttt{automake -a -c} & Compiler for \texttt{Makefile.am} for preparation of \texttt{Makefile.in}. The option \texttt{-c} forces a local copy of the defining files instead of links.\\\hline
-		\verb|./configure| & Substitutes in existing \texttt{.in}-files variables by systemdepending informationen, i.e. paths. With \texttt{CFLAGS}, \texttt{CXXFLAGS}, \texttt{F77FLAGS} and \texttt{FFFLAGS} the compiler can create code for degugging with \texttt{ddd} or \texttt{valgrind} (\texttt{g3}) or for release (\texttt{O2}). The options \verb|--disable-static| accelerates compiling, as the compiler only has to create dynamic (*.so) and no static libraries (*.a). In all source files \texttt{<config.h>} has to be included. \\\hline
+		%\verb|./configure| & Substitutes in existing \texttt{.in}-files variables by systemdepending informationen, i.e. paths. With \texttt{CFLAGS}, \texttt{CXXFLAGS}, \texttt{F77FLAGS} and \texttt{FFFLAGS} the compiler can create code for degugging with \texttt{ddd} or \texttt{valgrind} (\texttt{g3}) or for release (\texttt{O2}). The options \verb|--disable-static| accelerates compiling, as the compiler only has to create dynamic (*.so) and no static libraries (*.a). In all source files \texttt{<config.h>} has to be included. \\\hline
 		\texttt{make} & Compiles the project sources and links with preliminary libraries. On multi-core computers it is possible to define the number~\texttt{n} of parallel jobs with \texttt{-jn}.\\\hline
 		\texttt{make install} & Copies the executable project files and \texttt{includes} to \texttt{MBSim/Install}.\\\hline 
 	\end{tabular}
-\par It is reasonable to write an executable file invoking the procedures. 
+\par It is reasonable to write an executable file invoking the procedures.\\
 \par The procedure \textsc{reinstall}
 \begin{verbatim}
  ./config.status -recheck

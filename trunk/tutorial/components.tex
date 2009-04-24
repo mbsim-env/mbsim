@@ -27,6 +27,8 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment always deriv
 %\item \emph{BodyFlexible1s21ANCF} 2D-Balken mit Absolute Nodal Coordinate Formulation
 \item[] \texttt{BodyFlexible1s21RCM}\\
   planar beam using redundant coordinate methode with three coordinates per finite element node, translation  $x$, $y$ and rotation $\gamma$, as well as two additional bending deflections $c_1$, $c_2$
+\item[] \texttt{BodyFlexible1s33RCM}\\
+  spatial beam using redundant coordinate methode with six coordinates per finite element node, translation  $x$, $y$, $z$ and reversed Cardan rotation $\alpha$, $\beta$, $\gamma$, as well as four additional bending deflections $c_1$, $c_2$, $c_3$, $c_4$
 %\item \emph{BodyFlexible1s23BTA} Biege-Torsions-Welle (5-Koordinaten pro Knoten $\alpha$, $y$, $\gamma$, $z$, $\beta$ im jeweils mit $\alpha$ mitdrehenden KOSY)
 %\item \emph{BodyFlexibleLinearExternal}
 \end{itemize}
@@ -36,19 +38,35 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment always deriv
 %\subsubsection{Joints}
 %Verbindungen werden ohne Reibung \"uber Ports (\emph{addPort}, \emph{connect}) an K\"orper bez. an die Umgebung angeschlossen. Dann ist auszuw\"ahlen, ob eine flexible Verbindung (\emph{ConnectionFlexible}) oder eine Starrk\"orperverbindung (\emph{ConnectionRigid}) zwischen K\"orpern oder eine externe Erregung (\emph{Load}) zur Modellierung verwendet werden soll. Der Freiheitsgrad der Verbindung wird \"uber \emph{setForceDirection} bez. \emph{setMomentDirection} angegeben. Dem MKS wird eine Verbindung anschlie"send \"uber \emph{addLink} mitgeteilt. \"Uber \emph{Link} kann auch eine Visualisierung der Verbindungskr\"afte (\emph{Arrow}) und der Kopplung selbst zugeschaltet werden; hierbei ist es m\"oglich zwischen einer Einheitenumrechnung und einer L\"angenvisualisierung zu unterscheiden (\emph{setScaleFactor}, \emph{setArrowHead}, \emph{setDiameter}), sowie den Partner f\"ur das Pfeilende festzulegen. Bei \emph{Load} wird mit \emph{setSignal} eine benutzerspezifische Funktion\footnote{\emph{UserFunction} gibt es bereits mit harmonischen (\emph{FuncHarmonic}), linearen Verlauf (\emph{FuncLinear}), oder auch als mehrdimensionale st\"uckweise Polynominterpolation (\emph{MDPPolynom})} vorgegeben.
 %
-%\subsubsection{Kontakte und St\"o"se}
-%Kontakte und St\"o"se (\emph{Contact, ContactBilateral, Impact}\footnote{Vorsicht bei gleichzeitiger Modellierung von Reibung: es k\"onnen Widerspr\"uche zwischen Energieerhaltung in normaler Sto"srichtung und Dissipation durch Reibung auftreten.}) werden K\"orpern \"uber
-%passive Konturen (\emph{addContour}, \emph{connect}) und aktive Kraftgesetze
-%hinzugef\"ugt. Die Zahl der Reibrichtungen und -parameter muss hierbei explizit angegeben werden
-%(\emph{setFrictionDirections}, \emph{setFrictionCoefficientFunction}). Bei einem Sto"s muss
-%zus\"atzlich der Sto"skoeffizient (\emph{setNormalRestitutionCoefficient}) angegeben
-%werden, der beim Kontakt $0$ gesetzt wird. Dem MKS wird ein Kontakt bez. Sto"s
-%anschlie"send \"uber \emph{addLink} mitgeteilt.\\
-%Die Kontakt-Konturen sind so zu w\"ahlen, dass die Schnittmenge der beteiligten Kontakt-/
-%Sto"skonturen maximal einpunktig ist. Implementiert sind derzeit die Konfigurationen
-%Punkt-Linie, Punkt-Ebene, Punkt-Kante, Punkt-Polytop, Punkt-Zylinder, Punkt-Contour1s,
-%Punkt-Kegelstumpf, Punkt-Interpolationskontur, Kreis-Contour1s, Kreis-Linie, Kreis-Ebene,
-%Kreis-Kreisinneres, Kreis-Kreis, Kreis-Kegelstumpf, Kreisinneres-Zylinder,
+\subsubsection{Contacts and Impacts}
+Contacts and impacts are managed by \texttt{Contact}.\par 
+The relative kinematics is defined between \texttt{Contour} classes. Thereby kinematically there might be a finite number of possible contact points; for the evaluation of force laws a decision rule has to be implemented. On velocity level the contact kinematics is independent of the specific contour. For the calculations on position level the following contours are available.
+\begin{itemize}
+\item[] \texttt{Point}\\
+    most primitive rigid contour
+\item[] \texttt{Plane}\\
+    affine two dimensional surface
+\item[] \texttt{Sphere}\\
+    two dimensional sphere
+\item[] \texttt{FlexibleBand}\\
+    flexible contour describing a band in a certain distance and direction of a neutral fibre
+\end{itemize}
+
+Available contact kinematics on position level:
+\begin{itemize}
+\item[] \texttt{PointPlane}
+\item[] \texttt{PointFlexibleBand}
+\item[] \texttt{SpherePlane}
+\end{itemize}
+
+Concerning the constitutive laws it is distinguished between contact laws on acceleration and impact laws on velocity level. Further, both flexible and rigid laws in normal and tangential direction are available.\footnote{Modelling hint: There are contradictions between energy conservation in normal direction and dissipation due to friction when combining these features.})\par
+
+For modelling own contact kinematics and constitutive laws some conventions are important.
+\begin{itemize}
+\item[] accompanying contour trihedral\\
+    the first column is the outward pointing normal, 
+\end{itemize}
+
 %Linie-Contour1s, Kugel-Ebene, Kugel-Kugel und Kugel-Kegelstumpf. Auch Erweiterungen
 %k\"onnen \"uber die Definition neuer Konturen und zugeh\"origer Kontaktkinematiken
 %(\emph{setContactKinematics}) definiert werden. Hierzu ben\"otigt eine Kontur die
@@ -59,17 +77,33 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment always deriv
 %Schritt. Die Reihenfolge des \emph{connect}-Aufrufs muss dar\"uberhinaus behandelt
 %werden.
 %
-%\subsubsection{Integratoren}
-%Bei Integratoren stehen \emph{DOPRI5Integrator} f\"ur nichtsteife ODE- und \emph{RADAU5Integrator} f\"ur steife ODE-Systeme zur Verf\"ugung; DAEs behandeln \emph{RADAU5DAEIntegrator}, \emph{DASKRIntegrator} und \emph{DASPKIntegrator}. Alle arbeiten mit Schrittweitensteuerung. Dar\"uberhinaus gibt es noch \emph{RKSuite}, \emph{LSODAR} (Mehrschrittverfahren steif/nicht steif) und \emph{LSODE}. Bei Ungleichungsnebenbedingungen muss der semi-implizite \emph{TimeSteppingIntegrator} oder der allgemeinere \emph{ThetaTimeSteppingIntegrator} mit konstanter Schrittweitenvorgabe angewendet werden. \emph{TimeSteppingSSCIntegrator} implementiert für den semi-impliziten Fall eine Schrittweitensteuerung und \emph{DAETSIntegrator} liefert eine Kopplung zwischen TimeStepping und Dassl. Bei letzteren muss der Befehl \texttt{setSolver} vor der Initialisierung des MBS durchgef\"uhrt werden. Folgende M\"oglichkeiten stehen zur Wahl:
+\subsubsection{Integration Schemes}
+Available integration schemes:
+\begin{itemize}
+\item[] \texttt{DOPRI5Integrator}\\
+    Dormand-Prince one-step integration scheme of order 5 for nonstiff ODE with step size control
+\item[] \texttt{RADAU5Integrator}\\
+    one-step integration scheme of order 5 for stiff ODE with step size control
+\item[] \texttt{TimeSteppingIntegrator}\\
+    one-step integration scheme of order 1 for nonstiff MDE
+\end{itemize}
+%DAEs behandeln \emph{RADAU5DAEIntegrator}, \emph{DASKRIntegrator} und \emph{DASPKIntegrator}. Dar\"uberhinaus gibt es noch \emph{RKSuite}, \emph{LSODAR} (Mehrschrittverfahren steif/nicht steif) und \emph{LSODE}.  oder der allgemeinere \emph{ThetaTimeSteppingIntegrator} mit konstanter Schrittweitenvorgabe angewendet werden. \emph{TimeSteppingSSCIntegrator} implementiert für den semi-impliziten Fall eine Schrittweitensteuerung und \emph{DAETSIntegrator} liefert eine Kopplung zwischen TimeStepping und Dassl. Bei letzteren muss der Befehl \texttt{setSolver} vor der Initialisierung des MBS durchgef\"uhrt werden. Folgende M\"oglichkeiten stehen zur Wahl:
+
+Available constraint equation solution schemes:
+\begin{itemize}
+\item[] \texttt{GaussSeidel}\\
+    Gauss-Seidel solution scheme for piecewise linear systems (planar Coulomb friction)
+\item[] \texttt{FixedPointSingle}\\
+    Gauss-Seidel solution scheme with fixed point search and relaxation strategy for spatial Coulomb friction
+\item[] \texttt{RootFinding}\\
+    damped and globalised Newton scheme for spatial Coulomb friction
+\end{itemize}
 %\begin{itemize}
 %\item Invertierbare Gleichungssysteme (GS) mit nur bilateralen Bindungen\\
 %\emph{LinearEquations}: Cholesky-Verfahren
 %
-%\item St\"uckweise Lineare GS (2D-Coulomb-Reibung)\\
-%\emph{GaussSeidel}: Gauss-Seidel-Verfahren
 %
 %\item Nichtlineare GS (3D-Coulomb-Reibung)\\
-%\emph{FixedPointSingle}: Gauss-Seidel-Verfahren mit Fixpunktsuche und R-Faktor-Strategie
 %  (\emph{setStrategy} mit \emph{local}/\emph{global})\\
 %\emph{FixedPointTotal}: Jacobi-Verfahren mit Fixpunktsuche und R-Faktor-Strategie (verh\"alt sich zumeist schlechter als \emph{FixedPointSingle})\\  
 %\emph{RootFinding}: ged\"ampftes, z.B durch Regula Falsi generalisiertes Newton-Verfahren mit
