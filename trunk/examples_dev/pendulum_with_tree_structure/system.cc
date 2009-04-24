@@ -1,4 +1,4 @@
-#include "pendulum.h"
+#include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
 

@@ -21,15 +21,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
   // Parameters
-  double l = 0.8;              		
-  double h =  0.02;
   double d = 0.1;
   double m = 0.7;
   SymMat Theta(3);
   Theta(1,1) = m*d*d/2.;
   Theta(2,2) = Theta(1,1);
-  double alpha = 3.0 * M_PI/180.; 
-  double deltax = 0.2;           
   double mu  = 0.3;
 
   RigidBody* body = new RigidBody("Rod");

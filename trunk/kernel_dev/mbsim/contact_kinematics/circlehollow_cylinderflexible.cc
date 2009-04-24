@@ -49,7 +49,7 @@ namespace MBSim {
 
   void ContactKinematicsCircleHollowCylinderFlexible::updateg(Vec &g, ContourPointData *cpData) {
 
-    Vec WrOP_circle =  circle->getWrOP();
+    Vec WrOP_circle =  circle->getFrame()->getPosition();
 
     // longitudinal contact search
     Contact1sSearch search(func);
@@ -66,19 +66,19 @@ namespace MBSim {
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
     // kinematics for azimuthal contact search
-    cylinder->updateKinematicsForFrame( cpData[icylinder] );
+    cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy);
     Vec WrD = cpData[icylinder].getFrameOfReference().getPosition() - WrOP_circle;
 
     const double &R = circle->getRadius();
     const double &r = cylinder->getRadius();
 
-    Vec WbK = circle->computeWb();
+    Vec WbK = circle->getReferenceOrientation().col(2);
     Vec WtB = cpData[icylinder].getFrameOfReference().getOrientation().col(1); // normal in first column
 
     double cos_alpha = trans( WtB ) * WbK;
 
     if( nrm2(WrD) > 0 ) { // conic section theory
-      double a   =  abs(r/cos_alpha);
+      double a = abs(r/cos_alpha);
 
       Vec be1, be2;
       if( -0.99750 < cos_alpha && cos_alpha < 0.99750) { // until 1 degree tilting
@@ -114,7 +114,7 @@ namespace MBSim {
       delete funcPhi;
 
       cpData[icircle].getFrameOfReference().getPosition() = WrOP_circle + R * dTilde/nrm2(dTilde);
-      cylinder->updateKinematicsForFrame( cpData[icylinder] );
+      cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy);
       Vec WrD2 = cpData[icylinder].getFrameOfReference().getPosition() - cpData[icircle].getFrameOfReference().getPosition() ;
 
       Vec normal = (WrD - trans(WtB)*WrD*WtB );

@@ -64,7 +64,7 @@ namespace MBSim {
 
     cpData[icylinder].getLagrangeParameterPosition()(0) = search.slv();
 
-    cylinder->updateKinematicsForFrame(cpData[icylinder]); // TODO enum for kinematic election
+    cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy); 
     Vec WrD = cpData[ipoint].getFrameOfReference().getPosition() - cpData[icylinder].getFrameOfReference().getPosition();
 
     // contact in estimated contact area? 

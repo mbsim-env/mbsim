@@ -144,7 +144,7 @@ namespace MBSim {
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
       V[i]>>VParent(I,J);
     }
   } 
@@ -157,7 +157,7 @@ namespace MBSim {
       h[i]>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
-      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getWJP().cols()-1);
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
     }
   } 
@@ -170,7 +170,7 @@ namespace MBSim {
     }
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->getParent()->gethInd(parent);
-      Index I = Index(hInd,hInd+contour[i]->getWJP().cols()-1);
+      Index I = Index(hInd,hInd+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
       r[i]>>rParent(I);
     }
   } 
@@ -190,10 +190,10 @@ namespace MBSim {
     }
 
     for(unsigned i=0; i<contour.size(); i++) {
-      W.push_back(Mat(contour[i]->getWJP().cols(),laSize));
-      V.push_back(Mat(contour[i]->getWJP().cols(),laSize));
-      h.push_back(Vec(contour[i]->getWJP().cols()));
-      r.push_back(Vec(contour[i]->getWJP().cols()));
+      W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
+      V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
+      h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+      r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       WF.push_back(Vec(3));
       WM.push_back(Vec(3));
       fF.push_back(Mat(3,laSize));

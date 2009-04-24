@@ -1,4 +1,4 @@
-#include "robot.h"
+#include "system.h"
 #include <mbsim/integrators/integrators.h>
 
 using namespace MBSim;

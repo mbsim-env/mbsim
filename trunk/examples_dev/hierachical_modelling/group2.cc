@@ -13,19 +13,8 @@ using namespace MBSim;
 Group2::Group2(const string &name) : Group(name) {
   // Parameter der Körper
   double m1 = 5;
-  double m2 = 2;
   SymMat Theta1(3,EYE);
   SymMat Theta2(3,EYE);
-  double h1 = 0.5;
-  double h2 = 0.5;
-
-  // Parameter der Federn
-  double c1 = 1e3;
-  double c2 = 1e2;
-  double d1 = 0;
-  double d2 = 0;
-  double l01 = 0.5;
-  double l02 = 0.5;
 
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");

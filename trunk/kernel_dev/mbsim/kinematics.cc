@@ -73,12 +73,12 @@ namespace MBSim {
     double sin_alpha = sin(alpha);
     double tan_beta = sin_beta/cos_beta;
 
-    T(i-2,i-1) =    tan_beta*sin_alpha;
-    T(i-2,i) =   -tan_beta*cos_alpha;
-    T(i-1,i-1) =  cos_alpha;
-    T(i-1,i) =  sin_alpha;
+    T(i-2,i-1) = tan_beta*sin_alpha;
+    T(i-2,i) = -tan_beta*cos_alpha;
+    T(i-1,i-1) = cos_alpha;
+    T(i-1,i) = sin_alpha;
     T(i,i-1) = -sin_alpha/cos_beta;           
-    T(i,i) =  cos_alpha/cos_beta;
+    T(i,i) = cos_alpha/cos_beta;
     return T;
   }
 

@@ -72,9 +72,9 @@ namespace MBSim {
       double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       double computeElasticEnergy(const fmatvec::Vec& qElement);
-      fmatvec::Vec computeTranslation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslation): not implemented!"); }
+      fmatvec::Vec computePosition(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
       fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      fmatvec::Vec computeTranslationalVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeTranslationalVelocity): not implemented!"); }
+      fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
       fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
       fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/

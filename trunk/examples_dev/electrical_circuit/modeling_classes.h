@@ -22,7 +22,7 @@ class Pin : public MBSim::Element {
     Component* getParent() const { return parent; }
     int getNumberOfConnectedPins() const {return connectedPin.size();}
     int searchForBranches(Pin* callingPin);
-    vector<Branch*> buildBranches(Pin* callingPin, Branch* branch);
+    std::vector<Branch*> buildBranches(Pin* callingPin, Branch* branch);
     void setBranch(Branch *branch_) {branch = branch_;}
     Branch* getBranch() {return branch;}
 };
@@ -40,6 +40,7 @@ class Component {
       addPin("B");
      connectPin(pin[0],pin[1]);
     }
+    virtual ~Component() {}
     virtual std::string getName() const = 0;
     virtual void setName(std::string name) = 0;
     void addPin(Pin *pin);

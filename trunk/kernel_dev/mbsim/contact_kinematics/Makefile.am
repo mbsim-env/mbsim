@@ -16,6 +16,7 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					circlesolid_contour1s.cc\
 					circlehollow_cylinderflexible.cc \
   					point_cylinderflexible.cc \
+					point_flexibleband.cc \
 					edge_edge.cc\
 					point_area.cc\
 					point_frustum.cc\
@@ -38,6 +39,7 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h \
   point_cylinderflexible.h \
   compoundcontour_compoundcontour.h \
   compoundcontour_contour.h \
+  point_flexibleband.h \
   edge_edge.h \
   line_contour1s.h \
   point_area.h \

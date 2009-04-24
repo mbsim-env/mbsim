@@ -579,7 +579,7 @@ namespace MBSim {
        * \param generalised positions
        * \param contour location
        */
-      virtual fmatvec::Vec computeTranslation(const fmatvec::Vec& q, const ContourPointData &data) = 0;
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const ContourPointData &data) = 0;
 
       /*!
        * \brief compute orientation of contour in physical representation
@@ -594,7 +594,7 @@ namespace MBSim {
        * \param generalised velocities
        * \param contour location
        */
-      virtual fmatvec::Vec computeTranslationalVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
+      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
 
       /*!
        * \brief compute angular velocity of contour in physical representation
