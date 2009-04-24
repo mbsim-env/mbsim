@@ -41,9 +41,9 @@ namespace MBSim {
 
     public:
       ~ContactKinematicsCircleHollowCylinderFlexible();
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData);
-      void assignContours(const vector<Contour*> &contour);
+      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
+      void stage2(const Vec& g, Vec &gd, std::vector<ContourPointData> &cpData);
+      void assignContours(const std::vector<Contour*> &contour);
 
   };
 

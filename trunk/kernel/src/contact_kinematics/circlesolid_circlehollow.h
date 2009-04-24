@@ -40,10 +40,10 @@ namespace MBSim {
       CircleHollow *circle1;
 
     public:
-      void stage1(Vec &g, vector<ContourPointData> &cpData);
-      void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData);
+      void stage1(Vec &g, std::vector<ContourPointData> &cpData);
+      void stage2(const Vec& g, Vec &gd, std::vector<ContourPointData> &cpData);
 
-      void assignContours(const vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour);
   };
 
 }
