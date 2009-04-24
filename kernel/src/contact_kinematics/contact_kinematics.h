@@ -53,7 +53,7 @@ namespace MBSim {
        * \param g        normal distance
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
-      virtual void stage1(Vec &g, vector<ContourPointData> &cpData) = 0;
+      virtual void stage1(Vec &g, std::vector<ContourPointData> &cpData) = 0;
 
       /*! compute \f$\dot{\boldsymbol{g}}\f$, force directions, ... must be up-to-date at end of method
        * \param contour  vector of Contour holding both contours
@@ -63,11 +63,11 @@ namespace MBSim {
        * \param gd       contact velocities
        * \param cpData   vector of generalised position vectors(ContourPointData) for both contours
        */
-      virtual void stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) = 0;
+      virtual void stage2(const Vec& g, Vec &gd, std::vector<ContourPointData> &cpData) = 0;
 	  /*! Treats ordering of contours \param contour */
-      virtual void assignContours(const vector<Contour*> &contour) = 0;
+      virtual void assignContours(const std::vector<Contour*> &contour) = 0;
       /*! Treats ordering of contours \param contour1 and \param contour2 */
-      void assignContours(Contour *contour1, Contour *contour2) {vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
+      void assignContours(Contour *contour1, Contour *contour2) {std::vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c);}
   };
 
 }

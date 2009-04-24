@@ -79,7 +79,7 @@ namespace MBSim {
       /*! Set given values manually */
       void setXY(const Vec& X,const Mat& Y);
       /*! Set given values by file */
-      void setFile(const string &filename); 
+      void setFile(const std::string &filename); 
   };
 
   class FuncTablePer : public UserFunction {
@@ -92,13 +92,13 @@ namespace MBSim {
       /*! Destructor */
       virtual ~FuncTablePer() {}
       Vec operator()(double alpha) ; 
-      void setFile(const string &filename); 
+      void setFile(const std::string &filename); 
   };
 
   class FuncSum : public UserFunction {
     protected: 
-      vector<DataInterfaceBase*> dib;
-      vector<double> c;
+      std::vector<DataInterfaceBase*> dib;
+      std::vector<double> c;
       int outputdim;
     public:
       FuncSum() {}

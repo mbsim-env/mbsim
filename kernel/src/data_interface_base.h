@@ -33,7 +33,7 @@ namespace MBSim {
       /** merge multidimensional signals */
       double SigSize;
       /** name */
-      string name;
+      std::string name;
       
     public:
       /*! Constructor */
@@ -41,9 +41,9 @@ namespace MBSim {
       /*! Destructor */
       virtual ~DataInterfaceBase() {}
       /*! Get name of DataInterface */
-      const string& getName() {return name;}
+      const std::string& getName() {return name;}
       /*! Set name of DataInterface */
-      void setName(const string& name_) {name=name_;}
+      void setName(const std::string& name_) {name=name_;}
       /*! Calculate multidimensional signal with respect to one variable */
       virtual Vec operator()(double t) = 0;
       /*! Get signal size */
