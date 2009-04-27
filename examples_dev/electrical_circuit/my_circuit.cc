@@ -6,27 +6,27 @@ using namespace std;
 MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
 
   Resistor *resistor = new Resistor("Resistor");
-  addComponent(resistor);
+  addModell(resistor);
   Inductor *inductorL = new Inductor("InductorL");
   inductorL->setInductance(0.1);
-  addComponent(inductorL);
+  addModell(inductorL);
   VoltageSource *voltageSource = new VoltageSource("VoltageSource");
-  addComponent(voltageSource);
+  addModell(voltageSource);
   voltageSource->setVoltageSignal(new Signal);
 
-  connectPin(voltageSource->getPin("B"),inductorL->getPin("A"));
-  connectPin(inductorL->getPin("B"),resistor->getPin("A"));
-  connectPin(resistor->getPin("B"),voltageSource->getPin("A"));
+  connectTerminal(voltageSource->getTerminal("B"),inductorL->getTerminal("A"));
+  connectTerminal(inductorL->getTerminal("B"),resistor->getTerminal("A"));
+  connectTerminal(resistor->getTerminal("B"),voltageSource->getTerminal("A"));
 
   Inductor* inductorR = new Inductor("InductorR");
   inductorR->setInductance(0.2);
-  addComponent(inductorR);
-  connectPin(inductorL->getPin("B"),inductorR->getPin("A"));
+  addModell(inductorR);
+  connectTerminal(inductorL->getTerminal("B"),inductorR->getTerminal("A"));
 
   Capacitor *capacitor = new Capacitor("Capacitor");
-  addComponent(capacitor);
+  addModell(capacitor);
   capacitor->setCapacity(10);
 
-  connectPin(inductorR->getPin("B"),capacitor->getPin("A"));
-  connectPin(capacitor->getPin("B"),resistor->getPin("B"));
+  connectTerminal(inductorR->getTerminal("B"),capacitor->getTerminal("A"));
+  connectTerminal(capacitor->getTerminal("B"),resistor->getTerminal("B"));
 }
