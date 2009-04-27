@@ -39,7 +39,7 @@ class Branch : public MBSim::Object {
     fmatvec::Mat J;
     fmatvec::Vec Q, I;
     std::vector<Mesh*> mesh;
-    Pin *startPin, *endPin;
+    Terminal *startTerminal, *endTerminal;
     std::vector<Branch*> connectedBranch;
     int flag;
   public:
@@ -57,10 +57,10 @@ class Branch : public MBSim::Object {
     int getNumberOfConnectedMeshes() const {return mesh.size();}
     Mesh* getMesh(int i) {return mesh[i];}
     void init();
-    void setStartPin(Pin* p) {startPin = p;}
-    void setEndPin(Pin* p) {endPin = p;}
-    Pin* getStartPin() {return startPin;}
-    Pin* getEndPin() {return endPin;}
+    void setStartTerminal(Terminal* p) {startTerminal = p;}
+    void setEndTerminal(Terminal* p) {endTerminal = p;}
+    Terminal* getStartTerminal() {return startTerminal;}
+    Terminal* getEndTerminal() {return endTerminal;}
     void addConnectedBranch(Branch* branch);
     void buildTreeBranches(Branch* callingBranch, std::vector<Branch*> &treeBranch, unsigned int nmax);
 //    vector<Mesh*> buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &flag);
@@ -74,11 +74,11 @@ class Branch : public MBSim::Object {
 #endif
 };
 
-class ElectricalLink : public MBSim::Link, public Component {
+class ElectronicLink : public MBSim::Link, public ElectronicComponent {
   protected:
     //std::vector<Branch*> branch;
   public:
-    ElectricalLink(const std::string &name) : Link(name) {}
+    ElectronicLink(const std::string &name) : Link(name) {}
 
     void updateg(double t) {}
     void updategd(double t) {}
@@ -90,17 +90,17 @@ class ElectricalLink : public MBSim::Link, public Component {
     void updatehRef(const fmatvec::Vec &hParent, int j=0);
 
     /* INHERITED INTERFACE OF LINKINTERFACE */
-    virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updater): Not implemented!"); }
+    virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
     /*****************************************************/
     
     /* INHERITED INTERFACE OF LINK */
-    virtual void updateWRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updateWRef): Not implemented!"); }
-    virtual void updateVRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updateVRef): Not implemented!"); }
-    virtual void updaterRef(const fmatvec::Vec& ref) { throw new MBSim::MBSimError("ERROR (ElectricalLink::updaterRef): Not implemented!"); }
+    virtual void updateWRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateWRef): Not implemented!"); }
+    virtual void updateVRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateVRef): Not implemented!"); }
+    virtual void updaterRef(const fmatvec::Vec& ref) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updaterRef): Not implemented!"); }
     /*****************************************************/
 };
 
-class Resistor : public ElectricalLink {
+class Resistor : public ElectronicLink {
   protected:
     double R;
   public:
@@ -109,7 +109,7 @@ class Resistor : public ElectricalLink {
     void setResistance(double R_) { R = R_;}
 };
 
-class Capacitor : public ElectricalLink {
+class Capacitor : public ElectronicLink {
   protected:
     double C;
   public:
@@ -118,7 +118,7 @@ class Capacitor : public ElectricalLink {
     void setCapacity(double C_) { C = C_;}
 };
 
-class VoltageSource : public ElectricalLink {
+class VoltageSource : public ElectronicLink {
   protected:
     MBSim::UserFunction *voltageSignal;
   public:
@@ -127,10 +127,10 @@ class VoltageSource : public ElectricalLink {
     void setVoltageSignal(MBSim::UserFunction* f) {voltageSignal = f;}
 };
 
-class ElectricalObject : public MBSim::Object, public Component {
+class ElectronicObject : public MBSim::Object, public ElectronicComponent {
   protected:
   public:
-    ElectricalObject(const std::string &name) : Object(name) {}
+    ElectronicObject(const std::string &name) : Object(name) {}
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateInverseKineticsJacobians(double t) {};
@@ -140,31 +140,28 @@ class ElectricalObject : public MBSim::Object, public Component {
       OpenMBV::Group* getOpenMBVGrp() { return 0; }
 #endif
 };
-class Inductor : public ElectricalObject {
+
+class Inductor : public ElectronicObject {
   protected:
     double L;
   public:
-    Inductor(const std::string &name) : ElectricalObject(name), L(1) {}
-
+    Inductor(const std::string &name);
     void updateM(double t); 
     void setInductance(double L_) { L = L_;}
 };
 
 class ElectricalCircuit : public MBSim::Tree {
   protected:
-    std::vector<Pin*> pin;
-    std::vector<Component*> comp;
+    std::vector<ModellingInterface*> modell;
   public:
     ElectricalCircuit(const std::string &name) : Tree(name) {}
-    void addComponent(Component *comp);
-    Component* getComponent(const std::string &name, bool check=true);
-    void addPin(Pin *pin);
-    void addPin(const std::string &str);
-    Pin* getPin(const std::string &name, bool check=true);
+    void addModell(ModellingInterface *modell);
+    ModellingInterface* getModell(const std::string &name, bool check=true);
     void preinit();
     void init();
     void facLLM();
-    void buildListOfPins(std::vector<Pin*> &pin, bool recursive = true);
+    //// void buildListOfTerminals(std::vector<Terminal*> &terminal, bool recursive = true);
+    void buildListOfModells(std::vector<ModellingInterface*> &modell, bool recursive = true);
 };
 
 #endif
