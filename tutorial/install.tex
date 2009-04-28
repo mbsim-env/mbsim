@@ -3,12 +3,12 @@ This section summarizes the necessary steps to install \MBSim{} \cite{Foer06}.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
-The source code of \MBSim{} together with some examples, the necessary \FMatVec{} program and a \HDF{} wrapper can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} at \url{http://www.hdfgroup.org}. \AMVis{} can be downloaded from \url{www.amm.mw.tum.de}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL} (see file~\texttt{COPYING}, respectively).\\
+The source code of \MBSim{} together with some examples, the necessary \FMatVec{} program, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} at \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL} (see file~\texttt{COPYING}, respectively).\\
 First, one should create a directory~\texttt{MBSim} and a directory \texttt{MBSim/Install} for the libraries being installed. For calculations on 64- and 32-bit computers the following steps have to be accomplished on both operating systems. Thereby, it is reasonable to have only one copy of the source code and to use soft links for compiling the different binary installations (\texttt{cp -rs} with absolute path information).
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{Installation Procedures}
-For the installation of one of the three projects the following procedures have to be applied.
+For the installation of the projects the following procedures have to be applied.
 \begin{itemize}
 	\item \textsc{automake}:
 	\begin{itemize}
@@ -113,35 +113,6 @@ Last the procedure \textsc{configure} is used selecting the FLAGS
 if ATLAS should be used instead of LAPack. Details for adapting the installation can be found in \texttt{MBSim/fmatvec/README}. The code can be compiled and installed with the procedure \textsc{install}. For new installations one has to invoke the procedure \textsc{reinstall}.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
-\subsection{\AMVis{}}
-\AMVis{} visualises \MBSim{} simulations. Necessary for installation is Qt with version 4.1 or newer, which can be tested with
-\begin{verbatim}
- qmake --version
-\end{verbatim}
-The sources can be found at \url{www.amm.mw.tum.de}. After extracting, the installation consists of two steps: first \MBSim{} needs \textsf{AMVisC++Interface}, second \AMVis{} has to be build for visualisation. 
-
-{\small At the institute one can also use the subversion checkout
-\begin{verbatim}
- svn checkout http://zeiss/repos/SVN--rep//AM-software/AMVis/trunk AMVis
-\end{verbatim}
-}
-
-\subsubsection{AMVisC++Interface}
-The C++-Interface creates standard data for \AMVis{} using C++ programs. Use the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/AMVis/C++Interface}. One can find adaptations of this installation process in \texttt{MBSim/AMVis/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
-
-\subsubsection{\AMVis{}}
-For installation one has to type 
-\begin{verbatim}
- qmake
- make
-\end{verbatim}
-in the directory \texttt{MBSim/AMVis}. Last, \texttt{.bashrc} can be extended with
-\begin{verbatim}
- alias amvis="MBSim/AMVis/amvis"
-\end{verbatim}
-to gain overall access to the command \texttt{amvis}.
-
-%%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\HDF}
 \HDF can be downloaded from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2. After extracting one uses the procedure \textsc{configure} with the additional FLAG
 \begin{verbatim}
@@ -159,6 +130,46 @@ alias h5lsserie="MBSim/HDF5Serie/hdf5serie/dump/h5lsserie"
 alias h5dumpserie="MBSim/HDF5Serie/hdf5serie/dump/h5dumpserie"
 \end{verbatim}
 to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpserie}.
+
+%%------------------------------------------------------------ SUBSUBSECTION --
+\subsection{\OpenMBV{}}
+\OpenMBV{} visualises \MBSim{} simulations using XML and HDF5 in a coinciding hierarchical structure. Necessary for installation are
+\begin{itemize}
+\item Qt with version 4.4 or newer (2D user interface)
+\item Coin3d with version 3 or newer (3D scenegraphs)
+\item SoQt with version 1.5 or newer (e.g. event invocation in coin due to hardware events)
+\item hdf5 with version 1.8.2 or newer (file handling) 
+\item HDF5Serie (wrapper for file handling)
+\item qwt with version 5 or newer (GUI elements)
+\end{itemize}
+
+{\small At the institute one can use the subversion checkout
+\begin{verbatim}
+ svn checkout http://zeiss/repos/SVN--rep/user/Friedrich/trunk/openmbv OpenMBV
+\end{verbatim}
+}
+
+The installation consists of two steps: first \MBSim{} needs \textsf{OpenMBV-C++Interface}, second \OpenMBV{} has to be build for visualisation. 
+
+\subsubsection{OpenMBV-C++Interface}
+The C++-Interface creates standard data for \OpenMBV{} using C++ programs. Use the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/OpenMBV/C++Interface}. One can find adaptations of this installation process in \texttt{MBSim/OpenMBV/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
+
+\subsubsection{\OpenMBV{}}
+{\small Installation is a little bit complicated; but there is a static build at\\
+  \url{/usr/users/Transfer/friedma/openmbv}
+}
+%For installation one has to type 
+%\begin{verbatim}
+% qmake
+% make
+%\end{verbatim}
+%in the directory \texttt{MBSim/OpenMBV}. 
+
+Last, \texttt{.bashrc} can be extended with
+\begin{verbatim}
+ alias openmbv="MBSim/OpenMBV/openmbv"
+\end{verbatim}
+to gain overall access to the command \texttt{openmbv}.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
@@ -190,6 +201,6 @@ in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, conf
 \subsection{\MBSim Examples}
 The examples are used for testing successful installation. There are two possibilities:
 \begin{enumerate}
-\item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{amvis} and plotted with the commands from Sec.~\ref{sec:plot}.
+\item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{openmbv} and plotted with the commands from Sec.~\ref{sec:plot}.
 \item Use the script \texttt{./runexamples.sh} in the upmost examples directory even to compare with reference data. See \texttt{./runexamples.sh -h} for the syntax. The \HDF{} executables must be available in the search path.
 \end{enumerate}
