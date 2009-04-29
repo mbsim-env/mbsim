@@ -21,6 +21,7 @@
 #define _CONTACT_KINEMATICS_H_
 
 #include "fmatvec.h"
+#include "mbsim/mbsim_event.h"
 #include <vector>
 
 namespace MBSim {
@@ -81,7 +82,7 @@ namespace MBSim {
        * \param contact point parametrisation
        * \todo function should be pure virtual TODO
        */
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { std::cout << "ERROR (ContactKinematics::updatewb): not implemented" << std::endl; throw 5;};
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented"); };
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points

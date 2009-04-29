@@ -15,6 +15,7 @@ Group2::Group2(const string &name) : Group(name) {
   double m1 = 5;
   SymMat Theta1(3,EYE);
   SymMat Theta2(3,EYE);
+  double h1 = 0.5;
 
   // ----------------------- Definition des 1. Körpers --------------------  
   RigidBody *box1 = new RigidBody("Box1");
