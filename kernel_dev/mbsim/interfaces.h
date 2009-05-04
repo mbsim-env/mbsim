@@ -40,6 +40,8 @@ namespace MBSim {
 
   class ContourPointData;
   class DynamicSystem;
+  class Object;
+  class Link;
 
   /*!
    * \brief interface for objects for usage in tree structures
@@ -610,6 +612,44 @@ namespace MBSim {
        * \param contour location
        */
       virtual fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec& q,const ContourPointData &data) = 0;
+  };
+
+  /*!
+   * \brief Interface for models of arbitrary domains, e.g. electrical
+   * components 
+   * \author Martin Foerg
+   * \date 2009-05-04 initial commit (Martin Foerg)
+   */
+  class ModellingInterface {
+
+    public:
+
+      /*!
+       * \brief Destructor.
+       */
+      virtual ~ModellingInterface() {};
+
+      /*!
+       * \brief Get the name of the model 
+       * \return The name 
+       */
+      virtual std::string getName() const = 0;
+
+      /*!
+       * \brief Set the name of the model 
+       * \param name The name 
+       */
+      virtual void setName(std::string name) = 0;
+
+      /*!
+       * \brief Process all models of the same type as the calling model. 
+       * \param modellList On input, modellList contains all models. On output,
+       * modellList contains all models that are not processed, i.e. all
+       * models of different type.
+       * \param objectList On output, objectList contains all models that are objects.
+       * \param linkList On output, linkList contains all models that are links.
+       */
+      virtual void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList) = 0;
   };
 
 }
