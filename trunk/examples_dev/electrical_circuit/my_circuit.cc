@@ -6,12 +6,12 @@ using namespace std;
 MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
 
   Resistor *resistor = new Resistor("Resistor");
-  addModell(resistor);
+  addModel(resistor);
   Inductor *inductorL = new Inductor("InductorL");
   inductorL->setInductance(0.1);
-  addModell(inductorL);
+  addModel(inductorL);
   VoltageSource *voltageSource = new VoltageSource("VoltageSource");
-  addModell(voltageSource);
+  addModel(voltageSource);
   voltageSource->setVoltageSignal(new Signal);
 
   connectTerminal(voltageSource->getTerminal("B"),inductorL->getTerminal("A"));
@@ -20,11 +20,11 @@ MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
 
   Inductor* inductorR = new Inductor("InductorR");
   inductorR->setInductance(0.2);
-  addModell(inductorR);
+  addModel(inductorR);
   connectTerminal(inductorL->getTerminal("B"),inductorR->getTerminal("A"));
 
   Capacitor *capacitor = new Capacitor("Capacitor");
-  addModell(capacitor);
+  addModel(capacitor);
   capacitor->setCapacity(10);
 
   connectTerminal(inductorR->getTerminal("B"),capacitor->getTerminal("A"));

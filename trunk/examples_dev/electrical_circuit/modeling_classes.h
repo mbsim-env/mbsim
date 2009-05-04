@@ -2,6 +2,7 @@
 #define _MODELING_CLASSES_H
 
 #include "mbsim/element.h"
+#include "mbsim/interfaces.h"
 #include <string>
 #include <vector>
 
@@ -32,15 +33,7 @@ class Terminal : public MBSim::Element {
 void connectTerminal(Terminal *terminal1, Terminal *terminal2);
 void connectBranch(Branch *branch1, Branch *branch2);
 
-class ModellingInterface {
-  public:
-    virtual ~ModellingInterface() {}
-    virtual std::string getName() const = 0;
-    virtual void setName(std::string name) = 0;
-    virtual void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList) = 0;
-};
-
-class ElectronicComponent : public ModellingInterface {
+class ElectronicComponent : public MBSim::ModellingInterface {
   protected:
     std::vector<Terminal*> terminal;
     Branch* branch;
