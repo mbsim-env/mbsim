@@ -769,6 +769,14 @@ namespace MBSim {
         dynamicsystem[i]->buildListOfOrderOneDynamics(ood,recursive);
   }
 
+  void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList, bool recursive) {
+    for(unsigned int i=0; i<model.size(); i++)
+      modelList.push_back(model[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+	dynamicsystem[i]->buildListOfModels(modelList,recursive);
+  }
+
   void DynamicSystem::updateCondition() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateCondition();
@@ -1211,7 +1219,7 @@ namespace MBSim {
     unsigned int i;
     for(i=0; i<DIB.size(); i++) {
       if(DIB[i]->getName() == name_ || DIB[i]->getName() == name_+".SigOut")
-        return DIB[i];
+	return DIB[i];
     }
     if(check){
       if(!(i<DIB.size())) cout << "ERROR (DynamicSystem::getDataInterfaceBase): The DynamicSystem " << name <<" comprises no DataInterfaceBase " << name_ << "!" << endl; 
@@ -1219,6 +1227,27 @@ namespace MBSim {
     } 
     return NULL;
   }    
+
+  void DynamicSystem::addModel(ModellingInterface *model_) {
+    if(getModel(model_->getName(),false)) {
+      cout << "ERROR (DynamicSystem::addModell): The DynamicSystem " << name << " can only comprise one model by the name " <<  model_->getName() << "!" << endl;
+      assert(getModel(model_->getName(),false) == NULL); 
+    }
+    model.push_back(model_);
+  }
+
+  ModellingInterface* DynamicSystem::getModel(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<model.size(); i++) {
+      if(model[i]->getName() == name)
+	return model[i];
+    }
+    if(check){
+      if(!(i<model.size())) cout << "ERROR (DynamicSystem::getModell): The DynamicSystem " << name <<" comprises no model " << name << "!" << endl; 
+      assert(i<model.size());
+    }
+    return NULL;
+  }
 
   void DynamicSystem::addDynamicSystem(DynamicSystem *sys) {
     if(getDynamicSystem(sys->getName(),false)) {

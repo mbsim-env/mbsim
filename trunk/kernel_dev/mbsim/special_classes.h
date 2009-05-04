@@ -32,6 +32,12 @@ namespace MBSim {
    * \date 2009-04-03 some comments (Thorsten Schindler)
    */
   class SpecialGroup : public Group {
+    protected:
+      /**
+       * \brief TODO
+       */
+      void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+
     public:
       /**
        * \brief constructor
@@ -43,11 +49,6 @@ namespace MBSim {
        * \brief TODO
        */
       void preinit();
-
-      /**
-       * \brief TODO
-       */
-      void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
   };
 
 }

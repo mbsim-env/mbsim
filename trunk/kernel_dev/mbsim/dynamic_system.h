@@ -409,6 +409,11 @@ namespace MBSim {
       virtual void buildListOfOrderOneDynamics(std::vector<OrderOneDynamics*> &ood, bool recursive=false);
 
       /**
+       * \brief TODO
+       */
+      void buildListOfModels(std::vector<MBSim::ModellingInterface*> &model, bool recursive = true);
+
+      /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
        */
       void updateCondition();
@@ -626,6 +631,18 @@ namespace MBSim {
        */
       DataInterfaceBase* getDataInterfaceBase(const std::string &name, bool check=true);
 
+      /**
+       * \param modell to add
+       */
+      void addModel(ModellingInterface *modell);
+
+      /**
+       * \param name of the model
+       * \param check for existence of model
+       * \return modelling interface
+       */
+      MBSim::ModellingInterface* getModel(const std::string &name, bool check=true);
+
     protected:
       /**
        * \brief parent dynamic system
@@ -644,6 +661,7 @@ namespace MBSim {
       std::vector<Link*> link;
       std::vector<OrderOneDynamics*> orderOneDynamics;
       std::vector<DataInterfaceBase*> DIB;
+      std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> linkSingleValued;
       std::vector<Link*> linkSetValued;
