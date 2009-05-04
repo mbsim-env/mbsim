@@ -152,16 +152,9 @@ class Inductor : public ElectronicObject {
 
 class ElectricalCircuit : public MBSim::Tree {
   protected:
-    std::vector<ModellingInterface*> modell;
   public:
     ElectricalCircuit(const std::string &name) : Tree(name) {}
-    void addModell(ModellingInterface *modell);
-    ModellingInterface* getModell(const std::string &name, bool check=true);
     void preinit();
-    void init();
-    void facLLM();
-    //// void buildListOfTerminals(std::vector<Terminal*> &terminal, bool recursive = true);
-    void buildListOfModells(std::vector<ModellingInterface*> &modell, bool recursive = true);
 };
 
 #endif
