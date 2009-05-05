@@ -16,7 +16,7 @@ For the installation of the projects the following procedures have to be applied
 		\item[] \texttt{autoheader}
 		\item[] \texttt{autoconf}
 		\item[] \begin{verbatim}libtoolize -c --force\end{verbatim}
-		\item[] \begin{verbatim}automake -a -c\end{verbatim}
+		\item[] \begin{verbatim}automake -a -c --force\end{verbatim}
 	\end{itemize}
 	\item \textsc{configure}: 
 	\begin{itemize}
@@ -64,10 +64,11 @@ The role of the procedures can be summarized as follows.\footnote{in detail: \ur
 		\texttt{autoheader} & Creates \texttt{config.h.in} as basis for header files.\\\hline
 		\texttt{autoconf} & Compiler for \texttt{configure.ac} to build the executable \textsc{configure} procedure.\\\hline
 		\verb|libtoolize -c --force| & Generates shell and M4 procedures for the system depending shared object files. The option \texttt{-c} forces a local copy of the defining files instead of links. The option \texttt{--force} overwrites already existing procedures.\\\hline
-		\texttt{automake -a -c} & Compiler for \texttt{Makefile.am} for preparation of \texttt{Makefile.in}. The option \texttt{-c} forces a local copy of the defining files instead of links.\\\hline
+		\texttt{automake -a -c --force} & Compiler for \texttt{Makefile.am} for preparation of \texttt{Makefile.in}. The option \texttt{-c} forces a local copy of the defining files instead of links.\\\hline
 		%\verb|./configure| & Substitutes in existing \texttt{.in}-files variables by systemdepending informationen, i.e. paths. With \texttt{CFLAGS}, \texttt{CXXFLAGS}, \texttt{F77FLAGS} and \texttt{FFFLAGS} the compiler can create code for degugging with \texttt{ddd} or \texttt{valgrind} (\texttt{g3}) or for release (\texttt{O2}). The options \verb|--disable-static| accelerates compiling, as the compiler only has to create dynamic (*.so) and no static libraries (*.a). In all source files \texttt{<config.h>} has to be included. \\\hline
 		\texttt{make} & Compiles the project sources and links with preliminary libraries. On multi-core computers it is possible to define the number~\texttt{n} of parallel jobs with \texttt{-jn}.\\\hline
 		\texttt{make install} & Copies the executable project files and \texttt{includes} to \texttt{MBSim/Install}.\\\hline 
+        \texttt{./configure} & Invokes system dependent checks. The option \texttt{--enable-static --disable-shared} only produces a static build, vice versa a shared library is built. Without such an option normally both shared and static libraries are provided.\\\hline
 	\end{tabular}
 \par It is reasonable to write an executable file invoking the procedures.\\
 \par The procedure \textsc{reinstall}
@@ -133,41 +134,51 @@ to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpseri
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\OpenMBV{}}
-\OpenMBV{} visualises \MBSim{} simulations using XML and HDF5 in a coinciding hierarchical structure. Necessary for installation are
-\begin{itemize}
-\item Qt with version 4.4 or newer (2D user interface)
-\item Coin3d with version 3 or newer (3D scenegraphs)
-\item SoQt with version 1.5 or newer (e.g. event invocation in coin due to hardware events)
-\item hdf5 with version 1.8.2 or newer (file handling) 
-\item HDF5Serie (wrapper for file handling)
-\item qwt with version 5 or newer (GUI elements)
-\end{itemize}
-
-{\small At the institute one can use the subversion checkout
+\OpenMBV{} visualises \MBSim{} simulations using XML and HDF5 in a coinciding hierarchical structure. The installation consists of two steps: first \MBSim{} needs \textsf{OpenMBV-C++Interface}, second \OpenMBV{} has to be build for visualisation. The source code is available by
 \begin{verbatim}
- svn checkout http://zeiss/repos/SVN--rep/user/Friedrich/trunk/openmbv OpenMBV
+ svn checkout http://svn.berlios.de/svnroot/repos/openmbv/trunk OpenMBV
 \end{verbatim}
-}
-
-The installation consists of two steps: first \MBSim{} needs \textsf{OpenMBV-C++Interface}, second \OpenMBV{} has to be build for visualisation. 
 
 \subsubsection{OpenMBV-C++Interface}
-The C++-Interface creates standard data for \OpenMBV{} using C++ programs. Use the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/OpenMBV/C++Interface}. One can find adaptations of this installation process in \texttt{MBSim/OpenMBV/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
+The C++-Interface creates standard data for \OpenMBV{} using C++ programs. 
+Necessary for its installation are
+\begin{itemize}
+\item hdf5 with version 1.8.2 or newer (file handling),
+\item HDF5Serie (wrapper for file handling).
+\end{itemize}
+Use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/openmbvcppinterface}. One can find adaptations of this installation process in \texttt{MBSim/OpenMBV/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
 
 \subsubsection{\OpenMBV{}}
-{\small Installation is a little bit complicated; but there is a static build at\\
-  \url{/usr/users/Transfer/friedma/openmbv}
-}
-%For installation one has to type 
-%\begin{verbatim}
-% qmake
-% make
-%\end{verbatim}
-%in the directory \texttt{MBSim/OpenMBV}. 
-
+Necessary for the installation of a static visualisation part are the following preliminary steps with everything being installed in \texttt{/home/OpenMBV} and with some hints:
+\begin{itemize}
+\item \texttt{export PKG\_CONFIG\_PATH=/home/OpenMBV/local/lib/pkgconfig}
+\item Coin3d with version 3 or newer (3D scenegraphs)\\
+    \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static}
+\item hdf5 with version 1.8.2 or newer (file handling)\\
+    \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static\\ --enable-cxx --with-zlib=no}
+\item Qt with version 4.4 or newer (2D user interface)\\
+    \texttt{./configure -prefix /home/OpenMBV/local -static -nomake examples -nomake demos\\ -nomake docs -nomake translations -no-gif -no-libtiff -qt-libpng -no-libmng\\ -qt-libjpeg -no-openssl -no-glib}
+\item HDF5Serie (wrapper for file handling)\\
+    \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static}
+\item SoQt with version 1.5 or newer (e.g. event invocation in coin due to hardware events)\\
+    \texttt{in SoQtComponent.cpp:103' change "unsinged long key" to "uintptr\_t key"}\\
+    \texttt{export QTDIR=/home/OpenMBV/local}\\
+    \texttt{export CONFIG\_QTLIBS="\$(pkg-config --libs QtGui QtCore Qt3Support QtOpenGL)"}\\
+    \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static}
+\item Qwt with version 5 or newer (GUI elements)\\
+    \texttt{in qwtconfig.pri change INSTALLBASE=/home/OpenMBV/local}\\
+    \texttt{/home/OpenMBV/local/bin/qmake}
+\end{itemize}
+{\small Fortunately at the institute these steps have already been done at \texttt{diesel:/home/OpenMBV}.}\par
+Missing is the final installation. After typing
+\begin{verbatim}
+export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:MBSim/Install/lib/pkgconfig
+\end{verbatim} 
+one should use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build . The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation.\\
+There is also a static Linux binary available at \url{www.berlios.de}.\\
 Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
- alias openmbv="MBSim/OpenMBV/openmbv"
+ alias openmbv="MBSim/OpenMBV/openmbv/openmbv"
 \end{verbatim}
 to gain overall access to the command \texttt{openmbv}.
 
@@ -202,5 +213,5 @@ in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, conf
 The examples are used for testing successful installation. There are two possibilities:
 \begin{enumerate}
 \item Change to the specific directory and type \texttt{make} to create an executable. the simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{openmbv} and plotted with the commands from Sec.~\ref{sec:plot}.
-\item Use the script \texttt{./runexamples.sh} in the upmost examples directory even to compare with reference data. See \texttt{./runexamples.sh -h} for the syntax. The \HDF{} executables must be available in the search path.
+\item Use the script \texttt{./runexamples.sh} in the upmost examples directory even to compare with reference data. See \texttt{./runexamples.sh -h} for the syntax. The \HDF{} executables must be available in the search path. For all examples there should exist reference data, which also can be newly uploaded to \url{www.berlios.de} using the \texttt{Admin} button, anonymos ftp-upload, deleting the old file and adding the new one.
 \end{enumerate}
