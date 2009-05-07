@@ -263,6 +263,8 @@ namespace MBSim {
        * \param delimiter of the path
        */
       std::string getPath(char pathDelim='.');
+
+      virtual Object* getObjectDependingOn() const {return 0;}
       /*******************************************************/ 
 
     protected:

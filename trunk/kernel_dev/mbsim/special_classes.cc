@@ -43,65 +43,62 @@ namespace MBSim {
       buildListOfLinks(lnkList,true);
       buildListOfOrderOneDynamics(oodList,true);
 
+      vector<ModellingInterface*> modellList;
+      buildListOfModels(modellList,true);
+      if(modellList.size())
+	do {
+	  modellList[0]->processModellList(modellList,objList,lnkList);
+	} while(modellList.size());
+
       link.clear(); // Alte link-Liste löschen
       orderOneDynamics.clear(); // Alte ood-Liste löschen
       cout << "object List:" << endl;
       for(unsigned int i=0; i<objList.size(); i++) {
-        cout << objList[i]->getName() << endl;
-        stringstream str;
-        str << objList[i]->getName() << "#" << i;
-        objList[i]->setName(str.str());
+	cout << objList[i]->getName() << endl;
+	stringstream str;
+	str << objList[i]->getName() << "#" << i;
+	objList[i]->setName(str.str());
       }
       cout << "link List:" << endl;
       for(unsigned int i=0; i<lnkList.size(); i++) {
-        cout << lnkList[i]->getName() << endl;
-        stringstream str;
-        str << lnkList[i]->getName() << "#" << i;
-        lnkList[i]->setName(str.str());
-        addLink(lnkList[i]);
+	cout << lnkList[i]->getName() << endl;
+	stringstream str;
+	str << lnkList[i]->getName() << "#" << i;
+	lnkList[i]->setName(str.str());
+	addLink(lnkList[i]);
       }
       cout << "ood List:" << endl;
       for(unsigned int i=0; i<oodList.size(); i++) {
-        cout << oodList[i]->getName() << endl;
-        stringstream str;
-        str << oodList[i]->getName() << "#" << i;
-        oodList[i]->setName(str.str());
-        addOrderOneDynamics(oodList[i]);
+	cout << oodList[i]->getName() << endl;
+	stringstream str;
+	str << oodList[i]->getName() << "#" << i;
+	oodList[i]->setName(str.str());
+	addOrderOneDynamics(oodList[i]);
       }
       // Matrix anlegen, zeigt die Abhängigkeiten der Körper
       SqrMat A(objList.size());
-      cout << A.size() << endl;
       for(unsigned int i=0; i<objList.size(); i++) {
 
-        RigidBody *body = static_cast<RigidBody*>(objList[i]);
-        FrameInterface* frame =  body->getFrameOfReference();
-        DynamicSystem* parentSys = dynamic_cast<DynamicSystem*>(frame->getParent());
-        Body* parentBody = dynamic_cast<Body*>(frame->getParent());
+	Object* parentBody = objList[i]->getObjectDependingOn();
 
-        if(parentSys) { // Körper hat Absolutkinematik
-        }
-        else if(parentBody) { // Körper hat Relativkinematik
-          unsigned int j=0;
-          bool foundBody = false;
-          for(unsigned int k=0; k<objList.size(); k++, j++) {
-            if(objList[k] == parentBody) {
-              foundBody = true;
-              break;
-            }
-          }
+	if(parentBody) { // Körper hat Relativkinematik
+	  unsigned int j=0;
+	  bool foundBody = false;
+	  for(unsigned int k=0; k<objList.size(); k++, j++) {
+	    if(objList[k] == parentBody) {
+	      foundBody = true;
+	      break;
+	    }
+	  }
 
-          if(foundBody) {
-            A(i,j) = 2; // 2 bedeuted Vorgänger
-            A(j,i) = 1; // 1 bedeuted Nachfolger
-          }
-        }
-        else { // sollte nicht vorkommen
-          cout << "unknown type" << endl;
-          throw 5;
-        }
+	  if(foundBody) {
+	    A(i,j) = 2; // 2 bedeuted Vorgänger
+	    A(j,i) = 1; // 1 bedeuted Nachfolger
+	  }
+	}
       }
       // Matrix der Abhängigkeiten
-      cout << "A=" << A << endl;
+      //cout << "A=" << A << endl;
       // Tree Liste
       vector<Tree*> bufTree;
       int nt = 0;
@@ -111,24 +108,24 @@ namespace MBSim {
       dynamicsystem.clear(); // Alte DynamicSystem-Liste löschen
       // Starte Aufbau
       for(int i=0; i<A.size(); i++) {
-        double a = max(trans(A).col(i));
-        if(a==1) { // Root einer Relativkinematik
-          stringstream str;
-          str << "InvisibleTree" << nt++;
-          // Lege unsichtbaren Tree an 
-          Tree *tree = new Tree(str.str());
-          bufTree.push_back(tree);
-          addToTree(tree, 0, A, i, objList);
-        } 
-        else if(a==0) // Absolutkinematik
-          addObject(objList[i]);
-        //group->addObject(objList[i]);
+	double a = max(trans(A).col(i));
+	if(a==1) { // Root einer Relativkinematik
+	  stringstream str;
+	  str << "InvisibleTree" << nt++;
+	  // Lege unsichtbaren Tree an 
+	  Tree *tree = new Tree(str.str());
+	  bufTree.push_back(tree);
+	  addToTree(tree, 0, A, i, objList);
+	} 
+	else if(a==0) // Absolutkinematik
+	  addObject(objList[i]);
+	//group->addObject(objList[i]);
       }
 
       addDynamicSystem(group,Vec(3),SqrMat(3));
 
       for(unsigned int i=0; i<bufTree.size(); i++) {
-        addDynamicSystem(bufTree[i],Vec(3),SqrMat(3));
+	addDynamicSystem(bufTree[i],Vec(3),SqrMat(3));
       }
 
       cout << "End of special group preinit()" << endl;
@@ -142,7 +139,7 @@ namespace MBSim {
 
     for(int j=0; j<A.cols(); j++)
       if(A(i,j) == 1) // Child node of object i
-        addToTree(tree, nextNode, A, j,objList);
+	addToTree(tree, nextNode, A, j,objList);
   }
 }
 
