@@ -340,6 +340,8 @@ namespace MBSim {
        */
       void facLLMNotConst() { Object::facLLM(); }
 
+      Object* getObjectDependingOn() const { return dynamic_cast<Object*>(frameOfReference->getParent()); }
+
   };
 
 }
