@@ -200,7 +200,7 @@ namespace MBSim {
         joint->setMomentLaw(new BilateralConstraint);
         joint->setImpactMomentLaw(new BilateralImpact);
       }
-      joint->connect(frameOfReference,(FrameInterface*)frame[iKinematics]);
+      joint->connect(frameOfReference,frame[iKinematics]);
     }
   }
 

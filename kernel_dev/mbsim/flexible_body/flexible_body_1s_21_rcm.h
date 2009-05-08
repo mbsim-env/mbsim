@@ -22,8 +22,9 @@
 #define _FLEXIBLE_BODY_1S_21_RCM_H_
 
 #include "mbsim/flexible_body.h"
-
-//namespace AMVis { class ElasticBody1s21RCM; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
 
 namespace MBSim {
 
@@ -36,7 +37,8 @@ namespace MBSim {
    * \date 2009-03-23 initial kernel_dev commit (Thorsten Schindler)
    * \date 2009-03-26 cosmetics on doxygen (*! **) and alignements; some renames (Roland Zander)
    * \date 2009-04-05 minor change: parent class now is FlexibleBodyContinuum (Schindler / Zander)
-   * \date 2009-04-20 binormals of contours can be time variant
+   * \date 2009-04-20 binormals of contours can be time variant (Thorsten Schindler)
+   * \date 2009-05-08 visualisation (Thorsten Schindler)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    *
@@ -60,7 +62,6 @@ namespace MBSim {
       virtual ~FlexibleBody1s21RCM() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual std::string getType() const { return "FlexibleBody1s21RCM"; }
       virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
@@ -69,6 +70,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init();
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt=1);
+      virtual std::string getType() const { return "FlexibleBody1s21RCM"; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -84,26 +90,22 @@ namespace MBSim {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+#endif
       /***************************************************/
+
+      /**
+       * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
+       * \param Lagrangian coordinate
+       */
+      fmatvec::Vec computeState(double x);
 
       /**
        * \brief initialise beam state concerning a straight cantilever setting or a circle shaped ring
        * \param angle of slope in case of cantilever
        */
       void initRelaxed(double alpha);
-
-//#ifdef HAVE_AMVIS
-//      /**
-//       * \param radius of cylinder for AMVis visualisation
-//       */
-//      void setAMVisCylinder(float r) { setPlotFeature(amvis, enabled); AMVisRadius=r; }
-//
-//      /**
-//       * \param breadth of cuboid for AMVis visualisation
-//       * \param height of cuboid for AMVis visualisation
-//       */
-//      void setAMVisCuboid(float breadth, float height) { setPlotFeature(amvis, enabled); AMVisBreadth=breadth; AMVisHeight=height; }
-//#endif
 
     protected:
       /**
@@ -181,14 +183,6 @@ namespace MBSim {
        * \brief right and left side contour of body
        */
       Contour1sFlexible *contourR, *contourL;
-
-//#ifdef HAVE_AMVIS
-//      /** 
-//       * \brief AMVis visualisation for cylinder and cuboid
-//       */
-//      float AMVisRadius, AMVisBreadth, AMVisHeight;
-//#endif
-
   };
 
 }

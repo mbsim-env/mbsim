@@ -6,6 +6,12 @@
 #include "mbsim/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#include "openmbvcppinterface/sphere.h"
+#include <openmbvcppinterface/polygonpoint.h>
+#endif
+
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -24,7 +30,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double rho = 9.2e2; // density alu
   int elements = 2; // number of finite elements
 
-  double mass = 10.; // mass of ball
+  double mass = 20.; // mass of ball
   double r = 1.e-2; // radius of ball
 
   FlexibleBody1s33RCM *rod = new FlexibleBody1s33RCM("Rod", true);
@@ -34,7 +40,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setMomentsInertia(I1,I2,I0);
   rod->setDensity(rho);
   rod->setFrameOfReference(this->getFrame("I"));
-
   rod->setNumberElements(elements);
   rod->setCuboid(b0,b0);
 
@@ -42,21 +47,38 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   for(int i=1;i<=elements;i++) q0(10*i) = l0*i/elements;
   rod->setq0(q0);
   Vec u0 = Vec(10*elements+6,INIT,0.);
-
-
   this->addObject(rod);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
+  cuboid->setNumberOfSpinePoints(elements*4+1); // resolution of visualisation
+  cuboid->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
+  cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
+  vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
+  OpenMBV::PolygonPoint *corner1 = new OpenMBV::PolygonPoint(b0*0.5,b0*0.5,1);
+  rectangle->push_back(corner1);
+  OpenMBV::PolygonPoint *corner2 = new OpenMBV::PolygonPoint(b0*0.5,-b0*0.5,1);
+  rectangle->push_back(corner2);
+  OpenMBV::PolygonPoint *corner3 = new OpenMBV::PolygonPoint(-b0*0.5,-b0*0.5,1);
+  rectangle->push_back(corner3);
+  OpenMBV::PolygonPoint *corner4 = new OpenMBV::PolygonPoint(-b0*0.5,b0*0.5,1);
+  rectangle->push_back(corner4);
+
+  cuboid->setContour(rectangle);
+  rod->setOpenMBVSpineExtrusion(cuboid);
+#endif
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = l0*0.75; WrOS0B(1) = 0.15; WrOS0B(2) = b0*0.3;
+  WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+0.05; WrOS0B(2) = b0*0.3;
   this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
   ball->setMass(mass);
   SymMat Theta(3);
-  Theta(0,0) =  2./5.*mass*r*r;
-  Theta(1,1) =  2./5.*mass*r*r;
-  Theta(2,2) =  2./5.*mass*r*r;
+  Theta(0,0) = 2./5.*mass*r*r;
+  Theta(1,1) = 2./5.*mass*r*r;
+  Theta(2,2) = 2./5.*mass*r*r;
   ball->setInertiaTensor(Theta);
   ball->setTranslation(new LinearTranslation(Mat(3,3,EYE)));
   Point *point = new Point("Point");
@@ -64,6 +86,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
   ball->setu0(Vec("[0;-0.5;0]"));
   this->addObject(ball);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Sphere *sphere=new OpenMBV::Sphere;
+  sphere->setRadius(r);
+  sphere->setStaticColor(0.5);
+  ball->setOpenMBVRigidBody(sphere);
+#endif
 
   PointFlexibleBand *ck = new PointFlexibleBand();
   Contact *contact = new Contact("Contact");
@@ -86,6 +115,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   joint->setMomentLaw(new BilateralConstraint);
   joint->setImpactMomentLaw(new BilateralImpact);
   this->addLink(joint);
-
 }
 

@@ -406,9 +406,9 @@ namespace MBSim {
       for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
         gActive.push_back(int(1));
         gActive0.push_back(int(1));
-        gdActive.push_back(new unsigned int[1+min(1,getFrictionDirections())]);
-        for (int j=0; j<1+min(1,getFrictionDirections()); j++)
-          gdActive[i][j] = 1;
+        gdActive.push_back(new unsigned int[2]);
+        for(int j=0; j<1+min(1,getFrictionDirections()); j++) gdActive[i][j] = 1;
+        for(int j=1+min(1,getFrictionDirections()); j<2; j++) gdActive[i][j] = 0;
 
         gk.push_back(Vec(1));
         gdk.push_back(Vec(1));

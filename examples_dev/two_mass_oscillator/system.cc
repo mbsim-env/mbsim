@@ -103,10 +103,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // ----------------------- Visualisierung in OpenMBV --------------------  
   OpenMBV::Cube *cuboid=new OpenMBV::Cube;
   cuboid->setLength(h1);
+  cuboid->setStaticColor(0.5);
   box1->setOpenMBVRigidBody(cuboid);
 
   cuboid=new OpenMBV::Cube;
   cuboid->setLength(h2);
+  cuboid->setStaticColor(0.5);
   box2->setOpenMBVRigidBody(cuboid);
 
   OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;

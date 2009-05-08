@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameOfReference("I"), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0) {
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameOfReference("I"), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), openMBVGrp(0) {
     frameOfReference.setParent(this);
     uSize[0] = 0;
     uSize[1] = 0;
@@ -43,11 +43,6 @@ namespace MBSim {
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVGrp) openMBVGrp=0;
-#endif
-
   }
 
   DynamicSystem::~DynamicSystem() {
@@ -1091,8 +1086,8 @@ namespace MBSim {
   void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const FrameInterface* refFrame) {
     addFrame(cosy);
 
-    if(refFrame && refFrame->getType() == "Frame") {
-      int i = frameIndex(dynamic_cast<const Frame*>(refFrame));
+    if(dynamic_cast<const Frame*>(refFrame)!=0) {
+      int i = frameIndex(static_cast<const Frame*>(refFrame));
       IrOF.push_back(IrOF[i] + AIF[i]*RrRF);
       AIF.push_back(AIF[i]*ARF);
     }
@@ -1118,8 +1113,8 @@ namespace MBSim {
   void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const FrameInterface* refFrame) {
     addContour(contour);
 
-    if(refFrame && refFrame->getType() == "Frame") {
-      int i = frameIndex(dynamic_cast<const Frame*>(refFrame));
+    if(dynamic_cast<const Frame*>(refFrame)!=0) {
+      int i = frameIndex(static_cast<const Frame*>(refFrame));
       IrOC.push_back(IrOF[i] + AIF[i]*RrRC);
       AIC.push_back(AIF[i]*ARC);
     }

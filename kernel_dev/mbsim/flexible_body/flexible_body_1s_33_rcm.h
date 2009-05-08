@@ -22,6 +22,9 @@
 
 #include "mbsim/flexible_body.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
 
 namespace MBSim {
 
@@ -32,6 +35,7 @@ namespace MBSim {
    * \brief spatial beam using Redundant Coordinate Method (RCM)
    * \author Thorsten Schindler
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
+   * \date 2009-05-08 visualisation (Thorsten Schindler)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    */
@@ -43,14 +47,13 @@ namespace MBSim {
        * \param bool to specify open (cantilever) or closed (ring) structure
        */
       FlexibleBody1s33RCM(const std::string &name,bool openStructure); 
-      
+
       /**
        * \brief destructor
        */
       virtual ~FlexibleBody1s33RCM();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual std::string getType() const { return "FlexibleBody1s33RCM"; }
       virtual void BuildElements();
       virtual void GlobalMatrixContribution(int n);
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
@@ -59,6 +62,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init();
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt=1);
+      virtual std::string getType() const { return "FlexibleBody1s33RCM"; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -74,6 +82,9 @@ namespace MBSim {
       void setMaterialDamping(double epstD_,double k0D_);
       void setLehrDamping(double epstL_,double k0L_);
       void setNumberElements(int n);   	
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+#endif
       /***************************************************/
 
       /**
@@ -81,7 +92,7 @@ namespace MBSim {
        * \param Lagrangian coordinate
        */
       fmatvec::Vec computeState(double x);
-      
+
       /**
        * initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
@@ -182,14 +193,16 @@ namespace MBSim {
   };
 
   inline void FlexibleBody1s33RCM::setGauss(int nGauss_) { nGauss = nGauss_; }
+  inline void FlexibleBody1s33RCM::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }		
+  inline void FlexibleBody1s33RCM::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
   inline void FlexibleBody1s33RCM::setLength(double L_) { L = L_; }    	
   inline void FlexibleBody1s33RCM::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
   inline void FlexibleBody1s33RCM::setCrossSectionalArea(double A_) { A = A_; }    	
   inline void FlexibleBody1s33RCM::setMomentsInertia(double I1_,double I2_,double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33RCM::setDensity(double rho_) { rho = rho_;}     	
-  inline void FlexibleBody1s33RCM::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2); }    	
-  inline void FlexibleBody1s33RCM::setMaterialDamping(double epstD_,double k0D_) {epstD = epstD_; k0D = k0D_; if(initialised) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D); }   	
-  inline void FlexibleBody1s33RCM::setLehrDamping(double epstL_,double k0L_) { epstL = epstL_; k0L = k0L_; if(initialised) for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L); }   	
+  inline void FlexibleBody1s33RCM::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2); }    	
+  inline void FlexibleBody1s33RCM::setMaterialDamping(double epstD_,double k0D_) {epstD = epstD_; k0D = k0D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D); }   	
+  inline void FlexibleBody1s33RCM::setLehrDamping(double epstL_,double k0L_) { epstL = epstL_; k0L = k0L_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L); }   	
 
 }
 
