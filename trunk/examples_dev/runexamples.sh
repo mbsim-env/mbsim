@@ -76,7 +76,7 @@ for D in $EXAMPLES; do
 
   if test -d reference; then
     for H5F in $(cd reference && find -name "*.h5"); do
-      for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie $H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
+      for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
         $(pkg-config hdf5serie --variable=hdf5_prefix)/bin/h5diff --relative=$RTOL $H5F reference/$H5F $P $P
         RET=$?

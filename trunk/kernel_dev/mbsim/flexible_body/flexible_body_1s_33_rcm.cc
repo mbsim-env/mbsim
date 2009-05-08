@@ -28,17 +28,13 @@
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/frame.h"
 
-//#ifdef HAVE_AMVIS
-//#include "elastic1s33rcm.h"
-//using namespace AMVis;
-//#endif
-
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),implicit(false),CurrentElement(0),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),implicit(false),CurrentElement(0),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.)
+  {
     cylinder = new CylinderFlexible("Cylinder");
     Body::addContour(cylinder);
 
@@ -154,7 +150,7 @@ namespace MBSim {
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       double sLokal = BuildElement(cp.getLagrangeParameterPosition()(0)); // compute parameters of affected FE
-      Mat Jtmp = dynamic_cast<FiniteElement1s33RCM*>(discretization[CurrentElement])->computeJXqG(qElement[CurrentElement],sLokal); // this local ansatz yields continuous and finite wave propagation 
+      Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[CurrentElement])->computeJXqG(qElement[CurrentElement],sLokal); // this local ansatz yields continuous and finite wave propagation 
 
       if(CurrentElement<Elements-1 || openStructure) {
         Jacobian(Index(10*CurrentElement,10*CurrentElement+15),All) = Jtmp;
@@ -263,29 +259,33 @@ namespace MBSim {
       discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
       qElement.push_back(Vec(discretization[0]->getSizeOfPositions(),INIT,0.));
       uElement.push_back(Vec(discretization[0]->getSizeOfVelocities(),INIT,0.));
-      dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
-      if(R1 != 0. || R2 != 0.) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
-      dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
-      if(epstD == 0.) dynamic_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
+      static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
+      if(R1 != 0. || R2 != 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
+      static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
+      if(epstD == 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
     }
+  }
 
-//#ifdef HAVE_AMVIS
-//    if(getPlotFeature(amvis)==enabled) {
-//      ElasticBody1s33RCM *RCMbody = new ElasticBody1s33RCM(name,Elements,openStructure,1,boolAMVisBinary);
-//      RCMbody->setElementLength(l0);
-//      float amvisJac[3][3];
-//      for(int i=0;i<3;i++) {
-//        for(int j=0;j<3;j++) {
-//          amvisJac[i][j] = frameOfReference->getOrientation()(i,j);
-//        }
-//      }
-//      RCMbody->setJacobian(amvisJac);
-//      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
-//      RCMbody->setCylinder(cylinderRadius);
-//      RCMbody->setCuboid(cuboidBreadth,cuboidHeight);
-//      bodyAMVis = RCMbody;
-//    }
-//#endif
+  void FlexibleBody1s33RCM::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+        vector<double> data;
+        data.push_back(t);
+        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
+          Vec X = computeState(ds*i);
+          Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2);
+          data.push_back(pos(0)); // global x-position
+          data.push_back(pos(1)); // global y-position
+          data.push_back(pos(2)); // global z-position
+          data.push_back(X(3)); // local twist
+        }
+        ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
+      }
+#endif
+    }
+    FlexibleBodyContinuum<double>::plot(t,dt);
   }
 
   void FlexibleBody1s33RCM::setNumberElements(int n) {
@@ -299,23 +299,9 @@ namespace MBSim {
     u0.resize(uSize[0]);
   }
 
-  void FlexibleBody1s33RCM::setCylinder(double cylinderRadius_) { 
-//#ifdef HAVE_AMVIS 
-//    setPlotFeature(amvis, enabled);
-//#endif
-    cylinderRadius = cylinderRadius_; 
-  }		
-
-  void FlexibleBody1s33RCM::setCuboid(double cuboidBreadth_,double cuboidHeight_) {
-//#ifdef HAVE_AMVIS
-//    setPlotFeature(amvis, enabled);
-//#endif
-    cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; 
-  }
-
   Vec FlexibleBody1s33RCM::computeState(double sGlobal) {
     double sLocal = BuildElement(sGlobal); // Lagrange parameter of affected FE
-    return dynamic_cast<FiniteElement1s33RCM*>(discretization[CurrentElement])->computeState(qElement[CurrentElement],uElement[CurrentElement],sLocal);
+    return static_cast<FiniteElement1s33RCM*>(discretization[CurrentElement])->computeState(qElement[CurrentElement],uElement[CurrentElement],sLocal);
   }
 
   void FlexibleBody1s33RCM::initInfo() {

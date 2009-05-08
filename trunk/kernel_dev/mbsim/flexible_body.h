@@ -26,10 +26,6 @@
 #include "mbsim/contour_pdata.h"
 #include <vector>
 
-//#ifdef HAVE_AMVIS
-//namespace AMVis { class ElasticBody; }
-//#endif
-
 namespace MBSim {
 
   /**
@@ -129,19 +125,6 @@ namespace MBSim {
        */
       void addFrame(Frame *frame, const ContourPointData &S_);
 
-//#ifdef HAVE_AMVIS
-//      /** 
-//       * \brief activate output for AMVis
-//       * \param binary or ASCII data format in pos-file
-//       */
-//      void createAMVisBody(bool binary_) { boolAMVisBinary = binary_; }
-//
-//      /**
-//       * \param color float in [0;1] (blue - green - red)
-//       */
-//      void setAMVisColor(float color) { AMVisColor = color; }
-//#endif
-
     protected:
       /** 
        * \brief stl-vector of discretizations/finite elements
@@ -167,23 +150,6 @@ namespace MBSim {
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<ContourPointData> S_Frame;
-
-//#ifdef HAVE_AMVIS
-//      /** 
-//       * \brief body for AMVis
-//       */
-//      AMVis::ElasticBody *bodyAMVis;
-//
-//      /** 
-//       * \brief flag to allow for binary output file for AMVis
-//       */
-//      bool boolAMVisBinary;
-//
-//      /**
-//       * \brief float to pass to AMVis-object
-//       */
-//      float AMVisColor;
-//#endif
 
   };
 

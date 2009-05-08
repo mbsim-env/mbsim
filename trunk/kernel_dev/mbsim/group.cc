@@ -99,8 +99,8 @@ namespace MBSim {
   void Group::addDynamicSystem(DynamicSystem *sys, const Vec &RrRD, const SqrMat &ARD, const Frame* refFrame) {
     DynamicSystem::addDynamicSystem(sys);
 
-    if(refFrame && refFrame->getType() == "Frame") {
-      int i = frameIndex(dynamic_cast<const Frame*>(refFrame));
+    if(dynamic_cast<const Frame*>(refFrame)!=0) {
+      int i = frameIndex(static_cast<const Frame*>(refFrame));
       IrOD.push_back(IrOF[i] + AIF[i]*RrRD);
       AID.push_back(AIF[i]*ARD);
     }

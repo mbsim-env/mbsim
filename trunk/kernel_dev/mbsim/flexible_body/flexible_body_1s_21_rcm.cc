@@ -27,23 +27,12 @@
 
 #define FMATVEC_DEEP_COPY
 
-//#ifdef HAVE_AMVIS
-//#include "elastic1s21rcm.h"
-//using namespace AMVis;
-//#endif
-
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
 
-  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false)
-                                                                                      //#ifdef HAVE_AMVIS
-                                                                                      //                                                                                     ,
-                                                                                      //                                                                                     AMVisRadius(0), AMVisBreadth(0), AMVisHeight(0)
-                                                                                      //#endif
-
-  { 
+  FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) { 
     contourR = new Contour1sFlexible("R");
     contourL = new Contour1sFlexible("L");
     Body::addContour(contourR);
@@ -91,34 +80,30 @@ namespace MBSim {
 
   void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      const double &s = cp.getLagrangeParameterPosition()(0); 
-      double sLocal = BuildElement(s);
-      Vec Z = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
+      Vec X = computeState(cp.getLagrangeParameterPosition()(0));
 
       Vec tmp(3,NONINIT);
-
       if(ff==position || ff==position_cosy || ff==all) {
-        tmp(0) = Z(0); tmp(1) = Z(1); tmp(2) = 0.; // temporary vector used for compensating planar description
+        tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
       }
-
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = cos(Z(2)); tmp(1) = sin(Z(2)); 
+        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); 
         cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = -sin(Z(2)); tmp(1) = cos(Z(2));
+        tmp(0) = -sin(X(2)); tmp(1) = cos(X(2));
         cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
       }
       if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = Z(3); tmp(1) = Z(4);
+        tmp(0) = X(3); tmp(1) = X(4);
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
       }
 
       if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = Z(5);
+        tmp(0) = 0.; tmp(1) = 0.; tmp(2) = X(5);
         cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
       }
     }
@@ -168,7 +153,7 @@ namespace MBSim {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 
       double sLocal = BuildElement(cp.getLagrangeParameterPosition()(0));
-      Mat Jtmp = dynamic_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLocal);
+      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLocal);
       if(CurrentElement<Elements-1 || openStructure) {
         Jacobian(Index(5*CurrentElement,5*CurrentElement+7),All) = Jtmp;
       }
@@ -224,31 +209,34 @@ namespace MBSim {
       qElement.push_back(Vec(8,INIT,0.));
       uElement.push_back(Vec(8,INIT,0.));
       discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
-      if(rc != 0) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
-      dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
-      dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+      if(rc != 0) static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
+      static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
+      static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
     }
-
-    //#ifdef HAVE_AMVIS
-    //    if(getPlotFeature(amvis)==enabled) {
-    //      ElasticBody1s21RCM *RCMbody = new ElasticBody1s21RCM(name,Elements,openStructure,1,boolAMVisBinary); 
-    //      RCMbody->setElementLength(l0);
-    //
-    //      float amvisJT[3][2], amvisJR[3];
-    //      for(int i=0;i<3;i++) {
-    //        for(int j=0;j<2;j++) amvisJT[i][j] = frameOfReference->getOrientation()(i,j);
-    //        amvisJR[i] = frameOfReference->getOrientation()(i,0);
-    //      }
-    //      RCMbody->setJacobians(amvisJT,amvisJR);
-    //      RCMbody->setInitialTranslation(frameOfReference->getPosition()(0),frameOfReference->getPosition()(1),frameOfReference->getPosition()(2));
-    //      RCMbody->setCylinder(AMVisRadius);
-    //      RCMbody->setCuboid(AMVisBreadth,AMVisHeight);
-    //      RCMbody->setColor(AMVisColor);
-    //
-    //      bodyAMVis = RCMbody;
-    //    } 
-    //#endif
   }
+
+  void FlexibleBody1s21RCM::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+        vector<double> data;
+        data.push_back(t);
+        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
+          Vec X = computeState(ds*i);
+          Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
+          Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp;
+          data.push_back(pos(0)); // global x-position
+          data.push_back(pos(1)); // global y-position
+          data.push_back(pos(2)); // global z-position
+          data.push_back(0.); // local twist
+        }
+        ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
+      }
+#endif
+    }
+    FlexibleBodyContinuum<double>::plot(t,dt);
+  }  
 
   void FlexibleBody1s21RCM::setNumberElements(int n) {
     Elements = n;
@@ -264,19 +252,24 @@ namespace MBSim {
     rc = r;
     if(initialized) 
       for(int i=0;i<Elements;i++) 
-        dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
+        static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
   }
 
   void FlexibleBody1s21RCM::setMaterialDamping(double d) {
     dm = d;
     if(initialized) 
-      for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
+      for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
   }
 
   void FlexibleBody1s21RCM::setLehrDamping(double d) {
     dl = d;
     if(initialized) 
-      for(int i=0;i<Elements;i++) dynamic_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+      for(int i=0;i<Elements;i++) static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+  }
+
+  Vec FlexibleBody1s21RCM::computeState(double sGlobal) {
+    double sLocal = BuildElement(sGlobal); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
   }
 
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {

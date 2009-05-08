@@ -512,8 +512,8 @@ namespace MBSim {
       Contour1sFlexible(const std::string &name) : Contour1s(name) {}
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { dynamic_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(ContourPointData &cp) { dynamic_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
+      virtual void updateJacobiansForFrame(ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
       /***************************************************/
       
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
@@ -728,8 +728,8 @@ namespace MBSim {
       Contour2sFlexible(const std::string &name) : Contour2s(name) {}
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { dynamic_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(ContourPointData &cp) { dynamic_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
+      virtual void updateJacobiansForFrame(ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
       /***************************************************/
   };
 
