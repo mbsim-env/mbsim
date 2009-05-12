@@ -203,6 +203,49 @@ Timestepping integration solves the whole equations of the system including the 
 \end{enumerate}
 
 \subsubsection{Event-Driven Integration}
+Currently, \texttt{LSODAR} is the only event-driven integrator with automatic switch between stiff and non-stiff equations.
+\begin{enumerate}
+\item \texttt{DS::computeInitialCondition}\\
+    checks for system configuration and creates the necessary contact container
+\item $\text{\texttt{DS::plot}}\left(t,\vq\right)$
+\item \texttt{DLSODAR} 
+    \begin{enumerate}
+    \item[]$\text{\texttt{DS::zdot}}\left(t,\vq,\vu\right)$ is available for standard and inverse kinetics calculations
+      \begin{itemize}
+      \item \texttt{wb} means $\bar{w}$ and describes the acceleration terms in the constraint kinematics
+      \item \texttt{computeConstraintForces} uses a least square algorithm to solve the Delassus equations, assume $Ax=b$ with a $m\times n$ full-rank matrix $A$, then there are two cases
+        \begin{itemize}
+        \item $m\geq n$ (skinny) can always be solved by $\left\|Ax-b\right\|\rightarrow\min$ and so by SVD\\
+          analytically the solution is given by the normal equations $x=\left(A^TA\right)^{-1}A^Tb$
+        \item $m<n$ (fat) has an infinite dimensional solution space, one has to pick one solution\\
+          $\left\|x\right\|\rightarrow\min,\ Ax=b$ which is analytically given by $x=A^T\left(A^TA\right)^{-1}b$, again numerically a SVD solves the problem most efficiently
+        \end{itemize}
+      \end{itemize}
+    \item[]\texttt{DS::getsv} the stop vector defines the root function concerning contacts and stick-slip-transitions for the DAE solver
+      \begin{itemize}
+      \item it can be only set by \texttt{Link}
+      \item contains kinematics for not-active directions and kinetics for active directions
+      \item the last entry is used for position and velocity projections
+      \end{itemize}
+    \end{enumerate}
+\item \texttt{DS::shift} is invoked, if there is a sign change in the stop vector
+    \begin{itemize}
+      \item drift compensation if indicated by stop vector
+      \item project to slighly positive gaps to avoid instantaneous appearance of new shift point
+      \item[] \texttt{updateCondition} should impact or differential equations be solved, after earlier mentioned reconfiguring
+      \item case studies
+        \begin{itemize}
+        \item[] \texttt{impact} has highest priority and changes overall configuration
+        \item[] \texttt{impact} requires \texttt{D::checkAllgd} because of possible slip-stick transition
+        \item no difference between $\Lambda$ and $\lambda$
+        \item \texttt{gdn} means $\dot{g}^{+}$
+        \item[] \texttt{impact} involves new configuration and so also the equations of motion have to be solved
+        \item \texttt{checkActivegdd} has to be done with the same tolerance like in the nonlinear equations solver
+        \item[] \texttt{gActive} means a contact is closed
+        \item[] \texttt{gdActive} means a contact remains closed
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
 
 %exemplarisch ein System aus Umwelt und zwei Körpern. Angedeutet sind Wechselwirkungen
 %dieser untereinander über Kontakte und Verbindungen sowie eine äußere Last.

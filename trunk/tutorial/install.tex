@@ -115,7 +115,7 @@ if ATLAS should be used instead of LAPack. Details for adapting the installation
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\HDF}
-\HDF can be downloaded from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2. After extracting one uses the procedure \textsc{configure} with the additional FLAG
+\HDF can be downloaded as source code from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2. After extracting one uses the procedure \textsc{configure} with the additional FLAG
 \begin{verbatim}
  --enable-cxx
 \end{verbatim}
@@ -160,7 +160,7 @@ Necessary for the installation of a static visualisation part are the following 
     \texttt{./configure -prefix /home/OpenMBV/local -static -nomake examples -nomake demos\\ -nomake docs -nomake translations -no-gif -no-libtiff -qt-libpng -no-libmng\\ -qt-libjpeg -no-openssl -no-glib}
 \item HDF5Serie (wrapper for file handling)\\
     \texttt{./configure --prefix=/home/OpenMBV/local --disable-shared --enable-static}
-\item SoQt with version 1.5 or newer (e.g. event invocation in coin due to hardware events)\\
+\item SoQt with version 1.4.1 or newer (e.g. event invocation in coin due to hardware events)\\
     \texttt{in SoQtComponent.cpp:103' change "unsinged long key" to "uintptr\_t key"}\\
     \texttt{export QTDIR=/home/OpenMBV/local}\\
     \texttt{export CONFIG\_QTLIBS="\$(pkg-config --libs QtGui QtCore Qt3Support QtOpenGL)"}\\
@@ -174,13 +174,13 @@ Missing is the final installation. After typing
 \begin{verbatim}
 export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:MBSim/Install/lib/pkgconfig
 \end{verbatim} 
-one should use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build . The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation.\\
+one should use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build . The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation if invoked before the previous \textsc{install}.\\
 There is also a static Linux binary available at \url{www.berlios.de}.\\
 Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
  alias openmbv="MBSim/OpenMBV/openmbv/openmbv"
 \end{verbatim}
-to gain overall access to the command \texttt{openmbv}.
+to gain overall access to the command \texttt{openmbv}, which should be used only locally because of network protocols not providing the necessary X.org requirements.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
