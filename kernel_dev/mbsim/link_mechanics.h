@@ -21,6 +21,7 @@
 #define _LINK_MECHANICS_H_
 
 #include "link.h"
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace H5 {
   class Group;
@@ -97,6 +98,8 @@ namespace MBSim {
        * \param userfunction to manipulate color of arrow at each timestep (default: red arrow for forces and green one for moments)
        */
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
 
     protected:
       /** 

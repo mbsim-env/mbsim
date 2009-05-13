@@ -2,11 +2,12 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+bindir=${exec_prefix}/bin
 
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
 Requires: @requires@
 Version: @VERSION@
-Libs: -L${libdir} -lmbsim
+Libs: -L${libdir} -lmbsim -lmbsimtinyxml
 Cflags: -I${includedir} @DEFINES@ @openmbv_compilerflag@
 

@@ -1,6 +1,6 @@
-SUBDIRS = mbsim
+SUBDIRS = mbsimtinyxml mbsim mbsimxml
 
-DIST_SUBDIRS = mbsim doc
+DIST_SUBDIRS = mbsimxml mbsim doc
 EXTRA_DIST = doc/macros.sty
 
 #bin_SCRIPTS = mbsim-config

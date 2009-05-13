@@ -19,11 +19,18 @@
 
 #include <config.h>
 #include "mbsim/kinematics.h"
+#include "mbsim/element.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
+
+  void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"PJT");
+    setPJT(Mat(e->GetText()));
+  }
 
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {
     int i = q.size()-1;

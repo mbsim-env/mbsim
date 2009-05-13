@@ -113,6 +113,8 @@ namespace MBSim {
        */
       int contourIndex(const Contour *contour_) const;
 
+      virtual FrameInterface *getFrameByPath(std::string path);
+
     protected:
       /**
        * \brief vector of frames and contours

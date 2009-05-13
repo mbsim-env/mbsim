@@ -195,5 +195,18 @@ namespace MBSim {
     return -1;
   }
 
+  FrameInterface *Body::getFrameByPath(string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getFrameByPath(restPart);
+    else if(firstPart.substr(0,6)=="Frame[")
+      return getFrame(firstPart.substr(6,firstPart.find(']')-6));
+    else
+      return 0;
+  }
+
 }
 

@@ -25,6 +25,9 @@
 #include <string>
 #include <vector>
 #include <hdf5serie/vectorserie.h>
+#include "mbsimtinyxml/tinyxml.h"
+
+#define MBSIMNS "{http://mbsim.berlios.de/MBSim}"
 
 #ifdef NO_ISO_14882
 #include<fstream.h>
@@ -47,6 +50,10 @@ namespace MBSim {
     enabled, disabled, unset
   };
 
+  // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
+  // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
+  // new feature must also be added (as a string) in
+  // element.cc:Element::initializeUsingXML(TiXmlElement *element)
   enum PlotFeature {
     plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, openMBV, LASTPLOTFEATURE
   };
@@ -162,6 +169,8 @@ namespace MBSim {
        * \return plot feature for derived classes
        */
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature pf) { return plotFeatureForChildren[pf]; }
+
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
       /** 

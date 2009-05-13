@@ -25,6 +25,7 @@
 #include "sparse_matrix.h"
 #include "H5Cpp.h"
 #include <string>
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -358,6 +359,8 @@ namespace MBSim {
       // TODO just for testing
       void writez();
       void readz0();
+
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
       /**

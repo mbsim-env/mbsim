@@ -23,6 +23,7 @@
 #include "mbsim/interfaces.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/frame.h"
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace H5 {
   class Group;
@@ -642,6 +643,8 @@ namespace MBSim {
        * \return modelling interface
        */
       MBSim::ModellingInterface* getModel(const std::string &name, bool check=true);
+
+      virtual FrameInterface *getFrameByPath(std::string path);
 
     protected:
       /**

@@ -26,6 +26,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/simpleattribute.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -109,5 +110,33 @@ namespace MBSim {
       AID.push_back(ARD);
     }
   }
+
+  void Group::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    Element::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"ARD");
+    e=e->NextSiblingElement();
+
+    Group *g;
+    while((g=ObjectFactory::createGroup(e))) {
+      addDynamicSystem(g, Vec(e->FirstChildElement(MBSIMNS"RrRD")->GetText()),
+                          SqrMat(e->FirstChildElement(MBSIMNS"ARD")->GetText()));
+      g->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
+    Object *o;
+    while((o=ObjectFactory::createObject(e))) {
+      addObject(o);
+      o->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
+    LinkMechanics *m;
+    while((m=ObjectFactory::createLinkMechanics(e))) {
+      addLink(m);
+      m->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
+  }
+
 }
 
