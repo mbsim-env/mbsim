@@ -5,10 +5,13 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo ""
   echo "This script must be executed in the current directory!"
   echo ""
-  echo "runexamples.sh (run all examples with default RTOL=1e-6)"
-  echo "runexamples.sh 1e-3 (run all examples with RTOL=1e-3)"
-  echo "runexamples.sh robot (run robot example with default RTOL=1e-6)"
-  echo "runexamples.sh robot 1e-3 (run robot example with RTOL=1e-3)"
+  echo "Two dataset differ, if at least one data has a relative AND absoulute"
+  echo "tolerance higher than RTOL and ATOL respectively!"
+  echo ""
+  echo "runexamples.sh (run all examples with default RTOL=1e-6 and ATOL=1e-6)"
+  echo "runexamples.sh 1e-3,1e-4 (run all examples with RTOL=1e-3 and ATOL=1e-4)"
+  echo "runexamples.sh robot (run robot example with default RTOL=1e-6 and ATOL=1e-6)"
+  echo "runexamples.sh robot 1e-3,1e-4 (run robot example with RTOL=1e-3 AND ATOL=1e-4)"
   echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution using"
   echo "        the data stored in the reference directory of the respective example)"
   echo "runexamples.sh install (install the reference.tar.bz2 reference file from"
@@ -19,6 +22,7 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
 fi
 
 RTOL=1e-6
+ATOL=1e-6
 EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\.")
 if [ $# -eq 1 ]; then
   if [ "$1" = "dist" ]; then
@@ -34,10 +38,12 @@ if [ $# -eq 1 ]; then
     tar -xjf reference.tar.bz2
     exit
   fi
-  if cd $1; then
+  if cd $1 &> /dev/null; then
     EXAMPLES=$1
+    cd ..
   else
-    RTOL=$1
+    RTOL=$(echo $1 | sed -re "s/^([^,]+),([^,]+)$/\1/")
+    ATOL=$(echo $1 | sed -re "s/^([^,]+),([^,]+)$/\2/")
   fi
 fi
 if [ $# -eq 2 ]; then
@@ -47,7 +53,8 @@ if [ $# -eq 2 ]; then
     exit
   fi
   EXAMPLES=$1
-  RTOL=$2
+  RTOL=$(echo $2 | sed -re "s/^([^,]+),([^,]+)$/\1/")
+  ATOL=$(echo $2 | sed -re "s/^([^,]+),([^,]+)$/\2/")
 fi
 
 
@@ -61,11 +68,21 @@ for D in $EXAMPLES; do
   echo "RUNNING EXAMPLE $D"
   cd $D
 
-  ERROR=1
-  make clean && \
-  make && \
-  ./main && \
-  ERROR=0
+  XMLEXAMPLE=false
+  echo $D | grep "^\./xml_" && XMLEXAMPLE=true
+  echo $D | grep "^xml_" && XMLEXAMPLE=true
+
+
+  if [ $XMLEXAMPLE == false ]; then
+    ERROR=1
+    make clean && \
+    make && \
+    ./main && \
+    ERROR=0
+  else
+    ERROR=1
+    $(pkg-config mbsim --variable=bindir)/mbsimxml TS.mbsim.xml && ERROR=0
+  fi
 
   if [ $ERROR -eq 0 ]; then
     echo "EXAMPLE $D PASSED COMPILING AND RUNNING"
@@ -78,7 +95,7 @@ for D in $EXAMPLES; do
     for H5F in $(cd reference && find -name "*.h5"); do
       for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
-        $(pkg-config hdf5serie --variable=hdf5_prefix)/bin/h5diff --relative=$RTOL $H5F reference/$H5F $P $P
+        $(pkg-config hdf5serie --variable=hdf5_prefix)/bin/h5diff --relative=$RTOL --delta=$ATOL $H5F reference/$H5F $P $P
         RET=$?
         if [ $RET -ne 0 ]; then
           echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOLUTION"

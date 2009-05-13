@@ -1,7 +1,6 @@
 #include "group2.h"
 #include "group1.h"
 #include "mbsim/rigid_body.h"
-#include "springs.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
 #endif
