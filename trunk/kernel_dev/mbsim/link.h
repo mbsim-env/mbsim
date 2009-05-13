@@ -362,6 +362,8 @@ namespace MBSim {
        */
       void decreaserFactors();
 
+      virtual FrameInterface *getFrameByPath(std::string path);
+
     protected:
       /**
        * \brief parent of link 

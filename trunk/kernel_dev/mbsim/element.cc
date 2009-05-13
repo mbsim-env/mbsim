@@ -87,5 +87,30 @@ namespace MBSim {
     }
   }
 
+  void Element::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement();
+    while(e && (e->ValueStr()==MBSIMNS"setPlotFeature" ||
+                e->ValueStr()==MBSIMNS"setPlotFeatureForChildren" ||
+                e->ValueStr()==MBSIMNS"setPlotFeatureRecursive")) {
+      PlotFeatureStatus status;
+      if(e->Attribute("feature")[0]=='+') status=enabled; else status=disabled;
+      PlotFeature feature=plotRecursive;
+      if(string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
+      if(string(e->Attribute("feature")).substr(1)=="separateFilePerDynamicSystem") feature=separateFilePerDynamicSystem;
+      if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
+      if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
+      if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
+      if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
+      if(string(e->Attribute("feature")).substr(1)=="contact") feature=contact;
+      if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
+      if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
+      if(e->ValueStr()==MBSIMNS"setPlotFeature") setPlotFeature(feature, status);
+      if(e->ValueStr()==MBSIMNS"setPlotFeatureForChildren") setPlotFeatureForChildren(feature, status);
+      if(e->ValueStr()==MBSIMNS"setPlotFeatureRecursive") setPlotFeatureRecursive(feature, status);
+      e=e->NextSiblingElement();
+    }
+  }
+
 }
 

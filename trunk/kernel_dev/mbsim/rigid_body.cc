@@ -24,6 +24,11 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/objectfactory.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/invisiblebody.h>
+#include <openmbvcppinterface/objectfactory.h>
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -413,6 +418,44 @@ namespace MBSim {
 
   void RigidBody::updateMNotConst(double t) {
     M += m*JTJ(frame[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation());
+  }
+
+  void RigidBody::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    Body::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"frameForKinematics");
+    setFrameForKinematics((Frame*)getFrameByPath(e->Attribute("ref")));
+    e=element->FirstChildElement(MBSIMNS"mass");
+    setMass(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"inertiaTensor");
+    setInertiaTensor(SymMat(e->GetText()));
+    e=e->NextSiblingElement();
+    Translation *trans=ObjectFactory::createTranslation(e);
+    setTranslation(trans);
+    trans->initializeUsingXML(e);
+    e=e->NextSiblingElement();
+    while(e->ValueStr()==MBSIMNS"Frame") {
+      addFrame(e->Attribute("name"), Vec(e->FirstChildElement(MBSIMNS"RrRF")->GetText()),
+                                     SqrMat(e->FirstChildElement(MBSIMNS"ARF")->GetText()));
+      TiXmlElement *ee;
+      if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
+        getFrame(e->Attribute("name"))->enableOpenMBV(atof(ee->Attribute("size")), atof(ee->Attribute("offset")));
+      e=e->NextSiblingElement();
+    }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e));
+    if(rb) {
+      setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(e);
+    }
+    
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+    if(e) {
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      getFrame("C")->enableOpenMBV(atof(e->Attribute("size")), atof(e->Attribute("offset")));
+    }
+#endif
   }
 
 }

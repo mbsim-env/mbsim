@@ -3,9 +3,11 @@ SUBDIRS =  utils integrators contact_kinematics flexible_body contours .
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = body.cc\
+objectfactory.cc\
 mbsim_event.cc\
 link.cc\
 link_mechanics.cc\
+linear_spring_damper.cc\
 object.cc\
 dynamic_system_solver.cc\
 dynamic_system.cc\
@@ -32,14 +34,18 @@ special_classes.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
 
+libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
+
 INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
+objectfactory.h\
 mbsim_event.h\
 link.h\
 link_mechanics.h\
+linear_spring_damper.h\
 object.h\
 dynamic_system_solver.h\
 dynamic_system.h\

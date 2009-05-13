@@ -168,6 +168,8 @@ namespace MBSim {
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body) { openMBVBody=body; }
 #endif
 
+      virtual void initializeUsingXML(TiXmlElement *element);
+
     protected:
       /**
        * \brief mass

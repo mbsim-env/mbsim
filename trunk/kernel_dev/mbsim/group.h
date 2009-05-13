@@ -66,6 +66,10 @@ namespace MBSim {
        * \param relation frame
        */
       void addDynamicSystem(DynamicSystem *dynamicsystem, const fmatvec::Vec &RrRD, const fmatvec::SqrMat &ARD, const Frame* refFrame=0);
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+      fmatvec::Vec RrRD;
+      fmatvec::SqrMat ARD;
   };
 }
 

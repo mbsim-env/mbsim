@@ -22,6 +22,7 @@
 
 #include "fmatvec.h"
 #include <fstream>
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -55,6 +56,8 @@ namespace MBSim {
        */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element)=0;
   };
 
   /**
@@ -86,6 +89,8 @@ namespace MBSim {
       const fmatvec::Mat& getPJT() const { return PJT; }
       void setPJT(const fmatvec::Mat &PJT_) { PJT = PJT_; }
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
     
     private:
       /**

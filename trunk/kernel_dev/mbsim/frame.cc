@@ -188,12 +188,12 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
         openMBVFrame->setName(name);
         RigidBody *rigidBody;
-        parent->getOpenMBVGrp()->addObject(openMBVFrame);
         if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
           if(rigidBody->getOpenMBVBody()==0) {
             cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
             _exit(1);
           }
+          parent->getOpenMBVGrp()->addObject(openMBVFrame);
           openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
           openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
           openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));

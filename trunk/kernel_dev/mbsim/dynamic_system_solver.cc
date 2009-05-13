@@ -1305,5 +1305,12 @@ namespace MBSim {
     setPlotFeatureRecursive(openMBV, enabled);
   }
 
+  void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {
+    Group::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
+    setAccelerationOfGravity(Vec(e->GetText()));
+  }
+
 }
 

@@ -24,6 +24,7 @@
 #include "mbsim/interfaces.h"
 #include <string>
 #include <vector>
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -266,6 +267,9 @@ namespace MBSim {
 
       virtual Object* getObjectDependingOn() const {return 0;}
       /*******************************************************/ 
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual FrameInterface *getFrameByPath(std::string path);
 
     protected:
       /**

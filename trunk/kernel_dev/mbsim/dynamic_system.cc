@@ -1262,5 +1262,22 @@ namespace MBSim {
     obj->setParent(this);
   }
 
+  FrameInterface *DynamicSystem::getFrameByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getFrameByPath(restPart);
+    else if(firstPart.substr(0,6)=="Frame[")
+      return getFrame(firstPart.substr(6,firstPart.find(']')-6));
+    else if(firstPart.substr(0,7)=="Object[")
+      return getObject(firstPart.substr(7,firstPart.find(']')-7))->getFrameByPath(restPart);
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getFrameByPath(restPart);
+    else
+      return 0;
+  }
+
 }
 
