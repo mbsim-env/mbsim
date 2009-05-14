@@ -21,7 +21,8 @@
 #ifndef _CONTACT_KINEMATICS_CIRCLESOLID_CIRCLEHOLLOW_H_
 #define _CONTACT_KINEMATICS_CIRCLESOLID_CIRCLEHOLLOW_H_
 
-#include "contact_kinematics.h"
+#include "mbsim/contact_kinematics/contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -32,14 +33,15 @@ namespace MBSim {
    * \brief pairing circle outer side to circle inner side
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \todo change stage to new interface TODO
+   * \date 2009-05-13 updateg implemented (Bastian Esefeld)
+   * \todo updatewb TODO
    */
   class ContactKinematicsCircleSolidCircleHollow : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec& g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidCircleHollow:updatewb): Not implemented!"); }
       /***************************************************/
 
     private:
