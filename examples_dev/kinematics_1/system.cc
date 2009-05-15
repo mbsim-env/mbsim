@@ -8,6 +8,8 @@
 #include <openmbvcppinterface/cuboid.h>
 #endif
 
+#include "mbsimtinyxml/tinyxml.h"
+
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -36,6 +38,7 @@ class MyRot : public Rotation {
 class MyPos : public Translation {
   public:
     int getqSize() const {return 0;}
+    virtual void initializeUsingXML(TiXmlElement *element) {}
     virtual Vec operator()(const Vec &q, double t) {
       Vec PrPK(3);
       double om = 1;

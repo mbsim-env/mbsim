@@ -163,39 +163,42 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   body->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Frustum* dummy = new OpenMBV::Frustum;
-  dummy->setBaseRadius(d);
-  dummy->setTopRadius(d);
-  dummy->setHeight(d); 
-  dummy->setScaleFactor(1.);
-  dummy->setMinimalColorValue(0);
-  dummy->setMaximalColorValue(1);
-  dummy->setStaticColor(1);
-  body->setOpenMBVRigidBody(dummy);
+//  OpenMBV::Frustum* dummy = new OpenMBV::Frustum;
+//  dummy->setBaseRadius(d);
+//  dummy->setTopRadius(d);
+//  dummy->setHeight(d); 
+//  dummy->setScaleFactor(1.);
+//  dummy->setMinimalColorValue(0);
+//  dummy->setMaximalColorValue(1);
+//  dummy->setStaticColor(1);
+//  body->setOpenMBVRigidBody(dummy);
+  body->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 
   body2->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Frustum* dummy2 = new OpenMBV::Frustum;
-  dummy2->setBaseRadius(d);
-  dummy2->setTopRadius(d);
-  dummy2->setHeight(d); 
-  dummy2->setScaleFactor(1.);
-  dummy2->setMinimalColorValue(0);
-  dummy2->setMaximalColorValue(1);
-  dummy2->setStaticColor(0.5);
-  body2->setOpenMBVRigidBody(dummy2);
+//  OpenMBV::Frustum* dummy2 = new OpenMBV::Frustum;
+//  dummy2->setBaseRadius(d);
+//  dummy2->setTopRadius(d);
+//  dummy2->setHeight(d); 
+//  dummy2->setScaleFactor(1.);
+//  dummy2->setMinimalColorValue(0);
+//  dummy2->setMaximalColorValue(1);
+//  dummy2->setStaticColor(0.5);
+//  body2->setOpenMBVRigidBody(dummy2);
+  body2->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
-  OpenMBV::Frustum* dummy3 = new OpenMBV::Frustum;
-  dummy3->setBaseRadius(3*d);
-  dummy3->setTopRadius(3*d);
-  dummy3->setInnerBaseRadius(2.5*d);
-  dummy3->setInnerTopRadius(2.5*d);
-  dummy3->setHeight(d); 
-  dummy3->setScaleFactor(1.);
-  dummy3->setMinimalColorValue(0);
-  dummy3->setMaximalColorValue(1);
-  dummy3->setStaticColor(0.1);
-  body3->setOpenMBVRigidBody(dummy3);
+//  OpenMBV::Frustum* dummy3 = new OpenMBV::Frustum;
+//  dummy3->setBaseRadius(3*d);
+//  dummy3->setTopRadius(3*d);
+//  dummy3->setInnerBaseRadius(2.5*d);
+//  dummy3->setInnerTopRadius(2.5*d);
+//  dummy3->setHeight(d); 
+//  dummy3->setScaleFactor(1.);
+//  dummy3->setMinimalColorValue(0);
+//  dummy3->setMaximalColorValue(1);
+//  dummy3->setStaticColor(0.1);
+//  body3->setOpenMBVRigidBody(dummy3);
+  body3->setOpenMBVRigidBody(new OpenMBV::InvisibleBody());
 
 #endif
 }
