@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
+  <RrRD>[1;0;0]</RrRD>
+  <ARD>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</ARD>
+  <RigidBody name="Box1">
+    <q0>[l01 + h1/2 + 0.2]</q0>
+    <u0>[0]</u0>
+    <frameOfReference ref="../Frame[I]"/>
+    <frameForKinematics ref="Frame[C]"/>
+    <mass>m1</mass>
+    <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+    <LinearTranslation>
+      <PJT>[0; 1; 0]</PJT>
+    </LinearTranslation>
+    <Frame name="P1">
+      <RrRF>[0;-h1/2;0]</RrRF>
+      <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
+      <enableOpenMBV>
+        <size>h1</size>
+        <offset>1</offset>
+      </enableOpenMBV>
+    </Frame>
+    <Frame name="P2">
+      <RrRF>[0;h1/2;0]</RrRF>
+      <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
+    </Frame>
+    <ombv:Cuboid name="dummy">
+      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+      <ombv:scaleFactor>1</ombv:scaleFactor>
+      <ombv:length>[h1;h1;h1]</ombv:length>
+    </ombv:Cuboid>
+  </RigidBody>
+  <RigidBody name="Box2">
+    <plotFeature feature="-stateDerivative"/>
+    <q0>[l01 + l02 + h1 + h2/2]</q0>
+    <u0>[0]</u0>
+    <frameOfReference ref="../Frame[I]"/>
+    <frameForKinematics ref="Frame[C]"/>
+    <mass>m2</mass>
+    <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+    <LinearTranslation>
+      <PJT>[0; 1; 0]</PJT>
+    </LinearTranslation>
+    <Frame name="P1">
+      <RrRF>[0;-h2/2;0]</RrRF>
+      <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
+      <enableOpenMBV>
+        <size>h2</size>
+        <offset>1</offset>
+      </enableOpenMBV>
+    </Frame>
+    <ombv:Cuboid name="dummy">
+      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+      <ombv:scaleFactor>1</ombv:scaleFactor>
+      <ombv:length>[h2;h2;h2]</ombv:length>
+    </ombv:Cuboid>
+  </RigidBody>
+  <LinearSpringDamper name="Feder1">
+    <stiffness>c1</stiffness>
+    <damping>d1</damping>
+    <unloadedLength>l01</unloadedLength>
+    <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
+    <ombv:CoilSpring name="dummy">
+      <ombv:numberOfCoils>5</ombv:numberOfCoils>
+      <ombv:springRadius>0.1</ombv:springRadius>
+      <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
+      <ombv:scaleFactor>1</ombv:scaleFactor>
+    </ombv:CoilSpring>
+  </LinearSpringDamper>
+  <LinearSpringDamper name="Feder2">
+    <stiffness>c2</stiffness>
+    <damping>d2</damping>
+    <unloadedLength>l02</unloadedLength>
+    <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
+    <ombv:CoilSpring name="dummy">
+      <ombv:numberOfCoils>5</ombv:numberOfCoils>
+      <ombv:springRadius>0.1</ombv:springRadius>
+      <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
+      <ombv:scaleFactor>1</ombv:scaleFactor>
+    </ombv:CoilSpring>
+  </LinearSpringDamper>
+</Group>
