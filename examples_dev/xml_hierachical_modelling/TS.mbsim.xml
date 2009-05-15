@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
-    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
   <RrRD>[0;0;0]</RrRD><!-- dummy -->
   <ARD>[1,0,0;0,1,0;0,0,1]</ARD><!-- dummy -->
   <Group name="Hauptgruppe1">
@@ -22,7 +24,10 @@
         <Frame name="P1">
           <RrRF>[0;-0.25;0]</RrRF>
           <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-          <enableOpenMBV size="0.5" offset="1"/>
+          <enableOpenMBV>
+            <size>0.5</size>
+            <offset>1</offset>
+          </enableOpenMBV>
         </Frame>
         <Frame name="P2">
           <RrRF>[0;0.25;0]</RrRF>
@@ -36,7 +41,7 @@
         </ombv:Cuboid>
       </RigidBody>
       <RigidBody name="Box2">
-        <setPlotFeature feature="-stateDerivative"/>
+        <plotFeature feature="-stateDerivative"/>
         <q0>[1.75]</q0>
         <u0>[0]</u0>
         <frameOfReference ref="../Frame[I]"/>
@@ -49,7 +54,10 @@
         <Frame name="P1">
           <RrRF>[0;-0.25;0]</RrRF>
           <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-          <enableOpenMBV size="0.5" offset="1"/>
+          <enableOpenMBV>
+            <size>0.5</size>
+            <offset>1</offset>
+          </enableOpenMBV>
         </Frame>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
@@ -84,7 +92,7 @@
       </LinearSpringDamper>
     </Group>
     <RigidBody name="Box1">
-      <setPlotFeature feature="+globalPosition"/>
+      <plotFeature feature="+globalPosition"/>
       <q0>[0]</q0>
       <u0>[0.1]</u0>
       <frameOfReference ref="../Frame[I]"/>
@@ -100,12 +108,15 @@
         <ombv:scaleFactor>1</ombv:scaleFactor>
         <ombv:length>[0.5;0.5;0.5]</ombv:length>
       </ombv:Cuboid>
-      <enableOpenMBVFrameC size="1" offset="1"/>
+      <enableOpenMBVFrameC>
+        <size>1</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
     </RigidBody>
   </Group>
   <Group name="Hauptgruppe2">
-    <setPlotFeatureRecursive feature="+stateDerivative"/>
-    <setPlotFeature feature="+separateFilePerDynamicSystem"/>
+    <plotFeatureRecursive feature="+stateDerivative"/>
+    <plotFeature feature="+separateFilePerDynamicSystem"/>
     <RrRD>[2;0;0]</RrRD>
     <ARD>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</ARD>
     <Group name="Untergruppe">
@@ -124,7 +135,10 @@
         <Frame name="P1">
           <RrRF>[0;-0.25;0]</RrRF>
           <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-          <enableOpenMBV size="0.5" offset="1"/>
+          <enableOpenMBV>
+            <size>0.5</size>
+            <offset>1</offset>
+          </enableOpenMBV>
         </Frame>
         <Frame name="P2">
           <RrRF>[0;0.25;0]</RrRF>
@@ -138,7 +152,7 @@
         </ombv:Cuboid>
       </RigidBody>
       <RigidBody name="Box2">
-        <setPlotFeature feature="-stateDerivative"/>
+        <plotFeature feature="-stateDerivative"/>
         <q0>[1.75]</q0>
         <u0>[0]</u0>
         <frameOfReference ref="../Frame[I]"/>
@@ -151,7 +165,10 @@
         <Frame name="P1">
           <RrRF>[0;-0.25;0]</RrRF>
           <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-          <enableOpenMBV size="0.5" offset="1"/>
+          <enableOpenMBV>
+            <size>0.5</size>
+            <offset>1</offset>
+          </enableOpenMBV>
         </Frame>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
@@ -186,7 +203,7 @@
       </LinearSpringDamper>
     </Group>
     <RigidBody name="Box1">
-      <setPlotFeature feature="+globalPosition"/>
+      <plotFeature feature="+globalPosition"/>
       <q0>[0]</q0>
       <u0>[0.1]</u0>
       <frameOfReference ref="../Frame[I]"/>
@@ -202,7 +219,10 @@
         <ombv:scaleFactor>1</ombv:scaleFactor>
         <ombv:length>[0.5;0.5;0.5]</ombv:length>
       </ombv:Cuboid>
-      <enableOpenMBVFrameC size="1" offset="1"/>
+      <enableOpenMBVFrameC>
+        <size>1</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
     </RigidBody>
   </Group>
   <accelerationOfGravity>[0;0;0]</accelerationOfGravity>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Hauptgruppe{numHG}" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
+  <plotFeatureRecursive feature="+stateDerivative"/>
+  <plotFeature feature="+separateFilePerDynamicSystem"/>
+  <RrRD>[rHG(numHG);0;0]</RrRD>
+  <ARD>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</ARD>
+  <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
+  <RigidBody name="Box1">
+    <plotFeature feature="+globalPosition"/>
+    <q0>[0]</q0>
+    <u0>[0.1]</u0>
+    <frameOfReference ref="../Frame[I]"/>
+    <frameForKinematics ref="Frame[C]"/>
+    <mass>m</mass>
+    <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+    <LinearTranslation>
+      <PJT>[0; 1; 0]</PJT>
+    </LinearTranslation>
+    <ombv:Cuboid name="dummy">
+      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+      <ombv:scaleFactor>1</ombv:scaleFactor>
+      <ombv:length>[h;h;h]</ombv:length>
+    </ombv:Cuboid>
+    <enableOpenMBVFrameC>
+      <size>2*h</size>
+      <offset>1</offset>
+    </enableOpenMBVFrameC>
+  </RigidBody>
+</Group>
