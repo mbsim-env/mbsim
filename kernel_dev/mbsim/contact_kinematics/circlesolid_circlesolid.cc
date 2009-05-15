@@ -19,7 +19,7 @@
  */
 
 #include <config.h> 
-#include "circlesolid_circlesolid.h"
+#include "mbsim/contact_kinematics/circlesolid_circlesolid.h"
 #include "mbsim/contour.h"
 
 using namespace fmatvec;
@@ -28,42 +28,24 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsCircleSolidCircleSolid::assignContours(const vector<Contour*> &contour) {
-    icircle0 = 0; icircle1 = 1;
+    icircle0 = 0; 
+    icircle1 = 1;
     circle0 = static_cast<CircleSolid*>(contour[0]);
     circle1 = static_cast<CircleSolid*>(contour[1]);
   }
 
-  void ContactKinematicsCircleSolidCircleSolid::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  void ContactKinematicsCircleSolidCircleSolid::updateg(Vec &g, ContourPointData *cpData) {
+    Vec WrD = circle0->getFrame()->getPosition() - circle1->getFrame()->getPosition();
+    cpData[icircle1].getFrameOfReference().getOrientation().col(0) = WrD/nrm2(WrD);
+    cpData[icircle0].getFrameOfReference().getOrientation().col(0) = -cpData[icircle1].getFrameOfReference().getOrientation().col(0);
+    cpData[icircle0].getFrameOfReference().getOrientation().col(2) = circle0->getFrame()->getOrientation().col(2);
+    cpData[icircle1].getFrameOfReference().getOrientation().col(2) = circle1->getFrame()->getOrientation().col(2);
+    cpData[icircle0].getFrameOfReference().getOrientation().col(1) = crossProduct(cpData[icircle0].getFrameOfReference().getOrientation().col(2),cpData[icircle0].getFrameOfReference().getOrientation().col(0));
+    cpData[icircle1].getFrameOfReference().getOrientation().col(1) = -cpData[icircle0].getFrameOfReference().getOrientation().col(1);
+    cpData[icircle0].getFrameOfReference().getPosition() = circle0->getFrame()->getPosition() + cpData[icircle0].getFrameOfReference().getOrientation().col(0)*circle0->getRadius();
+    cpData[icircle1].getFrameOfReference().getPosition() = circle1->getFrame()->getPosition() + cpData[icircle1].getFrameOfReference().getOrientation().col(0)*circle1->getRadius();
 
-  //  Vec WrD = circle0->getWrOP() - circle1->getWrOP();
-  //  cpData[icircle0].Wn = WrD/nrm2(WrD);
-  //  cpData[icircle1].Wn = -cpData[icircle0].Wn;
-  //  g(0) = trans(cpData[icircle0].Wn)*WrD - circle0->getRadius() - circle1->getRadius();
+    g(0) = trans(cpData[icircle1].getFrameOfReference().getOrientation().col(0))*WrD - circle0->getRadius() - circle1->getRadius();
   }
-
-  void ContactKinematicsCircleSolidCircleSolid::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
-
-  //  Vec WrPC[2];
-  //  WrPC[icircle1] = cpData[icircle0].Wn*circle1->getRadius();
-  //  cpData[icircle1].WrOC = circle1->getWrOP()+WrPC[icircle1];
-
-  //  WrPC[icircle0] = cpData[icircle1].Wn*(circle0->getRadius());
-  //  cpData[icircle0].WrOC = circle0->getWrOP()+WrPC[icircle0];
-
-  //  Vec WvC[2];
-  //  WvC[icircle0] = circle0->getWvP()+crossProduct(circle0->getWomegaC(),WrPC[icircle0]);
-  //  WvC[icircle1] = circle1->getWvP()+crossProduct(circle1->getWomegaC(),WrPC[icircle1]);
-  //  Vec WvD = WvC[icircle0] - WvC[icircle1];
-
-  //  gd(0) = trans(cpData[icircle0].Wn)*WvD;
-
-  //  if(cpData[icircle0].Wt.cols()) {
-  //    cpData[icircle0].Wt = crossProduct(circle0->computeWb(),cpData[icircle0].Wn);
-  //    cpData[icircle1].Wt = -cpData[icircle0].Wt;
-  //    static Index iT(1,cpData[icircle0].Wt.cols());
-  //    gd(iT) = trans(cpData[icircle0].Wt)*WvD;
-  //  }
-  }
-
 }
 
