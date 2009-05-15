@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSim"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
+    schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
+
+  <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+
+
+
+  <xs:simpleType name="PlotFeatureType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="+plotRecursive"/>
+      <xs:enumeration value="-plotRecursive"/>
+      <xs:enumeration value="+separateFilePerDynamicSystem"/>
+      <xs:enumeration value="-separateFilePerDynamicSystem"/>
+      <xs:enumeration value="+state"/>
+      <xs:enumeration value="-state"/>
+      <xs:enumeration value="+stateDerivative"/>
+      <xs:enumeration value="-stateDerivative"/>
+      <xs:enumeration value="+rightHandSide"/>
+      <xs:enumeration value="-rightHandSide"/>
+      <xs:enumeration value="+globalPosition"/>
+      <xs:enumeration value="-globalPosition"/>
+      <xs:enumeration value="+contact"/>
+      <xs:enumeration value="-contact"/>
+      <xs:enumeration value="+energy"/>
+      <xs:enumeration value="-energy"/>
+      <xs:enumeration value="+openMBV"/>
+      <xs:enumeration value="-openMBV"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FrameReferenceType">
+    <xs:restriction base="xs:token">
+     <xs:pattern value="((\.\.|Frame\[[a-zA-Z0-9_]+\]|Object\[[a-zA-Z0-9_]+\]|DynamicSystem\[[a-zA-Z0-9_]+\])/)*Frame\[[a-zA-Z0-9_]+\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+
+  <xs:element name="Element" abstract="true" type="ElementType"/>
+  <xs:complexType name="ElementType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="plotFeature">  
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureForChildren">  
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+      <xs:element name="plotFeatureRecursive">  
+        <xs:complexType>
+          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+        </xs:complexType> 
+      </xs:element>  
+    </xs:choice> 
+    <xs:attribute name="name" type="xs:token" use="required"/>
+  </xs:complexType> 
+
+  <xs:element name="DynamicSystem" abstract="true" substitutionGroup="Element" type="DynamicSystemType"/>
+  <xs:complexType name="DynamicSystemType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Group" substitutionGroup="DynamicSystem" type="GroupType"/>
+  <xs:complexType name="GroupType">
+    <xs:complexContent>
+      <xs:extension base="DynamicSystemType">
+        <xs:sequence>
+          <xs:element name="RrRD" type="pv:lengthVector"/>  
+          <xs:element name="ARD" type="pv:nounitMatrix"/>  
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="pv:embed"/>  
+            <xs:element ref="DynamicSystem"/>  
+          </xs:choice>
+          <xs:element ref="Object" minOccurs="0" maxOccurs="unbounded"/>  
+          <xs:element ref="Link" minOccurs="0" maxOccurs="unbounded"/>  
+        </xs:sequence> 
+        <xs:attribute ref="xml:base"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="DynamicSystemSolver" substitutionGroup="Group" type="DynamicSystemSolverType"/>
+  <xs:complexType name="DynamicSystemSolverType">
+    <xs:complexContent>
+      <xs:extension base="GroupType">
+        <xs:sequence>
+          <xs:element name="accelerationOfGravity" type="pv:accelerationVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Object" abstract="true" substitutionGroup="Element" type="ObjectType"/>
+  <xs:complexType name="ObjectType">
+    <xs:complexContent>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+          <xs:element name="q0" type="pv:lengthVector"/>
+          <xs:element name="u0" type="pv:velocityVector"/>
+          <xs:element name="frameOfReference">
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Body" substitutionGroup="Object" type="BodyType"/>
+  <xs:complexType name="BodyType">
+    <xs:complexContent>
+      <xs:extension base="ObjectType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType"/>
+  <xs:complexType name="RigidBodyType">
+    <xs:complexContent>
+      <xs:extension base="BodyType">
+        <xs:sequence>
+          <xs:element name="frameForKinematics">
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="mass" type="pv:massScalar"/>
+          <xs:element name="inertiaTensor" type="pv:inertiaMatrix"/>
+          <xs:element ref="Translation"/>
+          <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="ombv:RigidBody" minOccurs="0"/>
+          <xs:element name="enableOpenMBVFrameC" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar"/>
+                <xs:element name="offset" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Link" abstract="true" substitutionGroup="Element" type="LinkType"/>
+  <xs:complexType name="LinkType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinkMechanics" abstract="true" substitutionGroup="Link" type="LinkMechanicsType"/>
+  <xs:complexType name="LinkMechanicsType">
+    <xs:complexContent>
+      <xs:extension base="LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinearSpringDamper" substitutionGroup="LinkMechanics" type="LinearSpringDamperType"/>
+  <xs:complexType name="LinearSpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="stiffness" type="pv:stiffnessScalar"/>
+          <xs:element name="damping" type="pv:dampingScalar"/>
+          <xs:element name="unloadedLength" type="pv:lengthScalar"/>
+          <xs:element name="connect">
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element ref="ombv:CoilSpring" minOccurs="0"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Frame" substitutionGroup="Element" type="FrameType"/>
+  <xs:complexType name="FrameType">
+    <xs:complexContent>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+          <xs:element name="RrRF" type="pv:lengthVector"/>  
+          <xs:element name="ARF" type="pv:nounitMatrix"/>  
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar"/>
+                <xs:element name="offset" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType> 
+
+  <xs:element name="Translation" abstract="true" type="TranslationType"/>
+  <xs:complexType name="TranslationType"/>
+
+  <xs:element name="LinearTranslation" substitutionGroup="Translation" type="LinearTranslationType"/>
+  <xs:complexType name="LinearTranslationType">
+    <xs:complexContent>
+      <xs:extension base="TranslationType">
+        <xs:sequence>
+          <xs:element name="PJT" type="pv:nounitMatrix"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+</xs:schema>

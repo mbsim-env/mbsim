@@ -439,7 +439,8 @@ namespace MBSim {
                                      SqrMat(e->FirstChildElement(MBSIMNS"ARF")->GetText()));
       TiXmlElement *ee;
       if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        getFrame(e->Attribute("name"))->enableOpenMBV(atof(ee->Attribute("size")), atof(ee->Attribute("offset")));
+        getFrame(e->Attribute("name"))->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
+                                                      atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
       e=e->NextSiblingElement();
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -453,7 +454,8 @@ namespace MBSim {
     if(e) {
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
-      getFrame("C")->enableOpenMBV(atof(e->Attribute("size")), atof(e->Attribute("offset")));
+      getFrame("C")->enableOpenMBV(atof(e->FirstChildElement(MBSIMNS"size")->GetText()),
+                                   atof(e->FirstChildElement(MBSIMNS"offset")->GetText()));
     }
 #endif
   }

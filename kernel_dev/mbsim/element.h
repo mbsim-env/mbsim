@@ -52,8 +52,10 @@ namespace MBSim {
 
   // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
   // be specified in dynamic_system_solver.cc:DynamicSystemSolver::constructor() and the
-  // new feature must also be added (as a string) in
+  // new feature must also be added in
   // element.cc:Element::initializeUsingXML(TiXmlElement *element)
+  // and in
+  // mbsimxml/schema/mbsim.xsd.in
   enum PlotFeature {
     plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, openMBV, LASTPLOTFEATURE
   };
