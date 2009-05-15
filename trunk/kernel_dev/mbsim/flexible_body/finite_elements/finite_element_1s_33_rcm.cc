@@ -309,7 +309,7 @@ namespace MBSim {
   }
 
   double FiniteElement1s33RCM::computeGravitationalEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp>tol_comp) wt->computewhcoefPos(qG);
+    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
 
     double Iwh1 = wt->intv(wt->getwh1coef());
     double Iwh2 = wt->intv(wt->getwh2coef());
@@ -318,7 +318,7 @@ namespace MBSim {
   }
 
   double FiniteElement1s33RCM::computeElasticEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp>tol_comp) wt->computewhcoefPos(qG);
+    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
 
     double Iwh1xwh1x = wt->intvw(wt->getwh1coef(),wt->getwh1coef());
     double Iwh2xwh2x = wt->intvw(wt->getwh2coef(),wt->getwh2coef());
