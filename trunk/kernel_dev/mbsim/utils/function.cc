@@ -36,4 +36,18 @@ namespace MBSim {
     return oss.str(); 
   }
 
+  double sign(double x) {
+    if(x>0)
+      return 1.0;
+    else if(x<0)
+      return -1.0;
+    else 
+      return 0;
+  }
+
+  int min(int i, int j) {
+    return i<j?i:j;
+  }
+
+
 }

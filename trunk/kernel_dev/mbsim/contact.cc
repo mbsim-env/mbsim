@@ -25,24 +25,12 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
+#include <mbsim/utils/function.h>
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
-
-  double sign(double x) {
-    if(x>0)
-      return 1.0;
-    else if(x<0)
-      return -1.0;
-    else 
-      return 0;
-  }
-
-  int min(int i, int j) {
-    return i<j?i:j;
-  }
 
   Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0) {}
 

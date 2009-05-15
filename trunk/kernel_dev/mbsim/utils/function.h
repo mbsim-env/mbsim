@@ -41,6 +41,9 @@ namespace MBSim {
 
   std::string numtostr(int i);   
   std::string numtostr(double d);   
+  
+  double sign(double x);
+  int min(int i, int j);
 }
 
 #endif
