@@ -119,6 +119,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         openMBVGrp=new OpenMBV::Group();
         openMBVGrp->setName(name+"#Group");
+        openMBVGrp->setExpand(false);
         parent->getOpenMBVGrp()->addObject(openMBVGrp);
         if(getPlotFeature(openMBV)==enabled && openMBVBody) {
           openMBVBody->setName(name);

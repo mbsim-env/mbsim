@@ -1,0 +1,13 @@
+#! /bin/sh
+
+PARAM=parameter.xml
+MBSIM=TS.mbsim.xml
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=${exec_prefix}/bin
+MBSIMSCHEMA=@MBSIMSCHEMA@
+MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
+
+$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAM $MBSIM http://mbsim.berlios.de/MBSim $MBSIMSCHEMA/mbsim.xsd .$MBSIM || exit 1
+$bindir/mbsimxml .$MBSIM || exit 1

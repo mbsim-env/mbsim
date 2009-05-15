@@ -72,7 +72,16 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile mbsimxml/Makefile])
+dnl XML
+PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils,[requires="$requires mbxmlutils"; MBXMLUTILS=yes],[MBXMLUTILS=no])
+AM_CONDITIONAL([COND_MBXMLUTILS], [test "_$MBXMLUTILS" = "_yes"])
+AC_SUBST([MBSIMSCHEMA],[$datarootdir/$PACKAGE/schema])
+AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
+AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile mbsimxml/Makefile mbsimxml/schema/Makefile mbsimxml/schema/mbsim.xsd mbsimxml/doc/Makefile])
+AC_CONFIG_FILES([mbsimxml/mbsimxmlpp], [chmod +x mbsimxml/mbsimxmlpp])
 
 AC_OUTPUT
 
