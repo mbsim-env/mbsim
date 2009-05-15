@@ -145,13 +145,17 @@ namespace MBSim {
   void CircleHollow::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerBaseRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerTopRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(1.1*r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(1.1*r);
+
       ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
     }
     else openMBVRigidBody=0;
   }
 #endif
+
   /* Area */
   Area::Area(const string &name) : RigidContour(name), lim1(1), lim2(1), Cn(3), Cd1(3), Cd2(3) {}
   void Area::setCd1(const Vec &d) {Cd1 = d/nrm2(d);}

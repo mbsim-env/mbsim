@@ -315,6 +315,7 @@ namespace MBSim {
    * \brief circle describing contact from inside
    * \author Roland Zander
    * \date 2009-04-20 some comments (Thorsten Schindler)
+   * \date 2009-05-13 OpenMBV-Interface (Bastian Esefeld)
    */
   class CircleHollow : public RigidContour {
     public:
@@ -324,6 +325,13 @@ namespace MBSim {
        */
       CircleHollow(const std::string &name) : RigidContour(name), r(0.) {}
 
+      /**
+       * \brief constructor
+       * \param name of circle
+       * \param radius of circle
+       */
+      CircleHollow(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleHollow"; }
       /***************************************************/
@@ -332,6 +340,11 @@ namespace MBSim {
       void setRadius(double r_) { r = r_; }
       double getRadius() const { return r; }
       /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
+#endif
+
 
     private:
       /**
