@@ -35,10 +35,3 @@ clean_pos :
 
 include $(sources:.cc=.d)
 
-
-.PHONY : clean
-clean :
-	-rm main $(objects) $(sources:.cc=.d)
-
-clean_pos :
-	-rm *.pos *.body

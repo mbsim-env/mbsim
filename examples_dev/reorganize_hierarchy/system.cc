@@ -13,8 +13,6 @@ using namespace std;
 
 Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
 
-  setProjectDirectory("plot");
-
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);

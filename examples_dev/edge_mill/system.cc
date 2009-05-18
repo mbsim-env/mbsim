@@ -16,8 +16,6 @@ using namespace std;
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* preliminaries */
-  setProjectDirectory("plot");
-
   Vec WrOK(3);
 
   Vec grav(3);

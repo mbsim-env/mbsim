@@ -14,7 +14,6 @@ using namespace fmatvec;
 using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
-  setProjectDirectory("plot");
 
   // Erdbeschleungigung definieren
   Vec g(3);
