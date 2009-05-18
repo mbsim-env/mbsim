@@ -10,9 +10,20 @@ using namespace std;
 using namespace MBSim;
 
 int main(int argc, char *argv[]) {
-  // load XML document
+  // help
+  if(argc!=3) {
+    cout<<"Usage: mbximxml <mbsimfile> <mbsimintegratorfile>"<<endl;
+    return 0;
+  }
+
+
+
+  // load MBSim XML document
   TiXmlDocument *doc=new TiXmlDocument;
-  doc->LoadFile(argv[1]);
+  if(doc->LoadFile(argv[1])==false) {
+    cerr<<"ERROR! Unable to load file: "<<argv[1]<<endl;
+    return 1;
+  }
   TiXmlElement *e=doc->FirstChildElement();
   incorporateNamespace(e);
 
@@ -23,15 +34,30 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   dss->initializeUsingXML(e);
-
   delete doc;
-
   dss->init();
 
-  DOPRI5Integrator integrator;
-  integrator.settEnd(4.0);
-  integrator.setdtPlot(1e-3);
-  integrator.integrate(*dss);
+
+
+  // load MBSimIntegrator XML document
+  doc=new TiXmlDocument;
+  if(doc->LoadFile(argv[2])==false) {
+    cerr<<"ERROR! Unable to load file: "<<argv[2]<<endl;
+    return 1;
+  }
+  e=doc->FirstChildElement();
+  incorporateNamespace(e);
+
+  // create integrator
+  Integrator *integrator=ObjectFactory::createIntegrator(e);
+  if(integrator==0) {
+    cerr<<"ERROR! Cannot create the integrator object!"<<endl;
+    return 1;
+  }
+  integrator->initializeUsingXML(e);
+  delete doc;
+  integrator->integrate(*dss);
+  delete integrator;
 
   return 0;
 }

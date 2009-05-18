@@ -117,6 +117,15 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"ARD");
     e=e->NextSiblingElement();
 
+    while(e->ValueStr()==MBSIMNS"Frame") {
+      addFrame(e->Attribute("name"), Vec(e->FirstChildElement(MBSIMNS"RrRF")->GetText()),
+                                     SqrMat(e->FirstChildElement(MBSIMNS"ARF")->GetText()));
+      TiXmlElement *ee;
+      if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
+        getFrame(e->Attribute("name"))->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
+                                                      atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+      e=e->NextSiblingElement();
+    }
     Group *g;
     while((g=ObjectFactory::createGroup(e))) {
       addDynamicSystem(g, Vec(e->FirstChildElement(MBSIMNS"RrRD")->GetText()),

@@ -27,4 +27,16 @@ namespace MBSim {
 
   Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true) {name = "Integrator";}
 
+  void Integrator::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMINTNS"tStart");
+    settStart(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"tEnd");
+    settEnd(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"dtPlot");
+    setdtPlot(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"z0");
+    if(e) setz0(fmatvec::Vec(e->GetText()));
+  }
+
 }

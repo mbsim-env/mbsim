@@ -118,6 +118,8 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
+      virtual void initializeUsingXML(TiXmlElement *element);
+
     protected:
       /**
        * \brief indices of forces and torques

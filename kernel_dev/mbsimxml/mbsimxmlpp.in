@@ -1,13 +1,52 @@
 #! /bin/sh
 
-PARAM=parameter.xml
-MBSIM=TS.mbsim.xml
-
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 bindir=${exec_prefix}/bin
 MBSIMSCHEMA=@MBSIMSCHEMA@
 MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
 
+FILENR=1
+HELP=no
+PARAM=".dummyfile.982346"
+PARAMINT=".dummyfile.982346"
+while [ $# -ne 0 ]; do
+  case $1 in
+    -h) HELP=yes;;
+    --help) HELP=yes;;
+    --mbsimparam) PARAM=$2; shift;;
+    --intparam) PARAMINT=$2; shift;;
+    -*) echo "Unknown parameter: $1"; exit;;
+    --*) echo "Unknown parameter: $1"; exit;;
+    *) if [ $FILENR -eq 1 ]; then
+         MBSIM=$1
+         FILENR=2
+       elif [ $FILENR -eq 2 ]; then
+         MBSIMINT=$1
+         FILENR=3
+       elif [ $FILENR -eq 3 ]; then
+         echo "Only two files are allowed. Third file: $1"
+         exit
+       fi;;
+  esac
+  shift
+done
+if [ $HELP = "yes" ]; then
+  echo "Usage: mbsimxmlpp [--mbsimparam <mbsimparameterfile>]"
+  echo "                  [--intparam <integratorparameterfile>]"
+  echo "                  <mbsimfile>"
+  echo "                  <integratorfile>"
+  exit
+fi
+if [ "_$MBSIM" = "_" -o "_$MBSIMINT" = "_" ]; then
+  echo "ERROR! A MBSim and a Integrator file must be specified!"
+  exit
+fi
+
+rm -f .$MBSIM .$MBSIMINT
+
 $MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAM $MBSIM http://mbsim.berlios.de/MBSim $MBSIMSCHEMA/mbsim.xsd .$MBSIM || exit 1
-$bindir/mbsimxml .$MBSIM || exit 1
+
+$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAMINT $MBSIMINT http://mbsim.berlios.de/MBSimIntegrator $MBSIMSCHEMA/mbsimintegrator.xsd .$MBSIMINT || exit 1
+
+$bindir/mbsimxml .$MBSIM .$MBSIMINT || exit 1

@@ -52,6 +52,12 @@ namespace MBSim {
     return APK;
   }
 
+  void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+    setAxisOfRotation(Vec(e->GetText()));
+  }
+
   SqrMat CardanAngles::operator()(const Vec &q, double t) {
     int i = q.size()-1;
     double a=q(i-2);
