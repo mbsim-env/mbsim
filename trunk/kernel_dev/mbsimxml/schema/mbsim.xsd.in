@@ -15,7 +15,8 @@
     schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
 
   <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
 
 
 
@@ -76,6 +77,9 @@
   <xs:complexType name="DynamicSystemType">
     <xs:complexContent>
       <xs:extension base="ElementType"/>
+      <!-- All functionality of DynamicSystem is moved to Group, because this two classes are the save,
+           if there exist no class Tree on modelling level. (The ordering of the elements is better, if
+           this is done so. -->
     </xs:complexContent>
   </xs:complexType>   
 
@@ -86,6 +90,7 @@
         <xs:sequence>
           <xs:element name="RrRD" type="pv:lengthVector"/>  
           <xs:element name="ARD" type="pv:nounitMatrix"/>  
+          <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element ref="pv:embed"/>  
             <xs:element ref="DynamicSystem"/>  
@@ -145,7 +150,8 @@
           </xs:element>
           <xs:element name="mass" type="pv:massScalar"/>
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix"/>
-          <xs:element ref="Translation"/>
+          <xs:element ref="Translation" minOccurs="0"/>
+          <xs:element ref="Rotation" minOccurs="0"/>
           <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element ref="ombv:RigidBody" minOccurs="0"/>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
@@ -168,7 +174,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinkMechanics" abstract="true" substitutionGroup="Link" type="LinkMechanicsType"/>
+  <xs:element name="LinkMechanics" substitutionGroup="Link" type="LinkMechanicsType"/>
   <xs:complexType name="LinkMechanicsType">
     <xs:complexContent>
       <xs:extension base="LinkType"/>
@@ -190,6 +196,40 @@
             </xs:complexType> 
           </xs:element>
           <xs:element ref="ombv:CoilSpring" minOccurs="0"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType"/>
+  <xs:complexType name="JointType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="force" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitMatrix"/>
+                <xs:element ref="GeneralizedForceLaw"/>
+                <xs:element ref="GeneralizedImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="moment" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitMatrix"/>
+                <xs:element ref="GeneralizedForceLaw"/>
+                <xs:element ref="GeneralizedImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:complexType>
+              <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -226,6 +266,40 @@
           <xs:element name="PJT" type="pv:nounitMatrix"/>
         </xs:sequence> 
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Rotation" abstract="true" type="RotationType"/>
+  <xs:complexType name="RotationType"/>
+
+  <xs:element name="RotationAboutFixedAxis" substitutionGroup="Rotation" type="RotationAboutFixedAxisType"/>
+  <xs:complexType name="RotationAboutFixedAxisType">
+    <xs:complexContent>
+      <xs:extension base="RotationType">
+        <xs:sequence>
+          <xs:element name="axisOfRotation" type="pv:nounitVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType"/>
+  <xs:complexType name="GeneralizedForceLawType"/>
+
+  <xs:element name="BilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="BilateralConstraintType"/>
+  <xs:complexType name="BilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedForceLawType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="GeneralizedImpactLaw" abstract="true" type="GeneralizedImpactLawType"/>
+  <xs:complexType name="GeneralizedImpactLawType"/>
+
+  <xs:element name="BilateralImpact" substitutionGroup="GeneralizedImpactLaw" type="BilateralImpactType"/>
+  <xs:complexType name="BilateralImpactType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedImpactLawType"/>
     </xs:complexContent>
   </xs:complexType>   
 

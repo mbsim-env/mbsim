@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimIntegrator"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimIntegrator"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+
+
+  <xs:element name="Integrator" abstract="true" type="IntegratorType"/>
+  <xs:complexType name="IntegratorType">
+    <xs:sequence>
+      <xs:element name="tStart" type="pv:timeScalar"/>  
+      <xs:element name="tEnd" type="pv:timeScalar"/>  
+      <xs:element name="dtPlot" type="pv:timeScalar"/>  
+      <xs:element name="z0" type="pv:nounitVector" minOccurs="0"/>  
+    </xs:sequence>
+  </xs:complexType> 
+
+  <xs:element name="DOPRI5Integrator" substitutionGroup="Integrator" type="DOPRI5IntegratorType"/>
+  <xs:complexType name="DOPRI5IntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="aTol" type="pv:nounitVector"/>  
+            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="rTol" type="pv:nounitVector"/>  
+            <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:element name="dt0" type="pv:timeScalar"/>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+</xs:schema>

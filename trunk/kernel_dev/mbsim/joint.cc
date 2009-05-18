@@ -21,6 +21,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -487,6 +488,39 @@ namespace MBSim {
 
     for(int i=0; i<md.cols(); i++)
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+  }
+
+  void Joint::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e, *ee;
+    LinkMechanics::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"force");
+    if(e) {
+      ee=e->FirstChildElement(MBSIMNS"direction");
+      setForceDirection(Mat(ee->GetText()));
+      ee=ee->NextSiblingElement();
+      GeneralizedForceLaw *gfl=ObjectFactory::createGeneralizedForceLaw(ee);
+      setForceLaw(gfl);
+      gfl->initializeUsingXML(ee);
+      ee=ee->NextSiblingElement();
+      GeneralizedImpactLaw *gifl=ObjectFactory::createGeneralizedImpactLaw(ee);
+      setImpactForceLaw(gifl);
+      gifl->initializeUsingXML(ee);
+    }
+    e=element->FirstChildElement(MBSIMNS"moment");
+    if(e) {
+      ee=e->FirstChildElement(MBSIMNS"direction");
+      setMomentDirection(Mat(ee->GetText()));
+      ee=ee->NextSiblingElement();
+      GeneralizedForceLaw *gfl=ObjectFactory::createGeneralizedForceLaw(ee);
+      setMomentLaw(gfl);
+      gfl->initializeUsingXML(ee);
+      ee=ee->NextSiblingElement();
+      GeneralizedImpactLaw *gifl=ObjectFactory::createGeneralizedImpactLaw(ee);
+      setImpactMomentLaw(gifl);
+      gifl->initializeUsingXML(ee);
+    }
+    e=element->FirstChildElement(MBSIMNS"connect");
+    connect(getFrameByPath(e->Attribute("ref1")),getFrameByPath(e->Attribute("ref2")));
   }
 
 }

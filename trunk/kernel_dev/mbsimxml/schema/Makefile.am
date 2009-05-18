@@ -1,2 +1,2 @@
 schemadir = @datadir@/@PACKAGE@/schema
-dist_schema_DATA = mbsim.xsd
+dist_schema_DATA = mbsim.xsd mbsimintegrator.xsd

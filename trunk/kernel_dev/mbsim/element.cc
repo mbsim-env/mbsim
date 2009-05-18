@@ -90,9 +90,9 @@ namespace MBSim {
   void Element::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement();
-    while(e && (e->ValueStr()==MBSIMNS"setPlotFeature" ||
-                e->ValueStr()==MBSIMNS"setPlotFeatureForChildren" ||
-                e->ValueStr()==MBSIMNS"setPlotFeatureRecursive")) {
+    while(e && (e->ValueStr()==MBSIMNS"plotFeature" ||
+                e->ValueStr()==MBSIMNS"plotFeatureForChildren" ||
+                e->ValueStr()==MBSIMNS"plotFeatureRecursive")) {
       PlotFeatureStatus status;
       if(e->Attribute("feature")[0]=='+') status=enabled; else status=disabled;
       PlotFeature feature=plotRecursive;
@@ -105,9 +105,9 @@ namespace MBSim {
       if(string(e->Attribute("feature")).substr(1)=="contact") feature=contact;
       if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
       if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
-      if(e->ValueStr()==MBSIMNS"setPlotFeature") setPlotFeature(feature, status);
-      if(e->ValueStr()==MBSIMNS"setPlotFeatureForChildren") setPlotFeatureForChildren(feature, status);
-      if(e->ValueStr()==MBSIMNS"setPlotFeatureRecursive") setPlotFeatureRecursive(feature, status);
+      if(e->ValueStr()==MBSIMNS"plotFeature") setPlotFeature(feature, status);
+      if(e->ValueStr()==MBSIMNS"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
+      if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
       e=e->NextSiblingElement();
     }
   }

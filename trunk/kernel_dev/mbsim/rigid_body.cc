@@ -431,9 +431,17 @@ namespace MBSim {
     setInertiaTensor(SymMat(e->GetText()));
     e=e->NextSiblingElement();
     Translation *trans=ObjectFactory::createTranslation(e);
-    setTranslation(trans);
-    trans->initializeUsingXML(e);
-    e=e->NextSiblingElement();
+    if(trans) {
+      setTranslation(trans);
+      trans->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
+    Rotation *rot=ObjectFactory::createRotation(e);
+    if(rot) {
+      setRotation(rot);
+      rot->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
     while(e->ValueStr()==MBSIMNS"Frame") {
       addFrame(e->Attribute("name"), Vec(e->FirstChildElement(MBSIMNS"RrRF")->GetText()),
                                      SqrMat(e->FirstChildElement(MBSIMNS"ARF")->GetText()));

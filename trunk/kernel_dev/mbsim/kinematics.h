@@ -57,7 +57,7 @@ namespace MBSim {
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element)=0;
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   /**
@@ -129,6 +129,8 @@ namespace MBSim {
        */
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t) = 0; 
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   /**
@@ -158,6 +160,8 @@ namespace MBSim {
       const fmatvec::Vec& getAxisOfRotation() const { return a; }
       void setAxisOfRotation(const fmatvec::Vec& a_) { a = a_; }
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
         
         private:
       /**
@@ -187,7 +191,7 @@ namespace MBSim {
       virtual int getqSize() const { return 3; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
       /***************************************************/
-    
+
     private:
       /**
        * \brief rotational matrix

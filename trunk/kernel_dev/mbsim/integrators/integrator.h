@@ -23,8 +23,11 @@
 #ifndef _INTEGRATOR_H_
 #define _INTEGRATOR_H_
 
+#define MBSIMINTNS "{http://mbsim.berlios.de/MBSimIntegrator}"
+
 #include<fmatvec.h>
 #include<string>
+#include"mbsimtinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -61,6 +64,8 @@ namespace MBSim {
       void settStart(double tStart_){tStart=tStart_;}
       /*! Start the integration for \param system */
       virtual void integrate(DynamicSystemSolver& system) = 0;
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }

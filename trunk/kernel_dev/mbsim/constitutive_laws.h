@@ -23,6 +23,7 @@
 #include <fmatvec.h>
 #include <mbsim/userfunction.h>
 #include <fstream>
+#include "mbsimtinyxml/tinyxml.h"
 
 namespace MBSim {
 
@@ -62,6 +63,8 @@ namespace MBSim {
        * \return flag if the force law is setvalued
        */
       virtual bool isSetValued() const = 0;
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   class UnilateralConstraint : public GeneralizedForceLaw {
@@ -99,6 +102,8 @@ namespace MBSim {
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
       virtual bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   class UnilateralNewtonImpact : public GeneralizedImpactLaw {
