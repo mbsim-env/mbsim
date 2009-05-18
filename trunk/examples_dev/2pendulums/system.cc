@@ -8,8 +8,6 @@ using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
-  setProjectDirectory("plot");
-
   Vec grav(3);
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);

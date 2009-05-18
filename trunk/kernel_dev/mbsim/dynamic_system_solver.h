@@ -131,7 +131,7 @@ namespace MBSim {
       void setAccelerationOfGravity(const fmatvec::Vec& g) { grav = g; }
       const fmatvec::Vec& getAccelerationOfGravity() const { return grav; }
 
-      void setProjectDirectory(const std::string &directoryName_) { directoryName = directoryName_; }
+//      void setProjectDirectory(const std::string &directoryName_) { directoryName = directoryName_; }
       void setPreInteg(Integrator *preInteg_) { preIntegrator = preInteg_; }
 
       void setImpact(bool impact_) { impact = impact_; }
@@ -553,10 +553,10 @@ namespace MBSim {
        */
       int warnLevel;
       
-      /** 
-       * \brief name of directory where output is processed
-       */
-      std::string directoryName;
+//      /** 
+//       * \brief name of directory where output is processed
+//       */
+//      std::string directoryName;
       
       /**
        * \brief hydraulic fluid, only for hydraulic systems TODO
@@ -607,10 +607,10 @@ namespace MBSim {
        */
       void computeConstraintForces(double t);
 
-      /**
-       * \brief create directories for simulation output
-       */
-      void setDirectory();
+//      /**
+//       * \brief create directories for simulation output
+//       */
+//      void setDirectory();
 
       /**
        * \brief function pointer for election of smooth update for event driven integrator

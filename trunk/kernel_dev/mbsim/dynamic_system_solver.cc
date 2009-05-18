@@ -51,12 +51,12 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default"), pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /*directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), directoryName("Default") , pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /* directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1) { 
 
     constructor();
   }
@@ -67,7 +67,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::init() {
 
-    setDirectory(); // output directory
+//    setDirectory(); // output directory
 
     Group::preinit();
 
@@ -547,19 +547,21 @@ namespace MBSim {
   }
   
   void DynamicSystemSolver::preInteg(DynamicSystemSolver *parent) {
-    if(preIntegrator){
-      setProjectDirectory(name+".preInteg");
-      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
-      cout << "Initialisation of " << name << " for Preintegration..."<<endl;
-      init();  
-      cout << "Preintegration..."<<endl;
-      preIntegrator->integrate(*this);
-      closePlot();
-      writez();
-      delete preIntegrator;
-      preIntegrator=NULL; 
-      cout << "Finished." << endl;
-    }  
+    cout << "preIntegrator not implemented yet." << endl;
+    throw(123);
+//    if(preIntegrator) {
+////      setProjectDirectory(name+".preInteg");
+//      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
+//      cout << "Initialisation of " << name << " for Preintegration..."<<endl;
+//      init();  
+//      cout << "Preintegration..."<<endl;
+//      preIntegrator->integrate(*this);
+//      closePlot();
+//      writez();
+//      delete preIntegrator;
+//      preIntegrator=NULL; 
+//      cout << "Finished." << endl;
+//    }  
   }
 
   int DynamicSystemSolver::solveConstraints() {
@@ -1183,45 +1185,45 @@ namespace MBSim {
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
 
-  void DynamicSystemSolver::setDirectory() {
-    int i;
-    string projectDirectory;
-
-    if(false) { // TODO: introduce flag "overwriteDirectory"
-      for(i=0; i<=99; i++) {
-        stringstream number;
-        number << "." << setw(2) << setfill('0') << i;
-        projectDirectory = directoryName + number.str();
-        int ret = mkdir(projectDirectory.c_str(),0777);
-        if(ret == 0) break;
-      }
-      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-    }
-    else { // always the same directory
-      projectDirectory = string(directoryName);
-
-      int ret = mkdir(projectDirectory.c_str(),0777);
-      if(ret == 0) {
-        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-      }
-      else {
-        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
-      }
-    }
-
-    if(preIntegrator) {
-      string preDir="PREINTEG";
-      int ret=mkdir(preDir.c_str(),0777);
-      if(ret==0) {
-        cout << "Make directory " << preDir << " for Preintegration results." << endl;
-      }
-      else {
-        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
-      }
-    }
-
-    return;
-  }
+//  void DynamicSystemSolver::setDirectory() {
+//    int i;
+//    string projectDirectory;
+//
+//    if(false) { // TODO: introduce flag "overwriteDirectory"
+//      for(i=0; i<=99; i++) {
+//        stringstream number;
+//        number << "." << setw(2) << setfill('0') << i;
+//        projectDirectory = directoryName + number.str();
+//        int ret = mkdir(projectDirectory.c_str(),0777);
+//        if(ret == 0) break;
+//      }
+//      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+//    }
+//    else { // always the same directory
+//      projectDirectory = string(directoryName);
+//
+//      int ret = mkdir(projectDirectory.c_str(),0777);
+//      if(ret == 0) {
+//        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+//      }
+//      else {
+//        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+//      }
+//    }
+//
+//    if(preIntegrator) {
+//      string preDir="PREINTEG";
+//      int ret=mkdir(preDir.c_str(),0777);
+//      if(ret==0) {
+//        cout << "Make directory " << preDir << " for Preintegration results." << endl;
+//      }
+//      else {
+//        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+//      }
+//    }
+//
+//    return;
+//  }
 
   Vec DynamicSystemSolver::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {
