@@ -89,15 +89,32 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="referenceFrame">
+    <xs:complexType>
+      <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+    </xs:complexType> 
+  </xs:element>
+
   <xs:element name="Group" substitutionGroup="DynamicSystem" type="GroupType"/>
   <xs:complexType name="GroupType">
     <xs:complexContent>
       <xs:extension base="DynamicSystemType">
         <xs:sequence>
-          <xs:element name="RrRD" type="pv:lengthVector"/>  
-          <xs:element name="ARD" type="pv:nounitMatrix"/>  
-          <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element ref="Contour" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="referenceFrame" minOccurs="0"/>
+          <xs:element name="relativeGroupLocation" type="pv:lengthVector"/>  
+          <xs:element name="relativeGroupOrientation" type="pv:nounitMatrix"/>  
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Frame"/>
+            <xs:element ref="referenceFrame" minOccurs="0"/>
+            <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
+            <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+          </xs:sequence>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Contour"/>
+            <xs:element ref="referenceFrame" minOccurs="0"/>
+            <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
+            <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+          </xs:sequence>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element ref="pv:embed"/>  
             <xs:element ref="DynamicSystem"/>  
@@ -159,8 +176,18 @@
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix"/>
           <xs:element ref="Translation" minOccurs="0"/>
           <xs:element ref="Rotation" minOccurs="0"/>
-          <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
-          <xs:element ref="Contour" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Frame"/>
+            <xs:element ref="referenceFrame" minOccurs="0"/>
+            <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
+            <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+          </xs:sequence>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="Contour"/>
+            <xs:element ref="referenceFrame" minOccurs="0"/>
+            <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
+            <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+          </xs:sequence>
           <xs:element ref="ombv:RigidBody" minOccurs="0"/>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:complexType>
@@ -268,8 +295,6 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="RrRF" type="pv:lengthVector"/>  
-          <xs:element name="ARF" type="pv:nounitMatrix"/>  
           <xs:element name="enableOpenMBV" minOccurs="0">  
             <xs:complexType>
               <xs:sequence>
@@ -286,12 +311,7 @@
   <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType"/>
   <xs:complexType name="ContourType">
     <xs:complexContent>
-      <xs:extension base="ElementType">
-        <xs:sequence>
-          <xs:element name="RrRC" type="pv:lengthVector"/>
-          <xs:element name="ARC" type="pv:nounitMatrix"/>
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 

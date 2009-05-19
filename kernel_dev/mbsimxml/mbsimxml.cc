@@ -4,7 +4,7 @@
 #include "mbsimtinyxml/tinynamespace.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
-#include <mbsim/integrators/integrators.h>
+#include <mbsim/integrators/integrator.h>
 
 using namespace std;
 using namespace MBSim;
