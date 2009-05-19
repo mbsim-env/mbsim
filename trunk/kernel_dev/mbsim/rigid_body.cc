@@ -443,19 +443,37 @@ namespace MBSim {
       e=e->NextSiblingElement();
     }
     while(e->ValueStr()==MBSIMNS"Frame") {
-      addFrame(e->Attribute("name"), Vec(e->FirstChildElement(MBSIMNS"RrRF")->GetText()),
-                                     SqrMat(e->FirstChildElement(MBSIMNS"ARF")->GetText()));
+      Frame *f=new Frame(e->Attribute("name"));
       TiXmlElement *ee;
       if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        getFrame(e->Attribute("name"))->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
-                                                      atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+        f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
+                         atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+      e=e->NextSiblingElement();
+      Frame *refF=0;
+      if(e->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
+        e=e->NextSiblingElement();
+      }
+      Vec RrRF(e->GetText());
+      e=e->NextSiblingElement();
+      SqrMat ARF(e->GetText());
+      addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
     Contour *c;
     while((c=ObjectFactory::createContour(e))) {
-      addContour(c, Vec(e->FirstChildElement(MBSIMNS"RrRC")->GetText()),
-                    SqrMat(e->FirstChildElement(MBSIMNS"ARC")->GetText()));
-      c->initializeUsingXML(e);
+      TiXmlElement *contourElement=e; // save for later initialization
+      e=e->NextSiblingElement();
+      Frame *refF=0;
+      if(e->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
+        e=e->NextSiblingElement();
+      }
+      Vec RrRC(e->GetText());
+      e=e->NextSiblingElement();
+      SqrMat ARC(e->GetText());
+      addContour(c, RrRC, ARC, refF);
+      c->initializeUsingXML(contourElement);
       e=e->NextSiblingElement();
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
