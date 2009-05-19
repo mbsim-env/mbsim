@@ -3,16 +3,11 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
-  <RrRD>[0;0;0]</RrRD><!-- dummy -->
-  <ARD>[1,0,0;0,1,0;0,0,1]</ARD><!-- dummy -->
-  <Frame name="Os">
-    <RrRF>[0;0;0]</RrRF>
-    <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-  </Frame>
-  <Plane name="Plane">
-    <RrRC>[0;0;0]</RrRC>
-    <ARC>[0,-1,0;1,0,0;0,0,1]</ARC>
-  </Plane>
+  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
+  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
+  <Plane name="Plane"/>
+  <relativeContourLocation>[0;0;0]</relativeContourLocation>
+  <relativeContourOrientation>[0,-1,0;1,0,0;0,0,1]</relativeContourOrientation>
   <RigidBody name="Body">
     <q0>[0;1.2015e-2;0;0.1;0;0]</q0>
     <u0>[0;0;0;0;180;0]</u0>
@@ -25,17 +20,17 @@
     </LinearTranslation>
     <CardanAngles/>
     <Sphere name="Sphere1">
-      <RrRC>[0;0.3e-2;0]</RrRC>
-      <ARC>[1,0,0;0,1,0;0,0,1]</ARC>
       <radius>1.5e-2</radius>
       <enableOpenMBV/>
     </Sphere>
+    <relativeContourLocation>[0;0.3e-2;0]</relativeContourLocation>
+    <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
     <Sphere name="Sphere2">
-      <RrRC>[0;1.6e-2;0]</RrRC>
-      <ARC>[1,0,0;0,1,0;0,0,1]</ARC>
       <radius>0.5e-2</radius>
       <enableOpenMBV/>
     </Sphere>
+    <relativeContourLocation>[0;1.6e-2;0]</relativeContourLocation>
+    <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
     <enableOpenMBVFrameC>
       <size>0.036</size>
       <offset>0</offset>

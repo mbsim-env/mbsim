@@ -3,14 +3,14 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
-  <RrRD>[0;0;0]</RrRD><!-- dummy -->
-  <ARD>[1,0,0;0,1,0;0,0,1]</ARD><!-- dummy -->
+  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
+  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
   <Group name="Hauptgruppe1">
-    <RrRD>[0;0;0]</RrRD>
-    <ARD>[1,0,0;0,1,0;0,0,1]</ARD>
+    <relativeGroupLocation>[0;0;0]</relativeGroupLocation>
+    <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation>
     <Group name="Untergruppe">
-      <RrRD>[1;0;0]</RrRD>
-      <ARD>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</ARD>
+      <relativeGroupLocation>[1;0;0]</relativeGroupLocation>
+      <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
       <RigidBody name="Box1">
         <q0>[0.95]</q0>
         <u0>[0]</u0>
@@ -22,17 +22,17 @@
           <PJT>[0; 1; 0]</PJT>
         </LinearTranslation>
         <Frame name="P1">
-          <RrRF>[0;-0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
           <enableOpenMBV>
             <size>0.5</size>
             <offset>1</offset>
           </enableOpenMBV>
         </Frame>
-        <Frame name="P2">
-          <RrRF>[0;0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-        </Frame>
+        <referenceFrame ref="Frame[C]"/>
+        <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+        <Frame name="P2"/>
+        <relativeFrameLocation>[0;0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
@@ -52,13 +52,13 @@
           <PJT>[0; 1; 0]</PJT>
         </LinearTranslation>
         <Frame name="P1">
-          <RrRF>[0;-0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
           <enableOpenMBV>
             <size>0.5</size>
             <offset>1</offset>
           </enableOpenMBV>
         </Frame>
+        <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
@@ -117,11 +117,11 @@
   <Group name="Hauptgruppe2">
     <plotFeatureRecursive feature="+stateDerivative"/>
     <plotFeature feature="+separateFilePerDynamicSystem"/>
-    <RrRD>[2;0;0]</RrRD>
-    <ARD>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</ARD>
+    <relativeGroupLocation>[2;0;0]</relativeGroupLocation>
+    <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
     <Group name="Untergruppe">
-      <RrRD>[1;0;0]</RrRD>
-      <ARD>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</ARD>
+      <relativeGroupLocation>[1;0;0]</relativeGroupLocation>
+      <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
       <RigidBody name="Box1">
         <q0>[0.95]</q0>
         <u0>[0]</u0>
@@ -133,17 +133,16 @@
           <PJT>[0; 1; 0]</PJT>
         </LinearTranslation>
         <Frame name="P1">
-          <RrRF>[0;-0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
           <enableOpenMBV>
             <size>0.5</size>
             <offset>1</offset>
           </enableOpenMBV>
         </Frame>
-        <Frame name="P2">
-          <RrRF>[0;0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
-        </Frame>
+        <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+        <Frame name="P2"/>
+        <relativeFrameLocation>[0;0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
@@ -163,13 +162,13 @@
           <PJT>[0; 1; 0]</PJT>
         </LinearTranslation>
         <Frame name="P1">
-          <RrRF>[0;-0.25;0]</RrRF>
-          <ARF>[1,0,0;0,1,0;0,0,1]</ARF>
           <enableOpenMBV>
             <size>0.5</size>
             <offset>1</offset>
           </enableOpenMBV>
         </Frame>
+        <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
+        <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
         <ombv:Cuboid name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
