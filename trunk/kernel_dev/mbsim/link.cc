@@ -176,5 +176,16 @@ namespace MBSim {
       return 0;
   }
 
+  Contour *Link::getContourByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getContourByPath(restPart);
+    else
+      return 0;
+  }
+
 }
 

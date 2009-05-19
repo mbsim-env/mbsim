@@ -40,4 +40,23 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType"/>
+  <xs:complexType name="LSODARIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="aTol" type="pv:nounitVector"/>  
+            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
+          <xs:element name="dt0" type="pv:timeScalar"/>  
+          <xs:element name="dtMin" type="pv:timeScalar"/>  
+          <xs:element name="dtMax" type="pv:timeScalar"/>  
+          <xs:element name="plotOnRoot" type="xs:boolean"/>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
 </xs:schema>

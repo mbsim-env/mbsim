@@ -45,7 +45,13 @@
 
   <xs:simpleType name="FrameReferenceType">
     <xs:restriction base="xs:token">
-     <xs:pattern value="((\.\.|Frame\[[a-zA-Z0-9_]+\]|Object\[[a-zA-Z0-9_]+\]|DynamicSystem\[[a-zA-Z0-9_]+\])/)*Frame\[[a-zA-Z0-9_]+\]"/>
+     <xs:pattern value="((\.\.|Object\[[a-zA-Z0-9_]+\]|DynamicSystem\[[a-zA-Z0-9_]+\])/)*Frame\[[a-zA-Z0-9_]+\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ContourReferenceType">
+    <xs:restriction base="xs:token">
+     <xs:pattern value="((\.\.|Object\[[a-zA-Z0-9_]+\]|DynamicSystem\[[a-zA-Z0-9_]+\])/)*Contour\[[a-zA-Z0-9_]+\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -91,6 +97,7 @@
           <xs:element name="RrRD" type="pv:lengthVector"/>  
           <xs:element name="ARD" type="pv:nounitMatrix"/>  
           <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="Contour" minOccurs="0" maxOccurs="unbounded"/>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element ref="pv:embed"/>  
             <xs:element ref="DynamicSystem"/>  
@@ -153,6 +160,7 @@
           <xs:element ref="Translation" minOccurs="0"/>
           <xs:element ref="Rotation" minOccurs="0"/>
           <xs:element ref="Frame" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="Contour" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element ref="ombv:RigidBody" minOccurs="0"/>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:complexType>
@@ -235,6 +243,26 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType"/>
+  <xs:complexType name="ContactType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element ref="GeneralizedForceLaw"/>
+          <xs:element ref="GeneralizedImpactLaw"/>
+          <xs:element ref="FrictionForceLaw"/>
+          <xs:element ref="FrictionImpactLaw"/>
+          <xs:element name="connect">
+            <xs:complexType>
+              <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="Frame" substitutionGroup="Element" type="FrameType"/>
   <xs:complexType name="FrameType">
     <xs:complexContent>
@@ -254,6 +282,44 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType> 
+
+  <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType"/>
+  <xs:complexType name="ContourType">
+    <xs:complexContent>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+          <xs:element name="RrRC" type="pv:lengthVector"/>
+          <xs:element name="ARC" type="pv:nounitMatrix"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidContour" substitutionGroup="Contour" type="RigidContourType"/>
+  <xs:complexType name="RigidContourType">
+    <xs:complexContent>
+      <xs:extension base="ContourType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType"/>
+  <xs:complexType name="PlaneType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Sphere" substitutionGroup="RigidContour" type="SphereType"/>
+  <xs:complexType name="SphereType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="radius" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Translation" abstract="true" type="TranslationType"/>
   <xs:complexType name="TranslationType"/>
@@ -283,11 +349,25 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="CardanAngles" substitutionGroup="Rotation" type="CardanAnglesType"/>
+  <xs:complexType name="CardanAnglesType">
+    <xs:complexContent>
+      <xs:extension base="RotationType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType"/>
   <xs:complexType name="GeneralizedForceLawType"/>
 
   <xs:element name="BilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="BilateralConstraintType"/>
   <xs:complexType name="BilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedForceLawType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="UnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="UnilateralConstraintType"/>
+  <xs:complexType name="UnilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType"/>
     </xs:complexContent>
@@ -300,6 +380,45 @@
   <xs:complexType name="BilateralImpactType">
     <xs:complexContent>
       <xs:extension base="GeneralizedImpactLawType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="UnilateralNewtonImpact" substitutionGroup="GeneralizedImpactLaw" type="UnilateralNewtonImpactType"/>
+  <xs:complexType name="UnilateralNewtonImpactType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedImpactLawType">
+        <xs:sequence>
+          <xs:element name="restitutionCoefficient" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType"/>
+  <xs:complexType name="FrictionForceLawType"/>
+
+  <xs:element name="SpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="SpatialCoulombFrictionType"/>
+  <xs:complexType name="SpatialCoulombFrictionType">
+    <xs:complexContent>
+      <xs:extension base="FrictionForceLawType">
+        <xs:sequence>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="FrictionImpactLaw" abstract="true" type="FrictionImpactLawType"/>
+  <xs:complexType name="FrictionImpactLawType"/>
+
+  <xs:element name="SpatialCoulombImpact" substitutionGroup="FrictionImpactLaw" type="SpatialCoulombImpactType"/>
+  <xs:complexType name="SpatialCoulombImpactType">
+    <xs:complexContent>
+      <xs:extension base="FrictionImpactLawType">
+        <xs:sequence>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 

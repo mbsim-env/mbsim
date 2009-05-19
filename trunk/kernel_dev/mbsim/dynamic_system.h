@@ -645,6 +645,7 @@ namespace MBSim {
       MBSim::ModellingInterface* getModel(const std::string &name, bool check=true);
 
       virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Contour *getContourByPath(std::string path);
 
     protected:
       /**

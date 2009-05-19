@@ -29,6 +29,7 @@
 namespace MBSim {
 
   class DynamicSystem;
+  class Contour;
 
   /** 
    * \brief class for all objects having own dynamics and mass
@@ -270,6 +271,7 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
       virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Contour *getContourByPath(std::string path);
 
     protected:
       /**

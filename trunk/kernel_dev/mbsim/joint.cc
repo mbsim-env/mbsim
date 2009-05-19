@@ -520,7 +520,11 @@ namespace MBSim {
       gifl->initializeUsingXML(ee);
     }
     e=element->FirstChildElement(MBSIMNS"connect");
-    connect(getFrameByPath(e->Attribute("ref1")),getFrameByPath(e->Attribute("ref2")));
+    FrameInterface *ref1=getFrameByPath(e->Attribute("ref1"));
+    if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
+    FrameInterface *ref2=getFrameByPath(e->Attribute("ref2"));
+    if(!ref2) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref2")<<endl; _exit(1); }
+    connect(ref1,ref2);
   }
 
 }

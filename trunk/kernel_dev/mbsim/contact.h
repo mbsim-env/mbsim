@@ -131,6 +131,8 @@ namespace MBSim {
        */
       void connect(Contour *contour1, Contour* contour2);
 
+      virtual void initializeUsingXML(TiXmlElement *element);
+
     protected:
       /**
        * \brief used contact kinematics

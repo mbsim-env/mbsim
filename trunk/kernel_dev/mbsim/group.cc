@@ -126,6 +126,13 @@ namespace MBSim {
                                                       atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
       e=e->NextSiblingElement();
     }
+    Contour *c;
+    while((c=ObjectFactory::createContour(e))) {
+      addContour(c, Vec(e->FirstChildElement(MBSIMNS"RrRC")->GetText()),
+                    SqrMat(e->FirstChildElement(MBSIMNS"ARC")->GetText()));
+      c->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
     Group *g;
     while((g=ObjectFactory::createGroup(e))) {
       addDynamicSystem(g, Vec(e->FirstChildElement(MBSIMNS"RrRD")->GetText()),
@@ -139,10 +146,10 @@ namespace MBSim {
       o->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
-    LinkMechanics *m;
-    while((m=ObjectFactory::createLinkMechanics(e))) {
-      addLink(m);
-      m->initializeUsingXML(e);
+    Link *l;
+    while((l=ObjectFactory::createLink(e))) {
+      addLink(l);
+      l->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
   }

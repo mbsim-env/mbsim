@@ -21,6 +21,7 @@
  */
 #include <config.h>
 #include <mbsim/constitutive_laws.h>
+#include <mbsim/element.h>
 #include "utils/nonsmooth_algebra.h"
 
 using namespace std;
@@ -174,6 +175,13 @@ namespace MBSim {
       return true;
     else 
       return false;
+  }
+
+  void UnilateralNewtonImpact::initializeUsingXML(TiXmlElement *element) {
+    GeneralizedImpactLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"restitutionCoefficient");
+    epsilon=atof(e->GetText());
   }
 
   double BilateralImpact::project(double la, double gdn, double gda, double r) {
@@ -360,6 +368,13 @@ namespace MBSim {
     return -mu*gd/nrm2(gd);
   }
 
+  void SpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    setFrictionCoefficient(atof(e->GetText()));
+  }
+
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
   }
@@ -434,6 +449,12 @@ namespace MBSim {
       return false;
   }
 
+  void SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+    FrictionImpactLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    setFrictionCoefficient(atof(e->GetText()));
+  }
 
 }
 

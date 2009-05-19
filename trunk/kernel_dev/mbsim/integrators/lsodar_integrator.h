@@ -65,6 +65,7 @@ namespace MBSim {
 
       void integrate(DynamicSystemSolver& system);
 
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }

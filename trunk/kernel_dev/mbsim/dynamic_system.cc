@@ -1278,6 +1278,23 @@ namespace MBSim {
     else
       return 0;
   }
+  
+  Contour *DynamicSystem::getContourByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getContourByPath(restPart);
+    else if(firstPart.substr(0,7)=="Object[")
+      return getObject(firstPart.substr(7,firstPart.find(']')-7))->getContourByPath(restPart);
+    else if(firstPart.substr(0,8)=="Contour[")
+      return getContour(firstPart.substr(8,firstPart.find(']')-8));
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getContourByPath(restPart);
+    else
+      return 0;
+  }
 
 }
 

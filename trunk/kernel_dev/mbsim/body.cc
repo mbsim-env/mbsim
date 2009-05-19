@@ -209,5 +209,18 @@ namespace MBSim {
       return 0;
   }
 
+  Contour *Body::getContourByPath(string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getContourByPath(restPart);
+    else if(firstPart.substr(0,8)=="Contour[")
+      return getContour(firstPart.substr(8,firstPart.find(']')-8));
+    else
+      return 0;
+  }
+
 }
 
