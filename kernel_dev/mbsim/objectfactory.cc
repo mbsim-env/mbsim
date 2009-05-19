@@ -6,7 +6,9 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/linear_spring_damper.h"
 #include "mbsim/joint.h"
+#include "mbsim/contact.h"
 #include "mbsim/integrators/dopri5_integrator.h"
+#include "mbsim/integrators/lsodar_integrator.h"
 
 using namespace std;
 
@@ -39,15 +41,19 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
+    if(element->ValueStr()==MBSIMNS"CardanAngles")
+      return new CardanAngles;
     return 0;
   }
   
-  LinkMechanics* ObjectFactory::createLinkMechanics(TiXmlElement *element) {
+  Link* ObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearSpringDamper")
       return new LinearSpringDamper(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Joint")
       return new Joint(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Contact")
+      return new Contact(element->Attribute("name"));
     return 0;
   }
   
@@ -55,6 +61,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
       return new DOPRI5Integrator;
+    if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
+      return new LSODARIntegrator;
     return 0;
   }
 
@@ -62,6 +70,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"BilateralConstraint")
       return new BilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"UnilateralConstraint")
+      return new UnilateralConstraint;
     return 0;
   }
 
@@ -69,6 +79,31 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"BilateralImpact")
       return new BilateralImpact;
+    if(element->ValueStr()==MBSIMNS"UnilateralNewtonImpact")
+      return new UnilateralNewtonImpact;
+    return 0;
+  }
+  
+  FrictionForceLaw *ObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"SpatialCoulombFriction")
+      return new SpatialCoulombFriction;
+    return 0;
+  }
+
+  FrictionImpactLaw *ObjectFactory::createFrictionImpactLaw(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"SpatialCoulombImpact")
+      return new SpatialCoulombImpact;
+    return 0;
+  }
+
+  Contour *ObjectFactory::createContour(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"Plane")
+      return new Plane(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Sphere")
+      return new Sphere(element->Attribute("name"));
     return 0;
   }
 

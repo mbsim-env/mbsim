@@ -451,6 +451,13 @@ namespace MBSim {
                                                       atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
       e=e->NextSiblingElement();
     }
+    Contour *c;
+    while((c=ObjectFactory::createContour(e))) {
+      addContour(c, Vec(e->FirstChildElement(MBSIMNS"RrRC")->GetText()),
+                    SqrMat(e->FirstChildElement(MBSIMNS"ARC")->GetText()));
+      c->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e));
     if(rb) {

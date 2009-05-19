@@ -95,7 +95,11 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"unloadedLength");
     setUnloadedLength(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"connect");
-    connect(getFrameByPath(e->Attribute("ref1")),getFrameByPath(e->Attribute("ref2")));
+    FrameInterface *ref1=getFrameByPath(e->Attribute("ref1"));
+    if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
+    FrameInterface *ref2=getFrameByPath(e->Attribute("ref2"));
+    if(!ref2) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref2")<<endl; _exit(1); }
+    connect(ref1,ref2);
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::CoilSpring *coilSpring=dynamic_cast<OpenMBV::CoilSpring*>(OpenMBV::ObjectFactory::createObject(e));

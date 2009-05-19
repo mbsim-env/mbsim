@@ -114,6 +114,7 @@ namespace MBSim {
       int contourIndex(const Contour *contour_) const;
 
       virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Contour *getContourByPath(std::string path);
 
     protected:
       /**

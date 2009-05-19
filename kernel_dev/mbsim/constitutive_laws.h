@@ -118,6 +118,8 @@ namespace MBSim {
       fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
       bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class BilateralImpact : public GeneralizedImpactLaw {
@@ -147,6 +149,8 @@ namespace MBSim {
       virtual double getFrictionCoefficient(double gd) {return 0;}
       virtual bool isSetValued() const = 0;
       void setMarginalVelocity(double gdLim_) {gdLim = gdLim_;}
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   class PlanarCoulombFriction : public FrictionForceLaw {
@@ -185,6 +189,8 @@ namespace MBSim {
       bool isSticking(const fmatvec::Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
       bool isSetValued() const {return true;}
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class FrictionImpactLaw {
@@ -196,6 +202,8 @@ namespace MBSim {
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN) = 0;
       virtual bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int getFrictionDirections() = 0;
+
+      virtual void initializeUsingXML(TiXmlElement *element) {}
   };
 
   class PlanarCoulombImpact : public FrictionImpactLaw {
@@ -228,6 +236,8 @@ namespace MBSim {
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
       bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class RegularizedUnilateralConstraint : public GeneralizedForceLaw {

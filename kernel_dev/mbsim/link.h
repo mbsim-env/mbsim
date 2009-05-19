@@ -32,6 +32,8 @@ namespace H5 {
 
 namespace MBSim {
 
+  class Contour;
+
   /** 
    * \brief general link to one or more objects
    * \author Martin Foerg
@@ -363,6 +365,7 @@ namespace MBSim {
       void decreaserFactors();
 
       virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Contour *getContourByPath(std::string path);
 
     protected:
       /**

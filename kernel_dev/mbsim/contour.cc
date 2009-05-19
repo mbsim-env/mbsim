@@ -182,6 +182,16 @@ namespace MBSim {
   }
 #endif
 
+  void Sphere::initializeUsingXML(TiXmlElement *element) {
+    RigidContour::initializeUsingXML(element);
+    TiXmlElement* e;
+    e=element->FirstChildElement(MBSIMNS"radius");
+    setRadius(atof(e->GetText()));
+    e=e->NextSiblingElement();
+    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV")
+      enableOpenMBV();
+  }
+
   /* Contour1s Analytical */
   void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==cosy || ff==position_cosy || velocity_cosy || velocities_cosy || ff==all) {

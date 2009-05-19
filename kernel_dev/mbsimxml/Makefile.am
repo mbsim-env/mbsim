@@ -12,7 +12,7 @@ bin_SCRIPTS = $(MAYBE_MBSIMXMLPP)
 bin_PROGRAMS = mbsimxml
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
-mbsimxml_LDFLAGS = -L../mbsimtinyxml
+mbsimxml_LDFLAGS = -L../mbsimtinyxml -L../mbsim
 mbsimxml_LDADD = -lmbsim $(OPENMBVCPPINTERFACE_LIBS) -lmbsimtinyxml
 
 mbsimxml_SOURCES = mbsimxml.cc
