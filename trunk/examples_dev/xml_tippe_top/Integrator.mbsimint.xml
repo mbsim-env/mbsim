@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsimintegrator.xsd">
+  <tStart>0</tStart>
+  <tEnd>5</tEnd>
+  <dtPlot>1e-2</dtPlot>
+  <aTolScalar>1e-6</aTolScalar>
+  <rTolScalar>1e-6</rTolScalar>
+  <dt0>1e-13</dt0>
+  <dtMin>0</dtMin>
+  <dtMax>0</dtMax>
+  <plotOnRoot>false</plotOnRoot>
+</LSODARIntegrator>
