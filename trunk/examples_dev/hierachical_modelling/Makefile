@@ -24,14 +24,3 @@ include $(sources:.cc=.d)
 clean :
 	-rm $(Target) $(objects) $(sources:.cc=.d)
 
-clean_pos :
-	-rm *.pos *.body
-
-
-%.d: %.cc
-	set -e; $(CC) -MM $(CPPFLAGS) $< \
-                 | sed 's/\(.*\)\.o[ :]*/\1.o \1.d : /g' > $@; \
-	[ -s $@ ] || rm -f $@
-
-include $(sources:.cc=.d)
-

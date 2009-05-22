@@ -21,7 +21,7 @@ libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
 					point_area.cc\
 					point_frustum.cc\
 					sphere_frustum.cc\
-					sphere_sphere.cc 
+					sphere_sphere.cc
 
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
@@ -50,4 +50,4 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h \
   point_plane.h \
   sphere_frustum.h \
   sphere_plane.h \
-  sphere_sphere.h
+  sphere_sphere.h 

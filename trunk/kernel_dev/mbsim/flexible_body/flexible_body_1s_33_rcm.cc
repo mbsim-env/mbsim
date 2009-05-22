@@ -134,6 +134,7 @@ namespace MBSim {
       if(ff==velocity || ff==velocities || velocity_cosy || velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(10*node+0,10*node+2));
       if(ff==angularVelocity || ff==velocities || velocity_cosy || velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(Phi,Phit));
     }
+    else throw new MBSimError("ERROR(FlexibleBody1s33RCM::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -176,6 +177,7 @@ namespace MBSim {
       Jacobian(Index(10*node+3,10*node+5),4) = t(2)*trans(tp(0,0,0,2))+n(2)*trans(np(0,0,0,2))+b(2)*trans(bp(0,0,0,2));
       Jacobian(Index(10*node+3,10*node+5),5) = t(0)*trans(tp(1,0,1,2))+n(0)*trans(np(1,0,1,2))+b(0)*trans(bp(1,0,1,2)); 
     }
+    else throw new MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*trans(Jacobian(0,0,qSize-1,2)));
     cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*trans(Jacobian(0,3,qSize-1,5))); 
@@ -272,7 +274,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
-        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
+        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-2);
         for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
           Vec X = computeState(ds*i);
           Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2);

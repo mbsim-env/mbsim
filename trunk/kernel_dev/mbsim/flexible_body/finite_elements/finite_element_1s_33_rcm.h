@@ -35,6 +35,9 @@ namespace MBSim {
    * \brief finite element for spatial beam using Redundant Coordinate Method (RCM)
    * \author Thorsten Schindler
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
+   * \todo implicit integration
+   * \todo transform  computeState to Position / Velocity / Orientation / AngularVelocity 
+   * \todo JacobianMinimalRepresentation
    */
   class FiniteElement1s33RCM : public MBSim::DiscretizationInterface {
     public:
@@ -60,10 +63,10 @@ namespace MBSim {
       virtual ~FiniteElement1s33RCM();		
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual fmatvec::SymMat getMassMatrix() const;		
-      virtual fmatvec::Vec getGeneralizedForceVector() const;
-      virtual fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const;
-      virtual fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const;
+      virtual const fmatvec::SymMat& getMassMatrix() const;		
+      virtual const fmatvec::Vec& getGeneralizedForceVector() const;
+      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const;
+      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const;
       virtual int getSizeOfPositions() const;
       virtual int getSizeOfVelocities() const;
 
@@ -191,7 +194,7 @@ namespace MBSim {
       /**
        * \brief last Lagrangian coordinate in state calculation 
        */
-      double  x_Old;
+      double x_Old;
 
       /**
        * \brief state at Lagrangian coordinate
@@ -249,10 +252,10 @@ namespace MBSim {
   inline void FiniteElement1s33RCM::setGauss(int nGauss) { wt->setGauss(nGauss); }
   inline void FiniteElement1s33RCM::setImpInt(bool impInt_) { impInt = impInt_; }
   inline double FiniteElement1s33RCM::getl0() const { return l0; }
-  inline fmatvec::SymMat FiniteElement1s33RCM::getMassMatrix() const { return M; }
-  inline fmatvec::Vec FiniteElement1s33RCM::getGeneralizedForceVector() const { return h; }
-  inline fmatvec::SqrMat FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingPosition() const {  throw new MBSimError("ERROR (FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingPosition): Not implemented!"); }
-  inline fmatvec::SqrMat FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingVelocity() const { throw new MBSimError("ERROR (FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingVelocity): Not implemented!"); }
+  inline const fmatvec::SymMat& FiniteElement1s33RCM::getMassMatrix() const { return M; }
+  inline const fmatvec::Vec& FiniteElement1s33RCM::getGeneralizedForceVector() const { return h; }
+  inline const fmatvec::SqrMat& FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingPosition() const {  throw new MBSimError("ERROR (FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingPosition): Not implemented!"); }
+  inline const fmatvec::SqrMat& FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingVelocity() const { throw new MBSimError("ERROR (FiniteElement1s33RCM::getJacobianForImplicitIntegrationRegardingVelocity): Not implemented!"); }
   inline int FiniteElement1s33RCM::getSizeOfPositions() const { return 16; }
   inline int FiniteElement1s33RCM::getSizeOfVelocities() const { return 16; }
   inline fmatvec::Vec FiniteElement1s33RCM::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSimError("ERROR (FiniteElement1s33RCM::computePosition): Not implemented!"); }

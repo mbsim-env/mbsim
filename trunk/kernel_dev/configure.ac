@@ -47,7 +47,29 @@ int main() {
 ], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
    [AC_MSG_RESULT([no])])
 
+dnl NURBS Package
+AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
 
+AC_ARG_WITH(nurbs-lib-prefix,[  --with-nurbs-lib-prefix=PFX  Prefix where nurbs libraries are installed], [nurbs_lib_prefix="$withval"], [nurbs_lib_prefix="$prefix/lib"])
+
+AC_MSG_CHECKING([for library nurbs])
+CPPFLAGS_OLD="$CPPFLAGS"
+LDFLAGS_OLD="$LDFLAGS"
+LIBS_OLD="$LIBS"
+
+CPPFLAGS="$CPPFLAGS -I$nurbs_inc_prefix/nurbs++"
+LDFLAGS="$LDFLAGS -L$nurbs_lib_prefix"
+LIBS="$LIBS -lnurbsd -lnurbsf -lmatrix -lmatrixI -lmatrixN"
+
+AC_LINK_IFELSE([AC_LANG_PROGRAM([#include "nurbs.h"],[PlNurbsCurvef var1; PlNurbsCurved var2;])],[AC_MSG_RESULT([yes]); nurbs="yes"],[AC_MSG_RESULT([no]); nurbs="no"])
+
+if (test "$nurbs" = "yes"); then
+  AC_DEFINE([HAVE_NURBS],[1],[linking with NURBS])
+else
+  CPPFLAGS="$CPPFLAGS_OLD"
+  LDFLAGS="$LDFLAGS_OLD"
+  LIBS="$LIBS_OLD"
+fi
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 

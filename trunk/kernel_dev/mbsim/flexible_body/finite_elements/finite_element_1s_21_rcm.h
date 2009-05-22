@@ -33,6 +33,8 @@ namespace MBSim {
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-03-23 initial for kernel_dev
+   * \todo transform computeState to Position / Velocity / Orientation / AngularVelocity
+   * \todo JacobianMinimalRepresentation
    *
    * read:\n
    * Zander, R.; Ulbrich, H.: Reference-free mixed FE-MBS approach for beam structures with constraints, Journal of Nonlinear Dynamics, Kluwer Academic Publishers, 2005\n
@@ -62,10 +64,10 @@ namespace MBSim {
       virtual ~FiniteElement1s21RCM() {}
 
       /* INHERITED INTERFACE */
-      fmatvec::SymMat getMassMatrix() const { return M; }
-      fmatvec::Vec getGeneralizedForceVector() const { return h; }
-      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const { return Dhq; }    
-      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const { return Dhqp; }
+      const fmatvec::SymMat& getMassMatrix() const { return M; }
+      const fmatvec::Vec& getGeneralizedForceVector() const { return h; }
+      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const { return Dhq; }    
+      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const { return Dhqp; }
       int getSizeOfPositions() const { return 8; }
       int getSizeOfVelocities() const { return 8; }
       void computeEquationsOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
