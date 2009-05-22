@@ -9,7 +9,6 @@ using namespace std;
 using namespace MBSim;
 
 class Pendulum : public DynamicSystemSolver {
-  private:
   public:
     Pendulum(const string &projectName); 
     

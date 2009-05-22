@@ -5,7 +5,6 @@
 #include <string>
 
 class System : public MBSim::DynamicSystemSolver {
-  private:
   public:
     System(const std::string &projectName); 
 };

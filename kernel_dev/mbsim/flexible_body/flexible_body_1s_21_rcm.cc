@@ -82,6 +82,8 @@ namespace MBSim {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0));
 
+      // TODO cout << "Lagrange=" << 
+
       Vec tmp(3,NONINIT);
       if(ff==position || ff==position_cosy || ff==all) {
         tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -137,6 +139,7 @@ namespace MBSim {
         cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * tmp);
       }
     }
+    else throw new MBSimError("ERROR(FlexibleBody1s21RCM::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition       (cp.getFrameOfReference().getPosition());
@@ -166,6 +169,7 @@ namespace MBSim {
       int node = cp.getNodeNumber();
       Jacobian(Index(5*node,5*node+2),All) << DiagMat(3,INIT,1.0);
     }
+    else throw new MBSimError("ERROR(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
     cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2)));
@@ -221,7 +225,7 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
-        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
+        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-2);
         for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
           Vec X = computeState(ds*i);
           Vec tmp(3,NONINIT); tmp(0) = X(0); tmp(1) = X(1); tmp(2) = 0.; // temporary vector used for compensating planar description
@@ -305,6 +309,9 @@ namespace MBSim {
   }
 
   double FlexibleBody1s21RCM::BuildElement(const double& sGlobal) {
+    //cout << "sGlobal=" << sGlobal << endl;
+    //cout << "openStructure=" << openStructure << endl;
+
     double remainder = fmod(sGlobal,L);
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)

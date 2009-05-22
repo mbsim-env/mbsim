@@ -93,6 +93,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
+      double getLength() const { return L; }
       /***************************************************/
 
       /**

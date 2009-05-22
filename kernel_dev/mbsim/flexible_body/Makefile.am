@@ -7,7 +7,6 @@ libflexiblebody_la_SOURCES =	flexible_body_1s_21_rcm.cc\
 
 # libflexiblebody_la_SOURCES =	flexible_body_1s_01_torsion.cc\
 # 								flexible_body_1s_21_ancf.cc\
-# 								flexible_body_1s_21_rcm.cc\
 # 								flexible_body_1s_23_bta.cc
 
 libflexiblebody_la_CPPFLAGS = -I.. -Ifinite_elements
@@ -23,6 +22,5 @@ flexiblebodyinclude_HEADERS =	flexible_body_1s_21_rcm.h\
 
 # flexiblebodyinclude_HEADERS =	flexible_body_1s_01_torsion.h\
 # 								flexible_body_1s_21_ancf.h\
-# 								flexible_body_1s_21_rcm.h\
 # 								flexible_body_1s_23_bta.h
 

@@ -523,22 +523,22 @@ namespace MBSim {
       /*!
        * \return mass matrix of discretization
        */
-      virtual fmatvec::SymMat getMassMatrix() const = 0;    
+      virtual const fmatvec::SymMat& getMassMatrix() const = 0;    
 
       /*!
        * \return smooth right hand side of discretization
        */
-      virtual fmatvec::Vec getGeneralizedForceVector() const = 0;
+      virtual const fmatvec::Vec& getGeneralizedForceVector() const = 0;
 
       /*!
        * \return Jacobian of implicit integration regarding position
        */
-      virtual fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const = 0;    
+      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const = 0;    
 
       /*!
        * \return Jacobian of implicit integration regarding velocity
        */
-      virtual fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const = 0;
+      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const = 0;
 
       /*!
        * \return dimension of positions

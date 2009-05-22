@@ -44,6 +44,7 @@ namespace MBSim {
       ContourPointData() : type(CONTINUUM), ID(0) {}
       ContourPointData(const double       &alpha_) : type(CONTINUUM), ID(0), alpha(1,fmatvec::INIT,alpha_) {}
       ContourPointData(const fmatvec::Vec &alpha_) : type(CONTINUUM), ID(0), alpha(alpha_) {}
+      ContourPointData(const int  &id_) : type(NODE), ID(id_) {}
 
       /**
        * \brief destructor

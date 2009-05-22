@@ -120,10 +120,29 @@ namespace MBSim {
       void addFrame(const std::string &name, const ContourPointData &S_);
 
       /**
-       * \param name of frame
+       * \param frame
        * \param frame location
        */
       void addFrame(Frame *frame, const ContourPointData &S_);
+
+      /** 
+       *  \param name of frame
+       *  \param node of frame 
+       */
+      void addFrame(const std::string &name, const int &id) {
+        ContourPointData cp(id);
+        addFrame(name,cp);
+      }
+
+      /**
+       * \param frame
+       * \param node of frame
+       */
+      void addFrame(Frame *frame, const  int &id) {
+        ContourPointData cp(id);
+        addFrame(frame,cp);
+      }
+
 
     protected:
       /** 

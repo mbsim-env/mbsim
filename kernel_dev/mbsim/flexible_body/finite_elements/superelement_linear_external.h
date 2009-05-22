@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,58 +13,41 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
  */
+
 #ifndef _SUPERELEMENT_LINEAR_EXTERNAL_H_
 #define _SUPERELEMENT_LINEAR_EXTERNAL_H_
 
 #include "fmatvec.h"
 #include "mbsim/interfaces.h"
+#include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
 
 namespace MBSim {
 
-  /*! \brief
-   * Superelement for linear models from external preprocessing.
+  /*! 
+   * \brief superelement for linear models from external preprocessing.
+   * \author Roland Zander
+   * \date 2009-05-22 some references added (Thorsten Schindler)
    */
-  class SuperElementLinearExternal : public DiscretizationInterface
-  {
-    protected:
-      int warnLevel;
-      fmatvec::SymMat M;
-      fmatvec::Vec h;
-
-      /** constant stiffness matrix \f$\vK\f$*/ 
-      fmatvec::SqrMat K;
-      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
-      fmatvec::SqrMat D; 
-      /** constant for damping matrix, see setProportionalDamping*/ 
-      double alpha;
-      /** constant for damping matrix, see setProportionalDamping*/ 
-      double  beta;
-
-      /** container holding constant JACOBIAN-matrizes of all Port s and Contour s */
-      std::vector<fmatvec::Mat> J;
-      /** container holding undeformed positions in body coordinate system of all Port s and Contour s */
-      std::vector<fmatvec::Vec> KrP;
-
+  class SuperElementLinearExternal : public DiscretizationInterface {
     public:
-      SuperElementLinearExternal(int warnLevel_=0);
+      SuperElementLinearExternal();
 	  void init();
 
 	  /*! set constant mass matrix \f$\vM\f$
 	   * \param M mass matrix
 	   * */
 	  void setM(const fmatvec::SymMat &M_);
-	  /*! set constant stiffness matrix \f$\vK\f$
+	  
+      /*! set constant stiffness matrix \f$\vK\f$
 	   * \param K stiffness matrix
 	   * */
 	  void setK(const fmatvec::SqrMat &K_);
-	  /*! set coefficients \f$\alpha\f$ and \f$\beta\f$ for proportional damping:
+	  
+      /*! set coefficients \f$\alpha\f$ and \f$\beta\f$ for proportional damping:
 	   * constant damping matrix \f$\vD\f$ proportional to mass and stiffness
        * \f[ \vD = \alpha * \vM + \beta*\vK \f]
  	   * \param alpha proportional coefficient for mass matrix
@@ -72,13 +55,13 @@ namespace MBSim {
 	   * */
 	  void setProportionalDamping(double alpha_,double beta_);
 
-      fmatvec::SymMat getMassMatrix()   const {return M;}
-      fmatvec::Vec    getGeneralizedForceVector()   const {return h;}
+      const fmatvec::SymMat& getMassMatrix() const {return M;}
+      const fmatvec::Vec&    getGeneralizedForceVector() const {return h;}
 
-      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingPosition() const {return fmatvec::SqrMat(-K);}    
-      fmatvec::SqrMat getJacobianForImplicitIntegrationRegardingVelocity() const {return fmatvec::SqrMat(-D);}
-	  int getSizeOfPositions()  const {return K.size();}
-	  int getSizeOfVelocities()  const {return M.size();}
+      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const {return Dhq;}    
+      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const {return Dhqp;}
+	  int getSizeOfPositions() const {return K.size();}
+	  int getSizeOfVelocities() const {return M.size();}
 
       /*! 
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$, \f$\vM\f$ is constant
@@ -88,15 +71,36 @@ namespace MBSim {
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
       double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}
 
-      fmatvec::Vec computeVelocity       (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-      fmatvec::Vec computeAngularVelocity    (const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-      fmatvec::Vec computePosition      (const fmatvec::Vec&q,const ContourPointData& cp);
-      fmatvec::SqrMat computeOrientation      (const fmatvec::Vec&q,const ContourPointData& cp) {if(warnLevel>0) std::cout << "WARNING (SuperElementLinearExternal::computeOrientation): Not Implemented" << std::endl; return fmatvec::SqrMat(0,fmatvec::INIT,0.);}
+      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computePosition(const fmatvec::Vec&q,const ContourPointData& cp);
+      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const ContourPointData& cp) { throw new MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
       fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q,const ContourPointData& cp);
 
 	  ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);
+    
+    protected:
+      /** constant mass matrix \f$\vM\f$*/ 
+      fmatvec::SymMat M;
+      /** right hand side */
+      fmatvec::Vec h;
+      /** constant stiffness matrix \f$\vK\f$*/ 
+      fmatvec::SqrMat K;
+      /** constant damping matrix \f$\vD\f$, see setProportionalDamping()*/ 
+      fmatvec::SqrMat D; 
+      /** constant for damping matrix, see setProportionalDamping*/ 
+      double alpha;
+      /** constant for damping matrix, see setProportionalDamping*/ 
+      double beta;
+      /** constant Jacobians for implicit integration */
+      fmatvec::SqrMat Dhq, Dhqp;
+      /** container holding constant JACOBIAN-matrizes of all Frames and Contours */
+      std::vector<fmatvec::Mat> J;
+      /** container holding undeformed positions in body coordinate system of all Frames and Contours */
+      std::vector<fmatvec::Vec> KrP;
   };
 
 }
 
 #endif
+

@@ -8,3 +8,4 @@ libcontour_la_LIBADD = $(DEPS_LIBS)
 
 contourincludedir = $(includedir)/mbsim/contours
 contourinclude_HEADERS = flexible_band.h
+

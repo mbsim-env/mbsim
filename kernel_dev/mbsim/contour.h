@@ -404,7 +404,7 @@ namespace MBSim {
         ContourContinuum(const std::string &name) : Contour(name) {}
 
         /* INHERITED INTERFACE OF ELEMENT */
-        std::string getType() const { return "ContourContinuum"; }
+        virtual std::string getType() const { return "ContourContinuum"; }
         /***************************************************/
         
         /* INTERFACE FOR DERIVED CLASSES */
