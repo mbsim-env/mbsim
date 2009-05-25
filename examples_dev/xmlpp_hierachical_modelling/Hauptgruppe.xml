@@ -6,12 +6,12 @@
     xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
   <plotFeatureRecursive feature="+stateDerivative"/>
   <plotFeature feature="+separateFilePerDynamicSystem"/>
-  <RrRD>[rHG(numHG);0;0]</RrRD>
-  <ARD>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</ARD>
+  <relativeGroupLocation>[rHG(numHG);0;0]</relativeGroupLocation>
+  <relativeGroupOrientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</relativeGroupOrientation>
   <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
   <RigidBody name="Box1">
     <plotFeature feature="+globalPosition"/>
-    <q0>[0]</q0>
+    <q0 unit="mm">[0]</q0>
     <u0>[0.1]</u0>
     <frameOfReference ref="../Frame[I]"/>
     <frameForKinematics ref="Frame[C]"/>

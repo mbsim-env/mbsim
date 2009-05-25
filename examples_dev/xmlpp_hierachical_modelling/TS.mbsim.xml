@@ -3,8 +3,8 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
-  <RrRD>[0;0;0]</RrRD><!-- dummy -->
-  <ARD>[1,0,0;0,1,0;0,0,1]</ARD><!-- dummy -->
+  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
+  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
   <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
   <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
 </DynamicSystemSolver>
