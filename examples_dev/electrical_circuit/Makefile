@@ -2,16 +2,17 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc simulation_classes.cc modeling_classes.cc my_circuit.cc
+sources = main.cc system.cc my_circuit.cc
+#sources = main.cc system.cc simulation_classes.cc modeling_classes.cc my_circuit.cc
 
 # Do Not Edit the Following Lines
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim` 
+	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsimelectronics` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs mbsim` 
+	$(CXX) -o $@ $(objects) `pkg-config --libs mbsimelectronics` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
