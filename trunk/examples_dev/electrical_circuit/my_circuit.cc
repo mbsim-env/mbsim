@@ -1,9 +1,19 @@
 #include "my_circuit.h"
-#include "modeling_classes.h"
+#include "mbsimelectronics/modeling_classes.h"
 
 using namespace std;
 
-MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
+// Just a test voltage signal
+class Signal : public MBSim::UserFunction {
+  public:
+    fmatvec::Vec operator()(double t) {
+      fmatvec::Vec U(1);
+      U(0) = 3;
+      return U;
+    }
+};
+
+MyCircuit::MyCircuit(const string &name) : MBSim::SpecialGroup(name) {
 
   Resistor *resistor = new Resistor("Resistor");
   addModel(resistor);
@@ -25,7 +35,7 @@ MyCircuit::MyCircuit(const string &name) : ElectricalCircuit(name) {
 
   Capacitor *capacitor = new Capacitor("Capacitor");
   addModel(capacitor);
-  capacitor->setCapacity(10);
+  capacitor->setCapacity(1./10);
 
   connectTerminal(inductorR->getTerminal("B"),capacitor->getTerminal("A"));
   connectTerminal(capacitor->getTerminal("B"),resistor->getTerminal("B"));
