@@ -19,6 +19,7 @@ PKG_CHECK_MODULES(DEPS, fmatvec >= 0.9.1  hdf5serie)
 AC_SUBST([requires])
 
 PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[requires="$requires openmbvcppinterface";openmbv_compilerflag="-DHAVE_OPENMBVCPPINTERFACE";AC_DEFINE([HAVE_OPENMBVCPPINTERFACE],[1],[linking with OpenMBVCppInterface])],[echo "no"])
+AM_CONDITIONAL([COND_OPENMBVCPPINTERFACE], [test _$openmbv_compilerflag = _-DHAVE_OPENMBVCPPINTERFACE])
 AC_SUBST([openmbv_compilerflag])
 
 dnl By autoscan

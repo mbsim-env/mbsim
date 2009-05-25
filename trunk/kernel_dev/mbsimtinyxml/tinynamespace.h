@@ -23,7 +23,7 @@
  * This function also embeds the file referenced by a 'xi:include href="..."'
  * element in the node tree.
  */
-void incorporateNamespace(TiXmlElement* e, std::map<std::string,std::string> prefixns=std::map<std::string,std::string>());
+void incorporateNamespace(TiXmlElement* e, std::map<std::string,std::string> &nsprefix, std::map<std::string,std::string> prefixns=std::map<std::string,std::string>());
 
 /* Changes recursivly every element name from e.g.
  * '{http://my.host.org/mynamespace}:localname' to
