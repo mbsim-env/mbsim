@@ -8,8 +8,8 @@ MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
 
 FILENR=1
 HELP=no
-PARAM=".dummyfile.982346"
-PARAMINT=".dummyfile.982346"
+PARAM="none"
+PARAMINT="none"
 while [ $# -ne 0 ]; do
   case $1 in
     -h) HELP=yes;;
@@ -43,10 +43,10 @@ if [ "_$MBSIM" = "_" -o "_$MBSIMINT" = "_" ]; then
   exit
 fi
 
-rm -f .$MBSIM .$MBSIMINT
+rm -f .simplified.$MBSIM .simplified.$MBSIMINT
 
-$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAM $MBSIM http://mbsim.berlios.de/MBSim $MBSIMSCHEMA/mbsim.xsd .$MBSIM || exit 1
+$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAM $MBSIM $MBSIMSCHEMA/mbsim.xsd || exit 1
 
-$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAMINT $MBSIMINT http://mbsim.berlios.de/MBSimIntegrator $MBSIMSCHEMA/mbsimintegrator.xsd .$MBSIMINT || exit 1
+$MBXMLUTILSBINDIR/mbxmlutils-simplifyxml $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
-$bindir/mbsimxml .$MBSIM .$MBSIMINT || exit 1
+$bindir/mbsimxml .simplified.$MBSIM .simplified.$MBSIMINT || exit 1

@@ -30,14 +30,16 @@ void incorporateNamespace(TiXmlElement* e, map<string,string> &nsprefix, map<str
       prefix="";
     if(prefix=="{NOTAPREFIX}") { a=aNext; continue; }
     prefixns[prefix]=ns;
-    int i=0;
-    tinyNamespaceCompStr=prefix;
-    while(find_if(nsprefix.begin(), nsprefix.end(), comp)!=nsprefix.end()) {
-      stringstream istr; istr<<++i;
-      prefix=prefix+"_"+istr.str();
+    if(nsprefix.find(ns)==nsprefix.end()) {
+      int i=0;
       tinyNamespaceCompStr=prefix;
+      while(find_if(nsprefix.begin(), nsprefix.end(), comp)!=nsprefix.end()) {
+        stringstream istr; istr<<++i;
+        prefix=prefix+"_"+istr.str();
+        tinyNamespaceCompStr=prefix;
+      }
+      nsprefix[ns]=prefix;
     }
-    nsprefix[ns]=prefix;
     e->RemoveAttribute(a->Name());
     a=aNext;
   }
