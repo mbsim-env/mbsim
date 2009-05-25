@@ -25,7 +25,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   TiXmlElement *e=doc->FirstChildElement();
-  incorporateNamespace(e);
+  map<string,string> dummy;
+  incorporateNamespace(e, dummy);
 
   // create object for root element and check correct type
   DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createGroup(e));
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   e=doc->FirstChildElement();
-  incorporateNamespace(e);
+  incorporateNamespace(e, dummy);
 
   // create integrator
   Integrator *integrator=ObjectFactory::createIntegrator(e);

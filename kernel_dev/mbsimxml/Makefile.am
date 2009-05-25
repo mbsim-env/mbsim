@@ -9,11 +9,17 @@ bin_SCRIPTS = $(MAYBE_MBSIMXMLPP)
 
 
 
+# avoid double linking again lib*tinyxml if openmbvcppinterface is used
+if COND_OPENMBVCPPINTERFACE
+else
+  MAYBE_MBSIMTINYXML = -lmbsimtinyxml
+endif
+
 bin_PROGRAMS = mbsimxml
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
 mbsimxml_LDFLAGS = -L../mbsimtinyxml -L../mbsim
-mbsimxml_LDADD = -lmbsim $(OPENMBVCPPINTERFACE_LIBS) -lmbsimtinyxml
+mbsimxml_LDADD = -lmbsim $(OPENMBVCPPINTERFACE_LIBS) $(MAYBE_MBSIMTINYXML)
 
 mbsimxml_SOURCES = mbsimxml.cc
 

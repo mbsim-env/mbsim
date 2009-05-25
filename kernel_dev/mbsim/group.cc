@@ -167,9 +167,7 @@ namespace MBSim {
       Vec RrRD(ee->GetText());
       ee=ee->NextSiblingElement();
       SqrMat ARD(ee->GetText());
-          cout<<"XX "<<refF<<endl;
       addDynamicSystem(g, RrRD, ARD, refF);
-          cout<<"XX "<<endl;
       g->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
