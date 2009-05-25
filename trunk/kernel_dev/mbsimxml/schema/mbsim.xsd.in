@@ -59,23 +59,25 @@
 
   <xs:element name="Element" abstract="true" type="ElementType"/>
   <xs:complexType name="ElementType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="plotFeature">  
-        <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-        </xs:complexType> 
-      </xs:element>  
-      <xs:element name="plotFeatureForChildren">  
-        <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-        </xs:complexType> 
-      </xs:element>  
-      <xs:element name="plotFeatureRecursive">  
-        <xs:complexType>
-          <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
-        </xs:complexType> 
-      </xs:element>  
-    </xs:choice> 
+    <xs:sequence> <!-- a fix for xmllint -->
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="plotFeature">  
+          <xs:complexType>
+            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotFeatureForChildren">  
+          <xs:complexType>
+            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotFeatureRecursive">  
+          <xs:complexType>
+            <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
+          </xs:complexType> 
+        </xs:element>  
+      </xs:choice> 
+    </xs:sequence> <!-- a fix for xmllint -->
     <xs:attribute name="name" type="xs:token" use="required"/>
   </xs:complexType> 
 
