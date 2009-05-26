@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
-    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <relativeGroupLocation>[1;0;0]</relativeGroupLocation>
   <relativeGroupOrientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</relativeGroupOrientation>
   <RigidBody name="Box1">
