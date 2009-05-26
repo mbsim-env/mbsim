@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsimintegrator.xsd">
+<LSODARIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
   <tStart>0</tStart>
   <tEnd>5</tEnd>
   <dtPlot>1e-2</dtPlot>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
-    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
+    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
   <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
   <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>

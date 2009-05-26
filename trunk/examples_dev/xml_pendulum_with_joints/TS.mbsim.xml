@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"
-    xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://mbsim.berlios.de/MBSim /usr/users/fermat/friedma/project/MBSimNeu/local/share/mbsim/schema/mbsim.xsd">
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
   <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
   <Frame name="Os"/>
