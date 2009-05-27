@@ -121,8 +121,14 @@
             <xs:element ref="pv:embed"/>  
             <xs:element ref="DynamicSystem"/>  
           </xs:choice>
-          <xs:element ref="Object" minOccurs="0" maxOccurs="unbounded"/>  
-          <xs:element ref="Link" minOccurs="0" maxOccurs="unbounded"/>  
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="pv:embed"/>  
+            <xs:element ref="Object"/>  
+          </xs:choice>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="pv:embed"/>  
+            <xs:element ref="Link"/>  
+          </xs:choice>
         </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
