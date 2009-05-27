@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RigidBody name="Stab{n+1}" xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <q0>[lO+lU;-lO-(lU+lO)*(n-1);0]</q0>
+  <u0>[0;0;0]</u0>
+  <frameOfReference ref="../Frame[Os]"/>
+  <frameForKinematics ref="Frame[C]"/>
+  <mass>0.5</mass>
+  <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
+  <LinearTranslation>
+    <PJT>[1,0 ; 0,1 ; 0,0]</PJT>
+  </LinearTranslation>
+  <RotationAboutFixedAxis>
+    <axisOfRotation>[0;0;1]</axisOfRotation>
+  </RotationAboutFixedAxis>
+  <Frame name="O"/>
+  <relativeFrameLocation>[0;lO;0]</relativeFrameLocation>
+  <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+  <Frame name="U"/>
+  <relativeFrameLocation>[0;-lU;0]</relativeFrameLocation>
+  <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+  <ombv:Frustum name="dummy">
+    <ombv:staticColor>mod(n-1,3)/2</ombv:staticColor>
+    <ombv:initialTranslation>[0;-0.5;0]</ombv:initialTranslation>
+    <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
+    <ombv:scaleFactor>1</ombv:scaleFactor>
+    <ombv:baseRadius>0.02</ombv:baseRadius>
+    <ombv:topRadius>0.02</ombv:topRadius>
+    <ombv:height>1</ombv:height>
+    <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
+    <ombv:innerTopRadius>0</ombv:innerTopRadius>
+  </ombv:Frustum>
+</RigidBody>
