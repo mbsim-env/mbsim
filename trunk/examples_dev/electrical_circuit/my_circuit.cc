@@ -1,5 +1,5 @@
 #include "my_circuit.h"
-#include "mbsimelectronics/modeling_classes.h"
+#include "mbsimElectronics/modeling_classes.h"
 
 using namespace std;
 
