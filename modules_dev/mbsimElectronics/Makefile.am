@@ -1,9 +1,9 @@
-SUBDIRS = mbsimelectronics
+SUBDIRS = mbsimElectronics
 
-DIST_SUBDIRS = mbsimelectronics doc
+DIST_SUBDIRS = mbsimElectronics doc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = mbsimelectronics.pc
+pkgconfig_DATA = mbsimElectronics.pc
 
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc
