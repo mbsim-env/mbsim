@@ -266,7 +266,13 @@ namespace MBSim {
        */
       std::string getPath(char pathDelim='.');
 
+      /**
+       * \brief checks dependency on another object.
+       * \return the object the calling object is depending on. If
+       * there is no dependency, zero is returned.
+       */
       virtual Object* getObjectDependingOn() const {return 0;}
+
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);

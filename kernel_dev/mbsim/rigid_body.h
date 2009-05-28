@@ -342,6 +342,10 @@ namespace MBSim {
        */
       void facLLMNotConst() { Object::facLLM(); }
 
+      /**
+       * \brief checks dependency on another object.
+       * \return if the parent of the frame of reference is an object, this object is returned. Otherwise, zero is returned.
+       */
       Object* getObjectDependingOn() const { return dynamic_cast<Object*>(frameOfReference->getParent()); }
 
   };
