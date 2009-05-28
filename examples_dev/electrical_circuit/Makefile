@@ -9,10 +9,10 @@ sources = main.cc system.cc my_circuit.cc
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsimelectronics` 
+	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsimElectronics` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs mbsimelectronics` 
+	$(CXX) -o $@ $(objects) `pkg-config --libs mbsimElectronics` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
