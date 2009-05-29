@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
+  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
+  <contour>
+    <Plane name="Plane"/>
+    <relativeContourLocation>[0;0;0]</relativeContourLocation>
+    <relativeContourOrientation>[0,-1,0;1,0,0;0,0,1]</relativeContourOrientation>
+  </contour>
+  <RigidBody name="Body">
+    <q0>[0;1.2015e-2;0;0.1;0;0]</q0>
+    <u0>[0;0;0;0;180;0]</u0>
+    <frameOfReference ref="../Frame[I]"/>
+    <frameForKinematics ref="Frame[C]"/>
+    <mass>6e-3</mass>
+    <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
+    <translation>
+      <LinearTranslation>
+        <PJT>[1,0,0;0,1,0;0,0,1]</PJT>
+      </LinearTranslation>
+    </translation>
+    <rotation>
+      <CardanAngles/>
+    </rotation>
+    <contour>
+      <Sphere name="Sphere1">
+        <radius>1.5e-2</radius>
+        <enableOpenMBV/>
+      </Sphere>
+      <relativeContourLocation>[0;0.3e-2;0]</relativeContourLocation>
+      <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
+    </contour>
+    <contour>
+      <Sphere name="Sphere2">
+        <radius>0.5e-2</radius>
+        <enableOpenMBV/>
+      </Sphere>
+      <relativeContourLocation>[0;1.6e-2;0]</relativeContourLocation>
+      <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
+    </contour>
+    <enableOpenMBVFrameC>
+      <size>0.036</size>
+      <offset>0</offset>
+    </enableOpenMBVFrameC>
+  </RigidBody>
+  <Contact name="Contact1">
+    <generalizedForceLaw>
+      <UnilateralConstraint/>
+    </generalizedForceLaw>
+    <generalizedImpactLaw>
+      <UnilateralNewtonImpact>
+        <restitutionCoefficient>0.0</restitutionCoefficient>
+      </UnilateralNewtonImpact>
+    </generalizedImpactLaw>
+    <frictionForceLaw>
+      <SpatialCoulombFriction>
+        <frictionCoefficient>0.2</frictionCoefficient>
+      </SpatialCoulombFriction>
+    </frictionForceLaw>
+    <frictionImpactLaw>
+      <SpatialCoulombImpact>
+        <frictionCoefficient>0.2</frictionCoefficient>
+      </SpatialCoulombImpact>
+    </frictionImpactLaw>
+    <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
+  </Contact>
+  <Contact name="Contact2">
+    <generalizedForceLaw>
+      <UnilateralConstraint/>
+    </generalizedForceLaw>
+    <generalizedImpactLaw>
+      <UnilateralNewtonImpact>
+        <restitutionCoefficient>0.0</restitutionCoefficient>
+      </UnilateralNewtonImpact>
+    </generalizedImpactLaw>
+    <frictionForceLaw>
+      <SpatialCoulombFriction>
+        <frictionCoefficient>0.2</frictionCoefficient>
+      </SpatialCoulombFriction>
+    </frictionForceLaw>
+    <frictionImpactLaw>
+      <SpatialCoulombImpact>
+        <frictionCoefficient>0.2</frictionCoefficient>
+      </SpatialCoulombImpact>
+    </frictionImpactLaw>
+    <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
+  </Contact>
+  <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+</DynamicSystemSolver>

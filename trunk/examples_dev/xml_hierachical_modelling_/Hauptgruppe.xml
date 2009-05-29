@@ -15,15 +15,20 @@
     <frameForKinematics ref="Frame[C]"/>
     <mass>m</mass>
     <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-    <LinearTranslation>
-      <PJT>[0; 1; 0]</PJT>
-    </LinearTranslation>
-    <ombv:Cuboid name="dummy">
-      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-      <ombv:scaleFactor>1</ombv:scaleFactor>
-      <ombv:length>[h;h;h]</ombv:length>
-    </ombv:Cuboid>
+    <translation>
+      <LinearTranslation>
+        <PJT>[0; 1; 0]</PJT>
+      </LinearTranslation>
+    </translation>
+    <rotation/>
+    <openMBVRigidBody>
+      <ombv:Cuboid name="dummy">
+        <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+        <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+        <ombv:scaleFactor>1</ombv:scaleFactor>
+        <ombv:length>[h;h;h]</ombv:length>
+      </ombv:Cuboid>
+    </openMBVRigidBody>
     <enableOpenMBVFrameC>
       <size>2*h</size>
       <offset>1</offset>

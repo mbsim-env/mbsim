@@ -69,10 +69,10 @@ for D in $EXAMPLES; do
   cd $D
 
   XMLEXAMPLE=false
-  echo $D | grep "^\./xml_" && XMLEXAMPLE=true
-  echo $D | grep "^xml_" && XMLEXAMPLE=true
-  echo $D | grep "^\./xmlpp_" && XMLEXAMPLE=true_pp
-  echo $D | grep "^xmlpp_" && XMLEXAMPLE=true_pp
+  echo $D | grep "^\./xmlflat_" && XMLEXAMPLE=true
+  echo $D | grep "^xmlflat_" && XMLEXAMPLE=true
+  echo $D | grep "^\./xml_" && XMLEXAMPLE=true_pp
+  echo $D | grep "^xml_" && XMLEXAMPLE=true_pp
 
 
   if [ $XMLEXAMPLE == false ]; then
@@ -83,10 +83,10 @@ for D in $EXAMPLES; do
     ERROR=0
   elif [ $XMLEXAMPLE == true ]; then
     ERROR=1
-    $(pkg-config mbsim --variable=bindir)/mbsimxml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
+    $(pkg-config mbsim --variable=bindir)/mbsimflatxml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
   else
     ERROR=1
-    $(pkg-config mbsim --variable=bindir)/mbsimxmlpp --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
+    $(pkg-config mbsim --variable=bindir)/mbsimxml --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
   fi
 
   if [ $ERROR -eq 0 ]; then

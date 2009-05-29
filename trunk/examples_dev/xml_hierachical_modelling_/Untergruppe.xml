@@ -10,26 +10,35 @@
     <frameForKinematics ref="Frame[C]"/>
     <mass>m1</mass>
     <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-    <LinearTranslation>
-      <PJT>[0; 1; 0]</PJT>
-    </LinearTranslation>
-    <Frame name="P1">
-      <enableOpenMBV>
-        <size>h1</size>
-        <offset>1</offset>
-      </enableOpenMBV>
-    </Frame>
-    <relativeFrameLocation>[0;-h1/2;0]</relativeFrameLocation>
-    <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
-    <Frame name="P2"/>
-    <relativeFrameLocation>[0;h1/2;0]</relativeFrameLocation>
-    <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
-    <ombv:Cuboid name="dummy">
-      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-      <ombv:scaleFactor>1</ombv:scaleFactor>
-      <ombv:length>[h1;h1;h1]</ombv:length>
-    </ombv:Cuboid>
+    <translation>
+      <LinearTranslation>
+        <PJT>[0; 1; 0]</PJT>
+      </LinearTranslation>
+    </translation>
+    <rotation/>
+    <frame>
+      <Frame name="P1">
+        <enableOpenMBV>
+          <size>h1</size>
+          <offset>1</offset>
+        </enableOpenMBV>
+      </Frame>
+      <relativeFrameLocation>[0;-h1/2;0]</relativeFrameLocation>
+      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+    </frame>
+    <frame>
+      <Frame name="P2"/>
+      <relativeFrameLocation>[0;h1/2;0]</relativeFrameLocation>
+      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+    </frame>
+    <openMBVRigidBody>
+      <ombv:Cuboid name="dummy">
+        <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+        <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+        <ombv:scaleFactor>1</ombv:scaleFactor>
+        <ombv:length>[h1;h1;h1]</ombv:length>
+      </ombv:Cuboid>
+    </openMBVRigidBody>
   </RigidBody>
   <RigidBody name="Box2">
     <plotFeature feature="-stateDerivative"/>
@@ -39,23 +48,30 @@
     <frameForKinematics ref="Frame[C]"/>
     <mass>m2</mass>
     <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-    <LinearTranslation>
-      <PJT>[0; 1; 0]</PJT>
-    </LinearTranslation>
-    <Frame name="P1">
-      <enableOpenMBV>
-        <size>h2</size>
-        <offset>1</offset>
-      </enableOpenMBV>
-    </Frame>
-    <relativeFrameLocation>[0;-h2/2;0]</relativeFrameLocation>
-    <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
-    <ombv:Cuboid name="dummy">
-      <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-      <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-      <ombv:scaleFactor>1</ombv:scaleFactor>
-      <ombv:length>[h2;h2;h2]</ombv:length>
-    </ombv:Cuboid>
+    <translation>
+      <LinearTranslation>
+        <PJT>[0; 1; 0]</PJT>
+      </LinearTranslation>
+    </translation>
+    <rotation/>
+    <frame>
+      <Frame name="P1">
+        <enableOpenMBV>
+          <size>h2</size>
+          <offset>1</offset>
+        </enableOpenMBV>
+      </Frame>
+      <relativeFrameLocation>[0;-h2/2;0]</relativeFrameLocation>
+      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+    </frame>
+    <openMBVRigidBody>
+      <ombv:Cuboid name="dummy">
+        <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+        <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+        <ombv:scaleFactor>1</ombv:scaleFactor>
+        <ombv:length>[h2;h2;h2]</ombv:length>
+      </ombv:Cuboid>
+    </openMBVRigidBody>
   </RigidBody>
   <LinearSpringDamper name="Feder1">
     <stiffness>c1</stiffness>
