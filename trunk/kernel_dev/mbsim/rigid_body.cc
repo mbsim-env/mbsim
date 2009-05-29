@@ -429,58 +429,60 @@ namespace MBSim {
     setMass(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(SymMat(e->GetText()));
-    e=e->NextSiblingElement();
-    Translation *trans=ObjectFactory::createTranslation(e);
+    e=element->FirstChildElement(MBSIMNS"translation");
+    Translation *trans=ObjectFactory::createTranslation(e->FirstChildElement());
     if(trans) {
       setTranslation(trans);
-      trans->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      trans->initializeUsingXML(e->FirstChildElement());
     }
-    Rotation *rot=ObjectFactory::createRotation(e);
+    e=element->FirstChildElement(MBSIMNS"rotation");
+    Rotation *rot=ObjectFactory::createRotation(e->FirstChildElement());
     if(rot) {
       setRotation(rot);
-      rot->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      rot->initializeUsingXML(e->FirstChildElement());
     }
-    while(e->ValueStr()==MBSIMNS"Frame") {
-      Frame *f=new Frame(e->Attribute("name"));
+    e=e->NextSiblingElement();
+    while(e && e->ValueStr()==MBSIMNS"frame") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Frame *f=new Frame(ec->Attribute("name"));
       TiXmlElement *ee;
-      if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
+      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
         f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
                          atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
-      e=e->NextSiblingElement();
+      ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(e->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
-        e=e->NextSiblingElement();
+      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        ec=ec->NextSiblingElement();
       }
-      Vec RrRF(e->GetText());
-      e=e->NextSiblingElement();
-      SqrMat ARF(e->GetText());
+      Vec RrRF(ec->GetText());
+      ec=ec->NextSiblingElement();
+      SqrMat ARF(ec->GetText());
       addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
-    Contour *c;
-    while((c=ObjectFactory::createContour(e))) {
-      TiXmlElement *contourElement=e; // save for later initialization
-      e=e->NextSiblingElement();
+    while(e && e->ValueStr()==MBSIMNS"contour") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Contour *c=ObjectFactory::createContour(ec);
+      TiXmlElement *contourElement=ec; // save for later initialization
+      ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(e->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
-        e=e->NextSiblingElement();
+      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        ec=ec->NextSiblingElement();
       }
-      Vec RrRC(e->GetText());
-      e=e->NextSiblingElement();
-      SqrMat ARC(e->GetText());
+      Vec RrRC(ec->GetText());
+      ec=ec->NextSiblingElement();
+      SqrMat ARC(ec->GetText());
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       e=e->NextSiblingElement();
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e));
-    if(rb) {
+    if(e && e->ValueStr()==MBSIMNS"openMBVRigidBody") {
+      OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       setOpenMBVRigidBody(rb);
-      rb->initializeUsingXML(e);
+      rb->initializeUsingXML(e->FirstChildElement());
     }
     
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");

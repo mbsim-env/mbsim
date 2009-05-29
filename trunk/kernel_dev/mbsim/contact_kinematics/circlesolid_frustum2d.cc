@@ -71,7 +71,7 @@ namespace MBSim {
         throw new MBSimError("ERROR (Cylinder): Not implemented!");
       }
       double phi = M_PI*0.5 - fabs(psi);
-      double alpha; // Winkel der Drehmatrix
+      double alpha=0; // Winkel der Drehmatrix
 
       if(l-r_h > -epsroot() && l0>0)
       {
