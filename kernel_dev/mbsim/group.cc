@@ -114,39 +114,46 @@ namespace MBSim {
   void Group::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Element::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"relativeGroupOrientation");
-    e=e->NextSiblingElement();
+    e=element->FirstChildElement();
+    while(e && e->ValueStr()!=MBSIMNS"frame" &&
+          e->ValueStr()!=MBSIMNS"contour" &&
+          ObjectFactory::createGroup(e)==0 &&
+          ObjectFactory::createObject(e)==0 &&
+          ObjectFactory::createLink(e)==0)
+      e=e->NextSiblingElement();
 
-    while(e->ValueStr()==MBSIMNS"Frame") {
-      Frame *f=new Frame(e->Attribute("name"));
+    while(e && e->ValueStr()==MBSIMNS"frame") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Frame *f=new Frame(ec->Attribute("name"));
       TiXmlElement *ee;
-      if((ee=e->FirstChildElement(MBSIMNS"enableOpenMBV")))
+      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
         f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
                          atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
-      e=e->NextSiblingElement();
+      ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(e->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
-        e=e->NextSiblingElement();
+      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        ec=ec->NextSiblingElement();
       }
-      Vec RrRF(e->GetText());
-      e=e->NextSiblingElement();
-      SqrMat ARF(e->GetText());
+      Vec RrRF(ec->GetText());
+      ec=ec->NextSiblingElement();
+      SqrMat ARF(ec->GetText());
       addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
-    Contour *c;
-    while((c=ObjectFactory::createContour(e))) {
-      TiXmlElement *contourElement=e; // save for later initialization
-      e=e->NextSiblingElement();
+    while(e && e->ValueStr()==MBSIMNS"contour") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Contour *c=ObjectFactory::createContour(ec);
+      TiXmlElement *contourElement=ec; // save for later initialization
+      ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(e->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(e->Attribute("ref"));
-        e=e->NextSiblingElement();
+      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        ec=ec->NextSiblingElement();
       }
-      Vec RrRC(e->GetText());
-      e=e->NextSiblingElement();
-      SqrMat ARC(e->GetText());
+      Vec RrRC(ec->GetText());
+      ec=ec->NextSiblingElement();
+      SqrMat ARC(ec->GetText());
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       e=e->NextSiblingElement();
@@ -154,19 +161,26 @@ namespace MBSim {
     Group *g;
     while((g=ObjectFactory::createGroup(e))) {
       TiXmlElement *ee=e->FirstChildElement();
-      while(ee->ValueStr()!=MBSIMNS"referenceFrame" && ee->ValueStr()!=MBSIMNS"relativeGroupLocation")
+      while(ee && ee->ValueStr()!=MBSIMNS"referenceFrame" &&
+            ee->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
+            ee->ValueStr()!=MBSIMNS"relativeGroupOrientation")
         ee=ee->NextSiblingElement();
       Frame *refF=0;
-      if(ee->ValueStr()==MBSIMNS"referenceFrame") {
+      if(ee && ee->ValueStr()==MBSIMNS"referenceFrame") {
         string ref=ee->Attribute("ref");
         if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
         ref=ref.substr(3); // delete '../' from the reference, we are still in the parent class!
         refF=(Frame*)getFrameByPath(ref);
         ee=ee->NextSiblingElement();
       }
-      Vec RrRD(ee->GetText());
-      ee=ee->NextSiblingElement();
-      SqrMat ARD(ee->GetText());
+      Vec RrRD("[0;0;0]");
+      if(ee && ee->ValueStr()==MBSIMNS"relativeGroupLocation") {
+        RrRD=Vec(ee->GetText());
+        ee=ee->NextSiblingElement();
+      }
+      SqrMat ARD("[1,0,0;0,1,0;0,0,1]");
+      if(ee && ee->ValueStr()==MBSIMNS"relativeGroupOrientation")
+        ARD=SqrMat(ee->GetText());
       addDynamicSystem(g, RrRD, ARD, refF);
       g->initializeUsingXML(e);
       e=e->NextSiblingElement();

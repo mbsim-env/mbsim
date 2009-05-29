@@ -3,9 +3,9 @@ SUBDIRS = schema .
 
 
 if COND_MBXMLUTILS
-  MAYBE_MBSIMXMLPP = mbsimxmlpp
+  MAYBE_MBSIMXML = mbsimxml
 endif
-bin_SCRIPTS = $(MAYBE_MBSIMXMLPP)
+bin_SCRIPTS = $(MAYBE_MBSIMXML)
 
 
 
@@ -15,13 +15,13 @@ else
   MAYBE_MBSIMTINYXML = -lmbsimtinyxml
 endif
 
-bin_PROGRAMS = mbsimxml
+bin_PROGRAMS = mbsimflatxml
 
-mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
-mbsimxml_LDFLAGS = -L../mbsimtinyxml -L../mbsim
-mbsimxml_LDADD = -lmbsim $(OPENMBVCPPINTERFACE_LIBS) $(MAYBE_MBSIMTINYXML)
+mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS)
+mbsimflatxml_LDFLAGS = -L../mbsimtinyxml -L../mbsim
+mbsimflatxml_LDADD = -lmbsim $(OPENMBVCPPINTERFACE_LIBS) $(MAYBE_MBSIMTINYXML)
 
-mbsimxml_SOURCES = mbsimxml.cc
+mbsimflatxml_SOURCES = mbsimflatxml.cc
 
 
 

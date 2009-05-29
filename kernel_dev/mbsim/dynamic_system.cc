@@ -1265,6 +1265,13 @@ namespace MBSim {
   FrameInterface *DynamicSystem::getFrameByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
+    // absolut path
+    if(i==0)
+      if(parent)
+        return parent->getFrameByPath(path);
+      else
+        return getFrameByPath(path.substr(1));
+    // relative path
     string firstPart=path.substr(0, i);
     string restPart=path.substr(i+1);
     if(firstPart=="..")
@@ -1282,6 +1289,13 @@ namespace MBSim {
   Contour *DynamicSystem::getContourByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
+    // absolut path
+    if(i==0)
+      if(parent)
+        return parent->getContourByPath(path);
+      else
+        return getContourByPath(path.substr(1));
+    // relative path
     string firstPart=path.substr(0, i);
     string restPart=path.substr(i+1);
     if(firstPart=="..")

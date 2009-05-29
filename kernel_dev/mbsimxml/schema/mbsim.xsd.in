@@ -48,7 +48,7 @@
      <!-- pattern value="((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Frame\[X\]" with
             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
             from physicalvariable.xsd name attribute -->
-     <xs:pattern value="((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+     <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -109,20 +109,28 @@
       <xs:extension base="DynamicSystemType">
         <xs:sequence>
           <xs:element ref="referenceFrame" minOccurs="0"/>
-          <xs:element name="relativeGroupLocation" type="pv:lengthVector"/>  
-          <xs:element name="relativeGroupOrientation" type="pv:nounitMatrix"/>  
-          <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="Frame"/>
-            <xs:element ref="referenceFrame" minOccurs="0"/>
-            <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
-            <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
-          </xs:sequence>
-          <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="Contour"/>
-            <xs:element ref="referenceFrame" minOccurs="0"/>
-            <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
-            <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
-          </xs:sequence>
+          <xs:element name="relativeGroupLocation" type="pv:lengthVector" minOccurs="0"/>  
+          <xs:element name="relativeGroupOrientation" type="pv:nounitMatrix" minOccurs="0"/>  
+          <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Frame"/>
+                <xs:element ref="referenceFrame" minOccurs="0"/>
+                <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
+                <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Contour"/>
+                <xs:element ref="referenceFrame" minOccurs="0"/>
+                <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
+                <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element ref="pv:embed"/>  
             <xs:element ref="DynamicSystem"/>  
@@ -188,21 +196,47 @@
           </xs:element>
           <xs:element name="mass" type="pv:massScalar"/>
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix"/>
-          <xs:element ref="Translation" minOccurs="0"/>
-          <xs:element ref="Rotation" minOccurs="0"/>
-          <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="Frame"/>
-            <xs:element ref="referenceFrame" minOccurs="0"/>
-            <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
-            <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
-          </xs:sequence>
-          <xs:sequence minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="Contour"/>
-            <xs:element ref="referenceFrame" minOccurs="0"/>
-            <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
-            <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
-          </xs:sequence>
-          <xs:element ref="ombv:RigidBody" minOccurs="0"/>
+          <xs:element name="translation">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Translation" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="rotation">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Rotation" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Frame"/>
+                <xs:element ref="referenceFrame" minOccurs="0"/>
+                <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
+                <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Contour"/>
+                <xs:element ref="referenceFrame" minOccurs="0"/>
+                <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
+                <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVRigidBody" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:RigidBody"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
@@ -259,8 +293,20 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="direction" type="pv:nounitMatrix"/>
-                <xs:element ref="GeneralizedForceLaw"/>
-                <xs:element ref="GeneralizedImpactLaw"/>
+                <xs:element name="generalizedForceLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="GeneralizedForceLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="generalizedImpactLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="GeneralizedImpactLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -268,8 +314,20 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="direction" type="pv:nounitMatrix"/>
-                <xs:element ref="GeneralizedForceLaw"/>
-                <xs:element ref="GeneralizedImpactLaw"/>
+                <xs:element name="generalizedForceLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="GeneralizedForceLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="generalizedImpactLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="GeneralizedImpactLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -289,10 +347,34 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element ref="GeneralizedForceLaw"/>
-          <xs:element ref="GeneralizedImpactLaw"/>
-          <xs:element ref="FrictionForceLaw"/>
-          <xs:element ref="FrictionImpactLaw"/>
+          <xs:element name="generalizedForceLaw">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="generalizedImpactLaw">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="GeneralizedImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frictionForceLaw">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionForceLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="frictionImpactLaw">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="FrictionImpactLaw"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="connect">
             <xs:complexType>
               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>

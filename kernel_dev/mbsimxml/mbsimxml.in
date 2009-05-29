@@ -1,0 +1,41 @@
+#! /bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=${exec_prefix}/bin
+MBSIMSCHEMA=@MBSIMSCHEMA@
+MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
+
+# help
+if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
+  echo "Usage: mbsimxml [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "                [--intparam <integratorparameterfile>] <integratorfile>"
+  exit
+fi
+
+# parameters
+if [ "_$1" = "_--mbsimparam" ]; then
+  PARAM=$2
+  shift
+  shift
+else
+  PARAM=none
+fi
+MBSIM=$1
+shift
+if [ "_$1" = "_--intparam" ]; then
+  PARAMINT=$2
+  shift
+  shift
+else
+  PARAMINT=none
+fi
+MBSIMINT=$1
+
+rm -f .pp.$MBSIM .pp.$MBSIMINT
+
+$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMSCHEMA/mbsim.xsd || exit 1
+
+$MBXMLUTILSBINDIR/mbxmlutilspp $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
+
+$bindir/mbsimflatxml .pp.$MBSIM .pp.$MBSIMINT || exit 1
