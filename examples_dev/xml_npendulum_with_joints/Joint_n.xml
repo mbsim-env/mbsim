@@ -2,8 +2,12 @@
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <force>
     <direction>[1,0 ; 0,1 ; 0,0]</direction>
-    <BilateralConstraint/>
-    <BilateralImpact/>
+    <generalizedForceLaw>
+      <BilateralConstraint/>
+    </generalizedForceLaw>
+    <generalizedImpactLaw>
+      <BilateralImpact/>
+    </generalizedImpactLaw>
   </force>
   <connect ref1="../Object[Stab{n}]/Frame[U]" ref2="../Object[Stab{n+1}]/Frame[O]"/>
 </Joint>
