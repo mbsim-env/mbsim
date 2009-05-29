@@ -22,6 +22,7 @@
 #define _CONTACT_KINEMATICS_CIRCLESOLID_FRUSTUM2D_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -32,14 +33,15 @@ namespace MBSim {
    * \brief pairing circle outer side to planar frustum
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \todo change stage to new interface TODO
+   * \date 2009-05-27 updateg() implementes (Bastian Esefeld)
+   * \todo implementation of updatewb() TODO
    */
   class ContactKinematicsCircleSolidFrustum2D : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidFrustum2D:updatewb): Not implemented!"); }
       /***************************************************/
 
     private:

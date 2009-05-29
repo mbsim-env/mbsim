@@ -62,7 +62,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour"; }
-      virtual void plot(double t, double dt = 1); 
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -205,9 +204,6 @@ namespace MBSim {
        */
       Frame R;
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::RigidBody *openMBVRigidBody;
-#endif
   };
 
   /**
@@ -221,7 +217,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      RigidContour(const std::string &name) : Contour(name) {}
+      RigidContour(const std::string &name) : Contour(name)
+# ifdef HAVE_OPENMBVCPPINTERFACE
+                                              , openMBVRigidBody(0)
+# endif
+                                              {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
@@ -231,6 +231,12 @@ namespace MBSim {
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp);
       /***************************************************/
+
+    protected:
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::RigidBody *openMBVRigidBody;
+#endif
+
   };
 
   /**
@@ -368,6 +374,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum2D"; }
+      virtual void initPlot();
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -376,6 +383,10 @@ namespace MBSim {
       void setHeight(double h_) { h = h_; }
       double getHeight() const { return h; } 
       /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
+#endif
 
     private:
       /**
@@ -387,6 +398,7 @@ namespace MBSim {
        * \brief height of frustum
        */
       double h;
+
   };
 
   /** 
@@ -627,6 +639,7 @@ namespace MBSim {
    * \brief sphere 
    * \author Martin Foerg
    * \date 2009-04-20 some comments (Thorsten Schindler) 
+   * \date 2009-05-28 new interface (Bastian Esefeld)
    */
   class Sphere : public RigidContour {
     public:
@@ -635,6 +648,16 @@ namespace MBSim {
        * \param name of contour
        */
       Sphere(const std::string &name) : RigidContour(name), r(0.) {}
+      
+      /**
+       * \brief constructor
+       * \param name of sphere
+       * \param radius of sphere
+       */
+      Sphere(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+
+
+      virtual void initPlot();
 
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }
@@ -669,13 +692,18 @@ namespace MBSim {
        */
       Frustum(const std::string &name) : RigidContour(name), r(2), h(0.), outCont(false) {}
 
+      /* INHERITED INTERFACE OF ELEMENT */
+      std::string getType() const { return "Frustum"; }
+      virtual void initPlot();
+      /***************************************************/
+
       /**
        * \brief constructor
        * \param name of the contour
        * \param contact from outside?
        */
       Frustum(const std::string &name, bool outCont_) : RigidContour(name), r(2), h(0.), outCont(outCont_) {}
-
+      
       /* GETTER / SETTER */
       void setRadii(const fmatvec::Vec &r_);
       const fmatvec::Vec& getRadii() const;
@@ -684,6 +712,10 @@ namespace MBSim {
       void setOutCont(bool outCont_);
       bool getOutCont() const;
       /***************************************************/
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true);
+#endif
 
     private:
       /** 
