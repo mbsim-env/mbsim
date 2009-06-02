@@ -98,7 +98,7 @@ fi
 dnl XML
 PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils,[requires="$requires mbxmlutils"; MBXMLUTILS=yes],[MBXMLUTILS=no])
 AM_CONDITIONAL([COND_MBXMLUTILS], [test "_$MBXMLUTILS" = "_yes"])
-AC_SUBST([MBSIMSCHEMA],[$datarootdir/$PACKAGE/schema])
+AC_SUBST([MBSIMSCHEMA],[$datadir/$PACKAGE/schema])
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
