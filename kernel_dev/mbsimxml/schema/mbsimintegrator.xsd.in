@@ -40,6 +40,25 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="RADAU5Integrator" substitutionGroup="Integrator" type="RADAU5IntegratorType"/>
+  <xs:complexType name="RADAU5IntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="aTol" type="pv:nounitVector"/>  
+            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="rTol" type="pv:nounitVector"/>  
+            <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:element name="dt0" type="pv:timeScalar"/>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType"/>
   <xs:complexType name="LSODARIntegratorType">
     <xs:complexContent>
