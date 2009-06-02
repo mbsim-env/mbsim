@@ -510,6 +510,25 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="RegularizedBilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedBilateralConstraintType"/>
+  <xs:complexType name="RegularizedBilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedForceLawType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="RegularizedBilateralConstraint" type="LinearRegularizedBilateralConstraintType"/>
+  <xs:complexType name="LinearRegularizedBilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="RegularizedBilateralConstraintType">
+        <xs:sequence>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType"/>
   <xs:complexType name="FrictionForceLawType"/>
 

@@ -8,6 +8,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/integrators/dopri5_integrator.h"
+#include "mbsim/integrators/radau5_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"
 
 using namespace std;
@@ -61,6 +62,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
       return new DOPRI5Integrator;
+    if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
+      return new RADAU5Integrator;
     if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
       return new LSODARIntegrator;
     return 0;
@@ -72,6 +75,8 @@ namespace MBSim {
       return new BilateralConstraint;
     if(element->ValueStr()==MBSIMNS"UnilateralConstraint")
       return new UnilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedBilateralConstraint")
+      return new LinearRegularizedBilateralConstraint;
     return 0;
   }
 

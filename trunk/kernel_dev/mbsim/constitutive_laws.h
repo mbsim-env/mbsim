@@ -285,6 +285,7 @@ namespace MBSim {
       double operator()(double g,  double gd) { 
 	return -c*g - d*gd;
       }
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class LinearRegularizedPlanarCoulombFriction : public FrictionForceLaw {
