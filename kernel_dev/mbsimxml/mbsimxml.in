@@ -1,4 +1,6 @@
 #! /bin/sh
+# Unix sh variant of mbsimxml (mbsimxml.in)
+# If editing this file, also edit the file mbsimxml.bat.in!
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@

@@ -1,0 +1,47 @@
+@echo off
+rem Windows batch variant of mbsimxml (mbsimxml.bat.in)
+rem If editing this file, also edit the file mbsimxml.in!
+
+set bindir=@win_bindir@
+set MBSIMSCHEMA=@win_MBSIMSCHEMA@
+set MBXMLUTILSBINDIR=@win_MBXMLUTILSBINDIR@
+
+rem help
+if %1!==! goto help
+if "%1"=="-h" goto help
+if "%1"=="--help" goto help
+goto help_cont
+:help
+  echo "Usage: mbsimxml [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "                [--intparam <integratorparameterfile>] <integratorfile>"
+  goto end
+:help_cont
+
+rem parameters
+if "%1" == "--mbsimparam" (
+  set PARAM=%2
+  shift
+  shift
+) else (
+  set PARAM=none
+)
+set MBSIM=%1
+shift
+if "%1" == "--intparam" (
+  set PARAMINT=%2
+  shift
+  shift
+) else (
+  set PARAMINT=none
+)
+set MBSIMINT=%1
+
+del .pp.%MBSIM% .pp.%MBSIMINT%
+
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMSCHEMA%/mbsim.xsd || goto end
+
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
+
+%bindir%/mbsimflatxml .pp.%MBSIM% .pp.%MBSIMINT% || goto end
+
+:end
