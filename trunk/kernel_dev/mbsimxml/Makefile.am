@@ -3,7 +3,7 @@ SUBDIRS = schema .
 
 
 if COND_MBXMLUTILS
-  MAYBE_MBSIMXML = mbsimxml
+  MAYBE_MBSIMXML = mbsimxml mbsimxml.bat
 endif
 bin_SCRIPTS = $(MAYBE_MBSIMXML)
 

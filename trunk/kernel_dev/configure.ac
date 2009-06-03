@@ -34,6 +34,7 @@ dnl Check for MinGW
 AC_CANONICAL_HOST
 if test "_$host_os" = "_mingw32" ; then
   AC_DEFINE([MINGW], [1], [Host System is MinGW/MSys])
+  CPPFLAGS="$CPPFLAGS -Wno-uninitialized" # MinGW-g++-3.4 and -O2 => uninitialized value in stl header
 fi
 
 
@@ -103,7 +104,22 @@ AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
 
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile mbsimxml/Makefile mbsimxml/schema/Makefile mbsimxml/schema/mbsim.xsd mbsimxml/schema/mbsimintegrator.xsd mbsimxml/doc/Makefile])
+dnl Helper functions to convert path to windows
+dirtowin() {
+  echo $(cd $1 && pwd -W 2> /dev/null)
+}
+filetowin() {
+  echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
+}
+dnl Convert to Windows path
+win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
+AC_SUBST([win_MBXMLUTILSBINDIR])
+win_MBSIMSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMSCHEMA)))
+AC_SUBST([win_MBSIMSCHEMA])
+win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
+AC_SUBST([win_bindir])
+
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile mbsimxml/Makefile mbsimxml/schema/Makefile mbsimxml/schema/mbsim.xsd mbsimxml/schema/mbsimintegrator.xsd mbsimxml/doc/Makefile mbsimxml/mbsimxml.bat])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
 
 AC_OUTPUT
