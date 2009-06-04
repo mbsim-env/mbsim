@@ -21,7 +21,6 @@
 #ifndef _CONTACT_UTILS_H_
 #define _CONTACT_UTILS_H_
 
-#include "mbsim/element.h"
 #include "mbsim/contact.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"

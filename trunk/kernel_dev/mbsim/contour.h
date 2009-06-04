@@ -21,9 +21,7 @@
 #ifndef _CONTOUR_H_
 #define _CONTOUR_H_
 
-#include "mbsim/flexible_body.h"
 #include "mbsim/element.h"
-#include "mbsim/userfunction_contour.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsim/frame.h"
 
@@ -44,6 +42,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-23 some comments (Thorsten Schindler)
    * \date 2009-04-20 RigidContour added (Thorsten Schindler)
+   * \date 2009-06-04 not rigid things are in separate files
    *
    * kinematics is stored in coordinate system class and is individually evaluated in specific contact kinematics 
    */
@@ -102,7 +101,7 @@ namespace MBSim {
        * \param contour position
        */
       virtual fmatvec::Vec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); } 
-      
+
       /**
        * \param position of contour in inertial frame
        */
@@ -402,180 +401,6 @@ namespace MBSim {
   };
 
   /** 
-   * \brief basic class for contours described by a parametrisation
-   * \author Thorsten Schindler
-   * \date 2009-04-20 initial commit (Thorsten Schindler)
-   */
-  template <class AT>
-    class ContourContinuum : public Contour {
-      public:
-        /**
-         * \brief constructor 
-         * \param name of contour
-         */
-        ContourContinuum(const std::string &name) : Contour(name) {}
-
-        /* INHERITED INTERFACE OF ELEMENT */
-        virtual std::string getType() const { return "ContourContinuum"; }
-        /***************************************************/
-        
-        /* INTERFACE FOR DERIVED CLASSES */
-        /**
-         * \brief compute necessary parameters for contact kinematics root function
-         * \param contour point data
-         */
-        virtual void computeRootFunctionPosition(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionFirstTangent(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionNormal(ContourPointData &cp) = 0;
-        virtual void computeRootFunctionSecondTangent(ContourPointData &cp) = 0;
-
-        /* GETTER / SETTER */
-        void setAlphaStart(AT as_) { as = as_; }
-        void setAlphaEnd(AT ae_) { ae = ae_; }
-        double getAlphaStart() const { return as; }
-        double getAlphaEnd() const { return ae; }
-        void setNodes(const std::vector<AT> &nodes_) { nodes = nodes_; }
-        const std::vector<AT>& getNodes() const { return nodes; }
-        /***************************************************/
-
-      protected:
-        AT as, ae;
-        std::vector<AT> nodes;
-    };
-
-  /** 
-   * \brief basic class for contours described by one contour parameter \f$s\f$
-   * \author Roland Zander
-   * \date 2009-04-20 frame-concept (Thorsten Schindler)
-   */
-  class Contour1s : public ContourContinuum<double> {
-    public:
-      /**
-       * \brief constructor 
-       * \param name of contour
-       */
-      Contour1s(const std::string &name) : ContourContinuum<double>(name), diameter(0.) {}
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Contour1s"; }
-      /***************************************************/
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \return tangent in world frame
-       * \param contour position
-       */
-      virtual fmatvec::Vec computeTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); return cp.getFrameOfReference().getOrientation().col(1); }
-
-      /**
-       * \return binormal in world frame
-       * \param Lagrangian position
-       */
-      virtual fmatvec::Vec computeBinormal(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); return cp.getFrameOfReference().getOrientation().col(2); }
-      /***************************************************/
-
-      /* GETTER / SETTER */
-      void setDiameter(double diameter_) { diameter= diameter_; }
-      double getDiameter() { return diameter; }
-      /***************************************************/
-
-    protected:
-      /**
-       * \brief diameter of neutral fibre
-       */
-      double diameter;
-  };
-
-  /** 
-   * \brief analytical description of contours with one contour parameter
-   * \author Robert Huber
-   * \date 2009-04-20 some comments (Thorsten Schindler)
-   */
-  class Contour1sAnalytical : public Contour1s {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Contour1sAnalytical(const std::string &name) : Contour1s(name) {}
-
-      /**
-       * \brief destructor
-       */
-      virtual ~Contour1sAnalytical() { if (funcCrPC) delete funcCrPC; }
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Contour1sAnalytical"; }
-      /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
-      /***************************************************/
-
-      /* GETTER / SETTER */
-      void setUserFunction(UserFunctionContour1s* f) { funcCrPC = f; }
-      UserFunctionContour1s* getUserFunction() { return funcCrPC; }
-      /***************************************************/
-
-    protected:
-      UserFunctionContour1s  *funcCrPC;
-  };
-
-  /** 
-   * \brief numerical description of contours with one contour parameter
-   * \author Roland Zander
-   * \author Thorsten Schindler
-   * \date 2009-03-18 initial comment (Thorsten Schindler)
-   * \date 2009-04-05 adapted to non-template FlexibleBody (Schindler / Zander)
-   */
-  class Contour1sFlexible : public Contour1s {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Contour1sFlexible(const std::string &name) : Contour1s(name) {}
-
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
-      /***************************************************/
-      
-      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); }
-      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); }
-      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); }
-      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); }
-      /***************************************************/
-  };
-
-  /** 
-   * \brief flexible cylinder for one dimensional flexible bodies
-   * \author Roland Zander
-   * \author Thorsten Schindler
-   * \date 2009-04-20 frame concept (Thorsten Schindler)
-   */
-  class CylinderFlexible : public Contour1sFlexible {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      CylinderFlexible(const std::string &name) : Contour1sFlexible(name) {}
-
-      /* GETTER / SETTER */
-      void setRadius(double r_) { r = r_; }
-      double getRadius() const  { return r; }
-      /***************************************************/
-
-    protected:
-      /**
-       * \brief radius
-       */
-      double r;
-  };
-
-  /** 
    * \brief plane without borders
    * \author Martin Foerg
    * \date 2009-03-23 some comments (Thorsten Schindler)
@@ -648,7 +473,7 @@ namespace MBSim {
        * \param name of contour
        */
       Sphere(const std::string &name) : RigidContour(name), r(0.) {}
-      
+
       /**
        * \brief constructor
        * \param name of sphere
@@ -703,7 +528,7 @@ namespace MBSim {
        * \param contact from outside?
        */
       Frustum(const std::string &name, bool outCont_) : RigidContour(name), r(2), h(0.), outCont(outCont_) {}
-      
+
       /* GETTER / SETTER */
       void setRadii(const fmatvec::Vec &r_);
       const fmatvec::Vec& getRadii() const;
@@ -740,45 +565,6 @@ namespace MBSim {
   inline double Frustum::getHeight() const { return h; }
   inline void Frustum::setOutCont(bool outCont_) { outCont = outCont_; }
   inline bool Frustum::getOutCont() const { return outCont; }
-
-  /**
-   * \brief basic contour described by two contour parameters \f$\vs\f$
-   * \author Roland Zander
-   * \date 2009-04-20 frame concept (Thorsten Schindler)
-   */
-  class Contour2s : public ContourContinuum<fmatvec::Vec> {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Contour2s(const std::string &name) : ContourContinuum<fmatvec::Vec>(name) {}
-
-      /**
-       * \return tangents in world frame
-       * \param Lagrangian position
-       */
-      virtual fmatvec::Mat computeTangentialPlane(fmatvec::Vec alpha) { ContourPointData cp(alpha); updateKinematicsForFrame(cp,cosy); return cp.getFrameOfReference().getOrientation()(0,1,2,2); }
-  };
-
-  /** 
-   * \brief numerical description of contours with two contour parameter
-   * \author Thorsten Schindler
-   * \date 2009-04-21 initial comment (Thorsten Schindler)
-   */
-  class Contour2sFlexible : public Contour2s {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Contour2sFlexible(const std::string &name) : Contour2s(name) {}
-
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
-      /***************************************************/
-  };
 
   /*! \brief Basis-Class for Contour interpolation between Point s, standard contact Point-ContourInterpolation is implemented
     special interpolations only need to provide (as derived class) the pure virtuals predefined here

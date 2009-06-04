@@ -33,7 +33,7 @@ namespace MBSim {
    * \brief pairing point to Contour1s
    * \author Roland Zander
    * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \todo change stage to new interface TODO
+   * \date 2009-06-04 new interface (Thorsten Schindler)
    */
   class ContactKinematicsPointContour1s: public ContactKinematics {
     public:
@@ -44,8 +44,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented!"); }
       /***************************************************/
 
     private:
@@ -63,10 +63,9 @@ namespace MBSim {
        * \brief root function
        */
       FuncPairContour1sPoint *func;
-
   };
 
 }
 
-#endif
+#endif /* _CONTACT_KINEMATICS_POINT_CONTOUR1S_H_ */
 

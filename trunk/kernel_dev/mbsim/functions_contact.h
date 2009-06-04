@@ -22,6 +22,7 @@
 #define FUNCTIONS_CONTACT_H_
 
 #include <mbsim/contour.h>
+#include <mbsim/contours/contour1s.h>
 #include <mbsim/utils/function.h>
 
 namespace MBSim {

@@ -24,7 +24,7 @@
 #include "mbsim/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/contours/flexible_band.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/cylinder_flexible.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/frame.h"
 
@@ -33,8 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),implicit(false),CurrentElement(0),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.)
-  {
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),implicit(false),CurrentElement(0),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
     cylinder = new CylinderFlexible("Cylinder");
     Body::addContour(cylinder);
 

@@ -21,6 +21,7 @@
 #include <config.h>
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
+#include "mbsim/mbsim_event.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -36,14 +37,13 @@ using namespace std;
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), parent(0), R("R")
-                                         {
-                                           // no canonic output...
-                                           hSize[0] = 0;
-                                           hSize[1] = 0;
-                                           hInd[0] = 0;
-                                           hInd[1] = 0;
-                                         }
+  Contour::Contour(const string &name) : Element(name), parent(0), R("R") {
+    // no canonic output...
+    hSize[0] = 0;
+    hSize[1] = 0;
+    hInd[0] = 0;
+    hInd[1] = 0;
+  }
 
   Contour::~Contour() {}
 
@@ -264,20 +264,6 @@ namespace MBSim {
     else openMBVRigidBody=0;
   }
 #endif
-
-
-  /* Contour1s Analytical */
-  void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if(ff==cosy || ff==position_cosy || velocity_cosy || velocities_cosy || ff==all) {
-      cp.getFrameOfReference().getOrientation().col(0)= funcCrPC->computeN(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation().col(1)= funcCrPC->computeT(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation().col(2)= -funcCrPC->computeB(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation() = cp.getFrameOfReference().getOrientation() * R.getOrientation();
-    }
-    if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().getPosition() = R.getPosition() + R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
-    if(ff==velocity || velocity_cosy || ff==velocities || velocities_cosy || ff==all) cp.getFrameOfReference().getVelocity() = R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
-    if(ff==angularVelocity || ff==velocities || velocities_cosy || ff==all) throw new MBSimError("ERROR (Contour1sAnalytical::updateKinematicsForFrame): Angular velocity not implemented!");
-  }
 
   /* Contour Interpolation */
   ContourInterpolation::ContourInterpolation(const string &name,int parameters_,int nPoints_) : Contour(name),contourParameters(parameters_),numberOfPoints(nPoints_) {}

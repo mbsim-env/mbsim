@@ -21,7 +21,7 @@
 #define NURBSDISK2S_H_
 
 #include "fmatvec.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/contour2s.h"
 #ifdef HAVE_NURBS
 #include "nurbsS.h"
 #include "vector.h"
@@ -36,6 +36,7 @@ namespace MBSim {
    * \author Raphael Missel
    * \author Thorsten Schindler
    * \date 2009-05-22 initial commit (Grundl / Missel / Schindler)
+   * \date 2009-06-04 separate contour files (Thorsten Schindler)
    * \todo HAVE_NURBS has to be set correctly
    */
   class NurbsDisk2s : public Contour2s {

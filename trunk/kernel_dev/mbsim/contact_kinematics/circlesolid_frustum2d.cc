@@ -19,8 +19,9 @@
  */
 
 #include <config.h> 
-#include "circlesolid_frustum2d.h"
+#include "mbsim/contact_kinematics/circlesolid_frustum2d.h"
 #include "mbsim/contour.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
