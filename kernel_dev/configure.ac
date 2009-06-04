@@ -30,14 +30,6 @@ AC_C_INLINE
 AC_HEADER_STDBOOL
 AC_FUNC_CLOSEDIR_VOID
 
-dnl Check for MinGW
-AC_CANONICAL_HOST
-if test "_$host_os" = "_mingw32" ; then
-  AC_DEFINE([MINGW], [1], [Host System is MinGW/MSys])
-  CPPFLAGS="$CPPFLAGS -Wno-uninitialized" # MinGW-g++-3.4 and -O2 => uninitialized value in stl header
-fi
-
-
 dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
 AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([
@@ -89,6 +81,13 @@ LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+
+dnl Check for MinGW
+AC_CANONICAL_HOST
+if test "_$host_os" = "_mingw32" ; then
+  AC_DEFINE([MINGW], [1], [Host System is MinGW/MSys])
+  CPPFLAGS="$CPPFLAGS -Wno-uninitialized" # MinGW-g++-3.4 and -O2 => uninitialized value in stl header
+fi
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
