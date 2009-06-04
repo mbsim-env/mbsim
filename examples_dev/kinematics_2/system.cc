@@ -1,8 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
-#include "mbsim/contour.h"
-#include "mbsim/load.h"
+#include "mbsim/userfunction.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>

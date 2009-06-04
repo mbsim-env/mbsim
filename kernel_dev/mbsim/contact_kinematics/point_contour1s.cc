@@ -47,7 +47,7 @@ namespace MBSim {
     func= new FuncPairContour1sPoint(point,contour1s);
   }
 
-  void ContactKinematicsPointContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData) {
 //
 //    cpData[ipoint].WrOC = point->getWrOP();
 //
@@ -74,9 +74,6 @@ namespace MBSim {
 //      cpData[icontour].WrOC  = contour1s->computeWrOC(cpData[icontour].alpha(0));
 //      g(0) = trans(cpData[icontour].Wn) * (cpData[icontour].WrOC - cpData[ipoint].WrOC);
 //    }
-  }
-
-  void ContactKinematicsPointContour1s::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 //
 //    Vec WvD = contour1s->computeWvC(cpData[icontour].alpha(0)) - point->getWvP();
 //
@@ -88,6 +85,7 @@ namespace MBSim {
 //      cpData[ipoint].Wt   = -cpData[icontour].Wt;
 //      gd(iT) = trans(cpData[icontour].Wt)*WvD;
 //    }
+
   }
 
 }

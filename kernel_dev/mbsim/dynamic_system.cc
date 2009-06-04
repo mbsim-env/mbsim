@@ -21,6 +21,8 @@
 #include "mbsim/order_one_dynamics.h"
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
+#include "mbsim/object.h"
+#include "mbsim/data_interface_base.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"

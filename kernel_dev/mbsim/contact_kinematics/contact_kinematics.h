@@ -73,7 +73,7 @@ namespace MBSim {
        * \param contact point parametrisation
        * \todo function should be pure virtual TODO
        */
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { std::cout << "ERROR (ContactKinematics::updateg): not implemented" << std::endl; throw 5; }
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematics::updateg): not implemented!"); }
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
@@ -82,7 +82,7 @@ namespace MBSim {
        * \param contact point parametrisation
        * \todo function should be pure virtual TODO
        */
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented"); };
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented!"); }
 
       /**
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points

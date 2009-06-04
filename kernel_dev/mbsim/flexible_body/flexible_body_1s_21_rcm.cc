@@ -23,7 +23,7 @@
 #include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsim/contour.h>
+#include <mbsim/contours/contour1s_flexible.h>
 
 #define FMATVEC_DEEP_COPY
 
@@ -81,8 +81,6 @@ namespace MBSim {
   void FlexibleBody1s21RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0));
-
-      // TODO cout << "Lagrange=" << 
 
       Vec tmp(3,NONINIT);
       if(ff==position || ff==position_cosy || ff==all) {
@@ -309,9 +307,6 @@ namespace MBSim {
   }
 
   double FlexibleBody1s21RCM::BuildElement(const double& sGlobal) {
-    //cout << "sGlobal=" << sGlobal << endl;
-    //cout << "openStructure=" << openStructure << endl;
-
     double remainder = fmod(sGlobal,L);
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)

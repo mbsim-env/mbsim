@@ -22,6 +22,11 @@
 
 #include <config.h>
 #include "contact_utils.h"
+// --- List of contour implementations - BEGIN ---
+#include "mbsim/contours/contour1s.h"
+#include "mbsim/contours/cylinder_flexible.h"
+// --- List of contour implementations - END ---
+
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/point_line.h>
 #include <mbsim/contact_kinematics/circlesolid_contour1s.h>
@@ -44,6 +49,7 @@
 #include <mbsim/contact_kinematics/circlesolid_frustum2d.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
+// --- List of contact kinematic implementations - END ---
 
 using namespace fmatvec;
 
@@ -84,10 +90,8 @@ namespace MBSim {
     else if((dynamic_cast<Sphere*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Sphere*>(contour1) && dynamic_cast<Plane*>(contour0))) 
       return new ContactKinematicsSpherePlane;
 
-    // INTERPOLATIONSGESCHICHTEN - Interpol-Point
     else if((dynamic_cast<Point*>(contour0) &&  dynamic_cast<ContourInterpolation*>(contour1)) || (dynamic_cast<Point*>(contour1) &&  dynamic_cast<ContourInterpolation*>(contour0))) 
       return new ContactKinematicsPointContourInterpolation;
-    // INTERPOLATIONSGESCHICHTEN
 
     // else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
     //   return new ContactKinematicsCircleHollowCylinderFlexible;
@@ -103,7 +107,6 @@ namespace MBSim {
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Contour1s*>(contour0)))
       return new ContactKinematicsCircleSolidContour1s;
-
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleHollow*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<CircleHollow*>(contour0)))
       return new ContactKinematicsCircleSolidCircleHollow;
@@ -129,8 +132,8 @@ namespace MBSim {
     else if((dynamic_cast<CompoundContour*>(contour0) && dynamic_cast<CompoundContour*>(contour1))) 
       return new ContactKinematicsCompoundContourCompoundContour;  
 
-
     else 
       return 0;
   }
 }
+
