@@ -43,7 +43,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointPlane::updateg(Vec &g, ContourPointData* cpData) {
-
     cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation()); // data of possible contact point
     cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -plane->getFrame()->getOrientation().col(0);
     cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -plane->getFrame()->getOrientation().col(1);

@@ -181,9 +181,9 @@ namespace MBSim {
       bool initialized;
 
       /** 
-       * \brief right and left side contour of body
+       * \brief contour of body
        */
-      Contour1sFlexible *contourR, *contourL;
+      Contour1sFlexible *contour1sFlexible;
   };
 
 }

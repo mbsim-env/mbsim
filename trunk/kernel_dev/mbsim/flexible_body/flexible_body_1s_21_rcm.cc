@@ -33,10 +33,8 @@ using namespace std;
 namespace MBSim {
 
   FlexibleBody1s21RCM::FlexibleBody1s21RCM(const string &name, bool openStructure_) : FlexibleBodyContinuum<double>(name), L(0), l0(0), E(0), A(0), I(0), rho(0), rc(0), dm(0), dl(0), openStructure(openStructure_), initialized(false) { 
-    contourR = new Contour1sFlexible("R");
-    contourL = new Contour1sFlexible("L");
-    Body::addContour(contourR);
-    Body::addContour(contourL);
+    contour1sFlexible = new Contour1sFlexible("Contour1sFlexible");
+    Body::addContour(contour1sFlexible);
   }
 
   void FlexibleBody1s21RCM::BuildElements() {
@@ -188,22 +186,15 @@ namespace MBSim {
 
     initialized = true;
 
-    contourR->getFrame()->setOrientation(frameOfReference->getOrientation());
-    contourL->getFrame()->setOrientation(frameOfReference->getOrientation());
+    contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
 
-    contourR->setAlphaStart(0); contourR->setAlphaEnd(L);
-    contourL->setAlphaStart(0); contourL->setAlphaEnd(L);
+    contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
     if(userContourNodes.size()==0) {
       Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++)
-        contourNodes(i) = L/Elements * i; // search area for each finite element contact search
-      contourR->setNodes(contourNodes);
-      contourL->setNodes(contourNodes);
+      for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // search area for each finite element contact search
+      contour1sFlexible->setNodes(contourNodes);
     }
-    else {
-      contourR->setNodes(userContourNodes);
-      contourL->setNodes(userContourNodes);
-    }
+    else contour1sFlexible->setNodes(userContourNodes);
 
     l0 = L/Elements;
     Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*ds->getAccelerationOfGravity();
