@@ -27,9 +27,8 @@ using namespace std;
 
 namespace MBSim {
 
-  ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {
-    delete func;
-  }
+  ContactKinematicsPointContour1s::ContactKinematicsPointContour1s() : ContactKinematics(),ipoint(0),icontour(0),point(0),contour1s(0) {}
+  ContactKinematicsPointContour1s::~ContactKinematicsPointContour1s() {} 
 
   void ContactKinematicsPointContour1s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {
@@ -44,48 +43,34 @@ namespace MBSim {
       point = static_cast<Point*>(contour[1]);
       contour1s = static_cast<Contour1s*>(contour[0]);
     }
-    func= new FuncPairContour1sPoint(point,contour1s);
   }
 
   void ContactKinematicsPointContour1s::updateg(Vec &g, ContourPointData *cpData) {
-//
-//    cpData[ipoint].WrOC = point->getWrOP();
-//
-//    Contact1sSearch search(func);
-//    search.setNodes(contour1s->getNodes());
-//
-//    if(cpData[icontour].alpha.size()!=0) {
-//      search.setInitialValue(cpData[icontour].alpha(0));
-//    } else {
-//      search.setSearchAll   (true);
-//      cpData[icontour].alpha = Vec(1);
-//    }
-//
-//    cpData[icontour].alpha(0) = search.slv();
-//    double &alphaC = cpData[icontour].alpha(0);
-//
-//    /* Pruefen, dass Kontakt nur im Kontaktbereich, sonst Ergebnis verwerfen 
-//    */
-//    if(alphaC < contour1s->getAlphaStart() || alphaC > contour1s->getAlphaEnd() )
-//      g(0) = 1.0;
-//    else {
-//      cpData[icontour].Wn    = contour1s->computeWn(cpData[icontour].alpha(0));
-//      cpData[ipoint].Wn      = -cpData[icontour].Wn;
-//      cpData[icontour].WrOC  = contour1s->computeWrOC(cpData[icontour].alpha(0));
-//      g(0) = trans(cpData[icontour].Wn) * (cpData[icontour].WrOC - cpData[ipoint].WrOC);
-//    }
-//
-//    Vec WvD = contour1s->computeWvC(cpData[icontour].alpha(0)) - point->getWvP();
-//
-//    gd(0)  = trans(cpData[icontour].Wn)*WvD;
-//
-//    if(cpData[0].Wt.cols()) {
-//      static Index iT(1,cpData[0].Wt.cols());
-//      cpData[icontour].Wt = contour1s->computeWt(cpData[icontour].alpha(0))(0,0,2,iT.end()-1);
-//      cpData[ipoint].Wt   = -cpData[icontour].Wt;
-//      gd(iT) = trans(cpData[icontour].Wt)*WvD;
-//    }
+    cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
+    
+    FuncPairContour1sPoint *func= new FuncPairContour1sPoint(point,contour1s); // root function for searching contact parameters
+    Contact1sSearch search(func);
+    search.setNodes(contour1s->getNodes()); // defining search areas for contacts
 
+    if(cpData[icontour].getLagrangeParameterPosition().size()!=0) { // select start value from last search
+      search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
+    } 
+    else { // define start search with regula falsi
+      search.setSearchAll(true);
+      cpData[icontour].getLagrangeParameterPosition() = Vec(1,NONINIT);
+    }
+
+    cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
+
+    if(cpData[icontour].getLagrangeParameterPosition()(0) < contour1s->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > contour1s->getAlphaEnd()) g(0) = 1.0;
+    else { // calculate the normal distance
+      contour1s->updateKinematicsForFrame(cpData[icontour],position_cosy);
+      cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
+      cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
+      cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+      g(0) = trans(cpData[icontour].getFrameOfReference().getOrientation().col(0)) * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+    }
+    delete func;
   }
 
 }

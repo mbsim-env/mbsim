@@ -27,7 +27,6 @@ namespace MBSim {
 
   class Point;
   class Contour1s;
-  class FuncPairContour1sPoint;
 
   /**
    * \brief pairing point to Contour1s
@@ -38,6 +37,11 @@ namespace MBSim {
   class ContactKinematicsPointContour1s: public ContactKinematics {
     public:
       /**
+       * \brief constructor
+       */
+      ContactKinematicsPointContour1s();
+
+      /**
        * \brief destructor
        */
       virtual ~ContactKinematicsPointContour1s();
@@ -45,7 +49,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented!"); }
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsPointContour1s::updatewb): Not implemented!"); }
       /***************************************************/
 
     private:
@@ -59,10 +63,6 @@ namespace MBSim {
        */
       Point *point;
       Contour1s *contour1s;
-      /**
-       * \brief root function
-       */
-      FuncPairContour1sPoint *func;
   };
 
 }

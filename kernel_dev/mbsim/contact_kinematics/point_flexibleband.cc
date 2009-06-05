@@ -63,19 +63,22 @@ namespace MBSim {
     cpData[icontour].getLagrangeParameterPosition()(0) = search.slv(); // get contact parameter of neutral fibre
     cpData[icontour].getLagrangeParameterPosition()(1) = 0.;
 
-    band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-    Vec Wd = cpData[icontour].getFrameOfReference().getPosition() - cpData[ipoint].getFrameOfReference().getPosition();
-    Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-    cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
+    if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd()) g(0) = 1.;
+    else {
+      band->updateKinematicsForFrame(cpData[icontour],position_cosy);
+      Vec Wd = cpData[icontour].getFrameOfReference().getPosition() - cpData[ipoint].getFrameOfReference().getPosition();
+      Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+      cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
 
-    double width = band->getWidth(); // contact must be in contact area of the flexible band with projection
-    if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd() || cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width || - cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width) g(0) = 1.;
-    else { // calculate the normal distance
-      cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
-      cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
-      cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
-      cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icontour].getFrameOfReference().getOrientation().col(2);
-      g(0) = trans(cpData[icontour].getFrameOfReference().getOrientation().col(0)) * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+      double width = band->getWidth();
+      if(cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width || - cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width) g(0) = 1.;
+      else { // calculate the normal distance
+        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
+        cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
+        cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
+        cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icontour].getFrameOfReference().getOrientation().col(2);
+        g(0) = trans(cpData[icontour].getFrameOfReference().getOrientation().col(0)) * (cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition());
+      }
     }
     delete func;
   }
