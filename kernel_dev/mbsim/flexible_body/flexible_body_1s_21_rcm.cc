@@ -86,17 +86,17 @@ namespace MBSim {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * tmp);
       }
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); 
+        tmp(0) = cos(X(2)); tmp(1) = sin(X(2)); tmp(2) = 0.; 
         cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = -sin(X(2)); tmp(1) = cos(X(2));
+        tmp(0) = -sin(X(2)); tmp(1) = cos(X(2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation() * tmp; // normal
       }
       if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
-        tmp(0) = X(3); tmp(1) = X(4);
+        tmp(0) = X(3); tmp(1) = X(4); tmp(2) = 0.;
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
       }
 
@@ -116,17 +116,17 @@ namespace MBSim {
       }
 
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); 
+        tmp(0) =  cos(q(5*node+2)); tmp(1) = sin(q(5*node+2)); tmp(2) = 0.; 
         cp.getFrameOfReference().getOrientation().col(1)    = frameOfReference->getOrientation() * tmp; // tangent
       }
       if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2));
+        tmp(0) = -sin(q(5*node+2)); tmp(1) = cos(q(5*node+2)); tmp(2) = 0.;
         cp.getFrameOfReference().getOrientation().col(0)    =  frameOfReference->getOrientation() * tmp; // normal
       }
       if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -frameOfReference->getOrientation().col(2); // binormal (cartesian system)
 
       if(ff==velocity || ff==velocities || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
-        tmp(0) = u(5*node+0); tmp(1) = u(5*node+1);
+        tmp(0) = u(5*node+0); tmp(1) = u(5*node+1); tmp(2) = 0.;
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * tmp);
       }
 
