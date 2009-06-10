@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="TS" xmlns="http://openmbv.berlios.de/OpenMBV"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <Group name="CylinderSolid#Group" expand="false">
+    <Frustum name="CylinderSolid">
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>1</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[0;0;0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <baseRadius>0.1</baseRadius>
+      <topRadius>0.1</topRadius>
+      <height>0.1</height>
+      <innerBaseRadius>0</innerBaseRadius>
+      <innerTopRadius>0</innerTopRadius>
+    </Frustum>
+    <Frame name="C">
+      <hdf5Link ref="CylinderSolid"/>
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>nan</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[-0;0;-0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <size>0.15</size>
+      <offset>1</offset>
+    </Frame>
+  </Group>
+  <Group name="CylinderHollow#Group" expand="false">
+    <Frustum name="CylinderHollow">
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>0.5</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[0;0;0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <baseRadius>0.1</baseRadius>
+      <topRadius>0.1</topRadius>
+      <height>0.1</height>
+      <innerBaseRadius>0.09</innerBaseRadius>
+      <innerTopRadius>0.09</innerTopRadius>
+    </Frustum>
+    <Frame name="C">
+      <hdf5Link ref="CylinderHollow"/>
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>nan</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[-0;0;-0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <size>0.15</size>
+      <offset>1</offset>
+    </Frame>
+  </Group>
+  <Group name="Sphere#Group" expand="false">
+    <Sphere name="Sphere">
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>0.1</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[0;0;0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <radius>0.1</radius>
+    </Sphere>
+    <Frame name="C">
+      <hdf5Link ref="Sphere"/>
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>nan</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[-0;0;-0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <size>0.15</size>
+      <offset>1</offset>
+    </Frame>
+  </Group>
+  <Group name="Stopper#Group" expand="false">
+    <Cube name="Stopper">
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>0.7</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[0;0;0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <length>0.1</length>
+    </Cube>
+    <Frame name="C">
+      <hdf5Link ref="Stopper"/>
+      <minimalColorValue>0</minimalColorValue>
+      <maximalColorValue>1</maximalColorValue>
+      <staticColor>nan</staticColor>
+      <initialTranslation>[0;0;0]</initialTranslation>
+      <initialRotation>[-0;0;-0]</initialRotation>
+      <scaleFactor>1</scaleFactor>
+      <size>0.1</size>
+      <offset>1</offset>
+    </Frame>
+  </Group>
+  <CoilSpring name="Spring">
+    <numberOfCoils>5</numberOfCoils>
+    <springRadius>0.02</springRadius>
+    <crossSectionRadius>0.002</crossSectionRadius>
+    <scaleFactor>1</scaleFactor>
+  </CoilSpring>
+</Group>
