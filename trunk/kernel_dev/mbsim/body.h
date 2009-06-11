@@ -34,6 +34,16 @@ namespace MBSim {
    *  \brief base class for all mechanical bodies with mass and generalised coordinates
    *  \author Martin Foerg
    *  \date 2009-04-06 object and body divided (Markus Schneider)
+   *
+   *  The following part is only a test for equation and image output for the XML documentation.
+   *  A not inline equation
+   *  \f[
+   *    \int_a^b\sin(x)dx
+   *  \f]
+   *  And a inline equation \f$x_a+\cos(x)\f$.
+   *  And a image
+   *  \image html mbsim.png
+   *  End of the test.
    */
   class Body : public Object {
     public:
