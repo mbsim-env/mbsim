@@ -25,7 +25,7 @@
 #include <string>
 #include <vector>
 #include <hdf5serie/vectorserie.h>
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 #define MBSIMNS "{http://mbsim.berlios.de/MBSim}"
 

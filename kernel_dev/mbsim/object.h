@@ -24,7 +24,7 @@
 #include "mbsim/interfaces.h"
 #include <string>
 #include <vector>
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 

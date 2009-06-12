@@ -22,7 +22,7 @@
 
 #include "fmatvec.h"
 #include <fstream>
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 
