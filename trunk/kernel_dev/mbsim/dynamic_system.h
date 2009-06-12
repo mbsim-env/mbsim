@@ -23,7 +23,7 @@
 #include "mbsim/interfaces.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/frame.h"
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace H5 {
   class Group;

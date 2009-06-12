@@ -21,7 +21,7 @@
 #define _LINK_MECHANICS_H_
 
 #include "link.h"
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace H5 {
   class Group;

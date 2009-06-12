@@ -25,7 +25,7 @@
 #include "sparse_matrix.h"
 #include "H5Cpp.h"
 #include <string>
-#include "mbsimtinyxml/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 

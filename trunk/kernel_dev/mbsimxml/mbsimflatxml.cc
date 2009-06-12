@@ -1,7 +1,7 @@
 #include "config.h"
 #include <iostream>
-#include "mbsimtinyxml/tinyxml.h"
-#include "mbsimtinyxml/tinynamespace.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/integrators/integrator.h>

@@ -1,15 +1,15 @@
 lib_LTLIBRARIES = libmbsimtinyxml.la
 INCLUDES = -DTIXML_USE_STL
-libmbsimtinyxml_la_SOURCES = tinynamespace.cpp \
-  tinystr.cpp \
-  tinyxml.cpp \
-  tinyxmlerror.cpp \
-  tinyxmlparser.cpp
+libmbsimtinyxml_la_SOURCES = tinyxml-src/tinynamespace.cpp \
+  tinyxml-src/tinystr.cpp \
+  tinyxml-src/tinyxml.cpp \
+  tinyxml-src/tinyxmlerror.cpp \
+  tinyxml-src/tinyxmlparser.cpp
 
-libmbsimtinyxml_la_HEADERS = tinynamespace.h \
-  tinystr.h \
-  tinyxml.h
+libmbsimtinyxml_la_HEADERS = tinyxml-src/tinynamespace.h \
+  tinyxml-src/tinystr.h \
+  tinyxml-src/tinyxml.h
 
-EXTRA_DIST = readme.txt changes.txt
+EXTRA_DIST = tinyxml-src/readme.txt tinyxml-src/changes.txt
 
-libmbsimtinyxml_ladir = $(includedir)/mbsimtinyxml
+libmbsimtinyxml_ladir = $(includedir)/mbsimtinyxml/tinyxml-src
