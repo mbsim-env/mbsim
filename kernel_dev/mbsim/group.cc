@@ -28,6 +28,10 @@
 #include "hdf5serie/simpleattribute.h"
 #include "mbsim/objectfactory.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace std;
 using namespace fmatvec;
 
@@ -46,22 +50,37 @@ namespace MBSim {
   }
 
   void Group::updateStateDependentVariables(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateStateDependentVariables(t);
+#pragma omp parallel for schedule(static) shared(t) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updateStateDependentVariables(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateStateDependentVariables(t);
+#pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+    for(int i=0; i<(int)object.size(); i++) {
+      try { object[i]->updateStateDependentVariables(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
   }
 
   void Group::updateJacobians(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateJacobians(t);
+#pragma omp parallel for schedule(static) shared(t) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updateJacobians(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateJacobians(t);
+#pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+    for(int i=0; i<(int)object.size(); i++) {
+      try { object[i]->updateJacobians(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
 
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
+#pragma omp parallel for schedule(dynamic, max(1,(int)link.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)link.size()>30) 
+    for(int i=0; i<(int)link.size(); i++) {
+      try { link[i]->updateJacobians(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
   }
 
   void Group::updatedu(double t, double dt) {
@@ -116,10 +135,10 @@ namespace MBSim {
     Element::initializeUsingXML(element);
     e=element->FirstChildElement();
     while(e && e->ValueStr()!=MBSIMNS"frame" &&
-          e->ValueStr()!=MBSIMNS"contour" &&
-          ObjectFactory::createGroup(e)==0 &&
-          ObjectFactory::createObject(e)==0 &&
-          ObjectFactory::createLink(e)==0)
+        e->ValueStr()!=MBSIMNS"contour" &&
+        ObjectFactory::createGroup(e)==0 &&
+        ObjectFactory::createObject(e)==0 &&
+        ObjectFactory::createLink(e)==0)
       e=e->NextSiblingElement();
 
     while(e && e->ValueStr()==MBSIMNS"frame") {
@@ -128,7 +147,7 @@ namespace MBSim {
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
         f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
-                         atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+            atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
       ec=ec->NextSiblingElement();
       Frame *refF=0;
       if(ec->ValueStr()==MBSIMNS"referenceFrame") {
@@ -162,8 +181,8 @@ namespace MBSim {
     while((g=ObjectFactory::createGroup(e))) {
       TiXmlElement *ee=e->FirstChildElement();
       while(ee && ee->ValueStr()!=MBSIMNS"referenceFrame" &&
-            ee->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
-            ee->ValueStr()!=MBSIMNS"relativeGroupOrientation")
+          ee->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
+          ee->ValueStr()!=MBSIMNS"relativeGroupOrientation")
         ee=ee->NextSiblingElement();
       Frame *refF=0;
       if(ee && ee->ValueStr()==MBSIMNS"referenceFrame") {

@@ -26,9 +26,16 @@
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #endif
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
+#include<algorithm>
 
 using namespace std;
 using namespace fmatvec;
@@ -56,6 +63,9 @@ namespace MBSim {
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
+    for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
+      delete *i;
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
     delete openMBVGrp;
 #endif
@@ -82,11 +92,17 @@ namespace MBSim {
 
 
   void DynamicSystem::updateM(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateM(t);
+#pragma omp parallel for schedule(static) shared(t) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updateM(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
-      (**i).updateM(t);
+#pragma omp parallel for num_threads(omp_get_max_threads()/2) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+    for(int i=0; i<(int)object.size(); i++) {
+      try { object[i]->updateM(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
   }
 
   void DynamicSystem::updatedq(double t, double dt) {
@@ -146,7 +162,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-   OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
+  OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
   void DynamicSystem::updater(double t) {
@@ -182,25 +198,43 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateg(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateg(t);
-    //for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) 
-    //  (*i)->updateg(t);
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
-      (*i)->updateg(t);
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-      (*i)->updateg(t);
+#pragma omp parallel for schedule(static) shared(t) default(none) 
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updateg(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
+
+#pragma omp parallel for schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
+    for(int i=0; i<(int)linkSingleValued.size(); i++) {
+      try { linkSingleValued[i]->updateg(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
+
+#pragma omp parallel for schedule(dynamic, max(1,(int)linkSetValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValued.size()>30) 
+    for(int i=0; i<(int)linkSetValued.size(); i++) {
+      try { linkSetValued[i]->updateg(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
   }
 
   void DynamicSystem::updategd(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updategd(t);
-    //for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) 
-    //  (*i)->updategd(t);
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
-      (*i)->updategd(t);
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->updategd(t);
+#pragma omp parallel for schedule(static) shared(t) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updategd(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
+
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSingleValued.size()>30)
+    for(int i=0; i<(int)linkSingleValued.size(); i++) {
+      try { linkSingleValued[i]->updategd(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
+
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSetValued.size()>30)
+    for(int i=0; i<(int)linkSetValuedActive.size(); i++) { 
+      try { linkSetValuedActive[i]->updategd(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); }
+    }
   }
 
   void DynamicSystem::updatedx(double t, double dt) {
@@ -771,7 +805,7 @@ namespace MBSim {
       modelList.push_back(model[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-	dynamicsystem[i]->buildListOfModels(modelList,recursive);
+        dynamicsystem[i]->buildListOfModels(modelList,recursive);
   }
 
   void DynamicSystem::updateCondition() {
@@ -1216,7 +1250,7 @@ namespace MBSim {
     unsigned int i;
     for(i=0; i<DIB.size(); i++) {
       if(DIB[i]->getName() == name_ || DIB[i]->getName() == name_+".SigOut")
-	return DIB[i];
+        return DIB[i];
     }
     if(check){
       if(!(i<DIB.size())) cout << "ERROR (DynamicSystem::getDataInterfaceBase): The DynamicSystem " << name <<" comprises no DataInterfaceBase " << name_ << "!" << endl; 
@@ -1237,7 +1271,7 @@ namespace MBSim {
     unsigned int i;
     for(i=0; i<model.size(); i++) {
       if(model[i]->getName() == name)
-	return model[i];
+        return model[i];
     }
     if(check){
       if(!(i<model.size())) cout << "ERROR (DynamicSystem::getModell): The DynamicSystem " << name <<" comprises no model " << name << "!" << endl; 
@@ -1288,7 +1322,7 @@ namespace MBSim {
     else
       return 0;
   }
-  
+
   Contour *DynamicSystem::getContourByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');

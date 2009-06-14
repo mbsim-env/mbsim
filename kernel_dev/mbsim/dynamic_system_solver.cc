@@ -28,20 +28,28 @@
 #include "mbsim/flexible_body.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
+
 #ifndef MINGW
 #  include<sys/stat.h>
 #else
 #  include<io.h>
 #  define mkdir(a,b) mkdir(a)
 #endif
+
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
 #include <hdf5serie/simpleattribute.h>
+
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
 #endif
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
+#endif
+
+#ifdef _OPENMP
+#include <omp.h>
 #endif
 
 using namespace std;
@@ -66,8 +74,9 @@ namespace MBSim {
   } 
 
   void DynamicSystemSolver::init() {
-
-//    setDirectory(); // output directory
+#ifdef _OPENMP
+    omp_set_nested(true);
+#endif
 
     Group::preinit();
 
@@ -252,7 +261,7 @@ namespace MBSim {
     }
     return iter;
   }
-  
+
   int DynamicSystemSolver::solveConstraintsGaussSeidel() {
     b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
 
@@ -462,7 +471,7 @@ namespace MBSim {
       if(term == false) return;
     }
   }
-  
+
   void DynamicSystemSolver::initPlot() {
     Group::initPlot();
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -499,7 +508,7 @@ namespace MBSim {
     // flush files ones if requested
     if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles();
   }
-  
+
   void DynamicSystemSolver::updater(double t) {
     r = V*la;
   }
@@ -518,7 +527,7 @@ namespace MBSim {
     V = W;
     Group::updateV(t);
   }
-  
+
   void DynamicSystemSolver::plot(const Vec& zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -539,29 +548,29 @@ namespace MBSim {
 
     plot(t,dt);
   }
-  
+
   void DynamicSystemSolver::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
     }
   }
-  
+
   void DynamicSystemSolver::preInteg(DynamicSystemSolver *parent) {
     cout << "preIntegrator not implemented yet." << endl;
     throw(123);
-//    if(preIntegrator) {
-////      setProjectDirectory(name+".preInteg");
-//      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
-//      cout << "Initialisation of " << name << " for Preintegration..."<<endl;
-//      init();  
-//      cout << "Preintegration..."<<endl;
-//      preIntegrator->integrate(*this);
-//      closePlot();
-//      writez();
-//      delete preIntegrator;
-//      preIntegrator=NULL; 
-//      cout << "Finished." << endl;
-//    }  
+    //    if(preIntegrator) {
+    ////      setProjectDirectory(name+".preInteg");
+    //      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
+    //      cout << "Initialisation of " << name << " for Preintegration..."<<endl;
+    //      init();  
+    //      cout << "Preintegration..."<<endl;
+    //      preIntegrator->integrate(*this);
+    //      closePlot();
+    //      writez();
+    //      delete preIntegrator;
+    //      preIntegrator=NULL; 
+    //      cout << "Finished." << endl;
+    //    }  
   }
 
   int DynamicSystemSolver::solveConstraints() {
@@ -647,14 +656,14 @@ namespace MBSim {
     updatedu(t,dt);
     return ud;
   }
-  
+
   Vec DynamicSystemSolver::deltaq(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) updatezRef(zParent);
     updatedq(t,dt);
 
     return qd;
   }
-  
+
   Vec DynamicSystemSolver::deltax(const Vec &zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -667,7 +676,7 @@ namespace MBSim {
     updatezRef(z);
     Group::initz();
   }
-  
+
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
     la = slvLS(G,-(trans(W)*slvLLFac(LLM,h) + wb));
     return 1;
@@ -689,13 +698,13 @@ namespace MBSim {
     }
     Gs << G;
   }
-  
+
   void DynamicSystemSolver::decreaserFactors() {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (*i)->decreaserFactors();
   }
-  
+
   void DynamicSystemSolver::update(const Vec &zParent, double t) {
     if(q()!=zParent()) updatezRef(zParent);
 
@@ -732,7 +741,7 @@ namespace MBSim {
     updateG(t); 
     //projectGeneralizedPositions(t);
   }
-  
+
   void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
@@ -912,14 +921,14 @@ namespace MBSim {
     updateW(t); 
     projectGeneralizedVelocities(t);
   }
-  
+
   void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {
     if(qd()!=zdParent()) {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
   }
-  
+
   void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
     if(sv()!=svExt()) {
       updatesvRef(svExt);
@@ -1014,7 +1023,7 @@ namespace MBSim {
     for(ic = link.begin(); ic != link.end(); ++ic) Vpot += (**ic).computePotentialEnergy();
     return Vpot;
   }
-  
+
   void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_=dynamic_cast<Object*>(element_);
     Link* link_=dynamic_cast<Link*>(element_);
@@ -1132,7 +1141,7 @@ namespace MBSim {
       orderOneDynamics[i]->readx0();
     }
   }
-  
+
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
 
     q >> ( zParent(0,qSize-1) );
@@ -1185,45 +1194,45 @@ namespace MBSim {
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
 
-//  void DynamicSystemSolver::setDirectory() {
-//    int i;
-//    string projectDirectory;
-//
-//    if(false) { // TODO: introduce flag "overwriteDirectory"
-//      for(i=0; i<=99; i++) {
-//        stringstream number;
-//        number << "." << setw(2) << setfill('0') << i;
-//        projectDirectory = directoryName + number.str();
-//        int ret = mkdir(projectDirectory.c_str(),0777);
-//        if(ret == 0) break;
-//      }
-//      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-//    }
-//    else { // always the same directory
-//      projectDirectory = string(directoryName);
-//
-//      int ret = mkdir(projectDirectory.c_str(),0777);
-//      if(ret == 0) {
-//        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-//      }
-//      else {
-//        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
-//      }
-//    }
-//
-//    if(preIntegrator) {
-//      string preDir="PREINTEG";
-//      int ret=mkdir(preDir.c_str(),0777);
-//      if(ret==0) {
-//        cout << "Make directory " << preDir << " for Preintegration results." << endl;
-//      }
-//      else {
-//        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
-//      }
-//    }
-//
-//    return;
-//  }
+  //  void DynamicSystemSolver::setDirectory() {
+  //    int i;
+  //    string projectDirectory;
+  //
+  //    if(false) { // TODO: introduce flag "overwriteDirectory"
+  //      for(i=0; i<=99; i++) {
+  //        stringstream number;
+  //        number << "." << setw(2) << setfill('0') << i;
+  //        projectDirectory = directoryName + number.str();
+  //        int ret = mkdir(projectDirectory.c_str(),0777);
+  //        if(ret == 0) break;
+  //      }
+  //      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+  //    }
+  //    else { // always the same directory
+  //      projectDirectory = string(directoryName);
+  //
+  //      int ret = mkdir(projectDirectory.c_str(),0777);
+  //      if(ret == 0) {
+  //        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
+  //      }
+  //      else {
+  //        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
+  //      }
+  //    }
+  //
+  //    if(preIntegrator) {
+  //      string preDir="PREINTEG";
+  //      int ret=mkdir(preDir.c_str(),0777);
+  //      if(ret==0) {
+  //        cout << "Make directory " << preDir << " for Preintegration results." << endl;
+  //      }
+  //      else {
+  //        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
+  //      }
+  //    }
+  //
+  //    return;
+  //  }
 
   Vec DynamicSystemSolver::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {

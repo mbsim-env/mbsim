@@ -150,14 +150,15 @@ namespace MBSim {
     Mat Jacobian(qSize,3,INIT,0.);
 
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-
-      double sLocal = BuildElement(cp.getLagrangeParameterPosition()(0));
-      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->JGeneralized(qElement[CurrentElement],sLocal);
-      if(CurrentElement<Elements-1 || openStructure) {
-        Jacobian(Index(5*CurrentElement,5*CurrentElement+7),All) = Jtmp;
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
+      Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
+      if(currentElement<Elements-1 || openStructure) {
+        Jacobian(Index(5*currentElement,5*currentElement+7),All) = Jtmp;
       }
       else { // ringstructure
-        Jacobian(Index(5*CurrentElement,5*CurrentElement+4),All) = Jtmp(Index(0,4),All);
+        Jacobian(Index(5*currentElement,5*currentElement+4),All) = Jtmp(Index(0,4),All);
         Jacobian(Index(               0,                 2),All) = Jtmp(Index(5,7),All);
       }
     }
@@ -261,8 +262,10 @@ namespace MBSim {
   }
 
   Vec FlexibleBody1s21RCM::computeState(double sGlobal) {
-    double sLocal = BuildElement(sGlobal); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s21RCM*>(discretization[CurrentElement])->StateBeam(qElement[CurrentElement],uElement[CurrentElement],sLocal);
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->StateBeam(qElement[currentElement],uElement[currentElement],sLocal);
   }
 
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {
@@ -297,19 +300,18 @@ namespace MBSim {
     }
   }
 
-  double FlexibleBody1s21RCM::BuildElement(const double& sGlobal) {
+  void FlexibleBody1s21RCM::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
     double remainder = fmod(sGlobal,L);
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
     if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    CurrentElement = int(remainder/l0);   
-    double sLokal = remainder - (0.5 + CurrentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
+    currentElement = int(remainder/l0);   
+    sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
 
-    if(CurrentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
-      CurrentElement =  Elements-1;
-      sLokal += l0;
+    if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+      currentElement =  Elements-1;
+      sLocal += l0;
     }
-    return sLokal;
   }
 
 }

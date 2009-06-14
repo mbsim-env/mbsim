@@ -112,8 +112,10 @@ namespace MBSim {
       /**
        * \brief detect current finite element
        * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
        */
-      double BuildElement(const double& sGlobal);
+      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
 
       /** 
        * \brief number of finite elements used for discretisation
@@ -169,11 +171,6 @@ namespace MBSim {
        * \brief flag for open (cantilever beam) or closed (rings) structures
        */ 
       bool openStructure;
-
-      /**
-       * \brief current finite element being evaluated
-       */
-      int CurrentElement;
 
       /**
        * \brief flag for testing if beam is initialised

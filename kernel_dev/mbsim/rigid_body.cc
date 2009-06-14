@@ -48,6 +48,20 @@ namespace MBSim {
     ASF.push_back(SqrMat(3,EYE));
   }
 
+  RigidBody::~RigidBody() {
+    if(fT) { delete fT; fT=0; }
+    if(fPrPK) { delete fPrPK; fPrPK=0; }
+    if(fAPK) { delete fAPK; fAPK=0; }
+    if(fPJT) { delete fPJT; fPJT=0; }
+    if(fPJR) { delete fPJR; fPJR=0; }
+    if(fPdJT) { delete fPdJT; fPdJT=0; }
+    if(fPdJR) { delete fPdJR; fPdJR=0; }
+    if(fPjT) { delete fPjT; fPjT=0; }
+    if(fPjR) { delete fPjR; fPjR=0; }
+    if(fPdjT) { delete fPdjT; fPdjT=0; }
+    if(fPdjR) { delete fPdjR; fPdjR=0; }
+  }
+
   void RigidBody::updateh(double t) {
     WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
 

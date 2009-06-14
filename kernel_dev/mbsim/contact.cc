@@ -36,7 +36,24 @@ namespace MBSim {
   Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0) {}
 
   Contact::~Contact() {
-    if (contactKinematics) delete contactKinematics;
+    if(contactKinematics) { delete contactKinematics; contactKinematics=0; }
+    if(fcl) { delete fcl; fcl=0; }
+    if(fdf) { delete fdf; fdf=0; }
+    if(fnil) { delete fnil; fnil=0; }
+    if(ftil) { delete ftil; ftil=0; }
+
+    for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
+      delete[] *i;
+    for(vector<Mat*>::iterator i = Wk.begin(); i != Wk.end(); ++i)
+      delete[] *i;
+    for(vector<Mat*>::iterator i = Vk.begin(); i != Vk.end(); ++i)
+      delete[] *i;
+    for(vector<Mat*>::iterator i = fF.begin(); i != fF.end(); ++i)
+      delete[] *i;
+    for(vector<Vec*>::iterator i = WF.begin(); i != WF.end(); ++i)
+      delete[] *i;
+    for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
+      delete[] *i;
   }
 
   void Contact::updater(double t) {
@@ -49,8 +66,6 @@ namespace MBSim {
       if(gActive[k]) {
         for(unsigned i=0; i<contour.size(); i++) 
           wbk[k] += trans(fF[k][i](Index(0,2),Index(0,laSizek[k]-1)))*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation();
-
-        //	contactKinematics->updatewb(wb,g,cpData[k]);
       }
     }
     contactKinematics->updatewb(wbk,gk,cpData);
@@ -238,7 +253,6 @@ namespace MBSim {
       jsvk[k] >> jsv(svIndk[k],svIndk[k]+svSizek[k]-1);
   }
 
-
   void Contact::calcxSize() {
     LinkMechanics::calcxSize();
     xSize = 0;
@@ -328,7 +342,6 @@ namespace MBSim {
     LinkMechanics::init();
 
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-
       if(getFrictionDirections() == 0)
         gdActive[i][1] = false;
 
@@ -383,12 +396,8 @@ namespace MBSim {
   void Contact::preinit() {
     LinkMechanics::preinit();
 
-    if(contactKinematics);
-    else contactKinematics = findContactPairing(contour[0],contour[1]);
-    if(contactKinematics==0) {
-      cout << "unknown contact pairing" << endl;
-      throw 5;
-    }
+    if(contactKinematics==0) contactKinematics = findContactPairing(contour[0],contour[1]);
+    if(contactKinematics==0) throw new MBSimError("Unknown contact pairing");
 
     contactKinematics->assignContours(contour[0],contour[1]);
 

@@ -161,11 +161,6 @@ namespace MBSim {
       bool implicit;
 
       /**
-       * \brief current element number
-       */
-      int CurrentElement;
-
-      /**
        * \brief Jacobians for implicit integration
        */
       fmatvec::SqrMat JhGqG,JhGqGt; // cannot be initialised in constructor because of unknown size
@@ -188,8 +183,10 @@ namespace MBSim {
       /**
        * \brief detect current finite element
        * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
        */
-      double BuildElement(double sGlobal);
+      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
   };
 
   inline void FlexibleBody1s33RCM::setGauss(int nGauss_) { nGauss = nGauss_; }

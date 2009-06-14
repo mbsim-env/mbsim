@@ -23,15 +23,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // input flexible ring 
   double l0 = 1.; // length ring
-  double E = 2.5e10; // E-Modul alu
+  double E = 2.5e9; // E-Modul alu
   double rho = 2.5e3; // density alu
-  int elements = 10; // number of finite elements
+  int elements = 20; // number of finite elements
   double b0 = 0.02; // width
   double A = b0*b0; // cross-section area
   double I = 1./12.*b0*b0*b0*b0; // moment inertia
 
   // input infty-norm balls (cuboids)
-  int nBalls = 20; // number of balls
+  int nBalls = 100; // number of balls
   double mass = 0.025; // mass of ball
 
   // flexible ring
@@ -67,7 +67,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // balls
   assert(nBalls>1);
-  double d = l0/(2.*nBalls); // thickness
+  double d = 7.*l0/(8.*nBalls); // thickness
   double b = b0*1.5; // height / width
 
   for(int i=0;i<nBalls;i++) {

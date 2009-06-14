@@ -42,6 +42,7 @@ namespace MBSim {
       delete *i;
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       delete *i;
+    if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
   }
 
   void Body::sethSize(int hSize_, int j) {
@@ -81,6 +82,12 @@ namespace MBSim {
         frame[j]->closePlot();
       for(unsigned int j=0; j<contour.size(); j++)
         contour[j]->closePlot();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+          if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+            delete openMBVGrp; openMBVGrp=0;
+          }
+#endif
+
     }
   }
 
