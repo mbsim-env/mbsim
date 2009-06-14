@@ -31,7 +31,11 @@ namespace MBSim {
   Joint::Joint(const string &name) : LinkMechanics(name), ffl(0), fml(0), fifl(0), fiml(0), C("C") {
   }
 
-  Joint::~Joint() { 
+  Joint::~Joint() {
+    if(ffl) { delete ffl; ffl=0; }
+    if(fml) { delete fml; fml=0; }
+    if(fifl) { delete fifl; fifl=0; }
+    if(fiml) { delete fiml; fiml=0; }
   }
 
   void Joint::connect(FrameInterface *frame0, FrameInterface* frame1) {

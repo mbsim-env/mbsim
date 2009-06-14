@@ -46,6 +46,8 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
+   * \date 2009-06-14 OpenMP (Thorsten Schindler)
+   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
     public:

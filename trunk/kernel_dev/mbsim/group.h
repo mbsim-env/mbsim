@@ -28,6 +28,8 @@ namespace MBSim {
    * \brief group ingredients do not depend on each other
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
+   * \date 2009-06-14 OpenMP (Thorsten Schindler)
+   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class Group : public DynamicSystem {
     public:

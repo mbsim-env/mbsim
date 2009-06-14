@@ -25,6 +25,10 @@
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace fmatvec;
 using namespace std;
 
@@ -39,11 +43,11 @@ namespace MBSim {
   }
 
   void FlexibleBody::updateM(double t) {
-    for(unsigned int i=0;i<discretization.size();i++) {
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+    for(int i=0;i<(int)discretization.size();i++) {
       discretization[i]->computeEquationsOfMotion(qElement[i],uElement[i]); // compute attributes of finite element
-
-      GlobalMatrixContribution(i); // assemble
     }
+    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i); // assemble
 
     if(d_massproportional) h -= d_massproportional*(M*u); // mass proportional damping
   }

@@ -1,6 +1,10 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 using namespace MBSim;
 using namespace std;
 
@@ -9,17 +13,25 @@ int main(int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
-  //sys->setSolver(RootFinding);
-  //sys->setLinAlg(PseudoInverse);
+  sys->setConstraintSolver(RootFinding);
+  sys->setImpactSolver(RootFinding);
+  sys->setLinAlg(PseudoInverse);
   sys->init();
 
   TimeSteppingIntegrator integrator;
 
-  integrator.settEnd(0.5);
+  integrator.settEnd(1e-4);
   integrator.setdt(1e-6);
-  integrator.setdtPlot(5e-4);
+  integrator.setdtPlot(1e-6);
 
+#ifdef _OPENMP
+  double start = omp_get_wtime();
+#endif
   integrator.integrate(*sys);
+#ifdef _OPENMP
+  double elapsed = omp_get_wtime() -start;
+  cout << "CPU-Time= " << elapsed << endl;
+#endif
 
   sys->closePlot();
 

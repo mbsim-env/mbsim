@@ -48,6 +48,11 @@ namespace MBSim {
        * \param name of rigid body
        */
       RigidBody(const std::string &name);
+      
+      /**
+       * \brief destructor
+       */
+      virtual ~RigidBody();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
