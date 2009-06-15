@@ -34,9 +34,9 @@ namespace MBSim {
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {}
 
-  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) 
-  {
-  	assert(dtPlot >= dt);
+  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
+
+    assert(dtPlot >= dt);
 
     double t = 0.;
 
@@ -59,14 +59,14 @@ namespace MBSim {
     double tPlot = 0.;
     ofstream integPlot((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
-//	int stepPlot =(int) (1./dtPlot);
+    //	int stepPlot =(int) (1./dtPlot);
 
     int stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
 
     int iter = 0;
-//    double dt0 = dt;
+    //    double dt0 = dt;
     int step = 0;   
     int integrationSteps = 0;
     int maxIter = 0;
@@ -91,16 +91,16 @@ namespace MBSim {
 	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
 	tPlot += dtPlot;
       }
-////      if((t+dt)*stepPlot >= step) { // plotten
-////		step++;
-////		system.plot(z,t,dt);
-////		double s1 = clock();
-////		time += (s1-s0)/CLOCKS_PER_SEC;
-////		s0 = s1; 
-////		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-////		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
-////		tPlot += dtPlot;
-////      }
+      ////      if((t+dt)*stepPlot >= step) { // plotten
+      ////		step++;
+      ////		system.plot(z,t,dt);
+      ////		double s1 = clock();
+      ////		time += (s1-s0)/CLOCKS_PER_SEC;
+      ////		s0 = s1; 
+      ////		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+      ////		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
+      ////		tPlot += dtPlot;
+      ////      }
       // long clock1b = clock();
 
       // if(fabs(tPlot-t)*dt < 1e-14) {
@@ -119,7 +119,7 @@ namespace MBSim {
       // else dt = dt0;
 
       q += system.deltaq(z,t,dt);
-      
+
       t += dt;
       // long clock2 = clock();
 
@@ -150,6 +150,13 @@ namespace MBSim {
 
     cout.unsetf(ios::scientific);
     cout << endl;
+  }
+
+  void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMINTNS"dt");
+    setdt(atof(e->GetText()));
   }
 
 }

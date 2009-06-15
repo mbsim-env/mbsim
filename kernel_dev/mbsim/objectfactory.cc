@@ -10,6 +10,7 @@
 #include "mbsim/integrators/dopri5_integrator.h"
 #include "mbsim/integrators/radau5_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"
+#include "mbsim/integrators/time_stepping_integrator.h"
 
 using namespace std;
 
@@ -66,6 +67,8 @@ namespace MBSim {
       return new RADAU5Integrator;
     if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
       return new LSODARIntegrator;
+    if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
+      return new TimeSteppingIntegrator;
     return 0;
   }
 

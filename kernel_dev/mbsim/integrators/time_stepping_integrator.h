@@ -46,6 +46,8 @@ namespace MBSim {
       void integrate(DynamicSystemSolver& system);
       /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }
