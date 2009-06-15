@@ -347,14 +347,14 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="generalizedForceLaw">
+          <xs:element name="contactForceLaw">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="GeneralizedForceLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="generalizedImpactLaw">
+          <xs:element name="contactImpactLaw">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="GeneralizedImpactLaw"/>
@@ -521,6 +521,25 @@
   <xs:complexType name="LinearRegularizedBilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="RegularizedBilateralConstraintType">
+        <xs:sequence>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedUnilateralConstraintType"/>
+  <xs:complexType name="RegularizedUnilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedForceLawType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="RegularizedUnilateralConstraint" type="LinearRegularizedUnilateralConstraintType"/>
+  <xs:complexType name="LinearRegularizedUnilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="RegularizedUnilateralConstraintType">
         <xs:sequence>
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>

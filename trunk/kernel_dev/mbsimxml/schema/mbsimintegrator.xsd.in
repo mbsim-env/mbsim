@@ -78,4 +78,15 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="TimeSteppingIntegrator" substitutionGroup="Integrator" type="TimeSteppingIntegratorType"/>
+  <xs:complexType name="TimeSteppingIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="dt" type="pv:timeScalar"/>  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
 </xs:schema>
