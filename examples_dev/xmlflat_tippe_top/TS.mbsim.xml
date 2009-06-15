@@ -45,14 +45,14 @@
     </enableOpenMBVFrameC>
   </RigidBody>
   <Contact name="Contact1">
-    <generalizedForceLaw>
+    <contactForceLaw>
       <UnilateralConstraint/>
-    </generalizedForceLaw>
-    <generalizedImpactLaw>
+    </contactForceLaw>
+    <contactImpactLaw>
       <UnilateralNewtonImpact>
         <restitutionCoefficient>0.0</restitutionCoefficient>
       </UnilateralNewtonImpact>
-    </generalizedImpactLaw>
+    </contactImpactLaw>
     <frictionForceLaw>
       <SpatialCoulombFriction>
         <frictionCoefficient>0.2</frictionCoefficient>
@@ -66,14 +66,14 @@
     <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
   </Contact>
   <Contact name="Contact2">
-    <generalizedForceLaw>
+    <contactForceLaw>
       <UnilateralConstraint/>
-    </generalizedForceLaw>
-    <generalizedImpactLaw>
+    </contactForceLaw>
+    <contactImpactLaw>
       <UnilateralNewtonImpact>
         <restitutionCoefficient>0.0</restitutionCoefficient>
       </UnilateralNewtonImpact>
-    </generalizedImpactLaw>
+    </contactImpactLaw>
     <frictionForceLaw>
       <SpatialCoulombFriction>
         <frictionCoefficient>0.2</frictionCoefficient>
