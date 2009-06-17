@@ -80,6 +80,8 @@ namespace MBSim {
       return new UnilateralConstraint;
     if(element->ValueStr()==MBSIMNS"LinearRegularizedBilateralConstraint")
       return new LinearRegularizedBilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedUnilateralConstraint")
+      return new LinearRegularizedUnilateralConstraint;
     return 0;
   }
 
@@ -96,6 +98,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombFriction")
       return new SpatialCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedSpatialCoulombFriction")
+      return new LinearRegularizedSpatialCoulombFriction;
     return 0;
   }
 

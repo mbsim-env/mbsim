@@ -562,6 +562,17 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="LinearRegularizedSpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="LinearRegularizedSpatialCoulombFrictionType"/>
+  <xs:complexType name="LinearRegularizedSpatialCoulombFrictionType">
+    <xs:complexContent>
+      <xs:extension base="FrictionForceLawType">
+        <xs:sequence>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="FrictionImpactLaw" abstract="true" type="FrictionImpactLawType"/>
   <xs:complexType name="FrictionImpactLawType"/>
 

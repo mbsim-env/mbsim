@@ -273,6 +273,7 @@ namespace MBSim {
 	else
 	  return -c*g;
       }
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class LinearRegularizedBilateralConstraint: public RegularizedBilateralConstraint {
@@ -325,6 +326,7 @@ namespace MBSim {
 	  return gd*(-laN*mu/normgd);
       }
       bool isSetValued() const {return false;}
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   class LinearRegularizedStribeckFriction : public FrictionForceLaw {

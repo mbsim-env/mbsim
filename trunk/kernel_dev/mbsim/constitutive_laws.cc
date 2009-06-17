@@ -464,5 +464,21 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
     d=atof(e->GetText());
   }
+
+  void LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
+    RegularizedUnilateralConstraint::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    c=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    d=atof(e->GetText());
+  }
+
+  void LinearRegularizedSpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    setFrictionCoefficient(atof(e->GetText()));
+  }
 }
 
