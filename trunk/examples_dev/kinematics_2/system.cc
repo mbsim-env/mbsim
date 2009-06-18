@@ -7,8 +7,6 @@
 #include <openmbvcppinterface/cuboid.h>
 #endif
 
-#include "mbsimtinyxml/tinyxml.h"
-
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -26,7 +24,6 @@ class Moment : public UserFunction {
 class MyPos : public Translation {
   public:
     int getqSize() const {return 1;} 
-    virtual void initializeUsingXML(TiXmlElement *element) {}
     Vec operator()(const Vec &q, double t) {
       Vec PrPK(3);
       PrPK(0) = cos(q(0));
