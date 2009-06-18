@@ -7,7 +7,7 @@
 #include "mbsim/tree.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objbody.h"
+#include "openmbvcppinterface/ivbody.h"
 #endif
 
 using namespace MBSim;
@@ -106,7 +106,6 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitze->setTranslation(new LinearTranslation(Vec("[0;1;0]")));
   spitze->setFrameOfReference(arm->getFrame("Q"));
   spitze->setFrameForKinematics(spitze->getFrame("C"));
-  //spitze->setq0(Vec(1,INIT,lA/2));
 
   // --------------------------- Setup Control ----------------------------
 
@@ -157,37 +156,25 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::ObjBody *obj=new OpenMBV::ObjBody;
-  obj->setObjFileName("objects/basis.obj");
+  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  obj->setIvFileName("wrl/basis.wrl");
   obj->setScaleFactor(0.2);
+  obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.25,0);
-  obj->setInitialRotation(-M_PI/2,0,0);
-  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
-  obj->setEpsVertex(1e-5);
-  obj->setEpsNormal(1e-5);
-  obj->setSmoothBarrier(M_PI*2/9);
   basis->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::ObjBody;
-  obj->setObjFileName("objects/arm.obj");
+  obj=new OpenMBV::IvBody;
+  obj->setIvFileName("wrl/arm.wrl");
   obj->setScaleFactor(0.2);
+  obj->setInitialRotation(M_PI,0,0);
   obj->setInitialTranslation(0,0.08,0);
-  obj->setInitialRotation(-M_PI/2,0,0);
-  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
-  obj->setEpsVertex(1e-5);
-  obj->setEpsNormal(1e-5);
-  obj->setSmoothBarrier(M_PI*2/9);
   arm->setOpenMBVRigidBody(obj);
 
-  obj=new OpenMBV::ObjBody;
-  obj->setObjFileName("objects/spitze.obj");
+  obj=new OpenMBV::IvBody;
+  obj->setIvFileName("wrl/spitze.wrl");
   obj->setScaleFactor(0.2);
   obj->setInitialTranslation(0,-0.3,0);
-  obj->setInitialRotation(-M_PI/2,0,0);
-  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
-  obj->setEpsVertex(1e-5);
-  obj->setEpsNormal(1e-5);
-  obj->setSmoothBarrier(M_PI*2/9);
+  obj->setInitialRotation(M_PI,0,0);
   spitze->setOpenMBVRigidBody(obj);
 #endif
 }
