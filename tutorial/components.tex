@@ -20,7 +20,7 @@ If there is a frame given tree structure a \texttt{Tree} for the kinematical eva
 %In jedem Fall sind Masse (\emph{setMass}), Tr\"agheitstensor bez. dem Bezugspunkt (\emph{setInertia}), generalisierte Koordinaten (\emph{setJT}, \emph{setJR}), evtl. Anfangsverformungen (\emph{setWrOK0}, \emph{setAWK0}) und \AMVis{}-Darstellungen (\emph{setAMVisBody}) anzugeben und die K\"orper dem MKS hinzuzuf\"ugen (\emph{addObject}). Auch ganze MKS k\"onnen als Slave einem Master-MKS hinzugef\"ugt werden.
 
 \subsubsection{Flexible Bodies}
-The equations of motion of a \texttt{FlexibleBody} is at the moment always derived with respect to a stationary frame. So, flexible bodies can only be used as root but not leave in a recursive tree structure. The following flexible bodies are available. 
+The equations of motion of a \texttt{FlexibleBody} is at the moment always derived with respect to a stationary frame. So, flexible bodies can only be used as root but not as leave in a recursive tree structure. The following flexible bodies are available. 
 
 \begin{itemize}
 %\item \emph{BodyFlexible1s01Torsion}
@@ -63,7 +63,7 @@ Concerning the constitutive laws it is distinguished between contact laws on acc
 
 For modelling own contact kinematics and constitutive laws some conventions are important.
 \begin{itemize}
-\item[] accompanying contour trihedral\\
+\item accompanying contour trihedral\\
     the first column is the outward pointing normal, 
 \end{itemize}
 
@@ -150,7 +150,7 @@ Timestepping integration solves the whole equations of the system including the 
       \item can be done in the child classes of \texttt{LinkMechanics}
       \end{itemize}
     \item[]\texttt{DS::updateT}\\
-      updates the linear transformation matrix $\dot{\vq}=T\vu$ independent of the system structure
+      updates the linear transformation matrix $\dot{\vq}=\vT\vu$ independent of the system structure
     \item[]\texttt{updateJacobians}\\
       updates the \textsc{Jacobians} for projecting forces in generalised directions dependent on the system structure
     \item[]\texttt{updateh}\\
