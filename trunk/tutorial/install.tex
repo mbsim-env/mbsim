@@ -64,7 +64,7 @@ The role of the procedures can be summarized as follows.\footnote{in detail: \ur
 		\texttt{autoheader} & Creates \texttt{config.h.in} as basis for header files.\\\hline
 		\texttt{autoconf} & Compiler for \texttt{configure.ac} to build the executable \textsc{configure} procedure.\\\hline
 		\verb|libtoolize -c --force| & Generates shell and M4 procedures for the system depending shared object files. The option \texttt{-c} forces a local copy of the defining files instead of links. The option \texttt{--force} overwrites already existing procedures.\\\hline
-		\texttt{automake -a -c --force} & Compiler for \texttt{Makefile.am} for preparation of \texttt{Makefile.in}. The option \texttt{-c} forces a local copy of the defining files instead of links.\\\hline
+		\texttt{automake -a -c --force} & Compiler for \texttt{Makefile.am} for preparation of \texttt{Makefile.in}. The option \texttt{-c} forces a local copy of the defining files instead of links. The option \texttt{-a} adds missing standard files. The option \texttt{--force} overwrites already existing procedures.\\\hline
 		%\verb|./configure| & Substitutes in existing \texttt{.in}-files variables by systemdepending informationen, i.e. paths. With \texttt{CFLAGS}, \texttt{CXXFLAGS}, \texttt{F77FLAGS} and \texttt{FFFLAGS} the compiler can create code for degugging with \texttt{ddd} or \texttt{valgrind} (\texttt{g3}) or for release (\texttt{O2}). The options \verb|--disable-static| accelerates compiling, as the compiler only has to create dynamic (*.so) and no static libraries (*.a). In all source files \texttt{<config.h>} has to be included. \\\hline
 		\texttt{make} & Compiles the project sources and links with preliminary libraries. On multi-core computers it is possible to define the number~\texttt{n} of parallel jobs with \texttt{-jn}.\\\hline
 		\texttt{make install} & Copies the executable project files and \texttt{includes} to \texttt{MBSim/Install}.\\\hline 
@@ -111,7 +111,12 @@ Last the procedure \textsc{configure} is used selecting the FLAGS
  --with-atlas-lib-prefix=PFX (prefix, where the ATLAS libs are
      installed, when ATLAS is used)
 \end{verbatim}
-if ATLAS should be used instead of LAPack. Details for adapting the installation can be found in \texttt{MBSim/fmatvec/README}. The code can be compiled and installed with the procedure \textsc{install}. For new installations one has to invoke the procedure \textsc{reinstall}.
+if ATLAS should be used instead of LAPack. The FLAGS
+\begin{verbatim}
+ --with-allocator-class=--gnu_cxx::new_allocator
+ --with-allocator-header=ext/new_allocator.h
+\end{verbatim}
+are necessary to use a standard thread-safe memory allocator instead of the \FMatVec built-in allocator. Details for adapting the installation can be found in \texttt{MBSim/fmatvec/README}. The code can be compiled and installed with the procedure \textsc{install}. For new installations one has to invoke the procedure \textsc{reinstall}.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\HDF}
@@ -139,15 +144,6 @@ to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpseri
  svn checkout http://svn.berlios.de/svnroot/repos/openmbv/trunk OpenMBV
 \end{verbatim}
 
-\subsubsection{OpenMBV-C++Interface}
-The C++-Interface creates standard data for \OpenMBV{} using C++ programs. 
-Necessary for its installation are
-\begin{itemize}
-\item hdf5 with version 1.8.2 or newer (file handling),
-\item HDF5Serie (wrapper for file handling).
-\end{itemize}
-Use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/openmbvcppinterface}. One can find adaptations of this installation process in \texttt{MBSim/OpenMBV/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
-
 \subsubsection{\OpenMBV{}}
 Necessary for the installation of a static visualisation part are the following preliminary steps with everything being installed in \texttt{/home/OpenMBV} and with some hints:
 \begin{itemize}
@@ -168,19 +164,30 @@ Necessary for the installation of a static visualisation part are the following 
 \item Qwt with version 5 or newer (GUI elements)\\
     \texttt{in qwtconfig.pri change INSTALLBASE=/home/OpenMBV/local}\\
     \texttt{/home/OpenMBV/local/bin/qmake}
+\item Octave with version 3.0 or newer (for XML preprocessing) 
 \end{itemize}
 {\small Fortunately at the institute these steps have already been done at \texttt{diesel:/home/OpenMBV}.}\par
 Missing is the final installation. After typing
 \begin{verbatim}
 export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:MBSim/Install/lib/pkgconfig
 \end{verbatim} 
-one should use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build . The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation if invoked before the previous \textsc{install}.\\
+one should use the procedures \textsc{automake}, \textsc{configure} perhaps with FLAG \texttt{\-\-with-ocatve-path} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build of an independent XML preprocessor. The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation if invoked before the previous \textsc{install}.\\
 There is also a static Linux binary available at \url{www.berlios.de}.\\
 Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
  alias openmbv="MBSim/OpenMBV/openmbv/openmbv"
 \end{verbatim}
 to gain overall access to the command \texttt{openmbv}, which should be used only locally because of network protocols not providing the necessary X.org requirements.
+
+\subsubsection{OpenMBV-C++Interface}
+The C++-Interface creates standard data for \OpenMBV{} using C++ programs. 
+Necessary for its installation are
+\begin{itemize}
+\item hdf5 with version 1.8.2 or newer (file handling),
+\item HDF5Serie (wrapper for file handling).
+\item openmbv/mbxmlutils (XML preprocessing).
+\end{itemize}
+Use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{MBSim/OpenMBV/openmbvcppinterface}. One can find adaptations of this installation process in \texttt{MBSim/OpenMBV/C++Interface/INSTALL}.  For a new installation the procedure \textsc{reinstall} is invoked.
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
