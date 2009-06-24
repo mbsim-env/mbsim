@@ -56,7 +56,7 @@ namespace MBSim {
        * \param tolerance for relative velocity
        * \return flag if the force law is valid given the parameters
        */
-      virtual bool isFullfield(double la,  double gdn, double tolla, double tolgd) { return true; }
+      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd) { return true; }
       virtual double operator()(double g,  double gd) { return 0; }
 
       /**
@@ -77,7 +77,7 @@ namespace MBSim {
       double project(double la, double gdn, double r);
       fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
-      bool isFullfield(double la,  double gdn, double tolla, double tolgd);
+      bool isFulfilled(double la,  double gdn, double tolla, double tolgd);
       bool isSetValued() const {return true;}
   };
 
@@ -90,7 +90,7 @@ namespace MBSim {
       double project(double la, double gdn, double r);
       fmatvec::Vec diff(double la, double gdn, double r);
       double solve(double G, double gdn);
-      bool isFullfield(double la,  double gdn, double tolla, double tolgd);
+      bool isFulfilled(double la,  double gdn, double tolla, double tolgd);
       bool isSetValued() const {return true;}
   };
 
@@ -101,7 +101,7 @@ namespace MBSim {
       virtual double project(double la, double gdn, double gda, double r) = 0;
       virtual fmatvec::Vec diff(double la, double gdn, double gda, double r) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
-      virtual bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
+      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
   };
@@ -117,7 +117,7 @@ namespace MBSim {
       double project(double la, double gdn, double gda, double r);
       fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
-      bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
+      bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd);
 
       virtual void initializeUsingXML(TiXmlElement *element);
   };
@@ -129,7 +129,7 @@ namespace MBSim {
       double project(double la, double gdn, double gda, double r);
       fmatvec::Vec diff(double la, double gdn, double gda, double r);
       double solve(double G, double gdn, double gda);
-      bool isFullfield(double la,  double gdn, double gda, double tolla, double tolgd);
+      bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd);
   };
 
   class FrictionForceLaw {
@@ -141,7 +141,7 @@ namespace MBSim {
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Vec(2);}
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) {return fmatvec::Mat(2,2);}
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) {return fmatvec::Vec(2);}
-      virtual bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) {return true;}
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) {return true;}
       virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN) {return fmatvec::Vec(2);}
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) {return fmatvec::Vec(2);}
       virtual int getFrictionDirections() = 0;
@@ -165,7 +165,7 @@ namespace MBSim {
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
-      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
       bool isSticking(const fmatvec::Vec& s, double sTol) {return fabs(s(0)) <= sTol;}
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
@@ -184,7 +184,7 @@ namespace MBSim {
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
-      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
       bool isSticking(const fmatvec::Vec& s, double sTol) {return nrm2(s(0,1)) <= sTol;}
       fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
@@ -200,7 +200,7 @@ namespace MBSim {
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r) = 0;
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN) = 0;
-      virtual bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd) = 0;
       virtual int getFrictionDirections() = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
@@ -218,7 +218,7 @@ namespace MBSim {
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
       fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
-      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 1;}
   };
 
@@ -234,7 +234,7 @@ namespace MBSim {
       fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
       fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
       fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
-      bool isFullfield(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
+      bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       int getFrictionDirections() {return 2;}
 
       virtual void initializeUsingXML(TiXmlElement *element);
