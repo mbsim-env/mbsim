@@ -801,12 +801,12 @@ namespace MBSim {
             gddk[k](i) += a[j]*laMBS(ja[j]);
         }
 
-        if(!fcl->isFullfield(lak[k](0),gddk[k](0),laTol,gddTol)) {
+        if(!fcl->isFulfilled(lak[k](0),gddk[k](0),laTol,gddTol)) {
           ds->setTermination(false);
           return;
         }
         if(fdf && gdActive[k][1]) 
-          if(!fdf->isFullfield(lak[k](1,getFrictionDirections()),gddk[k](1,getFrictionDirections()),lak[k](0),laTol,gddTol)) {
+          if(!fdf->isFulfilled(lak[k](1,getFrictionDirections()),gddk[k](1,getFrictionDirections()),lak[k](0),laTol,gddTol)) {
             ds->setTermination(false);
             return;
           }
@@ -831,12 +831,12 @@ namespace MBSim {
             gdnk[k](i) += a[j]*laMBS(ja[j]);
         }
 
-        if(!fnil->isFullfield(lak[k](0),gdnk[k](0),gdk[k](0),LaTol,gdTol)) {
+        if(!fnil->isFulfilled(lak[k](0),gdnk[k](0),gdk[k](0),LaTol,gdTol)) {
           ds->setTermination(false);
           return;
         }
         if(ftil) 
-          if(!ftil->isFullfield(lak[k](1,getFrictionDirections()),gdnk[k](1,getFrictionDirections()),gdk[k](1,getFrictionDirections()),lak[k](0),LaTol,gdTol)) {
+          if(!ftil->isFulfilled(lak[k](1,getFrictionDirections()),gdnk[k](1,getFrictionDirections()),gdk[k](1,getFrictionDirections()),lak[k](0),LaTol,gdTol)) {
             ds->setTermination(false);
             return;
           }

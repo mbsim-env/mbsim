@@ -59,7 +59,7 @@ namespace MBSim {
   //    return Vec(1,INIT,-(gdn(0))/G(0,0));
   //  }
   //}
-//    bool UnilateralContact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
+//    bool UnilateralContact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
 //    double gdn_ = gdn(0);
 //    if(fabs(gda(0)) > gd_limit)
 //      gdn_ += epsilon*gda(0);
@@ -94,7 +94,7 @@ namespace MBSim {
       return -gdn/G;
   }
 
-  bool UnilateralConstraint::isFullfield(double la, double gdn, double laTol, double gdTol) {
+  bool UnilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol) {
     if(gdn >= -gdTol && fabs(la) <= laTol)
       return true;
     else if(la >= -laTol && fabs(gdn) <= gdTol)
@@ -115,7 +115,7 @@ namespace MBSim {
   //Vec BilateralContact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda) {
   //  return Vec(1,INIT,-gdn(0)/G(0,0));
   //}
-  //bool BilateralContact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
+  //bool BilateralContact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
@@ -134,7 +134,7 @@ namespace MBSim {
     return -gdn/G;
   }
 
-  bool BilateralConstraint::isFullfield(double la, double gdn, double laTol, double gdTol) {
+  bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol) {
     return fabs(gdn) <= gdTol;
   }
 
@@ -165,7 +165,7 @@ namespace MBSim {
       return -gdn/G;
   }
 
-  bool UnilateralNewtonImpact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
+  bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
     
@@ -199,7 +199,7 @@ namespace MBSim {
     return -gdn/G;
   }
 
-  bool BilateralImpact::isFullfield(double la, double gdn, double gda, double laTol, double gdTol) {
+  bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol) {
     return fabs(gdn) <= gdTol;
   }
 
@@ -232,7 +232,7 @@ namespace MBSim {
       return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
   }
 
-  bool PlanarCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
+  bool PlanarCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
     if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
       return true;
     else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
@@ -308,7 +308,7 @@ namespace MBSim {
 //      return d;
 //    }
 //  }
-// bool CoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laTol, double gdTol) {
+// bool CoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laTol, double gdTol) {
 //    int nFric = gdn.size()-1;
 //    if(nFric == 1) {
 //      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol)
@@ -355,7 +355,7 @@ namespace MBSim {
     throw 5;
   }
 
-  bool SpatialCoulombFriction::isFullfield(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
+  bool SpatialCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
     if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
       return true;
     else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
@@ -404,7 +404,7 @@ namespace MBSim {
       return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
   }
 
-  bool PlanarCoulombImpact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+  bool PlanarCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
     if(fabs(la(0) + gdn(0)/fabs(gdn(0))*mu*fabs(laN)) <= laTol)
       return true;
     else if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
@@ -440,7 +440,7 @@ namespace MBSim {
     throw 5;
   }
 
-  bool SpatialCoulombImpact::isFullfield(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+  bool SpatialCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
     if(nrm2(la + gdn/nrm2(gdn)*mu*fabs(laN)) <= laTol)
       return true;
     else if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol)

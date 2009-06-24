@@ -424,7 +424,7 @@ namespace MBSim {
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      if(!fifl->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
+      if(!fifl->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
         ds->setTermination(false);
         return;
       }
@@ -434,7 +434,7 @@ namespace MBSim {
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      if(!fiml->isFullfield(la(i),gdn(i),gd(i),LaTol,gdTol)) {
+      if(!fiml->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
         ds->setTermination(false);
         return;
       }
@@ -454,7 +454,7 @@ namespace MBSim {
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      if(!ffl->isFullfield(la(i),gdd(i),laTol,gddTol)) {
+      if(!ffl->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
         ds->setTermination(false);
         return;
       }
@@ -464,7 +464,7 @@ namespace MBSim {
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      if(!fml->isFullfield(la(i),gdd(i),laTol,gddTol)) {
+      if(!fml->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
         ds->setTermination(false);
         return;
       }

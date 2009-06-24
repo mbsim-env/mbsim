@@ -102,7 +102,7 @@ namespace MBSim {
     cout << "uSize[0] = " << uSize[0] <<endl;
     cout << "xSize = " << xSize <<endl;
     cout << "gSize = " << gSize <<endl;
-    cout << "qdSize = " << gdSize <<endl;
+    cout << "gdSize = " << gdSize <<endl;
     cout << "laSize = " << laSize <<endl;
     cout << "svSize = " << svSize <<endl;
     cout << "hSize[0] = " << hSize[0] <<endl;
