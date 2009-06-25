@@ -30,6 +30,8 @@
 namespace MBSim {
 
   class Frame;
+  class Tree;
+  class Node;
   class HydFluid;
   class ExtraDynamicInterface;
   class DataInterfaceBase;
@@ -362,6 +364,12 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      /**
+       * \brief Decide, whether the model-hierarchy should be reorganized.
+       * \param true for reorganisation, false otherwise
+       */
+      void setReorganizeHierarchy(bool flag) {reorganizeHierarchy = flag;}
+
     protected:
       /**
        * \brief mass matrix
@@ -583,6 +591,12 @@ namespace MBSim {
        * TODO
        */
       int k;
+
+      /**
+       * \brief Flag for reorganisation of hierarchy. 
+       * This flag will be removed in the future.
+       */
+      bool reorganizeHierarchy;
       
       /**
        * \brief references to external state
@@ -646,6 +660,11 @@ namespace MBSim {
        * \brief boolean signal evaluation for end integration set by user
        */
       static bool exitRequest;
+
+      /**
+       * \brief TODO
+       */
+      void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
   };
 
 }
