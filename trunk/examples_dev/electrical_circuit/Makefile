@@ -2,7 +2,7 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc my_circuit.cc
+sources = main.cc system.cc 
 #sources = main.cc system.cc simulation_classes.cc modeling_classes.cc my_circuit.cc
 
 # Do Not Edit the Following Lines
