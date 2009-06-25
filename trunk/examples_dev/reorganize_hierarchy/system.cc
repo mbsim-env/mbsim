@@ -17,9 +17,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
 
-  SpecialGroup *mbs = new SpecialGroup("MehrfachPendel"); 
-  addDynamicSystem(mbs,Vec(3),SqrMat(3,EYE));
-
   double mStab = 0.2;
   double lStab = 0.3;
   double JStab = 1.0/12.0 * mStab * lStab * lStab; 
@@ -30,8 +27,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   SymMat Theta(3);
 
   RigidBody* stab1 = new RigidBody("Stab1");
-  mbs->addObject(stab1);
-  //Node* node = mbs->addObject(0,stab1);
+  addObject(stab1);
   KrCR(0) = a1;
 
   stab1->addFrame("R",KrCR,SqrMat(3,EYE));
@@ -57,8 +53,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
-  mbs->addObject(stab2);
-  //mbs->addObject(node,stab2);
+  addObject(stab2);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
   stab1->addFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R"));
@@ -85,8 +80,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   RigidBody* stab3 = new RigidBody("Stab3");
-  mbs->addObject(stab3);
-  //mbs->addObject(node,stab3);
+  addObject(stab3);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
   stab2->addFrame("P",KrRP,SqrMat(3,EYE),stab2->getFrame("R"));
@@ -113,8 +107,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   RigidBody* stab4 = new RigidBody("Stab4");
-  mbs->addObject(stab4);
-  //mbs->addObject(node,stab4);
+  addObject(stab4);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
   KrCR(0) = a2;
@@ -139,14 +132,14 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
-  mbs->addDynamicSystem(group,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(group,Vec(3),SqrMat(3,EYE));
   stab3->addFrame("P",KrRP,SqrMat(3,EYE),stab3->getFrame("R"));
   group->getRod1()->setFrameOfReference(stab3->getFrame("P"));
 
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  mbs->addDynamicSystem(group,r,SqrMat(3,EYE));
+  addDynamicSystem(group,r,SqrMat(3,EYE));
   KrRP(0) = lStab/2;
   KrRP(2) = -0.006;
 }
