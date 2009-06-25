@@ -8,6 +8,7 @@ int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
   DynamicSystemSolver *sys = new Pendulum("TS");
+  sys->setReorganizeHierarchy(true);
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->init();
