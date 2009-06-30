@@ -11,12 +11,14 @@ namespace MBSim {
   class LinearSpringDamper : public LinkMechanics {
     protected:
       double l0, cT, dT;
+      double dist;
       fmatvec::Vec forceDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
     public:
       LinearSpringDamper(const std::string &name);
+      virtual std::string getType() const { return "LinearSpringDamper"; }
       void init();
       void initPlot();
       void plot(double t,double dt=1); 
