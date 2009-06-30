@@ -2,6 +2,7 @@
 #include "mbsim/linear_spring_damper.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/body.h"
+#include "mbsim/utils/eps.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/objectfactory.h"
@@ -39,17 +40,28 @@ namespace MBSim {
 
   void LinearSpringDamper::updateg(double t) {
     Vec WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
-    forceDir = WrP0P1/nrm2(WrP0P1);
-    g(0) = trans(forceDir)*WrP0P1;
+    dist = nrm2(WrP0P1);
+    if (dist>epsroot()) {
+      forceDir = WrP0P1/dist;
+      g(0) = trans(forceDir)*WrP0P1;
+    }
+    else
+      g(0) = 0;
   } 
 
   void LinearSpringDamper::updategd(double t) {
-    gd(0) = trans(forceDir)*(frame[1]->getVelocity() - frame[0]->getVelocity());  
+    if (dist>epsroot())
+      gd(0) = trans(forceDir)*(frame[1]->getVelocity() - frame[0]->getVelocity());  
+    else
+      gd(0) = 0;
   }    
 
   void LinearSpringDamper::updateh(double t) {
     la(0) = (cT*(g(0)-l0) + dT*gd(0));
-    WF[0] = forceDir*la;
+    if (dist>epsroot())
+      WF[0] = forceDir*la;
+    else
+      WF[0] = Vec(3, INIT, 0);
     WF[1] = -WF[0];
     for(unsigned int i=0; i<frame.size(); i++)
       h[i] += trans(frame[i]->getJacobianOfTranslation())*WF[i];
