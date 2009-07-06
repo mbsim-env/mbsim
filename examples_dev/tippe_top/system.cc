@@ -22,8 +22,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   setAccelerationOfGravity(grav);
 
-  addFrame("Os",Vec(3),SqrMat(3,EYE));
-
   Plane *plane = new Plane("Plane");
   double phi = M_PI/2;
   SqrMat AWK(3);

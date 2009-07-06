@@ -6,12 +6,15 @@ sources = main.cc system.cc
 
 # Do Not Edit the Following Lines
 CXX = g++
+
 libsources = 
-objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim` 
+objects = $(sources:.cc=.o)
+
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs mbsimControl` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimControl` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
