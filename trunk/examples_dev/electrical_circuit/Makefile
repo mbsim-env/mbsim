@@ -3,16 +3,18 @@ Target = main
 
 # Defining Sources
 sources = main.cc system.cc 
-#sources = main.cc system.cc simulation_classes.cc modeling_classes.cc my_circuit.cc
 
 # Do Not Edit the Following Lines
 CXX = g++
+
 libsources = 
-objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsimElectronics` 
+objects = $(sources:.cc=.o)
+
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimElectronics` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs mbsimElectronics` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimElectronics` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
