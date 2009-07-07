@@ -26,6 +26,7 @@ namespace MBSim {
 
   void LinearSpringDamper::initPlot() {
     updatePlotFeatures(parent);
+    plotColumns.push_back("la(0)");
 
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -73,6 +74,7 @@ namespace MBSim {
   }
 
   void LinearSpringDamper::plot(double t,double dt) {
+    plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (coilspringOpenMBV) {
