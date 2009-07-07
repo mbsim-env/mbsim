@@ -13,7 +13,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setAccelerationOfGravity(grav);
 
   Tree* tree = new Tree("Master");
-  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree);
 
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
   Node* node = tree->addTree(0,pendel1);

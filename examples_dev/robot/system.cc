@@ -50,7 +50,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // System with tree-structure
   Tree *tree = new Tree("Baum");
-  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree);
 
   RigidBody *basis = new RigidBody("Basis");
   Node *node = tree->addObject(0,basis);

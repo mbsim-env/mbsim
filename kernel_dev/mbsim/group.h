@@ -29,6 +29,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
+   * \date 2009-07-08 relative dynamic system location (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class Group : public DynamicSystem {
@@ -60,14 +61,6 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Group"; }
       /***************************************************/
-
-      /**
-       * \param dynamic system to add
-       * \param relative position of dynamic system
-       * \param relative orientation of dynamic system
-       * \param relation frame
-       */
-      void addDynamicSystem(DynamicSystem *dynamicsystem, const fmatvec::Vec &RrRD, const fmatvec::SqrMat &ARD, const Frame* refFrame=0);
 
       virtual void initializeUsingXML(TiXmlElement *element);
       fmatvec::Vec RrRD;

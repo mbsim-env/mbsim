@@ -15,7 +15,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setAccelerationOfGravity(g);
 
   Group2 *group1 = new Group2("Hauptgruppe1");
-  addDynamicSystem(group1,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(group1);
 
   Group2 *group2 = new Group2("Hauptgruppe2");
   group2->setPlotFeatureRecursive(stateDerivative, enabled);
@@ -29,7 +29,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  addDynamicSystem(group2,r,A);
+  group2->setPosition(r);
+  group2->setOrientation(A);
+  addDynamicSystem(group2);
 
   //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;
   //cout << findFrame("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;

@@ -116,30 +116,35 @@ namespace MBSim {
       (*i)->updateJacobians(t);
   }
 
-  void Group::addDynamicSystem(DynamicSystem *sys, const Vec &RrRD, const SqrMat &ARD, const Frame* refFrame) {
-    DynamicSystem::addDynamicSystem(sys);
-
-    if(dynamic_cast<const Frame*>(refFrame)!=0) {
-      int i = frameIndex(static_cast<const Frame*>(refFrame));
-      IrOD.push_back(IrOF[i] + AIF[i]*RrRD);
-      AID.push_back(AIF[i]*ARD);
-    }
-    else {
-      IrOD.push_back(RrRD);
-      AID.push_back(ARD);
-    }
-  }
-
   void Group::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Element::initializeUsingXML(element);
     e=element->FirstChildElement();
-    while(e && e->ValueStr()!=MBSIMNS"frame" &&
+
+    while(e && e->ValueStr()!=MBSIMNS"referenceFrame" &&
+        e->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
+        e->ValueStr()!=MBSIMNS"relativeGroupOrientation" &&
+        e->ValueStr()!=MBSIMNS"frame" &&
         e->ValueStr()!=MBSIMNS"contour" &&
         ObjectFactory::createGroup(e)==0 &&
         ObjectFactory::createObject(e)==0 &&
         ObjectFactory::createLink(e)==0)
       e=e->NextSiblingElement();
+
+    if(e && e->ValueStr()==MBSIMNS"referenceFrame") {
+      string ref=e->Attribute("ref");
+      if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
+      setFrameOfReference(getFrameByPath(ref));
+      e=e->NextSiblingElement();
+    }
+    if(e && e->ValueStr()==MBSIMNS"relativeGroupLocation") {
+      setPosition(Vec(e->GetText()));
+      e=e->NextSiblingElement();
+    }
+    if(e && e->ValueStr()==MBSIMNS"relativeGroupOrientation") {
+      setOrientation(SqrMat(e->GetText()));
+      e=e->NextSiblingElement();
+    }
 
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
@@ -180,28 +185,7 @@ namespace MBSim {
     }
     Group *g;
     while((g=ObjectFactory::createGroup(e))) {
-      TiXmlElement *ee=e->FirstChildElement();
-      while(ee && ee->ValueStr()!=MBSIMNS"referenceFrame" &&
-          ee->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
-          ee->ValueStr()!=MBSIMNS"relativeGroupOrientation")
-        ee=ee->NextSiblingElement();
-      Frame *refF=0;
-      if(ee && ee->ValueStr()==MBSIMNS"referenceFrame") {
-        string ref=ee->Attribute("ref");
-        if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
-        ref=ref.substr(3); // delete '../' from the reference, we are still in the parent class!
-        refF=getFrameByPath(ref);
-        ee=ee->NextSiblingElement();
-      }
-      Vec RrRD("[0;0;0]");
-      if(ee && ee->ValueStr()==MBSIMNS"relativeGroupLocation") {
-        RrRD=Vec(ee->GetText());
-        ee=ee->NextSiblingElement();
-      }
-      SqrMat ARD("[1,0,0;0,1,0;0,0,1]");
-      if(ee && ee->ValueStr()==MBSIMNS"relativeGroupOrientation")
-        ARD=SqrMat(ee->GetText());
-      addDynamicSystem(g, RrRD, ARD, refF);
+      addDynamicSystem(g);
       g->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }

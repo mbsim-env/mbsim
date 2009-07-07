@@ -42,7 +42,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0)
 #endif
@@ -60,9 +60,6 @@ namespace MBSim {
 
                                                        IrOF.push_back(Vec(3,INIT,0.));
                                                        AIF.push_back(SqrMat(3,EYE));
-
-                                                       frame[0]->setPosition(Vec(3,INIT,0.));
-                                                       frame[0]->setOrientation(SqrMat(3,EYE));
                                                      }
 
   DynamicSystem::~DynamicSystem() {
@@ -325,6 +322,20 @@ namespace MBSim {
   }
 
   void DynamicSystem::init() {
+    if(frameParent) {
+      frame[0]->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
+      frame[0]->setOrientation(frameParent->getOrientation()*APF);
+    }
+    else {
+      if(parent) {
+        frame[0]->setPosition(parent->getFrame("I")->getPosition() + parent->getFrame("I")->getOrientation()*PrPF);
+        frame[0]->setOrientation(parent->getFrame("I")->getOrientation()*APF);
+      }
+      else {
+        frame[0]->setPosition(getFrame("I")->getPosition() + getFrame("I")->getOrientation()*PrPF);
+        frame[0]->setOrientation(getFrame("I")->getOrientation()*APF);
+      }
+    }
     for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
       frame[i]->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOF[i]);
       frame[i]->setOrientation(frame[0]->getOrientation()*AIF[i]);
@@ -335,10 +346,6 @@ namespace MBSim {
       contour[i]->init();
     }
     for(unsigned int i=0; i<dynamicsystem.size(); i++) { // kinematics of other dynamicsystems can be updates from frame I
-      if(dynamicsystem[i]->getType() == "Group") {
-        dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOD[i]);
-        dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AID[i]);
-      }
       dynamicsystem[i]->init();
     }
 
@@ -354,10 +361,6 @@ namespace MBSim {
 
   void DynamicSystem::preinit() {
     for(unsigned int i=0; i<dynamicsystem.size(); i++) {
-      if(dynamicsystem[i]->getType()=="Group") {
-        dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOD[i]);
-        dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AID[i]);
-      }
       dynamicsystem[i]->preinit();
     }
 
