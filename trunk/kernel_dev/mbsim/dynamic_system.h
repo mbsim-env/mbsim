@@ -195,7 +195,7 @@ namespace MBSim {
        * \param check for existence of frame
        * \return frame
        */
-      virtual FrameInterface* getFrame(const std::string &name, bool check=true);
+      virtual Frame* getFrame(const std::string &name, bool check=true);
 
       /**
        * \param name of the contour
@@ -548,7 +548,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const FrameInterface* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -556,7 +556,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const FrameInterface* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param contour to add
@@ -564,14 +564,14 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const FrameInterface* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       /**
        * \param contour to add
        * \param relative position of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const FrameInterface* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE),refFrame); }
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const Frame* refFrame=0) { addContour(contour,RrRC,fmatvec::SqrMat(3,fmatvec::EYE),refFrame); }
 
       /**
        * \param frame
@@ -646,7 +646,7 @@ namespace MBSim {
        */
       MBSim::ModellingInterface* getModel(const std::string &name, bool check=true);
 
-      virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 
     protected:
@@ -654,11 +654,6 @@ namespace MBSim {
        * \brief parent dynamic system
        */
       DynamicSystem *parent;
-
-      /**
-       * \brief frame of reference of the dynamic system
-       */
-      StationaryFrame frameOfReference;
 
       /** 
        * \brief container for possible ingredients

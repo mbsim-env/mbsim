@@ -71,7 +71,7 @@ namespace MBSim {
     laSize = forceDir.cols()+momentDir.cols(); // cols = columns
   }
 
-  void Actuator::connect(FrameInterface *frame0, FrameInterface* frame1) {
+  void Actuator::connect(Frame *frame0, Frame* frame1) {
     LinkMechanics::connect(frame0);
     LinkMechanics::connect(frame1);
   }

@@ -20,9 +20,9 @@ int main(int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.settEnd(1e-4);
+  integrator.settEnd(1e-3);
   integrator.setdt(1e-6);
-  integrator.setdtPlot(1e-6);
+  integrator.setdtPlot(1e-4);
 
 #ifdef _OPENMP
   double start = omp_get_wtime();
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
   integrator.integrate(*sys);
 #ifdef _OPENMP
   double elapsed = omp_get_wtime() -start;
-  cout << "CPU-Time= " << elapsed << endl;
+  cout << "CPU-Time = " << elapsed << endl;
 #endif
 
   sys->closePlot();

@@ -38,7 +38,7 @@ namespace MBSim {
     if(fiml) { delete fiml; fiml=0; }
   }
 
-  void Joint::connect(FrameInterface *frame0, FrameInterface* frame1) {
+  void Joint::connect(Frame* frame0, Frame* frame1) {
     LinkMechanics::connect(frame0);
     LinkMechanics::connect(frame1);
   }
@@ -524,9 +524,9 @@ namespace MBSim {
       gifl->initializeUsingXML(ee->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"connect");
-    FrameInterface *ref1=getFrameByPath(e->Attribute("ref1"));
+    Frame *ref1=getFrameByPath(e->Attribute("ref1"));
     if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
-    FrameInterface *ref2=getFrameByPath(e->Attribute("ref2"));
+    Frame *ref2=getFrameByPath(e->Attribute("ref2"));
     if(!ref2) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref2")<<endl; _exit(1); }
     connect(ref1,ref2);
   }

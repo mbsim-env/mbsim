@@ -257,7 +257,7 @@ namespace MBSim {
     setFrameOfReference(getFrameByPath(e->Attribute("ref")));
   }
 
-  FrameInterface *Object::getFrameByPath(string path) {
+  Frame *Object::getFrameByPath(string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
     // absolut path

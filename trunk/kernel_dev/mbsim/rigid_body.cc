@@ -441,14 +441,16 @@ namespace MBSim {
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
+#ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
         f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
-                         atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+            atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+#endif
       ec=ec->NextSiblingElement();
       Frame *refF=0;
       if(ec->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
       Vec RrRF(ec->GetText());
@@ -465,8 +467,8 @@ namespace MBSim {
       ec=ec->NextSiblingElement();
       Frame *refF=0;
       if(ec->ValueStr()==MBSIMNS"referenceFrame") {
-	refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
-	ec=ec->NextSiblingElement();
+        refF=getFrameByPath(ec->Attribute("ref"));
+        ec=ec->NextSiblingElement();
       }
       Vec RrRC(ec->GetText());
       ec=ec->NextSiblingElement();
@@ -476,7 +478,7 @@ namespace MBSim {
       e=e->NextSiblingElement();
     }
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    setFrameForKinematics((Frame*)getFrameByPath(e->Attribute("ref")));
+    setFrameForKinematics(getFrameByPath(e->Attribute("ref")));
     e=element->FirstChildElement(MBSIMNS"mass");
     setMass(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
@@ -504,9 +506,9 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
     if(e) {
       if(!openMBVBody)
-	setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       getFrame("C")->enableOpenMBV(atof(e->FirstChildElement(MBSIMNS"size")->GetText()),
-	  atof(e->FirstChildElement(MBSIMNS"offset")->GetText()));
+          atof(e->FirstChildElement(MBSIMNS"offset")->GetText()));
     }
 #endif
   }

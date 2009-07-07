@@ -42,17 +42,28 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameOfReference("I"), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), openMBVGrp(0) {
-    frameOfReference.setParent(this);
-    uSize[0] = 0;
-    uSize[1] = 0;
-    uInd[0] = 0;
-    uInd[1] = 0;
-    hSize[0] = 0;
-    hSize[1] = 0;
-    hInd[0] = 0;
-    hInd[1] = 0;
-  }
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0)
+#ifdef HAVE_OPENMBVCPPINTERFACE                      
+                                                     , openMBVGrp(0)
+#endif
+                                                     {
+                                                       uSize[0] = 0;
+                                                       uSize[1] = 0;
+                                                       uInd[0] = 0;
+                                                       uInd[1] = 0;
+                                                       hSize[0] = 0;
+                                                       hSize[1] = 0;
+                                                       hInd[0] = 0;
+                                                       hInd[1] = 0;
+
+                                                       addFrame(new Frame("I"));
+
+                                                       IrOF.push_back(Vec(3,INIT,0.));
+                                                       AIF.push_back(SqrMat(3,EYE));
+
+                                                       frame[0]->setPosition(Vec(3,INIT,0.));
+                                                       frame[0]->setOrientation(SqrMat(3,EYE));
+                                                     }
 
   DynamicSystem::~DynamicSystem() {
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
@@ -98,7 +109,7 @@ namespace MBSim {
       catch(MBSimError error) { error.printExceptionMessage(); }
     }
 
-#pragma omp parallel for num_threads(omp_get_max_threads()/2) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateM(t); }
       catch(MBSimError error) { error.printExceptionMessage(); }
@@ -314,19 +325,19 @@ namespace MBSim {
   }
 
   void DynamicSystem::init() {
-    for(unsigned int i=0; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
-      frame[i]->setPosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOF[i]);
-      frame[i]->setOrientation(frameOfReference.getOrientation()*AIF[i]);
+    for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
+      frame[i]->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOF[i]);
+      frame[i]->setOrientation(frame[0]->getOrientation()*AIF[i]);
     }
     for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
-      contour[i]->setReferencePosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOC[i]);
-      contour[i]->setReferenceOrientation(frameOfReference.getOrientation()*AIC[i]);
+      contour[i]->setReferencePosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOC[i]);
+      contour[i]->setReferenceOrientation(frame[0]->getOrientation()*AIC[i]);
       contour[i]->init();
     }
     for(unsigned int i=0; i<dynamicsystem.size(); i++) { // kinematics of other dynamicsystems can be updates from frame I
       if(dynamicsystem[i]->getType() == "Group") {
-        dynamicsystem[i]->getFrame("I")->setPosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOD[i]);
-        dynamicsystem[i]->getFrame("I")->setOrientation(frameOfReference.getOrientation()*AID[i]);
+        dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOD[i]);
+        dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AID[i]);
       }
       dynamicsystem[i]->init();
     }
@@ -344,8 +355,8 @@ namespace MBSim {
   void DynamicSystem::preinit() {
     for(unsigned int i=0; i<dynamicsystem.size(); i++) {
       if(dynamicsystem[i]->getType()=="Group") {
-        dynamicsystem[i]->getFrame("I")->setPosition(frameOfReference.getPosition() + frameOfReference.getOrientation()*IrOD[i]);
-        dynamicsystem[i]->getFrame("I")->setOrientation(frameOfReference.getOrientation()*AID[i]);
+        dynamicsystem[i]->getFrame("I")->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOD[i]);
+        dynamicsystem[i]->getFrame("I")->setOrientation(frame[0]->getOrientation()*AID[i]);
       }
       dynamicsystem[i]->preinit();
     }
@@ -503,8 +514,7 @@ namespace MBSim {
     plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
 
-  FrameInterface* DynamicSystem::getFrame(const string &name, bool check) {
-    if(frameOfReference.getName() == name) return &frameOfReference;
+  Frame* DynamicSystem::getFrame(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<frame.size(); i++) {
       if(frame[i]->getName() == name)
@@ -1119,21 +1129,17 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const FrameInterface* refFrame) {
+  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
     addFrame(cosy);
 
-    if(dynamic_cast<const Frame*>(refFrame)!=0) {
-      int i = frameIndex(static_cast<const Frame*>(refFrame));
-      IrOF.push_back(IrOF[i] + AIF[i]*RrRF);
-      AIF.push_back(AIF[i]*ARF);
-    }
-    else {
-      IrOF.push_back(RrRF);
-      AIF.push_back(ARF);
-    }
+    int i = 0;
+    if(refFrame) i = frameIndex(refFrame);
+
+    IrOF.push_back(IrOF[i] + AIF[i]*RrRF);
+    AIF.push_back(AIF[i]*ARF);
   }
 
-  void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const FrameInterface* refFrame) {
+  void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
     addFrame(new Frame(str),RrRF,ARF,refFrame);
   }
 
@@ -1146,7 +1152,7 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const FrameInterface* refFrame) {
+  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
     addContour(contour);
 
     if(dynamic_cast<const Frame*>(refFrame)!=0) {
@@ -1298,7 +1304,7 @@ namespace MBSim {
     obj->setParent(this);
   }
 
-  FrameInterface *DynamicSystem::getFrameByPath(std::string path) {
+  Frame *DynamicSystem::getFrameByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
     // absolut path

@@ -23,6 +23,7 @@
 #include "mbsim/element.h"
 #include "mbsim/interfaces.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsim/frame.h"
 #include "hdf5serie/vectorserie.h"
 #include <vector>
 
@@ -364,7 +365,7 @@ namespace MBSim {
        */
       void decreaserFactors();
 
-      virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 
     protected:

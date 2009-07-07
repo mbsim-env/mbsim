@@ -2,7 +2,7 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc springs.cc
+sources = main.cc system.cc
 
 # Do Not Edit the Following Lines
 CXX = g++

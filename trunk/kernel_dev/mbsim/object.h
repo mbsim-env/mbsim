@@ -22,9 +22,10 @@
 
 #include "mbsim/element.h"
 #include "mbsim/interfaces.h"
+#include "mbsim/frame.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include <string>
 #include <vector>
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 
@@ -197,17 +198,17 @@ namespace MBSim {
       /**
        * \return frame of reference
        */
-      virtual FrameInterface *getFrameOfReference() { return frameOfReference; }
+      virtual Frame *getFrameOfReference() { return frameOfReference; }
       
       /**
        * \return frame of reference
        */
-      virtual const FrameInterface *getFrameOfReference() const { return frameOfReference; }
+      virtual const Frame *getFrameOfReference() const { return frameOfReference; }
       
       /**
        * \param frame of reference
        */
-      virtual void setFrameOfReference(FrameInterface *frame) { frameOfReference = frame; }
+      virtual void setFrameOfReference(Frame *frame) { frameOfReference = frame; }
       /*******************************************************/ 
 
       /* GETTER / SETTER */
@@ -276,7 +277,7 @@ namespace MBSim {
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);
-      virtual FrameInterface *getFrameByPath(std::string path);
+      virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 
     protected:
@@ -288,7 +289,7 @@ namespace MBSim {
       /**
        * \brief frame of reference of the object
        */
-      FrameInterface * frameOfReference;
+      Frame * frameOfReference;
 
       /**
        * \brief size of object positions

@@ -211,7 +211,7 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::connect(FrameInterface *frame_) {
+  void LinkMechanics::connect(Frame *frame_) {
     frame.push_back(frame_);
   }
 

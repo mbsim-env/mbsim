@@ -4,7 +4,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
-#include "springs.h"
+#include "mbsim/linear_spring_damper.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -109,11 +109,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  
 
   // Spring 
-  Spring *spring = new Spring("Spring");
+  LinearSpringDamper *spring = new LinearSpringDamper("Spring");
   addLink(spring);
   spring->setStiffness(c);
   spring->setDamping(c/10.);
-  spring->setl0(d);
+  spring->setUnloadedLength(d);
   spring->connect(body4->getFrame("C"), getFrame("D"));
 
 
