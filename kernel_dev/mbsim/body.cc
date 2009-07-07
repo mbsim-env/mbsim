@@ -203,7 +203,7 @@ namespace MBSim {
     return -1;
   }
 
-  FrameInterface *Body::getFrameByPath(string path) {
+  Frame *Body::getFrameByPath(string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
     // absolut path

@@ -1,7 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/userfunction.h"
-#include "springs.h"
+#include "mbsim/linear_spring_damper.h"
 #include "mbsim/load.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -79,19 +79,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   box2->addFrame("P1",-SrSP,ASP);
 
   // ----------------------- Definition der 1. Feder --------------------  
-  Spring *spring1 = new Spring("Feder1");
+  LinearSpringDamper *spring1 = new LinearSpringDamper("Feder1");
   addLink(spring1);
   spring1->setStiffness(c1);
   spring1->setDamping(d1);
-  spring1->setl0(l01);
+  spring1->setUnloadedLength(l01);
   spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
-  Spring *spring2 = new Spring("Feder2");
+  LinearSpringDamper *spring2 = new LinearSpringDamper("Feder2");
   addLink(spring2);
   spring2->setStiffness(c2);
   spring2->setDamping(d2);
-  spring2->setl0(l02);
+  spring2->setUnloadedLength(l02);
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  

@@ -79,7 +79,7 @@ namespace MBSim {
       /**
        * \param frame to add to link frame vector
        */
-      virtual void connect(FrameInterface *frame_);
+      virtual void connect(Frame *frame_);
       
       /**
        * \param contour to add to link contour vector
@@ -115,7 +115,7 @@ namespace MBSim {
       /**
        * \brief array in which all frames are listed, connecting bodies via a link
        */
-      std::vector<FrameInterface*> frame;
+      std::vector<Frame*> frame;
 
       /** 
        * \brief array in which all contours are listed, connecting bodies via link

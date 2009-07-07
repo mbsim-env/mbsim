@@ -144,14 +144,15 @@ namespace MBSim {
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
+#ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()),
-            atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+        f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()), atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+#endif
       ec=ec->NextSiblingElement();
       Frame *refF=0;
       if(ec->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
       Vec RrRF(ec->GetText());
@@ -167,7 +168,7 @@ namespace MBSim {
       ec=ec->NextSiblingElement();
       Frame *refF=0;
       if(ec->ValueStr()==MBSIMNS"referenceFrame") {
-        refF=(Frame*)getFrameByPath(ec->Attribute("ref"));
+        refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
       Vec RrRC(ec->GetText());
@@ -189,7 +190,7 @@ namespace MBSim {
         string ref=ee->Attribute("ref");
         if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
         ref=ref.substr(3); // delete '../' from the reference, we are still in the parent class!
-        refF=(Frame*)getFrameByPath(ref);
+        refF=getFrameByPath(ref);
         ee=ee->NextSiblingElement();
       }
       Vec RrRD("[0;0;0]");

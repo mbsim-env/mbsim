@@ -67,7 +67,7 @@ namespace MBSim {
     laSize = forceDir.cols()+momentDir.cols();
   }
 
-  void Load::connect(FrameInterface *frame_) {
+  void Load::connect(Frame *frame_) {
     LinkMechanics::connect(frame_);
   }
 

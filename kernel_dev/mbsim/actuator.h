@@ -71,7 +71,7 @@ namespace MBSim {
        * \param first frame to connect
        * \param second frame to connect
        */
-      void connect(FrameInterface *frame1, FrameInterface *frame2);
+      void connect(Frame *frame1, Frame *frame2);
       
       /**
        * \param local force direction

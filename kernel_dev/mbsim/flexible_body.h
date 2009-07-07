@@ -21,6 +21,7 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
+#include "mbsim/dynamic_system.h"
 #include "mbsim/body.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
@@ -73,7 +74,7 @@ namespace MBSim {
       virtual void init();
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
-      virtual void setFrameOfReference(FrameInterface *frame) { if(frame->getType() == "Frame") throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); else frameOfReference = frame; }
+      virtual void setFrameOfReference(Frame *frame) { if(dynamic_cast<DynamicSystem*>(frame->getParent())) frameOfReference = frame; else throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); }
       void setq0(fmatvec::Vec q0_) { Body::setq0(q0_); q>>q0; }
       void setu0(fmatvec::Vec u0_) { Body::setu0(u0_); u>>u0; }
       /***************************************************/
