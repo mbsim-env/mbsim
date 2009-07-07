@@ -132,14 +132,15 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   TestGroup *group = new TestGroup("PendelGruppe1"); 
-  addDynamicSystem(group,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(group);
   stab3->addFrame("P",KrRP,SqrMat(3,EYE),stab3->getFrame("R"));
   group->getRod1()->setFrameOfReference(stab3->getFrame("P"));
 
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  addDynamicSystem(group,r,SqrMat(3,EYE));
+  group->setPosition(r);
+  addDynamicSystem(group);
   KrRP(0) = lStab/2;
   KrRP(2) = -0.006;
 }

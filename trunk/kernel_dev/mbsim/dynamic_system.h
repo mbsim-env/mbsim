@@ -47,6 +47,7 @@ namespace MBSim {
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
+   * \date 2009-07-08 relative dynamic system location (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
@@ -208,6 +209,10 @@ namespace MBSim {
       /* GETTER / SETTER */
       DynamicSystem* getParent() { return parent; }
       void setParent(DynamicSystem* sys) { parent = sys; }
+
+      void setPosition(const fmatvec::Vec& PrPF_) { PrPF = PrPF_; }
+      void setOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
+      void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
       const fmatvec::Vec& getq() const { return q; };
       const fmatvec::Vec& getu() const { return u; };
@@ -655,6 +660,21 @@ namespace MBSim {
        */
       DynamicSystem *parent;
 
+      /**
+       * \brief parent frame
+       */
+      Frame *frameParent;
+
+      /**
+       * \brief relative translation with respect to parent frame
+       */
+      fmatvec::Vec PrPF;
+
+      /**
+       * \brief relative rotation with respect to parent frame
+       */
+      fmatvec::SqrMat APF;
+
       /** 
        * \brief container for possible ingredients
        */
@@ -789,14 +809,14 @@ namespace MBSim {
       int svSize, svInd;
 
       /**
-       * \brief inertial position of frames, contours and dynamic systems (see group.h / tree.h)
+       * \brief inertial position of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::Vec> IrOF, IrOC, IrOD;
+      std::vector<fmatvec::Vec> IrOF, IrOC;
 
       /**
-       * \brief orientation to inertial frame of frames, contours and dynamic systems (see group.h / tree.h)
+       * \brief orientation to inertial frame of frames, contours (see group.h / tree.h)
        */
-      std::vector<fmatvec::SqrMat> AIF, AIC, AID;
+      std::vector<fmatvec::SqrMat> AIF, AIC;
 
       /**
        * \brief vector of frames and contours

@@ -17,7 +17,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   setAccelerationOfGravity(grav);
 
   Tree *tree = new Tree("Baum"); 
-  addDynamicSystem(tree,Vec(3),SqrMat(3,EYE));
+  addDynamicSystem(tree);
 
   double mStab = 0.2;
   double lStab = 0.3;
