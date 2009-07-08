@@ -585,6 +585,11 @@ namespace MBSim {
       int frameIndex(const Frame *frame_) const;
 
       /**
+       * \param dynamic system to add
+       */
+      void addDynamicSystem(DynamicSystem *dynamicsystem);
+
+      /**
        * \param name of the dynamic system
        * \param check for existence of dynamic system
        * \return dynamic system
@@ -837,11 +842,6 @@ namespace MBSim {
        * \param contour to add
        */
       void addContour(Contour* contour);
-
-      /**
-       * \param dynamic system to add
-       */
-      void addDynamicSystem(DynamicSystem *dynamicsystem);
   };
 }
 
