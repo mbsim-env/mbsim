@@ -19,11 +19,11 @@ int main (int argc, char* argv[])
   DOPRI5Integrator integrator;
   // TimeSteppingIntegrator integrator;
 
-  integrator.settEnd(14.0);
-  integrator.setdtPlot(1e-2);
-  // integrator.setdt(1e-5);
-  //integrator.setrTol(1e-8);
-  //integrator.setaTol(1e-8);
+  integrator.setEndTime(14.0);
+  integrator.setPlotStepSize(1e-2);
+  // integrator.setStepSize(1e-5);
+  //integrator.setRelativeTolerance(1e-8);
+  //integrator.setAbsoluteTolerance(1e-8);
 
   integrator.integrate(*sys);
   cout << "finished"<<endl;

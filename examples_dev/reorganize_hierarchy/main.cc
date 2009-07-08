@@ -15,8 +15,8 @@ int main (int argc, char* argv[])
   
   DOPRI5Integrator integrator;
 
-  integrator.settEnd(2.0);
-  integrator.setdtPlot(1e-2);
+  integrator.setEndTime(2.0);
+  integrator.setPlotStepSize(1e-2);
 
   integrator.integrate(*sys);
 

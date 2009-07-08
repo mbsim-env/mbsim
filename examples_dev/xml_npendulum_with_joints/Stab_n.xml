@@ -2,15 +2,15 @@
 <RigidBody name="Stab{n+1}" xmlns="http://mbsim.berlios.de/MBSim"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <q0>[lO+lU;-lO-(lU+lO)*(n-1);0]</q0>
-  <u0>[0;0;0]</u0>
+  <initialGeneralizedPosition>[lO+lU;-lO-(lU+lO)*(n-1);0]</initialGeneralizedPosition>
+  <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
   <frameOfReference ref="../Frame[Os]"/>
   <frameForKinematics ref="Frame[C]"/>
   <mass>5000000</mass>
   <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
   <translation>
     <LinearTranslation>
-      <PJT>
+      <translationVectors>
         <pv:xmlMatrix>
           <pv:row>
             <pv:ele>1</pv:ele>
@@ -25,7 +25,7 @@
             <pv:ele>0</pv:ele>
           </pv:row>
         </pv:xmlMatrix>
-      </PJT>
+      </translationVectors>
     </LinearTranslation>
   </translation>
   <rotation>
@@ -41,15 +41,15 @@
   </rotation>
   <frame>
     <Frame name="O"/>
-    <relativeFrameLocation>[0;lO;0]</relativeFrameLocation>
-    <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+    <relativePosition>[0;lO;0]</relativePosition>
+    <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
   </frame>
   <frame>
     <Frame name="U"/>
-    <relativeFrameLocation>[0;-lU;0]</relativeFrameLocation>
-    <relativeFrameOrientation>
+    <relativePosition>[0;-lU;0]</relativePosition>
+    <relativeOrientation>
       <pv:asciiMatrixRef href="eye.txt"/>
-    </relativeFrameOrientation>
+    </relativeOrientation>
   </frame>
   <openMBVRigidBody>
     <ombv:Frustum name="dummy">

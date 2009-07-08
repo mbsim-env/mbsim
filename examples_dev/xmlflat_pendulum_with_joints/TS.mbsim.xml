@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
-  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
+  <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
+  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
   <frame>
     <Frame name="Os"/>
-    <relativeFrameLocation>[0;0;0.04]</relativeFrameLocation>
-    <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+    <relativePosition>[0;0;0.04]</relativePosition>
+    <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
   </frame>
   <RigidBody name="Stab1">
-    <q0>[0.2;0;1.57079632679490]</q0>
-    <u0>[0;0;0]</u0>
+    <initialGeneralizedPosition>[0.2;0;1.57079632679490]</initialGeneralizedPosition>
+    <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
     <frameOfReference ref="../Frame[I]"/>
     <frameForKinematics ref="Frame[C]"/>
     <mass>0.5</mass>
     <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
     <translation>
       <LinearTranslation>
-        <PJT>[1,0 ; 0,1 ; 0,0]</PJT>
+        <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
       </LinearTranslation>
     </translation>
     <rotation>
@@ -27,13 +27,13 @@
     </rotation>
     <frame>
       <Frame name="PunktO"/>
-      <relativeFrameLocation>[0;0.2;0]</relativeFrameLocation>
-      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+      <relativePosition>[0;0.2;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
     </frame>
     <frame>
       <Frame name="PunktU"/>
-      <relativeFrameLocation>[0;-0.45;0]</relativeFrameLocation>
-      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+      <relativePosition>[0;-0.45;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Frustum name="dummy">
@@ -49,15 +49,15 @@
     </openMBVRigidBody>
   </RigidBody>
   <RigidBody name="Stab2">
-    <q0>[0.791421356237310;-0.141421356237310;0.785398163397448]</q0>
-    <u0>[0;0;0]</u0>
+    <initialGeneralizedPosition>[0.791421356237310;-0.141421356237310;0.785398163397448]</initialGeneralizedPosition>
+    <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
     <frameOfReference ref="../Frame[Os]"/>
     <frameForKinematics ref="Frame[C]"/>
     <mass>0.5</mass>
     <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
     <translation>
       <LinearTranslation>
-        <PJT>[1,0 ; 0,1 ; 0,0]</PJT>
+        <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
       </LinearTranslation>
     </translation>
     <rotation>
@@ -67,8 +67,8 @@
     </rotation>
     <frame>
       <Frame name="Punkt"/>
-      <relativeFrameLocation>[0;0.2;0]</relativeFrameLocation>
-      <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+      <relativePosition>[0;0.2;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Frustum name="dummy">

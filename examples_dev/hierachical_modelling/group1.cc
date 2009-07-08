@@ -75,22 +75,22 @@ Group1::Group1(const string &name) : Group(name) {
   // ----------------------- Definition der 1. Feder --------------------  
   LinearSpringDamper *spring1 = new LinearSpringDamper("Feder1");
   addLink(spring1);
-  spring1->setStiffness(c1);
-  spring1->setDamping(d1);
+  spring1->setStiffnessCoefficient(c1);
+  spring1->setDampingCoefficient(d1);
   spring1->setUnloadedLength(l01);
   spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
   LinearSpringDamper *spring2 = new LinearSpringDamper("Feder2");
   addLink(spring2);
-  spring2->setStiffness(c2);
-  spring2->setDamping(d2);
+  spring2->setStiffnessCoefficient(c2);
+  spring2->setDampingCoefficient(d2);
   spring2->setUnloadedLength(l02);
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  
-  box1->setq0(Vec(1,INIT,l01 + h1/2 + 0.2));
-  box2->setq0(Vec(1,INIT,l01 + l02 + h1 + h2/2));
+  box1->setInitialGeneralizedPosition(Vec(1,INIT,l01 + h1/2 + 0.2));
+  box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;

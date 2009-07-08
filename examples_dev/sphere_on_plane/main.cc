@@ -15,8 +15,8 @@ int main (int argc, char* argv[])
   if(eventDriven) { // Event driven time integration
     LSODARIntegrator integrator;
     integrator.setPlotOnRoot(false);
-    integrator.setdtPlot(1e-2);
-    integrator.settEnd(1.5);
+    integrator.setPlotStepSize(1e-2);
+    integrator.setEndTime(1.5);
     integrator.integrate(*sys);
   } 
   else { // time stepping integration
@@ -26,9 +26,9 @@ int main (int argc, char* argv[])
     sys->setConstraintSolver(RootFinding);
     sys->setImpactSolver(RootFinding);
     TimeSteppingIntegrator integrator;
-    integrator.setdt(dt);
-    integrator.setdtPlot(1e-2);
-    integrator.settEnd(1.5);
+    integrator.setStepSize(dt);
+    integrator.setPlotStepSize(1e-2);
+    integrator.setEndTime(1.5);
     integrator.integrate(*sys);
   }
 

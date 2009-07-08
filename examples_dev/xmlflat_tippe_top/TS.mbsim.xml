@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
-  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
+  <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
+  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
   <contour>
     <Plane name="Plane"/>
-    <relativeContourLocation>[0;0;0]</relativeContourLocation>
-    <relativeContourOrientation>[0,-1,0;1,0,0;0,0,1]</relativeContourOrientation>
+    <relativePosition>[0;0;0]</relativePosition>
+    <relativeOrientation>[0,-1,0;1,0,0;0,0,1]</relativeOrientation>
   </contour>
   <RigidBody name="Body">
-    <q0>[0;1.2015e-2;0;0.1;0;0]</q0>
-    <u0>[0;0;0;0;180;0]</u0>
+    <initialGeneralizedPosition>[0;1.2015e-2;0;0.1;0;0]</initialGeneralizedPosition>
+    <initialGeneralizedVelocity>[0;0;0;0;180;0]</initialGeneralizedVelocity>
     <frameOfReference ref="../Frame[I]"/>
     <frameForKinematics ref="Frame[C]"/>
     <mass>6e-3</mass>
     <inertiaTensor>[8e-7,0,0 ; 0,7e-7,0 ; 0,0,8e-7]</inertiaTensor>
     <translation>
       <LinearTranslation>
-        <PJT>[1,0,0;0,1,0;0,0,1]</PJT>
+        <translationVectors>[1,0,0;0,1,0;0,0,1]</translationVectors>
       </LinearTranslation>
     </translation>
     <rotation>
@@ -28,16 +28,16 @@
         <radius>1.5e-2</radius>
         <enableOpenMBV/>
       </Sphere>
-      <relativeContourLocation>[0;0.3e-2;0]</relativeContourLocation>
-      <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
+      <relativePosition>[0;0.3e-2;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
     </contour>
     <contour>
       <Sphere name="Sphere2">
         <radius>0.5e-2</radius>
         <enableOpenMBV/>
       </Sphere>
-      <relativeContourLocation>[0;1.6e-2;0]</relativeContourLocation>
-      <relativeContourOrientation>[1,0,0;0,1,0;0,0,1]</relativeContourOrientation>
+      <relativePosition>[0;1.6e-2;0]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
     </contour>
     <enableOpenMBVFrameC>
       <size>0.036</size>

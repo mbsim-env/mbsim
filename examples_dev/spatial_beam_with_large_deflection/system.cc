@@ -84,7 +84,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
-  ball->setu0(Vec("[0;-0.5;0]"));
+  ball->setInitialGeneralizedVelocity(Vec("[0;-0.5;0]"));
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

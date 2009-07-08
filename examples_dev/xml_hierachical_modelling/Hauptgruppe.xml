@@ -4,20 +4,20 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <plotFeatureRecursive feature="+stateDerivative"/>
   <plotFeature feature="+separateFilePerDynamicSystem"/>
-  <relativeGroupLocation>[rHG(numHG);0;0]</relativeGroupLocation>
-  <relativeGroupOrientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</relativeGroupOrientation>
+  <relativePosition>[rHG(numHG);0;0]</relativePosition>
+  <relativeOrientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</relativeOrientation>
   <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
   <RigidBody name="Box1">
     <plotFeature feature="+globalPosition"/>
-    <q0 unit="mm">[0]</q0>
-    <u0>[0.1]</u0>
+    <initialGeneralizedPosition unit="mm">[0]</initialGeneralizedPosition>
+    <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
     <frameOfReference ref="../Frame[I]"/>
     <frameForKinematics ref="Frame[C]"/>
     <mass>m</mass>
     <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
     <translation>
       <LinearTranslation>
-        <PJT>[0; 1; 0]</PJT>
+        <translationVectors>[0; 1; 0]</translationVectors>
       </LinearTranslation>
     </translation>
     <rotation/>

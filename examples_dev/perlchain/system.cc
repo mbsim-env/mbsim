@@ -165,7 +165,7 @@ void System::init() {
     q0(0) = cp.getFrameOfReference().getPosition()(0);
     q0(1) = cp.getFrameOfReference().getPosition()(1);
     q0(2) = -AIK2Cardan(cp.getFrameOfReference().getOrientation())(2) + M_PI*0.5;
-    balls[i]->setq0(q0);
+    balls[i]->setInitialGeneralizedPosition(q0);
   }
 
 }

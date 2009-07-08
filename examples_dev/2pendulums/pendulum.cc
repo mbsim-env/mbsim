@@ -64,7 +64,7 @@ Pendulum::Pendulum(const string &projectName) : Tree(projectName) {
     Theta(2,2) = JStab;
     stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
     stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-    stab2->setq0(Vec("[-1.6]"));
+    stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
     OpenMBV::ObjBody* obj=new OpenMBV::ObjBody;

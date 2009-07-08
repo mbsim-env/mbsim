@@ -20,9 +20,9 @@ int main(int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.settEnd(1e-3);
-  integrator.setdt(1e-6);
-  integrator.setdtPlot(1e-4);
+  integrator.setEndTime(1e-3);
+  integrator.setStepSize(1e-6);
+  integrator.setPlotStepSize(1e-4);
 
 #ifdef _OPENMP
   double start = omp_get_wtime();

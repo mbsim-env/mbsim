@@ -20,8 +20,8 @@ int main (int argc, char* argv[])
   //
   DOPRI5Integrator integrator;
 
-  integrator.settEnd(10.0);
-  integrator.setdtPlot(1e-3);
+  integrator.setEndTime(10.0);
+  integrator.setPlotStepSize(1e-3);
 
   //TimeSteppingIntegrator integrator;
   // integrator.setdt(1e-3);

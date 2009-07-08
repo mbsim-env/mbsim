@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DOPRI5Integrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
-  <tStart>0</tStart>
-  <tEnd>10.1</tEnd>
-  <dtPlot>1e-2</dtPlot>
-  <aTolScalar>1e-6</aTolScalar>
-  <rTolScalar>1e-6</rTolScalar>
-  <dt0>0</dt0>
+  <startTime>0</startTime>
+  <endTime>10.1</endTime>
+  <plotStepSize>1e-2</plotStepSize>
+  <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
+  <relativeToleranceScalar>1e-6</relativeToleranceScalar>
+  <initialStepSize>0</initialStepSize>
 </DOPRI5Integrator>

@@ -67,12 +67,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0(3);
   q0(0) = -0.1;
   q0(1) = .7;
-  body->setq0(q0);
+  body->setInitialGeneralizedPosition(q0);
   q0(1) = .6;
-  body3->setq0(q0);
+  body3->setInitialGeneralizedPosition(q0);
   Vec u0(3);
   u0(2) = -M_PI*10;
-  body->setu0(u0);
+  body->setInitialGeneralizedVelocity(u0);
 
 
   // Contour of InnerCylinder
