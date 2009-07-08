@@ -97,7 +97,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="referenceFrame">
+  <xs:element name="frameOfReference">
     <xs:complexType>
       <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
     </xs:complexType> 
@@ -108,16 +108,16 @@
     <xs:complexContent>
       <xs:extension base="DynamicSystemType">
         <xs:sequence>
-          <xs:element ref="referenceFrame" minOccurs="0"/>
-          <xs:element name="relativeGroupLocation" type="pv:lengthVector" minOccurs="0"/>  
-          <xs:element name="relativeGroupOrientation" type="pv:nounitMatrix" minOccurs="0"/>  
+          <xs:element ref="frameOfReference" minOccurs="0"/>
+          <xs:element name="relativePosition" type="pv:lengthVector" minOccurs="0"/>  
+          <xs:element name="relativeOrientation" type="pv:nounitMatrix" minOccurs="0"/>  
           <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Frame"/>
-                <xs:element ref="referenceFrame" minOccurs="0"/>
-                <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
-                <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+                <xs:element ref="frameOfReference" minOccurs="0"/>
+                <xs:element name="relativePosition" type="pv:lengthVector"/>
+                <xs:element name="relativeOrientation" type="pv:nounitMatrix"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -125,9 +125,9 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Contour"/>
-                <xs:element ref="referenceFrame" minOccurs="0"/>
-                <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
-                <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+                <xs:element ref="frameOfReference" minOccurs="0"/>
+                <xs:element name="relativePosition" type="pv:lengthVector"/>
+                <xs:element name="relativeOrientation" type="pv:nounitMatrix"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -165,13 +165,9 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="q0" type="pv:lengthVector"/>
-          <xs:element name="u0" type="pv:velocityVector"/>
-          <xs:element name="frameOfReference">
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType> 
-          </xs:element>
+          <xs:element name="initialGeneralizedPosition" type="pv:lengthVector"/>
+          <xs:element name="initialGeneralizedVelocity" type="pv:velocityVector"/>
+          <xs:element ref="frameOfReference"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -214,9 +210,9 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Frame"/>
-                <xs:element ref="referenceFrame" minOccurs="0"/>
-                <xs:element name="relativeFrameLocation" type="pv:lengthVector"/>
-                <xs:element name="relativeFrameOrientation" type="pv:nounitMatrix"/>
+                <xs:element ref="frameOfReference" minOccurs="0"/>
+                <xs:element name="relativePosition" type="pv:lengthVector"/>
+                <xs:element name="relativeOrientation" type="pv:nounitMatrix"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -224,9 +220,9 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Contour"/>
-                <xs:element ref="referenceFrame" minOccurs="0"/>
-                <xs:element name="relativeContourLocation" type="pv:lengthVector"/>
-                <xs:element name="relativeContourOrientation" type="pv:nounitMatrix"/>
+                <xs:element ref="frameOfReference" minOccurs="0"/>
+                <xs:element name="relativePosition" type="pv:lengthVector"/>
+                <xs:element name="relativeOrientation" type="pv:nounitMatrix"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -269,8 +265,8 @@
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="stiffness" type="pv:stiffnessScalar"/>
-          <xs:element name="damping" type="pv:dampingScalar"/>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
           <xs:element name="unloadedLength" type="pv:lengthScalar"/>
           <xs:element name="connect">
             <xs:complexType>
@@ -445,7 +441,7 @@
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
-          <xs:element name="PJT" type="pv:nounitMatrix"/>
+          <xs:element name="translationVectors" type="pv:nounitMatrix"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

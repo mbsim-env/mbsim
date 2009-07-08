@@ -14,10 +14,10 @@
   <xs:element name="Integrator" abstract="true" type="IntegratorType"/>
   <xs:complexType name="IntegratorType">
     <xs:sequence>
-      <xs:element name="tStart" type="pv:timeScalar"/>  
-      <xs:element name="tEnd" type="pv:timeScalar"/>  
-      <xs:element name="dtPlot" type="pv:timeScalar"/>  
-      <xs:element name="z0" type="pv:nounitVector" minOccurs="0"/>  
+      <xs:element name="startTime" type="pv:timeScalar"/>  
+      <xs:element name="endTime" type="pv:timeScalar"/>  
+      <xs:element name="plotStepSize" type="pv:timeScalar"/>  
+      <xs:element name="initialState" type="pv:nounitVector" minOccurs="0"/>  
     </xs:sequence>
   </xs:complexType> 
 
@@ -27,14 +27,14 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="aTol" type="pv:nounitVector"/>  
-            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
           </xs:choice>
           <xs:choice>
-            <xs:element name="rTol" type="pv:nounitVector"/>  
-            <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
+            <xs:element name="relativeTolerance" type="pv:nounitVector"/>  
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
           </xs:choice>
-          <xs:element name="dt0" type="pv:timeScalar"/>  
+          <xs:element name="initialStepSize" type="pv:timeScalar"/>  
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -46,14 +46,14 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="aTol" type="pv:nounitVector"/>  
-            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
           </xs:choice>
           <xs:choice>
-            <xs:element name="rTol" type="pv:nounitVector"/>  
-            <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
+            <xs:element name="relativeTolerance" type="pv:nounitVector"/>  
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
           </xs:choice>
-          <xs:element name="dt0" type="pv:timeScalar"/>  
+          <xs:element name="initialStepSize" type="pv:timeScalar"/>  
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -65,13 +65,13 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="aTol" type="pv:nounitVector"/>  
-            <xs:element name="aTolScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
           </xs:choice>
-          <xs:element name="rTolScalar" type="pv:nounitScalar"/>  
-          <xs:element name="dt0" type="pv:timeScalar"/>  
-          <xs:element name="dtMin" type="pv:timeScalar"/>  
-          <xs:element name="dtMax" type="pv:timeScalar"/>  
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
+          <xs:element name="initialStepSize" type="pv:timeScalar"/>  
+          <xs:element name="minimalStepSize" type="pv:timeScalar"/>  
+          <xs:element name="maximalStepSize" type="pv:timeScalar"/>  
           <xs:element name="plotOnRoot" type="xs:boolean"/>  
         </xs:sequence>
       </xs:extension>
@@ -83,7 +83,7 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
-          <xs:element name="dt" type="pv:timeScalar"/>  
+          <xs:element name="stepSize" type="pv:timeScalar"/>  
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

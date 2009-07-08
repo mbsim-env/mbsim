@@ -119,10 +119,10 @@ namespace MBSim {
   void LinearSpringDamper::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     LinkMechanics::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"stiffness");
-    setStiffness(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMNS"damping");
-    setDamping(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
+    setStiffnessCoefficient(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
+    setDampingCoefficient(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"unloadedLength");
     setUnloadedLength(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"connect");

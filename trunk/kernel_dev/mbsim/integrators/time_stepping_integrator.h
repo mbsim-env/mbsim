@@ -41,7 +41,7 @@ namespace MBSim {
       /*! Destructor */
       ~TimeSteppingIntegrator() {}
 	  /*! Set time step size */
-      void setdt(double dt_) {dt = dt_;}
+      void setStepSize(double dt_) {dt = dt_;}
       /*! Start the integration */
       void integrate(DynamicSystemSolver& system);
       /*! Set drift compensation */

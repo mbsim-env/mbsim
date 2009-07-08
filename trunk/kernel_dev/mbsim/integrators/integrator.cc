@@ -29,14 +29,14 @@ namespace MBSim {
 
   void Integrator::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"tStart");
-    settStart(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"tEnd");
-    settEnd(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"dtPlot");
-    setdtPlot(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"z0");
-    if(e) setz0(fmatvec::Vec(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"startTime");
+    setStartTime(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"endTime");
+    setEndTime(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"plotStepSize");
+    setPlotStepSize(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"initialState");
+    if(e) setInitialState(fmatvec::Vec(e->GetText()));
   }
 
 }

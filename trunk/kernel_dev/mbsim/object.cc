@@ -249,10 +249,10 @@ namespace MBSim {
   void Object::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Element::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"q0");
-    setq0(Vec(e->GetText()));
-    e=element->FirstChildElement(MBSIMNS"u0");
-    setu0(Vec(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    setInitialGeneralizedPosition(Vec(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
+    setInitialGeneralizedVelocity(Vec(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
     setFrameOfReference(getFrameByPath(e->Attribute("ref")));
   }

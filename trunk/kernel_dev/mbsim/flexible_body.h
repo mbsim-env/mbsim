@@ -75,8 +75,8 @@ namespace MBSim {
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
       virtual void setFrameOfReference(Frame *frame) { if(dynamic_cast<DynamicSystem*>(frame->getParent())) frameOfReference = frame; else throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); }
-      void setq0(fmatvec::Vec q0_) { Body::setq0(q0_); q>>q0; }
-      void setu0(fmatvec::Vec u0_) { Body::setu0(u0_); u>>u0; }
+      void setq0(fmatvec::Vec q0_) { Body::setInitialGeneralizedPosition(q0_); q>>q0; }
+      void setu0(fmatvec::Vec u0_) { Body::setInitialGeneralizedVelocity(u0_); u>>u0; }
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */

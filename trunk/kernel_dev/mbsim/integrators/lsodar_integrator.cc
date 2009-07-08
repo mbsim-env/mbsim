@@ -141,18 +141,18 @@ namespace MBSim {
   void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"aTol");
-    if(e) setaTol(Vec(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"aTolScalar");
-    if(e) setaTol(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"rTolScalar");
-    if(e) setrTol(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"dt0");
-    setdt0(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"dtMin");
-    setdtMin(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"dtMax");
-    setdtMax(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    if(e) setAbsoluteTolerance(Vec(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    if(e) setRelativeTolerance(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    setInitialStepSize(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    setMinimalStepSize(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    setMaximalStepSize(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
     setPlotOnRoot((e->GetText()==string("true"))?true:false);
   }

@@ -121,9 +121,9 @@ namespace MBSim {
     Element::initializeUsingXML(element);
     e=element->FirstChildElement();
 
-    while(e && e->ValueStr()!=MBSIMNS"referenceFrame" &&
-        e->ValueStr()!=MBSIMNS"relativeGroupLocation" &&
-        e->ValueStr()!=MBSIMNS"relativeGroupOrientation" &&
+    while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
+        e->ValueStr()!=MBSIMNS"relativePosition" &&
+        e->ValueStr()!=MBSIMNS"relativeOrientation" &&
         e->ValueStr()!=MBSIMNS"frame" &&
         e->ValueStr()!=MBSIMNS"contour" &&
         ObjectFactory::createGroup(e)==0 &&
@@ -131,18 +131,18 @@ namespace MBSim {
         ObjectFactory::createLink(e)==0)
       e=e->NextSiblingElement();
 
-    if(e && e->ValueStr()==MBSIMNS"referenceFrame") {
+    if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
       string ref=e->Attribute("ref");
       if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
       setFrameOfReference(getFrameByPath(ref));
       e=e->NextSiblingElement();
     }
-    if(e && e->ValueStr()==MBSIMNS"relativeGroupLocation") {
-      setPosition(Vec(e->GetText()));
+    if(e && e->ValueStr()==MBSIMNS"relativePosition") {
+      setRelativePosition(Vec(e->GetText()));
       e=e->NextSiblingElement();
     }
-    if(e && e->ValueStr()==MBSIMNS"relativeGroupOrientation") {
-      setOrientation(SqrMat(e->GetText()));
+    if(e && e->ValueStr()==MBSIMNS"relativeOrientation") {
+      setRelativeOrientation(SqrMat(e->GetText()));
       e=e->NextSiblingElement();
     }
 
@@ -156,7 +156,7 @@ namespace MBSim {
 #endif
       ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
         refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
@@ -172,7 +172,7 @@ namespace MBSim {
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
         refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }

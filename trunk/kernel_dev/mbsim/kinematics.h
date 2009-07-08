@@ -86,8 +86,13 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::Mat& getPJT() const { return PJT; }
-      void setPJT(const fmatvec::Mat &PJT_) { PJT = PJT_; }
+      const fmatvec::Mat& getTranslationVectors() const { return PJT; }
+
+      /**
+       * Set the posible translations vectors. Each column of the matrix
+       * is a posible translation vector.
+       */
+      void setTranslationVectors(const fmatvec::Mat &PJT_) { PJT = PJT_; }
       /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element);

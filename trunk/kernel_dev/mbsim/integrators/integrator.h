@@ -51,17 +51,17 @@ namespace MBSim {
       /*! Destructor */
       virtual ~Integrator() {};
 	  /*! Set integration end time \param tEnd_ */	
-      void settEnd(double tEnd_) {tEnd = tEnd_;}
+      void setEndTime(double tEnd_) {tEnd = tEnd_;}
       /*! Set plot step size \param dtPlot_ */
-      void setdtPlot(double dtPlot_) {dtPlot = dtPlot_;}
+      void setPlotStepSize(double dtPlot_) {dtPlot = dtPlot_;}
       /*! Set initial state \param z0_ */
-      void setz0(const fmatvec::Vec &z0_) {z0 = z0_;}
+      void setInitialState(const fmatvec::Vec &z0_) {z0 = z0_;}
       /*! Set warn level \param level TODO DOC */
       void setWarnLevel(int level) {warnLevel = level;}
       /*! Set output \param flag (true/false) */
       void setOutput(bool flag) {output = flag;}
       /*! Set integration start time \param tStart_ */
-      void settStart(double tStart_){tStart=tStart_;}
+      void setStartTime(double tStart_){tStart=tStart_;}
       /*! Start the integration for \param system */
       virtual void integrate(DynamicSystemSolver& system) = 0;
 

@@ -55,7 +55,7 @@ namespace MBSim {
       void setrTol(double rTol_) {rTol = rTol_;}
       void setThreshold(const fmatvec::Vec &thres_) {thres.resize() = thres_;}
       void setThreshold(double thres_) {thres.resize() = fmatvec::Vec(1,fmatvec::INIT,thres_);}
-      void setdt0(double dt0_) {dt0 = dt0_;}
+      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 
       void integrate(DynamicSystemSolver& system);

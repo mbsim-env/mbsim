@@ -155,8 +155,8 @@ namespace MBSim {
   void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"dt");
-    setdt(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    setStepSize(atof(e->GetText()));
   }
 
 }

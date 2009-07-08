@@ -67,8 +67,8 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setUnloadedLength(double l0_) {l0=l0_;}
-      void setStiffness(double c) {cT = c;}
-      void setDamping(double d) {dT = d;}
+      void setStiffnessCoefficient(double c) {cT = c;}
+      void setDampingCoefficient(double d) {dT = d;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpring(OpenMBV::CoilSpring *spring_) {coilspringOpenMBV=spring_;}
 #endif
