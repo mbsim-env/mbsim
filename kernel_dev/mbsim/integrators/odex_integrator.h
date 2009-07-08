@@ -59,11 +59,11 @@ namespace MBSim {
       ODEXIntegrator();
       ~ODEXIntegrator() {}
 
-      void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setaTol(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setrTol(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setrTol(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
-      void setdt0(double dt0_) {dt0 = dt0_;}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolernace(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
+      void setRelativeTolernace(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
 
       void integrate(DynamicSystemSolver& system);

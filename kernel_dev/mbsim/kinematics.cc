@@ -28,8 +28,8 @@ namespace MBSim {
 
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"PJT");
-    setPJT(Mat(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"translationVectors");
+    setTranslationVectors(Mat(e->GetText()));
   }
 
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {

@@ -210,8 +210,8 @@ namespace MBSim {
       DynamicSystem* getParent() { return parent; }
       void setParent(DynamicSystem* sys) { parent = sys; }
 
-      void setPosition(const fmatvec::Vec& PrPF_) { PrPF = PrPF_; }
-      void setOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
+      void setRelativePosition(const fmatvec::Vec& PrPF_) { PrPF = PrPF_; }
+      void setRelativeOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
       const fmatvec::Vec& getq() const { return q; };

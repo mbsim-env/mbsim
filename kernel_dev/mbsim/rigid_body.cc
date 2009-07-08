@@ -126,7 +126,7 @@ namespace MBSim {
       Mat JT;
       LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
       if(fPrPK_) {
-        JT = fPrPK_->getPJT();
+        JT = fPrPK_->getTranslationVectors();
       } else
         JT.resize(3,0);
       Mat JTT(3, uSize[0]);
@@ -449,7 +449,7 @@ namespace MBSim {
 #endif
       ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
         refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
@@ -466,7 +466,7 @@ namespace MBSim {
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
       Frame *refF=0;
-      if(ec->ValueStr()==MBSIMNS"referenceFrame") {
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
         refF=getFrameByPath(ec->Attribute("ref"));
         ec=ec->NextSiblingElement();
       }
