@@ -111,8 +111,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Spring 
   LinearSpringDamper *spring = new LinearSpringDamper("Spring");
   addLink(spring);
-  spring->setStiffness(c);
-  spring->setDamping(c/10.);
+  spring->setStiffnessCoefficient(c);
+  spring->setDampingCoefficient(c/10.);
   spring->setUnloadedLength(d);
   spring->connect(body4->getFrame("C"), getFrame("D"));
 
@@ -121,12 +121,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Initial translation
   Vec q0(3);
   q0(1) = d;
-  body->setq0(q0);
-  body2->setq0(q0);
-  body3->setq0(q0);
+  body->setInitialGeneralizedPosition(q0);
+  body2->setInitialGeneralizedPosition(q0);
+  body3->setInitialGeneralizedPosition(q0);
   Vec q04(2);
   q04(0) = -d;
-  body4->setq0(q04);
+  body4->setInitialGeneralizedPosition(q04);
 
 
   // Contour of Cylinder

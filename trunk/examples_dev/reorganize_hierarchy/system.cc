@@ -65,7 +65,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  stab2->setq0(Vec("[-1.6]"));
+  stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::ObjBody;
@@ -92,7 +92,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab3->setInertiaTensor(Theta,stab3->getFrame("C"));
   stab3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  stab3->setq0(Vec("[-1.6]"));
+  stab3->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::ObjBody;
@@ -117,7 +117,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab4->setInertiaTensor(Theta,stab4->getFrame("C"));
   stab4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  stab4->setu0(Vec("[-1.6]"));
+  stab4->setInitialGeneralizedVelocity(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::ObjBody;
@@ -139,7 +139,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  group->setPosition(r);
+  group->setRelativePosition(r);
   addDynamicSystem(group);
   KrRP(0) = lStab/2;
   KrRP(2) = -0.006;

@@ -3,18 +3,18 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <Group name="Hauptgruppe1">
     <Group name="Untergruppe">
-      <relativeGroupLocation>[1;0;0]</relativeGroupLocation>
-      <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
+      <relativePosition>[1;0;0]</relativePosition>
+      <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
       <RigidBody name="Box1">
-        <q0>[0.95]</q0>
-        <u0>[0]</u0>
+        <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="/DynamicSystem[Hauptgruppe1]/DynamicSystem[Untergruppe]/Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>5</mass>
         <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
         <translation>
           <LinearTranslation>
-            <PJT>[0; 1; 0]</PJT>
+            <translationVectors>[0; 1; 0]</translationVectors>
           </LinearTranslation>
         </translation>
         <rotation/>
@@ -25,14 +25,14 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <referenceFrame ref="Frame[C]"/>
-          <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <frameOfReference ref="Frame[C]"/>
+          <relativePosition>[0;-0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <frame>
           <Frame name="P2"/>
-          <relativeFrameLocation>[0;0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <relativePosition>[0;0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -45,15 +45,15 @@
       </RigidBody>
       <RigidBody name="Box2">
         <plotFeature feature="-stateDerivative"/>
-        <q0>[1.75]</q0>
-        <u0>[0]</u0>
+        <initialGeneralizedPosition>[1.75]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>2</mass>
         <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
         <translation>
           <LinearTranslation>
-            <PJT>[0; 1; 0]</PJT>
+            <translationVectors>[0; 1; 0]</translationVectors>
           </LinearTranslation>
         </translation>
         <rotation/>
@@ -64,8 +64,8 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <relativePosition>[0;-0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -77,8 +77,8 @@
         </openMBVRigidBody>
       </RigidBody>
       <LinearSpringDamper name="Feder1">
-        <stiffness>1e3</stiffness>
-        <damping>0</damping>
+        <stiffnessCoefficient>1e3</stiffnessCoefficient>
+        <dampingCoefficient>0</dampingCoefficient>
         <unloadedLength>0.5</unloadedLength>
         <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
         <ombv:CoilSpring name="dummy">
@@ -89,8 +89,8 @@
         </ombv:CoilSpring>
       </LinearSpringDamper>
       <LinearSpringDamper name="Feder2">
-        <stiffness>1e2</stiffness>
-        <damping>0</damping>
+        <stiffnessCoefficient>1e2</stiffnessCoefficient>
+        <dampingCoefficient>0</dampingCoefficient>
         <unloadedLength>0.5</unloadedLength>
         <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
         <ombv:CoilSpring name="dummy">
@@ -103,15 +103,15 @@
     </Group>
     <RigidBody name="Box1">
       <plotFeature feature="+globalPosition"/>
-      <q0>[0]</q0>
-      <u0>[0.1]</u0>
+      <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>5</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
         <LinearTranslation>
-          <PJT>[0; 1; 0]</PJT>
+          <translationVectors>[0; 1; 0]</translationVectors>
         </LinearTranslation>
       </translation>
       <rotation/>
@@ -132,21 +132,21 @@
   <Group name="Hauptgruppe2">
     <plotFeatureRecursive feature="+stateDerivative"/>
     <plotFeature feature="+separateFilePerDynamicSystem"/>
-    <relativeGroupLocation>[2;0;0]</relativeGroupLocation>
-    <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
+    <relativePosition>[2;0;0]</relativePosition>
+    <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
     <Group name="Untergruppe">
-      <relativeGroupLocation>[1;0;0]</relativeGroupLocation>
-      <relativeGroupOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeGroupOrientation>
+      <relativePosition>[1;0;0]</relativePosition>
+      <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
       <RigidBody name="Box1">
-        <q0>[0.95]</q0>
-        <u0>[0]</u0>
+        <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>5</mass>
         <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
         <translation>
           <LinearTranslation>
-            <PJT>[0; 1; 0]</PJT>
+            <translationVectors>[0; 1; 0]</translationVectors>
           </LinearTranslation>
         </translation>
         <rotation/>
@@ -157,13 +157,13 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <relativePosition>[0;-0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <frame>
           <Frame name="P2"/>
-          <relativeFrameLocation>[0;0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <relativePosition>[0;0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -176,15 +176,15 @@
       </RigidBody>
       <RigidBody name="Box2">
         <plotFeature feature="-stateDerivative"/>
-        <q0>[1.75]</q0>
-        <u0>[0]</u0>
+        <initialGeneralizedPosition>[1.75]</initialGeneralizedPosition>
+        <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>2</mass>
         <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
         <translation>
           <LinearTranslation>
-            <PJT>[0; 1; 0]</PJT>
+            <translationVectors>[0; 1; 0]</translationVectors>
           </LinearTranslation>
         </translation>
         <rotation/>
@@ -195,8 +195,8 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativeFrameLocation>[0;-0.25;0]</relativeFrameLocation>
-          <relativeFrameOrientation>[1,0,0;0,1,0;0,0,1]</relativeFrameOrientation>
+          <relativePosition>[0;-0.25;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -208,8 +208,8 @@
         </openMBVRigidBody>
       </RigidBody>
       <LinearSpringDamper name="Feder1">
-        <stiffness>1e3</stiffness>
-        <damping>0</damping>
+        <stiffnessCoefficient>1e3</stiffnessCoefficient>
+        <dampingCoefficient>0</dampingCoefficient>
         <unloadedLength>0.5</unloadedLength>
         <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
         <ombv:CoilSpring name="dummy">
@@ -220,8 +220,8 @@
         </ombv:CoilSpring>
       </LinearSpringDamper>
       <LinearSpringDamper name="Feder2">
-        <stiffness>1e2</stiffness>
-        <damping>0</damping>
+        <stiffnessCoefficient>1e2</stiffnessCoefficient>
+        <dampingCoefficient>0</dampingCoefficient>
         <unloadedLength>0.5</unloadedLength>
         <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
         <ombv:CoilSpring name="dummy">
@@ -234,15 +234,15 @@
     </Group>
     <RigidBody name="Box1">
       <plotFeature feature="+globalPosition"/>
-      <q0>[0]</q0>
-      <u0>[0.1]</u0>
+      <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>5</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
         <LinearTranslation>
-          <PJT>[0; 1; 0]</PJT>
+          <translationVectors>[0; 1; 0]</translationVectors>
         </LinearTranslation>
       </translation>
       <rotation/>

@@ -29,8 +29,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  group2->setPosition(r);
-  group2->setOrientation(A);
+  group2->setRelativePosition(r);
+  group2->setRelativeOrientation(A);
   addDynamicSystem(group2);
 
   //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;

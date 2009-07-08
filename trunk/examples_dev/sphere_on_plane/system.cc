@@ -46,9 +46,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   q0(0) = 0;
   q0(1) = 2.2*r;
   q0(2) = 0;
-  body->setq0(q0);
+  body->setInitialGeneralizedPosition(q0);
   //body->setu0("[0;0;0;0;0;-30]");
-  body->setu0("[3;0;1;0;0;0]");
+  body->setInitialGeneralizedVelocity("[3;0;1;0;0;0]");
   //body->setu0("[0;0;0;20;0;-30]");
   //body->setu0("[0;0;0;20;10;-30]");
   //body->setu0("[3;0;0;4;-3;2]");

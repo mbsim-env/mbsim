@@ -38,17 +38,17 @@ int main (int argc, char* argv[]) {
   else if(eventDriven) { // Event driven time integration
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setdt0(1e-13);
+    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
   } 
   else { // time stepping integration
     sys->setLaTol(1e-2*dt);
     sys->setgdTol(1e-8);
     integrator = new TimeSteppingIntegrator;
-    static_cast<TimeSteppingIntegrator*>(integrator)->setdt(dt);
+    static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(dt);
   }
 
-  integrator->settEnd(tEnd);
-  integrator->setdtPlot(dtPlot);
+  integrator->setEndTime(tEnd);
+  integrator->setPlotStepSize(dtPlot);
   integrator->integrate(*sys);
 
   cout << "finished"<<endl;

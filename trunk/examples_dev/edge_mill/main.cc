@@ -11,10 +11,10 @@ int main (int argc, char* argv[])
   sys->init();
   
   TimeSteppingIntegrator integrator;
-  integrator.setdt(5e-5);
+  integrator.setStepSize(5e-5);
 
-  integrator.settEnd(0.5);
-  integrator.setdtPlot(5e-3);
+  integrator.setEndTime(0.5);
+  integrator.setPlotStepSize(5e-3);
 
   integrator.integrate(*sys);
   cout << "finished"<<endl;

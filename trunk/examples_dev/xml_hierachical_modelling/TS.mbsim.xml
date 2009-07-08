@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
-  <relativeGroupLocation>[0;0;0]</relativeGroupLocation><!-- dummy -->
-  <relativeGroupOrientation>[1,0,0;0,1,0;0,0,1]</relativeGroupOrientation><!-- dummy -->
+  <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
+  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
   <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
   <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
 </DynamicSystemSolver>
