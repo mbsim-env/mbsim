@@ -1,5 +1,5 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
-libcontactkinematics_la_SOURCES = 	contact_kinematics.cc\
+libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 					point_line.cc\
 					sphere_plane.cc\
 					point_plane.cc\
