@@ -77,8 +77,8 @@ namespace MBSim {
     int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
     Vec rWork(lrWork);
     rWork(4) = dt0; 
-    rWork(5) = 1e-2;
-    rWork(6) = 1e-14;
+    rWork(5) = dtMax;
+    rWork(6) = dtMin;
     int liWork=(20+zSize)*10;
     Vector<int> iWork(liWork);
     iWork(5) = 10000;
