@@ -1,124 +1,95 @@
-\section{Beispiele}
+\section{Examples}
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{Beispiel: Einmassenschwinger}
+\subsection{Example: One-Mass-Oscillator}
 
 \hspace*{0.2\hsize}
   \psfrag{x} [cc][cc]{$x$}
-  \psfrag{K} [lc][lc]{Körper}
+  \psfrag{K} [lc][lc]{Body}
   \psfrag{m} [cc][cc]{$m$}
-  \psfrag{c} [cc][cc]{Feder $c$}
+  \psfrag{c} [cc][cc]{Spring $c$}
   \psfrag{S} [cc][cc]{$S$}
-  \psfrag{K} [lc][lc]{Körper mit Schwerpunkt/KOS}
-  \psfrag{pb}[lc][lc]{Port auf Körper}
-  \psfrag{pe}[lc][lc]{Port auf Umwelt}
-  \includegraphics[width=0.45\hsize]{Einmassenschwinger}
+  \psfrag{K} [lc][lc]{Body with COG}
+  \psfrag{pb}[lc][lc]{Frame on Body}
+  \psfrag{pe}[lc][lc]{Frame on Environment}
+  \includegraphics[width=0.45\hsize]{one_mass_oscillator}
 
 %%------------------------------------------------------------ SUBSUBSECTION ---------------------
-\subsubsection{Das "`physikalische"' System -- System}
+\subsubsection{Physics - system}
 
 \paragraph{Header}
 
-\listinginput{1}{C++/einmassen.h}
+\listinginput{1}{C++/system.h}
 
 \begin{tabular}{r|p{0.85\hsize}}
-  1,2,16 & verhindert, dass Header mehrfach eingebunden werden\\
-  4,5,7,8  & \emph{includes} und \emph{Namespaces}\\
-  10 & Klassendefinition für den Einmassenschwinger, der in direkter Ableitung zu
-       \texttt{MultiBodySystem} steht und keine zusätzliche Funktionalität implementiert\\
-  13 & Konstruktor
+  1,2,13 & avoids including Header more than once\\
+  4,5  & \emph{includes}\\
+  7 & class definition for one mass oscillator, which is derived by \texttt{DynamicSystemSolver} without additional functionality\\
+  9 & constructor
 \end{tabular}
 
 %------------------------------------------------------------
-\paragraph{Quellcode}
+\paragraph{Source}
 
-\listinginput{1}{C++/einmassen.cc}
-
-\begin{tabular}{r|p{0.85\hsize}}
-  10  & Standardmäßig werden Verzeichnisse gemäß \texttt{Projektname00, Projektname01, \dots
-  Projektnamexy, \dots Projektname99} angelegt; mit \texttt{setProjectDirectory} wird ein
-  fester Verzeichnisname angegeben, in inkrementelles Benennen findet nun nicht mehr statt.\\
-  40 & \texttt{setTranslationalStiffness} ist unabh\"angig von der Kraftrichtung\\
-  41 & \texttt{setTranslationalDamping} setzt die Materiald\"ampfung\\
-  53 & \emph{Cuboid} muss initial verschoben werden, da \AMVis{} und \MBSim{} unterschiedliche KOSY verwenden; das zweite Argument bezeichnet die Instanzen, das dritte Argument die Auswahl eines bin\"aren pos-files oder eines textbasierten
-  \end{tabular}
+\listinginput{1}{C++/system.cc}
 
 %%------------------------------------------------------------ SUBSUBSECTION ---------------------
-\subsubsection{Zeitintergation -- main}
+\subsubsection{Time integration -- main}
 
 \listinginput{1}{C++/main.cc}
 
 %%------------------------------------------------------------ SUBSUBSECTION ---------------------
 \subsubsection{Makefile} \enlargethispage{5mm}
-Die Erstellung eines lauffähigen Programmes wird durch ein Makefile gesteuert:
+The building process of a program is controlled by a Makefile:
 \listinginput{1}{C++/Makefile}
 
 %%--------------------------------------------------------------- SUBSECTION --
-\subsection{2D-Schubkurbel}
-Für die Modellierung ist nach folgendem Plan vorzugehen.
+\subsection{2D-Slider Crank Mechanism}
+Use the following plan.
 \begin{enumerate}
-\item Starr-Körper definieren durch
+\item rigid bodies with
 \begin{itemize}
-\item \emph{bodyRigidAbs} für Kurbel, Kolben und Block
-\item Masse/ Länge/ Breite/ MTM
-\item Jacobi-Matrizen (translatorischen dof und rotatorischen dof festlegen, um auf diese beschreibenden Koordinaten zu projizieren und Reibung und Kontaktkräfte zu berücksichtigen)
-\item WrOS0 (Abstand Ursprung - Körper-KOSY (Schwerpunkt))
-\item \AMVis{}-Körper (evtl. ist eine initiale Verschiebung anzugeben, da \AMVis{}-Körper z.T. nicht vom Schwerpunkt als Referenz ausgehen)
+\item \emph{RigidBody} for crank, pistin and block
+\item mass/ length/ width/ inertia tensor
+\item Jacobian matrices (translation / rotation)
+\item reference frames
+\item \OpenMBV{}-bodies (probably one needs an additional translation as \OpenMBV{}-bodies sometimes use another reference)
 \end{itemize}
 
-\item Elastisches Pleuel definieren durch
+\item elastic connecting rod with
 \begin{itemize}
-\item \emph{bodyflexible21}
-\item Länge/ Breite/ Höhe (Querschnitt)/ E-Modul (10e8)/ Flächenträgheitsmoment (bez. Schwerpunkt (Biegelinie) der Querschnittsfläche) als Geometriegröße)/ Dichte/ Dämpfung
-\item Elementzahl
-\item Jacobimatrizen (Körper-KOSY definieren)
-\item WrON00 (Vektor Ursprung Körper-KOSY (Bogenlängen-0-Punkt))
-\item initRelaxed (Winkel Körper-KOSY - Balken zur Zeit 0)
-\item CreateAMVis
+\item \emph{FlexibleBody1s21RCM}
+\item length/ width / height (cross-sectional area) / Young's modulus (10e8)/ area moment of inertia / density/ damping
+\item number of finite elements
+\item reference frames
+\item initial generalised coordinates
 \end{itemize}
 
-\item Ports/ Contours im Körper-KOSY definieren
-\item Links (Feder hätte Abstandsrichtung)/ Impacts (mind. Punkt-Linie-Kontakt; Normale in Koerper; $0\leq\mu<\infty$)/ Contacts (Impact mit $\epsilon=0$) definieren
-\item Externe Anregung definieren
-\item Alles dem MBS hinzufügen
-\item Integrator/ Schrittweite wählen (bei Divergenz Schrittweite verkleinern)
-\item Analyse
-	\begin{itemize}
-	\item \AMVis{}
-	\item GVim
-		\begin{itemize}
-		\item $\vg\left(0\right)\rightarrow$ Gap-Vektor-Komponente 0 (Normalgap/ KOSY-Gap)
-		\item $\vg\left(1\right)\rightarrow$ Gap-Vektor-Komponente 1 (KOSY-Gap)
-		\item Rechtssystem Normale/ Binormale/ Tangente
-		\item $\vlambda\left(0\right)\rightarrow$ mittlerer Normalkraftparameter bez. Contournormale
-		und Integrationsschrittweite (für exakte Darstellung müssen Plotzeiten stimmen, insbesondere bei Starrkörpern
-		mit Starrkörperkontakten und elastischen Stößen)
-	\item $\vlambda\left(1\right)\rightarrow$ Tangentialkraftparameter
-	\item Pleueldaten für ein FE-Element sind\\
-	$q_1=x_1$, $q_2=x_2$, $q_3=\varphi_1$, $q_4=a_1$, $q_5=a_2$, $q_6=x_3$, $q_7=x_4$, $q_8=\varphi_2$
-	\end{itemize}
-\item Gnuplot
-\end{itemize}
+\item frames/ contours in body coordinate system
+\item link definition
+\item external loads
+\item add to dynamic system solver
+\item integrator / time step size
 \end{enumerate}
 
 %%--------------------------------------------------------------- SUBSECTION --
-\subsection{3D-Schubkurbel}
-Für die Modellierung ist nach folgendem Plan vorzugehen.
+\subsection{3D-Slider Crank Mechanism}
+Use the following plan.
 \begin{enumerate}
-\item Starr-Körper definieren durch
+\item rigid bodies with
 \begin{itemize}
-\item \emph{bodyRigidAbs} für Kurbel, Pleuel, Kolben und Block
-\item Masse/ Länge/ Breite/ MTM
-\item Jacobi-Matrizen (Starrkörperkoordinatenauswahl)
-\item WrOS0 (Abstand Ursprung - Körper-KOSY (Schwerpunkt))
-\item \AMVis{}-Körper
+\item \emph{RigidBody} for crank, connecting rod, piston and block
+\item mass/ length/ width / inertia tensor
+\item Jacobian matrices (translation / rotation)
+\item reference frames
+\item \OpenMBV{}-bodies
 \end{itemize}
 
-\item Ports/ Contours im Körper-KOSY definieren
-\item Links/ Impacts definieren
-\item Externe Anregung definieren
-\item Alles dem MBS hinzufügen
-\item Integrator/ Schrittweite wählen
+\item frames / contours in body coordinate system
+\item link definition
+\item external loads
+\item add to dynamic system solver
+\item integrator / time step size
 \end{enumerate}
 
 

@@ -1,11 +1,10 @@
-%\section{Problembehandlung}
-%\subsection{Pfadinformationen}
-%Zun\"achst sollte bei Schwierigkeiten bez\"uglich Pfadangaben ein Fehler in Objektdateien durch \texttt{make clean} ausgeschlossen werden. Dann  k\"onnen die Pfadangaben in \texttt{.bashrc} und schlie"slich die in den betroffenen \texttt{.pc}-Dateien \"uberpr\"uft werden. Der Speicherort von letzteren kann \"uber
-%\begin{verbatim}
-%pkg-config --cflags mbsim
-%pkg-config --libs mbsim
-%\end{verbatim}
-%bestimmt werden.
+\section{Trouble-Shooting}
+\subsection{Path Information}
+After recognising difficulties concerning path information mistakes in the objects should be ruled out by \texttt{make clean}. Then, path information in \texttt{.bashrc} and finally in the affected \texttt{.pc}-files should be checked. The location of the \texttt{.pc}-files can be found by
+\begin{verbatim}
+pkg-config --cflags mbsim
+pkg-config --libs mbsim
+\end{verbatim}
 
 \section{\MBSim{} - Coding Standard}
 In the following the Coding standards of \MBSim{} and the associated projects is defined.

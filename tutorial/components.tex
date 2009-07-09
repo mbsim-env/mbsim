@@ -8,16 +8,22 @@ Fig.~\ref{fig:objects} shows a class diagram.
   	\caption{object structure in \MBSim}
   	\label{fig:objects}
 \end{figure}
+Exemplary this is a dynamical system with environment and two bodies. Indicated are interconnections due to contacts and joints as well as an external load.\par
+A body is defined with respect to its generalised coordinates and velocities, contacts between contours and joints between frames may be rigid or flexible also including friction. The definition of loads might include arbitrary functional descriptions.
 
 \subsection{Description of the Components}
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
 
+\subsubsection{DynamicSystem and DynamicSystemSolver}
+Hierarchically frames, bodies and interconnections belong to \texttt{DynamicSystem}s. For their definitions a canonic stationary frame \texttt{"I"} always exists. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).
+
 \subsubsection{Frames}
+\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for kinematic and kinetic expressions using a frame recursive relationship.
 
 \subsubsection{Rigid Bodies}
-To describe the kinematics and the update of further frames at rigid bodies a body-fixed frame has to be defined in \texttt{RigidBody} based on a predefined frame \texttt{"C"} in the centre of gravity. The frame for kinematics is updated with respect to a reference frame and its individual degree of freedom or its constrained relative motion. Both absolute and relative kinematical structures are canonically given by this frame recursion depending on the properties of the reference. The drawback of this general description is a time-dependent mass-matrix. A constant mass evaluation can be enforced by a boolean \texttt{"cb"}.\\
-If there is a frame given tree structure a \texttt{Tree} for the kinematical evaluations is defined automatically.
-%In jedem Fall sind Masse (\emph{setMass}), Tr\"agheitstensor bez. dem Bezugspunkt (\emph{setInertia}), generalisierte Koordinaten (\emph{setJT}, \emph{setJR}), evtl. Anfangsverformungen (\emph{setWrOK0}, \emph{setAWK0}) und \AMVis{}-Darstellungen (\emph{setAMVisBody}) anzugeben und die K\"orper dem MKS hinzuzuf\"ugen (\emph{addObject}). Auch ganze MKS k\"onnen als Slave einem Master-MKS hinzugef\"ugt werden.
+A \texttt{RigidBody} is based on a predefined frame \texttt{"C"} in the centre of gravity. This frame can e.g. be used to describe further frames at rigid bodies. Then, one frame for kinematics has to be chosen being updated with respect to a reference frame as well as the individual degree of freedom of the \texttt{RigidBody} or its constrained relative motion. Both absolute and relative kinematical structures are canonically given by this frame recursion depending on the properties of the reference. The drawback of this general description is a time-dependent mass-matrix. If there is a frame given tree structure a \texttt{Tree} for the kinematical evaluations is defined automatically.\\
+Important settings: \emph{setMass}, \emph{setInertiaTensor}, \emph{setFrameOfReference}, \emph{setFrameForKinematics}, \emph{setTranslation} describing the translational degrees of freedom, \emph{setRotation} describing the rotational degrees of freedom, \emph{setOpenMBVRigidBody} to enable visualisation\\
+Initial values: are given by the reference frame
 
 \subsubsection{Flexible Bodies}
 The equations of motion of a \texttt{FlexibleBody} is at the moment always derived with respect to a stationary frame. So, flexible bodies can only be used as root but not as leave in a recursive tree structure. The following flexible bodies are available. 
@@ -32,51 +38,62 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment always deriv
 %\item \emph{BodyFlexible1s23BTA} Biege-Torsions-Welle (5-Koordinaten pro Knoten $\alpha$, $y$, $\gamma$, $z$, $\beta$ im jeweils mit $\alpha$ mitdrehenden KOSY)
 %\item \emph{BodyFlexibleLinearExternal}
 \end{itemize}
-%F\"ur die RCM-Modelle sowie die Biege-Torsions-Welle kann eine \AMVis-Darstellung
-%(\emph{createAMVisBody}) aktiviert werden. Die Finiten Elemente selbst basieren im Fall von \emph{BodyFlexible1s21RCM}, \emph{BodyFlexible1s23BTA} und \emph{BodyFlexibleLinearExternal} auf einem neugeschaffenem Interface \emph{DiscretizationInterface} zur einheitlichen Darstellung.
-%
-%\subsubsection{Joints}
-%Verbindungen werden ohne Reibung \"uber Ports (\emph{addPort}, \emph{connect}) an K\"orper bez. an die Umgebung angeschlossen. Dann ist auszuw\"ahlen, ob eine flexible Verbindung (\emph{ConnectionFlexible}) oder eine Starrk\"orperverbindung (\emph{ConnectionRigid}) zwischen K\"orpern oder eine externe Erregung (\emph{Load}) zur Modellierung verwendet werden soll. Der Freiheitsgrad der Verbindung wird \"uber \emph{setForceDirection} bez. \emph{setMomentDirection} angegeben. Dem MKS wird eine Verbindung anschlie"send \"uber \emph{addLink} mitgeteilt. \"Uber \emph{Link} kann auch eine Visualisierung der Verbindungskr\"afte (\emph{Arrow}) und der Kopplung selbst zugeschaltet werden; hierbei ist es m\"oglich zwischen einer Einheitenumrechnung und einer L\"angenvisualisierung zu unterscheiden (\emph{setScaleFactor}, \emph{setArrowHead}, \emph{setDiameter}), sowie den Partner f\"ur das Pfeilende festzulegen. Bei \emph{Load} wird mit \emph{setSignal} eine benutzerspezifische Funktion\footnote{\emph{UserFunction} gibt es bereits mit harmonischen (\emph{FuncHarmonic}), linearen Verlauf (\emph{FuncLinear}), oder auch als mehrdimensionale st\"uckweise Polynominterpolation (\emph{MDPPolynom})} vorgegeben.
-%
-\subsubsection{Contacts and Impacts}
-Contacts and impacts are managed by \texttt{Contact}.\par 
+
+\subsubsection{LinkMechanics}
+Mechanical links represent interconnections between mechanical bodies.
+
+\paragraph{Actuators}
+An \texttt{Actuator} connects two frames using a predefined control function.
+
+\paragraph{Joints}
+\texttt{Joint}s connect two frames with the force laws depending on the ideal normal relative kinematics. The constitutive law has to be chosen for the calculation of the force parameter. 
+Important settings: \emph{setForceDirection}, \emph{setMomentDirection}, \emph{setForceLaw} (acceleration level), \emph{setImpactForceLaw} (velocity level)
+
+\paragraph{Contacts and Impacts}
+Contacts and impacts are managed by \texttt{Contact}.
+Important settings: \emph{setContactForceLaw}, \emph{setContactImpactLaw}, \emph{setFrictionForceLaw}, \emph{setFrictionImpactLaw}, \emph{setContactKinematics} \par 
 The relative kinematics is defined between \texttt{Contour} classes. Thereby kinematically there might be a finite number of possible contact points; for the evaluation of force laws a decision rule has to be implemented. On velocity level the contact kinematics is independent of the specific contour. For the calculations on position level the following contours are available.
 \begin{itemize}
-\item[] \texttt{Point}\\
-    most primitive rigid contour
-\item[] \texttt{Plane}\\
-    affine two dimensional surface
-\item[] \texttt{Sphere}\\
-    two dimensional sphere
+\item[] \texttt{CircleHollow}\\
+    one dimensional sphere with contact from inside 
+\item[] \texttt{CircleSolid}\\
+    one dimensional sphere with contact from outside 
 \item[] \texttt{FlexibleBand}\\
     flexible contour describing a band in a certain distance and direction of a neutral fibre
+\item[] \texttt{Frustum}\\
+    frustum with its axis given by the second column of the contour reference frame
+\item[] \texttt{Line}\\
+    affine one dimensional space 
+\item[] \texttt{Plane}\\
+    affine two dimensional surface
+\item[] \texttt{Point}\\
+    most primitive rigid contour
+\item[] \texttt{Sphere}\\
+    two dimensional sphere
 \end{itemize}
 
 Available contact kinematics on position level:
 \begin{itemize}
+\item[] \texttt{CircleSolidLine}
+\item[] \texttt{PointLine}
+\item[] \texttt{PointFrustum}
 \item[] \texttt{PointPlane}
 \item[] \texttt{PointFlexibleBand}
 \item[] \texttt{SpherePlane}
 \end{itemize}
 
+\paragraph{Constitutive Laws}
 Concerning the constitutive laws it is distinguished between contact laws on acceleration and impact laws on velocity level. Further, both flexible and rigid laws in normal and tangential direction are available.\footnote{Modelling hint: There are contradictions between energy conservation in normal direction and dissipation due to friction when combining these features.})\par
 
+\paragraph{Conventions}
 For modelling own contact kinematics and constitutive laws some conventions are important.
 \begin{itemize}
+\item contact kinematics\\
+    \texttt{updateg} should define the normal distance, the possible contact locations and trihedral orientations, \texttt{updatewb} are nonlinear kinematic terms
 \item accompanying contour trihedral\\
     the first column is the outward pointing normal, 
 \end{itemize}
 
-%Linie-Contour1s, Kugel-Ebene, Kugel-Kugel und Kugel-Kegelstumpf. Auch Erweiterungen
-%k\"onnen \"uber die Definition neuer Konturen und zugeh\"origer Kontaktkinematiken
-%(\emph{setContactKinematics}) definiert werden. Hierzu ben\"otigt eine Kontur die
-%Parametrisierung einer nach innen gerichteten Normale, einer Tangente, einer Position,
-%einer Geschwindigkeit und einer Winkelgeschwindigkeit. Die Kontaktkinematik muss in einem
-%ersten Schritt Normalabstand und Konturparameter \"uber eine Nullstellenfunktion
-%bestimmen, sowie tangentiale Richtungsinformationen f\"ur Reibung in einem zweiten
-%Schritt. Die Reihenfolge des \emph{connect}-Aufrufs muss dar\"uberhinaus behandelt
-%werden.
-%
 \subsubsection{Integration Schemes}
 Available integration schemes:
 \begin{itemize}
@@ -106,7 +123,7 @@ Available constraint equation solution schemes:
 %\item Nichtlineare GS (3D-Coulomb-Reibung)\\
 %  (\emph{setStrategy} mit \emph{local}/\emph{global})\\
 %\emph{FixedPointTotal}: Jacobi-Verfahren mit Fixpunktsuche und R-Faktor-Strategie (verh\"alt sich zumeist schlechter als \emph{FixedPointSingle})\\  
-%\emph{RootFinding}: ged\"ampftes, z.B durch Regula Falsi generalisiertes Newton-Verfahren mit
+%\emph{RootFinding}: 
 %  R-Faktor-Strategie (unstetige Jacobi-Matrix) und f\"ur unterbestimmte LGS ausw\"ahlbarer \emph{setLinalg} (LUDecomposition, LevenbergMarquardt, PseudoInverse) (f\"ur schlecht konditionierte Dylassus-Matrix meistens am besten)
 %\end{itemize}
 %Der Befehl \emph{stopifnoConvergence(\texttt{true},\texttt{true})} zwingt den Integrator abzubrechen, falls keine Konvergenz vorliegt, und die Kontaktsituation auszugeben.
@@ -247,59 +264,11 @@ Currently, \texttt{LSODAR} is the only event-driven integrator with automatic sw
     \end{itemize}
 \end{enumerate}
 
-%exemplarisch ein System aus Umwelt und zwei Körpern. Angedeutet sind Wechselwirkungen
-%dieser untereinander über Kontakte und Verbindungen sowie eine äußere Last.
-%
-%Ein Körper~(\texttt{Body...}) ist in \MBSim{} durch seine Lagen~$\vq$ und
-%Geschwindigkeiten~$\vu$ parametrisiert. Die Parameter der beschreibenden
-%Differentialgleichung sind bei starren Körpern~(\texttt{BodyRigid...}) immer Masse~$m$ und
-%Tragheitstensor~$\vTheta$. Die Modelle für flexible Körper~(\texttt{Bodyflexible...}) sind in der
-%Parametrisierung jeweils sehr speziell -- für sie sei auf die jeweiligen Implementierungen
-%und die zugehörigen Dokumentationen verwiesen.
-%
-%Die Umwelt kann wie auch alle Körper Konturen~(\texttt{Contour}) sowie
-%Anschlüsse~(\texttt{Port}) aufnehmen, auf denen Kontakte sowie diskrete Wechselwirkungen
-%definiert werden können. Zudem ist Gravitation über die Umwelt definiert.
-%
-%Kontakte zwischen den Konturen unterschiedlicher Körper können sowohl als
-%Starrkörperkontakt~(\texttt{ContactRigid}, mengenwertig, nicht-glatte Dynamik) als auch
-%als nachgiebiger Kontakt~(\texttt{ContactFlexible}, funktional, lokale Steifigkeit)
-%definiert werden. Reibung wird hierbei jeweils durch die Angabe der auszuwertenden
-%Reibrichtungen eingebunden. Verbindungen zwischen zwei Anschlüssen können sowohl starr
-%(\texttt{ConnectionRigid}) als auch mit Nachgiebigkeit~(\texttt{ConnectionFlexible})
-%modelliert werden. Für äussere Lasten~(\texttt{Load}) können beliebige Vorschriften
-%angegeben werden.
-%%%------------------------------------------------------------ SUBSECTION --
-%\subsection{Hinweise}
-%\begin{enumerate}
-%  \item F\"ur Anwendungen die MBSim-Ableitungen verwenden, muss im \texttt{Makefile} der
-%       \texttt{pkg}-Aufruf ge\"andert werden zu \texttt{mbsimMechAdd} oder Adequates, um
-%       die Bibliotheken einzubinden.
-%  \item In \emph{Vec}-Schreibweise d\"urfen nur Ziffern auftreten
-%  \item Parametrisierung der Gesamtbewegung (siehe Skriptum \cite{Foer07}) mit $\vA_{K_0K}$ durch $\vq$ und mit direkt vorgebbarem $\vA_{WK_0}$
-%  \item Plotlevel (0,1,2,3) erh\"oht f\"ur jedes Element extra die Ausgabedateigr\"o"se (z.B. zus\"atzlich Kontaktgeschwindigkeiten); für AMVis ist ein Wert größer als 0 nötig.
-%  \item Projektionen zur Korrektur bei Verletzung von Lage-Nebenbedingungen sind bei Time-Steppern \"uber \emph{setDriftCompensation} m\"oglich. Bei der Interpretation ist
-%       allerdings der Drift vom Diskretisierungsfehler (Time-Stepper ist 1. Ordnung) zu
-%       unterscheiden; bei Kontaktdurchsinken sollte demnach zun\"achst die Schrittweite
-%       verkleinert werden. Bei h\"ochstens Gleichungsnebenbedingungen k\"onnen bei reinen
-%       Starrk\"orpersystemen auch alle anderen
-%       Integratoren verwendet werden, da das System dann intern auf Beschleunigungsebene gebracht
-%       wird, bei flexiblen K\"orpern ist dies nur zum Teil der Fall. Auch f\"ur Integratoren
-%       h\"oherer Ordnung entsteht also ein numerischer Drift. Zur Vermeidung von numerischen
-%       Fehlern ist es h\"aufig besser, Gleichungsnebenbedingungen
-%       durch relativkinematische Beschreibungen zu ersetzen.
-%  \item Es besteht die M\"oglichkeit von negativen Abst\"anden bis zur Kontaktdetektion, da die Kontakte mit Toleranzen versehen sind (zur Behebung ist die Schrittweite manuell zu verringern).
-%  \item Bei unterbestimmten GS sind Kr\"afte au"serhalb der Bewegungsebene m\"oglich, solange die Physik nicht verletzt wird. Eine Addition aller Kr\"afte ergibt hierbei die korrekte Gesamtkraftwirkung. Alternativ k\"onnen \emph{flexibleLinks} oder z.B. bilaterale Links verwendet werden, die passive Kr\"afte eindeutig berechnen. Die Modellierung in MBSim ist im Wesentlichen gleich, jedoch kann dann wieder das Newton-Verfahren mit LU-Zerlegung als Solver benutzt werden. Z.B. im Reibungsfall sind solche alternativen Modellierungen zur Vermeidung mathematischer Abh\"angigkeiten nicht m\"oglich. Hier muss also ein iterativer L\"oser verwendet werden. Eine Konvergenzanalyse ist dann allerdings nicht m\"oglich.
-%  \item Standardm\"assig werden die Kontaktkr\"afte nur im aktiven Fall aktualisiert, um den Vorg\"angerwert zur schelleren Konvergenz auszunutzen. Mit \emph{setUseOldla} kann dies unterbunden werden.
-%  
-%  \item Kontakte m\"ussen f\"ur jeden K\"orper extra definiert werden, um die Physik jeweils gleich zu behandeln.
-%  \item Der Zustand kann für \emph{Tree} derzeit nicht ausgegeben werden.
-%\end{enumerate}
-
 %%------------------------------------------------------------ SUBSECTION --
 \subsection{Plot Routines}\label{sec:plot}
 
 \subsubsection{Usage}
+The result of a simualtion with \MBSim{} are a \texttt{mbsim.h5} file for plot analysis as well as \texttt{ombv.h5} and \texttt{ombv.xml} files for visualisation. Additionally there is information concerning the integrator in \texttt{*.plt} and \texttt{*.sum} files; for visualisation \texttt{*.iv} files might appear.\\
 For getting data from \MBSim{} a \HDF{} wrapper is used. Viewing the multibody system parts can be done with
 \begin{verbatim}
     h5lsserie <h5-file>
@@ -321,6 +290,10 @@ The column one is interested in is declared using a colon. Also several columns 
 or in \textsf{MatLab} by
 \begin{verbatim}
     h5dump('<path>')
+\end{verbatim}
+A convenient tool for analysing data is given by
+\begin{verbatim}
+    h5plotserie <h5-file>
 \end{verbatim}
 
 \subsubsection{Implementation}

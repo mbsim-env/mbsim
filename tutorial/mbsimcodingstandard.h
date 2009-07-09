@@ -35,7 +35,7 @@
  *
  * - for all new features there should exist a test case with reference data in the examples directory for automatic compilation / running / comparison with reference data
  *
- * - before new svn commit: svn update -> solve conflicts in compiling -> run test script to also avoid link and conceptional problems  
+ * - before new svn commit: svn update -> solve conflicts in compiling -> run test script to also avoid link and conceptional problems -> check for memory leakage, runtime and thread savity with valgrind (--tool=memcheck, callgrind, helgrind) 
 */
 
 
