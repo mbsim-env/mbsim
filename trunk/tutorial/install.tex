@@ -130,10 +130,11 @@ The \HDF wrapper is available by
 \begin{verbatim}
  svn checkout http://svn.berlios.de/svnroot/repos/hdf5serie/trunk HDF5Serie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBSim/HDF5Series}. Last, \texttt{.bashrc} can be extended with
+as well as the procedures \textsc{automake, configure} and \textsc{install} in the directories \texttt{MBSim/HDF5Series} and \texttt{MBSim/HDF5Series/h5plotserie} . Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
-alias h5lsserie="MBSim/HDF5Serie/hdf5serie/dump/h5lsserie"
-alias h5dumpserie="MBSim/HDF5Serie/hdf5serie/dump/h5dumpserie"
+alias h5lsserie="MBSim/Install/h5lsserie"
+alias h5dumpserie="MBSim/Install/bin/h5dumpserie"
+alias h5plotserie="MBSim/Install/bin/h5plotserie"
 \end{verbatim}
 to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpserie}.
 
@@ -191,6 +192,11 @@ Use the procedures \textsc{automake, configure} and \textsc{install} in \texttt{
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{\MBSim}
+Necessary for the installation of \MBSim are
+\begin{itemize}
+\item \FMatVec{}
+\item \OpenMBV{}-C++-Interface
+\end{itemize}
 For installation of \MBSim{} one types
 \begin{verbatim}
  svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
@@ -208,11 +214,11 @@ Now, one invokes the procedures \textsc{automake, configure} and \textsc{install
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{MBSimAddOns}
-{\small At the institute further modules can be found in \texttt{MBSimAddOn}: mechanical components~(\texttt{mbsimMechAdd}), hydraulic components~(\texttt{mbsimHydraulics}), an interface for co-simulationen~(\texttt{mbsimCosim}) and a XML parser~(\texttt{mbsimXML}). For installation one types
+{\small At the institute further modules can be found in \texttt{MBSimAddOn}: mechanical components~(\texttt{mbsimMechAdd}), hydraulic components~(\texttt{mbsimHydraulics}), and an interface for co-simulationen~(\texttt{mbsimCosim}). For installation one types
 \begin{verbatim}
  svn checkout http://zeiss/repos/SVN--rep//AM-software/mbsimAddOn/trunk mbsimAddOn
 \end{verbatim}
-in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, configure} and \textsc{install} in the subdirectories of \texttt{MBsim/mbsimAddOn}.
+in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, configure} and \textsc{install} in the subdirectories of \texttt{MBSim/mbsimAddOn}.
 }
 
 %%------------------------------------------------------------ SUBSUBSECTION --
