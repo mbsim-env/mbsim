@@ -6,10 +6,10 @@ using namespace MBSim;
 
 int main (int argc, char* argv[])
 {
-  // Einzelne Bausteine des MKS erschaffen
+  // build single modules
   DynamicSystemSolver *sys = new System("TS");
 
-  // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
+  // add modules to overall dynamical system
   sys->init();
 
   LSODEIntegrator integrator;
@@ -35,6 +35,5 @@ int main (int argc, char* argv[])
   delete sys;
 
   return 0;
-
 }
 
