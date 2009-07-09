@@ -97,17 +97,24 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
         openMBVFrame->setName(name);
-        RigidBody *rigidBody;
-        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getOpenMBVBody()==0) {
-            cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
-            _exit(1);
-          }
-          parent->getOpenMBVGrp()->addObject(openMBVFrame);
-          openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
-          openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
-          openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
-        }
+        // The next line adds redundant data to the h5 file (if the parent is a RigidBody or a Group)
+        // but this line of code work for allways!
+        parent->getOpenMBVGrp()->addObject(openMBVFrame);
+        // The following lines prevent redundant data (if the parent is a RigidBody) but dose not work
+        // if the parent is a Group; TODO
+        // BEGIN
+        //RigidBody *rigidBody;
+        //if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
+        //  if(rigidBody->getOpenMBVBody()==0) {
+        //    cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
+        //    _exit(1);
+        //  }
+        //  parent->getOpenMBVGrp()->addObject(openMBVFrame);
+        //  openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
+        //  openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
+        //  openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
+        //}
+        // END
       }
 #endif
       Element::initPlot(parent);
