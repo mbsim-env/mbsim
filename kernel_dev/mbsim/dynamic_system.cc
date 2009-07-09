@@ -300,6 +300,8 @@ namespace MBSim {
         link[i]->plot(t,dt);
       for(unsigned i=0; i<orderOneDynamics.size(); i++)
         orderOneDynamics[i]->plot(t,dt);
+      for(unsigned i=0; i<frame.size(); i++)
+        frame[i]->plot(t,dt);
     }
   }
 
@@ -313,6 +315,8 @@ namespace MBSim {
         link[i]->closePlot();
       for(unsigned i=0; i<orderOneDynamics.size(); i++)
         orderOneDynamics[i]->closePlot();
+      for(unsigned i=0; i<frame.size(); i++)
+        frame[i]->closePlot();
 
       if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
         delete (H5::FileSerie*)plotGroup;
@@ -513,6 +517,8 @@ namespace MBSim {
         link[i]->initPlot();
       for(unsigned i=0; i<orderOneDynamics.size(); i++)
         orderOneDynamics[i]->initPlot();
+      for(unsigned i=0; i<frame.size(); i++)
+        frame[i]->initPlot();
     }
     plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
