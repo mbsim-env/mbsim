@@ -190,7 +190,7 @@ namespace MBSim {
       frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
       frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
       frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
-    }   
+    }
   }
 
   void FlexibleBody1s33RCM::init() {

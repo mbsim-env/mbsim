@@ -57,5 +57,11 @@ namespace MBSim {
     }
   }
 
+  void FlexibleBand::updateJacobiansForFrame(ContourPointData &cp) {
+    static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp);
+    Vec WrPC = cp.getFrameOfReference().getOrientation().col(0)*nDist + cp.getFrameOfReference().getOrientation().col(2)*cp.getLagrangeParameterPosition()(1); // vector from neutral line to contour surface point
+    SqrMat tWrPC = tilde(WrPC); // tilde matrix of above vector
+    cp.getFrameOfReference().setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation()-tWrPC*cp.getFrameOfReference().getJacobianOfRotation()); // Jacobian of translation at contour surface with standard description assuming rigid cross-section
+  }
 }
 

@@ -18,19 +18,23 @@ using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   
+  Vec grav(3,INIT,0.);
+  grav(1) = -9.81;
+  this->setAccelerationOfGravity(grav);
+
   double l0 = 1.5; // length
   double b0 = 0.1; // width
-  double E = 5.e7; // E-Modul alu
+  double E = 5.e7; // E-Modul
   double mu = 0.3; // Poisson ratio
   double G = E/(2*(1+mu)); // shear modulus
   double A = b0*b0; // cross-section area
   double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
   double I2 = 1./12.*b0*b0*b0*b0; // moment inertia
   double I0 = I1 + I2;
-  double rho = 9.2e2; // density alu
+  double rho = 9.2e2; // density 
   int elements = 2; // number of finite elements
 
-  double mass = 20.; // mass of ball
+  double mass = 2.; // mass of ball
   double r = 1.e-2; // radius of ball
 
   FlexibleBody1s33RCM *rod = new FlexibleBody1s33RCM("Rod", true);
@@ -84,7 +88,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Point *point = new Point("Point");
   Vec BR(3,INIT,0.); BR(1)=-r;
   ball->addContour(point,BR,SqrMat(3,EYE),ball->getFrame("C"));
-  ball->setInitialGeneralizedVelocity(Vec("[0;-0.5;0]"));
   this->addObject(ball);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

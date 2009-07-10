@@ -27,7 +27,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double rho = 9.2e2; // density  
   int elements = 2; // number of finite elements
 
-  double mass = 20.; // mass of ball
+  double mass = 2.; // mass of ball
   double r = 1.e-2; // radius of ball
 
   FlexibleBody1s21RCM *rod = new FlexibleBody1s21RCM("Rod", true);
