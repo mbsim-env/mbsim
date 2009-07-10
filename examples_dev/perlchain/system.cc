@@ -109,12 +109,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
   // inertial ball constraint
-  this->addFrame("Bearing",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
-  Joint *joint = new Joint("Bearing");
+  this->addFrame("BearingFrame",l0/(2*M_PI)*Vec("[0;1;0]"),SqrMat(3,EYE),this->getFrame("I"));
+  Joint *joint = new Joint("BearingJoint");
   joint->setForceDirection(Mat("[1,0;0,1;0,0]"));
   joint->setForceLaw(new BilateralConstraint);
   joint->setImpactForceLaw(new BilateralImpact);
-  joint->connect(this->getFrame("Bearing"),balls[0]->getFrame("C"));
+  joint->connect(this->getFrame("BearingFrame"),balls[0]->getFrame("C"));
   this->addLink(joint);
 
   // constraints balls on flexible band
