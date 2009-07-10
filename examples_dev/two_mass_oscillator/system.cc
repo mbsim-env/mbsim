@@ -96,7 +96,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  
   box1->setInitialGeneralizedPosition(Vec(1,INIT,l01 + h1/2 + 0.2));
-  box2->setInitialGeneralizedVelocity(Vec(1,INIT,l01 + l02 + h1 + h2/2));
+  box2->setInitialGeneralizedPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // ----------------------- Visualisierung in OpenMBV --------------------  
