@@ -233,13 +233,13 @@ namespace MBSim {
     PositionFunction fun(angle,l0,pL,pR,qG(6),qG(7),qG(8),qG(9),rRrLmH); // (object itself no reference)
     PositionJacobian jac (angle,l0,rRrLmH,pSbE);
     MultiDimNewtonMethod rf(&fun,&jac);
-    rf.setMaxIter(10);	
+    rf.setMaximumNumberOfIterations(10);	
 
     if(nrm2(be)==0) {
       Vec s0 = computes0(qG); // initial value
-      be = rf.slv(s0); // Newton method according to Deuflhard (nonlinear_algebra.h)
+      be = rf.solve(s0); // Newton method according to Deuflhard (nonlinear_algebra.h)
     }
-    else be = rf.slv(be);
+    else be = rf.solve(be);
 
     if(rf.getInfo()!=0) {
       throw new MBSimError("ERROR (TRAFO33RCM:computebe): No convergence of Newton method during bending correction.");
