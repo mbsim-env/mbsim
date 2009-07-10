@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Roland Zander, Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
  */
 
 #include <config.h>
@@ -28,54 +25,50 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  void Contact1sSearch::setEqualSpacing(const int &n, const double &x0, const double &dx)
-  {
-  	Vec nodesTilde(n+1,NONINIT);
+  void Contact1sSearch::setEqualSpacing(const int &n, const double &x0, const double &dx) {
+    Vec nodesTilde(n+1,NONINIT);
     for(int i=0;i<=n;i++) nodesTilde(i) = x0 + i*dx;
     nodes = nodesTilde;
   }
 
-  double Contact1sSearch::slv()
-  {
-  	Vec alphaC(nodes.size()-1); // root
+  double Contact1sSearch::slv() {
+    Vec alphaC(nodes.size()-1); // root
     Vec gbuf; // buffering distances for comparison in Regula-Falsi
     int nRoots = 0; // number of found roots
-    
+
     if(!searchAll) {
-//      if(INFO) {cout << "INFO: Using Newton-Method with Initial Value s0 = "<< s0 << endl;}
-      NewtonMethod rf(func);
-      alphaC(0) = rf.slv(s0);
+      NewtonMethod rf(func,jac);
+      alphaC(0) = rf.solve(s0);
       if(rf.getInfo() == 0 && alphaC(0) >= nodes(0) && alphaC(0) <= nodes(nodes.size()-1)) { // converged
-		nRoots = 1;
+        nRoots = 1;
       }
       else {
-		searchAll = true;
+        searchAll = true;
       }
     }
-    
+
     if(searchAll) { 
-//      if(INFO) {cout << "INFO: Using Regula-Falsi in Areas " << trans(nodes) << endl;}
       RegulaFalsi rf(func);
       gbuf = Vec(nodes.size()-1);
 
       for(int i=0;i<nodes.size()-1; i++) {
-		double fa = (*func)(nodes(i));
-		double fb = (*func)(nodes(i+1));
-		if(fa*fb < 0) {
-		  alphaC(nRoots) = rf.slv(nodes(i),nodes(i+1));
-		  gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
-		  nRoots++;
-		} 
-		else if(fa == 0) {
-		  alphaC(nRoots) = nodes(i);
-		  gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
-		  nRoots++;
-		} 
-		else if(fb == 0) {
-		  alphaC(nRoots) = nodes(i+1);
-		  gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
-		  nRoots++;
-		}
+        double fa = (*func)(nodes(i));
+        double fb = (*func)(nodes(i+1));
+        if(fa*fb < 0) {
+          alphaC(nRoots) = rf.solve(nodes(i),nodes(i+1));
+          gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+          nRoots++;
+        } 
+        else if(fa == 0) {
+          alphaC(nRoots) = nodes(i);
+          gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+          nRoots++;
+        } 
+        else if(fb == 0) {
+          alphaC(nRoots) = nodes(i+1);
+          gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+          nRoots++;
+        }
       }
     }
 
@@ -84,16 +77,16 @@ namespace MBSim {
       double sMin = 1.0;
 
       for(int i=0;i<nRoots;i++)
-		if(gbuf(i) < g_) {
-	  		sMin = alphaC(i);
-//	  		if(WARN && g_ < 0. && gbuf(i) < 0.) {cout << "WARN: Two contact points detected!" << endl;};
-	  		g_=gbuf(i);
-		}
+        if(gbuf(i) < g_) {
+          sMin = alphaC(i);
+          g_=gbuf(i);
+        }
       return sMin;
     }
     else { // at most one root (even if no root: solution is signalising OutOfBounds)
       return alphaC(0);
     }
   }
-  
+
 }
+
