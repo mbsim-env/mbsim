@@ -92,7 +92,7 @@ namespace MBSim {
         dx = f/J;
       else {
         info = -1;
-        return 0.;
+        return 0;
       }
 
       double nrmf = 1;
@@ -114,7 +114,7 @@ namespace MBSim {
     }
     info = -1;
 
-    return 0.;
+    return 0;
   }
 
   MultiDimNewtonMethod::MultiDimNewtonMethod(Function<Vec,Vec> *fct_, Function<SqrMat,Vec> *jac_) : fct(fct_), jac(jac_), itmax(300), iter(0), kmax(100), tol(1e-10) {}
@@ -178,7 +178,7 @@ namespace MBSim {
     }
     info = -1;
 
-    return 0.;
+    return 0;
   }
 
 }
