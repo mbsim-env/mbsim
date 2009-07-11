@@ -13,6 +13,12 @@ int main(int argc, char *argv[]) {
   // help
   if(argc!=3) {
     cout<<"Usage: mbximxml <mbsimfile> <mbsimintegratorfile>"<<endl;
+    cout<<endl;
+    cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
+    cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
+    cout<<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."<<endl;
+    cout<<endl;
+    cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
     return 0;
   }
 
