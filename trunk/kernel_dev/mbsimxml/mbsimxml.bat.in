@@ -14,6 +14,12 @@ goto help_cont
 :help
   echo "Usage: mbsimxml [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
+  echo ""
+  echo "Copyright (C) 2004-2009 MBSim Development Team"
+  echo "This is free software; see the source for copying conditions. There is NO"
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  echo ""
+  echo "Licensed under the GNU Lesser General Public License (LGPL)"
   goto end
 :help_cont
 
