@@ -42,8 +42,7 @@ namespace MBSim {
   void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
     assert(dtPlot >= dt);
 
-    double t0 = 0.0;
-    double  t = t0;
+    double  t = tStart;
 
     int nq = system.getqSize();
     int nu = system.getuSize();

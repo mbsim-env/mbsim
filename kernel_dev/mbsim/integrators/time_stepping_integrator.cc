@@ -38,7 +38,7 @@ namespace MBSim {
 
     assert(dtPlot >= dt);
 
-    double t = 0.;
+    double t = tStart;
 
     int nq = system.getqSize(); // size of positions, velocities, state
     int nu = system.getuSize();
