@@ -23,13 +23,12 @@
 #include <mbsim/constitutive_laws.h>
 #include <mbsim/element.h>
 #include "utils/nonsmooth_algebra.h"
+#include "utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
-
-  double sign(double x);
 
   //Vec UnilateralContact::project(const Vec& la, const Vec& gdn, const Vec& gda, const Vec& r) {
   //  if(fabs(gda(0)) > gd_limit)

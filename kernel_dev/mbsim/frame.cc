@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/frame.h"
-#include "mbsim/utils/function.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
