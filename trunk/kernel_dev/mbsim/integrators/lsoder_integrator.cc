@@ -62,7 +62,7 @@ namespace MBSim {
     else
       system->initz(z);
     system->computeInitialCondition();
-    double t=0.0;
+    double t=tStart;
     double tPlot=t+dtPlot;
 
     int iTol; 

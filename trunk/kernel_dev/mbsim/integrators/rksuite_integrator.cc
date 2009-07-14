@@ -50,7 +50,7 @@ namespace MBSim {
     system = &system_;
     zSize=system->getzSize();
 
-    double t=0.0;
+    double t=tStart;
     Vec z(zSize);
     if(z0.size())
       z = z0;

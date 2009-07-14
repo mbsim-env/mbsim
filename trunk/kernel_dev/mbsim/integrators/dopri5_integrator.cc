@@ -76,7 +76,7 @@ namespace MBSim {
     int zSize=system->getzSize();
     int nrDens = zSize;
 
-    double t = 0.0;
+    double t = tStart;
 
     Vec z(zSize);
     if(z0.size())

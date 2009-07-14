@@ -40,7 +40,7 @@ namespace MBSim {
 
     assert(dtPlot >= dt);
 
-    double t = 0;
+    double t = tStart;
 
     int nq = system.getqSize();
     int nu = system.getuSize();
@@ -64,7 +64,6 @@ namespace MBSim {
 
     ofstream integPlot((name + ".plt").c_str());
     double s0 = clock();
-    double time = 0;
     int integrationSteps = 0;
  
     cout.setf(ios::scientific, ios::floatfield);
@@ -89,7 +88,6 @@ namespace MBSim {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
 
