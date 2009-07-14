@@ -70,7 +70,7 @@ namespace MBSim {
  	   * \param alpha proportional coefficient for mass matrix
  	   * \param beta  proportional coefficient for stiffness matrix
 	   * */
-	  void setProportionalDamping(double alpha_,double beta_);
+	  void setProportionalDamping(double alpha_,double beta_) { alpha=alpha_; beta=beta_; }
 
 	  SymMat getMassMatrix()   const {return M;}
 	  Vec    getGeneralizedForceVector()   const {return h;}

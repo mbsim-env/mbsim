@@ -273,7 +273,7 @@ namespace MBSim {
 
   HitSphereLink* MultiBodySystem::getHitSphereLink(Object* obj0, Object* obj1) {
     for(vector<HitSphereLink*>::iterator hsl = HSLinks.begin();hsl < HSLinks.end();hsl++)
-      if((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1 || (*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0) return  (*hsl);
+      if(((*hsl)->getObject(0) == obj0 && (*hsl)->getObject(1) == obj1) || ((*hsl)->getObject(0) == obj1 && (*hsl)->getObject(1) == obj0)) return (*hsl);
 
     HitSphereLink *HSLink = new HitSphereLink(); // create new hitsphere link if none is found
     HSLinks.push_back(HSLink);
