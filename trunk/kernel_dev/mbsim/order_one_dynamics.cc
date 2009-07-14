@@ -21,7 +21,7 @@
 #include "mbsim/order_one_dynamics.h"
 #include "mbsim/object.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/utils/function.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;

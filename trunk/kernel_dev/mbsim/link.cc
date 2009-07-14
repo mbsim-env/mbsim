@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/link.h"
-#include "mbsim/utils/function.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
 
 using namespace fmatvec;
