@@ -30,7 +30,7 @@ using namespace std;
 namespace MBSim {
   //-------------------------------------------------------------------------
   SuperElementLinearExternal::SuperElementLinearExternal(int warnLevel_)
-	:DiscretizationInterface(),warnLevel(warnLevel_),M(0),K(0) {}
+	:DiscretizationInterface(),warnLevel(warnLevel_),M(0),K(0),alpha(0.),beta(0.) {}
 
   void SuperElementLinearExternal::init() {
 	D = static_cast<SqrMat>( alpha*M + beta * K );
