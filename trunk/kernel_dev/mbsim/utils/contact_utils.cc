@@ -1,5 +1,5 @@
-/* Copyright (C) 2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,42 +13,42 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
  */
 
 #include <config.h>
 #include "contact_utils.h"
+
 // --- List of contour implementations - BEGIN ---
+#include "mbsim/contours/circle.h"
 #include "mbsim/contours/contour1s.h"
 #include "mbsim/contours/cylinder_flexible.h"
 // --- List of contour implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
-#include <mbsim/contact_kinematics/point_line.h>
-#include <mbsim/contact_kinematics/circlesolid_contour1s.h>
-#include <mbsim/contact_kinematics/circlesolid_line.h>
-#include <mbsim/contact_kinematics/circlesolid_plane.h>
-#include <mbsim/contact_kinematics/point_plane.h>
-#include <mbsim/contact_kinematics/point_area.h>
-#include <mbsim/contact_kinematics/edge_edge.h>
+#include <mbsim/contact_kinematics/circle_frustum.h>
 #include <mbsim/contact_kinematics/circlehollow_cylinderflexible.h>
-#include <mbsim/contact_kinematics/point_cylinderflexible.h>
-#include <mbsim/contact_kinematics/sphere_plane.h>
-#include <mbsim/contact_kinematics/point_contourinterpolation.h>
-#include <mbsim/contact_kinematics/point_contour1s.h>
-#include <mbsim/contact_kinematics/line_contour1s.h>
 #include <mbsim/contact_kinematics/circlesolid_circlehollow.h>
 #include <mbsim/contact_kinematics/circlesolid_circlesolid.h>
-#include <mbsim/contact_kinematics/sphere_sphere.h>
-#include <mbsim/contact_kinematics/sphere_frustum.h>
-#include <mbsim/contact_kinematics/point_frustum.h>
+#include <mbsim/contact_kinematics/circlesolid_contour1s.h>
 #include <mbsim/contact_kinematics/circlesolid_frustum2d.h>
-#include <mbsim/contact_kinematics/compoundcontour_contour.h>
+#include <mbsim/contact_kinematics/circlesolid_line.h>
+#include <mbsim/contact_kinematics/circlesolid_plane.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
+#include <mbsim/contact_kinematics/compoundcontour_contour.h>
+#include <mbsim/contact_kinematics/edge_edge.h>
+#include <mbsim/contact_kinematics/line_contour1s.h>
+#include <mbsim/contact_kinematics/point_area.h>
+#include <mbsim/contact_kinematics/point_contour1s.h>
+#include <mbsim/contact_kinematics/point_contourinterpolation.h>
+#include <mbsim/contact_kinematics/point_cylinderflexible.h>
+#include <mbsim/contact_kinematics/point_frustum.h>
+#include <mbsim/contact_kinematics/point_line.h>
+#include <mbsim/contact_kinematics/point_plane.h>
+#include <mbsim/contact_kinematics/sphere_frustum.h>
+#include <mbsim/contact_kinematics/sphere_plane.h>
+#include <mbsim/contact_kinematics/sphere_sphere.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace fmatvec;
@@ -66,47 +66,14 @@ namespace MBSim {
     zeta(1)= asin(r(2));
     return zeta;
   }
-  
+
   ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1) {
 
-    if((dynamic_cast<Point*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Line*>(contour0))) 
-      return new ContactKinematicsPointLine; 
-
-    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Line*>(contour0))) 
-      return new ContactKinematicsCircleSolidLine;
-
-    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Plane*>(contour0))) 
-      return new ContactKinematicsCircleSolidPlane;
-
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Plane*>(contour0))) 
-      return new ContactKinematicsPointPlane;
-
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Area*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Area*>(contour0))) 
-      return new ContactKinematicsPointArea;
-
-    else if(dynamic_cast<Edge*>(contour0) && dynamic_cast<Edge*>(contour1)) 
-      return new ContactKinematicsEdgeEdge;
-
-    else if((dynamic_cast<Sphere*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Sphere*>(contour1) && dynamic_cast<Plane*>(contour0))) 
-      return new ContactKinematicsSpherePlane;
-
-    else if((dynamic_cast<Point*>(contour0) &&  dynamic_cast<ContourInterpolation*>(contour1)) || (dynamic_cast<Point*>(contour1) &&  dynamic_cast<ContourInterpolation*>(contour0))) 
-      return new ContactKinematicsPointContourInterpolation;
+    if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
+      return new ContactKinematicsCircleFrustum;
 
     // else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
     //   return new ContactKinematicsCircleHollowCylinderFlexible;
-
-    // else if((dynamic_cast<Point*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0)))
-    //   return new ContactKinematicsPointCylinderFlexible;
-
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
-      return new ContactKinematicsPointContour1s;
-
-    else if((dynamic_cast<Line*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Line*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
-      return new ContactKinematicsLineContour1s;
-
-    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Contour1s*>(contour0)))
-      return new ContactKinematicsCircleSolidContour1s;
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleHollow*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<CircleHollow*>(contour0)))
       return new ContactKinematicsCircleSolidCircleHollow;
@@ -114,23 +81,59 @@ namespace MBSim {
     else if(dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleSolid*>(contour1))
       return new ContactKinematicsCircleSolidCircleSolid;
 
-    else if(dynamic_cast<Sphere*>(contour0) && dynamic_cast<Sphere*>(contour1))
-      return new ContactKinematicsSphereSphere;
+    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Contour1s*>(contour0)))
+      return new ContactKinematicsCircleSolidContour1s;
 
-    else if((dynamic_cast<Sphere*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Sphere*>(contour1) && dynamic_cast<Frustum*>(contour0)))
-      return new ContactKinematicsSphereFrustum;
+    else if((dynamic_cast<Line*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Line*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
+      return new ContactKinematicsLineContour1s;
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Frustum2D*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Frustum2D*>(contour0))) 
       return new ContactKinematicsCircleSolidFrustum2D;
 
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Frustum*>(contour0)))
-      return new ContactKinematicsPointFrustum;  
+    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Line*>(contour0))) 
+      return new ContactKinematicsCircleSolidLine;
+
+    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Plane*>(contour0))) 
+      return new ContactKinematicsCircleSolidPlane;
 
     else if((dynamic_cast<CompoundContour*>(contour0) && dynamic_cast<Contour*>(contour1)) || (dynamic_cast<CompoundContour*>(contour1) && dynamic_cast<Contour*>(contour0))) 
       return new ContactKinematicsCompoundContourContour;  
 
     else if((dynamic_cast<CompoundContour*>(contour0) && dynamic_cast<CompoundContour*>(contour1))) 
       return new ContactKinematicsCompoundContourCompoundContour;  
+
+    else if(dynamic_cast<Edge*>(contour0) && dynamic_cast<Edge*>(contour1)) 
+      return new ContactKinematicsEdgeEdge;
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Area*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Area*>(contour0))) 
+      return new ContactKinematicsPointArea;
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
+      return new ContactKinematicsPointContour1s;
+
+    else if((dynamic_cast<Point*>(contour0) &&  dynamic_cast<ContourInterpolation*>(contour1)) || (dynamic_cast<Point*>(contour1) &&  dynamic_cast<ContourInterpolation*>(contour0))) 
+      return new ContactKinematicsPointContourInterpolation;
+
+    // else if((dynamic_cast<Point*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0)))
+    //   return new ContactKinematicsPointCylinderFlexible;
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Frustum*>(contour0)))
+      return new ContactKinematicsPointFrustum;  
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Line*>(contour0))) 
+      return new ContactKinematicsPointLine; 
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Plane*>(contour0))) 
+      return new ContactKinematicsPointPlane;
+
+    else if((dynamic_cast<Sphere*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Sphere*>(contour1) && dynamic_cast<Frustum*>(contour0)))
+      return new ContactKinematicsSphereFrustum;
+
+    else if((dynamic_cast<Sphere*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Sphere*>(contour1) && dynamic_cast<Plane*>(contour0))) 
+      return new ContactKinematicsSpherePlane;
+
+    else if(dynamic_cast<Sphere*>(contour0) && dynamic_cast<Sphere*>(contour1))
+      return new ContactKinematicsSphereSphere;
 
     else 
       return 0;

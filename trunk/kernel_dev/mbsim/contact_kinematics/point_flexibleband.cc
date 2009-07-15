@@ -19,8 +19,9 @@
 
 #include<config.h>
 #include "mbsim/contact_kinematics/point_flexibleband.h"
-#include "mbsim/functions_contact.h"
+#include "mbsim/contour.h"
 #include "mbsim/contours/flexible_band.h"
+#include "mbsim/functions_contact.h"
 
 using namespace std;
 using namespace fmatvec;

@@ -4,16 +4,18 @@
 using namespace std;
 using namespace MBSim;
 
-int main (int argc, char* argv[])
-{
+int main (int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("TS");
+  sys->setImpactSolver(RootFinding);
+  sys->setConstraintSolver(RootFinding);
+  sys->setLinAlg(PseudoInverse);
 
   sys->init();
   
   TimeSteppingIntegrator integrator;
   integrator.setStepSize(5e-5);
 
-  integrator.setEndTime(0.5);
+  integrator.setEndTime(3.);
   integrator.setPlotStepSize(5e-3);
 
   integrator.integrate(*sys);

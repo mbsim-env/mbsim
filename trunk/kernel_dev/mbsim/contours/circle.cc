@@ -14,29 +14,36 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: thschindler@users.berlios.de
  */
 
-#include <config.h>
-#include "integrator.h"
+#include<config.h>
+#include "mbsim/contours/circle.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frustum.h>
+#endif
+
+using namespace std;
 
 namespace MBSim {
+  Circle::Circle(const string& name) : RigidContour(name),r(0.),outCont(false) {}
 
-  DynamicSystemSolver * Integrator::system = 0;
+  Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),outCont(outCont_) {}
 
-  Integrator::Integrator() : tStart(0.), tEnd(1.), dtPlot(1e-4), warnLevel(0), output(true), name("Integrator") {}
+  Circle::~Circle() {}
 
-  void Integrator::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMINTNS"startTime");
-    setStartTime(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"endTime");
-    setEndTime(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"plotStepSize");
-    setPlotStepSize(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMINTNS"initialState");
-    if(e) setInitialState(fmatvec::Vec(e->GetText()));
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void Circle::enableOpenMBV(bool enable) {
+    if(enable) {
+      openMBVRigidBody=new OpenMBV::Frustum;
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
+    }
+    else openMBVRigidBody=0;
   }
+#endif
 
 }
 

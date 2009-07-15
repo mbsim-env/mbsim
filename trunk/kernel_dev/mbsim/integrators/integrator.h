@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _INTEGRATOR_H_
@@ -26,48 +23,87 @@
 #define MBSIMINTNS "{http://mbsim.berlios.de/MBSimIntegrator}"
 
 #include<fmatvec.h>
-#include<string>
 #include"mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include<string>
 
 namespace MBSim {
 
   class DynamicSystemSolver;
 
-
-  /*! \brief Integrator-interface for dynamic systems */
+  /**
+   * \brief integrator-interface for dynamic systems
+   * \author Martin Foerg
+   * \date 2009-07-13 some comments (Thorsten Schindler) 
+   */
   class Integrator {
-
-    protected:
-      static DynamicSystemSolver* system;
-      double tStart, tEnd, dtPlot;
-      fmatvec::Vec z0;
-      int warnLevel;
-      bool output;
-      std::string name;
-
     public:
-      /*! Constructor with \default tStart(0.), \default tEnd(1.), \default dtPlot(1e-4), \default warnLevel(0), \default output(true), \default name("Integrator") */
+      /**
+       * \brief constructor 
+       */
       Integrator();
-      /*! Destructor */
+      
+      /**
+       * \brief destructor
+       */
       virtual ~Integrator() {};
-	  /*! Set integration end time \param tEnd_ */	
-      void setEndTime(double tEnd_) {tEnd = tEnd_;}
-      /*! Set plot step size \param dtPlot_ */
-      void setPlotStepSize(double dtPlot_) {dtPlot = dtPlot_;}
-      /*! Set initial state \param z0_ */
-      void setInitialState(const fmatvec::Vec &z0_) {z0 = z0_;}
-      /*! Set warn level \param level TODO DOC */
-      void setWarnLevel(int level) {warnLevel = level;}
-      /*! Set output \param flag (true/false) */
-      void setOutput(bool flag) {output = flag;}
-      /*! Set integration start time \param tStart_ */
-      void setStartTime(double tStart_){tStart=tStart_;}
-      /*! Start the integration for \param system */
+      
+      /* GETTER / SETTER */
+      void setStartTime(double tStart_) { tStart=tStart_; }
+      void setEndTime(double tEnd_) { tEnd = tEnd_; }
+      void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
+      void setWarnLevel(int level) { warnLevel = level; }
+      void setOutput(bool flag) { output = flag; }
+      /***************************************************/
+      
+      /* INTERFACE FOR DERIVED CLASSES */
+      /*! 
+       * \brief start the integration
+       * \param dynamic system to be integrated
+       */
       virtual void integrate(DynamicSystemSolver& system) = 0;
 
+      /*! 
+       * \brief initialize integrator
+       * \param XML description
+       */
       virtual void initializeUsingXML(TiXmlElement *element);
+      /***************************************************/
+
+    protected:
+      /**
+       * \brief integrated dynamic system
+       */
+      static DynamicSystemSolver* system;
+
+      /**
+       * \brief start, end, plot time
+       */
+      double tStart, tEnd, dtPlot;
+
+      /**
+       * \brief initial state
+       */
+      fmatvec::Vec z0;
+
+      /**
+       * \brief warn level
+       */
+      int warnLevel;
+
+      /**
+       * \brief flag for ouput printing
+       */
+      bool output;
+
+      /**
+       * \brief name of integrator
+       */
+      std::string name;
+
   };
 
 }
 
-#endif
+#endif /* _INTEGRATOR_H_ */
+
