@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include<config.h>
@@ -59,75 +56,40 @@ namespace MBSim {
     double tPlot = 0.;
     ofstream integPlot((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
-    //	int stepPlot =(int) (1./dtPlot);
 
     int stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
-
     int iter = 0;
-    //    double dt0 = dt;
     int step = 0;   
     int integrationSteps = 0;
     int maxIter = 0;
     int sumIter = 0;
 
-    // unsigned long s0 = clock();
     double s0 = clock();
     double time = 0;
-    // ofstream rzeit("rzeit.asc");
+
     while(t<tEnd) {
-      // rzeit << "Zeit: " << t << endl;
-      // long clock1 = clock();
       integrationSteps++;
       if( (step*stepPlot - integrationSteps) < 0) {
-	step++;
-	system.plot(z,t,dt);
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-	tPlot += dtPlot;
+        step++;
+        system.plot(z,t,dt);
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
+        if(output)
+          cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+        tPlot += dtPlot;
       }
-      ////      if((t+dt)*stepPlot >= step) { // plotten
-      ////		step++;
-      ////		system.plot(z,t,dt);
-      ////		double s1 = clock();
-      ////		time += (s1-s0)/CLOCKS_PER_SEC;
-      ////		s0 = s1; 
-      ////		integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-      ////		if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter <<  "\r"<< flush;
-      ////		tPlot += dtPlot;
-      ////      }
-      // long clock1b = clock();
-
-      // if(fabs(tPlot-t)*dt < 1e-14) {
-      // 	// Interpolation macht wahrscheinlich keinen Sinn
-      //    // Vec zPlot = z + (z-zOld)/(t-tOld)*(t-tPlot)
-      //    system.plot(z,t,dt);
-      //    integPlot<< t << " " << dt << " " <<  iter << " " << (clock()-s0)/CLOCKS_PER_SEC << " "<< dt <<endl;
-      //    if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = " << setw(4) << setiosflags(ios::left) << iter <<  "\r" << flush;
-      //    tPlot += dtPlot;
-      // }
-
-      // if ((tPlot-(t+dt))*dt < -1e-14) {
-      //    cout << "Warning " << t << " " << tPlot << " " << t+dt << " "<< t+dt - tPlot << endl;
-      //    dt = t+dt - tPlot;
-      // } 
-      // else dt = dt0;
 
       q += system.deltaq(z,t,dt);
 
       t += dt;
-      // long clock2 = clock();
 
       system.update(z,t); 
-      // long clock3 = clock();
 
       iter = system.solveImpacts(dt);
-      // long clock4 = clock();
 
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;
@@ -136,7 +98,7 @@ namespace MBSim {
       x += system.deltax(z,t,dt);
 
       if(driftCompensation) 
-	system.projectGeneralizedPositions(t);
+        system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();
@@ -160,3 +122,4 @@ namespace MBSim {
   }
 
 }
+

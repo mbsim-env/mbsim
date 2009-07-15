@@ -31,6 +31,7 @@ namespace MBSim {
    * \brief superelement for linear models from external preprocessing.
    * \author Roland Zander
    * \date 2009-05-22 some references added (Thorsten Schindler)
+   * \todo fix proportional damping like in old kernel or suggesting implementation in flexible_body 
    */
   class SuperElementLinearExternal : public DiscretizationInterface {
     public:

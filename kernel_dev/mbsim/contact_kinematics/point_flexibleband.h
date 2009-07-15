@@ -22,10 +22,11 @@
 
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/contour.h"
-#include "mbsim/contours/flexible_band.h"
 
 namespace MBSim {
+
+  class FlexibleBand;
+  class Point;
 
   /**
    * \brief pairing point to flexible band

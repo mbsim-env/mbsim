@@ -29,27 +29,47 @@
 
 namespace MBSim {
 
+  /**
+   * \brief computes azimuthal angle
+   * \author Martin Foerg
+   * \date some comments (Thorsten Schindler)
+   */
   double computeAngleOnUnitCircle(const fmatvec::Vec& r);
+
+  /**
+   * \brief computes azimuthal and polar angles
+   * \author Martin Foerg
+   * \date some comments (Thorsten Schindler)
+   */
   fmatvec::Vec computeAnglesOnUnitSphere(const fmatvec::Vec& r);
 
+  /**
+   * \brief defines contact kinematics between two contours
+   * \author Martin Foerg
+   * \date 2009-07-14 some comments (Thorsten Schindler)
+   */
   ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1);
 
   /*!
-    apply contact between ContourInterploation surfaces, using node-to-surface pairings, with both as master
-    */
+   * \brief apply contact between ContourInterpolation surfaces, using node-to-surface pairings, with both as master
+   * \author Roland Zander
+   * \date 2009-07-14 some comments (Thorsten Schindler)
+   */
   template <class T>
     void ContactContourInterpolation(DynamicSystemSolver *ds, T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1) {
       ContactContourInterpolation(ds,contact,contour0,contour1,0);
     }
+
   /*!
-    apply contact between ContourInterploation surfaces, using node-to-surface pairings, defining master contour 1 or 2, default 0 for both
-    */
+   * \brief apply contact between ContourInterploation surfaces, using node-to-surface pairings, defining master contour 1 or 2, default 0 for both
+   * \author Roland Zander
+   * \date 2009-07-14 some comments (Thorsten Schindler)
+   */
   template <class T>
     void ContactContourInterpolation(DynamicSystemSolver *ds, const T *contact, ContourInterpolation *contour0, ContourInterpolation *contour1, int master) {
       ContourInterpolation *contour[2];
       contour[0] = contour0;
       contour[1] = contour1;
-
       std::string contactName = contact->getName();
 
       int cStart, cEnd;
@@ -59,38 +79,26 @@ namespace MBSim {
         case 2: cStart = 0; cEnd = 0; break;
       }
 
-      // die beiden Contouren abklappern
-      for(int c = cStart;c<cEnd+1;c++) {
+      for(int c = cStart;c<cEnd+1;c++) { // loop with respect to contours
         int numberOfPoints = contour[c]->getNPoints();
-        //	int intWidth = static_cast<int>(round(log(static_cast<double>(numberOfPoints))));
         char contourName;
         switch(c) {
           case 0: contourName = 'A';break;
           case 1: contourName = 'B';break;
         }
-
-        // alle Punkte verwenden
-        for(int i = 0;i<numberOfPoints; i++) {
-          /* 	    cout << "\n-------------\nprocessing point " << contour[c]->getPoint(i)->getName()  << endl; */
-
-          // Namensgebung
+        for(int i = 0;i<numberOfPoints; i++) { // use all points
           std::stringstream number;
-          /* 	    number << "." << contourName << "." << contour[c]->getPoint(i)->getName(); */
           std::string name = contactName + number.str();
 
-          // von Vorlage abschreiben
-          T *newContact = new T( contact , name );//
+          T *newContact = new T( contact , name );
 
-          // Verbinden
           newContact->connect(contour[c]->getPoint(i),contour[1-c]);
           ds->addLink(newContact);
-
-          /* 	    cout << "added contact \"" << newContact->getName() << "\"" << endl; */
         }
       }
     }
 
 }
 
-#endif
+#endif /* _CONTACT_UTILS_H_ */
 

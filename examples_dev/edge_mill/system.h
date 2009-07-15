@@ -7,6 +7,7 @@
 class System : public MBSim::DynamicSystemSolver {
   public:
     System(const std::string &projectName);
+    virtual void init();
 
   private:
     struct Vertex { // data structure for vertices

@@ -118,6 +118,7 @@ namespace MBSim {
       void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
       void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
       void setContactKinematics(ContactKinematics* ck) { contactKinematics = ck; }
+      ContactKinematics* getContactKinematics() const { return contactKinematics; } 
       /***************************************************/
 
       /**

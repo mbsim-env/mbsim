@@ -665,7 +665,7 @@ namespace MBSim {
         }
         else if(getFrictionDirections() == 2) {
           Mat diff = ftil->diff(lak[k](1,2), gddk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
-          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()));
+          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()-1));
           Mat e2(2,jp2.cols());
           e2(0,laIndDS+laIndk[k]+1) = 1;
           e2(1,laIndDS+laIndk[k]+2) = 1;
@@ -711,7 +711,7 @@ namespace MBSim {
 
         } else if(getFrictionDirections() == 2) {
           Mat diff = ftil->diff(lak[k](1,2), gdnk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
-          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()));
+          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()-1));
           Mat e2(2,jp2.cols());
           e2(0,laIndDS+laIndk[k]+1) = 1;
           e2(1,laIndDS+laIndk[k]+2) = 1;

@@ -278,7 +278,6 @@ namespace MBSim {
    * \brief circular contour with contact possibility from outside
    * \author Martin Foerg
    * \date 2009-04-20 some commments (Thorsten Schindler)
-   * \todo new name for binormal-methods TODO
    * \todo CircleSolid / CircleHollow should be unified TODO
    */
   class CircleSolid : public RigidContour {
