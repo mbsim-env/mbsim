@@ -415,6 +415,35 @@ namespace MBSim {
       Plane(const std::string &name) : RigidContour(name) {}
   };
 
+  /** 
+   * \brief plane without borders and a frustum on reference kos
+   * \author Markus Schneider
+   * \date 2009-07-14 initial development
+   *
+   * normal equals first column in orientation matrix
+   */
+  class PlaneWithFrustum : public RigidContour {
+    public:
+      /**
+       * \brief constructor
+       * \param name of contour
+       * \param radius of frustum on contour side
+       * \param radius of frustum on "free" side
+       * \param height of frustum (positive in "free" space, negative in "solid" space)
+       */
+      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_) : RigidContour(name), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_) {
+        assert(rFrustumOnTop<rFrustumOnPlane); //TODO
+        assert(rFrustumOnTop>0); //TODO
+      }
+      double getFrustumRadiusOnPlane() {return rFrustumOnPlane; }
+      double getFrustumRadiusOnTop() {return rFrustumOnTop; }
+      double getFrustumHeight() {return hFrustum; }
+    private:
+      double rFrustumOnPlane;
+      double rFrustumOnTop;
+      double hFrustum;
+  };
+
   /*! \brief RigidContour Area */
   class Area : public RigidContour {
     public:
@@ -515,6 +544,7 @@ namespace MBSim {
        * \param name of contour
        */
       Frustum(const std::string &name) : RigidContour(name), r(2), h(0.), outCont(false) {}
+      Frustum(const std::string &name, fmatvec::Vec r_, double h) : RigidContour(name), r(r_), h(h), outCont(false) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum"; }
