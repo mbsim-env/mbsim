@@ -33,10 +33,6 @@ namespace MBSim {
 
   class Object;
 
-  // perhaps helpfull when debugging
-  //                 0    , 1   , 2          , 3           , 4        , 5    , 6     , 7      , 8   , 9   , 10       , 11       , 12              , 13
-  enum ContourType { point, line, circlesolid, circlehollow, frustum2D, plane, sphere, frustum, area, edge, contour1s, contour2d, cylinderflexible, interpolation };
-
   /** 
    * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies
    * \author Martin Foerg
@@ -202,13 +198,13 @@ namespace MBSim {
        * coordinate system of contour
        */
       Frame R;
-
   };
 
   /**
    * \brief basic class for rigid contours
    * \author Thorsten Schindler
    * \date 2009-04-20 initial commit (Thorsten Schindler)
+   * \date 2009-07-15 initPlot (Thorsten Schindler)
    */
   class RigidContour : public Contour {
     public:
@@ -224,11 +220,13 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
+      virtual void plot(double t, double dt = 1);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp);
+      virtual void initPlot();
       /***************************************************/
 
     protected:
@@ -349,7 +347,6 @@ namespace MBSim {
       void enableOpenMBV(bool enable=true);
 #endif
 
-
     private:
       /**
        * \brief radius of circle
@@ -372,7 +369,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum2D"; }
-      virtual void initPlot();
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -489,49 +485,6 @@ namespace MBSim {
   };
 
   /**
-   * \brief sphere 
-   * \author Martin Foerg
-   * \date 2009-04-20 some comments (Thorsten Schindler) 
-   * \date 2009-05-28 new interface (Bastian Esefeld)
-   */
-  class Sphere : public RigidContour {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Sphere(const std::string &name) : RigidContour(name), r(0.) {}
-
-      /**
-       * \brief constructor
-       * \param name of sphere
-       * \param radius of sphere
-       */
-      Sphere(const std::string &name, double r_) : RigidContour(name), r(r_) {}
-
-
-      virtual void initPlot();
-
-      /* GETTER / SETTER */
-      void setRadius(double r_) { r = r_; }
-      double getRadius() const { return r; }
-      /***************************************************/
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
-#endif
-
-      virtual void initializeUsingXML(TiXmlElement *element);
-
-    protected:
-      /** 
-       * \brief radius
-       */
-      double r;
-
-  };
-
-  /**
    * \brief frustum with axis in direction of second column of contour reference frame
    * \author Martin Foerg
    * \author Thorsten Schindler
@@ -548,7 +501,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum"; }
-      virtual void initPlot();
       /***************************************************/
 
       /**

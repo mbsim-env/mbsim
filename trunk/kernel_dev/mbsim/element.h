@@ -99,7 +99,6 @@ namespace MBSim {
        * \brief plots time dependent data
        * \param simulation time
        * \param simulation time step size for derivative calculation
-       * \param order of plot invocations
        */
       virtual void plot(double t, double dt = 1);
 
