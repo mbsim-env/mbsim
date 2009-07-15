@@ -7,6 +7,7 @@
 #include "mbsim/linear_spring_damper.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
+#include "mbsim/contours/sphere.h"
 #include "mbsim/integrators/dopri5_integrator.h"
 #include "mbsim/integrators/radau5_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"

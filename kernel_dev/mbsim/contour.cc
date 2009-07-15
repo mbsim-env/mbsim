@@ -90,6 +90,40 @@ namespace MBSim {
     if(cp.getFrameOfReference().getJacobianOfRotation().rows() == 0) cp.getFrameOfReference().getJacobianOfRotation().resize(3,R.getJacobianOfRotation().cols());
   }
 
+  void RigidContour::initPlot() {
+    updatePlotFeatures(parent);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+        openMBVRigidBody->setName(name);
+        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+      }
+#endif
+    }
+  }
+
+  void RigidContour::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(R.getPosition()(0));
+        data.push_back(R.getPosition()(1));
+        data.push_back(R.getPosition()(2));
+        Vec cardan=AIK2Cardan(R.getOrientation());
+        data.push_back(cardan(0));
+        data.push_back(cardan(1));
+        data.push_back(cardan(2));
+        data.push_back(0);
+        openMBVRigidBody->append(data);
+      }
+#endif
+      Element::plot(t,dt);
+    }
+  }
+
   /* Circle Solid */
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void CircleSolid::enableOpenMBV(bool enable) {
@@ -120,33 +154,6 @@ namespace MBSim {
 #endif
 
   /* Frustum2D*/
-  void Frustum2D::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        openMBVRigidBody->setName(name);
-        RigidBody *rigidBody;
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
-        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getOpenMBVBody()==0) {
-            cout<<"To visualize a contour on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
-            _exit(1);
-          }
-          openMBVRigidBody->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
-          Vec position = (rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)];
-          position(1) += h;
-          SqrMat offsetOrientation(3,INIT,0.); offsetOrientation(0,1) = 1.; offsetOrientation(1,2) = 1.; offsetOrientation(2,1) = 1.;
-          openMBVRigidBody->setInitialTranslation(position);
-          openMBVRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]*offsetOrientation));
-        }
-      }
-#endif
-      RigidContour::initPlot();
-    }
-  }
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Frustum2D::enableOpenMBV(bool enable) {
     if(enable) {
@@ -154,8 +161,8 @@ namespace MBSim {
       ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
       ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
       ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
-      openMBVRigidBody->setInitialTranslation(0,0,-h);
-
+      openMBVRigidBody->setInitialTranslation(0.,h,0.);
+      openMBVRigidBody->setInitialRotation(-M_PI*0.5,0.,0.);
     }
     else openMBVRigidBody=0;
   }
@@ -177,82 +184,7 @@ namespace MBSim {
   void Edge::setCd(const Vec &d) {Cd = d/nrm2(d);}
   void Edge::setCe(const Vec &e) {Ce = e/nrm2(e);}
 
-  /* Sphere */
-  void Sphere::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        openMBVRigidBody->setName(name);
-        RigidBody *rigidBody;
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
-        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getOpenMBVBody()==0) {
-            cout<<"To visualize a contour on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
-            _exit(1);
-          }
-          openMBVRigidBody->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
-          openMBVRigidBody->setInitialTranslation((rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)]);
-          openMBVRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]));
-        }
-      }
-#endif
-    }
-    RigidContour::initPlot();
-  }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Sphere::enableOpenMBV(bool enable) {
-    if(enable) {
-      openMBVRigidBody=new OpenMBV::Sphere;
-      ((OpenMBV::Sphere*)openMBVRigidBody)->setRadius(r);
-    }
-    else openMBVRigidBody=0;
-  }
-#endif
-
-  void Sphere::initializeUsingXML(TiXmlElement *element) {
-    RigidContour::initializeUsingXML(element);
-    TiXmlElement* e;
-    e=element->FirstChildElement(MBSIMNS"radius");
-    setRadius(atof(e->GetText()));
-    e=e->NextSiblingElement();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV")
-      enableOpenMBV();
-#endif
-  }
-
-
   /* Frustum */
-  void Frustum::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        openMBVRigidBody->setName(name);
-        RigidBody *rigidBody;
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
-        if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-          if(rigidBody->getOpenMBVBody()==0) {
-            cout<<"To visualize a contour on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
-            _exit(1);
-          }
-          openMBVRigidBody->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
-          Vec position = (rigidBody->getContainerForContourPositions())[rigidBody->contourIndex(this)];
-          position(1) += h;
-          SqrMat offsetOrientation(3,INIT,0.); offsetOrientation(0,1) = 1.; offsetOrientation(1,2) = 1.; offsetOrientation(2,1) = 1.;
-          openMBVRigidBody->setInitialTranslation(position);
-          openMBVRigidBody->setInitialRotation(AIK2Cardan((rigidBody->getContainerForContourOrientations())[rigidBody->contourIndex(this)]*offsetOrientation));
-        }
-      }
-#endif
-      RigidContour::initPlot();
-    }
-  }
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Frustum::enableOpenMBV(bool enable) {
     if(enable) {
@@ -260,8 +192,8 @@ namespace MBSim {
       ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
       ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
       ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
-      openMBVRigidBody->setInitialTranslation(0,0,-h);
-
+      openMBVRigidBody->setInitialTranslation(0.,h,0.);
+      openMBVRigidBody->setInitialRotation(-M_PI*0.5,0.,0.);
     }
     else openMBVRigidBody=0;
   }

@@ -22,6 +22,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #endif
@@ -35,7 +36,7 @@ namespace MBSim {
     AWP(0,0) = 1;
     AWP(1,1) = 1;
     AWP(2,2) = 1;
-    
+
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
@@ -98,9 +99,8 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
         openMBVFrame->setName(name);
         // The next line adds redundant data to the h5 file (if the parent is a RigidBody or a Group)
-        // but this line of code work for allways!
+        // but this line of code work for always!
         parent->getOpenMBVGrp()->addObject(openMBVFrame);
-        // The following lines prevent redundant data (if the parent is a RigidBody) but dose not work
         // if the parent is a Group; TODO
         // BEGIN
         //RigidBody *rigidBody;

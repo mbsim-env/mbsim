@@ -21,6 +21,7 @@
 #include <config.h> 
 #include "sphere_frustum.h"
 #include "mbsim/contour.h"
+#include "mbsim/contours/sphere.h"
 
 using namespace fmatvec;
 using namespace std;

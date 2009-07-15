@@ -121,7 +121,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(2,0) = -sin(M_PI*0.5), AWK(2,2) = cos(M_PI*0.5);
   disk->setOutCont(true);
   disk->setRadius(r_muller);
-  disk->enableOpenMBV(); // TODO
   muller->addContour(disk,Vec(3,INIT,0.),AWK);
 
   /* stony ground */
@@ -257,6 +256,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   frustumVRML << "  ShapeHints" << endl << "  {" << endl; // hints BEGIN
   frustumVRML << "    vertexOrdering COUNTERCLOCKWISE" << endl; //  CLOCKWISE means look inside
+  frustumVRML << "    shapeType UNKNOWN_SHAPE_TYPE" << endl; 
   frustumVRML << "    creaseAngle 3.1415" << endl;
   frustumVRML << "  }" << endl << endl; // hints END
 

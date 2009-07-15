@@ -24,6 +24,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/contour1s.h"
 #include "mbsim/contours/cylinder_flexible.h"
+#include "mbsim/contours/sphere.h"
 // --- List of contour implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
