@@ -426,18 +426,24 @@ namespace MBSim {
        * \param radius of frustum on contour side
        * \param radius of frustum on "free" side
        * \param height of frustum (positive in "free" space, negative in "solid" space)
+       * \param radius of the (small) rouding 
        */
-      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_) : RigidContour(name), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_) {
+      PlaneWithFrustum(const std::string &name, double rFrustumOnPlane_, double rFrustumOnTop_, double hFrustum_, double rho_) : RigidContour(name), rFrustumOnPlane(rFrustumOnPlane_), rFrustumOnTop(rFrustumOnTop_), hFrustum(hFrustum_), rho(rho_) {
         assert(rFrustumOnTop<rFrustumOnPlane); //TODO
-        assert(rFrustumOnTop>0); //TODO
+        assert(rFrustumOnTop>1e-6); //TODO
+        assert(rho>1e-6);
+        assert(rho<fabs(hFrustum));
+        assert(rho<rFrustumOnTop);
       }
       double getFrustumRadiusOnPlane() {return rFrustumOnPlane; }
       double getFrustumRadiusOnTop() {return rFrustumOnTop; }
       double getFrustumHeight() {return hFrustum; }
+      double getRoundingRadius() {return rho; }
     private:
       double rFrustumOnPlane;
       double rFrustumOnTop;
       double hFrustum;
+      double rho;
   };
 
   /*! \brief RigidContour Area */
