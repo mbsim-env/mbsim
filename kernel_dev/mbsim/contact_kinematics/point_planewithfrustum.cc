@@ -20,11 +20,15 @@
 #include <config.h> 
 #include "point_planewithfrustum.h"
 #include "mbsim/contour.h"
+#include "mbsim/utils/utils.h"
 
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() : ET(3), EP(3), MT(3), MP(3), nFrustum(3), tFrustum(3) {
+  }
 
   void ContactKinematicsPointPlaneWithFrustum::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {
@@ -40,78 +44,173 @@ namespace MBSim {
       plane = static_cast<PlaneWithFrustum*>(contour[0]);
     }
     h=plane->getFrustumHeight();
-    rPlane=plane->getFrustumRadiusOnPlane();
-    rTop=plane->getFrustumRadiusOnTop();
+    double R=plane->getFrustumRadiusOnPlane();
+    double r=plane->getFrustumRadiusOnTop();
+    rho=plane->getRoundingRadius();
+
+    // Statische Berechnungen aus Geometrieueberlegungen
+    ET(0)=h;
+    ET(1)=r;
+    EP(1)=R;
+
+    // Mittelpunkte der Rundungsradien
+    double tan_alpha=h/(R-r);
+    double alpha=atan(tan_alpha);
+    MT =ET;
+    MT(0)-= sign(h)*rho;
+    MT(1)-= sign(h)*(1/cos(alpha)-1)*rho/tan_alpha;
+    MP = EP;
+    MP(0)+= sign(h)*rho;
+    MP(1)+= sign(h)*(1/cos(alpha)-1)*rho/tan_alpha;
+
+    rTop=MT(1);
+    rPlane=MP(1);
+    rFrustumTop=rTop +sign(h)*rho*sin(alpha);
+    rFrustumPlane=rPlane - sign(h)*rho*sin(alpha);
+
+    nFrustum(0)=(R-r)/h;
+    nFrustum(1)=1;
+    nFrustum/=nrm2(nFrustum)*sign(h);
+
+    tFrustum=crossProduct(nFrustum, Vec("[0; 0; 1]"));
+    tFrustum/=nrm2(tFrustum);
+
+    // cerr << "ET=" << trans(ET) << endl;
+    // cerr << "EP=" << trans(EP) << endl;
+    // cerr << "MT=" << trans(MT) << endl;
+    // cerr << "MP=" << trans(MP) << endl;
+    // cerr << "nFrustum=" << trans(nFrustum) << endl;
+    // cerr << "tFrustum=" << trans(tFrustum) << endl;
+    // cerr << "rTop=" << rTop << endl;
+    // cerr << "rPlane=" << rPlane << endl;
+    // cerr << "rFrustumTop=" << rFrustumTop << endl;
+    // cerr << "rFrustumPlane=" << rFrustumPlane << endl;
   }
 
   void ContactKinematicsPointPlaneWithFrustum::updateg(Vec &g, ContourPointData* cpData) {
 
-    cpData[iplane].getFrameOfReference().setOrientation(plane->getFrame()->getOrientation()); // data of possible contact point
-
     Vec WrOPoint = point->getFrame()->getPosition();
     Vec WrOPlane = plane->getFrame()->getPosition();
-    Vec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
-    Vec Wd =  -WrOPlane + WrOPoint;
-    double distanceToWn = nrm2(crossProduct(Wn, Wd));
+    Vec WnContour = plane->getFrame()->getOrientation().col(0);
+    Vec WrPlanePoint = -WrOPlane+WrOPoint;
+    double d = nrm2(crossProduct(WnContour, WrPlanePoint));
 
-    bool searchOnPlane = (distanceToWn>=rPlane);
-    bool searchOnTop = (distanceToWn<=rTop);
-
-    Vec nDir(3);
-    Vec gDir(3);
-    Vec g2Dir(3);
-    if (searchOnPlane||searchOnTop) { // contact possible only with infinite plane or with plane on frustum top
-      g(0) = trans(Wn)*Wd - (searchOnTop?h:0); // distance
-
-      nDir = Wn;
-      g2Dir = crossProduct(Wd, nDir);
-      gDir = crossProduct(nDir, g2Dir);
-      gDir /= nrm2(gDir);
-      g2Dir = crossProduct(gDir, nDir);
-      g2Dir /= nrm2(g2Dir);
-
-      // if (searchOnPlane)
-      //   cerr << "plane ";
-      // else
-      //   cerr << "top ";
+    // SqrMat AKWTmp(3,3);
+    // AKWTmp.col(0)=WnContour;
+    // if (d<1e-9)
+    //   AKWTmp.col(1) = plane->getFrame()->getOrientation().col(1);
+    // else {
+    //   AKWTmp.col(1)=crossProduct(crossProduct(AKWTmp.col(0), WrPlanePoint), AKWTmp.col(0));
+    //   AKWTmp.col(1)/=nrm2(AKWTmp.col(1));
+    // }
+    // AKWTmp.col(2)=crossProduct(AKWTmp.col(0), AKWTmp.col(1));
+    // SqrMat AKW=trans(AKWTmp);
+    SqrMat AKW(3,3);
+    AKW.row(0) = trans(WnContour);
+    if (d<1e-9)
+      AKW.row(1) = trans(plane->getFrame()->getOrientation().col(1));
+    else {
+      AKW.row(1) = trans(crossProduct(crossProduct(trans(AKW.row(0)), WrPlanePoint), trans(AKW.row(0))));
+      AKW.row(1) /= nrm2(AKW.row(1));
     }
-    else { // contact with frustum contour
+    AKW.row(2) = trans(crossProduct(trans(AKW.row(0)), trans(AKW.row(1))));
+    Vec KrOPoint = AKW*WrPlanePoint;
 
-      Vec WrONn = WrOPlane + trans(Wd)*Wn*Wn; // nearest point to Point on Wn
+    // cerr << "\n\n\n\n" << endl;
+    // cerr << "WrOPoint=" << trans(WrOPoint) << endl;
+    // cerr << "WrOPlane=" << trans(WrOPlane) << endl;
+    // cerr << "WnContour=" << trans(WnContour) << endl;
+    // cerr << "WrPlanePoint=" << trans(WrPlanePoint) << endl;
+    // cerr << "d=" << d << endl;
+    // cerr << "AKW=" << AKW << endl;
+    // cerr << "KrOPoint=" << trans(KrOPoint) << endl;
 
-      Vec WrNnPoint = -WrONn + WrOPoint;
-      Vec WrNnPointDir = WrNnPoint / nrm2(WrNnPoint);
-
-      // defining a line g as a line of potential contact points
-      Vec gPointPlane = WrOPlane + WrNnPointDir * rPlane;
-      Vec gPointTop = WrOPlane + Wn * h + WrNnPointDir * rTop;
-      gDir = -gPointPlane+gPointTop;
-      gDir /= nrm2(gDir); // tangential direction of contact pair
-      Vec WrONg = gPointPlane + trans(-gPointPlane + WrOPoint)*gDir*gDir; // nearest point to Point on g
-      Vec WrNgPoint = -WrONg + WrOPoint;
-
-      g2Dir = crossProduct(gDir, WrNnPointDir); // binormal direction
-      nDir = (h>0?-1.:1.)*crossProduct(gDir, g2Dir); // normal direction
-      nDir/=nrm2(nDir);
-      g2Dir = crossProduct(gDir, nDir);
-      g2Dir/=nrm2(g2Dir);
-
-      g(0)=(trans(WrNgPoint)*Wn>0?1.:-1.)*nrm2(-WrONg + WrOPoint);
-
-      // cerr << "frustum ";
+    Vec Kn(3);
+    Vec Kt(3);
+    Vec Kb("[0; 0; 1]");
+    Vec KrCP(3);
+    if (d<rTop) { // Contact with small plane
+      // cerr << "Fall 1" << endl;
+      Kn=Vec("[1; 0; 0]");
+      Kt=Vec("[0; -1; 0]");
+      g(0)=KrOPoint(0)-h;
+      KrCP(0)=h;
+      KrCP(1)=KrOPoint(1);
     }
-    cpData[ipoint].getFrameOfReference().getPosition() = WrOPoint; // possible contact locations
-    cpData[iplane].getFrameOfReference().getPosition() =  WrOPoint - nDir * g(0);
+    else if (d<rFrustumTop) { // contact with inner rounding
+      // cerr << "Fall 2" << endl;
+      double sin_alpha=(KrOPoint(1)-MT(1))/rho;
+      double cos_alpha=cos(asin(sin_alpha));
+      Kn(0)=cos_alpha;
+      Kn(1)=sign(h)*sin_alpha;
+      Kt(0)=sign(h)*sin_alpha;
+      Kt(1)=-cos_alpha;
+      KrCP=MT+sign(h)*rho*Kn;
+      Vec KrPointCP=-KrOPoint+KrCP;
+      g(0)=-sign(trans(KrPointCP)*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+    }
+    else if (d<rFrustumPlane) { // contact with frustum
+      // cerr << "Fall 3" << endl;
+      Kn=nFrustum;
+      Kt=tFrustum;
+      Vec KrExP(3);
+      if (h<0) {
+        KrExP=-EP+KrOPoint;
+        KrCP=EP+(trans(KrExP)*tFrustum)*tFrustum;
+      }
+      else {
+        KrExP=-ET+KrOPoint;
+        KrCP=ET+(trans(KrExP)*tFrustum)*tFrustum;
+      }
+      g(0)=sign(trans(KrExP)*nFrustum)*nrm2(KrCP-KrOPoint);
+    }
+    else if (d < rPlane) { // contact with outer rounding
+      // cerr << "Fall 4" << endl;
+      double sin_alpha=(-KrOPoint(1)+MP(1))/rho;
+      double cos_alpha=cos(asin(sin_alpha));
+      Kn(0)=cos_alpha;
+      Kn(1)=sign(h)*sin_alpha;
+      Kt(0)=sign(h)*sin_alpha;
+      Kt(1)=-cos_alpha;
+      KrCP=MP-sign(h)*rho*Kn;
+      Vec KrPointCP=-KrOPoint+KrCP;
+      g(0)=-sign(trans(KrPointCP)*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+    }
+    else { // contact with infinite plane
+      // cerr << "Fall 5" << endl;
+      Kn=Vec("[1; 0; 0]");
+      Kt=Vec("[0; -1; 0]");
+      g(0)=KrOPoint(0);
+      KrCP(0)=h;
+      KrCP(1)=KrOPoint(1);
+    }
 
-    cpData[iplane].getFrameOfReference().getOrientation().col(0) = nDir;
-    cpData[iplane].getFrameOfReference().getOrientation().col(1) = gDir;
-    cpData[iplane].getFrameOfReference().getOrientation().col(2) = g2Dir;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -nDir;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -gDir;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = -g2Dir;
+    SqrMat AWK = trans(AKW);
+    Vec Wn = AWK * Kn;
+    Vec Wt = AWK * Kt;
+    Vec Wb = AWK * Kb;
+    Vec WrCP = WrOPlane + AWK * KrCP;
 
-    // cerr << " g=" << g(0);
-    // cerr << " n=[" << nDir(0) << " " << nDir(1) << " " << nDir(2) << "]" << endl;
+    // cerr << "Kn=" << trans(Kn) << endl;
+    // cerr << "Kt=" << trans(Kt) << endl;
+    // cerr << "Kb=" << trans(Kb) << endl;
+    // cerr << "g=" << g(0) << endl;
+    // cerr << "KrCP=" << trans(KrCP) << endl;
+    // cerr << "Wn=" << trans(Wn) << endl;
+    // cerr << "Wt=" << trans(Wt) << endl;
+    // cerr << "Wb=" << trans(Wb) << endl;
+    // cerr << "WrCP=" << trans(WrCP) << endl;
+    // cerr << "========================" << endl;
+
+    cpData[ipoint].getFrameOfReference().getPosition() = WrOPoint;
+    cpData[iplane].getFrameOfReference().getPosition() =  WrCP;
+
+    cpData[iplane].getFrameOfReference().getOrientation().col(0) = Wn;
+    cpData[iplane].getFrameOfReference().getOrientation().col(1) = Wt;
+    cpData[iplane].getFrameOfReference().getOrientation().col(2) = Wb;
+    cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -Wn;
+    cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -Wt;
+    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = Wb;
   }
 }
 

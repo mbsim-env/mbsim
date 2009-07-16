@@ -14,15 +14,20 @@ using namespace fmatvec;
 using namespace std;
 
 System::System(const string &projectName, bool setValued) : DynamicSystemSolver(projectName) {
-  
+
   setAccelerationOfGravity("[0; -9.81; 0]");
 
   bool considerRotation=true;
 
+  double R=7e-2;
+  double r=3.5e-2;
+  double rho=.01e-2;
+  double h=-6e-2;
+
   double rBar=.02;
   double lBar=.3;
   double rhoBar=786.;
-  double mue=.5;
+  double mue=.1;
 
   double mBar=M_PI*rBar*rBar*lBar*rhoBar;
   cout << "mBar=" << mBar*1e3 << " [g]." << endl;
@@ -32,7 +37,35 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   inertiaBar(2,2)=1./4.*mBar*rBar*rBar+1./12.*mBar*lBar*lBar;
   cout << "inertiaBar=" << inertiaBar*1e3*1e6 << " [g*mm^2]." << endl;
 
-  addContour(new PlaneWithFrustum("Plane", .02, .01, -.02), "[0; 0; 0]", BasicRotAIKz(M_PI/2.), getFrame("I"));
+  addFrame("I2", Vec("[-.2; -.25; .1]"), BasicRotAIKx(.3)*BasicRotAIKy(.7)*BasicRotAIKz(-0.7));
+  addContour(new PlaneWithFrustum("Plane", R, r, h, rho), "[0; 0; 0]", BasicRotAIKz(M_PI/2.), getFrame("I2"));
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  // nur fuer Visualisierung
+  RigidBody * m = new RigidBody("PlaneContour");
+  addObject(m);
+  m->setFrameOfReference(getFrame("I2"));
+  m->setFrameForKinematics(m->getFrame("C"));
+  m->setMass(mBar);
+  m->setInertiaTensor(inertiaBar);
+  OpenMBV::Frustum * mVisu = new OpenMBV::Frustum();
+  m->setOpenMBVRigidBody(mVisu);
+  if (h<0) {
+    mVisu->setBaseRadius(R+.01*r);
+    mVisu->setInnerBaseRadius(R);
+    mVisu->setTopRadius(r+.01*r);
+    mVisu->setInnerTopRadius(r);
+  }
+  else {
+    mVisu->setBaseRadius(R);
+    mVisu->setTopRadius(r);
+  }
+  mVisu->setHeight(h);
+  mVisu->setStaticColor(.3);
+  mVisu->setInitialRotation(-M_PI/2., 0, 0);
+  mVisu->setInitialTranslation(0, h, 0);
+  m->getFrame("C")->enableOpenMBV(2.*rBar, .9);
+#endif
 
   RigidBody * b = new RigidBody("Bar");
   b->setPlotFeature(plotRecursive, enabled);
@@ -42,6 +75,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   b->setFrameForKinematics(b->getFrame("C"));
   Vec SysBar_r_cog_Top(3);
   SysBar_r_cog_Top(1)=lBar/2.;
+  cout << "SysBar_r_cog_Top=" << SysBar_r_cog_Top << endl;
   b->addFrame("Top", SysBar_r_cog_Top, SqrMat(3, EYE));
   b->getFrame("Top")->setPlotFeature(globalPosition, enabled);
   b->setMass(mBar);
@@ -51,11 +85,11 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     b->setRotation(new CardanAngles());
   b->addContour(new Point("Point"), Vec(3), SqrMat(3), b->getFrame("Top"));
   if (considerRotation) {
-    b->setInitialGeneralizedPosition("[.04; -.14; -.02; 0; 0; 0]");
+    b->setInitialGeneralizedPosition("[.01; -.14; -.02; 0; 0; 0]");
     b->setInitialGeneralizedVelocity("[-1; 0; .5; 0; 2; 1]");
   }
   else {
-    b->setInitialGeneralizedPosition("[.04; -.14; -.02]");
+    b->setInitialGeneralizedPosition("[[.01; -.14; -.02]");
     b->setInitialGeneralizedVelocity("[-1; 0; .5]");
   }
 #ifdef HAVE_OPENMBVCPPINTERFACE

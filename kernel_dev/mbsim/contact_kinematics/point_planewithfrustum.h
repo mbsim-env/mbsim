@@ -34,6 +34,8 @@ namespace MBSim {
    */
   class ContactKinematicsPointPlaneWithFrustum : public ContactKinematics {
     public:
+      ContactKinematicsPointPlaneWithFrustum();
+
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData);
@@ -48,9 +50,10 @@ namespace MBSim {
       /**
        * \brief static contour parameter
        */
-      double h;
-      double rPlane;
-      double rTop;
+      double rho, h;
+      double rTop, rFrustumTop, rFrustumPlane, rPlane;
+      fmatvec::Vec ET, EP, MT, MP;
+      fmatvec::Vec nFrustum, tFrustum;
 
       /**
        * \brief contour classes
