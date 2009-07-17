@@ -36,6 +36,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    */
   class LinkMechanics : public Link {
     public:
@@ -51,6 +52,9 @@ namespace MBSim {
       virtual ~LinkMechanics();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updatedhdq(double t);
+      virtual void updatedhdu(double t);
+      virtual void updatedhdt(double t);
       virtual void updater(double t);
       /***************************************************/
 
@@ -62,11 +66,14 @@ namespace MBSim {
       std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
       /***************************************************/
-      
+
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatehRef(const fmatvec::Vec &ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int i=0);
+      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
+      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
       virtual void updaterRef(const fmatvec::Vec &ref);
       /***************************************************/
 
@@ -80,7 +87,7 @@ namespace MBSim {
        * \param frame to add to link frame vector
        */
       virtual void connect(Frame *frame_);
-      
+
       /**
        * \param contour to add to link contour vector
        */
@@ -106,7 +113,7 @@ namespace MBSim {
        * \brief force and moment direction for smooth right hand side
        */
       std::vector<fmatvec::Vec> WF, WM;
-      
+
       /**
        * \brief force and moment direction matrix for nonsmooth right hand side
        */

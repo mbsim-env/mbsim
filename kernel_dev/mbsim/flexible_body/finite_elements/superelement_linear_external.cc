@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  SuperElementLinearExternal::SuperElementLinearExternal() : DiscretizationInterface(), M(0), K(0) {}
+  SuperElementLinearExternal::SuperElementLinearExternal() : DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
 
   void SuperElementLinearExternal::init() {
     D = static_cast<SqrMat>( alpha*M + beta * K );

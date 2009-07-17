@@ -30,6 +30,7 @@ namespace MBSim {
    * \brief predefines load for one frame with additional possibility of rotation
    * \author Martin Foerg
    * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo delete and include functionality in actuator TODO
    */
   class Load : public LinkMechanics {

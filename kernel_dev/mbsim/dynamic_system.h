@@ -48,6 +48,7 @@ namespace MBSim {
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
    * \date 2009-07-08 relative dynamic system location (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
@@ -65,6 +66,9 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
       virtual void updateh(double t); 
+      virtual void updatedhdq(double t);
+      virtual void updatedhdu(double t);
+      virtual void updatedhdt(double t);
       virtual void updateM(double t);
       virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt); 
@@ -76,9 +80,13 @@ namespace MBSim {
       virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
+      virtual int getqInd() { return qInd; }
+      virtual int getuInd(int i=0) { return uInd[i]; }
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual int gethInd(DynamicSystem* sys, int i=0); 
+      virtual const fmatvec::Vec& getq() const { return q; };
+      virtual const fmatvec::Vec& getu() const { return u; };
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -214,8 +222,6 @@ namespace MBSim {
       void setRelativeOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
 
-      const fmatvec::Vec& getq() const { return q; };
-      const fmatvec::Vec& getu() const { return u; };
       const fmatvec::Vec& getxd() const { return xd; };
       fmatvec::Vec& getxd() { return xd; };
       const fmatvec::Vec& getx0() const { return x0; };
@@ -227,6 +233,9 @@ namespace MBSim {
       const fmatvec::Vec& geth() const { return h; };
       const fmatvec::Vec& getf() const { return f; };
       fmatvec::Vec& getf() { return f; };
+      fmatvec::Mat getdhdq() const { return dhdqObject + dhdqLink; }
+      fmatvec::SqrMat getdhdu() const { return dhduObject + dhduLink; }
+      fmatvec::Vec getdhdt() const { return dhdtObject + dhdtLink; }
 
       const fmatvec::Mat& getW() const { return W; }
       fmatvec::Mat& getW() { return W; }
@@ -255,8 +264,6 @@ namespace MBSim {
       int getxInd() { return xInd; }
       int getlaInd() const { return laInd; } 
 
-      int getqInd() { return qInd; }
-      int getuInd(int i=0) { return uInd[i]; }
       int gethInd(int i=0) { return hInd[i]; }
       void sethInd(int hInd_, int i=0) { hInd[i] = hInd_; }
       void setlaInd(int ind) { laInd = ind; }
@@ -304,10 +311,36 @@ namespace MBSim {
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
-       * \param vector to be referenced
+       * \param complete vector to be referenced
+       * \param vector concerning objects to be referenced
+       * \param vector concerning links to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updatehRef(const fmatvec::Vec &ref, int i=0);
+      void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hObjectRef, const fmatvec::Vec &hLinkRef, int i=0);
+
+      /**
+       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding positions
+       * \param matrix concerning objects to be referenced
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updatedhdqRef(const fmatvec::Mat    &dhdqObjectParent, const fmatvec::Mat    &dhdqLinkParent, int j=0);
+      
+      /**
+       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding velocities
+       * \param matrix concerning objects to be referenced
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updatedhduRef(const fmatvec::SqrMat &dhduObjectParent, const fmatvec::SqrMat &dhduLinkParent, int j=0);
+      
+      /**
+       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding time
+       * \param matrix concerning objects to be referenced
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updatedhdtRef(const fmatvec::Vec    &dhdtObjectParent, const fmatvec::Vec    &dhdtLinkParent, int j=0);
 
       /**
        * \brief references to order one right hand side of dynamic system parent
@@ -724,9 +757,16 @@ namespace MBSim {
       fmatvec::Vec x, xd, x0;
 
       /**
-       * \brief smooth, nonsmooth and order one right hand side
+       * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
-      fmatvec::Vec h, r, f;
+      fmatvec::Vec h, hObject, hLink, r, f;
+
+      /**
+       * \brief matrices for implicit integration
+       */
+      fmatvec::Mat    dhdqObject, dhdqLink;
+      fmatvec::SqrMat dhduObject, dhduLink;
+      fmatvec::Vec    dhdtObject, dhdtLink;
 
       /**
        * \brief 

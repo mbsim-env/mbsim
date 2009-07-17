@@ -114,8 +114,10 @@ namespace MBSim {
           WF[k][1] += cpData[k][0].getFrameOfReference().getOrientation().col(2)*lak[k](2);
       }
       WF[k][0] = -WF[k][1];
-      for(unsigned int i=0; i<contour.size(); i++)
+      for(unsigned int i=0; i<contour.size(); i++) {
         h[i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*WF[k][i];
+        hLink[i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*WF[k][i];
+      }
     }
   }
 
@@ -203,11 +205,12 @@ namespace MBSim {
     } 
   }
 
-  void Contact::updatehRef(const Vec& hParent, int j) {
+  void Contact::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->getParent()->gethInd(parent,j);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
       h[i].resize()>>hParent(I);
+      hLink[i].resize()>>hLinkParent(I);
     }
   } 
 

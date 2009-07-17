@@ -233,6 +233,14 @@ namespace MBSim {
     gdParent.resize(getgdSize());
     zdParent.resize(getzSize());
     hParent.resize(getuSize(1));
+    hObjectParent.resize(getuSize(1));
+    hLinkParent.resize(getuSize(1));
+    dhdqObjectParent.resize(getuSize(1),getqSize());
+    dhdqLinkParent.resize(getuSize(1),getqSize());
+    dhduObjectParent.resize(getuSize(1));
+    dhduLinkParent.resize(getuSize(1));
+    dhdtObjectParent.resize(getuSize(1));
+    dhdtLinkParent.resize(getuSize(1));
     rParent.resize(getuSize());
     fParent.resize(getxSize());
     svParent.resize(getsvSize());
@@ -250,7 +258,10 @@ namespace MBSim {
     updatelaRef(laParent);
     updategRef(gParent);
     updategdRef(gdParent);
-    updatehRef(hParent);
+    updatehRef(hParent,hObjectParent,hLinkParent);
+    updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
+    updatedhduRef(dhduObjectParent,dhduLinkParent);
+    updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
     updaterRef(rParent);
     updateWRef(WParent);
     updateVRef(VParent);
@@ -580,7 +591,27 @@ namespace MBSim {
 
   void DynamicSystemSolver::updateh(double t) {
     h.init(0);
+    hObject(0);
+    hLink(0);
     Group::updateh(t);
+  }
+
+  void DynamicSystemSolver::updatedhdq(double t) {
+    dhdqObjectParent.init(0);
+    dhdqLinkParent.init(0);
+    Group::updatedhdq(t);
+  }
+
+  void DynamicSystemSolver::updatedhdu(double t) {
+    dhduObjectParent.init(0);
+    dhduLinkParent.init(0);
+    Group::updatedhdu(t);
+  }
+
+  void DynamicSystemSolver::updatedhdt(double t) {
+    dhdtObjectParent.init(0);
+    dhdtLinkParent.init(0);
+    Group::updatedhdt(t);
   }
 
   void DynamicSystemSolver::updateM(double t) {
@@ -1368,7 +1399,7 @@ namespace MBSim {
     updateT(t); 
     resizeJacobians(1);
     updateInverseKineticsJacobians(t);
-    updatehRef(hParent,1);
+    updatehRef(hParent,hObjectParent,hLinkParent,1);
     updateh(t); 
     updateMRef(MParent,1);
     updateM(t); 
@@ -1386,7 +1417,7 @@ namespace MBSim {
     }
     resizeJacobians(0);
     updateJacobians(t);
-    updatehRef(hParent);
+    updatehRef(hParent,hObjectParent,hLinkParent);
     updateh(t); 
     updateMRef(MParent);
     updateM(t); 

@@ -39,6 +39,7 @@ namespace MBSim {
    * \date 2009-04-05 minor change: parent class now is FlexibleBodyContinuum (Schindler / Zander)
    * \date 2009-04-20 binormals of contours can be time variant (Thorsten Schindler)
    * \date 2009-05-08 visualisation (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    *

@@ -36,6 +36,7 @@ namespace MBSim {
    * \brief class for all objects having own dynamics and mass
    * \author Martin Foerg
    * \date 2009-03-24 plot energy added (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    */
   class Object : public Element, public ObjectInterface {
     public: 
@@ -53,6 +54,9 @@ namespace MBSim {
       void updateT(double t) {};
       void updateh(double t) {};
       void updateM(double t) {};
+      void updatedhdq(double t);
+      void updatedhdu(double t);
+      void updatedhdt(double t);
       void updatedq(double t, double dt);
       void updatedu(double t, double dt);
       void updateud(double t);
@@ -64,9 +68,13 @@ namespace MBSim {
       int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() {};
       virtual void calcuSize(int j) {};
+      virtual int getqInd() { return qInd; }
+      virtual int getuInd(int i=0) { return uInd[i]; }
       void setqInd(int qInd_) { qInd = qInd_; }
       void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       int gethInd(DynamicSystem* sys,int i=0); 
+      virtual const fmatvec::Vec& getq() const { return q; };
+      virtual const fmatvec::Vec& getu() const { return u; };
       H5::Group *getPlotGroup() { return plotGroup; }
       PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
@@ -116,7 +124,28 @@ namespace MBSim {
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updatehRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hObjectRef, int i=0);
+
+      /**
+       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
+
+      /**
+       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding velocities
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
+
+      /**
+       * \brief references to object Jacobian for implicit integration of dynamic system parent regarding time
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
@@ -194,17 +223,17 @@ namespace MBSim {
        * \brief TODO
        */
       virtual void checkForConstraints() {}
-      
+
       /**
        * \return frame of reference
        */
       virtual Frame *getFrameOfReference() { return frameOfReference; }
-      
+
       /**
        * \return frame of reference
        */
       virtual const Frame *getFrameOfReference() const { return frameOfReference; }
-      
+
       /**
        * \param frame of reference
        */
@@ -220,8 +249,6 @@ namespace MBSim {
       int getzSize() const { return qSize + uSize[0]; }
 
       void sethInd(int hInd_, int i=0); 
-      int getqInd() { return qInd; }
-      int getuInd(int i=0) { return uInd[i]; }
       int gethInd(int i=0) { return hInd[i]; }
 
       const fmatvec::Index& getuIndex() const { return Iu;}
@@ -238,8 +265,6 @@ namespace MBSim {
       const fmatvec::SymMat& getLLM() const { return LLM; };
       fmatvec::SymMat& getLLM() { return LLM; };
 
-      const fmatvec::Vec& getq() const { return q; };
-      const fmatvec::Vec& getu() const { return u; };
       fmatvec::Vec& getq() { return q; };
       fmatvec::Vec& getu() { return u; };
 
@@ -327,9 +352,16 @@ namespace MBSim {
       fmatvec::Vec qd,ud;
 
       /** 
-       * \brief smooth and nonsmooth right hand side
+       * \brief complete and object smooth and nonsmooth right hand side
        */
-      fmatvec::Vec h, r;
+      fmatvec::Vec h, hObject, r;
+
+      /** 
+       * \brief Jacobians of h
+       */
+      fmatvec::Mat    dhdq;
+      fmatvec::SqrMat dhdu;
+      fmatvec::Vec    dhdt;
 
       /** 
        * \brief linear relation matrix of differentiated position and velocity parameters

@@ -56,6 +56,7 @@ namespace MBSim {
    * \brief solver interface for modelling and simulation of dynamic systeme
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -94,6 +95,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
+      virtual void updatedhdq(double t);
+      virtual void updatedhdu(double t);
+      virtual void updatedhdt(double t);
       virtual void updateM(double t);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
@@ -437,9 +441,16 @@ namespace MBSim {
       fmatvec::Vec zdParent;
 
       /**
-       * \brief smooth right hand side
+       * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
        */
-      fmatvec::Vec hParent;
+      fmatvec::Vec hParent, hObjectParent, hLinkParent;
+
+      /**
+       * \brief matrices for implicit integration
+       */
+      fmatvec::Mat    dhdqObjectParent, dhdqLinkParent;
+      fmatvec::SqrMat dhduObjectParent, dhduLinkParent;
+	  fmatvec::Vec    dhdtObjectParent, dhdtLinkParent;
 
       /**
        * \brief nonsmooth right hand side

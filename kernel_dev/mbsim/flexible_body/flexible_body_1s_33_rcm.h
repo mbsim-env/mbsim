@@ -36,6 +36,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
    * \date 2009-05-08 visualisation (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    */

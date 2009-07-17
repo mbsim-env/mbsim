@@ -42,6 +42,7 @@ namespace MBSim {
     WF[0] = Wf*la(IT);
     WM[0] = Wm*la(IR);
     h[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
+    hLink[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
   } 
 
   void Load::init() {

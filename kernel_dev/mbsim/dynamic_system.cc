@@ -98,6 +98,38 @@ namespace MBSim {
       (**i).updateh(t);
   }
 
+  void DynamicSystem::updatedhdq(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updatedhdq(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhdq(t);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdq(t);
+  }
+
+  void DynamicSystem::updatedhdu(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updatedhdu(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhdu(t);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdu(t);
+  }
+
+  void DynamicSystem::updatedhdt(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updatedhdt(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhdt(t);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdt(t);
+  }
 
   void DynamicSystem::updateM(double t) {
 #pragma omp parallel for schedule(static) shared(t) default(none)
@@ -615,17 +647,61 @@ namespace MBSim {
       (**i).updatexdRef(xd);
   }
 
-  void DynamicSystem::updatehRef(const Vec &hParent, int j) {
+  void DynamicSystem::updatehRef(const Vec &hParent, const Vec &hObjectParent, const Vec &hLinkParent, int j) {
     h.resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
+    hObject.resize() >> hObjectParent(hInd[j],hInd[j]+hSize[j]-1);
+    hLink.resize() >> hLinkParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatehRef(h,j);
+      (**i).updatehRef(h,hObject,hLink,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef(h,j);
+      (**i).updatehRef(h,hObject,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatehRef(h);
+      (**i).updatehRef(h,hLink);
+  }
+
+  void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {
+    dhdqObject.resize() >> dhdqObjectParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(qInd,qInd+qSize-1));
+    dhdqLink.  resize() >> dhdqLinkParent  (Index(hInd[j],hInd[j]+hSize[j]-1),Index(qInd,qInd+qSize-1));
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatedhdqRef(dhdqObject,dhdqLink,j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhdqRef(dhdqObject,j);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdqRef(dhdqLink);
+  }
+  
+  void DynamicSystem::updatedhduRef(const SqrMat &dhduObjectParent, const SqrMat &dhduLinkParent, int j) {
+    dhduObject.resize() >> dhduObjectParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+    dhduLink.  resize() >> dhduLinkParent  (Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatedhduRef(dhduObject,dhduLink,j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhduRef(dhduObject,j);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhduRef(dhduLink);
+  }
+  
+  void DynamicSystem::updatedhdtRef(const Vec &dhdtObjectParent, const Vec &dhdtLinkParent, int j) {
+    dhdtObject.resize() >> dhdtObjectParent(hInd[j],hInd[j]+hSize[j]-1);
+    dhdtLink.  resize() >> dhdtLinkParent  (hInd[j],hInd[j]+hSize[j]-1);
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
+      (**i).updatedhdtRef(dhdtObject,dhdtLink,j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatedhdtRef(dhdtObject,j);
+
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdtRef(dhdtLink);
   }
 
   void DynamicSystem::updatefRef(const Vec &fParent) {

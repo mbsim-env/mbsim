@@ -62,7 +62,7 @@ namespace MBSim {
       virtual void closePlot(); 
       /***************************************************/
 
-      /* INHERITED INTERFACE OF FRAMEINTERFACE */
+      /* INTERFACE FOR DERIVED CLASSES */
       virtual void initPlot();
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }

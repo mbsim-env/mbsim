@@ -65,6 +65,7 @@ namespace MBSim {
     if( n < Elements - 1 || openStructure==true) {
       M(Index(j,j+7))   += discretization[n]->getMassMatrix();
       h(j,j+7)          += discretization[n]->getGeneralizedForceVector();
+      hObject(j,j+7)          += discretization[n]->getGeneralizedForceVector();
     } 
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       M(Index(j,j+4))               += discretization[n]->getMassMatrix()(Index(0,4));
@@ -73,6 +74,8 @@ namespace MBSim {
 
       h(j,j+4)                      += discretization[n]->getGeneralizedForceVector()(0,4);
       h(0,  2)                      += discretization[n]->getGeneralizedForceVector()(5,7);
+      hObject(j,j+4)                      += discretization[n]->getGeneralizedForceVector()(0,4);
+      hObject(0,  2)                      += discretization[n]->getGeneralizedForceVector()(5,7);
     }
   }
 

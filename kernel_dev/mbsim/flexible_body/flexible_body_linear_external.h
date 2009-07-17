@@ -151,7 +151,7 @@ namespace MBSim {
        * \param a_ \f$\alpha\f$
        * \param b_ \f$\beta \f$
        */
-	  inline void setProportionalDamping(const double &a, const double &b);
+	  void setProportionalDamping(const double &a, const double &b);
 
 //      /*! plot parameters of "BodyFlexibleLinearExternal"
 //      */
