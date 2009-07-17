@@ -18,13 +18,27 @@
  */
 
 #include <config.h>
-#include "contact_utils.h"
+#include "mbsim/utils/contact_utils.h"
 
 // --- List of contour implementations - BEGIN ---
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/contour1s.h"
 #include "mbsim/contours/cylinder_flexible.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/circle_hollow.h"
+#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/plane.h"
+#include "mbsim/contours/edge.h"
+#include "mbsim/contours/area.h"
+#include "mbsim/contours/frustum.h"
+#include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/contours/contour_interpolation.h"
+#include "mbsim/contours/contour_quad.h"
+#include "mbsim/contours/cuboid.h"
+#include "mbsim/contours/compound_contour.h"
 // --- List of contour implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -74,8 +88,8 @@ namespace MBSim {
     if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
       return new ContactKinematicsCircleFrustum;
 
-    // else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
-    //   return new ContactKinematicsCircleHollowCylinderFlexible;
+     else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
+       return new ContactKinematicsCircleHollowCylinderFlexible;
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleHollow*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<CircleHollow*>(contour0)))
       return new ContactKinematicsCircleSolidCircleHollow;

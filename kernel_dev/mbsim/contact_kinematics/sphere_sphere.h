@@ -22,6 +22,7 @@
 #define _CONTACT_KINEMATICS_SPHERE_SPHERE_H_
 
 #include "contact_kinematics.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -37,8 +38,10 @@ namespace MBSim {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsSphereSphere:updatewb): Not implemented!"); }
+      //virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
+      //virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
       /***************************************************/
 
     private:

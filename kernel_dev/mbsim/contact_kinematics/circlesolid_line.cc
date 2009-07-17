@@ -20,7 +20,9 @@
 
 #include <config.h> 
 #include "circlesolid_line.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contours/circle_solid.h"
+
 
 using namespace fmatvec;
 using namespace std;

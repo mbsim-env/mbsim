@@ -14,35 +14,38 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
- *          rzander@users.berlios.de
+ * Contact: thschindler@users.berlios.de
  */
 
-#include <config.h> 
-#include "point_nurbsdisk2s.h"
-#include "mbsim/contour.h"
-#include "mbsim/contours/point.h"
+#ifndef _CONTOUR_QUAD_H_
+#define _CONTOUR_QUAD_H_
 
-using namespace fmatvec;
-using namespace std;
+#include "mbsim/contour.h"
+#include "mbsim/contours/contour_interpolation.h"
 
 namespace MBSim {
-  void ContactKinematicsPointNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<Point*>(contour[0])) {
-      ipoint = 0;
-      inurbsdisk = 1;
-      point = static_cast<Point*>(contour[0]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[1]);
-    }
-    else {
-      ipoint = 1;
-      inurbsdisk = 0;
-      point = static_cast<Point*>(contour[1]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[0]);
-    }
-  }
 
-  void ContactKinematicsPointNurbsDisk2s::updateg(Vec &g, ContourPointData* cpData) {}
+  /**
+   * \brief Quad for 3D interpolation 
+   * \see{OpenGL-documentation}
+   */ 
+  class ContourQuad : public MBSim::ContourInterpolation {	
+    public:
+      /**
+       * \brief constructor
+       * \param name of point
+       */
+      ContourQuad(const std::string & name);
 
+      virtual void init();
+
+      bool testInsideBounds(const ContourPointData &cp);
+      double computePointWeight(const fmatvec::Vec &s, int i);
+      double computePointWeight(const fmatvec::Vec &s, int i, int diff);
+
+      fmatvec::Vec computeWn(const ContourPointData &cp);
+  };
 }
+
+#endif /* _CONTOUR_QUAD_H_ */
 

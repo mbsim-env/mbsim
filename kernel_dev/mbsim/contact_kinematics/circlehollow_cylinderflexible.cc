@@ -21,6 +21,7 @@
 #include "mbsim/contact_kinematics/circlehollow_cylinderflexible.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/cylinder_flexible.h"
+#include "mbsim/contours/circle_hollow.h"
 #include "mbsim/functions_contact.h"
 
 using namespace fmatvec;

@@ -23,6 +23,7 @@
 
 #include "mbsim/contact.h"
 #include "mbsim/contour.h"
+#include "mbsim/contours/contour_interpolation.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #include <vector>

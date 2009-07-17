@@ -20,7 +20,7 @@
 
 #include <config.h> 
 #include "sphere_frustum.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
 
 using namespace fmatvec;
@@ -41,56 +41,98 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSphereFrustum::stage1(Vec &g, vector<ContourPointData> &cpData){
 
-//    Vec Wd = sphere->getWrOP() - frustum->getWrOP();
-//    Vec Wa = frustum->getAWC()*frustum->getAxis();
-//    double h = frustum->getHeight();
-//    double loc = trans(Wd)*Wa;
-//    // TODO Pruefen ob aussen oder innen
-//    if(loc<0 || loc>h) {
-//      g(0) = 1;
-//      //  active = false;
-//    } else {
-//      Vec r = frustum->getRadii();
-//      // Halber Oeffnungswinkel
-//      double  phi = atan((r(0) - r(1))/h);
-//      phi = M_PI*0.5 - phi;
-//      Vec Wrot = crossProduct(Wa,Wd);
-//      Wrot /= nrm2(Wrot);
-//      cpData[ifrustum].Wn = cos(phi)*Wa + (1-cos(phi))*(trans(Wa)*Wrot)*Wrot + sin(phi)*crossProduct(Wrot,Wa);
-//      cpData[isphere].Wn= -cpData[ifrustum].Wn;
-//      double r_h = r(0) + (r(1)-r(0))/h * loc;
-//      Vec b = crossProduct(Wrot,Wa);
-//      double l = trans(Wd)*b;
-//      Vec c = (r_h - l)*b;
-//
-//      g(0) = trans(cpData[ifrustum].Wn)*c - sphere->getRadius();
-//    } 
+  void ContactKinematicsSphereFrustum::updateg(Vec &g, ContourPointData *cpData) {
+
+    // Bezugspunkt Kugel: Mittelpunkt
+    // Bezugspunkt Kegel: Mittelpunkt Grundfläche
+    // Rotationsachse Kegel: y-Achse
+    Vec Wd = sphere->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
+    
+    SqrMat Mat0 = frustum->getFrame()->getOrientation();
+    Vec yAchse = Mat0.col(1);
+    double loc = trans(yAchse)*Wd; // Projektion Distanzvektor auf y-Achse
+    Vec xAchse = Wd - (yAchse * loc);
+    double l=nrm2(xAchse);
+    SqrMat AW1(3);
+    xAchse =  xAchse/l;
+    Vec zAchse = crossProduct(xAchse,yAchse);
+    AW1.col(0) = xAchse;
+    AW1.col(1) = yAchse;
+    AW1.col(2) = zAchse;
+      
+    int fall = 0;
+    double h = frustum->getHeight();
+    Vec r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
+    double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
+    
+
+    if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || l==0) { // TODO! rudimentäre Bestimmung ob Kontakt
+      g(0) = 1;
+    }
+    else {
+      // Halber Oeffnungswinkel
+      double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r_unten(0) > r_oben(1)
+      double phi = M_PI*0.5 - fabs(psi);
+      double vz=psi/fabs(psi);
+      g(0) = fabs(r_h-l)*sin(phi)-sphere->getRadius();
+      int out = 1;
+
+      // Fallabfrage
+      if(psi==0) {
+        // Zylinder
+        if(l-r(0) > 0) {
+          fall = 1; // außen
+        }
+        else {
+          fall = 2; // innen
+          out = -1;
+        }
+        
+        // System of frustum
+        cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = out*xAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = out*yAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(xAchse,yAchse);
+      }
+
+      else {
+        // Kegel
+        if(l-r_h > -1e-5)
+        {
+          fall = 3; // außen
+        }
+        else {
+          fall = 4; // innen
+          out = -1;
+        }
+
+        double alpha= vz*(out*M_PI/2.-phi);
+        SqrMat A(3); // Drehmatrix
+        A(2,2) = 1;
+        A(0,0) = cos(alpha);
+        A(1,1) = cos(alpha);
+        A(0,1) = -sin(alpha);
+        A(1,0) = sin(alpha);
+
+        double v1 = loc/sin(phi);
+        double v2 = vz*cos(phi)*(r_h-l);
+        double v12 = out*(v1+v2);
+     
+        // System of frustum
+        cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + (r(0)*xAchse);
+        cpData[ifrustum].getFrameOfReference().getOrientation() = AW1 * A;
+        cpData[ifrustum].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + v12*cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
+      }
+
+      // System of sphere (position)
+      cpData[isphere].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g(0)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      // System of sphere (orientation)
+      cpData[isphere].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      cpData[isphere].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
+      cpData[isphere].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[isphere].getFrameOfReference().getOrientation().col(0),cpData[isphere].getFrameOfReference().getOrientation().col(1));
+
+    }
   }
-
-  void ContactKinematicsSphereFrustum::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData){
-
-//    Vec WrPC[2], WvC[2];
-//
-//    WrPC[isphere] = cpData[ifrustum].Wn*sphere->getRadius();
-//    cpData[isphere].WrOC = sphere->getWrOP()+WrPC[isphere];
-//    cpData[ifrustum].WrOC = cpData[isphere].WrOC - cpData[isphere].Wn*g;
-//    WrPC[ifrustum] = cpData[ifrustum].WrOC - frustum->getWrOP();
-//    WvC[isphere] = sphere->getWvP()+crossProduct(sphere->getWomegaC(),WrPC[isphere]);
-//    WvC[ifrustum] = frustum->getWvP()+crossProduct(frustum->getWomegaC(),WrPC[ifrustum]);
-//    Vec WvD = WvC[isphere] - WvC[ifrustum];
-//    gd(0) = trans(cpData[isphere].Wn)*WvD;
-//
-//    if(cpData[isphere].Wt.cols()) { 
-//      cpData[isphere].Wt.col(0) = computeTangential(cpData[isphere].Wn);
-//      if(cpData[isphere].Wt.cols()==2)
-//        cpData[isphere].Wt.col(1) = crossProduct(cpData[isphere].Wn,cpData[isphere].Wt.col(0));
-//      cpData[ifrustum].Wt = -cpData[isphere].Wt;
-//      static Index iT(1,cpData[isphere].Wt.cols());
-//      gd(iT) = trans(cpData[isphere].Wt)*WvD;
-//    }
-  }
-
 }
 

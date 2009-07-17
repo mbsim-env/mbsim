@@ -15,34 +15,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: mfoerg@users.berlios.de
- *          rzander@users.berlios.de
  */
 
-#include <config.h> 
-#include "point_nurbsdisk2s.h"
-#include "mbsim/contour.h"
-#include "mbsim/contours/point.h"
+#ifndef _PLANE_H_
+#define _PLANE_H_
 
-using namespace fmatvec;
-using namespace std;
+#include "mbsim/contour.h"
 
 namespace MBSim {
-  void ContactKinematicsPointNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<Point*>(contour[0])) {
-      ipoint = 0;
-      inurbsdisk = 1;
-      point = static_cast<Point*>(contour[0]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[1]);
-    }
-    else {
-      ipoint = 1;
-      inurbsdisk = 0;
-      point = static_cast<Point*>(contour[1]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[0]);
-    }
-  }
 
-  void ContactKinematicsPointNurbsDisk2s::updateg(Vec &g, ContourPointData* cpData) {}
 
+  /** 
+   * \brief plane without borders
+   * \author Martin Foerg
+   * \date 2009-03-23 some comments (Thorsten Schindler)
+   *
+   * normal equals first column in orientation matrix
+   */
+  class Plane : public RigidContour {
+    public:
+      /**
+       * \brief constructor
+       * \param name of contour
+       */
+      Plane(const std::string &name) : RigidContour(name) {}
+  };
 }
 
+#endif /* _PLANE_H_ */

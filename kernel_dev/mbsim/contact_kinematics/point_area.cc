@@ -20,7 +20,8 @@
 
 #include <config.h> 
 #include "point_area.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/area.h"
+#include "mbsim/contours/point.h"
 
 using namespace fmatvec;
 using namespace std;

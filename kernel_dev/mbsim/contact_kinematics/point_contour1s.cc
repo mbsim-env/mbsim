@@ -20,6 +20,7 @@
 
 #include <config.h> 
 #include "point_contour1s.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/functions_contact.h"
 
 using namespace fmatvec;

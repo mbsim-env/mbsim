@@ -23,6 +23,7 @@
 #include <mbsim/contour.h>
 #include <mbsim/contours/cylinder_flexible.h>
 #include <mbsim/functions_contact.h>
+#include "mbsim/contours/point.h"
 
 using namespace fmatvec;
 using namespace std;
