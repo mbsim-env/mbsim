@@ -26,7 +26,8 @@
 #include <mbsim/contour.h>
 #include <mbsim/functions_contact.h>
 #include <mbsim/utils/nonlinear_algebra.h>
-
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/contour_interpolation.h"
 using namespace fmatvec;
 using namespace std;
 

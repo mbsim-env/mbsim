@@ -23,8 +23,9 @@
 
 #include <config.h>
 #include "line_contour1s.h"
-#include <mbsim/contour.h>
-#include <mbsim/functions_contact.h>
+#include "mbsim/contour.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/functions_contact.h"
 
 using namespace fmatvec;
 using namespace std;

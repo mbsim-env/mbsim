@@ -21,6 +21,7 @@
 #include "mbsim/contact_kinematics/point_flexibleband.h"
 #include "mbsim/contour.h"
 #include "mbsim/contours/flexible_band.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/functions_contact.h"
 
 using namespace std;

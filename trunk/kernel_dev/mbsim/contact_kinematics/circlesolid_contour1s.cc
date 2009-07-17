@@ -22,6 +22,8 @@
 #include "circlesolid_contour1s.h"
 #include "mbsim/functions_contact.h"
 #include "mbsim/contour.h"
+#include "mbsim/contours/circle_solid.h"
+
 
 using namespace fmatvec;
 using namespace std;

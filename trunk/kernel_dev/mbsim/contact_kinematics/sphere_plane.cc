@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "sphere_plane.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/plane.h"
 #include "mbsim/contours/sphere.h"
 #include "mbsim/utils/contact_utils.h"
 

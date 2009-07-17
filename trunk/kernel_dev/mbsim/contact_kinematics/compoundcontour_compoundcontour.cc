@@ -19,7 +19,7 @@
 
 #include <config.h> 
 #include "compoundcontour_compoundcontour.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/compound_contour.h"
 #include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;

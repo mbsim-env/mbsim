@@ -33,15 +33,37 @@ namespace MBSim {
     sphere1 = static_cast<Sphere*>(contour[1]);
   }
 
-  void ContactKinematicsSphereSphere::stage1(Vec &g, vector<ContourPointData> &cpData) {
-
-//    Vec WrD = sphere0->getWrOP() - sphere1->getWrOP();
-//    cpData[isphere0].Wn = WrD/nrm2(WrD);
-//    cpData[isphere1].Wn = -cpData[isphere0].Wn; 
-//    g(0) = trans(cpData[isphere0].Wn)*WrD - sphere0->getRadius() - sphere1->getRadius();
+  void ContactKinematicsSphereSphere::updateg(Vec &g, ContourPointData *cpData) {
+    Vec Wd = sphere1->getFrame()->getPosition() - sphere0->getFrame()->getPosition();
+    double l = nrm2(Wd);
+    Wd = Wd/l;
+    g(0) = l-sphere0->getRadius()-sphere1->getRadius();
+    Vec t(3);
+    if(Wd(0)==0. && Wd(1)==0.) {
+      t(0) = 1.;
+      t(1) = 0.;
+      t(2) = 0.;
+    }
+    else {
+      t(0) = -Wd(1);
+      t(1) = -Wd(0);
+      t(2) = 0.0;
+    }
+    t = t/nrm2(t);
+    cpData[isphere0].getFrameOfReference().getOrientation().col(0) = Wd;
+    cpData[isphere1].getFrameOfReference().getOrientation().col(0) = -cpData[isphere0].getFrameOfReference().getOrientation().col(0);
+    cpData[isphere0].getFrameOfReference().getOrientation().col(1) = t;
+    cpData[isphere1].getFrameOfReference().getOrientation().col(1) = -cpData[isphere0].getFrameOfReference().getOrientation().col(1);
+    cpData[isphere0].getFrameOfReference().getOrientation().col(2) = crossProduct(Wd,t);
+    cpData[isphere1].getFrameOfReference().getOrientation().col(2) = cpData[isphere0].getFrameOfReference().getOrientation().col(2);
+    cpData[isphere0].getFrameOfReference().getPosition() = sphere0->getFrame()->getPosition() + sphere0->getRadius() * Wd;
+    cpData[isphere1].getFrameOfReference().getPosition() = sphere1->getFrame()->getPosition() - sphere0->getRadius() * Wd;
   }
 
-  void ContactKinematicsSphereSphere::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
+}
+
+
+//  void ContactKinematicsSphereSphere::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
 //    Vec WrPC[2], WvC[2];
 //
@@ -63,6 +85,4 @@ namespace MBSim {
 //        gd(iT) = trans(cpData[isphere0].Wt)*WvD;
 //      }
 //    }
-  }
-
-}
+//  }

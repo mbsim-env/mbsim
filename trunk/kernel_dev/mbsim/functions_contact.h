@@ -23,6 +23,20 @@
 
 #include <mbsim/contour.h>
 #include <mbsim/contours/contour1s.h>
+#include <mbsim/contours/point.h>
+#include "mbsim/contours/line.h"
+#include <mbsim/contours/circle_solid.h>
+#include "mbsim/contours/circle_hollow.h"
+#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/edge.h"
+#include "mbsim/contours/area.h"
+#include "mbsim/contours/frustum.h"
+#include "mbsim/contours/plane.h"
+#include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/contours/contour_interpolation.h"
+#include "mbsim/contours/contour_quad.h"
+#include "mbsim/contours/cuboid.h"
+#include "mbsim/contours/compound_contour.h"
 #include <mbsim/utils/function.h>
 
 namespace MBSim {

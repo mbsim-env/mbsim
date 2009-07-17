@@ -32,7 +32,8 @@ namespace MBSim {
    * \brief pairing outer circle side to outer circle side
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
-   * \todo change stage to new interface TODO
+   * \date 2009-07-13 updateg implemented (Bastian Esefeld)
+   * \todo updatewb implementation
    */
   class ContactKinematicsCircleSolidCircleSolid : public ContactKinematics {
     public:

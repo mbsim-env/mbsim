@@ -14,12 +14,13 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: mschneider@users.berlios.de
  */
 
 #include <config.h> 
 #include "point_planewithfrustum.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/utils/utils.h"
 
 using namespace fmatvec;

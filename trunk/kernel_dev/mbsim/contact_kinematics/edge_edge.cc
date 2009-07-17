@@ -20,7 +20,7 @@
 
 #include <config.h> 
 #include "edge_edge.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/edge.h"
 
 using namespace fmatvec;
 using namespace std;

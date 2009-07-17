@@ -14,35 +14,33 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
- *          rzander@users.berlios.de
+ * Contact: thschindler@users.berlios.de
  */
 
-#include <config.h> 
-#include "point_nurbsdisk2s.h"
-#include "mbsim/contour.h"
-#include "mbsim/contours/point.h"
+#include<config.h>
+#include "mbsim/contours/circle_solid.h"
 
-using namespace fmatvec;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frustum.h>
+#endif
+
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
-  void ContactKinematicsPointNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
-    if(dynamic_cast<Point*>(contour[0])) {
-      ipoint = 0;
-      inurbsdisk = 1;
-      point = static_cast<Point*>(contour[0]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[1]);
-    }
-    else {
-      ipoint = 1;
-      inurbsdisk = 0;
-      point = static_cast<Point*>(contour[1]);
-      nurbsdisk = static_cast<NurbsDisk2s*>(contour[0]);
-    }
-  }
 
-  void ContactKinematicsPointNurbsDisk2s::updateg(Vec &g, ContourPointData* cpData) {}
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void CircleSolid::enableOpenMBV(bool enable) {
+    if(enable) {
+      openMBVRigidBody=new OpenMBV::Frustum;
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
+    }
+    else openMBVRigidBody=0;
+  }
+#endif
+
 
 }
 

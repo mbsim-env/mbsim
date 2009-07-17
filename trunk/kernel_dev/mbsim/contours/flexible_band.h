@@ -21,6 +21,7 @@
 #define _FLEXIBLE_BAND_H_
 
 #include "mbsim/contours/contour1s_flexible.h"
+#include "mbsim/contour.h"
 
 namespace MBSim {
 

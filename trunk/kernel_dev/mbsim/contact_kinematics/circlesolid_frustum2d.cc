@@ -20,8 +20,9 @@
 
 #include <config.h> 
 #include "mbsim/contact_kinematics/circlesolid_frustum2d.h"
+#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/circle_solid.h"
 #include "mbsim/contour.h"
-#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -41,136 +42,93 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleSolidFrustum2D::updateg(Vec &g, ContourPointData *cpData) {
 
-    // Bezugspunkt Kreis: Mittelpunkt
-    // Bezugspunkt Kegel: Mittelpunkt Grundfläche
-    // Rotationsachse Kegel: y-Achse
-    // z-Achse Kegel / Kreis: aus Zeichenebene heraus
-    Vec Wd = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // Vektor von Bezugspunkt Kegel zu Bezugspunkt Kreis
-    cpData[ifrustum].getFrameOfReference().getOrientation() = frustum->getFrame()->getOrientation(); // Bezugssystem Kegel und Kontaktpunktsystem Kegel deckungsgleich
-    cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition();
-    double l0 = trans(Wd)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0); // Projektion Distanzvektor auf x-Achse
-    double l = l0;
+  void ContactKinematicsCircleSolidFrustum2D::updateg(Vec &g, ContourPointData *cpData) {
+    
+    Vec Wd = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition();
+    SqrMat Mat0 = frustum->getFrame()->getOrientation();
+    Vec yAchse = Mat0.col(1);
+    double loc = trans(yAchse)*Wd; // Projektion Distanzvektor auf y-Achse
+    Vec xAchse = Wd - (yAchse * loc);
+    double l=nrm2(xAchse);
+    SqrMat AW1(3);
+    xAchse =  xAchse/l;
+    Vec zAchse = crossProduct(xAchse,yAchse);
+    AW1.col(0) = xAchse;
+    AW1.col(1) = yAchse;
+    AW1.col(2) = zAchse;
+
     int fall = 0;
-    if(l0<0) { // Kreis links von Kegelachse
-      l *=-1;
-    }
-    double loc = trans(Wd)*cpData[ifrustum].getFrameOfReference().getOrientation().col(1); // Projektion Distanzvektor auf y-Achse
     double h = frustum->getHeight();
     Vec r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
+    
 
-    if(loc<0 || loc>h) { // TODO! rudimentäre Bestimmung ob Kontakt
-      //active = false;
+    if(loc<-circle->getRadius() || loc>h+circle->getRadius() || l==0) {
       g(0) = 1;
     }
     else {
       // Halber Oeffnungswinkel
-      double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r(0)nten(0) > r(1)ben(1)
-      if(psi==0) {
-        throw new MBSimError("ERROR (Cylinder): Not implemented!");
-      }
+      double  psi = atan((r(0) - r(1))/h); // psi > 0 falls r_unten(0) > r_oben(1)
       double phi = M_PI*0.5 - fabs(psi);
-      double alpha=0; // Winkel der Drehmatrix
+      double vz=psi/fabs(psi);
+      g(0) = fabs(r_h-l)*sin(phi)-circle->getRadius();
+      int out = 1;
 
-      if(l-r_h > -epsroot() && l0>0)
-      {
-        alpha=-psi; // außen rechts
-        fall = 1;
+      // Fallabfrage
+      if(psi==0) {
+        // Zylinder
+        if(l-r(0) > 0) {
+          fall = 1; // außen
+        }
+        else {
+          fall = 2; // innen
+          out = -1;
+        }
+        
+        // System of frustum
+        cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + r(0)*xAchse + loc*yAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = out*xAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = out*yAchse;
+        cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(xAchse,yAchse);
       }
-      if(l-r_h > -epsroot() && l0<0) {
-        alpha = psi+M_PI; // außen links
-        fall = 2;
+
+
+          else {
+        // Kegel
+        if(l-r_h > -1e-5)
+        {
+          fall = 3; // außen
+        }
+        else {
+          fall = 4; // innen
+          out = -1;
+        }
+
+        double alpha= vz*(out*M_PI/2.-phi);
+        SqrMat A(3); // Drehmatrix
+        A(2,2) = 1;
+        A(0,0) = cos(alpha);
+        A(1,1) = cos(alpha);
+        A(0,1) = -sin(alpha);
+        A(1,0) = sin(alpha);
+
+        double v1 = loc/sin(phi);
+        double v2 = vz*cos(phi)*(r_h-l);
+        double v12 = out*(v1+v2);
+     
+        // System of frustum
+        cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + (r(0)*xAchse);
+        cpData[ifrustum].getFrameOfReference().getOrientation() = AW1 * A;
+        cpData[ifrustum].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + v12*cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
       }
-      if(l-r_h < epsroot() && l0>0) {
-        alpha=-M_PI - psi; // innen rechts
-        fall = 3;
-      }
-      if(l-r_h < epsroot() && l0<0) {
-        alpha = psi; // innen links
-        fall = 4;
-      }
 
-      SqrMat A(3); // Drehmatrix
-      A(2,2) = 1;
-      A(0,0) = cos(alpha);
-      A(1,1) = cos(alpha);
-      A(0,1) = sin(alpha);
-      A(1,0) = -sin(alpha);
-      
-
-      // Circle outside frustum
-      if(fall == 1 || fall == 2) {
-        g(0) = (l-r_h)*sin(phi)-circle->getRadius(); // Berechnung Normalabstand
-        double dh = cos(phi)*(circle->getRadius()+g(0));
-        double dy_F, dx_F; // Verschiebung Bezugssystem Kegel
-        if(r(0)>=r(1))
-          dy_F = -dh + loc;
-        else
-          dy_F = dh + loc;
-        double dr = dh / tan(phi);
-        if(r(0)>=r(1))
-          dx_F = r_h+dr;
-        else
-          dx_F = r_h-dr;
-
-        double dx_C = -circle->getRadius()*sin(phi); // Verschiebung Bezugssystem Kreis
-        double dy_C = -circle->getRadius()*cos(phi);
-        if(r(0)<r(1))
-          dy_C = circle->getRadius()*cos(phi);
-
-        Vec d_C(3), d_F(3);
-        d_C(0) = l0/l*dx_C;
-        d_C(1) = dy_C;
-        d_F(0) = l0/l*dx_F;
-        d_F(1) = dy_F;
-
-        // System of frustum (position)
-        cpData[ifrustum].getFrameOfReference().getPosition() = frustum->getFrame()->getPosition() + d_F;
-        // System of circle (position)
-        cpData[icircle].getFrameOfReference().getPosition()=circle->getFrame()->getPosition() + d_C;
-        // System of frustum (orientation)
-        cpData[ifrustum].getFrameOfReference().getOrientation() = A * cpData[ifrustum].getFrameOfReference().getOrientation();
-        // System of circle (orientation)
-        cpData[icircle].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
-        cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
-      }
-      
-      // Circle inside frustum
-      if(fall == 3 || fall == 4) {
-        g(0) = (r_h-l)*sin(phi)-circle->getRadius();
-        double dh = cos(phi)*(circle->getRadius()+g(0));
-        double dy_F;
-        if(r(0)>=r(1))
-          dy_F = dh + loc;
-        else
-          dy_F = -dh + loc;
-        double dr = sin(phi)*(circle->getRadius()+g(0));
-        double dx_F = l+dr;
-        double dx_C = -circle->getRadius()*sin(phi);
-        if(l0<0)
-          dx_C *= -1;
-        double dy_C = circle->getRadius()*cos(phi);
-        if(r(0)<r(1))
-          dy_C = -circle->getRadius()*cos(phi);
-
-        Vec d_C(3), d_F(3);
-        d_C(0) = -dx_C;
-        d_C(1) = dy_C;
-        d_F(0) = dx_F;
-        d_F(1) = dy_F;
-
-        // System of frustum (position)
-        cpData[ifrustum].getFrameOfReference().getPosition()=frustum->getFrame()->getPosition() + d_F;
-        // System of circle (position)
-        cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + d_C;
-        // System of frustum (orientation)
-        cpData[ifrustum].getFrameOfReference().getOrientation() = A * cpData[ifrustum].getFrameOfReference().getOrientation();
-        // System of circle (orientation)
-        cpData[icircle].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
-        cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
-      }
+      // System of circle (position)
+      cpData[icircle].getFrameOfReference().getPosition() = cpData[ifrustum].getFrameOfReference().getPosition() + g(0)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      // System of circle (orientation)
+      cpData[icircle].getFrameOfReference().getOrientation().col(0) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+      cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
+      cpData[icircle].getFrameOfReference().getOrientation().col(2) = cpData[ifrustum].getFrameOfReference().getOrientation().col(2);
     }
   }
 }
