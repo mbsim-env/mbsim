@@ -1,7 +1,8 @@
 #include "system.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 
