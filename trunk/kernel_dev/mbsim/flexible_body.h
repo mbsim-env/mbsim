@@ -38,6 +38,7 @@ namespace MBSim {
    * \date 2009-04-05 changed to non-template definition (Schindler / Zander)
    * \date 2009-04-20 frame concept (Thorsten Schindler)
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class FlexibleBody : public Body {

@@ -74,6 +74,8 @@ namespace MBSim {
     WM[0] = -WM[1];
     h[0] += trans(C.getJacobianOfTranslation())*WF[0] + trans(C.getJacobianOfRotation())*WM[0];
     h[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
+    hLink[0] += trans(C.getJacobianOfTranslation())*WF[0] + trans(C.getJacobianOfRotation())*WM[0];
+    hLink[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
   }
 
   void Joint::updateg(double t) {

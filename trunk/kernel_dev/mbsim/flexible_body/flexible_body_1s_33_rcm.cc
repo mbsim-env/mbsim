@@ -81,6 +81,7 @@ namespace MBSim {
     if(n<Elements-1 || openStructure) {
       M(Index(j,j+15)) += discretization[n]->getMassMatrix();
       h(j,j+15) += discretization[n]->getGeneralizedForceVector();
+      hObject(j,j+15) += discretization[n]->getGeneralizedForceVector();
 
       //      	if(implicit) { // implicit integration
       //				Jhq(j,j,j+15,j+15) += discretization[n]->getJGq();
@@ -93,6 +94,8 @@ namespace MBSim {
       M(Index(0,5)) += (discretization[n]->getMassMatrix())(Index(10,15));
       h(j,j+9) += (discretization[n]->getGeneralizedForceVector())(0,9);
       h(0,5) += (discretization[n]->getGeneralizedForceVector())(10,15);
+      hObject(j,j+9) += (discretization[n]->getGeneralizedForceVector())(0,9);
+      hObject(0,5) += (discretization[n]->getGeneralizedForceVector())(10,15);
 
       //      	if(implicit) { // implicit integration
       //				Jhq(j,j,j+9,j+9) += discretization[n]->getJhq(0,0,9,9);

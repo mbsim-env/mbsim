@@ -30,6 +30,7 @@ namespace MBSim {
    * \brief predefines load between two frames with additional possibility of rotation
    * \author Martin Foerg
    * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo remove setUserfunction TODO
    * \todo visualisation TODO
    */

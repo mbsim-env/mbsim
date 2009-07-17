@@ -35,6 +35,7 @@ namespace MBSim {
    * \brief rigid bodies with arbitrary kinematics 
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo kinetic energy TODO
    * \todo Euler parameter TODO
    * \todo check if inertial system for performance TODO

@@ -34,6 +34,7 @@ namespace MBSim {
   /*! \brief class for contacts
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
    */
@@ -65,7 +66,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
       virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updatehRef(const fmatvec::Vec &ref, int j=0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int j=0);
       virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updategRef(const fmatvec::Vec& ref);

@@ -49,7 +49,10 @@ namespace MBSim {
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i); // assemble
 
-    if(d_massproportional) h -= d_massproportional*(M*u); // mass proportional damping
+    if(d_massproportional) { // mass proportional damping
+      h -= d_massproportional*(M*u);
+      hObject -= d_massproportional*(M*u);
+    }
   }
 
   void FlexibleBody::updateStateDependentVariables(double t) {

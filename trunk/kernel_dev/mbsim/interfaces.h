@@ -49,6 +49,7 @@ namespace MBSim {
    * \date 2009-03-09 some comments (Thorsten Schindler)
    * \date 2009-03-19 element.h added (Thorsten Schindler)
    * \date 2009-03-26 some comments (Thorsten Schindler)
+   * \date 2009-07-17 implicit integration (Thorsten Schindler)
    */
   class ObjectInterface {
     public:
@@ -73,6 +74,24 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateh(double t) = 0;
+
+      /**
+       * \brief updates Jacobian for implicit integration regarding positions
+       * \param simulation time
+       */
+      virtual void updatedhdq(double t) = 0;
+      
+      /**
+       * \brief updates Jacobian for implicit integration regarding velocities
+       * \param simulation time
+       */
+      virtual void updatedhdu(double t) = 0;
+      
+      /**
+       * \brief updates Jacobian for implicit integration regarding time
+       * \param simulation time
+       */
+      virtual void updatedhdt(double t) = 0;
 
       /**
        * \brief update mass matrix
@@ -159,6 +178,17 @@ namespace MBSim {
       virtual void calcuSize(int j=0) = 0;
 
       /**
+       * \return index of positions
+       */
+      virtual int getqInd() = 0;
+
+      /**
+       * \param index for normal usage and inverse kinetics 
+       * \return index of velocities
+       */
+      virtual int getuInd(int i=0) = 0;
+
+      /**
        * \param index of positions
        */
       virtual void setqInd(int ind) = 0;
@@ -175,6 +205,16 @@ namespace MBSim {
        * \return index of right hand side
        */
       virtual int gethInd(DynamicSystem* sys, int i=0) = 0;
+
+      /**
+       * \return positions
+       */
+      virtual const fmatvec::Vec& getq() const = 0; 
+      
+      /**
+       * \return velocities
+       */
+      virtual const fmatvec::Vec& getu() const = 0; 
 
       /**
        * \brief update JACOBIAN for inverse kinetics
@@ -266,6 +306,24 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateh(double t) = 0;
+
+      /**
+       * \brief updates Jacobian for implicit integration regarding positions
+       * \param simulation time
+       */
+      virtual void updatedhdq(double t) = 0;
+      
+      /**
+       * \brief updates Jacobian for implicit integration regarding velocities
+       * \param simulation time
+       */
+      virtual void updatedhdu(double t) = 0;
+      
+      /**
+       * \brief updates Jacobian for implicit integration regarding time
+       * \param simulation time
+       */
+      virtual void updatedhdt(double t) = 0;
 
       /*!
        * \brief update relative distance

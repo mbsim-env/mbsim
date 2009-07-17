@@ -40,6 +40,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
@@ -59,6 +60,9 @@ namespace MBSim {
       virtual void updateW(double t) {};
       virtual void updateV(double t) {};
       virtual void updateh(double t) {};
+      virtual void updatedhdq(double t) {};
+      virtual void updatedhdu(double t) {};
+      virtual void updatedhdt(double t) {};
       virtual void updateStopVector(double t) {}
       virtual void updateJacobians(double t) {}
       /***************************************************/
@@ -96,9 +100,30 @@ namespace MBSim {
       virtual void updateVRef(const fmatvec::Mat& ref, int i=0) = 0;
 
       /**
-       * \brief references to smooth force vector of dynamic system parent
+       * \brief references to complete and link smooth force vector of dynamic system parent
        */
-      virtual void updatehRef(const fmatvec::Vec &ref, int i=0) = 0;
+      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int i=0) = 0;
+
+      /**
+       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding positions
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) = 0;
+      
+      /**
+       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding velocities
+       * \param matrix concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) = 0;
+      
+      /**
+       * \brief references to link Jacobian for implicit integration of dynamic system parent regarding time
+       * \param vector concerning links to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) = 0;
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
@@ -485,9 +510,16 @@ namespace MBSim {
       std::vector<fmatvec::Mat> V;
       
       /**
-       * \brief smooth right hand side
+       * \brief smooth complete and link right hand side
        */
-      std::vector<fmatvec::Vec> h;
+      std::vector<fmatvec::Vec> h, hLink;
+      
+      /**
+       * \brief smooth Jacobians for implicit integration
+       */
+      std::vector<fmatvec::Mat> dhdq;
+      std::vector<fmatvec::SqrMat> dhdu;
+      std::vector<fmatvec::Vec> dhdt;
       
       /**
        * \brief nonsmooth right hand side

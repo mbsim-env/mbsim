@@ -35,6 +35,7 @@ namespace MBSim {
    * \brief class for connections: constraints on frames
    * \author Martin Foerg
    * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
+   * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \todo visualisation / hSize Frame C / One Force Direction TODO
    */
   class Joint: public LinkMechanics {

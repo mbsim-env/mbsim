@@ -69,6 +69,7 @@ namespace MBSim {
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
     h += trans(frame[0]->getJacobianOfTranslation())*WF +  trans(frame[0]->getJacobianOfRotation())*WM;
+    hObject += trans(frame[0]->getJacobianOfTranslation())*WF +  trans(frame[0]->getJacobianOfRotation())*WM;
   }
 
   void RigidBody::calcqSize() {

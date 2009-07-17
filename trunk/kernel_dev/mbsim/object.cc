@@ -20,6 +20,7 @@
 #include "mbsim/object.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -38,6 +39,37 @@ namespace MBSim {
   } 
 
   Object::~Object() {}
+
+  void Object::updatedhdq(double t) {
+    Vec h0 = h.copy();
+    for(int i=0;i<qSize;i++) {
+      double qi = q(i);
+      q(i) += epsroot();
+      updateh(t);
+      dhdq.col(i) = (h-h0)/epsroot();
+      q(i) = qi;
+    }
+  }
+
+  void Object::updatedhdu(double t) {
+    Vec h0 = h.copy();
+    for(int i=0;i<uSize[0];i++) {
+      double ui = u(i);
+      q(i) += epsroot();
+      updateh(t);
+      dhdu.col(i) = (h-h0)/epsroot();
+      u(i) = ui;
+    }
+  }
+
+  void Object::updatedhdt(double t) {
+    Vec h0 = h.copy();
+    double t0 = t;
+    t += epsroot();
+    updateh(t);
+    dhdt = (h-h0)/epsroot();
+    t = t0;
+  }
 
   void Object::updatedq(double t, double dt) {
     qd = T*u*dt;
@@ -169,8 +201,21 @@ namespace MBSim {
     ud>>udParent(uInd[0],uInd[0]+uSize[0]-1);
   }
 
-  void Object::updatehRef(const Vec& hParent, int i) {
+  void Object::updatehRef(const Vec& hParent, const Vec& hObjectParent, int i) {
     h.resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
+    hObject.resize()>>hObjectParent(hInd[i],hInd[i]+hSize[i]-1);
+  }
+
+  void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
+    dhdq.resize()>>dhdqParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(qInd,qInd+qSize-1));
+  }
+
+  void Object::updatedhduRef(const SqrMat& dhduParent, int i) {
+    dhdu.resize()>>dhduParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
+  }
+
+  void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
+    dhdt.resize()>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updaterRef(const Vec& rParent) {

@@ -21,6 +21,7 @@
 #include "mbsim/link_mechanics.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -30,12 +31,81 @@ namespace MBSim {
   LinkMechanics::~LinkMechanics() { 
   }
 
+  void LinkMechanics::updatedhdq(double t) {
+    for(unsigned int i=0; i<frame.size(); i++) {
+      Vec h0 = h[i].copy();
+      Vec qParent  = frame[i]->getParent()->getq();
+      for(int j=0; j<qParent.size(); j++) {
+        double qParentj = qParent(j);
+        qParent(j) += epsroot();
+        updateh(t);
+        dhdq[i].col(j) += (h[i]-h0)/epsroot();
+        qParent(j) = qParentj;
+      }
+    }
+    for(unsigned int i=0; i<contour.size(); i++) {
+      Vec h0 = h[frame.size()+i].copy();
+      Vec qParent  = contour[i]->getParent()->getq();
+      for(int j=0; j<qParent.size(); j++) {
+        double qParentj = qParent(j);
+        qParent(j) += epsroot();
+        updateh(t);
+        dhdq[i].col(j) += (h[i]-h0)/epsroot();
+        qParent(j) = qParentj;
+      }
+    }
+  }
+
+  void LinkMechanics::updatedhdu(double t) {
+    for(unsigned int i=0; i<frame.size(); i++) {
+      Vec h0 = h[i].copy();
+      Vec uParent  = frame[i]->getParent()->getu();
+      for(int j=0; j<uParent.size(); j++) {
+        double uParentj = uParent(j);
+        uParent(j) += epsroot();
+        updateh(t);
+        dhdu[i].col(j) += (h[i]-h0)/epsroot();
+        uParent(j) = uParentj;
+      }
+    }
+    for(unsigned int i=0; i<contour.size(); i++) {
+      Vec h0 = h[frame.size()+i].copy();
+      Vec uParent  = contour[i]->getParent()->getu();
+      for(int j=0; j<uParent.size(); j++) {
+        double uParentj = uParent(j);
+        uParent(j) += epsroot();
+        updateh(t);
+        dhdu[i].col(j) += (h[i]-h0)/epsroot();
+        uParent(j) = uParentj;
+      }
+    }
+  } 
+
+  void LinkMechanics::updatedhdt(double t) {
+    for(unsigned int i=0; i<frame.size(); i++) {
+      Vec h0 = h[i].copy();
+      double t0 = t;
+      t += epsroot();
+      updateh(t);
+      dhdt[i] += (h[i]-h0)/epsroot();
+      t = t0;
+    }
+    for(unsigned int i=0; i<contour.size(); i++) {
+      Vec h0 = h[frame.size()+i].copy();
+      double t0 = t;
+      t += epsroot();
+      updateh(t);
+      dhdt[i] += (h[i]-h0)/epsroot();
+      t = t0;
+    }
+  }
+
   void LinkMechanics::updater(double t) {
 
-    for(unsigned i=0; i<frame.size(); i++) 
+    for(unsigned int i=0; i<frame.size(); i++) 
       r[i] += W[i]*la;
 
-    for(unsigned i=0; i<contour.size(); i++) 
+    for(unsigned int i=0; i<contour.size(); i++) 
       r[i] += W[i]*la;
   }
 
@@ -149,16 +219,53 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::updatehRef(const Vec &hParent, int j) {
+  void LinkMechanics::updatehRef(const Vec &hParent, const Vec &hLinkParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
+      hLink[i]>>hLinkParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
       h[i]>>hParent(I);
+      hLink[i]>>hLinkParent(I);
     }
   } 
+
+  void LinkMechanics::updatedhdqRef(const fmatvec::Mat& dhdqParent, int j) {
+    for(unsigned i=0; i<frame.size(); i++) {
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
+      Index J = Index(frame[i]->getParent()->getqInd(),frame[i]->getParent()->getqInd()+frame[i]->getParent()->getqSize()-1);
+      dhdq[i]>>dhdqParent(I,J);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
+      Index J = Index(contour[i]->getParent()->getqInd(),contour[i]->getParent()->getqInd()+contour[i]->getParent()->getqSize()-1);
+      dhdq[i]>>dhdqParent(I,J);
+    }
+  }
+
+  void LinkMechanics::updatedhduRef(const fmatvec::SqrMat& dhduParent, int j) {
+    for(unsigned i=0; i<frame.size(); i++) {
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
+      dhdu[i]>>dhduParent(I);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
+      dhdu[i]>>dhduParent(I);
+    }
+  }
+
+  void LinkMechanics::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+    for(unsigned i=0; i<frame.size(); i++) {
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
+      dhdt[i]>>dhdtParent(I);
+    }
+    for(unsigned i=0; i<contour.size(); i++) {
+      Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
+      dhdt[i]>>dhdtParent(I);
+    }
+  }
 
   void LinkMechanics::updaterRef(const Vec &rParent) {
     for(unsigned i=0; i<frame.size(); i++) {
@@ -180,6 +287,10 @@ namespace MBSim {
       W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
       V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
       h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+      hLink.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+      dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[i]->getParent()->getqSize()));
+      dhdu.push_back(SqrMat(frame[i]->getJacobianOfTranslation().cols()));
+      dhdt.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       WF.push_back(Vec(3));
       WM.push_back(Vec(3));
@@ -191,6 +302,10 @@ namespace MBSim {
       W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
       V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
       h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+      hLink.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+      dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[i]->getParent()->getqSize()));
+      dhdu.push_back(SqrMat(contour[i]->getReferenceJacobianOfTranslation().cols()));
+      dhdt.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       WF.push_back(Vec(3));
       WM.push_back(Vec(3));
@@ -203,10 +318,10 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-//#ifdef HAVE_AMVIS
-//      for (unsigned int i=0; i<arrowAMVis.size(); i++)
-//        arrowAMVis[i]->writeBodyFile();
-//#endif
+      //#ifdef HAVE_AMVIS
+      //      for (unsigned int i=0; i<arrowAMVis.size(); i++)
+      //        arrowAMVis[i]->writeBodyFile();
+      //#endif
       Link::initPlot();
     }
   }
@@ -219,27 +334,27 @@ namespace MBSim {
     contour.push_back(contour_);
   }
 
-//#ifdef HAVE_AMVIS
-//  void LinkMechanics::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
-//    assert(ID >= 0);
-//    assert(ID < 2);
-//    arrowAMVis.push_back(arrow);
-//    arrowAMVisScale.push_back(scale);
-//    arrowAMVisID.push_back(ID);
-//    arrowAMVisUserFunctionColor.push_back(funcColor);
-//    arrowAMVisMoment.push_back(false);
-//  }
-//
-//  void LinkMechanics::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
-//    assert(ID >= 0);
-//    assert(ID < 2);
-//    arrowAMVis.push_back(arrow);
-//    arrowAMVisScale.push_back(scale);
-//    arrowAMVisID.push_back(ID);
-//    arrowAMVisUserFunctionColor.push_back(funcColor);
-//    arrowAMVisMoment.push_back(true);
-//  }
-//#endif
+  //#ifdef HAVE_AMVIS
+  //  void LinkMechanics::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
+  //    assert(ID >= 0);
+  //    assert(ID < 2);
+  //    arrowAMVis.push_back(arrow);
+  //    arrowAMVisScale.push_back(scale);
+  //    arrowAMVisID.push_back(ID);
+  //    arrowAMVisUserFunctionColor.push_back(funcColor);
+  //    arrowAMVisMoment.push_back(false);
+  //  }
+  //
+  //  void LinkMechanics::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
+  //    assert(ID >= 0);
+  //    assert(ID < 2);
+  //    arrowAMVis.push_back(arrow);
+  //    arrowAMVisScale.push_back(scale);
+  //    arrowAMVisID.push_back(ID);
+  //    arrowAMVisUserFunctionColor.push_back(funcColor);
+  //    arrowAMVisMoment.push_back(true);
+  //  }
+  //#endif
 
 }
 

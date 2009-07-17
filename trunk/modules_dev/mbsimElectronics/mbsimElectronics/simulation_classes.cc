@@ -95,6 +95,7 @@ void Diode::updateh(double t) {
   double slope=1e4;
   double Is = (branch->getCurrent()(0) >= 0) ? 0 : slope*branch->getCurrent()(0);
   h[0] -= trans(branch->getJacobian())*Is; // TODO Vorzeichen?
+  hLink[0] -= trans(branch->getJacobian())*Is; // TODO Vorzeichen?
 }
 
 Switch::Switch(const string &name) : ElectronicLink(name) {
@@ -114,6 +115,7 @@ void Switch::updateh(double t) {
     U = Is>0?-U0:U0;
   U*=-1;
   h[0] -= trans(branch->getJacobian())*U; // TODO Vorzeichen?
+  hLink[0] -= trans(branch->getJacobian())*U; // TODO Vorzeichen?
 }
 
 Resistor::Resistor(const string &name) : ElectronicLink(name), R(1) {
@@ -124,6 +126,7 @@ Resistor::Resistor(const string &name) : ElectronicLink(name), R(1) {
 
 void Resistor::updateh(double t) {
   h[0] -= trans(branch->getJacobian())*R*branch->getCurrent(); // TODO Vorzeichen?
+  hLink[0] -= trans(branch->getJacobian())*R*branch->getCurrent(); // TODO Vorzeichen?
 }
 
 double Resistor::computeU(double t) {
@@ -138,6 +141,7 @@ Capacitor::Capacitor(const string &name) : ElectronicLink(name), C(1) {
 
 void Capacitor::updateh(double t) {
   h[0] -= trans(branch->getJacobian())*branch->getCharge()/C; // TODO Vorzeichen?
+  hLink[0] -= trans(branch->getJacobian())*branch->getCharge()/C; // TODO Vorzeichen?
 }
 
 VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
@@ -148,15 +152,18 @@ VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
 
 void VoltageSource::updateh(double t) {
   h[0] -= trans(branch->getJacobian())*(*voltageSignal)(t);
+  hLink[0] -= trans(branch->getJacobian())*(*voltageSignal)(t);
 }
 
 void ElectronicLink::init() {
   h.push_back(fmatvec::Vec(branch->getJacobian().cols()));
+  hLink.push_back(fmatvec::Vec(branch->getJacobian().cols()));
 }
 
-void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, int j) {
+void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j) {
   fmatvec::Index I = fmatvec::Index(branch->getParent()->gethInd(parent,j),branch->getParent()->gethInd(parent,j)+branch->getJacobian().cols()-1);
   h[0]>>hParent(I);
+  hLink[0]>>hLinkParent(I);
 } 
 
 void Branch::init() {

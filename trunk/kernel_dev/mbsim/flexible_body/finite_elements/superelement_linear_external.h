@@ -31,7 +31,7 @@ namespace MBSim {
    * \brief superelement for linear models from external preprocessing.
    * \author Roland Zander
    * \date 2009-05-22 some references added (Thorsten Schindler)
-   * \todo fix proportional damping like in old kernel or suggesting implementation in flexible_body 
+   * \date 2009-07-16 fixed proportional damping (Thorsten Schindler)
    */
   class SuperElementLinearExternal : public DiscretizationInterface {
     public:
@@ -54,7 +54,7 @@ namespace MBSim {
  	   * \param alpha proportional coefficient for mass matrix
  	   * \param beta  proportional coefficient for stiffness matrix
 	   * */
-	  void setProportionalDamping(double alpha_,double beta_);
+	  void setProportionalDamping(double alpha_,double beta_) { alpha=alpha_; beta=beta_; }
 
       const fmatvec::SymMat& getMassMatrix() const {return M;}
       const fmatvec::Vec&    getGeneralizedForceVector() const {return h;}
