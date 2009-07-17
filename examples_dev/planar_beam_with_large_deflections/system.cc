@@ -3,6 +3,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/contours/flexible_band.h"
 #include "mbsim/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"

@@ -1,7 +1,10 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/contour.h"
+#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
@@ -71,6 +74,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
     body->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
+    body->setPlotFeature(energy, enabled);
+
     // Hollow cylinder
     RigidBody* body2 = new RigidBody("CylinderHollow");
     addObject(body2);
@@ -84,6 +89,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body2->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
     body2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
+    body2->setPlotFeature(energy, enabled);
+
     // Sphere
     RigidBody* body3 = new RigidBody("Sphere");
     addObject(body3);
@@ -96,6 +103,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     body3->setInertiaTensor(Theta);
     body3->setTranslation(new LinearTranslation("[1, 0; 0, 1; 0, 0]"));
     body3->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+
+    body3->setPlotFeature(energy, enabled);
 
 
   // Stopper
