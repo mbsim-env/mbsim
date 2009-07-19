@@ -869,7 +869,6 @@ namespace MBSim {
     updateW(t); 
     updateV(t); 
     updateG(t); 
-    //projectGeneralizedPositions(t);
   }
 
   void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {

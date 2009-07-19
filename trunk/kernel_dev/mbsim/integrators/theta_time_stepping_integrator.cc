@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Roland Zander, Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,19 +13,17 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #include <config.h>
-#include "theta_time_stepping_integrator.h"
-#include <mbsim/dynamic_system_solver.h>
 
-#include <mbsim/utils/eps.h>
+#include "mbsim/integrators/theta_time_stepping_integrator.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/eps.h"
+
 #include <cmath>
 
 #ifndef NO_ISO_14882
@@ -36,10 +34,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), driftCompensation(false) {
-  }
+  ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), driftCompensation(false) {}
 
   void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
+
+    // initialisation
     assert(dtPlot >= dt);
 
     double  t = tStart;
@@ -57,12 +56,10 @@ namespace MBSim {
     Vec u(z(Iu));
     Vec x(z(Ix));
 
-    if(z0.size())
-      z = z0;
-    else
-      system.initz(z);
+    if(z0.size()) z = z0;
+    else system.initz(z);
 
-    double tPlot = 0.0;
+    double tPlot = 0.;
 
     ofstream integPlot((name + ".plt").c_str());
 
@@ -71,7 +68,7 @@ namespace MBSim {
     cout.setf(ios::scientific, ios::floatfield);
 
     int step = 0;
-    int stepPlot =(int) (dtPlot/dt + 0.5);
+    int stepPlot = (int)(dtPlot/dt + 0.5);
 
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
@@ -81,83 +78,53 @@ namespace MBSim {
 
     double s0 = clock();
     double time = 0;
-    while(t<=tEnd+dt/2.) {
+
+    while(t<=tEnd+dt/2.) { // time loop
       integrationSteps++;
-      if( (step*stepPlot - integrationSteps) < 0) {
-	step++;
-	//system.plot(t,dt);
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
-	tPlot += dtPlot;
+      if((step*stepPlot - integrationSteps) < 0) {
+        step++;
+        system.plot(z,t,dt);
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot << t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() << endl;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << "\r" << flush;
+        tPlot += dtPlot;
       }
 
-      t += dt;
-
-   //   q += system.deltaq(z,t,dt);
-      //q += system.getT()*(u)*dt;
-
-      // TODO T updaten (passiert sonst in deltaq)
-      system.updateStateDependentVariables(t);
-      system.updateg(t);
-      //system.checkActiveConstraints();
-      system.updategd(t);
-      system.updateT(t); 
-      system.updateM(t); 
-      system.updateh(t); 
-      system.updateW(t); 
+      double te = t + dt;
+      t += theta*dt;
+      system.update(z,t); // TODO G
 
       SymMat M = system.getM().copy();
       Mat W = system.getW().copy();
       Vec h = system.geth().copy();
       Mat T = system.getT().copy();
-      //system.updateJh(t);
-      //Mat Jh = system.getJh();
-
-      // Global computation of Jacobian only for validation of function getJh
-//Mat Jh(nu,n);
-//static const double eps = epsroot();
-//for(int i=0;i<n;i++) {
-//  double zSave = z(i);
-//  z(i) += eps;
-//  system.updateKinematics(t);
-//  system.updateLinksStage1(t);
-//  system.updateLinksStage2(t);
-//  system.updateh(t); 
-//  Vec hm = system.geth();
-//  Jh.col(i) << (hm-h)/(eps);
-//  z(i) = zSave;
-//}
+      
+      system.updatedhdq(t);
+      system.updatedhdu(t);
+      Mat dhdq = system.getdhdq();
+      Mat dhdu = system.getdhdu();
 
       Vector<int> ipiv(M.size());
-      SqrMat luMeff;// = SqrMat(facLU(M - theta*dt*Jh(Index(0,nu-1),Index(nq,nq+nu-1)) - theta*theta*dt*dt*Jh(Index(0,nu-1),Index(0,nq-1))*T,ipiv));
+      SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
       SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,W,ipiv));
       system.getGs().resize();
       system.getGs() << Geff;
-      //system.getb() = trans(W)*(slvLUFac(luMeff,h+theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt,ipiv) );
+      system.getb() = trans(W)*slvLUFac(luMeff,h+theta*dhdq*T*u*dt,ipiv);
 
       iter = system.solveImpacts(dt);
-      if(iter>maxIter)
-	maxIter = iter;
+      if(iter>maxIter) maxIter = iter;
       sumIter += iter;
 
       system.updater(t);
-      //Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*Jh(Index(0,nu-1),Index(0,nq-1))*T*u*dt*dt,ipiv);
-      //q += T*(u+theta*du)*dt;
-      //u += du;
+      Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*dhdq*T*u*dt*dt,ipiv);
+      q += T*(u+theta*du)*dt;
+      u += du;
       x += system.deltax(z,t,dt);
+      t = te;
 
-//if(abs(nrmInf(Jh)-nrmInf(Jh2)) > 1e-10) {
-//cout << "system. Jh = " << Jh2 << endl;
-//cout << "numeric.Jh = " << Jh << endl;
-//  cout << "      diff = " << Jh - Jh2 << endl;
-//}
-
-      if(driftCompensation)
-	system.projectGeneralizedPositions(t);
+      if(driftCompensation) system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();
@@ -174,3 +141,4 @@ namespace MBSim {
   }
 
 }
+

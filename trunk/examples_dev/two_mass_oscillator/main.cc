@@ -4,30 +4,18 @@
 using namespace std;
 using namespace MBSim;
 
-int main (int argc, char* argv[])
-{
+int main (int argc, char* argv[]) {
   // build single modules
   DynamicSystemSolver *sys = new System("TS");
 
   // add modules to overall dynamical system
   sys->init();
 
-  LSODEIntegrator integrator;
-  // RKSuiteIntegrator integrator;
-  // RADAU5Integrator integrator;
-  // TimeSteppingIntegrator integrator;
-  // integrator.setdt(1e-4);
-  //
-  //  DOPRI5Integrator integrator;
-
+  // integration
+  ThetaTimeSteppingIntegrator integrator;
+  integrator.setdt(1e-4);
   integrator.setEndTime(4.0);
   integrator.setPlotStepSize(1e-3);
-
-  //  TimeSteppingIntegrator integrator;
-  //   integrator.setdt(1e-3);
-  //   integrator.setdtPlot(1e-2);
-  //   integrator.settEnd(2.0);
-  //
 
   integrator.integrate(*sys);
   cout << "finished"<<endl;

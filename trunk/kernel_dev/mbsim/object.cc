@@ -41,33 +41,33 @@ namespace MBSim {
   Object::~Object() {}
 
   void Object::updatedhdq(double t) {
-    Vec h0 = h.copy();
+    Vec h0 = hObject.copy();
     for(int i=0;i<qSize;i++) {
       double qi = q(i);
       q(i) += epsroot();
       updateh(t);
-      dhdq.col(i) = (h-h0)/epsroot();
+      dhdq.col(i) = (hObject-h0)/epsroot();
       q(i) = qi;
     }
   }
 
   void Object::updatedhdu(double t) {
-    Vec h0 = h.copy();
+    Vec h0 = hObject.copy();
     for(int i=0;i<uSize[0];i++) {
       double ui = u(i);
       q(i) += epsroot();
       updateh(t);
-      dhdu.col(i) = (h-h0)/epsroot();
+      dhdu.col(i) = (hObject-h0)/epsroot();
       u(i) = ui;
     }
   }
 
   void Object::updatedhdt(double t) {
-    Vec h0 = h.copy();
+    Vec h0 = hObject.copy();
     double t0 = t;
     t += epsroot();
     updateh(t);
-    dhdt = (h-h0)/epsroot();
+    dhdt = (hObject-h0)/epsroot();
     t = t0;
   }
 
