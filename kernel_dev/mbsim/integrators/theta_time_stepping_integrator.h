@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Roland Zander, Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,41 +13,64 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *   rzander@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef _MU_TIME_STEPPING_INTEGRATOR_H_ 
 #define _MU_TIME_STEPPING_INTEGRATOR_H_
 
 #include "fmatvec.h"
-#include "integrator.h"
+#include "mbsim/integrators/integrator.h"
 
 namespace MBSim {
 
+  /** 
+   * brief half-explicit time-stepping integrator of first order
+   * \author Roland Zander
+   * \date 2009-07-18 new kernel_dev (Thorsten Schindler)
+   */
   class ThetaTimeSteppingIntegrator : public Integrator { 
+    public:
+      /**
+       * \brief constructor
+       */
+      ThetaTimeSteppingIntegrator();
+
+      /**
+       * \brief destructor
+       */
+      virtual ~ThetaTimeSteppingIntegrator() {}
+
+      /* INHERITED INTERFACE OF INTEGRATOR */
+      void integrate(DynamicSystemSolver& system);
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      void setdt(double dt_) { dt = dt_; }
+      void settheta(double theta_ ) { theta  = theta_; }
+      void setDriftCompensation(bool dc) { driftCompensation = dc; }
+      /***************************************************/
 
     private:
-
+      /**
+       * \brief step size
+       */
       double dt;
+
+      /**
+       * \brief convex combination parameter between explicit (0) and implicit (1) Euler scheme
+       */
       double theta;
+
+      /**
+       * \brief flag for drift compensation
+       */
       bool driftCompensation;
-
-    public:
-
-      ThetaTimeSteppingIntegrator();
-      ~ThetaTimeSteppingIntegrator() {}
-
-      void setdt(double dt_) {dt = dt_;}
-      void settheta(double theta_ ) {theta  = theta_;}
-      void integrate(DynamicSystemSolver& system);
-      void setDriftCompensation(bool dc) {driftCompensation = dc;}
   };
 
 }
 
-#endif
+#endif /* _MU_TIME_STEPPING_INTEGRATOR_H_ */
+
