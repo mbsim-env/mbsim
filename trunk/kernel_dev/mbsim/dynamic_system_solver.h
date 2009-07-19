@@ -174,6 +174,13 @@ namespace MBSim {
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
+      const fmatvec::Mat& getWParent() const { return WParent; }
+      const fmatvec::Mat& getVParent() const { return VParent; }
+      const fmatvec::Vec& getlaParent() const { return laParent; }
+      const fmatvec::Vec& getgdParent() const { return gdParent; }
+      const fmatvec::Vec& getresParent() const { return resParent; }
+      const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
+
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
       /***************************************************/
@@ -372,7 +379,14 @@ namespace MBSim {
        * \brief Decide, whether the model-hierarchy should be reorganized.
        * \param true for reorganisation, false otherwise
        */
-      void setReorganizeHierarchy(bool flag) {reorganizeHierarchy = flag;}
+      void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
+      
+      /**
+       * \brief references to external state
+       * \param external state
+       */
+      void updatezRef(const fmatvec::Vec &ext);
+
 
     protected:
       /**
@@ -609,12 +623,6 @@ namespace MBSim {
        */
       bool reorganizeHierarchy;
       
-      /**
-       * \brief references to external state
-       * \param external state
-       */
-      void updatezRef(const fmatvec::Vec &ext);
-
       /**
        * \brief references to differentiated external state
        * \param differentiated external state

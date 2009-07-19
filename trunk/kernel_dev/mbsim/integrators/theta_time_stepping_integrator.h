@@ -30,6 +30,7 @@ namespace MBSim {
    * brief half-explicit time-stepping integrator of first order
    * \author Roland Zander
    * \date 2009-07-18 new kernel_dev (Thorsten Schindler)
+   * \date 2009-07-19 Delassus matrix / split of update (Thorsten Schindler)
    */
   class ThetaTimeSteppingIntegrator : public Integrator { 
     public:
@@ -52,6 +53,14 @@ namespace MBSim {
       void settheta(double theta_ ) { theta  = theta_; }
       void setDriftCompensation(bool dc) { driftCompensation = dc; }
       /***************************************************/
+
+      /**
+       * \brief update of dynamic system necessary values concerning theta time stepping integrator
+       * \param dynamic system
+       * \param state vector
+       * \param time
+       */
+      void update(DynamicSystemSolver& system, const fmatvec::Vec& z, double t);
 
     private:
       /**

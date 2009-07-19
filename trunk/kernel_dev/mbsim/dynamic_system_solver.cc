@@ -280,10 +280,7 @@ namespace MBSim {
     }
     else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
     else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
-    else {
-      cout << "Error: unknown contact solver" << endl;
-      throw 5;
-    }
+    else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
     // impact solver specific settings
     cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
@@ -294,10 +291,7 @@ namespace MBSim {
     }
     else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
     else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
-    else {
-      cout << "Error: unknown impact solver" << endl;
-      throw 5;
-    }
+    else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
 
     cout << "  initialising plot-files ..." << endl;
     initPlot();
@@ -686,8 +680,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::preInteg(DynamicSystemSolver *parent) {
-    cout << "preIntegrator not implemented yet." << endl;
-    throw(123);
+    throw new MBSimError("ERROR (DynamicSystemSolver::preInteg()): Preintegrator not implemented yet.");
     //    if(preIntegrator) {
     ////      setProjectDirectory(name+".preInteg");
     //      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
@@ -1160,7 +1153,7 @@ namespace MBSim {
     if(object_) addObject(object_);
     else if(link_) addLink(link_);
     else if(ood_) addOrderOneDynamics(ood_);
-    else{ cout << "Error: DynamicSystemSolver: addElement(): No such type of Element to add!"<<endl; throw 50;}
+    else{ throw new MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");}
   }
 
   Element* DynamicSystemSolver::getElement(const string &name) {
@@ -1307,16 +1300,10 @@ namespace MBSim {
       //     }
       //     rFactor.init(rFac);
 
-      cout << "Global r-Factor strategy not currently not available." << endl;
-      throw 5;
+      throw new MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
     }
-    else if(strategy == local) {
-      Group::updaterFactors();
-    } 
-    else {
-      cout << "Unknown strategy" << endl;
-      throw 5;
-    }
+    else if(strategy == local) Group::updaterFactors();
+    else throw new MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {

@@ -33,6 +33,7 @@ namespace MBSim {
 
   void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
 
+    // initialisation
     assert(dtPlot >= dt);
 
     double t = tStart;
@@ -69,17 +70,17 @@ namespace MBSim {
     double s0 = clock();
     double time = 0;
 
-    while(t<tEnd) {
+    while(t<tEnd) { // time loop
       integrationSteps++;
-      if( (step*stepPlot - integrationSteps) < 0) {
+      if((step*stepPlot - integrationSteps) < 0) {
         step++;
+        if(driftCompensation) system.projectGeneralizedPositions(t);
         system.plot(z,t,dt);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
         s0 = s1; 
         integPlot<< t << " " << dt << " " <<  iter << " " << time << " "<<system.getlaSize() <<endl;
-        if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << iter <<  "\r"<<flush;
         tPlot += dtPlot;
       }
 
@@ -96,9 +97,6 @@ namespace MBSim {
 
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
-
-      if(driftCompensation) 
-        system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();

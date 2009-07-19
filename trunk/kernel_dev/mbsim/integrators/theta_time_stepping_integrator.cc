@@ -36,12 +36,47 @@ namespace MBSim {
 
   ThetaTimeSteppingIntegrator::ThetaTimeSteppingIntegrator() : dt(1e-3), theta(0.5), driftCompensation(false) {}
 
+  void ThetaTimeSteppingIntegrator::update(DynamicSystemSolver& system, const Vec& z, double t) {
+    if(system.getq()()!=z()) system.updatezRef(z);
+
+    system.updateStateDependentVariables(t);
+    system.updateg(t);
+    system.checkActiveg();
+    system.checkActiveLinks();
+    if(system.gActiveChanged()) {
+      system.checkAllgd(); // TODO necessary?
+      system.calcgdSizeActive();
+      system.calclaSize();
+      system.calcrFactorSize();
+
+      system.setlaIndDS(system.getlaInd());
+
+      system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
+      system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
+      system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
+      system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
+      system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
+      system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
+    }
+    system.updategd(t);
+
+    system.updateT(t); 
+    system.updateJacobians(t);
+    system.updateh(t); 
+    system.updateM(t); 
+    system.facLLM(); 
+    system.updateW(t); 
+    system.updateV(t); 
+    system.updatedhdq(t);
+    system.updatedhdu(t); 
+  }
+
   void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
 
     // initialisation
     assert(dtPlot >= dt);
 
-    double  t = tStart;
+    double t = tStart;
 
     int nq = system.getqSize();
     int nu = system.getuSize();
@@ -83,6 +118,7 @@ namespace MBSim {
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
+        if(driftCompensation) system.projectGeneralizedPositions(t);
         system.plot(z,t,dt);
         double s1 = clock();
         time += (s1-s0)/CLOCKS_PER_SEC;
@@ -94,23 +130,20 @@ namespace MBSim {
 
       double te = t + dt;
       t += theta*dt;
-      system.update(z,t); // TODO G
+      update(system,z,t);
 
-      SymMat M = system.getM().copy();
-      Mat W = system.getW().copy();
-      Vec h = system.geth().copy();
       Mat T = system.getT().copy();
-      
-      system.updatedhdq(t);
-      system.updatedhdu(t);
+      SymMat M = system.getM().copy();
+      Vec h = system.geth().copy();
+      Mat W = system.getW().copy();
+      Mat V = system.getV().copy();
       Mat dhdq = system.getdhdq();
       Mat dhdu = system.getdhdu();
 
       Vector<int> ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
-      SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,W,ipiv));
-      system.getGs().resize();
-      system.getGs() << Geff;
+      SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,V,ipiv));
+      system.getGs().resize() << Geff;
       system.getb() = trans(W)*slvLUFac(luMeff,h+theta*dhdq*T*u*dt,ipiv);
 
       iter = system.solveImpacts(dt);
@@ -118,13 +151,11 @@ namespace MBSim {
       sumIter += iter;
 
       system.updater(t);
-      Vec du = slvLUFac(luMeff,h * dt + W*system.getla() + theta*dhdq*T*u*dt*dt,ipiv);
+      Vec du = slvLUFac(luMeff,h * dt + V*system.getla() + theta*dhdq*T*u*dt*dt,ipiv);
       q += T*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);
       t = te;
-
-      if(driftCompensation) system.projectGeneralizedPositions(t);
     }
 
     integPlot.close();
