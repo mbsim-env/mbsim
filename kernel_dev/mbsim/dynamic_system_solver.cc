@@ -585,27 +585,18 @@ namespace MBSim {
 
   void DynamicSystemSolver::updateh(double t) {
     h.init(0);
-    hObject(0);
-    hLink(0);
+    hObject.init(0);
+    hLink.init(0);
     Group::updateh(t);
   }
 
-  void DynamicSystemSolver::updatedhdq(double t) {
-    dhdqObjectParent.init(0);
-    dhdqLinkParent.init(0);
-    Group::updatedhdq(t);
-  }
-
-  void DynamicSystemSolver::updatedhdu(double t) {
-    dhduObjectParent.init(0);
-    dhduLinkParent.init(0);
-    Group::updatedhdu(t);
-  }
-
-  void DynamicSystemSolver::updatedhdt(double t) {
-    dhdtObjectParent.init(0);
-    dhdtLinkParent.init(0);
-    Group::updatedhdt(t);
+  void DynamicSystemSolver::updatedhdz(double t) {
+    h.init(0);
+    hObject.init(0);
+    hLink.init(0);
+    dhdqObject.init(0);
+    dhdqLink.init(0);
+    Group::updatedhdz(t);
   }
 
   void DynamicSystemSolver::updateM(double t) {

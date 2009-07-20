@@ -76,23 +76,11 @@ namespace MBSim {
       virtual void updateh(double t) = 0;
 
       /**
-       * \brief updates Jacobian for implicit integration regarding positions
+       * \brief updates Jacobian for implicit integration regarding state
        * \param simulation time
        */
-      virtual void updatedhdq(double t) = 0;
+      virtual void updatedhdz(double t) = 0;
       
-      /**
-       * \brief updates Jacobian for implicit integration regarding velocities
-       * \param simulation time
-       */
-      virtual void updatedhdu(double t) = 0;
-      
-      /**
-       * \brief updates Jacobian for implicit integration regarding time
-       * \param simulation time
-       */
-      virtual void updatedhdt(double t) = 0;
-
       /**
        * \brief update mass matrix
        * \param simulation time
@@ -212,10 +200,20 @@ namespace MBSim {
       virtual const fmatvec::Vec& getq() const = 0; 
       
       /**
+       * \return positions
+       */
+      virtual fmatvec::Vec& getq() = 0; 
+      
+      /**
        * \return velocities
        */
       virtual const fmatvec::Vec& getu() const = 0; 
 
+      /**
+       * \return velocities
+       */
+      virtual fmatvec::Vec& getu() = 0; 
+      
       /**
        * \brief update JACOBIAN for inverse kinetics
        * \param simulation time
@@ -308,23 +306,11 @@ namespace MBSim {
       virtual void updateh(double t) = 0;
 
       /**
-       * \brief updates Jacobian for implicit integration regarding positions
+       * \brief updates Jacobian for implicit integration regarding state
        * \param simulation time
        */
-      virtual void updatedhdq(double t) = 0;
+      virtual void updatedhdz(double t) = 0;
       
-      /**
-       * \brief updates Jacobian for implicit integration regarding velocities
-       * \param simulation time
-       */
-      virtual void updatedhdu(double t) = 0;
-      
-      /**
-       * \brief updates Jacobian for implicit integration regarding time
-       * \param simulation time
-       */
-      virtual void updatedhdt(double t) = 0;
-
       /*!
        * \brief update relative distance
        * \param simulation time

@@ -68,8 +68,8 @@ namespace MBSim {
     Vec WF = m*ds->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
-    h += trans(frame[0]->getJacobianOfTranslation())*WF +  trans(frame[0]->getJacobianOfRotation())*WM;
-    hObject += trans(frame[0]->getJacobianOfTranslation())*WF +  trans(frame[0]->getJacobianOfRotation())*WM;
+    h += trans(frame[0]->getJacobianOfTranslation())*WF + trans(frame[0]->getJacobianOfRotation())*WM;
+    hObject += trans(frame[0]->getJacobianOfTranslation())*WF + trans(frame[0]->getJacobianOfRotation())*WM;
   }
 
   void RigidBody::calcqSize() {
