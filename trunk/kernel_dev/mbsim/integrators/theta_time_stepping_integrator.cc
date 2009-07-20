@@ -66,7 +66,7 @@ namespace MBSim {
     system.updateM(t); 
     system.facLLM(); 
     system.updateW(t); 
-    system.updateV(t); 
+    system.updateV(t);
   }
 
   void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {

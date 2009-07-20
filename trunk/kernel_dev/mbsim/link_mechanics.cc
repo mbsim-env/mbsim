@@ -32,18 +32,23 @@ namespace MBSim {
 
   void LinkMechanics::updatedhdz(double t) {
     /***************************** frames ***************************************/
+    vector<Vec> hLink0, h0;
+    for(unsigned int i=0; i<frame.size(); i++) { // save old values
+      hLink0.push_back(hLink[i].copy()); 
+      h0.push_back(h[i].copy());
+    }
+    if(frame.size()) updateh(t);
+    vector<Vec> hLinkEnd, hEnd;
+    for(unsigned int i=0; i<frame.size(); i++) { // save with correct state
+      hLinkEnd.push_back(hLink[i].copy());
+      hEnd.push_back(h[i].copy());
+    }
+
     for(unsigned int i=0; i<frame.size(); i++) {
-      Vec hLink0 = hLink[i].copy(); // save old values
-      Vec h0 = h[i].copy();
-
-      updateh(t); // update with correct state
-      Vec hLinkEnd = hLink[i].copy();
-      Vec hEnd = h[i].copy();
-
       /****************** velocity dependent calculations ***********************/
       for(int j=0; j<frame[i]->getJacobianOfTranslation().cols(); j++) {
-        hLink[i] = hLink0; // set to old values
-        h[i] = h0;
+        hLink[i] = hLink0[i]; // set to old values
+        h[i] = h0[i];
 
         double uParentj = frame[i]->getParent()->getu()(j); // save correct position
 
@@ -52,15 +57,15 @@ namespace MBSim {
         updategd(t);
         updateh(t);
 
-        dhdu[i].col(j) += (hLink[i]-hLinkEnd)/epsroot();
+        dhdu[i].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
         frame[i]->getParent()->getu()(j) = uParentj;
       }
 
       /****************** position dependent calculations ***********************/
       if(frame[i]->getJacobianOfTranslation().cols() > 0) { // Jacobian using disturbed positions
         for(int j=0; j<frame[i]->getParent()->getq().size(); j++) {
-          hLink[i] = hLink0; // set to old values
-          h[i] = h0;
+          hLink[i] = hLink0[i]; // set to old values
+          h[i] = h0[i];
 
           double qParentj = frame[i]->getParent()->getq()(j); // save correct position
 
@@ -72,14 +77,14 @@ namespace MBSim {
           updateJacobians(t);
           updateh(t);
 
-          dhdq[i].col(j) += (hLink[i]-hLinkEnd)/epsroot();
+          dhdq[i].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
           frame[i]->getParent()->getq()(j) = qParentj;
         }
       }
 
       /******************** time dependent calculations ***************************/
-      hLink[i] = hLink0; // set to old values
-      h[i] = h0;
+      hLink[i] = hLink0[i]; // set to old values
+      h[i] = h0[i];
 
       double t0 = t; // save correct position
 
@@ -91,32 +96,37 @@ namespace MBSim {
       updateJacobians(t);
       updateh(t);
 
-      dhdt[i] += (hLink[i]-hLinkEnd)/epsroot();
+      dhdt[i] += (hLink[i]-hLinkEnd[i])/epsroot();
       t = t0;
+    }
 
-      /************************ back to initial state ******************************/
+    /************************ back to initial state ******************************/
+    for(unsigned int i=0; i<frame.size(); i++) {
       frame[i]->getParent()->updateStateDependentVariables(t); 
       updateg(t);
       updategd(t);
       frame[i]->getParent()->updateT(t); 
       updateJacobians(t);
-      hLink[i] = hLinkEnd;
-      h[i] = hEnd;
+      hLink[i] = hLinkEnd[i];
+      h[i] = hEnd[i];
     }
 
     /**************************** contoures ****************************************/
-    for(unsigned int i=0; i<contour.size(); i++) {
-      Vec hLink0 = hLink[frame.size()+i].copy(); // save old values
-      Vec h0 = h[frame.size()+i].copy();
+    for(unsigned int i=0; i<contour.size(); i++) { // save old values
+      hLink0.push_back(hLink[frame.size()+i].copy());
+      h0.push_back(h[frame.size()+i].copy());
+    }
+    if(contour.size()) updateh(t); 
+    for(unsigned int i=0; i<contour.size(); i++) { // save with correct state
+      hLinkEnd.push_back(hLink[frame.size()+i].copy());
+      hEnd.push_back(h[frame.size()+i].copy());
+    }
 
-      updateh(t); // update with correct state
-      Vec hLinkEnd = hLink[frame.size()+i].copy();
-      Vec hEnd = h[frame.size()+i].copy();
-
+    for(unsigned int i=0; i<contour.size(); i++) { 
       /****************** velocity dependent calculations *************************/
       for(int j=0; j<contour[i]->getReferenceJacobianOfTranslation().cols(); j++) {
-        hLink[frame.size()+i] = hLink0; // set to old values
-        h[frame.size()+i] = h0;
+        hLink[frame.size()+i] = hLink0[frame.size()+i]; // set to old values
+        h[frame.size()+i] = h0[frame.size()+i];
 
         double uParentj = contour[i]->getParent()->getu()(j); // save correct position
 
@@ -125,15 +135,15 @@ namespace MBSim {
         updategd(t);
         updateh(t);
 
-        dhdu[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
+        dhdu[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd[frame.size()+i])/epsroot();
         contour[i]->getParent()->getu()(j) = uParentj;
       }
 
       /****************** position dependent calculations *************************/
       if(contour[i]->getReferenceJacobianOfTranslation().cols() > 0) {
         for(int j=0; j<contour[i]->getParent()->getq().size(); j++) {
-          hLink[frame.size()+i] = hLink0; // set to old values
-          h[frame.size()+i] = h0;
+          hLink[frame.size()+i] = hLink0[frame.size()+i]; // set to old values
+          h[frame.size()+i] = h0[frame.size()+i];
 
           double qParentj = contour[i]->getParent()->getq()(j); // save correct position
 
@@ -144,14 +154,14 @@ namespace MBSim {
           contour[i]->getParent()->updateT(t); 
           updateJacobians(t);
           updateh(t);
-          dhdq[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
+          dhdq[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd[frame.size()+i])/epsroot();
           contour[i]->getParent()->getq()(j) = qParentj;
         }
       }
 
       /******************** time dependent calculations ***************************/
-      hLink[frame.size()+i] = hLink0; // set to old values
-      h[frame.size()+i] = h0;
+      hLink[frame.size()+i] = hLink0[frame.size()+i]; // set to old values
+      h[frame.size()+i] = h0[frame.size()+i];
 
       double t0 = t; // save correct position
 
@@ -163,17 +173,19 @@ namespace MBSim {
       updateJacobians(t);
       updateh(t);
 
-      dhdt[i] += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
+      dhdt[i] += (hLink[frame.size()+i]-hLinkEnd[frame.size()+i])/epsroot();
       t = t0;
+    }
 
-      /************************ back to initial state ******************************/
+    /************************ back to initial state ******************************/
+    for(unsigned int i=0; i<contour.size(); i++) {
       contour[i]->getParent()->updateStateDependentVariables(t); 
       updateg(t);
       updategd(t);
       contour[i]->getParent()->updateT(t); 
       updateJacobians(t);
-      hLink[i] = hLinkEnd;
-      h[i] = hEnd;
+      hLink[frame.size()+i] = hLinkEnd[frame.size()+i];
+      h[frame.size()+i] = hEnd[frame.size()+i];
     }
   }
 
