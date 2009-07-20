@@ -95,9 +95,9 @@ class ElectronicLink : public MBSim::Link, public ElectronicComponent {
     virtual void updateWRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateWRef): Not implemented!"); }
     virtual void updateVRef(const fmatvec::Mat& ref, int j) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updateVRef): Not implemented!"); }
     virtual void updaterRef(const fmatvec::Vec& ref) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updaterRef): Not implemented!"); }
-    virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updaterdhdqRef): Not implemented!"); }
-    virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updatedhduRef): Not implemented!"); }
-    virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updatedhdtRef): Not implemented!"); }
+    virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
+    virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
+    virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
     /*****************************************************/
 };
 

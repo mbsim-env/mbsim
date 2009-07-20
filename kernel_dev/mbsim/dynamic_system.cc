@@ -105,7 +105,7 @@ namespace MBSim {
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updatedhdz(t);
 
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
       (**i).updatedhdz(t);
   }
 

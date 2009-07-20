@@ -34,10 +34,8 @@ namespace MBSim {
 
   void LinearSpringDamper::updateh(double t) {
     la(0) = (cT*(g(0)-l0) + dT*gd(0));
-    if (dist>epsroot())
-      WF[0] = forceDir*la;
-    else
-      WF[0] = Vec(3, INIT, 0);
+    if(dist>epsroot()) WF[0] = forceDir*la;
+    else WF[0] = Vec(3, INIT, 0);
     WF[1] = -WF[0];
     for(unsigned int i=0; i<frame.size(); i++) {
       h[i] += trans(frame[i]->getJacobianOfTranslation())*WF[i];
