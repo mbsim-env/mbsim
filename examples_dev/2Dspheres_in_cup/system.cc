@@ -6,7 +6,6 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contours/frustum2d.h"
-//#include "mbsim/contour.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -31,7 +30,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = m*d*d/2.;
   Theta(2,2) = Theta(1,1);
   double mu  = 0.3;
-  bool out = false;
 
   // First Body
   RigidBody* body1 = new RigidBody("Body1");
@@ -89,8 +87,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Initial translation and rotation
   Vec q0(3), q1(1);
   q0(0) = 0.2;
-  if(out==true)
-    q0(0) = 0.;
   q0(1) = 1.7;
   body1->setInitialGeneralizedPosition(q0);
   q0(1) = .6;
@@ -142,8 +138,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Contour of Frustum
   Vec radii(2);
   radii(0) = 3*d, radii(1) = 5*d;
-  if(out==true)
-    radii(0) = 5*d, radii(1) = 3*d;
   Frustum2D* frustumcontour = new Frustum2D("Frustum");
   frustumcontour->setRadii(radii);
   frustumcontour->setHeight(5*d);
@@ -330,7 +324,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy4->setScaleFactor(1.);
   dummy4->setMinimalColorValue(0);
   dummy4->setMaximalColorValue(1);
-  dummy4->setStaticColor(0.3);
+  dummy4->setStaticColor(0.7);
   body4->setOpenMBVRigidBody(dummy4);
 
 #endif
