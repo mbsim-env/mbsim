@@ -296,7 +296,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dummy2->setScaleFactor(1.);
   dummy2->setMinimalColorValue(0);
   dummy2->setMaximalColorValue(1);
-  dummy2->setStaticColor(0.5);
+  dummy2->setStaticColor(0.3);
   body2->setOpenMBVRigidBody(dummy2);
 
   body3->getFrame("C")->enableOpenMBV(1.5*d);
