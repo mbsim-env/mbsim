@@ -24,10 +24,6 @@ using namespace std;
 
 extern bool rigidContact;
 
-// Example for using different frames and describing kinematics relativ to them and 
-// contact-pairings (Point-Line, Circle-Line, Plane-Sphere)
-// further information: cf eps-figure
-
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   Vec grav(3);
