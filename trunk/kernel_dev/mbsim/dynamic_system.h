@@ -66,9 +66,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
       virtual void updateh(double t); 
-      virtual void updatedhdq(double t);
-      virtual void updatedhdu(double t);
-      virtual void updatedhdt(double t);
+      virtual void updatedhdz(double t);
       virtual void updateM(double t);
       virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt); 
@@ -86,7 +84,9 @@ namespace MBSim {
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual int gethInd(DynamicSystem* sys, int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
+      virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
+      virtual fmatvec::Vec& getu() { return u; };
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };

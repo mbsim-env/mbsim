@@ -62,13 +62,11 @@ namespace MBSim {
 
     system.updateT(t); 
     system.updateJacobians(t);
-    system.updateh(t); 
+    system.updatedhdz(t);
     system.updateM(t); 
     system.facLLM(); 
     system.updateW(t); 
     system.updateV(t); 
-    system.updatedhdq(t);
-    system.updatedhdu(t); 
   }
 
   void ThetaTimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {

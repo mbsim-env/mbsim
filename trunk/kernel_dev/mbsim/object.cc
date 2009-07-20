@@ -40,35 +40,67 @@ namespace MBSim {
 
   Object::~Object() {}
 
-  void Object::updatedhdq(double t) {
-    Vec h0 = hObject.copy();
-    for(int i=0;i<qSize;i++) {
-      double qi = q(i);
-      q(i) += epsroot();
-      updateh(t);
-      dhdq.col(i) = (hObject-h0)/epsroot();
-      q(i) = qi;
-    }
-  }
+  void Object::updatedhdz(double t) {
+    Vec hObject0 = hObject.copy(); // save old values
+    Vec h0 = h.copy();
 
-  void Object::updatedhdu(double t) {
-    Vec h0 = hObject.copy();
-    for(int i=0;i<uSize[0];i++) {
-      double ui = u(i);
-      q(i) += epsroot();
+    updateh(t); // update with correct state
+    Vec hObjectEnd = hObject.copy();
+    Vec hEnd = h.copy();
+
+    /**************** velocity dependent calculations ********************/
+    for(int i=0;i<uSize[0];i++) {  
+      hObject = hObject0; // set to old values
+      h = h0;
+
+      double ui = u(i); // save correct position
+
+      u(i) += epsroot(); // update with disturbed positions assuming same active links
+      updateStateDependentVariables(t); 
       updateh(t);
-      dhdu.col(i) = (hObject-h0)/epsroot();
+
+      dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
       u(i) = ui;
     }
-  }
 
-  void Object::updatedhdt(double t) {
-    Vec h0 = hObject.copy();
-    double t0 = t;
-    t += epsroot();
+    /***************** position dependent calculations ********************/
+    for(int i=0;i<qSize;i++) { 
+      hObject = hObject0; // set to old values
+      h = h0;
+
+      double qi = q(i); // save correct position
+
+      q(i) += epsroot(); // update with disturbed positions assuming same active links
+      updateStateDependentVariables(t); 
+      updateT(t); 
+      updateJacobians(t);
+      updateh(t);
+
+      dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
+      q(i) = qi;
+    }
+
+    /******************* time dependent calculations **********************/
+    hObject = hObject0; // set to old values
+    h = h0;
+
+    double t0 = t; // save correct position
+
+    t += epsroot(); // update with disturbed positions assuming same active links
+    updateStateDependentVariables(t); 
+    updateT(t); 
+    updateJacobians(t);
     updateh(t);
-    dhdt = (hObject-h0)/epsroot();
+
+    dhdt = (hObject-hObjectEnd)/epsroot();
     t = t0;
+
+    /******************* back to initial state **********************/
+    updateStateDependentVariables(t); 
+    updateT(t); 
+    updateJacobians(t);
+    hObject = hObjectEnd;
+    h = hEnd;
   }
 
   void Object::updatedq(double t, double dt) {

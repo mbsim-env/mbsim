@@ -12,8 +12,9 @@ int main (int argc, char* argv[]) {
   sys->init();
 
   // integration
+  // TimeSteppingIntegrator integrator;
   ThetaTimeSteppingIntegrator integrator;
-  integrator.setdt(1e-4);
+  integrator.setStepSize(1e-4);
   integrator.setEndTime(4.0);
   integrator.setPlotStepSize(1e-3);
 

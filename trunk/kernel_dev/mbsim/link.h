@@ -60,9 +60,7 @@ namespace MBSim {
       virtual void updateW(double t) {};
       virtual void updateV(double t) {};
       virtual void updateh(double t) {};
-      virtual void updatedhdq(double t) {};
-      virtual void updatedhdu(double t) {};
-      virtual void updatedhdt(double t) {};
+      virtual void updatedhdz(double t) {};
       virtual void updateStopVector(double t) {}
       virtual void updateJacobians(double t) {}
       /***************************************************/

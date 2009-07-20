@@ -98,37 +98,15 @@ namespace MBSim {
       (**i).updateh(t);
   }
 
-  void DynamicSystem::updatedhdq(double t) {
+  void DynamicSystem::updatedhdz(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatedhdq(t);
+      (**i).updatedhdz(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdq(t);
+      (**i).updatedhdz(t);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhdq(t);
-  }
-
-  void DynamicSystem::updatedhdu(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatedhdu(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdu(t);
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhdu(t);
-  }
-
-  void DynamicSystem::updatedhdt(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatedhdt(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdt(t);
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhdt(t);
+      (**i).updatedhdz(t);
   }
 
   void DynamicSystem::updateM(double t) {

@@ -95,9 +95,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
-      virtual void updatedhdq(double t);
-      virtual void updatedhdu(double t);
-      virtual void updatedhdt(double t);
+      virtual void updatedhdz(double t);
       virtual void updateM(double t);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/

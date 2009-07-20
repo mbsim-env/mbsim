@@ -52,9 +52,7 @@ namespace MBSim {
       virtual ~LinkMechanics();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatedhdq(double t);
-      virtual void updatedhdu(double t);
-      virtual void updatedhdt(double t);
+      virtual void updatedhdz(double t);
       virtual void updater(double t);
       /***************************************************/
 

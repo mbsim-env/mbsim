@@ -28,79 +28,152 @@ using namespace std;
 
 namespace MBSim {
 
-  LinkMechanics::~LinkMechanics() { 
-  }
+  LinkMechanics::~LinkMechanics() {}
 
-  void LinkMechanics::updatedhdq(double t) {
+  void LinkMechanics::updatedhdz(double t) {
+    /***************************** frames ***************************************/
     for(unsigned int i=0; i<frame.size(); i++) {
-      Vec h0 = hLink[i].copy();
-      Vec qParent  = frame[i]->getParent()->getq();
-      if(frame[i]->getJacobianOfTranslation().cols() > 0) {
-        for(int j=0; j<qParent.size(); j++) {
-          double qParentj = qParent(j);
-          qParent(j) += epsroot();
-          updateh(t);
-          dhdq[i].col(j) += (hLink[i]-h0)/epsroot();
-          qParent(j) = qParentj;
-        }
-      }
-    }
-    for(unsigned int i=0; i<contour.size(); i++) {
-      Vec h0 = hLink[frame.size()+i].copy();
-      Vec qParent  = contour[i]->getParent()->getq();
-      if(contour[i]->getReferenceJacobianOfTranslation().cols() > 0) {
-        for(int j=0; j<qParent.size(); j++) {
-          double qParentj = qParent(j);
-          qParent(j) += epsroot();
-          updateh(t);
-          dhdq[i].col(j) += (hLink[i]-h0)/epsroot();
-          qParent(j) = qParentj;
-        }
-      }
-    }
-  }
+      Vec hLink0 = hLink[i].copy(); // save old values
+      Vec h0 = h[i].copy();
 
-  void LinkMechanics::updatedhdu(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) {
-      Vec h0 = hLink[i].copy();
-      Vec uParent  = frame[i]->getParent()->getu();
+      updateh(t); // update with correct state
+      Vec hLinkEnd = hLink[i].copy();
+      Vec hEnd = h[i].copy();
+
+      /****************** velocity dependent calculations ***********************/
       for(int j=0; j<frame[i]->getJacobianOfTranslation().cols(); j++) {
-        double uParentj = uParent(j);
-        uParent(j) += epsroot();
-        updateh(t);
-        dhdu[i].col(j) += (hLink[i]-h0)/epsroot();
-        uParent(j) = uParentj;
-      }
-    }
-    for(unsigned int i=0; i<contour.size(); i++) {
-      Vec h0 = hLink[frame.size()+i].copy();
-      Vec uParent  = contour[i]->getParent()->getu();
-      for(int j=0; j<contour[i]->getReferenceJacobianOfTranslation().cols(); j++) {
-        double uParentj = uParent(j);
-        uParent(j) += epsroot();
-        updateh(t);
-        dhdu[i].col(j) += (hLink[i]-h0)/epsroot();
-        uParent(j) = uParentj;
-      }
-    }
-  } 
+        hLink[i] = hLink0; // set to old values
+        h[i] = h0;
 
-  void LinkMechanics::updatedhdt(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) {
-      Vec h0 = hLink[i].copy();
-      double t0 = t;
-      t += epsroot();
+        double uParentj = frame[i]->getParent()->getu()(j); // save correct position
+
+        frame[i]->getParent()->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
+        frame[i]->getParent()->updateStateDependentVariables(t); 
+        updategd(t);
+        updateh(t);
+
+        dhdu[i].col(j) += (hLink[i]-hLinkEnd)/epsroot();
+        frame[i]->getParent()->getu()(j) = uParentj;
+      }
+
+      /****************** position dependent calculations ***********************/
+      if(frame[i]->getJacobianOfTranslation().cols() > 0) { // Jacobian using disturbed positions
+        for(int j=0; j<frame[i]->getParent()->getq().size(); j++) {
+          hLink[i] = hLink0; // set to old values
+          h[i] = h0;
+
+          double qParentj = frame[i]->getParent()->getq()(j); // save correct position
+
+          frame[i]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          frame[i]->getParent()->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          frame[i]->getParent()->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
+
+          dhdq[i].col(j) += (hLink[i]-hLinkEnd)/epsroot();
+          frame[i]->getParent()->getq()(j) = qParentj;
+        }
+      }
+
+      /******************** time dependent calculations ***************************/
+      hLink[i] = hLink0; // set to old values
+      h[i] = h0;
+
+      double t0 = t; // save correct position
+
+      t += epsroot(); // update with disturbed positions assuming same active links
+      frame[i]->getParent()->updateStateDependentVariables(t); 
+      updateg(t);
+      updategd(t);
+      frame[i]->getParent()->updateT(t); 
+      updateJacobians(t);
       updateh(t);
-      dhdt[i] += (hLink[i]-h0)/epsroot();
+
+      dhdt[i] += (hLink[i]-hLinkEnd)/epsroot();
       t = t0;
+
+      /************************ back to initial state ******************************/
+      frame[i]->getParent()->updateStateDependentVariables(t); 
+      updateg(t);
+      updategd(t);
+      frame[i]->getParent()->updateT(t); 
+      updateJacobians(t);
+      hLink[i] = hLinkEnd;
+      h[i] = hEnd;
     }
+
+    /**************************** contoures ****************************************/
     for(unsigned int i=0; i<contour.size(); i++) {
-      Vec h0 = hLink[frame.size()+i].copy();
-      double t0 = t;
-      t += epsroot();
+      Vec hLink0 = hLink[frame.size()+i].copy(); // save old values
+      Vec h0 = h[frame.size()+i].copy();
+
+      updateh(t); // update with correct state
+      Vec hLinkEnd = hLink[frame.size()+i].copy();
+      Vec hEnd = h[frame.size()+i].copy();
+
+      /****************** velocity dependent calculations *************************/
+      for(int j=0; j<contour[i]->getReferenceJacobianOfTranslation().cols(); j++) {
+        hLink[frame.size()+i] = hLink0; // set to old values
+        h[frame.size()+i] = h0;
+
+        double uParentj = contour[i]->getParent()->getu()(j); // save correct position
+
+        contour[i]->getParent()->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
+        contour[i]->getParent()->updateStateDependentVariables(t); 
+        updategd(t);
+        updateh(t);
+
+        dhdu[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
+        contour[i]->getParent()->getu()(j) = uParentj;
+      }
+
+      /****************** position dependent calculations *************************/
+      if(contour[i]->getReferenceJacobianOfTranslation().cols() > 0) {
+        for(int j=0; j<contour[i]->getParent()->getq().size(); j++) {
+          hLink[frame.size()+i] = hLink0; // set to old values
+          h[frame.size()+i] = h0;
+
+          double qParentj = contour[i]->getParent()->getq()(j); // save correct position
+
+          contour[i]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          contour[i]->getParent()->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          contour[i]->getParent()->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
+          dhdq[frame.size()+i].col(j) += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
+          contour[i]->getParent()->getq()(j) = qParentj;
+        }
+      }
+
+      /******************** time dependent calculations ***************************/
+      hLink[frame.size()+i] = hLink0; // set to old values
+      h[frame.size()+i] = h0;
+
+      double t0 = t; // save correct position
+
+      t += epsroot(); // update with disturbed positions assuming same active links
+      contour[i]->getParent()->updateStateDependentVariables(t); 
+      updateg(t);
+      updategd(t);
+      contour[i]->getParent()->updateT(t); 
+      updateJacobians(t);
       updateh(t);
-      dhdt[i] += (hLink[i]-h0)/epsroot();
+
+      dhdt[i] += (hLink[frame.size()+i]-hLinkEnd)/epsroot();
       t = t0;
+
+      /************************ back to initial state ******************************/
+      contour[i]->getParent()->updateStateDependentVariables(t); 
+      updateg(t);
+      updategd(t);
+      contour[i]->getParent()->updateT(t); 
+      updateJacobians(t);
+      hLink[i] = hLinkEnd;
+      h[i] = hEnd;
     }
   }
 

@@ -49,8 +49,8 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setdt(double dt_) { dt = dt_; }
-      void settheta(double theta_ ) { theta  = theta_; }
+      void setStepSize(double dt_) { dt = dt_; }
+      void setTheta(double theta_ ) { theta  = theta_; }
       void setDriftCompensation(bool dc) { driftCompensation = dc; }
       /***************************************************/
 
