@@ -228,7 +228,7 @@ namespace MBSim {
     laParent.resize(getlaSize());
     rFactorParent.resize(getlaSize());
     sParent.resize(getlaSize());
-    resParent.resize(getlaSize());
+    if(impactSolver==RootFinding) resParent.resize(getlaSize());
     gParent.resize(getgSize());
     gdParent.resize(getgdSize());
     zdParent.resize(getzSize());
@@ -269,6 +269,7 @@ namespace MBSim {
     updategRef(gParent);
     updategdRef(gdParent);
     updatelaRef(laParent);
+    if(impactSolver==RootFinding) updateresRef(resParent);
     updaterFactorRef(rFactorParent);
 
     // contact solver specific settings
@@ -839,7 +840,7 @@ namespace MBSim {
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updategdRef(gdParent(0,gdSize-1));
-      updateresRef(resParent(0,laSize-1));
+      if(impactSolver==RootFinding) updateresRef(resParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
     }
