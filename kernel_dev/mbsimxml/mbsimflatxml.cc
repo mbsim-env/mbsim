@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   incorporateNamespace(e, dummy);
 
   // create object for root element and check correct type
-  DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::createGroup(e));
+  DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
   if(dss==0) {
     cerr<<"ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'"<<endl;
     return 1;
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   incorporateNamespace(e, dummy);
 
   // create integrator
-  Integrator *integrator=ObjectFactory::createIntegrator(e);
+  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
   if(integrator==0) {
     cerr<<"ERROR! Cannot create the integrator object!"<<endl;
     return 1;

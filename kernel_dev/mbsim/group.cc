@@ -126,9 +126,9 @@ namespace MBSim {
         e->ValueStr()!=MBSIMNS"relativeOrientation" &&
         e->ValueStr()!=MBSIMNS"frame" &&
         e->ValueStr()!=MBSIMNS"contour" &&
-        ObjectFactory::createGroup(e)==0 &&
-        ObjectFactory::createObject(e)==0 &&
-        ObjectFactory::createLink(e)==0)
+        ObjectFactory::getInstance()->createGroup(e)==0 &&
+        ObjectFactory::getInstance()->createObject(e)==0 &&
+        ObjectFactory::getInstance()->createLink(e)==0)
       e=e->NextSiblingElement();
 
     if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
@@ -168,7 +168,7 @@ namespace MBSim {
     }
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
-      Contour *c=ObjectFactory::createContour(ec);
+      Contour *c=ObjectFactory::getInstance()->createContour(ec);
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
       Frame *refF=0;
@@ -184,19 +184,19 @@ namespace MBSim {
       e=e->NextSiblingElement();
     }
     Group *g;
-    while((g=ObjectFactory::createGroup(e))) {
+    while((g=ObjectFactory::getInstance()->createGroup(e))) {
       addDynamicSystem(g);
       g->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
     Object *o;
-    while((o=ObjectFactory::createObject(e))) {
+    while((o=ObjectFactory::getInstance()->createObject(e))) {
       addObject(o);
       o->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
     Link *l;
-    while((l=ObjectFactory::createLink(e))) {
+    while((l=ObjectFactory::getInstance()->createLink(e))) {
       addLink(l);
       l->initializeUsingXML(e);
       e=e->NextSiblingElement();

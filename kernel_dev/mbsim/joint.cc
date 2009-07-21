@@ -504,11 +504,11 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"direction");
       setForceDirection(Mat(ee->GetText()));
       ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory::createGeneralizedForceLaw(ee->FirstChildElement());
+      GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setForceLaw(gfl);
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory::createGeneralizedImpactLaw(ee->FirstChildElement());
+      GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       setImpactForceLaw(gifl);
       gifl->initializeUsingXML(ee->FirstChildElement());
     }
@@ -517,11 +517,11 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"direction");
       setMomentDirection(Mat(ee->GetText()));
       ee=ee->NextSiblingElement();
-      GeneralizedForceLaw *gfl=ObjectFactory::createGeneralizedForceLaw(ee->FirstChildElement());
+      GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setMomentLaw(gfl);
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
-      GeneralizedImpactLaw *gifl=ObjectFactory::createGeneralizedImpactLaw(ee->FirstChildElement());
+      GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       setImpactMomentLaw(gifl);
       gifl->initializeUsingXML(ee->FirstChildElement());
     }

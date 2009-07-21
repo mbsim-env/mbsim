@@ -463,7 +463,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"contour");
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
-      Contour *c=ObjectFactory::createContour(ec);
+      Contour *c=ObjectFactory::getInstance()->createContour(ec);
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
       Frame *refF=0;
@@ -485,13 +485,13 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
     setInertiaTensor(SymMat(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"translation");
-    Translation *trans=ObjectFactory::createTranslation(e->FirstChildElement());
+    Translation *trans=ObjectFactory::getInstance()->createTranslation(e->FirstChildElement());
     if(trans) {
       setTranslation(trans);
       trans->initializeUsingXML(e->FirstChildElement());
     }
     e=element->FirstChildElement(MBSIMNS"rotation");
-    Rotation *rot=ObjectFactory::createRotation(e->FirstChildElement());
+    Rotation *rot=ObjectFactory::getInstance()->createRotation(e->FirstChildElement());
     if(rot) {
       setRotation(rot);
       rot->initializeUsingXML(e->FirstChildElement());

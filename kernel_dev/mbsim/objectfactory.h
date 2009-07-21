@@ -9,22 +9,51 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
+#include <set>
 
 namespace MBSim {
 
 class ObjectFactory {
+  protected:
+    ObjectFactory() {}
+    virtual ~ObjectFactory() {}
+  private:
+    static ObjectFactory *instance;
+    std::set<ObjectFactory*> factories;
   public:
-    static Group* createGroup(TiXmlElement *element);
-    static Object* createObject(TiXmlElement *element);
-    static Translation* createTranslation(TiXmlElement *element);
-    static Rotation* createRotation(TiXmlElement *element);
-    static Link* createLink(TiXmlElement *element);
-    static Integrator* createIntegrator(TiXmlElement *element);
-    static GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
-    static GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
-    static FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
-    static FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
-    static Contour *createContour(TiXmlElement *element);
+    static ObjectFactory* getInstance() { return instance?instance:instance=new ObjectFactory; }
+    void registerObjectFactory(ObjectFactory *fac) { factories.insert(fac); }
+    void unregisterObjectFactory(ObjectFactory *fac) { factories.erase(fac); }
+
+    virtual Group* createGroup(TiXmlElement *element);
+    virtual Object* createObject(TiXmlElement *element);
+    virtual Translation* createTranslation(TiXmlElement *element);
+    virtual Rotation* createRotation(TiXmlElement *element);
+    virtual Link* createLink(TiXmlElement *element);
+    virtual Integrator* createIntegrator(TiXmlElement *element);
+    virtual GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
+    virtual GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
+    virtual FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
+    virtual FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
+    virtual Contour *createContour(TiXmlElement *element);
+};
+
+class KernelObjectFactory : protected ObjectFactory {
+  private:
+    static KernelObjectFactory instance;
+    KernelObjectFactory();
+  protected:
+    Group* createGroup(TiXmlElement *element);
+    Object* createObject(TiXmlElement *element);
+    Translation* createTranslation(TiXmlElement *element);
+    Rotation* createRotation(TiXmlElement *element);
+    Link* createLink(TiXmlElement *element);
+    Integrator* createIntegrator(TiXmlElement *element);
+    GeneralizedForceLaw *createGeneralizedForceLaw(TiXmlElement *element);
+    GeneralizedImpactLaw *createGeneralizedImpactLaw(TiXmlElement *element);
+    FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
+    FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
+    Contour *createContour(TiXmlElement *element);
 };
 
 }
