@@ -154,7 +154,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
     setMaximalStepSize(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
-    setPlotOnRoot((e->GetText()==string("true"))?true:false);
+    setPlotOnRoot(atoi(e->GetText()));
   }
 
 }
