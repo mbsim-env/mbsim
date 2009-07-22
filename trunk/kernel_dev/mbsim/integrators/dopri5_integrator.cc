@@ -34,7 +34,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DOPRI5Integrator::DOPRI5Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0),maxSteps(0) {
+  DOPRI5Integrator::DOPRI5Integrator() : aTol(1,INIT,1e-6), rTol(1,INIT,1e-6), dt0(0), maxSteps(0), dtMax(0) {
   }
 
   double DOPRI5Integrator::tPlot = 0;
@@ -103,6 +103,9 @@ namespace MBSim {
     int liWork = 2*(nrDens+21);
     Vector<int> iWork(liWork);
     Vec work(lWork);
+    if(dtMax)
+      work(5)=dtMax;
+    work(6)=dt0;
 
     //Maximum Step Numbers
     iWork(0)=maxSteps; 
@@ -112,6 +115,7 @@ namespace MBSim {
     //   iWork(2) = -1;
 
     iWork(4) = nrDens;
+    
 
     int idid;
 
