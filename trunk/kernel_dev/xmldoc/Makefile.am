@@ -7,7 +7,7 @@ nodist_doc_DATA = mbsim.html *.png mbsimintegrator.html
 ../schema/mbsimintegrator.xsd: ../schema/mbsimintegrator.xsd.in
 	$(top_srcdir)/config.status --file=../schema/mbsimintegrator.xsd
 
-xml/index.xml: ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../../mbsim/*.h ../../mbsim/integrators/*.h
+xml/index.xml: ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
 	doxygen
 
 mbsim.html: xml/index.xml

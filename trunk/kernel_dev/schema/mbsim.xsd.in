@@ -18,6 +18,10 @@
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
     schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
 
+  <!-- add xs:import statements for other mbsim modules here, but
+       preserve the MBSIMMODULES_IMPORT comment. -->
+  <!--MBSIMMODULES_IMPORT-->
+
 
 
   <xs:simpleType name="PlotFeatureType">

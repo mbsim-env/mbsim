@@ -4,6 +4,7 @@ rem If editing this file, also edit the file mbsimxml.in!
 
 set bindir=@win_bindir@
 set MBSIMSCHEMA=@win_MBSIMSCHEMA@
+set MBSIMXMLSCHEMA=@win_MBSIMXMLSCHEMA@
 set MBXMLUTILSBINDIR=@win_MBXMLUTILSBINDIR@
 
 rem help
@@ -44,7 +45,7 @@ set MBSIMINT=%1
 
 del .pp.%MBSIM% .pp.%MBSIMINT%
 
-%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMSCHEMA%/mbsim.xsd || goto end
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsim_root.xsd || goto end
 
 %MBXMLUTILSBINDIR%/mbxmlutilspp %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
