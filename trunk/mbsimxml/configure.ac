@@ -34,8 +34,10 @@ win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
 AC_SUBST([win_MBXMLUTILSBINDIR])
 win_MBSIMSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMSCHEMA)))
 AC_SUBST([win_MBSIMSCHEMA])
+mkdir -p $(eval echo $(eval echo $MBSIMXMLSCHEMA)) 2> /dev/null
 win_MBSIMXMLSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMXMLSCHEMA)))
 AC_SUBST([win_MBSIMXMLSCHEMA])
+mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
 win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
 AC_SUBST([win_bindir])
 
