@@ -1,0 +1,94 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_PREREQ([2.57])
+AC_INIT([mbsimxml],[1.0.0],[mafriedrich@users.berlios.de])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADER([config.h])
+AC_CONFIG_SRCDIR([mbsimxml/mbsimflatxml.cc])
+#####AC_PROG_LIBTOOL
+AC_PROG_CXX
+AC_PROG_CXXCPP
+AC_LANG([C++])
+
+PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
+
+
+
+dnl XML
+#####PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils,[requires="$requires mbxmlutils"; MBXMLUTILS=yes],[MBXMLUTILS=no])
+#####AM_CONDITIONAL([COND_MBXMLUTILS], [test "_$MBXMLUTILS" = "_yes"])
+AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
+AC_SUBST([MBSIMXMLSCHEMA],[$datadir/$PACKAGE/schema])
+AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
+#####AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+#####AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+
+dnl Helper functions to convert path to windows
+dirtowin() {
+  echo $(cd $1 && pwd -W 2> /dev/null)
+}
+filetowin() {
+  echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
+}
+dnl Convert to Windows path
+win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
+AC_SUBST([win_MBXMLUTILSBINDIR])
+win_MBSIMSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMSCHEMA)))
+AC_SUBST([win_MBSIMSCHEMA])
+win_MBSIMXMLSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMXMLSCHEMA)))
+AC_SUBST([win_MBSIMXMLSCHEMA])
+win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
+AC_SUBST([win_bindir])
+
+
+
+
+
+dnl Get all mbsim*.pc files in $prefix/lib/pkgconfig and $PKG_CONFIG_PATH directory
+OLDPWD=$(pwd)
+cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
+ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
+cd $OLDPWD
+dnl Check for all found mbsim*.pc modules
+for MBSIMMODULE in $ALLMBSIMMODULES; do
+  SCHEMA=$(pkg-config $MBSIMMODULE --variable SCHEMA)
+  NAMESPACE=$(pkg-config $MBSIMMODULE --variable NAMESPACE)
+  if test -z "$SCHEMA" -o -z "$NAMESPACE"; then
+    AC_MSG_WARN([MBSim module $MBSIMMODULE is not able to work with XML!])
+    continue
+  fi
+  MBSIMMODULES_IMPORT="$MBSIMMODULES_IMPORT <xs:import namespace=\"$NAMESPACE\" schemaLocation=\"$SCHEMA\"/>"
+  MBSIMMODULES_NAME="$MBSIMMODULES_NAME $MBSIMMODULE"
+  AC_SUBST([MBSIMMODULES_IMPORT])
+done
+if test ! -z "$MBSIMMODULES_NAME"; then
+  PKG_CHECK_MODULES(MBSIMMODULES, $MBSIMMODULES_NAME)
+fi
+
+
+
+
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsim_root.xsd schema/Makefile])
+AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
+AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
+
+AC_OUTPUT
+
+echo "
+Configuration for $PACKAGE $VERSION :
+--------------------------------
+
+ Source code location ....: $srcdir
+ Host System Type ........: $host
+ Preprocessor ............: $CC $CPPFLAGS
+ C Compiler ..............: $CC $CFLAGS $LIBFLAC_CFLAGS
+ C++ Compiler ............: $CXX $CXXFLAGS
+ Fortran 77 Compiler .....: $F77 $FFLAGS
+ Fortran 90 Compiler .....: $FC $FCFLAGS
+ Linker ..................: $CC $LDFLAGS $LIBS $LIBFLAC_LIBS
+ Install path ............: $prefix
+
+ Now type 'make' to build $PACKAGE $VERSION,
+ and then 'make install' for installation.
+"

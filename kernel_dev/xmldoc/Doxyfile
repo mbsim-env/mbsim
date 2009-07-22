@@ -1,4 +1,4 @@
-INPUT                  = ../../mbsim
+INPUT                  = ../mbsim
 FILE_PATTERNS          = *.h
 RECURSIVE              = YES
 EXCLUDE_SYMLINKS       = YES
@@ -6,5 +6,5 @@ GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
 GENERATE_XML           = YES
 XML_PROGRAMLISTING     = NO
-EXTRA_PACKAGES         = ../../../doc/macros, hyperref
-IMAGE_PATH             = ../../doc
+EXTRA_PACKAGES         = ../../doc/macros, hyperref
+IMAGE_PATH             = ../doc

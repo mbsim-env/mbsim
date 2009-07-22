@@ -8,6 +8,7 @@ bindir=${exec_prefix}/bin
 datarootdir=@datarootdir@
 datadir=@datadir@
 MBSIMSCHEMA=@MBSIMSCHEMA@
+MBSIMXMLSCHEMA=@MBSIMXMLSCHEMA@
 MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
 
 # help
@@ -44,7 +45,7 @@ MBSIMINT=$1
 
 rm -f .pp.$MBSIM .pp.$MBSIMINT
 
-$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMSCHEMA/mbsim.xsd || exit 1
+$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsim_root.xsd || exit 1
 
 $MBXMLUTILSBINDIR/mbxmlutilspp $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
