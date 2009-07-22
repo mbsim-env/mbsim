@@ -5,7 +5,8 @@ libutils_la_SOURCES = eps.cc\
                       ppolynom.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
-                      utils.cc
+                      utils.cc\
+                      ansatz_functions.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
@@ -19,5 +20,6 @@ utilsinclude_HEADERS = eps.h\
                        ppolynom.h\
                        contact_utils.h\
                        rotarymatrices.h\
-                       utils.h
+                       utils.h\
+                       ansatz_functions.h
 

@@ -40,7 +40,7 @@ namespace MBSim {
       EulerExplicitIntegrator();
       ~EulerExplicitIntegrator() {}
 
-      void setdt(double dt_) {dt = dt_;}
+      void setStepSize(double dt_) {dt = dt_;}
 
       void integrate(DynamicSystemSolver& system);
 

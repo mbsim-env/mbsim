@@ -65,7 +65,7 @@ namespace MBSim {
       void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
       void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
-      void setdtMax(double dtMax_) {dtMax = dtMax_;}
+      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}
 
 

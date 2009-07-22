@@ -54,6 +54,8 @@ namespace MBSim {
       double dt0;
       /** maximum number of steps */
       int maxSteps;  
+      /** maximale step size */
+      double dtMax;
 
     public:
 
@@ -66,6 +68,7 @@ namespace MBSim {
       void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
       void setMaxStepNumber(int maxSteps_) {maxSteps = maxSteps_;}    
+      void setMaximalStepSize(double dtMax_) {dtMax = dtMax_;}
 
       void integrate(DynamicSystemSolver& system);
 
