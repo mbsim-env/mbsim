@@ -117,7 +117,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec radii(2);
 
   Circle* disk = new Circle("Disk");
-  AWK(0,0) = cos(M_PI*0.5), AWK(0.1) = 0.; AWK(0,2) = sin(M_PI*0.5);
+  AWK(0,0) = cos(M_PI*0.5); AWK(0,1) = 0.; AWK(0,2) = sin(M_PI*0.5);
   AWK(1,0) = 0., AWK(1,1) = 1.;
   AWK(2,0) = -sin(M_PI*0.5), AWK(2,2) = cos(M_PI*0.5);
   disk->setOutCont(true);
