@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/special_classes.h"
 #include "test_group.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
