@@ -8,67 +8,6 @@ void Mesh::init() {
   T(0,0) = 1;
 }
 
-//void ElectricalCircuit::addModell(ModellingInterface *modell_) {
-//  if(getModell(modell_->getName(),false)) {
-//    cout << "Error: The Network " << name << " can only comprise one Object by the name " <<  modell_->getName() << "!" << endl;
-//    assert(getModell(modell_->getName(),false) == NULL); 
-//  }
-//  modell.push_back(modell_);
-//  //obj->setParent(this);
-//}
-//
-//ModellingInterface* ElectricalCircuit::getModell(const string &name, bool check) {
-//  unsigned int i;
-//  for(i=0; i<modell.size(); i++) {
-//    if(modell[i]->getName() == name)
-//      return modell[i];
-//  }
-//  if(check){
-//    if(!(i<modell.size())) cout << "Error: The Network " << this->name <<" modell no modell " << name << "!" << endl; 
-//    assert(i<modell.size());
-//  }
-//  return NULL;
-//}
-
-//void ElectricalCircuit::preinit() {
-//
-// // vector<ModellingInterface*> modellList;
-// // buildListOfModels(modellList,true);
-// // vector<Object*> objectList;
-// // vector<Link*> linkList;
-// // if(modellList.size())
-// //   do {
-// //     modellList[0]->processModellList(modellList,objectList,linkList);
-// //   } while(modellList.size());
-// // Node* node = 0;
-// // for(unsigned int i=0; i<objectList.size(); i++) {
-// //   addObject(objectList[i]);
-// //   //node = addObject(node,objectList[i]);
-// // }
-// // for(unsigned int i=0; i<linkList.size(); i++) {
-// //   addLink(linkList[i]);
-// // }
-//  SpecialGroup::preinit();
-//}
-
-/*void ElectricalCircuit::facLLM() {
-}
-
-void ElectricalCircuit::init() {
-  Tree::init();
-  updateM(0);
-  LLM = facLL(M);
-}
-
-void ElectricalCircuit::buildListOfModells(std::vector<ModellingInterface*> &modellList, bool recursive) {
-  for(unsigned int i=0; i<modell.size(); i++)
-    modellList.push_back(modell[i]);
-  //if(recursive) TODO: comment in, wenn in dynamic_system.cc
-  //  for(unsigned int i=0; i<dynamicsystem.size(); i++)
-  //    dynamicsystem[i]->buildListOfModells(modellList,recursive);
-}
-*/
-
 Inductor::Inductor(const string &name) : ElectronicObject(name), L(1) {
   addTerminal("A");
   addTerminal("B");
