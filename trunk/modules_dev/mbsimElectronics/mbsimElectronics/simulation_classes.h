@@ -2,11 +2,11 @@
 #define _SIMULATION_CLASSES_H
 
 #include "mbsim/tree.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/special_classes.h"
 #include "modeling_classes.h"
 #include <string>
 
@@ -169,15 +169,6 @@ class Inductor : public ElectronicObject {
     Inductor(const std::string &name);
     void updateM(double t); 
     void setInductance(double L_) { L = L_;}
-};
-
-//class ElectricalCircuit : public MBSim::Tree {
-class ElectricalCircuit : public MBSim::SpecialGroup {
-  protected:
-    //std::vector<MBSim::ModellingInterface*> modell;
-  public:
-    ElectricalCircuit(const std::string &name) : SpecialGroup(name) {}
-    //void preinit();
 };
 
 #endif
