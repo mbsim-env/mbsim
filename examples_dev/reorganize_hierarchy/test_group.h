@@ -1,9 +1,10 @@
 #ifndef _TEST_GROUP_H_
 #define _TEST_GROUP_H_
 
-#include "mbsim/special_classes.h"
+#include "mbsim/group.h"
+#include "mbsim/rigid_body.h"
 
-class TestGroup : public MBSim::SpecialGroup {
+class TestGroup : public MBSim::Group {
   public:
     TestGroup(const std::string &projectName); 
 

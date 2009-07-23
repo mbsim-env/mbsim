@@ -7,7 +7,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-TestGroup::TestGroup(const string &projectName) : SpecialGroup(projectName) {
+TestGroup::TestGroup(const string &projectName) : Group(projectName) {
 
   double mStab = 0.2;
   double lStab = 0.3;
