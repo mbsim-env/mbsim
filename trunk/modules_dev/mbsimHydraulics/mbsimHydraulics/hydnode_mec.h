@@ -133,6 +133,8 @@ namespace MBSim {
 
       void initPlot();
       void plot(double t, double dt);
+
+      void initializeUsingXML(TiXmlElement *element);
     
     protected:
       double fracAir;

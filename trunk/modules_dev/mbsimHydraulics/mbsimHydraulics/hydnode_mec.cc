@@ -23,6 +23,7 @@
 #include "hydfluid.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hydline.h"
+#include "objectfactory.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -437,6 +438,28 @@ namespace MBSim {
     plotVector.push_back(E*1e-6);
     plotVector.push_back(gd(0));
     HydNodeMec::plot(t, dt);
+  }
+
+  void HydNodeMecElastic::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    HydNodeMec::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    setFracAir(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"p0");
+    setp0(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"V0");
+    setV0(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"transMecArea");
+    TiXmlElement *ee;
+    ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+    Frame *ref=getFrameByPath(ee->Attribute("ref"));
+    if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
+    Vec normal(ee->GetText());
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
+    double area=atof(ee->GetText());
+    addTransMecArea(ref, normal, area);
+    e=e->NextSiblingElement();
   }
 
 
