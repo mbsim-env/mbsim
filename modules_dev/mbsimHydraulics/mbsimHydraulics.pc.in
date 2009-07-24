@@ -3,6 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
+SCHEMA=@datadir@/@PACKAGE@/schema/mbsimhydraulics.xsd
+NAMESPACE=http://mbsim.berlios.de/MBSimHydraulics
+
 Name: mbsimHydraulics
 Description: mbsimHydraulics is an add-on for hydraulic systems to the mbsim-kernel.
 Requires: mbsim

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimHydraulics"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimHydraulics"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
+
+  <xs:element name="HydNodeMecElastic" substitutionGroup="mbsim:Link" type="HydNodeMecElasticType"/>
+  <xs:complexType name="HydNodeMecElasticType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkType">
+        <xs:sequence>
+          <xs:element name="fracAir" type="pv:nounitScalar"/>  
+          <xs:element name="p0" type="pv:nounitScalar"/>  
+          <xs:element name="V0" type="pv:nounitScalar"/>  
+          <xs:element name="transMecArea" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:frameOfReference"/>
+                <xs:element name="normal" type="pv:nounitVector"/>
+                <xs:element name="area" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+</xs:schema>

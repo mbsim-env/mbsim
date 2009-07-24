@@ -18,6 +18,10 @@ AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0)
 
+dnl needed for XML
+AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
+
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
 dnl revision: 	The implementation number of the current interface. 
@@ -41,7 +45,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc])
+AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile schema/mbsimhydraulics.xsd])
 
 AC_OUTPUT
 

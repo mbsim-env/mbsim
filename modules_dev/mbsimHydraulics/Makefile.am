@@ -1,6 +1,6 @@
-SUBDIRS = mbsimHydraulics
+SUBDIRS = mbsimHydraulics schema
 
-DIST_SUBDIRS = mbsimHydraulics
+DIST_SUBDIRS = mbsimHydraulics schema
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimHydraulics.pc
