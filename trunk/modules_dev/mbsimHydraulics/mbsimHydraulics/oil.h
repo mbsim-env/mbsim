@@ -20,49 +20,47 @@
 #ifndef _OIL_H_
 #define _OIL_H_
 
-#include "mbsimHydraulics/hydfluid.h"
-
-enum OilType {
-  CastrolLongLife2TopUp_0W30,
-  CastrolLongLife3TopUp_5W30
-};
-
-/** \brief Model for (temperature dependent) hydraulic oil*/
-class Oil: public MBSim::HydFluid {
-  protected:
-    double eta;
-    /** Parameter fuer Ubbelohde*/
-    double m,Tm,Wm;
-    bool ubbelohde;
-    double rho0,T0,dVdT,dRhodT;
-  public:
-    /*! Constructor*/
-    Oil();
-    /*! Constructor and temperature initializer of a databased oiltype.
-     * Choose one of type
-     *   - CastrolLongLife2TopUp_0W30
-     *   - CastrolLongLife3TopUp_5W30*/
-    Oil(OilType _type, double _T);
-    
-    /*! set a databased oiltype*/
-    void setType(OilType _type); 
-    /*! set fluid parameters according Walter and Ubbelohde*/
-    void setUbbelohde(double T1,double nu1, double T2,double nu2);
-    /*! set volume change with temperature*/
-    void setdVdT(double dVdT_,double rho0_,double T0_);
-    /*! set specific mass change with temperature*/
-    void setdRhodT(double dRhodT_,double rho0_,double T0_);
-    
-    /*! initialize the oil at specific temperature*/
-    void init(double T_);
-    
-    /*! get the kinematic viscosity depending on temperature*/
-    double getNu(double _T);
-    /*! get the dynamic viscosity depending on temperature*/
-    double getEta(double _T); 
-    /*! get the specific fluid mass depending on temperature*/
-    double getRho(double _T);
-};
+//enum OilType {
+//  CastrolLongLife2TopUp_0W30,
+//  CastrolLongLife3TopUp_5W30
+//};
+//
+///** \brief Model for (temperature dependent) hydraulic oil*/
+//class Oil: public MBSim::HydFluid {
+//  protected:
+//    double eta;
+//    /** Parameter fuer Ubbelohde*/
+//    double m,Tm,Wm;
+//    bool ubbelohde;
+//    double rho0,T0,dVdT,dRhodT;
+//  public:
+//    /*! Constructor*/
+//    Oil();
+//    /*! Constructor and temperature initializer of a databased oiltype.
+//     * Choose one of type
+//     *   - CastrolLongLife2TopUp_0W30
+//     *   - CastrolLongLife3TopUp_5W30*/
+//    Oil(OilType _type, double _T);
+//    
+//    /*! set a databased oiltype*/
+//    void setType(OilType _type); 
+//    /*! set fluid parameters according Walter and Ubbelohde*/
+//    void setUbbelohde(double T1,double nu1, double T2,double nu2);
+//    /*! set volume change with temperature*/
+//    void setdVdT(double dVdT_,double rho0_,double T0_);
+//    /*! set specific mass change with temperature*/
+//    void setdRhodT(double dRhodT_,double rho0_,double T0_);
+//    
+//    /*! initialize the oil at specific temperature*/
+//    void init(double T_);
+//    
+//    /*! get the kinematic viscosity depending on temperature*/
+//    double getNu(double _T);
+//    /*! get the dynamic viscosity depending on temperature*/
+//    double getEta(double _T); 
+//    /*! get the specific fluid mass depending on temperature*/
+//    double getRho(double _T);
+//};
 
 #endif
 

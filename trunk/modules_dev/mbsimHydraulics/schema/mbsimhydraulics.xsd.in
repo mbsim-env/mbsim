@@ -12,6 +12,20 @@
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
 
+  <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType"/>
+  <xs:complexType name="HydraulicEnvironmentType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:EnvironmentType">
+        <xs:sequence>
+          <xs:element name="rho" type="pv:nounitScalar"/>
+          <xs:element name="E" type="pv:nounitScalar"/>
+          <xs:element name="nu" type="pv:nounitScalar"/>
+          <xs:element name="kappa" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="HydNodeMecElastic" substitutionGroup="mbsim:Link" type="HydNodeMecElasticType"/>
   <xs:complexType name="HydNodeMecElasticType">
     <xs:complexContent>

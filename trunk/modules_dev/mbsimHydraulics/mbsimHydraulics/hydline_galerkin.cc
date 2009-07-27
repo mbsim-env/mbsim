@@ -18,10 +18,9 @@
  */
 
 #include "hydline_galerkin.h"
+#include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
-
-#include "hydfluid.h"
 
 #include "mbsim/dynamic_system_solver.h"
 
@@ -75,9 +74,9 @@ namespace MBSim {
   void HydLineGalerkin::init() {
     HydLineAbstract::init();
 
-    double nu=getDynamicSystemSolver()->getFluid()->getNu();
+    double nu=HydraulicEnvironment::getInstance()->getNu();
     g=0; // TODO consider gravity
-    E=getDynamicSystemSolver()->getFluid()->getE(p0, fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(p0, fracAir);
 
     k=rho*g*delta_h/l;
 

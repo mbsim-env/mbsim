@@ -21,10 +21,10 @@
 #include "hydnode.h"
 #include "mbsim/object.h"
 #include "hydline_closed.h"
+#include "environment.h"
 
 #include "mbsim/userfunction.h"
 
-#include "hydfluid.h"
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
@@ -59,7 +59,7 @@ namespace MBSim {
     assert(nFrom!=nTo);
 
     Area=M_PI*d*d/4.;
-    rho=getDynamicSystemSolver()->getFluid()->getRho();
+    rho=HydraulicEnvironment::getInstance()->getRho();
   }
 
 
@@ -82,7 +82,7 @@ namespace MBSim {
     HydLineAbstract::init();
     MFac=rho*l/Area;
     for (unsigned int i=0; i<pd.size(); i++)
-      pd[i]->transferLineData(getDynamicSystemSolver()->getFluid(), d, l);
+      pd[i]->transferLineData(d, l);
   }
 
   void HydLine::calcqSize() {
@@ -184,9 +184,9 @@ namespace MBSim {
     zetaFac=zeta;
   }
 
-  void PressureLossZeta::transferLineData(HydFluid * fl, double d, double l) {
+  void PressureLossZeta::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    zetaFac*=fl->getRho()/2./area/area;
+    zetaFac*=HydraulicEnvironment::getInstance()->getRho()/2./area/area;
   }
 
   Vec PressureLossZeta::operator()(double Q){
@@ -201,9 +201,9 @@ namespace MBSim {
     updateRelativeArea(0);
   }
 
-  void PressureLossZetaVarArea::transferLineData(HydFluid * fl, double d, double l) {
+  void PressureLossZetaVarArea::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    zetaFac*=fl->getRho()/2./area/area;
+    zetaFac*=HydraulicEnvironment::getInstance()->getRho()/2./area/area;
   }
 
   void PressureLossZetaVarArea::updateRelativeArea(double t) {
@@ -232,9 +232,9 @@ namespace MBSim {
   PressureLossLaminarTubeFlow::PressureLossLaminarTubeFlow(const string &name) : PressureLoss(name) {
   }
 
-  void PressureLossLaminarTubeFlow::transferLineData(HydFluid * fl, double d, double l) {
+  void PressureLossLaminarTubeFlow::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    lossFactor=32.*fl->getEta()*l/d/d/area;
+    lossFactor=32.*HydraulicEnvironment::getInstance()->getEta()*l/d/d/area;
     cout << "formelchecken " << endl;
   }
 

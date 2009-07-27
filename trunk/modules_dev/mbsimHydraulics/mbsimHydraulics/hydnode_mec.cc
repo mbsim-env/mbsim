@@ -18,9 +18,9 @@
  */
 
 #include "hydnode_mec.h"
+#include "environment.h"
 #include "mbsim/frame.h"
 #include "mbsim/userfunction.h"
-#include "hydfluid.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hydline.h"
 #include "objectfactory.h"
@@ -402,8 +402,7 @@ namespace MBSim {
   void HydNodeMecElastic::init() {
     HydNodeMec::init();
     la(0)=p0;
-    fluid=getDynamicSystemSolver()->getFluid();
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     Vec x0Tmp(2);
     x0Tmp(0)=V0;
     x0Tmp(1)=p0;
@@ -418,13 +417,13 @@ namespace MBSim {
 
   void HydNodeMecElastic::updatexd(double t) {
     HydNodeMec::updatexd(t);
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     xd(1)=-E/x(0)*gd(0);
   }
 
   void HydNodeMecElastic::updatedx(double t, double dt) {
     HydNodeMec::updatedx(t, dt);
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     xd(1)=-E/x(0)*gd(0)*dt;
   }
 
