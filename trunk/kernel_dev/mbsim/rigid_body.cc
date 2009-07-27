@@ -25,6 +25,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
+#include <mbsim/environment.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
@@ -65,7 +66,7 @@ namespace MBSim {
   void RigidBody::updateh(double t) {
     WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
 
-    Vec WF = m*ds->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
+    Vec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
     h += trans(frame[0]->getJacobianOfTranslation())*WF + trans(frame[0]->getJacobianOfRotation())*WM;

@@ -32,7 +32,6 @@ namespace MBSim {
   class Frame;
   class Tree;
   class Node;
-  class HydFluid;
   class ExtraDynamicInterface;
   class DataInterfaceBase;
   class Integrator;
@@ -132,9 +131,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setAccelerationOfGravity(const fmatvec::Vec& g) { grav = g; }
-      const fmatvec::Vec& getAccelerationOfGravity() const { return grav; }
-
 //      void setProjectDirectory(const std::string &directoryName_) { directoryName = directoryName_; }
       void setPreInteg(Integrator *preInteg_) { preIntegrator = preInteg_; }
 
@@ -160,8 +156,6 @@ namespace MBSim {
 
       const double getpinf() const { return pinf; };
       void setpinf(const double pinf_) { pinf=pinf_; };
-      void setFluid(HydFluid *fl_) { fl=fl_; }
-      HydFluid *getFluid(){ return fl; }  
 
       const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
       fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
@@ -484,11 +478,6 @@ namespace MBSim {
        */
       fmatvec::Vector<int> jsvParent;
       
-      /** 
-       * \brief gravitation common for all components
-       */
-      fmatvec::Vec grav;
-
       /**
        * \brief sparse mass action matrix
        */
@@ -589,11 +578,6 @@ namespace MBSim {
 //       */
 //      std::string directoryName;
       
-      /**
-       * \brief hydraulic fluid, only for hydraulic systems TODO
-       */
-      HydFluid *fl;
-
       /**
        * \brief ambient pressure, only for hydraulic systems TODO
        */
