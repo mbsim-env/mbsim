@@ -86,5 +86,7 @@
     </frictionImpactLaw>
     <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere2]"/>
   </Contact>
-  <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  <MBSimEnvironment>
+    <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  </MBSimEnvironment>
 </DynamicSystemSolver>

@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "pendulum.h"
+#include "mbsim/environment.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -10,7 +11,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   Tree* tree = new Tree("Master");
   addDynamicSystem(tree);

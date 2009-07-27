@@ -260,5 +260,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
   </Group>
-  <accelerationOfGravity>[0;0;0]</accelerationOfGravity>
+  <MBSimEnvironment>
+    <accelerationOfGravity>[0;0;0]</accelerationOfGravity>
+  </MBSimEnvironment>
 </DynamicSystemSolver>

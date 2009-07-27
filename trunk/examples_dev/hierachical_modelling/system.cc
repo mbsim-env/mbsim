@@ -2,6 +2,7 @@
 #include "group2.h"
 #include "mbsim/load.h"
 #include "mbsim/frame.h"
+#include "mbsim/environment.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -12,7 +13,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Erdbeschleungigung definieren
   Vec g(3);
   g(1)=-9.81*0;
-  setAccelerationOfGravity(g);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
 
   Group2 *group1 = new Group2("Hauptgruppe1");
   addDynamicSystem(group1);

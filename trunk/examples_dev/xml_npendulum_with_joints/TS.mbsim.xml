@@ -63,5 +63,7 @@
     <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[O]"/>
   </Joint>
   <pv:embed href="Joint_n.xml" count="N" counterName="n"/>
-  <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  <MBSimEnvironment>
+    <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  </MBSimEnvironment>
 </DynamicSystemSolver>

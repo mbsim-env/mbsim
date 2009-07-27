@@ -3,6 +3,7 @@
 #include "mbsim/userfunction.h"
 #include "mbsim/linear_spring_damper.h"
 #include "mbsim/load.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
@@ -18,7 +19,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Erdbeschleungigung definieren
   Vec g(3);
   g(1)=-9.81*0;
-  setAccelerationOfGravity(g);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
 
   // Parameter der Körper
   double m1 = 5;

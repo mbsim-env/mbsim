@@ -5,6 +5,7 @@
 #include "mbsim/actuator.h"
 #include "mbsimControl/transfersys.h"
 #include "mbsim/tree.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -34,7 +35,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-1;
   grav(2)=-1;
   grav=grav/nrm2(grav)*9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // Data
   double mB = 20;

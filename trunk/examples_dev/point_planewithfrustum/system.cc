@@ -5,6 +5,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -16,7 +17,7 @@ using namespace std;
 
 System::System(const string &projectName, bool setValued) : DynamicSystemSolver(projectName) {
 
-  setAccelerationOfGravity("[0; -9.81; 0]");
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0; -9.81; 0]");
 
   bool considerRotation=true;
 

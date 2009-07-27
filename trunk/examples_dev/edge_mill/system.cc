@@ -8,6 +8,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact_kinematics/circle_frustum.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
@@ -29,7 +30,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
-  this->setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   /* mill as tree */
   Tree *mill = new Tree("Mill");

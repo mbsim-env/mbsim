@@ -2,7 +2,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "mbsim/utils/rotarymatrices.h"
 
-#include "mbsimHydraulics/hydfluid.h"
+#include "mbsimHydraulics/environment.h"
 #include "system.h"
 
 #include <time.h>
@@ -23,7 +23,7 @@ int main (int argc, char* argv[]) {
     DynamicSystemSolver * dss = new DynamicSystemSolver(name);
     dss->addDynamicSystem(new System("HS", (i==0)));
 
-    dss->setFluid(new HydFluid(800, 2e11, 12e-6, 1.3));
+    HydraulicEnvironment::getInstance()->setProperties(800, 2e11, 12e-6, 1.3);
 
     dss->setConstraintSolver(GaussSeidel);
     dss->setImpactSolver(GaussSeidel);

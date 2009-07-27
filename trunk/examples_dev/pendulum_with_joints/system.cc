@@ -4,6 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/load.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -19,7 +20,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double m1 = 0.5;
   double m2 = 0.5;

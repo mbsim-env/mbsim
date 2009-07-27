@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/linear_spring_damper.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
@@ -15,7 +16,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // acceleration of gravity
   Vec grav(3);
   grav(1)=-9.81;
-  this->setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // frames on environment 
   this->addFrame("L",Vec(3,INIT,1.),SqrMat(3,EYE));

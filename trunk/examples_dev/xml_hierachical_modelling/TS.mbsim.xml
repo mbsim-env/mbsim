@@ -4,5 +4,7 @@
   <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
   <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
   <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
-  <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
+  <MBSimEnvironment>
+    <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
+  </MBSimEnvironment>
 </DynamicSystemSolver>
