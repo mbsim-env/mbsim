@@ -49,6 +49,7 @@ dnl Get all mbsim*.pc files in $prefix/lib/pkgconfig and $PKG_CONFIG_PATH direct
 OLDPWD=$(pwd)
 cd $prefix/lib/pkgconfig; ALLMBSIMMODULES=$(ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p")
 ALLMBSIMMODULES="$ALLMBSIMMODULES $(for i in $(echo $PKG_CONFIG_PATH | tr ':' ' '); do cd $i; ls -1 mbsim*.pc | sed -rne "/^mbsim.pc$/n;s/.pc$//p"; done)"
+ALLMBSIMMODULES=$(echo $ALLMBSIMMODULES | tr ' ' '\n' | sort | uniq)
 cd $OLDPWD
 dnl Check for all found mbsim*.pc modules
 for MBSIMMODULE in $ALLMBSIMMODULES; do
