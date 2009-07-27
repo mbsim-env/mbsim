@@ -1,6 +1,7 @@
 #include "config.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/hydnode_mec.h"
+#include "mbsimHydraulics/environment.h"
 
 using namespace std;
 
@@ -58,5 +59,12 @@ namespace MBSim {
   //Contour *HydraulicsObjectFactory::createContour(TiXmlElement *element) {
   //  return 0;
   //}
+
+  Environment* HydraulicsObjectFactory::getEnvironment(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydraulicEnvironment")
+      return HydraulicEnvironment::getInstance();
+    return 0;
+  }
 
 }

@@ -19,9 +19,9 @@
 
 #include "hydnode.h"
 #include "hydline.h"
+#include "environment.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "hydfluid.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -328,8 +328,7 @@ namespace MBSim {
     HydNode::init();
     la(0)=p0;
     x0=Vec(1, INIT, p0);
-    fluid=getDynamicSystemSolver()->getFluid();
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
   }
 
   void HydNodeElastic::updatexRef(const Vec &xParent) {
@@ -338,12 +337,12 @@ namespace MBSim {
   }
 
   void HydNodeElastic::updatexd(double t) {
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     xd=-E/V*gd;
   }
 
   void HydNodeElastic::updatedx(double t, double dt) {
-    E=fluid->getE(la(0), fracAir);
+    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     xd=-E/V*gd*dt;
   }
 

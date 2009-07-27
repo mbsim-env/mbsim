@@ -18,8 +18,8 @@
  */
 
 #include "hydleakage.h"
-#include "hydfluid.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "environment.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -51,7 +51,7 @@ namespace MBSim {
 
     for (unsigned int i=0; i<pd.size(); i++)
       if (dynamic_cast<LeakagePressureLoss*>(pd[i]))
-        static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(getDynamicSystemSolver()->getFluid(), lGap, hGap, wGap);
+        static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(lGap, hGap, wGap);
   }
 
 
@@ -62,8 +62,8 @@ namespace MBSim {
   LeakagePressureLossHagenPoiseuille::LeakagePressureLossHagenPoiseuille(const string &name) : LeakagePressureLoss(name) {
   }
 
-  void LeakagePressureLossHagenPoiseuille::transferLeakageGapData(MBSim::HydFluid * fl, double lGap, double hGap, double wGap) {
-    lossFactor=12.*fl->getEta()*lGap/wGap/hGap/hGap/hGap;
+  void LeakagePressureLossHagenPoiseuille::transferLeakageGapData(double lGap, double hGap, double wGap) {
+    lossFactor=12.*HydraulicEnvironment::getInstance()->getEta()*lGap/wGap/hGap/hGap/hGap;
     cout << "lossFactor=" << lossFactor << endl;
   }
 

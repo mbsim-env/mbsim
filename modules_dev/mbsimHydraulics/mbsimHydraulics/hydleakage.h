@@ -41,13 +41,13 @@ namespace MBSim {
   class LeakagePressureLoss : public PressureLoss {
     public:
       LeakagePressureLoss(const std::string &name);
-      virtual void transferLeakageGapData(MBSim::HydFluid * fl, double lGap, double hGap, double wGap) {};
+      virtual void transferLeakageGapData(double lGap, double hGap, double wGap) {};
   };
 
   class LeakagePressureLossHagenPoiseuille : public LeakagePressureLoss {
     public:
       LeakagePressureLossHagenPoiseuille(const std::string &name);
-      virtual void transferLeakageGapData(MBSim::HydFluid * fl, double lGap, double hGap, double wGap);
+      virtual void transferLeakageGapData(double lGap, double hGap, double wGap);
 
       fmatvec::Vec operator()(double Q);
     private:

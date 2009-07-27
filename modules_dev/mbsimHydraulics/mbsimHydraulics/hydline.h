@@ -30,7 +30,6 @@ namespace MBSim {
   class UserFunction;
   class HydlineClosedBilateral;
   class HydlineClosedUnilateral;
-  class HydFluid;
 
   class HydLineAbstract : public ObjectHydraulics {
     public:
@@ -128,7 +127,7 @@ namespace MBSim {
     public:
       PressureLoss(const std::string &name);
       virtual ~PressureLoss() {};
-      virtual void transferLineData(MBSim::HydFluid * fl, double d, double l) {};
+      virtual void transferLineData(double d, double l) {};
 
       virtual fmatvec::Vec operator()(double Q) = 0;
       virtual void initPlot(std::vector<std::string>* plotColumns);
@@ -142,7 +141,7 @@ namespace MBSim {
   class PressureLossZeta : public PressureLoss {
     public:
       PressureLossZeta(const std::string &name, double zeta);
-      void transferLineData(MBSim::HydFluid * fl, double d, double l);
+      void transferLineData(double d, double l);
 
       fmatvec::Vec operator()(double Q);
 
@@ -153,7 +152,7 @@ namespace MBSim {
   class PressureLossZetaVarArea : public PressureLoss {
     public:
       PressureLossZetaVarArea(const std::string &name, double zeta, MBSim::UserFunction * relAreaFun, double minRelArea);
-      void transferLineData(MBSim::HydFluid * fl, double d, double l);
+      void transferLineData(double d, double l);
 
       void updateRelativeArea(double t);
       bool isClosed() {return closed; }
@@ -171,7 +170,7 @@ namespace MBSim {
   class PressureLossLaminarTubeFlow : public PressureLoss {
     public:
       PressureLossLaminarTubeFlow(const std::string &name);
-      void transferLineData(MBSim::HydFluid * fl, double d, double l);
+      void transferLineData(double d, double l);
 
       fmatvec::Vec operator()(double Q);
 

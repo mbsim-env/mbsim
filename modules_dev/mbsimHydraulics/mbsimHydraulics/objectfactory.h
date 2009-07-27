@@ -10,6 +10,7 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
+#include "mbsim/environment.h"
 
 #define MBSIMHYDRAULICSNS "{http://mbsim.berlios.de/MBSimHydraulics}"
 
@@ -31,6 +32,7 @@ class HydraulicsObjectFactory : protected ObjectFactory {
     //FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
     //FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
     //Contour *createContour(TiXmlElement *element);
+    Environment *getEnvironment(TiXmlElement *element);
 };
 
 }
