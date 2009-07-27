@@ -2,6 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
 #include "mbsim/userfunction.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
@@ -72,7 +73,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
   // Parameters
   double l = 0.8; 
   double h = 0.02;  	 	 

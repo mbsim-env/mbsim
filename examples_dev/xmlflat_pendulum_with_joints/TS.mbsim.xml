@@ -107,5 +107,7 @@
     </force>
     <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
   </Joint>
-  <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  <MBSimEnvironment>
+    <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+  </MBSimEnvironment>
 </DynamicSystemSolver>

@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "test_group.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objbody.h"
@@ -14,7 +15,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   Vec grav(3);
   grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double mStab = 0.2;
   double lStab = 0.3;

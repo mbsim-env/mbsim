@@ -5,6 +5,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -20,7 +21,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // acceleration of gravity
   Vec grav(3,INIT,0.); grav(1) = -9.81;
-  this->setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   // input flexible ring 
   double l0 = 1.; // length ring

@@ -6,6 +6,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/invisiblebody.h>
@@ -23,7 +24,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
-  setAccelerationOfGravity(grav);
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
   // Parameters
   double d = 0.1;
   double m = 0.7;

@@ -1,7 +1,7 @@
 #include <mbsim/integrators/integrators.h>
 #include <mbsim/dynamic_system_solver.h>
 
-#include "mbsimHydraulics/hydfluid.h"
+#include "mbsimHydraulics/environment.h"
 #include "system.h"
 
 using namespace std;
@@ -47,7 +47,7 @@ int main (int argc, char* argv[]) {
         simulationName.push_back(nameintegrator+"_"+valuetype+"_"+namesolver);
         DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
         dss->addDynamicSystem(new System("HS", setvalued));
-        dss->setFluid(new HydFluid(800, 2e11, 12e-6, 1.3));
+        HydraulicEnvironment::getInstance()->setProperties(800, 2e11, 12e-6, 1.3);
 
         if (isolver==0) {
           dss->setConstraintSolver(LinearEquations);

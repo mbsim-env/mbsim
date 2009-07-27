@@ -4,6 +4,7 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/ivbody.h>
@@ -231,6 +232,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     this->addLink(contact[i]);
   } 	
 
-  this->setAccelerationOfGravity(Vec("[0;-10;0]"));
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(Vec("[0;-10;0]"));
 }
 
