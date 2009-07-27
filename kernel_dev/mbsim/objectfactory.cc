@@ -110,14 +110,21 @@ namespace MBSim {
     return 0;
   }
 
+  Environment *ObjectFactory::getEnvironment(TiXmlElement *element) {
+    Environment *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->getEnvironment(element))) return obj;
+    return 0;
+  }
 
-  KernelObjectFactory KernelObjectFactory::instance;
 
-  KernelObjectFactory::KernelObjectFactory() : ObjectFactory() {
+  MBSimObjectFactory MBSimObjectFactory::instance;
+
+  MBSimObjectFactory::MBSimObjectFactory() : ObjectFactory() {
     ObjectFactory::getInstance()->registerObjectFactory(this);
   }
 
-  Group* KernelObjectFactory::createGroup(TiXmlElement *element) {
+  Group* MBSimObjectFactory::createGroup(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"DynamicSystemSolver")
       return new DynamicSystemSolver(element->Attribute("name"));
@@ -126,21 +133,21 @@ namespace MBSim {
     return 0;
   }
   
-  Object* KernelObjectFactory::createObject(TiXmlElement *element) {
+  Object* MBSimObjectFactory::createObject(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RigidBody")
       return new RigidBody(element->Attribute("name"));
     return 0;
   }
   
-  Translation* KernelObjectFactory::createTranslation(TiXmlElement *element) {
+  Translation* MBSimObjectFactory::createTranslation(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearTranslation")
       return new LinearTranslation;
     return 0;
   }
   
-  Rotation* KernelObjectFactory::createRotation(TiXmlElement *element) {
+  Rotation* MBSimObjectFactory::createRotation(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
@@ -149,7 +156,7 @@ namespace MBSim {
     return 0;
   }
   
-  Link* KernelObjectFactory::createLink(TiXmlElement *element) {
+  Link* MBSimObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearSpringDamper")
       return new LinearSpringDamper(element->Attribute("name"));
@@ -160,7 +167,7 @@ namespace MBSim {
     return 0;
   }
   
-  Integrator* KernelObjectFactory::createIntegrator(TiXmlElement *element) {
+  Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
       return new DOPRI5Integrator;
@@ -173,7 +180,7 @@ namespace MBSim {
     return 0;
   }
 
-  GeneralizedForceLaw* KernelObjectFactory::createGeneralizedForceLaw(TiXmlElement *element) {
+  GeneralizedForceLaw* MBSimObjectFactory::createGeneralizedForceLaw(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"BilateralConstraint")
       return new BilateralConstraint;
@@ -186,7 +193,7 @@ namespace MBSim {
     return 0;
   }
 
-  GeneralizedImpactLaw* KernelObjectFactory::createGeneralizedImpactLaw(TiXmlElement *element) {
+  GeneralizedImpactLaw* MBSimObjectFactory::createGeneralizedImpactLaw(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"BilateralImpact")
       return new BilateralImpact;
@@ -195,7 +202,7 @@ namespace MBSim {
     return 0;
   }
   
-  FrictionForceLaw *KernelObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
+  FrictionForceLaw *MBSimObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombFriction")
       return new SpatialCoulombFriction;
@@ -204,19 +211,26 @@ namespace MBSim {
     return 0;
   }
 
-  FrictionImpactLaw *KernelObjectFactory::createFrictionImpactLaw(TiXmlElement *element) {
+  FrictionImpactLaw *MBSimObjectFactory::createFrictionImpactLaw(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombImpact")
       return new SpatialCoulombImpact;
     return 0;
   }
 
-  Contour *KernelObjectFactory::createContour(TiXmlElement *element) {
+  Contour *MBSimObjectFactory::createContour(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"Plane")
       return new Plane(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Sphere")
       return new Sphere(element->Attribute("name"));
+    return 0;
+  }
+
+  Environment *MBSimObjectFactory::getEnvironment(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"MBSimEnvironment")
+      return MBSimEnvironment::getInstance();
     return 0;
   }
 

@@ -29,6 +29,8 @@
 #include "mbsim/flexible_body.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
+#include <mbsim/environment.h>
+#include <mbsim/objectfactory.h>
 
 #ifndef MINGW
 #  include<sys/stat.h>
@@ -60,12 +62,12 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /*directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /*directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), grav(3), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /* directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), /* directoryName("Default"),*/ pinf(0.), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
 
     constructor();
   }
@@ -1427,8 +1429,16 @@ namespace MBSim {
   void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {
     Group::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
-    setAccelerationOfGravity(Vec(e->GetText()));
+    // search first Environment element
+    e=element->FirstChildElement();
+    while(e && ObjectFactory::getInstance()->getEnvironment(e)==0)
+      e=e->NextSiblingElement();
+
+    Environment *env;
+    while((env=ObjectFactory::getInstance()->getEnvironment(e))) {
+      env->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
   }
 
   void DynamicSystemSolver::addToTree(Tree* tree, Node* node, SqrMat &A, int i, vector<Object*>& objList) {

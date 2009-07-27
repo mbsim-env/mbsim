@@ -18,10 +18,6 @@
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
     schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
 
-  <!-- add xs:import statements for other mbsim modules here, but
-       preserve the MBSIMMODULES_IMPORT comment. -->
-  <!--MBSIMMODULES_IMPORT-->
-
 
 
   <xs:simpleType name="PlotFeatureType">
@@ -153,12 +149,26 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="Environment" abstract="true" type="EnvironmentType"/>
+  <xs:complexType name="EnvironmentType"/>
+
+  <xs:element name="MBSimEnvironment" substitutionGroup="Environment" type="MBSimEnvironmentType"/>
+  <xs:complexType name="MBSimEnvironmentType">
+    <xs:complexContent>
+      <xs:extension base="EnvironmentType">
+        <xs:sequence>
+          <xs:element name="accelerationOfGravity" type="pv:accelerationVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="DynamicSystemSolver" substitutionGroup="Group" type="DynamicSystemSolverType"/>
   <xs:complexType name="DynamicSystemSolverType">
     <xs:complexContent>
       <xs:extension base="GroupType">
         <xs:sequence>
-          <xs:element name="accelerationOfGravity" type="pv:accelerationVector"/>
+          <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

@@ -4,6 +4,7 @@ lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = body.cc\
 objectfactory.cc\
+environment.cc\
 mbsim_event.cc\
 link.cc\
 link_mechanics.cc\
@@ -41,6 +42,7 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = body.h\
 objectfactory.h\
+environment.h\
 mbsim_event.h\
 link.h\
 link_mechanics.h\

@@ -9,6 +9,7 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
+#include "mbsim/environment.h"
 #include <set>
 
 namespace MBSim {
@@ -36,12 +37,13 @@ class ObjectFactory {
     virtual FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
     virtual FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
     virtual Contour *createContour(TiXmlElement *element);
+    virtual Environment *getEnvironment(TiXmlElement *element);
 };
 
-class KernelObjectFactory : protected ObjectFactory {
+class MBSimObjectFactory : protected ObjectFactory {
   private:
-    static KernelObjectFactory instance;
-    KernelObjectFactory();
+    static MBSimObjectFactory instance;
+    MBSimObjectFactory();
   protected:
     Group* createGroup(TiXmlElement *element);
     Object* createObject(TiXmlElement *element);
@@ -54,6 +56,7 @@ class KernelObjectFactory : protected ObjectFactory {
     FrictionForceLaw *createFrictionForceLaw(TiXmlElement *element);
     FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
     Contour *createContour(TiXmlElement *element);
+    Environment *getEnvironment(TiXmlElement *element);
 };
 
 }

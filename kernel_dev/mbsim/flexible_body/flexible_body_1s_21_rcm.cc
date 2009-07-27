@@ -24,6 +24,7 @@
 #include <mbsim/mbsim_event.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/contours/contour1s_flexible.h>
+#include <mbsim/environment.h>
 
 #define FMATVEC_DEEP_COPY
 
@@ -201,7 +202,7 @@ namespace MBSim {
     else contour1sFlexible->setNodes(userContourNodes);
 
     l0 = L/Elements;
-    Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*ds->getAccelerationOfGravity();
+    Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
     for(int i=0;i<Elements;i++) {
       qElement.push_back(Vec(8,INIT,0.));
       uElement.push_back(Vec(8,INIT,0.));

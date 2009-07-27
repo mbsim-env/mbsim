@@ -27,6 +27,7 @@
 #include "mbsim/contours/cylinder_flexible.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/frame.h"
+#include <mbsim/environment.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -259,7 +260,7 @@ namespace MBSim {
     right->setNormalDistance(0.5*cuboidBreadth);
 
     l0 = L/Elements;
-    Vec g = trans(frameOfReference->getOrientation())*ds->getAccelerationOfGravity();
+    Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
     for(int i=0;i<Elements;i++) {
       discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
