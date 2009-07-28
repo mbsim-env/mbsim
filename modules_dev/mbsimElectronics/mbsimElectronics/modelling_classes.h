@@ -2,7 +2,7 @@
 #define _MODELING_CLASSES_H
 
 #include "mbsim/element.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/modelling_interface.h"
 #include <string>
 #include <vector>
 

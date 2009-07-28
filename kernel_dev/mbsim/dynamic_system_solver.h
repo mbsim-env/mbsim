@@ -57,6 +57,7 @@ namespace MBSim {
    * \date 2009-03-31 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
   class DynamicSystemSolver : public Group {
     public:

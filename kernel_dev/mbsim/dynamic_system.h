@@ -20,7 +20,9 @@
 #define _DYNAMIC_SYSTEM_H_
 
 #include "mbsim/element.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/link_interface.h"
+#include "mbsim/object_interface.h"
+#include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/frame.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
@@ -36,10 +38,7 @@ namespace MBSim {
   class DataInterfaceBase;
   class Object;
   class Link;
-
-  // TODO delete compatibility classes 
-  class TreeRigid;
-  class BodyRigid;
+  class ModellingInterface;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -50,6 +49,7 @@ namespace MBSim {
    * \date 2009-07-08 relative dynamic system location (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
@@ -453,7 +453,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      void buildListOfModels(std::vector<MBSim::ModellingInterface*> &model, bool recursive = true);
+      void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
 
       /**
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
@@ -688,7 +688,7 @@ namespace MBSim {
        * \param check for existence of model
        * \return modelling interface
        */
-      MBSim::ModellingInterface* getModel(const std::string &name, bool check=true);
+      ModellingInterface* getModel(const std::string &name, bool check=true);
 
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);

@@ -21,7 +21,8 @@
 #define _LINK_H_
 
 #include "mbsim/element.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/link_interface.h"
+#include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/frame.h"
 #include "hdf5serie/vectorserie.h"
@@ -34,6 +35,7 @@ namespace H5 {
 namespace MBSim {
 
   class Contour;
+  class DynamicSystem;
 
   /** 
    * \brief general link to one or more objects
@@ -42,6 +44,7 @@ namespace MBSim {
    * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:

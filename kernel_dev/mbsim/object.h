@@ -21,7 +21,7 @@
 #define _OBJECT_H_
 
 #include "mbsim/element.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/object_interface.h"
 #include "mbsim/frame.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include <string>
@@ -38,6 +38,7 @@ namespace MBSim {
    * \date 2009-03-24 plot energy added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
   class Object : public Element, public ObjectInterface {
     public: 

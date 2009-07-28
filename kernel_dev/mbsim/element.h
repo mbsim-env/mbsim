@@ -66,6 +66,7 @@ namespace MBSim {
    * \brief basic class of MBSim mainly for plotting
    * \author Martin Foerg
    * \date 2009-03-24 plot feature energy (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
   class Element {
     public:
