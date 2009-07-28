@@ -25,6 +25,7 @@
 #include "mbsim/body.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
+#include "mbsim/discretization_interface.h"
 #include <vector>
 
 namespace MBSim {
@@ -39,6 +40,7 @@ namespace MBSim {
    * \date 2009-04-20 frame concept (Thorsten Schindler)
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-27 implicit integration (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class FlexibleBody : public Body {
@@ -55,13 +57,11 @@ namespace MBSim {
       virtual ~FlexibleBody();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      /** 
-       * \brief compute mass matrix and smooth right hand side
-       * \param time
-       */
       virtual void updatedq(double t, double dt) { qd = u*dt; }
       virtual void updateqd(double t) { qd = u; }
+      virtual void updateh(double t);
       virtual void updateM(double t);
+      virtual void updatedhdz(double t);
       virtual void updateStateDependentVariables(double t);
       virtual void updateJacobians(double t);
       virtual void updateInverseKineticsJacobians(double t);
@@ -87,10 +87,28 @@ namespace MBSim {
       virtual void BuildElements() = 0;
 
       /** 
+       * \brief insert 'local' information in global vectors
+       * \param number of finite element
+       * \param local vector
+       * \param global vector
+       */
+      virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec &locVec, fmatvec::Vec &gloVec) = 0;
+
+      /** 
        * \brief insert 'local' information in global matrices
        * \param number of finite element
+       * \param local matrix 
+       * \param global matrix
        */
-      virtual void GlobalMatrixContribution(int CurrentElement) = 0;
+      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat &locMat, fmatvec::Mat &gloMat) = 0;
+
+      /** 
+       * \brief insert 'local' information in global matrices
+       * \param number of finite element
+       * \param local matrix 
+       * \param global matrix
+       */
+      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat &locMat, fmatvec::SymMat &gloMat) = 0;
 
       /**
        * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
@@ -147,7 +165,6 @@ namespace MBSim {
         addFrame(frame,cp);
       }
 
-
     protected:
       /** 
        * \brief stl-vector of discretizations/finite elements
@@ -173,7 +190,6 @@ namespace MBSim {
        * \brief vector of contour parameters each describing a frame
        */
       std::vector<ContourPointData> S_Frame;
-
   };
 
   /**

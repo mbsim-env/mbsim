@@ -41,6 +41,7 @@ namespace MBSim {
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-04-06 ExtraDynamicInterface included / LinkMechanics added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
    */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
@@ -516,7 +517,7 @@ namespace MBSim {
        * \brief smooth Jacobians for implicit integration
        */
       std::vector<fmatvec::Mat> dhdq;
-      std::vector<fmatvec::SqrMat> dhdu;
+      std::vector<fmatvec::Mat> dhdu;
       std::vector<fmatvec::Vec> dhdt;
       
       /**

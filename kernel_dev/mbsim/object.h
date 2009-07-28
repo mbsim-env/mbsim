@@ -37,6 +37,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-24 plot energy added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    */
   class Object : public Element, public ObjectInterface {
     public: 
@@ -384,5 +385,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _OBJECT_H_ */
 

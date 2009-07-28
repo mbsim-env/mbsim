@@ -591,7 +591,6 @@ namespace MBSim {
 
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
-
         double *a = ds->getGs()();
         int *ia = ds->getGs().Ip();
         int *ja = ds->getGs().Jp();

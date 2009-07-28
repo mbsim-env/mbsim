@@ -21,7 +21,7 @@
 #ifndef _FINITE_ELEMENT_1S_21_RCM_H_
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
-#include <mbsim/interfaces.h>
+#include <mbsim/discretization_interface.h>
 #include <mbsim/contour_pdata.h>
 #include <mbsim/mbsim_event.h>
 #include "fmatvec.h"
@@ -33,6 +33,7 @@ namespace MBSim {
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-03-23 initial for kernel_dev
+   * \date 2009-07-27 implicit integration (Thorsten Schindler)
    * \todo transform computeState to Position / Velocity / Orientation / AngularVelocity
    * \todo JacobianMinimalRepresentation
    *
@@ -64,28 +65,29 @@ namespace MBSim {
       virtual ~FiniteElement1s21RCM() {}
 
       /* INHERITED INTERFACE */
-      const fmatvec::SymMat& getMassMatrix() const { return M; }
-      const fmatvec::Vec& getGeneralizedForceVector() const { return h; }
-      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const { return Dhq; }    
-      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const { return Dhqp; }
-      int getSizeOfPositions() const { return 8; }
-      int getSizeOfVelocities() const { return 8; }
-      void computeEquationsOfMotion(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      double computeGravitationalEnergy(const fmatvec::Vec& qElement);
-      double computeElasticEnergy(const fmatvec::Vec& qElement);
-      fmatvec::Vec computePosition(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
-      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
-      fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
+      virtual const fmatvec::SymMat& getM() const { return M; }
+      virtual const fmatvec::Vec& geth() const { return h; }
+      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }    
+      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
+      virtual int getqSize() const { return 8; }
+      virtual int getuSize() const { return 8; }
+      virtual void computeM(const fmatvec::Vec& qElement);
+      virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
+      virtual void computedhdz(fmatvec::Vec& qElement, fmatvec::Vec& qpElement);
+      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
+      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
+      virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
 
       /* GETTER / SETTER */
       void setCurlRadius(double);
       void setMaterialDamping(double);
       void setLehrDamping(double);
-      void setImplicit(bool implicit_) { implicit = implicit_; }
       /***************************************************/
 
       /**
@@ -175,9 +177,29 @@ namespace MBSim {
       fmatvec::SqrMat Damp;
 
       /**
-       * \brief FLAG for implicit integration
+       * \brief internal position and velocities as well as smooth right hand side
        */
-      bool implicit;
+      fmatvec::Vec qLocal, qpLocal, hIntermediate;
+
+      /**
+       * \brief local mass matrix
+       */
+      fmatvec::SymMat MLocal;
+
+      /**
+       * \brief transformation global -> internal coordinates coordinates and its derivative
+       */
+      fmatvec::SqrMat Jeg, Jegp;
+
+      /**
+       * \brief global and local state of the last time step 
+       */
+      fmatvec::Vec qElement_Old, qpElement_Old;
+
+      /**
+       * \brief tolerance for comparison of state with old state 
+       */
+      double tol_comp;
 
     private:
       /**
@@ -231,7 +253,10 @@ namespace MBSim {
       double l0h2, l0h3, l0h4, l0h5, l0h7, l0h8;
   };
 
+  inline double Sec(const double& alpha) { return 1.0/cos(alpha); }
+  inline double Power(double base, int exponent) { return pow(base,exponent); }
+
 }
 
-#endif
+#endif /* _FINITE_ELEMENT_1S_21_RCM_H_ */
 

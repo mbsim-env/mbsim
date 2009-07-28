@@ -51,32 +51,49 @@ namespace MBSim {
         qElement[i](0,4) << q(n,n+4);
         uElement[i](0,4) << u(n,n+4);
         qElement[i](5,7) << q(0,2);
-        if(qElement[i](2)-q(2)>0.0) 
-          qElement[i](7) += 2*M_PI;
-        else
-          qElement[i](7) -= 2*M_PI;
+        if(qElement[i](2)-q(2)>0.0) qElement[i](7) += 2*M_PI;
+        else qElement[i](7) -= 2*M_PI;
         uElement[i](5,7) << u(0,2);
       } 
     }
   }
 
-  void FlexibleBody1s21RCM::GlobalMatrixContribution(int n) {
+  void FlexibleBody1s21RCM::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
     int j = 5 * n;
 
-    if( n < Elements - 1 || openStructure==true) {
-      M(Index(j,j+7))   += discretization[n]->getMassMatrix();
-      h(j,j+7)          += discretization[n]->getGeneralizedForceVector();
-      hObject(j,j+7)          += discretization[n]->getGeneralizedForceVector();
+    if(n < Elements - 1 || openStructure==true) {
+      gloVec(j,j+7) += locVec;
     } 
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
-      M(Index(j,j+4))               += discretization[n]->getMassMatrix()(Index(0,4));
-      M(Index(j,j+4),Index(0,2))    += discretization[n]->getMassMatrix()(Index(0,4),Index(5,7));
-      M(Index(0,2))                 += discretization[n]->getMassMatrix()(Index(5,7));
+      gloVec(j,j+4) += locVec(0,4);
+      gloVec(0,  2) += locVec(5,7);
+    }
+  }
 
-      h(j,j+4)                      += discretization[n]->getGeneralizedForceVector()(0,4);
-      h(0,  2)                      += discretization[n]->getGeneralizedForceVector()(5,7);
-      hObject(j,j+4)                      += discretization[n]->getGeneralizedForceVector()(0,4);
-      hObject(0,  2)                      += discretization[n]->getGeneralizedForceVector()(5,7);
+  void FlexibleBody1s21RCM::GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
+    int j = 5 * n;
+
+    if(n < Elements - 1 || openStructure==true) {
+      gloMat(Index(j,j+7),Index(j,j+7)) += locMat;
+    } 
+    else { // ring closure at finite element (end,1) with angle difference 2*M_PI
+      gloMat(Index(j,j+4),Index(j,j+4)) += locMat(Index(0,4),Index(0,4));
+      gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
+      gloMat(Index(0,2),Index(j,j+4)) += locMat(Index(5,7),Index(0,4));
+      gloMat(Index(0,2),Index(0,2)) += locMat(Index(5,7),Index(5,7));
+    }
+  }
+
+  void FlexibleBody1s21RCM::GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
+    int j = 5 * n;
+
+    if(n < Elements - 1 || openStructure==true) {
+      gloMat(Index(j,j+7)) += locMat;
+    } 
+    else { // ring closure at finite element (end,1) with angle difference 2*M_PI
+      gloMat(Index(j,j+4))            += locMat(Index(0,4));
+      gloMat(Index(j,j+4),Index(0,2)) += locMat(Index(0,4),Index(5,7));
+      gloMat(Index(0,2))              += locMat(Index(5,7));
     }
   }
 

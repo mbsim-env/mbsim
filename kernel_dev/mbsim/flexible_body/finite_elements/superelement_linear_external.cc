@@ -37,24 +37,20 @@ namespace MBSim {
   }
 
   void SuperElementLinearExternal::setM(const SymMat &M_) {
-    if(M_.size()==getSizeOfPositions() || getSizeOfPositions()==0)
-      M = M_;
-    else
-      throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
+    if(M_.size()==getqSize() || getqSize()==0) M = M_;
+    else throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
   }
 
   void SuperElementLinearExternal::setK(const SqrMat &K_) {
-    if(K_.size()==getSizeOfVelocities() || getSizeOfVelocities()==0)
-      K = K_;
-    else
-      throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
+    if(K_.size()==getuSize() || getuSize()==0) K = K_;
+    else throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
   }
 
   Vec SuperElementLinearExternal::computePosition(const Vec&q,const ContourPointData& cp) {
-    return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*q + KrP[cp.getNodeNumber()];
+    return trans(computeJacobianOfMotion(q,cp))*q + KrP[cp.getNodeNumber()];
   }
 
-  Mat SuperElementLinearExternal::computeJacobianOfMinimalRepresentationRegardingPhysics(const Vec&q,const ContourPointData& cp) {
+  Mat SuperElementLinearExternal::computeJacobianOfMotion(const Vec&q,const ContourPointData& cp) {
     return J[cp.getNodeNumber()];
   }
 

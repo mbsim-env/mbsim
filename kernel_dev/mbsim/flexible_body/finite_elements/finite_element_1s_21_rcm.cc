@@ -23,6 +23,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
+#include <mbsim/utils/eps.h>
 #include <fstream>
 
 using namespace std;
@@ -30,22 +31,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  // Mathematica functions
-  inline double Sec(const double& alpha) {
-    return 1.0/cos(alpha);
-  }
-
-  inline double Power(double base, int exponent) {
-    return pow(base,exponent);
-  }
-  // Mathematica functions
-
   FiniteElement1s21RCM::FiniteElement1s21RCM(double sl0, double sArho, double sEA, double sEI, Vec sg)
-    : l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), g(sg), M(8), h(8), Dhq(8), Dhqp(8), Damp(8,fmatvec::INIT,0.), implicit(false)
+    : l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8), Dhqp(8), Damp(8,INIT,0.), qLocal(8,INIT,0.), qpLocal(8,INIT,0.), hIntermediate(8,INIT,0.), MLocal(8,INIT,0.), Jeg(8,INIT,0.), Jegp(8,INIT,0.), qElement_Old(8,INIT,0.), qpElement_Old(8,INIT,0.), tol_comp(1e-8)
   {
-    M.init(0.0);
-    h.init(0.0);
-
     l0h2 = l0*l0;
     l0h3 = l0h2*l0;
     l0h4 = l0h3*l0;
@@ -54,97 +42,143 @@ namespace MBSim {
     l0h8 = l0h4*l0h4;
   }
 
-  void FiniteElement1s21RCM::computeEquationsOfMotion(const Vec& qElement, const Vec& qpElement) {
-    Vec    qLocal(8,fmatvec::INIT,0.0), qpLocal(8,fmatvec::INIT,0.0);
+  void FiniteElement1s21RCM::computeM(const Vec& qElement) {
+    if(nrm2(qElement-qElement_Old)>tol_comp) {
+      BuildqLocal(qElement,qLocal);
+      BuildJacobi(qElement,Jeg);
 
-    SymMat MLocal(8,fmatvec::INIT,0.0);
-    SqrMat Jeg   (8,fmatvec::INIT,0.0), Jegp   (8,fmatvec::INIT,0.0);
-    Vec    hLocal(8,fmatvec::INIT,0.0), hdLocal(8,fmatvec::INIT,0.0); 
+      // local coordinates and velocities
+      double &phiS   = qLocal(2);      double &eps   = qLocal(3);
+      double &aL     = qLocal(4);      double &bL    = qLocal(5);
+      double &aR     = qLocal(6);      double &bR    = qLocal(7);
 
-    // local coordinates and velocities
-    double &phiS   = qLocal(2);      double &eps   = qLocal(3);
-    double &aL     = qLocal(4);      double &bL    = qLocal(5);
-    double &aR     = qLocal(6);      double &bR    = qLocal(7);
-    double &phiSp  = qpLocal(2);     double &epsp  = qpLocal(3);
-    double &aLp    = qpLocal(4);     double &bLp   = qpLocal(5);
-    double &aRp    = qpLocal(6);     double &bRp   = qpLocal(7);
+      // symmetric mass matrix
+      MLocal(0,0) = Arho*l0;
+      MLocal(0,2) = (Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) - 60*(1 + eps)*l0*(sin(bL - phiS) + sin(bR + phiS))))/480.;
+      MLocal(0,3) = (Arho*l0h2*(-cos(bL - phiS) + cos(bR + phiS)))/8.;
+      MLocal(0,4) = (Arho*l0*(-13*sin(bL - phiS) + sin(bR + phiS)))/60.;
+      MLocal(0,5) = -(Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + 3*l0*(-5*(3 + 4*eps)*sin(bL - phiS) + sin(bR + phiS))))/480.;
+      MLocal(0,6) = -(Arho*l0*(sin(bL - phiS) - 13*sin(bR + phiS)))/60.;
+      MLocal(0,7) = (Arho*l0*((8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) + 3*l0*(sin(bL - phiS) - 5*(3 + 4*eps)*sin(bR + phiS))))/480.;
+      MLocal(1,1) = Arho*l0;
+      MLocal(1,2) = (Arho*l0*(-60*(1 + eps)*l0*cos(bL - phiS) + 60*(1 + eps)*l0*cos(bR + phiS) + (-104*aL - 8*aR + 3*(-5*bL + bR)*l0)*sin(bL - phiS) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
+      MLocal(1,3) = (Arho*l0h2*(sin(bL - phiS) + sin(bR + phiS)))/8.;
+      MLocal(1,4) = -(Arho*l0*(13*cos(bL - phiS) + cos(bR + phiS)))/60.;
+      MLocal(1,5) = (Arho*l0*(3*l0*(5*(3 + 4*eps)*cos(bL - phiS) + cos(bR + phiS)) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS)))/480.;
+      MLocal(1,6) = -(Arho*l0*(cos(bL - phiS) + 13*cos(bR + phiS)))/60.;
+      MLocal(1,7) = (Arho*l0*(3*l0*(cos(bL - phiS) + 5*(3 + 4*eps)*cos(bR + phiS)) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
+      MLocal(2,2) = (Arho*l0*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0)))/20160.;
+      MLocal(2,3) = -(Arho*l0h2*(9*aL - 9*aR + (bL - bR)*l0))/120.;
+      MLocal(2,4) = (3*Arho*(1 + eps)*l0h2)/40.;
+      MLocal(2,5) = -(Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
+      MLocal(2,6) = (-3*Arho*(1 + eps)*l0h2)/40.;
+      MLocal(2,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
+      MLocal(3,3) = (Arho*l0h3)/12.;
+      MLocal(3,5) = (Arho*l0h2*(152*aL + 8*aR + 13*bL*l0 - 3*bR*l0))/1920.;
+      MLocal(3,7) = (Arho*l0h2*(8*aL + 152*aR - 3*bL*l0 + 13*bR*l0))/1920.;
+      MLocal(4,4) = (197*Arho*l0)/1260.;
+      MLocal(4,5) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
+      MLocal(4,6) = (17*Arho*l0)/1260.;
+      MLocal(4,7) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
+      MLocal(5,5) = (Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
+      MLocal(5,6) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
+      MLocal(5,7) = (Arho*(2 + 3*eps)*l0h3)/960.;
+      MLocal(6,6) = (197*Arho*l0)/1260.;
+      MLocal(6,7) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
+      MLocal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
 
-    // gravitation
-    double gx = g(0);
-    double gy = g(1);
-
-    // local coordinates
-    BuildqLocal(qElement,qLocal);
-
-    // Jacobian
-    BuildJacobi(qElement,qpElement,Jeg,Jegp);
-
-    // Locale velocities
-    qpLocal << Jeg * qpElement;
-
-    // symmetric mass matrix
-    MLocal(0,0) = Arho*l0;
-    MLocal(0,2) = (Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) - 60*(1 + eps)*l0*(sin(bL - phiS) + sin(bR + phiS))))/480.;
-    MLocal(0,3) = (Arho*l0h2*(-cos(bL - phiS) + cos(bR + phiS)))/8.;
-    MLocal(0,4) = (Arho*l0*(-13*sin(bL - phiS) + sin(bR + phiS)))/60.;
-    MLocal(0,5) = -(Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + 3*l0*(-5*(3 + 4*eps)*sin(bL - phiS) + sin(bR + phiS))))/480.;
-    MLocal(0,6) = -(Arho*l0*(sin(bL - phiS) - 13*sin(bR + phiS)))/60.;
-    MLocal(0,7) = (Arho*l0*((8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) + 3*l0*(sin(bL - phiS) - 5*(3 + 4*eps)*sin(bR + phiS))))/480.;
-    MLocal(1,1) = Arho*l0;
-    MLocal(1,2) = (Arho*l0*(-60*(1 + eps)*l0*cos(bL - phiS) + 60*(1 + eps)*l0*cos(bR + phiS) + (-104*aL - 8*aR + 3*(-5*bL + bR)*l0)*sin(bL - phiS) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
-    MLocal(1,3) = (Arho*l0h2*(sin(bL - phiS) + sin(bR + phiS)))/8.;
-    MLocal(1,4) = -(Arho*l0*(13*cos(bL - phiS) + cos(bR + phiS)))/60.;
-    MLocal(1,5) = (Arho*l0*(3*l0*(5*(3 + 4*eps)*cos(bL - phiS) + cos(bR + phiS)) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS)))/480.;
-    MLocal(1,6) = -(Arho*l0*(cos(bL - phiS) + 13*cos(bR + phiS)))/60.;
-    MLocal(1,7) = (Arho*l0*(3*l0*(cos(bL - phiS) + 5*(3 + 4*eps)*cos(bR + phiS)) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
-    MLocal(2,2) = (Arho*l0*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0)))/20160.;
-    MLocal(2,3) = -(Arho*l0h2*(9*aL - 9*aR + (bL - bR)*l0))/120.;
-    MLocal(2,4) = (3*Arho*(1 + eps)*l0h2)/40.;
-    MLocal(2,5) = -(Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
-    MLocal(2,6) = (-3*Arho*(1 + eps)*l0h2)/40.;
-    MLocal(2,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
-    MLocal(3,3) = (Arho*l0h3)/12.;
-    MLocal(3,5) = (Arho*l0h2*(152*aL + 8*aR + 13*bL*l0 - 3*bR*l0))/1920.;
-    MLocal(3,7) = (Arho*l0h2*(8*aL + 152*aR - 3*bL*l0 + 13*bR*l0))/1920.;
-    MLocal(4,4) = (197*Arho*l0)/1260.;
-    MLocal(4,5) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
-    MLocal(4,6) = (17*Arho*l0)/1260.;
-    MLocal(4,7) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
-    MLocal(5,5) = (Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
-    MLocal(5,6) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
-    MLocal(5,7) = (Arho*(2 + 3*eps)*l0h3)/960.;
-    MLocal(6,6) = (197*Arho*l0)/1260.;
-    MLocal(6,7) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
-    MLocal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
-
-    // right hand side
-    hLocal(0) = (Arho*l0*(480*gx + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*cos(bL - phiS) + 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*cos(bR + phiS) - (3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*sin(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*sin(bR + phiS)))/480.;
-    hLocal(1) = Arho*gy*l0 - (Arho*l0*((3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*cos(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*cos(bR + phiS) + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*sin(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*sin(bR + phiS)))/480.;
-    hLocal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*l0h2 - 42*Power(bLp,2)*bR*l0h2 - 51*bL*bLp*bRp*l0h2 + 51*bLp*bR*bRp*l0h2 + 42*bL*Power(bRp,2)*l0h2 - 211*bR*Power(bRp,2)*l0h2 + 3360*bLp*epsp*l0h2 - 3360*bRp*epsp*l0h2 + 3360*bLp*eps*epsp*l0h2 - 3360*bRp*eps*epsp*l0h2 - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*((8*(13*aL + aR)*gx + 3*(5*bL*gx - bR*gx - 20*(1 + eps)*gy)*l0)*cos(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*cos(bR + phiS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*sin(bL - phiS) + (8*(aL + 13*aR)*gy - 3*(20*(1 + eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS))))/40320.;
-    hLocal(3) = -(EA*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2)) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*l0 + 3*(140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*l0h2)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(176400.*l0h3) - (aLp*Arho*l0h2*(19*bLp + bRp - 18*phiSp))/120. - (Arho*aRp*l0h2*(bLp + 19*bRp + 18*phiSp))/120. + (Arho*l0h3*(67*Power(bLp,2) + 6*bLp*bRp + 67*Power(bRp,2) + 80*Power(bLp,2)*eps + 80*Power(bRp,2)*eps - 16*(bLp - bRp)*(9 + 10*eps)*phiSp + 160*(1 + eps)*Power(phiSp,2)))/1920. - (Arho*l0h3*(13*Power(bLp,2) - 2*bLp*(3*bRp + 8*phiSp) + bRp*(13*bRp + 16*phiSp)))/1920. - (Arho*gx*l0h2*cos(bL - phiS))/8. + (Arho*gx*l0h2*cos(bR + phiS))/8. + (Arho*gy*l0h2*sin(bL - phiS))/8. + (Arho*gy*l0h2*sin(bR + phiS))/8.;
-    hLocal(4) = -(282240*EI*(160*aL - 32*aR - 43*bL*l0 + 11*bR*l0) + 8*EA*(1 + eps)*(272*aL - 16*aR - 24*bL*l0 + 9*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(19*bLp + bRp - 18*phiSp))/240. + (aL*Arho*l0*(196*Power(bLp,2) + Power(bRp,2) - 392*bLp*phiSp + 2*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(205*bL*Power(bLp,2) - 51*Power(bLp,2)*bR - 6*bL*Power(bRp,2) + 28*bR*Power(bRp,2) + 1596*bLp*epsp + 84*bRp*epsp - 2*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp)*phiSp + (199*bL - 23*bR)*Power(phiSp,2)))/20160. + (17*aR*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (13*Arho*gy*l0*cos(bL - phiS))/60.  - (Arho*gy*l0*cos(bR + phiS))/60. - (13*Arho*gx*l0*sin(bL - phiS))/60. + (Arho*gx*l0*sin(bR + phiS))/60.;
-    hLocal(5) = -(-835584*Power(aL,3)*EA*Power(1 + eps,2) + 313344*Power(aR,3)*EA*Power(1 + eps,2) + 2304*Power(aR,2)*(213*bL - 92*bR)*EA*Power(1 + eps,2)*l0 + 3072*Power(aL,2)*EA*Power(1 + eps,2)*(134*aR + 201*bL*l0 - 69*bR*l0) - 4*aL*(24272640*EI + 218112*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(8*bL - 9*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(36*Power(bL,2) - 25*bL*bR + 15*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(6272*aLp*(bLp - phiSp) + 272*aRp*(bLp - phiSp) + l0*(205*Power(bLp,2) - 102*bLp*bRp + 6*Power(bRp,2) + 114*bRp*phiSp - 199*Power(phiSp,2))))) + 4*aR*(6209280*EI + l0h2*(432*EA*(1 + eps)*(140*eps + (3*bL - 5*bR)*(9*bL - 5*bR)*(1 + eps)) + 35*Arho*l0*(272*aLp*(bLp - phiSp) + 32*aRp*(bLp - phiSp) + l0*(28*Power(bLp,2) - 12*bLp*bRp + 51*Power(bRp,2) + 114*bRp*phiSp + 23*Power(phiSp,2))))) + l0*(23328*Power(bL,3)*EA*Power(1 + eps,2)*l0h2 - 23328*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h2 + bL*(32175360*EI + l0h2*(2592*EA*(1 + eps)*(140*eps + 11*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(1640*aLp*(bLp - phiSp) + 224*aRp*(bLp - phiSp) + l0*(211*Power(bLp,2) - 84*bLp*bRp - 9*Power(bRp,2) + 66*bRp*phiSp - 220*Power(phiSp,2))))) - 6*(1296*Power(bR,3)*EA*Power(1 + eps,2)*l0h2 + 35*bR*(40320*EI + l0h2*(576*EA*eps*(1 + eps) + Arho*l0*(68*aLp*(bLp - phiSp) + 8*aRp*(bLp - phiSp) + l0*(7*Power(bLp,2) - 3*bLp*bRp - 7*Power(bRp,2) - 11*bRp*phiSp - 14*Power(phiSp,2))))) + 490*l0*(Arho*epsp*l0h3*(-3*bRp - bLp*(67 + 80*eps) + 64*phiSp + 80*eps*phiSp) + 960*EI*wss0))) - 5880*Arho*l0h3*((-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 5*(3 + 4*eps)*gy)*l0)*cos(bL - phiS) + 3*gy*l0*cos(bR + phiS) + (8*(13*aL + aR)*gy + 3*(5*(3 + 4*eps)*gx + (5*bL - bR)*gy)*l0)*sin(bL - phiS) - 3*gx*l0*sin(bR + phiS)))/(2.8224e6*l0h2);
-    hLocal(6) = (282240*EI*(32*aL - 160*aR - 11*bL*l0 + 43*bR*l0) + 8*EA*(1 + eps)*(16*aL - 272*aR - 9*bL*l0 + 24*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(bLp + 19*bRp + 18*phiSp))/240. + (aR*Arho*l0*(Power(bLp,2) + 196*Power(bRp,2) - 2*bLp*phiSp + 392*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(28*bL*Power(bLp,2) - 6*Power(bLp,2)*bR - 51*bL*Power(bRp,2) + 205*bR*Power(bRp,2) + 84*bLp*epsp + 1596*bRp*epsp + 2*(-28*bL*bLp + 6*bLp*bR - 51*bL*bRp + 205*bR*bRp + 756*epsp)*phiSp + (-23*bL + 199*bR)*Power(phiSp,2)))/20160. + (17*aL*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (Arho*gy*l0*cos(bL - phiS))/60. - (13*Arho*gy*l0*cos(bR + phiS))/60. - (Arho*gx*l0*sin(bL - phiS))/60. + (13*Arho*gx*l0*sin(bR + phiS))/60.;
-    hLocal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 - 5880*Arho*l0h3*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
-
-    // damping
-    hdLocal(3) = - depsilon * epsp; // eps
-
-    // transformation in global system
-    M << JTMJ(MLocal,Jeg);
-
-    Vec hIntermediate(8,fmatvec::INIT,0.0);
-    hIntermediate << hLocal + hdLocal  -   MLocal * Jegp * qpElement;
-    h << trans(Jeg) * hIntermediate;
-
-    // implicit integration
-    if(implicit) {
-      Mat Dhz(16,8,fmatvec::INIT,0.0);
-      Dhz   = hFullJacobi(qElement,qpElement,qLocal,qpLocal,Jeg,Jegp,MLocal,hIntermediate);
-      Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
-      Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
-      Dhqp += trans(Jeg)*Damp*Jeg;
+      qElement_Old = qElement.copy();
     }
+    M << JTMJ(MLocal,Jeg); 
+  }
+
+  void FiniteElement1s21RCM::computeh(const Vec& qElement, const Vec& qpElement) {
+    if(nrm2(qElement-qElement_Old)>tol_comp || nrm2(qpElement-qpElement_Old)>tol_comp) {
+      Vec hLocal(8,INIT,0.), hdLocal(8,INIT,0.); 
+
+      // local coordinates and velocities
+      double &phiS   = qLocal(2);      double &eps   = qLocal(3);
+      double &aL     = qLocal(4);      double &bL    = qLocal(5);
+      double &aR     = qLocal(6);      double &bR    = qLocal(7);
+      double &phiSp  = qpLocal(2);     double &epsp  = qpLocal(3);
+      double &aLp    = qpLocal(4);     double &bLp   = qpLocal(5);
+      double &aRp    = qpLocal(6);     double &bRp   = qpLocal(7);
+
+      // gravitation
+      double gx = g(0);
+      double gy = g(1);
+
+      // local coordinates
+      BuildqLocal(qElement,qLocal);
+
+      // Jacobian
+      BuildJacobi(qElement,qpElement,Jeg,Jegp);
+
+      // Locale velocities
+      qpLocal << Jeg * qpElement;
+
+      // symmetric mass matrix
+      MLocal(0,0) = Arho*l0;
+      MLocal(0,2) = (Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + (8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) - 60*(1 + eps)*l0*(sin(bL - phiS) + sin(bR + phiS))))/480.;
+      MLocal(0,3) = (Arho*l0h2*(-cos(bL - phiS) + cos(bR + phiS)))/8.;
+      MLocal(0,4) = (Arho*l0*(-13*sin(bL - phiS) + sin(bR + phiS)))/60.;
+      MLocal(0,5) = -(Arho*l0*((104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*cos(bL - phiS) + 3*l0*(-5*(3 + 4*eps)*sin(bL - phiS) + sin(bR + phiS))))/480.;
+      MLocal(0,6) = -(Arho*l0*(sin(bL - phiS) - 13*sin(bR + phiS)))/60.;
+      MLocal(0,7) = (Arho*l0*((8*aL + 104*aR - 3*bL*l0 + 15*bR*l0)*cos(bR + phiS) + 3*l0*(sin(bL - phiS) - 5*(3 + 4*eps)*sin(bR + phiS))))/480.;
+      MLocal(1,1) = Arho*l0;
+      MLocal(1,2) = (Arho*l0*(-60*(1 + eps)*l0*cos(bL - phiS) + 60*(1 + eps)*l0*cos(bR + phiS) + (-104*aL - 8*aR + 3*(-5*bL + bR)*l0)*sin(bL - phiS) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
+      MLocal(1,3) = (Arho*l0h2*(sin(bL - phiS) + sin(bR + phiS)))/8.;
+      MLocal(1,4) = -(Arho*l0*(13*cos(bL - phiS) + cos(bR + phiS)))/60.;
+      MLocal(1,5) = (Arho*l0*(3*l0*(5*(3 + 4*eps)*cos(bL - phiS) + cos(bR + phiS)) + (104*aL + 8*aR + 15*bL*l0 - 3*bR*l0)*sin(bL - phiS)))/480.;
+      MLocal(1,6) = -(Arho*l0*(cos(bL - phiS) + 13*cos(bR + phiS)))/60.;
+      MLocal(1,7) = (Arho*l0*(3*l0*(cos(bL - phiS) + 5*(3 + 4*eps)*cos(bR + phiS)) + (8*aL + 104*aR - 3*(bL - 5*bR)*l0)*sin(bR + phiS)))/480.;
+      MLocal(2,2) = (Arho*l0*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0)))/20160.;
+      MLocal(2,3) = -(Arho*l0h2*(9*aL - 9*aR + (bL - bR)*l0))/120.;
+      MLocal(2,4) = (3*Arho*(1 + eps)*l0h2)/40.;
+      MLocal(2,5) = -(Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
+      MLocal(2,6) = (-3*Arho*(1 + eps)*l0h2)/40.;
+      MLocal(2,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps))*l0h2))/80640.;
+      MLocal(3,3) = (Arho*l0h3)/12.;
+      MLocal(3,5) = (Arho*l0h2*(152*aL + 8*aR + 13*bL*l0 - 3*bR*l0))/1920.;
+      MLocal(3,7) = (Arho*l0h2*(8*aL + 152*aR - 3*bL*l0 + 13*bR*l0))/1920.;
+      MLocal(4,4) = (197*Arho*l0)/1260.;
+      MLocal(4,5) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
+      MLocal(4,6) = (17*Arho*l0)/1260.;
+      MLocal(4,7) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
+      MLocal(5,5) = (Arho*l0*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2)) + 8*(205*aL*bL + 28*aR*bL - 51*aL*bR - 6*aR*bR)*l0 + (211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
+      MLocal(5,6) = -(Arho*(107 + 84*eps)*l0h2)/20160.;
+      MLocal(5,7) = (Arho*(2 + 3*eps)*l0h3)/960.;
+      MLocal(6,6) = (197*Arho*l0)/1260.;
+      MLocal(6,7) = -(Arho*(1397 + 1596*eps)*l0h2)/20160.;
+      MLocal(7,7) = (Arho*l0*(64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2)) - 8*(6*aL*bL + 51*aR*bL - 28*aL*bR - 205*aR*bR)*l0 + (9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 4*(622 + 21*eps*(67 + 40*eps)))*l0h2))/80640.;
+
+      // right hand side
+      hLocal(0) = (Arho*l0*(480*gx + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*cos(bL - phiS) + 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*cos(bR + phiS) - (3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*sin(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*sin(bR + phiS)))/480.;
+      hLocal(1) = Arho*gy*l0 - (Arho*l0*((3*l0*(40*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*(bLp - phiSp)*cos(bL - phiS) + (bRp + phiSp)*(8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-40*epsp + (bL - 5*bR)*(bRp + phiSp)))*cos(bR + phiS) + 2*(bLp - phiSp)*(104*aLp + 8*aRp - 3*(5*bLp + bRp + 10*bLp*eps)*l0 + 30*(1 + eps)*l0*phiSp)*sin(bL - phiS) - 2*(bRp + phiSp)*(-8*aLp - 104*aRp + 3*l0*(bLp + 5*(bRp + 2*bRp*eps + 2*(1 + eps)*phiSp)))*sin(bR + phiS)))/480.;
+      hLocal(2) = (Arho*l0*(64*aR*aRp*bLp - 12544*aR*aRp*bRp + 112*aRp*bL*bLp*l0 + 112*aR*Power(bLp,2)*l0 - 24*aRp*bLp*bR*l0 + 204*aRp*bL*bRp*l0 + 180*aR*bLp*bRp*l0 - 820*aRp*bR*bRp*l0 - 820*aR*Power(bRp,2)*l0 + 211*bL*Power(bLp,2)*l0h2 - 42*Power(bLp,2)*bR*l0h2 - 51*bL*bLp*bRp*l0h2 + 51*bLp*bR*bRp*l0h2 + 42*bL*Power(bRp,2)*l0h2 - 211*bR*Power(bRp,2)*l0h2 + 3360*bLp*epsp*l0h2 - 3360*bRp*epsp*l0h2 + 3360*bLp*eps*epsp*l0h2 - 3360*bRp*eps*epsp*l0h2 - 4*(aR*(3152*aRp - 23*bLp*l0 + 199*bRp*l0) + l0*(aRp*(-23*bL + 199*bR) + (55*bL*bLp - 21*bLp*bR - 21*bL*bRp + 55*bR*bRp + 1680*(1 + eps)*epsp)*l0))*phiSp + 4*aL*(16*aLp*(196*bLp - bRp - 197*phiSp) + 136*aRp*(bLp - bRp - 2*phiSp) + l0*(205*Power(bLp,2) - 45*bLp*bRp - 28*Power(bRp,2) - 199*bLp*phiSp + 23*bRp*phiSp)) + 4*aLp*(136*aR*(bLp - bRp - 2*phiSp) + l0*(bL*(205*bLp + 6*bRp - 199*phiSp) + bR*(-51*bLp - 28*bRp + 23*phiSp))) + 84*((8*(13*aL + aR)*gx + 3*(5*bL*gx - bR*gx - 20*(1 + eps)*gy)*l0)*cos(bL - phiS) + (8*aL*gx + 104*aR*gx + 3*(-(bL*gx) + 5*bR*gx + 20*(1 + eps)*gy)*l0)*cos(bR + phiS) - (60*(1 + eps)*gx*l0 + gy*(104*aL + 8*aR + 15*bL*l0 - 3*bR*l0))*sin(bL - phiS) + (8*(aL + 13*aR)*gy - 3*(20*(1 + eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS))))/40320.;
+      hLocal(3) = -(EA*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2)) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*l0 + 3*(140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*l0h2)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(176400.*l0h3) - (aLp*Arho*l0h2*(19*bLp + bRp - 18*phiSp))/120. - (Arho*aRp*l0h2*(bLp + 19*bRp + 18*phiSp))/120. + (Arho*l0h3*(67*Power(bLp,2) + 6*bLp*bRp + 67*Power(bRp,2) + 80*Power(bLp,2)*eps + 80*Power(bRp,2)*eps - 16*(bLp - bRp)*(9 + 10*eps)*phiSp + 160*(1 + eps)*Power(phiSp,2)))/1920. - (Arho*l0h3*(13*Power(bLp,2) - 2*bLp*(3*bRp + 8*phiSp) + bRp*(13*bRp + 16*phiSp)))/1920. - (Arho*gx*l0h2*cos(bL - phiS))/8. + (Arho*gx*l0h2*cos(bR + phiS))/8. + (Arho*gy*l0h2*sin(bL - phiS))/8. + (Arho*gy*l0h2*sin(bR + phiS))/8.;
+      hLocal(4) = -(282240*EI*(160*aL - 32*aR - 43*bL*l0 + 11*bR*l0) + 8*EA*(1 + eps)*(272*aL - 16*aR - 24*bL*l0 + 9*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(19*bLp + bRp - 18*phiSp))/240. + (aL*Arho*l0*(196*Power(bLp,2) + Power(bRp,2) - 392*bLp*phiSp + 2*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(205*bL*Power(bLp,2) - 51*Power(bLp,2)*bR - 6*bL*Power(bRp,2) + 28*bR*Power(bRp,2) + 1596*bLp*epsp + 84*bRp*epsp - 2*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp)*phiSp + (199*bL - 23*bR)*Power(phiSp,2)))/20160. + (17*aR*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (13*Arho*gy*l0*cos(bL - phiS))/60.  - (Arho*gy*l0*cos(bR + phiS))/60. - (13*Arho*gx*l0*sin(bL - phiS))/60. + (Arho*gx*l0*sin(bR + phiS))/60.;
+      hLocal(5) = -(-835584*Power(aL,3)*EA*Power(1 + eps,2) + 313344*Power(aR,3)*EA*Power(1 + eps,2) + 2304*Power(aR,2)*(213*bL - 92*bR)*EA*Power(1 + eps,2)*l0 + 3072*Power(aL,2)*EA*Power(1 + eps,2)*(134*aR + 201*bL*l0 - 69*bR*l0) - 4*aL*(24272640*EI + 218112*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(8*bL - 9*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(36*Power(bL,2) - 25*bL*bR + 15*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(6272*aLp*(bLp - phiSp) + 272*aRp*(bLp - phiSp) + l0*(205*Power(bLp,2) - 102*bLp*bRp + 6*Power(bRp,2) + 114*bRp*phiSp - 199*Power(phiSp,2))))) + 4*aR*(6209280*EI + l0h2*(432*EA*(1 + eps)*(140*eps + (3*bL - 5*bR)*(9*bL - 5*bR)*(1 + eps)) + 35*Arho*l0*(272*aLp*(bLp - phiSp) + 32*aRp*(bLp - phiSp) + l0*(28*Power(bLp,2) - 12*bLp*bRp + 51*Power(bRp,2) + 114*bRp*phiSp + 23*Power(phiSp,2))))) + l0*(23328*Power(bL,3)*EA*Power(1 + eps,2)*l0h2 - 23328*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h2 + bL*(32175360*EI + l0h2*(2592*EA*(1 + eps)*(140*eps + 11*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(1640*aLp*(bLp - phiSp) + 224*aRp*(bLp - phiSp) + l0*(211*Power(bLp,2) - 84*bLp*bRp - 9*Power(bRp,2) + 66*bRp*phiSp - 220*Power(phiSp,2))))) - 6*(1296*Power(bR,3)*EA*Power(1 + eps,2)*l0h2 + 35*bR*(40320*EI + l0h2*(576*EA*eps*(1 + eps) + Arho*l0*(68*aLp*(bLp - phiSp) + 8*aRp*(bLp - phiSp) + l0*(7*Power(bLp,2) - 3*bLp*bRp - 7*Power(bRp,2) - 11*bRp*phiSp - 14*Power(phiSp,2))))) + 490*l0*(Arho*epsp*l0h3*(-3*bRp - bLp*(67 + 80*eps) + 64*phiSp + 80*eps*phiSp) + 960*EI*wss0))) - 5880*Arho*l0h3*((-104*aL*gx - 8*aR*gx + 3*((-5*bL + bR)*gx + 5*(3 + 4*eps)*gy)*l0)*cos(bL - phiS) + 3*gy*l0*cos(bR + phiS) + (8*(13*aL + aR)*gy + 3*(5*(3 + 4*eps)*gx + (5*bL - bR)*gy)*l0)*sin(bL - phiS) - 3*gx*l0*sin(bR + phiS)))/(2.8224e6*l0h2);
+      hLocal(6) = (282240*EI*(32*aL - 160*aR - 11*bL*l0 + 43*bR*l0) + 8*EA*(1 + eps)*(16*aL - 272*aR - 9*bL*l0 + 24*bR*l0)*(32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2))/(352800.*l0h3) + (Arho*epsp*l0h2*(bLp + 19*bRp + 18*phiSp))/240. + (aR*Arho*l0*(Power(bLp,2) + 196*Power(bRp,2) - 2*bLp*phiSp + 392*bRp*phiSp + 197*Power(phiSp,2)))/1260. + (Arho*l0h2*(28*bL*Power(bLp,2) - 6*Power(bLp,2)*bR - 51*bL*Power(bRp,2) + 205*bR*Power(bRp,2) + 84*bLp*epsp + 1596*bRp*epsp + 2*(-28*bL*bLp + 6*bLp*bR - 51*bL*bRp + 205*bR*bRp + 756*epsp)*phiSp + (-23*bL + 199*bR)*Power(phiSp,2)))/20160. + (17*aL*Arho*l0*(Power(bLp,2) + Power(bRp,2) - 2*bLp*phiSp + 2*phiSp*(bRp + phiSp)))/2520. - (Arho*gy*l0*cos(bL - phiS))/60. - (13*Arho*gy*l0*cos(bR + phiS))/60. - (Arho*gx*l0*sin(bL - phiS))/60. + (13*Arho*gx*l0*sin(bR + phiS))/60.;
+      hLocal(7) = -(313344*Power(aL,3)*EA*Power(1 + eps,2) - 835584*Power(aR,3)*EA*Power(1 + eps,2) + 32175360*bR*EI*l0 - 9216*Power(aR,2)*(23*bL - 67*bR)*EA*Power(1 + eps,2)*l0 + 23328*Power(bR,3)*EA*l0h3 + 362880*bR*EA*eps*l0h3 + 46656*Power(bR,3)*EA*eps*l0h3 + 362880*bR*EA*Power(eps,2)*l0h3 + 23328*Power(bR,3)*EA*Power(eps,2)*l0h3 - 7776*Power(bL,3)*EA*Power(1 + eps,2)*l0h3 + 28512*Power(bL,2)*bR*EA*Power(1 + eps,2)*l0h3 + 7840*aLp*Arho*bR*bRp*l0h4 + 57400*Arho*aRp*bR*bRp*l0h4 - 315*Arho*Power(bLp,2)*bR*l0h5 - 2940*Arho*bLp*bR*bRp*l0h5 + 7385*Arho*bR*Power(bRp,2)*l0h5 + 8820*Arho*bLp*epsp*l0h5 + 196980*Arho*bRp*epsp*l0h5 + 235200*Arho*bRp*eps*epsp*l0h5 - 768*Power(aL,2)*EA*Power(1 + eps,2)*(1136*aR + 276*bL*l0 - 639*bR*l0) + 7840*aLp*Arho*bR*l0h4*phiSp + 57400*Arho*aRp*bR*l0h4*phiSp - 2310*Arho*bLp*bR*l0h5*phiSp + 188160*Arho*epsp*l0h5*phiSp + 235200*Arho*eps*epsp*l0h5*phiSp - 7700*Arho*bR*l0h5*Power(phiSp,2) - 6*bL*l0*(1411200*EI + l0h2*(144*EA*(1 + eps)*(140*eps + 27*Power(bR,2)*(1 + eps)) + 35*Arho*l0*(8*aLp*(bRp + phiSp) + 68*aRp*(bRp + phiSp) + l0*(-7*Power(bLp,2) - 3*bLp*bRp + 7*Power(bRp,2) + 11*bLp*phiSp - 14*Power(phiSp,2))))) + 4*aL*(6209280*EI + 102912*Power(aR,2)*EA*Power(1 + eps,2) + 5184*aR*(9*bL - 8*bR)*EA*Power(1 + eps,2)*l0 + l0h2*(432*EA*(1 + eps)*(140*eps + (5*bL - 9*bR)*(5*bL - 3*bR)*(1 + eps)) + 35*Arho*l0*(32*aLp*(bRp + phiSp) + 272*aRp*(bRp + phiSp) + l0*(51*Power(bLp,2) + 28*Power(bRp,2) + 23*Power(phiSp,2) - 6*bLp*(2*bRp + 19*phiSp))))) - 4*aR*(24272640*EI + l0h2*(288*EA*(1 + eps)*(560*eps + 3*(15*Power(bL,2) - 25*bL*bR + 36*Power(bR,2))*(1 + eps)) - 35*Arho*l0*(272*aLp*(bRp + phiSp) + 6272*aRp*(bRp + phiSp) + l0*(6*Power(bLp,2) + 205*Power(bRp,2) - 199*Power(phiSp,2) - 6*bLp*(17*bRp + 19*phiSp))))) - 2822400*EI*l0h2*wss0 - 5880*Arho*l0h3*(8*(aL + 13*aR)*gx*cos(bR + phiS) + 3*l0*(gy*cos(bL - phiS) + (-(bL*gx) + 5*bR*gx + 15*gy + 20*eps*gy)*cos(bR + phiS) + gx*sin(bL - phiS)) + (8*(aL + 13*aR)*gy - 3*(5*(3 + 4*eps)*gx + (bL - 5*bR)*gy)*l0)*sin(bR + phiS)))/(2.8224e6*l0h2);
+
+      // damping
+      hdLocal(3) = - depsilon * epsp; // eps
+
+      hIntermediate << hLocal + hdLocal - MLocal * Jegp * qpElement;
+      h << trans(Jeg) * hIntermediate;
+
+      qElement_Old = qElement.copy();
+      qpElement_Old = qpElement.copy();
+    }
+  }
+
+  void FiniteElement1s21RCM::computedhdz(Vec& qElement, Vec& qpElement) {
+    Mat Dhz(16,8,INIT,0.);
+    Dhz   = hFullJacobi(qElement,qpElement,qLocal,qpLocal,Jeg,Jegp,MLocal,hIntermediate);
+    Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
+    Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
+    Dhqp += trans(Jeg)*Damp*Jeg;
   }
 
   double FiniteElement1s21RCM::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
@@ -678,7 +712,7 @@ namespace MBSim {
 
     // gravitation
     double gx = g(0);
-    throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
+    if(g(1) != 0.) throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
 
     // q-derivative
     SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);

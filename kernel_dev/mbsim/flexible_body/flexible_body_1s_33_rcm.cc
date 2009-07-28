@@ -34,7 +34,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),implicit(false),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
     cylinder = new CylinderFlexible("Cylinder");
     Body::addContour(cylinder);
 
@@ -76,39 +76,42 @@ namespace MBSim {
     }
   }
 
-  void FlexibleBody1s33RCM::GlobalMatrixContribution(int n) {
+  void FlexibleBody1s33RCM::GlobalVectorContribution(int n, const Vec& locVec, Vec& gloVec) {
     int j = 10 * n; // start index in entire beam coordinates
 
     if(n<Elements-1 || openStructure) {
-      M(Index(j,j+15)) += discretization[n]->getMassMatrix();
-      h(j,j+15) += discretization[n]->getGeneralizedForceVector();
-      hObject(j,j+15) += discretization[n]->getGeneralizedForceVector();
-
-      //      	if(implicit) { // implicit integration
-      //				Jhq(j,j,j+15,j+15) += discretization[n]->getJGq();
-      //				Jhqt(j,j,j+15,j+15) += discretization[n]->getJhqt();
-      //      	}
+      gloVec(j,j+15) += locVec;
     }
     else { // last FE for closed structure
-      M(Index(j,j+9)) += (discretization[n]->getMassMatrix())(Index(0,9)); // symmetric mass matrix (object.h)
-      M(Index(j,j+9),Index(0,5)) += (discretization[n]->getMassMatrix())(Index(0,9),Index(10,15));
-      M(Index(0,5)) += (discretization[n]->getMassMatrix())(Index(10,15));
-      h(j,j+9) += (discretization[n]->getGeneralizedForceVector())(0,9);
-      h(0,5) += (discretization[n]->getGeneralizedForceVector())(10,15);
-      hObject(j,j+9) += (discretization[n]->getGeneralizedForceVector())(0,9);
-      hObject(0,5) += (discretization[n]->getGeneralizedForceVector())(10,15);
+      gloVec(j,j+9) += locVec(0,9);
+      gloVec(0,5) += locVec(10,15);
+    }
+  }
 
-      //      	if(implicit) { // implicit integration
-      //				Jhq(j,j,j+9,j+9) += discretization[n]->getJhq(0,0,9,9);
-      //				Jhq(j,0,j+9,5) += discretization[n]->getJhq(0,10,9,15);
-      //				Jhq(0,j,5,j+9) += discretization[n]->getJhq(10,0,15,9);
-      //				Jhq(0,0,5,5) += discretization[n]->getJhq(10,10,15,15);
+  void FlexibleBody1s33RCM::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
+    int j = 10 * n; // start index in entire beam coordinates
 
-      //				Jhqt(j,j,j+9,j+9) += discretization[n]->getJhqt(0,0,9,9);
-      //				Jhqt(j,0,j+9,5) += discretization[n]->getJhqt(0,10,9,15);
-      //				Jhqt(0,j,5,j+9) += discretization[n]->getJhqt(10,0,15,9);
-      //				Jhqt(0,0,5,5) += discretization[n]->getJhqt(10,10,15,15);
-      //      	}
+    if(n<Elements-1 || openStructure) {
+      gloMat(Index(j,j+15),Index(j,j+15)) += locMat;
+    }
+    else { // last FE for closed structure
+      gloMat(Index(j,j+9),Index(j,j+9)) += locMat(Index(0,9),Index(0,9)); 
+      gloMat(Index(j,j+9),Index(0,5)) += locMat(Index(0,9),Index(10,15));
+      gloMat(Index(0,5),Index(j,j+9)) += locMat(Index(10,15),Index(0,9));
+      gloMat(Index(0,5),Index(0,5)) += locMat(Index(10,15),Index(10,15));
+    }
+  }
+
+  void FlexibleBody1s33RCM::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
+    int j = 10 * n; // start index in entire beam coordinates
+
+    if(n<Elements-1 || openStructure) {
+      gloMat(Index(j,j+15)) += locMat;
+    }
+    else { // last FE for closed structure
+      gloMat(Index(j,j+9)) += locMat(Index(0,9)); 
+      gloMat(Index(j,j+9),Index(0,5)) += locMat(Index(0,9),Index(10,15));
+      gloMat(Index(0,5)) += locMat(Index(10,15));
     }
   }
 
@@ -156,7 +159,7 @@ namespace MBSim {
       double sLocal;
       int currentElement;
       BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // compute parameters of affected FE
-      Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJXqG(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation 
+      Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation 
 
       if(currentElement<Elements-1 || openStructure) {
         Jacobian(Index(10*currentElement,10*currentElement+15),All) = Jtmp;
@@ -264,8 +267,8 @@ namespace MBSim {
 
     for(int i=0;i<Elements;i++) {
       discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
-      qElement.push_back(Vec(discretization[0]->getSizeOfPositions(),INIT,0.));
-      uElement.push_back(Vec(discretization[0]->getSizeOfVelocities(),INIT,0.));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
       static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
       if(R1 != 0. || R2 != 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
       static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
@@ -318,8 +321,8 @@ namespace MBSim {
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {
       discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
-      qElement.push_back(Vec(discretization[0]->getSizeOfPositions(),INIT,0.));
-      uElement.push_back(Vec(discretization[0]->getSizeOfVelocities(),INIT,0.));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
     }
     BuildElements();
   }

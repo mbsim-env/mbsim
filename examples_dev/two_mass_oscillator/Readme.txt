@@ -1,5 +1,6 @@
-This example shows a two-mass-oscillator with
-    - theta-time-stepping-integrator
-    - linear-spring-damper
-    - coilspring
+This example shows a two-mass-oscillator.
+
+Validation of ThetaTimeSteppingIntegrator.
+Valodation of LinearSpringDamper.
+Validation of Coilspring.
 

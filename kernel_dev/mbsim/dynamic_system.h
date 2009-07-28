@@ -49,6 +49,7 @@ namespace MBSim {
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
    * \date 2009-07-08 relative dynamic system location (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {

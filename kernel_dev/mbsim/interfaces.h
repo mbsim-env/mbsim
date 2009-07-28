@@ -38,7 +38,6 @@ namespace OpenMBV {
 
 namespace MBSim {
 
-  class ContourPointData;
   class DynamicSystem;
   class Object;
   class Link;
@@ -423,127 +422,11 @@ namespace MBSim {
   };
 
   /*!
-   * \brief discretization interface for flexible systems
-   * \author Thorsten Schindler
-   * \author Roland Zander
-   * \date 2009-03-09 initial commit in kernel_dev (Thorsten Schindler)
-   * 
-   * interface for the desription of flexible systems using global and FE ansatz functions
-   */
-  class DiscretizationInterface {
-    public:
-      /*!
-       * \brief constructor
-       */
-      DiscretizationInterface() {}    
-
-      /*! 
-       * \brief destructor
-       */
-      virtual ~DiscretizationInterface() {}    
-
-      /*!
-       * \return mass matrix of discretization
-       */
-      virtual const fmatvec::SymMat& getMassMatrix() const = 0;    
-
-      /*!
-       * \return smooth right hand side of discretization
-       */
-      virtual const fmatvec::Vec& getGeneralizedForceVector() const = 0;
-
-      /*!
-       * \return Jacobian of implicit integration regarding position
-       */
-      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const = 0;    
-
-      /*!
-       * \return Jacobian of implicit integration regarding velocity
-       */
-      virtual const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const = 0;
-
-      /*!
-       * \return dimension of positions
-       */
-      virtual int getSizeOfPositions() const = 0;
-
-      /*!
-       * \return dimension of velocities
-       */
-      virtual int getSizeOfVelocities() const = 0;
-
-      /*!
-       * \brief compute equations of motion
-       * \param generalised positions
-       * \param generalised velocities
-       */
-      virtual void computeEquationsOfMotion(const fmatvec::Vec& q,const fmatvec::Vec& u) = 0;
-
-      /*!
-       * \brief compute kinetic energy
-       * \param generalised positions
-       * \param generalised velocities
-       */
-      virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) = 0;
-
-      /*! 
-       * \brief compute gravitational energy
-       * \param generalised positions
-       */
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& q) = 0;    
-
-      /*!
-       * \brief compute elastic energy
-       * \param generalised positions
-       */
-      virtual double computeElasticEnergy(const fmatvec::Vec& q) = 0;
-
-      /*! 
-       * \brief compute position of contour in physical representation
-       * \param generalised positions
-       * \param contour location
-       */
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec& q, const ContourPointData &data) = 0;
-
-      /*!
-       * \brief compute orientation of contour in physical representation
-       * \param generalised coordiantes
-       * \param contour location
-       */
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec& q, const ContourPointData &data) = 0;
-
-      /*!
-       * \brief compute translational velocity of contour in physical representation
-       * \param generalised positions
-       * \param generalised velocities
-       * \param contour location
-       */
-      virtual fmatvec::Vec computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
-
-      /*!
-       * \brief compute angular velocity of contour in physical representation
-       * \param generalised positions
-       * \param generalised velocities
-       * \param contour location
-       */
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const ContourPointData &data) = 0;
-
-      /*!
-       * \brief compute Jacobian of minimal representation regarding physical representation
-       * \param generalised positions
-       * \param contour location
-       */
-      virtual fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec& q,const ContourPointData &data) = 0;
-  };
-
-  /*!
-   * \brief Interface for models of arbitrary domains, e.g. electrical
-   * components 
+   * \brief Interface for models of arbitrary domains, e.g. electrical components 
    * \author Martin Foerg
    * \date 2009-05-04 initial commit (Martin Foerg)
    */
   class ModellingInterface {
-
     public:
 
       /*!

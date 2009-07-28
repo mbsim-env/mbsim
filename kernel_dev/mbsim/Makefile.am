@@ -2,35 +2,35 @@ SUBDIRS =  utils integrators contact_kinematics flexible_body contours .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
-libmbsim_la_SOURCES = body.cc\
-objectfactory.cc\
+libmbsim_la_SOURCES = actuator.cc\
+body.cc\
+class_factory.cc\
+constitutive_laws.cc\
+contact.cc\
+contour.cc\
+data_interface_base.cc\
+dynamic_system.cc\
+dynamic_system_solver.cc\
+element.cc\
 environment.cc\
-mbsim_event.cc\
+flexible_body.cc\
+frame.cc\
+functions_contact.cc\
+group.cc\
+joint.cc\
+kinematics.cc\
+linear_spring_damper.cc\
 link.cc\
 link_mechanics.cc\
-linear_spring_damper.cc\
-object.cc\
-dynamic_system_solver.cc\
-dynamic_system.cc\
-group.cc\
-rigid_body.cc\
-joint.cc\
-contact.cc\
 load.cc\
-actuator.cc\
-element.cc\
-tree.cc\
-contour.cc\
-frame.cc\
-data_interface_base.cc\
+mbsim_event.cc\
+object.cc\
+objectfactory.cc\
 order_one_dynamics.cc\
+rigid_body.cc\
+tree.cc\
 userfunction.cc\
-userfunction_contour.cc\
-functions_contact.cc\
-class_factory.cc\
-kinematics.cc\
-constitutive_laws.cc\
-flexible_body.cc
+userfunction_contour.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
 
@@ -40,35 +40,36 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
-mbsiminclude_HEADERS = body.h\
-objectfactory.h\
-environment.h\
-mbsim_event.h\
-link.h\
-link_mechanics.h\
-linear_spring_damper.h\
-object.h\
-dynamic_system_solver.h\
-dynamic_system.h\
-group.h\
-rigid_body.h\
-joint.h\
+mbsiminclude_HEADERS = actuator.h\
+body.h\
 contact.h\
-load.h\
-actuator.h\
-element.h\
-tree.h\
-frame.h\
 contour.h\
 contour_pdata.h\
-data_interface_base.h\
-order_one_dynamics.h\
-userfunction.h\
-userfunction_contour.h\
-functions_contact.h\
 class_factory.h\
-kinematics.h\
 constitutive_laws.h\
+data_interface_base.h\
+discretization_interface.h\
+dynamic_system.h\
+dynamic_system_solver.h\
+element.h\
+environment.h\
+frame.h\
+functions_contact.h\
+group.h\
 interfaces.h\
-flexible_body.h
+joint.h\
+kinematics.h\
+linear_spring_damper.h\
+link.h\
+link_mechanics.h\
+load.h\
+flexible_body.h\
+mbsim_event.h\
+object.h\
+objectfactory.h\
+order_one_dynamics.h\
+rigid_body.h\
+tree.h\
+userfunction.h\
+userfunction_contour.h
 

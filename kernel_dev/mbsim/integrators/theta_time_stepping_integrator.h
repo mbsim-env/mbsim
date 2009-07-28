@@ -29,8 +29,10 @@ namespace MBSim {
   /** 
    * brief half-explicit time-stepping integrator of first order
    * \author Roland Zander
+   * \author Thorsten Schindler
    * \date 2009-07-18 new kernel_dev (Thorsten Schindler)
    * \date 2009-07-19 Delassus matrix / split of update (Thorsten Schindler)
+   * \date 2009-07-27 some fixes (Thorsten Schindler)
    */
   class ThetaTimeSteppingIntegrator : public Integrator { 
     public:
