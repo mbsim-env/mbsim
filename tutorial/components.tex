@@ -15,10 +15,10 @@ A body is defined with respect to its generalised coordinates and velocities, co
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
 
 \subsubsection{DynamicSystem and DynamicSystemSolver}
-Hierarchically frames, bodies and interconnections belong to \texttt{DynamicSystem}s. For their definitions a canonic stationary frame \texttt{"I"} always exists. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).
+Hierarchically frames, bodies and interconnections belong to \texttt{DynamicSystem}s. For their definitions a canonic stationary frame \texttt{"I"} always exists. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation). Important settings: \emph{setReorganizeHierarchy} enforces the automatic creation of an invisible tree structures for the simulation process
 
 \subsubsection{Frames}
-\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for kinematic and kinetic expressions using a frame recursive relationship.
+\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for kinematic and kinetic expressions using a frame recursive relationship. Important settings: \emph{enableOpenMBV} enabling visualisation
 
 \subsubsection{Rigid Bodies}
 A \texttt{RigidBody} is based on a predefined frame \texttt{"C"} in the centre of gravity. This frame can e.g. be used to describe further frames at rigid bodies. Then, one frame for kinematics has to be chosen being updated with respect to a reference frame as well as the individual degree of freedom of the \texttt{RigidBody} or its constrained relative motion. Both absolute and relative kinematical structures are canonically given by this frame recursion depending on the properties of the reference. The drawback of this general description is a time-dependent mass-matrix. If there is a frame given tree structure a \texttt{Tree} for the kinematical evaluations is defined automatically.\\
@@ -102,7 +102,9 @@ Available integration schemes:
 \item[] \texttt{RADAU5Integrator}\\
     one-step integration scheme of order 5 for stiff ODE with step size control
 \item[] \texttt{TimeSteppingIntegrator}\\
-    one-step integration scheme of order 1 for nonstiff MDE
+    one-step semi-implicit integration scheme of order 1 for nonstiff MDE
+\item[] \texttt{ThetaTimeSteppingIntegrator}\\
+    one-step integration scheme of order 1 for nonstiff with $\Theta=0$ and stiff with $\Theta\in\left(0,1\right] $MDE
 \end{itemize}
 %DAEs behandeln \emph{RADAU5DAEIntegrator}, \emph{DASKRIntegrator} und \emph{DASPKIntegrator}. Dar\"uberhinaus gibt es noch \emph{RKSuite}, \emph{LSODAR} (Mehrschrittverfahren steif/nicht steif) und \emph{LSODE}.  oder der allgemeinere \emph{ThetaTimeSteppingIntegrator} mit konstanter Schrittweitenvorgabe angewendet werden. \emph{TimeSteppingSSCIntegrator} implementiert für den semi-impliziten Fall eine Schrittweitensteuerung und \emph{DAETSIntegrator} liefert eine Kopplung zwischen TimeStepping und Dassl. Bei letzteren muss der Befehl \texttt{setSolver} vor der Initialisierung des MBS durchgef\"uhrt werden. Folgende M\"oglichkeiten stehen zur Wahl:
 
@@ -130,7 +132,11 @@ Available constraint equation solution schemes:
 %
 
 \subsection{Program Flow}
-Conceptionally the program flow is defined by the election of the integration scheme. It can always be stopped using \texttt{Ctrl-C}.
+Conceptionally the program flow is defined by the election of the integration scheme. It can always be stopped using \texttt{Ctrl-C} also enforcing the closing of the plot functionality. With
+\begin{verbatim}
+kill -USR2 <PID of simulation thread>
+\end{verbatim}
+a flush of the plot routine is asked for.
 
 \subsubsection{Timestepping Integration}
 Timestepping integration solves the whole equations of the system including the contacts on velocity level with fixed time step size. In detail one has the following work flow.
@@ -268,7 +274,7 @@ Currently, \texttt{LSODAR} is the only event-driven integrator with automatic sw
 \subsection{Plot Routines}\label{sec:plot}
 
 \subsubsection{Usage}
-The result of a simualtion with \MBSim{} are a \texttt{mbsim.h5} file for plot analysis as well as \texttt{ombv.h5} and \texttt{ombv.xml} files for visualisation. Additionally there is information concerning the integrator in \texttt{*.plt} and \texttt{*.sum} files; for visualisation \texttt{*.iv} files might appear.\\
+The result of a simulation with \MBSim{} are a \texttt{mbsim.h5} file for plot analysis as well as \texttt{ombv.h5} and \texttt{ombv.xml} files for visualisation. Additionally there is information concerning the integrator in \texttt{*.plt} and \texttt{*.sum} files; for visualisation \texttt{*.iv} files might appear.\\
 For getting data from \MBSim{} a \HDF{} wrapper is used. Viewing the multibody system parts can be done with
 \begin{verbatim}
     h5lsserie <h5-file>
@@ -295,6 +301,12 @@ A convenient tool for analysing data is given by
 \begin{verbatim}
     h5plotserie <h5-file>
 \end{verbatim}
+The usage is quite canonic and documented in the online help. Interesting features are
+\begin{itemize}
+\item superimposing graphs by \texttt{<shift>}
+\item plotting labels by \texttt{<ctrl>}
+\item disabling graphs by double click
+\end{itemize}
 
 \subsubsection{Implementation}
 In \MBSim{} plotting is done using \texttt{plotFeatures} being defined in \texttt{element.h} and set in \texttt{dynamic\_system\_solver.cc}. One plot-file comprises time-series of rowvectors with the same data type in all entries.
