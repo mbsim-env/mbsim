@@ -42,8 +42,12 @@ class ObjectFactory {
 
 class MBSimObjectFactory : protected ObjectFactory {
   private:
-    static MBSimObjectFactory instance;
-    MBSimObjectFactory();
+    static MBSimObjectFactory *instance;
+    MBSimObjectFactory() {}
+  public:
+    // This static function must be called before the ObjectFactory is usend to create
+    // objects from MBSimObjectFactory
+    static void initialize();
   protected:
     Group* createGroup(TiXmlElement *element);
     Object* createObject(TiXmlElement *element);
