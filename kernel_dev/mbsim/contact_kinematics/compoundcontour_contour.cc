@@ -18,8 +18,7 @@
  */
 
 #include <config.h> 
-#include "compoundcontour_contour.h"
-#include "mbsim/contour.h"
+#include "mbsim/contact_kinematics/compoundcontour_contour.h"
 #include "mbsim/contours/compound_contour.h"
 #include "mbsim/utils/contact_utils.h"
 

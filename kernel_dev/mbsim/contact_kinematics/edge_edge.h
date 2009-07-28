@@ -30,15 +30,15 @@ namespace MBSim {
   /** 
    * \brief pairing edge (bounded line) to edge
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    * \todo change stage to new interface TODO
    */
   class ContactKinematicsEdgeEdge : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsEdgeEdge::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:
@@ -52,13 +52,9 @@ namespace MBSim {
        */
       Edge *edge0;
       Edge *edge1;
-
-      // delete TODO
-      fmatvec::Vec WrPC[2];
-
   };
 
 }
 
-#endif
+#endif /* _CONTACT_KINEMATICS_EDGE_EDGE_H_ */
 

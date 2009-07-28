@@ -37,7 +37,8 @@
 #include "mbsim/contours/contour_quad.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
-#include <mbsim/utils/function.h>
+#include "mbsim/utils/function.h"
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 
@@ -426,24 +427,24 @@ namespace MBSim {
       FuncPairContour1sLine(Line* line_, Contour1s *contour_) : contour(contour_), line(line_) {}
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
-      //////          double operator()(const double &s) {
-      //////    	fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
-      //////    	fmatvec::Vec WnL = line->computeWn();
-      //////    	return trans(WtC)*WnL;
-      //////          }
-      //
-      //////          fmatvec::Vec computeWrD(const double &s) {
-      //////    	fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
-      //////    	fmatvec::Vec Wn = contour->computeWn(s);
-      //////    	double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition()); 
-      //////    	//fmatvec::Vec WrOCLine = WrOCContour-Wn*g; 
-      //////    	//return WrOCContour-WrOCLine;
-      //////    	return Wn*g;
-      //////          }
-      //
-      //////          double operator[](const double &s) {
-      //////    	return nrm2(computeWrD(s));
-      //////          }
+      virtual double operator()(const double &s) {
+        throw new MBSimError("ERROR (FuncPairContour1sLine::operator): Not implemented!");
+        //fmatvec::Vec WtC = (contour->computeWt(s)).col(0);
+        //fmatvec::Vec WnL = line->computeWn();
+        //return trans(WtC)*WnL;
+      }
+
+      virtual fmatvec::Vec computeWrD(const double &s) {
+        throw new MBSimError("ERROR (FuncPairContour1sLine::computeWrD): Not implemented!");
+        //fmatvec::Vec WrOCContour =  contour->computeWrOC(s);
+        //fmatvec::Vec Wn = contour->computeWn(s);
+        //double g =trans(Wn)*(WrOCContour-line->getFrame()->getPosition()); 
+        //return Wn*g;
+      }
+
+      virtual double operator[](const double &s) {
+        return nrm2(computeWrD(s));
+      }
       /*************************************************/
 
     private:

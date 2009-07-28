@@ -19,7 +19,7 @@
  */
 
 #include <config.h> 
-#include "point_area.h"
+#include "mbsim/contact_kinematics/point_area.h"
 #include "mbsim/contours/area.h"
 #include "mbsim/contours/point.h"
 
@@ -40,8 +40,10 @@ namespace MBSim {
       area = static_cast<Area*>(contour[0]);
     }
   }
+      
+  void ContactKinematicsPointArea::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
 
-  void ContactKinematicsPointArea::stage1(Vec &g, vector<ContourPointData> &cpData) {
+//  void ContactKinematicsPointArea::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
 //    Vec Wd = area->getWrOP() - point->getWrOP();
 //    Vec Wd1 = area->computeWd1();
@@ -58,9 +60,9 @@ namespace MBSim {
 //      if(g(0) < -0.01)
 //	g(0) = 1;
 //    }
-  }
+//  }
 
-  void ContactKinematicsPointArea::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData){
+//  void ContactKinematicsPointArea::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData){
 
 //    Vec WrPC[2], WvC[2];
 //
@@ -79,7 +81,7 @@ namespace MBSim {
 //      static Index iT(1,cpData[ipoint].Wt.cols());
 //      gd(iT) = trans(cpData[iarea].Wt)*WvD;
 //    }
-  }
+//  }
 
 }
 

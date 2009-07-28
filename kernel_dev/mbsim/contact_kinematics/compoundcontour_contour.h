@@ -30,12 +30,14 @@ namespace MBSim {
   /**
    * \brief pairing of arbitrary contour and set of contours
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsCompoundContourContour : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCompoundContourContour::updateg): Not implemented!"); }
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCompoundContourContour::updatewb): Not implemented!"); };
       virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
       virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
       /***************************************************/
@@ -60,5 +62,5 @@ namespace MBSim {
 
 }
 
-#endif 
+#endif /* _CONTACT_KINEMATICS_COMPOUND_CONTOUR_H_ */
 

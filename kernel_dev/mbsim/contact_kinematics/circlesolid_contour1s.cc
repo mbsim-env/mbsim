@@ -19,16 +19,16 @@
  */
 
 #include <config.h> 
-#include "circlesolid_contour1s.h"
-#include "mbsim/functions_contact.h"
-#include "mbsim/contour.h"
+#include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/contours/circle_solid.h"
-
+#include "mbsim/functions_contact.h"
 
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() { delete func; }
 
   void ContactKinematicsCircleSolidContour1s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<CircleSolid*>(contour[0])) {
@@ -44,9 +44,9 @@ namespace MBSim {
     func= new FuncPairContour1sCircleSolid(circle,contour1d);
   }
 
-  ContactKinematicsCircleSolidContour1s::~ContactKinematicsCircleSolidContour1s() { delete func; }
+  void ContactKinematicsCircleSolidContour1s::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
 
-  void ContactKinematicsCircleSolidContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
+//  void ContactKinematicsCircleSolidContour1s::stage1(Vec &g, vector<ContourPointData> &cpData) {
 
 //    Contact1sSearch search(func);
 //    search.setNodes(contour1d->getNodes());     
@@ -75,9 +75,9 @@ namespace MBSim {
 //
 //      g(0) = trans(cpData[icontour].Wn)*WrD;
 //    }
-  }
+//  }
 
-  void ContactKinematicsCircleSolidContour1s::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
+//  void ContactKinematicsCircleSolidContour1s::stage2(const Vec& g, Vec &gd, vector<ContourPointData> &cpData) {
 
 //    Vec WrPCCircle;
 //    WrPCCircle = cpData[icontour].Wn*circle->getRadius();
@@ -98,6 +98,7 @@ namespace MBSim {
 //    }
 //
 //    gd(0) = trans(cpData[icontour].Wn)*WvD;
-  }
+//  }
 
 }
+

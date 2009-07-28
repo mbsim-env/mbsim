@@ -19,7 +19,7 @@
  */
 
 #include <config.h> 
-#include "edge_edge.h"
+#include "mbsim/contact_kinematics/edge_edge.h"
 #include "mbsim/contours/edge.h"
 
 using namespace fmatvec;
@@ -33,7 +33,9 @@ namespace MBSim {
     edge1 = static_cast<Edge*>(contour[1]);
   }
 
-  void ContactKinematicsEdgeEdge::stage1(Vec &g, vector<ContourPointData> &cpData) {
+  void ContactKinematicsEdgeEdge::updateg(fmatvec::Vec &g, ContourPointData *cpData) {}
+
+//  void ContactKinematicsEdgeEdge::stage1(Vec &g, vector<ContourPointData> &cpData) {
 //
 //    Vec Wd = edge1->getWrOP() - edge0->getWrOP();
 //    Vec Wd0 = edge0->computeWd();
@@ -68,9 +70,9 @@ namespace MBSim {
 //      g(0) = 1;
 //
 //    cpData[iedge1].Wn = -cpData[iedge0].Wn;
-  }
+//  }
 
-  void ContactKinematicsEdgeEdge::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
+//  void ContactKinematicsEdgeEdge::stage2(const Vec &g, Vec &gd, vector<ContourPointData> &cpData) {
 //    if(g(0)>0.0) return;
 //    cpData[iedge1].WrOC = edge1->getWrOP()+WrPC[iedge1];
 //    cpData[iedge0].WrOC = edge0->getWrOP()+WrPC[iedge0];
@@ -89,7 +91,7 @@ namespace MBSim {
 //      gd(iT) = trans(cpData[iedge0].Wt)*WvD;
 //    }
 //
-  }
+//  }
 
 }
 

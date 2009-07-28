@@ -31,6 +31,7 @@ namespace MBSim {
   /** 
    * \brief pairing point to plane
    * \author Markus Schneider
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsPointPlaneWithFrustum : public ContactKinematics {
     public:
@@ -39,6 +40,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsPointPlaneWithFrustum::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:

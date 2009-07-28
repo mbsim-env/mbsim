@@ -32,7 +32,7 @@ namespace MBSim {
   /** 
    * \brief pairing point to contour interpolation;
    * \author Roland Zander 
-   * \date 2009-04-02 some comments
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    * \todo change stage to new interface TODO
    */
   class ContactKinematicsPointContourInterpolation : public ContactKinematics {
@@ -44,8 +44,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void stage1(fmatvec::Vec &g, std::vector<ContourPointData> &cpData);
-      virtual void stage2(const fmatvec::Vec &g, fmatvec::Vec &gd, std::vector<ContourPointData> &cpData);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsPointContourInterpolation::updatewb): Not implemented!"); };
+      /***************************************************/
 
     private:
       /**
@@ -68,5 +69,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _CONTACT_KINEMATICS_POINT_CONTOURINTERPOLATION_H_ */
 
