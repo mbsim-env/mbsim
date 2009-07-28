@@ -5,6 +5,8 @@ includedir=@includedir@
 
 SCHEMA=@datadir@/@PACKAGE@/schema/mbsimhydraulics.xsd
 NAMESPACE=http://mbsim.berlios.de/MBSimHydraulics
+INITIALIZEFUNC=HydraulicsObjectFactory::initialize()
+INITIALIZEHEADER=mbsimHydraulics/objectfactory.h
 
 Name: mbsimHydraulics
 Description: mbsimHydraulics is an add-on for hydraulic systems to the mbsim-kernel.
