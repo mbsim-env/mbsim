@@ -130,7 +130,7 @@ The \HDF wrapper is available by
 \begin{verbatim}
  svn checkout http://svn.berlios.de/svnroot/repos/hdf5serie/trunk HDF5Serie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure} and \textsc{install} in the directories \texttt{MBSim/HDF5Series} and \texttt{MBSim/HDF5Series/h5plotserie} . Last, \texttt{.bashrc} can be extended with
+as well as the procedures \textsc{automake, configure} and \textsc{install} in the directories \texttt{MBSim/HDF5Serie/hdf5serie} and \texttt{MBSim/HDF5Serie/h5plotserie} . Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
 alias h5lsserie="MBSim/Install/h5lsserie"
 alias h5dumpserie="MBSim/Install/bin/h5dumpserie"
@@ -172,7 +172,7 @@ Missing is the final installation. After typing
 \begin{verbatim}
 export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:MBSim/Install/lib/pkgconfig
 \end{verbatim} 
-one should use the procedures \textsc{automake}, \textsc{configure} perhaps with FLAG \texttt{\-\-with-ocatve-path} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build of an independent XML preprocessor. The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV} complete the installation. \texttt{make doc} produces a HTML documentation if invoked before the previous \textsc{install}.\\
+one should use the procedures \textsc{automake}, \textsc{configure} perhaps with FLAG \texttt{\-\-with-ocatve-path} and \textsc{install} in \texttt{MBSim/OpenMBV/mbxmlutils} for a static build of an independent XML preprocessor. The procedures \textsc{automake, configure} and \textsc{install} for a static build in \texttt{MBSim/OpenMBV/openmbv} complete the installation. \texttt{make doc} produces a HTML documentation if invoked before the previous \textsc{install}.\\
 There is also a static Linux binary available at \url{www.berlios.de}.\\
 Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
@@ -201,7 +201,7 @@ For installation of \MBSim{} one types
 \begin{verbatim}
  svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
 \end{verbatim}
-in \texttt{MBSim}. Then in single subdirectories the \texttt{kernel}, some \texttt{examples} and some \texttt{modules} are extracted.\\
+in \texttt{MBSim}. Then in single subdirectories the \texttt{kernel}, some \texttt{examples} and \texttt{modules} as well as the XML interface are extracted.\\
 The file \texttt{.bashrc} has to be extended with
 \begin{verbatim}
  export PKG_CONFIG_PATH=
@@ -210,7 +210,7 @@ The file \texttt{.bashrc} has to be extended with
         "MBSim/Install/lib/:$LD_LIBRARY_PATH"
 \end{verbatim}
 Then the shell has to be restarted or the command \texttt{source .bashrc} is necessary.\\
-Now, one invokes the procedures \textsc{automake, configure} and \textsc{install} in the directory \texttt{MBsim/mbsim/kernel}. For a new installation the procedure \textsc{reinstall} is used. \texttt{make doc} creates a HTML documentation. The installation of the modules is analogously.
+Now, one invokes the procedures \textsc{automake, configure} and \textsc{install} in the directories \texttt{MBSim/mbsim/kernel}, \texttt{MBSim/mbsim/modules/*} and \texttt{MBSim/mbsim/mbsimxml}. For a new installation the procedure \textsc{reinstall} is used. \texttt{make doc} creates a HTML documentation. 
 
 %%------------------------------------------------------------ SUBSUBSECTION --
 \subsection{MBSimAddOns}
