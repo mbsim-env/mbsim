@@ -5,6 +5,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/integrators/integrator.h>
+#include "headermodules.h"
 
 using namespace std;
 using namespace MBSim;
@@ -21,6 +22,11 @@ int main(int argc, char *argv[]) {
     cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
     return 0;
   }
+
+
+  // initialize the ObjectFactory
+  MBSimObjectFactory::initialize();
+# include "initmodules.def"
 
 
 
