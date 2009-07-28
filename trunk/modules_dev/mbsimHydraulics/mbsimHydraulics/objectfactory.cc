@@ -7,10 +7,13 @@ using namespace std;
 
 namespace MBSim {
 
-  HydraulicsObjectFactory HydraulicsObjectFactory::instance;
+  HydraulicsObjectFactory *HydraulicsObjectFactory::instance=NULL;
 
-  HydraulicsObjectFactory::HydraulicsObjectFactory() : ObjectFactory() {
-    ObjectFactory::getInstance()->registerObjectFactory(this);
+  void HydraulicsObjectFactory::initialize() {
+    if(instance==0) {
+      instance=new HydraulicsObjectFactory;
+      ObjectFactory::getInstance()->registerObjectFactory(instance);
+    }
   }
 
   //Group* HydraulicsObjectFactory::createGroup(TiXmlElement *element) {

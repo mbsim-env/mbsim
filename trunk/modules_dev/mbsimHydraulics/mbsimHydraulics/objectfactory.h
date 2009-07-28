@@ -18,8 +18,12 @@ namespace MBSim {
 
 class HydraulicsObjectFactory : protected ObjectFactory {
   private:
-    static HydraulicsObjectFactory instance;
-    HydraulicsObjectFactory();
+    static HydraulicsObjectFactory *instance;
+    HydraulicsObjectFactory() {}
+  public:
+    // This static function must be called before the ObjectFactory is usend to create
+    // objects from MBSimObjectFactory
+    static void initialize();
   protected:
     //Group* createGroup(TiXmlElement *element);
     //Object* createObject(TiXmlElement *element);
