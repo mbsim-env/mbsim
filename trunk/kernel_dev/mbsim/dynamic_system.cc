@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "mbsim/dynamic_system.h"
+#include "mbsim/modelling_interface.h"
 #include "mbsim/order_one_dynamics.h"
 #include "mbsim/link.h"
 #include "mbsim/contour.h"

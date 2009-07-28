@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include <mbsim/element.h>
-#include <mbsim/interfaces.h>
+#include <mbsim/object_interface.h>
 
 using namespace std;
 

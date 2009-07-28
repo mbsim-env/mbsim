@@ -7,7 +7,7 @@
 #include "mbsim/link.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/mbsim_event.h"
-#include "modeling_classes.h"
+#include "modelling_classes.h"
 #include <string>
 
 

@@ -21,7 +21,7 @@
 #define _ORDER_ONE_DYNAMICS_H_
 
 #include "mbsim/element.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/extradynamic_interface.h"
 #include "hdf5serie/vectorserie.h"
 
 namespace MBSim {
@@ -32,6 +32,7 @@ namespace MBSim {
    * \brief base class for dynamic systems of the form \f$\dot{x}=f\left(x,u\right)\f$ and \f$y=g\left(x,u\right)\f$
    * \author Mathias Bachmayer
    * \date 2009-04-06 interface extracted (Thorsten Schindler)
+   * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
   class OrderOneDynamics : public Element, ExtraDynamicInterface {
     public:

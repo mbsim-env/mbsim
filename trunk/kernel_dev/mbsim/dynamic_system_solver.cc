@@ -20,6 +20,7 @@
 
 #include<config.h>
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/modelling_interface.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/link.h"

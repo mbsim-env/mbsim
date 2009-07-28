@@ -1,4 +1,4 @@
-#include "modeling_classes.h"
+#include "modelling_classes.h"
 #include "simulation_classes.h"
 
 using namespace fmatvec;
