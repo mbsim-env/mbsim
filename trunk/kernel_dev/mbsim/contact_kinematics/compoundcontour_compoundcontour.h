@@ -30,12 +30,14 @@ namespace MBSim {
   /**
    * \brief contact paring between set of contours and set of contours
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsCompoundContourCompoundContour : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCompoundContourCompoundContour::updateg): Not implemented!"); }
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCompoundContourCompoundContour::updatewb): Not implemented!"); };
       virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
       virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData);
       /***************************************************/
@@ -51,10 +53,9 @@ namespace MBSim {
        * \brief contact kinematics possibilities between compound contours
        */
       std::vector<ContactKinematics*> contactKinematics;
-
   };
 
 }
 
-#endif
+#endif /* _CONTACT_KINEMATICS_COMPOUNDCONTOUR_COMPOUNDCONTOUR_H_ */
 

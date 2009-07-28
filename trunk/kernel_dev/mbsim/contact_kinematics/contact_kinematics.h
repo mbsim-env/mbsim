@@ -40,7 +40,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-18 some comments (Thorsten Schindler)
    * \date 2009-04-02 velocity part deleted (Thorsten Schindler)
-   * \todo updates should be pure virtual
+   * \date 2009-07-28 updates are pure virtual (Thorsten Schindler)
    */
   class ContactKinematics {
     public:
@@ -54,43 +54,35 @@ namespace MBSim {
        */
       virtual ~ContactKinematics() {}
 
+      /* INTERFACE FOR DERIVED CLASSES */
       /** 
        * \brief treats ordering of contours 
        * \param contour vector
        */
       virtual void assignContours(const std::vector<Contour*> &contour) = 0;
 
-      /** 
-       * \brief treats ordering of contours
-       * \param first contour
-       * \param second contour
-       */
-      void assignContours(Contour *contour1, Contour *contour2) { std::vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c); }
-
       /**
        * \brief compute normal distance, possible contact point positions and orientation (cf. contact.cc)
        * \param normal distance
        * \param contact point parametrisation
-       * \todo function should be pure virtual TODO
        */
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematics::updateg): not implemented!"); }
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) = 0;
 
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration
        * \param acceleration in terms of contour parameters
        * \param normal distance
        * \param contact point parametrisation
-       * \todo function should be pure virtual TODO
        */
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematics::updatewb): not implemented!"); }
-
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) = 0;
+      
       /**
        * \brief compute normal distance, possible contact point positions and orientation for several possible contact points
        * \param normal distance
        * \param contact point parametrisation
        */
       virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
-
+      
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
        * \param acceleration in terms of contour parameters
@@ -98,6 +90,14 @@ namespace MBSim {
        * \param contact point parametrisation
        */
       virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
+      /*******************************************************/ 
+
+      /** 
+       * \brief treats ordering of contours
+       * \param first contour
+       * \param second contour
+       */
+      void assignContours(Contour *contour1, Contour *contour2) { std::vector<Contour*> c; c.push_back(contour1);c.push_back(contour2); assignContours(c); }
 
       /**
        * \return number of potential contact points
@@ -113,5 +113,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _CONTACT_KINEMATICS_H_ */
 

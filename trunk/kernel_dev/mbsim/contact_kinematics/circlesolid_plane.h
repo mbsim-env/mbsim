@@ -30,13 +30,14 @@ namespace MBSim {
   /*! \brief pairing circle outer side to plane
    * \author Martin Foerg
    * \author Thorsten Schindler
-   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    */
   class ContactKinematicsCircleSolidPlane : public ContactKinematics {
     public:
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidPlane::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:
