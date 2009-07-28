@@ -55,7 +55,7 @@ namespace MBSim {
       system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
       system.updategdRef(system.getgdParent()(0,system.getgdSize()-1));
-      system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
+      if(system.getImpactSolver() == RootFinding) system.updateresRef(system.getresParent()(0,system.getlaSize()-1));
       system.updaterFactorRef(system.getrFactorParent()(0,system.getrFactorSize()-1));
     }
     system.updategd(t);
@@ -63,8 +63,7 @@ namespace MBSim {
     system.updateT(t); 
     system.updateJacobians(t);
     system.updatedhdz(t);
-    system.updateM(t); 
-    system.facLLM(); 
+    system.updateM(t);
     system.updateW(t); 
     system.updateV(t);
   }
@@ -140,16 +139,17 @@ namespace MBSim {
 
       Vector<int> ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
-      SqrMat Geff = SqrMat(trans(W)*slvLUFac(luMeff,V,ipiv));
-      system.getGs().resize() << Geff;
-      system.getb() = trans(W)*slvLUFac(luMeff,h+theta*dhdq*T*u*dt,ipiv);
+      Vec heff = h+theta*dhdq*T*u*dt;
+      system.getG().resize() = SqrMat(trans(W)*slvLUFac(luMeff,V,ipiv));
+      system.getGs().resize() << system.getG();
+      system.getb().resize() = system.getgd() + trans(W)*slvLUFac(luMeff,heff,ipiv)*dt; // TODO system.getgd() necessary?
 
       iter = system.solveImpacts(dt);
       if(iter>maxIter) maxIter = iter;
       sumIter += iter;
 
-      system.updater(t);
-      Vec du = slvLUFac(luMeff,h * dt + V*system.getla() + theta*dhdq*T*u*dt*dt,ipiv);
+      Vec du = slvLUFac(luMeff,heff*dt + V*system.getla(),ipiv);
+      
       q += T*(u+theta*du)*dt;
       u += du;
       x += system.deltax(z,t,dt);

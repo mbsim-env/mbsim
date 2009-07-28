@@ -24,13 +24,14 @@
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const Vec& g_,RevCardan* ag_) : l0(l0_),rho(rho_),A(A_),E(E_),G(G_),I1(I1_),I2(I2_),I0(I0_),g(g_),k10(0.),k20(0.),epstD(0.),k0D(0.),M(16,INIT,0.),h(16,INIT,0.),Damp(16,INIT,0.),impInt(false),l0h2(l0*l0),l0h3(l0h2*l0),x_Old(-l0),X(12,INIT,0.),qG_Old(16,INIT,0.),qGt_Old(16,INIT,0.),tol_comp(1e-8),drS(3,16,INIT,0.),depstil(16,INIT,0.),dk0(16,INIT,0.),ag(ag_),tf(0),wt(0) {
+  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const Vec& g_,RevCardan* ag_) : l0(l0_),rho(rho_),A(A_),E(E_),G(G_),I1(I1_),I2(I2_),I0(I0_),g(g_),k10(0.),k20(0.),epstD(0.),k0D(0.),M(16,INIT,0.),h(16,INIT,0.),dhdq(16,INIT,0.),dhdu(16,INIT,0.),Damp(16,INIT,0.),l0h2(l0*l0),l0h3(l0h2*l0),x_Old(-l0),X(12,INIT,0.),qG_Old(16,INIT,0.),qGt_Old(16,INIT,0.),tol_comp(1e-8),drS(3,16,INIT,0.),depstil(16,INIT,0.),dk0(16,INIT,0.),ag(ag_),tf(0),wt(0) {
     tf = new Trafo33RCM(ag,l0);
     wt = new Weight33RCM(l0,l0h2,l0h3,tf);
     computedrS();
@@ -69,7 +70,36 @@ namespace MBSim {
     Damp(15,15) = -k0D;
   }
 
-  void FiniteElement1s33RCM::computeEquationsOfMotion(const Vec& qG,const Vec& qGt) { 
+  void FiniteElement1s33RCM::computeM(const Vec& qG) { 
+    if(nrm2(qG-qG_Old)>tol_comp) {
+      // /* symmetric mass matrix */
+      // Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();
+      // Mat QH = trans(Q);
+
+      // MI = A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
+      //       + tf->getbS()*wt->getvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh2())
+      //     + QH*(Q*l0h3/12.+tf->getnS()*wt->getxvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIxwh1()+tf->getbS()*wt->getxvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIxwh2())
+      //     + wt->getwh1coefqIH()*(wt->getvvtH()*tf->getnSH()*drS+wt->getxvvtH()*tf->getnSH()*Q+wt->getvvtwwt()*wt->getwh1coefqI()
+      //       + wt->getIwh1wwtH()*tf->getnSH()*wt->getnSqI()+wt->getIwh2wwtH()*tf->getnSH()*wt->getbSqI())
+      //     + wt->getnSqIH()*(drS*wt->getIwh1()+Q*wt->getIxwh1()+tf->getnS()*wt->getIwh1wwt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1wh1()
+      //       + tf->getbS()*wt->getIwh1wwt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh1wh2())
+      //     + wt->getwh2coefqIH()*(wt->getvvtH()*tf->getbSH()*drS+wt->getxvvtH()*tf->getbSH()*Q+wt->getvvtwwt()*wt->getwh2coefqI()
+      //       + wt->getIwh1wwtH()*tf->getbSH()*wt->getnSqI()+wt->getIwh2wwtH()*tf->getbSH()*wt->getbSqI())
+      //     + wt->getbSqIH()*(drS*wt->getIwh2()+Q*wt->getIxwh2()+tf->getnS()*wt->getIwh2wwt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1wh2()
+      //       + tf->getbS()*wt->getIwh2wwt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh2wh2()));
+      // MI += I0*wt->getTtilqItqIt();			
+      // MI = rho*MI;
+
+      // qG_Old = qG.copy();
+      
+      throw new MBSimError("ERROR (FiniteElement1s33RCM::computeM): Not implemented!");
+    }
+
+    /* global description */
+    M = JTMJ(MI,tf->getJIG());	
+  }
+
+  void FiniteElement1s33RCM::computeh(const Vec& qG,const Vec& qGt) { 
     if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) {
       wt->computeintD(qG,qGt);
 
@@ -113,7 +143,7 @@ namespace MBSim {
       Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();
       Mat QH = trans(Q);
 
-      SymMat MI = A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
+      MI = A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
             + tf->getbS()*wt->getvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh2())
           + QH*(Q*l0h3/12.+tf->getnS()*wt->getxvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIxwh1()+tf->getbS()*wt->getxvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIxwh2())
           + wt->getwh1coefqIH()*(wt->getvvtH()*tf->getnSH()*drS+wt->getxvvtH()*tf->getnSH()*Q+wt->getvvtwwt()*wt->getwh1coefqI()
@@ -173,45 +203,77 @@ namespace MBSim {
       hIZ -= MI*tf->getJIGt()*qGt;
 
       /* global description */
-      M = JTMJ(MI,tf->getJIG());	
       h = trans(tf->getJIG())*hIZ;
 
-      /* implicit integration */
-      if(impInt) { // TODO
-      }
       qG_Old = qG.copy();
       qGt_Old = qGt.copy();
     }
   }
 
-  const Vec& FiniteElement1s33RCM::computeState(const Vec& qG,const Vec& qGt,double x) {	
-    if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && x==x_Old) return X;
-    else {
-      if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) wt->computewhcoefVel(qG,qGt);
+  void FiniteElement1s33RCM::computedhdz(Vec& qElement, Vec& qpElement) {
+    Vec h0 = h.copy();
 
-      Vec wh1 = wt->computew(wt->getwh1coef(),x); // position and velocity
-      Vec wh2 = wt->computew(wt->getwh2coef(),x); // position and velocity
-      Vec wh1t = wt->computew(wt->getwh1tcoef(),x); // only velocity
-      Vec wh2t = wt->computew(wt->getwh2tcoef(),x); // only velocity
+    /**************** velocity dependent calculations ********************/
+    for(int i=0;i<qpElement.size();i++) {  
+      double qpElementi = qpElement(i); // save correct position
 
-      Vec w1 = wt->computew(wt->getw1coef(),x); // only position
-      Vec w2 = wt->computew(wt->getw2coef(),x); // position and velocity
-      Vec w1t = wt->computew(wt->getw1tcoef(),x); // only velocity
-      Vec w2t = wt->computew(wt->getw2tcoef(),x); // only velocity
+      qpElement(i) += epsroot(); // update with disturbed positions assuming same active links
+      computeh(qElement,qpElement);
 
-      X(0,2) = tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS(); /* pos */
-      X(3,5) = tf->getpS();	
-      X(3) += sin((tf->getpS())(1))*w2(1)+tf->getk0()*x;	
-      X(4) += w1(1);
-      X(5) += w2(1);/* angles */
-      X(6,8) = tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt(); /* vel */
-      X(9,11) = tf->getpSt(); 
-      X(9) += cos((tf->getpS())(1))*(tf->getpSt())(1)*w2(1)+sin((tf->getpS())(1))*w2t(1)+tf->getk0t()*x;
-      X(10) += w1t(1);
-      X(11) += w2t(1); /* time differentiated angles */
-
-      return X;
+      dhdu.col(i) = (h-h0)/epsroot();
+      qpElement(i) = qpElementi;
     }
+
+    /***************** position dependent calculations ********************/
+    for(int i=0;i<qElement.size();i++) { 
+      double qElementi = qElement(i); // save correct position
+
+      qElement(i) += epsroot(); // update with disturbed positions assuming same active links
+      computeh(qElement,qpElement);
+
+      dhdq.col(i) = (h-h0)/epsroot();
+      qElement(i) = qElementi;
+    }
+
+    /******************* back to initial state **********************/
+    h = h0;
+  }
+
+  double FiniteElement1s33RCM::computeKineticEnergy(const Vec& qG,const Vec& qGt) {
+    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) 	wt->computeint(qG,qGt);		
+    Vec S = tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt();
+
+    return 0.5*rho
+      * (	A*(trans(tf->getrSt())*(tf->getrSt()*l0+2.*tf->getnS()*wt->getIwh1t()+2.*tf->getnSt()*wt->getIwh1()
+              +2.*tf->getbS()*wt->getIwh2t()+2.*tf->getbSt()*wt->getIwh2())
+            +trans(S)*(S*l0h3/12.+2.*tf->getnS()*wt->getIxwh1t()+2.*tf->getnSt()*wt->getIxwh1()
+              +2.*tf->getbS()*wt->getIxwh2t()+2.*tf->getbSt()*wt->getIxwh2())
+            +tf->getnSH()*(2.*tf->getnSt()*wt->getIwh1twh1()+2.*tf->getbSt()*wt->getIwh1twh2())+wt->getIwh1twh1t()
+            +tf->getnStH()*(tf->getnSt()*wt->getIwh1wh1()+2.*tf->getbS()*wt->getIwh1wh2t()+2.*tf->getbSt()*wt->getIwh1wh2())
+            +tf->getbSH()*(2.*tf->getbSt()*wt->getIwh2twh2())+wt->getIwh2twh2t()
+            +tf->getbStH()*(tf->getbSt()*wt->getIwh2wh2()))
+          + I0*wt->getTtil()	);
+  }
+
+  double FiniteElement1s33RCM::computeGravitationalEnergy(const Vec& qG) {
+    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
+
+    double Iwh1 = wt->intv(wt->getwh1coef());
+    double Iwh2 = wt->intv(wt->getwh2coef());
+
+    return -rho*A*trans(g)*(l0*tf->getrS()+Iwh1*tf->getnS()+Iwh2*tf->getbS());
+  }
+
+  double FiniteElement1s33RCM::computeElasticEnergy(const Vec& qG) {
+    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
+
+    double Iwh1xwh1x = wt->intvw(wt->getwh1coef(),wt->getwh1coef());
+    double Iwh2xwh2x = wt->intvw(wt->getwh2coef(),wt->getwh2coef());
+    double Iwh1xxwh1xx = wt->intvxxvxx(wt->getwh1coef(),k10);
+    double Iwh2xxwh2xx = wt->intvxxvxx(wt->getwh2coef(),k20);		
+    double eps = tf->getepstil()+(Iwh1xwh1x+Iwh2xwh2x)/(2.*l0);
+
+    return 0.5*(E*A*eps*eps*l0+E*I1*Iwh1xxwh1xx+E*I2*Iwh2xxwh2xx+G*I0*l0*tf->getk0()*tf->getk0());
   }
 
   Mat FiniteElement1s33RCM::computeJXqG(const Vec& qG,double x) {
@@ -276,6 +338,36 @@ namespace MBSim {
     return JXqG.copy();
   }
 
+  const Vec& FiniteElement1s33RCM::computeState(const Vec& qG,const Vec& qGt,double x) {	
+    if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && x==x_Old) return X;
+    else {
+      if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) wt->computewhcoefVel(qG,qGt);
+
+      Vec wh1 = wt->computew(wt->getwh1coef(),x); // position and velocity
+      Vec wh2 = wt->computew(wt->getwh2coef(),x); // position and velocity
+      Vec wh1t = wt->computew(wt->getwh1tcoef(),x); // only velocity
+      Vec wh2t = wt->computew(wt->getwh2tcoef(),x); // only velocity
+
+      Vec w1 = wt->computew(wt->getw1coef(),x); // only position
+      Vec w2 = wt->computew(wt->getw2coef(),x); // position and velocity
+      Vec w1t = wt->computew(wt->getw1tcoef(),x); // only velocity
+      Vec w2t = wt->computew(wt->getw2tcoef(),x); // only velocity
+
+      X(0,2) = tf->getrS()+(1.+tf->getepstil())*x*tf->gettS()+wh1(0)*tf->getnS()+wh2(0)*tf->getbS(); /* pos */
+      X(3,5) = tf->getpS();	
+      X(3) += sin((tf->getpS())(1))*w2(1)+tf->getk0()*x;	
+      X(4) += w1(1);
+      X(5) += w2(1);/* angles */
+      X(6,8) = tf->getrSt()+(tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt())*x+wh1t(0)*tf->getnS()+wh1(0)*tf->getnSt()+wh2t(0)*tf->getbS()+wh2(0)*tf->getbSt(); /* vel */
+      X(9,11) = tf->getpSt(); 
+      X(9) += cos((tf->getpS())(1))*(tf->getpSt())(1)*w2(1)+sin((tf->getpS())(1))*w2t(1)+tf->getk0t()*x;
+      X(10) += w1t(1);
+      X(11) += w2t(1); /* time differentiated angles */
+
+      return X;
+    }
+  }
+
   Vec FiniteElement1s33RCM::computeData(const Vec& qG,const Vec& qGt) {
     if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) tf->computezI(qG,qGt);	
 
@@ -290,43 +382,6 @@ namespace MBSim {
     Data(15) = tf->getepstilt(); /* epstilt */
 
     return Data.copy();
-  }
-
-  double FiniteElement1s33RCM::computeKineticEnergy(const Vec& qG,const Vec& qGt) {
-    if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) 	wt->computeint(qG,qGt);		
-    Vec S = tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt();
-
-    return 0.5*rho
-      * (	A*(trans(tf->getrSt())*(tf->getrSt()*l0+2.*tf->getnS()*wt->getIwh1t()+2.*tf->getnSt()*wt->getIwh1()
-              +2.*tf->getbS()*wt->getIwh2t()+2.*tf->getbSt()*wt->getIwh2())
-            +trans(S)*(S*l0h3/12.+2.*tf->getnS()*wt->getIxwh1t()+2.*tf->getnSt()*wt->getIxwh1()
-              +2.*tf->getbS()*wt->getIxwh2t()+2.*tf->getbSt()*wt->getIxwh2())
-            +tf->getnSH()*(2.*tf->getnSt()*wt->getIwh1twh1()+2.*tf->getbSt()*wt->getIwh1twh2())+wt->getIwh1twh1t()
-            +tf->getnStH()*(tf->getnSt()*wt->getIwh1wh1()+2.*tf->getbS()*wt->getIwh1wh2t()+2.*tf->getbSt()*wt->getIwh1wh2())
-            +tf->getbSH()*(2.*tf->getbSt()*wt->getIwh2twh2())+wt->getIwh2twh2t()
-            +tf->getbStH()*(tf->getbSt()*wt->getIwh2wh2()))
-          + I0*wt->getTtil()	);
-  }
-
-  double FiniteElement1s33RCM::computeGravitationalEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
-
-    double Iwh1 = wt->intv(wt->getwh1coef());
-    double Iwh2 = wt->intv(wt->getwh2coef());
-
-    return -rho*A*trans(g)*(l0*tf->getrS()+Iwh1*tf->getnS()+Iwh2*tf->getbS());
-  }
-
-  double FiniteElement1s33RCM::computeElasticEnergy(const Vec& qG) {
-    if(nrm2(qG-qG_Old)>tol_comp) wt->computewhcoefPos(qG);
-
-    double Iwh1xwh1x = wt->intvw(wt->getwh1coef(),wt->getwh1coef());
-    double Iwh2xwh2x = wt->intvw(wt->getwh2coef(),wt->getwh2coef());
-    double Iwh1xxwh1xx = wt->intvxxvxx(wt->getwh1coef(),k10);
-    double Iwh2xxwh2xx = wt->intvxxvxx(wt->getwh2coef(),k20);		
-    double eps = tf->getepstil()+(Iwh1xwh1x+Iwh2xwh2x)/(2.*l0);
-
-    return 0.5*(E*A*eps*eps*l0+E*I1*Iwh1xxwh1xx+E*I2*Iwh2xxwh2xx+G*I0*l0*tf->getk0()*tf->getk0());
   }
 
   void FiniteElement1s33RCM::computedrS() {

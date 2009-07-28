@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef _BODY_FLEXIBLE_LINEAR_EXTERNAL_H_
-#define _BODY_FLEXIBLE_LINEAR_EXTERNAL_H_
+#ifndef _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_
+#define _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_
 
 #include "mbsim/flexible_body.h"
 #include "mbsim/mbsim_event.h"
@@ -31,74 +31,44 @@ namespace MBSim {
 
   class ContourInterpolation;
 
-
   /*! 
-   * \brief Linear models from external preprocessing, e.g. Finite %Element model.
+   * \brief Linear models from external preprocessing, e.g. Finite Element model.
    * \author Roland Zander
    * \date 2009-03-26 initial kernel_dev commit (Roland Zander)
    * \date 2009-04-05 minor change: parent class is not template class (Schindler / Zander)
+   * \date 2009-07-23 implicit integration (Thorsten Schindler)
    *
    * Systems equation of motion:
    * \f[ \vM{\rm d}\vu = -( \vK \vq + \vD \vu){\rm d}t - \vW{\rm d}\vLambda \f]
-   * with constant matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
-   * */
+   * with CONSTANT matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
+   */
   class FlexibleBodyLinearExternal : public FlexibleBody {
-
-    protected:
-      /** number of Contours directly asoziated to body */
-      int nContours;
-	  
-	  /** vector of ContourPointData controlling type of interface: node/interpolation */
-      std::vector<ContourPointData> contourType;
-
-      /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
-      fmatvec::Vec WrON00;
-
-      /*! update kinematical values\n
-       * Call to updateFrames(double t)
-       * and updateContours(double t)
-       * \param t time
-       */
-      void updateStateDependentVariables(double t);
-      /*!
-       * Kinematical update of postition and velocities of every Contour:
-       * \f[ \vr_{C} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
-       * \param t time
-       * \todo angular kinematics
-       */
-      void updateContours(double t);
-
-      /*! create interface in form of ContourPointData based on file
-       * \return cpData for refering to Port or Contour added
-       * \param jacbifilename file containing interface data
-       */
-      ContourPointData addInterface(const std::string &jacbifilename);
-      /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
-       * \return cpData for refering to Port or Contour added
-       * \param J Jacobian matrix
-       * \param r undeformed position in body coordinate system
-       */
-      ContourPointData addInterface(const fmatvec::Mat &J, const fmatvec::Vec &r);
-
-      /* empty function since mass, damping and stiffness matrices are constant !!! */
-      void updateJh_internal(double t);
-
     public:
 	  /*!
 	   * \brief constructor
 	   * \param name of body
 	   */
-      FlexibleBodyLinearExternal(const std::string &name); 
+      FlexibleBodyLinearExternal(const std::string &name);
+
       /*!
        * \brief destructor
        */
       virtual ~FlexibleBodyLinearExternal() {}
 
-      /* inherited interface */
-      /* FlexibleBody */
+      /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "FlexibleBodyLinearExternal"; }
-      virtual void BuildElements() { new MBSimError("BITTE INITIALISIEREN!"); } 
-      virtual void GlobalMatrixContribution(int n);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF OBJECT */
+      virtual void init() { new MBSimError("ERROR(FlexibleBodyLinearExternal::init): Not implemented!"); }
+      virtual void facLLM() {}
+      /***************************************************/
+      
+      /* INHERITED INTERFACE OF FLEXIBLEBODY */
+      virtual void BuildElements() { new MBSimError("ERROR(FlexibleBodyLinearExternal::BuildElements): Not implemented!"); } 
+      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       /*!
        * Kinematical update of postition and velocities of every attached Frame:
        * \f[ \vr_{P} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
@@ -107,16 +77,7 @@ namespace MBSim {
        */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
-
-      /* Object */
-      virtual void init() { new MBSimError("BITTE INITIALISIEREN!"); }
-
-      /*! \return true
-      */
-      bool hasConstMass() const {return true;}
-
-      /*! NULL-function, since mass matrix is constant*/
-      void facLLM() {}
+      /***************************************************/
 
       /*! 
        * read mass matrix: style e.g. for 2*2 matrix \n
@@ -200,8 +161,48 @@ namespace MBSim {
 
       /* geerbt */
       fmatvec::Mat computeJacobianMatrix(const ContourPointData &CP);
+
+    protected:
+      /** number of Contours directly asoziated to body */
+      int nContours;
+	  
+	  /** vector of ContourPointData controlling type of interface: node/interpolation */
+      std::vector<ContourPointData> contourType;
+
+      /** origin \f$\rs{_W}[_K0]{\vr}\f$ of model */
+      fmatvec::Vec WrON00;
+
+      /*! update kinematical values\n
+       * Call to updateFrames(double t)
+       * and updateContours(double t)
+       * \param t time
+       */
+      void updateStateDependentVariables(double t);
+      /*!
+       * Kinematical update of postition and velocities of every Contour:
+       * \f[ \vr_{C} = \vr_{K} + \vJ_T(\vr_{P0} + \vW^T\vq) \f]
+       * \param t time
+       * \todo angular kinematics
+       */
+      void updateContours(double t);
+
+      /*! create interface in form of ContourPointData based on file
+       * \return cpData for refering to Port or Contour added
+       * \param jacbifilename file containing interface data
+       */
+      ContourPointData addInterface(const std::string &jacbifilename);
+      /*! create interface in form of ContourPointData based on Jacobian matrix and undeformed position
+       * \return cpData for refering to Port or Contour added
+       * \param J Jacobian matrix
+       * \param r undeformed position in body coordinate system
+       */
+      ContourPointData addInterface(const fmatvec::Mat &J, const fmatvec::Vec &r);
+
+      /* empty function since mass, damping and stiffness matrices are constant !!! */
+      void updateJh_internal(double t);
    };
 
 }
 
-#endif
+#endif /* _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_ */
+

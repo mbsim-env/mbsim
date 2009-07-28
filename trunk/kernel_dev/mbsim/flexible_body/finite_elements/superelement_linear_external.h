@@ -21,7 +21,7 @@
 #define _SUPERELEMENT_LINEAR_EXTERNAL_H_
 
 #include "fmatvec.h"
-#include "mbsim/interfaces.h"
+#include "mbsim/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
 
@@ -32,6 +32,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-05-22 some references added (Thorsten Schindler)
    * \date 2009-07-16 fixed proportional damping (Thorsten Schindler)
+   * \date 2009-07-23 implicit integration (Thorsten Schindler)
    */
   class SuperElementLinearExternal : public DiscretizationInterface {
     public:
@@ -56,27 +57,29 @@ namespace MBSim {
 	   * */
 	  void setProportionalDamping(double alpha_,double beta_) { alpha=alpha_; beta=beta_; }
 
-      const fmatvec::SymMat& getMassMatrix() const {return M;}
-      const fmatvec::Vec&    getGeneralizedForceVector() const {return h;}
+      const fmatvec::SymMat& getM() const { return M; }
+      const fmatvec::Vec&    geth() const { return h; }
 
-      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingPosition() const {return Dhq;}    
-      const fmatvec::SqrMat& getJacobianForImplicitIntegrationRegardingVelocity() const {return Dhqp;}
-	  int getSizeOfPositions() const {return K.size();}
-	  int getSizeOfVelocities() const {return M.size();}
+      const fmatvec::SqrMat& getdhdq() const { return Dhq; }    
+      const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
+	  int getqSize() const { return K.size(); }
+	  int getuSize() const { return M.size(); }
 
+      void computeM(const fmatvec::Vec& qElement) {}
       /*! 
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$, \f$\vM\f$ is constant
        */
-      inline void computeEquationsOfMotion(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
+      void computeh(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
+      void computedhdz(fmatvec::Vec& qElement,fmatvec::Vec& uElement) {}
       double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*trans(u)*M*u;}
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
       double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}
 
-      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
-      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMinimalRepresentationRegardingPhysics(q,cp))*u;}
+      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMotion(q,cp))*u;}
+      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMotion(q,cp))*u;}
       fmatvec::Vec computePosition(const fmatvec::Vec&q,const ContourPointData& cp);
       fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const ContourPointData& cp) { throw new MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
-      fmatvec::Mat computeJacobianOfMinimalRepresentationRegardingPhysics(const fmatvec::Vec&q,const ContourPointData& cp);
+      fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q,const ContourPointData& cp);
 
 	  ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);
     
@@ -103,5 +106,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _SUPERELEMENT_LINEAR_EXTERNAL_H_ */
 

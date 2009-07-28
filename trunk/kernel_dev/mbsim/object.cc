@@ -81,19 +81,19 @@ namespace MBSim {
     }
 
     /******************* time dependent calculations **********************/
-    hObject = hObject0; // set to old values
-    h = h0;
+    // hObject = hObject0; // set to old values
+    // h = h0;
 
-    double t0 = t; // save correct position
+    // double t0 = t; // save correct position
 
-    t += epsroot(); // update with disturbed positions assuming same active links
-    updateStateDependentVariables(t); 
-    updateT(t); 
-    updateJacobians(t);
-    updateh(t);
+    // t += epsroot(); // update with disturbed positions assuming same active links
+    // updateStateDependentVariables(t); 
+    // updateT(t); 
+    // updateJacobians(t);
+    // updateh(t);
 
-    dhdt = (hObject-hObjectEnd)/epsroot();
-    t = t0;
+    // dhdt = (hObject-hObjectEnd)/epsroot();
+    // t = t0;
 
     /******************* back to initial state **********************/
     updateStateDependentVariables(t); 

@@ -40,6 +40,7 @@ namespace MBSim {
    * \date 2009-04-20 binormals of contours can be time variant (Thorsten Schindler)
    * \date 2009-05-08 visualisation (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-23 implicit integration (Thorsten Schindler)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    *
@@ -64,7 +65,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
-      virtual void GlobalMatrixContribution(int n);
+      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
       /***************************************************/
@@ -186,5 +189,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _FLEXIBLE_BODY_1S_21_RCM_H_ */
 

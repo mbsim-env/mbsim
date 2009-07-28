@@ -8,16 +8,16 @@ int main (int argc, char* argv[]) {
 
   DynamicSystemSolver *sys = new System("MBS");
 
+  sys->setImpactSolver(RootFinding);
   sys->setStopIfNoConvergence(true,true);
   sys->init();
 
-  TimeSteppingIntegrator integrator;
+  ThetaTimeSteppingIntegrator integrator;
 
+  integrator.setTheta(0.5);
   integrator.setEndTime(0.4);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
-
-  integrator.integrate(*sys);
 
   sys->closePlot();
 

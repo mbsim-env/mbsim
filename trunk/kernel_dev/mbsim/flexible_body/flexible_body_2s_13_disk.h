@@ -86,7 +86,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
-      virtual void GlobalMatrixContribution(int CurrentElement);
+      virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
+      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
       /***************************************************/

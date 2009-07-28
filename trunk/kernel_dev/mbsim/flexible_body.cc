@@ -42,17 +42,36 @@ namespace MBSim {
     }
   }
 
-  void FlexibleBody::updateM(double t) {
+  void FlexibleBody::updateh(double t) {
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
-      discretization[i]->computeEquationsOfMotion(qElement[i],uElement[i]); // compute attributes of finite element
+      discretization[i]->computeh(qElement[i],uElement[i]); // compute attributes of finite element
     }
-    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i); // assemble
+    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h); // assemble
+    for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),hObject); // assemble
 
     if(d_massproportional) { // mass proportional damping
       h -= d_massproportional*(M*u);
       hObject -= d_massproportional*(M*u);
     }
+  }
+
+  void FlexibleBody::updateM(double t) {
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+    for(int i=0;i<(int)discretization.size();i++) {
+      discretization[i]->computeM(qElement[i]); // compute attributes of finite element
+    }
+    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
+  }
+
+  void FlexibleBody::updatedhdz(double t) {
+    updateh(t);
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+    for(int i=0;i<(int)discretization.size();i++) {
+      discretization[i]->computedhdz(qElement[i],uElement[i]); // compute attributes of finite element
+    }
+   for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdq(),dhdq); // assemble
+   for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdu(),dhdu); // assemble
   }
 
   void FlexibleBody::updateStateDependentVariables(double t) {

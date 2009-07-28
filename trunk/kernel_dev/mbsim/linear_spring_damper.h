@@ -30,7 +30,7 @@ namespace MBSim {
    * \brief linear spring damper link
    * \author Martin Foerg
    * \date 2009-07-07 some comments (Thorsten Schindler)
-   * \date 2009-07-19 implicit integration (Thorsten Schindler)
+   * \date 2009-07-27 implicit integration (Thorsten Schindler)
    */
   class LinearSpringDamper : public LinkMechanics {
     public:

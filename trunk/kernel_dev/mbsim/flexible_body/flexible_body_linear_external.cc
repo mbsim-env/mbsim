@@ -40,9 +40,16 @@ namespace MBSim {
 	  uElement.push_back(Vec(0));
 	}
 
-  void FlexibleBodyLinearExternal::GlobalMatrixContribution(int i) {
-    M += discretization[i]->getMassMatrix();
-    h += discretization[i]->getGeneralizedForceVector();
+  void FlexibleBodyLinearExternal::GlobalVectorContribution(int i, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
+    gloVec += locVec;
+  }
+
+  void FlexibleBodyLinearExternal::GlobalMatrixContribution(int i, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
+    gloMat += locMat;
+  }
+
+  void FlexibleBodyLinearExternal::GlobalMatrixContribution(int i, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
+    gloMat += locMat;
   }
 
   void FlexibleBodyLinearExternal::setProportionalDamping(const double &a, const double &b) {
@@ -61,7 +68,7 @@ namespace MBSim {
   }
 
   void FlexibleBodyLinearExternal::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-	Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
+	Mat J = static_cast<SuperElementLinearExternal*>(discretization[0])->computeJacobianOfMotion(qElement[0],cp);
 //TODO  frame[i]->setWrOP(WrON00  + JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslation(qElement[0],cp)            );
 //TODO  frame[i]->setWvP (          JT *  static_cast<SuperElementLinearExternal*>(discretization[0])->computeTranslationalVelocity(qElement[0],uElement[0],cp));
 	if(frame!=NULL) {
@@ -72,7 +79,7 @@ namespace MBSim {
   void FlexibleBodyLinearExternal::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
 	Mat Jacobian;
 	if(cp.getContourParameterType() == NODE) {
-	  Jacobian = discretization[0]->computeJacobianOfMinimalRepresentationRegardingPhysics(qElement[0],cp);
+	  Jacobian = discretization[0]->computeJacobianOfMotion(qElement[0],cp);
 	} else if(cp.getContourParameterType() == EXTINTERPOL) {
 //	  for(unsigned int i=0;i<(cp.iPoints).size();i++) {
 //		ContourPointData cpTemp; cpTemp.getContourParameterType()=NODE;
@@ -119,8 +126,8 @@ namespace MBSim {
  
   void FlexibleBodyLinearExternal::setMassMatrix(const SymMat &mat) {
 	static_cast<SuperElementLinearExternal*>(discretization[0])->setM(mat);
-	uSize[0] = discretization[0]->getSizeOfVelocities();
-	uSize[1] = discretization[0]->getSizeOfVelocities(); // TODO
+	uSize[0] = discretization[0]->getuSize();
+	uSize[1] = discretization[0]->getuSize(); // TODO
   }
   void FlexibleBodyLinearExternal::readMassMatrix(const string &massfilename) {
 	fstream datafile(massfilename.c_str(),ios::in);
@@ -136,7 +143,7 @@ namespace MBSim {
 
   void FlexibleBodyLinearExternal::setStiffnessMatrix(const SqrMat &mat) {
 	static_cast<SuperElementLinearExternal*>(discretization[0])->setK(mat);
-	qSize = discretization[0]->getSizeOfPositions();
+	qSize = discretization[0]->getqSize();
   }
   void FlexibleBodyLinearExternal::readStiffnessMatrix(const string &stiffnessfilename) {
     fstream datafile(stiffnessfilename.c_str(),ios::in);

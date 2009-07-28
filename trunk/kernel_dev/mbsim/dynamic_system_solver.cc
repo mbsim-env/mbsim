@@ -310,8 +310,6 @@ namespace MBSim {
   int DynamicSystemSolver::solveConstraintsFixpointSingle() {
     updaterFactors();
 
-    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
-
     checkConstraintsForTermination();
     if(term) return 0;
 
@@ -341,8 +339,6 @@ namespace MBSim {
   int DynamicSystemSolver::solveImpactsFixpointSingle(double dt) {
     updaterFactors();
 
-    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
-
     checkImpactsForTermination();
     if(term) return 0;
 
@@ -370,8 +366,6 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsGaussSeidel() {
-    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
-
     checkConstraintsForTermination();
     if(term) return 0 ;
 
@@ -390,8 +384,6 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsGaussSeidel(double dt) {
-    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
-
     checkImpactsForTermination();
     if(term) return 0 ;
 
@@ -411,8 +403,6 @@ namespace MBSim {
 
   int DynamicSystemSolver::solveConstraintsRootFinding() {
     updaterFactors();
-
-    b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
 
     int iter;
     int checkTermLevel = 0;
@@ -470,28 +460,26 @@ namespace MBSim {
         alpha = 0.5*alpha;  
       }
       nrmf0 = nrmf;
-      res0 = res;
+    res0 = res;
 
-      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-        checkTermLevel++;
-        checkConstraintsForTermination();
-        if(term) break;
-      }
+    if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+      checkTermLevel++;
+      checkConstraintsForTermination();
+      if(term) break;
     }
-    return iter;
   }
+  return iter;
+}
 
-  int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
-    updaterFactors();
+int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
+  updaterFactors();
 
-    b.resize() = gd + trans(W)*slvLLFac(LLM,h)*dt;
+  int iter;
+  int checkTermLevel = 0;
 
-    int iter;
-    int checkTermLevel = 0;
-
-    Group::solveImpactsRootFinding(); 
-    double nrmf0 = nrm2(res);
-    Vec res0 = res.copy();
+  Group::solveImpactsRootFinding(); 
+  double nrmf0 = nrm2(res);
+  Vec res0 = res.copy();
 
     checkImpactsForTermination();
     if(term)
@@ -599,6 +587,10 @@ namespace MBSim {
     hLink.init(0);
     dhdqObject.init(0);
     dhdqLink.init(0);
+    dhduObject.init(0);
+    dhduLink.init(0);
+    dhdtObject.init(0);
+    dhdtLink.init(0);
     Group::updatedhdz(t);
   }
 
@@ -921,6 +913,7 @@ namespace MBSim {
       updateG(t); 
 
       projectGeneralizedPositions(t);
+      b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       int iter;
       iter = solveImpacts();
       u += deltau(zParent,t,0);
@@ -951,6 +944,7 @@ namespace MBSim {
         updateV(t); 
         updateG(t); 
         updatewb(t); 
+        b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();
@@ -989,6 +983,7 @@ namespace MBSim {
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
+        b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();

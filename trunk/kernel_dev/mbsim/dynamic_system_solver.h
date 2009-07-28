@@ -56,6 +56,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-03-31 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-07-27 implicit integration (Thorsten Schindler)
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -121,6 +122,7 @@ namespace MBSim {
 
       /**
        * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
+       * \return
        */
       virtual int solveConstraints(); 
 
@@ -139,6 +141,7 @@ namespace MBSim {
 
       void setConstraintSolver(Solver solver_) { contactSolver = solver_; }                         
       void setImpactSolver(Solver solver_) { impactSolver = solver_; }                         
+      const Solver& getImpactSolver() { return impactSolver; }                         
       void setTermination(bool term_) { term = term_; }
       void setStrategy(Strategy strategy_) { strategy = strategy_; }
       void setMaxIter(int iter) { maxIter = iter; }
