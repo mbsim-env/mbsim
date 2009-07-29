@@ -53,13 +53,13 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateStateDependentVariables(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateStateDependentVariables(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
@@ -67,19 +67,19 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateJacobians(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateJacobians(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(dynamic, max(1,(int)link.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)link.size()>30) 
     for(int i=0; i<(int)link.size(); i++) {
       try { link[i]->updateJacobians(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
@@ -122,8 +122,8 @@ namespace MBSim {
     e=element->FirstChildElement();
 
     while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
-        e->ValueStr()!=MBSIMNS"relativePosition" &&
-        e->ValueStr()!=MBSIMNS"relativeOrientation" &&
+        e->ValueStr()!=MBSIMNS"position" &&
+        e->ValueStr()!=MBSIMNS"orientation" &&
         e->ValueStr()!=MBSIMNS"frame" &&
         e->ValueStr()!=MBSIMNS"contour" &&
         ObjectFactory::getInstance()->createGroup(e)==0 &&
@@ -137,12 +137,12 @@ namespace MBSim {
       setFrameOfReference(getFrameByPath(ref));
       e=e->NextSiblingElement();
     }
-    if(e && e->ValueStr()==MBSIMNS"relativePosition") {
-      setRelativePosition(Vec(e->GetText()));
+    if(e && e->ValueStr()==MBSIMNS"position") {
+      setPosition(Vec(e->GetText()));
       e=e->NextSiblingElement();
     }
-    if(e && e->ValueStr()==MBSIMNS"relativeOrientation") {
-      setRelativeOrientation(SqrMat(e->GetText()));
+    if(e && e->ValueStr()==MBSIMNS"orientation") {
+      setOrientation(SqrMat(e->GetText()));
       e=e->NextSiblingElement();
     }
 

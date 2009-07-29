@@ -1,29 +1,27 @@
-/* Copyright (C) 2004-2008  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ * 
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
  * version 2.1 of the License, or (at your option) any later version. 
- *  
+ * 
  * This library is distributed in the hope that it will be useful, 
  * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details. 
- *  
+ *
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
+
 #include <config.h>
-#include <mbsim/constitutive_laws.h>
-#include <mbsim/element.h>
-#include "utils/nonsmooth_algebra.h"
-#include "utils/utils.h"
+#include "mbsim/constitutive_laws.h"
+#include "mbsim/element.h"
+#include "mbsim/utils/nonsmooth_algebra.h"
+#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -58,18 +56,18 @@ namespace MBSim {
   //    return Vec(1,INIT,-(gdn(0))/G(0,0));
   //  }
   //}
-//    bool UnilateralContact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
-//    double gdn_ = gdn(0);
-//    if(fabs(gda(0)) > gd_limit)
-//      gdn_ += epsilon*gda(0);
-//    if(gdn_ >= -gdTol && fabs(la(0)) <= laTol)
-//      return true;
-//    else if(la(0) >= -laTol && fabs(gdn_) <= gdTol)
-//      return true;
-//    else 
-//      return false;
-//    
-//  }
+  //    bool UnilateralContact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laTol, double gdTol) {
+  //    double gdn_ = gdn(0);
+  //    if(fabs(gda(0)) > gd_limit)
+  //      gdn_ += epsilon*gda(0);
+  //    if(gdn_ >= -gdTol && fabs(la(0)) <= laTol)
+  //      return true;
+  //    else if(la(0) >= -laTol && fabs(gdn_) <= gdTol)
+  //      return true;
+  //    else 
+  //      return false;
+  //    
+  //  }
 
   double UnilateralConstraint::project(double la, double gdn, double r) {
     return proxCN(la-r*gdn);
@@ -167,7 +165,7 @@ namespace MBSim {
   bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
-    
+
     if(gdn >= -gdTol && fabs(la) <= laTol)
       return true;
     else if(la >= -laTol && fabs(gdn) <= gdTol)
@@ -240,7 +238,7 @@ namespace MBSim {
       return false;
   }
 
- Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec PlanarCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
     return Vec(1,INIT,-mu*sign(gd(0)));
   }
 
@@ -268,64 +266,64 @@ namespace MBSim {
   //  else 
   //    return (laNmu<=sdG) ? laNmu : -laNmu;
   //}
-//    Mat CoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& r) {
-//    int nFric = gdn.size()-1;
-//  //Vec lan(la.size()-1);
-//    if(nFric==1) {
-//      double argT = la(1)-r(1)*gdn(1);
-//      Mat d(1,4,NONINIT);
-//      if(abs(argT) < mu*fabs(la(0))) {
-//	//d_dargT = Mat(2,2,EYE);
-//	d(0,0) = 0;
-//	d(0,1) = 1;
-//	d(0,2) = 0;
-//	d(0,3) = -r(1);
-//      } else {
-//	d(0,0) = sign(argT)*sign(la(0))*mu;
-//	d(0,1) = 0;
-//	d(0,2) = 0;
-//	d(0,3) = 0;
-//      }
-//      return d;
-//    } else { //if(nFric == 2) 
-//      Vec argT = la(1,nFric)-r(1)*gdn(1,nFric);
-//      Mat E(2,2,EYE);
-//      Mat d(2,6,NONINIT);
-//      if(nrm2(argT) < mu*fabs(la(0))) {
-//	//d_dargT = Mat(2,2,EYE);
-//	d(Index(0,1),Index(0,0)).init(0);
-//	d(Index(0,1),Index(1,2)) = E;
-//	d(Index(0,1),Index(3,3)).init(0);
-//	d(Index(0,1),Index(4,5)) = -r*E;
-//      } else {
-//	Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
-//	d(Index(0,1),Index(0,0)) = argT/nrm2(argT)*mu;
-//	d(Index(0,1),Index(1,2)) = d_dargT;
-//	d(Index(0,1),Index(3,3)).init(0);
-//	d(Index(0,1),Index(4,5)) = -r(1)*d_dargT;
-//      }
-//      return d;
-//    }
-//  }
-// bool CoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laTol, double gdTol) {
-//    int nFric = gdn.size()-1;
-//    if(nFric == 1) {
-//      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol)
-//	return true;
-//      else if(fabs(la(1)) <= mu*fabs(la(0))+laTol && fabs(gdn(1)) <= gdTol)
-//	return true;
-//      else 
-//	return false;
-//    } else if(nFric==2) {
-//      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol)
-//	return true;
-//      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol && nrm2(gdn(1,2)) <= gdTol)
-//	return true;
-//      else 
-//	return false;
-//    }
-//    return false;
-//  }
+  //    Mat CoulombFriction::diff(const Vec& la, const Vec& gdn, const Vec& r) {
+  //    int nFric = gdn.size()-1;
+  //  //Vec lan(la.size()-1);
+  //    if(nFric==1) {
+  //      double argT = la(1)-r(1)*gdn(1);
+  //      Mat d(1,4,NONINIT);
+  //      if(abs(argT) < mu*fabs(la(0))) {
+  //	//d_dargT = Mat(2,2,EYE);
+  //	d(0,0) = 0;
+  //	d(0,1) = 1;
+  //	d(0,2) = 0;
+  //	d(0,3) = -r(1);
+  //      } else {
+  //	d(0,0) = sign(argT)*sign(la(0))*mu;
+  //	d(0,1) = 0;
+  //	d(0,2) = 0;
+  //	d(0,3) = 0;
+  //      }
+  //      return d;
+  //    } else { //if(nFric == 2) 
+  //      Vec argT = la(1,nFric)-r(1)*gdn(1,nFric);
+  //      Mat E(2,2,EYE);
+  //      Mat d(2,6,NONINIT);
+  //      if(nrm2(argT) < mu*fabs(la(0))) {
+  //	//d_dargT = Mat(2,2,EYE);
+  //	d(Index(0,1),Index(0,0)).init(0);
+  //	d(Index(0,1),Index(1,2)) = E;
+  //	d(Index(0,1),Index(3,3)).init(0);
+  //	d(Index(0,1),Index(4,5)) = -r*E;
+  //      } else {
+  //	Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
+  //	d(Index(0,1),Index(0,0)) = argT/nrm2(argT)*mu;
+  //	d(Index(0,1),Index(1,2)) = d_dargT;
+  //	d(Index(0,1),Index(3,3)).init(0);
+  //	d(Index(0,1),Index(4,5)) = -r(1)*d_dargT;
+  //      }
+  //      return d;
+  //    }
+  //  }
+  // bool CoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laTol, double gdTol) {
+  //    int nFric = gdn.size()-1;
+  //    if(nFric == 1) {
+  //      if(fabs(la(1) + gdn(1)/fabs(gdn(1))*mu*fabs(la(0))) <= laTol)
+  //	return true;
+  //      else if(fabs(la(1)) <= mu*fabs(la(0))+laTol && fabs(gdn(1)) <= gdTol)
+  //	return true;
+  //      else 
+  //	return false;
+  //    } else if(nFric==2) {
+  //      if(nrm2(la(1,2) + gdn(1,2)/nrm2(gdn(1,2))*mu*fabs(la(0))) <= laTol)
+  //	return true;
+  //      else if(nrm2(la(1,2)) <= mu*fabs(la(0))+laTol && nrm2(gdn(1,2)) <= gdTol)
+  //	return true;
+  //      else 
+  //	return false;
+  //    }
+  //    return false;
+  //  }
 
   Vec SpatialCoulombFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return proxCT3D(la-r*gdn,mu*fabs(laN));
@@ -363,7 +361,7 @@ namespace MBSim {
       return false;
   }
 
- Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
+  Vec SpatialCoulombFriction::dlaTdlaN(const Vec& gd, double laN) {
     return -mu*gd/nrm2(gd);
   }
 

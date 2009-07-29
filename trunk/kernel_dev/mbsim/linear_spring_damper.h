@@ -31,6 +31,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-07-07 some comments (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
+   * \todo separate force law after having cleaned function concept
    */
   class LinearSpringDamper : public LinkMechanics {
     public:
@@ -85,7 +86,7 @@ namespace MBSim {
        * \brief loaded length
        */
       double dist;
-
+      
       /**
        * \brief direction of force
        */
@@ -98,5 +99,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _LINEARSPRINGDAMPER_H_ */
 

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <relativePosition>[1;0;0]</relativePosition>
-  <relativeOrientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</relativeOrientation>
+  <position>[1;0;0]</position>
+  <orientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</orientation>
   <RigidBody name="Box1">
     <initialGeneralizedPosition>[l01 + h1/2 + 0.2]</initialGeneralizedPosition>
     <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
@@ -23,13 +23,13 @@
           <offset>1</offset>
         </enableOpenMBV>
       </Frame>
-      <relativePosition>[0;-h1/2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;-h1/2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <frame>
       <Frame name="P2"/>
-      <relativePosition>[0;h1/2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;h1/2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Cuboid name="dummy">
@@ -61,8 +61,8 @@
           <offset>1</offset>
         </enableOpenMBV>
       </Frame>
-      <relativePosition>[0;-h2/2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;-h2/2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Cuboid name="dummy">

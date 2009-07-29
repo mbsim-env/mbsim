@@ -3,8 +3,8 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <Group name="Hauptgruppe1">
     <Group name="Untergruppe">
-      <relativePosition>[1;0;0]</relativePosition>
-      <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+      <position>[1;0;0]</position>
+      <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
       <RigidBody name="Box1">
         <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
         <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
@@ -26,13 +26,13 @@
             </enableOpenMBV>
           </Frame>
           <frameOfReference ref="Frame[C]"/>
-          <relativePosition>[0;-0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <position>[0;-0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <frame>
           <Frame name="P2"/>
-          <relativePosition>[0;0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <position>[0;0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -64,8 +64,8 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativePosition>[0;-0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <position>[0;-0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -132,11 +132,11 @@
   <Group name="Hauptgruppe2">
     <plotFeatureRecursive feature="+stateDerivative"/>
     <plotFeature feature="+separateFilePerDynamicSystem"/>
-    <relativePosition>[2;0;0]</relativePosition>
-    <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+    <position>[2;0;0]</position>
+    <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
     <Group name="Untergruppe">
-      <relativePosition>[1;0;0]</relativePosition>
-      <relativeOrientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</relativeOrientation>
+      <position>[1;0;0]</position>
+      <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
       <RigidBody name="Box1">
         <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
         <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
@@ -157,13 +157,13 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativePosition>[0;-0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <position>[0;-0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <frame>
           <Frame name="P2"/>
-          <relativePosition>[0;0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <position>[0;0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
@@ -195,8 +195,8 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <relativePosition>[0;-0.25;0]</relativePosition>
-          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+          <Position>[0;-0.25;0]</Position>
+          <Orientation>[1,0,0;0,1,0;0,0,1]</Orientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">

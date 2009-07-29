@@ -41,15 +41,15 @@
   </rotation>
   <frame>
     <Frame name="O"/>
-    <relativePosition>[0;lO;0]</relativePosition>
-    <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    <position>[0;lO;0]</position>
+    <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
   </frame>
   <frame>
     <Frame name="U"/>
-    <relativePosition>[0;-lU;0]</relativePosition>
-    <relativeOrientation>
+    <position>[0;-lU;0]</position>
+    <orientation>
       <pv:asciiMatrixRef href="eye.txt"/>
-    </relativeOrientation>
+    </orientation>
   </frame>
   <openMBVRigidBody>
     <ombv:Frustum name="dummy">

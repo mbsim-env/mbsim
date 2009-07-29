@@ -42,8 +42,8 @@ Group2::Group2(const string &name) : Group(name) {
   A(2,2) = 1;
   A(0,1) = sin(a);
   A(1,0) = -sin(a);
-  group->setRelativePosition(r);
-  group->setRelativeOrientation(A);
+  group->setPosition(r);
+  group->setOrientation(A);
   addDynamicSystem(group);
 
 

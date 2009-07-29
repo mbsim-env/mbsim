@@ -4,8 +4,8 @@
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <plotFeatureRecursive feature="+stateDerivative"/>
   <plotFeature feature="+separateFilePerDynamicSystem"/>
-  <relativePosition>[rHG(numHG);0;0]</relativePosition>
-  <relativeOrientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</relativeOrientation>
+  <position>[rHG(numHG);0;0]</position>
+  <orientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</orientation>
   <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
   <RigidBody name="Box1">
     <plotFeature feature="+globalPosition"/>

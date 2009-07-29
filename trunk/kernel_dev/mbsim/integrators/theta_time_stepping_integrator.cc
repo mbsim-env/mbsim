@@ -44,7 +44,7 @@ namespace MBSim {
     system.checkActiveg();
     system.checkActiveLinks();
     if(system.gActiveChanged()) {
-      system.checkAllgd(); // TODO necessary?
+      // system.checkAllgd(); // TODO necessary?
       system.calcgdSizeActive();
       system.calclaSize();
       system.calcrFactorSize();
