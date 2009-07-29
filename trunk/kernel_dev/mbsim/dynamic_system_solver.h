@@ -354,10 +354,14 @@ namespace MBSim {
       void initDataInterfaceBase();
 
       /**
-       * \brief handler for signals
-       * \param TODO
+       * \brief handler for user interrupt signal
        */
-      static void sigTermHandler(int);
+      static void sigInterruptHandler(int);
+
+      /**
+       * \brief handler for abort signals
+       */
+      static void sigAbortHandler(int);
 
       // TODO necessary?
       bool driftCompensation(fmatvec::Vec& z, double t) { return false; } 
