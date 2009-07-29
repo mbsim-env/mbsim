@@ -139,7 +139,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   group = new TestGroup("PendelGruppe2"); 
   Vec r(3);
   r(0) = 0.2;
-  group->setRelativePosition(r);
+  group->setPosition(r);
   addDynamicSystem(group);
   KrRP(0) = lStab/2;
   KrRP(2) = -0.006;

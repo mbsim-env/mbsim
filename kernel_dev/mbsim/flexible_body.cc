@@ -45,7 +45,8 @@ namespace MBSim {
   void FlexibleBody::updateh(double t) {
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
-      discretization[i]->computeh(qElement[i],uElement[i]); // compute attributes of finite element
+      try { discretization[i]->computeh(qElement[i],uElement[i]); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h); // assemble
     for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),hObject); // assemble
@@ -59,7 +60,8 @@ namespace MBSim {
   void FlexibleBody::updateM(double t) {
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
-      discretization[i]->computeM(qElement[i]); // compute attributes of finite element
+      try { discretization[i]->computeM(qElement[i]); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
   }
@@ -68,7 +70,8 @@ namespace MBSim {
     updateh(t);
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
-      discretization[i]->computedhdz(qElement[i],uElement[i]); // compute attributes of finite element
+      try {discretization[i]->computedhdz(qElement[i],uElement[i]); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdq(),dhdq); // assemble
    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getdhdu(),dhdu); // assemble

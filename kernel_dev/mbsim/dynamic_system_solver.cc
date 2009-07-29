@@ -826,7 +826,7 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     checkActiveLinks();
     if(gActiveChanged()) {
 
-      checkAllgd(); // TODO necessary?
+      // checkAllgd(); // TODO necessary?
       calcgdSizeActive();
       calclaSize();
       calcrFactorSize();

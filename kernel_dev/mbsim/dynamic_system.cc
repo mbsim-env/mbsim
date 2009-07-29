@@ -100,11 +100,17 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedhdz(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatedhdz(t);
+#pragma omp parallel for schedule(static) shared(t) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->updatedhdz(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
 
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdz(t);
+#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+    for(int i=0; i<(int)object.size(); i++) {
+      try { object[i]->updatedhdz(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
       (**i).updatedhdz(t);
@@ -114,13 +120,13 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateM(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateM(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
@@ -220,19 +226,19 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none) 
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(dynamic, max(1,(int)linkSetValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValued.size()>30) 
     for(int i=0; i<(int)linkSetValued.size(); i++) {
       try { linkSetValued[i]->updateg(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
@@ -240,19 +246,19 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSingleValued.size()>30)
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSetValued.size()>30)
     for(int i=0; i<(int)linkSetValuedActive.size(); i++) { 
       try { linkSetValuedActive[i]->updategd(t); }
-      catch(MBSimError error) { error.printExceptionMessage(); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
