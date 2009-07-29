@@ -303,7 +303,9 @@ namespace MBSim {
     cout << "...... done initialising." << endl << endl;
 
 #ifdef HAVE_ANSICSIGNAL
-    signal(SIGINT, sigTermHandler);
+    signal(SIGINT, sigInterruptHandler);
+    signal(SIGTERM, sigInterruptHandler);
+    signal(SIGABRT, sigAbortHandler);
 #endif
 
   }
@@ -1227,9 +1229,14 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     for(ie1 = orderOneDynamics.begin(); ie1 != orderOneDynamics.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
-  void DynamicSystemSolver::sigTermHandler(int) {
-    cout<<"MBSim: Received terminate signal!"<<endl;
+  void DynamicSystemSolver::sigInterruptHandler(int) {
+    cout<<"MBSim: Received user interrupt or terminate signal!"<<endl;
     exitRequest=true;
+  }
+
+  void DynamicSystemSolver::sigAbortHandler(int) {
+    cout<<"MBSim: Received abort signal! Flushing HDF5 files and abort!"<<endl;
+    H5::FileSerie::flushAllFiles();
   }
 
   void DynamicSystemSolver::writez(){
