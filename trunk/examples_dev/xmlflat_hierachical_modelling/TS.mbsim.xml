@@ -195,8 +195,8 @@
               <offset>1</offset>
             </enableOpenMBV>
           </Frame>
-          <Position>[0;-0.25;0]</Position>
-          <Orientation>[1,0,0;0,1,0;0,0,1]</Orientation>
+          <position>[0;-0.25;0]</position>
+          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
         <openMBVRigidBody>
           <ombv:Cuboid name="dummy">
