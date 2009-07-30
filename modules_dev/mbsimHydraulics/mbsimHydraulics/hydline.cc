@@ -59,7 +59,7 @@ namespace MBSim {
     assert(nFrom!=nTo);
 
     Area=M_PI*d*d/4.;
-    rho=HydraulicEnvironment::getInstance()->getRho();
+    rho=HydraulicEnvironment::getInstance()->getSpecificMass();
   }
 
 
@@ -186,7 +186,7 @@ namespace MBSim {
 
   void PressureLossZeta::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    zetaFac*=HydraulicEnvironment::getInstance()->getRho()/2./area/area;
+    zetaFac*=HydraulicEnvironment::getInstance()->getSpecificMass()/2./area/area;
   }
 
   Vec PressureLossZeta::operator()(double Q){
@@ -203,7 +203,7 @@ namespace MBSim {
 
   void PressureLossZetaVarArea::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    zetaFac*=HydraulicEnvironment::getInstance()->getRho()/2./area/area;
+    zetaFac*=HydraulicEnvironment::getInstance()->getSpecificMass()/2./area/area;
   }
 
   void PressureLossZetaVarArea::updateRelativeArea(double t) {
@@ -234,12 +234,43 @@ namespace MBSim {
 
   void PressureLossLaminarTubeFlow::transferLineData(double d, double l) {
     double area=M_PI*d*d/4.;
-    lossFactor=32.*HydraulicEnvironment::getInstance()->getEta()*l/d/d/area;
-    cout << "formelchecken " << endl;
+    lossFactor=32.*HydraulicEnvironment::getInstance()->getDynamicViscosity()*l/d/d/area;
   }
 
   Vec PressureLossLaminarTubeFlow::operator()(double Q) {
     return pLoss.init(lossFactor * Q);
+  }
+
+
+  PressureLossCurveFit::PressureLossCurveFit(const string &name, double dRef, double dHyd, double aPos_, double bPos_, double aNeg_, double bNeg_) : PressureLoss(name) {
+    ReynoldsFactor=dHyd/(M_PI*dRef*dRef/4.);
+    aPos=aPos_;
+    bPos=bPos_;
+    aNeg = (aNeg_>0)?aNeg_:aPos_;
+    bNeg = (bNeg_>0)?bNeg_:bPos_;
+    assert(aPos>0);
+    assert(bPos>0);
+    assert(aNeg>0);
+    assert(bNeg>0);
+  }
+
+  void PressureLossCurveFit::transferLineData(double d, double l) {
+    ReynoldsFactor/=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+  }
+
+  Vec PressureLossCurveFit::operator()(double Q) {
+    Re=ReynoldsFactor*Q;
+    return pLoss.init(Re*((Q>0)?aPos+bPos*Re:aNeg-bNeg*Re));
+  }
+  
+  void PressureLossCurveFit::initPlot(vector<string>* plotColumns) {
+    PressureLoss::initPlot(plotColumns);
+    plotColumns->push_back(name+"_ReynoldsNumber");
+  }
+
+  void PressureLossCurveFit::plot(vector<double>* plotVector) {
+    PressureLoss::plot(plotVector);
+    plotVector->push_back(Re);
   }
 }
 

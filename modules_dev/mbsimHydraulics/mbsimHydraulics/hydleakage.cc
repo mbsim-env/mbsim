@@ -63,7 +63,7 @@ namespace MBSim {
   }
 
   void LeakagePressureLossHagenPoiseuille::transferLeakageGapData(double lGap, double hGap, double wGap) {
-    lossFactor=12.*HydraulicEnvironment::getInstance()->getEta()*lGap/wGap/hGap/hGap/hGap;
+    lossFactor=12.*HydraulicEnvironment::getInstance()->getDynamicViscosity()*lGap/wGap/hGap/hGap/hGap;
     cout << "lossFactor=" << lossFactor << endl;
   }
 

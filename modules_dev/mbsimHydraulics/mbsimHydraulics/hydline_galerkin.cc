@@ -74,9 +74,9 @@ namespace MBSim {
   void HydLineGalerkin::init() {
     HydLineAbstract::init();
 
-    double nu=HydraulicEnvironment::getInstance()->getNu();
+    double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
     g=0; // TODO consider gravity
-    E=HydraulicEnvironment::getInstance()->getE(p0, fracAir);
+    E=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
 
     k=rho*g*delta_h/l;
 

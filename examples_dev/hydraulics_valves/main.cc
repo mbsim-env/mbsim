@@ -20,8 +20,6 @@ int main (int argc, char* argv[]) {
     string valuetype = (isetvalued==0) ? "setvalued" : "singlevalued";
 
     for (int iintegrator=0; iintegrator<6; iintegrator++) {
-      if (iintegrator==2)
-        iintegrator++; // no theta-timestepper
       string nameintegrator;
       switch (iintegrator) {
         case 0: 
@@ -50,7 +48,7 @@ int main (int argc, char* argv[]) {
           break;
       }
 
-      for (int isolver=1; isolver<3; isolver++) {
+      for (int isolver=0; isolver<4; isolver++) {
         string namesolver;
         if(isolver==0)
           namesolver = "LinearEquations";
@@ -64,7 +62,14 @@ int main (int argc, char* argv[]) {
         simulationName.push_back(nameintegrator+"_"+valuetype+"_"+namesolver);
         DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
         dss->addDynamicSystem(new System("HS", setvalued, unilateral));
-        HydraulicEnvironment::getInstance()->setProperties(800, 2e11, 12e-6, 1.3);
+        HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
+        HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
+        HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);
+        HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
+        HydraulicEnvironment::getInstance()->setKappa(1.3);
+        HydraulicEnvironment::getInstance()->setTemperature(50);
+        HydraulicEnvironment::getInstance()->initializeFluidData();
+
 
         if (isolver==0) {
           dss->setConstraintSolver(LinearEquations);
@@ -78,16 +83,16 @@ int main (int argc, char* argv[]) {
           dss->setConstraintSolver(FixedPointSingle);
           dss->setImpactSolver(FixedPointSingle);
         }
-//        else if(isolver==3) { // TODO
-//          dss->setConstraintSolver(RootFinding);
-//          dss->setImpactSolver(RootFinding);
-//        }
+        else if(isolver==3) {
+          dss->setConstraintSolver(RootFinding);
+          dss->setImpactSolver(RootFinding);
+        }
         dss->setgdTol(1e-9);
         dss->init();
         cout << "Use Integrator \"" << simulationName.back()  << "." << endl;
 
         double tEnd=0.5;
-        double dtPlot=1e-3;
+        double dtPlot=1e-4;
         double stepSizeFactor=(setvalued?.1:.01);
         clock_t startTime, endTime;
         if (iintegrator==0) {

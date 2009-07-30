@@ -1,74 +1,109 @@
 #include "config.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
-#include "mbsim/utils/eps.h"
 
 using namespace std;
 
 namespace MBSim {
 
   HydraulicEnvironment *HydraulicEnvironment::instance=NULL;
-
+      
   void HydraulicEnvironment::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"rho");
-    double rho=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"E");
-    double E=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"nu");
-    double nu=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"kappa");
-    double kappa=atof(e->GetText());
-    setProperties(rho, E, nu, kappa);
-  }
-
-  void HydraulicEnvironment::setProperties(double rho_, double E_, double nu_, double kappa_) {
-    rho=rho_;
-    E = E_;
-    nu = nu_;
-    kappa=kappa_;
-
-    f1=pow(1.e5, 1./kappa)*E/kappa;
-    f2=-(1.+1./kappa);
-  }
-
-  double HydraulicEnvironment::getE(double p, double fracAir) {
-    if(p<=0.1) {
-      cout << "HydraulicEnvironment: pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
-      p=0.1;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"environmentPressure");
+    setEnvironmentPressure(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"specificMass");
+    if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantSpecificMass")
+      setConstantSpecificMass(atof(e->FirstChildElement()->GetText()));
+    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"volumeDependingOnTemperature")
+      setVolumeDependingOnTemperature(
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dVdT")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature")->GetText())
+          );
+    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"specificMassDependingOnTemperature")
+      setSpecificMassDependingOnTemperature(
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dRhodT")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature")->GetText())
+          );
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity");
+    if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantKinematicViscosity")
+      setConstantKinematicViscosity(atof(e->FirstChildElement()->GetText()));
+    else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"walterUbbeohdeKinematicViscosity") {
+      setWalterUbbelohdeKinematicViscosity(
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature1")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity1")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature2")->GetText()), 
+          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity2")->GetText())
+          );
     }
-    // Umdruck zur Vorlesung
-    // Grundlagen der Oelhydraulik
-    // W.Backe
-    // H.Murrenhoff
-    // 10. Auflage 1994
-    // Formel (3-11), S. 103
-    return E * ((fracAir<epsroot()) ?
-      1. :
-      //(1.+fracAir) / (1.+pow((1.e5/p),(1./kappa))*fracAir*E/(kappa*p)));
-      // rechentechnisch optimiert:
-      (1.+fracAir) / (1. + f1*fracAir*pow(p, f2)));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"basicBulkModulus");
+    setBasicBulkModulus(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"kappa");
+    setKappa(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fluidTemperature");
+    setTemperature(atof(e->GetText()));
+    initializeFluidData();
   }
 
-  double HydraulicEnvironment::getRho(double T_) {
-    cout << "Caution! No dependy on temperature considered." << endl;
-    return getRho();
+  void HydraulicEnvironment::initializeFluidData() {
+    rho=(this->*calcRho)(T);
+    nu=(this->*calcNu)(T);
+    cout << endl;
+    cout << "===============================================" << endl;
+    cout << "initializing hydraulic environment at T=" << T << " [degC]" << endl;
+    cout << "            with kinematic viscosity nu=" << nu*1e6 << " [mm^2/s]" << endl;
+    cout << "                      specific mass rho=" << rho << " [kg/m^3]" << endl;
+    cout << "                  dynamic viscosity eta=" << getDynamicViscosity() << " [Pa*s]" << endl;
+    cout << "                                  kappa=" << kappa << " [-]" << endl;
+    cout << "                      boundary pressure=" << pinf*1e-5 << " [bar]" << endl;
+    cout << "===============================================\n\n" << endl;
+    cout << endl;
+    assert(pinf>0);
+    assert(rho>0);
+    assert(E0>0);
+    assert(kappa>0);
+    assert(nu>0);
   }
 
-  double HydraulicEnvironment::getNu(double T_) {
-    cout << "Caution! No dependy on temperature considered." << endl;
-    return getNu();
+  void HydraulicEnvironment::setConstantSpecificMass(double rho_) {
+    rhoConstant=rho_;
+    calcRho = &HydraulicEnvironment::calcConstantSpecificMass;
   }
 
-  double HydraulicEnvironment::getEta(double T_) {
-    cout << "Caution! No dependy on temperature considered." << endl;
-    return getEta(); 
+  void HydraulicEnvironment::setVolumeDependingOnTemperature(double dVdT_, double rho0_, double T0_) {
+    dVdT=dVdT_; 
+    rho0=rho0_; 
+    T0=T0_; 
+    calcRho = &HydraulicEnvironment::calcVolumeDependingOnTemperature;
   }
 
-  double HydraulicEnvironment::getTemperature() {
-    if (T==0)
-      cout << "Caution! No temperature set." << endl;
-    return T;
+  void HydraulicEnvironment::setSpecificMassDependingOnTemperature(double dRhodT_, double rho0_, double T0_) {
+    dRhodT=dRhodT_; 
+    rho0=rho0_; 
+    T0=T0_; 
+    calcRho = &HydraulicEnvironment::calcSpecificMassDependingOnTemperature;
+  }
+
+  void HydraulicEnvironment::setConstantKinematicViscosity(double nu_) {
+    nuConstant=nu_;
+    calcNu = &HydraulicEnvironment::calcConstantKinematicViscosity;
+  }
+
+  void HydraulicEnvironment::setWalterUbbelohdeKinematicViscosity(double T1, double nu1, double T2, double nu2) {
+    Tm=T1+273.16;
+    Wm=log10(log10(nu1*1e6+0.8));  //Umrechnung in cSt
+    T2=T2+273.16;
+    double W2=log10(log10(nu2*1e6+0.8));
+    m=(Wm-W2)/(log10(T2)-log10(Tm));
+    calcNu = &HydraulicEnvironment::calcWalterUbbelohdeKinematicViscosity;
+  }
+
+  double HydraulicEnvironment::calcWalterUbbelohdeKinematicViscosity(double T) {
+    double Tx=T+273.16;
+    double Wx=m*(log10(Tm)-log10(Tx))+Wm;
+    return (pow(10,pow(10,Wx))-0.8)*1e-6; //Umrechnung zu m^2/s
   }
 
 }

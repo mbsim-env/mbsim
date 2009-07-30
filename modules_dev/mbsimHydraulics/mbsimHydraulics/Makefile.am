@@ -10,7 +10,6 @@ libmbsimHydraulics_la_SOURCES = \
   hydnode.cc \
   hydnode_mec.cc \
   object_hydraulics.cc \
-  oil.cc \
   valve43.cc \
   objectfactory.cc \
   environment.cc
@@ -28,7 +27,6 @@ mbsimHydraulicsinclude_HEADERS = \
   hydnode.h \
   hydnode_mec.h \
   object_hydraulics.h \
-  oil.h \
   valve43.h \
   objectfactory.h \
   environment.h

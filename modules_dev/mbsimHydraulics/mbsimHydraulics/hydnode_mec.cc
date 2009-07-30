@@ -99,7 +99,7 @@ namespace MBSim {
       dhdt.push_back(Vec(j));
       r.push_back(Vec(j));
     }
-    pInf=Vec(1, INIT, getDynamicSystemSolver()->getpinf());
+    pinf=Vec(1, INIT, HydraulicEnvironment::getInstance()->getEnvironmentPressure());
     x.resize(xSize);
     x0=Vec(1, INIT, V0);
   }
@@ -241,14 +241,14 @@ namespace MBSim {
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
-        ) * (la - pInf);
+        ) * (la - pinf);
       hLink[nLines+i] +=
         connectedTransFrames[i].area * 
         trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
-        ) * (la - pInf);
+        ) * (la - pinf);
     }
     for (unsigned int i=0; i<nRot; i++) {
       h[nTrans+nLines+i] += 
@@ -257,14 +257,14 @@ namespace MBSim {
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal
-        ) * (la - pInf);
+        ) * (la - pinf);
       hLink[nTrans+nLines+i] += 
         connectedRotFrames[i].area * 
         trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal
-        ) * (la - pInf);
+        ) * (la - pinf);
     }
   }
 
@@ -342,7 +342,7 @@ namespace MBSim {
             connectedTransFrames[i].frame->getOrientation() * 
             connectedTransFrames[i].normal
             ) *
-          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pInf)(0));
+          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
         data.push_back(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
@@ -360,7 +360,7 @@ namespace MBSim {
             connectedRotFrames[i].frame->getOrientation() * 
             connectedRotFrames[i].normal
             ) *
-          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pInf)(0));
+          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
         data.push_back(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
@@ -399,15 +399,35 @@ namespace MBSim {
   HydNodeMecElastic::HydNodeMecElastic(const string &name) : HydNodeMec(name) {
   }
 
+  double HydNodeMecElastic::calcBulkModulus(double p) {
+    if(p<=0.1) {
+      cout << "HydraulicEnvironment: pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
+      p=0.1;
+    }
+    // Umdruck zur Vorlesung
+    // Grundlagen der Oelhydraulik
+    // W.Backe
+    // H.Murrenhoff
+    // 10. Auflage 1994
+    // Formel (3-11), S. 103
+    return factor[0]/(1.+factor[1]*pow(p, factor[2]));
+  }
+  
   void HydNodeMecElastic::init() {
     HydNodeMec::init();
     la(0)=p0;
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
     Vec x0Tmp(2);
     x0Tmp(0)=V0;
     x0Tmp(1)=p0;
     x0.resize(2);
     x0=x0Tmp;
+
+    double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+    double kappa=HydraulicEnvironment::getInstance()->getKappa();
+    factor[0]=E0*(1.+fracAir);
+    factor[1]=pow(pinf(0), 1./kappa) * fracAir * E0 / kappa;
+    factor[2]=-(1.+1./kappa);
+    E=calcBulkModulus(la(0));
   }
 
   void HydNodeMecElastic::updatexRef(const Vec &xParent) {
@@ -417,13 +437,13 @@ namespace MBSim {
 
   void HydNodeMecElastic::updatexd(double t) {
     HydNodeMec::updatexd(t);
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
+    E=calcBulkModulus(la(0));
     xd(1)=-E/x(0)*gd(0);
   }
 
   void HydNodeMecElastic::updatedx(double t, double dt) {
     HydNodeMec::updatedx(t, dt);
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
+    E=calcBulkModulus(la(0));
     xd(1)=-E/x(0)*gd(0)*dt;
   }
 

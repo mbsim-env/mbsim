@@ -22,7 +22,6 @@
 #include "environment.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/dynamic_system_solver.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -317,18 +316,39 @@ namespace MBSim {
 
   void HydNodeEnvironment::init() {
     HydNode::init();
-    la(0)=getDynamicSystemSolver()->getpinf();
+    la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
   }
 
 
   HydNodeElastic::HydNodeElastic(const string &name) : HydNode(name), V(0), E(0) {
+  }
+  
+  double HydNodeElastic::calcBulkModulus(double p) {
+    if(p<=0.1) {
+      cout << "HydraulicEnvironment: pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
+      p=0.1;
+    }
+    // Umdruck zur Vorlesung
+    // Grundlagen der Oelhydraulik
+    // W.Backe
+    // H.Murrenhoff
+    // 10. Auflage 1994
+    // Formel (3-11), S. 103
+    return factor[0]/(1.+factor[1]*pow(p, factor[2]));
   }
 
   void HydNodeElastic::init() {
     HydNode::init();
     la(0)=p0;
     x0=Vec(1, INIT, p0);
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
+
+    double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+    double kappa=HydraulicEnvironment::getInstance()->getKappa();
+    double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+    factor[0]=E0*(1.+fracAir);
+    factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
+    factor[2]=-(1.+1./kappa);
+    E=calcBulkModulus(la(0));
   }
 
   void HydNodeElastic::updatexRef(const Vec &xParent) {
@@ -337,12 +357,12 @@ namespace MBSim {
   }
 
   void HydNodeElastic::updatexd(double t) {
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
+    E=calcBulkModulus(la(0));
     xd=-E/V*gd;
   }
 
   void HydNodeElastic::updatedx(double t, double dt) {
-    E=HydraulicEnvironment::getInstance()->getE(la(0), fracAir);
+    E=calcBulkModulus(la(0));
     xd=-E/V*gd*dt;
   }
 

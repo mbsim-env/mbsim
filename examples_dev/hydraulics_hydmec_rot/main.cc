@@ -22,8 +22,14 @@ int main (int argc, char* argv[]) {
 
     DynamicSystemSolver * dss = new DynamicSystemSolver(name);
     dss->addDynamicSystem(new System("HS", (i==0)));
+    HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
+    HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
+    HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);
+    HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
+    HydraulicEnvironment::getInstance()->setKappa(1.3);
+    HydraulicEnvironment::getInstance()->setTemperature(50);
+    HydraulicEnvironment::getInstance()->initializeFluidData();
 
-    HydraulicEnvironment::getInstance()->setProperties(800, 2e11, 12e-6, 1.3);
 
     dss->setConstraintSolver(GaussSeidel);
     dss->setImpactSolver(GaussSeidel);
