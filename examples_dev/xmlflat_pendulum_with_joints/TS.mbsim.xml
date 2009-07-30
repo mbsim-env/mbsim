@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
-  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
+  <position>[0;0;0]</position><!-- dummy -->
+  <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <frame>
     <Frame name="Os"/>
-    <relativePosition>[0;0;0.04]</relativePosition>
-    <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    <position>[0;0;0.04]</position>
+    <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
   </frame>
   <RigidBody name="Stab1">
     <initialGeneralizedPosition>[0.2;0;1.57079632679490]</initialGeneralizedPosition>
@@ -27,13 +27,13 @@
     </rotation>
     <frame>
       <Frame name="PunktO"/>
-      <relativePosition>[0;0.2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;0.2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <frame>
       <Frame name="PunktU"/>
-      <relativePosition>[0;-0.45;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;-0.45;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Frustum name="dummy">
@@ -67,8 +67,8 @@
     </rotation>
     <frame>
       <Frame name="Punkt"/>
-      <relativePosition>[0;0.2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;0.2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </frame>
     <openMBVRigidBody>
       <ombv:Frustum name="dummy">

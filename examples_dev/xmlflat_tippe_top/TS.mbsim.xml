@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <relativePosition>[0;0;0]</relativePosition><!-- dummy -->
-  <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation><!-- dummy -->
+  <position>[0;0;0]</position><!-- dummy -->
+  <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
   <contour>
     <Plane name="Plane"/>
-    <relativePosition>[0;0;0]</relativePosition>
-    <relativeOrientation>[0,-1,0;1,0,0;0,0,1]</relativeOrientation>
+    <position>[0;0;0]</position>
+    <orientation>[0,-1,0;1,0,0;0,0,1]</orientation>
   </contour>
   <RigidBody name="Body">
     <initialGeneralizedPosition>[0;1.2015e-2;0;0.1;0;0]</initialGeneralizedPosition>
@@ -28,16 +28,16 @@
         <radius>1.5e-2</radius>
         <enableOpenMBV/>
       </Sphere>
-      <relativePosition>[0;0.3e-2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;0.3e-2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </contour>
     <contour>
       <Sphere name="Sphere2">
         <radius>0.5e-2</radius>
         <enableOpenMBV/>
       </Sphere>
-      <relativePosition>[0;1.6e-2;0]</relativePosition>
-      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+      <position>[0;1.6e-2;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
     </contour>
     <enableOpenMBVFrameC>
       <size>0.036</size>

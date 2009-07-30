@@ -18,6 +18,7 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo "                        the berlios server)"
   echo "runexamples.sh install ../myref/ref.tar.bz2 (install the ../myref/ref.tar.bz2"
   echo "                                            reference file)"
+  echo "runexamples.sh validateXML (validate all *.mbsim.xml and *.ombv.xml files)"
   exit
 fi
 
@@ -36,6 +37,11 @@ if [ $# -eq 1 ]; then
     wget http://download.berlios.de/mbsim/reference.tar.bz2
     echo "Install the reference file"
     tar -xjf reference.tar.bz2
+    exit
+  fi
+  if [ "$1" = "validateXML" ]; then
+    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsim_root.xsd
+    find -maxdepth 2 -name "*.ombv.xml" | xargs xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR openmbvcppinterface)/openmbv.xsd
     exit
   fi
   if cd $1 &> /dev/null; then
