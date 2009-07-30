@@ -177,6 +177,20 @@ namespace MBSim {
     private:
       double lossFactor;
   };
+
+  class PressureLossCurveFit : public PressureLoss {
+    public:
+      PressureLossCurveFit(const std::string &name, double dRef, double dHyd, double aPos, double bPos, double aNeg=0, double bNeg=0);
+      void transferLineData(double d, double l);
+
+      fmatvec::Vec operator()(double Q);
+      void initPlot(std::vector<std::string>* plotColumns);
+      void plot(std::vector<double>* plotVector);
+
+    private:
+      double Re, ReynoldsFactor;
+      double aPos, bPos, aNeg, bNeg;
+  };
 }
 
 #endif   /* ----- #ifndef _HYDLINE_H_  ----- */

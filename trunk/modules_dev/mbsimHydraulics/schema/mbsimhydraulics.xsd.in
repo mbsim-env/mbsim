@@ -17,10 +17,52 @@
     <xs:complexContent>
       <xs:extension base="mbsim:EnvironmentType">
         <xs:sequence>
-          <xs:element name="rho" type="pv:nounitScalar"/>
-          <xs:element name="E" type="pv:nounitScalar"/>
-          <xs:element name="nu" type="pv:nounitScalar"/>
+          <xs:element name="environmentPressure" type="pv:nounitScalar"/>
+          <xs:element name="specificMass">
+            <xs:complexType>
+              <xs:choice>
+                <xs:element name="constantSpecificMass" type="pv:nounitScalar"/>
+                <xs:element name="volumeDependingOnTemperature">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="dVdT" type="pv:nounitScalar"/>
+                      <xs:element name="basicSpecificMass" type="pv:nounitScalar"/>
+                      <xs:element name="basicTemperature" type="pv:nounitScalar"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="specificMassDependingOnTemperature">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="dRhodT" type="pv:nounitScalar"/>
+                      <xs:element name="basicSpecificMass" type="pv:nounitScalar"/>
+                      <xs:element name="basicTemperature" type="pv:nounitScalar"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="kinematicViscosity">
+            <xs:complexType>
+              <xs:choice>
+                <xs:element name="constantKinematicViscosity" type="pv:nounitScalar"/>
+                <xs:element name="walterUbbeohdeKinematicViscosity">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="temperature1" type="pv:nounitScalar"/>
+                      <xs:element name="kinematicViscosity1" type="pv:nounitScalar"/>
+                      <xs:element name="temperature2" type="pv:nounitScalar"/>
+                      <xs:element name="kinematicViscosity2" type="pv:nounitScalar"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="basicBulkModulus" type="pv:nounitScalar"/>
           <xs:element name="kappa" type="pv:nounitScalar"/>
+          <xs:element name="fluidTemperature" type="pv:nounitScalar"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

@@ -47,7 +47,13 @@ int main (int argc, char* argv[]) {
         simulationName.push_back(nameintegrator+"_"+valuetype+"_"+namesolver);
         DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
         dss->addDynamicSystem(new System("HS", setvalued));
-        HydraulicEnvironment::getInstance()->setProperties(800, 2e11, 12e-6, 1.3);
+        HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
+        HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
+        HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);
+        HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
+        HydraulicEnvironment::getInstance()->setKappa(1.3);
+        HydraulicEnvironment::getInstance()->setTemperature(50);
+        HydraulicEnvironment::getInstance()->initializeFluidData();
 
         if (isolver==0) {
           dss->setConstraintSolver(LinearEquations);
@@ -70,7 +76,7 @@ int main (int argc, char* argv[]) {
 
         double tEnd=.5;
         double dtPlot=1e-3;
-        double stepSizeFactor=(setvalued?1e-1:1e-2);
+        double stepSizeFactor=(setvalued?4e-2:1e-2);
         clock_t startTime, endTime;
         if (iintegrator==0) {
           EulerExplicitIntegrator in;
@@ -140,6 +146,7 @@ int main (int argc, char* argv[]) {
           endTime=clock();
         }
         integrationTime.push_back(double(endTime-startTime)/CLOCKS_PER_SEC);
+        cout << "Integrator \"" << simulationName.back() << "\": Integration time = " << integrationTime.back() << " [s]." << endl;
 
         dss->closePlot();
         delete dss;

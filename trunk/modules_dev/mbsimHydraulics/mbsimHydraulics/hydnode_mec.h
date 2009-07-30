@@ -89,7 +89,7 @@ namespace MBSim {
       double QMecTrans, QMecRot, QMec;
       double V0;
       unsigned int nTrans, nRot;
-      fmatvec::Vec pInf;
+      fmatvec::Vec pinf;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<OpenMBV::Arrow *> openMBVArrows;
       double openMBVArrowSize;
@@ -136,13 +136,13 @@ namespace MBSim {
 
       void initializeUsingXML(TiXmlElement *element);
     
-    protected:
+    private:
+      double E;
       double fracAir;
       double p0;
 
-    private:
-      double E;
-      HydFluid * fluid;
+      double factor[3];
+      double calcBulkModulus(double p);
   };
 
 

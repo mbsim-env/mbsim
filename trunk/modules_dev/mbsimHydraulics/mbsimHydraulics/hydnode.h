@@ -133,14 +133,13 @@ namespace MBSim {
       void initPlot();
       void plot(double t, double dt);
 
-    protected:
-      double V;
+    private:
+      double V, E;
       double fracAir;
       double p0;
 
-    private:
-      double E;
-      HydFluid * fluid;
+      double factor[3];
+      double calcBulkModulus(double p);
   };
 
 

@@ -158,9 +158,6 @@ namespace MBSim {
       void setCheckGSize(bool checkGSize_) { checkGSize = checkGSize_; }
       void setLimitGSize(int limitGSize_) { limitGSize = limitGSize_; checkGSize = false; }
 
-      const double getpinf() const { return pinf; };
-      void setpinf(const double pinf_) { pinf=pinf_; };
-
       const fmatvec::Matrix<fmatvec::Sparse, double>& getGs() const { return Gs; }
       fmatvec::Matrix<fmatvec::Sparse, double>& getGs() { return Gs; }
       const fmatvec::SqrMat& getG() const { return G; }
@@ -585,11 +582,6 @@ namespace MBSim {
 //       * \brief name of directory where output is processed
 //       */
 //      std::string directoryName;
-      
-      /**
-       * \brief ambient pressure, only for hydraulic systems TODO
-       */
-      double pinf;
 
       /**
        * \brief pre-integration scheme
