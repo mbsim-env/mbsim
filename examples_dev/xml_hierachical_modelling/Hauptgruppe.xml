@@ -6,32 +6,41 @@
   <plotFeature feature="+separateFilePerDynamicSystem"/>
   <position>[rHG(numHG);0;0]</position>
   <orientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</orientation>
-  <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
-  <RigidBody name="Box1">
-    <plotFeature feature="+globalPosition"/>
-    <initialGeneralizedPosition unit="mm">[0]</initialGeneralizedPosition>
-    <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
-    <frameOfReference ref="../Frame[I]"/>
-    <frameForKinematics ref="Frame[C]"/>
-    <mass>m</mass>
-    <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
-    <translation>
-      <LinearTranslation>
-        <translationVectors>[0; 1; 0]</translationVectors>
-      </LinearTranslation>
-    </translation>
-    <rotation/>
-    <openMBVRigidBody>
-      <ombv:Cuboid name="dummy">
-        <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-        <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-        <ombv:scaleFactor>1</ombv:scaleFactor>
-        <ombv:length>[h;h;h]</ombv:length>
-      </ombv:Cuboid>
-    </openMBVRigidBody>
-    <enableOpenMBVFrameC>
-      <size>2*h</size>
-      <offset>1</offset>
-    </enableOpenMBVFrameC>
-  </RigidBody>
+  <frames/>
+  <contours/>
+  <groups>
+    <pv:embed href="Untergruppe.xml" count="1" counterName="dummy"/>
+  </groups>
+  <objects>
+    <RigidBody name="Box1">
+      <plotFeature feature="+globalPosition"/>
+      <initialGeneralizedPosition unit="mm">[0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>m</mass>
+      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[0; 1; 0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cuboid name="dummy">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>[h;h;h]</ombv:length>
+        </ombv:Cuboid>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
+        <size>2*h</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+  </objects>
+  <links/>
 </Group>
