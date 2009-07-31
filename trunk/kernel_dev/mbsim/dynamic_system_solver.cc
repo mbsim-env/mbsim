@@ -1433,9 +1433,7 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     Group::initializeUsingXML(element);
     TiXmlElement *e;
     // search first Environment element
-    e=element->FirstChildElement();
-    while(e && ObjectFactory::getInstance()->getEnvironment(e)==0)
-      e=e->NextSiblingElement();
+    e=element->FirstChildElement(MBSIMNS"environments")->FirstChildElement();
 
     Environment *env;
     while((env=ObjectFactory::getInstance()->getEnvironment(e))) {

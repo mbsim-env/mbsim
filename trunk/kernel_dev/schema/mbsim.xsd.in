@@ -111,38 +111,68 @@
           <xs:element ref="frameOfReference" minOccurs="0"/>
           <xs:element name="position" type="pv:lengthVector" minOccurs="0"/>  
           <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0"/>  
-          <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="frames">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Frame"/>
-                <xs:element ref="frameOfReference" minOccurs="0"/>
-                <xs:element name="position" type="pv:lengthVector"/>
-                <xs:element name="orientation" type="pv:nounitMatrix"/>
+                <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Frame"/>
+                      <xs:element ref="frameOfReference" minOccurs="0"/>
+                      <xs:element name="position" type="pv:lengthVector"/>
+                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="contours">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Contour"/>
-                <xs:element ref="frameOfReference" minOccurs="0"/>
-                <xs:element name="position" type="pv:lengthVector"/>
-                <xs:element name="orientation" type="pv:nounitMatrix"/>
+                <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Contour"/>
+                      <xs:element ref="frameOfReference" minOccurs="0"/>
+                      <xs:element name="position" type="pv:lengthVector"/>
+                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="pv:embed"/>  
-            <xs:element ref="DynamicSystem"/>  
-          </xs:choice>
-          <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="pv:embed"/>  
-            <xs:element ref="Object"/>  
-          </xs:choice>
-          <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element ref="pv:embed"/>  
-            <xs:element ref="Link"/>  
-          </xs:choice>
+          <xs:element name="groups">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="pv:embed"/>  
+                  <xs:element ref="DynamicSystem"/>  
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="objects">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="pv:embed"/>  
+                  <xs:element ref="Object"/>  
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="links">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="pv:embed"/>  
+                  <xs:element ref="Link"/>  
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
@@ -168,8 +198,14 @@
     <xs:complexContent>
       <xs:extension base="GroupType">
         <xs:sequence>
-          <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence> 
+          <xs:element name="environments">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence> 
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -220,23 +256,35 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="frames">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Frame"/>
-                <xs:element ref="frameOfReference" minOccurs="0"/>
-                <xs:element name="position" type="pv:lengthVector"/>
-                <xs:element name="orientation" type="pv:nounitMatrix"/>
+                <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Frame"/>
+                      <xs:element ref="frameOfReference" minOccurs="0"/>
+                      <xs:element name="position" type="pv:lengthVector"/>
+                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="contours">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Contour"/>
-                <xs:element ref="frameOfReference" minOccurs="0"/>
-                <xs:element name="position" type="pv:lengthVector"/>
-                <xs:element name="orientation" type="pv:nounitMatrix"/>
+                <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Contour"/>
+                      <xs:element ref="frameOfReference" minOccurs="0"/>
+                      <xs:element name="position" type="pv:lengthVector"/>
+                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

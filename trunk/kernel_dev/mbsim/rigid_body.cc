@@ -439,7 +439,7 @@ namespace MBSim {
   void RigidBody::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Body::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMNS"frame");
+    e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
@@ -461,7 +461,7 @@ namespace MBSim {
       addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
-    e=element->FirstChildElement(MBSIMNS"contour");
+    e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);

@@ -121,14 +121,11 @@ namespace MBSim {
     Element::initializeUsingXML(element);
     e=element->FirstChildElement();
 
+    // search first element known by Group
     while(e && e->ValueStr()!=MBSIMNS"frameOfReference" &&
         e->ValueStr()!=MBSIMNS"position" &&
         e->ValueStr()!=MBSIMNS"orientation" &&
-        e->ValueStr()!=MBSIMNS"frame" &&
-        e->ValueStr()!=MBSIMNS"contour" &&
-        ObjectFactory::getInstance()->createGroup(e)==0 &&
-        ObjectFactory::getInstance()->createObject(e)==0 &&
-        ObjectFactory::getInstance()->createLink(e)==0)
+        e->ValueStr()!=MBSIMNS"frames")
       e=e->NextSiblingElement();
 
     if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
@@ -146,8 +143,9 @@ namespace MBSim {
       e=e->NextSiblingElement();
     }
 
-    while(e && e->ValueStr()==MBSIMNS"frame") {
-      TiXmlElement *ec=e->FirstChildElement();
+    TiXmlElement *E=e->FirstChildElement();
+    while(E && E->ValueStr()==MBSIMNS"frame") {
+      TiXmlElement *ec=E->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
@@ -164,10 +162,12 @@ namespace MBSim {
       ec=ec->NextSiblingElement();
       SqrMat ARF(ec->GetText());
       addFrame(f, RrRF, ARF, refF);
-      e=e->NextSiblingElement();
+      E=E->NextSiblingElement();
     }
-    while(e && e->ValueStr()==MBSIMNS"contour") {
-      TiXmlElement *ec=e->FirstChildElement();
+    e=e->NextSiblingElement();
+    E=e->FirstChildElement();
+    while(E && E->ValueStr()==MBSIMNS"contour") {
+      TiXmlElement *ec=E->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
@@ -181,25 +181,31 @@ namespace MBSim {
       SqrMat ARC(ec->GetText());
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
-      e=e->NextSiblingElement();
+      E=E->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
+    E=e->FirstChildElement();
     Group *g;
-    while((g=ObjectFactory::getInstance()->createGroup(e))) {
+    while((g=ObjectFactory::getInstance()->createGroup(E))) {
       addDynamicSystem(g);
-      g->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      g->initializeUsingXML(E);
+      E=E->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
+    E=e->FirstChildElement();
     Object *o;
-    while((o=ObjectFactory::getInstance()->createObject(e))) {
+    while((o=ObjectFactory::getInstance()->createObject(E))) {
       addObject(o);
-      o->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      o->initializeUsingXML(E);
+      E=E->NextSiblingElement();
     }
+    e=e->NextSiblingElement();
+    E=e->FirstChildElement();
     Link *l;
-    while((l=ObjectFactory::getInstance()->createLink(e))) {
+    while((l=ObjectFactory::getInstance()->createLink(E))) {
       addLink(l);
-      l->initializeUsingXML(e);
-      e=e->NextSiblingElement();
+      l->initializeUsingXML(E);
+      E=E->NextSiblingElement();
     }
   }
 
