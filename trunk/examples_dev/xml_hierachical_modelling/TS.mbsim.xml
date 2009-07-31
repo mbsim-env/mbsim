@@ -3,8 +3,16 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <position>[0;0;0]</position><!-- dummy -->
   <orientation>[1,0,0;0,1,0;0,0,1]</orientation><!-- dummy -->
-  <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
-  <MBSimEnvironment>
-    <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
-  </MBSimEnvironment>
+  <frames/>
+  <contours/>
+  <groups>
+    <pv:embed href="Hauptgruppe.xml" count="2" counterName="numHG"/>
+  </groups>
+  <objects/>
+  <links/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81*0;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
 </DynamicSystemSolver>
