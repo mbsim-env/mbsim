@@ -21,6 +21,13 @@
 #include <config.h>
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/mbsim_event.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/object.h"
+#include "mbsim/utils/rotarymatrices.h"
+#include <openmbvcppinterface/group.h>
+#include "openmbvcppinterface/polygonpoint.h"
+#include "openmbvcppinterface/extrusion.h"
+#endif
 
 using namespace fmatvec;
 using namespace std;
@@ -28,16 +35,96 @@ using namespace std;
 namespace MBSim {
 
   void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if(ff==cosy || ff==position_cosy || velocity_cosy || velocities_cosy || ff==all) {
+    if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
       cp.getFrameOfReference().getOrientation().col(0)= funcCrPC->computeN(cp.getLagrangeParameterPosition()(0));
       cp.getFrameOfReference().getOrientation().col(1)= funcCrPC->computeT(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation().col(2)= -funcCrPC->computeB(cp.getLagrangeParameterPosition()(0));
-      cp.getFrameOfReference().getOrientation() = cp.getFrameOfReference().getOrientation() * R.getOrientation();
+      cp.getFrameOfReference().getOrientation().col(2)= funcCrPC->computeB(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().getOrientation() = R.getOrientation() * cp.getFrameOfReference().getOrientation();
     }
-    if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().getPosition() = R.getPosition() + R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
-    if(ff==velocity || velocity_cosy || ff==velocities || velocities_cosy || ff==all) cp.getFrameOfReference().getVelocity() = R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
-    if(ff==angularVelocity || ff==velocities || velocities_cosy || ff==all) throw new MBSimError("ERROR (Contour1sAnalytical::updateKinematicsForFrame): Angular velocity not implemented!");
+    if(ff==position || ff==position_cosy || ff==all) 
+      cp.getFrameOfReference().getPosition() = R.getPosition() + R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0));
+    if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) 
+      cp.getFrameOfReference().getVelocity() = R.getVelocity() + crossProduct(R.getAngularVelocity(),R.getOrientation()*(*funcCrPC)(cp.getLagrangeParameterPosition()(0)));
+    if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) 
+      cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
   }
+
+  void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp) {
+    Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
+    Mat tWrPC = tilde(WrPC);
+
+    cp.getFrameOfReference().setJacobianOfTranslation(
+        R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
+    cp.getFrameOfReference().setJacobianOfRotation(
+        R.getJacobianOfRotation());
+    cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(
+        R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + 
+        crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
+    cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(
+        R.getGyroscopicAccelerationOfRotation());
+
+    // adapt dimensions if necessary
+    if(cp.getFrameOfReference().getJacobianOfTranslation().rows() == 0)
+      cp.getFrameOfReference().getJacobianOfTranslation().resize(3,R.getJacobianOfTranslation().cols());
+    if(cp.getFrameOfReference().getJacobianOfRotation().rows() == 0)
+      cp.getFrameOfReference().getJacobianOfRotation().resize(3,R.getJacobianOfRotation().cols());
+  }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void Contour1sAnalytical::enableOpenMBV(bool enable, double height) {
+    if (enable) {
+      vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
+      for (double alpha=as; alpha<ae; alpha+=(ae-as)/720.) {
+        Vec CrPC=(*funcCrPC)(alpha);
+        vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
+      }
+      vpp->push_back((*vpp)[0]);
+      openMBVRigidBody=new OpenMBV::Extrusion;
+      ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(height);
+      ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
+      ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
+      ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialTranslation(-height, 0, 0);
+    }
+    else
+      openMBVRigidBody=0;
+  }
+#endif
+
+  void Contour1sAnalytical::initPlot() {
+    updatePlotFeatures(parent);
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+        openMBVRigidBody->setName(name);
+        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+      }
+#endif
+      Contour1s::initPlot();
+    }
+  }
+
+  void Contour1sAnalytical::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(R.getPosition()(0));
+        data.push_back(R.getPosition()(1));
+        data.push_back(R.getPosition()(2));
+        Vec cardan=AIK2Cardan(R.getOrientation());
+        data.push_back(cardan(0));
+        data.push_back(cardan(1));
+        data.push_back(cardan(2));
+        data.push_back(0);
+        openMBVRigidBody->append(data);
+      }
+#endif
+      Contour1s::plot(t,dt);
+    }
+  }
+
 
 }
 

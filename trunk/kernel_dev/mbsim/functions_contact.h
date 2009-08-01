@@ -468,19 +468,17 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) {
+        cp.getLagrangeParameterPosition() = fmatvec::Vec(1, fmatvec::INIT, alpha);
         fmatvec::Vec Wd = computeWrD(alpha);
-        fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
+        fmatvec::Vec Wt = contour->computeTangent(cp);
         return trans(Wt)*Wd;
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
-        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
-          cp.getLagrangeParameterPosition()(0) = alpha;
-          contour->computeRootFunctionPosition(cp);
-          contour->computeRootFunctionFirstTangent(cp);
-          contour->computeRootFunctionNormal(cp);
-        }
-        fmatvec::Vec WrOC[2];
+        cp.getLagrangeParameterPosition() = fmatvec::Vec(1, fmatvec::INIT, alpha);
+        contour->computeRootFunctionPosition(cp);
+        contour->computeRootFunctionFirstTangent(cp);
+        contour->computeRootFunctionNormal(cp);
         WrOC[0] = circle->getFrame()->getPosition() - circle->getRadius()*cp.getFrameOfReference().getOrientation().col(0);
         WrOC[1] = cp.getFrameOfReference().getPosition();
         return WrOC[1] - WrOC[0];
@@ -498,6 +496,11 @@ namespace MBSim {
        * \brief contour point data for saving old values
        */
       ContourPointData cp;
+
+      /**
+       * \brief contour point data for saving old values
+       */
+      fmatvec::Vec WrOC[2];
   };
 
   /*! 

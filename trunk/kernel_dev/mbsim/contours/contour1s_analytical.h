@@ -37,7 +37,11 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      Contour1sAnalytical(const std::string &name) : Contour1s(name) {}
+      Contour1sAnalytical(const std::string &name) : Contour1s(name)
+# ifdef HAVE_OPENMBVCPPINTERFACE
+                                                     , openMBVRigidBody(0)
+# endif
+                                                     {}
 
       /**
        * \brief destructor
@@ -46,10 +50,20 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Contour1sAnalytical"; }
+      virtual void plot(double t, double dt = 1);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
+      virtual void updateJacobiansForFrame(ContourPointData &cp);
+      virtual void initPlot();
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF CONTOURCONTINUUM */
+      virtual void computeRootFunctionPosition(ContourPointData &cp) { updateKinematicsForFrame(cp,position); }
+      virtual void computeRootFunctionFirstTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,firstTangent); }
+      virtual void computeRootFunctionNormal(ContourPointData &cp) { updateKinematicsForFrame(cp,normal); }
+      virtual void computeRootFunctionSecondTangent(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -57,8 +71,15 @@ namespace MBSim {
       UserFunctionContour1s* getUserFunction() { return funcCrPC; }
       /***************************************************/
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true, double height=0);
+#endif
+
     protected:
       UserFunctionContour1s  *funcCrPC;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::RigidBody *openMBVRigidBody;
+#endif
   };
 
 }

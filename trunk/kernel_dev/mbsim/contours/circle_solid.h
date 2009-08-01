@@ -57,7 +57,7 @@ namespace MBSim {
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
+      void enableOpenMBV(bool enable=true, double height=0);
 #endif
 
     private:
