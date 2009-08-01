@@ -57,18 +57,19 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int icircle, icontour;
+      int icircle, icontour1s;
 
       /**
        * \brief contour classes
        */
       CircleSolid *circle;
-      Contour1s *contour1d;
+      Contour1s *contour1s;
 
       /**
        * \brief root function
        */
       FuncPairContour1sCircleSolid *func;
+    
   };
 
 }

@@ -25,7 +25,7 @@
 #include "mbsim/contour_pdata.h"
 #include "mbsim/frame.h"
 
-#ifdef HAVE_OPONMBVCPPINTERFACE
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
 #endif
 
