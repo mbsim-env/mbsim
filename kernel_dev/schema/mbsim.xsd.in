@@ -439,6 +439,7 @@
               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

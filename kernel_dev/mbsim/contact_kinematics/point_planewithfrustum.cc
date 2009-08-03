@@ -182,7 +182,7 @@ namespace MBSim {
       Kn=Vec("[1; 0; 0]");
       Kt=Vec("[0; -1; 0]");
       g(0)=KrOPoint(0);
-      KrCP(0)=h;
+      KrCP(0)=0.;
       KrCP(1)=KrOPoint(1);
     }
 
@@ -208,10 +208,10 @@ namespace MBSim {
 
     cpData[iplane].getFrameOfReference().getOrientation().col(0) = Wn;
     cpData[iplane].getFrameOfReference().getOrientation().col(1) = Wt;
-    cpData[iplane].getFrameOfReference().getOrientation().col(2) = Wb;
+    cpData[iplane].getFrameOfReference().getOrientation().col(2) = -Wb;
     cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -Wn;
     cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -Wt;
-    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = Wb;
+    cpData[ipoint].getFrameOfReference().getOrientation().col(2) = -Wb;
   }
 }
 
