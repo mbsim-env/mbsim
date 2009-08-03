@@ -68,7 +68,7 @@ namespace MBSim {
       int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() {};
       virtual void calcuSize(int j) {};
-      virtual int getqInd() { return qInd; }
+      virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
       void setqInd(int qInd_) { qInd = qInd_; }
       void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }

@@ -156,7 +156,7 @@ namespace MBSim {
       /**
        * \return index of positions
        */
-      virtual int getqInd() = 0;
+      virtual int getqInd(DynamicSystem* sys) = 0;
 
       /**
        * \param index for normal usage and inverse kinetics 
