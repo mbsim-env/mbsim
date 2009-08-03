@@ -183,7 +183,11 @@ namespace MBSim {
   }
 
   int DynamicSystem::gethInd(DynamicSystem* sys, int i) {
-    return (this == sys) ? 0 : ((parent == this) ? hInd[i] : hInd[i] + parent->gethInd(sys,i));
+    return (this == sys) ? 0 : hInd[i] + parent->gethInd(sys,i);
+  }
+
+  int DynamicSystem::getqInd(DynamicSystem* sys) {
+    return (this == sys) ? 0 : qInd + parent->getqInd(sys);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

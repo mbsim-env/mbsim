@@ -132,6 +132,10 @@ namespace MBSim {
     return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
   }
 
+  int Object::getqInd(DynamicSystem* sys) {
+    return (parent == sys) ? qInd : qInd + parent->getqInd(sys);
+  }
+
   void Object::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled) {

@@ -344,14 +344,14 @@ namespace MBSim {
   void LinkMechanics::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int j=0; j<frame.size(); j++) {
-        Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
-        Index J = Index(frame[j]->getParent()->getqInd(),frame[j]->getParent()->getqInd()+(frame[j]->getJacobianOfTranslation().cols() > 0 ? frame[j]->getParent()->getqSize()-1 : (-1)));
+        Index I = Index(frame[i]->getParent()->gethInd(parent,k),frame[i]->getParent()->gethInd(parent,k)+frame[i]->getJacobianOfTranslation().cols()-1);
+        Index J = Index(frame[j]->getParent()->getqInd(parent),frame[j]->getParent()->getqInd(parent)+(frame[j]->getJacobianOfTranslation().cols() > 0 ? frame[j]->getParent()->getqSize()-1 : (-1)));
         dhdq[i*frame.size()+j]>>dhdqParent(I,J);
       }
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int j=0; j<contour.size(); j++) {
         Index I = Index(contour[i]->getParent()->gethInd(parent,k),contour[i]->getParent()->gethInd(parent,k)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-        Index J = Index(contour[j]->getParent()->getqInd(),contour[j]->getParent()->getqInd()+(contour[j]->getReferenceJacobianOfTranslation().cols() > 0 ? contour[j]->getParent()->getqSize()-1 : (-1)));
+        Index J = Index(contour[j]->getParent()->getqInd(parent),contour[j]->getParent()->getqInd(parent)+(contour[j]->getReferenceJacobianOfTranslation().cols() > 0 ? contour[j]->getParent()->getqSize()-1 : (-1)));
         dhdq[frame.size()*frame.size()+i*contour.size()+j]>>dhdqParent(I,J);
       }
   }
