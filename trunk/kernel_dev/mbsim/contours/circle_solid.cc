@@ -30,12 +30,12 @@ using namespace fmatvec;
 namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void CircleSolid::enableOpenMBV(bool enable, double height) {
+  void CircleSolid::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Frustum;
       ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
       ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(height);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
     }
     else openMBVRigidBody=0;
   }

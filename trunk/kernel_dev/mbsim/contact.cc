@@ -473,13 +473,17 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (getPlotFeature(openMBV)==enabled && OpenMBVContactFrameSize>epsroot()) {
+        OpenMBV::Group * openMBVGrp = new OpenMBV::Group();
+        openMBVGrp->setName(name+"#Group");
+        openMBVGrp->setExpand(false);
+        parent->getOpenMBVGrp()->addObject(openMBVGrp);
         for (unsigned int i=0; i<cpData.size(); i++) {
           OpenMBVContactFrame.push_back(new OpenMBV::Frame[2]);
           for (unsigned int k=0; k<2; k++) {
             OpenMBVContactFrame[i][k].setOffset(1.);
             OpenMBVContactFrame[i][k].setSize(OpenMBVContactFrameSize);
-            OpenMBVContactFrame[i][k].setName(name+": ContactPoint "+cpData[i][k].getFrameOfReference().getName());
-            parent->getOpenMBVGrp()->addObject(&OpenMBVContactFrame[i][k]);
+            OpenMBVContactFrame[i][k].setName("ContactPoint "+cpData[i][k].getFrameOfReference().getName());
+            openMBVGrp->addObject(&OpenMBVContactFrame[i][k]);
           }
         }
       }
