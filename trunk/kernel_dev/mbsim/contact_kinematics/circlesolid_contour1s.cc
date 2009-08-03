@@ -85,7 +85,7 @@ namespace MBSim {
     cpData[icontour1s].getFrameOfReference().getOrientation().col(1) = 
       contour1s->computeTangent(cpData[icontour1s]);
     cpData[icontour1s].getFrameOfReference().getOrientation().col(2) = 
-      contour1s->computeBinormal(cpData[icontour1s]);
+      -contour1s->computeBinormal(cpData[icontour1s]);
 
     cpData[icircle].getFrameOfReference().getPosition() =
       circle->getFrame()->getPosition()-
@@ -99,7 +99,6 @@ namespace MBSim {
 
     Vec WrD = func->computeWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
     g(0) = -trans(cpData[icontour1s].getFrameOfReference().getOrientation().col(0))*WrD;
-
   }
 
 }

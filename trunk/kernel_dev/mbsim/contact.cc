@@ -27,13 +27,23 @@
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/objectfactory.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/frame.h>
+#include <mbsim/utils/eps.h>
+#include <mbsim/utils/rotarymatrices.h>
+#endif
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0) {}
+  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0)
+#ifdef HAVE_OPENMBVCPPINTERFACE
+                                         , OpenMBVContactFrameSize(0)
+#endif
+                                         {}
 
   Contact::~Contact() {
     if(contactKinematics) { delete contactKinematics; contactKinematics=0; }
@@ -456,6 +466,51 @@ namespace MBSim {
       gActive0[k] = gActive[k];
     }
     return changed;
+  }
+
+  void Contact::initPlot() {
+    updatePlotFeatures(parent);
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (getPlotFeature(openMBV)==enabled && OpenMBVContactFrameSize>epsroot()) {
+        for (unsigned int i=0; i<cpData.size(); i++) {
+          OpenMBVContactFrame.push_back(new OpenMBV::Frame[2]);
+          for (unsigned int k=0; k<2; k++) {
+            OpenMBVContactFrame[i][k].setOffset(1.);
+            OpenMBVContactFrame[i][k].setSize(OpenMBVContactFrameSize);
+            OpenMBVContactFrame[i][k].setName(name+": ContactPoint "+cpData[i][k].getFrameOfReference().getName());
+            parent->getOpenMBVGrp()->addObject(&OpenMBVContactFrame[i][k]);
+          }
+        }
+      }
+#endif
+      LinkMechanics::initPlot();
+    }
+  }
+
+  void Contact::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if (getPlotFeature(openMBV)==enabled && OpenMBVContactFrameSize>epsroot()) {
+        for (unsigned int i=0; i<cpData.size(); i++) {
+          for (unsigned int k=0; k<2; k++) {
+            vector<double> data;
+            data.push_back(t);
+            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(1));
+            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(2));
+            Vec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
+            data.push_back(cardan(0));
+            data.push_back(cardan(1));
+            data.push_back(cardan(2));
+            data.push_back(0);
+            OpenMBVContactFrame[i][k].append(data);
+          }
+        }
+      }
+#endif
+      LinkMechanics::plot(t, dt);
+    }
   }
 
   void Contact::solveImpactsFixpointSingle() {
@@ -993,6 +1048,8 @@ namespace MBSim {
     Contour *ref2=getContourByPath(e->Attribute("ref2"));
     if(!ref2) { cerr<<"ERROR! Cannot find contour: "<<e->Attribute("ref2")<<endl; _exit(1); }
     connect(ref1,ref2);
+    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
+      enableOpenMBVContactPoints(atof(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")->GetText()));
     e=e->NextSiblingElement();
   }
 

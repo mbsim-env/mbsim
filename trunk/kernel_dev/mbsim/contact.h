@@ -21,6 +21,11 @@
 #define _CONTACT_H_
 
 #include <mbsim/link_mechanics.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+namespace OpenMBV {
+  class Frame;
+}
+#endif
 
 namespace MBSim {
 
@@ -35,6 +40,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-08-03 contacts can now visualize their ContactPointFrames (Markus Schneider)
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
    */
@@ -111,7 +117,15 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contact"; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual void initPlot();
+      virtual void plot(double t, double dt = 1);
+#endif
       /***************************************************/
+      
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBVContactPoints(double size=1.) { OpenMBVContactFrameSize=size; }
+#endif
 
       /* GETTER / SETTER */
       void setContactForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
@@ -209,6 +223,18 @@ namespace MBSim {
        * \brief size and index of force parameters, relative distances, relative velocities, stop vector and relaxation factors for possible contact points
        */
       std::vector<int> laSizek, laIndk, gSizek, gIndk, gdSizek, gdIndk, svSizek, svIndk, rFactorSizek, rFactorIndk;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /**
+       * \brief container of ContactFrames to draw
+       */
+      std::vector<OpenMBV::Frame *> OpenMBVContactFrame;
+
+      /**
+       * \brief size of ContactFrames to draw
+       */
+      double OpenMBVContactFrameSize;
+#endif
   };
 
 }
