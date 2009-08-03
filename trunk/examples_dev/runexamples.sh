@@ -14,8 +14,10 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo "runexamples.sh robot 1e-3,1e-4 (run robot example with RTOL=1e-3 AND ATOL=1e-4)"
   echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution using"
   echo "        the data stored in the reference directory of the respective example)"
+  echo "runexamples.sh pushdist (push the reference file ./reference.tar.bz2 to the"
+  echo "                         berlios mbsim ftp server)"
   echo "runexamples.sh install (install the reference.tar.bz2 reference file from"
-  echo "                        the berlios server)"
+  echo "                        the berlios mbsim ftp server)"
   echo "runexamples.sh install ../myref/ref.tar.bz2 (install the ../myref/ref.tar.bz2"
   echo "                                            reference file)"
   echo "runexamples.sh validateXML (validate all *.mbsim.xml and *.ombv.xml files)"
@@ -28,13 +30,20 @@ EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\.")
 if [ $# -eq 1 ]; then
   if [ "$1" = "dist" ]; then
     echo "Making a distribution of reference files: reference.tar.bz2"
-    tar -cjf reference.tar.bz2 $(find -name "reference")
+    tar -cjf reference.tar.bz2 $(find -maxdepth 2 -name "reference")
+    exit
+  fi
+  if [ "$1" = "pushdist" ]; then
+    echo "Pushing the reference file to the mbsim ftp server."
+    echo -n "Username@shell.berlios.de: "
+    read U
+    cat reference.tar.bz2 | ssh $U@shell.berlios.de "cat - > /home/groups/ftp/pub/mbsim/reference.tar.bz2; chmod g+w /home/groups/ftp/pub/mbsim/reference.tar.bz2"
     exit
   fi
   if [ "$1" = "install" ]; then
     echo "Download reference file"
     rm reference.tar.bz2
-    wget http://download.berlios.de/mbsim/reference.tar.bz2
+    wget ftp://ftp.berlios.de/pub/mbsim/reference.tar.bz2
     echo "Install the reference file"
     tar -xjf reference.tar.bz2
     exit
