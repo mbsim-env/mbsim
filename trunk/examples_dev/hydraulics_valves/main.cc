@@ -20,6 +20,8 @@ int main (int argc, char* argv[]) {
     string valuetype = (isetvalued==0) ? "setvalued" : "singlevalued";
 
     for (int iintegrator=0; iintegrator<6; iintegrator++) {
+      if (iintegrator==2)
+        iintegrator++;
       string nameintegrator;
       switch (iintegrator) {
         case 0: 
@@ -30,7 +32,7 @@ int main (int argc, char* argv[]) {
           nameintegrator = "TimeStepping";
           unilateral = true;
           break;
-        case 2:
+        case 2: //TODO
           nameintegrator = "ThetaTimeStepping";
           unilateral = true;
           break;
@@ -48,7 +50,7 @@ int main (int argc, char* argv[]) {
           break;
       }
 
-      for (int isolver=0; isolver<4; isolver++) {
+      for (int isolver=0; isolver<3; isolver++) {
         string namesolver;
         if(isolver==0)
           namesolver = "LinearEquations";
@@ -62,7 +64,7 @@ int main (int argc, char* argv[]) {
         simulationName.push_back(nameintegrator+"_"+valuetype+"_"+namesolver);
         DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
         dss->addDynamicSystem(new System("HS", setvalued, unilateral));
-        HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
+        HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e8);
         HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
         HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);
         HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
@@ -83,7 +85,7 @@ int main (int argc, char* argv[]) {
           dss->setConstraintSolver(FixedPointSingle);
           dss->setImpactSolver(FixedPointSingle);
         }
-        else if(isolver==3) {
+        else if(isolver==3) { // TODO
           dss->setConstraintSolver(RootFinding);
           dss->setImpactSolver(RootFinding);
         }
@@ -92,8 +94,8 @@ int main (int argc, char* argv[]) {
         cout << "Use Integrator \"" << simulationName.back()  << "." << endl;
 
         double tEnd=0.5;
-        double dtPlot=1e-4;
-        double stepSizeFactor=(setvalued?.1:.01);
+        double dtPlot=1e-3;
+        double stepSizeFactor=(setvalued?.1:.001);
         clock_t startTime, endTime;
         if (iintegrator==0) {
           EulerExplicitIntegrator in;
