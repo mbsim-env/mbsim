@@ -8,7 +8,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contact.h"
 #include "mbsim/load.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -116,11 +116,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  
 
   // Spring 
-  LinearSpringDamper *spring = new LinearSpringDamper("Spring");
+  SpringDamper *spring = new SpringDamper("Spring");
   addLink(spring);
-  spring->setStiffnessCoefficient(c);
-  spring->setDampingCoefficient(c/10.);
-  spring->setUnloadedLength(d);
+  spring->setForceFunction(new LinearSpringDamperForce(c,c/10.,d));
   spring->connect(body4->getFrame("C"), getFrame("D"));
 
 
@@ -172,8 +170,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 
@@ -188,8 +186,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc2->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc2->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc2->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   
@@ -204,8 +202,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc3->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc3->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc3->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 
@@ -220,8 +218,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc4->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc4->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc4->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc4->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact Stopper and Cylinder (Contact-Pairing: CircleSolid-Line)
@@ -235,8 +233,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc5->setFrictionImpactLaw(new PlanarCoulombImpact(0));
   } 
   else {
-    rc5->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc5->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc5->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc5->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact Stopper and CylinderHollow (Contact-Pairing: CircleSolid-Line)
@@ -250,8 +248,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc6->setFrictionImpactLaw(new PlanarCoulombImpact(0));
   } 
   else{
-    rc6->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc6->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc6->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc6->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact Stopper and Sphere (Contact-Pairing: Sphere-Plane)
@@ -265,8 +263,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc7->setFrictionImpactLaw(new PlanarCoulombImpact(0));
   } 
   else{
-    rc7->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc7->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc7->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc7->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 

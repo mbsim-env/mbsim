@@ -7,7 +7,7 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/function.h"
 #include "mbsim/utils/utils.h"
@@ -71,7 +71,7 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
   return vpp;
 }
 
-class problem : public Function<double, double> {
+class problem : public Function1<double, double> {
   public:
     problem(double MSoll_, double rM_, double cF_, double phi0_) : MSoll(MSoll_), rM(rM_), cF(cF_), phi0(phi0_) {
     }
@@ -202,11 +202,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 #endif
 
     if (i>0) {
-      LinearSpringDamper * sp = new LinearSpringDamper("Spring_"+getBodyName(i-1)+"_"+getBodyName(i));
+      SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(i-1)+"_"+getBodyName(i));
       addLink(sp);
-      sp->setUnloadedLength(l0);
-      sp->setStiffnessCoefficient(cF);
-      sp->setDampingCoefficient(.05*cF);
+      sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
       sp->connect(
           dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
           dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
@@ -219,11 +217,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 #endif
     }
   }
-  LinearSpringDamper * sp = new LinearSpringDamper("Spring_"+getBodyName(4)+"_"+getBodyName(0));
+  SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(4)+"_"+getBodyName(0));
   addLink(sp);
-  sp->setUnloadedLength(l0);
-  sp->setStiffnessCoefficient(cF);
-  sp->setDampingCoefficient(.05*cF);
+  sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
   sp->connect(
       dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
       dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));

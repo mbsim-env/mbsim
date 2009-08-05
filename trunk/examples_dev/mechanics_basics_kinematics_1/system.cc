@@ -44,9 +44,9 @@ class MyPos : public Translation {
     }; 
 };
 
-class jT : public TimeDependentFunction {
+class jT : public Function1<Vec,double> {
   public:
-    Vec operator()(double t) {
+    Vec operator()(const double& t) {
       Vec j(3);
       double om = 1;
       j(0) = -sin(om*t)*om;
@@ -55,9 +55,9 @@ class jT : public TimeDependentFunction {
     }
 };
 
-class djT : public TimeDependentFunction {
+class djT : public Function1<Vec,double> {
   public:
-    Vec operator()(double t) {
+    Vec operator()(const double& t) {
       Vec dj(3);
       double om = 1;
       dj(0) = -cos(om*t)*om*om;

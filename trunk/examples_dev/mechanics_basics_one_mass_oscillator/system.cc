@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -35,9 +35,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   this->addObject(mass);	
 
   // spring
-  LinearSpringDamper *spring = new LinearSpringDamper("Spring");
-  spring->setStiffnessCoefficient(100.0);
-  spring->setDampingCoefficient(1);
+  SpringDamper *spring = new SpringDamper("Spring");
+  spring->setForceFunction(new LinearSpringDamperForce(100,1,0));
   spring->connect(mass->getFrame("C"),this->getFrame("I"));
 
   // add spring to dynamical system

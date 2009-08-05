@@ -7,7 +7,7 @@
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/spring_damper.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -118,11 +118,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 #endif
 
     if (i>0) {
-      LinearSpringDamper * sp = new LinearSpringDamper("Spring_"+getBodyName(i-1)+"_"+getBodyName(i));
+      SpringDamper * sp = new SpringDamper("Spring_"+getBodyName(i-1)+"_"+getBodyName(i));
       addLink(sp);
-      sp->setUnloadedLength(unloadedLength);
-      sp->setStiffnessCoefficient(stiffness);
-      sp->setDampingCoefficient(.05*stiffness);
+      sp->setForceFunction(new LinearSpringDamperForce(stiffness,0.05*stiffness,unloadedLength));
       sp->connect(
           dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i-1)))->getFrame("R"), 
           dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i)))->getFrame("L"));

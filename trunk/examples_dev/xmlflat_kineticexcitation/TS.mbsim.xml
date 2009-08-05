@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <frames>
+    <frame>
+      <Frame name="W">
+        <enableOpenMBV>
+          <size>1</size>
+          <offset>1</offset>
+        </enableOpenMBV>
+      </Frame>
+      <frameOfReference ref="Frame[I]"/>
+      <position>[0;0;0]</position>
+      <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
+    </frame>
+    <frame>
+      <Frame name="Wrot">
+        <enableOpenMBV>
+          <size>1</size>
+          <offset>1</offset>
+        </enableOpenMBV>
+      </Frame>
+      <frameOfReference ref="Frame[I]"/>
+      <position>[0;0;0]</position>
+      <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
+    </frame>
+  </frames>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Box1">
+      <initialGeneralizedPosition>[0;0;0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0;0;0]</initialGeneralizedVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1</mass>
+      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[1,0 ; 0,1 ; 0,0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0;0;1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </rotation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cuboid name="dummy">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>[0.5;0.5;0.5]</ombv:length>
+        </ombv:Cuboid>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
+        <size>0.5</size>
+        <offset>1</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+  </objects>
+  <links>
+    <KineticExcitation name ="ex">
+      <frameOfReference ref="../Frame[Wrot]"/>
+      <force>
+        <directionVectors>[1;0;0]</directionVectors>
+        <function>
+          <ConstantFunction1_VS>
+            <value>[10]</value>
+          </ConstantFunction1_VS>
+        </function>
+      </force>
+      <moment>
+        <directionVectors>[0;0;1]</directionVectors>
+        <function>
+          <ConstantFunction1_VS>
+            <value>[10]</value>
+          </ConstantFunction1_VS>
+        </function>
+      </moment>
+      <connect ref="../Object[Box1]/Frame[C]"/>
+    </KineticExcitation>
+  </links>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;0;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>

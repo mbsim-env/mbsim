@@ -116,8 +116,8 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     c->setFrictionForceLaw(new SpatialCoulombFriction(mue));
   }
   else {
-    c->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5, 1e3));
-    c->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mue));
+    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
+    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mue)));
   }
 
 }

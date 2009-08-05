@@ -1,6 +1,6 @@
 #include "group1.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/spring_damper.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/coilspring.h>
@@ -73,19 +73,15 @@ Group1::Group1(const string &name) : Group(name) {
   box2->addFrame("P1",-SrSP,ASP);
 
   // ----------------------- Definition der 1. Feder --------------------  
-  LinearSpringDamper *spring1 = new LinearSpringDamper("Feder1");
+  SpringDamper *spring1 = new SpringDamper("Feder1");
   addLink(spring1);
-  spring1->setStiffnessCoefficient(c1);
-  spring1->setDampingCoefficient(d1);
-  spring1->setUnloadedLength(l01);
+  spring1->setForceFunction(new LinearSpringDamperForce(c1,d1,l01));
   spring1->connect(box1->getFrame("P1"),getFrame("I"));
 
   // ----------------------- Definition der 2. Feder --------------------  
-  LinearSpringDamper *spring2 = new LinearSpringDamper("Feder2");
+  SpringDamper *spring2=new SpringDamper("Feder2");
   addLink(spring2);
-  spring2->setStiffnessCoefficient(c2);
-  spring2->setDampingCoefficient(d2);
-  spring2->setUnloadedLength(l02);
+  spring2->setForceFunction(new LinearSpringDamperForce(c2,d2,l02));
   spring2->connect(box1->getFrame("P2"),box2->getFrame("P1"));
 
   // ----------------------- Anfangsbedingungen der Körper -------------------  

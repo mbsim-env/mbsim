@@ -108,8 +108,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     joint2->setImpactForceLaw(new BilateralImpact);
   } 
   else {
-    joint1->setForceLaw(new LinearRegularizedBilateralConstraint(1e7,1));
-    joint2->setForceLaw(new LinearRegularizedBilateralConstraint(1e7,1));
+    joint1->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));
+    joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e7,1)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
