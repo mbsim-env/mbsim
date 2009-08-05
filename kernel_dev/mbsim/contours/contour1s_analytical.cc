@@ -71,7 +71,7 @@ namespace MBSim {
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void Contour1sAnalytical::enableOpenMBV(bool enable, double height) {
+  void Contour1sAnalytical::enableOpenMBV(bool enable) {
     if (enable) {
       vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
       for (double alpha=as; alpha<ae; alpha+=(ae-as)/720.) {
@@ -80,10 +80,9 @@ namespace MBSim {
       }
       vpp->push_back((*vpp)[0]);
       openMBVRigidBody=new OpenMBV::Extrusion;
-      ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(height);
+      ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
       ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
       ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
-      ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialTranslation(-height, 0, 0);
     }
     else
       openMBVRigidBody=0;

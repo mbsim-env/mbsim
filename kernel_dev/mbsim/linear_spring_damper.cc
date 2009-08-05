@@ -30,7 +30,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  LinearSpringDamper::LinearSpringDamper(const string &name) : LinkMechanics(name) {}
+  LinearSpringDamper::LinearSpringDamper(const string &name) : LinkMechanics(name), l0(0), cT(0), dT(0)
+#ifdef HAVE_OPENMBVCPPINTERFACE
+                                                               , coilspringOpenMBV(NULL)
+#endif
+  {}
 
   void LinearSpringDamper::updateh(double t) {
     la(0) = (cT*(g(0)-l0) + dT*gd(0));

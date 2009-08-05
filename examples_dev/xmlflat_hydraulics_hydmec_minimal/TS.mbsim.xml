@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics">
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Body">
+      <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
+      <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>2</mass>
+      <inertiaTensor>[0.001,0,0 ; 0,0.001,0 ; 0,0,0.001]</inertiaTensor>
+      <translation>
+        <LinearTranslation>
+          <translationVectors>[1; 0; 0]</translationVectors>
+        </LinearTranslation>
+      </translation>
+      <rotation/>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Frustum name="dummy">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;pi/2;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:baseRadius>0.5</ombv:baseRadius>
+          <ombv:topRadius>0.5</ombv:topRadius>
+          <ombv:height>0.2</ombv:height>
+          <ombv:innerBaseRadius>0.5</ombv:innerBaseRadius>
+          <ombv:innerTopRadius>0.5</ombv:innerTopRadius>
+        </ombv:Frustum>
+      </openMBVRigidBody>
+    </RigidBody>
+  </objects>
+  <links>
+    <h:HydNodeMecElastic name="Node">
+      <h:fracAir>0.08</h:fracAir>
+      <h:p0>2e5</h:p0>
+      <h:V0>1e-3</h:V0>
+      <h:transMecArea>
+        <frameOfReference ref="../Object[Body]/Frame[C]"/>
+        <h:normal>[-1;0;0]</h:normal>
+        <h:area>1e-3</h:area>
+      </h:transMecArea>
+    </h:HydNodeMecElastic>
+  </links>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;0;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+    <h:HydraulicEnvironment>
+      <h:environmentPressure>1e5</h:environmentPressure>
+      <h:specificMass>
+        <!--<h:constantSpecificMass>800</h:constantSpecificMass>-->
+        <!--<h:volumeDependingOnTemperature>
+          <h:dVdT>-.8</h:dVdT>
+          <h:basicSpecificMass>1200</h:basicSpecificMass>
+          <h:basicTemperature>10</h:basicTemperature>
+        </h:volumeDependingOnTemperature>-->
+        <h:specificMassDependingOnTemperature>
+          <h:dRhodT>-.8</h:dRhodT>
+          <h:basicSpecificMass>1200</h:basicSpecificMass>
+          <h:basicTemperature>10</h:basicTemperature>
+        </h:specificMassDependingOnTemperature>
+      </h:specificMass>
+      <h:kinematicViscosity>
+        <!--<h:constantKinematicViscosity>12e-6</h:constantKinematicViscosity>-->
+        <h:walterUbbeohdeKinematicViscosity>
+          <h:temperature1>40</h:temperature1>
+          <h:kinematicViscosity1>55e-6</h:kinematicViscosity1>
+          <h:temperature2>100</h:temperature2>
+          <h:kinematicViscosity2>10e-6</h:kinematicViscosity2>
+        </h:walterUbbeohdeKinematicViscosity>
+      </h:kinematicViscosity>
+      <h:basicBulkModulus>2e11</h:basicBulkModulus>
+      <h:kappa>1.4</h:kappa>
+      <h:fluidTemperature>50</h:fluidTemperature>
+    </h:HydraulicEnvironment>
+  </environments>
+</DynamicSystemSolver>
