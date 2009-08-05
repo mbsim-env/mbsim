@@ -23,17 +23,186 @@
 #ifndef FUNCTION_H_
 #define FUNCTION_H_
 
+#include <mbsimtinyxml/tinyxml-src/tinyxml.h>
+#include <mbsim/element.h>
+#include <fmatvec.h>
+
 namespace MBSim {
 
-  /*! \brief Template class for Funtions
+  /*! \brief Template class for Funtions with one parameter
    *
    * */
   template<class Ret, class Arg>
-    class Function {
-      public:
-        virtual ~Function(){}
-        virtual Ret operator()(const Arg& x) = 0;
-    };
+  class Function1 {
+    public:
+      virtual ~Function1() {}
+      virtual Ret operator()(const Arg& x)=0;
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+  };
+
+  /*! \brief Template class for Funtions with one parameter
+   *
+   * */
+  template<class Ret, class Arg1, class Arg2>
+  class Function2 {
+    public:
+      virtual ~Function2() {}
+      virtual Ret operator()(const Arg1& p1, const Arg2& p2)=0;
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+  };
+
+  /*! \brief Template class for Funtions with three parameters
+   *
+   * */
+  template<class Ret, class Arg1, class Arg2, class Arg3>
+  class Function3 {
+    public:
+      virtual ~Function3() {}
+      virtual Ret operator()(const Arg1& p1, const Arg2& p2, const Arg3& p3)=0;
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+  };
+
+  template<class Ret, class Arg>
+  class ConstantFunction1 : public Function1<Ret,Arg> {
+    protected:
+      Ret c;
+    public:
+      ConstantFunction1() {}
+      ConstantFunction1(Ret c_) : c(c_) {}
+      void setValue(Ret c_) { c=c_; }
+      Ret operator()(const Arg& p) { return c; }
+      void initializeUsingXML(TiXmlElement *element) {
+        Function1<Ret,Arg>::initializeUsingXML(element);
+        TiXmlElement *e;
+        e=element->FirstChildElement(MBSIMNS"value");
+        c=Ret(e->GetText());
+      }
+  };
+
+  template<class Ret, class Arg1, class Arg2>
+  class ConstantFunction2 : public Function2<Ret,Arg1,Arg2> {
+    protected:
+      Ret c;
+    public:
+      ConstantFunction2() {}
+      ConstantFunction2(Ret c_) : c(c_) {}
+      void setValue(Ret c_) { c=c_; }
+      Ret operator()(const Arg1& p1, const Arg2& p2) { return c; }
+      void initializeUsingXML(TiXmlElement *element) {
+        Function2<Ret,Arg1,Arg2>::initializeUsingXML(element);
+        TiXmlElement *e;
+        e=element->FirstChildElement(MBSIMNS"value");
+        c=Ret(e->GetText());
+      }
+  };
+
+  class LinearSpringDamperForce : public Function2<double,double,double> {
+    protected:
+      double c, d, l0;
+    public:
+      LinearSpringDamperForce() {}
+      LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) {}
+      void setParameters(double c_, double d_, double l0_) { c=c_; d=d_; l0=l0_; }
+      double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
+      void initializeUsingXML(TiXmlElement *element);
+  };
+
+  template<class Arg1, class Arg2>
+  class ConstantFunction2<double, Arg1, Arg2> : public Function2<double,Arg1,Arg2> {
+    protected:
+      double c;
+    public:
+      ConstantFunction2() {}
+      ConstantFunction2(double c_) : c(c_) {}
+      void setValue(double c_) { c=c_; }
+      double operator()(const Arg1& p1, const Arg2& p2) { return c; }
+      void initializeUsingXML(TiXmlElement *element) {
+        Function2<double,Arg1,Arg2>::initializeUsingXML(element);
+        TiXmlElement *e;
+        e=element->FirstChildElement(MBSIMNS"value");
+        c=atof(e->GetText());
+      }
+  };
+
+  class LinearRegularizedUnilateralConstraint: public Function2<double,double,double> {
+    private:
+      double c, d;
+    public:
+      LinearRegularizedUnilateralConstraint() : c(0), d(0) {}
+      LinearRegularizedUnilateralConstraint(double c_, double d_) : c(c_), d(d_) {}
+      void setParameter(double c_, double d_) { c=c_; d=d_; }
+      double operator()(const double& g, const double& gd) { 
+        if(g>0)
+          return 0;
+        else if(gd<0) 
+          return -c*g - d*gd;
+        else
+          return -c*g;
+      }
+      virtual void initializeUsingXML(TiXmlElement *element);
+  };
+
+  class LinearRegularizedBilateralConstraint: public Function2<double,double,double> {
+    private:
+      double c, d;
+    public:
+      LinearRegularizedBilateralConstraint() : c(0), d(0) {}
+      LinearRegularizedBilateralConstraint(double c_, double d_) : c(c_), d(d_) {}
+      void setParameter(double c_, double d_) { c=c_; d=d_; }
+      double operator()(const double& g, const double& gd) { 
+        return -c*g - d*gd;
+      }
+      virtual void initializeUsingXML(TiXmlElement *element);
+  };
+
+  class LinearRegularizedCoulombFriction : public Function2<fmatvec::Vec,fmatvec::Vec,double> {
+    protected:
+      double mu, gdLim;
+    public:
+      LinearRegularizedCoulombFriction() : mu(0), gdLim(0.01) {}
+      LinearRegularizedCoulombFriction(double mu_, double gdLim_=0.01) : mu(mu_), gdLim(gdLim_) {}
+      void setFrictionCoeffizient(double mu_) { mu=mu_; }
+      void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
+      virtual void initializeUsingXML(TiXmlElement *element);
+  };
+
+  class LinearRegularizedPlanarCoulombFriction : public LinearRegularizedCoulombFriction {
+    public:
+      LinearRegularizedPlanarCoulombFriction() : LinearRegularizedCoulombFriction() {}
+      LinearRegularizedPlanarCoulombFriction(double mu_, double gdLim_=0.01) : LinearRegularizedCoulombFriction(mu_, gdLim_) {}
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) { 
+        if(fabs(gd(0)) < gdLim)
+          return fmatvec::Vec(1,fmatvec::INIT,-laN*mu*gd(0)/gdLim);
+        else
+          return fmatvec::Vec(1,fmatvec::INIT,gd(0)>0?-laN*mu:laN*mu);
+      }
+  };
+
+  class LinearRegularizedSpatialCoulombFriction : public LinearRegularizedCoulombFriction {
+    public:
+      LinearRegularizedSpatialCoulombFriction() : LinearRegularizedCoulombFriction() {}
+      LinearRegularizedSpatialCoulombFriction(double mu_, double gdLim_=0.01) : LinearRegularizedCoulombFriction(mu_, gdLim_) {}
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) { 
+        double normgd = nrm2(gd);
+        if(normgd < gdLim)
+          return gd*(-laN*mu/gdLim);
+        else
+          return gd*(-laN*mu/normgd);
+      }
+  };
+
+  class LinearRegularizedPlanarStribeckFriction : public Function2<fmatvec::Vec,fmatvec::Vec,double> {
+    protected:
+      double gdLim;
+      Function1<double,double> *fmu;
+    public:
+      LinearRegularizedPlanarStribeckFriction() : gdLim(0.01), fmu(NULL) {}
+      LinearRegularizedPlanarStribeckFriction(double gdLim_, Function1<double,double> *fmu_) : gdLim(gdLim_), fmu(fmu_) {}
+      void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
+      void setFrictionFunction(Function1<double,double> *fmu_) { fmu=fmu_; }
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
+      virtual void initializeUsingXML(TiXmlElement *element);
+  };
 
 }
 

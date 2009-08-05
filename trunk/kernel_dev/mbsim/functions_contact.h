@@ -48,7 +48,7 @@ namespace MBSim {
    * \date 2009-04-21 some comments (Thorsten Schindler)
    */
   template<class Ret, class Arg>
-    class DistanceFunction : public Function<Ret,Arg> {
+    class DistanceFunction : public Function1<Ret,Arg> {
       public:
         /* INTERFACE FOR DERIVED CLASSES */
         /*!
@@ -335,7 +335,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class JacobianPairConeSectionCircle : public Function<double,double> {
+  class JacobianPairConeSectionCircle : public Function1<double,double> {
     public:
       /*! 
        * \brief constructor
@@ -528,7 +528,7 @@ namespace MBSim {
        * \param Jacobian evaluation
        * \default only local search
        */
-      Contact1sSearch(DistanceFunction<double,double> *func_,Function<double,double> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) {}
+      Contact1sSearch(DistanceFunction<double,double> *func_,Function1<double,double> *jac_) : func(func_), jac(jac_), s0(0.), searchAll(false) {}
 
       /* GETTER / SETTER */
       void setInitialValue(const double &s0_ ) { s0=s0_; }
@@ -558,7 +558,7 @@ namespace MBSim {
       /** 
        * \brief Jacobian of root function part of distance function
        */
-      Function<double,double> *jac;      
+      Function1<double,double> *jac;      
 
       /**
        * \brief initial value for Newton method 

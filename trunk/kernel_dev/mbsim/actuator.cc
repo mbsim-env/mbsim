@@ -27,7 +27,9 @@ using namespace std;
 
 namespace MBSim {
 
-  Actuator::Actuator(const string &name) : LinkMechanics(name), func(0), KOSYID(1) {}
+  Actuator::Actuator(const string &name) : LinkMechanics(name), func(0), KOSYID(1) {
+    fprintf(stderr,"The class Actuator in deprecated. It must be moved to mbsimControl!\n");
+  }
 
   Actuator::~Actuator() {
     delete func;

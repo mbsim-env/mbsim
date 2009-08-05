@@ -29,7 +29,6 @@ namespace H5 {
 
 namespace MBSim {
   class Contour;
-  class UserFunction;
 
   /** 
    * \brief general link to one or more objects
@@ -96,14 +95,6 @@ namespace MBSim {
        * \brief TODO
        */
       virtual void resizeJacobians(int j) {}
-
-      /**
-       * \param arrow do display the link load (force or moment)
-       * \param scale scalefactor (default=1): scale=1 means 1KN or 1KNM is equivalent to arrowlength one
-       * \param ID of load and corresponding frame/contour (ID=0 or 1)
-       * \param userfunction to manipulate color of arrow at each timestep (default: red arrow for forces and green one for moments)
-       */
-      /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
 

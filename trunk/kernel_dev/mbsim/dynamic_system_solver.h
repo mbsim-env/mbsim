@@ -33,7 +33,6 @@ namespace MBSim {
   class Tree;
   class Node;
   class ExtraDynamicInterface;
-  class DataInterfaceBase;
   class Integrator;
 
   /** 

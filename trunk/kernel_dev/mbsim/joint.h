@@ -25,7 +25,6 @@
 
 namespace MBSim {
 
-  class DataInterfaceBase;
   class GeneralizedForceLaw;
   class GeneralizedImpactLaw;
   class FrictionForceLaw;

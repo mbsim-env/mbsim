@@ -256,6 +256,64 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <!-- BEGIN The following elements are rarly used. That is why they are optional (on top level) -->
+          <xs:element name="jacobianOfTranslation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Jacobian"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="jacobianOfRotation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Jacobian"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="derivativeOfJacobianOfTranslation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function3_MVVS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="derivativeOfJacobianOfRotation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function3_MVVS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="guidingVelocityOfRotation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="derivativeOfGuidingVelocityOfTranslation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="derivativeOfGuidingVelocityOfRotation" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <!-- END -->
           <xs:element name="frames">
             <xs:complexType>
               <xs:sequence>
@@ -322,14 +380,66 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinearSpringDamper" substitutionGroup="LinkMechanics" type="LinearSpringDamperType"/>
-  <xs:complexType name="LinearSpringDamperType">
+  <xs:element name="KineticExcitation" substitutionGroup="LinkMechanics" type="KineticExcitationType"/>
+  <xs:complexType name="KineticExcitationType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
-          <xs:element name="unloadedLength" type="pv:lengthScalar"/>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="force" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="directionVectors" type="pv:nounitMatrix"/>
+                <xs:element name="function">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Function1_VS"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="moment" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="directionVectors" type="pv:nounitMatrix"/>
+                <xs:element name="function">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="Function1_VS"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType"/>
+  <xs:complexType name="SpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="forceFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_SSS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
           <xs:element name="connect">
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
@@ -337,10 +447,10 @@
             </xs:complexType> 
           </xs:element>
           <xs:element ref="ombv:CoilSpring" minOccurs="0"/>
-        </xs:sequence> 
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>   
+  </xs:complexType>
 
   <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType"/>
   <xs:complexType name="JointType">
@@ -572,17 +682,15 @@
   <xs:element name="RegularizedBilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedBilateralConstraintType"/>
   <xs:complexType name="RegularizedBilateralConstraintType">
     <xs:complexContent>
-      <xs:extension base="GeneralizedForceLawType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="RegularizedBilateralConstraint" type="LinearRegularizedBilateralConstraintType"/>
-  <xs:complexType name="LinearRegularizedBilateralConstraintType">
-    <xs:complexContent>
-      <xs:extension base="RegularizedBilateralConstraintType">
+      <xs:extension base="GeneralizedForceLawType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+          <xs:element name="forceFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_SSS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -591,17 +699,15 @@
   <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedUnilateralConstraintType"/>
   <xs:complexType name="RegularizedUnilateralConstraintType">
     <xs:complexContent>
-      <xs:extension base="GeneralizedForceLawType"/>
-    </xs:complexContent>
-  </xs:complexType>   
-
-  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="RegularizedUnilateralConstraint" type="LinearRegularizedUnilateralConstraintType"/>
-  <xs:complexType name="LinearRegularizedUnilateralConstraintType">
-    <xs:complexContent>
-      <xs:extension base="RegularizedUnilateralConstraintType">
+      <xs:extension base="GeneralizedForceLawType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+          <xs:element name="forceFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_SSS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -610,19 +716,42 @@
   <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType"/>
   <xs:complexType name="FrictionForceLawType"/>
 
-  <xs:element name="SpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="SpatialCoulombFrictionType"/>
-  <xs:complexType name="SpatialCoulombFrictionType">
+  <xs:element name="RegularizedPlanarFriction" substitutionGroup="FrictionForceLaw" type="RegularizedPlanarFrictionType"/>
+  <xs:complexType name="RegularizedPlanarFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
-          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+          <xs:element name="frictionForceFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_VVS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedSpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="LinearRegularizedSpatialCoulombFrictionType"/>
-  <xs:complexType name="LinearRegularizedSpatialCoulombFrictionType">
+  <xs:element name="RegularizedSpatialFriction" substitutionGroup="FrictionForceLaw" type="RegularizedSpatialFrictionType"/>
+  <xs:complexType name="RegularizedSpatialFrictionType">
+    <xs:complexContent>
+      <xs:extension base="FrictionForceLawType">
+        <xs:sequence>
+          <xs:element name="frictionForceFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function2_VVS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="SpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="SpatialCoulombFrictionType"/>
+  <xs:complexType name="SpatialCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
@@ -645,5 +774,137 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="Jacobian" abstract="true" type="JacobianType"/>
+  <xs:complexType name="JacobianType"/>
+
+  <xs:element name="ConstantJacobian" substitutionGroup="Jacobian" type="ConstantJacobianType"/>
+  <xs:complexType name="ConstantJacobianType">
+    <xs:complexContent>
+      <xs:extension base="JacobianType">
+        <xs:sequence>
+          <xs:element name="constant" type="pv:nounitMatrix"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Function1_SS" abstract="true" type="Function1_SSType"/>
+  <xs:complexType name="Function1_SSType"/>
+
+  <xs:element name="Function1_VS" abstract="true" type="Function1_VSType"/>
+  <xs:complexType name="Function1_VSType"/>
+
+  <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType"/>
+  <xs:complexType name="ConstantFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="value" type="pv:nounitVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType"/>
+  <xs:complexType name="Function2_SSSType"/>
+
+  <xs:element name="ConstantFunction2_SSS" substitutionGroup="Function2_SSS" type="ConstantFunction2_SSSType"/>
+  <xs:complexType name="ConstantFunction2_SSSType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="value" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType"/>
+  <xs:complexType name="LinearSpringDamperForceType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+          <xs:element name="unloadedLength" type="pv:lengthScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedUnilateralConstraintType"/>
+  <xs:complexType name="LinearRegularizedUnilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedBilateralConstraintType"/>
+  <xs:complexType name="LinearRegularizedBilateralConstraintType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Function2_VVS" abstract="true" type="Function2_VVSType"/>
+  <xs:complexType name="Function2_VVSType"/>
+
+  <xs:element name="LinearRegularizedCoulombFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType"/>
+  <xs:complexType name="LinearRegularizedCoulombFrictionType">
+    <xs:complexContent>
+      <xs:extension base="Function2_VVSType">
+        <xs:sequence>
+          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0"/>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedPlanarCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedPlanarCoulombFrictionType"/>
+  <xs:complexType name="LinearRegularizedPlanarCoulombFrictionType">
+    <xs:complexContent>
+      <xs:extension base="LinearRegularizedCoulombFrictionType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedSpatialCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedSpatialCoulombFrictionType"/>
+  <xs:complexType name="LinearRegularizedSpatialCoulombFrictionType">
+    <xs:complexContent>
+      <xs:extension base="LinearRegularizedCoulombFrictionType"/>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LinearRegularizedPlanarStribeckFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedPlanarStribeckFrictionType"/>
+  <xs:complexType name="LinearRegularizedPlanarStribeckFrictionType">
+    <xs:complexContent>
+      <xs:extension base="Function2_VVSType">
+        <xs:sequence>
+          <xs:element name="marginalVelocity" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="frictionFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_SS"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Function3_MVVS" abstract="true" type="Function3_MVVSType"/>
+  <xs:complexType name="Function3_MVVSType"/>
 
 </xs:schema>

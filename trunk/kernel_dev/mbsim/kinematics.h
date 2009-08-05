@@ -235,6 +235,8 @@ namespace MBSim {
        */
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) = 0;
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element) {};
   };
 
   /**
@@ -249,6 +251,8 @@ namespace MBSim {
        */
       ConstantJacobian(const fmatvec::Mat &J_) { J = J_; }
 
+      ConstantJacobian() {}
+
       /**
        * \brief destructor
        */
@@ -258,6 +262,8 @@ namespace MBSim {
       virtual int getuSize() const { return J.cols(); }
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) { return J; } 
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
     
     private:
       /**
@@ -315,7 +321,7 @@ namespace MBSim {
       int getuSize() const { return uSize; }
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
       /***************************************************/
-    
+
     private:
       /**
        * \brief size of positions and velocities
@@ -326,60 +332,6 @@ namespace MBSim {
        * \brief linear relation between differentiated positions and velocities
        */
       fmatvec::Mat T;
-  };
-
-  /**
-   * \brief base class to describe the derivative of Jacobians along a path
-   * \author Martin Foerg
-   * \date 2009-04-08 some comments (Thorsten Schindler)
-   */
-  class DerivativeOfJacobian {
-    public:
-      /**
-       * \brief constructor
-       */
-      DerivativeOfJacobian() {}
-
-      /**
-       * \brief destructor
-       */
-      virtual ~DerivativeOfJacobian() {}
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \param derived functional coordinates
-       * \param functional coordinates
-       * \param time
-       * \return derivative of Jacobian matrix as a function of its degree of freedom
-       */
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec &q, double t) = 0;
-      /***************************************************/
-  };
-
-  /**
-   * \brief base class to describe a vector valued time dependent function
-   * \author Martin Foerg
-   * \date 2009-04-08 some comments (Thorsten Schindler)
-   */
-  class TimeDependentFunction {
-    public:
-      /**
-       * \brief constructor
-       */
-      TimeDependentFunction() {}
-
-      /**
-       * \brief destructor
-       */
-      virtual ~TimeDependentFunction() {}
-
-      /* INTERFACE FOR DERIVED CLASSES */
-      /**
-       * \param time
-       * \return vector valued time dependent function
-       */
-      virtual fmatvec::Vec operator()(double t) = 0;
-      /***************************************************/
   };
 
 }

@@ -34,7 +34,9 @@ namespace MBSim {
       //virtual fmatvec::Vec y; // hinfällig wenn Ports etc. instantan über Dimension verfügen
       std::string name;
     public:
-      DataInterfaceBase(){}
+      DataInterfaceBase() {
+        fprintf(stderr,"The class DataInterfaceBase in deprecated. It must be moved to mbsimControl and the sensors must be derived from MBSim::Link!!!\n");
+      }
       virtual ~DataInterfaceBase() {}
       const std::string& getName() {return name;}
       void setName(const std::string& name_) {name=name_;}

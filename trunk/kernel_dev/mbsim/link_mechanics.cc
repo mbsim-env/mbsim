@@ -220,84 +220,6 @@ namespace MBSim {
 
   void LinkMechanics::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      //#ifdef HAVE_AMVIS TODO force visualisation
-      //      Vec WrOToPoint;
-      //      Vec LoadArrow(6,NONINIT);
-      //      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      //        WrOToPoint = frame[arrowAMVisID[i]]->getPosition();
-      //        if(setValued){ 
-      //          if (isActive()) {
-      //            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-      //            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-      //          }
-      //          else {
-      //            LoadArrow = Vec(6,INIT,0.0);
-      //            WrOToPoint= Vec(3,INIT,0.0);
-      //          }
-      //        }
-      //        else {
-      //          LoadArrow(0,2) = WF[arrowAMVisID[i]];
-      //          LoadArrow(3,5) = WM[arrowAMVisID[i]];
-      //        }
-      //        LoadArrow= LoadArrow/1000*arrowAMVisScale[i]; // scaling: 1KN or 1KNm scaled to arrowlenght one
-      //
-      //        arrowAMVis[i]->setTime(t);
-      //        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-      //        double color;
-      //        if (arrowAMVisMoment[i]) {
-      //          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-      //          color=0.5;
-      //        }
-      //        else {
-      //          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-      //          color =1.0;
-      //        }
-      //        if (arrowAMVisUserFunctionColor[i]) {
-      //          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-      //          if (color>1) color=1;
-      //          if (color<0) color=0;
-      //        }  
-      //        arrowAMVis[i]->setColor(color);
-      //        arrowAMVis[i]->appendDataset(0);
-      //      }
-      //
-      //      for (unsigned int i=0; i<arrowAMVis.size(); i++) {
-      //        if(setValued) { 
-      //          if (isActive()) {
-      //            LoadArrow(0,2) = fF[arrowAMVisID[i]]*la/dt;
-      //            LoadArrow(3,5) = fM[arrowAMVisID[i]]*la/dt;
-      //          }
-      //          else {
-      //            LoadArrow = Vec(6,INIT,0.0);
-      //            WrOToPoint= Vec(3,INIT,0.0);
-      //          }
-      //        }
-      //        else {
-      //          LoadArrow(0,2) = WF[arrowAMVisID[i]];
-      //          LoadArrow(3,5) = WM[arrowAMVisID[i]];
-      //        }
-      //        LoadArrow(0,2)= LoadArrow(0,2)/1000*arrowAMVisScale[i]; // Scaling: 1KN or 1KNm scaled to arrowlenght one
-      //
-      //        arrowAMVis[i]->setTime(t);
-      //        arrowAMVis[i]->setToPoint(WrOToPoint(0),WrOToPoint(1),WrOToPoint(2));
-      //        double color;
-      //        if (arrowAMVisMoment[i]) {
-      //          arrowAMVis[i]->setDirection(LoadArrow(3),LoadArrow(4),LoadArrow(5));
-      //          color=0.5;
-      //        }
-      //        else {
-      //          arrowAMVis[i]->setDirection(LoadArrow(0),LoadArrow(1),LoadArrow(2));
-      //          color =1.0;
-      //        }
-      //        if (arrowAMVisUserFunctionColor[i]) {
-      //          color = (*arrowAMVisUserFunctionColor[i])(t)(0);
-      //          if (color>1) color=1;
-      //          if (color<0) color=0;
-      //        }  
-      //        arrowAMVis[i]->setColor(color);
-      //        arrowAMVis[i]->appendDataset(0);
-      //      }
-      //#endif
       Link::plot(t,dt);
     }
   }
@@ -452,28 +374,6 @@ namespace MBSim {
   void LinkMechanics::connect(Contour *contour_) {
     contour.push_back(contour_);
   }
-
-  //#ifdef HAVE_AMVIS
-  //  void LinkMechanics::addAMVisForceArrow(AMVis::Arrow *arrow, double scale, int ID, UserFunction *funcColor) {
-  //    assert(ID >= 0);
-  //    assert(ID < 2);
-  //    arrowAMVis.push_back(arrow);
-  //    arrowAMVisScale.push_back(scale);
-  //    arrowAMVisID.push_back(ID);
-  //    arrowAMVisUserFunctionColor.push_back(funcColor);
-  //    arrowAMVisMoment.push_back(false);
-  //  }
-  //
-  //  void LinkMechanics::addAMVisMomentArrow(AMVis::Arrow *arrow,double scale ,int ID, UserFunction *funcColor) {
-  //    assert(ID >= 0);
-  //    assert(ID < 2);
-  //    arrowAMVis.push_back(arrow);
-  //    arrowAMVisScale.push_back(scale);
-  //    arrowAMVisID.push_back(ID);
-  //    arrowAMVisUserFunctionColor.push_back(funcColor);
-  //    arrowAMVisMoment.push_back(true);
-  //  }
-  //#endif
 
 }
 
