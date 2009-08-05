@@ -43,7 +43,9 @@ namespace MBSim {
       double delta, sqrtdelta;
 
     public:
-      UserFunction() : delta(epsroot()), sqrtdelta(sqrt(delta)) {}
+      UserFunction() : delta(epsroot()), sqrtdelta(sqrt(delta)) {
+        fprintf(stderr,"The class UserFunction is deprecated due to the new function concept!!!\n");
+      }
       virtual ~UserFunction() {}
       virtual fmatvec::Vec operator()(double t) = 0; 
       virtual fmatvec::Vec diff1(double t) { 

@@ -27,7 +27,9 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Load::Load(const string &name) : LinkMechanics(name), func(0), KOSYID(0) {}
+  Load::Load(const string &name) : LinkMechanics(name), func(0), KOSYID(0) {
+    fprintf(stderr,"The class Load in deprecated. It must be moved to mbsimControl! Use class Excitation for kinetic time dependent excitations.\n");
+  }
 
   Load::~Load() {
     delete func;

@@ -4,7 +4,8 @@
 #include "mbsim/group.h"
 #include "mbsim/tree.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/linear_spring_damper.h"
+#include "mbsim/kinetic_excitation.h"
+#include "mbsim/spring_damper.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/sphere.h"
@@ -28,6 +29,7 @@
 #include "mbsim/integrators/time_stepping_integrator.h"
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -117,6 +119,49 @@ namespace MBSim {
     return 0;
   }
 
+  Jacobian *ObjectFactory::createJacobian(TiXmlElement *element) {
+    Jacobian *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createJacobian(element))) return obj;
+    return 0;
+  }
+
+  Function1<double,double> *ObjectFactory::createFunction1_SS(TiXmlElement *element) {
+    Function1<double,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_SS(element))) return obj;
+    return 0;
+  }
+
+  Function1<Vec,double> *ObjectFactory::createFunction1_VS(TiXmlElement *element) {
+    Function1<Vec,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction1_VS(element))) return obj;
+    return 0;
+  }
+
+  Function2<double,double,double> *ObjectFactory::createFunction2_SSS(TiXmlElement *element) {
+    Function2<double,double,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction2_SSS(element))) return obj;
+    return 0;
+  }
+
+  Function2<Vec,Vec,double> *ObjectFactory::createFunction2_VVS(TiXmlElement *element) {
+    Function2<Vec,Vec,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction2_VVS(element))) return obj;
+    return 0;
+  }
+
+  Function3<Mat,Vec,Vec,double> *ObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
+    Function3<Mat,Vec,Vec,double> *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createFunction3_MVVS(element))) return obj;
+    return 0;
+  }
+
+
 
 
   MBSimObjectFactory *MBSimObjectFactory::instance=NULL;
@@ -162,8 +207,10 @@ namespace MBSim {
   
   Link* MBSimObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMNS"LinearSpringDamper")
-      return new LinearSpringDamper(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"KineticExcitation")
+      return new KineticExcitation(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"SpringDamper")
+      return new SpringDamper(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Joint")
       return new Joint(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Contact")
@@ -190,10 +237,10 @@ namespace MBSim {
       return new BilateralConstraint;
     if(element->ValueStr()==MBSIMNS"UnilateralConstraint")
       return new UnilateralConstraint;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedBilateralConstraint")
-      return new LinearRegularizedBilateralConstraint;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedUnilateralConstraint")
-      return new LinearRegularizedUnilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"RegularizedBilateralConstraint")
+      return new RegularizedBilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"RegularizedUnilateralConstraint")
+      return new RegularizedUnilateralConstraint;
     return 0;
   }
 
@@ -210,8 +257,10 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombFriction")
       return new SpatialCoulombFriction;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedSpatialCoulombFriction")
-      return new LinearRegularizedSpatialCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"PlanarCoulombFriction")
+      return new PlanarCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"RegularizedSpatialFriction")
+      return new RegularizedSpatialFriction;
     return 0;
   }
 
@@ -219,6 +268,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombImpact")
       return new SpatialCoulombImpact;
+    if(element->ValueStr()==MBSIMNS"PlanarCoulombImpact")
+      return new PlanarCoulombImpact;
     return 0;
   }
 
@@ -235,6 +286,51 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"MBSimEnvironment")
       return MBSimEnvironment::getInstance();
+    return 0;
+  }
+
+  Jacobian *MBSimObjectFactory::createJacobian(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"ConstantJacobian")
+      return new ConstantJacobian;
+    return 0;
+  }
+
+  Function1<double,double> *MBSimObjectFactory::createFunction1_SS(TiXmlElement *element) {
+    return 0;
+  }
+  
+  Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
+    if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
+      return new ConstantFunction1<Vec,double>;
+    return 0;
+  }
+  
+  Function2<double,double,double> *MBSimObjectFactory::createFunction2_SSS(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"ConstantFunction2_SSS")
+      return new ConstantFunction2<double,double,double>;
+    if(element->ValueStr()==MBSIMNS"LinearSpringDamperForce")
+      return new LinearSpringDamperForce;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedUnilateralConstraint")
+      return new LinearRegularizedUnilateralConstraint;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedBilateralConstraint")
+      return new LinearRegularizedBilateralConstraint;
+    return 0;
+  }
+
+  Function2<Vec,Vec,double> *MBSimObjectFactory::createFunction2_VVS(TiXmlElement *element) {
+    if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedPlanarCoulombFriction")
+      return new LinearRegularizedPlanarCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedSpatialCoulombFriction")
+      return new LinearRegularizedSpatialCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedPlanarStribeckFriction")
+      return new LinearRegularizedPlanarStribeckFriction;
+    return 0;
+  }
+
+  Function3<Mat,Vec,Vec,double> *MBSimObjectFactory::createFunction3_MVVS(TiXmlElement *element) {
     return 0;
   }
 

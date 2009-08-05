@@ -1,5 +1,5 @@
-#ifndef _MBSIMXML_OBJECTFACTORY_H_
-#define _MBSIMXML_OBJECTFACTORY_H_
+#ifndef _MBSIM_OBJECTFACTORY_H_
+#define _MBSIM_OBJECTFACTORY_H_
 
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include "mbsim/group.h"
@@ -38,6 +38,12 @@ class ObjectFactory {
     virtual FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
     virtual Contour *createContour(TiXmlElement *element);
     virtual Environment *getEnvironment(TiXmlElement *element);
+    virtual Jacobian *createJacobian(TiXmlElement *element);
+    virtual Function1<double,double> *createFunction1_SS(TiXmlElement *element);
+    virtual Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    virtual Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
+    virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
+    virtual Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
 };
 
 class MBSimObjectFactory : protected ObjectFactory {
@@ -61,6 +67,12 @@ class MBSimObjectFactory : protected ObjectFactory {
     FrictionImpactLaw *createFrictionImpactLaw(TiXmlElement *element);
     Contour *createContour(TiXmlElement *element);
     Environment *getEnvironment(TiXmlElement *element);
+    Jacobian *createJacobian(TiXmlElement *element);
+    Function1<double,double> *createFunction1_SS(TiXmlElement *element);
+    Function1<fmatvec::Vec,double> *createFunction1_VS(TiXmlElement *element);
+    Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
+    Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
+    Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
 };
 
 }

@@ -6,6 +6,7 @@ libutils_la_SOURCES = eps.cc\
                       contact_utils.cc\
                       rotarymatrices.cc\
                       utils.cc\
+                      function.cc\
                       ansatz_functions.cc
 
 utilsincludedir = $(includedir)/mbsim/utils

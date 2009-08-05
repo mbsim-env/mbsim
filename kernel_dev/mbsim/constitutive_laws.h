@@ -22,6 +22,7 @@
 
 #include "fmatvec.h"
 #include "mbsim/userfunction.h"
+#include "mbsim/utils/function.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include <fstream>
 
@@ -38,7 +39,9 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      GeneralizedForceLaw() {};
+      GeneralizedForceLaw() : forceFunc(NULL) {};
+
+      GeneralizedForceLaw(Function2<double,double,double> *forceFunc_) : forceFunc(forceFunc_) {};
 
       /**
        * \brief destructor
@@ -66,12 +69,16 @@ namespace MBSim {
        */
       virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd) { return true; }
 
-      /**
-       * \param relative distance
-       * \param relative velocity
-       * \return force law value
+      double operator()(double g, double gd) { assert(forceFunc); return (*forceFunc)(g,gd); }
+
+      Function2<double,double,double> *forceFunc;
+
+      /** \brief Set the force function for use in regularisized constitutive laws
+       * The first input parameter to the force function is g.
+       * The second input parameter to the force function is gd.
+       * The return value is the force.
        */
-      virtual double operator()(double g,  double gd) { return 0; }
+      void setForceFunction(Function2<double,double,double> *forceFunc_) { forceFunc=forceFunc_; }
 
       /**
        * \return flag if the force law is setvalued
@@ -250,7 +257,9 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      FrictionForceLaw(double gdLim_ = 0.01) : gdLim(gdLim_) {};
+      FrictionForceLaw() : frictionForceFunc(NULL) {};
+
+      FrictionForceLaw(Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc_) : frictionForceFunc(frictionForceFunc_) {};
 
       /**
        * \brief destructor
@@ -263,18 +272,23 @@ namespace MBSim {
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { return fmatvec::Vec(2); }
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) { return true; }
       virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN) { return fmatvec::Vec(2); }
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { return fmatvec::Vec(2); }
+
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
+      Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc;
+
+      /** \brief Set the friction force function for use in regularisized constitutive friction laws
+       * The first input parameter to the friction force function is gd.
+       * The second input parameter to the friction force function is laN.
+       * The return value is the force vector.
+       */
+      void setFrictionForceFunction(Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc_) { frictionForceFunc=frictionForceFunc_; }
+
       virtual int getFrictionDirections() = 0;
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual double getFrictionCoefficient(double gd) { return 0; }
       virtual bool isSetValued() const = 0;
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
-
-      void setMarginalVelocity(double gdLim_) { gdLim = gdLim_; }
-
-    protected:
-      double gdLim;
   };
 
   /**
@@ -478,6 +492,8 @@ namespace MBSim {
        */
       RegularizedUnilateralConstraint() {};
 
+      RegularizedUnilateralConstraint(Function2<double,double,double> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+
       /**
        * \brief destructor
        */
@@ -488,6 +504,8 @@ namespace MBSim {
       virtual bool remainsActive(double s, double sTol) { return s<=sTol; }
       virtual bool isSetValued() const { return false; }
       /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
   /**
@@ -503,6 +521,8 @@ namespace MBSim {
        */
       RegularizedBilateralConstraint() {};
 
+      RegularizedBilateralConstraint(Function2<double,double,double> *forceFunc_) : GeneralizedForceLaw(forceFunc_) {};
+
       /**
        * \brief destructor
        */
@@ -513,122 +533,30 @@ namespace MBSim {
       virtual bool remainsActive(double s, double sTol) { return true; }
       virtual bool isSetValued() const { return false; }
       /***************************************************/
-  };
 
-  /**
-   * \todo delete after new function concept TODO
-   */
-  class LinearRegularizedUnilateralConstraint: public RegularizedUnilateralConstraint {
-    public:
-      LinearRegularizedUnilateralConstraint() : c(0), d(0) {};
-      LinearRegularizedUnilateralConstraint(double c_, double d_) : c(c_), d(d_) {};
-      virtual ~LinearRegularizedUnilateralConstraint() {};
-      double operator()(double g,  double gd) { 
-        if(g>0)
-          return 0;
-        else if(gd<0) 
-          return -c*g - d*gd;
-        else
-          return -c*g;
-      }
       virtual void initializeUsingXML(TiXmlElement *element);
-
-    private:
-      double c, d;
   };
 
-  /**
-   * \todo delete after new function concept TODO
-   */
-  class LinearRegularizedBilateralConstraint: public RegularizedBilateralConstraint {
+  class RegularizedPlanarFriction : public FrictionForceLaw {
     public:
-      LinearRegularizedBilateralConstraint() : c(0), d(0) {};
-      LinearRegularizedBilateralConstraint(double c_, double d_) : c(c_), d(d_) {};
-      virtual ~LinearRegularizedBilateralConstraint() {};
-      double operator()(double g,  double gd) { 
-        return -c*g - d*gd;
-      }
-      virtual void initializeUsingXML(TiXmlElement *element);
-
-    private:
-      double c, d;
-  };
-
-  /**
-   * \todo delete after new function concept TODO
-   */
-  class LinearRegularizedPlanarCoulombFriction : public FrictionForceLaw {
-    public:
-      LinearRegularizedPlanarCoulombFriction() : mu(0) {};
-      LinearRegularizedPlanarCoulombFriction(double mu_, double gdLim=0.01) : FrictionForceLaw(gdLim), mu(mu_) {};
-      virtual ~LinearRegularizedPlanarCoulombFriction() {}
-      void setFrictionCoefficient(double mu_) { mu = mu_; }
+      RegularizedPlanarFriction() {};
+      RegularizedPlanarFriction(Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      virtual ~RegularizedPlanarFriction() {}
       int getFrictionDirections() { return 1; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
-        if(fabs(gd(0)) < gdLim)
-          return fmatvec::Vec(1,fmatvec::INIT,-laN*mu*gd(0)/gdLim);
-        else
-          return fmatvec::Vec(1,fmatvec::INIT,gd(0)>0?-laN*mu:laN*mu);
-      }
-      bool isSetValued() const { return false; }
-
-    private:
-      double mu;
-  };
-
-  /**
-   * \todo delete after new function concept TODO
-   */
-  class LinearRegularizedSpatialCoulombFriction : public FrictionForceLaw {
-    public:
-      LinearRegularizedSpatialCoulombFriction() : mu(0) {};
-      LinearRegularizedSpatialCoulombFriction(double mu_, double gdLim=0.01) : FrictionForceLaw(gdLim), mu(mu_) {};
-      virtual ~LinearRegularizedSpatialCoulombFriction() {}
-      void setFrictionCoefficient(double mu_) { mu = mu_; }
-      int getFrictionDirections() { return 2; }
-      bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
-        double normgd = nrm2(gd);
-        if(normgd < gdLim)
-          return gd*(-laN*mu/gdLim);
-        else
-          return gd*(-laN*mu/normgd);
-      }
       bool isSetValued() const { return false; }
       virtual void initializeUsingXML(TiXmlElement *element);
-
-    private:
-      double mu;
   };
 
-  /**
-   * \todo delete after new function concept TODO
-   */
-  class LinearRegularizedStribeckFriction : public FrictionForceLaw {
+  class RegularizedSpatialFriction : public FrictionForceLaw {
     public:
-      LinearRegularizedStribeckFriction() : fmu(0) {};
-      LinearRegularizedStribeckFriction(UserFunction *fmu_) : fmu(fmu_) {};
-      virtual ~LinearRegularizedStribeckFriction() {};
-      void setFrictionCharacteristics(UserFunction *fmu_) { fmu = fmu_; }
+      RegularizedSpatialFriction() {};
+      RegularizedSpatialFriction(Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc_) : FrictionForceLaw(frictionForceFunc_) {};
+      virtual ~RegularizedSpatialFriction() {}
+      int getFrictionDirections() { return 2; }
       bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { 
-        int nFric = gd.size();
-        fmatvec::Vec la(nFric,fmatvec::NONINIT);
-        double normgd = nrm2(gd(0,nFric-1));
-        if(normgd < gdLim) {
-          double mu0 = (*fmu)(0)(0);
-          la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu0/gdLim);
-        } else {
-          double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdLim)(0); //oder (*fmu)(nrm2(gd(0,nFric-1)))(0)
-          la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
-        }
-        return la;
-      }
       bool isSetValued() const { return false; }
-
-    private:
-      UserFunction *fmu;
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }

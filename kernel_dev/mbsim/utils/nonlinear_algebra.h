@@ -36,7 +36,7 @@ namespace MBSim {
        * \brief constructor
        * \param root function
        */
-      RegulaFalsi(Function<double,double> *f);
+      RegulaFalsi(Function1<double,double> *f);
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return it; };
@@ -56,7 +56,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      Function<double,double> *func;
+      Function1<double,double> *func;
 
       /**
        * \brief maximum number of iterations, actual number of iterations, information about success (0 = ok, -1 = not converged, -2 = no root) 
@@ -81,7 +81,7 @@ namespace MBSim {
        * \param root function
        * \param Jacobian matrix
        */
-      NewtonMethod(Function<double,double> *fct_, Function<double,double> *jac_=0);
+      NewtonMethod(Function1<double,double> *fct_, Function1<double,double> *jac_=0);
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return iter; }
@@ -100,12 +100,12 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      Function<double,double> *fct;
+      Function1<double,double> *fct;
 
       /**
        * \brief Jacobian matrix
        */
-      Function<double,double> *jac;
+      Function1<double,double> *jac;
 
       /** 
        * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success 
@@ -130,7 +130,7 @@ namespace MBSim {
        * \param root function
        * \param Jacobian matrix
        */
-      MultiDimNewtonMethod(Function<fmatvec::Vec,fmatvec::Vec> *fct_, Function<fmatvec::SqrMat,fmatvec::Vec> *jac_=0);
+      MultiDimNewtonMethod(Function1<fmatvec::Vec,fmatvec::Vec> *fct_, Function1<fmatvec::SqrMat,fmatvec::Vec> *jac_=0);
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return iter; }
@@ -149,12 +149,12 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      Function<fmatvec::Vec,fmatvec::Vec> *fct;
+      Function1<fmatvec::Vec,fmatvec::Vec> *fct;
 
       /**
        * \brief Jacobian matrix
        */
-      Function<fmatvec::SqrMat,fmatvec::Vec> *jac;
+      Function1<fmatvec::SqrMat,fmatvec::Vec> *jac;
 
       /** 
        * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success 

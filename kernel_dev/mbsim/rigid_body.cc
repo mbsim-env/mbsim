@@ -497,6 +497,56 @@ namespace MBSim {
       setRotation(rot);
       rot->initializeUsingXML(e->FirstChildElement());
     }
+    // BEGIN The following elements are rarly used. That is why they are optional
+    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
+    if(e) {
+      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      setJacobianOfTranslation(jac);
+      jac->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
+    if(e) {
+      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      setJacobianOfRotation(jac);
+      jac->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
+    if(e) {
+      Function3<Mat,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      setDerivativeOfJacobianOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
+    if(e) {
+      Function3<Mat,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      setDerivativeOfJacobianOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setGuidingVelocityOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setGuidingVelocityOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    // END
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
     if(e) {

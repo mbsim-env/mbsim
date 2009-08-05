@@ -19,10 +19,11 @@ functions_contact.cc\
 group.cc\
 joint.cc\
 kinematics.cc\
-linear_spring_damper.cc\
+spring_damper.cc\
 link.cc\
 link_mechanics.cc\
 load.cc\
+kinetic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
@@ -59,11 +60,12 @@ functions_contact.h\
 group.h\
 joint.h\
 kinematics.h\
-linear_spring_damper.h\
+spring_damper.h\
 link.h\
 link_interface.h\
 link_mechanics.h\
 load.h\
+kinetic_excitation.h\
 flexible_body.h\
 mbsim_event.h\
 modelling_interface.h\

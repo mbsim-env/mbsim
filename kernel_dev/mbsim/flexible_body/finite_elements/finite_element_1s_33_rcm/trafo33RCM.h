@@ -32,7 +32,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
    */
-  class PositionFunction : public MBSim::Function<fmatvec::Vec,fmatvec::Vec> {    
+  class PositionFunction : public MBSim::Function1<fmatvec::Vec,fmatvec::Vec> {    
     public:
       /**
        * \brief constructor
@@ -86,7 +86,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
    */
-  class PositionJacobian : public MBSim::Function<fmatvec::SqrMat,fmatvec::Vec> {
+  class PositionJacobian : public MBSim::Function1<fmatvec::SqrMat,fmatvec::Vec> {
     public:
       /**
        * \brief constructor

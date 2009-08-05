@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/element.h"
+#include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 #include "mbsim/utils/utils.h"
 
@@ -453,29 +454,37 @@ namespace MBSim {
     setFrictionCoefficient(atof(e->GetText()));
   }
 
-  void LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    RegularizedBilateralConstraint::initializeUsingXML(element);
+  void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"forceFunction");
+    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    setForceFunction(f);
+    f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
-    RegularizedUnilateralConstraint::initializeUsingXML(element);
+  void RegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"forceFunction");
+    Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
+    setForceFunction(f);
+    f->initializeUsingXML(e->FirstChildElement());
   }
 
-  void LinearRegularizedSpatialCoulombFriction::initializeUsingXML(TiXmlElement *element) {
-    FrictionForceLaw::initializeUsingXML(element);
+  void RegularizedPlanarFriction::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    setFrictionForceFunction(f);
+    f->initializeUsingXML(e->FirstChildElement());
   }
+
+  void RegularizedSpatialFriction::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionForceFunction");
+    Function2<Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction2_VVS(e->FirstChildElement());
+    setFrictionForceFunction(f);
+    f->initializeUsingXML(e->FirstChildElement());
+  }
+
 }
 

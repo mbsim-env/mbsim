@@ -114,5 +114,11 @@ namespace MBSim {
     return T;
   }
 
+  void ConstantJacobian::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"constant");
+    J=Mat(e->GetText());
+  }
+
 }
 

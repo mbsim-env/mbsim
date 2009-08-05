@@ -24,6 +24,7 @@
 #include "fmatvec.h"
 #include "mbsim/frame.h"
 #include "mbsim/kinematics.h"
+#include "mbsim/utils/function.h"
 #include <vector>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -109,12 +110,20 @@ namespace MBSim {
       void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
       void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
       void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
-      void setDerivativeOfJacobianOfTranslation(DerivativeOfJacobian* fPdJT_) { fPdJT = fPdJT_;}
-      void setDerivativeOfJacobianOfRotation(DerivativeOfJacobian* fPdJR_) { fPdJR = fPdJR_;}
-      void setGuidingVelocityOfTranslation(TimeDependentFunction* fPjT_) { fPjT = fPjT_;}
-      void setGuidingVelocityOfRotation(TimeDependentFunction* fPjR_) { fPjR = fPjR_;}
-      void setDerivativeOfGuidingVelocityOfTranslation(TimeDependentFunction* fPdjT_) { fPdjT = fPdjT_;}
-      void setDerivativeOfGuidingVelocityOfRotation(TimeDependentFunction* fPdjR_) { fPdjR = fPdjR_;}
+      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+
+      /** \brief Sets the time dependent function for the guiding velocity of translation */
+      void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
+
+      /** \brief Sets the time dependent function for the guiding velocity of rotation */
+      void setGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPjR_) { fPjR = fPjR_;}
+
+      /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
+      void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPdjT_) { fPdjT = fPdjT_;}
+
+      /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
+      void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       void setForceDirection(const fmatvec::Mat& fd);
       void setMomentDirection(const fmatvec::Mat& md);
@@ -286,32 +295,32 @@ namespace MBSim {
       /**
        * \brief differentiated JACOBIAN of translation in parent system
        */
-      DerivativeOfJacobian *fPdJT;
+      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
 
       /**
        * \brief differentiated JACOBIAN of rotation in parent system
        */
-      DerivativeOfJacobian *fPdJR;
+      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
 
       /**
        * \brief guiding vecloity of translation in parent system
        */
-      TimeDependentFunction *fPjT;
+      Function1<fmatvec::Vec,double> *fPjT;
 
       /**
        * \brief guiding vecloity of rotation in parent system
        */
-      TimeDependentFunction *fPjR;
+      Function1<fmatvec::Vec,double> *fPjR;
 
       /**
        * \brief differentiated guiding veclocity of translation in parent system
        */
-      TimeDependentFunction *fPdjT;
+      Function1<fmatvec::Vec,double> *fPdjT;
 
       /**
        * \brief differentiated guiding veclocity of rotation in parent system
        */
-      TimeDependentFunction *fPdjR;
+      Function1<fmatvec::Vec,double> *fPdjR;
 
       /**
        * \param force and moment directions for inverse kinetics
