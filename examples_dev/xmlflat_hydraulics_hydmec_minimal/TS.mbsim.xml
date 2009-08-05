@@ -24,7 +24,7 @@
       <openMBVRigidBody>
         <ombv:Frustum name="dummy">
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0;pi/2;0]</ombv:initialRotation>
+          <ombv:initialRotation>[0;1.57079632679490;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
           <ombv:baseRadius>0.5</ombv:baseRadius>
           <ombv:topRadius>0.5</ombv:topRadius>

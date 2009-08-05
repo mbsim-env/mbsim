@@ -157,8 +157,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc1->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc1->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc1->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 
@@ -173,8 +173,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc2->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc2->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc2->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body3 and plane
@@ -188,8 +188,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc3->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc3->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc3->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body4 and plane
@@ -203,8 +203,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc4->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc4->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc4->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc4->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body1 and Frustum
@@ -218,8 +218,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc1f->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc1f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc1f->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc1f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1f->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Frustum
@@ -233,8 +233,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc2f->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc2f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc2f->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc2f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2f->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body3 and Frustum
@@ -248,8 +248,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc3f->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc3f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc3f->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc3f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3f->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
   
   // Contact between Body4 and Frustum
@@ -263,8 +263,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc4f->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc4f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc4f->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc4f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc4f->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Body4
@@ -278,8 +278,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc24->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   } 
   else {
-    rc24->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc24->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    rc24->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc24->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 

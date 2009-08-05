@@ -10,6 +10,9 @@ if [ $# -eq 1 -a "$1" = "-h" ]; then
   echo ""
   echo "runexamples.sh (run all examples with default RTOL=1e-6 and ATOL=1e-6)"
   echo "runexamples.sh 1e-3,1e-4 (run all examples with RTOL=1e-3 and ATOL=1e-4)"
+  echo "runexamples.sh 2/3 (group all examples in blocks of 3 and run the 2 of each block;"
+  echo "                    So running 1/3 in one console and 2/3 and 3/3 in another"
+  echo "                    console will run all examples in parallel)"
   echo "runexamples.sh robot (run robot example with default RTOL=1e-6 and ATOL=1e-6)"
   echo "runexamples.sh robot 1e-3,1e-4 (run robot example with RTOL=1e-3 AND ATOL=1e-4)"
   echo "runexamples.sh dist (make a ./reference.tar.bz2 reference distribution using"
@@ -28,6 +31,20 @@ RTOL=1e-6
 ATOL=1e-6
 EXAMPLES=$(find -maxdepth 1 -type d | grep -v "^\.$" | grep -v "^\./\.")
 if [ $# -eq 1 ]; then
+  if echo $1 | grep -E "^[0-9]+/[0-9]+$" > /dev/null; then
+    I=$(echo $1 | sed -re "s|^([0-9]+)/.*$|\1|")
+    N=$(echo $1 | sed -re "s|^.*/([0-9]+)$|\1|")
+    i=1
+    PARTIALEXAMPLES=""
+    for E in $EXAMPLES; do
+      if [ $i -eq $I ]; then
+        PARTIALEXAMPLES="$PARTIALEXAMPLES $E"
+        I=$[$I+$N]
+      fi
+      i=$[$i+1]
+    done
+    EXAMPLES=$PARTIALEXAMPLES
+  fi
   if [ "$1" = "dist" ]; then
     echo "Making a distribution of reference files: reference.tar.bz2"
     tar -cjf reference.tar.bz2 $(find -maxdepth 2 -name "reference")
@@ -80,6 +97,7 @@ DIFF=""
 find -name "*.d" -exec rm -f {} \;
 
 for D in $EXAMPLES; do
+  echo -ne "\033]0;RUNNING EXAMPLE $D\007"
   echo "RUNNING EXAMPLE $D"
   cd $D
 

@@ -86,10 +86,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cr2S->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
   }
   else {
-    cr1S->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    cr1S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
-    cr2S->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    cr2S->setFrictionForceLaw(new LinearRegularizedPlanarCoulombFriction(mu));
+    cr1S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr1S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
+    cr2S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    cr2S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -170,8 +170,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc1->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc1->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc1->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+    rc1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
   }
 
 
@@ -186,8 +186,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
    rc2->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
  } 
  else {
-   rc2->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-   rc2->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+   rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+   rc2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
  }
 
  // Contact between Body3 and plane
@@ -201,8 +201,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
    rc3->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
  } 
  else {
-   rc3->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-   rc3->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+   rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+   rc3->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
  }
 
   // Contact between Body1 and Frustum
@@ -216,8 +216,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc1f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc1f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc1f->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+    rc1f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc1f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Frustum
@@ -231,8 +231,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc2f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc2f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc2f->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+    rc2f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc2f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
   }
 
   // Contact between Body3 and Frustum
@@ -246,8 +246,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc3f->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc3f->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc3f->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+    rc3f->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc3f->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
   }
 
   // Contact between Body2 and Body3
@@ -261,8 +261,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     rc23->setFrictionImpactLaw(new SpatialCoulombImpact(mu));
   } 
   else {
-    rc23->setContactForceLaw(new LinearRegularizedUnilateralConstraint(1e5,1e4));
-    rc23->setFrictionForceLaw(new LinearRegularizedSpatialCoulombFriction(mu));
+    rc23->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
+    rc23->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mu)));
   }
 
 
