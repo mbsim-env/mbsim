@@ -91,7 +91,7 @@ namespace MBSim {
 
   //=============================================================================================
   // Auswertung Splines 
-  Vec PPolynom::operator()(double x){
+  Vec PPolynom::operator()(const double& x){
 
     if (x>breaks(nPoly)){
       cout << "PPEVAL: x out of Range!   x= "  << x <<" Range= "<< breaks(nPoly) <<endl;
@@ -122,7 +122,7 @@ namespace MBSim {
 
   //..............................................................................................................
   // Auswertung spline: Erste Ableitung nach Konturparameter
-  Vec PPolynom::diff1(double x){
+  Vec PPolynom::diff1(const double& x){
 
     if (x>breaks(nPoly)){
       cout << "PPEVAL_S: x out of Range!   x= "  << x <<" Range= "<< breaks(nPoly) <<endl;
@@ -156,7 +156,7 @@ namespace MBSim {
   //..............................................................................................................
 
   // Auswertung Spline: Zweite Ableitung nach Konturparameter
-  Vec PPolynom::diff2(double x){
+  Vec PPolynom::diff2(const double& x){
 
     if (x>breaks(nPoly)){
       cout << "PPEVAL_SS: x out of Range!   x= "  << x <<" Range= "<< breaks(nPoly) <<endl;

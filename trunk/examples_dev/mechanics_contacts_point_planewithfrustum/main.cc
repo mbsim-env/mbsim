@@ -20,7 +20,7 @@ int main (int argc, char* argv[]) {
     static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(1e-4);
   }
   else
-    integrator = new DOPRI5Integrator();
+    integrator = new LSODEIntegrator();
   integrator->setEndTime(4e-0);
   integrator->setPlotStepSize(1e-3);
   integrator->integrate(*sys);

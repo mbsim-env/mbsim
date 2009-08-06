@@ -17,8 +17,8 @@ int main (int argc, char* argv[]) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
   sys->init();
 
-//  TimeSteppingIntegrator integrator; integrator.setStepSize(1e-4);
-//  DOPRI5Integrator integrator; integrator.setMaximalStepSize(1e-4);
+  //TimeSteppingIntegrator integrator; integrator.setStepSize(1e-4);
+  //DOPRI5Integrator integrator; integrator.setMaximalStepSize(1e-4);
   LSODEIntegrator integrator; integrator.setMaximalStepSize(1e-4);
   //RADAU5Integrator integrator; integrator.setMaximalStepSize(1e-4);
   integrator.setEndTime(2e-0);

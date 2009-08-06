@@ -5,6 +5,7 @@
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -78,14 +79,18 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   Vec SysBar_r_cog_Top(3);
   SysBar_r_cog_Top(1)=lBar/2.;
   cout << "SysBar_r_cog_Top=" << SysBar_r_cog_Top << endl;
-  b->addFrame("Top", SysBar_r_cog_Top, SqrMat(3, EYE));
-  b->getFrame("Top")->setPlotFeature(globalPosition, enabled);
+  b->addFrame("Top0", SysBar_r_cog_Top, SqrMat(3, EYE));
+  b->addFrame("Top1", SysBar_r_cog_Top+rBar*(+1.)*Vec("[1;0;0]"), SqrMat(3, EYE));
+  b->addFrame("Top2", SysBar_r_cog_Top+rBar*(-1.)*Vec("[1;0;0]"), SqrMat(3, EYE));
+  b->addFrame("Top3", SysBar_r_cog_Top+rBar*(+1.)*Vec("[0;0;1]"), SqrMat(3, EYE));
+  b->addFrame("Top4", SysBar_r_cog_Top+rBar*(-1.)*Vec("[0;0;1]"), SqrMat(3, EYE));
   b->setMass(mBar);
   b->setInertiaTensor(inertiaBar);
   b->setTranslation(new LinearTranslation("[1, 0, 0; 0, 1, 0; 0, 0, 1]"));
   if (considerRotation)
     b->setRotation(new CardanAngles());
-  b->addContour(new Point("Point"), Vec(3), SqrMat(3), b->getFrame("Top"));
+  for (int i=0; i<5; i++)
+    b->addContour(new Point("Point"+numtostr(i)), Vec(3), SqrMat(3), b->getFrame("Top"+numtostr(i)));
   if (considerRotation) {
     b->setInitialGeneralizedPosition("[.01; -.14; -.02; 0; 0; 0]");
     b->setInitialGeneralizedVelocity("[-1; 0; .5; 0; 2; 1]");
@@ -104,20 +109,25 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   bVisu->setInitialRotation(M_PI/2., 0, 0);
 
   b->getFrame("C")->enableOpenMBV(2.*rBar, .9);
-  b->getFrame("Top")->enableOpenMBV(2.*rBar, .9);
+  for (int i=0; i<5; i++)
+    b->getFrame("Top"+numtostr(i))->enableOpenMBV(.2*rBar, .9);
 #endif
 
-  Contact * c = new Contact("ContactPointPlane");
-  addLink(c);
-  c->connect(b->getContour("Point"), getContour("Plane"));
-  if (setValued) {
-    c->setContactForceLaw(new UnilateralConstraint());
-    c->setContactImpactLaw(new UnilateralNewtonImpact());
-    c->setFrictionForceLaw(new SpatialCoulombFriction(mue));
-  }
-  else {
-    c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
-    c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mue)));
+  for (int i=1; i<5; i++) {
+    Contact * c = new Contact("ContactPointPlane"+numtostr(i));
+    addLink(c);
+    c->connect(b->getContour("Point"+numtostr(i)), getContour("Plane"));
+    if (setValued) {
+      c->setContactForceLaw(new UnilateralConstraint());
+      c->setContactImpactLaw(new UnilateralNewtonImpact());
+      c->setFrictionForceLaw(new SpatialCoulombFriction(mue));
+      c->setFrictionImpactLaw(new SpatialCoulombImpact(mue));
+    }
+    else {
+      c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
+      c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mue)));
+    }
+    c->enableOpenMBVContactPoints(.1*rBar);
   }
 
 }

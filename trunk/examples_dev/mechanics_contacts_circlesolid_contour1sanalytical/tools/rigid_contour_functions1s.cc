@@ -104,33 +104,33 @@ void FuncCrPC::init(double alpha) {
   Cb = Cb/nrm2(Cb);  
 }
 
-Vec FuncCrPC::operator()(double alpha){
+Vec FuncCrPC::operator()(const double& alpha){
   Vec f(3,INIT);
-  alpha=fmod(alpha, 2.*M_PI);
-  if(alpha<0) 
-    alpha+=2.*M_PI;
-  f(1) = (pp_y)(alpha)(0); 
-  f(2) = (pp_z)(alpha)(0); 
+  double alphaLoc=fmod(alpha, 2.*M_PI);
+  if(alphaLoc<0) 
+    alphaLoc+=2.*M_PI;
+  f(1) = (pp_y)(alphaLoc)(0); 
+  f(2) = (pp_z)(alphaLoc)(0); 
   return f;
 } 
 
-Vec FuncCrPC::diff1(double alpha) {
+Vec FuncCrPC::diff1(const double& alpha) {
   Vec f(3,INIT);
-  alpha=fmod(alpha, 2.*M_PI);
-  if(alpha<0) 
-    alpha+=2.*M_PI;
-  f(1) = (pp_y).diff1(alpha)(0); 
-  f(2) = (pp_z).diff1(alpha)(0); 
+  double alphaLoc=fmod(alpha, 2.*M_PI);
+  if(alphaLoc<0) 
+    alphaLoc+=2.*M_PI;
+  f(1) = (pp_y).diff1(alphaLoc)(0); 
+  f(2) = (pp_z).diff1(alphaLoc)(0); 
   return f;
 }
 
-Vec FuncCrPC::diff2(double alpha) {
+Vec FuncCrPC::diff2(const double& alpha) {
   Vec f(3,INIT);
-  alpha=fmod(alpha, 2.*M_PI);
-  if(alpha<0) 
-    alpha+=2.*M_PI;
-  f(1) = (pp_y).diff2(alpha)(0); 
-  f(2) = (pp_z).diff2(alpha)(0); 
+  double alphaLoc=fmod(alpha, 2.*M_PI);
+  if(alphaLoc<0) 
+    alphaLoc+=2.*M_PI;
+  f(1) = (pp_y).diff2(alphaLoc)(0); 
+  f(2) = (pp_z).diff2(alphaLoc)(0); 
   return f;
 }
 
