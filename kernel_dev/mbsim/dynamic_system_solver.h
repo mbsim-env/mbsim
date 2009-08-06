@@ -18,8 +18,8 @@
  *          rzander@users.berlios.de
  */
 
-#ifndef _MULTI_BODY_SYSTEM_H_
-#define _MULTI_BODY_SYSTEM_H_
+#ifndef _DYNAMIC_SYSTEM_SOLVER_H_
+#define _DYNAMIC_SYSTEM_SOLVER_H_
 
 #include "mbsim/group.h"
 #include "sparse_matrix.h"
@@ -57,6 +57,7 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
+   * \date 2009-08-07 preintegration (Thorsten Schindler)
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -116,11 +117,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE FOR DERIVED CLASS */
       /**
-       * \param dynamic system to preintegrate
-       */
-      virtual void preInteg(DynamicSystemSolver *parent);
-
-      /**
        * \brief solves prox-functions on acceleration level using sparsity structure but not decoupled
        * \return
        */
@@ -133,9 +129,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-//      void setProjectDirectory(const std::string &directoryName_) { directoryName = directoryName_; }
-      void setPreInteg(Integrator *preInteg_) { preIntegrator = preInteg_; }
-
       void setImpact(bool impact_) { impact = impact_; }
       void setSticking(bool sticking_) { sticking = sticking_; }
 
@@ -359,23 +352,31 @@ namespace MBSim {
        */
       static void sigAbortHandler(int);
 
-      // TODO necessary?
-      bool driftCompensation(fmatvec::Vec& z, double t) { return false; } 
-
       // TODO just for testing
       void setPartialEventDrivenSolver(bool peds_) { peds = peds_; }
 
-      // TODO just for testing
+      /**
+       * \brief writes state to a file
+       */
       void writez();
+      
+      /**
+       * \brief reads state from a file
+       */
       void readz0();
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
       /**
-       * \brief Decide, whether the model-hierarchy should be reorganized.
+       * \brief decide, whether the model-hierarchy should be reorganized.
        * \param true for reorganisation, false otherwise
        */
       void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
+      
+      /**
+       * \param decide, whether information should be printed on standard output.
+       */
+      void setInformationOutput(bool INFO_) { INFO = INFO_; }
       
       /**
        * \brief references to external state
@@ -577,16 +578,6 @@ namespace MBSim {
        */
       int warnLevel;
       
-//      /** 
-//       * \brief name of directory where output is processed
-//       */
-//      std::string directoryName;
-
-      /**
-       * \brief pre-integration scheme
-       */
-      Integrator *preIntegrator;
-
       /**
        * \brief TODO, flag for occuring impact and sticking in event driven solver
        */
@@ -620,11 +611,6 @@ namespace MBSim {
        * \brief TODO
        */
       void computeConstraintForces(double t);
-
-//      /**
-//       * \brief create directories for simulation output
-//       */
-//      void setDirectory();
 
       /**
        * \brief function pointer for election of smooth update for event driven integrator
@@ -662,6 +648,16 @@ namespace MBSim {
       static bool exitRequest;
 
       /**
+       * \brief information on standard output
+       */
+      bool INFO;
+
+      /**
+       * \brief is a state read from a file
+       */
+      bool READZ0;
+
+      /**
        * \brief TODO
        */
       void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
@@ -669,5 +665,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _DYNAMIC_SYSTEM_SOLVER_H_ */
 

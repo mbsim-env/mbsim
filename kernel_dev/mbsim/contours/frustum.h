@@ -25,7 +25,7 @@
 namespace MBSim {
 
   /**
-   * \brief frustum
+   * \brief frustum with axis in direction of second column of contour reference frame
    * \author Martin Foerg
    * \author Thorsten Schindler
    * \date 2009-04-20 some comments (Thorsten Schindler)

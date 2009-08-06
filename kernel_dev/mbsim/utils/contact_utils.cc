@@ -21,24 +21,25 @@
 #include "mbsim/utils/contact_utils.h"
 
 // --- List of contour implementations - BEGIN ---
-#include "mbsim/contours/circle.h"
-#include "mbsim/contours/contour1s.h"
-#include "mbsim/contours/cylinder_flexible.h"
-#include "mbsim/contours/sphere.h"
-#include "mbsim/contours/point.h"
-#include "mbsim/contours/line.h"
-#include "mbsim/contours/circle_solid.h"
-#include "mbsim/contours/circle_hollow.h"
-#include "mbsim/contours/frustum2d.h"
-#include "mbsim/contours/plane.h"
-#include "mbsim/contours/edge.h"
 #include "mbsim/contours/area.h"
-#include "mbsim/contours/frustum.h"
-#include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/contours/circle.h"
+#include "mbsim/contours/circle_hollow.h"
+#include "mbsim/contours/circle_solid.h"
+#include "mbsim/contours/compound_contour.h"
+#include "mbsim/contours/contour1s.h"
 #include "mbsim/contours/contour_interpolation.h"
 #include "mbsim/contours/contour_quad.h"
 #include "mbsim/contours/cuboid.h"
-#include "mbsim/contours/compound_contour.h"
+#include "mbsim/contours/cylinder_flexible.h"
+#include "mbsim/contours/edge.h"
+#include "mbsim/contours/flexible_band.h"
+#include "mbsim/contours/frustum.h"
+#include "mbsim/contours/frustum2d.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contours/plane.h"
+#include "mbsim/contours/planewithfrustum.h"
+#include "mbsim/contours/point.h"
+#include "mbsim/contours/sphere.h"
 // --- List of contour implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -58,6 +59,7 @@
 #include <mbsim/contact_kinematics/point_contour1s.h>
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
 #include <mbsim/contact_kinematics/point_cylinderflexible.h>
+#include <mbsim/contact_kinematics/point_flexibleband.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
 #include <mbsim/contact_kinematics/point_plane.h>
@@ -123,6 +125,9 @@ namespace MBSim {
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Area*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Area*>(contour0))) 
       return new ContactKinematicsPointArea;
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<FlexibleBand*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<FlexibleBand*>(contour0)))
+      return new ContactKinematicsPointFlexibleBand;  
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Contour1s*>(contour0))) 
       return new ContactKinematicsPointContour1s;

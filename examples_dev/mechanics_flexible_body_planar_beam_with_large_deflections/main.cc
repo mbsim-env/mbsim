@@ -18,6 +18,7 @@ int main (int argc, char* argv[]) {
   integrator.setEndTime(0.4);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
+  integrator.integrate(*sys);
 
   sys->closePlot();
 

@@ -259,10 +259,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   frustumVRML << "  ShapeHints" << endl << "  {" << endl; // hints BEGIN
   frustumVRML << "    vertexOrdering COUNTERCLOCKWISE" << endl; //  CLOCKWISE means look inside
   frustumVRML << "    shapeType UNKNOWN_SHAPE_TYPE" << endl; 
-  frustumVRML << "    creaseAngle 3.1415" << endl;
+  frustumVRML << "    creaseAngle 0.393" << endl;
   frustumVRML << "  }" << endl << endl; // hints END
-
-  frustumVRML << "  Material { diffuseColor [ 1 0 0 ] }" << endl << endl; // material r g b
 
   frustumVRML << "  IndexedFaceSet" << endl << "  {" << endl; // faces BEGIN
   frustumVRML << "    coordIndex [" << endl;
@@ -298,6 +296,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
   frustumMBV->setIvFileName("frustum.iv");
+  frustumMBV->setStaticColor(1.);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   groundBase->setOpenMBVRigidBody(frustumMBV);
