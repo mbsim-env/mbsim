@@ -30,8 +30,7 @@ objectfactory.cc\
 order_one_dynamics.cc\
 rigid_body.cc\
 tree.cc\
-userfunction.cc\
-userfunction_contour.cc
+userfunction.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
 

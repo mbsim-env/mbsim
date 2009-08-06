@@ -17,16 +17,15 @@ class FuncCrPC : public MBSim::UserFunctionContour1s {
     
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
     
-    fmatvec::Vec operator()(double alpha); // Vektor vom P nach C
-    fmatvec::Vec diff1(double alpha); // Tangente in C
-    fmatvec::Vec diff2(double alpha); // 2. Ableitung in C
-    // double computeR(double alpha); // Krümmungsradius
+    fmatvec::Vec operator()(const double& alpha); // Vektor vom P nach C
+    fmatvec::Vec diff1(const double& alpha); // Tangente in C
+    fmatvec::Vec diff2(const double& alpha); // 2. Ableitung in C
 
     void init(double alpha);
 
-    fmatvec::Vec computeT(double alpha) {fmatvec::Vec T = -diff1(alpha); return T/nrm2(T); } // Tangente immer so, dass t n b ein rechtssystem bilden
-    fmatvec::Vec computeB(double alpha) {return Cb; } // immer konstant
-    fmatvec::Vec computeN(double alpha) {fmatvec::Vec N = crossProduct(diff1(alpha), Cb); return N/nrm2(N); } // normale immer nach außen
+    fmatvec::Vec computeT(const double& alpha) {fmatvec::Vec T = -diff1(alpha); return T/nrm2(T); } // Tangente immer so, dass t n b ein rechtssystem bilden
+    fmatvec::Vec computeB(const double& alpha) {return Cb; } // immer konstant
+    fmatvec::Vec computeN(const double& alpha) {fmatvec::Vec N = crossProduct(diff1(alpha), Cb); return N/nrm2(N); } // normale immer nach außen
 };  
 
 #endif

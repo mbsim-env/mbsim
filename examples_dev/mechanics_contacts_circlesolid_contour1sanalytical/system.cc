@@ -14,11 +14,12 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-
 System::System(const string &name) : DynamicSystemSolver(name) {
 
   double m1=1.0;
   double l1=0.1;
+
+  bool rigid=false;
 
   SymMat Theta(3);
   Theta(2,2) = 1./12.*m1*l1*l1;
@@ -71,10 +72,16 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   rollContour->enableOpenMBV();
 
   Contact * contactCamRoll = new Contact("Contact");
-  contactCamRoll->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 1e4)));
-  contactCamRoll->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(1.)));
-//  contactCamRoll->setContactForceLaw(new UnilateralConstraint);
-//  contactCamRoll->setContactImpactLaw(new UnilateralNewtonImpact);
+  if (rigid) {
+    contactCamRoll->setContactForceLaw(new UnilateralConstraint);
+    contactCamRoll->setContactImpactLaw(new UnilateralNewtonImpact);
+    contactCamRoll->setFrictionForceLaw(new PlanarCoulombFriction(.1));
+    contactCamRoll->setFrictionImpactLaw(new PlanarCoulombImpact(.1));
+  }
+  else {
+    contactCamRoll->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 1e4)));
+    contactCamRoll->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(1.)));
+  }
   contactCamRoll->connect(cam->getContour("Contour"), roll->getContour("Contour"));
   contactCamRoll->enableOpenMBVContactPoints(.005);
   addLink(contactCamRoll);
