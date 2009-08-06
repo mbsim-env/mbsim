@@ -27,5 +27,3 @@ include $(sources:.cc=.d)
 clean :
 	-rm $(Target) $(objects) $(sources:.cc=.d)
 
-clean_pos :
-	-rm *.pos *.body

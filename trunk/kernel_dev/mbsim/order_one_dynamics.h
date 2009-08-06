@@ -72,8 +72,6 @@ namespace MBSim {
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
       virtual void updateg(double t) = 0;
       virtual void initPlot();
-      virtual void writex();
-      virtual void readx0();
       /***************************************************/
 
       /* GETTER / SETTER */

@@ -178,49 +178,6 @@ namespace MBSim {
     Element::setDynamicSystemSolver(sys);
   }
 
-  void Object::writeq() {
-    //    string fname="PREINTEG/"+getPath()+".q0.asc";  
-    //    ofstream osq(fname.c_str(), ios::out);
-    //    osq << q;
-    //    osq.close();
-  }
-  void Object::readq0() {
-    //    string fname="PREINTEG/"+getPath()+".q0.asc";  
-    //    ifstream isq(fname.c_str());
-    //    if(isq) isq >> q0;
-    //    else {cout << "Object " << name << ": No Preintegration Data q0 available. Run Preintegration first." << endl; throw 50;}
-    //    isq.close();
-  }
-  void Object::writeu() {
-    //   string fname="PREINTEG/"+getPath()+".u0.asc";  
-    //   ofstream osu(fname.c_str(), ios::out);
-    //   osu << u;
-    //   osu.close();
-  }
-
-  void Object::readu0() {
-    //   string fname="PREINTEG/"+getPath()+".u0.asc";  
-    //   ifstream isu(fname.c_str());
-    //   if(isu) isu >> u0;
-    //   else {cout << "Object " << name << ": No Preintegration Data u0 available. Run Preintegration first." << endl; throw 50;}
-    //   isu.close();
-  }
-
-  void Object::writex() {
-    //   string fname="PREINTEG/"+getPath()+".x0.asc";  
-    //   ofstream osx(fname.c_str(), ios::out);
-    //   osx << x;
-    //   osx.close();
-  }
-
-  void Object::readx0() {
-    //   string fname="PREINTEG/"+getPath()+".x0.asc";  
-    //   ifstream isx(fname.c_str());
-    //   if(isx) isx >> x0;
-    //   else {cout << "Object " << name << ": No Preintegration Data x0 available. Run Preintegration first." << endl; throw 50;}
-    //   isx.close();
-  }
-
   void Object::updateqRef(const Vec &qParent) {
     q>>qParent(qInd,qInd+qSize-1);
   }

@@ -540,8 +540,9 @@ namespace MBSim {
         orderOneDynamics[i]->initPlot();
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->initPlot();
+
+      plotGroup->flush(H5F_SCOPE_GLOBAL);
     }
-    plotGroup->flush(H5F_SCOPE_GLOBAL);
   }
 
   Frame* DynamicSystem::getFrame(const string &name, bool check) {
@@ -664,7 +665,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatedhdqRef(dhdqLink);
   }
-  
+
   void DynamicSystem::updatedhduRef(const SqrMat &dhduObjectParent, const SqrMat &dhduLinkParent, int j) {
     dhduObject.resize() >> dhduObjectParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
     dhduLink.  resize() >> dhduLinkParent  (Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
@@ -678,7 +679,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatedhduRef(dhduLink);
   }
-  
+
   void DynamicSystem::updatedhdtRef(const Vec &dhdtObjectParent, const Vec &dhdtLinkParent, int j) {
     dhdtObject.resize() >> dhdtObjectParent(hInd[j],hInd[j]+hSize[j]-1);
     dhdtLink.  resize() >> dhdtLinkParent  (hInd[j],hInd[j]+hSize[j]-1);
@@ -847,9 +848,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::initz() {
-    q = q0;
-    u = u0;
-    x = x0;
     for(unsigned i=0; i<dynamicsystem.size(); i++)
       dynamicsystem[i]->initz();
     for(unsigned i=0; i<object.size(); i++)

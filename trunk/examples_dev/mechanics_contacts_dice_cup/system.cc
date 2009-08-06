@@ -171,10 +171,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
  
   frustumVRML << "  ShapeHints" << endl << "  {" << endl; // hints BEGIN
   frustumVRML << "    vertexOrdering CLOCKWISE" << endl; //  CLOCKWISE means look inside
-  frustumVRML << "    creaseAngle 3.1415" << endl;
+  frustumVRML << "    creaseAngle 0.393" << endl;
   frustumVRML << "  }" << endl << endl; // hints END
-
-  frustumVRML << "  Material { diffuseColor [ 1 0 0 ] }" << endl << endl; // material r g b
 
   frustumVRML << "  IndexedFaceSet" << endl << "  {" << endl; // faces BEGIN
   frustumVRML << "    coordIndex [" << endl;
@@ -209,11 +207,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
   frustumMBV->setIvFileName("frustum.iv");
+  frustumMBV->setStaticColor(1.);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
-  // frustumMBV->setCalculationOfNormals(3); // automatic calculation of normals for colouring
-  // frustumMBV->setVertexEPS(1e-5); // deleting dublicate points
-  // frustumMBV->setNormalEPS(1e-5); // deleting dublicate points
   frustumRef->setOpenMBVRigidBody(frustumMBV); 
   // ************************************************************************
 
@@ -228,6 +224,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact.push_back(new Contact(nameContact.str()));
     contact[i]->setContactForceLaw(new UnilateralConstraint());
     contact[i]->setContactImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
+    contact[i]->enableOpenMBVContactPoints(.05);
     contact[i]->connect(frustumRef->getContour("Frustum"),dice->getContour(nameContour.str()));
     this->addLink(contact[i]);
   } 	

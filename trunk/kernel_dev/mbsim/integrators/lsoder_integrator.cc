@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <config.h>
@@ -94,7 +91,6 @@ namespace MBSim {
     ofstream integPlot((name + ".plt").c_str());
 
     Vector<int> jsv(nsv);  
-    bool donedrift;
 
     cout.setf(ios::scientific, ios::floatfield);
 
@@ -103,27 +99,24 @@ namespace MBSim {
       integrationSteps++;
 
       DLSODER(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
-	  &istate, &one, rWork(), &lrWork, iWork(),
-	  &liWork, NULL, &two, fsv, &nsv, jsv());
+          &istate, &one, rWork(), &lrWork, iWork(),
+          &liWork, NULL, &two, fsv, &nsv, jsv());
       if(istate==2 || t==tPlot) {
-	system->plot(z, t);
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << rWork(10) << " " << time << endl;
-	tPlot += dtPlot;
-	donedrift=system->driftCompensation(z, t);
-	if(donedrift==true)
-	  istate=1;
+        system->plot(z, t);
+        if(output)
+          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot<< t << " " << rWork(10) << " " << time << endl;
+        tPlot += dtPlot;
       }
       if(istate==3) {
-	system->shift(z, jsv, t);
-	if(plotOnRoot)
-	  system->plot(z, t);
-	istate=1;
-	rWork(4)=dt0;
+        system->shift(z, jsv, t);
+        if(plotOnRoot)
+          system->plot(z, t);
+        istate=1;
+        rWork(4)=dt0;
       }
       if(istate<0) exit(istate);
     }
@@ -138,3 +131,4 @@ namespace MBSim {
     cout << endl;
   }
 }
+

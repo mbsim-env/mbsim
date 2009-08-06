@@ -101,7 +101,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
-  PointFlexibleBand *ck = new PointFlexibleBand();
+  ContactKinematicsPointFlexibleBand *ck = new ContactKinematicsPointFlexibleBand();
   Contact *contact = new Contact("Contact");
   contact->setContactKinematics(ck);
   contact->setContactForceLaw(new UnilateralConstraint);

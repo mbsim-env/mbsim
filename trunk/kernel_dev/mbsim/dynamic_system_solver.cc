@@ -43,6 +43,7 @@
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
 #include <hdf5serie/simpleattribute.h>
+#include <hdf5serie/simpledataset.h>
 
 #ifdef HAVE_ANSICSIGNAL
 #  include <signal.h>
@@ -63,19 +64,15 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
-
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), preIntegrator(NULL), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false) { 
-
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false) { 
     constructor();
   }
 
-  DynamicSystemSolver::~DynamicSystemSolver() {
-    if (preIntegrator) delete preIntegrator;
-  } 
+  DynamicSystemSolver::~DynamicSystemSolver() {} 
 
   void DynamicSystemSolver::init() {
 #ifdef _OPENMP
@@ -200,17 +197,17 @@ namespace MBSim {
     calcsvSize();
     svSize += 1; // TODO additional event for drift 
 
-    cout << "qSize = " << qSize <<endl;
-    cout << "uSize[0] = " << uSize[0] <<endl;
-    cout << "xSize = " << xSize <<endl;
-    cout << "gSize = " << gSize <<endl;
-    cout << "gdSize = " << gdSize <<endl;
-    cout << "laSize = " << laSize <<endl;
-    cout << "svSize = " << svSize <<endl;
-    cout << "hSize[0] = " << hSize[0] <<endl;
+    if(INFO) cout << "qSize = " << qSize << endl;
+    if(INFO) cout << "uSize[0] = " << uSize[0] << endl;
+    if(INFO) cout << "xSize = " << xSize << endl;
+    if(INFO) cout << "gSize = " << gSize << endl;
+    if(INFO) cout << "gdSize = " << gdSize << endl;
+    if(INFO) cout << "laSize = " << laSize << endl;
+    if(INFO) cout << "svSize = " << svSize << endl;
+    if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
 
-    cout << "uSize[1] = " << uSize[1] <<endl;
-    cout << "hSize[1] = " << hSize[1] <<endl;
+    if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
+    if(INFO) cout << "hSize[1] = " << hSize[1] << endl;
 
     if(uSize[0] == uSize[1]) 
       zdot_ = &DynamicSystemSolver::zdotStandard;
@@ -276,7 +273,7 @@ namespace MBSim {
     updaterFactorRef(rFactorParent);
 
     // contact solver specific settings
-    cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+    if(INFO) cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
     if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
     else if(contactSolver == LinearEquations) {
       solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
@@ -287,7 +284,7 @@ namespace MBSim {
     else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
     // impact solver specific settings
-    cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
+    if(INFO) cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
     if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
     else if(impactSolver == LinearEquations) {
       solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
@@ -297,10 +294,10 @@ namespace MBSim {
     else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
     else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
 
-    cout << "  initialising plot-files ..." << endl;
+    if(INFO) cout << "  initialising plot-files ..." << endl;
     initPlot();
 
-    cout << "...... done initialising." << endl << endl;
+    if(INFO) cout << "...... done initialising." << endl << endl;
 
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
@@ -324,8 +321,8 @@ namespace MBSim {
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
-        if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cout <<endl<< "WARNING: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -353,8 +350,8 @@ namespace MBSim {
       if(level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
-        if(warnLevel>=2) cout <<endl<< "Warning: decreasing r-factors at iter = " << iter << endl;
+        cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
+        if(warnLevel>=2) cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle();
@@ -463,26 +460,26 @@ namespace MBSim {
         alpha = 0.5*alpha;  
       }
       nrmf0 = nrmf;
-    res0 = res;
+      res0 = res;
 
-    if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
-      checkTermLevel++;
-      checkConstraintsForTermination();
-      if(term) break;
+      if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
+        checkTermLevel++;
+        checkConstraintsForTermination();
+        if(term) break;
+      }
     }
+    return iter;
   }
-  return iter;
-}
 
-int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
-  updaterFactors();
+  int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
+    updaterFactors();
 
-  int iter;
-  int checkTermLevel = 0;
+    int iter;
+    int checkTermLevel = 0;
 
-  Group::solveImpactsRootFinding(); 
-  double nrmf0 = nrm2(res);
-  Vec res0 = res.copy();
+    Group::solveImpactsRootFinding(); 
+    double nrmf0 = nrm2(res);
+    Vec res0 = res.copy();
 
     checkImpactsForTermination();
     if(term)
@@ -573,7 +570,7 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
   void DynamicSystemSolver::initPlot() {
     Group::initPlot();
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVGrp->initialize();
+    if(getPlotFeature(plotRecursive)==enabled) openMBVGrp->initialize();
 #endif
   }
 
@@ -666,23 +663,6 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
     }
-  }
-
-  void DynamicSystemSolver::preInteg(DynamicSystemSolver *parent) {
-    throw new MBSimError("ERROR (DynamicSystemSolver::preInteg()): Preintegrator not implemented yet.");
-    //    if(preIntegrator) {
-    ////      setProjectDirectory(name+".preInteg");
-    //      setAccelerationOfGravity(parent->getAccelerationOfGravity()); // TODO in preintegration gravitation of MBS parent has to be set already
-    //      cout << "Initialisation of " << name << " for Preintegration..."<<endl;
-    //      init();  
-    //      cout << "Preintegration..."<<endl;
-    //      preIntegrator->integrate(*this);
-    //      closePlot();
-    //      writez();
-    //      delete preIntegrator;
-    //      preIntegrator=NULL; 
-    //      cout << "Finished." << endl;
-    //    }  
   }
 
   int DynamicSystemSolver::solveConstraints() {
@@ -786,7 +766,12 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
 
   void DynamicSystemSolver::initz(Vec& z) {
     updatezRef(z);
-    Group::initz();
+    if(READZ0) {
+      q = q0;
+      u = u0;
+      x = x0;
+    }
+    else Group::initz();
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
@@ -1087,7 +1072,7 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
       corr.init(1e-14);
       SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
       // TODO: Wv*T check
-      while(nrmInf(g-corr) >= 1e-14) {
+      while(nrmInf(g-corr) >= 1e-8) {
         Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
         Vec dnu = slvLLFac(LLM,W*mu)-nu;
         nu += dnu;
@@ -1239,26 +1224,42 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
     H5::FileSerie::flushAllFiles();
   }
 
-  void DynamicSystemSolver::writez(){
-    for(unsigned int i=0; i<object.size(); i++)  {
-      object[i]->writeq();
-      object[i]->writeu();
-      object[i]->writex();
-    }
-    for(unsigned int i=0; i<orderOneDynamics.size(); i++)  {
-      orderOneDynamics[i]->writex();
-    }
+  void DynamicSystemSolver::writez() {
+    H5::H5File file("z0.h5", H5F_ACC_TRUNC);
+
+    H5::SimpleDataSet<vector<double> > qToWrite;
+    qToWrite.create(file,"q0");
+    qToWrite.write(q);
+
+    H5::SimpleDataSet<vector<double> > uToWrite;
+    uToWrite.create(file,"u0");
+    uToWrite.write(u);
+
+    H5::SimpleDataSet<vector<double> > xToWrite;
+    xToWrite.create(file,"x0");
+    xToWrite.write(x);
+
+    file.close();
   }
 
-  void DynamicSystemSolver::readz0(){
-    for(unsigned int i=0; i<object.size(); i++)  {
-      object[i]->readq0();
-      object[i]->readu0();
-      object[i]->readx0();
-    }
-    for(unsigned int i=0; i<orderOneDynamics.size(); i++)  {
-      orderOneDynamics[i]->readx0();
-    }
+  void DynamicSystemSolver::readz0() {
+    H5::H5File file("z0.h5", H5F_ACC_RDONLY);
+
+    H5::SimpleDataSet<vector<double> > qToRead;
+    qToRead.open(file,"q0");
+    q0 = qToRead.read();
+
+    H5::SimpleDataSet<vector<double> > uToRead;
+    uToRead.open(file,"u0");
+    u0 = uToRead.read();
+
+    H5::SimpleDataSet<vector<double> > xToRead;
+    xToRead.open(file,"x0");
+    x0 = xToRead.read();
+
+    file.close();
+
+    READZ0 = true;
   }
 
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
@@ -1306,46 +1307,6 @@ int DynamicSystemSolver::solveImpactsRootFinding(double dt) {
   void DynamicSystemSolver::computeConstraintForces(double t) {
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
-
-  //  void DynamicSystemSolver::setDirectory() {
-  //    int i;
-  //    string projectDirectory;
-  //
-  //    if(false) { // TODO: introduce flag "overwriteDirectory"
-  //      for(i=0; i<=99; i++) {
-  //        stringstream number;
-  //        number << "." << setw(2) << setfill('0') << i;
-  //        projectDirectory = directoryName + number.str();
-  //        int ret = mkdir(projectDirectory.c_str(),0777);
-  //        if(ret == 0) break;
-  //      }
-  //      cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-  //    }
-  //    else { // always the same directory
-  //      projectDirectory = string(directoryName);
-  //
-  //      int ret = mkdir(projectDirectory.c_str(),0777);
-  //      if(ret == 0) {
-  //        cout << "  make directory \'" << projectDirectory << "\' for output processing" << endl;
-  //      }
-  //      else {
-  //        cout << "  use existing directory \'" << projectDirectory << "\' for output processing" << endl;
-  //      }
-  //    }
-  //
-  //    if(preIntegrator) {
-  //      string preDir="PREINTEG";
-  //      int ret=mkdir(preDir.c_str(),0777);
-  //      if(ret==0) {
-  //        cout << "Make directory " << preDir << " for Preintegration results." << endl;
-  //      }
-  //      else {
-  //        cout << "Use existing directory " << preDir << " for Preintegration results." << endl;
-  //      }
-  //    }
-  //
-  //    return;
-  //  }
 
   Vec DynamicSystemSolver::zdotStandard(const Vec &zParent, double t) {
     if(q()!=zParent()) {

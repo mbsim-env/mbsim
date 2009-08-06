@@ -29,10 +29,10 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  PointFlexibleBand::PointFlexibleBand() : ContactKinematics(),ipoint(0),icontour(0),point(0),band(0) {}
-  PointFlexibleBand::~PointFlexibleBand() {}
+  ContactKinematicsPointFlexibleBand::ContactKinematicsPointFlexibleBand() : ContactKinematics(),ipoint(0),icontour(0),point(0),band(0) {}
+  ContactKinematicsPointFlexibleBand::~ContactKinematicsPointFlexibleBand() {}
 
-  void PointFlexibleBand::assignContours(const vector<Contour*>& contour) {	
+  void ContactKinematicsPointFlexibleBand::assignContours(const vector<Contour*>& contour) {	
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       icontour = 1;
@@ -47,7 +47,7 @@ namespace MBSim {
     }
   }
 
-  void PointFlexibleBand::updateg(Vec& g, ContourPointData *cpData) {
+  void ContactKinematicsPointFlexibleBand::updateg(Vec& g, ContourPointData *cpData) {
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // position of point
 
     FuncPairContour1sPoint *func= new FuncPairContour1sPoint(point,band); // root function for searching contact parameters

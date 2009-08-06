@@ -87,14 +87,6 @@ namespace MBSim {
       virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
 
-      /* INTERFACE FOR DERIVED CLASSES */
-      virtual void writeq(); // TODO the following: only testing
-      virtual void readq0();
-      virtual void writeu();
-      virtual void readu0();
-      virtual void writex();
-      virtual void readx0();
-
       /**
        * \brief references to positions of dynamic system parent
        * \param vector to be referenced
