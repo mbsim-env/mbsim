@@ -24,6 +24,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Frame;
+  class Arrow;
 }
 #endif
 
@@ -124,7 +125,9 @@ namespace MBSim {
       /***************************************************/
       
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBVContactPoints(double size=1.) { OpenMBVContactFrameSize=size; }
+      void enableOpenMBVContactPoints(double size=1.) { openMBVContactFrameSize=size; }
+      void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) { contactArrow=arrow; }
+      void setOpenMBVFrictionArrow(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
 #endif
 
       /* GETTER / SETTER */
@@ -228,12 +231,16 @@ namespace MBSim {
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<OpenMBV::Frame *> OpenMBVContactFrame;
+      std::vector<OpenMBV::Frame *> openMBVContactFrame;
+
+      std::vector<OpenMBV::Arrow *> openMBVNormalForceArrow, openMBVFrictionArrow;
 
       /**
        * \brief size of ContactFrames to draw
        */
-      double OpenMBVContactFrameSize;
+      double openMBVContactFrameSize;
+
+      OpenMBV::Arrow *contactArrow, *frictionArrow;
 #endif
   };
 

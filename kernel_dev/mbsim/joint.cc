@@ -521,8 +521,10 @@ namespace MBSim {
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
-      setImpactForceLaw(gifl);
-      gifl->initializeUsingXML(ee->FirstChildElement());
+      if(gifl) {
+        setImpactForceLaw(gifl);
+        gifl->initializeUsingXML(ee->FirstChildElement());
+      }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
@@ -543,8 +545,10 @@ namespace MBSim {
       gfl->initializeUsingXML(ee->FirstChildElement());
       ee=ee->NextSiblingElement();
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
-      setImpactMomentLaw(gifl);
-      gifl->initializeUsingXML(ee->FirstChildElement());
+      if(gifl) {
+        setImpactMomentLaw(gifl);
+        gifl->initializeUsingXML(ee->FirstChildElement());
+      }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));

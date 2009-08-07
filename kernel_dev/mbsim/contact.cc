@@ -26,10 +26,12 @@
 #include <mbsim/contact_kinematics/contact_kinematics.h>
 #include <mbsim/utils/contact_utils.h>
 #include <mbsim/utils/function.h>
+#include <mbsim/utils/utils.h>
 #include <mbsim/objectfactory.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>
 #endif
@@ -41,7 +43,7 @@ namespace MBSim {
 
   Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , OpenMBVContactFrameSize(0)
+                                         , openMBVContactFrameSize(0), contactArrow(NULL), frictionArrow(NULL)
 #endif
                                          {}
 
@@ -472,18 +474,34 @@ namespace MBSim {
     updatePlotFeatures(parent);
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV)==enabled && OpenMBVContactFrameSize>epsroot()) {
+      if (getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
         OpenMBV::Group * openMBVGrp = new OpenMBV::Group();
-        openMBVGrp->setName(name+"#Group");
+        openMBVGrp->setName(name+"#ContactGroup");
         openMBVGrp->setExpand(false);
         parent->getOpenMBVGrp()->addObject(openMBVGrp);
         for (unsigned int i=0; i<cpData.size(); i++) {
-          OpenMBVContactFrame.push_back(new OpenMBV::Frame[2]);
-          for (unsigned int k=0; k<2; k++) {
-            OpenMBVContactFrame[i][k].setOffset(1.);
-            OpenMBVContactFrame[i][k].setSize(OpenMBVContactFrameSize);
-            OpenMBVContactFrame[i][k].setName("ContactPoint "+cpData[i][k].getFrameOfReference().getName());
-            openMBVGrp->addObject(&OpenMBVContactFrame[i][k]);
+          if(openMBVContactFrameSize>epsroot()) {
+            openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
+            for (unsigned int k=0; k<2; k++) { // frames
+              openMBVContactFrame[i][k].setOffset(1.);
+              openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
+              openMBVContactFrame[i][k].setName("ContactPoint#"+numtostr((int)i)+(k==0?"A":"B"));
+              openMBVGrp->addObject(&openMBVContactFrame[i][k]);
+            }
+          }
+          // arrows
+          OpenMBV::Arrow *arrow;
+          if(contactArrow) {
+            arrow=new OpenMBV::Arrow(*contactArrow);
+            arrow->setName("NormalForce#"+numtostr((int)i)+"B");
+            openMBVNormalForceArrow.push_back(arrow); // normal force
+            openMBVGrp->addObject(arrow);
+          }
+          if(frictionArrow && getFrictionDirections()>0) { // friction force
+            arrow=new OpenMBV::Arrow(*frictionArrow);
+            arrow->setName("FrictionForce#"+numtostr((int)i)+"B");
+            openMBVFrictionArrow.push_back(arrow);
+            openMBVGrp->addObject(arrow);
           }
         }
       }
@@ -495,20 +513,69 @@ namespace MBSim {
   void Contact::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV)==enabled && OpenMBVContactFrameSize>epsroot()) {
+      if (getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
         for (unsigned int i=0; i<cpData.size(); i++) {
-          for (unsigned int k=0; k<2; k++) {
-            vector<double> data;
+          // frames
+          if(openMBVContactFrameSize>epsroot())
+            for (unsigned int k=0; k<2; k++) {
+              vector<double> data;
+              data.push_back(t);
+              data.push_back(cpData[i][k].getFrameOfReference().getPosition()(0));
+              data.push_back(cpData[i][k].getFrameOfReference().getPosition()(1));
+              data.push_back(cpData[i][k].getFrameOfReference().getPosition()(2));
+              Vec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
+              data.push_back(cardan(0));
+              data.push_back(cardan(1));
+              data.push_back(cardan(2));
+              data.push_back(0);
+              openMBVContactFrame[i][k].append(data);
+            }
+          // arrows
+          // normal force
+          vector<double> data;
+          if(contactArrow) {
             data.push_back(t);
-            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(0));
-            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[i][k].getFrameOfReference().getPosition()(2));
-            Vec cardan=AIK2Cardan(cpData[i][k].getFrameOfReference().getOrientation());
-            data.push_back(cardan(0));
-            data.push_back(cardan(1));
-            data.push_back(cardan(2));
-            data.push_back(0);
-            OpenMBVContactFrame[i][k].append(data);
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(1));
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(2));
+            Vec F(3,INIT,0);
+            if(isSetValued()) {
+              if(gActive[i]) F=fF[i][1].col(0)*lak[i](0);
+            }
+            else
+              F=cpData[i][0].getFrameOfReference().getOrientation().col(0)*lak[i](0);
+            data.push_back(F(0));
+            data.push_back(F(1));
+            data.push_back(F(2));
+            data.push_back(nrm2(F));
+            openMBVNormalForceArrow[i]->append(data);
+          }
+          if(frictionArrow && getFrictionDirections()>0) { // friction force
+            data.clear();
+            data.push_back(t);
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(1));
+            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(2));
+            Vec F(3,INIT,0);
+            if(isSetValued()) {
+              if(gActive[i] && lak[i].size()>1) { // stick friction
+                F=fF[i][1].col(1)*lak[i](1);
+                if(getFrictionDirections()>1)
+                  F+=fF[i][1].col(2)*lak[i](2);
+              }
+              if(gActive[i] && lak[i].size()==1) // slip friction
+                F=fF[i][1](Index(0,2),iT)*fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0);
+            }
+            else {
+              F=cpData[i][0].getFrameOfReference().getOrientation().col(1)*lak[i](1);
+              if(getFrictionDirections()>1)
+                F+=cpData[i][0].getFrameOfReference().getOrientation().col(2)*lak[i](2);
+            }
+            data.push_back(F(0));
+            data.push_back(F(1));
+            data.push_back(F(2));
+            data.push_back((isSetValued() && lak[i].size()>1)?1:0.5); // draw in green if slipping and draw in red if sticking
+            openMBVFrictionArrow[i]->append(data);
           }
         }
       }
@@ -1036,25 +1103,44 @@ namespace MBSim {
     gfl->initializeUsingXML(e->FirstChildElement());
     e=e->NextSiblingElement();
     GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(e->FirstChildElement());
-    setContactImpactLaw(gifl);
-    gifl->initializeUsingXML(e->FirstChildElement());
+    if(gifl) {
+      setContactImpactLaw(gifl);
+      gifl->initializeUsingXML(e->FirstChildElement());
+    }
     e=e->NextSiblingElement();
     FrictionForceLaw *ffl=ObjectFactory::getInstance()->createFrictionForceLaw(e->FirstChildElement());
     setFrictionForceLaw(ffl);
     ffl->initializeUsingXML(e->FirstChildElement());
     e=e->NextSiblingElement();
     FrictionImpactLaw *fil=ObjectFactory::getInstance()->createFrictionImpactLaw(e->FirstChildElement());
-    setFrictionImpactLaw(fil);
-    fil->initializeUsingXML(e->FirstChildElement());
+    if(fil) {
+      setFrictionImpactLaw(fil);
+      fil->initializeUsingXML(e->FirstChildElement());
+    }
     e=element->FirstChildElement(MBSIMNS"connect");
     Contour *ref1=getContourByPath(e->Attribute("ref1"));
     if(!ref1) { cerr<<"ERROR! Cannot find contour: "<<e->Attribute("ref1")<<endl; _exit(1); }
     Contour *ref2=getContourByPath(e->Attribute("ref2"));
     if(!ref2) { cerr<<"ERROR! Cannot find contour: "<<e->Attribute("ref2")<<endl; _exit(1); }
     connect(ref1,ref2);
-    if (element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
       enableOpenMBVContactPoints(atof(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")->GetText()));
-    e=e->NextSiblingElement();
+    e=element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVNormalForceArrow(arrow);
+      e=e->NextSiblingElement();
+    }
+    e=element->FirstChildElement(MBSIMNS"openMBVFrictionArrow");
+    if(e) {
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      arrow->initializeUsingXML(e->FirstChildElement()); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVFrictionArrow(arrow);
+      e=e->NextSiblingElement();
+    }
+#endif
   }
 
 }
