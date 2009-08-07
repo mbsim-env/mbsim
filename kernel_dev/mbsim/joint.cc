@@ -22,6 +22,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -392,6 +393,17 @@ namespace MBSim {
     }
   }
 
+  void Joint::updater(double t) {
+    for(unsigned int i=0; i<frame.size(); i++)
+      r[i] += V[i]*la;
+
+    // WF and WM are needed by OpenMBV plotting
+    WF[0]=fF[0]*la;
+    WF[1]=-WF[0];
+    WM[0]=fM[0]*la;
+    WM[1]=-WM[0];
+  }
+
   void Joint::updaterFactors() {
     if(isActive()) {
       double *a = ds->getGs()();
@@ -511,6 +523,15 @@ namespace MBSim {
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       setImpactForceLaw(gifl);
       gifl->initializeUsingXML(ee->FirstChildElement());
+      ee=ee->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
+      if(arrow) {
+        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+        setOpenMBVForceArrow(arrow);
+        ee=ee->NextSiblingElement();
+      }
+#endif
     }
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
@@ -524,6 +545,15 @@ namespace MBSim {
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       setImpactMomentLaw(gifl);
       gifl->initializeUsingXML(ee->FirstChildElement());
+      ee=ee->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
+      if(arrow) {
+        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+        setOpenMBVMomentArrow(arrow);
+        ee=ee->NextSiblingElement();
+      }
+#endif
     }
     e=element->FirstChildElement(MBSIMNS"connect");
     Frame *ref1=getFrameByPath(e->Attribute("ref1"));

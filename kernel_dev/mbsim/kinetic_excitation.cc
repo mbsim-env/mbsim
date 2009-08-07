@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
+#include "openmbvcppinterface/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -73,22 +74,45 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
-      Mat dir(e->FirstChildElement(MBSIMNS"directionVectors")->GetText());
-      Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement(MBSIMNS"function")->FirstChildElement());
-      func->initializeUsingXML(e->FirstChildElement(MBSIMNS"function")->FirstChildElement());
+      TiXmlElement *ee=e->FirstChildElement();
+      Mat dir(ee->GetText());
+      ee=ee->NextSiblingElement();
+      Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(ee->FirstChildElement());
+      func->initializeUsingXML(ee->FirstChildElement());
       setForce(dir, func);
+      ee=ee->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
+      if(arrow) {
+        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+        setOpenMBVForceArrow(arrow);
+        ee=ee->NextSiblingElement();
+      }
+#endif
     }
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
-      Mat dir(e->FirstChildElement(MBSIMNS"directionVectors")->GetText());
-      Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement(MBSIMNS"function")->FirstChildElement());
-      func->initializeUsingXML(e->FirstChildElement(MBSIMNS"function")->FirstChildElement());
+      TiXmlElement *ee=e->FirstChildElement();
+      Mat dir(ee->GetText());
+      ee=ee->NextSiblingElement();
+      Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(ee->FirstChildElement());
+      func->initializeUsingXML(ee->FirstChildElement());
       setMoment(dir, func);
+      ee=ee->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
+      if(arrow) {
+        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVMomentArrow calls the copy constructor on arrow
+        setOpenMBVMomentArrow(arrow);
+        ee=ee->NextSiblingElement();
+      }
+#endif
     }
     e=element->FirstChildElement(MBSIMNS"connect");
     Frame *con=getFrameByPath(e->Attribute("ref"));
     if(!con) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
     connect(con);
+    e=e->NextSiblingElement();
   }
 
 }

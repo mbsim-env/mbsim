@@ -57,6 +57,7 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateJacobians(double t);
+      virtual void updater(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -119,6 +120,22 @@ namespace MBSim {
       void setMomentDirection(const fmatvec::Mat& md);
 
       virtual void initializeUsingXML(TiXmlElement *element);
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow acting on frame2 */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
+        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+      }
+
+      /** \brief Visualize a moment arrow acting on frame2 */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(2, false);
+        which[1]=true;
+        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+      }
+#endif
 
     protected:
       /**

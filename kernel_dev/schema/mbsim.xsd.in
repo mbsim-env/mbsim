@@ -401,6 +401,7 @@
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -415,6 +416,7 @@
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -440,6 +442,14 @@
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="projectionDirection" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="frameOfReference"/>
+                <xs:element name="direction" type="pv:nounitVector"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
           <xs:element name="connect">
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
@@ -447,6 +457,7 @@
             </xs:complexType> 
           </xs:element>
           <xs:element ref="ombv:CoilSpring" minOccurs="0"/>
+          <xs:element ref="ombv:Arrow" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -475,6 +486,7 @@
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -496,6 +508,7 @@
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
+                <xs:element ref="ombv:Arrow" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>

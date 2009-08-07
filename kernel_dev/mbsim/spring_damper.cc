@@ -129,6 +129,15 @@ namespace MBSim {
     Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(e->FirstChildElement());
     setForceFunction(f);
     f->initializeUsingXML(e->FirstChildElement());
+    e=element->FirstChildElement(MBSIMNS"projectionDirection");
+    if(e) {
+      TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+      Frame *ref=getFrameByPath(ee->Attribute("ref"));
+      if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+      ee=e->FirstChildElement(MBSIMNS"direction");
+      Vec dir(ee->GetText());
+      setProjectionDirection(ref, dir);
+    }
     e=element->FirstChildElement(MBSIMNS"connect");
     Frame *ref1=getFrameByPath(e->Attribute("ref1"));
     if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
@@ -141,6 +150,13 @@ namespace MBSim {
     if(coilSpring) {
       setOpenMBVSpring(coilSpring);
       coilSpring->initializeUsingXML(e);
+      e=e->NextSiblingElement();
+    }
+    OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e));
+    if(arrow) {
+      arrow->initializeUsingXML(e); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+      setOpenMBVForceArrow(arrow);
+      e=e->NextSiblingElement();
     }
 #endif
   }
