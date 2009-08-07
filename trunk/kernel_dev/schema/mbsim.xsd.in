@@ -482,7 +482,7 @@
                 <xs:element name="generalizedImpactLaw">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="GeneralizedImpactLaw"/>
+                      <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -504,7 +504,7 @@
                 <xs:element name="generalizedImpactLaw">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="GeneralizedImpactLaw"/>
+                      <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -538,7 +538,7 @@
           <xs:element name="contactImpactLaw">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="GeneralizedImpactLaw"/>
+                <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -552,7 +552,7 @@
           <xs:element name="frictionImpactLaw">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionImpactLaw"/>
+                <xs:element ref="FrictionImpactLaw" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -563,6 +563,20 @@
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0"/>
+          <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVFrictionArrow" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ombv:Arrow"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -873,7 +887,7 @@
   <xs:element name="Function2_VVS" abstract="true" type="Function2_VVSType"/>
   <xs:complexType name="Function2_VVSType"/>
 
-  <xs:element name="LinearRegularizedCoulombFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType"/>
+  <xs:element name="LinearRegularizedCoulombFriction" abstract="true" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType"/>
   <xs:complexType name="LinearRegularizedCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="Function2_VVSType">
