@@ -125,8 +125,25 @@ namespace MBSim {
       /***************************************************/
       
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Draw two OpenMBV::Frame's of size size at the contact points.
+       * If the contact is closed, then the two contact points are the same on each contour.
+       * If the contact is not closed, then the two contact point lie on the contours with minimal distance inbetween.
+       * The x-axis of this frames are orientated to the other frame origin (normal vector).
+       */
       void enableOpenMBVContactPoints(double size=1.) { openMBVContactFrameSize=size; }
+
+      /** \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
+       * This vector is the force which is applied on the second contour.
+       * The reactio (not drawn) is applied on the frist contour.
+       */
       void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) { contactArrow=arrow; }
+
+      /** \brief Sets the OpenMBV::Arrow to be used for drawing the friction force vector.
+       * This vector is the friction which is applied on the second contour.
+       * The reactio (not drawn) is applied on the frist contour.
+       * If using a set-valued friction law, then the arrow is drawn in green if the contact
+       * is in slip and in red, if the contact is in stick.
+       */
       void setOpenMBVFrictionArrow(OpenMBV::Arrow *arrow) { frictionArrow=arrow; }
 #endif
 
