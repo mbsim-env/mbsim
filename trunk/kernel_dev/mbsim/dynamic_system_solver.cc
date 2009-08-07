@@ -620,7 +620,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updater(double t) {
-    r = V*la;
+    r.init(0);
+    DynamicSystem::updater(t); // must be called locally to be able to do some post "constraint solver" calculations in Objects/Links
   }
 
   void DynamicSystemSolver::updatewb(double t) {

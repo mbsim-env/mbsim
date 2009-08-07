@@ -22,6 +22,7 @@
 #include "mbsim/dynamic_system.h"
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -210,16 +211,47 @@ namespace MBSim {
   }
 
   void LinkMechanics::updater(double t) {
-
     for(unsigned int i=0; i<frame.size(); i++) 
-      r[i] += W[i]*la;
+      r[i] += V[i]*la;
 
     for(unsigned int i=0; i<contour.size(); i++) 
-      r[i] += W[i]*la;
+      r[i] += V[i]*la;
   }
 
   void LinkMechanics::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
+        if(openMBVArrowF[i]) {
+          vector<double> data;
+          data.push_back(t); 
+          Vec toPoint=frame[i]->getPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          data.push_back(WF[i](0));
+          data.push_back(WF[i](1));
+          data.push_back(WF[i](2));
+          data.push_back(nrm2(WF[i]));
+          openMBVArrowF[i]->append(data);
+        }
+      }
+      for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
+        if(openMBVArrowM[i]) {
+          vector<double> data;
+          data.push_back(t); 
+          Vec toPoint=frame[i]->getPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          data.push_back(WM[i](0));
+          data.push_back(WM[i](1));
+          data.push_back(WM[i](2));
+          data.push_back(nrm2(WM[i]));
+          openMBVArrowM[i]->append(data);
+        }
+      }
+#endif
       Link::plot(t,dt);
     }
   }
@@ -336,6 +368,10 @@ namespace MBSim {
       fF.push_back(Mat(3,laSize));
       fM.push_back(Mat(3,laSize));
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
+    assert(openMBVArrowM.size()==0 || openMBVArrowM.size()==frame.size());
+#endif
 
     for(unsigned int i=0; i<contour.size(); i++) {
       W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
@@ -359,10 +395,24 @@ namespace MBSim {
     updatePlotFeatures(parent);
 
     if(getPlotFeature(plotRecursive)==enabled) {
-      //#ifdef HAVE_AMVIS
-      //      for (unsigned int i=0; i<arrowAMVis.size(); i++)
-      //        arrowAMVis[i]->writeBodyFile();
-      //#endif
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    OpenMBV::Group *forceGrp=new OpenMBV::Group;
+    forceGrp->setExpand(false);
+    forceGrp->setName(name+"#ArrowGroup");
+    parent->getOpenMBVGrp()->addObject(forceGrp);
+    for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
+      if(openMBVArrowF[i]) {
+        openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
+        forceGrp->addObject(openMBVArrowF[i]);
+      }
+    }
+    for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
+      if(openMBVArrowM[i]) {
+        openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
+        forceGrp->addObject(openMBVArrowM[i]);
+      }
+    }
+#endif
       Link::initPlot();
     }
   }
@@ -374,6 +424,26 @@ namespace MBSim {
   void LinkMechanics::connect(Contour *contour_) {
     contour.push_back(contour_);
   }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void LinkMechanics::setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    for(unsigned int i=0; i<which.size(); i++) {
+      if(which[i]==true)
+        openMBVArrowF.push_back(new OpenMBV::Arrow(*arrow));
+      else
+        openMBVArrowF.push_back(NULL);
+    }
+  }
+
+  void LinkMechanics::setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const vector<bool>& which) {
+    for(unsigned int i=0; i<which.size(); i++) {
+      if(which[i]==true)
+        openMBVArrowM.push_back(new OpenMBV::Arrow(*arrow));
+      else
+        openMBVArrowM.push_back(NULL);
+    }
+  }
+#endif
 
 }
 

@@ -22,6 +22,10 @@
 
 #include "link.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/arrow.h>
+#endif
 
 namespace H5 {
   class Group;
@@ -99,6 +103,11 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element) {}
 
     protected:
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);
+#endif
+
       /** 
        * \brief force and moment direction for smooth right hand side
        */
@@ -118,6 +127,11 @@ namespace MBSim {
        * \brief array in which all contours are listed, connecting bodies via link
        */
       std::vector<Contour*> contour;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      std::vector<OpenMBV::Arrow*> openMBVArrowF;
+      std::vector<OpenMBV::Arrow*> openMBVArrowM;
+#endif
   };
 }
 

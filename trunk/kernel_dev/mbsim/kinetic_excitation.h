@@ -59,6 +59,20 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /** \brief Visualize a force arrow acting on the frame */
+      void setOpenMBVForceArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(1, true);
+        LinkMechanics::setOpenMBVForceArrow(arrow, which);
+      }
+
+      /** \brief Visualize a moment arrow acting on the frame */
+      void setOpenMBVMomentArrow(OpenMBV::Arrow *arrow) {
+        std::vector<bool> which; which.resize(1, true);
+        LinkMechanics::setOpenMBVMomentArrow(arrow, which);
+      }
+#endif
+
       void initializeUsingXML(TiXmlElement *element);
   };
 
