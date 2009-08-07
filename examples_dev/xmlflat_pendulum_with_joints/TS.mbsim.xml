@@ -45,7 +45,7 @@
       <contours/>
       <openMBVRigidBody>
         <ombv:Frustum name="dummy">
-          <ombv:initialTranslation>[0;-0.5;0]</ombv:initialTranslation>
+          <ombv:initialTranslation>[0;-0.5;-0.05]</ombv:initialTranslation>
           <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
           <ombv:baseRadius>0.02</ombv:baseRadius>
@@ -83,7 +83,7 @@
       <contours/>
       <openMBVRigidBody>
         <ombv:Frustum name="dummy">
-          <ombv:initialTranslation>[0;-0.5;0]</ombv:initialTranslation>
+          <ombv:initialTranslation>[0;-0.5;-0.05]</ombv:initialTranslation>
           <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
           <ombv:baseRadius>0.02</ombv:baseRadius>
@@ -105,6 +105,14 @@
         <generalizedImpactLaw>
           <BilateralImpact/>
         </generalizedImpactLaw>
+        <ombv:Arrow name="dummy">
+          <ombv:staticColor>1</ombv:staticColor>
+          <ombv:diameter>0.01</ombv:diameter>
+          <ombv:headDiameter>0.02</ombv:headDiameter>
+          <ombv:headLength>0.04</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.02</ombv:scaleLength>
+        </ombv:Arrow>
       </force>
       <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[PunktO]"/>
     </Joint>
@@ -117,6 +125,14 @@
         <generalizedImpactLaw>
           <BilateralImpact/>
         </generalizedImpactLaw>
+        <ombv:Arrow name="dummy">
+          <ombv:staticColor>1</ombv:staticColor>
+          <ombv:diameter>0.01</ombv:diameter>
+          <ombv:headDiameter>0.02</ombv:headDiameter>
+          <ombv:headLength>0.04</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.02</ombv:scaleLength>
+        </ombv:Arrow>
       </force>
       <connect ref1="../Object[Stab1]/Frame[PunktU]" ref2="../Object[Stab2]/Frame[Punkt]"/>
     </Joint>

@@ -94,12 +94,13 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Object[Box1]/Frame[P1]" ref2="../Frame[I]"/>
-      <ombv:CoilSpring name="dummy">
-        <ombv:numberOfCoils>5</ombv:numberOfCoils>
-        <ombv:springRadius>0.1</ombv:springRadius>
-        <ombv:crossSectionRadius>0.01</ombv:crossSectionRadius>
-        <ombv:scaleFactor>1</ombv:scaleFactor>
-      </ombv:CoilSpring>
+      <ombv:Arrow name="dummy">
+        <ombv:diameter>0.02</ombv:diameter>
+        <ombv:headDiameter>0.02*2</ombv:headDiameter>
+        <ombv:headLength>0.02*4</ombv:headLength>
+        <ombv:type>"toHead"</ombv:type>
+        <ombv:scaleLength>0.005</ombv:scaleLength>
+      </ombv:Arrow>
     </SpringDamper>
     <SpringDamper name="Feder2">
       <forceFunction>

@@ -71,6 +71,13 @@
             <value>[10]</value>
           </ConstantFunction1_VS>
         </function>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.05</ombv:diameter>
+          <ombv:headDiameter>0.1</ombv:headDiameter>
+          <ombv:headLength>0.2</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.05</ombv:scaleLength>
+        </ombv:Arrow>
       </force>
       <moment>
         <directionVectors>[0;0;1]</directionVectors>
@@ -79,6 +86,13 @@
             <value>[10]</value>
           </ConstantFunction1_VS>
         </function>
+        <ombv:Arrow name="dummy">
+          <ombv:diameter>0.05</ombv:diameter>
+          <ombv:headDiameter>0.1</ombv:headDiameter>
+          <ombv:headLength>0.2</ombv:headLength>
+          <ombv:type>"toHead"</ombv:type>
+          <ombv:scaleLength>0.05</ombv:scaleLength>
+        </ombv:Arrow>
       </moment>
       <connect ref="../Object[Box1]/Frame[C]"/>
     </KineticExcitation>
