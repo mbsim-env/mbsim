@@ -41,9 +41,7 @@ namespace MBSim {
       void init();
       void updateW(double t);
 
-      void setStatus(bool active_) {active=active_; }
-
-      virtual bool isActive() const {return active; }
+      virtual bool isActive() const {return active; } 
       virtual bool gActiveChanged();
 
       virtual bool isSetValued() const {return true; }
@@ -52,8 +50,8 @@ namespace MBSim {
       void calcrFactorSize() {rFactorSize=1; }
 
       //notwendige Funktionen aus MBSim
-      virtual void updater(double t) {std::cout << "\nupdater(" << t << ")" << std::endl; };
-      virtual void updateg(double t) {};
+      virtual void updater(double t);
+      virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);

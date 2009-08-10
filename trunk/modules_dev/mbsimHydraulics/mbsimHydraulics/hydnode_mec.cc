@@ -20,6 +20,7 @@
 #include "hydnode_mec.h"
 #include "environment.h"
 #include "mbsim/frame.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/userfunction.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hydline.h"
@@ -54,16 +55,17 @@ namespace MBSim {
   }
 #endif
 
-  void HydNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
+  unsigned int HydNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;
     transFrame.normal = fN/nrm2(fN);
     transFrame.area = area;
     transFrame.considerVolumeChange = considerVolumeChange;
     connectedTransFrames.push_back(transFrame);
+    return connectedTransFrames.size()-1;
   }
 
-  void HydNodeMec::addRotMecArea(Frame * f, Vec fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
+  unsigned int HydNodeMec::addRotMecArea(Frame * f, Vec fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
     connectedRotFrameStruct rotFrame;
     rotFrame.frame = f;
     rotFrame.normal = fN/nrm2(fN);
@@ -71,6 +73,7 @@ namespace MBSim {
     rotFrame.fref = frameOfReference;
     rotFrame.considerVolumeChange = considerVolumeChange;
     connectedRotFrames.push_back(rotFrame);
+    return connectedTransFrames.size()-1;
   }
 
   void HydNodeMec::init() {
@@ -141,21 +144,21 @@ namespace MBSim {
   }
 
   void HydNodeMec::updatehRef(const Vec &hParent, const Vec& hLinkParent, int j) {
-    HydNode::updatehRef(hParent, j);
+    HydNode::updatehRef(hParent, hLinkParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
       int hI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
       int hJ = hI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
       h[nLines+i].resize() >> hParent(Index(hI, hJ));
-      hLink[nLines+i].resize() >> hParent(Index(hI, hJ));
+      hLink[nLines+i].resize() >> hLinkParent(Index(hI, hJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       int hI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
       int hJ = hI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
       h[nTrans+nLines+i].resize() >> hParent(Index(hI, hJ));
-      hLink[nTrans+nLines+i].resize() >> hParent(Index(hI, hJ));
+      hLink[nTrans+nLines+i].resize() >> hLinkParent(Index(hI, hJ));
     }
   }
-  
+
   void HydNodeMec::updatedhdqRef(const Mat& dhdqParent, int j) {
     // for (unsigned int i=0; i<nLines; i++) {
     //   int hInd = connectedLines[i].line->gethInd(parent, j);
@@ -198,7 +201,7 @@ namespace MBSim {
     HydNode::updategd(t);
 
     QMecTrans=0;
-    for (unsigned int i=0; i< nTrans; i++)
+    for (unsigned int i=0; i<nTrans; i++)
       if (connectedTransFrames[i].considerVolumeChange)
         QMecTrans += 
           connectedTransFrames[i].area * 
@@ -208,7 +211,7 @@ namespace MBSim {
               ) * connectedTransFrames[i].frame->getVelocity();
 
     QMecRot=0;
-    for (unsigned int i=0; i< nRot; i++) {
+    for (unsigned int i=0; i<nRot; i++) {
       if (connectedRotFrames[i].considerVolumeChange) {
         Vec WrRefF = 
           -connectedRotFrames[i].fref->getPosition()
@@ -241,14 +244,16 @@ namespace MBSim {
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
-        ) * (la - pinf);
+        //) * (la - pinf);
+        ) * (la);
       hLink[nLines+i] +=
         connectedTransFrames[i].area * 
         trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
         (
          connectedTransFrames[i].frame->getOrientation() * 
          connectedTransFrames[i].normal
-        ) * (la - pinf);
+        //) * (la - pinf);
+        ) * (la);
     }
     for (unsigned int i=0; i<nRot; i++) {
       h[nTrans+nLines+i] += 
@@ -257,14 +262,16 @@ namespace MBSim {
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal
-        ) * (la - pinf);
+        //) * (la - pinf);
+        ) * (la);
       hLink[nTrans+nLines+i] += 
         connectedRotFrames[i].area * 
         trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
         (
          connectedRotFrames[i].frame->getOrientation() * 
          connectedRotFrames[i].normal
-        ) * (la - pinf);
+        //) * (la - pinf);
+        ) * (la);
     }
   }
 
@@ -293,6 +300,10 @@ namespace MBSim {
     plotColumns.push_back("QRot [mm^3/s]");
     plotColumns.push_back("Mechanical surface flow into and out the node [mm^3/s]");
     plotColumns.push_back("gd(0)");
+    for (unsigned int i=0; i<nTrans; i++)
+      plotColumns.push_back("interface force on area " + numtostr(int(i)));
+    for (unsigned int i=0; i<nRot; i++)
+      plotColumns.push_back("interface force on area " + numtostr(int(i)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if (openMBVArrowSize>0) {
       for (int i=0; i<nTrans+nRot; i++) {
@@ -325,6 +336,12 @@ namespace MBSim {
     plotVector.push_back(QMecRot*1e9);
     plotVector.push_back(QMec*1e9);
     plotVector.push_back(gd(0));
+    for (unsigned int i=0; i<nTrans; i++)
+      //plotVector.push_back(connectedTransFrames[i].area*(la(0)-pinf(0)));
+      plotVector.push_back(connectedTransFrames[i].area*(la(0)));
+    for (unsigned int i=0; i<nRot; i++)
+      //plotVector.push_back(connectedRotFrames[i].area*(la(0)-pinf(0)));
+      plotVector.push_back(connectedRotFrames[i].area*(la(0)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
       WrON.init(0);
@@ -342,7 +359,8 @@ namespace MBSim {
             connectedTransFrames[i].frame->getOrientation() * 
             connectedTransFrames[i].normal
             ) *
-          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
+          //openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
+          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la)(0));
         data.push_back(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
@@ -360,7 +378,8 @@ namespace MBSim {
             connectedRotFrames[i].frame->getOrientation() * 
             connectedRotFrames[i].normal
             ) *
-          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
+          //openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la-pinf)(0));
+          openMBVArrowSize*1e-5*(isSetValued()?la(0)/dt:(la)(0));
         data.push_back(t);
         data.push_back(toPoint(0));
         data.push_back(toPoint(1));
@@ -412,7 +431,7 @@ namespace MBSim {
     // Formel (3-11), S. 103
     return factor[0]/(1.+factor[1]*pow(p, factor[2]));
   }
-  
+
   void HydNodeMecElastic::init() {
     HydNodeMec::init();
     la(0)=p0;
@@ -466,8 +485,8 @@ namespace MBSim {
     setFracAir(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"p0");
     setp0(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"V0");
-    setV0(atof(e->GetText()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialVolume");
+    setInitialVolume(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"transMecArea");
     TiXmlElement *ee;
     ee=e->FirstChildElement(MBSIMNS"frameOfReference");
@@ -498,11 +517,11 @@ namespace MBSim {
   void HydNodeMecRigid::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
       int hJ=connectedLines[i].sign.cols()-1;
-      W[i](Index(0,hJ), Index(0, 0)) += connectedLines[i].sign;
+      W[i](Index(0,hJ), Index(0, 0)) = connectedLines[i].sign;
     }
     for (unsigned int i=0; i<nTrans; i++) {
       int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
-      W[nLines+i](Index(0,hJ), Index(0, 0)) +=
+      W[nLines+i](Index(0,hJ), Index(0, 0)) =
         connectedTransFrames[i].area * 
         trans(connectedTransFrames[i].frame->getJacobianOfTranslation()) * 
         (
@@ -512,7 +531,7 @@ namespace MBSim {
     }
     for (unsigned int i=0; i<nRot; i++) {
       int hJ=connectedRotFrames[i].frame->getJacobianOfTranslation().cols()-1;
-      W[nTrans+nLines+i](Index(0,hJ), Index(0, 0)) += 
+      W[nTrans+nLines+i](Index(0,hJ), Index(0, 0)) = 
         connectedRotFrames[i].area * 
         trans(connectedRotFrames[i].frame->getJacobianOfTranslation()) * 
         (
@@ -561,12 +580,7 @@ namespace MBSim {
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    // res(i) = la(i) - fiml->project(la(i),     gdn(i),     gd(i),      rFactor(i));
-    //                        project(double la, double gdn, double gda, double r) {
-    //                          return la-r*gdn;
-    //                        }
     res(0) = rFactor(0)*gdn;
-    //la(0) -= gdn/a[ia[laIndDS+0]];
   }
 
   void HydNodeMecRigid::updaterFactors() {

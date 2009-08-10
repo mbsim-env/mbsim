@@ -57,9 +57,10 @@ namespace MBSim {
       void enableOpenMBVArrows(double size=1.);
 #endif
 
-      void setV0(double V0_) {V0=V0_; }
-      void addTransMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, bool considerVolumeChange=true);
-      void addRotMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, MBSim::Frame * frameOfReference, bool considerVolumeChange=true);
+      void setInitialVolume(double V0_) {V0=V0_; }
+      unsigned int addTransMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, bool considerVolumeChange=true);
+      unsigned int addRotMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, MBSim::Frame * frameOfReference, bool considerVolumeChange=true);
+      void setTransMecArea(unsigned int i, double area) {connectedTransFrames[i].area=area; }
 
       void calcxSize() {xSize=1; }
 

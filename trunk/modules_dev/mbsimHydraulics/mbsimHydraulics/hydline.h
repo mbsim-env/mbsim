@@ -26,7 +26,7 @@ namespace MBSim {
 
   class HydNode;
   class PressureLoss;
-  class PressureLossZetaVarArea;
+  class PressureLossVar;
   class UserFunction;
   class HydlineClosedBilateral;
   class HydlineClosedUnilateral;
@@ -41,6 +41,9 @@ namespace MBSim {
       void setToNode(HydNode * nTo_);
       void setLength(double l_) {l=l_; }
       void setDiameter(double d_) {d=d_; }
+      HydNode * getFromNode() { return nFrom; }
+      HydNode * getToNode() {return nTo; }
+      double getDiameter() {return d; }
 
       virtual fmatvec::Vec getQIn(double t) = 0;
       virtual fmatvec::Vec getQOut(double t) = 0;
@@ -58,53 +61,49 @@ namespace MBSim {
   
   class HydLine : public HydLineAbstract {
     public:
-      HydLine(const std::string &name);
-      ~HydLine();
+      HydLine(const std::string &name) : HydLineAbstract(name), pLossSum(0), pdVar(NULL) {}
+      ~HydLine() {};
       virtual std::string getType() const { return "HydLine"; }
 
       void addPressureLoss(PressureLoss * dp);
-      void setQ0(double u0) {setInitialGeneralizedVelocity(u0); }
 
       virtual fmatvec::Vec getQIn(double t) {return u; }
       virtual fmatvec::Vec getQOut(double t) {return -u; }
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
+      PressureLossVar * getPressureLossVar() {return pdVar; }
 
       void init();
-      void calcqSize();
-      void calcuSize(int j);
+      void calcqSize() {qSize=0; }
+      void calcuSize(int j) {uSize[j]=1; }
 
-      void updateStateDependentVariables(double t);
       void updateh(double t);
-      void updateM(double t);
+      void updateM(double t) {M(0,0)=MFac; }
 
       void initPlot();
       void plot(double t, double dt);
 
     private:
-      fmatvec::Vec pLossSum;
-      double zeta, MFac, zetaFac;
+      double MFac, pLossSum;
 
     protected:
       std::vector<PressureLoss*> pd;
-      PressureLossZetaVarArea * pdVarArea;
+      PressureLossVar * pdVar;
   };
 
   class HydLineValve : public HydLine {
     public:
-      HydLineValve(const std::string &name);
+      HydLineValve(const std::string &name) : HydLine(name) {};
       virtual std::string getType() const { return "HydLineValve"; }
   };
 
   class HydLineValveBilateral : public HydLineValve {
     public:
-      HydLineValveBilateral(const std::string &name);
+      HydLineValveBilateral(const std::string &name) : HydLineValve(name) {}
       virtual std::string getType() const { return "HydLineValveBilateral"; }
 
       void preinit();
       void init();
-
-      void updateStateDependentVariables(double t);
 
     private:
       HydlineClosedBilateral * closed;
@@ -112,85 +111,15 @@ namespace MBSim {
 
   class HydLineCheckvalveUnilateral : public HydLineValve {
     public:
-      HydLineCheckvalveUnilateral(const std::string &name);
+      HydLineCheckvalveUnilateral(const std::string &name) : HydLineValve(name) {}
       virtual std::string getType() const { return "HydLineCheckvalveUnilateral"; }
 
       void preinit();
 
-      void updateStateDependentVariables(double t);
     private:
       HydlineClosedUnilateral * closed;
   };
 
-
-  class PressureLoss {
-    public:
-      PressureLoss(const std::string &name);
-      virtual ~PressureLoss() {};
-      virtual void transferLineData(double d, double l) {};
-
-      virtual fmatvec::Vec operator()(double Q) = 0;
-      virtual void initPlot(std::vector<std::string>* plotColumns);
-      virtual void plot(std::vector<double>* plotVector);
-
-    protected:
-      std::string name;
-      fmatvec::Vec pLoss;
-  };
-
-  class PressureLossZeta : public PressureLoss {
-    public:
-      PressureLossZeta(const std::string &name, double zeta);
-      void transferLineData(double d, double l);
-
-      fmatvec::Vec operator()(double Q);
-
-    private:
-      double zetaFac;
-  };
-
-  class PressureLossZetaVarArea : public PressureLoss {
-    public:
-      PressureLossZetaVarArea(const std::string &name, double zeta, MBSim::UserFunction * relAreaFun, double minRelArea);
-      void transferLineData(double d, double l);
-
-      void updateRelativeArea(double t);
-      bool isClosed() {return closed; }
-
-      fmatvec::Vec operator()(double Q);
-      void initPlot(std::vector<std::string>* plotColumns);
-      void plot(std::vector<double>* plotVector);
-
-    private:
-      MBSim::UserFunction * relAreaFun;
-      double zetaFac, relArea, minRelArea;
-      bool closed;
-  };
-
-  class PressureLossLaminarTubeFlow : public PressureLoss {
-    public:
-      PressureLossLaminarTubeFlow(const std::string &name);
-      void transferLineData(double d, double l);
-
-      fmatvec::Vec operator()(double Q);
-
-    private:
-      double lossFactor;
-  };
-
-  class PressureLossCurveFit : public PressureLoss {
-    public:
-      PressureLossCurveFit(const std::string &name, double dRef, double dHyd, double aPos, double bPos, double aNeg=0, double bNeg=0);
-      void transferLineData(double d, double l);
-
-      fmatvec::Vec operator()(double Q);
-      void initPlot(std::vector<std::string>* plotColumns);
-      void plot(std::vector<double>* plotVector);
-
-    private:
-      double Re, ReynoldsFactor;
-      double aPos, bPos, aNeg, bNeg;
-  };
 }
 
 #endif   /* ----- #ifndef _HYDLINE_H_  ----- */

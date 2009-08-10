@@ -122,7 +122,7 @@ namespace MBSim {
       int hInd=connectedLines[i].line->gethInd(parent, j);
       Index I(hInd, hInd+connectedLines[i].sign.size()-1);
       h[i].resize() >> hParent(I);
-      hLink[i].resize()>>hLinkParent(I);
+      hLink[i].resize() >> hLinkParent(I);
     }
   }
 

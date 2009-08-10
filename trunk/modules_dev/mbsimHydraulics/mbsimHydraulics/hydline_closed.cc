@@ -20,6 +20,7 @@
 #include "hydline_closed.h"
 
 #include "hydline.h"
+#include "pressure_loss.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 
@@ -46,6 +47,15 @@ namespace MBSim {
     gdn.resize(1);
     la.resize(1);
     gdTol*=1e-6;
+  }
+
+  void HydlineClosed::updater(double t) {
+    r[0] += V[0]*la;
+  }
+
+  void HydlineClosed::updateg(double t) {
+    line->getPressureLossVar()->updateg(t);
+    active=line->getPressureLossVar()->isClosed();
   }
 
   void HydlineClosed::updategd(double t) {

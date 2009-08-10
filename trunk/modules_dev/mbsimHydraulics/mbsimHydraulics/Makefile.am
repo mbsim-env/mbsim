@@ -12,7 +12,8 @@ libmbsimHydraulics_la_SOURCES = \
   object_hydraulics.cc \
   valve43.cc \
   objectfactory.cc \
-  environment.cc
+  environment.cc \
+  pressure_loss.cc
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
@@ -29,4 +30,5 @@ mbsimHydraulicsinclude_HEADERS = \
   object_hydraulics.h \
   valve43.h \
   objectfactory.h \
-  environment.h
+  environment.h \
+  pressure_loss.h
