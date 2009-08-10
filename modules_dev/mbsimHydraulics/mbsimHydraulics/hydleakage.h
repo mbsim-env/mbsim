@@ -21,6 +21,7 @@
 #define  _HYDLEAKAGE_H_
 
 #include "hydline.h"
+#include "pressure_loss.h"
 
 namespace MBSim {
 
@@ -49,7 +50,7 @@ namespace MBSim {
       LeakagePressureLossHagenPoiseuille(const std::string &name);
       virtual void transferLeakageGapData(double lGap, double hGap, double wGap);
 
-      fmatvec::Vec operator()(double Q);
+      double operator()(double Q);
     private:
       double lossFactor;
   };

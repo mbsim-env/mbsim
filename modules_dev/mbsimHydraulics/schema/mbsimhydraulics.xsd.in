@@ -75,7 +75,7 @@
         <xs:sequence>
           <xs:element name="fracAir" type="pv:nounitScalar"/>  
           <xs:element name="p0" type="pv:nounitScalar"/>  
-          <xs:element name="V0" type="pv:nounitScalar"/>  
+          <xs:element name="initialVolume" type="pv:nounitScalar"/>  
           <xs:element name="transMecArea" maxOccurs="unbounded">
             <xs:complexType>
               <xs:sequence>

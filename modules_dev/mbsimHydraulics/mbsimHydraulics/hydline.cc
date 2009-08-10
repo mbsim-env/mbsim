@@ -22,6 +22,7 @@
 #include "mbsim/object.h"
 #include "hydline_closed.h"
 #include "environment.h"
+#include "pressure_loss.h"
 
 #include "mbsim/userfunction.h"
 
@@ -63,20 +64,13 @@ namespace MBSim {
   }
 
 
-  HydLine::HydLine(const string &name) : HydLineAbstract(name), pLossSum(1), pdVarArea(NULL) {
-  }
-
-  HydLine::~HydLine() {
-  }
-
   void HydLine::addPressureLoss(PressureLoss * dp_) {
     pd.push_back(dp_);
-    if (dynamic_cast<PressureLossZetaVarArea*>(dp_)) {
-      assert(pdVarArea==NULL);
-      pdVarArea=static_cast<PressureLossZetaVarArea*>(dp_);
+    if (dynamic_cast<PressureLossVar*>(dp_)) {
+      assert(pdVar==NULL);
+      pdVar=static_cast<PressureLossVar*>(dp_);
     }
   }
-
 
   void HydLine::init() {
     HydLineAbstract::init();
@@ -85,29 +79,11 @@ namespace MBSim {
       pd[i]->transferLineData(d, l);
   }
 
-  void HydLine::calcqSize() {
-    qSize=0;
-  }
-
-  void HydLine::calcuSize(int j) {
-    uSize[j]=1;
-  }
-  
-  void HydLine::updateM(double t) {
-    M(0,0)=MFac;
-  }
-
-  void HydLine::updateStateDependentVariables(double t) {
-    HydLineAbstract::updateStateDependentVariables(t);
-    if (pdVarArea)
-      pdVarArea->updateRelativeArea(t);
-  }
-
   void HydLine::updateh(double t) {
-    pLossSum.init(0);
+    pLossSum=0;
     for (unsigned int i=0; i<pd.size(); i++)
       pLossSum+=(*pd[i])(u(0));
-    h-=pLossSum;
+    h(0)-=pLossSum;
   }
 
   void HydLine::initPlot() {
@@ -122,19 +98,12 @@ namespace MBSim {
   void HydLine::plot(double t, double dt) {
     plotVector.push_back(u(0)*6e4);
     plotVector.push_back(u(0)*rho*60);
-    plotVector.push_back(pLossSum(0)*1e-5);
+    plotVector.push_back(pLossSum*1e-5);
     for (unsigned int i=0; i<pd.size(); i++)
       pd[i]->plot(&plotVector);
     HydLineAbstract::plot(t, dt);
   }
 
-
-  HydLineValve::HydLineValve(const string &name) : HydLine(name) {
-  }
-
-
-  HydLineValveBilateral::HydLineValveBilateral(const string &name) : HydLineValve(name) {
-  }
 
   void HydLineValveBilateral::preinit() {
     HydLine::preinit();
@@ -144,133 +113,15 @@ namespace MBSim {
 
   void HydLineValveBilateral::init() {
     HydLine::init();
-    assert(pdVarArea);
+    assert(pdVar);
   }
 
-  void HydLineValveBilateral::updateStateDependentVariables(double t) {
-    HydLine::updateStateDependentVariables(t);
-    closed->setStatus(pdVarArea->isClosed());
-  }
-
-
-  HydLineCheckvalveUnilateral::HydLineCheckvalveUnilateral(const string &name) : HydLineValve(name) {
-  }
-
+  
   void HydLineCheckvalveUnilateral::preinit() {
     HydLine::preinit();
     closed = new HydlineClosedUnilateral(name+".Closed", this);
     parent->addLink(closed);
   }
 
-  void HydLineCheckvalveUnilateral::updateStateDependentVariables(double t) {
-    HydLine::updateStateDependentVariables(t);
-    closed->setStatus((u(0)<=0));
-  }
-
-
-  PressureLoss::PressureLoss(const string &name_) : name(name_), pLoss(1) {
-  }
-
-  void PressureLoss::initPlot(vector<string>* plotColumns) {
-    plotColumns->push_back(name+"_pLoss [bar]");
-  }
-
-  void PressureLoss::plot(vector<double>* plotVector) {
-    plotVector->push_back(pLoss(0)*1e-5);
-  }
-
-
-  PressureLossZeta::PressureLossZeta(const string &name, double zeta) : PressureLoss(name) {
-    zetaFac=zeta;
-  }
-
-  void PressureLossZeta::transferLineData(double d, double l) {
-    double area=M_PI*d*d/4.;
-    zetaFac*=HydraulicEnvironment::getInstance()->getSpecificMass()/2./area/area;
-  }
-
-  Vec PressureLossZeta::operator()(double Q){
-    return pLoss.init(zetaFac*Q*fabs(Q));
-  }
-
-
-  PressureLossZetaVarArea::PressureLossZetaVarArea(const string &name, double zeta, UserFunction * relAreaFun_, double minRelArea_) : PressureLoss(name) {
-    zetaFac=zeta;
-    relAreaFun=relAreaFun_;
-    minRelArea=minRelArea_;
-    updateRelativeArea(0);
-  }
-
-  void PressureLossZetaVarArea::transferLineData(double d, double l) {
-    double area=M_PI*d*d/4.;
-    zetaFac*=HydraulicEnvironment::getInstance()->getSpecificMass()/2./area/area;
-  }
-
-  void PressureLossZetaVarArea::updateRelativeArea(double t) {
-    relArea = (*relAreaFun)(t)(0);
-    closed = (relArea<minRelArea);
-    relArea = (closed ? minRelArea : relArea);
-  }
-
-  void PressureLossZetaVarArea::initPlot(vector<string>* plotColumns) {
-    PressureLoss::initPlot(plotColumns);
-    plotColumns->push_back(name+"_relArea");
-    plotColumns->push_back(name+"_closed");
-  }
-
-  void PressureLossZetaVarArea::plot(vector<double>* plotVector) {
-    PressureLoss::plot(plotVector);
-    plotVector->push_back(relArea);
-    plotVector->push_back(closed);
-  }
-  
-  Vec PressureLossZetaVarArea::operator()(double Q){
-    return pLoss.init(zetaFac*Q*fabs(Q)/relArea/relArea);
-  }
-
-
-  PressureLossLaminarTubeFlow::PressureLossLaminarTubeFlow(const string &name) : PressureLoss(name) {
-  }
-
-  void PressureLossLaminarTubeFlow::transferLineData(double d, double l) {
-    double area=M_PI*d*d/4.;
-    lossFactor=32.*HydraulicEnvironment::getInstance()->getDynamicViscosity()*l/d/d/area;
-  }
-
-  Vec PressureLossLaminarTubeFlow::operator()(double Q) {
-    return pLoss.init(lossFactor * Q);
-  }
-
-
-  PressureLossCurveFit::PressureLossCurveFit(const string &name, double dRef, double dHyd, double aPos_, double bPos_, double aNeg_, double bNeg_) : PressureLoss(name) {
-    ReynoldsFactor=dHyd/(M_PI*dRef*dRef/4.);
-    aPos=aPos_;
-    bPos=bPos_;
-    aNeg = (aNeg_>0)?aNeg_:aPos_;
-    bNeg = (bNeg_>0)?bNeg_:bPos_;
-    assert(aPos>0);
-    assert(bPos>0);
-    assert(aNeg>0);
-    assert(bNeg>0);
-  }
-
-  void PressureLossCurveFit::transferLineData(double d, double l) {
-    ReynoldsFactor/=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-  }
-
-  Vec PressureLossCurveFit::operator()(double Q) {
-    Re=ReynoldsFactor*Q;
-    return pLoss.init(Re*((Q>0)?aPos+bPos*Re:aNeg-bNeg*Re));
-  }
-  
-  void PressureLossCurveFit::initPlot(vector<string>* plotColumns) {
-    PressureLoss::initPlot(plotColumns);
-    plotColumns->push_back(name+"_ReynoldsNumber");
-  }
-
-  void PressureLossCurveFit::plot(vector<double>* plotVector) {
-    PressureLoss::plot(plotVector);
-    plotVector->push_back(Re);
-  }
 }
 

@@ -22,6 +22,7 @@
 #include "mbsim/userfunction.h"
 #include "hydnode.h"
 #include "hydline.h"
+#include "pressure_loss.h"
 
 using namespace std;
 
@@ -58,7 +59,7 @@ namespace MBSim {
       addObject(l);
       l->setDiameter(v.dValve);
       l->setLength(v.lValve);
-      l->addPressureLoss(new PressureLossZetaVarArea(
+      l->addPressureLoss(new PressureLossVarAreaZeta(
             "ValvePressureLoss",
             1./v.alphaValve/v.alphaValve-1.,
             new FuncFunction(fun, v.signal),

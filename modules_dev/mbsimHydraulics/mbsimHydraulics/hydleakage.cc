@@ -67,8 +67,8 @@ namespace MBSim {
     cout << "lossFactor=" << lossFactor << endl;
   }
 
-  Vec LeakagePressureLossHagenPoiseuille::operator()(double Q){
-    return pLoss.init(lossFactor*Q);
+  double LeakagePressureLossHagenPoiseuille::operator()(double Q){
+    return lossFactor*Q;
   }
 
 }
