@@ -44,18 +44,6 @@ namespace MBSim {
       virtual ~LinkInterface() {}
 
       /*!
-       * for links holding non-smooth contributions \f$\dd\vLambda\f$, the respective forces are projected
-       * into the minimal coordinate representation of the associated Body%s using the
-       * JACOBIAN matrices \f$\vJ\f$.
-       * \f[ \vr = \vJ\dd\vLambda \f]
-       * The JACOBIAN is provided by the connected Frame%s (which might be
-       * user-defined for Joint%s or internally defined for Contact%s).
-       * \brief update smooth link force law
-       * \param simulation time
-       */
-      virtual void updater(double t) = 0;
-
-      /*!
        * \brief updates nonlinear relative acceleration term
        * \param simulation time
        */

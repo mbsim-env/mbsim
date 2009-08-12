@@ -57,7 +57,6 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateJacobians(double t);
-      virtual void updater(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -108,6 +107,8 @@ namespace MBSim {
       void setImpactForceLaw(GeneralizedImpactLaw * rc) { fifl = rc; }
       void setImpactMomentLaw(GeneralizedImpactLaw * rc) { fiml = rc; }
       /***************************************************/
+
+      void plot(double t, double dt = 1);
 
       /**
        * \param local force direction

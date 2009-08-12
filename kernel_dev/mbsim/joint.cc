@@ -393,17 +393,6 @@ namespace MBSim {
     }
   }
 
-  void Joint::updater(double t) {
-    for(unsigned int i=0; i<frame.size(); i++)
-      r[i] += V[i]*la;
-
-    // WF and WM are needed by OpenMBV plotting
-    WF[0]=fF[0]*la;
-    WF[1]=-WF[0];
-    WM[0]=fM[0]*la;
-    WM[1]=-WM[0];
-  }
-
   void Joint::updaterFactors() {
     if(isActive()) {
       double *a = ds->getGs()();
@@ -506,6 +495,19 @@ namespace MBSim {
 
     for(int i=0; i<md.cols(); i++)
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
+  }
+
+  void Joint::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      // WF and WM are needed by OpenMBV plotting in LinkMechanics::plot(...)
+      WF[0]=fF[0]*la;
+      WF[1]=-WF[0];
+      WM[0]=fM[0]*la;
+      WM[1]=-WM[0];
+#endif
+      LinkMechanics::plot(t,dt);
+    }
   }
 
   void Joint::initializeUsingXML(TiXmlElement *element) {

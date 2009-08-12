@@ -70,11 +70,6 @@ namespace MBSim {
       delete[] *i;
   }
 
-  void Contact::updater(double t) {
-    for(unsigned i=0; i<contour.size(); i++) 
-      r[i] += V[i]*la;
-  }
-
   void Contact::updatewb(double t) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
@@ -1099,7 +1094,7 @@ namespace MBSim {
   void Contact::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement();
+    e=element->FirstChildElement(MBSIMNS"contactForceLaw");
     GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->getInstance()->createGeneralizedForceLaw(e->FirstChildElement());
     setContactForceLaw(gfl);
     gfl->initializeUsingXML(e->FirstChildElement());

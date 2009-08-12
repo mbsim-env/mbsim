@@ -210,14 +210,6 @@ namespace MBSim {
     }
   }
 
-  void LinkMechanics::updater(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) 
-      r[i] += V[i]*la;
-
-    for(unsigned int i=0; i<contour.size(); i++) 
-      r[i] += V[i]*la;
-  }
-
   void LinkMechanics::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE

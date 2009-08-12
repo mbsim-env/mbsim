@@ -57,7 +57,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updatedhdz(double t);
-      virtual void updater(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -99,8 +98,6 @@ namespace MBSim {
        * \brief TODO
        */
       virtual void resizeJacobians(int j) {}
-
-      virtual void initializeUsingXML(TiXmlElement *element) {}
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE

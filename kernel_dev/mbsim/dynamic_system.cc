@@ -194,14 +194,6 @@ namespace MBSim {
   OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
-  void DynamicSystem::updater(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updater(t);
-
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updater(t);
-  }
-
   void DynamicSystem::updatewb(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatewb(t);
