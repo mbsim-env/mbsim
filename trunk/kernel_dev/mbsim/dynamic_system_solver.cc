@@ -1225,8 +1225,8 @@ namespace MBSim {
     H5::FileSerie::flushAllFiles();
   }
 
-  void DynamicSystemSolver::writez() {
-    H5::H5File file("z0.h5", H5F_ACC_TRUNC);
+  void DynamicSystemSolver::writez(string fileName) {
+    H5::H5File file(fileName, H5F_ACC_TRUNC);
 
     H5::SimpleDataSet<vector<double> > qToWrite;
     qToWrite.create(file,"q0");
@@ -1243,8 +1243,8 @@ namespace MBSim {
     file.close();
   }
 
-  void DynamicSystemSolver::readz0() {
-    H5::H5File file("z0.h5", H5F_ACC_RDONLY);
+  void DynamicSystemSolver::readz0(string fileName) {
+    H5::H5File file(fileName, H5F_ACC_RDONLY);
 
     H5::SimpleDataSet<vector<double> > qToRead;
     qToRead.open(file,"q0");

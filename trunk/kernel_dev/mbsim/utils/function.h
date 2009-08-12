@@ -26,9 +26,9 @@
 
 namespace MBSim {
 
-  /*! \brief Template class for Funtions with one parameter
-   *
-   * */
+  /*! 
+   * \brief template class for functions with one parameter
+   */
   template<class Ret, class Arg>
     class Function1 {
       public:
@@ -37,9 +37,9 @@ namespace MBSim {
         virtual void initializeUsingXML(TiXmlElement *element) {}
     };
 
-  /*! \brief Template class for Funtions with one parameter
-   *
-   * */
+  /*! 
+   * \brief template class for functions with two parameters
+   */
   template<class Ret, class Arg1, class Arg2>
     class Function2 {
       public:
@@ -48,15 +48,47 @@ namespace MBSim {
         virtual void initializeUsingXML(TiXmlElement *element) {}
     };
 
-  /*! \brief Template class for Funtions with three parameters
-   *
-   * */
+  /*! 
+   * \brief template class for functions with three parameters
+   */
   template<class Ret, class Arg1, class Arg2, class Arg3>
     class Function3 {
       public:
         virtual ~Function3() {}
         virtual Ret operator()(const Arg1& p1, const Arg2& p2, const Arg3& p3)=0;
         virtual void initializeUsingXML(TiXmlElement *element) {}
+    };
+
+  /*! 
+   * \brief template class for differentiable functions with one scalar parameter
+   */
+  template<class Ret>
+    class Differentiable1Function1 : public Function1<Ret,double> {
+      public:
+        Differentiable1Function1() : Function1<Ret,double>(), diff(0) {}
+        Differentiable1Function1(Function1<Ret,double> *diff_) : Function1<Ret,double>(), diff(diff_) {}
+        virtual ~Differentiable1Function1() { if(diff) delete diff; diff=0; }
+        const Function1<Ret,double>& getDerivative() const { return *diff; }
+        Function1<Ret,double>& getDerivative() { return *diff; }
+
+      protected:
+        Function1<Ret,double> *diff; // derivative
+    };
+
+  /*! 
+   * \brief template class for two times differentiable functions with one scalar parameter
+   */
+  template<class Ret>
+    class Differentiable2Function1 : public Function1<Ret,double> {
+      public:
+        Differentiable2Function1() : Function1<Ret,double>(), diff(0) {}
+        Differentiable2Function1(Differentiable1Function1<Ret> *diff_) : Function1<Ret,double>(), diff(diff_) {}
+        virtual ~Differentiable2Function1() { if(diff) delete diff; diff=0; }
+        const Differentiable1Function1<Ret>& getDerivative() const { return *diff; }
+        Differentiable1Function1<Ret>& getDerivative() { return *diff; }
+
+      protected:
+        Differentiable1Function1<Ret> *diff; // first and second derivative
     };
 
   template<class Ret, class Arg>

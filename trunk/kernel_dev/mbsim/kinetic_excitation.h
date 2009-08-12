@@ -26,27 +26,47 @@
 
 namespace MBSim {
 
-  class DataInterfaceBase;
-
+  /**
+   * \brief kinetic excitations given by time dependent functions
+   * \author Markus Friedrich
+   * \date 2009-08-11 some comments (Thorsten Schindler)
+   */
   class KineticExcitation : public LinkMechanics {
-    protected:
-      Frame *refFrame;
-      fmatvec::Mat forceDir, momentDir;
-      Function1<fmatvec::Vec,double> *F, *M;
-    public: 
+    public:
+      /**
+       * \brief constructor
+       * \param name of link machanics
+       */
       KineticExcitation(const std::string &name);
+
+      /**
+       * \brief destructor
+       */
       virtual ~KineticExcitation();
-      void updateh(double t);
+
+      /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updateh(double t);
+      virtual void updateg(double) {}
+      virtual void updategd(double) {}
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
+      virtual void init();
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF LINK */
       void calclaSize();
-      void init();
+      bool isActive() const { return true; }
+      bool gActiveChanged() { return false; }
+      /***************************************************/
 
       /** \brief Set the force excitation.
-       * dir*func(t) is the applied force vector in R3.
+       * forceDir*func(t) is the applied force vector in space.
        * This force vector is given in the frame set by setFrameOfReference.
        */
       void setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
 
-      /** see setForce */
+      /** \brief see setForce */
       void setMoment(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func);
 
       /** \brief The frame of reference for the force/moment direction vectors.
@@ -54,10 +74,6 @@ namespace MBSim {
        */
       void setFrameOfReference(Frame *ref_) { refFrame=ref_; }
 
-      void updateg(double) {}
-      void updategd(double) {}
-      bool isActive() const { return true; }
-      bool gActiveChanged() { return false; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** \brief Visualize a force arrow acting on the frame */
@@ -74,9 +90,25 @@ namespace MBSim {
 #endif
 
       void initializeUsingXML(TiXmlElement *element);
+
+    protected:
+      /**
+       * \brief frame of reference the force is defined in
+       */
+      Frame *refFrame;
+
+      /**
+       * \brief directions of force and moment in frame of reference
+       */
+      fmatvec::Mat forceDir, momentDir;
+
+      /**
+       * \brief portions of the force / moment in the specific directions
+       */
+      Function1<fmatvec::Vec,double> *F, *M;
   };
 
 }
 
-#endif
+#endif /* _KINETICEXCITATION_H_ */
 

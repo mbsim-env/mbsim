@@ -32,7 +32,6 @@ namespace MBSim {
    * \brief basic force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class GeneralizedForceLaw {
     public:
@@ -46,7 +45,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~GeneralizedForceLaw() {};
+      virtual ~GeneralizedForceLaw() { if(forceFunc) delete forceFunc; forceFunc = NULL; };
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
@@ -69,17 +68,6 @@ namespace MBSim {
        */
       virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd) { return true; }
 
-      double operator()(double g, double gd) { assert(forceFunc); return (*forceFunc)(g,gd); }
-
-      Function2<double,double,double> *forceFunc;
-
-      /** \brief Set the force function for use in regularisized constitutive laws
-       * The first input parameter to the force function is g.
-       * The second input parameter to the force function is gd.
-       * The return value is the force.
-       */
-      void setForceFunction(Function2<double,double,double> *forceFunc_) { forceFunc=forceFunc_; }
-
       /**
        * \return flag if the force law is setvalued
        */
@@ -91,13 +79,24 @@ namespace MBSim {
        */
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
+      
+      double operator()(double g, double gd) { assert(forceFunc); return (*forceFunc)(g,gd); }
+
+      /** \brief Set the force function for use in regularisized constitutive laws
+       * The first input parameter to the force function is g.
+       * The second input parameter to the force function is gd.
+       * The return value is the force.
+       */
+      void setForceFunction(Function2<double,double,double> *forceFunc_) { forceFunc=forceFunc_; }
+
+    protected:
+      Function2<double,double,double> *forceFunc;
   };
 
   /**
    * \brief basic unilateral force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class UnilateralConstraint : public GeneralizedForceLaw {
     public:
@@ -127,7 +126,6 @@ namespace MBSim {
    * \brief basic bilateral force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class BilateralConstraint : public GeneralizedForceLaw {
     public:
@@ -157,7 +155,6 @@ namespace MBSim {
    * \brief basic force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class GeneralizedImpactLaw {
     public:
@@ -184,7 +181,6 @@ namespace MBSim {
    * \brief basic unilateral force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class UnilateralNewtonImpact : public GeneralizedImpactLaw {
     public:
@@ -224,7 +220,6 @@ namespace MBSim {
    * \brief basic bilateral force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class BilateralImpact : public GeneralizedImpactLaw {
     public:
@@ -250,7 +245,6 @@ namespace MBSim {
    * \brief basic friction force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class FrictionForceLaw {
     public:
@@ -264,7 +258,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~FrictionForceLaw() {};
+      virtual ~FrictionForceLaw() { if(frictionForceFunc) delete frictionForceFunc; frictionForceFunc = NULL; };
 
       /* INTERFACE FOR DERIVED CLASSES */
       virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r) { return fmatvec::Vec(2); }
@@ -272,9 +266,14 @@ namespace MBSim {
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN) { return fmatvec::Vec(2); }
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd) { return true; }
       virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN) { return fmatvec::Vec(2); }
-
+      virtual int getFrictionDirections() = 0;
+      virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
+      virtual double getFrictionCoefficient(double gd) { return 0; }
+      virtual bool isSetValued() const = 0;
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+      /***************************************************/
+      
       fmatvec::Vec operator()(const fmatvec::Vec &gd, double laN) { assert(frictionForceFunc); return (*frictionForceFunc)(gd,laN); }
-      Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc;
 
       /** \brief Set the friction force function for use in regularisized constitutive friction laws
        * The first input parameter to the friction force function is gd.
@@ -283,19 +282,14 @@ namespace MBSim {
        */
       void setFrictionForceFunction(Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc_) { frictionForceFunc=frictionForceFunc_; }
 
-      virtual int getFrictionDirections() = 0;
-      virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
-      virtual double getFrictionCoefficient(double gd) { return 0; }
-      virtual bool isSetValued() const = 0;
-      virtual void initializeUsingXML(TiXmlElement *element) {}
-      /***************************************************/
+    protected:
+      Function2<fmatvec::Vec,fmatvec::Vec,double> *frictionForceFunc;
   };
 
   /**
    * \brief basic planar friction force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class PlanarCoulombFriction : public FrictionForceLaw {
     public:
@@ -336,7 +330,6 @@ namespace MBSim {
    * \brief basic spatial friction force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class SpatialCoulombFriction : public FrictionForceLaw {
     public:
@@ -378,7 +371,6 @@ namespace MBSim {
    * \brief basic friction force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class FrictionImpactLaw {
     public:
@@ -406,7 +398,6 @@ namespace MBSim {
    * \brief basic planar friction force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class PlanarCoulombImpact : public FrictionImpactLaw {
     public:
@@ -444,7 +435,6 @@ namespace MBSim {
    * \brief basic spatial friction force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class SpatialCoulombImpact : public FrictionImpactLaw {
     public:
@@ -483,7 +473,6 @@ namespace MBSim {
    * \brief basic regularized unilateral force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class RegularizedUnilateralConstraint : public GeneralizedForceLaw {
     public:
@@ -512,7 +501,6 @@ namespace MBSim {
    * \brief basic regularized bilateral force law on acceleration level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
-   * \todo operator should be replaced by a function class TODO
    */
   class RegularizedBilateralConstraint : public GeneralizedForceLaw {
     public:
