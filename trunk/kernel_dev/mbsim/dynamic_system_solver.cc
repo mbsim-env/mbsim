@@ -620,8 +620,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updater(double t) {
-    r.init(0);
-    DynamicSystem::updater(t); // must be called locally to be able to do some post "constraint solver" calculations in Objects/Links
+    r = V*la; // !!! can not be called locally (hierarchically), because this adds some values twice to r for tree structures
   }
 
   void DynamicSystemSolver::updatewb(double t) {
