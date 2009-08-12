@@ -134,7 +134,7 @@ namespace MBSim {
 
       /** \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
        * This vector is the force which is applied on the second contour.
-       * The reactio (not drawn) is applied on the frist contour.
+       * The reactio (not drawn) is applied on the first contour.
        */
       void setOpenMBVNormalForceArrow(OpenMBV::Arrow *arrow) { contactArrow=arrow; }
 

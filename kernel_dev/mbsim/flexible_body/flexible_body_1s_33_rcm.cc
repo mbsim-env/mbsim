@@ -317,6 +317,7 @@ namespace MBSim {
   }
 
   void FlexibleBody1s33RCM::initInfo() {
+    FlexibleBodyContinuum<double>::init();
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {

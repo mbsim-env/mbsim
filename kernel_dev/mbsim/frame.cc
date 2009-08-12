@@ -32,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Frame::Frame(const string &name) : Element(name), parent(0), WrOP(3), AWP(3), WvP(3), WomegaP(3), WjP(3), WjR(3) {
+  Frame::Frame(const string &name) : Element(name), parent(0), WrOP(3,INIT,0.), AWP(3,INIT,0.), WvP(3,INIT,0.), WomegaP(3,INIT,0.), WjP(3,INIT,0.), WjR(3,INIT,0.) {
     AWP(0,0) = 1;
     AWP(1,1) = 1;
     AWP(2,2) = 1;

@@ -28,7 +28,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   KineticExcitation::KineticExcitation(const string &name) : LinkMechanics(name), refFrame(NULL),
-    forceDir(3,0), momentDir(3,0), F(NULL), M(NULL) {}
+  forceDir(3,0), momentDir(3,0), F(NULL), M(NULL) {}
 
   KineticExcitation::~KineticExcitation() {}
 
@@ -116,3 +116,4 @@ namespace MBSim {
   }
 
 }
+

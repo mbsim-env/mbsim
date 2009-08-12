@@ -36,16 +36,16 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), SThetaS(3), WThetaS(3), iKinematics(-1), iInertia(-1), cb(false), PjT(3), PjR(3), PdjT(3), PdjR(3), APK(3), PrPK(3), WrPK(3), WvPKrel(3), WomPK(3), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), SThetaS(3,INIT,0.), WThetaS(3,INIT,0.), iKinematics(-1), iInertia(-1), cb(false), PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,INIT,0.), PrPK(3,INIT,0.), WrPK(3,INIT,0.), WvPKrel(3,INIT,0.), WomPK(3,INIT,0.), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
 
-    APK(0,0)=1.0;
-    APK(1,1)=1.0;
-    APK(2,2)=1.0;
+    APK(0,0)=1.;
+    APK(1,1)=1.;
+    APK(2,2)=1.;
 
     Body::addFrame(new Frame("C"));
 
-    SrSF.push_back(Vec(3));
-    WrSF.push_back(Vec(3));
+    SrSF.push_back(Vec(3,INIT,0.));
+    WrSF.push_back(Vec(3,INIT,0.));
     ASF.push_back(SqrMat(3,EYE));
   }
 

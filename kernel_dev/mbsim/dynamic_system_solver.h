@@ -357,13 +357,15 @@ namespace MBSim {
 
       /**
        * \brief writes state to a file
+       * \param name of the file
        */
-      void writez();
+      void writez(std::string fileName);
       
       /**
        * \brief reads state from a file
+       * \param name of the file
        */
-      void readz0();
+      void readz0(std::string fileName);
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
