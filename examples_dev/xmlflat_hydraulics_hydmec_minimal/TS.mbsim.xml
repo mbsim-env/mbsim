@@ -39,7 +39,7 @@
     <h:HydNodeMecElastic name="Node">
       <h:fracAir>0.08</h:fracAir>
       <h:p0>2e5</h:p0>
-      <h:V0>1e-3</h:V0>
+      <h:initialVolume>1e-3</h:initialVolume>
       <h:transMecArea>
         <frameOfReference ref="../Object[Body]/Frame[C]"/>
         <h:normal>[-1;0;0]</h:normal>
