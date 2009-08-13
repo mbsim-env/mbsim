@@ -3,6 +3,7 @@
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/hydnode.h"
 #include "mbsim/userfunction.h"
+#include "mbsimHydraulics/pressure_loss.h"
 
 using namespace std;
 using namespace MBSim;
@@ -64,8 +65,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l56->setLength(1.7);
   l56->addPressureLoss(new PressureLossZeta("zeta1", 10));
 
-  HydNodeConstrained * n1 = new HydNodeConstrained("n1");
-  n1->setpFunction(new FuncConst(Vec("1e5")));
+  HydNodeEnvironment * n1 = new HydNodeEnvironment("n1");
   addLink(n1);
   n1->enableOpenMBV(.025, 0, 10e5, "[-.1; 0; 0]");
   n1->addOutFlow(l12a);
@@ -76,7 +76,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   HydNodeConstrained * n2 = new HydNodeConstrained("n2");
   addLink(n2);
   n2->enableOpenMBV(.025, 0, 10e5, "[-.05; .1; 0]");
-  n2->setpFunction(new FuncConst(Vec("5e5")));
+  n2->setpFunction(new ConstantFunction1<double, double>(5e5));
   n2->addInFlow(l12a);
   n2->addInFlow(l12b);
   n2->addOutFlow(l23);

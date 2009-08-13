@@ -30,17 +30,19 @@ int main (int argc, char* argv[]) {
     HydraulicEnvironment::getInstance()->setTemperature(50);
     HydraulicEnvironment::getInstance()->initializeFluidData();
 
+    dss->setConstraintSolver(LinearEquations);
+    dss->setImpactSolver(LinearEquations);
 
-    dss->setConstraintSolver(GaussSeidel);
-    dss->setImpactSolver(GaussSeidel);
+//    dss->setConstraintSolver(GaussSeidel);
+//    dss->setImpactSolver(GaussSeidel);
     dss->setgdTol(1e-9);
     dss->init();
 
-    double tEnd=.2;
-    double dtPlot=1e-4;
+    double tEnd=1e-3;
+    double dtPlot=1e-6;
     clock_t start, end;
     if (i==0) {
-      TimeSteppingIntegrator integrator; integrator.setStepSize(5e-5);
+      TimeSteppingIntegrator integrator; integrator.setStepSize(1e-6);
       integrator.setEndTime(tEnd);
       integrator.setPlotStepSize(dtPlot);
       integrator.setOutput(true);

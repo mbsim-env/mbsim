@@ -20,7 +20,7 @@
 #include "hydnode.h"
 #include "hydline.h"
 #include "environment.h"
-#include "mbsim/userfunction.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -35,7 +35,7 @@ namespace MBSim {
 
   HydNode::HydNode(const string &name) : Link(name)
 # ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , openMBVSphere(NULL)
+                                         , openMBVGrp(NULL), openMBVSphere(NULL)
 #endif
                                          {
                                            setPlotFeature(state, enabled);
@@ -81,9 +81,9 @@ namespace MBSim {
     for (unsigned int i=0; i<nLines; i++) {
       connectedLines[i].sign = 
         ((connectedLines[i].inflow) ?
-        connectedLines[i].line->getInflowFactor() :
-        connectedLines[i].line->getOutflowFactor());
-      
+         connectedLines[i].line->getInflowFactor() :
+         connectedLines[i].line->getOutflowFactor());
+
       int cols=connectedLines[i].sign.size();
       W.push_back(Mat(cols, laSize));
       V.push_back(Mat(cols, laSize));
@@ -255,18 +255,19 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updater(double t) {
-    for (unsigned int i=0; i<nLines; i++)
-      r[i] += W[i] * la;
-  }
-
   void HydNode::initPlot() {
     plotColumns.push_back("Node pressure [bar]");
     plotColumns.push_back("Fluidflow into and out the node [l/min]");
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if (openMBVSphere) {
-      openMBVSphere->setName(name);
-      parent->getOpenMBVGrp()->addObject(openMBVSphere);
+      if (openMBVGrp) {
+        openMBVSphere->setName("Node");
+        openMBVGrp->addObject(openMBVSphere);
+      }
+      else {
+       openMBVSphere->setName(name);
+       parent->getOpenMBVGrp()->addObject(openMBVSphere);
+      }
     }
 #endif
     Link::initPlot();
@@ -293,26 +294,16 @@ namespace MBSim {
   }
 
 
-  HydNodeConstrained::HydNodeConstrained(const string &name) : HydNode(name) {
-  }
-
-  void HydNodeConstrained::setpFunction(UserFunction * pFun_) {
-    pFun=pFun_;
-  }
-
   void HydNodeConstrained::init() {
     HydNode::init();
-    la.init((*pFun)(0)(0));
+    la.init((*pFun)(0));
   }
 
   void HydNodeConstrained::updateg(double t) {
     HydNode::updateg(t);
-    la=(*pFun)(t);
+    la(0)=(*pFun)(t);
   }
 
-
-  HydNodeEnvironment::HydNodeEnvironment(const string &name) : HydNode(name) {
-  }
 
   void HydNodeEnvironment::init() {
     HydNode::init();
@@ -320,12 +311,9 @@ namespace MBSim {
   }
 
 
-  HydNodeElastic::HydNodeElastic(const string &name) : HydNode(name), V(0), E(0) {
-  }
-  
   double HydNodeElastic::calcBulkModulus(double p) {
     if(p<=0.1) {
-      cout << "HydraulicEnvironment: pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
+      cout << "HydNodeElastic " << name << ": pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
       p=0.1;
     }
     // Umdruck zur Vorlesung
@@ -339,12 +327,16 @@ namespace MBSim {
 
   void HydNodeElastic::init() {
     HydNode::init();
+    double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+    if (fabs(p0)<epsroot()) {
+      cout << "WARNING HydNodeElastic \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
+      p0=pinf;
+    }
     la(0)=p0;
     x0=Vec(1, INIT, p0);
-
+    
     double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
     double kappa=HydraulicEnvironment::getInstance()->getKappa();
-    double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     factor[0]=E0*(1.+fracAir);
     factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
     factor[2]=-(1.+1./kappa);
@@ -377,12 +369,30 @@ namespace MBSim {
   }
 
 
-  HydNodeRigid::HydNodeRigid(const string &name) : HydNode(name) {
+  void HydNodeRigid::init() {
+    HydNode::init();
+    for (unsigned int i=0; i<nLines; i++) {
+      Vec u0=connectedLines[i].line->getu0();
+      bool zero=true;
+      for (int j=0; j<u0.size(); j++)
+        if (fabs(u0(j))>epsroot())
+          zero=false;
+      if (!zero)
+        cout << "WARNING in HydNodeRigid \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+    }
   }
 
   void HydNodeRigid::updatewbRef(const Vec &wbParent) {
     Link::updatewbRef(wbParent);
     gd >> wb;
+  }
+
+  void HydNodeRigid::updategd(double t) {
+    HydNode::updategd(t);
+    if (t<epsroot()) {
+      if (fabs(QHyd)>epsroot())
+        cout << "WARNING: HydNodeRigid \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+    }
   }
 
   void HydNodeRigid::updateW(double t) {

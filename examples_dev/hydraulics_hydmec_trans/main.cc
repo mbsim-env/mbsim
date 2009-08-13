@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
     dss->setgdTol(1e-9);
     dss->init();
 
-    double tEnd=2.;
+    double tEnd=2;
     double dtPlot=1e-4;
     clock_t start, end;
     if (i==0) {

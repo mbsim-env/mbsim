@@ -3,7 +3,7 @@
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/hydnode.h"
 #include "mbsimHydraulics/hydnode_mec.h"
-#include "mbsim/userfunction.h"
+#include "mbsimHydraulics/pressure_loss.h"
 
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
@@ -11,7 +11,6 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/function.h"
 #include "mbsim/utils/utils.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/polygonpoint.h"
@@ -71,31 +70,10 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
   return vpp;
 }
 
-class problem : public Function1<double, double> {
-  public:
-    problem(double MSoll_, double rM_, double cF_, double phi0_) : MSoll(MSoll_), rM(rM_), cF(cF_), phi0(phi0_) {
-    }
-    double operator()(const double& phiD) {
-      double l0 = rM * sqrt(2.-2.*cos(phi0));
-      double l1 = rM * sqrt(2.-2.*cos(phi0+phiD));
-      Vec dir(3, INIT, 0);
-      dir(0)=sin(phi0+phiD);
-      dir(1)=-cos(phi0+phiD);
-      Vec jac(3, INIT, 0);
-      jac(0)=-sin((phi0+phiD)/2.);
-      jac(1)=cos((phi0+phiD)/2.);
-      double MFz = - rM * cF * (l1-l0) * trans(jac) * dir;
-      return MFz-MSoll;
-    }
-  private:
-    double MSoll, rM, cF, phi0;
-};
-
 System::System(const string &name, bool unilateral) : Group(name) {
   Tree * tree = new Tree("Baum");
   addDynamicSystem(tree);
 
-  cout.precision(16);
   double dI=0.01;
   double dA=0.05;
   double h=0.02;
@@ -103,36 +81,17 @@ System::System(const string &name, bool unilateral) : Group(name) {
   double cF=1e4;
   
   double phiSolid=degtorad(20.);
-  cout << "phiSolid=" << radtodeg(phiSolid) << endl;
   double phiFree=(2.*M_PI-5.*phiSolid)/5.;
-  cout << "phiFree=" << radtodeg(phiFree) << endl;
   double dphi=2.*M_PI/5.;
   
   double factor=(dA*dA-dI*dI)/8.*h;
-  cout << "factor=" << factor << endl;
   
   double V0=phiFree*factor;
-  cout << "V0=" << V0 << endl;
 
   double rM=dI/2.+(dA-dI)/4.;
-  cout << "rM=" << rM << endl;
   double l0=rM*sqrt(2-2.*cos(phiFree));
-  cout << "l0=" << l0 << endl;
   double area=(dA-dI)/2.*h;
   cout << "area=" << area << endl;
-  double torque=pRB*area*rM;
-  cout << "torque due to hydraulic pressure=" << torque << endl;
-
-  problem * p = new problem(torque, rM, cF, phiFree);
-  RegulaFalsi solver(p);
-  double  phiRes = solver.solve(0, M_PI/2.);
-  cout << "resultierende generalisierte Koordinate= " << phiRes << " [rad] = " << radtodeg(phiRes) << " [deg.]" << endl;
-  double lRes=rM*sqrt(2.-2.*cos(phiFree+phiRes));
-  cout << "resultierende Federlaenge= " << lRes << endl;
-  double VRes=(phiFree+phiRes)*factor;
-  cout << "VRes=" << VRes*1e9 << endl;
-  cout.precision(5);
-
 
   RigidBody * traeger = new RigidBody("Traeger");
   Node * node = tree->addObject(0, traeger);
@@ -146,12 +105,10 @@ System::System(const string &name, bool unilateral) : Group(name) {
   traeger->setFrameForKinematics(traeger->getFrame("C"));
   traeger->setMass(2.);
   traeger->setInertiaTensor(0.001*SymMat(3, EYE));
-  traeger->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
+//  traeger->setTranslation(new LinearTranslation(SqrMat(3, EYE)));
 //  traeger->setRotation(new CardanAngles());
-//  traeger->setu0(Vec("[0.; 0; 0; -1; 2; 3]"));
+//  traeger->setTranslation(new LinearTranslation(Mat("[0;0;1]")));
 //  traeger->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-//  traeger->setu0(Vec("[4.; -1.; 2]"));
-//  traeger->setu0(Vec("12"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::CompoundRigidBody * traegerVisu = new OpenMBV::CompoundRigidBody();
   OpenMBV::Frustum * traegerVisuBoden = new OpenMBV::Frustum();
@@ -239,15 +196,19 @@ System::System(const string &name, bool unilateral) : Group(name) {
   
   HydNodeConstrained * n0 = new HydNodeConstrained("n0");
   addLink(n0);
-  // n0->setpFunction(new FuncConst(Vec(1, INIT, 3e5)));
-  n0->setpFunction(new FuncHarmonic(Vec(1, INIT, 2e5), 2*M_PI*8, 0, Vec(1, INIT, 3e5)));
+  n0->setpFunction(new ConstantFunction1<double, double>(.9e5));
   n0->addOutFlow(l04);
+
+  HydNodeMecEnvironment * n1Inf = new HydNodeMecEnvironment("n1Inf");
+  addLink(n1Inf);
+  n1Inf->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
+  n1Inf->enableOpenMBVArrows(.01);
   
   HydNodeMecConstrained * n1 = new HydNodeMecConstrained("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->enableOpenMBV(.005);
-  n1->setV0(V0);
-  n1->setpFunction(new FuncConst(Vec(1, INIT, pRB)));
+  n1->setInitialVolume(V0);
+  n1->setpFunction(new ConstantFunction1<double, double>(pRB));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
   n1->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
   n1->enableOpenMBVArrows(.01);
@@ -258,7 +219,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(n2);
   n2->enableOpenMBVArrows(.01);
   n2->enableOpenMBV(.005);
-  n2->setV0(V0);
+  n2->setInitialVolume(V0);
   n2->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
   n2->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
@@ -268,16 +229,32 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(n3);
   n3->enableOpenMBVArrows(.01);
   n3->enableOpenMBV(.005);
-  n3->setV0(V0);
+  n3->setInitialVolume(V0);
   n3->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
   n3->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
   HydNodeMecRigid * n4 = new HydNodeMecRigid("n_"+getBodyName(3)+"_"+getBodyName(4));
   addLink(n4);
-  n4->setV0(V0);
+  n4->setInitialVolume(V0);
   n4->enableOpenMBVArrows(.01);
   n4->enableOpenMBV(.005);
   n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
   n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
   n4->addInFlow(l04);
+
+//  HydNodeMecElastic * n4 = new HydNodeMecElastic("n_"+getBodyName(3)+"_"+getBodyName(4));
+//  n4->setFracAir(.01);
+//  n4->setp0(1e5);
+//  addLink(n4);
+//  n4->setInitialVolume(V0);
+//  n4->enableOpenMBVArrows(.01);
+//  n4->enableOpenMBV(.005);
+//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+//  n4->addInFlow(l04);
+
+  HydNodeMecEnvironment * n4Inf = new HydNodeMecEnvironment("n4Inf");
+  addLink(n4Inf);
+  n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C")); 
+  n4Inf->enableOpenMBVArrows(.01);
 }

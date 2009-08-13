@@ -21,6 +21,7 @@
 #define  _HYDNODE_MEC_H_
 
 #include "hydnode.h"
+#include "mbsim/utils/function.h"
 
 namespace OpenMBV {
   class Arrow;
@@ -29,7 +30,6 @@ namespace OpenMBV {
 namespace MBSim {
 
   class Frame;
-  class UserFunction;
   class HydFluid;
 
   struct connectedTransFrameStruct {
@@ -76,7 +76,7 @@ namespace MBSim {
 
       void updateh(double t);
       void updatedhdz(double t);
-      void updater(double t);
+      virtual void updater(double t) {std::cout << "HydNodeMec \"" << name << "\": updater()" << std::endl; }
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -90,7 +90,6 @@ namespace MBSim {
       double QMecTrans, QMecRot, QMec;
       double V0;
       unsigned int nTrans, nRot;
-      fmatvec::Vec pinf;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       std::vector<OpenMBV::Arrow *> openMBVArrows;
       double openMBVArrowSize;
@@ -98,25 +97,33 @@ namespace MBSim {
   };
 
   class HydNodeMecConstrained : public HydNodeMec {
-
     public:
-      HydNodeMecConstrained(const std::string &name);
+      HydNodeMecConstrained(const std::string &name) : HydNodeMec(name) {}
       ~HydNodeMecConstrained() {};
       virtual std::string getType() const { return "HydNodeMecConstrained"; }
 
-      void setpFunction(UserFunction * pFun_);
+      void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
       void init();
 
       void updateg(double t);
 
     private:
-      UserFunction * pFun;
+      Function1<double,double> * pFun;
+  };
+
+
+  class HydNodeMecEnvironment : public HydNodeMec {
+    public:
+      HydNodeMecEnvironment(const std::string &name) : HydNodeMec(name) {}
+      virtual std::string getType() const { return "HydNodeMecEnvironment"; }
+      
+      void init();
   };
 
   class HydNodeMecElastic : public HydNodeMec {
     public:
-      HydNodeMecElastic(const std::string &name);
+      HydNodeMecElastic(const std::string &name) : HydNodeMec(name) {}
       ~HydNodeMecElastic() {};
       virtual std::string getType() const { return "HydNodeElastic"; }
 
@@ -149,7 +156,7 @@ namespace MBSim {
 
   class HydNodeMecRigid : public HydNodeMec {
     public:
-      HydNodeMecRigid(const std::string &name);
+      HydNodeMecRigid(const std::string &name) : HydNodeMec(name) {}
       virtual std::string getType() const { return "HydNodeMecRigid"; }
 
       bool isSetValued() const {return true; }
@@ -162,6 +169,7 @@ namespace MBSim {
 
       void updatewbRef(const fmatvec::Vec& wbParent);
       
+      void updategd(double t);
       void updateW(double t);
 
       void solveImpactsFixpointSingle();
