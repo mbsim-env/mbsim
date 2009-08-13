@@ -110,7 +110,7 @@ namespace MBSim {
     };
 
   template<class Arg>
-    class ConstantFunction1 : public Function1<double,Arg> {
+    class ConstantFunction1<double, Arg> : public Function1<double,Arg> {
       public:
         ConstantFunction1() {}
         ConstantFunction1(double c_) : c(c_) {}
