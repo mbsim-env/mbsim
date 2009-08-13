@@ -109,6 +109,24 @@ namespace MBSim {
         Ret c;
     };
 
+  template<class Arg>
+    class ConstantFunction1 : public Function1<double,Arg> {
+      public:
+        ConstantFunction1() {}
+        ConstantFunction1(double c_) : c(c_) {}
+        void setValue(double c_) { c=c_; }
+        double operator()(const Arg& p) { return c; }
+        void initializeUsingXML(TiXmlElement *element) {
+          Function1<double,Arg>::initializeUsingXML(element);
+          TiXmlElement *e;
+          e=element->FirstChildElement(MBSIMNS"value");
+          c=atof(e->GetText());
+        }
+
+      protected:
+        double c;
+    };
+
   template<class Ret, class Arg1, class Arg2>
     class ConstantFunction2 : public Function2<Ret,Arg1,Arg2> {
       public:
