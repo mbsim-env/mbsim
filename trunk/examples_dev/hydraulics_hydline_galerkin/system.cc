@@ -3,7 +3,8 @@
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/hydline_galerkin.h"
 #include "mbsimHydraulics/hydnode.h"
-#include "mbsim/userfunction.h"
+#include "mbsimHydraulics/pressure_loss.h"
+#include "mbsim/utils/function.h"
 
 using namespace std;
 using namespace MBSim;
@@ -29,7 +30,7 @@ System::System(const string &name, bool setvalued) : Group(name) {
   l23->addPressureLoss(new PressureLossZeta("zeta1", 1.5));
 
   HydNodeConstrained * n1 = new HydNodeConstrained("n1");
-  n1->setpFunction(new FuncConst(Vec("5e5")));
+  n1->setpFunction(new ConstantFunction1<double, double>(5e5));
   addLink(n1);
   n1->addOutFlow(l12);
 
@@ -49,7 +50,7 @@ System::System(const string &name, bool setvalued) : Group(name) {
 
   HydNodeConstrained * n3 = new HydNodeConstrained("n3");
   addLink(n3);
-  n3->setpFunction(new FuncConst(Vec("1e5")));
+  n3->setpFunction(new ConstantFunction1<double, double>(1e5));
   n3->addInFlow(l23);
 
 }

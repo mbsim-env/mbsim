@@ -80,6 +80,10 @@ namespace MBSim {
   }
 
   void HydLine::updateh(double t) {
+    /* A simple fix for updating  variable pressure losses*/
+    if (pdVar)
+      pdVar->updateg(t);
+    
     pLossSum=0;
     for (unsigned int i=0; i<pd.size(); i++)
       pLossSum+=(*pd[i])(u(0));

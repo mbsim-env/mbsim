@@ -3,11 +3,20 @@
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/hydline_galerkin.h"
 #include "mbsimHydraulics/hydnode.h"
+#include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/userfunction.h"
 
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
+
+class MyHarmonicFunction: public Function1<double,double> {
+  public:
+    MyHarmonicFunction(double A_, double omega_, double phi_, double offset_) : A(A_), omega(omega_), phi(phi_), offset(offset_) {}
+    double operator()(const double& t) {return A*sin(omega*t+phi)+offset; }
+  private:
+    double A, omega, phi, offset;
+};
 
 System::System(const string &name, bool setvalued, bool unilateral) : Group(name) {
 
@@ -57,7 +66,7 @@ System::System(const string &name, bool setvalued, bool unilateral) : Group(name
   l35->setLength(.25);
   FuncTable * area35 = new FuncTable();
   area35->setXY(Vec("[0; .09; .11; .39; .41; .69; .71; 0.9; 1]"), Vec("[0;   0;   1;   1;   0;  0;    1;   1;  0]"));
-  l35->addPressureLoss(new PressureLossZetaVarArea("zeta1", 7, area35, .001));
+  l35->addPressureLoss(new PressureLossVarAreaZeta("zeta1", 7, area35, .01));
 
   HydLineGalerkin * l45 = new HydLineGalerkin("l45");
   addObject(l45);
@@ -80,10 +89,10 @@ System::System(const string &name, bool setvalued, bool unilateral) : Group(name
   l56->setLength(1.7);
   FuncTable * area56 = new FuncTable();
   area56->setXY(Vec("[0; .2; .4; .89; .91; 1.29; 1.3; 1.8; 2]"), Vec("[0;   0;   1;   1;   0;  0;    1;   1;  0]"));
-  l56->addPressureLoss(new PressureLossZetaVarArea("zeta1", 10, area56, .001));
+  l56->addPressureLoss(new PressureLossVarAreaZeta("zeta1", 10, area56, .01));
 
   HydNodeConstrained * n1 = new HydNodeConstrained("n1");
-  n1->setpFunction(new FuncHarmonic(Vec("3e5"), 8.*M_PI, 0, Vec("5e5")));
+  n1->setpFunction(new MyHarmonicFunction(3e5, 8.*M_PI, 0, 5e5));
   addLink(n1);
   n1->addOutFlow(l12a);
   n1->addOutFlow(l12b);
@@ -92,7 +101,7 @@ System::System(const string &name, bool setvalued, bool unilateral) : Group(name
 
   HydNodeConstrained * n2 = new HydNodeConstrained("n2");
   addLink(n2);
-  n2->setpFunction(new FuncConst(Vec("5e5")));
+  n2->setpFunction(new ConstantFunction1<double, double>(5e5));
   n2->addInFlow(l12a);
   n2->addInFlow(l12b);
   n2->addOutFlow(l23);
