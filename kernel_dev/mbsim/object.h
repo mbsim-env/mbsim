@@ -70,6 +70,7 @@ namespace MBSim {
       virtual void calcuSize(int j) {};
       virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
+      virtual int getuInd(DynamicSystem* sys, int i=0);
       void setqInd(int qInd_) { qInd = qInd_; }
       void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       int gethInd(DynamicSystem* sys,int i=0); 

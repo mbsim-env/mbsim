@@ -25,6 +25,7 @@
 
 std::string numtostr(int i);   
 std::string numtostr(double d);   
+std::string numtostr(fmatvec::Mat v);
 
 double degtorad(double alpha);
 double radtodeg(double phi);

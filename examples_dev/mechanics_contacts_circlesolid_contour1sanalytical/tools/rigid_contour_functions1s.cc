@@ -109,8 +109,8 @@ Vec FuncCrPC::operator()(const double& alpha){
   double alphaLoc=fmod(alpha, 2.*M_PI);
   if(alphaLoc<0) 
     alphaLoc+=2.*M_PI;
-  f(1) = (pp_y)(alphaLoc)(0); 
-  f(2) = (pp_z)(alphaLoc)(0); 
+  f(1) = (pp_y.getDerivative(0))(alphaLoc)(0); 
+  f(2) = (pp_z.getDerivative(0))(alphaLoc)(0); 
   return f;
 } 
 
@@ -119,8 +119,8 @@ Vec FuncCrPC::diff1(const double& alpha) {
   double alphaLoc=fmod(alpha, 2.*M_PI);
   if(alphaLoc<0) 
     alphaLoc+=2.*M_PI;
-  f(1) = ((pp_y).getDerivative())(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative())(alphaLoc)(0); 
+  f(1) = ((pp_y).getDerivative(1))(alphaLoc)(0); 
+  f(2) = ((pp_z).getDerivative(1))(alphaLoc)(0); 
   return f;
 }
 
@@ -129,8 +129,8 @@ Vec FuncCrPC::diff2(const double& alpha) {
   double alphaLoc=fmod(alpha, 2.*M_PI);
   if(alphaLoc<0) 
     alphaLoc+=2.*M_PI;
-  f(1) = ((pp_y).getDerivative().getDerivative())(alphaLoc)(0); 
-  f(2) = ((pp_z).getDerivative().getDerivative())(alphaLoc)(0); 
+  f(1) = ((pp_y).getDerivative(2))(alphaLoc)(0); 
+  f(2) = ((pp_z).getDerivative(2))(alphaLoc)(0); 
   return f;
 }
 

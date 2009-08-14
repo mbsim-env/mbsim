@@ -154,23 +154,30 @@ namespace MBSim {
       virtual void calcuSize(int j=0) = 0;
 
       /**
-       * \return index of positions
+       * \return index of positions relative to dynamical system
        */
       virtual int getqInd(DynamicSystem* sys) = 0;
 
       /**
        * \param index for normal usage and inverse kinetics 
-       * \return index of velocities
+       * \return index of velocities relative to parent
        */
       virtual int getuInd(int i=0) = 0;
 
       /**
-       * \param index of positions
+       * \param dynamic system
+       * \param index for normal usage and inverse kinetics 
+       * \return index of velocities relative to dynamical system
+       */
+      virtual int getuInd(DynamicSystem* sys, int i=0) = 0;
+
+      /**
+       * \param index of positions relative to parent
        */
       virtual void setqInd(int ind) = 0;
 
       /**
-       * \param index of velocities
+       * \param index of velocities relative to parent
        * \param index for normal usage and inverse kinetics 
        */
       virtual void setuInd(int ind, int i=0) = 0;
@@ -178,7 +185,7 @@ namespace MBSim {
       /**
        * \param dynamic system
        * \param index for normal usage and inverse kinetics 
-       * \return index of right hand side
+       * \return index of right hand side relative to dynamical system
        */
       virtual int gethInd(DynamicSystem* sys, int i=0) = 0;
 

@@ -20,7 +20,9 @@
 #include <config.h>
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;

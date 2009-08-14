@@ -11,10 +11,12 @@ packages = mbsim mbsimHydraulics
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -O0 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags $(packages)` 
+
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim`
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) `pkg-config --libs $(packages)` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
@@ -25,4 +27,5 @@ include $(sources:.cc=.d)
 
 .PHONY : clean
 clean :
-	-rm $(Target) $(objects) $(sources:.cc=.d) Integrator.* *.xml *.h5
+	-rm $(Target) $(objects) $(sources:.cc=.d)
+

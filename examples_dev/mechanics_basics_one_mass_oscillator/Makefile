@@ -8,7 +8,8 @@ sources = main.cc system.cc
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
-	CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim` 
+
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas `pkg-config --cflags mbsim` 
 
 $(Target) : $(objects)
 	$(CXX) -o $@ $(objects) `pkg-config --libs mbsim` 

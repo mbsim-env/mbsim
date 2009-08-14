@@ -63,32 +63,47 @@ namespace MBSim {
    * \brief template class for differentiable functions with one scalar parameter
    */
   template<class Ret>
-    class Differentiable1Function1 : public Function1<Ret,double> {
+    class DifferentiableFunction1 : public Function1<Ret,double> {
       public:
-        Differentiable1Function1() : Function1<Ret,double>(), diff(0) {}
-        Differentiable1Function1(Function1<Ret,double> *diff_) : Function1<Ret,double>(), diff(diff_) {}
-        virtual ~Differentiable1Function1() { if(diff) delete diff; diff=0; }
-        const Function1<Ret,double>& getDerivative() const { return *diff; }
-        Function1<Ret,double>& getDerivative() { return *diff; }
+        /**
+         * \brief constructor
+         */
+        DifferentiableFunction1() : Function1<Ret,double>() {}
+
+        /**
+         * \brief destructor
+         */
+        virtual ~DifferentiableFunction1() { for(unsigned int i=1;i<derivatives.size();i++) delete derivatives[i]; }
+
+        /* INHERITED INTERFACE OF FUNCTION1 */
+        virtual Ret operator()(const double& x) { assert(derivatives.size()>0); return (getDerivative(0))(x); }
+        /***************************************************/
+
+        /**
+         * \return derivative
+         * \param degree of derivative
+         */
+        const Function1<Ret,double>& getDerivative(int degree) const { return *(derivatives[degree]); }
+
+        /**
+         * \return derivative
+         * \param degree of derivative
+         */
+        Function1<Ret,double>& getDerivative(int degree) { return *(derivatives[degree]); }
+
+        /**
+         * \param highest derivative to add
+         */
+        void addDerivative(Function1<Ret,double> *diff) { derivatives.push_back(diff); }
+
+        /**
+         * \param derivative to add
+         * \param degree of the derivative
+         */
+        void setDerivative(Function1<Ret,double> *diff,int degree) { derivatives.resize(max(derivatives.size(),degree)); derivatives[degree]=diff; }
 
       protected:
-        Function1<Ret,double> *diff; // derivative
-    };
-
-  /*! 
-   * \brief template class for two times differentiable functions with one scalar parameter
-   */
-  template<class Ret>
-    class Differentiable2Function1 : public Function1<Ret,double> {
-      public:
-        Differentiable2Function1() : Function1<Ret,double>(), diff(0) {}
-        Differentiable2Function1(Differentiable1Function1<Ret> *diff_) : Function1<Ret,double>(), diff(diff_) {}
-        virtual ~Differentiable2Function1() { if(diff) delete diff; diff=0; }
-        const Differentiable1Function1<Ret>& getDerivative() const { return *diff; }
-        Differentiable1Function1<Ret>& getDerivative() { return *diff; }
-
-      protected:
-        Differentiable1Function1<Ret> *diff; // first and second derivative
+        std::vector<Function1<Ret,double>* > derivatives; // derivatives
     };
 
   template<class Ret, class Arg>

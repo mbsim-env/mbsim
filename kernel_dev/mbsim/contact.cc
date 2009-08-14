@@ -53,8 +53,10 @@ namespace MBSim {
     if(fdf) { delete fdf; fdf=0; }
     if(fnil) { delete fnil; fnil=0; }
     if(ftil) { delete ftil; ftil=0; }
+#ifdef HAVE_OPENMBVCPPINTERFACE
     if(contactArrow) { delete contactArrow; contactArrow=0; }
     if(frictionArrow) { delete frictionArrow; frictionArrow=0; }
+#endif
 
     for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
       delete[] *i;

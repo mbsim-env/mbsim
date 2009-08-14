@@ -22,7 +22,9 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;

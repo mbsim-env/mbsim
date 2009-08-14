@@ -74,7 +74,7 @@ namespace MBSim {
   void Contour1sAnalytical::enableOpenMBV(bool enable) {
     if (enable) {
       vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
-      for (double alpha=as; alpha<ae; alpha+=(ae-as)/720.) {
+      for (double alpha=as; alpha<ae; alpha+=(ae-as)/720.) { 
         Vec CrPC=(*funcCrPC)(alpha);
         vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
       }
@@ -86,6 +86,7 @@ namespace MBSim {
     }
     else
       openMBVRigidBody=0;
+      //throw 1;
   }
 #endif
 
@@ -123,7 +124,6 @@ namespace MBSim {
       Contour1s::plot(t,dt);
     }
   }
-
 
 }
 

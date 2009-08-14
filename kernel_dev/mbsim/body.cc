@@ -42,7 +42,9 @@ namespace MBSim {
       delete *i;
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       delete *i;
+#ifdef HAVE_OPENMBVCPPINTERFACE
     if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
+#endif
   }
 
   void Body::sethSize(int hSize_, int j) {

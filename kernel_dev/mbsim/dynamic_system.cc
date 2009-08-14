@@ -186,6 +186,10 @@ namespace MBSim {
     return (this == sys) ? 0 : hInd[i] + parent->gethInd(sys,i);
   }
 
+  int DynamicSystem::getuInd(DynamicSystem* sys, int i) {
+    return (this == sys) ? 0 : uInd[i] + parent->getuInd(sys,i);
+  }
+
   int DynamicSystem::getqInd(DynamicSystem* sys) {
     return (this == sys) ? 0 : qInd + parent->getqInd(sys);
   }

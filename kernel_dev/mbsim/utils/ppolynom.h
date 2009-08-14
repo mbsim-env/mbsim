@@ -53,26 +53,22 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-  class PPolynom : public Differentiable2Function1<fmatvec::Vec> {
+  class PPolynom : public DifferentiableFunction1<fmatvec::Vec> {
     public:
       /*! 
        * \brief constructor
        */
-      PPolynom() : Differentiable2Function1<fmatvec::Vec>(new PPolynom::FirstDerivative(new PPolynom::SecondDerivative(this),this)) {}
+      PPolynom() : DifferentiableFunction1<fmatvec::Vec>() { addDerivative(new PPolynom::ZerothDerivative(this)); addDerivative(new PPolynom::FirstDerivative(this)); addDerivative(new PPolynom::SecondDerivative(this)); }
 
       /*! 
        * \brief destructor
        */
       virtual ~PPolynom() {}
 
-      /* INHERITED INTERFACE OF FUNCTION */
-      fmatvec::Vec operator()(const double& x);
-      /***************************************************/
-
       /*! 
        * \brief set interpolation
        * @param x vector of ordered x values
-       * @param f corresponding f(x) valuesPPolynom::FirstDerivative(this)
+       * @param f corresponding f(x) values (rowwise)
        * @param InterpolationMethod     'csplinePer' -> cubic Spline with periodic end conditions
        *                                                                                        S(x1) = S(xN) -> f(0)=f(end)
        *                                                                                        S'(x1) = S'(xN)
@@ -81,12 +77,12 @@ namespace MBSim {
        *                                                                                        S''(x1) = S''(xN) = 0
        *                                'plinear'    -> piecewise linear function
        */
-      void setXF(const fmatvec::Vec &x, const fmatvec::Vec &f, std::string InterpolationMethod);
+      void setXF(const fmatvec::Vec &x, const fmatvec::Mat &f, std::string InterpolationMethod);
 
       /*! 
        * \return polynomial coefficients
        */
-      fmatvec::Mat getCoefs();
+      std::vector<fmatvec::Mat> getCoefs();
 
       /*! 
        * \return interval boundaries
@@ -95,16 +91,16 @@ namespace MBSim {
 
       /*!
        * \brief set piecewise polynomial
-       * \param
-       * \param
+       * \param polynomial coefficients
+       * \param interval boundaries
        */
-      void setPP(const fmatvec::Mat &coefs_u, const fmatvec::Vec &breaks_u);
+      void setPP(const std::vector<fmatvec::Mat> &coefs_u, const fmatvec::Vec &breaks_u);
 
     protected:
       /** 
-       * \brief matrix of polynomial coefficents
+       * \brief vector of polynomial coefficents
        */
-      fmatvec::Mat coefs;
+      std::vector<fmatvec::Mat> coefs;
 
       /**
        * \brief vector of breaks (interval boundaries)
@@ -131,28 +127,30 @@ namespace MBSim {
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplinePeriodic(const fmatvec::Vec &x, const fmatvec::Vec &f);
+      void calculateSplinePeriodic(const fmatvec::Vec &x, const fmatvec::Mat &f);
 
       /*! 
        * \brief calculation of natural spline by interpolation
        * \param interpolated arguments
        * \param interpolated function values
        */  
-      void calculateSplineNatural(const fmatvec::Vec &x, const fmatvec::Vec &f);
+      void calculateSplineNatural(const fmatvec::Vec &x, const fmatvec::Mat &f);
 
       /* 
        * \brief calculation of piecewise linear interpolation
        * \param interpolated arguments
        * \param interpolated function values
+       *
+       * the first derivative is weak and the second derivative is zero elsewhere although it should be distributionally at the corners
        */
-      void calculatePLinear(const fmatvec::Vec &x, const fmatvec::Vec &f);
+      void calculatePLinear(const fmatvec::Vec &x, const fmatvec::Mat &f);
 
       /**
-       * piecewise polynomial interpolation - second derivative: that is a function which is not differentiable
+       * piecewise polynomial interpolation - zeroth derivative
        */
-      class SecondDerivative : public Function1<fmatvec::Vec,double> {
+      class ZerothDerivative : public Function1<fmatvec::Vec,double> {
         public:
-          SecondDerivative(PPolynom *polynom) : parent(polynom) {}
+          ZerothDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
 
           /* INHERITED INTERFACE OF FUNCTION */
           fmatvec::Vec operator()(const double& x);
@@ -163,11 +161,26 @@ namespace MBSim {
       };
 
       /**
-       * piecewise polynomial interpolation - first derivative: that is a function which is one times differentiable
+       * piecewise polynomial interpolation - first derivative
        */
-      class FirstDerivative : public Differentiable1Function1<fmatvec::Vec> {
+      class FirstDerivative : public Function1<fmatvec::Vec,double> {
         public:
-          FirstDerivative(Function1<fmatvec::Vec,double> *diff_, PPolynom *polynom) : Differentiable1Function1<fmatvec::Vec>(diff_), parent(polynom) {}
+          FirstDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
+
+          /* INHERITED INTERFACE OF FUNCTION */
+          fmatvec::Vec operator()(const double& x);
+          /***************************************************/
+
+        private:
+          PPolynom *parent;
+      };
+
+      /**
+       * piecewise polynomial interpolation - second derivative
+       */
+      class SecondDerivative : public Function1<fmatvec::Vec,double> {
+        public:
+          SecondDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
 
           /* INHERITED INTERFACE OF FUNCTION */
           fmatvec::Vec operator()(const double& x);
@@ -178,14 +191,14 @@ namespace MBSim {
       };
   };
 
-  inline fmatvec::Mat PPolynom::getCoefs() { return coefs; }
+  inline std::vector<fmatvec::Mat> PPolynom::getCoefs() { return coefs; }
   inline fmatvec::Vec PPolynom::getBreaks() { return breaks; }
-  inline void PPolynom::setPP(const fmatvec::Mat &coefs_u, const fmatvec::Vec &breaks_u) {
+  inline void PPolynom::setPP(const std::vector<fmatvec::Mat> &coefs_u, const fmatvec::Vec &breaks_u) {
     coefs = coefs_u; 
     breaks = breaks_u;
     index = 0;
-    nPoly = coefs.rows();
-    order = coefs.cols()-1;
+    nPoly = (coefs[0]).rows();
+    order = coefs.size()-1;
   }
 
 }
