@@ -117,10 +117,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contact"; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void initPlot();
       virtual void plot(double t, double dt = 1);
-#endif
       /***************************************************/
       
 #ifdef HAVE_OPENMBVCPPINTERFACE

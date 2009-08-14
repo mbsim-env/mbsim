@@ -306,13 +306,13 @@ namespace MBSim {
     for(unsigned int i=0; i<frame.size(); i++)
       for(unsigned int j=0; j<frame.size(); j++) {
         Index I = Index(frame[i]->getParent()->gethInd(parent,k),frame[i]->getParent()->gethInd(parent,k)+frame[i]->getJacobianOfTranslation().cols()-1);
-        Index J = Index(frame[j]->getParent()->gethInd(parent,k),frame[j]->getParent()->gethInd(parent,k)+frame[j]->getJacobianOfTranslation().cols()-1);
+        Index J = Index(frame[j]->getParent()->getuInd(parent,k),frame[j]->getParent()->getuInd(parent,k)+frame[j]->getJacobianOfTranslation().cols()-1);
         dhdu[i*frame.size()+j]>>dhduParent(I,J);
       }
     for(unsigned int i=0; i<contour.size(); i++)
       for(unsigned int j=0; j<contour.size(); j++) {
         Index I = Index(contour[i]->getParent()->gethInd(parent,k),contour[i]->getParent()->gethInd(parent,k)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-        Index J = Index(contour[j]->getParent()->gethInd(parent,k),contour[j]->getParent()->gethInd(parent,k)+contour[j]->getReferenceJacobianOfTranslation().cols()-1);
+        Index J = Index(contour[j]->getParent()->getuInd(parent,k),contour[j]->getParent()->getuInd(parent,k)+contour[j]->getReferenceJacobianOfTranslation().cols()-1);
         dhdu[frame.size()*frame.size()+i*contour.size()+j]>>dhduParent(I,J);
       }
   }

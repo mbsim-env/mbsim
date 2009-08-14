@@ -128,12 +128,16 @@ namespace MBSim {
     hSize[j] = hSize_;
   }
 
-  int Object::gethInd(DynamicSystem* sys ,int i) {
+  int Object::gethInd(DynamicSystem* sys, int i) {
     return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
   }
 
   int Object::getqInd(DynamicSystem* sys) {
     return (parent == sys) ? qInd : qInd + parent->getqInd(sys);
+  }
+
+  int Object::getuInd(DynamicSystem* sys, int i) {
+    return (parent == sys) ? uInd[i] : uInd[i] + parent->getuInd(sys,i);
   }
 
   void Object::plot(double t, double dt) {

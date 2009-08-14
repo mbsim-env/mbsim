@@ -81,6 +81,7 @@ namespace MBSim {
       virtual void calcuSize(int j=0);
       virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
+      virtual int getuInd(DynamicSystem* sys, int i=0);
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
       virtual int gethInd(DynamicSystem* sys, int i=0); 
@@ -809,47 +810,47 @@ namespace MBSim {
       fmatvec::Vector<int> jsv;
 
       /** 
-       * \brief size and local start index of positions
+       * \brief size and local start index of positions relative to parent
        */
       int qSize, qInd;
 
       /** 
-       * \brief size and local start index of velocities
+       * \brief size and local start index of velocities relative to parent
        */
       int uSize[2], uInd[2];
 
       /** 
-       * \brief size and local start index of order one parameters
+       * \brief size and local start index of order one parameters relative to parent
        */
       int xSize, xInd;
 
       /** 
-       * \brief size and local start index of order smooth right hand side
+       * \brief size and local start index of order smooth right hand side relative to parent
        */
       int hSize[2], hInd[2];
 
       /** 
-       * \brief size and local start index of relative distances
+       * \brief size and local start index of relative distances relative to parent
        */
       int gSize, gInd;
 
       /** 
-       * \brief size and local start index of relative velocities
+       * \brief size and local start index of relative velocities relative to parent
        */
       int gdSize, gdInd;
 
       /** 
-       * \brief size and local start index of contact force parameters
+       * \brief size and local start index of contact force parameters relative to parent
        */
       int laSize, laInd;
 
       /** 
-       * \brief size and local start index of rfactors
+       * \brief size and local start index of rfactors relative to parent
        */
       int rFactorSize, rFactorInd;
 
       /** 
-       * \brief size and local start index of stop vector
+       * \brief size and local start index of stop vector relative to parent
        */
       int svSize, svInd;
 
