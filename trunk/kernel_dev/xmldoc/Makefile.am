@@ -1,5 +1,5 @@
 docdir = @datadir@/@PACKAGE@/doc
-nodist_doc_DATA = mbsim.html *.png mbsimintegrator.html
+nodist_doc_DATA = mbsim.html *.png *.eps mbsimintegrator.html
 
 ../schema/mbsim.xsd: ../schema/mbsim.xsd.in
 	$(top_srcdir)/config.status --file=../schema/mbsim.xsd

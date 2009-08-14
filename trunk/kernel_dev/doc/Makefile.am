@@ -1,4 +1,4 @@
-CLEANFILES = -r html/
+CLEANFILES = -r html/ Latex/
 
 docdir = @datadir@/doc/@PACKAGE@-@VERSION@
 
