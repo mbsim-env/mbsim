@@ -67,7 +67,7 @@ namespace MBSim {
        * is applied on the two connected frames in the direction of the two connected frames.
        * If this function is set, than this force is first projected in direction dir and then applied on
        * the two connected frames in the projected direction.
-       * The direction vector dir is given in coordinates of frame refFrame_.
+       * The direction vector dir is given in coordinates of frame refFrame.
        */
       void setProjectionDirection(Frame *refFrame_, fmatvec::Vec dir) { refFrame=refFrame_; forceDir=dir; }
 

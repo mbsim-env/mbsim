@@ -311,6 +311,8 @@ LATEX_HEADER          =
 
 PDF_HYPERLINKS       = YES
 
+USE_PDFLATEX         = YES
+
 #---------------------------------------------------------------------------
 # configuration options related to the man page output
 #---------------------------------------------------------------------------
