@@ -545,7 +545,7 @@
           <xs:element name="frictionForceLaw">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionForceLaw"/>
+                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -616,6 +616,13 @@
 
   <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType"/>
   <xs:complexType name="PlaneType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Point" substitutionGroup="RigidContour" type="PointType"/>
+  <xs:complexType name="PointType">
     <xs:complexContent>
       <xs:extension base="RigidContourType"/>
     </xs:complexContent>
