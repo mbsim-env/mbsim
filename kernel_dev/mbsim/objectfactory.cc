@@ -18,6 +18,7 @@
 #include "mbsim/contours/edge.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
+#include "mbsim/contours/point.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/contour_interpolation.h"
 #include "mbsim/contours/contour_quad.h"
@@ -277,6 +278,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"Plane")
       return new Plane(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Point")
+      return new Point(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Sphere")
       return new Sphere(element->Attribute("name"));
     return 0;

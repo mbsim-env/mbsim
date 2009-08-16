@@ -539,7 +539,7 @@ namespace MBSim {
             data.push_back(cpData[i][0].getFrameOfReference().getPosition()(2));
             Vec F(3,INIT,0);
             if(isSetValued()) {
-              if(gActive[i]) F=fF[i][1].col(0)*lak[i](0);
+              if(gActive[i]) F=fF[i][1].col(0)*lak[i](0)/dt;
             }
             else
               F=cpData[i][0].getFrameOfReference().getOrientation().col(0)*lak[i](0);
@@ -558,12 +558,12 @@ namespace MBSim {
             Vec F(3,INIT,0);
             if(isSetValued()) {
               if(gActive[i] && lak[i].size()>1) { // stick friction
-                F=fF[i][1].col(1)*lak[i](1);
+                F=fF[i][1].col(1)*lak[i](1)/dt;
                 if(getFrictionDirections()>1)
-                  F+=fF[i][1].col(2)*lak[i](2);
+                  F+=fF[i][1].col(2)*lak[i](2)/dt;
               }
               if(gActive[i] && lak[i].size()==1) // slip friction
-                F=fF[i][1](Index(0,2),iT)*fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0);
+                F=fF[i][1](Index(0,2),iT)*fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0)/dt;
             }
             else {
               F=cpData[i][0].getFrameOfReference().getOrientation().col(1)*lak[i](1);
@@ -1105,12 +1105,14 @@ namespace MBSim {
     if(gifl) {
       setContactImpactLaw(gifl);
       gifl->initializeUsingXML(e->FirstChildElement());
+      e=e->NextSiblingElement();
     }
-    e=e->NextSiblingElement();
     FrictionForceLaw *ffl=ObjectFactory::getInstance()->createFrictionForceLaw(e->FirstChildElement());
-    setFrictionForceLaw(ffl);
-    ffl->initializeUsingXML(e->FirstChildElement());
-    e=e->NextSiblingElement();
+    if(ffl) {
+      setFrictionForceLaw(ffl);
+      ffl->initializeUsingXML(e->FirstChildElement());
+      e=e->NextSiblingElement();
+    }
     FrictionImpactLaw *fil=ObjectFactory::getInstance()->createFrictionImpactLaw(e->FirstChildElement());
     if(fil) {
       setFrictionImpactLaw(fil);
