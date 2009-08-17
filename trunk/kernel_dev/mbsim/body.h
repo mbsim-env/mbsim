@@ -39,6 +39,7 @@ namespace MBSim {
    *  A not inline equation
    *  \f[
    *    \int_a^b\sin(x)dx
+   *    +5
    *  \f]
    *  And a inline equation \f$x_a+\cos(x)\f$.
    *  And a image
