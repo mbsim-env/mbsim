@@ -6,6 +6,7 @@
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
@@ -223,7 +224,19 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Body" substitutionGroup="Object" type="BodyType"/>
+  <xs:element name="Body" substitutionGroup="Object" type="BodyType">
+    <xs:annotation><xs:documentation>
+      The following part is only a test for equation and image output for the XML documentation FROM XSM SCHEMA. A not inline equation
+      <h:div class="eqn"><h:img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></h:div>
+      And a inline equation <h:img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
+      <h:div class="htmlfigure"><h:table>
+        <h:caption align="bottom">The image caption</h:caption><h:tr><h:td>
+        <h:img class="htmlfigure" src="mbsim.png" alt="mbsim.png"/></h:td></h:tr></h:table>
+      </h:div>
+      <h:object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
+      End of the test. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="BodyType">
     <xs:complexContent>
       <xs:extension base="ObjectType"/>
