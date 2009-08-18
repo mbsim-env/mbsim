@@ -22,13 +22,14 @@
 
 #include "mbsim/flexible_body.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_2s_13_disk.h"
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/nurbsdisk.h"
-#endif
 
 namespace MBSim {
 
   class NurbsDisk2s;
+
+  /**
+   * \brief condensation setting for clamping to rigid body motion
+   */
   enum LockType { innerring,outerring };
 
   /*!
@@ -63,7 +64,8 @@ namespace MBSim {
    * \author Raphael Missel
    * \author Adrian Staszkiewicz
    * \date 2009-05-14 initial commit (Schindler / Grundl / Missel)
-   * \todo gravity, contour, visualisation
+   * \date 2009-08-15 contour / visualisation (Schindler / Grundl / Missel)
+   * \todo gravity TODO
    */
   class FlexibleBody2s13Disk : public MBSim::FlexibleBodyContinuum<fmatvec::Vec> {
     public:
@@ -79,10 +81,15 @@ namespace MBSim {
       virtual ~FlexibleBody2s13Disk() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
-      void initPlot();
+      virtual void initPlot();
       using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
       /***************************************************/
 
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateh(double t);
+      virtual void updateM(double t) {};
+      virtual void updateStateDependentVariables(double t);
+      /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
@@ -95,6 +102,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init();
+      virtual void facLLM() {};
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -108,96 +116,177 @@ namespace MBSim {
       void setPoissonRatio(double nu_) { nu = nu_; }			
       void setThickness(const fmatvec::Vec &di_,const fmatvec::Vec &da_) { di = di_; da = da_; }		    
       void setDensity(double rho_) { rho = rho_; }	
-      int getNr() const {return nr;}
-      int getNj() const {return nj;}
-      double getRi() const {return Ri;}
-      double getRa() const {return Ra;}
-      void setRefInertias(double m0_, double J0_) { m0 = m0_; J0 = J0_; }	
+      int getRadialNumberOfElements() const { return nr; }
+      int getAzimuthalNumberOfElements() const { return nj; }
+      double getInnerRadius() const { return Ri; }
+      double getOuterRadius() const { return Ra; }
+      void setReferenceInertia(double m0_, double J0_) { m0 = m0_; J0 = J0_; }	
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
 
-      /*! set number of elements in radial and azimuthal direction */
+      /*! 
+       * \brief set number of elements in radial and azimuthal direction
+       * \param radial number of elements
+       * \param azimuthal number of elements
+       */
       void setNumberElements(int nr_,int nj_);
 
-      /*! computes the potential energy */
-      double computePotentialEnergy() {return 0.5*trans(q)*K*q;}
+      /*!
+       * \return potential energy
+       */
+      double computePotentialEnergy() { return 0.5*trans(q)*K*q; }
 
-      /*! transformation kartesian to cylinder system */
+      /*! 
+       * \brief transformation cartesian to cylinder system
+       * \param cartesian vector in world system
+       * \return cylindrical coordinates
+       */
       fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
 
     private:
-      /** total number of elements */
+      /** 
+       * \brief total number of elements
+       */
       int Elements;
-      /** elastic dof per node */
+      
+      /** 
+       * \brief elastic dof per node
+       */
       int NodeDofs;
-      /** dof of moving frame of reference */
+      
+      /**
+       * \brief dof of moving frame of reference
+       */
       int RefDofs;
 
-      /** Young's modulus */
+      /**
+       * \brief Young's modulus
+       */
       double E;
-      /** Poisson ratio */
+      
+      /**
+       * \brief Poisson ratio
+       */
       double nu;
-      /** density */
+      
+      /** 
+       * \brief density
+       */
       double rho;
-      /** inner and outer thickness */
+      
+      /**
+       * \brief inner and outer thickness
+       */
       fmatvec::Vec di, da;
-      /** inner and outer radius of disk */
+      
+      /**
+       * \brief inner and outer radius of disk
+       */
       double Ri, Ra;
-      /** radial and azimuthal length of an FE */
+      
+      /**
+       * \brief radial and azimuthal length of an FE
+       */
       double dr, dj;
-      /** mass and inertia of the attached shaft */
+      
+      /**
+       * \brief mass and inertia of the attached shaft
+       */
       double m0, J0;
-      /** Degree of surface interpolation in radial and azimuthal direction */
+      
+      /**
+       * \brief degree of surface interpolation in radial and azimuthal direction
+       */
       int degV, degU;
 
-      /** vector of boundary data of the FE (r1,j1,r2,j2) */
+      /**
+       * \brief number of points drawn between nodes
+       */
+      int drawDegree;
+
+      /**
+       * \brief vector of boundary data of the FE (r1,j1,r2,j2)
+       */
       std::vector<fmatvec::Vec> ElementalNodes;
-      /** number of element currently involved in contact calculations */
+      
+      /**
+       * \brief number of element currently involved in contact calculations
+       */
       int currentElement;
-      /** stiffness matrix */
-      fmatvec::SymMat K; // TODO not initialised in constructor 
+      
+      /**
+       * \brief stiffness matrix
+       */
+      fmatvec::SymMat K; 
 
-      /** organisation of node coordinates */
-      /** number of elements in radial and azimuthal direction, number of FE nodes */
+      /**
+       * \brief number of elements in radial and azimuthal direction, number of FE nodes
+       */
       int nr, nj, Nodes;
-      /** matrix mapping nodes and coordinates (size number of nodes x number of node coordinates) */
-      fmatvec::Mat NodeCoordinates; // TODO not initialised in constructor 
-      /** matrix mapping elements and nodes (size number of elements x  number of nodes per elements) */
-      fmatvec::Matrix<fmatvec::General,int> ElementNodeList; // TODO not initialised in constructor 
+      
+      /**
+       * \brief matrix mapping nodes and coordinates (size number of nodes x number of node coordinates)
+       */
+      fmatvec::Mat NodeCoordinates; 
+      
+      /** 
+       * \brief matrix mapping elements and nodes (size number of elements x number of nodes per elements) 
+       */
+      fmatvec::Matrix<fmatvec::General,int> ElementNodeList;
 
-      /** condensation setting */
-      /** total dof of disk with reference movement and elastic deformation but without including bearing */
+      /** 
+       * \brief total dof of disk with reference movement and elastic deformation but without including bearing
+       */
       int Dofs;
-      /** dirichlet boundary condition concerning reference movement 
+      
+      /**
+       * \brief dirichlet boundary condition concerning reference movement
+       *
        * possible settings: innering/outerring
        */
       LockType LType;
-      /** index of condensated dofs */
-      fmatvec::Index ILocked; // TODO not initialised in constructor 
-      /** position and velocity with respect to Dofs */
-      fmatvec::Vec qext, uext; // TODO not initialised in constructor 
-      /** Jacobian for condensation with size Dofs x qSize */
-      fmatvec::Mat Jext; // TODO not initialised in constructor 
+      
+      /**
+       * \brief index of condensated dofs
+       */
+      fmatvec::Index ILocked; 
+      
+      /** 
+       * \brief position and velocity with respect to Dofs
+       */
+      fmatvec::Vec qext, uext; 
+      
+      /** 
+       * \brief Jacobian for condensation with size Dofs x qSize
+       */
+      fmatvec::Mat Jext;
 
-      /** contour for contact description */
+      /**
+       * \brief contour for contact description
+       */
       NurbsDisk2s *contour;
 
-      /*! detect involved element for contact description */
+      /*! 
+       * \brief detect involved element for contact description
+       * \param parametrisation vector (radial / azimuthal)
+       */
       void BuildElement(const fmatvec::Vec &s);
 
-      /*! calculate constant mass and stiffness matrix */
+      /*! 
+       * \brief calculate constant mass and stiffness matrix
+       */
       void initMatrices();
 
-      /*! updates kinematics of disk */
-      void updateStateDependentVariables(double t);
-      /*! updates vector of generalized forces */
-      void updateh(double t);
-
-      /*! computes thickness of disk at radial coordinate */
+      /*! 
+       * \return thickness of disk at radial coordinate
+       * \param radial coordinate
+       */
       fmatvec::Vec computeThickness(const double &r_);
   };
 
-  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement) { throw new MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSimError("ERROR(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw new MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw new MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
 
 }
 

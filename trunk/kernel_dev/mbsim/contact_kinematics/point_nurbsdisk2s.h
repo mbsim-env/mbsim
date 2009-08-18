@@ -14,8 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
- *          rzander@users.berlios.de
+ * Contact: thschindler@users.berlios.de
  */
 
 #ifndef _CONTACT_KINEMATICS_POINT_NURBSDISK2S_H_
@@ -34,9 +33,16 @@ namespace MBSim {
    * \author Raphael Missel
    * \author Thorsten Schindler
    * \date 2009-05-14 initial commit (Missel / Grundl / Schindler)
+   * \date 2009-08-16 contour / visualisation (Missel / Grundl / Schindler)
    */
   class ContactKinematicsPointNurbsDisk2s : public ContactKinematics {
     public:
+      ContactKinematicsPointNurbsDisk2s() {
+#ifndef HAVE_NURBS
+        throw new MBSimError("ERROR(ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s): External NURBS library not implemented!");
+#endif        
+      }
+
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData* cpData);
@@ -54,7 +60,6 @@ namespace MBSim {
        */
       Point *point;
       NurbsDisk2s *nurbsdisk;
-
   };
 
 }

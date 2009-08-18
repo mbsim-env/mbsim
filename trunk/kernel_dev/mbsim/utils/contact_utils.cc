@@ -36,6 +36,7 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/contours/line.h"
+#include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/point.h"
@@ -62,6 +63,7 @@
 #include <mbsim/contact_kinematics/point_flexibleband.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
+#include <mbsim/contact_kinematics/point_nurbsdisk2s.h>
 #include <mbsim/contact_kinematics/point_plane.h>
 #include <mbsim/contact_kinematics/point_planewithfrustum.h>
 #include <mbsim/contact_kinematics/sphere_frustum.h>
@@ -143,6 +145,9 @@ namespace MBSim {
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Line*>(contour0))) 
       return new ContactKinematicsPointLine; 
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<NurbsDisk2s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<NurbsDisk2s*>(contour0))) 
+      return new ContactKinematicsPointNurbsDisk2s; 
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Plane*>(contour0))) 
       return new ContactKinematicsPointPlane;

@@ -20,6 +20,6 @@ feinclude_HEADERS = finite_element_1s_21_ancf.h\
 			finite_element_1s_21_rcm.h\
 			finite_element_1s_33_rcm.h\
 			finite_element_1s_23_bta.h\
-			finite_element_2s_13_disk.cc\
+			finite_element_2s_13_disk.h\
             superelement_linear_external.h
 

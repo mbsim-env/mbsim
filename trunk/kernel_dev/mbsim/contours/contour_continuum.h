@@ -29,6 +29,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-04-20 initial commit (Thorsten Schindler)
    * \date 2009-06-04 new file (Thorsten Schindler)
+   * \date 2009-08-16 fix in template usage (Thorsten Schindler)
    */
   template <class AT>
     class ContourContinuum : public Contour {
@@ -56,8 +57,8 @@ namespace MBSim {
         /* GETTER / SETTER */
         void setAlphaStart(AT as_) { as = as_; }
         void setAlphaEnd(AT ae_) { ae = ae_; }
-        double getAlphaStart() const { return as; }
-        double getAlphaEnd() const { return ae; }
+        const AT& getAlphaStart() const { return as; }
+        const AT& getAlphaEnd() const { return ae; }
         void setNodes(const std::vector<AT> &nodes_) { nodes = nodes_; }
         const std::vector<AT>& getNodes() const { return nodes; }
         /***************************************************/
