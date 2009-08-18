@@ -791,7 +791,7 @@ namespace MBSim {
     else if(Gs.cols() != G.size()) {
       static double facSizeGs = 1;
       if(G.size()>limitGSize && facSizeGs == 1) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
-      Gs.resize(G.size(),G.size(),int(G.size()*G.size()*facSizeGs));
+      Gs.resize(G.size(),int(G.size()*G.size()*facSizeGs));
     }
     Gs << G;
   }
