@@ -18,14 +18,18 @@
  */
 
 #include<config.h>
+
 #define FMATVEC_DEEP_COPY
 #define FMATVEC_NO_INITIALIZATION
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
-#include "mbsim/flexible_body/finite_elements/finite_element_2s_13_disk.h"
 #include "mbsim/contours/nurbs_disk_2s.h"
-#include <mbsim/dynamic_system.h>
+#include "mbsim/dynamic_system.h"
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/nurbsdisk.h"
+#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -66,10 +70,11 @@ namespace MBSim {
     return phi;
   }
 
-  FlexibleBody2s13Disk::FlexibleBody2s13Disk(const string &name) : FlexibleBodyContinuum<Vec>(name),Elements(0),NodeDofs(3),RefDofs(2),E(0.),nu(0.),rho(0.),di(3,INIT,0.),da(3,INIT,0.),Ri(0),Ra(0),dr(0),dj(0),m0(0),J0(0),currentElement(0),nr(0),nj(0),Nodes(0),Dofs(0),LType(innerring) {
-    degU=3;degV=3;
-    //contour = new NurbsDisk2s("SurfaceContour");  
-    //Body::addContour(contour);
+  FlexibleBody2s13Disk::FlexibleBody2s13Disk(const string &name) : FlexibleBodyContinuum<Vec>(name),Elements(0),NodeDofs(3),RefDofs(2),E(0.),nu(0.),rho(0.),di(3,INIT,0.),da(3,INIT,0.),Ri(0),Ra(0),dr(0),dj(0),m0(0),J0(0),degV(3),degU(8),drawDegree(0),currentElement(0),nr(0),nj(0),Nodes(0),Dofs(0),LType(innerring) {
+#ifdef HAVE_NURBS
+    contour = new NurbsDisk2s("SurfaceContour");  
+    Body::addContour(contour);
+#endif
 
     // frame in axis
     Vec s(2,fmatvec::INIT,0.);
@@ -78,7 +83,9 @@ namespace MBSim {
 
   void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+#ifdef HAVE_NURBS
       contour->updateKinematicsForFrame(cp,ff);
+#endif
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       const int &node = cp.getNodeNumber();
@@ -173,14 +180,14 @@ namespace MBSim {
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext,ILocked);
-   
+
     // transformation
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*trans(Jacobian(0,0,qSize-1,0)));
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation().col(2)*trans(Jacobian(0,0,qSize-1,0)));
     cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*trans(Jacobian(0,1,qSize-1,3)));
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
-    
+
     if(frame!=0) { // frame should be linked to contour point data
       frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
       frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
@@ -198,6 +205,7 @@ namespace MBSim {
 
     qSize = Dofs - NodeDofs*nj; // missing one node row because of bearing
     uSize[0] = qSize;
+    uSize[1] = qSize; // TODO
 
     qext = Vec(Dofs); 
     uext = Vec(Dofs); 
@@ -213,15 +221,15 @@ namespace MBSim {
 
     for(int i=0;i<Elements;i++) {
       discretization.push_back(new FiniteElement2s13Disk(E,nu,rho));
-      qElement.push_back(Vec(discretization[0]->getSizeOfPositions(),INIT,0.));
-      uElement.push_back(Vec(discretization[0]->getSizeOfVelocities(),INIT,0.));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
       static_cast<FiniteElement2s13Disk*>(discretization[i])->setThickness(di,da);
       ElementalNodes.push_back(Vec(4,INIT,0.));
     }
 
     // condensation
     switch(LType) {
-      case innerring:	// 0: innerring
+      case innerring: // 0: innerring
         ILocked = Index(RefDofs,RefDofs+NodeDofs*nj-1);
         Jext = Mat(Dofs,qSize,INIT,0.);
         Jext(0,0,RefDofs-1,RefDofs-1) << DiagMat(RefDofs,INIT,1.);
@@ -251,7 +259,6 @@ namespace MBSim {
 
         // ElementNodeList(node 1,node 2,node 3,node 4)
         // element number increases azimuthally from the inner to the outer ring
-
         if(i<nr && j<nj-1) {
           ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
           ElementNodeList(j+i*nj,1) = (j+1) +  i   *nj; // node 2
@@ -267,56 +274,66 @@ namespace MBSim {
       }
     }
 
-    // beginning (?)
+#ifdef HAVE_NURBS
+    // borders of contour parametrisation 
+    // beginning 
     Vec alphaS(2); 
     alphaS(0) =  Ri; // radius
     alphaS(1) = 0.; // angle
-    // end (?)
+    
+    // end 
     Vec alphaE(2);
     alphaE(0) =     Ra; // radius
     alphaE(1) = 2*M_PI; // angle
 
     contour->setAlphaStart(alphaS);  contour->setAlphaEnd(alphaE);
+#endif
 
     qext = Jext * q0;
     uext = Jext * u0;
 
-    // calculate constant mass- and stiffness matrix
-    initMatrices();
-    contour->init(degU, degV, nr, nj, Ri, Ra, 1); //flag = 1, because contourR is in positive z-direction of the local disk-coordinate system
-    contour->computeSurface();
-    contour->computeSurfaceVelocities();
+    initMatrices(); // calculate constant mass- and stiffness matrix
 
+#ifdef HAVE_NURBS
+    contour->init(degU, degV, nr, nj, Ri, Ra); // initialize contour
+    contour->computeSurface(); // calculate nodes of position interpolation
+    contour->computeSurfaceVelocities(); // calculate nodes of velocity interpolation TODO necessary?
+#endif
   }
 
   void FlexibleBody2s13Disk::initPlot() {
-    updatePlotFeatures(parent); // REMARK[TS] holt sich alle features, die in Elternklassen definiert sind
+    updatePlotFeatures(parent); 
 
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_NURBS
       if(getPlotFeature(openMBV)==enabled) {
         OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
-        Diskbody->setElementNumberRadial(nr);
-        Diskbody->setElementNumberAzimuthal(nj);
-        Diskbody->setRadii(Ri,Ra);
 
-        float *openmbvDI = new float[di.size()];
-        float *openmbvDA = new float[da.size()];
-        for(int i=0;i<di.size();i++) openmbvDI[i]=di(i);
-        for(int i=0;i<da.size();i++) openmbvDA[i]=da(i);
-        Diskbody->setThickness(openmbvDI,openmbvDA);
+        drawDegree = 25/nj;
+        Diskbody->setStaticColor(1.);
+        Diskbody->setStaticColor(0.3);
+        Diskbody->setMinimalColorValue(0.);
+        Diskbody->setMaximalColorValue(1.);
+        Diskbody->setDrawDegree(drawDegree);
+        Diskbody->setRadii(Ri,Ra);
 
         float *openmbvUVec = new float[nj+1+2*degU];
         float *openmbvVVec = new float[nr+2+degV];
-        for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVec()(i);
-        for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVec()(i);
+        for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
+        for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
 
         Diskbody->setKnotVecAzimuthal(openmbvUVec);
         Diskbody->setKnotVecRadial(openmbvVVec);
-        Diskbody->setStaticColor(0.5);
 
+        Diskbody->setElementNumberRadial(nr);
+        Diskbody->setElementNumberAzimuthal(nj);
+
+        Diskbody->setInterpolationDegreeRadial(degV);  
+        Diskbody->setInterpolationDegreeAzimuthal(degU);
         openMBVBody = Diskbody;
       }
+#endif
 #endif
       FlexibleBodyContinuum<Vec>::initPlot();
     }
@@ -336,8 +353,8 @@ namespace MBSim {
       static_cast<FiniteElement2s13Disk*>(discretization[i])->computeConstantSystemMatrices(ElementalNodes[i],computeThickness(r1)(0),computeThickness(r2)(0));
 
       // definition of variables for element matrices
-      SymMat Mplatte = discretization[i]->getMassMatrix();
-      SymMat Kplatte = static_cast<FiniteElement2s13Disk*>(discretization[i])->getStiffnessMatrix();
+      SymMat Mplatte = discretization[i]->getM();
+      SymMat Kplatte = static_cast<FiniteElement2s13Disk*>(discretization[i])->getK();
 
       Index IRef(0,RefDofs-1);
 
@@ -375,7 +392,6 @@ namespace MBSim {
     M(0,0) += m0;
     M(1,1) += J0;
 
-
     // LU-decomposition of M
     LLM = facLL(M);
   }
@@ -388,19 +404,17 @@ namespace MBSim {
     h = -K*q;
   }
 
-  void FlexibleBody2s13Disk::BuildElement(const Vec &s) 
-  {
+  void FlexibleBody2s13Disk::BuildElement(const Vec &s) {
     //outer-ring s(0) > Ra -> TODO: change s(0) of outer-ring
     assert(Ri <= s(0)); // is the input on the disk?
     // assert(Ra >= s(0)); 
 
-    currentElement = int( (s(0)-Ri)/dr )*nj + int(s(1)/dj); // which element is involved?
+    currentElement = int( (s(0)-Ri)/dr )*nj + int( s(1)/dj ); // which element is involved?
     if( Ra<=s(0) ) currentElement-=nj;  //outer-ring-knots lead to existing element 
   }
 
 
   void FlexibleBody2s13Disk::BuildElements() {
-
     for(int i=0;i<Elements;i++) {
       //  3--------4
       //  |        |
@@ -413,7 +427,6 @@ namespace MBSim {
       if(ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2*M_PI; 
       }
-
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
@@ -431,16 +444,10 @@ namespace MBSim {
       uElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
       uElement[i](RefDofs+3*NodeDofs,RefDofs+4*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,3)*NodeDofs,RefDofs+(ElementNodeList(i,3)+1)*NodeDofs-1); 
     }
-
   }
 
   Vec FlexibleBody2s13Disk::computeThickness(const double &r_) {
     Vec d(3);
-
-    // linear
-    // double d = (da(2)-da(0))/(Ra-Ri)*r_;
-    // double d = (d1*(r-r1)+d2*(r2-r))/(r2-r1);
-
     // quadratic
     d(1) = di(0) + di(1)*r_ + di(2)*r_*r_; // thickness inner ring
     d(2) = da(0) + da(1)*r_ + da(2)*r_*r_; // thickness outer ring
@@ -451,29 +458,68 @@ namespace MBSim {
   }
 
   void FlexibleBody2s13Disk::plot(double t, double dt) {
-    Element::plot(t); 
-
-
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_NURBS
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
-        data.push_back(qext(0)); //time
+        data.push_back(t); //time
 
-        for(int i=0;i<nr+1; i++) 
-        {
-          for(int j=0;j<nj+degU;j++)
-          {
-            data.push_back(contour->getCtrlPts(j,i)(1)); //global x-coordinate
-            data.push_back(contour->getCtrlPts(j,i)(2)); //global y-coordinate
-            data.push_back(contour->getCtrlPts(j,i)(3)); //global z-coordinate
+        for(int i=0;i<nr+1; i++) {
+          for(int j=0;j<nj+degU;j++) {
+            data.push_back(contour->getControlPoints(j,i)(0)); //global x-coordinate
+            data.push_back(contour->getControlPoints(j,i)(1)); //global y-coordinate
+            data.push_back(contour->getControlPoints(j,i)(2)); //global z-coordinate
           }
         }
+
+        ContourPointData cp;
+        cp.getLagrangeParameterPosition() = Vec(2,NONINIT);
+
+        //inner ring
+        for(int i=0;i<nj; i++) {
+          for(int j=0;j<drawDegree;j++) {
+            cp.getLagrangeParameterPosition()(1) = 2*M_PI*(i*drawDegree+j)/(nj*drawDegree);
+            cp.getLagrangeParameterPosition()(0) = Ri;
+            contour->updateKinematicsForFrame(cp, position);
+            Vec pos = cp.getFrameOfReference().getPosition();
+
+            data.push_back(pos(0)); //global x-coordinate
+            data.push_back(pos(1)); //global y-coordinate
+            data.push_back(pos(2)); //global z-coordinate*/
+          }
+        }
+
+        //outer Ring
+        for(int i=0;i<nj; i++) {
+          for(int j=0;j<drawDegree;j++) {
+            cp.getLagrangeParameterPosition()(0) = Ra;
+            cp.getLagrangeParameterPosition()(1) = 2*M_PI*(i*drawDegree+j)/(nj*drawDegree);
+            contour->updateKinematicsForFrame(cp, position);
+            Vec pos = cp.getFrameOfReference().getPosition(); 
+
+            data.push_back(pos(0)); //global x-coordinate
+            data.push_back(pos(1)); //global y-coordinate
+            data.push_back(pos(2)); //global z-coordinate
+          }
+        }
+
+        cp.getLagrangeParameterPosition()(0) = 0.;
+        cp.getLagrangeParameterPosition()(1) = 0.;
+        contour->updateKinematicsForFrame(cp,position_cosy);// TODO im Nullpunkt kein FrameFeature
+        Vec pos = cp.getFrameOfReference().getPosition();  
+        data.push_back(pos(0)); //global x-coordinate
+        data.push_back(pos(1)); //global y-coordinate
+        data.push_back(pos(2)); //global z-coordinate
+
+        for(int i=0;i<3;i++) for(int j=0;j<3;j++) data.push_back(cp.getFrameOfReference().getOrientation()(i,j));
+
         ((OpenMBV::NurbsDisk*)openMBVBody)->append(data);
       }
 #endif
+#endif
     }
-    FlexibleBodyContinuum<Vec>::plot(t,dt); //changed from double to Vec
+    FlexibleBodyContinuum<Vec>::plot(t,dt);
   }
 
   Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {
@@ -486,6 +532,7 @@ namespace MBSim {
 
     CrPoint(0) = sqrt( xt*xt + yt*yt );
     CrPoint(1) = ArcTan(xt*cos(alpha) + yt*sin(alpha),yt*cos(alpha) - xt*sin(alpha));
+    CrPoint(2) = WrPoint(2);
 
     return CrPoint;
   }
@@ -493,8 +540,11 @@ namespace MBSim {
   void FlexibleBody2s13Disk::updateStateDependentVariables(double t) {
     FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
 
+#ifdef HAVE_NURBS
     contour->computeSurface(); 
     contour->computeSurfaceVelocities();
+    contour->computeSurfaceJacobians();
+#endif
   }
 
 }

@@ -19,6 +19,7 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 					point_flexibleband.cc \
 					point_frustum.cc\
 					point_line.cc\
+					point_nurbsdisk2s.cc\
 					point_plane.cc\
 					point_planewithfrustum.cc\
 					sphere_frustum.cc\
@@ -50,6 +51,7 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   point_flexibleband.h \
   point_frustum.h \
   point_line.h \
+  point_nurbsdisk2s.h\
   point_plane.h \
   point_planewithfrustum.h \
   sphere_frustum.h \
