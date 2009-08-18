@@ -14,6 +14,7 @@ libcontour_la_SOURCES = area.cc\
 						frustum.cc\
 						frustum2d.cc\
 						nurbs_disk_2s.cc\
+						planewithfrustum.cc\
 						sphere.cc
 
   libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)

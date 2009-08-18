@@ -85,7 +85,13 @@
         </xs:element>  
       </xs:choice> 
     </xs:sequence> <!-- a fix for xmllint -->
-    <xs:attribute name="name" type="pv:name" use="required"/>
+    <xs:attribute name="name" type="pv:name" use="required">
+      <xs:annotation>
+        <xs:documentation xml:lang="de">
+          Name des Elements
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType> 
 
   <xs:element name="DynamicSystem" abstract="true" substitutionGroup="Element" type="DynamicSystemType"/>
@@ -99,6 +105,11 @@
   </xs:complexType>   
 
   <xs:element name="frameOfReference">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Referenzkoordinatensystem
+      </xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
     </xs:complexType> 
@@ -109,19 +120,71 @@
     <xs:complexContent>
       <xs:extension base="DynamicSystemType">
         <xs:sequence>
-          <xs:element ref="frameOfReference" minOccurs="0"/>
-          <xs:element name="position" type="pv:lengthVector" minOccurs="0"/>  
-          <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0"/>  
+          <xs:element ref="frameOfReference" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Koordinatensystem, in dem die Positionierung der Gruppe angegeben wird. Standardmäßig wird das "I"-System des übergeordneten Systems verwendet.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="position" type="pv:lengthVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Relative Lager der Gruppe.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Relative Orientierung der Gruppe.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>           
           <xs:element name="frames">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für lokale Koordinatensysteme der Gruppe.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      lokale Gruppe eines Koordinatensystems.
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Frame"/>
-                      <xs:element ref="frameOfReference" minOccurs="0"/>
-                      <xs:element name="position" type="pv:lengthVector"/>
-                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                      <xs:element ref="Frame">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Definition eines Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element ref="frameOfReference" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="position" type="pv:lengthVector">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Lager des Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="orientation" type="pv:nounitMatrix">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Orientierung des Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -129,15 +192,49 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für ortsfeste Kontaktkontouren der Gruppe.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      lokale Gruppe einer Kontaktkontur
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Contour"/>
-                      <xs:element ref="frameOfReference" minOccurs="0"/>
-                      <xs:element name="position" type="pv:lengthVector"/>
-                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                      <xs:element ref="Contour">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Definition einer Kontaktkontur.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element ref="frameOfReference" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "I"-System der Gruppe.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="position" type="pv:lengthVector">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Lager der Kontour.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="orientation" type="pv:nounitMatrix">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Orientierung der Kontour.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -145,31 +242,82 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="groups">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für Untergruppen der Gruppe (Subsysteme)
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed"/>  
-                  <xs:element ref="DynamicSystem"/>  
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
+                  <xs:element ref="DynamicSystem">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="objects">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für Objekte (Körper, hydraulische Leitungen, ...)
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed"/>  
-                  <xs:element ref="Object"/>  
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
+                  <xs:element ref="Object">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="links">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für Links (Verbindungen, Kontakte, hydraulische Knoten, ...)
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed"/>  
-                  <xs:element ref="Link"/>  
+                  <xs:element ref="pv:embed">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Definition in externer Datei.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
+                  <xs:element ref="Link">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de">
+                        Lokale Definition.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>  
                 </xs:choice>
               </xs:sequence>
             </xs:complexType>
@@ -188,7 +336,13 @@
     <xs:complexContent>
       <xs:extension base="EnvironmentType">
         <xs:sequence>
-          <xs:element name="accelerationOfGravity" type="pv:accelerationVector"/>
+          <xs:element name="accelerationOfGravity" type="pv:accelerationVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Erdbeschleunigung
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -200,9 +354,20 @@
       <xs:extension base="GroupType">
         <xs:sequence>
           <xs:element name="environments">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für Umgebungsvariablen des physikalen Systems
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Definition einzelner Umgebungsvariablen
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
@@ -212,13 +377,31 @@
   </xs:complexType>   
 
   <xs:element name="Object" abstract="true" substitutionGroup="Element" type="ObjectType"/>
+  <xs:annotation>
+    <xs:documentation xml:lang="de">
+      Abstrakte Klasse eines Objekts.
+    </xs:documentation>
+  </xs:annotation>
   <xs:complexType name="ObjectType">
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" type="pv:lengthVector"/>
-          <xs:element name="initialGeneralizedVelocity" type="pv:velocityVector"/>
-          <xs:element ref="frameOfReference"/>
+          <xs:element name="initialGeneralizedPosition" type="pv:lengthVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Inertiale Lage in den generalisierten Freiheitsgraden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="initialGeneralizedVelocity" type="pv:velocityVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element ref="frameOfReference">
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -226,46 +409,86 @@
 
   <xs:element name="Body" substitutionGroup="Object" type="BodyType">
     <xs:annotation><xs:documentation>
-      The following part is only a test for equation and image output for the XML documentation FROM XSM SCHEMA. A not inline equation
-      <h:div class="eqn"><h:img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></h:div>
-      And a inline equation <h:img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
-      <h:div class="htmlfigure"><h:table>
-        <h:caption align="bottom">The image caption</h:caption><h:tr><h:td>
-        <h:img class="htmlfigure" src="mbsim.png" alt="mbsim.png"/></h:td></h:tr></h:table>
-      </h:div>
-      <h:object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
-      End of the test. 
+        The following part is only a test for equation and image output for the XML documentation FROM XSM SCHEMA. A not inline equation
+        <h:div class="eqn"><h:img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></h:div>
+        And a inline equation <h:img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">The image caption</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="mbsim.png" alt="mbsim.png"/></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
+        End of the test. 
     </xs:documentation></xs:annotation>
   </xs:element>
+  <xs:annotation>
+    <xs:documentation xml:lang="de">
+      Mechanischer Körper.
+    </xs:documentation>
+  </xs:annotation>
   <xs:complexType name="BodyType">
     <xs:complexContent>
       <xs:extension base="ObjectType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType"/>
+  <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Jeder Starrkörper bekommt automatisch ein Koordinatensystem "C" in seinem Schwerpunkt zugewiesen. Alle Größen werden standardmäßig in diesem Koordinatensystem definiert.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="RigidBodyType">
     <xs:complexContent>
       <xs:extension base="BodyType">
         <xs:sequence>
           <xs:element name="frameForKinematics">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Koordinatensystem, in dem die kinematischen Größen des Körpers ausgewertet werden. Für eine Beschreibung des Körpers in Absolutkoordinaten ist hier das ortsfeste "I"-System der übergeordneten Gruppe zu wählen.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="mass" type="pv:massScalar"/>
-          <xs:element name="inertiaTensor" type="pv:inertiaMatrix"/>
+          <xs:element name="mass" type="pv:massScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Masse des Körpers
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Trägheitstensor des Körpers. Anzugeben im Punkt und der Orientierung des Schwerpunkts.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="translation">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Translation" minOccurs="0"/>
+                <xs:element ref="Translation" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Translatorische Freiheitsgrade des Körpers.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="rotation">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Rotation" minOccurs="0"/>
+                <xs:element ref="Rotation" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Rotatorische Freiheitsgrade des Körpers.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -328,15 +551,49 @@
           </xs:element>
           <!-- END -->
           <xs:element name="frames">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für lokale Koordinatensysteme des Körpers.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      lokale Gruppe eines Koordinatensystems.
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Frame"/>
-                      <xs:element ref="frameOfReference" minOccurs="0"/>
-                      <xs:element name="position" type="pv:lengthVector"/>
-                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                      <xs:element ref="Frame">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Definition eines Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element ref="frameOfReference" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "C"-KOS.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="position" type="pv:lengthVector">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Lager des Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="orientation" type="pv:nounitMatrix">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Orientierung des Koordinatensystems.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -344,15 +601,44 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für lokale Kontaktkontouren des Körpers.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="Contour"/>
-                      <xs:element ref="frameOfReference" minOccurs="0"/>
-                      <xs:element name="position" type="pv:lengthVector"/>
-                      <xs:element name="orientation" type="pv:nounitMatrix"/>
+                      <xs:element ref="Contour">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            lokale Gruppe einer Kontourdefinition.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element ref="frameOfReference" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "C"-KOS.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="position" type="pv:lengthVector">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relative Lager der Kontour.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="orientation" type="pv:nounitMatrix">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de">
+                            Relatvie Orientierung der Kontour.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -360,17 +646,45 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="openMBVRigidBody" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung des Körpers in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="ombv:RigidBody"/>
+                <xs:element ref="ombv:RigidBody">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Visualisierung
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung des Schwerpunktssystems
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:lengthScalar"/>
-                <xs:element name="offset" type="pv:nounitScalar"/>
+                <xs:element name="size" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Länge der Achsen
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="offset" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem)
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
@@ -558,7 +872,7 @@
           <xs:element name="frictionForceLaw">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
+                <xs:element ref="FrictionForceLaw"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -627,6 +941,67 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="CircleHollow" substitutionGroup="RigidContour" type="CircleHollowType"/>
+  <xs:complexType name="CircleHollowType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="radius" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CircleSolid" substitutionGroup="RigidContour" type="CircleSolidType"/>
+  <xs:complexType name="CircleSolidType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="radius" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Frustum" substitutionGroup="RigidContour" type="FrustumType"/>
+  <xs:complexType name="FrustumType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="baseRadius" type="pv:lengthScalar"/>
+          <xs:element name="topRadius" type="pv:lengthScalar"/>
+          <xs:element name="height" type="pv:lengthScalar"/>
+          <xs:choice>
+            <xs:element name="solid"/>
+            <xs:element name="hollow"/>
+          </xs:choice>
+          <xs:element name="enableOpenMBV" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Line" substitutionGroup="RigidContour" type="LineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Einfache, unendlich ausgedehnte Linienkontur.
+        Die Linie verläuft in Richtung der y-Achse des Referenzkoordinatensystems, die Normale weist in die Richtung der x-Achse des Referenzkoordinatensystems.
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung einer Line-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_line.png" alt="./figures/contour_line.png"/></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_line.eps" title="Orientierung einer Line-Kontour"/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LineType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType"/>
   <xs:complexType name="PlaneType">
     <xs:complexContent>
@@ -634,6 +1009,21 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="PlaneWithFrustum" substitutionGroup="RigidContour" type="PlaneWithFrustumType"/>
+  <xs:complexType name="PlaneWithFrustumType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="baseRadius" type="pv:lengthScalar"/>
+          <xs:element name="topRadius" type="pv:lengthScalar"/>
+          <xs:element name="height" type="pv:lengthScalar"/>
+          <xs:element name="roundingRadius" type="pv:lengthScalar"/>
+          <xs:element name="enableOpenMBV" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+        
   <xs:element name="Point" substitutionGroup="RigidContour" type="PointType"/>
   <xs:complexType name="PointType">
     <xs:complexContent>
