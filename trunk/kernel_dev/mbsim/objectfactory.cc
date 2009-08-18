@@ -276,8 +276,18 @@ namespace MBSim {
 
   Contour *MBSimObjectFactory::createContour(TiXmlElement *element) {
     if(element==0) return 0;
+    if(element->ValueStr()==MBSIMNS"CircleHollow")
+      return new CircleHollow(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"CircleSolid")
+      return new CircleSolid(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Frustum")
+      return new Frustum(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Line")
+      return new Line(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Plane")
       return new Plane(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"PlaneWithFrustum")
+      return new PlaneWithFrustum(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Point")
       return new Point(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Sphere")

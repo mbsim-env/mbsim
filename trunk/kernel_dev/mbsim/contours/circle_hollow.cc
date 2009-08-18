@@ -43,5 +43,18 @@ namespace MBSim {
     else openMBVRigidBody=0;
   }
 #endif
+  
+  void CircleHollow::initializeUsingXML(TiXmlElement *element) {
+    RigidContour::initializeUsingXML(element);
+    TiXmlElement* e;
+    e=element->FirstChildElement(MBSIMNS"radius");
+    setRadius(atof(e->GetText()));
+    e=e->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV")
+      enableOpenMBV();
+#endif
+  }
+
 }
 

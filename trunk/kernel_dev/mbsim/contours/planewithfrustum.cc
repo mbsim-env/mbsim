@@ -14,65 +14,61 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: schneidm@users.berlios.de
  */
 
 #include<config.h>
-#include "mbsim/contours/frustum.h"
+#include "mbsim/contours/planewithfrustum.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #endif
-
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  void Frustum::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
-      }
-#endif
-      RigidContour::initPlot();
-    }
-  }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-  void Frustum::enableOpenMBV(bool enable) {
+  void PlaneWithFrustum::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setStaticColor(0.5);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(-M_PI*0.5,0.,0.);
+      if (hFrustum<0) {
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerBaseRadius(rFrustumOnPlane);
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setInnerTopRadius(rFrustumOnTop);
+      }
+      else {
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(rFrustumOnPlane);
+        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(rFrustumOnTop);
+      }
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(hFrustum);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialRotation(0, M_PI/2., 0);
+      ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(hFrustum, 0, 0);
     }
     else openMBVRigidBody=0;
   }
 #endif
 
-  void Frustum::initializeUsingXML(TiXmlElement *element) {
+  void PlaneWithFrustum::initializeUsingXML(TiXmlElement *element) {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
     e=element->FirstChildElement(MBSIMNS"baseRadius");
-    r(0)=atof(e->GetText());
+    rFrustumOnPlane=atof(e->GetText());
     e=element->FirstChildElement(MBSIMNS"topRadius");
-    r(1)=atof(e->GetText());
+    rFrustumOnTop=atof(e->GetText());
     e=element->FirstChildElement(MBSIMNS"height");
-    h=atof(e->GetText());
-    if (element->FirstChildElement(MBSIMNS"solid"))
-      outCont=true;
-    else
-      outCont=false;
+    hFrustum=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"roundingRadius");
+    rho=atof(e->GetText());
+    e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if(element->FirstChildElement(MBSIMNS"enableOpenMBV"))
       enableOpenMBV();
 #endif
+    checkInput();
   }
+
 }
+

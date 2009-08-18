@@ -59,6 +59,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBV(bool enable=true);
 #endif
+      
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     private:
       /**
