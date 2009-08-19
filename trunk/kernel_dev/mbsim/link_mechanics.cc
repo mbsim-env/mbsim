@@ -48,7 +48,7 @@ namespace MBSim {
     /****************** velocity dependent calculations ***********************/
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int l=0; l<frame.size(); l++) {
-        for(int j=0; j<frame[l]->getJacobianOfTranslation().cols(); j++) {
+        for(int j=0; j<frame[l]->getParent()->getuSize(); j++) {
           hLink[i] = hLink0[i].copy(); // set to old values
           h[i] = h0[i].copy();
 
@@ -68,26 +68,24 @@ namespace MBSim {
     /****************** position dependent calculations ***********************/
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int l=0; l<frame.size(); l++) {
-        if(frame[l]->getJacobianOfTranslation().cols() > 0) { // Jacobian using disturbed positions
-          for(int j=0; j<frame[l]->getParent()->getq().size(); j++) {
-            hLink[i] = hLink0[i].copy(); // set to old values
-            h[i] = h0[i].copy();
+        for(int j=0; j<frame[l]->getParent()->getq().size(); j++) {
+          hLink[i] = hLink0[i].copy(); // set to old values
+          h[i] = h0[i].copy();
 
-            double qParentj = frame[l]->getParent()->getq()(j); // save correct position
+          double qParentj = frame[l]->getParent()->getq()(j); // save correct position
 
-            frame[l]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
-            frame[l]->getParent()->updateStateDependentVariables(t); 
-            updateg(t);
-            updategd(t);
-            frame[l]->getParent()->updateT(t); 
-            updateJacobians(t);
-            updateh(t);
+          frame[l]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          frame[l]->getParent()->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          frame[l]->getParent()->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
 
-            dhdq[i*frame.size()+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
-            frame[l]->getParent()->getq()(j) = qParentj;
-            frame[l]->getParent()->updateStateDependentVariables(t); 
-            frame[l]->getParent()->updateT(t); 
-          }
+          dhdq[i*frame.size()+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
+          frame[l]->getParent()->getq()(j) = qParentj;
+          frame[l]->getParent()->updateStateDependentVariables(t); 
+          frame[l]->getParent()->updateT(t); 
         }
       }
 
@@ -136,7 +134,7 @@ namespace MBSim {
     /****************** velocity dependent calculations *************************/
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int l=0; l<contour.size(); l++) { 
-        for(int j=0; j<contour[l]->getReferenceJacobianOfTranslation().cols(); j++) {
+        for(int j=0; j<contour[l]->getParent()->getuSize(); j++) {
           hLink[frame.size()+i] = hLink0[frame.size()+i].copy(); // set to old values
           h[frame.size()+i] = h0[frame.size()+i].copy();
 
@@ -156,25 +154,23 @@ namespace MBSim {
     /****************** position dependent calculations *************************/
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int l=0; l<contour.size(); l++) { 
-        if(contour[l]->getReferenceJacobianOfTranslation().cols() > 0) {
-          for(int j=0; j<contour[l]->getParent()->getq().size(); j++) {
-            hLink[frame.size()+i] = hLink0[frame.size()+i].copy(); // set to old values
-            h[frame.size()+i] = h0[frame.size()+i].copy();
+        for(int j=0; j<contour[l]->getParent()->getq().size(); j++) {
+          hLink[frame.size()+i] = hLink0[frame.size()+i].copy(); // set to old values
+          h[frame.size()+i] = h0[frame.size()+i].copy();
 
-            double qParentj = contour[l]->getParent()->getq()(j); // save correct position
+          double qParentj = contour[l]->getParent()->getq()(j); // save correct position
 
-            contour[l]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
-            contour[l]->getParent()->updateStateDependentVariables(t); 
-            updateg(t);
-            updategd(t);
-            contour[l]->getParent()->updateT(t); 
-            updateJacobians(t);
-            updateh(t);
-            dhdq[frame.size()*frame.size()+i*contour.size()+l].col(j) += (hLink[frame.size()+i]-hLinkEnd[frame.size()+i])/epsroot();
-            contour[l]->getParent()->getq()(j) = qParentj;
-            contour[l]->getParent()->updateStateDependentVariables(t); 
-            contour[l]->getParent()->updateT(t); 
-          }
+          contour[l]->getParent()->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          contour[l]->getParent()->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          contour[l]->getParent()->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
+          dhdq[frame.size()*frame.size()+i*contour.size()+l].col(j) += (hLink[frame.size()+i]-hLinkEnd[frame.size()+i])/epsroot();
+          contour[l]->getParent()->getq()(j) = qParentj;
+          contour[l]->getParent()->updateStateDependentVariables(t); 
+          contour[l]->getParent()->updateT(t); 
         }
       }
 
@@ -291,13 +287,13 @@ namespace MBSim {
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int j=0; j<frame.size(); j++) {
         Index I = Index(frame[i]->getParent()->gethInd(parent,k),frame[i]->getParent()->gethInd(parent,k)+frame[i]->getJacobianOfTranslation().cols()-1);
-        Index J = Index(frame[j]->getParent()->getqInd(parent),frame[j]->getParent()->getqInd(parent)+(frame[j]->getJacobianOfTranslation().cols() > 0 ? frame[j]->getParent()->getqSize()-1 : (-1)));
+        Index J = Index(frame[j]->getParent()->getqInd(parent),frame[j]->getParent()->getqInd(parent)+frame[j]->getParent()->getqSize()-1);
         dhdq[i*frame.size()+j]>>dhdqParent(I,J);
       }
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int j=0; j<contour.size(); j++) {
         Index I = Index(contour[i]->getParent()->gethInd(parent,k),contour[i]->getParent()->gethInd(parent,k)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-        Index J = Index(contour[j]->getParent()->getqInd(parent),contour[j]->getParent()->getqInd(parent)+(contour[j]->getReferenceJacobianOfTranslation().cols() > 0 ? contour[j]->getParent()->getqSize()-1 : (-1)));
+        Index J = Index(contour[j]->getParent()->getqInd(parent),contour[j]->getParent()->getqInd(parent)+contour[j]->getParent()->getqSize()-1);
         dhdq[frame.size()*frame.size()+i*contour.size()+j]>>dhdqParent(I,J);
       }
   }
@@ -306,13 +302,13 @@ namespace MBSim {
     for(unsigned int i=0; i<frame.size(); i++)
       for(unsigned int j=0; j<frame.size(); j++) {
         Index I = Index(frame[i]->getParent()->gethInd(parent,k),frame[i]->getParent()->gethInd(parent,k)+frame[i]->getJacobianOfTranslation().cols()-1);
-        Index J = Index(frame[j]->getParent()->getuInd(parent,k),frame[j]->getParent()->getuInd(parent,k)+frame[j]->getJacobianOfTranslation().cols()-1);
+        Index J = Index(frame[j]->getParent()->getuInd(parent,k),frame[j]->getParent()->getuInd(parent,k)+frame[j]->getParent()->getuSize()-1);
         dhdu[i*frame.size()+j]>>dhduParent(I,J);
       }
     for(unsigned int i=0; i<contour.size(); i++)
       for(unsigned int j=0; j<contour.size(); j++) {
         Index I = Index(contour[i]->getParent()->gethInd(parent,k),contour[i]->getParent()->gethInd(parent,k)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-        Index J = Index(contour[j]->getParent()->getuInd(parent,k),contour[j]->getParent()->getuInd(parent,k)+contour[j]->getReferenceJacobianOfTranslation().cols()-1);
+        Index J = Index(contour[j]->getParent()->getuInd(parent,k),contour[j]->getParent()->getuInd(parent,k)+contour[j]->getParent()->getuSize()-1);
         dhdu[frame.size()*frame.size()+i*contour.size()+j]>>dhduParent(I,J);
       }
   }
@@ -350,8 +346,8 @@ namespace MBSim {
       h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       hLink.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       for(unsigned int j=0; j<frame.size(); j++) {
-        dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getJacobianOfTranslation().cols() > 0 ? frame[j]->getParent()->getqSize() : 0));
-        dhdu.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getJacobianOfTranslation().cols()));
+        dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getqSize()));
+        dhdu.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getuSize()));
       }
       dhdt.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
       r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
@@ -371,8 +367,8 @@ namespace MBSim {
       h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       hLink.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       for(unsigned int j=0; j<contour.size(); j++) {
-        dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getReferenceJacobianOfTranslation().cols() > 0 ? contour[j]->getParent()->getqSize() : 0));
-        dhdu.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getReferenceJacobianOfTranslation().cols()));
+        dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getqSize()));
+        dhdu.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getuSize()));
       }
       dhdt.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
       r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
@@ -388,22 +384,22 @@ namespace MBSim {
 
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    OpenMBV::Group *forceGrp=new OpenMBV::Group;
-    forceGrp->setExpand(false);
-    forceGrp->setName(name+"#ArrowGroup");
-    parent->getOpenMBVGrp()->addObject(forceGrp);
-    for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
-      if(openMBVArrowF[i]) {
-        openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
-        forceGrp->addObject(openMBVArrowF[i]);
+      OpenMBV::Group *forceGrp=new OpenMBV::Group;
+      forceGrp->setExpand(false);
+      forceGrp->setName(name+"#ArrowGroup");
+      parent->getOpenMBVGrp()->addObject(forceGrp);
+      for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
+        if(openMBVArrowF[i]) {
+          openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
+          forceGrp->addObject(openMBVArrowF[i]);
+        }
       }
-    }
-    for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
-      if(openMBVArrowM[i]) {
-        openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
-        forceGrp->addObject(openMBVArrowM[i]);
+      for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
+        if(openMBVArrowM[i]) {
+          openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
+          forceGrp->addObject(openMBVArrowM[i]);
+        }
       }
-    }
 #endif
       Link::initPlot();
     }

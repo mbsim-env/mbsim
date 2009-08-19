@@ -41,6 +41,7 @@ namespace MBSim {
    * \date 2009-04-06 ExtraDynamicInterface included (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
+   * \date 2009-08-19 fix in dhdu referencing (Thorsten Schindler)
    */
   class LinkMechanics : public Link {
     public:
@@ -111,7 +112,7 @@ namespace MBSim {
       std::vector<fmatvec::Vec> WF, WM;
 
       /**
-       * \brief force and moment direction matrix for nonsmooth right hand side
+       * \brief cartesian force and moment direction matrix for nonsmooth right hand side
        */
       std::vector<fmatvec::Mat> fF, fM;
 

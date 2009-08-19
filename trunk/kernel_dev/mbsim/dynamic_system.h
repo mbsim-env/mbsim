@@ -325,7 +325,7 @@ namespace MBSim {
        * \param matrix concerning links to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updatedhdqRef(const fmatvec::Mat    &dhdqObjectParent, const fmatvec::Mat    &dhdqLinkParent, int j=0);
+      void updatedhdqRef(const fmatvec::Mat &dhdqObjectParent, const fmatvec::Mat &dhdqLinkParent, int j=0);
       
       /**
        * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding velocities
