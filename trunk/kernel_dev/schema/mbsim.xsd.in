@@ -380,12 +380,13 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Object" abstract="true" substitutionGroup="Element" type="ObjectType"/>
-  <xs:annotation>
-    <xs:documentation xml:lang="de">
-      Abstrakte Klasse eines Objekts.
-    </xs:documentation>
-  </xs:annotation>
+  <xs:element name="Object" abstract="true" substitutionGroup="Element" type="ObjectType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse eines Objekts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ObjectType">
     <xs:complexContent>
       <xs:extension base="ElementType">
@@ -423,12 +424,12 @@
         <h:object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
         End of the test. 
     </xs:documentation></xs:annotation>
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Mechanischer Körper.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
-  <xs:annotation>
-    <xs:documentation xml:lang="de">
-      Mechanischer Körper.
-    </xs:documentation>
-  </xs:annotation>
   <xs:complexType name="BodyType">
     <xs:complexContent>
       <xs:extension base="ObjectType"/>
