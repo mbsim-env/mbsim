@@ -9,6 +9,10 @@
   xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <xs:annotation><xs:documentation>
+    Write here a introcution to MBSim (kernel and mechanics)
+  </xs:documentation></xs:annotation>
+
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
 
