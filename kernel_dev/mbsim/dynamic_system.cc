@@ -117,7 +117,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateM(double t) {
-#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateM(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }

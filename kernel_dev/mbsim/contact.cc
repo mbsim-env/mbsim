@@ -115,8 +115,7 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       // TODO: check if(gActive[k])
       lak[k](0) = (*fcl)(gk[k](0),gdk[k](0));
-      if(fdf)
-        lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
+      if(fdf) lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
 
       WF[k][1] =  cpData[k][0].getFrameOfReference().getOrientation().col(0)*lak[k](0);
       if(getFrictionDirections()) {
