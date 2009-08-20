@@ -11,11 +11,11 @@ xml/index.xml: ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ..
 	doxygen
 
 mbsim.html: xml/index.xml
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsim.xsd xml .:../doc MBSim MBSim::
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsim.xsd xml .:../doc MBSim MBSim:: false
 #sed -re "s|$$(pkg-config mbxmlutils --variable DOCDIR)/measurement.html|qrc:measurement.html|" ../doc/openmbv.html > openmbv.qt.html
 
 mbsimintegrator.html: xml/index.xml
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimintegrator.xsd xml .:../doc MBSim-Integrator MBSim::
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimintegrator.xsd xml .:../doc MBSim-Integrator MBSim:: false
 #sed -re "s|$$(pkg-config mbxmlutils --variable DOCDIR)/measurement.html|qrc:measurement.html|" ../doc/openmbv.html > openmbv.qt.html
 
 
