@@ -70,7 +70,7 @@
 
   <xs:element name="Element" abstract="true" type="ElementType"/>
   <xs:complexType name="ElementType">
-    <xs:sequence> <!-- a fix for xmllint -->
+    <xs:sequence> <!-- a workaround for xmllint -->
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="plotFeature">  
           <xs:complexType>
@@ -88,7 +88,7 @@
           </xs:complexType> 
         </xs:element>  
       </xs:choice> 
-    </xs:sequence> <!-- a fix for xmllint -->
+    </xs:sequence> <!-- a workaround for xmllint -->
     <xs:attribute name="name" type="pv:name" use="required">
       <xs:annotation>
         <xs:documentation xml:lang="de">
@@ -252,24 +252,22 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Definition in externer Datei.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                  <xs:element ref="DynamicSystem">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Lokale Definition.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+                <xs:element ref="DynamicSystem">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="objects">
@@ -279,24 +277,22 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Definition in externer Datei.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                  <xs:element ref="Object">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Lokale Definition.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+                <xs:element ref="Object">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="links">
@@ -306,24 +302,22 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="pv:embed">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Definition in externer Datei.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                  <xs:element ref="Link">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de">
-                        Lokale Definition.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>  
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+                <xs:element ref="Link">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -413,7 +407,8 @@
   </xs:complexType>   
 
   <xs:element name="Body" substitutionGroup="Object" type="BodyType">
-    <xs:annotation><xs:documentation>
+    <xs:annotation>
+      <xs:documentation>
         The following part is only a test for equation and image output for the XML documentation FROM XSM SCHEMA. A not inline equation
         <h:div class="eqn"><h:img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></h:div>
         And a inline equation <h:img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
@@ -423,8 +418,7 @@
         </h:div>
         <h:object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
         End of the test. 
-    </xs:documentation></xs:annotation>
-    <xs:annotation>
+      </xs:documentation>
       <xs:documentation xml:lang="de">
         Mechanischer Körper.
       </xs:documentation>
