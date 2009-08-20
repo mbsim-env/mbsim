@@ -1,11 +1,17 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/userfunction.h"
-#include "mbsim/load.h"
-#include "mbsim/actuator.h"
-#include "mbsimControl/transfersys.h"
 #include "mbsim/tree.h"
 #include "mbsim/environment.h"
+
+#include "mbsimControl/actuator.h"
+#include "mbsimControl/linear_transfer_system.h"
+#include "mbsimControl/mechanical_sensors.h"
+#include "mbsimControl/signal_processing_system_sensor.h"
+#include "mbsimControl/function_sensors.h"
+#include "mbsimControl/signal_manipulation.h"
+
+#include "mbsim/utils/function_library.h"
+#include "tools/file_to_fmatvecstring.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -14,19 +20,6 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-
-class PositionSensor : public UserFunction {
-  private:
-    RigidBody *body;
-  public:
-    PositionSensor(RigidBody *body_) : body(body_) {}
-
-    Vec operator()(double t) {
-      Vec pos(1);
-      pos(0) = body->getq()(0);
-      return pos;
-    };
-};
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 
@@ -109,52 +102,128 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitze->setFrameForKinematics(spitze->getFrame("C"));
 
   // --------------------------- Setup Control ----------------------------
+//  RelativeAngularPositionSensor * basePosition = new RelativeAngularPositionSensor("BasePositionIst");
+//  addLink(basePosition);
+//  basePosition->setReferenceFrame(getFrame("I"));
+//  basePosition->setRelativeFrame(basis->getFrame("C"));
+//  basePosition->setDirection("[0;1;0]");
+  GeneralizedPositionSensor * basePosition = new GeneralizedPositionSensor("BasePositionIst");
+  addLink(basePosition);
+  basePosition->setBody(basis);
+  basePosition->setIndex(0);
 
-  FuncTable *basisSoll=new FuncTable;
-  basisSoll->setFile("Soll_Basis.tab");   
+  Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
+  TabularFunction * basePositionSollFunction = new TabularFunction(bPT.col(0), bPT.col(1));
+  FunctionSensor * basePositionSoll = new FunctionSensor("BasePositionSoll");
+  addLink(basePositionSoll);
+  basePositionSoll->setFunction(basePositionSollFunction);
 
-  TransferSys *tf = new TransferSys("ReglerBasis");
-  addOrderOneDynamics(tf);
-  tf->setInSignalnWeight(new PositionSensor(basis),1);
-  tf->setInSignalnWeight(basisSoll,-1);
-  tf->setPID(4000,0,200);
+  SignalAddition * basePositionDiff = new SignalAddition("BasePositionDiff");
+  addLink(basePositionDiff);
+  basePositionDiff->addSignal(basePosition, 1);
+  basePositionDiff->addSignal(basePositionSoll, -1);
+
+  LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
+  addOrderOneDynamics(basisControl);
+  basisControl->setInputSignal(basePositionDiff);
+  basisControl->setPID(4000., 0., 200.);
+
+  SignalProcessingSystemSensor * basisControlOut = new SignalProcessingSystemSensor("BaseControlOut");
+  addLink(basisControlOut);
+  basisControlOut->setSignalProcessingSystem(basisControl);
+
+  SignalTimeDiscretization * bDis = new SignalTimeDiscretization("BaseDis");
+  addLink(bDis);
+  bDis->setSignal(basisControlOut);
 
   Actuator *motorBasis = new Actuator("MotorBasis");
   addLink(motorBasis);
-  motorBasis->setSignal(tf->SigOut());
+  // motorBasis->setSignal(basisControlOut);
+  motorBasis->setSignal(bDis);
   motorBasis->setMomentDirection("[0;1;0]");
   motorBasis->connect(getFrame("I"),basis->getFrame("R"));
 
-  FuncTable *armSoll=new FuncTable;
-  armSoll->setFile("Soll_Arm.tab");   
+//  RelativeAngularPositionSensor * armPosition = new RelativeAngularPositionSensor("ArmPositionIst");
+//  addLink(armPosition);
+//  armPosition->setReferenceFrame(basis->getFrame("C"));
+//  armPosition->setRelativeFrame(arm->getFrame("C"));
+//  armPosition->setDirection("[0;0;1]");
+  GeneralizedPositionSensor * armPosition = new GeneralizedPositionSensor("ArmPositionIst");
+  addLink(armPosition);
+  armPosition->setBody(arm);
+  armPosition->setIndex(0);
 
-  tf = new TransferSys("ReglerArm");
-  addOrderOneDynamics(tf);
-  tf->setInSignalnWeight(new PositionSensor(arm),1);
-  tf->setInSignalnWeight(armSoll,-1);
-  tf->setPID(4000,0,200);
+  Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
+  TabularFunction * armPositionSollFunction = new TabularFunction(aPT.col(0), aPT.col(1));
+  FunctionSensor * armPositionSoll = new FunctionSensor("ArmPositionSoll");
+  addLink(armPositionSoll);
+  armPositionSoll->setFunction(armPositionSollFunction);
+
+  SignalAddition * armPositionDiff = new SignalAddition("ArmPositionDiff");
+  addLink(armPositionDiff);
+  armPositionDiff->addSignal(armPosition, 1);
+  armPositionDiff->addSignal(armPositionSoll, -1);
+
+  LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
+  addOrderOneDynamics(armControl);
+  armControl->setInputSignal(armPositionDiff);
+  armControl->setPID(4000., 0., 200.);
+
+  SignalProcessingSystemSensor * armControlOut = new SignalProcessingSystemSensor("ArmControlOut");
+  addLink(armControlOut);
+  armControlOut->setSignalProcessingSystem(armControl);
+
+  SignalTimeDiscretization * aDis = new SignalTimeDiscretization("ArmDis");
+  addLink(aDis);
+  aDis->setSignal(armControlOut);
 
   Actuator *motorArm = new Actuator("MotorArm");
   addLink(motorArm);
-  motorArm->setSignal(tf->SigOut());
+  // motorArm->setSignal(armControlOut);
+  motorArm->setSignal(aDis);
   motorArm->setMomentDirection("[0;0;1]");
   motorArm->connect(basis->getFrame("P"),arm->getFrame("R"));
 
-  FuncTable *spitzeSoll=new FuncTable;
-  spitzeSoll->setFile("Soll_Spitze.tab");   
+//  RelativePositionSensor * spitzePosition = new RelativePositionSensor("SpitzePositionIst");
+//  addLink(spitzePosition);
+//  spitzePosition->setReferenceFrame(arm->getFrame("Q"));
+//  spitzePosition->setRelativeFrame(spitze->getFrame("C"));
+//  spitzePosition->setDirection("[0;1;0]");
+  GeneralizedPositionSensor * spitzePosition = new GeneralizedPositionSensor("SpitzePositionIst");
+  addLink(spitzePosition);
+  spitzePosition->setBody(spitze);
+  spitzePosition->setIndex(0);
 
-  tf = new TransferSys("ReglerSpitze");
-  addOrderOneDynamics(tf);
-  tf->setInSignalnWeight(new PositionSensor(spitze),1);
-  tf->setInSignalnWeight(spitzeSoll,-1);
-  tf->setPID(4000,0,200);
+  Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
+  TabularFunction * spitzePositionSollFunction = new TabularFunction(sPT.col(0), sPT.col(1));
+  FunctionSensor * spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
+  addLink(spitzePositionSoll);
+  spitzePositionSoll->setFunction(spitzePositionSollFunction);
+
+  SignalAddition * spitzePositionDiff = new SignalAddition("SpitzePositionDiff");
+  addLink(spitzePositionDiff);
+  spitzePositionDiff->addSignal(spitzePosition, 1);
+  spitzePositionDiff->addSignal(spitzePositionSoll, -1);
+
+  LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
+  addOrderOneDynamics(spitzeControl);
+  spitzeControl->setInputSignal(spitzePositionDiff);
+  spitzeControl->setPID(4000., 0., 200.);
+
+  SignalProcessingSystemSensor * spitzeControlOut = new SignalProcessingSystemSensor("SpitzeControlOut");
+  addLink(spitzeControlOut);
+  spitzeControlOut->setSignalProcessingSystem(spitzeControl);
+
+  SignalTimeDiscretization * sDis = new SignalTimeDiscretization("SpitzeDis");
+  addLink(sDis);
+  sDis->setSignal(spitzeControlOut);
 
   Actuator *motorSpitze = new Actuator("MotorSpitze");
   addLink(motorSpitze);
-  motorSpitze->setSignal(tf->SigOut());
+  // motorSpitze->setSignal(spitzeControlOut);
+  motorSpitze->setSignal(sDis);
   motorSpitze->setForceDirection("[0;1;0]");
   motorSpitze->connect(arm->getFrame("Q"),spitze->getFrame("C"));
-
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;

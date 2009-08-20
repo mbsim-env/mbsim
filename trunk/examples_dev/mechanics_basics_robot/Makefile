@@ -2,7 +2,7 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc
+sources = main.cc system.cc tools/file_to_fmatvecstring.cc
 
 # Do Not Edit the Following Lines
 CXX = g++

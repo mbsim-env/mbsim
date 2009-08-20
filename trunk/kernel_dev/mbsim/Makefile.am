@@ -2,7 +2,7 @@ SUBDIRS =  utils integrators contact_kinematics flexible_body contours .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
-libmbsim_la_SOURCES = actuator.cc\
+libmbsim_la_SOURCES = \
 body.cc\
 class_factory.cc\
 constitutive_laws.cc\
@@ -40,7 +40,7 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 mbsimincludedir = $(includedir)/mbsim
-mbsiminclude_HEADERS = actuator.h\
+mbsiminclude_HEADERS = \
 body.h\
 contact.h\
 contour.h\
