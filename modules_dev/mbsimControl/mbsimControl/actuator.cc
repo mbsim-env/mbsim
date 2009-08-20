@@ -17,26 +17,20 @@
  * Contact: mfoerg@users.berlios.de
  */
 
-#include <config.h>
-#include "mbsim/actuator.h"
-#include "mbsim/data_interface_base.h"
-#include "mbsim/dynamic_system_solver.h"
+#include "mbsimControl/actuator.h"
+ #include "mbsimControl/signal.h"
+//#include "mbsim/dynamic_system_solver.h"
 
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
 
-  Actuator::Actuator(const string &name) : LinkMechanics(name), func(0), KOSYID(1) {
-    fprintf(stderr,"The class Actuator in deprecated. It must be moved to mbsimControl!\n");
-  }
-
-  Actuator::~Actuator() {
-    delete func;
+  Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
   }
 
   void Actuator::updateh(double t) {
-    la = (*func)(t); // norm of force / moment is given by user
+    la = signal->getSignal();
     if(KOSYID) { // calculation of force / moment direction
       Wf = frame[KOSYID-1]->getOrientation()*forceDir;
       Wm = frame[KOSYID-1]->getOrientation()*momentDir;
@@ -96,13 +90,6 @@ namespace MBSim {
 
     for(int i=0; i<md.cols(); i++)
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
-  }
-
-  void Actuator::initDataInterfaceBase(DynamicSystemSolver *parentds) {
-    if(DIBRefs.size()==1){
-      DataInterfaceBase* in_=parentds->getDataInterfaceBase(DIBRefs[0]); 
-      setSignal(in_); 
-    }
   }
 
 }

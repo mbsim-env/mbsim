@@ -23,8 +23,9 @@
 #include "mbsim/link_mechanics.h"
 
 namespace MBSim {
-
-  class DataInterfaceBase; 
+  
+  class Signal;
+  class Frame;
 
   /*!
    * \brief predefines load between two frames with additional possibility of rotation
@@ -45,12 +46,12 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Actuator();
+      virtual ~Actuator() {};
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateh(double t);
       virtual void updateg(double t) {}
-      virtual void updategd(double t) {}
+      virtual void updategd(double t) {};
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -65,7 +66,7 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setKOSY(int id) { KOSYID = id; assert(KOSYID >= 0); assert(KOSYID <= 2); }
-      void setSignal(DataInterfaceBase *func_) { func = func_; }
+      void setSignal(Signal *signal_) {signal = signal_; }
       /***************************************************/
 
       /**
@@ -83,12 +84,6 @@ namespace MBSim {
        * \param local moment direction
        */
       void setMomentDirection(const fmatvec::Mat& md);
-
-      /**
-       * \brief initialises signals describing norm of force / moment
-       * \param parent, where to add the signal
-       */
-      void initDataInterfaceBase(DynamicSystemSolver *parentds);
 
     protected:
       /**
@@ -114,7 +109,7 @@ namespace MBSim {
       /**
        * \brief force / moment norm function
        */
-      DataInterfaceBase *func;
+      Signal * signal;
 
       /**
        * \brief frame index for rotating forces

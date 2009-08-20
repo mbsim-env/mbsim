@@ -7,6 +7,7 @@ libutils_la_SOURCES = eps.cc\
                       rotarymatrices.cc\
                       utils.cc\
                       function.cc\
+                      function_library.cc\
                       ansatz_functions.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
@@ -18,6 +19,7 @@ utilsinclude_HEADERS = eps.h\
                        nonlinear_algebra.h\
                        nonsmooth_algebra.h\
                        function.h\
+                       function_library.h\
                        ppolynom.h\
                        contact_utils.h\
                        rotarymatrices.h\
