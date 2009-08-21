@@ -18,7 +18,7 @@
  */
 
 #include "mbsimControl/actuator.h"
- #include "mbsimControl/signal.h"
+ #include "mbsimControl/signal_.h"
 //#include "mbsim/dynamic_system_solver.h"
 
 using namespace fmatvec;
