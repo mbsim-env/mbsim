@@ -1371,6 +1371,98 @@ namespace MBSim {
     obj->setParent(this);
   }
 
+  Object *DynamicSystem::getObjectByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getObjectByPath(path);
+      else
+        return getObjectByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getObjectByPath(restPart);
+    else if(firstPart.substr(0,7)=="Object[")
+      return getObject(firstPart.substr(7,firstPart.find(']')-7));
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getObjectByPath(restPart);
+    else
+      return 0;
+  }
+
+  DynamicSystem *DynamicSystem::getDynamicSystemByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getDynamicSystemByPath(path);
+      else
+        return getDynamicSystemByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getDynamicSystemByPath(restPart);
+    else if(firstPart.substr(0,14)=="DynamicSystem[" && restPart=="")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14));
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getDynamicSystemByPath(restPart);
+    else
+      return 0;
+  }
+
+  Link *DynamicSystem::getLinkByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getLinkByPath(path);
+      else
+        return getLinkByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getLinkByPath(restPart);
+    else if(firstPart.substr(0,5)=="Link[")
+      return getLink(firstPart.substr(5,firstPart.find(']')-5));
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getLinkByPath(restPart);
+    else
+      return 0;
+  }
+
+  OrderOneDynamics *DynamicSystem::getOrderOneDynamicsByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getOrderOneDynamicsByPath(path);
+      else
+        return getOrderOneDynamicsByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getOrderOneDynamicsByPath(restPart);
+    else if(firstPart.substr(0,17)=="OrderOneDynamics[")
+      return getOrderOneDynamics(firstPart.substr(17,firstPart.find(']')-17));
+    else if(firstPart.substr(0,14)=="DynamicSystem[")
+      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getOrderOneDynamicsByPath(restPart);
+    else
+      return 0;
+  }
+
   Frame *DynamicSystem::getFrameByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
