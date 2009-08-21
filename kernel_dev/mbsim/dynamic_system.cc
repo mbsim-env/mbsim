@@ -854,7 +854,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
-    for(unsigned int i=0; i<object.size(); i++)
+    for(unsigned int i=0; i<object.size(); i++) 
       obj.push_back(object[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
@@ -867,6 +867,22 @@ namespace MBSim {
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfLinks(lnk,recursive);
+  }
+  
+  void DynamicSystem::buildListOfFrames(vector<Frame*> &frm, bool recursive) {
+    for(unsigned int i=0; i<frame.size(); i++) 
+      frm.push_back(frame[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfFrames(frm,recursive);
+  }
+  
+  void DynamicSystem::buildListOfContours(vector<Contour*> &cnt, bool recursive) {
+    for(unsigned int i=0; i<contour.size(); i++) 
+      cnt.push_back(contour[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfContours(cnt,recursive);
   }
 
   void DynamicSystem::buildListOfOrderOneDynamics(vector<OrderOneDynamics*> &ood, bool recursive) {

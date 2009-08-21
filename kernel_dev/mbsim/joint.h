@@ -35,7 +35,8 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-06 LinkMechanics added (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
-   * \todo hSize Frame C / One Force Direction TODO
+   * \date 2009-08-21 one force direction (Thorsten Schindler)
+   * \todo hSize Frame C
    */
   class Joint: public LinkMechanics {
     public: 

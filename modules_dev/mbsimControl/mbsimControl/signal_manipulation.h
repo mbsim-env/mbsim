@@ -20,7 +20,7 @@
 #ifndef _SIGNAL_MANIPULATION_H_
 #define _SIGNAL_MANIPULATION_H_
 
-#include "mbsimControl/signal.h"
+#include "mbsimControl/signal_.h"
 
 namespace MBSim {
 

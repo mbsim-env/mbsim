@@ -71,6 +71,7 @@ namespace MBSim {
       virtual void init();
       virtual void initPlot();
       virtual void facLLM() { (this->*facLLM_)(); }
+      virtual Object* getObjectDependingOn() const { return dynamic_cast<Object*>(frameOfReference->getParent()); }
       virtual void resizeJacobians(int j);
       virtual void checkForConstraints();
       /*****************************************************/
@@ -356,13 +357,6 @@ namespace MBSim {
        * \brief Cholesky decomposition of time dependent mass matrix
        */
       void facLLMNotConst() { Object::facLLM(); }
-
-      /**
-       * \brief checks dependency on another object.
-       * \return if the parent of the frame of reference is an object, this object is returned. Otherwise, zero is returned.
-       */
-      Object* getObjectDependingOn() const { return dynamic_cast<Object*>(frameOfReference->getParent()); }
-
   };
 
 }

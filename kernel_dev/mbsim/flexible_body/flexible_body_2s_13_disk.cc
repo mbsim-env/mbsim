@@ -81,6 +81,98 @@ namespace MBSim {
     addFrame("COG",s);
   }
 
+  void FlexibleBody2s13Disk::initPlot() {
+    updatePlotFeatures(parent); 
+
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_NURBS
+      if(getPlotFeature(openMBV)==enabled) {
+        OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
+
+        drawDegree = 25/nj;
+        Diskbody->setStaticColor(1.);
+        Diskbody->setStaticColor(0.3);
+        Diskbody->setMinimalColorValue(0.);
+        Diskbody->setMaximalColorValue(1.);
+        Diskbody->setDrawDegree(drawDegree);
+        Diskbody->setRadii(Ri,Ra);
+
+        float *openmbvUVec = new float[nj+1+2*degU];
+        float *openmbvVVec = new float[nr+2+degV];
+        for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
+        for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
+
+        Diskbody->setKnotVecAzimuthal(openmbvUVec);
+        Diskbody->setKnotVecRadial(openmbvVVec);
+
+        Diskbody->setElementNumberRadial(nr);
+        Diskbody->setElementNumberAzimuthal(nj);
+
+        Diskbody->setInterpolationDegreeRadial(degV);  
+        Diskbody->setInterpolationDegreeAzimuthal(degU);
+        openMBVBody = Diskbody;
+      }
+#endif
+#endif
+      FlexibleBodyContinuum<Vec>::initPlot();
+    }
+  }
+
+  void FlexibleBody2s13Disk::updateh(double t) {
+    // update positions and velocities
+    qext = Jext * q;
+    uext = Jext * u;
+
+    h = -K*q;
+  }
+  
+  void FlexibleBody2s13Disk::updateM(double t) {
+    initMatrices(); // TODO at the moment necessary because of the zero init of the mass matrix in each time step
+  }
+
+  void FlexibleBody2s13Disk::updateStateDependentVariables(double t) {
+    FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
+
+#ifdef HAVE_NURBS
+    contour->computeSurface(); 
+    contour->computeSurfaceVelocities();
+    contour->computeSurfaceJacobians();
+#endif
+  }
+
+  void FlexibleBody2s13Disk::BuildElements() {
+    for(int i=0;i<Elements;i++) {
+      //  3--------4
+      //  |        |
+      //  1--------2
+      // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
+      // r1 and j1 are defined with node 1, r2 and j2 with node 4
+      ElementalNodes[i](0,1) << trans(NodeCoordinates.row(ElementNodeList(i,0))); // node 1
+      ElementalNodes[i](2,3) << trans(NodeCoordinates.row(ElementNodeList(i,3))); // node 4
+
+      if(ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
+        ElementalNodes[i](3) += 2*M_PI; 
+      }
+
+      // mapping node dof position (w, a, b) from global vector to element vector
+      // ref, node 1, node 2, node 3, node 4
+      qElement[i](                 0,RefDofs           -1) << qext(                                    0,RefDofs                                  -1);
+      qElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << qext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
+      qElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
+      qElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
+      qElement[i](RefDofs+3*NodeDofs,RefDofs+4*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,3)*NodeDofs,RefDofs+(ElementNodeList(i,3)+1)*NodeDofs-1);
+
+      // mapping node dof velocity from global vector to element vector
+      // ref, node 1, node 2, node 3, node 4
+      uElement[i](                 0,RefDofs           -1) << uext(                                    0,RefDofs                                  -1);
+      uElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << uext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
+      uElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
+      uElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
+      uElement[i](RefDofs+3*NodeDofs,RefDofs+4*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,3)*NodeDofs,RefDofs+(ElementNodeList(i,3)+1)*NodeDofs-1); 
+    }
+  }
+
   void FlexibleBody2s13Disk::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 #ifdef HAVE_NURBS
@@ -196,24 +288,6 @@ namespace MBSim {
     }   
   }
 
-  void FlexibleBody2s13Disk::setNumberElements(int nr_, int nj_) {
-    nr = nr_; nj = nj_; 
-    Elements = nr*nj;
-    Nodes = (nr+1) * nj;
-
-    Dofs  = RefDofs + Nodes*NodeDofs;
-
-    qSize = Dofs - NodeDofs*nj; // missing one node row because of bearing
-    uSize[0] = qSize;
-    uSize[1] = qSize; // TODO
-
-    qext = Vec(Dofs); 
-    uext = Vec(Dofs); 
-
-    q0.resize(qSize);
-    u0.resize(uSize[0]);
-  }
-
   void FlexibleBody2s13Disk::init() {
     FlexibleBodyContinuum<Vec>::init();
     assert(nr>0); // at least on radial row
@@ -301,162 +375,6 @@ namespace MBSim {
 #endif
   }
 
-  void FlexibleBody2s13Disk::initPlot() {
-    updatePlotFeatures(parent); 
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
-      if(getPlotFeature(openMBV)==enabled) {
-        OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
-
-        drawDegree = 25/nj;
-        Diskbody->setStaticColor(1.);
-        Diskbody->setStaticColor(0.3);
-        Diskbody->setMinimalColorValue(0.);
-        Diskbody->setMaximalColorValue(1.);
-        Diskbody->setDrawDegree(drawDegree);
-        Diskbody->setRadii(Ri,Ra);
-
-        float *openmbvUVec = new float[nj+1+2*degU];
-        float *openmbvVVec = new float[nr+2+degV];
-        for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
-        for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
-
-        Diskbody->setKnotVecAzimuthal(openmbvUVec);
-        Diskbody->setKnotVecRadial(openmbvVVec);
-
-        Diskbody->setElementNumberRadial(nr);
-        Diskbody->setElementNumberAzimuthal(nj);
-
-        Diskbody->setInterpolationDegreeRadial(degV);  
-        Diskbody->setInterpolationDegreeAzimuthal(degU);
-        openMBVBody = Diskbody;
-      }
-#endif
-#endif
-      FlexibleBodyContinuum<Vec>::initPlot();
-    }
-  }
-
-  void FlexibleBody2s13Disk::initMatrices() {
-    BuildElements();
-
-    // initialising of mass and stiffness matrix
-    SymMat Mext(Dofs,INIT,0.);
-    SymMat Kext(Dofs,INIT,0.);
-
-    // element loop
-    for(int i=0;i< Elements;i++) {
-      double r1 = ElementalNodes[i](0);
-      double r2 = ElementalNodes[i](2);
-      static_cast<FiniteElement2s13Disk*>(discretization[i])->computeConstantSystemMatrices(ElementalNodes[i],computeThickness(r1)(0),computeThickness(r2)(0));
-
-      // definition of variables for element matrices
-      SymMat Mplatte = discretization[i]->getM();
-      SymMat Kplatte = static_cast<FiniteElement2s13Disk*>(discretization[i])->getK();
-
-      Index IRef(0,RefDofs-1);
-
-      // reference components
-      Mext(IRef) += Mplatte(IRef);
-      Kext(IRef) += Kplatte(IRef);
-
-      // nodes sort
-      for(int k=0;k<4;k++) {
-        // position in global matrix
-        Index Ikges    (RefDofs+ElementNodeList(i,k)*NodeDofs, RefDofs+(ElementNodeList(i,k)+1)*NodeDofs-1);
-        // position in element matrix
-        Index Ikelement(RefDofs+                  k *NodeDofs, RefDofs+                   (k+1)*NodeDofs-1);
-
-        // four nodes
-        // ref,0 and 0,Ref
-        Mext(Ikges,IRef ) += Mplatte(Ikelement,IRef);
-        Kext(Ikges,IRef ) += Kplatte(Ikelement,IRef);
-
-        // int n=k;
-        Mext(Ikges) += Mplatte(Ikelement); // diagonal
-        Kext(Ikges) += Kplatte(Ikelement); // diagonal
-        for(int n=k+1;n<4;n++) {
-          Mext(Ikges,Index(RefDofs+ElementNodeList(i,n)*NodeDofs, RefDofs+(ElementNodeList(i,n)+1)*NodeDofs-1)) += Mplatte(Ikelement,Index(RefDofs+n*NodeDofs, RefDofs+(n+1)*NodeDofs-1));
-          Kext(Ikges,Index(RefDofs+ElementNodeList(i,n)*NodeDofs, RefDofs+(ElementNodeList(i,n)+1)*NodeDofs-1)) += Kplatte(Ikelement,Index(RefDofs+n*NodeDofs, RefDofs+(n+1)*NodeDofs-1));
-        }
-      }
-    }
-
-    // condensation
-    M = condenseMatrix(Mext,ILocked);
-    K = condenseMatrix(Kext,ILocked);
-
-    // masse and inertia of shaft
-    M(0,0) += m0;
-    M(1,1) += J0;
-
-    // LU-decomposition of M
-    LLM = facLL(M);
-  }
-
-  void FlexibleBody2s13Disk::updateh(double t) {
-    // update positions and velocities
-    qext = Jext * q;
-    uext = Jext * u;
-
-    h = -K*q;
-  }
-
-  void FlexibleBody2s13Disk::BuildElement(const Vec &s) {
-    //outer-ring s(0) > Ra -> TODO: change s(0) of outer-ring
-    assert(Ri <= s(0)); // is the input on the disk?
-    // assert(Ra >= s(0)); 
-
-    currentElement = int( (s(0)-Ri)/dr )*nj + int( s(1)/dj ); // which element is involved?
-    if( Ra<=s(0) ) currentElement-=nj;  //outer-ring-knots lead to existing element 
-  }
-
-
-  void FlexibleBody2s13Disk::BuildElements() {
-    for(int i=0;i<Elements;i++) {
-      //  3--------4
-      //  |        |
-      //  1--------2
-      // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
-      // r1 and j1 are defined with node 1, r2 and j2 with node 4
-      ElementalNodes[i](0,1) << trans(NodeCoordinates.row(ElementNodeList(i,0))); // node 1
-      ElementalNodes[i](2,3) << trans(NodeCoordinates.row(ElementNodeList(i,3))); // node 4
-
-      if(ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
-        ElementalNodes[i](3) += 2*M_PI; 
-      }
-
-      // mapping node dof position (w, a, b) from global vector to element vector
-      // ref, node 1, node 2, node 3, node 4
-      qElement[i](                 0,RefDofs           -1) << qext(                                    0,RefDofs                                  -1);
-      qElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << qext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
-      qElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
-      qElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
-      qElement[i](RefDofs+3*NodeDofs,RefDofs+4*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,3)*NodeDofs,RefDofs+(ElementNodeList(i,3)+1)*NodeDofs-1);
-
-      // mapping node dof velocity from global vector to element vector
-      // ref, node 1, node 2, node 3, node 4
-      uElement[i](                 0,RefDofs           -1) << uext(                                    0,RefDofs                                  -1);
-      uElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << uext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
-      uElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
-      uElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
-      uElement[i](RefDofs+3*NodeDofs,RefDofs+4*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,3)*NodeDofs,RefDofs+(ElementNodeList(i,3)+1)*NodeDofs-1); 
-    }
-  }
-
-  Vec FlexibleBody2s13Disk::computeThickness(const double &r_) {
-    Vec d(3);
-    // quadratic
-    d(1) = di(0) + di(1)*r_ + di(2)*r_*r_; // thickness inner ring
-    d(2) = da(0) + da(1)*r_ + da(2)*r_*r_; // thickness outer ring
-
-    d(0) = d(1) + d(2);
-
-    return d;
-  }
-
   void FlexibleBody2s13Disk::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -522,6 +440,24 @@ namespace MBSim {
     FlexibleBodyContinuum<Vec>::plot(t,dt);
   }
 
+  void FlexibleBody2s13Disk::setNumberElements(int nr_, int nj_) {
+    nr = nr_; nj = nj_; 
+    Elements = nr*nj;
+    Nodes = (nr+1) * nj;
+
+    Dofs  = RefDofs + Nodes*NodeDofs;
+
+    qSize = Dofs - NodeDofs*nj; // missing one node row because of bearing
+    uSize[0] = qSize;
+    uSize[1] = qSize; // TODO
+
+    qext = Vec(Dofs); 
+    uext = Vec(Dofs); 
+
+    q0.resize(qSize);
+    u0.resize(uSize[0]);
+  }
+
   Vec FlexibleBody2s13Disk::transformCW(const Vec& WrPoint) {
     Vec CrPoint(WrPoint.size());
 
@@ -537,14 +473,81 @@ namespace MBSim {
     return CrPoint;
   }
 
-  void FlexibleBody2s13Disk::updateStateDependentVariables(double t) {
-    FlexibleBodyContinuum<Vec>::updateStateDependentVariables(t);
+  void FlexibleBody2s13Disk::BuildElement(const Vec &s) {
+    //outer-ring s(0) > Ra -> TODO: change s(0) of outer-ring
+    assert(Ri <= s(0)); // is the input on the disk?
+    // assert(Ra >= s(0)); 
 
-#ifdef HAVE_NURBS
-    contour->computeSurface(); 
-    contour->computeSurfaceVelocities();
-    contour->computeSurfaceJacobians();
-#endif
+    currentElement = int( (s(0)-Ri)/dr )*nj + int( s(1)/dj ); // which element is involved?
+    if( Ra<=s(0) ) currentElement-=nj;  //outer-ring-knots lead to existing element 
+  }
+
+  void FlexibleBody2s13Disk::initMatrices() {
+    BuildElements();
+
+    // initialising of mass and stiffness matrix
+    SymMat Mext(Dofs,INIT,0.);
+    SymMat Kext(Dofs,INIT,0.);
+
+    // element loop
+    for(int i=0;i< Elements;i++) {
+      double r1 = ElementalNodes[i](0);
+      double r2 = ElementalNodes[i](2);
+      static_cast<FiniteElement2s13Disk*>(discretization[i])->computeConstantSystemMatrices(ElementalNodes[i],computeThickness(r1)(0),computeThickness(r2)(0));
+
+      // definition of variables for element matrices
+      SymMat Mplatte = discretization[i]->getM();
+      SymMat Kplatte = static_cast<FiniteElement2s13Disk*>(discretization[i])->getK();
+
+      Index IRef(0,RefDofs-1);
+
+      // reference components
+      Mext(IRef) += Mplatte(IRef);
+      Kext(IRef) += Kplatte(IRef);
+
+      // nodes sort
+      for(int k=0;k<4;k++) {
+        // position in global matrix
+        Index Ikges    (RefDofs+ElementNodeList(i,k)*NodeDofs, RefDofs+(ElementNodeList(i,k)+1)*NodeDofs-1);
+        // position in element matrix
+        Index Ikelement(RefDofs+                  k *NodeDofs, RefDofs+                   (k+1)*NodeDofs-1);
+
+        // four nodes
+        // ref,0 and 0,Ref
+        Mext(Ikges,IRef ) += Mplatte(Ikelement,IRef);
+        Kext(Ikges,IRef ) += Kplatte(Ikelement,IRef);
+
+        // int n=k;
+        Mext(Ikges) += Mplatte(Ikelement); // diagonal
+        Kext(Ikges) += Kplatte(Ikelement); // diagonal
+        for(int n=k+1;n<4;n++) {
+          Mext(Ikges,Index(RefDofs+ElementNodeList(i,n)*NodeDofs, RefDofs+(ElementNodeList(i,n)+1)*NodeDofs-1)) += Mplatte(Ikelement,Index(RefDofs+n*NodeDofs, RefDofs+(n+1)*NodeDofs-1));
+          Kext(Ikges,Index(RefDofs+ElementNodeList(i,n)*NodeDofs, RefDofs+(ElementNodeList(i,n)+1)*NodeDofs-1)) += Kplatte(Ikelement,Index(RefDofs+n*NodeDofs, RefDofs+(n+1)*NodeDofs-1));
+        }
+      }
+    }
+
+    // condensation
+    M = condenseMatrix(Mext,ILocked);
+    K = condenseMatrix(Kext,ILocked);
+
+    // masse and inertia of shaft
+    M(0,0) += m0;
+    M(1,1) += J0;
+
+    // LU-decomposition of M
+    LLM = facLL(M);
+  }
+
+  Vec FlexibleBody2s13Disk::computeThickness(const double &r_) {
+    Vec d(3);
+    // quadratic
+    d(1) = di(0) + di(1)*r_ + di(2)*r_*r_; // thickness inner ring
+    d(2) = da(0) + da(1)*r_ + da(2)*r_*r_; // thickness outer ring
+
+    d(0) = d(1) + d(2);
+
+    return d;
   }
 
 }

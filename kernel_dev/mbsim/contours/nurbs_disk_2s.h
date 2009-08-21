@@ -20,11 +20,10 @@
 #ifndef NURBSDISK2S_H_
 #define NURBSDISK2S_H_
 
-#include <config.h>
-
 #include "fmatvec.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contours/contour2s.h"
+
 #ifdef HAVE_NURBS
 #define MY_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
 #define MY_PACKAGE_NAME PACKAGE_NAME
@@ -66,7 +65,7 @@ namespace MBSim {
    * \date 2009-05-22 initial commit (Grundl / Missel / Schindler)
    * \date 2009-06-04 separate contour files (Thorsten Schindler)
    * \date 2009-08-16 contour / visualisation (Grundl / Missel / Schindler)
-   * \todo computeSurfaceJacobians / computeSurfaceVelocities only in contact case
+   * \todo computeSurfaceJacobians / computeSurfaceVelocities only in contact case TODO
    */
   class NurbsDisk2s : public Contour2s {
     public:

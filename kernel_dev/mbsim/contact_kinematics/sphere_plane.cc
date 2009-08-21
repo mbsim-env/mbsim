@@ -141,10 +141,8 @@ namespace MBSim {
     Mat tOm2 = tilde(Om2);
     wb(0) += trans(n1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
-    if(wb.size() > 1) {
-      wb(1) += trans(u1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
-      wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
-    }
+    if(wb.size() > 1) wb(1) += trans(u1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(wb.size() > 2) wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
   }
 
 }

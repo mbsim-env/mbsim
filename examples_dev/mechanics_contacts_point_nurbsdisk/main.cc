@@ -13,7 +13,7 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(0.01);
+  integrator.setEndTime(0.1);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(5e-4);
 

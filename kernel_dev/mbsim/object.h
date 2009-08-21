@@ -192,6 +192,12 @@ namespace MBSim {
       virtual void facLLM();
 
       /**
+       * \brief checks dependency on another object.
+       * \return if the parent of the frame of reference is an object, this object is returned, otherwise, zero is returned.
+       */
+      virtual Object* getObjectDependingOn() const { return 0; }
+
+      /**
        * \brief calculates size of right hand side
        * \param index of normal usage and inverse kinetics TODO
        */
@@ -284,14 +290,6 @@ namespace MBSim {
        * \param delimiter of the path
        */
       std::string getPath(char pathDelim='.');
-
-      /**
-       * \brief checks dependency on another object.
-       * \return the object the calling object is depending on. If
-       * there is no dependency, zero is returned.
-       */
-      virtual Object* getObjectDependingOn() const {return 0;}
-
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);
