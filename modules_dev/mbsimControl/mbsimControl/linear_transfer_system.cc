@@ -22,7 +22,7 @@
  */ 
 
 #include "mbsimControl/linear_transfer_system.h"
-#include "mbsimControl/signal.h"
+#include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 
 using namespace std;

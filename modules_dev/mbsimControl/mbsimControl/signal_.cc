@@ -17,7 +17,7 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimControl/signal.h"
+#include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
 
