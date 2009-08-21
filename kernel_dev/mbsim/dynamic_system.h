@@ -690,6 +690,10 @@ namespace MBSim {
        */
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
+      virtual Object *getObjectByPath(std::string path);
+      virtual DynamicSystem *getDynamicSystemByPath(std::string path);
+      virtual Link *getLinkByPath(std::string path);
+      virtual OrderOneDynamics *getOrderOneDynamicsByPath(std::string path);
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 
