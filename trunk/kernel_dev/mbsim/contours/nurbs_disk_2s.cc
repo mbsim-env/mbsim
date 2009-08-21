@@ -18,9 +18,12 @@
  */
 
 #include<config.h>
+
 #include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
+
 #include <iostream>
+
 #ifdef HAVE_NURBS
 using namespace PLib; 
 #endif
@@ -229,6 +232,7 @@ namespace MBSim {
 
     Surface->globalInterpClosedU_OwnKnotVecs(Nodelist, *uVec, *vVec, *uvec, *vvec, degU, degV);
 
+    /*
     //TESTBLOCK...
     //testing the "real"values and the surface values at the nodes
     cout << "Surface-Berechnung:" << endl;
@@ -265,7 +269,7 @@ namespace MBSim {
     int k = 0;
     int l = 0;
 
-    cout << "TEST der Ableitungen" << endl;
+    cout << "TEST der Ableitungen:" << endl;
 
     Vec test_pt(3);
     test_pt(0) = ((*vvec)[vvec->size()-1]-(*vvec)[0])/2;
@@ -288,9 +292,10 @@ namespace MBSim {
       cout << i+1 << "-te Ableitung ..." << endl;
       for(int j=0;j<2;j++) {
         cout << "j=" << j << "(j=0...V-Richtung, j=1...U-Richtung)" << endl;
-        cout << "Fehler der Punkte am Rande:    " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
+        cout << "Fehler der Punkte am Rande: " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
       }
     }
+    */
   }
 #endif
 

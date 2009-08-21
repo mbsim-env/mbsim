@@ -141,7 +141,5 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   r(0) = 0.2;
   group->setPosition(r);
   addDynamicSystem(group);
-  KrRP(0) = lStab/2;
-  KrRP(2) = -0.006;
 }
 

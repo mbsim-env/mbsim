@@ -326,7 +326,7 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updatedhdqRef(const fmatvec::Mat &dhdqObjectParent, const fmatvec::Mat &dhdqLinkParent, int j=0);
-      
+
       /**
        * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding velocities
        * \param matrix concerning objects to be referenced
@@ -334,7 +334,7 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updatedhduRef(const fmatvec::SqrMat &dhduObjectParent, const fmatvec::SqrMat &dhduLinkParent, int j=0);
-      
+
       /**
        * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding time
        * \param matrix concerning objects to be referenced
@@ -438,20 +438,44 @@ namespace MBSim {
       void updaterFactorRef(const fmatvec::Vec &ref);
 
       /**
-       * \brief TODO
+       * \brief build flat list of objects
+       * \param list of objects
+       * \param flag for recursive
        */
       virtual void buildListOfObjects(std::vector<Object*> &obj, bool recursive=false);
+
       /**
-       * \brief TODO
+       * \brief build flat list of links
+       * \param list of links
+       * \param flag for recursive
        */
       virtual void buildListOfLinks(std::vector<Link*> &lnk, bool recursive=false);
+
       /**
-       * \brief TODO
+       * \brief build flat list of frames
+       * \param list of frames
+       * \param flag for recursive
+       */
+      virtual void buildListOfFrames(std::vector<Frame*> &frm, bool recursive);
+
+      /**
+       * \brief build flat list of contours
+       * \param list of contours
+       * \param flag for recursive
+       */
+      virtual void buildListOfContours(std::vector<Contour*> &cnt, bool recursive);
+
+      /**
+       * \brief build flat list of order one dynamics
+       * \param list of order one dynamics
+       * \param flag for recursive
        */
       virtual void buildListOfOrderOneDynamics(std::vector<OrderOneDynamics*> &ood, bool recursive=false);
 
       /**
-       * \brief TODO
+       * \brief build flat list of models
+       * \param list of models
+       * \param flag for recursive
        */
       void buildListOfModels(std::vector<ModellingInterface*> &model, bool recursive = true);
 

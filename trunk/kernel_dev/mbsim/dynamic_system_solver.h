@@ -43,12 +43,12 @@ namespace MBSim {
   /** 
    * \brief relaxation strategies in solution of contact equations
    */
-  enum Strategy {global, local};
+  enum Strategy { global, local };
 
   /**
    * \brief linear algebra for Newton scheme in solution of contact equations
    */
-  enum LinAlg {LUDecomposition,LevenbergMarquardt,PseudoInverse};
+  enum LinAlg { LUDecomposition, LevenbergMarquardt, PseudoInverse };
 
   /**
    * \brief solver interface for modelling and simulation of dynamic systeme
@@ -58,6 +58,8 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-08-07 preintegration (Thorsten Schindler)
+   * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
+   * \todo split init process TODO
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -671,7 +673,12 @@ namespace MBSim {
       bool READZ0;
 
       /**
-       * \brief TODO
+       * \brief adds list of objects to tree
+       * \param tree where to add objects
+       * \param current node in the tree
+       * \param matrix of dependencies
+       * \param current entry of matrix of dependencies
+       * \param list of objects
        */
       void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
   };

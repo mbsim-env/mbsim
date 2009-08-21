@@ -87,7 +87,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
-      virtual void updateM(double t) {};
+      virtual void updateM(double t);
       virtual void updateStateDependentVariables(double t);
       /***************************************************/
 

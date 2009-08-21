@@ -1,0 +1,23 @@
+How to install external Nurbs++ Library for MBSim
+
+1. Download: (http://sourceforge.net/projects/libnurbs/)
+  
+- download Nurbs++ library from http://sourceforge.net/projects/libnurbs/ and extract e.g. in ~/Nurbs/nurbs++-3.0.11/
+- download patch (nurbs++-gcc4-patch.patch = nurbs++-3.0.11.1.patch and nurbs++-3.0.11.2.patch) and copy into ~/Nurbs/
+
+2. Patchen
+
+- change to ~/Nurbs/nurbs++-3.0.11
+- use patch ("patch -p1 < nurbs++-3.0.11.1.patch")
+- use patch ("patch -p1 < nurbs++-3.0.11.2.patch")
+
+3. Installation
+
+- configure project in ~/Nurbs/nurbs++-3.0.11/ ("./configure --prefix=~/MBSim/Install")
+- compile and install project ("make install")
+
+4. Possible Nurbs++ improvements
+
+- virtual destructor
+- plib_config.h <-> plib.h
+

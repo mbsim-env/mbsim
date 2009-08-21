@@ -22,6 +22,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/contact_kinematics/contact_kinematics.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
 #endif
@@ -153,9 +154,9 @@ namespace MBSim {
       JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
     else if(forceDir.cols() == 3);
     else if(forceDir.cols() == 0);
-    else {
-      cout << "TODO: 1 Force Direction not yet implemented" << endl;
-      throw 5;
+    else { // define a coordinate system in the plane perpendicular to the force direction
+      JT.col(0) = computeTangential(forceDir.col(0));
+      JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
     }
   }
 
