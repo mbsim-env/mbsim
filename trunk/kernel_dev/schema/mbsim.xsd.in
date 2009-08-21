@@ -871,7 +871,7 @@
           <xs:element name="frictionForceLaw">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FrictionForceLaw"/>
+                <xs:element ref="FrictionForceLaw" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
