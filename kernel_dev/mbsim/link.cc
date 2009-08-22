@@ -40,6 +40,9 @@ namespace MBSim {
       if(getPlotFeature(contact)==enabled) {
         for(int i=0; i<g.size(); ++i)
           plotVector.push_back(g(i));
+//	for(unsigned int i=0; i<r.size(); i++)
+//	  for(int j=0; j<r[i].size(); ++j)
+//	    plotVector.push_back(r[i](j));
         if(isActive()) {
           for(int i=0; i<sv.size(); ++i)
             plotVector.push_back(sv(i));
@@ -134,6 +137,9 @@ namespace MBSim {
       if(getPlotFeature(contact)==enabled) {
         for(int i=0; i<g.size(); ++i)
           plotColumns.push_back("g("+numtostr(i)+")");
+	//for(unsigned int i=0; i<r.size(); i++)
+	//  for(int j=0; j<r[i].size(); ++j)
+	//    plotColumns.push_back("r["+numtostr(int(i))+"]("+numtostr(j)+")");
         for(int i=0; i<sv.size(); ++i)
           plotColumns.push_back("sv("+numtostr(i)+")");
         // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
