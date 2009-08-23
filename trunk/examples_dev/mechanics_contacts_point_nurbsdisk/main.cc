@@ -11,10 +11,10 @@ int main (int argc, char* argv[]) {
   sys->setStopIfNoConvergence(true,true);
   sys->init();
 
-  TimeSteppingIntegrator integrator;
+  ThetaTimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(0.1);
-  integrator.setStepSize(1e-5);
+  integrator.setEndTime(0.5);
+  integrator.setStepSize(5e-4);
   integrator.setPlotStepSize(5e-4);
 
   integrator.integrate(*sys);

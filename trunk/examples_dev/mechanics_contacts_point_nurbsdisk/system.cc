@@ -9,7 +9,6 @@
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/nurbsdisk.h"
 #include "openmbvcppinterface/sphere.h"
 #endif
 
@@ -29,18 +28,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double E = 5.e7; // Young's modulus  
   double rho = 9.2e2; // density
   double nu = 0.3; // poisson ratio
-  double rI = 0.1; // inner radius
-  double rO = 0.3; // outer radius
-  Vec d(3); d(0) = 0.1; // thickness
+  double rI = 0.01; // inner radius
+  double rO = 0.4; // outer radius
+  Vec d(3); d(0) = 0.025; // thickness at r==0 
+  SqrMat A(2,NONINIT); A(0,0) = rI*rI; A(0,1) = rI; A(1,0) = rO*rO; A(1,1) = rO;
+  Vec b(2,NONINIT); b(0) = 1e-4; b(1) = 0.15; // differences to thickness d(0) for r==rI and r==rO
+  d(1,2) = slvLU(A,b);
 
   int nr = 3; // radial number of elements
-  int nj = 9; // azimuthal number of elements
+  int nj = 6; // azimuthal number of elements
 
   disk->setEModul(E);
   disk->setDensity(rho);
   disk->setPoissonRatio(nu);
   disk->setRadius(rI,rO);
-  disk->setThickness(d,d);
+  disk->setThickness(d);
   disk->setFrameOfReference(this->getFrame("I")); // location of disk
   disk->setLockType(innerring); // inner ring has no elastic dof
   disk->setReferenceInertia(1.,1.); // inertia of the reference frame
@@ -49,7 +51,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0 = Vec(2+nr*nj*3,INIT,0.); // initial position
   disk->setq0(q0);
   Vec u0 = Vec(2+nr*nj*3,INIT,0.); // initial velocity
-  u0(1) = M_PI;
+  u0(1) = 4.*M_PI;
   disk->setu0(u0);
   this->addObject(disk);
 
@@ -68,7 +70,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   vector<Contact*> contact;
 
   double r = 1e-2; // radius of ball
-  double mass = 20.; // mass of ball
+  double mass = 0.5; // mass of ball
   SymMat Theta(3,INIT,0.); // inertia of ball
   Theta(0,0) = 2./5.*mass*r*r;
   Theta(1,1) = 2./5.*mass*r*r;
@@ -85,9 +87,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     stringstream frame; // ball location
     frame << "B_"  << k;
     Vec WrOS0B(3,INIT,0.);
-    WrOS0B(0) = (rI+rO)*0.3*cos(k*2.*M_PI/nB);
-    WrOS0B(1) = (rI+rO)*0.6*sin(k*2.*M_PI/nB);
-    WrOS0B(2) = d(0)+r + 1e-2*(1.+cos(k*2.*M_PI/nB));
+    WrOS0B(0) = (rI+rO)*0.25*cos(k*2.*M_PI/nB);
+    WrOS0B(1) = (rI+rO)*0.35*sin(k*2.*M_PI/nB);
+    WrOS0B(2) = b(1)*0.5+ r + 1e-2*(1.+cos(k*2.*M_PI/nB));
     this->addFrame(frame.str(),WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
 
     balls[k]->setFrameOfReference(this->getFrame(frame.str()));

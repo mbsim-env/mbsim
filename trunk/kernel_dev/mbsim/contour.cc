@@ -69,12 +69,13 @@ namespace MBSim {
 
   /* Rigid Contour */
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
-    if(ff == velocities) {
+    if(ff==velocity || ff==velocities) {
       Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
       cp.getFrameOfReference().setVelocity(R.getVelocity() + crossProduct(R.getAngularVelocity(),WrPC));
-      cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
     }
-    else throw new MBSimError("ERROR (RigidContour::updateKinematicsForFrame): FrameFeature not implemented!");
+    if(ff==angularVelocity || ff==velocities)
+      cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
+    if(ff!=velocity && ff!=angularVelocity && ff!=velocities) throw new MBSimError("ERROR (RigidContour::updateKinematicsForFrame): FrameFeature not implemented!");
   }
 
   void RigidContour::updateJacobiansForFrame(ContourPointData &cp) {
