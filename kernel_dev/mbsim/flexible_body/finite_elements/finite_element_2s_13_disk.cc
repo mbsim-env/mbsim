@@ -29,7 +29,7 @@ namespace MBSim {
     return pow(base,exponent);
   }
 
-  FiniteElement2s13Disk::FiniteElement2s13Disk(double E_,double nu_,double rho_) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),rho(rho_),alphaS(5./6.),di(3,INIT,0.),da(3,INIT,0.),RefDofs(2),NodeDofs(3),Nodes(4),M(14,INIT,0.),K(14,INIT,0.) {}
+  FiniteElement2s13Disk::FiniteElement2s13Disk(double E_,double nu_,double rho_) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),rho(rho_),alphaS(5./6.),RefDofs(2),NodeDofs(3),Nodes(4),M(14,INIT,0.),K(14,INIT,0.) {}
 
   void FiniteElement2s13Disk::computeConstantSystemMatrices(const Vec &NodeCoordinates,double d1,double d2) {
 

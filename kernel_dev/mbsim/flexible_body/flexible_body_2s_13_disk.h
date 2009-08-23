@@ -88,6 +88,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
       virtual void updateM(double t);
+      virtual void updatedhdz(double t);
       virtual void updateStateDependentVariables(double t);
       /***************************************************/
 
@@ -114,7 +115,7 @@ namespace MBSim {
       void setRadius(double Ri_,double Ra_) { Ri = Ri_; Ra = Ra_; }		
       void setEModul(double E_) { E = E_; }				
       void setPoissonRatio(double nu_) { nu = nu_; }			
-      void setThickness(const fmatvec::Vec &di_,const fmatvec::Vec &da_) { di = di_; da = da_; }		    
+      void setThickness(const fmatvec::Vec &d_) { d = d_; }		    
       void setDensity(double rho_) { rho = rho_; }	
       int getRadialNumberOfElements() const { return nr; }
       int getAzimuthalNumberOfElements() const { return nj; }
@@ -177,7 +178,7 @@ namespace MBSim {
       /**
        * \brief inner and outer thickness
        */
-      fmatvec::Vec di, da;
+      fmatvec::Vec d;
       
       /**
        * \brief inner and outer radius of disk
@@ -214,6 +215,11 @@ namespace MBSim {
        */
       int currentElement;
       
+      /**
+       * \brief mass matrix
+       */
+      fmatvec::SymMat MSave; 
+
       /**
        * \brief stiffness matrix
        */
@@ -281,7 +287,7 @@ namespace MBSim {
        * \return thickness of disk at radial coordinate
        * \param radial coordinate
        */
-      fmatvec::Vec computeThickness(const double &r_);
+      double computeThickness(const double &r_);
   };
 
   inline void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSimError("ERROR(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!"); }

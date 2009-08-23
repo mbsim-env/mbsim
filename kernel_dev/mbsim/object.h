@@ -53,32 +53,32 @@ namespace MBSim {
       virtual ~Object();
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      void updateT(double t) {};
-      void updateh(double t) {};
-      void updateM(double t) {};
-      void updatedhdz(double t);
-      void updatedq(double t, double dt);
-      void updatedu(double t, double dt);
-      void updateud(double t);
-      void updateqd(double t);
-      void updatezd(double t);
-      void sethSize(int hSize_, int i=0);
-      int gethSize(int i=0) const { return hSize[i]; }
-      int getqSize() const { return qSize; }
-      int getuSize(int i=0) const { return uSize[i]; }
+      virtual void updateT(double t) {};
+      virtual void updateh(double t) {};
+      virtual void updateM(double t) {};
+      virtual void updatedhdz(double t);
+      virtual void updatedq(double t, double dt);
+      virtual void updatedu(double t, double dt);
+      virtual void updateud(double t);
+      virtual void updateqd(double t);
+      virtual void updatezd(double t);
+      virtual void sethSize(int hSize_, int i=0);
+      virtual int gethSize(int i=0) const { return hSize[i]; }
+      virtual int getqSize() const { return qSize; }
+      virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() {};
       virtual void calcuSize(int j) {};
       virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
       virtual int getuInd(DynamicSystem* sys, int i=0);
-      void setqInd(int qInd_) { qInd = qInd_; }
-      void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      int gethInd(DynamicSystem* sys,int i=0); 
+      virtual void setqInd(int qInd_) { qInd = qInd_; }
+      virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
+      virtual int gethInd(DynamicSystem* sys,int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
-      H5::Group *getPlotGroup() { return plotGroup; }
-      PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
-      PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      virtual H5::Group *getPlotGroup() { return plotGroup; }
+      virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
+      virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */

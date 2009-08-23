@@ -87,9 +87,9 @@ namespace MBSim {
         cp.getFrameOfReference().getVelocity()(2) = Tmpv.z();
       } 
 
-      if(ff==angularVelocity || /*ff==velocities ||*/ ff==velocities_cosy || ff==all) { // TODO
-        throw new MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame): Not implemented!");
-      }
+      // if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) { 
+      //   throw new MBSimError("ERROR(FlexibleBody2s13Disk::updateKinematicsForFrame::angularVelocity): Not implemented!");
+      // }
     }
 #endif
   }

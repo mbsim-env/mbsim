@@ -82,7 +82,6 @@ namespace MBSim {
       void setPoissonRatio(double nu_);
       void setDensity(double rho_);
       void setShearCorrectionFactor(double alp_);
-      void setThickness(const fmatvec::Vec &di_,const fmatvec::Vec &da_);
       /***************************************************/
 
       /*!
@@ -137,11 +136,6 @@ namespace MBSim {
        */
       double alphaS;
 
-      /**
-       * \brief quadratic thickness coefficients for inner and outer direction from mid-plane
-       */
-      fmatvec::Vec di, da;
-
       /** 
        * \brief reference dof
        */ 
@@ -186,7 +180,6 @@ namespace MBSim {
   inline void FiniteElement2s13Disk::setPoissonRatio(double nu_) { nu = nu_; }
   inline void FiniteElement2s13Disk::setDensity(double rho_) { rho = rho_; }
   inline void FiniteElement2s13Disk::setShearCorrectionFactor(double alphaS_) { alphaS = alphaS_; }
-  inline void FiniteElement2s13Disk::setThickness(const fmatvec::Vec &di_,const fmatvec::Vec &da_) { di = di_; da=da_; }
 }
 
 #endif /* _FINITE_ELEMENT_2S_13_RCM_H_ */
