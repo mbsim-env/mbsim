@@ -595,9 +595,11 @@ namespace MBSim {
                 plotVector.push_back(lak[i](1+j));
             }
             else {
-              Vec buf = fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0);
-              for(int j=0; j<getFrictionDirections(); j++)
-                plotVector.push_back(buf(j));
+	      if(fdf) {
+		Vec buf = fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0);
+		for(int j=0; j<getFrictionDirections(); j++)
+		  plotVector.push_back(buf(j));
+	      }
             }
           } 
           else {
