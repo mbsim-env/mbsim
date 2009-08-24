@@ -1,5 +1,6 @@
 #include "system.h"
 
+#include "mbsim/tree.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/function.h"
@@ -17,7 +18,7 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
+System::System(unsigned int type,bool reorganize) : Group("System"+numtostr(int(type))) {
 
   // input values
   double dDisk=0.05;
@@ -66,17 +67,35 @@ System::System(unsigned int type) : Group("System"+numtostr(int(type))) {
 
   // parametrisation of relative kinematics
   if(type==1) { // K2 child of K1, K3 child of K2
-    addObject(k1);
-    addObject(k2);
-    addObject(k3);
+    if(!reorganize) {
+      Tree *tree = new Tree("Baum");
+      addDynamicSystem(tree);
+      Node *node1 = tree->addObject(0, k1);
+      Node *node2 = tree->addObject(node1, k2);
+      tree->addObject(node2, k3);
+    }
+    else {
+      addObject(k1);
+      addObject(k2);
+      addObject(k3);
+    }
     k1->setFrameOfReference(getFrame("fK1"));
     k2->setFrameOfReference(k1->getFrame("fK2"));
     k3->setFrameOfReference(k2->getFrame("fK3"));
   }
   else if(type==2) { // K2 child of K1, K3 child of K1
-    addObject(k1);
-    addObject(k2);
-    addObject(k3);
+    if(!reorganize) {
+      Tree * tree = new Tree("Baum");
+      addDynamicSystem(tree);
+      Node * node = tree->addObject(0, k1);
+      tree->addObject(node, k2);
+      tree->addObject(node, k3);
+    }
+    else {
+      addObject(k1);
+      addObject(k2);
+      addObject(k3);
+    }
     k1->setFrameOfReference(getFrame("fK1"));
     k2->setFrameOfReference(k1->getFrame("fK2"));
     k3->setFrameOfReference(k1->getFrame("fK3"));

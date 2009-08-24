@@ -5,7 +5,7 @@
 
 class System : public MBSim::Group {
   public:
-    System(unsigned int type);
+    System(unsigned int type,bool reorganize);
 };
 
 #endif
