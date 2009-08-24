@@ -17,8 +17,8 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef _FUNCTION_SENSORS_H_
-#define _FUNCTION_SENSORS_H_
+#ifndef _FUNCTION_SENSOR_H_
+#define _FUNCTION_SENSOR_H_
 
 #include "mbsimControl/sensor.h"
 #include "mbsim/utils/function.h"
@@ -27,16 +27,18 @@ namespace MBSim {
 
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name) : Sensor(name) {}
+      FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y(0) {}
       std::string getType() const { return "FunctionSensor"; }
-      void setFunction(Function1<fmatvec::Vec, double>* function_) {function=function_; signal.resize((*function)(0).size()); }
-      fmatvec::Vec getSignal() {return signal; }
-      void updateg(double t) {signal=(*function)(t); }
+      void setFunction(Function1<fmatvec::Vec, double>* function_);
+      fmatvec::Vec getSignal() {return y; }
+      void updateg(double t);
+      void initializeUsingXML(TiXmlElement *element);
     private:
       Function1<fmatvec::Vec, double> * function;
+      fmatvec::Vec y;
   };
 
 }
 
-#endif /* _FUNCTION_SENSORS_H_ */
+#endif /* _FUNCTION_SENSOR_H_ */
 

@@ -33,6 +33,11 @@ AC_SUBST([LIBMBSIM_CONTROL_AGE])
 LIBMBSIM_CONTROL_VERSION_INFO=$LIBMBSIM_CONTROL_CURRENT:$LIBMBSIM_CONTROL_REVISION:$LIBMBSIM_CONTROL_AGE
 AC_SUBST([LIBMBSIM_CONTROL_VERSION_INFO])
 
+dnl needed for XML
+AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
+AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+
 CPPFLAGS="$CPPFLAGS"
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
@@ -41,7 +46,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/Makefile mbsimControl.pc])
+AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/Makefile mbsimControl.pc schema/Makefile schema/mbsimcontrol.xsd])
 
 AC_OUTPUT
 

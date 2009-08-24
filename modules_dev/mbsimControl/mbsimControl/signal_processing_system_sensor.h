@@ -29,14 +29,8 @@ namespace MBSim {
     public:
       SignalProcessingSystemSensor(const std::string &name) : MBSim::Sensor(name) {}
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
-      void init() {
-        Sensor::init();
-        // signal.resize((sps->calculateOutput()).size());
-        signal.resize(1); // TODO
-      }
       fmatvec::Vec getSignal() {
-        signal=sps->calculateOutput();
-        return signal;
+        return sps->calculateOutput();
       }
     private:
       SignalProcessingSystem * sps;

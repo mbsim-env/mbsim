@@ -1278,6 +1278,68 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SinusFunction1_VS" substitutionGroup="Function1_VS" type="SinusFunction1_VSType"/>
+  <xs:complexType name="SinusFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="amplitude" type="pv:nounitVector"/>
+          <xs:element name="frequency" type="pv:nounitVector"/>
+          <xs:element name="phase" type="pv:nounitVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType"/>
+  <xs:complexType name="PositiveSinusFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="amplitude" type="pv:nounitVector"/>
+          <xs:element name="frequency" type="pv:nounitVector"/>
+          <xs:element name="phase" type="pv:nounitVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="StepFunction1_VS" substitutionGroup="Function1_VS" type="StepFunction1_VSType"/>
+  <xs:complexType name="StepFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="time" type="pv:nounitVector"/>
+          <xs:element name="size" type="pv:nounitVector"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TabularFunction1_VS" substitutionGroup="Function1_VS" type="TabularFunction1_VSType"/>
+  <xs:complexType name="TabularFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="x" type="pv:nounitVector"/>
+          <xs:element name="y" type="pv:nounitMatrix"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="Function1_VS" type="PeriodicTabularFunction1_VSType"/>
+  <xs:complexType name="PeriodicTabularFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="x" type="pv:nounitVector"/>
+          <xs:element name="y" type="pv:nounitMatrix"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType"/>
   <xs:complexType name="Function2_SSSType"/>
 

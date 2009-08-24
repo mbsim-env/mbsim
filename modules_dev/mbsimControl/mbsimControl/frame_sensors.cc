@@ -17,84 +17,87 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mechanical_sensors.h"
+#include "mbsimControl/frame_sensors.h"
+#include "mbsimControl/objectfactory.h"
 
 #include "mbsim/frame.h"
-#include "mbsim/body.h"
 
+using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
+  void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"frame");
+    frame=getFrameByPath(e->Attribute("ref"));
+    if(!frame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
+    e=element->FirstChildElement(MBSIMCONTROLNS"direction");
+    direction=Mat(e->GetText());
+  }
+
   Vec AbsolutPositionSensor::getSignal() {
-    signal(0)=trans(direction)*frame->getPosition();
-    return signal;
+    return trans(direction)*frame->getPosition();
   }
 
 
   Vec AbsolutVelocitySensor::getSignal() {
-    signal(0)=trans(direction)*frame->getVelocity();
-    return signal;
+    return trans(direction)*frame->getVelocity();
   }
 
 
   void AbsolutAngularPositionSensor::updategd(double t) {
-    gd(0)=trans(direction)*frame->getAngularVelocity();
+    gd=trans(direction)*frame->getAngularVelocity();
   }
 
   Vec AbsolutAngularPositionSensor::getSignal() {
-    signal=g;
-    return signal;
+    return g;
   }
 
 
   Vec AbsolutAngularVelocitySensor::getSignal() {
-    signal(0)=trans(direction)*frame->getAngularVelocity();
-    return signal;
+    return trans(direction)*frame->getAngularVelocity();
   }
+  
+  void RelativeCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"frame");
+    refFrame=getFrameByPath(e->Attribute("ref"));
+    if(!refFrame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
+    relFrame=getFrameByPath(e->Attribute("rel"));
+    if(!relFrame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("rel")<<endl; _exit(1); }
+    e=element->FirstChildElement(MBSIMCONTROLNS"direction");
+    direction=Mat(e->GetText());
+  }
+
 
 
   Vec RelativePositionSensor::getSignal() {
     Vec WrRefRel=relFrame->getPosition()-refFrame->getPosition();
-    signal(0)=trans(refFrame->getOrientation()*direction)*WrRefRel;
-    return signal;
+    return trans(refFrame->getOrientation()*direction)*WrRefRel;
   }
 
 
   Vec RelativeVelocitySensor::getSignal() {
     Vec WvRefRel=relFrame->getVelocity()-refFrame->getVelocity();
-    signal(0)=trans(refFrame->getOrientation()*direction)*WvRefRel;
-    return signal;
+    return trans(refFrame->getOrientation()*direction)*WvRefRel;
   }
 
 
   void RelativeAngularPositionSensor::updategd(double t) {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    gd(0)=trans(refFrame->getOrientation()*direction)*WomegaRefRel;
+    gd=trans(refFrame->getOrientation()*direction)*WomegaRefRel;
   }
 
   Vec RelativeAngularPositionSensor::getSignal() {
-    signal=g;
-    return signal;
+    cerr <<  g << endl;
+    return g;
   }
 
 
   Vec RelativeAngularVelocitySensor::getSignal() {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    signal(0)=trans(refFrame->getOrientation()*direction)*WomegaRefRel;
-    return signal;
-  }
-
-
-  Vec GeneralizedPositionSensor::getSignal() {
-    signal(0)=((body->getq()).copy())(index);
-    return signal;
-  }
-
-
-  Vec GeneralizedVelocitySensor::getSignal() {
-    signal(0)=((body->getu()).copy())(index);
-    return signal;
+    return trans(refFrame->getOrientation()*direction)*WomegaRefRel;
   }
 
 }
