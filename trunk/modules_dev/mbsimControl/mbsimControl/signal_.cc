@@ -21,21 +21,39 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
 
+using namespace fmatvec;
+
 namespace MBSim {
+
+  Signal * Signal::getSignalByPath(std::string path) {
+    int pos=path.find("Signal");
+    path.erase(pos, 6);
+    path.insert(pos, "Link");
+    Link * s = parent->getLinkByPath(path);
+    if (dynamic_cast<Signal *>(s))
+      return static_cast<Signal *>(s);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
+      _exit(1);
+    }
+  }
 
   void Signal::initPlot() {
     updatePlotFeatures(parent);
     if(getPlotFeature(plotRecursive)==enabled) {
-      for (int i=0; i<signal.size(); i++)
+      Vec y=getSignal();
+      for (int i=0; i<y.size(); i++)
         plotColumns.push_back("Signal (" + numtostr(i) + ")");
     }
     Link::initPlot();
   }
 
   void Signal::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled)
-      for (int i=0; i<signal.size(); i++)
-        plotVector.push_back(signal(i));
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Vec y=getSignal();
+      for (int i=0; i<y.size(); i++)
+        plotVector.push_back(y(i));
+    }
     Link::plot(t, dt);
   }
 

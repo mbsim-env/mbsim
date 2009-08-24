@@ -24,6 +24,7 @@
 #include "mbsim/contours/contour_quad.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
+#include "mbsim/utils/function_library.h"
 #include "mbsim/integrators/dopri5_integrator.h"
 #include "mbsim/integrators/radau5_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"
@@ -316,6 +317,16 @@ namespace MBSim {
   Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec,double>;
+    if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
+      return new SinusFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
+      return new PositiveSinusFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"StepFunction1_VS")
+      return new StepFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"TabularFunction1_VS")
+      return new TabularFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
+      return new PeriodicTabularFunction1_VS;
     return 0;
   }
   

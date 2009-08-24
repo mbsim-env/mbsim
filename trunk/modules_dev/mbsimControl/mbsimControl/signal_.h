@@ -28,10 +28,10 @@ namespace MBSim {
   class Signal : public Link, public SignalInterface {
 
     public:
-      Signal(const std::string &name) : Link(name), signal(0) {}
+      Signal(const std::string &name) : Link(name) {}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateg(double t) {getSignal(); };
+      virtual void updateg(double t) {getSignal(); }; // at least one signal-update
       virtual void updategd(double t) {};
       /***************************************************/
 
@@ -53,10 +53,9 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       
-      virtual fmatvec::Vec getSignal() {return signal; }
+      virtual fmatvec::Vec getSignal() = 0;
 
-    protected:
-      fmatvec::Vec signal;
+      virtual Signal * getSignalByPath(std::string path);
 
   };
 

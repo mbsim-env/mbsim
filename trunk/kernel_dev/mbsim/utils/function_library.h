@@ -24,90 +24,87 @@
 
 namespace MBSim {
 
-  class SinusFunction : public Function1<fmatvec::Vec, double> {
+  class SinusFunction1_VS : public Function1<fmatvec::Vec, double> {
     public:
-      SinusFunction(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_) : amplitude(amplitude_), frequency(frequency_), phase(phase_) {
-        ySize=amplitude.size();
-        assert(frequency.size()==ySize);
-        assert(phase.size()==ySize);
-        y.resize(ySize);
-      }
-      fmatvec::Vec operator()(const double& tVal) {
-        for (int i=0; i<ySize; i++)
-          y(i)=amplitude(i)*sin(2.*M_PI*frequency(i)*tVal+phase(i));
-        return y;
-      }
-    private:
-      fmatvec::Vec amplitude, frequency, phase, y;
+      SinusFunction1_VS() {}
+      SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
+      fmatvec::Vec operator()(const double& tVal);
+      void initializeUsingXML(TiXmlElement *element);
     protected:
       int ySize;
-  };
-
-  class PositiveSinusFunction : public SinusFunction {
-    PositiveSinusFunction(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase) : SinusFunction(amplitude, frequency, phase) {}
-    fmatvec::Vec operator()(const double& tVal) {
-      fmatvec::Vec y=SinusFunction::operator()(tVal);
-      for (int i=0; i<ySize; i++)
-        if (y(i)<0)
-          y(i)=0;
-      return y;
-    }
-  };
-
-  class StepFunction : public Function1<fmatvec::Vec, double> {
-    public:
-      StepFunction(fmatvec::Vec stepTime_, fmatvec::Vec stepSize_) : stepTime(stepTime_), stepSize(stepSize_) {
-        ySize=stepTime.size();
-        assert(stepSize.size()==ySize);
-        y.resize(ySize);
-      }
-      fmatvec::Vec operator()(const double& tVal) {
-        for (int i=0; i<ySize; i++)
-          y(i)=(tVal<stepTime(i))?0:stepSize(i);
-        return y;
-      }
     private:
-      fmatvec::Vec stepTime, stepSize, y;
-      int ySize;
+      fmatvec::Vec amplitude, frequency, phase, y;
+      void check();
   };
 
-  class TabularFunction : public Function1<fmatvec::Vec, double> {
+
+  class PositiveSinusFunction1_VS : public SinusFunction1_VS {
     public:
-      TabularFunction(fmatvec::Vec x_, fmatvec::Mat y_) : x(x_), y(y_), xIndexOld(0) {
-        for (int i=1; i<x.size(); i++)
-          assert(x(i)>x(i-1));
-        assert(x.size()==y.rows());
-        xSize=x.size();
+      PositiveSinusFunction1_VS() {}
+      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase) : SinusFunction1_VS(amplitude, frequency, phase) {}
+      fmatvec::Vec operator()(const double& tVal);
+      void initializeUsingXML(TiXmlElement *element) {
+        SinusFunction1_VS::initializeUsingXML(element);
+      }
+  };
+
+
+  class StepFunction1_VS : public Function1<fmatvec::Vec, double> {
+    public:
+      StepFunction1_VS() {}
+      StepFunction1_VS(fmatvec::Vec stepTime_, fmatvec::Vec stepSize_) : stepTime(stepTime_), stepSize(stepSize_) {
+        check();
+      }
+      fmatvec::Vec operator()(const double& tVal);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      fmatvec::Vec stepTime, stepSize;
+      int ySize;
+      void check();
+  };
+
+
+  class TabularFunction1_VS : public Function1<fmatvec::Vec, double> {
+    public:
+      TabularFunction1_VS() {}
+      TabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : x(x_), y(y_), xIndexOld(0) {
+        check();
       }
       fmatvec::Vec operator()(const double& xVal);
-    private:
+      void initializeUsingXML(TiXmlElement *element);
+    protected:
       fmatvec::Vec x;
       fmatvec::Mat y;
+    private:
       int xSize, xIndexOld;
+      void check();
   };
 
-  class PeriodicTabularFunction : public TabularFunction {
+
+  class PeriodicTabularFunction1_VS : public TabularFunction1_VS {
     public:
-      PeriodicTabularFunction(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction(x_, y_) {
-        xMin=x_(0);
-        xMax=x_(x_.size()-1);
-        xDelta=xMax-xMin;
+      PeriodicTabularFunction1_VS() {}
+      PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS(x_, y_) {
+        check();
       }
-      fmatvec::Vec operator()(const double& xVal) {
-        double xValTmp=xVal;
-        while (xValTmp<xMin)
-          xValTmp+=xDelta;
-        while (xValTmp>xMax)
-          xValTmp-=xDelta;
-        return TabularFunction::operator()(xValTmp);
+      fmatvec::Vec operator()(const double& xVal);
+      void initializeUsingXML(TiXmlElement *element) {
+        TabularFunction1_VS::initializeUsingXML(element);
+        check();
       }
     private:
       double xMin, xMax, xDelta;
+      void check() {
+        xMin=x(0);
+        xMax=x(x.size()-1);
+        xDelta=xMax-xMin;
+      }
   };
-  
-  class SummationFunction : Function1<fmatvec::Vec, double> {
+
+
+  class SummationFunction1_VS : Function1<fmatvec::Vec, double> {
     public:
-      SummationFunction() : ySize(0) {};
+      SummationFunction1_VS() : ySize(0) {};
       void addFunction(Function1<fmatvec::Vec, double> * function, double factor=1.) {
         if (!ySize)
           ySize=((*function)(0)).size();

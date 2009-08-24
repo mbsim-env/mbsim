@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimControl"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimControl"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
+
+  <xs:simpleType name="SignalReferenceType">
+    <xs:restriction base="xs:token">
+     <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Signal\[X\]" with
+            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+            from physicalvariable.xsd name attribute -->
+     <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Signal\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+
+  <xs:element name="Signal" abstract="true" substitutionGroup="mbsim:Link" type="SignalType"/>
+  <xs:complexType name="SignalType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Sensor" abstract="true" substitutionGroup="Signal" type="SensorType"/>
+  <xs:complexType name="SensorType">
+    <xs:complexContent>
+      <xs:extension base="SignalType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="GeneralizedCoordinateSensorType"/>
+  <xs:complexType name="GeneralizedCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="object">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="index" type="xs:nonNegativeInteger"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedPositionSensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedPositionSensorType"/>
+  <xs:complexType name="GeneralizedPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedVelocitySensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedVelocitySensorType"/>
+  <xs:complexType name="GeneralizedVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="AbsoluteCoordinateSensorType"/>
+  <xs:complexType name="AbsoluteCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="direction" type="pv:nounitMatrix"/>        
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsolutePositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsolutePositionSensorType"/>
+  <xs:complexType name="AbsolutePositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteVelocitySensorType"/>
+  <xs:complexType name="AbsoluteVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteAngularPositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularPositionSensorType"/>
+  <xs:complexType name="AbsoluteAngularPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteAngularVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularVelocitySensorType"/>
+  <xs:complexType name="AbsoluteAngularVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="RelativeCoordinateSensorType"/>
+  <xs:complexType name="RelativeCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+              <xs:attribute name="rel" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="direction" type="pv:nounitMatrix"/>        
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativePositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativePositionSensorType"/>
+  <xs:complexType name="RelativePositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeVelocitySensorType"/>
+  <xs:complexType name="RelativeVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeAngularPositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularPositionSensorType"/>
+  <xs:complexType name="RelativeAngularPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeAngularVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularVelocitySensorType"/>
+  <xs:complexType name="RelativeAngularVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType"/>
+  <xs:complexType name="FunctionSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalAddition" substitutionGroup="Signal" type="SignalAdditionType"/>
+  <xs:complexType name="SignalAdditionType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence maxOccurs="unbounded">
+          <xs:element name="input">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="factor" type="xs:double"/>
+              </xs:sequence>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalMux" substitutionGroup="Signal" type="SignalMuxType"/>
+  <xs:complexType name="SignalMuxType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="input" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalTimeDiscretization" substitutionGroup="Signal" type="SignalTimeDiscretizationType"/>
+  <xs:complexType name="SignalTimeDiscretizationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="input">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinearTransferSystem" substitutionGroup="Signal" type="LinearTransferSystemType"/>
+  <xs:complexType name="LinearTransferSystemType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="input" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

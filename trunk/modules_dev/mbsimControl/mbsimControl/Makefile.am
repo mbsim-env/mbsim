@@ -4,9 +4,13 @@ lib_LTLIBRARIES = libmbsimControl.la
 libmbsimControl_la_LDFLAGS = -version-info @LIBMBSIM_CONTROL_VERSION_INFO@
 libmbsimControl_la_SOURCES = \
 														 signal_.cc\
-														 mechanical_sensors.cc\
+														 object_sensors.cc\
+														 frame_sensors.cc\
+														 function_sensor.cc\
+														 signal_manipulation.cc\
 														 linear_transfer_system.cc\
 														 actuator.cc\
+														 objectfactory.cc\
 mectosignal.cc\
 nltransfersys.cc\
 signalspsys.cc\
@@ -23,13 +27,15 @@ mbsimControlinclude_HEADERS = \
 															signal_interface.h\
 															signal_.h\
 															sensor.h\
-															mechanical_sensors.h\
-															function_sensors.h\
+															object_sensors.h\
+															frame_sensors.h\
+															function_sensor.h\
 															signal_manipulation.h\
 															signal_processing_system.h\
+															signal_processing_system_sensor.h\
 															linear_transfer_system.h\
 															actuator.h\
-															signal_processing_system_sensor.h\
+															objectfactory.h\
 mectosignal.h\
 nltransfersys.h\
 signalspsys.h\

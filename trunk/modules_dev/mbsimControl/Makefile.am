@@ -1,6 +1,6 @@
-SUBDIRS = mbsimControl
+SUBDIRS = mbsimControl schema
 
-DIST_SUBDIRS = mbsimControl doc
+DIST_SUBDIRS = mbsimControl doc schema
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimControl.pc

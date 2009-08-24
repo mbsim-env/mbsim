@@ -17,25 +17,30 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef _MECHANICAL_SENSORS_H_
-#define _MECHANICAL_SENSORS_H_
+#ifndef _FRAME_SENSORS_H_
+#define _FRAME_SENSORS_H_
 
 #include "mbsimControl/sensor.h"
 
 namespace MBSim {
 
   class Frame;
-  class Body;
 
   class AbsolutCoordinateSensor : public Sensor {
     public:
       AbsolutCoordinateSensor(const std::string &name) : Sensor(name) {}
       std::string getType() const { return "AbsolutCoordinateSensor"; }
+      void initializeUsingXML(TiXmlElement *element);
       void setFrame(Frame * frame_) {frame=frame_; }
-      void setDirection(fmatvec::Vec direction_) {direction=direction_/nrm2(direction_); assert(direction.size()==3); signal.resize(1); }
+      void setDirection(fmatvec::Mat direction_) {
+        direction=direction_;
+        for (int i=0; i<direction_.cols(); i++)
+          direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
+        assert(direction.rows()==3); 
+      }
     protected:
       Frame * frame;
-      fmatvec::Vec direction;
+      fmatvec::Mat direction;
   };
 
   class AbsolutPositionSensor : public AbsolutCoordinateSensor {
@@ -58,10 +63,10 @@ namespace MBSim {
       std::string getType() const { return "AbsolutAngularPositionSensor"; }
       fmatvec::Vec getSignal();
 
-      void calcxSize() {xSize=signal.cols(); }
-      void calcgSize() {gSize=signal.cols(); }
-      void calcgdSize() {gdSize=signal.cols(); }
-      void init() {g.resize(signal.cols()); gd.resize(signal.cols()); }
+      void calcxSize() {xSize=getSignal().cols(); }
+      void calcgSize() {gSize=getSignal().cols(); }
+      void calcgdSize() {gdSize=getSignal().cols(); }
+      void init() {g.resize(gSize); gd.resize(gdSize); }
       void updateg(double t) {g=x; }
       void updategd(double t);
       void updatexd(double t) {xd=gd; }
@@ -80,13 +85,20 @@ namespace MBSim {
     public:
       RelativeCoordinateSensor(const std::string &name) : Sensor(name) {}
       std::string getType() const { return "RelativeCoordinateSensor"; }
+      void initializeUsingXML(TiXmlElement *element);
       void setReferenceFrame(Frame * refFrame_) {refFrame=refFrame_; }
       void setRelativeFrame(Frame * relFrame_) {relFrame=relFrame_; }
-      void setDirection(fmatvec::Vec direction_) {direction=direction_/nrm2(direction_); assert(direction.size()==3); signal.resize(1); }
+      void setDirection(fmatvec::Mat direction_) {
+        direction=direction_;
+        for (int i=0; i<direction_.cols(); i++)
+          direction.col(i)=direction.col(i)/nrm2(direction.col(i)); 
+        assert(direction.rows()==3); 
+        std::cerr << "d=" << direction << std::endl;
+      }
     protected:
       Frame * refFrame;
       Frame * relFrame;
-      fmatvec::Vec direction;
+      fmatvec::Mat direction;
   };
   
   class RelativePositionSensor : public RelativeCoordinateSensor {
@@ -109,10 +121,12 @@ namespace MBSim {
       std::string getType() const { return "RelativeAngularPositionSensor"; }
       fmatvec::Vec getSignal();
       
-      void calcxSize() {xSize=signal.cols(); }
-      void calcgSize() {gSize=signal.cols(); }
-      void calcgdSize() {gdSize=signal.cols(); }
-      void init() {g.resize(signal.cols()); gd.resize(signal.cols()); }
+      void calcxSize() {xSize=direction.cols(); }
+      void init() {
+        g.resize(direction.cols()); 
+        gd.resize(direction.cols());
+        x.resize(direction.cols()); 
+      }
       void updateg(double t) {g=x; }
       void updategd(double t);
       void updatexd(double t) {xd=gd; }
@@ -126,32 +140,6 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
 
-
-  class GeneralizedCoordinateSensor : public Sensor {
-    public:
-      GeneralizedCoordinateSensor(const std::string &name) : Sensor(name) {}
-      std::string getType() const { return "GeneralizedCoordinateSensor"; }
-      void setBody(Body * body_) {body=body_; }
-      void setIndex(int index_) {index=index_; signal.resize(1); }
-    protected:
-      Body * body;
-      int index;
-  };
-
-  class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
-    public:
-      GeneralizedPositionSensor(const std::string &name) : GeneralizedCoordinateSensor(name) {}
-      std::string getType() const { return "GeneralizedPositionSensor"; }
-      fmatvec::Vec getSignal();
-  };
-
-  class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
-    public:
-      GeneralizedVelocitySensor(const std::string &name) : GeneralizedCoordinateSensor(name) {}
-      std::string getType() const { return "GeneralizedVelocitySensor"; }
-      fmatvec::Vec getSignal();
-  };
-
 }
 
-#endif /* _MECHANICAL_SENSORS_H_ */
+#endif /* _FRAME_SENSORS_H_ */

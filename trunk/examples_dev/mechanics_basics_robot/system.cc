@@ -5,9 +5,9 @@
 
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/linear_transfer_system.h"
-#include "mbsimControl/mechanical_sensors.h"
+#include "mbsimControl/object_sensors.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
-#include "mbsimControl/function_sensors.h"
+#include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_manipulation.h"
 
 #include "mbsim/utils/function_library.h"
@@ -109,11 +109,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 //  basePosition->setDirection("[0;1;0]");
   GeneralizedPositionSensor * basePosition = new GeneralizedPositionSensor("BasePositionIst");
   addLink(basePosition);
-  basePosition->setBody(basis);
+  basePosition->setObject(basis);
   basePosition->setIndex(0);
 
   Mat bPT(FileTofmatvecString("./Soll_Basis.tab").c_str());
-  TabularFunction * basePositionSollFunction = new TabularFunction(bPT.col(0), bPT.col(1));
+  TabularFunction1_VS * basePositionSollFunction = new TabularFunction1_VS(bPT.col(0), bPT.col(1));
   FunctionSensor * basePositionSoll = new FunctionSensor("BasePositionSoll");
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
@@ -150,11 +150,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 //  armPosition->setDirection("[0;0;1]");
   GeneralizedPositionSensor * armPosition = new GeneralizedPositionSensor("ArmPositionIst");
   addLink(armPosition);
-  armPosition->setBody(arm);
+  armPosition->setObject(arm);
   armPosition->setIndex(0);
 
   Mat aPT(FileTofmatvecString("./Soll_Arm.tab").c_str());
-  TabularFunction * armPositionSollFunction = new TabularFunction(aPT.col(0), aPT.col(1));
+  TabularFunction1_VS * armPositionSollFunction = new TabularFunction1_VS(aPT.col(0), aPT.col(1));
   FunctionSensor * armPositionSoll = new FunctionSensor("ArmPositionSoll");
   addLink(armPositionSoll);
   armPositionSoll->setFunction(armPositionSollFunction);
@@ -191,11 +191,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 //  spitzePosition->setDirection("[0;1;0]");
   GeneralizedPositionSensor * spitzePosition = new GeneralizedPositionSensor("SpitzePositionIst");
   addLink(spitzePosition);
-  spitzePosition->setBody(spitze);
+  spitzePosition->setObject(spitze);
   spitzePosition->setIndex(0);
 
   Mat sPT(FileTofmatvecString("./Soll_Spitze.tab").c_str());
-  TabularFunction * spitzePositionSollFunction = new TabularFunction(sPT.col(0), sPT.col(1));
+  TabularFunction1_VS * spitzePositionSollFunction = new TabularFunction1_VS(sPT.col(0), sPT.col(1));
   FunctionSensor * spitzePositionSoll = new FunctionSensor("SpitzePositionSoll");
   addLink(spitzePositionSoll);
   spitzePositionSoll->setFunction(spitzePositionSollFunction);
