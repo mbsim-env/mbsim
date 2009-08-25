@@ -336,6 +336,8 @@ namespace MBSim {
       return new ConstantFunction2<double,double,double>;
     if(element->ValueStr()==MBSIMNS"LinearSpringDamperForce")
       return new LinearSpringDamperForce;
+    if(element->ValueStr()==MBSIMNS"NonlinearSpringDamperForce")
+      return new NonlinearSpringDamperForce;
     if(element->ValueStr()==MBSIMNS"LinearRegularizedUnilateralConstraint")
       return new LinearRegularizedUnilateralConstraint;
     if(element->ValueStr()==MBSIMNS"LinearRegularizedBilateralConstraint")

@@ -38,6 +38,17 @@ namespace MBSim {
     l0=atof(e->GetText());
   }
 
+  void NonlinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
+    Function2<double,double,double>::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"distanceForce");
+    gForceFun=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    gForceFun->initializeUsingXML(e->FirstChildElement());
+    e=element->FirstChildElement(MBSIMNS"velocityForce");
+    gdForceFun=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    gdForceFun->initializeUsingXML(e->FirstChildElement());
+  }
+
   void LinearRegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     Function2<double,double,double>::initializeUsingXML(element);
     TiXmlElement *e;
