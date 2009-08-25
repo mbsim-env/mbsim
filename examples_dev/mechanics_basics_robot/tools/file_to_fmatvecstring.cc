@@ -1,6 +1,7 @@
 #include "file_to_fmatvecstring.h"
 #include <iostream>
 #include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ string FileTofmatvecString(const string &filename) {
 
   string fmatvecString="[";
   string line;
-  int maxSize=line.max_size();
+  string::size_type maxSize=line.max_size();
   while (getline(filestream, line)) {
 
     int start=line.find_first_not_of(" ");
@@ -50,7 +51,7 @@ string FileTofmatvecString(const string &filename) {
   } 
   fmatvecString=fmatvecString.substr(0,fmatvecString.size()-1);
   fmatvecString+="]";
-  if (int(fmatvecString.length())>maxSize) {
+  if (fmatvecString.length()>maxSize) {
     cout << "The input file is too long!" << endl;
     throw(123);
   }
