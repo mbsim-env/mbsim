@@ -44,12 +44,10 @@ namespace MBSim {
   void LinearTransferSystem::init() {
     SignalProcessingSystem::init();
     x.resize(xSize, INIT, 0); 
-    output.resize(C.rows());
   }
 
   Vec LinearTransferSystem::calculateOutput() {
-    output = (this->*calculateOutputMethod)();
-    return output;
+    return (this->*calculateOutputMethod)();
   }
 
   Vec LinearTransferSystem::outputMethodC() {
@@ -73,13 +71,10 @@ namespace MBSim {
   }
 
   void LinearTransferSystem::setPID(double PP, double II, double DD) {
-    if (DD!=0)
-      calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
+    if ((II==0)&&(DD==0))
+      calculateOutputMethod=&LinearTransferSystem::outputMethodD;
     else
-      if (II!=0) 
-        calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
-      else
-        calculateOutputMethod=&LinearTransferSystem::outputMethodD;
+      calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
 
     if (DD==0) {
       A.resize(1, 1, INIT, 0);
@@ -113,6 +108,7 @@ namespace MBSim {
     B.resize(1, 1, INIT, 1.);
     C.resize(1, 1, INIT, OutputGain);
     D.resize(1, 1, INIT, 0);
+    calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
   }
 
   void LinearTransferSystem::setI2(double OutputGain) {
@@ -123,6 +119,7 @@ namespace MBSim {
     C.resize(1, 2, INIT, 0);
     C(0,0)=OutputGain;
     D.resize(1, 1, INIT, 0);
+    calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
   }
 
   void LinearTransferSystem::setPT1(double P,double T) {
@@ -130,6 +127,7 @@ namespace MBSim {
     B.resize(1, 1, INIT, 1.);
     C.resize(1, 1, INIT, P/T);
     D.resize(1, 1, INIT, 0);
+    calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
   }
 
   void LinearTransferSystem::setGain(double P) {
@@ -137,15 +135,16 @@ namespace MBSim {
   }
 
   void LinearTransferSystem::plot(double t, double dt) {
-    for (int i=0; i<output.size(); i++)
-      plotVector.push_back(output(i));
+    Vec y=calculateOutput();
+    for (int i=0; i<y.size(); i++)
+      plotVector.push_back(y(i));
     for (int i=0; i<B.cols(); i++)
       plotVector.push_back(inputSignal->getSignal()(i));
     SignalProcessingSystem::plot(t,dt);
   }
 
   void LinearTransferSystem::initPlot() {
-    for (int i=0; i<output.size(); i++)
+    for (int i=0; i<C.rows(); i++)
       plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
     for (int i=0; i<B.cols(); i++)
       plotColumns.push_back("Input Signal (" + numtostr(i) + ")");

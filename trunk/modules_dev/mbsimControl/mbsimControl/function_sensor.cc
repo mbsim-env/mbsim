@@ -17,29 +17,30 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef _FUNCTION_SENSOR_H_
-#define _FUNCTION_SENSOR_H_
-
-#include "mbsimControl/sensor.h"
-#include "mbsim/utils/function.h"
+#include "mbsimControl/function_sensor.h"
+#include "mbsimControl/objectfactory.h"
 
 namespace MBSim {
+      
+  FunctionSensor::FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_) : Sensor(name), function(function_) {
+    y=(*function)(0);
+  }
 
-  class FunctionSensor : public Sensor {
-    public:
-      FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y(0) {}
-      FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_);
-      std::string getType() const { return "FunctionSensor"; }
-      void setFunction(Function1<fmatvec::Vec, double>* function_);
-      fmatvec::Vec getSignal() {return y; }
-      void updateg(double t);
-      void initializeUsingXML(TiXmlElement *element);
-    private:
-      Function1<fmatvec::Vec, double> * function;
-      fmatvec::Vec y;
-  };
+  void FunctionSensor::setFunction(Function1<fmatvec::Vec, double>* function_) {
+    function=function_; 
+    y=(*function)(0); 
+  }
+  void FunctionSensor::updateg(double t) {
+    Sensor::updateg(t);
+    y=(*function)(t); 
+  }
+
+  void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    function=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
+    function->initializeUsingXML(e->FirstChildElement());
+    y=(*function)(0);
+  }
 
 }
-
-#endif /* _FUNCTION_SENSOR_H_ */
 

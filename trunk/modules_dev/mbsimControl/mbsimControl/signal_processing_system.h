@@ -33,7 +33,7 @@ namespace MBSim {
   class SignalProcessingSystem : public MBSim::OrderOneDynamics {
 
     public:
-      SignalProcessingSystem(const std::string &name) : OrderOneDynamics(name), inputSignal(0), output(0) {
+      SignalProcessingSystem(const std::string &name) : OrderOneDynamics(name), inputSignal(0) {
       }
 
       void preinit() {}
@@ -49,7 +49,6 @@ namespace MBSim {
 
     protected:
       Signal * inputSignal;
-      fmatvec::Vec output;
   };
 
 }
