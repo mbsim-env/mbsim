@@ -48,23 +48,25 @@ namespace MBSim {
 
   Contour::~Contour() {}
 
-  void Contour::init() {
-    getFrame()->getJacobianOfTranslation().resize(3,hSize[0]);
-    getFrame()->getJacobianOfRotation().resize(3,hSize[0]);
+  void Contour::init(InitStage stage) {
+    if(stage==unknownStage) {
+      getFrame()->getJacobianOfTranslation().resize(3,hSize[0]);
+      getFrame()->getJacobianOfRotation().resize(3,hSize[0]);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        Element::init(stage, parent);
+      }
+    }
+    else
+      Element::init(stage, parent);
   }
 
   void Contour::resizeJacobians(int j) {
     getFrame()->getJacobianOfTranslation().resize(3,hSize[j]);
     getFrame()->getJacobianOfRotation().resize(3,hSize[j]);
-  }
-
-
-  void Contour::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Element::initPlot(parent);
-    }
   }
 
   /* Rigid Contour */
@@ -92,18 +94,24 @@ namespace MBSim {
     if(cp.getFrameOfReference().getJacobianOfRotation().rows() == 0) cp.getFrameOfReference().getJacobianOfRotation().resize(3,R.getJacobianOfRotation().cols());
   }
 
-  void RigidContour::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        openMBVRigidBody->setName(name);
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+  void RigidContour::init(InitStage stage) {
+    if(stage==unknownStage)
+      Contour::init(stage);
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          openMBVRigidBody->setName(name);
+          parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+        }
+  #endif
+        Contour::init(stage);
       }
-#endif
-      Contour::initPlot();
     }
+    else
+      Contour::init(stage);
   }
 
   void RigidContour::plot(double t, double dt) {

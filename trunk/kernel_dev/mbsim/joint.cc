@@ -124,40 +124,47 @@ namespace MBSim {
     xSize = momentDir.cols();
   }
 
-  void Joint::init() {
-    LinkMechanics::init();
+  void Joint::init(InitStage stage) {
+    if(stage==resize) {
+      LinkMechanics::init(stage);
 
-    g.resize(forceDir.cols()+momentDir.cols());
-    gd.resize(forceDir.cols()+momentDir.cols());
-    la.resize(forceDir.cols()+momentDir.cols());
-    gdd.resize(gdSize);
-    gdn.resize(gdSize);
-
-    IT = Index(0,forceDir.cols()-1);
-    IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
-    if(forceDir.cols()) 
-      Wf = forceDir;
-    else {
-      forceDir.resize(3,0);
-      Wf.resize(3,0);
+      g.resize(forceDir.cols()+momentDir.cols());
+      gd.resize(forceDir.cols()+momentDir.cols());
+      la.resize(forceDir.cols()+momentDir.cols());
+      gdd.resize(gdSize);
+      gdn.resize(gdSize);
     }
-    if(momentDir.cols())
-      Wm = momentDir;
-    else {
-      momentDir.resize(3,0);
-      Wm.resize(3,0);
+    else if(stage==unknownStage) {
+      LinkMechanics::init(stage);
+  
+      IT = Index(0,forceDir.cols()-1);
+      IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
+      if(forceDir.cols()) 
+        Wf = forceDir;
+      else {
+        forceDir.resize(3,0);
+        Wf.resize(3,0);
+      }
+      if(momentDir.cols())
+        Wm = momentDir;
+      else {
+        momentDir.resize(3,0);
+        Wm.resize(3,0);
+      }
+      C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
+      C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
+      JT.resize(3,3-forceDir.cols());
+      if(forceDir.cols() == 2)
+        JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
+      else if(forceDir.cols() == 3);
+      else if(forceDir.cols() == 0);
+      else { // define a coordinate system in the plane perpendicular to the force direction
+        JT.col(0) = computeTangential(forceDir.col(0));
+        JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
+      }
     }
-    C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
-    C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
-    JT.resize(3,3-forceDir.cols());
-    if(forceDir.cols() == 2)
-      JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
-    else if(forceDir.cols() == 3);
-    else if(forceDir.cols() == 0);
-    else { // define a coordinate system in the plane perpendicular to the force direction
-      JT.col(0) = computeTangential(forceDir.col(0));
-      JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
-    }
+    else
+      LinkMechanics::init(stage);
   }
 
   void Joint::calclaSize() {

@@ -200,80 +200,84 @@ namespace MBSim {
     }
   }
 
-  void FlexibleBody1s33RCM::init() {
-    FlexibleBodyContinuum<double>::init();
+  void FlexibleBody1s33RCM::init(InitStage stage) {
+    if(stage==unknownStage) {
+      FlexibleBodyContinuum<double>::init(stage);
 
-    initialised = true;
+      initialised = true;
 
-    /* cylinder */
-    cylinder->setAlphaStart(0.);
-    cylinder->setAlphaEnd(L);
+      /* cylinder */
+      cylinder->setAlphaStart(0.);
+      cylinder->setAlphaEnd(L);
 
-    if(userContourNodes.size()==0) {
-      Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // own search area for each element
-      cylinder->setNodes(contourNodes);
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // own search area for each element
+        cylinder->setNodes(contourNodes);
+      }
+      else {
+        cylinder->setNodes(userContourNodes);
+      }
+
+      cylinder->setRadius(cylinderRadius);
+
+      /* cuboid */
+      top->setCn(Vec("[1.;0.]"));
+      bottom->setCn(Vec("[-1.;0.]"));
+      left->setCn(Vec("[0.;-1.]"));
+      right->setCn(Vec("[0.;1.]"));
+
+      top->setAlphaStart(0.);
+      top->setAlphaEnd(L);
+
+      bottom->setAlphaStart(0.);
+      bottom->setAlphaEnd(L);
+
+      left->setAlphaStart(0.);
+      left->setAlphaEnd(L);
+
+      right->setAlphaStart(0.);
+      right->setAlphaEnd(L);
+
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i;
+        top->setNodes(contourNodes);
+        bottom->setNodes(contourNodes);
+        left->setNodes(contourNodes);
+        right->setNodes(contourNodes);
+      }
+      else {
+        top->setNodes(userContourNodes);
+        bottom->setNodes(userContourNodes);
+        left->setNodes(userContourNodes);
+        right->setNodes(userContourNodes);
+      }
+
+      top->setWidth(cuboidBreadth);
+      bottom->setWidth(cuboidBreadth);
+      top->setNormalDistance(0.5*cuboidHeight);
+      bottom->setNormalDistance(0.5*cuboidHeight);
+      left->setWidth(cuboidHeight);
+      right->setWidth(cuboidHeight);
+      left->setNormalDistance(0.5*cuboidBreadth);
+      right->setNormalDistance(0.5*cuboidBreadth);
+
+      l0 = L/Elements;
+      Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+
+      for(int i=0;i<Elements;i++) {
+        discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
+        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
+        if(R1 != 0. || R2 != 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
+        if(epstD == 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
+      }
     }
-    else {
-      cylinder->setNodes(userContourNodes);
-    }
-
-    cylinder->setRadius(cylinderRadius);
-
-    /* cuboid */
-    top->setCn(Vec("[1.;0.]"));
-    bottom->setCn(Vec("[-1.;0.]"));
-    left->setCn(Vec("[0.;-1.]"));
-    right->setCn(Vec("[0.;1.]"));
-
-    top->setAlphaStart(0.);
-    top->setAlphaEnd(L);
-
-    bottom->setAlphaStart(0.);
-    bottom->setAlphaEnd(L);
-
-    left->setAlphaStart(0.);
-    left->setAlphaEnd(L);
-
-    right->setAlphaStart(0.);
-    right->setAlphaEnd(L);
-
-    if(userContourNodes.size()==0) {
-      Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i;
-      top->setNodes(contourNodes);
-      bottom->setNodes(contourNodes);
-      left->setNodes(contourNodes);
-      right->setNodes(contourNodes);
-    }
-    else {
-      top->setNodes(userContourNodes);
-      bottom->setNodes(userContourNodes);
-      left->setNodes(userContourNodes);
-      right->setNodes(userContourNodes);
-    }
-
-    top->setWidth(cuboidBreadth);
-    bottom->setWidth(cuboidBreadth);
-    top->setNormalDistance(0.5*cuboidHeight);
-    bottom->setNormalDistance(0.5*cuboidHeight);
-    left->setWidth(cuboidHeight);
-    right->setWidth(cuboidHeight);
-    left->setNormalDistance(0.5*cuboidBreadth);
-    right->setNormalDistance(0.5*cuboidBreadth);
-
-    l0 = L/Elements;
-    Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-
-    for(int i=0;i<Elements;i++) {
-      discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));
-      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
-      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
-      static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
-      if(R1 != 0. || R2 != 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
-      static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
-      if(epstD == 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
-    }
+    else
+      FlexibleBodyContinuum<double>::init(stage);
   }
 
   void FlexibleBody1s33RCM::plot(double t, double dt) {
@@ -317,7 +321,7 @@ namespace MBSim {
   }
 
   void FlexibleBody1s33RCM::initInfo() {
-    FlexibleBodyContinuum<double>::init();
+    FlexibleBodyContinuum<double>::init(unknownStage);
     l0 = L/Elements;
     Vec g = Vec("[0.;0.;0.]");
     for(int i=0;i<Elements;i++) {

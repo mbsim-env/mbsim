@@ -68,11 +68,10 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
-      virtual void initPlot();
       virtual std::string getType() const { return "FlexibleBody"; }
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init();
+      virtual void init(InitStage stage);
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
       virtual void setFrameOfReference(Frame *frame) { if(dynamic_cast<DynamicSystem*>(frame->getParent())) frameOfReference = frame; else throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); }

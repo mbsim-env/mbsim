@@ -30,8 +30,8 @@ namespace MBSim {
     //active = false;
   }
 
-  void FlexibleContact::init() {
-    Contact::init();
+  void FlexibleContact::init(InitStage stage) {
+    Contact::init(stage);
   }
 
   void FlexibleContact::updateh(double t) {

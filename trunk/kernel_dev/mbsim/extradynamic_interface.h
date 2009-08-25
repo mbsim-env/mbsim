@@ -93,12 +93,7 @@ namespace MBSim {
       /**
        * \brief initialise extra dynamic interface
        */
-      virtual void init() = 0;
-
-      /**
-       * \brief do tasks before initialisation 
-       */
-      virtual void preinit() = 0;
+      virtual void init(InitStage stage) = 0;
 
       /**
        * \brief initialise order one parameters

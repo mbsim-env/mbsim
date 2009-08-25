@@ -90,18 +90,22 @@ namespace MBSim {
   }
 #endif
 
-  void Contour1sAnalytical::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        openMBVRigidBody->setName(name);
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+  void Contour1sAnalytical::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          openMBVRigidBody->setName(name);
+          parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+        }
+  #endif
+        Contour1s::init(stage);
       }
-#endif
-      Contour1s::initPlot();
     }
+    else
+      Contour1s::init(stage);
   }
 
   void Contour1sAnalytical::plot(double t, double dt) {

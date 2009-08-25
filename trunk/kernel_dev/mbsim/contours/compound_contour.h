@@ -49,7 +49,7 @@ namespace MBSim {
       void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR);
       /***************************************************/
 
-      void init();
+      void init(InitStage stage);
       Contour* getContourElement(int i) { return element[i]; }
       void addContourElement(Contour* ce, const fmatvec::Vec& re);
       unsigned int getNumberOfElements() { return element.size(); }

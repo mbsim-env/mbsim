@@ -169,22 +169,12 @@ namespace MBSim {
       /**
        * \brief initialize object at start of simulation with respect to contours and frames
        */
-      virtual void init();
-
-      /**
-       * \brief initialize object at start of simulation with respect to contours and frames TODO
-       */
-      virtual void preinit();
+      virtual void init(InitStage stage);
 
       /**
        * initialize state of object at start of simulation
        */
       virtual void initz();
-
-      /**
-       * \brief plots time series header
-       */
-      virtual void initPlot();
 
       /**
        * \brief perform Cholesky decomposition of mass martix

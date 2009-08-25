@@ -59,7 +59,7 @@ namespace MBSim {
       void updatePorts(double t);
 
       void updateh(double t);
-      void init();
+      void init(InitStage stage);
       void initM();
       bool initialized;
       double alphaRelax0, alphaRelax;

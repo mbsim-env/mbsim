@@ -63,7 +63,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
-      virtual void initPlot();
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int gethInd(int i=0) const { return hInd[i]; }
       virtual ObjectInterface* getParent() { return parent; }
@@ -80,8 +79,7 @@ namespace MBSim {
       virtual const fmatvec::Mat& getJacobianOfRotation() const { return WJR; }
       virtual const fmatvec::Vec& getGyroscopicAccelerationOfTranslation() const { return WjP; }
       virtual const fmatvec::Vec& getGyroscopicAccelerationOfRotation() const { return WjR; }
-      virtual void preinit() {}
-      virtual void init();
+      virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
 #endif

@@ -40,7 +40,7 @@ namespace MBSim {
     public: 
       FlexibleContact(const string &name);
 
-      void init();
+      void init(InitStage stage);
 
       void updateh(double t);
 

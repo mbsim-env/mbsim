@@ -203,31 +203,35 @@ namespace MBSim {
     }   
   }
 
-  void FlexibleBody1s21RCM::init() {
-    FlexibleBodyContinuum<double>::init();
-
-    initialized = true;
-
-    contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
-
-    contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
-    if(userContourNodes.size()==0) {
-      Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // search area for each finite element contact search
-      contour1sFlexible->setNodes(contourNodes);
+  void FlexibleBody1s21RCM::init(InitStage stage) {
+    if(stage==unknownStage) {
+      FlexibleBodyContinuum<double>::init(stage);
+  
+      initialized = true;
+  
+      contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
+  
+      contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; // search area for each finite element contact search
+        contour1sFlexible->setNodes(contourNodes);
+      }
+      else contour1sFlexible->setNodes(userContourNodes);
+  
+      l0 = L/Elements;
+      Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      for(int i=0;i<Elements;i++) {
+        qElement.push_back(Vec(8,INIT,0.));
+        uElement.push_back(Vec(8,INIT,0.));
+        discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
+        if(rc != 0) static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
+        static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
+        static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
+      }
     }
-    else contour1sFlexible->setNodes(userContourNodes);
-
-    l0 = L/Elements;
-    Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-    for(int i=0;i<Elements;i++) {
-      qElement.push_back(Vec(8,INIT,0.));
-      uElement.push_back(Vec(8,INIT,0.));
-      discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
-      if(rc != 0) static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
-      static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
-      static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
-    }
+    else
+      FlexibleBodyContinuum<double>::init(stage);
   }
 
   void FlexibleBody1s21RCM::plot(double t, double dt) {

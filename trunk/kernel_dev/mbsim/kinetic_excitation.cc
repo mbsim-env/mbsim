@@ -34,9 +34,13 @@ namespace MBSim {
 
   KineticExcitation::~KineticExcitation() {}
 
-  void KineticExcitation::init() {
-    LinkMechanics::init();
-    if(!refFrame) refFrame=frame[0];
+  void KineticExcitation::init(InitStage stage) {
+    if(stage==unknownStage) {
+      LinkMechanics::init(stage);
+      if(!refFrame) refFrame=frame[0];
+    }
+    else
+      LinkMechanics::init(stage);
   }
 
   void KineticExcitation::updateh(double t) {

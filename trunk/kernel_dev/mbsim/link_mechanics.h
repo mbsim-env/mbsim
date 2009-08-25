@@ -61,7 +61,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void init();
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -80,11 +80,6 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */
-      /**
-       * \brief plots time series header
-       */
-      virtual void initPlot();
-
       /**
        * \param frame to add to link frame vector
        */

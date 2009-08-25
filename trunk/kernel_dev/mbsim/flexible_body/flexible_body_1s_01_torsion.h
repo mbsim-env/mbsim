@@ -45,7 +45,7 @@ namespace MBSim {
       Vec Axis; /* Enspricht der neutralen Faser */
       Vec WrON00,WrON0;
 
-      void init();
+      void init(InitStage stage);
       void initMatrizes();
 
       void updateStateDependentVariables(double t);

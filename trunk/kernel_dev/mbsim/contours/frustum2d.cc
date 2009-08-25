@@ -30,20 +30,24 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  void Frustum2D::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
-        ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
+  void Frustum2D::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r(0));
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r(1));
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(h);
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setInitialTranslation(0.,h,0.);
+        }
+  #endif
+        RigidContour::init(stage);
       }
-#endif
-      RigidContour::initPlot();
     }
+    else
+      RigidContour::init(stage);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

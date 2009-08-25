@@ -121,8 +121,7 @@ namespace MBSim {
       int getxSize() const { return xSize; }
       void updatexRef(const fmatvec::Vec &ref);
       void updatexdRef(const fmatvec::Vec &ref);
-      virtual void init();
-      virtual void preinit();
+      virtual void init(InitStage stage);
       virtual void initz();
       /*****************************************************/
 
@@ -194,11 +193,6 @@ namespace MBSim {
        * \brief update relaxation factors for contact equations
        */
       virtual void updaterFactors();
-
-      /**
-       * \brief plots time series headers and manages HDF5 files of dynamic systems
-       */
-      virtual void initPlot();
 
       /**
        * \param name of the frame
@@ -721,6 +715,9 @@ namespace MBSim {
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 
+      /** Return frame "I" */
+      Frame *getFrameI() { return I; }
+
     protected:
       /**
        * \brief parent dynamic system
@@ -911,6 +908,9 @@ namespace MBSim {
        * \param contour to add
        */
       void addContour(Contour* contour);
+
+      /** A pointer to frame "I" */
+      Frame *I;
   };
 }
 

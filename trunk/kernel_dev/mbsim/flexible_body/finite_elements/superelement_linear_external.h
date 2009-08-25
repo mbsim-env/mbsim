@@ -37,7 +37,7 @@ namespace MBSim {
   class SuperElementLinearExternal : public DiscretizationInterface {
     public:
       SuperElementLinearExternal();
-	  void init();
+	  void init(InitStage stage);
 
 	  /*! set constant mass matrix \f$\vM\f$
 	   * \param M mass matrix

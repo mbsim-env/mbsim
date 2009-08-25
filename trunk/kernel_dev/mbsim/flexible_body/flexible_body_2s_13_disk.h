@@ -81,7 +81,6 @@ namespace MBSim {
       virtual ~FlexibleBody2s13Disk() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
-      virtual void initPlot();
       using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
       /***************************************************/
 
@@ -102,7 +101,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init();
+      virtual void init(InitStage stage);
       virtual void facLLM() {};
       /***************************************************/
 

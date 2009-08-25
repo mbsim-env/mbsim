@@ -57,7 +57,8 @@ namespace MBSim {
                                                        hInd[0] = 0;
                                                        hInd[1] = 0;
 
-                                                       addFrame(new Frame("I"));
+                                                       I=new Frame("I");
+                                                       addFrame(I);
 
                                                        IrOF.push_back(Vec(3,INIT,0.));
                                                        AIF.push_back(SqrMat(3,EYE));
@@ -341,57 +342,74 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::init() {
-    if(frameParent) {
-      frame[0]->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
-      frame[0]->setOrientation(frameParent->getOrientation()*APF);
-    }
-    else {
-      if(parent) {
-        frame[0]->setPosition(parent->getFrame("I")->getPosition() + parent->getFrame("I")->getOrientation()*PrPF);
-        frame[0]->setOrientation(parent->getFrame("I")->getOrientation()*APF);
+  void DynamicSystem::init(InitStage stage) {
+    if(stage==frameLocation) {
+      if(frameParent) {
+        I->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
+        I->setOrientation(frameParent->getOrientation()*APF);
       }
       else {
-        frame[0]->setPosition(getFrame("I")->getPosition() + getFrame("I")->getOrientation()*PrPF);
-        frame[0]->setOrientation(getFrame("I")->getOrientation()*APF);
+        if(parent) {
+          I->setPosition(parent->getFrameI()->getPosition() + parent->getFrameI()->getOrientation()*PrPF);
+          I->setOrientation(parent->getFrameI()->getOrientation()*APF);
+        }
+        else {
+          I->setPosition(getFrameI()->getPosition() + getFrameI()->getOrientation()*PrPF);
+          I->setOrientation(getFrameI()->getOrientation()*APF);
+        }
+      }
+      for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
+        frame[i]->setPosition(I->getPosition() + I->getOrientation()*IrOF[i]);
+        frame[i]->setOrientation(I->getOrientation()*AIF[i]);
+      }
+      for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
+        contour[i]->setReferencePosition(I->getPosition() + I->getOrientation()*IrOC[i]);
+        contour[i]->setReferenceOrientation(I->getOrientation()*AIC[i]);
       }
     }
-    for(unsigned int i=1; i<frame.size(); i++) { // kinematics of other frames can be updates from frame I 
-      frame[i]->setPosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOF[i]);
-      frame[i]->setOrientation(frame[0]->getOrientation()*AIF[i]);
-    }
-    for(unsigned int i=0; i<contour.size(); i++) { // kinematics of other contours can be updates from frame I
-      contour[i]->setReferencePosition(frame[0]->getPosition() + frame[0]->getOrientation()*IrOC[i]);
-      contour[i]->setReferenceOrientation(frame[0]->getOrientation()*AIC[i]);
-      contour[i]->init();
-    }
-    for(unsigned int i=0; i<dynamicsystem.size(); i++) { // kinematics of other dynamicsystems can be updates from frame I
-      dynamicsystem[i]->init();
+    else if(stage==MBSim::plot) {
+      if(parent)
+        updatePlotFeatures(parent);
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(separateFilePerDynamicSystem)==enabled) {
+          // create symbolic link in parent plot file if exist
+          if(parent) H5Lcreate_external((getPath()+".mbsim.h5").c_str(), "/",
+              parent->getPlotGroup()->getId(), name.c_str(),
+              H5P_DEFAULT, H5P_DEFAULT);
+          // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
+          plotGroup=(H5::Group*)new H5::FileSerie(getPath()+".mbsim.h5", H5F_ACC_TRUNC);
+        }
+        else
+          plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+
+        H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+        plotVectorSerie=NULL;
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        openMBVGrp=new OpenMBV::Group();
+        openMBVGrp->setName(name);
+        if(parent) parent->openMBVGrp->addObject(openMBVGrp);
+        if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
+          openMBVGrp->setSeparateFile(true);
+#endif
+
+        plotGroup->flush(H5F_SCOPE_GLOBAL);
+      }
     }
 
+    for(unsigned i=0; i<frame.size(); i++)
+      frame[i]->init(stage);
+    for(unsigned int i=0; i<contour.size(); i++)
+      contour[i]->init(stage);
+    for(unsigned int i=0; i<dynamicsystem.size(); i++)
+      dynamicsystem[i]->init(stage);
     for(unsigned i=0; i<object.size(); i++)
-      object[i]->init();
-
+      object[i]->init(stage);
     for(unsigned i=0; i<link.size(); i++)
-      link[i]->init();
-
-    for (unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->init();
-  }
-
-  void DynamicSystem::preinit() {
-    for(unsigned int i=0; i<dynamicsystem.size(); i++) {
-      dynamicsystem[i]->preinit();
-    }
-
-    for(unsigned i=0; i<object.size(); i++)
-      object[i]->preinit();
-
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->preinit();
-
-    for (unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->preinit();
+      link[i]->init(stage);
+    for(unsigned i=0; i<orderOneDynamics.size(); i++)
+      orderOneDynamics[i]->init(stage);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
@@ -496,48 +514,6 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updaterFactors();
-  }
-
-  void DynamicSystem::initPlot() {
-    if(parent)
-      updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(separateFilePerDynamicSystem)==enabled) {
-        // create symbolic link in parent plot file if exist
-        if(parent) H5Lcreate_external((getPath()+".mbsim.h5").c_str(), "/",
-            parent->getPlotGroup()->getId(), name.c_str(),
-            H5P_DEFAULT, H5P_DEFAULT);
-        // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-        plotGroup=(H5::Group*)new H5::FileSerie(getPath()+".mbsim.h5", H5F_ACC_TRUNC);
-      }
-      else
-        plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
-
-      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
-      plotVectorSerie=NULL;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      openMBVGrp=new OpenMBV::Group();
-      openMBVGrp->setName(name);
-      if(parent) parent->openMBVGrp->addObject(openMBVGrp);
-      if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
-        openMBVGrp->setSeparateFile(true);
-#endif
-
-      for(unsigned i=0; i<dynamicsystem.size(); i++)
-        dynamicsystem[i]->initPlot();
-      for(unsigned i=0; i<object.size(); i++)
-        object[i]->initPlot();
-      for(unsigned i=0; i<link.size(); i++)
-        link[i]->initPlot();
-      for(unsigned i=0; i<orderOneDynamics.size(); i++)
-        orderOneDynamics[i]->initPlot();
-      for(unsigned i=0; i<frame.size(); i++)
-        frame[i]->initPlot();
-
-      plotGroup->flush(H5F_SCOPE_GLOBAL);
-    }
   }
 
   Frame* DynamicSystem::getFrame(const string &name, bool check) {
@@ -870,7 +846,7 @@ namespace MBSim {
   }
   
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm, bool recursive) {
-    for(unsigned int i=0; i<frame.size(); i++) 
+    for(unsigned int i=0; i<frame.size(); i++)
       frm.push_back(frame[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
@@ -878,7 +854,7 @@ namespace MBSim {
   }
   
   void DynamicSystem::buildListOfContours(vector<Contour*> &cnt, bool recursive) {
-    for(unsigned int i=0; i<contour.size(); i++) 
+    for(unsigned int i=0; i<contour.size(); i++)
       cnt.push_back(contour[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)

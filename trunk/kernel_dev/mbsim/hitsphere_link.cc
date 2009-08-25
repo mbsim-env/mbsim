@@ -29,7 +29,7 @@ namespace MBSim {
   HitSphereLink::HitSphereLink() : active(false) {
   }
 
-  void HitSphereLink::init() {
+  void HitSphereLink::init(InitStage stage) {
     //mbs = obj[0]->getMbs();
   }
 

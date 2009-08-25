@@ -64,7 +64,7 @@ namespace MBSim {
 
       void updateh(double t);
 
-      void init();
+      void init(InitStage stage);
 
       double sTangent;
       Vec Wt, WrOC, WvC, Womega;

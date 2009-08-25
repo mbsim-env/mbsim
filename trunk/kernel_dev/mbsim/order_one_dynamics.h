@@ -58,8 +58,7 @@ namespace MBSim {
       virtual int getxSize() const { return xSize; }
       virtual void updatexRef(const fmatvec::Vec& ref);
       virtual void updatexdRef(const fmatvec::Vec& ref);
-      virtual void init() { std::cout << "WARNING (OrderOneDynamics::init): Not implemented!" << std::endl; }
-      virtual void preinit() { std::cout << "WARNING (OrderOneDynamics::preinit): Not implemented!" << std::endl; }
+      virtual void init(InitStage stage);
       virtual void initz();
       /***************************************************/
 
@@ -71,11 +70,11 @@ namespace MBSim {
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
       virtual void updateg(double t) = 0;
-      virtual void initPlot();
       /***************************************************/
 
       /* GETTER / SETTER */
       void setParent(DynamicSystem *parent_) { parent = parent_; }
+      DynamicSystem* getParent() { return parent; }
       void setx0(fmatvec::Vec x_) { x0 = x_; }
       /***************************************************/
 

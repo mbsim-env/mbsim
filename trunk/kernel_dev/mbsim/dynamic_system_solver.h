@@ -79,8 +79,48 @@ namespace MBSim {
        */
       virtual ~DynamicSystemSolver();
 
-      /* INHERITED INTERFACE OF GROUP */
+      /** \brief Initialize the system.
+       *
+       * This function calls init(InitStage stage) with all stages
+       * defined in the enumeration InitStage, in the order in which
+       * they are defined in this enumeration.
+       *
+       * The init(InitStage stage) functions of all classes MUST call
+       * the init(InitStage stage) functions of all objects
+       * for which this class holds as a container. This call is 
+       * always done at the end of the function independent of the
+       * stage.
+       *
+       * If the init(InitStage stage) function implements a given
+       * stage, the init(InitStage stage) function of the base class
+       * should be call or not as expected by the programer for this
+       * stage. For all other (not implemented) stages the function
+       * of the base call must always be called.
+       *
+       * Example for a proper init(InitStage stage) function:
+       * \code
+       * void MyClass::init(InitStage stage) {
+       *   if(stage==preInit) {
+       *     // do something
+       *     MyBaseClass::init(stage); // base must be called
+       *     // do something
+       *   }
+       *   else if(stage==plot) {
+       *     // do something
+       *     // base need not be called
+       *   }
+       *   else
+       *     MyBaseClass::init(stage);
+       *
+       *   for(int i=0; i<container.size(); i++)
+       *     container[i]->init(stage);
+       * }
+       * \endcode
+       */
       void init();
+
+      /* INHERITED INTERFACE OF GROUP */
+      void init(InitStage stage);
       using Group::plot;
       /***************************************************/
 
@@ -93,7 +133,6 @@ namespace MBSim {
       virtual int solveImpactsRootFinding(double dt = 0); 
       virtual void checkConstraintsForTermination(); 
       virtual void checkImpactsForTermination(); 
-      virtual void initPlot();
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */

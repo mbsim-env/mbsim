@@ -59,24 +59,26 @@ namespace MBSim {
     DIBRefs.push_back(DIBRef_);
   }
 
-  void Element::initPlot(ObjectInterface* parent) {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
-      H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
-
-      plotColumns.insert(plotColumns.begin(), "Time");
-      if(plotColumns.size()>1) {
-        plotVectorSerie=new H5::VectorSerie<double>;
-        // copy plotColumns to a std::vector
-        vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
-        plotVectorSerie->create(*plotGroup,"data",dummy);
-        plotVectorSerie->setDescription("Default dataset for class: "+getType());
+  void Element::init(InitStage stage, ObjectInterface* parent) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+        H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+  
+        plotColumns.insert(plotColumns.begin(), "Time");
+        if(plotColumns.size()>1) {
+          plotVectorSerie=new H5::VectorSerie<double>;
+          // copy plotColumns to a std::vector
+          vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
+          plotVectorSerie->create(*plotGroup,"data",dummy);
+          plotVectorSerie->setDescription("Default dataset for class: "+getType());
+        }
+  
+        plotVector.clear();
+        plotVector.reserve(plotColumns.size()); // preallocation
       }
-
-      plotVector.clear();
-      plotVector.reserve(plotColumns.size()); // preallocation
     }
   }
 

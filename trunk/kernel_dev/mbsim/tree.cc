@@ -75,6 +75,7 @@ namespace MBSim {
       child[i]->sethSize(hSize,j);
 
     obj->sethSize(hSize,j);
+    obj->sethInd(0,j);
     hSize -= obj->getuSize(j);
   }
 

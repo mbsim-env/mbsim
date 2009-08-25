@@ -41,13 +41,14 @@ namespace MBSim {
       void setHeight(double h_) { h = h_; }
       void setDepth(double d_) { d = d_; }
       /***************************************************/
-      void preinit();
 
     private:
       /**
        * \brief length, height and depth of cuboid
        */
       double l,h,d;
+
+      void init(InitStage stage);
   };
 }
 

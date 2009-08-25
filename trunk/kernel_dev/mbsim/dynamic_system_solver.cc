@@ -78,11 +78,21 @@ namespace MBSim {
 #ifdef _OPENMP
     omp_set_nested(true);
 #endif
+#ifdef HAVE_ANSICSIGNAL
+    signal(SIGINT, sigInterruptHandler);
+    signal(SIGTERM, sigInterruptHandler);
+    signal(SIGABRT, sigAbortHandler);
+#endif
+    for(int stage=0; stage<MBSim::LASTINITSTAGE; stage++) {
+      cout<<"Initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
+      init((InitStage)stage);
+      cout<<"Done initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
+    }
+  }
 
-    Group::preinit();
-
-    if(reorganizeHierarchy) { // build invisible calculation structure
-      cout << name << " (special group) preinit():" << endl;
+  void DynamicSystemSolver::init(InitStage stage) {
+    if(stage==MBSim::reorganizeHierarchy && reorganizeHierarchy) {
+      cout <<name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
       buildListOfObjects(objList,true);
@@ -109,49 +119,48 @@ namespace MBSim {
 
       dynamicsystem.clear(); // delete old DynamicSystem list
       object.clear(); // delete old object list
-      //frame.clear(); // delete old frame list
-      //contour.clear(); // delete old contour list
+      frame.clear(); // delete old frame list
+      contour.clear(); // delete old contour list
       link.clear(); // delete old link list
       orderOneDynamics.clear(); // delete old ood list
 
       /* rename system structure */
       cout << "object List:" << endl;
       for(unsigned int i=0; i<objList.size(); i++) {
-        cout << objList[i]->getName() << endl;
         stringstream str;
-        str << objList[i]->getName() << "#" << i;
+        str << objList[i]->getPath('/');
+        cout<<str.str()<<endl;
         objList[i]->setName(str.str());
       }
-      //cout << "frame List:" << endl;
-      //for(unsigned int i=0; i<frmList.size(); i++) {
-      //  cout << frmList[i]->getName() << endl;
-      //  if(i>0) {
-      //    stringstream str;
-      //    str << frmList[i]->getName() << "#" << i;
-      //    frmList[i]->setName(str.str());
-      //  }
-      //  addFrame(frmList[i]);
-      //}
-      //for(unsigned int i=0; i<cntList.size(); i++) {
-      //  cout << cntList[i]->getName() << endl;
-      //  stringstream str;
-      //  str << cntList[i]->getName() << "#" << i;
-      //  cntList[i]->setName(str.str());
-      //  addContour(cntList[i]);
-      //}
+      cout << "frame List:" << endl;
+      for(unsigned int i=0; i<frmList.size(); i++) {
+        stringstream str;
+        str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
+        cout<<str.str()<<endl;
+        frmList[i]->setName(str.str());
+        addFrame(frmList[i]);
+      }
+      cout << "contour List:" << endl;
+      for(unsigned int i=0; i<cntList.size(); i++) {
+        stringstream str;
+        str << cntList[i]->getParent()->getPath('/') << "/" << cntList[i]->getName();
+        cout<<str.str()<<endl;
+        cntList[i]->setName(str.str());
+        addContour(cntList[i]);
+      }
       cout << "link List:" << endl;
       for(unsigned int i=0; i<lnkList.size(); i++) {
-        cout << lnkList[i]->getName() << endl;
         stringstream str;
-        str << lnkList[i]->getName() << "#" << i;
+        str << lnkList[i]->getParent()->getPath('/') << "/" << lnkList[i]->getName();
+        cout<<str.str()<<endl;
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
       }
       cout << "ood List:" << endl;
       for(unsigned int i=0; i<oodList.size(); i++) {
-        cout << oodList[i]->getName() << endl;
         stringstream str;
-        str << oodList[i]->getName() << "#" << i;
+        str << oodList[i]->getParent()->getPath('/') << "/" << oodList[i]->getName();
+        cout<<str.str()<<endl;
         oodList[i]->setName(str.str());
         addOrderOneDynamics(oodList[i]);
       }
@@ -182,12 +191,14 @@ namespace MBSim {
       /* tree list */
       vector<Tree*> bufTree;
       int nt = 0;
+      // Starte Aufbau
       for(int i=0; i<A.size(); i++) {
         double a = max(trans(A).col(i));
         if(a==1) { // root of relativ kinematics
           stringstream str;
           str << "InvisibleTree" << nt++;
           Tree *tree = new Tree(str.str());
+          tree->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible tree must always walk throw the plot functions
           addToTree(tree, 0, A, i, objList);
           bufTree.push_back(tree);
         } 
@@ -199,135 +210,140 @@ namespace MBSim {
         addDynamicSystem(bufTree[i]);
       }
 
-      cout << "End of special group preinit()" << endl;
+      cout << "End of special group stage==preInit" << endl;
+
+      // After reorganizing a resize is required
+      init(resize);
     }
+    else if(stage==resize) {
+      calcqSize();
+      calcuSize(0);
+      calcuSize(1);
+      sethSize(uSize[0]);
+      sethSize(uSize[1],1);
+      checkForConstraints(); // TODO for preinit
+      setUpLinks();
+      setDynamicSystemSolver(this);
+  
+      calcxSize();
+  
+      calclaSize();
+      calcgSize();
+      calcgdSize();
+      calcrFactorSize();
+      calcsvSize();
+      svSize += 1; // TODO additional event for drift 
 
-    calcqSize();
-    calcuSize(0);
-    calcuSize(1);
-    sethSize(uSize[0]);
-    sethSize(uSize[1],1);
-    checkForConstraints(); // TODO for preinit
-    setUpLinks();
-    setDynamicSystemSolver(this);
+      if(INFO) cout << "qSize = " << qSize << endl;
+      if(INFO) cout << "uSize[0] = " << uSize[0] << endl;
+      if(INFO) cout << "xSize = " << xSize << endl;
+      if(INFO) cout << "gSize = " << gSize << endl;
+      if(INFO) cout << "gdSize = " << gdSize << endl;
+      if(INFO) cout << "laSize = " << laSize << endl;
+      if(INFO) cout << "svSize = " << svSize << endl;
+      if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
+  
+      if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
+      if(INFO) cout << "hSize[1] = " << hSize[1] << endl;
 
-    calcxSize();
-
-    calclaSize();
-    calcgSize();
-    calcgdSize();
-    calcrFactorSize();
-    calcsvSize();
-    svSize += 1; // TODO additional event for drift 
-
-    if(INFO) cout << "qSize = " << qSize << endl;
-    if(INFO) cout << "uSize[0] = " << uSize[0] << endl;
-    if(INFO) cout << "xSize = " << xSize << endl;
-    if(INFO) cout << "gSize = " << gSize << endl;
-    if(INFO) cout << "gdSize = " << gdSize << endl;
-    if(INFO) cout << "laSize = " << laSize << endl;
-    if(INFO) cout << "svSize = " << svSize << endl;
-    if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
-
-    if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
-    if(INFO) cout << "hSize[1] = " << hSize[1] << endl;
-
-    if(uSize[0] == uSize[1]) 
-      zdot_ = &DynamicSystemSolver::zdotStandard;
-    else
-      zdot_ = &DynamicSystemSolver::zdotResolveConstraints;
-
-    setlaIndDS(laInd);
-
-    // TODO memory problem with many contacts
-    if(laSize>8000)
-      laSize=8000;
-    MParent.resize(getuSize(1));
-    TParent.resize(getqSize(),getuSize());
-    LLMParent.resize(getuSize(1));
-    WParent.resize(getuSize(1),getlaSize());
-    VParent.resize(getuSize(1),getlaSize());
-    wbParent.resize(getlaSize());
-    laParent.resize(getlaSize());
-    rFactorParent.resize(getlaSize());
-    sParent.resize(getlaSize());
-    if(impactSolver==RootFinding) resParent.resize(getlaSize());
-    gParent.resize(getgSize());
-    gdParent.resize(getgdSize());
-    zdParent.resize(getzSize());
-    hParent.resize(getuSize(1));
-    hObjectParent.resize(getuSize(1));
-    hLinkParent.resize(getuSize(1));
-    dhdqObjectParent.resize(getuSize(1),getqSize());
-    dhdqLinkParent.resize(getuSize(1),getqSize());
-    dhduObjectParent.resize(getuSize(1));
-    dhduLinkParent.resize(getuSize(1));
-    dhdtObjectParent.resize(getuSize(1));
-    dhdtLinkParent.resize(getuSize(1));
-    rParent.resize(getuSize());
-    fParent.resize(getxSize());
-    svParent.resize(getsvSize());
-    jsvParent.resize(getsvSize());
-
-    updateMRef(MParent);
-    updateTRef(TParent);
-    updateLLMRef(LLMParent);
-
-    Group::init();
-
-    updatesvRef(svParent);
-    updatejsvRef(jsvParent);
-    updatezdRef(zdParent);
-    updatelaRef(laParent);
-    updategRef(gParent);
-    updategdRef(gdParent);
-    updatehRef(hParent,hObjectParent,hLinkParent);
-    updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
-    updatedhduRef(dhduObjectParent,dhduLinkParent);
-    updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
-    updaterRef(rParent);
-    updateWRef(WParent);
-    updateVRef(VParent);
-    updatewbRef(wbParent);
-    updategRef(gParent);
-    updategdRef(gdParent);
-    updatelaRef(laParent);
-    if(impactSolver==RootFinding) updateresRef(resParent);
-    updaterFactorRef(rFactorParent);
-
-    // contact solver specific settings
-    if(INFO) cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
-    if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
-    else if(contactSolver == LinearEquations) {
-      solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
-      cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+      Group::init(stage);
     }
-    else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
-    else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
-    else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
+    else if(stage==unknownStage) {
+      if(uSize[0] == uSize[1]) 
+        zdot_ = &DynamicSystemSolver::zdotStandard;
+      else
+        zdot_ = &DynamicSystemSolver::zdotResolveConstraints;
+  
+      setlaIndDS(laInd);
+  
+      // TODO memory problem with many contacts
+      if(laSize>8000)
+        laSize=8000;
+      MParent.resize(getuSize(1));
+      TParent.resize(getqSize(),getuSize());
+      LLMParent.resize(getuSize(1));
+      WParent.resize(getuSize(1),getlaSize());
+      VParent.resize(getuSize(1),getlaSize());
+      wbParent.resize(getlaSize());
+      laParent.resize(getlaSize());
+      rFactorParent.resize(getlaSize());
+      sParent.resize(getlaSize());
+      if(impactSolver==RootFinding) resParent.resize(getlaSize());
+      gParent.resize(getgSize());
+      gdParent.resize(getgdSize());
+      zdParent.resize(getzSize());
+      hParent.resize(getuSize(1));
+      hObjectParent.resize(getuSize(1));
+      hLinkParent.resize(getuSize(1));
+      dhdqObjectParent.resize(getuSize(1),getqSize());
+      dhdqLinkParent.resize(getuSize(1),getqSize());
+      dhduObjectParent.resize(getuSize(1));
+      dhduLinkParent.resize(getuSize(1));
+      dhdtObjectParent.resize(getuSize(1));
+      dhdtLinkParent.resize(getuSize(1));
+      rParent.resize(getuSize());
+      fParent.resize(getxSize());
+      svParent.resize(getsvSize());
+      jsvParent.resize(getsvSize());
+  
+      updateMRef(MParent);
+      updateTRef(TParent);
+      updateLLMRef(LLMParent);
 
-    // impact solver specific settings
-    if(INFO) cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
-    if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
-    else if(impactSolver == LinearEquations) {
-      solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
-      cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+      Group::init(stage);
+
+      updatesvRef(svParent);
+      updatejsvRef(jsvParent);
+      updatezdRef(zdParent);
+      updatelaRef(laParent);
+      updategRef(gParent);
+      updategdRef(gdParent);
+      updatehRef(hParent,hObjectParent,hLinkParent);
+      updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
+      updatedhduRef(dhduObjectParent,dhduLinkParent);
+      updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
+      updaterRef(rParent);
+      updateWRef(WParent);
+      updateVRef(VParent);
+      updatewbRef(wbParent);
+      updategRef(gParent);
+      updategdRef(gdParent);
+      updatelaRef(laParent);
+      if(impactSolver==RootFinding) updateresRef(resParent);
+      updaterFactorRef(rFactorParent);
+  
+      // contact solver specific settings
+      if(INFO) cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+      if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
+      else if(contactSolver == LinearEquations) {
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
+        cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+      }
+      else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
+      else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
+      else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
+  
+      // impact solver specific settings
+      if(INFO) cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
+      if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
+      else if(impactSolver == LinearEquations) {
+        solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
+        cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
+      }
+      else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
+      else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
+      else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
-    else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
-    else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
-    else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
-
-    if(INFO) cout << "  initialising plot-files ..." << endl;
-    initPlot();
-
-    if(INFO) cout << "...... done initialising." << endl << endl;
-
-#ifdef HAVE_ANSICSIGNAL
-    signal(SIGINT, sigInterruptHandler);
-    signal(SIGTERM, sigInterruptHandler);
-    signal(SIGABRT, sigAbortHandler);
+    else if(stage==MBSim::plot) {
+      if(INFO) cout << "  initialising plot-files ..." << endl;
+      Group::init(stage);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(plotRecursive)==enabled) openMBVGrp->initialize();
 #endif
-
+      if(INFO) cout << "...... done initialising." << endl << endl;
+    }
+    else
+      Group::init(stage);
   }
 
   int DynamicSystemSolver::solveConstraintsFixpointSingle() {
@@ -588,13 +604,6 @@ namespace MBSim {
       (**i).checkImpactsForTermination();
       if(term == false) return;
     }
-  }
-
-  void DynamicSystemSolver::initPlot() {
-    Group::initPlot();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(getPlotFeature(plotRecursive)==enabled) openMBVGrp->initialize();
-#endif
   }
 
   void DynamicSystemSolver::updateh(double t) {
