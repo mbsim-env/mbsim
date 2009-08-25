@@ -83,47 +83,50 @@ namespace MBSim {
     }
   }
 
-  void Frame::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(globalPosition)==enabled) {
-        for(int i=0; i<3; i++)
-          plotColumns.push_back("WrOP("+numtostr(i)+")");
-        plotColumns.push_back("alpha");
-        plotColumns.push_back("beta");
-        plotColumns.push_back("gamma");
-      }
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
-        openMBVFrame->setName(name);
-        // The next line adds redundant data to the h5 file (if the parent is a RigidBody or a Group)
-        // but this line of code work for always!
-        parent->getOpenMBVGrp()->addObject(openMBVFrame);
-        // if the parent is a Group; TODO
-        // BEGIN
-        //RigidBody *rigidBody;
-        //if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
-        //  if(rigidBody->getOpenMBVBody()==0) {
-        //    cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
-        //    _exit(1);
-        //  }
-        //  parent->getOpenMBVGrp()->addObject(openMBVFrame);
-        //  openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
-        //  openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
-        //  openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
-        //}
-        // END
-      }
-#endif
-      Element::initPlot(parent);
+  void Frame::init(InitStage stage) {
+    if(stage==unknownStage) {
+      getJacobianOfTranslation().resize(3,hSize[0]);
+      getJacobianOfRotation().resize(3,hSize[0]);
     }
-  }
-
-  void Frame::init() {
-    getJacobianOfTranslation().resize(3,hSize[0]);
-    getJacobianOfRotation().resize(3,hSize[0]);
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(globalPosition)==enabled) {
+          for(int i=0; i<3; i++)
+            plotColumns.push_back("WrOP("+numtostr(i)+")");
+          plotColumns.push_back("alpha");
+          plotColumns.push_back("beta");
+          plotColumns.push_back("gamma");
+        }
+  
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVFrame) {
+          openMBVFrame->setName(name);
+          // The next line adds redundant data to the h5 file (if the parent is a RigidBody or a Group)
+          // but this line of code work for always!
+          parent->getOpenMBVGrp()->addObject(openMBVFrame);
+          // if the parent is a Group; TODO
+          // BEGIN
+          //RigidBody *rigidBody;
+          //if((rigidBody=dynamic_cast<RigidBody*>(parent))!=0) {
+          //  if(rigidBody->getOpenMBVBody()==0) {
+          //    cout<<"To visualize a frame on a rigid body, the body must at least have a OpenMBV::InvisibleBody!"<<endl;
+          //    _exit(1);
+          //  }
+          //  parent->getOpenMBVGrp()->addObject(openMBVFrame);
+          //  openMBVFrame->setHDF5LinkTarget(rigidBody->getOpenMBVBody());
+          //  openMBVFrame->setInitialTranslation((rigidBody->getContainerForFramePositions())[rigidBody->frameIndex(this)]);
+          //  openMBVFrame->setInitialRotation(AIK2Cardan((rigidBody->getContainerForFrameOrientations())[rigidBody->frameIndex(this)]));
+          //}
+          // END
+        }
+  #endif
+        Element::init(stage, parent);
+      }
+    }
+    else
+      Element::init(stage, parent);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

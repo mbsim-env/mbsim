@@ -231,49 +231,49 @@ namespace MBSim {
     LLM.resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
-  void Object::init() {  
-    Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
-    Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
-  }
+  void Object::init(InitStage stage) {  
+    if(stage==unknownStage) {
+      Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
+      Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
 
-  void Object::preinit() {  
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(state)==enabled) {
+          for(int i=0; i<qSize; ++i)
+            plotColumns.push_back("q("+numtostr(i)+")");
+          for(int i=0; i<uSize[0]; ++i)
+            plotColumns.push_back("u("+numtostr(i)+")");
+        }
+        if(getPlotFeature(stateDerivative)==enabled) {
+          for(int i=0; i<qSize; ++i)
+            plotColumns.push_back("qd("+numtostr(i)+")");
+          for(int i=0; i<uSize[0]; ++i)
+            plotColumns.push_back("ud("+numtostr(i)+")");
+        }
+        if(getPlotFeature(rightHandSide)==enabled) {
+          for(int i=0; i<uSize[0]; ++i)
+            plotColumns.push_back("h("+numtostr(i)+")");
+          for(int i=0; i<getuSize(); ++i)
+            plotColumns.push_back("r("+numtostr(i)+")");
+        }
+        if(getPlotFeature(energy)==enabled) {
+          plotColumns.push_back("T");
+          plotColumns.push_back("V");
+          plotColumns.push_back("E");
+        }
+
+        Element::init(stage, parent);
+      }
+    }
+    else
+      Element::init(stage, parent);
   }
 
   void Object::initz() {
     q = q0;
     u = u0;
-  }
-
-  void Object::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotColumns.push_back("q("+numtostr(i)+")");
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("u("+numtostr(i)+")");
-      }
-      if(getPlotFeature(stateDerivative)==enabled) {
-        for(int i=0; i<qSize; ++i)
-          plotColumns.push_back("qd("+numtostr(i)+")");
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("ud("+numtostr(i)+")");
-      }
-      if(getPlotFeature(rightHandSide)==enabled) {
-        for(int i=0; i<uSize[0]; ++i)
-          plotColumns.push_back("h("+numtostr(i)+")");
-        for(int i=0; i<getuSize(); ++i)
-          plotColumns.push_back("r("+numtostr(i)+")");
-      }
-      if(getPlotFeature(energy)==enabled) {
-        plotColumns.push_back("T");
-        plotColumns.push_back("V");
-        plotColumns.push_back("E");
-      }
-
-      Element::initPlot(parent);
-    }
   }
 
   void Object::facLLM() {

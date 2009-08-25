@@ -53,7 +53,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      void init();
+      void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

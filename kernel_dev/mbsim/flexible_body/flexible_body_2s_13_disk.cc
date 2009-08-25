@@ -81,43 +81,6 @@ namespace MBSim {
     addFrame("COG",s);
   }
 
-  void FlexibleBody2s13Disk::initPlot() {
-    updatePlotFeatures(parent); 
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-#ifdef HAVE_NURBS
-      if(getPlotFeature(openMBV)==enabled) {
-        OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
-
-        drawDegree = 30/nj;
-        Diskbody->setStaticColor(0.3);
-        Diskbody->setMinimalColorValue(0.);
-        Diskbody->setMaximalColorValue(1.);
-        Diskbody->setDrawDegree(drawDegree);
-        Diskbody->setRadii(Ri,Ra);
-
-        float *openmbvUVec = new float[nj+1+2*degU];
-        float *openmbvVVec = new float[nr+2+degV];
-        for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
-        for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
-
-        Diskbody->setKnotVecAzimuthal(openmbvUVec);
-        Diskbody->setKnotVecRadial(openmbvVVec);
-
-        Diskbody->setElementNumberRadial(nr);
-        Diskbody->setElementNumberAzimuthal(nj);
-
-        Diskbody->setInterpolationDegreeRadial(degV);  
-        Diskbody->setInterpolationDegreeAzimuthal(degU);
-        openMBVBody = Diskbody;
-      }
-#endif
-#endif
-      FlexibleBodyContinuum<Vec>::initPlot();
-    }
-  }
-
   void FlexibleBody2s13Disk::updateh(double t) {
     // update positions and velocities
     qext = Jext * q;
@@ -295,89 +258,129 @@ namespace MBSim {
     }   
   }
 
-  void FlexibleBody2s13Disk::init() {
-    FlexibleBodyContinuum<Vec>::init();
-    assert(nr>0); // at least on radial row
-    assert(nj>1); // at least two azimuthal elements
-
-    for(int i=0;i<Elements;i++) {
-      discretization.push_back(new FiniteElement2s13Disk(E,nu,rho));
-      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
-      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
-      ElementalNodes.push_back(Vec(4,INIT,0.));
-    }
-
-    // condensation
-    switch(LType) {
-      case innerring: // 0: innerring
-        ILocked = Index(RefDofs,RefDofs+NodeDofs*nj-1);
-        Jext = Mat(Dofs,qSize,INIT,0.);
-        Jext(0,0,RefDofs-1,RefDofs-1) << DiagMat(RefDofs,INIT,1.);
-        Jext(RefDofs+NodeDofs*nj,RefDofs,Dofs-1,qSize-1) << DiagMat(qSize - RefDofs,INIT,1.);
-        break;
-
-      case outerring: // 1: outerring
-        ILocked = Index(qSize,Dofs-1);
-        Jext = Mat(Dofs,qSize,INIT,0.);
-        Jext(0,0,qSize-1,qSize-1) << DiagMat(qSize,INIT,1.);
-        break;
-    }
-
-    dr = (Ra-Ri)/nr;
-    dj =  2*M_PI/nj;
-
-    NodeCoordinates = Mat(Nodes,2);
-    ElementNodeList.resize(Elements,4);
-
-    // mapping nodes - node coordinates - elements 
-    for(int i=0; i<=nr; i++) {
-      for(int j=0; j<nj; j++) {
-        // NodeCoordinates(radial,azimuthal)
-        // node number increases azimuthally from the inner to the outer ring
-        NodeCoordinates(j+i*nj,0) = Ri+dr*i;
-        NodeCoordinates(j+i*nj,1) = 0. +dj*j;
-
-        // ElementNodeList(node 1,node 2,node 3,node 4)
-        // element number increases azimuthally from the inner to the outer ring
-        if(i<nr && j<nj-1) {
-          ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
-          ElementNodeList(j+i*nj,1) = (j+1) +  i   *nj; // node 2
-          ElementNodeList(j+i*nj,2) =  j    + (i+1)*nj; // node 3
-          ElementNodeList(j+i*nj,3) = (j+1) + (i+1)*nj; // node 4
-        }
-        else if(i<nr && j==nj-1) { // ring closure
-          ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
-          ElementNodeList(j+i*nj,1) =  0    +  i   *nj; // node 2
-          ElementNodeList(j+i*nj,2) =  j    + (i+1)*nj; // node 3
-          ElementNodeList(j+i*nj,3) =  0    + (i+1)*nj; // node 4
+  void FlexibleBody2s13Disk::init(InitStage stage) {
+    if(stage==unknownStage) {
+      FlexibleBodyContinuum<Vec>::init(stage);
+      assert(nr>0); // at least on radial row
+      assert(nj>1); // at least two azimuthal elements
+  
+      for(int i=0;i<Elements;i++) {
+        discretization.push_back(new FiniteElement2s13Disk(E,nu,rho));
+        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+        ElementalNodes.push_back(Vec(4,INIT,0.));
+      }
+  
+      // condensation
+      switch(LType) {
+        case innerring: // 0: innerring
+          ILocked = Index(RefDofs,RefDofs+NodeDofs*nj-1);
+          Jext = Mat(Dofs,qSize,INIT,0.);
+          Jext(0,0,RefDofs-1,RefDofs-1) << DiagMat(RefDofs,INIT,1.);
+          Jext(RefDofs+NodeDofs*nj,RefDofs,Dofs-1,qSize-1) << DiagMat(qSize - RefDofs,INIT,1.);
+          break;
+  
+        case outerring: // 1: outerring
+          ILocked = Index(qSize,Dofs-1);
+          Jext = Mat(Dofs,qSize,INIT,0.);
+          Jext(0,0,qSize-1,qSize-1) << DiagMat(qSize,INIT,1.);
+          break;
+      }
+  
+      dr = (Ra-Ri)/nr;
+      dj =  2*M_PI/nj;
+  
+      NodeCoordinates = Mat(Nodes,2);
+      ElementNodeList.resize(Elements,4);
+  
+      // mapping nodes - node coordinates - elements 
+      for(int i=0; i<=nr; i++) {
+        for(int j=0; j<nj; j++) {
+          // NodeCoordinates(radial,azimuthal)
+          // node number increases azimuthally from the inner to the outer ring
+          NodeCoordinates(j+i*nj,0) = Ri+dr*i;
+          NodeCoordinates(j+i*nj,1) = 0. +dj*j;
+  
+          // ElementNodeList(node 1,node 2,node 3,node 4)
+          // element number increases azimuthally from the inner to the outer ring
+          if(i<nr && j<nj-1) {
+            ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
+            ElementNodeList(j+i*nj,1) = (j+1) +  i   *nj; // node 2
+            ElementNodeList(j+i*nj,2) =  j    + (i+1)*nj; // node 3
+            ElementNodeList(j+i*nj,3) = (j+1) + (i+1)*nj; // node 4
+          }
+          else if(i<nr && j==nj-1) { // ring closure
+            ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
+            ElementNodeList(j+i*nj,1) =  0    +  i   *nj; // node 2
+            ElementNodeList(j+i*nj,2) =  j    + (i+1)*nj; // node 3
+            ElementNodeList(j+i*nj,3) =  0    + (i+1)*nj; // node 4
+          }
         }
       }
+  
+  #ifdef HAVE_NURBS
+      // borders of contour parametrisation 
+      // beginning 
+      Vec alphaS(2); 
+      alphaS(0) =  Ri; // radius
+      alphaS(1) = 0.; // angle
+      
+      // end 
+      Vec alphaE(2);
+      alphaE(0) =     Ra; // radius
+      alphaE(1) = 2*M_PI; // angle
+  
+      contour->setAlphaStart(alphaS);  contour->setAlphaEnd(alphaE);
+  #endif
+  
+      qext = Jext * q0;
+      uext = Jext * u0;
+  
+      initMatrices(); // calculate constant mass- and stiffness matrix
+  
+  #ifdef HAVE_NURBS
+      contour->init(degU, degV, nr, nj, Ri, Ra); // initialize contour
+      contour->computeSurface(); // calculate nodes of position interpolation
+  #endif
     }
-
-#ifdef HAVE_NURBS
-    // borders of contour parametrisation 
-    // beginning 
-    Vec alphaS(2); 
-    alphaS(0) =  Ri; // radius
-    alphaS(1) = 0.; // angle
-    
-    // end 
-    Vec alphaE(2);
-    alphaE(0) =     Ra; // radius
-    alphaE(1) = 2*M_PI; // angle
-
-    contour->setAlphaStart(alphaS);  contour->setAlphaEnd(alphaE);
-#endif
-
-    qext = Jext * q0;
-    uext = Jext * u0;
-
-    initMatrices(); // calculate constant mass- and stiffness matrix
-
-#ifdef HAVE_NURBS
-    contour->init(degU, degV, nr, nj, Ri, Ra); // initialize contour
-    contour->computeSurface(); // calculate nodes of position interpolation
-#endif
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent); 
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+  #ifdef HAVE_NURBS
+        if(getPlotFeature(openMBV)==enabled) {
+          OpenMBV::NurbsDisk *Diskbody = new OpenMBV::NurbsDisk;
+  
+          drawDegree = 30/nj;
+          Diskbody->setStaticColor(0.3);
+          Diskbody->setMinimalColorValue(0.);
+          Diskbody->setMaximalColorValue(1.);
+          Diskbody->setDrawDegree(drawDegree);
+          Diskbody->setRadii(Ri,Ra);
+  
+          float *openmbvUVec = new float[nj+1+2*degU];
+          float *openmbvVVec = new float[nr+2+degV];
+          for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
+          for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
+  
+          Diskbody->setKnotVecAzimuthal(openmbvUVec);
+          Diskbody->setKnotVecRadial(openmbvVVec);
+  
+          Diskbody->setElementNumberRadial(nr);
+          Diskbody->setElementNumberAzimuthal(nj);
+  
+          Diskbody->setInterpolationDegreeRadial(degV);  
+          Diskbody->setInterpolationDegreeAzimuthal(degU);
+          openMBVBody = Diskbody;
+        }
+  #endif
+  #endif
+        FlexibleBodyContinuum<Vec>::init(stage);
+      }
+    }
+    else
+      FlexibleBodyContinuum<Vec>::init(stage);
   }
 
   void FlexibleBody2s13Disk::plot(double t, double dt) {

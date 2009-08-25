@@ -89,8 +89,7 @@ namespace MBSim {
       virtual void calcgdSizeActive();
       virtual void calcrFactorSize();
       virtual void calcsvSize();
-      virtual void init();
-      virtual void preinit();
+      virtual void init(InitStage stage);
       virtual bool isSetValued() const;
       virtual bool isActive() const;
       virtual bool gActiveChanged();
@@ -117,7 +116,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contact"; }
-      virtual void initPlot();
       virtual void plot(double t, double dt = 1);
       /***************************************************/
       

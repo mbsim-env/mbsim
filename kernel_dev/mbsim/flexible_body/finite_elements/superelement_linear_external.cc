@@ -30,10 +30,12 @@ namespace MBSim {
 
   SuperElementLinearExternal::SuperElementLinearExternal() : DiscretizationInterface(), M(0), K(0), alpha(0.), beta(0.) {}
 
-  void SuperElementLinearExternal::init() {
-    D = static_cast<SqrMat>( alpha*M + beta * K );
-    Dhq = -K;
-    Dhqp = -D;
+  void SuperElementLinearExternal::init(InitStage stage) {
+    if(stage==unknownStage) {
+      D = static_cast<SqrMat>( alpha*M + beta * K );
+      Dhq = -K;
+      Dhqp = -D;
+    }
   }
 
   void SuperElementLinearExternal::setM(const SymMat &M_) {

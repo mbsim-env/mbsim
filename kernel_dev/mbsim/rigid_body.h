@@ -68,8 +68,7 @@ namespace MBSim {
       /*****************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init();
-      virtual void initPlot();
+      virtual void init(InitStage stage);
       virtual void facLLM() { (this->*facLLM_)(); }
       virtual Object* getObjectDependingOn() const { return dynamic_cast<Object*>(frameOfReference->getParent()); }
       virtual void resizeJacobians(int j);
@@ -357,6 +356,9 @@ namespace MBSim {
        * \brief Cholesky decomposition of time dependent mass matrix
        */
       void facLLMNotConst() { Object::facLLM(); }
+
+      /** a pointer to frame "C" */
+      Frame *C;
   };
 
 }

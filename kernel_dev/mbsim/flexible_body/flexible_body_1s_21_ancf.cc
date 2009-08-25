@@ -49,48 +49,52 @@ namespace MBSim {
     }
 
 
-  void BodyFlexible1s21ANCF::init() {
-    BodyFlexible1s::init();
-    initialized = true;
-
-    SqrMat AWC(3,INIT,0.0);
-    AWC(Index(0,2),Index(0,1)) = JT;
-    AWC(Index(0,2),Index(2,2)) = JR;
-    contourR->setAWC(AWC);
-    contourL->setAWC(AWC);
-
-    Vec contourRBinormal(3,INIT,0.0); contourRBinormal(2) = 1.0;
-    Vec contourLBinormal = - contourRBinormal;
-
-    contourR->setCb(contourRBinormal);
-    contourL->setCb(contourLBinormal);
-
-    contourR->setAlphaStart(0);  contourR->setAlphaEnd(L);
-    contourL->setAlphaStart(0);  contourL->setAlphaEnd(L);
-    if(userContourNodes.size()==0) {
-      Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++)
-	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
-      contourR->setNodes(contourNodes);
-      contourL->setNodes(contourNodes);
+  void BodyFlexible1s21ANCF::init(InitStage stage) {
+    if(stage==unknownStage) {
+      BodyFlexible1s::init(stage);
+      initialized = true;
+  
+      SqrMat AWC(3,INIT,0.0);
+      AWC(Index(0,2),Index(0,1)) = JT;
+      AWC(Index(0,2),Index(2,2)) = JR;
+      contourR->setAWC(AWC);
+      contourL->setAWC(AWC);
+  
+      Vec contourRBinormal(3,INIT,0.0); contourRBinormal(2) = 1.0;
+      Vec contourLBinormal = - contourRBinormal;
+  
+      contourR->setCb(contourRBinormal);
+      contourL->setCb(contourLBinormal);
+  
+      contourR->setAlphaStart(0);  contourR->setAlphaEnd(L);
+      contourL->setAlphaStart(0);  contourL->setAlphaEnd(L);
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++)
+  	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
+        contourR->setNodes(contourNodes);
+        contourL->setNodes(contourNodes);
+      }
+      else {
+        contourR->setNodes(userContourNodes);
+        contourL->setNodes(userContourNodes);
+      }
+  
+      double l0 = L/Elements;
+      Vec g = trans(JT)*mbs->getGrav();
+      balken = new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g);
+  
+      initM();
+  
+      if(alphaRelax != alphaRelax0) initRelaxed(alphaRelax);
+  
+      //   if(rc != 0)
+      //     balken->setCurleRadius(rc);
+      //   balken->setMaterialDamping(dm);
+      //   balken->setLehrDamping(dl);
     }
-    else {
-      contourR->setNodes(userContourNodes);
-      contourL->setNodes(userContourNodes);
-    }
-
-    double l0 = L/Elements;
-    Vec g = trans(JT)*mbs->getGrav();
-    balken = new FiniteElement1s21ANCF(l0, A*rho, E*A, E*I, g);
-
-    initM();
-
-    if(alphaRelax != alphaRelax0) initRelaxed(alphaRelax);
-
-    //   if(rc != 0)
-    //     balken->setCurleRadius(rc);
-    //   balken->setMaterialDamping(dm);
-    //   balken->setLehrDamping(dl);
+    else
+      BodyFlexible1s::init(stage);
   }
 
   void BodyFlexible1s21ANCF::setNumberElements(int n) {

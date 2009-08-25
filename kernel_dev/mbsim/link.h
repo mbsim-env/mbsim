@@ -79,8 +79,7 @@ namespace MBSim {
       virtual int getxSize() const { return xSize; }
       virtual void updatexRef(const fmatvec::Vec& ref);
       virtual void updatexdRef(const fmatvec::Vec& ref);
-      virtual void init();
-      virtual void preinit() {}
+      virtual void init(InitStage stage);
       virtual void initz();
       /***************************************************/
 
@@ -216,11 +215,6 @@ namespace MBSim {
        * \brief calculates size of stopvector (root function for event driven integration)
        */
       virtual void calcsvSize() { svSize = 0; }
-
-      /**
-       * \brief plots time series header
-       */
-      virtual void initPlot();
 
       /**
        * \return set valued force laws used?

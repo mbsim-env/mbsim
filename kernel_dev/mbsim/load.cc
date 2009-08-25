@@ -47,22 +47,26 @@ namespace MBSim {
     hLink[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
   } 
 
-  void Load::init() {
-    LinkMechanics::init();
-    IT = Index(0,forceDir.cols()-1);
-    IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
-    if(forceDir.cols()) 
-      Wf = forceDir;
-    else {
-      forceDir.resize(3,0);
-      Wf.resize(3,0);
+  void Load::init(InitStage stage) {
+    if(stage==unknownStage) {
+      LinkMechanics::init(stage);
+      IT = Index(0,forceDir.cols()-1);
+      IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
+      if(forceDir.cols()) 
+        Wf = forceDir;
+      else {
+        forceDir.resize(3,0);
+        Wf.resize(3,0);
+      }
+      if(momentDir.cols())
+        Wm = momentDir;
+      else {
+        momentDir.resize(3,0);
+        Wm.resize(3,0);
+      }
     }
-    if(momentDir.cols())
-      Wm = momentDir;
-    else {
-      momentDir.resize(3,0);
-      Wm.resize(3,0);
-    }
+    else
+      LinkMechanics::init(stage);
   }
 
   void Load::calclaSize() {

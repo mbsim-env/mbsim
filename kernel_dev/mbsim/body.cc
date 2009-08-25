@@ -102,47 +102,33 @@ namespace MBSim {
       contour[i]->setDynamicSystemSolver(sys);
   }
 
-  void Body::init() {
-    Object::init();
-
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
-      (*i)->init();
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->init();
-  }
-
-  void Body::preinit() {
-    Object::preinit();
-
-    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
-      (*i)->preinit();
-    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
-      (*i)->preinit();
-  }
-
-  void Body::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled) {
-        openMBVGrp=new OpenMBV::Group();
-        openMBVGrp->setName(name+"#Group");
-        openMBVGrp->setExpand(false);
-        parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-          openMBVBody->setName(name);
-          openMBVGrp->addObject(openMBVBody);
+  void Body::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          openMBVGrp=new OpenMBV::Group();
+          openMBVGrp->setName(name+"#Group");
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
+          if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+            openMBVBody->setName(name);
+            openMBVGrp->addObject(openMBVBody);
+          }
         }
+  #endif
+        Object::init(stage);
       }
-#endif
-      Object::initPlot();
-
-      for(unsigned int j=0; j<frame.size(); j++)
-        frame[j]->initPlot();
-      for(unsigned int j=0; j<contour.size(); j++)
-        contour[j]->initPlot();
     }
+    else
+      Object::init(stage);
+
+    for(vector<Frame*>::iterator i=frame.begin(); i!=frame.end(); i++) 
+      (*i)->init(stage);
+    for(vector<Contour*>::iterator i=contour.begin(); i!=contour.end(); i++) 
+      (*i)->init(stage);
   }
 
   void Body::addContour(Contour* contour_) {

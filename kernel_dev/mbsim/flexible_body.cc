@@ -102,21 +102,24 @@ namespace MBSim {
     }
   }
 
-  void FlexibleBody::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Body::initPlot();
+  void FlexibleBody::init(InitStage stage) {
+    if(stage==unknownStage) {
+      Body::init(stage);
+      T = SqrMat(qSize,fmatvec::EYE);
+      for(unsigned int i=0; i<frame.size(); i++) { // frames
+        S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(3,uSize[0]);
+        S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(3,uSize[0]);
+      }
     }
-  }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
 
-  void FlexibleBody::init() {
-    Body::init();
-    T = SqrMat(qSize,fmatvec::EYE);
-    for(unsigned int i=0; i<frame.size(); i++) { // frames
-      S_Frame[i].getFrameOfReference().getJacobianOfTranslation().resize(3,uSize[0]);
-      S_Frame[i].getFrameOfReference().getJacobianOfRotation().resize(3,uSize[0]);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        Body::init(stage);
+      }
     }
+    else
+      Body::init(stage);
   }
 
   double FlexibleBody::computeKineticEnergy() {

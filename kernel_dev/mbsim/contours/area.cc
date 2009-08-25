@@ -28,9 +28,13 @@ namespace MBSim {
   Area::Area(const string &name) : RigidContour(name), lim1(1), lim2(1), Cn(3), Cd1(3), Cd2(3) {}
   void Area::setCd1(const Vec &d) {Cd1 = d/nrm2(d);}
   void Area::setCd2(const Vec &d) {Cd2 = d/nrm2(d);}
-  void Area::init() {
-    RigidContour::init();
-    Cn = crossProduct(Cd1,Cd2);
-    Cn = Cn/nrm2(Cn);
+  void Area::init(InitStage stage) {
+    if(stage==unknownStage) {
+      RigidContour::init(stage);
+      Cn = crossProduct(Cd1,Cd2);
+      Cn = Cn/nrm2(Cn);
+    }
+    else
+      RigidContour::init(stage);
   }
 }

@@ -42,7 +42,8 @@ namespace MBSim {
     APK(1,1)=1.;
     APK(2,2)=1.;
 
-    Body::addFrame(new Frame("C"));
+    C=new Frame("C");
+    Body::addFrame(C);
 
     SrSF.push_back(Vec(3,INIT,0.));
     WrSF.push_back(Vec(3,INIT,0.));
@@ -109,94 +110,97 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::init() {
-    if(iKinematics == -1)
-      iKinematics = 0;
-
-    Body::init();
-
-    PJT.resize(3,uSize[0]);
-    PJR.resize(3,uSize[0]);
-
-    PdJT.resize(3,uSize[0]);
-    PdJR.resize(3,uSize[0]);
-
-    PJTs.resize(3,uSize[1]);
-    PJRs.resize(3,uSize[1]);
-
-    if(fPJT==0) {
-      Mat JT;
-      LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-      if(fPrPK_) {
-        JT = fPrPK_->getTranslationVectors();
-      } else
-        JT.resize(3,0);
-      Mat JTT(3, uSize[0]);
-      PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
-      PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
-      PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
-    }
-    if(fPJR==0) {
-      Mat JR;
-      JR.resize(3,0);
-      {
-        RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-        if(fAPK_) 
-          JR.resize() = fAPK_->getAxisOfRotation();
+  void RigidBody::init(InitStage stage) {
+    if(stage==unknownStage) {
+      if(iKinematics == -1)
+        iKinematics = 0;
+  
+      Body::init(stage);
+  
+      PJT.resize(3,uSize[0]);
+      PJR.resize(3,uSize[0]);
+  
+      PdJT.resize(3,uSize[0]);
+      PdJR.resize(3,uSize[0]);
+  
+      PJTs.resize(3,uSize[1]);
+      PJRs.resize(3,uSize[1]);
+  
+      if(fPJT==0) {
+        Mat JT;
+        LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+        if(fPrPK_) {
+          JT = fPrPK_->getTranslationVectors();
+        } else
+          JT.resize(3,0);
+        Mat JTT(3, uSize[0]);
+        PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
+        PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
+        PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
       }
-      {
-        CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-        if(fAPK_) {
-          JR.resize() << DiagMat(3,INIT,1);
-          if(cb) {
-            fT = new TCardanAngles2(qSize,uSize[0]);
-          } else {
-            fT = new TCardanAngles(qSize,uSize[0]);
+      if(fPJR==0) {
+        Mat JR;
+        JR.resize(3,0);
+        {
+          RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
+          if(fAPK_) 
+            JR.resize() = fAPK_->getAxisOfRotation();
+        }
+        {
+          CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+          if(fAPK_) {
+            JR.resize() << DiagMat(3,INIT,1);
+            if(cb) {
+              fT = new TCardanAngles2(qSize,uSize[0]);
+            } else {
+              fT = new TCardanAngles(qSize,uSize[0]);
+            }
           }
         }
-      }
-      Mat JRR(3, uSize[0]);
-      PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
-      PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
-      PJRs(Index(0,2), Index(uSize[1]-momentDir.cols(),uSize[1]-1)) = momentDir;
-
-      updateM_ = &RigidBody::updateMNotConst;
-      facLLM_ = &RigidBody::facLLMNotConst;
-
-      if(cb) {
-        if(iKinematics == 0 && false) {
-          updateM_ = &RigidBody::updateMConst;
-          Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
-          LLM = facLL(Mbuf);
-          facLLM_ = &RigidBody::facLLMConst;
+        Mat JRR(3, uSize[0]);
+        PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
+        PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
+        PJRs(Index(0,2), Index(uSize[1]-momentDir.cols(),uSize[1]-1)) = momentDir;
+  
+        updateM_ = &RigidBody::updateMNotConst;
+        facLLM_ = &RigidBody::facLLMNotConst;
+  
+        if(cb) {
+          if(iKinematics == 0 && false) {
+            updateM_ = &RigidBody::updateMConst;
+            Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
+            LLM = facLL(Mbuf);
+            facLLM_ = &RigidBody::facLLMConst;
+          }
+          PJR0 = PJR;
+          //fPJR = new PJRTest(frame[iKinematics],frameOfReference,PJR);
+        } else {
         }
-        PJR0 = PJR;
-        //fPJR = new PJRTest(frame[iKinematics],frameOfReference,PJR);
-      } else {
+      }
+  
+      if(iInertia != 0)
+        SThetaS = SymMat(ASF[iInertia]*SThetaS*trans(ASF[iInertia])) - m*JTJ(tilde(SrSF[iInertia]));
+  
+      for(int i=0; i<uSize[0]; i++) 
+        T(i,i) = 1;
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(globalPosition)==enabled) {
+          plotColumns.push_back("WxOS");
+          plotColumns.push_back("WyOS");
+          plotColumns.push_back("WzOS");
+          plotColumns.push_back("alpha");
+          plotColumns.push_back("beta");
+          plotColumns.push_back("gamma");
+        }
+        Body::init(stage);
       }
     }
-
-    if(iInertia != 0)
-      SThetaS = SymMat(ASF[iInertia]*SThetaS*trans(ASF[iInertia])) - m*JTJ(tilde(SrSF[iInertia]));
-
-    for(int i=0; i<uSize[0]; i++) 
-      T(i,i) = 1;
-  }
-
-  void RigidBody::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(globalPosition)==enabled) {
-        plotColumns.push_back("WxOS");
-        plotColumns.push_back("WyOS");
-        plotColumns.push_back("WzOS");
-        plotColumns.push_back("alpha");
-        plotColumns.push_back("beta");
-        plotColumns.push_back("gamma");
-      }
-      Body::initPlot();
-    }
+    else
+      Body::init(stage);
   }
 
   void RigidBody::resizeJacobians(int j) {
@@ -559,7 +563,7 @@ namespace MBSim {
     if(e) {
       if(!openMBVBody)
         setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
-      getFrame("C")->enableOpenMBV(atof(e->FirstChildElement(MBSIMNS"size")->GetText()),
+      C->enableOpenMBV(atof(e->FirstChildElement(MBSIMNS"size")->GetText()),
           atof(e->FirstChildElement(MBSIMNS"offset")->GetText()));
     }
 #endif

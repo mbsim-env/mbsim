@@ -60,6 +60,21 @@ namespace MBSim {
     plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, contact, energy, openMBV, lagrangeMultiplier, LASTPLOTFEATURE
   };
 
+  /** \brief The stages of the initialization
+   *
+   * see also DynamicSystemSolver::init()
+   */
+  enum InitStage {
+    resolveXMLPath=0, /*!< TODO resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
+    preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
+    resize, /*!< Do the resizing of all vectors, matrices and containers. */
+    plot, /*!< Build the plot structure */
+    frameLocation, /*!< Set the world position and orientation of all frames in all DynamicSystem's */
+    reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
+    unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
+    LASTINITSTAGE
+  };
+
   class DynamicSystemSolver;
 
   /** 
@@ -133,7 +148,7 @@ namespace MBSim {
        * \brief plots time series header
        * \param invocing parent class
        */
-      void initPlot(ObjectInterface* parent); 
+      void init(InitStage stage, ObjectInterface* parent); 
 
       /**
        * \return associated plot group

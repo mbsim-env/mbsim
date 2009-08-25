@@ -337,72 +337,75 @@ namespace MBSim {
     }
   } 
 
-  void LinkMechanics::init() {
-    Link::init();
-
-    for(unsigned int i=0; i<frame.size(); i++) {
-      W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
-      V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
-      h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
-      hLink.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
-      for(unsigned int j=0; j<frame.size(); j++) {
-        dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getqSize()));
-        dhdu.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getuSize()));
-      }
-      dhdt.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
-      r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
-      WF.push_back(Vec(3));
-      WM.push_back(Vec(3));
-      fF.push_back(Mat(3,laSize));
-      fM.push_back(Mat(3,laSize));
-    }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
-    assert(openMBVArrowM.size()==0 || openMBVArrowM.size()==frame.size());
-#endif
-
-    for(unsigned int i=0; i<contour.size(); i++) {
-      W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
-      V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
-      h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
-      hLink.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
-      for(unsigned int j=0; j<contour.size(); j++) {
-        dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getqSize()));
-        dhdu.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getuSize()));
-      }
-      dhdt.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
-      r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
-      WF.push_back(Vec(3));
-      WM.push_back(Vec(3));
-      fF.push_back(Mat(3,laSize));
-      fM.push_back(Mat(3,laSize));
-    }
-  }
-
-  void LinkMechanics::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      OpenMBV::Group *forceGrp=new OpenMBV::Group;
-      forceGrp->setExpand(false);
-      forceGrp->setName(name+"#ArrowGroup");
-      parent->getOpenMBVGrp()->addObject(forceGrp);
-      for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
-        if(openMBVArrowF[i]) {
-          openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
-          forceGrp->addObject(openMBVArrowF[i]);
+  void LinkMechanics::init(InitStage stage) {
+    if(stage==unknownStage) {
+      Link::init(stage);
+  
+      for(unsigned int i=0; i<frame.size(); i++) {
+        W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
+        V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
+        h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        hLink.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        for(unsigned int j=0; j<frame.size(); j++) {
+          dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getqSize()));
+          dhdu.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getuSize()));
         }
+        dhdt.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        WF.push_back(Vec(3));
+        WM.push_back(Vec(3));
+        fF.push_back(Mat(3,laSize));
+        fM.push_back(Mat(3,laSize));
       }
-      for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
-        if(openMBVArrowM[i]) {
-          openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
-          forceGrp->addObject(openMBVArrowM[i]);
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+      assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
+      assert(openMBVArrowM.size()==0 || openMBVArrowM.size()==frame.size());
+  #endif
+  
+      for(unsigned int i=0; i<contour.size(); i++) {
+        W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
+        V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
+        h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        hLink.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        for(unsigned int j=0; j<contour.size(); j++) {
+          dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getqSize()));
+          dhdu.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getuSize()));
         }
+        dhdt.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        WF.push_back(Vec(3));
+        WM.push_back(Vec(3));
+        fF.push_back(Mat(3,laSize));
+        fM.push_back(Mat(3,laSize));
       }
-#endif
-      Link::initPlot();
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        OpenMBV::Group *forceGrp=new OpenMBV::Group;
+        forceGrp->setExpand(false);
+        forceGrp->setName(name+"#ArrowGroup");
+        parent->getOpenMBVGrp()->addObject(forceGrp);
+        for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
+          if(openMBVArrowF[i]) {
+            openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
+            forceGrp->addObject(openMBVArrowF[i]);
+          }
+        }
+        for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
+          if(openMBVArrowM[i]) {
+            openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
+            forceGrp->addObject(openMBVArrowM[i]);
+          }
+        }
+  #endif
+        Link::init(stage);
+      }
+    }
+    else
+      Link::init(stage);
   }
 
   void LinkMechanics::connect(Frame *frame_) {

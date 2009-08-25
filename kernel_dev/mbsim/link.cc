@@ -116,42 +116,42 @@ namespace MBSim {
     jsv >> jsvParent(svInd,svInd+svSize-1);
   }
 
-  void Link::init() {
-    rFactorUnsure.resize(rFactorSize);
+  void Link::init(InitStage stage) {
+    if(stage==unknownStage) {
+      rFactorUnsure.resize(rFactorSize);
+    }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(state)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("x("+numtostr(i)+")");
+        if(getPlotFeature(stateDerivative)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("xd("+numtostr(i)+")");
+        if(getPlotFeature(contact)==enabled) {
+          for(int i=0; i<g.size(); ++i)
+            plotColumns.push_back("g("+numtostr(i)+")");
+          for(int i=0; i<svSize; ++i)
+            plotColumns.push_back("sv("+numtostr(i)+")");
+          // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
+          //for(int i=0; i<gdSize; ++i)
+          //  plotColumns.push_back("gd("+numtostr(i)+")");
+          //for(int i=0; i<laSize; ++i)
+          //  plotColumns.push_back("la("+numtostr(i)+")");
+          plotColumns.push_back("V");
+        }
+
+        Element::init(stage, parent);
+      }
+    }
+    else
+      Element::init(stage, parent);
   }
 
   void Link::initz() {
     x=x0;
-  }
-
-  void Link::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotColumns.push_back("x("+numtostr(i)+")");
-      if(getPlotFeature(stateDerivative)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotColumns.push_back("xd("+numtostr(i)+")");
-      if(getPlotFeature(contact)==enabled) {
-        for(int i=0; i<g.size(); ++i)
-          plotColumns.push_back("g("+numtostr(i)+")");
-	//for(unsigned int i=0; i<r.size(); i++)
-	//  for(int j=0; j<r[i].size(); ++j)
-	//    plotColumns.push_back("r["+numtostr(int(i))+"]("+numtostr(j)+")");
-        for(int i=0; i<sv.size(); ++i)
-          plotColumns.push_back("sv("+numtostr(i)+")");
-        // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
-        //for(int i=0; i<gdSize; ++i)
-        //  plotColumns.push_back("gd("+numtostr(i)+")");
-        //for(int i=0; i<laSize; ++i)
-        //  plotColumns.push_back("la("+numtostr(i)+")");
-        plotColumns.push_back("V");
-      }
-
-      Element::initPlot(parent);
-    }
   }
 
   void Link::savela() {

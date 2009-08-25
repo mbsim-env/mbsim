@@ -27,47 +27,51 @@ namespace MBSim {
 
   Cuboid::Cuboid(const string &name) : CompoundContour(name) {}
 
-  void Cuboid::preinit() {
-    Vec Kr[8];
-    for(int i=0; i<8; i++) {
-      Kr[i] = Vec(3);
+  void Cuboid::init(InitStage stage) {
+    if(stage==preInit) {
+      Vec Kr[8];
+      for(int i=0; i<8; i++) {
+        Kr[i] = Vec(3);
+      }
+      Kr[0](0) = l/2;
+      Kr[0](1) = d/2;
+      Kr[0](2) = h/2;
+  
+      Kr[1](0) = -l/2.0;
+      Kr[1](1) = d/2.0;
+      Kr[1](2) = h/2.0;
+  
+      Kr[2](0) = -l/2.0;
+      Kr[2](1) = -d/2.0;
+      Kr[2](2) = h/2.0;
+  
+      Kr[3](0) = l/2.0;
+      Kr[3](1) = -d/2.0;
+      Kr[3](2) = h/2.0;
+  
+      Kr[4](0) = l/2.0;
+      Kr[4](1) = d/2.0;
+      Kr[4](2) = -h/2.0;
+  
+      Kr[5](0) = -l/2.0;
+      Kr[5](1) = d/2.0;
+      Kr[5](2) = -h/2.0;
+  
+      Kr[6](0) = -l/2.0;
+      Kr[6](1) = -d/2.0;
+      Kr[6](2) = -h/2.0;
+  
+      Kr[7](0) = l/2.0;
+      Kr[7](1) = -d/2.0;
+      Kr[7](2) = -h/2.0;
+  
+      for(int i=0; i<8; i++) {
+        stringstream s;
+        s << i+1;
+        addContourElement(new Point(s.str()),Kr[i]);
+      }
     }
-    Kr[0](0) = l/2;
-    Kr[0](1) = d/2;
-    Kr[0](2) = h/2;
-
-    Kr[1](0) = -l/2.0;
-    Kr[1](1) = d/2.0;
-    Kr[1](2) = h/2.0;
-
-    Kr[2](0) = -l/2.0;
-    Kr[2](1) = -d/2.0;
-    Kr[2](2) = h/2.0;
-
-    Kr[3](0) = l/2.0;
-    Kr[3](1) = -d/2.0;
-    Kr[3](2) = h/2.0;
-
-    Kr[4](0) = l/2.0;
-    Kr[4](1) = d/2.0;
-    Kr[4](2) = -h/2.0;
-
-    Kr[5](0) = -l/2.0;
-    Kr[5](1) = d/2.0;
-    Kr[5](2) = -h/2.0;
-
-    Kr[6](0) = -l/2.0;
-    Kr[6](1) = -d/2.0;
-    Kr[6](2) = -h/2.0;
-
-    Kr[7](0) = l/2.0;
-    Kr[7](1) = -d/2.0;
-    Kr[7](2) = -h/2.0;
-
-    for(int i=0; i<8; i++) {
-      stringstream s;
-      s << i+1;
-      addContourElement(new Point(s.str()),Kr[i]);
-    }
+    else
+      CompoundContour::init(stage);
   }
 }

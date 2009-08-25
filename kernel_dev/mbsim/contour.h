@@ -140,19 +140,9 @@ namespace MBSim {
       virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR) { R.setGyroscopicAccelerationOfRotation(WjR); }
 
       /**
-       * \brief do things before initialisation
-       */
-      virtual void preinit() {}
-
-      /**
        * \brief TODO
        */
-      virtual void init();
-
-      /**
-       * \brief plots time series header
-       */
-      virtual void initPlot();
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -222,12 +212,12 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
       virtual void plot(double t, double dt = 1);
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp);
-      virtual void initPlot();
       /***************************************************/
 
     protected:

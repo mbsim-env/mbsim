@@ -43,7 +43,7 @@ namespace MBSim {
       void setLimit2(double l) {lim2 = l;}
       void setCd1(const fmatvec::Vec& Cd);
       void setCd2(const fmatvec::Vec& Cd);
-      virtual void init();
+      virtual void init(InitStage stage);
       double getLimit1() const { return lim1; }
       double getLimit2() const { return lim2; }
       /***************************************************/

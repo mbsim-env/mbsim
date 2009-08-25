@@ -53,7 +53,7 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       std::string getType() const { return "SpringDamper"; }
-      void init();
+      void init(InitStage stage);
 
       /** \brief Set function for the force calculation.
        * The first input parameter to that function is the distance g between frame2 and frame1.
@@ -71,7 +71,6 @@ namespace MBSim {
        */
       void setProjectionDirection(Frame *refFrame_, fmatvec::Vec dir) { refFrame=refFrame_; forceDir=dir; }
 
-      void initPlot();
       void plot(double t, double dt=1);
       void initializeUsingXML(TiXmlElement *element);
 

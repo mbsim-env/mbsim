@@ -50,7 +50,7 @@ namespace MBSim {
 	return obj[id];
       }
 
-      void init();
+      void init(InitStage stage);
       void checkActive();
       bool isActive() {	return active;    }
       vector<Link*> getLinkList();

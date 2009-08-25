@@ -74,26 +74,28 @@ namespace MBSim {
     LinkMechanics::connect(frame1);
   }
 
-  void SpringDamper::init() {
-    LinkMechanics::init();
-
-    g.resize(1);
-    gd.resize(1);
-    la.resize(1);
-  }
-
-  void SpringDamper::initPlot() {
-    updatePlotFeatures(parent);
-    plotColumns.push_back("la(0)");
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if(coilspringOpenMBV) {
-        coilspringOpenMBV->setName(name);
-        parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
-      }
-#endif
-      LinkMechanics::initPlot();
+  void SpringDamper::init(InitStage stage) {
+    if(stage==resize) {
+      LinkMechanics::init(stage);
+      g.resize(1);
+      gd.resize(1);
+      la.resize(1);
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      plotColumns.push_back("la(0)");
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if(coilspringOpenMBV) {
+          coilspringOpenMBV->setName(name);
+          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+        }
+  #endif
+        LinkMechanics::init(stage);
+      }
+    }
+    else
+      LinkMechanics::init(stage);
   }
 
   void SpringDamper::plot(double t,double dt) {

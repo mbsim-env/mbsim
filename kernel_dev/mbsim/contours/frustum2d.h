@@ -40,7 +40,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Frustum2D"; }
-      virtual void initPlot();
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* GETTER / SETTER */

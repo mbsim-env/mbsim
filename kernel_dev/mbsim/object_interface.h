@@ -126,6 +126,12 @@ namespace MBSim {
       virtual void sethSize(int hSize, int i=0) = 0;
 
       /**
+       * \param index of right hand side
+       * \param index for normal usage and inverse kinetics 
+       */
+      virtual void sethInd(int ind, int i=0) = 0;
+
+      /**
        * \param index for normal usage and inverse kinetics 
        * \return size of right hand side
        */
@@ -229,6 +235,12 @@ namespace MBSim {
        * \return plot feature for derived classes
        */
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) = 0;
+
+      /** 
+       * Return the full path of the object.
+       * \param pathDelim The delimiter of the path
+       */
+      virtual std::string getPath(char pathDelim='.') = 0;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual OpenMBV::Group* getOpenMBVGrp() = 0;

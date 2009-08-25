@@ -84,11 +84,16 @@ namespace MBSim {
       element[i]->setReferenceGyroscopicAccelerationOfRotation(R.getGyroscopicAccelerationOfRotation());
   }
 
-  void CompoundContour::init() {
-    Contour::init();
-    for(unsigned int i=0; i<element.size(); i++) {
-      element[i]->sethSize(hSize[0]);
-      element[i]->init();
+  void CompoundContour::init(InitStage stage) {
+    if(stage==unknownStage) {
+      Contour::init(stage);
+      for(unsigned int i=0; i<element.size(); i++)
+        element[i]->sethSize(hSize[0]);
     }
+    else
+      Contour::init(stage);
+
+    for(unsigned int i=0; i<element.size(); i++)
+      element[i]->init(stage);
   }
 }

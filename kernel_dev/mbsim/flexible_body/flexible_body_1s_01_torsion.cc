@@ -48,14 +48,17 @@ namespace MBSim {
     u0.resize(uSize);
   }
 
-  void BodyFlexible1s01Torsion::init() {
-    BodyFlexible1s::init();
-    assert(0<n);
+  void BodyFlexible1s01Torsion::init(InitStage stage) {
+    if(stage==unknownStage) {
+      BodyFlexible1s::init(stage);
+      assert(0<n);
 
-    JT = Mat(0,0);
+      JT = Mat(0,0);
 
-    initMatrizes();
-
+      initMatrizes();
+    }
+    else
+      BodyFlexible1s::init(stage);
   }
 
 

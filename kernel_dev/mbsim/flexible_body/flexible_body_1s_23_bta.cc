@@ -47,50 +47,37 @@ namespace MBSim {
     BodyFlexible::addContour(contourCyl,cpTmp,false);
   }
 
-  void BodyFlexible1s23BTA::init() {
-    BodyFlexible1s::init();
-    assert(0<Elements);
-
-    double l0 = L/Elements;
-    Vec g = trans(JR)*mbs->getGrav();
-
-    for(int i=0; i<Elements; i++) {
-      //    FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
-      element.push_back(  FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g )  );
-
-      element[i].setMaterialDamping(dm);
-      element[i].setLehrDamping(dl);
+  void BodyFlexible1s23BTA::init(InitStage stage) {
+    if(stage==unknownStage) {
+      BodyFlexible1s::init(stage);
+      assert(0<Elements);
+  
+      double l0 = L/Elements;
+      Vec g = trans(JR)*mbs->getGrav();
+  
+      for(int i=0; i<Elements; i++) {
+        //    FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
+        element.push_back(  FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g )  );
+  
+        element[i].setMaterialDamping(dm);
+        element[i].setLehrDamping(dl);
+      }
+  
+  
+      contourCyl->setAlphaStart(0);  contourCyl->setAlphaEnd(L);
+  
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++)
+  	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
+        contourCyl->setNodes(contourNodes);
+      }
+      else {
+        contourCyl->setNodes(userContourNodes);
+      }
     }
-
-
-    contourCyl->setAlphaStart(0);  contourCyl->setAlphaEnd(L);
-
-    if(userContourNodes.size()==0) {
-      Vec contourNodes(Elements+1);
-      for(int i=0;i<=Elements;i++)
-	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
-      contourCyl->setNodes(contourNodes);
-    }
-    else {
-      contourCyl->setNodes(userContourNodes);
-    }
-//#ifdef HAVE_AMVIS
-//    // wenn ein file fuer AMVis geschrieben werden soll
-//    if(boolAMVis) {
-//      ElasticBody1sBTA *BTAbody = new ElasticBody1sBTA(fullName,Elements,1,boolAMVisBinary);
-//      BTAbody->setElementLength(element[0].l0);
-//      BTAbody->setRadius(static_cast<CylinderFlexible*>(contourCyl)->getRadius());
-//      BTAbody->setColor(AMVisColor);
-//
-//      float amvisJ[3][3];
-//      for(int i=0;i<3;i++)
-//	for(int j=0;j<3;j++) amvisJ[i][j] = JR(i,j);
-//      BTAbody->setJacobian(amvisJ);
-//      BTAbody->setInitialTranslation(WrON00(0),WrON00(1),WrON00(2));
-//
-//      bodyAMVis = BTAbody;
-//    }
-//#endif 
+    else
+      BodyFlexible1s::init(stage);
   }
 
   void BodyFlexible1s23BTA::setNumberElements(int n) {

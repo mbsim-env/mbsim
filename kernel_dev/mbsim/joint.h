@@ -64,7 +64,7 @@ namespace MBSim {
       virtual void updatexd(double t);
       virtual void updatedx(double t, double dt);
       virtual void calcxSize();
-      virtual void init();
+      virtual void init(InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */

@@ -351,96 +351,144 @@ namespace MBSim {
     }
   }
 
-  void Contact::init() {
-    LinkMechanics::init();
+  void Contact::init(InitStage stage) {
+    if(stage==resize) {
+      LinkMechanics::init(stage);
+      int n = contactKinematics->getNumberOfPotentialContactPoints();
 
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      if(getFrictionDirections() == 0)
-        gdActive[i][1] = false;
+      la.resize(n*(1+getFrictionDirections()));
+      g.resize(n);
+      gd.resize(n*(1+getFrictionDirections()));
+      gdd.resize(gd.size());
+      gdn.resize(gd.size());
 
-      cpData.push_back(new ContourPointData[2]);
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        if(getFrictionDirections() == 0)
+          gdActive[i][1] = false;
 
-      cpData[i][0].getFrameOfReference().setName("0");
-      cpData[i][1].getFrameOfReference().setName("1");
-      cpData[i][0].getFrameOfReference().getJacobianOfTranslation().resize();
-      cpData[i][0].getFrameOfReference().getJacobianOfRotation().resize();
-      cpData[i][1].getFrameOfReference().getJacobianOfTranslation().resize();
-      cpData[i][1].getFrameOfReference().getJacobianOfRotation().resize();
+        cpData.push_back(new ContourPointData[2]);
 
-      int laSizek = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
+        cpData[i][0].getFrameOfReference().setName("0");
+        cpData[i][1].getFrameOfReference().setName("1");
+        cpData[i][0].getFrameOfReference().getJacobianOfTranslation().resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfRotation().resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfTranslation().resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfRotation().resize();
 
-      Wk.push_back(new Mat[2]);
-      Wk[i][0].resize(contour[0]->gethSize(),laSizek);
-      Wk[i][1].resize(contour[1]->gethSize(),laSizek);
+        int laSizek = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
 
-      Vk.push_back(new Mat[2]);
-      Vk[i][0].resize(contour[0]->gethSize(),laSizek);
-      Vk[i][1].resize(contour[1]->gethSize(),laSizek);
+        Wk.push_back(new Mat[2]);
+        Wk[i][0].resize(contour[0]->gethSize(),laSizek);
+        Wk[i][1].resize(contour[1]->gethSize(),laSizek);
 
-      fF.push_back(new Mat[2]);
-      fF[i][0].resize(3,laSizek);
-      fF[i][1].resize(3,laSizek);
+        Vk.push_back(new Mat[2]);
+        Vk[i][0].resize(contour[0]->gethSize(),laSizek);
+        Vk[i][1].resize(contour[1]->gethSize(),laSizek);
 
-      WF.push_back(new Vec[2]);
-      WF[i][0].resize(3);
-      WF[i][1].resize(3);
+        fF.push_back(new Mat[2]);
+        fF[i][0].resize(3,laSizek);
+        fF[i][1].resize(3,laSizek);
+
+        WF.push_back(new Vec[2]);
+        WF[i][0].resize(3);
+        WF[i][1].resize(3);
+      }
     }
+    else if(stage==unknownStage) {
+      LinkMechanics::init(stage);
 
-    iT = Index(1,getFrictionDirections());
+      iT = Index(1,getFrictionDirections());
 
-    int n = contactKinematics->getNumberOfPotentialContactPoints();
-
-    la.resize(n*(1+getFrictionDirections()));
-    g.resize(n);
-    gd.resize(n*(1+getFrictionDirections()));
-    gdd.resize(gd.size());
-    gdn.resize(gd.size());
-
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      lak[k].resize() >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-      gdk[k].resize() >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-      gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-      gddk[k].resize() >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
-      gk[k].resize() >> g(k,k);
+      for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+        lak[k].resize() >> la(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gdk[k].resize() >> gd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gdnk[k].resize() >> gdn(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gddk[k].resize() >> gdd(k*(1+getFrictionDirections()),(k+1)*(1+getFrictionDirections())-1);
+        gk[k].resize() >> g(k,k);
+      }
     }
-
-  }
-
-  void Contact::preinit() {
-    LinkMechanics::preinit();
-
-    if(contactKinematics==0) contactKinematics = findContactPairing(contour[0],contour[1]);
-    if(contactKinematics==0) throw new MBSimError("Unknown contact pairing");
-
-    contactKinematics->assignContours(contour[0],contour[1]);
-
-    for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-      gActive.push_back(int(1));
-      gActive0.push_back(int(1));
-      gdActive.push_back(new unsigned int[2]);
-      for(int j=0; j<1+min(1,getFrictionDirections()); j++) gdActive[i][j] = 1;
-      for(int j=1+min(1,getFrictionDirections()); j<2; j++) gdActive[i][j] = 0;
-
-      gk.push_back(Vec(1));
-      gdk.push_back(Vec(1));
-      gdnk.push_back(Vec(1));
-      gddk.push_back(Vec(1));
-      lak.push_back(Vec());
-      wbk.push_back(Vec());
-      svk.push_back(Vec());
-      jsvk.push_back(Vector<int>());
-      rFactork.push_back(Vec());
-      laSizek.push_back(int(0));
-      laIndk.push_back(int(0));
-      gSizek.push_back(int(0));
-      gIndk.push_back(int(0));
-      gdSizek.push_back(int(0));
-      gdIndk.push_back(int(0));
-      svSizek.push_back(int(0));
-      svIndk.push_back(int(0));
-      rFactorSizek.push_back(int(0));
-      rFactorIndk.push_back(int(0));
+    else if(stage==preInit) {
+      LinkMechanics::init(stage);
+  
+      if(contactKinematics==0) contactKinematics = findContactPairing(contour[0],contour[1]);
+      if(contactKinematics==0) throw new MBSimError("Unknown contact pairing");
+  
+      contactKinematics->assignContours(contour[0],contour[1]);
+  
+      for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+        gActive.push_back(int(1));
+        gActive0.push_back(int(1));
+        gdActive.push_back(new unsigned int[2]);
+        for(int j=0; j<1+min(1,getFrictionDirections()); j++) gdActive[i][j] = 1;
+        for(int j=1+min(1,getFrictionDirections()); j<2; j++) gdActive[i][j] = 0;
+  
+        gk.push_back(Vec(1));
+        gdk.push_back(Vec(1));
+        gdnk.push_back(Vec(1));
+        gddk.push_back(Vec(1));
+        lak.push_back(Vec());
+        wbk.push_back(Vec());
+        svk.push_back(Vec());
+        jsvk.push_back(Vector<int>());
+        rFactork.push_back(Vec());
+        laSizek.push_back(int(0));
+        laIndk.push_back(int(0));
+        gSizek.push_back(int(0));
+        gIndk.push_back(int(0));
+        gdSizek.push_back(int(0));
+        gdIndk.push_back(int(0));
+        svSizek.push_back(int(0));
+        svIndk.push_back(int(0));
+        rFactorSizek.push_back(int(0));
+        rFactorIndk.push_back(int(0));
+      }
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+  #ifdef HAVE_OPENMBVCPPINTERFACE
+        if (getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
+          OpenMBV::Group * openMBVGrp = new OpenMBV::Group();
+          openMBVGrp->setName(name+"#ContactGroup");
+          openMBVGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVGrp);
+          for (unsigned int i=0; i<cpData.size(); i++) {
+            if(openMBVContactFrameSize>epsroot()) {
+              openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
+              for (unsigned int k=0; k<2; k++) { // frames
+                openMBVContactFrame[i][k].setOffset(1.);
+                openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
+                openMBVContactFrame[i][k].setName("ContactPoint#"+numtostr((int)i)+(k==0?"A":"B"));
+                openMBVGrp->addObject(&openMBVContactFrame[i][k]);
+              }
+            }
+            // arrows
+            OpenMBV::Arrow *arrow;
+            if(contactArrow) {
+              arrow=new OpenMBV::Arrow(*contactArrow);
+              arrow->setName("NormalForce#"+numtostr((int)i)+"B");
+              openMBVNormalForceArrow.push_back(arrow); // normal force
+              openMBVGrp->addObject(arrow);
+            }
+            if(frictionArrow && getFrictionDirections()>0) { // friction force
+              arrow=new OpenMBV::Arrow(*frictionArrow);
+              arrow->setName("FrictionForce#"+numtostr((int)i)+"B");
+              openMBVFrictionArrow.push_back(arrow);
+              openMBVGrp->addObject(arrow);
+            }
+          }
+        }
+  #endif
+        if(getPlotFeature(lagrangeMultiplier)==enabled)
+          for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
+            for(int j=0; j<1+getFrictionDirections(); ++j)
+              plotColumns.push_back("la("+numtostr(j)+")");
+          }
+        LinkMechanics::init(stage);
+      }
+    }
+    else
+      LinkMechanics::init(stage);
   }
 
   bool Contact::isSetValued() const {
@@ -466,53 +514,6 @@ namespace MBSim {
       gActive0[k] = gActive[k];
     }
     return changed;
-  }
-
-  void Contact::initPlot() {
-    updatePlotFeatures(parent);
-    if(getPlotFeature(plotRecursive)==enabled) {
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      if (getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
-        OpenMBV::Group * openMBVGrp = new OpenMBV::Group();
-        openMBVGrp->setName(name+"#ContactGroup");
-        openMBVGrp->setExpand(false);
-        parent->getOpenMBVGrp()->addObject(openMBVGrp);
-        for (unsigned int i=0; i<cpData.size(); i++) {
-          if(openMBVContactFrameSize>epsroot()) {
-            openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
-            for (unsigned int k=0; k<2; k++) { // frames
-              openMBVContactFrame[i][k].setOffset(1.);
-              openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
-              openMBVContactFrame[i][k].setName("ContactPoint#"+numtostr((int)i)+(k==0?"A":"B"));
-              openMBVGrp->addObject(&openMBVContactFrame[i][k]);
-            }
-          }
-          // arrows
-          OpenMBV::Arrow *arrow;
-          if(contactArrow) {
-            arrow=new OpenMBV::Arrow(*contactArrow);
-            arrow->setName("NormalForce#"+numtostr((int)i)+"B");
-            openMBVNormalForceArrow.push_back(arrow); // normal force
-            openMBVGrp->addObject(arrow);
-          }
-          if(frictionArrow && getFrictionDirections()>0) { // friction force
-            arrow=new OpenMBV::Arrow(*frictionArrow);
-            arrow->setName("FrictionForce#"+numtostr((int)i)+"B");
-            openMBVFrictionArrow.push_back(arrow);
-            openMBVGrp->addObject(arrow);
-          }
-        }
-      }
-#endif
-
-      if(getPlotFeature(lagrangeMultiplier)==enabled)
-        for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
-          for(int j=0; j<1+getFrictionDirections(); ++j)
-            plotColumns.push_back("la("+numtostr(j)+")");
-        }
-
-      LinkMechanics::initPlot();
-    }
   }
 
   void Contact::plot(double t, double dt) {

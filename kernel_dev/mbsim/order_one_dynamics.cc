@@ -69,19 +69,26 @@ namespace MBSim {
     }
   }
 
-  void OrderOneDynamics::initPlot() {
-    updatePlotFeatures(parent);
-
-    if(getPlotFeature(plotRecursive)==enabled) {
-      if(getPlotFeature(state)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotColumns.push_back("x("+numtostr(i)+")");
-      if(getPlotFeature(stateDerivative)==enabled)
-        for(int i=0; i<xSize; ++i)
-          plotColumns.push_back("xd("+numtostr(i)+")");
-
-      Element::initPlot(parent);
+  void OrderOneDynamics::init(InitStage stage) {
+    if(stage==unknownStage) {
+      std::cout << "WARNING (OrderOneDynamics::init): Not implemented!" << std::endl;
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+  
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(state)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("x("+numtostr(i)+")");
+        if(getPlotFeature(stateDerivative)==enabled)
+          for(int i=0; i<xSize; ++i)
+            plotColumns.push_back("xd("+numtostr(i)+")");
+  
+        Element::init(stage, parent);
+      }
+    }
+    else
+      Element::init(stage, parent);
   }
 }
 
