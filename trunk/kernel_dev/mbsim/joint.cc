@@ -511,10 +511,12 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       // WF and WM are needed by OpenMBV plotting in LinkMechanics::plot(...)
-      WF[0]=fF[0]*la;
-      WF[1]=-WF[0];
-      WM[0]=fM[0]*la;
-      WM[1]=-WM[0];
+      if (isSetValued()) {
+        WF[0]=fF[0]*la;
+        WF[1]=-WF[0];
+        WM[0]=fM[0]*la;
+        WM[1]=-WM[0];
+      }
 #endif
       LinkMechanics::plot(t,dt);
     }

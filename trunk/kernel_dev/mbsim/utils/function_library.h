@@ -24,6 +24,16 @@
 
 namespace MBSim {
 
+  class Function1_VS_to_SS : public Function1<double, double> {
+    public:
+      Function1_VS_to_SS() {}
+      Function1_VS_to_SS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
+      void setFunction(Function1<fmatvec::Vec, double> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
+      double operator()(const double& x) {return (*fun)(x)(0); }
+    private:
+      Function1<fmatvec::Vec, double> * fun;
+  };
+
   class SinusFunction1_VS : public Function1<fmatvec::Vec, double> {
     public:
       SinusFunction1_VS() {}
@@ -66,7 +76,7 @@ namespace MBSim {
 
   class TabularFunction1_VS : public Function1<fmatvec::Vec, double> {
     public:
-      TabularFunction1_VS() {}
+      TabularFunction1_VS() : xIndexOld(0) {}
       TabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : x(x_), y(y_), xIndexOld(0) {
         check();
       }
@@ -76,7 +86,7 @@ namespace MBSim {
       fmatvec::Vec x;
       fmatvec::Mat y;
     private:
-      int xSize, xIndexOld;
+      int xIndexOld, xSize;
       void check();
   };
 
@@ -102,7 +112,7 @@ namespace MBSim {
   };
 
 
-  class SummationFunction1_VS : Function1<fmatvec::Vec, double> {
+  class SummationFunction1_VS : public Function1<fmatvec::Vec, double> {
     public:
       SummationFunction1_VS() : ySize(0) {};
       void addFunction(Function1<fmatvec::Vec, double> * function, double factor=1.) {

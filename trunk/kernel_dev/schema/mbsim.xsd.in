@@ -50,55 +50,55 @@
 
   <xs:simpleType name="ObjectReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Object\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Object\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="DynamicSystemReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*DynamicSystem\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*DynamicSystem\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="LinkReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Link\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Link\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="OrderOneDynamicsReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*OrderOneDynamics\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*OrderOneDynamics\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*OrderOneDynamics\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*OrderOneDynamics\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="FrameReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Frame\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Frame\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="ContourReferenceType">
     <xs:restriction base="xs:token">
-     <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Contour\[X\]" with
-            X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-            from physicalvariable.xsd name attribute -->
-     <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Contour\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -139,8 +139,8 @@
     <xs:complexContent>
       <xs:extension base="ElementType"/>
       <!-- All functionality of DynamicSystem is moved to Group, because this two classes are the save,
-           if there exist no class Tree on modelling level. (The ordering of the elements is better, if
-           this is done so. -->
+      if there exist no class Tree on modelling level. (The ordering of the elements is better, if
+      this is done so. -->
     </xs:complexContent>
   </xs:complexType>   
 
@@ -331,6 +331,33 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <!--
+          <xs:element name="order_one_systems">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Kontainer für Systeme 1. Ordnung (z.B. Regelung)
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+                <xs:element ref="OrderOneSystem">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          -->
           <xs:element name="links">
             <xs:annotation>
               <xs:documentation xml:lang="de">
@@ -962,45 +989,115 @@
     </xs:complexContent>
   </xs:complexType> 
 
-  <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType"/>
+  <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse für Kontaktkonturen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ContourType">
     <xs:complexContent>
       <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidContour" substitutionGroup="Contour" type="RigidContourType"/>
+  <xs:element name="RigidContour" substitutionGroup="Contour" type="RigidContourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse für starre Konturen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="RigidContourType">
     <xs:complexContent>
       <xs:extension base="ContourType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleHollow" substitutionGroup="RigidContour" type="CircleHollowType"/>
+  <xs:element name="CircleHollow" substitutionGroup="RigidContour" type="CircleHollowType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung einer CircleHollow-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_circlehollow.png" alt="./figures/contour_circlehollow.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_circlehollow.eps" title="Orientierung einer CicleHollow-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="CircleHollowType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="radius" type="pv:lengthScalar"/>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="radius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Innenradius des Hohlzylinders
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircleSolid" substitutionGroup="RigidContour" type="CircleSolidType"/>
+  <xs:element name="CircleSolid" substitutionGroup="RigidContour" type="CircleSolidType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Ebene Kontur eines CircleSolid (= (Voll)zylinders = Kreiskontur mit Kontakt aussen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems. 
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung einer CircleSolid-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_circlesolid.png" alt="./figures/contour_circlesolid.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_circlesolid.eps" title="Orientierung einer CircleSolid-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="CircleSolidType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="radius" type="pv:lengthScalar"/>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="radius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Aussenradius des Vollzylinders
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Frustum" substitutionGroup="RigidContour" type="FrustumType"/>
+  <xs:element name="Frustum" substitutionGroup="RigidContour" type="FrustumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Kontur eines Kegelstumpfes. Hiermit kann auch ein Kegel und ein Zylinder abgedeckt werden.
+        Die Symmetrieachse fällt mit der y-Achse des Referenzkoordinationsystems zusammen. Zu definierende geometrische Größen sind in der Zeichnung eingetragen.      
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung und geometrische Größen einer Frustum-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_frustum.png" alt="./figures/contour_frustum.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_frustum.eps" title="Orientierung und geometrische Größen einer Frustum-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="FrustumType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
@@ -1037,14 +1134,37 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType"/>
+  <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Unendlich ausgedehnte Ebenenkontur.
+        Die Ebene wird durch die y- und z-Achse des Referenzkoordinatensystems beschrieben.
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung einer Plane-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_plane.png" alt="./figures/contour_plane.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_plane.eps" title="Orientierung einer Plane-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PlaneType">
     <xs:complexContent>
       <xs:extension base="RigidContourType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PlaneWithFrustum" substitutionGroup="RigidContour" type="PlaneWithFrustumType"/>
+  <xs:element name="PlaneWithFrustum" substitutionGroup="RigidContour" type="PlaneWithFrustumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">       
+        Eine Kontur, die aus einer Ebene und einem Kegelstumpf (Frustum) besteht. Die Ebene wird wie gezeichnet durch die y- und z-Achse des Referenzkoordinatensystems aufgespannt, die Rotationsachse des Kegelstumpfes ist die x-Achse des Referenzkoordinatensystems. Für eine Kegelstumpf-Höhe h&gt;0 erstreckt sich die Kegelstumpfkontur - wie gezeichnet - in Richtung der positiven x-Achse des Referenzkoordinatensystems. Rho ist der Radius der Verrundung zwischen Ebene und Kegelstumpf und am Kopf des Kegelstumpfes.
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Orientierung einer PlaneWithFrustum-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_planewithfrustum.png" alt="./figures/contour_planewithfrustum.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_planewithfrustum.eps" title="Orientierung einer PlaneWithFrustum-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PlaneWithFrustumType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
@@ -1058,15 +1178,33 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-        
-  <xs:element name="Point" substitutionGroup="RigidContour" type="PointType"/>
+
+  <xs:element name="Point" substitutionGroup="RigidContour" type="PointType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Kontur eines einzelnen Punktes.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PointType">
     <xs:complexContent>
       <xs:extension base="RigidContourType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Sphere" substitutionGroup="RigidContour" type="SphereType"/>
+  <xs:element name="Sphere" substitutionGroup="RigidContour" type="SphereType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Kontur einer Kugel.
+        Der Radius r gibt den Radius der Kugel an
+        <h:div class="htmlfigure"><h:table>
+            <h:caption align="bottom">Geometrie einer Sphere-Kontour</h:caption><h:tr><h:td>
+                <h:img class="htmlfigure" src="./figures/contour_sphere.png" alt="./figures/contour_sphere.png"></h:img></h:td></h:tr></h:table>
+        </h:div>
+        <h:object class="latexfigure" standby="4cm" data="figures/contour_sphere.eps" title="Geometrie einer Sphere-Kontour"></h:object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="SphereType">
     <xs:complexContent>
       <xs:extension base="RigidContourType">
@@ -1362,6 +1500,30 @@
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
           <xs:element name="unloadedLength" type="pv:lengthScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function2_SSS" type="NonlinearSpringDamperForceType"/>
+  <xs:complexType name="NonlinearSpringDamperForceType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="distanceForce">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="velocityForce">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

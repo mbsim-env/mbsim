@@ -172,6 +172,19 @@ namespace MBSim {
       double c, d, l0;
   };
 
+  class NonlinearSpringDamperForce : public Function2<double,double,double> {
+    public:
+      NonlinearSpringDamperForce() {}
+      NonlinearSpringDamperForce(Function1<fmatvec::Vec, double> * gForceFun_, Function1<fmatvec::Vec, double> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
+      void setParameters(Function1<fmatvec::Vec, double> * gForceFun_, Function1<fmatvec::Vec, double> * gdForceFun_) { gForceFun=gForceFun_; gdForceFun=gdForceFun_; }
+      double operator()(const double& g, const double& gd) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
+      void initializeUsingXML(TiXmlElement *element);
+
+    protected:
+      Function1<fmatvec::Vec, double> * gForceFun;
+      Function1<fmatvec::Vec, double> * gdForceFun;
+  };
+
   template<class Arg1, class Arg2>
     class ConstantFunction2<double, Arg1, Arg2> : public Function2<double,Arg1,Arg2> {
       public:
