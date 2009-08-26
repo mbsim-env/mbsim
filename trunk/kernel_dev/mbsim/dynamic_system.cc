@@ -908,6 +908,10 @@ namespace MBSim {
     for(unsigned int i=0; i<dynamicsystem.size(); i++) 
       dynamicsystem[i]->setUpLinks();
 
+    // clear container first, because setUpLinks in called twice from InitStage resize (before and after the reorganization)
+    linkSetValued.clear();
+    linkSetValuedActive.clear();
+    linkSingleValued.clear();
     for(unsigned int i=0; i<link.size(); i++) {
       if(link[i]->isSetValued()) {
         linkSetValued.push_back(link[i]);

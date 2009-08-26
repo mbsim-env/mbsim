@@ -221,9 +221,7 @@ namespace MBSim {
       calcuSize(1);
       sethSize(uSize[0]);
       sethSize(uSize[1],1);
-      checkForConstraints(); // TODO for preinit
-      setUpLinks();
-      setDynamicSystemSolver(this);
+      setUpLinks(); // is needed by calcgSize()
   
       calcxSize();
   
@@ -249,6 +247,9 @@ namespace MBSim {
       Group::init(stage);
     }
     else if(stage==unknownStage) {
+      checkForConstraints(); // TODO for preinit
+      setDynamicSystemSolver(this);
+
       if(uSize[0] == uSize[1]) 
         zdot_ = &DynamicSystemSolver::zdotStandard;
       else

@@ -362,6 +362,7 @@ namespace MBSim {
       gdd.resize(gd.size());
       gdn.resize(gd.size());
 
+      cpData.clear(); // clear container first, because InitStage resize is called twice (before and after the reorganization)
       for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
         if(getFrictionDirections() == 0)
           gdActive[i][1] = false;
