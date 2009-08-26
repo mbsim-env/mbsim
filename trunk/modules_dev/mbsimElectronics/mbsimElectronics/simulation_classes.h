@@ -21,7 +21,7 @@ class Mesh : public MBSim::Object {
     void updateStateDependentVariables(double t) {};
     void updateJacobians(double t) {};
     void updateInverseKineticsJacobians(double t) {};
-    void init();
+    void init(MBSim::InitStage stage);
     Object* getObjectDependingOn() const {return precessor;}
     void setPrecessor(Object* obj) {precessor = obj;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -53,7 +53,7 @@ class Branch : public MBSim::Object {
     void clearMeshList() {mesh.clear();}
     int getNumberOfConnectedMeshes() const {return mesh.size();}
     Mesh* getMesh(int i) {return mesh[i];}
-    void init();
+    void init(MBSim::InitStage stage);
     void setStartTerminal(Terminal* p) {startTerminal = p; p->addConnectedBranch(this);}
     void setEndTerminal(Terminal* p) {endTerminal = p; p->addConnectedBranch(this);}
     Terminal* getStartTerminal() {return startTerminal;}
@@ -64,7 +64,6 @@ class Branch : public MBSim::Object {
     void buildMeshes(Terminal* callingTerminal, Branch* callingBranch, Mesh* currentMesh, bool &foundMesh);
     void setFlag(int f) { flag = f; }
     int getFlag() const { return flag; }
-    void initPlot();
     void plot(double t, double dt);
     Object* getObjectDependingOn() const {return precessor;}
     void setPrecessor(Object* obj) {precessor = obj;}
@@ -84,7 +83,7 @@ class ElectronicLink : public MBSim::Link, public ElectronicComponent {
     virtual void setName(std::string name) {Link::setName(name);}
     bool isActive() const {return true;}
     bool gActiveChanged() {return true;}
-    void init();
+    void init(MBSim::InitStage stage);
     void updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j=0);
 
     /* INHERITED INTERFACE OF LINKINTERFACE */
@@ -109,7 +108,7 @@ class Resistor : public ElectronicLink {
     void updateh(double t);
     void setResistance(double R_) { R = R_;}
     double computeU(double t);
-    void initPlot();
+    void init(MBSim::InitStage stage);
     void plot(double t, double dt);
 };
 

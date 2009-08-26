@@ -4,8 +4,12 @@ using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
 
-void Mesh::init() {
-  T(0,0) = 1;
+void Mesh::init(InitStage stage) {
+  if(stage==unknownStage) {
+    T(0,0) = 1;
+  }
+  else
+    Object::init(stage);
 }
 
 Inductor::Inductor(const string &name) : ElectronicObject(name), L(1) {
@@ -94,9 +98,13 @@ void VoltageSource::updateh(double t) {
   hLink[0] -= trans(branch->getJacobian())*(*voltageSignal)(t);
 }
 
-void ElectronicLink::init() {
-  h.push_back(fmatvec::Vec(branch->getJacobian().cols()));
-  hLink.push_back(fmatvec::Vec(branch->getJacobian().cols()));
+void ElectronicLink::init(InitStage stage) {
+  if(stage==unknownStage) {
+    h.push_back(fmatvec::Vec(branch->getJacobian().cols()));
+    hLink.push_back(fmatvec::Vec(branch->getJacobian().cols()));
+  }
+  else
+    Link::init(stage);
 }
 
 void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j) {
@@ -105,13 +113,29 @@ void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec 
   hLink[0]>>hLinkParent(I);
 } 
 
-void Branch::init() {
-  if(J.cols() == 0) {
-  J.resize(1,gethSize());
-  for(int i=0; i<mesh.size(); i++)
-    J(0,mesh[i]->getuInd()) = i==0?1:1; 
+void Branch::init(InitStage stage) {
+  if(stage==unknownStage) {
+    if(J.cols() == 0) {
+    J.resize(1,gethSize());
+    for(int i=0; i<mesh.size(); i++)
+      J(0,mesh[i]->getuInd()) = i==0?1:1; 
+    }
+    cout << name << " " << J << endl;
   }
-  cout << name << " " << J << endl;
+  else if(stage==MBSim::plot) {
+    //updatePlotFeatures(parent);
+
+    //if(getPlotFeature(plotRecursive)==enabled) {
+    //if(getPlotFeature(globalPosition)==enabled) {
+    plotColumns.push_back("Charge");
+    plotColumns.push_back("Current");
+    //}
+
+    Object::init(stage);
+    //}
+  }
+  else
+    Object::init(stage);
 }
 
 void Branch::addConnectedBranch(Branch *branch) {
@@ -193,19 +217,6 @@ void Branch::buildMeshes(Terminal *callingTerminal, Branch* callingBranch, Mesh*
   cout << " end " << getName() << endl;
 }
 
-void Branch::initPlot() {
-  //updatePlotFeatures(parent);
-
-  //if(getPlotFeature(plotRecursive)==enabled) {
-  //if(getPlotFeature(globalPosition)==enabled) {
-  plotColumns.push_back("Charge");
-  plotColumns.push_back("Current");
-  //}
-
-  Object::initPlot();
-  //}
-}
-
 void Branch::plot(double t, double dt) {
   //if(getPlotFeature(plotRecursive)==enabled) {
   //if(getPlotFeature(globalPosition)==enabled) {
@@ -242,10 +253,14 @@ void Branch::plot(double t, double dt) {
 //  return mesh;
 //}
 
-void Resistor::initPlot() {
-  plotColumns.push_back("VoltageDrop");
+void Resistor::init(InitStage stage) {
+  if(stage==MBSim::plot) {
+    plotColumns.push_back("VoltageDrop");
 
-  Link::initPlot();
+    Link::init(stage);
+  }
+  else
+    ElectronicLink::init(stage);
 }
 
 void Resistor::plot(double t, double dt) {
