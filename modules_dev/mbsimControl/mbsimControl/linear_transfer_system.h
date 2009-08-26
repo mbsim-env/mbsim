@@ -28,6 +28,10 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief LinearTransferSystem
+   * \author Markus Schneider
+   */
   class LinearTransferSystem : public SignalProcessingSystem {
 
     public:   
@@ -36,12 +40,11 @@ namespace MBSim {
       
       void calcxSize() {xSize=A.rows(); }
       
-      void init();
+      void init(InitStage stage);
 
       void updatedx(double t, double dt);
       void updatexd(double t);
       
-      void initPlot();
       void plot(double t,double dt);
      
       void setPID(double P_, double I_, double D_);

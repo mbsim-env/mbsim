@@ -24,6 +24,10 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief Sensor
+   * \author Markus Schneider
+   */
   class Sensor : public Signal {
     
     public:

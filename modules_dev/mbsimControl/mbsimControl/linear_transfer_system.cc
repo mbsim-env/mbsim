@@ -41,9 +41,20 @@ namespace MBSim {
     xd=A*x+B*inputSignal->getSignal();
   }
 
-  void LinearTransferSystem::init() {
-    SignalProcessingSystem::init();
-    x.resize(xSize, INIT, 0); 
+  void LinearTransferSystem::init(InitStage stage) {
+    if (stage==MBSim::resize) {
+      SignalProcessingSystem::init(stage);
+      x.resize(xSize, INIT, 0);
+    }
+    else if (stage==MBSim::plot) {
+      for (int i=0; i<C.rows(); i++)
+        plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
+      for (int i=0; i<B.cols(); i++)
+        plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
+      SignalProcessingSystem::init(stage);
+    }
+    else
+      SignalProcessingSystem::init(stage);
   }
 
   Vec LinearTransferSystem::calculateOutput() {
@@ -143,11 +154,4 @@ namespace MBSim {
     SignalProcessingSystem::plot(t,dt);
   }
 
-  void LinearTransferSystem::initPlot() {
-    for (int i=0; i<C.rows(); i++)
-      plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
-    for (int i=0; i<B.cols(); i++)
-      plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
-    SignalProcessingSystem::initPlot();
-  }
 }

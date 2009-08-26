@@ -29,10 +29,10 @@
 class NLTransferSys : public SPSys {
   public:   
     NLTransferSys(const std::string& name);
+    void init(InitStage stage);
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateStage1(double t);
-    void initPlot();
     void plot(double t,double dt);
 
     void setMinMaxOut(double MinOut,double MaxOut);

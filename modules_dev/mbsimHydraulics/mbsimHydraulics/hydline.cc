@@ -24,8 +24,6 @@
 #include "environment.h"
 #include "pressure_loss.h"
 
-#include "mbsim/userfunction.h"
-
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
@@ -50,17 +48,20 @@ namespace MBSim {
     nTo=nTo_;
   }
 
-  void HydLineAbstract::init() {
-    ObjectHydraulics::init();
+  void HydLineAbstract::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
+      ObjectHydraulics::init(stage);
+      if (!nFrom || !nTo || (nFrom==nTo))
+        cout << getName() << ": Fehler!" << endl;
+      assert(nFrom!=NULL);
+      assert(nTo!=NULL);
+      assert(nFrom!=nTo);
 
-    if (!nFrom || !nTo || (nFrom==nTo))
-      cout << getName() << ": Fehler!" << endl;
-    assert(nFrom!=NULL);
-    assert(nTo!=NULL);
-    assert(nFrom!=nTo);
-
-    Area=M_PI*d*d/4.;
-    rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      Area=M_PI*d*d/4.;
+      rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+    }
+    else
+      ObjectHydraulics::init(stage);
   }
 
 
@@ -72,59 +73,71 @@ namespace MBSim {
     }
   }
 
-  void HydLine::init() {
-    HydLineAbstract::init();
-    MFac=rho*l/Area;
-    for (unsigned int i=0; i<pd.size(); i++)
-      pd[i]->transferLineData(d, l);
+  void HydLine::init(InitStage stage) {
+    if (stage==MBSim::unknownStage) {
+      HydLineAbstract::init(stage);
+      MFac=rho*l/Area;
+      for (unsigned int i=0; i<pd.size(); i++)
+        pd[i]->transferLineData(d, l);
+    }
+    else if(stage==MBSim::plot) {
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("Fluidflow [l/min]");
+        plotColumns.push_back("Massflow [kg/min]");
+        plotColumns.push_back("p_Loss [bar]");
+        for (unsigned int i=0; i<pd.size(); i++)
+          pd[i]->initPlot(&plotColumns);
+        HydLineAbstract::init(stage);
+      }
+    }
+    else
+      HydLineAbstract::init(stage);
   }
 
   void HydLine::updateh(double t) {
     /* A simple fix for updating  variable pressure losses*/
     if (pdVar)
       pdVar->updateg(t);
-    
+
     pLossSum=0;
     for (unsigned int i=0; i<pd.size(); i++)
       pLossSum+=(*pd[i])(u(0));
     h(0)-=pLossSum;
   }
 
-  void HydLine::initPlot() {
-    plotColumns.push_back("Fluidflow [l/min]");
-    plotColumns.push_back("Massflow [kg/min]");
-    plotColumns.push_back("p_Loss [bar]");
-    for (unsigned int i=0; i<pd.size(); i++)
-      pd[i]->initPlot(&plotColumns);
-    HydLineAbstract::initPlot();
-  }
-
   void HydLine::plot(double t, double dt) {
-    plotVector.push_back(u(0)*6e4);
-    plotVector.push_back(u(0)*rho*60);
-    plotVector.push_back(pLossSum*1e-5);
-    for (unsigned int i=0; i<pd.size(); i++)
-      pd[i]->plot(&plotVector);
-    HydLineAbstract::plot(t, dt);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(u(0)*6e4);
+      plotVector.push_back(u(0)*rho*60);
+      plotVector.push_back(pLossSum*1e-5);
+      for (unsigned int i=0; i<pd.size(); i++)
+        pd[i]->plot(&plotVector);
+      HydLineAbstract::plot(t, dt);
+    }
   }
 
 
-  void HydLineValveBilateral::preinit() {
-    HydLine::preinit();
-    closed = new HydlineClosedBilateral(name+".Closed", this);
-    parent->addLink(closed);
+  void HydLineValveBilateral::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
+      HydLine::init(stage);
+      closed = new HydlineClosedBilateral(name+".Closed", this);
+      parent->addLink(closed);
+    }
+    else if (stage==MBSim::unknownStage) {
+      HydLine::init(stage);
+      assert(pdVar);
+    }
+    else
+      HydLine::init(stage);
   }
 
-  void HydLineValveBilateral::init() {
-    HydLine::init();
-    assert(pdVar);
-  }
 
-  
-  void HydLineCheckvalveUnilateral::preinit() {
-    HydLine::preinit();
-    closed = new HydlineClosedUnilateral(name+".Closed", this);
-    parent->addLink(closed);
+  void HydLineCheckvalveUnilateral::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
+      HydLine::init(stage);
+      closed = new HydlineClosedUnilateral(name+".Closed", this);
+      parent->addLink(closed);
+    }
   }
 
 }

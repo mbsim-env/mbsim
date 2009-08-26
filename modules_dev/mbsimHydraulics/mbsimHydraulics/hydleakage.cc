@@ -46,12 +46,15 @@ namespace MBSim {
     HydLine::setLength(l);
   }
 
-  void HydLeakage::init() {
-    HydLine::init();
-
-    for (unsigned int i=0; i<pd.size(); i++)
-      if (dynamic_cast<LeakagePressureLoss*>(pd[i]))
-        static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(lGap, hGap, wGap);
+  void HydLeakage::init(InitStage stage) {
+    if (stage==MBSim::unknownStage) {
+      HydLine::init(stage);
+      for (unsigned int i=0; i<pd.size(); i++)
+        if (dynamic_cast<LeakagePressureLoss*>(pd[i]))
+          static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(lGap, hGap, wGap);
+    }
+    else
+      HydLine::init(stage);
   }
 
 

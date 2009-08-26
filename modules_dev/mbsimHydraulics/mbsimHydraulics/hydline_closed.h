@@ -38,7 +38,7 @@ namespace MBSim {
       void calcgdSize() {gdSize=1; }
       void calcgdSizeActive() {gdSize=1; }
 
-      void init();
+      void init(InitStage stage);
       void updateW(double t);
 
       virtual bool isActive() const {return active; } 
@@ -62,7 +62,6 @@ namespace MBSim {
       virtual void updaterRef(const fmatvec::Vec& rRef);
       virtual void updatewbRef(const fmatvec::Vec& wbRef);
 
-      void initPlot();
       void plot(double t, double dt);
 
     protected:

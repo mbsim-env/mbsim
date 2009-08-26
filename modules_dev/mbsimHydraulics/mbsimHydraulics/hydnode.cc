@@ -73,28 +73,54 @@ namespace MBSim {
     out->setFromNode(this);
   }
 
-  void HydNode::init() {
-    Link::init();
-    gd.resize(1);
-    la.resize(1);
-    nLines=connectedLines.size();
-    for (unsigned int i=0; i<nLines; i++) {
-      connectedLines[i].sign = 
-        ((connectedLines[i].inflow) ?
-         connectedLines[i].line->getInflowFactor() :
-         connectedLines[i].line->getOutflowFactor());
-
-      int cols=connectedLines[i].sign.size();
-      W.push_back(Mat(cols, laSize));
-      V.push_back(Mat(cols, laSize));
-      h.push_back(Vec(cols));
-      hLink.push_back(Vec(cols));
-      dhdq.push_back(Mat(cols, 0));
-      dhdu.push_back(SqrMat(cols));
-      dhdt.push_back(Vec(cols));
-      r.push_back(Vec(cols));
+  void HydNode::init(InitStage stage) {
+    if (stage==MBSim::resize) {
+      Link::init(stage);
+      gd.resize(1);
+      la.resize(1);
+      nLines=connectedLines.size();
+      for (unsigned int i=0; i<nLines; i++) {
+        connectedLines[i].sign = 
+          ((connectedLines[i].inflow) ?
+           connectedLines[i].line->getInflowFactor() :
+           connectedLines[i].line->getOutflowFactor());
+        int cols=connectedLines[i].sign.size();
+        W.push_back(Mat(cols, laSize));
+        V.push_back(Mat(cols, laSize));
+        h.push_back(Vec(cols));
+        hLink.push_back(Vec(cols));
+        dhdq.push_back(Mat(cols, 0));
+        dhdu.push_back(SqrMat(cols));
+        dhdt.push_back(Vec(cols));
+        r.push_back(Vec(cols));
+      }
     }
-    gdTol*=1e-6;
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("Node pressure [bar]");
+        plotColumns.push_back("Fluidflow into and out the node [l/min]");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if (openMBVSphere) {
+          if (openMBVGrp) {
+            openMBVSphere->setName("Node");
+            openMBVGrp->addObject(openMBVSphere);
+          }
+          else {
+            openMBVSphere->setName(name);
+            parent->getOpenMBVGrp()->addObject(openMBVSphere);
+          }
+        }
+#endif
+        Link::init(stage);
+      }
+    }
+    else if (stage==MBSim::unknownStage) {
+      Link::init(stage);
+      gdTol*=1e-6;
+    }
+    else
+      Link::init(stage);
   }
 
   void HydNode::updateWRef(const Mat &WParent, int j) {
@@ -255,48 +281,36 @@ namespace MBSim {
     }
   }
 
-  void HydNode::initPlot() {
-    plotColumns.push_back("Node pressure [bar]");
-    plotColumns.push_back("Fluidflow into and out the node [l/min]");
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if (openMBVSphere) {
-      if (openMBVGrp) {
-        openMBVSphere->setName("Node");
-        openMBVGrp->addObject(openMBVSphere);
-      }
-      else {
-       openMBVSphere->setName(name);
-       parent->getOpenMBVGrp()->addObject(openMBVSphere);
-      }
-    }
-#endif
-    Link::initPlot();
-  }
-
   void HydNode::plot(double t, double dt) {
-    plotVector.push_back(la(0)*1e-5/(isSetValued()?dt:1.));
-    plotVector.push_back(QHyd*6e4);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(la(0)*1e-5/(isSetValued()?dt:1.));
+      plotVector.push_back(QHyd*6e4);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
-      vector<double> data;
-      data.push_back(t);
-      data.push_back(WrON(0));
-      data.push_back(WrON(1));
-      data.push_back(WrON(2));
-      data.push_back(0);
-      data.push_back(0);
-      data.push_back(0);
-      data.push_back(la(0)/(isSetValued()?dt:1.));
-      openMBVSphere->append(data);
-    }
+      if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
+        vector<double> data;
+        data.push_back(t);
+        data.push_back(WrON(0));
+        data.push_back(WrON(1));
+        data.push_back(WrON(2));
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(0);
+        data.push_back(la(0)/(isSetValued()?dt:1.));
+        openMBVSphere->append(data);
+      }
 #endif
-    Link::plot(t, dt);
+      Link::plot(t, dt);
+    }
   }
 
 
-  void HydNodeConstrained::init() {
-    HydNode::init();
-    la.init((*pFun)(0));
+  void HydNodeConstrained::init(InitStage stage) {
+    if (stage==MBSim::unknownStage) {
+      HydNode::init(stage);
+      la.init((*pFun)(0));
+    }
+    else
+      HydNode::init(stage);
   }
 
   void HydNodeConstrained::updateg(double t) {
@@ -305,9 +319,13 @@ namespace MBSim {
   }
 
 
-  void HydNodeEnvironment::init() {
-    HydNode::init();
-    la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+  void HydNodeEnvironment::init(InitStage stage) {
+    if (stage==MBSim::unknownStage) {
+      HydNode::init(stage);
+      la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+    }
+    else
+      HydNode::init(stage);
   }
 
 
@@ -325,22 +343,33 @@ namespace MBSim {
     return factor[0]/(1.+factor[1]*pow(p, factor[2]));
   }
 
-  void HydNodeElastic::init() {
-    HydNode::init();
-    double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
-    if (fabs(p0)<epsroot()) {
-      cout << "WARNING HydNodeElastic \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
-      p0=pinf;
+  void HydNodeElastic::init(InitStage stage) {
+    if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("Node bulk modulus [N/mm^2]");
+        HydNode::init(stage);
+      }
     }
-    la(0)=p0;
-    x0=Vec(1, INIT, p0);
-    
-    double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-    double kappa=HydraulicEnvironment::getInstance()->getKappa();
-    factor[0]=E0*(1.+fracAir);
-    factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
-    factor[2]=-(1.+1./kappa);
-    E=calcBulkModulus(la(0));
+    else if (stage==unknownStage) {
+      HydNode::init(stage);
+      double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      if (fabs(p0)<epsroot()) {
+        cout << "WARNING HydNodeElastic \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
+        p0=pinf;
+      }
+      la(0)=p0;
+      x0=Vec(1, INIT, p0);
+
+      double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+      double kappa=HydraulicEnvironment::getInstance()->getKappa();
+      factor[0]=E0*(1.+fracAir);
+      factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
+      factor[2]=-(1.+1./kappa);
+      E=calcBulkModulus(la(0));
+    }
+    else
+      HydNode::init(stage);
   }
 
   void HydNodeElastic::updatexRef(const Vec &xParent) {
@@ -358,28 +387,29 @@ namespace MBSim {
     xd=-E/V*gd*dt;
   }
 
-  void HydNodeElastic::initPlot() {
-    plotColumns.push_back("Node bulk modulus [N/mm^2]");
-    HydNode::initPlot();
-  }
-
   void HydNodeElastic::plot(double t, double dt) {
-    plotVector.push_back(E*1e-6);
-    HydNode::plot(t, dt);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(E*1e-6);
+      HydNode::plot(t, dt);
+    }
   }
 
 
-  void HydNodeRigid::init() {
-    HydNode::init();
-    for (unsigned int i=0; i<nLines; i++) {
-      Vec u0=connectedLines[i].line->getu0();
-      bool zero=true;
-      for (int j=0; j<u0.size(); j++)
-        if (fabs(u0(j))>epsroot())
-          zero=false;
-      if (!zero)
-        cout << "WARNING in HydNodeRigid \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+  void HydNodeRigid::init(InitStage stage) {
+    if (stage==MBSim::unknownStage) {
+      HydNode::init(stage);
+      for (unsigned int i=0; i<nLines; i++) {
+        Vec u0=connectedLines[i].line->getu0();
+        bool zero=true;
+        for (int j=0; j<u0.size(); j++)
+          if (fabs(u0(j))>epsroot())
+            zero=false;
+        if (!zero)
+          cout << "WARNING in HydNodeRigid \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+      }
     }
+    else
+      HydNode::init(stage);
   }
 
   void HydNodeRigid::updatewbRef(const Vec &wbParent) {

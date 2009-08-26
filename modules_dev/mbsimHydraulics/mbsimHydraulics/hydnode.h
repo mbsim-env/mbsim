@@ -57,7 +57,7 @@ namespace MBSim {
       void calcgdSize() {gdSize=1; }
       void calcgdSizeActive() {calcgdSize(); }
 
-      void init();
+      void init(InitStage stage);
 
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
@@ -75,7 +75,6 @@ namespace MBSim {
       virtual bool isActive() const {return true; }
       virtual bool gActiveChanged() {return false; }
 
-      void initPlot();
       void plot(double t, double dt);
 
     protected:
@@ -98,7 +97,7 @@ namespace MBSim {
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
-      void init();
+      void init(InitStage stage);
 
     private:
       Function1<double,double> * pFun;
@@ -110,7 +109,7 @@ namespace MBSim {
       HydNodeEnvironment(const std::string &name) : HydNode(name) {}
       virtual std::string getType() const { return "HydNodeEnvironment"; }
 
-      void init();
+      void init(InitStage stage);
   };
 
 
@@ -125,14 +124,13 @@ namespace MBSim {
 
       void calcxSize() {xSize=1; }
 
-      void init();
+      void init(InitStage stage);
 
       void updatexRef(const fmatvec::Vec &xParent);
 
       void updatexd(double t);
       void updatedx(double t, double dt);
 
-      void initPlot();
       void plot(double t, double dt);
 
     private:
@@ -156,7 +154,7 @@ namespace MBSim {
       void calclaSizeForActiveg() {laSize=1; }
       void calcrFactorSize() {rFactorSize=1; }
 
-      void init();
+      void init(InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 
