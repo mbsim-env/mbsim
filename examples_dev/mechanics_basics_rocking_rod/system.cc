@@ -68,12 +68,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Contact *cr1S = new Contact("Contact1"); 
   cr1S->connect(point1,body->getContour("Line"));
-  cr1S->setPlotFeature(lagrangeMultiplier,enabled);
   addLink(cr1S);
 
   Contact *cr2S = new Contact("Contact2");
   cr2S->connect(point2,body->getContour("Line"));
-  cr2S->setPlotFeature(lagrangeMultiplier,enabled);
   addLink(cr2S);
 
   if(rigidContacts) {
