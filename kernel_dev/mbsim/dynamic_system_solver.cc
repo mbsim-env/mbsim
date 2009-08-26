@@ -1418,9 +1418,11 @@ namespace MBSim {
     setPlotFeatureRecursive(stateDerivative, disabled);
     setPlotFeatureRecursive(rightHandSide, disabled);
     setPlotFeatureRecursive(globalPosition, disabled);
-    setPlotFeatureRecursive(contact, enabled);
     setPlotFeatureRecursive(energy, disabled);
     setPlotFeatureRecursive(openMBV, enabled);
+    setPlotFeatureRecursive(generalizedLinkForce, enabled);
+    setPlotFeatureRecursive(linkKinematics, enabled);
+    setPlotFeatureRecursive(stopVector, enabled);
   }
 
   void DynamicSystemSolver::initializeUsingXML(TiXmlElement *element) {

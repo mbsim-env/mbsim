@@ -104,9 +104,11 @@ namespace MBSim {
       if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
       if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
       if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
-      if(string(e->Attribute("feature")).substr(1)=="contact") feature=contact;
       if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
       if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
+      if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;
+      if(string(e->Attribute("feature")).substr(1)=="linkKinematics") feature=linkKinematics;
+      if(string(e->Attribute("feature")).substr(1)=="stopVector") feature=stopVector;
       if(e->ValueStr()==MBSIMNS"plotFeature") setPlotFeature(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureForChildren") setPlotFeatureForChildren(feature, status);
       if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
