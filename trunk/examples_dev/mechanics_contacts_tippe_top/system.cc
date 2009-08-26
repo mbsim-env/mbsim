@@ -82,12 +82,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Contact *cnf1 = new Contact("Contact1");
   cnf1->connect(getContour("Plane"), body->getContour("Sphere1"));
-  cnf1->setPlotFeature(lagrangeMultiplier,enabled);
   addLink(cnf1);
 
   Contact *cnf2 = new Contact("Contact2");
   cnf2->connect(getContour("Plane"), body->getContour("Sphere2"));
-  cnf2->setPlotFeature(lagrangeMultiplier,enabled);
   addLink(cnf2);
 
   if(rigidContact) {
