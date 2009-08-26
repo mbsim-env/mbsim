@@ -26,6 +26,10 @@ namespace MBSim {
 
   class Frame;
 
+  /*!
+   * \brief AbsolutCoordinateSensor
+   * \author Markus Schneider
+   */
   class AbsolutCoordinateSensor : public Sensor {
     public:
       AbsolutCoordinateSensor(const std::string &name) : Sensor(name) {}
@@ -43,6 +47,10 @@ namespace MBSim {
       fmatvec::Mat direction;
   };
 
+  /*!
+   * \brief AbsolutPositionSensor
+   * \author Markus Schneider
+   */
   class AbsolutPositionSensor : public AbsolutCoordinateSensor {
     public:
       AbsolutPositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
@@ -50,6 +58,10 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
 
+  /*!
+   * \brief AbsolutVelocitySensor
+   * \author Markus Schneider
+   */
   class AbsolutVelocitySensor : public AbsolutCoordinateSensor {
     public:
       AbsolutVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
@@ -57,6 +69,10 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
 
+  /*!
+   * \brief AbsolutAngularPositionSensor
+   * \author Markus Schneider
+   */
   class AbsolutAngularPositionSensor : public AbsolutCoordinateSensor {
     public:
       AbsolutAngularPositionSensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
@@ -73,6 +89,10 @@ namespace MBSim {
       void updatedx(double t, double dt) {xd=gd*dt; }
   };
 
+  /*!
+   * \brief AbsolutAngularVelocitySensor
+   * \author Markus Schneider
+   */
   class AbsolutAngularVelocitySensor : public AbsolutCoordinateSensor {
     public:
       AbsolutAngularVelocitySensor(const std::string &name) : AbsolutCoordinateSensor(name) {}
@@ -81,6 +101,10 @@ namespace MBSim {
   };
   
   
+  /*!
+   * \brief RelativeCoordinateSensor
+   * \author Markus Schneider
+   */
   class RelativeCoordinateSensor : public Sensor {
     public:
       RelativeCoordinateSensor(const std::string &name) : Sensor(name) {}
@@ -101,6 +125,10 @@ namespace MBSim {
       fmatvec::Mat direction;
   };
   
+  /*!
+   * \brief RelativePositionSensor
+   * \author Markus Schneider
+   */
   class RelativePositionSensor : public RelativeCoordinateSensor {
     public:
       RelativePositionSensor(const std::string &name) : RelativeCoordinateSensor(name) {}
@@ -108,6 +136,10 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
   
+  /*!
+   * \brief RelativeVelocitySensor
+   * \author Markus Schneider
+   */
   class RelativeVelocitySensor : public RelativeCoordinateSensor {
     public:
       RelativeVelocitySensor(const std::string &name) : RelativeCoordinateSensor(name) {}
@@ -115,6 +147,10 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
   
+  /*!
+   * \brief RelativeAngularPositionSensor
+   * \author Markus Schneider
+   */
   class RelativeAngularPositionSensor : public RelativeCoordinateSensor {
     public:
       RelativeAngularPositionSensor(const std::string &name) : RelativeCoordinateSensor(name) {}
@@ -133,6 +169,10 @@ namespace MBSim {
       void updatedx(double t, double dt) {xd=gd*dt; }
   };
   
+  /*!
+   * \brief RelativeAngularVelocitySensor
+   * \author Markus Schneider
+   */
   class RelativeAngularVelocitySensor : public RelativeCoordinateSensor {
     public:
       RelativeAngularVelocitySensor(const std::string &name) : RelativeCoordinateSensor(name) {}

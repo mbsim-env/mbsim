@@ -71,59 +71,70 @@ namespace MBSim {
     uSize[j]=mdim;
   }
 
-  void HydLineGalerkin::init() {
-    HydLineAbstract::init();
-
-    double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-    g=0; // TODO consider gravity
-    E=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-
-    k=rho*g*delta_h/l;
-
-    MFac=Area*rho*MatIntWWT;
-    K=Area*E*MatIntWSWST;
-
-    phi.resize(mdim, mdim);
-    lambda.resize(mdim);
-    if (eigvec(K, MFac, phi, lambda)) {
-      cout << getName() << ": Fehler bei Eigenvektorberechnung!" << endl;
-      throw 821;
+  void HydLineGalerkin::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
+      HydLineAbstract::init(stage);
+      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      g=0; // TODO consider gravity
+      E=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+      k=rho*g*delta_h/l;
+      MFac=Area*rho*MatIntWWT;
+      K=Area*E*MatIntWSWST;
     }
-
-    Omega.resize(mdim, INIT, 0);
-    for (int i=1; i<mdim; i++) // analytische Loesung unabhaengig vom Ansatztyp --> omega(0)=0
-      Omega(i,i)=sqrt(lambda(i));
-
-    N.resize(mdim, INIT, 0);
-    if (Flow2D) {
-      for (int i=0; i<mdim; i++) {
-        double kH=sqrt(Omega(i,i)/nu)*sqrt(Area/M_PI);
-        N(i,i)=(kH<5.)?1.+0.0024756*pow(kH, 3.0253322):0.44732718+0.175*kH;
+    else if (stage==MBSim::resize) {
+      HydLineAbstract::init(stage);
+      phi.resize(mdim, mdim);
+      lambda.resize(mdim);
+      if (eigvec(K, MFac, phi, lambda)) {
+        cout << getName() << ": Fehler bei Eigenvektorberechnung!" << endl;
+        throw 821;
+      }
+      Omega.resize(mdim, INIT, 0);
+      for (int i=1; i<mdim; i++) // analytische Loesung unabhaengig vom Ansatztyp --> omega(0)=0
+        Omega(i,i)=sqrt(lambda(i));
+      N.resize(mdim, INIT, 0);
+      if (Flow2D) {
+        for (int i=0; i<mdim; i++) {
+          double kH=sqrt(Omega(i,i)/nu)*sqrt(Area/M_PI);
+          N(i,i)=(kH<5.)?1.+0.0024756*pow(kH, 3.0253322):0.44732718+0.175*kH;
+        }
+      }
+      Mat DTmp(mdim, mdim, INIT, 0);
+      if (!Flow2D)
+        DTmp=8*rho*M_PI*nu*MatIntWWT*SymMat(mdim, EYE);
+      else
+        DTmp=8*rho*M_PI*nu*MatIntWWT*phi*N*inv(phi);
+      if (DLehr>0)
+        DTmp += 2.*DLehr*inv(trans(phi))*Omega*trans(phi)*MFac;
+      D.resize(mdim, INIT, 0);
+      for (int i=0; i<mdim; i++)
+        for (int j=0; j<mdim; j++)
+          D(i,j)=DTmp(i,j);
+    }
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotdim=relPlotPoints.size();
+        plotVecW.resize(mdim, plotdim);
+        plotVecWS.resize(mdim, plotdim);
+        for (int i=0; i<plotdim; i++) {
+          plotVecW.col(i)=ansatz->VecW(relPlotPoints(i));
+          plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
+        }
+        delete ansatz;
+        for (int i=0; i<plotdim; i++)
+          plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
+        for (int i=0; i<plotdim; i++)
+          plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
+        HydLineAbstract::init(stage);
       }
     }
-
-    Mat DTmp(mdim, mdim, INIT, 0);
-    if (!Flow2D)
-      DTmp=8*rho*M_PI*nu*MatIntWWT*SymMat(mdim, EYE);
-    else
-      DTmp=8*rho*M_PI*nu*MatIntWWT*phi*N*inv(phi);
-    if (DLehr>0)
-      DTmp += 2.*DLehr*inv(trans(phi))*Omega*trans(phi)*MFac;
-    D.resize(mdim, INIT, 0);
-    for (int i=0; i<mdim; i++)
-      for (int j=0; j<mdim; j++)
-        D(i,j)=DTmp(i,j);
-
-    plotdim=relPlotPoints.size();
-    plotVecW.resize(mdim, plotdim);
-    plotVecWS.resize(mdim, plotdim);
-    for (int i=0; i<plotdim; i++) {
-      plotVecW.col(i)=ansatz->VecW(relPlotPoints(i));
-      plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
+    else if (stage==MBSim::unknownStage) {
+      HydLineAbstract::init(stage);
+      setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
     }
-    delete ansatz;
-
-    setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
+    else
+      HydLineAbstract::init(stage);
   }
 
   void HydLineGalerkin::updateT(double t) {
@@ -145,19 +156,13 @@ namespace MBSim {
   }
 
   void HydLineGalerkin::plot(double t, double dt) {
-    for (int i=0; i<plotdim; i++)
-      plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
-    for (int i=0; i<plotdim; i++)
-      plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
-    HydLineAbstract::plot(t,dt);
-  }
-
-  void HydLineGalerkin::initPlot() {
-    for (int i=0; i<plotdim; i++)
-      plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
-    for (int i=0; i<plotdim; i++)
-      plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-    HydLineAbstract::initPlot();
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for (int i=0; i<plotdim; i++)
+        plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
+      for (int i=0; i<plotdim; i++)
+        plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
+      HydLineAbstract::plot(t,dt);
+    }
   }
 
   //  void HydLineGalerkin::plotParameters() {

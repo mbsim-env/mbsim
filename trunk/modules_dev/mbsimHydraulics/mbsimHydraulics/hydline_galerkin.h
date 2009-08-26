@@ -67,7 +67,7 @@ namespace MBSim {
       fmatvec::Vec getInflowFactor() {return -Area*wE; }
       fmatvec::Vec getOutflowFactor() {return Area*wA; }
 
-      void init();
+      void init(InitStage stage);
       void calcqSize();
       void calcuSize(int j);
 
@@ -77,7 +77,6 @@ namespace MBSim {
       void updateM(double t);
 
       void plot(double t, double dt);
-      void initPlot();   
     
     private:
       int mdim, plotdim;

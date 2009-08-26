@@ -46,22 +46,26 @@ namespace MBSim {
     hLink[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
   }
 
-  void Actuator::init() {
-    LinkMechanics::init();
-    IT = Index(0,forceDir.cols()-1);
-    IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
-    if(forceDir.cols()) 
-      Wf = forceDir;
-    else {
-      forceDir.resize(3,0);
-      Wf.resize(3,0);
+  void Actuator::init(InitStage stage) {
+    if (stage==MBSim::resize) {
+      LinkMechanics::init(stage);
+      IT = Index(0,forceDir.cols()-1);
+      IR = Index(forceDir.cols(),forceDir.cols()+momentDir.cols()-1);
+      if(forceDir.cols()) 
+        Wf = forceDir;
+      else {
+        forceDir.resize(3,0);
+        Wf.resize(3,0);
+      }
+      if(momentDir.cols())
+        Wm = momentDir;
+      else {
+        momentDir.resize(3,0);
+        Wm.resize(3,0);
+      }
     }
-    if(momentDir.cols())
-      Wm = momentDir;
-    else {
-      momentDir.resize(3,0);
-      Wm.resize(3,0);
-    }
+    else
+      LinkMechanics::init(stage);
   }
 
   void Actuator::calclaSize() {

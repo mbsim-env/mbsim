@@ -27,7 +27,6 @@ namespace MBSim {
   class HydNode;
   class PressureLoss;
   class PressureLossVar;
-  class UserFunction;
   class HydlineClosedBilateral;
   class HydlineClosedUnilateral;
 
@@ -50,7 +49,7 @@ namespace MBSim {
       virtual fmatvec::Vec getInflowFactor() = 0;
       virtual fmatvec::Vec getOutflowFactor() = 0;
 
-      void init();
+      void init(InitStage stage);
 
     protected:
       HydNode * nFrom;
@@ -58,7 +57,7 @@ namespace MBSim {
       double d, l;
       double Area, rho;
   };
-  
+
   class HydLine : public HydLineAbstract {
     public:
       HydLine(const std::string &name) : HydLineAbstract(name), pLossSum(0), pdVar(NULL) {}
@@ -73,14 +72,13 @@ namespace MBSim {
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       PressureLossVar * getPressureLossVar() {return pdVar; }
 
-      void init();
+      void init(InitStage stage);
       void calcqSize() {qSize=0; }
       void calcuSize(int j) {uSize[j]=1; }
 
       void updateh(double t);
       void updateM(double t) {M(0,0)=MFac; }
 
-      void initPlot();
       void plot(double t, double dt);
 
     private:
@@ -102,8 +100,7 @@ namespace MBSim {
       HydLineValveBilateral(const std::string &name) : HydLineValve(name) {}
       virtual std::string getType() const { return "HydLineValveBilateral"; }
 
-      void preinit();
-      void init();
+      void init(InitStage stage);
 
     private:
       HydlineClosedBilateral * closed;
@@ -114,7 +111,7 @@ namespace MBSim {
       HydLineCheckvalveUnilateral(const std::string &name) : HydLineValve(name) {}
       virtual std::string getType() const { return "HydLineCheckvalveUnilateral"; }
 
-      void preinit();
+      void init(InitStage stage);
 
     private:
       HydlineClosedUnilateral * closed;

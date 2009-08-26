@@ -38,15 +38,20 @@ namespace MBSim {
     }
   }
 
-  void Signal::initPlot() {
-    updatePlotFeatures(parent);
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Vec y=getSignal();
-      for (int i=0; i<y.size(); i++)
-        plotColumns.push_back("Signal (" + numtostr(i) + ")");
+  void Signal::init(InitStage stage) {
+    if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        Vec y=getSignal();
+        for (int i=0; i<y.size(); i++)
+          plotColumns.push_back("Signal (" + numtostr(i) + ")");
+      }
+      Link::init(stage);
     }
-    Link::initPlot();
+    else
+      Link::init(stage);
   }
+
 
   void Signal::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {

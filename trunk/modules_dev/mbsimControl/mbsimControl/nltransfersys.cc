@@ -21,6 +21,7 @@
  *
  */ 
 #include <config.h>
+#include "mbsim/dynamic_system.h"
 #include "mbsimControl/nltransfersys.h"
 
 using namespace std;
@@ -30,6 +31,19 @@ NLTransferSys::NLTransferSys(const string& name) : SPSys(name) {
   OutForm=&NLTransferSys::SystemOutput;
   xSize=0;
   Single_Input=false;
+}
+
+void NLTransferSys::init(InitStage stage) {
+  if (stage==MBSim::plot) {
+    updatePlotFeatures(parent);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotColumns.push_back("OutputSignal");
+      plotColumns.push_back("Inputsignal");
+      SPSys::init(stage);
+    }
+  }
+  else
+    SPSys::init(stage);
 }
 
 void NLTransferSys::updatedx(double t, double dt){
@@ -95,7 +109,6 @@ void NLTransferSys::activateDynamics(){
 // Feature Definitionen Ende ---------------
 
 
-//Plot Def Anfang************************************************************
 void NLTransferSys::plot(double t, double dt){
   if(getPlotFeature(plotRecursive)==enabled) {
     plotVector.push_back(y(0));
@@ -107,13 +120,4 @@ void NLTransferSys::plot(double t, double dt){
   }
 }
 
-void NLTransferSys::initPlot() {
-  if(getPlotFeature(plotRecursive)==enabled) {
-    plotColumns.push_back("OutputSignal");
-    plotColumns.push_back("Inputsignal");
-
-    SPSys::initPlot();
-  }
-}
-//Plot Defs Ende--------------------------------------------------------------------
 

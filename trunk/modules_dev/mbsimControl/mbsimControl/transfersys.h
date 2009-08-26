@@ -35,10 +35,10 @@ class TransferSys : public SPSys {
     void updatedx(double t, double dt);
     void updatexd(double t);
     void updateg(double t);
-    void initPlot();
     void plot(double t,double dt);
     void showABCD();
 
+    void init(InitStage stage);
 
     void setPID(double P_, double I_, double D_);
     void setABCD(Mat A_,Mat B_,Mat C_,Mat D_);

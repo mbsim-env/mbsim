@@ -24,6 +24,10 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief SignalAddition
+   * \author Markus Schneider
+   */
   class SignalAddition : public Signal {
     public:
       SignalAddition(const std::string &name) : Signal(name) {}
@@ -36,6 +40,10 @@ namespace MBSim {
   };
 
 
+  /*!
+   * \brief SignalMux
+   * \author Markus Schneider
+   */
   class SignalMux : public Signal {  
     public:
       SignalMux(const std::string &name) : Signal(name) {}
@@ -47,6 +55,10 @@ namespace MBSim {
   };
 
 
+  /*!
+   * \brief SignalTimeDiscretization
+   * \author Markus Schneider
+   */
   class SignalTimeDiscretization : public Signal {  
     public:
       SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99) {}

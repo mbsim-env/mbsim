@@ -64,7 +64,7 @@ namespace MBSim {
 
       void calcxSize() {xSize=1; }
 
-      void init();
+      void init(InitStage stage);
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
@@ -81,7 +81,6 @@ namespace MBSim {
       void updatexd(double t);
       void updatedx(double t, double dt);
 
-      void initPlot();
       void plot(double t, double dt);
 
     protected:
@@ -104,7 +103,7 @@ namespace MBSim {
 
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
-      void init();
+      void init(InitStage stage);
 
       void updateg(double t);
 
@@ -118,7 +117,7 @@ namespace MBSim {
       HydNodeMecEnvironment(const std::string &name) : HydNodeMec(name) {}
       virtual std::string getType() const { return "HydNodeMecEnvironment"; }
       
-      void init();
+      void init(InitStage stage);
   };
 
   class HydNodeMecElastic : public HydNodeMec {
@@ -132,14 +131,13 @@ namespace MBSim {
 
       void calcxSize() {xSize=2; }
 
-      void init();
+      void init(InitStage stage);
 
       void updatexRef(const fmatvec::Vec &xParent);
 
       void updatexd(double t);
       void updatedx(double t, double dt);
 
-      void initPlot();
       void plot(double t, double dt);
 
       void initializeUsingXML(TiXmlElement *element);
@@ -165,7 +163,7 @@ namespace MBSim {
       void calclaSizeForActiveg() {laSize=1; }
       void calcrFactorSize() {rFactorSize=1; }
 
-      void init();
+      void init(InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
       

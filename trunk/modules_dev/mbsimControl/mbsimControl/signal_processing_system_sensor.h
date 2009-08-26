@@ -25,6 +25,10 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief SignalProcessingSystemSensor
+   * \author Markus Schneider
+   */
   class SignalProcessingSystemSensor : public MBSim::Sensor {
     public:
       SignalProcessingSystemSensor(const std::string &name) : MBSim::Sensor(name) {}

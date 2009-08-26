@@ -30,14 +30,17 @@ namespace MBSim {
 
   class Signal;
 
+  /*!
+   * \brief SignalProcessingSystem
+   * \author Markus Schneider
+   */
   class SignalProcessingSystem : public MBSim::OrderOneDynamics {
 
     public:
       SignalProcessingSystem(const std::string &name) : OrderOneDynamics(name), inputSignal(0) {
       }
 
-      void preinit() {}
-      void init() {}
+      void init(InitStage stage) {}
 
       void updateg(double t) {}
 

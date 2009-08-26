@@ -25,10 +25,16 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief Signal
+   * \author Markus Schneider
+   */
   class Signal : public Link, public SignalInterface {
 
     public:
       Signal(const std::string &name) : Link(name) {}
+
+      void init(InitStage stage);
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) {getSignal(); }; // at least one signal-update
@@ -45,7 +51,6 @@ namespace MBSim {
       virtual void updaterRef(const fmatvec::Vec &ref) {}
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
-      virtual void initPlot();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

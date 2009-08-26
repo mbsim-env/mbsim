@@ -30,7 +30,7 @@ namespace MBSim {
       HydLeakage(const std::string &name);
       virtual std::string getType() const { return "HydLeakage"; }
       
-      void init();
+      void init(InitStage stage);
       
       void setGeometry(double lGap, double hGap, double wGap);
     

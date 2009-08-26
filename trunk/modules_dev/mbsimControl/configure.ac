@@ -46,7 +46,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/Makefile mbsimControl.pc schema/Makefile schema/mbsimcontrol.xsd])
+AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/doxyfile doc/Makefile mbsimControl.pc schema/Makefile schema/mbsimcontrol.xsd xmldoc/Makefile])
 
 AC_OUTPUT
 

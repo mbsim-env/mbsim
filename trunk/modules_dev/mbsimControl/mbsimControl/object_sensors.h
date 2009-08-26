@@ -26,6 +26,10 @@ namespace MBSim {
 
   class Object;
 
+  /*!
+   * \brief GeneralizedCoordinateSensor
+   * \author Markus Schneider
+   */
   class GeneralizedCoordinateSensor : public Sensor {
     public:
       GeneralizedCoordinateSensor(const std::string &name) : Sensor(name) {}
@@ -38,6 +42,10 @@ namespace MBSim {
       int index;
   };
 
+  /*!
+   * \brief GeneralizedPositionSensor
+   * \author Markus Schneider
+   */
   class GeneralizedPositionSensor : public GeneralizedCoordinateSensor {
     public:
       GeneralizedPositionSensor(const std::string &name) : GeneralizedCoordinateSensor(name) {}
@@ -45,6 +53,10 @@ namespace MBSim {
       fmatvec::Vec getSignal();
   };
 
+  /*!
+   * \brief GeneralizedVelocitySensor
+   * \author Markus Schneider
+   */
   class GeneralizedVelocitySensor : public GeneralizedCoordinateSensor {
     public:
       GeneralizedVelocitySensor(const std::string &name) : GeneralizedCoordinateSensor(name) {}

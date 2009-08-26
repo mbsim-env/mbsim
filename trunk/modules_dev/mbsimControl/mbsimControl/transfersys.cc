@@ -36,6 +36,19 @@ TransferSys::TransferSys(const string& name) : SPSys(name) {
   Single_Input=true;
 }
 
+void TransferSys::init(InitStage stage) {
+  if (stage==MBSim::plot) {
+    updatePlotFeatures(parent);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotColumns.push_back("Sigout");
+      plotColumns.push_back("Sigin");
+      SPSys::init(stage);
+    }
+  }
+  else
+    SPSys::init(stage);
+}
+
 void TransferSys::updatedx(double t, double dt){
   xd=(A*x+B*(this->*Uin)(t))*dt;
 }
@@ -235,22 +248,11 @@ void TransferSys::setGain(double P){
 
 }
 
-//Plot Defs Anfang************************************************************
 void TransferSys::plot(double t, double dt) {
   if(getPlotFeature(plotRecursive)==enabled) {
     plotVector.push_back(y(0));
     plotVector.push_back((this->*Uin)(t)(0));
 
     SPSys::plot(t,dt);
-  }
-}
-
-void TransferSys::initPlot() {
-  updatePlotFeatures(parent);
-  if(getPlotFeature(plotRecursive)==enabled) {
-    plotColumns.push_back("Sigout");
-    plotColumns.push_back("Sigin");
-
-    SPSys::initPlot();
   }
 }

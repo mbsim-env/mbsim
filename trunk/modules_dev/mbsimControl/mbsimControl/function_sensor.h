@@ -25,6 +25,10 @@
 
 namespace MBSim {
 
+  /*!
+   * \brief FunctionSensor
+   * \author Markus Schneider
+   */
   class FunctionSensor : public Sensor {
     public:
       FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y(0) {}

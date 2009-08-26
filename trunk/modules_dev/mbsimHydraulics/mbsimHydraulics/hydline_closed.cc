@@ -32,21 +32,39 @@ namespace MBSim {
   HydlineClosed::HydlineClosed(const string &name, HydLineValve * line_) : Link(name), line(line_), isActive0(true) {
   }
 
-  void HydlineClosed::init() {
-    Link::init();
-    int j=1;
-    W.push_back(Mat(j, 1));
-    V.push_back(Mat(j, 1));
-    h.push_back(Vec(j));
-    hLink.push_back(Vec(j));
-    dhdq.push_back(Mat(j, 0));
-    dhdu.push_back(SqrMat(j));
-    dhdt.push_back(Vec(j));
-    r.push_back(Vec(j));
-    gd.resize(1);
-    gdn.resize(1);
-    la.resize(1);
-    gdTol*=1e-6;
+  void HydlineClosed::init(InitStage stage) {
+    if (stage==MBSim::resize) {
+      Link::init(stage);
+      int j=1;
+      W.push_back(Mat(j, 1));
+      V.push_back(Mat(j, 1));
+      h.push_back(Vec(j));
+      hLink.push_back(Vec(j));
+      dhdq.push_back(Mat(j, 0));
+      dhdu.push_back(SqrMat(j));
+      dhdt.push_back(Vec(j));
+      r.push_back(Vec(j));
+      gd.resize(1);
+      gdn.resize(1);
+      la.resize(1);
+    }
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("gd");
+        plotColumns.push_back("active");
+        plotColumns.push_back("gdn");
+        plotColumns.push_back("la(0)");
+        plotColumns.push_back("rFactor(0)");
+        Link::init(stage);
+      }
+    }
+    else if (stage==MBSim::unknownStage) {
+      gdTol*=1e-6;
+      Link::init(stage);
+    }
+    else
+      Link::init(stage);
   }
 
   void HydlineClosed::updater(double t) {
@@ -115,22 +133,15 @@ namespace MBSim {
     W[0]=Mat(1,1,INIT,1.);
   }
 
-  void HydlineClosed::initPlot() {
-    plotColumns.push_back("gd");
-    plotColumns.push_back("active");
-    plotColumns.push_back("gdn");
-    plotColumns.push_back("la(0)");
-    plotColumns.push_back("rFactor(0)");
-    Link::initPlot();
-  }
-
   void HydlineClosed::plot(double t, double dt) {
-    plotVector.push_back(gd(0));
-    plotVector.push_back(active);
-    plotVector.push_back(gdn(0));
-    plotVector.push_back(la(0));
-    plotVector.push_back(rFactor(0));
-    Link::plot(t, dt);
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(gd(0));
+      plotVector.push_back(active);
+      plotVector.push_back(gdn(0));
+      plotVector.push_back(la(0));
+      plotVector.push_back(rFactor(0));
+      Link::plot(t, dt);
+    }
   }
 
 
