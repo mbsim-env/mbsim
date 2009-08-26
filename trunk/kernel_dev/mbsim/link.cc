@@ -37,32 +37,14 @@ namespace MBSim {
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
-      if(getPlotFeature(contact)==enabled) {
-        for(int i=0; i<g.size(); ++i)
-          plotVector.push_back(g(i));
-//	for(unsigned int i=0; i<r.size(); i++)
-//	  for(int j=0; j<r[i].size(); ++j)
-//	    plotVector.push_back(r[i](j));
-        if(isActive()) {
+      if(getPlotFeature(stopVector)==enabled)
           for(int i=0; i<sv.size(); ++i)
             plotVector.push_back(sv(i));
-          //for(int i=0; i<gdSize; ++i) TODO laSize, gdSize not constant during simulation
-          //  plotVector.push_back(gd(i));
-          //if(setValued)
-          //  for(int i=0; i<la.size(); ++i)
-          //    plotVector.push_back(la(i)/dt);
-          //else
-          //  for(int i=0; i<la.size(); ++i)
-          //    plotVector.push_back(la(i));
-        } 
-        else {
-          for(int i=0; i<sv.size(); ++i)
-            plotVector.push_back(sv(i));
-          //for(int i=0; i<gdSize; ++i) TODO laSize, gdSize not constant during simulation
-          //  plotVector.push_back(gd(i));
-          //for(int i=0; i<la.size(); ++i)
-          //  plotVector.push_back(0);
-        }
+     // if(getPlotFeature(contact)==enabled) {
+     //   for(int i=0; i<g.size(); ++i)
+     //     plotVector.push_back(g(i));
+     // }
+      if(getPlotFeature(energy)==enabled) {
         plotVector.push_back(computePotentialEnergy()); 
       }
 
@@ -130,18 +112,15 @@ namespace MBSim {
         if(getPlotFeature(stateDerivative)==enabled)
           for(int i=0; i<xSize; ++i)
             plotColumns.push_back("xd("+numtostr(i)+")");
-        if(getPlotFeature(contact)==enabled) {
-          for(int i=0; i<g.size(); ++i)
-            plotColumns.push_back("g("+numtostr(i)+")");
-          for(int i=0; i<svSize; ++i)
-            plotColumns.push_back("sv("+numtostr(i)+")");
-          // la.size()=laSize, gdSize ist nicht konstant ueber der Simulation
-          //for(int i=0; i<gdSize; ++i)
-          //  plotColumns.push_back("gd("+numtostr(i)+")");
-          //for(int i=0; i<laSize; ++i)
-          //  plotColumns.push_back("la("+numtostr(i)+")");
+        //if(getPlotFeature(contact)==enabled) {
+        //  for(int i=0; i<g.size(); ++i)
+        //    plotColumns.push_back("g("+numtostr(i)+")");
+	//}
+        if(getPlotFeature(stopVector)==enabled)
+	  for(int i=0; i<svSize; ++i)
+	    plotColumns.push_back("sv("+numtostr(i)+")");
+        if(getPlotFeature(energy)==enabled)
           plotColumns.push_back("V");
-        }
 
         Element::init(stage, parent);
       }

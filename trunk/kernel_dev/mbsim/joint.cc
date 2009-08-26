@@ -23,6 +23,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/contact_kinematics/contact_kinematics.h"
+#include <mbsim/utils/utils.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
 #endif
@@ -163,6 +164,17 @@ namespace MBSim {
         JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
       }
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#endif
+	if(getPlotFeature(generalizedLinkForce)==enabled)
+	  for(int j=0; j<la.size(); ++j)
+	    plotColumns.push_back("la("+numtostr(j)+")");
+      }
+      LinkMechanics::init(stage);
+    }
     else
       LinkMechanics::init(stage);
   }
@@ -219,14 +231,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
     }
@@ -242,14 +254,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fml->project(la(i), gdd(i), rFactor(i));
     }
@@ -265,14 +277,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fifl->solve(a[ia[laIndDS+i]], gdn(i), gd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fiml->solve(a[ia[laIndDS+i]], gdn(i), gd(i));
     }
@@ -288,14 +300,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = ffl->solve(a[ia[laIndDS+i]], gdd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fml->solve(a[ia[laIndDS+i]], gdd(i));
     }
@@ -311,14 +323,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
     }
@@ -334,14 +346,14 @@ namespace MBSim {
     for(int i=0; i<forceDir.cols(); i++) {
       gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fml->project(la(i), gdd(i), rFactor(i));
     }
@@ -359,7 +371,7 @@ namespace MBSim {
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+	jp1(j) -= diff(1)*G(laIndDS+i,j);
     }
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
@@ -371,7 +383,7 @@ namespace MBSim {
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+	jp1(j) -= diff(1)*G(laIndDS+i,j);
     }
   }
 
@@ -387,7 +399,7 @@ namespace MBSim {
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+	jp1(j) -= diff(1)*G(laIndDS+i,j);
     }
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
@@ -399,7 +411,7 @@ namespace MBSim {
 
       jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+	jp1(j) -= diff(1)*G(laIndDS+i,j);
     }
   }
 
@@ -409,17 +421,17 @@ namespace MBSim {
       int *ia = ds->getGs().Ip();
 
       for(int i=0; i<rFactorSize; i++) {
-        double sum = 0;
-        for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+i+1]; j++)
-          sum += fabs(a[j]);
-        double ai = a[ia[laIndDS+i]];
-        if(ai > sum) {
-          rFactorUnsure(i) = 0;
-          rFactor(i) = 1.0/ai;
-        } else {
-          rFactorUnsure(i) = 1;
-          rFactor(i) = 1.0/ai;
-        }
+	double sum = 0;
+	for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+i+1]; j++)
+	  sum += fabs(a[j]);
+	double ai = a[ia[laIndDS+i]];
+	if(ai > sum) {
+	  rFactorUnsure(i) = 0;
+	  rFactor(i) = 1.0/ai;
+	} else {
+	  rFactorUnsure(i) = 1;
+	  rFactor(i) = 1.0/ai;
+	}
       }
     }
   }
@@ -435,21 +447,21 @@ namespace MBSim {
     for(int i=0; i < forceDir.cols(); i++) {
       gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       if(!fifl->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-        ds->setTermination(false);
-        return;
+	ds->setTermination(false);
+	return;
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdn(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdn(i) += a[j]*laMBS(ja[j]);
+	gdn(i) += a[j]*laMBS(ja[j]);
 
       if(!fiml->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
-        ds->setTermination(false);
-        return;
+	ds->setTermination(false);
+	return;
       }
     }
   }
@@ -465,21 +477,21 @@ namespace MBSim {
     for(int i=0; i < forceDir.cols(); i++) {
       gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       if(!ffl->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
-        ds->setTermination(false);
-        return;
+	ds->setTermination(false);
+	return;
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
       gdd(i) = b(i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
-        gdd(i) += a[j]*laMBS(ja[j]);
+	gdd(i) += a[j]*laMBS(ja[j]);
 
       if(!fml->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
-        ds->setTermination(false);
-        return;
+	ds->setTermination(false);
+	return;
       }
     }
   }
@@ -512,12 +524,16 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       // WF and WM are needed by OpenMBV plotting in LinkMechanics::plot(...)
       if (isSetValued()) {
-        WF[0]=fF[0]*la;
-        WF[1]=-WF[0];
-        WM[0]=fM[0]*la;
-        WM[1]=-WM[0];
+	WF[0]=fF[0]*la;
+	WF[1]=-WF[0];
+	WM[0]=fM[0]*la;
+	WM[1]=-WM[0];
       }
 #endif
+      if(getPlotFeature(generalizedLinkForce)==enabled) 
+	for(int j=0; j<la.size(); j++)
+	  plotVector.push_back(la(j));
+
       LinkMechanics::plot(t,dt);
     }
   }
@@ -536,16 +552,16 @@ namespace MBSim {
       ee=ee->NextSiblingElement();
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       if(gifl) {
-        setImpactForceLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
+	setImpactForceLaw(gifl);
+	gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
       if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVForceArrow(arrow);
-        ee=ee->NextSiblingElement();
+	arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+	setOpenMBVForceArrow(arrow);
+	ee=ee->NextSiblingElement();
       }
 #endif
     }
@@ -560,16 +576,16 @@ namespace MBSim {
       ee=ee->NextSiblingElement();
       GeneralizedImpactLaw *gifl=ObjectFactory::getInstance()->createGeneralizedImpactLaw(ee->FirstChildElement());
       if(gifl) {
-        setImpactMomentLaw(gifl);
-        gifl->initializeUsingXML(ee->FirstChildElement());
+	setImpactMomentLaw(gifl);
+	gifl->initializeUsingXML(ee->FirstChildElement());
       }
       ee=ee->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(ee));
       if(arrow) {
-        arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
-        setOpenMBVMomentArrow(arrow);
-        ee=ee->NextSiblingElement();
+	arrow->initializeUsingXML(ee); // first initialize, because setOpenMBVForceArrow calls the copy constructor on arrow
+	setOpenMBVMomentArrow(arrow);
+	ee=ee->NextSiblingElement();
       }
 #endif
     }
