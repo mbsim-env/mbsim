@@ -3,7 +3,7 @@
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <plotFeatureRecursive feature="+stateDerivative"/>
-  <plotFeature feature="+separateFilePerDynamicSystem"/>
+  <plotFeature feature="+separateFilePerGroup"/>
   <position>[rHG(numHG);0;0]</position>
   <orientation>[cos(alphaHG(numHG)),sin(alphaHG(numHG)),0;-sin(alphaHG(numHG)),cos(alphaHG(numHG)),0;0,0,1]</orientation>
   <frames/>

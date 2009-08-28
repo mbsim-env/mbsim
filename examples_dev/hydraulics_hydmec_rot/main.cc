@@ -21,7 +21,7 @@ int main (int argc, char* argv[]) {
       name = "ELASTIC";
 
     DynamicSystemSolver * dss = new DynamicSystemSolver(name);
-    dss->addDynamicSystem(new System("HS", (i==0)));
+    dss->addGroup(new System("HS", (i==0)));
     HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
     HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
     HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);

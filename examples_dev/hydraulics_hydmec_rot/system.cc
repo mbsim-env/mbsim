@@ -72,7 +72,7 @@ vector<OpenMBV::PolygonPoint*> * createPiece(double rI, double rA, double phi0, 
 
 System::System(const string &name, bool unilateral) : Group(name) {
   Tree * tree = new Tree("Baum");
-  addDynamicSystem(tree);
+  addGroup(tree);
 
   double dI=0.01;
   double dA=0.05;
@@ -163,8 +163,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
       addLink(sp);
       sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
       sp->connect(
-          dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
-          dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
+          dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(i-1)))->getFrame("L"), 
+          dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(i)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
       spVisu->setSpringRadius(.75*.1*h);
@@ -178,8 +178,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addLink(sp);
   sp->setForceFunction(new LinearSpringDamperForce(cF,0.05*cF,l0));
   sp->connect(
-      dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
-      dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
+      dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), 
+      dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::CoilSpring * spVisu = new OpenMBV::CoilSpring();
   spVisu->setSpringRadius(.75*.1*h);
@@ -201,7 +201,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
 
   HydNodeMecEnvironment * n1Inf = new HydNodeMecEnvironment("n1Inf");
   addLink(n1Inf);
-  n1Inf->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
+  n1Inf->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
   n1Inf->enableOpenMBVArrows(.01);
   
   HydNodeMecConstrained * n1 = new HydNodeMecConstrained("n_"+getBodyName(0)+"_"+getBodyName(1));
@@ -209,8 +209,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n1->enableOpenMBV(.005);
   n1->setInitialVolume(V0);
   n1->setpFunction(new ConstantFunction1<double, double>(pRB));
-  n1->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
-  n1->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
+  n1->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), "[0;1;0]", area, traeger->getFrame("C"));
+  n1->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), "[0;-1;0]", area, traeger->getFrame("C"));
   n1->enableOpenMBVArrows(.01);
 
   HydNodeMecElastic * n2 = new HydNodeMecElastic("n_"+getBodyName(1)+"_"+getBodyName(2));
@@ -220,8 +220,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n2->enableOpenMBVArrows(.01);
   n2->enableOpenMBV(.005);
   n2->setInitialVolume(V0);
-  n2->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-  n2->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n2->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+  n2->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
   HydNodeMecElastic * n3 = new HydNodeMecElastic("n_"+getBodyName(2)+"_"+getBodyName(3));
   n3->setFracAir(0.08);
@@ -230,16 +230,16 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n3->enableOpenMBVArrows(.01);
   n3->enableOpenMBV(.005);
   n3->setInitialVolume(V0);
-  n3->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
-  n3->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n3->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C"));
+  n3->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 
   HydNodeMecRigid * n4 = new HydNodeMecRigid("n_"+getBodyName(3)+"_"+getBodyName(4));
   addLink(n4);
   n4->setInitialVolume(V0);
   n4->enableOpenMBVArrows(.01);
   n4->enableOpenMBV(.005);
-  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
   n4->addInFlow(l04);
 
 //  HydNodeMecElastic * n4 = new HydNodeMecElastic("n_"+getBodyName(3)+"_"+getBodyName(4));
@@ -249,12 +249,12 @@ System::System(const string &name, bool unilateral) : Group(name) {
 //  n4->setInitialVolume(V0);
 //  n4->enableOpenMBVArrows(.01);
 //  n4->enableOpenMBV(.005);
-//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
-//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
+//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[0;1;0]"), area, traeger->getFrame("C")); 
+//  n4->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C"));
 //  n4->addInFlow(l04);
 
   HydNodeMecEnvironment * n4Inf = new HydNodeMecEnvironment("n4Inf");
   addLink(n4Inf);
-  n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getDynamicSystem("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C")); 
+  n4Inf->addRotMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[0;-1;0]"), area, traeger->getFrame("C")); 
   n4Inf->enableOpenMBVArrows(.01);
 }

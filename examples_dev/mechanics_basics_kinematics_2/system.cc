@@ -84,7 +84,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = Theta(1,1);
 
   Tree *tree = new Tree("Baum"); 
-  addDynamicSystem(tree);
+  addGroup(tree);
   RigidBody* body = new RigidBody("Rod");
 
   tree->addObject(0, body);

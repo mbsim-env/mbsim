@@ -16,11 +16,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
 
   Group2 *group1 = new Group2("Hauptgruppe1");
-  addDynamicSystem(group1);
+  addGroup(group1);
 
   Group2 *group2 = new Group2("Hauptgruppe2");
   group2->setPlotFeatureRecursive(stateDerivative, enabled);
-  group2->setPlotFeature(separateFilePerDynamicSystem, enabled);
+  group2->setPlotFeature(separateFilePerGroup, enabled);
   Vec r(3);
   r(0) = 2;
   SqrMat A(3);
@@ -32,7 +32,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   A(1,0) = -sin(a);
   group2->setPosition(r);
   group2->setOrientation(A);
-  addDynamicSystem(group2);
+  addGroup(group2);
 
   //cout << getSubsystem("Hauptgruppe2")->getSubsystem("Hauptgruppe2_Untergruppe")->getName()<<endl;;
   //cout << findFrame("TS.Hauptgruppe2.Hauptgruppe2_Untergruppe.Box1.P2")->getName()<<endl;

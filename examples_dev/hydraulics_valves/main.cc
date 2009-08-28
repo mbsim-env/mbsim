@@ -63,7 +63,7 @@ int main (int argc, char* argv[]) {
 
         simulationName.push_back(nameintegrator+"_"+valuetype+"_"+namesolver);
         DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
-        dss->addDynamicSystem(new System("HS", setvalued, unilateral));
+        dss->addGroup(new System("HS", setvalued, unilateral));
         HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e8);
         HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
         HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);

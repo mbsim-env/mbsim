@@ -18,7 +18,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   Tree *tree = new Tree("Baum"); 
-  addDynamicSystem(tree);
+  addGroup(tree);
 
   double mStab = 0.2;
   double lStab = 0.3;

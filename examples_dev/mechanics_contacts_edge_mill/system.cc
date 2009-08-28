@@ -34,7 +34,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* mill as tree */
   Tree *mill = new Tree("Mill");
-  this->addDynamicSystem(mill);
+  this->addGroup(mill);
 
   /* axis */
   RigidBody *axis = new RigidBody("Axis");
