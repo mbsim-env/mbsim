@@ -5,7 +5,7 @@ Target = main
 sources = main.cc system.cc
 
 # Defining Packages
-packages = mbsim mbsimHydraulics
+packages = mbsim mbsimHydraulics mbsimControl
 
 # Do Not Edit the Following Lines
 CXX = g++

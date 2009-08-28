@@ -3,7 +3,6 @@
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/hydnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/utils/function.h"
 
 using namespace std;

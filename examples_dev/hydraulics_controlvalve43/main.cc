@@ -17,8 +17,8 @@ int main (int argc, char* argv[]) {
   for (int valveType=0; valveType<2; valveType++) {
     string valveTypeString = (valveType==0) ? "regularizedValves" : "cornerValves";
 
-    for (int nodeType=0; nodeType<2; nodeType++) {
-      string nodeTypeString = (nodeType==0) ? "elasticNodes" : "rigidNodes";
+//    for (int nodeType=1; nodeType<2; nodeType++) {
+//      string nodeTypeString = (nodeType==0) ? "elasticNodes" : "rigidNodes";
 
       int iintegratorMax=((valveType==0)?6:2);
       if (iintegratorMax==2) // no ThetaTimeSteppingIntegrator
@@ -54,9 +54,9 @@ int main (int argc, char* argv[]) {
           else if (isolver==3)
             namesolver = "RootFinding";
 
-          simulationName.push_back(valveTypeString+"_"+nodeTypeString+"_"+nameintegrator+"_"+namesolver);
+          simulationName.push_back(valveTypeString+"_"/*+nodeTypeString+"_"*/+nameintegrator+"_"+namesolver);
           DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
-          dss->addGroup(new System("HS", (nodeType==1), (valveType==1)));
+          dss->addGroup(new System("HS", /*(nodeType==1)*/ true, (valveType==1)));
           HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
           HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
           HydraulicEnvironment::getInstance()->setWalterUbbelohdeKinematicViscosity(40, 55e-6, 100, 10e-6);
@@ -89,7 +89,7 @@ int main (int argc, char* argv[]) {
           double tEnd=1.;
           double dtPlot=5e-4;
           // if elasticNodes or regularizedValves
-          double stepSizeFactor=(((nodeType==0)||(valveType==0))?1.e-2:1.);
+          double stepSizeFactor=((/*(nodeType==0)||*/(valveType==0))?1.e-1:1.);
           clock_t startTime, endTime;
           cout << "\n" << simulationName.back() << endl;
           cerr << "\n" << simulationName.back() << endl;
@@ -132,7 +132,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/2.);
+            in.setMaximalStepSize(dtPlot/4.);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);
@@ -154,7 +154,7 @@ int main (int argc, char* argv[]) {
             in.setStartTime(0);
             in.setEndTime(tEnd);
             in.setPlotStepSize(dtPlot);
-            in.setMaximalStepSize(dtPlot/4.);
+            in.setMaximalStepSize(dtPlot/8.);
             in.setOutput(true);
             startTime=clock();
             in.integrate(*dss);
@@ -167,7 +167,7 @@ int main (int argc, char* argv[]) {
         }
       }
     }
-  }
+//  }
 
   cout << endl;
   for (unsigned int i=0; i<integrationTime.size(); i++)
