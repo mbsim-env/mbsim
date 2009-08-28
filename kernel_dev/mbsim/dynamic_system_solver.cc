@@ -207,7 +207,7 @@ namespace MBSim {
       }
 
       for(unsigned int i=0; i<bufTree.size(); i++) {
-        addDynamicSystem(bufTree[i]);
+        addGroup(bufTree[i]);
       }
 
       cout << "End of special group stage==preInit" << endl;
@@ -1412,8 +1412,8 @@ namespace MBSim {
   void DynamicSystemSolver::constructor() {
     integratorExitRequest=false;
     setPlotFeatureRecursive(plotRecursive, enabled);
-    setPlotFeature(separateFilePerDynamicSystem, enabled);
-    setPlotFeatureForChildren(separateFilePerDynamicSystem, disabled);
+    setPlotFeature(separateFilePerGroup, enabled);
+    setPlotFeatureForChildren(separateFilePerGroup, disabled);
     setPlotFeatureRecursive(state, enabled);
     setPlotFeatureRecursive(stateDerivative, disabled);
     setPlotFeatureRecursive(rightHandSide, disabled);

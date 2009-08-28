@@ -4,7 +4,6 @@ lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
 libmbsim_la_SOURCES = \
 body.cc\
-class_factory.cc\
 constitutive_laws.cc\
 contact.cc\
 contour.cc\
@@ -45,7 +44,6 @@ body.h\
 contact.h\
 contour.h\
 contour_pdata.h\
-class_factory.h\
 constitutive_laws.h\
 data_interface_base.h\
 discretization_interface.h\
