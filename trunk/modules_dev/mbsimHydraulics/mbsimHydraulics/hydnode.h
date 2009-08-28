@@ -34,6 +34,7 @@ namespace MBSim {
 
   class HydLineAbstract;
   class HydFluid;
+  class OilBulkModulus;
 
   struct connectedLinesStruct {
     HydLineAbstract * line;
@@ -91,7 +92,7 @@ namespace MBSim {
 
   class HydNodeConstrained : public HydNode {
     public:
-      HydNodeConstrained(const std::string &name) : HydNode(name) {}
+      HydNodeConstrained(const std::string &name) : HydNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "HydNodeConstrained"; }
 
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
@@ -115,7 +116,8 @@ namespace MBSim {
 
   class HydNodeElastic : public HydNode {
     public:
-      HydNodeElastic(const std::string &name) : HydNode(name) {}
+      HydNodeElastic(const std::string &name) : HydNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ~HydNodeElastic();
       virtual std::string getType() const { return "HydNodeElastic"; }
 
       void setVolume(double V_) {V=V_; }
@@ -137,15 +139,13 @@ namespace MBSim {
       double V, E;
       double fracAir;
       double p0;
-
-      double factor[3];
-      double calcBulkModulus(double p);
+      OilBulkModulus * bulkModulus;
   };
 
 
   class HydNodeRigid : public HydNode {
     public:
-      HydNodeRigid(const std::string &name) : HydNode(name) {};
+      HydNodeRigid(const std::string &name) : HydNode(name), gdn(0) {};
       virtual std::string getType() const { return "HydNodeRigid"; }
 
       bool isSetValued() const {return true; }

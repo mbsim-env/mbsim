@@ -24,14 +24,17 @@
 
 namespace MBSim {
 
-  class UserFunction;
+  class Signal;
 
-  class PressureLoss : public MBSim::Function1<double,double> {
+  class PressureLoss : public Function1<double,double> {
     public:
       PressureLoss(const std::string &name_) : name(name_), pLoss(0) {}
       virtual ~PressureLoss() {};
       virtual void transferLineData(double d, double l) {};
-      double operator()(const double& Q) = 0;
+      double operator()(const double& Q, const void * =NULL) = 0;
+      std::string getName() {return name; }
+      virtual bool isBilateral() {return false; }
+      virtual bool isUnilateral() {return false; }
       virtual void initPlot(std::vector<std::string>* plotColumns);
       virtual void plot(std::vector<double>* plotVector);
     protected:
@@ -43,7 +46,7 @@ namespace MBSim {
     public:
       PressureLossZeta(const std::string &name, double zeta) : PressureLoss(name), lossFactor(zeta) {}
       void transferLineData(double d, double l);
-      double operator()(const double& Q) {pLoss=lossFactor*Q*fabs(Q); return pLoss; }
+      double operator()(const double& Q, const void * =NULL) {pLoss=lossFactor*Q*fabs(Q); return pLoss; }
     private:
       double lossFactor;
   };
@@ -52,16 +55,16 @@ namespace MBSim {
     public:
       PressureLossLaminarTubeFlow(const std::string &name) : PressureLoss(name) {}
       void transferLineData(double d, double l);
-      double operator()(const double& Q) {pLoss=lossFactor*Q; return pLoss; }
+      double operator()(const double& Q, const void * =NULL) {pLoss=lossFactor*Q; return pLoss; }
     private:
       double lossFactor;
   };
-  
+
   class PressureLossCurveFit : public PressureLoss {
     public:
       PressureLossCurveFit(const std::string &name, double dRef, double dHyd, double aPos, double bPos, double aNeg=0, double bNeg=0);
       void transferLineData(double d, double l);
-      double operator()(const double& Q) {Re=ReynoldsFactor*Q; pLoss=Re*((Q>0)?aPos+bPos*Re:aNeg-bNeg*Re); return pLoss; }
+      double operator()(const double& Q, const void * =NULL);
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     private:
@@ -69,67 +72,144 @@ namespace MBSim {
       double aPos, bPos, aNeg, bNeg;
   };
 
-  class PressureLossVar : public PressureLoss {
+  class VariablePressureLoss : public PressureLoss {
     public:
-      PressureLossVar(const std::string &name) : PressureLoss(name) {};
-      virtual void updateg(double t) {};
+      VariablePressureLoss(const std::string &name) : PressureLoss(name) {}
+      VariablePressureLoss(const std::string &name, Signal * checkSizeSignal_) : PressureLoss(name), closed(false), checkSizeSignal(checkSizeSignal_) {}
+      void setCheckSizeSignal(Signal * s) {checkSizeSignal=s; }
+      virtual void update(const double& Q) = 0;
       void setClosed(bool closed_) {closed=closed_; }
       bool isClosed() {return closed; }
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     private:
       bool closed;
+    protected:
+      Signal * checkSizeSignal;
   };
   
-  class PressureLossVarAreaZeta : public PressureLossVar {
+  class VariablePressureLossAreaZeta : public VariablePressureLoss {
     public:
-      PressureLossVarAreaZeta(const std::string &name, double zeta, MBSim::UserFunction * relAreaFun, double minRelArea);
+      VariablePressureLossAreaZeta(const std::string &name, double zeta, double minRelArea, Signal * checkSizeSignal);
+      bool isBilateral() {return true; }
       void transferLineData(double d, double l);
-      virtual void updateg(double t);
-      double operator()(const double& Q) {pLoss=zetaFac*Q*fabs(Q)/relArea/relArea; return pLoss; }
+      void update(const double& Q);
+      virtual double operator()(const double& Q, const void * =NULL);
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     private:
-      MBSim::UserFunction * relAreaFun;
       double zetaFac, relArea, minRelArea;
   };
-  
-  class PressureLossVarCheckvalve : public PressureLossVar {
+
+  class RegularizedVariablePressureLossAreaZeta : public VariablePressureLossAreaZeta {
     public:
-      PressureLossVarCheckvalve(const std::string &name, double minimalXOpen_) : PressureLossVar(name), minimalXOpen(minimalXOpen_) {}
+      RegularizedVariablePressureLossAreaZeta(const std::string &name, double zeta, double minRelArea, Signal * checkSizeSignal) : VariablePressureLossAreaZeta(name, zeta, minRelArea, checkSizeSignal) {}
+      bool isBilateral() {return false; }
+  };
+
+
+  class VariablePressureLossControlvalveAreaAlpha : public VariablePressureLoss {
+    public:
+      VariablePressureLossControlvalveAreaAlpha(const std::string &name, double alpha, double minRelArea, Signal * checkSizeSignal);
+      bool isBilateral() {return true; }
+      void transferLineData(double d, double l);
+      void update(const double& Q);
+      virtual double operator()(const double& Q, const void * =NULL);
+      void initPlot(std::vector<std::string>* plotColumns);
+      void plot(std::vector<double>* plotVector);
+    private:
+      double alpha2, relArea, minRelArea, factor, zeta;
+  };
+
+  class RegularizedVariablePressureLossControlvalveAreaAlpha : public VariablePressureLossControlvalveAreaAlpha {
+    public:
+      RegularizedVariablePressureLossControlvalveAreaAlpha(const std::string &name, double alpha, double minRelArea, Signal * checkSizeSignal) : VariablePressureLossControlvalveAreaAlpha(name, alpha, minRelArea, checkSizeSignal) {}
+      bool isBilateral() {return false; }
+  };
+
+  class VariablePressureLossCheckvalve : public VariablePressureLoss {
+    public:
+      VariablePressureLossCheckvalve(const std::string &name) : VariablePressureLoss(name) {}
+      VariablePressureLossCheckvalve(const std::string &name, double minimalXOpen_, Signal * checkSizeSignal) : VariablePressureLoss(name, checkSizeSignal), minimalXOpen(minimalXOpen_) {}
       virtual void transferCheckvalveData(double rBall_) {rBall=rBall_; }
-      virtual double calcBallAreaFactor() {return 1.; }
-      virtual void setXOpen(double xOpen_) {setClosed(xOpen_<minimalXOpen); xOpen=isClosed()?minimalXOpen:xOpen_; }
+      virtual double calcBallAreaFactor() = 0;
+      void setMinimalXOpen(double xMin) {minimalXOpen=xMin; }
+      void update(const double& Q);
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     protected:
       double xOpen, minimalXOpen, rBall;
   };
 
-  class PressureLossVarCheckvalveGamma : public PressureLossVarCheckvalve {
+  class VariablePressureLossCheckvalveGamma : public VariablePressureLossCheckvalve {
     public:
-      PressureLossVarCheckvalveGamma(const std::string &name, double minimalXOpen, double alpha, double gamma) : PressureLossVarCheckvalve(name, minimalXOpen) {siga=sin(gamma); coga=cos(gamma); zetaFac=1./alpha/alpha*coga*coga*coga*coga; }
+      VariablePressureLossCheckvalveGamma(const std::string &name) : VariablePressureLossCheckvalve(name) {}
+      VariablePressureLossCheckvalveGamma(const std::string &name, double minimalXOpen, double alpha, double gamma, Signal * checkSizeSignal) : VariablePressureLossCheckvalve(name, minimalXOpen, checkSizeSignal) {siga=sin(gamma); coga=cos(gamma); zetaFac=1./alpha/alpha*coga*coga*coga*coga; }
+      bool isBilateral() {return true; }
       void transferLineData(double d, double l);
       virtual double calcBallAreaFactor() {return siga*siga; }
-      void setXOpen(double xOpen_);
-      double operator()(const double& Q) {pLoss=zetaFac*Q*fabs(Q)/area/area; return pLoss; }
+      void setAlpha(double alpha) { std::cout << "setGamma first" << std::endl; zetaFac=1./alpha/alpha*coga*coga*coga*coga; }
+      void setGamma(double gamma) {siga=sin(gamma); coga=cos(gamma); }
+      void update(const double& Q);
+      double operator()(const double& Q, const void * =NULL);
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     private:
       double zetaFac, siga, coga, area;
   };
 
-  class PressureLossVarCheckvalveIdelchick : public PressureLossVarCheckvalve {
+  class RegularizedVariablePressureLossCheckvalveGamma : public VariablePressureLossCheckvalveGamma {
     public:
-      PressureLossVarCheckvalveIdelchick(const std::string &name, double minimalXOpen) : PressureLossVarCheckvalve(name, minimalXOpen) {}
+      RegularizedVariablePressureLossCheckvalveGamma(const std::string &name, double minimalXOpen, double alpha, double gamma, Signal * checkSizeSignal) : VariablePressureLossCheckvalveGamma(name, minimalXOpen, alpha, gamma, checkSizeSignal) {};
+      bool isBilateral() {return false; }
+  };
+
+  class VariablePressureLossCheckvalveIdelchick : public VariablePressureLossCheckvalve {
+    public:
+      VariablePressureLossCheckvalveIdelchick(const std::string &name, double minimalXOpen, Signal * checkSizeSignal) : VariablePressureLossCheckvalve(name, minimalXOpen, checkSizeSignal) {}
       void transferLineData(double d, double l);
-      void setXOpen(double xOpen_);
-      double operator()(const double& Q) {pLoss=zetaFac*Q*fabs(Q)*(2.7-beta2-beta3); return pLoss; }
+      virtual double calcBallAreaFactor() {return 1.; }
+      void update(const double& Q);
+      double operator()(const double& Q, const void * =NULL) {pLoss=zetaFac*Q*fabs(Q)*(2.7-beta2-beta3); return pLoss; }
       void initPlot(std::vector<std::string>* plotColumns);
       void plot(std::vector<double>* plotVector);
     private:
       double d0, hdivd0, beta2, beta3, zetaFac;
   };
+
+  class RegularizedVariablePressureLossCheckvalveIdelchick : public VariablePressureLossCheckvalveIdelchick {
+    public:
+      RegularizedVariablePressureLossCheckvalveIdelchick(const std::string &name, double minimalXOpen, Signal * checkSizeSignal) : VariablePressureLossCheckvalveIdelchick(name, minimalXOpen, checkSizeSignal) {}
+      bool isBilateral() {return false; }
+  };
+
+//  class PositiveFlowLimittingPressureLoss : public VariablePressureLoss {
+//    public:
+//      PositiveFlowLimittingPressureLoss(const std::string &name, Signal * checkSizeSignal) : VariablePressureLoss(name, checkSizeSignal) {}
+//      bool isUnilateral() {return true; }
+//      void update(const double& Q);
+//      double operator()(const double& Q) {pLoss=0; return pLoss; }
+//    protected:
+//      double QLimit;
+//  };
+//
+//  class RegularizedPositiveFlowLimittingPressureLoss : public PositiveFlowLimittingPressureLoss {
+//    public:
+//      RegularizedPositiveFlowLimittingPressureLoss(const std::string &name, Signal * checkSizeSignal, double zeta1_,double offset_) : PositiveFlowLimittingPressureLoss(name, checkSizeSignal), zeta1(zeta1_), offset(offset_) {assert(offset>0); }
+//      bool isUnilateral() {return false; }
+//      double operator()(const double& Q);
+//    private:
+//      double zeta1, offset;
+//      double zeta;
+//  };
+//
+//  class NegativeFlowLimittingPressureLoss : public VariablePressureLoss {
+//    public:
+//      NegativeFlowLimittingPressureLoss(const std::string &name, Signal * checkSizeSignal) : VariablePressureLoss(name, checkSizeSignal) {}
+//      bool isUnilateral() {return true; }
+//      void update(const double& Q);
+//      double operator()(const double& Q) {pLoss=0; return pLoss; }
+//  };
 
 }
 

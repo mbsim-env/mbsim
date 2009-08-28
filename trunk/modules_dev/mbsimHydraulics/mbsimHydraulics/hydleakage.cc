@@ -26,27 +26,25 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydLeakage::HydLeakage(const string &name) : HydLine(name) {
-  }
-
   void HydLeakage::setGeometry(double lGap_, double hGap_, double wGap_) {
     lGap=lGap_;
     hGap=hGap_;
     wGap=wGap_;
-
-    double d=sqrt(4.*hGap*wGap/M_PI);
-    double l=lGap;
-//    double dmin=2e-3;
-//    double lmin=10e-3;
-//    d=(d<dmin)?dmin:d;
-//    l=(l<lmin)?lmin:l;
-    cout << getName() << ": gapLength=" << lGap*1e3 << "[mm]  equivalent diamter=" << sqrt(4.*hGap*wGap/M_PI)*1e3 << "[mm]" << endl;
-
-    HydLine::setDiameter(d);
-    HydLine::setLength(l);
   }
 
   void HydLeakage::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
+      double d=sqrt(4.*hGap*wGap/M_PI);
+      double l=lGap;
+      //    double dmin=2e-3;
+      //    double lmin=10e-3;
+      //    d=(d<dmin)?dmin:d;
+      //    l=(l<lmin)?lmin:l;
+      cout << name << ": gapLength=" << lGap*1e3 << "[mm]  equivalent diamter=" << d*1e3 << "[mm]" << endl;
+      HydLine::setDiameter(d);
+      HydLine::setLength(l);
+      HydLine::init(stage);
+    }
     if (stage==MBSim::unknownStage) {
       HydLine::init(stage);
       for (unsigned int i=0; i<pd.size(); i++)

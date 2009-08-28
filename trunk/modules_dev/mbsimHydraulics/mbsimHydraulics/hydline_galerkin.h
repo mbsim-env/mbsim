@@ -40,8 +40,6 @@ namespace MBSim {
 
       /*! Constructor */
       HydLineGalerkin(const std::string &name);
-      /*! Destructor */
-      ~HydLineGalerkin();
       virtual std::string getType() const { return "HydLineGalerkin"; }
 
       /*! set initial pressure of the pipe fluid*/
@@ -77,6 +75,7 @@ namespace MBSim {
       void updateM(double t);
 
       void plot(double t, double dt);
+      void plotParameters();
     
     private:
       int mdim, plotdim;

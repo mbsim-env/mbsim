@@ -16,12 +16,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0)
-
-dnl needed for XML
-AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
-AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0 mbsimControl)
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
@@ -38,6 +33,11 @@ AC_SUBST([LIBMBSIMHYDRAULICS_AGE])
 LIBMBSIMHYDRAULICS_VERSION_INFO=$LIBMBSIMHYDRAULICS_CURRENT:$LIBMBSIMHYDRAULICS_REVISION:$LIBMBSIMHYDRAULICS_AGE
 AC_SUBST([LIBMBSIMHYDRAULICS_VERSION_INFO])
 
+dnl needed for XML
+AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
+AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+
 CPPFLAGS="$CPPFLAGS"
 
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
@@ -46,7 +46,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile schema/mbsimhydraulics.xsd])
+AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile schema/mbsimhydraulics.xsd doc/doxyfile doc/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 
