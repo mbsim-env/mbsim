@@ -187,7 +187,7 @@ namespace MBSim {
     E=e->FirstChildElement();
     Group *g;
     while((g=ObjectFactory::getInstance()->createGroup(E))) {
-      addDynamicSystem(g);
+      addGroup(g);
       g->initializeUsingXML(E);
       E=E->NextSiblingElement();
     }

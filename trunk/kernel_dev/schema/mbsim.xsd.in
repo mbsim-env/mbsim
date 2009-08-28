@@ -29,8 +29,8 @@
     <xs:restriction base="xs:token">
       <xs:enumeration value="+plotRecursive"/>
       <xs:enumeration value="-plotRecursive"/>
-      <xs:enumeration value="+separateFilePerDynamicSystem"/>
-      <xs:enumeration value="-separateFilePerDynamicSystem"/>
+      <xs:enumeration value="+separateFilePerGroup"/>
+      <xs:enumeration value="-separateFilePerGroup"/>
       <xs:enumeration value="+state"/>
       <xs:enumeration value="-state"/>
       <xs:enumeration value="+stateDerivative"/>
@@ -39,66 +39,70 @@
       <xs:enumeration value="-rightHandSide"/>
       <xs:enumeration value="+globalPosition"/>
       <xs:enumeration value="-globalPosition"/>
-      <xs:enumeration value="+contact"/>
-      <xs:enumeration value="-contact"/>
       <xs:enumeration value="+energy"/>
       <xs:enumeration value="-energy"/>
       <xs:enumeration value="+openMBV"/>
       <xs:enumeration value="-openMBV"/>
+      <xs:enumeration value="+generalizedLinkForce"/>
+      <xs:enumeration value="-generalizedLinkForce"/>
+      <xs:enumeration value="+linkKinematics"/>
+      <xs:enumeration value="-linkKinematics"/>
+      <xs:enumeration value="+stopVector"/>
+      <xs:enumeration value="-stopVector"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="ObjectReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Object\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Object\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="DynamicSystemReferenceType">
+  <xs:simpleType name="GroupReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*DynamicSystem\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Group\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="LinkReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*Link\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Link\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="OrderOneDynamicsReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|DynamicSystem\[X\])/)*OrderOneDynamics\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*OrderOneDynamics\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*OrderOneDynamics\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*OrderOneDynamics\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="FrameReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Frame\[X\]" with
+      <!-- pattern value="/?((\.\.|Object\[X\]|Group\[X\])/)*Frame\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
   <xs:simpleType name="ContourReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Object\[X\]|DynamicSystem\[X\])/)*Contour\[X\]" with
+      <!-- pattern value="/?((\.\.|Object\[X\]|Group\[X\])/)*Contour\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|DynamicSystem\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -296,7 +300,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>  
-                <xs:element ref="DynamicSystem">
+                <xs:element ref="Group">
                   <xs:annotation>
                     <xs:documentation xml:lang="de">
                       Lokale Definition.
@@ -472,7 +476,24 @@
   <xs:element name="Body" substitutionGroup="Object" type="BodyType">
     <xs:annotation>
       <xs:documentation>
-        The following part is only a test for equation and image output for the XML documentation FROM XSM SCHEMA. A not inline equation
+        The following <h:b>part</h:b> is <h:i>only</h:i> a test for <h:tt>equation</h:tt> and image output for the XML documentation FROM XSM SCHEMA.
+        <h:p>A paragraph with a line break<h:br/>here</h:p>
+        <h:p>Other paragraph with a definition list:</h:p>
+        <h:dl>
+          <h:dt>Def1</h:dt><h:dd>The description of Def1</h:dd>
+          <h:dt>Def2</h:dt><h:dd>The description of Def2</h:dd>
+        </h:dl>
+        A unordered list
+        <h:ul>
+          <h:li>Item 1</h:li>
+          <h:li>Item 2</h:li>
+        </h:ul>
+        and a ordered list
+        <h:ol>
+          <h:li>Item 1</h:li>
+          <h:li>Item 2</h:li>
+        </h:ol>
+        A not inline equation
         <h:div class="eqn"><h:img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></h:div>
         And a inline equation <h:img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
         <h:div class="htmlfigure"><h:table>

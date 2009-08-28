@@ -639,14 +639,14 @@ namespace MBSim {
       /**
        * \param dynamic system to add
        */
-      void addDynamicSystem(DynamicSystem *dynamicsystem);
+      void addGroup(DynamicSystem *dynamicsystem);
 
       /**
        * \param name of the dynamic system
        * \param check for existence of dynamic system
        * \return dynamic system
        */
-      DynamicSystem* getDynamicSystem(const std::string &name,bool check=true);
+      DynamicSystem* getGroup(const std::string &name,bool check=true);
 
       /**
        * \param object to add
@@ -709,7 +709,7 @@ namespace MBSim {
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
       virtual Object *getObjectByPath(std::string path);
-      virtual DynamicSystem *getDynamicSystemByPath(std::string path);
+      virtual DynamicSystem *getGroupByPath(std::string path);
       virtual Link *getLinkByPath(std::string path);
       virtual OrderOneDynamics *getOrderOneDynamicsByPath(std::string path);
       virtual Frame *getFrameByPath(std::string path);

@@ -335,7 +335,7 @@ namespace MBSim {
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->closePlot();
 
-      if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
+      if(getPlotFeature(separateFilePerGroup)==enabled)
         delete (H5::FileSerie*)plotGroup;
       else
         delete (H5::Group*)plotGroup;
@@ -372,7 +372,7 @@ namespace MBSim {
         updatePlotFeatures(parent);
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        if(getPlotFeature(separateFilePerDynamicSystem)==enabled) {
+        if(getPlotFeature(separateFilePerGroup)==enabled) {
           // create symbolic link in parent plot file if exist
           if(parent) H5Lcreate_external((getPath()+".mbsim.h5").c_str(), "/",
               parent->getPlotGroup()->getId(), name.c_str(),
@@ -390,7 +390,7 @@ namespace MBSim {
         openMBVGrp=new OpenMBV::Group();
         openMBVGrp->setName(name);
         if(parent) parent->openMBVGrp->addObject(openMBVGrp);
-        if(getPlotFeature(separateFilePerDynamicSystem)==enabled)
+        if(getPlotFeature(separateFilePerGroup)==enabled)
           openMBVGrp->setSeparateFile(true);
 #endif
 
@@ -1237,7 +1237,7 @@ namespace MBSim {
     return -1;
   }
 
-  DynamicSystem* DynamicSystem::getDynamicSystem(const string &name, bool check) {
+  DynamicSystem* DynamicSystem::getGroup(const string &name, bool check) {
     unsigned int i;
     for(i=0; i<dynamicsystem.size(); i++) {
       if(dynamicsystem[i]->getName() == name)
@@ -1349,10 +1349,10 @@ namespace MBSim {
     return NULL;
   }
 
-  void DynamicSystem::addDynamicSystem(DynamicSystem *sys) {
-    if(getDynamicSystem(sys->getName(),false)) {
+  void DynamicSystem::addGroup(DynamicSystem *sys) {
+    if(getGroup(sys->getName(),false)) {
       cout << "ERROR (DynamicSystem::addDynamicSystem): The DynamicSystem " << name << " can only comprise one DynamicSystem by the name " <<  sys->getName() << "!" << endl;
-      assert(getDynamicSystem(sys->getName(),false) == NULL); 
+      assert(getGroup(sys->getName(),false) == NULL); 
     }
     dynamicsystem.push_back(sys);
     sys->setParent(this);
@@ -1384,31 +1384,31 @@ namespace MBSim {
       return parent->getObjectByPath(restPart);
     else if(firstPart.substr(0,7)=="Object[")
       return getObject(firstPart.substr(7,firstPart.find(']')-7));
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getObjectByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getObjectByPath(restPart);
     else
       return 0;
   }
 
-  DynamicSystem *DynamicSystem::getDynamicSystemByPath(std::string path) {
+  DynamicSystem *DynamicSystem::getGroupByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
     // absolut path
     if(i==0) {
       if(parent)
-        return parent->getDynamicSystemByPath(path);
+        return parent->getGroupByPath(path);
       else
-        return getDynamicSystemByPath(path.substr(1));
+        return getGroupByPath(path.substr(1));
     }
     // relative path
     string firstPart=path.substr(0, i);
     string restPart=path.substr(i+1);
     if(firstPart=="..")
-      return parent->getDynamicSystemByPath(restPart);
-    else if(firstPart.substr(0,14)=="DynamicSystem[" && restPart=="")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14));
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getDynamicSystemByPath(restPart);
+      return parent->getGroupByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[" && restPart=="")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6));
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getGroupByPath(restPart);
     else
       return 0;
   }
@@ -1430,8 +1430,8 @@ namespace MBSim {
       return parent->getLinkByPath(restPart);
     else if(firstPart.substr(0,5)=="Link[")
       return getLink(firstPart.substr(5,firstPart.find(']')-5));
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getLinkByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getLinkByPath(restPart);
     else
       return 0;
   }
@@ -1453,8 +1453,8 @@ namespace MBSim {
       return parent->getOrderOneDynamicsByPath(restPart);
     else if(firstPart.substr(0,17)=="OrderOneDynamics[")
       return getOrderOneDynamics(firstPart.substr(17,firstPart.find(']')-17));
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getOrderOneDynamicsByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getOrderOneDynamicsByPath(restPart);
     else
       return 0;
   }
@@ -1478,8 +1478,8 @@ namespace MBSim {
       return getFrame(firstPart.substr(6,firstPart.find(']')-6));
     else if(firstPart.substr(0,7)=="Object[")
       return getObject(firstPart.substr(7,firstPart.find(']')-7))->getFrameByPath(restPart);
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getFrameByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getFrameByPath(restPart);
     else
       return 0;
   }
@@ -1503,8 +1503,8 @@ namespace MBSim {
       return getObject(firstPart.substr(7,firstPart.find(']')-7))->getContourByPath(restPart);
     else if(firstPart.substr(0,8)=="Contour[")
       return getContour(firstPart.substr(8,firstPart.find(']')-8));
-    else if(firstPart.substr(0,14)=="DynamicSystem[")
-      return getDynamicSystem(firstPart.substr(14,firstPart.find(']')-14))->getContourByPath(restPart);
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getContourByPath(restPart);
     else
       return 0;
   }

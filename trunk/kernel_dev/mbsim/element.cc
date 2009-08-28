@@ -99,7 +99,7 @@ namespace MBSim {
       if(e->Attribute("feature")[0]=='+') status=enabled; else status=disabled;
       PlotFeature feature=plotRecursive;
       if(string(e->Attribute("feature")).substr(1)=="plotRecursive") feature=plotRecursive;
-      if(string(e->Attribute("feature")).substr(1)=="separateFilePerDynamicSystem") feature=separateFilePerDynamicSystem;
+      if(string(e->Attribute("feature")).substr(1)=="separateFilePerGroup") feature=separateFilePerGroup;
       if(string(e->Attribute("feature")).substr(1)=="state") feature=state;
       if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
       if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;

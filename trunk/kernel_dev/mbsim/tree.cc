@@ -151,7 +151,7 @@ namespace MBSim {
   }
 
   Node* Tree::addTree(Node* tree, Tree *sys) {
-    DynamicSystem::addDynamicSystem(sys);
+    DynamicSystem::addGroup(sys);
 
     Node *node = new Node(sys);
     if(tree)

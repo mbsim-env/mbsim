@@ -57,7 +57,7 @@ namespace MBSim {
   // and in
   // mbsimxml/schema/mbsim.xsd.in
   enum PlotFeature {
-    plotRecursive=0, separateFilePerDynamicSystem, state, stateDerivative, rightHandSide, globalPosition, energy, openMBV, generalizedLinkForce, linkKinematics, stopVector, LASTPLOTFEATURE
+    plotRecursive=0, separateFilePerGroup, state, stateDerivative, rightHandSide, globalPosition, energy, openMBV, generalizedLinkForce, linkKinematics, stopVector, LASTPLOTFEATURE
   };
 
   /** \brief The stages of the initialization
