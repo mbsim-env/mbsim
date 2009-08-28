@@ -28,7 +28,7 @@ namespace MBSim {
   SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_) : amplitude(amplitude_), frequency(frequency_), phase(phase_) {
     check();
   }
-  Vec SinusFunction1_VS::operator()(const double& tVal) {
+  Vec SinusFunction1_VS::operator()(const double& tVal, const void *) {
     for (int i=0; i<ySize; i++)
       y(i)=amplitude(i)*sin(2.*M_PI*frequency(i)*tVal+phase(i));
     return y;
@@ -55,7 +55,7 @@ namespace MBSim {
   }
 
 
-  Vec PositiveSinusFunction1_VS::operator()(const double& tVal) {
+  Vec PositiveSinusFunction1_VS::operator()(const double& tVal, const void *) {
     Vec y=SinusFunction1_VS::operator()(tVal);
     for (int i=0; i<ySize; i++)
       if (y(i)<0)
@@ -64,7 +64,7 @@ namespace MBSim {
   }
 
 
-  Vec StepFunction1_VS::operator()(const double& tVal) {
+  Vec StepFunction1_VS::operator()(const double& tVal, const void *) {
     Vec y(ySize, fmatvec::INIT, 0);
     for (int i=0; i<ySize; i++)
       if (tVal>=stepTime(i))
@@ -99,7 +99,7 @@ namespace MBSim {
     check();
   }
 
-  Vec TabularFunction1_VS::operator()(const double& xVal) {
+  Vec TabularFunction1_VS::operator()(const double& xVal, const void *) {
     int i=xIndexOld;
     if (xVal<=x(0)) {
       xIndexOld=0;
@@ -132,7 +132,7 @@ namespace MBSim {
   }
 
 
-  Vec PeriodicTabularFunction1_VS::operator()(const double& xVal) {
+  Vec PeriodicTabularFunction1_VS::operator()(const double& xVal, const void *) {
     double xValTmp=xVal;
     while (xValTmp<xMin)
       xValTmp+=xDelta;

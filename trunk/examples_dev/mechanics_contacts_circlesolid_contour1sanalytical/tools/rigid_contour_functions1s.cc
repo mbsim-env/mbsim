@@ -104,7 +104,7 @@ void FuncCrPC::init(double alpha) {
   Cb = Cb/nrm2(Cb);  
 }
 
-Vec FuncCrPC::operator()(const double& alpha){
+Vec FuncCrPC::operator()(const double& alpha, const void *){
   Vec f(3,INIT);
   double alphaLoc=fmod(alpha, 2.*M_PI);
   if(alphaLoc<0) 

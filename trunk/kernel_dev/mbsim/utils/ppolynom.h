@@ -153,7 +153,7 @@ namespace MBSim {
           ZerothDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vec operator()(const double& x);
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
           /***************************************************/
 
         private:
@@ -168,7 +168,7 @@ namespace MBSim {
           FirstDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vec operator()(const double& x);
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
           /***************************************************/
 
         private:
@@ -183,7 +183,7 @@ namespace MBSim {
           SecondDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
 
           /* INHERITED INTERFACE OF FUNCTION */
-          fmatvec::Vec operator()(const double& x);
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
           /***************************************************/
 
         private:

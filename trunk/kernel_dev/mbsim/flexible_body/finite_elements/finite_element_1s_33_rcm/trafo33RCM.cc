@@ -36,7 +36,7 @@ namespace MBSim {
 
   PositionFunction::~PositionFunction() {}
 
-  Vec PositionFunction::operator()(const Vec& pos) {			
+  Vec PositionFunction::operator()(const Vec& pos, const void *) {			
     Vec pS = pos(0,2);
 
     Vec nS = angle->computen(pS);
@@ -69,7 +69,7 @@ namespace MBSim {
 
   PositionJacobian::~PositionJacobian() {}
 
-  SqrMat PositionJacobian::operator()(const Vec& pos) {			
+  SqrMat PositionJacobian::operator()(const Vec& pos, const void *) {			
     Vec pS = pos(0,2);
 
     Vec nS = angle->computen(pS);

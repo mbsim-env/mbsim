@@ -33,7 +33,7 @@ namespace MBSim {
     class Function1 {
       public:
         virtual ~Function1() {}
-        virtual Ret operator()(const Arg& x)=0;
+        virtual Ret operator()(const Arg& x, const void * =NULL)=0;
         virtual void initializeUsingXML(TiXmlElement *element) {}
     };
 
@@ -44,7 +44,7 @@ namespace MBSim {
     class Function2 {
       public:
         virtual ~Function2() {}
-        virtual Ret operator()(const Arg1& p1, const Arg2& p2)=0;
+        virtual Ret operator()(const Arg1& p1, const Arg2& p2, const void * =NULL)=0;
         virtual void initializeUsingXML(TiXmlElement *element) {}
     };
 
@@ -55,7 +55,7 @@ namespace MBSim {
     class Function3 {
       public:
         virtual ~Function3() {}
-        virtual Ret operator()(const Arg1& p1, const Arg2& p2, const Arg3& p3)=0;
+        virtual Ret operator()(const Arg1& p1, const Arg2& p2, const Arg3& p3, const void * =NULL)=0;
         virtual void initializeUsingXML(TiXmlElement *element) {}
     };
 
@@ -76,7 +76,7 @@ namespace MBSim {
         virtual ~DifferentiableFunction1() { for(unsigned int i=1;i<derivatives.size();i++) delete derivatives[i]; }
 
         /* INHERITED INTERFACE OF FUNCTION1 */
-        virtual Ret operator()(const double& x) { assert(derivatives.size()>0); return (getDerivative(0))(x); }
+        virtual Ret operator()(const double& x, const void * =NULL) { assert(derivatives.size()>0); return (getDerivative(0))(x); }
         /***************************************************/
 
         /**
@@ -112,7 +112,7 @@ namespace MBSim {
         ConstantFunction1() {}
         ConstantFunction1(Ret c_) : c(c_) {}
         void setValue(Ret c_) { c=c_; }
-        Ret operator()(const Arg& p) { return c; }
+        Ret operator()(const Arg& p, const void * =NULL) { return c; }
         void initializeUsingXML(TiXmlElement *element) {
           Function1<Ret,Arg>::initializeUsingXML(element);
           TiXmlElement *e;
@@ -130,7 +130,7 @@ namespace MBSim {
         ConstantFunction1() {}
         ConstantFunction1(double c_) : c(c_) {}
         void setValue(double c_) { c=c_; }
-        double operator()(const Arg& p) { return c; }
+        double operator()(const Arg& p, const void * =NULL) { return c; }
         void initializeUsingXML(TiXmlElement *element) {
           Function1<double,Arg>::initializeUsingXML(element);
           TiXmlElement *e;
@@ -148,7 +148,7 @@ namespace MBSim {
         ConstantFunction2() {}
         ConstantFunction2(Ret c_) : c(c_) {}
         void setValue(Ret c_) { c=c_; }
-        Ret operator()(const Arg1& p1, const Arg2& p2) { return c; }
+        Ret operator()(const Arg1& p1, const Arg2& p2, const void * =NULL) { return c; }
         void initializeUsingXML(TiXmlElement *element) {
           Function2<Ret,Arg1,Arg2>::initializeUsingXML(element);
           TiXmlElement *e;
@@ -165,7 +165,7 @@ namespace MBSim {
       LinearSpringDamperForce() {}
       LinearSpringDamperForce(double c_, double d_, double l0_) : c(c_), d(d_), l0(l0_) {}
       void setParameters(double c_, double d_, double l0_) { c=c_; d=d_; l0=l0_; }
-      double operator()(const double& g, const double& gd) { return c*(g-l0) + d*gd; }
+      double operator()(const double& g, const double& gd, const void * =NULL) { return c*(g-l0) + d*gd; }
       void initializeUsingXML(TiXmlElement *element);
 
     protected:
@@ -177,7 +177,7 @@ namespace MBSim {
       NonlinearSpringDamperForce() {}
       NonlinearSpringDamperForce(Function1<fmatvec::Vec, double> * gForceFun_, Function1<fmatvec::Vec, double> * gdForceFun_) : gForceFun(gForceFun_), gdForceFun(gdForceFun_) {}
       void setParameters(Function1<fmatvec::Vec, double> * gForceFun_, Function1<fmatvec::Vec, double> * gdForceFun_) { gForceFun=gForceFun_; gdForceFun=gdForceFun_; }
-      double operator()(const double& g, const double& gd) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
+      double operator()(const double& g, const double& gd, const void * =NULL) { return (*gForceFun)(g)(0) + (*gdForceFun)(gd)(0); }
       void initializeUsingXML(TiXmlElement *element);
 
     protected:
@@ -191,7 +191,7 @@ namespace MBSim {
         ConstantFunction2() {}
         ConstantFunction2(double c_) : c(c_) {}
         void setValue(double c_) { c=c_; }
-        double operator()(const Arg1& p1, const Arg2& p2) { return c; }
+        double operator()(const Arg1& p1, const Arg2& p2, const void * =NULL) { return c; }
         void initializeUsingXML(TiXmlElement *element) {
           Function2<double,Arg1,Arg2>::initializeUsingXML(element);
           TiXmlElement *e;
@@ -208,7 +208,7 @@ namespace MBSim {
       LinearRegularizedUnilateralConstraint() : c(0), d(0) {}
       LinearRegularizedUnilateralConstraint(double c_, double d_) : c(c_), d(d_) {}
       void setParameter(double c_, double d_) { c=c_; d=d_; }
-      double operator()(const double& g, const double& gd) { 
+      double operator()(const double& g, const double& gd, const void * =NULL) { 
         if(g>0)
           return 0;
         else if(gd<0) 
@@ -227,7 +227,7 @@ namespace MBSim {
       LinearRegularizedBilateralConstraint() : c(0), d(0) {}
       LinearRegularizedBilateralConstraint(double c_, double d_) : c(c_), d(d_) {}
       void setParameter(double c_, double d_) { c=c_; d=d_; }
-      double operator()(const double& g, const double& gd) { 
+      double operator()(const double& g, const double& gd, const void * =NULL) { 
         return -c*g - d*gd;
       }
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -252,7 +252,7 @@ namespace MBSim {
     public:
       LinearRegularizedPlanarCoulombFriction() : LinearRegularizedCoulombFriction() {}
       LinearRegularizedPlanarCoulombFriction(double mu_, double gdLim_=0.01) : LinearRegularizedCoulombFriction(mu_, gdLim_) {}
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) { 
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL) { 
         if(fabs(gd(0)) < gdLim)
           return fmatvec::Vec(1,fmatvec::INIT,-laN*mu*gd(0)/gdLim);
         else
@@ -264,7 +264,7 @@ namespace MBSim {
     public:
       LinearRegularizedSpatialCoulombFriction() : LinearRegularizedCoulombFriction() {}
       LinearRegularizedSpatialCoulombFriction(double mu_, double gdLim_=0.01) : LinearRegularizedCoulombFriction(mu_, gdLim_) {}
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) { 
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL) { 
         double normgd = nrm2(gd);
         if(normgd < gdLim)
           return gd*(-laN*mu/gdLim);
@@ -279,7 +279,7 @@ namespace MBSim {
       LinearRegularizedPlanarStribeckFriction(double gdLim_, Function1<double,double> *fmu_) : gdLim(gdLim_), fmu(fmu_) {}
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       void setFrictionFunction(Function1<double,double> *fmu_) { fmu=fmu_; }
-      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN);
+      fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:

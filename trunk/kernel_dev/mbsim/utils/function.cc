@@ -76,7 +76,7 @@ namespace MBSim {
     mu=atof(e->GetText());
   }
 
-  Vec LinearRegularizedPlanarStribeckFriction::operator()(const Vec &gd, const double& laN) { 
+  Vec LinearRegularizedPlanarStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) { 
     int nFric = gd.size();
     Vec la(nFric,NONINIT);
     double normgd = nrm2(gd(0,nFric-1));

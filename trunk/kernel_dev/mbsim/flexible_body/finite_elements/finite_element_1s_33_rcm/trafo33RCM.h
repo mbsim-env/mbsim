@@ -51,7 +51,7 @@ namespace MBSim {
       virtual ~PositionFunction();
       
       /* INHERITED INTERFACE */
-      fmatvec::Vec operator()(const fmatvec::Vec& pos);
+      fmatvec::Vec operator()(const fmatvec::Vec& pos, const void * =NULL);
       /***************************************************/
 
     private:
@@ -103,7 +103,7 @@ namespace MBSim {
       virtual ~PositionJacobian();
       
       /* INHERITED INTERFACE */
-      fmatvec::SqrMat operator()(const fmatvec::Vec &pos);
+      fmatvec::SqrMat operator()(const fmatvec::Vec &pos, const void * =NULL);
       /***************************************************/
 
     private:
