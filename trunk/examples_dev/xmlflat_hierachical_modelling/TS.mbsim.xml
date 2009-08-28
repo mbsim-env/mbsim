@@ -18,7 +18,7 @@
             <RigidBody name="Box1">
               <initialGeneralizedPosition>[0.95]</initialGeneralizedPosition>
               <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
-              <frameOfReference ref="/DynamicSystem[Hauptgruppe1]/DynamicSystem[Untergruppe]/Frame[I]"/>
+              <frameOfReference ref="/Group[Hauptgruppe1]/Group[Untergruppe]/Frame[I]"/>
               <frameForKinematics ref="Frame[C]"/>
               <mass>5</mass>
               <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
@@ -164,7 +164,7 @@
     </Group>
     <Group name="Hauptgruppe2">
       <plotFeatureRecursive feature="+stateDerivative"/>
-      <plotFeature feature="+separateFilePerDynamicSystem"/>
+      <plotFeature feature="+separateFilePerGroup"/>
       <position>[2;0;0]</position>
       <orientation>[0.707106781186548,0.707106781186548,0 ; -0.707106781186548,0.707106781186548,0 ; 0,0,1]</orientation>
       <frames/>

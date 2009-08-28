@@ -44,7 +44,7 @@ Group2::Group2(const string &name) : Group(name) {
   A(1,0) = -sin(a);
   group->setPosition(r);
   group->setOrientation(A);
-  addDynamicSystem(group);
+  addGroup(group);
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

@@ -14,9 +14,9 @@ int main(int argc, char *argv[]) {
   bool reorganize = true;
 
   DynamicSystemSolver *sys = new DynamicSystemSolver("MBS");
-  sys->addDynamicSystem(new System(0,reorganize));
-  sys->addDynamicSystem(new System(1,reorganize));
-  sys->addDynamicSystem(new System(2,reorganize));
+  sys->addGroup(new System(0,reorganize));
+  sys->addGroup(new System(1,reorganize));
+  sys->addGroup(new System(2,reorganize));
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
   sys->setConstraintSolver(LinearEquations);
