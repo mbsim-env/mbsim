@@ -38,7 +38,7 @@ namespace MBSim {
       virtual ~UserFunctionContour1s() {};
       virtual void init(double alpha) {};
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); }
-      virtual fmatvec::Vec operator()(const double& alpha) = 0;
+      virtual fmatvec::Vec operator()(const double& alpha, const void * =NULL) = 0;
       virtual fmatvec::Vec diff1(const double& alpha) = 0; // { return (operator()(t+delta)-operator()(t-delta))/(2.0*delta); }    
       virtual fmatvec::Vec diff2(const double& alpha) = 0; // {return (operator()(t+sqrtdelta)+operator()(t-sqrtdelta)-2*operator()(t))/(sqrtdelta*sqrtdelta); }
       virtual fmatvec::Vec computeN(const double& alpha) { fmatvec::Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N/nrm2(N); }

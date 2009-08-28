@@ -17,7 +17,7 @@ class FuncCrPC : public MBSim::UserFunctionContour1s {
     
     void setYZ(const fmatvec::Mat& YZ, int discretization=1, fmatvec::Vec rYZ=fmatvec::Vec(3, fmatvec::INIT, 0));
     
-    fmatvec::Vec operator()(const double& alpha); // Vektor vom P nach C
+    fmatvec::Vec operator()(const double& alpha, const void * =NULL); // Vektor vom P nach C
     fmatvec::Vec diff1(const double& alpha); // Tangente in C
     fmatvec::Vec diff2(const double& alpha); // 2. Ableitung in C
 

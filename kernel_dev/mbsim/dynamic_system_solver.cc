@@ -296,9 +296,9 @@ namespace MBSim {
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
       updatezdRef(zdParent);
-      updatelaRef(laParent);
-      updategRef(gParent);
-      updategdRef(gdParent);
+      updatelaRef(laParent); // TODO why double?
+      updategRef(gParent); // TODO why double?
+      updategdRef(gdParent); // TODO why double?
       updatehRef(hParent,hObjectParent,hLinkParent);
       updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
       updatedhduRef(dhduObjectParent,dhduLinkParent);
@@ -307,9 +307,9 @@ namespace MBSim {
       updateWRef(WParent);
       updateVRef(VParent);
       updatewbRef(wbParent);
-      updategRef(gParent);
-      updategdRef(gdParent);
-      updatelaRef(laParent);
+      updategRef(gParent); // TODO why double?
+      updategdRef(gdParent); // TODO why double?
+      updatelaRef(laParent); // TODO why double?
       if(impactSolver==RootFinding) updateresRef(resParent);
       updaterFactorRef(rFactorParent);
   

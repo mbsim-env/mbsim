@@ -29,7 +29,7 @@ namespace MBSim {
       Function1_VS_to_SS() {}
       Function1_VS_to_SS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
       void setFunction(Function1<fmatvec::Vec, double> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
-      double operator()(const double& x) {return (*fun)(x)(0); }
+      double operator()(const double& x, const void * =NULL) {return (*fun)(x)(0); }
     private:
       Function1<fmatvec::Vec, double> * fun;
   };
@@ -38,7 +38,7 @@ namespace MBSim {
     public:
       SinusFunction1_VS() {}
       SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
-      fmatvec::Vec operator()(const double& tVal);
+      fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element);
     protected:
       int ySize;
@@ -52,7 +52,7 @@ namespace MBSim {
     public:
       PositiveSinusFunction1_VS() {}
       PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase) : SinusFunction1_VS(amplitude, frequency, phase) {}
-      fmatvec::Vec operator()(const double& tVal);
+      fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element) {
         SinusFunction1_VS::initializeUsingXML(element);
       }
@@ -65,7 +65,7 @@ namespace MBSim {
       StepFunction1_VS(fmatvec::Vec stepTime_, fmatvec::Vec stepSize_) : stepTime(stepTime_), stepSize(stepSize_) {
         check();
       }
-      fmatvec::Vec operator()(const double& tVal);
+      fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element);
     private:
       fmatvec::Vec stepTime, stepSize;
@@ -80,7 +80,7 @@ namespace MBSim {
       TabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : x(x_), y(y_), xIndexOld(0) {
         check();
       }
-      fmatvec::Vec operator()(const double& xVal);
+      fmatvec::Vec operator()(const double& xVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element);
     protected:
       fmatvec::Vec x;
@@ -97,7 +97,7 @@ namespace MBSim {
       PeriodicTabularFunction1_VS(fmatvec::Vec x_, fmatvec::Mat y_) : TabularFunction1_VS(x_, y_) {
         check();
       }
-      fmatvec::Vec operator()(const double& xVal);
+      fmatvec::Vec operator()(const double& xVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element) {
         TabularFunction1_VS::initializeUsingXML(element);
         check();
@@ -123,7 +123,7 @@ namespace MBSim {
         functions.push_back(function);
         factors.push_back(factor);
       }
-      fmatvec::Vec operator()(const double& tVal) {
+      fmatvec::Vec operator()(const double& tVal, const void * =NULL) {
         fmatvec::Vec y=factors[0]*(*(functions[0]))(tVal);
         for (unsigned int i=1; i<functions.size(); i++)
           y+=factors[i]*(*(functions[i]))(tVal);

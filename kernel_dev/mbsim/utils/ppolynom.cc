@@ -192,7 +192,7 @@ namespace MBSim {
     coefs.push_back(a);
   }
 
-  Vec PPolynom::ZerothDerivative::operator()(const double& x) {
+  Vec PPolynom::ZerothDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -210,7 +210,7 @@ namespace MBSim {
     return yi.copy();
   }
 
-  Vec PPolynom::FirstDerivative::operator()(const double& x) {
+  Vec PPolynom::FirstDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
@@ -228,7 +228,7 @@ namespace MBSim {
     return yi.copy();
   }
 
-  Vec PPolynom::SecondDerivative::operator()(const double& x) {
+  Vec PPolynom::SecondDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
