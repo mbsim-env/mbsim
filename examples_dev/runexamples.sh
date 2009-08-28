@@ -66,8 +66,8 @@ if [ $# -eq 1 ]; then
     exit
   fi
   if [ "$1" = "validateXML" ]; then
-    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsim_root.xsd
-    find -maxdepth 2 -name "*.ombv.xml" | xargs xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR openmbvcppinterface)/openmbv.xsd
+    find -maxdepth 2 -name "*.ombv.xml" | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR openmbvcppinterface)/openmbv.xsd
+    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsim_root.xsd
     exit
   fi
   if cd $1 &> /dev/null; then
