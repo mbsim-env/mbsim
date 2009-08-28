@@ -35,7 +35,7 @@ using namespace std;
 
 namespace MBSim {
 
-  HydNodeMec::HydNodeMec(const string &name) : HydNode(name), QMec(1)
+  HydNodeMec::HydNodeMec(const string &name) : HydNode(name), QMecTrans(0), QMecRot(0), QMec(0), V0(0), nTrans(0), nRot(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVArrowSize(0)
 #endif
@@ -419,18 +419,8 @@ namespace MBSim {
   }
 
 
-  double HydNodeMecElastic::calcBulkModulus(double p) {
-    if(p<=0.1) {
-      cout << "HydraulicEnvironment: pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
-      p=0.1;
-    }
-    // Umdruck zur Vorlesung
-    // Grundlagen der Oelhydraulik
-    // W.Backe
-    // H.Murrenhoff
-    // 10. Auflage 1994
-    // Formel (3-11), S. 103
-    return factor[0]/(1.+factor[1]*pow(p, factor[2]));
+  HydNodeMecElastic::~HydNodeMecElastic() {
+    delete bulkModulus;
   }
 
   void HydNodeMecElastic::init(InitStage stage) {
@@ -458,10 +448,8 @@ namespace MBSim {
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
-      factor[0]=E0*(1.+fracAir);
-      factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
-      factor[2]=-(1.+1./kappa);
-      E=calcBulkModulus(la(0));
+      bulkModulus = new OilBulkModulus(name, E0, pinf, kappa, fracAir);
+      E=(*bulkModulus)(la(0));
     }
     else
       HydNodeMec::init(stage);
@@ -474,13 +462,13 @@ namespace MBSim {
 
   void HydNodeMecElastic::updatexd(double t) {
     HydNodeMec::updatexd(t);
-    E=calcBulkModulus(la(0));
+    E=(*bulkModulus)(la(0));
     xd(1)=-E/x(0)*gd(0);
   }
 
   void HydNodeMecElastic::updatedx(double t, double dt) {
     HydNodeMec::updatedx(t, dt);
-    E=calcBulkModulus(la(0));
+    E=(*bulkModulus)(la(0));
     xd(1)=-E/x(0)*gd(0)*dt;
   }
 

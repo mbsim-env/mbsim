@@ -17,9 +17,9 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "hydnode.h"
-#include "hydline.h"
-#include "environment.h"
+#include "mbsimHydraulics/hydnode.h"
+#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 
@@ -33,14 +33,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydNode::HydNode(const string &name) : Link(name)
+  HydNode::HydNode(const string &name) : Link(name), QHyd(0), nLines(0)
 # ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , openMBVGrp(NULL), openMBVSphere(NULL)
+                                         , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
 #endif
                                          {
-                                           setPlotFeature(state, enabled);
-                                           setPlotFeature(stateDerivative, enabled);
-                                           setPlotFeature(rightHandSide, enabled);
                                          }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -328,19 +325,9 @@ namespace MBSim {
       HydNode::init(stage);
   }
 
-
-  double HydNodeElastic::calcBulkModulus(double p) {
-    if(p<=0.1) {
-      cout << "HydNodeElastic " << name << ": pressure near zero! Continuing anyway, using p=0.1 Pa" << endl;
-      p=0.1;
-    }
-    // Umdruck zur Vorlesung
-    // Grundlagen der Oelhydraulik
-    // W.Backe
-    // H.Murrenhoff
-    // 10. Auflage 1994
-    // Formel (3-11), S. 103
-    return factor[0]/(1.+factor[1]*pow(p, factor[2]));
+  
+  HydNodeElastic::~HydNodeElastic() {
+    delete bulkModulus;
   }
 
   void HydNodeElastic::init(InitStage stage) {
@@ -363,10 +350,8 @@ namespace MBSim {
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
-      factor[0]=E0*(1.+fracAir);
-      factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
-      factor[2]=-(1.+1./kappa);
-      E=calcBulkModulus(la(0));
+      bulkModulus = new OilBulkModulus(name, E0, pinf, kappa, fracAir);
+      E=(*bulkModulus)(la(0));
     }
     else
       HydNode::init(stage);
@@ -378,12 +363,12 @@ namespace MBSim {
   }
 
   void HydNodeElastic::updatexd(double t) {
-    E=calcBulkModulus(la(0));
+    E=(*bulkModulus)(la(0));
     xd=-E/V*gd;
   }
 
   void HydNodeElastic::updatedx(double t, double dt) {
-    E=calcBulkModulus(la(0));
+    E=(*bulkModulus)(la(0));
     xd=-E/V*gd*dt;
   }
 

@@ -69,6 +69,34 @@ namespace MBSim {
       double getDynamicViscosity() {return nu*rho; }
   };
 
+  class OilBulkModulus {
+    public:
+      OilBulkModulus(const std::string &name, double E0, double pinf, double kappa, double fracAir) {
+        ownerName=name;
+        factor[0]=E0*(1.+fracAir);
+        factor[1]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
+        factor[2]=-(1.+1./kappa);
+      }
+      double operator()(const double &p) {
+        if(p<=0.1) {
+          std::cout << "OilBulkModulus of \"" << ownerName << "\": pressure near zero! Continuing anyway, using p=0.1 Pa" << std::endl;
+          return factor[0]/(1.+factor[1]*pow(.1, factor[2]));
+        }
+        else {
+          // Umdruck zur Vorlesung
+          // Grundlagen der Oelhydraulik
+          // W.Backe
+          // H.Murrenhoff
+          // 10. Auflage 1994
+          // Formel (3-11), S. 103
+          return factor[0]/(1.+factor[1]*pow(p, factor[2]));
+        }
+      }
+    private:
+      std::string ownerName;
+      double factor[3];
+  };
+
 }
 
 #endif

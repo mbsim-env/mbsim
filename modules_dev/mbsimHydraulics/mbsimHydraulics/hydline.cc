@@ -17,13 +17,13 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "hydline.h"
-#include "hydnode.h"
+#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/hydnode.h"
+#include "mbsimHydraulics/environment.h"
+#include "mbsimHydraulics/pressure_loss.h"
+#include "mbsimHydraulics/hydline_pressureloss.h"
 #include "mbsim/object.h"
-#include "hydline_closed.h"
-#include "environment.h"
-#include "pressure_loss.h"
-
+#include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
@@ -31,21 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydLineAbstract::HydLineAbstract(const string &name) : ObjectHydraulics(name) {
-    setPlotFeature(state, enabled);
-    setPlotFeature(stateDerivative, enabled);
-    setPlotFeature(rightHandSide, enabled);
-  }
-
-  HydLineAbstract::~HydLineAbstract() {
-  }
-
-  void HydLineAbstract::setFromNode(HydNode * nFrom_) {
-    nFrom=nFrom_;
-  }
-
-  void HydLineAbstract::setToNode(HydNode * nTo_) {
-    nTo=nTo_;
+  HydLineAbstract::HydLineAbstract(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0), frameOfReference(NULL) {
   }
 
   void HydLineAbstract::init(InitStage stage) {
@@ -59,34 +45,49 @@ namespace MBSim {
 
       Area=M_PI*d*d/4.;
       rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      if (!frameOfReference)
+        frameOfReference=parent->getFrame("I");
     }
     else
       ObjectHydraulics::init(stage);
   }
 
 
-  void HydLine::addPressureLoss(PressureLoss * dp_) {
-    pd.push_back(dp_);
-    if (dynamic_cast<PressureLossVar*>(dp_)) {
-      assert(pdVar==NULL);
-      pdVar=static_cast<PressureLossVar*>(dp_);
+  void HydLine::addPressureLoss(PressureLoss * dp) {
+    if (pressureLoss==NULL)
+      pressureLoss=new HydlinePressureloss(name+"/PressureLoss", this);
+    pressureLoss->addPressureLoss(dp);
+    if (dp->isUnilateral()) {
+      setvaluedPressureLoss.push_back(new HydlinePressureloss(name+"/UnilateralPressureLoss "+dp->getName(), this));
+      setvaluedPressureLoss.back()->addPressureLoss(dp);
+      setvaluedPressureLoss.back()->setUnilateral(true);
+    }
+    else if (dp->isBilateral()) {
+      setvaluedPressureLoss.push_back(new HydlinePressureloss(name+"/BilateralPressureLoss "+dp->getName(), this));
+      setvaluedPressureLoss.back()->addPressureLoss(dp);
+      setvaluedPressureLoss.back()->setBilateral(true);
     }
   }
 
   void HydLine::init(InitStage stage) {
-    if (stage==MBSim::unknownStage) {
+    if (stage==MBSim::preInit) {
+      if (pressureLoss)
+        parent->addLink(pressureLoss);
+      for (unsigned int i=0; i<setvaluedPressureLoss.size(); i++)
+        parent->addLink(setvaluedPressureLoss[i]);
+      HydLineAbstract::init(stage);
+    }
+    else if (stage==MBSim::unknownStage) {
       HydLineAbstract::init(stage);
       MFac=rho*l/Area;
-      for (unsigned int i=0; i<pd.size(); i++)
-        pd[i]->transferLineData(d, l);
     }
     else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Fluidflow [l/min]");
         plotColumns.push_back("Massflow [kg/min]");
-        plotColumns.push_back("p_Loss [bar]");
-        for (unsigned int i=0; i<pd.size(); i++)
-          pd[i]->initPlot(&plotColumns);
+        if (direction.size()>0)
+          plotColumns.push_back("pressureLoss due to gravity [bar]");
         HydLineAbstract::init(stage);
       }
     }
@@ -95,48 +96,18 @@ namespace MBSim {
   }
 
   void HydLine::updateh(double t) {
-    /* A simple fix for updating  variable pressure losses*/
-    if (pdVar)
-      pdVar->updateg(t);
-
-    pLossSum=0;
-    for (unsigned int i=0; i<pd.size(); i++)
-      pLossSum+=(*pd[i])(u(0));
-    h(0)-=pLossSum;
+    if (direction.size()>0)
+      pressureLossGravity=trans(frameOfReference->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*rho*l;
+    h(0)=pressureLossGravity;
   }
 
   void HydLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(u(0)*6e4);
-      plotVector.push_back(u(0)*rho*60);
-      plotVector.push_back(pLossSum*1e-5);
-      for (unsigned int i=0; i<pd.size(); i++)
-        pd[i]->plot(&plotVector);
+      plotVector.push_back(u(0)*rho*60.);
+      if (direction.size()>0)
+        plotVector.push_back(pressureLossGravity*1e-5);
       HydLineAbstract::plot(t, dt);
-    }
-  }
-
-
-  void HydLineValveBilateral::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
-      HydLine::init(stage);
-      closed = new HydlineClosedBilateral(name+".Closed", this);
-      parent->addLink(closed);
-    }
-    else if (stage==MBSim::unknownStage) {
-      HydLine::init(stage);
-      assert(pdVar);
-    }
-    else
-      HydLine::init(stage);
-  }
-
-
-  void HydLineCheckvalveUnilateral::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
-      HydLine::init(stage);
-      closed = new HydlineClosedUnilateral(name+".Closed", this);
-      parent->addLink(closed);
     }
   }
 

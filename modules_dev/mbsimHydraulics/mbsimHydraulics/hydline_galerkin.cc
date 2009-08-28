@@ -32,9 +32,6 @@ namespace MBSim {
   HydLineGalerkin::HydLineGalerkin(const string &name) : HydLineAbstract(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(Vec(0)), wA(Vec(0)), wE(Vec(0)), lambda(0), MatIntWWT(SymMat(0)), MatIntWSWST(SymMat(0)), K(SymMat(0)), D(SymMat(0)), N(SymMat(0)), Omega(SymMat(0)), phi(SqrMat(0,0)), ansatz(NULL), plotVecW(Mat(0,0)), plotVecWS(Mat(0,0)), QIn(1), QOut(1), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints(Vec(0)) {
   }
 
-  HydLineGalerkin::~HydLineGalerkin() {
-  }
-
   void HydLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
     if (l<=1e-4) {
       cout << "set length first!" << endl;
@@ -75,8 +72,12 @@ namespace MBSim {
     if (stage==MBSim::preInit) {
       HydLineAbstract::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      g=0; // TODO consider gravity
-      E=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+      g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+      double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
+      double kappa=HydraulicEnvironment::getInstance()->getKappa();
+      double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      OilBulkModulus bulkModulus(name, E0, pinf, kappa, fracAir);
+      E=bulkModulus(p0);
       k=rho*g*delta_h/l;
       MFac=Area*rho*MatIntWWT;
       K=Area*E*MatIntWSWST;
@@ -132,6 +133,7 @@ namespace MBSim {
     else if (stage==MBSim::unknownStage) {
       HydLineAbstract::init(stage);
       setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
+//      plotParameters();
     }
     else
       HydLineAbstract::init(stage);
@@ -165,27 +167,26 @@ namespace MBSim {
     }
   }
 
-  //  void HydLineGalerkin::plotParameters() {
-  //    HydLinkInertiaAbstract::plotParameters();
-  //    parafile << "mdim=" << mdim << endl;
-  //    parafile << "rho=" << rho << endl;
-  //    parafile << "g=" << g << endl;
-  //    parafile << "E=" << E << endl;
-  //    parafile << "k=" << k << endl;
-  //    parafile << "WInt=" << WInt << endl;
-  //    parafile << "wA=" << wA << endl;
-  //    parafile << "wE=" << wE << endl;
-  //    parafile << "MatIntWWT=" << MatIntWWT << endl;
-  //    parafile << "MatIntWSWST=" << MatIntWSWST << endl;
-  //    parafile << "M=" << M << endl;
-  //    parafile << "K=" << K << endl;
-  //    parafile << "D=" << D << endl;
-  //    parafile << "lambda=" << lambda << endl;
-  //    parafile << "Omega=" << Omega << endl;
-  //    parafile << "phi=" << phi << endl;
-  //    parafile << "N=" << N << endl;
-  //    parafile << "plotVecW=" << plotVecW << endl;
-  //    parafile << "plotVecWS=" << plotVecWS << endl;
-  //  }
+    void HydLineGalerkin::plotParameters() {
+      cout << "mdim=" << mdim << endl;
+      cout << "rho=" << rho << endl;
+      cout << "g=" << g << endl;
+      cout << "E=" << E << endl;
+      cout << "k=" << k << endl;
+      cout << "WInt=" << WInt << endl;
+      cout << "wA=" << wA << endl;
+      cout << "wE=" << wE << endl;
+      cout << "MatIntWWT=" << MatIntWWT << endl;
+      cout << "MatIntWSWST=" << MatIntWSWST << endl;
+      cout << "M=" << MFac << endl;
+      cout << "K=" << K << endl;
+      cout << "D=" << D << endl;
+      cout << "lambda=" << lambda << endl;
+      cout << "Omega=" << Omega << endl;
+      cout << "phi=" << phi << endl;
+      cout << "N=" << N << endl;
+      cout << "plotVecW=" << plotVecW << endl;
+      cout << "plotVecWS=" << plotVecWS << endl;
+    }
 
 }

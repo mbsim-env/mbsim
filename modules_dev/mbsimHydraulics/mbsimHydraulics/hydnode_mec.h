@@ -31,6 +31,7 @@ namespace MBSim {
 
   class Frame;
   class HydFluid;
+  class OilBulkModulus;
 
   struct connectedTransFrameStruct {
     MBSim::Frame * frame;
@@ -97,7 +98,7 @@ namespace MBSim {
 
   class HydNodeMecConstrained : public HydNodeMec {
     public:
-      HydNodeMecConstrained(const std::string &name) : HydNodeMec(name) {}
+      HydNodeMecConstrained(const std::string &name) : HydNodeMec(name), pFun(NULL) {}
       ~HydNodeMecConstrained() {};
       virtual std::string getType() const { return "HydNodeMecConstrained"; }
 
@@ -120,10 +121,11 @@ namespace MBSim {
       void init(InitStage stage);
   };
 
+
   class HydNodeMecElastic : public HydNodeMec {
     public:
-      HydNodeMecElastic(const std::string &name) : HydNodeMec(name) {}
-      ~HydNodeMecElastic() {};
+      HydNodeMecElastic(const std::string &name) : HydNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ~HydNodeMecElastic();
       virtual std::string getType() const { return "HydNodeElastic"; }
 
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
@@ -147,14 +149,13 @@ namespace MBSim {
       double fracAir;
       double p0;
 
-      double factor[3];
-      double calcBulkModulus(double p);
+      OilBulkModulus * bulkModulus;
   };
 
 
   class HydNodeMecRigid : public HydNodeMec {
     public:
-      HydNodeMecRigid(const std::string &name) : HydNodeMec(name) {}
+      HydNodeMecRigid(const std::string &name) : HydNodeMec(name), gdn(0) {}
       virtual std::string getType() const { return "HydNodeMecRigid"; }
 
       bool isSetValued() const {return true; }
