@@ -25,6 +25,8 @@
 
 namespace MBSim {
 
+  class DynamicSystem;
+
   /*!
    * \brief Signal
    * \author Markus Schneider
@@ -61,8 +63,13 @@ namespace MBSim {
       virtual fmatvec::Vec getSignal() = 0;
 
       virtual Signal * getSignalByPath(std::string path);
-
   };
+  
+  /*!
+   * \brief SignalByPath
+   * \author Markus Schneider
+   */
+  Signal * getSignalByPath(DynamicSystem * ds,  const std::string& path);
 
 }
 

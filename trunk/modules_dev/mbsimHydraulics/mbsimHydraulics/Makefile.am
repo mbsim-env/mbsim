@@ -7,7 +7,6 @@ libmbsimHydraulics_la_SOURCES = \
   hydline_galerkin.cc \
   hydnode.cc \
   hydnode_mec.cc \
-  object_hydraulics.cc \
   objectfactory.cc \
   environment.cc \
   pressure_loss.cc \

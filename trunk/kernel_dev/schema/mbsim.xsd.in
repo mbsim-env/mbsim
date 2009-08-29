@@ -452,7 +452,10 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" type="pv:lengthVector">
+          <!--
+          simple workaround for hydraulic lines, which don't have a q
+          -->
+          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:lengthVector">
             <xs:annotation>
               <xs:documentation xml:lang="de">
                 Inertiale Lage in den generalisierten Freiheitsgraden.
@@ -1422,6 +1425,28 @@
 
   <xs:element name="Function1_SS" abstract="true" type="Function1_SSType"/>
   <xs:complexType name="Function1_SSType"/>
+
+  <xs:element name="ConstantFunction1_SS" substitutionGroup="Function1_SS" type="ConstantFunction1_SSType"/>
+  <xs:complexType name="ConstantFunction1_SSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_SSType">
+        <xs:sequence>
+          <xs:element name="value" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType"/>
+  <xs:complexType name="Function1_SS_from_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_SSType">
+        <xs:sequence>
+          <xs:element ref="Function1_VS"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
 
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType"/>
   <xs:complexType name="Function1_VSType"/>

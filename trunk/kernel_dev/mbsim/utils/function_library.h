@@ -24,12 +24,13 @@
 
 namespace MBSim {
 
-  class Function1_VS_to_SS : public Function1<double, double> {
+  class Function1_SS_from_VS : public Function1<double, double> {
     public:
-      Function1_VS_to_SS() {}
-      Function1_VS_to_SS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
+      Function1_SS_from_VS() {}
+      Function1_SS_from_VS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
       void setFunction(Function1<fmatvec::Vec, double> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
       double operator()(const double& x, const void * =NULL) {return (*fun)(x)(0); }
+      void initializeUsingXML(TiXmlElement *element);
     private:
       Function1<fmatvec::Vec, double> * fun;
   };

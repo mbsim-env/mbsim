@@ -4,13 +4,25 @@
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSimHydraulics"
   xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:mbsimcontrol="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"/>
+
+  <xs:simpleType name="HydLineReferenceType">
+    <xs:restriction base="xs:token">
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Hydline\[X\]" with
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*HydLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType"/>
   <xs:complexType name="HydraulicEnvironmentType">
@@ -68,26 +80,392 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="HydNodeMecElastic" substitutionGroup="mbsim:Link" type="HydNodeMecElasticType"/>
-  <xs:complexType name="HydNodeMecElasticType">
+  <xs:element name="PressureLoss" abstract="true" type="PressureLossType"/>
+  <xs:complexType name="PressureLossType">
+    <xs:attribute name="name" type="pv:name" use="required"/>
+  </xs:complexType>
+
+  <xs:element name="PressureLossZeta" substitutionGroup="PressureLoss" type="PressureLossZetaType">
+  </xs:element>
+  <xs:complexType name="PressureLossZetaType">
+    <xs:complexContent>
+      <xs:extension base="PressureLossType">
+        <xs:sequence>
+          <xs:element name="zeta" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PressureLossLaminarTubeFlow" substitutionGroup="PressureLoss" type="PressureLossLaminarTubeFlowType">
+  </xs:element>
+  <xs:complexType name="PressureLossLaminarTubeFlowType">
+    <xs:complexContent>
+      <xs:extension base="PressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PressureLossCurveFit" substitutionGroup="PressureLoss" type="PressureLossCurveFitType">
+  </xs:element>
+  <xs:complexType name="PressureLossCurveFitType">
+    <xs:complexContent>
+      <xs:extension base="PressureLossType">
+        <xs:sequence>
+          <xs:element name="referenceDiameter" type="pv:nounitScalar"/>
+          <xs:element name="hydraulicDiameter" type="pv:nounitScalar"/>
+          <xs:element name="aPositive" type="pv:nounitScalar"/>
+          <xs:element name="bPositive" type="pv:nounitScalar"/>
+          <xs:element name="aNegative" type="pv:nounitScalar"/>
+          <xs:element name="bNegative" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="VariablePressureLossType"/>
+  <xs:complexType name="VariablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="PressureLossType">
+        <xs:sequence>
+          <xs:element name="checksizeSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="minimalChecksizeValue" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossAreaZeta" substitutionGroup="VariablePressureLoss" type="VariablePressureLossAreaZetaType"/>
+  <xs:complexType name="VariablePressureLossAreaZetaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossType">
+        <xs:sequence>
+          <xs:element name="zeta" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedVariablePressureLossAreaZeta" substitutionGroup="VariablePressureLossAreaZeta" type="RegularizedVariablePressureLossAreaZetaType"/>
+  <xs:complexType name="RegularizedVariablePressureLossAreaZetaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossAreaZetaType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossControlvalveAreaAlpha" substitutionGroup="VariablePressureLoss" type="VariablePressureLossControlvalveAreaAlphaType"/>
+  <xs:complexType name="VariablePressureLossControlvalveAreaAlphaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossType">
+        <xs:sequence>
+          <xs:element name="alpha" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedVariablePressureLossControlvalveAreaAlpha" substitutionGroup="VariablePressureLossControlvalveAreaAlpha" type="RegularizedVariablePressureLossControlvalveAreaAlphaType"/>
+  <xs:complexType name="RegularizedVariablePressureLossControlvalveAreaAlphaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossControlvalveAreaAlphaType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossCheckvalve" abstract="true" substitutionGroup="VariablePressureLoss" type="VariablePressureLossCheckvalveType"/>
+  <xs:complexType name="VariablePressureLossCheckvalveType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossType">
+        <xs:sequence>
+          <xs:element name="ballRadius" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossCheckvalveGamma" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveGammaType"/>
+  <xs:complexType name="VariablePressureLossCheckvalveGammaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveType">
+        <xs:sequence>
+          <xs:element name="alpha" type="pv:nounitScalar"/>
+          <xs:element name="gamma" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedVariablePressureLossCheckvalveGamma" substitutionGroup="VariablePressureLossCheckvalveGamma" type="RegularizedVariablePressureLossCheckvalveGammaType"/>
+  <xs:complexType name="RegularizedVariablePressureLossCheckvalveGammaType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveGammaType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossCheckvalveIdelchick" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveIdelchickType"/>
+  <xs:complexType name="VariablePressureLossCheckvalveIdelchickType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedVariablePressureLossCheckvalveIdelchick" substitutionGroup="VariablePressureLossCheckvalveIdelchick" type="RegularizedVariablePressureLossCheckvalveIdelchickType"/>
+  <xs:complexType name="RegularizedVariablePressureLossCheckvalveIdelchickType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveIdelchickType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ObjectHydraulics" substitutionGroup="mbsim:Object" abstract="true" type="ObjectHydraulicsType"/>
+  <xs:complexType name="ObjectHydraulicsType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ObjectType">
+        <!--
+        <xs:sequence>
+          <xs:element name="initialGeneralizedVelocity" type="pv:nounitScalar"/>
+          <xs:element ref="mbsim:frameOfReference"/>
+        </xs:sequence>
+        -->
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydLineAbstract" abstract="true" substitutionGroup="ObjectHydraulics" type="HydLineAbstractType"/>
+  <xs:complexType name="HydLineAbstractType">
+    <xs:complexContent>
+      <xs:extension base="ObjectHydraulicsType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="diameter" type="pv:lengthScalar">
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydLine" substitutionGroup="HydLineAbstract" type="HydLineType">
+  </xs:element>
+  <xs:complexType name="HydLineType">
+    <xs:complexContent>
+      <xs:extension base="HydLineAbstractType">
+        <xs:sequence>
+          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="PressureLoss"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:element name="HydNode" abstract="true" substitutionGroup="mbsim:Link" type="HydNodeType"/>
+  <xs:complexType name="HydNodeType">
     <xs:complexContent>
       <xs:extension base="mbsim:LinkType">
         <xs:sequence>
-          <xs:element name="fracAir" type="pv:nounitScalar"/>  
-          <xs:element name="p0" type="pv:nounitScalar"/>  
-          <xs:element name="initialVolume" type="pv:nounitScalar"/>  
-          <xs:element name="transMecArea" maxOccurs="unbounded">
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="inflow">
+              <xs:complexType>
+                <xs:attribute name="ref" type="HydLineReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="outflow">
+              <xs:complexType>
+                <xs:attribute name="ref" type="HydLineReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeConstrained" substitutionGroup="HydNode" type="HydNodeConstrainedType">
+  </xs:element>
+  <xs:complexType name="HydNodeConstrainedType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeType">
+        <xs:sequence>
+          <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:frameOfReference"/>
-                <xs:element name="normal" type="pv:nounitVector"/>
-                <xs:element name="area" type="pv:nounitScalar"/>
+                <xs:element ref="mbsim:Function1_SS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeEnvironment" substitutionGroup="HydNode" type="HydNodeEnvironmentType">
+  </xs:element>
+  <xs:complexType name="HydNodeEnvironmentType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeElastic" substitutionGroup="HydNode" type="HydNodeElasticType">
+  </xs:element>
+  <xs:complexType name="HydNodeElasticType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeType">
+        <xs:sequence>
+          <xs:element name="volume" type="pv:nounitScalar"/>
+          <xs:element name="initialPressure" type="pv:nounitScalar"/>
+          <xs:element name="fracAir" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeRigid" substitutionGroup="HydNode" type="HydNodeRigidType">
+  </xs:element>
+  <xs:complexType name="HydNodeRigidType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeMec" abstract="true" substitutionGroup="HydNode" type="HydNodeMecType"/>
+  <xs:complexType name="HydNodeMecType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeType">
+        <xs:sequence>
+          <xs:element name="initialVolume" type="pv:nounitScalar"/>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="translatorialBoundarySourface">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:frameOfReference"/>
+                  <xs:element name="normal" type="pv:nounitVector"/>
+                  <xs:element name="area" type="pv:nounitScalar"/>
+                  <xs:element name="noVolumeChange" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="rotatorialBoundarySourface">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element ref="mbsim:frameOfReference"/>
+                  <xs:element name="normal" type="pv:nounitVector"/>
+                  <xs:element name="area" type="pv:nounitScalar"/>
+                  <xs:element name="frameOfRotationCenter">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+                    </xs:complexType> 
+                  </xs:element>
+                  <xs:element name="noVolumeChange" minOccurs="0"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="enableOpenMBVArrows" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:nounitScalar"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeMecConstrained" substitutionGroup="HydNodeMec" type="HydNodeMecConstrainedType">
+  </xs:element>
+  <xs:complexType name="HydNodeMecConstrainedType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeMecType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeMecEnvironment" substitutionGroup="HydNodeMec" type="HydNodeMecEnvironmentType">
+  </xs:element>
+  <xs:complexType name="HydNodeMecEnvironmentType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeMecType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HydNodeMecElastic" substitutionGroup="HydNodeMec" type="HydNodeMecElasticType"/>
+  <xs:complexType name="HydNodeMecElasticType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeMecType">
+        <xs:sequence>
+          <xs:element name="initialPressure" type="pv:nounitScalar"/>
+          <xs:element name="fracAir" type="pv:nounitScalar"/>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="HydNodeMecRigid" substitutionGroup="HydNodeMec" type="HydNodeMecRigidType">
+  </xs:element>
+  <xs:complexType name="HydNodeMecRigidType">
+    <xs:complexContent>
+      <xs:extension base="HydNodeMecType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:element name="Controlvalve43" substitutionGroup="mbsim:Group" type="Controlvalve43Type">
+  </xs:element>
+  <xs:complexType name="Controlvalve43Type">
+    <xs:complexContent>
+      <xs:extension base="mbsim:GroupType">
+        <xs:sequence>
+          <xs:element name="valveLength" type="pv:nounitScalar"/>
+          <xs:element name="valveDiameter" type="pv:nounitScalar"/>
+          <xs:element name="inletLength" type="pv:nounitScalar"/>
+          <xs:element name="inletDiameter" type="pv:nounitScalar"/>
+          <xs:element name="alpha" type="pv:nounitScalar"/>
+          <xs:element name="minimalRelativeArea" type="pv:nounitScalar"/>
+          <xs:element name="relativeAreaPA">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="offset" type="pv:nounitScalar"/>
+          <xs:element name="position">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedControlvalve43" substitutionGroup="Controlvalve43" type="RegularizedControlvalve43Type">
+  </xs:element>
+  <xs:complexType name="RegularizedControlvalve43Type">
+    <xs:complexContent>
+      <xs:extension base="Controlvalve43Type"/>
+    </xs:complexContent>
+  </xs:complexType>
 
 </xs:schema>

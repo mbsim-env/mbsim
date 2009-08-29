@@ -25,6 +25,20 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  Signal * getSignalByPath(DynamicSystem * ds,  const std::string& cpath) {
+    std::string path=cpath;
+    int pos=path.find("Signal");
+    path.erase(pos, 6);
+    path.insert(pos, "Link");
+    Link * s = ds->getLinkByPath(path);
+    if (dynamic_cast<Signal *>(s))
+      return static_cast<Signal *>(s);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
+      _exit(1);
+    }
+  }
+
   Signal * Signal::getSignalByPath(std::string path) {
     int pos=path.find("Signal");
     path.erase(pos, 6);

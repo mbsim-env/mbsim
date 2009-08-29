@@ -51,6 +51,7 @@ namespace MBSim {
   }
 
   void HydlinePressureloss::addPressureLoss(PressureLoss * loss) {
+    loss->setHydlinePressureloss(this);
     if (dynamic_cast<VariablePressureLoss*>(loss))
       variablePressureLoss.push_back(static_cast<VariablePressureLoss*>(loss));
     else

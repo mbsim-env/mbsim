@@ -17,7 +17,7 @@ namespace MBSim {
       Checkvalve(const std::string &name);
       void init(InitStage stage);
 
-      void setKinematics(double rBall, double hMax);
+      void setMaximalOpening(double hMax_) {hMax=hMax_; }
       void setVariablePressureLossCheckvalve(VariablePressureLossCheckvalve * pressureLoss_) { pressureLoss=pressureLoss_; }
       void setFrameOfReference(Frame * ref_) {ref = ref_; }
 
@@ -32,11 +32,11 @@ namespace MBSim {
       RigidBody * ball;
       Contact * seatContact;
       Contact * maxContact;
-      Frame * ref;
       GeneralizedCoordinateSensor * xOpen;
+      Frame * ref;
       VariablePressureLossCheckvalve * pressureLoss;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
-      double rBall, hMax;
+      double hMax;
   };
 
 }
