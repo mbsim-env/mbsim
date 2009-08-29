@@ -25,7 +25,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   cv->setAlpha(.9);
   cv->setMinimalRelativeArea(.05);
   cv->setOffset(.05);
-  cv->setPARelativeAreaFunction(new Function1_VS_to_SS(new TabularFunction1_VS(Vec("[0; .2; .45; 1]"), "[1; 1; 0; 0]")));
+  cv->setPARelativeAreaFunction(new Function1_SS_from_VS(new TabularFunction1_VS(Vec("[0; .2; .45; 1]"), "[1; 1; 0; 0]")));
   FunctionSensor * cvs = new FunctionSensor("Valve43Position");
   addLink(cvs);
   cvs->setFunction(new TabularFunction1_VS(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));

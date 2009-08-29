@@ -20,6 +20,7 @@
 #include "mbsimHydraulics/hydnode.h"
 #include "mbsimHydraulics/hydline.h"
 #include "mbsimHydraulics/environment.h"
+#include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 
@@ -53,6 +54,32 @@ namespace MBSim {
       openMBVSphere=0;
   }
 #endif
+
+  HydLineAbstract * HydNode::getHydLineAbstractByPath(string path) {
+    int pos=path.find("HydLine");
+    path.erase(pos, 7);
+    path.insert(pos, "Object");
+    Object * h = parent->getObjectByPath(path);
+    if (dynamic_cast<HydLineAbstract *>(h))
+      return static_cast<HydLineAbstract *>(h);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of HydLineAbstract-Type." << std::endl; 
+      _exit(1);
+    }
+  }
+
+
+  void HydNode::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement();
+    while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"inflow" || e->ValueStr()==MBSIMHYDRAULICSNS"outflow")) {
+      if (e->ValueStr()==MBSIMHYDRAULICSNS"inflow")
+        addInFlow(getHydLineAbstractByPath(e->Attribute("ref")));
+      else
+        addOutFlow(getHydLineAbstractByPath(e->Attribute("ref")));
+      e=e->NextSiblingElement();
+    }
+  }
 
   void HydNode::addInFlow(HydLineAbstract * in) {
     connectedLinesStruct c;
@@ -315,6 +342,15 @@ namespace MBSim {
     la(0)=(*pFun)(t);
   }
 
+  void HydNodeConstrained::initializeUsingXML(TiXmlElement *element) {
+    HydNode::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
+    pFun=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    pFun->initializeUsingXML(e->FirstChildElement());
+    //    e=element->FirstChildElement("function");
+  }
+
+
 
   void HydNodeEnvironment::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -325,7 +361,7 @@ namespace MBSim {
       HydNode::init(stage);
   }
 
-  
+
   HydNodeElastic::~HydNodeElastic() {
     delete bulkModulus;
   }
@@ -355,6 +391,17 @@ namespace MBSim {
     }
     else
       HydNode::init(stage);
+  }
+
+  void HydNodeElastic::initializeUsingXML(TiXmlElement * element) {
+    HydNode::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"volume");
+    V=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    p0=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    fracAir=atof(e->GetText());
   }
 
   void HydNodeElastic::updatexRef(const Vec &xParent) {

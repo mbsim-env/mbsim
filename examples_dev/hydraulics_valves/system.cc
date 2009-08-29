@@ -27,9 +27,9 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   addLink(l23s);
   l23s->setFunction(new TabularFunction1_VS(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
   if (unilateral)
-    l23->addPressureLoss(new VariablePressureLossAreaZeta("zeta1", 7, .01, l23s));
+    l23->addPressureLoss(new VariablePressureLossAreaZeta("zeta1", l23s, 7, .01));
   else
-    l23->addPressureLoss(new RegularizedVariablePressureLossAreaZeta("zeta1", 7, .01, l23s));
+    l23->addPressureLoss(new RegularizedVariablePressureLossAreaZeta("zeta1", l23s, 7, .01));
 
   HydLine * l34 = new HydLine("l34");
   addObject(l34);
@@ -38,7 +38,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l34->addPressureLoss(new PressureLossZeta("zeta1", 15));
 
   HydNodeConstrained * n1 = new HydNodeConstrained("n1");
-  n1->setpFunction(new Function1_VS_to_SS(new TabularFunction1_VS(Vec("[0; .35; .65; 1]"), "[5e5; 5e5; 1e5; 1e5]")));
+  n1->setpFunction(new Function1_SS_from_VS(new TabularFunction1_VS(Vec("[0; .35; .65; 1]"), "[5e5; 5e5; 1e5; 1e5]")));
   addLink(n1);
   n1->addOutFlow(l12);
 

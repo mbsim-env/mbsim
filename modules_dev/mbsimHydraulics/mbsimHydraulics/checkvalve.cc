@@ -16,17 +16,7 @@ using namespace MBSim;
 
 namespace MBSim {
 
-  Checkvalve::Checkvalve(const string &name) : Group(name) {
-    line = new HydLine("Line");
-    ball = new RigidBody("Ball");
-    seatContact = new Contact(name+"/SeatContact");
-    maxContact = new Contact(name+"/MaximalContact");
-    xOpen = new GeneralizedPositionSensor("xOpen");
-  }
-
-  void Checkvalve::setKinematics(double rBall_, double hMax_) {
-    rBall=rBall_;
-    hMax=hMax_;
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new HydLine("Line")), ball(new RigidBody("Ball")), seatContact(new Contact(name+"/SeatContact")), maxContact(new Contact(name+"/MaximalContact")), xOpen(new GeneralizedPositionSensor("xOpen")), ref(NULL), pressureLoss(NULL), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0) {
   }
 
   void Checkvalve::init(InitStage stage) {
@@ -37,6 +27,7 @@ namespace MBSim {
       xOpen->setIndex(0);
       addLink(xOpen);
       
+      double rBall=pressureLoss->getBallRadius();
       ball->setFrameForKinematics(ball->getFrame("C"));
       ball->setTranslation(new LinearTranslation("[1;0;0]"));
       ball->addContour(new CircleSolid("ContourBall", rBall), Vec(3, INIT, 0), SqrMat(3, EYE));
@@ -79,7 +70,6 @@ namespace MBSim {
       assert(dynamic_cast<HydNodeMec*>(line->getToNode()));
       assert(rBall>rLine);
 
-      pressureLoss->transferCheckvalveData(rBall);
       fromNodeAreaIndex = ((HydNodeMec*)line->getFromNode())->addTransMecArea(
           ball->getFrame("C"),
           "[1; 0; 0]",

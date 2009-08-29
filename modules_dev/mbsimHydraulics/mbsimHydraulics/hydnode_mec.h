@@ -66,6 +66,7 @@ namespace MBSim {
       void calcxSize() {xSize=1; }
 
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
       virtual void updateVRef(const fmatvec::Mat& Vref, int i=0);
@@ -105,6 +106,7 @@ namespace MBSim {
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
 
       void updateg(double t);
 
@@ -117,7 +119,7 @@ namespace MBSim {
     public:
       HydNodeMecEnvironment(const std::string &name) : HydNodeMec(name) {}
       virtual std::string getType() const { return "HydNodeMecEnvironment"; }
-      
+
       void init(InitStage stage);
   };
 
@@ -134,6 +136,7 @@ namespace MBSim {
       void calcxSize() {xSize=2; }
 
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
 
@@ -142,8 +145,7 @@ namespace MBSim {
 
       void plot(double t, double dt);
 
-      void initializeUsingXML(TiXmlElement *element);
-    
+
     private:
       double E;
       double fracAir;
@@ -167,21 +169,21 @@ namespace MBSim {
       void init(InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
-      
+
       void updategd(double t);
       void updateW(double t);
 
       void solveImpactsFixpointSingle();
-//      void solveConstraintsFixpointSingle();
+      //      void solveConstraintsFixpointSingle();
       void solveImpactsGaussSeidel();
-//      void solveConstraintsGaussSeidel();
+      //      void solveConstraintsGaussSeidel();
       void solveImpactsRootFinding();
-//      void solveConstraintsRootFinding();
-//      void jacobianConstraints();
-//      void jacobianImpacts();
+      //      void solveConstraintsRootFinding();
+      //      void jacobianConstraints();
+      //      void jacobianImpacts();
       void updaterFactors();
       void checkImpactsForTermination();
-//      void checkConstraintsForTermination();
+      //      void checkConstraintsForTermination();
     private:
       double gdn;
   };

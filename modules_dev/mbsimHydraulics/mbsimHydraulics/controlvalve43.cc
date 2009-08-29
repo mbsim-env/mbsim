@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/hydnode.h"
 #include "mbsimControl/signal_.h"
+#include "mbsimHydraulics/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -55,6 +56,14 @@ namespace MBSim {
     lA = new HydLine("LineA");
     lB = new HydLine("LineB");
     lT = new HydLine("LineT");
+    addObject(lPA);
+    addObject(lPB);
+    addObject(lAT);
+    addObject(lBT);
+    addObject(lP);
+    addObject(lA);
+    addObject(lB);
+    addObject(lT);
   }
 
   void Controlvalve43::init(InitStage stage) {
@@ -68,16 +77,16 @@ namespace MBSim {
       checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAreaBT", 1., offset, position, relAreaPA);
       addLink(checkSizeSignalBT);
       if (!regularized) {
-        lPA->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalPA));
-        lPB->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalPB));
-        lAT->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalAT));
-        lBT->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalBT));
+        lPA->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalPA, minRelArea, alpha));
+        lPB->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalPB, minRelArea, alpha));
+        lAT->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalAT, minRelArea, alpha));
+        lBT->addPressureLoss(new VariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalBT, minRelArea, alpha));
       }
       else {
-        lPA->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalPA));
-        lPB->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalPB));
-        lAT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalAT));
-        lBT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", alpha, minRelArea, checkSizeSignalBT));
+        lPA->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalPA, minRelArea, alpha));
+        lPB->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalPB, minRelArea, alpha));
+        lAT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalAT, minRelArea, alpha));
+        lBT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalBT, minRelArea, alpha));
       }
       lPA->setLength(l);
       lPB->setLength(l);
@@ -87,10 +96,6 @@ namespace MBSim {
       lPB->setDiameter(d);
       lAT->setDiameter(d);
       lBT->setDiameter(d);
-      addObject(lPA);
-      addObject(lPB);
-      addObject(lAT);
-      addObject(lBT);
       lP->setLength(ll);
       lA->setLength(ll);
       lB->setLength(ll);
@@ -99,10 +104,6 @@ namespace MBSim {
       lA->setDiameter(ld);
       lB->setDiameter(ld);
       lT->setDiameter(ld);
-      addObject(lP);
-      addObject(lA);
-      addObject(lB);
-      addObject(lT);
       HydNodeRigid * nP = new HydNodeRigid("NodeP");
       addLink(nP);
       nP->addOutFlow(lPA);
@@ -127,6 +128,30 @@ namespace MBSim {
     }
     else
       Group::init(stage);
+  }
+
+  void Controlvalve43::initializeUsingXML(TiXmlElement * element) {
+    Group::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valveLength");
+    l=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valveDiameter");
+    d=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inletLength");
+    ll=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inletLength");
+    ld=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
+    alpha=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
+    minRelArea=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAreaPA");
+    relAreaPA=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    relAreaPA->initializeUsingXML(e->FirstChildElement());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"offset");
+    offset=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"position");
+    position=getSignalByPath(parent, e->Attribute("ref"));
   }
 
 }

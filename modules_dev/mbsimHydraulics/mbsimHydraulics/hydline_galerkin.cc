@@ -72,7 +72,10 @@ namespace MBSim {
     if (stage==MBSim::preInit) {
       HydLineAbstract::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+      if (direction.size()>0)
+        g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+      else
+        g=0;
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();

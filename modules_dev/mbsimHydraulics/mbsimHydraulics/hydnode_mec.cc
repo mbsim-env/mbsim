@@ -17,13 +17,13 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "hydnode_mec.h"
-#include "environment.h"
+#include "mbsimHydraulics/hydnode_mec.h"
+#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "hydline.h"
-#include "objectfactory.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -138,7 +138,7 @@ namespace MBSim {
             openMBVArrows[nTrans+i]->setName(
                 "ForceOn_"+
                 connectedRotFrames[i].frame->getName()+
-                "_#"+numtostr(int(i)));
+                "_#"+numtostr(int(nTrans+i)));
             openMBVGrp->addObject(openMBVArrows[nTrans+i]);
           }
         }
@@ -392,6 +392,43 @@ namespace MBSim {
     }
   }
 
+  void HydNodeMec::initializeUsingXML(TiXmlElement *element) {
+    HydNode::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialVolume");
+    V0=atof(e->GetText());
+    e=e->NextSiblingElement();
+    while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
+      if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
+        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+        Frame *ref=getFrameByPath(ee->Attribute("ref"));
+        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
+        Vec normal(ee->GetText());
+        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
+        double area=atof(ee->GetText());
+        bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
+        addTransMecArea(ref, normal, area, !noVolumeChange);
+      }
+      else {
+        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+        Frame *ref=getFrameByPath(ee->Attribute("ref"));
+        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
+        Vec normal(ee->GetText());
+        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
+        double area=atof(ee->GetText());
+        ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfRotationCenter");
+        Frame *center=getFrameByPath(ee->Attribute("ref"));
+        if(!center) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+        bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
+        addRotMecArea(ref, normal, area, center, !noVolumeChange);
+      }
+      e=e->NextSiblingElement();
+    }
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows");
+    if (e)
+      enableOpenMBVArrows(atof(e->FirstChildElement(MBSIMHYDRAULICSNS"size")->GetText()));
+  }
 
   void HydNodeMecConstrained::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -406,6 +443,13 @@ namespace MBSim {
   void HydNodeMecConstrained::updateg(double t) {
     HydNodeMec::updateg(t);
     la(0)=(*pFun)(t);
+  }
+
+  void HydNodeMecConstrained::initializeUsingXML(TiXmlElement *element) {
+    HydNodeMec::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
+    pFun=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    pFun->initializeUsingXML(e->FirstChildElement());
   }
 
 
@@ -480,26 +524,13 @@ namespace MBSim {
     }
   }
 
-  void HydNodeMecElastic::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e;
+  void HydNodeMecElastic::initializeUsingXML(TiXmlElement * element) {
     HydNodeMec::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    p0=atof(e->GetText());
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
-    setFracAir(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"p0");
-    setp0(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialVolume");
-    setInitialVolume(atof(e->GetText()));
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"transMecArea");
-    TiXmlElement *ee;
-    ee=e->FirstChildElement(MBSIMNS"frameOfReference");
-    Frame *ref=getFrameByPath(ee->Attribute("ref"));
-    if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
-    Vec normal(ee->GetText());
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
-    double area=atof(ee->GetText());
-    addTransMecArea(ref, normal, area);
-    e=e->NextSiblingElement();
+    fracAir=atof(e->GetText());
   }
 
 

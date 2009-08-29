@@ -25,6 +25,13 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  void Function1_SS_from_VS::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element;
+    fun=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement());
+    fun->initializeUsingXML(e->FirstChildElement());
+  }
+
   SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_) : amplitude(amplitude_), frequency(frequency_), phase(phase_) {
     check();
   }

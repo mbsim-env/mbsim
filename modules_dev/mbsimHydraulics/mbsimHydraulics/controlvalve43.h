@@ -48,6 +48,7 @@ namespace MBSim {
       HydLine * getLineT() {return lT; }
 
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement * element);
     protected:
       HydLine * lPA, * lPB, * lAT, * lBT, * lP, * lA, * lB, *lT;
       bool regularized;

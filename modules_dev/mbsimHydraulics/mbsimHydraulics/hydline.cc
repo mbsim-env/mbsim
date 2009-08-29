@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/hydline_pressureloss.h"
+#include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -31,7 +32,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydLineAbstract::HydLineAbstract(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0), frameOfReference(NULL) {
+  HydLineAbstract::HydLineAbstract(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0) {
   }
 
   void HydLineAbstract::init(InitStage stage) {
@@ -52,32 +53,55 @@ namespace MBSim {
       ObjectHydraulics::init(stage);
   }
 
+  void HydLineAbstract::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    ObjectHydraulics::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    l=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    d=atof(e->GetText());
+  }
+
 
   void HydLine::addPressureLoss(PressureLoss * dp) {
-    if (pressureLoss==NULL)
+    if(!parent) {
+      cerr << "HydLine \"" << name << "\" has to be added to a group before adding a PressureLoss!" << endl;
+      throw(123);
+    }
+    if (pressureLoss==NULL) {
       pressureLoss=new HydlinePressureloss(name+"/PressureLoss", this);
+      parent->addLink(pressureLoss);
+    }
     pressureLoss->addPressureLoss(dp);
     if (dp->isUnilateral()) {
-      setvaluedPressureLoss.push_back(new HydlinePressureloss(name+"/UnilateralPressureLoss "+dp->getName(), this));
-      setvaluedPressureLoss.back()->addPressureLoss(dp);
-      setvaluedPressureLoss.back()->setUnilateral(true);
+      HydlinePressureloss * hlpl = new HydlinePressureloss(name+"/UnilateralPressureLoss "+dp->getName(), this);
+      parent->addLink(hlpl);
+      hlpl->addPressureLoss(dp);
+      hlpl->setUnilateral(true);
     }
     else if (dp->isBilateral()) {
-      setvaluedPressureLoss.push_back(new HydlinePressureloss(name+"/BilateralPressureLoss "+dp->getName(), this));
-      setvaluedPressureLoss.back()->addPressureLoss(dp);
-      setvaluedPressureLoss.back()->setBilateral(true);
+      HydlinePressureloss * hlpl = new HydlinePressureloss(name+"/BilateralPressureLoss "+dp->getName(), this);
+      parent->addLink(hlpl);
+      hlpl->addPressureLoss(dp);
+      hlpl->setBilateral(true);
+    }
+  }
+
+  void HydLine::initializeUsingXML(TiXmlElement * element) {
+    HydLineAbstract::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addPressureLoss(p);
+      p->initializeUsingXML(e->FirstChildElement());
+      e=e->NextSiblingElement();
     }
   }
 
   void HydLine::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
-      if (pressureLoss)
-        parent->addLink(pressureLoss);
-      for (unsigned int i=0; i<setvaluedPressureLoss.size(); i++)
-        parent->addLink(setvaluedPressureLoss[i]);
-      HydLineAbstract::init(stage);
-    }
-    else if (stage==MBSim::unknownStage) {
+    if (stage==MBSim::unknownStage) {
       HydLineAbstract::init(stage);
       MFac=rho*l/Area;
     }

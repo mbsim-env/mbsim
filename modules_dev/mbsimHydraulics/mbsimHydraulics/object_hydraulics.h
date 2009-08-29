@@ -25,7 +25,7 @@
 namespace MBSim {
   class ObjectHydraulics : public Object {
     public:
-      ObjectHydraulics(const std::string &name);
+      ObjectHydraulics(const std::string &name) : Object(name) {};
       ~ObjectHydraulics() {}
       virtual std::string getType() const { return "ObjectHydraulics"; }
 

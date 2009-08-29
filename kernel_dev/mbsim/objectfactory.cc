@@ -311,6 +311,10 @@ namespace MBSim {
   }
 
   Function1<double,double> *MBSimObjectFactory::createFunction1_SS(TiXmlElement *element) {
+    if(element->ValueStr()==MBSIMNS"ConstantFunction1_SS")
+      return new ConstantFunction1<double,double>;
+    if(element->ValueStr()==MBSIMNS"Function1_SS_from_VS")
+      return new Function1_SS_from_VS();
     return 0;
   }
   

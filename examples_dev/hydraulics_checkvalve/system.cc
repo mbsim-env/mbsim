@@ -40,11 +40,11 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->getLine()->setDiameter(4e-3);
   lCV->getLine()->setLength(.05);
   if (unilateral)
-    lCV->setVariablePressureLossCheckvalve(new VariablePressureLossCheckvalveGamma("CheckvalveGamma", 1e-4, .1, M_PI/4., lCV->getXOpen()));
+    lCV->setVariablePressureLossCheckvalve(new VariablePressureLossCheckvalveGamma("CheckvalveGamma", lCV->getXOpen(), 1e-4, 6e-3, .1, M_PI/4.));
   else
-    lCV->setVariablePressureLossCheckvalve(new RegularizedVariablePressureLossCheckvalveGamma("CheckvalveGamma", 1e-4, .1, M_PI/4., lCV->getXOpen()));
+    lCV->setVariablePressureLossCheckvalve(new RegularizedVariablePressureLossCheckvalveGamma("CheckvalveGamma", lCV->getXOpen(), 1e-4, 6e-3, .1, M_PI/4.));
 
-  lCV->setKinematics(.006, .003);
+  lCV->setMaximalOpening(.003);
   lCV->setFrameOfReference(b->getFrame("ref"));
   if (unilateral) {
     lCV->getSeatContact()->setContactForceLaw(new UnilateralConstraint);
@@ -64,7 +64,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->getLine()->setPlotFeature(rightHandSide, enabled);
 
   HydNodeMecConstrained * n1 = new HydNodeMecConstrained("n1");
-  n1->setpFunction(new Function1_VS_to_SS(new  TabularFunction1_VS(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
+  n1->setpFunction(new Function1_SS_from_VS(new  TabularFunction1_VS(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
   addLink(n1);
   n1->addOutFlow(lCV->getLine());
 

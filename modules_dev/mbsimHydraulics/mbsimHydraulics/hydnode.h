@@ -24,10 +24,10 @@
 #include "mbsim/utils/function.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  namespace OpenMBV {
-    class Group;
-    class Sphere;
-  };
+namespace OpenMBV {
+  class Group;
+  class Sphere;
+};
 #endif
 
 namespace MBSim {
@@ -47,6 +47,7 @@ namespace MBSim {
       HydNode(const std::string &name);
       ~HydNode() {};
       virtual std::string getType() const { return "HydNode"; }
+      HydLineAbstract * getHydLineAbstractByPath(std::string path);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double pMin=0e5, double pMax=10e5, fmatvec::Vec WrON=fmatvec::Vec(3));
@@ -78,6 +79,8 @@ namespace MBSim {
 
       void plot(double t, double dt);
 
+      void initializeUsingXML(TiXmlElement *element);
+
     protected:
       std::vector<connectedLinesStruct> connectedLines;
       double QHyd;
@@ -99,6 +102,7 @@ namespace MBSim {
 
       void updateg(double t);
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
 
     private:
       Function1<double,double> * pFun;
@@ -127,6 +131,7 @@ namespace MBSim {
       void calcxSize() {xSize=1; }
 
       void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
 

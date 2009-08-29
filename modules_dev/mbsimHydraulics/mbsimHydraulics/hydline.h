@@ -40,7 +40,6 @@ namespace MBSim {
       void setLength(double l_) {l=l_; }
       void setDiameter(double d_) {d=d_; }
       void setDirection(fmatvec::Vec dir) {direction=dir/nrm2(dir); }
-      void setFrameOfReference(Frame * ref) {frameOfReference=ref; }
       HydNode * getFromNode() { return nFrom; }
       HydNode * getToNode() {return nTo; }
       double getDiameter() {return d; }
@@ -53,13 +52,14 @@ namespace MBSim {
 
       void init(InitStage stage);
 
+      void initializeUsingXML(TiXmlElement *element);
+
     protected:
       HydNode * nFrom;
       HydNode * nTo;
       double d, l;
       double Area, rho;
       fmatvec::Vec direction;
-      Frame * frameOfReference;
   };
 
   class HydLine : public HydLineAbstract {
@@ -84,11 +84,11 @@ namespace MBSim {
 
       void plot(double t, double dt);
 
+      void initializeUsingXML(TiXmlElement *element);
     private:
       double MFac;
       double pressureLossGravity;
       HydlinePressureloss * pressureLoss;
-      std::vector<HydlinePressureloss*> setvaluedPressureLoss;
   };
 }
 
