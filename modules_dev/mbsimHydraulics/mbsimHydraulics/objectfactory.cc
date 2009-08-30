@@ -47,29 +47,29 @@ namespace MBSim {
 
   Object * HydraulicsObjectFactory::createObject(TiXmlElement * element) {
     if (element==0) return 0;
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"HydLine")
-      return new HydLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"RigidLine")
+      return new RigidLine(element->Attribute("name"));
     return 0;
   }
 
   Link* HydraulicsObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeConstrained")
-      return new HydNodeConstrained(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeEnvironment")
-      return new HydNodeEnvironment(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeElastic")
-      return new HydNodeElastic(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeRigid")
-      return new HydNodeRigid(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeMecConstrained")
-      return new HydNodeMecConstrained(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeMecEnvironment")
-      return new HydNodeMecEnvironment(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeMecElastic")
-      return new HydNodeMecElastic(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"HydNodeMecRigid")
-      return new HydNodeMecRigid(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedNode")
+      return new ConstrainedNode(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"EnvironmentNode")
+      return new EnvironmentNode(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"ElasticNode")
+      return new ElasticNode(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidNode")
+      return new RigidNode(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedNodeMec")
+      return new ConstrainedNodeMec(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"EnvironmentNodeMec")
+      return new EnvironmentNodeMec(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"ElasticNodeMec")
+      return new ElasticNodeMec(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidNodeMec")
+      return new RigidNodeMec(element->Attribute("name"));
     return 0;
   }
 

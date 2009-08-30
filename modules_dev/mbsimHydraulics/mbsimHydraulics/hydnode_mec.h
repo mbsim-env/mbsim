@@ -48,11 +48,11 @@ namespace MBSim {
     bool considerVolumeChange;
   };
 
-  class HydNodeMec : public HydNode {
+  class HNodeMec : public HNode {
     public:
-      HydNodeMec(const std::string &name);
-      ~HydNodeMec();
-      virtual std::string getType() const { return "HydNodeMec"; }
+      HNodeMec(const std::string &name);
+      ~HNodeMec();
+      virtual std::string getType() const { return "HNodeMec"; }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBVArrows(double size=1.);
@@ -78,7 +78,7 @@ namespace MBSim {
 
       void updateh(double t);
       void updatedhdz(double t);
-      virtual void updater(double t) {std::cout << "HydNodeMec \"" << name << "\": updater()" << std::endl; }
+      virtual void updater(double t) {std::cout << "HNodeMec \"" << name << "\": updater()" << std::endl; }
       void updategd(double t);
       void updatexd(double t);
       void updatedx(double t, double dt);
@@ -97,11 +97,11 @@ namespace MBSim {
 #endif
   };
 
-  class HydNodeMecConstrained : public HydNodeMec {
+  class ConstrainedNodeMec : public HNodeMec {
     public:
-      HydNodeMecConstrained(const std::string &name) : HydNodeMec(name), pFun(NULL) {}
-      ~HydNodeMecConstrained() {};
-      virtual std::string getType() const { return "HydNodeMecConstrained"; }
+      ConstrainedNodeMec(const std::string &name) : HNodeMec(name), pFun(NULL) {}
+      ~ConstrainedNodeMec() {};
+      virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
@@ -115,20 +115,20 @@ namespace MBSim {
   };
 
 
-  class HydNodeMecEnvironment : public HydNodeMec {
+  class EnvironmentNodeMec : public HNodeMec {
     public:
-      HydNodeMecEnvironment(const std::string &name) : HydNodeMec(name) {}
-      virtual std::string getType() const { return "HydNodeMecEnvironment"; }
+      EnvironmentNodeMec(const std::string &name) : HNodeMec(name) {}
+      virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
       void init(InitStage stage);
   };
 
 
-  class HydNodeMecElastic : public HydNodeMec {
+  class ElasticNodeMec : public HNodeMec {
     public:
-      HydNodeMecElastic(const std::string &name) : HydNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
-      ~HydNodeMecElastic();
-      virtual std::string getType() const { return "HydNodeElastic"; }
+      ElasticNodeMec(const std::string &name) : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ~ElasticNodeMec();
+      virtual std::string getType() const { return "ElasticNode"; }
 
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
       void setp0(double p0_) {p0=p0_; }
@@ -155,10 +155,10 @@ namespace MBSim {
   };
 
 
-  class HydNodeMecRigid : public HydNodeMec {
+  class RigidNodeMec : public HNodeMec {
     public:
-      HydNodeMecRigid(const std::string &name) : HydNodeMec(name), gdn(0) {}
-      virtual std::string getType() const { return "HydNodeMecRigid"; }
+      RigidNodeMec(const std::string &name) : HNodeMec(name), gdn(0) {}
+      virtual std::string getType() const { return "RigidNodeMec"; }
 
       bool isSetValued() const {return true; }
 

@@ -34,7 +34,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydNode::HydNode(const string &name) : Link(name), QHyd(0), nLines(0)
+  HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0)
 # ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
 #endif
@@ -42,7 +42,7 @@ namespace MBSim {
                                          }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  void HydNode::enableOpenMBV(double size, double pMin, double pMax, Vec WrON_) {
+  void HNode::enableOpenMBV(double size, double pMin, double pMax, Vec WrON_) {
     if(size>=0) {
       openMBVSphere=new OpenMBV::Sphere;
       openMBVSphere->setRadius(size);
@@ -55,33 +55,33 @@ namespace MBSim {
   }
 #endif
 
-  HydLineAbstract * HydNode::getHydLineAbstractByPath(string path) {
-    int pos=path.find("HydLine");
-    path.erase(pos, 7);
+  HLine * HNode::getHLineByPath(string path) {
+    int pos=path.find("RigidLine");
+    path.erase(pos, 9);
     path.insert(pos, "Object");
     Object * h = parent->getObjectByPath(path);
-    if (dynamic_cast<HydLineAbstract *>(h))
-      return static_cast<HydLineAbstract *>(h);
+    if (dynamic_cast<HLine *>(h))
+      return static_cast<HLine *>(h);
     else {
-      std::cerr << "ERROR! \"" << path << "\" is not of HydLineAbstract-Type." << std::endl; 
+      std::cerr << "ERROR! \"" << path << "\" is not of HLine-Type." << std::endl; 
       _exit(1);
     }
   }
 
 
-  void HydNode::initializeUsingXML(TiXmlElement *element) {
+  void HNode::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement();
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"inflow" || e->ValueStr()==MBSIMHYDRAULICSNS"outflow")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"inflow")
-        addInFlow(getHydLineAbstractByPath(e->Attribute("ref")));
+        addInFlow(getHLineByPath(e->Attribute("ref")));
       else
-        addOutFlow(getHydLineAbstractByPath(e->Attribute("ref")));
+        addOutFlow(getHLineByPath(e->Attribute("ref")));
       e=e->NextSiblingElement();
     }
   }
 
-  void HydNode::addInFlow(HydLineAbstract * in) {
+  void HNode::addInFlow(HLine * in) {
     connectedLinesStruct c;
     c.line=in;
     c.inflow=true;
@@ -89,7 +89,7 @@ namespace MBSim {
     in->setToNode(this);
   }
 
-  void HydNode::addOutFlow(HydLineAbstract * out) {
+  void HNode::addOutFlow(HLine * out) {
     connectedLinesStruct c;
     c.line=out;
     c.inflow=false;
@@ -97,7 +97,7 @@ namespace MBSim {
     out->setFromNode(this);
   }
 
-  void HydNode::init(InitStage stage) {
+  void HNode::init(InitStage stage) {
     if (stage==MBSim::resize) {
       Link::init(stage);
       gd.resize(1);
@@ -147,7 +147,7 @@ namespace MBSim {
       Link::init(stage);
   }
 
-  void HydNode::updateWRef(const Mat &WParent, int j) {
+  void HNode::updateWRef(const Mat &WParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int laI=laInd;
       int laJ=laInd;
@@ -157,7 +157,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updateVRef(const Mat &VParent, int j) {
+  void HNode::updateVRef(const Mat &VParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int laI=laInd;
       int laJ=laInd;
@@ -167,7 +167,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
+  void HNode::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd=connectedLines[i].line->gethInd(parent, j);
       Index I(hInd, hInd+connectedLines[i].sign.size()-1);
@@ -176,7 +176,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updatedhdqRef(const Mat& dhdqParent, int j) {
+  void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd = connectedLines[i].line->gethInd(parent, j);
       Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
@@ -184,7 +184,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updatedhduRef(const SqrMat& dhduParent, int j) {
+  void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd = connectedLines[i].line->gethInd(parent, j);
       Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
@@ -192,7 +192,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updatedhdtRef(const Vec& dhdtParent, int j) {
+  void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd = connectedLines[i].line->gethInd(parent, j);
       Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
@@ -200,7 +200,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updaterRef(const Vec &rParent) {
+  void HNode::updaterRef(const Vec &rParent) {
     for (unsigned int i=0; i<nLines; i++) {
       int rI=connectedLines[i].line->gethInd(parent);
       int rJ=rI+connectedLines[i].sign.size()-1;
@@ -208,7 +208,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::updategd(double t) {
+  void HNode::updategd(double t) {
     QHyd=0;
     for (unsigned int i=0; i<nLines; i++)
       QHyd-=((connectedLines[i].inflow) ?
@@ -217,14 +217,14 @@ namespace MBSim {
     gd(0)=-QHyd;
   }
 
-  void HydNode::updateh(double t) {
+  void HNode::updateh(double t) {
     for (unsigned int i=0; i<nLines; i++) {
       h[i] += connectedLines[i].sign * la;
       hLink[i] += connectedLines[i].sign * la;
     }
   }
 
-  void HydNode::updatedhdz(double t) {
+  void HNode::updatedhdz(double t) {
     vector<Vec> hLink0, h0;
 
     for(unsigned int i=0; i<nLines; i++) { // save old values
@@ -305,7 +305,7 @@ namespace MBSim {
     }
   }
 
-  void HydNode::plot(double t, double dt) {
+  void HNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(la(0)*1e-5/(isSetValued()?dt:1.));
       plotVector.push_back(QHyd*6e4);
@@ -328,22 +328,22 @@ namespace MBSim {
   }
 
 
-  void HydNodeConstrained::init(InitStage stage) {
+  void ConstrainedNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
-      HydNode::init(stage);
+      HNode::init(stage);
       la.init((*pFun)(0));
     }
     else
-      HydNode::init(stage);
+      HNode::init(stage);
   }
 
-  void HydNodeConstrained::updateg(double t) {
-    HydNode::updateg(t);
+  void ConstrainedNode::updateg(double t) {
+    HNode::updateg(t);
     la(0)=(*pFun)(t);
   }
 
-  void HydNodeConstrained::initializeUsingXML(TiXmlElement *element) {
-    HydNode::initializeUsingXML(element);
+  void ConstrainedNode::initializeUsingXML(TiXmlElement *element) {
+    HNode::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
     pFun=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
     pFun->initializeUsingXML(e->FirstChildElement());
@@ -352,33 +352,33 @@ namespace MBSim {
 
 
 
-  void HydNodeEnvironment::init(InitStage stage) {
+  void EnvironmentNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
-      HydNode::init(stage);
+      HNode::init(stage);
       la(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
     }
     else
-      HydNode::init(stage);
+      HNode::init(stage);
   }
 
 
-  HydNodeElastic::~HydNodeElastic() {
+  ElasticNode::~ElasticNode() {
     delete bulkModulus;
   }
 
-  void HydNodeElastic::init(InitStage stage) {
+  void ElasticNode::init(InitStage stage) {
     if (stage==MBSim::plot) {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
-        HydNode::init(stage);
+        HNode::init(stage);
       }
     }
     else if (stage==unknownStage) {
-      HydNode::init(stage);
+      HNode::init(stage);
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       if (fabs(p0)<epsroot()) {
-        cout << "WARNING HydNodeElastic \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
+        cout << "WARNING ElasticNode \"" << name << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
       }
       la(0)=p0;
@@ -390,11 +390,11 @@ namespace MBSim {
       E=(*bulkModulus)(la(0));
     }
     else
-      HydNode::init(stage);
+      HNode::init(stage);
   }
 
-  void HydNodeElastic::initializeUsingXML(TiXmlElement * element) {
-    HydNode::initializeUsingXML(element);
+  void ElasticNode::initializeUsingXML(TiXmlElement * element) {
+    HNode::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"volume");
     V=atof(e->GetText());
@@ -404,32 +404,32 @@ namespace MBSim {
     fracAir=atof(e->GetText());
   }
 
-  void HydNodeElastic::updatexRef(const Vec &xParent) {
-    HydNode::updatexRef(xParent);
+  void ElasticNode::updatexRef(const Vec &xParent) {
+    HNode::updatexRef(xParent);
     la >> x;
   }
 
-  void HydNodeElastic::updatexd(double t) {
+  void ElasticNode::updatexd(double t) {
     E=(*bulkModulus)(la(0));
     xd=-E/V*gd;
   }
 
-  void HydNodeElastic::updatedx(double t, double dt) {
+  void ElasticNode::updatedx(double t, double dt) {
     E=(*bulkModulus)(la(0));
     xd=-E/V*gd*dt;
   }
 
-  void HydNodeElastic::plot(double t, double dt) {
+  void ElasticNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(E*1e-6);
-      HydNode::plot(t, dt);
+      HNode::plot(t, dt);
     }
   }
 
 
-  void HydNodeRigid::init(InitStage stage) {
+  void RigidNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
-      HydNode::init(stage);
+      HNode::init(stage);
       for (unsigned int i=0; i<nLines; i++) {
         Vec u0=connectedLines[i].line->getu0();
         bool zero=true;
@@ -437,34 +437,34 @@ namespace MBSim {
           if (fabs(u0(j))>epsroot())
             zero=false;
         if (!zero)
-          cout << "WARNING in HydNodeRigid \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+          cout << "WARNING in RigidNode \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
       }
     }
     else
-      HydNode::init(stage);
+      HNode::init(stage);
   }
 
-  void HydNodeRigid::updatewbRef(const Vec &wbParent) {
+  void RigidNode::updatewbRef(const Vec &wbParent) {
     Link::updatewbRef(wbParent);
     gd >> wb;
   }
 
-  void HydNodeRigid::updategd(double t) {
-    HydNode::updategd(t);
+  void RigidNode::updategd(double t) {
+    HNode::updategd(t);
     if (t<epsroot()) {
       if (fabs(QHyd)>epsroot())
-        cout << "WARNING: HydNodeRigid \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+        cout << "WARNING: RigidNode \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
     }
   }
 
-  void HydNodeRigid::updateW(double t) {
+  void RigidNode::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
       int hJ=connectedLines[i].sign.size()-1;
       W[i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
     }
   }
 
-  void HydNodeRigid::solveImpactsFixpointSingle() {
+  void RigidNode::solveImpactsFixpointSingle() {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
@@ -478,7 +478,7 @@ namespace MBSim {
     la(0) -= rFactor(0)*gdn;
   }
 
-  void HydNodeRigid::solveImpactsGaussSeidel() {
+  void RigidNode::solveImpactsGaussSeidel() {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
@@ -492,7 +492,7 @@ namespace MBSim {
     la(0) -= gdn/a[ia[laIndDS+0]];
   }
 
-  void HydNodeRigid::solveImpactsRootFinding() {
+  void RigidNode::solveImpactsRootFinding() {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();
@@ -506,7 +506,7 @@ namespace MBSim {
     res(0) = rFactor(0)*gdn;
   }
 
-  void HydNodeRigid::jacobianImpacts() {
+  void RigidNode::jacobianImpacts() {
     SqrMat Jprox = ds->getJprox();
     SqrMat G = ds->getG();
     RowVec jp1=Jprox.row(laIndDS);
@@ -515,7 +515,7 @@ namespace MBSim {
       jp1(j) = rFactor(0) * G(laIndDS, j);
   }
 
-  void HydNodeRigid::updaterFactors() {
+  void RigidNode::updaterFactors() {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
 
@@ -534,7 +534,7 @@ namespace MBSim {
     }
   }
 
-  void HydNodeRigid::checkImpactsForTermination() {
+  void RigidNode::checkImpactsForTermination() {
     double *a = ds->getGs()();
     int *ia = ds->getGs().Ip();
     int *ja = ds->getGs().Jp();

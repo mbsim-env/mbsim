@@ -32,29 +32,29 @@ namespace OpenMBV {
 
 namespace MBSim {
 
-  class HydLineAbstract;
+  class HLine;
   class HydFluid;
   class OilBulkModulus;
 
   struct connectedLinesStruct {
-    HydLineAbstract * line;
+    HLine * line;
     fmatvec::Vec sign;
     bool inflow;
   };
 
-  class HydNode : public Link {
+  class HNode : public Link {
     public:
-      HydNode(const std::string &name);
-      ~HydNode() {};
-      virtual std::string getType() const { return "HydNode"; }
-      HydLineAbstract * getHydLineAbstractByPath(std::string path);
+      HNode(const std::string &name);
+      ~HNode() {};
+      virtual std::string getType() const { return "HNode"; }
+      HLine * getHLineByPath(std::string path);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double pMin=0e5, double pMax=10e5, fmatvec::Vec WrON=fmatvec::Vec(3));
 #endif
 
-      void addInFlow(HydLineAbstract * in);
-      void addOutFlow(HydLineAbstract * out);
+      void addInFlow(HLine * in);
+      void addOutFlow(HLine * out);
 
       void calcgdSize() {gdSize=1; }
       void calcgdSizeActive() {calcgdSize(); }
@@ -71,7 +71,7 @@ namespace MBSim {
 
       void updateh(double t);
       void updatedhdz(double t);
-      virtual void updater(double t) {std::cout << "HydNode \"" << name << "\": updater()" << std::endl; }
+      virtual void updater(double t) {std::cout << "HNode \"" << name << "\": updater()" << std::endl; }
       virtual void updateg(double t) {};
       virtual void updategd(double t);
       virtual bool isActive() const {return true; }
@@ -93,10 +93,10 @@ namespace MBSim {
   };
 
 
-  class HydNodeConstrained : public HydNode {
+  class ConstrainedNode : public HNode {
     public:
-      HydNodeConstrained(const std::string &name) : HydNode(name), pFun(NULL) {}
-      virtual std::string getType() const { return "HydNodeConstrained"; }
+      ConstrainedNode(const std::string &name) : HNode(name), pFun(NULL) {}
+      virtual std::string getType() const { return "ConstrainedNode"; }
 
       void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
 
@@ -109,20 +109,20 @@ namespace MBSim {
   };
 
 
-  class HydNodeEnvironment : public HydNode {
+  class EnvironmentNode : public HNode {
     public:
-      HydNodeEnvironment(const std::string &name) : HydNode(name) {}
-      virtual std::string getType() const { return "HydNodeEnvironment"; }
+      EnvironmentNode(const std::string &name) : HNode(name) {}
+      virtual std::string getType() const { return "EnvironmentNode"; }
 
       void init(InitStage stage);
   };
 
 
-  class HydNodeElastic : public HydNode {
+  class ElasticNode : public HNode {
     public:
-      HydNodeElastic(const std::string &name) : HydNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
-      ~HydNodeElastic();
-      virtual std::string getType() const { return "HydNodeElastic"; }
+      ElasticNode(const std::string &name) : HNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
+      ~ElasticNode();
+      virtual std::string getType() const { return "ElasticNode"; }
 
       void setVolume(double V_) {V=V_; }
       void setFracAir(double fracAir_) {fracAir=fracAir_; }
@@ -148,10 +148,10 @@ namespace MBSim {
   };
 
 
-  class HydNodeRigid : public HydNode {
+  class RigidNode : public HNode {
     public:
-      HydNodeRigid(const std::string &name) : HydNode(name), gdn(0) {};
-      virtual std::string getType() const { return "HydNodeRigid"; }
+      RigidNode(const std::string &name) : HNode(name), gdn(0) {};
+      virtual std::string getType() const { return "RigidNode"; }
 
       bool isSetValued() const {return true; }
 

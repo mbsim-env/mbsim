@@ -41,18 +41,18 @@ namespace MBSim {
       //    d=(d<dmin)?dmin:d;
       //    l=(l<lmin)?lmin:l;
       cout << name << ": gapLength=" << lGap*1e3 << "[mm]  equivalent diamter=" << d*1e3 << "[mm]" << endl;
-      HydLine::setDiameter(d);
-      HydLine::setLength(l);
-      HydLine::init(stage);
+      RigidLine::setDiameter(d);
+      RigidLine::setLength(l);
+      RigidLine::init(stage);
     }
     if (stage==MBSim::unknownStage) {
-      HydLine::init(stage);
+      RigidLine::init(stage);
       for (unsigned int i=0; i<pd.size(); i++)
         if (dynamic_cast<LeakagePressureLoss*>(pd[i]))
           static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(lGap, hGap, wGap);
     }
     else
-      HydLine::init(stage);
+      RigidLine::init(stage);
   }
 
 

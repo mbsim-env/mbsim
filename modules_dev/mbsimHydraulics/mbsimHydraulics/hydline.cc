@@ -32,10 +32,10 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydLineAbstract::HydLineAbstract(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0) {
+  HLine::HLine(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0) {
   }
 
-  void HydLineAbstract::init(InitStage stage) {
+  void HLine::init(InitStage stage) {
     if (stage==MBSim::preInit) {
       ObjectHydraulics::init(stage);
       if (!nFrom || !nTo || (nFrom==nTo))
@@ -53,7 +53,7 @@ namespace MBSim {
       ObjectHydraulics::init(stage);
   }
 
-  void HydLineAbstract::initializeUsingXML(TiXmlElement * element) {
+  void HLine::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement * e;
     ObjectHydraulics::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
@@ -63,9 +63,9 @@ namespace MBSim {
   }
 
 
-  void HydLine::addPressureLoss(PressureLoss * dp) {
+  void RigidLine::addPressureLoss(PressureLoss * dp) {
     if(!parent) {
-      cerr << "HydLine \"" << name << "\" has to be added to a group before adding a PressureLoss!" << endl;
+      cerr << "RigidLine \"" << name << "\" has to be added to a group before adding a PressureLoss!" << endl;
       throw(123);
     }
     if (pressureLoss==NULL) {
@@ -87,8 +87,8 @@ namespace MBSim {
     }
   }
 
-  void HydLine::initializeUsingXML(TiXmlElement * element) {
-    HydLineAbstract::initializeUsingXML(element);
+  void RigidLine::initializeUsingXML(TiXmlElement * element) {
+    HLine::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
@@ -100,9 +100,9 @@ namespace MBSim {
     }
   }
 
-  void HydLine::init(InitStage stage) {
+  void RigidLine::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
       MFac=rho*l/Area;
     }
     else if(stage==MBSim::plot) {
@@ -112,26 +112,26 @@ namespace MBSim {
         plotColumns.push_back("Massflow [kg/min]");
         if (direction.size()>0)
           plotColumns.push_back("pressureLoss due to gravity [bar]");
-        HydLineAbstract::init(stage);
+        HLine::init(stage);
       }
     }
     else
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
   }
 
-  void HydLine::updateh(double t) {
+  void RigidLine::updateh(double t) {
     if (direction.size()>0)
       pressureLossGravity=trans(frameOfReference->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*rho*l;
     h(0)=pressureLossGravity;
   }
 
-  void HydLine::plot(double t, double dt) {
+  void RigidLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(u(0)*6e4);
       plotVector.push_back(u(0)*rho*60.);
       if (direction.size()>0)
         plotVector.push_back(pressureLossGravity*1e-5);
-      HydLineAbstract::plot(t, dt);
+      HLine::plot(t, dt);
     }
   }
 

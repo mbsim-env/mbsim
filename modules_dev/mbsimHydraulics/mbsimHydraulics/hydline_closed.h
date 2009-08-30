@@ -25,13 +25,13 @@
 namespace MBSim {
 
   class UserFunction;
-  class HydLineValve;
-  class HydLineCheckvalveUnilateral;
+  class RigidLineValve;
+  class RigidLineCheckvalveUnilateral;
 
   class HydlineClosed : public Link {
     public:
 
-      HydlineClosed(const std::string &name, HydLineValve * line);
+      HydlineClosed(const std::string &name, RigidLineValve * line);
       ~HydlineClosed() {};
       virtual std::string getType() const { return "HydlineClosed"; }
 
@@ -65,7 +65,7 @@ namespace MBSim {
       void plot(double t, double dt);
 
     protected:
-      HydLineValve * line;
+      RigidLineValve * line;
       bool isActive0;
       fmatvec::Vec gdn;
       bool active;
@@ -73,7 +73,7 @@ namespace MBSim {
 
   class HydlineClosedBilateral : public HydlineClosed {
     public:
-      HydlineClosedBilateral(const std::string &name, HydLineValve * line);
+      HydlineClosedBilateral(const std::string &name, RigidLineValve * line);
       ~HydlineClosedBilateral() {};
       virtual std::string getType() const { return "HydlineClosedBilateral"; }
 
@@ -85,7 +85,7 @@ namespace MBSim {
 
   class HydlineClosedUnilateral : public HydlineClosed {
     public:
-      HydlineClosedUnilateral(const std::string &name, HydLineCheckvalveUnilateral * line);
+      HydlineClosedUnilateral(const std::string &name, RigidLineCheckvalveUnilateral * line);
       ~HydlineClosedUnilateral() {};
       virtual std::string getType() const { return "HydlineClosedUnilateral"; }
 
