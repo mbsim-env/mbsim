@@ -134,7 +134,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
     }
   }
   
-  HydLine * l04 = new HydLine("l04");
+  RigidLine * l04 = new RigidLine("l04");
   addObject(l04);
   l04->setDiameter(5e-3);
   l04->setLength(.7);
@@ -144,23 +144,23 @@ System::System(const string &name, bool unilateral) : Group(name) {
   double pressure=.75*unloadedLength*stiffness/area;
   double V0=area*unloadedLength;
   
-  HydNodeConstrained * n0 = new HydNodeConstrained("n0");
+  ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);
   n0->setpFunction(new ConstantFunction1<double, double>(1e5));
   n0->addOutFlow(l04);
 
-  HydNodeMecEnvironment * n1Inf = new HydNodeMecEnvironment("n1Inf");
+  EnvironmentNodeMec * n1Inf = new EnvironmentNodeMec("n1Inf");
   addLink(n1Inf);
   n1Inf->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   
-  HydNodeMecConstrained * n1 = new HydNodeMecConstrained("n_"+getBodyName(0)+"_"+getBodyName(1));
+  ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n_"+getBodyName(0)+"_"+getBodyName(1));
   addLink(n1);
   n1->setInitialVolume(V0);
   n1->setpFunction(new ConstantFunction1<double, double>(pressure));
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(0)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n1->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 
-  HydNodeMecElastic * n2 = new HydNodeMecElastic("n_"+getBodyName(1)+"_"+getBodyName(2));
+  ElasticNodeMec * n2 = new ElasticNodeMec("n_"+getBodyName(1)+"_"+getBodyName(2));
   n2->setFracAir(0.08);
   n2->setp0(10e5);
   addLink(n2);
@@ -168,7 +168,7 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n2->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(1)))->getFrame("R"), Vec("[-1; 0; 0]"), area); 
   n2->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 
-  HydNodeMecElastic * n3 = new HydNodeMecElastic("n_"+getBodyName(2)+"_"+getBodyName(3));
+  ElasticNodeMec * n3 = new ElasticNodeMec("n_"+getBodyName(2)+"_"+getBodyName(3));
   n3->setFracAir(0.08);
   n3->setp0(1e5);
   addLink(n3);
@@ -176,14 +176,14 @@ System::System(const string &name, bool unilateral) : Group(name) {
   n3->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(2)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
   n3->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("L"), Vec("[1; 0; 0]"), area);
 
-  HydNodeMecRigid * n4 = new HydNodeMecRigid("n_"+getBodyName(3)+"_"+getBodyName(4));
+  RigidNodeMec * n4 = new RigidNodeMec("n_"+getBodyName(3)+"_"+getBodyName(4));
   addLink(n4);
   n4->setInitialVolume(V0);
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(3)))->getFrame("R"), Vec("[-1; 0; 0]"), area); 
   n4->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("L"), Vec("[1; 0; 0]"), area);
   n4->addInFlow(l04);
 
-  HydNodeMecEnvironment * n4Inf = new HydNodeMecEnvironment("n4Inf");
+  EnvironmentNodeMec * n4Inf = new EnvironmentNodeMec("n4Inf");
   addLink(n4Inf);
   n4Inf->addTransMecArea(dynamic_cast<RigidBody*>(getGroup("Baum")->getObject("Scheibe_"+getBodyName(4)))->getFrame("R"), Vec("[-1; 0; 0]"), area);
 }

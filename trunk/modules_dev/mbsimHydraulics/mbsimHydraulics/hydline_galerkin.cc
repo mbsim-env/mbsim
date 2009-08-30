@@ -29,10 +29,10 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydLineGalerkin::HydLineGalerkin(const string &name) : HydLineAbstract(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(Vec(0)), wA(Vec(0)), wE(Vec(0)), lambda(0), MatIntWWT(SymMat(0)), MatIntWSWST(SymMat(0)), K(SymMat(0)), D(SymMat(0)), N(SymMat(0)), Omega(SymMat(0)), phi(SqrMat(0,0)), ansatz(NULL), plotVecW(Mat(0,0)), plotVecWS(Mat(0,0)), QIn(1), QOut(1), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints(Vec(0)) {
+  ElasticLineGalerkin::ElasticLineGalerkin(const string &name) : HLine(name), mdim(0), plotdim(0), g(0), E(0), k(0), WInt(Vec(0)), wA(Vec(0)), wE(Vec(0)), lambda(0), MatIntWWT(SymMat(0)), MatIntWSWST(SymMat(0)), K(SymMat(0)), D(SymMat(0)), N(SymMat(0)), Omega(SymMat(0)), phi(SqrMat(0,0)), ansatz(NULL), plotVecW(Mat(0,0)), plotVecWS(Mat(0,0)), QIn(1), QOut(1), Flow2D(false), nAnsatz(0), p0(0), Q0(0), fracAir(0), delta_h(0), DLehr(0), relPlotPoints(Vec(0)) {
   }
 
-  void HydLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
+  void ElasticLineGalerkin::setAnsatzFunction(AnsatzTypes method_, int nAnsatz_) {
     if (l<=1e-4) {
       cout << "set length first!" << endl;
       throw(123);
@@ -60,17 +60,17 @@ namespace MBSim {
     MatIntWSWST=ansatz->MatIntWSWST();
   };
 
-  void HydLineGalerkin::calcqSize() {
+  void ElasticLineGalerkin::calcqSize() {
     qSize=mdim;
   }
 
-  void HydLineGalerkin::calcuSize(int j) {
+  void ElasticLineGalerkin::calcuSize(int j) {
     uSize[j]=mdim;
   }
 
-  void HydLineGalerkin::init(InitStage stage) {
+  void ElasticLineGalerkin::init(InitStage stage) {
     if (stage==MBSim::preInit) {
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       if (direction.size()>0)
         g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
@@ -86,7 +86,7 @@ namespace MBSim {
       K=Area*E*MatIntWSWST;
     }
     else if (stage==MBSim::resize) {
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
       phi.resize(mdim, mdim);
       lambda.resize(mdim);
       if (eigvec(K, MFac, phi, lambda)) {
@@ -130,47 +130,47 @@ namespace MBSim {
           plotColumns.push_back("Q(x="+numtostr(relPlotPoints(i)*l)+") [l/min]");
         for (int i=0; i<plotdim; i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
-        HydLineAbstract::init(stage);
+        HLine::init(stage);
       }
     }
     else if (stage==MBSim::unknownStage) {
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
       setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
 //      plotParameters();
     }
     else
-      HydLineAbstract::init(stage);
+      HLine::init(stage);
   }
 
-  void HydLineGalerkin::updateT(double t) {
+  void ElasticLineGalerkin::updateT(double t) {
     T=SqrMat(mdim, EYE);
   }
 
-  void HydLineGalerkin::updateM(double t) {
+  void ElasticLineGalerkin::updateM(double t) {
     M=MFac;
   }
 
-  void HydLineGalerkin::updateStateDependentVariables(double t) {
+  void ElasticLineGalerkin::updateStateDependentVariables(double t) {
     QIn(0)=Area*trans(wA)*u;
     QOut(0)=-Area*trans(wE)*u;
   }
 
-  void HydLineGalerkin::updateh(double t) {
-    HydLineAbstract::updateh(t);
+  void ElasticLineGalerkin::updateh(double t) {
+    HLine::updateh(t);
     h = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
   }
 
-  void HydLineGalerkin::plot(double t, double dt) {
+  void ElasticLineGalerkin::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       for (int i=0; i<plotdim; i++)
         plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
       for (int i=0; i<plotdim; i++)
         plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
-      HydLineAbstract::plot(t,dt);
+      HLine::plot(t,dt);
     }
   }
 
-    void HydLineGalerkin::plotParameters() {
+    void ElasticLineGalerkin::plotParameters() {
       cout << "mdim=" << mdim << endl;
       cout << "rho=" << rho << endl;
       cout << "g=" << g << endl;

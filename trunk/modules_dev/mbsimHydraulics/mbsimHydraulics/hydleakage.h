@@ -25,9 +25,9 @@
 
 namespace MBSim {
 
-  class HydLeakage : public HydLine {
+  class HydLeakage : public RigidLine {
     public:
-      HydLeakage(const std::string &name) : HydLine(name) {};
+      HydLeakage(const std::string &name) : RigidLine(name) {};
       virtual std::string getType() const { return "HydLeakage"; }
       
       void init(InitStage stage);

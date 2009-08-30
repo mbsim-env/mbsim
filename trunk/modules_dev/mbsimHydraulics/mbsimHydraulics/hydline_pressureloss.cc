@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydlinePressureloss::HydlinePressureloss(const string &name, HydLine * line_) : Link(name), line(line_), isActive0(false), unilateral(false), bilateral(false), active(false) {
+  HydlinePressureloss::HydlinePressureloss(const string &name, RigidLine * line_) : Link(name), line(line_), isActive0(false), unilateral(false), bilateral(false), active(false) {
   }
 
   void HydlinePressureloss::plot(double t, double dt) {

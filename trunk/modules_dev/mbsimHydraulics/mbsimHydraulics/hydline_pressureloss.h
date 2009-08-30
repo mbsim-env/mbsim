@@ -25,13 +25,13 @@
 
 namespace MBSim {
 
-  class HydLine; 
+  class RigidLine; 
   class PressureLoss;
   class VariablePressureLoss;
 
   class HydlinePressureloss : public Link {
     public:
-      HydlinePressureloss(const std::string &name, HydLine * line_);
+      HydlinePressureloss(const std::string &name, RigidLine * line_);
       ~HydlinePressureloss() {};
       virtual std::string getType() const { return "HydlinePressureloss"; }
       void plot(double t, double dt);
@@ -95,7 +95,7 @@ namespace MBSim {
       // ==== END not needed methods ===
 
     private:
-      HydLine * line;
+      RigidLine * line;
       bool isActive0;
       fmatvec::Vec gdn;
       bool unilateral, bilateral;

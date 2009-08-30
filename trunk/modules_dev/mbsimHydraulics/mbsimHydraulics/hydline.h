@@ -25,23 +25,23 @@
 namespace MBSim {
 
   class Frame;
-  class HydNode;
+  class HNode;
   class HydlinePressureloss;
   class PressureLoss;
 
-  class HydLineAbstract : public ObjectHydraulics {
+  class HLine : public ObjectHydraulics {
     public:
-      HydLineAbstract(const std::string &name);
-      ~HydLineAbstract() {};
-      virtual std::string getType() const { return "HydLineAbstract"; }
+      HLine(const std::string &name);
+      ~HLine() {};
+      virtual std::string getType() const { return "HLine"; }
 
-      void setFromNode(HydNode * nFrom_) {nFrom=nFrom_; }
-      void setToNode(HydNode * nTo_) {nTo=nTo_; }
+      void setFromNode(HNode * nFrom_) {nFrom=nFrom_; }
+      void setToNode(HNode * nTo_) {nTo=nTo_; }
       void setLength(double l_) {l=l_; }
       void setDiameter(double d_) {d=d_; }
       void setDirection(fmatvec::Vec dir) {direction=dir/nrm2(dir); }
-      HydNode * getFromNode() { return nFrom; }
-      HydNode * getToNode() {return nTo; }
+      HNode * getFromNode() { return nFrom; }
+      HNode * getToNode() {return nTo; }
       double getDiameter() {return d; }
       double getLength() {return l; }
 
@@ -55,18 +55,18 @@ namespace MBSim {
       void initializeUsingXML(TiXmlElement *element);
 
     protected:
-      HydNode * nFrom;
-      HydNode * nTo;
+      HNode * nFrom;
+      HNode * nTo;
       double d, l;
       double Area, rho;
       fmatvec::Vec direction;
   };
 
-  class HydLine : public HydLineAbstract {
+  class RigidLine : public HLine {
     public:
-      HydLine(const std::string &name) : HydLineAbstract(name), MFac(0), pressureLossGravity(0), pressureLoss(NULL) {}
-      ~HydLine() {};
-      virtual std::string getType() const { return "HydLine"; }
+      RigidLine(const std::string &name) : HLine(name), MFac(0), pressureLossGravity(0), pressureLoss(NULL) {}
+      ~RigidLine() {};
+      virtual std::string getType() const { return "RigidLine"; }
 
       void addPressureLoss(PressureLoss * dp);
 

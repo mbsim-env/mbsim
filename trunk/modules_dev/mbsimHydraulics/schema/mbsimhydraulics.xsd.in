@@ -15,12 +15,12 @@
   <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
   <xs:import namespace="http://mbsim.berlios.de/MBSimControl"/>
 
-  <xs:simpleType name="HydLineReferenceType">
+  <xs:simpleType name="RigidLineReferenceType">
     <xs:restriction base="xs:token">
       <!-- pattern value="/?((\.\.|Group\[X\])/)*Hydline\[X\]" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*HydLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*RigidLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -232,8 +232,8 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydLineAbstract" abstract="true" substitutionGroup="ObjectHydraulics" type="HydLineAbstractType"/>
-  <xs:complexType name="HydLineAbstractType">
+  <xs:element name="HLine" abstract="true" substitutionGroup="ObjectHydraulics" type="HLineType"/>
+  <xs:complexType name="HLineType">
     <xs:complexContent>
       <xs:extension base="ObjectHydraulicsType">
         <xs:sequence>
@@ -246,11 +246,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydLine" substitutionGroup="HydLineAbstract" type="HydLineType">
+  <xs:element name="RigidLine" substitutionGroup="HLine" type="RigidLineType">
   </xs:element>
-  <xs:complexType name="HydLineType">
+  <xs:complexType name="RigidLineType">
     <xs:complexContent>
-      <xs:extension base="HydLineAbstractType">
+      <xs:extension base="HLineType">
         <xs:sequence>
           <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
@@ -265,20 +265,20 @@
   </xs:complexType>
 
 
-  <xs:element name="HydNode" abstract="true" substitutionGroup="mbsim:Link" type="HydNodeType"/>
-  <xs:complexType name="HydNodeType">
+  <xs:element name="HNode" abstract="true" substitutionGroup="mbsim:Link" type="HNodeType"/>
+  <xs:complexType name="HNodeType">
     <xs:complexContent>
       <xs:extension base="mbsim:LinkType">
         <xs:sequence>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="inflow">
               <xs:complexType>
-                <xs:attribute name="ref" type="HydLineReferenceType" use="required"/>
+                <xs:attribute name="ref" type="RigidLineReferenceType" use="required"/>
               </xs:complexType>
             </xs:element>
             <xs:element name="outflow">
               <xs:complexType>
-                <xs:attribute name="ref" type="HydLineReferenceType" use="required"/>
+                <xs:attribute name="ref" type="RigidLineReferenceType" use="required"/>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -287,11 +287,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeConstrained" substitutionGroup="HydNode" type="HydNodeConstrainedType">
+  <xs:element name="ConstrainedNode" substitutionGroup="HNode" type="ConstrainedNodeType">
   </xs:element>
-  <xs:complexType name="HydNodeConstrainedType">
+  <xs:complexType name="ConstrainedNodeType">
     <xs:complexContent>
-      <xs:extension base="HydNodeType">
+      <xs:extension base="HNodeType">
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
@@ -306,19 +306,19 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeEnvironment" substitutionGroup="HydNode" type="HydNodeEnvironmentType">
+  <xs:element name="EnvironmentNode" substitutionGroup="HNode" type="EnvironmentNodeType">
   </xs:element>
-  <xs:complexType name="HydNodeEnvironmentType">
+  <xs:complexType name="EnvironmentNodeType">
     <xs:complexContent>
-      <xs:extension base="HydNodeType"/>
+      <xs:extension base="HNodeType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeElastic" substitutionGroup="HydNode" type="HydNodeElasticType">
+  <xs:element name="ElasticNode" substitutionGroup="HNode" type="ElasticNodeType">
   </xs:element>
-  <xs:complexType name="HydNodeElasticType">
+  <xs:complexType name="ElasticNodeType">
     <xs:complexContent>
-      <xs:extension base="HydNodeType">
+      <xs:extension base="HNodeType">
         <xs:sequence>
           <xs:element name="volume" type="pv:nounitScalar"/>
           <xs:element name="initialPressure" type="pv:nounitScalar"/>
@@ -328,18 +328,18 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeRigid" substitutionGroup="HydNode" type="HydNodeRigidType">
+  <xs:element name="RigidNode" substitutionGroup="HNode" type="RigidNodeType">
   </xs:element>
-  <xs:complexType name="HydNodeRigidType">
+  <xs:complexType name="RigidNodeType">
     <xs:complexContent>
-      <xs:extension base="HydNodeType"/>
+      <xs:extension base="HNodeType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeMec" abstract="true" substitutionGroup="HydNode" type="HydNodeMecType"/>
-  <xs:complexType name="HydNodeMecType">
+  <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType"/>
+  <xs:complexType name="HNodeMecType">
     <xs:complexContent>
-      <xs:extension base="HydNodeType">
+      <xs:extension base="HNodeType">
         <xs:sequence>
           <xs:element name="initialVolume" type="pv:nounitScalar"/>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -381,11 +381,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeMecConstrained" substitutionGroup="HydNodeMec" type="HydNodeMecConstrainedType">
+  <xs:element name="ConstrainedNodeMec" substitutionGroup="HNodeMec" type="ConstrainedNodeMecType">
   </xs:element>
-  <xs:complexType name="HydNodeMecConstrainedType">
+  <xs:complexType name="ConstrainedNodeMecType">
     <xs:complexContent>
-      <xs:extension base="HydNodeMecType">
+      <xs:extension base="HNodeMecType">
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
@@ -400,18 +400,18 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeMecEnvironment" substitutionGroup="HydNodeMec" type="HydNodeMecEnvironmentType">
+  <xs:element name="EnvironmentNodeMec" substitutionGroup="HNodeMec" type="EnvironmentNodeMecType">
   </xs:element>
-  <xs:complexType name="HydNodeMecEnvironmentType">
+  <xs:complexType name="EnvironmentNodeMecType">
     <xs:complexContent>
-      <xs:extension base="HydNodeMecType"/>
+      <xs:extension base="HNodeMecType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HydNodeMecElastic" substitutionGroup="HydNodeMec" type="HydNodeMecElasticType"/>
-  <xs:complexType name="HydNodeMecElasticType">
+  <xs:element name="ElasticNodeMec" substitutionGroup="HNodeMec" type="ElasticNodeMecType"/>
+  <xs:complexType name="ElasticNodeMecType">
     <xs:complexContent>
-      <xs:extension base="HydNodeMecType">
+      <xs:extension base="HNodeMecType">
         <xs:sequence>
           <xs:element name="initialPressure" type="pv:nounitScalar"/>
           <xs:element name="fracAir" type="pv:nounitScalar"/>
@@ -420,11 +420,11 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="HydNodeMecRigid" substitutionGroup="HydNodeMec" type="HydNodeMecRigidType">
+  <xs:element name="RigidNodeMec" substitutionGroup="HNodeMec" type="RigidNodeMecType">
   </xs:element>
-  <xs:complexType name="HydNodeMecRigidType">
+  <xs:complexType name="RigidNodeMecType">
     <xs:complexContent>
-      <xs:extension base="HydNodeMecType"/>
+      <xs:extension base="HNodeMecType"/>
     </xs:complexContent>
   </xs:complexType>
 

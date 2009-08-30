@@ -27,7 +27,7 @@ class ansatz_function;
 namespace MBSim {
 
   /** \brief Model for a multi-mass pipe*/
-  class HydLineGalerkin : public HydLineAbstract {
+  class ElasticLineGalerkin : public HLine {
 
     public:
       
@@ -39,8 +39,8 @@ namespace MBSim {
       };
 
       /*! Constructor */
-      HydLineGalerkin(const std::string &name);
-      virtual std::string getType() const { return "HydLineGalerkin"; }
+      ElasticLineGalerkin(const std::string &name);
+      virtual std::string getType() const { return "ElasticLineGalerkin"; }
 
       /*! set initial pressure of the pipe fluid*/
       void setp0(double p0_) {p0=p0_; }

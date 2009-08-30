@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class HydLine;
+  class RigidLine;
   class Signal;
 
   class Controlvalve43 : public Group {
@@ -42,15 +42,15 @@ namespace MBSim {
       void setPARelativeAreaFunction(Function1<double, double> * relAreaPA_) {relAreaPA=relAreaPA_; } 
       void setPositionSignal(Signal * s) {position = s; }
 
-      HydLine * getLineP() {return lP; }
-      HydLine * getLineA() {return lA; }
-      HydLine * getLineB() {return lB; }
-      HydLine * getLineT() {return lT; }
+      RigidLine * getLineP() {return lP; }
+      RigidLine * getLineA() {return lA; }
+      RigidLine * getLineB() {return lB; }
+      RigidLine * getLineT() {return lT; }
 
       void init(InitStage stage);
       void initializeUsingXML(TiXmlElement * element);
     protected:
-      HydLine * lPA, * lPB, * lAT, * lBT, * lP, * lA, * lB, *lT;
+      RigidLine * lPA, * lPB, * lAT, * lBT, * lP, * lA, * lB, *lT;
       bool regularized;
       double l, ll, d, ld, alpha, minRelArea, offset;
       Function1<double, double> * relAreaPA;

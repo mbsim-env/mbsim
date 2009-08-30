@@ -8,7 +8,7 @@ namespace MBSim {
   class Frame;
   class RigidBody;
   class Contact;
-  class HydLine;
+  class RigidLine;
   class VariablePressureLossCheckvalve;
   class GeneralizedCoordinateSensor;
   
@@ -21,14 +21,14 @@ namespace MBSim {
       void setVariablePressureLossCheckvalve(VariablePressureLossCheckvalve * pressureLoss_) { pressureLoss=pressureLoss_; }
       void setFrameOfReference(Frame * ref_) {ref = ref_; }
 
-      MBSim::HydLine * getLine() {return line; }
+      MBSim::RigidLine * getLine() {return line; }
       MBSim::RigidBody * getBall() {return ball; }
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
       MBSim::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
 
     private:
-      HydLine * line;
+      RigidLine * line;
       RigidBody * ball;
       Contact * seatContact;
       Contact * maxContact;

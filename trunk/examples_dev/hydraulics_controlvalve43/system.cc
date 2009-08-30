@@ -31,22 +31,22 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   cvs->setFunction(new TabularFunction1_VS(Vec("[0; .3; .7; 1]"), "[0; 0; 1; 1]"));
   cv->setPositionSignal(cvs);
 
-  HydNodeConstrained * nP = new HydNodeConstrained("nP");
+  ConstrainedNode * nP = new ConstrainedNode("nP");
   nP->setpFunction(new ConstantFunction1<double, double>(5e5));
   addLink(nP);
   nP->addOutFlow(cv->getLineP());
 
-  HydNodeConstrained * nA = new HydNodeConstrained("nA");
+  ConstrainedNode * nA = new ConstrainedNode("nA");
   nA->setpFunction(new ConstantFunction1<double, double>(3e5));
   addLink(nA);
   nA->addInFlow(cv->getLineA());
 
-  HydNodeConstrained * nB = new HydNodeConstrained("nB");
+  ConstrainedNode * nB = new ConstrainedNode("nB");
   nB->setpFunction(new ConstantFunction1<double, double>(2e5));
   addLink(nB);
   nB->addInFlow(cv->getLineB());
 
-  HydNodeConstrained * nT = new HydNodeConstrained("nT");
+  ConstrainedNode * nT = new ConstrainedNode("nT");
   nT->setpFunction(new ConstantFunction1<double, double>(1e5));
   addLink(nT);
   nT->addInFlow(cv->getLineT());

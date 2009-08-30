@@ -63,12 +63,12 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   lCV->getBall()->setPlotFeature(rightHandSide, enabled);
   lCV->getLine()->setPlotFeature(rightHandSide, enabled);
 
-  HydNodeMecConstrained * n1 = new HydNodeMecConstrained("n1");
+  ConstrainedNodeMec * n1 = new ConstrainedNodeMec("n1");
   n1->setpFunction(new Function1_SS_from_VS(new  TabularFunction1_VS(Vec("[0; .9; 1.1; 2.9; 3.1; 5]")*.1, "[4e5; 4e5; 2e5; 2e5; 4e5; 4e5]")));
   addLink(n1);
   n1->addOutFlow(lCV->getLine());
 
-  HydNodeMecConstrained * n2 = new HydNodeMecConstrained("n2");
+  ConstrainedNodeMec * n2 = new ConstrainedNodeMec("n2");
   addLink(n2);
   n2->setpFunction(new ConstantFunction1<double,double>(3e5));
   n2->addInFlow(lCV->getLine());

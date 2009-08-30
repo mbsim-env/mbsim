@@ -29,7 +29,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydlineClosed::HydlineClosed(const string &name, HydLineValve * line_) : Link(name), line(line_), isActive0(true) {
+  HydlineClosed::HydlineClosed(const string &name, RigidLineValve * line_) : Link(name), line(line_), isActive0(true) {
   }
 
   void HydlineClosed::init(InitStage stage) {
@@ -146,7 +146,7 @@ namespace MBSim {
 
 
 
-  HydlineClosedBilateral::HydlineClosedBilateral(const string &name, HydLineValve * line) : HydlineClosed(name, line) {
+  HydlineClosedBilateral::HydlineClosedBilateral(const string &name, RigidLineValve * line) : HydlineClosed(name, line) {
   }
 
   void HydlineClosedBilateral::updaterFactors() {
@@ -221,7 +221,7 @@ namespace MBSim {
 
 
 
-  HydlineClosedUnilateral::HydlineClosedUnilateral(const string &name, HydLineCheckvalveUnilateral * line) : HydlineClosed(name, line) {
+  HydlineClosedUnilateral::HydlineClosedUnilateral(const string &name, RigidLineCheckvalveUnilateral * line) : HydlineClosed(name, line) {
   }
 
   void HydlineClosedUnilateral::updaterFactors() {
