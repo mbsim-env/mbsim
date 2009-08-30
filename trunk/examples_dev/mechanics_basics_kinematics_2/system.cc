@@ -53,7 +53,7 @@ class JacobianR : public Jacobian {
 
 class MyDerT : public Function3<Mat,Vec,Vec,double> {
   public:
-    Mat operator()(const Vec &qd, const Vec& q, const double& t) {
+    Mat operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
       Mat J(3,1);
       J(0,0) = -cos(q(0))*qd(0);
       J(1,0) = -sin(q(0))*qd(0);
@@ -63,7 +63,7 @@ class MyDerT : public Function3<Mat,Vec,Vec,double> {
 
 class MyDerR : public Function3<Mat,Vec,Vec,double> {
   public:
-    Mat operator()(const Vec &qd, const Vec& q, const double& t) {
+    Mat operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
       Mat J(3,1);
       return J;
     }
