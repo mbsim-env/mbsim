@@ -40,4 +40,4 @@ PREFIX=$(dirname $BINDIR)
 # setup link
 test -L /tmp/mbsim_local || ln -s $PREFIX /tmp/mbsim_local
 # setup PATH
-export PATH=$PATH:/tmp/mbsim_local/bin"
+export PATH=$PATH:/tmp/mbsim_local/bin
