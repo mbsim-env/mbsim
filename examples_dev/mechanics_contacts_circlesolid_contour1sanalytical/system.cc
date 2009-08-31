@@ -80,7 +80,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   }
   else {
     contactCamRoll->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e6, 1e4)));
-    contactCamRoll->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(1.)));
+    contactCamRoll->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(1.)));
   }
   contactCamRoll->connect(cam->getContour("Contour"), roll->getContour("Contour"));
   contactCamRoll->enableOpenMBVContactPoints(.005);

@@ -125,7 +125,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
     }
     else {
       c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
-      c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(mue)));
+      c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
     c->enableOpenMBVContactPoints(.1*rBar);
   }

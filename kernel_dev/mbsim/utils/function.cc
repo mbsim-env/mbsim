@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
-
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <mbsim/utils/function.h>
@@ -67,6 +64,17 @@ namespace MBSim {
     d=atof(e->GetText());
   }
 
+  Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN, const void *) { 
+    int nFric = gd.size();
+    Vec la(nFric,NONINIT);
+    double normgd = nrm2(gd(0,nFric-1));
+    if(normgd < gdLim)
+      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/gdLim);
+    else
+      la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
+    return la;
+  }
+
   void LinearRegularizedCoulombFriction::initializeUsingXML(TiXmlElement *element) {
     Function2<Vec,Vec,double>::initializeUsingXML(element);
     TiXmlElement *e;
@@ -76,21 +84,22 @@ namespace MBSim {
     mu=atof(e->GetText());
   }
 
-  Vec LinearRegularizedPlanarStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) { 
+  Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) { 
     int nFric = gd.size();
     Vec la(nFric,NONINIT);
     double normgd = nrm2(gd(0,nFric-1));
     if(normgd < gdLim) {
       double mu0 = (*fmu)(0);
       la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu0/gdLim);
-    } else {
-      double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdLim); //oder (*fmu)(nrm2(gd(0,nFric-1)))
+    } 
+    else {
+      double mu = (*fmu)(nrm2(gd(0,nFric-1))-gdLim);
       la(0,nFric-1) = gd(0,nFric-1)*(-laN*mu/normgd);
     }
     return la;
   }
 
-  void LinearRegularizedPlanarStribeckFriction::initializeUsingXML(TiXmlElement *element) {
+  void LinearRegularizedStribeckFriction::initializeUsingXML(TiXmlElement *element) {
     Function2<Vec,Vec,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"marginalVelocity");
@@ -102,3 +111,4 @@ namespace MBSim {
   }
 
 }
+

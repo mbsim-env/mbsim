@@ -130,7 +130,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   } 
   else {
     rc2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
+    rc2->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between InnerCylinder and CylinderHollow
@@ -145,7 +145,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   } 
   else {
     rc3->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
+    rc3->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
   // Contact between HollowCylinder and plane
@@ -160,7 +160,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   } 
   else {
     rc4->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
-    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedPlanarCoulombFriction(mu)));
+    rc4->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
 
 

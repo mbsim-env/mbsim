@@ -84,15 +84,15 @@ namespace MBSim {
     signal(SIGABRT, sigAbortHandler);
 #endif
     for(int stage=0; stage<MBSim::LASTINITSTAGE; stage++) {
-      cout<<"Initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
+      if(INFO) cout<<"Initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
       init((InitStage)stage);
-      cout<<"Done initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
+      if(INFO) cout<<"Done initializing stage "<<stage<<"/"<<LASTINITSTAGE-1<<endl;
     }
   }
 
   void DynamicSystemSolver::init(InitStage stage) {
     if(stage==MBSim::reorganizeHierarchy && reorganizeHierarchy) {
-      cout <<name << " (special group) stage==preInit:" << endl;
+      if(INFO) cout <<name << " (special group) stage==preInit:" << endl;
 
       vector<Object*> objList;
       buildListOfObjects(objList,true);
@@ -125,42 +125,42 @@ namespace MBSim {
       orderOneDynamics.clear(); // delete old ood list
 
       /* rename system structure */
-      cout << "object List:" << endl;
+      if(INFO) cout << "object List:" << endl;
       for(unsigned int i=0; i<objList.size(); i++) {
         stringstream str;
         str << objList[i]->getPath('/');
-        cout<<str.str()<<endl;
+        if(INFO) cout<<str.str()<<endl;
         objList[i]->setName(str.str());
       }
-      cout << "frame List:" << endl;
+      if(INFO) cout << "frame List:" << endl;
       for(unsigned int i=0; i<frmList.size(); i++) {
         stringstream str;
         str << frmList[i]->getParent()->getPath('/') << "/" << frmList[i]->getName();
-        cout<<str.str()<<endl;
+        if(INFO) cout<<str.str()<<endl;
         frmList[i]->setName(str.str());
         addFrame(frmList[i]);
       }
-      cout << "contour List:" << endl;
+      if(INFO) cout << "contour List:" << endl;
       for(unsigned int i=0; i<cntList.size(); i++) {
         stringstream str;
         str << cntList[i]->getParent()->getPath('/') << "/" << cntList[i]->getName();
-        cout<<str.str()<<endl;
+        if(INFO) cout<<str.str()<<endl;
         cntList[i]->setName(str.str());
         addContour(cntList[i]);
       }
-      cout << "link List:" << endl;
+      if(INFO) cout << "link List:" << endl;
       for(unsigned int i=0; i<lnkList.size(); i++) {
         stringstream str;
         str << lnkList[i]->getParent()->getPath('/') << "/" << lnkList[i]->getName();
-        cout<<str.str()<<endl;
+        if(INFO) cout<<str.str()<<endl;
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
       }
-      cout << "ood List:" << endl;
+      if(INFO) cout << "ood List:" << endl;
       for(unsigned int i=0; i<oodList.size(); i++) {
         stringstream str;
         str << oodList[i]->getParent()->getPath('/') << "/" << oodList[i]->getName();
-        cout<<str.str()<<endl;
+        if(INFO) cout<<str.str()<<endl;
         oodList[i]->setName(str.str());
         addOrderOneDynamics(oodList[i]);
       }
@@ -186,7 +186,7 @@ namespace MBSim {
           }
         }
       }
-      // cout << "A = " << A << endl;
+      // if(INFO) cout << "A = " << A << endl;
 
       /* tree list */
       vector<Tree*> bufTree;
@@ -210,7 +210,7 @@ namespace MBSim {
         addGroup(bufTree[i]);
       }
 
-      cout << "End of special group stage==preInit" << endl;
+      if(INFO) cout << "End of special group stage==preInit" << endl;
 
       // After reorganizing a resize is required
       init(resize);

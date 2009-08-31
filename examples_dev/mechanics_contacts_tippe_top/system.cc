@@ -100,9 +100,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   } 
   else {
     cnf1->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(0.3)));
+    cnf1->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
     cnf2->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e3)));
-    cnf2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedSpatialCoulombFriction(0.3)));
+    cnf2->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(0.3)));
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

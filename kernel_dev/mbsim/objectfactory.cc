@@ -351,12 +351,12 @@ namespace MBSim {
 
   Function2<Vec,Vec,double> *MBSimObjectFactory::createFunction2_VVS(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedPlanarCoulombFriction")
-      return new LinearRegularizedPlanarCoulombFriction;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedSpatialCoulombFriction")
-      return new LinearRegularizedSpatialCoulombFriction;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedPlanarStribeckFriction")
-      return new LinearRegularizedPlanarStribeckFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedCoulombFriction")
+      return new LinearRegularizedCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedCoulombFriction")
+      return new LinearRegularizedCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"LinearRegularizedStribeckFriction")
+      return new LinearRegularizedStribeckFriction;
     return 0;
   }
 
