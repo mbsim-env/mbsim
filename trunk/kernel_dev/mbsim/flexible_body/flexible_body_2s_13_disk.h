@@ -196,6 +196,8 @@ namespace MBSim {
       
       /**
        * \brief degree of surface interpolation in radial and azimuthal direction
+       *
+       * both degrees have to be smaller than 8
        */
       int degV, degU;
 

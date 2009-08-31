@@ -287,6 +287,7 @@ namespace MBSim {
     WrPK = frameOfReference->getOrientation()*PrPK;
     WomPK = frameOfReference->getOrientation()*(PJR*u + PjR);
     WvPKrel = frameOfReference->getOrientation()*(PJT*u + PjT);
+    
     frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
     frame[iKinematics]->setPosition(WrPK + frameOfReference->getPosition());
     frame[iKinematics]->setVelocity(frameOfReference->getVelocity() + WvPKrel + crossProduct(frameOfReference->getAngularVelocity(),WrPK));
