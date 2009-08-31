@@ -74,7 +74,7 @@ namespace MBSim {
 #ifdef HAVE_NURBS
     contour = new NurbsDisk2s("SurfaceContour");  
     Body::addContour(contour);
-#elif
+#else
     cout << "WARNING (FlexibleBody2s13Disk::FlexibleBody2s13Disk): No NURBS library installed!" << endl;
 #endif
 
