@@ -38,6 +38,6 @@ PREFIX=$(dirname $BINDIR)
 
 
 # setup link
-echo "test -L /tmp/mbsim_local || ln -s $PREFIX /tmp/mbsim_local"
+test -L /tmp/mbsim_local || ln -s $PREFIX /tmp/mbsim_local
 # setup PATH
-echo "export PATH=$PATH:/tmp/mbsim_local"
+export PATH=$PATH:/tmp/mbsim_local/bin"
