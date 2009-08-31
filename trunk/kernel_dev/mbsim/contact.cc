@@ -136,8 +136,9 @@ namespace MBSim {
   }
 
   void Contact::updategd(double t) {
+    bool flag = fcl->isSetValued();
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gActive[k]) {
+      if((flag && gActive[k]) || (!flag && fcl->isActive(gk[k](0),0))) {
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
         Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
@@ -619,9 +620,11 @@ namespace MBSim {
         }
       }
       if(getPlotFeature(linkKinematics)==enabled) {
+	bool flag = fcl->isSetValued();
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
 	  plotVector.push_back(gk[i](0)); //gN
-          if(gActive[i]) {
+	  if((flag && gActive[i]) || (!flag && fcl->isActive(gk[i](0),0))) {
+          //if(gActive[i]) {
 	    for(int j=0; j<1+getFrictionDirections(); j++)
 	      plotVector.push_back(gdk[i](j)); //gd
           } 
