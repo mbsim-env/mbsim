@@ -26,3 +26,8 @@ utilsinclude_HEADERS = eps.h\
                        utils.h\
                        ansatz_functions.h
 
+
+
+
+
+bin_SCRIPTS = mbsiminit mbsiminit.bat
