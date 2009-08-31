@@ -169,11 +169,18 @@ namespace MBSim {
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #endif
-	if(getPlotFeature(generalizedLinkForce)==enabled)
+	if(getPlotFeature(generalizedLinkForce)==enabled) {
 	  for(int j=0; j<la.size(); ++j)
 	    plotColumns.push_back("la("+numtostr(j)+")");
+	}
+	if(getPlotFeature(linkKinematics)==enabled) {
+	  for(int j=0; j<g.size(); ++j)
+	    plotColumns.push_back("g("+numtostr(j)+")");
+	  for(int j=0; j<gd.size(); ++j)
+	    plotColumns.push_back("gd("+numtostr(j)+")");
+	}
+	LinkMechanics::init(stage);
       }
-      LinkMechanics::init(stage);
     }
     else
       LinkMechanics::init(stage);
@@ -530,10 +537,16 @@ namespace MBSim {
 	WM[1]=-WM[0];
       }
 #endif
-      if(getPlotFeature(generalizedLinkForce)==enabled) 
+      if(getPlotFeature(generalizedLinkForce)==enabled) {
 	for(int j=0; j<la.size(); j++)
 	  plotVector.push_back(la(j));
-
+      }
+      if(getPlotFeature(linkKinematics)==enabled) {
+	for(int j=0; j<g.size(); j++)
+	  plotVector.push_back(g(j));
+	for(int j=0; j<gd.size(); j++)
+	  plotVector.push_back(gd(j));
+      }
       LinkMechanics::plot(t,dt);
     }
   }

@@ -480,19 +480,19 @@ namespace MBSim {
           }
         }
   #endif
-        if(getPlotFeature(generalizedLinkForce)==enabled)
+        if(getPlotFeature(generalizedLinkForce)==enabled) {
           for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
             for(int j=0; j<1+getFrictionDirections(); ++j)
               plotColumns.push_back("la["+numtostr(i)+"]("+numtostr(j)+")");
           }
-        if(getPlotFeature(linkKinematics)==enabled)
+	}
+        if(getPlotFeature(linkKinematics)==enabled) {
           for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
 	    plotColumns.push_back("g["+numtostr(i)+"]("+numtostr(0)+")");
             for(int j=0; j<1+getFrictionDirections(); ++j) 
 	      plotColumns.push_back("gd["+numtostr(i)+"]("+numtostr(j)+")");
-            for(int j=0; j<1+getFrictionDirections(); ++j) 
-	      plotColumns.push_back("gdd["+numtostr(i)+"]("+numtostr(j)+")");
           }
+	}
         LinkMechanics::init(stage);
       }
     }
@@ -596,7 +596,7 @@ namespace MBSim {
       }
 #endif
 
-      if(getPlotFeature(generalizedLinkForce)==enabled) 
+      if(getPlotFeature(generalizedLinkForce)==enabled) {
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
           if(gActive[i] && gdActive[i][0]) {
             plotVector.push_back(lak[i](0));
@@ -617,36 +617,21 @@ namespace MBSim {
               plotVector.push_back(0);
           }
         }
-      if(getPlotFeature(linkKinematics)==enabled) 
+      }
+      if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
 	  plotVector.push_back(gk[i](0)); //gN
           if(gActive[i]) {
 	    for(int j=0; j<1+getFrictionDirections(); j++)
 	      plotVector.push_back(gdk[i](j)); //gd
-	    if(gdActive[i][0]) {
-	      plotVector.push_back(gddk[i](0)); //gddN
-	      if(gdActive[i][1]) { 
-		for(int j=0; j<getFrictionDirections(); j++)
-		  plotVector.push_back(gddk[i](1+j)); //gddT
-	      }
-	      else { 
-		for(int j=0; j<getFrictionDirections(); j++)
-		  plotVector.push_back(0); //gddT
-	      }
-	    }
-	    else {
-	      for(int j=0; j<1+getFrictionDirections(); j++) 
-		plotVector.push_back(0); //gdd
-	    }
           } 
           else {
 	    for(int j=0; j<1+getFrictionDirections(); j++)
 	      plotVector.push_back(0); //gd
-            for(int j=0; j<1+getFrictionDirections() ; j++) 
-              plotVector.push_back(0); //gdd
           }
         }
-     LinkMechanics::plot(t, dt);
+      }
+      LinkMechanics::plot(t, dt);
     }
   }
 
