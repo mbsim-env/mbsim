@@ -33,6 +33,6 @@ rem get PREFIX
 set PREFIX=%BINDIR:~0,-4%
 
 rem setup link
-echo %BINDIR%ln.exe %PREFIX% c:\WINDOWS\Temp\mbsim_local
+if not exist c:\WINDOWS\Temp\mbsim_local %BINDIR%ln.exe %PREFIX% c:\WINDOWS\Temp\mbsim_local
 rem setup PATH
-echo set PATH=%PATH%;c:\WINDOWS\Temp\mbsim_local
+set PATH=%PATH%;c:\WINDOWS\Temp\mbsim_local\bin
