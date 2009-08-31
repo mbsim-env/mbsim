@@ -39,5 +39,8 @@ PREFIX=$(dirname $BINDIR)
 
 # setup link
 test -L /tmp/mbsim_local || ln -s $PREFIX /tmp/mbsim_local
-# setup PATH
-export PATH=$PATH:/tmp/mbsim_local/bin
+# setup PATH and LD_LIBRARY_PATH
+mbsimflatxml -h >& /dev/null || LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/mbsim_local/lib
+mbsimflatxml -h >& /dev/null || PATH=$PATH:/tmp/mbsim_local/bin
+export LD_LIBRARY_PATH
+export PATH
