@@ -68,7 +68,7 @@ System::System(unsigned int type,bool reorganize) : Group("System"+numtostr(int(
   // parametrisation of relative kinematics
   if(type==1) { // K2 child of K1, K3 child of K2
     if(!reorganize) {
-      Tree *tree = new Tree("Baum");
+      Tree *tree = new Tree("Tree");
       addGroup(tree);
       Node *node1 = tree->addObject(0, k1);
       Node *node2 = tree->addObject(node1, k2);
@@ -85,9 +85,9 @@ System::System(unsigned int type,bool reorganize) : Group("System"+numtostr(int(
   }
   else if(type==2) { // K2 child of K1, K3 child of K1
     if(!reorganize) {
-      Tree * tree = new Tree("Baum");
+      Tree *tree = new Tree("Tree");
       addGroup(tree);
-      Node * node = tree->addObject(0, k1);
+      Node *node = tree->addObject(0, k1);
       tree->addObject(node, k2);
       tree->addObject(node, k3);
     }

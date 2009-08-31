@@ -74,6 +74,8 @@ namespace MBSim {
 #ifdef HAVE_NURBS
     contour = new NurbsDisk2s("SurfaceContour");  
     Body::addContour(contour);
+#elif
+    cout << "WARNING (FlexibleBody2s13Disk::FlexibleBody2s13Disk): No NURBS library installed!" << endl;
 #endif
 
     // frame in axis
@@ -259,7 +261,7 @@ namespace MBSim {
   }
 
   void FlexibleBody2s13Disk::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==resize) {
       FlexibleBodyContinuum<Vec>::init(stage);
       assert(nr>0); // at least on radial row
       assert(nj>1); // at least two azimuthal elements
@@ -450,6 +452,8 @@ namespace MBSim {
 
   void FlexibleBody2s13Disk::setNumberElements(int nr_, int nj_) {
     nr = nr_; nj = nj_; 
+    degV = min(degV, nr); // radial adaptation of spline degree to have correct knot vector
+    degU = min(degU, nj); // azimuthal adaptation of spline degree to have correct knot vector
     Elements = nr*nj;
     Nodes = (nr+1) * nj;
 
