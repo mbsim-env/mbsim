@@ -121,9 +121,9 @@ namespace MBSim {
       
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** 
-       * \brief Draw two OpenMBV::Frame's of size size at the contact points.
+       * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points.
        * If the contact is closed, then the two contact points are the same on each contour.
-       * If the contact is not closed, then the two contact point lie on the contours with minimal distance inbetween.
+       * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
       void enableOpenMBVContactPoints(double size=1.) { openMBVContactFrameSize=size; }
