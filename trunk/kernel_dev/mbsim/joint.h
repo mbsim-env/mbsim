@@ -94,6 +94,10 @@ namespace MBSim {
       virtual void resizeJacobians(int j); 
       /***************************************************/
 
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt = 1);
+      /***************************************************/
+
       /* INTERFACE FOR DERIVED CLASSES */
       /**
        * \brief \param first frame to connect
@@ -108,8 +112,6 @@ namespace MBSim {
       void setImpactForceLaw(GeneralizedImpactLaw * rc) { fifl = rc; }
       void setImpactMomentLaw(GeneralizedImpactLaw * rc) { fiml = rc; }
       /***************************************************/
-
-      void plot(double t, double dt = 1);
 
       /**
        * \param local force direction

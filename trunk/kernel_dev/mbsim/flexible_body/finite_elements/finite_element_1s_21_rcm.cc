@@ -173,7 +173,7 @@ namespace MBSim {
     }
   }
 
-  void FiniteElement1s21RCM::computedhdz(Vec& qElement, Vec& qpElement) {
+  void FiniteElement1s21RCM::computedhdz(const Vec& qElement, const Vec& qpElement) {
     Mat Dhz(16,8,INIT,0.);
     Dhz   = hFullJacobi(qElement,qpElement,qLocal,qpLocal,Jeg,Jegp,MLocal,hIntermediate);
     Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));

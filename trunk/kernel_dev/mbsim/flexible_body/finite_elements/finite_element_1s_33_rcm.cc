@@ -91,7 +91,7 @@ namespace MBSim {
       // MI = rho*MI;
 
       // qG_Old = qG.copy();
-      
+
       throw new MBSimError("ERROR (FiniteElement1s33RCM::computeM): Not implemented!");
     }
 
@@ -210,33 +210,36 @@ namespace MBSim {
     }
   }
 
-  void FiniteElement1s33RCM::computedhdz(Vec& qElement, Vec& qpElement) {
+  void FiniteElement1s33RCM::computedhdz(const Vec& qG, const Vec& qGt) {
     Vec h0 = h.copy();
 
-    /**************** velocity dependent calculations ********************/
-    for(int i=0;i<qpElement.size();i++) {  
-      double qpElementi = qpElement(i); // save correct position
+    Vec qG_tmp = qG.copy();
+    Vec qGt_tmp = qGt.copy();
 
-      qpElement(i) += epsroot(); // update with disturbed positions assuming same active links
-      computeh(qElement,qpElement);
+    /**************** velocity dependent calculations ********************/
+    for(int i=0;i<qGt.size();i++) {  
+      double qGti = qGt_tmp(i); // save correct position
+
+      qGt_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      computeh(qG_tmp,qGt_tmp);
 
       dhdu.col(i) = (h-h0)/epsroot();
-      qpElement(i) = qpElementi;
+      qGt_tmp(i) = qGti;
     }
 
     /***************** position dependent calculations ********************/
-    for(int i=0;i<qElement.size();i++) { 
-      double qElementi = qElement(i); // save correct position
+    for(int i=0;i<qG.size();i++) { 
+      double qGi = qG_tmp(i); // save correct position
 
-      qElement(i) += epsroot(); // update with disturbed positions assuming same active links
-      computeh(qElement,qpElement);
+      qG_tmp(i) += epsroot(); // update with disturbed positions assuming same active links
+      computeh(qG_tmp,qGt_tmp);
 
       dhdq.col(i) = (h-h0)/epsroot();
-      qElement(i) = qElementi;
+      qG_tmp(i) = qGi;
     }
 
     /******************* back to initial state **********************/
-    h = h0;
+    computeh(qG,qGt);
   }
 
   double FiniteElement1s33RCM::computeKineticEnergy(const Vec& qG,const Vec& qGt) {

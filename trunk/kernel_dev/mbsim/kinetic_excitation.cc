@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
+#include <mbsim/utils/utils.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
 #endif
@@ -39,6 +40,15 @@ namespace MBSim {
       LinkMechanics::init(stage);
       if(!refFrame) refFrame=frame[0];
     }
+    else if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if(getPlotFeature(generalizedLinkForce)==enabled)
+          for(int j=0; j<forceDir.cols()+momentDir.cols(); ++j) 
+            plotColumns.push_back("la("+numtostr(j)+")");
+      }
+      LinkMechanics::init(stage);
+    }
     else
       LinkMechanics::init(stage);
   }
@@ -53,6 +63,22 @@ namespace MBSim {
   void KineticExcitation::calclaSize() {
     LinkMechanics::calclaSize();
     laSize=forceDir.cols()+momentDir.cols();
+  }
+
+  void KineticExcitation::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if(getPlotFeature(generalizedLinkForce)==enabled) {
+        if(F) {
+          Vec f = (*F)(t);
+          for(int i=0; i<forceDir.cols(); i++) plotVector.push_back(f(i));
+        }
+        if(M) {
+          Vec m = (*M)(t);
+          for(int i=0; i<momentDir.cols(); i++) plotVector.push_back(m(i));
+        }
+      }
+      LinkMechanics::plot(t,dt);
+    }
   }
 
   void KineticExcitation::setForce(fmatvec::Mat dir, Function1<fmatvec::Vec,double> *func) {

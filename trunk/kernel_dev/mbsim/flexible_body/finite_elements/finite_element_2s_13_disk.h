@@ -65,7 +65,7 @@ namespace MBSim {
       virtual int getuSize() const;
       virtual void computeM(const fmatvec::Vec& q);
       virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
-      virtual void computedhdz(fmatvec::Vec& q,fmatvec::Vec& u);
+      virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& q);
       virtual double computeElasticEnergy(const fmatvec::Vec& q);
@@ -165,7 +165,7 @@ namespace MBSim {
   inline int FiniteElement2s13Disk::getuSize() const { return RefDofs + 4*NodeDofs; }
   inline void FiniteElement2s13Disk::computeM(const fmatvec::Vec& q) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computeM): Not implemented!"); } 
   inline void FiniteElement2s13Disk::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computeh): Not implemented!"); } 
-  inline void FiniteElement2s13Disk::computedhdz(fmatvec::Vec& q,fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computedhdz): Not implemented!"); } 
+  inline void FiniteElement2s13Disk::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computedhdz): Not implemented!"); } 
   inline double FiniteElement2s13Disk::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computeKineticEnergy): Not implemented!"); } 
   inline double FiniteElement2s13Disk::computeGravitationalEnergy(const fmatvec::Vec& q) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computeGravitationalEnergy): Not implemented!"); } 
   inline double FiniteElement2s13Disk::computeElasticEnergy(const fmatvec::Vec& q) { throw new MBSimError("ERROR(FiniteElement2s13Disk::computeElasticEnergy): Not implemented!"); } 
