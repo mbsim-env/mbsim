@@ -38,9 +38,9 @@ namespace MBSim {
     if(ff==normal || ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy) {
       static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,normal);
       static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,secondTangent);    
-      Vec WnLocal = cp.getFrameOfReference().getOrientation().col(0);
-      Vec WbLocal = cp.getFrameOfReference().getOrientation().col(2);
-      if(ff!=secondTangent) cp.getFrameOfReference().getOrientation().col(0) = WnLocal*Cn(0) + WbLocal*Cn(1);
+      Vec WnLocal = cp.getFrameOfReference().getOrientation().col(0).copy();
+      Vec WbLocal = cp.getFrameOfReference().getOrientation().col(2).copy();
+      if(ff!=secondTangent) cp.getFrameOfReference().getOrientation().col(0) = WnLocal*Cn(0) + WbLocal*Cn(1); 
       if(ff!=normal) cp.getFrameOfReference().getOrientation().col(2) = -WnLocal*Cn(1) + WbLocal*Cn(0);
     }
     if(ff==position || ff==position_cosy) {

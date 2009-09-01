@@ -75,7 +75,7 @@ namespace MBSim {
       double width = band->getWidth();
       if(cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width || - cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*width) g(0) = 1.;
       else { // calculate the normal distance
-        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb;
+        cpData[icontour].getFrameOfReference().getPosition() += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
         cpData[ipoint].getFrameOfReference().getOrientation().col(0) = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
         cpData[ipoint].getFrameOfReference().getOrientation().col(1) = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
         cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icontour].getFrameOfReference().getOrientation().col(2);
