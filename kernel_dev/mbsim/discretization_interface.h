@@ -96,7 +96,7 @@ namespace MBSim {
        * \param generalised positions
        * \param generalised velocities
        */
-      virtual void computedhdz(fmatvec::Vec& q,fmatvec::Vec& u) = 0;
+      virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) = 0;
 
       /*!
        * \brief compute kinetic energy

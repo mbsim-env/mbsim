@@ -70,7 +70,7 @@ namespace MBSim {
        * update \f$\vh= -(\vK \vq + \vD \vu)\f$, \f$\vM\f$ is constant
        */
       void computeh(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
-      void computedhdz(fmatvec::Vec& qElement,fmatvec::Vec& uElement) {}
+      void computedhdz(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) {}
       double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*trans(u)*M*u;}
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
       double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}

@@ -59,6 +59,10 @@ namespace MBSim {
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
       /***************************************************/
+      
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt = 1);
+      /***************************************************/
 
       /** \brief Set the force excitation.
        * forceDir*func(t) is the applied force vector in space.

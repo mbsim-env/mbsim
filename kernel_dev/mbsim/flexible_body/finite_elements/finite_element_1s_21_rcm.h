@@ -73,7 +73,7 @@ namespace MBSim {
       virtual int getuSize() const { return 8; }
       virtual void computeM(const fmatvec::Vec& qElement);
       virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(fmatvec::Vec& qElement, fmatvec::Vec& qpElement);
+      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
