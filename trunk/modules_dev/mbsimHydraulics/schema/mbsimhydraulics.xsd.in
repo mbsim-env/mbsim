@@ -6,11 +6,15 @@
   xmlns:mbsim="http://mbsim.berlios.de/MBSim"
   xmlns:mbsimcontrol="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
   xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
+    schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
   <xs:import namespace="http://mbsim.berlios.de/MBSimControl"/>
@@ -215,6 +219,24 @@
   <xs:complexType name="RegularizedVariablePressureLossCheckvalveIdelchickType">
     <xs:complexContent>
       <xs:extension base="VariablePressureLossCheckvalveIdelchickType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="VariablePressureLossCheckvalveCone" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveConeType"/>
+  <xs:complexType name="VariablePressureLossCheckvalveConeType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveType">
+        <xs:sequence>
+          <xs:element name="alpha" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RegularizedVariablePressureLossCheckvalveCone" substitutionGroup="VariablePressureLossCheckvalveCone" type="RegularizedVariablePressureLossCheckvalveConeType"/>
+  <xs:complexType name="RegularizedVariablePressureLossCheckvalveConeType">
+    <xs:complexContent>
+      <xs:extension base="VariablePressureLossCheckvalveConeType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -450,7 +472,7 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="offset" type="pv:nounitScalar"/>
-          <xs:element name="position">
+          <xs:element name="relativePosition">
             <xs:complexType>
               <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
             </xs:complexType>
@@ -465,6 +487,104 @@
   <xs:complexType name="RegularizedControlvalve43Type">
     <xs:complexContent>
       <xs:extension base="Controlvalve43Type"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BallCheckvalve" substitutionGroup="mbsim:EmptyGroup" type="BallCheckvalveType">
+  </xs:element>
+  <xs:complexType name="BallCheckvalveType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:EmptyGroupType">
+        <xs:sequence>
+          <xs:element name="basisFrame">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="RigidLine">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="length" type="pv:lengthScalar"/>
+                <xs:element name="diameter" type="pv:lengthScalar"/>
+                <xs:element name="pressureLoss">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="VariablePressureLossCheckvalve"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Ball">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="mass" type="pv:massScalar">
+                </xs:element>
+                <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="Spring">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="forceFunction">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:Function2_SSS"/>
+                    </xs:sequence>
+                  </xs:complexType> 
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="SeatContact">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="contactForceLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:GeneralizedForceLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="contactImpactLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence> 
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="maximalOpening" type="pv:lengthScalar"/>
+          <xs:element name="MaximalOpeningContact">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="contactForceLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:GeneralizedForceLaw"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="contactImpactLaw">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence> 
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVBodies" minOccurs="0"/>
+          <xs:element name="enableOpenMBVFrames" minOccurs="0"/>
+          <xs:element name="enableOpenMBVArrows" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

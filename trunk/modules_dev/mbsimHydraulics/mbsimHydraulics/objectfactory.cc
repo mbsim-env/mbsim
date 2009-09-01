@@ -5,6 +5,7 @@
 #include "mbsimHydraulics/hydnode_mec.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/controlvalve43.h"
+#include "mbsimHydraulics/checkvalve.h"
 
 using namespace std;
 
@@ -43,6 +44,10 @@ namespace MBSim {
       return new VariablePressureLossCheckvalveIdelchick(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveIdelchick")
       return new RegularizedVariablePressureLossCheckvalveIdelchick(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossCheckvalveCone")
+      return new VariablePressureLossCheckvalveCone(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveCone")
+      return new RegularizedVariablePressureLossCheckvalveCone(element->Attribute("name"));
   }
 
   Object * HydraulicsObjectFactory::createObject(TiXmlElement * element) {
@@ -88,6 +93,8 @@ namespace MBSim {
       return new Controlvalve43(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedControlvalve43")
       return new RegularizedControlvalve43(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"BallCheckvalve")
+      return new Checkvalve(element->Attribute("name"));
     return 0;
   }
 

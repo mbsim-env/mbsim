@@ -29,10 +29,11 @@ namespace MBSim {
 
   class PressureLoss : public Function1<double,double> {
     public:
-      PressureLoss(const std::string &name_) : name(name_), pLoss(0) {}
+      PressureLoss(const std::string &name_) : name(name_), line(NULL), pLoss(0) {}
       virtual ~PressureLoss() {};
       std::string getName() {return name; }
       void setHydlinePressureloss(HydlinePressureloss * line_) {line=line_; }
+      HydlinePressureloss * getHydlinePressureloss() {return line; }
       virtual void transferLineData(double d, double l) {};
       virtual void initPlot(std::vector<std::string>* plotColumns);
       virtual bool isBilateral() {return false; }
@@ -201,6 +202,32 @@ namespace MBSim {
       RegularizedVariablePressureLossCheckvalveIdelchick(const std::string &name, Signal * checkSizeSignal, double minimalXOpen, double rBall) : VariablePressureLossCheckvalveIdelchick(name, checkSizeSignal, minimalXOpen, rBall) {}
       bool isBilateral() {return false; }
   };
+
+  class VariablePressureLossCheckvalveCone : public VariablePressureLossCheckvalve {
+    public:
+      VariablePressureLossCheckvalveCone(const std::string &name) : VariablePressureLossCheckvalve(name), alpha(0), zetaFac(0), factor(0) {}
+      VariablePressureLossCheckvalveCone(const std::string &name, Signal * checkSizeSignal, double minimalXOpen, double rBall, double alpha_) : VariablePressureLossCheckvalve(name, checkSizeSignal, minimalXOpen, rBall), alpha(alpha_), zetaFac(0), factor(0) {}
+      void setAlpha(double alpha_) {alpha=alpha_; }
+      void transferLineData(double d, double l);
+      void initPlot(std::vector<std::string>* plotColumns);
+      bool isBilateral() {return true; }
+      void update(const double& Q);
+      double operator()(const double& Q, const void * =NULL) {pLoss=factor*Q*fabs(Q); return pLoss; }
+      void plot(std::vector<double>* plotVector);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double alpha;
+      double numer[2], denom[2], zetaFac, factor;
+  };
+
+
+  class RegularizedVariablePressureLossCheckvalveCone : public VariablePressureLossCheckvalveCone {
+    public:
+      RegularizedVariablePressureLossCheckvalveCone(const std::string &name) : VariablePressureLossCheckvalveCone(name) {}
+      RegularizedVariablePressureLossCheckvalveCone(const std::string &name, Signal * checkSizeSignal, double minimalXOpen, double rBall, double alpha) : VariablePressureLossCheckvalveCone(name, checkSizeSignal, minimalXOpen, rBall, alpha) {}
+      bool isBilateral() {return false; }
+  };
+
 
   //  class PositiveFlowLimittingPressureLoss : public VariablePressureLoss {
   //    public:
