@@ -258,6 +258,41 @@ namespace MBSim {
     plotVector->push_back(beta3);
   }
 
+  
+  void VariablePressureLossCheckvalveCone::transferLineData(double d, double l) {
+    double rOpen=d/2.;
+    double rBall2=rBall*rBall;
+    double rOpen2=rOpen*rOpen;
+    zetaFac=HydraulicEnvironment::getInstance()->getSpecificMass()/2./alpha/alpha/M_PI/M_PI;
+    numer[0]=rBall2;
+    numer[1]=2.*sqrt(rBall2-rOpen2);
+    denom[0]=4.*(rBall2-rOpen2);
+    denom[1]=4.*sqrt(rBall2-rOpen2);
+  }
+
+  void VariablePressureLossCheckvalveCone::initPlot(vector<string>* plotColumns) {
+    VariablePressureLossCheckvalve::initPlot(plotColumns);
+    plotColumns->push_back(name+"_factor");
+  }
+
+  void VariablePressureLossCheckvalveCone::update(const double& Q) {
+    VariablePressureLossCheckvalve::update(Q);
+    double xOpen=checkValue;
+    double xOpen2=checkValue*checkValue;
+    double xOpen4=xOpen2*xOpen2;
+    factor=zetaFac*(xOpen2+xOpen*numer[1]+numer[0])/(xOpen2+xOpen*denom[1]+denom[0])/xOpen4;
+  }
+
+  void VariablePressureLossCheckvalveCone::plot(vector<double>* plotVector) {
+    VariablePressureLossCheckvalve::plot(plotVector);
+    plotVector->push_back(factor);
+  }
+
+  void VariablePressureLossCheckvalveCone::initializeUsingXML(TiXmlElement * element) {
+    VariablePressureLossCheckvalve::initializeUsingXML(element);
+    alpha=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha")->GetText());
+  }
+
   //  void PositiveFlowLimittingPressureLoss::update(const double& Q) {
   //    QLimit=checkSizeSignal->getSignal()(0);
   //    setClosed(Q>QLimit);

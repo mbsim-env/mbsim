@@ -40,7 +40,7 @@ namespace MBSim {
       void setMinimalRelativeArea(double minRelArea_) {minRelArea=minRelArea_; }
       void setOffset(double off) {offset=off; }
       void setPARelativeAreaFunction(Function1<double, double> * relAreaPA_) {relAreaPA=relAreaPA_; } 
-      void setPositionSignal(Signal * s) {position = s; }
+      void setRelativePositionSignal(Signal * s) {position = s; }
 
       RigidLine * getLineP() {return lP; }
       RigidLine * getLineA() {return lA; }

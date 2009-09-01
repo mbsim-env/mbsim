@@ -47,15 +47,7 @@ namespace MBSim {
       Vec signal;
   };
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(NULL), lPB(NULL), lAT(NULL), lBT(NULL), lP(NULL), lA(NULL), lB(NULL), lT(NULL), regularized(false), l(0), ll(0), d(0), ld(0), alpha(0), minRelArea(0), offset(0), relAreaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL) {
-    lPA = new RigidLine("LinePA");
-    lPB = new RigidLine("LinePB");
-    lAT = new RigidLine("LineAT");
-    lBT = new RigidLine("LineBT");
-    lP = new RigidLine("LineP");
-    lA = new RigidLine("LineA");
-    lB = new RigidLine("LineB");
-    lT = new RigidLine("LineT");
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new RigidLine("LinePA")), lPB(new RigidLine("LinePB")), lAT(new RigidLine("LineAT")), lBT(new RigidLine("LineBT")), lP(new RigidLine("LineP")), lA(new RigidLine("LineA")), lB(new RigidLine("LineB")), lT(new RigidLine("LineT")), regularized(false), l(0), ll(0), d(0), ld(0), alpha(0), minRelArea(0), offset(0), relAreaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL) {
     addObject(lPA);
     addObject(lPB);
     addObject(lAT);
@@ -150,7 +142,7 @@ namespace MBSim {
     relAreaPA->initializeUsingXML(e->FirstChildElement());
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"offset");
     offset=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"position");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");
     position=getSignalByPath(parent, e->Attribute("ref"));
   }
 
