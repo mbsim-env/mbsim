@@ -138,13 +138,10 @@
     </xs:attribute>
   </xs:complexType> 
 
-  <xs:element name="DynamicSystem" abstract="true" substitutionGroup="Element" type="DynamicSystemType"/>
-  <xs:complexType name="DynamicSystemType">
+  <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
+  <xs:complexType name="EmptyGroupType">
     <xs:complexContent>
       <xs:extension base="ElementType"/>
-      <!-- All functionality of DynamicSystem is moved to Group, because this two classes are the save,
-      if there exist no class Tree on modelling level. (The ordering of the elements is better, if
-      this is done so. -->
     </xs:complexContent>
   </xs:complexType>   
 
@@ -159,10 +156,10 @@
     </xs:complexType> 
   </xs:element>
 
-  <xs:element name="Group" substitutionGroup="DynamicSystem" type="GroupType"/>
+  <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType"/>
   <xs:complexType name="GroupType">
     <xs:complexContent>
-      <xs:extension base="DynamicSystemType">
+      <xs:extension base="EmptyGroupType">
         <xs:sequence>
           <xs:element ref="frameOfReference" minOccurs="0">
             <xs:annotation>
@@ -300,7 +297,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>  
-                <xs:element ref="Group">
+                <xs:element ref="EmptyGroup">
                   <xs:annotation>
                     <xs:documentation xml:lang="de">
                       Lokale Definition.
@@ -452,9 +449,6 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <!--
-          simple workaround for hydraulic lines, which don't have a q
-          -->
           <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:lengthVector">
             <xs:annotation>
               <xs:documentation xml:lang="de">
@@ -462,7 +456,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="initialGeneralizedVelocity" type="pv:velocityVector">
+          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:velocityVector">
             <xs:annotation>
               <xs:documentation xml:lang="de">
                 Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
@@ -608,6 +602,11 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Vorgabe der translatorischen Geschwindigkeit. Rückgabewert muss eine 3x1-Matrix sein.
+                    </xs:documentation>
+                  </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -1253,6 +1252,27 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <!--
+  <xs:element name="TimeDependentPosition1D" substitutionGroup="Translation" type="TimeDependentPosition1DType"/>
+  <xs:complexType name="TimeDependentPosition1DType">
+    <xs:complexContent>
+      <xs:extension base="TranslationType">
+        <xs:sequence>
+          <xs:element name="direction" type="pv:nounitVector"/>
+          <xs:element name="position">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_SS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+  -->
 
   <xs:element name="Rotation" abstract="true" type="RotationType"/>
   <xs:complexType name="RotationType"/>
