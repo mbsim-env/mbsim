@@ -1,5 +1,5 @@
 docdir = @datadir@/@PACKAGE@/doc
-nodist_doc_DATA = mbsimcontrol.html 
+nodist_doc_DATA = mbsimcontrol.xhtml 
 
 ../schema/mbsimcontrol.xsd: ../schema/mbsimcontrol.xsd.in
 	$(top_srcdir)/config.status --file=../schema/mbsimcontrol.xsd
@@ -7,7 +7,7 @@ nodist_doc_DATA = mbsimcontrol.html
 xml/index.xml: ../schema/mbsimcontrol.xsd ../mbsimControl/*.h
 	doxygen
 
-mbsimcontrol.html: xml/index.xml
+mbsimcontrol.xhtml: xml/index.xml
 	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimcontrol.xsd xml .:../doc MBSimControl MBSim:: false
 #sed -re "s|$$(pkg-config mbxmlutils --variable DOCDIR)/measurement.html|qrc:measurement.html|" ../doc/openmbv.html > openmbv.qt.html
 
@@ -16,5 +16,6 @@ mbsimcontrol.html: xml/index.xml
 schemadir = @datadir@/@PACKAGE@/schema
 nodist_schema_DATA = mbsimcontrol.doxygen.xsd
 
-mbsimcontrol.doxygen.xsd: mbsimcontrol.html
+mbsimcontrol.doxygen.xsd: mbsimcontrol.xhtml
 
+CLEANFILES=mbsimcontrol.xhtml xml/index.xml
