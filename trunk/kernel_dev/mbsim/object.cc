@@ -235,7 +235,7 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_frameOfReference!="")
         setFrameOfReference(getFrameByPath(saved_frameOfReference));
-      Element::init(stage)
+      Element::init(stage,parent);
     }
     else if(stage==unknownStage) {
       Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
