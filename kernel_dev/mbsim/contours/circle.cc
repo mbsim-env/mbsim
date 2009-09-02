@@ -33,12 +33,28 @@ namespace MBSim {
 
   Circle::~Circle() {}
 
+  void Circle::init(InitStage stage) {
+    if(stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+
+      if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
+          ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
+        }
+#endif
+        RigidContour::init(stage);
+      }
+    }
+    else
+      RigidContour::init(stage);
+  }
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Circle::enableOpenMBV(bool enable) {
     if(enable) {
       openMBVRigidBody=new OpenMBV::Frustum;
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setBaseRadius(r);
-      ((OpenMBV::Frustum*)openMBVRigidBody)->setTopRadius(r);
       ((OpenMBV::Frustum*)openMBVRigidBody)->setHeight(0);
     }
     else openMBVRigidBody=0;
