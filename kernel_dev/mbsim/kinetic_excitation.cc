@@ -45,6 +45,7 @@ namespace MBSim {
         Frame *con=getFrameByPath(saved_ref);
         connect(con);
       }
+      LinkMechanics::init(stage);
     }
     else if(stage==unknownStage) {
       LinkMechanics::init(stage);

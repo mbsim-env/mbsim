@@ -85,6 +85,7 @@ namespace MBSim {
         Frame *ref2=getFrameByPath(saved_ref2);
         connect(ref1,ref2);
       }
+      LinkMechanics::init(stage);
     }
     else if(stage==resize) {
       LinkMechanics::init(stage);
