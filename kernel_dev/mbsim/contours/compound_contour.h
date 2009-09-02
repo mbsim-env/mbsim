@@ -50,12 +50,15 @@ namespace MBSim {
       /***************************************************/
 
       void init(InitStage stage);
-      Contour* getContourElement(int i) { return element[i]; }
-      void addContourElement(Contour* ce, const fmatvec::Vec& re);
+      RigidContour* getContourElement(int i) { return element[i]; }
+      void addContourElement(RigidContour* ce, const fmatvec::Vec& re);
       unsigned int getNumberOfElements() { return element.size(); }
 
+      void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
+      void updateJacobiansForFrame(ContourPointData &cp);
+
     private:
-      std::vector<Contour*> element;
+      std::vector<RigidContour*> element;
       std::vector<fmatvec::Vec> Kr, Wr;
   };
 }

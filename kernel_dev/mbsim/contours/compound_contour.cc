@@ -28,7 +28,7 @@ namespace MBSim {
   CompoundContour::CompoundContour(const string &name) : Contour(name) {
   }
 
-  void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {
+  void CompoundContour::addContourElement(RigidContour* c, const Vec& Kr_) {
     element.push_back(c);
     Kr.push_back(Kr_);
     Wr.push_back(Vec(3));
@@ -93,7 +93,20 @@ namespace MBSim {
     else
       Contour::init(stage);
 
-    for(unsigned int i=0; i<element.size(); i++)
+    for(unsigned int i=0; i<element.size(); i++) {
+      element[i]->setParent(parent);
       element[i]->init(stage);
+    }
   }
+
+  void CompoundContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->updateKinematicsForFrame(cp,ff);
+  }
+
+  void CompoundContour::updateJacobiansForFrame(ContourPointData &cp) {
+    for(unsigned int i=0; i<element.size(); i++) 
+      element[i]->updateJacobiansForFrame(cp);
+  }
+
 }
