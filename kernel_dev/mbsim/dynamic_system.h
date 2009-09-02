@@ -603,9 +603,19 @@ namespace MBSim {
        * \param frame to add
        * \param relative position of frame
        * \param relative orientation of frame
+       * \param relation frame name
+       */
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName);
+
+      /**
+       * \param frame to add
+       * \param relative position of frame
+       * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
+        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
+      }
 
       /**
        * \param name of frame to add
@@ -619,9 +629,19 @@ namespace MBSim {
        * \param contour to add
        * \param relative position of contour
        * \param relative orientation of contour
+       * \param relation frame name
+       */
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
+
+      /**
+       * \param contour to add
+       * \param relative position of contour
+       * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
+        addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
+      }
 
       /**
        * \param contour to add
@@ -911,6 +931,11 @@ namespace MBSim {
 
       /** A pointer to frame "I" */
       Frame *I;
+
+    private:
+      std::vector<std::string> saved_refFrameF, saved_refFrameC;
+      std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
   };
 }
 

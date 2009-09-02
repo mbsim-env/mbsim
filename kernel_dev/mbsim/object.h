@@ -363,6 +363,9 @@ namespace MBSim {
        * \brief indices for velocities and right hand side
        */
       fmatvec::Index Iu, Ih;
+
+    private:
+      std::string saved_frameOfReference;
   };
 
 }

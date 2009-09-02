@@ -343,7 +343,25 @@ namespace MBSim {
   }
 
   void DynamicSystem::init(InitStage stage) {
-    if(stage==frameLocation) {
+    if(stage==relativeFrameContourLocation) {
+      // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
+      for(size_t k=0; k<saved_refFrameF.size(); k++)
+        for(size_t j=0; j<saved_refFrameF.size(); j++) {
+          int i = 0;
+          if(saved_refFrameF[j]!="") i = frameIndex(getFrame(saved_refFrameF[j]));
+
+          IrOF[j+1]=IrOF[i] + AIF[i]*saved_RrRF[j];
+          AIF[j+1]=AIF[i]*saved_ARF[j];
+        }
+      for(size_t j=0; j<saved_refFrameC.size(); j++) {
+        int i = 0;
+        if(saved_refFrameC[j]!="") i = frameIndex(getFrame(saved_refFrameC[j]));
+
+        IrOC[j]=IrOF[i] + AIF[i]*saved_RrRC[j];
+        AIC[j]=AIF[i]*saved_ARC[j];
+      }
+    }
+    else if(stage==worldFrameContourLocation) {
       if(frameParent) {
         I->setPosition(frameParent->getPosition() + frameParent->getOrientation()*PrPF);
         I->setOrientation(frameParent->getOrientation()*APF);
@@ -1192,14 +1210,14 @@ namespace MBSim {
     cosy->setParent(this);
   }
 
-  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
+  void DynamicSystem::addFrame(Frame* cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {
     addFrame(cosy);
 
-    int i = 0;
-    if(refFrame) i = frameIndex(refFrame);
-
-    IrOF.push_back(IrOF[i] + AIF[i]*RrRF);
-    AIF.push_back(AIF[i]*ARF);
+    saved_refFrameF.push_back(refFrameName);
+    saved_RrRF.push_back(RrRF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    saved_ARF.push_back(ARF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    IrOF.push_back(Vec(3));
+    AIF.push_back(SqrMat(3));
   }
 
   void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
@@ -1215,18 +1233,14 @@ namespace MBSim {
     contour_->setParent(this);
   }
 
-  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
+  void DynamicSystem::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const string& refFrameName) {
     addContour(contour);
 
-    if(dynamic_cast<const Frame*>(refFrame)!=0) {
-      int i = frameIndex(static_cast<const Frame*>(refFrame));
-      IrOC.push_back(IrOF[i] + AIF[i]*RrRC);
-      AIC.push_back(AIF[i]*ARC);
-    }
-    else {
-      IrOC.push_back(RrRC);
-      AIC.push_back(ARC);
-    }
+    saved_refFrameC.push_back(refFrameName);
+    saved_RrRC.push_back(RrRC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    IrOC.push_back(Vec(3));
+    AIC.push_back(SqrMat(3));
   }
 
   int DynamicSystem::frameIndex(const Frame *frame_) const {

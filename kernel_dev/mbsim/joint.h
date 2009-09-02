@@ -182,6 +182,9 @@ namespace MBSim {
        * \brief own frame located in second partner with same orientation as first partner 
        */
       Frame C;
+
+    private:
+      std::string saved_ref1, saved_ref2;
   };
 
 }

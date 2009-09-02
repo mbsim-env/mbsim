@@ -36,7 +36,17 @@ namespace MBSim {
   KineticExcitation::~KineticExcitation() {}
 
   void KineticExcitation::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="") {
+        Frame *ref=getFrameByPath(saved_frameOfReference);
+        setFrameOfReference(ref);
+      }
+      if(saved_ref!="") {
+        Frame *con=getFrameByPath(saved_ref);
+        connect(con);
+      }
+    }
+    else if(stage==unknownStage) {
       LinkMechanics::init(stage);
       if(!refFrame) refFrame=frame[0];
     }
@@ -102,9 +112,7 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
     if(e) {
-      Frame *ref=getFrameByPath(e->Attribute("ref"));
-      if(!ref) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
-      setFrameOfReference(ref);
+      saved_frameOfReference=e->Attribute("ref");
     }
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
@@ -143,9 +151,7 @@ namespace MBSim {
 #endif
     }
     e=element->FirstChildElement(MBSIMNS"connect");
-    Frame *con=getFrameByPath(e->Attribute("ref"));
-    if(!con) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
-    connect(con);
+    saved_ref=e->Attribute("ref");
     e=e->NextSiblingElement();
   }
 

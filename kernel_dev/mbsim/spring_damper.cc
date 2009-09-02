@@ -75,7 +75,18 @@ namespace MBSim {
   }
 
   void SpringDamper::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="") {
+        Frame *ref=getFrameByPath(saved_frameOfReference);
+        setProjectionDirection(ref, saved_direction);
+      }
+      if(saved_ref1!="" && saved_ref2!="") {
+        Frame *ref1=getFrameByPath(saved_ref1);
+        Frame *ref2=getFrameByPath(saved_ref2);
+        connect(ref1,ref2);
+      }
+    }
+    else if(stage==resize) {
       LinkMechanics::init(stage);
       g.resize(1);
       gd.resize(1);
@@ -134,18 +145,13 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"projectionDirection");
     if(e) {
       TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
-      Frame *ref=getFrameByPath(ee->Attribute("ref"));
-      if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
+      saved_frameOfReference=ee->Attribute("ref");
       ee=e->FirstChildElement(MBSIMNS"direction");
-      Vec dir(ee->GetText());
-      setProjectionDirection(ref, dir);
+      saved_direction=Vec(ee->GetText());
     }
     e=element->FirstChildElement(MBSIMNS"connect");
-    Frame *ref1=getFrameByPath(e->Attribute("ref1"));
-    if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
-    Frame *ref2=getFrameByPath(e->Attribute("ref2"));
-    if(!ref2) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref2")<<endl; _exit(1); }
-    connect(ref1,ref2);
+    saved_ref1=e->Attribute("ref1");
+    saved_ref2=e->Attribute("ref2");
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::CoilSpring *coilSpring=dynamic_cast<OpenMBV::CoilSpring*>(OpenMBV::ObjectFactory::createObject(e));

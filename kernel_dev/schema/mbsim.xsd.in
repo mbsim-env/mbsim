@@ -52,42 +52,27 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="ObjectReferenceType">
+  <!-- A reference to a Frame at the same hierarchy -->
+  <xs:simpleType name="CurrentFrameReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*Object\[X\]" with
+      <!-- pattern value="Frame\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="GroupReferenceType">
+  <!-- A reference to a Frame at the parent -->
+  <xs:simpleType name="ParentFrameReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*Group\[X\]" with
+      <!-- pattern value="\.\./Frame\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="\.\./Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:simpleType name="LinkReferenceType">
-    <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*Link\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="OrderOneDynamicsReferenceType">
-    <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*OrderOneDynamics\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*OrderOneDynamics\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
-  </xs:simpleType>
-
+  <!-- A reference to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
     <xs:restriction base="xs:token">
       <!-- pattern value="/?((\.\.|Object\[X\]|Group\[X\])/)*Frame\[X\]" with
@@ -97,6 +82,7 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- A reference to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
     <xs:restriction base="xs:token">
       <!-- pattern value="/?((\.\.|Object\[X\]|Group\[X\])/)*Contour\[X\]" with
@@ -105,6 +91,17 @@
       <xs:pattern value="/?((\.\.|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
+
+  <!-- A reference to a Object somewhere in the hierarchy -->
+  <xs:simpleType name="ObjectReferenceType">
+    <xs:restriction base="xs:token">
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Object\[X\]" with
+             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
 
 
 
@@ -145,28 +142,20 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="frameOfReference">
-    <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Referenzkoordinatensystem
-      </xs:documentation>
-    </xs:annotation>
-    <xs:complexType>
-      <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-    </xs:complexType> 
-  </xs:element>
-
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType"/>
   <xs:complexType name="GroupType">
     <xs:complexContent>
       <xs:extension base="EmptyGroupType">
         <xs:sequence>
-          <xs:element ref="frameOfReference" minOccurs="0">
+          <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de">
                 Koordinatensystem, in dem die Positionierung der Gruppe angegeben wird. Standardmäßig wird das "I"-System des übergeordneten Systems verwendet.
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ParentFrameReferenceType" use="required"/>
+            </xs:complexType>
           </xs:element>
           <xs:element name="position" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
@@ -205,12 +194,15 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element ref="frameOfReference" minOccurs="0">
+                      <xs:element name="frameOfReference" minOccurs="0">
                         <xs:annotation>
                           <xs:documentation xml:lang="de">
                             Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe.
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+                        </xs:complexType>
                       </xs:element>
                       <xs:element name="position" type="pv:lengthVector">
                         <xs:annotation>
@@ -255,12 +247,15 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element ref="frameOfReference" minOccurs="0">
+                      <xs:element name="frameOfReference" minOccurs="0">
                         <xs:annotation>
                           <xs:documentation xml:lang="de">
                             Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "I"-System der Gruppe.
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+                        </xs:complexType>
                       </xs:element>
                       <xs:element name="position" type="pv:lengthVector">
                         <xs:annotation>
@@ -463,7 +458,10 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element ref="frameOfReference">
+          <xs:element name="frameOfReference">
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -529,7 +527,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+              <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="mass" type="pv:massScalar">
@@ -658,12 +656,15 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element ref="frameOfReference" minOccurs="0">
+                      <xs:element name="frameOfReference" minOccurs="0">
                         <xs:annotation>
                           <xs:documentation xml:lang="de">
                             Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "C"-KOS.
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+                        </xs:complexType> 
                       </xs:element>
                       <xs:element name="position" type="pv:lengthVector">
                         <xs:annotation>
@@ -703,12 +704,15 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element ref="frameOfReference" minOccurs="0">
+                      <xs:element name="frameOfReference" minOccurs="0">
                         <xs:annotation>
                           <xs:documentation xml:lang="de">
                             Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "C"-KOS.
                           </xs:documentation>
                         </xs:annotation>
+                        <xs:complexType>
+                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+                        </xs:complexType> 
                       </xs:element>
                       <xs:element name="position" type="pv:lengthVector">
                         <xs:annotation>
@@ -870,7 +874,11 @@
           <xs:element name="projectionDirection" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="frameOfReference"/>
+                <xs:element name="frameOfReference">
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+                  </xs:complexType> 
+                </xs:element>
                 <xs:element name="direction" type="pv:nounitVector"/>
               </xs:sequence>
             </xs:complexType> 

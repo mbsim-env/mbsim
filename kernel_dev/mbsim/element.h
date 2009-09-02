@@ -46,8 +46,11 @@ namespace MBSim {
 
   class ObjectInterface;
 
+  /** \brief Plot feature status */
   enum PlotFeatureStatus {
-    enabled, disabled, unset
+    enabled, /*!< set the feature enabled */
+    disabled, /*!< set the feature disabled */
+    unset /*!< use the default value for the feature */
   };
 
   // NOTE!!! When adding a new PlotFeature here, the default setting for this feature must
@@ -56,8 +59,20 @@ namespace MBSim {
   // element.cc:Element::initializeUsingXML(TiXmlElement *element)
   // and in
   // mbsimxml/schema/mbsim.xsd.in
+  /** \brief Plot Features */
   enum PlotFeature {
-    plotRecursive=0, separateFilePerGroup, state, stateDerivative, rightHandSide, globalPosition, energy, openMBV, generalizedLinkForce, linkKinematics, stopVector, LASTPLOTFEATURE
+    plotRecursive=0, /*!< enables/disables all plotting beyond this hierarchy */
+    separateFilePerGroup, /*!< create a separate h5 file for the Group */
+    state, /*!< plot the state vector (x, q, u) */
+    stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
+    rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
+    globalPosition, /*!< plot some global (world) positions/orientation */
+    energy, /*!< plot the energy */
+    openMBV, /*!< plot the OpenMBV part */
+    generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
+    linkKinematics, /*!< plot the kinematic of links (g, gd) */
+    stopVector, /*!< plot the stop vector (sv) */
+    LASTPLOTFEATURE
   };
 
   /** \brief The stages of the initialization
@@ -65,11 +80,12 @@ namespace MBSim {
    * see also DynamicSystemSolver::init()
    */
   enum InitStage {
-    resolveXMLPath=0, /*!< TODO resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
+    resolveXMLPath=0, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
     preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
-    resize, /*!< Do the resizing of all vectors, matrices and containers. */
-    plot, /*!< Build the plot structure */
-    frameLocation, /*!< Set the world position and orientation of all frames in all DynamicSystem's */
+    resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
+    plot, /*!< Build/initialize the plot structure */
+    relativeFrameContourLocation, /*!< Set the relative position and orientation of all Frame's/Contour's in all Group's/RigidBody's */
+    worldFrameContourLocation, /*!< Set the world position and orientation of all Frame's/Contour's in all Group's */
     reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
     unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
     LASTINITSTAGE

@@ -84,6 +84,9 @@ namespace MBSim {
         LinkMechanics::setOpenMBVForceArrow(arrow, which);
       }
 #endif
+    private:
+      std::string saved_frameOfReference, saved_ref1, saved_ref2;
+      fmatvec::Vec saved_direction;
   };
 
 }

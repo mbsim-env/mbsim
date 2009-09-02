@@ -130,19 +130,21 @@ namespace MBSim {
 
     if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
       string ref=e->Attribute("ref");
-      if(ref.substr(0,3)!="../") { cout<<"ERROR! The reference frame "<<ref<<" must be one of the parent!"<<endl; _exit(1); }
-      setFrameOfReference(getFrameByPath(ref));
+      setFrameOfReference(getFrameByPath(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
       e=e->NextSiblingElement();
     }
+
     if(e && e->ValueStr()==MBSIMNS"position") {
       setPosition(Vec(e->GetText()));
       e=e->NextSiblingElement();
     }
+
     if(e && e->ValueStr()==MBSIMNS"orientation") {
       setOrientation(SqrMat(e->GetText()));
       e=e->NextSiblingElement();
     }
 
+    // frames
     TiXmlElement *E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=E->FirstChildElement();
@@ -153,9 +155,10 @@ namespace MBSim {
         f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()), atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
 #endif
       ec=ec->NextSiblingElement();
-      Frame *refF=0;
+      string refF="I";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=getFrameByPath(ec->Attribute("ref"));
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
       Vec RrRF(ec->GetText());
@@ -165,15 +168,18 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
+
+    // contours
     E=e->FirstChildElement();
     while(E && E->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=E->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
-      Frame *refF=0;
+      string refF="I";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=getFrameByPath(ec->Attribute("ref"));
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
       Vec RrRC(ec->GetText());
@@ -184,6 +190,8 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
+
+    // groups
     E=e->FirstChildElement();
     Group *g;
     while((g=ObjectFactory::getInstance()->createGroup(E))) {
@@ -192,6 +200,9 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
+
+
+    // objects
     E=e->FirstChildElement();
     Object *o;
     while((o=ObjectFactory::getInstance()->createObject(E))) {
@@ -200,6 +211,8 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
+
+    // links
     E=e->FirstChildElement();
     Link *l;
     while((l=ObjectFactory::getInstance()->createLink(E))) {
