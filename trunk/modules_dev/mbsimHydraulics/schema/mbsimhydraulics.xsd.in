@@ -247,7 +247,11 @@
         <!--
         <xs:sequence>
           <xs:element name="initialGeneralizedVelocity" type="pv:nounitScalar"/>
-          <xs:element ref="mbsim:frameOfReference"/>
+          <xs:element name="frameOfReference">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
         -->
       </xs:extension>
@@ -368,7 +372,11 @@
             <xs:element name="translatorialBoundarySourface">
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="mbsim:frameOfReference"/>
+                  <xs:element name="frameOfReference">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
                   <xs:element name="normal" type="pv:nounitVector"/>
                   <xs:element name="area" type="pv:nounitScalar"/>
                   <xs:element name="noVolumeChange" minOccurs="0"/>
@@ -378,7 +386,11 @@
             <xs:element name="rotatorialBoundarySourface">
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element ref="mbsim:frameOfReference"/>
+                  <xs:element name="frameOfReference">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
                   <xs:element name="normal" type="pv:nounitVector"/>
                   <xs:element name="area" type="pv:nounitScalar"/>
                   <xs:element name="frameOfRotationCenter">
