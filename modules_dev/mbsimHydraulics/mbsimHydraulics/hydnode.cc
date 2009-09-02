@@ -36,10 +36,10 @@ namespace MBSim {
 
   HNode::HNode(const string &name) : Link(name), QHyd(0), nLines(0)
 # ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
+                                     , openMBVGrp(NULL), openMBVSphere(NULL), WrON(3)
 #endif
-                                         {
-                                         }
+                                     {
+                                     }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void HNode::enableOpenMBV(double size, double pMin, double pMax, Vec WrON_) {
@@ -56,8 +56,8 @@ namespace MBSim {
 #endif
 
   HLine * HNode::getHLineByPath(string path) {
-    int pos=path.find("RigidLine");
-    path.erase(pos, 9);
+    int pos=path.find("HLine");
+    path.erase(pos, 5);
     path.insert(pos, "Object");
     Object * h = parent->getObjectByPath(path);
     if (dynamic_cast<HLine *>(h))

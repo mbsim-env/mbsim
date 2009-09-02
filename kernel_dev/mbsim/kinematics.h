@@ -22,6 +22,7 @@
 
 #include "fmatvec.h"
 #include <fstream>
+#include "mbsim/utils/function.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
@@ -103,6 +104,59 @@ namespace MBSim {
        */
       fmatvec::Mat PJT;
   };
+
+  /**
+   * \brief class to describe time dependent positions
+   * \author Markus Schneider
+   */
+  class TimeDependentTranslation1D : public Translation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentTranslation1D() : dir(0), pos(NULL) {}
+
+      /**
+       * \brief constructor
+       * \param independent direction matrix of translation
+       */
+      TimeDependentTranslation1D(fmatvec::Vec dir_, Function1<double, double> * pos_) : dir(dir_), pos(pos_) {dir/=nrm2(dir); }
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqSize() const { return 0; }
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
+        return (*pos)(t)*dir;
+      };
+      /***************************************************/
+
+      /* GETTER / SETTER */
+
+      /**
+       * Set the translation direction
+       */
+      void setDirection(fmatvec::Vec dir_) { dir = dir_/nrm2(dir_); }
+      
+      /**
+       * Set the positon function
+       */
+      void setPosition(Function1<double, double> * pos_) { pos = pos_; }
+      /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+
+    private:
+      /**
+       * translation direction
+       */
+      fmatvec::Vec dir;
+
+      /**
+       * time dependent position function
+       */
+      Function1<double, double> * pos;
+  };
+
+
 
   /**
    * \brief base class to describe rotation along a path

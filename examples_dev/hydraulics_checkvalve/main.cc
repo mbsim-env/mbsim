@@ -66,7 +66,7 @@ int main (int argc, char* argv[]) {
           HydraulicEnvironment::getInstance()->setTemperature(50);
           HydraulicEnvironment::getInstance()->initializeFluidData();
 
-          MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
+          MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
           if (isolver==0) {
             dss->setConstraintSolver(LinearEquations);
@@ -85,6 +85,7 @@ int main (int argc, char* argv[]) {
             dss->setImpactSolver(RootFinding);
           }
           dss->setgdTol(1e-9);
+          dss->setReorganizeHierarchy(true);
           dss->init();
 
           double tEnd=.5;

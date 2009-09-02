@@ -24,8 +24,7 @@ namespace MBSim {
       void setLineLength(double lLine_);
       void setLineDiameter(double lDiameter_);
       void setLinePressureLoss(VariablePressureLossCheckvalve * pressureLoss_) { pressureLoss=pressureLoss_; }
-      void setBallMass(double mBall_);
-      void setBallInertiaTensor(fmatvec::SymMat ThetaBall_);
+      void setBallMass(double mBall_) {mBall=mBall_; }
       void setSpringForceFunction(Function2<double,double,double> *func);
       void setSeatContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
       void setSeatContactForceLaw(GeneralizedForceLaw * seatGFL_);
@@ -39,6 +38,7 @@ namespace MBSim {
 #endif
 
       MBSim::RigidLine * getLine() {return line; }
+      MBSim::RigidBody * getBallSeat() {return ballSeat; }
       MBSim::RigidBody * getBall() {return ball; }
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
@@ -51,6 +51,7 @@ namespace MBSim {
 
     private:
       RigidLine * line;
+      RigidBody * ballSeat;
       RigidBody * ball;
       Contact * seatContact;
       Contact * maxContact;
@@ -59,7 +60,7 @@ namespace MBSim {
       Frame * ref;
       VariablePressureLossCheckvalve * pressureLoss;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
-      double hMax;
+      double hMax, mBall;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       bool openMBVBodies, openMBVArrows, openMBVFrames;
 #endif

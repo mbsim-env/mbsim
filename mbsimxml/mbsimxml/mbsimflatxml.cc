@@ -48,6 +48,8 @@ int main(int argc, char *argv[]) {
   }
   dss->initializeUsingXML(e);
   delete doc;
+  cout << "\n\n\n===\nWARNING! ReorganizeHierarchy is enabled.\n===\n\n\n" << endl;
+  dss->setReorganizeHierarchy(true);
   dss->init();
 
 

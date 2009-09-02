@@ -333,10 +333,10 @@
             </xs:complexType>
           </xs:element>
           <!--
-          <xs:element name="order_one_systems">
+          <xs:element name="extradynamics">
             <xs:annotation>
               <xs:documentation xml:lang="de">
-                Kontainer für Systeme 1. Ordnung (z.B. Regelung)
+                Kontainer für zusätzliche dynamische Systeme, welche als gewöhnliches Differentialgleichungssystem 1. Ordnung abgebildet werden können.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -348,7 +348,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>  
-                <xs:element ref="OrderOneSystem">
+                <xs:element ref="ExtraDynamicSystem">
                   <xs:annotation>
                     <xs:documentation xml:lang="de">
                       Lokale Definition.
@@ -525,7 +525,7 @@
           <xs:element name="frameForKinematics">
             <xs:annotation>
               <xs:documentation xml:lang="de">
-                Koordinatensystem, in dem die kinematischen Größen des Körpers ausgewertet werden. Für eine Beschreibung des Körpers in Absolutkoordinaten ist hier das ortsfeste "I"-System der übergeordneten Gruppe zu wählen.
+                Koordinatensystem, in dem die kinematischen Größen des Körpers ausgewertet werden. Dieses Koordinatensystem muss dem Körper zugehörig sein. Es kann sich entsprechend der angegebenen translatorischen und rotatorischen Freiheitsgrade gegenüber dem frameOfReference bewegen und ist zu Beginn der Simulation um die angegebenen generalisierten Startwerte gegenüber dem frameOfReference ausgelenkt.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -552,7 +552,7 @@
                 <xs:element ref="Translation" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de">
-                      Translatorische Freiheitsgrade des Körpers.
+                      Translatorische Freiheitsgrade des Körpers. Sie werden in den Koordinaten des zugewiesenen frameOfReference angegeben.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -565,7 +565,7 @@
                 <xs:element ref="Rotation" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de">
-                      Rotatorische Freiheitsgrade des Körpers.
+                      Rotatorische Freiheitsgrade des Körpers. Sie werden in den Koordinaten des zugewiesenen frameOfReference angegeben. Wenn dieses Koordinatensystem einem anderen Körper zugehörig ist, dann wird der Körper in relativen Koordinaten beschrieben. Ist das Koordinaten dagegen einer Gruppe zugehörig, so wird der Körper in Absolutkoordinaten beschrieben.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -775,6 +775,19 @@
           </xs:element>
         </xs:sequence> 
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="ExtraDynamicSystem" abstract="true" substitutionGroup="Element" type="ExtraDynamicSystemType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse eines ExtraDynamicSystems.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExtraDynamicSystemType">
+    <xs:complexContent>
+      <xs:extension base="ElementType"/>
     </xs:complexContent>
   </xs:complexType>   
 
@@ -1253,9 +1266,8 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <!--
-  <xs:element name="TimeDependentPosition1D" substitutionGroup="Translation" type="TimeDependentPosition1DType"/>
-  <xs:complexType name="TimeDependentPosition1DType">
+  <xs:element name="TimeDependentTranslation1D" substitutionGroup="Translation" type="TimeDependentTranslation1DType"/>
+  <xs:complexType name="TimeDependentTranslation1DType">
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
@@ -1272,7 +1284,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
-  -->
 
   <xs:element name="Rotation" abstract="true" type="RotationType"/>
   <xs:complexType name="RotationType"/>

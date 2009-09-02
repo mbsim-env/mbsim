@@ -5,7 +5,7 @@
 
 class System : public MBSim::Group {
   public:
-    System(const std::string &name, bool setvalued);
+    System(const std::string &name, bool setvalued=true);
 };
 
 #endif   /* ----- #ifndef _SYSTEM_H_  ----- */

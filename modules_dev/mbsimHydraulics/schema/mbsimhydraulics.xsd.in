@@ -19,12 +19,12 @@
   <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
   <xs:import namespace="http://mbsim.berlios.de/MBSimControl"/>
 
-  <xs:simpleType name="RigidLineReferenceType">
+  <xs:simpleType name="HLineReferenceType">
     <xs:restriction base="xs:token">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*Hydline\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*HLine\[X\]" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*RigidLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*HLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -295,12 +295,12 @@
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="inflow">
               <xs:complexType>
-                <xs:attribute name="ref" type="RigidLineReferenceType" use="required"/>
+                <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
               </xs:complexType>
             </xs:element>
             <xs:element name="outflow">
               <xs:complexType>
-                <xs:attribute name="ref" type="RigidLineReferenceType" use="required"/>
+                <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -520,8 +520,11 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="mass" type="pv:massScalar">
-                </xs:element>
-                <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Masse der Ventilkugel. Die Massenträgheit der Ventilkugel wird gemäß  <h:img class="inlineeqn" src="id_B.png" alt="$\Theta_{Ball}=\frac{2}{5}*m_{Ball}*r_{Ball}^2$"/>. berechnet.
+                    </xs:documentation>
+                  </xs:annotation>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
