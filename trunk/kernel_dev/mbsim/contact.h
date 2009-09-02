@@ -257,6 +257,8 @@ namespace MBSim {
 
       OpenMBV::Arrow *contactArrow, *frictionArrow;
 #endif
+    private:
+      std::string saved_ref1, saved_ref2;
   };
 
 }

@@ -110,6 +110,9 @@ namespace MBSim {
        * \brief portions of the force / moment in the specific directions
        */
       Function1<fmatvec::Vec,double> *F, *M;
+
+    private:
+      std::string saved_frameOfReference, saved_ref;
   };
 
 }

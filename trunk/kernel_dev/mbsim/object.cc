@@ -232,7 +232,11 @@ namespace MBSim {
   }
 
   void Object::init(InitStage stage) {  
-    if(stage==unknownStage) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getFrameByPath(saved_frameOfReference));
+    }
+    else if(stage==unknownStage) {
       Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
       Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
     }
@@ -298,7 +302,7 @@ namespace MBSim {
     if (e && e->GetText())
       setInitialGeneralizedVelocity(Vec(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    setFrameOfReference(getFrameByPath(e->Attribute("ref")));
+    saved_frameOfReference=e->Attribute("ref");
   }
 
   Frame *Object::getFrameByPath(string path) {

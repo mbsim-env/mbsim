@@ -126,7 +126,15 @@ namespace MBSim {
   }
 
   void Joint::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==resolveXMLPath) {
+      if(saved_ref1!="" && saved_ref2!="") {
+        Frame *ref1=getFrameByPath(saved_ref1);
+        Frame *ref2=getFrameByPath(saved_ref2);
+        connect(ref1,ref2);
+      }
+      LinkMechanics::init(stage);
+    }
+    else if(stage==resize) {
       LinkMechanics::init(stage);
 
       g.resize(forceDir.cols()+momentDir.cols());
@@ -603,11 +611,8 @@ namespace MBSim {
 #endif
     }
     e=element->FirstChildElement(MBSIMNS"connect");
-    Frame *ref1=getFrameByPath(e->Attribute("ref1"));
-    if(!ref1) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref1")<<endl; _exit(1); }
-    Frame *ref2=getFrameByPath(e->Attribute("ref2"));
-    if(!ref2) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref2")<<endl; _exit(1); }
-    connect(ref1,ref2);
+    saved_ref1=e->Attribute("ref1");
+    saved_ref2=e->Attribute("ref2");
   }
 
 }

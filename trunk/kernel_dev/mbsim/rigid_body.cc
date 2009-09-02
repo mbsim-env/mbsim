@@ -111,7 +111,25 @@ namespace MBSim {
   }
 
   void RigidBody::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==relativeFrameContourLocation) {
+      // This outer loop is nessesary because the frame hierarchy must not be in the correct order!
+      for(size_t k=0; k<saved_refFrameF.size(); k++)
+        for(size_t j=0; j<saved_refFrameF.size(); j++) {
+          int i = 0;
+          if(saved_refFrameF[j]!="") i = frameIndex(getFrame(saved_refFrameF[j]));
+    
+          SrSF[j+1]=SrSF[i] + ASF[i]*saved_RrRF[j];
+          ASF[j+1]=ASF[i]*saved_ARF[j];
+        }
+      for(size_t j=0; j<saved_refFrameC.size(); j++) {
+        int i = 0;
+        if(saved_refFrameC[j]!="") i = frameIndex(getFrame(saved_refFrameC[j]));
+    
+        SrSC[j]=SrSF[i] + ASF[i]*saved_RrRC[j];
+        ASC[j]=ASF[i]*saved_ARC[j];
+      }
+    }
+    else if(stage==unknownStage) {
       if(iKinematics == -1)
         iKinematics = 0;
   
@@ -406,31 +424,30 @@ namespace MBSim {
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
   }
 
-  void RigidBody::addFrame(Frame *cosy, const Vec &RrRK, const SqrMat &ARK, const Frame* refFrame) {
+  void RigidBody::addFrame(Frame *cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {
     Body::addFrame(cosy);
-    int i = 0;
-    if(refFrame)
-      i = frameIndex(refFrame);
 
-    SrSF.push_back(SrSF[i] + ASF[i]*RrRK);
+    saved_refFrameF.push_back(refFrameName);
+    saved_RrRF.push_back(RrRF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    saved_ARF.push_back(ARF.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    SrSF.push_back(Vec(3));
     WrSF.push_back(Vec(3));
-    ASF.push_back(ASF[i]*ARK);
+    ASF.push_back(SqrMat(3));
   }
 
   void RigidBody::addFrame(const string &str, const Vec &SrSF, const SqrMat &ASF, const Frame* refFrame) {
     addFrame(new Frame(str),SrSF,ASF,refFrame);
   }
 
-  void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const Frame* refFrame) {
+  void RigidBody::addContour(Contour* contour, const Vec &RrRC, const SqrMat &ARC, const string& refFrameName) {
     Body::addContour(contour);
 
-    int i = 0;
-    if(refFrame)
-      i = frameIndex(refFrame);
-
-    SrSC.push_back(SrSF[i] + ASF[i]*RrRC);
+    saved_refFrameC.push_back(refFrameName);
+    saved_RrRC.push_back(RrRC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
+    SrSC.push_back(Vec(3));
     WrSC.push_back(Vec(3));
-    ASC.push_back(ASF[i]*ARC);
+    ASC.push_back(SqrMat(3));
   }
 
   void RigidBody::updateMConst(double t) {
@@ -444,6 +461,8 @@ namespace MBSim {
   void RigidBody::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     Body::initializeUsingXML(element);
+
+    // frames
     e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
@@ -455,9 +474,10 @@ namespace MBSim {
             atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
 #endif
       ec=ec->NextSiblingElement();
-      Frame *refF=0;
+      string refF="C";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=getFrameByPath(ec->Attribute("ref"));
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
       Vec RrRF(ec->GetText());
@@ -466,15 +486,18 @@ namespace MBSim {
       addFrame(f, RrRF, ARF, refF);
       e=e->NextSiblingElement();
     }
+
+    // contours
     e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
     while(e && e->ValueStr()==MBSIMNS"contour") {
       TiXmlElement *ec=e->FirstChildElement();
       Contour *c=ObjectFactory::getInstance()->createContour(ec);
       TiXmlElement *contourElement=ec; // save for later initialization
       ec=ec->NextSiblingElement();
-      Frame *refF=0;
+      string refF="C";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=getFrameByPath(ec->Attribute("ref"));
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
       Vec RrRC(ec->GetText());
@@ -484,8 +507,9 @@ namespace MBSim {
       c->initializeUsingXML(contourElement);
       e=e->NextSiblingElement();
     }
+
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    setFrameForKinematics(getFrameByPath(e->Attribute("ref")));
+    setFrameForKinematics(getFrameByPath(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=element->FirstChildElement(MBSIMNS"mass");
     setMass(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");

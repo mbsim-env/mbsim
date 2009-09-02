@@ -151,9 +151,19 @@ namespace MBSim {
        * \param specific frame to add
        * \param constant relative vector from reference frame to specific frame in reference system
        * \param constant relative rotation from specific frame to reference frame
+       * \param reference frame name
+       */
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName); 
+
+      /**
+       * \param specific frame to add
+       * \param constant relative vector from reference frame to specific frame in reference system
+       * \param constant relative rotation from specific frame to reference frame
        * \param optional reference frame, otherwise cog-frame will be used as reference
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0); 
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
+        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
+      }
 
       /**
        * \param name of frame to add
@@ -161,7 +171,15 @@ namespace MBSim {
        * \param constant relative rotation from specific frame to reference frame
        * \param optional reference frame, otherwise cog-frame will be used as reference
        */
-      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARK, const Frame* refFrame=0);
+      void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
+
+      /**
+       * \param specific contour to add
+       * \param constant relative vector from reference frame to specific contour in reference system
+       * \param constant relative rotation from specific contour to reference frame
+       * \param reference frame name
+       */
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
 
       /**
        * \param specific contour to add
@@ -169,7 +187,9 @@ namespace MBSim {
        * \param constant relative rotation from specific contour to reference frame
        * \param optional reference frame, otherwise cog-frame will be used as reference
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
+        addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
+      }
 
       /**
        * \param frame to be used for kinematical description depending on reference frame and generalised positions / velocities
@@ -359,6 +379,11 @@ namespace MBSim {
 
       /** a pointer to frame "C" */
       Frame *C;
+
+    private:
+      std::vector<std::string> saved_refFrameF, saved_refFrameC;
+      std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
+      std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
   };
 
 }

@@ -353,7 +353,15 @@ namespace MBSim {
   }
 
   void Contact::init(InitStage stage) {
-    if(stage==resize) {
+    if(stage==resolveXMLPath) {
+      if(saved_ref1!="" && saved_ref2!="") {
+        Contour *ref1=getContourByPath(saved_ref1);
+        Contour *ref2=getContourByPath(saved_ref2);
+        connect(ref1,ref2);
+      }
+      LinkMechanics::init(stage);
+    }
+    else if(stage==resize) {
       LinkMechanics::init(stage);
       int n = contactKinematics->getNumberOfPotentialContactPoints();
 
@@ -1174,11 +1182,8 @@ namespace MBSim {
         fil->initializeUsingXML(e->FirstChildElement());
       }
       e=element->FirstChildElement(MBSIMNS"connect");
-      Contour *ref1=getContourByPath(e->Attribute("ref1"));
-      if(!ref1) { cerr<<"ERROR! Cannot find contour: "<<e->Attribute("ref1")<<endl; _exit(1); }
-      Contour *ref2=getContourByPath(e->Attribute("ref2"));
-      if(!ref2) { cerr<<"ERROR! Cannot find contour: "<<e->Attribute("ref2")<<endl; _exit(1); }
-      connect(ref1,ref2);
+      saved_ref1=e->Attribute("ref1");
+      saved_ref2=e->Attribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
         enableOpenMBVContactPoints(atof(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")->GetText()));
