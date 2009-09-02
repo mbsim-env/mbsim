@@ -17,9 +17,8 @@
  * Contact: mfoerg@users.berlios.de
  */
 
-#include <config.h>
 #include "mbsim/kinematics.h"
-#include "mbsim/element.h"
+#include "mbsim/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,6 +29,15 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
     setTranslationVectors(Mat(e->GetText()));
+  }
+
+  void TimeDependentTranslation1D::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"direction");
+    setDirection(Vec(e->GetText()));
+    e=element->FirstChildElement(MBSIMNS"position");
+    pos=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+    pos->initializeUsingXML(e->FirstChildElement());
   }
 
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {

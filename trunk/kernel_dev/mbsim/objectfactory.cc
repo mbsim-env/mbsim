@@ -195,6 +195,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearTranslation")
       return new LinearTranslation;
+    if(element->ValueStr()==MBSIMNS"TimeDependentTranslation1D")
+      return new TimeDependentTranslation1D;
     return 0;
   }
   

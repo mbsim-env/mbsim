@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
+  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+  <frames>
+    <frame>
+      <Frame name="AnregungC"/>
+      <position>[0;hpcInitialHeight+pistonHeight; 0 ]</position>
+      <orientation>eye(3)</orientation>
+    </frame>
+  </frames>
+  <contours/>
+  <groups>
+    <Group name="Mechanik">
+      <frameOfReference ref="../Frame[I]"/>
+      <frames>
+        <frame>
+          <Frame name="PistonC"/>
+          <position>[0; hpcInitialHeight+pistonHeight/2.; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+        <frame>
+          <Frame name="PistonGap"/>
+          <position>[0; hpcInitialHeight+gapLength; 0]</position>
+          <orientation>eye(3)</orientation>
+        </frame>
+      </frames>
+      <contours/>
+      <groups/>
+      <objects>
+        <!--
+        <RigidBody name="Housing">
+          <frameOfReference ref="../Frame[I]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass>1.</mass>
+          <inertiaTensor>eye(3)</inertiaTensor>
+          <translation/>
+          <rotation/>
+          <frames>
+            <frame>
+              <Frame name="PistonC"/>
+              <position>[0; hpcInitialHeight+pistonHeight/2.; 0]</position>
+              <orientation>eye(3)</orientation>
+            </frame>
+          </frames>
+          <contours/>
+          <enableOpenMBVFrameC>
+            <size>.001</size>
+            <offset>1.</offset>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+        -->
+        <RigidBody name="Piston">
+          <!--
+          <frameOfReference ref="Object[Housing]/Frame[PistonC]"/>
+          -->
+          <frameOfReference ref="../Frame[PistonC]"/>
+          <frameForKinematics ref="Frame[C]"/>
+          <mass>pistonMass</mass>
+          <inertiaTensor>eye(3)</inertiaTensor>
+          <translation>
+            <LinearTranslation>
+              <translationVectors>
+                [0;1;0]
+              </translationVectors>
+            </LinearTranslation>
+          </translation>
+          <rotation/>
+          <frames>
+            <frame>
+              <Frame name="CheckvalveF">
+                <enableOpenMBV>
+                  <size>.001</size>
+                  <offset>1.</offset>
+                </enableOpenMBV>
+              </Frame>
+              <position>[0; -pistonHeight/2.; 0]</position>
+              <orientation>[0,-1,0; 1,0,0; 0,0,1]'</orientation>
+            </frame>
+            <frame>
+              <Frame name="TopF">
+                <enableOpenMBV>
+                  <size>.001</size>
+                  <offset>1.</offset>
+                </enableOpenMBV>
+              </Frame>
+              <position>[0; pistonHeight/2; 0]</position>
+              <orientation>eye(3)</orientation>
+            </frame>
+          </frames>
+          <contours>
+            <contour>
+              <CircleSolid name="Contour">
+                <radius>pistonContourRadius</radius>
+                <enableOpenMBV/>
+              </CircleSolid>
+              <frameOfReference ref="Frame[TopF]"/>
+              <position>[0; -pistonContourRadius; 0]</position>
+              <orientation>eye(3)</orientation>
+            </contour>
+          </contours>
+          <openMBVRigidBody>
+            <ombv:Frustum name="Frustum">
+              <ombv:staticColor>.5</ombv:staticColor>
+              <ombv:initialTranslation>[0; -pistonHeight/2.; 0]</ombv:initialTranslation>
+              <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
+              <ombv:scaleFactor>1.</ombv:scaleFactor>
+              <ombv:baseRadius>pistonRadius</ombv:baseRadius>
+              <ombv:topRadius>pistonRadius</ombv:topRadius>
+              <ombv:height>pistonHeight-pistonContourRadius</ombv:height>
+              <ombv:innerBaseRadius>pistonRadius*.95</ombv:innerBaseRadius>
+              <ombv:innerTopRadius>pistonRadius*.95</ombv:innerTopRadius>
+            </ombv:Frustum>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size>.001</size>
+            <offset>1.</offset>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <SpringDamper name="PistonSpring">
+          <forceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient>pistonSpringStiffness</stiffnessCoefficient>
+              <dampingCoefficient>pistonSpringDamping</dampingCoefficient>
+              <unloadedLength>hpcInitialHeight-pistonSpringF0/pistonSpringStiffness</unloadedLength>
+            </LinearSpringDamperForce>
+          </forceFunction>
+          <connect ref1="/Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
+          <ombv:CoilSpring name="PistonSpringX">
+            <ombv:minimalColorValue>-10</ombv:minimalColorValue>
+            <ombv:maximalColorValue>10</ombv:maximalColorValue>
+            <ombv:numberOfCoils>5</ombv:numberOfCoils>
+            <ombv:springRadius>.003</ombv:springRadius>
+            <ombv:crossSectionRadius>.0002</ombv:crossSectionRadius>
+            <ombv:scaleFactor>1.</ombv:scaleFactor>
+          </ombv:CoilSpring>
+        </SpringDamper>
+        <c:RelativePositionSensor name="GapLength">
+          <c:frame ref="/Group[Mechanik]/Frame[PistonGap]" rel="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+          <c:direction>[0;-1;0]</c:direction>
+        </c:RelativePositionSensor>
+        <c:RelativeVelocitySensor name="GapVelocity">
+          <c:frame ref="/Group[Mechanik]/Frame[PistonGap]" rel="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+          <c:direction>[0;-1;0]</c:direction>
+        </c:RelativeVelocitySensor>
+      </links>
+    </Group>
+    <h:BallCheckvalve name="Checkvalve">
+      <h:basisFrame ref="../Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+      <h:RigidLine>
+        <h:length>.001</h:length>
+        <h:diameter>2*cvRadius</h:diameter>
+        <h:pressureLoss>
+          <h:VariablePressureLossCheckvalveCone name="test">
+            <h:checksizeSignal ref="Signal[xOpen]"/>
+            <h:minimalChecksizeValue>5e-5</h:minimalChecksizeValue>
+            <h:ballRadius>cvBallRadius</h:ballRadius>
+            <h:alpha>cvAlpha</h:alpha>
+          </h:VariablePressureLossCheckvalveCone>
+        </h:pressureLoss>
+      </h:RigidLine>
+      <h:Ball>
+        <h:mass>cvBallMass</h:mass>
+      </h:Ball>
+      <h:Spring>
+        <h:forceFunction>
+          <LinearSpringDamperForce>
+            <stiffnessCoefficient>cvSpringStiffness</stiffnessCoefficient>
+            <dampingCoefficient>cvSpringDamping</dampingCoefficient>
+            <unloadedLength>cvMaximalOpening-cvSpringF0/cvSpringStiffness</unloadedLength>
+          </LinearSpringDamperForce>
+        </h:forceFunction>
+      </h:Spring>
+      <h:SeatContact>
+        <h:contactForceLaw>
+          <UnilateralConstraint/>
+          <!--
+          <RegularizedUnilateralConstraint>
+            <forceFunction>
+              <LinearRegularizedUnilateralConstraint>
+                <stiffnessCoefficient>1e3</stiffnessCoefficient>
+                <dampingCoefficient>1</dampingCoefficient>
+              </LinearRegularizedUnilateralConstraint>
+            </forceFunction>
+          </RegularizedUnilateralConstraint>
+          -->
+        </h:contactForceLaw>
+        <h:contactImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>.1</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </h:contactImpactLaw>
+      </h:SeatContact>
+      <h:maximalOpening>cvMaximalOpening</h:maximalOpening>
+      <h:MaximalOpeningContact>
+        <h:contactForceLaw>
+          <UnilateralConstraint/>
+          <!--       
+          <RegularizedUnilateralConstraint>
+            <forceFunction>
+              <LinearRegularizedUnilateralConstraint>
+                <stiffnessCoefficient>1e3</stiffnessCoefficient>
+                <dampingCoefficient>1</dampingCoefficient>
+              </LinearRegularizedUnilateralConstraint>
+            </forceFunction>
+          </RegularizedUnilateralConstraint>
+          -->
+        </h:contactForceLaw>
+        <h:contactImpactLaw>
+          <UnilateralNewtonImpact>
+            <restitutionCoefficient>.1</restitutionCoefficient>
+          </UnilateralNewtonImpact>
+        </h:contactImpactLaw>
+      </h:MaximalOpeningContact>
+      <h:enableOpenMBVBodies/>
+      <h:enableOpenMBVFrames/>
+      <h:enableOpenMBVArrows/>
+    </h:BallCheckvalve>
+  </groups>
+  <objects>
+    <RigidBody name="Anregung">
+      <frameOfReference ref="/Frame[AnregungC]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>1.</mass>
+      <inertiaTensor>eye(3)</inertiaTensor>
+      <translation>
+        <TimeDependentTranslation1D>
+          <direction>[0;1;0]</direction>
+          <position>
+            <Function1_SS_from_VS>
+              <SinusFunction1_VS>
+                <amplitude>A</amplitude>
+                <frequency>f</frequency>
+                <phase>pi/2</phase>
+              </SinusFunction1_VS>
+            </Function1_SS_from_VS>
+          </position>
+        </TimeDependentTranslation1D>
+      </translation>
+      <rotation/>
+      <guidingVelocityOfTranslation>
+        <SinusFunction1_VS>
+          <amplitude>2*pi*f * A *  [0;1;0]</amplitude>
+          <frequency>f*ones(3,1)</frequency>
+          <phase>pi*ones(3,1)</phase>
+        </SinusFunction1_VS>
+      </guidingVelocityOfTranslation>
+      <derivativeOfGuidingVelocityOfTranslation>
+        <SinusFunction1_VS>
+          <amplitude>(2*pi*f)^2 * A * [0;1;0]</amplitude>
+          <frequency>f*ones(3,1)</frequency>
+          <phase>1.5*pi*ones(3,1)</phase>
+        </SinusFunction1_VS>
+      </derivativeOfGuidingVelocityOfTranslation>
+      <frames>
+        <frame>
+          <Frame name="LineF">
+            <enableOpenMBV>
+              <size>.005</size>
+              <offset>1.</offset>
+            </enableOpenMBV>
+          </Frame>
+          <frameOfReference ref="Frame[C]"/>
+          <position>zeros(3,1)</position>
+          <orientation>[0,-1,0;1,0,0;0,0,1]'</orientation>
+        </frame>
+      </frames>
+      <contours>
+        <contour>
+          <Line name="Line"/>
+          <frameOfReference ref="Frame[LineF]"/>
+          <position>[0; 0; 0]</position>
+          <orientation>eye(3)</orientation>
+        </contour>
+      </contours>
+      <openMBVRigidBody>
+        <ombv:Frustum name="Frustum">
+          <ombv:staticColor>0</ombv:staticColor>
+          <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
+          <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
+          <ombv:scaleFactor>1.</ombv:scaleFactor>
+          <ombv:baseRadius>4.2945e-3</ombv:baseRadius>
+          <ombv:topRadius>4.2945e-3</ombv:topRadius>
+          <ombv:height>.005</ombv:height>
+          <ombv:innerBaseRadius>4.1e-3</ombv:innerBaseRadius>
+          <ombv:innerTopRadius>4.1e-3</ombv:innerTopRadius>
+        </ombv:Frustum>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
+        <size>.001</size>
+        <offset>1.</offset>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+    <h:RigidLine name="leck">
+      <frameOfReference ref="/Frame[I]"/>
+      <h:length>.1</h:length>
+      <h:diameter>.0001</h:diameter>
+      <h:pressureLoss>
+        <h:PressureLossZeta name="zeta">
+          <h:zeta>7</h:zeta>
+        </h:PressureLossZeta>
+      </h:pressureLoss>
+    </h:RigidLine>
+  </objects>
+  <links>
+    <h:EnvironmentNodeMec name="nEnvironment">
+      <h:inflow ref="/HLine[leck]"/>
+      <h:initialVolume>0</h:initialVolume>
+      <h:translatorialBoundarySourface>
+        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[TopF]"/>
+        <h:normal>[0;-1;0]</h:normal>
+        <h:area>pi*pistonRadius^2</h:area>
+      </h:translatorialBoundarySourface>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+    </h:EnvironmentNodeMec>
+    <h:ConstrainedNodeMec name="nLPC">
+      <h:outflow ref="/Group[Checkvalve]/HLine[Line]"/>
+      <h:initialVolume>0</h:initialVolume>
+      <h:translatorialBoundarySourface>
+        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+        <h:normal>[1;0;0]</h:normal>
+        <h:area>pi*cvRadius^2</h:area>
+      </h:translatorialBoundarySourface>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+      <h:function>
+        <ConstantFunction1_SS>
+          <value>4e5</value>
+        </ConstantFunction1_SS>
+      </h:function>
+    </h:ConstrainedNodeMec>
+    <h:ElasticNodeMec name="nHPC">
+      <h:outflow ref="/HLine[leck]"></h:outflow>
+      <h:inflow ref="/Group[Checkvalve]/HLine[Line]"/>
+      <h:initialVolume>hpcV0</h:initialVolume>
+      <h:translatorialBoundarySourface>
+        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+        <h:normal>[-1;0;0]</h:normal>
+        <h:area>pi*(pistonRadius^2-cvRadius^2)</h:area>
+      </h:translatorialBoundarySourface>
+      <h:enableOpenMBVArrows>
+        <h:size>.001</h:size>
+      </h:enableOpenMBVArrows>
+      <h:initialPressure>1e5</h:initialPressure>
+      <h:fracAir>.02</h:fracAir>
+    </h:ElasticNodeMec>
+    <Contact name="AnregungContact">
+      <contactForceLaw>
+        <!--
+        <UnilateralConstraint/>
+        -->
+        <RegularizedUnilateralConstraint>
+          <forceFunction>
+            <LinearRegularizedUnilateralConstraint>
+              <stiffnessCoefficient>1e7</stiffnessCoefficient>
+              <dampingCoefficient>1e4</dampingCoefficient>
+            </LinearRegularizedUnilateralConstraint>
+          </forceFunction>
+        </RegularizedUnilateralConstraint>
+      </contactForceLaw>
+      <contactImpactLaw>
+        <!--
+        <UnilateralNewtonImpact>
+          <restitutionCoefficient>.1</restitutionCoefficient>
+        </UnilateralNewtonImpact>
+        -->
+      </contactImpactLaw>
+      <frictionForceLaw/>
+      <frictionImpactLaw/>
+      <connect ref1="/Object[Anregung]/Contour[Line]" ref2="/Group[Mechanik]/Object[Piston]/Contour[Contour]"/>
+    </Contact>
+    <c:AbsolutePositionSensor name="AnregungPos">
+      <c:frame ref="/Object[Anregung]/Frame[C]"/>
+      <c:direction>[0;1;0]</c:direction>
+    </c:AbsolutePositionSensor>
+    <c:AbsoluteVelocitySensor name="AnregungVel">
+      <c:frame ref="/Object[Anregung]/Frame[C]"/>
+      <c:direction>[0;1;0]</c:direction>
+    </c:AbsoluteVelocitySensor>
+  </links>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+    <h:HydraulicEnvironment>
+      <h:environmentPressure>1e5</h:environmentPressure>
+      <h:specificMass>
+        <!--<h:constantSpecificMass>800</h:constantSpecificMass>-->
+        <!--<h:volumeDependingOnTemperature>
+          <h:dVdT>-.8</h:dVdT>
+          <h:basicSpecificMass>1200</h:basicSpecificMass>
+          <h:basicTemperature>10</h:basicTemperature>
+        </h:volumeDependingOnTemperature>-->
+        <h:specificMassDependingOnTemperature>
+          <h:dRhodT>-.8</h:dRhodT>
+          <h:basicSpecificMass>1200</h:basicSpecificMass>
+          <h:basicTemperature>10</h:basicTemperature>
+        </h:specificMassDependingOnTemperature>
+      </h:specificMass>
+      <h:kinematicViscosity>
+        <!--<h:constantKinematicViscosity>12e-6</h:constantKinematicViscosity>-->
+        <h:walterUbbeohdeKinematicViscosity>
+          <h:temperature1>40</h:temperature1>
+          <h:kinematicViscosity1>55e-6</h:kinematicViscosity1>
+          <h:temperature2>100</h:temperature2>
+          <h:kinematicViscosity2>10e-6</h:kinematicViscosity2>
+        </h:walterUbbeohdeKinematicViscosity>
+      </h:kinematicViscosity>
+      <h:basicBulkModulus>2e11</h:basicBulkModulus>
+      <h:kappa>1.4</h:kappa>
+      <h:fluidTemperature>50</h:fluidTemperature>
+    </h:HydraulicEnvironment>
+  </environments>
+</DynamicSystemSolver>
