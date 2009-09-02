@@ -638,7 +638,7 @@ namespace MBSim {
           } 
           else {
             for(int j=0; j<1+getFrictionDirections(); j++)
-	      plotVector.push_back(strtod("NAN",0)); //gd
+	      plotVector.push_back(NAN); //gd
           }
           }
         }
