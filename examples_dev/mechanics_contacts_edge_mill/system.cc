@@ -185,6 +185,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setContactImpactLaw(new UnilateralNewtonImpact);
   contact->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
   contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+  contact->enableOpenMBVContactPoints();
   this->addLink(contact);
 
   /* OpenMBV */

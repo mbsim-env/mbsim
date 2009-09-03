@@ -313,14 +313,14 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
       virtual int getFrictionDirections() { return 1; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
-      double getFrictionCoefficient(double gd) { return mu; }
 
     protected:
       double mu;
@@ -353,18 +353,102 @@ namespace MBSim {
       virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
       virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
       virtual int getFrictionDirections() { return 2; }
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
-      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
-      double getFrictionCoefficient(double gd) { return mu; }
 
     protected:
       double mu;
+  };
+
+  /**
+   * \brief planar Stribeck friction force law on acceleration level for constraint description
+   * \author Thorsten Schindler
+   * \date 2009-09-02 inital commit (Thorsten Schindler)
+   * \todo high oscillations in normal relative velocity TODO
+   */
+  class PlanarStribeckFriction : public FrictionForceLaw {
+    public:
+      /**
+       * \brief constructor
+       */
+      PlanarStribeckFriction() : fmu(0) {};
+
+      /**
+       * \brief constructor
+       */
+      PlanarStribeckFriction(Function1<double,double> *fmu_) : fmu(fmu_) {};
+
+      /**
+       * \brief destructor
+       */
+      virtual ~PlanarStribeckFriction() { if(fmu) delete fmu; fmu=0; }
+
+      /* INHERITED INTERFACE */
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual int getFrictionDirections() { return 1; }
+      virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
+      virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+      virtual bool isSetValued() const { return true; }
+      /***************************************************/
+
+    protected:
+      /**
+       * friction coefficient function
+       */
+      Function1<double,double> *fmu;
+  };
+
+  /**
+   * \brief spatial Stribeck friction force law on acceleration level for constraint description
+   * \author Thorsten Schindler
+   * \date 2009-09-02 initial commit (Thorsten Schindler)
+   * \todo high oscillations in normal relative velocity TODO
+   */
+  class SpatialStribeckFriction : public FrictionForceLaw {
+    public:
+      /**
+       * \brief constructor
+       */
+      SpatialStribeckFriction() : fmu(0) {};
+
+      /**
+       * \brief constructor
+       */
+      SpatialStribeckFriction(Function1<double,double> *fmu_) : fmu(fmu_) {};
+
+      /**
+       * \brief destructor
+       */
+      virtual ~SpatialStribeckFriction() { if(fmu) delete fmu; fmu=0; }
+
+      /* INHERITED INTERFACE */
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double r);
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, double laN);
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, double laN, double tolla, double tolgd);
+      virtual fmatvec::Vec dlaTdlaN(const fmatvec::Vec& gd, double laN);
+      virtual int getFrictionDirections() { return 2; }
+      virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return nrm2(s(0,1)) <= sTol; }
+      virtual double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+      virtual bool isSetValued() const { return true; }
+      /***************************************************/
+
+    protected:
+      /**
+       * friction coefficient function
+       */
+      Function1<double,double> *fmu;
   };
 
   /**
@@ -467,6 +551,86 @@ namespace MBSim {
 
     protected:
       double mu;
+  };
+
+  /**
+   * \brief planar Stribeck friction force law on velocity level for constraint description
+   * \author Thorsten Schindler
+   * \date 2009-09-02 initial commit (Thorsten Schindler)
+   * \todo high oscillations in normal relative velocity TODO
+   */
+  class PlanarStribeckImpact : public FrictionImpactLaw {
+    public:
+      /**
+       * \brief constructor
+       */
+      PlanarStribeckImpact() : fmu(0) {};
+
+      /**
+       * \brief constructor
+       */
+      PlanarStribeckImpact(Function1<double,double> *fmu_) : fmu(fmu_) {};
+
+      /**
+       * \brief destructor
+       */
+      virtual ~PlanarStribeckImpact() { if(fmu) delete fmu; fmu=0; }
+
+      /* INHERITED INTERFACE */
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
+      virtual int getFrictionDirections() { return 1; }
+      /***************************************************/
+
+      double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+
+    protected:
+      /**
+       * friction coefficient function
+       */
+      Function1<double,double> *fmu;
+  };
+
+  /**
+   * \brief spatial Stribeck friction force law on velocity level for constraint description
+   * \author Thorsten Schindler
+   * \date 2009-09-02 initial commit (Thorsten Schindler)
+   * \todo high oscillations in normal relative velocity TODO
+   */
+  class SpatialStribeckImpact : public FrictionImpactLaw {
+    public:
+      /**
+       * \brief constructor
+       */
+      SpatialStribeckImpact() : fmu(0) {};
+
+      /**
+       * \brief constructor
+       */
+      SpatialStribeckImpact(Function1<double,double> *fmu_) : fmu(fmu_) {};
+
+      /**
+       * \brief destructor
+       */
+      virtual ~SpatialStribeckImpact() { if(fmu) delete fmu; fmu=0; }
+
+      /* INHERITED INTERFACE */
+      virtual fmatvec::Vec project(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      virtual fmatvec::Mat diff(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double r);
+      virtual fmatvec::Vec solve(const fmatvec::SqrMat& G, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN);
+      virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
+      virtual int getFrictionDirections() { return 2; }
+      /***************************************************/
+
+      double getFrictionCoefficient(double gd) { return (*fmu)(gd); }
+
+    protected:
+      /**
+       * friction coefficient function
+       */
+      Function1<double,double> *fmu;
   };
 
   /**

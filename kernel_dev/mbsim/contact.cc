@@ -112,8 +112,7 @@ namespace MBSim {
   }
 
   void Contact::updateh(double t) {
-    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      // TODO: check if(gActive[k])
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) { // gActive should not be checked, e.g. because of possible predamping in constitutive laws
       lak[k](0) = (*fcl)(gk[k](0),gdk[k](0));
       if(fdf) lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
 
@@ -647,7 +646,6 @@ namespace MBSim {
     }
 
     void Contact::solveImpactsFixpointSingle() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -676,7 +674,6 @@ namespace MBSim {
     }
 
     void Contact::solveConstraintsFixpointSingle() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -741,7 +738,6 @@ namespace MBSim {
     }
 
     void Contact::solveConstraintsGaussSeidel() {
-
       assert(getFrictionDirections() <= 1);
 
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
@@ -776,7 +772,6 @@ namespace MBSim {
     }
 
     void Contact::solveImpactsRootFinding() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
           double *a = ds->getGs()();
@@ -799,7 +794,6 @@ namespace MBSim {
     }
 
     void Contact::solveConstraintsRootFinding() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -823,7 +817,6 @@ namespace MBSim {
     }
 
     void Contact::jacobianConstraints() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -870,7 +863,6 @@ namespace MBSim {
     }
 
     void Contact::jacobianImpacts() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -899,7 +891,8 @@ namespace MBSim {
             for(int i=0; i<G.size(); i++) 
               jp2(i) -= diff(0,1)*G(laIndDS+laIndk[k]+1,i);
 
-          } else if(getFrictionDirections() == 2) {
+          } 
+          else if(getFrictionDirections() == 2) {
             Mat diff = ftil->diff(lak[k](1,2), gdnk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
             Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()-1));
             Mat e2(2,jp2.cols());
@@ -916,7 +909,6 @@ namespace MBSim {
     }
 
     void Contact::updaterFactors() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -975,7 +967,6 @@ namespace MBSim {
     }
 
     void Contact::checkConstraintsForTermination() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) { // TODO check if gdActive[k][0]
 
@@ -1005,7 +996,6 @@ namespace MBSim {
     }
 
     void Contact::checkImpactsForTermination() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k]) {
 
@@ -1103,7 +1093,6 @@ namespace MBSim {
     }
 
     void Contact::updateCondition() {
-
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(jsvk[k](0)) {
           if(gActive[k]) {

@@ -213,7 +213,8 @@ namespace MBSim {
       d(0,0) = 1;
       d(0,1) = -r;
       d(0,2) = 0;
-    } else {
+    } 
+    else {
       d(0,0) = 0;
       d(0,1) = 0;
       d(0,2) = sign(argT)*sign(laN)*mu;
@@ -339,7 +340,8 @@ namespace MBSim {
       d(Index(0,1),Index(0,1)) = E;
       d(Index(0,1),Index(2,3)) = -r*E;
       d(Index(0,1),Index(4,4)).init(0);
-    } else {
+    } 
+    else {
       Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
@@ -349,8 +351,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    cout << "solve is not implemented for spatial Coulomb friction" << endl;
-    throw 5;
+    throw new MBSimError("ERROR (SpatialCoulombFriction::solve): Not implemented!");
   }
 
   bool SpatialCoulombFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
@@ -372,6 +373,87 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(atof(e->GetText()));
   }
+  
+  Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
+    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(fabs(gdn(0)))*fabs(laN)));
+  }
+
+  Mat PlanarStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
+    double argT = la(0)-r*gdn(0);
+    Mat d(1,3,NONINIT);
+    if(abs(argT) < (*fmu)(fabs(gdn(0)))*fabs(laN)) {
+      d(0,0) = 1;
+      d(0,1) = -r;
+      d(0,2) = 0;
+    } 
+    else {
+      d(0,0) = 0;
+      d(0,1) = 0;
+      d(0,2) = sign(argT)*sign(laN)*(*fmu)(fabs(gdn(0)));
+    }
+    return d;
+  }
+
+  Vec PlanarStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
+    double laNmu = fabs(laN)*(*fmu)(fabs(gdn(0)));
+    double sdG = -gdn(0)/G(0,0);
+    if(fabs(sdG)<=laNmu) 
+      return Vec(1,INIT,sdG);
+    else 
+      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+  }
+
+  bool PlanarStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
+    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(fabs(gdn(0)))*fabs(laN)) <= laTol)
+      return true;
+    else if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+
+  Vec PlanarStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
+    return Vec(1,INIT,-(*fmu)(fabs(gd(0)))*sign(gd(0)));
+  }
+
+  Vec SpatialStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
+    return proxCT3D(la-r*gdn,(*fmu)(nrm2(gdn))*fabs(laN));
+  }
+
+  Mat SpatialStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
+    Vec argT = la-r*gdn;
+    Mat E(2,2,EYE);
+    Mat d(2,5,NONINIT);
+    if(nrm2(argT) < (*fmu)(nrm2(gdn))*fabs(laN)) {
+      d(Index(0,1),Index(0,1)) = E;
+      d(Index(0,1),Index(2,3)) = -r*E;
+      d(Index(0,1),Index(4,4)).init(0);
+    } 
+    else {
+      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
+      d(Index(0,1),Index(0,1)) = d_dargT;
+      d(Index(0,1),Index(2,3)) = -r*d_dargT;
+      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));
+    }
+    return d;
+  }
+
+  Vec SpatialStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
+    throw new MBSimError("ERROR (SpatialStribeckFriction::solve): Not implemented!");
+  }
+
+  bool SpatialStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
+    if(nrm2(la + gdn/nrm2(gdn)*(*fmu)(nrm2(gdn))*fabs(laN)) <= laTol)
+      return true;
+    else if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+
+  Vec SpatialStribeckFriction::dlaTdlaN(const Vec& gd, double laN) {
+    return -(*fmu)(nrm2(gd))*gd/nrm2(gd);
+  }
 
   Vec PlanarCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),mu*fabs(laN)));
@@ -385,7 +467,8 @@ namespace MBSim {
       d(0,0) = 1;
       d(0,1) = -r;
       d(0,2) = 0;
-    } else {
+    } 
+    else {
       d(0,0) = 0;
       d(0,1) = 0;
       d(0,2) = sign(argT)*sign(laN)*mu;
@@ -424,7 +507,8 @@ namespace MBSim {
       d(Index(0,1),Index(0,1)) = E;
       d(Index(0,1),Index(2,3)) = -r*E;
       d(Index(0,1),Index(4,4)).init(0);
-    } else {
+    } 
+    else {
       Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
@@ -434,8 +518,7 @@ namespace MBSim {
   }
 
   Vec SpatialCoulombImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
-    cout << "solve is not implemented for spatial Coulomb friction" << endl;
-    throw 5;
+    throw new MBSimError("ERROR (SpatialCoulombImpact::solve): Not implemented!");
   }
 
   bool SpatialCoulombImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
@@ -453,6 +536,80 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(atof(e->GetText()));
   }
+
+  Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(fabs(gdn(0)))*fabs(laN)));
+  }
+
+  Mat PlanarStribeckImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    double argT = la(0)-r*gdn(0);
+    Mat d(1,3,NONINIT);
+    if(abs(argT) < (*fmu)(fabs(gdn(0)))*fabs(laN)) {
+      d(0,0) = 1;
+      d(0,1) = -r;
+      d(0,2) = 0;
+    } 
+    else {
+      d(0,0) = 0;
+      d(0,1) = 0;
+      d(0,2) = sign(argT)*sign(laN)*(*fmu)(fabs(gdn(0)));
+    }
+    return d;
+  }
+
+  Vec PlanarStribeckImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
+    double laNmu = fabs(laN)*(*fmu)(fabs(gdn(0)));
+    double sdG = -gdn(0)/G(0,0);
+    if(fabs(sdG)<=laNmu) 
+      return Vec(1,INIT,sdG);
+    else 
+      return Vec(1,INIT,(laNmu<=sdG) ? laNmu : -laNmu);
+  }
+
+  bool PlanarStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(fabs(gdn(0)))*fabs(laN)) <= laTol)
+      return true;
+    else if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+  
+  Vec SpatialStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    return proxCT3D(la-r*gdn,(*fmu)(nrm2(gdn))*fabs(laN));
+  }
+
+  Mat SpatialStribeckImpact::diff(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
+    Vec argT = la-r*gdn;
+    Mat E(2,2,EYE);
+    Mat d(2,5,NONINIT);
+    if(nrm2(argT) < (*fmu)(nrm2(gdn))*fabs(laN)) {
+      d(Index(0,1),Index(0,1)) = E;
+      d(Index(0,1),Index(2,3)) = -r*E;
+      d(Index(0,1),Index(4,4)).init(0);
+    } 
+    else {
+      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
+      d(Index(0,1),Index(0,1)) = d_dargT;
+      d(Index(0,1),Index(2,3)) = -r*d_dargT;
+      d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));
+    }
+    return d;
+  }
+
+  Vec SpatialStribeckImpact::solve(const SqrMat& G, const Vec& gdn, const Vec& gda, double laN) {
+    throw new MBSimError("ERROR (SpatialStribeckImpact::solve): Not implemented!");
+  }
+
+  bool SpatialStribeckImpact::isFulfilled(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(nrm2(la + gdn/nrm2(gdn)*(*fmu)(nrm2(gdn))*fabs(laN)) <= laTol)
+      return true;
+    else if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol)
+      return true;
+    else 
+      return false;
+  }
+
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;

@@ -1,26 +1,31 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
 
-using namespace std;
 using namespace MBSim;
+using namespace std;
 
 int main (int argc, char* argv[]) {
-  DynamicSystemSolver *sys = new System("TS");
+
+  DynamicSystemSolver *sys = new System("MBS");
+
   sys->setImpactSolver(RootFinding);
-  sys->setConstraintSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);
-  // sys->setNumJacProj(true);
-
+  sys->setNumJacProj(true);
+  sys->setStopIfNoConvergence(true,true);
   sys->init();
-  
-  TimeSteppingIntegrator integrator;
-  integrator.setStepSize(5e-5);
 
-  integrator.setEndTime(3.);
-  integrator.setPlotStepSize(5e-3);
+  TimeSteppingIntegrator integrator;
+
+  integrator.setEndTime(0.5);
+  integrator.setStepSize(1e-4);
+  integrator.setPlotStepSize(5e-4);
 
   integrator.integrate(*sys);
+
+  sys->closePlot();
+
   cout << "finished"<<endl;
+
   delete sys;
 
   return 0;
