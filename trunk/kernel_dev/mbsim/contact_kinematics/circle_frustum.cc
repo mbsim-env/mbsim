@@ -209,7 +209,8 @@ namespace MBSim {
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-            Vec dTilde = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);	
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition()-frustum->getFrame()->getPosition();
             double s_PF = trans(Wa_F) * Wd_PF;
@@ -278,7 +279,7 @@ namespace MBSim {
           /********************************/
           else if(abs(q) > 1.) { // hyperbola
             c2_star_nrm2 = abs(p)/sqrt(abs(1. - q*q));
-            //					c2_star_nrm2 = abs(p)/sqrt(2.*abs(1.+q)+(1.+q)*(1.+q));
+            // c2_star_nrm2 = abs(p)/sqrt(2.*abs(1.+q)+(1.+q)*(1.+q));
             if(DEBUG) {
               cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Hyperbola Contact!" << endl;
             }
@@ -343,8 +344,8 @@ namespace MBSim {
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-
-            Vec dTilde = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);				
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
             double s_PF = trans(Wa_F) * Wd_PF;
@@ -395,11 +396,15 @@ namespace MBSim {
         }
       }
     }
-    cpData[ifrustum].getFrameOfReference().getPosition() = cpData[icircle].getFrameOfReference().getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*g(0);
-    cpData[icircle].getFrameOfReference().getOrientation().col(1) = computeTangential(cpData[icircle].getFrameOfReference().getOrientation().col(0));
-    cpData[icircle].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icircle].getFrameOfReference().getOrientation().col(0),cpData[icircle].getFrameOfReference().getOrientation().col(1));
-    cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = -cpData[icircle].getFrameOfReference().getOrientation().col(1);
-    cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = cpData[icircle].getFrameOfReference().getOrientation().col(2);
+
+    if(g(0)<eps) {
+      cpData[ifrustum].getFrameOfReference().getPosition() = cpData[icircle].getFrameOfReference().getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*g(0);
+      if(outCont_F) cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = (Wa_F + sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F); // radial direction
+      else cpData[ifrustum].getFrameOfReference().getOrientation().col(1) = (Wa_F - sin(phi_F)*cpData[ifrustum].getFrameOfReference().getOrientation().col(0))/cos(phi_F);
+      cpData[ifrustum].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[ifrustum].getFrameOfReference().getOrientation().col(0),cpData[ifrustum].getFrameOfReference().getOrientation().col(1)); // azimuthal direction
+      cpData[icircle].getFrameOfReference().getOrientation().col(1) = -cpData[ifrustum].getFrameOfReference().getOrientation().col(1);
+      cpData[icircle].getFrameOfReference().getOrientation().col(2) = cpData[ifrustum].getFrameOfReference().getOrientation().col(2);
+    }
   }	
   /***************************************************************/
 

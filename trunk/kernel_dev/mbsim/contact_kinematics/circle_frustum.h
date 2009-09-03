@@ -33,6 +33,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \author Bastian Esefeld
    * \date 2009-07-13 initial commit kernel_dev
+   * \date 2009-09-02 performance improvement
    */
   class ContactKinematicsCircleFrustum : public ContactKinematics {
     public:
