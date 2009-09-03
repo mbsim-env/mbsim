@@ -7,7 +7,6 @@
   xmlns:mbsimcontrol="http://mbsim.berlios.de/MBSimControl"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-  xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
@@ -533,8 +532,8 @@
               <xs:sequence>
                 <xs:element name="mass" type="pv:massScalar">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Masse der Ventilkugel. Die Massenträgheit der Ventilkugel wird gemäß  <h:img class="inlineeqn" src="id_B.png" alt="$\Theta_{Ball}=\frac{2}{5}*m_{Ball}*r_{Ball}^2$"/>. berechnet.
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Masse der Ventilkugel. Die Massenträgheit der Ventilkugel wird gemäß  <img class="inlineeqn" src="id_B.png" alt="$\Theta_{Ball}=\frac{2}{5}*m_{Ball}*r_{Ball}^2$"/>. berechnet.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
