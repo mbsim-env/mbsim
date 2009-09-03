@@ -5,25 +5,24 @@
   xmlns="http://mbsim.berlios.de/MBSimControl"
   xmlns:mbsim="http://mbsim.berlios.de/MBSim"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:h="http://www.w3.org/1999/xhtml"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:annotation><xs:documentation>
+  <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
       Mit dem Modul MBSimControl können einfache Regelungsstrukturen aufgebaut werden. 
-      <h:p>
+      <p>
         Zum Auswerten von Systemzuständen oder Funktionen stehen verschiedene Sensoren zur Verfügung, die die entsprechenden Größen zur Verfügung stellen.
         Ebenso stehen Pseude-Sensoren zur Verfügung, welche Funktionen auswerten, um beispielsweise zeitabhängige Eingabegrößen zu generieren.
-      </h:p>
-      <h:p>
+      </p>
+      <p>
         Zum Aufbereiten der Sensorsignale sind Signalmanipulatoren vorhanden.
-      </h:p>
-      <h:p>
+      </p>
+      <p>
         In dynamischen Systemen 1. Ordnung können verschiedene Regelungskonzepte umgesetzt werden.
-      </h:p>
-      <h:p>
+      </p>
+      <p>
         Durch Aktoren können Stellkräfte in die Systeme zurückgespeist werden.
         Da Aktoren als Eingangsgröße ebenfalls Signale erhalten, gibt es einen speziellen Sensor, der die Systeme 1. Ordnung ausliest und deren Systemausgänge an die Aktoren überträgt.
-      </h:p>
+      </p>
   </xs:documentation></xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
