@@ -47,7 +47,7 @@ namespace MBSim {
       Vec signal;
   };
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new RigidLine("LinePA")), lPB(new RigidLine("LinePB")), lAT(new RigidLine("LineAT")), lBT(new RigidLine("LineBT")), lP(new RigidLine("LineP")), lA(new RigidLine("LineA")), lB(new RigidLine("LineB")), lT(new RigidLine("LineT")), regularized(false), l(0), ll(0), d(0), ld(0), alpha(0), minRelArea(0), offset(0), relAreaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL) {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new RigidLine("LinePA")), lPB(new RigidLine("LinePB")), lAT(new RigidLine("LineAT")), lBT(new RigidLine("LineBT")), lP(new RigidLine("LineP")), lA(new RigidLine("LineA")), lB(new RigidLine("LineB")), lT(new RigidLine("LineT")), regularized(false), l(0), ll(0), d(0), ld(0), alpha(0), minRelArea(0), offset(0), relAreaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), refFrameString(""), positionString("") {
     addObject(lPA);
     addObject(lPB);
     addObject(lAT);
@@ -58,8 +58,48 @@ namespace MBSim {
     addObject(lT);
   }
 
+  void Controlvalve43::setFrameOfReference(Frame * ref) {
+    lPA->setFrameOfReference(ref);
+    lPB->setFrameOfReference(ref);
+    lAT->setFrameOfReference(ref);
+    lBT->setFrameOfReference(ref);
+    lP->setFrameOfReference(ref);
+    lA->setFrameOfReference(ref);
+    lB->setFrameOfReference(ref);
+    lT->setFrameOfReference(ref);
+  }
+  void Controlvalve43::setLinePDirection(Vec dir) {lP->setDirection(dir); }
+  void Controlvalve43::setLinePLength(double l) {lP->setLength(l); }
+  void Controlvalve43::setLinePDiameter(double d) {lP->setDiameter(d); }
+  void Controlvalve43::addLinePPressureLoss(LinePressureLoss * lpl) {lP->addPressureLoss(lpl); }
+  void Controlvalve43::setLineADirection(Vec dir) {lA->setDirection(dir); }
+  void Controlvalve43::setLineALength(double l) {lA->setLength(l); }
+  void Controlvalve43::setLineADiameter(double d) {lA->setDiameter(d); }
+  void Controlvalve43::addLineAPressureLoss(LinePressureLoss * lpl) {lA->addPressureLoss(lpl); }
+  void Controlvalve43::setLineBDirection(Vec dir) {lB->setDirection(dir); }
+  void Controlvalve43::setLineBLength(double l) {lB->setLength(l); }
+  void Controlvalve43::setLineBDiameter(double d) {lB->setDiameter(d); }
+  void Controlvalve43::addLineBPressureLoss(LinePressureLoss * lpl) {lB->addPressureLoss(lpl); }
+  void Controlvalve43::setLineTDirection(Vec dir) {lT->setDirection(dir); }
+  void Controlvalve43::setLineTLength(double l) {lT->setLength(l); }
+  void Controlvalve43::setLineTDiameter(double d) {lT->setDiameter(d); }
+  void Controlvalve43::addLineTPressureLoss(LinePressureLoss * lpl) {lT->addPressureLoss(lpl); }
+
   void Controlvalve43::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (refFrameString!="") {
+        Frame * ref=getFrameByPath(refFrameString);
+        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
+        setFrameOfReference(ref);
+      }
+      if (positionString!="") {
+        Signal * sig=getSignalByPath(this, positionString);
+        if(!sig) { cerr<<"ERROR! Cannot find frame: "<<positionString<<endl; _exit(1); }
+        setRelativePositionSignal(sig);
+      }
+      Group::init(stage);
+    }
+    else if (stage==MBSim::preInit) {
       checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAreaPA", 1., 0., position, relAreaPA);
       addLink(checkSizeSignalPA);
       checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAreaPB", -1., 1., position, relAreaPA);
@@ -80,6 +120,10 @@ namespace MBSim {
         lAT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalAT, minRelArea, alpha));
         lBT->addPressureLoss(new RegularizedVariablePressureLossControlvalveAreaAlpha("PressureLoss", checkSizeSignalBT, minRelArea, alpha));
       }
+      lPA->setDirection(Vec(3, INIT, 0));
+      lPB->setDirection(Vec(3, INIT, 0));
+      lAT->setDirection(Vec(3, INIT, 0));
+      lBT->setDirection(Vec(3, INIT, 0));
       lPA->setLength(l);
       lPB->setLength(l);
       lAT->setLength(l);
@@ -88,14 +132,6 @@ namespace MBSim {
       lPB->setDiameter(d);
       lAT->setDiameter(d);
       lBT->setDiameter(d);
-      lP->setLength(ll);
-      lA->setLength(ll);
-      lB->setLength(ll);
-      lT->setLength(ll);
-      lP->setDiameter(ld);
-      lA->setDiameter(ld);
-      lB->setDiameter(ld);
-      lT->setDiameter(ld);
       RigidNode * nP = new RigidNode("NodeP");
       addLink(nP);
       nP->addOutFlow(lPA);
@@ -125,25 +161,91 @@ namespace MBSim {
   void Controlvalve43::initializeUsingXML(TiXmlElement * element) {
     Group::initializeUsingXML(element);
     TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valveLength");
-    l=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valveDiameter");
-    d=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inletLength");
-    ll=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inletLength");
-    ld=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
-    alpha=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
-    minRelArea=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAreaPA");
-    relAreaPA=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
-    relAreaPA->initializeUsingXML(e->FirstChildElement());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"offset");
-    offset=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
+    refFrameString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valve");
+    TiXmlElement * ee;
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    setLength(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    setDiameter(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
+    setAlpha(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"relativeAreaPA");
+    relAreaPA=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(ee->FirstChildElement()); 
+    relAreaPA->initializeUsingXML(ee->FirstChildElement());
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
+    minRelArea=atof(ee->GetText());
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"offset");
+    offset=atof(ee->GetText());
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");
-    position=getSignalByPath(parent, e->Attribute("ref"));
+    positionString=e->Attribute("ref");
+
+    e=element->FirstChildElement("lineP");
+    ee=e->FirstChildElement("direction");
+    setLinePDirection(Vec(ee->GetText()));
+    ee=e->FirstChildElement("length");
+    setLinePLength(atof(ee->GetText()));
+    ee=e->FirstChildElement("diameter");
+    setLinePDiameter(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addLinePPressureLoss(static_cast<LinePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      ee=ee->NextSiblingElement();
+    }
+
+    e=element->FirstChildElement("lineA");
+    ee=e->FirstChildElement("direction");
+    setLineADirection(Vec(ee->GetText()));
+    ee=e->FirstChildElement("length");
+    setLineALength(atof(ee->GetText()));
+    ee=e->FirstChildElement("diameter");
+    setLineADiameter(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addLineAPressureLoss(static_cast<LinePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      ee=ee->NextSiblingElement();
+    }
+
+    e=element->FirstChildElement("lineB");
+    ee=e->FirstChildElement("direction");
+    setLineBDirection(Vec(ee->GetText()));
+    ee=e->FirstChildElement("length");
+    setLineBLength(atof(ee->GetText()));
+    ee=e->FirstChildElement("diameter");
+    setLineBDiameter(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addLineBPressureLoss(static_cast<LinePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      ee=ee->NextSiblingElement();
+    }
+
+    e=element->FirstChildElement("lineT");
+    ee=e->FirstChildElement("direction");
+    setLineTDirection(Vec(ee->GetText()));
+    ee=e->FirstChildElement("length");
+    setLineTLength(atof(ee->GetText()));
+    ee=e->FirstChildElement("diameter");
+    setLineTDiameter(atof(ee->GetText()));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addLineTPressureLoss(static_cast<LinePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      ee=ee->NextSiblingElement();
+    }
+    
+
   }
 
 }

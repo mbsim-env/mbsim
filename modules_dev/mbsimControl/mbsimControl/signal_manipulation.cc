@@ -27,7 +27,7 @@ namespace MBSim {
   void SignalAddition::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"input");
     while (e && e->ValueStr()==MBSIMCONTROLNS"input") {
-      Signal * s=getSignalByPath(e->Attribute("ref"));
+      Signal * s=getSignalByPath(parent, e->Attribute("ref"));
       double f =atof(e->FirstChildElement(MBSIMCONTROLNS"factor")->GetText());
       addSignal(s, f);
       e=e->NextSiblingElement();
@@ -50,7 +50,7 @@ namespace MBSim {
   void SignalMux::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"input");
     while (e && e->ValueStr()==MBSIMCONTROLNS"input") {
-      Signal * s=getSignalByPath(e->Attribute("ref"));
+      Signal * s=getSignalByPath(parent, e->Attribute("ref"));
       addSignal(s);
       e=e->NextSiblingElement();
     }
@@ -72,7 +72,7 @@ namespace MBSim {
   void SignalTimeDiscretization::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"input");
-    s=getSignalByPath(e->Attribute("ref"));
+    s=getSignalByPath(parent, e->Attribute("ref"));
   }
 
   void SignalTimeDiscretization::updateg(double t) { 

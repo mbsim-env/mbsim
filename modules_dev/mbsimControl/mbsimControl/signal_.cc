@@ -39,19 +39,6 @@ namespace MBSim {
     }
   }
 
-  Signal * Signal::getSignalByPath(std::string path) {
-    int pos=path.find("Signal");
-    path.erase(pos, 6);
-    path.insert(pos, "Link");
-    Link * s = parent->getLinkByPath(path);
-    if (dynamic_cast<Signal *>(s))
-      return static_cast<Signal *>(s);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
-      _exit(1);
-    }
-  }
-
   void Signal::init(InitStage stage) {
     if (stage==MBSim::plot) {
       updatePlotFeatures(parent);

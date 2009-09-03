@@ -32,69 +32,20 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HLine::HLine(const string &name) : ObjectHydraulics(name) , nFrom(NULL), nTo(NULL), d(0), l(0), Area(0), rho(0), direction(0) {
-  }
-
-  void HLine::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
-      ObjectHydraulics::init(stage);
-      if (!nFrom || !nTo || (nFrom==nTo))
-        cout << getName() << ": Fehler!" << endl;
-      assert(nFrom!=NULL);
-      assert(nTo!=NULL);
-      assert(nFrom!=nTo);
-
-      Area=M_PI*d*d/4.;
-      rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      if (!frameOfReference)
-        frameOfReference=parent->getFrame("I");
-    }
-    else
-      ObjectHydraulics::init(stage);
-  }
-
-  void HLine::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
-    ObjectHydraulics::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    l=atof(e->GetText());
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    d=atof(e->GetText());
-  }
-
-
-  void RigidLine::addPressureLoss(PressureLoss * dp) {
-    if(!parent) {
-      cerr << "RigidLine \"" << name << "\" has to be added to a group before adding a PressureLoss!" << endl;
-      throw(123);
-    }
-    if (pressureLoss==NULL) {
-      pressureLoss=new HydlinePressureloss(name+"/PressureLoss", this);
-      parent->addLink(pressureLoss);
-    }
-    pressureLoss->addPressureLoss(dp);
-    if (dp->isUnilateral()) {
-      HydlinePressureloss * hlpl = new HydlinePressureloss(name+"/UnilateralPressureLoss "+dp->getName(), this);
-      parent->addLink(hlpl);
-      hlpl->addPressureLoss(dp);
-      hlpl->setUnilateral(true);
-    }
-    else if (dp->isBilateral()) {
-      HydlinePressureloss * hlpl = new HydlinePressureloss(name+"/BilateralPressureLoss "+dp->getName(), this);
-      parent->addLink(hlpl);
-      hlpl->addPressureLoss(dp);
-      hlpl->setBilateral(true);
-    }
+  void RigidLine::addPressureLoss(LinePressureLoss * dp) {
+    RigidHLine::addPressureLoss(dp); 
   }
 
   void RigidLine::initializeUsingXML(TiXmlElement * element) {
-    HLine::initializeUsingXML(element);
+    RigidHLine::initializeUsingXML(element);
     TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    setDiameter(atof(e->GetText()));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?
       PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
-      addPressureLoss(p);
+      addPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       e=e->NextSiblingElement();
     }
@@ -102,37 +53,13 @@ namespace MBSim {
 
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
-      HLine::init(stage);
-      MFac=rho*l/Area;
-    }
-    else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
-      if(getPlotFeature(plotRecursive)==enabled) {
-        plotColumns.push_back("Fluidflow [l/min]");
-        plotColumns.push_back("Massflow [kg/min]");
-        if (direction.size()>0)
-          plotColumns.push_back("pressureLoss due to gravity [bar]");
-        HLine::init(stage);
-      }
+      RigidHLine::init(stage);
+      double area=M_PI*diameter*diameter/4.;
+      Mlocal.resize(1, INIT, rho*length/area);
+      cout << "Mlocal=" << Mlocal << endl;
     }
     else
-      HLine::init(stage);
-  }
-
-  void RigidLine::updateh(double t) {
-    if (direction.size()>0)
-      pressureLossGravity=trans(frameOfReference->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*rho*l;
-    h(0)=pressureLossGravity;
-  }
-
-  void RigidLine::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(u(0)*6e4);
-      plotVector.push_back(u(0)*rho*60.);
-      if (direction.size()>0)
-        plotVector.push_back(pressureLossGravity*1e-5);
-      HLine::plot(t, dt);
-    }
+      RigidHLine::init(stage);
   }
 
 }

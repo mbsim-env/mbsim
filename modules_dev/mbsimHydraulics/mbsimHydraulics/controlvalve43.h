@@ -27,20 +27,36 @@ namespace MBSim {
 
   class RigidLine;
   class Signal;
+  class LinePressureLoss;
 
   class Controlvalve43 : public Group {
     public:
       Controlvalve43(const std::string& name);
 
+      void setFrameOfReference(Frame * ref);
       void setLength(double l_) {l=l_; }
       void setDiameter(double d_) {d=d_; }
-      void setLineLength(double l_) {ll=l_; }
-      void setLineDiameter(double d_) {ld=d_; }
       void setAlpha(double alpha_) {alpha=alpha_; }
+      void setPARelativeAreaFunction(Function1<double, double> * relAreaPA_) {relAreaPA=relAreaPA_; } 
       void setMinimalRelativeArea(double minRelArea_) {minRelArea=minRelArea_; }
       void setOffset(double off) {offset=off; }
-      void setPARelativeAreaFunction(Function1<double, double> * relAreaPA_) {relAreaPA=relAreaPA_; } 
       void setRelativePositionSignal(Signal * s) {position = s; }
+      void setLinePDirection(fmatvec::Vec dir);
+      void setLinePLength(double l);
+      void setLinePDiameter(double d);
+      void addLinePPressureLoss(LinePressureLoss * lpl);
+      void setLineADirection(fmatvec::Vec dir);
+      void setLineALength(double l);
+      void setLineADiameter(double d);
+      void addLineAPressureLoss(LinePressureLoss * lpl);
+      void setLineBDirection(fmatvec::Vec dir);
+      void setLineBLength(double l);
+      void setLineBDiameter(double d);
+      void addLineBPressureLoss(LinePressureLoss * lpl);
+      void setLineTDirection(fmatvec::Vec dir);
+      void setLineTLength(double l);
+      void setLineTDiameter(double d);
+      void addLineTPressureLoss(LinePressureLoss * lpl);
 
       RigidLine * getLineP() {return lP; }
       RigidLine * getLineA() {return lA; }
@@ -56,6 +72,8 @@ namespace MBSim {
       Function1<double, double> * relAreaPA;
       Signal * position;
       Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
+    private:
+      std::string refFrameString, positionString;
   };
 
   class RegularizedControlvalve43 : public Controlvalve43 {

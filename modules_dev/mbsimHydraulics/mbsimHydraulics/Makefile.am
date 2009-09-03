@@ -7,12 +7,14 @@ libmbsimHydraulics_la_SOURCES = \
   hydline_galerkin.cc \
   hydnode.cc \
   hydnode_mec.cc \
+	hline.cc \
   objectfactory.cc \
   environment.cc \
   pressure_loss.cc \
 	hydline_pressureloss.cc \
 	controlvalve43.cc \
-	checkvalve.cc
+	checkvalve.cc \
+	hydleakage.cc
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
@@ -24,10 +26,11 @@ mbsimHydraulicsinclude_HEADERS = \
   hydline_galerkin.h \
   hydnode.h \
   hydnode_mec.h \
-  object_hydraulics.h \
+  hline.h \
   objectfactory.h \
   environment.h \
   pressure_loss.h \
 	hydline_pressureloss.h \
 	controlvalve43.h \
-	checkvalve.h
+	checkvalve.h \
+	hydleakage.h

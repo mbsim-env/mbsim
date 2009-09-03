@@ -17,59 +17,73 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "hydleakage.h"
-#include "mbsim/dynamic_system_solver.h"
-#include "environment.h"
+#include "mbsimHydraulics/hydleakage.h"
+#include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/pressure_loss.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  void HydLeakage::setGeometry(double lGap_, double hGap_, double wGap_) {
-    lGap=lGap_;
-    hGap=hGap_;
-    wGap=wGap_;
-  }
-
-  void HydLeakage::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
-      double d=sqrt(4.*hGap*wGap/M_PI);
-      double l=lGap;
-      //    double dmin=2e-3;
-      //    double lmin=10e-3;
-      //    d=(d<dmin)?dmin:d;
-      //    l=(l<lmin)?lmin:l;
-      cout << name << ": gapLength=" << lGap*1e3 << "[mm]  equivalent diamter=" << d*1e3 << "[mm]" << endl;
-      RigidLine::setDiameter(d);
-      RigidLine::setLength(l);
-      RigidLine::init(stage);
-    }
-    if (stage==MBSim::unknownStage) {
-      RigidLine::init(stage);
-      for (unsigned int i=0; i<pd.size(); i++)
-        if (dynamic_cast<LeakagePressureLoss*>(pd[i]))
-          static_cast<LeakagePressureLoss*>(pd[i])->transferLeakageGapData(lGap, hGap, wGap);
+  void PlaneLeakage::init(InitStage stage) {
+    if (stage==MBSim::preInit) {  
+      RigidHLine::init(stage);
+      Mlocal.resize(1, INIT, rho*length/hGap/wGap);
     }
     else
-      RigidLine::init(stage);
+      RigidHLine::init(stage);
+  }
+
+  void PlaneLeakage::addPressureLoss(PlaneLeakagePressureLoss * dp) {
+    RigidHLine::addPressureLoss(dp);
+  }
+
+  void PlaneLeakage::initializeUsingXML(TiXmlElement * element) {
+    RigidHLine::initializeUsingXML(element);
+    TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"width");
+    setGapWidth(atof(e->GetText()));
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
+    setGapHeight(atof(e->GetText()));
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addPressureLoss(static_cast<PlaneLeakagePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      e=e->NextSiblingElement();
+    }
   }
 
 
-
-  LeakagePressureLoss::LeakagePressureLoss(const string &name) : PressureLoss(name) {
+  void CircularLeakage::init(InitStage stage) {
+    if (stage==MBSim::preInit) {  
+      rO=rI+hGap;
+      RigidHLine::init(stage);
+      Mlocal.resize(1, INIT, rho*length/(M_PI*(rO*rO-rI*rI)));
+    }
+    else
+      RigidHLine::init(stage);
   }
 
-  LeakagePressureLossHagenPoiseuille::LeakagePressureLossHagenPoiseuille(const string &name) : LeakagePressureLoss(name) {
+  void CircularLeakage::addPressureLoss(CircularLeakagePressureLoss * dp) {
+    RigidHLine::addPressureLoss(dp);
   }
 
-  void LeakagePressureLossHagenPoiseuille::transferLeakageGapData(double lGap, double hGap, double wGap) {
-    lossFactor=12.*HydraulicEnvironment::getInstance()->getDynamicViscosity()*lGap/wGap/hGap/hGap/hGap;
-    cout << "lossFactor=" << lossFactor << endl;
-  }
-
-  double LeakagePressureLossHagenPoiseuille::operator()(double Q){
-    return lossFactor*Q;
+  void CircularLeakage::initializeUsingXML(TiXmlElement * element) {
+    RigidHLine::initializeUsingXML(element);
+    TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"innerRadius");
+    setInnerRadius(atof(e->GetText()));
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
+    setGapHeight(atof(e->GetText()));
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
+    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
+      // TODO Ist das so richtig mit dem factory-cast?
+      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      addPressureLoss(static_cast<CircularLeakagePressureLoss*>(p));
+      p->initializeUsingXML(e->FirstChildElement());
+      e=e->NextSiblingElement();
+    }
   }
 
 }

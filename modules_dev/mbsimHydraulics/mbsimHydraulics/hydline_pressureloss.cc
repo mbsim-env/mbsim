@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  HydlinePressureloss::HydlinePressureloss(const string &name, RigidLine * line_) : Link(name), line(line_), isActive0(false), unilateral(false), bilateral(false), active(false) {
+  HydlinePressureloss::HydlinePressureloss(const string &name, RigidHLine * line_) : Link(name), line(line_), isActive0(false), unilateral(false), bilateral(false), active(false) {
   }
 
   void HydlinePressureloss::plot(double t, double dt) {
@@ -43,8 +43,10 @@ namespace MBSim {
       else {
         for (unsigned int i=0; i<pressureLosses.size(); i++)
           pressureLosses[i]->plot(&plotVector);
-        for (unsigned int i=0; i<variablePressureLoss.size(); i++)
-          variablePressureLoss[i]->plot(&plotVector);
+        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+          leakagePressureLosses[i]->plot(&plotVector);
+        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+          variablePressureLosses[i]->plot(&plotVector);
       }
       Link::plot(t, dt);
     }
@@ -53,13 +55,26 @@ namespace MBSim {
   void HydlinePressureloss::addPressureLoss(PressureLoss * loss) {
     loss->setHydlinePressureloss(this);
     if (dynamic_cast<VariablePressureLoss*>(loss))
-      variablePressureLoss.push_back(static_cast<VariablePressureLoss*>(loss));
+      variablePressureLosses.push_back(static_cast<VariablePressureLoss*>(loss));
+    else if (dynamic_cast<LeakagePressureLoss*>(loss))
+      leakagePressureLosses.push_back(static_cast<LeakagePressureLoss*>(loss));
     else
       pressureLosses.push_back(loss);
   }
 
   void HydlinePressureloss::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
+    if (stage==MBSim::resolveXMLPath) {
+      Link::init(stage);
+      if (!isSetValued()) {
+        for (unsigned int i=0; i<pressureLosses.size(); i++)
+          pressureLosses[i]->init(stage);
+        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+          leakagePressureLosses[i]->init(stage);
+        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+          variablePressureLosses[i]->init(stage);
+      }
+    }
+    else if (stage==MBSim::preInit) {
       Link::init(stage);
       if (isSetValued()) {
         isActive0=true;
@@ -80,6 +95,15 @@ namespace MBSim {
       gd.resize(1);
       gdn.resize(1);
       la.resize(1);
+      // unsauber...
+      if (!isSetValued()) {
+        for (unsigned int i=0; i<pressureLosses.size(); i++)
+          pressureLosses[i]->init(stage);
+        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+          leakagePressureLosses[i]->init(stage);
+        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+          variablePressureLosses[i]->init(stage);
+      }
     }
     else if (stage==MBSim::plot) {
       updatePlotFeatures(parent);
@@ -93,21 +117,17 @@ namespace MBSim {
         }
         else {
           for (unsigned int i=0; i<pressureLosses.size(); i++)
-            pressureLosses[i]->initPlot(&plotColumns);
-          for (unsigned int i=0; i<variablePressureLoss.size(); i++)
-            variablePressureLoss[i]->initPlot(&plotColumns);
+            pressureLosses[i]->init(stage, &plotColumns);
+          for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+            leakagePressureLosses[i]->init(stage, &plotColumns);
+          for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+            variablePressureLosses[i]->init(stage, &plotColumns);
         }
         Link::init(stage);
       }
     }
     else if (stage==MBSim::unknownStage) {
       gdTol*=1e-6;
-      if (!isSetValued()) {
-        for (unsigned int i=0; i<pressureLosses.size(); i++)
-          pressureLosses[i]->transferLineData(line->getDiameter(), line->getLength());
-        for (unsigned int i=0; i<variablePressureLoss.size(); i++)
-          variablePressureLoss[i]->transferLineData(line->getDiameter(), line->getLength());
-      }
       Link::init(stage);
     }
     else
@@ -156,13 +176,16 @@ namespace MBSim {
   }
 
   void HydlinePressureloss::updateg(double t) {
-    if (!isSetValued())
-      for (unsigned int i=0; i<variablePressureLoss.size(); i++)
-        variablePressureLoss[i]->update(line->getu()(0));
+    if (!isSetValued()) {
+      for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+        leakagePressureLosses[i]->update(line->getu()(0));
+      for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+        variablePressureLosses[i]->update(line->getu()(0));
+    }
   }
 
   void HydlinePressureloss::checkActiveg() {
-    active=variablePressureLoss[0]->isClosed();
+    active=variablePressureLosses[0]->isClosed();
   }
 
   bool HydlinePressureloss::gActiveChanged() {
@@ -180,8 +203,10 @@ namespace MBSim {
   void HydlinePressureloss::updateh(double t) {
     for (unsigned int i=0; i<pressureLosses.size(); i++)
       h[0](0)-=(*pressureLosses[i])(line->getu()(0));
-    for (unsigned int i=0; i<variablePressureLoss.size(); i++)
-      h[0](0)-=(*variablePressureLoss[i])(line->getu()(0));
+    for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+      h[0](0)-=(*leakagePressureLosses[i])(line->getu()(0));
+    for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+      h[0](0)-=(*variablePressureLosses[i])(line->getu()(0));
   }
 
   void HydlinePressureloss::updateW(double t) {
