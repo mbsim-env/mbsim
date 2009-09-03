@@ -310,7 +310,7 @@
       <h:inflow ref="/HLine[leck]"/>
       <h:initialVolume>0</h:initialVolume>
       <h:translatorialBoundarySourface>
-        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[TopF]"/>
+        <h:frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[TopF]"/>
         <h:normal>[0;-1;0]</h:normal>
         <h:area>pi*pistonRadius^2</h:area>
       </h:translatorialBoundarySourface>
@@ -322,7 +322,7 @@
       <h:outflow ref="/Group[Checkvalve]/HLine[Line]"/>
       <h:initialVolume>0</h:initialVolume>
       <h:translatorialBoundarySourface>
-        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+        <h:frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
         <h:normal>[1;0;0]</h:normal>
         <h:area>pi*cvRadius^2</h:area>
       </h:translatorialBoundarySourface>
@@ -340,7 +340,7 @@
       <h:inflow ref="/Group[Checkvalve]/HLine[Line]"/>
       <h:initialVolume>hpcV0</h:initialVolume>
       <h:translatorialBoundarySourface>
-        <frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
+        <h:frameOfReference ref="/Group[Mechanik]/Object[Piston]/Frame[CheckvalveF]"/>
         <h:normal>[-1;0;0]</h:normal>
         <h:area>pi*(pistonRadius^2-cvRadius^2)</h:area>
       </h:translatorialBoundarySourface>

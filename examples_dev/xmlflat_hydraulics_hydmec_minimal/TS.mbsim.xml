@@ -39,7 +39,7 @@
     <h:ElasticNodeMec name="Node">
       <h:initialVolume>1e-3</h:initialVolume>
       <h:translatorialBoundarySourface>
-        <frameOfReference ref="../Object[Body]/Frame[C]"/>
+        <h:frameOfReference ref="../Object[Body]/Frame[C]"/>
         <h:normal>[-1;0;0]</h:normal>
         <h:area>1e-3</h:area>
       </h:translatorialBoundarySourface>
@@ -49,7 +49,7 @@
     <h:EnvironmentNodeMec name="NodeEnvironment">
       <h:initialVolume>1e-3</h:initialVolume>
       <h:translatorialBoundarySourface>
-        <frameOfReference ref="../Object[Body]/Frame[C]"/>
+        <h:frameOfReference ref="../Object[Body]/Frame[C]"/>
         <h:normal>[1;0;0]</h:normal>
         <h:area>1e-3</h:area>
       </h:translatorialBoundarySourface>
