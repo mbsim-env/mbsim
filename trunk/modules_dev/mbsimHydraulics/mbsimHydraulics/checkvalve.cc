@@ -48,7 +48,7 @@ namespace MBSim {
   };
 #endif
 
-  Checkvalve::Checkvalve(const string &name) : Group(name), line(new RigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), ref(NULL), pressureLoss(NULL), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0)
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new RigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), ref(NULL), pressureLoss(NULL), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
 #endif
@@ -71,13 +71,22 @@ namespace MBSim {
   void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setContactForceLaw(GFL); }
 
   void Checkvalve::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (refFrameString!="") {
+        ref=getFrameByPath(refFrameString);
+        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
+      }
+      Group::init(stage);
+    }
     if (stage==MBSim::preInit) {
       double rBall=pressureLoss->getBallRadius();
       double rLine=line->getDiameter()/2.;
       assert(rBall>rLine);
       double gamma=asin(rLine/rBall);
       double h0=rBall*cos(gamma);
-      
+
+      line->setFrameOfReference(ballSeat->getFrame("C"));
+      line->setDirection("[1; 0; 0]");
       if (!pressureLoss->getHydlinePressureloss())
         line->addPressureLoss(pressureLoss);
 
@@ -98,7 +107,7 @@ namespace MBSim {
       ball->addContour(new CircleSolid("ContourBall", rBall), Vec(3, INIT, 0), SqrMat(3, EYE));
       ball->addFrame("LowPressureSide", rBall*Vec("[-1; 0; 0]"), SqrMat(3, EYE));
       ball->addFrame("HighPressureSide", rBall*Vec("[1; 0; 0]"), SqrMat(3, EYE));
-      
+
       seatContact->connect(ballSeat->getContour("ContourSeat"), ball->getContour("ContourBall"));
 
       maxContact->connect(ballSeat->getContour("ContourMaxOpening"), ball->getContour("ContourBall"));
@@ -166,8 +175,7 @@ namespace MBSim {
   void Checkvalve::initializeUsingXML(TiXmlElement * element) {
     Element::initializeUsingXML(element);
     TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"basisFrame");
-    ref=getFrameByPath(e->Attribute("ref"));
-    if(!ref) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
+    refFrameString=e->Attribute("ref");
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"RigidLine");
     TiXmlElement * ee = e->FirstChildElement(MBSIMHYDRAULICSNS"length");
     setLineLength(atof(ee->GetText()));

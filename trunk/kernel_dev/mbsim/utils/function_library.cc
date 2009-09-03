@@ -35,6 +35,7 @@ namespace MBSim {
   SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_) : amplitude(amplitude_), frequency(frequency_), phase(phase_) {
     check();
   }
+  
   Vec SinusFunction1_VS::operator()(const double& tVal, const void *) {
     for (int i=0; i<ySize; i++)
       y(i)=amplitude(i)*sin(2.*M_PI*frequency(i)*tVal+phase(i));

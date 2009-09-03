@@ -17,45 +17,57 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _HYDLEAKAGE_H_
-#define  _HYDLEAKAGE_H_
+#ifndef  _LEAKAGE_H_
+#define  _LEAKAGE_H_
 
-#include "hydline.h"
-#include "pressure_loss.h"
+#include "mbsimHydraulics/hline.h"
 
 namespace MBSim {
 
-  class HydLeakage : public RigidLine {
+  class PlaneLeakagePressureLoss;
+  class CircularLeakagePressureLoss;
+
+  class PlaneLeakage : public RigidHLine {
     public:
-      HydLeakage(const std::string &name) : RigidLine(name) {};
-      virtual std::string getType() const { return "HydLeakage"; }
-      
+      PlaneLeakage(const std::string &name) : RigidHLine(name), hGap(0), wGap(0) {};
+      virtual std::string getType() const { return "PlaneLeakage"; }
+
       void init(InitStage stage);
-      
-      void setGeometry(double lGap, double hGap, double wGap);
-    
+
+      void setGapWidth(double wGap_) {wGap=wGap_; }
+      double getGapWidth() {return wGap; }
+      void setGapHeight(double hGap_) {hGap=hGap_; }
+      double getGapHeight() {return hGap; }
+      void addPressureLoss(PlaneLeakagePressureLoss * dp);
+
+      void initializeUsingXML(TiXmlElement * element);
+
     private:
-      double lGap, hGap, wGap;
+      double hGap, wGap;
   };
 
-
-  class LeakagePressureLoss : public PressureLoss {
+  class CircularLeakage : public RigidHLine {
     public:
-      LeakagePressureLoss(const std::string &name);
-      virtual void transferLeakageGapData(double lGap, double hGap, double wGap) {};
-  };
+      CircularLeakage(const std::string &name) : RigidHLine(name), rI(0), rO(0), hGap(0) {}
+      virtual std::string getType() const { return "CircularLeakage"; }
 
-  class LeakagePressureLossHagenPoiseuille : public LeakagePressureLoss {
-    public:
-      LeakagePressureLossHagenPoiseuille(const std::string &name);
-      virtual void transferLeakageGapData(double lGap, double hGap, double wGap);
+      void init(InitStage stage);
 
-      double operator()(double Q);
+      void setInnerRadius(double rI_) {rI=rI_; }
+      double getInnerRadius() {return rI; }
+      void setGapHeight(double hGap_) {hGap=hGap_; }
+      double getGapHeight() {return hGap; }
+      double getOuterRadius() {return rO; }
+      void addPressureLoss(CircularLeakagePressureLoss * dp);
+
+      void initializeUsingXML(TiXmlElement * element);
+
     private:
-      double lossFactor;
+      double rI, rO, hGap;
+
   };
 
 }
 
-#endif   /* ----- #ifndef _HYDLEAKAGE_H_  ----- */
+#endif   /* ----- #ifndef _LEAKAGE_H_  ----- */
 

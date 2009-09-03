@@ -6,6 +6,7 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/controlvalve43.h"
 #include "mbsimHydraulics/checkvalve.h"
+#include "mbsimHydraulics/hydleakage.h"
 
 using namespace std;
 
@@ -13,12 +14,14 @@ namespace MBSim {
 
   HydraulicsObjectFactory *HydraulicsObjectFactory::instance=NULL;
 
+
   void HydraulicsObjectFactory::initialize() {
     if(instance==0) {
       instance=new HydraulicsObjectFactory;
       ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
   }
+
 
   PressureLoss * HydraulicsObjectFactory::createPressureLoss(TiXmlElement * element) {
     if (element==0) return 0;
@@ -48,14 +51,26 @@ namespace MBSim {
       return new VariablePressureLossCheckvalveCone(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveCone")
       return new RegularizedVariablePressureLossCheckvalveCone(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakagePressureLoss")
+      return new PlaneLeakagePressureLoss(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"EccentricCircularLeakagePressureLoss")
+      return new EccentricCircularLeakagePressureLoss(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
+      return new RealCircularLeakagePressureLoss(element->Attribute("name"));
   }
+
 
   Object * HydraulicsObjectFactory::createObject(TiXmlElement * element) {
     if (element==0) return 0;
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RigidLine")
       return new RigidLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakage")
+      return new PlaneLeakage(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakage")
+      return new CircularLeakage(element->Attribute("name"));
     return 0;
   }
+
 
   Link* HydraulicsObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;

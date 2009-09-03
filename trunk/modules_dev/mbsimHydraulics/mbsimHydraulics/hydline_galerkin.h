@@ -57,6 +57,8 @@ namespace MBSim {
       void setFlow2D(){Flow2D=true; }
       /*! select points in the pipe, for which a output should be created*/
       void setRelativePlotPoints(const fmatvec::Vec &rPP) {relPlotPoints=rPP; }
+      void setDiameter(double d_) {d=d_; }
+      void setLength(double l_) {l=l_; }
 
       void setQ0(double Q0_) {Q0=Q0_; }
 
@@ -86,6 +88,7 @@ namespace MBSim {
       ansatz_function * ansatz;
       fmatvec::Mat plotVecW, plotVecWS;
       fmatvec::Vec QIn, QOut;
+      double l, d, Area;
 
     protected:
       AnsatzTypes ansatzType;

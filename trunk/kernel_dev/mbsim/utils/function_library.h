@@ -37,7 +37,7 @@ namespace MBSim {
 
   class SinusFunction1_VS : public Function1<fmatvec::Vec, double> {
     public:
-      SinusFunction1_VS() {}
+      SinusFunction1_VS() : ySize(0), amplitude(0), frequency(0), phase(0), y(0) {}
       SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element);

@@ -62,7 +62,6 @@ namespace MBSim {
       
       virtual fmatvec::Vec getSignal() = 0;
 
-      virtual Signal * getSignalByPath(std::string path);
   };
   
   /*!

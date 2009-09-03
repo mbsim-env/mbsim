@@ -61,6 +61,7 @@ namespace MBSim {
       VariablePressureLossCheckvalve * pressureLoss;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;
+      std::string refFrameString;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       bool openMBVBodies, openMBVArrows, openMBVFrames;
 #endif

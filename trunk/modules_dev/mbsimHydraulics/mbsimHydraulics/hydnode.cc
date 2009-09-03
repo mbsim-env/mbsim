@@ -56,6 +56,7 @@ namespace MBSim {
 #endif
 
   HLine * HNode::getHLineByPath(string path) {
+    path.erase(0, 3);
     int pos=path.find("HLine");
     path.erase(pos, 5);
     path.insert(pos, "Object");

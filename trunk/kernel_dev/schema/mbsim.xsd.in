@@ -1145,14 +1145,50 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="baseRadius" type="pv:lengthScalar"/>
-          <xs:element name="topRadius" type="pv:lengthScalar"/>
-          <xs:element name="height" type="pv:lengthScalar"/>
+          <xs:element name="baseRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Radius des Fußkreises
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="topRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Radius des Kopfkreises
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+              <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Höhe des Kegelstumpfes
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:choice>
-            <xs:element name="solid"/>
-            <xs:element name="hollow"/>
+            <xs:element name="solid">
+              <xs:annotation>
+                <xs:documentation xml:lang="de">
+                  Als Kontaktkontur wird die Ausfläche des Kegelstumpfes gewählt
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="hollow">
+              <xs:annotation>
+                <xs:documentation xml:lang="de">
+                  Als Kontaktkontur wird die Innenfläche des Kegelstumpfes gewählt
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
           </xs:choice>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1212,11 +1248,41 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="baseRadius" type="pv:lengthScalar"/>
-          <xs:element name="topRadius" type="pv:lengthScalar"/>
-          <xs:element name="height" type="pv:lengthScalar"/>
-          <xs:element name="roundingRadius" type="pv:lengthScalar"/>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="baseRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Radius des Fußkreises
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="topRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Radius des Kopfkreises
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Höhe des Kegelstumpfes
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="roundingRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Verrundungsradius, einmal zwischen Ebene und Kegelstumpf und einmal zwischen Kegelstumpf und Deckfläche des Kegelstumpfes (wie gezeichnet)
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1252,8 +1318,20 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="radius" type="pv:lengthScalar"/>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="radius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Radius der Kugel
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

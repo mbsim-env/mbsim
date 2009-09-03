@@ -15,12 +15,16 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   
   RigidLine * l12 = new RigidLine("l12");
   addObject(l12);
+  l12->setFrameOfReference(getFrame("I"));
+  l12->setDirection(Vec(3, INIT, 0));
   l12->setDiameter(4e-3);
   l12->setLength(.4);
   l12->addPressureLoss(new PressureLossZeta("zeta1", 15));
 
   RigidLine * l23 = new RigidLine("l23");
   addObject(l23);
+  l23->setFrameOfReference(getFrame("I"));
+  l23->setDirection(Vec(3, INIT, 0));
   l23->setDiameter(3e-3);
   l23->setLength(.1);
   FunctionSensor * l23s = new FunctionSensor("Valveposition23");
@@ -33,6 +37,8 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
 
   RigidLine * l34 = new RigidLine("l34");
   addObject(l34);
+  l34->setFrameOfReference(getFrame("I"));
+  l34->setDirection(Vec(3, INIT, 0));
   l34->setDiameter(5e-3);
   l34->setLength(.5);
   l34->addPressureLoss(new PressureLossZeta("zeta1", 15));

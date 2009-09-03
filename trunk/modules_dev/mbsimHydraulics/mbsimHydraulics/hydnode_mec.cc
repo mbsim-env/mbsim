@@ -399,7 +399,7 @@ namespace MBSim {
     e=e->NextSiblingElement();
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+        TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
         Frame *ref=getFrameByPath(ee->Attribute("ref"));
         if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
@@ -410,7 +410,7 @@ namespace MBSim {
         addTransMecArea(ref, normal, area, !noVolumeChange);
       }
       else {
-        TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
+        TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
         Frame *ref=getFrameByPath(ee->Attribute("ref"));
         if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");

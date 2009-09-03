@@ -21,17 +21,17 @@
 #define  _HYDLINE_PRESSURELOSS_H_
 
 #include "mbsim/link.h"
-//#include "mbsimHydraulics/hydline.h"
 
 namespace MBSim {
 
-  class RigidLine; 
+  class RigidHLine; 
   class PressureLoss;
+  class LeakagePressureLoss;
   class VariablePressureLoss;
 
   class HydlinePressureloss : public Link {
     public:
-      HydlinePressureloss(const std::string &name, RigidLine * line_);
+      HydlinePressureloss(const std::string &name, RigidHLine * line_);
       ~HydlinePressureloss() {};
       virtual std::string getType() const { return "HydlinePressureloss"; }
       void plot(double t, double dt);
@@ -42,6 +42,7 @@ namespace MBSim {
       void addPressureLoss(PressureLoss * loss);
       void setUnilateral(bool unilateral_) {assert(bilateral==false); unilateral=unilateral_; }
       void setBilateral(bool bilateral_) {assert(unilateral==false); bilateral=bilateral_; }
+      RigidHLine * getRigidHLine() {return line; }
       // ==== END Getters / Setters / Adders ===
 
       void init(InitStage stage);
@@ -95,13 +96,14 @@ namespace MBSim {
       // ==== END not needed methods ===
 
     private:
-      RigidLine * line;
+      RigidHLine * line;
       bool isActive0;
       fmatvec::Vec gdn;
       bool unilateral, bilateral;
       bool active;
       std::vector<PressureLoss*> pressureLosses;
-      std::vector<VariablePressureLoss*> variablePressureLoss;
+      std::vector<LeakagePressureLoss*> leakagePressureLosses;
+      std::vector<VariablePressureLoss*> variablePressureLosses;
   };
 
 }

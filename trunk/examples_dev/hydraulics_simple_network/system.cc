@@ -13,54 +13,72 @@ System::System(const string &name, bool unilateral) : Group(name) {
 
   RigidLine * l12a = new RigidLine("l12a");
   addObject(l12a);
+  l12a->setFrameOfReference(getFrame("I"));
+  l12a->setDirection("[1; 0; 0]");
   l12a->setDiameter(5e-3);
   l12a->setLength(.7);
   l12a->addPressureLoss(new PressureLossZeta("zeta1", 14));
 
   RigidLine * l12b = new RigidLine("l12b");
   addObject(l12b);
+  l12b->setFrameOfReference(getFrame("I"));
+  l12b->setDirection("[1; 0; 0]");
   l12b->setDiameter(3e-3);
   l12b->setLength(.7);
   l12b->addPressureLoss(new PressureLossZeta("zeta1", 5));
 
   RigidLine * l15 = new RigidLine("l15");
   addObject(l15);
+  l15->setFrameOfReference(getFrame("I"));
+  l15->setDirection("[1; 0; 0]");
   l15->setDiameter(4e-3);
   l15->setLength(.2);
   l15->addPressureLoss(new PressureLossZeta("zeta1", 3));
 
   RigidLine * l16 = new RigidLine("l16");
   addObject(l16);
+  l16->setFrameOfReference(getFrame("I"));
+  l16->setDirection("[1; 0; 0]");
   l16->setDiameter(4e-3);
   l16->setLength(.2);
   l16->addPressureLoss(new PressureLossZeta("zeta1", 3));
 
   RigidLine * l23 = new RigidLine("l23");
   addObject(l23);
+  l23->setFrameOfReference(getFrame("I"));
+  l23->setDirection("[1; 0; 0]");
   l23->setDiameter(7e-3);
   l23->setLength(.7);
   l23->addPressureLoss(new PressureLossZeta("zeta1", 1.5));
 
   RigidLine * l34 = new RigidLine("l34");
   addObject(l34);
+  l34->setFrameOfReference(getFrame("I"));
+  l34->setDirection("[1; 0; 0]");
   l34->setDiameter(4e-3);
   l34->setLength(.5);
   l34->addPressureLoss(new PressureLossZeta("zeta1", 5));
 
   RigidLine * l35 = new RigidLine("l35");
   addObject(l35);
+  l35->setFrameOfReference(getFrame("I"));
+  l35->setDirection("[1; 0; 0]");
   l35->setDiameter(3e-3);
   l35->setLength(.25);
   l35->addPressureLoss(new PressureLossZeta("zeta1", 7));
 
   RigidLine * l45 = new RigidLine("l45");
   addObject(l45);
+  l45->setFrameOfReference(getFrame("I"));
+  l45->setDirection("[1; 0; 0]");
   l45->setDiameter(7e-3);
   l45->setLength(.7);
   l45->addPressureLoss(new PressureLossZeta("zeta1", 19));
 
   RigidLine * l56 = new RigidLine("l56");
   addObject(l56);
+  l56->setFrameOfReference(getFrame("I"));
+  l56->setDirection("[1; 0; 0]");
   l56->setDiameter(2e-3);
   l56->setLength(1.7);
   l56->addPressureLoss(new PressureLossZeta("zeta1", 10));

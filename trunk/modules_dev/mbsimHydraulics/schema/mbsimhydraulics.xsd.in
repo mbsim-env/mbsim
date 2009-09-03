@@ -83,36 +83,87 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PressureLoss" abstract="true" type="PressureLossType"/>
+  <xs:element name="PressureLoss" abstract="true" type="PressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung von Druckverlusten
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PressureLossType">
     <xs:attribute name="name" type="pv:name" use="required"/>
   </xs:complexType>
 
-  <xs:element name="PressureLossZeta" substitutionGroup="PressureLoss" type="PressureLossZetaType">
+  <xs:element name="LinePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="LinePressureLossType">
   </xs:element>
-  <xs:complexType name="PressureLossZetaType">
-    <xs:complexContent>
-      <xs:extension base="PressureLossType">
-        <xs:sequence>
-          <xs:element name="zeta" type="pv:nounitScalar"/>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="PressureLossLaminarTubeFlow" substitutionGroup="PressureLoss" type="PressureLossLaminarTubeFlowType">
-  </xs:element>
-  <xs:complexType name="PressureLossLaminarTubeFlowType">
+  <xs:complexType name="LinePressureLossType">
     <xs:complexContent>
       <xs:extension base="PressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PressureLossCurveFit" substitutionGroup="PressureLoss" type="PressureLossCurveFitType">
+  <xs:element name="PressureLossZeta" substitutionGroup="LinePressureLoss" type="PressureLossZetaType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste.<br/>
+        Die Berechnung erfolgt gemäß
+        <div class="eqn"><img class="eqn" src="id1.png" alt="\[ \Delta p = \frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{A^2} \]"/></div>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PressureLossZetaType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="zeta" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <img class="inlineeqn" src="id2.png" alt="$\zeta$"/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PressureLossLaminarTubeFlow" substitutionGroup="LinePressureLoss" type="PressureLossLaminarTubeFlowType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Druckverluste aufgrund laminarer Rohrströmung.<br/>
+        Die Berechnung erfolgt gemäß
+        <div class="eqn"><img class="eqn" src="id3.png" alt="\[ \Delta p = 32 \, \eta \, \frac{l}{d^2} \, \frac{Q}{A} \]"/></div>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PressureLossLaminarTubeFlowType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PressureLossCurveFit" substitutionGroup="LinePressureLoss" type="PressureLossCurveFitType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Für hydraulische Bauteile einer gewissen Komplexität sind die Druckverlustfaktoren aus tabellarischen Naschlagewerken oft nur sehr ungenau bis gar nicht zu bestimmen. Dagegen kann für jedes Bauteil durch eine Messung bzw. CFD-Simulation der Druckverlust in Abhängigkeit der Reynoldszahl bestimmt werden. Die Reynoldszahl sollte hierbei möglichst im Bezug auf den engsten Querschnitt als Referenzquerschnitt <img class="inlineeqn" src="id4.png" alt="$A_r$"/> mit dem hydraulischen Durchmesser <img class="inlineeqn" src="id5.png" alt="$D_H$"/> bestimmt werden <br/>
+        Für jedes hydraulische Bauteil setzt sich der Durckverlust bei laminarer Strömung aus einem Anteil der Umlenkverluste und einem Anteil der Reibungsverluste zusammen
+        <div class="eqn"><img class="eqn" src="id6.png" alt="\[ \Delta p = \Delta p_{Umlenk} + \Delta p_{Reibung} = \frac{\rho}{2} \, \left( \sum_i \zeta_i \, \frac{Q \, |Q|}{A^2} + \sum_j \lambda_j \, \frac{l_j}{d_j} \, \frac{Q \, |Q|}{A^2} \right) \]"/></div>
+        mit den konstante Faktoren <img class="inlineeqn" src="id7.png" alt="$\zeta_i$"/> für die Umlenkstellen und der Rohrreibungszahl <img class="inlineeqn" src="id8.png" alt="$\lambda_j$"/> f+r die jeweiligen Leitungsabschnitte des Bauelements.<br/>
+        Die Reynoldszahl am Referenzquerschnitt wird über die Beziehung
+        <div class="eqn"><img class="eqn" src="id9.png" alt="\[ Re = \frac{D_{H,R}}{\nu} \, \frac{Q}{A} \]"/></div>
+        bestimmt.
+        Ausgehend von den Mess- bzw. Simulationsdaten können dann mittels Curvefitting die Parameter <img class="inlineeqn" src="id10.png" alt="$a$"/> und <img class="inlineeqn" src="id11.png" alt="$b$"/> für die folgende Approximationsfunktion in Abhängigkeit von der Reynoldszahl bestimmt werden:
+        <div class="eqn"><img class="eqn" src="id12.png" alt="\[ \Delta p = \rho \, \nu^2 \, \left( a \, Re_R + b \, Re_R^2 \right) \]"/></div>
+        mit
+        <div class="eqn"><img class="eqn" src="id13.png" alt="\[ a= \sum_i 32 \, \frac{l_i}{d_i^2 \, D_{H,R}} \, \frac{A_R}{A_i} \]"/></div>
+        <div class="eqn"><img class="eqn" src="id14.png" alt="\[ b= \sum_i \frac{\zeta_i}{2 \, D_{H,R}^2} \, \left( \frac{A_R}{A_i} \right)^2 \]"/></div>
+        Ab einer Reynoldszahl von <img class="inlineeqn" src="id15.png" alt="$Re>2300$"/> kann es zu turbulenten Strömungszuständen kommen. Abhängig von deren Ausprägung im Bauteil verschlechtert sich die Aussagegenauigkeit des Modells.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="PressureLossCurveFitType">
     <xs:complexContent>
-      <xs:extension base="PressureLossType">
+      <xs:extension base="LinePressureLossType">
         <xs:sequence>
           <xs:element name="referenceDiameter" type="pv:nounitScalar"/>
           <xs:element name="hydraulicDiameter" type="pv:nounitScalar"/>
@@ -125,10 +176,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="VariablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="VariablePressureLossType"/>
+  <xs:element name="VariablePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="VariablePressureLossType"/>
   <xs:complexType name="VariablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="PressureLossType">
+      <xs:extension base="LinePressureLossType">
         <xs:sequence>
           <xs:element name="checksizeSignal">
             <xs:complexType>
@@ -239,48 +290,130 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ObjectHydraulics" substitutionGroup="mbsim:Object" abstract="true" type="ObjectHydraulicsType"/>
-  <xs:complexType name="ObjectHydraulicsType">
+  <xs:element name="LeakagePressureLoss" substitutionGroup="PressureLoss" abstract="true" type="LeakagePressureLossType">
+  </xs:element>
+  <xs:complexType name="LeakagePressureLossType">
     <xs:complexContent>
-      <xs:extension base="mbsim:ObjectType">
-        <!--
+      <xs:extension base="PressureLossType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedVelocity" type="pv:nounitScalar"/>
-          <xs:element name="frameOfReference">
+          <xs:element name="firstSurfaceVelocity" minOccurs="0">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondSurfaceVelocity" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="gapLength" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        -->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HLine" abstract="true" substitutionGroup="ObjectHydraulics" type="HLineType"/>
+  <xs:element name="PlaneLeakagePressureLoss" substitutionGroup="LeakagePressureLoss" type="PlaneLeakagePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Modell eines ebenen Leckagespaltes.
+        Der Druckverlust berechnet sich zu
+        <div class="eqn"><img class="eqn" src="id7.png" alt="\[ p_V = \frac{12 \, \eta \, |l|}{b \, h^3} \left[ Q + \frac{h \, b}{2} \, \left(v_1 + v_2\right) \right] \]"/></div>
+        Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Signals angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Signaleingänge. Dieser Summand wird nur berücksichtigt, falls die Signaleingänge gesetzt sind.
+        Als Geschwindigkeit muss die Geschwindigkeit der Grenzflächen in Richtung der Länge l angegeben werden.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlaneLeakagePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LeakagePressureLossType">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CircularLeakagePressureLoss" abstract="true" substitutionGroup="LeakagePressureLoss" type="CircularLeakagePressureLossType">
+  </xs:element>
+  <xs:complexType name="CircularLeakagePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LeakagePressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="EccentricCircularLeakagePressureLoss" substitutionGroup="CircularLeakagePressureLoss" type="EccentricCircularLeakagePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Strömung durch einen kreisförmigen Leckagespalt.
+        Der Druckverlust berechnet sich zu
+        <div class="eqn"><img class="eqn" src="id8.png" alt="\[ p_V = \frac{|l|}{\alpha \, A} \, Q - \frac{|l|}{2 \, \alpha} \, \left(\dot x_i + \dot x_a \right) \]"/></div>
+        mit 
+        <div class="eqn"><img class="eqn" src="id9.png" alt="\[ \alpha = \frac{A \, h^2}{12 \, \nu} \, \left( 1 + 1.5 \, \epsilon \right) \]"/></div>
+        Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Signals angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Signaleingänge. Dieser Summand wird nur berücksichtigt, falls die Signaleingänge gesetzt sind.
+        Als Geschwindigkeit muss die Geschwindigkeit der Grenzflächen in Richtung der Länge l angegeben werden.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="EccentricCircularLeakagePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="CircularLeakagePressureLossType">
+        <xs:sequence>
+          <xs:element name="eccentricity" type="pv:nounitScalar">
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RealCircularLeakagePressureLoss" substitutionGroup="CircularLeakagePressureLoss" type="RealCircularLeakagePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RealCircularLeakagePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="CircularLeakagePressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="HLine" abstract="true" substitutionGroup="mbsim:Object" type="HLineType"/>
   <xs:complexType name="HLineType">
     <xs:complexContent>
-      <xs:extension base="ObjectHydraulicsType">
+      <xs:extension base="mbsim:ObjectType">
         <xs:sequence>
-          <xs:element name="length" type="pv:lengthScalar">
+          <xs:element name="direction" type="pv:nounitVector">
           </xs:element>
-          <xs:element name="diameter" type="pv:lengthScalar">
-          </xs:element>
-        </xs:sequence> 
+        </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidLine" substitutionGroup="HLine" type="RigidLineType">
-  </xs:element>
-  <xs:complexType name="RigidLineType">
+  <xs:element name="RigidHLine" abstract="true" substitutionGroup="HLine" type="RigidHLineType"/>
+  <xs:complexType name="RigidHLineType">
     <xs:complexContent>
       <xs:extension base="HLineType">
         <xs:sequence>
+          <xs:element name="length" type="pv:lengthScalar">
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidLine" substitutionGroup="RigidHLine" type="RigidLineType">
+  </xs:element>
+  <xs:complexType name="RigidLineType">
+    <xs:complexContent>
+      <xs:extension base="RigidHLineType">
+        <xs:sequence>
+          <xs:element name="diameter" type="pv:lengthScalar">
+          </xs:element>
           <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="PressureLoss"/>
+                <xs:element ref="LinePressureLoss"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -289,6 +422,49 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="PlaneLeakage" substitutionGroup="RigidHLine" type="PlaneLeakageType">
+  </xs:element>
+  <xs:complexType name="PlaneLeakageType">
+    <xs:complexContent>
+      <xs:extension base="RigidHLineType">
+        <xs:sequence>
+          <xs:element name="width" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="PlaneLeakagePressureLoss"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CircularLeakage" substitutionGroup="RigidHLine" type="CircularLeakageType">
+  </xs:element>
+  <xs:complexType name="CircularLeakageType">
+    <xs:complexContent>
+      <xs:extension base="RigidHLineType">
+        <xs:sequence>
+          <xs:element name="innerRadius" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="CircularLeakagePressureLoss"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="HNode" abstract="true" substitutionGroup="mbsim:Link" type="HNodeType"/>
   <xs:complexType name="HNodeType">
@@ -468,24 +644,189 @@
     <xs:complexContent>
       <xs:extension base="mbsim:GroupType">
         <xs:sequence>
-          <xs:element name="valveLength" type="pv:nounitScalar"/>
-          <xs:element name="valveDiameter" type="pv:nounitScalar"/>
-          <xs:element name="inletLength" type="pv:nounitScalar"/>
-          <xs:element name="inletDiameter" type="pv:nounitScalar"/>
-          <xs:element name="alpha" type="pv:nounitScalar"/>
-          <xs:element name="minimalRelativeArea" type="pv:nounitScalar"/>
-          <xs:element name="relativeAreaPA">
+          <xs:element name="frameOfReference">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="valve">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS">
+                <xs:element name="length" type="pv:lengthScalar"/>
+                <xs:element name="diameter" type="pv:lengthScalar"/>
+                <xs:element name="alpha" type="pv:nounitScalar"/>
+                <xs:element name="relativeAreaPA">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="mbsim:Function1_SS">
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="minimalRelativeArea" type="pv:nounitScalar"/>
+                <xs:element name="offset" type="pv:nounitScalar"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="relativePosition">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="lineP">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitVector">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungsvektor der Zuleitung zu P
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="length" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Zuleitung zu P
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Durchmesser der Zuleitung zu P
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Druckverluste in der Zuleitung zu P
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="LinePressureLoss"/>
+                    </xs:sequence>
+                  </xs:complexType>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="offset" type="pv:nounitScalar"/>
-          <xs:element name="relativePosition">
+          <xs:element name="lineA">
             <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitVector">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungsvektor der Ableitung von A
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="length" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Ableitung von A
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Durchmesser der Ableitung von A
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Druckverluste in der Ableitung von A
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="LinePressureLoss"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="lineB">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitVector">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungsvektor der Ableitung von B
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="length" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Ableitung von B
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Durchmesser der Ableitung von B
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Druckverluste in der Ableitung von B
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="LinePressureLoss"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="lineT">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" type="pv:nounitVector">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungsvektor der Ableitung von T
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="length" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Ableitung von T
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Durchmesser der Ableitung von T
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Druckverluste in der Ableitung von T
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element ref="LinePressureLoss"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -501,26 +842,73 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="BallCheckvalve" substitutionGroup="mbsim:EmptyGroup" type="BallCheckvalveType">
+  <xs:element name="Checkvalve" abstract="true" substitutionGroup="mbsim:EmptyGroup" type="CheckvalveType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse eines Rückschlagventils
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CheckvalveType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:EmptyGroupType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BallCheckvalve" substitutionGroup="Checkvalve" type="BallCheckvalveType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
+        Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <tt>HydNodeMec</tt> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="BallCheckvalveType">
     <xs:complexContent>
-      <xs:extension base="mbsim:EmptyGroupType">
+      <xs:extension base="CheckvalveType">
         <xs:sequence>
           <xs:element name="basisFrame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Koordinatensystem, in dem das Rückschlagventil berechnet wird.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="RigidLine">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Daten der Blende
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="length" type="pv:lengthScalar"/>
-                <xs:element name="diameter" type="pv:lengthScalar"/>
+                <xs:element name="length" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Blende
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Durchmesser der Blende
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
                 <xs:element name="pressureLoss">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="VariablePressureLossCheckvalve"/>
+                      <xs:element ref="VariablePressureLossCheckvalve">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Druckverlust des Rückschlagventils.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -528,12 +916,18 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="Ball">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Daten der Ventilkugel
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="mass" type="pv:massScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Masse der Ventilkugel. Die Massenträgheit der Ventilkugel wird gemäß  <img class="inlineeqn" src="id_B.png" alt="$\Theta_{Ball}=\frac{2}{5}*m_{Ball}*r_{Ball}^2$"/>. berechnet.
+                      Masse der Ventilkugel. <br/>
+                      Die Massenträgheit der Ventilkugel wird gemäß  <img class="inlineeqn" src="id_B.png" alt="$\Theta_{Ball}=\frac{2}{5} \, m_{Ball} \, r_{Ball}^2$"/>. berechnet.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -541,9 +935,19 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="Spring">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Ventilfeder
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="forceFunction">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Kraftgesetz der Feder. Die Einbaulänge der Feder entspricht der maximalen Ventilöffnungshöhe.
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="mbsim:Function2_SSS"/>
@@ -554,9 +958,19 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="SeatContact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Modellierung des Kontaktes zwischen Kugel und Ventilsitz.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="contactForceLaw">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Kraftgesetz
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="mbsim:GeneralizedForceLaw"/>
@@ -564,6 +978,11 @@
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="contactImpactLaw">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Kraftgesetz zur Lösung der Nebenbedingungen auf Impulsebene.
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
@@ -573,11 +992,22 @@
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
-          <xs:element name="maximalOpening" type="pv:lengthScalar"/>
+          <xs:element name="maximalOpening" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximale Öffnungshöhe der Ventilkugel
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="MaximalOpeningContact">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="contactForceLaw">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Kraftgesetz
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="mbsim:GeneralizedForceLaw"/>
@@ -585,6 +1015,11 @@
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="contactImpactLaw">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Kraftgesetz zur Lösung der Nebenbedingungen auf Impulsebene.
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
@@ -594,9 +1029,27 @@
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVBodies" minOccurs="0"/>
-          <xs:element name="enableOpenMBVFrames" minOccurs="0"/>
-          <xs:element name="enableOpenMBVArrows" minOccurs="0"/>
+          <xs:element name="enableOpenMBVBodies" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Visualisierung der Körper des Rückschlagventils
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVFrames" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Visualisierung der internen Koordinatensyteme des Rückschlagventils
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVArrows" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Visualisierung der Kräfte des Rückschlagventils
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
