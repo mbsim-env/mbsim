@@ -45,9 +45,7 @@ set MBSIMINT=%1
 
 del .pp.%MBSIM% .pp.%MBSIMINT%
 
-%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsim_root.xsd || goto end
-
-%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsim_root.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
 %bindir%/mbsimflatxml .pp.%MBSIM% .pp.%MBSIMINT% || goto end
 
