@@ -45,8 +45,6 @@ MBSIMINT=$1
 
 rm -f .pp.$MBSIM .pp.$MBSIMINT
 
-$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsim_root.xsd || exit 1
-
-$MBXMLUTILSBINDIR/mbxmlutilspp $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
+$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsim_root.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
 $bindir/mbsimflatxml .pp.$MBSIM .pp.$MBSIMINT || exit 1
