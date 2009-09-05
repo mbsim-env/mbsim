@@ -42,9 +42,6 @@ namespace MBSim {
       delete *i;
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       delete *i;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
-#endif
   }
 
   void Body::sethSize(int hSize_, int j) {
@@ -84,13 +81,11 @@ namespace MBSim {
         frame[j]->closePlot();
       for(unsigned int j=0; j<contour.size(); j++)
         contour[j]->closePlot();
-#ifdef HAVE_OPENMBVCPPINTERFACE
-          if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-            delete openMBVGrp; openMBVGrp=0;
-          }
-#endif
-
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVGrp) { delete openMBVGrp; openMBVGrp=0; }
+    if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
+#endif
   }
 
   void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {
@@ -105,9 +100,9 @@ namespace MBSim {
   void Body::init(InitStage stage) {
     if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
-  
+
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           openMBVGrp=new OpenMBV::Group();
           openMBVGrp->setName(name+"#Group");
@@ -118,7 +113,7 @@ namespace MBSim {
             openMBVGrp->addObject(openMBVBody);
           }
         }
-  #endif
+#endif
         Object::init(stage);
       }
     }

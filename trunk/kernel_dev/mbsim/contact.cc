@@ -43,7 +43,7 @@ namespace MBSim {
 
   Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , openMBVContactFrameSize(0), contactArrow(NULL), frictionArrow(NULL)
+                                         , openMBVContactGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
                                          {}
 
@@ -53,10 +53,6 @@ namespace MBSim {
     if(fdf) { delete fdf; fdf=0; }
     if(fnil) { delete fnil; fnil=0; }
     if(ftil) { delete ftil; ftil=0; }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(contactArrow) { delete contactArrow; contactArrow=0; }
-    if(frictionArrow) { delete frictionArrow; frictionArrow=0; }
-#endif
 
     for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
       delete[] *i;
@@ -456,19 +452,20 @@ namespace MBSim {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        if (getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
-          OpenMBV::Group * openMBVGrp = new OpenMBV::Group();
-          openMBVGrp->setName(name+"#ContactGroup");
-          openMBVGrp->setExpand(false);
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
-          for (unsigned int i=0; i<cpData.size(); i++) {
+        if(getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
+          openMBVContactGrp = new OpenMBV::Group();
+          openMBVContactGrp->setName(name+"#ContactGroup");
+          openMBVContactGrp->setExpand(false);
+          parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
+          for(unsigned int i=0; i<cpData.size(); i++) {
             if(openMBVContactFrameSize>epsroot()) {
               openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
-              for (unsigned int k=0; k<2; k++) { // frames
+              for(unsigned int k=0; k<2; k++) { // frames
                 openMBVContactFrame[i][k].setOffset(1.);
                 openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
                 openMBVContactFrame[i][k].setName("ContactPoint#"+numtostr((int)i)+(k==0?"A":"B"));
-                openMBVGrp->addObject(&openMBVContactFrame[i][k]);
+                openMBVContactFrame[i][k].setEnable(openMBVContactFrameEnabled);
+                openMBVContactGrp->addObject(&openMBVContactFrame[i][k]);
               }
             }
             // arrows
@@ -477,13 +474,13 @@ namespace MBSim {
               arrow=new OpenMBV::Arrow(*contactArrow);
               arrow->setName("NormalForce#"+numtostr((int)i)+"B");
               openMBVNormalForceArrow.push_back(arrow); // normal force
-              openMBVGrp->addObject(arrow);
+              openMBVContactGrp->addObject(arrow);
             }
             if(frictionArrow && getFrictionDirections()>0) { // friction force
               arrow=new OpenMBV::Arrow(*frictionArrow);
               arrow->setName("FrictionForce#"+numtostr((int)i)+"B");
               openMBVFrictionArrow.push_back(arrow);
-              openMBVGrp->addObject(arrow);
+              openMBVContactGrp->addObject(arrow);
             }
           }
         }
@@ -637,12 +634,27 @@ namespace MBSim {
           } 
           else {
             for(int j=0; j<1+getFrictionDirections(); j++)
-	      plotVector.push_back(NAN); //gd
+              plotVector.push_back(NAN); //gd
           }
           }
         }
         LinkMechanics::plot(t, dt);
       }
+    }
+
+    void Contact::closePlot() {
+      if(getPlotFeature(plotRecursive)==enabled) {
+        LinkMechanics::closePlot();
+      }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      for(unsigned int i=0; i<openMBVContactFrame.size(); i++) {
+        delete[] openMBVContactFrame[i];
+        openMBVContactFrame[i]=0;
+      }
+      if(contactArrow) { delete contactArrow; contactArrow=0; }
+      if(frictionArrow) { delete frictionArrow; frictionArrow=0; }
+      if(openMBVContactGrp) { delete openMBVContactGrp; openMBVContactGrp=0; }
+#endif
     }
 
     void Contact::solveImpactsFixpointSingle() {

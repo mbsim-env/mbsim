@@ -75,10 +75,6 @@ namespace MBSim {
       delete *i;
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
       delete *i;
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    delete openMBVGrp;
-#endif
   }
 
   void DynamicSystem::updateT(double t) {
@@ -340,6 +336,10 @@ namespace MBSim {
       else
         delete (H5::Group*)plotGroup;
     }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVGrp) { delete openMBVGrp; openMBVGrp=0; }
+#endif
   }
 
   void DynamicSystem::init(InitStage stage) {
@@ -862,7 +862,7 @@ namespace MBSim {
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfLinks(lnk,recursive);
   }
-  
+
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm, bool recursive) {
     for(unsigned int i=0; i<frame.size(); i++)
       frm.push_back(frame[i]);
@@ -870,7 +870,7 @@ namespace MBSim {
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfFrames(frm,recursive);
   }
-  
+
   void DynamicSystem::buildListOfContours(vector<Contour*> &cnt, bool recursive) {
     for(unsigned int i=0; i<contour.size(); i++)
       cnt.push_back(contour[i]);

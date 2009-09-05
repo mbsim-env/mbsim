@@ -49,7 +49,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of link machanics
        */
-      LinkMechanics(const std::string &name) : Link(name) {}
+      LinkMechanics(const std::string &name);
 
       /**
        * \brief destructor
@@ -67,6 +67,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Link"; }
       virtual void plot(double t, double dt = 1);
+      virtual void closePlot();
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -122,6 +123,7 @@ namespace MBSim {
       std::vector<Contour*> contour;
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+      OpenMBV::Group *openMBVForceGrp;
       std::vector<OpenMBV::Arrow*> openMBVArrowF;
       std::vector<OpenMBV::Arrow*> openMBVArrowM;
 #endif

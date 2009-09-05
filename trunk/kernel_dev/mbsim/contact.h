@@ -117,16 +117,17 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contact"; }
       virtual void plot(double t, double dt = 1);
+      virtual void closePlot();
       /***************************************************/
-      
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /** 
-       * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points.
+       * \brief Draw two OpenMBV::Frame's of size 'size' at the contact points if 'enable'==true, otherwise the object is available but disabled.
        * If the contact is closed, then the two contact points are the same on each contour.
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      void enableOpenMBVContactPoints(double size=1.) { openMBVContactFrameSize=size; }
+      void enableOpenMBVContactPoints(double size=1.,bool enable=true) { openMBVContactFrameSize=size; openMBVContactFrameEnabled=enable; }
 
       /** 
        * \brief Sets the OpenMBV::Arrow to be used for drawing the normal force vector.
@@ -177,14 +178,14 @@ namespace MBSim {
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
       GeneralizedForceLaw *fcl;
-	  /** force law defining relation between tangential velocities and tangential forces
-	   */
+      /** force law defining relation between tangential velocities and tangential forces
+      */
       FrictionForceLaw *fdf;
-	  /** force law defining relation between penetration velocity and resulting normal impulses
-	   */
+      /** force law defining relation between penetration velocity and resulting normal impulses
+      */
       GeneralizedImpactLaw *fnil;
-	  /** force law defining relation between tangential velocities and forces impulses
-	   */
+      /** force law defining relation between tangential velocities and forces impulses
+      */
       FrictionImpactLaw *ftil;
 
       /**
@@ -196,7 +197,7 @@ namespace MBSim {
        * \brief boolean vector symbolising activity of contacts on position level with possibility to save previous time step
        */
       std::vector<unsigned int> gActive, gActive0;
-      
+
       /** 
        * \brief boolean vector symbolising activity of contacts on velocity level
        */
@@ -221,7 +222,7 @@ namespace MBSim {
        * \brief boolean evaluation of stop vector for possible contact points
        */
       std::vector<fmatvec::Vector<int> > jsvk;
-      
+
       /**
        * \brief single-valued forces for possible contact points
        */
@@ -244,10 +245,18 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
+       * \brief contact group to draw
+       */
+      OpenMBV::Group * openMBVContactGrp;
+
+      /**
        * \brief container of ContactFrames to draw
        */
       std::vector<OpenMBV::Frame *> openMBVContactFrame;
 
+      /**
+       * \brief container of normal and friction forces to draw
+       */
       std::vector<OpenMBV::Arrow *> openMBVNormalForceArrow, openMBVFrictionArrow;
 
       /**
@@ -255,8 +264,17 @@ namespace MBSim {
        */
       double openMBVContactFrameSize;
 
+      /**
+       * \brief enable flag of ContactFrames to draw
+       */
+      bool openMBVContactFrameEnabled;
+
+      /**
+       * \brief pointer to memory of normal and friction forces to draw
+       */
       OpenMBV::Arrow *contactArrow, *frictionArrow;
 #endif
+
     private:
       std::string saved_ref1, saved_ref2;
   };
