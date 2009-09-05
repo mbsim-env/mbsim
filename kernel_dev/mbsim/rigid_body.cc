@@ -37,7 +37,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   RigidBody::RigidBody(const string &name) : Body(name), m(0), SThetaS(3,INIT,0.), WThetaS(3,INIT,0.), iKinematics(-1), iInertia(-1), cb(false), PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,INIT,0.), PrPK(3,INIT,0.), WrPK(3,INIT,0.), WvPKrel(3,INIT,0.), WomPK(3,INIT,0.), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
-
     APK(0,0)=1.;
     APK(1,1)=1.;
     APK(2,2)=1.;
@@ -117,14 +116,14 @@ namespace MBSim {
         for(size_t j=0; j<saved_refFrameF.size(); j++) {
           int i = 0;
           if(saved_refFrameF[j]!="") i = frameIndex(getFrame(saved_refFrameF[j]));
-    
+
           SrSF[j+1]=SrSF[i] + ASF[i]*saved_RrRF[j];
           ASF[j+1]=ASF[i]*saved_ARF[j];
         }
       for(size_t j=0; j<saved_refFrameC.size(); j++) {
         int i = 0;
         if(saved_refFrameC[j]!="") i = frameIndex(getFrame(saved_refFrameC[j]));
-    
+
         SrSC[j]=SrSF[i] + ASF[i]*saved_RrRC[j];
         ASC[j]=ASF[i]*saved_ARC[j];
       }
@@ -132,18 +131,18 @@ namespace MBSim {
     else if(stage==unknownStage) {
       if(iKinematics == -1)
         iKinematics = 0;
-  
+
       Body::init(stage);
-  
+
       PJT.resize(3,uSize[0]);
       PJR.resize(3,uSize[0]);
-  
+
       PdJT.resize(3,uSize[0]);
       PdJR.resize(3,uSize[0]);
-  
+
       PJTs.resize(3,uSize[1]);
       PJRs.resize(3,uSize[1]);
-  
+
       if(fPJT==0) {
         Mat JT;
         LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
@@ -179,10 +178,10 @@ namespace MBSim {
         PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
         PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
         PJRs(Index(0,2), Index(uSize[1]-momentDir.cols(),uSize[1]-1)) = momentDir;
-  
+
         updateM_ = &RigidBody::updateMNotConst;
         facLLM_ = &RigidBody::facLLMNotConst;
-  
+
         if(cb) {
           if(iKinematics == 0 && false) {
             updateM_ = &RigidBody::updateMConst;
@@ -195,10 +194,10 @@ namespace MBSim {
         } else {
         }
       }
-  
+
       if(iInertia != 0)
         SThetaS = SymMat(ASF[iInertia]*SThetaS*trans(ASF[iInertia])) - m*JTJ(tilde(SrSF[iInertia]));
-  
+
       for(int i=0; i<uSize[0]; i++) 
         T(i,i) = 1;
     }
@@ -305,7 +304,7 @@ namespace MBSim {
     WrPK = frameOfReference->getOrientation()*PrPK;
     WomPK = frameOfReference->getOrientation()*(PJR*u + PjR);
     WvPKrel = frameOfReference->getOrientation()*(PJT*u + PjT);
-    
+
     frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
     frame[iKinematics]->setPosition(WrPK + frameOfReference->getPosition());
     frame[iKinematics]->setVelocity(frameOfReference->getVelocity() + WvPKrel + crossProduct(frameOfReference->getAngularVelocity(),WrPK));

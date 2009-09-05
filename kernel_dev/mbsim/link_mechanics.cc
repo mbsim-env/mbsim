@@ -29,6 +29,12 @@ using namespace std;
 
 namespace MBSim {
 
+  LinkMechanics::LinkMechanics(const std::string &name) : Link(name) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVForceGrp=0;
+#endif
+  }
+
   LinkMechanics::~LinkMechanics() {}
 
   void LinkMechanics::updatedhdz(double t) {
@@ -244,6 +250,21 @@ namespace MBSim {
     }
   }
 
+  void LinkMechanics::closePlot() {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Link::closePlot();
+    }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
+      delete openMBVArrowF[i]; openMBVArrowF[i]=0;
+    }
+    for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
+      delete openMBVArrowM[i]; openMBVArrowM[i]=0;
+    }
+    if(openMBVForceGrp) { delete openMBVForceGrp; openMBVForceGrp=0; }
+#endif
+  }
+
   void LinkMechanics::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
@@ -340,7 +361,7 @@ namespace MBSim {
   void LinkMechanics::init(InitStage stage) {
     if(stage==unknownStage) {
       Link::init(stage);
-  
+
       for(unsigned int i=0; i<frame.size(); i++) {
         W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
         V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
@@ -357,11 +378,11 @@ namespace MBSim {
         fF.push_back(Mat(3,laSize));
         fM.push_back(Mat(3,laSize));
       }
-  #ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_OPENMBVCPPINTERFACE
       assert(openMBVArrowF.size()==0 || openMBVArrowF.size()==frame.size());
       assert(openMBVArrowM.size()==0 || openMBVArrowM.size()==frame.size());
-  #endif
-  
+#endif
+
       for(unsigned int i=0; i<contour.size(); i++) {
         W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
         V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
@@ -381,26 +402,26 @@ namespace MBSim {
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
-  
+
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
-        OpenMBV::Group *forceGrp=new OpenMBV::Group;
-        forceGrp->setExpand(false);
-        forceGrp->setName(name+"#ArrowGroup");
-        parent->getOpenMBVGrp()->addObject(forceGrp);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        openMBVForceGrp=new OpenMBV::Group;
+        openMBVForceGrp->setExpand(false);
+        openMBVForceGrp->setName(name+"#ArrowGroup");
+        parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
         for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
           if(openMBVArrowF[i]) {
             openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
-            forceGrp->addObject(openMBVArrowF[i]);
+            openMBVForceGrp->addObject(openMBVArrowF[i]);
           }
         }
         for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
           if(openMBVArrowM[i]) {
             openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
-            forceGrp->addObject(openMBVArrowM[i]);
+            openMBVForceGrp->addObject(openMBVArrowM[i]);
           }
         }
-  #endif
+#endif
         Link::init(stage);
       }
     }
