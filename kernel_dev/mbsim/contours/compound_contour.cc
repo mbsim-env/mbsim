@@ -28,7 +28,7 @@ namespace MBSim {
   CompoundContour::CompoundContour(const string &name) : Contour(name) {
   }
 
-  void CompoundContour::addContourElement(RigidContour* c, const Vec& Kr_) {
+  void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {
     element.push_back(c);
     Kr.push_back(Kr_);
     Wr.push_back(Vec(3));

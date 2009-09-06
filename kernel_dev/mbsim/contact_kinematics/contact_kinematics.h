@@ -81,7 +81,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updateg(std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updateg(g[0],cpData[0]); }
+      virtual void updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { if((*ig).size()) updateg(*ig,*icpData); }
       
       /**
        * \brief compute acceleration in terms of contour parameters for event driven integration and several contact points
@@ -89,7 +89,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(std::vector<fmatvec::Vec> &wb, std::vector<fmatvec::Vec> &g, std::vector<ContourPointData*> &cpData) { updatewb(wb[0],g[0],cpData[0]); }
+      virtual void updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { updatewb(*iwb,*ig,*icpData); }
       /*******************************************************/ 
 
       /** 
