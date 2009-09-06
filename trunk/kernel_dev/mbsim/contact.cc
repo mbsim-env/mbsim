@@ -75,7 +75,7 @@ namespace MBSim {
           wbk[k] += trans(fF[k][i](Index(0,2),Index(0,laSizek[k]-1)))*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation();
       }
     }
-    contactKinematics->updatewb(wbk,gk,cpData);
+    contactKinematics->updatewb(wbk.begin(),gk.begin(),cpData.begin());
   }
 
   void Contact::updateW(double t) {
@@ -127,7 +127,7 @@ namespace MBSim {
   }
 
   void Contact::updateg(double t) {
-    contactKinematics->updateg(gk,cpData);
+    contactKinematics->updateg(gk.begin(),cpData.begin());
   }
 
   void Contact::updategd(double t) {

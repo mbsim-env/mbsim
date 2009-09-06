@@ -55,18 +55,20 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCompoundContourContour::updateg(vector<Vec> &g, vector<ContourPointData*> &cpData) {
-    for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
-      if(g[k].size())
-	contactKinematics[i]->updateg(g[k], cpData[k]);
-      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+  void ContactKinematicsCompoundContourContour::updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) {
+    for(unsigned int i=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updateg(ig, icpData);
+      ig += contactKinematics[i]->getNumberOfPotentialContactPoints();
+      icpData += contactKinematics[i]->getNumberOfPotentialContactPoints();
     }
   }
 
-  void ContactKinematicsCompoundContourContour::updatewb(vector<Vec> &wb, vector<Vec> &g, vector<ContourPointData*> &cpData) {
-    for(unsigned int i=0, k=0; i<contactKinematics.size(); i++) {
-      contactKinematics[i]->updatewb(wb[k], g[k], cpData[k]);
-      k += contactKinematics[i]->getNumberOfPotentialContactPoints();
+  void ContactKinematicsCompoundContourContour::updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) {
+    for(unsigned int i=0; i<contactKinematics.size(); i++) {
+      contactKinematics[i]->updatewb(iwb, ig, icpData);
+      iwb += contactKinematics[i]->getNumberOfPotentialContactPoints();
+      ig += contactKinematics[i]->getNumberOfPotentialContactPoints();
+      icpData += contactKinematics[i]->getNumberOfPotentialContactPoints();
     }
   }
 
