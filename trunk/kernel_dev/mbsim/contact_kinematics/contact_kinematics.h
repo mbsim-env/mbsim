@@ -89,7 +89,7 @@ namespace MBSim {
        * \param normal distance
        * \param contact point parametrisation
        */
-      virtual void updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { updatewb(*iwb,*ig,*icpData); }
+      virtual void updatewb(std::vector<fmatvec::Vec>::iterator iwb, std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData) { if((*iwb).size()) updatewb(*iwb,*ig,*icpData); }
       /*******************************************************/ 
 
       /** 
