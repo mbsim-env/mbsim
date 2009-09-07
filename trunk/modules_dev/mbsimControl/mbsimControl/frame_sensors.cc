@@ -33,7 +33,7 @@ namespace MBSim {
     frame=getFrameByPath(e->Attribute("ref"));
     if(!frame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
-    direction=Mat(e->GetText());
+    direction=getMat(e,3,0);
   }
 
   Vec AbsolutPositionSensor::getSignal() {
@@ -67,7 +67,7 @@ namespace MBSim {
     relFrame=getFrameByPath(e->Attribute("rel"));
     if(!relFrame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("rel")<<endl; _exit(1); }
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
-    direction=Mat(e->GetText());
+    direction=getMat(e,3,0);
   }
 
 

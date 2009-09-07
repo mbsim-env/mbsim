@@ -31,7 +31,7 @@ namespace MBSim {
     object=parent->getObjectByPath(e->Attribute("ref"));
     if(!object) { std::cerr<<"ERROR! Cannot find object: "<<e->Attribute("ref")<<std::endl; _exit(1); }
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
-    index=atoi(e->GetText());
+    index=(int)getDouble(e);
   }
 
   Vec GeneralizedPositionSensor::getSignal() {

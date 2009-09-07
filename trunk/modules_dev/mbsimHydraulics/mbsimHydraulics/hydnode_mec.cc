@@ -395,7 +395,7 @@ namespace MBSim {
   void HNodeMec::initializeUsingXML(TiXmlElement *element) {
     HNode::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialVolume");
-    V0=atof(e->GetText());
+    V0=getDouble(e);
     e=e->NextSiblingElement();
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
@@ -403,9 +403,9 @@ namespace MBSim {
         Frame *ref=getFrameByPath(ee->Attribute("ref"));
         if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
-        Vec normal(ee->GetText());
+        Vec normal=getVec(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
-        double area=atof(ee->GetText());
+        double area=getDouble(ee);
         bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
         addTransMecArea(ref, normal, area, !noVolumeChange);
       }
@@ -414,9 +414,9 @@ namespace MBSim {
         Frame *ref=getFrameByPath(ee->Attribute("ref"));
         if(!ref) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
-        Vec normal(ee->GetText());
+        Vec normal=getVec(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
-        double area=atof(ee->GetText());
+        double area=getDouble(ee);
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfRotationCenter");
         Frame *center=getFrameByPath(ee->Attribute("ref"));
         if(!center) { cerr<<"ERROR! Cannot find frame: "<<ee->Attribute("ref")<<endl; _exit(1); }
@@ -427,7 +427,7 @@ namespace MBSim {
     }
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows");
     if (e)
-      enableOpenMBVArrows(atof(e->FirstChildElement(MBSIMHYDRAULICSNS"size")->GetText()));
+      enableOpenMBVArrows(getDouble(e->FirstChildElement(MBSIMHYDRAULICSNS"size")));
   }
 
   void ConstrainedNodeMec::init(InitStage stage) {
@@ -528,9 +528,9 @@ namespace MBSim {
     HNodeMec::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
-    p0=atof(e->GetText());
+    p0=getDouble(e);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
-    fracAir=atof(e->GetText());
+    fracAir=getDouble(e);
   }
 
 

@@ -398,11 +398,11 @@ namespace MBSim {
     HNode::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"volume");
-    V=atof(e->GetText());
+    V=getDouble(e);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
-    p0=atof(e->GetText());
+    p0=getDouble(e);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
-    fracAir=atof(e->GetText());
+    fracAir=getDouble(e);
   }
 
   void ElasticNode::updatexRef(const Vec &xParent) {

@@ -178,16 +178,16 @@ namespace MBSim {
     refFrameString=e->Attribute("ref");
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"RigidLine");
     TiXmlElement * ee = e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLineLength(atof(ee->GetText()));
+    setLineLength(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setLineDiameter(atof(ee->GetText()));
+    setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     pressureLoss = (VariablePressureLossCheckvalve*)(((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(ee->FirstChildElement()));
     line->addPressureLoss(pressureLoss);
     pressureLoss->initializeUsingXML(ee->FirstChildElement());
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Ball");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"mass");
-    setBallMass(atof(ee->GetText()));
+    setBallMass(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
     Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(ee->FirstChildElement());
@@ -204,7 +204,7 @@ namespace MBSim {
       gilS->initializeUsingXML(ee->FirstChildElement());
       setSeatContactImpactLaw(gilS);
     }
-    hMax=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening")->GetText());
+    hMax=getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening"));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"MaximalOpeningContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
     GeneralizedForceLaw * gflM=ObjectFactory::getInstance()->getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());

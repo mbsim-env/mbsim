@@ -53,7 +53,7 @@ namespace MBSim {
   void PressureLossZeta::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
-    zeta=atof(e->GetText());
+    zeta=Element::getDouble(e);
   }
 
 
@@ -103,12 +103,12 @@ namespace MBSim {
 
   void PressureLossCurveFit::initializeUsingXML(TiXmlElement * element) {
     PressureLoss::initializeUsingXML(element);
-    dRef=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"referenceDiameter")->GetText());
-    dHyd=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"hydraulicDiameter")->GetText());
-    aPos=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"aPositive")->GetText());
-    bPos=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"bPositive")->GetText());
-    aNeg=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"aNegative")->GetText());
-    bNeg=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"bNegative")->GetText());
+    dRef=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"referenceDiameter"));
+    dHyd=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"hydraulicDiameter"));
+    aPos=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"aPositive"));
+    bPos=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"bPositive"));
+    aNeg=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"aNegative"));
+    bNeg=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"bNegative"));
   }
 
 
@@ -147,7 +147,7 @@ namespace MBSim {
     PressureLoss::initializeUsingXML(element);
     TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
     signalPath=e->Attribute("ref");
-    minValue=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue")->GetText());
+    minValue=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue"));
   }
 
 
@@ -174,7 +174,7 @@ namespace MBSim {
 
   void VariablePressureLossAreaZeta::initializeUsingXML(TiXmlElement * element) {
     VariablePressureLoss::initializeUsingXML(element);
-    zeta=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta")->GetText());
+    zeta=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta"));
   }
 
 
@@ -215,12 +215,12 @@ namespace MBSim {
 
   void VariablePressureLossControlvalveAreaAlpha::initializeUsingXML(TiXmlElement * element) {
     VariablePressureLoss::initializeUsingXML(element);
-    alpha=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha")->GetText());
+    alpha=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha"));
   }
 
   void VariablePressureLossCheckvalve::initializeUsingXML(TiXmlElement * element) {
     VariablePressureLoss::initializeUsingXML(element);
-    rBall=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"ballRadius")->GetText());
+    rBall=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"ballRadius"));
   }
 
 
@@ -256,8 +256,8 @@ namespace MBSim {
 
   void VariablePressureLossCheckvalveGamma::initializeUsingXML(TiXmlElement * element) {
     VariablePressureLossCheckvalve::initializeUsingXML(element);
-    alpha=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha")->GetText());
-    gamma=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"gamma")->GetText());
+    alpha=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha"));
+    gamma=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"gamma"));
   }
 
 
@@ -330,7 +330,7 @@ namespace MBSim {
 
   void VariablePressureLossCheckvalveCone::initializeUsingXML(TiXmlElement * element) {
     VariablePressureLossCheckvalve::initializeUsingXML(element);
-    alpha=atof(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha")->GetText());
+    alpha=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"alpha"));
   }
 
 
@@ -479,7 +479,7 @@ namespace MBSim {
     CircularLeakagePressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"eccentricity");
-    setEccentricity(atof(e->GetText()));
+    setEccentricity(Element::getDouble(e));
   }
 
 

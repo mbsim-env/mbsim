@@ -11,39 +11,39 @@ namespace MBSim {
   void HydraulicEnvironment::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"environmentPressure");
-    setEnvironmentPressure(atof(e->GetText()));
+    setEnvironmentPressure(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"specificMass");
     if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantSpecificMass")
-      setConstantSpecificMass(atof(e->FirstChildElement()->GetText()));
+      setConstantSpecificMass(Element::getDouble(e->FirstChildElement()));
     else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"volumeDependingOnTemperature")
       setVolumeDependingOnTemperature(
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dVdT")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature")->GetText())
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dVdT")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature"))
           );
     else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"specificMassDependingOnTemperature")
       setSpecificMassDependingOnTemperature(
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dRhodT")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature")->GetText())
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"dRhodT")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicSpecificMass")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"basicTemperature"))
           );
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity");
     if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"constantKinematicViscosity")
-      setConstantKinematicViscosity(atof(e->FirstChildElement()->GetText()));
+      setConstantKinematicViscosity(Element::getDouble(e->FirstChildElement()));
     else if (e->FirstChildElement()->ValueStr()==MBSIMHYDRAULICSNS"walterUbbeohdeKinematicViscosity") {
       setWalterUbbelohdeKinematicViscosity(
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature1")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity1")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature2")->GetText()), 
-          atof(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity2")->GetText())
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature1")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity1")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"temperature2")), 
+          Element::getDouble(e->FirstChildElement()->FirstChildElement(MBSIMHYDRAULICSNS"kinematicViscosity2"))
           );
     }
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"basicBulkModulus");
-    setBasicBulkModulus(atof(e->GetText()));
+    setBasicBulkModulus(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"kappa");
-    setKappa(atof(e->GetText()));
+    setKappa(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"fluidTemperature");
-    setTemperature(atof(e->GetText()));
+    setTemperature(Element::getDouble(e));
     initializeFluidData();
   }
 
