@@ -11,20 +11,7 @@
   <translation>
     <LinearTranslation>
       <translationVectors>
-        <pv:xmlMatrix>
-          <pv:row>
-            <pv:ele>1</pv:ele>
-            <pv:ele>0</pv:ele>
-          </pv:row>
-          <pv:row>
-            <pv:ele>0</pv:ele>
-            <pv:ele>1</pv:ele>
-          </pv:row>
-          <pv:row>
-            <pv:ele>0</pv:ele>
-            <pv:ele>0</pv:ele>
-          </pv:row>
-        </pv:xmlMatrix>
+        <xi:include href="abc/mat.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </translationVectors>
     </LinearTranslation>
   </translation>
