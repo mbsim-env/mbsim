@@ -42,9 +42,9 @@ namespace MBSim {
   void PlaneLeakage::initializeUsingXML(TiXmlElement * element) {
     RigidHLine::initializeUsingXML(element);
     TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"width");
-    setGapWidth(atof(e->GetText()));
+    setGapWidth(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
-    setGapHeight(atof(e->GetText()));
+    setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?
@@ -73,9 +73,9 @@ namespace MBSim {
   void CircularLeakage::initializeUsingXML(TiXmlElement * element) {
     RigidHLine::initializeUsingXML(element);
     TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"innerRadius");
-    setInnerRadius(atof(e->GetText()));
+    setInnerRadius(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
-    setGapHeight(atof(e->GetText()));
+    setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?

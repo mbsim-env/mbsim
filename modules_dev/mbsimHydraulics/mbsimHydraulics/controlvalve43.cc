@@ -166,28 +166,28 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"valve");
     TiXmlElement * ee;
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLength(atof(ee->GetText()));
+    setLength(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setDiameter(atof(ee->GetText()));
+    setDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
-    setAlpha(atof(ee->GetText()));
+    setAlpha(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"relativeAreaPA");
     relAreaPA=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(ee->FirstChildElement()); 
     relAreaPA->initializeUsingXML(ee->FirstChildElement());
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
-    minRelArea=atof(ee->GetText());
+    minRelArea=getDouble(ee);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"offset");
-    offset=atof(ee->GetText());
+    offset=getDouble(ee);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");
     positionString=e->Attribute("ref");
 
     e=element->FirstChildElement("lineP");
     ee=e->FirstChildElement("direction");
-    setLinePDirection(Vec(ee->GetText()));
+    setLinePDirection(getVec(ee));
     ee=e->FirstChildElement("length");
-    setLinePLength(atof(ee->GetText()));
+    setLinePLength(getDouble(ee));
     ee=e->FirstChildElement("diameter");
-    setLinePDiameter(atof(ee->GetText()));
+    setLinePDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?
@@ -199,11 +199,11 @@ namespace MBSim {
 
     e=element->FirstChildElement("lineA");
     ee=e->FirstChildElement("direction");
-    setLineADirection(Vec(ee->GetText()));
+    setLineADirection(getVec(ee));
     ee=e->FirstChildElement("length");
-    setLineALength(atof(ee->GetText()));
+    setLineALength(getDouble(ee));
     ee=e->FirstChildElement("diameter");
-    setLineADiameter(atof(ee->GetText()));
+    setLineADiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?
@@ -215,11 +215,11 @@ namespace MBSim {
 
     e=element->FirstChildElement("lineB");
     ee=e->FirstChildElement("direction");
-    setLineBDirection(Vec(ee->GetText()));
+    setLineBDirection(getVec(ee));
     ee=e->FirstChildElement("length");
-    setLineBLength(atof(ee->GetText()));
+    setLineBLength(getDouble(ee));
     ee=e->FirstChildElement("diameter");
-    setLineBDiameter(atof(ee->GetText()));
+    setLineBDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?
@@ -231,11 +231,11 @@ namespace MBSim {
 
     e=element->FirstChildElement("lineT");
     ee=e->FirstChildElement("direction");
-    setLineTDirection(Vec(ee->GetText()));
+    setLineTDirection(getVec(ee));
     ee=e->FirstChildElement("length");
-    setLineTLength(atof(ee->GetText()));
+    setLineTLength(getDouble(ee));
     ee=e->FirstChildElement("diameter");
-    setLineTDiameter(atof(ee->GetText()));
+    setLineTDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?

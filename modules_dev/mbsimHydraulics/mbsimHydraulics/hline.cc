@@ -45,7 +45,7 @@ namespace MBSim {
     TiXmlElement * e;
     Object::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"direction");
-    setDirection(Vec(e->GetText()));
+    setDirection(getVec(e,3));
   }
   
   
@@ -105,7 +105,7 @@ namespace MBSim {
     TiXmlElement * e;
     HLine::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLength(atof(e->GetText()));
+    setLength(getDouble(e));
   }
 
 }

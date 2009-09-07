@@ -40,7 +40,7 @@ namespace MBSim {
     RigidHLine::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setDiameter(atof(e->GetText()));
+    setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
       // TODO Ist das so richtig mit dem factory-cast?

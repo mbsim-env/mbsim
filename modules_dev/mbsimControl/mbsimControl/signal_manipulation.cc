@@ -28,7 +28,7 @@ namespace MBSim {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"input");
     while (e && e->ValueStr()==MBSIMCONTROLNS"input") {
       Signal * s=getSignalByPath(parent, e->Attribute("ref"));
-      double f =atof(e->FirstChildElement(MBSIMCONTROLNS"factor")->GetText());
+      double f =getDouble(e->FirstChildElement(MBSIMCONTROLNS"factor"));
       addSignal(s, f);
       e=e->NextSiblingElement();
     }
