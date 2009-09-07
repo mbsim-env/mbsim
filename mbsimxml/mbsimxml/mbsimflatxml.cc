@@ -1,5 +1,6 @@
 #include "config.h"
 #include <iostream>
+#include <cstdlib>
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinyxml.h"
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinynamespace.h"
 #include "mbsim/objectfactory.h"
@@ -37,19 +38,27 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   TiXmlElement *e=doc->FirstChildElement();
+  TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
   incorporateNamespace(e, dummy);
 
   // create object for root element and check correct type
   DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
+
+  // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
+  // In this case it is not possible to simulate a relativ kinematics (tree structures).
+  char *reorg=getenv("MBSIMREORGANIZEHIERARCHY");
+  if(reorg && strcmp(reorg, "false")==0)
+    dss->setReorganizeHierarchy(false);
+  else
+    dss->setReorganizeHierarchy(true);
+
   if(dss==0) {
     cerr<<"ERROR! The root element of the MBSim main file must be of type 'DynamicSystemSolver'"<<endl;
     return 1;
   }
   dss->initializeUsingXML(e);
   delete doc;
-  cout << "\n\n\n===\nWARNING! ReorganizeHierarchy is enabled.\n===\n\n\n" << endl;
-  dss->setReorganizeHierarchy(true);
   dss->init();
 
 
@@ -61,6 +70,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   e=doc->FirstChildElement();
+  TiXml_setLineNrFromProcessingInstruction(e);
   incorporateNamespace(e, dummy);
 
   // create integrator
