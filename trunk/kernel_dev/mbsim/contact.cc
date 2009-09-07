@@ -1187,7 +1187,7 @@ namespace MBSim {
       saved_ref2=e->Attribute("ref2");
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints"))
-        enableOpenMBVContactPoints(atof(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")->GetText()));
+        enableOpenMBVContactPoints(getDouble(element->FirstChildElement(MBSIMNS"enableOpenMBVContactPoints")));
       e=element->FirstChildElement(MBSIMNS"openMBVNormalForceArrow");
       if(e) {
         OpenMBV::Arrow *arrow=dynamic_cast<OpenMBV::Arrow*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));

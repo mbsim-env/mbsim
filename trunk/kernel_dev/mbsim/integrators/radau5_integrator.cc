@@ -167,15 +167,15 @@ namespace MBSim {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
-    if(e) setAbsoluteTolerance(Vec(e->GetText()));
+    if(e) setAbsoluteTolerance(Element::getVec(e));
     e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(atof(e->GetText()));
+    if(e) setAbsoluteTolerance(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
-    if(e) setRelativeTolerance(Vec(e->GetText()));
+    if(e) setRelativeTolerance(Element::getVec(e));
     e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
-    if(e) setRelativeTolerance(atof(e->GetText()));
+    if(e) setRelativeTolerance(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
-    setInitialStepSize(atof(e->GetText()));
+    setInitialStepSize(Element::getDouble(e));
   }
 
 }

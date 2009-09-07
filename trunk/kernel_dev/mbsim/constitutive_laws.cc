@@ -179,7 +179,7 @@ namespace MBSim {
     GeneralizedImpactLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"restitutionCoefficient");
-    epsilon=atof(e->GetText());
+    epsilon=Element::getDouble(e);
   }
 
   double BilateralImpact::project(double la, double gdn, double gda, double r) {
@@ -371,7 +371,7 @@ namespace MBSim {
     FrictionForceLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(atof(e->GetText()));
+    setFrictionCoefficient(Element::getDouble(e));
   }
   
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
@@ -534,7 +534,7 @@ namespace MBSim {
     FrictionImpactLaw::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    setFrictionCoefficient(atof(e->GetText()));
+    setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec PlanarStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {

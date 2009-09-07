@@ -205,6 +205,13 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      // some convenience function for XML
+      static double getDouble(TiXmlElement *e);
+      static fmatvec::Vec getVec(TiXmlElement *e, int rows=0);
+      static fmatvec::Mat getMat(TiXmlElement *e, int rows=0, int cols=0);
+      static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);
+      static fmatvec::SymMat getSymMat(TiXmlElement *e, int size=0);
+
     protected:
       /** 
        * \brief name of element 

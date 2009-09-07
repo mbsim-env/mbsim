@@ -65,11 +65,11 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
     e=element->FirstChildElement(MBSIMNS"baseRadius");
-    r(0)=atof(e->GetText());
+    r(0)=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"topRadius");
-    r(1)=atof(e->GetText());
+    r(1)=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"height");
-    h=atof(e->GetText());
+    h=getDouble(e);
     if (element->FirstChildElement(MBSIMNS"solid"))
       outCont=true;
     else

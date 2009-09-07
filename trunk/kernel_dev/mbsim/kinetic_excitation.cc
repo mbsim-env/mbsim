@@ -118,7 +118,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       TiXmlElement *ee=e->FirstChildElement();
-      Mat dir(ee->GetText());
+      Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
       Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());
@@ -136,7 +136,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
       TiXmlElement *ee=e->FirstChildElement();
-      Mat dir(ee->GetText());
+      Mat dir=getMat(ee,3,0);
       ee=ee->NextSiblingElement();
       Function1<Vec,double> *func=ObjectFactory::getInstance()->createFunction1_VS(ee->FirstChildElement());
       func->initializeUsingXML(ee->FirstChildElement());

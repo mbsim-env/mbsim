@@ -230,7 +230,7 @@ namespace MBSim {
           Function1<double,Arg>::initializeUsingXML(element);
           TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
-          c=atof(e->GetText());
+          c=Element::getDouble(e);
         }
         /***************************************************/
 
@@ -387,7 +387,7 @@ namespace MBSim {
           Function2<double,Arg1,Arg2>::initializeUsingXML(element);
           TiXmlElement *e;
           e=element->FirstChildElement(MBSIMNS"value");
-          c=atof(e->GetText());
+          c=Element::getDouble(e);
         }
         /***************************************************/
 

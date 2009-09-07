@@ -28,13 +28,13 @@ namespace MBSim {
   void LinearTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"translationVectors");
-    setTranslationVectors(Mat(e->GetText()));
+    setTranslationVectors(Element::getMat(e,3,0));
   }
 
   void TimeDependentTranslation1D::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"direction");
-    setDirection(Vec(e->GetText()));
+    setDirection(Element::getVec(e,3));
     e=element->FirstChildElement(MBSIMNS"position");
     pos=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
@@ -63,7 +63,7 @@ namespace MBSim {
   void RotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
-    setAxisOfRotation(Vec(e->GetText()));
+    setAxisOfRotation(Element::getVec(e,3));
   }
 
   SqrMat CardanAngles::operator()(const Vec &q, double t) {
@@ -125,7 +125,7 @@ namespace MBSim {
   void ConstantJacobian::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"constant");
-    J=Mat(e->GetText());
+    J=Element::getMat(e);
   }
 
 }

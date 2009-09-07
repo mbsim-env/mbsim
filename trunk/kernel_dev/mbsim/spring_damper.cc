@@ -148,7 +148,7 @@ namespace MBSim {
       TiXmlElement *ee=e->FirstChildElement(MBSIMNS"frameOfReference");
       saved_frameOfReference=ee->Attribute("ref");
       ee=e->FirstChildElement(MBSIMNS"direction");
-      saved_direction=Vec(ee->GetText());
+      saved_direction=getVec(ee,3);
     }
     e=element->FirstChildElement(MBSIMNS"connect");
     saved_ref1=e->Attribute("ref1");
