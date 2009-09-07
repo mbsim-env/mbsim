@@ -129,7 +129,7 @@ for D in $EXAMPLES; do
     FAILED="$FAILED\n$D"
   fi
 
-  if test -d reference; then
+  if test -d reference -a $ERROR -eq 0; then
     for H5F in $(cd reference && find -name "*.h5"); do
       for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: (.*)\)|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
