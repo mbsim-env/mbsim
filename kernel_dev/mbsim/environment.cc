@@ -31,7 +31,7 @@ namespace MBSim {
   void MBSimEnvironment::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"accelerationOfGravity");
-    setAccelerationOfGravity(Vec(e->GetText()));
+    setAccelerationOfGravity(Element::getVec(e,3));
   }
 
 }

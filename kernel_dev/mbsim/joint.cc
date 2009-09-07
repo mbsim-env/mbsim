@@ -565,7 +565,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setForceDirection(Mat(ee->GetText()));
+      setForceDirection(getMat(ee,3,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setForceLaw(gfl);
@@ -589,7 +589,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"moment");
     if(e) {
       ee=e->FirstChildElement(MBSIMNS"direction");
-      setMomentDirection(Mat(ee->GetText()));
+      setMomentDirection(getMat(ee,3,0));
       ee=ee->NextSiblingElement();
       GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());
       setMomentLaw(gfl);

@@ -44,13 +44,13 @@ namespace MBSim {
 
   void SinusFunction1_VS::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"amplitude");
-    Vec amplitude_(e->GetText());
+    Vec amplitude_=Element::getVec(e);
     amplitude=amplitude_;
     e=element->FirstChildElement(MBSIMNS"frequency");
-    Vec frequency_(e->GetText());
+    Vec frequency_=Element::getVec(e);
     frequency=frequency_;
     e=element->FirstChildElement(MBSIMNS"phase");
-    Vec phase_(e->GetText());
+    Vec phase_=Element::getVec(e);
     phase=phase_;
     check();
   }
@@ -83,10 +83,10 @@ namespace MBSim {
 
   void StepFunction1_VS::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"time");
-    Vec stepTime_(e->GetText());
+    Vec stepTime_=Element::getVec(e);
     stepTime=stepTime_;
     e=element->FirstChildElement(MBSIMNS"size");
-    Vec stepSize_(e->GetText());
+    Vec stepSize_=Element::getVec(e);
     stepSize=stepSize_;
     check();
   }
@@ -99,10 +99,10 @@ namespace MBSim {
 
   void TabularFunction1_VS::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-    Vec x_(e->GetText());
+    Vec x_=Element::getVec(e);
     x=x_;
     e=element->FirstChildElement(MBSIMNS"y");
-    Vec y_(e->GetText());
+    Vec y_=Element::getVec(e);
     y=y_;
     check();
   }

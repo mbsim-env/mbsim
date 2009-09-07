@@ -135,12 +135,12 @@ namespace MBSim {
     }
 
     if(e && e->ValueStr()==MBSIMNS"position") {
-      setPosition(Vec(e->GetText()));
+      setPosition(getVec(e,3));
       e=e->NextSiblingElement();
     }
 
     if(e && e->ValueStr()==MBSIMNS"orientation") {
-      setOrientation(SqrMat(e->GetText()));
+      setOrientation(getSqrMat(e,3));
       e=e->NextSiblingElement();
     }
 
@@ -152,7 +152,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        f->enableOpenMBV(atof(ee->FirstChildElement(MBSIMNS"size")->GetText()), atof(ee->FirstChildElement(MBSIMNS"offset")->GetText()));
+        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")), getDouble(ee->FirstChildElement(MBSIMNS"offset")));
 #endif
       ec=ec->NextSiblingElement();
       string refF="I";
@@ -161,9 +161,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      Vec RrRF(ec->GetText());
+      Vec RrRF=getVec(ec,3);
       ec=ec->NextSiblingElement();
-      SqrMat ARF(ec->GetText());
+      SqrMat ARF=getSqrMat(ec,3);
       addFrame(f, RrRF, ARF, refF);
       E=E->NextSiblingElement();
     }
@@ -182,9 +182,9 @@ namespace MBSim {
         refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
         ec=ec->NextSiblingElement();
       }
-      Vec RrRC(ec->GetText());
+      Vec RrRC=getVec(ec,3);
       ec=ec->NextSiblingElement();
-      SqrMat ARC(ec->GetText());
+      SqrMat ARC=getSqrMat(ec,3);
       addContour(c, RrRC, ARC, refF);
       c->initializeUsingXML(contourElement);
       E=E->NextSiblingElement();

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
+#include "mbsim/element.h"
 
 namespace MBSim {
 
@@ -29,13 +30,13 @@ namespace MBSim {
   void Integrator::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMINTNS"startTime");
-    setStartTime(atof(e->GetText()));
+    setStartTime(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"endTime");
-    setEndTime(atof(e->GetText()));
+    setEndTime(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"plotStepSize");
-    setPlotStepSize(atof(e->GetText()));
+    setPlotStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"initialState");
-    if(e) setInitialState(fmatvec::Vec(e->GetText()));
+    if(e) setInitialState(Element::getVec(e));
   }
 
 }

@@ -117,7 +117,7 @@ namespace MBSim {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMINTNS"stepSize");
-    setStepSize(atof(e->GetText()));
+    setStepSize(Element::getDouble(e));
   }
 
 }

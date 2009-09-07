@@ -55,13 +55,13 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     TiXmlElement* e;
     e=element->FirstChildElement(MBSIMNS"baseRadius");
-    rFrustumOnPlane=atof(e->GetText());
+    rFrustumOnPlane=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"topRadius");
-    rFrustumOnTop=atof(e->GetText());
+    rFrustumOnTop=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"height");
-    hFrustum=atof(e->GetText());
+    hFrustum=getDouble(e);
     e=element->FirstChildElement(MBSIMNS"roundingRadius");
-    rho=atof(e->GetText());
+    rho=getDouble(e);
     e=e->NextSiblingElement();
 #ifdef HAVE_OPENMBVCPPINTERFACE
     if(element->FirstChildElement(MBSIMNS"enableOpenMBV"))

@@ -21,8 +21,12 @@
 #include <config.h>
 #include <mbsim/element.h>
 #include <mbsim/object_interface.h>
+#include <mbsim/mbsim_event.h>
+#include <mbsim/utils/eps.h>
+#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -114,6 +118,83 @@ namespace MBSim {
       if(e->ValueStr()==MBSIMNS"plotFeatureRecursive") setPlotFeatureRecursive(feature, status);
       e=e->NextSiblingElement();
     }
+  }
+
+  // some convenience function for XML
+  double Element::getDouble(TiXmlElement *e) {
+    Mat m=Mat(e->GetText());
+    if(m.rows()==1 && m.cols()==1)
+      return m(0,0);
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a scalar was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return NAN;
+  }
+
+  Vec Element::getVec(TiXmlElement *e, int rows) {
+    Mat m=Mat(e->GetText());
+    if((rows==0 || m.rows()==rows) && m.cols()==1)
+      return m.col(0);
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a vector of size "<<rows<<" was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return Vec();
+  }
+
+  Mat Element::getMat(TiXmlElement *e, int rows, int cols) {
+    Mat m=Mat(e->GetText());
+    if((rows==0 || m.rows()==rows) && (cols==0 || m.cols()==cols))
+      return m;
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a matrix of size "<<rows<<"x"<<cols<<" was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return Mat();
+  }
+
+  SqrMat Element::getSqrMat(TiXmlElement *e, int size) {
+    Mat m=Mat(e->GetText());
+    if((size==0 || m.rows()==size) && (size==0 || m.cols()==size) && m.rows()==m.cols())
+      return SqrMat(m);
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a square matrix of size "<<size<<" was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return SqrMat();
+  }
+
+  fmatvec::SymMat Element::getSymMat(TiXmlElement *e, int size) {
+    Mat m=Mat(e->GetText());
+    bool isSym=true;
+    for(int i=0; i<min(m.rows(),m.cols()); i++) {
+      for(int j=0; j<min(m.rows(),m.cols()); j++)
+        if(fabs(m(i,j)-m(j,i))>epsroot()) { isSym=false; break; }
+      if(isSym==false) break;
+    }
+    if((size==0 || m.rows()==size) && (size==0 || m.cols()==size) && m.rows()==m.cols() && isSym)
+      return SymMat(m);
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a symmetric matrix of size "<<size<<" was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return SymMat();
   }
 
 }

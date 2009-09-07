@@ -28,11 +28,11 @@ namespace MBSim {
     Function2<double,double,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=atof(e->GetText());
+    c=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=atof(e->GetText());
+    d=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"unloadedLength");
-    l0=atof(e->GetText());
+    l0=Element::getDouble(e);
   }
 
   void NonlinearSpringDamperForce::initializeUsingXML(TiXmlElement *element) {
@@ -50,18 +50,18 @@ namespace MBSim {
     Function2<double,double,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=atof(e->GetText());
+    c=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=atof(e->GetText());
+    d=Element::getDouble(e);
   }
 
   void LinearRegularizedBilateralConstraint::initializeUsingXML(TiXmlElement *element) {
     Function2<double,double,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"stiffnessCoefficient");
-    c=atof(e->GetText());
+    c=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"dampingCoefficient");
-    d=atof(e->GetText());
+    d=Element::getDouble(e);
   }
 
   Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN, const void *) { 
@@ -79,9 +79,9 @@ namespace MBSim {
     Function2<Vec,Vec,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"marginalVelocity");
-    if(e) gdLim=atof(e->GetText());
+    if(e) gdLim=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
-    mu=atof(e->GetText());
+    mu=Element::getDouble(e);
   }
 
   Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN, const void *) { 
@@ -103,7 +103,7 @@ namespace MBSim {
     Function2<Vec,Vec,double>::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"marginalVelocity");
-    if(e) gdLim=atof(e->GetText());
+    if(e) gdLim=Element::getDouble(e);
     e=element->FirstChildElement(MBSIMNS"frictionFunction");
     Function1<double,double> *f=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     setFrictionFunction(f);
