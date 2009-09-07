@@ -33,6 +33,8 @@ if "%1" == "--mbsimparam" (
   set PARAM=none
 )
 set MBSIM=%1
+set PPMBSIM=%~n1
+set PPMBSIM=%PPMBSIM%.xml
 shift
 if "%1" == "--intparam" (
   set PARAMINT=%2
@@ -42,11 +44,13 @@ if "%1" == "--intparam" (
   set PARAMINT=none
 )
 set MBSIMINT=%1
+set PPMBSIMINT=%~n2
+set PPMBSIMINT=%PPMBSIMINT%.xml
 
-del .pp.%MBSIM% .pp.%MBSIMINT%
+del %PPMBSIM% %PPMBSIMINT%
 
 %MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsim_root.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
-%bindir%/mbsimflatxml .pp.%MBSIM% .pp.%MBSIMINT% || goto end
+%bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
 
 :end

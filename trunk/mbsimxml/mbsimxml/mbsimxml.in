@@ -33,6 +33,7 @@ else
   PARAM=none
 fi
 MBSIM=$1
+PPMBSIM=.pp.$(basename $MBSIM)
 shift
 if [ "_$1" = "_--intparam" ]; then
   PARAMINT=$2
@@ -42,9 +43,10 @@ else
   PARAMINT=none
 fi
 MBSIMINT=$1
+PPMBSIMINT=.pp.$(basename $MBSIMINT)
 
-rm -f .pp.$MBSIM .pp.$MBSIMINT
+rm -f $PPMBSIM $PPMBSIMINT
 
 $MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsim_root.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
-$bindir/mbsimflatxml .pp.$MBSIM .pp.$MBSIMINT || exit 1
+$bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
