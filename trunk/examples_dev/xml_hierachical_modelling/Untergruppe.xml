@@ -12,7 +12,21 @@
       <initialGeneralizedVelocity>[0]</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
-      <mass>m1</mass>
+      <mass>
+        <![CDATA[
+        % If more than one octave statement is given, the value for the
+        % element is taken from the octave variable named 'ret'.
+        % Note that the characters '<', '>' and '&' are not allowed in XML text
+        % elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
+        % a CDATA section as used here.
+        % This code for the element 'mass' is just the same as '<mass>m1</mass>'.
+        function r=myfunc(a)
+          r=2*a;
+        end
+        if 1 & 2, x=9; else x=8; end
+        ret=myfunc(m1/2);
+        ]]>
+      </mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
         <LinearTranslation>
