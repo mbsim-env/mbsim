@@ -107,7 +107,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste.<br/>
         Die Berechnung erfolgt gemäß
-        <div class="eqn"><img class="eqn" src="id1.png" alt="\[ \Delta p = \frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{A^2} \]"/></div>
+        <img class="eqn" src="id1.png" alt="\[ \Delta p = \frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{A^2} \]"/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -132,7 +132,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Druckverluste aufgrund laminarer Rohrströmung.<br/>
         Die Berechnung erfolgt gemäß
-        <div class="eqn"><img class="eqn" src="id3.png" alt="\[ \Delta p = 32 \, \eta \, \frac{l}{d^2} \, \frac{Q}{A} \]"/></div>
+        <img class="eqn" src="id3.png" alt="\[ \Delta p = 32 \, \eta \, \frac{l}{d^2} \, \frac{Q}{A} \]"/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -147,16 +147,16 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Für hydraulische Bauteile einer gewissen Komplexität sind die Druckverlustfaktoren aus tabellarischen Naschlagewerken oft nur sehr ungenau bis gar nicht zu bestimmen. Dagegen kann für jedes Bauteil durch eine Messung bzw. CFD-Simulation der Druckverlust in Abhängigkeit der Reynoldszahl bestimmt werden. Die Reynoldszahl sollte hierbei möglichst im Bezug auf den engsten Querschnitt als Referenzquerschnitt <img class="inlineeqn" src="id4.png" alt="$A_r$"/> mit dem hydraulischen Durchmesser <img class="inlineeqn" src="id5.png" alt="$D_H$"/> bestimmt werden <br/>
         Für jedes hydraulische Bauteil setzt sich der Durckverlust bei laminarer Strömung aus einem Anteil der Umlenkverluste und einem Anteil der Reibungsverluste zusammen
-        <div class="eqn"><img class="eqn" src="id6.png" alt="\[ \Delta p = \Delta p_{Umlenk} + \Delta p_{Reibung} = \frac{\rho}{2} \, \left( \sum_i \zeta_i \, \frac{Q \, |Q|}{A^2} + \sum_j \lambda_j \, \frac{l_j}{d_j} \, \frac{Q \, |Q|}{A^2} \right) \]"/></div>
+        <img class="eqn" src="id6.png" alt="\[ \Delta p = \Delta p_{Umlenk} + \Delta p_{Reibung} = \frac{\rho}{2} \, \left( \sum_i \zeta_i \, \frac{Q \, |Q|}{A^2} + \sum_j \lambda_j \, \frac{l_j}{d_j} \, \frac{Q \, |Q|}{A^2} \right) \]"/>
         mit den konstante Faktoren <img class="inlineeqn" src="id7.png" alt="$\zeta_i$"/> für die Umlenkstellen und der Rohrreibungszahl <img class="inlineeqn" src="id8.png" alt="$\lambda_j$"/> f+r die jeweiligen Leitungsabschnitte des Bauelements.<br/>
         Die Reynoldszahl am Referenzquerschnitt wird über die Beziehung
-        <div class="eqn"><img class="eqn" src="id9.png" alt="\[ Re = \frac{D_{H,R}}{\nu} \, \frac{Q}{A} \]"/></div>
+        <img class="eqn" src="id9.png" alt="\[ Re = \frac{D_{H,R}}{\nu} \, \frac{Q}{A} \]"/>
         bestimmt.
         Ausgehend von den Mess- bzw. Simulationsdaten können dann mittels Curvefitting die Parameter <img class="inlineeqn" src="id10.png" alt="$a$"/> und <img class="inlineeqn" src="id11.png" alt="$b$"/> für die folgende Approximationsfunktion in Abhängigkeit von der Reynoldszahl bestimmt werden:
-        <div class="eqn"><img class="eqn" src="id12.png" alt="\[ \Delta p = \rho \, \nu^2 \, \left( a \, Re_R + b \, Re_R^2 \right) \]"/></div>
+        <img class="eqn" src="id12.png" alt="\[ \Delta p = \rho \, \nu^2 \, \left( a \, Re_R + b \, Re_R^2 \right) \]"/>
         mit
-        <div class="eqn"><img class="eqn" src="id13.png" alt="\[ a= \sum_i 32 \, \frac{l_i}{d_i^2 \, D_{H,R}} \, \frac{A_R}{A_i} \]"/></div>
-        <div class="eqn"><img class="eqn" src="id14.png" alt="\[ b= \sum_i \frac{\zeta_i}{2 \, D_{H,R}^2} \, \left( \frac{A_R}{A_i} \right)^2 \]"/></div>
+        <img class="eqn" src="id13.png" alt="\[ a= \sum_i 32 \, \frac{l_i}{d_i^2 \, D_{H,R}} \, \frac{A_R}{A_i} \]"/>
+        <img class="eqn" src="id14.png" alt="\[ b= \sum_i \frac{\zeta_i}{2 \, D_{H,R}^2} \, \left( \frac{A_R}{A_i} \right)^2 \]"/>
         Ab einer Reynoldszahl von <img class="inlineeqn" src="id15.png" alt="$Re>2300$"/> kann es zu turbulenten Strömungszuständen kommen. Abhängig von deren Ausprägung im Bauteil verschlechtert sich die Aussagegenauigkeit des Modells.
       </xs:documentation>
     </xs:annotation>
@@ -321,7 +321,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines ebenen Leckagespaltes.
         Der Druckverlust berechnet sich zu
-        <div class="eqn"><img class="eqn" src="id7.png" alt="\[ p_V = \frac{12 \, \eta \, |l|}{b \, h^3} \left[ Q + \frac{h \, b}{2} \, \left(v_1 + v_2\right) \right] \]"/></div>
+        <img class="eqn" src="id7.png" alt="\[ p_V = \frac{12 \, \eta \, |l|}{b \, h^3} \left[ Q + \frac{h \, b}{2} \, \left(v_1 + v_2\right) \right] \]"/>
         Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Signals angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Signaleingänge. Dieser Summand wird nur berücksichtigt, falls die Signaleingänge gesetzt sind.
         Als Geschwindigkeit muss die Geschwindigkeit der Grenzflächen in Richtung der Länge l angegeben werden.
       </xs:documentation>
@@ -347,9 +347,9 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Strömung durch einen kreisförmigen Leckagespalt.
         Der Druckverlust berechnet sich zu
-        <div class="eqn"><img class="eqn" src="id8.png" alt="\[ p_V = \frac{|l|}{\alpha \, A} \, Q - \frac{|l|}{2 \, \alpha} \, \left(\dot x_i + \dot x_a \right) \]"/></div>
+        <img class="eqn" src="id8.png" alt="\[ p_V = \frac{|l|}{\alpha \, A} \, Q - \frac{|l|}{2 \, \alpha} \, \left(\dot x_i + \dot x_a \right) \]"/>
         mit 
-        <div class="eqn"><img class="eqn" src="id9.png" alt="\[ \alpha = \frac{A \, h^2}{12 \, \nu} \, \left( 1 + 1.5 \, \epsilon \right) \]"/></div>
+        <img class="eqn" src="id9.png" alt="\[ \alpha = \frac{A \, h^2}{12 \, \nu} \, \left( 1 + 1.5 \, \epsilon \right) \]"/>
         Die Länge des Leckagespaltes wird dabei entweder konstant gehalten oder an die Länge des gapLength-Signals angepasst. Die Geschwindigkeiten v1 und v2 entsprechen den Geschwindigkeiten der beiden anderen Signaleingänge. Dieser Summand wird nur berücksichtigt, falls die Signaleingänge gesetzt sind.
         Als Geschwindigkeit muss die Geschwindigkeit der Grenzflächen in Richtung der Länge l angegeben werden.
       </xs:documentation>
