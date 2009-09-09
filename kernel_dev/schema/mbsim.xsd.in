@@ -489,13 +489,9 @@
           <li>Item 2</li>
         </ol>
         A not inline equation
-        <div class="eqn"><img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/></div>
+        <img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/>
         And a inline equation <img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
-        <div class="htmlfigure"><table>
-            <caption align="bottom">The image caption</caption><tr><td>
-                <img class="htmlfigure" src="mbsim.png" alt="mbsim.png"/></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="mbsim.eps" title="The image caption"/>
+        <object class="figure" standby="4cm" data="mbsim" title="The image caption"/>
         End of the test. 
       </xs:documentation>
       <xs:documentation xml:lang="de">
@@ -1065,11 +1061,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung einer CircleHollow-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_circlehollow.png" alt="./figures/contour_circlehollow.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_circlehollow.eps" title="Orientierung einer CicleHollow-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_circlehollow" title="Orientierung einer CicleHollow-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1100,11 +1092,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Ebene Kontur eines CircleSolid (= (Voll)zylinders = Kreiskontur mit Kontakt aussen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems. 
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung einer CircleSolid-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_circlesolid.png" alt="./figures/contour_circlesolid.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_circlesolid.eps" title="Orientierung einer CircleSolid-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_circlesolid" title="Orientierung einer CircleSolid-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1136,11 +1124,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Kontur eines Kegelstumpfes. Hiermit kann auch ein Kegel und ein Zylinder abgedeckt werden.
         Die Symmetrieachse fällt mit der y-Achse des Referenzkoordinationsystems zusammen. Zu definierende geometrische Größen sind in der Zeichnung eingetragen.      
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung und geometrische Größen einer Frustum-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_frustum.png" alt="./figures/contour_frustum.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_frustum.eps" title="Orientierung und geometrische Größen einer Frustum-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_frustum" title="Orientierung und geometrische Größen einer Frustum-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1202,11 +1186,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Einfache, unendlich ausgedehnte Linienkontur.
         Die Linie verläuft in Richtung der y-Achse des Referenzkoordinatensystems, die Normale weist in die Richtung der x-Achse des Referenzkoordinatensystems.
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung einer Line-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_line.png" alt="./figures/contour_line.png"/></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_line.eps" title="Orientierung einer Line-Kontour"/>
+        <object class="figure" standby="4cm" data="figures/contour_line" title="Orientierung einer Line-Kontour"/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1221,11 +1201,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Unendlich ausgedehnte Ebenenkontur.
         Die Ebene wird durch die y- und z-Achse des Referenzkoordinatensystems beschrieben.
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung einer Plane-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_plane.png" alt="./figures/contour_plane.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_plane.eps" title="Orientierung einer Plane-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_plane" title="Orientierung einer Plane-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1239,11 +1215,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">       
         Eine Kontur, die aus einer Ebene und einem Kegelstumpf (Frustum) besteht. Die Ebene wird wie gezeichnet durch die y- und z-Achse des Referenzkoordinatensystems aufgespannt, die Rotationsachse des Kegelstumpfes ist die x-Achse des Referenzkoordinatensystems. Für eine Kegelstumpf-Höhe h&gt;0 erstreckt sich die Kegelstumpfkontur - wie gezeichnet - in Richtung der positiven x-Achse des Referenzkoordinatensystems. Rho ist der Radius der Verrundung zwischen Ebene und Kegelstumpf und am Kopf des Kegelstumpfes.
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Orientierung einer PlaneWithFrustum-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_planewithfrustum.png" alt="./figures/contour_planewithfrustum.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_planewithfrustum.eps" title="Orientierung einer PlaneWithFrustum-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_planewithfrustum" title="Orientierung einer PlaneWithFrustum-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1309,11 +1281,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Kontur einer Kugel.
         Der Radius r gibt den Radius der Kugel an
-        <div class="htmlfigure"><table>
-            <caption align="bottom">Geometrie einer Sphere-Kontour</caption><tr><td>
-                <img class="htmlfigure" src="./figures/contour_sphere.png" alt="./figures/contour_sphere.png"></img></td></tr></table>
-        </div>
-        <object class="latexfigure" standby="4cm" data="figures/contour_sphere.eps" title="Geometrie einer Sphere-Kontour"></object>
+        <object class="figure" standby="4cm" data="figures/contour_sphere" title="Geometrie einer Sphere-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
