@@ -489,8 +489,14 @@
           <li>Item 2</li>
         </ol>
         A not inline equation
-        <img class="eqn" src="id_A.png" alt="\[ \int_a^b\sin(x)dx \]"/>
-        And a inline equation <img class="inlineeqn" src="id_B.png" alt="$x_a+\cos(x)$"/>. And a image.
+        <object class="eqn"><![CDATA[
+          \int_a^b\sin(x)dx +
+          \left[\begin{array}{cc}
+            1 & 2 \\
+            3 & 4
+          \end{array}\right]
+        ]]></object>
+        And a inline equation <object class="inlineeqn">x_a+\cos(x)</object>. And a image.
         <object class="figure" standby="4cm" data="mbsim" title="The image caption"/>
         End of the test. 
       </xs:documentation>
