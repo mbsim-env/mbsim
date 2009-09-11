@@ -25,6 +25,9 @@
 
 
   <xs:simpleType name="PlotFeatureType">
+    <xs:annotation><xs:documentation>
+      Bestimmt, welche Plotausgaben eingeschaltet sind.
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="+plotRecursive"/>
       <xs:enumeration value="-plotRecursive"/>
@@ -141,6 +144,96 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <!-- For usage in Group an RigidBody -->
+  <xs:element name="frame" type="frameType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        lokale Gruppe eines Koordinatensystems.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="frameType"> <!-- use global type for parsing by the documentation generator -->
+    <xs:sequence>
+      <xs:element ref="Frame">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Definition eines Koordinatensystems.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="frameOfReference" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="position" type="pv:lengthVector">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Relative Lage des Koordinatensystems.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="orientation" type="pv:nounitMatrix">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Relative Orientierung des Koordinatensystems.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute ref="xml:base"/>
+  </xs:complexType>
+
+  <!-- For usage in Group an RigidBody -->
+  <xs:element name="contour" type="contourType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        lokale Gruppe einer Kontaktkontur
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="contourType"> <!-- use global type for parsing by the documentation generator -->
+    <xs:sequence>
+      <xs:element ref="Contour">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Definition einer Kontaktkontur.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="frameOfReference" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="position" type="pv:lengthVector">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Relative Lager der Kontour.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="orientation" type="pv:nounitMatrix">
+        <xs:annotation>
+          <xs:documentation xml:lang="de">
+            Relative Orientierung der Kontour.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute ref="xml:base"/>
+  </xs:complexType>
+
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType"/>
   <xs:complexType name="GroupType">
     <xs:complexContent>
@@ -177,50 +270,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      lokale Gruppe eines Koordinatensystems.
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Frame">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Definition eines Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="frameOfReference" minOccurs="0">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe.
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType>
-                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-                        </xs:complexType>
-                      </xs:element>
-                      <xs:element name="position" type="pv:lengthVector">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Lager des Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="orientation" type="pv:nounitMatrix">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Orientierung des Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="frame"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -230,50 +283,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      lokale Gruppe einer Kontaktkontur
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Contour">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Definition einer Kontaktkontur.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="frameOfReference" minOccurs="0">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "I"-System der Gruppe.
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType>
-                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-                        </xs:complexType>
-                      </xs:element>
-                      <xs:element name="position" type="pv:lengthVector">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Lager der Kontour.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="orientation" type="pv:nounitMatrix">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Orientierung der Kontour.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="contour"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="groups">
@@ -642,50 +655,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="frame" minOccurs="0" maxOccurs="unbounded">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      lokale Gruppe eines Koordinatensystems.
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Frame">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Definition eines Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="frameOfReference" minOccurs="0">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "C"-KOS.
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType>
-                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-                        </xs:complexType> 
-                      </xs:element>
-                      <xs:element name="position" type="pv:lengthVector">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Lager des Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="orientation" type="pv:nounitMatrix">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Orientierung des Koordinatensystems.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="frame"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -695,45 +668,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="contour" minOccurs="0" maxOccurs="unbounded">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="Contour">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            lokale Gruppe einer Kontourdefinition.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="frameOfReference" minOccurs="0">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "C"-KOS.
-                          </xs:documentation>
-                        </xs:annotation>
-                        <xs:complexType>
-                          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-                        </xs:complexType> 
-                      </xs:element>
-                      <xs:element name="position" type="pv:lengthVector">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relative Lager der Kontour.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                      <xs:element name="orientation" type="pv:nounitMatrix">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de">
-                            Relatvie Orientierung der Kontour.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="contour"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="openMBVRigidBody" minOccurs="0">
