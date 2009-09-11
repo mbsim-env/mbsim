@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
   <position>[1;0;0]</position>
   <orientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</orientation>
@@ -47,11 +48,13 @@
           <position>[0;-h1/2;0]</position>
           <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
         </frame>
-        <frame>
-          <Frame name="P2"/>
-          <position>[0;h1/2;0]</position>
-          <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
-        </frame>
+        <pv:embed count="1" counterName="dummy">
+          <frame>
+            <Frame name="P2"/>
+            <position>[0;h1/2;0]</position>
+            <orientation>[1,0,0;0,1,0;0,0,1]</orientation>
+          </frame>
+        </pv:embed>
       </frames>
       <contours/>
       <openMBVRigidBody>
