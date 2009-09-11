@@ -24,11 +24,14 @@
 #include "mbsim/contours/contour_quad.h"
 #include "mbsim/contours/cuboid.h"
 #include "mbsim/contours/compound_contour.h"
+#include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/integrators/dopri5_integrator.h"
 #include "mbsim/integrators/radau5_integrator.h"
+#include "mbsim/integrators/lsode_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"
 #include "mbsim/integrators/time_stepping_integrator.h"
+#include "mbsim/utils/contour_functions.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -163,6 +166,12 @@ namespace MBSim {
     return 0;
   }
 
+  ContourFunction1s *ObjectFactory::createContourFunction1s(TiXmlElement *element) {
+    ContourFunction1s * u;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((u=(*i)->createContourFunction1s(element))) return u;
+    return 0;
+  }
 
 
 
@@ -204,6 +213,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
+    if(element->ValueStr()==MBSIMNS"TimeDependentRotation1D")
+      return new TimeDependentRotation1D;
     if(element->ValueStr()==MBSIMNS"CardanAngles")
       return new CardanAngles;
     return 0;
@@ -228,6 +239,8 @@ namespace MBSim {
       return new DOPRI5Integrator;
     if(element->ValueStr()==MBSIMINTNS"RADAU5Integrator")
       return new RADAU5Integrator;
+    if(element->ValueStr()==MBSIMINTNS"LSODEIntegrator")
+      return new LSODEIntegrator;
     if(element->ValueStr()==MBSIMINTNS"LSODARIntegrator")
       return new LSODARIntegrator;
     if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
@@ -295,6 +308,8 @@ namespace MBSim {
       return new Point(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Sphere")
       return new Sphere(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"Contour1sAnalytical")
+      return new Contour1sAnalytical(element->Attribute("name"));
     return 0;
   }
 
@@ -323,6 +338,8 @@ namespace MBSim {
   Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec,double>;
+    if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
+      return new PPolynom;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
       return new SinusFunction1_VS;
     if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")
@@ -333,6 +350,8 @@ namespace MBSim {
       return new TabularFunction1_VS;
     if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
       return new PeriodicTabularFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
+      return new Function1_VS_from_SS;
     return 0;
   }
   

@@ -279,6 +279,10 @@ namespace MBSim {
   void Object::initz() {
     q = q0;
     u = u0;
+    if (q.size()==0)
+      q = Vec(qSize, INIT, 0);
+    if (u.size()==0)
+      u = Vec(uSize[0], INIT, 0);
   }
 
   void Object::facLLM() {

@@ -10,6 +10,7 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/contour.h"
 #include "mbsim/environment.h"
+#include "mbsim/utils/contour_functions.h"
 #include <set>
 
 namespace MBSim {
@@ -44,6 +45,7 @@ class ObjectFactory {
     virtual Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     virtual Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     virtual Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    virtual ContourFunction1s * createContourFunction1s(TiXmlElement * element);
 };
 
 class MBSimObjectFactory : protected ObjectFactory {
@@ -73,6 +75,7 @@ class MBSimObjectFactory : protected ObjectFactory {
     Function2<double,double,double> *createFunction2_SSS(TiXmlElement *element);
     Function2<fmatvec::Vec,fmatvec::Vec,double> *createFunction2_VVS(TiXmlElement *element);
     Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> *createFunction3_MVVS(TiXmlElement *element);
+    ContourFunction1s * createContourFunction1s(TiXmlElement * element) {return 0; }
 };
 
 }

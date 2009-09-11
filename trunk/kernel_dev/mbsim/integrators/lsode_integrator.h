@@ -67,6 +67,8 @@ namespace MBSim {
       void setStiff(bool flag) {stiff = flag;}
 
       void integrate(DynamicSystemSolver& system);
+      
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }

@@ -21,9 +21,10 @@
 #define _CONTOUR1S_ANALYTICAL_H_
 
 #include "mbsim/contours/contour1s.h"
-#include "mbsim/userfunction_contour.h"
 
 namespace MBSim {
+
+  class ContourFunction1s;
 
   /** 
    * \brief analytical description of contours with one contour parameter
@@ -46,7 +47,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~Contour1sAnalytical() { if (funcCrPC) delete funcCrPC; }
+      virtual ~Contour1sAnalytical();
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Contour1sAnalytical"; }
@@ -57,6 +58,7 @@ namespace MBSim {
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp);
       virtual void init(InitStage stage);
+      virtual double computeCurvature(ContourPointData &cp);
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
@@ -67,16 +69,18 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setUserFunction(UserFunctionContour1s* f) { funcCrPC = f; }
-      UserFunctionContour1s* getUserFunction() { return funcCrPC; }
+      void setContourFunction1s(ContourFunction1s* f) { funcCrPC = f; }
+      ContourFunction1s* getContourFunction1s() { return funcCrPC; }
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBV(bool enable=true);
 #endif
+      
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
-      UserFunctionContour1s  *funcCrPC;
+      ContourFunction1s * funcCrPC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::RigidBody *openMBVRigidBody;
 #endif

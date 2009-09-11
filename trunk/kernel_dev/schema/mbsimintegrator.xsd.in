@@ -65,6 +65,26 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="LSODEIntegrator" substitutionGroup="Integrator" type="LSODEIntegratorType"/>
+  <xs:complexType name="LSODEIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
+          </xs:choice>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
+          <xs:element name="initialStepSize" type="pv:timeScalar"/>  
+          <xs:element name="maximalStepSize" type="pv:timeScalar"/>  
+          <xs:element name="minimalStepSize" type="pv:timeScalar"/>  
+          <xs:element name="numberOfMaximalSteps" type="xs:unsignedLong"/>
+          <xs:element name="stiffModus" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType"/>
   <xs:complexType name="LSODARIntegratorType">
     <xs:complexContent>

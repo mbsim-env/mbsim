@@ -24,7 +24,8 @@ utilsinclude_HEADERS = eps.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
-                       ansatz_functions.h
+                       ansatz_functions.h\
+											 contour_functions.h
 
 
 

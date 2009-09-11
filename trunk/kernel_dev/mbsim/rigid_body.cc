@@ -43,6 +43,9 @@ namespace MBSim {
 
     C=new Frame("C");
     Body::addFrame(C);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    openMBVFrame=C;
+#endif
 
     SrSF.push_back(Vec(3,INIT,0.));
     WrSF.push_back(Vec(3,INIT,0.));
@@ -263,8 +266,8 @@ namespace MBSim {
       if(getPlotFeature(openMBV)==enabled && openMBVBody) {
         vector<double> data;
         data.push_back(t);
-        Vec WrOS=frame[0]->getPosition();
-        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
+        Vec WrOS=openMBVFrame->getPosition();
+        Vec cardan=AIK2Cardan(openMBVFrame->getOrientation());
         data.push_back(WrOS(0));
         data.push_back(WrOS(1));
         data.push_back(WrOS(2));
@@ -581,6 +584,9 @@ namespace MBSim {
       OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
       setOpenMBVRigidBody(rb);
       rb->initializeUsingXML(e->FirstChildElement());
+
+      if (e->FirstChildElement(MBSIMNS"frameOfReference"))
+        setOpenMBVFrameOfReference(getFrameByPath(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     }
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");

@@ -128,7 +128,7 @@ namespace MBSim {
         data.push_back(WrOToPoint(0));
         data.push_back(WrOToPoint(1));
         data.push_back(WrOToPoint(2));
-        data.push_back(0);
+        data.push_back(la(0));
         coilspringOpenMBV->append(data);
       }
 #endif

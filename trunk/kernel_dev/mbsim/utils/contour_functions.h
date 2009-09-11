@@ -19,8 +19,8 @@
  *   rzander@users.berlios.de
  *
  */
-#ifndef USERFUNCTION_CONTOUR_H
-#define USERFUNCTION_CONTOUR_H
+#ifndef CONTOUR_FUNCTION_1S_H
+#define CONTOUR_FUNCTION_1S_H
 
 #include "fmatvec.h"
 #include <mbsim/utils/eps.h>
@@ -32,10 +32,10 @@ namespace MBSim {
   //================================================================================================================================
   /** userFunction for Contours: Contourpoint and trihedral (T,N,B) *
    * Parent class */
-  class  UserFunctionContour1s {
+  class  ContourFunction1s {
     public:
-      UserFunctionContour1s() : delta(epsroot()), sqrtdelta(sqrt(delta)) {};
-      virtual ~UserFunctionContour1s() {};
+      ContourFunction1s() : delta(epsroot()), sqrtdelta(sqrt(delta)) {};
+      virtual ~ContourFunction1s() {};
       virtual void init(double alpha) {};
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); }
       virtual fmatvec::Vec operator()(const double& alpha, const void * =NULL) = 0;
@@ -53,10 +53,13 @@ namespace MBSim {
         return nrm2rs*nrm2rs*nrm2rs/nrm2(crossProduct(rs,diff2(alpha)));
       }
       virtual double computeR(const ContourPointData &cp) { return computeR(cp.getLagrangeParameterPosition()(0)); } 
+      virtual double computeCurvature(const ContourPointData &cp) {return 1./computeR(cp); }
       double getalphaStart() { return alphaStart; }
       double getalphaEnd() { return alphaEnd; }
       void setalphaStart(double alphaStart_) { alphaStart = alphaStart_; };
       void setalphaEnd(double alphaEnd_) { alphaEnd = alphaEnd_; };
+
+      virtual void initializeUsingXML(TiXmlElement * element) {};
 
     protected:
       double alphaStart, alphaEnd;

@@ -80,7 +80,8 @@ namespace MBSim {
    * see also DynamicSystemSolver::init()
    */
   enum InitStage {
-    resolveXMLPath=0, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
+    modelBuildup=0, /*< build up complex internal models */
+    resolveXMLPath, /*!< resolve the path (given by the XML ref* attributes) to the corrosponding pointer */
     preInit, /*!< Make some early initialization. TODO This should be split into detailed stages. */
     resize, /*!< Do the resizing of all vectors, matrices and containers, ... */
     plot, /*!< Build/initialize the plot structure */
@@ -88,6 +89,7 @@ namespace MBSim {
     worldFrameContourLocation, /*!< Set the world position and orientation of all Frame's/Contour's in all Group's */
     reorganizeHierarchy, /*!< Reorganize the hierarchy (build invisible tree structur) */
     unknownStage, /*!< Init all the rest. TODO This should be split into detailed stages. */
+    calculateLocalInitialValues, /*!< calculation of non-linear initial values in complex internal models */
     LASTINITSTAGE
   };
 

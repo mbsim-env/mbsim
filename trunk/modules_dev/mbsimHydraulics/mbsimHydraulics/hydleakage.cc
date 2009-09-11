@@ -47,8 +47,7 @@ namespace MBSim {
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addPressureLoss(static_cast<PlaneLeakagePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       e=e->NextSiblingElement();
@@ -78,8 +77,7 @@ namespace MBSim {
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addPressureLoss(static_cast<CircularLeakagePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       e=e->NextSiblingElement();

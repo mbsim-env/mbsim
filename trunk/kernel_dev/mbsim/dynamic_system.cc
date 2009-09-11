@@ -25,6 +25,7 @@
 #include "mbsim/object.h"
 #include "mbsim/data_interface_base.h"
 #include "mbsim/frame.h"
+#include "mbsim/contact.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
 
@@ -1521,6 +1522,19 @@ namespace MBSim {
       return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getContourByPath(restPart);
     else
       return 0;
+  }
+
+  Contact *DynamicSystem::getContactByPath(std::string path) {
+    int pos=path.find("Contact");
+    path.erase(pos, 7);
+    path.insert(pos, "Link");
+    Link * c = getLinkByPath(path);
+    if (dynamic_cast<Contact *>(c))
+      return static_cast<Contact *>(c);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of Contact-Type." << std::endl; 
+      _exit(1);
+    }
   }
 
 }

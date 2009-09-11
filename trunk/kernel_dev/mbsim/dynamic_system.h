@@ -39,6 +39,7 @@ namespace MBSim {
   class Object;
   class Link;
   class ModellingInterface;
+  class Contact;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -734,6 +735,7 @@ namespace MBSim {
       virtual OrderOneDynamics *getOrderOneDynamicsByPath(std::string path);
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
+      virtual Contact *getContactByPath(std::string path);
 
       /** Return frame "I" */
       Frame *getFrameI() { return I; }

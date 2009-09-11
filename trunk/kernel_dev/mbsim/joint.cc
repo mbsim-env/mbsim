@@ -547,7 +547,7 @@ namespace MBSim {
 #endif
       if(getPlotFeature(generalizedLinkForce)==enabled) {
         for(int j=0; j<la.size(); j++)
-          plotVector.push_back(la(j));
+          plotVector.push_back(la(j)/(isSetValued()?dt:1.));
       }
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int j=0; j<g.size(); j++)

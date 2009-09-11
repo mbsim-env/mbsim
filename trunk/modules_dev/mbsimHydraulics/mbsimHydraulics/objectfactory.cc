@@ -23,7 +23,7 @@ namespace MBSim {
   }
 
 
-  PressureLoss * HydraulicsObjectFactory::createPressureLoss(TiXmlElement * element) {
+  Function1<double, double> * HydraulicsObjectFactory::createFunction1_SS(TiXmlElement * element) {
     if (element==0) return 0;
     if (element->ValueStr()==MBSIMHYDRAULICSNS"PressureLossZeta")
       return new PressureLossZeta(element->Attribute("name"));

@@ -182,7 +182,7 @@ namespace MBSim {
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setLineDiameter(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
-    pressureLoss = (VariablePressureLossCheckvalve*)(((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(ee->FirstChildElement()));
+    pressureLoss=(VariablePressureLossCheckvalve*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
     line->addPressureLoss(pressureLoss);
     pressureLoss->initializeUsingXML(ee->FirstChildElement());
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Ball");
@@ -216,9 +216,11 @@ namespace MBSim {
       gilM->initializeUsingXML(ee->FirstChildElement());
       setMaximalContactImpactLaw(gilM);
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
     enableOpenMBVBodies(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVBodies"));
     enableOpenMBVFrames(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVFrames"));
     enableOpenMBVArrows(element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows"));
+#endif
   }
 }
 

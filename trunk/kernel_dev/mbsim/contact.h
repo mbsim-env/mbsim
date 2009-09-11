@@ -166,6 +166,8 @@ namespace MBSim {
        */
       void connect(Contour *contour1, Contour* contour2);
 
+      void computeCurvatures(fmatvec::Vec & r) const;
+
       virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
@@ -173,7 +175,7 @@ namespace MBSim {
        * \brief used contact kinematics
        */
       ContactKinematics *contactKinematics;
-
+      
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */

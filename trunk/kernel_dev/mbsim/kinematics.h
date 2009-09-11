@@ -235,6 +235,57 @@ namespace MBSim {
   };
 
   /**
+   * \brief class to describe time dependent positions
+   * \author Markus Schneider
+   */
+  class TimeDependentRotation1D : public Rotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentRotation1D() : dir(0), pos(NULL) {}
+
+      /**
+       * \brief constructor
+       * \param independent direction matrix of translation
+       */
+      TimeDependentRotation1D(fmatvec::Vec n1, fmatvec::Vec n2, Function1<double, double> * pos_) : dir(0), pos(pos_) {setDirections(n1, n2); }
+
+      /* INTERFACE OF TRANSLATION */
+      virtual int getqSize() const { return 0; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      /***************************************************/
+
+      /* GETTER / SETTER */
+
+      /**
+       * \brief set the rotation direction
+       * \param axis of rotation (x-axis)
+       * \param direction of initial axis (y-axis)
+       */
+      void setDirections(fmatvec::Vec dir_, fmatvec::Vec dir2_);
+      
+      /**
+       * Set the positon function
+       */
+      void setPosition(Function1<double, double> * pos_) { pos = pos_; }
+      /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+
+    private:
+      /**
+       * basis rotation matrix
+       */
+      fmatvec::SqrMat dir;
+
+      /**
+       * time dependent position function
+       */
+      Function1<double, double> * pos;
+  };
+
+  /**
    * \brief class to describe rotation parametrised by cardan angles
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)

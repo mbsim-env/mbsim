@@ -2,9 +2,9 @@
 #define RIGID_CONTOUR_FUNCTION1S_H
 
 #include <mbsim/utils/ppolynom.h>
-#include <mbsim/userfunction_contour.h>
+#include <mbsim/utils/contour_functions.h>
 
-class FuncCrPC : public MBSim::UserFunctionContour1s {
+class FuncCrPC : public MBSim::ContourFunction1s {
   private:
     fmatvec::Vec Cb;
     MBSim::PPolynom pp_y;

@@ -51,6 +51,7 @@ namespace MBSim {
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidContour1s::updatewb): Not implemented!"); };
+      virtual void computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData);
       /***************************************************/
 
     private:
