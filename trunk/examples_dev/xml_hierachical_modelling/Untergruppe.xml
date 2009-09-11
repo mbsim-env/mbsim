@@ -30,7 +30,9 @@
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <translation>
         <LinearTranslation>
-          <translationVectors>[0; 1; 0]</translationVectors>
+          <translationVectors>
+            [0; 1; 0]
+          </translationVectors>
         </LinearTranslation>
       </translation>
       <rotation/>
