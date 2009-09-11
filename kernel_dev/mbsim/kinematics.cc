@@ -42,12 +42,12 @@ namespace MBSim {
 
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {
     int i = q.size()-1;
-    double cosq=cos(q(i));
-    double sinq=sin(q(i));
-    double onemcosq=1-cosq;
-    double a0a1=a(0)*a(1);
-    double a0a2=a(0)*a(2);
-    double a1a2=a(1)*a(2);
+    const double cosq=cos(q(i));
+    const double sinq=sin(q(i));
+    const double onemcosq=1-cosq;
+    const double a0a1=a(0)*a(1);
+    const double a0a2=a(0)*a(2);
+    const double a1a2=a(1)*a(2);
     APK(0,0) = cosq+onemcosq*a(0)*a(0);
     APK(1,0) = onemcosq*a0a1+a(2)*sinq;
     APK(2,0) = onemcosq*a0a2-a(1)*sinq;
@@ -64,6 +64,43 @@ namespace MBSim {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"axisOfRotation");
     setAxisOfRotation(Element::getVec(e,3));
+  }
+
+  void TimeDependentRotation1D::setDirections(Vec n, Vec s) {
+    assert(n.size()==3 && nrm2(n)>1e-6);
+    assert(s.size()==3 && nrm2(s)>1e-6);
+    dir.resize(3);
+    dir.col(0)=n/nrm2(n);
+    dir.col(2)=crossProduct(n, s);
+    dir.col(2)/=nrm2(dir.col(2));
+    dir.col(1)=crossProduct(dir.col(2), dir.col(0));
+    dir.col(0)/=nrm2(dir.col(0));
+  }
+
+  SqrMat TimeDependentRotation1D::operator()(const Vec &q, double t) {
+    SqrMat A(3, NONINIT);
+    const double phi=(*pos)(t);
+    const double s=sin(phi);
+    const double c=cos(phi);
+    A.col(0)=dir.col(0);
+    A(0,1)=dir(0,1)*c+dir(0,2)*s;
+    A(1,1)=dir(1,1)*c+dir(1,2)*s;
+    A(2,1)=dir(2,1)*c+dir(2,2)*s;
+    A(0,2)=-dir(0,1)*s+dir(0,2)*c;
+    A(1,2)=-dir(1,1)*s+dir(1,2)*c;
+    A(2,2)=-dir(2,1)*s+dir(2,2)*c;
+//    return dir*BasicRotAIKx((*pos)(t));
+    return A;
+  }
+
+  void TimeDependentRotation1D::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e, *ee;
+    e=element->FirstChildElement(MBSIMNS"direction1");
+    ee=element->FirstChildElement(MBSIMNS"direction2");
+    setDirections(Element::getVec(e,3), Element::getVec(ee,3));
+    e=element->FirstChildElement(MBSIMNS"position");
+    pos=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+    pos->initializeUsingXML(e->FirstChildElement());
   }
 
   SqrMat CardanAngles::operator()(const Vec &q, double t) {

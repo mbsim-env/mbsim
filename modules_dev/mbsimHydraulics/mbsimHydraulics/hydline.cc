@@ -43,8 +43,7 @@ namespace MBSim {
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       e=e->NextSiblingElement();
@@ -56,7 +55,6 @@ namespace MBSim {
       RigidHLine::init(stage);
       double area=M_PI*diameter*diameter/4.;
       Mlocal.resize(1, INIT, rho*length/area);
-      cout << "Mlocal=" << Mlocal << endl;
     }
     else
       RigidHLine::init(stage);

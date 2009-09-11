@@ -201,6 +201,7 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVRigidBody(OpenMBV::RigidBody* body) { openMBVBody=body; }
+      void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -384,6 +385,12 @@ namespace MBSim {
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
       std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;
       std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      /**
+       * \brief frame of reference for drawing openMBVBody
+       */
+      Frame * openMBVFrame;
+#endif
   };
 
 }

@@ -26,7 +26,7 @@ namespace MBSim {
 
   class Function1_SS_from_VS : public Function1<double, double> {
     public:
-      Function1_SS_from_VS() {}
+      Function1_SS_from_VS() : fun(NULL) {}
       Function1_SS_from_VS(Function1<fmatvec::Vec, double> * fun_) : fun(fun_) {assert((*fun)(0).size()==1); }
       void setFunction(Function1<fmatvec::Vec, double> * fun_) {fun=fun_; assert((*fun)(0).size()==1); }
       double operator()(const double& x, const void * =NULL) {return (*fun)(x)(0); }
@@ -35,16 +35,52 @@ namespace MBSim {
       Function1<fmatvec::Vec, double> * fun;
   };
 
-  class SinusFunction1_VS : public Function1<fmatvec::Vec, double> {
+  class Function1_VS_from_SS : public Function1<fmatvec::Vec, double> {
     public:
-      SinusFunction1_VS() : ySize(0), amplitude(0), frequency(0), phase(0), y(0) {}
-      SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
-      fmatvec::Vec operator()(const double& tVal, const void * =NULL);
+      Function1_VS_from_SS() : fun(NULL), vec(0) {}
+      Function1_VS_from_SS(Function1<double, double> * fun_, fmatvec::Vec v) : fun(fun_), vec(v) {vec/=nrm2(v); }
+      void setFunction(Function1<double, double> * fun_) {fun=fun_; }
+      void setVector(fmatvec::Vec v) {vec=v; vec/=nrm2(v); }
+      fmatvec::Vec operator()(const double& x, const void * =NULL) {return (*fun)(x)*vec; }
       void initializeUsingXML(TiXmlElement *element);
+    private:
+      Function1<double, double> * fun;
+      fmatvec::Vec vec;
+  };
+
+  class SinusFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
+    public:
+      SinusFunction1_VS();
+      SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
+      void initializeUsingXML(TiXmlElement *element);
+
+      class ZerothDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          ZerothDerivative(SinusFunction1_VS *sin) : Function1<fmatvec::Vec,double>(), parent(sin) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          SinusFunction1_VS *parent;
+      };
+
+      class FirstDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          FirstDerivative(SinusFunction1_VS *sin) : Function1<fmatvec::Vec,double>(), parent(sin) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          SinusFunction1_VS *parent;
+      };
+      
+      class SecondDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          SecondDerivative(SinusFunction1_VS *sin) : Function1<fmatvec::Vec,double>(), parent(sin) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          SinusFunction1_VS *parent;
+      };
     protected:
       int ySize;
+      fmatvec::Vec amplitude, frequency, phase;
     private:
-      fmatvec::Vec amplitude, frequency, phase, y;
       void check();
   };
 

@@ -3,12 +3,11 @@
 
 #include "mbsim/objectfactory.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+#include "mbsim/utils/function.h"
 
 #define MBSIMHYDRAULICSNS "{http://mbsim.berlios.de/MBSimHydraulics}"
 
 namespace MBSim {
-
-  class PressureLoss;
 
   class HydraulicsObjectFactory : protected ObjectFactory {
     private:
@@ -18,12 +17,12 @@ namespace MBSim {
       // This static function must be called before the ObjectFactory is usend to create
       // objects from MBSimObjectFactory
       static void initialize();
-      // protected:
+    protected:
       Group* createGroup(TiXmlElement *element);
       Object* createObject(TiXmlElement *element);
       Link* createLink(TiXmlElement *element);
       Environment *getEnvironment(TiXmlElement *element);
-      PressureLoss * createPressureLoss(TiXmlElement *element);
+      Function1<double, double> * createFunction1_SS(TiXmlElement *element);
   };
 
 }

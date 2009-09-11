@@ -109,7 +109,7 @@ namespace MBSim {
 
   void Contact::updateh(double t) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) { // gActive should not be checked, e.g. because of possible predamping in constitutive laws
-      lak[k](0) = (*fcl)(gk[k](0),gdk[k](0));
+      lak[k](0) = (*fcl)(gk[k](0),gdk[k](0), this);
       if(fdf) lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
 
       WF[k][1] =  cpData[k][0].getFrameOfReference().getOrientation().col(0)*lak[k](0);
@@ -1155,6 +1155,10 @@ namespace MBSim {
     void Contact::connect(Contour *contour0, Contour* contour1) {
       LinkMechanics::connect(contour0);
       LinkMechanics::connect(contour1);
+    }
+
+    void Contact::computeCurvatures(Vec & r) const {
+      contactKinematics->computeCurvatures(r, cpData[0]);
     }
 
     void Contact::initializeUsingXML(TiXmlElement *element) {

@@ -343,6 +343,12 @@ namespace MBSim {
 #endif
       if(INFO) cout << "...... done initialising." << endl << endl;
     }
+    else if(stage==MBSim::calculateLocalInitialValues) {
+      Group::initz();
+      updateStateDependentVariables(0);
+      updateg(0);
+      Group::init(stage);
+    }
     else
       Group::init(stage);
   }

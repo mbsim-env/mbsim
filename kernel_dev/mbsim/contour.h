@@ -24,6 +24,7 @@
 #include "mbsim/element.h"
 #include "mbsim/contour_pdata.h"
 #include "mbsim/frame.h"
+#include "mbsim/mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
@@ -98,6 +99,12 @@ namespace MBSim {
        * \param contour position
        */
       virtual fmatvec::Vec computeAngularVelocity(ContourPointData &cp) { updateKinematicsForFrame(cp,angularVelocity); return cp.getFrameOfReference().getAngularVelocity(); } 
+
+      /**
+       * \return curvature of contour in contour point
+       * \param contour position
+       */
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeCurvature): Not implemented."); return 0; } 
 
       /**
        * \param position of contour in inertial frame

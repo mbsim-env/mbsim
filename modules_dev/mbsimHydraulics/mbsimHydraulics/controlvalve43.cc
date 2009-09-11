@@ -190,8 +190,7 @@ namespace MBSim {
     setLinePDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addLinePPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       ee=ee->NextSiblingElement();
@@ -206,8 +205,7 @@ namespace MBSim {
     setLineADiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addLineAPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       ee=ee->NextSiblingElement();
@@ -222,8 +220,7 @@ namespace MBSim {
     setLineBDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addLineBPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       ee=ee->NextSiblingElement();
@@ -238,8 +235,7 @@ namespace MBSim {
     setLineTDiameter(getDouble(ee));
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
     while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      // TODO Ist das so richtig mit dem factory-cast?
-      PressureLoss *p=((HydraulicsObjectFactory*)(ObjectFactory::getInstance()))->createPressureLoss(e->FirstChildElement());
+      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
       addLineTPressureLoss(static_cast<LinePressureLoss*>(p));
       p->initializeUsingXML(e->FirstChildElement());
       ee=ee->NextSiblingElement();

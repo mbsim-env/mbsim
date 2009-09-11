@@ -193,6 +193,8 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l04->setDiameter(5e-3);
   l04->setLength(.7);
   l04->addPressureLoss(new PressureLossZeta("zeta1", 14));
+  l04->setFrameOfReference(getFrame("I"));
+  l04->setDirection("[0;0;0]");
   
   ConstrainedNode * n0 = new ConstrainedNode("n0");
   addLink(n0);

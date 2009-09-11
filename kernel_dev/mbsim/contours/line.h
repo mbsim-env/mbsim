@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  class ContourPointData;
+
   /**
    * \brief unbounded line with constant normal
    * \author Martin Foerg
@@ -39,6 +41,10 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Line"; }
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF CONTOUR */
+      virtual double computeCurvature(ContourPointData &cp) { return 0; } 
       /***************************************************/
   };      
 }

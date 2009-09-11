@@ -25,6 +25,7 @@
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/functions_contact.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/contour_functions.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -54,7 +55,7 @@ namespace MBSim {
     if (dynamic_cast<Contour1sAnalytical*>(contour1s)) {
       double minRadius=1./epsroot();
       for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
-        double radius=static_cast<Contour1sAnalytical*>(contour1s)->getUserFunction()->computeR(alpha);
+        double radius=static_cast<Contour1sAnalytical*>(contour1s)->getContourFunction1s()->computeR(alpha);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius) {
@@ -99,6 +100,11 @@ namespace MBSim {
 
     Vec WrD = func->computeWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
     g(0) = -trans(cpData[icontour1s].getFrameOfReference().getOrientation().col(0))*WrD;
+  }
+      
+  void ContactKinematicsCircleSolidContour1s::computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData) {
+    r(icircle)=circle->computeCurvature(cpData[icircle]);
+    r(icontour1s)=contour1s->computeCurvature(cpData[icontour1s]);
   }
 
 }

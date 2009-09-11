@@ -246,5 +246,33 @@ namespace MBSim {
     return yi.copy();
   }
 
+  void PPolynom::initializeUsingXML(TiXmlElement * element) {
+    DifferentiableFunction1<Vec>::initializeUsingXML(element);
+    TiXmlElement * e;
+    Vec x;
+    Mat y;
+    e=element->FirstChildElement(MBSIMNS"x");
+    if (e) {
+      x=Element::getVec(e);
+      e=element->FirstChildElement(MBSIMNS"y");
+      y=Element::getMat(e, x.size(), 0);
+    }
+    else {
+      e=element->FirstChildElement(MBSIMNS"xy");
+      Mat xy=Element::getMat(e);
+      assert(xy.cols()>1);
+      x=xy.col(0);
+      y=xy(0, 1, xy.rows()-1, xy.cols()-1);
+    }
+    string method;
+    if (element->FirstChildElement(MBSIMNS"cSplinePeriodic"))
+        method="csplinePer";
+    else if (element->FirstChildElement(MBSIMNS"cSplineNatural"))
+      method="csplineNat";
+    else if (element->FirstChildElement(MBSIMNS"piecewiseLinear"))
+      method="plinear";
+    setXF(x, y, method);
+  }
+
 }
 

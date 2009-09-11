@@ -124,7 +124,7 @@ namespace MBSim {
         /**
          * \brief constructor
          */
-        DifferentiableFunction1() : Function1<Ret,double>() {}
+        DifferentiableFunction1() : Function1<Ret,double>(), order(0) {}
 
         /**
          * \brief destructor
@@ -132,7 +132,8 @@ namespace MBSim {
         virtual ~DifferentiableFunction1() { for(unsigned int i=1;i<derivatives.size();i++) delete derivatives[i]; }
 
         /* INHERITED INTERFACE OF FUNCTION1 */
-        virtual Ret operator()(const double& x, const void * =NULL) { assert(derivatives.size()>0); return (getDerivative(0))(x); }
+        virtual Ret operator()(const double& x, const void * =NULL) {
+          assert(derivatives.size()>0); return (getDerivative(order))(x); }
         /***************************************************/
 
         /**
@@ -158,11 +159,30 @@ namespace MBSim {
          */
         void setDerivative(Function1<Ret,double> *diff,int degree) { derivatives.resize(max(derivatives.size(),degree)); derivatives[degree]=diff; }
 
+        /**
+         * \param orderOfDerivative
+         */
+        void setOrderOfDerivative(int i) {order=i; }
+
+        /**
+         * \brief initialize function with XML code
+         * \param XML element
+         */
+        virtual void initializeUsingXML(TiXmlElement *element) {
+          Function1<Ret,double>::initializeUsingXML(element);
+          TiXmlElement * e;
+          e=element->FirstChildElement(MBSIMNS"orderOfDerivative");
+          if (e)
+            setOrderOfDerivative(atoi(e->GetText()));
+        }
+        /***************************************************/
+
       protected:
         /**
          * \brief vector of derivatives
          */
-        std::vector<Function1<Ret,double>* > derivatives; 
+        std::vector<Function1<Ret,double>* > derivatives;
+        int order;
     };
 
   /*! 

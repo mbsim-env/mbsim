@@ -21,6 +21,8 @@
 #include <config.h>
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsim/objectfactory.h"
+#include "mbsim/utils/contour_functions.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/object.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -33,6 +35,12 @@ using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  Contour1sAnalytical::~Contour1sAnalytical() {
+     if (funcCrPC) 
+       delete funcCrPC;
+     funcCrPC=NULL;
+  }
 
   void Contour1sAnalytical::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
@@ -127,6 +135,32 @@ namespace MBSim {
 #endif
       Contour1s::plot(t,dt);
     }
+  }
+      
+  double Contour1sAnalytical::computeCurvature(ContourPointData &cp) {
+    return funcCrPC->computeCurvature(cp);
+  }
+
+  void Contour1sAnalytical::initializeUsingXML(TiXmlElement * element) {
+    Contour::initializeUsingXML(element);
+    TiXmlElement * e;
+    //ContourContinuum
+    e=element->FirstChildElement(MBSIMNS"alphaStart");
+    as=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"alphaEnd");
+    ae=atof(e->GetText());
+    e=element->FirstChildElement(MBSIMNS"nodes");
+    nodes=Vec(e->GetText());
+    //Contour1s
+    e=element->FirstChildElement(MBSIMNS"diameter");
+    diameter=atof(e->GetText());
+    //Contour1sAnalytical
+    e=element->FirstChildElement(MBSIMNS"contourFunction");
+    funcCrPC=ObjectFactory::getInstance()->createContourFunction1s(e->FirstChildElement());
+    funcCrPC->initializeUsingXML(e->FirstChildElement());
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+    if (e)
+      enableOpenMBV(true);
   }
 
 }

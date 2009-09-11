@@ -38,21 +38,25 @@ namespace MBSim {
        * \brief constructor
        * \param name of circle
        */
-      CircleSolid(const std::string& name) : RigidContour(name), r(0) {}
+      CircleSolid(const std::string& name) : RigidContour(name), r(0), curvature(0) {}
 
       /**
        * \brief constructor
        * \param name of circle
        * \param radius of circle
        */
-      CircleSolid(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+      CircleSolid(const std::string &name, double r_) : RigidContour(name), r(r_), curvature(1./r_) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleSolid"; }
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
+      virtual double computeCurvature(ContourPointData &cp) { return curvature; }
+      /***************************************************/
+
       /* GETTER / SETTER */
-      void setRadius(double r_) { r = r_; }
+      void setRadius(double r_) { r = r_; curvature=1./r; }
       double getRadius() const { return r; }
       /***************************************************/
 
@@ -66,7 +70,7 @@ namespace MBSim {
       /**
        * \brief radius of circle
        */
-      double r;
+      double r, curvature;
   };      
 }
 

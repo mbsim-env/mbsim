@@ -95,6 +95,12 @@ namespace MBSim {
        * \param interval boundaries
        */
       void setPP(const std::vector<fmatvec::Mat> &coefs_u, const fmatvec::Vec &breaks_u);
+        
+      /**
+       * \brief initialize function with XML code
+       * \param XML element
+       */
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
       /** 

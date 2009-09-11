@@ -56,6 +56,12 @@ namespace MBSim {
       virtual fmatvec::Vec computeBinormal(ContourPointData &cp) { updateKinematicsForFrame(cp,secondTangent); return cp.getFrameOfReference().getOrientation().col(2); }
       /***************************************************/
 
+      /**
+       * \return radius of contour in contour point
+       * \param contour position
+       */
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeRadius): Not implemented."); return 0; } 
+
       /* GETTER / SETTER */
       void setDiameter(double diameter_) { diameter= diameter_; }
       double getDiameter() { return diameter; }

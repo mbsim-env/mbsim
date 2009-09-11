@@ -80,7 +80,7 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
       
-      double operator()(double g, double gd) { assert(forceFunc); return (*forceFunc)(g,gd); }
+      double operator()(double g, double gd, const void * additional=NULL) { assert(forceFunc); return (*forceFunc)(g,gd,additional); }
 
       /** \brief Set the force function for use in regularisized constitutive laws
        * The first input parameter to the force function is g.

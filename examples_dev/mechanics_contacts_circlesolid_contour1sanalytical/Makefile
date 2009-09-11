@@ -5,18 +5,18 @@ Target = main
 sources = main.cc system.cc tools/rigid_contour_functions1s.cc
 
 # Defining Packages
-packages = mbsim mbsimHydraulics
+packages = mbsim 
 
 # Do Not Edit the Following Lines
 CXX = g++
 libsources = 
 objects = $(sources:.cc=.o) 
 
-OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim`
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags $(packages)` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags $(packages)`
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs $(packages)` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \

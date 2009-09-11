@@ -47,7 +47,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   this->addObject(cam);
 
   Contour1sAnalytical * camContour = new Contour1sAnalytical("Contour");
-  camContour->setUserFunction(funcCamContour);
+  camContour->setContourFunction1s(funcCamContour);
   camContour->setAlphaStart(0.);
   camContour->setAlphaEnd(2.*M_PI);
   camContour->setNodes(searchpoints);

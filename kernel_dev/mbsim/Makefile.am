@@ -72,6 +72,5 @@ object_interface.h\
 order_one_dynamics.h\
 rigid_body.h\
 tree.h\
-userfunction.h\
-userfunction_contour.h
+userfunction.h
 

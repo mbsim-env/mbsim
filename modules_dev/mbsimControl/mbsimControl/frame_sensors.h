@@ -79,10 +79,17 @@ namespace MBSim {
       std::string getType() const { return "AbsolutAngularPositionSensor"; }
       fmatvec::Vec getSignal();
 
-      void calcxSize() {xSize=getSignal().cols(); }
-      void calcgSize() {gSize=getSignal().cols(); }
-      void calcgdSize() {gdSize=getSignal().cols(); }
-      void init() {g.resize(gSize); gd.resize(gdSize); }
+      void calcxSize() {xSize=direction.cols(); }
+      void init(InitStage stage) {
+        if (stage==MBSim::resize) {
+          AbsolutCoordinateSensor::init(stage);
+          g.resize(direction.cols()); 
+          gd.resize(direction.cols()); 
+          x.resize(direction.cols());
+        }
+        else
+          AbsolutCoordinateSensor::init(stage);
+      }
       void updateg(double t) {g=x; }
       void updategd(double t);
       void updatexd(double t) {xd=gd; }
@@ -158,10 +165,15 @@ namespace MBSim {
       fmatvec::Vec getSignal();
       
       void calcxSize() {xSize=direction.cols(); }
-      void init() {
-        g.resize(direction.cols()); 
-        gd.resize(direction.cols());
-        x.resize(direction.cols()); 
+      void init(InitStage stage) {
+        if (stage==MBSim::resize) {
+          RelativeCoordinateSensor::init(stage);
+          g.resize(direction.cols()); 
+          gd.resize(direction.cols());
+          x.resize(direction.cols()); 
+        }
+        else
+          RelativeCoordinateSensor::init(stage);
       }
       void updateg(double t) {g=x; }
       void updategd(double t);

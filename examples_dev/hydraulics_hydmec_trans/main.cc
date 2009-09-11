@@ -28,6 +28,7 @@ int main (int argc, char* argv[]) {
     HydraulicEnvironment::getInstance()->setKappa(1.3);
     HydraulicEnvironment::getInstance()->setTemperature(50);
     HydraulicEnvironment::getInstance()->initializeFluidData();
+    MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
 
 

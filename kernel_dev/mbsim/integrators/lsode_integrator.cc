@@ -134,4 +134,28 @@ namespace MBSim {
     cout << endl;
   }
 
+  void LSODEIntegrator::initializeUsingXML(TiXmlElement * element) {
+    Integrator::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    if (e)
+      setAbsoluteTolerance(Element::getVec(e));
+    else {
+      e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+      setAbsoluteTolerance(Element::getDouble(e));
+    }
+    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    setRelativeTolerance(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    setInitialStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    setMaximalStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    setMinimalStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"numberOfMaximalSteps");
+    setmaxSteps(int(Element::getDouble(e)));
+    setStiff(element->FirstChildElement(MBSIMINTNS"stiffModus"));
+      
+  }
+
 }
