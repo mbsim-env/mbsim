@@ -1,5 +1,4 @@
-docdir = @datadir@/@PACKAGE@/doc
-nodist_doc_DATA = mbsimhydraulics.html 
+all: mbsimhydraulics/mbsimhydraulics.tex
 
 ../schema/mbsimhydraulics.xsd: ../schema/mbsimhydraulics.xsd.in
 	$(top_srcdir)/config.status --file=../schema/mbsimhydraulics.xsd
@@ -7,14 +6,14 @@ nodist_doc_DATA = mbsimhydraulics.html
 xml/index.xml: ../schema/mbsimhydraulics.xsd ../mbsimHydraulics/*.h
 	doxygen
 
-mbsimhydraulics.html: xml/index.xml
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimhydraulics.xsd xml .:../doc MBSimHydraulics MBSim:: false
-#sed -re "s|$$(pkg-config mbxmlutils --variable DOCDIR)/measurement.html|qrc:measurement.html|" ../doc/openmbv.html > openmbv.qt.html
+mbsimhydraulics/mbsimhydraulics.tex: xml/index.xml
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimhydraulics.xsd xml . MBSimHydraulics MBSim:: false
 
 
 
-schemadir = @datadir@/@PACKAGE@/schema
-nodist_schema_DATA = mbsimhydraulics.doxygen.xsd 
+install:
+	cp -r http___* $$(pkg-config mbxmlutils --variable DOCDIR)
 
-mbsimhydraulics.doxygen.xsd: mbsimhydraulics.html
 
+
+CLEANFILES=xml/index.xml mbsimhydraulics/mbsimhydraulics.tex
