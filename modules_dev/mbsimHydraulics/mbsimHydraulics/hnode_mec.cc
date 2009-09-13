@@ -17,8 +17,8 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimHydraulics/hydnode_mec.h"
-#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/hnode_mec.h"
+#include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsim/frame.h"

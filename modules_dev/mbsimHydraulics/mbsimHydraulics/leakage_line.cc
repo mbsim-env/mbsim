@@ -17,9 +17,9 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimHydraulics/hydleakage.h"
-#include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/pressure_loss.h"
+#include "mbsimHydraulics/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;

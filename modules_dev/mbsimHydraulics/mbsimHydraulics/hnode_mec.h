@@ -17,10 +17,10 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _HYDNODE_MEC_H_
-#define  _HYDNODE_MEC_H_
+#ifndef  _HNODE_MEC_H_
+#define  _HNODE_MEC_H_
 
-#include "hydnode.h"
+#include "hnode.h"
 #include "mbsim/utils/function.h"
 
 namespace OpenMBV {
@@ -48,6 +48,7 @@ namespace MBSim {
     bool considerVolumeChange;
   };
 
+  /*! HNodeMec */
   class HNodeMec : public HNode {
     public:
       HNodeMec(const std::string &name);
@@ -97,6 +98,7 @@ namespace MBSim {
 #endif
   };
 
+  /*! ConstrainedNodeMec */
   class ConstrainedNodeMec : public HNodeMec {
     public:
       ConstrainedNodeMec(const std::string &name) : HNodeMec(name), pFun(NULL) {}
@@ -115,6 +117,7 @@ namespace MBSim {
   };
 
 
+  /*! EnvironmentNodeMec */
   class EnvironmentNodeMec : public HNodeMec {
     public:
       EnvironmentNodeMec(const std::string &name) : HNodeMec(name) {}
@@ -124,6 +127,7 @@ namespace MBSim {
   };
 
 
+  /*! ElasticNodeMec */
   class ElasticNodeMec : public HNodeMec {
     public:
       ElasticNodeMec(const std::string &name) : HNodeMec(name), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
@@ -155,6 +159,7 @@ namespace MBSim {
   };
 
 
+  /*! RigidNodeMec */
   class RigidNodeMec : public HNodeMec {
     public:
       RigidNodeMec(const std::string &name) : HNodeMec(name), gdn(0) {}

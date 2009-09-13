@@ -17,16 +17,16 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _HYDLINEGALERKIN_H_
-#define  _HYDLINEGALERKIN_H_
+#ifndef  _ELASTIC_LINE_GALERKIN_H_
+#define  _ELASTIC_LINE_GALERKIN_H_
 
-#include "hydline.h"
+#include "hline.h"
 
 class ansatz_function;
 
 namespace MBSim {
 
-  /** \brief Model for a multi-mass pipe*/
+  /*! ElasticLineGalerkin */
   class ElasticLineGalerkin : public HLine {
 
     public:

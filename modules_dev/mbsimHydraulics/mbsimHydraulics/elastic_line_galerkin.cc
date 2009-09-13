@@ -17,7 +17,7 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "hydline_galerkin.h"
+#include "mbsimHydraulics/elastic_line_galerkin.h"
 #include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"

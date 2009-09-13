@@ -1,8 +1,8 @@
 #include "system.h"
 
-#include "mbsimHydraulics/hydline.h"
-#include "mbsimHydraulics/hydline_galerkin.h"
-#include "mbsimHydraulics/hydnode.h"
+#include "mbsimHydraulics/rigid_line.h"
+//#include "mbsimHydraulics/hydline_galerkin.h"
+#include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsimControl/function_sensor.h"
@@ -19,9 +19,11 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l12->setDirection(Vec(3, INIT, 0));
   l12->setDiameter(4e-3);
   l12->setLength(.4);
-  l12->addPressureLoss(new PressureLossZeta("zeta1", 15));
+  ZetaLinePressureLoss * pl12 = new ZetaLinePressureLoss();
+  pl12->setZeta(15);
+  l12->setLinePressureLoss(pl12);
 
-  RigidLine * l23 = new RigidLine("l23");
+  ClosableRigidLine * l23 = new ClosableRigidLine("l23");
   addObject(l23);
   l23->setFrameOfReference(getFrame("I"));
   l23->setDirection(Vec(3, INIT, 0));
@@ -30,10 +32,18 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   FunctionSensor * l23s = new FunctionSensor("Valveposition23");
   addLink(l23s);
   l23s->setFunction(new TabularFunction1_VS(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
+  l23->setSignal(l23s);
+  l23->setMinValue(.01);
   if (unilateral)
-    l23->addPressureLoss(new VariablePressureLossAreaZeta("zeta1", l23s, .01, 7));
-  else
-    l23->addPressureLoss(new RegularizedVariablePressureLossAreaZeta("zeta1", l23s, .01, 7));
+    l23->setBilateral();
+  RelativeAreaZetaClosablePressureLoss * pl23 = new RelativeAreaZetaClosablePressureLoss();
+  pl23->setZeta(7);
+  l23->setClosablePressureLoss(pl23);
+
+//  if (unilateral)
+//    l23->addPressureLoss(new VariablePressureLossAreaZeta("zeta1", l23s, .01, 7));
+//  else
+//    l23->addPressureLoss(new RegularizedVariablePressureLossAreaZeta("zeta1", l23s, .01, 7));
 
   RigidLine * l34 = new RigidLine("l34");
   addObject(l34);
@@ -41,7 +51,9 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   l34->setDirection(Vec(3, INIT, 0));
   l34->setDiameter(5e-3);
   l34->setLength(.5);
-  l34->addPressureLoss(new PressureLossZeta("zeta1", 15));
+  ZetaLinePressureLoss * pl34 = new ZetaLinePressureLoss();
+  pl34->setZeta(15);
+  l34->setLinePressureLoss(pl34);
 
   ConstrainedNode * n1 = new ConstrainedNode("n1");
   n1->setpFunction(new Function1_SS_from_VS(new TabularFunction1_VS(Vec("[0; .35; .65; 1]"), "[5e5; 5e5; 1e5; 1e5]")));

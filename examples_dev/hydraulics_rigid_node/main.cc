@@ -19,13 +19,13 @@ int main (int argc, char* argv[]) {
   int valveType=0;
   string valveTypeString = "";
 
-  for (int nodeType=0; nodeType<2; nodeType++) {
+  for (int nodeType=0; nodeType<1; nodeType++) {
     string nodeTypeString = (nodeType==0) ? "elasticNodes" : "rigidNodes";
 
-    int iintegratorMax=((valveType==0)?6:2);
+    int iintegratorMax=((valveType==0)?4:4);
     if (iintegratorMax==2) // no ThetaTimeSteppingIntegrator
       iintegratorMax--;
-    for (int iintegrator=0; iintegrator<iintegratorMax; iintegrator++) {
+    for (int iintegrator=3; iintegrator<iintegratorMax; iintegrator++) {
       if (iintegrator==1) // no ThetaTimeSteppingIntegrator
         iintegrator++;
       string nameintegrator;
@@ -42,10 +42,10 @@ int main (int argc, char* argv[]) {
       else if (iintegrator==5)
         nameintegrator = "LSODE";
 
-      int isolverMax=((iintegrator<=1)?4:1);
+      int isolverMax=((iintegrator<=1)?2:2);
 //        if ((valveType==1)&&(isolverMax==4))
 //          isolverMax--; // TODO no Rootfinding in HydlinePressureloss yet
-        for (int isolver=0; isolver<isolverMax; isolver++) {
+        for (int isolver=1; isolver<isolverMax; isolver++) {
           string namesolver;
           if(isolver==0)
             namesolver = "LinearEquations";

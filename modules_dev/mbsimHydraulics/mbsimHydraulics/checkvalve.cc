@@ -1,3 +1,22 @@
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: schneidm@users.berlios.de
+ */
+
 #include "checkvalve.h"
 #include "mbsim/frame.h"
 #include "mbsim/rigid_body.h"
@@ -6,8 +25,8 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/spring_damper.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsimHydraulics/hydline.h"
-#include "mbsimHydraulics/hydnode_mec.h"
+#include "mbsimHydraulics/rigid_line.h"
+#include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimHydraulics/objectfactory.h"
@@ -28,7 +47,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   class colorLink : public Link {
     public:
-      colorLink(const std::string &name, OpenMBV::DynamicColoredBody * body_, VariablePressureLoss * p_) : Link(name), body(body_), p(p_) {}
+      colorLink(const std::string &name, OpenMBV::DynamicColoredBody * body_, ClosableRigidLine * l_) : Link(name), body(body_), l(l_) {}
       void updateWRef(const fmatvec::Mat&, int){}
       void updateVRef(const fmatvec::Mat&, int){}
       void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int){}
@@ -40,15 +59,15 @@ namespace MBSim {
       bool gActiveChanged() {return false; }
       void init(InitStage stage) {}
       void updateg(double t) {}
-      void updategd(double t) {body->setDynamicColor(p->isClosed()?.9:.1); }
+      void updategd(double t) {body->setDynamicColor((l->getSignal()->getSignal()(0)<l->getMinimalValue())?.9:.1); }
       void plot(double t, double dt) {}
     private:
       OpenMBV::DynamicColoredBody * body;
-      VariablePressureLoss * p;
+      ClosableRigidLine * l;
   };
 #endif
 
-  Checkvalve::Checkvalve(const string &name) : Group(name), line(new RigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), ref(NULL), pressureLoss(NULL), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
+  Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new SpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")), fromNodeAreaIndex(0), toNodeAreaIndex(0), hMax(0), mBall(0), refFrameString("")
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                                , openMBVBodies(false), openMBVArrows(false), openMBVFrames(false)
 #endif
@@ -60,26 +79,26 @@ namespace MBSim {
                                                  addLink(maxContact);
                                                  addLink(spring);
                                                  addLink(xOpen);
+                                                 
+                                                 line->setSignal(xOpen);
                                                }
 
+  void Checkvalve::setFrameOfReference(Frame * ref) {ballSeat->setFrameOfReference(ref); }
   void Checkvalve::setLineLength(double lLine) {line->setLength(lLine); }
   void Checkvalve::setLineDiameter(double lDiameter) {line->setDiameter(lDiameter); }
+  void Checkvalve::setLinePressureLoss(CheckvalveClosablePressureLoss * ccpl) {line->setClosablePressureLoss(ccpl); }
+  void Checkvalve::setLineMinimalXOpen(double x) {line->setMinimalValue(x); }
+  void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setSpringForceFunction(Function2<double,double,double> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
   void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
   void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setContactImpactLaw(GIL); }
   void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setContactForceLaw(GFL); }
+  void Checkvalve::setSetValued(bool setValued) {line->setBilateral(setValued); }
 
   void Checkvalve::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
-      if (refFrameString!="") {
-        ref=getFrameByPath(refFrameString);
-        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
-      }
-      Group::init(stage);
-    }
-    if (stage==MBSim::preInit) {
-      double rBall=pressureLoss->getBallRadius();
+    if (stage==MBSim::modelBuildup) {
+      double rBall=((CheckvalveClosablePressureLoss*)line->getClosablePressureLoss())->getBallRadius();
       double rLine=line->getDiameter()/2.;
       assert(rBall>rLine);
       double gamma=asin(rLine/rBall);
@@ -87,19 +106,15 @@ namespace MBSim {
 
       line->setFrameOfReference(ballSeat->getFrame("C"));
       line->setDirection("[1; 0; 0]");
-      if (!pressureLoss->getHydlinePressureloss())
-        line->addPressureLoss(pressureLoss);
 
       ballSeat->setMass(0);
       ballSeat->setInertiaTensor(SymMat(3, INIT, 0));
-      ballSeat->setFrameOfReference(ref);
       ballSeat->setFrameForKinematics(ballSeat->getFrame("C"));
       ballSeat->addFrame("BallMount", h0*Vec("[1; 0; 0]"), SqrMat(3, EYE));
       ballSeat->addFrame("SpringMount", (rBall+h0+hMax)*Vec("[1;0;0]"), SqrMat(3, EYE));
       ballSeat->addContour(new Line("ContourSeat"), (-rBall+h0)*Vec("[1;0;0]"), BasicRotAIKy(0));
       ballSeat->addContour(new Line("ContourMaxOpening"), (rBall+h0+hMax)*Vec("[1;0;0]"), BasicRotAIKz(-M_PI));
 
-      ball->setMass(mBall);
       ball->setInertiaTensor(SymMat(3, EYE) * 2./5. * mBall * rBall * rBall);
       ball->setFrameOfReference(ballSeat->getFrame("BallMount"));
       ball->setFrameForKinematics(ball->getFrame("C"));
@@ -123,12 +138,12 @@ namespace MBSim {
       fromNodeAreaIndex = ((HNodeMec*)line->getFromNode())->addTransMecArea(
           ball->getFrame("LowPressureSide"),
           "[1; 0; 0]",
-          rLine*rLine*M_PI*pressureLoss->calcBallAreaFactor(),
+          rLine*rLine*M_PI*((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallAreaFactor(),
           false);
       toNodeAreaIndex = ((HNodeMec*)line->getToNode())->addTransMecArea(
           ball->getFrame("HighPressureSide"),
           "[-1; 0; 0]",
-          rLine*rLine*M_PI*pressureLoss->calcBallAreaFactor(),
+          rLine*rLine*M_PI*((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallAreaFactor(),
           false);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -146,7 +161,7 @@ namespace MBSim {
         ballVisu->setRadius(rBall);
         ball->setOpenMBVRigidBody(ballVisu);
 
-        addLink(new colorLink("BallColorLink", ballVisu, pressureLoss));
+        addLink(new colorLink("BallColorLink", ballVisu, line));
 
         OpenMBV::CoilSpring* springVisu=new OpenMBV::CoilSpring();
         springVisu->setSpringRadius(rBall/2.);
@@ -168,6 +183,14 @@ namespace MBSim {
 
       Group::init(stage);
     }
+    else if (stage==MBSim::resolveXMLPath) {
+      if (refFrameString!="") {
+        Frame * ref_=getFrameByPath(refFrameString);
+        if(!ref_) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
+        setFrameOfReference(ref_);
+      }
+      Group::init(stage);
+    }
     else
       Group::init(stage);
   }
@@ -181,10 +204,10 @@ namespace MBSim {
     setLineLength(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setLineDiameter(getDouble(ee));
-    ee = e->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
-    pressureLoss=(VariablePressureLossCheckvalve*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-    line->addPressureLoss(pressureLoss);
-    pressureLoss->initializeUsingXML(ee->FirstChildElement());
+    ee = e->FirstChildElement(MBSIMHYDRAULICSNS"ccpl");
+    CheckvalveClosablePressureLoss * ccpl_=(CheckvalveClosablePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
+    ccpl_->initializeUsingXML(ee->FirstChildElement());
+    setLinePressureLoss(ccpl_);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Ball");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"mass");
     setBallMass(getDouble(ee));
@@ -204,7 +227,7 @@ namespace MBSim {
       gilS->initializeUsingXML(ee->FirstChildElement());
       setSeatContactImpactLaw(gilS);
     }
-    hMax=getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening"));
+    setMaximalOpening(getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"maximalOpening")));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"MaximalOpeningContact");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"contactForceLaw");
     GeneralizedForceLaw * gflM=ObjectFactory::getInstance()->getInstance()->createGeneralizedForceLaw(ee->FirstChildElement());

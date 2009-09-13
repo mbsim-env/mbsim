@@ -28,9 +28,10 @@ namespace MBSim {
   class HydlinePressureloss;
   class PressureLoss;
 
+  /*! HLine */
   class HLine : public Object {
     public:
-      HLine(const std::string &name) : Object(name), nFrom(NULL), nTo(NULL), direction(3), Mlocal(0), rho(0) {};
+      HLine(const std::string &name) : Object(name), nFrom(NULL), nTo(NULL), direction(3), Mlocal(0) {};
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -63,17 +64,16 @@ namespace MBSim {
       HNode * nTo;
       fmatvec::Vec direction;
       fmatvec::SymMat Mlocal;
-      double rho;
-
   };
 
+  /*! RigidHLine */
   class RigidHLine : public HLine {
     public:
-      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), pressureLoss(NULL), length(0) {}
+      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0) {}
       virtual std::string getType() const { return "RigidHLine"; }
       
       void setLength(double length_) {length=length_; }
-      double getLength() {return length; }
+      double getLength() const {return length; }
 
       virtual fmatvec::Vec getQIn(double t) {return u; }
       virtual fmatvec::Vec getQOut(double t) {return -u; }
@@ -91,11 +91,7 @@ namespace MBSim {
     
     protected:
       double pressureLossGravity;
-      HydlinePressureloss * pressureLoss;
       double length;
-
-      void addPressureLoss(PressureLoss * dp);
-
   };
 
 }

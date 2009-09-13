@@ -17,22 +17,31 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimHydraulics/hydline_pressureloss.h"
-#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/rigid_line_pressureloss.h"
+#include "mbsimHydraulics/hline.h"
+#include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
+#include "mbsimControl/signal_.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  HydlinePressureloss::HydlinePressureloss(const string &name, RigidHLine * line_) : Link(name), line(line_), isActive0(false), unilateral(false), bilateral(false), active(false) {
+  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), isActive0(false), gdn(1), unilateral(unilateral_), bilateral(bilateral_), active(false), pLoss(0), linePressureLoss(NULL), closablePressureLoss(NULL) {
+    if (dynamic_cast<LinePressureLoss*>(pressureLoss))
+      linePressureLoss = (LinePressureLoss*)(pressureLoss);
+    else if (dynamic_cast<ClosablePressureLoss*>(pressureLoss))
+      closablePressureLoss = (ClosablePressureLoss*)(pressureLoss);
   }
 
-  void HydlinePressureloss::plot(double t, double dt) {
+  void RigidLinePressureLoss::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(pLoss*1e-5);
+      if (closablePressureLoss)
+        plotVector.push_back(((ClosableRigidLine*)line)->getSignal()->getSignal()(0)<((ClosableRigidLine*)line)->getMinimalValue());
       if (isSetValued()) {
         plotVector.push_back(gd(0));
         plotVector.push_back(active);
@@ -40,41 +49,12 @@ namespace MBSim {
         plotVector.push_back(la(0));
         plotVector.push_back(rFactor(0));
       }
-      else {
-        for (unsigned int i=0; i<pressureLosses.size(); i++)
-          pressureLosses[i]->plot(&plotVector);
-        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-          leakagePressureLosses[i]->plot(&plotVector);
-        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-          variablePressureLosses[i]->plot(&plotVector);
-      }
       Link::plot(t, dt);
     }
   }
 
-  void HydlinePressureloss::addPressureLoss(PressureLoss * loss) {
-    loss->setHydlinePressureloss(this);
-    if (dynamic_cast<VariablePressureLoss*>(loss))
-      variablePressureLosses.push_back(static_cast<VariablePressureLoss*>(loss));
-    else if (dynamic_cast<LeakagePressureLoss*>(loss))
-      leakagePressureLosses.push_back(static_cast<LeakagePressureLoss*>(loss));
-    else
-      pressureLosses.push_back(loss);
-  }
-
-  void HydlinePressureloss::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
-      Link::init(stage);
-      if (!isSetValued()) {
-        for (unsigned int i=0; i<pressureLosses.size(); i++)
-          pressureLosses[i]->init(stage);
-        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-          leakagePressureLosses[i]->init(stage);
-        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-          variablePressureLosses[i]->init(stage);
-      }
-    }
-    else if (stage==MBSim::preInit) {
+  void RigidLinePressureLoss::init(InitStage stage) {
+    if (stage==MBSim::preInit) {
       Link::init(stage);
       if (isSetValued()) {
         isActive0=true;
@@ -95,33 +75,19 @@ namespace MBSim {
       gd.resize(1);
       gdn.resize(1);
       la.resize(1);
-      // unsauber...
-      if (!isSetValued()) {
-        for (unsigned int i=0; i<pressureLosses.size(); i++)
-          pressureLosses[i]->init(stage);
-        for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-          leakagePressureLosses[i]->init(stage);
-        for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-          variablePressureLosses[i]->init(stage);
-      }
     }
     else if (stage==MBSim::plot) {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("pressureLoss [bar]");
+        if (closablePressureLoss)
+          plotColumns.push_back("active");
         if (isSetValued()) {
           plotColumns.push_back("gd");
           plotColumns.push_back("active");
           plotColumns.push_back("gdn");
           plotColumns.push_back("la(0)");
           plotColumns.push_back("rFactor(0)");
-        }
-        else {
-          for (unsigned int i=0; i<pressureLosses.size(); i++)
-            pressureLosses[i]->init(stage, &plotColumns);
-          for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-            leakagePressureLosses[i]->init(stage, &plotColumns);
-          for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-            variablePressureLosses[i]->init(stage, &plotColumns);
         }
         Link::init(stage);
       }
@@ -134,61 +100,62 @@ namespace MBSim {
       Link::init(stage);
   }
 
-  void HydlinePressureloss::updatehRef(const Vec& hParent, const Vec& hLinkParent, int i) {
+  void RigidLinePressureLoss::updatehRef(const Vec& hParent, const Vec& hLinkParent, int i) {
     int hInd = line->gethInd(parent, i);
     Index I=Index(hInd, hInd);
     h[0] >> hParent(I);
     hLink[0].resize() >> hLinkParent(I);
   }
 
-  void HydlinePressureloss::updatedhduRef(const SqrMat& dhduParent, int i) {
+  void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
     int hInd = line->gethInd(parent, i);
     Index I=Index(hInd, hInd);
     dhdu[0].resize() >> dhduParent(I);
   }
 
-  void HydlinePressureloss::updatedhdtRef(const Vec& dhdtParent, int i) {
+  void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
     int hInd = line->gethInd(parent, i);
     Index I=Index(hInd, hInd);
     dhdt[0].resize() >> dhdtParent(I);
   }
 
-  void HydlinePressureloss::updaterRef(const Vec &rParent) {
+  void RigidLinePressureLoss::updaterRef(const Vec &rParent) {
     Index I=Index(line->gethInd(parent), line->gethInd(parent));
     r[0].resize() >> rParent(I);
   }
 
-  void HydlinePressureloss::updateWRef(const Mat &WParent, int j) {
+  void RigidLinePressureLoss::updateWRef(const Mat &WParent, int j) {
     Index I=Index(line->gethInd(parent,j), line->gethInd(parent,j));
     Index J=Index(laInd, laInd);
     W[0].resize() >> WParent(I,J);
   }
 
-  void HydlinePressureloss::updateVRef(const Mat &VParent, int j) {
+  void RigidLinePressureLoss::updateVRef(const Mat &VParent, int j) {
     Index J=Index(laInd, laInd);
     Index I=Index(line->gethInd(parent,j), line->gethInd(parent,j));
     V[0].resize() >> VParent(I,J);
   }
 
-  void HydlinePressureloss::updatewbRef(const Vec &wbParent) {
+  void RigidLinePressureLoss::updatewbRef(const Vec &wbParent) {
     Link::updatewbRef(wbParent);
     gd.resize() >> wb;
   }
 
-  void HydlinePressureloss::updateg(double t) {
+  void RigidLinePressureLoss::updateg(double t) {
     if (!isSetValued()) {
-      for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-        leakagePressureLosses[i]->update(line->getu()(0));
-      for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-        variablePressureLosses[i]->update(line->getu()(0));
+      // for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+      //   leakagePressureLosses[i]->update(line->getu()(0));
+      // for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+      //   variablePressureLosses[i]->update(line->getu()(0));
     }
   }
 
-  void HydlinePressureloss::checkActiveg() {
-    active=variablePressureLosses[0]->isClosed();
+  void RigidLinePressureLoss::checkActiveg() {
+    if (closablePressureLoss)
+      active=(((ClosableRigidLine*)line)->getSignal()->getSignal()(0)<((ClosableRigidLine*)line)->getMinimalValue());
   }
 
-  bool HydlinePressureloss::gActiveChanged() {
+  bool RigidLinePressureLoss::gActiveChanged() {
     bool changed = false;
     if (isActive0 != active)
       changed =true;
@@ -196,24 +163,29 @@ namespace MBSim {
     return changed;
   }
 
-  void HydlinePressureloss::updategd(double t) {
+  void RigidLinePressureLoss::updategd(double t) {
     gd=line->getQIn(t);
   }
 
-  void HydlinePressureloss::updateh(double t) {
-    for (unsigned int i=0; i<pressureLosses.size(); i++)
-      h[0](0)-=(*pressureLosses[i])(line->getu()(0));
-    for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-      h[0](0)-=(*leakagePressureLosses[i])(line->getu()(0));
-    for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-      h[0](0)-=(*variablePressureLosses[i])(line->getu()(0));
+  void RigidLinePressureLoss::updateh(double t) {
+    if (linePressureLoss)
+      pLoss=(*linePressureLoss)(line->getu()(0), line);
+    else if (closablePressureLoss)
+      pLoss=(*closablePressureLoss)(line->getu()(0), line);
+    h[0](0)-=pLoss;
+    // for (unsigned int i=0; i<pressureLosses.size(); i++)
+    //   h[0](0)-=(*pressureLosses[i])(line->getu()(0));
+    // for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
+    //   h[0](0)-=(*leakagePressureLosses[i])(line->getu()(0));
+    // for (unsigned int i=0; i<variablePressureLosses.size(); i++)
+    //   h[0](0)-=(*variablePressureLosses[i])(line->getu()(0));
   }
 
-  void HydlinePressureloss::updateW(double t) {
+  void RigidLinePressureLoss::updateW(double t) {
     W[0]=Mat(1,1,INIT,1.);
   }
 
-  void HydlinePressureloss::updaterFactors() {
+  void RigidLinePressureLoss::updaterFactors() {
     if (active) {
       double *a = ds->getGs()();
       int *ia = ds->getGs().Ip();
@@ -232,7 +204,7 @@ namespace MBSim {
     }
   }
 
-  void HydlinePressureloss::solveImpactsFixpointSingle() {
+  void RigidLinePressureLoss::solveImpactsFixpointSingle() {
     if(active) {
       double *a = ds->getGs()();
       int *ia = ds->getGs().Ip();
@@ -255,7 +227,7 @@ namespace MBSim {
     }
   }
 
-  void HydlinePressureloss::solveImpactsGaussSeidel() {
+  void RigidLinePressureLoss::solveImpactsGaussSeidel() {
     if(active) {
       double *a = ds->getGs()();
       int *ia = ds->getGs().Ip();
@@ -283,7 +255,7 @@ namespace MBSim {
     }
   }
 
-  void HydlinePressureloss::checkImpactsForTermination() {
+  void RigidLinePressureLoss::checkImpactsForTermination() {
     if (active) {
       double *a = ds->getGs()();
       int *ia = ds->getGs().Ip();
