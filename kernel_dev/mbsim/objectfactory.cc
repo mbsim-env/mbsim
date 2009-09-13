@@ -340,6 +340,8 @@ namespace MBSim {
       return new ConstantFunction1<Vec,double>;
     if(element->ValueStr()==MBSIMNS"PiecewisePolynom1_VS")
       return new PPolynom;
+    if(element->ValueStr()==MBSIMNS"QuadraticFunction1_VS")
+      return new QuadraticFunction1_VS;
     if(element->ValueStr()==MBSIMNS"SinusFunction1_VS")
       return new SinusFunction1_VS;
     if(element->ValueStr()==MBSIMNS"PositiveSinusFunction1_VS")

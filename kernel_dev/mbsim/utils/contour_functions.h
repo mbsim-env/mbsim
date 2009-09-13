@@ -23,7 +23,6 @@
 #define CONTOUR_FUNCTION_1S_H
 
 #include "fmatvec.h"
-#include <mbsim/utils/eps.h>
 #include "mbsim/utils/ppolynom.h"
 #include "mbsim/contour_pdata.h"
 
@@ -34,26 +33,25 @@ namespace MBSim {
    * Parent class */
   class  ContourFunction1s {
     public:
-      ContourFunction1s() : delta(epsroot()), sqrtdelta(sqrt(delta)) {};
+      ContourFunction1s() {};
       virtual ~ContourFunction1s() {};
-      virtual void init(double alpha) {};
+      virtual void init(const double& alpha) {};
       virtual void init(const ContourPointData &cp) { init(cp.getLagrangeParameterPosition()(0)); }
       virtual fmatvec::Vec operator()(const double& alpha, const void * =NULL) = 0;
-      virtual fmatvec::Vec diff1(const double& alpha) = 0; // { return (operator()(t+delta)-operator()(t-delta))/(2.0*delta); }    
-      virtual fmatvec::Vec diff2(const double& alpha) = 0; // {return (operator()(t+sqrtdelta)+operator()(t-sqrtdelta)-2*operator()(t))/(sqrtdelta*sqrtdelta); }
-      virtual fmatvec::Vec computeN(const double& alpha) { fmatvec::Vec N = crossProduct(computeB(alpha), computeT(alpha)); return N/nrm2(N); }
+      virtual fmatvec::Vec diff1(const double& alpha) = 0;
+      virtual fmatvec::Vec diff2(const double& alpha) = 0;
+      virtual fmatvec::Vec computeN(const double& alpha) { const fmatvec::Vec N=crossProduct(diff1(alpha),computeB(alpha)); return N/nrm2(N); }
       virtual fmatvec::Vec computeN(const ContourPointData &cp) { return computeN(cp.getLagrangeParameterPosition()(0)); };
-      virtual fmatvec::Vec computeT(const double& alpha) { fmatvec::Vec T = diff1(alpha); return T/nrm2(T); }
+      virtual fmatvec::Vec computeT(const double& alpha) { const fmatvec::Vec T=-diff1(alpha); return T/nrm2(T); }
       virtual fmatvec::Vec computeT(const ContourPointData &cp) { return computeT(cp.getLagrangeParameterPosition()(0)); };
-      virtual fmatvec::Vec computeB(const double& alpha) { fmatvec::Vec B = crossProduct(diff1(alpha), diff2(alpha)); return B/nrm2(B); }
+      virtual fmatvec::Vec computeB(const double& alpha) { const fmatvec::Vec B = crossProduct(operator()(alpha), diff1(alpha)); return B/nrm2(B); }
       virtual fmatvec::Vec computeB(const ContourPointData &cp) { return computeB(cp.getLagrangeParameterPosition()(0)); };
-      virtual double computeR(const double& alpha){ 
-        fmatvec::Vec rs = diff1(alpha);
-        double nrm2rs = nrm2(rs);
-        return nrm2rs*nrm2rs*nrm2rs/nrm2(crossProduct(rs,diff2(alpha)));
+      virtual double computeCurvature(const double& alpha) {
+        const fmatvec::Vec rs = diff1(alpha);
+        const double nrm2rs = nrm2(rs);
+        return nrm2(crossProduct(rs,diff2(alpha)))/(nrm2rs*nrm2rs*nrm2rs); 
       }
-      virtual double computeR(const ContourPointData &cp) { return computeR(cp.getLagrangeParameterPosition()(0)); } 
-      virtual double computeCurvature(const ContourPointData &cp) {return 1./computeR(cp); }
+      virtual double computeCurvature(const ContourPointData &cp) {return computeCurvature(cp.getLagrangeParameterPosition()(0)); }
       double getalphaStart() { return alphaStart; }
       double getalphaEnd() { return alphaEnd; }
       void setalphaStart(double alphaStart_) { alphaStart = alphaStart_; };
@@ -63,9 +61,6 @@ namespace MBSim {
 
     protected:
       double alphaStart, alphaEnd;
-
-    private:
-      double delta, sqrtdelta;
   };  
 }
 

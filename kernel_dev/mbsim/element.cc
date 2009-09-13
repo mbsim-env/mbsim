@@ -142,7 +142,7 @@ namespace MBSim {
     else {
       ostringstream str;
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
-           "where a vector of size "<<rows<<" was requested for element "<<e->ValueStr();
+           "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
       throw MBSimError("Wrong type");
     }
@@ -156,7 +156,7 @@ namespace MBSim {
     else {
       ostringstream str;
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
-           "where a matrix of size "<<rows<<"x"<<cols<<" was requested for element "<<e->ValueStr();
+           "where a matrix of size "<<((rows==0)?-1:rows)<<"x"<<((cols==0)?-1:cols)<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
       throw MBSimError("Wrong type");
     }
