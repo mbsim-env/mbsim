@@ -1,7 +1,28 @@
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: schneidm@users.berlios.de
+ */
+
 #include <string>
 
-#include "rigid_contour_functions1s.h"
-#include "mbsim/utils/eps.h"
+#include "mbsimValvetrain/rigid_contour_functions1s.h"
+#include "mbsimValvetrain/objectfactory.h"
+#include "mbsim/utils/function_library.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -91,47 +112,175 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   return erg;
 }
 
-void FuncCrPC::setYZ(const Mat& YZ, int discretization,Vec rYZ) {
+FuncCrPC::FuncCrPC() : ContourFunction1s(), Cb(3) {
+  Cb(0)=1;
+  operator_ = &FuncCrPC::operatorPPolynom;
+  computeT_ = &FuncCrPC::computeTPPolynom;
+  computeB_ = &FuncCrPC::computeBPPolynom;
+  computeN_ = &FuncCrPC::computeNPPolynom;
+  computeCurvature_ = &FuncCrPC::computeCurvaturePPolynom;
+}
+
+void FuncCrPC::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   Mat angleYZ=ContourXY2angleXY(YZ, 1., rYZ , discretization); 
   pp_y.setXF(angleYZ.col(0), angleYZ.col(1), "csplinePer");
   pp_z.setXF(angleYZ.col(0), angleYZ.col(2), "csplinePer");
 }   
 
-void FuncCrPC::init(double alpha) {
-  Vec CrPC = operator()(alpha);
-  Vec Ct = diff1(alpha);
-  Cb = crossProduct(CrPC,Ct);
-  Cb = Cb/nrm2(Cb);  
+//void FuncCrPC::init(const double& alpha) {
+//  const Vec CrPC = operator()(alpha);
+//  const Vec Ct = diff1(alpha);
+//  Cb = crossProduct(CrPC,Ct);
+//  Cb = Cb/nrm2(Cb);  
+//}
+
+void FuncCrPC::enableTabularFit(double tabularFitLength) {
+  vector<double> a;
+  a.push_back(0);
+  while(a.back()<2.*M_PI) {
+    Vec p1=operator()(a.back());
+    class PointDistance : public Function1<double, double> {
+      public:
+        PointDistance(Vec p1_, FuncCrPC * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+        double operator()(const double &alpha, const void * = NULL) {
+          Vec p2=(*f)(alpha);
+          return nrm2(p2-p1)-d;
+        }
+      private:
+        Vec p1;
+        FuncCrPC * f;
+        double d;
+    };
+    PointDistance g(p1, this, tabularFitLength);
+    RegulaFalsi solver(&g);
+    solver.setTolerance(epsroot());
+    a.push_back(solver.solve(a.back(), a.back()+M_PI/4.));
+  }
+  Vec phi(a.size(), INIT, 0);
+  Mat O(a.size(), 3, INIT, 0);
+  Mat T(a.size(), 3, INIT, 0);
+  Mat B(a.size(), 3, INIT, 0);
+  Mat N(a.size(), 3, INIT, 0);
+  Vec curve(a.size(), INIT, 0);
+  for (unsigned int i=0; i<a.size(); i++) {
+    double alp=a[i]/a.back()*2.*M_PI;
+    phi(i)=alp;
+    O.row(i)=trans(operator()(alp));
+    T.row(i)=trans(this->computeT(alp));
+    B.row(i)=trans(this->computeB(alp));
+    N.row(i)=trans(this->computeN(alp));
+    curve(i)=this->computeCurvature(alp);
+  }
+  tab_operator = new TabularFunction1_VS(phi, O);
+  tab_T = new TabularFunction1_VS(phi, T);
+  tab_B = new TabularFunction1_VS(phi, B);
+  tab_N = new TabularFunction1_VS(phi, N);
+  tab_curvature = new TabularFunction1_VS(phi, curve);
+
+  operator_ = &FuncCrPC::operatorTabular;
+  computeT_ = &FuncCrPC::computeTTabular;
+  computeB_ = &FuncCrPC::computeBTabular;
+  computeN_ = &FuncCrPC::computeNTabular;
+  computeCurvature_ = &FuncCrPC::computeCurvatureTabular;
 }
 
-Vec FuncCrPC::operator()(const double& alpha, const void *){
-  Vec f(3,INIT);
-  double alphaLoc=fmod(alpha, 2.*M_PI);
-  if(alphaLoc<0) 
-    alphaLoc+=2.*M_PI;
-  f(1) = (pp_y.getDerivative(0))(alphaLoc)(0); 
-  f(2) = (pp_z.getDerivative(0))(alphaLoc)(0); 
-  return f;
-} 
-
 Vec FuncCrPC::diff1(const double& alpha) {
-  Vec f(3,INIT);
-  double alphaLoc=fmod(alpha, 2.*M_PI);
-  if(alphaLoc<0) 
-    alphaLoc+=2.*M_PI;
+  Vec f(3,NONINIT);
+  const double alphaLoc=calculateLocalAlpha(alpha);
+  f(0) = 0;
   f(1) = ((pp_y).getDerivative(1))(alphaLoc)(0); 
   f(2) = ((pp_z).getDerivative(1))(alphaLoc)(0); 
   return f;
 }
 
 Vec FuncCrPC::diff2(const double& alpha) {
-  Vec f(3,INIT);
-  double alphaLoc=fmod(alpha, 2.*M_PI);
-  if(alphaLoc<0) 
-    alphaLoc+=2.*M_PI;
+  Vec f(3,NONINIT);
+  const double alphaLoc=calculateLocalAlpha(alpha);
+  f(0) = 0;
   f(1) = ((pp_y).getDerivative(2))(alphaLoc)(0); 
   f(2) = ((pp_z).getDerivative(2))(alphaLoc)(0); 
   return f;
+}
+
+Vec FuncCrPC::operatorPPolynom(const double& alpha) {
+  Vec f(3,NONINIT);
+  const double alphaLoc=calculateLocalAlpha(alpha);
+  f(0) = 0;
+  f(1) = (pp_y.getDerivative(0))(alphaLoc)(0); 
+  f(2) = (pp_z.getDerivative(0))(alphaLoc)(0); 
+  return f;
+} 
+
+Vec FuncCrPC::operatorTabular(const double& alpha) {
+  return (*tab_operator)(calculateLocalAlpha(alpha));
+}
+
+Vec FuncCrPC::computeTPPolynom(const double& alpha) {
+  const Vec T = -diff1(alpha);
+  return T/nrm2(T); 
+}
+
+Vec FuncCrPC::computeTTabular(const double& alpha) {
+  return (*tab_T)(calculateLocalAlpha(alpha));
+}
+
+Vec FuncCrPC::computeNPPolynom(const double& alpha) { 
+  const Vec N = crossProduct(diff1(alpha), Cb);
+  // const Vec N = crossProduct(diff1(alpha), computeBPPolynom(alpha));
+  return N/nrm2(N);
+}
+
+Vec FuncCrPC::computeNTabular(const double& alpha) {
+  return (*tab_N)(calculateLocalAlpha(alpha));
+}
+
+Vec FuncCrPC::computeBPPolynom(const double& alpha) {
+  // const Vec B = crossProduct(operator()(alpha), diff1(alpha));
+  // return B/nrm2(B);
+  return Cb;
+}
+
+Vec FuncCrPC::computeBTabular(const double& alpha) {
+  return (*tab_B)(calculateLocalAlpha(alpha));
+}
+
+double FuncCrPC::computeCurvaturePPolynom(const double& alpha) {
+  const Vec rs = diff1(alpha);
+  const double nrm2rs = nrm2(rs);
+  return nrm2(crossProduct(rs,diff2(alpha)))/(nrm2rs*nrm2rs*nrm2rs);
+}
+
+double FuncCrPC::computeCurvatureTabular(const double& alpha) {
+  return (*tab_curvature)(calculateLocalAlpha(alpha))(0);
+}
+
+  double FuncCrPC::calculateLocalAlpha(const double& alpha) {
+    if ((alpha>0) && (alpha<2.*M_PI))
+      return alpha;
+    else {
+      double a=fmod(alpha, 2.*M_PI);
+      if(a<0) 
+        a+=2.*M_PI;
+      return a;
+    }
+  }
+
+void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
+  TiXmlElement * e;
+  e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
+  Mat YZ=Element::getMat(e);
+  int dis=1;
+  e=element->FirstChildElement(MBSIMVALVETRAINNS"discretization");
+  if (e)
+    dis=atoi(e->GetText());
+  Vec rYZ(3);
+  e=element->FirstChildElement(MBSIMVALVETRAINNS"rYZ");
+  if (e)
+    rYZ=Element::getVec(e, 3);
+  setYZ(YZ, dis, rYZ);
+  e=element->FirstChildElement(MBSIMVALVETRAINNS"enableTabularFit");
+  if (e)
+    enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));
 }
 
 

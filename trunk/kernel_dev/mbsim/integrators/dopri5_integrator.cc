@@ -160,6 +160,11 @@ namespace MBSim {
     if(e) setRelativeTolerance(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
     setInitialStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    setMaximalStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"maximalNumberOfSteps");
+    if (e)
+      setMaxStepNumber(atoi(e->GetText()));
   }
 
 }

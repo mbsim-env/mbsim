@@ -48,6 +48,43 @@ namespace MBSim {
       fmatvec::Vec vec;
   };
 
+
+  class QuadraticFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
+    public:
+      QuadraticFunction1_VS();
+      QuadraticFunction1_VS(fmatvec::Vec a0_, fmatvec::Vec a1_, fmatvec::Vec a2_);
+      void initializeUsingXML(TiXmlElement *element);
+
+      class ZerothDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          ZerothDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          QuadraticFunction1_VS *parent;
+      };
+
+      class FirstDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          FirstDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          QuadraticFunction1_VS *parent;
+      };
+      
+      class SecondDerivative : public Function1<fmatvec::Vec,double> {
+         public:
+          SecondDerivative(QuadraticFunction1_VS *f) : Function1<fmatvec::Vec,double>(), parent(f) {}
+          fmatvec::Vec operator()(const double& x, const void * =NULL);
+        private:
+          QuadraticFunction1_VS *parent;
+      };
+    protected:
+      int ySize;
+      fmatvec::Vec a0, a1, a2;
+    private:
+  };
+
+
   class SinusFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
     public:
       SinusFunction1_VS();

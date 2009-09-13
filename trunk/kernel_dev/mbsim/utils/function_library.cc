@@ -43,6 +43,54 @@ namespace MBSim {
     setVector(Element::getVec(e));
   }
 
+
+  QuadraticFunction1_VS::QuadraticFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), a0(0), a1(0), a2(0) {
+    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
+  }
+
+  QuadraticFunction1_VS::QuadraticFunction1_VS(Vec a0_, Vec a1_, Vec a2_) : DifferentiableFunction1<Vec>(), a0(a0_), a1(a1_), a2(a2_) {
+    addDerivative(new QuadraticFunction1_VS::ZerothDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::FirstDerivative(this));
+    addDerivative(new QuadraticFunction1_VS::SecondDerivative(this));
+    ySize=a0.size();
+  }
+  
+  Vec QuadraticFunction1_VS::ZerothDerivative::operator()(const double& tVal, const void *) {
+    Vec y(parent->ySize, NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=parent->a0(i)+tVal*(parent->a1(i)+parent->a2(i)*tVal);
+    return y;
+  }
+
+  Vec QuadraticFunction1_VS::FirstDerivative::operator()(const double& tVal, const void *) {
+    Vec y(parent->ySize, NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=parent->a1(i)+2.*parent->a2(i)*tVal;
+    return y;
+  }
+
+  Vec QuadraticFunction1_VS::SecondDerivative::operator()(const double& tVal, const void *) {
+    Vec y(parent->ySize, NONINIT);
+    for (int i=0; i<parent->ySize; i++)
+      y(i)=4.*parent->a2(i);
+    return y;
+  }
+
+  void QuadraticFunction1_VS::initializeUsingXML(TiXmlElement *element) {
+    DifferentiableFunction1<Vec>::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"a0");
+    a0=Element::getVec(e);
+    ySize=a0.size();
+    e=element->FirstChildElement(MBSIMNS"a1");
+    a1=Element::getVec(e, ySize);
+    e=element->FirstChildElement(MBSIMNS"a2");
+    a2=Element::getVec(e, ySize);
+    
+  }
+
+
   SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), amplitude(0), frequency(0), phase(0) {
     addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
     addDerivative(new SinusFunction1_VS::FirstDerivative(this));
@@ -134,11 +182,20 @@ namespace MBSim {
 
   void TabularFunction1_VS::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMNS"x");
-    Vec x_=Element::getVec(e);
-    x=x_;
-    e=element->FirstChildElement(MBSIMNS"y");
-    Vec y_=Element::getVec(e);
-    y=y_;
+    if (e) {
+      Vec x_=Element::getVec(e);
+      x=x_;
+      e=element->FirstChildElement(MBSIMNS"y");
+      Mat y_=Element::getMat(e, x.size(), 0);
+      y=y_;
+    }
+    e=element->FirstChildElement(MBSIMNS"xy");
+    if (e) {
+      Mat xy=Element::getMat(e);
+      assert(xy.cols()>1);
+      x=xy.col(0);
+      y=xy(0, 1, xy.rows()-1, xy.cols()-1);
+    }
     check();
   }
 

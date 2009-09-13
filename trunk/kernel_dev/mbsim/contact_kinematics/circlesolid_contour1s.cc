@@ -55,7 +55,7 @@ namespace MBSim {
     if (dynamic_cast<Contour1sAnalytical*>(contour1s)) {
       double minRadius=1./epsroot();
       for (double alpha=contour1s->getAlphaStart(); alpha<=contour1s->getAlphaEnd(); alpha+=(contour1s->getAlphaEnd()-contour1s->getAlphaStart())*1e-4) {
-        double radius=static_cast<Contour1sAnalytical*>(contour1s)->getContourFunction1s()->computeR(alpha);
+        double radius=1./static_cast<Contour1sAnalytical*>(contour1s)->getContourFunction1s()->computeCurvature(alpha);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
       if (circle->getRadius()>minRadius) {

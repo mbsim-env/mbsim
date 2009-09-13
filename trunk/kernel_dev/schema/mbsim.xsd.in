@@ -8,9 +8,11 @@
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:annotation><xs:documentation>
-    Write here a introcution to MBSim (kernel and mechanics)
-  </xs:documentation></xs:annotation>
+  <xs:annotation>
+    <xs:documentation>
+      Write here a introcution to MBSim (kernel and mechanics)
+    </xs:documentation>
+  </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
@@ -25,9 +27,11 @@
 
 
   <xs:simpleType name="PlotFeatureType">
-    <xs:annotation><xs:documentation>
-      Bestimmt, welche Plotausgaben eingeschaltet sind.
-    </xs:documentation></xs:annotation>
+    <xs:annotation>
+      <xs:documentation>
+        Bestimmt, welche Plotausgaben eingeschaltet sind.
+      </xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="+plotRecursive"/>
       <xs:enumeration value="-plotRecursive"/>
@@ -516,13 +520,15 @@
           <li>Item 2</li>
         </ol>
         A not inline equation
-        <object class="eqn"><![CDATA[
+        <object class="eqn">
+          <![CDATA[
           \int_a^b\sin(x)dx +
           \left[\begin{array}{cc}
-            1 & 2 \\
-            3 & 4
+          1 & 2 \\
+          3 & 4
           \end{array}\right]
-        ]]></object>
+          ]]>
+        </object>
         And a inline equation <object class="inlineeqn">x_a+\cos(x)</object>. And a image.
         <object class="figure" standby="4cm" data="mbsim" title="The image caption"/>
         End of the test. 
@@ -629,11 +635,11 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Vorgabe der translatorischen Geschwindigkeit. Rückgabewert muss eine 3x1-Matrix sein.
-                    </xs:documentation>
-                  </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Vorgabe der translatorischen Geschwindigkeit. Rückgabewert muss eine 3x1-Matrix sein.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -1115,7 +1121,7 @@
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
-              <xs:annotation>
+            <xs:annotation>
               <xs:documentation xml:lang="de">
                 Höhe des Kegelstumpfes
               </xs:documentation>
@@ -1543,21 +1549,45 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_SS" abstract="true" type="Function1_SSType"/>
+  <xs:element name="Function1_SS" abstract="true" type="Function1_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse von Funktionen vom Typ <object class="inlineeqn">y=f(x)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function1_SSType"/>
 
-  <xs:element name="ConstantFunction1_SS" substitutionGroup="Function1_SS" type="ConstantFunction1_SSType"/>
+  <xs:element name="ConstantFunction1_SS" substitutionGroup="Function1_SS" type="ConstantFunction1_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Konstanter Funktionswert: <object class="inlineeqn">y=c</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ConstantFunction1_SSType">
     <xs:complexContent>
       <xs:extension base="Function1_SSType">
         <xs:sequence>
-          <xs:element name="value" type="pv:nounitScalar"/>
+          <xs:element name="value" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Konstanter Funktionswert.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType"/>
+  <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\vy=f(x)</object>. Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\vy_1</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function1_SS_from_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_SSType">
@@ -1568,21 +1598,45 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_VS" abstract="true" type="Function1_VSType"/>
+  <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Abstrakte Klasse von vektorwertigen Funktionen vom Typ <object class="inlineeqn">\vy=f(x)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function1_VSType"/>
 
-  <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType"/>
+  <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Konstanter Funktionswert.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ConstantFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="value" type="pv:nounitVector"/>
+          <xs:element name="value" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Konstanter Funktionswert: <object class="inlineeqn">\vy=\vc</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function1_VS_from_SS" substitutionGroup="Function1_VS" type="Function1_VS_from_SSType"/>
+  <xs:element name="Function1_VS_from_SS" substitutionGroup="Function1_VS" type="Function1_VS_from_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Generiert eine Funktion vom Typ  <object class="inlineeqn">\vy=f(x)</object> durch eine Multiplikation des skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\vy=\vn \, f(x)</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function1_VS_from_SSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
@@ -1590,105 +1644,179 @@
           <xs:element name="function">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SS"/>
+                <xs:element ref="Function1_SS">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Funktion vom Typ  <object class="inlineeqn">y=f(x)</object>.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="direction" type="pv:nounitVector"/>
+          <xs:element name="direction" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Richtungsvektor
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType"/>
+  <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        <object class="inlineeqn">\vy= \vf(x)</object> mit 
+        <object class="inlineeqn">y_i= \begin{cases} a_i \, \sin \left( 2 \, \pi \, f_i \, t + \varphi_i \right) \\ 0 \end{cases}</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="PositiveSinusFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="amplitude" type="pv:nounitVector"/>
-          <xs:element name="frequency" type="pv:nounitVector"/>
-          <xs:element name="phase" type="pv:nounitVector"/>
+          <xs:element name="amplitude" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Vektor der Amplituden
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="frequency" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Vektor der Frequenzen
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="phase" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Vektor der Phasenwinkel
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="StepFunction1_VS" substitutionGroup="Function1_VS" type="StepFunction1_VSType"/>
+  <xs:element name="StepFunction1_VS" substitutionGroup="Function1_VS" type="StepFunction1_VSType">
+  </xs:element>
   <xs:complexType name="StepFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="time" type="pv:nounitVector"/>
-          <xs:element name="size" type="pv:nounitVector"/>
+          <xs:element name="time" type="pv:nounitVector">
+          </xs:element>
+          <xs:element name="size" type="pv:nounitVector">
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TabularFunction1_VS" substitutionGroup="Function1_VS" type="TabularFunction1_VSType"/>
+  <xs:element name="TabularFunction1_VS" substitutionGroup="Function1_VS" type="TabularFunction1_VSType">
+  </xs:element>
   <xs:complexType name="TabularFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="x" type="pv:nounitVector"/>
-          <xs:element name="y" type="pv:nounitMatrix"/>
+          <xs:choice>
+            <xs:sequence>
+              <xs:element name="x" type="pv:nounitVector">
+              </xs:element>
+              <xs:element name="y" type="pv:nounitMatrix">
+              </xs:element>
+            </xs:sequence>
+            <xs:element name="xy" type="pv:nounitMatrix">
+            </xs:element>
+          </xs:choice>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="Function1_VS" type="PeriodicTabularFunction1_VSType"/>
+  <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="TabularFunction1_VS" type="PeriodicTabularFunction1_VSType">
+  </xs:element>
   <xs:complexType name="PeriodicTabularFunction1_VSType">
     <xs:complexContent>
-      <xs:extension base="Function1_VSType">
-        <xs:sequence>
-          <xs:element name="x" type="pv:nounitVector"/>
-          <xs:element name="y" type="pv:nounitMatrix"/>
-        </xs:sequence> 
-      </xs:extension>
+      <xs:extension base="TabularFunction1_VSType"/>
     </xs:complexContent>
   </xs:complexType>   
-  
-  <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true"/>
+
+  <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
+  </xs:element>
   <xs:complexType name="DifferentiableFunction1_VS">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0"/>
+          <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0">
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType"/>
+  <xs:element name="QuadraticFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="QuadraticFunction1_VSType">
+  </xs:element>
+  <xs:complexType name="QuadraticFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="DifferentiableFunction1_VS">
+        <xs:sequence>
+          <xs:element name="a0" type="pv:nounitVector">
+          </xs:element>
+          <xs:element name="a1" type="pv:nounitVector">
+          </xs:element>
+          <xs:element name="a2" type="pv:nounitVector">
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
+  </xs:element>
   <xs:complexType name="SinusFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
-          <xs:element name="amplitude" type="pv:nounitVector"/>
-          <xs:element name="frequency" type="pv:nounitVector"/>
-          <xs:element name="phase" type="pv:nounitVector"/>
+          <xs:element name="amplitude" type="pv:nounitVector">
+          </xs:element>
+          <xs:element name="frequency" type="pv:nounitVector">
+          </xs:element>
+          <xs:element name="phase" type="pv:nounitVector">
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PiecewisePolynom1_VS" substitutionGroup="DifferentiableFunction1_VS" type="PiecewisePolynom1_VSType"/>
+  <xs:element name="PiecewisePolynom1_VS" substitutionGroup="DifferentiableFunction1_VS" type="PiecewisePolynom1_VSType">
+  </xs:element>
   <xs:complexType name="PiecewisePolynom1_VSType">
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
-              <xs:element name="x" type="pv:nounitVector"/>
-              <xs:element name="y" type="pv:nounitMatrix"/>
+              <xs:element name="x" type="pv:nounitVector">
+              </xs:element>
+              <xs:element name="y" type="pv:nounitMatrix">
+              </xs:element>
             </xs:sequence>
             <xs:element name="xy" type="pv:nounitMatrix"/>
           </xs:choice>
           <xs:choice>
-            <xs:element name="cSplinePeriodic"/>
-            <xs:element name="cSplineNatural"/>
-            <xs:element name="piecewiseLinear"/>
+            <xs:element name="cSplinePeriodic">
+            </xs:element>
+            <xs:element name="cSplineNatural">
+            </xs:element>
+            <xs:element name="piecewiseLinear">
+            </xs:element>
           </xs:choice>
         </xs:sequence> 
       </xs:extension>
