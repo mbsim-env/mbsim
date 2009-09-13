@@ -27,11 +27,35 @@
 
 
   <xs:simpleType name="PlotFeatureType">
-    <xs:annotation>
-      <xs:documentation>
-        Bestimmt, welche Plotausgaben eingeschaltet sind.
-      </xs:documentation>
-    </xs:annotation>
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
+      jeweils mit einem vorangestellten '+' oder '-' zulässig. Ein '+' aktiviert das entsprechende
+      Plotfeature, ein '-' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
+      <dl>
+        <dt>plotRecursive</dt>
+          <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
+        <dt>separateFilePerGroup</dt>
+          <dd>Erzeugt ein eigenes H5 File für diese Gruppe [-]</dd>
+        <dt>state</dt>
+          <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
+        <dt>stateDerivative</dt>
+          <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
+        <dt>rightHandSide</dt>
+          <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
+        <dt>globalPosition</dt>
+          <dd>Globale (world) Positionen und Orientierungen plotten [-]</dd>
+        <dt>energy</dt>
+          <dd>Energie plotten [-]</dd>
+        <dt>openMBV</dt>
+          <dd>OpenMBV Visualisierung ausgeben [+]</dd>
+        <dt>generalizedLinkForce</dt>
+          <dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
+        <dt>linkKinematics</dt>
+          <dd>Kinematic der Links plotten (g, gd) [+]</dd>
+        <dt>stopVector</dt>
+          <dd>Stopvektor der Schaltpunktsuche plotten [+]</dd>
+      </dl>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="+plotRecursive"/>
       <xs:enumeration value="-plotRecursive"/>
@@ -521,13 +545,11 @@
         </ol>
         A not inline equation
         <object class="eqn">
-          <![CDATA[
-          \int_a^b\sin(x)dx +
+          <![CDATA[\int_a^b\sin(x)dx +
           \left[\begin{array}{cc}
           1 & 2 \\
           3 & 4
-          \end{array}\right]
-          ]]>
+          \end{array}\right]]]>
         </object>
         And a inline equation <object class="inlineeqn">x_a+\cos(x)</object>. And a image.
         <object class="figure" standby="4cm" data="mbsim" title="The image caption"/>
@@ -1035,7 +1057,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Ebene Kontur eines CircleHollow (= Hohlzylinders = Kreiskontur mit Kontakt innen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems.
-        <object class="figure" standby="4cm" data="figures/contour_circlehollow" title="Orientierung einer CicleHollow-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_circlehollow" title="Orientierung einer CicleHollow-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1066,7 +1088,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Ebene Kontur eines CircleSolid (= (Voll)zylinders = Kreiskontur mit Kontakt aussen). Die Kreiskontur liegt normal zur z-Achse des Referenzkoordinatensystems. 
-        <object class="figure" standby="4cm" data="figures/contour_circlesolid" title="Orientierung einer CircleSolid-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_circlesolid" title="Orientierung einer CircleSolid-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1098,7 +1120,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Kontur eines Kegelstumpfes. Hiermit kann auch ein Kegel und ein Zylinder abgedeckt werden.
         Die Symmetrieachse fällt mit der y-Achse des Referenzkoordinationsystems zusammen. Zu definierende geometrische Größen sind in der Zeichnung eingetragen.      
-        <object class="figure" standby="4cm" data="figures/contour_frustum" title="Orientierung und geometrische Größen einer Frustum-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_frustum" title="Orientierung und geometrische Größen einer Frustum-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1160,7 +1182,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Einfache, unendlich ausgedehnte Linienkontur.
         Die Linie verläuft in Richtung der y-Achse des Referenzkoordinatensystems, die Normale weist in die Richtung der x-Achse des Referenzkoordinatensystems.
-        <object class="figure" standby="4cm" data="figures/contour_line" title="Orientierung einer Line-Kontour"/>
+        <object class="figure" standby="4cm" data="contour_line" title="Orientierung einer Line-Kontour"/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1175,7 +1197,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Unendlich ausgedehnte Ebenenkontur.
         Die Ebene wird durch die y- und z-Achse des Referenzkoordinatensystems beschrieben.
-        <object class="figure" standby="4cm" data="figures/contour_plane" title="Orientierung einer Plane-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_plane" title="Orientierung einer Plane-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1189,7 +1211,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">       
         Eine Kontur, die aus einer Ebene und einem Kegelstumpf (Frustum) besteht. Die Ebene wird wie gezeichnet durch die y- und z-Achse des Referenzkoordinatensystems aufgespannt, die Rotationsachse des Kegelstumpfes ist die x-Achse des Referenzkoordinatensystems. Für eine Kegelstumpf-Höhe h&gt;0 erstreckt sich die Kegelstumpfkontur - wie gezeichnet - in Richtung der positiven x-Achse des Referenzkoordinatensystems. Rho ist der Radius der Verrundung zwischen Ebene und Kegelstumpf und am Kopf des Kegelstumpfes.
-        <object class="figure" standby="4cm" data="figures/contour_planewithfrustum" title="Orientierung einer PlaneWithFrustum-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_planewithfrustum" title="Orientierung einer PlaneWithFrustum-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1255,7 +1277,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Kontur einer Kugel.
         Der Radius r gibt den Radius der Kugel an
-        <object class="figure" standby="4cm" data="figures/contour_sphere" title="Geometrie einer Sphere-Kontour"></object>
+        <object class="figure" standby="4cm" data="contour_sphere" title="Geometrie einer Sphere-Kontour"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1551,7 +1573,7 @@
 
   <xs:element name="Function1_SS" abstract="true" type="Function1_SSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse von Funktionen vom Typ <object class="inlineeqn">y=f(x)</object>.
       </xs:documentation>
     </xs:annotation>
@@ -1560,7 +1582,7 @@
 
   <xs:element name="ConstantFunction1_SS" substitutionGroup="Function1_SS" type="ConstantFunction1_SSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert: <object class="inlineeqn">y=c</object>.
       </xs:documentation>
     </xs:annotation>
@@ -1583,8 +1605,8 @@
 
   <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\vy=f(x)</object>. Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\vy_1</object>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>. Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\boldsymbol{y}_1</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1600,8 +1622,8 @@
 
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Abstrakte Klasse von vektorwertigen Funktionen vom Typ <object class="inlineeqn">\vy=f(x)</object>.
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse von vektorwertigen Funktionen vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1620,8 +1642,8 @@
         <xs:sequence>
           <xs:element name="value" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Konstanter Funktionswert: <object class="inlineeqn">\vy=\vc</object>.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1632,8 +1654,8 @@
 
   <xs:element name="Function1_VS_from_SS" substitutionGroup="Function1_VS" type="Function1_VS_from_SSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Generiert eine Funktion vom Typ  <object class="inlineeqn">\vy=f(x)</object> durch eine Multiplikation des skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\vy=\vn \, f(x)</object>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Generiert eine Funktion vom Typ  <object class="inlineeqn">\boldsymbol{y}=f(x)</object> durch eine Multiplikation des skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{n} \, f(x)</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1646,7 +1668,7 @@
               <xs:sequence>
                 <xs:element ref="Function1_SS">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Funktion vom Typ  <object class="inlineeqn">y=f(x)</object>.
                     </xs:documentation>
                   </xs:annotation>
@@ -1668,8 +1690,8 @@
 
   <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        <object class="inlineeqn">\vy= \vf(x)</object> mit 
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        <object class="inlineeqn">\boldsymbol{y}= f(x)</object> mit 
         <object class="inlineeqn">y_i= \begin{cases} a_i \, \sin \left( 2 \, \pi \, f_i \, t + \varphi_i \right) \\ 0 \end{cases}</object>
       </xs:documentation>
     </xs:annotation>
