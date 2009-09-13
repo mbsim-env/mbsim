@@ -17,8 +17,8 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _HYDLINE_PRESSURELOSS_H_
-#define  _HYDLINE_PRESSURELOSS_H_
+#ifndef  _RIGID_LINE_PRESSURELOSS_H_
+#define  _RIGID_LINE_PRESSURELOSS_H_
 
 #include "mbsim/link.h"
 
@@ -26,24 +26,17 @@ namespace MBSim {
 
   class RigidHLine; 
   class PressureLoss;
-  class LeakagePressureLoss;
-  class VariablePressureLoss;
+  class LinePressureLoss;
+  class ClosablePressureLoss;
+  // class LeakagePressureLoss;
+  // class VariablePressureLoss;
 
-  class HydlinePressureloss : public Link {
+  /*! RigidLinePressureLoss */
+  class RigidLinePressureLoss : public Link {
     public:
-      HydlinePressureloss(const std::string &name, RigidHLine * line_);
-      ~HydlinePressureloss() {};
-      virtual std::string getType() const { return "HydlinePressureloss"; }
+      RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
+      virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void plot(double t, double dt);
-
-      // ================================
-      // Getters / Setters / Adders
-      // ================================
-      void addPressureLoss(PressureLoss * loss);
-      void setUnilateral(bool unilateral_) {assert(bilateral==false); unilateral=unilateral_; }
-      void setBilateral(bool bilateral_) {assert(unilateral==false); bilateral=bilateral_; }
-      RigidHLine * getRigidHLine() {return line; }
-      // ==== END Getters / Setters / Adders ===
 
       void init(InitStage stage);
       // ================================
@@ -101,9 +94,9 @@ namespace MBSim {
       fmatvec::Vec gdn;
       bool unilateral, bilateral;
       bool active;
-      std::vector<PressureLoss*> pressureLosses;
-      std::vector<LeakagePressureLoss*> leakagePressureLosses;
-      std::vector<VariablePressureLoss*> variablePressureLosses;
+      double pLoss;
+      LinePressureLoss * linePressureLoss;
+      ClosablePressureLoss * closablePressureLoss;
   };
 
 }

@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
   vector<string> simulationName;
 
 
-  for (int valveType=0; valveType<2; valveType++) {
+  for (int valveType=1; valveType<2; valveType++) {
     string valveTypeString = (valveType==0) ? "regularizedValves" : "cornerValves";
 
     for (int nodeType=0; nodeType<2; nodeType++) {
@@ -86,7 +86,7 @@ int main (int argc, char* argv[]) {
           dss->setgdTol(1e-9);
           dss->init();
 
-          double tEnd=1.;
+          double tEnd=.9;
           double dtPlot=5e-4;
           // if elasticNodes or regularizedValves
           double stepSizeFactor=(((nodeType==0)||(valveType==0))?1.e-2:1.);

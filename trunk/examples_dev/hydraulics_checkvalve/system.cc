@@ -1,9 +1,8 @@
 #include "system.h"
 
-#include "mbsimHydraulics/hydline.h"
-#include "mbsimHydraulics/hydnode.h"
-#include "mbsimHydraulics/hydnode_mec.h"
-#include "mbsim/userfunction.h"
+#include "mbsimHydraulics/rigid_line.h"
+#include "mbsimHydraulics/hnode.h"
+#include "mbsimHydraulics/hnode_mec.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsimHydraulics/checkvalve.h"
@@ -39,13 +38,17 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
 
   Checkvalve * lCV = new Checkvalve("lCV");
   addGroup(lCV);
+  if (unilateral)
+    lCV->setSetValued();
   lCV->setFrameOfReference(b->getFrame("ref"));
   lCV->setLineLength(.05);
   lCV->setLineDiameter(4e-3);
-  if (unilateral)
-    lCV->setLinePressureLoss(new VariablePressureLossCheckvalveGamma("CheckvalveGamma", lCV->getXOpen(), 1e-4, 6e-3, .1, M_PI/4.));
-  else
-    lCV->setLinePressureLoss(new RegularizedVariablePressureLossCheckvalveGamma("CheckvalveGamma", lCV->getXOpen(), 1e-4, 6e-3, .1, M_PI/4.));
+  GammaCheckvalveClosablePressureLoss * lCVPressureLoss = new GammaCheckvalveClosablePressureLoss();
+  lCVPressureLoss->setGamma(M_PI/4.);
+  lCVPressureLoss->setAlpha(.1);
+  lCVPressureLoss->setBallRadius(6e-3);
+  lCV->setLinePressureLoss(lCVPressureLoss);
+  lCV->setLineMinimalXOpen(1e-4);
   lCV->setBallMass(0.1);
   lCV->setSpringForceFunction(new LinearSpringDamperForce(200, 5, 5e-3));
   double c=1e5;

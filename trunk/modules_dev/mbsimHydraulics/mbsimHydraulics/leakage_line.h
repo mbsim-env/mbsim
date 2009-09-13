@@ -17,8 +17,8 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _LEAKAGE_H_
-#define  _LEAKAGE_H_
+#ifndef  _LEAKAGE_LINE_H_
+#define  _LEAKAGE_LINE_H_
 
 #include "mbsimHydraulics/hline.h"
 
@@ -27,6 +27,7 @@ namespace MBSim {
   class PlaneLeakagePressureLoss;
   class CircularLeakagePressureLoss;
 
+  /*! PlaneLeakage */
   class PlaneLeakage : public RigidHLine {
     public:
       PlaneLeakage(const std::string &name) : RigidHLine(name), hGap(0), wGap(0) {};
@@ -46,6 +47,7 @@ namespace MBSim {
       double hGap, wGap;
   };
 
+  /*! CircularLeakage */
   class CircularLeakage : public RigidHLine {
     public:
       CircularLeakage(const std::string &name) : RigidHLine(name), rI(0), rO(0), hGap(0) {}

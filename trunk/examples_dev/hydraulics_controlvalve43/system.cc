@@ -1,7 +1,7 @@
 #include "system.h"
 
-#include "mbsimHydraulics/hydnode.h"
-#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/hnode.h"
+#include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/controlvalve43.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsimControl/function_sensor.h"
@@ -12,11 +12,9 @@ using namespace fmatvec;
 
 System::System(const string &name, bool bilateral, bool unilateral) : Group(name) {
   
-  Controlvalve43 * cv;
+  Controlvalve43 * cv = new Controlvalve43("Valve43");
   if (unilateral)
-    cv = new Controlvalve43("Valve43");
-  else
-    cv = new RegularizedControlvalve43("Valve43");
+    cv->setSetValued();
   addGroup(cv);
   cv->setLength(.05);
   cv->setDiameter(2e-3);

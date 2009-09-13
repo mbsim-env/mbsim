@@ -1,12 +1,31 @@
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: schneidm@users.berlios.de
+ */
+
 #include "config.h"
 #include "mbsimHydraulics/objectfactory.h"
-#include "mbsimHydraulics/hydline.h"
+#include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/pressure_loss.h"
-#include "mbsimHydraulics/hydnode_mec.h"
+#include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/controlvalve43.h"
 #include "mbsimHydraulics/checkvalve.h"
-#include "mbsimHydraulics/hydleakage.h"
+#include "mbsimHydraulics/leakage_line.h"
 
 using namespace std;
 

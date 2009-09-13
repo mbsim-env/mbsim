@@ -66,6 +66,8 @@ namespace MBSim {
                                                      }
 
   DynamicSystem::~DynamicSystem() {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      delete *i;
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       delete *i;
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)

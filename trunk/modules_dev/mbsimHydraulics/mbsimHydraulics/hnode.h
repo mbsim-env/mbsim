@@ -17,8 +17,8 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#ifndef  _HYDNODE_H_
-#define  _HYDNODE_H_
+#ifndef  _HNODE_H_
+#define  _HNODE_H_
 
 #include "mbsim/link.h"
 #include "mbsim/utils/function.h"
@@ -42,6 +42,7 @@ namespace MBSim {
     bool inflow;
   };
 
+  /*! HNode */
   class HNode : public Link {
     public:
       HNode(const std::string &name);
@@ -93,6 +94,7 @@ namespace MBSim {
   };
 
 
+  /*! ConstrainedNode */
   class ConstrainedNode : public HNode {
     public:
       ConstrainedNode(const std::string &name) : HNode(name), pFun(NULL) {}
@@ -109,6 +111,7 @@ namespace MBSim {
   };
 
 
+  /*! EnvironmentNode */
   class EnvironmentNode : public HNode {
     public:
       EnvironmentNode(const std::string &name) : HNode(name) {}
@@ -118,6 +121,7 @@ namespace MBSim {
   };
 
 
+  /*! ElasticNode */
   class ElasticNode : public HNode {
     public:
       ElasticNode(const std::string &name) : HNode(name), V(0), E(0), fracAir(0), p0(0), bulkModulus(NULL) {}
@@ -148,6 +152,7 @@ namespace MBSim {
   };
 
 
+  /*! RigidNode */
   class RigidNode : public HNode {
     public:
       RigidNode(const std::string &name) : HNode(name), gdn(0) {};

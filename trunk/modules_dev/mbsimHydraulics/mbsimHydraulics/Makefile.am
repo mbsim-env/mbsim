@@ -3,18 +3,20 @@ SUBDIRS =  .
 lib_LTLIBRARIES = libmbsimHydraulics.la
 libmbsimHydraulics_la_LDFLAGS = -version-info @LIBMBSIMHYDRAULICS_VERSION_INFO@
 libmbsimHydraulics_la_SOURCES = \
-  hydline.cc \
-  hydline_galerkin.cc \
-  hydnode.cc \
-  hydnode_mec.cc \
-	hline.cc \
-  objectfactory.cc \
   environment.cc \
+  hline.cc \
+  rigid_line.cc \
+	rigid_line_pressureloss.cc \
+  hnode.cc \
+  hnode_mec.cc \
   pressure_loss.cc \
-	hydline_pressureloss.cc \
 	controlvalve43.cc \
-	checkvalve.cc \
-	hydleakage.cc
+	checkvalve.cc
+
+#	checkvalve.cc 
+#  elastic_line_galerkin.cc 
+#	leakage_line.cc 
+#  objectfactory.cc 
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
@@ -22,15 +24,17 @@ LDADD = $(DEPS_LIBS)
 
 mbsimHydraulicsincludedir = $(includedir)/mbsimHydraulics
 mbsimHydraulicsinclude_HEADERS = \
-  hydline.h \
-  hydline_galerkin.h \
-  hydnode.h \
-  hydnode_mec.h \
-  hline.h \
-  objectfactory.h \
   environment.h \
+  hline.h \
+  rigid_line.h \
+	rigid_line_pressureloss.h \
+  hnode.h \
+  hnode_mec.h \
   pressure_loss.h \
-	hydline_pressureloss.h \
 	controlvalve43.h \
-	checkvalve.h \
-	hydleakage.h
+	checkvalve.h
+
+#	checkvalve.cc 
+#  elastic_line_galerkin.cc 
+#	leakage_line.cc 
+#  objectfactory.cc 
