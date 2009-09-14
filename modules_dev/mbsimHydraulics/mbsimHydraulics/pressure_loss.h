@@ -69,14 +69,14 @@ namespace MBSim {
   /*! PressureLossCurveFit */
   class CurveFittedLinePressureLoss : public LinePressureLoss {
     public:
-      CurveFittedLinePressureLoss() : LinePressureLoss(), dRef(0), dHyd(0), aPos(0), bPos(0), aNeg(0), bNeg(0), Re(0), ReynoldsFactor(0) {}
+      CurveFittedLinePressureLoss() : LinePressureLoss(), dRef(0), dHyd(0), aPos(0), bPos(0), aNeg(0), bNeg(0), ReynoldsFactor(0) {}
       void setFactors(double aPos_, double bPos_, double aNeg_, double bNeg_, double dRef_, double dHyd_) { aPos=aPos_; bPos=bPos_; aNeg=aNeg_; bNeg=bNeg_; dRef=dRef_; dHyd=dHyd_; }
       double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
       double dRef, dHyd;
       double aPos, bPos, aNeg, bNeg;
-      double Re, ReynoldsFactor;
+      double ReynoldsFactor;
   };
 
 
