@@ -59,7 +59,7 @@ namespace MBSim {
       bool gActiveChanged() {return false; }
       void init(InitStage stage) {}
       void updateg(double t) {}
-      void updategd(double t) {body->setDynamicColor((l->getSignal()->getSignal()(0)<l->getMinimalValue())?.9:.1); }
+      void updategd(double t) {body->setDynamicColor((l->isClosed())?.9:.1); }
       void plot(double t, double dt) {}
     private:
       OpenMBV::DynamicColoredBody * body;
@@ -88,13 +88,13 @@ namespace MBSim {
   void Checkvalve::setLineDiameter(double lDiameter) {line->setDiameter(lDiameter); }
   void Checkvalve::setLinePressureLoss(CheckvalveClosablePressureLoss * ccpl) {line->setClosablePressureLoss(ccpl); }
   void Checkvalve::setLineMinimalXOpen(double x) {line->setMinimalValue(x); }
+  void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
   void Checkvalve::setSpringForceFunction(Function2<double,double,double> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
   void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
   void Checkvalve::setMaximalContactImpactLaw(GeneralizedImpactLaw * GIL) {maxContact->setContactImpactLaw(GIL); }
   void Checkvalve::setMaximalContactForceLaw(GeneralizedForceLaw * GFL) {maxContact->setContactForceLaw(GFL); }
-  void Checkvalve::setSetValued(bool setValued) {line->setBilateral(setValued); }
 
   void Checkvalve::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -204,10 +204,16 @@ namespace MBSim {
     setLineLength(getDouble(ee));
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setLineDiameter(getDouble(ee));
-    ee = e->FirstChildElement(MBSIMHYDRAULICSNS"ccpl");
-    CheckvalveClosablePressureLoss * ccpl_=(CheckvalveClosablePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-    ccpl_->initializeUsingXML(ee->FirstChildElement());
+    ee = e->FirstChildElement(MBSIMHYDRAULICSNS"checkvalvePressureLoss");
+    TiXmlElement * eee = ee->FirstChildElement();
+    CheckvalveClosablePressureLoss * ccpl_=(CheckvalveClosablePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(eee));
+    ccpl_->initializeUsingXML(eee);
     setLinePressureLoss(ccpl_);
+    eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"minimalXOpen");
+    setLineMinimalXOpen(Element::getDouble(eee));
+    eee = ee->FirstChildElement(MBSIMHYDRAULICSNS"setValued");
+    if (eee)
+      setLineSetValued(true);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Ball");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"mass");
     setBallMass(getDouble(ee));

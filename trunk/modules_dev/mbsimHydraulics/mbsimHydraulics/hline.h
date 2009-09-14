@@ -27,6 +27,7 @@ namespace MBSim {
   class HNode;
   class HydlinePressureloss;
   class PressureLoss;
+  class Signal;
 
   /*! HLine */
   class HLine : public Object {
@@ -58,6 +59,7 @@ namespace MBSim {
 
       void init(InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
+      Signal * getSignalByPath(std::string path);
 
     protected:
       HNode * nFrom;

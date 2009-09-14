@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsimControl/signal_.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -44,6 +45,19 @@ namespace MBSim {
     Object::initializeUsingXML(element);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"direction");
     setDirection(getVec(e,3));
+  }
+
+  Signal * HLine::getSignalByPath(string path) {
+    int pos=path.find("Signal");
+    path.erase(pos, 6);
+    path.insert(pos, "Link");
+    Link * s = getLinkByPath(path);
+    if (dynamic_cast<Signal *>(s))
+      return static_cast<Signal *>(s);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
+      _exit(1);
+    }
   }
  
 

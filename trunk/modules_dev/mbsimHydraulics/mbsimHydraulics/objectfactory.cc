@@ -44,38 +44,28 @@ namespace MBSim {
 
   Function1<double, double> * HydraulicsObjectFactory::createFunction1_SS(TiXmlElement * element) {
     if (element==0) return 0;
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"PressureLossZeta")
-      return new PressureLossZeta(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"PressureLossLaminarTubeFlow")
-      return new PressureLossLaminarTubeFlow(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"PressureLossCurveFit")
-      return new PressureLossCurveFit(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossAreaZeta")
-      return new VariablePressureLossAreaZeta(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossAreaZeta")
-      return new RegularizedVariablePressureLossAreaZeta(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossControlvalveAreaAlpha")
-      return new VariablePressureLossControlvalveAreaAlpha(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossControlvalveAreaAlpha")
-      return new RegularizedVariablePressureLossControlvalveAreaAlpha(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossCheckvalveGamma")
-      return new VariablePressureLossCheckvalveGamma(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveGamma")
-      return new RegularizedVariablePressureLossCheckvalveGamma(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossCheckvalveIdelchick")
-      return new VariablePressureLossCheckvalveIdelchick(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveIdelchick")
-      return new RegularizedVariablePressureLossCheckvalveIdelchick(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"VariablePressureLossCheckvalveCone")
-      return new VariablePressureLossCheckvalveCone(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedVariablePressureLossCheckvalveCone")
-      return new RegularizedVariablePressureLossCheckvalveCone(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
+      return new ZetaLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
+      return new LaminarTubeFlowLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"CurveFittedLinePressureLoss")
+      return new CurveFittedLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
+      return new RelativeAreaZetaClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
+      return new RelativeAlphaClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")
+      return new GammaCheckvalveClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"IdelchickCheckvalveClosablePressureLoss")
+      return new IdelchickCheckvalveClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ConeCheckvalveClosablePressureLoss")
+      return new ConeCheckvalveClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakagePressureLoss")
-      return new PlaneLeakagePressureLoss(element->Attribute("name"));
+      return new PlaneLeakagePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"EccentricCircularLeakagePressureLoss")
-      return new EccentricCircularLeakagePressureLoss(element->Attribute("name"));
+      return new EccentricCircularLeakagePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
-      return new RealCircularLeakagePressureLoss(element->Attribute("name"));
+      return new RealCircularLeakagePressureLoss();
   }
 
 
@@ -83,10 +73,12 @@ namespace MBSim {
     if (element==0) return 0;
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RigidLine")
       return new RigidLine(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakage")
-      return new PlaneLeakage(element->Attribute("name"));
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakage")
-      return new CircularLeakage(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ClosableRigidLine")
+      return new ClosableRigidLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakageLine")
+      return new PlaneLeakageLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakageLine")
+      return new CircularLeakageLine(element->Attribute("name"));
     return 0;
   }
 
@@ -125,8 +117,6 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"Controlvalve43")
       return new Controlvalve43(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMHYDRAULICSNS"RegularizedControlvalve43")
-      return new RegularizedControlvalve43(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"BallCheckvalve")
       return new Checkvalve(element->Attribute("name"));
     return 0;

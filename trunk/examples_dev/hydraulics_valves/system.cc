@@ -33,7 +33,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   addLink(l23s);
   l23s->setFunction(new TabularFunction1_VS(Vec("[0; .19; .21; .29; .31; .69; .71; .79; .81; 1]"), "[0;   0;   1;   1;   0;  0;    1;   1; 0; 0]"));
   l23->setSignal(l23s);
-  l23->setMinValue(.01);
+  l23->setMinimalValue(.01);
   if (unilateral)
     l23->setBilateral();
   RelativeAreaZetaClosablePressureLoss * pl23 = new RelativeAreaZetaClosablePressureLoss();

@@ -36,11 +36,13 @@ namespace MBSim {
       bool initialized;
   };
 
+
   /*! LinePressureLoss */
   class LinePressureLoss : public PressureLoss {
     public:
       LinePressureLoss() : PressureLoss() {}
   };
+
 
   /*! LinePressureLossZeta */
   class ZetaLinePressureLoss : public LinePressureLoss {
@@ -53,6 +55,7 @@ namespace MBSim {
       double c;
   };
 
+
   /*! PressureLossLaminarTubeFlow */
   class LaminarTubeFlowLinePressureLoss : public LinePressureLoss {
     public:
@@ -61,6 +64,7 @@ namespace MBSim {
     private:
       double c;
   };
+
 
   /*! PressureLossCurveFit */
   class CurveFittedLinePressureLoss : public LinePressureLoss {
@@ -106,6 +110,7 @@ namespace MBSim {
       double alpha, alpha2, c;
   };
 
+
   /*! VariablePressureLossCheckvalve */
   class CheckvalveClosablePressureLoss : public ClosablePressureLoss {
     public:
@@ -117,6 +122,7 @@ namespace MBSim {
     protected:
       double rBall;
   };
+
 
   /*! VariablePressureLossCheckvalveGamma */
   class GammaCheckvalveClosablePressureLoss : public CheckvalveClosablePressureLoss {
@@ -132,7 +138,6 @@ namespace MBSim {
   };
 
 
-
   /*! VariablePressureLossCheckvalveIdelchick */
   class IdelchickCheckvalveClosablePressureLoss : public CheckvalveClosablePressureLoss {
     public:
@@ -141,6 +146,7 @@ namespace MBSim {
     private:
       double d0, c;
   };
+
 
   /*! VariablePressureLossCheckvalveCone */
   class ConeCheckvalveClosablePressureLoss : public CheckvalveClosablePressureLoss {
@@ -153,72 +159,54 @@ namespace MBSim {
       double alpha;
       double numer[2], denom[2], c;
   };
+  
+  
+  /*! LeakagePressureLoss */
+  class LeakagePressureLoss : public PressureLoss {
+    public:
+      LeakagePressureLoss() : PressureLoss() {}
+  };
 
 
-//  /*! LeakagePressureLoss */
-//  class LeakagePressureLoss : public PressureLoss {
-//    public:
-//      LeakagePressureLoss(const std::string &name) : PressureLoss(name), qfac(0), xdfac(0), dpQ(0), dpxd(0), s1v(0), s2v(0), gl(0), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
-//      void setSurface1Velocity(Signal * s1v_) {s1vSignal=s1v_; }
-//      void setSurface2Velocity(Signal * s2v_) {s2vSignal=s2v_; }
-//      void setGapLength(Signal * gl_) {glSignal=gl_; }
-//      virtual void init(InitStage stage, std::vector<std::string> * plotColumns=NULL);
-//      void update(const double &Q);
-//      void plot(std::vector<double>* plotVector);
-//      void initializeUsingXML(TiXmlElement *element);
-//    protected:
-//      double qfac, xdfac;
-//      double dpQ, dpxd;
-//      double s1v, s2v, gl;
-//      Signal *s1vSignal, *s2vSignal, *glSignal;
-//    private:
-//      std::string s1vPath, s2vPath, glPath;
-//  };
-//
-//
-//  /*! PlaneLeakagePressureLoss */
-//  class PlaneLeakagePressureLoss : public LeakagePressureLoss {
-//    public:
-//      PlaneLeakagePressureLoss(const std::string &name) : LeakagePressureLoss(name) {}
-//      virtual void init(InitStage stage, std::vector<std::string> * plotColumns=NULL);
-//      double operator()(const double& Q, const void * =NULL);
-//  };
-//  
-//
-//  /*! CircularLeakagePressureLoss */
-//  class CircularLeakagePressureLoss : public LeakagePressureLoss {
-//    public:
-//      CircularLeakagePressureLoss(const std::string &name) : LeakagePressureLoss(name), rI(0), rO(0), hGap(0) {}
-//      virtual void init(InitStage stage, std::vector<std::string> * plotColumns=NULL);
-//    protected:
-//      double rI, rO, hGap;
-//  };
-//
-//
-//  /*! EccentricCircularLeakagePressureLoss */
-//  class EccentricCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
-//    public:
-//      EccentricCircularLeakagePressureLoss(const std::string &name) : CircularLeakagePressureLoss (name) {}
-//      void setEccentricity(double ecc_) {ecc=ecc_; }
-//      virtual void init(InitStage stage, std::vector<std::string> * plotColumns=NULL);
-//      double operator()(const double& Q, const void * =NULL);
-//      void initializeUsingXML(TiXmlElement *element);
-//    private:
-//      double ecc;
-//  };
-//
-//
-//  /*! RealCircularLeakagePressureLoss */
-//  class RealCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
-//    public:
-//      RealCircularLeakagePressureLoss(const std::string &name) : CircularLeakagePressureLoss(name) {}
-//      virtual void init(InitStage stage, std::vector<std::string> * plotColumns=NULL);
-//      double operator()(const double& Q, const void * =NULL);
-//    private:
-//      double vIfac, vOfac, vIOfac;
-//  };
-//
-//
+  /*! PlaneLeakagePressureLoss */
+  class PlaneLeakagePressureLoss : public LeakagePressureLoss {
+    public:
+      PlaneLeakagePressureLoss() : LeakagePressureLoss(), qfac(0), xdfac(0) {}
+      double operator()(const double& Q, const void * line);
+    private:
+      double qfac, xdfac;
+  };
+  
+
+  /*! CircularLeakagePressureLoss */
+  class CircularLeakagePressureLoss : public LeakagePressureLoss {
+    public:
+      CircularLeakagePressureLoss() : LeakagePressureLoss() {}
+  };
+
+
+  /*! EccentricCircularLeakagePressureLoss */
+  class EccentricCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
+    public:
+      EccentricCircularLeakagePressureLoss() : CircularLeakagePressureLoss (), ecc(0), qfac(0), xdfac(0) {}
+      void setEccentricity(double ecc_) {ecc=ecc_; }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double ecc, qfac, xdfac;
+  };
+
+
+  /*! RealCircularLeakagePressureLoss */
+  class RealCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
+    public:
+      RealCircularLeakagePressureLoss() : CircularLeakagePressureLoss(), pVfac(0), vIfac(0), vOfac(0) {}
+      double operator()(const double& Q, const void * line);
+    private:
+      double pVfac, vIfac, vOfac;
+  };
+
+
 //  //  class PositiveFlowLimittingPressureLoss : public VariablePressureLoss {
 //  //    public:
 //  //      PositiveFlowLimittingPressureLoss(const std::string &name, Signal * checkSizeSignal) : VariablePressureLoss(name, checkSizeSignal) {}

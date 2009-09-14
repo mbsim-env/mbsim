@@ -17,7 +17,7 @@
   <scalarParameter name="hpcV0">33e-8</scalarParameter>
   <scalarParameter name="pistonHeight">1e-2</scalarParameter>
   <scalarParameter name="gapLength">5.5e-3</scalarParameter>
-  <scalarParameter name="gapDiameter">5e-6</scalarParameter>
+  <scalarParameter name="gapDiameter">20e-6</scalarParameter>
 
   <scalarParameter name="A">5e-5</scalarParameter>
   <scalarParameter name="f">100</scalarParameter>

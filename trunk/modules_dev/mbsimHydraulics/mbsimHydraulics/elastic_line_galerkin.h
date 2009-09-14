@@ -68,8 +68,8 @@ namespace MBSim {
       fmatvec::Vec getOutflowFactor() {return Area*wA; }
 
       void init(InitStage stage);
-      void calcqSize();
-      void calcuSize(int j);
+      void calcqSize() {qSize=mdim; }
+      void calcuSize(int j) {uSize[j]=mdim; }
 
       void updateStateDependentVariables(double t);
       void updateh(double t);

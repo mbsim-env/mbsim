@@ -89,6 +89,7 @@ namespace MBSim {
       double getDynamicViscosity() {return nu*rho; }
   };
 
+  /*! OilBulkModulus */
   class OilBulkModulus {
     public:
       OilBulkModulus(const std::string &name, double E0, double pinf, double kappa, double fracAir) {

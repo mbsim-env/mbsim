@@ -11,12 +11,10 @@ libmbsimHydraulics_la_SOURCES = \
   hnode_mec.cc \
   pressure_loss.cc \
 	controlvalve43.cc \
-	checkvalve.cc
-
-#	checkvalve.cc 
-#  elastic_line_galerkin.cc 
-#	leakage_line.cc 
-#  objectfactory.cc 
+	checkvalve.cc \
+	leakage_line.cc \
+  elastic_line_galerkin.cc \
+  objectfactory.cc 
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
@@ -32,9 +30,8 @@ mbsimHydraulicsinclude_HEADERS = \
   hnode_mec.h \
   pressure_loss.h \
 	controlvalve43.h \
-	checkvalve.h
+	checkvalve.h \
+	leakage_line.h \
+  elastic_line_galerkin.h \
+  objectfactory.h
 
-#	checkvalve.cc 
-#  elastic_line_galerkin.cc 
-#	leakage_line.cc 
-#  objectfactory.cc 

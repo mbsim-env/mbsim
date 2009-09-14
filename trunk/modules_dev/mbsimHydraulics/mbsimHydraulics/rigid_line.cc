@@ -26,15 +26,12 @@
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsimControl/signal_.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
-
-  RigidLine::~RigidLine() {
-//    if (pL) { delete pL; pL=NULL; }
-  }
 
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -63,8 +60,12 @@ namespace MBSim {
   }
 
 
-  ClosableRigidLine::~ClosableRigidLine() {
-//    if (cpL) {delete cpL; cpL=NULL; }
+  bool ClosableRigidLine::isClosed() const {
+   return (cpLSignal->getSignal()(0)<cpLMinValue);
+  }
+
+  double ClosableRigidLine::getRegularizedValue() const {
+    return isClosed()?cpLMinValue:cpLSignal->getSignal()(0);
   }
 
   void ClosableRigidLine::init(InitStage stage) {
@@ -86,12 +87,10 @@ namespace MBSim {
   void ClosableRigidLine::initializeUsingXML(TiXmlElement * element) {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e;
-//    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-//    setDiameter(getDouble(e));
-//    e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-//    LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
-//    setLinePressureLoss(p);
-//    p->initializeUsingXML(e->FirstChildElement());
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"closableLinePressureLoss");
+    ClosablePressureLoss *p=(ClosablePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    setClosablePressureLoss(p);
+    p->initializeUsingXML(e->FirstChildElement());
   }
 }
 

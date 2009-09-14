@@ -2,6 +2,6 @@
 <TimeSteppingIntegrator xmlns="http://mbsim.berlios.de/MBSimIntegrator">
   <startTime>0</startTime>
   <endTime>1e-1</endTime>
-  <plotStepSize>1e-4</plotStepSize>
+  <plotStepSize>5e-7*500</plotStepSize>
   <stepSize>5e-7</stepSize> 
 </TimeSteppingIntegrator>

@@ -45,6 +45,7 @@ namespace MBSim {
       void setLineDiameter(double lDiameter);
       void setLinePressureLoss(CheckvalveClosablePressureLoss * ccpl);
       void setLineMinimalXOpen(double xMin);
+      void setLineSetValued(bool setValued=true);
       void setBallMass(double mBall_);
       void setSpringForceFunction(Function2<double,double,double> *func);
       void setSeatContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
@@ -52,7 +53,6 @@ namespace MBSim {
       void setMaximalOpening(double hMax_) {hMax=hMax_; }
       void setMaximalContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
       void setMaximalContactForceLaw(GeneralizedForceLaw * seatGFL_);
-      void setSetValued(bool setValued=true);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBVFrames(bool openMBVFrames_=true) {openMBVFrames=openMBVFrames_; }
       void enableOpenMBVArrows(bool openMBVArrows_=true) {openMBVArrows=openMBVArrows_; }
@@ -79,8 +79,6 @@ namespace MBSim {
       Contact * maxContact;
       SpringDamper * spring;
       GeneralizedCoordinateSensor * xOpen;
-//      Frame * ref;
-//      CheckvalveClosablePressureLoss * ccpl;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;
       std::string refFrameString;
