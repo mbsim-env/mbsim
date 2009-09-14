@@ -4,7 +4,6 @@ AC_INIT([mbsimxml],[1.0.0],[mafriedrich@users.berlios.de])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([mbsimxml/mbsimflatxml.cc])
-#####AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
@@ -12,15 +11,28 @@ AC_LANG([C++])
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
 
 
+dnl Check for xslt
+AC_ARG_WITH([xsltprocpath],
+  [  --with-xsltproc-path=PATHTOXSLTPROC  The path to the 'xsltproc' program.],
+  [xsltprocpath="$withval"],[xsltprocpath=""])
+AC_PATH_PROG([xsltproc],[xsltproc],[no],[$xsltprocpath:$prefix/bin:$PATH])
+test $xsltproc = "no" && AC_MSG_ERROR([xsltproc not found])
+AC_SUBST([XSLTPROC],[$xsltproc])
+
+dnl Check for xmllint
+AC_ARG_WITH([xmllintpath],
+  [  --with-xmllint-path=PATHTOXMLLINT  The path to the 'xmllint' program.],
+  [xmllintpath="$withval"],[xmllintpath=""])
+AC_PATH_PROG([xmllint],[xmllint],[no],[$xmllintpath:$prefix/bin:$PATH])
+test $xmllint = "no" && AC_MSG_ERROR([xmllint not found])
+AC_SUBST([XMLLINT],[$xmllint])
+
+
 
 dnl XML
-#####PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils,[requires="$requires mbxmlutils"; MBXMLUTILS=yes],[MBXMLUTILS=no])
-#####AM_CONDITIONAL([COND_MBXMLUTILS], [test "_$MBXMLUTILS" = "_yes"])
 AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
 AC_SUBST([MBSIMXMLSCHEMA],[$datadir/$PACKAGE/schema])
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
-#####AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-#####AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
 
 dnl Helper functions to convert path to windows
 dirtowin() {
@@ -76,10 +88,15 @@ fi
 
 
 
+dnl MBXMLUtilsDOCDIR
+MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
+AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
+
+
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsim_root.xsd schema/Makefile])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsim_root.xsd schema/Makefile xmldoc/Makefile])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
 AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
 
