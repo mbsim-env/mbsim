@@ -356,7 +356,7 @@
         <xs:sequence>
           <xs:element name="diameter" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="pressureLoss">
+          <xs:element name="linePressureLoss">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="LinePressureLoss"/>
@@ -639,7 +639,7 @@
   </xs:element>
   <xs:complexType name="Controlvalve43Type">
     <xs:complexContent>
-      <xs:extension base="mbsim:GroupType">
+      <xs:extension base="mbsim:EmptyGroupType">
         <xs:sequence>
           <xs:element name="frameOfReference">
             <xs:complexType>
@@ -661,6 +661,7 @@
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="minimalRelativeArea" type="pv:nounitScalar"/>
+                <xs:element name="setValued" minOccurs="0"/>
                 <xs:element name="offset" type="pv:nounitScalar"/>
               </xs:sequence>
             </xs:complexType>
@@ -694,7 +695,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0">
+                <xs:element name="linePressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Zuleitung zu P
@@ -733,7 +734,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0">
+                <xs:element name="linePressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von A
@@ -772,7 +773,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0">
+                <xs:element name="linePressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von B
@@ -811,7 +812,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0">
+                <xs:element name="linePressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von T
@@ -826,7 +827,6 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="setValued"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

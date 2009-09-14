@@ -47,11 +47,11 @@ namespace MBSim {
 
   double LaminarTubeFlowLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
-      double nu=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
       double d=((const RigidLine*)(line))->getDiameter();
       double l=((const RigidLine*)(line))->getLength();
       double area=M_PI*d*d/4.;
-      c=32.*nu*l/d/d/area;
+      c=32.*eta*l/d/d/area;
       initialized=true;
     }
     return c*Q;
@@ -59,11 +59,12 @@ namespace MBSim {
 
   double CurveFittedLinePressureLoss::operator()(const double &Q, const void * line) {
     if (!initialized) {
-      double eta=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      ReynoldsFactor=dHyd/(M_PI*dRef*dRef/4.)/eta;
+      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double areaRef=M_PI*dRef*dRef/4.;
+      ReynoldsFactor=dHyd/areaRef/nu;
       initialized=true;
     }
-    Re=ReynoldsFactor*Q; 
+    const double Re=ReynoldsFactor*Q; 
     return Re*((Re>0)?aPos+bPos*Re:aNeg-bNeg*Re); 
   }
 
