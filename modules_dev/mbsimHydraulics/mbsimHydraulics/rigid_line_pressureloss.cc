@@ -35,6 +35,8 @@ namespace MBSim {
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
     else if (dynamic_cast<ClosablePressureLoss*>(pressureLoss))
       closablePressureLoss = (ClosablePressureLoss*)(pressureLoss);
+    else if (dynamic_cast<LeakagePressureLoss*>(pressureLoss))
+      leakagePressureLoss = (LeakagePressureLoss*)(pressureLoss);
   }
 
   void RigidLinePressureLoss::plot(double t, double dt) {
@@ -172,13 +174,9 @@ namespace MBSim {
       pLoss=(*linePressureLoss)(line->getu()(0), line);
     else if (closablePressureLoss)
       pLoss=(*closablePressureLoss)(line->getu()(0), line);
+    else if (leakagePressureLoss)
+      pLoss=(*leakagePressureLoss)(line->getu()(0), line);
     h[0](0)-=pLoss;
-    // for (unsigned int i=0; i<pressureLosses.size(); i++)
-    //   h[0](0)-=(*pressureLosses[i])(line->getu()(0));
-    // for (unsigned int i=0; i<leakagePressureLosses.size(); i++)
-    //   h[0](0)-=(*leakagePressureLosses[i])(line->getu()(0));
-    // for (unsigned int i=0; i<variablePressureLosses.size(); i++)
-    //   h[0](0)-=(*variablePressureLosses[i])(line->getu()(0));
   }
 
   void RigidLinePressureLoss::updateW(double t) {

@@ -28,8 +28,7 @@ namespace MBSim {
   class PressureLoss;
   class LinePressureLoss;
   class ClosablePressureLoss;
-  // class LeakagePressureLoss;
-  // class VariablePressureLoss;
+  class LeakagePressureLoss;
 
   /*! RigidLinePressureLoss */
   class RigidLinePressureLoss : public Link {
@@ -97,6 +96,7 @@ namespace MBSim {
       double pLoss;
       LinePressureLoss * linePressureLoss;
       ClosablePressureLoss * closablePressureLoss;
+      LeakagePressureLoss * leakagePressureLoss;
   };
 
 }

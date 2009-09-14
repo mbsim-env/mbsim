@@ -14,14 +14,14 @@
       <h:RigidLine>
         <h:length>.001</h:length>
         <h:diameter>2*cvRadius</h:diameter>
-        <h:pressureLoss>
-          <h:VariablePressureLossCheckvalveCone name="ConeType">
-            <h:checksizeSignal ref="../Group[Checkvalve]/Signal[xOpen]"/>
-            <h:minimalChecksizeValue>5e-5</h:minimalChecksizeValue>
+        <h:checkvalvePressureLoss>
+          <h:ConeCheckvalveClosablePressureLoss>
             <h:ballRadius>cvBallRadius</h:ballRadius>
             <h:alpha>cvAlpha</h:alpha>
-          </h:VariablePressureLossCheckvalveCone>
-        </h:pressureLoss>
+          </h:ConeCheckvalveClosablePressureLoss>
+          <h:minimalXOpen>5e-5</h:minimalXOpen>
+          <h:setValued/>
+        </h:checkvalvePressureLoss>
       </h:RigidLine>
       <h:Ball>
         <h:mass>cvBallMass</h:mass>
@@ -94,9 +94,7 @@
       <inertiaTensor>eye(3)</inertiaTensor>
       <translation>
         <LinearTranslation>
-          <translationVectors>
-            [0;1;0]
-          </translationVectors>
+          <translationVectors>[0;1;0]</translationVectors>
         </LinearTranslation>
       </translation>
       <rotation/>
@@ -152,19 +150,6 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <!--
-    <h:RigidLine name="circularLeakage">
-      <frameOfReference ref="../Frame[I]"/>
-      <h:direction>[0;1;0]</h:direction>
-      <h:length>.1</h:length>
-      <h:diameter>.0001</h:diameter>
-      <h:pressureLoss>
-        <h:PressureLossZeta name="zeta">
-          <h:zeta>7</h:zeta>
-        </h:PressureLossZeta>
-      </h:pressureLoss>
-    </h:RigidLine>
-    -->
-    <!--
     <h:CircularLeakage name="circularLeakage">
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
       <h:direction>[0;1;0]</h:direction>
@@ -181,19 +166,18 @@
       </h:pressureLoss>
     </h:CircularLeakage>
     -->
-    <h:CircularLeakage name="circularLeakage">
+    <h:CircularLeakageLine name="circularLeakage">
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
       <h:direction>[0;1;0]</h:direction>
       <h:length>gapLength</h:length>
+      <h:firstSurfaceVelocity ref="../Signal[pistonSpeed]"/>
+      <h:secondSurfaceVelocity ref="../Signal[housingSpeed]"/>
       <h:innerRadius>pistonRadius</h:innerRadius>
       <h:height>gapDiameter</h:height>
-      <h:pressureLoss>
-        <h:RealCircularLeakagePressureLoss name="loss">
-          <h:firstSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[pistonSpeed]"/>
-          <h:secondSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[housingSpeed]"/>
-        </h:RealCircularLeakagePressureLoss>
-      </h:pressureLoss>
-    </h:CircularLeakage>
+      <h:circularLeakagePressureLoss>
+        <h:RealCircularLeakagePressureLoss/>
+      </h:circularLeakagePressureLoss>
+    </h:CircularLeakageLine>
   </objects>
   <links>
     <SpringDamper name="PistonSpring">
@@ -267,7 +251,7 @@
       <h:enableOpenMBVArrows>
         <h:size>.001</h:size>
       </h:enableOpenMBVArrows>
-      <h:initialPressure>1e5</h:initialPressure>
+      <h:initialPressure>5e5</h:initialPressure>
       <h:fracAir>.02</h:fracAir>
     </h:ElasticNodeMec>
   </links>

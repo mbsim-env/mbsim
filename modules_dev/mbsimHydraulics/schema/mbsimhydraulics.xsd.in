@@ -83,7 +83,7 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="PressureLoss" abstract="true" type="PressureLossType">
+  <xs:element name="PressureLoss" abstract="true" substitutionGroup="mbsim:Function1_SS" type="PressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse zur Berechnung von Druckverlusten
@@ -91,7 +91,9 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="PressureLossType">
-    <xs:attribute name="name" type="pv:name" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="mbsim:Function1_SSType"/>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="LinePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="LinePressureLossType">
@@ -102,7 +104,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PressureLossZeta" substitutionGroup="LinePressureLoss" type="PressureLossZetaType">
+  <xs:element name="ZetaLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste.<br/>
@@ -111,7 +113,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PressureLossZetaType">
+  <xs:complexType name="ZetaLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
@@ -127,7 +129,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PressureLossLaminarTubeFlow" substitutionGroup="LinePressureLoss" type="PressureLossLaminarTubeFlowType">
+  <xs:element name="LaminarTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="LaminarTubeFlowLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Druckverluste aufgrund laminarer Rohrströmung.<br/>
@@ -136,13 +138,13 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PressureLossLaminarTubeFlowType">
+  <xs:complexType name="LaminarTubeFlowLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PressureLossCurveFit" substitutionGroup="LinePressureLoss" type="PressureLossCurveFitType">
+  <xs:element name="CurveFittedLinePressureLoss" substitutionGroup="LinePressureLoss" type="CurveFittedLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Für hydraulische Bauteile einer gewissen Komplexität sind die Druckverlustfaktoren aus tabellarischen Naschlagewerken oft nur sehr ungenau bis gar nicht zu bestimmen. Dagegen kann für jedes Bauteil durch eine Messung bzw. CFD-Simulation der Druckverlust in Abhängigkeit der Reynoldszahl bestimmt werden. Die Reynoldszahl sollte hierbei möglichst im Bezug auf den engsten Querschnitt als Referenzquerschnitt <object class="inlineeqn">A_r</object> mit dem hydraulischen Durchmesser <object class="inlineeqn">D_H</object> bestimmt werden <br/>
@@ -161,7 +163,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="PressureLossCurveFitType">
+  <xs:complexType name="CurveFittedLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
@@ -176,26 +178,23 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="VariablePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="VariablePressureLossType"/>
-  <xs:complexType name="VariablePressureLossType">
+  <xs:element name="ClosablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="ClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung von Druckverlusten mit veränderlichen Koeffizienten und einer Sperrmöglichkeit.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="LinePressureLossType">
-        <xs:sequence>
-          <xs:element name="checksizeSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="minimalChecksizeValue" type="pv:nounitScalar"/>
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="PressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="VariablePressureLossAreaZeta" substitutionGroup="VariablePressureLoss" type="VariablePressureLossAreaZetaType"/>
-  <xs:complexType name="VariablePressureLossAreaZetaType">
+  <xs:element name="RelativeAreaZetaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAreaZetaClosablePressureLossType"/>
+  <xs:complexType name="RelativeAreaZetaClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossType">
+      <xs:extension base="ClosablePressureLossType">
         <xs:sequence>
           <xs:element name="zeta" type="pv:nounitScalar"/>
         </xs:sequence>
@@ -203,17 +202,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RegularizedVariablePressureLossAreaZeta" substitutionGroup="VariablePressureLossAreaZeta" type="RegularizedVariablePressureLossAreaZetaType"/>
-  <xs:complexType name="RegularizedVariablePressureLossAreaZetaType">
+  <xs:element name="RelativeAlphaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAlphaClosablePressureLossType"/>
+  <xs:complexType name="RelativeAlphaClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossAreaZetaType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="VariablePressureLossControlvalveAreaAlpha" substitutionGroup="VariablePressureLoss" type="VariablePressureLossControlvalveAreaAlphaType"/>
-  <xs:complexType name="VariablePressureLossControlvalveAreaAlphaType">
-    <xs:complexContent>
-      <xs:extension base="VariablePressureLossType">
+      <xs:extension base="ClosablePressureLossType">
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar"/>
         </xs:sequence>
@@ -221,17 +213,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RegularizedVariablePressureLossControlvalveAreaAlpha" substitutionGroup="VariablePressureLossControlvalveAreaAlpha" type="RegularizedVariablePressureLossControlvalveAreaAlphaType"/>
-  <xs:complexType name="RegularizedVariablePressureLossControlvalveAreaAlphaType">
+  <xs:element name="CheckvalveClosablePressureLoss" abstract="true" substitutionGroup="ClosablePressureLoss" type="CheckvalveClosablePressureLossType"/>
+  <xs:complexType name="CheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossControlvalveAreaAlphaType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="VariablePressureLossCheckvalve" abstract="true" substitutionGroup="VariablePressureLoss" type="VariablePressureLossCheckvalveType"/>
-  <xs:complexType name="VariablePressureLossCheckvalveType">
-    <xs:complexContent>
-      <xs:extension base="VariablePressureLossType">
+      <xs:extension base="ClosablePressureLossType">
         <xs:sequence>
           <xs:element name="ballRadius" type="pv:nounitScalar"/>
         </xs:sequence>
@@ -239,10 +224,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="VariablePressureLossCheckvalveGamma" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveGammaType"/>
-  <xs:complexType name="VariablePressureLossCheckvalveGammaType">
+  <xs:element name="GammaCheckvalveClosablePressureLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="GammaCheckvalveClosablePressureLossType"/>
+  <xs:complexType name="GammaCheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveType">
+      <xs:extension base="CheckvalveClosablePressureLossType">
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar"/>
           <xs:element name="gamma" type="pv:nounitScalar"/>
@@ -251,31 +236,17 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RegularizedVariablePressureLossCheckvalveGamma" substitutionGroup="VariablePressureLossCheckvalveGamma" type="RegularizedVariablePressureLossCheckvalveGammaType"/>
-  <xs:complexType name="RegularizedVariablePressureLossCheckvalveGammaType">
+  <xs:element name="IdelchickCheckvalveClosablePressreLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressreLossType"/>
+  <xs:complexType name="IdelchickCheckvalveClosablePressreLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveGammaType"/>
+      <xs:extension base="CheckvalveClosablePressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="VariablePressureLossCheckvalveIdelchick" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveIdelchickType"/>
-  <xs:complexType name="VariablePressureLossCheckvalveIdelchickType">
+  <xs:element name="ConeCheckvalveClosablePressureLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="ConeCheckvalveClosablePressureLossType"/>
+  <xs:complexType name="ConeCheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="RegularizedVariablePressureLossCheckvalveIdelchick" substitutionGroup="VariablePressureLossCheckvalveIdelchick" type="RegularizedVariablePressureLossCheckvalveIdelchickType"/>
-  <xs:complexType name="RegularizedVariablePressureLossCheckvalveIdelchickType">
-    <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveIdelchickType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="VariablePressureLossCheckvalveCone" substitutionGroup="VariablePressureLossCheckvalve" type="VariablePressureLossCheckvalveConeType"/>
-  <xs:complexType name="VariablePressureLossCheckvalveConeType">
-    <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveType">
+      <xs:extension base="CheckvalveClosablePressureLossType">
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar"/>
         </xs:sequence>
@@ -283,36 +254,11 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RegularizedVariablePressureLossCheckvalveCone" substitutionGroup="VariablePressureLossCheckvalveCone" type="RegularizedVariablePressureLossCheckvalveConeType"/>
-  <xs:complexType name="RegularizedVariablePressureLossCheckvalveConeType">
-    <xs:complexContent>
-      <xs:extension base="VariablePressureLossCheckvalveConeType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="LeakagePressureLoss" substitutionGroup="PressureLoss" abstract="true" type="LeakagePressureLossType">
   </xs:element>
   <xs:complexType name="LeakagePressureLossType">
     <xs:complexContent>
-      <xs:extension base="PressureLossType">
-        <xs:sequence>
-          <xs:element name="firstSurfaceVelocity" minOccurs="0">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="secondSurfaceVelocity" minOccurs="0">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="gapLength" minOccurs="0">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="PressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -410,7 +356,7 @@
         <xs:sequence>
           <xs:element name="diameter" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="pressureLoss">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="LinePressureLoss"/>
@@ -422,17 +368,68 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="PlaneLeakage" substitutionGroup="RigidHLine" type="PlaneLeakageType">
+  <xs:element name="ClosableRigidLine" substitutionGroup="RigidLine" type="ClosableRigidLineType">
   </xs:element>
-  <xs:complexType name="PlaneLeakageType">
+  <xs:complexType name="ClosableRigidLineType">
+    <xs:complexContent>
+      <xs:extension base="RigidLineType">
+        <xs:sequence>
+          <xs:element name="closablePressureLoss">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="ClosablePressureLoss"/>
+                <xs:element name="checksizeSignal">
+                  <xs:complexType>
+                    <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="minimalChecksizeValue"/>
+                <xs:element name="setValued"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LeakageLine" substitutionGroup="RigidHLine" type="LeakageLineType">
+  </xs:element>
+  <xs:complexType name="LeakageLineType">
     <xs:complexContent>
       <xs:extension base="RigidHLineType">
+        <xs:sequence>
+          <xs:element name="firstSurfaceVelocity" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondSurfaceVelocity" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="gapLength" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PlaneLeakageLine" substitutionGroup="LeakageLine" type="PlaneLeakageLineType">
+  </xs:element>
+  <xs:complexType name="PlaneLeakageLineType">
+    <xs:complexContent>
+      <xs:extension base="LeakageLineType">
         <xs:sequence>
           <xs:element name="width" type="pv:lengthScalar">
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="planeLeakagePressureLoss">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="PlaneLeakagePressureLoss"/>
@@ -444,17 +441,17 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CircularLeakage" substitutionGroup="RigidHLine" type="CircularLeakageType">
+  <xs:element name="CircularLeakageLine" substitutionGroup="LeakageLine" type="CircularLeakageLineType">
   </xs:element>
-  <xs:complexType name="CircularLeakageType">
+  <xs:complexType name="CircularLeakageLineType">
     <xs:complexContent>
-      <xs:extension base="RigidHLineType">
+      <xs:extension base="LeakageLineType">
         <xs:sequence>
           <xs:element name="innerRadius" type="pv:lengthScalar">
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="circularLeakagePressureLoss">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="CircularLeakagePressureLoss"/>
@@ -638,7 +635,7 @@
   </xs:complexType>
 
 
-  <xs:element name="Controlvalve43" substitutionGroup="mbsim:Group" type="Controlvalve43Type">
+  <xs:element name="Controlvalve43" substitutionGroup="mbsim:EmptyGroup" type="Controlvalve43Type">
   </xs:element>
   <xs:complexType name="Controlvalve43Type">
     <xs:complexContent>
@@ -697,7 +694,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="pressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Zuleitung zu P
@@ -736,7 +733,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="pressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von A
@@ -775,7 +772,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="pressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von B
@@ -814,7 +811,7 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss" minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="pressureLoss" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Druckverluste in der Ableitung von T
@@ -829,16 +826,9 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="setValued"/>
         </xs:sequence>
       </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="RegularizedControlvalve43" substitutionGroup="Controlvalve43" type="RegularizedControlvalve43Type">
-  </xs:element>
-  <xs:complexType name="RegularizedControlvalve43Type">
-    <xs:complexContent>
-      <xs:extension base="Controlvalve43Type"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -899,13 +889,27 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="pressureLoss">
+                <xs:element name="checkvalvePressureLoss">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="VariablePressureLossCheckvalve">
+                      <xs:element ref="CheckvalveClosablePressureLoss">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Druckverlust des Rückschlagventils.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="minimalXOpen" type="pv:lengthScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Numerische Schranke für die minimale Öffnungshöhe des Kugelventils.
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="setValued" minOccurs="0">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Berechnung des Rückschlagventils mit einem Eckengesetz.
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>

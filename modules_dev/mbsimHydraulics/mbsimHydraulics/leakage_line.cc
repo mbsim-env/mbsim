@@ -18,70 +18,113 @@
  */
 
 #include "mbsimHydraulics/leakage_line.h"
+#include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/pressure_loss.h"
+#include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsimControl/signal_.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  void PlaneLeakage::init(InitStage stage) {
-    if (stage==MBSim::preInit) {  
+  double LeakageLine::getGapLength() const {
+    return ((glSignal)?glSignal->getSignal()(0):length);
+  }
+
+  double LeakageLine::getSurface1Velocity() const {
+    return ((s1vSignal)?s1vSignal->getSignal()(0):0);
+  }
+
+  double LeakageLine::getSurface2Velocity() const {
+    return ((s2vSignal)?s2vSignal->getSignal()(0):0);
+  }
+
+  void LeakageLine::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
       RigidHLine::init(stage);
-      Mlocal.resize(1, INIT, rho*length/hGap/wGap);
+      if (s1vPath!="")
+        setSurface1VelocitySignal(getSignalByPath(s1vPath));
+      if (s2vPath!="")
+        setSurface2VelocitySignal(getSignalByPath(s2vPath));
+      if (glPath!="")
+        setGapLengthSignal(getSignalByPath(glPath));
+    }
+    else if (stage==MBSim::modelBuildup) {
+      parent->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));
+      RigidHLine::init(stage);
     }
     else
       RigidHLine::init(stage);
   }
 
-  void PlaneLeakage::addPressureLoss(PlaneLeakagePressureLoss * dp) {
-    RigidHLine::addPressureLoss(dp);
+  void LeakageLine::initializeUsingXML(TiXmlElement * element) {
+    RigidHLine::initializeUsingXML(element);
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"firstSurfaceVelocity");
+    if (e)
+      s1vPath=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"secondSurfaceVelocity");
+    if (e)
+      s2vPath=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"gapLength");
+    if (e)
+      glPath=e->Attribute("ref");
   }
 
-  void PlaneLeakage::initializeUsingXML(TiXmlElement * element) {
-    RigidHLine::initializeUsingXML(element);
+
+  void PlaneLeakageLine::setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl) {
+    lpl=plpl;
+  }
+
+  void PlaneLeakageLine::init(InitStage stage) {
+    if (stage==MBSim::preInit) {  
+      LeakageLine::init(stage);
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      Mlocal.resize(1, INIT, rho*length/hGap/wGap);
+    }
+    else
+      LeakageLine::init(stage);
+  }
+
+  void PlaneLeakageLine::initializeUsingXML(TiXmlElement * element) {
+    LeakageLine::initializeUsingXML(element);
     TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"width");
     setGapWidth(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
-    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
-      addPressureLoss(static_cast<PlaneLeakagePressureLoss*>(p));
-      p->initializeUsingXML(e->FirstChildElement());
-      e=e->NextSiblingElement();
-    }
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
+    PlaneLeakagePressureLoss *p=(PlaneLeakagePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    setPlaneLeakagePressureLoss(p);
+    p->initializeUsingXML(e->FirstChildElement());
   }
 
 
-  void CircularLeakage::init(InitStage stage) {
+  void CircularLeakageLine::setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl) {
+    lpl=clpl;
+  }
+
+  void CircularLeakageLine::init(InitStage stage) {
     if (stage==MBSim::preInit) {  
       rO=rI+hGap;
-      RigidHLine::init(stage);
+      LeakageLine::init(stage);
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/(M_PI*(rO*rO-rI*rI)));
     }
     else
-      RigidHLine::init(stage);
+      LeakageLine::init(stage);
   }
 
-  void CircularLeakage::addPressureLoss(CircularLeakagePressureLoss * dp) {
-    RigidHLine::addPressureLoss(dp);
-  }
-
-  void CircularLeakage::initializeUsingXML(TiXmlElement * element) {
-    RigidHLine::initializeUsingXML(element);
+  void CircularLeakageLine::initializeUsingXML(TiXmlElement * element) {
+    LeakageLine::initializeUsingXML(element);
     TiXmlElement * e = element->FirstChildElement(MBSIMHYDRAULICSNS"innerRadius");
     setInnerRadius(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
-    e = element->FirstChildElement(MBSIMHYDRAULICSNS"pressureLoss");
-    while (e && e->ValueStr()==MBSIMHYDRAULICSNS"pressureLoss") {
-      PressureLoss *p=(PressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
-      addPressureLoss(static_cast<CircularLeakagePressureLoss*>(p));
-      p->initializeUsingXML(e->FirstChildElement());
-      e=e->NextSiblingElement();
-    }
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
+    CircularLeakagePressureLoss *p=(CircularLeakagePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    setCircularLeakagePressureLoss(p);
+    p->initializeUsingXML(e->FirstChildElement());
   }
 
 }

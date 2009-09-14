@@ -26,6 +26,8 @@ using namespace fmatvec;
 namespace MBSim {
 
   Signal * getSignalByPath(DynamicSystem * ds,  const std::string& cpath) {
+    std::cout << "You are using Method \"Signal * getSignalByPath(DynamicSystem * ds,  const std::string& cpath)\"." << std::endl;
+    std::cout << "THIS METHOD IS OBSOLETE..." << std::endl;
     std::string path=cpath;
     int pos=path.find("Signal");
     path.erase(pos, 6);

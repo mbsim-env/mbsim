@@ -24,49 +24,71 @@
 
 namespace MBSim {
 
+  class LeakagePressureLoss;
   class PlaneLeakagePressureLoss;
   class CircularLeakagePressureLoss;
+  class Signal;
 
-  /*! PlaneLeakage */
-  class PlaneLeakage : public RigidHLine {
+  /*! LeakageLine */
+  class LeakageLine : public RigidHLine {
     public:
-      PlaneLeakage(const std::string &name) : RigidHLine(name), hGap(0), wGap(0) {};
-      virtual std::string getType() const { return "PlaneLeakage"; }
+      LeakageLine(const std::string &name) : RigidHLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
+      virtual std::string getType() const { return "LeakageLine"; }
+
+      void setGapLengthSignal(Signal * s) {glSignal=s; }
+      double getGapLength() const;
+      void setSurface1VelocitySignal(Signal * s) {s1vSignal=s; }
+      double getSurface1Velocity() const;
+      void setSurface2VelocitySignal(Signal * s) {s2vSignal=s; }
+      double getSurface2Velocity() const;
 
       void init(InitStage stage);
 
+      void initializeUsingXML(TiXmlElement * element);
+    protected:
+      LeakagePressureLoss * lpl;
+    private:
+      Signal *s1vSignal, *s2vSignal, *glSignal;
+      std::string s1vPath, s2vPath, glPath;
+  };
+
+  /*! PlaneLeakageLine */
+  class PlaneLeakageLine : public LeakageLine {
+    public:
+      PlaneLeakageLine(const std::string &name) : LeakageLine(name), hGap(0), wGap(0) {};
+      virtual std::string getType() const { return "PlaneLeakageLine"; }
+
       void setGapWidth(double wGap_) {wGap=wGap_; }
-      double getGapWidth() {return wGap; }
+      double getGapWidth() const {return wGap; }
       void setGapHeight(double hGap_) {hGap=hGap_; }
-      double getGapHeight() {return hGap; }
-      void addPressureLoss(PlaneLeakagePressureLoss * dp);
+      double getGapHeight() const {return hGap; }
+      void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
+
+      void init(InitStage stage);
 
       void initializeUsingXML(TiXmlElement * element);
-
     private:
       double hGap, wGap;
   };
 
-  /*! CircularLeakage */
-  class CircularLeakage : public RigidHLine {
+  /*! CircularLeakageLine */
+  class CircularLeakageLine : public LeakageLine {
     public:
-      CircularLeakage(const std::string &name) : RigidHLine(name), rI(0), rO(0), hGap(0) {}
-      virtual std::string getType() const { return "CircularLeakage"; }
+      CircularLeakageLine(const std::string &name) : LeakageLine(name), rI(0), rO(0), hGap(0) {}
+      virtual std::string getType() const { return "CircularLeakageLine"; }
+
+      void setInnerRadius(double rI_) {rI=rI_; }
+      double getInnerRadius() const {return rI; }
+      void setGapHeight(double hGap_) {hGap=hGap_; }
+      double getGapHeight() const {return hGap; }
+      double getOuterRadius() const {return rO; }
+      void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
       void init(InitStage stage);
 
-      void setInnerRadius(double rI_) {rI=rI_; }
-      double getInnerRadius() {return rI; }
-      void setGapHeight(double hGap_) {hGap=hGap_; }
-      double getGapHeight() {return hGap; }
-      double getOuterRadius() {return rO; }
-      void addPressureLoss(CircularLeakagePressureLoss * dp);
-
       void initializeUsingXML(TiXmlElement * element);
-
     private:
       double rI, rO, hGap;
-
   };
 
 }

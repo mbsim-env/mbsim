@@ -30,7 +30,6 @@ namespace MBSim {
   class RigidLine : public RigidHLine {
     public:
       RigidLine(const std::string &name) : RigidHLine(name), diameter(0), pL(NULL) {}
-      ~RigidLine();
       virtual std::string getType() const { return "RigidLine"; }
 
       void setDiameter(double diameter_) {diameter=diameter_; }
@@ -53,17 +52,18 @@ namespace MBSim {
   class ClosableRigidLine : public RigidLine {
     public:
       ClosableRigidLine(const std::string &name) : RigidLine(name), cpL(NULL), cpLSignal(NULL), cpLMinValue(0), cpLUnilateral(false), cpLBilateral(false) {}
-      ~ClosableRigidLine();
       virtual std::string getType() const { return "ClosableRigidLine"; }
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
+      ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
       void setSignal(Signal * s) {cpLSignal = s; }
+      Signal * getSignal() const {return cpLSignal; }
       void setMinimalValue(double v) {cpLMinValue=v; }
+      double getMinimalValue() const {return cpLMinValue; }
       void setUnilateral(bool u=true) {cpLUnilateral=u; }
       void setBilateral(bool b=true) {cpLBilateral=b; }
-      Signal * getSignal() const {return cpLSignal; }
-      double getMinimalValue() const {return cpLMinValue; }
-      ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
+      bool isClosed() const;
+      double getRegularizedValue() const;
 
       void init(InitStage stage);
 

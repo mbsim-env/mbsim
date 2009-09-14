@@ -201,6 +201,9 @@ namespace MBSim {
     setPARelativeAreaFunction(relAreaPA_);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
     setMinimalRelativeArea(getDouble(ee));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"setValued");
+    if (ee)
+      setSetValued(true);
     ee=e->FirstChildElement(MBSIMHYDRAULICSNS"offset");
     setOffset(getDouble(ee));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");

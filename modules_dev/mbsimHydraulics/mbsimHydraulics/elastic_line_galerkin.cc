@@ -60,19 +60,10 @@ namespace MBSim {
     MatIntWSWST=ansatz->MatIntWSWST();
   };
 
-  void ElasticLineGalerkin::calcqSize() {
-    qSize=mdim;
-  }
-
-  void ElasticLineGalerkin::calcuSize(int j) {
-    uSize[j]=mdim;
-  }
-
   void ElasticLineGalerkin::init(InitStage stage) {
     if (stage==MBSim::preInit) {
       HLine::init(stage);
       Area=M_PI*d*d/4.;
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       if (direction.size()>0)
         g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
       else
@@ -82,12 +73,15 @@ namespace MBSim {
       double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
       OilBulkModulus bulkModulus(name, E0, pinf, kappa, fracAir);
       E=bulkModulus(p0);
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       k=rho*g*delta_h/l;
       MFac=Area*rho*MatIntWWT;
       K=Area*E*MatIntWSWST;
     }
     else if (stage==MBSim::resize) {
       HLine::init(stage);
+      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       phi.resize(mdim, mdim);
       lambda.resize(mdim);
       if (eigvec(K, MFac, phi, lambda)) {
@@ -137,7 +131,7 @@ namespace MBSim {
     else if (stage==MBSim::unknownStage) {
       HLine::init(stage);
       setInitialGeneralizedVelocity(inv(MatIntWWT)*WInt*Q0); 
-//      plotParameters();
+      //      plotParameters();
     }
     else
       HLine::init(stage);
@@ -171,26 +165,25 @@ namespace MBSim {
     }
   }
 
-    void ElasticLineGalerkin::plotParameters() {
-      cout << "mdim=" << mdim << endl;
-      cout << "rho=" << rho << endl;
-      cout << "g=" << g << endl;
-      cout << "E=" << E << endl;
-      cout << "k=" << k << endl;
-      cout << "WInt=" << WInt << endl;
-      cout << "wA=" << wA << endl;
-      cout << "wE=" << wE << endl;
-      cout << "MatIntWWT=" << MatIntWWT << endl;
-      cout << "MatIntWSWST=" << MatIntWSWST << endl;
-      cout << "M=" << MFac << endl;
-      cout << "K=" << K << endl;
-      cout << "D=" << D << endl;
-      cout << "lambda=" << lambda << endl;
-      cout << "Omega=" << Omega << endl;
-      cout << "phi=" << phi << endl;
-      cout << "N=" << N << endl;
-      cout << "plotVecW=" << plotVecW << endl;
-      cout << "plotVecWS=" << plotVecWS << endl;
-    }
+  void ElasticLineGalerkin::plotParameters() {
+    cout << "mdim=" << mdim << endl;
+    cout << "g=" << g << endl;
+    cout << "E=" << E << endl;
+    cout << "k=" << k << endl;
+    cout << "WInt=" << WInt << endl;
+    cout << "wA=" << wA << endl;
+    cout << "wE=" << wE << endl;
+    cout << "MatIntWWT=" << MatIntWWT << endl;
+    cout << "MatIntWSWST=" << MatIntWSWST << endl;
+    cout << "M=" << MFac << endl;
+    cout << "K=" << K << endl;
+    cout << "D=" << D << endl;
+    cout << "lambda=" << lambda << endl;
+    cout << "Omega=" << Omega << endl;
+    cout << "phi=" << phi << endl;
+    cout << "N=" << N << endl;
+    cout << "plotVecW=" << plotVecW << endl;
+    cout << "plotVecWS=" << plotVecWS << endl;
+  }
 
 }
