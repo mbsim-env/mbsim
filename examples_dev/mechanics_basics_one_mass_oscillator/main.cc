@@ -12,8 +12,8 @@ int main (int argc, char* argv[])
   // add modules to overall dynamical system 
   sys->init();
 
-  DOPRI5Integrator integrator;
-
+  TimeSteppingIntegrator integrator;
+  integrator.setStepSize(1e-4);
   integrator.setEndTime(10.0);
   integrator.setPlotStepSize(1e-3);
 
