@@ -44,7 +44,7 @@
     <ul>
       <li><b><a class="namespace" href="../{translate(/xs:schema/@targetNamespace,'.:/','___')}/index.xhtml"><xsl:value-of select="/xs:schema/@targetNamespace"/></a></b></li>
       <xsl:for-each select="/xs:schema/xs:import">
-        <xsl:sort name="@namespace"/>
+        <xsl:sort select="@namespace"/>
         <li><a class="namespace" href="../{translate(@namespace,'.:/','___')}/index.xhtml"><xsl:value-of select="@namespace"/></a></li>
       </xsl:for-each>
     </ul>
@@ -53,7 +53,7 @@
     <ul class="content">
       <xsl:apply-templates mode="CONTENT" select="$NODES/xs:schema/xs:element[not(@substitutionGroup)]">
         <xsl:with-param name="NODES" select="$NODES"/>
-        <xsl:sort name="@name"/>
+        <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
 
@@ -61,7 +61,7 @@
     <ul class="content">
       <xsl:apply-templates mode="CONTENT" select="$NODES/xs:schema/xs:simpleType">
         <xsl:with-param name="NODES" select="$NODES"/>
-        <xsl:sort name="@name"/>
+        <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
     </body></html>
@@ -80,7 +80,7 @@
         <ul class="content">
           <xsl:apply-templates mode="CONTENT" select="$NODES/xs:schema/xs:element[concat('{',namespace::*[name()=substring-before(../@substitutionGroup,':')],'}',translate(substring(@substitutionGroup,string-length(substring-before(@substitutionGroup,':'))+1),':',''))=concat('{',$NS,'}',$NAME)]">
             <xsl:with-param name="NODES" select="$NODES"/>
-            <xsl:sort name="@name"/>
+            <xsl:sort select="@name"/>
           </xsl:apply-templates>
         </ul>
       </xsl:if>
