@@ -3,14 +3,34 @@
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
   xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
   xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:annotation>
-    <xs:documentation>
-      Write here a introcution to MBSim (kernel and mechanics)
+    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      MBSim ist ein Simulationstool zur Analyse von dynamischen Systemen. Die Basis von MBSim liegt
+      in der Modellierung von nichtglatten dynamischen Systemen, woraus der Name des Programms stammt.
+      Der mathematische Hintergrund wurde über Jahre hinweg am Lehrstuhl für Angewandte Mechanik der
+      Technischen Universität München entwickelt. Eine Übersicht über derartige Mehrkörpersysteme
+      ist in der Doktorarbeit und dem Vorlesungsskript von Martin Förg [1,2] zu finden. Roland Zander
+      erweiterte das System um flexible Körper [3]. In [4] ist ein Überblick über die Forschung am
+      Lehrstuhl für Angewandte Mechanik während der letzten Jahrzehnte auf dem Gebiet der
+      nichtglatten Mechanik gegeben. Dort sind auch Simulationsergebnisse von akademischen und
+      industriellen Beispielen gegeben. Erweiterungen bezüglich Hydraulik und Regelungstechnik sowie
+      Parallelisierung und Co-Simulation sind ebenfalls gegeben.
+      <ol>
+        <li>Martin Förg. <i>Mehrkörpersysteme mit mengenwertigen Kraftgesetzen - Theorie und Numerik.</i>
+          PhD thesis, TU München, 2007.</li>
+        <li>Martin Förg. <i>Mehrkörpersimulation - Vorlesungsskript</i>, München, 2006, Version 19.06.2008.</li>
+        <li>Roland Zander. <i>Flexible Multibody Systems with Set-Valued Force Laws.</i> PhD thesis,
+          TU München, 2008.</li>
+        <li>Roland Zander, Thorsten Schindler, Markus Friedrich, Robert Huber, Martin Förg, and Heinz
+          Ulbrich. <i>Non-smooth dynamics in academia and industry: recent work at TU München.</i>
+          Acta Mechanica, 195:167–183, 2008.</li>
+      </ol>
     </xs:documentation>
   </xs:annotation>
 
@@ -29,8 +49,8 @@
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
       Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
-      jeweils mit einem vorangestellten '+' oder '-' zulässig. Ein '+' aktiviert das entsprechende
-      Plotfeature, ein '-' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
+      jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
+      Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
       <dl>
         <dt>plotRecursive</dt>
           <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
@@ -84,6 +104,11 @@
 
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> im aktuellen Kontext.
+      Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
+      zu referenzierenden Frames darstellt.
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="Frame\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -94,6 +119,13 @@
 
   <!-- A reference to a Frame at the parent -->
   <xs:simpleType name="ParentFrameReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> des Vorgängers
+      des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
+      <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
+      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+      Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="\.\./Frame\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -104,6 +136,20 @@
 
   <!-- A reference from a Link|Object|ExtraDynamicSystem to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> an beliebiger
+      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
+      <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+      <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
+      <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
+      <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann der <tt>Frame Z</tt> des
+      <tt>Object's Y</tt> ausgewählt werden oder der <tt>Frame Z</tt> der <tt>Group</tt> wenn die Angabe von
+      <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
+      in diesem Fall beginnt die Referenzierung beim obersten Element
+      (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+      Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Frame\[X\]|Object\[X\]/Frame\[X\])" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -114,6 +160,20 @@
 
   <!-- A reference form a Link|Object|ExtraDynamicSystem to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einer <tt><a class="link" href="mbsim:Contour">&lt;Contour&gt;</a></tt> an beliebiger
+      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
+      <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+      <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
+      <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
+      <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann die <tt>Contour Z</tt> des
+      <tt>Object's Y</tt> ausgewählt werden oder die <tt>Contour Z</tt> der <tt>Group</tt> wenn die Angabe von
+      <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
+      in diesem Fall beginnt die Referenzierung beim obersten Element
+      (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+      Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Contour\[X\]|Object\[X\]/Contour\[X\])" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -124,6 +184,18 @@
 
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
   <xs:simpleType name="ObjectReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Object">&lt;Object&gt;</a></tt> an beliebiger
+      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
+      <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+      kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
+      kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+      Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
+      Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+      obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+      Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Object\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -134,6 +206,18 @@
 
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
   <xs:simpleType name="ContactReferenceType">
+    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Contact">&lt;Contact&gt;</a></tt> an beliebiger
+      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
+      <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+      kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt> kann
+      beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+      Element-Namen <tt>X</tt>. Als letzter Pfadteil wird der <tt>Contact Y</tt> ausgewählt. Alternativ kann die
+      Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+      obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+      Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Contact\[X\]" with
              X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
@@ -144,34 +228,43 @@
 
 
 
-  <xs:element name="Element" abstract="true" type="ElementType"/>
+  <xs:element name="Element" abstract="true" type="ElementType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      <p>Abstraktes (Top-Level) Basis Element von MBSim.</p>
+      <p>Das Attribut <tt>name</tt> gibt den Namen des Elements an. Dieser Name wird für die Referenzierung des
+         Elements benötig. Die Plotausgaben verwenden ebenfalls diese Namen.</p>
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="ElementType">
     <xs:sequence> <!-- a workaround for xmllint -->
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="plotFeature">  
+          <xs:annotation><xs:documentation xml:lang="de">
+            Definiert die Plotfeatures für dieses Element.
+          </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
           </xs:complexType> 
         </xs:element>  
-        <xs:element name="plotFeatureForChildren">  
+        <xs:element name="plotFeatureForChildren">
+          <xs:annotation><xs:documentation xml:lang="de">
+            Definiert die Plotfeatures für alle Kindelement.
+          </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
           </xs:complexType> 
         </xs:element>  
         <xs:element name="plotFeatureRecursive">  
+          <xs:annotation><xs:documentation xml:lang="de">
+            Definiert die Plotfeatures für diese Element und alle Kindelement.
+          </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
           </xs:complexType> 
         </xs:element>  
       </xs:choice> 
     </xs:sequence> <!-- a workaround for xmllint -->
-    <xs:attribute name="name" type="pv:name" use="required">
-      <xs:annotation>
-        <xs:documentation xml:lang="de">
-          Name des Elements
-        </xs:documentation>
-      </xs:annotation>
-    </xs:attribute>
+    <xs:attribute name="name" type="pv:name" use="required"/>
   </xs:complexType> 
 
   <xs:element name="EmptyGroup" abstract="true" substitutionGroup="Element" type="EmptyGroupType"/>
@@ -185,22 +278,16 @@
   <xs:element name="frame" type="frameType">
     <xs:annotation>
       <xs:documentation xml:lang="de">
-        lokale Gruppe eines Koordinatensystems.
+        Lokale Gruppe eines Koordinatensystems.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="frameType"> <!-- use global type for parsing by the documentation generator -->
     <xs:sequence>
-      <xs:element ref="Frame">
-        <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Definition eines Koordinatensystems.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element ref="Frame"/>
       <xs:element name="frameOfReference" minOccurs="0">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
           </xs:documentation>
         </xs:annotation>
@@ -210,15 +297,16 @@
       </xs:element>
       <xs:element name="position" type="pv:lengthVector">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Relative Lage des Koordinatensystems.
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Lage des Koordinatensystems. Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
+            im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="orientation" type="pv:nounitMatrix">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Relative Orientierung des Koordinatensystems.
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Orientierung des Koordinatensystems. Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -230,19 +318,13 @@
   <xs:element name="contour" type="contourType">
     <xs:annotation>
       <xs:documentation xml:lang="de">
-        lokale Gruppe einer Kontaktkontur
+        Lokale Gruppe einer Kontaktkontur.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="contourType"> <!-- use global type for parsing by the documentation generator -->
     <xs:sequence>
-      <xs:element ref="Contour">
-        <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Definition einer Kontaktkontur.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element ref="Contour"/>
       <xs:element name="frameOfReference" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de">
@@ -255,15 +337,16 @@
       </xs:element>
       <xs:element name="position" type="pv:lengthVector">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Relative Lager der Kontour.
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Lage der Kontour. Vektor von <tt>frameOfReference</tt> zum Ursprung des Contoureigenen KOS dargestellt
+            im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="orientation" type="pv:nounitMatrix">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
-            Relative Orientierung der Kontour.
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Relative Orientierung der Contour. Transformationsmatrix vom Contoureigenen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
