@@ -1,31 +1,134 @@
 \section{\MBSim - Program Overview}
-\MBSim{} is written in the object-orientated programming language C++. 
-
-Fig.~\ref{fig:objects} shows a class diagram.
+\MBSim{} is written in the object-oriented programming language C++. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and the use of self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
+\MBSim{} can handle a set of dynamical systems from various domains not only separated but also exchanging data of the form
+\begin{align*}
+\dot{\vq}&=\vT\vu\\
+\vM\dot{\vu}&=\vh\left(\vq,\vu,t\right)+\vW\vlambda\\
+\dot{\vx}&=\vf\left(\vx\right)\\
+&\mathcal{\vN}\left(\vq,\vu,t\right)
+\end{align*}
+A typical example of a dynamical system only from mechanics is given by Fig.~\ref{fig:objects}.
 \begin{figure}
 	\centering
-  	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} % TODO
+    
+    \psfrag{Body}{\textsf{\small body}}
+    \psfrag{Frame}{\textsf{\small frame}}
+    \psfrag{Contour}{\textsf{\small contour}}
+    \psfrag{Joint}{\textsf{\small joint}}
+    \psfrag{Contact}{\textsf{\small contact}}
+    \psfrag{Load}{\put(-5.0,+5.0){\textsf{\small kinetic excitation}}}
+  	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} 
   	\caption{object structure in \MBSim}
   	\label{fig:objects}
 \end{figure}
-Exemplary this is a dynamical system with environment and two bodies. Indicated are interconnections due to contacts and joints as well as an external load.\par
-A body is defined with respect to its generalised coordinates and velocities, contacts between contours and joints between frames may be rigid or flexible also including friction. The definition of loads might include arbitrary functional descriptions.
+One has the environment and two bodies holding the inertia terms. Indicated are interconnecting links due to contacts between body contours giving also the possibility to model friction and ideal joints between body frames as well as an external kinetic excitation acting on a body frame. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following to have an easier begin with \MBSim{}.
 
 \subsection{Description of the Components}
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
 
 \subsubsection{DynamicSystem and DynamicSystemSolver}
-Hierarchically frames, bodies and interconnections belong to \texttt{DynamicSystem}s. For their definitions a canonic stationary frame \texttt{"I"} always exists. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation). Important settings: \emph{setReorganizeHierarchy} enforces the automatic creation of an invisible tree structures for the simulation process
+Hierarchically bodies and links belong to \texttt{DynamicSystem}s. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
+Important settings: 
+\begin{itemize}
+\item[] \texttt{setReorganizeHierarchy}\\
+    enforces the automatic creation of invisible tree structures only for simulation depending on the hierarchy of frames used for modelling 
+\item[] \texttt{setConstraintSolver}\\
+    solver for constraint equations on acceleration level (cf. \emph{setImpactSolver})
+\item[] \texttt{setImpactSolver}\\
+    solver for constraint equations on velocity level; available constraint equation solution schemes are
+    \begin{itemize}
+        \item[] \texttt{LinearEquations}\\
+        Cholesky solution scheme for regular linear systems (only bilateral constraints)
+        \item[] \texttt{GaussSeidel}\\
+        Gauss-Seidel solution scheme for piecewise linear systems (planar Coulomb friction)
+        \item[] \texttt{FixedPointSingle}\\
+        Gauss-Seidel solution scheme with fixed point search and relaxation strategy for spatial Coulomb friction
+        \item[] \texttt{RootFinding}\\
+        damped and globalised Newton scheme for spatial Coulomb friction
+        \end{itemize}
+\item[] \texttt{setLinAlg}\\
+    linear equations solver for \emph{RootFinding}; available solvers are
+    \begin{itemize}
+    \item[] \texttt{LUDecomposition}\\
+    LU decomposition is only valid for non-singular contact situations
+    \item[] \texttt{LevenbergMarquardt}\\
+    regularisation of contact matrix by Levenberg Marquard factor
+    \item[] \texttt{PseudoInverse}\\
+    selecting the norm-minimal solution if there exist several 
+    \end{itemize}
+\item[] \texttt{setStrategy}\\
+    set relaxation strategy to \texttt{local} (contact wise) or \texttt{global} (all contacts)
+\item[] \texttt{setNumJacProj}
+\item[] \texttt{setMaxIter}\\
+    set the maximum number of iterations in the contact solver
+\item[] \texttt{setStopIfNoConvergence}\\
+    the integrator stops integration, if there is no convergence in the contact solver
+\item[] \texttt{addFrame}\\
+    cf. \texttt{Frame}
+\end{itemize}
 
 \subsubsection{Frames}
-\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for kinematic and kinetic expressions using a frame recursive relationship. Important settings: \emph{enableOpenMBV} enabling visualisation
+\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for \MBSim{} components concerning kinematic and kinetic expressions. New frames can be added arbitrarily and recursively based on a predecessor frame. That is why there has to be a first frame for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary frame \texttt{"I"} (inertia frame).\par
+Important settings next to position and orientation are defined according to the parametrisation
+\begin{align*}
+  	\begin{pmatrix}	\rs{_I}[_P]{\va}\\ \rs{_I}{\vPsi}\end{pmatrix} 
+	&= \begin{pmatrix}\rs{_I}[_P]{\vJ}\\ \rs{_I}[_R]{\vJ}\end{pmatrix} \,
+	\dot{\vu} +
+   	  \begin{pmatrix}\rs{_I}[_P]{\viota}\\\rs{_I}[_R]{\viota}\end{pmatrix}
+\end{align*}
+such that summarizing
+\begin{itemize}
+\item[] \texttt{getPosition} 
+\item[] \texttt{getOrientation} 
+\item[] \texttt{getVelocity}
+\item[] \texttt{getAngularVelocity} 
+\item[] \texttt{getJacobianOfTranslation} 
+\item[] \texttt{getJacobianOfRotation}
+\item[] \texttt{getGyroscopicAccelerationOfTranslation}
+\item[] \texttt{getGyroscopicAccelerationOfRotation}
+\item[] \texttt{enableOpenMBV}\\
+    enabling visualisation for \OpenMBV{}
+\end{itemize}
 
-\subsubsection{Rigid Bodies}
-A \texttt{RigidBody} is based on a predefined frame \texttt{"C"} in the centre of gravity. This frame can e.g. be used to describe further frames at rigid bodies. Then, one frame for kinematics has to be chosen being updated with respect to a reference frame as well as the individual degree of freedom of the \texttt{RigidBody} or its constrained relative motion. Both absolute and relative kinematical structures are canonically given by this frame recursion depending on the properties of the reference. The drawback of this general description is a time-dependent mass-matrix. If there is a frame given tree structure a \texttt{Tree} for the kinematical evaluations is defined automatically.\\
-Important settings: \emph{setMass}, \emph{setInertiaTensor}, \emph{setFrameOfReference}, \emph{setFrameForKinematics}, \emph{setTranslation} describing the translational degrees of freedom, \emph{setRotation} describing the rotational degrees of freedom, \emph{setOpenMBVRigidBody} to enable visualisation\\
-Initial values: are given by the reference frame
+\subsubsection{Bodies}
+\paragraph{Rigid Bodies}
+For each \texttt{RigidBody} a \texttt{Frame} \texttt{"C"} in the centre of gravity is predefined. One perhaps newly created \texttt{Frame} of the \texttt{RigidBody} has to be chosen as frame for kinematics, and one \texttt{Frame} of another \texttt{Body} or a \texttt{DynamicSystem} has to be chosen as frame of reference. Then, the motion of the frame of kinematics and so also the \texttt{RigidBody} with respect to this frame of reference is defined by the individual generalised coordinates of the \texttt{RigidBody} or its constrained relative motion. Both absolute (if the frame of reference belongs to a \texttt{DynamicSystem}) and relative (if the frame of reference belongs to another \texttt{RigidBody}) kinematical structures are canonically given by this frame recursion. The drawback of this general description is a time-dependent mass-matrix also in the absolute kinematics case.\par
+Important settings: 
+\begin{itemize}
+\item[] \texttt{setMass}
+\item[] \texttt{setInertiaTensor}\\
+    is defined with respect to \texttt{"C"}, if no other \texttt{Frame} is given as second argument
+\item[] \texttt{setFrameOfReference}\\
+    one possibility to define initial values
+\item[] \texttt{setFrameForKinematics}
+\item[] \texttt{setOpenMBVRigidBody}\\
+    enabling visualisation for \OpenMBV{}
+\end{itemize}
+Kinematics can be defined individually according to
+\begin{align*}
+        \rs{_B}[_{O'P}]{\vr} &= \rs{_B}[_{O'P}]{\vr}({\vq}_{\text{rel}}^{(i)},\,t)\,,\\
+        \vA_{BK} &= \vA_{BK}({\vq}_{\text{rel}}^{(i)},\,t)\,,\\
+        \rs{_B}[_{O'P,\text{rel}}]{\vv} &=  \rs{_B}[_{P,\text{rel}}]{\vJ} \,\vu_\text{rel}^{(i)} + \rs{_B}[_{P,\text{rel}}]{\viota}  \, \\
+        \rs{_B}[_{BK}]{\vomega} &= \rs{_B}[_{R,\text{rel}}]{\vJ} \,\vu_\text{rel}^{(i)} + \rs{_B}[_{R,\text{rel}}]{\viota} \\
+        \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{O'P,\text{rel}}]{\vv}\right) &= \rs{_I}[_{P,\text{rel}}]{\vJ} \,\dot{\vu}_\text{rel}^{(i)} +\frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{P,\text{rel}}]{\vJ} \right)\,\vu_\text{rel}^{(i)} + \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{P,\text{rel}}]{\viota} \right)  \,,\\ 
+        \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{BK}]{\vomega}\right) &= \rs{_I}[_{R,\text{rel}}]{\vJ} \,\dot{\vu}_\text{rel}^{(i)} +\frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{R,\text{rel}}]{\vJ} \right)\,\vu_\text{rel}^{(i)} + \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_B}[_{P,\text{rel}}]{\viota} \right)  \,. 
+\end{align*}
+using functions such that
+\begin{itemize}
+\item[] \texttt{setTranslation}
+\item[] \texttt{setRotation}
+\item[] \texttt{setJacobianOfTranslation}
+\item[] \texttt{setJacobianOfRotation}
+\item[] \texttt{setDerivativeOfJacobianOfTranslation}
+\item[] \texttt{setDerivativeOfJacobianOfRotation}
+\item[] \texttt{setGuidingVelocityOfTranslation}
+\item[] \texttt{setGuidingVelocityOfRotation}
+\item[] \texttt{setDerivativeOfGuidingVelocityOfTranslation}
+\item[] \texttt{setDerivativeOfGuidingVelocityOfRotation}
+\end{itemize}
+A body is defined with respect to its generalised coordinates and velocities, contacts between contours and joints between frames may be rigid or flexible also including friction. The definition of loads might include arbitrary functional descriptions.
 
-\subsubsection{Flexible Bodies}
+\paragraph{Flexible Bodies}
 The equations of motion of a \texttt{FlexibleBody} is at the moment always derived with respect to a stationary frame. So, flexible bodies can only be used as root but not as leave in a recursive tree structure. The following flexible bodies are available. 
 
 \begin{itemize}
@@ -107,29 +210,6 @@ Available integration schemes:
     one-step integration scheme of order 1 for nonstiff with $\Theta=0$ and stiff with $\Theta\in\left(0,1\right] $MDE
 \end{itemize}
 %DAEs behandeln \emph{RADAU5DAEIntegrator}, \emph{DASKRIntegrator} und \emph{DASPKIntegrator}. Dar\"uberhinaus gibt es noch \emph{RKSuite}, \emph{LSODAR} (Mehrschrittverfahren steif/nicht steif) und \emph{LSODE}.  oder der allgemeinere \emph{ThetaTimeSteppingIntegrator} mit konstanter Schrittweitenvorgabe angewendet werden. \emph{TimeSteppingSSCIntegrator} implementiert für den semi-impliziten Fall eine Schrittweitensteuerung und \emph{DAETSIntegrator} liefert eine Kopplung zwischen TimeStepping und Dassl. Bei letzteren muss der Befehl \texttt{setSolver} vor der Initialisierung des MBS durchgef\"uhrt werden. Folgende M\"oglichkeiten stehen zur Wahl:
-
-Available constraint equation solution schemes:
-\begin{itemize}
-\item[] \texttt{GaussSeidel}\\
-    Gauss-Seidel solution scheme for piecewise linear systems (planar Coulomb friction)
-\item[] \texttt{FixedPointSingle}\\
-    Gauss-Seidel solution scheme with fixed point search and relaxation strategy for spatial Coulomb friction
-\item[] \texttt{RootFinding}\\
-    damped and globalised Newton scheme for spatial Coulomb friction
-\end{itemize}
-%\begin{itemize}
-%\item Invertierbare Gleichungssysteme (GS) mit nur bilateralen Bindungen\\
-%\emph{LinearEquations}: Cholesky-Verfahren
-%
-%
-%\item Nichtlineare GS (3D-Coulomb-Reibung)\\
-%  (\emph{setStrategy} mit \emph{local}/\emph{global})\\
-%\emph{FixedPointTotal}: Jacobi-Verfahren mit Fixpunktsuche und R-Faktor-Strategie (verh\"alt sich zumeist schlechter als \emph{FixedPointSingle})\\  
-%\emph{RootFinding}: 
-%  R-Faktor-Strategie (unstetige Jacobi-Matrix) und f\"ur unterbestimmte LGS ausw\"ahlbarer \emph{setLinalg} (LUDecomposition, LevenbergMarquardt, PseudoInverse) (f\"ur schlecht konditionierte Dylassus-Matrix meistens am besten)
-%\end{itemize}
-%Der Befehl \emph{stopifnoConvergence(\texttt{true},\texttt{true})} zwingt den Integrator abzubrechen, falls keine Konvergenz vorliegt, und die Kontaktsituation auszugeben.
-%
 
 \subsection{Program Flow}
 Conceptionally the program flow is defined by the election of the integration scheme. It can always be stopped using \texttt{Ctrl-C} also enforcing the closing of the plot functionality. With
