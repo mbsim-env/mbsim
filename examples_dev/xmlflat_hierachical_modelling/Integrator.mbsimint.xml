@@ -6,4 +6,5 @@
   <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
   <relativeToleranceScalar>1e-6</relativeToleranceScalar>
   <initialStepSize>0</initialStepSize>
+  <maximalStepSize>1e-2</maximalStepSize>
 </DOPRI5Integrator>
