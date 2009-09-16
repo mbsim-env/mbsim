@@ -117,7 +117,7 @@ namespace MBSim {
       CheckvalveClosablePressureLoss() : ClosablePressureLoss(), rBall(0) {}
       void setBallRadius(double rBall_) {rBall=rBall_; }
       double getBallRadius() const {return rBall; }
-      virtual double calcBallAreaFactor() {return 1.; }
+      virtual double calcBallForceArea() {return -1.; }
       void initializeUsingXML(TiXmlElement *element);
     protected:
       double rBall;
@@ -127,14 +127,14 @@ namespace MBSim {
   /*! VariablePressureLossCheckvalveGamma */
   class GammaCheckvalveClosablePressureLoss : public CheckvalveClosablePressureLoss {
     public:
-      GammaCheckvalveClosablePressureLoss() : CheckvalveClosablePressureLoss(), alpha(0), gamma(0), c(0), siga(0), coga(0), area(0) {}
+      GammaCheckvalveClosablePressureLoss() : CheckvalveClosablePressureLoss(), alpha(0), gamma(0), c(0), siga(0), coga(0) {}
       void setAlpha(double alpha_) {alpha=alpha_; }
       void setGamma(double gamma_) {gamma=gamma_; }
-      virtual double calcBallAreaFactor() {return sin(gamma)*sin(gamma); }
+      virtual double calcBallForceArea() {return M_PI*rBall*rBall*sin(gamma)*sin(gamma); }
       double operator()(const double& Q, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      double alpha, gamma, c, siga, coga, area;
+      double alpha, gamma, c, siga, coga;
   };
 
 
@@ -164,17 +164,19 @@ namespace MBSim {
   /*! LeakagePressureLoss */
   class LeakagePressureLoss : public PressureLoss {
     public:
-      LeakagePressureLoss() : PressureLoss() {}
+      LeakagePressureLoss() : PressureLoss(), stateless(true) {}
+    protected:
+      bool stateless;
   };
 
 
   /*! PlaneLeakagePressureLoss */
   class PlaneLeakagePressureLoss : public LeakagePressureLoss {
     public:
-      PlaneLeakagePressureLoss() : LeakagePressureLoss(), qfac(0), xdfac(0) {}
-      double operator()(const double& Q, const void * line);
+      PlaneLeakagePressureLoss() : LeakagePressureLoss(), pVfac(0), xdfac(0) {}
+      double operator()(const double& pVorQ, const void * line);
     private:
-      double qfac, xdfac;
+      double pVfac, xdfac;
   };
   
 
@@ -188,12 +190,12 @@ namespace MBSim {
   /*! EccentricCircularLeakagePressureLoss */
   class EccentricCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
     public:
-      EccentricCircularLeakagePressureLoss() : CircularLeakagePressureLoss (), ecc(0), qfac(0), xdfac(0) {}
+      EccentricCircularLeakagePressureLoss() : CircularLeakagePressureLoss (), ecc(0), pVfac(0), xdfac(0) {}
       void setEccentricity(double ecc_) {ecc=ecc_; }
-      double operator()(const double& Q, const void * line);
+      double operator()(const double& pVorQ, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      double ecc, qfac, xdfac;
+      double ecc, pVfac, xdfac;
   };
 
 
@@ -201,7 +203,7 @@ namespace MBSim {
   class RealCircularLeakagePressureLoss : public CircularLeakagePressureLoss {
     public:
       RealCircularLeakagePressureLoss() : CircularLeakagePressureLoss(), pVfac(0), vIfac(0), vOfac(0) {}
-      double operator()(const double& Q, const void * line);
+      double operator()(const double& pVorQ, const void * line);
     private:
       double pVfac, vIfac, vOfac;
   };

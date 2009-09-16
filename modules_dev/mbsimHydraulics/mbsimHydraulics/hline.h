@@ -59,8 +59,8 @@ namespace MBSim {
 
       void init(InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
+      
       Signal * getSignalByPath(std::string path);
-
     protected:
       HNode * nFrom;
       HNode * nTo;
@@ -86,11 +86,10 @@ namespace MBSim {
       
       void updateh(double t);
       
+      void initializeUsingXML(TiXmlElement *element);
       void init(InitStage stage);
       void plot(double t, double dt);
       
-      void initializeUsingXML(TiXmlElement *element);
-    
     protected:
       double pressureLossGravity;
       double length;

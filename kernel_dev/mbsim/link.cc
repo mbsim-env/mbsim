@@ -38,12 +38,14 @@ namespace MBSim {
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
       if(getPlotFeature(stopVector)==enabled)
-          for(int i=0; i<sv.size(); ++i)
-            plotVector.push_back(sv(i));
-     // if(getPlotFeature(contact)==enabled) {
-     //   for(int i=0; i<g.size(); ++i)
-     //     plotVector.push_back(g(i));
-     // }
+        for(int i=0; i<sv.size(); ++i)
+          plotVector.push_back(sv(i));
+      if(getPlotFeature(linkKinematics)==enabled) {
+        for(int i=0; i<g.size(); ++i)
+          plotVector.push_back(g(i));
+        for(int i=0; i<gd.size(); ++i)
+          plotVector.push_back(gd(i));
+      }
       if(getPlotFeature(energy)==enabled) {
         plotVector.push_back(computePotentialEnergy()); 
       }
@@ -57,7 +59,7 @@ namespace MBSim {
       Element::closePlot();
     }
   }
-  
+
   void Link::updatewbRef(const Vec& wbParent) {
     wb.resize() >> wbParent(laInd,laInd+laSize-1);
   }
@@ -112,13 +114,15 @@ namespace MBSim {
         if(getPlotFeature(stateDerivative)==enabled)
           for(int i=0; i<xSize; ++i)
             plotColumns.push_back("xd("+numtostr(i)+")");
-        //if(getPlotFeature(contact)==enabled) {
-        //  for(int i=0; i<g.size(); ++i)
-        //    plotColumns.push_back("g("+numtostr(i)+")");
-	//}
+        if(getPlotFeature(linkKinematics)==enabled) {
+          for(int i=0; i<g.size(); ++i)
+            plotColumns.push_back("g("+numtostr(i)+")");
+          for(int i=0; i<gd.size(); ++i)
+            plotColumns.push_back("gd("+numtostr(i)+")");
+        }
         if(getPlotFeature(stopVector)==enabled)
-	  for(int i=0; i<svSize; ++i)
-	    plotColumns.push_back("sv("+numtostr(i)+")");
+          for(int i=0; i<svSize; ++i)
+            plotColumns.push_back("sv("+numtostr(i)+")");
         if(getPlotFeature(energy)==enabled)
           plotColumns.push_back("V");
 

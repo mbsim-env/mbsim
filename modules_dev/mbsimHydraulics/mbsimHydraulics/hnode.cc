@@ -86,7 +86,11 @@ namespace MBSim {
     connectedLinesStruct c;
     c.line=in;
     c.inflow=true;
-    connectedLines.push_back(c);
+    in->calcuSize(0);
+    if (in->getuSize(0))
+      connectedLines.push_back(c);
+    else
+      connected0DOFLines.push_back(c);
     in->setToNode(this);
   }
 
@@ -94,7 +98,11 @@ namespace MBSim {
     connectedLinesStruct c;
     c.line=out;
     c.inflow=false;
-    connectedLines.push_back(c);
+    out->calcuSize(0);
+    if (out->getuSize(0))
+      connectedLines.push_back(c);
+    else
+      connected0DOFLines.push_back(c);
     out->setFromNode(this);
   }
 
@@ -215,6 +223,10 @@ namespace MBSim {
       QHyd-=((connectedLines[i].inflow) ?
           connectedLines[i].line->getQOut(t) :
           connectedLines[i].line->getQIn(t))(0);
+    for (unsigned int i=0; i<connected0DOFLines.size(); i++)
+      QHyd-=((connected0DOFLines[i].inflow) ?
+          connected0DOFLines[i].line->getQOut(t) :
+          connected0DOFLines[i].line->getQIn(t))(0);
     gd(0)=-QHyd;
   }
 

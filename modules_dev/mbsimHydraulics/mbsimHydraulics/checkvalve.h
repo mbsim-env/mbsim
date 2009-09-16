@@ -47,6 +47,7 @@ namespace MBSim {
       void setLineMinimalXOpen(double xMin);
       void setLineSetValued(bool setValued=true);
       void setBallMass(double mBall_);
+      void setBallInitialPosition(double x0Ball_);
       void setSpringForceFunction(Function2<double,double,double> *func);
       void setSeatContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
       void setSeatContactForceLaw(GeneralizedForceLaw * seatGFL_);

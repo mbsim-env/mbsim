@@ -26,6 +26,7 @@
 #include "mbsimHydraulics/controlvalve43.h"
 #include "mbsimHydraulics/checkvalve.h"
 #include "mbsimHydraulics/leakage_line.h"
+#include "mbsimHydraulics/dimensionless_line.h"
 
 using namespace std;
 
@@ -79,6 +80,10 @@ namespace MBSim {
       return new PlaneLeakageLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakageLine")
       return new CircularLeakageLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakage0DOF")
+      return new PlaneLeakage0DOF(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakage0DOF")
+      return new CircularLeakage0DOF(element->Attribute("name"));
     return 0;
   }
 

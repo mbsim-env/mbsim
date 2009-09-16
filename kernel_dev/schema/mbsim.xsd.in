@@ -356,10 +356,10 @@
 
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine neue Hierarchieebene in Form einer Gruppe. Eine Gruppe stellt dabei einen
-      Kontainer für andere <tt>Group</tt>'s, <tt>Object</tt>'s (Körper) und <tt>Link</tt>'s
-      (Verbindungselemente) bereit. Mithilfe von Gruppen können somit hierarchische Modelle erzeugt werden.
-      <p>Jede Gruppe definiert automatisch ein statisches KOS mit den Namen "I".</p>
+        Definiert eine neue Hierarchieebene in Form einer Gruppe. Eine Gruppe stellt dabei einen
+        Kontainer für andere <tt>Group</tt>'s, <tt>Object</tt>'s (Körper) und <tt>Link</tt>'s
+        (Verbindungselemente) bereit. Mithilfe von Gruppen können somit hierarchische Modelle erzeugt werden.
+        <p>Jede Gruppe definiert automatisch ein statisches KOS mit den Namen "I".</p>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="GroupType">
@@ -398,8 +398,20 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
-                <xs:element ref="frame"/>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="frame">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -411,8 +423,20 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
-                <xs:element ref="contour"/>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="contour">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -424,8 +448,20 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
-                <xs:element ref="EmptyGroup"/>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="EmptyGroup">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -437,8 +473,20 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
-                <xs:element ref="Object"/>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="Object">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -477,8 +525,20 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
-                <xs:element ref="Link"/>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="Link">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -648,6 +708,7 @@
         Definiert einen Starrköper. Ob der Körper mittels relativ oder absolut Koordinaten beschreiben wird
         entscheidet allein das <tt>frameOfReference</tt> des Körpers (siehe <a class="link" href="mbsim:Object">&lt;Object&gt;</a>.
         <p>Jeder Starrkörper bekommt automatisch ein Koordinatensystem "C" in seinem Schwerpunkt zugewiesen.</p>
+        <object class="figure" standby="4cm" data="rigid_body" title="Kinematische Beschreibung eines Starrkörpers"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1174,7 +1235,13 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType"/>
+  <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        <object class="figure" standby="4cm" data="contact" title="Kinematik einer Kontaktpaarung"></object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ContactType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
@@ -1529,32 +1596,78 @@
   </xs:complexType>
 
   <xs:element name="ContourContinuum" substitutionGroup="Contour" abstract="true" type="ContourContinuumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Beschreibung kontinuierlicher Konturen. Die Konturen werden in Abhängigkeit eines Parameters <object class="inlineeqn">\alpha \, \left(\alpha_{Start} \leq \alpha \leq \alpha_{End} \right)</object> beschrieben. Für eine effiziente Abstandsberechnung müssen vom Benutzer zusätzliche Stützstellen angegeben werden, anhand derer eine erste Abschätzung des Kontaktbereiches erfolgt.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="ContourContinuumType">
     <xs:complexContent>
       <xs:extension base="ContourType">
         <xs:sequence>
-          <xs:element name="alphaStart" type="pv:nounitScalar"/>
-          <xs:element name="alphaEnd" type="pv:nounitScalar"/>
-          <xs:element name="nodes" type="pv:nounitScalar"/>
+          <xs:element name="alphaStart" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Startwert des Laufparameters <object class="inlineeqn">\alpha</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="alphaEnd" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Endwert des Laufparameters <object class="inlineeqn">\alpha</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="nodes" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Stützstellen
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="Contour1s" substitutionGroup="ContourContinuum" abstract="true" type="Contour1sType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Beschreibung beliebiger, ebener Konturen.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="Contour1sType">
     <xs:complexContent>
       <xs:extension base="ContourContinuumType">
         <xs:sequence>
-          <xs:element name="diameter" type="pv:lengthScalar"/>
+          <xs:element name="diameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                räumliche Tiefe der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="Contour1sAnalytical" substitutionGroup="Contour1s" type="Contour1sAnalyticalType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Ebene Kontur, die analytisch durch einen funktionalen Zusammenhang beschrieben werden kann:
+        <object class="eqn">
+          <![CDATA[\left\{\begin{array}{c}
+          f_x \\
+          f_y \\
+          f_z
+          \end{array}\right\} = \mathbf{f} \left(\alpha\right)]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="Contour1sAnalyticalType">
     <xs:complexContent>
@@ -1563,11 +1676,23 @@
           <xs:element name="contourFunction">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="FunctionContour"/>
+                <xs:element ref="FunctionContour">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Beschreibung der Kontur
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBV" minOccurs="0"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Visualisierung der Kontur
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1679,7 +1804,13 @@
     <xs:complexContent>
       <xs:extension base="GeneralizedImpactLawType">
         <xs:sequence>
-          <xs:element name="restitutionCoefficient" type="pv:nounitScalar"/>
+          <xs:element name="restitutionCoefficient" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Stoßzahl. Wert zwischen 0 (plastisch) und 1 (vollelastisch).
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1995,12 +2126,22 @@
   </xs:complexType>   
 
   <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse von stetig ableitbaren Funktionen. Durch die Angabe des Ableitungsgrades n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="DifferentiableFunction1_VS">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
           <xs:element name="orderOfDerivative" type="xs:nonNegativeInteger" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Grad der Ableitung
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2008,16 +2149,36 @@
   </xs:complexType>   
 
   <xs:element name="QuadraticFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="QuadraticFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Quadratische Funktion mit <object class="inlineeqn">\boldsymbol{y}_i= a_{0_i} + a_{1_i} \, x + a_{2_i} \, x^2</object>
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="QuadraticFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
           <xs:element name="a0" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">a_0</object>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="a1" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">a_1</object>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="a2" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Faktor <object class="inlineeqn">a_2</object>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2025,16 +2186,36 @@
   </xs:complexType>   
 
   <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Periodische Funktion mit <object class="inlineeqn">\boldsymbol{y}_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="SinusFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
           <xs:element name="amplitude" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Amplitude
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Frequenz
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Phasenversatz
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence> 
       </xs:extension>

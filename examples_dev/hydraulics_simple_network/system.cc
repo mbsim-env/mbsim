@@ -1,7 +1,7 @@
 #include "system.h"
 
-#include "mbsimHydraulics/hydline.h"
-#include "mbsimHydraulics/hydnode.h"
+#include "mbsimHydraulics/rigid_line.h"
+#include "mbsimHydraulics/hnode.h"
 #include "mbsim/userfunction.h"
 #include "mbsimHydraulics/pressure_loss.h"
 
@@ -17,7 +17,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l12a->setDirection("[1; 0; 0]");
   l12a->setDiameter(5e-3);
   l12a->setLength(.7);
-  l12a->addPressureLoss(new PressureLossZeta("zeta1", 14));
+  ZetaLinePressureLoss * pl_l12a = new ZetaLinePressureLoss();
+  pl_l12a->setZeta(14);
+  l12a->setLinePressureLoss(pl_l12a);
 
   RigidLine * l12b = new RigidLine("l12b");
   addObject(l12b);
@@ -25,7 +27,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l12b->setDirection("[1; 0; 0]");
   l12b->setDiameter(3e-3);
   l12b->setLength(.7);
-  l12b->addPressureLoss(new PressureLossZeta("zeta1", 5));
+  ZetaLinePressureLoss * pl_l12b = new ZetaLinePressureLoss();
+  pl_l12b->setZeta(5);
+  l12b->setLinePressureLoss(pl_l12b);
 
   RigidLine * l15 = new RigidLine("l15");
   addObject(l15);
@@ -33,7 +37,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l15->setDirection("[1; 0; 0]");
   l15->setDiameter(4e-3);
   l15->setLength(.2);
-  l15->addPressureLoss(new PressureLossZeta("zeta1", 3));
+  ZetaLinePressureLoss * pl_l15 = new ZetaLinePressureLoss();
+  pl_l15->setZeta(3);
+  l15->setLinePressureLoss(pl_l15);
 
   RigidLine * l16 = new RigidLine("l16");
   addObject(l16);
@@ -41,7 +47,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l16->setDirection("[1; 0; 0]");
   l16->setDiameter(4e-3);
   l16->setLength(.2);
-  l16->addPressureLoss(new PressureLossZeta("zeta1", 3));
+  ZetaLinePressureLoss * pl_l16 = new ZetaLinePressureLoss();
+  pl_l16->setZeta(3);
+  l16->setLinePressureLoss(pl_l16);
 
   RigidLine * l23 = new RigidLine("l23");
   addObject(l23);
@@ -49,7 +57,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l23->setDirection("[1; 0; 0]");
   l23->setDiameter(7e-3);
   l23->setLength(.7);
-  l23->addPressureLoss(new PressureLossZeta("zeta1", 1.5));
+  ZetaLinePressureLoss * pl_l23 = new ZetaLinePressureLoss();
+  pl_l23->setZeta(1.5);
+  l23->setLinePressureLoss(pl_l23);
 
   RigidLine * l34 = new RigidLine("l34");
   addObject(l34);
@@ -57,7 +67,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l34->setDirection("[1; 0; 0]");
   l34->setDiameter(4e-3);
   l34->setLength(.5);
-  l34->addPressureLoss(new PressureLossZeta("zeta1", 5));
+  ZetaLinePressureLoss * pl_l34 = new ZetaLinePressureLoss();
+  pl_l34->setZeta(5);
+  l34->setLinePressureLoss(pl_l34);
 
   RigidLine * l35 = new RigidLine("l35");
   addObject(l35);
@@ -65,7 +77,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l35->setDirection("[1; 0; 0]");
   l35->setDiameter(3e-3);
   l35->setLength(.25);
-  l35->addPressureLoss(new PressureLossZeta("zeta1", 7));
+  ZetaLinePressureLoss * pl_l35 = new ZetaLinePressureLoss();
+  pl_l35->setZeta(7);
+  l35->setLinePressureLoss(pl_l35);
 
   RigidLine * l45 = new RigidLine("l45");
   addObject(l45);
@@ -73,7 +87,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l45->setDirection("[1; 0; 0]");
   l45->setDiameter(7e-3);
   l45->setLength(.7);
-  l45->addPressureLoss(new PressureLossZeta("zeta1", 19));
+  ZetaLinePressureLoss * pl_l45 = new ZetaLinePressureLoss();
+  pl_l45->setZeta(19);
+  l45->setLinePressureLoss(pl_l45);
 
   RigidLine * l56 = new RigidLine("l56");
   addObject(l56);
@@ -81,7 +97,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   l56->setDirection("[1; 0; 0]");
   l56->setDiameter(2e-3);
   l56->setLength(1.7);
-  l56->addPressureLoss(new PressureLossZeta("zeta1", 10));
+  ZetaLinePressureLoss * pl_l56 = new ZetaLinePressureLoss();
+  pl_l56->setZeta(10);
+  l56->setLinePressureLoss(pl_l56);
 
   EnvironmentNode * n1 = new EnvironmentNode("n1");
   addLink(n1);
