@@ -1,8 +1,8 @@
 #include "system.h"
 
-#include "mbsimHydraulics/hydline.h"
-#include "mbsimHydraulics/hydnode.h"
-#include "mbsimHydraulics/hydnode_mec.h"
+#include "mbsimHydraulics/rigid_line.h"
+#include "mbsimHydraulics/hnode.h"
+#include "mbsimHydraulics/hnode_mec.h"
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsim/utils/function.h"
 
@@ -138,7 +138,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
   addObject(l04);
   l04->setDiameter(5e-3);
   l04->setLength(.7);
-  l04->addPressureLoss(new PressureLossZeta("zeta1", 14));
+  ZetaLinePressureLoss * zeta = new ZetaLinePressureLoss();
+  zeta->setZeta(14);
+  l04->setLinePressureLoss(zeta);
   l04->setFrameOfReference(getFrame("I"));
   l04->setDirection("[0;0;0]");
 

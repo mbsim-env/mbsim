@@ -27,31 +27,112 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType"/>
+  <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definition der Hydraulischen Umbegumgsvariablen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="HydraulicEnvironmentType">
     <xs:complexContent>
       <xs:extension base="mbsim:EnvironmentType">
         <xs:sequence>
-          <xs:element name="environmentPressure" type="pv:nounitScalar"/>
+          <xs:element name="environmentPressure" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Umgebungsdruck
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="specificMass">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Dichte des Fluids in Abhängigkeit der Fluidtemperatur
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:choice>
-                <xs:element name="constantSpecificMass" type="pv:nounitScalar"/>
+                <xs:element name="constantSpecificMass" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      konstante Dichte
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
                 <xs:element name="volumeDependingOnTemperature">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Ermittlung der Dichte über eine temperaturabhängige Volumenänderung. Die Dichte berechnet sich gemäß
+                      <object class="eqn">
+                        <![CDATA[\rho = \rho_0 \, \frac{1}{1+\frac{\text{d}V}{\text{d}T}\, \left( T-T_0\right)} \text{.}]]>
+                      </object>
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="dVdT" type="pv:nounitScalar"/>
-                      <xs:element name="basicSpecificMass" type="pv:nounitScalar"/>
-                      <xs:element name="basicTemperature" type="pv:nounitScalar"/>
+                      <xs:element name="dVdT" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\frac{\text{d}V}{\text{d}T}</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="basicSpecificMass" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\rho_0</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="basicTemperature" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">T_0</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="specificMassDependingOnTemperature">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Ermittlung der Dichte über eine temperaturabhängige Dichteänderung
+                      <object class="eqn">
+                        <![CDATA[\rho = \rho_0 + \frac{\text{d}\rho}{\text{d}T} \, \left( T-T_0\right) \text{.}]]>
+                      </object>
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="dRhodT" type="pv:nounitScalar"/>
-                      <xs:element name="basicSpecificMass" type="pv:nounitScalar"/>
-                      <xs:element name="basicTemperature" type="pv:nounitScalar"/>
+                      <xs:element name="dRhodT" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\frac{\text{d}\rho}{\text{d}T}</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="basicSpecificMass" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\rho_0</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="basicTemperature" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">T_0</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -59,25 +140,111 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="kinematicViscosity">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bestimmung der temperaturabhängigen kinematischen Viskosität 
+                <object class="inlineeqn">\nu</object>.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:choice>
-                <xs:element name="constantKinematicViscosity" type="pv:nounitScalar"/>
+                <xs:element name="constantKinematicViscosity" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Konsanter Wert.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
                 <xs:element name="walterUbbeohdeKinematicViscosity">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Bestimmung der Viskosität nach der Formel von <i>Walter-Ubbelohde</i>
+                      <object class="eqn">
+                        <![CDATA[\nu = \left(10^{10^{W_x}}-0.8\right) \, 10^{-6}]]>
+                      </object>
+                      mit
+                      <object class="eqn">
+                        <![CDATA[W_x=m \, \left[ \log_{10} \left(T_1+273.16\right) - \log_{10} \left(T+273.16\right) \right] + W_m]]>
+                      </object>
+                      und
+                      <object class="eqn">
+                        <![CDATA[W_m=\log_{10} \left( \log_{10} \nu_1 \, 10^6 + 0.8 \right)]]>
+                      </object>
+                      <object class="eqn">
+                        <![CDATA[W_2=\log_{10} \left( \log_{10} \nu_2 \, 10^6 + 0.8 \right)]]>
+                      </object>
+                      <object class="eqn">
+                        <![CDATA[m=\frac{ W_m-W_2   }{ \log_{10} T_2 - \log_{10} T_m   }]]>
+                      </object>
+                    </xs:documentation>
+                  </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="temperature1" type="pv:nounitScalar"/>
-                      <xs:element name="kinematicViscosity1" type="pv:nounitScalar"/>
-                      <xs:element name="temperature2" type="pv:nounitScalar"/>
-                      <xs:element name="kinematicViscosity2" type="pv:nounitScalar"/>
+                      <xs:element name="temperature1" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">T_1</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="kinematicViscosity1" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\nu_1</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="temperature2" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">T_2</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="kinematicViscosity2" type="pv:nounitScalar">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                            Faktor 
+                            <object class="inlineeqn">\nu_2</object>
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
               </xs:choice>
             </xs:complexType>
           </xs:element>
-          <xs:element name="basicBulkModulus" type="pv:nounitScalar"/>
-          <xs:element name="kappa" type="pv:nounitScalar"/>
-          <xs:element name="fluidTemperature" type="pv:nounitScalar"/>
+          <xs:element name="basicBulkModulus" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kompressionsmodul des (luftfreien) Fluids
+                <object class="inlineeqn">E_{Fluid}</object>.<br/>
+                In Abhängigkeit des Luftanteils in Öl <object class="inlineeqn">\chi</object> berechnet sich das Kompressionsmodul des Öl-Luft-Gemisches nach <i>Backe-Murrenhoff</i> bei einer isentropen Zustandsänderung zu
+                <object class="eqn">
+                  <![CDATA[E_{isentrop} = E_{Fluid} \, \frac{1+\chi}{1+\left( \frac{p_0}{p}\right)^{\frac{1}{\kappa}} \, \chi \, \frac{E_{Fluid}}{\kappa \, p} } \text{.}]]>
+                </object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="kappa" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Isentropenexponent der Luft. 
+                <object class="inlineeqn">\kappa \approx 1.4</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="fluidTemperature" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Temperatur des Fluids zur Bestimmung der Fluideigenschaften.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -97,6 +264,11 @@
   </xs:complexType>
 
   <xs:element name="LinePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="LinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung von Druckverlusten von 1-dimensionalen hydraulischen Leitungen.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="LinePressureLossType">
     <xs:complexContent>
@@ -167,12 +339,18 @@
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
-          <xs:element name="referenceDiameter" type="pv:nounitScalar"/>
-          <xs:element name="hydraulicDiameter" type="pv:nounitScalar"/>
-          <xs:element name="aPositive" type="pv:nounitScalar"/>
-          <xs:element name="bPositive" type="pv:nounitScalar"/>
-          <xs:element name="aNegative" type="pv:nounitScalar"/>
-          <xs:element name="bNegative" type="pv:nounitScalar"/>
+          <xs:element name="referenceDiameter" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="hydraulicDiameter" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="aPositive" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="bPositive" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="aNegative" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="bNegative" type="pv:nounitScalar">
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -182,6 +360,9 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse zur Berechnung von Druckverlusten mit veränderlichen Koeffizienten und einer Sperrmöglichkeit.
+         Bei der Integration des Systems mit herkömmlichen Integratoren wird die Kennlinie des Ventils regularisiert, d.h. es wird aus nummerischen Gründen immer ein Restfluss durch das Ventil zugelassen.
+         Bei der Verwendung eines <i>Time-Stepping-Integrators</i> kann durch eine entsprechende Angabe der Fluidfluss durch das Ventil im geschlossenen Zustand <object class="inlineeqn">Q=0</object>  gesetzt werden.
+         Der variable Wert wird in der Klasse XXX gesetzt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -191,70 +372,198 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RelativeAreaZetaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAreaZetaClosablePressureLossType"/>
+  <xs:element name="RelativeAreaZetaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAreaZetaClosablePressureLossType">
+  <xs:annotation>
+    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Berechnung des Druckverlustes durch eine Veränderung der relativen Öffnungsfläche:
+      <object class="eqn">
+        <![CDATA[p_V=\frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{\left(A_{rel} \, A\right)^2})]]>
+      </object>
+      mit <object class="inlineeqn">0 \leq A_{rel} \leq 1</object>
+    </xs:documentation>
+  </xs:annotation>
+  </xs:element>
   <xs:complexType name="RelativeAreaZetaClosablePressureLossType">
     <xs:complexContent>
       <xs:extension base="ClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="zeta" type="pv:nounitScalar"/>
+          <xs:element name="zeta" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RelativeAlphaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAlphaClosablePressureLossType"/>
+  <xs:element name="RelativeAlphaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAlphaClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes durch eine Veränderung des Verlustkoeffizienten
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \left( \frac{1}{\left(\alpha_{rel} \, \alpha \right)^2} -1\right) \, \frac{Q \, |Q|}{A^2}]]>
+        </object>
+      mit <object class="inlineeqn">0 \leq \alpha_{rel} \leq 1</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="RelativeAlphaClosablePressureLossType">
     <xs:complexContent>
       <xs:extension base="ClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="alpha" type="pv:nounitScalar"/>
+          <xs:element name="alpha" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\alpha</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="CheckvalveClosablePressureLoss" abstract="true" substitutionGroup="ClosablePressureLoss" type="CheckvalveClosablePressureLossType"/>
+  <xs:element name="CheckvalveClosablePressureLoss" abstract="true" substitutionGroup="ClosablePressureLoss" type="CheckvalveClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung des Druckverlustes in Rückschlagventilen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="CheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="ClosablePressureLossType">
+      <xs:extension base="ClosablePressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BallCheckvalveClosablePressureLoss" abstract="true" substitutionGroup="CheckvalveClosablePressureLoss" type="BallCheckvalveClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung des Druckverlustes in Rückschlagventilen mit Kugelgeometrie.
+        Falls nicht anders angegeben, wird die Kraft auf die Ventilkugel gemäß
+        <object class="eqn">
+          <![CDATA[F_{Ball}=A_{Line} \, \Delta p ]]>
+        </object>
+        berechnet.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="BallCheckvalveClosablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="CheckvalveClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="ballRadius" type="pv:nounitScalar"/>
+          <xs:element name="ballRadius" type="pv:nounitScalar">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Radius des Ventilkugel <object class="inlineeqn">r_{Ball}</object>
+      </xs:documentation>
+    </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GammaCheckvalveClosablePressureLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="GammaCheckvalveClosablePressureLossType"/>
+  <xs:element name="GammaCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="GammaCheckvalveClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes in Rückschlagventilen mit Kugelgeometrie und einem Einlaufwinkel <object class="inlineeqn">\gamma</object>.
+        Die Kraft auf die Ventilkugel wird gemäß
+        <object class="eqn">
+          <![CDATA[F_{Ball}=\left( \pi \, r_{Ball} \, \sin^2 \gamma \right) \Delta p  ]]>
+        </object>
+        berechnet.<br/>
+        Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \frac{|Q| \, Q}{\alpha^2} \, \frac{1}{\left( 2 \, \pi \, r_{Ball} \, x \, \frac{\sin \gamma}{\cos \gamma} + \pi \, x^2 \, \frac{\sin \gamma }{\cos^2 \gamma} \right)^2} ]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="GammaCheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="CheckvalveClosablePressureLossType">
+      <xs:extension base="BallCheckvalveClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="alpha" type="pv:nounitScalar"/>
-          <xs:element name="gamma" type="pv:nounitScalar"/>
+          <xs:element name="alpha" type="pv:nounitScalar">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
+      </xs:documentation>
+    </xs:annotation>
+          </xs:element>
+          <xs:element name="gamma" type="pv:angleScalar">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Einlaufwinkel <object class="inlineeqn">\gamma</object>
+      </xs:documentation>
+    </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="IdelchickCheckvalveClosablePressreLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressreLossType"/>
+  <xs:element name="IdelchickCheckvalveClosablePressreLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressreLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes in Rückschlagventilen  nach <i>Idelchick, Diagramm 9.26</i>
+        Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \left( 2.7 - \beta_2 + \beta_3\right)\, \frac{|Q| \, Q}{A^2} ]]>
+        </object>
+        mit
+        <object class="eqn">
+          <![CDATA[\beta_2=\frac{0.8}{\frac{x}{D_0}} ]]>
+        </object>
+        <object class="eqn">
+          <![CDATA[\beta_3=\frac{0.14}{\left(\frac{x}{D_0}\right)^2} ]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="IdelchickCheckvalveClosablePressreLossType">
     <xs:complexContent>
-      <xs:extension base="CheckvalveClosablePressureLossType"/>
+      <xs:extension base="BallCheckvalveClosablePressureLossType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ConeCheckvalveClosablePressureLoss" substitutionGroup="CheckvalveClosablePressureLoss" type="ConeCheckvalveClosablePressureLossType"/>
+  <xs:element name="ConeCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="ConeCheckvalveClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes in Rückschlagventilen  mit konischer Geometrie.
+        Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \frac{1}{\alpha^2} \,  \frac{r_{Ball}^2 + 2 \, \sqrt{r_{Ball}^2 - x^2} \, x + x^2 }                 {\left[ 4 \, \left( r_{Ball}^2 - x^2\right) + 4 \, \sqrt{r_{Ball}^2 - x^2 } \, x + x^2 \right] \, \left(\pi \, x^2 \right)^2}   |Q| \, Q ]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ConeCheckvalveClosablePressureLossType">
     <xs:complexContent>
-      <xs:extension base="CheckvalveClosablePressureLossType">
+      <xs:extension base="BallCheckvalveClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="alpha" type="pv:nounitScalar"/>
+          <xs:element name="alpha" type="pv:nounitScalar">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
+      </xs:documentation>
+    </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="LeakagePressureLoss" substitutionGroup="PressureLoss" abstract="true" type="LeakagePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Klasse zur Berechnung von Druckverlusten in Leckagespalten.
+        In Abhängigkeit von der Modellerierung des zugehörigen Leitungsmodells wird entweder die Flussgleichung oder die Druckverlustgleichung ausgewertet.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="LeakagePressureLossType">
     <xs:complexContent>
@@ -324,7 +633,13 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HLine" abstract="true" substitutionGroup="mbsim:Object" type="HLineType"/>
+  <xs:element name="HLine" abstract="true" substitutionGroup="mbsim:Object" type="HLineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        <object class="figure" standby="4cm" data="hline" title="Orientierung und Referenzierung eines hydraulischen Leitungsobjekts"></object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="HLineType">
     <xs:complexContent>
       <xs:extension base="mbsim:ObjectType">
@@ -336,7 +651,8 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidHLine" abstract="true" substitutionGroup="HLine" type="RigidHLineType"/>
+  <xs:element name="RigidHLine" abstract="true" substitutionGroup="HLine" type="RigidHLineType">
+  </xs:element>
   <xs:complexType name="RigidHLineType">
     <xs:complexContent>
       <xs:extension base="HLineType">
@@ -359,7 +675,8 @@
           <xs:element name="linePressureLoss">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="LinePressureLoss"/>
+                <xs:element ref="LinePressureLoss">
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -383,8 +700,10 @@
                     <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="minimalChecksizeValue"/>
-                <xs:element name="setValued"/>
+                <xs:element name="minimalChecksizeValue">
+                </xs:element>
+                <xs:element name="setValued" minOccurs="0">
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -463,6 +782,89 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="DimensionlessLine" substitutionGroup="HLine" type="DimensionlessLineType">
+  </xs:element>
+  <xs:complexType name="DimensionlessLineType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthScalar">
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Leakage0DOF" substitutionGroup="DimensionlessLine" type="Leakage0DOFType">
+  </xs:element>
+  <xs:complexType name="Leakage0DOFType">
+    <xs:complexContent>
+      <xs:extension base="DimensionlessLineType">
+        <xs:sequence>
+          <xs:element name="firstSurfaceVelocity" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondSurfaceVelocity" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="gapLength" minOccurs="0">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PlaneLeakage0DOF" substitutionGroup="Leakage0DOF" type="PlaneLeakage0DOFType">
+  </xs:element>
+  <xs:complexType name="PlaneLeakage0DOFType">
+    <xs:complexContent>
+      <xs:extension base="Leakage0DOFType">
+        <xs:sequence>
+          <xs:element name="width" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="planeLeakagePressureLoss">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="PlaneLeakagePressureLoss"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="CircularLeakage0DOF" substitutionGroup="Leakage0DOF" type="CircularLeakage0DOFType">
+  </xs:element>
+  <xs:complexType name="CircularLeakage0DOFType">
+    <xs:complexContent>
+      <xs:extension base="Leakage0DOFType">
+        <xs:sequence>
+          <xs:element name="innerRadius" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+          </xs:element>
+          <xs:element name="circularLeakagePressureLoss">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="CircularLeakagePressureLoss"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="HNode" abstract="true" substitutionGroup="mbsim:Link" type="HNodeType"/>
   <xs:complexType name="HNodeType">
     <xs:complexContent>
@@ -518,9 +920,12 @@
     <xs:complexContent>
       <xs:extension base="HNodeType">
         <xs:sequence>
-          <xs:element name="volume" type="pv:nounitScalar"/>
-          <xs:element name="initialPressure" type="pv:nounitScalar"/>
-          <xs:element name="fracAir" type="pv:nounitScalar"/>
+          <xs:element name="volume" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="initialPressure" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="fracAir" type="pv:nounitScalar">
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -534,12 +939,14 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType"/>
+  <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType">
+  </xs:element>
   <xs:complexType name="HNodeMecType">
     <xs:complexContent>
       <xs:extension base="HNodeType">
         <xs:sequence>
-          <xs:element name="initialVolume" type="pv:nounitScalar"/>
+          <xs:element name="initialVolume" type="pv:nounitScalar">
+          </xs:element>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="translatorialBoundarySourface">
               <xs:complexType>
@@ -549,9 +956,12 @@
                       <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
                     </xs:complexType>
                   </xs:element>
-                  <xs:element name="normal" type="pv:nounitVector"/>
-                  <xs:element name="area" type="pv:nounitScalar"/>
-                  <xs:element name="noVolumeChange" minOccurs="0"/>
+                  <xs:element name="normal" type="pv:nounitVector">
+                  </xs:element>
+                  <xs:element name="area" type="pv:nounitScalar">
+                  </xs:element>
+                  <xs:element name="noVolumeChange" minOccurs="0">
+                  </xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -563,14 +973,17 @@
                       <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
                     </xs:complexType>
                   </xs:element>
-                  <xs:element name="normal" type="pv:nounitVector"/>
-                  <xs:element name="area" type="pv:nounitScalar"/>
+                  <xs:element name="normal" type="pv:nounitVector">
+                  </xs:element>
+                  <xs:element name="area" type="pv:nounitScalar">
+                  </xs:element>
                   <xs:element name="frameOfRotationCenter">
                     <xs:complexType>
                       <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
                     </xs:complexType> 
                   </xs:element>
-                  <xs:element name="noVolumeChange" minOccurs="0"/>
+                  <xs:element name="noVolumeChange" minOccurs="0">
+                  </xs:element>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -578,7 +991,8 @@
           <xs:element name="enableOpenMBVArrows" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="size" type="pv:nounitScalar"/>
+                <xs:element name="size" type="pv:nounitScalar">
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -614,13 +1028,16 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ElasticNodeMec" substitutionGroup="HNodeMec" type="ElasticNodeMecType"/>
+  <xs:element name="ElasticNodeMec" substitutionGroup="HNodeMec" type="ElasticNodeMecType">
+  </xs:element>
   <xs:complexType name="ElasticNodeMecType">
     <xs:complexContent>
       <xs:extension base="HNodeMecType">
         <xs:sequence>
-          <xs:element name="initialPressure" type="pv:nounitScalar"/>
-          <xs:element name="fracAir" type="pv:nounitScalar"/>
+          <xs:element name="initialPressure" type="pv:nounitScalar">
+          </xs:element>
+          <xs:element name="fracAir" type="pv:nounitScalar">
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -636,6 +1053,12 @@
 
 
   <xs:element name="Controlvalve43" substitutionGroup="mbsim:EmptyGroup" type="Controlvalve43Type">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        <object class="figure" standby="4cm" data="controlvalve43" title="Elemente eines 4/3-Wegeventils"></object>
+
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="Controlvalve43Type">
     <xs:complexContent>
@@ -649,9 +1072,12 @@
           <xs:element name="valve">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="length" type="pv:lengthScalar"/>
-                <xs:element name="diameter" type="pv:lengthScalar"/>
-                <xs:element name="alpha" type="pv:nounitScalar"/>
+                <xs:element name="length" type="pv:lengthScalar">
+                </xs:element>
+                <xs:element name="diameter" type="pv:lengthScalar">
+                </xs:element>
+                <xs:element name="alpha" type="pv:nounitScalar">
+                </xs:element>
                 <xs:element name="relativeAreaPA">
                   <xs:complexType>
                     <xs:sequence>
@@ -660,9 +1086,12 @@
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="minimalRelativeArea" type="pv:nounitScalar"/>
-                <xs:element name="setValued" minOccurs="0"/>
-                <xs:element name="offset" type="pv:nounitScalar"/>
+                <xs:element name="minimalRelativeArea" type="pv:nounitScalar">
+                </xs:element>
+                <xs:element name="setValued" minOccurs="0">
+                </xs:element>
+                <xs:element name="offset" type="pv:nounitScalar">
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -820,7 +1249,8 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="LinePressureLoss"/>
+                      <xs:element ref="LinePressureLoss">
+                      </xs:element>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
@@ -850,6 +1280,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
         Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <tt>HydNodeMec</tt> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
+        <object class="figure" standby="4cm" data="ball_checkvalve" title="Rückschlagventil"></object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -932,6 +1363,13 @@
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Masse der Ventilkugel. <br/>
                       Die Massenträgheit der Ventilkugel wird gemäß  <object class="inlineeqn">\Theta_{Ball}=\frac{2}{5} \, m_{Ball} \, r_{Ball}^2</object>. berechnet.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="initialPosition" type="pv:lengthScalar" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Inertiale Öffnungshöhe des Rückschlagventils.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>

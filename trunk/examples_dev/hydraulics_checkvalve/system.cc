@@ -39,7 +39,7 @@ System::System(const string &name, bool bilateral, bool unilateral) : Group(name
   Checkvalve * lCV = new Checkvalve("lCV");
   addGroup(lCV);
   if (unilateral)
-    lCV->setSetValued();
+    lCV->setLineSetValued();
   lCV->setFrameOfReference(b->getFrame("ref"));
   lCV->setLineLength(.05);
   lCV->setLineDiameter(4e-3);

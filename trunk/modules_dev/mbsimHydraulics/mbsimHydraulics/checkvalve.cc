@@ -90,6 +90,7 @@ namespace MBSim {
   void Checkvalve::setLineMinimalXOpen(double x) {line->setMinimalValue(x); }
   void Checkvalve::setLineSetValued(bool setValued) {line->setBilateral(setValued); }
   void Checkvalve::setBallMass(double mBall_) {mBall=mBall_; ball->setMass(mBall); }
+  void Checkvalve::setBallInitialPosition(double x0) {ball->setInitialGeneralizedPosition(x0); }
   void Checkvalve::setSpringForceFunction(Function2<double,double,double> *func) {spring->setForceFunction(func); }
   void Checkvalve::setSeatContactImpactLaw(GeneralizedImpactLaw * GIL) {seatContact->setContactImpactLaw(GIL); }
   void Checkvalve::setSeatContactForceLaw(GeneralizedForceLaw * GFL) {seatContact->setContactForceLaw(GFL); }
@@ -135,15 +136,18 @@ namespace MBSim {
 
       assert(dynamic_cast<HNodeMec*>(line->getFromNode()));
       assert(dynamic_cast<HNodeMec*>(line->getToNode()));
+      double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
+      if (ballForceArea<0)
+        ballForceArea=rLine*rLine*M_PI;
       fromNodeAreaIndex = ((HNodeMec*)line->getFromNode())->addTransMecArea(
           ball->getFrame("LowPressureSide"),
           "[1; 0; 0]",
-          rLine*rLine*M_PI*((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallAreaFactor(),
+          ballForceArea,
           false);
       toNodeAreaIndex = ((HNodeMec*)line->getToNode())->addTransMecArea(
           ball->getFrame("HighPressureSide"),
           "[-1; 0; 0]",
-          rLine*rLine*M_PI*((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallAreaFactor(),
+          ballForceArea,
           false);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -217,6 +221,9 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Ball");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"mass");
     setBallMass(getDouble(ee));
+    ee = e->FirstChildElement(MBSIMHYDRAULICSNS"initialPosition");
+    if (ee)
+      setBallInitialPosition(getDouble(ee));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"Spring");
     ee = e->FirstChildElement(MBSIMHYDRAULICSNS"forceFunction");
     Function2<double,double,double> *f=ObjectFactory::getInstance()->createFunction2_SSS(ee->FirstChildElement());

@@ -20,6 +20,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/leakage_line.h"
+#include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
 
@@ -129,15 +130,15 @@ namespace MBSim {
 
   double GammaCheckvalveClosablePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
-      siga=sin(gamma); 
-      coga=cos(gamma); 
+      siga=sin(gamma);
+      coga=cos(gamma);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      c=1./alpha/alpha*coga*coga*coga*coga*rho/2.;
+      c=rho/2./alpha/alpha/M_PI/M_PI;
       initialized=true;
     }
-    const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue();
-    area=M_PI*xOpen*siga*(2.*rBall*coga+xOpen);
-    return c*Q*fabs(Q)/area/area; 
+    const double x=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double fx=x*(2.*rBall*siga/coga + x*siga/coga/coga );
+    return c/fx/fx*abs(Q)*Q;
   }
 
   void GammaCheckvalveClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -162,8 +163,8 @@ namespace MBSim {
     const double xOpen=((const ClosableRigidLine*)(line))->getRegularizedValue();
     const double hdivd0=xOpen/d0;
     const double beta2=.8/hdivd0;
-    const double beta3=.14/hdivd0/hdivd0; // TODO
-    return c*Q*fabs(Q)*(2.7-beta2-beta3); 
+    const double beta3=.14/hdivd0/hdivd0;
+    return c*Q*fabs(Q)*(2.7-beta2+beta3); 
   }
 
 
@@ -195,38 +196,81 @@ namespace MBSim {
   }
 
 
-  double PlaneLeakagePressureLoss::operator()(const double& Q, const void * line) {
+  double PlaneLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      double h=((const PlaneLeakageLine*)(line))->getGapHeight();
-      double w=((const PlaneLeakageLine*)(line))->getGapWidth();
+      if (((const Object*)(line))->getuSize(0))
+        stateless=false;
+      double h;
+      double w;
+      if (stateless) {
+        h=((const PlaneLeakage0DOF*)(line))->getGapHeight();
+        w=((const PlaneLeakage0DOF*)(line))->getGapWidth();
+      }
+      else {
+        h=((const PlaneLeakageLine*)(line))->getGapHeight();
+        w=((const PlaneLeakageLine*)(line))->getGapWidth();
+      }
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
       // vgl. E. Becker: Technische Strömungslehre, (6. 13)
-      qfac = 12.*eta/w/h/h/h;
-      xdfac = -6.*eta/h/h;
+      pVfac = -w*h*h*h/12./eta;
+      xdfac = w*h/2.;
       initialized=true;
     }
-    const double gl=((const PlaneLeakageLine*)(line))->getGapLength();
-    const double s1v=((const PlaneLeakageLine*)(line))->getSurface1Velocity();
-    const double s2v=((const PlaneLeakageLine*)(line))->getSurface2Velocity();
-    return qfac*gl*Q + xdfac*gl*(s1v+s2v);
+    if (stateless) {
+      const double dp=pVorQ;
+      const double gl=((const PlaneLeakage0DOF*)(line))->getGapLength();
+      const double s1v=((const PlaneLeakage0DOF*)(line))->getSurface1Velocity();
+      const double s2v=((const PlaneLeakage0DOF*)(line))->getSurface2Velocity();
+      return xdfac*(s1v+s2v) + pVfac/gl*dp;
+    }
+    else {
+      const double Q=pVorQ;
+      const double gl=((const PlaneLeakageLine*)(line))->getGapLength();
+      const double s1v=((const PlaneLeakageLine*)(line))->getSurface1Velocity();
+      const double s2v=((const PlaneLeakageLine*)(line))->getSurface2Velocity();
+      return (Q-xdfac*(s1v+s2v))*gl/pVfac;
+    }
   }
 
 
-  double EccentricCircularLeakagePressureLoss::operator()(const double& Q, const void * line) {
+  double EccentricCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      double rI=((const CircularLeakageLine*)(line))->getInnerRadius();
-      double rO=((const CircularLeakageLine*)(line))->getOuterRadius();
-      double hGap=((const CircularLeakageLine*)(line))->getGapHeight();
+      if (((const Object*)(line))->getuSize(0))
+        stateless=false;
+      double rI;
+      double rO;
+      double hGap;
+      if (stateless) {
+        rI=((const CircularLeakage0DOF*)(line))->getInnerRadius();
+        rO=((const CircularLeakage0DOF*)(line))->getOuterRadius();
+        hGap=((const CircularLeakage0DOF*)(line))->getGapHeight();
+      }
+      else {
+        rI=((const CircularLeakageLine*)(line))->getInnerRadius();
+        rO=((const CircularLeakageLine*)(line))->getOuterRadius();
+        hGap=((const CircularLeakageLine*)(line))->getGapHeight();
+      }
       double area=M_PI*(rO*rO-rI*rI);
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      double alpha=area*hGap*hGap/12./nu*(1.+1.5*ecc*ecc*ecc);
-      qfac=1./alpha/area;
-      xdfac=-1./2./alpha;
+      area=M_PI*2.*rI*hGap;
+      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      pVfac=-area*hGap*hGap*(1.+1.5*ecc*ecc*ecc)/12./eta;
+      xdfac=area/2.;
+      initialized=true;
     }
-    const double gl=((const CircularLeakageLine*)(line))->getGapLength();
-    const double s1v=((const CircularLeakageLine*)(line))->getSurface1Velocity();
-    const double s2v=((const CircularLeakageLine*)(line))->getSurface2Velocity();
-    return qfac*gl*Q + xdfac*gl*(s1v+s2v);
+    if (stateless) {
+      const double dp=pVorQ;
+      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
+      const double s1v=((const CircularLeakage0DOF*)(line))->getSurface1Velocity();
+      const double s2v=((const CircularLeakage0DOF*)(line))->getSurface2Velocity();
+      return xdfac*(s1v+s2v) + pVfac/gl*dp;
+    }
+    else {
+      const double Q=pVorQ;
+      const double gl=((const CircularLeakageLine*)(line))->getGapLength();
+      const double s1v=((const CircularLeakageLine*)(line))->getSurface1Velocity();
+      const double s2v=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      return (Q-xdfac*(s1v+s2v))*gl/pVfac;
+    }
   }
 
   void EccentricCircularLeakagePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -237,10 +281,20 @@ namespace MBSim {
   }
 
 
-  double RealCircularLeakagePressureLoss::operator()(const double& Q, const void * line) {
+  double RealCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      double rI=((const CircularLeakageLine*)(line))->getInnerRadius();
-      double rA=((const CircularLeakageLine*)(line))->getOuterRadius();
+      if (((const Object*)(line))->getuSize(0))
+        stateless=false;
+      double rI;
+      double rA;
+      if (stateless) {
+        rI=((const CircularLeakage0DOF*)(line))->getInnerRadius();
+        rA=((const CircularLeakage0DOF*)(line))->getOuterRadius();
+      }
+      else {
+        rI=((const CircularLeakageLine*)(line))->getInnerRadius();
+        rA=((const CircularLeakageLine*)(line))->getOuterRadius();
+      }
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
       vIfac=-(-rI*rI+2.*rI*rI*log(rI)-2.*rI*rI*log(rA)+rA*rA)*M_PI/(log(rI)-log(rA))/2.;
       vOfac=(rA*rA-2.*rA*rA*log(rA)+2.*rA*rA*log(rI)-rI*rI)*M_PI/(log(rI)-log(rA))/2.;
@@ -248,32 +302,43 @@ namespace MBSim {
       initialized=true;
     }
     // vgl. Spurk Stroemungslehre S.162, (6.65)
-    const double gl=((const CircularLeakageLine*)(line))->getGapLength();
-    const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity();
-    const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity();
-    return (Q-vOfac*vO-vIfac*vI)*gl/pVfac;
+    if (stateless) {
+      const double dp=pVorQ;
+      const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
+      const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity();
+      const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      return vIfac*vI + vOfac*vO + pVfac/gl*dp;
+    }
+    else {
+      const double Q=pVorQ;
+      const double gl=((const CircularLeakageLine*)(line))->getGapLength();
+      const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity();
+      const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      return (Q-vOfac*vO-vIfac*vI)*gl/pVfac;
+    }
   }
 
-//  //  void PositiveFlowLimittingPressureLoss::update(const double& Q) {
-//  //    QLimit=checkSizeSignal->getSignal()(0);
-//  //    setClosed(Q>QLimit);
-//  //  }
-//  //
-//  //  double RegularizedPositiveFlowLimittingPressureLoss::operator()(const double& Q, const void *) {
-//  //    if (isClosed()) {
-//  //      zeta = zeta1 * ((Q>QLimit+offset) ? 1. : (Q-QLimit)/offset * zeta1);
-//  //      pLoss = 1.e4;
-//  //    }
-//  //    else {
-//  //      zeta = 0;
-//  //      pLoss = 0;
-//  //    }
-//  //    return pLoss;
-//  //  }
-//  //
-//  //  void NegativeFlowLimittingPressureLoss::update(const double& Q) {
-//  //    setClosed(Q<checkSizeSignal->getSignal()(0));
-//  //  }
+
+  //  //  void PositiveFlowLimittingPressureLoss::update(const double& Q) {
+  //  //    QLimit=checkSizeSignal->getSignal()(0);
+  //  //    setClosed(Q>QLimit);
+  //  //  }
+  //  //
+  //  //  double RegularizedPositiveFlowLimittingPressureLoss::operator()(const double& Q, const void *) {
+  //  //    if (isClosed()) {
+  //  //      zeta = zeta1 * ((Q>QLimit+offset) ? 1. : (Q-QLimit)/offset * zeta1);
+  //  //      pLoss = 1.e4;
+  //  //    }
+  //  //    else {
+  //  //      zeta = 0;
+  //  //      pLoss = 0;
+  //  //    }
+  //  //    return pLoss;
+  //  //  }
+  //  //
+  //  //  void NegativeFlowLimittingPressureLoss::update(const double& Q) {
+  //  //    setClosed(Q<checkSizeSignal->getSignal()(0));
+  //  //  }
 
 }
 

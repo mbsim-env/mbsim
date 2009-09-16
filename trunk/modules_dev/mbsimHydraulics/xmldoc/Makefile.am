@@ -7,7 +7,7 @@ xml/index.xml: ../schema/mbsimhydraulics.xsd ../mbsimHydraulics/*.h
 	doxygen
 
 mbsimhydraulics/mbsimhydraulics.tex: xml/index.xml
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimhydraulics.xsd xml . MBSimHydraulics MBSim:: false
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimhydraulics.xsd xml figures:../doc MBSimHydraulics MBSim:: false
 
 
 
