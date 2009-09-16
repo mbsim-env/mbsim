@@ -10,7 +10,7 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:annotation>
-    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       MBSim ist ein Simulationstool zur Analyse von dynamischen Systemen. Die Basis von MBSim liegt
       in der Modellierung von nichtglatten dynamischen Systemen, woraus der Name des Programms stammt.
       Der mathematische Hintergrund wurde über Jahre hinweg am Lehrstuhl für Angewandte Mechanik der
@@ -47,7 +47,7 @@
 
 
   <xs:simpleType name="PlotFeatureType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
       jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
       Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
@@ -104,7 +104,7 @@
 
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> im aktuellen Kontext.
       Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
       zu referenzierenden Frames darstellt.
@@ -119,7 +119,7 @@
 
   <!-- A reference to a Frame at the parent -->
   <xs:simpleType name="ParentFrameReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> des Vorgängers
       des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
       <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
@@ -136,7 +136,7 @@
 
   <!-- A reference from a Link|Object|ExtraDynamicSystem to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> an beliebiger
       Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
       <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
@@ -160,7 +160,7 @@
 
   <!-- A reference form a Link|Object|ExtraDynamicSystem to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einer <tt><a class="link" href="mbsim:Contour">&lt;Contour&gt;</a></tt> an beliebiger
       Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
       <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
@@ -184,7 +184,7 @@
 
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
   <xs:simpleType name="ObjectReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Object">&lt;Object&gt;</a></tt> an beliebiger
       Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
       <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
@@ -206,7 +206,7 @@
 
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
   <xs:simpleType name="ContactReferenceType">
-    <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
       Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Contact">&lt;Contact&gt;</a></tt> an beliebiger
       Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
       <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
@@ -239,7 +239,7 @@
     <xs:sequence> <!-- a workaround for xmllint -->
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="plotFeature">  
-          <xs:annotation><xs:documentation xml:lang="de">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Definiert die Plotfeatures für dieses Element.
           </xs:documentation></xs:annotation>
           <xs:complexType>
@@ -247,7 +247,7 @@
           </xs:complexType> 
         </xs:element>  
         <xs:element name="plotFeatureForChildren">
-          <xs:annotation><xs:documentation xml:lang="de">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Definiert die Plotfeatures für alle Kindelement.
           </xs:documentation></xs:annotation>
           <xs:complexType>
@@ -255,7 +255,7 @@
           </xs:complexType> 
         </xs:element>  
         <xs:element name="plotFeatureRecursive">  
-          <xs:annotation><xs:documentation xml:lang="de">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Definiert die Plotfeatures für diese Element und alle Kindelement.
           </xs:documentation></xs:annotation>
           <xs:complexType>
@@ -277,7 +277,7 @@
   <!-- For usage in Group an RigidBody -->
   <xs:element name="frame" type="frameType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Lokale Gruppe eines Koordinatensystems.
       </xs:documentation>
     </xs:annotation>
@@ -317,7 +317,7 @@
   <!-- For usage in Group an RigidBody -->
   <xs:element name="contour" type="contourType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Lokale Gruppe einer Kontaktkontur.
       </xs:documentation>
     </xs:annotation>
@@ -327,7 +327,7 @@
       <xs:element ref="Contour"/>
       <xs:element name="frameOfReference" minOccurs="0">
         <xs:annotation>
-          <xs:documentation xml:lang="de">
+          <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Koordinatensystem, in dem die relative Positionierung der Kontour angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
           </xs:documentation>
         </xs:annotation>
@@ -354,14 +354,21 @@
     <xs:attribute ref="xml:base"/>
   </xs:complexType>
 
-  <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType"/>
+  <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine neue Hierarchieebene in Form einer Gruppe. Eine Gruppe stellt dabei einen
+      Kontainer für andere <tt>Group</tt>'s, <tt>Object</tt>'s (Körper) und <tt>Link</tt>'s
+      (Verbindungselemente) bereit. Mithilfe von Gruppen können somit hierarchische Modelle erzeugt werden.
+      <p>Jede Gruppe definiert automatisch ein statisches KOS mit den Namen "I".</p>
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="GroupType">
     <xs:complexContent>
       <xs:extension base="EmptyGroupType">
         <xs:sequence>
           <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Koordinatensystem, in dem die Positionierung der Gruppe angegeben wird. Standardmäßig wird das "I"-System des übergeordneten Systems verwendet.
               </xs:documentation>
             </xs:annotation>
@@ -371,22 +378,22 @@
           </xs:element>
           <xs:element name="position" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Relative Lager der Gruppe.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Lage der Gruppe. Vektor vom <tt>frameOfReference</tt> zum KOS "I" dieser Gruppe.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="orientation" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Relative Orientierung der Gruppe.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Orientierung der Gruppe. Transformationsmatrix vom KOS "I" dieser Gruppe in das KOS <tt>frameOfReference</tt>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>           
           <xs:element name="frames">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für lokale Koordinatensysteme der Gruppe.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für ortsfeste (statische) Koordinatensysteme dieser Gruppe.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -398,8 +405,8 @@
           </xs:element>
           <xs:element name="contours">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für ortsfeste Kontaktkontouren der Gruppe.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für ortsfeste (statische) Kontaktkontouren dieser Gruppe.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -411,58 +418,34 @@
           </xs:element>
           <xs:element name="groups">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für Untergruppen der Gruppe (Subsysteme)
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für Untergruppen dieser Gruppe
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
-                <xs:element ref="EmptyGroup">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="EmptyGroup"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="objects">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für Objekte (Körper, hydraulische Leitungen, ...)
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für <tt>Object</tt>'s (Körper, hydraulische Leitungen, ...)
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
-                <xs:element ref="Object">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="Object"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
           <!--
           <xs:element name="extradynamics">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Kontainer für zusätzliche dynamische Systeme, welche als gewöhnliches Differentialgleichungssystem 1. Ordnung abgebildet werden können.
               </xs:documentation>
             </xs:annotation>
@@ -470,14 +453,14 @@
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="pv:embed">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>  
                 <xs:element ref="ExtraDynamicSystem">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
                     </xs:documentation>
                   </xs:annotation>
@@ -488,26 +471,14 @@
           -->
           <xs:element name="links">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für Links (Verbindungen, Kontakte, hydraulische Knoten, ...)
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für <tt>Link</tt>'s (Verbindungen, Kontakte, hydraulische Knoten, ...)
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
-                <xs:element ref="Link">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Lokale Definition.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
+                <xs:element ref="pv:embed"/>
+                <xs:element ref="Link"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -517,18 +488,28 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Environment" abstract="true" type="EnvironmentType"/>
+  <xs:element name="Environment" abstract="true" type="EnvironmentType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Abstrakte Oberklasse für die Definition von Umgebungsgröße verschiedener physikalischer Domains.
+      Z.b. die Erdbeschleunding in der Mechanik.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="EnvironmentType"/>
 
-  <xs:element name="MBSimEnvironment" substitutionGroup="Environment" type="MBSimEnvironmentType"/>
+  <xs:element name="MBSimEnvironment" substitutionGroup="Environment" type="MBSimEnvironmentType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Definiert mechanische Umgebungsgröße.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="MBSimEnvironmentType">
     <xs:complexContent>
       <xs:extension base="EnvironmentType">
         <xs:sequence>
           <xs:element name="accelerationOfGravity" type="pv:accelerationVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Erdbeschleunigung
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Vektor der Erdbeschleunigung angegeben im Welt-KOS. Das Welt-KOS ist identisch mit dem
+                KOS "I" von <tt><a class="link" href="mbsim:DynamicSystemSolver">&lt;DynamicSystemSolver&gt;</a></tt>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -537,26 +518,34 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="DynamicSystemSolver" substitutionGroup="Group" type="DynamicSystemSolverType"/>
+  <xs:element name="DynamicSystemSolver" substitutionGroup="Group" type="DynamicSystemSolverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      DynamicSystemSolver ist stets das oberste Element eines Modells und stellt somit ein Integrierbares
+      Gesammtsystem dar. Da DynamicSystemSolver von Group abgeleitet ist, stelle diese Element gleichzeitig
+      eine Gruppe dar welche mit anderen Gruppen, Objekten und Link's gefüllt werden kann. Zuletzt werden
+      innerhalb von DynamicSystemSolver die Umgebungsgrößen der einzelenen verwendeten Domains definiert.
+      <p>Das das oberste XML Element auch stets den <i>Namespace</i> der folgenden Elemente definieren muss,
+      sind die ersten Zeilen eines Modells meist die folgenden:</p>
+      <tt>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</tt><br/>
+      <tt>&lt;DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"</tt><br/>
+      <tt>  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"</tt><br/>
+      <tt>  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"&gt;</tt><br/>
+      <tt>  ...</tt><br/>
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="DynamicSystemSolverType">
     <xs:complexContent>
       <xs:extension base="GroupType">
         <xs:sequence>
           <xs:element name="environments">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Kontainer für Umgebungsvariablen des physikalen Systems
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Definition einzelner Umgebungsvariablen
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
@@ -567,7 +556,7 @@
 
   <xs:element name="Object" abstract="true" substitutionGroup="Element" type="ObjectType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse eines Objekts.
       </xs:documentation>
     </xs:annotation>
@@ -578,22 +567,25 @@
         <xs:sequence>
           <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:lengthVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Lage in den generalisierten Freiheitsgraden.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:velocityVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frameOfReference">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Koordinatensystem, in dem die generalisierten Koordinaten des Objekts ausgewertet werden.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das KOS bezüglich dessen die Bewegung (Kinematik; generalisierte Lagen) dieses Objekts angegebn wird.
+                Ist dieses KOS ein KOS einer Gruppe (statisches KOS) so handelt es sich um eine Objekt
+                mit absoluter Parametrierung. Ist das referenz KOS eine KOS eines anderen Objekts (bewegliches KOS),
+                so handelt es sich um ein Objekt mit relativer Parametrierung (Baumstruktur).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -606,10 +598,11 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Body" substitutionGroup="Object" type="BodyType">
+  <xs:element name="Body" abstract="true" substitutionGroup="Object" type="BodyType">
     <xs:annotation>
-      <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      <!--<xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         The following <b>part</b> is <i>only</i> a test for <tt>equation</tt> and image output for the XML documentation FROM XSM SCHEMA.
+        Also links to other parts of the Documentation is possible <a class="link" href="mbsim:Element">like this</a>.
         <p>A paragraph with a line break<br/>here</p>
         <p>Other paragraph with a definition list:</p>
         <dl>
@@ -637,9 +630,9 @@
         And a inline equation <object class="inlineeqn">x_a+\cos(x)</object>. And a image.
         <object class="figure" standby="4cm" data="mbsim" title="The image caption"/>
         End of the test. 
-      </xs:documentation>
-      <xs:documentation xml:lang="de">
-        Mechanischer Körper.
+      </xs:documentation>-->
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse für beliebigen mechanische Körper (starr, flexible, ...).
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -651,8 +644,10 @@
 
   <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Jeder Starrkörper bekommt automatisch ein Koordinatensystem "C" in seinem Schwerpunkt zugewiesen. Alle Größen werden standardmäßig in diesem Koordinatensystem definiert.
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert einen Starrköper. Ob der Körper mittels relativ oder absolut Koordinaten beschreiben wird
+        entscheidet allein das <tt>frameOfReference</tt> des Körpers (siehe <a class="link" href="mbsim:Object">&lt;Object&gt;</a>.
+        <p>Jeder Starrkörper bekommt automatisch ein Koordinatensystem "C" in seinem Schwerpunkt zugewiesen.</p>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -662,8 +657,13 @@
         <xs:sequence>
           <xs:element name="frameForKinematics">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Koordinatensystem, in dem die kinematischen Größen des Körpers ausgewertet werden. Dieses Koordinatensystem muss dem Körper zugehörig sein. Es kann sich entsprechend der angegebenen translatorischen und rotatorischen Freiheitsgrade gegenüber dem frameOfReference bewegen und ist zu Beginn der Simulation um die angegebenen generalisierten Startwerte gegenüber dem frameOfReference ausgelenkt.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das KOS dessen relative Bewegung bezüglich des <tt>frameOfReference</tt>
+                (siehe <tt><a class="link" href="mbsim:Object">Object</a></tt>) sich unmittelbar aus den
+                generalisierten Koordinaten dieses Körpers ergibt.
+                <p>Es kann sich somit entsprechend der angegebenen translatorischen und rotatorischen Freiheitsgrade
+                relativ gegenüber dem <tt>frameOfReference</tt> bewegen und ist zu Beginn der Simulation um die
+                angegebenen generalisierten Startwerte gegenüber dem <tt>frameOfReference</tt> ausgelenkt.</p>
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -672,46 +672,58 @@
           </xs:element>
           <xs:element name="mass" type="pv:massScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Masse des Körpers
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Trägheitstensor des Körpers. Anzugeben im Punkt und der Orientierung des Schwerpunkts.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Trägheitstensor des Körpers bezüglich des Schwerkpunktkoordinatensystems "C".
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="translation">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Vorschrift zur Berechnung des Translationsvektors
+              <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+              generalisierten Lagen und der Zeit an.
+              Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+              im KOS <tt>frameOfReference</tt> dargestellt und stellt die
+              Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinamtics</tt> dar.
+              <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Translation" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Translatorische Freiheitsgrade des Körpers. Sie werden in den Koordinaten des zugewiesenen frameOfReference angegeben.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:element ref="Translation" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="rotation">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+              <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+              generalisierten Lagen und der Zeit an.
+              Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+              Transformation vom KOS <tt>frameForKinamtics</tt> in das KOS <tt>frameOfReference</tt> dar.
+              <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Rotation" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Rotatorische Freiheitsgrade des Körpers. Sie werden in den Koordinaten des zugewiesenen frameOfReference angegeben. Wenn dieses Koordinatensystem einem anderen Körper zugehörig ist, dann wird der Körper in relativen Koordinaten beschrieben. Ist das Koordinaten dagegen einer Gruppe zugehörig, so wird der Körper in Absolutkoordinaten beschrieben.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:element ref="Rotation" minOccurs="0"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <!-- BEGIN The following elements are rarly used. That is why they are optional (on top level) -->
           <xs:element name="jacobianOfTranslation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Vorschrift zur Berechnung der Jacobimatrix der Translation
+              <object class="inlineeqn">\boldsymbol{J}_T=\frac{\partial \boldsymbol{r}_q}{\partial q}(\boldsymbol{q},t)</object>
+              in Abhängigkeit der generalisierten Lagen und der Zeit an.
+              <p>Wenn als Translation <a class="link" href="mbsim:LinearTranslation">LinearTranslation</a> angegeben wurde,
+              so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Jacobian"/>
@@ -719,6 +731,14 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="jacobianOfRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Vorschrift zur Berechnung der Jacobimatrix der Rotation
+              <object class="inlineeqn">\boldsymbol{J}_R=\frac{\partial \omega}{\partial \dot{\boldsymbol{q}}}(\boldsymbol{q},t)</object> in Abhängigkeit der 
+              generalisierten Lagen und der Zeit an.
+              <p>Wenn als Rotation <a class="link" href="mbsim:RotationAboutFixedAxis">RotationAboutFixedAxis</a> oder
+              <a class="link" href="mbsim:CardanAngles">CardanAngles</a> angegeben wurde,
+              so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Jacobian"/>
@@ -726,6 +746,12 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="derivativeOfJacobianOfTranslation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die zeitliche Ableitung der Jacobimatrix der Translation
+              <object class="inlineeqn">\dot{\boldsymbol{J}}_T(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
+              Abhängigkeit der Ableitung der generalisierten Koordinaten, den generalisierten Koordinaten und der Zeit an.
+              <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function3_MVVS"/>
@@ -733,6 +759,12 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="derivativeOfJacobianOfRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die zeitliche Ableitung der Jacobimatrix der Rotation
+              <object class="inlineeqn">\dot{\boldsymbol{J}}_R(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
+              Abhängigkeit der Ableitung der generalisierten Koordinaten, den generalisierten Koordinaten und der Zeit an.
+              <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function3_MVVS"/>
@@ -740,11 +772,13 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Vorgabe der translatorischen Geschwindigkeit. Rückgabewert muss eine 3x1-Matrix sein.
-              </xs:documentation>
-            </xs:annotation>
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die translatorische Führungsgeschwindigkeit
+              <object class="inlineeqn">\boldsymbol{v}_t=\frac{\partial \boldsymbol{r}_q}{\partial t}(t)</object>
+              in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
+              dargestellt werden.
+              <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -752,6 +786,13 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="guidingVelocityOfRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die rotatorische Führungsdrehgeschwindigkeit
+              <object class="inlineeqn">\boldsymbol{\omega}_t(t)</object>
+              in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
+              dargestellt werden.
+              <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -759,6 +800,13 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="derivativeOfGuidingVelocityOfTranslation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Ableitung der translatorischen Führungsgeschwindigkeit
+              <object class="inlineeqn">\boldsymbol{a}_t=\dot{\boldsymbol{v}}_t(t)</object>
+              in Abhängigkeit der Zeit an. Diese Beschleunigung muss im KOS <tt>frameOfReference</tt>
+              dargestellt werden.
+              <p>Wenn diese Beschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -766,6 +814,13 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="derivativeOfGuidingVelocityOfRotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Gibt die Ableitung der rotatorischen Führungsdrehgeschwindigkeit
+              <object class="inlineeqn">\boldsymbol{\alpha}_t=\dot{\boldsymbol{\omega}}_t(t)</object>
+              in Abhängigkeit der Zeit an. Diese Drehbeschleunigung muss im KOS <tt>frameOfReference</tt>
+              dargestellt werden.
+              <p>Wenn diese Drehbeschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -775,8 +830,10 @@
           <!-- END -->
           <xs:element name="frames">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für lokale Koordinatensysteme des Körpers.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für lokale Koordinatensysteme dieses Körpers. Da es sich um einen Starrkörper
+                handelt ist die relative Lage dieser KOS untereinander (und auch zum KOS "C") während
+                der gesamten Simulation konstant.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -788,8 +845,10 @@
           </xs:element>
           <xs:element name="contours">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Kontainer für lokale Kontaktkontouren des Körpers.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kontainer für lokale Kontaktkontouren dieses Körpers.
+                Da es sich um einen Starrkörper handelt ist die relative Lage dieser Kontaktkontouren
+                untereinander (und auch zum KOS "C") während der gesamten Simulation konstant.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -801,23 +860,18 @@
           </xs:element>
           <xs:element name="openMBVRigidBody" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Visualisierung des Körpers in OpenMBV.
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung dieses Körpers in OpenMBV durch den unten angegebenen OpenMBV Körper.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="ombv:RigidBody">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Visualisierung
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:element ref="ombv:RigidBody"/>
                 <xs:element name="frameOfReference" minOccurs="0">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Koordinatensystem, in dessen Koordinaten die Visualisierung dagestellt wird. Standardmäßig Schwerpunktssystem.
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert das MBSim KOS mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt. Wird
+                      dieses Element nicht angegeben, so wird das KOS "C" verwendent.
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
@@ -829,23 +883,23 @@
           </xs:element>
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
-                Visualisierung des Schwerpunktssystems
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung des Schwerpunktskoordinatensystems "C" diese Körpers in OpenMBV.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="size" type="pv:lengthScalar">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      Länge der Achsen
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Länge der Achsen des visuellen KOS im OpenMBV.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
                 <xs:element name="offset" type="pv:nounitScalar">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
-                      relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem)
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Relative Verschiebung der Achsen (0=Achsenkreuz, 1=Rechtssystem).
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -859,8 +913,8 @@
 
   <xs:element name="ExtraDynamicSystem" abstract="true" substitutionGroup="Element" type="ExtraDynamicSystemType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
-        Abstrakte Klasse eines ExtraDynamicSystems.
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse eines ExtraDynamicSystems.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -870,7 +924,11 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Link" abstract="true" substitutionGroup="Element" type="LinkType"/>
+  <xs:element name="Link" abstract="true" substitutionGroup="Element" type="LinkType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Abstrakte Oberklasse eines Verbindungselements zwischen Objekten.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="LinkType">
     <xs:complexContent>
       <xs:extension base="ElementType">
@@ -879,54 +937,103 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LinkMechanics" substitutionGroup="Link" type="LinkMechanicsType"/>
+  <xs:element name="LinkMechanics" substitutionGroup="Link" type="LinkMechanicsType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="LinkMechanicsType">
     <xs:complexContent>
       <xs:extension base="LinkType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="KineticExcitation" substitutionGroup="LinkMechanics" type="KineticExcitationType"/>
+  <xs:element name="KineticExcitation" substitutionGroup="LinkMechanics" type="KineticExcitationType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine externe, kinetische Anregung auf einen Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="KineticExcitationType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
           <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert das KOS bezüglich dem die Kraft-/Momentenrichtung der Anregung angegeben ist.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
           <xs:element name="force" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert eine Kraftanregung.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="directionVectors" type="pv:nounitMatrix"/>
+                <xs:element name="directionVectors" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Definiert die Wirkrichtung der Kraftanregung(en).
+                    Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                    im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                    zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
                 <xs:element name="function">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Definiert die Kraftfunktion in Anhängigkeit der Zeit.
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="Function1_VS"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Wenn angegeben, wird die Kraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="moment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert eine Momentenanregung.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="directionVectors" type="pv:nounitMatrix"/>
+                <xs:element name="directionVectors" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Definiert die Wirkrichtung der Momentenanregung(en).
+                    Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
+                    im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                    zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
                 <xs:element name="function">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Definiert die Momentfunktion in Anhängigkeit der Zeit.
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="Function1_VS"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Wenn angegeben, wird das Moment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
+              muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
@@ -936,12 +1043,20 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType"/>
+  <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern.
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="SpringDamperType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
           <xs:element name="forceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkten
+              und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function2_SSS"/>
@@ -949,25 +1064,51 @@
             </xs:complexType> 
           </xs:element>
           <xs:element name="projectionDirection" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn dieses Element nicht angegeben ist, so entspricht die Kraftwirkrichtung der
+              Verbindunglinie zwischen dan Kraftangriffspunkten.
+              <p>Wenn diese Element angegeben ist, so wird die Kraftwirkrichtung durch den Benutzer
+              vorgegeben.</p>
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="frameOfReference">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Gibt das KOS an, bezüglich dessen der Kraftwirkrichtung vorgegeben wird.
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
                   </xs:complexType> 
                 </xs:element>
-                <xs:element name="direction" type="pv:nounitVector"/>
+                <xs:element name="direction" type="pv:nounitVector">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Gibt den Kraftwirkrichtungsvektor im KOS <tt>frameOfReference</tt> an. Der vektor
+                    sollte normiert sein, um eine Skalierung der Kraftfunktion zu umgehen.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType> 
           </xs:element>
           <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
+              muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element ref="ombv:CoilSpring" minOccurs="0"/>
-          <xs:element ref="ombv:Arrow" minOccurs="0"/>
+          <xs:element ref="ombv:CoilSpring" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element ref="ombv:Arrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Pfeile in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1112,7 +1253,7 @@
 
   <xs:element name="Contour" abstract="true" substitutionGroup="Element" type="ContourType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse für Kontaktkonturen.
       </xs:documentation>
     </xs:annotation>
@@ -1125,7 +1266,7 @@
 
   <xs:element name="RigidContour" substitutionGroup="Contour" type="RigidContourType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse für starre Konturen.
       </xs:documentation>
     </xs:annotation>
@@ -1150,14 +1291,14 @@
         <xs:sequence>
           <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Innenradius des Hohlzylinders
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Visualisierung der Kontur
               </xs:documentation>
             </xs:annotation>
@@ -1181,14 +1322,14 @@
         <xs:sequence>
           <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Aussenradius des Vollzylinders
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Visualisierung der Kontur
               </xs:documentation>
             </xs:annotation>
@@ -1213,21 +1354,21 @@
         <xs:sequence>
           <xs:element name="baseRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Radius des Fußkreises
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="topRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Radius des Kopfkreises
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Höhe des Kegelstumpfes
               </xs:documentation>
             </xs:annotation>
@@ -1235,14 +1376,14 @@
           <xs:choice>
             <xs:element name="solid">
               <xs:annotation>
-                <xs:documentation xml:lang="de">
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                   Als Kontaktkontur wird die Ausfläche des Kegelstumpfes gewählt
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
             <xs:element name="hollow">
               <xs:annotation>
-                <xs:documentation xml:lang="de">
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                   Als Kontaktkontur wird die Innenfläche des Kegelstumpfes gewählt
                 </xs:documentation>
               </xs:annotation>
@@ -1250,7 +1391,7 @@
           </xs:choice>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Visualisierung der Kontur
               </xs:documentation>
             </xs:annotation>
@@ -1292,7 +1433,7 @@
 
   <xs:element name="PlaneWithFrustum" substitutionGroup="RigidContour" type="PlaneWithFrustumType">
     <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">       
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Eine Kontur, die aus einer Ebene und einem Kegelstumpf (Frustum) besteht. Die Ebene wird wie gezeichnet durch die y- und z-Achse des Referenzkoordinatensystems aufgespannt, die Rotationsachse des Kegelstumpfes ist die x-Achse des Referenzkoordinatensystems. Für eine Kegelstumpf-Höhe h&gt;0 erstreckt sich die Kegelstumpfkontur - wie gezeichnet - in Richtung der positiven x-Achse des Referenzkoordinatensystems. Rho ist der Radius der Verrundung zwischen Ebene und Kegelstumpf und am Kopf des Kegelstumpfes.
         <object class="figure" standby="4cm" data="contour_planewithfrustum" title="Orientierung einer PlaneWithFrustum-Kontour"></object>
       </xs:documentation>
@@ -1304,35 +1445,35 @@
         <xs:sequence>
           <xs:element name="baseRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Radius des Fußkreises
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="topRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Radius des Kopfkreises
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="height" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Höhe des Kegelstumpfes
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="roundingRadius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Verrundungsradius, einmal zwischen Ebene und Kegelstumpf und einmal zwischen Kegelstumpf und Deckfläche des Kegelstumpfes (wie gezeichnet)
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Visualisierung der Kontur
               </xs:documentation>
             </xs:annotation>
@@ -1344,7 +1485,7 @@
 
   <xs:element name="Point" substitutionGroup="RigidContour" type="PointType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Kontur eines einzelnen Punktes.
       </xs:documentation>
     </xs:annotation>
@@ -1370,14 +1511,14 @@
         <xs:sequence>
           <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Radius der Kugel
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Visualisierung der Kontur
               </xs:documentation>
             </xs:annotation>
@@ -1676,7 +1817,7 @@
         <xs:sequence>
           <xs:element name="value" type="pv:nounitScalar">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Konstanter Funktionswert.
               </xs:documentation>
             </xs:annotation>
@@ -1714,7 +1855,7 @@
 
   <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Konstanter Funktionswert.
       </xs:documentation>
     </xs:annotation>
@@ -1761,7 +1902,7 @@
           </xs:element>
           <xs:element name="direction" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Richtungsvektor
               </xs:documentation>
             </xs:annotation>
@@ -1785,21 +1926,21 @@
         <xs:sequence>
           <xs:element name="amplitude" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Amplituden
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Frequenzen
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:nounitVector">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Phasenwinkel
               </xs:documentation>
             </xs:annotation>
