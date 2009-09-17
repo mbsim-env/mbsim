@@ -398,17 +398,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
                 <xs:element ref="frame">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -423,17 +423,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
                 <xs:element ref="contour">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -448,17 +448,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
                 <xs:element ref="EmptyGroup">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -473,17 +473,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
                 <xs:element ref="Object">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -499,17 +499,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>  
                 <xs:element ref="ExtraDynamicSystem">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>  
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>  
@@ -525,17 +525,17 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Definition in externer Datei.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
                 <xs:element ref="Link">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Lokale Definition.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element ref="pv:embed">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definition in externer Datei.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -899,8 +899,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
                 <xs:element ref="frame"/>
+                <xs:element ref="pv:embed"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
@@ -914,8 +914,8 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element ref="pv:embed"/>
                 <xs:element ref="contour"/>
+                <xs:element ref="pv:embed"/>
               </xs:choice>
             </xs:complexType>
           </xs:element>
