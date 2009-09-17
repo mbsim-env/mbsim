@@ -38,7 +38,7 @@
     <xs:complexContent>
       <xs:extension base="mbsim:EnvironmentType">
         <xs:sequence>
-          <xs:element name="environmentPressure" type="pv:nounitScalar">
+          <xs:element name="environmentPressure" type="pv:pressureScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Umgebungsdruck
@@ -53,7 +53,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice>
-                <xs:element name="constantSpecificMass" type="pv:nounitScalar">
+                <xs:element name="constantSpecificMass" type="pv:densityScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       konstante Dichte
@@ -79,7 +79,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="basicSpecificMass" type="pv:nounitScalar">
+                      <xs:element name="basicSpecificMass" type="pv:densityScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -87,7 +87,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="basicTemperature" type="pv:nounitScalar">
+                      <xs:element name="basicTemperature" type="pv:temperatureScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -117,7 +117,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="basicSpecificMass" type="pv:nounitScalar">
+                      <xs:element name="basicSpecificMass" type="pv:densityScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -125,7 +125,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="basicTemperature" type="pv:nounitScalar">
+                      <xs:element name="basicTemperature" type="pv:temperatureScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -148,7 +148,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:choice>
-                <xs:element name="constantKinematicViscosity" type="pv:nounitScalar">
+                <xs:element name="constantKinematicViscosity" type="pv:kinematicViscosityScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Konsanter Wert.
@@ -180,7 +180,7 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="temperature1" type="pv:nounitScalar">
+                      <xs:element name="temperature1" type="pv:temperatureScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -188,7 +188,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="kinematicViscosity1" type="pv:nounitScalar">
+                      <xs:element name="kinematicViscosity1" type="pv:kinematicViscosityScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -196,7 +196,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="temperature2" type="pv:nounitScalar">
+                      <xs:element name="temperature2" type="pv:temperatureScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -204,7 +204,7 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="kinematicViscosity2" type="pv:nounitScalar">
+                      <xs:element name="kinematicViscosity2" type="pv:kinematicViscosityScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -218,7 +218,7 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
-          <xs:element name="basicBulkModulus" type="pv:nounitScalar">
+          <xs:element name="basicBulkModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Kompressionsmodul des (luftfreien) Fluids
@@ -238,7 +238,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="fluidTemperature" type="pv:nounitScalar">
+          <xs:element name="fluidTemperature" type="pv:temperatureScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Temperatur des Fluids zur Bestimmung der Fluideigenschaften.
@@ -319,19 +319,6 @@
   <xs:element name="CurveFittedLinePressureLoss" substitutionGroup="LinePressureLoss" type="CurveFittedLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Für hydraulische Bauteile einer gewissen Komplexität sind die Druckverlustfaktoren aus tabellarischen Naschlagewerken oft nur sehr ungenau bis gar nicht zu bestimmen. Dagegen kann für jedes Bauteil durch eine Messung bzw. CFD-Simulation der Druckverlust in Abhängigkeit der Reynoldszahl bestimmt werden. Die Reynoldszahl sollte hierbei möglichst im Bezug auf den engsten Querschnitt als Referenzquerschnitt <object class="inlineeqn">A_r</object> mit dem hydraulischen Durchmesser <object class="inlineeqn">D_H</object> bestimmt werden <br/>
-        Für jedes hydraulische Bauteil setzt sich der Durckverlust bei laminarer Strömung aus einem Anteil der Umlenkverluste und einem Anteil der Reibungsverluste zusammen
-        <object class="eqn">\Delta p = \Delta p_{Umlenk} + \Delta p_{Reibung} = \frac{\rho}{2} \, \left( \sum_i \zeta_i \, \frac{Q \, |Q|}{A^2} + \sum_j \lambda_j \, \frac{l_j}{d_j} \, \frac{Q \, |Q|}{A^2} \right)</object>
-        mit den konstante Faktoren <object class="inlineeqn">\zeta_i</object> für die Umlenkstellen und der Rohrreibungszahl <object class="inlineeqn">\lambda_j</object> f+r die jeweiligen Leitungsabschnitte des Bauelements.<br/>
-        Die Reynoldszahl am Referenzquerschnitt wird über die Beziehung
-        <object class="eqn">Re = \frac{D_{H,R}}{\nu} \, \frac{Q}{A}</object>
-        bestimmt.
-        Ausgehend von den Mess- bzw. Simulationsdaten können dann mittels Curvefitting die Parameter <object class="inlineeqn">a</object> und <object class="inlineeqn">b</object> für die folgende Approximationsfunktion in Abhängigkeit von der Reynoldszahl bestimmt werden:
-        <object class="eqn">\Delta p = \rho \, \nu^2 \, \left( a \, Re_R + b \, Re_R^2 \right)</object>
-        mit
-        <object class="eqn">a= \sum_i 32 \, \frac{l_i}{d_i^2 \, D_{H,R}} \, \frac{A_R}{A_i}</object>
-        <object class="eqn">b= \sum_i \frac{\zeta_i}{2 \, D_{H,R}^2} \, \left( \frac{A_R}{A_i} \right)^2</object>
-        Ab einer Reynoldszahl von <object class="inlineeqn">Re>2300</object> kann es zu turbulenten Strömungszuständen kommen. Abhängig von deren Ausprägung im Bauteil verschlechtert sich die Aussagegenauigkeit des Modells.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -339,9 +326,9 @@
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
-          <xs:element name="referenceDiameter" type="pv:nounitScalar">
+          <xs:element name="referenceDiameter" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="hydraulicDiameter" type="pv:nounitScalar">
+          <xs:element name="hydraulicDiameter" type="pv:lengthScalar">
           </xs:element>
           <xs:element name="aPositive" type="pv:nounitScalar">
           </xs:element>
@@ -455,7 +442,7 @@
     <xs:complexContent>
       <xs:extension base="CheckvalveClosablePressureLossType">
         <xs:sequence>
-          <xs:element name="ballRadius" type="pv:nounitScalar">
+          <xs:element name="ballRadius" type="pv:lengthScalar">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Radius des Ventilkugel <object class="inlineeqn">r_{Ball}</object>
@@ -700,7 +687,7 @@
                     <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="minimalChecksizeValue">
+                <xs:element name="minimalChecksizeValue" type="pv:nounitScalar">
                 </xs:element>
                 <xs:element name="setValued" minOccurs="0">
                 </xs:element>
@@ -920,9 +907,9 @@
     <xs:complexContent>
       <xs:extension base="HNodeType">
         <xs:sequence>
-          <xs:element name="volume" type="pv:nounitScalar">
+          <xs:element name="volume" type="pv:volumeScalar">
           </xs:element>
-          <xs:element name="initialPressure" type="pv:nounitScalar">
+          <xs:element name="initialPressure" type="pv:pressureScalar">
           </xs:element>
           <xs:element name="fracAir" type="pv:nounitScalar">
           </xs:element>
@@ -945,7 +932,7 @@
     <xs:complexContent>
       <xs:extension base="HNodeType">
         <xs:sequence>
-          <xs:element name="initialVolume" type="pv:nounitScalar">
+          <xs:element name="initialVolume" type="pv:volumeScalar">
           </xs:element>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element name="translatorialBoundarySourface">
@@ -958,7 +945,7 @@
                   </xs:element>
                   <xs:element name="normal" type="pv:nounitVector">
                   </xs:element>
-                  <xs:element name="area" type="pv:nounitScalar">
+                  <xs:element name="area" type="pv:areaScalar">
                   </xs:element>
                   <xs:element name="noVolumeChange" minOccurs="0">
                   </xs:element>
@@ -975,7 +962,7 @@
                   </xs:element>
                   <xs:element name="normal" type="pv:nounitVector">
                   </xs:element>
-                  <xs:element name="area" type="pv:nounitScalar">
+                  <xs:element name="area" type="pv:areaScalar">
                   </xs:element>
                   <xs:element name="frameOfRotationCenter">
                     <xs:complexType>
@@ -1034,7 +1021,7 @@
     <xs:complexContent>
       <xs:extension base="HNodeMecType">
         <xs:sequence>
-          <xs:element name="initialPressure" type="pv:nounitScalar">
+          <xs:element name="initialPressure" type="pv:pressureScalar">
           </xs:element>
           <xs:element name="fracAir" type="pv:nounitScalar">
           </xs:element>

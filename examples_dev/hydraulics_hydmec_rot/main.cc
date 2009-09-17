@@ -27,7 +27,7 @@ int main (int argc, char* argv[]) {
     HydraulicEnvironment::getInstance()->setConstantKinematicViscosity(12e-6);
     HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
     HydraulicEnvironment::getInstance()->setKappa(1.3);
-    HydraulicEnvironment::getInstance()->setTemperature(50);
+    HydraulicEnvironment::getInstance()->setTemperature(50+273.16);
     HydraulicEnvironment::getInstance()->initializeFluidData();
 
     dss->setConstraintSolver(LinearEquations);

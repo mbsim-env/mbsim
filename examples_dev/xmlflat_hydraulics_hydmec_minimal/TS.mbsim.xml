@@ -71,21 +71,21 @@
         <h:specificMassDependingOnTemperature>
           <h:dRhodT>-.8</h:dRhodT>
           <h:basicSpecificMass>1200</h:basicSpecificMass>
-          <h:basicTemperature>10</h:basicTemperature>
+          <h:basicTemperature unit="degC">10</h:basicTemperature>
         </h:specificMassDependingOnTemperature>
       </h:specificMass>
       <h:kinematicViscosity>
         <!--<h:constantKinematicViscosity>12e-6</h:constantKinematicViscosity>-->
         <h:walterUbbeohdeKinematicViscosity>
-          <h:temperature1>40</h:temperature1>
+          <h:temperature1 unit="degC">40</h:temperature1>
           <h:kinematicViscosity1>55e-6</h:kinematicViscosity1>
-          <h:temperature2>100</h:temperature2>
+          <h:temperature2 unit="degC">100</h:temperature2>
           <h:kinematicViscosity2>10e-6</h:kinematicViscosity2>
         </h:walterUbbeohdeKinematicViscosity>
       </h:kinematicViscosity>
       <h:basicBulkModulus>2e11</h:basicBulkModulus>
       <h:kappa>1.4</h:kappa>
-      <h:fluidTemperature>50</h:fluidTemperature>
+      <h:fluidTemperature unit="degC">50</h:fluidTemperature>
     </h:HydraulicEnvironment>
   </environments>
 </DynamicSystemSolver>
