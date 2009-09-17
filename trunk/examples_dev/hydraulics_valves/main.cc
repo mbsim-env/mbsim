@@ -59,10 +59,10 @@ int main (int argc, char* argv[]) {
           dss->addGroup(new System("HS", (nodeType==1), (valveType==1)));
           HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
           HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
-          HydraulicEnvironment::getInstance()->setWalterUbbelohdeKinematicViscosity(40, 55e-6, 100, 10e-6);
+          HydraulicEnvironment::getInstance()->setWalterUbbelohdeKinematicViscosity(40+273.16, 55e-6, 100+273.16, 10e-6);
           HydraulicEnvironment::getInstance()->setKappa(1.3);
           HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
-          HydraulicEnvironment::getInstance()->setTemperature(50);
+          HydraulicEnvironment::getInstance()->setTemperature(50+273.16);
           HydraulicEnvironment::getInstance()->initializeFluidData();
 
           MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");

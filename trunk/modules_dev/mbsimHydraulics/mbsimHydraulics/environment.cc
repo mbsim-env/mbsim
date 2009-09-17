@@ -71,10 +71,10 @@ namespace MBSim {
     nu=(this->*calcNu)(T);
     cout << endl;
     cout << "===============================================" << endl;
-    cout << "initializing hydraulic environment at T=" << T << " [degC]" << endl;
+    cout << "initializing hydraulic environment at T=" << T-273.16 << " [degC]" << endl;
     cout << "            with kinematic viscosity nu=" << nu*1e6 << " [mm^2/s]" << endl;
     cout << "                      specific mass rho=" << rho << " [kg/m^3]" << endl;
-    cout << "                  dynamic viscosity eta=" << getDynamicViscosity() << " [Pa*s]" << endl;
+    cout << "                  dynamic viscosity eta=" << getDynamicViscosity()*1e3 << " [mPa*s]" << endl;
     cout << "                                  kappa=" << kappa << " [-]" << endl;
     cout << "                      boundary pressure=" << pinf*1e-5 << " [bar]" << endl;
     cout << "===============================================\n\n" << endl;
@@ -110,17 +110,17 @@ namespace MBSim {
     calcNu = &HydraulicEnvironment::calcConstantKinematicViscosity;
   }
 
-  void HydraulicEnvironment::setWalterUbbelohdeKinematicViscosity(double T1, double nu1, double T2, double nu2) {
-    Tm=T1+273.16;
+  void HydraulicEnvironment::setWalterUbbelohdeKinematicViscosity(double T1, double nu1, double T2_, double nu2) {
+    Tm=T1;
     Wm=log10(log10(nu1*1e6+0.8));  //Umrechnung in cSt
-    T2=T2+273.16;
+    T2=T2_;
     double W2=log10(log10(nu2*1e6+0.8));
     m=(Wm-W2)/(log10(T2)-log10(Tm));
     calcNu = &HydraulicEnvironment::calcWalterUbbelohdeKinematicViscosity;
   }
 
   double HydraulicEnvironment::calcWalterUbbelohdeKinematicViscosity(double T) {
-    double Tx=T+273.16;
+    double Tx=T;
     double Wx=m*(log10(Tm)-log10(Tx))+Wm;
     return (pow(10,pow(10,Wx))-0.8)*1e-6; //Umrechnung zu m^2/s
   }
