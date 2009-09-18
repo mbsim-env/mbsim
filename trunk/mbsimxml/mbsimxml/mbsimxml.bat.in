@@ -34,7 +34,7 @@ if "%1" == "--mbsimparam" (
 )
 set MBSIM=%1
 set PPMBSIM=%~n1
-set PPMBSIM=%PPMBSIM%.xml
+set PPMBSIM=.pp.%PPMBSIM%.xml
 shift
 if "%1" == "--intparam" (
   set PARAMINT=%2
@@ -44,8 +44,8 @@ if "%1" == "--intparam" (
   set PARAMINT=none
 )
 set MBSIMINT=%1
-set PPMBSIMINT=%~n2
-set PPMBSIMINT=%PPMBSIMINT%.xml
+set PPMBSIMINT=%~n1
+set PPMBSIMINT=.pp.%PPMBSIMINT%.xml
 
 del %PPMBSIM% %PPMBSIMINT%
 
