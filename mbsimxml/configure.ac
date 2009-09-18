@@ -96,7 +96,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsim_root.xsd schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
 AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
 

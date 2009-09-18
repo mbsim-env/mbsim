@@ -49,7 +49,7 @@ set PPMBSIMINT=%PPMBSIMINT%.xml
 
 del %PPMBSIM% %PPMBSIMINT%
 
-%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsim_root.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
 %bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
 
