@@ -67,7 +67,7 @@ if [ $# -eq 1 ]; then
   fi
   if [ "$1" = "validateXML" ]; then
     find -maxdepth 2 -name "*.ombv.xml" | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR openmbvcppinterface)/openmbv.xsd 2>&1 | grep -v " validates$"
-    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsim_root.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsimxml.xsd 2>&1 | grep -v " validates$"
     find -maxdepth 2 -name "*.mbsimint.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/mbsimintegrator.xsd 2>&1 | grep -v " validates$"
     exit
   fi
