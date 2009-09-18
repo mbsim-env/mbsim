@@ -28,7 +28,8 @@
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
 
-  <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"
+    schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
 
   <xs:simpleType name="SignalReferenceType">
     <xs:restriction base="xs:token">

@@ -37,6 +37,7 @@ dnl needed for XML
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
 AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
+AC_SUBST([MBSIMCONTROLSCHEMA],[$(pkg-config mbsimControl --variable SCHEMA)])
 
 CPPFLAGS="$CPPFLAGS"
 

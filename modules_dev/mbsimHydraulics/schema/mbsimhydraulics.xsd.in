@@ -15,8 +15,10 @@
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
     schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
 
-  <xs:import namespace="http://mbsim.berlios.de/MBSim"/>
-  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"
+    schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
+    schemaLocation="@MBSIMCONTROLSCHEMA@"/>
 
   <xs:simpleType name="HLineReferenceType">
     <xs:restriction base="xs:token">
