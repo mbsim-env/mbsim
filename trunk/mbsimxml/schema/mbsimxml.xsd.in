@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://mbsim.berlios.de/MBSim"
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimXML"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified"
-  xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns="http://mbsim.berlios.de/MBSimXML"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:include schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
+  <xs:import namespace="http://mbsim.berlios.de/MBSim" schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
 
   <!-- The MBSIMMODULES_IMPORT variable is substituted by configure to
        a xs:import element for each mbsim module found by configure -->

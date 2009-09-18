@@ -47,6 +47,6 @@ PPMBSIMINT=.pp.$(basename $MBSIMINT)
 
 rm -f $PPMBSIM $PPMBSIMINT
 
-$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsim_root.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
+$MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsimxml.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
 $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
