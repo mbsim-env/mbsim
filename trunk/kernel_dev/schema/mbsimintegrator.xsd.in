@@ -22,7 +22,7 @@
       <xs:element name="startTime" type="pv:timeScalar"/>  
       <xs:element name="endTime" type="pv:timeScalar"/>  
       <xs:element name="plotStepSize" type="pv:timeScalar"/>  
-      <xs:element name="initialState" type="pv:nounitVector" minOccurs="0"/>  
+      <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"/>  
     </xs:sequence>
     <xs:attribute ref="xml:base"/>
   </xs:complexType> 
@@ -33,8 +33,8 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
-            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:unknownVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"/>  
           </xs:choice>
           <xs:choice>
             <xs:element name="relativeTolerance" type="pv:nounitVector"/>  
@@ -54,8 +54,8 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
-            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:unknownVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"/>  
           </xs:choice>
           <xs:choice>
             <xs:element name="relativeTolerance" type="pv:nounitVector"/>  
@@ -75,8 +75,8 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
-            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:unknownVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"/>  
           </xs:choice>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
           <xs:element name="initialStepSize" type="pv:timeScalar"/>  
@@ -95,8 +95,8 @@
       <xs:extension base="IntegratorType">
         <xs:sequence>
           <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:nounitVector"/>  
-            <xs:element name="absoluteToleranceScalar" type="pv:nounitScalar"/>  
+            <xs:element name="absoluteTolerance" type="pv:unknownVector"/>  
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"/>  
           </xs:choice>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"/>  
           <xs:element name="initialStepSize" type="pv:timeScalar"/>  

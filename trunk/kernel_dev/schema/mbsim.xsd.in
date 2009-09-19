@@ -1920,7 +1920,7 @@
     <xs:complexContent>
       <xs:extension base="JacobianType">
         <xs:sequence>
-          <xs:element name="constant" type="pv:nounitMatrix"/>
+          <xs:element name="constant" type="pv:unknownMatrix"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1946,7 +1946,7 @@
     <xs:complexContent>
       <xs:extension base="Function1_SSType">
         <xs:sequence>
-          <xs:element name="value" type="pv:nounitScalar">
+          <xs:element name="value" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Konstanter Funktionswert.
@@ -1995,7 +1995,7 @@
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="value" type="pv:nounitVector">
+          <xs:element name="value" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
@@ -2055,21 +2055,21 @@
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="amplitude" type="pv:nounitVector">
+          <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Amplituden
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="frequency" type="pv:nounitVector">
+          <xs:element name="frequency" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Frequenzen
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="phase" type="pv:nounitVector">
+          <xs:element name="phase" type="pv:angleVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Vektor der Phasenwinkel
@@ -2087,9 +2087,9 @@
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
-          <xs:element name="time" type="pv:nounitVector">
+          <xs:element name="time" type="pv:unknownVector">
           </xs:element>
-          <xs:element name="size" type="pv:nounitVector">
+          <xs:element name="size" type="pv:unknownVector">
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2104,12 +2104,12 @@
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
-              <xs:element name="x" type="pv:nounitVector">
+              <xs:element name="x" type="pv:unknownVector">
               </xs:element>
-              <xs:element name="y" type="pv:nounitMatrix">
+              <xs:element name="y" type="pv:unknownMatrix">
               </xs:element>
             </xs:sequence>
-            <xs:element name="xy" type="pv:nounitMatrix">
+            <xs:element name="xy" type="pv:unknownMatrix">
             </xs:element>
           </xs:choice>
         </xs:sequence> 
@@ -2159,21 +2159,21 @@
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
-          <xs:element name="a0" type="pv:nounitVector">
+          <xs:element name="a0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Faktor <object class="inlineeqn">a_0</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="a1" type="pv:nounitVector">
+          <xs:element name="a1" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Faktor <object class="inlineeqn">a_1</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="a2" type="pv:nounitVector">
+          <xs:element name="a2" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Faktor <object class="inlineeqn">a_2</object>
@@ -2196,21 +2196,21 @@
     <xs:complexContent>
       <xs:extension base="DifferentiableFunction1_VS">
         <xs:sequence>
-          <xs:element name="amplitude" type="pv:nounitVector">
+          <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Amplitude
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="frequency" type="pv:nounitVector">
+          <xs:element name="frequency" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Frequenz
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="phase" type="pv:nounitVector">
+          <xs:element name="phase" type="pv:angleVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Phasenversatz
@@ -2230,12 +2230,12 @@
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
-              <xs:element name="x" type="pv:nounitVector">
+              <xs:element name="x" type="pv:unknownVector">
               </xs:element>
-              <xs:element name="y" type="pv:nounitMatrix">
+              <xs:element name="y" type="pv:unknownMatrix">
               </xs:element>
             </xs:sequence>
-            <xs:element name="xy" type="pv:nounitMatrix"/>
+            <xs:element name="xy" type="pv:unknownMatrix"/>
           </xs:choice>
           <xs:choice>
             <xs:element name="cSplinePeriodic">
@@ -2258,7 +2258,7 @@
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
         <xs:sequence>
-          <xs:element name="value" type="pv:nounitScalar"/>
+          <xs:element name="value" type="pv:unknownScalar"/>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2362,7 +2362,7 @@
     <xs:complexContent>
       <xs:extension base="Function2_VVSType">
         <xs:sequence>
-          <xs:element name="marginalVelocity" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0"/>
           <xs:element name="frictionFunction">
             <xs:complexType>
               <xs:sequence>
