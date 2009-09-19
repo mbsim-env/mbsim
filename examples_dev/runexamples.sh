@@ -120,7 +120,11 @@ for D in $EXAMPLES; do
     $(pkg-config mbsim --variable=bindir)/mbsimflatxml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
   else
     ERROR=1
-    $(pkg-config mbsim --variable=bindir)/mbsimxml --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
+    if [ -e parameter.xml ]; then
+      $(pkg-config mbsim --variable=bindir)/mbsimxml --mbsimparam parameter.xml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
+    else
+      $(pkg-config mbsim --variable=bindir)/mbsimxml TS.mbsim.xml Integrator.mbsimint.xml && ERROR=0
+    fi
   fi
 
   if [ $ERROR -eq 0 ]; then
