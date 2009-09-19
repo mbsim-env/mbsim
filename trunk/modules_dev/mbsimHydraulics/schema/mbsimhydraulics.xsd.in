@@ -73,7 +73,7 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="dVdT" type="pv:nounitScalar">
+                      <xs:element name="dVdT" type="pv:unknownScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -111,7 +111,7 @@
                   </xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element name="dRhodT" type="pv:nounitScalar">
+                      <xs:element name="dRhodT" type="pv:unknownScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                             Faktor 
@@ -332,13 +332,13 @@
           </xs:element>
           <xs:element name="hydraulicDiameter" type="pv:lengthScalar">
           </xs:element>
-          <xs:element name="aPositive" type="pv:nounitScalar">
+          <xs:element name="aPositive" type="pv:unknownScalar">
           </xs:element>
-          <xs:element name="bPositive" type="pv:nounitScalar">
+          <xs:element name="bPositive" type="pv:unknownScalar">
           </xs:element>
-          <xs:element name="aNegative" type="pv:nounitScalar">
+          <xs:element name="aNegative" type="pv:unknownScalar">
           </xs:element>
-          <xs:element name="bNegative" type="pv:nounitScalar">
+          <xs:element name="bNegative" type="pv:unknownScalar">
           </xs:element>
         </xs:sequence>
       </xs:extension>
