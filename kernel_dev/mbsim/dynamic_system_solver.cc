@@ -1442,6 +1442,33 @@ namespace MBSim {
       env->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
+    
+    TiXmlElement * ee;
+    e=element->FirstChildElement(MBSIMNS"solverParameters");
+    ee=e->FirstChildElement(MBSIMNS"constraintSolver");
+    if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+        setConstraintSolver(FixedPointTotal);
+    else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+      setConstraintSolver(FixedPointSingle);
+    else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+      setConstraintSolver(GaussSeidel);
+    else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+      setConstraintSolver(LinearEquations);
+    else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+      setConstraintSolver(RootFinding);
+    ee=e->FirstChildElement(MBSIMNS"impactSolver");
+    if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+        setImpactSolver(FixedPointTotal);
+    else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+      setImpactSolver(FixedPointSingle);
+    else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+      setImpactSolver(GaussSeidel);
+    else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+      setImpactSolver(LinearEquations);
+    else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+      setImpactSolver(RootFinding);
+    ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
+    setMaxIter(atoi(ee->GetText()));
   }
 
   void DynamicSystemSolver::addToTree(Tree* tree, Node* node, SqrMat &A, int i, vector<Object*>& objList) {

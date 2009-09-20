@@ -26,57 +26,43 @@
 namespace MBSim {
 
   class ClosableRigidLine;
-  class RigidLine;
+  class RigidNode;
   class Signal;
-  class LinePressureLoss;
+  class HLine;
 
   /*! Controlvalve43 */
   class Controlvalve43 : public Group {
     public:
       Controlvalve43(const std::string& name);
+      HLine * getHLineByPath(std::string path);
+      Signal * getSignalByPath(std::string path);
+      void init(InitStage stage);
+      void initializeUsingXML(TiXmlElement * element);
 
-      void setFrameOfReference(Frame * ref);
       void setLength(double l_);
       void setDiameter(double d_);
       void setAlpha(double alpha_);
-      void setPARelativeAreaFunction(Function1<double, double> * relAreaPA_) {relAreaPA=relAreaPA_; } 
-      void setMinimalRelativeArea(double minRelArea_);
+      void setPARelativeAlphaFunction(Function1<double, double> * relAlphaPA_) {relAlphaPA=relAlphaPA_; } 
+      void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
       void setRelativePositionSignal(Signal * s) {position = s; }
-      void setLinePDirection(fmatvec::Vec dir);
-      void setLinePLength(double l);
-      void setLinePDiameter(double d);
-      void setLinePPressureLoss(LinePressureLoss * lpl);
-      void setLineADirection(fmatvec::Vec dir);
-      void setLineALength(double l);
-      void setLineADiameter(double d);
-      void setLineAPressureLoss(LinePressureLoss * lpl);
-      void setLineBDirection(fmatvec::Vec dir);
-      void setLineBLength(double l);
-      void setLineBDiameter(double d);
-      void setLineBPressureLoss(LinePressureLoss * lpl);
-      void setLineTDirection(fmatvec::Vec dir);
-      void setLineTLength(double l);
-      void setLineTDiameter(double d);
-      void setLineTPressureLoss(LinePressureLoss * lpl);
       void setSetValued(bool setValued=true);
+      void setPInflow(HLine * hl);
+      void setAOutflow(HLine * hl);
+      void setBOutflow(HLine * hl);
+      void setTOutflow(HLine * hl);
 
-      RigidLine * getLineP() {return lP; }
-      RigidLine * getLineA() {return lA; }
-      RigidLine * getLineB() {return lB; }
-      RigidLine * getLineT() {return lT; }
-
-      void init(InitStage stage);
-      void initializeUsingXML(TiXmlElement * element);
     protected:
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
-      RigidLine * lP, * lA, * lB, *lT;
+      RigidNode * nP, * nA, * nB, * nT;
       double offset;
-      Function1<double, double> * relAreaPA;
+      Function1<double, double> * relAlphaPA;
       Signal * position;
       Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
+    
     private:
-      std::string refFrameString, positionString;
+      std::string positionString;
+      std::string nPInflowString, nAOutflowString, nBOutflowString, nTOutflowString;
   };
 }
 

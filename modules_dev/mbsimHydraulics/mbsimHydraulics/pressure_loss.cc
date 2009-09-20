@@ -28,6 +28,40 @@ using namespace std;
 
 namespace MBSim {
 
+  double SerialResistanceLinePressureLoss::operator()(const double& Q, const void *line) {
+    double pl=0;
+    for (unsigned int i=0; i<slp.size(); i++)
+      pl+=(*slp[i])(Q, line);
+    return pl;
+  }
+
+  void SerialResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement();
+    while (e) {
+      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e));
+      p->initializeUsingXML(e);
+      addLinePressureLoss(p);
+      e=e->NextSiblingElement();
+    }
+  }
+
+
+  double ParallelResistanceLinePressureLoss::operator()(const double& Q, const void *line) {
+    return (*pl)(Q/double(number), line)/double(number);
+  }
+
+  void ParallelResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
+    int n=int(Element::getDouble(e));
+    e=e->NextSiblingElement();
+    LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e));
+    p->initializeUsingXML(e);
+    setLinePressureLoss(p, n);
+  }
+
+
   double ZetaLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
@@ -57,6 +91,43 @@ namespace MBSim {
     }
     return c*Q;
   }
+
+  
+  double ChurchillLinePressureLoss::operator()(const double& Q, const void * line) {
+    if (!initialized) {
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double l=((const RigidLine*)(line))->getLength();
+      double d=((const RigidLine*)(line))->getDiameter();
+      double area=M_PI*d*d/4.;
+      c=l*rho/d/2./area;
+      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double areaRef=M_PI*dRef*dRef/4.;
+      ReynoldsFactor=dHyd/areaRef/nu;
+      initialized=true;
+    }
+    const double Re=fabs(ReynoldsFactor*Q);
+    double lambda;
+    if (Re<1404.)
+      return 64./ReynoldsFactor*c*Q;
+    else {
+      if (Re<2320)
+        lambda=0.0456;
+      else
+        lambda=0.3164/pow(Re, 0.25);
+      return lambda*c*fabs(Q)*Q;
+    }
+  }
+
+  void ChurchillLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    PressureLoss::initializeUsingXML(element);
+    TiXmlElement * e;
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"referenceDiameter");
+    double dRefX=Element::getDouble(e);
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"hydraulicDiameter");
+    double dHydX=Element::getDouble(e);
+    setFactors(dRefX, dHydX);
+  }
+
 
   double CurveFittedLinePressureLoss::operator()(const double &Q, const void * line) {
     if (!initialized) {
@@ -305,8 +376,8 @@ namespace MBSim {
     if (stateless) {
       const double dp=pVorQ;
       const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
-      const double vI=((const CircularLeakageLine*)(line))->getSurface1Velocity();
-      const double vO=((const CircularLeakageLine*)(line))->getSurface2Velocity();
+      const double vI=((const CircularLeakage0DOF*)(line))->getSurface1Velocity();
+      const double vO=((const CircularLeakage0DOF*)(line))->getSurface2Velocity();
       return vIfac*vI + vOfac*vO + pVfac/gl*dp;
     }
     else {

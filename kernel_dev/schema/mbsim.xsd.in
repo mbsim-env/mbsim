@@ -609,6 +609,35 @@
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
+          <xs:element name="solverParameters" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="constraintSolver">
+                  <xs:complexType>
+                    <xs:choice>
+                      <xs:element name="FixedPointTotal"/>
+                      <xs:element name="FixedPointSingle"/>
+                      <xs:element name="GaussSeidel"/>
+                      <xs:element name="LinearEquations"/>
+                      <xs:element name="RootFinding"/>
+                    </xs:choice>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="impactSolver">
+                  <xs:complexType>
+                    <xs:choice>
+                      <xs:element name="FixedPointTotal"/>
+                      <xs:element name="FixedPointSingle"/>
+                      <xs:element name="GaussSeidel"/>
+                      <xs:element name="LinearEquations"/>
+                      <xs:element name="RootFinding"/>
+                    </xs:choice>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="numberOfMaximalIterations" type="xs:nonNegativeInteger" minOccurs="0"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
