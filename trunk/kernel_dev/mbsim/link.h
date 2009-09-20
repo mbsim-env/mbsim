@@ -34,6 +34,7 @@ namespace H5 {
 
 namespace MBSim {
 
+  class Object;
   class Contour;
   class DynamicSystem;
 
@@ -386,6 +387,7 @@ namespace MBSim {
        */
       void decreaserFactors();
 
+      virtual Object * getObjectByPath(std::string path);
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
 

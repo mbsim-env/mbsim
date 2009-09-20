@@ -56,11 +56,10 @@ namespace MBSim {
 #endif
 
   HLine * HNode::getHLineByPath(string path) {
-    path.erase(0, 3);
     int pos=path.find("HLine");
     path.erase(pos, 5);
     path.insert(pos, "Object");
-    Object * h = parent->getObjectByPath(path);
+    Object * h = getObjectByPath(path);
     if (dynamic_cast<HLine *>(h))
       return static_cast<HLine *>(h);
     else {
@@ -75,10 +74,24 @@ namespace MBSim {
     e=element->FirstChildElement();
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"inflow" || e->ValueStr()==MBSIMHYDRAULICSNS"outflow")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"inflow")
-        addInFlow(getHLineByPath(e->Attribute("ref")));
+        refInflowString.push_back(e->Attribute("ref"));
       else
-        addOutFlow(getHLineByPath(e->Attribute("ref")));
+        refOutflowString.push_back(e->Attribute("ref"));
       e=e->NextSiblingElement();
+    }
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
+    if (e) {
+      TiXmlElement * ee;
+      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"size");
+      double size=Element::getDouble(ee);
+      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"minimalPressure");
+      double pMin=Element::getDouble(ee);
+      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"maximalPressure");
+      double pMax=Element::getDouble(ee);
+      ee = e->FirstChildElement(MBSIMHYDRAULICSNS"position");
+      if (ee)
+        Vec WrON=Element::getVec(ee, 3);
+      enableOpenMBV(size, pMin, pMax, WrON);
     }
   }
 
@@ -107,7 +120,14 @@ namespace MBSim {
   }
 
   void HNode::init(InitStage stage) {
-    if (stage==MBSim::resize) {
+    if (stage==MBSim::resolveXMLPath) {
+      for (unsigned int i=0; i<refInflowString.size(); i++)
+        addInFlow(getHLineByPath(refInflowString[i]));
+      for (unsigned int i=0; i<refOutflowString.size(); i++)
+        addOutFlow(getHLineByPath(refOutflowString[i]));
+      Link::init(stage);
+    }
+    else if (stage==MBSim::resize) {
       Link::init(stage);
       gd.resize(1);
       la.resize(1);

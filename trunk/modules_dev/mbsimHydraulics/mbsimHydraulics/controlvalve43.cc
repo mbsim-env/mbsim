@@ -31,47 +31,76 @@ namespace MBSim {
 
   class ControlvalveAreaSignal : public Signal {
     public:
-      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, Function1<double, double> * relAreaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAreaPA(relAreaPA_), signal(1) {
+      ControlvalveAreaSignal(const string& name, double factor_, double offset_, Signal * position_, Function1<double, double> * relAlphaPA_) : Signal(name), factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_), signal(1) {
       }
       Vec getSignal() {
         double x=factor*position->getSignal()(0)+offset;
         x=(x>1.)?1.:x;
         x=(x<0.)?0.:x;
-        signal(0)=(*relAreaPA)(x);
+        signal(0)=(*relAlphaPA)(x);
         return signal;        
       }
     private:
       double factor, offset;
       Signal * position;
-      Function1<double, double> * relAreaPA;
+      Function1<double, double> * relAlphaPA;
       Vec signal;
   };
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), lP(new RigidLine("LineP")), lA(new RigidLine("LineA")), lB(new RigidLine("LineB")), lT(new RigidLine("LineT")), offset(0), relAreaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), refFrameString(""), positionString("") {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), relAlphaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString("") {
     addObject(lPA);
-    addObject(lPB);
-    addObject(lAT);
-    addObject(lBT);
-    addObject(lP);
-    addObject(lA);
-    addObject(lB);
-    addObject(lT);
     lPA->setDirection(Vec(3, INIT, 0));
+    lPA->setFrameOfReference(getFrame("I"));
+    addObject(lPB);
     lPB->setDirection(Vec(3, INIT, 0));
+    lPB->setFrameOfReference(getFrame("I"));
+    addObject(lAT);
     lAT->setDirection(Vec(3, INIT, 0));
+    lAT->setFrameOfReference(getFrame("I"));
+    addObject(lBT);
     lBT->setDirection(Vec(3, INIT, 0));
+    lBT->setFrameOfReference(getFrame("I"));
+    
+    addLink(nP);
+    nP->addOutFlow(lPA);
+    nP->addOutFlow(lPB);
+    addLink(nA);
+    nA->addInFlow(lPA);
+    nA->addOutFlow(lAT);
+    addLink(nB);
+    nB->addInFlow(lPB);
+    nB->addOutFlow(lBT);
+    addLink(nT);
+    nT->addInFlow(lAT);
+    nT->addInFlow(lBT);
   }
 
-  void Controlvalve43::setFrameOfReference(Frame * ref) {
-    lPA->setFrameOfReference(ref);
-    lPB->setFrameOfReference(ref);
-    lAT->setFrameOfReference(ref);
-    lBT->setFrameOfReference(ref);
-    lP->setFrameOfReference(ref);
-    lA->setFrameOfReference(ref);
-    lB->setFrameOfReference(ref);
-    lT->setFrameOfReference(ref);
+  HLine * Controlvalve43::getHLineByPath(string path) {
+    int pos=path.find("HLine");
+    path.erase(pos, 5);
+    path.insert(pos, "Object");
+    Object * h = getObjectByPath(path);
+    if (dynamic_cast<HLine *>(h))
+      return static_cast<HLine *>(h);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of HLine-Type." << std::endl; 
+      _exit(1);
+    }
   }
+
+  Signal * Controlvalve43::getSignalByPath(string path) {
+    int pos=path.find("Signal");
+    path.erase(pos, 6);
+    path.insert(pos, "Link");
+    Link * h = getLinkByPath(path);
+    if (dynamic_cast<Signal *>(h))
+      return static_cast<Signal *>(h);
+    else {
+      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
+      _exit(1);
+    }
+  }
+
   void Controlvalve43::setLength(double l) {
     lPA->setLength(l);
     lPB->setLength(l);
@@ -98,79 +127,43 @@ namespace MBSim {
     lAT->setClosablePressureLoss(plPA);
     lBT->setClosablePressureLoss(plPA);
   }
-  void Controlvalve43::setMinimalRelativeArea(double minRelArea_) {
-    lPA->setMinimalValue(minRelArea_);
-    lPB->setMinimalValue(minRelArea_);
-    lAT->setMinimalValue(minRelArea_);
-    lBT->setMinimalValue(minRelArea_);
+  void Controlvalve43::setMinimalRelativeAlpha(double minRelAlpha_) {
+    lPA->setMinimalValue(minRelAlpha_);
+    lPB->setMinimalValue(minRelAlpha_);
+    lAT->setMinimalValue(minRelAlpha_);
+    lBT->setMinimalValue(minRelAlpha_);
   }
-  void Controlvalve43::setLinePDirection(Vec dir) {lP->setDirection(dir); }
-  void Controlvalve43::setLinePLength(double l) {lP->setLength(l); }
-  void Controlvalve43::setLinePDiameter(double d) {lP->setDiameter(d); }
-  void Controlvalve43::setLinePPressureLoss(LinePressureLoss * lpl) {lP->setLinePressureLoss(lpl); }
-  void Controlvalve43::setLineADirection(Vec dir) {lA->setDirection(dir); }
-  void Controlvalve43::setLineALength(double l) {lA->setLength(l); }
-  void Controlvalve43::setLineADiameter(double d) {lA->setDiameter(d); }
-  void Controlvalve43::setLineAPressureLoss(LinePressureLoss * lpl) {lA->setLinePressureLoss(lpl); }
-  void Controlvalve43::setLineBDirection(Vec dir) {lB->setDirection(dir); }
-  void Controlvalve43::setLineBLength(double l) {lB->setLength(l); }
-  void Controlvalve43::setLineBDiameter(double d) {lB->setDiameter(d); }
-  void Controlvalve43::setLineBPressureLoss(LinePressureLoss * lpl) {lB->setLinePressureLoss(lpl); }
-  void Controlvalve43::setLineTDirection(Vec dir) {lT->setDirection(dir); }
-  void Controlvalve43::setLineTLength(double l) {lT->setLength(l); }
-  void Controlvalve43::setLineTDiameter(double d) {lT->setDiameter(d); }
-  void Controlvalve43::setLineTPressureLoss(LinePressureLoss * lpl) {lT->setLinePressureLoss(lpl); }
   void Controlvalve43::setSetValued(bool s) {
     lPA->setBilateral(s);
     lPB->setBilateral(s);
     lAT->setBilateral(s);
     lBT->setBilateral(s);
   }
+  void Controlvalve43::setPInflow(HLine * hl) {nP->addInFlow(hl); }
+  void Controlvalve43::setAOutflow(HLine * hl) {nA->addOutFlow(hl); }
+  void Controlvalve43::setBOutflow(HLine * hl) {nB->addOutFlow(hl); }
+  void Controlvalve43::setTOutflow(HLine * hl) {nT->addOutFlow(hl); }
 
   void Controlvalve43::init(InitStage stage) {
-    if (stage==MBSim::modelBuildup) {
-      RigidNode * nP = new RigidNode("NodeP");
-      addLink(nP);
-      nP->addOutFlow(lPA);
-      nP->addOutFlow(lPB);
-      nP->addInFlow(lP);
-      RigidNode * nA = new RigidNode("NodeA");
-      addLink(nA);
-      nA->addInFlow(lPA);
-      nA->addOutFlow(lAT);
-      nA->addOutFlow(lA);
-      RigidNode * nB = new RigidNode("NodeB");
-      addLink(nB);
-      nB->addInFlow(lPB);
-      nB->addOutFlow(lBT);
-      nB->addOutFlow(lB);
-      RigidNode * nT = new RigidNode("NodeT");
-      addLink(nT);
-      nT->addInFlow(lAT);
-      nT->addInFlow(lBT);
-      nT->addOutFlow(lT);
-      Group::init(stage);
-    }
-    else if (stage==MBSim::resolveXMLPath) {
-      if (refFrameString!="") {
-        Frame * ref=getFrameByPath(refFrameString);
-        if(!ref) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
-        setFrameOfReference(ref);
-      }
-      if (positionString!="") {
-        Signal * sig=getSignalByPath(this, positionString);
-        if(!sig) { cerr<<"ERROR! Cannot find frame: "<<positionString<<endl; _exit(1); }
-        cout << "FOUND SIGNAL " << sig->getName() << endl;
-        setRelativePositionSignal(sig);
-      }
-      
-      checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAreaPA", 1., 0., position, relAreaPA);
+    if (stage==MBSim::resolveXMLPath) {
+      if (positionString!="")
+        setRelativePositionSignal(getSignalByPath(positionString));
+      if (nPInflowString!="")
+        setPInflow(getHLineByPath(nPInflowString));
+      if (nAOutflowString!="")
+        setAOutflow(getHLineByPath(nAOutflowString));
+      if (nBOutflowString!="")
+        setBOutflow(getHLineByPath(nBOutflowString));
+      if (nTOutflowString!="")
+        setTOutflow(getHLineByPath(nTOutflowString));
+
+      checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAreaPA", 1., 0., position, relAlphaPA);
       addLink(checkSizeSignalPA);
-      checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAreaPB", -1., 1., position, relAreaPA);
+      checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAreaPB", -1., 1., position, relAlphaPA);
       addLink(checkSizeSignalPB);
-      checkSizeSignalAT = new ControlvalveAreaSignal("RelativeAreaAT", -1., 1.+offset, position, relAreaPA);
+      checkSizeSignalAT = new ControlvalveAreaSignal("RelativeAreaAT", -1., 1.+offset, position, relAlphaPA);
       addLink(checkSizeSignalAT);
-      checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAreaBT", 1., offset, position, relAreaPA);
+      checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAreaBT", 1., offset, position, relAlphaPA);
       addLink(checkSizeSignalBT);
 
       lPA->setSignal(checkSizeSignalPA);
@@ -186,86 +179,33 @@ namespace MBSim {
 
   void Controlvalve43::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-    refFrameString=e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"valve");
-    TiXmlElement * ee;
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLength(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setDiameter(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
-    setAlpha(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"relativeAreaPA");
-    Function1<double, double> * relAreaPA_=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(ee->FirstChildElement()); 
-    relAreaPA_->initializeUsingXML(ee->FirstChildElement());
-    setPARelativeAreaFunction(relAreaPA_);
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeArea");
-    setMinimalRelativeArea(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"setValued");
-    if (ee)
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    setLength(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    setDiameter(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
+    setAlpha(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
+    Function1<double, double> * relAlphaPA_=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    relAlphaPA_->initializeUsingXML(e->FirstChildElement());
+    setPARelativeAlphaFunction(relAlphaPA_);
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");
+    setMinimalRelativeAlpha(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"bilateralConstrained");
+    if (e)
       setSetValued(true);
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"offset");
-    setOffset(getDouble(ee));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"offset");
+    setOffset(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePosition");
     positionString=e->Attribute("ref");
-
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"lineP");
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"direction");
-    setLinePDirection(getVec(ee, 3));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLinePLength(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setLinePDiameter(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    if (ee) {
-      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-      setLinePPressureLoss(p);
-      p->initializeUsingXML(ee->FirstChildElement());
-    }
-
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"lineA");
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"direction");
-    setLineADirection(getVec(ee,3));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLineALength(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setLineADiameter(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    if (ee) {
-      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-      setLineAPressureLoss(p);
-      p->initializeUsingXML(ee->FirstChildElement());
-    }
-
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"lineB");
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"direction");
-    setLineBDirection(getVec(ee,3));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLineBLength(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setLineBDiameter(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    if (ee) {
-      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-      setLineBPressureLoss(p);
-      p->initializeUsingXML(ee->FirstChildElement());
-    }
-
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"lineT");
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"direction");
-    setLineTDirection(getVec(ee,3));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"length");
-    setLineTLength(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
-    setLineTDiameter(getDouble(ee));
-    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    if (ee) {
-      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(ee->FirstChildElement()));
-      setLineTPressureLoss(p);
-      p->initializeUsingXML(ee->FirstChildElement());
-    }
-
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflowP");
+    nPInflowString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowA");
+    nAOutflowString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowB");
+    nBOutflowString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowT");
+    nTOutflowString=e->Attribute("ref");
   }
 
 }

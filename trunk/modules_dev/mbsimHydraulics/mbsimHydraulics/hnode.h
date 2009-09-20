@@ -85,6 +85,8 @@ namespace MBSim {
     protected:
       std::vector<connectedLinesStruct> connectedLines;
       std::vector<connectedLinesStruct> connected0DOFLines;
+      std::vector<std::string> refInflowString;
+      std::vector<std::string> refOutflowString;
       double QHyd;
       unsigned int nLines;
 #ifdef HAVE_OPENMBVCPPINTERFACE

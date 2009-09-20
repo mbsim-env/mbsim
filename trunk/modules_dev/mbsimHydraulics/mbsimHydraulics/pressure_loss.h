@@ -44,6 +44,31 @@ namespace MBSim {
   };
 
 
+  /*! SerialResistanceLinePressureLoss */
+  class SerialResistanceLinePressureLoss : public LinePressureLoss {
+    public:
+      SerialResistanceLinePressureLoss() : LinePressureLoss() {}
+      void addLinePressureLoss(LinePressureLoss * l) {slp.push_back(l); }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement * element);
+    private:
+      std::vector<LinePressureLoss*> slp;
+  };
+
+
+  /*! ParallelResistanceLinePressureLoss */
+  class ParallelResistanceLinePressureLoss : public LinePressureLoss {
+    public:
+      ParallelResistanceLinePressureLoss() : LinePressureLoss(), pl(NULL), number(0) {}
+      void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=number_; }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement * element);
+    private:
+      LinePressureLoss* pl;
+      int number;
+  };
+
+
   /*! LinePressureLossZeta */
   class ZetaLinePressureLoss : public LinePressureLoss {
     public:
@@ -59,10 +84,22 @@ namespace MBSim {
   /*! PressureLossLaminarTubeFlow */
   class LaminarTubeFlowLinePressureLoss : public LinePressureLoss {
     public:
-      LaminarTubeFlowLinePressureLoss() : LinePressureLoss() {}
+      LaminarTubeFlowLinePressureLoss() : LinePressureLoss(), c(0) {}
       double operator()(const double& Q, const void * line);
     private:
       double c;
+  };
+
+
+  /*! Churchill */
+  class ChurchillLinePressureLoss : public LinePressureLoss {
+    public:
+      ChurchillLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), ReynoldsFactor(0) {}
+      double setFactors(double dRef_, double dHyd_) {dRef=dRef_; dHyd=dHyd_; }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double c, dRef, dHyd, ReynoldsFactor;
   };
 
 

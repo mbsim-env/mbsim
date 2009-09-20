@@ -278,6 +278,56 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SerialResistancePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="SerialResistancePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Serielle Aneinanderreihung verschiedener Druckveruste. <br/>
+        Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
+        <object class="eqn">
+          <![CDATA[p_V=\sum_{i=1}^n p_{V,i} \text{.}  ]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SerialResistancePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element ref="LinePressureLoss" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ParallelResistanceLinePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="ParallelResistanceLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parallelschaltung identischer hydraulischer Widerstände.<br/>
+        Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
+        <object class="eqn">
+          <![CDATA[p_V=\left( n \, \frac{1}{\sum_{i=1}^n p_{V,i}(\frac{Q}{n}) } \right)^{-1} \text{.}  ]]>
+        </object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ParallelResistanceLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="number" type="xs:nonNegativeInteger">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Anzahl der parallel geschalteten hydraulischen Widerstände.
+      </xs:documentation>
+    </xs:annotation>
+          </xs:element>
+          <xs:element ref="LinePressureLoss">
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ZetaLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -318,6 +368,42 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ChurchillLinePressureLoss" substitutionGroup="LinePressureLoss" type="ChurchillLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Druckverluste aufgrund einer Rohrströmung nach <i>Churchill</i>.<br/>
+        Die Berechnung erfolgt gemäß
+        <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q| \, Q}{A^2}\text{,}</object>
+        wobei sich der Widerstandsbeiwert zu
+        <object class="eqn">\lambda = \begin{cases} \frac{64}{Re} &amp; Re &lt; 1404 \qquad \text{(HagenPoiseuille)} \\ 0.0456 &amp; 1404 &lt;= 1404 Re &lt; 2320 \qquad \text{(Transition)} \\ \frac{0.3164}{{Re}^{0.25}} &amp; 2320 &lt;=Re \qquad\text{(Blasius)}\end{cases}</object>
+        berechnet.<br/>
+        Die Reynoldszahl bestimmt sich dabei gemäß <object class="inlineeqn">Re=\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}}</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ChurchillLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="referenceDiameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Referenzduchmesser zur Bestimmung der Strömungsgeschwindigket <object class="inlineeqn">d_{ref}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="hydraulicDiameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                hydraulischer Duchmesser zur Bestimmung der Reynoldszahl <object class="inlineeqn">d_{hyd}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="CurveFittedLinePressureLoss" substitutionGroup="LinePressureLoss" type="CurveFittedLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -349,9 +435,9 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse zur Berechnung von Druckverlusten mit veränderlichen Koeffizienten und einer Sperrmöglichkeit.
-         Bei der Integration des Systems mit herkömmlichen Integratoren wird die Kennlinie des Ventils regularisiert, d.h. es wird aus nummerischen Gründen immer ein Restfluss durch das Ventil zugelassen.
-         Bei der Verwendung eines <i>Time-Stepping-Integrators</i> kann durch eine entsprechende Angabe der Fluidfluss durch das Ventil im geschlossenen Zustand <object class="inlineeqn">Q=0</object>  gesetzt werden.
-         Der variable Wert wird in der Klasse XXX gesetzt.
+        Bei der Integration des Systems mit herkömmlichen Integratoren wird die Kennlinie des Ventils regularisiert, d.h. es wird aus nummerischen Gründen immer ein Restfluss durch das Ventil zugelassen.
+        Bei der Verwendung eines <i>Time-Stepping-Integrators</i> kann durch eine entsprechende Angabe der Fluidfluss durch das Ventil im geschlossenen Zustand <object class="inlineeqn">Q=0</object>  gesetzt werden.
+        Der variable Wert wird in der Klasse XXX gesetzt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -362,15 +448,15 @@
   </xs:complexType>
 
   <xs:element name="RelativeAreaZetaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAreaZetaClosablePressureLossType">
-  <xs:annotation>
-    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Berechnung des Druckverlustes durch eine Veränderung der relativen Öffnungsfläche:
-      <object class="eqn">
-        <![CDATA[p_V=\frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{\left(A_{rel} \, A\right)^2})]]>
-      </object>
-      mit <object class="inlineeqn">0 \leq A_{rel} \leq 1</object>
-    </xs:documentation>
-  </xs:annotation>
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes durch eine Veränderung der relativen Öffnungsfläche:
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \zeta \, \frac{Q \, |Q|}{\left(A_{rel} \, A\right)^2})]]>
+        </object>
+        mit <object class="inlineeqn">0 \leq A_{rel} \leq 1</object>
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="RelativeAreaZetaClosablePressureLossType">
     <xs:complexContent>
@@ -395,7 +481,7 @@
         <object class="eqn">
           <![CDATA[p_V=\frac{\rho}{2} \, \left( \frac{1}{\left(\alpha_{rel} \, \alpha \right)^2} -1\right) \, \frac{Q \, |Q|}{A^2}]]>
         </object>
-      mit <object class="inlineeqn">0 \leq \alpha_{rel} \leq 1</object>
+        mit <object class="inlineeqn">0 \leq \alpha_{rel} \leq 1</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -445,11 +531,11 @@
       <xs:extension base="CheckvalveClosablePressureLossType">
         <xs:sequence>
           <xs:element name="ballRadius" type="pv:lengthScalar">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Radius des Ventilkugel <object class="inlineeqn">r_{Ball}</object>
-      </xs:documentation>
-    </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Radius des Ventilkugel <object class="inlineeqn">r_{Ball}</object>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -477,18 +563,18 @@
       <xs:extension base="BallCheckvalveClosablePressureLossType">
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
-      </xs:documentation>
-    </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="gamma" type="pv:angleScalar">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Einlaufwinkel <object class="inlineeqn">\gamma</object>
-      </xs:documentation>
-    </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Einlaufwinkel <object class="inlineeqn">\gamma</object>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -535,11 +621,11 @@
       <xs:extension base="BallCheckvalveClosablePressureLossType">
         <xs:sequence>
           <xs:element name="alpha" type="pv:nounitScalar">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
-      </xs:documentation>
-    </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Verlustkoeffizienten <object class="inlineeqn">\alpha</object> des Ventils
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
@@ -1045,7 +1131,26 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         <object class="figure" standby="4cm" data="controlvalve43" title="Elemente eines 4/3-Wegeventils"></object>
-
+        4/3-Wege Steuerventil. 
+        Die Berechnung des Druckverlustes der einzelnen Leitungen erfolgt dabei gemäß <i>RelativeAlphaClosablePressureLoss</i>.
+        Die relativen Durchflusskoeffizienten der einzelnen Steuerkanten werden entsprechend
+        <object class="eqn">
+          <![CDATA[ \alpha_{rel, PA} = f \left( x \right)]]>
+        </object>
+        <object class="eqn">
+          <![CDATA[ \alpha_{rel, PB} = f \left( -x+1 \right)]]>
+        </object>
+        <object class="eqn">
+          <![CDATA[ \alpha_{rel, AT} = f \left( -x + 1 + x_{offset}\right)]]>
+        </object>
+        <object class="eqn">
+          <![CDATA[ \alpha_{rel, BT} = f \left( x + x_{offset} \right)]]>
+        </object>
+        berechnet, wobei für 
+        <object class="eqn">
+          <![CDATA[ 0 \leq \alpha_{rel, x} \leq 1 ]]>
+        </object>
+        gilt.<br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1053,197 +1158,109 @@
     <xs:complexContent>
       <xs:extension base="mbsim:EmptyGroupType">
         <xs:sequence>
-          <xs:element name="frameOfReference">
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
-            </xs:complexType> 
+          <xs:element name="length" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Länge der Ventilblende
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
-          <xs:element name="valve">
+          <xs:element name="diameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Durchmesser der Ventilblende
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="alpha" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Durchflusskoeffiziente der Ventilblende
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="relativeAlphaPA">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Funktion des relativen Durchflusskoeffizienten durch die Ventilblende in Abhängigkeit des angelegten Steuersignals.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="length" type="pv:lengthScalar">
-                </xs:element>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                </xs:element>
-                <xs:element name="alpha" type="pv:nounitScalar">
-                </xs:element>
-                <xs:element name="relativeAreaPA">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="mbsim:Function1_SS">
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-                <xs:element name="minimalRelativeArea" type="pv:nounitScalar">
-                </xs:element>
-                <xs:element name="setValued" minOccurs="0">
-                </xs:element>
-                <xs:element name="offset" type="pv:nounitScalar">
+                <xs:element ref="mbsim:Function1_SS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="minimalRelativeAlpha" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                minimaler Wert
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="bilateralConstrained" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn gesetzt, wird der Fluss über die Steuerkante des Ventils bei einem relativen alpha-Wert unter der gesetzten Schranke durch eine Nebenbedingung gesperrt. (nur Time-Stepping Integratoren)
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="offset" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Versatz der relativen Ventilöffnungsfläche der Rückflüsse AT und BT
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="relativePosition">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Signal zur Steuerung der relativen Ventilöffnungsfläche
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="lineP">
+          <xs:element name="inflowP">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Zuleitung
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="direction" type="pv:nounitVector">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Richtungsvektor der Zuleitung zu P
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="length" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Zuleitung zu P
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Durchmesser der Zuleitung zu P
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="linePressureLoss" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Druckverluste in der Zuleitung zu P
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="LinePressureLoss"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="lineA">
+          <xs:element name="outflowA">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Ableitung A
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="direction" type="pv:nounitVector">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Richtungsvektor der Ableitung von A
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="length" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Ableitung von A
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Durchmesser der Ableitung von A
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="linePressureLoss" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Druckverluste in der Ableitung von A
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="LinePressureLoss"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="lineB">
+          <xs:element name="outflowB">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Ableitung B
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="direction" type="pv:nounitVector">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Richtungsvektor der Ableitung von B
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="length" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Ableitung von B
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Durchmesser der Ableitung von B
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="linePressureLoss" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Druckverluste in der Ableitung von B
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="LinePressureLoss"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="lineT">
+          <xs:element name="outflowT">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Rückfluss
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element name="direction" type="pv:nounitVector">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Richtungsvektor der Ableitung von T
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="length" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Ableitung von T
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="diameter" type="pv:lengthScalar">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Durchmesser der Ableitung von T
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
-                <xs:element name="linePressureLoss" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Druckverluste in der Ableitung von T
-                    </xs:documentation>
-                  </xs:annotation>
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="LinePressureLoss">
-                      </xs:element>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
+              <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
