@@ -251,7 +251,7 @@ namespace MBSim {
       la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
+      gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -274,7 +274,7 @@ namespace MBSim {
       la(i) = ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
+      gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
@@ -297,7 +297,7 @@ namespace MBSim {
       la(i) = fifl->solve(a[ia[laIndDS+i]], gdn(i), gd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
+      gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -320,7 +320,7 @@ namespace MBSim {
       la(i) = ffl->solve(a[ia[laIndDS+i]], gdd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
+      gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
@@ -343,7 +343,7 @@ namespace MBSim {
       res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
+      gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -366,7 +366,7 @@ namespace MBSim {
       res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
+      gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
@@ -470,7 +470,7 @@ namespace MBSim {
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(i);
+      gdn(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
@@ -500,7 +500,7 @@ namespace MBSim {
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(i);
+      gdd(i) = b(laIndDS+i);
       for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
