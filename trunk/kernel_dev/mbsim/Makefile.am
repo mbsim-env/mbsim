@@ -26,7 +26,7 @@ kinetic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
-order_one_dynamics.cc\
+extra_dynamic.cc\
 rigid_body.cc\
 tree.cc\
 userfunction.cc
@@ -69,7 +69,7 @@ modelling_interface.h\
 object.h\
 objectfactory.h\
 object_interface.h\
-order_one_dynamics.h\
+extra_dynamic.h\
 rigid_body.h\
 tree.h\
 userfunction.h

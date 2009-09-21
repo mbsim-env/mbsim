@@ -18,8 +18,9 @@
  */
 
 #include <config.h>
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 #include "mbsim/object.h"
+#include "mbsim/link.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 
@@ -28,35 +29,28 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  OrderOneDynamics::OrderOneDynamics(const string &name) : Element(name) {
-    xSize = 0;
-    y = Vec(1,INIT,0);
+  ExtraDynamic::ExtraDynamic(const string &name) : Element(name), y(0) {
   }
 
-  OrderOneDynamics::OrderOneDynamics(const string &name, int xSize_) : Element(name) {
-    xSize = xSize_;
-    y = Vec(1,INIT,0);
-  }
-
-  void OrderOneDynamics::updatexRef(const Vec& xParent) {
+  void ExtraDynamic::updatexRef(const Vec& xParent) {
     x >> xParent(xInd,xInd+xSize-1);
   }
 
-  void OrderOneDynamics::updatexdRef(const Vec& xdParent) {
+  void ExtraDynamic::updatexdRef(const Vec& xdParent) {
     xd >> xdParent(xInd,xInd+xSize-1);
   }
 
-  void OrderOneDynamics::initz() {
+  void ExtraDynamic::initz() {
     x = x0;
   }
 
-  void OrderOneDynamics::closePlot() {
+  void ExtraDynamic::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Element::closePlot();
     }
   }
 
-  void OrderOneDynamics::plot(double t, double dt) {
+  void ExtraDynamic::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       if(getPlotFeature(state)==enabled)
         for(int i=0; i<xSize; ++i)
@@ -69,11 +63,8 @@ namespace MBSim {
     }
   }
 
-  void OrderOneDynamics::init(InitStage stage) {
-    if(stage==unknownStage) {
-      std::cout << "WARNING (OrderOneDynamics::init): Not implemented!" << std::endl;
-    }
-    else if(stage==MBSim::plot) {
+  void ExtraDynamic::init(InitStage stage) {
+    if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
   
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -90,5 +81,26 @@ namespace MBSim {
     else
       Element::init(stage, parent);
   }
+
+  Link * ExtraDynamic::getLinkByPath(string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getLinkByPath(path);
+      else
+        return getLinkByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getLinkByPath(restPart);
+    else
+      return 0;
+  }
+
+
 }
 

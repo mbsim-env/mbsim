@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Group name="Control"
+  xmlns="http://mbsim.berlios.de/MBSim"
+  xmlns:c="http://mbsim.berlios.de/MBSimControl"
+  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+  <frameOfReference ref="../Frame[I]"/>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects/>
+  <extraDynamics>
+    <c:LinearTransferSystem name="LTI">
+      <c:inputSignal ref="../Signal[DifferencePosition]"/>
+      <c:pidType>
+        <c:P>1000</c:P>
+        <c:I>100</c:I>
+        <c:D>10</c:D>
+      </c:pidType>
+    </c:LinearTransferSystem>
+    <c:LinearTransferSystem name="PT1Controlvalve">
+      <c:inputSignal ref="../Signal[ControlOutputLimitted]"/>
+      <c:pt1Type>
+        <c:P>1</c:P>
+        <c:T>1/25</c:T>
+      </c:pt1Type>
+    </c:LinearTransferSystem>
+  </extraDynamics>
+  <links>
+    <c:RelativePositionSensor name="MassPosition">
+      <c:frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
+      <c:direction>[0;1;0]</c:direction>
+    </c:RelativePositionSensor>
+    <c:RelativeVelocitySensor name="MassVelocity">
+      <c:frame ref="../../Frame[FMass]" rel="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
+      <c:direction>[0;1;0]</c:direction>
+    </c:RelativeVelocitySensor>
+    <c:FunctionSensor name="DesiredPosition">
+      <c:function>
+        <!--
+        <SinusFunction1_VS>
+          <amplitude>.1</amplitude>
+          <frequency>1</frequency>
+          <phase>0</phase>
+        </SinusFunction1_VS>
+        -->
+        <TabularFunction1_VS>
+          <x>[0; .49; .51; .99; 1.01; 1.49; 1.51; 2]/2</x>
+          <y>[0;   0;   1;   1;   -1;   -1;    0; 0]*.05</y>
+        </TabularFunction1_VS>
+      </c:function>
+    </c:FunctionSensor>
+    <c:SignalAddition name="DifferencePosition">
+      <c:inputSignal ref="../Signal[DesiredPosition]">
+        <c:factor>-1.</c:factor>
+      </c:inputSignal>
+      <c:inputSignal ref="../Signal[MassPosition]">
+        <c:factor>1.</c:factor>
+      </c:inputSignal>
+    </c:SignalAddition>
+    <c:SignalProcessingSystemSensor name="ControlOutput">
+      <c:signalProcessingSystem ref="../ExtraDynamic[LTI]"/>
+    </c:SignalProcessingSystemSensor>
+    <c:SignalLimitation name="ControlOutputLimitted">
+      <c:inputSignal ref="../Signal[ControlOutput]"/>
+      <c:minimalValue>0-5</c:minimalValue>
+      <c:maximalValue>1+5</c:maximalValue>
+    </c:SignalLimitation>
+    <c:SignalProcessingSystemSensor name="PT1ControlvalveOutput">
+      <c:signalProcessingSystem ref="../ExtraDynamic[PT1Controlvalve]"/>
+    </c:SignalProcessingSystemSensor>
+    <c:SignalLimitation name="PT1ControlvalveOutputLimitted">
+      <c:inputSignal ref="../Signal[PT1ControlvalveOutput]"/>
+      <c:minimalValue>0</c:minimalValue>
+      <c:maximalValue>1</c:maximalValue>
+    </c:SignalLimitation>
+  </links>
+</Group>

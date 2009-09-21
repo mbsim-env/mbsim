@@ -45,6 +45,10 @@ namespace MBSim {
 
   Function1<double, double> * HydraulicsObjectFactory::createFunction1_SS(TiXmlElement * element) {
     if (element==0) return 0;
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"SerialResistanceLinePressureLoss")
+      return new SerialResistanceLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ParallelResistanceLinePressureLoss")
+      return new ParallelResistanceLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
       return new ZetaLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")

@@ -36,7 +36,8 @@ namespace MBSim {
 
     public:   
       LinearTransferSystem(const std::string& name);
-      virtual std::string getType() const {return "LinearTransferSystem";}
+      virtual std::string getType() const {return "LinearTransferSystem"; }
+      void initializeUsingXML(TiXmlElement * element);
       
       void calcxSize() {xSize=A.rows(); }
       

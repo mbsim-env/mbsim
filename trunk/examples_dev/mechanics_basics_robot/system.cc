@@ -124,7 +124,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basePositionDiff->addSignal(basePositionSoll, -1);
 
   LinearTransferSystem * basisControl = new LinearTransferSystem("ReglerBasis");
-  addOrderOneDynamics(basisControl);
+  addExtraDynamic(basisControl);
   basisControl->setInputSignal(basePositionDiff);
   basisControl->setPID(4000., 0., 200.);
 
@@ -165,7 +165,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   armPositionDiff->addSignal(armPositionSoll, -1);
 
   LinearTransferSystem * armControl = new LinearTransferSystem("ReglerArm");
-  addOrderOneDynamics(armControl);
+  addExtraDynamic(armControl);
   armControl->setInputSignal(armPositionDiff);
   armControl->setPID(4000., 0., 200.);
 
@@ -206,7 +206,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   spitzePositionDiff->addSignal(spitzePositionSoll, -1);
 
   LinearTransferSystem * spitzeControl = new LinearTransferSystem("ReglerSpitze");
-  addOrderOneDynamics(spitzeControl);
+  addExtraDynamic(spitzeControl);
   spitzeControl->setInputSignal(spitzePositionDiff);
   spitzeControl->setPID(4000., 0., 200.);
 

@@ -34,7 +34,7 @@ namespace H5 {
 namespace MBSim {
   class Frame;
   class Contour;
-  class OrderOneDynamics;
+  class ExtraDynamic;
   class DataInterfaceBase;
   class Object;
   class Link;
@@ -461,11 +461,11 @@ namespace MBSim {
       virtual void buildListOfContours(std::vector<Contour*> &cnt, bool recursive);
 
       /**
-       * \brief build flat list of order one dynamics
-       * \param list of order one dynamics
+       * \brief build flat list of extra dynamic
+       * \param list of extra dynamic
        * \param flag for recursive
        */
-      virtual void buildListOfOrderOneDynamics(std::vector<OrderOneDynamics*> &ood, bool recursive=false);
+      virtual void buildListOfExtraDynamic(std::vector<ExtraDynamic*> &ed, bool recursive=false);
 
       /**
        * \brief build flat list of models
@@ -694,16 +694,16 @@ namespace MBSim {
       Link* getLink(const std::string &name,bool check=true);
 
       /**
-       * \param order one dynamics to add
+       * \param extra dynamic to add
        */
-      void addOrderOneDynamics(OrderOneDynamics *ood_);
+      void addExtraDynamic(ExtraDynamic *ed_);
 
       /**
-       * \param name of the order one dynamics
-       * \param check for existence of order one dynamics
-       * \return order one dynamics
+       * \param name of the extra dynamic
+       * \param check for existence of extra dynamic
+       * \return extra dynamic
        */
-      OrderOneDynamics* getOrderOneDynamics(const std::string &name,bool check=true);
+      ExtraDynamic* getExtraDynamic(const std::string &name,bool check=true);
 
       /**
        * \param data interface base to add
@@ -732,7 +732,7 @@ namespace MBSim {
       virtual Object *getObjectByPath(std::string path);
       virtual DynamicSystem *getGroupByPath(std::string path);
       virtual Link *getLinkByPath(std::string path);
-      virtual OrderOneDynamics *getOrderOneDynamicsByPath(std::string path);
+      virtual ExtraDynamic *getExtraDynamicByPath(std::string path);
       virtual Frame *getFrameByPath(std::string path);
       virtual Contour *getContourByPath(std::string path);
       virtual Contact *getContactByPath(std::string path);
@@ -766,7 +766,7 @@ namespace MBSim {
        */
       std::vector<Object*> object;
       std::vector<Link*> link;
-      std::vector<OrderOneDynamics*> orderOneDynamics;
+      std::vector<ExtraDynamic*> extraDynamic;
       std::vector<DataInterfaceBase*> DIB;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;

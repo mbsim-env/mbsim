@@ -19,7 +19,7 @@
 #include <config.h>
 #include "mbsim/dynamic_system.h"
 #include "mbsim/modelling_interface.h"
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
@@ -72,7 +72,7 @@ namespace MBSim {
       delete *i;
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i)
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
       delete *i;
     for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
@@ -268,7 +268,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatedx(t,dt);
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatedx(t,dt);
 
   }
@@ -280,7 +280,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexd(t);
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatexd(t);
   }
 
@@ -302,8 +302,8 @@ namespace MBSim {
     for(unsigned i=0; i<link.size(); i++)
       link[i]->setDynamicSystemSolver(sys);
 
-    for (unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->setDynamicSystemSolver(sys);
+    for (unsigned i=0; i<extraDynamic.size(); i++)
+      extraDynamic[i]->setDynamicSystemSolver(sys);
   }
 
   void DynamicSystem::plot(double t, double dt) {
@@ -314,8 +314,8 @@ namespace MBSim {
         object[i]->plot(t,dt);
       for(unsigned i=0; i<link.size(); i++)
         link[i]->plot(t,dt);
-      for(unsigned i=0; i<orderOneDynamics.size(); i++)
-        orderOneDynamics[i]->plot(t,dt);
+      for(unsigned i=0; i<extraDynamic.size(); i++)
+        extraDynamic[i]->plot(t,dt);
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->plot(t,dt);
     }
@@ -329,8 +329,8 @@ namespace MBSim {
         object[i]->closePlot();
       for(unsigned i=0; i<link.size(); i++)
         link[i]->closePlot();
-      for(unsigned i=0; i<orderOneDynamics.size(); i++)
-        orderOneDynamics[i]->closePlot();
+      for(unsigned i=0; i<extraDynamic.size(); i++)
+        extraDynamic[i]->closePlot();
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->closePlot();
 
@@ -429,8 +429,8 @@ namespace MBSim {
       object[i]->init(stage);
     for(unsigned i=0; i<link.size(); i++)
       link[i]->init(stage);
-    for(unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->init(stage);
+    for(unsigned i=0; i<extraDynamic.size(); i++)
+      extraDynamic[i]->init(stage);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
@@ -612,7 +612,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexRef(x);
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatexRef(x);
   }
 
@@ -625,7 +625,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (**i).updatexdRef(xd);
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatexdRef(xd);
   }
 
@@ -846,8 +846,8 @@ namespace MBSim {
       object[i]->initz();
     for(unsigned i=0; i<link.size(); i++)
       link[i]->initz();
-    for(unsigned i=0; i<orderOneDynamics.size(); i++)
-      orderOneDynamics[i]->initz();
+    for(unsigned i=0; i<extraDynamic.size(); i++)
+      extraDynamic[i]->initz();
   }
 
   void DynamicSystem::buildListOfObjects(vector<Object*> &obj, bool recursive) {
@@ -882,12 +882,12 @@ namespace MBSim {
         dynamicsystem[i]->buildListOfContours(cnt,recursive);
   }
 
-  void DynamicSystem::buildListOfOrderOneDynamics(vector<OrderOneDynamics*> &ood, bool recursive) {
-    for(unsigned int i=0; i<orderOneDynamics.size(); i++)
-      ood.push_back(orderOneDynamics[i]);
+  void DynamicSystem::buildListOfExtraDynamic(vector<ExtraDynamic*> &ed, bool recursive) {
+    for(unsigned int i=0; i<extraDynamic.size(); i++)
+      ed.push_back(extraDynamic[i]);
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
-        dynamicsystem[i]->buildListOfOrderOneDynamics(ood,recursive);
+        dynamicsystem[i]->buildListOfExtraDynamic(ed,recursive);
   }
 
   void DynamicSystem::buildListOfModels(std::vector<ModellingInterface*> &modelList, bool recursive) {
@@ -972,7 +972,7 @@ namespace MBSim {
       xSize += (*i)->getxSize();
     }
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i != orderOneDynamics.end(); ++i) {
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) {
       (*i)->calcxSize();
       (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
@@ -1303,25 +1303,26 @@ namespace MBSim {
     return NULL;
   }
 
-  OrderOneDynamics* DynamicSystem::getOrderOneDynamics(const string &name,bool check) {
-    unsigned int i;
-    for(i=0; i<orderOneDynamics.size(); i++) {
-      if(orderOneDynamics[i]->getName() == name) return orderOneDynamics[i];
+  void DynamicSystem::addExtraDynamic(ExtraDynamic *ed_) {
+    if(getExtraDynamic(ed_->getName(),false)) {
+      cout << "ERROR (DynamicSystem::addExtraDynamic): The DynamicSystem " << name << " can only comprise one ExtraDynamic by the name " <<  ed_->getName() << "!" << endl;
+      assert(getExtraDynamic(ed_->getName(),false) == NULL);
     }
-    if(check) {
-      if(!(i<orderOneDynamics.size())) cout << "ERROR (DynamicSystem::getOrderOneDynamics): The DynamicSystem " << this->name <<" comprises no OrderOneDynamics " << name << "!" << endl; 
-      assert(i<orderOneDynamics.size());
-    }
-    return NULL; 
-  }    
+    extraDynamic.push_back(ed_);
+    ed_->setParent(this);
+  }
 
-  void DynamicSystem::addOrderOneDynamics(OrderOneDynamics *ood_) {
-    if(getOrderOneDynamics(ood_->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addOrderOneDynamics): The DynamicSystem " << name << " can only comprise one OrderOneDynamics by the name " <<  ood_->getName() << "!" << endl;
-      assert(getOrderOneDynamics(ood_->getName(),false) == NULL);
+  ExtraDynamic* DynamicSystem::getExtraDynamic(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<extraDynamic.size(); i++) {
+      if(extraDynamic[i]->getName() == name)
+        return extraDynamic[i];
     }
-    orderOneDynamics.push_back(ood_);
-    ood_->setParent(this);
+    if(check){
+      if(!(i<extraDynamic.size())) cout << "ERROR (DynamicSystem::getExtraDynamic): The DynamicSystem " << this->name <<" comprises no ExtraDynamic " << name << "!" << endl; 
+      assert(i<extraDynamic.size());
+    }
+    return NULL;
   }
 
   void DynamicSystem::addDataInterfaceBase(DataInterfaceBase* dib_) {
@@ -1407,6 +1408,29 @@ namespace MBSim {
       return 0;
   }
 
+  ExtraDynamic *DynamicSystem::getExtraDynamicByPath(std::string path) {
+    if(path[path.length()-1]!='/') path=path+"/";
+    size_t i=path.find('/');
+    // absolut path
+    if(i==0) {
+      if(parent)
+        return parent->getExtraDynamicByPath(path);
+      else
+        return getExtraDynamicByPath(path.substr(1));
+    }
+    // relative path
+    string firstPart=path.substr(0, i);
+    string restPart=path.substr(i+1);
+    if(firstPart=="..")
+      return parent->getExtraDynamicByPath(restPart);
+    else if(firstPart.substr(0,13)=="ExtraDynamic[")
+      return getExtraDynamic(firstPart.substr(13,firstPart.find(']')-13));
+    else if(firstPart.substr(0,6)=="Group[")
+      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getExtraDynamicByPath(restPart);
+    else
+      return 0;
+  }
+
   DynamicSystem *DynamicSystem::getGroupByPath(std::string path) {
     if(path[path.length()-1]!='/') path=path+"/";
     size_t i=path.find('/');
@@ -1449,29 +1473,6 @@ namespace MBSim {
       return getLink(firstPart.substr(5,firstPart.find(']')-5));
     else if(firstPart.substr(0,6)=="Group[")
       return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getLinkByPath(restPart);
-    else
-      return 0;
-  }
-
-  OrderOneDynamics *DynamicSystem::getOrderOneDynamicsByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getOrderOneDynamicsByPath(path);
-      else
-        return getOrderOneDynamicsByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getOrderOneDynamicsByPath(restPart);
-    else if(firstPart.substr(0,17)=="OrderOneDynamics[")
-      return getOrderOneDynamics(firstPart.substr(17,firstPart.find(']')-17));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getOrderOneDynamicsByPath(restPart);
     else
       return 0;
   }

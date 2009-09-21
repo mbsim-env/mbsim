@@ -26,13 +26,13 @@
 #include "mbsim/frame.h"
 #include "mbsimControl/signalspsys.h"
 #include "mbsim/data_interface_base.h"
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 #include <vector>
 #include <string>
 
 using namespace MBSim;
 
-class SPSys : public OrderOneDynamics {
+class SPSys : public MBSim::ExtraDynamic {
   public:
     SPSys(const std::string &name);
     void setInSignalnWeight(SPSys *In_,double wichtung);

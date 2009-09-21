@@ -29,7 +29,7 @@
 using namespace fmatvec;
 using namespace std;
 
-SPSys::SPSys(const string &name) : OrderOneDynamics(name) {
+SPSys::SPSys(const string &name) : ExtraDynamic(name) {
   Uin=&SPSys::InputDummie;
   Testgesetzt=false;
   if (Single_Input){DGL_INPUT_DIMENSION=1;} else {DGL_INPUT_DIMENSION=0;} // wird in setIn... Routinen NumberofInputs nachgefuehrt werden. 

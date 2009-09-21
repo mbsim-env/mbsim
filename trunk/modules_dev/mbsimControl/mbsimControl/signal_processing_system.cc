@@ -17,50 +17,49 @@
  * Contact: schneidm@users.berlios.de
  */
 
+#include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/dynamic_system.h"
+#include "mbsimControl/objectfactory.h"
 
 using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
 
-  Signal * Signal::getSignalByPath(string path) {
+  SignalProcessingSystem::SignalProcessingSystem(const string &name) : ExtraDynamic(name), inputSignal(NULL), inputSignalString("") {
+  }
+
+  Signal * SignalProcessingSystem::getSignalByPath(string path) {
     int pos=path.find("Signal");
     path.erase(pos, 6);
     path.insert(pos, "Link");
-    Link * s = getLinkByPath(path);
-    if (dynamic_cast<Signal *>(s))
-      return static_cast<Signal *>(s);
+    Link * h = getLinkByPath(path);
+    if (dynamic_cast<Signal *>(h))
+      return static_cast<Signal *>(h);
     else {
       std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
       _exit(1);
     }
   }
 
-  void Signal::init(InitStage stage) {
-    if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
-      if(getPlotFeature(plotRecursive)==enabled) {
-        Vec y=getSignal();
-        for (int i=0; i<y.size(); i++)
-          plotColumns.push_back("Signal (" + numtostr(i) + ")");
+  void SignalProcessingSystem::initializeUsingXML(TiXmlElement * element) {
+    ExtraDynamic::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    inputSignalString=e->Attribute("ref");
+  }
+
+  void SignalProcessingSystem::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (inputSignalString!="") {
+        Signal * s = getSignalByPath(inputSignalString);
+        setInputSignal(s);
       }
-      Link::init(stage);
+      ExtraDynamic::init(stage);
     }
     else
-      Link::init(stage);
+      ExtraDynamic::init(stage);
   }
 
-
-  void Signal::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Vec y=getSignal();
-      for (int i=0; i<y.size(); i++)
-        plotVector.push_back(y(i));
-    }
-    Link::plot(t, dt);
-  }
 
 }

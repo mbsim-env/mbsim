@@ -22,6 +22,7 @@
  */ 
 
 #include "mbsimControl/linear_transfer_system.h"
+#include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
 
@@ -31,6 +32,51 @@ using namespace fmatvec;
 namespace MBSim {
 
   LinearTransferSystem::LinearTransferSystem(const string& name) : SignalProcessingSystem(name), R1(.002), R2(1.), c(1.) {
+  }
+
+  void LinearTransferSystem::initializeUsingXML(TiXmlElement * element) {
+    SignalProcessingSystem::initializeUsingXML(element);
+    TiXmlElement * e;
+    TiXmlElement * ee;
+    e=element->FirstChildElement(MBSIMCONTROLNS"pidType");
+    if (e) {
+      ee=e->FirstChildElement(MBSIMCONTROLNS"P");
+      double p=Element::getDouble(ee);
+      ee=e->FirstChildElement(MBSIMCONTROLNS"I");
+      double i=Element::getDouble(ee);
+      ee=e->FirstChildElement(MBSIMCONTROLNS"D");
+      double d=Element::getDouble(ee);
+      setPID(p, i, d);
+    }
+    e=element->FirstChildElement(MBSIMCONTROLNS"abcdType");
+    if (e) {
+      ee=e->FirstChildElement(MBSIMCONTROLNS"A");
+      Mat AA=Element::getMat(ee);
+      ee=e->FirstChildElement(MBSIMCONTROLNS"B");
+      Mat BB=Element::getMat(ee, A.rows(), 0);
+      ee=e->FirstChildElement(MBSIMCONTROLNS"C");
+      Mat CC=Element::getMat(ee, 0, A.cols());
+      ee=e->FirstChildElement(MBSIMCONTROLNS"D");
+      Mat DD=Element::getMat(ee, C.rows(), B.cols());
+      setABCD(AA, BB, CC, DD);
+    }
+    e=element->FirstChildElement(MBSIMCONTROLNS"integratorType");
+    if (e) {
+      ee=e->FirstChildElement(MBSIMCONTROLNS"gain");
+      double g=Element::getDouble(ee);
+      setIntegrator(g);
+    }
+    e=element->FirstChildElement(MBSIMCONTROLNS"pt1Type");
+    if (e) {
+      ee=e->FirstChildElement(MBSIMCONTROLNS"P");
+      double PP=Element::getDouble(ee);
+      ee=e->FirstChildElement(MBSIMCONTROLNS"T");
+      double TT=Element::getDouble(ee);
+      setPT1(PP, TT);
+    }
+    e=element->FirstChildElement(MBSIMCONTROLNS"showABCD");
+    if (e)
+      showABCD();
   }
 
   void LinearTransferSystem::updatedx(double t, double dt) {
@@ -105,6 +151,13 @@ namespace MBSim {
       D.resize(1,1);
       D(0,0)=PP+DD*R2*c/(R1*c);
     }   
+  }
+
+  void LinearTransferSystem::setABCD(Mat A_, Mat B_, Mat C_, Mat D_) {
+    A=A_;
+    B=B_;
+    C=C_;
+    D=D_;
   }
 
   void LinearTransferSystem::setBandwidth(double Hz_fg) {
