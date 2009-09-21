@@ -21,23 +21,28 @@
 #define _SIGNAL_PROCESSING_SYSTEM_SENSORS_H_
 
 #include "mbsimControl/sensor.h"
-#include "mbsimControl/signal_processing_system.h"
 
 namespace MBSim {
+
+  class SignalProcessingSystem;
 
   /*!
    * \brief SignalProcessingSystemSensor
    * \author Markus Schneider
    */
-  class SignalProcessingSystemSensor : public MBSim::Sensor {
+  class SignalProcessingSystemSensor : public Sensor {
     public:
-      SignalProcessingSystemSensor(const std::string &name) : MBSim::Sensor(name) {}
+      SignalProcessingSystemSensor(const std::string &name) : Sensor(name), sps(NULL), spsString("") {}
+      virtual std::string getType() const {return "SignalProcessingSystemSensor"; }
+      void initializeUsingXML(TiXmlElement * element);
+      void init(InitStage stage);
+      
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
-      fmatvec::Vec getSignal() {
-        return sps->calculateOutput();
-      }
+      fmatvec::Vec getSignal();
+
     private:
       SignalProcessingSystem * sps;
+      std::string spsString;
   };
 
 }

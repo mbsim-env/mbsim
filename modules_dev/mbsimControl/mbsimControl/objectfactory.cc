@@ -4,6 +4,7 @@
 #include "mbsimControl/sensor.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/function_sensor.h"
+#include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/frame_sensors.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/linear_transfer_system.h"
@@ -19,6 +20,13 @@ namespace MBSim {
       instance=new ControlObjectFactory;
       ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
+  }
+
+  ExtraDynamic * ControlObjectFactory::createExtraDynamic(TiXmlElement *element) {
+    if(element==0) return 0;
+    if (element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
+      return new LinearTransferSystem(element->Attribute("name"));
+    return 0;
   }
 
   Link* ControlObjectFactory::createLink(TiXmlElement *element) {
@@ -45,10 +53,14 @@ namespace MBSim {
       return new RelativeAngularVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"FunctionSensor")
       return new FunctionSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalProcessingSystemSensor")
+      return new SignalProcessingSystemSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
       return new SignalAddition(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMux")
       return new SignalMux(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalLimitation")
+      return new SignalLimitation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalTimeDiscretization")
       return new SignalTimeDiscretization(element->Attribute("name"));
     return 0;

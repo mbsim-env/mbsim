@@ -40,8 +40,8 @@ namespace MBSim {
     e=element->FirstChildElement();
     while (e) {
       LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e));
-      p->initializeUsingXML(e);
       addLinePressureLoss(p);
+      p->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
   }

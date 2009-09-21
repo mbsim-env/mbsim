@@ -278,7 +278,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SerialResistancePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="SerialResistancePressureLossType">
+  <xs:element name="SerialResistanceLinePressureLoss" substitutionGroup="LinePressureLoss" type="SerialResistanceLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Serielle Aneinanderreihung verschiedener Druckveruste. <br/>
@@ -289,7 +289,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="SerialResistancePressureLossType">
+  <xs:complexType name="SerialResistanceLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
@@ -299,7 +299,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ParallelResistanceLinePressureLoss" abstract="true" substitutionGroup="LinePressureLoss" type="ParallelResistanceLinePressureLossType">
+  <xs:element name="ParallelResistanceLinePressureLoss" substitutionGroup="LinePressureLoss" type="ParallelResistanceLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Parallelschaltung identischer hydraulischer Widerstände.<br/>
@@ -957,6 +957,46 @@
               </xs:complexType>
             </xs:element>
           </xs:choice>
+          <xs:element name="enableOpenMBVSphere" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Visualisierung der Knotendrücke in OpenMBV durch Druckknoten
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Größe des Druckknotens
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="minimalPressure" type="pv:pressureScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      minimaler Druckwert für die Farbgebung des Knotens (entspricht blau)
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="maximalPressure" type="pv:pressureScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      maximaler Druckwert für die Farbgebung des Knotens (entspricht rot)
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="position" type="pv:lengthVector" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Position des Druckknotens.<br/>
+                      Bei der Verwendung von hydraulisch-mechanischen Grenzflächen wird dieser Wert nicht berücksichtigt. Stattdessen wird die Kugelposition dynamisch als Mittelwert der Positionen der angeschlossenen Koordinatensysteme berechnet.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -1015,6 +1055,11 @@
   </xs:complexType>
 
   <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Die Druckkraft des Knotens wirkt immer in die Richtung der angegebenen Normalen.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="HNodeMecType">
     <xs:complexContent>
@@ -1285,7 +1330,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
-        Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <tt>HydNodeMec</tt> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
+        Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <tt>HNodeMec</tt> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
         <object class="figure" standby="4cm" data="ball_checkvalve" title="Rückschlagventil"></object>
       </xs:documentation>
     </xs:annotation>

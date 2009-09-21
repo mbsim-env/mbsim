@@ -327,6 +327,27 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Sensor, zur Konvertierung des Ausgangs eines <i>SignalProcessingSystem</i>s in ein Sensor-Signal.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalProcessingSystemSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="signalProcessingSystem">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ExtraDynamicReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalAddition" substitutionGroup="Signal" type="SignalAdditionType">
     <xs:annotation>
       <xs:documentation xml:lang="de">
@@ -338,7 +359,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType" >
         <xs:sequence maxOccurs="unbounded">
-          <xs:element name="input">
+          <xs:element name="inputSignal">
             <xs:annotation>
               <xs:documentation xml:lang="de">
                 ref=Pfad des Eingangssignals
@@ -373,7 +394,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="input" maxOccurs="unbounded">
+          <xs:element name="inputSignal" maxOccurs="unbounded">
             <xs:annotation>
               <xs:documentation xml:lang="de">
                 Pfad zum Eingangssignal
@@ -383,6 +404,29 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalLimitation" substitutionGroup="Signal" type="SignalLimitationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de">
+        Beschränkung der Ausgangswerte eines Signals.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalLimitationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="minimalValue" type="pv:nounitVector"/>
+          <xs:element name="maximalValue" type="pv:nounitVector"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -408,14 +452,13 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
-  <!--
-  <xs:element name="LinearTransferSystem" substitutionGroup="Signal" type="LinearTransferSystemType"/>
-  <xs:complexType name="LinearTransferSystemType">
+  
+  <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:ExtraDynamicSystem" type="SignalProcessingSystemType"/>
+  <xs:complexType name="SignalProcessingSystemType">
     <xs:complexContent>
-      <xs:extension base="SignalType">
+      <xs:extension base="mbsim:ExtraDynamicSystemType">
         <xs:sequence>
-          <xs:element name="input" maxOccurs="unbounded">
+          <xs:element name="inputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
@@ -424,5 +467,52 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  -->
+
+  <xs:element name="LinearTransferSystem" substitutionGroup="SignalProcessingSystem" type="LinearTransferSystemType"/>
+  <xs:complexType name="LinearTransferSystemType">
+    <xs:complexContent>
+      <xs:extension base="SignalProcessingSystemType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="pidType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="P" type="pv:nounitScalar"/>
+                  <xs:element name="I" type="pv:nounitScalar"/>
+                  <xs:element name="D" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="abcdType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="A" type="pv:nounitMatrix"/>
+                  <xs:element name="B" type="pv:nounitMatrix"/>
+                  <xs:element name="C" type="pv:nounitMatrix"/>
+                  <xs:element name="D" type="pv:nounitMatrix"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="integratorType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="gain" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="pt1Type">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="P" type="pv:nounitScalar"/>
+                  <xs:element name="T" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="showABCD" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>

@@ -32,11 +32,14 @@ namespace MBSim {
     public:
       SignalAddition(const std::string &name) : Signal(name) {}
       void initializeUsingXML(TiXmlElement *element);
+      void init(InitStage stage);
       void addSignal(Signal * signal, double factor=1.);
       fmatvec::Vec getSignal();
     private:
       std::vector<Signal *> signals;
       std::vector<double> factors;
+      std::vector<std::string> signalString;
+      std::vector<double> factorsTmp;
   };
 
 
@@ -48,10 +51,32 @@ namespace MBSim {
     public:
       SignalMux(const std::string &name) : Signal(name) {}
       void initializeUsingXML(TiXmlElement *element);
+      void init(InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
       fmatvec::Vec getSignal();
     private:
       std::vector<Signal *> signals;
+      std::vector<std::string> signalString;
+  };
+
+
+  /*!
+   * \brief SignalLimitation
+   * \author Markus Schneider
+   */
+  class SignalLimitation : public Signal {  
+    public:
+      SignalLimitation(const std::string &name) : Signal(name), minValue(0), maxValue(0), signalString("") {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(InitStage stage);
+      void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
+      void setMaximalValue(fmatvec::Vec maxValue_) {maxValue=maxValue_; }
+      void setSignal(Signal * signal_) {s=signal_; }
+      fmatvec::Vec getSignal();
+    private:
+      Signal * s;
+      fmatvec::Vec minValue, maxValue;
+      std::string signalString;
   };
 
 
@@ -61,8 +86,9 @@ namespace MBSim {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99) {}
+      SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
+      void init(InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
       fmatvec::Vec getSignal();
@@ -70,6 +96,7 @@ namespace MBSim {
       Signal * s;
       fmatvec::Vec y;
       double tOld;
+      std::string signalString;
   };
 
 

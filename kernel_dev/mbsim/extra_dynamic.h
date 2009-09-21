@@ -17,8 +17,8 @@
  * Contact: mbachmayer@gmx.de
  */
 
-#ifndef _ORDER_ONE_DYNAMICS_H_
-#define _ORDER_ONE_DYNAMICS_H_
+#ifndef _EXTRA_DYNAMIC_H_
+#define _EXTRA_DYNAMIC_H_
 
 #include "mbsim/element.h"
 #include "mbsim/extradynamic_interface.h"
@@ -27,6 +27,7 @@
 namespace MBSim {
 
   class DynamicSystem;
+  class Link;
 
   /**
    * \brief base class for dynamic systems of the form \f$\dot{x}=f\left(x,u\right)\f$ and \f$y=g\left(x,u\right)\f$
@@ -34,19 +35,13 @@ namespace MBSim {
    * \date 2009-04-06 interface extracted (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    */
-  class OrderOneDynamics : public Element, ExtraDynamicInterface {
+  class ExtraDynamic : public Element, ExtraDynamicInterface {
     public:
       /**
        * \brief constructor
-       * \param name of order one system
+       * \param name of extra dynamic system
        */
-      OrderOneDynamics(const std::string &name);
-
-      /**
-       * \brief constructor
-       * \param name of order one system
-       */
-      OrderOneDynamics(const std::string &name, int xSize_);
+      ExtraDynamic(const std::string &name);
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
       using ExtraDynamicInterface::updatedx;
@@ -63,7 +58,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "OrderOneDynamics"; }
+      virtual std::string getType() const { return "ExtraDynamic"; }
       virtual void closePlot(); 
       virtual void plot(double t, double dt = 1); 
       /***************************************************/
@@ -76,6 +71,7 @@ namespace MBSim {
       void setParent(DynamicSystem *parent_) { parent = parent_; }
       DynamicSystem* getParent() { return parent; }
       void setx0(fmatvec::Vec x_) { x0 = x_; }
+      virtual Link *getLinkByPath(std::string path);
       /***************************************************/
 
     protected:
@@ -108,5 +104,5 @@ namespace MBSim {
 
 }
 
-#endif /* _ORDER_ONE_DYNAMICS_H_ */
+#endif /* _EXTRA_DYNAMIC_H_ */
 

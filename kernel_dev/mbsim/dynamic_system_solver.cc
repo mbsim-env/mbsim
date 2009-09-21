@@ -25,7 +25,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
 #include "mbsim/tree.h"
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/flexible_body.h"
 #include "mbsim/utils/eps.h"
@@ -106,8 +106,8 @@ namespace MBSim {
       vector<Link*> lnkList;
       buildListOfLinks(lnkList,true);
 
-      vector<OrderOneDynamics*> oodList;
-      buildListOfOrderOneDynamics(oodList,true);
+      vector<ExtraDynamic*> edList;
+      buildListOfExtraDynamic(edList,true);
 
       vector<ModellingInterface*> modellList;
       buildListOfModels(modellList,true);
@@ -122,7 +122,7 @@ namespace MBSim {
       frame.clear(); // delete old frame list
       contour.clear(); // delete old contour list
       link.clear(); // delete old link list
-      orderOneDynamics.clear(); // delete old ood list
+      extraDynamic.clear(); // delete old ed list
 
       /* rename system structure */
       if(INFO) cout << "object List:" << endl;
@@ -156,13 +156,13 @@ namespace MBSim {
         lnkList[i]->setName(str.str());
         addLink(lnkList[i]);
       }
-      if(INFO) cout << "ood List:" << endl;
-      for(unsigned int i=0; i<oodList.size(); i++) {
+      if(INFO) cout << "ed List:" << endl;
+      for(unsigned int i=0; i<edList.size(); i++) {
         stringstream str;
-        str << oodList[i]->getParent()->getPath('/') << "/" << oodList[i]->getName();
+        str << edList[i]->getParent()->getPath('/') << "/" << edList[i]->getName();
         if(INFO) cout<<str.str()<<endl;
-        oodList[i]->setName(str.str());
-        addOrderOneDynamics(oodList[i]);
+        edList[i]->setName(str.str());
+        addExtraDynamic(edList[i]);
       }
 
       /* matrix of body dependencies */
@@ -1165,10 +1165,10 @@ namespace MBSim {
   void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_=dynamic_cast<Object*>(element_);
     Link* link_=dynamic_cast<Link*>(element_);
-    OrderOneDynamics* ood_=dynamic_cast<OrderOneDynamics*>(element_);
+    ExtraDynamic* ed_=dynamic_cast<ExtraDynamic*>(element_);
     if(object_) addObject(object_);
     else if(link_) addLink(link_);
-    else if(ood_) addOrderOneDynamics(ood_);
+    else if(ed_) addExtraDynamic(ed_);
     else{ throw new MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");}
   }
 
@@ -1188,14 +1188,14 @@ namespace MBSim {
     //     if(link[i2]->getPath() == name) return (Element*)link[i2];
     //   }
     //   unsigned int i3;
-    //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
-    //     if(orderOneDynamics[i3]->getName() == name) return (Element*)orderOneDynamics[i3];
+    //   for(i3=0; i3<extraDynamic.size(); i3++) {
+    //     if(extraDynamic[i3]->getName() == name) return (Element*)extraDynamic[i3];
     //   }
-    //   for(i3=0; i3<orderOneDynamics.size(); i3++) {
-    //     if(orderOneDynamics[i3]->getPath() == name) return (Element*)orderOneDynamics[i3];
+    //   for(i3=0; i3<extraDynamic.size(); i3++) {
+    //     if(extraDynamic[i3]->getPath() == name) return (Element*)extraDynamic[i3];
     //   }
-    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<orderOneDynamics.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
-    //   assert(i1<object.size()||i2<link.size()||!(i3<orderOneDynamics.size()));
+    //   if(!(i1<object.size())||!(i2<link.size())||!(i3<extraDynamic.size())) cout << "Error: The DynamicSystemSolver " << this->name <<" comprises no element " << name << "!" << endl; 
+    //   assert(i1<object.size()||i2<link.size()||!(i3<extraDynamic.size()));
     return NULL;
   }
 
@@ -1249,8 +1249,8 @@ namespace MBSim {
     for(il1 = link.begin(); il1 != link.end(); ++il1) (*il1)->initDataInterfaceBase(this);
     vector<Object*>::iterator io1;
     for(io1 = object.begin(); io1 != object.end(); ++io1) (*io1)->initDataInterfaceBase(this);
-    vector<OrderOneDynamics*>::iterator ie1;
-    for(ie1 = orderOneDynamics.begin(); ie1 != orderOneDynamics.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
+    vector<ExtraDynamic*>::iterator ie1;
+    for(ie1 = extraDynamic.begin(); ie1 != extraDynamic.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {

@@ -4,6 +4,7 @@
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include "mbsim/group.h"
 #include "mbsim/object.h"
+#include "mbsim/extra_dynamic.h"
 #include "mbsim/kinematics.h"
 #include "mbsim/link.h"
 #include "mbsim/integrators/integrator.h"
@@ -29,6 +30,7 @@ class ObjectFactory {
 
     virtual Group* createGroup(TiXmlElement *element);
     virtual Object* createObject(TiXmlElement *element);
+    virtual ExtraDynamic * createExtraDynamic(TiXmlElement *element);
     virtual Translation* createTranslation(TiXmlElement *element);
     virtual Rotation* createRotation(TiXmlElement *element);
     virtual Link* createLink(TiXmlElement *element);
@@ -59,6 +61,7 @@ class MBSimObjectFactory : protected ObjectFactory {
   protected:
     Group* createGroup(TiXmlElement *element);
     Object* createObject(TiXmlElement *element);
+    ExtraDynamic * createExtraDynamic(TiXmlElement *element) {return 0; }
     Translation* createTranslation(TiXmlElement *element);
     Rotation* createRotation(TiXmlElement *element);
     Link* createLink(TiXmlElement *element);

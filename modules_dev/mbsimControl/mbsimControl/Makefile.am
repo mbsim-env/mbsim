@@ -8,6 +8,8 @@ libmbsimControl_la_SOURCES = \
 														 frame_sensors.cc\
 														 function_sensor.cc\
 														 signal_manipulation.cc\
+														 signal_processing_system.cc\
+														 signal_processing_system_sensor.cc\
 														 linear_transfer_system.cc\
 														 actuator.cc\
 														 objectfactory.cc\

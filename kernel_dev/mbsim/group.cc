@@ -21,7 +21,7 @@
 #include "mbsim/group.h"
 #include "mbsim/object.h"
 #include "mbsim/link.h"
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -101,7 +101,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       (*i)->updatexd(t);
 
-    for(vector<OrderOneDynamics*>::iterator i = orderOneDynamics.begin(); i!= orderOneDynamics.end(); ++i) 
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (*i)->updatexd(t);
   }
 
@@ -201,7 +201,6 @@ namespace MBSim {
     }
     e=e->NextSiblingElement();
 
-
     // objects
     E=e->FirstChildElement();
     Object *o;
@@ -211,6 +210,18 @@ namespace MBSim {
       E=E->NextSiblingElement();
     }
     e=e->NextSiblingElement();
+
+    // extraDynamics
+    if (e->ValueStr()==MBSIMNS"extraDynamics") {
+      E=e->FirstChildElement();
+      ExtraDynamic *ed;
+      while((ed=ObjectFactory::getInstance()->createExtraDynamic(E))) {
+        addExtraDynamic(ed);
+        ed->initializeUsingXML(E);
+        E=E->NextSiblingElement();
+      }
+      e=e->NextSiblingElement();
+    }
 
     // links
     E=e->FirstChildElement();

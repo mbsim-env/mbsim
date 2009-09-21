@@ -54,6 +54,13 @@ namespace MBSim {
     return 0;
   }
   
+  ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element) {
+    ExtraDynamic *obj;
+    for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
+      if((obj=(*i)->createExtraDynamic(element))) return obj;
+    return 0;
+  }
+  
   Translation* ObjectFactory::createTranslation(TiXmlElement *element) {
     Translation *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)

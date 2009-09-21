@@ -35,6 +35,7 @@ namespace MBSim {
 
     public:
       Signal(const std::string &name) : Link(name) {}
+      Signal * getSignalByPath(std::string path);
 
       void init(InitStage stage);
 
@@ -63,12 +64,6 @@ namespace MBSim {
       virtual fmatvec::Vec getSignal() = 0;
 
   };
-  
-  /*!
-   * \brief SignalByPath
-   * \author Markus Schneider
-   */
-  Signal * getSignalByPath(DynamicSystem * ds,  const std::string& path);
 
 }
 

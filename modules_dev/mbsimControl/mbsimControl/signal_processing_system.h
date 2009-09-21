@@ -24,7 +24,7 @@
 #ifndef _SIGNAL_PROCESSING_SYSTEM_H_
 #define _SIGNAL_PROCESSING_SYSTEM_H_
 
-#include "mbsim/order_one_dynamics.h"
+#include "mbsim/extra_dynamic.h"
 
 namespace MBSim {
 
@@ -34,24 +34,25 @@ namespace MBSim {
    * \brief SignalProcessingSystem
    * \author Markus Schneider
    */
-  class SignalProcessingSystem : public MBSim::OrderOneDynamics {
+  class SignalProcessingSystem : public MBSim::ExtraDynamic {
 
     public:
-      SignalProcessingSystem(const std::string &name) : OrderOneDynamics(name), inputSignal(0) {
-      }
+      SignalProcessingSystem(const std::string &name);
+      virtual std::string getType() const {return "SignalProcessingSystem"; }
+      void initializeUsingXML(TiXmlElement *element);
 
-      void init(InitStage stage) {}
+      void init(InitStage stage);
 
       void updateg(double t) {}
 
       virtual fmatvec::Vec calculateOutput() = 0;
 
       void setInputSignal(Signal * inputSignal_) {inputSignal=inputSignal_; }
-
-      virtual std::string getType() const {return "SignalProcessingSystem"; }
+      Signal * getSignalByPath(std::string path);
 
     protected:
       Signal * inputSignal;
+      std::string inputSignalString;
   };
 
 }

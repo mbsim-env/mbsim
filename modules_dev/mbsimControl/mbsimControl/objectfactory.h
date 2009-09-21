@@ -17,6 +17,7 @@ namespace MBSim {
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
+      ExtraDynamic * createExtraDynamic(TiXmlElement *element);
       Link* createLink(TiXmlElement *element);
   };
 
