@@ -32,7 +32,7 @@
     schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
 
   <xs:simpleType name="SignalReferenceType">
-    <xs:restriction base="xs:token">
+    <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="/?((\.\.|Group\[X\])/)*Signal\[X\]" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
