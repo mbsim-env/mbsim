@@ -7,7 +7,8 @@
   xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:annotation><xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+  <xs:annotation>
+    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
       Mit dem Modul MBSimControl können einfache Regelungsstrukturen aufgebaut werden. 
       <p>
         Zum Auswerten von Systemzuständen oder Funktionen stehen verschiedene Sensoren zur Verfügung, die die entsprechenden Größen zur Verfügung stellen.
@@ -23,7 +24,8 @@
         Durch Aktoren können Stellkräfte in die Systeme zurückgespeist werden.
         Da Aktoren als Eingangsgröße ebenfalls Signale erhalten, gibt es einen speziellen Sensor, der die Systeme 1. Ordnung ausliest und deren Systemausgänge an die Aktoren überträgt.
       </p>
-  </xs:documentation></xs:annotation>
+  </xs:documentation>
+</xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
@@ -44,7 +46,7 @@
 
   <xs:element name="Signal" abstract="true" substitutionGroup="mbsim:Link" type="SignalType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Signal
       </xs:documentation>
     </xs:annotation>
@@ -57,7 +59,7 @@
 
   <xs:element name="Sensor" abstract="true" substitutionGroup="Signal" type="SensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor
       </xs:documentation>
     </xs:annotation>
@@ -70,7 +72,7 @@
 
   <xs:element name="GeneralizedCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="GeneralizedCoordinateSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der generalisierten Koordinaten eines Objekts.
       </xs:documentation>
     </xs:annotation>
@@ -81,7 +83,7 @@
         <xs:sequence>
           <xs:element name="object">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Pfad des Objekts
               </xs:documentation>
             </xs:annotation>
@@ -91,7 +93,7 @@
           </xs:element>
           <xs:element name="index" type="xs:nonNegativeInteger">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Index der generalisierten Koordinate
               </xs:documentation>
             </xs:annotation>
@@ -103,7 +105,7 @@
 
   <xs:element name="GeneralizedPositionSensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedPositionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der generalisierten Positionen
       </xs:documentation>
     </xs:annotation>
@@ -116,7 +118,7 @@
 
   <xs:element name="GeneralizedVelocitySensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedVelocitySensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der generalisierten Geschwindigkeiten
       </xs:documentation>
     </xs:annotation>
@@ -129,7 +131,7 @@
 
   <xs:element name="AbsoluteCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="AbsoluteCoordinateSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten (Welt-System)
       </xs:documentation>
     </xs:annotation>
@@ -140,7 +142,7 @@
         <xs:sequence>
           <xs:element name="frame">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Pfad des Koordinatensystems
               </xs:documentation>
             </xs:annotation>
@@ -150,7 +152,7 @@
           </xs:element>
           <xs:element name="direction" type="pv:nounitMatrix">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Matrix der Richtungsvektoren
               </xs:documentation>
             </xs:annotation>
@@ -162,7 +164,7 @@
 
   <xs:element name="AbsolutePositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsolutePositionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der Positionen im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
@@ -175,7 +177,7 @@
 
   <xs:element name="AbsoluteVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteVelocitySensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der Geschwindigkeiten im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
@@ -188,7 +190,7 @@
 
   <xs:element name="AbsoluteAngularPositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularPositionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der Winkel im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
@@ -201,7 +203,7 @@
 
   <xs:element name="AbsoluteAngularVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularVelocitySensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen der Winkelgeschwindigkeit im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
@@ -214,7 +216,7 @@
 
   <xs:element name="RelativeCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="RelativeCoordinateSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zum Auslesen von Zusammenhängen zweier Koordinatensystemen in relativen Koordinaten (Koordinatensystem des Referenzsystems)
       </xs:documentation>
     </xs:annotation>
@@ -225,7 +227,7 @@
         <xs:sequence>
           <xs:element name="frame">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 ref=Pfad zum Koordinatensystem des Referenzsystems
                 rel=Pfad zum Koordinatensystem dessen relative Größe zum Referenzsystem ausgewertet wird.
               </xs:documentation>
@@ -237,7 +239,7 @@
           </xs:element>
           <xs:element name="direction" type="pv:nounitMatrix">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Matrix der Richtungsvektoren
               </xs:documentation>
             </xs:annotation>
@@ -249,7 +251,7 @@
 
   <xs:element name="RelativePositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativePositionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Relative Position
       </xs:documentation>
     </xs:annotation>
@@ -262,7 +264,7 @@
 
   <xs:element name="RelativeVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeVelocitySensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Relative Geschwindigkeit
       </xs:documentation>
     </xs:annotation>
@@ -275,7 +277,7 @@
 
   <xs:element name="RelativeAngularPositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularPositionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Relativer Winkel 
       </xs:documentation>
     </xs:annotation>
@@ -288,7 +290,7 @@
 
   <xs:element name="RelativeAngularVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularVelocitySensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Relative Winkelgeschwindigkeit
       </xs:documentation>
     </xs:annotation>
@@ -301,7 +303,7 @@
 
   <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor zur zeitabhängigen Auswertung von Funktionen
       </xs:documentation>
     </xs:annotation>
@@ -312,7 +314,7 @@
         <xs:sequence>
           <xs:element name="function">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Bennenung der Funktion
               </xs:documentation>
             </xs:annotation>
@@ -329,7 +331,7 @@
 
   <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Sensor, zur Konvertierung des Ausgangs eines <i>SignalProcessingSystem</i>s in ein Sensor-Signal.
       </xs:documentation>
     </xs:annotation>
@@ -350,7 +352,7 @@
 
   <xs:element name="SignalAddition" substitutionGroup="Signal" type="SignalAdditionType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Addition von Signalen
       </xs:documentation>
     </xs:annotation>
@@ -361,7 +363,7 @@
         <xs:sequence maxOccurs="unbounded">
           <xs:element name="inputSignal">
             <xs:annotation>
-              <xs:documentation xml:lang="de">
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 ref=Pfad des Eingangssignals
               </xs:documentation>
             </xs:annotation>
@@ -369,7 +371,7 @@
               <xs:sequence>
                 <xs:element name="factor" type="xs:double">
                   <xs:annotation>
-                    <xs:documentation xml:lang="de">
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Faktor, mit dem das Eingangssignal zur Summe hinzugefügt wird.
                     </xs:documentation>
                   </xs:annotation>
@@ -385,7 +387,7 @@
 
   <xs:element name="SignalMux" substitutionGroup="Signal" type="SignalMuxType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Vektorwertiges Zusammenführen von Signalen
       </xs:documentation>
     </xs:annotation>
@@ -411,7 +413,7 @@
 
   <xs:element name="SignalLimitation" substitutionGroup="Signal" type="SignalLimitationType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Beschränkung der Ausgangswerte eines Signals.
       </xs:documentation>
     </xs:annotation>
@@ -434,7 +436,7 @@
 
   <xs:element name="SignalTimeDiscretization" substitutionGroup="Signal" type="SignalTimeDiscretizationType">
     <xs:annotation>
-      <xs:documentation xml:lang="de">
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Zeitdiskretisierung eines Signals (ALPHA-STATUS)
       </xs:documentation>
     </xs:annotation>

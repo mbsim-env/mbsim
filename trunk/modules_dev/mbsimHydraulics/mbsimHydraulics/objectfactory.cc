@@ -53,8 +53,8 @@ namespace MBSim {
       return new ZetaLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
       return new LaminarTubeFlowLinePressureLoss();
-    if (element->ValueStr()==MBSIMHYDRAULICSNS"ChurchillLinePressureLoss")
-      return new ChurchillLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"TurbulentTubeFlowLinePressureLoss")
+      return new TurbulentTubeFlowLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CurveFittedLinePressureLoss")
       return new CurveFittedLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")

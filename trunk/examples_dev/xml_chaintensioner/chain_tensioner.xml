@@ -216,8 +216,8 @@
       </forceFunction>
       <connect ref1="../Object[Housing]/Frame[PistonSpringMount]" ref2="../Object[Piston]/Frame[PistonSpringMount]"/>
       <ombv:CoilSpring name="xxx">
-        <ombv:minimalColorValue>-10</ombv:minimalColorValue>
-        <ombv:maximalColorValue>10</ombv:maximalColorValue>
+        <ombv:minimalColorValue>-88</ombv:minimalColorValue>
+        <ombv:maximalColorValue>-92</ombv:maximalColorValue>
         <ombv:numberOfCoils>11</ombv:numberOfCoils>
         <ombv:springRadius>.00525</ombv:springRadius>
         <ombv:crossSectionRadius>.0006</ombv:crossSectionRadius>

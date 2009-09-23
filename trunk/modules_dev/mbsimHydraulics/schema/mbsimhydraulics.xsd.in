@@ -283,9 +283,7 @@
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Serielle Aneinanderreihung verschiedener Druckveruste. <br/>
         Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
-        <object class="eqn">
-          <![CDATA[p_V=\sum_{i=1}^n p_{V,i} \text{.}  ]]>
-        </object>
+        <object class="eqn">p_V=\sum_{i=1}^n p_{V,i} \text{.}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -305,7 +303,7 @@
         Parallelschaltung identischer hydraulischer Widerstände.<br/>
         Die einzelnen Druckverluste werden dabei als hydraulische Widerstände betrachtet. Demzufolge berechnet sich der Gesamtdruckverlust zu
         <object class="eqn">
-          <![CDATA[p_V=\left( n \, \frac{1}{\sum_{i=1}^n p_{V,i}(\frac{Q}{n}) } \right)^{-1} \text{.}  ]]>
+          <![CDATA[p_V=p_{V,i}\left(\frac{Q}{n}\right) \text{.}  ]]>
         </object>
       </xs:documentation>
     </xs:annotation>
@@ -315,11 +313,11 @@
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
           <xs:element name="number" type="xs:nonNegativeInteger">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Anzahl der parallel geschalteten hydraulischen Widerstände.
-      </xs:documentation>
-    </xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Anzahl der parallel geschalteten hydraulischen Widerstände.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element ref="LinePressureLoss">
           </xs:element>
@@ -368,20 +366,24 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="ChurchillLinePressureLoss" substitutionGroup="LinePressureLoss" type="ChurchillLinePressureLossType">
+  <xs:element name="TurbulentTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="TurbulentTubeFlowLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Druckverluste aufgrund einer Rohrströmung nach <i>Churchill</i>.<br/>
-        Die Berechnung erfolgt gemäß
-        <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q| \, Q}{A^2}\text{,}</object>
-        wobei sich der Widerstandsbeiwert zu
-        <object class="eqn">\lambda = \begin{cases} \frac{64}{Re} &amp; Re &lt; 1404 \qquad \text{(HagenPoiseuille)} \\ 0.0456 &amp; 1404 &lt;= 1404 Re &lt; 2320 \qquad \text{(Transition)} \\ \frac{0.3164}{{Re}^{0.25}} &amp; 2320 &lt;=Re \qquad\text{(Blasius)}\end{cases}</object>
-        berechnet.<br/>
+        Druckverluste aufgrund einer turbulenten Rohrströmung.<br/>
+        Der Druckverlust berechnet sich zu
+        <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q|\,Q}{A^2} \text{.}</object>
         Die Reynoldszahl bestimmt sich dabei gemäß <object class="inlineeqn">Re=\frac{d_{hyd}}{\nu}\,\frac{Q}{A_{ref}}</object>.
+        Die Verlustzahl <object class="inlineeqn">\lambda</object> wird in Abhängigkeit der <object class="inlineeqn">Re</object>-Zahl bestimmt.
+        Im laminaren Bereich gilt
+        <object class="eqn">\lambda = \frac{64}{Re} \qquad Re \leq 1404 \text{.}</object>
+        Im turbulenten Bereich wird <object class="inlineeqn">\lambda</object> aus der impliziten Gleichung
+        <object class="eqn">\frac{1}{\sqrt{\lambda}} = -2 \, \log_{10}  \left( \frac{2.51}{Re \, \sqrt{\lambda}} + \frac{k}{3.71 \, d} \right) \qquad Re \geq 2320</object>
+        berechnet.
+        Im Übergangsbereich erfolgt eine lineare Interpolation des <object class="inlineeqn">\lambda</object>-Wertes.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="ChurchillLinePressureLossType">
+  <xs:complexType name="TurbulentTubeFlowLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
         <xs:sequence>
@@ -396,6 +398,13 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 hydraulischer Duchmesser zur Bestimmung der Reynoldszahl <object class="inlineeqn">d_{hyd}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="surfaceRoughness" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Rohrrauhigkeit <object class="inlineeqn">k</object>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -665,6 +674,11 @@
   </xs:complexType>
 
   <xs:element name="CircularLeakagePressureLoss" abstract="true" substitutionGroup="LeakagePressureLoss" type="CircularLeakagePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse von kreisförmigen Leckagespalten.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="CircularLeakagePressureLossType">
     <xs:complexContent>
@@ -740,17 +754,34 @@
   </xs:complexType>
 
   <xs:element name="RigidLine" substitutionGroup="RigidHLine" type="RigidLineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Hydraulische Leitung ohne Fluidkompressibilität.
+        <object class="eqn">\frac{\rho \, l}{A} \dot Q = p_1- p_2 -p_V \text{.}</object>
+        Berücksichtigung der Schwerkraft.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="RigidLineType">
     <xs:complexContent>
       <xs:extension base="RigidHLineType">
         <xs:sequence>
           <xs:element name="diameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Durchmesser der Leitung.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="linePressureLoss">
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="LinePressureLoss">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Druckverlust der Leitung.
+                    </xs:documentation>
+                  </xs:annotation>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -761,6 +792,13 @@
   </xs:complexType>
 
   <xs:element name="ClosableRigidLine" substitutionGroup="RigidLine" type="ClosableRigidLineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Hydraulische Leitung mit veränderbarem Druckverlust.
+        Die Größe des Druckverlustes wird über das Kontroll-Signal festgelegt, wobei ein minimaler Wert für eine Regularisierung anzugeben ist.
+        Bei der Verwendung eines Time-Stepping-Algorithmuses kann zudem festgelegt werden, dass keine Regularisierung erfolgt, sondern dass bei der Unterschreitung des eingestellten Grenzwertes eine Sperrung des Durchflusses erfolgt.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="ClosableRigidLineType">
     <xs:complexContent>
