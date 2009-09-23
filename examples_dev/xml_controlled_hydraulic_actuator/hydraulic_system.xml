@@ -39,10 +39,11 @@
       <h:diameter>.005</h:diameter>
       <h:linePressureLoss>
         <h:SerialResistanceLinePressureLoss>
-          <h:ChurchillLinePressureLoss>
+          <h:TurbulentTubeFlowLinePressureLoss>
             <h:referenceDiameter>.005</h:referenceDiameter>
             <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-          </h:ChurchillLinePressureLoss>
+            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
+          </h:TurbulentTubeFlowLinePressureLoss>
           <h:ZetaLinePressureLoss>
             <h:zeta>.04</h:zeta>
           </h:ZetaLinePressureLoss>
@@ -56,10 +57,11 @@
       <h:diameter>.005</h:diameter>
       <h:linePressureLoss>
         <h:SerialResistanceLinePressureLoss>
-          <h:ChurchillLinePressureLoss>
+          <h:TurbulentTubeFlowLinePressureLoss>
             <h:referenceDiameter>.005</h:referenceDiameter>
             <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-          </h:ChurchillLinePressureLoss>
+            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
+          </h:TurbulentTubeFlowLinePressureLoss>
           <h:ZetaLinePressureLoss>
             <h:zeta>.04</h:zeta>
           </h:ZetaLinePressureLoss>
@@ -73,10 +75,11 @@
       <h:diameter>.005</h:diameter>
       <h:linePressureLoss>
         <h:SerialResistanceLinePressureLoss>
-          <h:ChurchillLinePressureLoss>
+          <h:TurbulentTubeFlowLinePressureLoss>
             <h:referenceDiameter>.005</h:referenceDiameter>
             <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-          </h:ChurchillLinePressureLoss>
+            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
+          </h:TurbulentTubeFlowLinePressureLoss>
           <h:ZetaLinePressureLoss>
             <h:zeta>.04</h:zeta>
           </h:ZetaLinePressureLoss>
@@ -90,10 +93,11 @@
       <h:diameter>.01</h:diameter>
       <h:linePressureLoss>
         <h:SerialResistanceLinePressureLoss>
-          <h:ChurchillLinePressureLoss>
+          <h:TurbulentTubeFlowLinePressureLoss>
             <h:referenceDiameter>.005</h:referenceDiameter>
             <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-          </h:ChurchillLinePressureLoss>
+            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
+          </h:TurbulentTubeFlowLinePressureLoss>
           <h:ZetaLinePressureLoss>
             <h:zeta>.04</h:zeta>
           </h:ZetaLinePressureLoss>

@@ -23,8 +23,12 @@
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsim/utils/function_library.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
 
@@ -48,7 +52,7 @@ namespace MBSim {
 
 
   double ParallelResistanceLinePressureLoss::operator()(const double& Q, const void *line) {
-    return (*pl)(Q/double(number), line)/double(number);
+    return (*pl)(Q/number, line);
   }
 
   void ParallelResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
@@ -93,39 +97,70 @@ namespace MBSim {
   }
 
   
-  double ChurchillLinePressureLoss::operator()(const double& Q, const void * line) {
+  double TurbulentTubeFlowLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       double l=((const RigidLine*)(line))->getLength();
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d/4.;
-      c=l*rho/d/2./area;
+      c=l/d*rho/2./area/area;
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double areaRef=M_PI*dRef*dRef/4.;
       ReynoldsFactor=dHyd/areaRef/nu;
+      class Lambda : public Function1<double, double> {
+        public:
+          Lambda(double Re_, double k_, double d_) : Re(Re_), k(k_), d(d_) {}
+          double operator()(const double &lambda, const void * = NULL) {
+            return -2.*log10(2.51/Re/sqrt(lambda)+k/3.71/d)-1./sqrt(lambda);
+          }
+        private:
+          double Re, k, d;
+      };
+      vector<double> re, la;
+      re.push_back(2320.);
+      Lambda fLambda(re.back(), k, d);
+      RegulaFalsi solver(&fLambda);
+      solver.setTolerance(epsroot());
+      la.push_back(solver.solve(1e-4, 1e-1));
+      do {
+        re.push_back(re.back()*1.1);
+        Lambda l(re.back(), k, d);
+        RegulaFalsi solver(&l);
+        solver.setTolerance(epsroot());
+        la.push_back(solver.solve(1e-4, 1e-1));
+      } while (fabs(la.back()-la[la.size()-2])>1e-6);
+      Vec ReValues(re.size(), INIT, 0);
+      Vec lambdaValues(re.size(), INIT, 0);
+      for (int i=0; i<re.size(); i++) {
+        ReValues(i)=re[i];
+        lambdaValues(i)=la[i];
+      }
+      lambdaTabular = new TabularFunction1_VS(ReValues, lambdaValues);
       initialized=true;
     }
     const double Re=fabs(ReynoldsFactor*Q);
     double lambda;
-    if (Re<1404.)
+    if (Re<1404.) // laminar
       return 64./ReynoldsFactor*c*Q;
-    else {
-      if (Re<2320)
-        lambda=0.0456;
-      else
-        lambda=0.3164/pow(Re, 0.25);
-      return lambda*c*fabs(Q)*Q;
-    }
+    else if (Re<2320.) // transition
+      lambda=64./Re+((*lambdaTabular)(2320.)(0)-64./Re)/(2320.-1404.)*(Re-1404.);
+    else // turbulent
+      lambda=(*lambdaTabular)(Re)(0);
+    return lambda*c*fabs(Q)*Q;
   }
 
-  void ChurchillLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+  void TurbulentTubeFlowLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
     PressureLoss::initializeUsingXML(element);
     TiXmlElement * e;
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"referenceDiameter");
-    double dRefX=Element::getDouble(e);
+    double dR=Element::getDouble(e);
+    setReferenceDiameter(dR);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"hydraulicDiameter");
-    double dHydX=Element::getDouble(e);
-    setFactors(dRefX, dHydX);
+    double dH=Element::getDouble(e);
+    setHydraulicDiameter(dH);
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"surfaceRoughness");
+    double kS=Element::getDouble(e);
+    setSurfaceRoughness(kS);
   }
 
 

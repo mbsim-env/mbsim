@@ -79,7 +79,7 @@ namespace MBSim {
                                                  addLink(maxContact);
                                                  addLink(spring);
                                                  addLink(xOpen);
-                                                 
+
                                                  line->setSignal(xOpen);
                                                }
 
@@ -134,22 +134,6 @@ namespace MBSim {
       xOpen->setObject(ball);
       xOpen->setIndex(0);
 
-      assert(dynamic_cast<HNodeMec*>(line->getFromNode()));
-      assert(dynamic_cast<HNodeMec*>(line->getToNode()));
-      double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
-      if (ballForceArea<0)
-        ballForceArea=rLine*rLine*M_PI;
-      fromNodeAreaIndex = ((HNodeMec*)line->getFromNode())->addTransMecArea(
-          ball->getFrame("LowPressureSide"),
-          "[1; 0; 0]",
-          ballForceArea,
-          false);
-      toNodeAreaIndex = ((HNodeMec*)line->getToNode())->addTransMecArea(
-          ball->getFrame("HighPressureSide"),
-          "[-1; 0; 0]",
-          ballForceArea,
-          false);
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if (openMBVBodies) {
         OpenMBV::Frustum * ballSeatVisu = new OpenMBV::Frustum();
@@ -184,7 +168,6 @@ namespace MBSim {
         ball->getFrame("C")->enableOpenMBV(.5*rBall, 1.);
       }
 #endif
-
       Group::init(stage);
     }
     else if (stage==MBSim::resolveXMLPath) {
@@ -194,6 +177,32 @@ namespace MBSim {
         setFrameOfReference(ref_);
       }
       Group::init(stage);
+    }
+    else if (stage==MBSim::preInit) {
+      Group::init(stage);
+
+      double rLine=line->getDiameter()/2.;
+      if (!dynamic_cast<HNodeMec*>(line->getFromNode())) {
+        cerr<<"ERROR! Hydraulic Node \""<<line->getFromNode()->getName()<<"\" connected to Checkvalve \""<<name<<"\" has to be of Type \"HNodeMec\"!"<<endl;
+        throw(123);
+      }
+      if (!dynamic_cast<HNodeMec*>(line->getToNode())) {
+        cerr<<"ERROR! Hydraulic Node \""<<line->getToNode()->getName()<<"\" connected to Checkvalve \""<<name<<"\" has to be of Type \"HNodeMec\"!"<<endl;
+        throw(123);
+      }
+      double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
+      if (ballForceArea<0)
+        ballForceArea=rLine*rLine*M_PI;
+      fromNodeAreaIndex = ((HNodeMec*)line->getFromNode())->addTransMecArea(
+          ball->getFrame("LowPressureSide"),
+          "[1; 0; 0]",
+          ballForceArea,
+          false);
+      toNodeAreaIndex = ((HNodeMec*)line->getToNode())->addTransMecArea(
+          ball->getFrame("HighPressureSide"),
+          "[-1; 0; 0]",
+          ballForceArea,
+          false);
     }
     else
       Group::init(stage);

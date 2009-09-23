@@ -25,8 +25,8 @@
 
 namespace MBSim {
 
-  class Signal;
   class HydlinePressureloss;
+  class TabularFunction1_VS;
 
   /*! PressureLoss */
   class PressureLoss : public Function1<double,double> {
@@ -60,12 +60,12 @@ namespace MBSim {
   class ParallelResistanceLinePressureLoss : public LinePressureLoss {
     public:
       ParallelResistanceLinePressureLoss() : LinePressureLoss(), pl(NULL), number(0) {}
-      void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=number_; }
+      void setLinePressureLoss(LinePressureLoss * pl_, int number_) {pl=pl_; number=double(number_); }
       double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement * element);
     private:
       LinePressureLoss* pl;
-      int number;
+      double number;
   };
 
 
@@ -91,15 +91,18 @@ namespace MBSim {
   };
 
 
-  /*! Churchill */
-  class ChurchillLinePressureLoss : public LinePressureLoss {
+  /*! TurbulentTubeFlow */
+  class TurbulentTubeFlowLinePressureLoss : public LinePressureLoss {
     public:
-      ChurchillLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), ReynoldsFactor(0) {}
-      void setFactors(double dRef_, double dHyd_) {dRef=dRef_; dHyd=dHyd_; }
+      TurbulentTubeFlowLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), k(0), ReynoldsFactor(0), lambdaTabular(NULL) {}
+      void setReferenceDiameter(double dRef_) {dRef=dRef_; }
+      void setHydraulicDiameter(double dHyd_) {dHyd=dHyd_; }
+      void setSurfaceRoughness(double k_) {k=k_; }
       double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      double c, dRef, dHyd, ReynoldsFactor;
+      double c, dRef, dHyd, k, ReynoldsFactor;
+      TabularFunction1_VS * lambdaTabular;
   };
 
 
