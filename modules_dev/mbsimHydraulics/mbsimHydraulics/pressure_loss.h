@@ -95,7 +95,7 @@ namespace MBSim {
   class ChurchillLinePressureLoss : public LinePressureLoss {
     public:
       ChurchillLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), ReynoldsFactor(0) {}
-      double setFactors(double dRef_, double dHyd_) {dRef=dRef_; dHyd=dHyd_; }
+      void setFactors(double dRef_, double dHyd_) {dRef=dRef_; dHyd=dHyd_; }
       double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
