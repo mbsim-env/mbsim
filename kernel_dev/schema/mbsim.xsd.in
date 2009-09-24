@@ -1947,34 +1947,62 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType"/>
+  <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung konstitutiver Gesetze auf Beschleunigungsebene.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="GeneralizedForceLawType"/>
 
-  <xs:element name="BilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="BilateralConstraintType"/>
+  <xs:element name="BilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="BilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz auf Beschleunigungsebene zur Beschreibung einer mengenwertigen zweiseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="BilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="UnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="UnilateralConstraintType"/>
+  <xs:element name="UnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="UnilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz auf Beschleunigunssebene zur Beschreibung einer mengenwertigen einseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="UnilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="GeneralizedImpactLaw" abstract="true" type="GeneralizedImpactLawType"/>
+  <xs:element name="GeneralizedImpactLaw" abstract="true" type="GeneralizedImpactLawType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung konstitutiver Gesetze auf Geschwindigkeitsebene.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="GeneralizedImpactLawType"/>
 
-  <xs:element name="BilateralImpact" substitutionGroup="GeneralizedImpactLaw" type="BilateralImpactType"/>
+  <xs:element name="BilateralImpact" substitutionGroup="GeneralizedImpactLaw" type="BilateralImpactType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz auf Geschwindigkeitsebene zur Beschreibung einer mengenwertigen zweiseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="BilateralImpactType">
     <xs:complexContent>
       <xs:extension base="GeneralizedImpactLawType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="UnilateralNewtonImpact" substitutionGroup="GeneralizedImpactLaw" type="UnilateralNewtonImpactType"/>
+  <xs:element name="UnilateralNewtonImpact" substitutionGroup="GeneralizedImpactLaw" type="UnilateralNewtonImpactType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz auf Geschwindigkeitsebene zur Beschreibung eines Newton-Stoßes. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="UnilateralNewtonImpactType">
     <xs:complexContent>
       <xs:extension base="GeneralizedImpactLawType">
@@ -1991,12 +2019,19 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedBilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedBilateralConstraintType"/>
+  <xs:element name="RegularizedBilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedBilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz zur Beschreibung einer regularisierten zweiseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="RegularizedBilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType">
         <xs:sequence>
           <xs:element name="forceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstitutive zweiparametrige Funktion zur Auswertung der Reaktion basierend auf relativer Distanz und Geschwindigkeit.  
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function2_SSS"/>
@@ -2008,12 +2043,19 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedUnilateralConstraintType"/>
+  <xs:element name="RegularizedUnilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="RegularizedUnilateralConstraintType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutives Gesetz zur Beschreibung einer regularisierten einseitigen Bindung. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="RegularizedUnilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="GeneralizedForceLawType">
         <xs:sequence>
           <xs:element name="forceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstitutive zweiparametrige Funktion zur Auswertung der Reaktion basierend auf relativer Distanz und Geschwindigkeit.  
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function2_SSS"/>
@@ -2087,15 +2129,29 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Jacobian" abstract="true" type="JacobianType"/>
+  <xs:element name="Jacobian" abstract="true" type="JacobianType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der Jacobi-Matrizen bei der kinematischen Parametrisierung eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="JacobianType"/>
 
-  <xs:element name="ConstantJacobian" substitutionGroup="Jacobian" type="ConstantJacobianType"/>
+  <xs:element name="ConstantJacobian" substitutionGroup="Jacobian" type="ConstantJacobianType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine konstante Jacobi-Matrix bei der kinematischen Parametrisierung eines Starrkörpers (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="ConstantJacobianType">
     <xs:complexContent>
       <xs:extension base="JacobianType">
         <xs:sequence>
-          <xs:element name="constant" type="pv:unknownMatrix"/>
+          <xs:element name="constant" type="pv:unknownMatrix">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstante Jacobi-Matrix als Ableitung kartesischer Geschwindigkeiten nach generalisierten Geschwindigkeiten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2425,10 +2481,22 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType"/>
+  <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrackte Oberklasse für skalarwertige Funktionen mit zwei skalaren Parametern.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function2_SSSType"/>
 
-  <xs:element name="ConstantFunction2_SSS" substitutionGroup="Function2_SSS" type="ConstantFunction2_SSSType"/>
+  <xs:element name="ConstantFunction2_SSS" substitutionGroup="Function2_SSS" type="ConstantFunction2_SSSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstante skalarwertige Funktion mit zwei skalaren Parametern.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="ConstantFunction2_SSSType">
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
@@ -2439,25 +2507,60 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType"/>
+  <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Lineares funktionelles Feder- / Dämpfergesetz.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearSpringDamperForceType">
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
-          <xs:element name="unloadedLength" type="pv:lengthScalar"/>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Steifigkeit
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Dämpfungskoeffizient
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="unloadedLength" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Entspannte Federlänge
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function2_SSS" type="NonlinearSpringDamperForceType"/>
+  <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function2_SSS" type="NonlinearSpringDamperForceType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Nichtlineares funktionelles Feder- / Dämpfergesetz.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="NonlinearSpringDamperForceType">
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
         <xs:sequence>
           <xs:element name="distanceForce">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Lagereaktion (Feder)
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -2465,6 +2568,11 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="velocityForce">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Geschwindigkeitsreaktion (Dämpfer)
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_VS"/>
@@ -2476,40 +2584,101 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedUnilateralConstraintType"/>
+  <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedUnilateralConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutive Funktion für einseitige Bindungen, die jeweils durch eine lineare Funktion auf Lage- und Geschwindigkeitsebene regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
   <xs:complexType name="LinearRegularizedUnilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Steifigkeit
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Dämpfungskoeffizient
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedBilateralConstraintType"/>
+  <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedBilateralConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Konstitutive Funktion für zweiseitige Bindungen, die jeweils durch eine lineare Funktion auf Lage- und Geschwindigkeitsebene regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearRegularizedBilateralConstraintType">
     <xs:complexContent>
       <xs:extension base="Function2_SSSType">
         <xs:sequence>
-          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar"/>
-          <xs:element name="dampingCoefficient" type="pv:dampingScalar"/>
+          <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Steifigkeit
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dampingCoefficient" type="pv:dampingScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Dämpfungskoeffizient
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Function2_VVS" abstract="true" type="Function2_VVSType"/>
+  <xs:element name="Function2_VVS" abstract="true" type="Function2_VVSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse für vektorwertige Funktionen mit einem skalaren und vektorwertigen Parameter.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="Function2_VVSType"/>
 
-  <xs:element name="LinearRegularizedCoulombFriction" abstract="true" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType"/>
+  <xs:element name="LinearRegularizedCoulombFriction" abstract="true" substitutionGroup="Function2_VVS" type="LinearRegularizedCoulombFrictionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse für Coulomb Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearRegularizedCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="Function2_VVSType">
         <xs:sequence>
-          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0"/>
-          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Grenze für die Regularisierung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Reibkoeffizient
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2518,27 +2687,56 @@
   <xs:element name="FunctionContour" abstract="true" type="FunctionContourType"/>
   <xs:complexType name="FunctionContourType"/>
 
-  <xs:element name="LinearRegularizedPlanarCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedPlanarCoulombFrictionType"/>
+  <xs:element name="LinearRegularizedPlanarCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedPlanarCoulombFrictionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Ebene Coulomb Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearRegularizedPlanarCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="LinearRegularizedCoulombFrictionType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedSpatialCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedSpatialCoulombFrictionType"/>
+  <xs:element name="LinearRegularizedSpatialCoulombFriction" substitutionGroup="LinearRegularizedCoulombFriction" type="LinearRegularizedSpatialCoulombFrictionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Räumliche Coulomb Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearRegularizedSpatialCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="LinearRegularizedCoulombFrictionType"/>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="LinearRegularizedPlanarStribeckFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedPlanarStribeckFrictionType"/>
+  <xs:element name="LinearRegularizedPlanarStribeckFriction" substitutionGroup="Function2_VVS" type="LinearRegularizedPlanarStribeckFrictionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Ebene Stribeck Reibung, die durch eine lineare Funktion innerhalb von Grenzen um den Haftreibungsbereich regularisiert ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearRegularizedPlanarStribeckFrictionType">
     <xs:complexContent>
       <xs:extension base="Function2_VVSType">
         <xs:sequence>
-          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0"/>
+          <xs:element name="marginalVelocity" type="pv:velocityScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Grenze für die Regularisierung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="frictionFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Funktion für den geschwindigkeitsabhängigen Reibkoeffizienten.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_SS"/>
