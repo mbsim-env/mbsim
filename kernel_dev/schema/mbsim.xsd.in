@@ -11,16 +11,15 @@
 
   <xs:annotation>
     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      MBSim ist ein Simulationstool zur Analyse von dynamischen Systemen. Die Basis von MBSim liegt
-      in der Modellierung von nichtglatten dynamischen Systemen, woraus der Name des Programms stammt.
-      Der mathematische Hintergrund wurde über Jahre hinweg am Lehrstuhl für Angewandte Mechanik der
-      Technischen Universität München entwickelt. Eine Übersicht über derartige Mehrkörpersysteme
-      ist in der Doktorarbeit und dem Vorlesungsskript von Martin Förg [1,2] zu finden. Roland Zander
-      erweiterte das System um flexible Körper [3]. In [4] ist ein Überblick über die Forschung am
-      Lehrstuhl für Angewandte Mechanik während der letzten Jahrzehnte auf dem Gebiet der
-      nichtglatten Mechanik gegeben. Dort sind auch Simulationsergebnisse von akademischen und
-      industriellen Beispielen gegeben. Erweiterungen bezüglich Hydraulik und Regelungstechnik sowie
-      Parallelisierung und Co-Simulation sind ebenfalls gegeben.
+      MBSim ist ein Simulationstool zur Analyse von dynamischen Systemen. Sein Ursprung liegt 
+      in der Modellierung von nichtglatten Mehrkörpersystemen, woraus sich auch der Name "MBSim" ableitet.
+      Der mathematische Hintergrund wurde in den letzten Jahrzehnten am Lehrstuhl für Angewandte Mechanik der
+      Technischen Universität München entwickelt. Eine gute Zusammenfassung ist die Doktorarbeit und das Vorlesungsskript von Martin Förg [1,2]. Roland Zander
+      diskutiert Erweiterungen hinsichtlich flexibler Körper [3]. In [4] erhält man einen Überblick über die Forschung am
+      Lehrstuhl für Angewandte Mechanik auf dem Gebiet der
+      nichtglatten Mechanik. Dort sind auch Simulationsergebnisse von akademischen und
+      industriellen Beispielen zu finden. Erweiterungen bezüglich Hydraulik und Regelungstechnik sowie
+      Parallelisierung und Co-Simulation sind einzigartig im Bereich der nichtglatten Dynamik.
       <ol>
         <li>Martin Förg. <i>Mehrkörpersysteme mit mengenwertigen Kraftgesetzen - Theorie und Numerik.</i>
           PhD thesis, TU München, 2007.</li>
@@ -48,33 +47,31 @@
 
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
-      jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
-      Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
-      <dl>
-        <dt>plotRecursive</dt>
-          <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
-        <dt>separateFilePerGroup</dt>
+        Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
+        jeweils mit einem vorangestellten '<b>+</b>' oder '<b>-</b>' zulässig. Ein '<b>+</b>' aktiviert das entsprechende
+        Plotfeature, ein '<b>-</b>' deaktiviert es (Der default Wert ist in eckigen Klammern angegeben):
+        <dl>
+          <dt>plotRecursive</dt> <dd>Aktiviert/Deaktiviert das Plotten unterhalb dieser hiearchy Gruppe [+]</dd>
+          <dt>separateFilePerGroup</dt>
           <dd>Erzeugt ein eigenes H5 File für diese Gruppe [-]</dd>
-        <dt>state</dt>
+          <dt>state</dt>
           <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
-        <dt>stateDerivative</dt>
+          <dt>stateDerivative</dt>
           <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
-        <dt>rightHandSide</dt>
+          <dt>rightHandSide</dt>
           <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
-        <dt>globalPosition</dt>
+          <dt>globalPosition</dt>
           <dd>Globale (world) Positionen und Orientierungen plotten [-]</dd>
-        <dt>energy</dt>
+          <dt>energy</dt>
           <dd>Energie plotten [-]</dd>
-        <dt>openMBV</dt>
+          <dt>openMBV</dt>
           <dd>OpenMBV Visualisierung ausgeben [+]</dd>
-        <dt>generalizedLinkForce</dt>
-          <dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
-        <dt>linkKinematics</dt>
+          <dt>generalizedLinkForce</dt> <dd>Glatte und nicht glatte generalisierte Link Kräfte plotten (l) [+]</dd>
+          <dt>linkKinematics</dt>
           <dd>Kinematic der Links plotten (g, gd) [+]</dd>
-        <dt>stopVector</dt>
+          <dt>stopVector</dt>
           <dd>Stopvektor der Schaltpunktsuche plotten [+]</dd>
-      </dl>
+        </dl>
     </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="+plotRecursive"/>
@@ -105,13 +102,13 @@
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> im aktuellen Kontext.
-      Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
-      zu referenzierenden Frames darstellt.
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> im aktuellen Kontext.
+        Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
+        zu referenzierenden Frames darstellt.
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="Frame\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
@@ -120,15 +117,15 @@
   <!-- A reference to a Frame at the parent -->
   <xs:simpleType name="ParentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> des Vorgängers
-      des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
-      <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> des Vorgängers
+        des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
+        <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="\.\./Frame\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="\.\./Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
@@ -137,22 +134,22 @@
   <!-- A reference from a Link|Object|ExtraDynamicSystem to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> an beliebiger
-      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
-      <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
-      <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
-      <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
-      <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann der <tt>Frame Z</tt> des
-      <tt>Object's Y</tt> ausgewählt werden oder der <tt>Frame Z</tt> der <tt>Group</tt> wenn die Angabe von
-      <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
-      in diesem Fall beginnt die Referenzierung beim obersten Element
-      (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
+        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+        <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
+        <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
+        <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann der <tt>Frame Z</tt> des
+        <tt>Object's Y</tt> ausgewählt werden oder der <tt>Frame Z</tt> der <tt>Group</tt> wenn die Angabe von
+        <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
+        in diesem Fall beginnt die Referenzierung beim obersten Element
+        (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Frame\[X\]|Object\[X\]/Frame\[X\])" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/Frame\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
     </xs:restriction>
@@ -161,22 +158,22 @@
   <!-- A reference form a Link|Object|ExtraDynamicSystem to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einer <tt><a class="link" href="mbsim:Contour">&lt;Contour&gt;</a></tt> an beliebiger
-      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
-      <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
-      <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
-      <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
-      <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann die <tt>Contour Z</tt> des
-      <tt>Object's Y</tt> ausgewählt werden oder die <tt>Contour Z</tt> der <tt>Group</tt> wenn die Angabe von
-      <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
-      in diesem Fall beginnt die Referenzierung beim obersten Element
-      (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einer <tt><a class="link" href="mbsim:Contour">&lt;Contour&gt;</a></tt> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
+        <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
+        <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
+        <tt>Group</tt> kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die
+        <tt>Group</tt> mit dem Element-Namen <tt>X</tt>. Als letzter Pfadteil kann die <tt>Contour Z</tt> des
+        <tt>Object's Y</tt> ausgewählt werden oder die <tt>Contour Z</tt> der <tt>Group</tt> wenn die Angabe von
+        <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
+        in diesem Fall beginnt die Referenzierung beim obersten Element
+        (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Contour\[X\]|Object\[X\]/Contour\[X\])" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/Contour\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
     </xs:restriction>
@@ -185,20 +182,20 @@
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
   <xs:simpleType name="ObjectReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Object">&lt;Object&gt;</a></tt> an beliebiger
-      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
-      <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
-      kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
-      kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
-      Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
-      Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-      obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Object">&lt;Object&gt;</a></tt> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
+        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
+        kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+        Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
+        Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Object\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
@@ -207,20 +204,20 @@
   <!-- A reference form a Link to a ExtraDynamic somewhere in the hierarchy -->
   <xs:simpleType name="ExtraDynamicReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:ExtraDynamic">&lt;ExtraDynamic&gt;</a></tt> an beliebiger
-      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/ExtraDynamic[Y]</tt>, wobei <tt>X</tt> und
-      <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
-      kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
-      kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
-      Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
-      Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-      obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:ExtraDynamic">&lt;ExtraDynamic&gt;</a></tt> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/ExtraDynamic[Y]</tt>, wobei <tt>X</tt> und
+        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
+        kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+        Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
+        Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*ExtraDynamic\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*ExtraDynamic\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
@@ -229,20 +226,20 @@
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
   <xs:simpleType name="ContactReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Contact">&lt;Contact&gt;</a></tt> an beliebiger
-      Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
-      <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
-      kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt> kann
-      beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
-      Element-Namen <tt>X</tt>. Als letzter Pfadteil wird der <tt>Contact Y</tt> ausgewählt. Alternativ kann die
-      Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-      obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
-      <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
-      Elemente die mit einem Großbuchstaben beginnen.</p>
+        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Contact">&lt;Contact&gt;</a></tt> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
+        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt> kann
+        beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+        Element-Namen <tt>X</tt>. Als letzter Pfadteil wird der <tt>Contact Y</tt> ausgewählt. Alternativ kann die
+        Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
       <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Contact\[X\]" with
-             X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
       <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Contact\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
     </xs:restriction>
@@ -252,9 +249,9 @@
 
   <xs:element name="Element" abstract="true" type="ElementType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      <p>Abstraktes (Top-Level) Basis Element von MBSim.</p>
-      <p>Das Attribut <tt>name</tt> gibt den Namen des Elements an. Dieser Name wird für die Referenzierung des
-         Elements benötig. Die Plotausgaben verwenden ebenfalls diese Namen.</p>
+        <p>Abstraktes (Top-Level) Basis Element von MBSim.</p>
+        <p>Das Attribut <tt>name</tt> gibt den Namen des Elements an. Dieser Name wird für die Referenzierung des
+          Elements benötig. Die Plotausgaben verwenden ebenfalls diese Namen.</p>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ElementType">
@@ -262,7 +259,7 @@
       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="plotFeature">  
           <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Definiert die Plotfeatures für dieses Element.
+              Definiert die Plotfeatures für dieses Element.
           </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
@@ -270,7 +267,7 @@
         </xs:element>  
         <xs:element name="plotFeatureForChildren">
           <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Definiert die Plotfeatures für alle Kindelement.
+              Definiert die Plotfeatures für alle Kindelement.
           </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
@@ -278,7 +275,7 @@
         </xs:element>  
         <xs:element name="plotFeatureRecursive">  
           <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Definiert die Plotfeatures für diese Element und alle Kindelement.
+              Definiert die Plotfeatures für diese Element und alle Kindelement.
           </xs:documentation></xs:annotation>
           <xs:complexType>
             <xs:attribute name="feature" type="PlotFeatureType" use="required"/>
@@ -570,15 +567,15 @@
 
   <xs:element name="Environment" abstract="true" type="EnvironmentType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Abstrakte Oberklasse für die Definition von Umgebungsgröße verschiedener physikalischer Domains.
-      Z.b. die Erdbeschleunding in der Mechanik.
+        Abstrakte Oberklasse für die Definition von Umgebungsgröße verschiedener physikalischer Domains.
+        Z.b. die Erdbeschleunding in der Mechanik.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="EnvironmentType"/>
 
   <xs:element name="MBSimEnvironment" substitutionGroup="Environment" type="MBSimEnvironmentType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert mechanische Umgebungsgröße.
+        Definiert mechanische Umgebungsgröße.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="MBSimEnvironmentType">
@@ -600,17 +597,17 @@
 
   <xs:element name="DynamicSystemSolver" substitutionGroup="Group" type="DynamicSystemSolverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      DynamicSystemSolver ist stets das oberste Element eines Modells und stellt somit ein Integrierbares
-      Gesammtsystem dar. Da DynamicSystemSolver von Group abgeleitet ist, stelle diese Element gleichzeitig
-      eine Gruppe dar welche mit anderen Gruppen, Objekten und Link's gefüllt werden kann. Zuletzt werden
-      innerhalb von DynamicSystemSolver die Umgebungsgrößen der einzelenen verwendeten Domains definiert.
-      <p>Das das oberste XML Element auch stets den <i>Namespace</i> der folgenden Elemente definieren muss,
-      sind die ersten Zeilen eines Modells meist die folgenden:</p>
-      <tt>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</tt><br/>
-      <tt>&lt;DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"</tt><br/>
-      <tt>  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"</tt><br/>
-      <tt>  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"&gt;</tt><br/>
-      <tt>  ...</tt><br/>
+        DynamicSystemSolver ist stets das oberste Element eines Modells und stellt somit ein Integrierbares
+        Gesammtsystem dar. Da DynamicSystemSolver von Group abgeleitet ist, stelle diese Element gleichzeitig
+        eine Gruppe dar welche mit anderen Gruppen, Objekten und Link's gefüllt werden kann. Zuletzt werden
+        innerhalb von DynamicSystemSolver die Umgebungsgrößen der einzelenen verwendeten Domains definiert.
+        <p>Das das oberste XML Element auch stets den <i>Namespace</i> der folgenden Elemente definieren muss,
+          sind die ersten Zeilen eines Modells meist die folgenden:</p>
+        <tt>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</tt><br/>
+        <tt>&lt;DynamicSystemSolver name="MBS" xmlns="http://mbsim.berlios.de/MBSim"</tt><br/>
+        <tt>  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"</tt><br/>
+        <tt>  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"&gt;</tt><br/>
+        <tt>  ...</tt><br/>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="DynamicSystemSolverType">
@@ -754,9 +751,9 @@
   <xs:element name="RigidBody" substitutionGroup="Body" type="RigidBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert einen Starrköper. Ob der Körper mittels relativ oder absolut Koordinaten beschreiben wird
-        entscheidet allein das <tt>frameOfReference</tt> des Körpers (siehe <a class="link" href="mbsim:Object">&lt;Object&gt;</a>.
-        <p>Jeder Starrkörper bekommt automatisch ein Koordinatensystem "C" in seinem Schwerpunkt zugewiesen.</p>
+        Definiert einen Starrköper.<br/>
+        Grundlage zur Definition aller kinematischen Zusammenhänge bei Starrkörpern sind zwei Koordinatensysteme, das <tt>frameOfReference</tt> (siehe <a class="link" href="mbsim:Object">&lt;Object&gt;</a>) und das <tt>frameForKinematics</tt>. Das <tt>frameOfReference</tt> gehört entweder zu einem Dynamischen System und ist somit inertial fest oder es gehört zu einem anderen Körper und kann somit bewegt sein. Das <tt>frameForKinematics</tt> ist ein beliebiges körperfestes Koordinatensystem. Schließlich wird die Bewegung des Starrkörpers mittels generalisierter Koordinaten oder zeitabhängiger Funktionen als Bewegung des <tt>frameForKinematics</tt> relativ zum <tt>frameOfReference</tt> definiert.<br/>
+        Zur rekursiven Definition weiterer körperfester Koordinatensystem hat jeder Starrkörper automatisch ein Koordinatensystem "C" in seinem Schwerpunkt.
         <object class="figure" standby="4cm" data="rigid_body" title="Kinematische Beschreibung eines Starrkörpers"></object>
       </xs:documentation>
     </xs:annotation>
@@ -772,8 +769,8 @@
                 (siehe <tt><a class="link" href="mbsim:Object">Object</a></tt>) sich unmittelbar aus den
                 generalisierten Koordinaten dieses Körpers ergibt.
                 <p>Es kann sich somit entsprechend der angegebenen translatorischen und rotatorischen Freiheitsgrade
-                relativ gegenüber dem <tt>frameOfReference</tt> bewegen und ist zu Beginn der Simulation um die
-                angegebenen generalisierten Startwerte gegenüber dem <tt>frameOfReference</tt> ausgelenkt.</p>
+                  relativ gegenüber dem <tt>frameOfReference</tt> bewegen und ist zu Beginn der Simulation um die
+                  angegebenen generalisierten Startwerte gegenüber dem <tt>frameOfReference</tt> ausgelenkt.</p>
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -790,19 +787,19 @@
           <xs:element name="inertiaTensor" type="pv:inertiaMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Trägheitstensor des Körpers bezüglich des Schwerkpunktkoordinatensystems "C".
+                Trägheitstensor des Körpers bezüglich des Schwerpunktkoordinatensystems "C".
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="translation">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Vorschrift zur Berechnung des Translationsvektors
-              <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
-              generalisierten Lagen und der Zeit an.
-              Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
-              im KOS <tt>frameOfReference</tt> dargestellt und stellt die
-              Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinamtics</tt> dar.
-              <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
+                Gibt die Vorschrift zur Berechnung des Translationsvektors
+                <object class="inlineeqn">\boldsymbol{r}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+                generalisierten Lagen und der Zeit an.
+                Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
+                im KOS <tt>frameOfReference</tt> dargestellt und stellt die
+                Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinamtics</tt> dar.
+                <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -812,12 +809,12 @@
           </xs:element>
           <xs:element name="rotation">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Vorschrift zur Berechnung der Transformationsmatrix
-              <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
-              generalisierten Lagen und der Zeit an.
-              Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
-              Transformation vom KOS <tt>frameForKinamtics</tt> in das KOS <tt>frameOfReference</tt> dar.
-              <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
+                Gibt die Vorschrift zur Berechnung der Transformationsmatrix
+                <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
+                generalisierten Lagen und der Zeit an.
+                Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
+                Transformation vom KOS <tt>frameForKinamtics</tt> in das KOS <tt>frameOfReference</tt> dar.
+                <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -828,11 +825,11 @@
           <!-- BEGIN The following elements are rarly used. That is why they are optional (on top level) -->
           <xs:element name="jacobianOfTranslation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Vorschrift zur Berechnung der Jacobimatrix der Translation
-              <object class="inlineeqn">\boldsymbol{J}_T=\frac{\partial \boldsymbol{r}_q}{\partial q}(\boldsymbol{q},t)</object>
-              in Abhängigkeit der generalisierten Lagen und der Zeit an.
-              <p>Wenn als Translation <a class="link" href="mbsim:LinearTranslation">LinearTranslation</a> angegeben wurde,
-              so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
+                Gibt die Vorschrift zur Berechnung der Jacobimatrix der Translation
+                <object class="inlineeqn">\boldsymbol{J}_T=\frac{\partial \boldsymbol{r}_q}{\partial q}(\boldsymbol{q},t)</object>
+                in Abhängigkeit der generalisierten Lagen und der Zeit an.
+                <p>Wenn als Translation <a class="link" href="mbsim:LinearTranslation">LinearTranslation</a> angegeben wurde,
+                  so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -842,12 +839,12 @@
           </xs:element>
           <xs:element name="jacobianOfRotation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Vorschrift zur Berechnung der Jacobimatrix der Rotation
-              <object class="inlineeqn">\boldsymbol{J}_R=\frac{\partial \omega}{\partial \dot{\boldsymbol{q}}}(\boldsymbol{q},t)</object> in Abhängigkeit der 
-              generalisierten Lagen und der Zeit an.
-              <p>Wenn als Rotation <a class="link" href="mbsim:RotationAboutFixedAxis">RotationAboutFixedAxis</a> oder
-              <a class="link" href="mbsim:CardanAngles">CardanAngles</a> angegeben wurde,
-              so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
+                Gibt die Vorschrift zur Berechnung der Jacobimatrix der Rotation
+                <object class="inlineeqn">\boldsymbol{J}_R=\frac{\partial \omega}{\partial \dot{\boldsymbol{q}}}(\boldsymbol{q},t)</object> in Abhängigkeit der 
+                generalisierten Lagen und der Zeit an.
+                <p>Wenn als Rotation <a class="link" href="mbsim:RotationAboutFixedAxis">RotationAboutFixedAxis</a> oder
+                  <a class="link" href="mbsim:CardanAngles">CardanAngles</a> angegeben wurde,
+                  so kann auf die Angabe dieses Elements verzichtet werden, da es automatische bestimmt wird.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -857,10 +854,10 @@
           </xs:element>
           <xs:element name="derivativeOfJacobianOfTranslation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die zeitliche Ableitung der Jacobimatrix der Translation
-              <object class="inlineeqn">\dot{\boldsymbol{J}}_T(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
-              Abhängigkeit der Ableitung der generalisierten Koordinaten, den generalisierten Koordinaten und der Zeit an.
-              <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die zeitliche Ableitung der Jacobimatrix der Translation
+                <object class="inlineeqn">\dot{\boldsymbol{J}}_T(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
+                Abhängigkeit der Ableitung der generalisierten Koordinaten, der generalisierten Koordinaten und der Zeit an.
+                <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -870,10 +867,10 @@
           </xs:element>
           <xs:element name="derivativeOfJacobianOfRotation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die zeitliche Ableitung der Jacobimatrix der Rotation
-              <object class="inlineeqn">\dot{\boldsymbol{J}}_R(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
-              Abhängigkeit der Ableitung der generalisierten Koordinaten, den generalisierten Koordinaten und der Zeit an.
-              <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die zeitliche Ableitung der Jacobimatrix der Rotation
+                <object class="inlineeqn">\dot{\boldsymbol{J}}_R(\dot{\boldsymbol{q}},\boldsymbol{q},t)</object> in
+                Abhängigkeit der Ableitung der generalisierten Koordinaten, der generalisierten Koordinaten und der Zeit an.
+                <p>Wenn diese Ableitung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -883,11 +880,11 @@
           </xs:element>
           <xs:element name="guidingVelocityOfTranslation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die translatorische Führungsgeschwindigkeit
-              <object class="inlineeqn">\boldsymbol{v}_t=\frac{\partial \boldsymbol{r}_q}{\partial t}(t)</object>
-              in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
-              dargestellt werden.
-              <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die translatorische Führungsgeschwindigkeit
+                <object class="inlineeqn">\boldsymbol{v}_t=\frac{\partial \boldsymbol{r}_q}{\partial t}(t)</object>
+                in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
+                dargestellt werden.
+                <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -897,11 +894,11 @@
           </xs:element>
           <xs:element name="guidingVelocityOfRotation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die rotatorische Führungsdrehgeschwindigkeit
-              <object class="inlineeqn">\boldsymbol{\omega}_t(t)</object>
-              in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
-              dargestellt werden.
-              <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die Führungswinkelgeschwindigkeit
+                <object class="inlineeqn">\boldsymbol{\omega}_t(t)</object>
+                in Abhängigkeit der Zeit an. Diese Geschwindigkeit muss im KOS <tt>frameOfReference</tt>
+                dargestellt werden.
+                <p>Wenn diese Geschwindigkeit konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -911,11 +908,11 @@
           </xs:element>
           <xs:element name="derivativeOfGuidingVelocityOfTranslation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Ableitung der translatorischen Führungsgeschwindigkeit
-              <object class="inlineeqn">\boldsymbol{a}_t=\dot{\boldsymbol{v}}_t(t)</object>
-              in Abhängigkeit der Zeit an. Diese Beschleunigung muss im KOS <tt>frameOfReference</tt>
-              dargestellt werden.
-              <p>Wenn diese Beschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die Ableitung der translatorischen Führungsgeschwindigkeit
+                <object class="inlineeqn">\boldsymbol{a}_t=\dot{\boldsymbol{v}}_t(t)</object>
+                in Abhängigkeit der Zeit an. Diese Beschleunigung muss im KOS <tt>frameOfReference</tt>
+                dargestellt werden.
+                <p>Wenn diese Beschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -925,11 +922,11 @@
           </xs:element>
           <xs:element name="derivativeOfGuidingVelocityOfRotation" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Gibt die Ableitung der rotatorischen Führungsdrehgeschwindigkeit
-              <object class="inlineeqn">\boldsymbol{\alpha}_t=\dot{\boldsymbol{\omega}}_t(t)</object>
-              in Abhängigkeit der Zeit an. Diese Drehbeschleunigung muss im KOS <tt>frameOfReference</tt>
-              dargestellt werden.
-              <p>Wenn diese Drehbeschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
+                Gibt die Ableitung der Führungswinkelgeschwindigkeit
+                <object class="inlineeqn">\boldsymbol{\alpha}_t=\dot{\boldsymbol{\omega}}_t(t)</object>
+                in Abhängigkeit der Zeit an. Diese Drehbeschleunigung muss im KOS <tt>frameOfReference</tt>
+                dargestellt werden.
+                <p>Wenn diese Drehbeschleunigung konstant 0 ist, so kann auf die Angabe dieses Elements verzichtet werden.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -956,8 +953,8 @@
           <xs:element name="contours">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Kontainer für lokale Kontaktkontouren dieses Körpers.
-                Da es sich um einen Starrkörper handelt ist die relative Lage dieser Kontaktkontouren
+                Kontainer für lokale Kontaktkonturen dieses Körpers.
+                Da es sich um einen Starrkörper handelt ist die relative Lage dieser Kontaktkonturen
                 untereinander (und auch zum KOS "C") während der gesamten Simulation konstant.
               </xs:documentation>
             </xs:annotation>
@@ -981,7 +978,7 @@
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Definiert das MBSim KOS mit dem das Referenz-KOS des OpenMBV Körpers zusammenfällt. Wird
-                      dieses Element nicht angegeben, so wird das KOS "C" verwendent.
+                      dieses Element nicht angegeben, so wird das KOS "C" verwendet.
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
@@ -994,7 +991,7 @@
           <xs:element name="enableOpenMBVFrameC" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Aktiviert die Visualisierung des Schwerpunktskoordinatensystems "C" diese Körpers in OpenMBV.
+                Aktiviert die Visualisierung des Schwerpunktskoordinatensystems "C" dieses Körpers in OpenMBV.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -1002,7 +999,7 @@
                 <xs:element name="size" type="pv:lengthScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Länge der Achsen des visuellen KOS im OpenMBV.
+                      Länge der Achsen des KOS in OpenMBV.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
@@ -1036,7 +1033,7 @@
 
   <xs:element name="Link" abstract="true" substitutionGroup="Element" type="LinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Abstrakte Oberklasse eines Verbindungselements zwischen Objekten.
+        Abstrakte Oberklasse eines Verbindungselements zwischen Objekten.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LinkType">
@@ -1049,7 +1046,7 @@
 
   <xs:element name="LinkMechanics" substitutionGroup="Link" type="LinkMechanicsType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
+        Abstrakte Oberklasse für mechanische Verbindungselemente zwischen Körpern.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LinkMechanicsType">
@@ -1060,7 +1057,7 @@
 
   <xs:element name="KineticExcitation" substitutionGroup="LinkMechanics" type="KineticExcitationType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert eine externe, kinetische Anregung auf einen Körper.
+        Definiert eine externe, kinetische Anregung auf einen Körper.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="KineticExcitationType">
@@ -1069,7 +1066,7 @@
         <xs:sequence>
           <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert das KOS bezüglich dem die Kraft-/Momentenrichtung der Anregung angegeben ist.
+                Definiert das KOS bezüglich dem die Kraft-/Momentenrichtung der Anregung angegeben ist.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
@@ -1077,21 +1074,21 @@
           </xs:element>
           <xs:element name="force" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert eine Kraftanregung.
+                Definiert eine Kraftanregung.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="directionVectors" type="pv:nounitMatrix">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Definiert die Wirkrichtung der Kraftanregung(en).
-                    Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                    im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
-                    zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
+                      Definiert die Wirkrichtung der Kraftanregung(en).
+                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
+                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                      zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
                   </xs:documentation></xs:annotation>
                 </xs:element>
                 <xs:element name="function">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Definiert die Kraftfunktion in Anhängigkeit der Zeit.
+                      Definiert die Kraftfunktion in Anhängigkeit der Zeit.
                   </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
@@ -1101,7 +1098,7 @@
                 </xs:element>
                 <xs:element ref="ombv:Arrow" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Wenn angegeben, wird die Kraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                      Wenn angegeben, wird die Kraft durch einen OpenMBV Pfeil in OpenMBV visualisiert.
                   </xs:documentation></xs:annotation>
                 </xs:element>
               </xs:sequence>
@@ -1109,21 +1106,21 @@
           </xs:element>
           <xs:element name="moment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert eine Momentenanregung.
+                Definiert eine Momentenanregung.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="directionVectors" type="pv:nounitMatrix">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Definiert die Wirkrichtung der Momentenanregung(en).
-                    Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
-                    im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
-                    zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
+                      Definiert die Wirkrichtung der Momentenanregung(en).
+                      Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
+                      im KOS <tt>frameOfReference</tt>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                      zu entgehen, sollte jede Spalte dieser Matrix einen Einheitsvektor bilden.
                   </xs:documentation></xs:annotation>
                 </xs:element>
                 <xs:element name="function">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Definiert die Momentfunktion in Anhängigkeit der Zeit.
+                      Definiert die Momentfunktion in Anhängigkeit der Zeit.
                   </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
@@ -1133,7 +1130,7 @@
                 </xs:element>
                 <xs:element ref="ombv:Arrow" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Wenn angegeben, wird das Moment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
+                      Wenn angegeben, wird das Moment durch einen OpenMBV Pfeil in OpenMBV visualisiert.
                   </xs:documentation></xs:annotation>
                 </xs:element>
               </xs:sequence>
@@ -1141,8 +1138,8 @@
           </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
-              muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+                Definiert den Angriffspunkt dieser kinetischen Anregung auf einen Körper. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
@@ -1155,7 +1152,7 @@
 
   <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-      Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern.
+        Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="SpringDamperType">
@@ -1164,8 +1161,8 @@
         <xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkten
-              und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
+                Definiert die Kraftfunktion in Abhängigkeit der relativen Auslenkung der Kraftangriffspunkten
+                und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -1175,16 +1172,16 @@
           </xs:element>
           <xs:element name="projectionDirection" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn dieses Element nicht angegeben ist, so entspricht die Kraftwirkrichtung der
-              Verbindunglinie zwischen dan Kraftangriffspunkten.
-              <p>Wenn diese Element angegeben ist, so wird die Kraftwirkrichtung durch den Benutzer
-              vorgegeben.</p>
+                Wenn dieses Element nicht angegeben ist, so entspricht die Kraftwirkrichtung der
+                Verbindunglinie zwischen dan Kraftangriffspunkten.
+                <p>Wenn diese Element angegeben ist, so wird die Kraftwirkrichtung durch den Benutzer
+                  vorgegeben.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="frameOfReference">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Gibt das KOS an, bezüglich dessen der Kraftwirkrichtung vorgegeben wird.
+                      Gibt das KOS an, bezüglich dessen der Kraftwirkrichtung vorgegeben wird.
                   </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
@@ -1192,8 +1189,8 @@
                 </xs:element>
                 <xs:element name="direction" type="pv:nounitVector">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                    Gibt den Kraftwirkrichtungsvektor im KOS <tt>frameOfReference</tt> an. Der vektor
-                    sollte normiert sein, um eine Skalierung der Kraftfunktion zu umgehen.
+                      Gibt den Kraftwirkrichtungsvektor im KOS <tt>frameOfReference</tt> an. Der vektor
+                      sollte normiert sein, um eine Skalierung der Kraftfunktion zu umgehen.
                   </xs:documentation></xs:annotation>
                 </xs:element>
               </xs:sequence>
@@ -1201,8 +1198,8 @@
           </xs:element>
           <xs:element name="connect">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
-              muss dabei ein KOS des entsprechenden Körpers angegeben werden.
+                Definiert die Angriffspunkte des Feder-Dämpfer Elements auf den beiden Körpern. Als Angriffspunkt
+                muss dabei ein KOS des entsprechenden Körpers angegeben werden.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
@@ -1211,12 +1208,12 @@
           </xs:element>
           <xs:element ref="ombv:CoilSpring" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
+                Wenn angegeben, wird das Feder-Dämpfer Element durch eine OpenMBV Feder in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element ref="ombv:Arrow" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-              Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Pfeile in OpenMBV visualisiert.
+                Wenn angegeben, wird das Feder-Dämpfer Element durch zwei OpenMBV Pfeile in OpenMBV visualisiert.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -1224,7 +1221,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType"/>
+  <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert ein Gelenk als Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
+        Aufgabe von Gelenken ist es, die Relativbewegung zwischen einzelnen Körpern eines Mehrkörpersystems einzuschränken und somit nur bestimmte Bewegungsmöglichkeiten zuzulassen. Die Relativbewegungen, die zwei Körper im ungebundenen Zustand durchführen könnten, werden dabei durch Gelenkkräfte und -momente verhindert.<br/> 
+        Dabei wird idealisiert davon ausgegangen, dass Zwangsreaktionen punktuell zwischen zwei Koordinatensystemen übertragen werden.<br/>
+        Wie der Betrag der Zwangsreaktionen berechnet wird, bestimmt das zugrunde liegende konstitutive Gesetz.<br/>
+        Die Richtungen der Zwangsreaktion sind vom Benutzer anzugeben und bestimmen den Typ des Gelenks (z.B. Schub- / Drehgelenk usw.)
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="JointType">
     <xs:complexContent>
       <xs:extension base="LinkMechanicsType">
@@ -1232,8 +1237,15 @@
           <xs:element name="force" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="direction" type="pv:nounitMatrix"/>
+                <xs:element name="direction" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
                 <xs:element name="generalizedForceLaw">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert das konstitutive Gesetz bez. der Zwangskräfte auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="GeneralizedForceLaw"/>
@@ -1241,21 +1253,35 @@
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="generalizedImpactLaw">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert das konstitutive Gesetz bez. der Zwangskräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird)
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Wenn angegeben, wird die Zwangskraft des Gelenks durch einen OpenMBV Pfeil mit Wirkung auf das Koordinatensystem des zweiten Körpers in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="moment" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="direction" type="pv:nounitMatrix"/>
+                <xs:element name="direction" type="pv:nounitMatrix">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
                 <xs:element name="generalizedForceLaw">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert das konstitutive Gesetz bez. der Zwangsmomente auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="GeneralizedForceLaw"/>
@@ -1263,17 +1289,27 @@
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="generalizedImpactLaw">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Definiert das konstitutive Gesetz bez. der Zwangsmomente auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird)
+                  </xs:documentation></xs:annotation>
                   <xs:complexType>
                     <xs:sequence>
                       <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
                     </xs:sequence>
                   </xs:complexType>
                 </xs:element>
-                <xs:element ref="ombv:Arrow" minOccurs="0"/>
+                <xs:element ref="ombv:Arrow" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Wenn angegeben, wird das Zwangsmoment des Gelenks durch einen OpenMBV Pfeil mit Wirkung auf das Koordinatensystem des zweiten Körpers in OpenMBV visualisiert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bindet zwei Koordinatensysteme an ein Gelenk. 
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref1" type="FrameReferenceType" use="required"/>
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
@@ -1287,6 +1323,10 @@
   <xs:element name="Contact" substitutionGroup="LinkMechanics" type="ContactType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert einen Kontakt als Interaktion zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>
+        Bei der Simulation von Mehrkörpersystemen kann es aufgrund der Bewegung der Körper zu Kontakten zwischen einzelnen Körpern, aber auch zwischen einem Körper und der Umwelt kommen. Kommen zwei Körper in Kontakt, bildet sich an den sich berührenden Konturen (siehe <a class="link" href="mbsim:Contour">&lt;Contour&gt;</a>) eine Kontaktfläche aus, in der die Kontaktkräfte zwischen den Kontaktpartnern übertragen werden.<br/>
+        Idealisiert wird davon ausgegangen, dass nur punktförmige Kontakte existieren; dies ist für eine Vielzahl von Problemstellungen ausreichend. Bei flächenhaften Kontakten muss die Oberfläche durch eine endliche Anzahl von Punkten diskretisiert werden.<br/>
+        Es wird zwischen Kontaktkinematik und -kinetik unterschieden. In der Kontaktkinematik wird die relative Lage und Bewegung von zwei Konturen, also potentielle Kontaktpunkte, Abstand, relative Geschwindigkeiten in Konturnormalenrichtung und in der Tangentialebene der Kontur sowie u.U. auch Beschleunigungsgrößen bestimmt. Sie sind Eingangsgrößen der Kontaktkinetik und bestimmen somit anschließend die Kontaktkräfte über konstitutive Gesetze.
         <object class="figure" standby="4cm" data="contact" title="Kinematik einer Kontaktpaarung"></object>
       </xs:documentation>
     </xs:annotation>
@@ -1296,6 +1336,9 @@
       <xs:extension base="LinkMechanicsType">
         <xs:sequence>
           <xs:element name="contactForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="GeneralizedForceLaw"/>
@@ -1303,6 +1346,9 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="contactImpactLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird)
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="GeneralizedImpactLaw" minOccurs="0"/>
@@ -1310,6 +1356,9 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="frictionForceLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird) 
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="FrictionForceLaw" minOccurs="0"/>
@@ -1317,6 +1366,9 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="frictionImpactLaw">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird)
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="FrictionImpactLaw" minOccurs="0"/>
@@ -1324,13 +1376,25 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bindet zwei Konturen an einen Kontakt. 
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref1" type="ContourReferenceType" use="required"/>
               <xs:attribute name="ref2" type="ContourReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0"/>
+          <xs:element name="enableOpenMBVContactPoints" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> <br/>.
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="openMBVNormalForceArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ombv:Arrow"/>
@@ -1338,6 +1402,9 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="openMBVFrictionArrow" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="ombv:Arrow"/>
@@ -1747,27 +1814,53 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="Translation" abstract="true" type="TranslationType"/>
+  <xs:element name="Translation" abstract="true" type="TranslationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der translatorischen Position eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="TranslationType"/>
 
-  <xs:element name="LinearTranslation" substitutionGroup="Translation" type="LinearTranslationType"/>
+  <xs:element name="LinearTranslation" substitutionGroup="Translation" type="LinearTranslationType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine lineare Translation für Starrkörper ausschließlich abhängig von generalisierten Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="LinearTranslationType">
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
-          <xs:element name="translationVectors" type="pv:nounitMatrix"/>
+          <xs:element name="translationVectors" type="pv:nounitMatrix">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierten konstanten Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Translation bez. der generalisierten Koordinaten <object class="inlineeqn">\left\{{q}_i\right\}</object>.<br/>
+                Die Position des Starrkörper ergibt sich als Linearkombination <object class="inlineeqn">\sum_i\mathbf{d}_{T,i}{q}_i</object> der konstanten Richtungsvektoren und zugehörigen generalisierten Koordinaten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentTranslation1D" substitutionGroup="Translation" type="TimeDependentTranslation1DType"/>
+  <xs:element name="TimeDependentTranslation1D" substitutionGroup="Translation" type="TimeDependentTranslation1DType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zeitabhängige lineare Translation <object class="inlineeqn">\mathbf{d}_{T}p</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="TimeDependentTranslation1DType">
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
-          <xs:element name="direction" type="pv:nounitVector"/>
+          <xs:element name="direction" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierte konstante Richtung <object class="inlineeqn">\mathbf{d}_{T}</object> des Translationsvektors.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="position">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den zeitabhängen skalaren Ort <object class="inlineeqn">p</object> entlang der Geraden mit dem oben definierten Richtungsvektor.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_SS">
@@ -1780,28 +1873,57 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="Rotation" abstract="true" type="RotationType"/>
+  <xs:element name="Rotation" abstract="true" type="RotationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung der rotatorischen Position eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="RotationType"/>
 
-  <xs:element name="RotationAboutFixedAxis" substitutionGroup="Rotation" type="RotationAboutFixedAxisType"/>
+  <xs:element name="RotationAboutFixedAxis" substitutionGroup="Rotation" type="RotationAboutFixedAxisType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation um eine feste Achse für Starrkörper ausschließlich abhängig von generalisierten Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="RotationAboutFixedAxisType">
     <xs:complexContent>
       <xs:extension base="RotationType">
         <xs:sequence>
-          <xs:element name="axisOfRotation" type="pv:nounitVector"/>
+          <xs:element name="axisOfRotation" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierte konstante Drehachse.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentRotation1D" substitutionGroup="Rotation" type="TimeDependentRotation1DType"/>
+  <xs:element name="TimeDependentRotation1D" substitutionGroup="Rotation" type="TimeDependentRotation1DType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zeitabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="TimeDependentRotation1DType">
     <xs:complexContent>
       <xs:extension base="RotationType">
         <xs:sequence>
-          <xs:element name="direction1" type="pv:nounitVector"/>
-          <xs:element name="direction2" type="pv:nounitVector"/>
+          <xs:element name="direction1" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierte konstante Drehachse.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="direction2" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert einen zur Drehachse unabhängigen normierten Vektor, von dem ausgehend die Drehung gemessen wird.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="position">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert den zeitabhängen Winkel um die oben definierte Achse gemessen ab dem zweiten Vektor.
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_SS">
@@ -1814,7 +1936,11 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="CardanAngles" substitutionGroup="Rotation" type="CardanAnglesType"/>
+  <xs:element name="CardanAngles" substitutionGroup="Rotation" type="CardanAnglesType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Rotation für Starrkörper ausschließlich abhängig von generalisierten Kardan Koordinaten (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="CardanAnglesType">
     <xs:complexContent>
       <xs:extension base="RotationType"/>
