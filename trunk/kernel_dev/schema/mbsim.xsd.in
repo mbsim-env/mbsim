@@ -575,7 +575,7 @@
 
   <xs:element name="MBSimEnvironment" substitutionGroup="Environment" type="MBSimEnvironmentType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert mechanische Umgebungsgröße.
+        Definiert mechanische Umgebungsgrößen.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="MBSimEnvironmentType">
@@ -585,8 +585,7 @@
           <xs:element name="accelerationOfGravity" type="pv:accelerationVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Erdbeschleunigung angegeben im Welt-KOS. Das Welt-KOS ist identisch mit dem
-                KOS "I" von <tt><a class="link" href="mbsim:DynamicSystemSolver">&lt;DynamicSystemSolver&gt;</a></tt>.
+                Vektor der Erdbeschleunigung angegeben im KOS "I" von <tt><a class="link" href="mbsim:DynamicSystemSolver">&lt;DynamicSystemSolver&gt;</a></tt>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -879,7 +878,7 @@
                 generalisierten Lagen und der Zeit an.<br/>
                 Der Translationsvektor <object class="inlineeqn">\boldsymbol{r}_q</object> ist
                 im KOS <tt>frameOfReference</tt> dargestellt und stellt die
-                Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinamtics</tt> dar.
+                Relativverschiebung zwischen dem KOS <tt>frameOfReference</tt> und dem KOS <tt>frameForKinematics</tt> dar.
                 <p>Wird <tt>Translation</tt> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
@@ -894,7 +893,7 @@
                 <object class="inlineeqn">\boldsymbol{A}_q=f(\boldsymbol{q},t)</object> in Abhängigkeit der 
                 generalisierten Lagen und der Zeit an.<br/>
                 Die Transformationsmatrix <object class="inlineeqn">\boldsymbol{A}_q</object> stellt dabei die
-                Transformation vom KOS <tt>frameForKinamtics</tt> in das KOS <tt>frameOfReference</tt> dar.
+                Transformation vom KOS <tt>frameForKinematics</tt> in das KOS <tt>frameOfReference</tt> dar.
                 <p>Wird <tt>Rotation</tt> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
@@ -2174,15 +2173,26 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType"/>
+  <xs:element name="FrictionForceLaw" abstract="true" type="FrictionForceLawType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung von Reibgesetzen auf Beschleunigungsebene. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="FrictionForceLawType"/>
 
-  <xs:element name="RegularizedPlanarFriction" substitutionGroup="FrictionForceLaw" type="RegularizedPlanarFrictionType"/>
+  <xs:element name="RegularizedPlanarFriction" substitutionGroup="FrictionForceLaw" type="RegularizedPlanarFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert beliebige ebene regularisierte und damit funktionale Reibgesetze. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="RegularizedPlanarFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
           <xs:element name="frictionForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Reibgesetze der Form <object class="inlineeqn">\boldsymbol{F}_R=\boldsymbol{F}_R\left(\dot{\boldsymbol{g}}_T,\left\|\boldsymbol{F}_N\right\|\right)</object> basierend auf tangentialer relativer Geschwindigkeit und Betrag der Normalkraft
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function2_VVS"/>
@@ -2194,12 +2204,19 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="RegularizedSpatialFriction" substitutionGroup="FrictionForceLaw" type="RegularizedSpatialFrictionType"/>
+  <xs:element name="RegularizedSpatialFriction" substitutionGroup="FrictionForceLaw" type="RegularizedSpatialFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert beliebige räumliche regularisierte und damit funktionale Reibgesetze. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="RegularizedSpatialFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
           <xs:element name="frictionForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Reibgesetze der Form <object class="inlineeqn">\boldsymbol{F}_R=\boldsymbol{F}_R\left(\dot{\boldsymbol{g}}_T,\left\|\boldsymbol{F}_N\right\|\right)</object> basierend auf tangentialer relativer Geschwindigkeit und Betrag der Normalkraft
+            </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function2_VVS"/>
@@ -2211,26 +2228,46 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="SpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="SpatialCoulombFrictionType"/>
+  <xs:element name="SpatialCoulombFriction" substitutionGroup="FrictionForceLaw" type="SpatialCoulombFrictionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert räumliche Coulomb-Reibung auf Beschleunigungsebene. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="SpatialCoulombFrictionType">
     <xs:complexContent>
       <xs:extension base="FrictionForceLawType">
         <xs:sequence>
-          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstanter Reibkoeffizient. 
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="FrictionImpactLaw" abstract="true" type="FrictionImpactLawType"/>
+  <xs:element name="FrictionImpactLaw" abstract="true" type="FrictionImpactLawType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse zur Beschreibung von Reibgesetzen auf Geschwindigkeitsebene. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="FrictionImpactLawType"/>
 
-  <xs:element name="SpatialCoulombImpact" substitutionGroup="FrictionImpactLaw" type="SpatialCoulombImpactType"/>
+  <xs:element name="SpatialCoulombImpact" substitutionGroup="FrictionImpactLaw" type="SpatialCoulombImpactType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert räumliche Coulomb-Reibung auf Geschwindigkeitssebene. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
   <xs:complexType name="SpatialCoulombImpactType">
     <xs:complexContent>
       <xs:extension base="FrictionImpactLawType">
         <xs:sequence>
-          <xs:element name="frictionCoefficient" type="pv:nounitScalar"/>
+          <xs:element name="frictionCoefficient" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Konstanter Reibkoeffizient. 
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
@@ -2267,7 +2304,7 @@
   <xs:element name="Function1_SS" abstract="true" type="Function1_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von Funktionen vom Typ <object class="inlineeqn">y=f(x)</object>.
+        Abstrakte Klasse von skalarwertigen Funktionen mit einem Parameter <object class="inlineeqn">y=f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2287,7 +2324,7 @@
           <xs:element name="value" type="pv:unknownScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Konstanter Funktionswert.
+                Konstanter Funktionswert: <object class="inlineeqn">y=c</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2299,7 +2336,8 @@
   <xs:element name="Function1_SS_from_VS" substitutionGroup="Function1_SS" type="Function1_SS_from_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>. Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\boldsymbol{y}_1</object>
+        Generiert eine Funktion von Typ <object class="inlineeqn">y=f(x)</object> aus einer Funktion vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.<br/>
+        Es wird immer der erste Index weitergereicht: <object class="inlineeqn">y=\boldsymbol{y}_1</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2316,7 +2354,7 @@
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von vektorwertigen Funktionen vom Typ <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.
+        Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2325,7 +2363,7 @@
   <xs:element name="ConstantFunction1_VS" substitutionGroup="Function1_VS" type="ConstantFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstanter Funktionswert.
+        Konstanter Funktionswert: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{c}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2466,7 +2504,8 @@
   <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von stetig ableitbaren Funktionen. Durch die Angabe des Ableitungsgrades n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
+        Abstrakte Klasse von stetig differenzierbaren Funktionen.<br/>
+        Durch die Angabe des Ableitungsgrads n liefert der Funktionswert die n-te Ableitung der angegebenen Funktion zurück.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2489,7 +2528,7 @@
   <xs:element name="QuadraticFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="QuadraticFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Quadratische Funktion mit <object class="inlineeqn">\boldsymbol{y}_i= a_{0_i} + a_{1_i} \, x + a_{2_i} \, x^2</object>
+        Quadratische Funktion mit <object class="inlineeqn">\boldsymbol{y}= \boldsymbol{a}_{0} + \boldsymbol{a}_{1} \, x + \boldsymbol{a}_{2} \, x^2</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2500,21 +2539,21 @@
           <xs:element name="a0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">a_0</object>
+                Faktor <object class="inlineeqn">\boldsymbol{a}_0</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="a1" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">a_1</object>
+                Faktor <object class="inlineeqn">\boldsymbol{a}_1</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="a2" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Faktor <object class="inlineeqn">a_2</object>
+                Faktor <object class="inlineeqn">\boldsymbol{a}_2</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2526,7 +2565,7 @@
   <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Periodische Funktion mit <object class="inlineeqn">\boldsymbol{y}_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>
+        Periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2537,21 +2576,21 @@
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Amplitude
+                Amplitude <object class="inlineeqn">\boldsymbol{A}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Frequenz
+                Frequenz <object class="inlineeqn">\boldsymbol{f}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:angleVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Phasenversatz
+                Phasenversatz <object class="inlineeqn">\boldsymbol{\varphi}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2561,6 +2600,13 @@
   </xs:complexType>   
 
   <xs:element name="PiecewisePolynom1_VS" substitutionGroup="DifferentiableFunction1_VS" type="PiecewisePolynom1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Klasse zur Definition von vektorwertigen, univariaten Funktionen über Spline-Interpolation.<br/>
+        Die zu interpolierenden Punkte <object class="inlineeqn">\mathbf{Y}_i</object> werden dabei bez. des Spline mit der skalaren Größe <object class="inlineeqn">x_i</object> parametrisiert.<br/>
+        Zum einen ist es möglich, die Parameter <object class="inlineeqn">\mathbf{x}</object> als (Spalten-)Vektor und die Punkte <object class="inlineeqn">\mathbf{Y}</object> -zeilenweise in einer Matrix angeordnet- in getrennten Matrizen vorzugeben, zum anderen ist deren Angabe auch in einer Matrix möglich.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="PiecewisePolynom1_VSType">
     <xs:complexContent>
@@ -2569,18 +2615,49 @@
           <xs:choice>
             <xs:sequence>
               <xs:element name="x" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                  </xs:documentation>
+                </xs:annotation>
               </xs:element>
               <xs:element name="y" type="pv:unknownMatrix">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                  </xs:documentation>
+                </xs:annotation>
               </xs:element>
             </xs:sequence>
-            <xs:element name="xy" type="pv:unknownMatrix"/>
+            <xs:element name="xy" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
           </xs:choice>
           <xs:choice>
             <xs:element name="cSplinePeriodic">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).
+                </xs:documentation>
+              </xs:annotation>
             </xs:element>
             <xs:element name="cSplineNatural">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).
+                </xs:documentation>
+              </xs:annotation>
             </xs:element>
             <xs:element name="piecewiseLinear">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Interpolation mit stückweise linearem Spline.
+                </xs:documentation>
+              </xs:annotation>
             </xs:element>
           </xs:choice>
         </xs:sequence> 
