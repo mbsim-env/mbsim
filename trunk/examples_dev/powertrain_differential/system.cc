@@ -64,7 +64,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   Shaft* shaft1 = new Shaft("Shaft1");
   addObject(shaft1);
-  shaft1->setInitialGeneralizedVelocity(Vec(1,INIT,2));
+  //shaft1->setInitialGeneralizedVelocity(Vec(1,INIT,2));
 
   shaft1->setFrameOfReference(getFrame("I"));
   //shaft1->setFrameOfReference(housing->getFrame("C"));
@@ -102,7 +102,8 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   Shaft* shaft3 = new Shaft("Shaft3");
   addObject(shaft3);
-  shaft3->setInitialGeneralizedVelocity(Vec(1,INIT,0.7));
+  //shaft3->setInitialGeneralizedVelocity(Vec(1,INIT,0.7));
+  //shaft3->setInitialGeneralizedVelocity(Vec(1,INIT,0.0));
 
   r.init(0);
   r(2) = l2/2+R3*1.2;
@@ -150,16 +151,21 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft5->setInertiaTensor(Theta);
   shaft5->addDependecy(shaft2,1);
   shaft5->addDependecy(shaft3,-1);
-
-//  KineticExcitation* ke = new KineticExcitation("MAn");
-//  addLink(ke);
-//  ke->connect(shaft1->getFrame("C"));
-//  ke->setMoment("[0;0;1]", new Moment(1));
+KineticExcitation* ke;
+  ke = new KineticExcitation("MAn");
+  addLink(ke);
+  ke->connect(shaft1->getFrame("C"));
+  ke->setMoment("[0;0;1]", new Moment(1.2));
 //
-//  ke = new KineticExcitation("MAb");
-//  addLink(ke);
-//  ke->connect(shaft2->getFrame("C"));
-//  ke->setMoment("[0;0;1]", new Moment(2.0));
+  ke = new KineticExcitation("MAbL");
+  addLink(ke);
+  ke->connect(shaft4->getFrame("C"));
+  ke->setMoment("[0;0;1]", new Moment(0.99));
+
+  ke = new KineticExcitation("MAbR");
+  addLink(ke);
+  ke->connect(shaft5->getFrame("C"));
+  ke->setMoment("[0;0;1]", new Moment(1));
 
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
