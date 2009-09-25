@@ -14,7 +14,7 @@ void RigidBodyWith1DRelativeMotion::init(InitStage stage) {
     if(body.size()) {
       for(unsigned int i=0; i<body.size(); i++) {
 	Vec Ip = body[i]->getI()*ratio[i];
-	I(0,Ip.size()-1) = Ip;
+	I(0,Ip.size()-1) += Ip;
       }
     }
     else {
