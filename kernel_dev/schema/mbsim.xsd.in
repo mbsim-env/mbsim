@@ -2386,7 +2386,7 @@
   <xs:element name="Function1_VS_from_SS" substitutionGroup="Function1_VS" type="Function1_VS_from_SSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Generiert eine Funktion vom Typ  <object class="inlineeqn">\boldsymbol{y}=f(x)</object> durch eine Multiplikation des skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{n} \, f(x)</object>
+        Generiert eine Funktion durch Multiplikation eines skalaren Funktionswertes mit einem normierten Richtungsvektor:  <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{n} \, f(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2395,14 +2395,14 @@
       <xs:extension base="Function1_VSType">
         <xs:sequence>
           <xs:element name="function">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Funktion vom Typ  <object class="inlineeqn">y=f(x)</object>.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:sequence>
                 <xs:element ref="Function1_SS">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                      Funktion vom Typ  <object class="inlineeqn">y=f(x)</object>.
-                    </xs:documentation>
-                  </xs:annotation>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2410,7 +2410,7 @@
           <xs:element name="direction" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Richtungsvektor
+                Richtungsvektor.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2422,8 +2422,9 @@
   <xs:element name="PositiveSinusFunction1_VS" substitutionGroup="Function1_VS" type="PositiveSinusFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        <object class="inlineeqn">\boldsymbol{y}= f(x)</object> mit 
-        <object class="inlineeqn">y_i= \begin{cases} a_i \, \sin \left( 2 \, \pi \, f_i \, t + \varphi_i \right) \\ 0 \end{cases}</object>
+        Funktion der Gestalt
+        <object class="inlineeqn">\boldsymbol{y}= \boldsymbol{f}(x)</object> mit 
+        <object class="inlineeqn">y_i= \begin{cases} A_i \, \sin \left( 2 \, \pi \, f_i \, t + \varphi_i \right) \\ 0 \end{cases}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2434,21 +2435,21 @@
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Amplituden
+                Vektor der Amplituden <object class="inlineeqn">\boldsymbol{A}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Frequenzen
+                Vektor der Frequenzen <object class="inlineeqn">\boldsymbol{f}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:angleVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Phasenwinkel
+                Vektor der Phasenwinkel <object class="inlineeqn">\boldsymbol{\varphi}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2458,14 +2459,29 @@
   </xs:complexType>   
 
   <xs:element name="StepFunction1_VS" substitutionGroup="Function1_VS" type="StepFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertige Sprungfunktion <object class="inlineeqn">y_i=\begin{cases}c_i\ \text{bei}\ t\geq t_i\\0\ \text{bei}\ t\leq t_i\end{cases}</object>.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="StepFunction1_VSType">
     <xs:complexContent>
       <xs:extension base="Function1_VSType">
         <xs:sequence>
           <xs:element name="time" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Vektor der Sprungzeitpunkte <object class="inlineeqn">\boldsymbol{t}</object>.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="size" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Vektor der zugehörigen Funktionswerte <object class="inlineeqn">\boldsymbol{c}</object>.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence> 
       </xs:extension>
@@ -2473,6 +2489,12 @@
   </xs:complexType>   
 
   <xs:element name="TabularFunction1_VS" substitutionGroup="Function1_VS" type="TabularFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertige Funktion generiert aus linearer Interpolation von Tabellenwerten <object class="inlineeqn">\boldsymbol{y}=\begin{cases}\boldsymbol{c_0}\ \text{bei}\ x\leq x_0\\\frac{\boldsymbol{c}_{i+1}-\boldsymbol{c}_{i}}{x_{i+1}-x_i}\left(x-x_i\right)\ \text{bei}\ x_i \leq x\leq x_{i+1}\ \text{und}\ 0\leq i\leq n-1\\\boldsymbol{c_n}\ \text{bei}\ x_n \leq x\end{cases}</object>.<br/>
+        Zum einen ist es möglich, die Parameter <object class="inlineeqn">\mathbf{x}</object> als (Spalten-)Vektor und die Punkte <object class="inlineeqn">\mathbf{c}</object> -zeilenweise in einer Matrix angeordnet- in getrennten Matrizen vorzugeben, zum anderen ist deren Angabe auch in einer Matrix möglich.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="TabularFunction1_VSType">
     <xs:complexContent>
@@ -2481,11 +2503,26 @@
           <xs:choice>
             <xs:sequence>
               <xs:element name="x" type="pv:unknownVector">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                  </xs:documentation>
+                </xs:annotation>
               </xs:element>
               <xs:element name="y" type="pv:unknownMatrix">
+                <xs:annotation>
+                  <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                  </xs:documentation>
+                </xs:annotation>
               </xs:element>
             </xs:sequence>
             <xs:element name="xy" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                </xs:documentation>
+              </xs:annotation>
             </xs:element>
           </xs:choice>
         </xs:sequence> 
@@ -2494,6 +2531,11 @@
   </xs:complexType>   
 
   <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="TabularFunction1_VS" type="PeriodicTabularFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction1_VS">&lt;TabularFunction1_VS&gt;</a>.
+      </xs:documentation>
+    </xs:annotation>
   </xs:element>
   <xs:complexType name="PeriodicTabularFunction1_VSType">
     <xs:complexContent>
@@ -2565,7 +2607,7 @@
   <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>.
+        Vektorwertige periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2576,21 +2618,21 @@
           <xs:element name="amplitude" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Amplitude <object class="inlineeqn">\boldsymbol{A}</object>.
+                Amplitudenvektor <object class="inlineeqn">\boldsymbol{A}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="frequency" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Frequenz <object class="inlineeqn">\boldsymbol{f}</object>.
+                Frequenzvektor <object class="inlineeqn">\boldsymbol{f}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="phase" type="pv:angleVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Phasenversatz <object class="inlineeqn">\boldsymbol{\varphi}</object>.
+                Phasenversatzvektor <object class="inlineeqn">\boldsymbol{\varphi}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
