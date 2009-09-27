@@ -307,7 +307,8 @@
       <xs:element name="frameOfReference" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Koordinatensystem, in dem die Positionierung des KOS angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
+           Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
@@ -317,7 +318,8 @@
       <xs:element name="position" type="pv:lengthVector">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Relative Lage des Koordinatensystems. Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
+            Relative Lage des Koordinatensystems.<br/>
+           Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
             im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
@@ -325,7 +327,8 @@
       <xs:element name="orientation" type="pv:nounitMatrix">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Relative Orientierung des Koordinatensystems. Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
+            Relative Orientierung des Koordinatensystems.<br/>
+           Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -347,7 +350,8 @@
       <xs:element name="frameOfReference" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Koordinatensystem, in dem die relative Positionierung der Kontur angegeben wird. Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+            Koordinatensystem, in dem die relative Positionierung der Kontur angegeben wird.<br/> 
+            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
@@ -357,7 +361,8 @@
       <xs:element name="position" type="pv:lengthVector">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Relative Lage der Kontur. Vektor von <tt>frameOfReference</tt> zum Ursprung des Contoureigenen KOS dargestellt
+            Relative Lage der Kontur.<br/>
+           Vektor von <tt>frameOfReference</tt> zum Ursprung des kontureigenen KOS dargestellt
             im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
@@ -365,7 +370,8 @@
       <xs:element name="orientation" type="pv:nounitMatrix">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-            Relative Orientierung der Contour. Transformationsmatrix vom Contoureigenen KOS ins KOS <tt>frameOfReference</tt>.
+            Relative Orientierung der Kontur.<br/>
+           Transformationsmatrix vom kontureigenen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -2064,7 +2070,7 @@
 
   <xs:element name="BilateralConstraint" substitutionGroup="GeneralizedForceLaw" type="BilateralConstraintType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstitutives Gesetz auf Beschleunigungsebene zur Beschreibung einer mengenwertigen zweiseitigen Bindung. 
+        Konstitutives Gesetz zur Beschreibung einer mengenwertigen zweiseitigen Bindung auf Beschleunigungsebene. 
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="BilateralConstraintType">
@@ -2136,7 +2142,7 @@
         <xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Konstitutive zweiparametrige Funktion zur Auswertung der Reaktion basierend auf relativer Distanz und Geschwindigkeit.  
+                Konstitutive zweiparametrige Funktion <object class="inlineeqn">\lambda=\lambda\left(g,\dot{g}\right)</object> zur Auswertung der Reaktion basierend auf relativer Distanz g und Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.  
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -2160,7 +2166,7 @@
         <xs:sequence>
           <xs:element name="forceFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Konstitutive zweiparametrige Funktion zur Auswertung der Reaktion basierend auf relativer Distanz und Geschwindigkeit.  
+                Konstitutive zweiparametrige Funktion <object class="inlineeqn">\lambda=\lambda\left(g,\dot{g}\right)</object> zur Auswertung der Reaktion basierend auf relativer Distanz g und Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.  
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -2276,7 +2282,7 @@
   <xs:element name="Jacobian" abstract="true" type="JacobianType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Oberklasse zur Beschreibung der Jacobi-Matrizen bei der kinematischen Parametrisierung eines Starrkörpers.
+        Abstrakte Oberklasse zur Beschreibung der Jacobi-Matrizen bei der kinematischen Parametrisierung eines Starrkörpers (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>).
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2293,7 +2299,7 @@
         <xs:sequence>
           <xs:element name="constant" type="pv:unknownMatrix">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Konstante Jacobi-Matrix als Ableitung kartesischer Geschwindigkeiten nach generalisierten Geschwindigkeiten.
+                Konstante Jacobi-Matrix <object class="inlineeqn">\left(\frac{\partial \dot{\boldsymbol{r}}}{\partial \dot{q}},\frac{\partial {\boldsymbol{\omega}}}{\partial \dot{q}}\right)</object> als Ableitung kartesischer Geschwindigkeiten nach generalisierten Geschwindigkeiten.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence> 
@@ -2354,7 +2360,7 @@
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=f(x)</object>.
+        Abstrakte Klasse von vektorwertigen Funktionen mit einem Parameter <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{f}(x)</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2710,7 +2716,7 @@
   <xs:element name="Function2_SSS" abstract="true" type="Function2_SSSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Abstrackte Oberklasse für skalarwertige Funktionen mit zwei skalaren Parametern.
+        Abstrakte Oberklasse für skalarwertige Funktionen mit zwei skalaren Parametern.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2736,7 +2742,8 @@
   <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Lineares funktionelles Feder- / Dämpfergesetz.
+        Lineares funktionelles Feder- / Dämpfergesetz.<br/>
+        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=-c\left(g-l_0\right)-d\dot{g}</object> mit der Auslenkung g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2747,21 +2754,21 @@
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Steifigkeit
+                Steifigkeit c.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Dämpfungskoeffizient
+                Dämpfungskoeffizient d.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="unloadedLength" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Entspannte Federlänge
+                Entspannte Federlänge <object class="inlineeqn">l_0</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2773,7 +2780,8 @@
   <xs:element name="NonlinearSpringDamperForce" substitutionGroup="Function2_SSS" type="NonlinearSpringDamperForceType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Nichtlineares funktionelles Feder- / Dämpfergesetz.
+        Nichtlineares funktionelles Feder- / Dämpfergesetz.<br/>
+        Die resultierende Kraft ergibt sich zu <object class="inlineeqn">f=f_g\left(g\right)+f_{\dot{g}}\left(\dot{g}\right)</object> mit der Auslenkung g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2784,7 +2792,7 @@
           <xs:element name="distanceForce">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Lagereaktion (Feder)
+                Lagereaktion <object class="inlineeqn">f_g\left(g\right)</object> (Feder).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -2796,7 +2804,7 @@
           <xs:element name="velocityForce">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Geschwindigkeitsreaktion (Dämpfer)
+                Geschwindigkeitsreaktion <object class="inlineeqn">f_{\dot{g}}\left(\dot{g}\right)</object> (Dämpfer).
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -2813,7 +2821,8 @@
   <xs:element name="LinearRegularizedUnilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedUnilateralConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstitutive Funktion für einseitige Bindungen, die jeweils durch eine lineare Funktion auf Lage- und Geschwindigkeitsebene regularisiert ist.
+        Konstitutive Funktion für einseitige Bindungen.<br/>
+        Die Bindungskraft ergibt sich zu <object class="inlineeqn">\lambda=\begin{cases}0\ \text{bei}\ g\geq 0\\-cg-d\dot{g}\ \text{bei}\ g\leq 0\ \text{und}\ \dot{g}\leq 0\\-cg\ \text{bei}\ g\leq 0\ \text{und}\ \dot{g}\geq 0\end{cases}</object> mit dem Abstand g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2825,14 +2834,14 @@
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Steifigkeit
+                Steifigkeit c.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Dämpfungskoeffizient
+                Dämpfungskoeffizient d.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2844,7 +2853,8 @@
   <xs:element name="LinearRegularizedBilateralConstraint" substitutionGroup="Function2_SSS" type="LinearRegularizedBilateralConstraintType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Konstitutive Funktion für zweiseitige Bindungen, die jeweils durch eine lineare Funktion auf Lage- und Geschwindigkeitsebene regularisiert ist.
+        Konstitutive Funktion für zweiseitige Bindungen.<br/>
+        Die Bindungskraft ergibt sich zu <object class="inlineeqn">\lambda=-cg-d\dot{g}</object> mit dem Abstand g und der relativen Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2855,14 +2865,14 @@
           <xs:element name="stiffnessCoefficient" type="pv:stiffnessScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Steifigkeit
+                Steifigkeit c.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="dampingCoefficient" type="pv:dampingScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Dämpfungskoeffizient
+                Dämpfungskoeffizient d.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2901,7 +2911,7 @@
           <xs:element name="frictionCoefficient" type="pv:nounitScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Reibkoeffizient
+                Reibkoeffizient.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
