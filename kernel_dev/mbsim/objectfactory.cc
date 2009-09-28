@@ -6,6 +6,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/spring_damper.h"
+#include "mbsim/extern_generalized_io.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/sphere.h"
@@ -237,6 +238,8 @@ namespace MBSim {
       return new Joint(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Contact")
       return new Contact(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"ExternGeneralizedIO")
+      return new ExternGeneralizedIO(element->Attribute("name"));
     return 0;
   }
   

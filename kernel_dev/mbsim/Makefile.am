@@ -19,6 +19,7 @@ group.cc\
 joint.cc\
 kinematics.cc\
 spring_damper.cc\
+extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
 load.cc\
@@ -58,6 +59,7 @@ group.h\
 joint.h\
 kinematics.h\
 spring_damper.h\
+extern_generalized_io.h\
 link.h\
 link_interface.h\
 link_mechanics.h\
