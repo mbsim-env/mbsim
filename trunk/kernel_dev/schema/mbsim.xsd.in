@@ -2557,7 +2557,7 @@
   <xs:element name="PeriodicTabularFunction1_VS" substitutionGroup="TabularFunction1_VS" type="PeriodicTabularFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction1_VS">&lt;TabularFunction1_VS&gt;</a>.
+        Periodische Fortsetzung einer <a class="link" href="mbsim:TabularFunction1_VS"><tt>&lt;TabularFunction1_VS&gt;</tt></a>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
