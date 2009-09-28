@@ -4,6 +4,7 @@ AC_INIT([mbsimxml],[1.0.0],[mafriedrich@users.berlios.de])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([mbsimxml/mbsimflatxml.cc])
+AC_PROG_LIBTOOL
 AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_LANG([C++])
@@ -85,6 +86,7 @@ done
 if test ! -z "$MBSIMMODULES_NAME"; then
   PKG_CHECK_MODULES(MBSIMMODULES, $MBSIMMODULES_NAME)
 fi
+AC_SUBST([MBSIMMODULES_NAME])
 
 
 
@@ -96,7 +98,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
 AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
 
