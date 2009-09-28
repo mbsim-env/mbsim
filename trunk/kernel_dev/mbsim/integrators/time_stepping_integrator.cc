@@ -31,12 +31,11 @@ namespace MBSim {
 
   TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {}
 
-  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
-
+  void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
     // initialisation
     assert(dtPlot >= dt);
 
-    double t = tStart;
+    t = tStart;
 
     int nq = system.getqSize(); // size of positions, velocities, state
     int nu = system.getuSize();
@@ -46,31 +45,33 @@ namespace MBSim {
     Index Iq(0,nq-1);
     Index Iu(nq,nq+nu-1);
     Index Ix(nq+nu,n-1);
-    Vec z(n);
-    Vec q(z(Iq));
-    Vec u(z(Iu));
-    Vec x(z(Ix));
+    z.resize(n);
+    q>>z(Iq);
+    u>>z(Iu);
+    x>>z(Ix);
 
     if(z0.size()) z = z0; // define initial state
     else system.initz(z);
 
-    double tPlot = 0.;
-    ofstream integPlot((name + ".plt").c_str());
+    tPlot = 0.;
+    integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
-    int stepPlot =(int) (dtPlot/dt + 0.5);
+    stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
-    int iter = 0;
-    int step = 0;   
-    int integrationSteps = 0;
-    int maxIter = 0;
-    int sumIter = 0;
+    iter = 0;
+    step = 0;   
+    integrationSteps = 0;
+    maxIter = 0;
+    sumIter = 0;
 
-    double s0 = clock();
-    double time = 0;
+    s0 = clock();
+    time = 0;
+  }
 
-    while(t<tEnd) { // time loop
+  void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {
+    while(t<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
@@ -99,7 +100,9 @@ namespace MBSim {
       u += system.deltau(z,t,dt);
       x += system.deltax(z,t,dt);
     }
+  }
 
+  void TimeSteppingIntegrator::postIntegrate(DynamicSystemSolver& system) {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
@@ -111,6 +114,13 @@ namespace MBSim {
 
     cout.unsetf(ios::scientific);
     cout << endl;
+  }
+
+
+  void TimeSteppingIntegrator::integrate(DynamicSystemSolver& system) {
+    preIntegrate(system);
+    subIntegrate(system, tEnd);
+    postIntegrate(system);
   }
 
   void TimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {

@@ -1313,6 +1313,24 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ExternGeneralizedIO" substitutionGroup="Link" type="ExternGeneralizedIOType">
+  </xs:element>
+  <xs:complexType name="ExternGeneralizedIOType">
+    <xs:complexContent>
+      <xs:extension base="LinkType">
+        <xs:sequence>
+          <xs:element name="connectedObject">
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="qIndex" type="pv:nounitScalar"/>
+          <xs:element name="uIndex" type="pv:nounitScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Joint" substitutionGroup="LinkMechanics" type="JointType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Definiert ein Gelenk als Verbindung zwischen zwei Körpern oder zwischen Körper und Umwelt.<br/>

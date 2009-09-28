@@ -42,6 +42,10 @@ namespace MBSim {
        */
       virtual ~TimeSteppingIntegrator() {}
 
+      void preIntegrate(DynamicSystemSolver& system);
+      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      void postIntegrate(DynamicSystemSolver& system);
+
       /* INHERITED INTERFACE OF INTEGRATOR */
       virtual void integrate(DynamicSystemSolver& system);
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -57,6 +61,13 @@ namespace MBSim {
        * \brief step size
        */
       double dt;
+
+      double t, tPlot;
+      int iter,step, integrationSteps, maxIter, sumIter;
+      double s0, time;
+      int stepPlot;
+      fmatvec::Vec z, q, u, x;
+      std::ofstream integPlot;
 
       /**
        * \brief flag for drift compensation
