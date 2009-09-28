@@ -6,15 +6,17 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/integrators/integrator.h>
-#include "headermodules.h"
+#include "mbsimxml/headermodules.h"
+#include "mbsimflatxml.h"
 
 using namespace std;
-using namespace MBSim;
 
-int main(int argc, char *argv[]) {
+namespace MBSim {
+
+int MBSimXML::preInitDynamicSystemSolver(int argc, const char *argv[], DynamicSystemSolver*& dss) {
   // help
   if(argc!=3) {
-    cout<<"Usage: mbximxml <mbsimfile> <mbsimintegratorfile>"<<endl;
+    cout<<"Usage: mbsimflatxml <mbsimfile> <mbsimintegratorfile>"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
     cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
@@ -43,7 +45,7 @@ int main(int argc, char *argv[]) {
   incorporateNamespace(e, dummy);
 
   // create object for root element and check correct type
-  DynamicSystemSolver *dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
+  dss=dynamic_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(e));
 
   // If enviornment variable MBSIMREORGANIZEHIERARCHY=false then do NOT reorganize.
   // In this case it is not possible to simulate a relativ kinematics (tree structures).
@@ -59,30 +61,50 @@ int main(int argc, char *argv[]) {
   }
   dss->initializeUsingXML(e);
   delete doc;
+
+  return 0;
+}
+
+int MBSimXML::initDynamicSystemSolver(int argc, const char *argv[], DynamicSystemSolver*& dss) {
   dss->init();
+  return 0;
+}
 
-
+int MBSimXML::initIntegrator(int argc, const char *argv[], Integrator *&integrator) {
+  TiXmlElement *e;
 
   // load MBSimIntegrator XML document
-  doc=new TiXmlDocument;
+  TiXmlDocument *doc=new TiXmlDocument;
   if(doc->LoadFile(argv[2])==false) {
     cerr<<"ERROR! Unable to load file: "<<argv[2]<<endl;
     return 1;
   }
   e=doc->FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
+  map<string,string> dummy;
   incorporateNamespace(e, dummy);
 
   // create integrator
-  Integrator *integrator=ObjectFactory::getInstance()->createIntegrator(e);
+  integrator=ObjectFactory::getInstance()->createIntegrator(e);
   if(integrator==0) {
     cerr<<"ERROR! Cannot create the integrator object!"<<endl;
     return 1;
   }
   integrator->initializeUsingXML(e);
   delete doc;
-  integrator->integrate(*dss);
-  delete integrator;
 
   return 0;
+}
+
+int MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
+  integrator->integrate(*dss);
+  return 0;
+}
+
+int MBSimXML::postMain(Integrator *&integrator, DynamicSystemSolver*& dss) {
+  delete dss;
+  delete integrator;
+  return 0;
+}
+
 }
