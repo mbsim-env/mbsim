@@ -78,8 +78,8 @@ namespace MBSim {
   void ExternGeneralizedIO::initializeUsingXML(TiXmlElement *element) {
     Link::initializeUsingXML(element);
     saved_connectedObject=element->FirstChildElement(MBSIMNS"connectedObject")->Attribute("ref");
-    qInd=getDouble(element->FirstChildElement(MBSIMNS"qIndex"));
-    uInd=getDouble(element->FirstChildElement(MBSIMNS"uIndex"));
+    qInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"qIndex"))+0.5);
+    uInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"uIndex"))+0.5);
   }
 
 }
