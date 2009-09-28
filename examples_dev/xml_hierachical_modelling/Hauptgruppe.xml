@@ -10,7 +10,7 @@
   <frames/>
   <contours/>
   <groups>
-    <pv:embed href="Untergruppe.xml" count="1" counterName="dummy">
+    <pv:embed href="Untergruppe.xml">
       <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
       <pv:localParameter>
         <p:parameter>
