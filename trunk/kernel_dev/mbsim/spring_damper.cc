@@ -38,14 +38,12 @@ namespace MBSim {
 
   void SpringDamper::updateh(double t) {
     la(0)=(*func)(g(0),gd(0));
-    if(dist<=epsroot() && abs(la(0))>epsroot())
+    if(refFrame==0 && dist<=epsroot() && abs(la(0))>epsroot())
       cout<<"Warning! The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
     if(refFrame==0) // Point to Point
       WF[0]=n*la;
-    else { // Directed
-      Vec WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
-      WF[0]=WforceDir*(trans(WforceDir)*(n*la)); // projected force in direction of WforceDir
-    }
+    else // Directed
+      WF[0]=WforceDir*la; // projected force in direction of WforceDir
     WF[1]=-WF[0];
     for(unsigned int i=0; i<2; i++) {
       h[i]+=trans(frame[i]->getJacobianOfTranslation())*WF[i];
@@ -56,21 +54,25 @@ namespace MBSim {
   void SpringDamper::updateg(double) {
     Vec WrP0P1=frame[1]->getPosition() - frame[0]->getPosition();
     dist=nrm2(WrP0P1);
-    if(dist>epsroot()) {
+    if(dist>epsroot())
       n=WrP0P1/dist;
-      g(0)=trans(n)*WrP0P1;
-    }
-    else {
+    else
       n=Vec(3,INIT,0);
-      g(0)=0;
+    if(refFrame==0) // Point to Point
+      g(0)=dist;
+    else {
+      WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
+      g(0)=trans(WrP0P1)*WforceDir;
     }
   } 
 
   void SpringDamper::updategd(double) {
-    if(dist>epsroot())
-      gd(0)=trans(n)*(frame[1]->getVelocity() - frame[0]->getVelocity());  
-    else
-      gd(0)=0;
+    Vec Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
+    if(refFrame==0) // Point to Point
+      gd(0)=trans(Wvrel)*n;
+    else {
+      gd(0)=trans(Wvrel)*WforceDir;
+    }
   }
 
   void SpringDamper::connect(Frame *frame0, Frame* frame1) {

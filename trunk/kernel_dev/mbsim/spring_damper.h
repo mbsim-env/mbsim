@@ -37,7 +37,7 @@ namespace MBSim {
       fmatvec::Vec n;
       Function2<double,double,double> *func;
       Frame *refFrame;
-      fmatvec::Vec forceDir;
+      fmatvec::Vec forceDir, WforceDir;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::CoilSpring *coilspringOpenMBV;
 #endif
