@@ -13,7 +13,8 @@ if "%1"=="-h" goto help
 if "%1"=="--help" goto help
 goto help_cont
 :help
-  echo "Usage: mbsimxml [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "Usage: mbsimxml [--onlypreprocess]"
+  echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
   echo "Copyright (C) 2004-2009 MBSim Development Team"
@@ -25,6 +26,11 @@ goto help_cont
 :help_cont
 
 rem parameters
+set ONLYPP=false
+if "%1" == "--onlypreprocess" (
+  set ONLYPP=true
+  shift
+)
 if "%1" == "--mbsimparam" (
   set PARAM=%2
   shift
@@ -51,6 +57,8 @@ del %PPMBSIM% %PPMBSIMINT%
 
 %MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
-%bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
+if "%ONLYPP%" == "false" (
+  %bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
+)
 
 :end

@@ -13,7 +13,7 @@ using namespace std;
 
 namespace MBSim {
 
-int MBSimXML::preInitDynamicSystemSolver(int argc, const char *argv[], DynamicSystemSolver*& dss) {
+int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   // help
   if(argc!=3) {
     cout<<"Usage: mbsimflatxml <mbsimfile> <mbsimintegratorfile>"<<endl;
@@ -65,12 +65,12 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, const char *argv[], DynamicSy
   return 0;
 }
 
-int MBSimXML::initDynamicSystemSolver(int argc, const char *argv[], DynamicSystemSolver*& dss) {
+int MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   dss->init();
   return 0;
 }
 
-int MBSimXML::initIntegrator(int argc, const char *argv[], Integrator *&integrator) {
+int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   TiXmlElement *e;
 
   // load MBSimIntegrator XML document
