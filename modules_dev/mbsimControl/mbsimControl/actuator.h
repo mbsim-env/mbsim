@@ -85,6 +85,9 @@ namespace MBSim {
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
+      Signal * getSignalByPath(std::string path);
+      void initializeUsingXML(TiXmlElement *element);
+
     protected:
       /**
        * \brief indices of forces and moments
@@ -115,6 +118,9 @@ namespace MBSim {
        * \brief frame index for rotating forces
        */
       int KOSYID;
+
+    private:
+      std::string saved_inputSignal, saved_ref1, saved_ref2;
 
   };
 }
