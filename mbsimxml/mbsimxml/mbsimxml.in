@@ -13,7 +13,8 @@ MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
 
 # help
 if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
-  echo "Usage: mbsimxml [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "Usage: mbsimxml [--onlypreprocess]"
+  echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
   echo "Copyright (C) 2004-2009 MBSim Development Team"
@@ -25,6 +26,11 @@ if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
 fi
 
 # parameters
+ONLYPP="false"
+if [ "_$1" = "_--onlypreprocess" ]; then
+  ONLYPP="true"
+  shift
+fi
 if [ "_$1" = "_--mbsimparam" ]; then
   PARAM=$2
   shift
@@ -49,4 +55,6 @@ rm -f $PPMBSIM $PPMBSIMINT
 
 $MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsimxml.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
-$bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+if [ $ONLYPP = "false" ]; then
+  $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+fi
