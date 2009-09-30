@@ -2,12 +2,14 @@
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/sensor.h"
+#include "mbsimControl/extern_signal_source.h"
 #include "mbsimControl/object_sensors.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/frame_sensors.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/linear_transfer_system.h"
+#include "mbsimControl/actuator.h"
 
 using namespace std;
 
@@ -31,6 +33,8 @@ namespace MBSim {
 
   Link* ControlObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
+    if(element->ValueStr()==MBSIMCONTROLNS"ExternSignalSource")
+      return new ExternSignalSource(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedPositionSensor")
       return new GeneralizedPositionSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"GeneralizedVelocitySensor")
@@ -63,6 +67,8 @@ namespace MBSim {
       return new SignalLimitation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalTimeDiscretization")
       return new SignalTimeDiscretization(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"Actuator")
+      return new Actuator(element->Attribute("name"));
     return 0;
   }
 

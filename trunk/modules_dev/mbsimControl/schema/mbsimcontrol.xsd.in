@@ -57,6 +57,20 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ExternSignalSource" substitutionGroup="Signal" type="ExternSignalSourceType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Dieses Signal bezieht seine Signalwerte (Vektor der dimension n) von einer externen Quelle, z.B,
+        von dem Master der Cosimulation mittels MDPCosim.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExternSignalSourceType">
+    <xs:complexContent>
+      <xs:extension base="SignalType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Sensor" abstract="true" substitutionGroup="Signal" type="SensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -512,6 +526,73 @@
             </xs:element>
           </xs:choice>
           <xs:element name="showABCD" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Actuator" substitutionGroup="mbsim:LinkMechanics" type="ActuatorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Mechanischer aktuator zwischen zwei Punkten. Die mechanische Kraft bzw. das Moment wird von
+        einem Signal bezogen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ActuatorType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kraftrichtungsmatrix <object class="inlineeqn">\boldsymbol{W}_f</object> des Aktors. Der Aktor bringt auf den Anschlusspunkt <tt>ref1</tt>
+                ein Kraft der Größe <object class="inlineeqn">\boldsymbol{f}=\boldsymbol{W}_f \boldsymbol{s}_f</object> auf.
+                Auf den Anschlusspunkt <tt>ref2</tt> wird die entsprechende Reaktion aufgebracht.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Momentrichtungsmatrix <object class="inlineeqn">\boldsymbol{W}_m</object> des Aktors. Der Aktor bringt auf den Anschlusspunkt <tt>ref1</tt>
+                ein Moment der Größe <object class="inlineeqn">\boldsymbol{m}=\boldsymbol{W}_m \boldsymbol{s}_m</object> auf.
+                Auf den Anschlusspunkt <tt>ref2</tt> wird die entsprechende Reaktion aufgebracht.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="referenceFrame" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das Koordinatensystem in dem die Momentrichtungsmatrix und die Kraftrichtungsmatrix angegeben wird:<br/>
+                0: im Koordinatensystem des Anschlusspunkts <tt>ref1</tt><br/>
+                1: im Koordinatensystem des Anschlusspunkts <tt>ref2</tt><br/>
+                Wenn nicht angegeben, so wird 0 verwendet.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das Signal, welches als Input <tt>s</tt> verwendet wird. Es setzt sich zusammen aus:
+                <object class="eqn">\boldsymbol{s}^T=[\boldsymbol{s}_f^T, \boldsymbol{s}_m^T]</object>
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das beiden Anschlusspunkte des Aktors
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="mbsim:FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
