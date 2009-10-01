@@ -2,7 +2,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "shaft.h"
+#include "mbsimPowertrain/shaft.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
