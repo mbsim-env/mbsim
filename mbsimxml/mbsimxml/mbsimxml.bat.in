@@ -53,7 +53,7 @@ set MBSIMINT=%1
 set PPMBSIMINT=%~n1
 set PPMBSIMINT=.pp.%PPMBSIMINT%.xml
 
-del %PPMBSIM% %PPMBSIMINT%
+del %PPMBSIM% %PPMBSIMINT% > NUL
 
 %MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
 
