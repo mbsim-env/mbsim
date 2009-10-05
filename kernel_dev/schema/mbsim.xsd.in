@@ -102,7 +102,7 @@
   <!-- A reference to a Frame at the same hierarchy -->
   <xs:simpleType name="CurrentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> im aktuellen Kontext.
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> im aktuellen Kontext.
         Gültige Werte sind <tt>Frame[X]</tt>, wobei <tt>X</tt> den <a class="link" href="pv:name">Element-Namen</a> des
         zu referenzierenden Frames darstellt.
     </xs:documentation></xs:annotation>
@@ -117,7 +117,7 @@
   <!-- A reference to a Frame at the parent -->
   <xs:simpleType name="ParentFrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> des Vorgängers
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> des Vorgängers
         des aktuellen Kontext (Vorgänger in der Hierarchieebene). Gültige Werte sind <tt>../Frame[X]</tt>, wobei <tt>X</tt> den
         <a class="link" href="pv:name">Element-Namen</a> des Frames des Vorgangers darstellt.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
@@ -134,7 +134,7 @@
   <!-- A reference from a Link|Object|ExtraDynamicSystem to a Frame somewhere in the hierarchy -->
   <xs:simpleType name="FrameReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Frame">&lt;Frame&gt;</a></tt> an beliebiger
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Frame"><tt>&lt;Frame&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Frame[Z]</tt>, wobei <tt>X</tt>,
         <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
         <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
@@ -143,7 +143,7 @@
         <tt>Object's Y</tt> ausgewählt werden oder der <tt>Frame Z</tt> der <tt>Group</tt> wenn die Angabe von
         <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
         in diesem Fall beginnt die Referenzierung beim obersten Element
-        (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -158,7 +158,7 @@
   <!-- A reference form a Link|Object|ExtraDynamicSystem to a Contour somewhere in the hierarchy -->
   <xs:simpleType name="ContourReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einer <tt><a class="link" href="mbsim:Contour">&lt;Contour&gt;</a></tt> an beliebiger
+        Definiert eine Pfadangabe zu einer <a class="link" href="mbsim:Contour"><tt>&lt;Contour&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]/Contour[Z]</tt>, wobei <tt>X</tt>,
         <tt>Y</tt> und <tt>Z</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil
         <tt>..</tt> kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil
@@ -167,7 +167,7 @@
         <tt>Object's Y</tt> ausgewählt werden oder die <tt>Contour Z</tt> der <tt>Group</tt> wenn die Angabe von
         <tt>Object</tt> weggelassen wird. Alternativ kann die Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen,
         in diesem Fall beginnt die Referenzierung beim obersten Element
-        (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -182,14 +182,14 @@
   <!-- A reference form a Link to a Object somewhere in the hierarchy -->
   <xs:simpleType name="ObjectReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Object">&lt;Object&gt;</a></tt> an beliebiger
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Object"><tt>&lt;Object&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Object[Y]</tt>, wobei <tt>X</tt> und
         <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
         Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -204,14 +204,14 @@
   <!-- A reference form a Link to a ExtraDynamic somewhere in the hierarchy -->
   <xs:simpleType name="ExtraDynamicReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:ExtraDynamic">&lt;ExtraDynamic&gt;</a></tt> an beliebiger
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:ExtraDynamic"><tt>&lt;ExtraDynamic&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/ExtraDynamic[Y]</tt>, wobei <tt>X</tt> und
         <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
         kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Object Y</tt> ausgewählt. Alternativ kann die
         Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -226,14 +226,14 @@
   <!-- A reference form a Link to a Contact somewhere in the hierarchy -->
   <xs:simpleType name="ContactReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert eine Pfadangabe zu einem <tt><a class="link" href="mbsim:Contact">&lt;Contact&gt;</a></tt> an beliebiger
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Contact"><tt>&lt;Contact&gt;</tt></a> an beliebiger
         Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Contact[Y]</tt>, wobei <tt>X</tt> und
         <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
         kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt> kann
         beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
         Element-Namen <tt>X</tt>. Als letzter Pfadteil wird der <tt>Contact Y</tt> ausgewählt. Alternativ kann die
         Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
-        obersten Element (<tt><a class="link" href="mbsim:DynamicSystemSolver">DynamicSystemSolver</a></tt>) des Modells.
+        obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
         <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
@@ -591,7 +591,7 @@
           <xs:element name="accelerationOfGravity" type="pv:accelerationVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Vektor der Erdbeschleunigung angegeben im KOS "I" von <tt><a class="link" href="mbsim:DynamicSystemSolver">&lt;DynamicSystemSolver&gt;</a></tt>.
+                Vektor der Erdbeschleunigung angegeben im KOS "I" von <a class="link" href="mbsim:DynamicSystemSolver"><tt>&lt;DynamicSystemSolver&gt;</tt></a>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -852,7 +852,7 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert das KOS, dessen relative Bewegung bezüglich des <tt>frameOfReference</tt>
-                (siehe <tt><a class="link" href="mbsim:Object">Object</a></tt>) sich unmittelbar aus den
+                (siehe <a class="link" href="mbsim:Object"><tt>Object</tt></a>) sich unmittelbar aus den
                 generalisierten Koordinaten dieses Körpers ergibt.
                 <p>Es kann sich somit entsprechend der angegebenen translatorischen und rotatorischen Freiheitsgrade
                   relativ gegenüber dem <tt>frameOfReference</tt> bewegen und ist zu Beginn der Simulation um die
