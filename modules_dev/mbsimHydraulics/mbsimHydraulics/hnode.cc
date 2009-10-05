@@ -89,9 +89,10 @@ namespace MBSim {
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"maximalPressure");
       double pMax=Element::getDouble(ee);
       ee = e->FirstChildElement(MBSIMHYDRAULICSNS"position");
+      Vec localWrON(3, INIT, 0);
       if (ee)
-        Vec WrON=Element::getVec(ee, 3);
-      enableOpenMBV(size, pMin, pMax, WrON);
+        localWrON=Element::getVec(ee, 3);
+      enableOpenMBV(size, pMin, pMax, localWrON);
     }
   }
 

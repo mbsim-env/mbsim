@@ -96,6 +96,12 @@ namespace MBSim {
     return c*Q;
   }
 
+  void TurbulentTubeFlowLinePressureLoss::setHydraulicDiameter(double dHyd_, double dHydNeg_) {
+    assert(dHyd_>=0);
+    assert(dHydNeg_>=0);
+    dHyd=dHyd_; 
+    dHydNeg=((fabs(dHydNeg_)<epsroot())?dHyd_:dHydNeg_); 
+  }
   
   double TurbulentTubeFlowLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
@@ -107,6 +113,7 @@ namespace MBSim {
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       double areaRef=M_PI*dRef*dRef/4.;
       ReynoldsFactor=dHyd/areaRef/nu;
+      ReynoldsFactorNeg=-dHydNeg/areaRef/nu;
       class Lambda : public Function1<double, double> {
         public:
           Lambda(double Re_, double k_, double d_) : Re(Re_), k(k_), d(d_) {}
@@ -138,7 +145,7 @@ namespace MBSim {
       lambdaTabular = new TabularFunction1_VS(ReValues, lambdaValues);
       initialized=true;
     }
-    const double Re=fabs(ReynoldsFactor*Q);
+    const double Re=Q*((Q>0)?ReynoldsFactor:ReynoldsFactorNeg);
     double lambda;
     if (Re<1404.) // laminar
       return 64./ReynoldsFactor*c*Q;
@@ -157,7 +164,11 @@ namespace MBSim {
     setReferenceDiameter(dR);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"hydraulicDiameter");
     double dH=Element::getDouble(e);
-    setHydraulicDiameter(dH);
+    e = element->FirstChildElement(MBSIMHYDRAULICSNS"negativeHydraulicDiameter");
+    double dHNeg=0;
+    if (e)
+     dHNeg=Element::getDouble(e);
+    setHydraulicDiameter(dH, dHNeg);
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"surfaceRoughness");
     double kS=Element::getDouble(e);
     setSurfaceRoughness(kS);
@@ -334,7 +345,7 @@ namespace MBSim {
       const double gl=((const PlaneLeakageLine*)(line))->getGapLength();
       const double s1v=((const PlaneLeakageLine*)(line))->getSurface1Velocity();
       const double s2v=((const PlaneLeakageLine*)(line))->getSurface2Velocity();
-      return (Q-xdfac*(s1v+s2v))*gl/pVfac;
+      return -(Q-xdfac*(s1v+s2v))*gl/pVfac;
     }
   }
 
@@ -375,7 +386,7 @@ namespace MBSim {
       const double gl=((const CircularLeakageLine*)(line))->getGapLength();
       const double s1v=((const CircularLeakageLine*)(line))->getSurface1Velocity();
       const double s2v=((const CircularLeakageLine*)(line))->getSurface2Velocity();
-      return (Q-xdfac*(s1v+s2v))*gl/pVfac;
+      return - (Q-xdfac*(s1v+s2v))*gl/pVfac;
     }
   }
 
@@ -413,7 +424,7 @@ namespace MBSim {
       const double gl=((const CircularLeakage0DOF*)(line))->getGapLength();
       const double vI=((const CircularLeakage0DOF*)(line))->getSurface1Velocity();
       const double vO=((const CircularLeakage0DOF*)(line))->getSurface2Velocity();
-      return vIfac*vI + vOfac*vO + pVfac/gl*dp;
+      return vIfac*vI + vOfac*vO - pVfac/gl*dp;
     }
     else {
       const double Q=pVorQ;

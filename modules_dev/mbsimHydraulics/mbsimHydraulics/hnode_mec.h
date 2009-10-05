@@ -185,7 +185,7 @@ namespace MBSim {
       void solveImpactsRootFinding();
       //      void solveConstraintsRootFinding();
       //      void jacobianConstraints();
-      //      void jacobianImpacts();
+      void jacobianImpacts();
       void updaterFactors();
       void checkImpactsForTermination();
       //      void checkConstraintsForTermination();
