@@ -13,7 +13,7 @@ void RigidBodyWith1DRelativeMotion::init(InitStage stage) {
     I.resize(gethSize());
     if(body.size()) {
       for(unsigned int i=0; i<body.size(); i++) {
-	Vec Ip = body[i]->getI()*ratio[i];
+	Vec Ip = body[i]->getI()/ratio[i];
 	I(0,Ip.size()-1) += Ip;
       }
     }
@@ -39,8 +39,8 @@ void RigidBodyWith1DRelativeMotion::updateKinematicsForSelectedFrame(double t) {
     sRel = 0;
     sdRel = 0;
     for(unsigned int i=0; i<body.size(); i++) {
-      sRel += body[i]->getsRel()/ratio[i];
-      sdRel += body[i]->getsdRel()/ratio[i];
+      sRel += body[i]->getsRel()*ratio[i];
+      sdRel += body[i]->getsdRel()*ratio[i];
     }
   }
   else {
