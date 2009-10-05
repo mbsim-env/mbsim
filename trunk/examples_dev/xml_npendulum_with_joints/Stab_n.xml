@@ -35,18 +35,14 @@
     <frame>
       <Frame name="U"/>
       <position>[0;-lU;0]</position>
-      <orientation>
-        <pv:asciiMatrixRef href="eye.txt"/>
-      </orientation>
+      <orientation>ret=load('eye.txt')</orientation>
     </frame>
   </frames>
   <contours/>
   <openMBVRigidBody>
     <ombv:Frustum name="dummy">
       <ombv:staticColor>mod(n-1,3)/2</ombv:staticColor>
-      <ombv:initialTranslation>
-        <pv:asciiVectorRef href="inittrans.txt"/>
-      </ombv:initialTranslation>
+      <ombv:initialTranslation>ret=load('inittrans.txt')</ombv:initialTranslation>
       <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
       <ombv:scaleFactor>1</ombv:scaleFactor>
       <ombv:baseRadius>0.02</ombv:baseRadius>
