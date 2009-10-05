@@ -78,6 +78,8 @@ namespace MBSim {
       void updaterFactors();
       void solveImpactsFixpointSingle();
       void solveImpactsGaussSeidel();
+      void solveImpactsRootFinding();
+      void jacobianImpacts();
       void checkImpactsForTermination();
       // ==== END Methods for solve-Process ===
 

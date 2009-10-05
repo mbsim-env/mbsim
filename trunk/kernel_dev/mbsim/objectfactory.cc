@@ -286,6 +286,8 @@ namespace MBSim {
       return new SpatialCoulombFriction;
     if(element->ValueStr()==MBSIMNS"PlanarCoulombFriction")
       return new PlanarCoulombFriction;
+    if(element->ValueStr()==MBSIMNS"RegularizedPlanarFriction")
+      return new RegularizedPlanarFriction;
     if(element->ValueStr()==MBSIMNS"RegularizedSpatialFriction")
       return new RegularizedSpatialFriction;
     return 0;
@@ -384,8 +386,6 @@ namespace MBSim {
 
   Function2<Vec,Vec,double> *MBSimObjectFactory::createFunction2_VVS(TiXmlElement *element) {
     if(element==0) return 0;
-    if(element->ValueStr()==MBSIMNS"LinearRegularizedCoulombFriction")
-      return new LinearRegularizedCoulombFriction;
     if(element->ValueStr()==MBSIMNS"LinearRegularizedCoulombFriction")
       return new LinearRegularizedCoulombFriction;
     if(element->ValueStr()==MBSIMNS"LinearRegularizedStribeckFriction")

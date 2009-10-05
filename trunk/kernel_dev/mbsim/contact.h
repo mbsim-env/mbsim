@@ -148,6 +148,7 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setContactForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
+      GeneralizedForceLaw * getContactForceLaw() const {return fcl; }
       void setContactImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
       void setFrictionForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
       void setFrictionImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }

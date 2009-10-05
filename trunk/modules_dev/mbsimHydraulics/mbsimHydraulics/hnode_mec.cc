@@ -544,8 +544,8 @@ namespace MBSim {
         for (int j=0; j<u0.size(); j++)
           if (fabs(u0(j))>epsroot())
             zero=false;
-        if (!zero)
-          cout << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//        if (!zero)
+//          cout << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
       }
       for (unsigned int i=0; i<nTrans; i++) { // TODO Baumstruktur
         if(dynamic_cast<Object*>(connectedTransFrames[i].frame->getParent())) {
@@ -554,8 +554,8 @@ namespace MBSim {
           for (int j=0; j<u0.size(); j++)
             if (fabs(u0(j))>epsroot())
               zero=false;
-          if (!zero)
-            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//          if (!zero)
+//            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }
       }
       for (unsigned int i=0; i<nRot; i++) { // TODO Baumstruktur
@@ -565,8 +565,8 @@ namespace MBSim {
           for (int j=0; j<u0.size(); j++)
             if (fabs(u0(j))>epsroot())
               zero=false;
-          if (!zero)
-            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+//          if (!zero)
+//            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }
       }
     }
@@ -583,11 +583,11 @@ namespace MBSim {
     HNodeMec::updategd(t);
     if (t<epsroot()) {
       if (fabs(QHyd)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+        cout << "WARNING: RigidNode \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
       if (fabs(QMecTrans)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
       if (fabs(QMecRot)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
+        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
     }
   }
 
@@ -658,6 +658,23 @@ namespace MBSim {
       gdn += a[j]*laMBS(ja[j]);
 
     res(0) = rFactor(0)*gdn;
+  }
+
+  void RigidNodeMec::jacobianImpacts() {
+    SqrMat Jprox = ds->getJprox();
+    SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    // Vec diff = fifl->diff(la(0), gdn(0), gd(0), rFactor(0));
+    Vec diff(2, NONINIT);
+    diff(0)=1.;
+    diff(1)=-rFactor(0);
+
+    jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
   }
 
   void RigidNodeMec::updaterFactors() {

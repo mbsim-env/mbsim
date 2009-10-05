@@ -253,6 +253,37 @@ namespace MBSim {
     }
   }
 
+  void RigidLinePressureLoss::solveImpactsRootFinding() {
+    if (bilateral) {
+      double *a = ds->getGs()();
+      int *ia = ds->getGs().Ip();
+      int *ja = ds->getGs().Jp();
+      Vec &laMBS = ds->getla();
+      Vec &b = ds->getb();
+
+      gdn(0) = b(laIndDS);
+      for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+        gdn(0) += a[j]*laMBS(ja[j]);
+
+      res = rFactor(0)*gdn;
+    }
+    else
+      throw(123);
+  }
+
+  void RigidLinePressureLoss::jacobianImpacts() {
+    if (bilateral) {
+    SqrMat Jprox = ds->getJprox();
+    SqrMat G = ds->getG();
+    RowVec jp1=Jprox.row(laIndDS);
+    jp1.init(0);
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) = rFactor(0) * G(laIndDS, j);
+    }
+    else
+      throw(123);
+  }
+
   void RigidLinePressureLoss::checkImpactsForTermination() {
     if (active) {
       double *a = ds->getGs()();

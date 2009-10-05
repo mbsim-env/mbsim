@@ -94,14 +94,14 @@ namespace MBSim {
   /*! TurbulentTubeFlow */
   class TurbulentTubeFlowLinePressureLoss : public LinePressureLoss {
     public:
-      TurbulentTubeFlowLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), k(0), ReynoldsFactor(0), lambdaTabular(NULL) {}
+      TurbulentTubeFlowLinePressureLoss() : LinePressureLoss(), c(0), dRef(0), dHyd(0), dHydNeg(0), k(0), ReynoldsFactor(0), ReynoldsFactorNeg(0), lambdaTabular(NULL) {}
       void setReferenceDiameter(double dRef_) {dRef=dRef_; }
-      void setHydraulicDiameter(double dHyd_) {dHyd=dHyd_; }
+      void setHydraulicDiameter(double dHyd_, double dHydNeg_=0);
       void setSurfaceRoughness(double k_) {k=k_; }
       double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      double c, dRef, dHyd, k, ReynoldsFactor;
+      double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
       TabularFunction1_VS * lambdaTabular;
   };
 
