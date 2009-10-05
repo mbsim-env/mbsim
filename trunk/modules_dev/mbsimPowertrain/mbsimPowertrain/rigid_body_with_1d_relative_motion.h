@@ -28,7 +28,7 @@ namespace MBSim {
       const fmatvec::Vec& getI() const {return I;}
       void setAxis(const fmatvec::Vec &Ka_) {Ka = Ka_;}
       void updateKinematicsForSelectedFrame(double t); 
-      Object* getObjectDependingOn() const { return body.size() ? body[0] : RigidBody::getObjectDependingOn(); }
+      Object* getObjectDependingOn() const { return body.size() ? body[body.size()-1] : RigidBody::getObjectDependingOn(); }
 
   };
 
