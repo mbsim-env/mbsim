@@ -12,12 +12,7 @@
   <groups>
     <pv:embed href="Untergruppe.xml">
       <!-- set local parameter for Untergruppe.xml; existing ones will be overwritten -->
-      <pv:localParameter>
-        <p:parameter>
-          <p:scalarParameter name="h1">0.5</p:scalarParameter>
-          <p:scalarParameter name="h2">h1</p:scalarParameter>
-        </p:parameter>
-      </pv:localParameter>
+      <pv:localParameter href="Untergruppe.param.xml"/>
     </pv:embed>
   </groups>
   <objects>
