@@ -66,8 +66,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   addObject(shaft1);
   //shaft1->setInitialGeneralizedVelocity(Vec(1,INIT,2));
 
-  shaft1->setFrameOfReference(getFrame("I"));
-  //shaft1->setFrameOfReference(housing->getFrame("C"));
+  shaft1->setFrameOfReference(housing->getFrame("C"));
   shaft1->setFrameForKinematics(shaft1->getFrame("C"));
 
   shaft1->setMass(m);
@@ -85,20 +84,18 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   r(2) = l;
   r(1) = 1.5*R;
-  //housing->addFrame("Q",r,SqrMat(3,EYE));
-  //housing->getFrame("Q")->enableOpenMBV(0.3);
-  //shaft2->setFrameOfReference(housing->getFrame("Q"));
 
-  addFrame("Q",r,BasicRotAKIy(M_PI/2));
-  getFrame("Q")->enableOpenMBV(0.3);
-  shaft2->setFrameOfReference(getFrame("Q"));
+  housing->addFrame("Q",r,BasicRotAKIy(M_PI/2));
+  housing->getFrame("Q")->enableOpenMBV(0.3);
+  shaft2->setFrameOfReference(housing->getFrame("Q"));
+  
   shaft2->setFrameForKinematics(shaft2->getFrame("C"));
   shaft2->getFrame("C")->enableOpenMBV(0.3);
 
   shaft2->setMass(m2);
   Theta(2,2) = J2;
   shaft2->setInertiaTensor(Theta);
-  shaft2->addDependecy(shaft1,-2);
+  shaft2->addDependecy(shaft1,-1./2);
 
   Shaft* shaft3 = new Shaft("Shaft3");
   addObject(shaft3);
@@ -123,9 +120,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   r.init(0);
   r(2) = -l4/2-0.2;
-  addFrame("L",r,BasicRotAKIy(0),getFrame("Q"));
-  getFrame("L")->enableOpenMBV(0.3);
-  shaft4->setFrameOfReference(getFrame("L"));
+  housing->addFrame("L",r,BasicRotAKIy(0),housing->getFrame("Q"));
+  housing->getFrame("L")->enableOpenMBV(0.3);
+  shaft4->setFrameOfReference(housing->getFrame("L"));
+
   shaft4->setFrameForKinematics(shaft4->getFrame("C"));
   shaft4->getFrame("C")->enableOpenMBV(0.3);
 
@@ -140,9 +138,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   r.init(0);
   r(2) = +l5/2+0.2;
-  addFrame("R",r,BasicRotAKIy(0),getFrame("Q"));
-  getFrame("R")->enableOpenMBV(0.3);
-  shaft5->setFrameOfReference(getFrame("R"));
+  housing->addFrame("R",r,BasicRotAKIy(0),housing->getFrame("Q"));
+  housing->getFrame("R")->enableOpenMBV(0.3);
+  shaft5->setFrameOfReference(housing->getFrame("R"));
+
   shaft5->setFrameForKinematics(shaft5->getFrame("C"));
   shaft5->getFrame("C")->enableOpenMBV(0.3);
 
@@ -151,12 +150,13 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft5->setInertiaTensor(Theta);
   shaft5->addDependecy(shaft2,1);
   shaft5->addDependecy(shaft3,-1);
-KineticExcitation* ke;
+
+  KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
   addLink(ke);
   ke->connect(shaft1->getFrame("C"));
   ke->setMoment("[0;0;1]", new Moment(1.2));
-//
+
   ke = new KineticExcitation("MAbL");
   addLink(ke);
   ke->connect(shaft4->getFrame("C"));
