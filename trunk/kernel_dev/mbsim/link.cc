@@ -37,15 +37,15 @@ namespace MBSim {
       if(getPlotFeature(stateDerivative)==enabled)
         for(int i=0; i<xSize; ++i)
           plotVector.push_back(xd(i)/dt);
-      if(getPlotFeature(stopVector)==enabled)
-        for(int i=0; i<sv.size(); ++i)
-          plotVector.push_back(sv(i));
       if(getPlotFeature(linkKinematics)==enabled) {
         for(int i=0; i<g.size(); ++i)
           plotVector.push_back(g(i));
         for(int i=0; i<gd.size(); ++i)
           plotVector.push_back(gd(i));
       }
+      if(getPlotFeature(stopVector)==enabled)
+        for(int i=0; i<sv.size(); ++i)
+          plotVector.push_back(sv(i));
       if(getPlotFeature(energy)==enabled) {
         plotVector.push_back(computePotentialEnergy()); 
       }
