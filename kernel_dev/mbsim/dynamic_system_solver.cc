@@ -64,11 +64,11 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(false), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   }
 
@@ -339,7 +339,10 @@ namespace MBSim {
       if(INFO) cout << "  initialising plot-files ..." << endl;
       Group::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(plotRecursive)==enabled) openMBVGrp->initialize();
+      if(getPlotFeature(plotRecursive)==enabled) {
+        openMBVGrp->initializeXML();
+        if(truncateSimulationFiles) openMBVGrp->initializeH5();
+      }
 #endif
       if(INFO) cout << "...... done initialising." << endl << endl;
     }

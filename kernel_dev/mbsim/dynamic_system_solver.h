@@ -118,6 +118,15 @@ namespace MBSim {
        * \endcode
        */
       void init();
+      
+      /*
+       * If true (the default) then
+       * the simulation output files (h5 files) are deleted/truncated/regenerated.
+       * If false, then these files left are untouched from a previous run.
+       * This is usefull to regenerate the
+       * e.g. OpenMBV XML files whithout doing a new integration.
+       */
+      void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
       /* INHERITED INTERFACE OF GROUP */
       void init(InitStage stage);
@@ -720,6 +729,8 @@ namespace MBSim {
        * \param list of objects
        */
       void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+
+      bool truncateSimulationFiles;
   };
 
 }
