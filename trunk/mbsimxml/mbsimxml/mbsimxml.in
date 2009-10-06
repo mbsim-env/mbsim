@@ -13,7 +13,7 @@ MBXMLUTILSBINDIR=@MBXMLUTILSBINDIR@
 
 # help
 if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
-  echo "Usage: mbsimxml [--onlypreprocess]"
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate]"
   echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
@@ -22,6 +22,13 @@ if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
   echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
   echo ""
   echo "Licensed under the GNU Lesser General Public License (LGPL)"
+  echo ""
+  echo "--onlypreprocess     Stop after the preprocessing stage"
+  echo "--donotintegrate     Stop after the initialization stage, do not integrate"
+  echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
+  echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
+  echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
+  echo "<integratorfile>     Use <integratorfile> as mbsim integrator xml file"
   exit
 fi
 
@@ -29,6 +36,11 @@ fi
 ONLYPP="false"
 if [ "_$1" = "_--onlypreprocess" ]; then
   ONLYPP="true"
+  shift
+fi
+NOINT="false"
+if [ "_$1" = "_--donotintegrate" ]; then
+  NOINT="true"
   shift
 fi
 if [ "_$1" = "_--mbsimparam" ]; then
@@ -56,5 +68,9 @@ rm -f $PPMBSIM $PPMBSIMINT
 $MBXMLUTILSBINDIR/mbxmlutilspp $PARAM $MBSIM $MBSIMXMLSCHEMA/mbsimxml.xsd $PARAMINT $MBSIMINT $MBSIMSCHEMA/mbsimintegrator.xsd || exit 1
 
 if [ $ONLYPP = "false" ]; then
-  $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+  if [ $NOINT = "false" ]; then
+    $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+  else
+    $bindir/mbsimflatxml --donotintegrate $PPMBSIM $PPMBSIMINT || exit 1
+  fi
 fi
