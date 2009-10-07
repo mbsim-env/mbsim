@@ -1271,7 +1271,7 @@
                 Wenn dieses Element nicht angegeben ist, so entspricht die Kraftwirkrichtung der
                 Verbindunglinie zwischen den Kraftangriffspunkten.
                 <p>Wenn diese Element angegeben ist, so wird die Kraftwirkrichtung durch den Benutzer
-                  vorgegeben.</p>
+                  vorgegeben; hierbei ist zu beachten, dass je nach Vorgabe das globale Momentengleichgewicht verletzt wird.</p>
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
