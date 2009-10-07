@@ -23,8 +23,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimControl {
 
   void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement * element) {
     Sensor::initializeUsingXML(element);
@@ -34,7 +35,7 @@ namespace MBSim {
   }
 
   void SignalProcessingSystemSensor::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (spsString!="") {
         SignalProcessingSystem * sps_=(SignalProcessingSystem*)(getExtraDynamicByPath(spsString));
         setSignalProcessingSystem(sps_);

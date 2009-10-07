@@ -28,7 +28,7 @@ int main (int argc, char* argv[]) {
 
   DynamicSystemSolver *sys = new System("TS");
 
-  sys->init();
+  sys->initialize();
 
   Integrator* integrator;
 

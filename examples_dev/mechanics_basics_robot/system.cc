@@ -17,9 +17,10 @@
 #include "openmbvcppinterface/ivbody.h"
 #endif
 
-using namespace MBSim;
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
 

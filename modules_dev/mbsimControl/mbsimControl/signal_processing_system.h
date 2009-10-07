@@ -26,7 +26,7 @@
 
 #include "mbsim/extra_dynamic.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   class Signal;
 
@@ -41,7 +41,7 @@ namespace MBSim {
       virtual std::string getType() const {return "SignalProcessingSystem"; }
       void initializeUsingXML(TiXmlElement *element);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void updateg(double t) {}
 

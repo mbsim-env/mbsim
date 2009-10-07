@@ -7,7 +7,7 @@ using namespace MBSim;
 int main (int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("TS");
 
-  sys->init();
+  sys->initialize();
   bool eventDriven = false;
 
   if(eventDriven) { // Event driven time integration

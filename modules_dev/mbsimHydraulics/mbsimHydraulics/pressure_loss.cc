@@ -29,8 +29,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   double SerialResistanceLinePressureLoss::operator()(const double& Q, const void *line) {
     double pl=0;
@@ -43,7 +44,7 @@ namespace MBSim {
     TiXmlElement * e;
     e=element->FirstChildElement();
     while (e) {
-      LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e));
+      LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e));
       addLinePressureLoss(p);
       p->initializeUsingXML(e);
       e=e->NextSiblingElement();
@@ -60,7 +61,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
     int n=int(Element::getDouble(e));
     e=e->NextSiblingElement();
-    LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e));
+    LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e));
     p->initializeUsingXML(e);
     setLinePressureLoss(p, n);
   }

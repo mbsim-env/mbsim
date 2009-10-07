@@ -9,7 +9,7 @@
 class System : public MBSim::DynamicSystemSolver {
   public:
     System(const std::string &projectName); 
-    void init();
+    void initialize();
 
   private:
     /** flexible ring */

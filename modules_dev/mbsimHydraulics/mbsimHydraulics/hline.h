@@ -22,17 +22,20 @@
 
 #include "mbsim/object.h"
 
-namespace MBSim {
+namespace MBSimControl {
+  class Signal;
+}
+
+namespace MBSimHydraulics {
 
   class HNode;
   class HydlinePressureloss;
   class PressureLoss;
-  class Signal;
 
   /*! HLine */
-  class HLine : public Object {
+  class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : Object(name), nFrom(NULL), nTo(NULL), direction(3), Mlocal(0) {};
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), direction(3), Mlocal(0) {};
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -57,10 +60,10 @@ namespace MBSim {
       
       void updateM(double t) {M=Mlocal; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
       
-      Signal * getSignalByPath(std::string path);
+      MBSimControl::Signal * getSignalByPath(std::string path);
     protected:
       HNode * nFrom;
       HNode * nTo;
@@ -87,7 +90,7 @@ namespace MBSim {
       void updateh(double t);
       
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void plot(double t, double dt);
       
     protected:

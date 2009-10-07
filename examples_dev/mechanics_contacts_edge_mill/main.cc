@@ -11,7 +11,7 @@ int main (int argc, char* argv[]) {
   sys->setLinAlg(PseudoInverse);
   // sys->setNumJacProj(true);
 
-  sys->init();
+  sys->initialize();
   
   TimeSteppingIntegrator integrator;
   integrator.setStepSize(5e-5);

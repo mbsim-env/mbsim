@@ -22,7 +22,7 @@
 
 #include "mbsimControl/signal_.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /*!
    * \brief SignalAddition
@@ -32,7 +32,7 @@ namespace MBSim {
     public:
       SignalAddition(const std::string &name) : Signal(name) {}
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void addSignal(Signal * signal, double factor=1.);
       fmatvec::Vec getSignal();
     private:
@@ -51,7 +51,7 @@ namespace MBSim {
     public:
       SignalMux(const std::string &name) : Signal(name) {}
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void addSignal(Signal * signal) {signals.push_back(signal); }
       fmatvec::Vec getSignal();
     private:
@@ -68,7 +68,7 @@ namespace MBSim {
     public:
       SignalLimitation(const std::string &name) : Signal(name), minValue(0), maxValue(0), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
       void setMaximalValue(fmatvec::Vec maxValue_) {maxValue=maxValue_; }
       void setSignal(Signal * signal_) {s=signal_; }
@@ -88,7 +88,7 @@ namespace MBSim {
     public:
       SignalTimeDiscretization(const std::string &name) : Signal(name), s(NULL), y(0), tOld(-99e99), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void setSignal(Signal * signal_) {s=signal_; }
       void updateg(double t);
       fmatvec::Vec getSignal();

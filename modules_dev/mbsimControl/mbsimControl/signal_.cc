@@ -23,8 +23,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimControl {
 
   Signal * Signal::getSignalByPath(string path) {
     int pos=path.find("Signal");

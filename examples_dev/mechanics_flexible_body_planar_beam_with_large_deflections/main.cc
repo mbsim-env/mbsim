@@ -10,7 +10,7 @@ int main (int argc, char* argv[]) {
 
   sys->setImpactSolver(RootFinding);
   sys->setStopIfNoConvergence(true,true);
-  sys->init();
+  sys->initialize();
 
   ThetaTimeSteppingIntegrator integrator;
 

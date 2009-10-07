@@ -28,8 +28,11 @@ namespace OpenMBV {
 }
 
 namespace MBSim {
-
   class Frame;
+}
+
+namespace MBSimHydraulics {
+
   class HydFluid;
   class OilBulkModulus;
 
@@ -66,7 +69,7 @@ namespace MBSim {
 
       void calcxSize() {xSize=1; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
 
       virtual void updateWRef(const fmatvec::Mat& Wref, int i=0);
@@ -105,15 +108,15 @@ namespace MBSim {
       ~ConstrainedNodeMec() {};
       virtual std::string getType() const { return "ConstrainedNodeMec"; }
 
-      void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
 
       void updateg(double t);
 
     private:
-      Function1<double,double> * pFun;
+      MBSim::Function1<double,double> * pFun;
   };
 
 
@@ -123,7 +126,7 @@ namespace MBSim {
       EnvironmentNodeMec(const std::string &name) : HNodeMec(name) {}
       virtual std::string getType() const { return "EnvironmentNodeMec"; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
   };
 
 
@@ -139,7 +142,7 @@ namespace MBSim {
 
       void calcxSize() {xSize=2; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
@@ -171,7 +174,7 @@ namespace MBSim {
       void calclaSizeForActiveg() {laSize=1; }
       void calcrFactorSize() {rFactorSize=1; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 

@@ -117,7 +117,7 @@ namespace MBSim {
        * }
        * \endcode
        */
-      void init();
+      void initialize();
       
       /*
        * If true (the default) then

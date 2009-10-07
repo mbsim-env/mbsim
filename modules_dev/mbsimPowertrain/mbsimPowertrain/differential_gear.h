@@ -3,14 +3,12 @@
 
 #include "mbsim/group.h"
 
-namespace MBSim {
+namespace MBSimPowertrain {
 
-  class DifferentialGear : public Group { 
+  class DifferentialGear : public MBSim::Group { 
     protected:
 
-
     public:
-
       DifferentialGear(const std::string &name);
   };
 

@@ -22,7 +22,7 @@
 
 #include "mbsimControl/signal_.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /** Signal which value if given by a external resource. E.g. Cosimulation */
   class ExternSignalSource : public Signal {

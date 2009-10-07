@@ -9,9 +9,10 @@
 #include "openmbvcppinterface/frustum.h"
 #endif
 
-using namespace MBSim;
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimPowertrain;
 
 class Moment : public Function1<fmatvec::Vec, double> {
   double M0;

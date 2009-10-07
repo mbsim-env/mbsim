@@ -26,7 +26,7 @@
 
 #include "mbsimControl/signal_processing_system.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /*!
    * \brief LinearTransferSystem
@@ -41,7 +41,7 @@ namespace MBSim {
       
       void calcxSize() {xSize=A.rows(); }
       
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void updatedx(double t, double dt);
       void updatexd(double t);

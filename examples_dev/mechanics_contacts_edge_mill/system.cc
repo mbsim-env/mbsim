@@ -304,8 +304,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 }
 
-void System::init() {
-  DynamicSystemSolver::init();
+void System::initialize() {
+  DynamicSystemSolver::initialize();
 
   for(unsigned i=0; i<link.size(); i++) {
     dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setDebug(false);

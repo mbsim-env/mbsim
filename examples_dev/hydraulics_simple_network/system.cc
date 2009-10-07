@@ -6,8 +6,9 @@
 #include "mbsimHydraulics/pressure_loss.h"
 
 using namespace std;
-using namespace MBSim;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimHydraulics;
 
 System::System(const string &name, bool unilateral) : Group(name) {
 

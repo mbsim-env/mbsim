@@ -9,7 +9,7 @@ int main (int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
-  sys->init();
+  sys->initialize();
 
   TimeSteppingIntegrator integrator;
 

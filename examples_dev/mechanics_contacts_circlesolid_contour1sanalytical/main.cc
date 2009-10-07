@@ -15,7 +15,7 @@ int main (int argc, char* argv[]) {
 
   DynamicSystemSolver * sys = new System("MBS");
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
-  sys->init();
+  sys->initialize();
 
   //TimeSteppingIntegrator integrator; integrator.setStepSize(1e-4);
   //DOPRI5Integrator integrator; integrator.setMaximalStepSize(1e-4);

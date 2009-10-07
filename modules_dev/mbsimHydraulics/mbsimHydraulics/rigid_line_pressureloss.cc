@@ -27,8 +27,10 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), isActive0(false), gdn(1), unilateral(unilateral_), bilateral(bilateral_), active(false), pLoss(0), linePressureLoss(NULL), closablePressureLoss(NULL) {
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))

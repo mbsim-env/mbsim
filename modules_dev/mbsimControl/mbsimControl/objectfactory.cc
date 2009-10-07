@@ -13,25 +13,25 @@
 
 using namespace std;
 
-namespace MBSim {
+namespace MBSimControl {
 
-  ControlObjectFactory *ControlObjectFactory::instance=NULL;
+  ObjectFactory *ObjectFactory::instance=NULL;
 
-  void ControlObjectFactory::initialize() {
+  void ObjectFactory::initialize() {
     if(instance==0) {
-      instance=new ControlObjectFactory;
-      ObjectFactory::getInstance()->registerObjectFactory(instance);
+      instance=new ObjectFactory;
+      MBSim::ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
   }
 
-  ExtraDynamic * ControlObjectFactory::createExtraDynamic(TiXmlElement *element) {
+  MBSim::ExtraDynamic * ObjectFactory::createExtraDynamic(TiXmlElement *element) {
     if(element==0) return 0;
     if (element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
       return new LinearTransferSystem(element->Attribute("name"));
     return 0;
   }
 
-  Link* ControlObjectFactory::createLink(TiXmlElement *element) {
+  MBSim::Link* ObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMCONTROLNS"ExternSignalSource")
       return new ExternSignalSource(element->Attribute("name"));

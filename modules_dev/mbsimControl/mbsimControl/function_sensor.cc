@@ -20,7 +20,9 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/objectfactory.h"
 
-namespace MBSim {
+using namespace MBSim;
+
+namespace MBSimControl {
       
   FunctionSensor::FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_) : Sensor(name), function(function_) {
     y=(*function)(0);
@@ -37,7 +39,7 @@ namespace MBSim {
 
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    function=ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
+    function=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
   }

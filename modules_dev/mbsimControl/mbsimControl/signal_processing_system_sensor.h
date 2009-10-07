@@ -22,7 +22,7 @@
 
 #include "mbsimControl/sensor.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   class SignalProcessingSystem;
 
@@ -35,7 +35,7 @@ namespace MBSim {
       SignalProcessingSystemSensor(const std::string &name) : Sensor(name), sps(NULL), spsString("") {}
       virtual std::string getType() const {return "SignalProcessingSystemSensor"; }
       void initializeUsingXML(TiXmlElement * element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       
       void setSignalProcessingSystem(SignalProcessingSystem * sps_) {sps=sps_; }
       fmatvec::Vec getSignal();

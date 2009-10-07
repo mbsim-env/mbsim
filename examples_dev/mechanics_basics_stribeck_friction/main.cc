@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   sys->setLinAlg(PseudoInverse);
   sys->setNumJacProj(true);
   sys->setStopIfNoConvergence(true,true);
-  sys->init();
+  sys->initialize();
 
   TimeSteppingIntegrator integrator;
 

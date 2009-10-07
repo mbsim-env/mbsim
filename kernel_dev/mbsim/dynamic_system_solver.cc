@@ -74,7 +74,7 @@ namespace MBSim {
 
   DynamicSystemSolver::~DynamicSystemSolver() {} 
 
-  void DynamicSystemSolver::init() {
+  void DynamicSystemSolver::initialize() {
 #ifdef _OPENMP
     omp_set_nested(true);
 #endif

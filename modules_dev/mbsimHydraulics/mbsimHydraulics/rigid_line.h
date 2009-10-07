@@ -22,7 +22,11 @@
 
 #include "mbsimHydraulics/hline.h"
 
-namespace MBSim {
+namespace MBSimControl {
+  class Signal;
+}
+
+namespace MBSimHydraulics {
 
   class LinePressureLoss;
 
@@ -36,7 +40,7 @@ namespace MBSim {
       double getDiameter() const {return diameter; }
       void setLinePressureLoss(LinePressureLoss * pL_) {pL=pL_; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement *element);
     private:
@@ -46,7 +50,6 @@ namespace MBSim {
 
 
   class ClosablePressureLoss;
-  class Signal;
 
   /*! ClosableRigidLine */
   class ClosableRigidLine : public RigidLine {
@@ -56,8 +59,8 @@ namespace MBSim {
 
       void setClosablePressureLoss(ClosablePressureLoss * cpL_) {cpL=cpL_; }
       ClosablePressureLoss * getClosablePressureLoss() const {return cpL; }
-      void setSignal(Signal * s) {cpLSignal = s; }
-      Signal * getSignal() const {return cpLSignal; }
+      void setSignal(MBSimControl::Signal * s) {cpLSignal = s; }
+      MBSimControl::Signal * getSignal() const {return cpLSignal; }
       void setMinimalValue(double v) {cpLMinValue=v; }
       double getMinimalValue() const {return cpLMinValue; }
       void setUnilateral(bool u=true) {cpLUnilateral=u; }
@@ -65,12 +68,12 @@ namespace MBSim {
       bool isClosed() const;
       double getRegularizedValue() const;
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement *element);
     private:
       ClosablePressureLoss * cpL;
-      Signal * cpLSignal;
+      MBSimControl::Signal * cpLSignal;
       double cpLMinValue;
       bool cpLUnilateral, cpLBilateral;
   };

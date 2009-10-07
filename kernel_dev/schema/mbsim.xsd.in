@@ -1248,7 +1248,14 @@
 
   <xs:element name="SpringDamper" substitutionGroup="LinkMechanics" type="SpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern.
+        Definiert ein Feder-Dämpfer Element als Verbindung zwischen zwei Körpern. Es wird zwischen einer gerichteten Verbindung und einer Punkt-zu-Punkt-Verbindung unterschieden.
+        <p>
+          <i>Punkt-zu-Punkt-Verbindung.</i> Die Kraft des Feder-Dämpfer-Elements wird aus dem Abstand der verbundenen Punkte und der in diese Richtung projezierten relativen Geschwindigkeit berechnet. Der Abstand ist dabei immer positiv. Die Kraft wird ebenfalls in diese Richtung aufgebracht.
+        </p>
+        <p>
+          <i>Gerichtete Verbindung.</i> Die Kraft des Feder-Dämpfer-Elements wird aus dem in die Richtung der angegebenen Projektionsrichtung projezierten Verbindungsvektor der beiden verbundenen Punkte sowie der in diese Richtung projezierten Relativgeschwindigkeit berechnet. Die Kraft wird in der angegebenen Projektionsrichtung aufgebracht. <br/>
+          <b>Achtung!</b> Durch eine falsche Wahl der Projektionsrichtung wird unter Umständen das Momentengleichgewicht nicht mehr erfüllt.
+        </p>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="SpringDamperType">

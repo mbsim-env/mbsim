@@ -23,11 +23,14 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   class ControlvalveAreaSignal : public Signal {
     public:
@@ -113,19 +116,29 @@ namespace MBSim {
     lAT->setDiameter(d);
     lBT->setDiameter(d);
   }
-  void Controlvalve43::setAlpha(double alpha) {
+  void Controlvalve43::setAlpha(double alpha, double alphaBack) {
+    if (alphaBack<epsroot())
+      alphaBack=alpha;
+    if ((alpha<0)||(alpha>1)) {
+      cout << "Error in \"" << getPath() << "\": alpha must be in the range of 0..1!" << endl;
+      throw(123);
+    }
+    if ((alphaBack<0)||(alphaBack>1)) {
+      cout << "Error in \"" << getPath() << "\": alphaBack must be in the range of 0..1!" << endl;
+      throw(123);
+    }
     RelativeAlphaClosablePressureLoss * plPA = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plPB = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plAT = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plBT = new RelativeAlphaClosablePressureLoss();
     plPA->setAlpha(alpha);
     plPB->setAlpha(alpha);
-    plAT->setAlpha(alpha);
-    plBT->setAlpha(alpha);
+    plAT->setAlpha(alphaBack);
+    plBT->setAlpha(alphaBack);
     lPA->setClosablePressureLoss(plPA);
-    lPB->setClosablePressureLoss(plPA);
-    lAT->setClosablePressureLoss(plPA);
-    lBT->setClosablePressureLoss(plPA);
+    lPB->setClosablePressureLoss(plPB);
+    lAT->setClosablePressureLoss(plAT);
+    lBT->setClosablePressureLoss(plBT);
   }
   void Controlvalve43::setMinimalRelativeAlpha(double minRelAlpha_) {
     lPA->setMinimalValue(minRelAlpha_);
@@ -184,9 +197,14 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"alpha");
-    setAlpha(getDouble(e));
+    double a=getDouble(e);
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"alphaBackflow");
+    double aT=0;
+    if (e)
+      aT=getDouble(e);
+    setAlpha(a, aT);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativeAlphaPA");
-    Function1<double, double> * relAlphaPA_=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    Function1<double, double> * relAlphaPA_=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
     relAlphaPA_->initializeUsingXML(e->FirstChildElement());
     setPARelativeAlphaFunction(relAlphaPA_);
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"minimalRelativeAlpha");

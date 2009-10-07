@@ -28,8 +28,10 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   void DimensionlessLine::init(InitStage stage) {
     if(stage==MBSim::preInit) {
@@ -127,7 +129,7 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"planeLeakagePressureLoss");
-    PlaneLeakagePressureLoss *p=(PlaneLeakagePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    PlaneLeakagePressureLoss *p=(PlaneLeakagePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
     setPlaneLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -153,7 +155,7 @@ namespace MBSim {
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"height");
     setGapHeight(getDouble(e));
     e = element->FirstChildElement(MBSIMHYDRAULICSNS"circularLeakagePressureLoss");
-    CircularLeakagePressureLoss *p=(CircularLeakagePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    CircularLeakagePressureLoss *p=(CircularLeakagePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
     setCircularLeakagePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }

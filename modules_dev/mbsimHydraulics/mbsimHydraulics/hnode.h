@@ -30,7 +30,7 @@ namespace OpenMBV {
 };
 #endif
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   class HLine;
   class HydFluid;
@@ -43,7 +43,7 @@ namespace MBSim {
   };
 
   /*! HNode */
-  class HNode : public Link {
+  class HNode : public MBSim::Link {
     public:
       HNode(const std::string &name);
       ~HNode() {};
@@ -60,7 +60,7 @@ namespace MBSim {
       void calcgdSize() {gdSize=1; }
       void calcgdSizeActive() {calcgdSize(); }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
       virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
@@ -103,14 +103,14 @@ namespace MBSim {
       ConstrainedNode(const std::string &name) : HNode(name), pFun(NULL) {}
       virtual std::string getType() const { return "ConstrainedNode"; }
 
-      void setpFunction(Function1<double,double> * pFun_) {pFun=pFun_; }
+      void setpFunction(MBSim::Function1<double,double> * pFun_) {pFun=pFun_; }
 
       void updateg(double t);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
 
     private:
-      Function1<double,double> * pFun;
+      MBSim::Function1<double,double> * pFun;
   };
 
 
@@ -120,7 +120,7 @@ namespace MBSim {
       EnvironmentNode(const std::string &name) : HNode(name) {}
       virtual std::string getType() const { return "EnvironmentNode"; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
   };
 
 
@@ -137,7 +137,7 @@ namespace MBSim {
 
       void calcxSize() {xSize=1; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
 
       void updatexRef(const fmatvec::Vec &xParent);
@@ -167,7 +167,7 @@ namespace MBSim {
       void calclaSizeForActiveg() {laSize=1; }
       void calcrFactorSize() {rFactorSize=1; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void updatewbRef(const fmatvec::Vec& wbParent);
 

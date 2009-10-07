@@ -30,8 +30,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   void RigidLine::init(InitStage stage) {
     if (stage==MBSim::modelBuildup) {
@@ -54,7 +55,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
-    LinePressureLoss *p=(LinePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
     setLinePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }
@@ -88,7 +89,7 @@ namespace MBSim {
     RigidLine::initializeUsingXML(element);
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"closableLinePressureLoss");
-    ClosablePressureLoss *p=(ClosablePressureLoss*)(ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    ClosablePressureLoss *p=(ClosablePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
     setClosablePressureLoss(p);
     p->initializeUsingXML(e->FirstChildElement());
   }

@@ -23,21 +23,24 @@
 #include "mbsim/link.h"
 #include "mbsimControl/signal_interface.h"
 
-namespace MBSim {
 
+namespace MBSim {
   class DynamicSystem;
+}
+
+namespace MBSimControl {
 
   /*!
    * \brief Signal
    * \author Markus Schneider
    */
-  class Signal : public Link, public SignalInterface {
+  class Signal : public MBSim::Link, public SignalInterface {
 
     public:
       Signal(const std::string &name) : Link(name) {}
       Signal * getSignalByPath(std::string path);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updateg(double t) {getSignal(); }; // at least one signal-update

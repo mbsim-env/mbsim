@@ -4,7 +4,7 @@
 #include "rigid_body_with_1d_relative_motion.h"
 #include <vector.h>
 
-namespace MBSim {
+namespace MBSimPowertrain {
 
   class Shaft : public RigidBodyWith1DRelativeMotion { 
     protected:
@@ -15,7 +15,7 @@ namespace MBSim {
 
       void updateKinematicsForSelectedFrame(double t); 
       void updateJacobiansForSelectedFrame(double t); 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
   };
 
 }

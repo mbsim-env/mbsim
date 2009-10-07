@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
   DynamicSystemSolver *sys = new Pendulum("TS");
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
-  sys->init();
+  sys->initialize();
 
   // LSODEIntegrator integrator;
   // RKSuiteIntegrator integrator;

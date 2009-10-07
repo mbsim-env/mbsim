@@ -22,7 +22,7 @@
 
 #include "mbsimHydraulics/hline.h"
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   /*! DimensionlessLine */
   class DimensionlessLine : public HLine {
@@ -41,7 +41,7 @@ namespace MBSim {
       void calcuSize(int j) {uSize[j]=0; }
       
       void initializeUsingXML(TiXmlElement *element);
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void plot(double t, double dt);
     protected:
       fmatvec::Vec Q;
@@ -57,14 +57,14 @@ namespace MBSim {
       Leakage0DOF(const std::string &name) : DimensionlessLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
       virtual std::string getType() const { return "Leakage0DOF"; }
 
-      void setGapLengthSignal(Signal * s) {glSignal=s; }
+      void setGapLengthSignal(MBSimControl::Signal * s) {glSignal=s; }
       double getGapLength() const;
-      void setSurface1VelocitySignal(Signal * s) {s1vSignal=s; }
+      void setSurface1VelocitySignal(MBSimControl::Signal * s) {s1vSignal=s; }
       double getSurface1Velocity() const;
-      void setSurface2VelocitySignal(Signal * s) {s2vSignal=s; }
+      void setSurface2VelocitySignal(MBSimControl::Signal * s) {s2vSignal=s; }
       double getSurface2Velocity() const;
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void updateStateDependentVariables(double t);
 
@@ -72,7 +72,7 @@ namespace MBSim {
     protected:
       LeakagePressureLoss * lpl;
     private:
-      Signal *s1vSignal, *s2vSignal, *glSignal;
+      MBSimControl::Signal *s1vSignal, *s2vSignal, *glSignal;
       std::string s1vPath, s2vPath, glPath;
   };
 
@@ -104,7 +104,7 @@ namespace MBSim {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement * element);
     private:

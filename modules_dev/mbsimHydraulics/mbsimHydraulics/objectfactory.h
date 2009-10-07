@@ -27,21 +27,28 @@
 #define MBSIMHYDRAULICSNS "{http://mbsim.berlios.de/MBSimHydraulics}"
 
 namespace MBSim {
+  class Group;
+  class Object;
+  class Link;
+  class Environment;
+}
 
-  class HydraulicsObjectFactory : protected ObjectFactory {
+namespace MBSimHydraulics {
+
+  class ObjectFactory : protected MBSim::ObjectFactory {
     private:
-      static HydraulicsObjectFactory *instance;
-      HydraulicsObjectFactory() {}
+      static ObjectFactory *instance;
+      ObjectFactory() {}
     public:
       // This static function must be called before the ObjectFactory is usend to create
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      Group* createGroup(TiXmlElement *element);
-      Object* createObject(TiXmlElement *element);
-      Link* createLink(TiXmlElement *element);
-      Environment *getEnvironment(TiXmlElement *element);
-      Function1<double, double> * createFunction1_SS(TiXmlElement *element);
+      MBSim::Group* createGroup(TiXmlElement *element);
+      MBSim::Object* createObject(TiXmlElement *element);
+      MBSim::Link* createLink(TiXmlElement *element);
+      MBSim::Environment *getEnvironment(TiXmlElement *element);
+      MBSim::Function1<double, double> * createFunction1_SS(TiXmlElement *element);
   };
 
 }
