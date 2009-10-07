@@ -208,25 +208,33 @@ For installation of \MBSim{} one types
 \begin{verbatim}
  cd $HOME/MBSim
  svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
- cd $HOME/MBSim/kernel
+ cd $HOME/MBSim/mbsim/kernel
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
- cd $HOME/MBSim/modules/mbsimControl
+ cd $HOME/MBSim/mbsim/modules/mbsimControl
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the signal processing and control module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
- cd $HOME/MBSim/modules/mbsimHydraulics
+ cd $HOME/MBSim/mbsim/modules/mbsimHydraulics
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the hydraulics module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
- cd $HOME/MBSim/modules/mbsimElectronics
+ cd $HOME/MBSim/mbsim/modules/mbsimElectronics
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
- cd $HOME/MBSim/mbsimxml
+ cd $HOME/MBSim/mbsim/modules/mbsimPowerTrain
+\end{verbatim}
+Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the module for gears and to create a Doxygen HTML class documentation. 
+\begin{verbatim}
+ cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the xml module and to create a Doxygen HTML class documentation. 
+\begin{verbatim}
+ cd $HOME/MBSim/mbsim/kernel
+\end{verbatim}
+Invoke \texttt{make xmldoc} to create an HTML class documentation of the XML interface. 
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{MBSimAddOns}
