@@ -24,12 +24,15 @@
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
+  class TabularFunction1_VS;
+}
+
+namespace MBSimHydraulics {
 
   class HydlinePressureloss;
-  class TabularFunction1_VS;
 
   /*! PressureLoss */
-  class PressureLoss : public Function1<double,double> {
+  class PressureLoss : public MBSim::Function1<double,double> {
     public:
       PressureLoss() : initialized(false) {}
     protected:
@@ -102,7 +105,7 @@ namespace MBSim {
       void initializeUsingXML(TiXmlElement *element);
     private:
       double c, dRef, dHyd, dHydNeg, k, ReynoldsFactor, ReynoldsFactorNeg;
-      TabularFunction1_VS * lambdaTabular;
+      MBSim::TabularFunction1_VS * lambdaTabular;
   };
 
 

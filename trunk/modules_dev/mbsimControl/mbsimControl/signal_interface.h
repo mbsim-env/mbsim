@@ -22,7 +22,7 @@
 
 #include "fmatvec.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /*!
    * Interface for getting values out of objets, links and extra dynamic interfaces

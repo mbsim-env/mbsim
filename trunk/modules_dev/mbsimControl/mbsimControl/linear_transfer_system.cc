@@ -29,7 +29,7 @@
 using namespace std;
 using namespace fmatvec;
 
-namespace MBSim {
+namespace MBSimControl {
 
   LinearTransferSystem::LinearTransferSystem(const string& name) : SignalProcessingSystem(name), R1(.002), R2(1.), c(1.) {
   }
@@ -87,7 +87,7 @@ namespace MBSim {
     xd=A*x+B*inputSignal->getSignal();
   }
 
-  void LinearTransferSystem::init(InitStage stage) {
+  void LinearTransferSystem::init(MBSim::InitStage stage) {
     if (stage==MBSim::resize) {
       SignalProcessingSystem::init(stage);
       x.resize(xSize, INIT, 0);

@@ -23,7 +23,7 @@
 #include "mbsimControl/sensor.h"
 #include "mbsim/utils/function.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /*!
    * \brief FunctionSensor
@@ -32,14 +32,14 @@ namespace MBSim {
   class FunctionSensor : public Sensor {
     public:
       FunctionSensor(const std::string &name) : Sensor(name), function(NULL), y(0) {}
-      FunctionSensor(const std::string &name, Function1<fmatvec::Vec, double>* function_);
+      FunctionSensor(const std::string &name, MBSim::Function1<fmatvec::Vec, double>* function_);
       std::string getType() const { return "FunctionSensor"; }
-      void setFunction(Function1<fmatvec::Vec, double>* function_);
+      void setFunction(MBSim::Function1<fmatvec::Vec, double>* function_);
       fmatvec::Vec getSignal() {return y; }
       void updateg(double t);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      Function1<fmatvec::Vec, double> * function;
+      MBSim::Function1<fmatvec::Vec, double> * function;
       fmatvec::Vec y;
   };
 

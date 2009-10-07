@@ -22,10 +22,11 @@
 #include "mbsimControl/objectfactory.h"
 //#include "mbsim/dynamic_system_solver.h"
 
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimControl {
 
   Actuator::Actuator(const string &name) : LinkMechanics(name), signal(0), KOSYID(1) {
   }

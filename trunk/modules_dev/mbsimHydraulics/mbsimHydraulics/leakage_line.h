@@ -22,12 +22,15 @@
 
 #include "mbsimHydraulics/hline.h"
 
-namespace MBSim {
+namespace MBSimControl {
+  class Signal;
+}
+
+namespace MBSimHydraulics {
 
   class LeakagePressureLoss;
   class PlaneLeakagePressureLoss;
   class CircularLeakagePressureLoss;
-  class Signal;
 
   /*! LeakageLine */
   class LeakageLine : public RigidHLine {
@@ -35,20 +38,20 @@ namespace MBSim {
       LeakageLine(const std::string &name) : RigidHLine(name), lpl(NULL), s1vSignal(NULL), s2vSignal(NULL), glSignal(NULL), s1vPath(""), s2vPath(""), glPath("") {}
       virtual std::string getType() const { return "LeakageLine"; }
 
-      void setGapLengthSignal(Signal * s) {glSignal=s; }
+      void setGapLengthSignal(MBSimControl::Signal * s) {glSignal=s; }
       double getGapLength() const;
-      void setSurface1VelocitySignal(Signal * s) {s1vSignal=s; }
+      void setSurface1VelocitySignal(MBSimControl::Signal * s) {s1vSignal=s; }
       double getSurface1Velocity() const;
-      void setSurface2VelocitySignal(Signal * s) {s2vSignal=s; }
+      void setSurface2VelocitySignal(MBSimControl::Signal * s) {s2vSignal=s; }
       double getSurface2Velocity() const;
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement * element);
     protected:
       LeakagePressureLoss * lpl;
     private:
-      Signal *s1vSignal, *s2vSignal, *glSignal;
+      MBSimControl::Signal *s1vSignal, *s2vSignal, *glSignal;
       std::string s1vPath, s2vPath, glPath;
   };
 
@@ -64,7 +67,7 @@ namespace MBSim {
       double getGapHeight() const {return hGap; }
       void setPlaneLeakagePressureLoss(PlaneLeakagePressureLoss * plpl);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement * element);
     private:
@@ -84,7 +87,7 @@ namespace MBSim {
       double getOuterRadius() const {return rO; }
       void setCircularLeakagePressureLoss(CircularLeakagePressureLoss * clpl);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
 
       void initializeUsingXML(TiXmlElement * element);
     private:

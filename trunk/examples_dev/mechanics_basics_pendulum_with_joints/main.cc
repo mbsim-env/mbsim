@@ -23,7 +23,7 @@ int main (int argc, char* argv[]) {
 
   DynamicSystemSolver *sys = new System("MBS");
 
-  sys->init();
+  sys->initialize();
 
   DOPRI5Integrator integrator;
 

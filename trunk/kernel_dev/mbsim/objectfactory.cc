@@ -188,7 +188,7 @@ namespace MBSim {
   void MBSimObjectFactory::initialize() {
     if(instance==0) {
       instance=new MBSimObjectFactory;
-      ObjectFactory::getInstance()->registerObjectFactory(instance);
+      MBSim::ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
   }
 

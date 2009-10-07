@@ -152,8 +152,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 }
 
-void System::init() {
-  DynamicSystemSolver::init();
+void System::initialize() {
+  DynamicSystemSolver::initialize();
   rod->updateStateDependentVariables(0.);
 
   for(unsigned int i=0;i<balls.size();i++) {

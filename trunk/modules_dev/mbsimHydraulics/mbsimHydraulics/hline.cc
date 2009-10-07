@@ -26,11 +26,13 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   void HLine::init(InitStage stage) {
-    if (stage==MBSim::preInit) {
+    if (stage==preInit) {
       Object::init(stage);
       if (!nFrom) { cerr<<"ERROR! HLine \""<<name<<"\" has no fromNode!"<<endl; _exit(1); }
       if (!nTo) { cerr<<"ERROR! HLine \""<<name<<"\" has no toNode!"<<endl; _exit(1); }

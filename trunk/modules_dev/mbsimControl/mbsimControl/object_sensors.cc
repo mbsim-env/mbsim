@@ -23,8 +23,9 @@
 #include "mbsim/dynamic_system.h"
 
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimControl {
 
   void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");

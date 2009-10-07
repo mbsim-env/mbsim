@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
   DynamicSystemSolver *sys = new Robot("TS");
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
-  sys->init();
+  sys->initialize();
 
   //LSODARIntegrator integrator;
   //LSODEIntegrator integrator;

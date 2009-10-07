@@ -1171,7 +1171,7 @@ namespace MBSim {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"contactForceLaw");
-    GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->getInstance()->createGeneralizedForceLaw(e->FirstChildElement());
+    GeneralizedForceLaw *gfl=ObjectFactory::getInstance()->createGeneralizedForceLaw(e->FirstChildElement());
     setContactForceLaw(gfl);
     gfl->initializeUsingXML(e->FirstChildElement());
     e=e->NextSiblingElement();

@@ -23,10 +23,10 @@
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include "mbsim/environment.h"
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   /*! HydraulicEnvironment */
-  class HydraulicEnvironment : public Environment {
+  class HydraulicEnvironment : public MBSim::Environment {
     private:
       double rhoConstant, dVdT, rho0, T0, dRhodT;
       double (HydraulicEnvironment::*calcRho)(double T);

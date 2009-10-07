@@ -7,8 +7,10 @@
 #include "mbsimControl/function_sensor.h"
 
 using namespace std;
-using namespace MBSim;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimControl;
+using namespace MBSimHydraulics;
 
 System::System(const string &name, bool bilateral, bool unilateral) : Group(name) {
 

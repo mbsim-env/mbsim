@@ -23,8 +23,9 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimControl {
 
   SignalProcessingSystem::SignalProcessingSystem(const string &name) : ExtraDynamic(name), inputSignal(NULL), inputSignalString("") {
   }
@@ -50,7 +51,7 @@ namespace MBSim {
   }
 
   void SignalProcessingSystem::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
+    if (stage==resolveXMLPath) {
       if (inputSignalString!="") {
         Signal * s = getSignalByPath(inputSignalString);
         setInputSignal(s);

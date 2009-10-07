@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
   sys->setConstraintSolver(RootFinding);
   sys->setImpactSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);
-  sys->init();
+  sys->initialize();
 
   TimeSteppingIntegrator integrator;
 

@@ -8,8 +8,9 @@
 #include <time.h>
 
 using namespace std;
-using namespace MBSim;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimHydraulics;
 
 int main (int argc, char* argv[]) {
 
@@ -36,7 +37,7 @@ int main (int argc, char* argv[]) {
 //    dss->setConstraintSolver(GaussSeidel);
 //    dss->setImpactSolver(GaussSeidel);
     dss->setgdTol(1e-9);
-    dss->init();
+    dss->initialize();
 
     double tEnd=1e-3;
     double dtPlot=1e-6;

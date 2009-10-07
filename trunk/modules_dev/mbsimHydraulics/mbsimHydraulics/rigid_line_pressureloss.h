@@ -22,7 +22,7 @@
 
 #include "mbsim/link.h"
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   class RigidHLine; 
   class PressureLoss;
@@ -31,13 +31,13 @@ namespace MBSim {
   class LeakagePressureLoss;
 
   /*! RigidLinePressureLoss */
-  class RigidLinePressureLoss : public Link {
+  class RigidLinePressureLoss : public MBSim::Link {
     public:
       RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
       virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void plot(double t, double dt);
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       // ================================
       // Methods from init-Process
       // ================================

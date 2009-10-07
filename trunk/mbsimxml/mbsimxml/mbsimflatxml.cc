@@ -77,7 +77,7 @@ int MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolve
   if(strcmp(argv[1],"--donotintegrate")==0)
     dss->setTruncateSimulationFiles(false);
 
-  dss->init();
+  dss->initialize();
   return 0;
 }
 

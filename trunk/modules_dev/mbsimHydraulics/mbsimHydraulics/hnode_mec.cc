@@ -30,10 +30,11 @@
 #include "openmbvcppinterface/arrow.h"
 #endif
 
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   HNodeMec::HNodeMec(const string &name) : HNode(name), QMecTrans(0), QMecRot(0), QMec(0), V0(0), nTrans(0), nRot(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -448,7 +449,7 @@ namespace MBSim {
   void ConstrainedNodeMec::initializeUsingXML(TiXmlElement *element) {
     HNodeMec::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
-    pFun=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    pFun=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()); 
     pFun->initializeUsingXML(e->FirstChildElement());
   }
 

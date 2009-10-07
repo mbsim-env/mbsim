@@ -36,7 +36,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"direction");
     setDirection(Element::getVec(e,3));
     e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+    pos=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
@@ -99,7 +99,7 @@ namespace MBSim {
     ee=element->FirstChildElement(MBSIMNS"direction2");
     setDirections(Element::getVec(e,3), Element::getVec(ee,3));
     e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement());
+    pos=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 

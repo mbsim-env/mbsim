@@ -3,14 +3,12 @@
 
 #include "mbsim/group.h"
 
-namespace MBSim {
+namespace MBSimPowertrain {
 
-  class PlanetaryGear : public Group { 
+  class PlanetaryGear : public MBSim::Group { 
     protected:
 
-
     public:
-
       PlanetaryGear(const std::string &name);
   };
 

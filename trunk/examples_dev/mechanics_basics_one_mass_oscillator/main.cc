@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
   DynamicSystemSolver *sys = new System("TS");
 
   // add modules to overall dynamical system 
-  sys->init();
+  sys->initialize();
 
   TimeSteppingIntegrator integrator;
   integrator.setStepSize(1e-4);

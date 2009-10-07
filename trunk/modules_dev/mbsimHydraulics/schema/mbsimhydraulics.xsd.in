@@ -414,7 +414,11 @@
           <xs:element name="surfaceRoughness" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Rohrrauhigkeit <object class="inlineeqn">k</object>
+                Rohrrauhigkeit <object class="inlineeqn">k</object><br/>
+                Anhaltswerte:<br/>
+                Stahl, nahtlos, neu: <object class="inlineeqn">k=0.02 \ldots 0.1 \, \text{mm}</object><br/>
+                Stahl, längsgeschweißt, neu: <object class="inlineeqn">k=0.01 \ldots 0.1 \, \text{mm}</object><br/>
+                Kupfer/ Messing/ Bronze/ Leichtmetall/ Glas, gezogen oder gepresst, neu: <object class="inlineeqn">k=0.0013 \ldots 0.0015 \, \text{mm}</object><br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1573,7 +1577,15 @@
           <xs:element name="alpha" type="pv:nounitScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Durchflusskoeffiziente der Ventilblende
+                Durchflusskoeffiziente der Ventilblende <object class="inlineeqn">\alpha</object>. ( Anhaltswert <object class="inlineeqn">\alpha \approx 0.7 </object>; vgl <i>Matthies, Renius: Einführung in die Ölhydraulik, Kap. "Druckabfall in Wegeventilen"</i> )
+
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="alphaBackflow" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Durchflusskoeffiziente der Ventilblende in Rücklaufrichtung <object class="inlineeqn">\alpha_T</object> (<object class="inlineeqn">Q_{AT}</object> und <object class="inlineeqn">Q_{BT}</object>). Wird dieser Wert nicht gesetzt, so wird der Wert <object class="inlineeqn">\alpha</object> verwendet.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

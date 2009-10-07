@@ -21,8 +21,9 @@
 #endif
 
 using namespace std;
-using namespace MBSim;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimHydraulics;
 
 string getBodyName(int i) {
   string name;

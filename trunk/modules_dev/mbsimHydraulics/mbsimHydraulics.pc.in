@@ -5,7 +5,7 @@ includedir=@includedir@
 
 SCHEMA=@datadir@/@PACKAGE@/schema/mbsimhydraulics.xsd
 NAMESPACE=http://mbsim.berlios.de/MBSimHydraulics
-INITIALIZEFUNC=HydraulicsObjectFactory::initialize()
+INITIALIZEFUNC=MBSimHydraulics::ObjectFactory::initialize()
 INITIALIZEHEADER=mbsimHydraulics/objectfactory.h
 
 Name: mbsimHydraulics

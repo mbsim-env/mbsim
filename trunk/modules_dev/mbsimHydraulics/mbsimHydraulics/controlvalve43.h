@@ -23,29 +23,32 @@
 #include "mbsim/group.h"
 #include "mbsim/utils/function.h"
 
-namespace MBSim {
+namespace MBSimControl {
+  class Signal;
+}
+
+namespace MBSimHydraulics {
 
   class ClosableRigidLine;
   class RigidNode;
-  class Signal;
   class HLine;
 
   /*! Controlvalve43 */
-  class Controlvalve43 : public Group {
+  class Controlvalve43 : public MBSim::Group {
     public:
       Controlvalve43(const std::string& name);
       HLine * getHLineByPath(std::string path);
-      Signal * getSignalByPath(std::string path);
-      void init(InitStage stage);
+      MBSimControl::Signal * getSignalByPath(std::string path);
+      void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement * element);
 
       void setLength(double l_);
       void setDiameter(double d_);
-      void setAlpha(double alpha_);
-      void setPARelativeAlphaFunction(Function1<double, double> * relAlphaPA_) {relAlphaPA=relAlphaPA_; } 
+      void setAlpha(double alpha_, double alphaBack_=0);
+      void setPARelativeAlphaFunction(MBSim::Function1<double, double> * relAlphaPA_) {relAlphaPA=relAlphaPA_; } 
       void setMinimalRelativeAlpha(double minRelAlpha_);
       void setOffset(double off) {offset=off; }
-      void setRelativePositionSignal(Signal * s) {position = s; }
+      void setRelativePositionSignal(MBSimControl::Signal * s) {position = s; }
       void setSetValued(bool setValued=true);
       void setPInflow(HLine * hl);
       void setAOutflow(HLine * hl);
@@ -56,9 +59,9 @@ namespace MBSim {
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
       RigidNode * nP, * nA, * nB, * nT;
       double offset;
-      Function1<double, double> * relAlphaPA;
-      Signal * position;
-      Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
+      MBSim::Function1<double, double> * relAlphaPA;
+      MBSimControl::Signal * position;
+      MBSimControl::Signal * checkSizeSignalPA, * checkSizeSignalPB, * checkSizeSignalAT, * checkSizeSignalBT;
     
     private:
       std::string positionString;

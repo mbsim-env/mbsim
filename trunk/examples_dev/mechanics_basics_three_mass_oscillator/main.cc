@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   sys->setgdTol(1e-9);
   sys->setReorganizeHierarchy(reorganize);
 
-  sys->init();
+  sys->initialize();
 
   double dtPlot=1e-4;
   clock_t start, end;

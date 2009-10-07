@@ -24,7 +24,7 @@
 
 class ansatz_function;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
   /*! ElasticLineGalerkin */
   class ElasticLineGalerkin : public HLine {
@@ -67,7 +67,7 @@ namespace MBSim {
       fmatvec::Vec getInflowFactor() {return -Area*wE; }
       fmatvec::Vec getOutflowFactor() {return Area*wA; }
 
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       void calcqSize() {qSize=mdim; }
       void calcuSize(int j) {uSize[j]=mdim; }
 

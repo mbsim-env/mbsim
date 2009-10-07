@@ -22,7 +22,7 @@
 
 #include "mbsimControl/signal_.h"
 
-namespace MBSim {
+namespace MBSimControl {
 
   /*!
    * \brief Sensor

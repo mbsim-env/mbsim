@@ -2,8 +2,10 @@
 #include "mbsim/userfunction.h"
 #include "mbsimElectronics/simulation_classes.h"
 
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimElectronics;
 // Just a test voltage signal
 class Signal : public MBSim::UserFunction {
   public:

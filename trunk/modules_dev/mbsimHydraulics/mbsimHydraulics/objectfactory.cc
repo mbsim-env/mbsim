@@ -29,21 +29,22 @@
 #include "mbsimHydraulics/dimensionless_line.h"
 
 using namespace std;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimHydraulics {
 
-  HydraulicsObjectFactory *HydraulicsObjectFactory::instance=NULL;
+  ObjectFactory *ObjectFactory::instance=NULL;
 
 
-  void HydraulicsObjectFactory::initialize() {
+  void ObjectFactory::initialize() {
     if(instance==0) {
-      instance=new HydraulicsObjectFactory;
-      ObjectFactory::getInstance()->registerObjectFactory(instance);
+      instance=new ObjectFactory;
+      MBSim::ObjectFactory::getInstance()->registerObjectFactory(instance);
     }
   }
 
 
-  Function1<double, double> * HydraulicsObjectFactory::createFunction1_SS(TiXmlElement * element) {
+  Function1<double, double> * ObjectFactory::createFunction1_SS(TiXmlElement * element) {
     if (element==0) return 0;
     if (element->ValueStr()==MBSIMHYDRAULICSNS"SerialResistanceLinePressureLoss")
       return new SerialResistanceLinePressureLoss();
@@ -76,7 +77,7 @@ namespace MBSim {
   }
 
 
-  Object * HydraulicsObjectFactory::createObject(TiXmlElement * element) {
+  Object * ObjectFactory::createObject(TiXmlElement * element) {
     if (element==0) return 0;
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RigidLine")
       return new RigidLine(element->Attribute("name"));
@@ -94,7 +95,7 @@ namespace MBSim {
   }
 
 
-  Link* HydraulicsObjectFactory::createLink(TiXmlElement *element) {
+  Link* ObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedNode")
       return new ConstrainedNode(element->Attribute("name"));
@@ -116,7 +117,7 @@ namespace MBSim {
   }
 
 
-  Environment* HydraulicsObjectFactory::getEnvironment(TiXmlElement *element) {
+  Environment* ObjectFactory::getEnvironment(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"HydraulicEnvironment")
       return HydraulicEnvironment::getInstance();
@@ -124,7 +125,7 @@ namespace MBSim {
   }
 
 
-  Group * HydraulicsObjectFactory::createGroup(TiXmlElement * element) {
+  Group * ObjectFactory::createGroup(TiXmlElement * element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMHYDRAULICSNS"Controlvalve43")
       return new Controlvalve43(element->Attribute("name"));

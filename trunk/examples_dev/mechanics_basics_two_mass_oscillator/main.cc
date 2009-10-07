@@ -9,7 +9,7 @@ int main (int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("TS");
 
   // add modules to overall dynamical system
-  sys->init();
+  sys->initialize();
 
   // integration
   ThetaTimeSteppingIntegrator integrator;

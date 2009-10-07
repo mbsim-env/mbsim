@@ -7,18 +7,23 @@
 #define MBSIMCONTROLNS "{http://mbsim.berlios.de/MBSimControl}"
 
 namespace MBSim {
+  class ExtraDynamic;
+  class Link;
+}
 
-  class ControlObjectFactory : protected ObjectFactory {
+namespace MBSimControl {
+
+  class ObjectFactory : protected MBSim::ObjectFactory {
     private:
-      static ControlObjectFactory *instance;
-      ControlObjectFactory() {}
+      static ObjectFactory *instance;
+      ObjectFactory() {}
     public:
       // This static function must be called before the ObjectFactory is used to create
       // objects from MBSimObjectFactory
       static void initialize();
     protected:
-      ExtraDynamic * createExtraDynamic(TiXmlElement *element);
-      Link* createLink(TiXmlElement *element);
+      MBSim::ExtraDynamic * createExtraDynamic(TiXmlElement *element);
+      MBSim::Link* createLink(TiXmlElement *element);
   };
 
 }

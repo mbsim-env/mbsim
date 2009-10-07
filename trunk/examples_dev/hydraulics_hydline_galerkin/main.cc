@@ -5,8 +5,9 @@
 #include "system.h"
 
 using namespace std;
-using namespace MBSim;
 using namespace fmatvec;
+using namespace MBSim;
+using namespace MBSimHydraulics;
 
 int main (int argc, char* argv[]) {
 
@@ -83,7 +84,7 @@ int main (int argc, char* argv[]) {
             dss->setImpactSolver(RootFinding);
           }
           dss->setgdTol(1e-9);
-          dss->init();
+          dss->initialize();
 
           double tEnd=.5;
           double dtPlot=1e-4;

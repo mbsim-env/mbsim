@@ -23,9 +23,12 @@
 #include "mbsim/link_mechanics.h"
 
 namespace MBSim {
+  class Frame;
+}
+
+namespace MBSimControl {
   
   class Signal;
-  class Frame;
 
   /*!
    * \brief predefines load between two frames with additional possibility of rotation
@@ -35,7 +38,7 @@ namespace MBSim {
    * \todo remove setUserfunction TODO
    * \todo visualisation TODO
    */
-  class Actuator : public LinkMechanics {
+  class Actuator : public MBSim::LinkMechanics {
     public:
       /**
        * \brief constructor
@@ -55,7 +58,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
-      virtual void init(InitStage stage);
+      virtual void init(MBSim::InitStage stage);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -73,7 +76,7 @@ namespace MBSim {
        * \param first frame to connect
        * \param second frame to connect
        */
-      void connect(Frame *frame1, Frame *frame2);
+      void connect(MBSim::Frame *frame1, MBSim::Frame *frame2);
       
       /**
        * \param local force direction

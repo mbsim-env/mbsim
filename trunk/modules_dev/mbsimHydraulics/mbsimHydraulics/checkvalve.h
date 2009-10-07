@@ -24,23 +24,29 @@
 #include "mbsim/utils/function.h"
 
 namespace MBSim {
-
   class Frame;
   class RigidBody;
   class Contact;
   class SpringDamper;
-  class ClosableRigidLine;
-  class CheckvalveClosablePressureLoss;
-  class GeneralizedCoordinateSensor;
   class GeneralizedImpactLaw;
   class GeneralizedForceLaw;
+}
+
+namespace MBSimControl {
+  class GeneralizedCoordinateSensor;
+}
+
+namespace MBSimHydraulics {
+
+  class ClosableRigidLine;
+  class CheckvalveClosablePressureLoss;
   
   /*! Checkvalve */
   class Checkvalve : public MBSim::Group {
     public:
       Checkvalve(const std::string &name);
       
-      void setFrameOfReference(Frame * ref);
+      void setFrameOfReference(MBSim::Frame * ref);
       void setLineLength(double lLine);
       void setLineDiameter(double lDiameter);
       void setLinePressureLoss(CheckvalveClosablePressureLoss * ccpl);
@@ -48,38 +54,38 @@ namespace MBSim {
       void setLineSetValued(bool setValued=true);
       void setBallMass(double mBall_);
       void setBallInitialPosition(double x0Ball_);
-      void setSpringForceFunction(Function2<double,double,double> *func);
-      void setSeatContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
-      void setSeatContactForceLaw(GeneralizedForceLaw * seatGFL_);
+      void setSpringForceFunction(MBSim::Function2<double,double,double> *func);
+      void setSeatContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
+      void setSeatContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
       void setMaximalOpening(double hMax_) {hMax=hMax_; }
-      void setMaximalContactImpactLaw(GeneralizedImpactLaw * seatGIL_);
-      void setMaximalContactForceLaw(GeneralizedForceLaw * seatGFL_);
+      void setMaximalContactImpactLaw(MBSim::GeneralizedImpactLaw * seatGIL_);
+      void setMaximalContactForceLaw(MBSim::GeneralizedForceLaw * seatGFL_);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBVFrames(bool openMBVFrames_=true) {openMBVFrames=openMBVFrames_; }
       void enableOpenMBVArrows(bool openMBVArrows_=true) {openMBVArrows=openMBVArrows_; }
       void enableOpenMBVBodies(bool openMBVBodies_=true) {openMBVBodies=openMBVBodies_; }
 #endif
 
-      MBSim::ClosableRigidLine * getLine() {return line; }
+      ClosableRigidLine * getLine() {return line; }
       MBSim::RigidBody * getBallSeat() {return ballSeat; }
       MBSim::RigidBody * getBall() {return ball; }
       MBSim::Contact * getSeatContact() {return seatContact; }
       MBSim::Contact * getMaximalContact() {return maxContact; }
       MBSim::SpringDamper * getSpring() {return spring; }
-      MBSim::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
+      MBSimControl::GeneralizedCoordinateSensor * getXOpen() {return xOpen; }
       
-      void init(InitStage stage);
+      void init(MBSim::InitStage stage);
       
       void initializeUsingXML(TiXmlElement * element);
 
     private:
       ClosableRigidLine * line;
-      RigidBody * ballSeat;
-      RigidBody * ball;
-      Contact * seatContact;
-      Contact * maxContact;
-      SpringDamper * spring;
-      GeneralizedCoordinateSensor * xOpen;
+      MBSim::RigidBody * ballSeat;
+      MBSim::RigidBody * ball;
+      MBSim::Contact * seatContact;
+      MBSim::Contact * maxContact;
+      MBSim::SpringDamper * spring;
+      MBSimControl::GeneralizedCoordinateSensor * xOpen;
       unsigned int fromNodeAreaIndex, toNodeAreaIndex;
       double hMax, mBall;
       std::string refFrameString;

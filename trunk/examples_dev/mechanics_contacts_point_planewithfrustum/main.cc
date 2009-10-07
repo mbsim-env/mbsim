@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   sys->setPlotFeature(state, enabled);
   sys->setPlotFeature(globalPosition, enabled);
   sys->setStopIfNoConvergence(true, true);
-  sys->init();
+  sys->initialize();
 
   Integrator * integrator;
   if (setValued) {
