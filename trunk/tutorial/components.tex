@@ -56,9 +56,9 @@ Important settings:
         \item[] \texttt{GaussSeidel}\\
         Gauss-Seidel solution scheme for piecewise linear systems (planar Coulomb friction)
         \item[] \texttt{FixedPointSingle}\\
-        Gauss-Seidel solution scheme with fixed point search and relaxation strategy for spatial Coulomb friction
+        Gauss-Seidel solution scheme with fixed point search and relaxation strategy (spatial Coulomb friction)
         \item[] \texttt{RootFinding}\\
-        damped and globalised Newton scheme for spatial Coulomb friction
+        damped and globalised Newton scheme (spatial Coulomb friction)
         \end{itemize}
 \item[] \texttt{setLinAlg}\\
     linear equations solver for \emph{RootFinding}; available solvers are
@@ -66,7 +66,7 @@ Important settings:
     \item[] \texttt{LUDecomposition}\\
     LU decomposition is only valid for non-singular contact situations
     \item[] \texttt{LevenbergMarquardt}\\
-    regularisation of contact matrix by Levenberg Marquard factor
+    regularisation of contact matrix by Levenberg Marquardt factor
     \item[] \texttt{PseudoInverse}\\
     selecting the norm-minimal solution if there exist several 
     \end{itemize}
@@ -215,15 +215,15 @@ Important settings:
 Contacts and impacts are managed by class \texttt{Contact}.\par
 Important settings: 
 \begin{itemize}
-\item[] \texttt{setContactForceLaw} 
+\item[] \texttt{setContactForceLaw}\\ 
     constitutive normal law on acceleration level
-\item[] \texttt{setContactImpactLaw}
+\item[] \texttt{setContactImpactLaw}\\
     constitutive normal law on velocity level
-\item[] \texttt{setFrictionForceLaw} 
+\item[] \texttt{setFrictionForceLaw}\\
     constitutive friction law on acceleration level
-\item[] \texttt{setFrictionImpactLaw}
+\item[] \texttt{setFrictionImpactLaw}\\
     constitutive friction law on velocity level
-\item[] \texttt{setContactKinematics}
+\item[] \texttt{setContactKinematics}\\
     The relative kinematics is defined between \texttt{Contour} classes. On velocity level the contact kinematics is independent of the specific contour. For the calculations on position level the following contours are available.
     \begin{itemize}
     \item[] \texttt{CircleHollow}\\
