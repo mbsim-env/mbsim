@@ -66,7 +66,7 @@ namespace MBSim {
        * If this function is not set, or frame is NULL, than force calculated by setForceFunction
        * is applied on the two connected frames in the direction of the two connected frames.
        * If this function is set, than this force is first projected in direction dir and then applied on
-       * the two connected frames in the projected direction.
+       * the two connected frames in the projected direction; (!) this might induce violation of the global equality of torques (!).
        * The direction vector dir is given in coordinates of frame refFrame.
        */
       void setProjectionDirection(Frame *refFrame_, fmatvec::Vec dir) { refFrame=refFrame_; forceDir=dir; }
