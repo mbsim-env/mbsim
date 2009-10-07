@@ -43,14 +43,10 @@ namespace MBSim {
       //       (cos(rotAngle),-sin(rotAngle),0,
       //        sin(rotAngle), cos(rotAngle),0,
       //        0,             0,            1);
-      SqrMat AWK(3,INIT,0.);
-      AWK(0,0) = cos(rotAngle);
-      AWK(1,1) = cos(rotAngle);
-      AWK(0,1) = -sin(rotAngle);
-      AWK(1,0) = sin(rotAngle);
-      AWK(2,2) = 1;
-      cp.getFrameOfReference().setOrientation(R.getOrientation() * AWK); // z-rotation
-
+      SqrMat AWK(3,EYE);
+      AWK(0,0) = cos(rotAngle); AWK(0,1) = -sin(rotAngle);
+      AWK(1,0) = sin(rotAngle); AWK(1,1) = cos(rotAngle);
+      cp.getFrameOfReference().setOrientation(R.getOrientation() * AWK);
       cp.getFrameOfReference().setVelocity(R.getOrientation().col(2)* ( static_cast<FlexibleBody2s13Disk*>(parent)->getu()(0) )); // z-translation
 
       double diskAngularVelocity = static_cast<FlexibleBody2s13Disk*>(parent)->getu()(1);
@@ -109,28 +105,37 @@ namespace MBSim {
   }
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::init(const int dU, const int dV, const int nBr, const int nBj, const double &innerRadius, const double &outerRadius) {
-    degU = dU;
-    degV = dV;
-    nr = nBr;
-    nj = nBj;
-    Ri = innerRadius;
-    Ra = outerRadius;
+  void NurbsDisk2s::initContourFromBody(InitStage stage){
+    if(stage==resize){
+      degU = (static_cast<FlexibleBody2s13Disk*>(parent))->getAzimuthalDegree();
+      degV = (static_cast<FlexibleBody2s13Disk*>(parent))->getRadialDegree();
+      nr = (static_cast<FlexibleBody2s13Disk*>(parent))->getRadialNumberOfElements();
+      nj = (static_cast<FlexibleBody2s13Disk*>(parent))->getAzimuthalNumberOfElements();
+      Ri = (static_cast<FlexibleBody2s13Disk*>(parent))->getInnerRadius();
+      Ra = (static_cast<FlexibleBody2s13Disk*>(parent))->getOuterRadius();
 
-    computeUVector(nj+degU);
-    computeVVector(nr+1);
+      computeUVector(nj+degU);
+      computeVVector(nr+1);
 
-    Surface = new PlNurbsSurfaced;
-    SurfaceVelocities = new PlNurbsSurfaced;
-    for(int i=0; i<nr+1; i++) {  
-      for(int j=0; j<nj; j++) {  
-        jacobians.push_back(ContourPointData(i*nj+j));
-        jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
-        jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfRotation().resize();
+      Surface = new PlNurbsSurfaced;
+      SurfaceVelocities = new PlNurbsSurfaced;
+      for(int i=0; i<nr+1; i++) {  
+        for(int j=0; j<nj; j++) {  
+          jacobians.push_back(ContourPointData(i*nj+j));
+          jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfTranslation().resize();
+          jacobians[jacobians.size()-1].getFrameOfReference().getJacobianOfRotation().resize();
+        }
       }
-    }
 
-    for(int k=0; k<nr*nj*3+2; k++) SurfaceJacobians.push_back(PlNurbsSurfaced());
+      for(int k=0; k<nr*nj*3+2; k++) SurfaceJacobians.push_back(PlNurbsSurfaced());
+
+      computeSurface();
+    }
+    else if(stage==worldFrameContourLocation)
+    {
+      R.getOrientation() = (static_cast<FlexibleBody2s13Disk*>(parent))->getFrameOfReference()->getOrientation();
+      R.getPosition()    = (static_cast<FlexibleBody2s13Disk*>(parent))->getFrameOfReference()->getPosition();
+    }
   }
 #endif
 
@@ -241,24 +246,24 @@ namespace MBSim {
     double stepU = 2*M_PI / nj;
     double stepV = ((*vvec)[vvec->size()-1] - (*vvec)[0]) / nr;
     for(int i=0; i<=nr; i++)
-      for(int j=0; j<nj; j++) {
-        cout << "i = " << i << ", j = " << j << endl;
-        Point3Dd PointUV = Surface->pointAt(j*stepU,(*vVec)[0]+i*stepV);
-        cout << "Surface Auswertung = " << PointUV.x() << " "<< PointUV.y() << " " << PointUV.z() << endl;
+    for(int j=0; j<nj; j++) {
+    cout << "i = " << i << ", j = " << j << endl;
+    Point3Dd PointUV = Surface->pointAt(j*stepU,(*vVec)[0]+i*stepV);
+    cout << "Surface Auswertung = " << PointUV.x() << " "<< PointUV.y() << " " << PointUV.z() << endl;
 
-        ContourPointData cp(i*nj+j);
-        (static_cast<FlexibleBody2s13Disk*>(parent))->updateKinematicsForFrame(cp,position);
-        Vec InterpPoint = cp.getFrameOfReference().getPosition();
-        cout << "Interpolationspunkt = " << InterpPoint(0) << " " << InterpPoint(1) << " " << InterpPoint(2) << endl << endl;
+    ContourPointData cp(i*nj+j);
+    (static_cast<FlexibleBody2s13Disk*>(parent))->updateKinematicsForFrame(cp,position);
+    Vec InterpPoint = cp.getFrameOfReference().getPosition();
+    cout << "Interpolationspunkt = " << InterpPoint(0) << " " << InterpPoint(1) << " " << InterpPoint(2) << endl << endl;
 
-        Vec error(3);
-        error(0) = PointUV.x()-InterpPoint(0);
-        error(1) = PointUV.y()-InterpPoint(1);
-        error(2) = PointUV.z()-InterpPoint(2);
-        cout << "Fehler = " << nrm2(error)  << endl;
-        if(maxerr < nrm2(error)) maxerr = nrm2(error);
-        if(minerr > nrm2(error)) minerr = nrm2(error);
-      }
+    Vec error(3);
+    error(0) = PointUV.x()-InterpPoint(0);
+    error(1) = PointUV.y()-InterpPoint(1);
+    error(2) = PointUV.z()-InterpPoint(2);
+    cout << "Fehler = " << nrm2(error)  << endl;
+    if(maxerr < nrm2(error)) maxerr = nrm2(error);
+    if(minerr > nrm2(error)) minerr = nrm2(error);
+    }
     cout << "Maximaler Fehler ist: " << maxerr << endl;
     cout << "Minimaler Fehler ist: " << minerr << endl;
     cout << " ***************************************************** " << endl << endl;
@@ -276,24 +281,24 @@ namespace MBSim {
     test_pt(1) = 0;
     cout << "Punkt ist bei phi=0" << endl;
     for(int i=1;i<=degDev;i++) {
-      TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
-      TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
+    TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
+    TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
     }
     l++; k =0;
 
     test_pt(1) = 2*M_PI;
     cout << "Punkt ist bei phi=2*PI" << endl;
     for(int i=1;i<=degDev;i++) {
-      TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
-      TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
+    TestVec[k][l][0] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(0);
+    TestVec[k++][l][1] = computeDirectionalDerivatives(test_pt(0),test_pt(1),i).col(1);
     }
 
     for(int i=0;i<degDev;i++) {
-      cout << i+1 << "-te Ableitung ..." << endl;
-      for(int j=0;j<2;j++) {
-        cout << "j=" << j << "(j=0...V-Richtung, j=1...U-Richtung)" << endl;
-        cout << "Fehler der Punkte am Rande: " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
-      }
+    cout << i+1 << "-te Ableitung ..." << endl;
+    for(int j=0;j<2;j++) {
+    cout << "j=" << j << "(j=0...V-Richtung, j=1...U-Richtung)" << endl;
+    cout << "Fehler der Punkte am Rande: " << computeError(TestVec[i][0][j],TestVec[i][1][j]) << endl;
+    }
     }
     */
   }

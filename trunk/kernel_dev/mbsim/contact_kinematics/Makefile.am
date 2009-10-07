@@ -1,5 +1,6 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
 libcontactkinematics_la_SOURCES = circle_frustum.cc\
+					circle_nurbsdisk2s.cc\
 					circlehollow_cylinderflexible.cc \
 					circlesolid_circlehollow.cc\
 					circlesolid_circlesolid.cc\
@@ -32,6 +33,7 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = circle_frustum.h\
+  circle_nurbsdisk2s.h\
   circlehollow_cylinderflexible.h \
   circlesolid_circlehollow.h \
   circlesolid_circlesolid.h \

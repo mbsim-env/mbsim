@@ -104,14 +104,9 @@ namespace MBSim {
 #ifdef HAVE_NURBS
       /**
        * \brief initialize NURBS disk
-       * \param azimuthal interpolation degree
-       * \param radial interpolation degree
-       * \param radial number of elements
-       * \param azimuthal number of elements
-       * \param inner radius
-       * \param outer radius
+       * \param stage of initialisation
        */
-      void init(const int dU, const int dV, const int nBr, const int nBj, const double &innerRadius, const double &outerRadius);
+      void initContourFromBody(InitStage stage);
 #endif
 
       /*! 

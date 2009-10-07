@@ -45,6 +45,7 @@
 
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/circle_frustum.h>
+#include <mbsim/contact_kinematics/circle_nurbsdisk2s.h>
 #include <mbsim/contact_kinematics/circlehollow_cylinderflexible.h>
 #include <mbsim/contact_kinematics/circlesolid_circlehollow.h>
 #include <mbsim/contact_kinematics/circlesolid_circlesolid.h>
@@ -91,6 +92,9 @@ namespace MBSim {
 
     if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
       return new ContactKinematicsCircleFrustum;
+
+    else if((dynamic_cast<Circle*>(contour0) && dynamic_cast<NurbsDisk2s*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<NurbsDisk2s*>(contour0)))
+      return new ContactKinematicsCircleNurbsDisk2s;
 
      else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
        return new ContactKinematicsCircleHollowCylinderFlexible;

@@ -120,6 +120,8 @@ namespace MBSim {
       int getAzimuthalNumberOfElements() const { return nj; }
       double getInnerRadius() const { return Ri; }
       double getOuterRadius() const { return Ra; }
+      double getAzimuthalDegree() const { return degU; }
+      double getRadialDegree() const { return degV; }
       void setReferenceInertia(double m0_, double J0_) { m0 = m0_; J0 = J0_; }	
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
@@ -148,12 +150,12 @@ namespace MBSim {
        * \brief total number of elements
        */
       int Elements;
-      
+
       /** 
        * \brief elastic dof per node
        */
       int NodeDofs;
-      
+
       /**
        * \brief dof of moving frame of reference
        */
@@ -163,37 +165,37 @@ namespace MBSim {
        * \brief Young's modulus
        */
       double E;
-      
+
       /**
        * \brief Poisson ratio
        */
       double nu;
-      
+
       /** 
        * \brief density
        */
       double rho;
-      
+
       /**
        * \brief inner and outer thickness
        */
       fmatvec::Vec d;
-      
+
       /**
        * \brief inner and outer radius of disk
        */
       double Ri, Ra;
-      
+
       /**
        * \brief radial and azimuthal length of an FE
        */
       double dr, dj;
-      
+
       /**
        * \brief mass and inertia of the attached shaft
        */
       double m0, J0;
-      
+
       /**
        * \brief degree of surface interpolation in radial and azimuthal direction
        *
@@ -210,12 +212,12 @@ namespace MBSim {
        * \brief vector of boundary data of the FE (r1,j1,r2,j2)
        */
       std::vector<fmatvec::Vec> ElementalNodes;
-      
+
       /**
        * \brief number of element currently involved in contact calculations
        */
       int currentElement;
-      
+
       /**
        * \brief mass matrix
        */
@@ -230,12 +232,12 @@ namespace MBSim {
        * \brief number of elements in radial and azimuthal direction, number of FE nodes
        */
       int nr, nj, Nodes;
-      
+
       /**
        * \brief matrix mapping nodes and coordinates (size number of nodes x number of node coordinates)
        */
       fmatvec::Mat NodeCoordinates; 
-      
+
       /** 
        * \brief matrix mapping elements and nodes (size number of elements x number of nodes per elements) 
        */
@@ -245,24 +247,24 @@ namespace MBSim {
        * \brief total dof of disk with reference movement and elastic deformation but without including bearing
        */
       int Dofs;
-      
+
       /**
        * \brief dirichlet boundary condition concerning reference movement
        *
        * possible settings: innering/outerring
        */
       LockType LType;
-      
+
       /**
        * \brief index of condensated dofs
        */
       fmatvec::Index ILocked; 
-      
+
       /** 
        * \brief position and velocity with respect to Dofs
        */
       fmatvec::Vec qext, uext; 
-      
+
       /** 
        * \brief Jacobian for condensation with size Dofs x qSize
        */

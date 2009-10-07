@@ -114,12 +114,12 @@ namespace MBSim {
       /***************************************************/
 
       /**
-       * \param local force direction
+       * \param local force direction represented in first frame
        */
       void setForceDirection(const fmatvec::Mat& fd);
 
       /**
-       * \param local moment direction
+       * \param local moment direction represented in first frame
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
