@@ -91,7 +91,6 @@ namespace MBSimControl {
   }
 
   Vec RelativeAngularPositionSensor::getSignal() {
-    cerr <<  g << endl;
     return g;
   }
 

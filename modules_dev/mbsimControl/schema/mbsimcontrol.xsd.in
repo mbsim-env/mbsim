@@ -67,7 +67,17 @@
   </xs:element>
   <xs:complexType name="ExternSignalSourceType">
     <xs:complexContent>
-      <xs:extension base="SignalType"/>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="sourceSize" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Gibt die Dimension der Signalquelle an.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

@@ -28,11 +28,17 @@ namespace MBSimControl {
   class ExternSignalSource : public Signal {
     protected:
       fmatvec::Vec source;
+      int sourceSize;
     public:
-      ExternSignalSource(const std::string &name) : Signal(name), source(0,fmatvec::INIT,0) {}
+      ExternSignalSource(const std::string &name) : Signal(name), sourceSize(0) {}
+      void setSourceSize(int size) { sourceSize=size; source.resize(sourceSize); }
       std::string getType() const { return "ExternSignalSource"; }
       fmatvec::Vec getSignal() { return source; }
-      void setSignal(fmatvec::Vec s) { source=s; }
+      void setSignal(fmatvec::Vec s) { assert(s.size()==source.size()); source=s; }
+      void initializeUsingXML(TiXmlElement *element) {
+        Signal::initializeUsingXML(element);
+        setSourceSize((int)(getDouble(element->FirstChildElement(MBSIMCONTROLNS"sourceSize"))+0.5));
+      }
   };
 
 }
