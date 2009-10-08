@@ -24,6 +24,7 @@
 #include "mbsimControl/signal_.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/eps.h"
+#include <fstream>
 
 using namespace std;
 using namespace fmatvec;
@@ -50,7 +51,7 @@ namespace MBSimHydraulics {
       Vec signal;
   };
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), relAlphaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString("") {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), relAlphaPA(NULL), position(NULL), checkSizeSignalPA(NULL), checkSizeSignalPB(NULL), checkSizeSignalAT(NULL), checkSizeSignalBT(NULL), positionString(""), nPInflowString(""), nAOutflowString(""), nBOutflowString(""), nTOutflowString(""), pRACC(false) {
     addObject(lPA);
     lPA->setDirection(Vec(3, INIT, 0));
     lPA->setFrameOfReference(getFrame("I"));
@@ -170,13 +171,13 @@ namespace MBSimHydraulics {
       if (nTOutflowString!="")
         setTOutflow(getHLineByPath(nTOutflowString));
 
-      checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAreaPA", 1., 0., position, relAlphaPA);
+      checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       addLink(checkSizeSignalPA);
-      checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAreaPB", -1., 1., position, relAlphaPA);
+      checkSizeSignalPB = new ControlvalveAreaSignal("RelativeAlphaPB", -1., 1., position, relAlphaPA);
       addLink(checkSizeSignalPB);
-      checkSizeSignalAT = new ControlvalveAreaSignal("RelativeAreaAT", -1., 1.+offset, position, relAlphaPA);
+      checkSizeSignalAT = new ControlvalveAreaSignal("RelativeAlphaAT", -1., 1.+offset, position, relAlphaPA);
       addLink(checkSizeSignalAT);
-      checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAreaBT", 1., offset, position, relAlphaPA);
+      checkSizeSignalBT = new ControlvalveAreaSignal("RelativeAlphaBT", 1., offset, position, relAlphaPA);
       addLink(checkSizeSignalBT);
 
       lPA->setSignal(checkSizeSignalPA);
@@ -185,6 +186,33 @@ namespace MBSimHydraulics {
       lBT->setSignal(checkSizeSignalBT);
 
       Group::init(stage);
+
+      if (pRACC) {
+        fstream o;
+        o.open(name.c_str(), ios::out);
+        o << "#1: SignalValue" << endl;
+        o << "#2: " << checkSizeSignalPA->getName() << endl;
+        o << "#3: " << checkSizeSignalAT->getName() << endl;
+        o << "#4: " << checkSizeSignalBT->getName() << endl;
+        o << "#5: " << checkSizeSignalPB->getName() << endl;
+        for (double x=0; x<=1; x+=.01) {
+          o << x;
+          double xPA=+1.*x+0.;
+          double xPB=-1.*x+1.;
+          double xAT=-1.*x+1.+offset;
+          double xBT=+1.*x+offset;
+          xPA=(xPA<0)?0:((xPA>1)?1.:xPA);
+          xPB=(xPB<0)?0:((xPB>1)?1.:xPB);
+          xAT=(xAT<0)?0:((xAT>1)?1.:xAT);
+          xBT=(xBT<0)?0:((xBT>1)?1.:xBT);
+          o << " " << (*relAlphaPA)(xPA);
+          o << " " << (*relAlphaPA)(xAT);
+          o << " " << (*relAlphaPA)(xBT);
+          o << " " << (*relAlphaPA)(xPB);
+          o << endl;
+        }
+        o.close();
+      }
     }
     else
       Group::init(stage);
@@ -224,6 +252,9 @@ namespace MBSimHydraulics {
     nBOutflowString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflowT");
     nTOutflowString=e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"printRelativeAlphaCharacteristikCurve");
+    if (e)
+      printRelativeAlphaCharacteristikCurve(true);
   }
 
 }

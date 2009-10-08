@@ -604,7 +604,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="IdelchickCheckvalveClosablePressreLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressreLossType">
+  <xs:element name="IdelchickCheckvalveClosablePressureLoss" substitutionGroup="BallCheckvalveClosablePressureLoss" type="IdelchickCheckvalveClosablePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Berechnung des Druckverlustes in Rückschlagventilen  nach <i>Idelchick, Diagramm 9.26</i>
@@ -622,7 +622,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="IdelchickCheckvalveClosablePressreLossType">
+  <xs:complexType name="IdelchickCheckvalveClosablePressureLossType">
     <xs:complexContent>
       <xs:extension base="BallCheckvalveClosablePressureLossType"/>
     </xs:complexContent>
@@ -1673,6 +1673,13 @@
               <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="printRelativeAlphaCharacteristikCurve" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Durch das Setzen dieser Anweisung werden die relativen Ventilöffnungsflächen der 4 Flussrichtungen ausgegeben.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1695,7 +1702,8 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Modell eines Rückschlagventils mit Berücksichtigung der Trägheit der Ventilkugel.<br/>
-        Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <tt>HNodeMec</tt> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
+        Die an die Blende angeschlossenen hydraulischen Knoten müssen vom Typ <a class="link" href="mbsimhydraulics:NodeMec">&lt;NodeMec&gt;</a> sein, da ihnen automatisch hydraulisch-mechanische Grenzflächen zur Berechnung der Kräfte auf die Ventilkugel zugewiesen werden. Die Fläche der Grenzfläche ist dabei abhängig vom gewählten Druckverlustmodell der Blende.
+        <p>Die hydraulische Leitung des Rückschlagventils ist mit <i>Line</i> benannt und kann durch <i>XXX/Group[name]/HLine[Line]</i> an Knoten angeschlossen werden.</p>
         <object class="figure" standby="4cm" data="ball_checkvalve" title="Rückschlagventil"></object>
       </xs:documentation>
     </xs:annotation>

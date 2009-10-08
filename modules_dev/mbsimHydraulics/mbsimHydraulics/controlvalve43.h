@@ -54,6 +54,7 @@ namespace MBSimHydraulics {
       void setAOutflow(HLine * hl);
       void setBOutflow(HLine * hl);
       void setTOutflow(HLine * hl);
+      void printRelativeAlphaCharacteristikCurve(bool print=true) {pRACC=print; }
 
     protected:
       ClosableRigidLine * lPA, * lPB, * lAT, * lBT;
@@ -66,6 +67,7 @@ namespace MBSimHydraulics {
     private:
       std::string positionString;
       std::string nPInflowString, nAOutflowString, nBOutflowString, nTOutflowString;
+      bool pRACC;
   };
 }
 
