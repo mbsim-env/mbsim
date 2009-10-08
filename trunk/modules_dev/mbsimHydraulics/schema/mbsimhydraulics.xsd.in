@@ -370,7 +370,8 @@
   <xs:element name="TurbulentTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="TurbulentTubeFlowLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Druckverluste aufgrund einer turbulenten Rohrströmung.<br/>
+        Druckverluste aufgrund einer turbulenten Rohrströmung.
+        <br/>
         Der Druckverlust berechnet sich zu
         <object class="eqn">\Delta p = \lambda \, \frac{l}{d} \, \frac{\rho}{2} \, \frac{|Q|\,Q}{A^2} \text{.}</object>
         Die Reynoldszahl wird gemäß 
@@ -383,6 +384,13 @@
         <object class="eqn">\frac{1}{\sqrt{\lambda}} = -2 \, \log_{10}  \left( \frac{2.51}{Re \, \sqrt{\lambda}} + \frac{k}{3.71 \, d} \right) \qquad Re \geq 2320</object>
         berechnet.
         Im Übergangsbereich erfolgt eine lineare Interpolation des <object class="inlineeqn">\lambda</object>-Wertes.
+        Diesen Zusammenhang verdeutlicht folgende Abbildung:
+        <object class="figure" standby="7cm" data="resistance_number" title="Rohrwiderstandszahl in Abhängigkeit der Re-Zahl"></object>
+        Den sich in Abhängigkeit des Durchflusses einstellenden Druckverlust bei verschiedenen Fluidtemperaturen zeigen folgende Abbildungen:
+        <object class="figure" standby="7cm" data="pressureloss_global" title="Druckverlust in Rohrleitung"></object>
+        <object class="figure" standby="7cm" data="pressureloss_detail" title="Druckverlust in Rohrleitung (Detail)"></object>
+        Eine Umrechnung der Reynoldszahl der Leitung auf die Reynoldszahl des Druckverlustes erfolgt gemäß
+        <object class="eqn">Re = \frac{d_{hyd} \, d}{d_{ref}^2} \, Re_{Leitung} \text{.}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -634,7 +642,7 @@
         Berechnung des Druckverlustes in Rückschlagventilen  mit konischer Geometrie.
         Der Druckverlust berechnet sich in Abhängigkeit der Ventilöffungshöhe <object class="inlineeqn">x</object> zu
         <object class="eqn">
-          <![CDATA[p_V=\frac{\rho}{2} \, \frac{1}{\alpha^2} \,  \frac{r_{Ball}^2 + 2 \, \sqrt{r_{Ball}^2 - x^2} \, x + x^2 }                 {\left[ 4 \, \left( r_{Ball}^2 - x^2\right) + 4 \, \sqrt{r_{Ball}^2 - x^2 } \, x + x^2 \right] \, \left(\pi \, x^2 \right)^2}   |Q| \, Q ]]>
+          <![CDATA[p_V=\frac{\rho}{2} \, \frac{1}{\alpha^2} \,  \frac{r_{Ball}^2 + 2 \, \sqrt{r_{Ball}^2 - x^2} \, x + x^2 }{\left[ 4 \, \left( r_{Ball}^2 - x^2\right) + 4 \, \sqrt{r_{Ball}^2 - x^2 } \, x + x^2 \right] \, \left(\pi \, x^2 \right)^2} \, |Q| \, Q ]]>
         </object>
       </xs:documentation>
     </xs:annotation>

@@ -33,7 +33,7 @@ namespace MBSimHydraulics {
   /*! RigidLine */
   class RigidLine : public RigidHLine {
     public:
-      RigidLine(const std::string &name) : RigidHLine(name), diameter(0), pL(NULL) {}
+      RigidLine(const std::string &name) : RigidHLine(name), diameter(0), pL(NULL), ReynoldsFactor(0) {}
       virtual std::string getType() const { return "RigidLine"; }
 
       void setDiameter(double diameter_) {diameter=diameter_; }
@@ -42,10 +42,13 @@ namespace MBSimHydraulics {
 
       void init(MBSim::InitStage stage);
 
+      void plot(double t, double dt);
+
       void initializeUsingXML(TiXmlElement *element);
     private:
       double diameter;
       LinePressureLoss * pL;
+      double ReynoldsFactor;
   };
 
 

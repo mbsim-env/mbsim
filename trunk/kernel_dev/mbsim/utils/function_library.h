@@ -88,7 +88,7 @@ namespace MBSim {
   class SinusFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
     public:
       SinusFunction1_VS();
-      SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_);
+      SinusFunction1_VS(fmatvec::Vec amplitude_, fmatvec::Vec frequency_, fmatvec::Vec phase_, fmatvec::Vec offset_);
       void initializeUsingXML(TiXmlElement *element);
 
       class ZerothDerivative : public Function1<fmatvec::Vec,double> {
@@ -116,7 +116,7 @@ namespace MBSim {
       };
     protected:
       int ySize;
-      fmatvec::Vec amplitude, frequency, phase;
+      fmatvec::Vec amplitude, frequency, phase, offset;
     private:
       void check();
   };
@@ -125,7 +125,7 @@ namespace MBSim {
   class PositiveSinusFunction1_VS : public SinusFunction1_VS {
     public:
       PositiveSinusFunction1_VS() {}
-      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase) : SinusFunction1_VS(amplitude, frequency, phase) {}
+      PositiveSinusFunction1_VS(fmatvec::Vec amplitude, fmatvec::Vec frequency, fmatvec::Vec phase, fmatvec::Vec offset) : SinusFunction1_VS(amplitude, frequency, phase, offset) {}
       fmatvec::Vec operator()(const double& tVal, const void * =NULL);
       void initializeUsingXML(TiXmlElement *element) {
         SinusFunction1_VS::initializeUsingXML(element);
