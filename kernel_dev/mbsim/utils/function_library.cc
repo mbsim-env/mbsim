@@ -91,13 +91,13 @@ namespace MBSim {
   }
 
 
-  SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), amplitude(0), frequency(0), phase(0) {
+  SinusFunction1_VS::SinusFunction1_VS() : DifferentiableFunction1<Vec>(), ySize(0), amplitude(0), frequency(0), phase(0), offset(0) {
     addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
     addDerivative(new SinusFunction1_VS::FirstDerivative(this));
     addDerivative(new SinusFunction1_VS::SecondDerivative(this));
   }
 
-  SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_) : DifferentiableFunction1<Vec>(), amplitude(amplitude_), frequency(frequency_), phase(phase_) {
+  SinusFunction1_VS::SinusFunction1_VS(Vec amplitude_, Vec frequency_, Vec phase_, Vec offset_) : DifferentiableFunction1<Vec>(), amplitude(amplitude_), frequency(frequency_), phase(phase_), offset(offset_) {
     addDerivative(new SinusFunction1_VS::ZerothDerivative(this));
     addDerivative(new SinusFunction1_VS::FirstDerivative(this));
     addDerivative(new SinusFunction1_VS::SecondDerivative(this));
@@ -107,7 +107,7 @@ namespace MBSim {
   Vec SinusFunction1_VS::ZerothDerivative::operator()(const double& tVal, const void *) {
     Vec y(parent->ySize, NONINIT);
     for (int i=0; i<parent->ySize; i++)
-      y(i)=parent->amplitude(i)*sin(2.*M_PI*parent->frequency(i)*tVal+parent->phase(i));
+      y(i)=parent->offset(i)+parent->amplitude(i)*sin(2.*M_PI*parent->frequency(i)*tVal+parent->phase(i));
     return y;
   }
 
@@ -131,11 +131,18 @@ namespace MBSim {
     Vec amplitude_=Element::getVec(e);
     amplitude=amplitude_;
     e=element->FirstChildElement(MBSIMNS"frequency");
-    Vec frequency_=Element::getVec(e);
+    Vec frequency_=Element::getVec(e, amplitude_.size());
     frequency=frequency_;
     e=element->FirstChildElement(MBSIMNS"phase");
-    Vec phase_=Element::getVec(e);
+    Vec phase_=Element::getVec(e, amplitude_.size());
     phase=phase_;
+    e=element->FirstChildElement(MBSIMNS"offset");
+    Vec offset_;
+    if (e)
+      offset_=Element::getVec(e, amplitude_.size());
+    else
+      offset_.resize(amplitude_.size(), INIT, 0);
+    offset=offset_;
     check();
   }
 
@@ -143,6 +150,7 @@ namespace MBSim {
     ySize=amplitude.size();
     assert(frequency.size()==ySize);
     assert(phase.size()==ySize);
+    assert(offset.size()==ySize);
   }
 
 

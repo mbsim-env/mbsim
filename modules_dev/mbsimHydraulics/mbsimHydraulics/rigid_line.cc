@@ -40,13 +40,29 @@ namespace MBSimHydraulics {
         parent->addLink(new RigidLinePressureLoss(name+"/LinePressureLoss", this, pL, false,false));
       RigidHLine::init(stage);
     }
+    else if (stage==MBSim::plot) {
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        plotColumns.push_back("Reynolds number [-]");
+        RigidHLine::init(stage);
+      }
+    }
     else if (stage==MBSim::unknownStage) {
       RigidHLine::init(stage);
       double area=M_PI*diameter*diameter/4.;
       Mlocal.resize(1, INIT, HydraulicEnvironment::getInstance()->getSpecificMass()*length/area);
+      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      ReynoldsFactor=diameter/nu/area;
     }
     else
       RigidHLine::init(stage);
+  }
+  
+  void RigidLine::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      plotVector.push_back(fabs(u(0))*ReynoldsFactor);
+      RigidHLine::plot(t, dt);
+    }
   }
 
   void RigidLine::initializeUsingXML(TiXmlElement * element) {

@@ -2642,7 +2642,7 @@
   <xs:element name="SinusFunction1_VS" substitutionGroup="DifferentiableFunction1_VS" type="SinusFunction1_VSType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Vektorwertige periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right)</object>.
+        Vektorwertige periodische Funktion mit <object class="inlineeqn">y_i= A_i \, \sin \left( 2 \, \pi \, f_i \, x + \varphi_i \right) + o_i</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -2668,6 +2668,13 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Phasenversatzvektor <object class="inlineeqn">\boldsymbol{\varphi}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="offset" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Offsetvektor <object class="inlineeqn">\boldsymbol{o}</object>.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
