@@ -250,4 +250,18 @@ namespace MBSim {
   }
 
 
+  void SummationFunction1_VS::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMNS"function");
+    while (e && e->ValueStr()==MBSIMNS"function") {
+      TiXmlElement * ee = e->FirstChildElement();
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(ee);
+      f->initializeUsingXML(ee);
+      ee=e->FirstChildElement(MBSIMNS"factor");
+      double factor=Element::getDouble(ee);
+      addFunction(f, factor);
+      e=e->NextSiblingElement();
+    }
+  }
+
 }

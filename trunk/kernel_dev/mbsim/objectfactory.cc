@@ -364,6 +364,8 @@ namespace MBSim {
       return new TabularFunction1_VS;
     if(element->ValueStr()==MBSIMNS"PeriodicTabularFunction1_VS")
       return new PeriodicTabularFunction1_VS;
+    if(element->ValueStr()==MBSIMNS"SummationFunction1_VS")
+      return new SummationFunction1_VS;
     if(element->ValueStr()==MBSIMNS"Function1_VS_from_SS")
       return new Function1_VS_from_SS;
     return 0;
