@@ -203,6 +203,7 @@ namespace MBSim {
           y+=factors[i]*(*(functions[i]))(tVal);
         return y;
       }
+      void initializeUsingXML(TiXmlElement *element);
     private:
       std::vector<Function1<fmatvec::Vec, double> *> functions;
       std::vector<double> factors;

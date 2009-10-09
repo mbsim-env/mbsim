@@ -765,6 +765,7 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Lage in den generalisierten Freiheitsgraden.
+                <p>An dieser Stelle werden die Anfangslagen von zustandsbehafteten Objekten angegeben. Bei Starrkörpern muss die Länge dieses Vektors der Anzahl der angegebenen Translations- und Rotationsrichtungen entsprechen, wobei zunächst die translatorischen Lagen und danach die rotatorischen Lagen anzugeben sind.</p>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -772,6 +773,7 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
+                <p>vgl. <i>initialGeneralizedPosition</i> für die Zuordnung.</p>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -2578,6 +2580,36 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="SummationFunction1_VS" substitutionGroup="Function1_VS" type="SummationFunction1_VSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Bildet die Summe einer beliebigen Anzahl von Funktionen: <object class="inlineeqn">\mathbf{y} \left(x\right) = \sum_i^n c_i \, \mathbf{y}_i \left(x \right) </object> 
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SummationFunction1_VSType">
+    <xs:complexContent>
+      <xs:extension base="Function1_VSType">
+        <xs:sequence>
+          <xs:element name="function" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_VS"/>
+                <xs:element name="factor" type="pv:nounitScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Factor <object class="inlineeqn">c_i</object> 
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+  
   <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

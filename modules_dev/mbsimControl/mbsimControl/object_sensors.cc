@@ -29,7 +29,7 @@ namespace MBSimControl {
 
   void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
-    object=parent->getObjectByPath(e->Attribute("ref"));
+    object=getObjectByPath(e->Attribute("ref"));
     if(!object) { std::cerr<<"ERROR! Cannot find object: "<<e->Attribute("ref")<<std::endl; _exit(1); }
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
     index=(int)getDouble(e);
