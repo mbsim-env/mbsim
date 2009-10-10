@@ -29,10 +29,22 @@ namespace MBSimControl {
 
   void GeneralizedCoordinateSensor::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
-    object=getObjectByPath(e->Attribute("ref"));
-    if(!object) { std::cerr<<"ERROR! Cannot find object: "<<e->Attribute("ref")<<std::endl; _exit(1); }
+    objectString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
     index=(int)getDouble(e);
+  }
+
+  void GeneralizedCoordinateSensor::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (objectString!="") {
+        Object * o = getObjectByPath(objectString);
+        if(!object) { std::cerr<<"ERROR! Cannot find object: "<<objectString<<std::endl; _exit(1); }
+        setObject(o);
+      }
+      Sensor::init(stage);
+    }
+    else
+      Sensor::init(stage);
   }
 
   Vec GeneralizedPositionSensor::getSignal() {

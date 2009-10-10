@@ -839,6 +839,56 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:element name="ConstrainedLine" substitutionGroup="HLine" type="ConstrainedLineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vorgabe von hydraulischen Flussrandbedingungen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ConstrainedLineType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Funktion der Flussrandbedingung
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="FluidPump" substitutionGroup="HLine" type="FluidPumpType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vorgabe eines Volumenstroms.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FluidPumpType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="volumeflowSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="ClosableRigidLine" substitutionGroup="RigidLine" type="ClosableRigidLineType">
     <xs:annotation>
@@ -1929,4 +1979,52 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="FlowSensor" substitutionGroup="mbsimcontrol:Sensor" type="FlowSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zur Ermittlung hydraulischer Volumenströme.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlowSensorType">
+    <xs:complexContent>
+      <xs:extension base="mbsimcontrol:SensorType">
+        <xs:sequence>
+          <xs:element name="hline">
+            <xs:complexType>
+              <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TemperatureSensor" substitutionGroup="mbsimcontrol:Sensor" type="TemperatureSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zur Ermittlung der Fluidtemperatur.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TemperatureSensorType">
+    <xs:complexContent>
+      <xs:extension base="mbsimcontrol:SensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="KinematicViscositySensor" substitutionGroup="mbsimcontrol:Sensor" type="KinematicViscositySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zur Ermittlung der kinematischen Viskosität des Fluids.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="KinematicViscositySensorType">
+    <xs:complexContent>
+      <xs:extension base="mbsimcontrol:SensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
+

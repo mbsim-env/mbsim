@@ -34,13 +34,15 @@ namespace MBSimControl {
    */
   class GeneralizedCoordinateSensor : public Sensor {
     public:
-      GeneralizedCoordinateSensor(const std::string &name) : Sensor(name) {}
+      GeneralizedCoordinateSensor(const std::string &name) : Sensor(name), object(NULL), objectString(""), index(0) {}
       std::string getType() const { return "GeneralizedCoordinateSensor"; }
       void setObject(MBSim::Object * object_) {object=object_; }
       void setIndex(int index_) {index=index_; }
       void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
     protected:
       MBSim::Object * object;
+      std::string objectString;
       int index;
   };
 

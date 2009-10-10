@@ -27,6 +27,7 @@
 #include "mbsimHydraulics/checkvalve.h"
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/dimensionless_line.h"
+#include "mbsimHydraulics/hydraulic_sensor.h"
 
 using namespace std;
 using namespace MBSim;
@@ -91,6 +92,10 @@ namespace MBSimHydraulics {
       return new PlaneLeakage0DOF(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakage0DOF")
       return new CircularLeakage0DOF(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ConstrainedLine")
+      return new ConstrainedLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"FluidPump")
+      return new FluidPump(element->Attribute("name"));
     return 0;
   }
 
@@ -113,6 +118,12 @@ namespace MBSimHydraulics {
       return new ElasticNodeMec(element->Attribute("name"));
     if(element->ValueStr()==MBSIMHYDRAULICSNS"RigidNodeMec")
       return new RigidNodeMec(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"FlowSensor")
+      return new FlowSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"TemperatureSensor")
+      return new TemperatureSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMHYDRAULICSNS"KinematicViscositySensor")
+      return new KinematicViscositySensor(element->Attribute("name"));
     return 0;
   }
 
