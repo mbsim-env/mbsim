@@ -34,6 +34,8 @@ namespace MBSimControl {
     frameString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
     direction=getMat(e,3,0);
+    for (int i=0; i<direction.cols(); i++)
+      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
   }
 
   void AbsolutCoordinateSensor::init(InitStage stage) {
@@ -80,6 +82,8 @@ namespace MBSimControl {
     relFrameString=e->Attribute("rel");
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
     direction=getMat(e,3,0);
+    for (int i=0; i<direction.cols(); i++)
+      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
   }
 
   void RelativeCoordinateSensor::init(InitStage stage) {
