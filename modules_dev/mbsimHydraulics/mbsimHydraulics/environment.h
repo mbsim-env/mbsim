@@ -87,6 +87,8 @@ namespace MBSimHydraulics {
       double getKappa() {return kappa; }
       /*! get the dynamic viscosity*/
       double getDynamicViscosity() {return nu*rho; }
+      /*! get the fluid temperature*/
+      double getTemperature() {return T;}
   };
 
   /*! OilBulkModulus */

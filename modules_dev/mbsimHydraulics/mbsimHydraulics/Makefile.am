@@ -15,7 +15,8 @@ libmbsimHydraulics_la_SOURCES = \
 	leakage_line.cc \
   elastic_line_galerkin.cc \
   objectfactory.cc \
-	dimensionless_line.cc
+	dimensionless_line.cc \
+	hydraulic_sensor.cc
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
@@ -35,5 +36,6 @@ mbsimHydraulicsinclude_HEADERS = \
 	leakage_line.h \
   elastic_line_galerkin.h \
   objectfactory.h \
-	dimensionless_line.h
+	dimensionless_line.h \
+	hydraulic_sensor.h
 

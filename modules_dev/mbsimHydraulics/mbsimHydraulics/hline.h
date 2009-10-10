@@ -21,6 +21,7 @@
 #define  _HLINE_H_
 
 #include "mbsim/object.h"
+#include "mbsim/utils/function.h"
 
 namespace MBSimControl {
   class Signal;
@@ -96,6 +97,58 @@ namespace MBSimHydraulics {
     protected:
       double pressureLossGravity;
       double length;
+  };
+
+  /*! ConstrainedLine */
+  class ConstrainedLine : public HLine {
+    public:
+      ConstrainedLine(const std::string &name) : HLine(name), QFun(NULL), Q(1) {}
+      virtual std::string getType() const { return "ConstrainedLine"; }
+      
+      void setQFunction(MBSim::Function1<double,double> * QFun_) {QFun=QFun_; }
+
+      virtual fmatvec::Vec getQIn(double t) {return Q; }
+      virtual fmatvec::Vec getQOut(double t) {return -Q; }
+      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
+      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
+      void calcqSize() {qSize=0; }
+      void calcuSize(int j) {uSize[j]=0; }
+      
+      virtual void updateStateDependentVariables(double t);
+      void updateh(double t) {};
+      
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      
+    private:
+      MBSim::Function1<double,double> * QFun;
+      fmatvec::Vec Q;
+  };
+
+  /*! FluidPump */
+  class FluidPump : public HLine {
+    public:
+      FluidPump(const std::string &name) : HLine(name), QSignal(NULL), QSignalString(""), Q(1) {}
+      virtual std::string getType() const { return "FluidPump"; }
+      
+      void setQSignal(MBSimControl::Signal * QSignal_) {QSignal=QSignal_; }
+
+      virtual fmatvec::Vec getQIn(double t);
+      virtual fmatvec::Vec getQOut(double t);
+      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
+      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
+      void calcqSize() {qSize=0; }
+      void calcuSize(int j) {uSize[j]=0; }
+      
+      void updateh(double t) {};
+      
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      
+    private:
+      MBSimControl::Signal * QSignal;
+      std::string QSignalString;
+      fmatvec::Vec Q;
   };
 
 }

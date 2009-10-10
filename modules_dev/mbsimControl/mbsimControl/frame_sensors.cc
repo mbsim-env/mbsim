@@ -31,10 +31,22 @@ namespace MBSimControl {
   void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
-    frame=getFrameByPath(e->Attribute("ref"));
-    if(!frame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
+    frameString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
     direction=getMat(e,3,0);
+  }
+
+  void AbsolutCoordinateSensor::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (frameString!="") {
+        Frame * t=getFrameByPath(frameString);
+        if(!t) { cerr<<"ERROR! Cannot find frame: "<<frameString<<endl; _exit(1); }
+        setFrame(t);
+      }
+      Sensor::init(stage);
+    }
+    else
+      Sensor::init(stage);
   }
 
   Vec AbsolutPositionSensor::getSignal() {
@@ -60,17 +72,33 @@ namespace MBSimControl {
     return trans(direction)*frame->getAngularVelocity();
   }
   
+
   void RelativeCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
-    refFrame=getFrameByPath(e->Attribute("ref"));
-    if(!refFrame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("ref")<<endl; _exit(1); }
-    relFrame=getFrameByPath(e->Attribute("rel"));
-    if(!relFrame) { cerr<<"ERROR! Cannot find frame: "<<e->Attribute("rel")<<endl; _exit(1); }
+    refFrameString=e->Attribute("ref");
+    relFrameString=e->Attribute("rel");
     e=element->FirstChildElement(MBSIMCONTROLNS"direction");
     direction=getMat(e,3,0);
   }
 
+  void RelativeCoordinateSensor::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (refFrameString!="") {
+        Frame * t=getFrameByPath(refFrameString);
+        if(!t) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
+        setReferenceFrame(t);
+      }
+      if (relFrameString!="") {
+        Frame * t=getFrameByPath(relFrameString);
+        if(!t) { cerr<<"ERROR! Cannot find frame: "<<relFrameString<<endl; _exit(1); }
+        setRelativeFrame(t);
+      }
+      Sensor::init(stage);
+    }
+    else
+      Sensor::init(stage);
+  }
 
 
   Vec RelativePositionSensor::getSignal() {
