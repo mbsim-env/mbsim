@@ -64,6 +64,11 @@ namespace MBSim {
         Link::init(stage);
       }
     }
+    else if(stage==MBSim::calculateLocalInitialValues) {
+      Link::init(stage);
+      g(0)=connectedObject->getq()(qInd);
+      gd(0)=connectedObject->getu()(uInd);
+    }
     else
       Link::init(stage);
   }
