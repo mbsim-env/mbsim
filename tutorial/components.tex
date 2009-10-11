@@ -5,23 +5,24 @@
 \dot{\vq}&=\vT\vu\\
 \vM\dot{\vu}&=\vh\left(\vq,\vu,t\right)+\vW\vlambda\\
 \dot{\vx}&=\vf\left(\vx\right)\\
-&\mathcal{\vN}\left(\vq,\vu,t\right)
+&\left(\vq,\vu,\vlambda,t\right)\in\mathcal{N}
 \end{align*}
 A typical example of a dynamical system only from mechanics is given by Fig.~\ref{fig:objects}.
 \begin{figure}
 	\centering
+    \small
     
-    \psfrag{Body}{\textsf{\small body}}
-    \psfrag{Frame}{\textsf{\small frame}}
-    \psfrag{Contour}{\textsf{\small contour}}
-    \psfrag{Joint}{\textsf{\small joint}}
-    \psfrag{Contact}{\textsf{\small contact}}
-    \psfrag{Load}{\put(-5.0,+5.0){\textsf{\small kinetic excitation}}}
+    \psfrag{Body}{\textsf{body}}
+    \psfrag{Frame}{\textsf{frame}}
+    \psfrag{Contour}{\textsf{contour}}
+    \psfrag{Joint}{\textsf{joint}}
+    \psfrag{Contact}{\textsf{contact}}
+    \psfrag{Load}{\put(-5.0,+5.0){\textsf{kinetic excitation}}}
   	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} 
   	\caption{object structure in \MBSim}
   	\label{fig:objects}
 \end{figure}
-One has the environment and two objects, in mechanics called bodies, holding the inertia terms. Indicated are interconnecting links due to contacts between body contours giving also the possibility to model friction and ideal joints between body frames as well as an external kinetic excitation acting on a body frame. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following to have an easier begin with \MBSim{}.
+One has the environment and two objects, in mechanics called bodies, holding the inertia terms. Indicated are interconnecting links due to contacts between body contours giving also the possibility to model friction and ideal joints between body \texttt{Frame}s as well as an external kinetic excitation acting on a body \texttt{Frame}. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following to have an easier begin with \MBSim{}.
 
 \subsection{Description of the Components}
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
@@ -80,7 +81,7 @@ Important settings:
 \end{itemize}
 
 \subsubsection{Frames}
-\texttt{Frame}s are a basic concept in \MBSim{} to define an interface for \MBSim{} components concerning kinematic and kinetic expressions. New \texttt{frame}s can be added arbitrarily and recursively based on a predecessor frame. That is why there has to be a first frame for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary frame \texttt{"I"} (inertia frame).\par
+\texttt{Frame}s are a basic concept in the kernel of \MBSim{} to define an interface for \MBSim{} multibody components concerning kinematic and kinetic expressions. New \texttt{Frame}s can be added arbitrarily and recursively based on a predecessor \texttt{Frame}. That is why there has to be a first \texttt{Frame} for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary \texttt{Frame} \texttt{"I"} (inertia frame).\par
 Important settings next to position and Cartesian orientation are defined according to the parametrisation
 \begin{align*}
   	\begin{pmatrix}	\rs{_I}[_P]{\va}\\ \rs{_I}{\vPsi}\end{pmatrix} 
@@ -149,14 +150,14 @@ using the member functions
 For convenience it is sometimes not necessary to define all components. E.g. for a \texttt{LinearTranslation} as well as \texttt{RotationAboutFixedAxis} and \texttt{CardanAngles} everything else is derived automatically.
 
 \paragraph{Flexible Bodies}
-The equations of motion of a \texttt{FlexibleBody} is at the moment only available with respect to a stationary frame. So, for flexible bodies the frame of reference must belong to a \texttt{DynamicSystem}. The following flexible bodies are available. 
+The equations of motion of a \texttt{FlexibleBody} is at the moment only available with respect to a stationary \texttt{Frame}. So, for flexible bodies the frame of reference must belong to a \texttt{DynamicSystem}. The following flexible bodies are available. 
 
 \begin{itemize}
 %\item \emph{BodyFlexible1s01Torsion}
 %\item \emph{BodyFlexible1s21ANCF} 2D-Balken mit Absolute Nodal Coordinate Formulation
-\item[] \texttt{BodyFlexible1s21RCM}\\
+\item[] \texttt{FlexibleBody1s21RCM}\\
   planar beam using redundant coordinate methode with three coordinates per finite element node, translation  $x$, $y$ and rotation $\gamma$, as well as two additional bending deflections $c_1$, $c_2$
-\item[] \texttt{BodyFlexible1s33RCM}\\
+\item[] \texttt{FlexibleBody1s33RCM}\\
   spatial beam using redundant coordinate methode with six coordinates per finite element node, translation  $x$, $y$, $z$ and reversed Cardan rotation $\alpha$, $\beta$, $\gamma$, as well as four additional bending deflections $c_1$, $c_2$, $c_3$, $c_4$
 %\item \emph{BodyFlexible1s23BTA} Biege-Torsions-Welle (5-Koordinaten pro Knoten $\alpha$, $y$, $\gamma$, $z$, $\beta$ im jeweils mit $\alpha$ mitdrehenden KOSY)
 %\item \emph{BodyFlexibleLinearExternal}
@@ -167,7 +168,7 @@ Mechanical links represent interconnections between mechanical bodies.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{connect}\\
-    connect mechanical links to frames
+    connect mechanical links to \texttt{Frame}s
 \item[] \texttt{setOpenMBVForceArrow}\\
     visualisation of link forces in \OpenMBV{}
 \item[] \texttt{setOpenMBVMomentArrow}\\
@@ -175,18 +176,18 @@ Important settings:
 \end{itemize}
 
 \paragraph{SpringDamper}
-A \texttt{SpringDamper} connects two frames using a predefined spring force function.\par
+A \texttt{SpringDamper} connects two \texttt{Frame}s using a predefined spring force function.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{setForceFunction}
 \item[] \texttt{setProjectionDirection}\\
-    projection direction of the force, if it should not act in direction of the frames' connecting vector
+    projection direction of the force, if it should not act in direction of the \texttt{Frame}s' connecting vector
 \item[] \texttt{setOpenMBVSpring}\\
     visualisation of a spring in \OpenMBV{}
 \end{itemize}
 
 \paragraph{KineticExcitation}
-A \texttt{KineticExcitation} is connected to one frames using a predefined excitation function.\par
+A \texttt{KineticExcitation} is connected to one \texttt{Frame} using a predefined excitation function.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{setForce}\\
@@ -194,11 +195,11 @@ Important settings:
 \item[] \texttt{setMoment}\\
     moment excitation function
 \item[] \texttt{setFrameOfReference}\\
-    force / moment direction vectors, if not the connected frame should be used
+    force / moment direction vectors, if not the connected \texttt{Frame} should be used
 \end{itemize}
 
 \paragraph{Joints}
-\texttt{Joint}s connect two frames with the force laws depending on the ideal normal relative kinematics. The constitutive law has to be chosen for the calculation of the force parameter.\par
+\texttt{Joint}s connect two \texttt{Frame}s with the force laws depending on the ideal normal relative kinematics. The constitutive law has to be chosen for the calculation of the force parameter.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{setForceDirection}\\
