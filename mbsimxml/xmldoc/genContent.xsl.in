@@ -11,7 +11,7 @@
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
   <!-- all nodes of all imported schemas -->
-  <xsl:param name="ALLNODES" select="document(/xs:schema/xs:import/@schemaLocation)"/>
+  <xsl:param name="ALLNODES" select="document(/xs:schema/xs:import/@schemaLocation)|document('@MBSIMSCHEMA@/mbsimintegrator.xsd')|document('@OPENMBVSCHEMA@/openmbv.xsd')"/>
 
   <!-- generate html link form a attribute -->
   <xsl:template mode="GENLINK" match="@*">
@@ -62,6 +62,12 @@
     <h1>MBSim XML - XML Documentation</h1>
     <p>This is the entry point for the documentation of MBSim XML (Kernel and Mechanics) and the installed modules:</p>
     <ul>
+      <li>
+        <a class="namespace" href="../http___openmbv_berlios_de_OpenMBV/index.xhtml">http://openmbv.berlios.de/OpenMBV</a>
+      </li>
+      <li>
+        <a class="namespace" href="../http___mbsim_berlios_de_MBSimIntegrator/index.xhtml">http://mbsim.berlios.de/MBSimIntegrator</a>
+      </li>
       <xsl:for-each select="/xs:schema/xs:import">
         <xsl:sort select="@namespace"/>
         <li><a class="namespace" href="../{translate(@namespace,'.:/','___')}/index.xhtml"><xsl:value-of select="@namespace"/></a></li>
