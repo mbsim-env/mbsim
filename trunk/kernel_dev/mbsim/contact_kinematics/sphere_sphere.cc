@@ -46,7 +46,7 @@ namespace MBSim {
     }
     else {
       t(0) = -Wd(1);
-      t(1) = -Wd(0);
+      t(1) = Wd(0);
       t(2) = 0.0;
     }
     t = t/nrm2(t);
