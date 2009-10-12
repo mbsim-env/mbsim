@@ -32,6 +32,7 @@ AC_SUBST([XMLLINT],[$xmllint])
 
 dnl XML
 AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
+AC_SUBST([OPENMBVSCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
 AC_SUBST([MBSIMXMLSCHEMA],[$datadir/$PACKAGE/schema])
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 
@@ -98,7 +99,7 @@ AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc])
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
 AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
 
