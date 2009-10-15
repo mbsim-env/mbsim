@@ -542,7 +542,7 @@ namespace MBSim {
         cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( trans(AWK_disk) * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk 
 
         //get the position and the derivatives on the disk 
-        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,firstTangent); // CHANGED 
+        nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,firstTangent); 
 
         //compute the derivates of the radial and the azimuthal coordinates with respect to alpha
         fmatvec::SqrMat A_inv(3,fmatvec::EYE);
