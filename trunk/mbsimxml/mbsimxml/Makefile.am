@@ -13,7 +13,7 @@ mbsimxmlinclude_HEADERS = mbsimflatxml.h headermodules.h
 bin_PROGRAMS = mbsimflatxml
 
 mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS)
-mbsimflatxml_LDFLAGS = 
+mbsimflatxml_LDFLAGS = -L.
 mbsimflatxml_LDADD = -lmbsimflatxml
 
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc

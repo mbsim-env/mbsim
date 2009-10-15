@@ -12,14 +12,14 @@ A typical example of a dynamical system only from mechanics is given by Fig.~\re
 	\centering
     \small
     
-    \psfrag{Body}{\textsf{body}}
-    \psfrag{Frame}{\textsf{frame}}
-    \psfrag{Contour}{\textsf{contour}}
-    \psfrag{Joint}{\textsf{joint}}
-    \psfrag{Contact}{\textsf{contact}}
-    \psfrag{Load}{\put(-5.0,+5.0){\textsf{kinetic excitation}}}
+    \psfrag{Body}{\texttt{Body}}
+    \psfrag{Frame}{\texttt{Frame}}
+    \psfrag{Contour}{\texttt{Contour}}
+    \psfrag{Joint}{\texttt{Joint}}
+    \psfrag{Contact}{\texttt{Contact}}
+    \psfrag{Load}{\put(-5.0,+5.0){\texttt{KineticExcitation}}}
   	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} 
-  	\caption{object structure in \MBSim}
+  	\caption{Object structure in \MBSim}
   	\label{fig:objects}
 \end{figure}
 One has the environment and two \texttt{Object}s, in mechanics called \texttt{Body}s, holding the inertia terms. Indicated are interconnecting \texttt{Link}s due to \texttt{Contact}s between \texttt{Body} \texttt{Contour}s giving also the possibility to model friction and ideal \texttt{Joint}s between body \texttt{Frame}s as well as an external \texttt{KineticExcitation} acting on a body \texttt{Frame}. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following to have an easier begin with \MBSim{}.
