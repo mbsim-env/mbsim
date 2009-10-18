@@ -71,9 +71,11 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   cr->connect(pl,ball->getContour("Sphere"));
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
+  aC_N->setEnable(false);
   cr->setOpenMBVNormalForceArrow(aC_N);
   OpenMBV::Arrow *aC_T = new OpenMBV::Arrow;
   cr->setOpenMBVFrictionArrow(aC_T);
+  aC_T->setEnable(false);
 #endif
   this->addLink(cr);
 }

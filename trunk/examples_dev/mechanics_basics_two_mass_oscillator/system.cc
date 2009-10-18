@@ -104,13 +104,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   cuboid=new OpenMBV::Cube;
   cuboid->setLength(h2);
-  cuboid->setStaticColor(0.5);
+  cuboid->setStaticColor(0.8);
   box2->setOpenMBVRigidBody(cuboid);
 
   OpenMBV::CoilSpring* openMBVspring1=new OpenMBV::CoilSpring;
   openMBVspring1->setSpringRadius(0.1);
   openMBVspring1->setCrossSectionRadius(0.01);
   openMBVspring1->setNumberOfCoils(5);
+  openMBVspring1->setStaticColor(0.);
   spring1->setOpenMBVSpring(openMBVspring1);
 
   OpenMBV::CoilSpring* openMBVspring2=new OpenMBV::CoilSpring;
