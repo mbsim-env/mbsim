@@ -41,7 +41,8 @@ namespace MBSim {
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
-   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
+   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs TODO
+   * \todo mass proportional damping should be distributed on discretization and is not at the correct place (dependence on M) TODO
    */
   class FlexibleBody : public Body {
     public:

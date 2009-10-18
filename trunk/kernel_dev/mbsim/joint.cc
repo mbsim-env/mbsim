@@ -166,7 +166,7 @@ namespace MBSim {
       if(forceDir.cols() == 2)
         JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
       else if(forceDir.cols() == 3);
-      else if(forceDir.cols() == 0);
+      else if(forceDir.cols() == 0) JT = SqrMat(3,EYE);
       else { // define a coordinate system in the plane perpendicular to the force direction
         JT.col(0) = computeTangential(forceDir.col(0));
         JT.col(1) = crossProduct(forceDir.col(0),JT.col(0));
@@ -418,7 +418,6 @@ namespace MBSim {
     }
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-
       RowVec jp1=Jprox.row(laIndDS+i);
       RowVec e1(jp1.size());
       e1(laIndDS+i) = 1;

@@ -40,10 +40,7 @@ namespace MBSim {
     else if(InterpolationMethod == "plinear") {
       calculatePLinear(x,f);
     }
-    else {
-      cout << "ERROR (PPolynom::setXF): No valid method to calculate pp-form" << endl;
-      exit(-1);
-    }
+    else throw new MBSimError("ERROR (PPolynom::setXF): No valid method to calculate pp-form");
 
     index = 0;
     nPoly = x.size()-1;
