@@ -69,13 +69,13 @@ namespace MBSim {
        * \brief set interpolation
        * @param x vector of ordered x values
        * @param f corresponding f(x) values (rowwise)
-       * @param InterpolationMethod     'csplinePer' -> cubic Spline with periodic end conditions
+       * @param InterpolationMethod     'csplinePer' -> cubic Spline with periodic end conditions (two-times continuously differentiable)
        *                                                                                        S(x1) = S(xN) -> f(0)=f(end)
        *                                                                                        S'(x1) = S'(xN)
        *                                                                                        S''(x1) = S''(xN)
-       *                                'csplineNat' -> cubic Spline with natural end conditions
+       *                                'csplineNat' -> cubic Spline with natural end conditions (two-times continuously differentiable)
        *                                                                                        S''(x1) = S''(xN) = 0
-       *                                'plinear'    -> piecewise linear function
+       *                                'plinear'    -> piecewise linear function (weak differentiable)
        */
       void setXF(const fmatvec::Vec &x, const fmatvec::Mat &f, std::string InterpolationMethod);
 

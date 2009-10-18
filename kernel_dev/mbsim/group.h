@@ -45,7 +45,7 @@ namespace MBSim {
        */
       virtual ~Group();
 
-      /* INHERITED INTERFACE OF SUBSYSTEM */
+      /* INHERITED INTERFACE OF DYNAMICSYSTEM */
       virtual void updateJacobians(double t);
       virtual void facLLM();
       using DynamicSystem::addObject;

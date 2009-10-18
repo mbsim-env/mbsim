@@ -161,22 +161,26 @@ namespace MBSim {
       if(fPJR==0) {
         Mat JR;
         JR.resize(3,0);
+
         {
           RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
           if(fAPK_) 
             JR.resize() = fAPK_->getAxisOfRotation();
         }
+
         {
           CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
           if(fAPK_) {
             JR.resize() << DiagMat(3,INIT,1);
             if(cb) {
               fT = new TCardanAngles2(qSize,uSize[0]);
-            } else {
+            }
+            else {
               fT = new TCardanAngles(qSize,uSize[0]);
             }
           }
         }
+
         Mat JRR(3, uSize[0]);
         PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
         PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
@@ -194,7 +198,8 @@ namespace MBSim {
           }
           PJR0 = PJR;
           //fPJR = new PJRTest(frame[iKinematics],frameOfReference,PJR);
-        } else {
+        } 
+        else {
         }
       }
 

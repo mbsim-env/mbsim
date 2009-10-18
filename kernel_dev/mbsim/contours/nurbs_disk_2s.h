@@ -67,6 +67,7 @@ namespace MBSim {
    * \date 2009-08-16 contour / visualisation (Grundl / Missel / Schindler)
    * \todo computeSurfaceJacobians / computeSurfaceVelocities only in contact case TODO
    * \todo angularVelocity TODO
+   * \todo flexible body should only parametrise midplane -> other surfaces in contour TODO
    */
   class NurbsDisk2s : public Contour2s {
     public:
