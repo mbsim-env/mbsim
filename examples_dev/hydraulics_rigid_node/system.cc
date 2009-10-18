@@ -7,6 +7,7 @@
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimHydraulics;
 using namespace fmatvec;
 
 System::System(const string &name, bool setvalued) : Group(name) {
