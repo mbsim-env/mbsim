@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.57])
-AC_INIT([mbsimControl],[0.0.1],[rzander@users.berlios.de])
+AC_INIT([mbsimControl],[2.0.0],[rzander@users.berlios.de])
 AC_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([mbsimControl/Makefile.am])
