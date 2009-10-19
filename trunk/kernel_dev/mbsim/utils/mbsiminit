@@ -38,6 +38,7 @@ PREFIX=$(dirname $BINDIR)
 
 
 # setup link
+rm -f /tmp/mbsim_local
 test -L /tmp/mbsim_local || ln -s $PREFIX /tmp/mbsim_local
 # setup PATH and LD_LIBRARY_PATH
 mbsimflatxml -h >& /dev/null || LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/tmp/mbsim_local/lib
