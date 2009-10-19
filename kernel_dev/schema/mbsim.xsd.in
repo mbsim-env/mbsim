@@ -761,7 +761,7 @@
     <xs:complexContent>
       <xs:extension base="ElementType">
         <xs:sequence>
-          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:lengthVector">
+          <xs:element name="initialGeneralizedPosition" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Lage in den generalisierten Freiheitsgraden.
@@ -769,7 +769,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:velocityVector">
+          <xs:element name="initialGeneralizedVelocity" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
