@@ -18,7 +18,7 @@
   <objects>
     <RigidBody name="Box1">
       <plotFeature feature="+globalPosition"/>
-      <initialGeneralizedPosition unit="mm">[0]</initialGeneralizedPosition>
+      <initialGeneralizedPosition>[0]</initialGeneralizedPosition>
       <initialGeneralizedVelocity>[0.1]</initialGeneralizedVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
