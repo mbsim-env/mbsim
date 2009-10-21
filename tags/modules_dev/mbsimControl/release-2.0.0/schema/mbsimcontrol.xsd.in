@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimControl"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimControl"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:annotation>
+    <xs:documentation xmlns="http://www.w3.org/1999/xhtml">
+      Mit dem Modul MBSimControl können einfache Regelungsstrukturen aufgebaut werden. 
+      <p>
+        Zum Auswerten von Systemzuständen oder Funktionen stehen verschiedene Sensoren zur Verfügung, die die entsprechenden Größen zur Verfügung stellen.
+        Ebenso stehen Pseude-Sensoren zur Verfügung, welche Funktionen auswerten, um beispielsweise zeitabhängige Eingabegrößen zu generieren.
+      </p>
+      <p>
+        Zum Aufbereiten der Sensorsignale sind Signalmanipulatoren vorhanden.
+      </p>
+      <p>
+        In dynamischen Systemen 1. Ordnung können verschiedene Regelungskonzepte umgesetzt werden.
+      </p>
+      <p>
+        Durch Aktoren können Stellkräfte in die Systeme zurückgespeist werden.
+        Da Aktoren als Eingangsgröße ebenfalls Signale erhalten, gibt es einen speziellen Sensor, der die Systeme 1. Ordnung ausliest und deren Systemausgänge an die Aktoren überträgt.
+      </p>
+  </xs:documentation>
+</xs:annotation>
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"
+    schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
+
+  <xs:simpleType name="SignalReferenceType">
+    <xs:restriction base="pv:partialOctaveString">
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*Signal\[X\]" with
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*Signal\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+
+  <xs:element name="Signal" abstract="true" substitutionGroup="mbsim:Link" type="SignalType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Signal
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ExternSignalSource" substitutionGroup="Signal" type="ExternSignalSourceType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Dieses Signal bezieht seine Signalwerte (Vektor der dimension n) von einer externen Quelle, z.B,
+        von dem Master der Cosimulation mittels MDPCosim.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExternSignalSourceType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="sourceSize" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Gibt die Dimension der Signalquelle an.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Sensor" abstract="true" substitutionGroup="Signal" type="SensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SensorType">
+    <xs:complexContent>
+      <xs:extension base="SignalType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="GeneralizedCoordinateSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der generalisierten Koordinaten eines Objekts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="object">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Pfad des Objekts
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="index" type="xs:nonNegativeInteger">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Index der generalisierten Koordinate
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedPositionSensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedPositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der generalisierten Positionen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedVelocitySensor" substitutionGroup="GeneralizedCoordinateSensor" type="GeneralizedVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der generalisierten Geschwindigkeiten
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="AbsoluteCoordinateSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten (Welt-System)
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Pfad des Koordinatensystems
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="direction" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Matrix der Richtungsvektoren
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>        
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsolutePositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsolutePositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der Positionen im Welt-Koordinatensystem
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsolutePositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der Geschwindigkeiten im Welt-Koordinatensystem
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteAngularPositionSensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularPositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der Winkel im Welt-Koordinatensystem
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteAngularPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="AbsoluteAngularVelocitySensor" substitutionGroup="AbsoluteCoordinateSensor" type="AbsoluteAngularVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen der Winkelgeschwindigkeit im Welt-Koordinatensystem
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AbsoluteAngularVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="AbsoluteCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="RelativeCoordinateSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen von Zusammenhängen zweier Koordinatensystemen in relativen Koordinaten (Koordinatensystem des Referenzsystems)
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeCoordinateSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad zum Koordinatensystem des Referenzsystems
+                rel=Pfad zum Koordinatensystem dessen relative Größe zum Referenzsystem ausgewertet wird.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+              <xs:attribute name="rel" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="direction" type="pv:nounitMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Matrix der Richtungsvektoren
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>        
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativePositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativePositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Relative Position
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativePositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Relative Geschwindigkeit
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeAngularPositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularPositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Relativer Winkel 
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeAngularPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RelativeAngularVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Relative Winkelgeschwindigkeit
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RelativeAngularVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="RelativeCoordinateSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zur zeitabhängigen Auswertung von Funktionen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FunctionSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bennenung der Funktion
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_VS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor, zur Konvertierung des Ausgangs eines <i>SignalProcessingSystem</i>s in ein Sensor-Signal.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalProcessingSystemSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="signalProcessingSystem">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ExtraDynamicReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalAddition" substitutionGroup="Signal" type="SignalAdditionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Addition von Signalen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalAdditionType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence maxOccurs="unbounded">
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="factor" type="xs:double">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Faktor, mit dem das Eingangssignal zur Summe hinzugefügt wird.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalMux" substitutionGroup="Signal" type="SignalMuxType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Vektorwertiges Zusammenführen von Signalen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalMuxType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Pfad zum Eingangssignal
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalLimitation" substitutionGroup="Signal" type="SignalLimitationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Beschränkung der Ausgangswerte eines Signals.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalLimitationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="minimalValue" type="pv:nounitVector"/>
+          <xs:element name="maximalValue" type="pv:nounitVector"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalTimeDiscretization" substitutionGroup="Signal" type="SignalTimeDiscretizationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Zeitdiskretisierung eines Signals (ALPHA-STATUS)
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalTimeDiscretizationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="input">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:ExtraDynamicSystem" type="SignalProcessingSystemType"/>
+  <xs:complexType name="SignalProcessingSystemType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ExtraDynamicSystemType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinearTransferSystem" substitutionGroup="SignalProcessingSystem" type="LinearTransferSystemType"/>
+  <xs:complexType name="LinearTransferSystemType">
+    <xs:complexContent>
+      <xs:extension base="SignalProcessingSystemType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="pidType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="P" type="pv:nounitScalar"/>
+                  <xs:element name="I" type="pv:nounitScalar"/>
+                  <xs:element name="D" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="abcdType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="A" type="pv:nounitMatrix"/>
+                  <xs:element name="B" type="pv:nounitMatrix"/>
+                  <xs:element name="C" type="pv:nounitMatrix"/>
+                  <xs:element name="D" type="pv:nounitMatrix"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="integratorType">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="gain" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="pt1Type">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="P" type="pv:nounitScalar"/>
+                  <xs:element name="T" type="pv:nounitScalar"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="showABCD" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Actuator" substitutionGroup="mbsim:LinkMechanics" type="ActuatorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Mechanischer aktuator zwischen zwei Punkten. Die mechanische Kraft bzw. das Moment wird von
+        einem Signal bezogen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ActuatorType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:LinkMechanicsType">
+        <xs:sequence>
+          <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Kraftrichtungsmatrix <object class="inlineeqn">\boldsymbol{W}_f</object> des Aktors. Der Aktor bringt auf den Anschlusspunkt <tt>ref1</tt>
+                ein Kraft der Größe <object class="inlineeqn">\boldsymbol{f}=\boldsymbol{W}_f \boldsymbol{s}_f</object> auf.
+                Auf den Anschlusspunkt <tt>ref2</tt> wird die entsprechende Reaktion aufgebracht.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Momentrichtungsmatrix <object class="inlineeqn">\boldsymbol{W}_m</object> des Aktors. Der Aktor bringt auf den Anschlusspunkt <tt>ref1</tt>
+                ein Moment der Größe <object class="inlineeqn">\boldsymbol{m}=\boldsymbol{W}_m \boldsymbol{s}_m</object> auf.
+                Auf den Anschlusspunkt <tt>ref2</tt> wird die entsprechende Reaktion aufgebracht.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="referenceFrame" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das Koordinatensystem in dem die Momentrichtungsmatrix und die Kraftrichtungsmatrix angegeben wird:<br/>
+                0: im Koordinatensystem des Anschlusspunkts <tt>ref1</tt><br/>
+                1: im Koordinatensystem des Anschlusspunkts <tt>ref2</tt><br/>
+                Wenn nicht angegeben, so wird 0 verwendet.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das Signal, welches als Input <tt>s</tt> verwendet wird. Es setzt sich zusammen aus:
+                <object class="eqn">\boldsymbol{s}^T=[\boldsymbol{s}_f^T, \boldsymbol{s}_m^T]</object>
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="connect">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das beiden Anschlusspunkte des Aktors
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="mbsim:FrameReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>
