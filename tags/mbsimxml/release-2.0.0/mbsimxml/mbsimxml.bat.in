@@ -1,0 +1,80 @@
+@echo off
+rem Windows batch variant of mbsimxml (mbsimxml.bat.in)
+rem If editing this file, also edit the file mbsimxml.in!
+
+set bindir=@win_bindir@
+set MBSIMSCHEMA=@win_MBSIMSCHEMA@
+set MBSIMXMLSCHEMA=@win_MBSIMXMLSCHEMA@
+set MBXMLUTILSBINDIR=@win_MBXMLUTILSBINDIR@
+
+rem help
+if %1!==! goto help
+if "%1"=="-h" goto help
+if "%1"=="--help" goto help
+goto help_cont
+:help
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate]"
+  echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "                [--intparam <integratorparameterfile>] <integratorfile>"
+  echo ""
+  echo "Copyright (C) 2004-2009 MBSim Development Team"
+  echo "This is free software; see the source for copying conditions. There is NO"
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  echo ""
+  echo "Licensed under the GNU Lesser General Public License (LGPL)"
+  echo ""
+  echo "--onlypreprocess     Stop after the preprocessing stage"
+  echo "--donotintegrate     Stop after the initialization stage, do not integrate"
+  echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
+  echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
+  echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
+  echo "<integratorfile>     Use <integratorfile> as mbsim integrator xml file"
+  goto end
+:help_cont
+
+rem parameters
+set ONLYPP=false
+if "%1" == "--onlypreprocess" (
+  set ONLYPP=true
+  shift
+)
+set NOINT=false
+if "%1" == "--donotintegrate" (
+  set NOINT=true
+  shift
+)
+if "%1" == "--mbsimparam" (
+  set PARAM=%2
+  shift
+  shift
+) else (
+  set PARAM=none
+)
+set MBSIM=%1
+set PPMBSIM=%~n1
+set PPMBSIM=.pp.%PPMBSIM%.xml
+shift
+if "%1" == "--intparam" (
+  set PARAMINT=%2
+  shift
+  shift
+) else (
+  set PARAMINT=none
+)
+set MBSIMINT=%1
+set PPMBSIMINT=%~n1
+set PPMBSIMINT=.pp.%PPMBSIMINT%.xml
+
+del %PPMBSIM% %PPMBSIMINT% > NUL
+
+%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
+
+if "%ONLYPP%" == "false" (
+  if "%NOINT%" == "false" (
+    %bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
+  ) else (
+    %bindir%/mbsimflatxml --donotintegrate %PPMBSIM% %PPMBSIMINT% || goto end
+  )
+)
+
+:end
