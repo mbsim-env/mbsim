@@ -72,7 +72,9 @@ namespace MBSim {
     constructor();
   }
 
-  DynamicSystemSolver::~DynamicSystemSolver() {} 
+  DynamicSystemSolver::~DynamicSystemSolver() { 
+    H5::FileSerie::deletePIDFiles();
+  }
 
   void DynamicSystemSolver::initialize() {
 #ifdef _OPENMP
