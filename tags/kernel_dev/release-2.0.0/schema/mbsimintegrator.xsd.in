@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimIntegrator"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimIntegrator"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:xml="http://www.w3.org/XML/1998/namespace"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+
+  <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
+
+
+
+  <xs:element name="Integrator" abstract="true" type="IntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Abstrakte Oberklasse für Zeitintegratoren.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="IntegratorType">
+    <xs:sequence>
+      <xs:element name="startTime" type="pv:timeScalar">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Startzeitpunkt der Integration.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="endTime" type="pv:timeScalar">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Endzeitpunkt der Integration.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="plotStepSize" type="pv:timeScalar">  
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Schrittweite zur Ausgabe von Plotdaten.<br/>
+            Die Schrittweite zur Ausgabe von Plotdaten darf nicht kleiner als die Integrationsschrittweite sein.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="initialState" type="pv:unknownVector" minOccurs="0"> 
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+            Anfangszustand der Differentialinklusion.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute ref="xml:base"/>
+  </xs:complexType> 
+
+  <xs:element name="DOPRI5Integrator" substitutionGroup="Integrator" type="DOPRI5IntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Explizites Runge-Kutta Verfahren der Ordnung 5(4) mit 'dense output' der Ordnung 4.<br/>
+        Das Verfahren ist nur für nicht-steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DOPRI5IntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:nounitVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="initialStepSize" type="pv:timeScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalNumberOfSteps" type="xs:nonNegativeInteger" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="RADAU5Integrator" substitutionGroup="Integrator" type="RADAU5IntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Implizites Runge-Kutta Verfahren der Ordnung 5 (Radau IIA) mit 'dense output'.<br/>
+        Das Verfahren ist für steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RADAU5IntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector">  
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:nounitVector">  
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="initialStepSize" type="pv:timeScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalNumberOfSteps" type="xs:nonNegativeInteger" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LSODEIntegrator" substitutionGroup="Integrator" type="LSODEIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Livermore Solver für Ordinary Differential Equations zur Lösung von Anfangswertproblemen für steife gewöhnliche Differentialgleichungssysteme. Das Verfahren basiert auf den BDF-Verfahren der Ordnung 1-5 enthält aber auch das Adams-Moulton Verfahren der Ordnung 1-12 für nicht-steife Probleme. Die Schrittweite wird dynamisch angepasst. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="LSODEIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialStepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimalStepSize" type="pv:timeScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Minimal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfMaximalSteps" type="xs:unsignedLong">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="stiffModus" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert, ob steifes oder nicht-steifes Problem vorliegt.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="LSODARIntegrator" substitutionGroup="Integrator" type="LSODARIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Livermore Solver für Differential Algebraic Problems mit Rootfinding zur Lösung von Anfangswertproblemen für Differentiell-Algebraische Gleichungen ist eine Erweiterung von LSODE. Zum einen entscheidet das Verfahren dynamisch, ob ein steifes oder nicht-steifes System vorliegt, zum anderen enthält es einen Mechanismus, um Nullstellen von Indikatorfunktionen zu finden. Die Schrittweite wird dynamisch angepasst. 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="LSODARIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialStepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Schrittweitenvorschlag zu Beginn der Integration.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimalStepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Minimal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Maximal zu verwendende Schrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="plotOnRoot" type="xs:boolean">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Gibt an, ob eine Plot-Ausgabe geschrieben werden soll, wenn eine Indikatorfunktion einen Nulldurchgang hat.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="TimeSteppingIntegrator" substitutionGroup="Integrator" type="TimeSteppingIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeSteppingIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="stepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+</xs:schema>
