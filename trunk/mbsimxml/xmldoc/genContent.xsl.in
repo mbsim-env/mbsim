@@ -30,7 +30,7 @@
     <!-- html header -->
     <html xml:lang="en" lang="en">
     <head>
-      <title>MBSim XML - XML Documentation</title>
+      <title>MBSimXML - XML Documentation</title>
       <style type="text/css">
         *.element { font-family:monospace;font-weight:bold;font-size:1.25em }
         *.namespace { font-style:italic }
@@ -54,14 +54,17 @@
             c.firstChild.data="- ";
             c.style.cursor="nw-resize";
           }
-        }
+        
         /* ]]> */
       </script>
     </head>
     <body>
-    <h1>MBSim XML - XML Documentation</h1>
-    <p>This is the entry point for the documentation of MBSim XML (Kernel and Mechanics) and the installed modules:</p>
+    <h1>MBSimXML - XML Documentation</h1>
+    <p>This is the entry point for the documentation of MBSimXML. Below is a list of all relevant documentations for MBSimXML.</p>
     <ul>
+      <li>
+        <a class="namespace" href="../http___openmbv_berlios_de_MBXMLUtils_physicalvariable/index.xhtml">http://openmbv.berlios.de/MBXMLUtils/physicalvariable</a>
+      </li>
       <li>
         <a class="namespace" href="../http___openmbv_berlios_de_OpenMBV/index.xhtml">http://openmbv.berlios.de/OpenMBV</a>
       </li>
@@ -74,14 +77,16 @@
       </xsl:for-each>
     </ul>
 
-    <h2>All Elements in MBSim XML and in the Modules</h2>
+    <h2>All Elements</h2>
+    <p>Below is a list of all known element from MBSimXML, MBSimXML-Integrator, OpenMBV and the MBSimXML-Modules.</p>
     <ul class="content">
       <xsl:apply-templates mode="CONTENT" select="$ALLNODES/xs:schema/xs:element[not(@substitutionGroup)]">
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
 
-    <h2>All Simple Types in MBSim XML and in the Modules</h2>
+    <h2>All Simple Types</h2>
+    <p>Below is a list of all known simple types from MBSimXML, MBSimXML-Integrator, OpenMBV and the MBSimXML-Modules.</p>
     <ul class="content">
       <xsl:apply-templates mode="CONTENT" select="$ALLNODES/xs:schema/xs:simpleType">
         <xsl:sort select="@name"/>
