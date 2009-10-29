@@ -19,14 +19,15 @@
 
 #include <string>
 
-#include "mbsimValvetrain/rigid_contour_functions1s.h"
-#include "mbsimValvetrain/objectfactory.h"
+#include "rigid_contour_functions1s.h"
+
+#include "mbsim/utils/eps.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
-using namespace MBSim;
-using namespace fmatvec;
 using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
 
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
   Mat ContourMat;
@@ -266,7 +267,7 @@ double FuncCrPC::computeCurvatureTabular(const double& alpha) {
   }
 
 void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
-  TiXmlElement * e;
+/* TiXmlElement * e;
   e=element->FirstChildElement(MBSIMVALVETRAINNS"YZ");
   Mat YZ=Element::getMat(e);
   int dis=1;
@@ -280,7 +281,7 @@ void FuncCrPC::initializeUsingXML(TiXmlElement * element) {
   setYZ(YZ, dis, rYZ);
   e=element->FirstChildElement(MBSIMVALVETRAINNS"enableTabularFit");
   if (e)
-    enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));
+    enableTabularFit(Element::getDouble(e->FirstChildElement(MBSIMVALVETRAINNS"fitLength")));*/
 }
 
 

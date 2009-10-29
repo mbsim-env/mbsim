@@ -35,7 +35,6 @@ namespace MBSim {
   class Frame;
   class Contour;
   class ExtraDynamic;
-  class DataInterfaceBase;
   class Object;
   class Link;
   class ModellingInterface;
@@ -706,18 +705,6 @@ namespace MBSim {
       ExtraDynamic* getExtraDynamic(const std::string &name,bool check=true);
 
       /**
-       * \param data interface base to add
-       */
-      void addDataInterfaceBase(DataInterfaceBase* dib_);
-
-      /**
-       * \param name of the data interface interface
-       * \param check for existence of data interface interface
-       * \return data interface interface
-       */
-      DataInterfaceBase* getDataInterfaceBase(const std::string &name, bool check=true);
-
-      /**
        * \param modell to add
        */
       void addModel(ModellingInterface *modell);
@@ -767,7 +754,6 @@ namespace MBSim {
       std::vector<Object*> object;
       std::vector<Link*> link;
       std::vector<ExtraDynamic*> extraDynamic;
-      std::vector<DataInterfaceBase*> DIB;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> linkSingleValued;

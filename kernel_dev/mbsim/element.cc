@@ -59,10 +59,6 @@ namespace MBSim {
     }
   }
 
-  void Element::addDataInterfaceBaseRef(const string& DIBRef_){
-    DIBRefs.push_back(DIBRef_);
-  }
-
   void Element::init(InitStage stage, ObjectInterface* parent) {
     if(stage==MBSim::plot) {
       updatePlotFeatures(parent);

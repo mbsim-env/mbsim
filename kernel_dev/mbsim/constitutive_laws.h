@@ -21,7 +21,6 @@
 #define _CONSTITUTIVE_LAWS_H_
 
 #include "fmatvec.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/utils/function.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include <fstream>

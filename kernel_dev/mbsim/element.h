@@ -158,11 +158,6 @@ namespace MBSim {
       DynamicSystemSolver* getDynamicSystemSolver() { return ds; }
 
       /**
-       * \param name of data interface base
-       */
-      void addDataInterfaceBaseRef(const std::string& DIBRef_);
-
-      /**
        * \brief plots time series header
        * \param invocing parent class
        */
@@ -219,11 +214,6 @@ namespace MBSim {
        * \brief name of element 
        */
       std::string name;
-
-      /** 
-       * \brief vector for data interface base references
-       */
-      std::vector<std::string> DIBRefs;
 
       /**
        * \brief dynamic system

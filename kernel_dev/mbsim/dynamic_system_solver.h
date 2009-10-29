@@ -397,11 +397,6 @@ namespace MBSim {
        * writes a file with relevant matrices for debugging
        */
       void dropContactMatrices();
-      
-      /**
-       * \brief initialise data interface base
-       */
-      void initDataInterfaceBase();
 
       /**
        * \brief handler for user interrupt signal

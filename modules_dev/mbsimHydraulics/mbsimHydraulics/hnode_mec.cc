@@ -23,6 +23,7 @@
 #include "mbsimHydraulics/environment.h"
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

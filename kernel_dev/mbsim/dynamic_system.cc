@@ -23,7 +23,6 @@
 #include "mbsim/link.h"
 #include "mbsim/contour.h"
 #include "mbsim/object.h"
-#include "mbsim/data_interface_base.h"
 #include "mbsim/frame.h"
 #include "mbsim/contact.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -73,8 +72,6 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
       delete *i;
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i)
-      delete *i;
-    for(vector<DataInterfaceBase*>::iterator i = DIB.begin(); i != DIB.end(); ++i)
       delete *i;
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i)
       delete *i;
@@ -1324,27 +1321,6 @@ namespace MBSim {
     }
     return NULL;
   }
-
-  void DynamicSystem::addDataInterfaceBase(DataInterfaceBase* dib_) {
-    if(getDataInterfaceBase(dib_->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addDataInterfaceBase): The DynamicSystem " << name << " can only comprise one DataInterfaceBase by the name " <<  dib_->getName() << "!" << endl;
-      assert(getDataInterfaceBase(dib_->getName(),false) == NULL);
-    }
-    DIB.push_back(dib_);
-  }
-
-  DataInterfaceBase* DynamicSystem::getDataInterfaceBase(const string &name_, bool check) {
-    unsigned int i;
-    for(i=0; i<DIB.size(); i++) {
-      if(DIB[i]->getName() == name_ || DIB[i]->getName() == name_+".SigOut")
-        return DIB[i];
-    }
-    if(check){
-      if(!(i<DIB.size())) cout << "ERROR (DynamicSystem::getDataInterfaceBase): The DynamicSystem " << name <<" comprises no DataInterfaceBase " << name_ << "!" << endl; 
-      assert(i<DIB.size());
-    } 
-    return NULL;
-  }    
 
   void DynamicSystem::addModel(ModellingInterface *model_) {
     if(getModel(model_->getName(),false)) {
