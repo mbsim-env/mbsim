@@ -31,4 +31,4 @@ utilsinclude_HEADERS = eps.h\
 
 
 
-bin_SCRIPTS = mbsiminit mbsiminit.bat
+bin_SCRIPTS = mbsiminit.sh mbsiminit.csh mbsiminit.ksh mbsiminit.bat
