@@ -1,6 +1,7 @@
 @echo off
+rem WINDOWS IS NOT TESTED TILL NOW
 rem Windows batch variant of mbsiminit.bat
-rem If editing this file, edit also the file mbsiminit!
+rem DEVELOPER: If editing this file, edit also the files mbsiminit.*!
 rem
 rem Copyright (C) 2009 Markus Friedrich
 rem
@@ -20,12 +21,7 @@ rem Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 US
 rem
 rem Contact:
 rem   mafriedrich@users.berlios.de
-rem
-rem
-rem This file is only usefull for binary installations which are origianlly made
-rem to the directory c:/WINDOWS/Temp/mbsim_local. In this case copy this directory to some
-rem other directory on some other machine and run this script
-rem ("path\mbsiminit.bat") ones in the shell to initialize the installation.
+
 
 rem get BINDIR
 set BINDIR=%~dp0
