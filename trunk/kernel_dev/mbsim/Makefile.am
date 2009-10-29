@@ -7,7 +7,6 @@ body.cc\
 constitutive_laws.cc\
 contact.cc\
 contour.cc\
-data_interface_base.cc\
 dynamic_system.cc\
 dynamic_system_solver.cc\
 element.cc\
@@ -22,15 +21,13 @@ spring_damper.cc\
 extern_generalized_io.cc\
 link.cc\
 link_mechanics.cc\
-load.cc\
 kinetic_excitation.cc\
 mbsim_event.cc\
 object.cc\
 objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
-tree.cc\
-userfunction.cc
+tree.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
 
@@ -46,7 +43,6 @@ contact.h\
 contour.h\
 contour_pdata.h\
 constitutive_laws.h\
-data_interface_base.h\
 discretization_interface.h\
 dynamic_system.h\
 dynamic_system_solver.h\
@@ -63,7 +59,6 @@ extern_generalized_io.h\
 link.h\
 link_interface.h\
 link_mechanics.h\
-load.h\
 kinetic_excitation.h\
 flexible_body.h\
 mbsim_event.h\
@@ -73,6 +68,5 @@ objectfactory.h\
 object_interface.h\
 extra_dynamic.h\
 rigid_body.h\
-tree.h\
-userfunction.h
+tree.h
 

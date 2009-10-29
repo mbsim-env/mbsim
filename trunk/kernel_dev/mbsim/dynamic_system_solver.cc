@@ -1249,15 +1249,6 @@ namespace MBSim {
     contactDrop.close();
   }
 
-  void DynamicSystemSolver::initDataInterfaceBase() {
-    vector<Link*>::iterator il1;
-    for(il1 = link.begin(); il1 != link.end(); ++il1) (*il1)->initDataInterfaceBase(this);
-    vector<Object*>::iterator io1;
-    for(io1 = object.begin(); io1 != object.end(); ++io1) (*io1)->initDataInterfaceBase(this);
-    vector<ExtraDynamic*>::iterator ie1;
-    for(ie1 = extraDynamic.begin(); ie1 != extraDynamic.end(); ++ie1) (*ie1)->initDataInterfaceBase(this); 
-  }
-
   void DynamicSystemSolver::sigInterruptHandler(int) {
     cout<<"MBSim: Received user interrupt or terminate signal!"<<endl;
     exitRequest=true;

@@ -12,12 +12,7 @@ libmbsimControl_la_SOURCES = \
 														 signal_processing_system_sensor.cc\
 														 linear_transfer_system.cc\
 														 actuator.cc\
-														 objectfactory.cc\
-mectosignal.cc\
-nltransfersys.cc\
-signalspsys.cc\
-spsys.cc\
-transfersys.cc
+														 objectfactory.cc
 
 
 libmbsimControl_la_LIBADD = 
@@ -28,7 +23,7 @@ mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \
 															signal_interface.h\
 															signal_.h\
-														 extern_signal_source.h\
+														  extern_signal_source.h\
 															sensor.h\
 															object_sensors.h\
 															frame_sensors.h\
@@ -38,10 +33,5 @@ mbsimControlinclude_HEADERS = \
 															signal_processing_system_sensor.h\
 															linear_transfer_system.h\
 															actuator.h\
-															objectfactory.h\
-mectosignal.h\
-nltransfersys.h\
-signalspsys.h\
-spsys.h\
-transfersys.h
+															objectfactory.h
 
