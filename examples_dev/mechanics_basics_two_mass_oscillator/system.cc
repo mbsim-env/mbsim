@@ -1,8 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/spring_damper.h"
-#include "mbsim/load.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

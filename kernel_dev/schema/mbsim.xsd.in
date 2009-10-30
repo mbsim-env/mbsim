@@ -1751,7 +1751,35 @@
   </xs:element>
   <xs:complexType name="PlaneType">
     <xs:complexContent>
-      <xs:extension base="RigidContourType"/>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Größe der Ebene um den Referenzframe.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="numberOfLines" type="xs:positiveInteger">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Anzahl der Gitterlinien.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

@@ -3,7 +3,6 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contact.h"
-#include "mbsim/load.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 

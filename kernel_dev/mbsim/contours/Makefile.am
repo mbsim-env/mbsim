@@ -14,6 +14,7 @@ libcontour_la_SOURCES = area.cc\
 						frustum.cc\
 						frustum2d.cc\
 						nurbs_disk_2s.cc\
+						plane.cc\
 						planewithfrustum.cc\
 						sphere.cc
 
