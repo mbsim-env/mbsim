@@ -1,7 +1,6 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/tree.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -11,16 +10,6 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-
-class Moment : public UserFunction {
-  public:
-    Vec operator()(double t) {
-      Vec a(3);
-      a(0) = 0.001*cos(t);
-      a(1) = 0.0005*sin(t);
-      return a;
-    }
-};
 
 class MyPos : public Translation {
   public:

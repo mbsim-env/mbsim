@@ -29,6 +29,7 @@ namespace MBSim {
    * \brief plane without borders
    * \author Martin Foerg
    * \date 2009-03-23 some comments (Thorsten Schindler)
+   * \date 2009-10-30 visualization added (Markus Schneider)
    *
    * normal equals first column in orientation matrix
    */
@@ -39,6 +40,13 @@ namespace MBSim {
        * \param name of contour
        */
       Plane(const std::string &name) : RigidContour(name) {}
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void enableOpenMBV(bool enable=true, double size=1., int number=10);
+#endif
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+
   };
 }
 

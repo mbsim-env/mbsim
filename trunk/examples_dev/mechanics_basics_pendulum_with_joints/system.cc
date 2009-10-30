@@ -1,9 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/userfunction.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
-#include "mbsim/load.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

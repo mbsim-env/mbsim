@@ -2,7 +2,6 @@
 
 #include "mbsimHydraulics/rigid_line.h"
 #include "mbsimHydraulics/hnode.h"
-#include "mbsim/userfunction.h"
 #include "mbsimHydraulics/pressure_loss.h"
 
 using namespace std;
