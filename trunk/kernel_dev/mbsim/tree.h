@@ -89,6 +89,8 @@ namespace MBSim {
        */
       void sethSize(int &hsize, int j=0);
 
+      ObjectInterface* getObject() {return obj;} 
+
     protected:
       /**
        * \brief vector of node pointer for recursive structure

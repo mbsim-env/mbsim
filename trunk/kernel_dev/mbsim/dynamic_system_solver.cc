@@ -170,13 +170,16 @@ namespace MBSim {
       /* matrix of body dependencies */
       SqrMat A(objList.size());
       for(unsigned int i=0; i<objList.size(); i++) {
-        Object* parentBody = objList[i]->getObjectDependingOn();
 
-        if(parentBody) { // body with relativ kinematics
+	objList[i]->cutDependencies();
+
+        vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
+
+        if(parentBody.size()) { // body with relativ kinematics
           unsigned int j=0;
           bool foundBody = false;
           for(unsigned int k=0; k<objList.size(); k++, j++) {
-            if(objList[k] == parentBody) {
+            if(objList[k] == parentBody[0]) {
               foundBody = true;
               break;
             }

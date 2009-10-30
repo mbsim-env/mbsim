@@ -237,6 +237,12 @@ namespace MBSim {
         setFrameOfReference(getFrameByPath(saved_frameOfReference));
       Element::init(stage,parent);
     }
+    else if(stage==preInit) {
+      Element::init(stage,parent);
+      Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
+      if(obj)
+	dependency.push_back(obj);
+    }
     else if(stage==unknownStage) {
       Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
       Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
@@ -367,5 +373,21 @@ namespace MBSim {
       return 0;
   }
 
+  int Object::cutDependencies() {
+    int lOld=0;
+    Object* buf=0;
+    for(unsigned int i=0; i<dependency.size(); i++) { 
+      int lNew = dependency[i]->cutDependencies()+1;
+      if(lNew > lOld) {
+	lOld = lNew;
+	buf = dependency[i];
+      }
+    }
+    if(dependency.size()) {
+      dependency.clear();
+      dependency.push_back(buf);
+    }
+    return lOld;
+  }
 }
 
