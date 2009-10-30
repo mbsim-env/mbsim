@@ -10,16 +10,15 @@ using namespace MBSim;
 namespace MBSimPowertrain {
 
   void RigidBodyWith1DRelativeMotion::init(InitStage stage) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
+      RigidBody::init(stage);
+      for(unsigned int i=0; i<body.size(); i++)
+	dependency.push_back(body[i]);
+    }
+    else if(stage==resize) {
       RigidBody::init(stage);
       I.resize(gethSize());
-      if(body.size()) {
-        for(unsigned int i=0; i<body.size(); i++) {
-          Vec Ip = body[i]->getI()/ratio[i];
-          I(0,Ip.size()-1) += Ip;
-        }
-      }
-      else {
+      if(body.size()==0) {
         if(qSize) {
           assert(qSize == 1);
           I(gethSize()-1) = 1;
@@ -29,6 +28,15 @@ namespace MBSimPowertrain {
           if(parent) {
             I = parent->getI();
           }
+        }
+      }
+    }
+    else if(stage==unknownStage) {
+      RigidBody::init(stage);
+      if(body.size()) {
+        for(unsigned int i=0; i<body.size(); i++) {
+          Vec Ip = body[i]->getI()/ratio[i];
+          I(0,Ip.size()-1) += Ip;
         }
       }
     }
