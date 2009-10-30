@@ -21,7 +21,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/rigid_body.h"
+#include "mbsim/object_interface.h"
 #include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"

@@ -33,50 +33,58 @@ namespace MBSim {
   }
 
   void Node::updateStateDependentVariables(double t) {
-    obj->updateStateDependentVariables(t);
+    for(unsigned int i=0; i<child.size(); i++)
+      child[i]->getObject()->updateStateDependentVariables(t);
     for(unsigned int i=0; i<child.size(); i++)
       child[i]->updateStateDependentVariables(t);
   }
 
   void Node::updateJacobians(double t) {
-    obj->updateJacobians(t);
+    for(unsigned int i=0; i<child.size(); i++)
+      child[i]->getObject()->updateJacobians(t);
     for(unsigned int i=0; i<child.size(); i++)
       child[i]->updateJacobians(t);
   }
 
   void Node::updateInverseKineticsJacobians(double t) {
-    obj->updateInverseKineticsJacobians(t);
+    for(unsigned int i=0; i<child.size(); i++)
+      child[i]->getObject()->updateInverseKineticsJacobians(t);
     for(unsigned int i=0; i<child.size(); i++)
       child[i]->updateInverseKineticsJacobians(t);
   }
 
   void Node::calcqSize(int &qSize) {
-    obj->calcqSize();
-    obj->setqInd(qSize);
-    qSize += obj->getqSize();
-
+    for(unsigned int i=0; i<child.size(); i++) {
+      child[i]->getObject()->calcqSize();
+      child[i]->getObject()->setqInd(qSize);
+      qSize += child[i]->getObject()->getqSize();
+    }
     for(unsigned int i=0; i<child.size(); i++)
       child[i]->calcqSize(qSize);
   }
 
   void Node::calcuSize(int &uSize, int j) {
-
-    obj->calcuSize(j);
-    obj->setuInd(uSize,j);
-    uSize += obj->getuSize(j);
-
+    for(unsigned int i=0; i<child.size(); i++) {
+      child[i]->getObject()->calcuSize(j);
+      child[i]->getObject()->setuInd(uSize,j);
+      uSize += child[i]->getObject()->getuSize(j);
+    }
     for(unsigned int i=0; i<child.size(); i++)
       child[i]->calcuSize(uSize,j);
   }
 
   void Node::sethSize(int &hSize, int j) {
 
-    for(int i=child.size()-1; i>=0; i--)
-      child[i]->sethSize(hSize,j);
+   // obj->sethSize(hSize,j);
+   // obj->sethInd(0,j);
+   // hSize -= obj->getuSize(j);
 
-    obj->sethSize(hSize,j);
-    obj->sethInd(0,j);
-    hSize -= obj->getuSize(j);
+  //  for(int i=child.size()-1; i>=0; i--)
+  //    child[i]->sethSize(hSize,j);
+
+  //  obj->sethSize(hSize,j);
+  //  obj->sethInd(0,j);
+  //  hSize -= obj->getuSize(j);
   }
 
 
@@ -85,10 +93,12 @@ namespace MBSim {
   Tree::~Tree() {}
 
   void Tree::updateStateDependentVariables(double t) {
+    root->getObject()->updateStateDependentVariables(t);
     root->updateStateDependentVariables(t);
   }
 
   void Tree::updateJacobians(double t) {
+    root->getObject()->updateJacobians(t);
     root->updateJacobians(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
@@ -115,20 +125,31 @@ namespace MBSim {
 
   void Tree::sethSize(int hSize_, int j) {
     hSize[j] = hSize_;
-    root->sethSize(hSize_,j);
+    //root->sethSize(hSize_,j);
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->sethSize((*i)->getuSize(j)+(*i)->getuInd(j),j);
+      (*i)->sethInd(0,j);
+    }
   } 
 
   void Tree::calcqSize() {
     qSize = 0;
+    root->getObject()->calcqSize();
+    root->getObject()->setqInd(qSize);
+    qSize += root->getObject()->getqSize();
     root->calcqSize(qSize);
   }
 
   void Tree::calcuSize(int j) {
     uSize[j] = 0;
+    root->getObject()->calcuSize(j);
+    root->getObject()->setuInd(uSize[j],j);
+    uSize[j] += root->getObject()->getuSize(j);
     root->calcuSize(uSize[j],j);
   }
 
   void Tree::updateInverseKineticsJacobians(double t) {
+    root->getObject()->updateInverseKineticsJacobians(t);
     root->updateInverseKineticsJacobians(t);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 

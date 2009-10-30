@@ -26,7 +26,7 @@
 #include "mbsim/contours/point.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <rigid_body.h>
+#include <object_interface.h>
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/sphere.h>

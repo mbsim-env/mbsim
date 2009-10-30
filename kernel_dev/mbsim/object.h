@@ -183,10 +183,18 @@ namespace MBSim {
       virtual void facLLM();
 
       /**
-       * \brief checks dependency on another object.
-       * \return if the parent of the frame of reference is an object, this object is returned, otherwise, zero is returned.
+       * \brief checks dependency on other objects.
+       * \return a vector of objects the calling objects depends on.
        */
-      virtual Object* getObjectDependingOn() const { return 0; }
+      virtual std::vector<Object*> getObjectsDependingOn() const { return dependency; }
+
+      /**
+       * \brief computes the length of the pathes in the graph that represents
+       * the dependencies between all objects. The function also cuts
+       * all dependencies except the one associated with the longest path.
+       * \return the length of the longest path in the graph.
+       */
+      int cutDependencies();
 
       /**
        * \brief calculates size of right hand side
@@ -365,6 +373,11 @@ namespace MBSim {
        * \brief indices for velocities and right hand side
        */
       fmatvec::Index Iu, Ih;
+
+      /**
+       * \brief vector containing all dependencies.
+       */
+      std::vector<Object*> dependency;
 
     private:
       std::string saved_frameOfReference;
