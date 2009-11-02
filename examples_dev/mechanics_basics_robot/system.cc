@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/tree.h"
 #include "mbsim/environment.h"
 
 #include "mbsimControl/actuator.h"
@@ -23,7 +22,6 @@ using namespace MBSim;
 using namespace MBSimControl;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
-
   // Gravitation
   Vec grav(3);
   grav(1)=-1;
@@ -42,13 +40,9 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   double rS= 0.05;
 
   // --------------------------- Setup MBS ----------------------------
-
   // System with tree-structure
-  Tree *tree = new Tree("Baum");
-  addGroup(tree);
-
   RigidBody *basis = new RigidBody("Basis");
-  Node *node = tree->addObject(0,basis);
+  this->addObject(basis);
   basis->setMass(mB);
   SymMat Theta(3);
   Theta(0,0) = mB*rB*rB;
@@ -70,7 +64,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   basis->setFrameForKinematics(basis->getFrame("R"));
 
   RigidBody *arm = new RigidBody("Arm");
-  node = tree->addObject(node,arm);
+  this->addObject(arm);
   Vec PrPK0(3);
   PrPK0(1) = hB;
   basis->addFrame("P",PrPK0,A,basis->getFrame("R"));
@@ -90,7 +84,7 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   KrSP(1) = lA/2;
 
   RigidBody *spitze = new RigidBody("Spitze");
-  tree->addObject(node,spitze);
+  this->addObject(spitze);
   spitze->setMass(mS);
   Theta(0,0) = mS*rS*rS;
   Theta(1,1) = 1./2.*mS*rS*rS;

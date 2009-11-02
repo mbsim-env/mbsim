@@ -5,8 +5,8 @@
 
 class System : public MBSim::Group {
   public:
-    System(unsigned int type,bool reorganize);
+    System(unsigned int type);
 };
 
-#endif
+#endif /* _SYSTEM_H_ */
 

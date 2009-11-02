@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/tree.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contact.h"
 #include "mbsim/constitutive_laws.h"
@@ -32,13 +31,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  /* mill as tree */
-  Tree *mill = new Tree("Mill");
-  this->addGroup(mill);
-
   /* axis */
   RigidBody *axis = new RigidBody("Axis");
-  Node *node_axis = mill->addObject(0,axis);
+  this->addObject(axis);
 
   double l_axis = 0.1;
   double r_axis = 0.025;
@@ -61,7 +56,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* pole */
   RigidBody *pole = new RigidBody("Pole");
-  Node *node_pole = mill->addObject(node_axis,pole);
+  this->addObject(pole);
 
   double l_pole = 0.5;
   double r_pole = 0.025;
@@ -93,7 +88,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* reference of muller */
   RigidBody* muller = new RigidBody("Muller");
-  mill->addObject(node_pole,muller);
+  this->addObject(muller);
 
   double l_muller = 0.025;
   double r_muller = 0.1;

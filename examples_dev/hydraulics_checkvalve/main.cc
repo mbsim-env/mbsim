@@ -86,7 +86,6 @@ int main (int argc, char* argv[]) {
             dss->setImpactSolver(RootFinding);
           }
           dss->setgdTol(1e-9);
-          dss->setReorganizeHierarchy(true);
           dss->initialize();
 
           double tEnd=.5;
