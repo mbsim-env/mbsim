@@ -15,5 +15,5 @@ class TestGroup : public MBSim::Group {
     MBSim::RigidBody *stab1, *stab2;
 };
 
-#endif
+#endif /* _TEST_GROUP_H_ */
 
