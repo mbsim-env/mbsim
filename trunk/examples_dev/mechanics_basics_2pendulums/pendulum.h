@@ -1,26 +1,19 @@
 #ifndef _PENDULUM_H
 #define _PENDULUM_H
 
-#include "mbsim/tree.h"
-#include <string>
+#include "mbsim/group.h"
+#include "mbsim/rigid_body.h"
 
-namespace MBSim {
-  class RigidBody;
-}
-
-using namespace std;
-using namespace MBSim;
-
-class Pendulum : public Tree {
-  private:
-    RigidBody *stab1, *stab2;
+class Pendulum : public MBSim::Group {
   public:
-    Pendulum(const string &projectName); 
+    Pendulum(const std::string &projectName); 
 
-    RigidBody* getRod1() {return stab1;}
-    RigidBody* getRod2() {return stab2;}
+    MBSim::RigidBody* getRod1() { return stab1; }
+    MBSim::RigidBody* getRod2() { return stab2; }
 
+  private:
+    MBSim::RigidBody *stab1, *stab2;
 };
 
-#endif
+#endif /* _PENDULUM_H */
 

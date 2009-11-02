@@ -9,5 +9,5 @@ class System : public MBSim::DynamicSystemSolver {
     System(const std::string &projectName); 
 };
 
-#endif
+#endif /* _SYS_H */
 
