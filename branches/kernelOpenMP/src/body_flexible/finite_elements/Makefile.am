@@ -1,9 +1,0 @@
-noinst_LTLIBRARIES = libfe.la
-libfe_la_SOURCES = 	finite_element_1s_21_ancf.cc\
-			finite_element_1s_21_rcm.cc\
-			finite_element_1s_23_bta.cc
-
-feincludedir = $(includedir)/mbsim
-
-INCLUDES = $(DEPS_CFLAGS) 
-LDADD = $(DEPS_LIBS)   
