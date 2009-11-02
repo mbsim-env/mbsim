@@ -1,0 +1,15 @@
+<parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
+  <vectorParameter name="rHG">[0;2]</vectorParameter>
+  <vectorParameter name="alphaHG">[0;pi/4]</vectorParameter>
+  <scalarParameter name="m">5</scalarParameter>
+  <scalarParameter name="h">0.5</scalarParameter>
+  <scalarParameter name="alphaUG">pi/4</scalarParameter>
+  <scalarParameter name="m1">5</scalarParameter>
+  <scalarParameter name="m2">2</scalarParameter>
+  <scalarParameter name="c1">1e3</scalarParameter>
+  <scalarParameter name="c2">1e2</scalarParameter>
+  <scalarParameter name="d1">0</scalarParameter>
+  <scalarParameter name="d2">0</scalarParameter>
+  <scalarParameter name="l01">0.5</scalarParameter>
+  <scalarParameter name="l02">0.5</scalarParameter>
+</parameter>
