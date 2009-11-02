@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/tree.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -72,12 +71,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(1,1) = m*l*l/12.;
   Theta(2,2) = Theta(1,1);
 
-  Tree *tree = new Tree("Baum"); 
-  addGroup(tree);
   RigidBody* body = new RigidBody("Rod");
-
-  tree->addObject(0, body);
-  body->setFrameOfReference(tree->getFrame("I"));
+  this->addObject(body);
+  body->setFrameOfReference(this->getFrame("I"));
   body->setFrameForKinematics(body->getFrame("C"));
   body->setMass(m);
   body->setInertiaTensor(Theta);

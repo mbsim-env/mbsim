@@ -1,6 +1,5 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
-#include "mbsim/tree.h"
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -17,9 +16,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   grav(1)=-9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  Tree *tree = new Tree("Baum"); 
-  addGroup(tree);
-
   double mStab = 0.2;
   double lStab = 0.3;
   double JStab = 1.0/12.0 * mStab * lStab * lStab; 
@@ -30,7 +26,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   SymMat Theta(3);
 
   RigidBody* stab1 = new RigidBody("Stab1");
-  Node* node = tree->addObject(0,stab1);
+  this->addObject(stab1);
   KrCR(0) = a1;
 
   stab1->addFrame("R",KrCR,SqrMat(3,EYE));
@@ -56,7 +52,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
-  tree->addObject(node,stab2);
+  this->addObject(stab2);
   KrRP(0) = lStab/2;
   KrRP(2) = 0.006;
   stab1->addFrame("P",KrRP,SqrMat(3,EYE),stab1->getFrame("R"));

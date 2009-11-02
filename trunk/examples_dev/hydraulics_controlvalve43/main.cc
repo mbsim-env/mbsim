@@ -85,7 +85,6 @@ int main (int argc, char* argv[]) {
             dss->setImpactSolver(RootFinding);
           }
           dss->setgdTol(1e-9);
-          dss->setReorganizeHierarchy(true); // TODO why neccessary???
           dss->initialize();
 
           double tEnd=1.;

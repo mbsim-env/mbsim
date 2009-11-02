@@ -11,18 +11,15 @@ using namespace MBSim;
 using namespace fmatvec;
 
 int main(int argc, char *argv[]) {
-  bool reorganize = true;
-
   DynamicSystemSolver *sys = new DynamicSystemSolver("MBS");
-  sys->addGroup(new System(0,reorganize));
-  sys->addGroup(new System(1,reorganize));
-  sys->addGroup(new System(2,reorganize));
+  sys->addGroup(new System(0));
+  sys->addGroup(new System(1));
+  sys->addGroup(new System(2));
   MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
 
   sys->setConstraintSolver(LinearEquations);
   sys->setImpactSolver(LinearEquations);
   sys->setgdTol(1e-9);
-  sys->setReorganizeHierarchy(reorganize);
 
   sys->initialize();
 

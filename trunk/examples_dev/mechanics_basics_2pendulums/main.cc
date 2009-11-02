@@ -7,7 +7,6 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   DynamicSystemSolver *sys = new System("TS");
-  sys->setReorganizeHierarchy(true);
   sys->initialize();
   
   DOPRI5Integrator integrator;

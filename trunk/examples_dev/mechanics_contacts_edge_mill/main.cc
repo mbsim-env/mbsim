@@ -9,10 +9,9 @@ int main (int argc, char* argv[]) {
   sys->setImpactSolver(RootFinding);
   sys->setConstraintSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);
-  // sys->setNumJacProj(true);
-
+  //sys->setNumJacProj(true);
   sys->initialize();
-  
+
   TimeSteppingIntegrator integrator;
   integrator.setStepSize(5e-5);
 
