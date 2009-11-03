@@ -37,6 +37,8 @@ namespace MBSimHydraulics {
       if (!nFrom) { cerr<<"ERROR! HLine \""<<name<<"\" has no fromNode!"<<endl; _exit(1); }
       if (!nTo) { cerr<<"ERROR! HLine \""<<name<<"\" has no toNode!"<<endl; _exit(1); }
       if (nFrom==nTo) { cerr<<"ERROR! HLine \""<<name<<"\": fromNode and toNode are the same!"<<endl; _exit(1); }
+      
+      dependency.clear(); // no hydraulic-objects in tree structure
     }
     else
       Object::init(stage);
