@@ -153,7 +153,7 @@ Then,
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
-and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-octave-path} and \textsc{install} for installation of a XML interface. 
+and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-octave-path} and \textsc{install} for installation of an independent XML preprocessor. 
 
 \subsubsection{\OpenMBV{}}
 There is a static Linux binary available at \url{www.berlios.de} being updated from time to time.\par
@@ -212,13 +212,25 @@ For installation of \MBSim{} one types
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
+$HOME/MBSim/mbsim/kernel/xmldoc
+\end{verbatim}
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
+\begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimControl
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the signal processing and control module and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the signal processing and control module and to create a Doxygen HTML class documentation. In 
+\begin{verbatim}
+$HOME/MBSim/mbsim/modules/mbsimControl/xmldoc
+\end{verbatim}
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimHydraulics
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the hydraulics module and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the hydraulics module and to create a Doxygen HTML class documentation. In 
+\begin{verbatim}
+$HOME/MBSim/mbsim/modules/mbsimHydraulics/xmldoc
+\end{verbatim}
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimElectronics
 \end{verbatim}
@@ -230,7 +242,11 @@ Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \texts
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} and \textsc{install} to install the xml module.
+Invoke the procedures \textsc{automake, configure} and \textsc{install} to install the xml module. In
+\begin{verbatim}
+$HOME/MBSim/mbsim/mbsimxml/xmldoc
+\end{verbatim}
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/kernel
 \end{verbatim}
