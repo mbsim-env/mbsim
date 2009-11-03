@@ -14,6 +14,6 @@ bin_PROGRAMS = mbsimflatxml
 
 mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS)
 mbsimflatxml_LDFLAGS = -L.
-mbsimflatxml_LDADD = -lmbsimflatxml
+mbsimflatxml_LDADD = ./libmbsimflatxml.la
 
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc
