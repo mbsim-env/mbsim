@@ -186,8 +186,9 @@ namespace MBSim {
        * \brief checks dependency on other objects.
        * \return a vector of objects the calling objects depends on.
        */
-      virtual std::vector<Object*> getObjectsDependingOn() const { return dependency; }
+      std::vector<Object*> getObjectsDependingOn() const { return dependency; }
 
+      void addDependency(Object* obj) { dependency.push_back(obj); }
       /**
        * \brief computes the length of the pathes in the graph that represents
        * the dependencies between all objects. The function also cuts

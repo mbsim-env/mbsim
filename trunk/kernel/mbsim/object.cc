@@ -239,9 +239,11 @@ namespace MBSim {
     }
     else if(stage==preInit) {
       Element::init(stage,parent);
-      Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
-      if(obj)
-	dependency.push_back(obj);
+      if(frameOfReference) {
+	Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
+	if(obj)
+	  dependency.push_back(obj);
+      }
     }
     else if(stage==unknownStage) {
       Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
