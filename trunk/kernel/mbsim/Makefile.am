@@ -27,7 +27,8 @@ object.cc\
 objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
-tree.cc
+tree.cc\
+graph.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
 
@@ -68,5 +69,6 @@ objectfactory.h\
 object_interface.h\
 extra_dynamic.h\
 rigid_body.h\
-tree.h
+tree.h\
+graph.h
 
