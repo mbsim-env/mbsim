@@ -195,6 +195,7 @@ namespace MBSim {
        * \return the length of the longest path in the graph.
        */
       int cutDependencies();
+      int computeLevel();
 
       /**
        * \brief calculates size of right hand side

@@ -25,6 +25,7 @@
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
 #include "mbsim/tree.h"
+#include "mbsim/graph.h"
 #include "mbsim/extra_dynamic.h"
 #include "mbsim/integrators/integrator.h"
 #include "mbsim/flexible_body.h"
@@ -167,52 +168,49 @@ namespace MBSim {
         addExtraDynamic(edList[i]);
       }
 
-      /* matrix of body dependencies */
       SqrMat A(objList.size());
       for(unsigned int i=0; i<objList.size(); i++) {
 
-	objList[i]->cutDependencies();
+	vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
 
-        vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
+	for(unsigned int h=0; h<parentBody.size(); h++) {
+	  unsigned int j=0;
+	  bool foundBody = false;
+	  for(unsigned int k=0; k<objList.size(); k++, j++) {
+	    if(objList[k] == parentBody[h]) {
+	      foundBody = true;
+	      break;
+	    }
+	  }
 
-        if(parentBody.size()) { // body with relativ kinematics
-          unsigned int j=0;
-          bool foundBody = false;
-          for(unsigned int k=0; k<objList.size(); k++, j++) {
-            if(objList[k] == parentBody[0]) {
-              foundBody = true;
-              break;
-            }
-          }
-
-          if(foundBody) {
-            A(i,j) = 2; // 2 means predecessor
-            A(j,i) = 1; // 1 means successor
-          }
-        }
+	  if(foundBody) {
+	    A(i,j) = 2; // 2 means predecessor
+	    A(j,i) = 1; // 1 means successor
+	  }
+	}
       }
       // if(INFO) cout << "A = " << A << endl;
 
-      /* tree list */
-      vector<Tree*> bufTree;
+      vector<Graph*> bufGraph;
       int nt = 0;
       // Starte Aufbau
       for(int i=0; i<A.size(); i++) {
-        double a = max(trans(A).col(i));
-        if(a==1) { // root of relativ kinematics
-          stringstream str;
-          str << "InvisibleTree" << nt++;
-          Tree *tree = new Tree(str.str());
-          tree->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible tree must always walk throw the plot functions
-          addToTree(tree, 0, A, i, objList);
-          bufTree.push_back(tree);
-        } 
-        else if(a==0) // absolut kinematics
-          addObject(objList[i]);
+	double a = max(trans(A).col(i));
+	if(a>0 && A(i,i) != -1) { // root of relativ kinematics
+	  stringstream str;
+	  str << "InvisibleGraph" << nt++;
+	  Graph *graph = new Graph(str.str());
+	  addToGraph(graph, A, i, objList);
+	  graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk throw the plot functions
+	  bufGraph.push_back(graph);
+	} 
+	else if(a==0) // absolut kinematics
+	  addObject(objList[i]);
       }
+      // if(INFO) cout << "A = " << A << endl;
 
-      for(unsigned int i=0; i<bufTree.size(); i++) {
-        addGroup(bufTree[i]);
+      for(unsigned int i=0; i<bufGraph.size(); i++) {
+	addGroup(bufGraph[i]);
       }
 
       if(INFO) cout << "End of special group stage==preInit" << endl;
@@ -1479,6 +1477,14 @@ namespace MBSim {
     for(int j=0; j<A.cols(); j++)
       if(A(i,j) == 1) // child node of object i
         addToTree(tree, nextNode, A, j, objList);
+  }
+  void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
+    graph->addObject(objList[i]->computeLevel(),objList[i]);
+    A(i,i) = -1;
+
+    for(int j=0; j<A.cols(); j++)
+      if(A(i,j) > 0 && A(j,j)!=-1) // child node of object i
+        addToGraph(graph, A, j, objList);
   }
 
 }

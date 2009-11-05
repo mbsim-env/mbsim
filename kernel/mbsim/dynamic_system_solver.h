@@ -32,6 +32,7 @@ namespace MBSim {
   class Frame;
   class Tree;
   class Node;
+  class Graph;
   class ExtraDynamicInterface;
   class Integrator;
 
@@ -724,6 +725,7 @@ namespace MBSim {
        * \param list of objects
        */
       void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
+      void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
 
       bool truncateSimulationFiles;
   };
