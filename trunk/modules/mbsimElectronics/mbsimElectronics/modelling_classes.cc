@@ -231,36 +231,23 @@ namespace MBSimElectronics {
 
     for(unsigned int i=0; i<meshList.size(); i++) {
       objectList.push_back(meshList[i]);
-      if(i>0)
-        meshList[i]->setPrecessor(meshList[i-1]);
     }
 
     for(unsigned int i=0; i<branchList.size(); i++) {
       objectList.push_back(branchList[i]);
-      if(i>0)
-        branchList[i]->setPrecessor(branchList[i-1]);
-      else
-        branchList[i]->setPrecessor(meshList[meshList.size()-1]);
+      for(unsigned j=0; j<branchList[i]->getNumberOfConnectedMeshes(); j++)
+        branchList[i]->addDependency(branchList[i]->getMesh(j));
     }
 
     for(unsigned int i=0; i<compList.size(); i++) {
-      //cout << "comp " <<  compList[i]->getName();
-      //cout << " connected with branch " <<endl;
-      //if(compList[i]->getBranch())
-      //cout <<" - "<< compList[i]->getBranch()->getName() << endl;
-      //else
-      //cout <<" - "<< "not connected" << endl;
       Object* objectcomp = dynamic_cast<Object*>(compList[i]);
       Link* linkcomp = dynamic_cast<Link*>(compList[i]);
       if(objectcomp) {
-        //cout << "is Object" << endl;
         objectList.push_back(objectcomp);
-        //node = addObject(node,objectcomp);
+	objectcomp->addDependency(compList[i]->getBranch());
       }
       else if(linkcomp) {
-        //cout << "is Link" << endl;
         linkList.push_back(linkcomp);
-        //addLink(linkcomp);
       }
       else {
         cout << "Fehler" << endl;

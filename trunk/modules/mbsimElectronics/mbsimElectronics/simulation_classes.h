@@ -40,7 +40,7 @@ namespace MBSimElectronics {
       int flag;
       Object* precessor;
     public:
-      Branch(const std::string &name) : Object(name), flag(0), precessor(0) {}
+      Branch(const std::string &name) : Object(name), Q(1), I(1), flag(0), precessor(0) {}
       void updateStateDependentVariables(double t);
       void updateJacobians(double t) {};
       void updateInverseKineticsJacobians(double t) {};
@@ -65,7 +65,6 @@ namespace MBSimElectronics {
       void buildMeshes(Terminal* callingTerminal, Branch* callingBranch, Mesh* currentMesh, bool &foundMesh);
       void setFlag(int f) { flag = f; }
       int getFlag() const { return flag; }
-      void plot(double t, double dt);
       Object* getObjectDependingOn() const {return precessor;}
       void setPrecessor(Object* obj) {precessor = obj;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -80,8 +79,11 @@ namespace MBSimElectronics {
 
       void updateg(double t) {}
       void updategd(double t) {}
+      void plot(double t, double dt = 1); 
       virtual std::string getName() const {return Link::getName();}
       virtual void setName(std::string name) {Link::setName(name);}
+      MBSim::DynamicSystem* getParent() { return Link::getParent(); }
+      void setParent(MBSim::DynamicSystem* sys) { Link::setParent(sys); }
       bool isActive() const {return true;}
       bool gActiveChanged() {return true;}
       void init(MBSim::InitStage stage);
@@ -151,11 +153,15 @@ namespace MBSimElectronics {
     protected:
     public:
       ElectronicObject(const std::string &name) : Object(name) {}
+      void init(MBSim::InitStage stage);
+      void plot(double t, double dt = 1); 
       void updateStateDependentVariables(double t) {};
       void updateJacobians(double t) {};
       void updateInverseKineticsJacobians(double t) {};
       virtual std::string getName() const {return Object::getName();}
       virtual void setName(std::string name) {Object::setName(name);}
+      MBSim::DynamicSystem* getParent() { return Object::getParent(); }
+      void setParent(MBSim::DynamicSystem* sys) { Object::setParent(sys); }     
       Object* getObjectDependingOn() const {return branch;}
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Group* getOpenMBVGrp() { return 0; }
