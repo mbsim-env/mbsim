@@ -428,6 +428,8 @@ namespace MBSim {
       link[i]->init(stage);
     for(unsigned i=0; i<extraDynamic.size(); i++)
       extraDynamic[i]->init(stage);
+    for(unsigned i=0; i<model.size(); i++)
+      model[i]->init(stage);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
@@ -1328,6 +1330,7 @@ namespace MBSim {
       assert(getModel(model_->getName(),false) == NULL); 
     }
     model.push_back(model_);
+    model_->setParent(this);
   }
 
   ModellingInterface* DynamicSystem::getModel(const string &name, bool check) {
