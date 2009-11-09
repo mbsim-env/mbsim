@@ -1,5 +1,5 @@
 \section{Installation}
-This section summarizes the necessary steps to install \MBSim{} \cite{Foer06}.
+This section summarizes the necessary steps to install \MBSim{}.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
@@ -153,7 +153,7 @@ Then,
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
-and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-octave-path} and \textsc{install} for installation of an independent XML preprocessor. 
+and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-octave-path} and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
 
 \subsubsection{\OpenMBV{}}
 There is a static Linux binary available at \url{www.berlios.de} being updated from time to time.\par
@@ -210,7 +210,7 @@ For installation of \MBSim{} one types
  svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
  cd $HOME/MBSim/mbsim/kernel
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. In
 \begin{verbatim}
 $HOME/MBSim/mbsim/kernel/xmldoc
 \end{verbatim}
@@ -242,15 +242,11 @@ Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \texts
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} and \textsc{install} to install the xml module. In
+Invoke the procedures \textsc{automake, configure} and \textsc{install} to install the XML module which contains an executable to invoke the preprocessor and after that evaluate the resulting flat structure. In
 \begin{verbatim}
 $HOME/MBSim/mbsim/mbsimxml/xmldoc
 \end{verbatim}
 invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
-\begin{verbatim}
- cd $HOME/MBSim/mbsim/kernel
-\end{verbatim}
-Invoke \texttt{make xmldoc} to create an HTML class documentation of the XML interface. 
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{MBSimAddOns}
