@@ -42,8 +42,5 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   connectTerminal(inductorR->getTerminal("B"),capacitor->getTerminal("A"));
   connectTerminal(capacitor->getTerminal("B"),resistor->getTerminal("B"));
 
-  //MyCircuit *elnet = new MyCircuit("ElectricalCircuit");
-  //addGroup(elnet,Vec(3),SqrMat(3));
-
 }
 
