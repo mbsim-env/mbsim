@@ -28,8 +28,8 @@ namespace MBSimElectronics {
 
   void ElectronicObject::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(branch->getCharge()(0));
-      plotVector.push_back(branch->getCurrent()(0));
+      plotVector.push_back(Q);
+      plotVector.push_back(I);
       Object::plot(t,dt);
     }
   }
@@ -45,6 +45,7 @@ namespace MBSimElectronics {
       if(getPlotFeature(plotRecursive)==enabled) {
 	plotColumns.push_back("Charge");
 	plotColumns.push_back("Current");
+	plotColumns.push_back("Voltage");
 
 	Link::init(stage);
       }
@@ -55,8 +56,9 @@ namespace MBSimElectronics {
 
   void ElectronicLink::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(branch->getCharge()(0));
-      plotVector.push_back(branch->getCurrent()(0));
+      plotVector.push_back(Q);
+      plotVector.push_back(I);
+      plotVector.push_back(U);
       Link::plot(t,dt);
     }
   }
@@ -96,12 +98,18 @@ namespace MBSimElectronics {
     }
   }
 
+  void Branch::setvz(int vz_, Mesh* mesh_) {
+    for(int i=0; i<mesh.size(); i++)
+      if(mesh_ == mesh[i])
+	vz[i] = vz_;
+  }
+
   void Branch::init(InitStage stage) {
     if(stage==MBSim::unknownStage) {
       if(J.cols() == 0) {
 	J.resize(1,gethSize());
 	for(int i=0; i<mesh.size(); i++)
-	  J(0,mesh[i]->getuInd()) = i==0?1:1; 
+	  J(0,mesh[i]->getuInd()) = vz[i]; 
       }
     }
     else
@@ -113,16 +121,15 @@ namespace MBSimElectronics {
   }
 
   void Branch::buildTreeBranches(Branch* callingBranch, vector<Branch*> &treeBranch, unsigned int nmax) {
-    //cout << "   insert " << this->getName() << endl;
-    treeBranch.push_back(this);
+    if(getStartTerminal()->getFlag() != -1 || getEndTerminal()->getFlag() != -1) {
+      treeBranch.push_back(this);
+      getStartTerminal()->setFlag(-1);
+      getEndTerminal()->setFlag(-1);
+    }
     for(unsigned int i=0; i<connectedBranch.size(); i++)
       if(connectedBranch[i] != callingBranch) {
 	if(connectedBranch[i]->getFlag()==0) {
 	  connectedBranch[i]->setFlag(1);
-	  //treeBranch.push_back(connectedBranch[i]);
-	  //cout << "   insert " << connectedBranch[i]->getName() << endl;
-	  //cout << nmax << endl;
-	  //cout << treeBranch.size() << endl;
 
 	  if(treeBranch.size() < nmax)
 	    connectedBranch[i]->buildTreeBranches(this,treeBranch,nmax);
@@ -131,7 +138,6 @@ namespace MBSimElectronics {
   }
 
   void Branch::buildMeshes(Terminal *callingTerminal, Branch* callingBranch, Mesh* currentMesh, bool &foundMesh) {
-    cout << "begin " << getName() << endl;
     if(callingBranch == 0) {
       callingBranch = this;
     } 
@@ -148,19 +154,22 @@ namespace MBSimElectronics {
 	if(foundMesh) {
 	  if(getFlag()==4)
 	    setFlag(3);
-	  cout << "connect " << name << " with " << currentMesh->getName() << endl;
 	  connect(currentMesh);
 	  return;
 	}
       }
     }
-    cout << " end " << getName() << endl;
   }
 
   Inductor::Inductor(const string &name) : ElectronicObject(name), L(1) {
     addTerminal("A");
     addTerminal("B");
     connectTerminal(terminal[0],terminal[1]);
+  }
+
+  void Inductor::updateStateDependentVariables(double t) {
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
   }
 
   void Inductor::updateM(double t) {
@@ -175,10 +184,12 @@ namespace MBSimElectronics {
   }
 
   void Diode::updateh(double t) {
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
     double slope=1e4;
-    double Is = (branch->getCurrent()(0) >= 0) ? 0 : slope*branch->getCurrent()(0);
-    h[0] -= trans(branch->getJacobian())*Is; // TODO Vorzeichen?
-    hLink[0] -= trans(branch->getJacobian())*Is; // TODO Vorzeichen?
+    U = (I >= 0) ? 0 : slope*I;
+    h[0] -= trans(branch->getJacobian())*U*vz; 
+    hLink[0] -= trans(branch->getJacobian())*U*vz; 
   }
 
   Switch::Switch(const string &name) : ElectronicLink(name) {
@@ -188,17 +199,17 @@ namespace MBSimElectronics {
   }
 
   void Switch::updateh(double t) {
-    double Is = branch->getCurrent()(0);
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
     double gdLim = 0.01;
     double U0 = (*voltageSignal)(t)(0);
-    double U;
-    if(fabs(Is) < gdLim)
-      U = -U0*Is/gdLim;
+    if(fabs(I) < gdLim)
+      U = -U0*I/gdLim;
     else
-      U = Is>0?-U0:U0;
+      U = I>0?-U0:U0;
     U*=-1;
-    h[0] -= trans(branch->getJacobian())*U; // TODO Vorzeichen?
-    hLink[0] -= trans(branch->getJacobian())*U; // TODO Vorzeichen?
+    h[0] -= trans(branch->getJacobian())*U*vz; 
+    hLink[0] -= trans(branch->getJacobian())*U*vz; 
   }
 
   Resistor::Resistor(const string &name) : ElectronicLink(name), R(1) {
@@ -208,12 +219,16 @@ namespace MBSimElectronics {
   }
 
   void Resistor::updateh(double t) {
-    h[0] -= trans(branch->getJacobian())*R*branch->getCurrent(); // TODO Vorzeichen?
-    hLink[0] -= trans(branch->getJacobian())*R*branch->getCurrent(); // TODO Vorzeichen?
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
+    U = R*I; 
+
+    h[0] -= trans(branch->getJacobian())*U*vz; 
+    hLink[0] -= trans(branch->getJacobian())*U*vz; 
   }
 
   double Resistor::computeU(double t) {
-    return -R*branch->getCurrent()(0); // TODO Vorzeichen?
+    return R*branch->getCurrent()(0)*vz; // TODO Vorzeichen?
   }
 
   Capacitor::Capacitor(const string &name) : ElectronicLink(name), C(1) {
@@ -223,8 +238,11 @@ namespace MBSimElectronics {
   }
 
   void Capacitor::updateh(double t) {
-    h[0] -= trans(branch->getJacobian())*branch->getCharge()/C; // TODO Vorzeichen?
-    hLink[0] -= trans(branch->getJacobian())*branch->getCharge()/C; // TODO Vorzeichen?
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
+    U = Q/C; 
+    h[0] -= trans(branch->getJacobian())*U*vz;
+    hLink[0] -= trans(branch->getJacobian())*U*vz;
   }
 
   VoltageSource::VoltageSource(const string &name) : ElectronicLink(name) {
@@ -234,84 +252,12 @@ namespace MBSimElectronics {
   }
 
   void VoltageSource::updateh(double t) {
-    h[0] -= trans(branch->getJacobian())*(*voltageSignal)(t);
-    hLink[0] -= trans(branch->getJacobian())*(*voltageSignal)(t);
+    Q = branch->getCharge()(0)*vz;
+    I = branch->getCurrent()(0)*vz;
+    U = (*voltageSignal)(t)(0);
+    h[0] -= trans(branch->getJacobian())*U*vz;
+    hLink[0] -= trans(branch->getJacobian())*U*vz;
   }
-
-   void Resistor::init(InitStage stage) {
-    if(stage==MBSim::plot) {
-     // if(getPlotFeature(plotRecursive)==enabled) {
-	plotColumns.push_back("Voltage drop");
-
-	ElectronicLink::init(stage);
-     // }
-    }
-    else
-      ElectronicLink::init(stage);
-  }
-
-  void Resistor::plot(double t, double dt) {
-    //if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(R*branch->getCurrent()(0));
-
-      ElectronicLink::plot(t,dt);
-   // }
-  }
-
-   //void Branch::buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &foundMesh) {
-  //  cout << "begin " << getName() << endl;
-  //  if(callingBranch == 0) {
-  //    callingBranch = this;
-  //  } 
-  //  if(getFlag() == 3)
-  //    setFlag(4);
-  //  for(unsigned int i=0; i<connectedBranch.size(); i++) {
-  //    cout << i << endl;
-  //   // cout << " treeBranch? " << (connectedBranch[i]->getFlag()==3) <<endl;
-  //   // cout << " found? " << (connectedBranch[i] == callingBranch) <<endl;
-  //   // cout << " sondern: " << connectedBranch[i]->getName() <<endl;
-  //    if(callingBranch)
-  //      //cout << " und: " << callingBranch->getName() <<endl;
-  //      if(connectedBranch[i]->getFlag() == 3)
-  //	connectedBranch[i]->buildMeshes(callingBranch,currentMesh,foundMesh);
-  //      else if(connectedBranch[i] == callingBranch)
-  //	foundMesh = true;
-  //    if(foundMesh) {
-  //      if(getFlag()==4)
-  //	setFlag(3);
-  //      cout << "connect " << name << " with " << currentMesh->getName() << endl;
-  //      connect(currentMesh);
-  //      return;
-  //    }
-  //  }
-  //  //cout << " end " << getName() << endl;
-  //}
-  //
-
-  //vector<Mesh*> Branch::buildMeshes(Branch* callingBranch, Mesh* currentMesh, bool &foundMesh) {
-  //  vector<Mesh*> mesh;
-  //  if(callingBranch == 0) {
-  //    currentMesh = new Mesh("Name");
-  //    //this->connect(currentMesh);
-  //    mesh.push_back(currentMesh);
-  //  }
-  //  for(unsigned int i=0; i<connectedBranch.size(); i++) {
-  //    if(!foundMesh) {
-  //      if(connectedBranch[i] != callingBranch) {
-  //	if(connectedBranch[i]->getFlag()==3) {
-  //	  connectedBranch[i]->buildMeshes(this,currentMesh,foundMesh);
-  //	}
-  //	else if(connectedBranch[i]->getFlag()==2) {
-  //	  foundMesh = true;
-  //	  cout << "found mesh" << endl;
-  //	}
-  //      }
-  //    }
-  //  }
-  //  if(foundMesh)
-  //    connect(currentMesh);
-  //  return mesh;
-  //}
 
 }
 

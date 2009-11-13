@@ -32,7 +32,6 @@ namespace MBSimElectronics {
     int getNumberOfConnectedTerminals() const {return connectedTerminal.size();}
     int getNumberOfConnectedBranches() const {return connectedBranch.size();}
     Branch* getBranch(int i) {return connectedBranch[i];}
-    int searchForBranches(Terminal* callingTerminal);
     std::vector<Branch*> buildBranches(Branch* branch);
     void findEndOfBranch(Terminal* callingTerminal, Branch* currentBranch);
   };
@@ -40,27 +39,22 @@ namespace MBSimElectronics {
   void connectTerminal(Terminal *terminal1, Terminal *terminal2);
   void connectBranch(Branch *branch1, Branch *branch2);
 
-  /*class ModellingInterface {
-    public:
-    virtual std::string getName() const = 0;
-    virtual void setName(std::string name) = 0;
-    virtual void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList) = 0;
-    };
-    */
-
   class ElectronicComponent : public MBSim::ModellingInterface {
     protected:
       std::vector<Terminal*> terminal;
       Branch* branch;
+      int vz;
+      double U,Q,I;
     public:
-      ElectronicComponent() : branch(0) {}
+      ElectronicComponent() : branch(0), vz(0), U(0), Q(0), I(0) {}
       void addTerminal(Terminal *terminal);
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
       void buildListOfTerminals(std::vector<Terminal*> &terminal);
-      void connect(Branch *branch_) {branch=branch_;}
+      void connect(Branch *branch_,int vz=0);
       Branch* getBranch() {return branch;}
       void processModellList(std::vector<ModellingInterface*> &modellList, std::vector<MBSim::Object*> &objectList, std::vector<MBSim::Link*> &linkList);
+      int getvz() const { return vz;}
   };
 
 }
