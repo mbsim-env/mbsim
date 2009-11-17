@@ -604,16 +604,16 @@ namespace MBSim {
       if(getPlotFeature(generalizedLinkForce)==enabled) {
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
           if(gActive[i] && gdActive[i][0]) {
-            plotVector.push_back(lak[i](0));
+            plotVector.push_back(lak[i](0)/(isSetValued()?dt:1.));
             if(gdActive[i][1]) {
               for(int j=0; j<getFrictionDirections(); j++)
-                plotVector.push_back(lak[i](1+j));
+                plotVector.push_back(lak[i](1+j)/(isSetValued()?dt:1.));
             }
             else {
               if(fdf) {
                 Vec buf = fdf->dlaTdlaN(gdk[i](1,getFrictionDirections()), lak[i](0))*lak[i](0);
                 for(int j=0; j<getFrictionDirections(); j++)
-                  plotVector.push_back(buf(j));
+                  plotVector.push_back(buf(j)/(isSetValued()?dt:1.));
               }
             }
           } 
