@@ -14,7 +14,7 @@ OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /de
 CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimElectronics` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimElectronics` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimElectronics` `pkg-config --libs mbsimControl`
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \
