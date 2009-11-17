@@ -52,6 +52,11 @@ namespace MBSim {
         return nrm2(crossProduct(rs,diff2(alpha)))/(nrm2rs*nrm2rs*nrm2rs); 
       }
       virtual double computeCurvature(const ContourPointData &cp) {return computeCurvature(cp.getLagrangeParameterPosition()(0)); }
+      
+      virtual double computeR(const double &alpha) {return 0; }
+      virtual double computedRdAlpha(const double &alpha) {return 0; }
+      virtual double computed2RdAlpha2(const double &alpha) {return 0; }
+      
       double getalphaStart() { return alphaStart; }
       double getalphaEnd() { return alphaEnd; }
       void setalphaStart(double alphaStart_) { alphaStart = alphaStart_; };
