@@ -9,11 +9,11 @@ Installation:
 =============
 	1. aclocal, autoconf, libtoolize und automake ausführen
 		
-		aclocal
-		autoheader
-		autoconf
-		libtoolize
-		automake -a
+                aclocal
+                autoheader
+                autoconf
+                libtoolize -c --force
+                automake -a -c --force
 			                
 	2. configure Skript ausführen.
 
