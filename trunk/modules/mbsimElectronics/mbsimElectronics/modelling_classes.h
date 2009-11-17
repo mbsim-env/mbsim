@@ -44,9 +44,9 @@ namespace MBSimElectronics {
       std::vector<Terminal*> terminal;
       Branch* branch;
       int vz;
-      double U,Q,I;
+      double Q,I;
     public:
-      ElectronicComponent() : branch(0), vz(0), U(0), Q(0), I(0) {}
+      ElectronicComponent();
       void addTerminal(Terminal *terminal);
       void addTerminal(const std::string &str);
       Terminal* getTerminal(const std::string &name, bool check=true);
