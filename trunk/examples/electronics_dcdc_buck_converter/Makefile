@@ -10,7 +10,7 @@ CPPFLAGS= -g3 `pkg-config --cflags mbsimElectronics`
 
 
 main : $(objects)
-	$(CC) -o main $(objects) `pkg-config --libs mbsimElectronics` 
+	$(CC) -o main $(objects) `pkg-config --libs mbsimElectronics` `pkg-config --libs mbsimControl`  
 
 
 
