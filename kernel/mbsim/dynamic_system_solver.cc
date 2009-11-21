@@ -906,6 +906,11 @@ namespace MBSim {
       facLLM(); 
       updateW(t); 
       projectGeneralizedVelocities(t);
+      bool ret = true;
+      for(int j=0; j<jsv.size()-1; j++)
+      if(jsv(j)>0)
+	ret = false;
+      if(ret) return;
     }
 
     updateStateDependentVariables(t);
@@ -1100,12 +1105,13 @@ namespace MBSim {
       computeConstraintForces(t); 
     }
     updateStopVector(t);
-    sv(sv.size()-1) = k*1e-1-t; 
+    sv(sv.size()-1) = k*1e-0-t; 
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(double t) {
     if(laSize) {
       calcgSizeActive();
+
       updategRef(gParent(0,gSize-1));
       updateg(t);
       Vec nu(getuSize());
@@ -1114,10 +1120,10 @@ namespace MBSim {
       updateW(t);
       Vec corr;
       corr = g;
-      corr.init(1e-14);
+      corr.init(1e-16);
       SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
       // TODO: Wv*T check
-      while(nrmInf(g-corr) >= 1e-8) {
+      while(nrmInf(g-corr) >= 1e-16) {
         Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
         Vec dnu = slvLLFac(LLM,W*mu)-nu;
         nu += dnu;
@@ -1137,7 +1143,6 @@ namespace MBSim {
       calcgdSizeActive();
       updategdRef(gdParent(0,gdSize-1));
       updategd(t);
-      Vec nu(getuSize());
 
       SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
       Vec mu = slvLS(Gv,-gd);
