@@ -47,7 +47,7 @@ namespace MBSim {
        * \param length of finite element
        * \param density
        * \param cross-sectional area
-       * \param Young' modulus
+       * \param Young's modulus
        * \param shear modulus
        * \param first area moment of inertia
        * \param second area moment of inertia
@@ -132,7 +132,7 @@ namespace MBSim {
       double A;
 
       /**
-       * \brief Youngs modulus 
+       * \brief Young's modulus 
        */
       double E;
 

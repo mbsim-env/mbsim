@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,105 +13,133 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
+ *          thschindler@users.berlios.de
  */
 
-#ifndef _BODY_FLEXIBLE_1S_23_BTA_H_
-#define _BODY_FLEXIBLE_1S_23_BTA_H_
+#ifndef _FLEXIBLE_BODY_1S_23_BTA_H_
+#define _FLEXIBLE_BODY_1S_23_BTA_H_
 
-
-#include "body_flexible.h"
-#include "contour.h"
+#include "mbsim/flexible_body.h"
+#include "mbsim/contours/cylinder_flexible.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#endif
 
 namespace MBSim {
 
-//  class CylinderFlexible;
-  class FiniteElement1s23BTA;
+  /*! 
+   * \brief bending torsional axis
+   * \author Roland Zander
+   * \author Thorsten Schindler
+   * \date 2009-11-22 initial commit kernel_dev
+   * \todo gravity, handling for contour-node information, tangents and AWK TODO
+   */
+  class FlexibleBody1s23BTA : public FlexibleBodyContinuum<double> {
+    public:
+      /**
+       * \brief constructor
+       * \param name of body
+       */
+      FlexibleBody1s23BTA(const std::string &name);
 
-  /*! \brief
-   * Bending torsional axis
-   * \todo gravity, handling for Contour-node information
-   * */
-  class BodyFlexible1s23BTA : public BodyFlexible1s {
-    private:
-      int CurrentElement;
-      Vec qElement, uElement;
-      Index activeElement;
+      /**
+       * \brief destructor
+       */
+      virtual ~FlexibleBody1s23BTA() {}
+
+      /* INHERITED INTERFACE OF FLEXIBLE BODY */
+      virtual void BuildElements();
+      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
+      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame=0);
+      virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF OBJECT */
+      virtual void init(InitStage stage);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual void plot(double t, double dt=1);
+      virtual std::string getType() const { return "FlexibleBody1s23BTA"; }
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      /**
+       * \brief sets size of positions and velocities
+       */
+      void setNumberElements(int n); 
+      void setLength(double L_) { L = L_; }
+      void setElastModuls(double E_, double G_) { E = E_;G = G_; }
+      void setCrossSectionalArea(double A_) { A = A_; }
+      void setMomentsInertia(double Iyy_,double Izz_,double It_) { Iyy = Iyy_; Izz = Izz_; It = It_; }
+      void setDensity(double rho_) { rho = rho_; }
+      void setTorsionalDamping(double d) { dTorsional = d; }
+      void setContourRadius(double r) { cylinderFlexible->setRadius(r); }
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
+#endif
+      /***************************************************/
 
     protected:
-      vector <FiniteElement1s23BTA> element;
-
-      int Elements;
-      double L, E, G, A, Iyy, Izz, It,rho, rc, dm, dl;
-
-// TODO: updateContours aus BodyFlexibleLinearExternal übernehmen
-
-      bool implicit;
-      SqrMat Dhq, Dhqp;
-
-      // KOS-Definition und Lage des ersten Knoten im Weltsystem
-      Vec WrON00;
-
-      void   BuildElement(const int&);
-      double BuildElement(const double&);
-
-      void updateStateDependentVariables(double t);
-      void updatePorts(double t);
-
-      void updateh(double t);
-
-      void init(InitStage stage);
-
-      double sTangent;
-      Vec Wt, WrOC, WvC, Womega;
-
-     CylinderFlexible *contourCyl;
-
-    public:
-      BodyFlexible1s23BTA(const string &name); 
-
-      void setNumberElements(int n); 
-      void setLength(double L_)             {L = L_;}
-      void setElastModuls(double E_, double G_)             {E = E_;G = G_;}
-      void setCrossSectionalArea(double A_) {A = A_;}
-      void setMomentsInertia(double Iyy_,double Izz_,double It_)      {Iyy = Iyy_;Izz = Izz_;It = It_;}
-      void setDensity(double rho_)          {rho = rho_;}
-//      void setMaterialDamping(double d)     {dm = d;}
-//      void setLehrDamping(double d)         {dl = d;}
-
-      void setContourRadius(double r) {contourCyl->setRadius(r);}
-
-      using BodyFlexible1s::addPort;
-      /*! add Port at
-       * \param node
+      /**
+       * \brief detect current finite element
+       * \param global parametrisation
+       * \param local parametrisation
+       * \param finite element number
        */
-      void addPort(const string &name, const int &node);
+      void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
 
-      Mat computeJacobianMatrix(const ContourPointData &data);
+      /**
+       * \brief number of elements 
+       */
+      int Elements;
 
-      Vec computeWn    (const ContourPointData &S_){return Vec(3);}
-      Mat computeWt    (const ContourPointData &S_);
-      Vec computeWrOC  (const ContourPointData &S_);
-      Vec computeWvC   (const ContourPointData &S_);
-      Vec computeWomega(const ContourPointData &S_);
-      SqrMat computeAWK(const ContourPointData &S_);
+      /**
+       * \brief length of entire beam and finite elements
+       */
+      double L, l0;
 
-      bool hasConstMass() const {return false;}
+      /**
+       * \brief elastic modules 
+       */
+      double E, G;
 
-      void setJ(const Mat &J_) {JR =J_;  JT = J_(0,1,2,2);}
+      /**
+       * \brief area of cross-section
+       */
+      double A;
 
-      void setWrON00(const Vec &WrON00_) {WrON00 = WrON00_;}
+      /**
+       * \brief area moment of inertia 
+       */
+      double Iyy, Izz, It;
 
-      static const int nodalDOFs;
+      /**
+       * \brief density 
+       */
+      double rho;
 
-      /* geerbt */
-      void plotParameters();
+      /**
+       * \brief contour radius
+       */
+      double rc;
+
+      /**
+       * \brief damping 
+       */
+      double dTorsional;
+
+      /** 
+       * \brief contour of body
+       */
+      CylinderFlexible *cylinderFlexible;
   };
 
 }
 
-#endif
+#endif /* _FLEXIBLE_BODY_1S_23_BTA_H_ */
+

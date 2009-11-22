@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,273 +13,202 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: rzander@users.berlios.de
+ *          thschindler@users.berlios.de
  */
-#include <config.h>
-#include "finite_element_1s_23_bta.h"
-#include "body_flexible_1s_23_bta.h"
-#include "frame.h"
-#include "dynamic_system_solver.h"
-#include "contact_flexible.h"
-#include "contact_rigid.h"
-#include "contour.h"
 
-//#ifdef HAVE_AMVIS
-//#include "elastic1sbta.h"
-//using namespace AMVis;
-//#endif
+#include <config.h>
+#include "mbsim/flexible_body/flexible_body_1s_23_bta.h"
+#include "mbsim/flexible_body/finite_elements/finite_element_1s_23_bta.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/environment.h"
+
+using namespace fmatvec;
+using namespace std;
 
 namespace MBSim {
 
-  const int BodyFlexible1s23BTA::nodalDOFs = FiniteElement1s23BTA::nodalDOFs;
-
-  BodyFlexible1s23BTA::BodyFlexible1s23BTA(const string &name) :BodyFlexible1s(name), 
-  L(0), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0), dm(0), dl(0),
-  implicit(false), WrON00(3),
-  WrOC(3), WvC(3), Womega(3) { 
-
-    contourCyl = new CylinderFlexible("cylinder");
-    ContourPointData cpTmp;
-    BodyFlexible::addContour(contourCyl,cpTmp,false);
+  FlexibleBody1s23BTA::FlexibleBody1s23BTA(const string &name) : FlexibleBodyContinuum<double>(name), L(0), l0(0.), E(0), A(0), Iyy(0), Izz(0), rho(0), rc(0) { 
+    cylinderFlexible = new CylinderFlexible("CylinderFlexible");
+    Body::addContour(cylinderFlexible);
   }
 
-  void BodyFlexible1s23BTA::init(InitStage stage) {
-    if(stage==unknownStage) {
-      BodyFlexible1s::init(stage);
-      assert(0<Elements);
-  
-      double l0 = L/Elements;
-      Vec g = trans(JR)*mbs->getGrav();
-  
-      for(int i=0; i<Elements; i++) {
-        //    FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg)
-        element.push_back(  FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g )  );
-  
-        element[i].setMaterialDamping(dm);
-        element[i].setLehrDamping(dl);
+  void FlexibleBody1s23BTA::BuildElements() {
+    for(int i=0;i<Elements;i++) {
+      Index activeElement( discretization[i]->getuSize()/2*i , discretization[i]->getuSize()/2*(i+2) -1 );
+      qElement[i] = q(activeElement);
+      uElement[i] = u(activeElement);
+    }
+  }
+
+  void FlexibleBody1s23BTA::GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) {
+    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    gloVec(activeElement) += locVec;
+  }
+
+  void FlexibleBody1s23BTA::GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) {
+    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    gloMat(activeElement) += locMat;
+  }
+
+  void FlexibleBody1s23BTA::GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) {
+    Index activeElement( discretization[n]->getuSize()/2*n , discretization[n]->getuSize()/2*(n+2) -1 );
+    gloMat(activeElement) += locMat;
+  }
+
+  void FlexibleBody1s23BTA::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
+    if(cp.getContourParameterType() == NODE) { // frame on node
+      cp.getContourParameterType() = CONTINUUM;
+      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+    }
+
+    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0),sLocal,currentElement);
+      Vec X;
+      if(ff==position || ff==position_cosy || ff==velocity || ff==angularVelocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+        X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
+        X(0) = cp.getLagrangeParameterPosition()(0);
       }
-  
-  
-      contourCyl->setAlphaStart(0);  contourCyl->setAlphaEnd(L);
-  
+      SqrMat AWK;
+      if(ff==firstTangent || ff==normal || ff==cosy || ff==secondTangent || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        AWK = frameOfReference->getOrientation()*static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->AWK(qElement[currentElement],sLocal);
+      }
+
+      if(ff==position || ff==position_cosy || ff==all) {
+        cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
+      }
+      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        cp.getFrameOfReference().getOrientation().col(1) = AWK.col(0); // tangent
+      }
+      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) {
+        cp.getFrameOfReference().getOrientation().col(0) = AWK.col(1); // normal
+      }
+      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = -AWK.col(2); // binormal (cartesian system)
+      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) {
+        cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * X(6,8));
+      }
+      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
+        cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * X(9,11));
+      }
+    }
+    else throw new MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+
+    if(frame!=0) { // frame should be linked to contour point data
+      frame->setPosition       (cp.getFrameOfReference().getPosition());
+      frame->setOrientation    (cp.getFrameOfReference().getOrientation());
+      frame->setVelocity       (cp.getFrameOfReference().getVelocity());
+      frame->setAngularVelocity(cp.getFrameOfReference().getAngularVelocity());
+    }
+  }
+
+  void FlexibleBody1s23BTA::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
+    Index All(0,5-1);
+    Mat Jacobian(qSize,5);
+
+    if(cp.getContourParameterType() == NODE) { // force on node
+      cp.getContourParameterType() = CONTINUUM;
+      cp.getLagrangeParameterPosition() = Vec(1,INIT,cp.getNodeNumber()*L/Elements);
+    }
+
+    if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement);
+
+      Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
+      Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
+    }
+    else throw new MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,1,2,2)*trans(Jacobian(0,0,qSize-1,1)));
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*trans(Jacobian(0,2,qSize-1,4)));
+
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
+
+    if(frame!=0) { // frame should be linked to contour point data
+      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
+      frame->setJacobianOfRotation   (cp.getFrameOfReference().getJacobianOfRotation());
+      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
+      frame->setGyroscopicAccelerationOfRotation   (cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
+    }   
+  }
+
+  void FlexibleBody1s23BTA::init(InitStage stage) {
+    if(stage==unknownStage) {
+      FlexibleBodyContinuum<double>::init(stage);
+
+      assert(0<Elements);
+
+      cylinderFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
+      cylinderFlexible->setAlphaStart(0);  cylinderFlexible->setAlphaEnd(L);
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
-        for(int i=0;i<=Elements;i++)
-  	contourNodes(i) = L/Elements * i; // jedes FE hat eigenen Suchbereich fuer Kontaktstellensuche
-        contourCyl->setNodes(contourNodes);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements * i; 
+        cylinderFlexible->setNodes(contourNodes);
       }
-      else {
-        contourCyl->setNodes(userContourNodes);
+      else cylinderFlexible->setNodes(userContourNodes);
+
+      l0 = L/Elements;
+      Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      for(int i=0; i<Elements; i++) {
+        discretization.push_back(new FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g ));
+        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+        static_cast<FiniteElement1s23BTA*>(discretization[i])->setTorsionalDamping(dTorsional);
       }
     }
     else
-      BodyFlexible1s::init(stage);
+      FlexibleBodyContinuum<double>::init(stage);    
   }
 
-  void BodyFlexible1s23BTA::setNumberElements(int n) {
-    Elements = n;
-    qSize = nodalDOFs*( Elements + 1 ); 
-
-    uSize = qSize;
-    q0.resize(qSize);
-    u0.resize(uSize);
-  }
-
-  void BodyFlexible1s23BTA::plotParameters() {
-    parafile << "BodyFlexible1s23BTA"  << endl;
-    parafile << "# Elements = "  << Elements << endl;
-    parafile << "#   L = "  << L << endl;
-    parafile << "#   E = "  << E << endl;
-    parafile << "#   G = "  << G << endl;
-    parafile << "# rho = "  << rho << endl;
-    parafile << "#   A = "  << A << endl;
-    parafile << "# Iyy = "  << Iyy << endl;
-    parafile << "# Izz = "  << Izz << endl;
-    parafile << "#  It = "  << It << endl;
-
-    parafile << "\n# JT:\n"      << JT   << endl;
-    parafile << "\n# JR:\n"      << JR   << endl;
-
-    if(frame.size()>0) parafile << "\nframes:" <<endl;
-    for(unsigned int i=0; i<frame.size(); i++) { 
-      parafile << "# s: (frame:  name= "<< frame[i]->getName()<<",  ID= "<<frame[i]->getID()<<") = ";
-      if(S_Port[i].type==CONTINUUM) parafile << S_Port[i].alpha(0) << endl;
-      if(S_Port[i].type==NODE     ) parafile << S_Port[i].ID*L/Elements  << endl;
-    }
-    //    parafile << "\n# contours:" <<endl;
-    //    for(int i=0; i<contour.size(); i++) {
-    //      parafile << "# J: (contour:  name= "<< contour[i]->getName()<<",  ID= "<<contour[i]->getID()<<")"<< endl;
-    //      if(contour[i]->getType() == point) parafile << J[contour[i]->getID()]<<endl;
-    //    }
-
-
-  }
-  //-----------------------------------------------------------------------------------
-
-  void BodyFlexible1s23BTA::updateStateDependentVariables(double t) {
-    sTangent = -element[0].l0;
-
-    //  WrON0 = WrON00 + JT*q(Index(0,1));
-    updatePorts(t);
-    //updateContours(t);
-  }
-
-  void BodyFlexible1s23BTA::updatePorts(double t) {
-    for(unsigned int i=0; i<frame.size(); i++) {
-      if(S_Port[i].type == CONTINUUM) // ForceElement on continuum
-      {
-	const double &s = S_Port[i].alpha(0);
-	double sElement = BuildElement( s );
-
-	Vec Z = element[CurrentElement].StateAxis(qElement,uElement,sElement);
-	Z(0) = s;
-	frame[i]->setWrOP(WrON00 + JR * Z( 0,2));
-	//	    frame[i]->setWaP (         JR * Z( 3,5));
-	frame[i]->setWvP (         JR * Z( 6,8));
-	frame[i]->setWomegaP(      JR * Z(9,11));
-
+  void FlexibleBody1s23BTA::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
+        vector<double> data;
+        data.push_back(t);
+        double ds = L/(((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints()-1);
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
+          double sLocal;
+          int currentElement;
+          BuildElement(ds*i,sLocal,currentElement);
+          Vec X = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->StateAxis(qElement[currentElement],uElement[currentElement],sLocal); 
+          X(0) = ds*i;
+          Vec pos = frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2);
+          data.push_back(pos(0)); // global x-position
+          data.push_back(pos(1)); // global y-position
+          data.push_back(pos(2)); // global z-position
+          data.push_back(X(3)); // local twist
+        }
+        ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
-      // 	else                   // ForceElement on node
-      // 	{
-      // 	    int node = int(S_Port[i](0));
-      // 	    frame[i]->setWrOP(WrON00 + JT * q(5*node+0,5*node+1));
-      // 	    frame[i]->setWvP (         JT * u(5*node+0,5*node+1));
-      // 	    frame[i]->setWomegaP(      JR * u(5*node+2,5*node+2));
-      // 	}
+#endif
     }
+    FlexibleBodyContinuum<double>::plot(t,dt);
+  }  
+
+  void FlexibleBody1s23BTA::setNumberElements(int n) {
+    Elements = n;
+    qSize = 5*( Elements + 1 ); 
+    uSize[0] = qSize;
+    uSize[1] = qSize; // TODO
+    q0.resize(qSize);
+    u0.resize(uSize[0]);
   }
 
-  Mat BodyFlexible1s23BTA::computeJacobianMatrix(const ContourPointData &S_) {
-    //     cout << "BodyFlexible1s23BTA::updatePorts" << endl;
-    static Index All(0,5-1);
-    Mat Jacobian(qSize,5);
+  void FlexibleBody1s23BTA::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
+    currentElement = int(sGlobal/l0);   
+    sLocal = sGlobal - currentElement * l0; // Lagrange-Parameter of the affected FE 
 
-    // ForceElement on continuum
-    if(S_.type == CONTINUUM)
-    {
-      const double &s = S_.alpha(0);
-      double sElement = BuildElement( s );
-
-      Jacobian(activeElement,All) = element[CurrentElement].JGeneralized(qElement,sElement);
+    if(currentElement >= Elements) { // contact solver computes to large sGlobal at the end of the entire beam
+      currentElement =  Elements-1;
+      sLocal += l0;
     }
-    if(S_.type == NODE)
-    {
-      ContourPointData Stmp;
-      Stmp.alpha = Vec(1,INIT,S_.ID*L/Elements);
-      Jacobian = computeJacobianMatrix(Stmp);
-    } 
-    return Jacobian;
-  }
-
-  void BodyFlexible1s23BTA::updateh(double t) {
-    static int i;
-
-    M.init(0.0);
-    h.init(0.0);
-
-    if(implicit) {
-      Dhq .init(0.0);
-      Dhqp.init(0.0);
-    }
-
-    // Alle Elemente ausser (n-1,0)
-    for ( i = 0; i < Elements ; i++ ) {
-      BuildElement(i);
-      element[i].update(qElement,uElement);
-      M(activeElement) += element[i].M;
-      h(activeElement) += element[i].h;
-
-      //       if(implicit) {
-      // 	  Dhq (j,j,j+7,j+7) += element[i].Dhq;
-      // 	  Dhqp(j,j,j+7,j+7) += element[i].Dhqp;
-      //       }
-    }
-
-//    if(autoInvM) LLM = facLL(M);
-
-    sumUpForceElements(t);
-  }
-
-  //-----------------------------------------------------------------------------------
-  void BodyFlexible1s23BTA::BuildElement(const int& ENumber) {
-    // Grenzen testen
-    assert(ENumber >= 0       );
-    assert(ENumber <  Elements);
-
-    CurrentElement = ENumber;
-
-    activeElement = Index( nodalDOFs*CurrentElement , nodalDOFs*(CurrentElement+2) -1 );
-    qElement = q(activeElement);
-    uElement = u(activeElement);
-  }
-
-  double BodyFlexible1s23BTA::BuildElement(const double& sGlobal) {
-    CurrentElement = 0;
-    double lCummulated = 0.0;
-    while(lCummulated <= sGlobal && CurrentElement < Elements) lCummulated += element[CurrentElement++].l0;
-    CurrentElement--; // eins zu weit gerannt...
-
-    double sLokal = sGlobal - ( lCummulated - element[CurrentElement].l0 );
-    BuildElement(CurrentElement);
-
-    return sLokal;
-  }
-
-
-  void BodyFlexible1s23BTA::addPort(const string &name, const int &node) {
-    Port *frame = new Port(name);
-    ContourPointData cpTemp;
-    //  cpTemp.type = NODE;
-    cpTemp.type = CONTINUUM;
-    cpTemp.ID = node;
-    cpTemp.alpha = Vec(1,INIT,node*L/Elements);
-    addPort(frame,cpTemp);
-  }
-
-  //----------------------------------------------------------------------
-  Mat BodyFlexible1s23BTA::computeWt  (const ContourPointData &S_) {
-    const double &s = S_.alpha(0);
-    double sElement = BuildElement(s);
-    Vec Tangent = element[CurrentElement].Tangent(qElement,sElement);
-    Wt = JR * Tangent;
-    return Wt.copy();
-  }
-
-  SqrMat BodyFlexible1s23BTA::computeAWK (const ContourPointData &S_) {
-    const double &s = S_.alpha(0);
-    double sElement = BuildElement(s);
-    SqrMat AWK = element[CurrentElement].AWK(qElement,sElement);
-    return SqrMat(JR * AWK);
-  }
-
-  Vec BodyFlexible1s23BTA::computeWrOC(const ContourPointData &S_) {
-    if (S_.alpha(0) != sTangent) 
-    {
-      sTangent = S_.alpha(0);
-      double sElement = BuildElement(sTangent);
-      Vec Z = element[CurrentElement].StateAxis(qElement,uElement,sElement);
-      Z(0) = sTangent;
-      WrOC   = WrON00 + JR * Z(0,2);
-      WvC    =          JR * Z(6,8);
-      Womega =          JR * Z(9,11);
-    }
-    return WrOC.copy();
-  }
-
-  Vec BodyFlexible1s23BTA::computeWvC (const ContourPointData &S_) {
-    if (S_.alpha(0) != sTangent) 
-      computeWrOC(S_);
-    return WvC.copy();
-  }
-
-  Vec BodyFlexible1s23BTA::computeWomega (const ContourPointData &S_) {
-    if (S_.alpha(0) != sTangent) 
-      computeWrOC(S_);
-    return Womega.copy();
   }
 
 }
+

@@ -28,7 +28,6 @@
 
 namespace MBSim {
 
-  class FiniteElement1s21RCM;
   class Contour1sFlexible;
 
   /*!
