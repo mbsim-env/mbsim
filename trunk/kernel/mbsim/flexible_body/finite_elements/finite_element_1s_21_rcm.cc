@@ -31,9 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  FiniteElement1s21RCM::FiniteElement1s21RCM(double sl0, double sArho, double sEA, double sEI, Vec sg)
-    : l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8), Dhqp(8), Damp(8,INIT,0.), qLocal(8,INIT,0.), qpLocal(8,INIT,0.), hIntermediate(8,INIT,0.), MLocal(8,INIT,0.), Jeg(8,INIT,0.), Jegp(8,INIT,0.), qElement_Old(8,INIT,0.), qpElement_Old(8,INIT,0.), tol_comp(1e-8)
-  {
+  FiniteElement1s21RCM::FiniteElement1s21RCM(double sl0, double sArho, double sEA, double sEI, Vec sg) : l0(sl0), Arho(sArho), EA(sEA), EI(sEI), wss0(0.), depsilon(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8), Dhqp(8), Damp(8,INIT,0.), qLocal(8,INIT,0.), qpLocal(8,INIT,0.), hIntermediate(8,INIT,0.), MLocal(8,INIT,0.), Jeg(8,INIT,0.), Jegp(8,INIT,0.), qElement_Old(8,INIT,0.), qpElement_Old(8,INIT,0.), tol_comp(1e-8) {
     l0h2 = l0*l0;
     l0h3 = l0h2*l0;
     l0h4 = l0h3*l0;
@@ -47,7 +45,7 @@ namespace MBSim {
       BuildqLocal(qElement,qLocal);
       BuildJacobi(qElement,Jeg);
 
-      // local coordinates and velocities
+      // local coordinates 
       double &phiS   = qLocal(2);      double &eps   = qLocal(3);
       double &aL     = qLocal(4);      double &bL    = qLocal(5);
       double &aR     = qLocal(6);      double &bR    = qLocal(7);

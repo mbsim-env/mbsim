@@ -19,12 +19,12 @@
  */
 
 #include <config.h>
-#include <mbsim/flexible_body/flexible_body_1s_21_rcm.h>
-#include <mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h>
-#include <mbsim/mbsim_event.h>
-#include <mbsim/dynamic_system_solver.h>
-#include <mbsim/contours/contour1s_flexible.h>
-#include <mbsim/environment.h>
+#include "mbsim/flexible_body/flexible_body_1s_21_rcm.h"
+#include "mbsim/flexible_body/finite_elements/finite_element_1s_21_rcm.h"
+#include "mbsim/mbsim_event.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/contours/contour1s_flexible.h"
+#include "mbsim/environment.h"
 
 #define FMATVEC_DEEP_COPY
 
@@ -40,7 +40,6 @@ namespace MBSim {
 
   void FlexibleBody1s21RCM::BuildElements() {
     for(int i=0;i<Elements;i++) {
-
       int n = 5 * i ;
 
       if(i<Elements-1 || openStructure==true) {
@@ -210,7 +209,6 @@ namespace MBSim {
       initialized = true;
   
       contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
-  
       contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);

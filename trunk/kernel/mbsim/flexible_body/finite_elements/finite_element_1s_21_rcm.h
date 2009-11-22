@@ -21,9 +21,9 @@
 #ifndef _FINITE_ELEMENT_1S_21_RCM_H_
 #define _FINITE_ELEMENT_1S_21_RCM_H_
 
-#include <mbsim/discretization_interface.h>
-#include <mbsim/contour_pdata.h>
-#include <mbsim/mbsim_event.h>
+#include "mbsim/discretization_interface.h"
+#include "mbsim/contour_pdata.h"
+#include "mbsim/mbsim_event.h"
 #include "fmatvec.h"
 
 namespace MBSim {
