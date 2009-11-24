@@ -433,6 +433,12 @@ namespace MBSim {
       void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
       
       /**
+       * \brief set tolerance for projection of generalized position
+       * \param tolerance
+       */
+      void setProjectionTolerance(double tol) { tolProj = tol; }
+
+      /**
        * \param decide, whether information should be printed on standard output.
        */
       void setInformationOutput(bool INFO_) { INFO = INFO_; }
@@ -653,6 +659,11 @@ namespace MBSim {
        * This flag will be removed in the future.
        */
       bool reorganizeHierarchy;
+
+      /**
+       * \brief Tolerance for projection of generalized position.
+       */
+      double tolProj;
       
       /**
        * \brief references to differentiated external state

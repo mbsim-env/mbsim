@@ -65,11 +65,11 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(true), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(true), tolProj(1e-16), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(true), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), k(1), reorganizeHierarchy(true), tolProj(1e-16), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   }
 
@@ -928,6 +928,10 @@ namespace MBSim {
 
     updateCondition(); // decide which constraints should be added and deleted
     checkActiveLinks(); // list with active links (g<=0)
+    calclaSize();
+    updatelaRef(laParent(0,laSize-1));
+    updateJacobians(t);
+    projectGeneralizedPositions(t);
 
     if(impact) { // impact
 
@@ -950,7 +954,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
 
-      projectGeneralizedPositions(t);
+      //projectGeneralizedPositions(t);
       b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       int iter;
       iter = solveImpacts();
@@ -1120,11 +1124,11 @@ namespace MBSim {
       updateW(t);
       Vec corr;
       corr = g;
-      corr.init(1e-16);
+      corr.init(tolProj);
       SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
       // TODO: Wv*T check
-      while(nrmInf(g-corr) >= 1e-16) {
-        Vec mu = slvLS(Gv, -g+trans(W)*nu+corr);
+      while(nrmInf(g-corr) >= tolProj) {
+        Vec mu = slvLS(Gv, -g+trans(W)*nu+0.5*corr);
         Vec dnu = slvLLFac(LLM,W*mu)-nu;
         nu += dnu;
         q += T*dnu;
