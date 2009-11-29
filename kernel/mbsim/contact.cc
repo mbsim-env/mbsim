@@ -133,7 +133,7 @@ namespace MBSim {
   void Contact::updategd(double t) {
     bool flag = fcl->isSetValued();
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if((flag && gActive[k]) || (!flag && fcl->isActive(gk[k](0),0))) {
+      if((flag && gdActive[k][0]) || (!flag && fcl->isActive(gk[k](0),0))) {
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
 
         Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
@@ -1098,6 +1098,8 @@ namespace MBSim {
           else 
             gdActive[k][1] = false;
         }
+	else
+          gdActive[k][1] = false;
       }
     }
   }
@@ -1121,9 +1123,9 @@ namespace MBSim {
         }
         else {// TODO if(gdk[k](0)<=0)  // pseudo collision because of penetration
           gActive[k] = true;
-          gdActive[k][0] = true;
+          gdActive[k][0] = false;
           if(getFrictionDirections())
-            gdActive[k][1] = true;
+            gdActive[k][1] = false;
           ds->setImpact(true);
           return;
         }
