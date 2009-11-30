@@ -1135,7 +1135,7 @@ namespace MBSim {
           if(gdActive[k][1]) {
             gdActive[k][1] = false;
           } 
-          else {
+	  else if(nrm2(gdk[k](1,getFrictionDirections()))<gdTol) {
             gdActive[k][1] = true;
             ds->setSticking(true);
           }
