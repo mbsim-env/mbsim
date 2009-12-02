@@ -28,7 +28,6 @@
 #include "mbsim/graph.h"
 #include "mbsim/extra_dynamic.h"
 #include "mbsim/integrators/integrator.h"
-#include "mbsim/flexible_body.h"
 #include "mbsim/utils/eps.h"
 #include "dirent.h"
 #include <mbsim/environment.h>
@@ -1448,35 +1447,58 @@ namespace MBSim {
       env->initializeUsingXML(e);
       e=e->NextSiblingElement();
     }
-    
+
     e=element->FirstChildElement(MBSIMNS"solverParameters");
     if (e) {
       TiXmlElement * ee;
       ee=e->FirstChildElement(MBSIMNS"constraintSolver");
-      if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-        setConstraintSolver(FixedPointTotal);
-      else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-        setConstraintSolver(FixedPointSingle);
-      else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-        setConstraintSolver(GaussSeidel);
-      else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-        setConstraintSolver(LinearEquations);
-      else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-        setConstraintSolver(RootFinding);
+      if (ee) {
+        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+          setConstraintSolver(FixedPointTotal);
+        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+          setConstraintSolver(FixedPointSingle);
+        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+          setConstraintSolver(GaussSeidel);
+        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+          setConstraintSolver(LinearEquations);
+        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+          setConstraintSolver(RootFinding);
+      }
       ee=e->FirstChildElement(MBSIMNS"impactSolver");
-      if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
-        setImpactSolver(FixedPointTotal);
-      else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
-        setImpactSolver(FixedPointSingle);
-      else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
-        setImpactSolver(GaussSeidel);
-      else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
-        setImpactSolver(LinearEquations);
-      else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
-        setImpactSolver(RootFinding);
+      if (ee) {
+        if (ee->FirstChildElement(MBSIMNS"FixedPointTotal"))
+          setImpactSolver(FixedPointTotal);
+        else if (ee->FirstChildElement(MBSIMNS"FixedPointSingle"))
+          setImpactSolver(FixedPointSingle);
+        else if (ee->FirstChildElement(MBSIMNS"GaussSeidel"))
+          setImpactSolver(GaussSeidel);
+        else if (ee->FirstChildElement(MBSIMNS"LinearEquations"))
+          setImpactSolver(LinearEquations);
+        else if (ee->FirstChildElement(MBSIMNS"RootFinding"))
+          setImpactSolver(RootFinding);
+      }
       ee=e->FirstChildElement(MBSIMNS"numberOfMaximalIterations");
       if (ee)
         setMaxIter(atoi(ee->GetText()));
+      ee=e->FirstChildElement(MBSIMNS"tolerances");
+      if (ee) {
+        TiXmlElement * eee;
+        eee=ee->FirstChildElement(MBSIMNS"projection");
+        if (eee)
+          setProjectionTolerance(getDouble(eee));
+        eee=ee->FirstChildElement(MBSIMNS"gd");
+        if (eee)
+          setgdTol(getDouble(eee));
+        eee=ee->FirstChildElement(MBSIMNS"gdd");
+        if (eee)
+          setgddTol(getDouble(eee));
+        eee=ee->FirstChildElement(MBSIMNS"la");
+        if (eee)
+          setlaTol(getDouble(eee));
+        eee=ee->FirstChildElement(MBSIMNS"La");
+        if (eee)
+          setLaTol(getDouble(eee));
+      }
     }
   }
 

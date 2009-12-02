@@ -18,7 +18,7 @@
  *          rzander@users.berlios.de
  */
 
-#include <config.h> 
+#include <config.h>
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/contour1s.h"
@@ -100,6 +100,92 @@ namespace MBSim {
 
     Vec WrD = func->computeWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
     g(0) = -trans(cpData[icontour1s].getFrameOfReference().getOrientation().col(0))*WrD;
+  }
+
+  void ContactKinematicsCircleSolidContour1s::updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {
+    
+    const Vec KrPC1 = trans(circle->getFrame()->getOrientation())*(cpData[icircle].getFrameOfReference().getPosition() - circle->getFrame()->getPosition());
+    const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
+    const double sa1=sin(zeta1);
+    const double ca1=cos(zeta1);
+    const double r1=circle->getRadius();
+    Vec Ks1(3, NONINIT);
+    Ks1(0)=-r1*sa1;
+    Ks1(1)=r1*ca1;
+    Ks1(2)=0;
+    Vec Kt1(3, NONINIT);
+    Kt1(0)=0;
+    Kt1(1)=0;
+    Kt1(2)=1;
+    const Vec s1=circle->getFrame()->getOrientation()*Ks1;
+    const Vec t1=circle->getFrame()->getOrientation()*Kt1;
+    Vec n1=crossProduct(s1, t1);
+    n1/=nrm2(n1);
+    const Vec u1=s1/nrm2(s1);
+    const Vec R1(s1);
+    Vec KN1(3,NONINIT);
+    KN1(0)=-sa1;
+    KN1(1)=ca1;
+    KN1(2)=0;
+    const Vec N1=circle->getFrame()->getOrientation()*KN1;
+    Vec KU1(3,NONINIT);
+    KU1(0)=-ca1;
+    KU1(1)=-sa1;
+    KU1(2)=0;
+    const Vec U1=circle->getFrame()->getOrientation()*KU1;
+
+    const Vec KrPC2 = trans(contour1s->getFrame()->getOrientation())*(cpData[icontour1s].getFrameOfReference().getPosition() - contour1s->getFrame()->getPosition());
+    const double zeta2=(KrPC2(2)>0) ? acos(KrPC2(1)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(1)/nrm2(KrPC2));
+    const double sa2=sin(zeta2);
+    const double ca2=cos(zeta2);
+    const double r2=contour1s->computeDistance(zeta2, 0);
+    const double r2s=contour1s->computeDistance(zeta2, 1);
+    const double r2ss=contour1s->computeDistance(zeta2, 2);
+    Vec Ks2(3, NONINIT);
+    Ks2(0)=0;
+    Ks2(1)=-r2*sa2+r2s*ca2;
+    Ks2(2)=r2*ca2+r2s*sa2;
+    Vec Kt2(3, NONINIT);
+    Kt2(0)=1;
+    Kt2(1)=0;
+    Kt2(2)=0;
+    const Vec s2=contour1s->getFrame()->getOrientation()*Ks2;
+    const Vec t2=contour1s->getFrame()->getOrientation()*Kt2;
+    Vec n2=crossProduct(s2, t2);
+    n2/=nrm2(n2);
+    const Vec u2=s2/nrm2(s2);
+    const Vec v2=crossProduct(n2, u2);
+    const Vec R2(s2);
+    const double c0=(r2*r2+2.*r2s*r2s-r2*r2ss)/sqrt((r2*r2+r2s*r2s)*(r2*r2+r2s*r2s)*(r2*r2+r2s*r2s));
+    const double c1=r2*ca2+r2s*sa2;
+    const double c2=-r2*sa2+r2s*ca2;
+    Vec KU2(3,NONINIT);
+    KU2(0)=0;
+    KU2(1)=-c0*c1;
+    KU2(2)=c0*c2;
+    const Vec U2=contour1s->getFrame()->getOrientation()*KU2;
+
+    const Vec vC1 = cpData[icircle].getFrameOfReference().getVelocity();
+    const Vec vC2 = cpData[icontour1s].getFrameOfReference().getVelocity();
+    const Vec Om1 = cpData[icircle].getFrameOfReference().getAngularVelocity();
+    const Vec Om2 = cpData[icontour1s].getFrameOfReference().getAngularVelocity();
+
+    SqrMat A(2,2,NONINIT);
+    A(0,0)=-trans(u1)*R1;
+    A(0,1)=trans(u1)*R2;
+    A(1,0)=trans(u2)*N1;
+    A(1,1)=trans(n1)*U2;
+    Vec b(2,NONINIT);
+    b(0)=-trans(u1)*(vC2-vC1);
+    b(1)=-trans(v2)*(Om2-Om1);
+    const Vec zetad = slvLU(A,b);
+
+    const Mat tOm1 = tilde(Om1);
+    const Mat tOm2 = tilde(Om2);
+    
+    wb(0) += (trans(vC2-vC1)*N1-trans(n1)*tOm1*R1)*zetad(0)+trans(n1)*tOm2*R2*zetad(1)-trans(n1)*tOm1*(vC2-vC1);
+    if (wb.size()>1) 
+      wb(1) += (trans(vC2-vC1)*U1-trans(u1)*tOm1*R1)*zetad(0)+trans(u1)*tOm2*R2*zetad(1)-trans(u1)*tOm1*(vC2-vC1);
   }
       
   void ContactKinematicsCircleSolidContour1s::computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData) {

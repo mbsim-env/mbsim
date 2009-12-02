@@ -50,7 +50,7 @@ namespace MBSim {
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidContour1s::updatewb): Not implemented!"); };
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData);
       virtual void computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData);
       /***************************************************/
 
@@ -70,7 +70,6 @@ namespace MBSim {
        * \brief root function
        */
       FuncPairContour1sCircleSolid *func;
-    
   };
 
 }

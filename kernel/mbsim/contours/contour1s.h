@@ -60,7 +60,14 @@ namespace MBSim {
        * \return radius of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeRadius): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeCurvature): Not implemented."); return 0; } 
+
+      /**
+       * \return distance between frameOfReference and possible contour point
+       * \param Lagrangian position
+       * \param orderOfDerivative
+       */
+      virtual double computeDistance(const double s, const int order=0) { throw MBSimError("ERROR (Contour::computeDistance): Not implemented."); return 0; } 
 
       /* GETTER / SETTER */
       void setDiameter(double diameter_) { diameter= diameter_; }
