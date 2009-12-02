@@ -639,7 +639,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="constraintSolver">
+                <xs:element name="constraintSolver" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Nebenbedingungsgleichungen auf Beschleunigungsebene.
@@ -687,7 +687,7 @@
                     </xs:choice>
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="impactSolver">
+                <xs:element name="impactSolver" minOccurs="0">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Nebenbedingungsgleichungen auf Geschwindigkeitssebene.
@@ -742,6 +742,27 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
+                <xs:element name="tolerances" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      allgemeine Toleranzangaben.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="projection" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
+                      <xs:element name="gd" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
+                      <xs:element name="gdd" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
+                      <xs:element name="la" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
+                      <xs:element name="La" type="pv:nounitScalar" minOccurs="0">
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element> 
               </xs:sequence>
             </xs:complexType>
           </xs:element>

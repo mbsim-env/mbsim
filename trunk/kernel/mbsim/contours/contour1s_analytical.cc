@@ -141,6 +141,19 @@ namespace MBSim {
     return funcCrPC->computeCurvature(cp);
   }
 
+  double Contour1sAnalytical::computeDistance(const double s, const int order) {
+    if (order==0)
+      return funcCrPC->computeR(s);
+    else if (order==1)
+      return funcCrPC->computedRdAlpha(s);
+    else if (order==2)
+      return funcCrPC->computed2RdAlpha2(s);
+    else {
+      throw MBSimError("ERROR (Contour1sAnalytical::computeDistance): Not implemented.");
+      return 0.;
+    }
+  }
+
   void Contour1sAnalytical::initializeUsingXML(TiXmlElement * element) {
     Contour::initializeUsingXML(element);
     TiXmlElement * e;
