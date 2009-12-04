@@ -113,12 +113,8 @@ namespace MBSim {
     Ks1(0)=-r1*sa1;
     Ks1(1)=r1*ca1;
     Ks1(2)=0;
-    Vec Kt1(3, NONINIT);
-    Kt1(0)=0;
-    Kt1(1)=0;
-    Kt1(2)=1;
     const Vec s1=circle->getFrame()->getOrientation()*Ks1;
-    const Vec t1=circle->getFrame()->getOrientation()*Kt1;
+    const Vec t1=circle->getFrame()->getOrientation().col(2);
     Vec n1=crossProduct(s1, t1);
     n1/=nrm2(n1);
     const Vec u1=s1/nrm2(s1);
