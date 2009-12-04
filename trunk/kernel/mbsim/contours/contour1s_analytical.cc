@@ -29,6 +29,8 @@
 #include <openmbvcppinterface/group.h>
 #include "openmbvcppinterface/polygonpoint.h"
 #include "openmbvcppinterface/extrusion.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/eps.h"
 #endif
 
 using namespace fmatvec;
@@ -81,20 +83,57 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   void Contour1sAnalytical::enableOpenMBV(bool enable) {
     if (enable) {
+      double rMax=0;
+      for (double a=as; a<=ae; a+=1e-3*(ae-as)) {
+        const double r=nrm2((*funcCrPC)(a));
+        if (r>rMax)
+          rMax=r;
+      }
+      vector<double> alpha;
+      alpha.push_back(as);
+      while(alpha.back()<ae) {
+        class PointDistance : public Function1<double, double> {
+          public:
+            PointDistance(Vec p1_, ContourFunction1s * f_, double d_) : p1(p1_), f(f_), d(d_) {}
+            double operator()(const double &alpha, const void * = NULL) {
+              return nrm2((*f)(alpha)-p1)-d;
+            }
+          private:
+            Vec p1;
+            ContourFunction1s * f;
+            double d;
+        };
+        PointDistance g((*funcCrPC)(alpha.back()), funcCrPC, .1*rMax);
+        RegulaFalsi solver(&g);
+        solver.setTolerance(epsroot());
+        double aeTmp;
+        if (alpha.back()<as+.25*(ae-as))
+          aeTmp=as+.25*(ae-as);
+        else if (alpha.back()<as+.5*(ae-as))
+          aeTmp=as+.5*(ae-as);
+        else if (alpha.back()<as+.75*(ae-as))
+          aeTmp=as+.75*(ae-as);
+        else
+          aeTmp=ae;
+        alpha.push_back(solver.solve(alpha.back(), aeTmp));
+      }
+      if (alpha.back()>ae)
+        alpha.back()=ae;
+      else
+        alpha.push_back(ae);
+
       vector<OpenMBV::PolygonPoint*> * vpp = new vector<OpenMBV::PolygonPoint*>();
-      for (double alpha=as; alpha<ae; alpha+=(ae-as)/720.) { 
-        Vec CrPC=(*funcCrPC)(alpha);
+      for (unsigned int i=0; i<alpha.size(); i++) {
+        const Vec CrPC=(*funcCrPC)(alpha[i]);
         vpp->push_back(new OpenMBV::PolygonPoint(CrPC(1), CrPC(2), 0));
       }
-      vpp->push_back((*vpp)[0]);
       openMBVRigidBody=new OpenMBV::Extrusion;
       ((OpenMBV::Extrusion*)openMBVRigidBody)->setHeight(0);
       ((OpenMBV::Extrusion*)openMBVRigidBody)->addContour(vpp);
       ((OpenMBV::Extrusion*)openMBVRigidBody)->setInitialRotation(0, .5*M_PI, .5*M_PI);
     }
     else
-      openMBVRigidBody=0;
-      //throw 1;
+      openMBVRigidBody=NULL;
   }
 #endif
 
