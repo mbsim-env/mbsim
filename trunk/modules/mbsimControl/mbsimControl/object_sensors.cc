@@ -38,7 +38,7 @@ namespace MBSimControl {
     if (stage==MBSim::resolveXMLPath) {
       if (objectString!="") {
         Object * o = getObjectByPath(objectString);
-        if(!object) { std::cerr<<"ERROR! Cannot find object: "<<objectString<<std::endl; _exit(1); }
+        if(!o) { std::cerr<<"ERROR! Cannot find object: "<<objectString<<std::endl; _exit(1); }
         setObject(o);
       }
       Sensor::init(stage);
