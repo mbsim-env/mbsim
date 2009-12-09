@@ -156,8 +156,6 @@ namespace MBSim {
       Function1<double, double> * pos;
   };
 
-
-
   /**
    * \brief base class to describe rotation along a path
    * \author Martin Foerg
@@ -286,6 +284,56 @@ namespace MBSim {
   };
 
   /**
+   * \brief class to describe rotation about axes x and y
+   * \author Martin Foerg
+   */
+  class RotationAboutAxesXY: public Rotation {
+        public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutAxesXY() : APK(3) {}
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 2; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+        
+        private:
+      /**
+       * \brief rotational matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
+  /**
+   * \brief class to describe rotation about axes y and z
+   * \author Martin Foerg
+   */
+  class RotationAboutAxesYZ: public Rotation {
+        public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutAxesYZ() : APK(3) {}
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 2; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      /***************************************************/
+
+      virtual void initializeUsingXML(TiXmlElement *element);
+        
+        private:
+      /**
+       * \brief rotational matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
+  /**
    * \brief class to describe rotation parametrised by cardan angles
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
@@ -378,6 +426,65 @@ namespace MBSim {
   };
 
   /**
+   * \brief Jacobian for rotation about axes x and y
+   * \author Martin Foerg
+   */
+  class JRotationAboutAxesXY : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JRotationAboutAxesXY(int uSize_) : uSize(uSize_), J(3,uSize) {}
+
+      /* INTERFACE OF JACOBIAN */
+      int getuSize() const { return uSize; }
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat J;
+  };
+
+
+  /**
+   * \brief Jacobian for rotation about axes y and z
+   * \author Martin Foerg
+   */
+  class JRotationAboutAxesYZ : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JRotationAboutAxesYZ(int uSize_) : uSize(uSize_), J(3,uSize) {}
+
+      /* INTERFACE OF JACOBIAN */
+      int getuSize() const { return uSize; }
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat J;
+  };
+
+  /**
    * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
@@ -395,7 +502,7 @@ namespace MBSim {
       int getuSize() const { return uSize; }
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
       /***************************************************/
-    
+
     private:
       /**
        * \brief size of positions and velocities
@@ -432,11 +539,63 @@ namespace MBSim {
        * \brief size of positions and velocities
        */
       int qSize, uSize;
-      
+
       /**
        * \brief linear relation between differentiated positions and velocities
        */
       fmatvec::Mat T;
+  };
+
+  /**
+   * \brief derivative of Jacobian for rotation about axes x and y
+   * \author Martin Foerg
+   */
+  class JdRotationAboutAxesXY : public Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JdRotationAboutAxesXY(int uSize_) : uSize(uSize_), Jd(3,uSize) {}
+
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat Jd;
+  };
+
+  /**
+   * \brief derivative of Jacobian for rotation about axes y and z
+   * \author Martin Foerg
+   */
+  class JdRotationAboutAxesYZ : public Function3<fmatvec::Mat,fmatvec::Vec,fmatvec::Vec,double> {
+    public:
+      /**
+       * \brief constructor
+       * \param size of generalized velocity vector
+       */
+      JdRotationAboutAxesYZ(int uSize_) : uSize(uSize_), Jd(3,uSize) {}
+
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &qd, const fmatvec::Vec& q, const double& t, const void*);
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat Jd;
   };
 
 }
