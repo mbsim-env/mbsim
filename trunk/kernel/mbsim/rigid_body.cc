@@ -67,7 +67,6 @@ namespace MBSim {
   }
 
   void RigidBody::updateh(double t) {
-    WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
 
     Vec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
@@ -165,21 +164,37 @@ namespace MBSim {
         {
           RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
           if(fAPK_) 
-            JR.resize() = fAPK_->getAxisOfRotation();
-        }
+	    JR.resize() = fAPK_->getAxisOfRotation();
+	}
 
-        {
-          CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-          if(fAPK_) {
-            JR.resize() << DiagMat(3,INIT,1);
-            if(cb) {
-              fT = new TCardanAngles2(qSize,uSize[0]);
-            }
-            else {
-              fT = new TCardanAngles(qSize,uSize[0]);
-            }
-          }
-        }
+	{
+	  RotationAboutAxesYZ* fAPK_ = dynamic_cast<RotationAboutAxesYZ*>(fAPK);
+	  if(fAPK_) {
+	    fPJR = new JRotationAboutAxesYZ(uSize[0]);;
+	    fPdJR = new JdRotationAboutAxesYZ(uSize[0]);;
+	  }
+	}
+
+	{
+	  RotationAboutAxesXY* fAPK_ = dynamic_cast<RotationAboutAxesXY*>(fAPK);
+	  if(fAPK_) {
+	    fPJR = new JRotationAboutAxesXY(uSize[0]);;
+	    fPdJR = new JdRotationAboutAxesXY(uSize[0]);;
+	  }
+	}
+
+	{
+	  CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+	  if(fAPK_) {
+	    JR.resize() << DiagMat(3,INIT,1);
+	    if(cb) {
+	      fT = new TCardanAngles2(qSize,uSize[0]);
+	    }
+	    else {
+	      fT = new TCardanAngles(qSize,uSize[0]);
+	    }
+	  }
+	}
 
         Mat JRR(3, uSize[0]);
         PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
@@ -371,6 +386,7 @@ namespace MBSim {
       contour[i]->setReferencePosition(frame[0]->getPosition() + WrSC[i]);
       contour[i]->setReferenceVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSC[i]));
     }
+    WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t) {
