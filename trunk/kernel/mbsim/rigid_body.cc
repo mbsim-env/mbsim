@@ -146,53 +146,34 @@ namespace MBSim {
       PJRs.resize(3,uSize[1]);
 
       if(fPJT==0) {
-        Mat JT;
-        LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-        if(fPrPK_) {
-          JT = fPrPK_->getTranslationVectors();
-        } else
-          JT.resize(3,0);
-        Mat JTT(3, uSize[0]);
+        Mat JT(3,0);
+        if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+          JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
+        } 
         PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
         PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
         PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
       }
       if(fPJR==0) {
-        Mat JR;
-        JR.resize(3,0);
+        Mat JR(3,0);
 
-        {
-          RotationAboutFixedAxis* fAPK_ = dynamic_cast<RotationAboutFixedAxis*>(fAPK);
-          if(fAPK_) 
-	    JR.resize() = fAPK_->getAxisOfRotation();
+	if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
+	  JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+	else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
+	  fPJR = new JRotationAboutAxesYZ(uSize[0]);
+	  fPdJR = new JdRotationAboutAxesYZ(uSize[0]);
 	}
-
-	{
-	  RotationAboutAxesYZ* fAPK_ = dynamic_cast<RotationAboutAxesYZ*>(fAPK);
-	  if(fAPK_) {
-	    fPJR = new JRotationAboutAxesYZ(uSize[0]);;
-	    fPdJR = new JdRotationAboutAxesYZ(uSize[0]);;
+	else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
+	  fPJR = new JRotationAboutAxesXY(uSize[0]);
+	  fPdJR = new JdRotationAboutAxesXY(uSize[0]);
+	}
+	else if(dynamic_cast<CardanAngles*>(fAPK)) {
+	  JR.resize() << DiagMat(3,INIT,1);
+	  if(cb) {
+	    fT = new TCardanAngles2(qSize,uSize[0]);
 	  }
-	}
-
-	{
-	  RotationAboutAxesXY* fAPK_ = dynamic_cast<RotationAboutAxesXY*>(fAPK);
-	  if(fAPK_) {
-	    fPJR = new JRotationAboutAxesXY(uSize[0]);;
-	    fPdJR = new JdRotationAboutAxesXY(uSize[0]);;
-	  }
-	}
-
-	{
-	  CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-	  if(fAPK_) {
-	    JR.resize() << DiagMat(3,INIT,1);
-	    if(cb) {
-	      fT = new TCardanAngles2(qSize,uSize[0]);
-	    }
-	    else {
-	      fT = new TCardanAngles(qSize,uSize[0]);
-	    }
+	  else {
+	    fT = new TCardanAngles(qSize,uSize[0]);
 	  }
 	}
 
@@ -212,7 +193,6 @@ namespace MBSim {
             facLLM_ = &RigidBody::facLLMConst;
           }
           PJR0 = PJR;
-          //fPJR = new PJRTest(frame[iKinematics],frameOfReference,PJR);
         } 
         else {
         }
