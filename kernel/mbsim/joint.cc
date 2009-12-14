@@ -160,8 +160,7 @@ namespace MBSim {
         momentDir.resize(3,0);
         Wm.resize(3,0);
       }
-      C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
-      C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
+      resizeJacobians(0);
       JT.resize(3,3-forceDir.cols());
       if(forceDir.cols() == 2)
         JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
@@ -511,7 +510,8 @@ namespace MBSim {
   }
 
   void Joint::resizeJacobians(int j) {
-    C.resizeJacobians(); // TODO: hSize of COSY C not set
+    C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
+    C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
   }
 
 
