@@ -81,6 +81,8 @@ namespace MBSim {
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      virtual void updateStateDerivativeDependentVariables(double t) {};
+      virtual void updatehInverseKinetics(double t) {};
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
