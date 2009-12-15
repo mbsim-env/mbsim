@@ -174,6 +174,10 @@ namespace MBSim {
       /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystemSolver"; }
       virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
+
+      // TODO function is only temporarily. Shows inverse kinetics feature
+      virtual void plotWithIK(const fmatvec::Vec& z, double t); 
+
       virtual void closePlot();
       /***************************************************/
 
