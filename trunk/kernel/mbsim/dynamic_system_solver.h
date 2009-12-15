@@ -30,7 +30,6 @@
 namespace MBSim {
 
   class Frame;
-  class Tree;
   class Node;
   class Graph;
   class ExtraDynamicInterface;
@@ -60,6 +59,7 @@ namespace MBSim {
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-08-07 preintegration (Thorsten Schindler)
    * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \todo split init process TODO
    */
   class DynamicSystemSolver : public Group {
@@ -324,19 +324,19 @@ namespace MBSim {
       void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
 
       /**
+       * \brief standard invocation of smooth update for event driven integration 
+       * \param state
+       * \param time
+       */
+      fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t);
+
+      /**
        * \brief evaluation of stop vector
        * \param state
        * \param TODO
        * \param time
        */
       void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
-
-      /**
-       * \brief update for event driven integrator during smooth phase
-       * \param state
-       * \param time
-       */
-      fmatvec::Vec zdot(const fmatvec::Vec& z, double t) { return (this->*zdot_)(z,t); }
 
       /**
        * \brief drift projection for positions
@@ -526,7 +526,7 @@ namespace MBSim {
        */
       fmatvec::Mat    dhdqObjectParent, dhdqLinkParent;
       fmatvec::SqrMat dhduObjectParent, dhduLinkParent;
-	  fmatvec::Vec    dhdtObjectParent, dhdtLinkParent;
+      fmatvec::Vec    dhdtObjectParent, dhdtLinkParent;
 
       /**
        * \brief nonsmooth right hand side
@@ -683,23 +683,14 @@ namespace MBSim {
       void computeConstraintForces(double t);
 
       /**
-       * \brief function pointer for election of smooth update for event driven integrator
+       * \brief 
        */
-      fmatvec::Vec (DynamicSystemSolver::*zdot_)(const fmatvec::Vec &zParent, double t);
+      fmatvec::Vec laInverseKineticsParent;
 
       /**
-       * \brief standard invocation of smooth update for event driven integration without inverse kinetics
-       * \param state
-       * \param time
+       * \brief 
        */
-      fmatvec::Vec zdotStandard(const fmatvec::Vec &zParent, double t);
-
-      /**
-       * \brief invocation of smooth update for event driven integration with inverse kinetics
-       * \param state
-       * \param time
-       */
-      fmatvec::Vec zdotResolveConstraints(const fmatvec::Vec &zParent, double t);
+      fmatvec::Mat WInverseKineticsParent;
 
     private:
       /**
@@ -735,7 +726,6 @@ namespace MBSim {
        * \param current entry of matrix of dependencies
        * \param list of objects
        */
-      void addToTree(Tree* tree, Node* node, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
       void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
 
       bool truncateSimulationFiles;

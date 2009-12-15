@@ -47,7 +47,8 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
-   */
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+    */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
       /**
@@ -131,7 +132,7 @@ namespace MBSim {
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
        */
-      virtual void updaterRef(const fmatvec::Vec &ref) = 0;
+      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) = 0;
 
       /**
        * \brief references to TODO of dynamic system parent

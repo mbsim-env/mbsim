@@ -24,7 +24,6 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/link.h"
-#include "mbsim/tree.h"
 #include "mbsim/graph.h"
 #include "mbsim/extra_dynamic.h"
 #include "mbsim/integrators/integrator.h"
@@ -227,6 +226,8 @@ namespace MBSim {
   
       calcxSize();
   
+      calclaInverseKineticsSize(); 
+
       calclaSize();
       calcgSize();
       calcgdSize();
@@ -249,14 +250,8 @@ namespace MBSim {
       Group::init(stage);
     }
     else if(stage==unknownStage) {
-      checkForConstraints(); // TODO for preinit
       setDynamicSystemSolver(this);
 
-      if(uSize[0] == uSize[1]) 
-        zdot_ = &DynamicSystemSolver::zdotStandard;
-      else
-        zdot_ = &DynamicSystemSolver::zdotResolveConstraints;
-  
       setlaIndDS(laInd);
   
       // TODO memory problem with many contacts
@@ -284,10 +279,12 @@ namespace MBSim {
       dhduLinkParent.resize(getuSize(1));
       dhdtObjectParent.resize(getuSize(1));
       dhdtLinkParent.resize(getuSize(1));
-      rParent.resize(getuSize());
+      rParent.resize(getuSize(1));
       fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
+      WInverseKineticsParent.resize(hSize[1],laInverseKineticsSize);
+      laInverseKineticsParent.resize(laInverseKineticsSize);
   
       updateMRef(MParent);
       updateTRef(TParent);
@@ -312,6 +309,13 @@ namespace MBSim {
       updategRef(gParent); // TODO why double?
       updategdRef(gdParent); // TODO why double?
       updatelaRef(laParent); // TODO why double?
+      if(uSize[0] != uSize[1]) {
+	resizeJacobians(1);
+	updatelaInverseKineticsRef(laInverseKineticsParent);
+	updateWInverseKineticsRef(WInverseKineticsParent,1);
+	resizeJacobians(0);
+      }
+
       if(impactSolver==RootFinding) updateresRef(resParent);
       updaterFactorRef(rFactorParent);
   
@@ -336,6 +340,12 @@ namespace MBSim {
       else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
       else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
       else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
+    }
+    else if(stage==MBSim::modelBuildup) {
+      if(INFO) cout << "  initialising modelBuildup ..." << endl;
+      Group::init(stage);
+      setDynamicSystemSolver(this);
+      checkForConstraints(); // TODO for preinit
     }
     else if(stage==MBSim::plot) {
       if(INFO) cout << "  initialising plot-files ..." << endl;
@@ -1326,6 +1336,8 @@ namespace MBSim {
     updateqdRef(qd);
     updateudRef(ud);
     updatexdRef(xd);
+
+    updateudallRef(ud);
   }
 
   void DynamicSystemSolver::updaterFactors() {
@@ -1352,7 +1364,7 @@ namespace MBSim {
     la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
   } 
 
-  Vec DynamicSystemSolver::zdotStandard(const Vec &zParent, double t) {
+  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1374,49 +1386,6 @@ namespace MBSim {
     updater(t); 
     updatezd(t);
 
-    return zdParent;
-  }
-
-  Vec DynamicSystemSolver::zdotResolveConstraints(const Vec &zParent, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t); 
-    resizeJacobians(1);
-    updateInverseKineticsJacobians(t);
-    updatehRef(hParent,hObjectParent,hLinkParent,1);
-    updateh(t); 
-    updateMRef(MParent,1);
-    updateM(t); 
-    updateLLMRef(LLMParent,1);
-    facLLM(); 
-    if(laSize) {
-      updateLLMRef(LLMParent,1);
-      updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updateW(t); 
-      updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      computeConstraintForces(t); 
-    }
-    resizeJacobians(0);
-    updateJacobians(t);
-    updatehRef(hParent,hObjectParent,hLinkParent);
-    updateh(t); 
-    updateMRef(MParent);
-    updateM(t); 
-    updateWRef(WParent);
-    updateW(t); 
-    updateVRef(VParent);
-    updateV(t); 
-    updateLLMRef(LLMParent);
-    facLLM(); 
-    //updater(t); 
-    updatezd(t);
     return zdParent;
   }
 
@@ -1502,13 +1471,6 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::addToTree(Tree* tree, Node* node, SqrMat &A, int i, vector<Object*>& objList) {
-    Node *nextNode = tree->addObject(node,objList[i]);
-
-    for(int j=0; j<A.cols(); j++)
-      if(A(i,j) == 1) // child node of object i
-        addToTree(tree, nextNode, A, j, objList);
-  }
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Object*>& objList) {
     graph->addObject(objList[i]->computeLevel(),objList[i]);
     A(i,i) = -1;

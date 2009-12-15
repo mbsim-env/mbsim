@@ -194,8 +194,16 @@ namespace MBSim {
     u>>uParent(uInd[0],uInd[0]+uSize[0]-1);
   }
 
+  void Object::updateuallRef(const Vec &uParent) {
+    uall>>uParent(hInd[0],hInd[0]+hSize[0]-1);
+  }
+
   void Object::updateudRef(const Vec &udParent) {
     ud>>udParent(uInd[0],uInd[0]+uSize[0]-1);
+  }
+
+  void Object::updateudallRef(const Vec &udParent) {
+    udall>>udParent(hInd[0],hInd[0]+hSize[0]-1);
   }
 
   void Object::updatehRef(const Vec& hParent, const Vec& hObjectParent, int i) {
@@ -215,8 +223,8 @@ namespace MBSim {
     dhdt.resize()>>dhdtParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
-  void Object::updaterRef(const Vec& rParent) {
-    r>>rParent(uInd[0],uInd[0]+uSize[0]-1);
+  void Object::updaterRef(const Vec& rParent, int i) {
+    r.resize()>>rParent(uInd[i],uInd[i]+uSize[i]-1);
   }
 
   void Object::updateTRef(const Mat &TParent) {

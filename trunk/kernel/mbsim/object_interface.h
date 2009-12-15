@@ -38,7 +38,8 @@ namespace MBSim {
    * \date 2009-03-26 some comments (Thorsten Schindler)
    * \date 2009-07-17 implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
-   */
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+    */
   class ObjectInterface {
     public:
       /**
@@ -80,6 +81,18 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateStateDependentVariables(double t) = 0;
+
+      /**
+       * \brief update state derivative dependent variables (e.g. accelerations)
+       * \param simulation time
+       */
+      virtual void updateStateDerivativeDependentVariables(double t) = 0;
+
+      /**
+       * \brief update h-vector for inverse kinetics
+       * \param simulation time
+       */
+      virtual void updatehInverseKinetics(double t) = 0;
 
       /**
        * \brief update acceleration description of frames, contours and bodies
