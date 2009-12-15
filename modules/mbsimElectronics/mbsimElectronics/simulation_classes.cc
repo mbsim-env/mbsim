@@ -123,8 +123,8 @@ namespace MBSimElectronics {
     hLink[0]>>hLinkParent(I);
   } 
 
-  void ElectronicLink::updaterRef(const Vec &rParent) {
-    fmatvec::Index I = fmatvec::Index(branch->getParent()->gethInd(parent),branch->getParent()->gethInd(parent)+branch->getJacobian().cols()-1);
+  void ElectronicLink::updaterRef(const Vec &rParent, int j) {
+    fmatvec::Index I = fmatvec::Index(branch->getParent()->gethInd(parent,j),branch->getParent()->gethInd(parent,j)+branch->getJacobian().cols()-1);
     r[0]>>rParent(I);
   } 
 
