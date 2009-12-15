@@ -54,7 +54,7 @@ namespace MBSimControl {
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
-      virtual void updaterRef(const fmatvec::Vec &ref) {}
+      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) {}
       virtual bool isActive() const {return false; }
       virtual bool gActiveChanged() {return false; }
       /***************************************************/
