@@ -77,7 +77,7 @@ namespace MBSim {
       virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      virtual void updaterRef(const fmatvec::Vec &ref);
+      virtual void updaterRef(const fmatvec::Vec &ref, int i=0);
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASS */

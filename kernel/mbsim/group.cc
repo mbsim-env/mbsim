@@ -114,6 +114,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->updateJacobians(t);
+
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+      (*i)->updateJacobians(t);
   }
 
   void Group::initializeUsingXML(TiXmlElement *element) {

@@ -37,6 +37,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \todo kinetic energy TODO
    * \todo Euler parameter TODO
    * \todo check if inertial system for performance TODO
@@ -59,6 +60,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
       virtual void updateh(double t);
+      virtual void updatehInverseKinetics(double t);
+      virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t) { (this->*updateM_)(t); }
       virtual void updateStateDependentVariables(double t) { updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t); }
       virtual void updateJacobians(double t) { updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
@@ -379,6 +382,8 @@ namespace MBSim {
 
       /** a pointer to frame "C" */
       Frame *C;
+
+      fmatvec::Vec aT, aR;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;

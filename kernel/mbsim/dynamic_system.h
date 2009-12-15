@@ -50,7 +50,8 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
-   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
     public:
@@ -67,6 +68,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
       virtual void updateh(double t); 
+      virtual void updatehInverseKinetics(double t); 
+      virtual void updateStateDerivativeDependentVariables(double t); 
       virtual void updatedhdz(double t);
       virtual void updateM(double t);
       virtual void updateJacobians(double t) = 0;
@@ -109,6 +112,10 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t); 
+
+      virtual void updategInverseKinetics(double t); 
+      virtual void updategdInverseKinetics(double t);
+      virtual void updateWInverseKinetics(double t); 
       /*****************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -299,10 +306,22 @@ namespace MBSim {
       void updateuRef(const fmatvec::Vec &ref);
 
       /**
+       * \brief references to velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updateuallRef(const fmatvec::Vec &ref);
+
+      /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
       void updateudRef(const fmatvec::Vec &ref);
+
+      /**
+       * \brief references to velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updateudallRef(const fmatvec::Vec &ref);
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
@@ -347,7 +366,7 @@ namespace MBSim {
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterRef(const fmatvec::Vec &ref);
+      void updaterRef(const fmatvec::Vec &ref, int j=0);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -387,6 +406,8 @@ namespace MBSim {
        */
       void updatelaRef(const fmatvec::Vec &ref);
 
+      void updatelaInverseKineticsRef(const fmatvec::Vec &ref);
+
       /**
        * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
@@ -399,6 +420,13 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updateWRef(const fmatvec::Mat &ref, int i=0);
+
+      /**
+       * \brief references to contact force direction matrix of dynamic system parent
+       * \param matrix to be referenced
+       * \param index of normal usage and inverse kinetics
+       */
+      void updateWInverseKineticsRef(const fmatvec::Mat &ref, int i=0);
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
@@ -508,6 +536,11 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       void calclaSize();
+
+      /**
+       * \brief calculates size of contact force parameters
+       */
+      void calclaInverseKineticsSize();
 
       /**
        * \brief calculates size of active contact force parameters
@@ -686,6 +719,11 @@ namespace MBSim {
       void addLink(Link *link);
 
       /**
+       * \param add link for inverse kinetics
+       */
+      void addInverseKineticsLink(Link *link);
+
+      /**
        * \param name of the link
        * \param check for existence of link
        * \return link
@@ -759,6 +797,7 @@ namespace MBSim {
       std::vector<Link*> linkSingleValued;
       std::vector<Link*> linkSetValued;
       std::vector<Link*> linkSetValuedActive;
+      std::vector<Link*> inverseKineticsLink;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters
@@ -920,6 +959,13 @@ namespace MBSim {
       /** A pointer to frame "I" */
       Frame *I;
 
+      /** 
+       * \brief size of contact force parameters of special links relative to parent
+       */
+      int laInverseKineticsSize;
+
+      fmatvec::Mat WInverseKinetics;
+      fmatvec::Vec laInverseKinetics;
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
       std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;

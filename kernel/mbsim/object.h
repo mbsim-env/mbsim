@@ -40,7 +40,8 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
-   */
+   * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+    */
   class Object : public Element, public ObjectInterface {
     public: 
       /**
@@ -108,10 +109,22 @@ namespace MBSim {
       virtual void updateuRef(const fmatvec::Vec& ref);
 
       /**
+       * \brief references to velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      virtual void updateuallRef(const fmatvec::Vec& ref);
+
+      /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
       virtual void updateudRef(const fmatvec::Vec& ref);
+
+      /**
+       * \brief references to differentiated velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      virtual void updateudallRef(const fmatvec::Vec& ref);
 
       /**
        * \brief references to smooth force vector of dynamic system parent
@@ -145,7 +158,7 @@ namespace MBSim {
        * \brief references to nonsmooth force vector of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updaterRef(const fmatvec::Vec& ref);
+      virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
@@ -332,17 +345,17 @@ namespace MBSim {
       /** 
        * \brief positions, velocities
        */
-      fmatvec::Vec q, u;
+      fmatvec::Vec q, u, uall;
 
       /**
        * \brief initial position, velocity
        */
-      fmatvec::Vec q0,u0;
+      fmatvec::Vec q0, u0;
 
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd,ud;
+      fmatvec::Vec qd, ud, udall;
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side

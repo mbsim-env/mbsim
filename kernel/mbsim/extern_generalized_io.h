@@ -53,7 +53,7 @@ namespace MBSim {
       virtual void updatedhdqRef(const fmatvec::Mat&, int) {}
       virtual void updatedhduRef(const fmatvec::SqrMat&, int) {}
       virtual void updatedhdtRef(const fmatvec::Vec&, int) {}
-      virtual void updaterRef(const fmatvec::Vec&) {}
+      virtual void updaterRef(const fmatvec::Vec&, int) {}
 
     private:
       std::string saved_connectedObject;
