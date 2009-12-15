@@ -82,7 +82,7 @@ namespace MBSim {
     int result;
 //    bool donedrift;
 
-    system->plot(z, t);
+    system->plotWithIK(z, t);
 
     double s0 = clock();
     double time = 0;
@@ -99,7 +99,7 @@ namespace MBSim {
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, 
 	  &result, &dtLast);
       if(result==1 || result==2 || t==tPlot) {
-	system->plot(z, t);
+	system->plotWithIK(z, t);
 
 	if(output)
 	  cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;

@@ -713,6 +713,62 @@ namespace MBSim {
     plot(t,dt);
   }
 
+  void DynamicSystemSolver::plotWithIK(const Vec& zParent, double t) {
+    if(q()!=zParent()) {
+      updatezRef(zParent);
+    }
+
+    if(qd()!=zdParent()) 
+      updatezdRef(zdParent);
+
+    updateStateDependentVariables(t);
+    updateg(t);
+    updategd(t);
+    updateJacobians(t);
+    updateT(t);
+    updateh(t); 
+    updateM(t); 
+    facLLM(); 
+
+    if(laSize) {
+      updateW(t); 
+      updateV(t); 
+      updateG(t); 
+      updatewb(t); 
+      computeConstraintForces(t); 
+    }
+    updater(t); 
+    updatezd(t);
+    updateStateDerivativeDependentVariables(t);
+
+    if(uSize[0] != uSize[1]) {
+      resizeJacobians(1);
+      updatehRef(hParent,hObjectParent,hLinkParent,1);
+      updaterRef(rParent,1);
+      updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updategInverseKinetics(t); // TODO nicht optimal, aber nötig da Kraftrichtung geupdated wird
+      updategdInverseKinetics(t); // TODO nicht optimal, aber nötig da Kraftrichtung geupdated wird
+      //updateStateDependentVariablesSpecial(t);
+      updateInverseKineticsJacobians(t);
+      updateh(t);
+      updateW(t); 
+      updateV(t); 
+      updater(t);
+      updatehInverseKinetics(t);
+      updateWInverseKinetics(t); 
+      laInverseKinetics = slvLS(trans(WInverseKinetics)*WInverseKinetics,-trans(WInverseKinetics)*(h+r));
+      plot(t,1);
+      resizeJacobians(0);
+      updatehRef(hParent,hObjectParent,hLinkParent);
+      updaterRef(rParent);
+      updateWRef(WParent);
+      updateVRef(VParent);
+    }
+    else
+      plot(t,1);
+  }
+
   void DynamicSystemSolver::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
