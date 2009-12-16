@@ -156,6 +156,9 @@ namespace MBSim {
       PJTs.resize(3,uSize[1]);
       PJRs.resize(3,uSize[1]);
 
+      updateM_ = &RigidBody::updateMNotConst;
+      facLLM_ = &RigidBody::facLLMNotConst;
+
       if(fPJT==0) {
         Mat JT(3,0);
         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
@@ -192,9 +195,6 @@ namespace MBSim {
         PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
         PJRs(Index(0,2), Index(uSize[1]-momentDir.cols()-JR.cols(),uSize[1]-momentDir.cols()-1)) = JR;
         PJRs(Index(0,2), Index(uSize[1]-momentDir.cols(),uSize[1]-1)) = momentDir;
-
-        updateM_ = &RigidBody::updateMNotConst;
-        facLLM_ = &RigidBody::facLLMNotConst;
 
         if(cb) {
           if(iKinematics == 0 && false) {
