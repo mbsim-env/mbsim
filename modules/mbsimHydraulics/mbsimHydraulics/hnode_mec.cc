@@ -232,15 +232,15 @@ namespace MBSimHydraulics {
     // }
   }
 
-  void HNodeMec::updaterRef(const Vec &rParent) {
-    HNode::updaterRef(rParent);
+  void HNodeMec::updaterRef(const Vec &rParent, int j) {
+    HNode::updaterRef(rParent, j);
     for (unsigned int i=0; i<nTrans; i++) {
-      int rI = connectedTransFrames[i].frame->getParent()->gethInd(parent);
+      int rI = connectedTransFrames[i].frame->getParent()->gethInd(parent, j);
       int rJ = rI + connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;
       r[nLines+i] >> rParent(Index(rI, rJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
-      int rI = connectedRotFrames[i].frame->getParent()->gethInd(parent);
+      int rI = connectedRotFrames[i].frame->getParent()->gethInd(parent, j);
       int rJ = rI + connectedRotFrames[i].frame->getJacobianOfRotation().cols()-1;
       r[nTrans+nLines+i] >> rParent(Index(rI, rJ));
     }

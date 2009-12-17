@@ -111,6 +111,12 @@ namespace MBSimHydraulics {
     hLink[0].resize() >> hLinkParent(I);
   }
 
+  void RigidLinePressureLoss::updaterRef(const Vec& rParent, int i) {
+    int hInd = line->gethInd(parent, i);
+    Index I=Index(hInd, hInd);
+    r[0] >> rParent(I);
+  }
+
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
     int hInd = line->gethInd(parent, i);
     Index I=Index(hInd, hInd);
