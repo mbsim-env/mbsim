@@ -207,6 +207,14 @@ namespace MBSimHydraulics {
     }
   }
 
+  void HNode::updaterRef(const Vec& rParent, int j) {
+    for (unsigned int i=0; i<nLines; i++) {
+      int hInd=connectedLines[i].line->gethInd(parent, j);
+      Index I(hInd, hInd+connectedLines[i].sign.size()-1);
+      r[i].resize() >> rParent(I);
+    }
+  }
+
   void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       int hInd = connectedLines[i].line->gethInd(parent, j);

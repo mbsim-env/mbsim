@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
       void updatedhdqRef(const fmatvec::Mat&, int){}
       void updatedhduRef(const fmatvec::SqrMat&, int){}
       void updatedhdtRef(const fmatvec::Vec&, int){}
-      void updaterRef(const fmatvec::Vec&) {}
+      void updaterRef(const fmatvec::Vec&, int) {}
       bool isActive() const {return false; }
       bool gActiveChanged() {return false; }
       void init(InitStage stage) {}
