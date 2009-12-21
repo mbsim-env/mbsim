@@ -166,54 +166,54 @@ namespace MBSim {
         addExtraDynamic(edList[i]);
       }
 
-      SqrMat A(objList.size());
+      /* matrix of body dependencies */
+      SqrMat A(objList.size(),INIT,0.);
       for(unsigned int i=0; i<objList.size(); i++) {
 
-	vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
+        vector<Object*> parentBody = objList[i]->getObjectsDependingOn();
 
-	for(unsigned int h=0; h<parentBody.size(); h++) {
-	  unsigned int j=0;
-	  bool foundBody = false;
-	  for(unsigned int k=0; k<objList.size(); k++, j++) {
-	    if(objList[k] == parentBody[h]) {
-	      foundBody = true;
-	      break;
-	    }
-	  }
+        for(unsigned int h=0; h<parentBody.size(); h++) {
+          unsigned int j=0;
+          bool foundBody = false;
+          for(unsigned int k=0; k<objList.size(); k++, j++) {
+            if(objList[k] == parentBody[h]) {
+              foundBody = true;
+              break;
+            }
+          }
 
-	  if(foundBody) {
-	    A(i,j) = 2; // 2 means predecessor
-	    A(j,i) = 1; // 1 means successor
-	  }
-	}
+          if(foundBody) {
+            A(i,j) = 2; // 2 means predecessor
+            A(j,i) = 1; // 1 means successor
+          }
+        }
       }
       // if(INFO) cout << "A = " << A << endl;
 
       vector<Graph*> bufGraph;
       int nt = 0;
-      // Starte Aufbau
       for(int i=0; i<A.size(); i++) {
-	double a = max(trans(A).col(i));
-	if(a>0 && A(i,i) != -1) { // root of relativ kinematics
-	  stringstream str;
-	  str << "InvisibleGraph" << nt++;
-	  Graph *graph = new Graph(str.str());
-	  addToGraph(graph, A, i, objList);
-	  graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk throw the plot functions
-	  bufGraph.push_back(graph);
-	} 
-	else if(a==0) // absolut kinematics
-	  addObject(objList[i]);
+        double a = max(trans(A).col(i));
+        if(a>0 && A(i,i) != -1) { // root of relativ kinematics
+          stringstream str;
+          str << "InvisibleGraph" << nt++;
+          Graph *graph = new Graph(str.str());
+          addToGraph(graph, A, i, objList);
+          graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
+          bufGraph.push_back(graph);
+        } 
+        else if(a==0) // absolut kinematics
+          addObject(objList[i]);
       }
       // if(INFO) cout << "A = " << A << endl;
 
       for(unsigned int i=0; i<bufGraph.size(); i++) {
-	addGroup(bufGraph[i]);
+        addGroup(bufGraph[i]);
       }
 
       if(INFO) cout << "End of special group stage==preInit" << endl;
 
-      // After reorganizing a resize is required
+      // after reorganizing a resize is required
       init(resize);
     }
     else if(stage==resize) {
@@ -223,9 +223,9 @@ namespace MBSim {
       sethSize(uSize[0]);
       sethSize(uSize[1],1);
       setUpLinks(); // is needed by calcgSize()
-  
+
       calcxSize();
-  
+
       calclaInverseKineticsSize(); 
 
       calclaSize();
@@ -243,7 +243,7 @@ namespace MBSim {
       if(INFO) cout << "laSize = " << laSize << endl;
       if(INFO) cout << "svSize = " << svSize << endl;
       if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
-  
+
       if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
       if(INFO) cout << "hSize[1] = " << hSize[1] << endl;
 
@@ -253,7 +253,7 @@ namespace MBSim {
       setDynamicSystemSolver(this);
 
       setlaIndDS(laInd);
-  
+
       // TODO memory problem with many contacts
       if(laSize>8000)
         laSize=8000;
@@ -285,7 +285,7 @@ namespace MBSim {
       jsvParent.resize(getsvSize());
       WInverseKineticsParent.resize(hSize[1],laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
-  
+
       updateMRef(MParent);
       updateTRef(TParent);
       updateLLMRef(LLMParent);
@@ -310,15 +310,15 @@ namespace MBSim {
       updategdRef(gdParent); // TODO why double?
       updatelaRef(laParent); // TODO why double?
       if(uSize[0] != uSize[1]) {
-	resizeJacobians(1);
-	updatelaInverseKineticsRef(laInverseKineticsParent);
-	updateWInverseKineticsRef(WInverseKineticsParent,1);
-	resizeJacobians(0);
+        resizeJacobians(1);
+        updatelaInverseKineticsRef(laInverseKineticsParent);
+        updateWInverseKineticsRef(WInverseKineticsParent,1);
+        resizeJacobians(0);
       }
 
       if(impactSolver==RootFinding) updateresRef(resParent);
       updaterFactorRef(rFactorParent);
-  
+
       // contact solver specific settings
       if(INFO) cout << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if(contactSolver == GaussSeidel) solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel; 
@@ -329,7 +329,7 @@ namespace MBSim {
       else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
       else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
       else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
-  
+
       // impact solver specific settings
       if(INFO) cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
       if(impactSolver == GaussSeidel) solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel; 
@@ -656,25 +656,23 @@ namespace MBSim {
   void DynamicSystemSolver::updateStateDependentVariables(double t) {
     Group::updateStateDependentVariables(t);
 
-    // if the integrator has not exit after a integratorExitRequest, exit the hard way
-    if(integratorExitRequest) {
+    if(integratorExitRequest) { // if the integrator has not exit after a integratorExitRequest
       cout<<"MBSim: Integrator has not stopped integration! Terminate NOW the hard way!"<<endl;
       H5::FileSerie::deletePIDFiles();
       _exit(1);
     }
-    // on exitRequest flush plot files and ask the integrator to exit
-    if(exitRequest) {
+
+    if(exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
       cout<<"MBSim: Flushing HDF5 files and ask integrator to terminate!"<<endl;
       H5::FileSerie::flushAllFiles();
       integratorExitRequest=true;
     }
 
-    // flush files ones if requested
-    if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles();
+    if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles(); // flush files ones if requested
   }
 
   void DynamicSystemSolver::updater(double t) {
-    r = V*la; // !!! can not be called locally (hierarchically), because this adds some values twice to r for tree structures
+    r = V*la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
   }
 
   void DynamicSystemSolver::updatewb(double t) {
@@ -747,8 +745,8 @@ namespace MBSim {
       updaterRef(rParent,1);
       updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
       updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updategInverseKinetics(t); // TODO nicht optimal, aber nötig da Kraftrichtung geupdated wird
-      updategdInverseKinetics(t); // TODO nicht optimal, aber nötig da Kraftrichtung geupdated wird
+      updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
+      updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
       //updateStateDependentVariablesSpecial(t);
       updateInverseKineticsJacobians(t);
       updateh(t);
@@ -973,8 +971,8 @@ namespace MBSim {
       projectGeneralizedVelocities(t);
       bool ret = true;
       for(int j=0; j<jsv.size()-1; j++)
-      if(jsv(j)>0)
-	ret = false;
+        if(jsv(j)>0)
+          ret = false;
       if(ret) return;
     }
 
@@ -1019,7 +1017,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
 
-      //projectGeneralizedPositions(t);
+      // projectGeneralizedPositions(t);
       b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       int iter;
       iter = solveImpacts();
@@ -1417,7 +1415,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS wegen unbestimmten Systemen
+    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS because of undeterminded system of equations
   } 
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {

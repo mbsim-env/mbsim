@@ -368,7 +368,7 @@ namespace MBSim {
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->plot(t,dt);
       for(unsigned i=0; i<inverseKineticsLink.size(); i++)
-	inverseKineticsLink[i]->plot(t,dt);
+        inverseKineticsLink[i]->plot(t,dt);
     }
   }
 
@@ -875,7 +875,7 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updateWRef(WInverseKinetics,j);
-   }
+  }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
     V.resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));

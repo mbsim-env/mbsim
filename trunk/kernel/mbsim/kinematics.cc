@@ -31,16 +31,16 @@ namespace MBSim {
     setTranslationVectors(Element::getMat(e,3,0));
   }
 
-  void TimeDependentTranslation1D::initializeUsingXML(TiXmlElement *element) {
+  void TimeDependentTranslation::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    e=element->FirstChildElement(MBSIMNS"direction");
-    setDirection(Element::getVec(e,3));
     e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    pos=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {
+    SqrMat APK(3,NONINIT);
+
     int i = q.size()-1;
     const double cosq=cos(q(i));
     const double sinq=sin(q(i));
@@ -48,6 +48,7 @@ namespace MBSim {
     const double a0a1=a(0)*a(1);
     const double a0a2=a(0)*a(2);
     const double a1a2=a(1)*a(2);
+
     APK(0,0) = cosq+onemcosq*a(0)*a(0);
     APK(1,0) = onemcosq*a0a1+a(2)*sinq;
     APK(2,0) = onemcosq*a0a2-a(1)*sinq;
@@ -57,6 +58,7 @@ namespace MBSim {
     APK(0,2) = onemcosq*a0a2+a(1)*sinq;
     APK(1,2) = onemcosq*a1a2-a(0)*sinq;
     APK(2,2) = cosq+onemcosq*a(2)*a(2);
+
     return APK;
   }
 
@@ -66,44 +68,21 @@ namespace MBSim {
     setAxisOfRotation(Element::getVec(e,3));
   }
 
-  void TimeDependentRotation1D::setDirections(Vec n, Vec s) {
-    assert(n.size()==3 && nrm2(n)>1e-6);
-    assert(s.size()==3 && nrm2(s)>1e-6);
-    dir.resize(3);
-    dir.col(0)=n/nrm2(n);
-    dir.col(2)=crossProduct(n, s);
-    dir.col(2)/=nrm2(dir.col(2));
-    dir.col(1)=crossProduct(dir.col(2), dir.col(0));
-    dir.col(0)/=nrm2(dir.col(0));
+  SqrMat TimeDependentRotationAboutFixedAxis::operator()(const Vec &q, double t) {
+    Vec phi(1,INIT,(*angle)(t));
+    return RotationAboutFixedAxis::operator()(phi,t);
   }
 
-  SqrMat TimeDependentRotation1D::operator()(const Vec &q, double t) {
-    SqrMat A(3, NONINIT);
-    const double phi=(*pos)(t);
-    const double s=sin(phi);
-    const double c=cos(phi);
-    A.col(0)=dir.col(0);
-    A(0,1)=dir(0,1)*c+dir(0,2)*s;
-    A(1,1)=dir(1,1)*c+dir(1,2)*s;
-    A(2,1)=dir(2,1)*c+dir(2,2)*s;
-    A(0,2)=-dir(0,1)*s+dir(0,2)*c;
-    A(1,2)=-dir(1,1)*s+dir(1,2)*c;
-    A(2,2)=-dir(2,1)*s+dir(2,2)*c;
-//    return dir*BasicRotAIKx((*pos)(t));
-    return A;
-  }
-
-  void TimeDependentRotation1D::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e, *ee;
-    e=element->FirstChildElement(MBSIMNS"direction1");
-    ee=element->FirstChildElement(MBSIMNS"direction2");
-    setDirections(Element::getVec(e,3), Element::getVec(ee,3));
-    e=element->FirstChildElement(MBSIMNS"position");
-    pos=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
-    pos->initializeUsingXML(e->FirstChildElement());
+  void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    RotationAboutFixedAxis::initializeUsingXML(element);
+    angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    angle->initializeUsingXML(e->FirstChildElement());
   }
 
   SqrMat RotationAboutAxesXY::operator()(const Vec &q, double t) {
+    SqrMat APK(3,NONINIT);
+
     int i = q.size()-1;
     double a=q(i-1);
     double b=q(i);
@@ -121,10 +100,9 @@ namespace MBSim {
     return APK;
   }
 
-  void RotationAboutAxesXY::initializeUsingXML(TiXmlElement *element) {
-  }
-
   SqrMat RotationAboutAxesYZ::operator()(const Vec &q, double t) {
+    SqrMat APK(3,NONINIT);
+
     int i = q.size()-1;
     double b=q(i-1);
     double g=q(i);
@@ -138,13 +116,13 @@ namespace MBSim {
     APK(0,2) = sin(b);
     APK(1,2) = 0;
     APK(2,2) = cos(b);
+
     return APK;
   }
 
-  void RotationAboutAxesYZ::initializeUsingXML(TiXmlElement *element) {
-  }
-
   SqrMat CardanAngles::operator()(const Vec &q, double t) {
+    SqrMat APK(3,NONINIT);
+
     int i = q.size()-1;
     double a=q(i-2);
     double b=q(i-1);
@@ -159,7 +137,19 @@ namespace MBSim {
     APK(0,2) = sin(b);
     APK(1,2) = -sin(a)*cos(b);
     APK(2,2) = cos(a)*cos(b);
+
     return APK;
+  }
+
+  SqrMat TimeDependentCardanAngles::operator()(const Vec &q, double t) {
+    return CardanAngles::operator()((*angle)(t),t);
+  }
+
+  void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    CardanAngles::initializeUsingXML(element);
+    angle=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+    angle->initializeUsingXML(e->FirstChildElement());
   }
 
   Mat JRotationAboutAxesXY::operator()(const Vec &q, double t) {
