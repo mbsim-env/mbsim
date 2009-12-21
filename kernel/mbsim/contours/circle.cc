@@ -27,9 +27,11 @@
 using namespace std;
 
 namespace MBSim {
-  Circle::Circle(const string& name) : RigidContour(name),r(0.),outCont(false) {}
+  Circle::Circle(const string& name) : RigidContour(name),r(0.),curvature(0),outCont(false) {}
+ 
+  Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),curvature(0),outCont(outCont_) {}
 
-  Circle::Circle(const string& name, bool outCont_) : RigidContour(name),r(0.),outCont(outCont_) {}
+  Circle::Circle(const string& name, double r_, bool outCont_) : RigidContour(name),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
 
   Circle::~Circle() {}
 
@@ -60,6 +62,18 @@ namespace MBSim {
     else openMBVRigidBody=0;
   }
 #endif
+
+  void Circle::initializeUsingXML(TiXmlElement *element) {
+    RigidContour::initializeUsingXML(element);
+    TiXmlElement* e;
+    e=element->FirstChildElement(MBSIMNS"radius");
+    setRadius(getDouble(e));
+    e=e->NextSiblingElement();
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    if(e && e->ValueStr()==MBSIMNS"enableOpenMBV")
+      enableOpenMBV();
+#endif
+  }
 
 }
 
