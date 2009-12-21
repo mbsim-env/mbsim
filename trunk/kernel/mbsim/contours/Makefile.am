@@ -3,8 +3,6 @@ SUBDIRS = .
 noinst_LTLIBRARIES = libcontour.la
 libcontour_la_SOURCES = area.cc\
 						circle.cc\
-						circle_solid.cc\
-						circle_hollow.cc\
 						compound_contour.cc\
 						contour1s_analytical.cc\
 						contour_interpolation.cc\

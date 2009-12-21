@@ -29,6 +29,7 @@ namespace MBSim {
    * \brief circular contour with contact possibility from outside and inside and binormal in direction of the third column of the contour reference frame
    * \author Thorsten Schindler
    * \date 2009-07-13 initial commit (Thorsten Schindler)
+   * \date 2009-12-21 adaptations concerning CircleHollow and CircleSolid
    */
   class Circle : public RigidContour {
     public:
@@ -46,6 +47,14 @@ namespace MBSim {
        */
       Circle(const std::string& name, bool outCont_);
 
+      /*! 
+       * \brief constructor
+       * \param name of circle
+       * \param radius
+       * \param contact from outside?
+       */
+      Circle(const std::string& name, double r_, bool outCont_);
+
       /*!
        * \brief destructor
        */
@@ -54,6 +63,10 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Circle"; }
       virtual void init(InitStage stage);
+      /***************************************************/
+
+      /* INHERITED INTERFACE OF CONTOUR */
+      virtual double computeCurvature(ContourPointData &cp) { return curvature; }
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -67,20 +80,28 @@ namespace MBSim {
       void enableOpenMBV(bool enable=true);
 #endif
 
-    private:
+    virtual void initializeUsingXML(TiXmlElement *element);
+
+    protected:
       /** 
        * \brief radius
        */
       double r;
 
+      /**
+       * \brief curvature of circle
+       */
+      double curvature;
+
+    private:
       /** 
        * \brief contact on outer surface?
        */
       bool outCont;	
   };
 
-  inline void Circle::setRadius(double r_) { r = r_; }    	
-  inline void Circle::setOutCont(bool outCont_) { outCont = outCont_; }
+  inline void Circle::setRadius(double r_) { r = r_; outCont ? curvature = 1./r_ : curvature = -1./r_; }    	
+  inline void Circle::setOutCont(bool outCont_) { outCont = outCont_; if(r!=0.) outCont ? curvature = 1./r : curvature = -1./r; }
   inline double Circle::getRadius() const { return r; }
   inline bool Circle::getOutCont() const { return outCont; }
 

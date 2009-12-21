@@ -20,7 +20,7 @@
 #ifndef _CIRCLE_SOLID_H_
 #define _CIRCLE_SOLID_H_
 
-#include "mbsim/contour.h"
+#include "mbsim/contours/circle.h"
 
 namespace MBSim {
 
@@ -28,50 +28,29 @@ namespace MBSim {
    * \brief circular contour with contact possibility from outside
    * \author Martin Foerg
    * \date 2009-04-20 some commments (Thorsten Schindler)
-   * \todo new name for binormal-methods TODO
-   * \todo CircleSolid / CircleHollow should be unified TODO
    * \date 2009-07-16 new file (Bastian Esefeld)
+   * \date 2009-12-21 special circle (Thorsten Schindler)
    */ 
-  class CircleSolid : public MBSim::RigidContour {	
+  class CircleSolid : public MBSim::Circle {	
     public:
       /**
        * \brief constructor
        * \param name of circle
        */
-      CircleSolid(const std::string& name) : RigidContour(name), r(0), curvature(0) {}
+      CircleSolid(const std::string& name) : Circle(name,true) {}
 
       /**
        * \brief constructor
        * \param name of circle
        * \param radius of circle
        */
-      CircleSolid(const std::string &name, double r_) : RigidContour(name), r(r_), curvature(1./r_) {}
+      CircleSolid(const std::string &name, double r_) : Circle(name,r,true) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleSolid"; }
       /***************************************************/
-
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual double computeCurvature(ContourPointData &cp) { return curvature; }
-      /***************************************************/
-
-      /* GETTER / SETTER */
-      void setRadius(double r_) { r = r_; curvature=1./r; }
-      double getRadius() const { return r; }
-      /***************************************************/
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-      void enableOpenMBV(bool enable=true);
-#endif
-      
-      virtual void initializeUsingXML(TiXmlElement *element);
-
-    private:
-      /**
-       * \brief radius of circle
-       */
-      double r, curvature;
   };      
 }
 
 #endif /* _CIRCLE_SOLID_H_ */
+
