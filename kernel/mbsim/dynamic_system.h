@@ -51,7 +51,7 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
-    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
+   * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
     public:

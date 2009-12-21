@@ -43,8 +43,6 @@
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
     schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
 
-
-
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Bestimmt, welche Plotausgaben aktiviert bzw. deaktiviert werden. Die folgenden Werte sind
@@ -308,7 +306,7 @@
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
-           Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
+            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
@@ -319,7 +317,7 @@
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Lage des Koordinatensystems.<br/>
-           Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
+            Vektor von <tt>frameOfReference</tt> zum Ursprung des neuen KOS dargestellt
             im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
@@ -328,7 +326,7 @@
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Orientierung des Koordinatensystems.<br/>
-           Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
+            Transformationsmatrix vom neuen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -362,7 +360,7 @@
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Lage der Kontur.<br/>
-           Vektor von <tt>frameOfReference</tt> zum Ursprung des kontureigenen KOS dargestellt
+            Vektor von <tt>frameOfReference</tt> zum Ursprung des kontureigenen KOS dargestellt
             im KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
@@ -371,7 +369,7 @@
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
             Relative Orientierung der Kontur.<br/>
-           Transformationsmatrix vom kontureigenen KOS ins KOS <tt>frameOfReference</tt>.
+            Transformationsmatrix vom kontureigenen KOS ins KOS <tt>frameOfReference</tt>.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -2035,27 +2033,22 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentTranslation1D" substitutionGroup="Translation" type="TimeDependentTranslation1DType">
+  <xs:element name="TimeDependentTranslation" substitutionGroup="Translation" type="TimeDependentTranslationType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Parametrisiert eine zeitabhängige lineare Translation <object class="inlineeqn">\mathbf{d}_{T}p</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+        Parametrisiert eine zeitabhängige Translation <object class="inlineeqn">\mathbf{p}</object> für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="TimeDependentTranslation1DType">
+  <xs:complexType name="TimeDependentTranslationType">
     <xs:complexContent>
       <xs:extension base="TranslationType">
         <xs:sequence>
-          <xs:element name="direction" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierte konstante Richtung <object class="inlineeqn">\mathbf{d}_{T}</object> des Translationsvektors.
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:element name="position">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen skalaren Ort <object class="inlineeqn">p</object> entlang der Geraden mit dem oben definierten Richtungsvektor.
+                Definiert den zeitabhängen vektoriellen Ort <object class="inlineeqn">\mathbf{p}</object>.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="Function1_SS">
+                <xs:element ref="Function1_VS">
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2093,28 +2086,18 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentRotation1D" substitutionGroup="Rotation" type="TimeDependentRotation1DType">
+  <xs:element name="TimeDependentRotationAboutFixedAxis" substitutionGroup="RotationAboutFixedAxis" type="TimeDependentRotationAboutFixedAxisType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Parametrisiert eine zeitabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
     </xs:documentation></xs:annotation>
   </xs:element>
-  <xs:complexType name="TimeDependentRotation1DType">
+  <xs:complexType name="TimeDependentRotationAboutFixedAxisType">
     <xs:complexContent>
-      <xs:extension base="RotationType">
+      <xs:extension base="RotationAboutFixedAxisType">
         <xs:sequence>
-          <xs:element name="direction1" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert die normierte konstante Drehachse.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="direction2" type="pv:nounitVector">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert einen zur Drehachse unabhängigen normierten Vektor, von dem ausgehend die Drehung gemessen wird.
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:element name="position">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert den zeitabhängen Winkel um die oben definierte Achse gemessen ab dem zweiten Vektor.
+                Definiert den zeitabhängen Winkel um die Drehachse.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:sequence>
@@ -2138,6 +2121,31 @@
       <xs:extension base="RotationType"/>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="TimeDependentCardanAngles" substitutionGroup="CardanAngles" type="TimeDependentCardanAngles">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Parametrisiert eine zeitabhängige Rotation bez. Kardanwinkeln für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeDependentCardanAngles">
+    <xs:complexContent>
+      <xs:extension base="CardanAnglesType">
+        <xs:sequence>
+          <xs:element name="position">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die zeitabhängen Kardan-Winkel.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function1_VS">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
@@ -2658,7 +2666,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
-  
+
   <xs:element name="DifferentiableFunction1_VS" substitutionGroup="Function1_VS" type="DifferentiableFunction1_VS" abstract="true">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

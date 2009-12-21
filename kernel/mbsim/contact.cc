@@ -764,7 +764,7 @@ namespace MBSim {
         for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
           gddk[k](0) += a[j]*laMBS(ja[j]);
 
-        double om = 1.0;
+        double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
         double buf = fcl->solve(a[ia[laIndDS+laIndk[k]]], gddk[k](0));
         lak[k](0) += om*(buf - lak[k](0));
 

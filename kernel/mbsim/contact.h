@@ -44,6 +44,9 @@ namespace MBSim {
    * \date 2009-08-03 contacts can now visualize their ContactPointFrames (Markus Schneider)
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
+   * 
+   * Remarks:
+   * - constitutive laws on acceleration and velocity level have to be set pairwise
    */
   class Contact: public LinkMechanics {
     public:
@@ -176,18 +179,24 @@ namespace MBSim {
        * \brief used contact kinematics
        */
       ContactKinematics *contactKinematics;
-      
+
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level
        */
       GeneralizedForceLaw *fcl;
-      /** force law defining relation between tangential velocities and tangential forces
-      */
+
+      /**
+       * \brief force law defining relation between tangential velocities and tangential forces
+       */
       FrictionForceLaw *fdf;
-      /** force law defining relation between penetration velocity and resulting normal impulses
+      
+      /**
+       * \brief force law defining relation between penetration velocity and resulting normal impulses
       */
       GeneralizedImpactLaw *fnil;
-      /** force law defining relation between tangential velocities and forces impulses
+      
+      /** 
+       * \brief force law defining relation between tangential velocities and forces impulses
       */
       FrictionImpactLaw *ftil;
 
@@ -284,5 +293,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _CONTACT_H_ */
 

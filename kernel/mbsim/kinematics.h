@@ -56,9 +56,9 @@ namespace MBSim {
        * \return translational vector as a function of its degree of freedom
        */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
-      /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      /***************************************************/
   };
 
   /**
@@ -84,6 +84,7 @@ namespace MBSim {
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
         return PJT*q(0,PJT.cols()-1);
       }; 
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -96,8 +97,6 @@ namespace MBSim {
       void setTranslationVectors(const fmatvec::Mat &PJT_) { PJT = PJT_; }
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-    
     private:
       /**
        * independent direction matrix of translation
@@ -106,54 +105,41 @@ namespace MBSim {
   };
 
   /**
-   * \brief class to describe time dependent positions
+   * \brief class to describe time dependent translations
    * \author Markus Schneider
+   * \date 2009-12-21 some adaptations (Thorsten Schindler)
    */
-  class TimeDependentTranslation1D : public Translation {
+  class TimeDependentTranslation : public Translation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentTranslation1D() : dir(0), pos(NULL) {}
+      TimeDependentTranslation() : pos(NULL) {}
 
       /**
        * \brief constructor
-       * \param independent direction matrix of translation
+       * \param independent translation function
        */
-      TimeDependentTranslation1D(fmatvec::Vec dir_, Function1<double, double> * pos_) : dir(dir_), pos(pos_) {dir/=nrm2(dir); }
+      TimeDependentTranslation(Function1<fmatvec::Vec, double> *pos_) : pos(pos_) {}
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
-        return (*pos)(t)*dir;
-      };
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) { return (*pos)(t); }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
-
       /**
-       * Set the translation direction
+       * \brief set the translation function
        */
-      void setDirection(fmatvec::Vec dir_) { dir = dir_/nrm2(dir_); }
-      
-      /**
-       * Set the positon function
-       */
-      void setPosition(Function1<double, double> * pos_) { pos = pos_; }
+      void setTranslationFunction(Function1<fmatvec::Vec, double> *pos_) { pos = pos_; }
       /***************************************************/
-
-      virtual void initializeUsingXML(TiXmlElement *element);
 
     private:
       /**
-       * translation direction
+       * time dependent translation function
        */
-      fmatvec::Vec dir;
-
-      /**
-       * time dependent position function
-       */
-      Function1<double, double> * pos;
+      Function1<fmatvec::Vec, double> *pos;
   };
 
   /**
@@ -185,9 +171,9 @@ namespace MBSim {
        * \return rotational matrix as a function of its degree of freedom
        */
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t) = 0; 
-      /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
+      /***************************************************/
   };
 
   /**
@@ -196,21 +182,22 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    */
   class RotationAboutFixedAxis: public Rotation {
-        public:
+    public:
       /**
        * \brief constructor
        */
-      RotationAboutFixedAxis() : APK(3), a(3) {}
+      RotationAboutFixedAxis() : Rotation(), a(3) {}
 
       /**
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec &a_) : APK(3) { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec &a_) : Rotation(), a(a_) {} 
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 1; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -218,14 +205,7 @@ namespace MBSim {
       void setAxisOfRotation(const fmatvec::Vec& a_) { a = a_; }
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-        
-        private:
-      /**
-       * \brief rotational matrix
-       */
-      fmatvec::SqrMat APK;
-
+    protected:
       /**
        * \brief axis of rotation
        */
@@ -233,104 +213,79 @@ namespace MBSim {
   };
 
   /**
-   * \brief class to describe time dependent positions
-   * \author Markus Schneider
+   * \brief class to describe time dependent rotation about fixed axis
+   * \author Thorsten Schindler
+   * \date 2009-12-21 initial commit (Thorsten Schindler)
    */
-  class TimeDependentRotation1D : public Rotation {
+  class TimeDependentRotationAboutFixedAxis: public RotationAboutFixedAxis {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentRotation1D() : dir(0), pos(NULL) {}
+      TimeDependentRotationAboutFixedAxis() : RotationAboutFixedAxis(), angle(NULL) {}
 
       /**
        * \brief constructor
-       * \param independent direction matrix of translation
+       * \param independent rotation angle function
+       * \param axis of rotation
        */
-      TimeDependentRotation1D(fmatvec::Vec n1, fmatvec::Vec n2, Function1<double, double> * pos_) : dir(0), pos(pos_) {setDirections(n1, n2); }
+      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec &a_) : RotationAboutFixedAxis(a), angle(angle_) {}
 
-      /* INTERFACE OF TRANSLATION */
+      /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
-      /***************************************************/
-
-      /* GETTER / SETTER */
-
-      /**
-       * \brief set the rotation direction
-       * \param axis of rotation (x-axis)
-       * \param direction of initial axis (y-axis)
-       */
-      void setDirections(fmatvec::Vec dir_, fmatvec::Vec dir2_);
-      
-      /**
-       * Set the positon function
-       */
-      void setPosition(Function1<double, double> * pos_) { pos = pos_; }
-      /***************************************************/
-
       virtual void initializeUsingXML(TiXmlElement *element);
+      /***************************************************/
+
+      /**
+       * \brief set the translation function
+       */
+      void setRotationalFunction(Function1<double, double> *angle_) { angle = angle_; }
+      /***************************************************/
 
     private:
       /**
-       * basis rotation matrix
+       * \brief time dependent rotation angle
        */
-      fmatvec::SqrMat dir;
-
-      /**
-       * time dependent position function
-       */
-      Function1<double, double> * pos;
+      Function1<double, double> *angle;
   };
 
   /**
    * \brief class to describe rotation about axes x and y
    * \author Martin Foerg
+   * \date 2009-12-21 some localisations (Thorsten Schindler)
    */
   class RotationAboutAxesXY: public Rotation {
-        public:
+    public:
       /**
        * \brief constructor
        */
-      RotationAboutAxesXY() : APK(3) {}
+      RotationAboutAxesXY() : Rotation() {}
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
-
-      virtual void initializeUsingXML(TiXmlElement *element);
-        
-        private:
-      /**
-       * \brief rotational matrix
-       */
-      fmatvec::SqrMat APK;
   };
 
   /**
    * \brief class to describe rotation about axes y and z
    * \author Martin Foerg
+   * \date 2009-12-21 some localisations (Thorsten Schindler)
    */
   class RotationAboutAxesYZ: public Rotation {
-        public:
+    public:
       /**
        * \brief constructor
        */
-      RotationAboutAxesYZ() : APK(3) {}
+      RotationAboutAxesYZ() : Rotation() {}
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
-
-      virtual void initializeUsingXML(TiXmlElement *element);
-        
-        private:
-      /**
-       * \brief rotational matrix
-       */
-      fmatvec::SqrMat APK;
   };
 
   /**
@@ -343,18 +298,44 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      CardanAngles() : APK(3) {}
+      CardanAngles() : Rotation() {}
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+      /***************************************************/
+  };
+
+  /**
+   * \brief class to describe time dependent rotation parametrised by Cardan angles
+   * \author Thorsten Schindler
+   * \date 2009-12-21 initial commit (Thorsten Schindler)
+   */
+  class TimeDependentCardanAngles: public CardanAngles {
+    public:
+      /**
+       * \brief constructor
+       */
+      TimeDependentCardanAngles() : CardanAngles(), angle(NULL) {}
+
+      /**
+       * \brief constructor
+       * \param independent rotation angle function
+       */
+      TimeDependentCardanAngles(Function1<fmatvec::Vec, double> *angle_) : CardanAngles(), angle(angle_) {}
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 0; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
     private:
       /**
-       * \brief rotational matrix
+       * \brief time dependent rotation angle
        */
-      fmatvec::SqrMat APK;
+      Function1<fmatvec::Vec, double> *angle;
   };
 
   /**
@@ -387,9 +368,9 @@ namespace MBSim {
        * \return Jacobian matrix as a function of its degree of freedom
        */
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) = 0;
-      /***************************************************/
 
       virtual void initializeUsingXML(TiXmlElement *element) {};
+      /***************************************************/
   };
 
   /**
@@ -410,14 +391,13 @@ namespace MBSim {
        * \brief destructor
        */
       virtual ~ConstantJacobian() {}
-      
+
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
       virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) { return J; } 
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
-      virtual void initializeUsingXML(TiXmlElement *element);
-    
     private:
       /**
        * \brief constant Jacobian
@@ -453,7 +433,6 @@ namespace MBSim {
        */
       fmatvec::Mat J;
   };
-
 
   /**
    * \brief Jacobian for rotation about axes y and z
@@ -600,5 +579,5 @@ namespace MBSim {
 
 }
 
-#endif
+#endif /* _KINEMATICS_H_ */
 

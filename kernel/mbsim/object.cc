@@ -248,9 +248,9 @@ namespace MBSim {
     else if(stage==preInit) {
       Element::init(stage,parent);
       if(frameOfReference) {
-	Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
-	if(obj)
-	  dependency.push_back(obj);
+        Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
+        if(obj)
+          dependency.push_back(obj);
       }
     }
     else if(stage==unknownStage) {
@@ -388,7 +388,7 @@ namespace MBSim {
     for(unsigned int i=0; i<dependency.size(); i++) { 
       int lNew = dependency[i]->computeLevel()+1;
       if(lNew > lOld) {
-	lOld = lNew;
+        lOld = lNew;
       }
     }
     return lOld;
@@ -399,8 +399,8 @@ namespace MBSim {
     for(unsigned int i=0; i<dependency.size(); i++) { 
       int lNew = dependency[i]->cutDependencies()+1;
       if(lNew > lOld) {
-	lOld = lNew;
-	buf = dependency[i];
+        lOld = lNew;
+        buf = dependency[i];
       }
     }
     if(dependency.size()) {

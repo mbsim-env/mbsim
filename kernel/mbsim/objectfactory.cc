@@ -47,42 +47,42 @@ namespace MBSim {
       if((obj=(*i)->createGroup(element))) return obj;
     return 0;
   }
-  
+
   Object* ObjectFactory::createObject(TiXmlElement *element) {
     Object *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createObject(element))) return obj;
     return 0;
   }
-  
+
   ExtraDynamic* ObjectFactory::createExtraDynamic(TiXmlElement *element) {
     ExtraDynamic *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createExtraDynamic(element))) return obj;
     return 0;
   }
-  
+
   Translation* ObjectFactory::createTranslation(TiXmlElement *element) {
     Translation *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createTranslation(element))) return obj;
     return 0;
   }
-  
+
   Rotation* ObjectFactory::createRotation(TiXmlElement *element) {
     Rotation *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createRotation(element))) return obj;
     return 0;
   }
-  
+
   Link* ObjectFactory::createLink(TiXmlElement *element) {
     Link *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
       if((obj=(*i)->createLink(element))) return obj;
     return 0;
   }
-  
+
   Integrator* ObjectFactory::createIntegrator(TiXmlElement *element) {
     Integrator *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
@@ -103,7 +103,7 @@ namespace MBSim {
       if((obj=(*i)->createGeneralizedImpactLaw(element))) return obj;
     return 0;
   }
-  
+
   FrictionForceLaw *ObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
     FrictionForceLaw *obj;
     for(set<ObjectFactory*>::iterator i=factories.begin(); i!=factories.end(); i++)
@@ -200,34 +200,36 @@ namespace MBSim {
       return new Group(element->Attribute("name"));
     return 0;
   }
-  
+
   Object* MBSimObjectFactory::createObject(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RigidBody")
       return new RigidBody(element->Attribute("name"));
     return 0;
   }
-  
+
   Translation* MBSimObjectFactory::createTranslation(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"LinearTranslation")
       return new LinearTranslation;
-    if(element->ValueStr()==MBSIMNS"TimeDependentTranslation1D")
-      return new TimeDependentTranslation1D;
+    if(element->ValueStr()==MBSIMNS"TimeDependentTranslation")
+      return new TimeDependentTranslation;
     return 0;
   }
-  
+
   Rotation* MBSimObjectFactory::createRotation(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RotationAboutFixedAxis")
       return new RotationAboutFixedAxis;
-    if(element->ValueStr()==MBSIMNS"TimeDependentRotation1D")
-      return new TimeDependentRotation1D;
+    if(element->ValueStr()==MBSIMNS"TimeDependentRotationAboutFixedAxis")
+      return new TimeDependentRotationAboutFixedAxis;
     if(element->ValueStr()==MBSIMNS"CardanAngles")
       return new CardanAngles;
+    if(element->ValueStr()==MBSIMNS"TimeDependentCardanAngles")
+      return new TimeDependentCardanAngles;
     return 0;
   }
-  
+
   Link* MBSimObjectFactory::createLink(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"KineticExcitation")
@@ -242,7 +244,7 @@ namespace MBSim {
       return new ExternGeneralizedIO(element->Attribute("name"));
     return 0;
   }
-  
+
   Integrator* MBSimObjectFactory::createIntegrator(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMINTNS"DOPRI5Integrator")
@@ -279,7 +281,7 @@ namespace MBSim {
       return new UnilateralNewtonImpact;
     return 0;
   }
-  
+
   FrictionForceLaw *MBSimObjectFactory::createFrictionForceLaw(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"SpatialCoulombFriction")
@@ -346,7 +348,7 @@ namespace MBSim {
       return new Function1_SS_from_VS();
     return 0;
   }
-  
+
   Function1<Vec,double> *MBSimObjectFactory::createFunction1_VS(TiXmlElement *element) {
     if(element->ValueStr()==MBSIMNS"ConstantFunction1_VS")
       return new ConstantFunction1<Vec,double>;
@@ -370,7 +372,7 @@ namespace MBSim {
       return new Function1_VS_from_SS;
     return 0;
   }
-  
+
   Function2<double,double,double> *MBSimObjectFactory::createFunction2_SSS(TiXmlElement *element) {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction2_SSS")

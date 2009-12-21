@@ -60,7 +60,6 @@ namespace MBSim {
    * \date 2009-08-07 preintegration (Thorsten Schindler)
    * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
-   * \todo split init process TODO
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -119,7 +118,7 @@ namespace MBSim {
        * \endcode
        */
       void initialize();
-      
+
       /*
        * If true (the default) then
        * the simulation output files (h5 files) are deleted/truncated/regenerated.
@@ -134,7 +133,7 @@ namespace MBSim {
       using Group::plot;
       /***************************************************/
 
-      /* INHERITED INTERFACE OF SUBSYSTEM */
+      /* INHERITED INTERFACE OF DYNAMICSYSTEM */
       virtual int solveConstraintsFixpointSingle(); 
       virtual int solveImpactsFixpointSingle(double dt = 0); 
       virtual int solveConstraintsGaussSeidel();
@@ -258,8 +257,8 @@ namespace MBSim {
       fmatvec::Vec deltaq(const fmatvec::Vec &zParent, double t, double dt);
 
       /**
-       * \brief TODO
-       * \param TODO
+       * \brief return x-state difference for current time
+       * \param parent state
        * \param time
        * \param time step
        */
@@ -283,13 +282,13 @@ namespace MBSim {
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on acceleration level
-       * TODO dynamic system?
+       * \todo put in dynamic system? TODO
        */
       int solveConstraintsLinearEquations(); 
 
       /**
        * \return successful solution of contact equations with Cholesky decomposition on velocity level
-       * TODO dynamic system?
+       * \todo put in dynamic system? TODO
        */
       int solveImpactsLinearEquations(double dt = 0); 
 
@@ -355,14 +354,16 @@ namespace MBSim {
       void projectGeneralizedVelocities(double t);
 
       /**
-       * save contact force parameter for use as starting value in next time step
+       * \brief save contact force parameter for use as starting value in next time step
+       * \todo put in dynamic system TODO 
        */
-      void savela(); // TODO put in dynamic system 
+      void savela();
 
       /**
-       * load contact force parameter for use as starting value
+       * \brief load contact force parameter for use as starting value
+       * \todo put in dynamic system TODO 
        */
-      void initla(); // TODO put in dynamic system
+      void initla(); 
 
       /** 
        * \brief compute kinetic energy of entire dynamic system
@@ -370,20 +371,21 @@ namespace MBSim {
       double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
 
       /** 
-       * \brief compute potential energy of entire dynamic system TODO change
+       * \brief compute potential energy of entire dynamic system 
+       * \tofo change? TODO
        */
       double computePotentialEnergy();
 
       /**
        * \param element to add
-       * TODO necessary
+       * \todo necessary? TODO
        */
       void addElement(Element *element_);
 
       /**
        * \param name of the element
        * \return the pointer to an element
-       * TODO not activated
+       * \todo not activated TODO
        */
       Element* getElement(const std::string &name); 
 
@@ -421,7 +423,7 @@ namespace MBSim {
        * \param name of the file
        */
       void writez(std::string fileName);
-      
+
       /**
        * \brief reads state from a file
        * \param name of the file
@@ -435,7 +437,7 @@ namespace MBSim {
        * \param true for reorganisation, false otherwise
        */
       void setReorganizeHierarchy(bool flag) { reorganizeHierarchy = flag; }
-      
+
       /**
        * \brief set tolerance for projection of generalized position
        * \param tolerance
@@ -446,7 +448,7 @@ namespace MBSim {
        * \param decide, whether information should be printed on standard output.
        */
       void setInformationOutput(bool INFO_) { INFO = INFO_; }
-      
+
       /**
        * \brief references to external state
        * \param external state
@@ -459,7 +461,7 @@ namespace MBSim {
        * \brief mass matrix
        */
       fmatvec::SymMat MParent;
-      
+
       /**
        * \brief Cholesky decomposition of mass matrix
        */
@@ -551,7 +553,7 @@ namespace MBSim {
        * \brief boolean evaluation of stopvector
        */
       fmatvec::Vector<int> jsvParent;
-      
+
       /**
        * \brief sparse mass action matrix
        */
@@ -581,7 +583,7 @@ namespace MBSim {
        * \brief maximum number of contact iterations, high number of contact iterations for warnings, maximum number of damping steps for Newton scheme
        */
       int maxIter, highIter, maxDampingSteps;
-      
+
       /**
        * \brief Levenberg-Marquard parameter
        */
@@ -646,15 +648,14 @@ namespace MBSim {
        * \brief level for warning output (0-2)
        */
       int warnLevel;
-      
+
       /**
        * \brief TODO, flag for occuring impact and sticking in event driven solver
        */
       bool peds, impact, sticking;
 
       /**
-       * \brief additional stop in event driven solver for drift correction
-       * TODO
+       * \brief TODO, additional stop in event driven solver for drift correction
        */
       int k;
 
@@ -668,21 +669,22 @@ namespace MBSim {
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
-      
+
       /**
        * \brief references to differentiated external state
        * \param differentiated external state
        */
       void updatezdRef(const fmatvec::Vec &ext);
-      
+
       /**
        * \brief update relaxation factors for contact equations
-       * TODO global not available because of unsymmetric mass action matrix
+       * \todo global not available because of unsymmetric mass action matrix TODO 
        */
       void updaterFactors();
 
       /**
-       * \brief TODO
+       * \brief compute inverse kinetics constraint forces
+       * \param current time
        */
       void computeConstraintForces(double t);
 
@@ -706,7 +708,7 @@ namespace MBSim {
        * \brief boolean signal evaluation for end integration set by program
        */
       bool integratorExitRequest;
-      
+
       /** 
        * \brief boolean signal evaluation for end integration set by user
        */
