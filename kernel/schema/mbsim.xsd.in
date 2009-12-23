@@ -2086,15 +2086,20 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentRotationAboutFixedAxis" substitutionGroup="RotationAboutFixedAxis" type="TimeDependentRotationAboutFixedAxisType">
+  <xs:element name="TimeDependentRotationAboutFixedAxis" substitutionGroup="Rotation" type="TimeDependentRotationAboutFixedAxisType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Parametrisiert eine zeitabhängige Rotation um eine feste Achse für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="TimeDependentRotationAboutFixedAxisType">
     <xs:complexContent>
-      <xs:extension base="RotationAboutFixedAxisType">
+      <xs:extension base="RotationType">
         <xs:sequence>
+          <xs:element name="axisOfRotation" type="pv:nounitVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert die normierte konstante Drehachse.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="position">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Definiert den zeitabhängen Winkel um die Drehachse.
@@ -2122,14 +2127,14 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="TimeDependentCardanAngles" substitutionGroup="CardanAngles" type="TimeDependentCardanAngles">
+  <xs:element name="TimeDependentCardanAngles" substitutionGroup="Rotation" type="TimeDependentCardanAngles">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Parametrisiert eine zeitabhängige Rotation bez. Kardanwinkeln für Starrkörper (siehe <a class="link" href="mbsim:RigidBody">&lt;RigidBody&gt;</a>). 
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="TimeDependentCardanAngles">
     <xs:complexContent>
-      <xs:extension base="CardanAnglesType">
+      <xs:extension base="RotationType">
         <xs:sequence>
           <xs:element name="position">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
