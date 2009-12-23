@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libflexiblebody.la
 libflexiblebody_la_SOURCES =	flexible_body_1s_21_rcm.cc\
 								flexible_body_1s_33_rcm.cc\
 								flexible_body_2s_13_disk.cc\
+								flexible_body_2s_13_mfr_mindlin.cc\
  								flexible_body_linear_external.cc\
  								flexible_body_1s_23_bta.cc
 
@@ -20,6 +21,7 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 flexiblebodyinclude_HEADERS =	flexible_body_1s_21_rcm.h\
 								flexible_body_1s_33_rcm.h\
 								flexible_body_2s_13_disk.h\
+								flexible_body_2s_13_mfr_mindlin.h\
  								flexible_body_linear_external.h\
  								flexible_body_1s_23_bta.h
 
