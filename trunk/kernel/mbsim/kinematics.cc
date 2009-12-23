@@ -70,12 +70,14 @@ namespace MBSim {
 
   SqrMat TimeDependentRotationAboutFixedAxis::operator()(const Vec &q, double t) {
     Vec phi(1,INIT,(*angle)(t));
-    return RotationAboutFixedAxis::operator()(phi,t);
+    return (*rot)(phi,t);
   }
 
   void TimeDependentRotationAboutFixedAxis::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    RotationAboutFixedAxis::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"axisOfRotation");
+    setAxisOfRotation(Element::getVec(e,3));
+    e=element->FirstChildElement(MBSIMNS"position");
     angle=ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }
@@ -142,12 +144,12 @@ namespace MBSim {
   }
 
   SqrMat TimeDependentCardanAngles::operator()(const Vec &q, double t) {
-    return CardanAngles::operator()((*angle)(t),t);
+    return (*rot)((*angle)(t),t);
   }
 
   void TimeDependentCardanAngles::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;
-    CardanAngles::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"position");
     angle=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
     angle->initializeUsingXML(e->FirstChildElement());
   }

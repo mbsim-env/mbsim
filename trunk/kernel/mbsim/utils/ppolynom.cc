@@ -166,7 +166,7 @@ namespace MBSim {
     }
 
     breaks.resize(N);
-    breaks = x;
+    breaks = x.copy();
     coefs.push_back(d);
     coefs.push_back(ctmp(0,0,N-2,f.cols()-1));
     coefs.push_back(b);
@@ -177,7 +177,7 @@ namespace MBSim {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
-    breaks = x;
+    breaks = x.copy();
 
     Mat m(N-1,f.cols(),INIT,0.0);
     Mat a(N-1,f.cols(),INIT,0.0);

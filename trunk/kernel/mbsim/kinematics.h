@@ -122,6 +122,11 @@ namespace MBSim {
        */
       TimeDependentTranslation(Function1<fmatvec::Vec, double> *pos_) : pos(pos_) {}
 
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentTranslation() { delete pos; pos = 0; } 
+
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { return 0; }
       virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) { return (*pos)(t); }
@@ -216,20 +221,27 @@ namespace MBSim {
    * \brief class to describe time dependent rotation about fixed axis
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
+   * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
    */
-  class TimeDependentRotationAboutFixedAxis: public RotationAboutFixedAxis {
+  class TimeDependentRotationAboutFixedAxis: public Rotation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentRotationAboutFixedAxis() : RotationAboutFixedAxis(), angle(NULL) {}
+      TimeDependentRotationAboutFixedAxis() : Rotation(), rot(new RotationAboutFixedAxis()), angle(NULL) {}
 
       /**
        * \brief constructor
        * \param independent rotation angle function
        * \param axis of rotation
        */
-      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec &a_) : RotationAboutFixedAxis(a), angle(angle_) {}
+      TimeDependentRotationAboutFixedAxis(Function1<double, double> *angle_, const fmatvec::Vec &a_) : Rotation(), rot(new RotationAboutFixedAxis(a_)), angle(angle_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentRotationAboutFixedAxis() { delete rot; rot = 0; delete angle; angle = 0; }
+
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
@@ -237,13 +249,18 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
-      /**
-       * \brief set the translation function
-       */
+      /* GETTER / SETTER */
       void setRotationalFunction(Function1<double, double> *angle_) { angle = angle_; }
+      const fmatvec::Vec& getAxisOfRotation() const { return rot->getAxisOfRotation(); }
+      void setAxisOfRotation(const fmatvec::Vec& a_) { rot->setAxisOfRotation(a_); }
       /***************************************************/
 
     private:
+      /**
+       * \brief rotational parametrisation
+       */
+      RotationAboutFixedAxis *rot;
+
       /**
        * \brief time dependent rotation angle
        */
@@ -311,19 +328,25 @@ namespace MBSim {
    * \brief class to describe time dependent rotation parametrised by Cardan angles
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
+   * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
    */
-  class TimeDependentCardanAngles: public CardanAngles {
+  class TimeDependentCardanAngles: public Rotation {
     public:
       /**
        * \brief constructor
        */
-      TimeDependentCardanAngles() : CardanAngles(), angle(NULL) {}
+      TimeDependentCardanAngles() : Rotation(), rot(new CardanAngles()), angle(NULL) {}
 
       /**
        * \brief constructor
        * \param independent rotation angle function
        */
-      TimeDependentCardanAngles(Function1<fmatvec::Vec, double> *angle_) : CardanAngles(), angle(angle_) {}
+      TimeDependentCardanAngles(Function1<fmatvec::Vec, double> *angle_) : Rotation(), rot(new CardanAngles()), angle(angle_) {}
+
+      /**
+       * \brief destructor
+       */
+      virtual ~TimeDependentCardanAngles() { delete rot; rot = 0; delete angle; angle = 0; }
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
@@ -332,6 +355,11 @@ namespace MBSim {
       /***************************************************/
 
     private:
+      /**
+       * \brief rotational parametrisation
+       */
+      CardanAngles *rot;
+
       /**
        * \brief time dependent rotation angle
        */

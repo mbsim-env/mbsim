@@ -129,7 +129,7 @@ namespace MBSim {
         /**
          * \brief destructor
          */
-        virtual ~DifferentiableFunction1() { for(unsigned int i=1;i<derivatives.size();i++) delete derivatives[i]; }
+        virtual ~DifferentiableFunction1() { delete derivatives[0]; derivatives.erase(derivatives.begin()); }
 
         /* INHERITED INTERFACE OF FUNCTION1 */
         virtual Ret operator()(const double& x, const void * =NULL) {
@@ -162,7 +162,7 @@ namespace MBSim {
         /**
          * \param orderOfDerivative
          */
-        void setOrderOfDerivative(int i) {order=i; }
+        void setOrderOfDerivative(int i) { order=i; }
 
         /**
          * \brief initialize function with XML code
