@@ -455,6 +455,12 @@ namespace MBSim {
        */
       void updatezRef(const fmatvec::Vec &ext);
 
+      /**
+       * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed 
+       * \param flag
+       */
+      void setFlushEvery(unsigned int every) {flushEvery = every;}
+
 
     protected:
       /**
@@ -657,7 +663,19 @@ namespace MBSim {
       /**
        * \brief TODO, additional stop in event driven solver for drift correction
        */
-      int k;
+      unsigned int driftCount;
+
+      /**
+       * \brief flushes all hdf5-files every x-times the plot-routine is called
+       * TODO
+       */
+      unsigned int flushEvery;
+
+      /**
+       * \brief counts plot-calls until files to be flushed
+       * TODO
+       */
+      unsigned int flushCount;
 
       /**
        * \brief Flag for reorganisation of hierarchy. 
