@@ -197,7 +197,7 @@ namespace MBSim {
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec &a_) : Rotation(), a(a_) {} 
+      RotationAboutFixedAxis(const fmatvec::Vec &a_) : Rotation() { a = a_; } 
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 1; }
