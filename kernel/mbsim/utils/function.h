@@ -504,6 +504,7 @@ namespace MBSim {
    * \brief function describing a linear regularized relationship between the input relative velocity and the output for Coulomb friction
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
+   * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo put in function_library TODO
    */
   class LinearRegularizedCoulombFriction : public Function2<fmatvec::Vec,fmatvec::Vec,double> {
@@ -526,7 +527,7 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setFrictionCoeffizient(double mu_) { mu=mu_; }
+      void setFrictionCoefficient(double mu_) { mu=mu_; }
       void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 
@@ -541,6 +542,7 @@ namespace MBSim {
    * \brief function describing a linear regularized relationship between the input relative velocity and the output for Stribeck friction
    * \author Martin Foerg
    * \date 2009-08-31 some comments (Thorsten Schindler)
+   * \date 2010-01-09 beauty correction (Thorsten Schindler)
    * \todo put in function_library TODO
    */
   class LinearRegularizedStribeckFriction : public Function2<fmatvec::Vec,fmatvec::Vec,double> {
@@ -548,14 +550,14 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      LinearRegularizedStribeckFriction() : gdLim(0.01), fmu(NULL) {}
+      LinearRegularizedStribeckFriction() : fmu(NULL), gdLim(0.01) {}
 
       /**
        * \brief constructor
-       * \param border with respect to the relative velocity for the linear regularized increase of the friction force
        * \param function for friction coefficient depending on norm of relative velocity
+       * \param border with respect to the relative velocity for the linear regularized increase of the friction force
        */
-      LinearRegularizedStribeckFriction(double gdLim_, Function1<double,double> *fmu_) : gdLim(gdLim_), fmu(fmu_) {}
+      LinearRegularizedStribeckFriction(Function1<double,double> *fmu_, double gdLim_=0.01) : fmu(fmu_), gdLim(gdLim_) {}
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       virtual fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN, const void * =NULL);
@@ -563,20 +565,20 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       void setFrictionFunction(Function1<double,double> *fmu_) { fmu=fmu_; }
+      void setMarginalVelocity(double gdLim_) { gdLim=gdLim_; }
       /***************************************************/
 
     protected:
       /**
-       * \brief border with respect to the relative velocity for the linear regularized increase of the friction force
-       */
-      double gdLim;
-
-      /**
        * \brief friction coefficient function
        */
       Function1<double,double> *fmu;
+      
+      /**
+       * \brief border with respect to the relative velocity for the linear regularized increase of the friction force
+       */
+      double gdLim;
   };
 
 }
