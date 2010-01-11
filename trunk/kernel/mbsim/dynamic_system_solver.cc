@@ -327,7 +327,7 @@ namespace MBSim {
         cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
-      else if(contactSolver == RootFinding)solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding;
+      else if(contactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding; }
       else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
@@ -338,7 +338,7 @@ namespace MBSim {
         cout << "WARNING: solveLL is only valid for bilateral constrained systems!" << endl;
       }
       else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
-      else if(impactSolver == RootFinding)solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding;
+      else if(impactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding; }
       else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
     else if(stage==MBSim::modelBuildup) {
