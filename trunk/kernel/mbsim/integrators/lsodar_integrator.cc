@@ -23,6 +23,7 @@
 #include "fortran_wrapper.h"
 #include "lsodar_integrator.h"
 #include <fstream>
+#include <time.h>
 
 #ifndef NO_ISO_14882
 using namespace std;
