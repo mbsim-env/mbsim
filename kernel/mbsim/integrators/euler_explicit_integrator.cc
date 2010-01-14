@@ -24,6 +24,7 @@
 #include <mbsim/dynamic_system_solver.h>
 #include "euler_explicit_integrator.h"
 #include <fstream>
+#include <time.h>
 
 #ifndef NO_ISO_14882
 using namespace std;

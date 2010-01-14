@@ -28,6 +28,7 @@
 
 // TODO wieder entfernen
 #include <fstream>
+#include <time.h>
 
 #ifndef NO_ISO_14882
 using namespace std;
