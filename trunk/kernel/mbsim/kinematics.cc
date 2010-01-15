@@ -155,7 +155,7 @@ namespace MBSim {
   }
 
   Mat JRotationAboutAxesXY::operator()(const Vec &q, double t) {
-    int iq = q.size()-1;
+    unsigned int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
     J(0,iu-1) = 1;
@@ -168,7 +168,7 @@ namespace MBSim {
   }
 
   Mat JRotationAboutAxesYZ::operator()(const Vec &q, double t) {
-    int iq = q.size()-1;
+    unsigned int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
     J(0,iu-1) = 0;
@@ -228,7 +228,7 @@ namespace MBSim {
   }
 
   Mat JdRotationAboutAxesXY::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-    int iq = q.size()-1;
+    unsigned int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
     double ad = qd(iq-1);
@@ -243,7 +243,7 @@ namespace MBSim {
   }
 
   Mat JdRotationAboutAxesYZ::operator()(const Vec &qd, const Vec& q, const double& t, const void*) {
-    int iq = q.size()-1;
+    unsigned int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
     double betad = qd(iq-1);
