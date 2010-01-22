@@ -30,7 +30,7 @@ namespace MBSim {
 
   double RegulaFalsi::solve(double a, double b) {
 
-    double u;
+    double u=0;
     double fa, fb, fu;
 
     for(it=0; it<itmax; it++) {

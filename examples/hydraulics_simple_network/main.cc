@@ -93,7 +93,7 @@ int main (int argc, char* argv[]) {
           double dtPlot=5e-4;
           // if elasticNodes or regularizedValves
           double stepSizeFactor=(((nodeType==0)/*||(valveType==0)*/)?1.e-2:1.);
-          clock_t startTime, endTime;
+          clock_t startTime=0, endTime=0;
           cout << "\n" << simulationName.back() << endl;
           cerr << "\n" << simulationName.back() << endl;
           if (iintegrator==0) {
