@@ -46,7 +46,7 @@ It is reasonable to write an executable script file invoking the procedures.
 \subsubsection{Reinstallation}
 The procedure \textsc{reinstall}
 \begin{verbatim}
- ./config.status -recheck
+ ./config.status --recheck
  ./config.status
  make clean
  make install
@@ -153,7 +153,7 @@ Then,
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
-and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-octave-path} and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
+and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-mkoctfile-path} (\texttt{Octave/bin}) and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
 
 \subsubsection{\OpenMBV{}}
 There is a static Linux binary available at \url{www.berlios.de} being updated from time to time.\par

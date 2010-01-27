@@ -63,7 +63,7 @@ Shaded one can see interfaces for the different components of the modelling equa
   &\vh\left(\vq,\vu,t\right)\,,\vW\left(\vq\right)\vlambda
  \end{align} 
 \end{itemize}
-and \texttt{Element} for load/save mechanism as well as plot and data administration. Class \texttt{Tree} is dotted as it is not available for modelling. A tree structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
+and \texttt{Element} for load/save mechanism as well as plot and data administration. Class \texttt{Graph} is dotted as it is not available for modelling. A graph structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{addObject}\\
@@ -81,7 +81,7 @@ Important settings:
 \item[] \texttt{writez}\\
     write current state to \HDF{} file
 \item[] \texttt{setReorganizeHierarchy}\\
-    enforces the automatic creation of invisible tree structures only for simulation depending on the hierarchy of frames used for modelling 
+    enforces the automatic creation of invisible graph structures only for simulation depending on the hierarchy of frames used for modelling 
 \item[] \texttt{setConstraintSolver}\\
     solver for constraint equations on acceleration level (cf. \emph{setImpactSolver})
 \item[] \texttt{setImpactSolver}\\
@@ -415,7 +415,7 @@ Timestepping integration solves the whole equations of the system including the 
 \item $\text{\texttt{DS::update}}\left(t,\vq,\vu\right)$
     \begin{enumerate}
     \item[]\texttt{DS::updateStateDependentVariables}\\
-      update variables depending on the generalised state and the structure of the system with one independent group and several recursive calculation trees
+      update variables depending on the generalised state and the structure of the system with one independent group and several recursive calculation graphs
     \item[]\texttt{DS::updateg}
       \begin{itemize}
       \item update of the relative position kinematics independent of the system structure using the order
@@ -446,7 +446,7 @@ Timestepping integration solves the whole equations of the system including the 
       \begin{itemize}
       \item computes the \textsc{Cholesky} decomposition of the mass matrix dependent on the system structure
       \item \texttt{group} calculates the matrix inverse locally per object
-      \item \texttt{tree} calculates the matrix inverse globally
+      \item \texttt{graph} calculates the matrix inverse globally
       \end{itemize}
     \item[]\texttt{updateW}\\
       updates the \textsc{Jacobian} between in general set-valued \texttt{link}-force parameters and generalised coordinates
