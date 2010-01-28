@@ -29,8 +29,14 @@ namespace MBSim {
     connectedObject(NULL), qInd(0), uInd(0), saved_connectedObject("") {
   }
 
-  void ExternGeneralizedIO::updateh(double) {
-    connectedObject->geth()(uInd)+=la(0);
+  void ExternGeneralizedIO::updateh(double t) {
+    if(type==CONSTANT)
+      connectedObject->geth()(uInd)+=la(0);
+    else if(type==LINEAR) {
+      la(0)=m*(t-t0)+a;
+      connectedObject->geth()(uInd)+=la(0);
+    }
+   
   }
 
   void ExternGeneralizedIO::updateg(double) {
@@ -82,6 +88,14 @@ namespace MBSim {
 
   void ExternGeneralizedIO::initializeUsingXML(TiXmlElement *element) {
     Link::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMNS"type");
+    if(e) {
+      string str=e->GetText();
+      if(str=="\"constant\"") type=CONSTANT;
+      else if(str=="\"linear\"") type=LINEAR;
+    }
+    else
+      type=CONSTANT;
     saved_connectedObject=element->FirstChildElement(MBSIMNS"connectedObject")->Attribute("ref");
     qInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"qIndex"))+0.5);
     uInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"uIndex"))+0.5);
