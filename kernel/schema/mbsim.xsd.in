@@ -1346,11 +1346,34 @@
   </xs:complexType>
 
   <xs:element name="ExternGeneralizedIO" substitutionGroup="Link" type="ExternGeneralizedIOType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+      Definiert eine Kraftaufprägung von einem externem Programm auf eine generalisierte Koordinate.
+      (Verwendet für die Co-Simulation mittels MDPCosim)
+    </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ExternGeneralizedIOType">
     <xs:complexContent>
       <xs:extension base="LinkType">
         <xs:sequence>
+          <xs:element name="type" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+              <p>Definiert, wie die aufzuprägende Kraft während der Simulation in abhängigkeit der
+              dynamischen Parameter berechnet wird.</p>
+              <dl>
+                <dt>"constant"</dt> <dd>Die aufzuprägende Kraft F ist direkt der externe Parameter (DEFAULT)</dd>
+                <dt>"linear"</dt> <dd>Die aufzuprägende Kraft F berechnet sich linear aus den drei
+                  externen Parametern <object class="inlineeqn">m,t_0,a</object>:
+                  <object class="eqn">F=m(t-t_0)+a</object>
+                  </dd>
+              </dl>
+            </xs:documentation></xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="&quot;constant&quot;"/>
+                <xs:enumeration value="&quot;linear&quot;"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:element>
           <xs:element name="connectedObject">
             <xs:complexType>
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>

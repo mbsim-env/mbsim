@@ -28,7 +28,11 @@ namespace MBSim {
     protected:
       Object *connectedObject;
       int qInd, uInd;
+      double m, a, t0;
     public:
+      enum Type {
+        CONSTANT, LINEAR
+      };
       ExternGeneralizedIO(const std::string &name);
       void updateh(double);
       void updateg(double);
@@ -41,11 +45,13 @@ namespace MBSim {
 
       void connect(Object *obj, int qInd_, int uInd_) { connectedObject=obj; qInd=qInd_; uInd=uInd_; }
       void setGeneralizedForce(double h) { la(0)=h; }
+      void setGeneralizedLinearForceParameters(double m_, double a_, double t0_) { m=m_; a=a_; t0=t0_; }
       double getGeneralizedPosition() { return g(0); }
       double getGeneralizedVelocity() { return gd(0); }
 
       void plot(double t, double dt=1);
       void initializeUsingXML(TiXmlElement *element);
+      Type getType() { return type; }
 
       virtual void updateWRef(const fmatvec::Mat&, int) {}
       virtual void updateVRef(const fmatvec::Mat&, int) {}
@@ -57,6 +63,8 @@ namespace MBSim {
 
     private:
       std::string saved_connectedObject;
+    protected:
+      Type type;
   };
 
 }
