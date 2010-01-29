@@ -75,6 +75,7 @@ namespace MBSimHydraulics {
       return new EccentricCircularLeakagePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
       return new RealCircularLeakagePressureLoss();
+    return 0;
   }
 
 

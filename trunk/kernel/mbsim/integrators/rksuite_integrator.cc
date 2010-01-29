@@ -22,6 +22,7 @@
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran_wrapper.h"
 #include "rksuite_integrator.h"
 #include <fstream>
@@ -99,7 +100,7 @@ namespace MBSim {
 
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, 
 	  &result, &dtLast);
-      if(result==1 || result==2 || t==tPlot) {
+      if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
 	system->plotWithIK(z, t);
 
 	if(output)

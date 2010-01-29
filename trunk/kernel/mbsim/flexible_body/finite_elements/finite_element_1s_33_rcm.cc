@@ -45,8 +45,8 @@ namespace MBSim {
   }
 
   void FiniteElement1s33RCM::setCurlRadius(double R1,double R2) {
-    if (R1 != 0.) k10 = 1./R1;
-    if (R2 != 0.) k20 = 1./R2;
+    if (fabs(R1)>epsroot()) k10 = 1./R1;
+    if (fabs(R2)>epsroot()) k20 = 1./R2;
 
     wt->setCurvature(k10,k20);
   }
@@ -342,7 +342,7 @@ namespace MBSim {
   }
 
   const Vec& FiniteElement1s33RCM::computeState(const Vec& qG,const Vec& qGt,double x) {	
-    if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && x==x_Old) return X;
+    if(nrm2(qG-qG_Old)<tol_comp && nrm2(qGt-qGt_Old)<tol_comp && fabs(x-x_Old)<epsroot()) return X;
     else {
       if(nrm2(qG-qG_Old)>tol_comp || nrm2(qGt-qGt_Old)>tol_comp) wt->computewhcoefVel(qG,qGt);
 

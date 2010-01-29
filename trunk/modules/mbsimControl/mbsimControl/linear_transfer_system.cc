@@ -25,9 +25,11 @@
 #include "mbsimControl/objectfactory.h"
 #include "mbsimControl/signal_.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
 namespace MBSimControl {
 
@@ -128,12 +130,12 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::setPID(double PP, double II, double DD) {
-    if ((II==0)&&(DD==0))
+    if ((fabs(II)<epsroot())&&(fabs(DD)<epsroot()))
       calculateOutputMethod=&LinearTransferSystem::outputMethodD;
     else
       calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
 
-    if (DD==0) {
+    if (fabs(DD)<epsroot()) {
       A.resize(1, 1, INIT, 0);
       B.resize(1, 1, INIT, 1.);
       C.resize(1, 1, INIT, II);

@@ -194,7 +194,7 @@ namespace MBSim {
       int nt = 0;
       for(int i=0; i<A.size(); i++) {
         double a = max(trans(A).col(i));
-        if(a>0 && A(i,i) != -1) { // root of relativ kinematics
+        if(a>0 && fabs(A(i,i)+1)>epsroot() ) { // root of relativ kinematics
           stringstream str;
           str << "InvisibleGraph" << nt++;
           Graph *graph = new Graph(str.str());
@@ -202,7 +202,7 @@ namespace MBSim {
           graph->setPlotFeatureRecursive(plotRecursive, enabled); // the generated invisible graph must always walk through the plot functions
           bufGraph.push_back(graph);
         } 
-        else if(a==0) // absolut kinematics
+        else if(fabs(a)<epsroot()) // absolut kinematics
           addObject(objList[i]);
       }
       // if(INFO) cout << "A = " << A << endl;
@@ -489,7 +489,7 @@ namespace MBSim {
 
           dx = (epsroot() * 0.5);
           do dx += dx;
-          while (xj + dx == la(j));
+          while (fabs(xj + dx - la(j)) < epsroot());
 
           la(j) += dx;
           Group::solveConstraintsRootFinding(); 
@@ -559,7 +559,7 @@ namespace MBSim {
 
           dx = (epsroot() * 0.5);
           do dx += dx;
-          while (xj + dx == la(j));
+          while (fabs(xj + dx - la(j)) < epsroot());
 
           la(j) += dx;
           Group::solveImpactsRootFinding(); 
@@ -903,7 +903,7 @@ namespace MBSim {
     if(checkGSize) Gs.resize();
     else if(Gs.cols() != G.size()) {
       static double facSizeGs = 1;
-      if(G.size()>limitGSize && facSizeGs == 1) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
+      if(G.size()>limitGSize && fabs(facSizeGs-1) < epsroot()) facSizeGs = double(countElements(G))/double(G.size()*G.size())*1.5;
       Gs.resize(G.size(),int(G.size()*G.size()*facSizeGs));
     }
     Gs << G;
@@ -1535,7 +1535,7 @@ namespace MBSim {
     A(i,i) = -1;
 
     for(int j=0; j<A.cols(); j++)
-      if(A(i,j) > 0 && A(j,j)!=-1) // child node of object i
+      if(A(i,j) > 0 && fabs(A(j,j)+1)>epsroot()) // child node of object i
         addToGraph(graph, A, j, objList);
   }
 

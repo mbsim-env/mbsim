@@ -23,6 +23,7 @@
 
 #include "mbsim/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/contours/flexible_band.h"
 #include "mbsim/contours/cylinder_flexible.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
@@ -271,9 +272,9 @@ namespace MBSim {
         qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
         static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);  		
-        if(R1 != 0. || R2 != 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
+        if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
         static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
-        if(epstD == 0.) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
+        if(fabs(epstD)<epsroot()) static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
       }
     }
     else

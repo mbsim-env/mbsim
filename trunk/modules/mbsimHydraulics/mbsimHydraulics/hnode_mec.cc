@@ -120,7 +120,7 @@ namespace MBSimHydraulics {
           plotColumns.push_back("interface force on area " + numtostr(int(i)));
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVArrowSize>0) {
-          for (int i=0; i<nTrans+nRot; i++) {
+          for (int i=0; i<int(nTrans+nRot); i++) {
             openMBVArrows.push_back(new OpenMBV::Arrow);
             openMBVArrows.back()->setArrowHead(openMBVArrowSize/4., openMBVArrowSize/4.);
             openMBVArrows.back()->setDiameter(openMBVArrowSize/10.);

@@ -27,7 +27,7 @@
 namespace OpenMBV {
   class Group;
   class Sphere;
-};
+}
 #endif
 
 namespace MBSimHydraulics {

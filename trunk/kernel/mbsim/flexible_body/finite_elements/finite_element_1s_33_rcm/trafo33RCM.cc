@@ -24,6 +24,7 @@
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"
 
 using namespace fmatvec;
@@ -235,7 +236,7 @@ namespace MBSim {
     MultiDimNewtonMethod rf(&fun,&jac);
     rf.setMaximumNumberOfIterations(10);	
 
-    if(nrm2(be)==0) {
+    if(nrm2(be)<epsroot()) {
       Vec s0 = computes0(qG); // initial value
       be = rf.solve(s0); // Newton method according to Deuflhard (nonlinear_algebra.h)
     }

@@ -60,8 +60,8 @@ namespace MBSim {
   }
 
   void FlexibleBodyLinearExternal::updateStateDependentVariables(double t) {
-    if(qElement[0]!=q) qElement[0] >> q;
-    if(uElement[0]!=u) uElement[0] >> u;
+    if(nrm2(qElement[0]-q)>0) qElement[0] >> q;
+    if(nrm2(uElement[0]-u)>0) uElement[0] >> u;
 
 //	updateKinematicsForFrame(t); 
 //	updateContours(t); 

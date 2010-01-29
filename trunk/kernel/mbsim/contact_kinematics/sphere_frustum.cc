@@ -22,6 +22,7 @@
 #include "sphere_frustum.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -67,7 +68,7 @@ namespace MBSim {
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
 
-    if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || l==0) { // TODO! rudimentäre Bestimmung ob Kontakt
+    if(loc<-sphere->getRadius() || loc>h+sphere->getRadius() || fabs(l)<epsroot()) { // TODO! rudimentäre Bestimmung ob Kontakt
       g(0) = 1;
     }
     else {
@@ -79,7 +80,7 @@ namespace MBSim {
       int out = 1;
 
       // Fallabfrage
-      if(psi==0) {
+      if(fabs(psi)<epsroot()) {
         // Zylinder
         if(l-r(0) > 0) {
           fall = 1; // außen

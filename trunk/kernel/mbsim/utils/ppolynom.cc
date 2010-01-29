@@ -21,6 +21,7 @@
 
 #include "mbsim/utils/ppolynom.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"
 
 using namespace fmatvec;
@@ -49,14 +50,13 @@ namespace MBSim {
 
   void PPolynom::calculateSplinePeriodic(const Vec &x, const Mat &f) {
     double hi, hii;
-    int i;
     int N = x.size();
-    if(f.row(0)!=f.row(f.rows()-1)) throw new MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
+    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw new MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
     SqrMat C(N-1,N-1,INIT,0.0);
     Mat rs(N-1,f.cols(),INIT,0.0);
 
     // Matrix C and vector rs C*c=rs
-    for(i=0; i<N-3;i++) {
+    for(int i=0; i<N-3;i++) {
       hi = x(i+1) - x(i);
       hii = x(i+2)-x(i+1);
       C(i,i) = hi;
@@ -66,13 +66,12 @@ namespace MBSim {
     }
 
     // last but one row
-    i = N-3;
-    hi = x(i+1)-x(i);
-    hii = x(i+2)-x(i+1);
-    C(i,i) = hi;
-    C(i,i+1)= 2*(hi+hii);
-    C(i,0)= hii;
-    rs.row(i) = 3*((f.row(i+2)-f.row(i+1))/hii - (f.row(i+1)-f.row(i))/hi);
+    hi = x(N-2)-x(N-3);
+    hii = x(N-1)-x(N-2);
+    C(N-3,N-3) = hi;
+    C(N-3,N-2)= 2*(hi+hii);
+    C(N-3,0)= hii;
+    rs.row(N-3) = 3*((f.row(N-1)-f.row(N-2))/hii - (f.row(N-2)-f.row(N-3))/hi);
 
     // last row
     double h1 = x(1)-x(0);
@@ -93,7 +92,7 @@ namespace MBSim {
     Mat b(N-1,f.cols(),INIT,0.0);
     Mat a(N-1,f.cols(),INIT,0.0);
 
-    for(i=0; i<N-1; i++) {
+    for(int i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
       a.row(i) = f.row(i);
       d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3 / hi;

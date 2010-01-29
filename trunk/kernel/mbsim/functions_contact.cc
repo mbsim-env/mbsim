@@ -59,12 +59,12 @@ namespace MBSim {
           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
           nRoots++;
         } 
-        else if(fa == 0) {
+        else if(fabs(fa) < epsroot()) {
           alphaC(nRoots) = nodes(i);
           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
           nRoots++;
         } 
-        else if(fb == 0) {
+        else if(fabs(fb) < epsroot()) {
           alphaC(nRoots) = nodes(i+1);
           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
           nRoots++;

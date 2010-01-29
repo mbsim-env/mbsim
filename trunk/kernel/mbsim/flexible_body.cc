@@ -51,7 +51,7 @@ namespace MBSim {
     for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),h); // assemble
     for(int i=0;i<(int)discretization.size();i++) GlobalVectorContribution(i,discretization[i]->geth(),hObject); // assemble
 
-    if(d_massproportional) { // mass proportional damping
+    if(d_massproportional>0) { // mass proportional damping
       h -= d_massproportional*(M*u);
       hObject -= d_massproportional*(M*u);
     }

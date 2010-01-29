@@ -88,7 +88,7 @@ AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wno-strict-overflow"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal -Wno-strict-overflow"
 
 dnl Check for MinGW
 AC_CANONICAL_HOST

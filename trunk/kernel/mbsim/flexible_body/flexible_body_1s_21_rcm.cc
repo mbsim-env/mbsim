@@ -24,6 +24,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/contours/contour1s_flexible.h"
+#include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
 
 #define FMATVEC_DEEP_COPY
@@ -223,7 +224,7 @@ namespace MBSim {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));
         discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
-        if(rc != 0) static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
+        if(fabs(rc)>epsroot()) static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setMaterialDamping(dm);
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
       }

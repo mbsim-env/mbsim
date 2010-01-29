@@ -22,6 +22,7 @@
 
 #include "fmatvec.h"
 #include "mbsim/contour.h"
+#include "mbsim/utils/eps.h"
 
 namespace MBSim {
 
@@ -101,7 +102,7 @@ namespace MBSim {
   };
 
   inline void Circle::setRadius(double r_) { r = r_; outCont ? curvature = 1./r_ : curvature = -1./r_; }    	
-  inline void Circle::setOutCont(bool outCont_) { outCont = outCont_; if(r!=0.) outCont ? curvature = 1./r : curvature = -1./r; }
+  inline void Circle::setOutCont(bool outCont_) { outCont = outCont_; if(fabs(r)>epsroot()) outCont ? curvature = 1./r : curvature = -1./r; }
   inline double Circle::getRadius() const { return r; }
   inline bool Circle::getOutCont() const { return outCont; }
 

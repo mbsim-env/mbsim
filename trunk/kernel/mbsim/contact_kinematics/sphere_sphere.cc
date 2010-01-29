@@ -21,6 +21,7 @@
 #include <config.h> 
 #include "sphere_sphere.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -39,7 +40,7 @@ namespace MBSim {
     Wd = Wd/l;
     g(0) = l-sphere0->getRadius()-sphere1->getRadius();
     Vec t(3);
-    if(Wd(0)==0. && Wd(1)==0.) {
+    if(fabs(Wd(0))<epsroot() && fabs(Wd(1))<epsroot()) {
       t(0) = 1.;
       t(1) = 0.;
       t(2) = 0.;

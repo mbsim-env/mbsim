@@ -26,6 +26,7 @@
 #include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
 #include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/utils/eps.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -197,7 +198,7 @@ namespace MBSim {
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
       Vec alpha = cp.getLagrangeParameterPosition();
 
-      if(nrm2(alpha)==0.) { // center of gravity
+      if(nrm2(alpha)<epsroot()) { // center of gravity
         Wext(0,0) = 1.;
         Wext(1,1) = 1.;
       } 

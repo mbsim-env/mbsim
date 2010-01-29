@@ -23,6 +23,7 @@
 #include <config.h>
 #include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran_wrapper.h"
 #include "lsode_integrator.h"
 
@@ -111,7 +112,7 @@ namespace MBSim {
       DLSODE (fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), 
 	  &one, &istate, &one, rWork(), &lrWork, iWork(), 
 	  &liWork, 0, &MF);
-      if(istate==2 || t==tPlot) {
+      if(istate==2 || fabs(t-tPlot)<epsroot()) {
 	system->plot(z, t);
 	if(output)
 	  cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
