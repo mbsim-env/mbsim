@@ -95,7 +95,7 @@ namespace MBSim {
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
-        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
+        if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) {
           cp.getLagrangeParameterPosition()(0) = alpha;
           contour->computeRootFunctionPosition(cp);
           contour->computeRootFunctionFirstTangent(cp);
@@ -138,7 +138,7 @@ namespace MBSim {
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
-        if(alpha!=cp.getLagrangeParameterPosition()(0)) {
+        if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) {
           cp.getLagrangeParameterPosition()(0) = alpha;
           contour->computeRootFunctionPosition(cp);
         }

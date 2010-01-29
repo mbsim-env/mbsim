@@ -20,6 +20,7 @@
 #include <config.h>
 #include <fmatvec.h>
 #include <mbsim/dynamic_system_solver.h>
+#include <mbsim/utils/eps.h>
 #include "fortran_wrapper.h"
 #include "lsodar_integrator.h"
 #include <fstream>
@@ -100,7 +101,7 @@ namespace MBSim {
       DLSODAR(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
           &istate, &one, rWork(), &lrWork, iWork(),
           &liWork, NULL, &two, fsv, &nsv, jsv());
-      if(istate==2 || t==tPlot) {
+      if(istate==2 || fabs(t-tPlot)<epsroot()) {
         system->plot(z, t);
         if(output)
           cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
@@ -148,7 +149,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
     setMaximalStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
-    setPlotOnRoot(Element::getDouble(e));
+    setPlotOnRoot((Element::getDouble(e)>.5));
   }
 
 }

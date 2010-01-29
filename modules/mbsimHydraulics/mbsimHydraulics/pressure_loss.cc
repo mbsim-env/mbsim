@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
       } while (fabs(la.back()-la[la.size()-2])>1e-6);
       Vec ReValues(re.size(), INIT, 0);
       Vec lambdaValues(re.size(), INIT, 0);
-      for (int i=0; i<re.size(); i++) {
+      for (int i=0; i<int(re.size()); i++) {
         ReValues(i)=re[i];
         lambdaValues(i)=la[i];
       }

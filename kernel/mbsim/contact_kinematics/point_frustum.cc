@@ -23,6 +23,7 @@
 #include "point_frustum.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -52,7 +53,7 @@ namespace MBSim {
     double h = frustum->getHeight(); // height of Frustum	    
     double s = trans(Wd)*Wa; // projection of difference vector on axis
     double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
-    if(h==0.) {
+    if(fabs(h)<epsroot()) {
       cout << "ERROR: Frustum with height = 0!" << endl;
       throw(1);
     }

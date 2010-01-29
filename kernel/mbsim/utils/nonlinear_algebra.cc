@@ -148,7 +148,7 @@ namespace MBSim {
           dx = (epsroot() * 0.5);
           do {                   
             dx += dx;
-          } while (xj + dx == x(j));
+          } while (fabs(xj + dx - x(j))<epsroot());
 
           x(j)+=dx;
           f2 = (*fct)(x);

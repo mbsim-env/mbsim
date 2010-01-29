@@ -103,7 +103,7 @@ namespace MBSim {
     else if(outCont_F && outCont_C && (nrm2_MFMC-rmax-r_C>0.)) g(0) = 1.;
     else { // possible contact
 
-      if(z_CF_nrm2 == 0.) { // circle - circle
+      if(fabs(z_CF_nrm2)<epsroot()) { // circle - circle
         if(u_CF < 0. || u_CF > h_F) g(0) = 1.; // not in relevant area
         else { // relevant area
           double r_Fh = r_F(0) + tan(phi_F)*u_CF;
@@ -122,7 +122,7 @@ namespace MBSim {
 
           if(g(0) < eps) {
             if(outCont_F && !outCont_C) { // inner circle, outer frustum
-              if(c_CF_nrm2 == 0.) {
+              if(fabs(c_CF_nrm2)<epsroot()) {
                 cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
                 throw(1);
               }
@@ -135,7 +135,7 @@ namespace MBSim {
             /********************************/
             else if(!outCont_F && outCont_C) { // outer circle, inner frustum
               if(g(0) < eps) {
-                if(c_CF_nrm2 == 0.) {
+                if(fabs(c_CF_nrm2)<epsroot()) {
                   cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Infinite number of possible contact points in Circle-Frustum-Contact!" << endl;
                   throw(1);
                 }
@@ -167,8 +167,8 @@ namespace MBSim {
         double xi_2 = trans(Wa_F)*Wd_CF;
         if(xi_2 < -sin(al_CF)*r_C || xi_2 > h_F + sin(al_CF)*r_C) g(0) = 1.;
 
-        else if(phi_F == 0.) { // special case: cylinder (circle-ellipse)	
-          if(al_CF == M_PI/2.) {
+        else if(fabs(phi_F)<epsroot()) { // special case: cylinder (circle-ellipse)	
+          if(fabs(al_CF-M_PI/2.)<epsroot()) {
             cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!" << endl;
             throw(1);
           }

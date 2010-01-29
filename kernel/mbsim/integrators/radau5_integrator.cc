@@ -115,7 +115,7 @@ namespace MBSim {
     Vector<int> iWork(liWork);
     Vec work(lWork);
 
-    if(dtMax)
+    if(dtMax>0)
       work(6) = dtMax;
 
     //Maximum Step Numbers

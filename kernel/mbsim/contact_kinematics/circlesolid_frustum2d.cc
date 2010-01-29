@@ -64,7 +64,7 @@ namespace MBSim {
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
     
 
-    if(loc<-circle->getRadius() || loc>h+circle->getRadius() || l==0) {
+    if(loc<-circle->getRadius() || loc>h+circle->getRadius() || fabs(l)<epsroot()) {
       g(0) = 1;
     }
     else {
@@ -76,7 +76,7 @@ namespace MBSim {
       int out = 1;
 
       // Fallabfrage
-      if(psi==0) {
+      if(fabs(psi)<epsroot()) {
         // Zylinder
         if(l-r(0) > 0) {
           fall = 1; // außen

@@ -235,7 +235,7 @@ namespace MBSim {
   }
 
   void FiniteElement1s21RCM::setCurlRadius(double R) {
-    if (R == 0.0) throw new MBSimError("CurlRadius must not be 0!\n");
+    if (fabs(R) < epsroot()) throw new MBSimError("CurlRadius must not be 0!\n");
     wss0 = 1/R;
   }
 
@@ -710,7 +710,7 @@ namespace MBSim {
 
     // gravitation
     double gx = g(0);
-    if(g(1) != 0.) throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
+    if(fabs(g(1))>epsroot()) throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
 
     // q-derivative
     SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);

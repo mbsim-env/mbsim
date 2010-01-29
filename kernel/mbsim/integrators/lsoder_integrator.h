@@ -62,7 +62,7 @@ namespace MBSim {
       void setRelativeTolernace(double rTol_) {rTol = rTol_;}
       void setInitialStepSize(double dt0_) {dt0 = dt0_;}
 
-      void setPlotOnRoot(double b) {plotOnRoot = b;}
+      void setPlotOnRoot(bool b) {plotOnRoot = b;}
 
       void integrate(DynamicSystemSolver& system);
 

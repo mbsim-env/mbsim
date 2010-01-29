@@ -19,6 +19,7 @@
 
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/objectfactory.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -154,7 +155,7 @@ namespace MBSimControl {
   }
 
   void SignalTimeDiscretization::updateg(double t) { 
-    if (tOld!=t) {
+    if (fabs(tOld-t)>epsroot()) {
       y=s->getSignal(); 
       tOld=t; 
     } 

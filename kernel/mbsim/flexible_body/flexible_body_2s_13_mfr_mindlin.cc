@@ -26,6 +26,7 @@
 #include "mbsim/flexible_body/flexible_body_2s_13_mfr_mindlin.h"
 #include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/utils/eps.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -197,7 +198,7 @@ namespace MBSim {
     if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
       Vec alpha = cp.getLagrangeParameterPosition();
 
-      if(nrm2(alpha)==0.) { // center of gravity
+      if(nrm2(alpha)<epsroot()) { // center of gravity
         Wext(0,0) = 1.;
         Wext(1,1) = 1.;
       } 
@@ -564,7 +565,7 @@ namespace MBSim {
         
         for(int j=2; j<Kext.size(); j++){
           if     (Kext(k,j)-K_old(k,j)>0)    cout << "  " << Kext(k,j)-K_old(k,j);
-          else if(Kext(k,j)-K_old(k,j)==0)   cout << "        0       "; 
+          else if(fabs(Kext(k,j)-K_old(k,j))<epsroot())   cout << "        0       "; 
           else if(Kext(k,j)-K_old(k,j)<0)    cout << " "  <<Kext(k,j)-K_old(k,j);
         }
       }
