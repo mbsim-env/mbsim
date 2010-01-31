@@ -23,10 +23,14 @@
 if ( $?MBSIMPREFIX == 0 ) then
   echo "ERROR! You must set the environment variable MBSIMPREFIX first."
 else
-  # setup link
-  rm -f /tmp/mbsim_local
-  test -L /tmp/mbsim_local || ln -s $MBSIMPREFIX /tmp/mbsim_local
-  # setup PATH and LD_LIBRARY_PATH
-  mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/tmp/mbsim_local/lib
-  mbsimflatxml -h >& /dev/null || setenv PATH ${PATH}:/tmp/mbsim_local/bin
+  setenv MBXMLUTILSSCHEMADIR ${MBSIMPREFIX}/share/mbxmlutils/schema
+  setenv MBXMLUTILSXMLDIR ${MBSIMPREFIX}/share/mbxmlutils/xml
+  setenv MBXMLUTILSOCTAVEDIR ${MBSIMPREFIX}/share/mbxmlutils/octave
+  setenv HDF5SERIEDATADIR ${MBSIMPREFIX}/share
+  setenv HDF5SERIEH5DUMP ${MBSIMPREFIX}/bin/h5dump
+  setenv MBSIMBINDIR ${MBSIMPREFIX}/bin
+  setenv MBXMLUTILSBINDIR ${MBSIMPREFIX}/bin
+  setenv HDF5SERIEXSLTPROC ${MBSIMPREFIX}/bin/xsltproc
+  mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${MBSIMPREFIX}/lib
+  mbsimflatxml -h >& /dev/null || setenv PATH ${PATH}:${MBSIMPREFIX}/bin
 endif

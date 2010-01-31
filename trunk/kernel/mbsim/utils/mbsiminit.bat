@@ -1,5 +1,4 @@
 @echo off
-rem WINDOWS IS NOT TESTED TILL NOW
 rem Windows batch variant of mbsiminit.bat
 rem DEVELOPER: If editing this file, edit also the files mbsiminit.*!
 rem
@@ -28,8 +27,12 @@ set BINDIR=%~dp0
 rem get PREFIX
 set PREFIX=%BINDIR:~0,-4%
 
-rem setup link
-del c:\WINDOWS\Temp\mbsim_local
-if not exist c:\WINDOWS\Temp\mbsim_local %BINDIR%ln.exe %PREFIX% c:\WINDOWS\Temp\mbsim_local
-rem setup PATH
-set PATH=%PATH%;c:\WINDOWS\Temp\mbsim_local\bin
+set MBXMLUTILSSCHEMADIR=%PREFIX%/share/mbxmlutils/schema
+set MBXMLUTILSXMLDIR=%PREFIX%/share/mbxmlutils/xml
+set MBXMLUTILSOCTAVEDIR=%PREFIX%/share/mbxmlutils/octave
+set HDF5SERIEDATADIR=%PREFIX%/share
+set HDF5SERIEH5DUMP=%PREFIX%/bin/h5dump
+set MBSIMBINDIR=%PREFIX%/bin
+set MBXMLUTILSBINDIR=%PREFIX%/bin
+set HDF5SERIEXSLTPROC=%PREFIX%/bin/xsltproc
+set PATH=%PATH%;%PREFIX%\bin
