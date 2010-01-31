@@ -104,29 +104,9 @@ if test $doxygen = "no" ; then
 fi
 
 dnl XML
-#####PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils,[requires="$requires mbxmlutils"; MBXMLUTILS=yes],[MBXMLUTILS=no])
-#####AM_CONDITIONAL([COND_MBXMLUTILS], [test "_$MBXMLUTILS" = "_yes"])
-#####AC_SUBST([MBSIMSCHEMA],[$datadir/$PACKAGE/schema])
-#####AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
 
-#####dnl Helper functions to convert path to windows
-#####dirtowin() {
-#####  echo $(cd $1 && pwd -W 2> /dev/null)
-#####}
-#####filetowin() {
-#####  echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
-#####}
-#####dnl Convert to Windows path
-#####win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
-#####AC_SUBST([win_MBXMLUTILSBINDIR])
-#####win_MBSIMSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMSCHEMA)))
-#####AC_SUBST([win_MBSIMSCHEMA])
-#####win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
-#####AC_SUBST([win_bindir])
-
-AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile schema/mbsim.xsd schema/mbsimintegrator.xsd xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 

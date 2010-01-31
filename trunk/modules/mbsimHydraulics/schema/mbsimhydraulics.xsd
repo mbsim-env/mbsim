@@ -11,15 +11,15 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
-    schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"
-    schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
   <xs:import namespace="http://mbsim.berlios.de/MBSimControl"
-    schemaLocation="@MBSIMCONTROLSCHEMA@"/>
+    schemaLocation="../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd"/>
 
   <xs:simpleType name="HLineReferenceType">
     <xs:restriction base="pv:partialOctaveString">

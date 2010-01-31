@@ -35,8 +35,6 @@ AC_SUBST([LIBMBSIM_CONTROL_VERSION_INFO])
 
 dnl needed for XML
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
-AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 
@@ -46,7 +44,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/doxyfile doc/Makefile mbsimControl.pc schema/Makefile schema/mbsimcontrol.xsd xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/doxyfile doc/Makefile mbsimControl.pc schema/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 

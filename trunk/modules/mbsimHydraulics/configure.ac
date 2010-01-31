@@ -35,9 +35,6 @@ AC_SUBST([LIBMBSIMHYDRAULICS_VERSION_INFO])
 
 dnl needed for XML
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
-AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
-AC_SUBST([OPENMBVCPPINTERFACESCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
-AC_SUBST([MBSIMCONTROLSCHEMA],[$(pkg-config mbsimControl --variable SCHEMA)])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
 
@@ -47,7 +44,7 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile schema/mbsimhydraulics.xsd doc/doxyfile doc/Makefile xmldoc/Makefile])
+AC_CONFIG_FILES([Makefile mbsimHydraulics/Makefile mbsimHydraulics.pc schema/Makefile doc/doxyfile doc/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 
