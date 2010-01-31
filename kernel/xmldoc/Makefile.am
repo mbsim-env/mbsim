@@ -9,20 +9,14 @@ USEDOXYGENDEP=
 
 all: mbsim/mbsim.tex mbsimintegrator/mbsimintegrator.tex
 
-../schema/mbsim.xsd: ../schema/mbsim.xsd.in
-	$(top_srcdir)/config.status --file=../schema/mbsim.xsd
-
-../schema/mbsimintegrator.xsd: ../schema/mbsimintegrator.xsd.in
-	$(top_srcdir)/config.status --file=../schema/mbsimintegrator.xsd
-
 xml/index.xml: ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
 	doxygen
 
 mbsim/mbsim.tex: $(USEDOXYGENDEP) ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsim.xsd xml figures:../doc MBSim MBSim:: $(USEDOXYGEN)
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsim.xsd xml figures:../doc MBSim MBSim:: $(USEDOXYGEN)
 
 mbsimintegrator/mbsimintegrator.tex: $(USEDOXYGENDEP) ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim:: $(USEDOXYGEN)
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim:: $(USEDOXYGEN)
 
 
 install:

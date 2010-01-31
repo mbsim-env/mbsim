@@ -4,9 +4,6 @@ libdir=@libdir@
 includedir=@includedir@
 bindir=${exec_prefix}/bin
 
-#ALLMBSIMSCHEMAS=@ALLMBSIMSCHEMAS@
-#ALLMBSIMNAMESPACES=@ALLMBSIMNAMESPACES@
-
 Name: mbsimxml
 Description: mbsimxml is a multi-body simulation software.
 Requires: mbsim @MBSIMMODULES_NAME@

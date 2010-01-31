@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-SCHEMA=@datadir@/@PACKAGE@/schema/mbsimcontrol.xsd
+SCHEMA=../http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd
 NAMESPACE=http://mbsim.berlios.de/MBSimControl
 INITIALIZEFUNC=MBSimControl::ObjectFactory::initialize()
 INITIALIZEHEADER=mbsimControl/objectfactory.h

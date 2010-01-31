@@ -3,9 +3,13 @@ rem Windows batch variant of mbsimxml (mbsimxml.bat.in)
 rem If editing this file, also edit the file mbsimxml.in!
 
 set bindir=@win_bindir@
-set MBSIMSCHEMA=@win_MBSIMSCHEMA@
-set MBSIMXMLSCHEMA=@win_MBSIMXMLSCHEMA@
-set MBXMLUTILSBINDIR=@win_MBXMLUTILSBINDIR@
+set MBXMLUTILSSCHEMA=@win_MBXMLUTILSSCHEMA@
+set MBXMLUTILSBIN=@win_MBXMLUTILSBINDIR@
+
+rem get environment variables (for none default intallation)
+if defined MBSIMBINDIR set bindir=%MBSIMBINDIR%
+if defined MBXMLUTILSSCHEMADIR set MBXMLUTILSSCHEMA=%MBXMLUTILSSCHEMADIR%
+if defined MBXMLUTILSBINDIR set MBXMLUTILSBIN=%MBXMLUTILSBINDIR%
 
 rem help
 if %1!==! goto help
@@ -67,7 +71,7 @@ set PPMBSIMINT=.pp.%PPMBSIMINT%.xml
 
 del %PPMBSIM% %PPMBSIMINT% > NUL
 
-%MBXMLUTILSBINDIR%/mbxmlutilspp %PARAM% %MBSIM% %MBSIMXMLSCHEMA%/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBSIMSCHEMA%/mbsimintegrator.xsd || goto end
+%MBXMLUTILSBIN%/mbxmlutilspp %PARAM% %MBSIM% %MBXMLUTILSSCHEMA%/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBXMLUTILSSCHEMA%/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || goto end
 
 if "%ONLYPP%" == "false" (
   if "%NOINT%" == "false" (

@@ -31,10 +31,8 @@ AC_SUBST([XMLLINT],[$xmllint])
 
 
 dnl XML
-AC_SUBST([MBSIMSCHEMA],[$(pkg-config mbsim --variable SCHEMADIR)])
-AC_SUBST([OPENMBVSCHEMA],[$(pkg-config openmbvcppinterface --variable SCHEMADIR)])
-AC_SUBST([MBSIMXMLSCHEMA],[$datadir/$PACKAGE/schema])
 AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
+AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 
 dnl Helper functions to convert path to windows
 dirtowin() {
@@ -44,13 +42,10 @@ filetowin() {
   echo $(cd $(dirname $1) && pwd -W 2> /dev/null)/$(basename $1)
 }
 dnl Convert to Windows path
+win_MBXMLUTILSSCHEMA=$(dirtowin $MBXMLUTILSSCHEMA)
+AC_SUBST([win_MBXMLUTILSSCHEMA])
 win_MBXMLUTILSBINDIR=$(dirtowin $MBXMLUTILSBINDIR)
 AC_SUBST([win_MBXMLUTILSBINDIR])
-win_MBSIMSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMSCHEMA)))
-AC_SUBST([win_MBSIMSCHEMA])
-mkdir -p $(eval echo $(eval echo $MBSIMXMLSCHEMA)) 2> /dev/null
-win_MBSIMXMLSCHEMA=$(dirtowin $(eval echo $(eval echo $MBSIMXMLSCHEMA)))
-AC_SUBST([win_MBSIMXMLSCHEMA])
 mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
 win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
 AC_SUBST([win_bindir])

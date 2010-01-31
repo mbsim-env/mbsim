@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-SCHEMA=@datadir@/@PACKAGE@/schema/mbsimhydraulics.xsd
+SCHEMA=../http___mbsim_berlios_de_MBSimHydraulics/mbsimhydraulics.xsd
 NAMESPACE=http://mbsim.berlios.de/MBSimHydraulics
 INITIALIZEFUNC=MBSimHydraulics::ObjectFactory::initialize()
 INITIALIZEHEADER=mbsimHydraulics/objectfactory.h

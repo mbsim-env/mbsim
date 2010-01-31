@@ -4,8 +4,6 @@ libdir=@libdir@
 includedir=@includedir@
 bindir=${exec_prefix}/bin
 
-SCHEMADIR=@datadir@/@PACKAGE@/schema
-
 Name: mbsim
 Description: mbsim is a multi-body simulation library.
 Requires: @requires@

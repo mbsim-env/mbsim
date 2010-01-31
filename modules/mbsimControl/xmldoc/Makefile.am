@@ -1,13 +1,10 @@
 all: mbsimcontrol/mbsimcontrol.tex
 
-../schema/mbsimcontrol.xsd: ../schema/mbsimcontrol.xsd.in
-	$(top_srcdir)/config.status --file=../schema/mbsimcontrol.xsd
-
 xml/index.xml: ../schema/mbsimcontrol.xsd ../mbsimControl/*.h
 	doxygen
 
 mbsimcontrol/mbsimcontrol.tex: xml/index.xml
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html ../schema/mbsimcontrol.xsd xml . MBSimControl MBSim:: false
+	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSimControl/mbsimcontrol.xsd xml . MBSimControl MBSim:: false
 
 
 install:

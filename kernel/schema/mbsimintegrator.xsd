@@ -8,11 +8,11 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-    schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/xml.xsd"/>
 
 
 

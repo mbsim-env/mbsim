@@ -34,14 +34,14 @@
   </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
-    schemaLocation="@OPENMBVCPPINTERFACESCHEMA@/openmbv.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
 
   <!-- for xml:base attribute: include xml namespaces defining attribute xml:base -->
   <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-    schemaLocation="@MBXMLUTILSSCHEMA@/xml.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/xml.xsd"/>
 
   <xs:simpleType name="PlotFeatureType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

@@ -28,10 +28,10 @@
 </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-    schemaLocation="@MBXMLUTILSSCHEMA@/physicalvariable.xsd"/>
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
 
   <xs:import namespace="http://mbsim.berlios.de/MBSim"
-    schemaLocation="@MBSIMSCHEMA@/mbsim.xsd"/>
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
 
   <xs:simpleType name="SignalReferenceType">
     <xs:restriction base="pv:partialOctaveString">
