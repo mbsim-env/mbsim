@@ -52,7 +52,7 @@ namespace MBSim {
       ee=e->FirstChildElement(MBSIMNS"size");
       double size=getDouble(ee);
       ee=e->FirstChildElement(MBSIMNS"numberOfLines");
-      int n=int(getDouble(ee)+.1);
+      int n=getInt(ee);
       enableOpenMBV(true, size, n);
     }
 #endif

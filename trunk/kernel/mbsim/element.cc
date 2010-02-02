@@ -131,6 +131,20 @@ namespace MBSim {
     return NAN;
   }
 
+  int Element::getInt(TiXmlElement *e) {
+    Mat m=Mat(e->GetText());
+    if(m.rows()==1 && m.cols()==1)
+      return lround(m(0,0));
+    else {
+      ostringstream str;
+      str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
+           "where a scalar integer was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return 0;
+  }
+
   Vec Element::getVec(TiXmlElement *e, int rows) {
     Mat m=Mat(e->GetText());
     if((rows==0 || m.rows()==rows) && m.cols()==1)

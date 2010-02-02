@@ -40,11 +40,28 @@ namespace MBSim {
   }
 
   void ExternGeneralizedIO::updateg(double) {
-    g(0)=connectedObject->getq()(qInd);
+    if(qInd>=0)
+      g(0)=connectedObject->getq()(qInd);
+    else
+      g(0)=x(0);
   } 
 
   void ExternGeneralizedIO::updategd(double) {
     gd(0)=connectedObject->getu()(uInd);
+  }
+
+  void ExternGeneralizedIO::calcxSize() {
+    xSize=qInd>=0?0:1;
+  }
+
+  void ExternGeneralizedIO::updatedx(double t, double dt) {
+    if(qInd<0)
+      xd(0)=connectedObject->getu()(uInd)*dt;
+  }
+
+  void ExternGeneralizedIO::updatexd(double t) {
+    if(qInd<0)
+      xd(0)=connectedObject->getu()(uInd);
   }
 
   void ExternGeneralizedIO::init(InitStage stage) {
@@ -62,6 +79,8 @@ namespace MBSim {
       g.resize(1);
       gd.resize(1);
       la.resize(1);
+      if(qInd<0)
+        x.resize(1);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
@@ -72,7 +91,10 @@ namespace MBSim {
     }
     else if(stage==MBSim::calculateLocalInitialValues) {
       Link::init(stage);
-      g(0)=connectedObject->getq()(qInd);
+      if(qInd>=0)
+        g(0)=connectedObject->getq()(qInd);
+      else
+        g(0)=0;
       gd(0)=connectedObject->getu()(uInd);
     }
     else
@@ -97,8 +119,8 @@ namespace MBSim {
     else
       type=CONSTANT;
     saved_connectedObject=element->FirstChildElement(MBSIMNS"connectedObject")->Attribute("ref");
-    qInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"qIndex"))+0.5);
-    uInd=(int)(getDouble(element->FirstChildElement(MBSIMNS"uIndex"))+0.5);
+    qInd=getInt(element->FirstChildElement(MBSIMNS"qIndex"));
+    uInd=getInt(element->FirstChildElement(MBSIMNS"uIndex"));
   }
 
 }

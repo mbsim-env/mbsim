@@ -59,7 +59,7 @@ namespace MBSimHydraulics {
   void ParallelResistanceLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
     TiXmlElement * e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"number");
-    int n=int(Element::getDouble(e));
+    int n=Element::getInt(e);
     e=e->NextSiblingElement();
     LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e));
     p->initializeUsingXML(e);

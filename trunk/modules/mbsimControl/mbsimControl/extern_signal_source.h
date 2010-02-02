@@ -37,7 +37,7 @@ namespace MBSimControl {
       void setSignal(fmatvec::Vec s) { assert(s.size()==source.size()); source=s; }
       void initializeUsingXML(TiXmlElement *element) {
         Signal::initializeUsingXML(element);
-        setSourceSize((int)(getDouble(element->FirstChildElement(MBSIMCONTROLNS"sourceSize"))+0.5));
+        setSourceSize(getInt(element->FirstChildElement(MBSIMCONTROLNS"sourceSize")));
       }
   };
 
