@@ -31,7 +31,7 @@ namespace MBSimControl {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"object");
     objectString=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"index");
-    index=(int)getDouble(e);
+    index=getInt(e);
   }
 
   void GeneralizedCoordinateSensor::init(InitStage stage) {

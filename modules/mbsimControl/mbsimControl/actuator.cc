@@ -129,7 +129,7 @@ namespace MBSimControl {
     e=element->FirstChildElement(MBSIMCONTROLNS"momentDirection");
     if(e) setMomentDirection(getMat(e,3,0));
     e=element->FirstChildElement(MBSIMCONTROLNS"referenceFrame");
-    if(e) setKOSY((int)(getDouble(e)+0.5));
+    if(e) setKOSY(getInt(e));
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     saved_inputSignal=e->Attribute("ref");
     e=element->FirstChildElement(MBSIMCONTROLNS"connect");
