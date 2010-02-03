@@ -282,4 +282,23 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="EulerExplicitIntegrator" substitutionGroup="Integrator" type="EulerExplicitIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Explizites Einschritt-Integrationsverfahren mit fester Schrittweite.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="EulerExplicitIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="stepSize" type="pv:timeScalar"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Integrationsschrittweite.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
 </xs:schema>

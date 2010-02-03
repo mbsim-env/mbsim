@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #ifndef _EULER_EXPLICIT_INTEGRATOR_H_ 
@@ -30,20 +27,42 @@ namespace MBSim {
 
   /** \brief Explicit Euler integrator. */
   class EulerExplicitIntegrator : public Integrator { 
+    public:
+      /**
+       * \brief constructor
+       */
+      EulerExplicitIntegrator();
+
+      /**
+       * \brief destructor
+       */
+      virtual ~EulerExplicitIntegrator() {}
+
+      void preIntegrate(DynamicSystemSolver& system);
+      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      void postIntegrate(DynamicSystemSolver& system);
+
+      /* INHERITED INTERFACE OF INTEGRATOR */
+      virtual void integrate(DynamicSystemSolver& system);
+      virtual void initializeUsingXML(TiXmlElement *element);
+      /***************************************************/
+
+      /* GETTER / SETTER */
+      void setStepSize(double dt_) {dt = dt_;}
+      /***************************************************/
 
     private:
-
+      /**
+       * \brief step size
+       */
       double dt;
 
-    public:
-
-      EulerExplicitIntegrator();
-      ~EulerExplicitIntegrator() {}
-
-      void setStepSize(double dt_) {dt = dt_;}
-
-      void integrate(DynamicSystemSolver& system);
-
+      double t, tPlot;
+      int iter, step, integrationSteps;
+      double s0, time;
+      int stepPlot;
+      fmatvec::Vec z, q, u, x;
+      std::ofstream integPlot;
   };
 
 }
