@@ -44,7 +44,7 @@ namespace MBSim {
        * \param name of circle
        * \param radius of circle
        */
-      CircleSolid(const std::string &name, double r_) : Circle(name,r,true) {}
+      CircleSolid(const std::string &name, double r_) : Circle(name,r_,true) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleSolid"; }
