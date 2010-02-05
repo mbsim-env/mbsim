@@ -21,6 +21,7 @@
 
 #include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsim/utils/eps.h"
 
 #include <iostream>
 
@@ -35,7 +36,7 @@ namespace MBSim {
 
   void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
 #ifdef HAVE_NURBS
-    if(nrm2(cp.getLagrangeParameterPosition()) == 0.) { // center of gravity 
+    if(nrm2(cp.getLagrangeParameterPosition()) < epsroot()) { // center of gravity 
       cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation().col(2)* ( static_cast<FlexibleBody2s13Disk*>(parent)->getq()(0) )); // z-translation
 
       double rotAngle = static_cast<FlexibleBody2s13Disk*>(parent)->getq()(1);
