@@ -191,7 +191,7 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <h:CircularLeakage0DOF name="LeackageGap">
-      <frameOfReference ref="../Object[Housing]/Frame[Bottom]"/>
+      <h:frameOfReference ref="../Object[Housing]/Frame[Bottom]"/>
       <h:direction>[0;1;0]</h:direction>
       <h:length unit="mm">7</h:length>
       <h:firstSurfaceVelocity ref="../Signal[PistonVelocity]"/>

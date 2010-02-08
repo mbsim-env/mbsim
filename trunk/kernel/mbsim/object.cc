@@ -19,6 +19,7 @@
 #include <config.h>
 #include "mbsim/object.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 
@@ -27,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), parent(0), frameOfReference(0), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), parent(0), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -240,20 +241,7 @@ namespace MBSim {
   }
 
   void Object::init(InitStage stage) {  
-    if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="")
-        setFrameOfReference(getFrameByPath(saved_frameOfReference));
-      Element::init(stage,parent);
-    }
-    else if(stage==preInit) {
-      Element::init(stage,parent);
-      if(frameOfReference) {
-        Object* obj = dynamic_cast<Object*>(frameOfReference->getParent());
-        if(obj)
-          dependency.push_back(obj);
-      }
-    }
-    else if(stage==unknownStage) {
+    if(stage==unknownStage) {
       Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
       Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
     }
@@ -322,65 +310,17 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"initialGeneralizedVelocity");
     if (e)
       setInitialGeneralizedVelocity(getVec(e));
-    e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    saved_frameOfReference=e->Attribute("ref");
   }
 
-  Frame *Object::getFrameByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getFrameByPath(path);
-      else
-        return getFrameByPath(path.substr(1));
+  Element * Object::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      return ds->getByPathSearch(path);
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      cout << "Unknown name of container" << endl;
+      throw(123);
     }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getFrameByPath(restPart);
-    else
-      return 0;
-  }
-
-  Contour *Object::getContourByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getContourByPath(path);
-      else
-        return getContourByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getContourByPath(restPart);
-    else
-      return 0;
-  }
-
-  Link *Object::getLinkByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getLinkByPath(path);
-      else
-        return getLinkByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getLinkByPath(restPart);
-    else
-      return 0;
   }
 
   int Object::computeLevel() {
@@ -393,6 +333,7 @@ namespace MBSim {
     }
     return lOld;
   }
+  
   int Object::cutDependencies() {
     int lOld=0;
     Object* buf=0;

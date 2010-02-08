@@ -23,7 +23,6 @@
 #include "mbsim/link.h"
 #include "mbsimControl/signal_interface.h"
 
-
 namespace MBSim {
   class DynamicSystem;
 }
@@ -38,7 +37,6 @@ namespace MBSimControl {
 
     public:
       Signal(const std::string &name) : Link(name) {}
-      Signal * getSignalByPath(std::string path);
 
       void init(MBSim::InitStage stage);
 

@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="HydraulicActor"
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl"
-  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<Group name="HydraulicActor" xmlns="http://mbsim.berlios.de/MBSim">
   <frameOfReference ref="../Frame[FJack]"/>
   <frames>
   </frames>
@@ -55,34 +50,34 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <ombv:CompoundRigidBody name="x">
-          <ombv:staticColor>.4</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:Frustum name="x">
-            <ombv:staticColor>.4</ombv:staticColor>
-            <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
-            <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-            <ombv:scaleFactor>1</ombv:scaleFactor>
-            <ombv:baseRadius>.03</ombv:baseRadius>
-            <ombv:topRadius>.03</ombv:topRadius>
-            <ombv:height>.01</ombv:height>
-            <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-            <ombv:innerTopRadius>0</ombv:innerTopRadius>
-          </ombv:Frustum>
-          <ombv:Frustum name="x">
-            <ombv:staticColor>.4</ombv:staticColor>
-            <ombv:initialTranslation>[0; .13; 0]</ombv:initialTranslation>
-            <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-            <ombv:scaleFactor>1</ombv:scaleFactor>
-            <ombv:baseRadius>.03</ombv:baseRadius>
-            <ombv:topRadius>.03</ombv:topRadius>
-            <ombv:height>.01</ombv:height>
-            <ombv:innerBaseRadius>.01</ombv:innerBaseRadius>
-            <ombv:innerTopRadius>.01</ombv:innerTopRadius>
-          </ombv:Frustum>
-        </ombv:CompoundRigidBody>
+        <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.4</staticColor>
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <Frustum name="x">
+            <staticColor>.4</staticColor>
+            <initialTranslation>[0; 0; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.01</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <Frustum name="x">
+            <staticColor>.4</staticColor>
+            <initialTranslation>[0; .13; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.01</height>
+            <innerBaseRadius>.01</innerBaseRadius>
+            <innerTopRadius>.01</innerTopRadius>
+          </Frustum>
+        </CompoundRigidBody>
         <frameOfReference ref="Frame[FMount]"/>
       </openMBVRigidBody>
     </RigidBody>
@@ -121,118 +116,118 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <ombv:CompoundRigidBody name="x">
-          <ombv:staticColor>.1</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:Frustum name="x">
-            <ombv:staticColor>.1</ombv:staticColor>
-            <ombv:initialTranslation>[0; -.01; 0]</ombv:initialTranslation>
-            <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-            <ombv:scaleFactor>1</ombv:scaleFactor>
-            <ombv:baseRadius>.03</ombv:baseRadius>
-            <ombv:topRadius>.03</ombv:topRadius>
-            <ombv:height>.02</ombv:height>
-            <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-            <ombv:innerTopRadius>0</ombv:innerTopRadius>
-          </ombv:Frustum>
-          <ombv:Frustum name="x">
-            <ombv:staticColor>.1</ombv:staticColor>
-            <ombv:initialTranslation>[0; .01; 0]</ombv:initialTranslation>
-            <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-            <ombv:scaleFactor>1</ombv:scaleFactor>
-            <ombv:baseRadius>.01</ombv:baseRadius>
-            <ombv:topRadius>.01</ombv:topRadius>
-            <ombv:height>.12</ombv:height>
-            <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-            <ombv:innerTopRadius>0</ombv:innerTopRadius>
-          </ombv:Frustum>
-        </ombv:CompoundRigidBody>
+        <CompoundRigidBody name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.1</staticColor>
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <Frustum name="x">
+            <staticColor>.1</staticColor>
+            <initialTranslation>[0; -.01; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.03</baseRadius>
+            <topRadius>.03</topRadius>
+            <height>.02</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+          <Frustum name="x">
+            <staticColor>.1</staticColor>
+            <initialTranslation>[0; .01; 0]</initialTranslation>
+            <initialRotation>[pi/2; 0; 0]</initialRotation>
+            <scaleFactor>1</scaleFactor>
+            <baseRadius>.01</baseRadius>
+            <topRadius>.01</topRadius>
+            <height>.12</height>
+            <innerBaseRadius>0</innerBaseRadius>
+            <innerTopRadius>0</innerTopRadius>
+          </Frustum>
+        </CompoundRigidBody>
       </openMBVRigidBody>
     </RigidBody>
     <!--
-    <h:CircularLeakageLine name="Leckage">
+    <CircularLeakageLine name="Leckage" xmlns="http://openmbv.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Object[HydraulicActor]/Frame[FPlunger]"/>
-      <h:direction>[0;0;0]</h:direction>
-      <h:length>.5</h:length>
-      <h:innerRadius>.03</h:innerRadius>
-      <h:height>50e-6</h:height>
-      <h:circularLeakagePressureLoss>
-        <h:RealCircularLeakagePressureLoss/>
-      </h:circularLeakagePressureLoss>
-    </h:CircularLeakageLine>
+      <direction>[0;0;0]</direction>
+      <length>.5</length>
+      <innerRadius>.03</innerRadius>
+      <height>50e-6</height>
+      <circularLeakagePressureLoss>
+        <RealCircularLeakagePressureLoss/>
+      </circularLeakagePressureLoss>
+    </CircularLeakageLine>
     -->
   </objects>
   <links>
-    <h:RigidNodeMec name="nA">
+    <RigidNodeMec name="nA" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <!--
-      <h:outflow ref="../HLine[Leckage]"/>
+      <outflow ref="../HLine[Leckage]"/>
       -->
-      <h:inflow ref="../../Group[HydraulicSystem]/HLine[lineA]"/>
-      <h:enableOpenMBVSphere>
-        <h:size>.02</h:size>
-        <h:minimalPressure unit="bar">10</h:minimalPressure>
-        <h:maximalPressure unit="bar">50</h:maximalPressure>
-      </h:enableOpenMBVSphere>
-      <h:initialVolume>pi*(.03^2-.01^2)*.05</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[HydraulicActor]/Frame[FTop]"/>
-        <h:normal>[0; 1; 0]</h:normal>
-        <h:area>pi*(.03^2-.01^2)</h:area>
-      </h:translatorialBoundarySourface>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
-        <h:normal>[0; -1; 0]</h:normal>
-        <h:area>pi*(.03^2-.01^2)</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows> <!-- optional -->
-        <h:size>.01</h:size>
-      </h:enableOpenMBVArrows>
+      <inflow ref="../../Group[HydraulicSystem]/HLine[lineA]"/>
+      <enableOpenMBVSphere>
+        <size>.02</size>
+        <minimalPressure unit="bar">10</minimalPressure>
+        <maximalPressure unit="bar">50</maximalPressure>
+      </enableOpenMBVSphere>
+      <initialVolume>pi*(.03^2-.01^2)*.05</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[HydraulicActor]/Frame[FTop]"/>
+        <normal>[0; 1; 0]</normal>
+        <area>pi*(.03^2-.01^2)</area>
+      </translatorialBoundarySourface>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
+        <normal>[0; -1; 0]</normal>
+        <area>pi*(.03^2-.01^2)</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows> <!-- optional -->
+        <size>.01</size>
+      </enableOpenMBVArrows>
       <!--
-      <h:initialPressure unit="bar">2</h:initialPressure>
-      <h:fracAir>.05</h:fracAir>
+      <initialPressure unit="bar">2</initialPressure>
+      <fracAir>.05</fracAir>
       -->
-    </h:RigidNodeMec>
-    <h:RigidNodeMec name="nB">
+    </RigidNodeMec>
+    <RigidNodeMec name="nB" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <!--
-      <h:inflow ref="../HLine[Leckage]"/>
+      <inflow ref="../HLine[Leckage]"/>
       -->
-      <h:inflow ref="../../Group[HydraulicSystem]/HLine[lineB]"/>
-      <h:enableOpenMBVSphere>
-        <h:size>.02</h:size>
-        <h:minimalPressure unit="bar">10</h:minimalPressure>
-        <h:maximalPressure unit="bar">50</h:maximalPressure>
-      </h:enableOpenMBVSphere>
-      <h:initialVolume>pi*.03^2*.05</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[HydraulicActor]/Frame[FBottom]"/>
-        <h:normal>[0;-1 ; 0]</h:normal>
-        <h:area>pi*.03^2</h:area>
-      </h:translatorialBoundarySourface>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Plunger]/Frame[FBottom]"/>
-        <h:normal>[0; 1; 0]</h:normal>
-        <h:area>pi*.03^2</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows>
-        <h:size>.01</h:size>
-      </h:enableOpenMBVArrows>
+      <inflow ref="../../Group[HydraulicSystem]/HLine[lineB]"/>
+      <enableOpenMBVSphere>
+        <size>.02</size>
+        <minimalPressure unit="bar">10</minimalPressure>
+        <maximalPressure unit="bar">50</maximalPressure>
+      </enableOpenMBVSphere>
+      <initialVolume>pi*.03^2*.05</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[HydraulicActor]/Frame[FBottom]"/>
+        <normal>[0;-1 ; 0]</normal>
+        <area>pi*.03^2</area>
+      </translatorialBoundarySourface>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FBottom]"/>
+        <normal>[0; 1; 0]</normal>
+        <area>pi*.03^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.01</size>
+      </enableOpenMBVArrows>
       <!--
-      <h:initialPressure unit="bar">2</h:initialPressure>
-      <h:fracAir>.05</h:fracAir>
+      <initialPressure unit="bar">2</initialPressure>
+      <fracAir>.05</fracAir>
       -->
-    </h:RigidNodeMec>
-    <h:EnvironmentNodeMec name="nPlungerEnvironment">
-      <h:initialVolume>0</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
-        <h:normal>[0; -1; 0]</h:normal>
-        <h:area>pi*.01^2</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows>
-        <h:size>.01</h:size>
-      </h:enableOpenMBVArrows>
-    </h:EnvironmentNodeMec>
+    </RigidNodeMec>
+    <EnvironmentNodeMec name="nPlungerEnvironment" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <initialVolume>0</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>
+        <normal>[0; -1; 0]</normal>
+        <area>pi*.01^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.01</size>
+      </enableOpenMBVArrows>
+    </EnvironmentNodeMec>
   </links>
 </Group>

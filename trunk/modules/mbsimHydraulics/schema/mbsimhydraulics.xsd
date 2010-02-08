@@ -23,10 +23,10 @@
 
   <xs:simpleType name="HLineReferenceType">
     <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*HLine\[X\]" with
+      <!-- pattern value="/?((\.\.|Group\[X\])/)*(HLine\[X\]|Object\[X\])" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*HLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*(HLine\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -766,11 +766,21 @@
   <xs:complexType name="HLineType">
     <xs:complexContent>
       <xs:extension base="mbsim:ObjectType">
-        <xs:sequence>
+        <xs:sequence minOccurs="0">
+          <xs:element name="frameOfReference">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das KOS bezüglich dessen die Richtung der Schwerkraft definiert wird.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="direction" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Richtungsvektor der Leitung zur Bestimmung der Druckverluste aufgrund der Schwerkraft. Wenn ein 0-Vektor angegeben wird, so wird der Druckverlust aufgrund der Schwerkraft vernachlässigt.
+                Richtungsvektor der Leitung zur Bestimmung der Druckverluste aufgrund der Schwerkraft.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -790,6 +800,18 @@
     <xs:complexContent>
       <xs:extension base="HLineType">
         <xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="inflowDependencyOnInflow">
+              <xs:complexType>
+                <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="inflowDependencyOnOutflow">
+              <xs:complexType>
+                <xs:attribute name="ref" type="HLineReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
           <xs:element name="length" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

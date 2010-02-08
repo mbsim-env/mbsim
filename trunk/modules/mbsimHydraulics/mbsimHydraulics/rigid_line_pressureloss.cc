@@ -106,43 +106,46 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updatehRef(const Vec& hParent, const Vec& hLinkParent, int i) {
     int hInd = line->gethInd(parent, i);
-    Index I=Index(hInd, hInd);
-    h[0] >> hParent(I);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
+    h[0].resize() >> hParent(I);
     hLink[0].resize() >> hLinkParent(I);
   }
 
   void RigidLinePressureLoss::updaterRef(const Vec& rParent, int i) {
     int hInd = line->gethInd(parent, i);
-    Index I=Index(hInd, hInd);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     r[0] >> rParent(I);
   }
 
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
     int hInd = line->gethInd(parent, i);
-    Index I=Index(hInd, hInd);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     dhdu[0].resize() >> dhduParent(I);
   }
 
   void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
     int hInd = line->gethInd(parent, i);
-    Index I=Index(hInd, hInd);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     dhdt[0].resize() >> dhdtParent(I);
   }
 
   void RigidLinePressureLoss::updaterRef(const Vec &rParent) {
-    Index I=Index(line->gethInd(parent), line->gethInd(parent));
+    int hInd = line->gethInd(parent);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     r[0].resize() >> rParent(I);
   }
 
   void RigidLinePressureLoss::updateWRef(const Mat &WParent, int j) {
-    Index I=Index(line->gethInd(parent,j), line->gethInd(parent,j));
+    int hInd = line->gethInd(parent, j);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     Index J=Index(laInd, laInd);
     W[0].resize() >> WParent(I,J);
   }
 
   void RigidLinePressureLoss::updateVRef(const Mat &VParent, int j) {
+    int hInd = line->gethInd(parent, j);
+    Index I=Index(hInd, hInd+line->getJacobian().cols()-1);
     Index J=Index(laInd, laInd);
-    Index I=Index(line->gethInd(parent,j), line->gethInd(parent,j));
     V[0].resize() >> VParent(I,J);
   }
 
@@ -179,12 +182,13 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateh(double t) {
     if (linePressureLoss)
-      pLoss=(*linePressureLoss)(line->getu()(0), line);
+      pLoss=(*linePressureLoss)(line->getQIn(t)(0), line);
     else if (closablePressureLoss)
-      pLoss=(*closablePressureLoss)(line->getu()(0), line);
+      pLoss=(*closablePressureLoss)(line->getQIn(t)(0), line);
     else if (leakagePressureLoss)
-      pLoss=(*leakagePressureLoss)(line->getu()(0), line);
-    h[0](0)-=pLoss;
+      pLoss=(*leakagePressureLoss)(line->getQIn(t)(0), line);
+    h[0]-=trans(line->getJacobian())*pLoss;
+    hLink[0]-=trans(line->getJacobian())*pLoss;
   }
 
   void RigidLinePressureLoss::updateW(double t) {

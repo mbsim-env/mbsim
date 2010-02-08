@@ -40,11 +40,8 @@ namespace MBSimControl {
 
   void AbsolutCoordinateSensor::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (frameString!="") {
-        Frame * t=getFrameByPath(frameString);
-        if(!t) { cerr<<"ERROR! Cannot find frame: "<<frameString<<endl; _exit(1); }
-        setFrame(t);
-      }
+      if (frameString!="")
+        setFrame(getByPath<Frame>(frameString));
       Sensor::init(stage);
     }
     else
@@ -88,16 +85,10 @@ namespace MBSimControl {
 
   void RelativeCoordinateSensor::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (refFrameString!="") {
-        Frame * t=getFrameByPath(refFrameString);
-        if(!t) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
-        setReferenceFrame(t);
-      }
-      if (relFrameString!="") {
-        Frame * t=getFrameByPath(relFrameString);
-        if(!t) { cerr<<"ERROR! Cannot find frame: "<<relFrameString<<endl; _exit(1); }
-        setRelativeFrame(t);
-      }
+      if (refFrameString!="")
+        setReferenceFrame(getByPath<Frame>(refFrameString));
+      if (relFrameString!="")
+        setRelativeFrame(getByPath<Frame>(relFrameString));
       Sensor::init(stage);
     }
     else

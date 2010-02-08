@@ -82,23 +82,11 @@ namespace MBSim {
       Element::init(stage, parent);
   }
 
-  Link * ExtraDynamic::getLinkByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getLinkByPath(path);
-      else
-        return getLinkByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getLinkByPath(restPart);
-    else
-      return 0;
+  Element * ExtraDynamic::getByPathSearch(string path) {
+    if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else // absolut path
+      return ds->getByPathSearch(path.substr(3));
   }
 
 

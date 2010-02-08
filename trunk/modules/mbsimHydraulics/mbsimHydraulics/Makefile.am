@@ -16,7 +16,8 @@ libmbsimHydraulics_la_SOURCES = \
   elastic_line_galerkin.cc \
   objectfactory.cc \
 	dimensionless_line.cc \
-	hydraulic_sensor.cc
+	hydraulic_sensor.cc \
+	obsolet_hint.cc
 
 libmbsimHydraulics_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)

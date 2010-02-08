@@ -37,14 +37,10 @@ namespace MBSim {
 
   void KineticExcitation::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_frameOfReference!="") {
-        Frame *ref=getFrameByPath(saved_frameOfReference);
-        setFrameOfReference(ref);
-      }
-      if(saved_ref!="") {
-        Frame *con=getFrameByPath(saved_ref);
-        connect(con);
-      }
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      if(saved_ref!="")
+        connect(getByPath<Frame>(saved_ref));
       LinkMechanics::init(stage);
     }
     else if(stage==unknownStage) {
@@ -112,9 +108,8 @@ namespace MBSim {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMNS"frameOfReference");
-    if(e) {
+    if(e)
       saved_frameOfReference=e->Attribute("ref");
-    }
     e=element->FirstChildElement(MBSIMNS"force");
     if(e) {
       TiXmlElement *ee=e->FirstChildElement();

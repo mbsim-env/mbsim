@@ -153,7 +153,7 @@ namespace MBSim {
       void setName(const std::string &str) { name = str; }
 
       /**
-       * \return dynamic system
+       * \return dynamic system solver
        */
       DynamicSystemSolver* getDynamicSystemSolver() { return ds; }
 
@@ -202,6 +202,25 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      /**
+       * \brief a general element access
+       */
+      template<class T> 
+        T* getByPath(std::string path) {
+          Element * e = getByPathSearch(path);
+          if (dynamic_cast<T*>(e))
+            return (T*)(e);
+          else {
+            std::cout << "Element \"" << path << "\" not found or not of wanted type. Sorry." << std::endl;
+            throw(123);
+          }
+        }
+
+      /**
+       * \brief a general element search by path
+       */
+      virtual Element* getByPathSearch(std::string path) {return 0; }
+      
       // some convenience function for XML
       static double getDouble(TiXmlElement *e);
       static int getInt(TiXmlElement *e);

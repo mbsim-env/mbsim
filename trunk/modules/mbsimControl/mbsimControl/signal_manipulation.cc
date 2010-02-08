@@ -19,6 +19,7 @@
 
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/objectfactory.h"
+#include "mbsimControl/obsolet_hint.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -40,11 +41,8 @@ namespace MBSimControl {
 
   void SignalAddition::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++) {
-        Signal * s = getSignalByPath(signalString[i]);
-        double f=factorsTmp[i];
-        addSignal(s, f);
-      }
+      for (unsigned int i=0; i<signalString.size(); i++)
+        addSignal(getByPath<Signal>(process_signal_string(signalString[i])), factorsTmp[i]);
       signalString.clear();
       factorsTmp.clear();
       Signal::init(stage);
@@ -77,10 +75,8 @@ namespace MBSimControl {
 
   void SignalMux::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      for (unsigned int i=0; i<signalString.size(); i++) {
-        Signal * s = getSignalByPath(signalString[i]);
-        addSignal(s);
-      }
+      for (unsigned int i=0; i<signalString.size(); i++)
+        addSignal(getByPath<Signal>(process_signal_string(signalString[i])));
       signalString.clear();
       Signal::init(stage);
     }
@@ -115,10 +111,8 @@ namespace MBSimControl {
 
   void SignalLimitation::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      if (signalString!="") {
-        Signal * s = getSignalByPath(signalString);
-        setSignal(s);
-      }
+      if (signalString!="")
+        setSignal(getByPath<Signal>(process_signal_string(signalString)));
       Signal::init(stage);
     }
     else
@@ -144,10 +138,8 @@ namespace MBSimControl {
 
   void SignalTimeDiscretization::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      if (signalString!="") {
-        Signal * s = getSignalByPath(signalString);
-        setSignal(s);
-      }
+      if (signalString!="")
+        setSignal(getByPath<Signal>(process_signal_string(signalString)));
       Signal::init(stage);
     }
     else

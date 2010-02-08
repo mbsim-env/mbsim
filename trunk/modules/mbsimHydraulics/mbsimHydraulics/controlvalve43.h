@@ -37,8 +37,7 @@ namespace MBSimHydraulics {
   class Controlvalve43 : public MBSim::Group {
     public:
       Controlvalve43(const std::string& name);
-      HLine * getHLineByPath(std::string path);
-      MBSimControl::Signal * getSignalByPath(std::string path);
+      
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement * element);
 

@@ -20,7 +20,7 @@
 #include "mbsimControl/actuator.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/objectfactory.h"
-//#include "mbsim/dynamic_system_solver.h"
+#include "mbsimControl/obsolet_hint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -51,12 +51,9 @@ namespace MBSimControl {
   void Actuator::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if(saved_inputSignal!="")
-        setSignal(getSignalByPath(saved_inputSignal));
-      if(saved_ref1!="" && saved_ref2!="") {
-        Frame *ref1=getFrameByPath(saved_ref1);
-        Frame *ref2=getFrameByPath(saved_ref2);
-        connect(ref1,ref2);
-      }
+        setSignal(getByPath<Signal>(process_signal_string(saved_inputSignal)));
+      if(saved_ref1!="" && saved_ref2!="")
+        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       LinkMechanics::init(stage);
     }
     else if (stage==MBSim::resize) {
@@ -108,19 +105,6 @@ namespace MBSimControl {
       momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
   }
   
-  Signal * Actuator::getSignalByPath(string path) {
-    int pos=path.find("Signal");
-    path.erase(pos, 6);
-    path.insert(pos, "Link");
-    Link * s = getLinkByPath(path);
-    if (dynamic_cast<Signal *>(s))
-      return static_cast<Signal *>(s);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
-      _exit(1);
-    }
-  }
-
   void Actuator::initializeUsingXML(TiXmlElement *element) {
     LinkMechanics::initializeUsingXML(element);
     TiXmlElement *e;

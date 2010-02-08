@@ -754,16 +754,10 @@ namespace MBSim {
        */
       ModellingInterface* getModel(const std::string &name, bool check=true);
 
-      virtual Object *getObjectByPath(std::string path);
-      virtual DynamicSystem *getGroupByPath(std::string path);
-      virtual Link *getLinkByPath(std::string path);
-      virtual ExtraDynamic *getExtraDynamicByPath(std::string path);
-      virtual Frame *getFrameByPath(std::string path);
-      virtual Contour *getContourByPath(std::string path);
-      virtual Contact *getContactByPath(std::string path);
-
       /** Return frame "I" */
       Frame *getFrameI() { return I; }
+      
+      virtual Element *getByPathSearch(std::string path);
 
     protected:
       /**
@@ -966,6 +960,7 @@ namespace MBSim {
 
       fmatvec::Mat WInverseKinetics;
       fmatvec::Vec laInverseKinetics;
+
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
       std::vector<fmatvec::Vec> saved_RrRF, saved_RrRC;

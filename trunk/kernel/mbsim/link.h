@@ -391,11 +391,10 @@ namespace MBSim {
        */
       void decreaserFactors();
 
-      virtual Object * getObjectByPath(std::string path);
-      virtual ExtraDynamic * getExtraDynamicByPath(std::string path);
-      virtual Link * getLinkByPath(std::string path);
-      virtual Frame *getFrameByPath(std::string path);
-      virtual Contour *getContourByPath(std::string path);
+      /**
+       * \return a general element access
+       */
+      virtual Element* getByPathSearch(std::string path);
 
     protected:
       /**

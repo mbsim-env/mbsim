@@ -20,6 +20,7 @@
 #include "mbsimControl/signal_processing_system.h"
 #include "mbsimControl/signal_.h"
 #include "mbsimControl/objectfactory.h"
+#include "mbsimControl/obsolet_hint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -28,19 +29,6 @@ using namespace MBSim;
 namespace MBSimControl {
 
   SignalProcessingSystem::SignalProcessingSystem(const string &name) : ExtraDynamic(name), inputSignal(NULL), inputSignalString("") {
-  }
-
-  Signal * SignalProcessingSystem::getSignalByPath(string path) {
-    int pos=path.find("Signal");
-    path.erase(pos, 6);
-    path.insert(pos, "Link");
-    Link * h = getLinkByPath(path);
-    if (dynamic_cast<Signal *>(h))
-      return static_cast<Signal *>(h);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
-      _exit(1);
-    }
   }
 
   void SignalProcessingSystem::initializeUsingXML(TiXmlElement * element) {
@@ -52,10 +40,8 @@ namespace MBSimControl {
 
   void SignalProcessingSystem::init(InitStage stage) {
     if (stage==resolveXMLPath) {
-      if (inputSignalString!="") {
-        Signal * s = getSignalByPath(inputSignalString);
-        setInputSignal(s);
-      }
+      if (inputSignalString!="")
+        setInputSignal(getByPath<Signal>(process_signal_string(inputSignalString)));
       ExtraDynamic::init(stage);
     }
     else

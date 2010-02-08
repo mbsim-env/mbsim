@@ -100,6 +100,21 @@ namespace MBSim {
        * \return frame
        */
       virtual Frame* getFrame(const std::string &name, bool check=true);
+
+      /**
+       * \return frame of reference
+       */
+      virtual Frame *getFrameOfReference() { return frameOfReference; }
+
+      /**
+       * \return frame of reference
+       */
+      virtual const Frame *getFrameOfReference() const { return frameOfReference; }
+
+      /**
+       * \param frame of reference
+       */
+      virtual void setFrameOfReference(Frame *frame) { frameOfReference = frame; }
       /*******************************************************/ 
 
       /* GETTER / SETTER */
@@ -123,8 +138,9 @@ namespace MBSim {
        */
       int contourIndex(const Contour *contour_) const;
 
-      virtual Frame *getFrameByPath(std::string path);
-      virtual Contour *getContourByPath(std::string path);
+      virtual void initializeUsingXML(TiXmlElement *element);
+      
+      virtual Element * getByPathSearch(std::string path);
 
     protected:
       /**
@@ -133,10 +149,18 @@ namespace MBSim {
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
+      /**
+       * \brief frame of reference of the object
+       */
+      Frame * frameOfReference;
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Body* openMBVBody;
       OpenMBV::Group* openMBVGrp;
 #endif
+
+    private:
+      std::string saved_frameOfReference;
   };
 
 }

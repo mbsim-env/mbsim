@@ -21,6 +21,7 @@
 #include "mbsim/link.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -154,100 +155,11 @@ namespace MBSim {
         rFactor(i) *= 0.9;
   }
 
-  Object *Link::getObjectByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getObjectByPath(path);
-      else
-        return getObjectByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getObjectByPath(restPart);
-    else
-      return 0;
-  }
-
-  ExtraDynamic *Link::getExtraDynamicByPath(std::string path) {
-    cout << "Link::getExtraDynamicByPath: BEGINNE SUCHE nach " << path << endl;
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getExtraDynamicByPath(path);
-      else
-        return getExtraDynamicByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getExtraDynamicByPath(restPart);
-    else
-      return 0;
-  }
-
-  Link *Link::getLinkByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getLinkByPath(path);
-      else
-        return getLinkByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getLinkByPath(restPart);
-    else
-      return 0;
-  }
-
-  Frame *Link::getFrameByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getFrameByPath(path);
-      else
-        return getFrameByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getFrameByPath(restPart);
-    else
-      return 0;
-  }
-
-  Contour *Link::getContourByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getContourByPath(path);
-      else
-        return getContourByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getContourByPath(restPart);
-    else
-      return 0;
+  Element * Link::getByPathSearch(string path) {
+    if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else // absolut path
+      return ds->getByPathSearch(path.substr(3));
   }
 
 }
