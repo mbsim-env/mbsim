@@ -88,7 +88,6 @@ namespace MBSimControl {
        */
       void setMomentDirection(const fmatvec::Mat& md);
 
-      Signal * getSignalByPath(std::string path);
       void initializeUsingXML(TiXmlElement *element);
 
     protected:

@@ -127,11 +127,8 @@ namespace MBSim {
 
   void Joint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_ref1!="" && saved_ref2!="") {
-        Frame *ref1=getFrameByPath(saved_ref1);
-        Frame *ref2=getFrameByPath(saved_ref2);
-        connect(ref1,ref2);
-      }
+      if(saved_ref1!="" && saved_ref2!="")
+        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {

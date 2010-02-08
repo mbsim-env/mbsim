@@ -133,7 +133,7 @@ namespace MBSim {
 
     if(e && e->ValueStr()==MBSIMNS"frameOfReference") {
       string ref=e->Attribute("ref");
-      setFrameOfReference(getFrameByPath(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
+      setFrameOfReference(getByPath<Frame>(ref)); // must be a Frame of the parent, so it allready exists (no need to resolve path later)
       e=e->NextSiblingElement();
     }
 

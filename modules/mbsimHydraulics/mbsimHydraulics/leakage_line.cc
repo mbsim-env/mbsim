@@ -23,6 +23,7 @@
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsimControl/signal_.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -47,11 +48,11 @@ namespace MBSimHydraulics {
     if (stage==MBSim::resolveXMLPath) {
       RigidHLine::init(stage);
       if (s1vPath!="")
-        setSurface1VelocitySignal(getSignalByPath(s1vPath));
+        setSurface1VelocitySignal(getByPath<Signal>(process_signal_string(s1vPath)));
       if (s2vPath!="")
-        setSurface2VelocitySignal(getSignalByPath(s2vPath));
+        setSurface2VelocitySignal(getByPath<Signal>(process_signal_string(s2vPath)));
       if (glPath!="")
-        setGapLengthSignal(getSignalByPath(glPath));
+        setGapLengthSignal(getByPath<Signal>(process_signal_string(glPath)));
     }
     else if (stage==MBSim::modelBuildup) {
       parent->addLink(new RigidLinePressureLoss(name+"/LeakagePressureLoss", this, lpl, false, false));

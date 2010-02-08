@@ -17,40 +17,16 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimControl/signal_.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/dynamic_system.h"
+#ifndef _OBSOLET_HINT_H_
+#define _OBSOLET_HINT_H_
 
-#include "mbsimControl/obsolet_hint.h"
+#include <string>
 
-using namespace std;
-using namespace fmatvec;
-using namespace MBSim;
+namespace MBSimHydraulics {
 
-namespace MBSimControl {
-
-  void Signal::init(InitStage stage) {
-    if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
-      if(getPlotFeature(plotRecursive)==enabled) {
-        Vec y=getSignal();
-        for (int i=0; i<y.size(); i++)
-          plotColumns.push_back("Signal (" + numtostr(i) + ")");
-      }
-      Link::init(stage);
-    }
-    else
-      Link::init(stage);
-  }
-
-
-  void Signal::plot(double t, double dt) {
-    if(getPlotFeature(plotRecursive)==enabled) {
-      Vec y=getSignal();
-      for (int i=0; i<y.size(); i++)
-        plotVector.push_back(y(i));
-    }
-    Link::plot(t, dt);
-  }
+  std::string process_signal_string(std::string path);
+  std::string process_hline_string(std::string path);
 
 }
+
+#endif /* _OBSOLET_HINT_H_ */

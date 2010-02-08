@@ -85,6 +85,7 @@ namespace MBSimHydraulics {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       phi.resize(mdim, mdim);
       lambda.resize(mdim);
+      Jacobian.resize(1, mdim, INIT, 1.);
       if (eigvec(K, MFac, phi, lambda)) {
         cout << getName() << ": Fehler bei Eigenvektorberechnung!" << endl;
         throw 821;

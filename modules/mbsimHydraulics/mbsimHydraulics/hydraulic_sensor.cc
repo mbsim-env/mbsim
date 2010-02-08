@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -40,14 +41,8 @@ namespace MBSimHydraulics {
 
   void FlowSensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      if (lineString!="") {
-        int pos=lineString.find("HLine");
-        lineString.erase(pos, 5);
-        lineString.insert(pos, "Object");
-        HLine * t = dynamic_cast<HLine*>(getObjectByPath(lineString));
-        if(!t) { cerr<<"ERROR! Cannot find HLine: "<<lineString<<endl; _exit(1); }
-        setHLine(t);
-      }
+      if (lineString!="")
+        setHLine(getByPath<HLine>(process_hline_string(lineString)));
       Sensor::init(stage);
     }
     else

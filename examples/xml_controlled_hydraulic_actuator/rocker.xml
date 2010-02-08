@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="Rocker"
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<Group name="Rocker" xmlns="http://mbsim.berlios.de/MBSim">
   <frameOfReference ref="../Frame[FRocker]"/>
   <frames/>
   <contours/>
@@ -43,17 +39,17 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <ombv:Frustum name="x">
-          <ombv:staticColor>.5</ombv:staticColor>
-          <ombv:initialTranslation>[.25; 0; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[0; pi/2; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:baseRadius>.025</ombv:baseRadius>
-          <ombv:topRadius>.025</ombv:topRadius>
-          <ombv:height>.5</ombv:height>
-          <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>0</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.5</staticColor>
+          <initialTranslation>[.25; 0; 0]</initialTranslation>
+          <initialRotation>[0; pi/2; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.025</baseRadius>
+          <topRadius>.025</topRadius>
+          <height>.5</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
         <frameOfReference ref="Frame[C]"/>
       </openMBVRigidBody>
     </RigidBody>
@@ -69,17 +65,17 @@
       <contours>
       </contours>
       <openMBVRigidBody>
-        <ombv:Frustum name="x">
-          <ombv:staticColor>.2</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0.03]</ombv:initialTranslation>
-          <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:baseRadius>.005</ombv:baseRadius>
-          <ombv:topRadius>.005</ombv:topRadius>
-          <ombv:height>.06</ombv:height>
-          <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>0</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.2</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.005</baseRadius>
+          <topRadius>.005</topRadius>
+          <height>.06</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
       </openMBVRigidBody>
     </RigidBody>
     <RigidBody name="RightPin">
@@ -98,17 +94,17 @@
       <contours>
       </contours>
       <openMBVRigidBody>
-        <ombv:Frustum name="x">
-          <ombv:staticColor>.7</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0.03]</ombv:initialTranslation>
-          <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:baseRadius>.005</ombv:baseRadius>
-          <ombv:topRadius>.005</ombv:topRadius>
-          <ombv:height>.06</ombv:height>
-          <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>0</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.7</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[0; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.005</baseRadius>
+          <topRadius>.005</topRadius>
+          <height>.06</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
       </openMBVRigidBody>
     </RigidBody>
     <RigidBody name="Mass">
@@ -127,17 +123,17 @@
       <contours>
       </contours>
       <openMBVRigidBody>
-        <ombv:Frustum name="x">
-          <ombv:staticColor>1</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0.03]</ombv:initialTranslation>
-          <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1</ombv:scaleFactor>
-          <ombv:baseRadius>.1</ombv:baseRadius>
-          <ombv:topRadius>.1</ombv:topRadius>
-          <ombv:height>.1</ombv:height>
-          <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>0</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="x" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>1</staticColor>
+          <initialTranslation>[0; 0; 0.03]</initialTranslation>
+          <initialRotation>[pi/2; 0; 0]</initialRotation>
+          <scaleFactor>1</scaleFactor>
+          <baseRadius>.1</baseRadius>
+          <topRadius>.1</topRadius>
+          <height>.1</height>
+          <innerBaseRadius>0</innerBaseRadius>
+          <innerTopRadius>0</innerTopRadius>
+        </Frustum>
       </openMBVRigidBody>
     </RigidBody>
   </objects>

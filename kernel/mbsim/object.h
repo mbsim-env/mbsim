@@ -22,7 +22,6 @@
 
 #include "mbsim/element.h"
 #include "mbsim/object_interface.h"
-#include "mbsim/frame.h"
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include <string>
 #include <vector>
@@ -30,7 +29,6 @@
 namespace MBSim {
 
   class DynamicSystem;
-  class Contour;
   class Link;
 
   /** 
@@ -238,21 +236,6 @@ namespace MBSim {
        * \brief TODO
        */
       virtual void checkForConstraints() {}
-
-      /**
-       * \return frame of reference
-       */
-      virtual Frame *getFrameOfReference() { return frameOfReference; }
-
-      /**
-       * \return frame of reference
-       */
-      virtual const Frame *getFrameOfReference() const { return frameOfReference; }
-
-      /**
-       * \param frame of reference
-       */
-      virtual void setFrameOfReference(Frame *frame) { frameOfReference = frame; }
       /*******************************************************/ 
 
       /* GETTER / SETTER */
@@ -309,20 +292,14 @@ namespace MBSim {
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);
-      virtual Frame *getFrameByPath(std::string path);
-      virtual Contour *getContourByPath(std::string path);
-      virtual Link *getLinkByPath(std::string path);
+
+      virtual Element* getByPathSearch(std::string path);
 
     protected:
       /**
        * \brief dynamic system, object belongs to
        */
       DynamicSystem * parent;
-
-      /**
-       * \brief frame of reference of the object
-       */
-      Frame * frameOfReference;
 
       /**
        * \brief size of object positions
@@ -395,9 +372,6 @@ namespace MBSim {
        * \brief vector containing all dependencies.
        */
       std::vector<Object*> dependency;
-
-    private:
-      std::string saved_frameOfReference;
   };
 
 }

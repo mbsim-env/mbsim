@@ -12,7 +12,8 @@ libmbsimControl_la_SOURCES = \
 														 signal_processing_system_sensor.cc\
 														 linear_transfer_system.cc\
 														 actuator.cc\
-														 objectfactory.cc
+														 objectfactory.cc\
+														 obsolet_hint.cc
 
 
 libmbsimControl_la_LIBADD = 

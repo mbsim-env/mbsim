@@ -17,36 +17,32 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimControl/signal_processing_system_sensor.h"
-#include "mbsimControl/signal_processing_system.h"
-#include "mbsimControl/objectfactory.h"
+#include "mbsimHydraulics/obsolet_hint.h"
+#include <string>
+#include <iostream>
 
 using namespace std;
-using namespace fmatvec;
-using namespace MBSim;
 
-namespace MBSimControl {
+namespace MBSimHydraulics {
 
-  void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
-    TiXmlElement * e;
-    e = element->FirstChildElement(MBSIMCONTROLNS"signalProcessingSystem");
-    spsString=e->Attribute("ref");
-  }
-
-  void SignalProcessingSystemSensor::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (spsString!="")
-        setSignalProcessingSystem(getByPath<SignalProcessingSystem>(spsString));
-      Sensor::init(stage);
+  string process_signal_string(string path) {
+    if (path.find("Signal[")!=string::npos) {
+      const size_t pos=path.find("Signal[");
+      cout << "WARNING! Signal-Container is obsolete, use Link-Container instead! (" << path << ")" << endl;
+      path.erase(pos, 7);
+      path.insert(pos, "Link[");
     }
-    else
-      Sensor::init(stage);
+    return path;
   }
 
-  Vec SignalProcessingSystemSensor::getSignal() {
-    return sps->calculateOutput();
+  string process_hline_string(string path) {
+    if (path.find("HLine[")!=string::npos) {
+      const size_t pos=path.find("HLine[");
+      cout << "WARNING! HLine-Container is obsolete, use Object-Container instead! (" << path << ")" << endl;
+      path.erase(pos, 6);
+      path.insert(pos, "Object[");
+    }
+    return path;
   }
 
 }
-

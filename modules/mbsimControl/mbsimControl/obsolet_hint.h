@@ -17,36 +17,15 @@
  * Contact: schneidm@users.berlios.de
  */
 
-#include "mbsimControl/signal_processing_system_sensor.h"
-#include "mbsimControl/signal_processing_system.h"
-#include "mbsimControl/objectfactory.h"
+#ifndef _OBSOLET_HINT_H_
+#define _OBSOLET_HINT_H_
 
-using namespace std;
-using namespace fmatvec;
-using namespace MBSim;
+#include <string>
 
 namespace MBSimControl {
 
-  void SignalProcessingSystemSensor::initializeUsingXML(TiXmlElement * element) {
-    Sensor::initializeUsingXML(element);
-    TiXmlElement * e;
-    e = element->FirstChildElement(MBSIMCONTROLNS"signalProcessingSystem");
-    spsString=e->Attribute("ref");
-  }
-
-  void SignalProcessingSystemSensor::init(InitStage stage) {
-    if (stage==resolveXMLPath) {
-      if (spsString!="")
-        setSignalProcessingSystem(getByPath<SignalProcessingSystem>(spsString));
-      Sensor::init(stage);
-    }
-    else
-      Sensor::init(stage);
-  }
-
-  Vec SignalProcessingSystemSensor::getSignal() {
-    return sps->calculateOutput();
-  }
+  std::string process_signal_string(std::string path);
 
 }
 
+#endif /* _OBSOLET_HINT_H_ */

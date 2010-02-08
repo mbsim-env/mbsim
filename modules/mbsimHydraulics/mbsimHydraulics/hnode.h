@@ -48,7 +48,6 @@ namespace MBSimHydraulics {
       HNode(const std::string &name);
       ~HNode() {};
       virtual std::string getType() const { return "HNode"; }
-      HLine * getHLineByPath(std::string path);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double pMin=0e5, double pMax=10e5, fmatvec::Vec WrON=fmatvec::Vec(3));

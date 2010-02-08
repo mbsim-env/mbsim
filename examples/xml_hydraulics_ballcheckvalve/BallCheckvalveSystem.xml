@@ -1,65 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="BallCheckvalveSystem"
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+<Group name="BallCheckvalveSystem" xmlns="http://mbsim.berlios.de/MBSim">
   <position>[0;-(hpcInitialHeight+pistonHeight-pistonContourRadius);0]</position>
   <orientation>eye(3)</orientation>
   <frames/>
   <contours/>
   <groups>
-    <h:BallCheckvalve name="Checkvalve">
-      <h:basisFrame ref="../Object[Piston]/Frame[CheckvalveF]"/>
-      <h:RigidLine>
-        <h:length>.001</h:length>
-        <h:diameter>2*cvRadius</h:diameter>
-        <h:checkvalvePressureLoss>
-          <h:ConeCheckvalveClosablePressureLoss>
-            <h:ballRadius>cvBallRadius</h:ballRadius>
-            <h:alpha>cvAlpha</h:alpha>
-          </h:ConeCheckvalveClosablePressureLoss>
-          <h:minimalXOpen>5e-5</h:minimalXOpen>
-          <h:setValued/>
-        </h:checkvalvePressureLoss>
-      </h:RigidLine>
-      <h:Ball>
-        <h:mass>cvBallMass</h:mass>
-      </h:Ball>
-      <h:Spring>
-        <h:forceFunction>
-          <LinearSpringDamperForce>
+    <BallCheckvalve name="Checkvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <basisFrame ref="../Object[Piston]/Frame[CheckvalveF]"/>
+      <RigidLine>
+        <length>.001</length>
+        <diameter>2*cvRadius</diameter>
+        <checkvalvePressureLoss>
+          <ConeCheckvalveClosablePressureLoss>
+            <ballRadius>cvBallRadius</ballRadius>
+            <alpha>cvAlpha</alpha>
+          </ConeCheckvalveClosablePressureLoss>
+          <minimalXOpen>5e-5</minimalXOpen>
+          <setValued/>
+        </checkvalvePressureLoss>
+      </RigidLine>
+      <Ball>
+        <mass>cvBallMass</mass>
+      </Ball>
+      <Spring>
+        <forceFunction>
+          <LinearSpringDamperForce xmlns="http://mbsim.berlios.de/MBSim">
             <stiffnessCoefficient>cvSpringStiffness</stiffnessCoefficient>
             <dampingCoefficient>cvSpringDamping</dampingCoefficient>
             <unloadedLength>cvMaximalOpening-cvSpringF0/cvSpringStiffness</unloadedLength>
           </LinearSpringDamperForce>
-        </h:forceFunction>
-      </h:Spring>
-      <h:SeatContact>
-        <h:contactForceLaw>
-          <UnilateralConstraint/>
-        </h:contactForceLaw>
-        <h:contactImpactLaw>
-          <UnilateralNewtonImpact>
+        </forceFunction>
+      </Spring>
+      <SeatContact>
+        <contactForceLaw>
+          <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+        </contactForceLaw>
+        <contactImpactLaw>
+          <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
             <restitutionCoefficient>.1</restitutionCoefficient>
           </UnilateralNewtonImpact>
-        </h:contactImpactLaw>
-      </h:SeatContact>
-      <h:maximalOpening>cvMaximalOpening</h:maximalOpening>
-      <h:MaximalOpeningContact>
-        <h:contactForceLaw>
-          <UnilateralConstraint/>
-        </h:contactForceLaw>
-        <h:contactImpactLaw>
-          <UnilateralNewtonImpact>
+        </contactImpactLaw>
+      </SeatContact>
+      <maximalOpening>cvMaximalOpening</maximalOpening>
+      <MaximalOpeningContact>
+        <contactForceLaw>
+          <UnilateralConstraint xmlns="http://mbsim.berlios.de/MBSim"/>
+        </contactForceLaw>
+        <contactImpactLaw>
+          <UnilateralNewtonImpact xmlns="http://mbsim.berlios.de/MBSim">
             <restitutionCoefficient>.1</restitutionCoefficient>
           </UnilateralNewtonImpact>
-        </h:contactImpactLaw>
-      </h:MaximalOpeningContact>
-      <h:enableOpenMBVBodies/>
-      <h:enableOpenMBVFrames/>
-      <h:enableOpenMBVArrows/>
-    </h:BallCheckvalve>
+        </contactImpactLaw>
+      </MaximalOpeningContact>
+      <enableOpenMBVBodies/>
+      <enableOpenMBVFrames/>
+      <enableOpenMBVArrows/>
+    </BallCheckvalve>
   </groups>
   <objects>
     <RigidBody name="Housing">
@@ -132,17 +128,17 @@
         </contour>
       </contours>
       <openMBVRigidBody>
-        <ombv:Frustum name="Frustum">
-          <ombv:staticColor>.5</ombv:staticColor>
-          <ombv:initialTranslation>[0; -pistonHeight/2.; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1.</ombv:scaleFactor>
-          <ombv:baseRadius>pistonRadius</ombv:baseRadius>
-          <ombv:topRadius>pistonRadius</ombv:topRadius>
-          <ombv:height>pistonHeight-pistonContourRadius</ombv:height>
-          <ombv:innerBaseRadius>pistonRadius*.95</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>pistonRadius*.95</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>.5</staticColor>
+          <initialTranslation>[0; -pistonHeight/2.; 0]</initialTranslation>
+          <initialRotation>[pi/2; 0; 0]</initialRotation>
+          <scaleFactor>1.</scaleFactor>
+          <baseRadius>pistonRadius</baseRadius>
+          <topRadius>pistonRadius</topRadius>
+          <height>pistonHeight-pistonContourRadius</height>
+          <innerBaseRadius>pistonRadius*.95</innerBaseRadius>
+          <innerTopRadius>pistonRadius*.95</innerTopRadius>
+        </Frustum>
       </openMBVRigidBody>
       <enableOpenMBVFrameC>
         <size>.001</size>
@@ -150,34 +146,36 @@
       </enableOpenMBVFrameC>
     </RigidBody>
     <!--
-    <h:CircularLeakage name="circularLeakage">
+    <CircularLeakage name="circularLeakage" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
-      <h:direction>[0;1;0]</h:direction>
-      <h:length>gapLength</h:length>
-      <h:innerRadius>pistonRadius</h:innerRadius>
-      <h:height>40*gapDiameter</h:height>
-      <h:pressureLoss>
-        <h:EccentricCircularLeakagePressureLoss name="loss">
-          <h:firstSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[pistonSpeed]"/>
-          <h:secondSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[housingSpeed]"/>
-          <h:gapLength ref="/Group[BallCheckvalveSystem]/Signal[GapLength]"/>
-          <h:eccentricity>0</h:eccentricity>
-        </h:EccentricCircularLeakagePressureLoss>
-      </h:pressureLoss>
-    </h:CircularLeakage>
+      <direction>[0;1;0]</direction>
+      <length>gapLength</length>
+      <innerRadius>pistonRadius</innerRadius>
+      <height>40*gapDiameter</height>
+      <pressureLoss>
+        <EccentricCircularLeakagePressureLoss name="loss">
+          <firstSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[pistonSpeed]"/>
+          <secondSurfaceVelocity ref="/Group[BallCheckvalveSystem]/Signal[housingSpeed]"/>
+          <gapLength ref="/Group[BallCheckvalveSystem]/Signal[GapLength]"/>
+          <eccentricity>0</eccentricity>
+        </EccentricCircularLeakagePressureLoss>
+      </pressureLoss>
+    </CircularLeakage>
     -->
-    <h:CircularLeakageLine name="circularLeakage">
+    <CircularLeakageLine name="circularLeakage" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <!--
       <frameOfReference ref="../Object[Housing]/Frame[C]"/>
-      <h:direction>[0;1;0]</h:direction>
-      <h:length>gapLength</h:length>
-      <h:firstSurfaceVelocity ref="../Signal[pistonSpeed]"/>
-      <h:secondSurfaceVelocity ref="../Signal[housingSpeed]"/>
-      <h:innerRadius>pistonRadius</h:innerRadius>
-      <h:height>gapDiameter</h:height>
-      <h:circularLeakagePressureLoss>
-        <h:RealCircularLeakagePressureLoss/>
-      </h:circularLeakagePressureLoss>
-    </h:CircularLeakageLine>
+      <direction>[0;1;0]</direction>
+      -->
+      <length>gapLength</length>
+      <firstSurfaceVelocity ref="../Signal[pistonSpeed]"/>
+      <secondSurfaceVelocity ref="../Signal[housingSpeed]"/>
+      <innerRadius>pistonRadius</innerRadius>
+      <height>gapDiameter</height>
+      <circularLeakagePressureLoss>
+        <RealCircularLeakagePressureLoss/>
+      </circularLeakagePressureLoss>
+    </CircularLeakageLine>
   </objects>
   <links>
     <SpringDamper name="PistonSpring">
@@ -189,70 +187,70 @@
         </LinearSpringDamperForce>
       </forceFunction>
       <connect ref1="../Frame[I]" ref2="../Object[Piston]/Frame[CheckvalveF]"/>
-      <ombv:CoilSpring name="PistonSpringX">
-        <ombv:minimalColorValue>-10</ombv:minimalColorValue>
-        <ombv:maximalColorValue>10</ombv:maximalColorValue>
-        <ombv:numberOfCoils>5</ombv:numberOfCoils>
-        <ombv:springRadius>.003</ombv:springRadius>
-        <ombv:crossSectionRadius>.0002</ombv:crossSectionRadius>
-        <ombv:scaleFactor>1.</ombv:scaleFactor>
-      </ombv:CoilSpring>
+      <CoilSpring name="PistonSpringX" xmlns="http://openmbv.berlios.de/OpenMBV">
+        <minimalColorValue>-10</minimalColorValue>
+        <maximalColorValue>10</maximalColorValue>
+        <numberOfCoils>5</numberOfCoils>
+        <springRadius>.003</springRadius>
+        <crossSectionRadius>.0002</crossSectionRadius>
+        <scaleFactor>1.</scaleFactor>
+      </CoilSpring>
     </SpringDamper>
-    <c:RelativePositionSensor name="GapLength">
-      <c:frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>
-      <c:direction>[0;-1;0]</c:direction>
-    </c:RelativePositionSensor>
-    <c:AbsoluteVelocitySensor name="housingSpeed">
-      <c:frame ref="../Object[Housing]/Frame[PistonGap]"/>
-      <c:direction>[0;1;0]</c:direction>
-    </c:AbsoluteVelocitySensor>
-    <c:AbsoluteVelocitySensor name="pistonSpeed">
-      <c:frame ref="../Object[Piston]/Frame[CheckvalveF]"/>
-      <c:direction>[0;1;0]</c:direction>
-    </c:AbsoluteVelocitySensor>
-    <h:EnvironmentNodeMec name="nEnvironment">
-      <h:inflow ref="../HLine[circularLeakage]"/>
-      <h:initialVolume>0</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Piston]/Frame[TopF]"/>
-        <h:normal>[0;-1;0]</h:normal>
-        <h:area>pi*pistonRadius^2</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows>
-        <h:size>.001</h:size>
-      </h:enableOpenMBVArrows>
-    </h:EnvironmentNodeMec>
-    <h:ConstrainedNodeMec name="nLPC">
-      <h:outflow ref="../Group[Checkvalve]/HLine[Line]"/>
-      <h:initialVolume>0</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>
-        <h:normal>[1;0;0]</h:normal>
-        <h:area>pi*cvRadius^2</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows>
-        <h:size>.001</h:size>
-      </h:enableOpenMBVArrows>
-      <h:function>
-        <ConstantFunction1_SS>
+    <RelativePositionSensor name="GapLength" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../Object[Housing]/Frame[PistonGap]" rel="../Object[Piston]/Frame[CheckvalveF]"/>
+      <direction>[0;-1;0]</direction>
+    </RelativePositionSensor>
+    <AbsoluteVelocitySensor name="housingSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../Object[Housing]/Frame[PistonGap]"/>
+      <direction>[0;1;0]</direction>
+    </AbsoluteVelocitySensor>
+    <AbsoluteVelocitySensor name="pistonSpeed" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../Object[Piston]/Frame[CheckvalveF]"/>
+      <direction>[0;1;0]</direction>
+    </AbsoluteVelocitySensor>
+    <EnvironmentNodeMec name="nEnvironment" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <inflow ref="../HLine[circularLeakage]"/>
+      <initialVolume>0</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Piston]/Frame[TopF]"/>
+        <normal>[0;-1;0]</normal>
+        <area>pi*pistonRadius^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.001</size>
+      </enableOpenMBVArrows>
+    </EnvironmentNodeMec>
+    <ConstrainedNodeMec name="nLPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <outflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <initialVolume>0</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>
+        <normal>[1;0;0]</normal>
+        <area>pi*cvRadius^2</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.001</size>
+      </enableOpenMBVArrows>
+      <function>
+        <ConstantFunction1_SS xmlns="http://mbsim.berlios.de/MBSim">
           <value>4e5</value>
         </ConstantFunction1_SS>
-      </h:function>
-    </h:ConstrainedNodeMec>
-    <h:ElasticNodeMec name="nHPC">
-      <h:outflow ref="../HLine[circularLeakage]"></h:outflow>
-      <h:inflow ref="../Group[Checkvalve]/HLine[Line]"/>
-      <h:initialVolume>hpcV0</h:initialVolume>
-      <h:translatorialBoundarySourface>
-        <h:frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>
-        <h:normal>[-1;0;0]</h:normal>
-        <h:area>pi*(pistonRadius^2-cvRadius^2)</h:area>
-      </h:translatorialBoundarySourface>
-      <h:enableOpenMBVArrows>
-        <h:size>.001</h:size>
-      </h:enableOpenMBVArrows>
-      <h:initialPressure>5e5</h:initialPressure>
-      <h:fracAir>.02</h:fracAir>
-    </h:ElasticNodeMec>
+      </function>
+    </ConstrainedNodeMec>
+    <ElasticNodeMec name="nHPC" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <outflow ref="../HLine[circularLeakage]"></outflow>
+      <inflow ref="../Group[Checkvalve]/HLine[Line]"/>
+      <initialVolume>hpcV0</initialVolume>
+      <translatorialBoundarySourface>
+        <frameOfReference ref="../Object[Piston]/Frame[CheckvalveF]"/>
+        <normal>[-1;0;0]</normal>
+        <area>pi*(pistonRadius^2-cvRadius^2)</area>
+      </translatorialBoundarySourface>
+      <enableOpenMBVArrows>
+        <size>.001</size>
+      </enableOpenMBVArrows>
+      <initialPressure>5e5</initialPressure>
+      <fracAir>.02</fracAir>
+    </ElasticNodeMec>
   </links>
 </Group>

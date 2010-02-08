@@ -66,12 +66,8 @@ namespace MBSim {
 
   void ExternGeneralizedIO::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_connectedObject!="") {
-        if(saved_connectedObject.substr(0,3)=="../")
-          connectedObject=parent->getObjectByPath(saved_connectedObject.substr(3));
-        else
-          connectedObject=parent->getObjectByPath(saved_connectedObject);
-      }
+      if(saved_connectedObject!="")
+        connectedObject=getByPath<Object>(saved_connectedObject);
       Link::init(stage);
     }
     else if(stage==resize) {

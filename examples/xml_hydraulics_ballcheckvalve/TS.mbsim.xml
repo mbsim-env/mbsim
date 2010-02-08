@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="TS" 
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
-  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl">
+<DynamicSystemSolver name="TS" xmlns="http://mbsim.berlios.de/MBSim"
+    xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
   <frames>
     <frame>
       <Frame name="AnregungC"/>
@@ -80,17 +76,17 @@
         </contour>
       </contours>
       <openMBVRigidBody>
-        <ombv:Frustum name="Frustum">
-          <ombv:staticColor>0</ombv:staticColor>
-          <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
-          <ombv:initialRotation>[pi/2; 0; 0]</ombv:initialRotation>
-          <ombv:scaleFactor>1.</ombv:scaleFactor>
-          <ombv:baseRadius>4.2945e-3</ombv:baseRadius>
-          <ombv:topRadius>4.2945e-3</ombv:topRadius>
-          <ombv:height>.005</ombv:height>
-          <ombv:innerBaseRadius>4.1e-3</ombv:innerBaseRadius>
-          <ombv:innerTopRadius>4.1e-3</ombv:innerTopRadius>
-        </ombv:Frustum>
+        <Frustum name="Frustum" xmlns="http://openmbv.berlios.de/OpenMBV">
+          <staticColor>0</staticColor>
+          <initialTranslation>[0; 0; 0]</initialTranslation>
+          <initialRotation>[pi/2; 0; 0]</initialRotation>
+          <scaleFactor>1.</scaleFactor>
+          <baseRadius>4.2945e-3</baseRadius>
+          <topRadius>4.2945e-3</topRadius>
+          <height>.005</height>
+          <innerBaseRadius>4.1e-3</innerBaseRadius>
+          <innerTopRadius>4.1e-3</innerTopRadius>
+        </Frustum>
       </openMBVRigidBody>
       <enableOpenMBVFrameC>
         <size>.001</size>
@@ -124,46 +120,46 @@
       <frictionImpactLaw/>
       <connect ref1="../Object[Anregung]/Contour[Line]" ref2="../Group[BallCheckvalveSystem]/Object[Piston]/Contour[Contour]"/>
     </Contact>
-    <c:AbsolutePositionSensor name="AnregungPos">
-      <c:frame ref="../Object[Anregung]/Frame[C]"/>
-      <c:direction>[0;1;0]</c:direction>
-    </c:AbsolutePositionSensor>
-    <c:AbsoluteVelocitySensor name="AnregungVel">
-      <c:frame ref="../Object[Anregung]/Frame[C]"/>
-      <c:direction>[0;1;0]</c:direction>
-    </c:AbsoluteVelocitySensor>
+    <AbsolutePositionSensor name="AnregungPos" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../Object[Anregung]/Frame[C]"/>
+      <direction>[0;1;0]</direction>
+    </AbsolutePositionSensor>
+    <AbsoluteVelocitySensor name="AnregungVel" xmlns="http://mbsim.berlios.de/MBSimControl">
+      <frame ref="../Object[Anregung]/Frame[C]"/>
+      <direction>[0;1;0]</direction>
+    </AbsoluteVelocitySensor>
   </links>
   <environments>
     <MBSimEnvironment>
       <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
     </MBSimEnvironment>
-    <h:HydraulicEnvironment>
-      <h:environmentPressure unit="bar">1</h:environmentPressure>
-      <h:specificMass>
-        <!--<h:constantSpecificMass>800</h:constantSpecificMass>-->
-        <!--<h:volumeDependingOnTemperature>
-          <h:dVdT>-.8</h:dVdT>
-          <h:basicSpecificMass>1200</h:basicSpecificMass>
-          <h:basicTemperature>10</h:basicTemperature>
-        </h:volumeDependingOnTemperature>-->
-        <h:specificMassDependingOnTemperature>
-          <h:dRhodT>-.8</h:dRhodT>
-          <h:basicSpecificMass unit="kg/m^3">1200</h:basicSpecificMass>
-          <h:basicTemperature unit="degC">10</h:basicTemperature>
-        </h:specificMassDependingOnTemperature>
-      </h:specificMass>
-      <h:kinematicViscosity>
-        <!--<h:constantKinematicViscosity>12e-6</h:constantKinematicViscosity>-->
-        <h:walterUbbeohdeKinematicViscosity>
-          <h:temperature1 unit="degC">40</h:temperature1>
-          <h:kinematicViscosity1>55e-6</h:kinematicViscosity1>
-          <h:temperature2 unit="degC">100</h:temperature2>
-          <h:kinematicViscosity2>10e-6</h:kinematicViscosity2>
-        </h:walterUbbeohdeKinematicViscosity>
-      </h:kinematicViscosity>
-      <h:basicBulkModulus>2e11</h:basicBulkModulus>
-      <h:kappa>1.4</h:kappa>
-      <h:fluidTemperature unit="degC">50</h:fluidTemperature>
-    </h:HydraulicEnvironment>
+    <HydraulicEnvironment xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <environmentPressure unit="bar">1</environmentPressure>
+      <specificMass>
+        <!--<constantSpecificMass>800</constantSpecificMass>-->
+        <!--<volumeDependingOnTemperature>
+          <dVdT>-.8</dVdT>
+          <basicSpecificMass>1200</basicSpecificMass>
+          <basicTemperature>10</basicTemperature>
+        </volumeDependingOnTemperature>-->
+        <specificMassDependingOnTemperature>
+          <dRhodT>-.8</dRhodT>
+          <basicSpecificMass unit="kg/m^3">1200</basicSpecificMass>
+          <basicTemperature unit="degC">10</basicTemperature>
+        </specificMassDependingOnTemperature>
+      </specificMass>
+      <kinematicViscosity>
+        <!--<constantKinematicViscosity>12e-6</constantKinematicViscosity>-->
+        <walterUbbeohdeKinematicViscosity>
+          <temperature1 unit="degC">40</temperature1>
+          <kinematicViscosity1>55e-6</kinematicViscosity1>
+          <temperature2 unit="degC">100</temperature2>
+          <kinematicViscosity2>10e-6</kinematicViscosity2>
+        </walterUbbeohdeKinematicViscosity>
+      </kinematicViscosity>
+      <basicBulkModulus>2e11</basicBulkModulus>
+      <kappa>1.4</kappa>
+      <fluidTemperature unit="degC">50</fluidTemperature>
+    </HydraulicEnvironment>
   </environments>
 </DynamicSystemSolver>

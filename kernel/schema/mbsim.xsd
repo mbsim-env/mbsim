@@ -236,10 +236,10 @@
           Elemente die mit einem Großbuchstaben beginnen.</p>
     </xs:documentation></xs:annotation>
     <xs:restriction base="pv:partialOctaveString">
-      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Contact\[X\]" with
+      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*(Contact\[X\]|Link\[X\])" with
       X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
       from physicalvariable.xsd name attribute -->
-      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Contact\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*(Contact\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|)"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -796,19 +796,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="frameOfReference">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Definiert das KOS bezüglich dessen die Bewegung (Kinematik; generalisierte Lagen) dieses Objekts angegeben wird.<br/>
-                Ist dieses Referenz-KOS ein KOS einer Gruppe (statisches KOS) so handelt es sich um eine Objekt
-                mit absoluter Parametrierung. Ist das Referenz-KOS eine KOS eines anderen Objekts (bewegtes KOS),
-                so handelt es sich um ein Objekt mit relativer Parametrierung (Baumstruktur).
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
         </xs:sequence> 
         <xs:attribute ref="xml:base"/>
       </xs:extension>
@@ -855,7 +842,23 @@
   </xs:element>
   <xs:complexType name="BodyType">
     <xs:complexContent>
-      <xs:extension base="ObjectType"/>
+      <xs:extension base="ObjectType">
+        <xs:sequence>
+          <xs:element name="frameOfReference">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definiert das KOS bezüglich dessen die Bewegung (Kinematik; generalisierte Lagen) des Körpers angegeben wird.<br/>
+                Ist dieses Referenz-KOS ein KOS einer Gruppe (statisches KOS) so wird der Körper mit absoluten Koordinaten parametriert.
+                Ist das Referenz-KOS eine KOS eines anderen Körpers (bewegtes KOS),
+                so handelt es sich um einen Körper mit relativer Parametrierung (Baumstruktur).
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 

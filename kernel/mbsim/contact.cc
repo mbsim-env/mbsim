@@ -41,10 +41,11 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0)
+  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), wbk(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), Vk(0), Wk(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-                                         , openMBVContactGrp(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
+                                         , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
+                                         , saved_ref1(""), saved_ref2("")
                                          {}
 
   Contact::~Contact() {
@@ -131,7 +132,7 @@ namespace MBSim {
   }
 
   void Contact::updategd(double t) {
-    bool flag = fcl->isSetValued();
+    const bool flag = fcl->isSetValued();
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if((flag && gdActive[k][0]) || (!flag && fcl->isActive(gk[k](0),0))) {
         for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); // angular velocity necessary e.g. see ContactKinematicsSpherePlane::updatewb
@@ -349,11 +350,8 @@ namespace MBSim {
 
   void Contact::init(InitStage stage) {
     if(stage==resolveXMLPath) {
-      if(saved_ref1!="" && saved_ref2!="") {
-        Contour *ref1=getContourByPath(saved_ref1);
-        Contour *ref2=getContourByPath(saved_ref2);
-        connect(ref1,ref2);
-      }
+      if(saved_ref1!="" && saved_ref2!="")
+        connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
       LinkMechanics::init(stage);
     }
     else if(stage==resize) {

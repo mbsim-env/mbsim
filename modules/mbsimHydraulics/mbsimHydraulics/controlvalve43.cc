@@ -25,6 +25,7 @@
 #include "mbsimHydraulics/objectfactory.h"
 #include "mbsim/utils/eps.h"
 #include <fstream>
+#include "mbsimHydraulics/obsolet_hint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -77,32 +78,6 @@ namespace MBSimHydraulics {
     addLink(nT);
     nT->addInFlow(lAT);
     nT->addInFlow(lBT);
-  }
-
-  HLine * Controlvalve43::getHLineByPath(string path) {
-    int pos=path.find("HLine");
-    path.erase(pos, 5);
-    path.insert(pos, "Object");
-    Object * h = getObjectByPath(path);
-    if (dynamic_cast<HLine *>(h))
-      return static_cast<HLine *>(h);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of HLine-Type." << std::endl; 
-      _exit(1);
-    }
-  }
-
-  Signal * Controlvalve43::getSignalByPath(string path) {
-    int pos=path.find("Signal");
-    path.erase(pos, 6);
-    path.insert(pos, "Link");
-    Link * h = getLinkByPath(path);
-    if (dynamic_cast<Signal *>(h))
-      return static_cast<Signal *>(h);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of Signal-Type." << std::endl; 
-      _exit(1);
-    }
   }
 
   void Controlvalve43::setLength(double l) {
@@ -161,15 +136,15 @@ namespace MBSimHydraulics {
   void Controlvalve43::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
       if (positionString!="")
-        setRelativePositionSignal(getSignalByPath(positionString));
+        setRelativePositionSignal(getByPath<Signal>(process_signal_string(positionString)));
       if (nPInflowString!="")
-        setPInflow(getHLineByPath(nPInflowString));
+        setPInflow(getByPath<HLine>(process_hline_string(nPInflowString)));
       if (nAOutflowString!="")
-        setAOutflow(getHLineByPath(nAOutflowString));
+        setAOutflow(getByPath<HLine>(process_hline_string(nAOutflowString)));
       if (nBOutflowString!="")
-        setBOutflow(getHLineByPath(nBOutflowString));
+        setBOutflow(getByPath<HLine>(process_hline_string(nBOutflowString)));
       if (nTOutflowString!="")
-        setTOutflow(getHLineByPath(nTOutflowString));
+        setTOutflow(getByPath<HLine>(process_hline_string(nTOutflowString)));
 
       checkSizeSignalPA = new ControlvalveAreaSignal("RelativeAlphaPA", 1., 0., position, relAlphaPA);
       addLink(checkSizeSignalPA);

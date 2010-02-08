@@ -22,6 +22,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
 #endif
@@ -30,11 +31,11 @@ using namespace std;
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name) {
+  Body::Body(const string &name) : Object(name), frameOfReference(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
-    openMBVBody=0;
-    openMBVGrp=0;
+                                   ,  openMBVBody(0), openMBVGrp(0), 
 #endif
+                                   saved_frameOfReference("") {
   } 
 
   Body::~Body() {
@@ -101,7 +102,20 @@ namespace MBSim {
   }
 
   void Body::init(InitStage stage) {
-    if(stage==MBSim::plot) {
+    if(stage==resolveXMLPath) {
+      if(saved_frameOfReference!="")
+        setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      Object::init(stage);
+    }
+    if(stage==preInit) {
+      Object::init(stage);
+      if(frameOfReference) {
+        Body* obj = dynamic_cast<Body*>(frameOfReference->getParent());
+        if(obj)
+          dependency.push_back(obj);
+      }
+    }
+    else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
 
       if(getPlotFeature(plotRecursive)==enabled) {
@@ -189,46 +203,32 @@ namespace MBSim {
     return -1;
   }
 
-  Frame *Body::getFrameByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getFrameByPath(path);
-      else
-        return getFrameByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getFrameByPath(restPart);
-    else if(firstPart.substr(0,6)=="Frame[")
-      return getFrame(firstPart.substr(6,firstPart.find(']')-6));
-    else
-      return 0;
+  void Body::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    Object::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"frameOfReference");
+    saved_frameOfReference=e->Attribute("ref");
   }
 
-  Contour *Body::getContourByPath(string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getContourByPath(path);
-      else
-        return getContourByPath(path.substr(1));
+  Element * Body::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") // absolut path
+      return ds->getByPathSearch(path);
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      size_t pos0=path.find_first_of("[", 0);
+      string container=path.substr(0, pos0);
+      size_t pos1=path.find_first_of("]", pos0);
+      string searched_name=path.substr(pos0+1, pos1-pos0-1);
+      if (container=="Frame")
+        return getFrame(searched_name);
+      else if (container=="Contour")
+        return getContour(searched_name);
+      else {
+        cout << "Unknown name of container" << endl;
+        throw(123);
+      }
     }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getContourByPath(restPart);
-    else if(firstPart.substr(0,8)=="Contour[")
-      return getContour(firstPart.substr(8,firstPart.find(']')-8));
-    else
-      return 0;
   }
 
 }

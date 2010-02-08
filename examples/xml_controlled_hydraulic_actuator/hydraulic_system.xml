@@ -1,121 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="HydraulicSystem"
-  xmlns="http://mbsim.berlios.de/MBSim"
-  xmlns:c="http://mbsim.berlios.de/MBSimControl"
-  xmlns:h="http://mbsim.berlios.de/MBSimHydraulics"
-  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
-  xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
+<Group name="HydraulicSystem" xmlns="http://mbsim.berlios.de/MBSim">
   <frameOfReference ref="../Frame[I]"/>
   <frames/>
   <contours/>
   <groups>
-    <h:Controlvalve43 name="Controlvalve">
-      <h:length>.02</h:length>
-      <h:diameter>.003</h:diameter>
-      <h:alpha>.7</h:alpha>
-      <h:relativeAlphaPA>
-        <Function1_SS_from_VS>
+    <Controlvalve43 name="Controlvalve" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <length>.02</length>
+      <diameter>.003</diameter>
+      <alpha>.7</alpha>
+      <relativeAlphaPA>
+        <Function1_SS_from_VS xmlns="http://mbsim.berlios.de/MBSim">
           <TabularFunction1_VS>
             <x>[0; .4; .45; 1]</x>
             <y>[1;  1;  0; 0]</y>
           </TabularFunction1_VS>
         </Function1_SS_from_VS>
-      </h:relativeAlphaPA>
-      <h:minimalRelativeAlpha>.05</h:minimalRelativeAlpha>
-      <h:bilateralConstrained/>
-      <h:offset>.05</h:offset>
-      <h:relativePosition ref="../../Group[Control]/Signal[PT1ControlvalveOutputLimitted]"/>
-      <h:inflowP ref="../HLine[lineP]"/>
-      <h:outflowA ref="../HLine[lineA]"/>
-      <h:outflowB ref="../HLine[lineB]"/>
-      <h:outflowT ref="../HLine[lineT]"/>
-    </h:Controlvalve43>  
+      </relativeAlphaPA>
+      <minimalRelativeAlpha>.05</minimalRelativeAlpha>
+      <bilateralConstrained/>
+      <offset>.05</offset>
+      <relativePosition ref="../../Group[Control]/Signal[PT1ControlvalveOutputLimitted]"/>
+      <inflowP ref="../HLine[lineP]"/>
+      <outflowA ref="../HLine[lineA]"/>
+      <outflowB ref="../HLine[lineB]"/>
+      <outflowT ref="../HLine[lineT]"/>
+    </Controlvalve43>  
   </groups>
   <objects>
-    <h:RigidLine name="lineP">
+    <RigidLine name="lineP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
-      <h:direction>[0;0;0]</h:direction>
-      <h:length>.15</h:length>
-      <h:diameter>.005</h:diameter>
-      <h:linePressureLoss>
-        <h:SerialResistanceLinePressureLoss>
-          <h:TurbulentTubeFlowLinePressureLoss>
-            <h:referenceDiameter>.005</h:referenceDiameter>
-            <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
-          </h:TurbulentTubeFlowLinePressureLoss>
-          <h:ZetaLinePressureLoss>
-            <h:zeta>.04</h:zeta>
-          </h:ZetaLinePressureLoss>
-        </h:SerialResistanceLinePressureLoss>
-      </h:linePressureLoss>
-    </h:RigidLine>
-    <h:RigidLine name="lineA">
+      <direction>[0;0;0]</direction>
+      <length>.15</length>
+      <diameter>.005</diameter>
+      <linePressureLoss>
+        <SerialResistanceLinePressureLoss>
+          <TurbulentTubeFlowLinePressureLoss>
+            <referenceDiameter>.005</referenceDiameter>
+            <hydraulicDiameter>.005</hydraulicDiameter>
+            <surfaceRoughness unit="mum">20</surfaceRoughness>
+          </TurbulentTubeFlowLinePressureLoss>
+          <ZetaLinePressureLoss>
+            <zeta>.04</zeta>
+          </ZetaLinePressureLoss>
+        </SerialResistanceLinePressureLoss>
+      </linePressureLoss>
+    </RigidLine>
+    <RigidLine name="lineA" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
-      <h:direction>[0;0;0]</h:direction>
-      <h:length>.15</h:length>
-      <h:diameter>.005</h:diameter>
-      <h:linePressureLoss>
-        <h:SerialResistanceLinePressureLoss>
-          <h:TurbulentTubeFlowLinePressureLoss>
-            <h:referenceDiameter>.005</h:referenceDiameter>
-            <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
-          </h:TurbulentTubeFlowLinePressureLoss>
-          <h:ZetaLinePressureLoss>
-            <h:zeta>.04</h:zeta>
-          </h:ZetaLinePressureLoss>
-        </h:SerialResistanceLinePressureLoss>
-      </h:linePressureLoss>
-    </h:RigidLine>
-    <h:RigidLine name="lineB">
+      <direction>[0;0;0]</direction>
+      <length>.15</length>
+      <diameter>.005</diameter>
+      <linePressureLoss>
+        <SerialResistanceLinePressureLoss>
+          <TurbulentTubeFlowLinePressureLoss>
+            <referenceDiameter>.005</referenceDiameter>
+            <hydraulicDiameter>.005</hydraulicDiameter>
+            <surfaceRoughness unit="mum">20</surfaceRoughness>
+          </TurbulentTubeFlowLinePressureLoss>
+          <ZetaLinePressureLoss>
+            <zeta>.04</zeta>
+          </ZetaLinePressureLoss>
+        </SerialResistanceLinePressureLoss>
+      </linePressureLoss>
+    </RigidLine>
+    <RigidLine name="lineB" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
-      <h:direction>[0;0;0]</h:direction>
-      <h:length>.15</h:length>
-      <h:diameter>.005</h:diameter>
-      <h:linePressureLoss>
-        <h:SerialResistanceLinePressureLoss>
-          <h:TurbulentTubeFlowLinePressureLoss>
-            <h:referenceDiameter>.005</h:referenceDiameter>
-            <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
-          </h:TurbulentTubeFlowLinePressureLoss>
-          <h:ZetaLinePressureLoss>
-            <h:zeta>.04</h:zeta>
-          </h:ZetaLinePressureLoss>
-        </h:SerialResistanceLinePressureLoss>
-      </h:linePressureLoss>
-    </h:RigidLine>
-    <h:RigidLine name="lineT">
+      <direction>[0;0;0]</direction>
+      <length>.15</length>
+      <diameter>.005</diameter>
+      <linePressureLoss>
+        <SerialResistanceLinePressureLoss>
+          <TurbulentTubeFlowLinePressureLoss>
+            <referenceDiameter>.005</referenceDiameter>
+            <hydraulicDiameter>.005</hydraulicDiameter>
+            <surfaceRoughness unit="mum">20</surfaceRoughness>
+          </TurbulentTubeFlowLinePressureLoss>
+          <ZetaLinePressureLoss>
+            <zeta>.04</zeta>
+          </ZetaLinePressureLoss>
+        </SerialResistanceLinePressureLoss>
+      </linePressureLoss>
+    </RigidLine>
+    <RigidLine name="lineT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
       <frameOfReference ref="../Frame[I]"/>
-      <h:direction>[0;0;0]</h:direction>
-      <h:length>.05</h:length>
-      <h:diameter>.01</h:diameter>
-      <h:linePressureLoss>
-        <h:SerialResistanceLinePressureLoss>
-          <h:TurbulentTubeFlowLinePressureLoss>
-            <h:referenceDiameter>.005</h:referenceDiameter>
-            <h:hydraulicDiameter>.005</h:hydraulicDiameter>
-            <h:surfaceRoughness unit="mum">20</h:surfaceRoughness>
-          </h:TurbulentTubeFlowLinePressureLoss>
-          <h:ZetaLinePressureLoss>
-            <h:zeta>.04</h:zeta>
-          </h:ZetaLinePressureLoss>
-        </h:SerialResistanceLinePressureLoss>
-      </h:linePressureLoss>
-    </h:RigidLine>
+      <direction>[0;0;0]</direction>
+      <length>.05</length>
+      <diameter>.01</diameter>
+      <linePressureLoss>
+        <SerialResistanceLinePressureLoss>
+          <TurbulentTubeFlowLinePressureLoss>
+            <referenceDiameter>.005</referenceDiameter>
+            <hydraulicDiameter>.005</hydraulicDiameter>
+            <surfaceRoughness unit="mum">20</surfaceRoughness>
+          </TurbulentTubeFlowLinePressureLoss>
+          <ZetaLinePressureLoss>
+            <zeta>.04</zeta>
+          </ZetaLinePressureLoss>
+        </SerialResistanceLinePressureLoss>
+      </linePressureLoss>
+    </RigidLine>
   </objects>
   <links>
-    <h:ConstrainedNode name="sourceP">
-      <h:outflow ref="../HLine[lineP]"/>
-      <h:function>
-        <ConstantFunction1_SS>
+    <ConstrainedNode name="sourceP" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <outflow ref="../HLine[lineP]"/>
+      <function>
+        <ConstantFunction1_SS xmlns="http://mbsim.berlios.de/MBSim">
           <value>40e5</value>
         </ConstantFunction1_SS>
-      </h:function>
-    </h:ConstrainedNode>
-    <h:EnvironmentNode name="sourceT">
-      <h:inflow ref="../HLine[lineT]"/>
-    </h:EnvironmentNode>
+      </function>
+    </ConstrainedNode>
+    <EnvironmentNode name="sourceT" xmlns="http://mbsim.berlios.de/MBSimHydraulics">
+      <inflow ref="../HLine[lineT]"/>
+    </EnvironmentNode>
   </links>
 </Group>

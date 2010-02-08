@@ -527,7 +527,7 @@ namespace MBSim {
     }
 
     e=element->FirstChildElement(MBSIMNS"frameForKinematics");
-    setFrameForKinematics(getFrameByPath(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=element->FirstChildElement(MBSIMNS"mass");
     setMass(getDouble(e));
     e=element->FirstChildElement(MBSIMNS"inertiaTensor");
@@ -602,7 +602,7 @@ namespace MBSim {
       rb->initializeUsingXML(e->FirstChildElement());
 
       if (e->FirstChildElement(MBSIMNS"frameOfReference"))
-        setOpenMBVFrameOfReference(getFrameByPath(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+        setOpenMBVFrameOfReference(getByPath<Frame>(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     }
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");

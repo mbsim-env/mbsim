@@ -23,6 +23,10 @@
 #include "mbsim/object.h"
 #include "mbsim/utils/function.h"
 
+namespace MBSim {
+  class Frame;
+}
+
 namespace MBSimControl {
   class Signal;
 }
@@ -36,7 +40,7 @@ namespace MBSimHydraulics {
   /*! HLine */
   class HLine : public MBSim::Object {
     public:
-      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), direction(3), Mlocal(0) {};
+      HLine(const std::string &name) : MBSim::Object(name), nFrom(NULL), nTo(NULL), nFromRelative(false), nToRelative(false), direction(fmatvec::Vec(3, fmatvec::INIT, 0)), Mlocal(0), Jacobian(0,0) {};
       virtual std::string getType() const { return "HLine"; }
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
@@ -48,47 +52,60 @@ namespace MBSimHydraulics {
 #endif
       /***************************************************/
 
+      virtual void setFrameOfReference(MBSim::Frame *frame);
       void setFromNode(HNode * nFrom_) {nFrom=nFrom_; }
       void setToNode(HNode * nTo_) {nTo=nTo_; }
       void setDirection(fmatvec::Vec dir) {direction=((nrm2(dir)>0)?dir/nrm2(dir):fmatvec::Vec(3, fmatvec::INIT, 0)); }
       HNode * getFromNode() { return nFrom; }
       HNode * getToNode() {return nTo; }
+      void setOutflowRelative(bool rel=true) {nToRelative=rel; }
+      void setInflowRelative(bool rel=true) {nFromRelative=rel; }
 
       virtual fmatvec::Vec getQIn(double t) = 0;
       virtual fmatvec::Vec getQOut(double t) = 0;
       virtual fmatvec::Vec getInflowFactor() = 0;
       virtual fmatvec::Vec getOutflowFactor() = 0;
+      virtual fmatvec::Mat& getJacobian() {return Jacobian; }
       
       void updateM(double t) {M=Mlocal; }
 
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
       
-      MBSimControl::Signal * getSignalByPath(std::string path);
     protected:
       HNode * nFrom;
       HNode * nTo;
+      bool nFromRelative, nToRelative;
       fmatvec::Vec direction;
       fmatvec::SymMat Mlocal;
+      fmatvec::Mat Jacobian;
+      MBSim::Frame * frameOfReference;
+    private:
+      std::string saved_frameOfReference;
   };
 
   /*! RigidHLine */
   class RigidHLine : public HLine {
     public:
-      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0) {}
+      RigidHLine(const std::string &name) : HLine(name), pressureLossGravity(0), length(0), Q(fmatvec::Vec(1)) {}
       virtual std::string getType() const { return "RigidHLine"; }
       
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
+      void addInflowDependencyOnOutflow(RigidHLine* line);
+      void addInflowDependencyOnInflow(RigidHLine* line);
 
-      virtual fmatvec::Vec getQIn(double t) {return u; }
-      virtual fmatvec::Vec getQOut(double t) {return -u; }
+      virtual fmatvec::Vec getQIn(double t) {return Q; }
+      virtual fmatvec::Vec getQOut(double t) {return -Q; }
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
-      void calcuSize(int j) {uSize[j]=1; }
+      void calcuSize(int j) {uSize[j]=(dependency.size()?0:1); }
+      fmatvec::Mat calculateJacobian(std::vector<RigidHLine*> dep_check);
       
+      virtual void updateStateDependentVariables(double t);
       void updateh(double t);
+      void updateM(double t);
       
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
@@ -97,6 +114,9 @@ namespace MBSimHydraulics {
     protected:
       double pressureLossGravity;
       double length;
+      fmatvec::Vec Q;
+      std::vector<RigidHLine*> dependencyOnOutflow, dependencyOnInflow;
+      std::vector<std::string> refDependencyOnOutflowString, refDependencyOnInflowString;
   };
 
   /*! ConstrainedLine */

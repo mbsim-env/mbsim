@@ -172,11 +172,8 @@ namespace MBSimHydraulics {
       Group::init(stage);
     }
     else if (stage==MBSim::resolveXMLPath) {
-      if (refFrameString!="") {
-        Frame * ref_=getFrameByPath(refFrameString);
-        if(!ref_) { cerr<<"ERROR! Cannot find frame: "<<refFrameString<<endl; _exit(1); }
-        setFrameOfReference(ref_);
-      }
+      if (refFrameString!="")
+        setFrameOfReference(getByPath<Frame>(refFrameString));
       Group::init(stage);
     }
     else if (stage==MBSim::preInit) {

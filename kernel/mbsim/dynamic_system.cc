@@ -1475,160 +1475,54 @@ namespace MBSim {
     obj->setParent(this);
   }
 
-  Object *DynamicSystem::getObjectByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getObjectByPath(path);
-      else
-        return getObjectByPath(path.substr(1));
+  Element * DynamicSystem::getByPathSearch(string path) {
+    if (path.substr(0, 1)=="/") { // absolut path
+      if (this!=ds) // absolut path from Group
+        return ds->getByPathSearch(path);
+      else // absolut path from DynamicSystemSolver
+        return getByPathSearch(path.substr(1));
     }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getObjectByPath(restPart);
-    else if(firstPart.substr(0,7)=="Object[")
-      return getObject(firstPart.substr(7,firstPart.find(']')-7));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getObjectByPath(restPart);
-    else
-      return 0;
-  }
-
-  ExtraDynamic *DynamicSystem::getExtraDynamicByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getExtraDynamicByPath(path);
-      else
-        return getExtraDynamicByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getExtraDynamicByPath(restPart);
-    else if(firstPart.substr(0,13)=="ExtraDynamic[")
-      return getExtraDynamic(firstPart.substr(13,firstPart.find(']')-13));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getExtraDynamicByPath(restPart);
-    else
-      return 0;
-  }
-
-  DynamicSystem *DynamicSystem::getGroupByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getGroupByPath(path);
-      else
-        return getGroupByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getGroupByPath(restPart);
-    else if(firstPart.substr(0,6)=="Group[" && restPart=="")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getGroupByPath(restPart);
-    else
-      return 0;
-  }
-
-  Link *DynamicSystem::getLinkByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getLinkByPath(path);
-      else
-        return getLinkByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getLinkByPath(restPart);
-    else if(firstPart.substr(0,5)=="Link[")
-      return getLink(firstPart.substr(5,firstPart.find(']')-5));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getLinkByPath(restPart);
-    else
-      return 0;
-  }
-
-  Frame *DynamicSystem::getFrameByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getFrameByPath(path);
-      else
-        return getFrameByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getFrameByPath(restPart);
-    else if(firstPart.substr(0,6)=="Frame[")
-      return getFrame(firstPart.substr(6,firstPart.find(']')-6));
-    else if(firstPart.substr(0,7)=="Object[")
-      return getObject(firstPart.substr(7,firstPart.find(']')-7))->getFrameByPath(restPart);
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getFrameByPath(restPart);
-    else
-      return 0;
-  }
-
-  Contour *DynamicSystem::getContourByPath(std::string path) {
-    if(path[path.length()-1]!='/') path=path+"/";
-    size_t i=path.find('/');
-    // absolut path
-    if(i==0) {
-      if(parent)
-        return parent->getContourByPath(path);
-      else
-        return getContourByPath(path.substr(1));
-    }
-    // relative path
-    string firstPart=path.substr(0, i);
-    string restPart=path.substr(i+1);
-    if(firstPart=="..")
-      return parent->getContourByPath(restPart);
-    else if(firstPart.substr(0,7)=="Object[")
-      return getObject(firstPart.substr(7,firstPart.find(']')-7))->getContourByPath(restPart);
-    else if(firstPart.substr(0,8)=="Contour[")
-      return getContour(firstPart.substr(8,firstPart.find(']')-8));
-    else if(firstPart.substr(0,6)=="Group[")
-      return getGroup(firstPart.substr(6,firstPart.find(']')-6))->getContourByPath(restPart);
-    else
-      return 0;
-  }
-
-  Contact *DynamicSystem::getContactByPath(std::string path) {
-    int pos=path.find("Contact");
-    path.erase(pos, 7);
-    path.insert(pos, "Link");
-    Link * c = getLinkByPath(path);
-    if (dynamic_cast<Contact *>(c))
-      return static_cast<Contact *>(c);
-    else {
-      std::cerr << "ERROR! \"" << path << "\" is not of Contact-Type." << std::endl; 
-      _exit(1);
+    else if (path.substr(0, 3)=="../") // relative path
+      return parent->getByPathSearch(path.substr(3));
+    else { // local path
+      size_t pos0=path.find_first_of("[");
+      string container=path.substr(0, pos0);
+      size_t pos1=path.find_first_of("]", pos0);
+      string searched_name=path.substr(pos0+1, pos1-pos0-1);
+      if(path.length()>pos1+1) { // weiter absteigen
+        string rest=path.substr(pos1+2);
+        if (container=="Object")
+          return getObject(searched_name)->getByPathSearch(rest);
+        else if (container=="Link")
+          return getLink(searched_name)->getByPathSearch(rest);
+        else if (container=="ExtraDynamic")
+          return getExtraDynamic(searched_name)->getByPathSearch(rest);
+        else if (container=="Group")
+          return getGroup(searched_name)->getByPathSearch(rest);
+        else {
+          cout << "Unknown name of container" << endl;
+          throw(123);
+        }
+      }
+      else {
+        if (container=="Object")
+          return getObject(searched_name);
+        else if (container=="Link")
+          return getLink(searched_name);
+        else if (container=="ExtraDynamic")
+          return getExtraDynamic(searched_name);
+        else if (container=="Group")
+          return getGroup(searched_name);
+        else if (container=="Frame")
+          return getFrame(searched_name);
+        else if (container=="Contour")
+          return getContour(searched_name);
+        else {
+          cout << "Unknown name of container" << endl;
+          throw(123);
+        }
+      }
     }
   }
-
 }
 
