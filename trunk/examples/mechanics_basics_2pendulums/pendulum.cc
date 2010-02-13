@@ -1,6 +1,6 @@
 #include "pendulum.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/objbody.h>
+//#include <openmbvcppinterface/objbody.h>
 #endif
 
 using namespace MBSim;
@@ -36,11 +36,11 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::ObjBody* obj1=new OpenMBV::ObjBody;
-  obj1->setObjFileName("objects/pendel1.obj");
-  obj1->setScaleFactor(0.1*0.3);
-  obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
-  stab1->setOpenMBVRigidBody(obj1);
+//  OpenMBV::ObjBody* obj1=new OpenMBV::ObjBody;
+//  obj1->setObjFileName("objects/pendel1.obj");
+//  obj1->setScaleFactor(0.1*0.3);
+//  obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+//  stab1->setOpenMBVRigidBody(obj1);
 #endif
 
   stab2 = new RigidBody("Stab2");
@@ -61,11 +61,11 @@ Pendulum::Pendulum(const string &projectName) : Group(projectName) {
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #if HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::ObjBody* obj2=new OpenMBV::ObjBody;
-  obj2->setObjFileName("objects/pendel2.obj");
-  obj2->setScaleFactor(0.1*0.3);
-  obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
-  stab2->setOpenMBVRigidBody(obj2);
+//  OpenMBV::ObjBody* obj2=new OpenMBV::ObjBody;
+//  obj2->setObjFileName("objects/pendel2.obj");
+//  obj2->setScaleFactor(0.1*0.3);
+//  obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
+//  stab2->setOpenMBVRigidBody(obj2);
 #endif
 }
 

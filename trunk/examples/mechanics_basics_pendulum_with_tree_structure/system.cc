@@ -3,7 +3,7 @@
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/objbody.h"
+//#include "openmbvcppinterface/objbody.h"
 #endif
 
 using namespace MBSim;
@@ -40,15 +40,15 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::ObjBody *obj=new OpenMBV::ObjBody;
-  obj->setObjFileName("objects/pendel1.obj");
-  obj->setScaleFactor(0.1*0.3);
-  obj->setInitialRotation(0,0,M_PI/2);
-  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
-  obj->setEpsVertex(1e-5);
-  obj->setEpsNormal(1e-5);
-  obj->setSmoothBarrier(M_PI*2/9);
-  stab1->setOpenMBVRigidBody(obj);
+//  OpenMBV::ObjBody *obj=new OpenMBV::ObjBody;
+//  obj->setObjFileName("objects/pendel1.obj");
+//  obj->setScaleFactor(0.1*0.3);
+//  obj->setInitialRotation(0,0,M_PI/2);
+//  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
+//  obj->setEpsVertex(1e-5);
+//  obj->setEpsNormal(1e-5);
+//  obj->setSmoothBarrier(M_PI*2/9);
+//  stab1->setOpenMBVRigidBody(obj);
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
@@ -67,15 +67,15 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  obj=new OpenMBV::ObjBody;
-  obj->setObjFileName("objects/pendel2.obj");
-  obj->setScaleFactor(0.1*0.3);
-  obj->setInitialRotation(0,0,M_PI/2);
-  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
-  obj->setEpsVertex(1e-5);
-  obj->setEpsNormal(1e-5);
-  obj->setSmoothBarrier(M_PI*2/9);
-  stab2->setOpenMBVRigidBody(obj);
+//  obj=new OpenMBV::ObjBody;
+//  obj->setObjFileName("objects/pendel2.obj");
+//  obj->setScaleFactor(0.1*0.3);
+//  obj->setInitialRotation(0,0,M_PI/2);
+//  obj->setNormals(OpenMBV::ObjBody::smoothIfLessBarrier);
+//  obj->setEpsVertex(1e-5);
+//  obj->setEpsNormal(1e-5);
+//  obj->setSmoothBarrier(M_PI*2/9);
+//  stab2->setOpenMBVRigidBody(obj);
 #endif
 
 }
