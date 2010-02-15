@@ -250,17 +250,10 @@ namespace MBSimHydraulics {
 
   void HNode::updateh(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      if (connectedLines[i].sign.size()>1) {
-        const Vec J=trans(connectedLines[i].line->getJacobian().row(0));
-        Matrix<Diagonal, double> JM(J.size(), NONINIT);
-        for (int j=0; j<J.size(); j++)
-          JM(j)=J(j);
-        h[i] += JM * connectedLines[i].sign * la;
-        hLink[i] += JM * connectedLines[i].sign * la;
-      }
-      else {
-        h[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la;
-        hLink[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la;
+      const Vec J=trans(connectedLines[i].line->getJacobian().row(0));
+      for (int j=0; j<J.size(); j++) {
+        h[i](j) += J(j) * connectedLines[i].sign(j) * la(0);
+        hLink[i](j) += J(j) * connectedLines[i].sign(j) * la(0);
       }
     }
   }

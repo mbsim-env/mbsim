@@ -18,6 +18,7 @@
  */
 
 #include "mbsimHydraulics/elastic_line_galerkin.h"
+#include "mbsimHydraulics/objectfactory.h"
 #include "environment.h"
 #include "mbsim/utils/ansatz_functions.h"
 #include "mbsim/utils/utils.h"
@@ -186,6 +187,40 @@ namespace MBSimHydraulics {
     cout << "N=" << N << endl;
     cout << "plotVecW=" << plotVecW << endl;
     cout << "plotVecWS=" << plotVecWS << endl;
+  }
+
+  void ElasticLineGalerkin::initializeUsingXML(TiXmlElement * element) {
+    Object::initializeUsingXML(element);
+    cout << element->ValueStr() << endl;
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"initialPressure");
+    cout << e->ValueStr() << endl;
+    setp0(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"fracAir");
+    setFracAir(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"heightDifference");
+    setdh(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"dLehr");
+    setDLehr(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    setDiameter(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
+    setLength(getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"AnsatzFunction");
+    TiXmlElement * ee = e->FirstChildElement();
+    if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder3")
+      setAnsatzFunction(BSplineOrd3, getInt(ee->NextSiblingElement()));
+    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"BSplineOrder4")
+      setAnsatzFunction(BSplineOrd4, getInt(ee->NextSiblingElement()));
+    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Polynom")
+      setAnsatzFunction(Polynom, getInt(ee->NextSiblingElement()));
+    else if (ee->ValueStr()==MBSIMHYDRAULICSNS"Harmonic")
+      setAnsatzFunction(Harmonic, getInt(ee->NextSiblingElement()));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"flow2d");
+    if (e)
+      setFlow2D(true);
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"relativePlotPoints");
+    setRelativePlotPoints(getVec(e));
   }
 
 }

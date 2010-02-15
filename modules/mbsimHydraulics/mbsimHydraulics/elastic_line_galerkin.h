@@ -54,7 +54,7 @@ namespace MBSimHydraulics {
       //void setAnsatzFunction(std::string method_, int nAnsatz_);
       void setAnsatzFunction(AnsatzTypes method_, int nAnsatz_);
       /*! set a 2dimension flow recognition*/
-      void setFlow2D(){Flow2D=true; }
+      void setFlow2D(bool flow2d=true){Flow2D=flow2d; }
       /*! select points in the pipe, for which a output should be created*/
       void setRelativePlotPoints(const fmatvec::Vec &rPP) {relPlotPoints=rPP; }
       void setDiameter(double d_) {d=d_; }
@@ -78,6 +78,8 @@ namespace MBSimHydraulics {
 
       void plot(double t, double dt);
       void plotParameters();
+
+      void initializeUsingXML(TiXmlElement * element);
     
     private:
       int mdim, plotdim;

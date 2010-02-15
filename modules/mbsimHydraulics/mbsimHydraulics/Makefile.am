@@ -14,6 +14,7 @@ libmbsimHydraulics_la_SOURCES = \
 	checkvalve.cc \
 	leakage_line.cc \
   elastic_line_galerkin.cc \
+  elastic_line_variational.cc \
   objectfactory.cc \
 	dimensionless_line.cc \
 	hydraulic_sensor.cc \
@@ -36,6 +37,7 @@ mbsimHydraulicsinclude_HEADERS = \
 	checkvalve.h \
 	leakage_line.h \
   elastic_line_galerkin.h \
+  elastic_line_variational.h \
   objectfactory.h \
 	dimensionless_line.h \
 	hydraulic_sensor.h

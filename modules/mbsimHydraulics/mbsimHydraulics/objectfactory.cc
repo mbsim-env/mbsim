@@ -28,6 +28,8 @@
 #include "mbsimHydraulics/leakage_line.h"
 #include "mbsimHydraulics/dimensionless_line.h"
 #include "mbsimHydraulics/hydraulic_sensor.h"
+#include "mbsimHydraulics/elastic_line_galerkin.h"
+#include "mbsimHydraulics/elastic_line_variational.h"
 
 using namespace std;
 using namespace MBSim;
@@ -97,6 +99,10 @@ namespace MBSimHydraulics {
       return new ConstrainedLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"FluidPump")
       return new FluidPump(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineGalerkin")
+      return new ElasticLineGalerkin(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineVariational")
+      return new ElasticLineVariational(element->Attribute("name"));
     return 0;
   }
 
