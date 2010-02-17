@@ -52,12 +52,12 @@ namespace MBSim {
     double eps = 0.; // tolerance for rough contact description can be set to zero (no bilateral contact possible)
 
     /* Geometry */	
-    Vec Wa_F = frustum->getFrame()->getOrientation().col(1); // axis of Frustum in inertial FR
-    Vec r_F = frustum->getRadii(); // radii of Frustum
+    Vec Wa_F = frustum->getFrame()->getOrientation().col(1).copy(); // axis of Frustum in inertial FR
+    Vec r_F = frustum->getRadii().copy(); // radii of Frustum
     double h_F = frustum->getHeight(); // height of Frustum   
     bool outCont_F = frustum->getOutCont(); // contact on outer surface of Frustum?
     double phi_F = atan((r_F(1) - r_F(0))/h_F); // opening angle of Frustum
-    Vec Wb_C = circle->getFrame()->getOrientation().col(2); // binormal of Circle in inertial FR
+    Vec Wb_C = circle->getFrame()->getOrientation().col(2).copy(); // binormal of Circle in inertial FR
     double r_C = circle->getRadius(); // radius of Circle
     bool outCont_C = circle->getOutCont(); // contact on outer surface of Circle?
 
@@ -129,7 +129,7 @@ namespace MBSim {
               else {
                 cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() - r_C*c_CF/c_CF_nrm2;
                 cpData[icircle].getFrameOfReference().getOrientation().col(0) = sin(phi_F)*Wa_F + cos(phi_F)*c_CF/c_CF_nrm2;
-                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -cpData[icircle].getFrameOfReference().getOrientation().col(0);
+                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -cpData[icircle].getFrameOfReference().getOrientation().col(0).copy();
               }
             }
             /********************************/
@@ -142,7 +142,7 @@ namespace MBSim {
                 else {
                   cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*c_CF/c_CF_nrm2;
                   cpData[icircle].getFrameOfReference().getOrientation().col(0) = -sin(phi_F)*Wa_F + cos(phi_F)*c_CF/c_CF_nrm2;
-                  cpData[ifrustum].getFrameOfReference().getOrientation().col(0)  = -cpData[icircle].getFrameOfReference().getOrientation().col(0);
+                  cpData[ifrustum].getFrameOfReference().getOrientation().col(0)  = -cpData[icircle].getFrameOfReference().getOrientation().col(0).copy();
                 }
               }
             }
@@ -151,7 +151,7 @@ namespace MBSim {
               if(g(0) < eps) {
                 cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() - r_C*c_CF/c_CF_nrm2;
                 cpData[icircle].getFrameOfReference().getOrientation().col(0) = sin(phi_F)*Wa_F - cos(phi_F)*c_CF/c_CF_nrm2;
-                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -cpData[icircle].getFrameOfReference().getOrientation().col(0);
+                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -cpData[icircle].getFrameOfReference().getOrientation().col(0).copy();
               }
             }
           }
@@ -159,7 +159,7 @@ namespace MBSim {
       }
       /**************************************************************************/
 
-      else {	// circle - ?
+      else { // circle - ?
         double al_CF = acos(t_CF);
         Vec eF1 = -z_CF/z_CF_nrm2;
         Vec eF2 = crossProduct(Wa_F,eF1);	
@@ -174,7 +174,7 @@ namespace MBSim {
           }
           double cE1_star_nrm2 = r_F(0)/t_CF;
           Vec cE1 = t_CF*eF1+sin(al_CF)*Wa_F; // semi-major axis
-          Vec cE2 = eF2; // semi-minor axis
+          Vec cE2 = eF2.copy(); // semi-minor axis
           Vec Wd_EC = -Wd_CF+(xi_2-tan(al_CF)*xi_1)*Wa_F;
 
           FuncPairEllipseCircle* funcRho;
@@ -199,7 +199,7 @@ namespace MBSim {
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
-            cpData[ifrustum].getLagrangeParameterPosition() = Vec(1,NONINIT);	
+            cpData[ifrustum].getLagrangeParameterPosition() = Vec(1,NONINIT).copy();	
           }
           int SEC = 16; // partition for regula falsi
           double drho = 2.*M_PI/SEC * 1.01; // 10% intersection for improved convergence of solver
@@ -209,7 +209,7 @@ namespace MBSim {
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0)).copy();
             Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);	
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition()-frustum->getFrame()->getPosition();
@@ -227,15 +227,15 @@ namespace MBSim {
 
               if(!outCont_F && outCont_C) {
                 g(0) = r_F(0)-d_PF;	
-                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -Wb_PF;
+                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -Wb_PF.copy();
               }
               else {	
                 g(0) = d_PF-r_F(0);
-                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = Wb_PF;
+                cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = Wb_PF.copy();
               }
             }
 
-            cpData[icircle].getFrameOfReference().getOrientation().col(0)  = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+            cpData[icircle].getFrameOfReference().getOrientation().col(0)  = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0).copy();
           }
           delete funcRho;
         }
@@ -257,7 +257,7 @@ namespace MBSim {
           Vec c1_star = pqr*(eF1 + q/tan(phi_F)*Wa_F); // semi-major axis
           double c1_star_nrm2 = nrm2(c1_star);
           c1 = c1_star/c1_star_nrm2;
-          c2 = eF2; // semi-minor axis
+          c2 = eF2.copy(); // semi-minor axis
           double c2_star_nrm2;
 
           if(abs(q) < 1.) { // ellipse
@@ -337,14 +337,14 @@ namespace MBSim {
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
-            cpData[ifrustum].getLagrangeParameterPosition() = Vec(1,NONINIT);
+            cpData[ifrustum].getLagrangeParameterPosition() = Vec(1,NONINIT).copy();
           }
           searchRho.setEqualSpacing(SEC,rhoStartSpacing,drho);					
           cpData[ifrustum].getLagrangeParameterPosition()(0) = searchRho.slv();
 
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
-            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0));
+            Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0)).copy();
             Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);				
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
@@ -370,7 +370,7 @@ namespace MBSim {
                 g(0) = (d_PF-r_Fh)*cos(phi_F);
                 cpData[ifrustum].getFrameOfReference().getOrientation().col(0) = -sin(phi_F)*Wa_F + cos(phi_F)*Wb_PF;
               }		
-              cpData[icircle].getFrameOfReference().getOrientation().col(0)  = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0);
+              cpData[icircle].getFrameOfReference().getOrientation().col(0)  = -cpData[ifrustum].getFrameOfReference().getOrientation().col(0).copy();
             }
           }
           if(DEBUG) {
