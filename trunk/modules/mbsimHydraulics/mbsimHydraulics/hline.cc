@@ -41,9 +41,12 @@ namespace MBSimHydraulics {
     }
     else if (stage==preInit) {
       Object::init(stage);
-      if (!nFrom && !nFromRelative) { cerr<<"ERROR! HLine \""<<name<<"\" has no fromNode!"<<endl; _exit(1); }
-      if (!nTo && !nToRelative) { cerr<<"ERROR! HLine \""<<name<<"\" has no toNode!"<<endl; _exit(1); }
-      if (nFrom && nFrom==nTo) { cerr<<"ERROR! HLine \""<<name<<"\": fromNode and toNode are the same!"<<endl; _exit(1); }
+      if (!nFrom && !nFromRelative) 
+        throw new MBSimError("ERROR! HLine \""+name+"\" has no fromNode!");
+      if (!nTo && !nToRelative) 
+        throw new MBSimError("ERROR! HLine \""+name+"\" has no toNode!");
+      if (nFrom && nFrom==nTo) 
+        throw new MBSimError("ERROR! HLine \""+name+"\": fromNode and toNode are the same!");
     }
     else
       Object::init(stage);
@@ -54,9 +57,8 @@ namespace MBSimHydraulics {
   }
 
   void HLine::initializeUsingXML(TiXmlElement * element) {
-    TiXmlElement * e;
     Object::initializeUsingXML(element);
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
     if (e) {
       saved_frameOfReference=e->Attribute("ref");
       e=element->FirstChildElement(MBSIMHYDRAULICSNS"direction");
@@ -79,10 +81,8 @@ namespace MBSimHydraulics {
 
   Mat RigidHLine::calculateJacobian(vector<RigidHLine*> dep_check) {
     for (unsigned int i=0; i<dep_check.size()-1; i++)
-      if (this==dep_check[i]) {
-        cerr << "Kinematic Loop in hydraulic system. Check model!" << endl;
-        throw(456);
-      }
+      if (this==dep_check[i])
+        throw new MBSimError("Kinematic Loop in hydraulic system. Check model!");
 
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
@@ -90,21 +90,19 @@ namespace MBSimHydraulics {
       if(M.size()==1)
         JLocal=Mat(1,1,INIT,1);
       else {
-        JLocal=Mat(1,M.size());
+        JLocal=Mat(1,M.size(),INIT,0);
         JLocal(0,uInd[0])=1;
       }
     }
     else {
-      JLocal=Mat(1,M.size());
-
+      JLocal=Mat(1,M.size(),INIT,0);
       dep_check.push_back(this);
-
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++) {
-        Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
+        const Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
         JLocal(0,Index(0,Jdep.cols()-1))+=Jdep;
       }
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++) {
-        Mat Jdep=((RigidHLine*)dependencyOnInflow[i])->calculateJacobian(dep_check);
+        const Mat Jdep=((RigidHLine*)dependencyOnInflow[i])->calculateJacobian(dep_check);
         JLocal(0,Index(0,Jdep.cols()-1))-=Jdep;
       }
     }
@@ -217,8 +215,10 @@ namespace MBSimHydraulics {
   void ConstrainedLine::init(MBSim::InitStage stage) {
     if (stage==preInit) {
       Object::init(stage); // no check of connected lines
-      if (!nFrom && !nTo) { cerr<<"ERROR! ConstrainedLine \""<<name<<"\" needs at least one connected node!"<<endl; _exit(1); }
-      if (nFrom==nTo) { cerr<<"ERROR! ConstrainedLine \""<<name<<"\": fromNode and toNode are the same!"<<endl; _exit(1); }
+      if (!nFrom && !nTo) 
+        throw new MBSimError("ERROR! ConstrainedLine \""+name+"\" needs at least one connected node!");
+      if (nFrom==nTo) 
+        throw new MBSimError("ERROR! ConstrainedLine \""+name+"\": fromNode and toNode are the same!");
     }
     else
       HLine::init(stage);
@@ -242,8 +242,10 @@ namespace MBSimHydraulics {
     }
     else if (stage==preInit) {
       Object::init(stage); // no check of connected lines
-      if (!nFrom && !nTo) { cerr<<"ERROR! ConstrainedLine \""<<name<<"\" needs at least one connected node!"<<endl; _exit(1); }
-      if (nFrom==nTo) { cerr<<"ERROR! ConstrainedLine \""<<name<<"\": fromNode and toNode are the same!"<<endl; _exit(1); }
+      if (!nFrom && !nTo) 
+        throw new MBSimError("ERROR! FluidPump \""+name+"\" needs at least one connected node!");
+      if (nFrom==nTo)
+        throw new MBSimError("ERROR! FluidPump \""+name+"\": fromNode and toNode are the same!");
     }
     else
       HLine::init(stage);

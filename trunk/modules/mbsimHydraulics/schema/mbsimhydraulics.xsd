@@ -1224,6 +1224,73 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ElasticLineGalerkin" substitutionGroup="HLine" type="ElasticLineGalerkinType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Hydraulische Leitung mit Berücksichtigung der Fluidmasse und der Fluidkompressibilität.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ElasticLineGalerkinType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="initialPressure" type="pv:pressureScalar"/>
+          <xs:element name="fracAir" type="pv:nounitScalar"/>
+          <xs:element name="heightDifference" type="pv:lengthScalar"/>
+          <xs:element name="dLehr" type="pv:nounitScalar"/>
+          <xs:element name="AnsatzFunction">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice>
+                  <xs:element name="BSplineOrder3"/>
+                  <xs:element name="BSplineOrder4"/>
+                  <xs:element name="Polynom"/>
+                  <xs:element name="Harmonic"/>
+                </xs:choice>
+                <xs:element name="number" type="xs:nonNegativeInteger"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="flow2d" minOccurs="0"/>
+          <xs:element name="relativePlotPoints" type="pv:nounitVector"/>
+          <xs:element name="diameter" type="pv:lengthScalar"/>
+          <xs:element name="length" type="pv:lengthScalar"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ElasticLineVariational" substitutionGroup="HLine" type="ElasticLineVariationalType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Hydraulische Leitung mit Berücksichtigung der Fluidmasse und der Fluidkompressibilität.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ElasticLineVariationalType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="initialPressure" type="pv:pressureScalar"/>
+          <xs:element name="fracAir" type="pv:nounitScalar"/>
+          <xs:element name="diameter" type="pv:lengthScalar"/>
+          <xs:element name="length" type="pv:lengthScalar"/>
+          <xs:element name="relativePlotPoints" type="pv:nounitVector" minOccurs="0"/>
+          <xs:element name="numberOfAnsatzFunctions" type="xs:nonNegativeInteger"/>
+          <xs:choice>
+            <xs:element name="windowNone"/>
+            <xs:element name="windowHann"/>
+            <xs:element name="windowHamming"/>
+            <xs:element name="windowRiemann"/>
+            <xs:element name="windowBlackmanHarris"/>
+          </xs:choice>
+          <xs:element name="printStateSpace" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="HNode" abstract="true" substitutionGroup="mbsim:Link" type="HNodeType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

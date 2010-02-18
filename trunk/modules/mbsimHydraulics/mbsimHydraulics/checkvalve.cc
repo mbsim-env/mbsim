@@ -179,18 +179,17 @@ namespace MBSimHydraulics {
     else if (stage==MBSim::preInit) {
       Group::init(stage);
 
-      double rLine=line->getDiameter()/2.;
-      if (!dynamic_cast<HNodeMec*>(line->getFromNode())) {
-        cerr<<"ERROR! Hydraulic Node \""<<line->getFromNode()->getName()<<"\" connected to Checkvalve \""<<name<<"\" has to be of Type \"HNodeMec\"!"<<endl;
-        throw(123);
-      }
-      if (!dynamic_cast<HNodeMec*>(line->getToNode())) {
-        cerr<<"ERROR! Hydraulic Node \""<<line->getToNode()->getName()<<"\" connected to Checkvalve \""<<name<<"\" has to be of Type \"HNodeMec\"!"<<endl;
-        throw(123);
-      }
+      if (!dynamic_cast<HNodeMec*>(line->getFromNode()))
+        throw new MBSimError("ERROR! Hydraulic Node \""+line->getFromNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+      if (!dynamic_cast<HNodeMec*>(line->getToNode()))
+        throw new MBSimError("ERROR! Hydraulic Node \""+line->getToNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+      
       double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
-      if (ballForceArea<0)
+      if (ballForceArea<0) {
+        const double rLine=line->getDiameter()/2.;
         ballForceArea=rLine*rLine*M_PI;
+      }
+
       fromNodeAreaIndex = ((HNodeMec*)line->getFromNode())->addTransMecArea(
           ball->getFrame("LowPressureSide"),
           "[1; 0; 0]",

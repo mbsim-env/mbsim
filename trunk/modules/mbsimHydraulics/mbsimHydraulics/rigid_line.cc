@@ -23,6 +23,7 @@
 #include "mbsimHydraulics/pressure_loss.h"
 #include "mbsimHydraulics/rigid_line_pressureloss.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/dynamic_system_solver.h"
@@ -67,8 +68,7 @@ namespace MBSimHydraulics {
 
   void RigidLine::initializeUsingXML(TiXmlElement * element) {
     RigidHLine::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"diameter");
     setDiameter(getDouble(e));
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"linePressureLoss");
     LinePressureLoss *p=(LinePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
@@ -86,7 +86,12 @@ namespace MBSimHydraulics {
   }
 
   void ClosableRigidLine::init(InitStage stage) {
-    if (stage==MBSim::modelBuildup) {
+    if (stage==MBSim::resolveXMLPath) {
+      if(refSignalString!="")
+        setSignal(getByPath<MBSimControl::Signal>(process_signal_string(refSignalString)));
+      RigidLine::init(stage);
+    }
+    else if (stage==MBSim::modelBuildup) {
       if (cpL)
         parent->addLink(new RigidLinePressureLoss(name+"/ClosablePressureLoss", this, cpL, false,false));
       assert(!(cpLUnilateral && cpLBilateral));
@@ -103,11 +108,18 @@ namespace MBSimHydraulics {
 
   void ClosableRigidLine::initializeUsingXML(TiXmlElement * element) {
     RigidLine::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"closableLinePressureLoss");
-    ClosablePressureLoss *p=(ClosablePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement()));
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"closablePressureLoss");
+    TiXmlElement * ee=e->FirstChildElement();
+    ClosablePressureLoss *p=(ClosablePressureLoss*)(MBSim::ObjectFactory::getInstance()->createFunction1_SS(ee));
     setClosablePressureLoss(p);
-    p->initializeUsingXML(e->FirstChildElement());
+    p->initializeUsingXML(ee);
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"checksizeSignal");
+    refSignalString=ee->Attribute("ref");
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"minimalChecksizeValue");
+    setMinimalValue(getDouble(ee));
+    ee=e->FirstChildElement(MBSIMHYDRAULICSNS"setValued");
+    if (ee)
+      setBilateral(true);
   }
 }
 

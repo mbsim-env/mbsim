@@ -147,18 +147,14 @@ namespace MBSimHydraulics {
       initialized=true;
     }
     const double Re=Q*((Q>0)?ReynoldsFactor:ReynoldsFactorNeg);
-    // cerr << " " << Re;
-    if (Re<1404.) { // laminar
-      // cerr << " " << 64./Re;
+    if (Re<1404.) // laminar
       return 64./ReynoldsFactor*c*Q;
-    }
     else {
       double lambda;
       if (Re<2320.) // transition
         lambda=64./Re+((*lambdaTabular)(2320.)(0)-64./Re)/(2320.-1404.)*(Re-1404.);
       else // turbulent
         lambda=(*lambdaTabular)(Re)(0);
-      // cerr << " " << lambda;
       return lambda*c*fabs(Q)*Q;
     }
   }
@@ -217,9 +213,7 @@ namespace MBSimHydraulics {
 
   void RelativeAreaZetaClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
-    TiXmlElement * e;
-    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
-    setZeta(Element::getDouble(e));
+    setZeta(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta")));
   }
 
 
