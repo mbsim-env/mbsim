@@ -177,7 +177,9 @@ namespace MBSimHydraulics {
 
       hp0=(-wO-wI)*p0;
 
-      Jacobian.resize(1, n, INIT, 1.);
+      Jacobian.resize(n, n, INIT, 0);
+      for (int i=0; i<n; i++)
+        Jacobian(i, i)=1.;
 
       y.resize(n, INIT, 0);
 

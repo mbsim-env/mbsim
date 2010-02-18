@@ -36,14 +36,10 @@ namespace MBSimHydraulics {
 
   void DimensionlessLine::init(InitStage stage) {
     if(stage==MBSim::preInit) {
-      if (dynamic_cast<RigidNode*>(nFrom) || dynamic_cast<RigidNodeMec*>(nFrom)) {
-        cout << "pFrom is of setValued type. not valid for dimensionless lines." << endl;
-        throw(123);
-      }
-      if (dynamic_cast<RigidNode*>(nTo) || dynamic_cast<RigidNodeMec*>(nTo)) {
-        cout << "pTo is of setValued type. not valid for dimensionless lines." << endl;
-        throw(123);
-      }
+      if (dynamic_cast<RigidNode*>(nFrom) || dynamic_cast<RigidNodeMec*>(nFrom))
+        throw new MBSimError("pFrom is of setValued type. not valid for dimensionless lines.");
+      if (dynamic_cast<RigidNode*>(nTo) || dynamic_cast<RigidNodeMec*>(nTo))
+        throw new MBSimError("pTo is of setValued type. not valid for dimensionless lines.");
       HLine::init(stage);
     }
     else if(stage==MBSim::plot) {

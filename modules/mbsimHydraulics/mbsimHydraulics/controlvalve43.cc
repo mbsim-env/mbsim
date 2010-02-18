@@ -95,14 +95,10 @@ namespace MBSimHydraulics {
   void Controlvalve43::setAlpha(double alpha, double alphaBack) {
     if (alphaBack<epsroot())
       alphaBack=alpha;
-    if ((alpha<0)||(alpha>1)) {
-      cout << "Error in \"" << getPath() << "\": alpha must be in the range of 0..1!" << endl;
-      throw(123);
-    }
-    if ((alphaBack<0)||(alphaBack>1)) {
-      cout << "Error in \"" << getPath() << "\": alphaBack must be in the range of 0..1!" << endl;
-      throw(123);
-    }
+    if ((alpha<0)||(alpha>1))
+      throw new MBSimError("Error in \""+name+"\": alpha must be in the range of 0..1!");
+    if ((alphaBack<0)||(alphaBack>1))
+      throw new MBSimError("Error in \""+name+"\": alphaBack must be in the range of 0..1!");
     RelativeAlphaClosablePressureLoss * plPA = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plPB = new RelativeAlphaClosablePressureLoss();
     RelativeAlphaClosablePressureLoss * plAT = new RelativeAlphaClosablePressureLoss();
