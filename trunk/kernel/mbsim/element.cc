@@ -145,6 +145,20 @@ namespace MBSim {
     return 0;
   }
 
+  bool Element::getBool(TiXmlElement *e) {
+    if(e->GetText()==string("true") || e->GetText()==string("1"))
+      return true;
+    else if(e->GetText()==string("false") || e->GetText()==string("0"))
+      return false;
+    else {
+      ostringstream str;
+      str<<": Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
+      TiXml_location(e, "", str.str());
+      throw MBSimError("Wrong type");
+    }
+    return 0;
+  }
+
   Vec Element::getVec(TiXmlElement *e, int rows) {
     Mat m=Mat(e->GetText());
     if((rows==0 || m.rows()==rows) && m.cols()==1)

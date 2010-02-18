@@ -21,6 +21,7 @@
 
 #include "mbsim/link.h"
 #include "mbsim/object.h"
+#include <vector>
 
 namespace MBSim {
 
@@ -29,6 +30,13 @@ namespace MBSim {
       Object *connectedObject;
       int qInd, uInd;
       double m, a, t0;
+      struct ApplyForceAlsoTo {
+        std::string saved_ref;
+        Object *ref;
+        double factor;
+        int index;
+      };
+      std::vector<ApplyForceAlsoTo> applyForceAlsoTo;
     public:
       enum Type {
         CONSTANT, LINEAR
@@ -64,6 +72,8 @@ namespace MBSim {
       virtual void updatedhduRef(const fmatvec::SqrMat&, int) {}
       virtual void updatedhdtRef(const fmatvec::Vec&, int) {}
       virtual void updaterRef(const fmatvec::Vec&, int) {}
+
+      void addApplyForceAlsoTo(Object *ref, double factor, int index);
 
     private:
       std::string saved_connectedObject;

@@ -26,15 +26,20 @@ using namespace fmatvec;
 namespace MBSim {
 
   ExternGeneralizedIO::ExternGeneralizedIO(const string &name) : Link(name),
-    connectedObject(NULL), qInd(0), uInd(0), saved_connectedObject("") {
+    connectedObject(NULL), qInd(0), uInd(0), m(0), a(0), t0(0), saved_connectedObject("") {
   }
 
   void ExternGeneralizedIO::updateh(double t) {
-    if(type==CONSTANT)
+    if(type==CONSTANT) {
       connectedObject->geth()(uInd)+=la(0);
+      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
+        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
+    }
     else if(type==LINEAR) {
       la(0)=m*(t-t0)+a;
       connectedObject->geth()(uInd)+=la(0);
+      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
+        applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
    
   }
@@ -68,13 +73,19 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_connectedObject!="")
         connectedObject=getByPath<Object>(saved_connectedObject);
+      for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
+        if(applyForceAlsoTo[i].saved_ref!="")
+          if(applyForceAlsoTo[i].saved_ref.substr(0,3)=="../")
+            applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref.substr(3));
+          else
+            applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref);
       Link::init(stage);
     }
     else if(stage==resize) {
       Link::init(stage);
       g.resize(1);
       gd.resize(1);
-      la.resize(1);
+      la.resize(1); la(0)=0;
       if(qInd<0)
         x.resize(1);
     }
@@ -117,6 +128,23 @@ namespace MBSim {
     saved_connectedObject=element->FirstChildElement(MBSIMNS"connectedObject")->Attribute("ref");
     qInd=getInt(element->FirstChildElement(MBSIMNS"qIndex"));
     uInd=getInt(element->FirstChildElement(MBSIMNS"uIndex"));
+    for(e=element->FirstChildElement(MBSIMNS"applyForceAlsoTo"); e!=0; e=e->NextSiblingElement(MBSIMNS"applyForceAlsoTo")) {
+      ApplyForceAlsoTo alsoTo;
+      alsoTo.saved_ref=e->Attribute(("ref"));
+      alsoTo.ref=0;
+      alsoTo.factor=getDouble(e->FirstChildElement());
+      alsoTo.index=getInt(e->FirstChildElement()->NextSiblingElement());
+      applyForceAlsoTo.push_back(alsoTo);
+    }
+  }
+
+  void ExternGeneralizedIO::addApplyForceAlsoTo(Object *ref, double factor, int index) {
+    ApplyForceAlsoTo alsoTo;
+    alsoTo.saved_ref="";
+    alsoTo.ref=ref;
+    alsoTo.factor=factor;
+    alsoTo.index=index;
+    applyForceAlsoTo.push_back(alsoTo);
   }
 
 }

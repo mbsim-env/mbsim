@@ -1,4 +1,8 @@
-SUBDIRS = mbsimtinyxml mbsim schema
+if COND_XML
+  MAYBE_SCHEMA = schema
+endif
+
+SUBDIRS = mbsimtinyxml mbsim $(MAYBE_SCHEMA)
 
 DIST_SUBDIRS = mbsim doc schema
 EXTRA_DIST = doc/macros.sty
