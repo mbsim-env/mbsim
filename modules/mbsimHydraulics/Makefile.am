@@ -1,4 +1,8 @@
-SUBDIRS = mbsimHydraulics schema
+if COND_XML
+  MAYBE_SCHEMA = schema
+endif
+
+SUBDIRS = mbsimHydraulics $(MAYBE_SCHEMA)
 
 DIST_SUBDIRS = mbsimHydraulics schema
 

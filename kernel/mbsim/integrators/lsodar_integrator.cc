@@ -149,7 +149,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
     setMaximalStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
-    setPlotOnRoot((Element::getDouble(e)>.5));
+    setPlotOnRoot(Element::getBool(e));
   }
 
 }

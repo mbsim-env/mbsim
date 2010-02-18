@@ -41,7 +41,7 @@
         span.expandcollapsecontent { cursor:nw-resize;color:blue;font-family:monospace;font-weight:bold;font-size:1.25em }
       </style>
       <script type="text/javascript">
-        /* <![CDATA[ */
+        <![CDATA[
         function expandcollapsecontent(c) {
           var ul=c.parentNode.getElementsByTagName('ul')[0];
           if(ul.style.display=="") {
@@ -54,8 +54,8 @@
             c.firstChild.data="- ";
             c.style.cursor="nw-resize";
           }
-        
-        /* ]]> */
+        }
+        ]]>
       </script>
     </head>
     <body>

@@ -1384,6 +1384,15 @@
           </xs:element>
           <xs:element name="qIndex" type="pv:nounitScalar"/>
           <xs:element name="uIndex" type="pv:nounitScalar"/>
+          <xs:element name="applyForceAlsoTo" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="factor" type="pv:nounitScalar"/>
+                <xs:element name="index" type="pv:nounitScalar"/>
+              </xs:sequence>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType> 
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

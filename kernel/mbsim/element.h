@@ -224,6 +224,7 @@ namespace MBSim {
       // some convenience function for XML
       static double getDouble(TiXmlElement *e);
       static int getInt(TiXmlElement *e);
+      static bool getBool(TiXmlElement *e);
       static fmatvec::Vec getVec(TiXmlElement *e, int rows=0);
       static fmatvec::Mat getMat(TiXmlElement *e, int rows=0, int cols=0);
       static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);

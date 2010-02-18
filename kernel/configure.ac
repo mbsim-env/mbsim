@@ -88,7 +88,11 @@ AC_SUBST([LIBMBSIM_AGE])
 LIBMBSIM_VERSION_INFO=$LIBMBSIM_CURRENT:$LIBMBSIM_REVISION:$LIBMBSIM_AGE
 AC_SUBST([LIBMBSIM_VERSION_INFO])
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal -Wno-strict-overflow"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
+CPPFLAGS_OLD=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
+AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
 
 dnl Check for MinGW
 AC_CANONICAL_HOST
@@ -105,6 +109,7 @@ fi
 
 dnl XML
 AC_SUBST([MBXMLUTILSSCHEMA],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMA" != "_"])
 
 AC_CONFIG_FILES([Makefile mbsim/Makefile mbsim/integrators/Makefile mbsim/flexible_body/Makefile mbsim/flexible_body/finite_elements/Makefile mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsim/contact_kinematics/Makefile mbsim/contours/Makefile mbsim/utils/Makefile doc/doxyfile doc/Makefile mbsim.pc mbsimtinyxml/Makefile schema/Makefile xmldoc/Makefile])
 
