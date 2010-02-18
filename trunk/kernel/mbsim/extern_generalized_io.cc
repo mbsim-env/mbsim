@@ -74,11 +74,12 @@ namespace MBSim {
       if(saved_connectedObject!="")
         connectedObject=getByPath<Object>(saved_connectedObject);
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
-        if(applyForceAlsoTo[i].saved_ref!="")
+        if(applyForceAlsoTo[i].saved_ref!="") {
           if(applyForceAlsoTo[i].saved_ref.substr(0,3)=="../")
             applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref.substr(3));
           else
             applyForceAlsoTo[i].ref=parent->getByPath<Object>(applyForceAlsoTo[i].saved_ref);
+        }
       Link::init(stage);
     }
     else if(stage==resize) {
