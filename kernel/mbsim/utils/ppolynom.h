@@ -124,7 +124,7 @@ namespace MBSim {
       int order;
 
       /** 
-       * \brief for internal use in ppeval functions
+       * \brief for internal use in ppeval functions 
        */
       int index;
 
@@ -156,7 +156,7 @@ namespace MBSim {
        */
       class ZerothDerivative : public Function1<fmatvec::Vec,double> {
         public:
-          ZerothDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
+          ZerothDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
           virtual ~ZerothDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -165,6 +165,8 @@ namespace MBSim {
 
         private:
           PPolynom *parent;
+          double xSave;
+          fmatvec::Vec ySave;
       };
 
       /**
@@ -172,7 +174,7 @@ namespace MBSim {
        */
       class FirstDerivative : public Function1<fmatvec::Vec,double> {
         public:
-          FirstDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
+          FirstDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
           virtual ~FirstDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -181,6 +183,8 @@ namespace MBSim {
 
         private:
           PPolynom *parent;
+          double xSave;
+          fmatvec::Vec ySave;
       };
 
       /**
@@ -188,7 +192,7 @@ namespace MBSim {
        */
       class SecondDerivative : public Function1<fmatvec::Vec,double> {
         public:
-          SecondDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom) {}
+          SecondDerivative(PPolynom *polynom) : Function1<fmatvec::Vec,double>(), parent(polynom), xSave(0), ySave(fmatvec::Vec(0)) {}
           virtual ~SecondDerivative() {}
 
           /* INHERITED INTERFACE OF FUNCTION */
@@ -197,6 +201,8 @@ namespace MBSim {
 
         private:
           PPolynom *parent;
+          double xSave;
+          fmatvec::Vec ySave;
       };
   };
 

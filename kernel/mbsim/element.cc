@@ -42,9 +42,8 @@ namespace MBSim {
 
   void Element::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.insert(plotVector.begin(), t);
-
       if(plotColumns.size()>1) {
+        plotVector.insert(plotVector.begin(), t);
         assert(plotColumns.size()==plotVector.size());
         plotVectorSerie->append(plotVector);
         plotVector.clear();

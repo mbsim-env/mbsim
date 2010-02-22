@@ -28,7 +28,7 @@ using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
-
+      
   void PPolynom::setXF(const Vec &x, const Mat &f, std::string InterpolationMethod) {
     assert(x.size() == f.rows());
 
@@ -187,59 +187,85 @@ namespace MBSim {
     coefs.push_back(m);
     coefs.push_back(a);
   }
-
+          
   Vec PPolynom::ZerothDerivative::operator()(const double& x, const void *) {
-    if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
+    if(x>(parent->breaks)(parent->nPoly)) 
+      throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
+    if(x<(parent->breaks)(0)) 
+      throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
 
-    if(!(x>(parent->breaks)(parent->index) && x<(parent->breaks)((parent->index)+1))) { // saved index still OK? otherwise search
-      (parent->index) = 0;
-      while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x) (parent->index)++;
-      (parent->index)--;  
-    }
+    if ((fabs(x-xSave)<macheps()) && ySave.size())
+      return ySave;
+    else {
+      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
+        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
+          (parent->index)--;
+      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
+        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
+          (parent->index)++;
+        (parent->index)--;  
+      }
 
-    double dx = x - (parent->breaks)(parent->index); // local coordinate
-    Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy());
-    for(int i=1;i<=(parent->order);i++) { // Horner scheme
-      yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
+      const double dx = x - (parent->breaks)(parent->index); // local coordinate
+      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy());
+      for(int i=1;i<=(parent->order);i++) // Horner scheme
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
+      xSave=x;
+      ySave=yi;
+      return yi.copy();
     }
-    return yi.copy();
   }
 
   Vec PPolynom::FirstDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
-    if(!(x>(parent->breaks)(parent->index) && x<(parent->breaks)((parent->index)+1))) { // saved index still OK? otherwise search
-      (parent->index) = 0;
-      while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x) (parent->index)++;
-      (parent->index)--;
-    }
+    if ((fabs(x-xSave)<macheps()) && ySave.size())
+      return ySave;
+    else {
+      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
+        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
+          (parent->index)--;
+      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
+        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
+          (parent->index)++;
+        (parent->index)--;  
+      }
 
-    double dx = x - (parent->breaks)(parent->index);
-    Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order);
-    for(int i=1;i<parent->order;i++) {
-      yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i);
+      double dx = x - (parent->breaks)(parent->index);
+      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order);
+      for(int i=1;i<parent->order;i++)
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i);
+      xSave=x;
+      ySave=yi;
+      return yi.copy();
     }
-    return yi.copy();
   }
 
   Vec PPolynom::SecondDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
-    if(!(x>(parent->breaks)(parent->index) && x<(parent->breaks)((parent->index)+1))) { // saved index still OK? otherwise search
-      (parent->index) = 0;
-      while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x) (parent->index)++;
-      (parent->index)--;
-    }
+    if ((fabs(x-xSave)<macheps()) && ySave.size())
+      return ySave;
+    else {
+      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
+        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
+          (parent->index)--;
+      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
+        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
+          (parent->index)++;
+        (parent->index)--;  
+      }
 
-    double dx = x - (parent->breaks)(parent->index);
-    Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order)*((parent->order)-1);
-    for(int i=1;i<=((parent->order)-2);i++) {
-      yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i)*((parent->order)-i-1);
+      double dx = x - (parent->breaks)(parent->index);
+      Vec yi = trans(((parent->coefs)[0]).row(parent->index).copy())*(parent->order)*((parent->order)-1);
+      for(int i=1;i<=((parent->order)-2);i++)
+        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*((parent->order)-i)*((parent->order)-i-1);
+      xSave=x;
+      ySave=yi;
+      return yi.copy();
     }
-    return yi.copy();
   }
 
   void PPolynom::initializeUsingXML(TiXmlElement * element) {
@@ -262,7 +288,7 @@ namespace MBSim {
     }
     string method;
     if (element->FirstChildElement(MBSIMNS"cSplinePeriodic"))
-        method="csplinePer";
+      method="csplinePer";
     else if (element->FirstChildElement(MBSIMNS"cSplineNatural"))
       method="csplineNat";
     else if (element->FirstChildElement(MBSIMNS"piecewiseLinear"))
