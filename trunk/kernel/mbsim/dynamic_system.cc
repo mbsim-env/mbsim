@@ -1477,9 +1477,9 @@ namespace MBSim {
 
   Element * DynamicSystem::getByPathSearch(string path) {
     if (path.substr(0, 1)=="/") { // absolut path
-      if (this!=ds) // absolut path from Group
-        return ds->getByPathSearch(path);
-      else // absolut path from DynamicSystemSolver
+      if(parent)
+        return parent->getByPathSearch(path);
+      else
         return getByPathSearch(path.substr(1));
     }
     else if (path.substr(0, 3)=="../") // relative path
