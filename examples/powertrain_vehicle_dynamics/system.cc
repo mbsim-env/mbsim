@@ -3,7 +3,6 @@
 #include "mbsim/contact.h"
 #include "mbsimControl/actuator.h"
 #include "openmbvcppinterface/cuboid.h"
-#include "openmbvcppinterface/objbody.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/ivbody.h"
 #include "mbsim/utils/function_library.h"
