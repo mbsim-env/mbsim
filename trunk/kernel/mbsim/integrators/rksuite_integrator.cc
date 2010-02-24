@@ -1,5 +1,5 @@
-/* Copyright (C) 2004-2006  Martin Förg
- 
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,19 +13,16 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   mfoerg@users.berlios.de
- *
+ * Contact: mfoerg@users.berlios.de
  */
 
 #include <config.h>
 #include <mbsim/dynamic_system_solver.h>
+#include "rksuite_integrator.h"
 #include <mbsim/utils/eps.h>
 #include "fortran_wrapper.h"
-#include "rksuite_integrator.h"
-#include <fstream>
+
 #include <time.h>
 
 #ifndef NO_ISO_14882
@@ -36,87 +33,85 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RKSuiteIntegrator::RKSuiteIntegrator() : method(2), thres(1,INIT,1e-10), rTol(1e-6), dt0(0) {
+  RKSuiteIntegrator::RKSuiteIntegrator() : method(2), thres(1,INIT,1e-10), rTol(1e-6), dt0(0), ndworkarray(100000), messages(0), integrationSteps(0), t(0), tPlot(0), s0(0), time(0), z(0), zdGot(0), zMax(0), integPlot(0) {
   }
 
-  int RKSuiteIntegrator::zSize = 0;
+  void RKSuiteIntegrator::preIntegrate(DynamicSystemSolver& system_) {
 
-  void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
-    Vec z(zSize, z_);
-    Vec zd(zSize, zd_);
-    system->zdot(z, zd, *t);
-  }
+    system=&system_;
 
-  void RKSuiteIntegrator::integrate(DynamicSystemSolver& system_) {
-
-    system = &system_;
     zSize=system->getzSize();
 
-    double t=tStart;
-    Vec z(zSize);
-    if(z0.size())
-      z = z0;
-    else
-      system->initz(z);
-    double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
+    z.resize(zSize, INIT, 0);
+    if(z0.size()) z = z0; // define initial state
+    else system->initz(z);
+
     if(thres.size() == 1) {
       double buf = thres(0);
       thres.resize(zSize,INIT,buf);
     } 
     assert (thres.size() == zSize);
 
-    char task='U';
-    int errass=0;
-    double dtStart=0.0; // automatical detection of dt start
-    int ndworkarray=100000; /////////////////
-    double *dworkarray=new double[ndworkarray];
-    int messages;
-    if(warnLevel)
-      messages = 1;
-    else 
-      messages = 0;
-    SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method, &task,
-	&errass, &dtStart, dworkarray, &ndworkarray, &messages);
+    dworkarray=new double[ndworkarray];
+    if (warnLevel)
+      messages=1;
 
-    double tPlot=t+dtPlot;
-    Vec zdGot(zSize);
-    Vec zMax(zSize);
-    int result;
-//    bool donedrift;
+    zdGot.resize(zSize, INIT, 0);
+    zMax.resize(zSize, INIT, 0);
 
+    t=tStart;
     system->plotWithIK(z, t);
 
-    double s0 = clock();
-    double time = 0;
-    int integrationSteps = 0;
-
-    ofstream integPlot((name + ".plt").c_str());
-
+    tPlot = t + dtPlot;
+    integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
-    double dtLast = 0;
-    while(t<=tEnd) {
+
+    integrationSteps = 0;
+
+    s0 = clock();
+    time = 0;
+  }
+
+  void RKSuiteIntegrator::subIntegrate(DynamicSystemSolver& system_, double tStop) {
+
+    int result=0, errass=0;
+    double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
+    const char task='U';
+
+    SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method, &task,
+        &errass, &dt0, dworkarray, &ndworkarray, &messages);
+
+    while((tStop-t)>epsroot()) {
 
       integrationSteps++;
 
-      UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, 
-	  &result, &dtLast);
+      double dtLast = 0;
+      UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
+
       if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
-	system->plotWithIK(z, t);
+        system->plotWithIK(z, t);
 
-	if(output)
-	  cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
+        if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
 
-	double s1 = clock();
-	time += (s1-s0)/CLOCKS_PER_SEC;
-	s0 = s1; 
-	integPlot<< t << " " << dtLast << " " << time << endl;
+        const double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot<< t << " " << dtLast << " " << time << endl;
 
-	tPlot += dtPlot;
+        tPlot += dtPlot;
       }
+
       if(result==3 || result==4)
-	continue;
-      if(result>=5) exit(result);
+        continue;
+      if(result>=5) 
+        exit(result);
+
+      if (tPlot>tStop)
+        tPlot=tStop;
     }
+  }
+
+  void RKSuiteIntegrator::postIntegrate(DynamicSystemSolver& system_) {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
@@ -127,5 +122,41 @@ namespace MBSim {
     cout.unsetf (ios::scientific);
     cout << endl;
   }
+
+  void RKSuiteIntegrator::integrate(DynamicSystemSolver& system) {
+    preIntegrate(system);
+    subIntegrate(system, tEnd);
+    postIntegrate(system);
+  }
+
+  void RKSuiteIntegrator::initializeUsingXML(TiXmlElement *element) {
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMINTNS"method23");
+    if (e)
+      setMethod(1);
+    e=element->FirstChildElement(MBSIMINTNS"method45");
+    if (e)
+      setMethod(2);
+    e=element->FirstChildElement(MBSIMINTNS"method78");
+    if (e)
+      setMethod(3);
+    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    setrTol(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"thresholdScalar");
+    setThreshold(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"initialStepsize");
+    if (e)
+      setInitialStepSize(Element::getDouble(e));
+  }
+
+  void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
+    Vec z(zSize, z_);
+    Vec zd(zSize, zd_);
+    system->zdot(z, zd, *t);
+  }
+
+  int RKSuiteIntegrator::zSize = 0;
+
 
 }
