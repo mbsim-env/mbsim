@@ -157,3 +157,10 @@ echo -e "\n\n\n\n\n\n\n\n\n\n"
 echo -e "EXAMPLES FAILED COMPILING OR RUNNING:$FAILED"
 echo -e "\n"
 echo -e "EXAMPLES FAILED DIFF WITH REFERENCE SOLUTION:$DIFF"
+
+
+
+echo -e "\n\n\n\n\n\n\n\n\n\n" >> runexamples.log
+echo -e "EXAMPLES FAILED COMPILING OR RUNNING:$FAILED" >> runexamples.log
+echo -e "\n" >> runexamples.log
+echo -e "EXAMPLES FAILED DIFF WITH REFERENCE SOLUTION:$DIFF" >> runexamples.log

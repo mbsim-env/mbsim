@@ -76,7 +76,7 @@ namespace MBSim {
 
     int result=0, errass=0;
     double tEND=tEnd+dtPlot; // tEND must be greater than tEnd
-    const char task='U';
+    char task='U';
 
     SETUP(&zSize, &t, z(), &tEND, &rTol, thres(), &method, &task,
         &errass, &dt0, dworkarray, &ndworkarray, &messages);

@@ -33,6 +33,7 @@
 #include "mbsim/integrators/lsodar_integrator.h"
 #include "mbsim/integrators/time_stepping_integrator.h"
 #include "mbsim/integrators/euler_explicit_integrator.h"
+#include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
 
 using namespace std;
@@ -260,6 +261,8 @@ namespace MBSim {
       return new TimeSteppingIntegrator;
     if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
       return new EulerExplicitIntegrator;
+    if(element->ValueStr()==MBSIMINTNS"RKSuiteIntegrator")
+      return new RKSuiteIntegrator;
     return 0;
   }
 
