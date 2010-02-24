@@ -20,7 +20,6 @@
 #ifndef _EULER_EXPLICIT_INTEGRATOR_H_ 
 #define _EULER_EXPLICIT_INTEGRATOR_H_
 
-#include <fmatvec.h>
 #include "integrator.h"
 
 namespace MBSim {

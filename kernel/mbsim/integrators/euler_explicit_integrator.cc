@@ -72,7 +72,7 @@ namespace MBSim {
   }
 
   void EulerExplicitIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { 
-    while(t<tEnd) { // time loop
+    while(t<tStop) { // time loop
       integrationSteps++;
       if((step*stepPlot - integrationSteps) < 0) {
         step++;
@@ -101,9 +101,6 @@ namespace MBSim {
     integSum.close();
 
     cout.unsetf(ios::scientific);
-    cout << endl;
-
-    cout.unsetf (ios::scientific);
     cout << endl;
   }
 

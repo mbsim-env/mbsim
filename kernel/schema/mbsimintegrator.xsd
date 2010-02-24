@@ -301,4 +301,38 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="RKSuiteIntegrator" substitutionGroup="Integrator" type="RKSuiteIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Runge-Kutta Integrationsverfahren
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="RKSuiteIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="method23"/>
+            <xs:element name="method45"/>
+            <xs:element name="method67"/>
+          </xs:choice>
+          <xs:element name="relativeToleranceScalar" type="pv:nounitScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="thresholdScalar" type="pv:nounitScalar">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Grenzwert
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initalStepsize" type="pv:timeScalar" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Integrationsschrittweite. (t=0: automatische Detektion)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
 </xs:schema>
