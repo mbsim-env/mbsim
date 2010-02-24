@@ -5379,13 +5379,13 @@ C----------------------- End of Subroutine DLSODA ----------------------
      1   JROOT(NG)
 C-----------------------------------------------------------------------
 C This is the 12 November 2003 version of
-C DLSODAR: Livermore Solver for Ordinary Differential Equations, with
+C DLSODER: Livermore Solver for Ordinary Differential Equations, with
 C          Automatic method switching for stiff and nonstiff problems,
 C          and with Root-finding.
 C
 C This version is in double precision.
 C
-C DLSODAR solves the initial value problem for stiff or nonstiff
+C DLSODER solves the initial value problem for stiff or nonstiff
 C systems of first order ODEs,
 C     dy/dt = f(t,y) ,  or, in component form,
 C     dy(i)/dt = f(i) = f(i,t,y(1),y(2),...,y(NEQ)) (i = 1,...,NEQ).
@@ -5429,7 +5429,7 @@ C     February 1980.
 C-----------------------------------------------------------------------
 C Summary of Usage.
 C
-C Communication between the user and the DLSODAR package, for normal
+C Communication between the user and the DLSODER package, for normal
 C situations, is summarized here.  This summary describes only a subset
 C of the full set of options available.  See the full description for
 C details, including alternative treatment of the Jacobian matrix,
@@ -5448,10 +5448,10 @@ C               DOUBLE PRECISION T, Y(*), GOUT(NG)
 C which supplies the vector function g by loading GOUT(i) with
 C g(i), the i-th constraint function whose root is sought.
 C
-C C. Write a main program which calls Subroutine DLSODAR once for
+C C. Write a main program which calls Subroutine DLSODER once for
 C each point at which answers are desired.  This should also provide
 C for possible use of logical unit 6 for output of error messages by
-C DLSODAR.  On the first call to DLSODAR, supply arguments as follows:
+C DLSODER.  On the first call to DLSODER, supply arguments as follows:
 C F      = name of subroutine for right-hand side vector f.
 C          This name must be declared External in calling program.
 C NEQ    = number of first order ODEs.
@@ -5499,8 +5499,8 @@ C D. The output from the first call (or any call) is:
 C      Y = array of computed values of y(t) vector.
 C      T = corresponding value of independent variable.  This is
 C          TOUT if ISTATE = 2, or the root location if ISTATE = 3,
-C          or the farthest point reached if DLSODAR was unsuccessful.
-C ISTATE = 2 or 3  if DLSODAR was successful, negative otherwise.
+C          or the farthest point reached if DLSODER was unsuccessful.
+C ISTATE = 2 or 3  if DLSODER was successful, negative otherwise.
 C           2 means no root was found, and TOUT was reached as desired.
 C           3 means a root was found prior to reaching TOUT.
 C          -1 means excess work done on this call (perhaps wrong JT).
@@ -5517,14 +5517,14 @@ C          JROOT(i) = 1 if g(i) has a root at t, or 0 otherwise.
 C
 C E. To continue the integration after a successful return, proceed
 C as follows:
-C  (a) If ISTATE = 2 on return, reset TOUT and call DLSODAR again.
-C  (b) If ISTATE = 3 on return, reset ISTATE to 2, call DLSODAR again.
+C  (a) If ISTATE = 2 on return, reset TOUT and call DLSODER again.
+C  (b) If ISTATE = 3 on return, reset ISTATE to 2, call DLSODER again.
 C In either case, no other parameters need be reset.
 C
-C F. Note: If and when DLSODAR regards the problem as stiff, and
+C F. Note: If and when DLSODER regards the problem as stiff, and
 C switches methods accordingly, it must make use of the NEQ by NEQ
 C Jacobian matrix, J = df/dy.  For the sake of simplicity, the
-C inputs to DLSODAR recommended in Paragraph C above cause DLSODAR to
+C inputs to DLSODER recommended in Paragraph C above cause DLSODER to
 C treat J as a full matrix, and to approximate it internally by
 C difference quotients.  Alternatively, J can be treated as a band
 C matrix (with great potential reduction in the size of the RWORK
@@ -5537,7 +5537,7 @@ C-----------------------------------------------------------------------
 C Example Problem.
 C
 C The following is a simple example problem, with the coding
-C needed for its solution by DLSODAR.  The problem is from chemical
+C needed for its solution by DLSODER.  The problem is from chemical
 C kinetics, and consists of the following three rate equations:
 C     dy1/dt = -.04*y1 + 1.e4*y2*y3
 C     dy2/dt = .04*y1 - 1.e4*y2*y3 - 3.e7*y2**2
@@ -5548,7 +5548,7 @@ C In addition, we want to find the values of t, y1, y2, and y3 at which
 C   (1) y1 reaches the value 1.e-4, and
 C   (2) y3 reaches the value 1.e-2.
 C
-C The following coding solves this problem with DLSODAR,
+C The following coding solves this problem with DLSODER,
 C printing results at t = .4, 4., ..., 4.e10, and at the computed
 C roots.  It uses ITOL = 2 and ATOL much smaller for y2 than y1 or y3
 C because y2 has much smaller values.
@@ -5577,7 +5577,7 @@ C     LIW = 23
 C     JT = 2
 C     NG = 2
 C     DO 40 IOUT = 1,12
-C 10    CALL DLSODAR(FEX,NEQ,Y,T,TOUT,ITOL,RTOL,ATOL,ITASK,ISTATE,
+C 10    CALL DLSODER(FEX,NEQ,Y,T,TOUT,ITOL,RTOL,ATOL,ITASK,ISTATE,
 C    1     IOPT,RWORK,LRW,IWORK,LIW,JDUM,JT,GEX,NG,JROOT)
 C       WRITE(6,20)T,Y(1),Y(2),Y(3)
 C 20    FORMAT(' At t =',D12.4,'   Y =',3D14.6)
@@ -5640,18 +5640,18 @@ C   No. steps = 361  No. f-s = 693  No. J-s =  64  No. g-s = 390
 C   Method last used = 2   Last switch was at t =  6.0092e-03
 C
 C-----------------------------------------------------------------------
-C Full Description of User Interface to DLSODAR.
+C Full Description of User Interface to DLSODER.
 C
-C The user interface to DLSODAR consists of the following parts.
+C The user interface to DLSODER consists of the following parts.
 C
-C 1.   The call sequence to Subroutine DLSODAR, which is a driver
+C 1.   The call sequence to Subroutine DLSODER, which is a driver
 C      routine for the solver.  This includes descriptions of both
-C      the call sequence arguments and of user-supplied routines.
+C      the call sequence arguments and of useE-supplied routines.
 C      Following these descriptions is a description of
 C      optional inputs available through the call sequence, and then
 C      a description of optional outputs (in the work arrays).
 C
-C 2.   Descriptions of other routines in the DLSODAR package that may be
+C 2.   Descriptions of other routines in the DLSODER package that may be
 C      (optionally) called by the user.  These provide the ability to
 C      alter error message handling, save and restore the internal
 C      Common, and obtain specified derivatives of the solution y(t).
@@ -5660,7 +5660,7 @@ C 3.   Descriptions of Common blocks to be declared in overlay
 C      or similar environments, or to be saved when doing an interrupt
 C      of the problem and continued solution later.
 C
-C 4.   Description of a subroutine in the DLSODAR package,
+C 4.   Description of a subroutine in the DLSODER package,
 C      which the user may replace with his/her own version, if desired.
 C      this relates to the measurement of errors.
 C
@@ -5675,7 +5675,7 @@ C and those used for both input and output are
 C     Y, T, ISTATE.
 C The work arrays RWORK and IWORK are also used for conditional and
 C optional inputs and optional outputs.  (The term output here refers
-C to the return from Subroutine DLSODAR to the user's calling program.)
+C to the return from Subroutine DLSODER to the user's calling program.)
 C
 C The legality of input parameters will be thoroughly checked on the
 C initial call for the problem, but not checked thereafter unless a
@@ -5701,7 +5701,7 @@ C          (dimensioned in F) and/or Y has length exceeding NEQ(1).
 C          See the descriptions of NEQ and Y below.
 C
 C          If quantities computed in the F routine are needed
-C          externally to DLSODAR, an extra call to F should be made
+C          externally to DLSODER, an extra call to F should be made
 C          for this purpose, for consistent and accurate results.
 C          If only the derivative dy/dt is needed, use DINTDY instead.
 C
@@ -5715,7 +5715,7 @@ C
 C          Normally, NEQ is a scalar, and it is generally referred to
 C          as a scalar in this user interface description.  However,
 C          NEQ may be an array, with NEQ(1) set to the system size.
-C          (The DLSODAR package accesses only NEQ(1).)  In either case,
+C          (The DLSODER package accesses only NEQ(1).)  In either case,
 C          this parameter is passed as the NEQ argument in all calls
 C          to F, JAC, and G.  Hence, if it is an array, locations
 C          NEQ(2),... may be used to store other integer data and pass
@@ -5733,7 +5733,7 @@ C
 C          This array is passed as the Y argument in all calls to F,
 C          JAC, and G.  Hence its length may exceed NEQ, and locations
 C          Y(NEQ+1),... may be used to store other real data and
-C          pass it to F, JAC, and G.  (The DLSODAR package accesses only
+C          pass it to F, JAC, and G.  (The DLSODER package accesses only
 C          Y(1),...,Y(NEQ).)
 C
 C T      = the independent variable.  On input, T is used only on the
@@ -5901,7 +5901,7 @@ C              was requested on a variable which has now vanished.
 C              The integration was successful as far as T.
 C          -7  means the length of RWORK and/or IWORK was too small to
 C              proceed, but the integration was successful as far as T.
-C              This happens when DLSODAR chooses to switch methods
+C              This happens when DLSODER chooses to switch methods
 C              but LRW and/or LIW is too small for the new method.
 C
 C          Note:  Since the normal output value of ISTATE is 2,
@@ -5921,12 +5921,12 @@ C
 C RWORK  = a real array (double precision) for work space, and (in the
 C          first 20 words) for conditional and optional inputs and
 C          optional outputs.
-C          As DLSODAR switches automatically between stiff and nonstiff
+C          As DLSODER switches automatically between stiff and nonstiff
 C          methods, the required length of RWORK can change during the
-C          problem.  Thus the RWORK array passed to DLSODAR can either
+C          problem.  Thus the RWORK array passed to DLSODER can either
 C          have a static (fixed) length large enough for both methods,
 C          or have a dynamic (changing) length altered by the calling
-C          program in response to output from DLSODAR.
+C          program in response to output from DLSODER.
 C
 C                       --- Fixed Length Case ---
 C          If the RWORK length is to be fixed, it should be at least
@@ -5958,27 +5958,27 @@ C                       --- Dynamic Length Case ---
 C          If the length of RWORK is to be dynamic, then it should
 C          be at least LRN or LRS, as defined above, depending on the
 C          current method.  Initially, it must be at least LRN (since
-C          DLSODAR starts with the nonstiff method).  On any return
-C          from DLSODAR, the optional output MCUR indicates the current
+C          DLSODER starts with the nonstiff method).  On any return
+C          from DLSODER, the optional output MCUR indicates the current
 C          method.  If MCUR differs from the value it had on the
 C          previous return, or if there has only been one call to
-C          DLSODAR and MCUR is now 2, then DLSODAR has switched
+C          DLSODER and MCUR is now 2, then DLSODER has switched
 C          methods during the last call, and the length of RWORK
 C          should be reset (to LRN if MCUR = 1, or to LRS if
 C          MCUR = 2).  (An increase in the RWORK length is required
-C          if DLSODAR returned ISTATE = -7, but not otherwise.)
-C          After resetting the length, call DLSODAR with ISTATE = 3
+C          if DLSODER returned ISTATE = -7, but not otherwise.)
+C          After resetting the length, call DLSODER with ISTATE = 3
 C          to signal that change.
 C
 C LRW    = the length of the array RWORK, as declared by the user.
 C          (This will be checked by the solver.)
 C
 C IWORK  = an integer array for work space.
-C          As DLSODAR switches automatically between stiff and nonstiff
+C          As DLSODER switches automatically between stiff and nonstiff
 C          methods, the required length of IWORK can change during
 C          problem, between
 C             LIS = 20 + NEQ   and   LIN = 20,
-C          respectively.  Thus the IWORK array passed to DLSODAR can
+C          respectively.  Thus the IWORK array passed to DLSODER can
 C          either have a fixed length of at least 20 + NEQ, or have a
 C          dynamic length of at least LIN or LIS, depending on the
 C          current method.  The comments on dynamic length under
@@ -6004,12 +6004,12 @@ C LIW    = the length of the array IWORK, as declared by the user.
 C          (This will be checked by the solver.)
 C
 C Note: The base addresses of the work arrays must not be
-C altered between calls to DLSODAR for the same problem.
+C altered between calls to DLSODER for the same problem.
 C The contents of the work arrays must not be altered
 C between calls, except possibly for the conditional and
 C optional inputs, and except for the last 3*NEQ words of RWORK.
 C The latter space is used for internal scratch space, and so is
-C available for use by the user outside DLSODAR between calls, if
+C available for use by the user outside DLSODER between calls, if
 C desired (but not for use by F, JAC, or G).
 C
 C JAC    = the name of the user-supplied routine to compute the
@@ -6017,8 +6017,8 @@ C          Jacobian matrix, df/dy, if JT = 1 or 4.  The JAC routine
 C          is optional, but if the problem is expected to be stiff much
 C          of the time, you are encouraged to supply JAC, for the sake
 C          of efficiency.  (Alternatively, set JT = 2 or 5 to have
-C          DLSODAR compute df/dy internally by difference quotients.)
-C          If and when DLSODAR uses df/dy, it treats this NEQ by NEQ
+C          DLSODER compute df/dy internally by difference quotients.)
+C          If and when DLSODER uses df/dy, it treats this NEQ by NEQ
 C          matrix either as full (JT = 1 or 2), or as banded (JT =
 C          4 or 5) with half-bandwidths ML and MU (discussed under
 C          IWORK above).  In either case, if JT = 1 or 4, the JAC
@@ -6041,7 +6041,7 @@ C          of PD.  Thus df(i)/dy(j) is to be loaded into PD(i-j+MU+1,j).
 C          ML and MU are the half-bandwidth parameters (see IWORK).
 C          The locations in PD in the two triangular areas which
 C          correspond to nonexistent matrix elements can be ignored
-C          or loaded arbitrarily, as they are overwritten by DLSODAR.
+C          or loaded arbitrarily, as they are overwritten by DLSODER.
 C               JAC need not provide df/dy exactly.  A crude
 C          approximation (possibly with a smaller bandwidth) will do.
 C               In either case, PD is preset to zero by the solver,
@@ -6059,7 +6059,7 @@ C          See the descriptions of NEQ and Y above.
 C
 C JT     = Jacobian type indicator.  Used only for input.
 C          JT specifies how the Jacobian matrix df/dy will be
-C          treated, if and when DLSODAR requires this matrix.
+C          treated, if and when DLSODER requires this matrix.
 C          JT has the following values and meanings:
 C           1 means a user-supplied full (NEQ by NEQ) Jacobian.
 C           2 means an internally generated (difference quotient) full
@@ -6081,20 +6081,20 @@ C          is output.  NEQ, T, and Y have the same meaning as in
 C          the F routine, and GOUT is an array of length NG.
 C          For i = 1,...,NG, this routine is to load into GOUT(i)
 C          the value at (T,Y) of the i-th constraint function g(i).
-C          DLSODAR will find roots of the g(i) of odd multiplicity
+C          DLSODER will find roots of the g(i) of odd multiplicity
 C          (i.e. sign changes) as they occur during the integration.
 C          G must be declared External in the calling program.
 C
 C          Caution:  Because of numerical errors in the functions
-C          g(i) due to roundoff and integration error, DLSODAR may
+C          g(i) due to roundoff and integration error, DLSODER may
 C          return false roots, or return the same root at two or more
 C          nearly equal values of t.  If such false roots are
 C          suspected, the user should consider smaller error tolerances
 C          and/or higher precision in the evaluation of the g(i).
 C
 C          If a root of some g(i) defines the end of the problem,
-C          the input to DLSODAR should nevertheless allow integration
-C          to a point slightly past that root, so that DLSODAR can
+C          the input to DLSODER should nevertheless allow integration
+C          to a point slightly past that root, so that DLSODER can
 C          locate the root by interpolation.
 C
 C          Subroutine G may access user-defined quantities in
@@ -6164,12 +6164,12 @@ C                   MXORDS is held constant during the problem.
 C-----------------------------------------------------------------------
 C Optional Outputs.
 C
-C As optional additional output from DLSODAR, the variables listed
-C below are quantities related to the performance of DLSODAR
+C As optional additional output from DLSODER, the variables listed
+C below are quantities related to the performance of DLSODER
 C which are available to the user.  These are communicated by way of
 C the work arrays, but also have internal mnemonic names as shown.
 C Except where stated otherwise, all of these outputs are defined
-C on any successful return from DLSODAR, and on any return with
+C on any successful return from DLSODER, and on any return with
 C ISTATE = -1, -2, -4, -5, or -6.  On an illegal input return
 C (ISTATE = -3), they will be unchanged from their existing values
 C (if any), except possibly for TOLSF, LENRW, and LENIW.
@@ -6260,7 +6260,7 @@ C           as noted)    to represent the estimated local error in y
 C                        on the last step.  This is the vector E in
 C                        the description of the error control.  It is
 C                        defined only on a successful return from
-C                        DLSODAR.  The base address LACOR is obtained by
+C                        DLSODER.  The base address LACOR is obtained by
 C                        including in the user's program the
 C                        following 2 lines:
 C                           COMMON /DLS001/ RLS(218), ILS(37)
@@ -6270,18 +6270,18 @@ C-----------------------------------------------------------------------
 C Part 2.  Other Routines Callable.
 C
 C The following are optional calls which the user may make to
-C gain additional capabilities in conjunction with DLSODAR.
+C gain additional capabilities in conjunction with DLSODER.
 C (The routines XSETUN and XSETF are designed to conform to the
 C SLATEC error handling package.)
 C
 C     Form of Call                  Function
 C   CALL XSETUN(LUN)          Set the logical unit number, LUN, for
-C                             output of messages from DLSODAR, if
+C                             output of messages from DLSODER, if
 C                             the default is not desired.
 C                             The default value of LUN is 6.
 C
 C   CALL XSETF(MFLAG)         Set a flag to control the printing of
-C                             messages by DLSODAR.
+C                             messages by DLSODER.
 C                             MFLAG = 0 means do not print. (Danger:
 C                             This risks losing valuable information.)
 C                             MFLAG = 1 means print (the default).
@@ -6291,7 +6291,7 @@ C                             any time and will take effect immediately.
 C
 C   CALL DSRCAR(RSAV,ISAV,JOB) saves and restores the contents of
 C                             the internal Common blocks used by
-C                             DLSODAR (see Part 3 below).
+C                             DLSODER (see Part 3 below).
 C                             RSAV must be a real array of length 245
 C                             or more, and ISAV must be an integer
 C                             array of length 55 or more.
@@ -6300,12 +6300,12 @@ C                             JOB=2 means restore Common from RSAV/ISAV.
 C                                DSRCAR is useful if one is
 C                             interrupting a run and restarting
 C                             later, or alternating between two or
-C                             more problems solved with DLSODAR.
+C                             more problems solved with DLSODER.
 C
 C   CALL DINTDY(,,,,,)        Provide derivatives of y, of various
 C        (see below)          orders, at a specified point t, if
 C                             desired.  It may be called only after
-C                             a successful return from DLSODAR.
+C                             a successful return from DLSODER.
 C
 C The detailed instructions for using DINTDY are as follows.
 C The form of the call is:
@@ -6316,14 +6316,14 @@ C
 C The input parameters are:
 C
 C T         = value of independent variable where answers are desired
-C             (normally the same as the T last returned by DLSODAR).
+C             (normally the same as the T last returned by DLSODER).
 C             For valid results, T must lie between TCUR - HU and TCUR.
 C             (See optional outputs for TCUR and HU.)
 C K         = integer order of the derivative desired.  K must satisfy
 C             0 .le. K .le. NQCUR, where NQCUR is the current order
 C             (see optional outputs).  The capability corresponding
 C             to K = 0, i.e. computing y(t), is already provided
-C             by DLSODAR directly.  Since NQCUR .ge. 1, the first
+C             by DLSODER directly.  Since NQCUR .ge. 1, the first
 C             derivative dy/dt is always available with DINTDY.
 C LYH       = 21 + 3*NG = base address in RWORK of the history array YH.
 C NYH       = column length of YH, equal to the initial value of NEQ.
@@ -6338,9 +6338,9 @@ C             On an error return, a message is also written.
 C-----------------------------------------------------------------------
 C Part 3.  Common Blocks.
 C
-C If DLSODAR is to be used in an overlay situation, the user
+C If DLSODER is to be used in an overlay situation, the user
 C must declare, in the primary overlay, the variables in:
-C   (1) the call sequence to DLSODAR, and
+C   (1) the call sequence to DLSODER, and
 C   (2) the three internal Common blocks
 C         /DLS001/  of length  255  (218 double precision words
 C                      followed by 37 integer words),
@@ -6349,24 +6349,24 @@ C                      followed by  9 integer words).
 C         /DLSR01/  of length   7  (3 double precision words
 C                      followed by  4 integer words).
 C
-C If DLSODAR is used on a system in which the contents of internal
+C If DLSODER is used on a system in which the contents of internal
 C Common blocks are not preserved between calls, the user should
 C declare the above Common blocks in the calling program to insure
 C that their contents are preserved.
 C
-C If the solution of a given problem by DLSODAR is to be interrupted
+C If the solution of a given problem by DLSODER is to be interrupted
 C and then later continued, such as when restarting an interrupted run
 C or alternating between two or more problems, the user should save,
-C following the return from the last DLSODAR call prior to the
+C following the return from the last DLSODER call prior to the
 C interruption, the contents of the call sequence variables and the
 C internal Common blocks, and later restore these values before the
-C next DLSODAR call for that problem.  To save and restore the Common
+C next DLSODER call for that problem.  To save and restore the Common
 C blocks, use Subroutine DSRCAR (see Part 2 above).
 C
 C-----------------------------------------------------------------------
 C Part 4.  Optionally Replaceable Solver Routines.
 C
-C Below is a description of a routine in the DLSODAR package which
+C Below is a description of a routine in the DLSODER package which
 C relates to the measurement of errors, and can be
 C replaced by a user-supplied version, if desired.  However, since such
 C a replacement may have a major impact on performance, it should be
@@ -6379,14 +6379,14 @@ C The following subroutine is called just before each internal
 C integration step, and sets the array of error weights, EWT, as
 C described under ITOL/RTOL/ATOL above:
 C     Subroutine DEWSET (NEQ, ITOL, RTOL, ATOL, YCUR, EWT)
-C where NEQ, ITOL, RTOL, and ATOL are as in the DLSODAR call sequence,
+C where NEQ, ITOL, RTOL, and ATOL are as in the DLSODER call sequence,
 C YCUR contains the current dependent variable vector, and
 C EWT is the array of weights set by DEWSET.
 C
 C If the user supplies this subroutine, it must return in EWT(i)
 C (i = 1,...,NEQ) a positive quantity suitable for comparing errors
 C in y(i) to.  The EWT array returned by DEWSET is passed to the
-C DMNORM routine, and also used by DLSODAR in the computation
+C DMNORM routine, and also used by DLSODER in the computation
 C of the optional output IMXER, and the increments for difference
 C quotient Jacobians.
 C
@@ -6420,7 +6420,7 @@ C           fixed t test in INTDY; added Cray directives in STODA;
 C           in STODA, fixed DELP init. and logic around PJAC call;
 C           combined routines to save/restore Common;
 C           passed LEVEL = 0 in error message calls (except run abort).
-C 19970225  Fixed lines setting JSTART = -2 in Subroutine LSODAR.
+C 19970225  Fixed lines setting JSTART = -2 in Subroutine LSODER.
 C 20010425  Major update: convert source lines to upper case;
 C           added *DECK lines; changed from 1 to * in dummy dimensions;
 C           changed names R1MACH/D1MACH to RUMACH/DUMACH;
@@ -6441,12 +6441,12 @@ C           interrupt/restart feature.
 C 20031112  Added SAVE statements for data-loaded constants.
 C
 C-----------------------------------------------------------------------
-C Other routines in the DLSODAR package.
+C Other routines in the DLSODER package.
 C
-C In addition to Subroutine DLSODAR, the DLSODAR package includes the
+C In addition to Subroutine DLSODER, the DLSODER package includes the
 C following subroutines and function routines:
 C  DRCHEK   does preliminary checking for roots, and serves as an
-C           interface between Subroutine DLSODAR and Subroutine DROOTS.
+C           interface between Subroutine DLSODER and Subroutine DROOTS.
 C  DROOTS   finds the leftmost root of a set of functions.
 C  DINTDY   computes an interpolated value of the y vector at t = TOUT.
 C  DSTODA   is the core integrator, which does one step of the
@@ -6502,10 +6502,10 @@ C The following three internal Common blocks contain
 C (a) variables which are local to any subroutine but whose values must
 C     be preserved between calls to the routine ("own" variables), and
 C (b) variables which are communicated between subroutines.
-C The block DLS001 is declared in subroutines DLSODAR, DINTDY, DSTODA,
+C The block DLS001 is declared in subroutines DLSODER, DINTDY, DSTODA,
 C DPRJA, and DSOLSY.
-C The block DLSA01 is declared in subroutines DLSODAR, DSTODA, DPRJA.
-C The block DLSR01 is declared in subroutines DLSODAR, DRCHEK, DROOTS.
+C The block DLSA01 is declared in subroutines DLSODER, DSTODA, DPRJA.
+C The block DLSR01 is declared in subroutines DLSODER, DRCHEK, DROOTS.
 C Groups of variables are replaced by dummy arrays in the Common
 C declarations in routines where those variables are not used.
 C-----------------------------------------------------------------------
@@ -6661,7 +6661,7 @@ C If ISTATE = 3 and NG was changed, shift YH to its new location. ------
       IF (LRW .GE. LENRW) GO TO 65
       INSUFR = 2
       LEWT = LEN1C + 1
-      MSG='DLSODAR-  Warning.. RWORK length is sufficient for now, but '
+      MSG='DLSODER-  Warning.. RWORK length is sufficient for now, but '
       CALL XERRWD (MSG, 60, 103, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      may not be later.  Integration will proceed anyway.   '
       CALL XERRWD (MSG, 60, 103, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
@@ -6672,7 +6672,7 @@ C If ISTATE = 3 and NG was changed, shift YH to its new location. ------
       INSUFI = 0
       IF (LIW .GE. LENIW) GO TO 70
       INSUFI = 2
-      MSG='DLSODAR-  Warning.. IWORK length is sufficient for now, but '
+      MSG='DLSODER-  Warning.. IWORK length is sufficient for now, but '
       CALL XERRWD (MSG, 60, 104, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      may not be later.  Integration will proceed anyway.   '
       CALL XERRWD (MSG, 60, 104, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
@@ -6882,14 +6882,14 @@ C-----------------------------------------------------------------------
  280  IF ((TN + H) .NE. TN) GO TO 290
       NHNIL = NHNIL + 1
       IF (NHNIL .GT. MXHNIL) GO TO 290
-      MSG = 'DLSODAR-  Warning..Internal T(=R1) and H(=R2) are '
+      MSG = 'DLSODER-  Warning..Internal T(=R1) and H(=R2) are '
       CALL XERRWD (MSG, 50, 101, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      such that in the machine, T + H = T on the next step  '
       CALL XERRWD (MSG, 60, 101, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '     (H = step size). Solver will continue anyway.'
       CALL XERRWD (MSG, 50, 101, 0, 0, 0, 0, 2, TN, H)
       IF (NHNIL .LT. MXHNIL) GO TO 290
-      MSG = 'DLSODAR-  Above warning has been issued I1 times. '
+      MSG = 'DLSODER-  Above warning has been issued I1 times. '
       CALL XERRWD (MSG, 50, 102, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '     It will not be issued again for this problem.'
       CALL XERRWD (MSG, 50, 102, 0, 1, MXHNIL, 0, 0, 0.0D0, 0.0D0)
@@ -6925,11 +6925,11 @@ C-----------------------------------------------------------------------
       JSTART = -1
       IF (IXPR .EQ. 0) GO TO 310
       IF (METH .EQ. 2) THEN
-      MSG='DLSODAR- A switch to the BDF (stiff) method has occurred    '
+      MSG='DLSODER- A switch to the BDF (stiff) method has occurred    '
       CALL XERRWD (MSG, 60, 105, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       ENDIF
       IF (METH .EQ. 1) THEN
-      MSG='DLSODAR- A switch to the Adams (nonstiff) method occurred   '
+      MSG='DLSODER- A switch to the Adams (nonstiff) method occurred   '
       CALL XERRWD (MSG, 60, 106, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       ENDIF
       MSG='     at T = R1,  tentative step size H = R2,  step NST = I1 '
@@ -6973,7 +6973,7 @@ C ITASK = 5.  See if TCRIT was reached and jump to exit. ---------------
       IHIT = ABS(TN - TCRIT) .LE. 100.0D0*UROUND*HMX
 C-----------------------------------------------------------------------
 C Block G.
-C The following block handles all successful returns from DLSODAR.
+C The following block handles all successful returns from DLSODER.
 C If ITASK .ne. 1, Y is loaded from YH and T is set accordingly.
 C ISTATE is set to 2, and the optional outputs are loaded into the
 C work arrays before returning.
@@ -7008,7 +7008,7 @@ C Then Y is loaded from YH and T is set to TN.
 C The optional outputs are loaded into the work arrays before returning.
 C-----------------------------------------------------------------------
 C The maximum number of steps was taken before reaching TOUT. ----------
- 500  MSG = 'DLSODAR-  At current T (=R1), MXSTEP (=I1) steps  '
+ 500  MSG = 'DLSODER-  At current T (=R1), MXSTEP (=I1) steps  '
       CALL XERRWD (MSG, 50, 201, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      taken on this call before reaching TOUT     '
       CALL XERRWD (MSG, 50, 201, 0, 1, MXSTEP, 0, 1, TN, 0.0D0)
@@ -7016,12 +7016,12 @@ C The maximum number of steps was taken before reaching TOUT. ----------
       GO TO 580
 C EWT(i) .le. 0.0 for some i (not at start of problem). ----------------
  510  EWTI = RWORK(LEWT+I-1)
-      MSG = 'DLSODAR-  At T(=R1), EWT(I1) has become R2 .le. 0.'
+      MSG = 'DLSODER-  At T(=R1), EWT(I1) has become R2 .le. 0.'
       CALL XERRWD (MSG, 50, 202, 0, 1, I, 0, 2, TN, EWTI)
       ISTATE = -6
       GO TO 580
 C Too much accuracy requested for machine precision. -------------------
- 520  MSG = 'DLSODAR-  At T (=R1), too much accuracy requested '
+ 520  MSG = 'DLSODER-  At T (=R1), too much accuracy requested '
       CALL XERRWD (MSG, 50, 203, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      for precision of machine..  See TOLSF (=R2) '
       CALL XERRWD (MSG, 50, 203, 0, 0, 0, 0, 2, TN, TOLSF)
@@ -7029,14 +7029,14 @@ C Too much accuracy requested for machine precision. -------------------
       ISTATE = -2
       GO TO 580
 C KFLAG = -1.  Error test failed repeatedly or with ABS(H) = HMIN. -----
- 530  MSG = 'DLSODAR-  At T(=R1), step size H(=R2), the error  '
+ 530  MSG = 'DLSODER-  At T(=R1), step size H(=R2), the error  '
       CALL XERRWD (MSG, 50, 204, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      test failed repeatedly or with ABS(H) = HMIN'
       CALL XERRWD (MSG, 50, 204, 0, 0, 0, 0, 2, TN, H)
       ISTATE = -4
       GO TO 560
 C KFLAG = -2.  Convergence failed repeatedly or with ABS(H) = HMIN. ----
- 540  MSG = 'DLSODAR-  At T (=R1) and step size H (=R2), the   '
+ 540  MSG = 'DLSODER-  At T (=R1) and step size H (=R2), the   '
       CALL XERRWD (MSG, 50, 205, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      corrector convergence failed repeatedly     '
       CALL XERRWD (MSG, 50, 205, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
@@ -7045,14 +7045,14 @@ C KFLAG = -2.  Convergence failed repeatedly or with ABS(H) = HMIN. ----
       ISTATE = -5
       GO TO 560
 C RWORK length too small to proceed. -----------------------------------
- 550  MSG = 'DLSODAR- At current T(=R1), RWORK length too small'
+ 550  MSG = 'DLSODER- At current T(=R1), RWORK length too small'
       CALL XERRWD (MSG, 50, 206, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      to proceed.  The integration was otherwise successful.'
       CALL XERRWD (MSG, 60, 206, 0, 0, 0, 0, 1, TN, 0.0D0)
       ISTATE = -7
       GO TO 580
 C IWORK length too small to proceed. -----------------------------------
- 555  MSG = 'DLSODAR- At current T(=R1), IWORK length too small'
+ 555  MSG = 'DLSODER- At current T(=R1), IWORK length too small'
       CALL XERRWD (MSG, 50, 207, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      to proceed.  The integration was otherwise successful.'
       CALL XERRWD (MSG, 60, 207, 0, 0, 0, 0, 1, TN, 0.0D0)
@@ -7093,109 +7093,109 @@ C (ISTATE = -3), as detected before calling the core integrator.
 C First the error message routine is called.  If the illegal input
 C is a negative ISTATE, the run is aborted (apparent infinite loop).
 C-----------------------------------------------------------------------
- 601  MSG = 'DLSODAR-  ISTATE(=I1) illegal.'
+ 601  MSG = 'DLSODER-  ISTATE(=I1) illegal.'
       CALL XERRWD (MSG, 30, 1, 0, 1, ISTATE, 0, 0, 0.0D0, 0.0D0)
       IF (ISTATE .LT. 0) GO TO 800
       GO TO 700
- 602  MSG = 'DLSODAR-  ITASK (=I1) illegal.'
+ 602  MSG = 'DLSODER-  ITASK (=I1) illegal.'
       CALL XERRWD (MSG, 30, 2, 0, 1, ITASK, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 603  MSG = 'DLSODAR-  ISTATE.gt.1 but DLSODAR not initialized.'
+ 603  MSG = 'DLSODER-  ISTATE.gt.1 but DLSODER not initialized.'
       CALL XERRWD (MSG, 50, 3, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 604  MSG = 'DLSODAR-  NEQ (=I1) .lt. 1    '
+ 604  MSG = 'DLSODER-  NEQ (=I1) .lt. 1    '
       CALL XERRWD (MSG, 30, 4, 0, 1, NEQ(1), 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 605  MSG = 'DLSODAR-  ISTATE = 3 and NEQ increased (I1 to I2).'
+ 605  MSG = 'DLSODER-  ISTATE = 3 and NEQ increased (I1 to I2).'
       CALL XERRWD (MSG, 50, 5, 0, 2, N, NEQ(1), 0, 0.0D0, 0.0D0)
       GO TO 700
- 606  MSG = 'DLSODAR-  ITOL (=I1) illegal. '
+ 606  MSG = 'DLSODER-  ITOL (=I1) illegal. '
       CALL XERRWD (MSG, 30, 6, 0, 1, ITOL, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 607  MSG = 'DLSODAR-  IOPT (=I1) illegal. '
+ 607  MSG = 'DLSODER-  IOPT (=I1) illegal. '
       CALL XERRWD (MSG, 30, 7, 0, 1, IOPT, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 608  MSG = 'DLSODAR-  JT (=I1) illegal.   '
+ 608  MSG = 'DLSODER-  JT (=I1) illegal.   '
       CALL XERRWD (MSG, 30, 8, 0, 1, JT, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 609  MSG = 'DLSODAR-  ML (=I1) illegal: .lt.0 or .ge.NEQ (=I2)'
+ 609  MSG = 'DLSODER-  ML (=I1) illegal: .lt.0 or .ge.NEQ (=I2)'
       CALL XERRWD (MSG, 50, 9, 0, 2, ML, NEQ(1), 0, 0.0D0, 0.0D0)
       GO TO 700
- 610  MSG = 'DLSODAR-  MU (=I1) illegal: .lt.0 or .ge.NEQ (=I2)'
+ 610  MSG = 'DLSODER-  MU (=I1) illegal: .lt.0 or .ge.NEQ (=I2)'
       CALL XERRWD (MSG, 50, 10, 0, 2, MU, NEQ(1), 0, 0.0D0, 0.0D0)
       GO TO 700
- 611  MSG = 'DLSODAR-  IXPR (=I1) illegal. '
+ 611  MSG = 'DLSODER-  IXPR (=I1) illegal. '
       CALL XERRWD (MSG, 30, 11, 0, 1, IXPR, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 612  MSG = 'DLSODAR-  MXSTEP (=I1) .lt. 0 '
+ 612  MSG = 'DLSODER-  MXSTEP (=I1) .lt. 0 '
       CALL XERRWD (MSG, 30, 12, 0, 1, MXSTEP, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 613  MSG = 'DLSODAR-  MXHNIL (=I1) .lt. 0 '
+ 613  MSG = 'DLSODER-  MXHNIL (=I1) .lt. 0 '
       CALL XERRWD (MSG, 30, 13, 0, 1, MXHNIL, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 614  MSG = 'DLSODAR-  TOUT (=R1) behind T (=R2)     '
+ 614  MSG = 'DLSODER-  TOUT (=R1) behind T (=R2)     '
       CALL XERRWD (MSG, 40, 14, 0, 0, 0, 0, 2, TOUT, T)
       MSG = '      Integration direction is given by H0 (=R1)  '
       CALL XERRWD (MSG, 50, 14, 0, 0, 0, 0, 1, H0, 0.0D0)
       GO TO 700
- 615  MSG = 'DLSODAR-  HMAX (=R1) .lt. 0.0 '
+ 615  MSG = 'DLSODER-  HMAX (=R1) .lt. 0.0 '
       CALL XERRWD (MSG, 30, 15, 0, 0, 0, 0, 1, HMAX, 0.0D0)
       GO TO 700
- 616  MSG = 'DLSODAR-  HMIN (=R1) .lt. 0.0 '
+ 616  MSG = 'DLSODER-  HMIN (=R1) .lt. 0.0 '
       CALL XERRWD (MSG, 30, 16, 0, 0, 0, 0, 1, HMIN, 0.0D0)
       GO TO 700
- 617  MSG='DLSODAR-  RWORK length needed, LENRW(=I1), exceeds LRW(=I2) '
+ 617  MSG='DLSODER-  RWORK length needed, LENRW(=I1), exceeds LRW(=I2) '
       CALL XERRWD (MSG, 60, 17, 0, 2, LENRW, LRW, 0, 0.0D0, 0.0D0)
       GO TO 700
- 618  MSG='DLSODAR-  IWORK length needed, LENIW(=I1), exceeds LIW(=I2) '
+ 618  MSG='DLSODER-  IWORK length needed, LENIW(=I1), exceeds LIW(=I2) '
       CALL XERRWD (MSG, 60, 18, 0, 2, LENIW, LIW, 0, 0.0D0, 0.0D0)
       GO TO 700
- 619  MSG = 'DLSODAR-  RTOL(I1) is R1 .lt. 0.0       '
+ 619  MSG = 'DLSODER-  RTOL(I1) is R1 .lt. 0.0       '
       CALL XERRWD (MSG, 40, 19, 0, 1, I, 0, 1, RTOLI, 0.0D0)
       GO TO 700
- 620  MSG = 'DLSODAR-  ATOL(I1) is R1 .lt. 0.0       '
+ 620  MSG = 'DLSODER-  ATOL(I1) is R1 .lt. 0.0       '
       CALL XERRWD (MSG, 40, 20, 0, 1, I, 0, 1, ATOLI, 0.0D0)
       GO TO 700
  621  EWTI = RWORK(LEWT+I-1)
-      MSG = 'DLSODAR-  EWT(I1) is R1 .le. 0.0        '
+      MSG = 'DLSODER-  EWT(I1) is R1 .le. 0.0        '
       CALL XERRWD (MSG, 40, 21, 0, 1, I, 0, 1, EWTI, 0.0D0)
       GO TO 700
- 622  MSG='DLSODAR- TOUT(=R1) too close to T(=R2) to start integration.'
+ 622  MSG='DLSODER- TOUT(=R1) too close to T(=R2) to start integration.'
       CALL XERRWD (MSG, 60, 22, 0, 0, 0, 0, 2, TOUT, T)
       GO TO 700
- 623  MSG='DLSODAR-  ITASK = I1 and TOUT (=R1) behind TCUR - HU (= R2) '
+ 623  MSG='DLSODER-  ITASK = I1 and TOUT (=R1) behind TCUR - HU (= R2) '
       CALL XERRWD (MSG, 60, 23, 0, 1, ITASK, 0, 2, TOUT, TP)
       GO TO 700
- 624  MSG='DLSODAR-  ITASK = 4 or 5 and TCRIT (=R1) behind TCUR (=R2)  '
+ 624  MSG='DLSODER-  ITASK = 4 or 5 and TCRIT (=R1) behind TCUR (=R2)  '
       CALL XERRWD (MSG, 60, 24, 0, 0, 0, 0, 2, TCRIT, TN)
       GO TO 700
- 625  MSG='DLSODAR-  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)  '
+ 625  MSG='DLSODER-  ITASK = 4 or 5 and TCRIT (=R1) behind TOUT (=R2)  '
       CALL XERRWD (MSG, 60, 25, 0, 0, 0, 0, 2, TCRIT, TOUT)
       GO TO 700
- 626  MSG = 'DLSODAR-  At start of problem, too much accuracy  '
+ 626  MSG = 'DLSODER-  At start of problem, too much accuracy  '
       CALL XERRWD (MSG, 50, 26, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG='      requested for precision of machine..  See TOLSF (=R1) '
       CALL XERRWD (MSG, 60, 26, 0, 0, 0, 0, 1, TOLSF, 0.0D0)
       RWORK(14) = TOLSF
       GO TO 700
- 627  MSG = 'DLSODAR-  Trouble in DINTDY. ITASK = I1, TOUT = R1'
+ 627  MSG = 'DLSODER-  Trouble in DINTDY. ITASK = I1, TOUT = R1'
       CALL XERRWD (MSG, 50, 27, 0, 1, ITASK, 0, 1, TOUT, 0.0D0)
       GO TO 700
- 628  MSG = 'DLSODAR-  MXORDN (=I1) .lt. 0 '
+ 628  MSG = 'DLSODER-  MXORDN (=I1) .lt. 0 '
       CALL XERRWD (MSG, 30, 28, 0, 1, MXORDN, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 629  MSG = 'DLSODAR-  MXORDS (=I1) .lt. 0 '
+ 629  MSG = 'DLSODER-  MXORDS (=I1) .lt. 0 '
       CALL XERRWD (MSG, 30, 29, 0, 1, MXORDS, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 630  MSG = 'DLSODAR-  NG (=I1) .lt. 0     '
+ 630  MSG = 'DLSODER-  NG (=I1) .lt. 0     '
       CALL XERRWD (MSG, 30, 30, 0, 1, NG, 0, 0, 0.0D0, 0.0D0)
       GO TO 700
- 631  MSG = 'DLSODAR-  NG changed (from I1 to I2) illegally,   '
+ 631  MSG = 'DLSODER-  NG changed (from I1 to I2) illegally,   '
       CALL XERRWD (MSG, 50, 31, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      i.e. not immediately after a root was found.'
       CALL XERRWD (MSG, 50, 31, 0, 2, NGC, NG, 0, 0.0D0, 0.0D0)
       GO TO 700
- 632  MSG = 'DLSODAR-  One or more components of g has a root  '
+ 632  MSG = 'DLSODER-  One or more components of g has a root  '
       CALL XERRWD (MSG, 50, 32, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
       MSG = '      too near to the initial point.    '
       CALL XERRWD (MSG, 40, 32, 0, 0, 0, 0, 0, 0.0D0, 0.0D0)
@@ -7203,7 +7203,7 @@ C
  700  ISTATE = -3
       RETURN
 C
- 800  MSG = 'DLSODAR-  Run aborted.. apparent infinite loop.   '
+ 800  MSG = 'DLSODER-  Run aborted.. apparent infinite loop.   '
       CALL XERRWD (MSG, 50, 303, 2, 0, 0, 0, 0, 0.0D0, 0.0D0)
       RETURN
 C----------------------- End of Subroutine DLSODER ---------------------
