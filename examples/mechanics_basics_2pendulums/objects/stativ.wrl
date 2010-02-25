@@ -2,7 +2,6 @@
 
 Separator {
 	Separator {
-		Transform { rotation -1 0 0 3.0 }
 		Coordinate3 {
 			point [
 				-0.026195 -10.388141 0.774836,
