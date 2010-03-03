@@ -1,12 +1,11 @@
 \section{\MBSim - Program Overview}
-From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. Also the programs described in \cite{Aca07} and \cite{Ber07} follow this approach. It is approved and also used in \MBSim{} using the object-oriented C++ programming style. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and the use of self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
+From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. The programs described in \cite{Aca07} and \cite{Ber07} follow also this approach. It is approved and also used in \emph{MBSim} using the object-oriented C++ programming style. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and the use of self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
 
-                                                                                                                                                                                                                                                                                                                                         
-Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \MBSim{} in the global simulation and analysing process.
+Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} in the global simulation and analysing process. 
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-    \includegraphics[width=0.9\hsize]{Figures/mbsim_embedding.eps}
+    \includegraphics[width=0.9\hsize]{Figures/mbsim_embedding_grey.eps}
     \label{fig:departure:mbsim:embedding}
 \end{figure}                                                                                                                                                                                                                                                                                                                                      
 \MBSim{} can handle a set of dynamical systems from various domains not only separated but also exchanging data of the form
@@ -18,21 +17,20 @@ Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \MBSim{} in th
 \end{align*}
 Though, the simulation of hydraulics, electronics, control and power train systems is included within several modules. \MBSim{} is based on the interface \FMatVec{} using either LaPack\footnote{cf.~\url{http://www.netlib.org/lapack/}} or ATLAS\footnote{cf.~\url{http://www.netlib.org/atlas/}} for fast evaluation of linear algebra routines. Further, it uses \emph{HDF5Serie} to write files using the hierarchical HDF5 file format\footnote{cf.~\url{http://www.hdfgroup.org/HDF5/}} even for large dynamical systems. These files can be read by \emph{H5PlotSerie} for plotting or by \OpenMBV{} for visualisation. Thereby, \OpenMBV{} is based on the Coin implementation\footnote{cf.~\url{http://www.coin3d.org/}} of the Open Inventor Library\footnote{\url{http://oss.sgi.com/projects/inventor/}}. Also a co-simulation with Matlab/Simulink\footnote{cf.~\url{http://www.mathworks.de/}}, HySim \cite{Bor03} for hydraulic components and KetSim \cite{Fri98} for camshaft timing chains is possible. \MBSim{} is divided in a modelling part using C++ or XML and a simulation part. The simulation part is implemented quite modular distinguishing between the update of bodies and interactions concerning kinematics, kinetics as well as force laws and integration / nonlinear solution schemes. Also here external libraries are used where it is possible for having always a state-of-the-art numerical basis.
 A typical example of a dynamical system only from mechanics is given by Figure~\ref{fig:objects}.
-\begin{figure}
+\begin{figure}[hbt]%
 	\centering
-    \small
+    \footnotesize
     \psfrag{Body}{\texttt{Body}}
-    \psfrag{Frame}{\texttt{Frame}}
-    \psfrag{Contour}{\texttt{Contour}}
+    \psfrag{Frame}{\put(+4.0,+0.0){\texttt{Frame}}}
+    \psfrag{Contour}{\put(+2.0,+0.0){\texttt{Contour}}}
     \psfrag{Joint}{\texttt{Joint}}
-    \psfrag{Contact}{\texttt{Contact}}
-    \psfrag{Load}{\put(-5.0,+5.0){\texttt{KineticExcitation}}}
-
-  	\includegraphics[width=12cm]{Figures/objectorientationMBSim.eps} 
-  	\caption{Object structure in \MBSim}
+    \psfrag{Contact}{\put(+2.0,+1.0){\texttt{Contact}}}
+    \psfrag{Load}{\put(-50.0,+5.0){\texttt{KineticExcitation}}}
+  	\includegraphics[width=0.9\hsize]{Figures/mbsim_objectorientation.eps} 
+  	\caption{Object structure in \emph{MBSim}.}
   	\label{fig:objects}
 \end{figure}
-One has the environment and two \texttt{Object}s, in mechanics called \texttt{Body}s, holding the inertia terms. Indicated are interconnecting \texttt{Link}s due to \texttt{Contact}s between \texttt{Body} \texttt{Contour}s giving also the possibility to model friction and ideal \texttt{Joint}s between body \texttt{Frame}s as well as an external \texttt{KineticExcitation} acting on a body \texttt{Frame}. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following to have an easier begin with \MBSim{}.
+One has the environment and two \texttt{Object}s, in mechanics called \texttt{Body}s, holding the inertia terms. Indicated are interconnecting \texttt{Link}s due to \texttt{Contact}s between \texttt{Body} \texttt{Contour}s giving also the possibility to model friction and ideal \texttt{Joint}s between body \texttt{Frame}s as well as an external \texttt{KineticExcitation} acting on a body \texttt{Frame}. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following.
 
 \subsection{Description of the Components}
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
@@ -42,8 +40,8 @@ Hierarchically objects and links belong to \texttt{DynamicSystem}s, which themse
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-  	\includegraphics[width=12cm]{Figures/mbsim_dynamicsystem.eps} 
-  	\caption{Dynamic system type classes in \MBSim{}}
+  	\includegraphics[width=0.7\hsize]{Figures/mbsim_dynamicsystem.eps} 
+  	\caption{Dynamic system type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:dynamicsystem}
 \end{figure}
 Shaded one can see interfaces for the different components of the modelling equations
@@ -141,12 +139,12 @@ Summarizing
 are important settings.
 %
 \subsubsection{Bodies}
-Mechanical \texttt{Body}s provide their portion of a positive definite mass matrix, a smooth right hand side, a state and energy expressions according to \texttt{Object}, which is e.g. similar to some hydraulic objects (cf.~Figure~\ref{fig:departure:mbsim:object}).
+Mechanical \texttt{Body}s provide their portion of a positive definite mass matrix, a smooth right hand side, state and energy expressions according to \texttt{Object}, which is e.g. similar to some hydraulic objects (cf.~Figure~\ref{fig:departure:mbsim:object}).
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-  	\includegraphics[width=8cm]{Figures/mbsim_object.eps} 
-  	\caption{Object type classes in \MBSim{}}
+  	\includegraphics[width=0.45\hsize]{Figures/mbsim_object.eps} 
+  	\caption{Object type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:object}
 \end{figure}
 Different is the kinematic description which is based on \texttt{Frame}s in the case of mechanical \texttt{Body}s. Also the connectors to other \texttt{Body}s might follow other structural rules. Depending on the type of linkage \texttt{Frame}s or \texttt{Contour}s occur in the case of \texttt{Body}s.\par
@@ -180,8 +178,8 @@ and Figure~\ref{fig:departure:mbsim:rigid_kinematics} also including the link re
     \psfrag{I}{\put(+0.0,+0.0){$I$}}
     \psfrag{B}{\put(+0.0,+0.0){$B$}}
     \psfrag{q}{\put(+0.0,+0.0){$q_{\text{rel}}$}}
-  	\includegraphics[width=13cm]{Figures/mbsim_rigid_kinematics.eps} 
-  	\caption{Rigid kinematics in \MBSim{}}
+  	\includegraphics[width=0.6\hsize]{Figures/mbsim_rigid_kinematics.eps} 
+  	\caption{Rigid kinematics in \MBSim{}.}
   	\label{fig:departure:mbsim:rigid_kinematics}
 \end{figure}
 The drawback of this general description is a time-dependent mass-matrix also in the absolute kinematics case.\par
@@ -226,12 +224,12 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment only availab
 \end{itemize}
 
 \subsubsection{LinkMechanics}
-\texttt{LinkMechanics} represent interconnections between mechanical bodies according to Figure~\ref{fig:departure:mbsim:link} using the connectors of \texttt{Body}s. 
+\texttt{LinkMechanics} represents interconnections between mechanical bodies according to Figure~\ref{fig:departure:mbsim:link} using the connectors of \texttt{Body}s. 
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-  	\includegraphics[width=15cm]{Figures/mbsim_link.eps} 
-  	\caption{Link type classes in \MBSim{}}
+  	\includegraphics[width=0.8\hsize]{Figures/mbsim_link.eps} 
+  	\caption{Link type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:link}
 \end{figure}
 If other connectors are used other link classes have to be inherited. Always \texttt{Link}s distribute locally to $\vh$ and $\vW\vlambda$ in the equations of motion.\par
