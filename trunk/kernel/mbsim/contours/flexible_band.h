@@ -55,7 +55,18 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setCn(const fmatvec::Vec& Cn_);   
       void setWidth(double width_);
+      
+      /*!
+       * \brief set normal distance of band surface to fibre of reference of one dimensional continuum
+       * \param normal distance
+       */
       void setNormalDistance(double nDist_);
+      
+      /*!
+       * \brief get normal distance of band surface to fibre of reference of one dimensional continuum
+       * \return normal distance
+       */
+      double getNormalDistance() {return nDist;};
       double getWidth() const; 
       /***************************************************/
 
