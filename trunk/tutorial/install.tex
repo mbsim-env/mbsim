@@ -4,17 +4,9 @@ This section summarizes the necessary steps to install \MBSim{}.
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
 The source code of \MBSim{} together with some examples, the necessary \FMatVec{} library, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} from \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL}\footnote{see file~\texttt{COPYING} in the root directory of the specific source code}.\par
-In the following it is assumed, that a directory~\texttt{MBSim} and a directory \texttt{MBSim/Install} has been created in the \texttt{\$HOME} path of the Linux operating system. 
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Installation Procedures}
-All projects depend on PKG package administration. That is why the file \texttt{\$HOME/.bashrc} has to be extended with
-\begin{verbatim}
- export PKG_CONFIG_PATH=
-        "$HOME/MBSim/Install/lib/pkgconfig/:$PKG_CONFIG_PATH"
- export LD_LIBRARY_PATH=
-        "$HOME/MBSim/Install/lib/:$LD_LIBRARY_PATH"
-\end{verbatim}
 For the installation of the specific projects always the same \emph{procedures} have to be applied. They are summarised in the following.
 
 \subsubsection{Installation}
@@ -29,10 +21,12 @@ For the installation of the specific projects always the same \emph{procedures} 
 	\end{itemize}
 	\item \textsc{configure}: 
 	\begin{itemize}
-		\item[] \begin{verbatim}./configure --prefix=$HOME/MBSim/Install F77=gfortran \end{verbatim}
-        \item[] possibly FLAGS for debug information
+		\item[] \begin{verbatim}./configure F77=gfortran \end{verbatim}
+        \item[] with defining a location for the installation 
+                \begin{verbatim}--prefix=$HOME/.../Install\end{verbatim}
+        \item[] possibly with FLAGS for debug information
 		        \begin{verbatim} CFLAGS="-g3 -O0" CXXFLAGS="-g3 -O0" F77FLAGS="-g3 -O0" FFLAGS="-g3 -O0" \end{verbatim}
-		\item[] possibly project depending FLAGS
+		\item[] possibly with project depending FLAGS
 	\end{itemize}
 	\item \textsc{install}
 	\begin{itemize}	
@@ -46,9 +40,10 @@ It is reasonable to write an executable script file invoking the procedures.
 \subsubsection{Reinstallation}
 The procedure \textsc{reinstall}
 \begin{verbatim}
+make uninstall 
+make clean
  ./config.status --recheck
  ./config.status
- make clean
  make install
 \end{verbatim}
 newly installs a project.\par
@@ -67,7 +62,17 @@ For uninstall
 has to be called in all directories.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{\FMatVec{}}
+\subsection{Installation of the Simulation Framework\label{sec:install:simulation}}
+In the following it is assumed, that a directory~\texttt{MBSim} and a directory \texttt{MBSim/Install} has been created in the \texttt{\$HOME} path of the Linux operating system.\par
+All projects depend on PKG package administration. That is why the file \texttt{\$HOME/.bashrc} has to be extended with
+\begin{verbatim}
+ export PKG_CONFIG_PATH=
+        "$HOME/MBSim/Install/lib/pkgconfig/:$PKG_CONFIG_PATH"
+ export LD_LIBRARY_PATH=
+        "$HOME/MBSim/Install/lib/:$LD_LIBRARY_PATH"
+\end{verbatim}
+
+\subsubsection{\FMatVec{}}
 \FMatVec{} is a library for fast matrix-vector evaluations based on LAPack with the possibility to use ATLAS, which is faster for large system dimensions because of internal parallelisation.\\
 For the installation the following instructions have to be completed:
 \begin{verbatim}
@@ -76,7 +81,11 @@ For the installation the following instructions have to be completed:
  cd $HOME/MBSim/fmatvec
 \end{verbatim}
 Continue with the procedure \textsc{automake}.\par
-Then, the procedure \textsc{configure} is used selecting the FLAGS
+Then, the procedure \textsc{configure} for dynamic compilation is used with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+as well as selecting the FLAGS
 \begin{verbatim}
  --with-blas-lib-prefix=PFX (prefix, where the BLAS lib is
      installed, when ATLAS is not used)
@@ -99,12 +108,15 @@ if ATLAS should be used instead of LAPack. The FLAGS
 are necessary to use a standard thread-safe memory allocator instead of the \FMatVec{} built-in allocator.\par
 The code can be compiled and installed with a Doxygen HTML class documentation by \texttt{make doc} and the procedure \textsc{install}.
 
-%%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{\HDF}
+\subsubsection{\HDF}
 \HDF{} is a hierarchical data format enabling the effective administration of plot and visualisation data. It can be downloaded as source code from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2.\par
 Extract the source archive to \texttt{\$HOME/MBSim/hdf5}.\par
 Change to \texttt{\$HOME/MBSim/hdf5}.\par
-Use the procedure \textsc{configure} with the additional FLAG
+Use the procedure \textsc{configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+and the additional FLAG
 \begin{verbatim}
  --enable-cxx
 \end{verbatim}
@@ -118,73 +130,38 @@ For having \MBSim{} creating \HDF{} files invoke
 \begin{verbatim}
  cd $HOME/MBSim/HDF5Serie/hdf5serie
 \end{verbatim}
-as well as the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation.\par
-For convenient plotting of \HDF{} files it is assumed that Qwt with version 5 or newer is installed (cf. Sec.~\ref{sec:third_party}).\par
-Invoke 
+as well as the procedures \textsc{automake, configure} for dynamic compilation with the prefix
 \begin{verbatim}
- ssh diesel (only at the institute)
- export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:
-    $HOME/MBSim/Install/lib/pkgconfig (only at the institute)
- cd $HOME/MBSim/HDF5Serie/h5plotserie
+--prefix=$HOME/MBSim/Install
 \end{verbatim}
-as well as the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. Then,
-\begin{verbatim}
- exit (only at the institute)
-\end{verbatim}
+\texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation.\par
 Last, \texttt{.bashrc} can be extended with
 \begin{verbatim}
 alias h5lsserie="$HOME/MBSim/Install/bin/h5lsserie"
 alias h5dumpserie="$HOME/MBSim/Install/bin/h5dumpserie"
-alias h5plotserie="$HOME/MBSim/Install/bin/h5plotserie"
 \end{verbatim}
-to gain overall access to the commands \texttt{h5lsserie}, \texttt{h5dumpserie} and \texttt{h5plotserie}.
+to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpserie}.
 
-%%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{\OpenMBV{}}
-\OpenMBV{} visualises \MBSim{} simulations using XML and \HDF{} in a coinciding hierarchical structure. The installation consists of three steps: first the XML utils have to be installed, then \OpenMBV{} has to be build for visualisation, and third \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
+\subsubsection{\OpenMBV{}}
+\OpenMBV{} visualises \MBSim{} simulations using XML and \HDF{} in a coinciding hierarchical structure. The installation for the simulation framework consists of two steps: first the XML utils have to be installed, then \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
 \begin{verbatim}
  cd $HOME/MBSim
  svn checkout http://svn.berlios.de/svnroot/repos/openmbv/trunk OpenMBV
 \end{verbatim}
 
-\subsubsection{XML Utils}
+\paragraph{XML Utils}
 It is assumed that Octave with version 3.0 or newer is installed (cf. Sec.~\ref{sec:third_party}).\par
 Then,
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
-and use the procedures \textsc{automake}, \textsc{configure} with FLAG \texttt{\-\-with-mkoctfile-path} (\texttt{Octave/bin}) and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
-
-\subsubsection{\OpenMBV{}}
-There is a static Linux binary available at \url{www.berlios.de} being updated from time to time.\par
-For the installation of a static visualisation using always the newest source files it is assumed that
-\begin{itemize}
-\item Coin3d with version 3 or newer 
-\item hdf5 with version 1.8.2 or newer 
-\item Qt with version 4.4 or newer 
-\item HDF5Serie 
-\item SoQt with version 1.4.1 or newer 
-\item Qwt with version 5 or newer 
-\end{itemize}
-is installed (cf. Sec.~\ref{sec:third_party}).\par
-With
+and use the procedures \textsc{automake}, \textsc{configure} for dynamic compilation with the prefix
 \begin{verbatim}
- ssh diesel (only at the institute)
- export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:
-    $HOME/MBSim/Install/lib/pkgconfig (only at the institute)
- cd $HOME/MBSim/OpenMBV/openmbv
-\end{verbatim} 
-and the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} a static build of the viewer together with an Doxygen HTML class documentation completes the installation. Then,
-\begin{verbatim}
- exit (only at the institute)
+--prefix=$HOME/MBSim/Install
 \end{verbatim}
-Last, \texttt{.bashrc} can be extended with
-\begin{verbatim}
- alias openmbv="$HOME/MBSim/Install/bin/openmbv"
-\end{verbatim}
-to gain overall access to the command \texttt{openmbv}, which should be used only locally because of network protocols not providing the necessary X.org requirements.
+and FLAG \texttt{\-\-with-mkoctfile-path} (\texttt{Octave/bin}) and \textsc{install} for installation of an independent XML preprocessor to parse and validate hierarchical XML-files with Octave code.
 
-\subsubsection{OpenMBV-C++Interface}
+\paragraph{OpenMBV-C++Interface}
 It is assumed that 
 \begin{itemize}
 \item hdf5 with version 1.8.2 or newer
@@ -195,10 +172,13 @@ Invoke
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/openmbvcppinterface
 \end{verbatim} 
-and the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. 
+and the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. 
 
-%%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{\MBSim}
+\subsubsection{\MBSim}
 Necessary for the installation of \MBSim{} are
 \begin{itemize}
 \item \FMatVec{}
@@ -210,7 +190,11 @@ For installation of \MBSim{} one types
  svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
  cd $HOME/MBSim/mbsim/kernel
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. In
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the basic module and to create a Doxygen HTML class documentation. In
 \begin{verbatim}
 $HOME/MBSim/mbsim/kernel/xmldoc
 \end{verbatim}
@@ -218,7 +202,11 @@ invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimControl
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the signal processing and control module and to create a Doxygen HTML class documentation. In 
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the signal processing and control module and to create a Doxygen HTML class documentation. In 
 \begin{verbatim}
 $HOME/MBSim/mbsim/modules/mbsimControl/xmldoc
 \end{verbatim}
@@ -226,7 +214,11 @@ invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimHydraulics
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the hydraulics module and to create a Doxygen HTML class documentation. In 
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the hydraulics module and to create a Doxygen HTML class documentation. In 
 \begin{verbatim}
 $HOME/MBSim/mbsim/modules/mbsimHydraulics/xmldoc
 \end{verbatim}
@@ -234,33 +226,105 @@ invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimElectronics
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimPowerTrain
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure}, \texttt{make doc} and \textsc{install} to install the module for gears and to create a Doxygen HTML class documentation. 
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the module for gears and to create a Doxygen HTML class documentation. 
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
-Invoke the procedures \textsc{automake, configure} and \textsc{install} to install the XML module which contains an executable to invoke the preprocessor and after that evaluate the resulting flat structure. In
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+and \textsc{install} to install the XML module which contains an executable to invoke the preprocessor and after that evaluate the resulting flat structure. In
 \begin{verbatim}
 $HOME/MBSim/mbsim/mbsimxml/xmldoc
 \end{verbatim}
 invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
 
-%%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{MBSimAddOns}
+\subsubsection{MBSimAddOns}
 At the institute further modules can be found in \texttt{MBSimAddOn}: mechanical components~(\texttt{mbsimMechAdd}), hydraulic components~(\texttt{mbsimHydraulics}), and an interface for co-simulationen~(\texttt{mbsimCosim}). For installation one types
 \begin{verbatim}
  svn checkout http://zeiss/repos/SVN--rep//AM-software/mbsimAddOn/trunk mbsimAddOn
 \end{verbatim}
-in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, configure} and \textsc{install} in the subdirectories of \texttt{MBSim/mbsimAddOn}.
+in directory \texttt{MBSim}. Then one uses the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+and \textsc{install} in the subdirectories of \texttt{MBSim/mbsimAddOn}.
 
-%%------------------------------------------------------------ SUBSECTION ---------------------
-\subsection{\MBSim Examples}
+\subsubsection{\MBSim Examples}
 The examples are used for testing successful installation. There are two possibilities:
 \begin{enumerate}
-\item Change to the specific directory \texttt{\$HOME/MBSim/mbsim/examples/*} and type \texttt{make} to create an executable. The simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{openmbv} and plotted with~\texttt{h5plotserie} (cf.~Sec.~\ref{sec:plot}).
+\item Change to the specific directory \texttt{\$HOME/MBSim/mbsim/examples/*} and type \texttt{make} to create an executable. The simulation starts with the command~\texttt{./main}. The results are visualised with the command~\texttt{openmbv} and plotted with~\texttt{h5plotserie} after having installed the visualisation framework (cf.~Sec.~\ref{sec:install:visualisation} and \ref{sec:plot}).
 \item Use the script \texttt{./runexamples.sh install} in \texttt{\$HOME/MBSim/mbsim/examples} to install reference files. Then \texttt{./runexamples.sh} compiles, runs and tests each example. See \texttt{./runexamples.sh -h} for additional information.
 \end{enumerate}
+
+%%------------------------------------------------------------ SUBSECTION ---------------------
+\subsection{Installation of the Visualisation Framework\label{sec:install:visualisation}}
+In the following it is assumed, that a directory~\texttt{OpenMBV} and a directory \texttt{MBSim/OpenMBV} has been created in the \texttt{\$HOME} path of the Linux operating system.\par
+%
+Invoke 
+\begin{verbatim}
+ ssh diesel (only at the institute)
+ export PKG_CONFIG_PATH=/home/OpenMBV/local/lib/pkgconfig:
+    $HOME/OpenMBV/Install/lib/pkgconfig (only at the institute)
+\end{verbatim}
+to change to a computer defining minimal requirements for further usage of the executable files and having installed the necessary software (cf. Sec.~\ref{sec:third_party}).
+
+\subsubsection{\HDF}
+Install \HDF{} and the \HDF{} wrapper as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation.\par
+For convenient plotting of \HDF{} files it is assumed that Qwt with version 5 or newer is installed.\par
+Invoke 
+\begin{verbatim}
+ cd $HOME/OpenMBV/HDF5Serie/h5plotserie
+\end{verbatim}
+as well as the procedures \textsc{automake, configure} for static compilation, \texttt{make doc} and \textsc{install} for installation and creation of a Doxygen HTML class documentation. Then, \texttt{.bashrc} can be extended with
+\begin{verbatim}
+alias h5plotserie="$HOME/OpenMBV/Install/bin/h5plotserie"
+\end{verbatim}
+to gain overall access to the command \texttt{h5plotserie}.
+
+\subsubsection{\OpenMBV{}}
+\paragraph{XML Utils}
+Install XML Utils as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation
+
+\paragraph{\OpenMBV{}}
+There is a static Linux binary available at \url{www.berlios.de} being updated from time to time. For the installation of a static visualisation using always the newest source files it is assumed that
+\begin{itemize}
+\item Coin3d with version 3 or newer 
+\item hdf5 with version 1.8.2 or newer 
+\item Qt with version 4.4 or newer 
+\item HDF5Serie 
+\item SoQt with version 1.4.1 or newer 
+\item Qwt with version 5 or newer 
+\end{itemize}
+is installed.\par
+With
+\begin{verbatim}
+ cd $HOME/OpenMBV/OpenMBV/openmbv
+\end{verbatim} 
+and the procedures \textsc{automake, configure} for static compilation with the additional FLAG
+\begin{verbatim}
+ --Wno-non-virtual-dtor
+\end{verbatim}
+\texttt{make doc} and \textsc{install} a static build of the viewer together with an Doxygen HTML class documentation completes the installation. Then,
+\begin{verbatim}
+ exit (only at the institute)
+\end{verbatim}
+Last, \texttt{.bashrc} can be extended with
+\begin{verbatim}
+ alias openmbv="$HOME/OpenMBV/Install/bin/openmbv"
+\end{verbatim}
+to gain overall access to the command \texttt{openmbv}, which should be used only locally because of network protocols not providing the necessary X.org requirements.
 
