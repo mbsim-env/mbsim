@@ -294,7 +294,8 @@ namespace MBSim {
 
   void FlexibleBody1s21RCM::initRelaxed(double alpha) {
     if(!initialized) {
-      if(Elements==0) throw(new MBSimError("ERROR (FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!"));
+      if(Elements==0)
+        throw(new MBSimError("ERROR (FlexibleBody1s21RCM::initRelaxed): Set number of finite elements!"));
       Vec q0Dummy(q0.size(),INIT,0.);
       if(openStructure) {
         Vec direction(2);
@@ -318,9 +319,9 @@ namespace MBSim {
           q0Dummy(5*i+3) = a_;
           q0Dummy(5*i+4) = a_;
         }
-        setq0(q0Dummy);
-        setu0(Vec(q0Dummy.size(),INIT,0.));
       }
+      setq0(q0Dummy);
+      setu0(Vec(q0Dummy.size(),INIT,0.));
     }
   }
 
