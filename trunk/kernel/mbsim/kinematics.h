@@ -268,7 +268,7 @@ namespace MBSim {
   };
 
   /**
-   * \brief class to describe rotation about axes x and y
+   * \brief class to describe rotation about axes x and y with basic rotations interpretated in the current coordinate system
    * \author Martin Foerg
    * \date 2009-12-21 some localisations (Thorsten Schindler)
    */
@@ -287,7 +287,7 @@ namespace MBSim {
   };
 
   /**
-   * \brief class to describe rotation about axes y and z
+   * \brief class to describe rotation about axes y and z with basic rotations interpretated in the current coordinate system
    * \author Martin Foerg
    * \date 2009-12-21 some localisations (Thorsten Schindler)
    */
