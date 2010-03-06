@@ -49,17 +49,17 @@ namespace MBSimControl {
   }
 
   Vec AbsolutPositionSensor::getSignal() {
-    return trans(direction)*frame->getPosition();
+    return direction.T()*frame->getPosition();
   }
 
 
   Vec AbsolutVelocitySensor::getSignal() {
-    return trans(direction)*frame->getVelocity();
+    return direction.T()*frame->getVelocity();
   }
 
 
   void AbsolutAngularPositionSensor::updategd(double t) {
-    gd=trans(direction)*frame->getAngularVelocity();
+    gd=direction.T()*frame->getAngularVelocity();
   }
 
   Vec AbsolutAngularPositionSensor::getSignal() {
@@ -68,7 +68,7 @@ namespace MBSimControl {
 
 
   Vec AbsolutAngularVelocitySensor::getSignal() {
-    return trans(direction)*frame->getAngularVelocity();
+    return direction.T()*frame->getAngularVelocity();
   }
   
 
@@ -98,19 +98,19 @@ namespace MBSimControl {
 
   Vec RelativePositionSensor::getSignal() {
     Vec WrRefRel=relFrame->getPosition()-refFrame->getPosition();
-    return trans(refFrame->getOrientation()*direction)*WrRefRel;
+    return (refFrame->getOrientation()*direction).T()*WrRefRel;
   }
 
 
   Vec RelativeVelocitySensor::getSignal() {
     Vec WvRefRel=relFrame->getVelocity()-refFrame->getVelocity();
-    return trans(refFrame->getOrientation()*direction)*WvRefRel;
+    return (refFrame->getOrientation()*direction).T()*WvRefRel;
   }
 
 
   void RelativeAngularPositionSensor::updategd(double t) {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    gd=trans(refFrame->getOrientation()*direction)*WomegaRefRel;
+    gd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
   }
 
   Vec RelativeAngularPositionSensor::getSignal() {
@@ -120,7 +120,7 @@ namespace MBSimControl {
 
   Vec RelativeAngularVelocitySensor::getSignal() {
     Vec WomegaRefRel=relFrame->getAngularVelocity()-refFrame->getAngularVelocity();
-    return trans(refFrame->getOrientation()*direction)*WomegaRefRel;
+    return (refFrame->getOrientation()*direction).T()*WomegaRefRel;
   }
 
 }

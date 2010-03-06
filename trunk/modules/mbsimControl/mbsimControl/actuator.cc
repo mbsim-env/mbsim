@@ -42,10 +42,10 @@ namespace MBSimControl {
     WM[0] = Wm*la(IR);
     WM[1] = -WM[0];
 
-    h[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
-    h[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
-    hLink[0] += trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
-    hLink[1] += trans(frame[1]->getJacobianOfTranslation())*WF[1] + trans(frame[1]->getJacobianOfRotation())*WM[1];
+    h[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    h[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
+    hLink[0] += frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    hLink[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
   }
 
   void Actuator::init(InitStage stage) {
