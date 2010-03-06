@@ -65,7 +65,7 @@ namespace MBSim {
       system->initz(z);
 
     double t = tStart;
-    double tPlot = t + dtPlot;
+    double tPlot = min(tEnd,t + dtPlot);
 
     int iTol; 
     if(aTol.size() == 1) {
@@ -120,7 +120,7 @@ namespace MBSim {
 	time += (s1-s0)/CLOCKS_PER_SEC;
 	s0 = s1; 
 	integPlot<< t << " " << rWork(10) << " " << time << endl;
-	tPlot += dtPlot;
+	tPlot = min(tEnd,tPlot + dtPlot);
       }
       if(istate<0) exit(istate);
     }
@@ -129,6 +129,7 @@ namespace MBSim {
 
     ofstream integSum((name + ".sum").c_str());
     integSum << "Integration time: " << time << endl;
+    integSum << "Simulation time: " << t << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
 

@@ -48,7 +48,7 @@ namespace MBSim {
     Vec Wd = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition();
     SqrMat Mat0 = frustum->getFrame()->getOrientation();
     Vec yAchse = Mat0.col(1);
-    double loc = trans(yAchse)*Wd; // Projektion Distanzvektor auf y-Achse
+    double loc = yAchse.T()*Wd; // Projektion Distanzvektor auf y-Achse
     Vec xAchse = Wd - (yAchse * loc);
     double l=nrm2(xAchse);
     SqrMat AW1(3);

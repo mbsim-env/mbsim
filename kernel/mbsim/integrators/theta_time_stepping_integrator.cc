@@ -141,9 +141,9 @@ namespace MBSim {
       Vector<int> ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu - theta*theta*dt*dt*dhdq*T,ipiv));
       Vec heff = h+theta*dhdq*T*u*dt;
-      system.getG().resize() = SqrMat(trans(W)*slvLUFac(luMeff,V,ipiv));
+      system.getG().resize() = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
       system.getGs().resize() << system.getG();
-      system.getb().resize() = system.getgd() + trans(W)*slvLUFac(luMeff,heff,ipiv)*dt; // TODO system.getgd() necessary?
+      system.getb().resize() = system.getgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt; // TODO system.getgd() necessary?
 
       iter = system.solveImpacts(dt);
       if(iter>maxIter) maxIter = iter;

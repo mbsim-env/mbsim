@@ -71,12 +71,12 @@ namespace MBSim {
        */
       void computeh(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) { h = - K * qElement - D * uElement; }
       void computedhdz(const fmatvec::Vec& qElement,const fmatvec::Vec& uElement) {}
-      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*trans(u)*M*u;}
+      double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { return 0.5*u.T()*M*u;}
       double computeGravitationalEnergy(const fmatvec::Vec& q) { return 0.0;}
-      double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*trans(q)*K*q;}
+      double computeElasticEnergy(const fmatvec::Vec& q) { return 0.5*q.T()*K*q;}
 
-      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMotion(q,cp))*u;}
-      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return trans(computeJacobianOfMotion(q,cp))*u;}
+      fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
+      fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
       fmatvec::Vec computePosition(const fmatvec::Vec&q,const ContourPointData& cp);
       fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const ContourPointData& cp) { throw new MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
       fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q,const ContourPointData& cp);

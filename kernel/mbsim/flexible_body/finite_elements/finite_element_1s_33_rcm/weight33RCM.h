@@ -356,10 +356,10 @@ namespace MBSim {
   };
 
   inline void Weight33RCM::setCurvature(double k10_,double k20_) { k10 = k10_; k20 = k20_; }
-  inline void Weight33RCM::intvvtH() { IvvtH = trans(Ivvt); }
-  inline void Weight33RCM::intvxvtH() { IvxvtH = trans(Ivxvt); }	
-  inline void Weight33RCM::intxvvtH() { IxvvtH = trans(Ixvvt); }
-  inline void Weight33RCM::intxvxvtH() { IxvxvtH = trans(Ixvxvt); }
+  inline void Weight33RCM::intvvtH() { IvvtH = Ivvt.T(); }
+  inline void Weight33RCM::intvxvtH() { IvxvtH = Ivxvt.T(); }	
+  inline void Weight33RCM::intxvvtH() { IxvvtH = Ixvvt.T(); }
+  inline void Weight33RCM::intxvxvtH() { IxvxvtH = Ixvxvt.T(); }
 
   inline const fmatvec::RowVec& Weight33RCM::getvxvt() const { return Ivxvt; }
   inline const fmatvec::Vec& Weight33RCM::getvxvtH() const { return IvxvtH; }
@@ -419,8 +419,8 @@ namespace MBSim {
   inline const fmatvec::Vec& Weight33RCM::getwh2tcoef() const { return wh2tcoef; }
   inline const fmatvec::Mat& Weight33RCM::getwh1coefqI() const { return wh1coefqI; }
   inline const fmatvec::Mat& Weight33RCM::getwh2coefqI() const { return wh2coefqI; }
-  inline fmatvec::Mat Weight33RCM::getwh1coefqIH() const { return trans(wh1coefqI); }
-  inline fmatvec::Mat Weight33RCM::getwh2coefqIH() const { return trans(wh2coefqI); }
+  inline fmatvec::Mat Weight33RCM::getwh1coefqIH() const { return wh1coefqI.T(); }
+  inline fmatvec::Mat Weight33RCM::getwh2coefqIH() const { return wh2coefqI.T(); }
   inline const fmatvec::Mat& Weight33RCM::getwh1tcoefqI() const { return wh1tcoefqI; }
   inline const fmatvec::Mat& Weight33RCM::getwh2tcoefqI() const { return wh2tcoefqI; }
   inline const fmatvec::Mat& Weight33RCM::getwh1coefqInunutH() const { return wh1coefqInunutH; }

@@ -140,7 +140,9 @@ namespace MBSim {
     integPlot.close();
 
     ofstream integSum((name + ".sum").c_str());
+    integSum.precision(8);
     integSum << "Integration time: " << time << endl;
+    integSum << "Simulation time: " << t << endl;
     //integSum << "Integration steps: " << integrationSteps << endl;
     integSum.close();
 

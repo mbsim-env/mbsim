@@ -342,7 +342,7 @@ namespace MBSim {
       d(Index(0,1),Index(4,4)).init(0);
     } 
     else {
-      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
+      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*mu*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
       d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*mu;
@@ -430,7 +430,7 @@ namespace MBSim {
       d(Index(0,1),Index(4,4)).init(0);
     } 
     else {
-      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
+      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
       d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));
@@ -509,7 +509,7 @@ namespace MBSim {
       d(Index(0,1),Index(4,4)).init(0);
     } 
     else {
-      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*mu*la(0)/nrm2(argT);
+      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*mu*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
       d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*mu;
@@ -589,7 +589,7 @@ namespace MBSim {
       d(Index(0,1),Index(4,4)).init(0);
     } 
     else {
-      Mat d_dargT = (E - (argT*trans(argT))/(trans(argT)*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
+      Mat d_dargT = (E - (argT*argT.T())/(argT.T()*argT))*(*fmu)(nrm2(gdn))*la(0)/nrm2(argT);
       d(Index(0,1),Index(0,1)) = d_dargT;
       d(Index(0,1),Index(2,3)) = -r*d_dargT;
       d(Index(0,1),Index(4,4)) = argT/nrm2(argT)*(*fmu)(nrm2(gdn));

@@ -209,13 +209,13 @@ namespace MBSim {
   // Balkenort ermitteln aus globalen Lagen 
   Vec FiniteElement1s21ANCF::LocateBalken(Vec& qElement, double& s)
   {
-    Mat S = trans(JGeneralized(qElement,s));
+    Mat S = JGeneralized(qElement,s).T();
     return S*qElement;
   }
 
   Vec FiniteElement1s21ANCF::StateBalken(Vec& qElement, Vec& qpElement, double& s)
   {
-    Mat S = trans(JGeneralized(qElement,s));
+    Mat S = JGeneralized(qElement,s).T();
     Vec X(6);
     X(Index(0,2)) = S* qElement;
     X(Index(3,5)) = S*qpElement;

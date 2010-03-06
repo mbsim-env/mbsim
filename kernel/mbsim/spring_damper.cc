@@ -46,8 +46,8 @@ namespace MBSim {
       WF[0]=WforceDir*la; // projected force in direction of WforceDir
     WF[1]=-WF[0];
     for(unsigned int i=0; i<2; i++) {
-      h[i]+=trans(frame[i]->getJacobianOfTranslation())*WF[i];
-      hLink[i]+=trans(frame[i]->getJacobianOfTranslation())*WF[i];
+      h[i]+=frame[i]->getJacobianOfTranslation().T()*WF[i];
+      hLink[i]+=frame[i]->getJacobianOfTranslation().T()*WF[i];
     }
   }
 
@@ -62,16 +62,16 @@ namespace MBSim {
       g(0)=dist;
     else {
       WforceDir=refFrame->getOrientation()*forceDir; // force direction in world system
-      g(0)=trans(WrP0P1)*WforceDir;
+      g(0)=WrP0P1.T()*WforceDir;
     }
   } 
 
   void SpringDamper::updategd(double) {
     Vec Wvrel=frame[1]->getVelocity() - frame[0]->getVelocity();
     if(refFrame==0) // Point to Point
-      gd(0)=trans(Wvrel)*n;
+      gd(0)=Wvrel.T()*n;
     else {
-      gd(0)=trans(Wvrel)*WforceDir;
+      gd(0)=Wvrel.T()*WforceDir;
     }
   }
 

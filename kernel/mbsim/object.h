@@ -220,7 +220,7 @@ namespace MBSim {
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
+      virtual double computeKineticEnergy() { return 0.5*u.T()*M*u; }
 
       /**
        * \return potential energy

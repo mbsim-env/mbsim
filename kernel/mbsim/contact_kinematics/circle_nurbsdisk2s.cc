@@ -76,7 +76,7 @@ namespace MBSim {
     P_circle = circle->getFrame()->getPosition() + circle->getRadius() * circle->getFrame()->getOrientation() * P_circle;  
     cpData[icircle].getFrameOfReference().setPosition(P_circle); // position of the point in world coordinates
 
-    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(trans(nurbsdisk->getFrame()->getOrientation())*(cpData[icircle].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition())); 
+    cpData[inurbsdisk].getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(cpData[icircle].getFrameOfReference().getPosition() - nurbsdisk->getFrame()->getPosition())); 
 
     if(cpData[inurbsdisk].getLagrangeParameterPosition()(0) < (nurbsdisk->getAlphaStart())(0) || cpData[inurbsdisk].getLagrangeParameterPosition()(0) > (nurbsdisk->getAlphaEnd())(0)) g(0) = 1.;
     else {
@@ -86,7 +86,7 @@ namespace MBSim {
       cpData[icircle].getFrameOfReference().getOrientation().col(1)= -cpData[inurbsdisk].getFrameOfReference().getOrientation().col(1);   
       cpData[icircle].getFrameOfReference().getOrientation().col(2)=  cpData[inurbsdisk].getFrameOfReference().getOrientation().col(2); // to have a legal framework the second tangent is not the negative of the tanget of the disk
 
-      g(0) = trans(cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0)) * (cpData[icircle].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
+      g(0) = cpData[inurbsdisk].getFrameOfReference().getOrientation().col(0).T() * (cpData[icircle].getFrameOfReference().getPosition() - cpData[inurbsdisk].getFrameOfReference().getPosition());
     }
 
     delete func;

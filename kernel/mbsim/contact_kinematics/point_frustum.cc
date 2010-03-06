@@ -51,7 +51,7 @@ namespace MBSim {
     Vec Wa = frustum->getFrame()->getOrientation().col(1); // axis in inertial FR 
     Vec r = frustum->getRadii(); // radii of Frustum
     double h = frustum->getHeight(); // height of Frustum	    
-    double s = trans(Wd)*Wa; // projection of difference vector on axis
+    double s = Wd.T()*Wa; // projection of difference vector on axis
     double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
     if(fabs(h)<epsroot()) {
       cout << "ERROR: Frustum with height = 0!" << endl;

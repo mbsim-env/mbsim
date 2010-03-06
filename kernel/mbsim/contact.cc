@@ -73,7 +73,7 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
         for(unsigned i=0; i<contour.size(); i++) 
-          wbk[k] += trans(fF[k][i](Index(0,2),Index(0,laSizek[k]-1)))*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation();
+          wbk[k] += fF[k][i](Index(0,2),Index(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation();
       }
     }
     contactKinematics->updatewb(wbk.begin(),gk.begin(),cpData.begin());
@@ -92,7 +92,7 @@ namespace MBSim {
         fF[k][0] = -fF[k][1];
 
         for(unsigned int i=0; i<contour.size(); i++) 
-          Wk[k][i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
+          Wk[k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
       }
     }
   }
@@ -102,7 +102,7 @@ namespace MBSim {
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gActive[k] && !gdActive[k][1]) {
           for(unsigned int i=0; i<contour.size(); i++) 
-            Vk[k][i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
+            Vk[k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
         }
       }
     }
@@ -121,8 +121,8 @@ namespace MBSim {
       }
       WF[k][0] = -WF[k][1];
       for(unsigned int i=0; i<contour.size(); i++) {
-        h[i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*WF[k][i];
-        hLink[i] += trans(cpData[k][i].getFrameOfReference().getJacobianOfTranslation())*WF[k][i];
+        h[i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*WF[k][i];
+        hLink[i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*WF[k][i];
       }
     }
   }
@@ -141,7 +141,7 @@ namespace MBSim {
 
         Vec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
 
-        gdk[k](0) = trans(Wn)*WvD;
+        gdk[k](0) = Wn.T()*WvD;
 
         if(gdk[k].size()>1) {
           Mat Wt(3,gdk[k].size()-1);
@@ -149,7 +149,7 @@ namespace MBSim {
           if(gdk[k].size() > 2)
             Wt.col(1) = cpData[k][0].getFrameOfReference().getOrientation().col(2);
 
-          gdk[k](1,gdk[k].size()-1) = trans(Wt)*WvD;
+          gdk[k](1,gdk[k].size()-1) = Wt.T()*WvD;
         }
       }
     }

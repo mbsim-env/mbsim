@@ -49,7 +49,7 @@ namespace MBSim {
   }
 
   Vec SuperElementLinearExternal::computePosition(const Vec&q,const ContourPointData& cp) {
-    return trans(computeJacobianOfMotion(q,cp))*q + KrP[cp.getNodeNumber()];
+    return computeJacobianOfMotion(q,cp).T()*q + KrP[cp.getNodeNumber()];
   }
 
   Mat SuperElementLinearExternal::computeJacobianOfMotion(const Vec&q,const ContourPointData& cp) {

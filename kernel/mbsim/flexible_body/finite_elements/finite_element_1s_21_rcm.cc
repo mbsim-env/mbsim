@@ -164,7 +164,7 @@ namespace MBSim {
       hdLocal(3) = - depsilon * epsp; // eps
 
       hIntermediate << hLocal + hdLocal - MLocal * Jegp * qpElement;
-      h << trans(Jeg) * hIntermediate;
+      h << Jeg.T() * hIntermediate;
 
       qElement_Old = qElement.copy();
       qpElement_Old = qpElement.copy();
@@ -176,7 +176,7 @@ namespace MBSim {
     Dhz   = hFullJacobi(qElement,qpElement,qLocal,qpLocal,Jeg,Jegp,MLocal,hIntermediate);
     Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
     Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
-    Dhqp += trans(Jeg)*Damp*Jeg;
+    Dhqp += Jeg.T()*Damp*Jeg;
   }
 
   double FiniteElement1s21RCM::computeKineticEnergy(const Vec& qElement, const Vec& qpElement) {
@@ -349,7 +349,7 @@ namespace MBSim {
   Mat FiniteElement1s21RCM::JGeneralized(const Vec& qElement, const double& s) {
     SqrMat Jeg(8); 
     BuildJacobi(qElement,Jeg);
-    return trans(Jeg)*JGeneralizedInternal(qElement,s);
+    return Jeg.T()*JGeneralizedInternal(qElement,s);
   }
 
   Mat FiniteElement1s21RCM::JpGeneralized(const Vec& qElement, const Vec& qpElement, const double& s, const double& sp) {
@@ -430,7 +430,7 @@ namespace MBSim {
       Jp(6,2) = (-8*(l0h2 + 12*l0*s - 48*Power(s,2))*sp)/l0h4;
       Jp(7,2) = (3*(l0h2 + 12*l0*s - 40*Power(s,2))*sp)/l0h3;
     }
-    return trans(Jeg)*Jp + trans(Jegp)*JGeneralizedInternal(qElement,s);
+    return Jeg.T()*Jp + Jegp.T()*JGeneralizedInternal(qElement,s);
   }
 
   Vec FiniteElement1s21RCM::ElementData(Vec qElement, Vec qpElement) {
@@ -985,8 +985,8 @@ namespace MBSim {
     dhLqpJp(7,6) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(2.*l0*one_p_cos_dphi);
     dhLqpJp(7,7) = (11*(2*(-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (-x1p + x2p - phi2p*y1 + phi2p*y2)*cos(2*phi1 - phi2) - x1p*cos(phi2) + x2p*cos(phi2) - 2*phi1p*y1*cos(phi2) + phi2p*y1*cos(phi2) + 2*phi1p*y2*cos(phi2) - phi2p*y2*cos(phi2) + 2*(phi1p*x1 - phi1p*x2 - y1p + y2p)*sin(phi1) + (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(phi2)*sin(2*phi1) + 2*phi1p*x1*sin(phi2) - phi2p*x1*sin(phi2) - 2*phi1p*x2*sin(phi2) + phi2p*x2*sin(phi2) - y1p*sin(phi2) + y2p*sin(phi2) - (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(2*phi1)*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
 
-    Dhz(0,0, 7,7) << dhqJ + trans(Jeg)*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  );
-    Dhz(8,0,15,7) <<        trans(Jeg)*( dhLqp*Jeg             - MLocal*dhLqpJp );
+    Dhz(0,0, 7,7) << dhqJ + Jeg.T()*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  );
+    Dhz(8,0,15,7) <<        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp );
 
     return Dhz;
   }

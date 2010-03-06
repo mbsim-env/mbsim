@@ -168,13 +168,13 @@ namespace MBSim {
     computeint();
 
     Iwh1wwt = intvwwt(wh1coef);
-    Iwh1wwtH = trans(Iwh1wwt);
+    Iwh1wwtH = Iwh1wwt.T();
     Iwh1twwt = intvwwt(wh1tcoef);
-    Iwh1twwtH = trans(Iwh1twwt);
+    Iwh1twwtH = Iwh1twwt.T();
     Iwh2wwt = intvwwt(wh2coef);
-    Iwh2wwtH = trans(Iwh2wwt);
+    Iwh2wwtH = Iwh2wwt.T();
     Iwh2twwt = intvwwt(wh2tcoef);
-    Iwh2twwtH = trans(Iwh2twwt);	
+    Iwh2twwtH = Iwh2twwt.T();	
 
     Iwh1xxwxxwt = intvxxwxxwt(wh1coef,k10); 
     Iwh2xxwxxwt  = intvxxwxxwt(wh2coef,k20);
@@ -302,21 +302,21 @@ namespace MBSim {
       + tf->getetantilt()*w1coefqI+tf->getetabtilt()*w2coefqI
       + w1tcoef*etantilqI+w2tcoef*etabtilqI;
 
-    nSqIH = trans(nSqI);
-    bSqIH = trans(bSqI);
+    nSqIH = nSqI.T();
+    bSqIH = bSqI.T();
 
-    Mat ntilSqIH = trans(ntilSqI);
-    Mat btilSqIH = trans(btilSqI);
+    Mat ntilSqIH = ntilSqI.T();
+    Mat btilSqIH = btilSqI.T();
 
-    RowVec xintilqInunut = trans(nSqIH*ntilSqI*tf->getqIt()+dpSH*trans(tf->getnSpSt())*tf->getntilS()+ntilSqIH*nSqI*tf->getqIt()+dpSH*trans(tf->getntilSpSt())*tf->getnS());
-    RowVec xibtilqInunut = trans(nSqIH*btilSqI*tf->getqIt()+dpSH*trans(tf->getnSpSt())*tf->getbtilS()+btilSqIH*nSqI*tf->getqIt()+dpSH*trans(tf->getbtilSpSt())*tf->getnS());
-    RowVec etantilqInunut = trans(bSqIH*ntilSqI*tf->getqIt()+dpSH*trans(tf->getbSpSt())*tf->getntilS()+ntilSqIH*bSqI*tf->getqIt()+dpSH*trans(tf->getntilSpSt())*tf->getbS());
-    RowVec etabtilqInunut = trans(bSqIH*btilSqI*tf->getqIt()+dpSH*trans(tf->getbSpSt())*tf->getbtilS()+btilSqIH*bSqI*tf->getqIt()+dpSH*trans(tf->getbtilSpSt())*tf->getbS());
+    RowVec xintilqInunut = (nSqIH*ntilSqI*tf->getqIt()+dpSH*tf->getnSpSt().T()*tf->getntilS()+ntilSqIH*nSqI*tf->getqIt()+dpSH*tf->getntilSpSt().T()*tf->getnS()).T();
+    RowVec xibtilqInunut = (nSqIH*btilSqI*tf->getqIt()+dpSH*tf->getnSpSt().T()*tf->getbtilS()+btilSqIH*nSqI*tf->getqIt()+dpSH*tf->getbtilSpSt().T()*tf->getnS()).T();
+    RowVec etantilqInunut = (bSqIH*ntilSqI*tf->getqIt()+dpSH*tf->getbSpSt().T()*tf->getntilS()+ntilSqIH*bSqI*tf->getqIt()+dpSH*tf->getntilSpSt().T()*tf->getbS()).T();
+    RowVec etabtilqInunut = (bSqIH*btilSqI*tf->getqIt()+dpSH*tf->getbSpSt().T()*tf->getbtilS()+btilSqIH*bSqI*tf->getqIt()+dpSH*tf->getbtilSpSt().T()*tf->getbS()).T();
 
-    wh1coefqInunutH = trans(w1coefqI*tf->getqIt()*xintilqI+w2coefqI*tf->getqIt()*xibtilqI+xintilqI*tf->getqIt()*w1coefqI+xibtilqI*tf->getqIt()*w2coefqI
-        +w1coef*xintilqInunut+w2coef*xibtilqInunut);
-    wh2coefqInunutH = trans(w1coefqI*tf->getqIt()*etantilqI+w2coefqI*tf->getqIt()*etabtilqI+etantilqI*tf->getqIt()*w1coefqI+etabtilqI*tf->getqIt()*w2coefqI
-        +w1coef*etantilqInunut+w2coef*etabtilqInunut);
+    wh1coefqInunutH = (w1coefqI*tf->getqIt()*xintilqI+w2coefqI*tf->getqIt()*xibtilqI+xintilqI*tf->getqIt()*w1coefqI+xibtilqI*tf->getqIt()*w2coefqI
+        +w1coef*xintilqInunut+w2coef*xibtilqInunut).T();
+    wh2coefqInunutH = (w1coefqI*tf->getqIt()*etantilqI+w2coefqI*tf->getqIt()*etabtilqI+etantilqI*tf->getqIt()*w1coefqI+etabtilqI*tf->getqIt()*w2coefqI
+        +w1coef*etantilqInunut+w2coef*etabtilqInunut).T();
   }
 
   Vec Weight33RCM::computewcoef(double dL,double dR,double bL,double bR) const {
@@ -374,10 +374,10 @@ namespace MBSim {
     omgtqIt(15) += x;
     omgtqIt(4) += cpS1*w2(1);
 
-    omgtqItqIqIt = trans(w2xqI);
+    omgtqItqIqIt = w2xqI.T();
     omgtqItqIqIt(5) += 1.;	
     omgtqItqIqIt *= -((cpS1-spS1*w1(1))*(pSt(1)+w1xqI*tf->getqIt()));
-    omgtqItqIqIt += trans(w2xqI)*cpS1*pSt(1);
+    omgtqItqIqIt += w2xqI.T()*cpS1*pSt(1);
     omgtqItqIqIt(4) += -spS1*w2(1)*pSt(1)+cpS1*w2xqI*tf->getqIt();
   }
 
@@ -395,8 +395,8 @@ namespace MBSim {
       computeomgt(bam*xip(i));
       Ttil += bam*gp(i)*omgt*omgt;
       TtilqI += bam*gp(i)*omgt*omgtqI;
-      TtilqItqIt += static_cast<SymMat>(bam*gp(i)*trans(omgtqIt)*omgtqIt);
-      TtilqItqIqIt += bam*gp(i)*(trans(omgtqIt)*omgtqI*tf->getqIt()+omgt*omgtqItqIqIt);
+      TtilqItqIt += static_cast<SymMat>(bam*gp(i)*omgtqIt.T()*omgtqIt);
+      TtilqItqIqIt += bam*gp(i)*(omgtqIt.T()*omgtqI*tf->getqIt()+omgt*omgtqItqIqIt);
     } 
   }
 
@@ -404,7 +404,7 @@ namespace MBSim {
     dpS(0,3) = 1.;
     dpS(1,4) = 1.;
     dpS(2,5) = 1.;
-    dpSH = trans(dpS);
+    dpSH = dpS.T();
   }
 
   double Weight33RCM::intv(const Vec& vt) const {

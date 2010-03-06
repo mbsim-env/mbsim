@@ -104,12 +104,12 @@ namespace MBSim {
       wt->computeintD(qG,qGt);
 
       /* preliminaries for EoM */
-      Mat tSqIH = trans(wt->gettSqI());
-      Mat nSqIH = trans(wt->getnSqI());
-      Mat bSqIH = trans(wt->getbSqI());		
+      Mat tSqIH = wt->gettSqI().T();
+      Mat nSqIH = wt->getnSqI().T();
+      Mat bSqIH = wt->getbSqI().T();		
 
       /* gravitational part VgqI */	
-      RowVec VgqI = -rho*A*trans(g)*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getIwh1()*wt->getnSqI()
+      RowVec VgqI = -rho*A*g.T()*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getIwh1()*wt->getnSqI()
           +tf->getbS()*wt->getvvt()*wt->getwh2coefqI()+wt->getIwh2()*wt->getbSqI());
 
       /* elastic part VeqI */
@@ -124,9 +124,9 @@ namespace MBSim {
       Vec S = tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt();
       Mat P = tf->getepstilt()*wt->gettSqI()+tf->gettSt()*depstil+(1.+tf->getepstil())*wt->gettStqI();
 
-      RowVec TqI = A*(trans(tf->getrSt())*(tf->getnS()*wt->getvvt()*wt->getwh1tcoefqI()+wt->getnSqI()*wt->getIwh1t()+tf->getnSt()*wt->getvvt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIwh1()
+      RowVec TqI = A*(tf->getrSt().T()*(tf->getnS()*wt->getvvt()*wt->getwh1tcoefqI()+wt->getnSqI()*wt->getIwh1t()+tf->getnSt()*wt->getvvt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIwh1()
             + tf->getbS()*wt->getvvt()*wt->getwh2tcoefqI()+wt->getbSqI()*wt->getIwh2t()+tf->getbSt()*wt->getvvt()*wt->getwh2coefqI()+wt->getbStqI()*wt->getIwh2())
-          + trans(S)*(P*l0h3/12.+tf->getnS()*wt->getxvvt()*wt->getwh1tcoefqI()+wt->getnSqI()*wt->getIxwh1t()+tf->getnSt()*wt->getxvvt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIxwh1()
+          + S.T()*(P*l0h3/12.+tf->getnS()*wt->getxvvt()*wt->getwh1tcoefqI()+wt->getnSqI()*wt->getIxwh1t()+tf->getnSt()*wt->getxvvt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIxwh1()
             + tf->getbS()*wt->getxvvt()*wt->getwh2tcoefqI()+wt->getbSqI()*wt->getIxwh2t()+tf->getbSt()*wt->getxvvt()*wt->getwh2coefqI()+wt->getbStqI()*wt->getIxwh2())
           + tf->getnSH()*(P*wt->getIxwh1t()+wt->getnSqI()*wt->getIwh1twh1t()+tf->getnSt()*wt->getIwh1twwt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIwh1twh1()
             + wt->getbSqI()*wt->getIwh1twh2t()+tf->getbSt()*wt->getIwh1twwt()*wt->getwh2coefqI()+wt->getbStqI()*wt->getIwh1twh2()) + wt->getIwh1twwt()*wt->getwh1tcoefqI()
@@ -141,7 +141,7 @@ namespace MBSim {
 
       /* symmetric mass matrix */
       Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();
-      Mat QH = trans(Q);
+      Mat QH = Q.T();
 
       MI = A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
             + tf->getbS()*wt->getvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh2())
@@ -158,8 +158,8 @@ namespace MBSim {
       MI = rho*MI;
 
       /* kinetic part TqItqIqIt */		
-      RowVec qItH = trans(tf->getqIt());	
-      Mat Qnunut = trans(depstil)*qItH*tSqIH+tf->getepstilt()*tSqIH + (1.+tf->getepstil())*wt->getdpSH()*trans(tf->gettSpSt());
+      RowVec qItH = tf->getqIt().T();	
+      Mat Qnunut = depstil.T()*qItH*tSqIH+tf->getepstilt()*tSqIH + (1.+tf->getepstil())*wt->getdpSH()*tf->gettSpSt().T();
 
       Vec TqItqIqIt = A*(drSH*(tf->getnS()*wt->getvvt()*wt->getwh1tcoefqI()+wt->getnSqI()*wt->getIwh1t()+tf->getnSt()*wt->getvvt()*wt->getwh1coefqI()+wt->getnStqI()*wt->getIwh1()
             + tf->getbS()*wt->getvvt()*wt->getwh2tcoefqI()+wt->getbSqI()*wt->getIwh2t()+tf->getbSt()*wt->getvvt()*wt->getwh2coefqI()+wt->getbStqI()*wt->getIwh2())*tf->getqIt()
@@ -185,25 +185,25 @@ namespace MBSim {
           + wt->getwh1coefqInunutH()*((tf->getnSH()*tf->getrSt())*wt->getvvtH()+(tf->getnSH()*S)*wt->getxvvtH()+wt->getIwh1twwtH()+(tf->getnSH()*tf->getnSt())*wt->getIwh1wwtH()+(tf->getnSH()*tf->getbSt())*wt->getIwh2wwtH())	
           + wt->getnSqIH()*(tf->getrSt()*wt->getvvt()+S*wt->getxvvt()+tf->getnS()*wt->getIwh1twwt()
               +tf->getnSt()*wt->getIwh1wwt()+tf->getbS()*wt->getIwh2twwt()+tf->getbSt()*wt->getIwh2wwt())*wt->getwh1coefqI()*tf->getqIt()
-          + wt->getdpSH()*trans(tf->getnSpSt())*(tf->getrSt()*wt->getIwh1()+S*wt->getIxwh1()+tf->getnS()*wt->getIwh1twh1()+tf->getnSt()*wt->getIwh1wh1()+tf->getbS()*wt->getIwh1wh2t()+tf->getbSt()*wt->getIwh1wh2())
+          + wt->getdpSH()*tf->getnSpSt().T()*(tf->getrSt()*wt->getIwh1()+S*wt->getIxwh1()+tf->getnS()*wt->getIwh1twh1()+tf->getnSt()*wt->getIwh1wh1()+tf->getbS()*wt->getIwh1wh2t()+tf->getbSt()*wt->getIwh1wh2())
           + (qItH*wt->getbSqIH()*tf->getrSt())*wt->getwh2coefqIH()*wt->getvvtH()+(qItH*wt->getbSqIH()*S)*wt->getwh2coefqIH()*wt->getxvvtH()
           +(qItH*wt->getbSqIH()*tf->getnS())*wt->getwh2coefqIH()*wt->getIwh1twwtH()+(qItH*wt->getbSqIH()*tf->getnSt())*wt->getwh2coefqIH()*wt->getIwh1wwtH()
           +(qItH*wt->getbSqIH()*tf->getbS())*wt->getwh2coefqIH()*wt->getIwh2twwtH()+(qItH*wt->getbSqIH()*tf->getbSt())*wt->getwh2coefqIH()*wt->getIwh2wwtH()
           + wt->getwh2coefqInunutH()*((tf->getbSH()*tf->getrSt())*wt->getvvtH()+(tf->getbSH()*S)*wt->getxvvtH()+(tf->getbSH()*tf->getnSt())*wt->getIwh1wwtH()+wt->getIwh2twwtH()+(tf->getbSH()*tf->getbSt())*wt->getIwh2wwtH())			
           + wt->getbSqIH()*(tf->getrSt()*wt->getvvt()+S*wt->getxvvt()+tf->getnS()*wt->getIwh1twwt()
               +tf->getnSt()*wt->getIwh1wwt()+tf->getbS()*wt->getIwh2twwt()+tf->getbSt()*wt->getIwh2wwt())*wt->getwh2coefqI()*tf->getqIt()
-          + wt->getdpSH()*trans(tf->getbSpSt())*(tf->getrSt()*wt->getIwh2()+S*wt->getIxwh2()+tf->getnS()*wt->getIwh1twh2()+tf->getnSt()*wt->getIwh1wh2()+tf->getbS()*wt->getIwh2twh2()+tf->getbSt()*wt->getIwh2wh2()));
+          + wt->getdpSH()*tf->getbSpSt().T()*(tf->getrSt()*wt->getIwh2()+S*wt->getIxwh2()+tf->getnS()*wt->getIwh1twh2()+tf->getnSt()*wt->getIwh1wh2()+tf->getbS()*wt->getIwh2twh2()+tf->getbSt()*wt->getIwh2wh2()));
       TqItqIqIt += I0*wt->getTtilqItqIqIt();
       TqItqIqIt = rho*TqItqIqIt;
 
       /* summarizing RHS */
-      Vec hIZ = trans(TqI-VeqI-VgqI)-TqItqIqIt;
+      Vec hIZ = (TqI-VeqI-VgqI).T()-TqItqIqIt;
       hIZ(6) -= epstD*tf->getepstilt();
       hIZ(15) -= k0D*tf->getk0t();
       hIZ -= MI*tf->getJIGt()*qGt;
 
       /* global description */
-      h = trans(tf->getJIG())*hIZ;
+      h = tf->getJIG().T()*hIZ;
 
       qG_Old = qG.copy();
       qGt_Old = qGt.copy();
@@ -247,9 +247,9 @@ namespace MBSim {
     Vec S = tf->getepstilt()*tf->gettS()+(1.+tf->getepstil())*tf->gettSt();
 
     return 0.5*rho
-      * (	A*(trans(tf->getrSt())*(tf->getrSt()*l0+2.*tf->getnS()*wt->getIwh1t()+2.*tf->getnSt()*wt->getIwh1()
+      * (	A*(tf->getrSt().T()*(tf->getrSt()*l0+2.*tf->getnS()*wt->getIwh1t()+2.*tf->getnSt()*wt->getIwh1()
               +2.*tf->getbS()*wt->getIwh2t()+2.*tf->getbSt()*wt->getIwh2())
-            +trans(S)*(S*l0h3/12.+2.*tf->getnS()*wt->getIxwh1t()+2.*tf->getnSt()*wt->getIxwh1()
+            +S.T()*(S*l0h3/12.+2.*tf->getnS()*wt->getIxwh1t()+2.*tf->getnSt()*wt->getIxwh1()
               +2.*tf->getbS()*wt->getIxwh2t()+2.*tf->getbSt()*wt->getIxwh2())
             +tf->getnSH()*(2.*tf->getnSt()*wt->getIwh1twh1()+2.*tf->getbSt()*wt->getIwh1twh2())+wt->getIwh1twh1t()
             +tf->getnStH()*(tf->getnSt()*wt->getIwh1wh1()+2.*tf->getbS()*wt->getIwh1wh2t()+2.*tf->getbSt()*wt->getIwh1wh2())
@@ -264,7 +264,7 @@ namespace MBSim {
     double Iwh1 = wt->intv(wt->getwh1coef());
     double Iwh2 = wt->intv(wt->getwh2coef());
 
-    return -rho*A*trans(g)*(l0*tf->getrS()+Iwh1*tf->getnS()+Iwh2*tf->getbS());
+    return -rho*A*g.T()*(l0*tf->getrS()+Iwh1*tf->getnS()+Iwh2*tf->getbS());
   }
 
   double FiniteElement1s33RCM::computeElasticEnergy(const Vec& qG) {
@@ -296,8 +296,8 @@ namespace MBSim {
     Vec wh1 = wt->computew(wt->getwh1coef(),x);
     Vec wh2 = wt->computew(wt->getwh2coef(),x);
 
-    JXqG(0,0,15,2) = trans(drS+(tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI())*x
-        +tf->getnS()*wh1qI+wh1(0)*wt->getnSqI()+tf->getbS()*wh2qI+wh2(0)*wt->getbSqI()); /* JT */
+    JXqG(0,0,15,2) = (drS+(tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI())*x
+        +tf->getnS()*wh1qI+wh1(0)*wt->getnSqI()+tf->getbS()*wh2qI+wh2(0)*wt->getbSqI()).T(); /* JT */
 
     Vec w1 = wt->computew(wt->getw1coef(),x);
     Vec w2 = wt->computew(wt->getw2coef(),x);
@@ -332,11 +332,11 @@ namespace MBSim {
     Mat ntqIt = np*ptqIt;
     Mat btqIt = bp*ptqIt;
 
-    JXqG(0,3,15,3) = trans(t(1)*ttqIt(2,0,2,15)+n(1)*ntqIt(2,0,2,15)+b(1)*btqIt(2,0,2,15));
-    JXqG(0,4,15,4) = trans(t(2)*ttqIt(0,0,0,15)+n(2)*ntqIt(0,0,0,15)+b(2)*btqIt(0,0,0,15));
-    JXqG(0,5,15,5) = trans(t(0)*ttqIt(1,0,1,15)+n(0)*ntqIt(1,0,1,15)+b(0)*btqIt(1,0,1,15)); /* JR */
+    JXqG(0,3,15,3) = (t(1)*ttqIt(2,0,2,15)+n(1)*ntqIt(2,0,2,15)+b(1)*btqIt(2,0,2,15)).T();
+    JXqG(0,4,15,4) = (t(2)*ttqIt(0,0,0,15)+n(2)*ntqIt(0,0,0,15)+b(2)*btqIt(0,0,0,15)).T();
+    JXqG(0,5,15,5) = (t(0)*ttqIt(1,0,1,15)+n(0)*ntqIt(1,0,1,15)+b(0)*btqIt(1,0,1,15)).T(); /* JR */
 
-    JXqG = trans(tf->getJIG())*JXqG; /* transformation global coordinates */
+    JXqG = tf->getJIG().T()*JXqG; /* transformation global coordinates */
 
     return JXqG.copy();
   }
@@ -391,7 +391,7 @@ namespace MBSim {
     drS(0,0) = 1.; 
     drS(1,1) = 1.; 
     drS(2,2) = 1.;	
-    drSH = trans(drS);
+    drSH = drS.T();
   }
 
   void FiniteElement1s33RCM::computedepstil() {	

@@ -93,7 +93,7 @@ namespace MBSim {
 
       system.update(z,t); 
 
-      system.getb().resize() = system.getgd() + trans(system.getW())*slvLLFac(system.getLLM(),system.geth())*dt;
+      system.getb().resize() = system.getgd() + system.getW().T()*slvLLFac(system.getLLM(),system.geth())*dt;
       iter = system.solveImpacts(dt);
 
       if(iter>maxIter) maxIter = iter;

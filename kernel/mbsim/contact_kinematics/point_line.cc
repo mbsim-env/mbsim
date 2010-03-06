@@ -50,7 +50,7 @@ namespace MBSim {
 
     Vec Wd =  point->getFrame()->getPosition() - line->getFrame()->getPosition();
 
-    g(0) = trans(Wn)*Wd;
+    g(0) = Wn.T()*Wd;
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
     cpData[iline].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
@@ -64,12 +64,12 @@ namespace MBSim {
     Vec Om1 = cpData[iline].getFrameOfReference().getAngularVelocity();
     Vec Om2 = cpData[ipoint].getFrameOfReference().getAngularVelocity();
 
-    double sd1 = trans(u1)*(vC2 - vC1); 
+    double sd1 = u1.T()*(vC2 - vC1); 
 
-    wb(0) += trans(n1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+    wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
 
     if(wb.size() > 1) 
-      wb(1) += trans(u1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
+      wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*sd1);
   }
 }
 

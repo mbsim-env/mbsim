@@ -368,7 +368,7 @@ namespace MBSim {
       /** 
        * \brief compute kinetic energy of entire dynamic system
        */
-      double computeKineticEnergy() { return 0.5*trans(u)*M*u; }
+      double computeKineticEnergy() { return 0.5*u.T()*M*u; }
 
       /** 
        * \brief compute potential energy of entire dynamic system 
