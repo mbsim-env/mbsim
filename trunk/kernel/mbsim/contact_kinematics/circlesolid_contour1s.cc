@@ -99,7 +99,7 @@ namespace MBSim {
       cpData[icontour1s].getFrameOfReference().getOrientation().col(2);
 
     Vec WrD = func->computeWrD(cpData[icontour1s].getLagrangeParameterPosition()(0));
-    g(0) = -trans(cpData[icontour1s].getFrameOfReference().getOrientation().col(0))*WrD;
+    g(0) = -cpData[icontour1s].getFrameOfReference().getOrientation().col(0).T()*WrD;
   }
 
   void ContactKinematicsCircleSolidContour1s::updatewb(Vec &wb, const Vec &g, ContourPointData* cpData) {
@@ -139,22 +139,22 @@ namespace MBSim {
     const Vec Om2 = cpData[icontour1s].getFrameOfReference().getAngularVelocity();
 
     SqrMat A(2,2,NONINIT);
-    A(0,0)=-trans(u1)*R1;
-    A(0,1)=trans(u1)*R2;
-    A(1,0)=trans(u2)*N1;
-    A(1,1)=trans(n1)*U2;
+    A(0,0)=-u1.T()*R1;
+    A(0,1)=u1.T()*R2;
+    A(1,0)=u2.T()*N1;
+    A(1,1)=n1.T()*U2;
     Vec b(2,NONINIT);
-    b(0)=-trans(u1)*(vC2-vC1);
-    b(1)=-trans(v2)*(Om2-Om1);
+    b(0)=-u1.T()*(vC2-vC1);
+    b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
     const Mat tOm1 = tilde(Om1);
     const Mat tOm2 = tilde(Om2);
     
-    wb(0) += (trans(vC2-vC1)*N1-trans(n1)*tOm1*R1)*zetad(0)+trans(n1)*tOm2*R2*zetad(1)-trans(n1)*tOm1*(vC2-vC1);
+    wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
     if (wb.size()>1) {
       const Vec U1=-n1;
-      wb(1) += (trans(vC2-vC1)*U1-trans(u1)*tOm1*R1)*zetad(0)+trans(u1)*tOm2*R2*zetad(1)-trans(u1)*tOm1*(vC2-vC1);
+      wb(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
     }
   }
       

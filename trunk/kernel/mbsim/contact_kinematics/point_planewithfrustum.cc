@@ -107,14 +107,14 @@ namespace MBSim {
     // AKWTmp.col(2)=crossProduct(AKWTmp.col(0), AKWTmp.col(1));
     // SqrMat AKW=trans(AKWTmp);
     SqrMat AKW(3,3);
-    AKW.row(0) = trans(WnContour);
+    AKW.row(0) = WnContour.T();
     if (d<1e-9)
-      AKW.row(1) = trans(plane->getFrame()->getOrientation().col(1));
+      AKW.row(1) = plane->getFrame()->getOrientation().col(1).T();
     else {
-      AKW.row(1) = trans(crossProduct(crossProduct(trans(AKW.row(0)), WrPlanePoint), trans(AKW.row(0))));
+      AKW.row(1) = crossProduct(crossProduct(AKW.row(0).T(), WrPlanePoint), AKW.row(0).T()).T();
       AKW.row(1) /= nrm2(AKW.row(1));
     }
-    AKW.row(2) = trans(crossProduct(trans(AKW.row(0)), trans(AKW.row(1))));
+    AKW.row(2) = crossProduct(AKW.row(0).T(), AKW.row(1).T()).T();
     Vec KrOPoint = AKW*WrPlanePoint;
 
     // cerr << "\n\n\n\n" << endl;
@@ -148,7 +148,7 @@ namespace MBSim {
       Kt(1)=-cos_alpha;
       KrCP=MT+sign(h)*rho*Kn;
       Vec KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(trans(KrPointCP)*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+      g(0)=-sign(KrPointCP.T()*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else if (d<rFrustumPlane) { // contact with frustum
       // cerr << "Fall 3" << endl;
@@ -157,13 +157,13 @@ namespace MBSim {
       Vec KrExP(3);
       if (h<0) {
         KrExP=-EP+KrOPoint;
-        KrCP=EP+(trans(KrExP)*tFrustum)*tFrustum;
+        KrCP=EP+(KrExP.T()*tFrustum)*tFrustum;
       }
       else {
         KrExP=-ET+KrOPoint;
-        KrCP=ET+(trans(KrExP)*tFrustum)*tFrustum;
+        KrCP=ET+(KrExP.T()*tFrustum)*tFrustum;
       }
-      g(0)=sign(trans(KrExP)*nFrustum)*nrm2(KrCP-KrOPoint);
+      g(0)=sign(KrExP.T()*nFrustum)*nrm2(KrCP-KrOPoint);
     }
     else if (d < rPlane) { // contact with outer rounding
       // cerr << "Fall 4" << endl;
@@ -175,7 +175,7 @@ namespace MBSim {
       Kt(1)=-cos_alpha;
       KrCP=MP-sign(h)*rho*Kn;
       Vec KrPointCP=-KrOPoint+KrCP;
-      g(0)=-sign(trans(KrPointCP)*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
+      g(0)=-sign(KrPointCP.T()*Vec("[1; 0; 0]"))*nrm2(KrPointCP);
     }
     else { // contact with infinite plane
       // cerr << "Fall 5" << endl;
@@ -186,7 +186,7 @@ namespace MBSim {
       KrCP(1)=KrOPoint(1);
     }
 
-    SqrMat AWK = trans(AKW);
+    SqrMat AWK = AKW.T();
     Vec Wn = AWK * Kn;
     Vec Wt = AWK * Kt;
     Vec Wb = AWK * Kb;

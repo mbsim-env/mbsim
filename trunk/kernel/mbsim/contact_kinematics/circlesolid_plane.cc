@@ -53,7 +53,7 @@ namespace MBSim {
     Vec Wd;
     Vec Wn = cpData[iplane].getFrameOfReference().getOrientation().col(0);
     Vec Wb = circlesolid->getFrame()->getOrientation().col(2);
-    double t_EC = trans(Wn)*Wb;
+    double t_EC = Wn.T()*Wb;
     if(t_EC>0) {
       Wb *= -1.;
       t_EC *= -1;	
@@ -71,7 +71,7 @@ namespace MBSim {
     //cout << z_EC<<endl;
     //cout << Wd << endl;
     //cout << Wn << endl;
-    g(0) = trans(Wn)*Wd;
+    g(0) = Wn.T()*Wd;
     //cout << g(0) << endl;
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - (circlesolid->getRadius()/z_EC_nrm2)*z_EC);
     cpData[iplane].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g(0));

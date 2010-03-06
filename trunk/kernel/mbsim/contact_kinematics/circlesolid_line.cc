@@ -57,7 +57,7 @@ namespace MBSim {
 
     Vec Wd = circlesolid->getFrame()->getPosition() - line->getFrame()->getPosition();
 
-    g(0) = trans(Wn)*Wd - circlesolid->getRadius();
+    g(0) = Wn.T()*Wd - circlesolid->getRadius();
 
     cpData[icircle].getFrameOfReference().setPosition(circlesolid->getFrame()->getPosition() - Wn*circlesolid->getRadius());
     cpData[iline].getFrameOfReference().setPosition(cpData[icircle].getFrameOfReference().getPosition() - Wn*g(0));
@@ -76,14 +76,14 @@ namespace MBSim {
     Vec Om2 = cpData[icircle].getFrameOfReference().getAngularVelocity();
     double r = circlesolid->getRadius();
 
-    double ad2 = -trans(v2)*(Om2-Om1);
-    double ad1 = trans(u1)*(vC2-vC1) - r*ad2;
+    double ad2 = -v2.T()*(Om2-Om1);
+    double ad1 = u1.T()*(vC2-vC1) - r*ad2;
     Vec s2 = u2*r;
 
-    wb(0) += trans(n1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+    wb(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     
     if(wb.size() > 1) 
-      wb(1) += trans(u1)*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+      wb(1) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
   }
       
   void ContactKinematicsCircleSolidLine::computeCurvatures(Vec &r, ContourPointData* cpData) {

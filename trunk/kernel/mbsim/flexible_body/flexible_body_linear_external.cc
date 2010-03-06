@@ -89,8 +89,8 @@ namespace MBSim {
 //	  }
 	}
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));// TODO dimensionen der internen Jacobis
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2))); 
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*Jacobian(0,0,qSize-1,1).T());// TODO dimensionen der internen Jacobis
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*Jacobian(0,2,qSize-1,2).T()); 
     // S_.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // S_.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 

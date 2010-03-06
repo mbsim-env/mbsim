@@ -71,13 +71,13 @@ namespace MBSim {
     Vec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation();
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
-    h += trans(frame[0]->getJacobianOfTranslation())*WF + trans(frame[0]->getJacobianOfRotation())*WM;
-    hObject += trans(frame[0]->getJacobianOfTranslation())*WF + trans(frame[0]->getJacobianOfRotation())*WM;
+    h += frame[0]->getJacobianOfTranslation().T()*WF + frame[0]->getJacobianOfRotation().T()*WM;
+    hObject += frame[0]->getJacobianOfTranslation().T()*WF + frame[0]->getJacobianOfRotation().T()*WM;
   }
 
   void RigidBody::updatehInverseKinetics(double t) {
 
-    h -= trans(frame[0]->getJacobianOfTranslation())*m*aT + trans(frame[0]->getJacobianOfRotation())*WThetaS*aR;
+    h -= frame[0]->getJacobianOfTranslation().T()*m*aT + frame[0]->getJacobianOfRotation().T()*WThetaS*aR;
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -210,7 +210,7 @@ namespace MBSim {
       }
 
       if(iInertia != 0)
-        SThetaS = SymMat(ASF[iInertia]*SThetaS*trans(ASF[iInertia])) - m*JTJ(tilde(SrSF[iInertia]));
+        SThetaS = SymMat(ASF[iInertia]*SThetaS*ASF[iInertia].T()) - m*JTJ(tilde(SrSF[iInertia]));
 
       for(int i=0; i<uSize[0]; i++) 
         T(i,i) = 1;
@@ -313,7 +313,7 @@ namespace MBSim {
     frame[iKinematics]->setOrientation(frameOfReference->getOrientation()*APK);
 
     if(cb) {
-      PJR = trans(frameOfReference->getOrientation())*frame[iKinematics]->getOrientation()*PJR0;
+      PJR = frameOfReference->getOrientation().T()*frame[iKinematics]->getOrientation()*PJR0;
     }
 
     WrPK = frameOfReference->getOrientation()*PrPK;
@@ -348,7 +348,7 @@ namespace MBSim {
 
   void RigidBody::updateKinematicsForRemainingFramesAndContours(double t) {
     if(iKinematics != 0) // only if kinematics frame is not cog-frame, update JACOBIAN of cog
-      frame[0]->setOrientation(frame[iKinematics]->getOrientation()*trans(ASF[iKinematics]));
+      frame[0]->setOrientation(frame[iKinematics]->getOrientation()*ASF[iKinematics].T());
 
     for(unsigned int i=1; i<frame.size(); i++) {
       WrSF[i] = frame[0]->getOrientation()*SrSF[i];
@@ -378,7 +378,7 @@ namespace MBSim {
       contour[i]->setReferencePosition(frame[0]->getPosition() + WrSC[i]);
       contour[i]->setReferenceVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSC[i]));
     }
-    WThetaS = JTMJ(SThetaS,trans(frame[0]->getOrientation()));
+    WThetaS = JTMJ(SThetaS,frame[0]->getOrientation().T());
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours(double t) {

@@ -189,8 +189,8 @@ namespace MBSim {
     }
     else throw new MBSimError("ERROR(FlexibleBody1s21RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*trans(Jacobian(0,0,qSize-1,1)));
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*trans(Jacobian(0,2,qSize-1,2)));
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,0,2,1)*Jacobian(0,0,qSize-1,1).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()(0,2,2,2)*Jacobian(0,2,qSize-1,2).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -219,7 +219,7 @@ namespace MBSim {
       else contour1sFlexible->setNodes(userContourNodes);
   
       l0 = L/Elements;
-      Vec g = trans(frameOfReference->getOrientation()(0,0,2,1))*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = frameOfReference->getOrientation()(0,0,2,1).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0;i<Elements;i++) {
         qElement.push_back(Vec(8,INIT,0.));
         uElement.push_back(Vec(8,INIT,0.));

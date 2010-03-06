@@ -136,7 +136,7 @@ namespace MBSim {
       /*!
        * \return potential energy
        */
-      double computePotentialEnergy() { return 0.5*trans(q)*K*q; }
+      double computePotentialEnergy() { return 0.5*q.T()*K*q; }
 
       /*! 
        * \brief transformation cartesian to cylinder system

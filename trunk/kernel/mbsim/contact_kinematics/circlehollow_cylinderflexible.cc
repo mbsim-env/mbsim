@@ -76,7 +76,7 @@ namespace MBSim {
     Vec WbK = circle->getReferenceOrientation().col(2);
     Vec WtB = cpData[icylinder].getFrameOfReference().getOrientation().col(1); // normal in first column
 
-    double cos_alpha = trans( WtB ) * WbK;
+    double cos_alpha = WtB.T() * WbK;
 
     if( nrm2(WrD) > 0 ) { // conic section theory
       double a = abs(r/cos_alpha);
@@ -118,7 +118,7 @@ namespace MBSim {
       cylinder->updateKinematicsForFrame(cpData[icylinder],position_cosy);
       Vec WrD2 = cpData[icylinder].getFrameOfReference().getPosition() - cpData[icircle].getFrameOfReference().getPosition() ;
 
-      Vec normal = (WrD - trans(WtB)*WrD*WtB );
+      Vec normal = (WrD - WtB.T()*WrD*WtB );
 
       g(0) = nrm2(WrD2);
       if( nrm2(normal)>0.01*a ) { // hack of Roland Zander, oh my god; what about the COSY in the non-if-case? TODO
@@ -126,7 +126,7 @@ namespace MBSim {
         cpData[icylinder].getFrameOfReference().getOrientation().col(0) = - cpData[icircle].getFrameOfReference().getOrientation().col(0);
         cpData[icylinder].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1));
 
-        g(0) = trans(cpData[icylinder].getFrameOfReference().getOrientation().col(0)) * WrD2 ;
+        g(0) = cpData[icylinder].getFrameOfReference().getOrientation().col(0).T() * WrD2 ;
       }
     }
     else { // only dimensioning

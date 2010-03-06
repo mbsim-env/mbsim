@@ -46,12 +46,12 @@ namespace MBSim {
     cpData[icircle0].getFrameOfReference().getPosition() = circle0->getFrame()->getPosition() + cpData[icircle0].getFrameOfReference().getOrientation().col(0)*circle0->getRadius();
     cpData[icircle1].getFrameOfReference().getPosition() = circle1->getFrame()->getPosition() + cpData[icircle1].getFrameOfReference().getOrientation().col(0)*circle1->getRadius();
 
-    g(0) = trans(cpData[icircle1].getFrameOfReference().getOrientation().col(0))*WrD - circle0->getRadius() - circle1->getRadius();
+    g(0) = cpData[icircle1].getFrameOfReference().getOrientation().col(0).T()*WrD - circle0->getRadius() - circle1->getRadius();
   }
       
   void ContactKinematicsCircleSolidCircleSolid::updatewb(Vec &wb, const Vec &g, ContourPointData *cpData) {
 
-    const Vec KrPC1 = trans(circle0->getFrame()->getOrientation())*(cpData[icircle0].getFrameOfReference().getPosition() - circle0->getFrame()->getPosition());
+    const Vec KrPC1 = circle0->getFrame()->getOrientation().T()*(cpData[icircle0].getFrameOfReference().getPosition() - circle0->getFrame()->getPosition());
     const double zeta1=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
     const double sa1=sin(zeta1);
     const double ca1=cos(zeta1);
@@ -81,7 +81,7 @@ namespace MBSim {
     KU1(2)=0;
     const Vec U1=circle0->getFrame()->getOrientation()*KU1;
 
-    const Vec KrPC2 = trans(circle1->getFrame()->getOrientation())*(cpData[icircle1].getFrameOfReference().getPosition() - circle1->getFrame()->getPosition());
+    const Vec KrPC2 = circle1->getFrame()->getOrientation().T()*(cpData[icircle1].getFrameOfReference().getPosition() - circle1->getFrame()->getPosition());
     const double zeta2=(KrPC2(1)>0) ? acos(KrPC2(0)/nrm2(KrPC2)) : 2.*M_PI - acos(KrPC2(0)/nrm2(KrPC2));
     const double sa2=sin(zeta2);
     const double ca2=cos(zeta2);
@@ -113,21 +113,21 @@ namespace MBSim {
     const Vec Om2 = cpData[icircle1].getFrameOfReference().getAngularVelocity();
 
     SqrMat A(2,2,NONINIT);
-    A(0,0)=-trans(u1)*R1;
-    A(0,1)=trans(u1)*R2;
-    A(1,0)=trans(u2)*N1;
-    A(1,1)=trans(n1)*U2;
+    A(0,0)=-u1.T()*R1;
+    A(0,1)=u1.T()*R2;
+    A(1,0)=u2.T()*N1;
+    A(1,1)=n1.T()*U2;
     Vec b(2,NONINIT);
-    b(0)=-trans(u1)*(vC2-vC1);
-    b(1)=-trans(v2)*(Om2-Om1);
+    b(0)=-u1.T()*(vC2-vC1);
+    b(1)=-v2.T()*(Om2-Om1);
     const Vec zetad = slvLU(A,b);
 
     const Mat tOm1 = tilde(Om1);
     const Mat tOm2 = tilde(Om2);
     
-    wb(0) += (trans(vC2-vC1)*N1-trans(n1)*tOm1*R1)*zetad(0)+trans(n1)*tOm2*R2*zetad(1)-trans(n1)*tOm1*(vC2-vC1);
+    wb(0) += ((vC2-vC1).T()*N1-n1.T()*tOm1*R1)*zetad(0)+n1.T()*tOm2*R2*zetad(1)-n1.T()*tOm1*(vC2-vC1);
     if (wb.size()>1) 
-      wb(1) += (trans(vC2-vC1)*U1-trans(u1)*tOm1*R1)*zetad(0)+trans(u1)*tOm2*R2*zetad(1)-trans(u1)*tOm1*(vC2-vC1);
+      wb(1) += ((vC2-vC1).T()*U1-u1.T()*tOm1*R1)*zetad(0)+u1.T()*tOm2*R2*zetad(1)-u1.T()*tOm1*(vC2-vC1);
   }
 }
 

@@ -63,12 +63,12 @@ namespace MBSim {
 
     /* Contact Geometry */
     Vec Wd_CF = circle->getFrame()->getPosition() - frustum->getFrame()->getPosition(); // difference vector of Circle and Frustum basis point in inertial FR    
-    double t_CF = trans(Wb_C)*Wa_F; // projection of Circle binormal on axis (-> rotational angle)
+    double t_CF = Wb_C.T()*Wa_F; // projection of Circle binormal on axis (-> rotational angle)
     if(t_CF < 0.) { // looking for equivalence classes
       Wb_C *= -1.;
       t_CF *= -1.;
     }
-    double u_CF = trans(Wd_CF)*Wa_F; // projection of difference vector on axis
+    double u_CF = Wd_CF.T()*Wa_F; // projection of difference vector on axis
     Vec c_CF = Wd_CF - u_CF*Wa_F; // projection of translational vector
     Vec z_CF = Wb_C - t_CF*Wa_F; // projection of rotational vector
     double z_CF_nrm2 = nrm2(z_CF);
@@ -163,8 +163,8 @@ namespace MBSim {
         double al_CF = acos(t_CF);
         Vec eF1 = -z_CF/z_CF_nrm2;
         Vec eF2 = crossProduct(Wa_F,eF1);	
-        double xi_1 = trans(eF1)*Wd_CF;
-        double xi_2 = trans(Wa_F)*Wd_CF;
+        double xi_1 = eF1.T()*Wd_CF;
+        double xi_2 = Wa_F.T()*Wd_CF;
         if(xi_2 < -sin(al_CF)*r_C || xi_2 > h_F + sin(al_CF)*r_C) g(0) = 1.;
 
         else if(fabs(phi_F)<epsroot()) { // special case: cylinder (circle-ellipse)	
@@ -210,10 +210,10 @@ namespace MBSim {
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
             Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0)).copy();
-            Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
+            Vec dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);	
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition()-frustum->getFrame()->getPosition();
-            double s_PF = trans(Wa_F) * Wd_PF;
+            double s_PF = Wa_F.T() * Wd_PF;
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
@@ -345,10 +345,10 @@ namespace MBSim {
           if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] > eps) g(0) = 1.; // too far away?
           else {
             Vec dTilde_tmp = funcRho->computeWrD(cpData[ifrustum].getLagrangeParameterPosition()(0)).copy();
-            Vec dTilde = dTilde_tmp - trans(Wb_C)*dTilde_tmp*Wb_C; // projection in plane of circle
+            Vec dTilde = dTilde_tmp - Wb_C.T()*dTilde_tmp*Wb_C; // projection in plane of circle
             cpData[icircle].getFrameOfReference().getPosition() = circle->getFrame()->getPosition() + r_C*dTilde/nrm2(dTilde);				
             Vec Wd_PF = cpData[icircle].getFrameOfReference().getPosition() - frustum->getFrame()->getPosition();
-            double s_PF = trans(Wa_F) * Wd_PF;
+            double s_PF = Wa_F.T() * Wd_PF;
 
             if(s_PF < 0. || s_PF > h_F) {
               if(warnLevel!=0) {
@@ -382,12 +382,12 @@ namespace MBSim {
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): eF2= " << eF2 << endl;		
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1= " << c1 << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2= " << c2 << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << trans(Wd_SC)*crossProduct(c1,c2) << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << trans(c1)*Wd_SC << endl;
-            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << trans(c2)*Wd_SC << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << Wd_SC.T()*crossProduct(c1,c2) << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << c1.T()*Wd_SC << endl;
+            cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << c2.T()*Wd_SC << endl;
             if((*funcRho)[cpData[ifrustum].getLagrangeParameterPosition()(0)] < eps) {
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << trans(c1)*(cpData[icircle].getFrameOfReference().getPosition()-circle->getFrame()->getPosition()-Wd_SC) << endl;
-              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << trans(c2)*(cpData[icircle].getFrameOfReference().getPosition()-circle->getFrame()->getPosition()-Wd_SC) << endl;
+              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T()*(cpData[icircle].getFrameOfReference().getPosition()-circle->getFrame()->getPosition()-Wd_SC) << endl;
+              cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T()*(cpData[icircle].getFrameOfReference().getPosition()-circle->getFrame()->getPosition()-Wd_SC) << endl;
             }
           }
           delete funcRho;

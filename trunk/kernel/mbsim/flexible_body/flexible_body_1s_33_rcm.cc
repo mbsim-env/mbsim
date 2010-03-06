@@ -182,14 +182,14 @@ namespace MBSim {
       SqrMat bp = angle->computebq(p); 
 
       Jacobian(Index(10*node,10*node+2),One) << SqrMat(3,EYE); // translation
-      Jacobian(Index(10*node+3,10*node+5),3) = t(1)*trans(tp(2,0,2,2))+n(1)*trans(np(2,0,2,2))+b(1)*trans(bp(2,0,2,2)); // rotation
-      Jacobian(Index(10*node+3,10*node+5),4) = t(2)*trans(tp(0,0,0,2))+n(2)*trans(np(0,0,0,2))+b(2)*trans(bp(0,0,0,2));
-      Jacobian(Index(10*node+3,10*node+5),5) = t(0)*trans(tp(1,0,1,2))+n(0)*trans(np(1,0,1,2))+b(0)*trans(bp(1,0,1,2)); 
+      Jacobian(Index(10*node+3,10*node+5),3) = t(1)*tp(2,0,2,2).T()+n(1)*np(2,0,2,2).T()+b(1)*bp(2,0,2,2).T(); // rotation
+      Jacobian(Index(10*node+3,10*node+5),4) = t(2)*tp(0,0,0,2).T()+n(2)*np(0,0,0,2).T()+b(2)*bp(0,0,0,2).T();
+      Jacobian(Index(10*node+3,10*node+5),5) = t(0)*tp(1,0,1,2).T()+n(0)*np(1,0,1,2).T()+b(0)*bp(1,0,1,2).T(); 
     }
     else throw new MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*trans(Jacobian(0,0,qSize-1,2)));
-    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*trans(Jacobian(0,3,qSize-1,5))); 
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian(0,0,qSize-1,2).T());
+    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian(0,3,qSize-1,5).T()); 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
@@ -265,7 +265,7 @@ namespace MBSim {
       right->setNormalDistance(0.5*cuboidBreadth);
 
       l0 = L/Elements;
-      Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = frameOfReference->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
       for(int i=0;i<Elements;i++) {
         discretization.push_back(new FiniteElement1s33RCM(l0,rho,A,E,G,I1,I2,I0,g,angle));

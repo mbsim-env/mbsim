@@ -121,8 +121,8 @@ namespace MBSim {
       //  1--------2
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
       // r1 and j1 are defined with node 1, r2 and j2 with node 3
-      ElementalNodes[i](0,1) << trans(NodeCoordinates.row(ElementNodeList(i,0))); // node 1
-      ElementalNodes[i](2,3) << trans(NodeCoordinates.row(ElementNodeList(i,2))); // node 3
+      ElementalNodes[i](0,1) << NodeCoordinates.row(ElementNodeList(i,0)).T(); // node 1
+      ElementalNodes[i](2,3) << NodeCoordinates.row(ElementNodeList(i,2)).T(); // node 3
 
       if(ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2*M_PI; 
@@ -247,8 +247,8 @@ namespace MBSim {
     Mat Jacobian = condenseMatrixRows_cd(Wext,ILocked);
 
     // transformation
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation().col(2)*trans(Jacobian(0,0,qSize-1,0)));
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*trans(Jacobian(0,1,qSize-1,3)));
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation().col(2)*Jacobian(0,0,qSize-1,0).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(0,1,qSize-1,3).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)

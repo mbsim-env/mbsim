@@ -77,7 +77,7 @@ namespace MBSim {
       cpData[icylinder].getFrameOfReference().getOrientation().col(2) = crossProduct(cpData[icylinder].getFrameOfReference().getOrientation().col(0),cpData[icylinder].getFrameOfReference().getOrientation().col(1));
       cpData[ipoint].getFrameOfReference().getOrientation().col(1) = - cpData[icylinder].getFrameOfReference().getOrientation().col(1);
       cpData[ipoint].getFrameOfReference().getOrientation().col(2) = cpData[icylinder].getFrameOfReference().getOrientation().col(2);
-      g(0) = trans(cpData[ipoint].getFrameOfReference().getOrientation().col(0))*WrD - cylinder->getRadius();
+      g(0) = cpData[ipoint].getFrameOfReference().getOrientation().col(0).T()*WrD - cylinder->getRadius();
     }
   }
 

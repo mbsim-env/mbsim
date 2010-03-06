@@ -123,8 +123,8 @@ namespace MBSim {
     }
     else throw new MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,1,2,2)*trans(Jacobian(0,0,qSize-1,1)));
-    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*trans(Jacobian(0,2,qSize-1,4)));
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,1,2,2)*Jacobian(0,0,qSize-1,1).T());
+    cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(0,2,qSize-1,4).T());
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
@@ -153,7 +153,7 @@ namespace MBSim {
       else cylinderFlexible->setNodes(userContourNodes);
 
       l0 = L/Elements;
-      Vec g = trans(frameOfReference->getOrientation())*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = frameOfReference->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0; i<Elements; i++) {
         discretization.push_back(new FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g ));
         qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));

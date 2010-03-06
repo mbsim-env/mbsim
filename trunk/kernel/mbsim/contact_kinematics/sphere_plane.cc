@@ -51,7 +51,7 @@ namespace MBSim {
 
     Vec Wd = sphere->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
-    g(0) = trans(Wn)*Wd - sphere->getRadius();
+    g(0) = Wn.T()*Wd - sphere->getRadius();
 
     cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
     cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn*g(0));
@@ -67,7 +67,7 @@ namespace MBSim {
     Vec Om1 = cpData[iplane].getFrameOfReference().getAngularVelocity();
     Vec Om2 = cpData[isphere].getFrameOfReference().getAngularVelocity();
 
-    Vec KrPC2 = trans(sphere->getFrame()->getOrientation())*(cpData[isphere].getFrameOfReference().getPosition() - sphere->getFrame()->getPosition());
+    Vec KrPC2 = sphere->getFrame()->getOrientation().T()*(cpData[isphere].getFrameOfReference().getPosition() - sphere->getFrame()->getPosition());
     Vec zeta2 = computeAnglesOnUnitSphere(KrPC2/sphere->getRadius());
     double a2 = zeta2(0);
     double b2 = zeta2(1);
@@ -119,30 +119,30 @@ namespace MBSim {
     Mat V2 = sphere->getFrame()->getOrientation()*KV2;
 
     SqrMat A(4,4,NONINIT);
-    A(Index(0,0),Index(0,1)) = -trans(u1)*R1;
-    A(Index(0,0),Index(2,3)) = trans(u1)*R2;
-    A(Index(1,1),Index(0,1)) = -trans(v1)*R1;
-    A(Index(1,1),Index(2,3)) = trans(v1)*R2;
+    A(Index(0,0),Index(0,1)) = -u1.T()*R1;
+    A(Index(0,0),Index(2,3)) = u1.T()*R2;
+    A(Index(1,1),Index(0,1)) = -v1.T()*R1;
+    A(Index(1,1),Index(2,3)) = v1.T()*R2;
     A(Index(2,2),Index(0,1)).init(0);
-    A(Index(2,2),Index(2,3)) = trans(n1)*U2;
+    A(Index(2,2),Index(2,3)) = n1.T()*U2;
     A(Index(3,3),Index(0,1)).init(0);
-    A(Index(3,3),Index(2,3)) = trans(n1)*V2;
+    A(Index(3,3),Index(2,3)) = n1.T()*V2;
 
     Vec b(4,NONINIT);
-    b(0) = -trans(u1)*(vC2-vC1);
-    b(1) = -trans(v1)*(vC2-vC1);
-    b(2) = -trans(v2)*(Om2-Om1);
-    b(3) = trans(u2)*(Om2-Om1);
+    b(0) = -u1.T()*(vC2-vC1);
+    b(1) = -v1.T()*(vC2-vC1);
+    b(2) = -v2.T()*(Om2-Om1);
+    b(3) = u2.T()*(Om2-Om1);
     Vec zetad =  slvLU(A,b);
     Vec zetad1 = zetad(0,1);
     Vec zetad2 = zetad(2,3);
 
     Mat tOm1 = tilde(Om1);
     Mat tOm2 = tilde(Om2);
-    wb(0) += trans(n1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
 
-    if(wb.size() > 1) wb(1) += trans(u1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
-    if(wb.size() > 2) wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(wb.size() > 1) wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(wb.size() > 2) wb(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
   }
 
 }

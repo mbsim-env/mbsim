@@ -63,8 +63,8 @@ namespace MBSim {
   void KineticExcitation::updateh(double t) {
     if(F) WF[0]=refFrame->getOrientation()*forceDir * (*F)(t);
     if(M) WM[0]=refFrame->getOrientation()*momentDir * (*M)(t);
-    h[0]+=trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
-    hLink[0]+=trans(frame[0]->getJacobianOfTranslation())*WF[0] + trans(frame[0]->getJacobianOfRotation())*WM[0];
+    h[0]+=frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    hLink[0]+=frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
   }
 
   void KineticExcitation::calclaSize() {

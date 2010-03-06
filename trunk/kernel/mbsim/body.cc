@@ -176,7 +176,9 @@ namespace MBSim {
 
   Frame* Body::getFrame(const string &name_, bool check) {
     unsigned int i;
+    cout << getName() << endl;
     for(i=0; i<frame.size(); i++) {
+      cout << frame[i]->getName() << endl;
       if(frame[i]->getName() == name_)
         return frame[i];
     }             

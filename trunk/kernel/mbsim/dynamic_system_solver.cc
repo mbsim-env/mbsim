@@ -193,7 +193,7 @@ namespace MBSim {
       vector<Graph*> bufGraph;
       int nt = 0;
       for(int i=0; i<A.size(); i++) {
-        double a = max(trans(A).col(i));
+        double a = max(A.T().col(i));
         if(a>0 && fabs(A(i,i)+1)>epsroot() ) { // root of relativ kinematics
           stringstream str;
           str << "InvisibleGraph" << nt++;
@@ -502,7 +502,7 @@ namespace MBSim {
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
         SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-        dx >> slvLL(J,trans(Jprox)*res0);
+        dx >> slvLL(J,Jprox.T()*res0);
       }
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
@@ -572,7 +572,7 @@ namespace MBSim {
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
       else if(linAlg == LevenbergMarquardt) {
         SymMat J = SymMat(JTJ(Jprox) + lmParm*I);
-        dx >> slvLL(J,trans(Jprox)*res0);
+        dx >> slvLL(J,Jprox.T()*res0);
       }
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
@@ -760,7 +760,7 @@ namespace MBSim {
       updater(t);
       updatehInverseKinetics(t);
       updateWInverseKinetics(t); 
-      laInverseKinetics = slvLS(trans(WInverseKinetics)*WInverseKinetics,-trans(WInverseKinetics)*(h+r));
+      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h+r));
       plot(t,1);
       resizeJacobians(0);
       updatehRef(hParent,hObjectParent,hLinkParent);
@@ -888,17 +888,17 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
-    la = slvLS(G,-(trans(W)*slvLLFac(LLM,h) + wb));
+    la = slvLS(G,-(W.T()*slvLLFac(LLM,h) + wb));
     return 1;
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double dt) {
-    la = slvLS(G,-(gd + trans(W)*slvLLFac(LLM,h)*dt));
+    la = slvLS(G,-(gd + W.T()*slvLLFac(LLM,h)*dt));
     return 1;
   }
 
   void DynamicSystemSolver::updateG(double t) {
-    G.resize() = SqrMat(trans(W)*slvLLFac(LLM,V)); 
+    G.resize() = SqrMat(W.T()*slvLLFac(LLM,V)); 
 
     if(checkGSize) Gs.resize();
     else if(Gs.cols() != G.size()) {
@@ -1054,7 +1054,7 @@ namespace MBSim {
         updateV(t); 
         updateG(t); 
         updatewb(t); 
-        b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
+        b.resize() = W.T()*slvLLFac(LLM,h) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();
@@ -1093,7 +1093,7 @@ namespace MBSim {
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
-        b.resize() = trans(W)*slvLLFac(LLM,h) + wb;
+        b.resize() = W.T()*slvLLFac(LLM,h) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();
@@ -1193,10 +1193,10 @@ namespace MBSim {
       Vec corr;
       corr = g;
       corr.init(tolProj);
-      SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
+      SqrMat Gv= SqrMat(W.T()*slvLLFac(LLM,W)); 
       // TODO: Wv*T check
       while(nrmInf(g-corr) >= tolProj) {
-        Vec mu = slvLS(Gv, -g+trans(W)*nu+0.5*corr);
+        Vec mu = slvLS(Gv, -g+W.T()*nu+0.5*corr);
         Vec dnu = slvLLFac(LLM,W*mu)-nu;
         nu += dnu;
         q += T*dnu;
@@ -1216,7 +1216,7 @@ namespace MBSim {
       updategdRef(gdParent(0,gdSize-1));
       updategd(t);
 
-      SqrMat Gv= SqrMat(trans(W)*slvLLFac(LLM,W)); 
+      SqrMat Gv= SqrMat(W.T()*slvLLFac(LLM,W)); 
       Vec mu = slvLS(Gv,-gd);
       u += slvLLFac(LLM,W*mu);
       calcgdSize();
@@ -1315,15 +1315,15 @@ namespace MBSim {
     cout << "dropping contact matrices to file <dump_matrices.asc>" << endl;
     ofstream contactDrop("dump_matrices.asc");   
 
-    contactDrop << "constraint functions g" << endl << trans(g) << endl << endl;
+    contactDrop << "constraint functions g" << endl << g.T() << endl << endl;
     contactDrop << endl;
     contactDrop << "mass matrix M" << endl << M << endl << endl;
     contactDrop << "generalized force directions W" << endl << W << endl << endl;
     contactDrop << "Delassus matrix G" << endl << G << endl << endl;
     contactDrop << endl;
-    contactDrop << "constraint velocities gp" << endl << trans(gd) << endl << endl;
-    contactDrop << "non-holonomic part in gp; b" << endl << trans(b) << endl << endl;
-    contactDrop << "Lagrange multipliers la" << endl << trans(la) << endl << endl;
+    contactDrop << "constraint velocities gp" << endl << gd.T() << endl << endl;
+    contactDrop << "non-holonomic part in gp; b" << endl << b.T() << endl << endl;
+    contactDrop << "Lagrange multipliers la" << endl << la.T() << endl << endl;
     contactDrop.close();
   }
 
@@ -1420,7 +1420,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(trans(W)*slvLLFac(LLM,h) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(G, -(W.T()*slvLLFac(LLM,h) + wb)); // slvLS because of undeterminded system of equations
   } 
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {

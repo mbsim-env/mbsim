@@ -53,7 +53,7 @@ namespace MBSim {
 
     Vec Wd =  point->getFrame()->getPosition() - plane->getFrame()->getPosition();
 
-    g(0) = trans(Wn)*Wd; // distance
+    g(0) = Wn.T()*Wd; // distance
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition()); // possible contact locations
     cpData[iplane].getFrameOfReference().setPosition(cpData[ipoint].getFrameOfReference().getPosition() - Wn*g(0));
@@ -77,20 +77,20 @@ namespace MBSim {
       R1.col(1) = t1;
 
       SqrMat A(2,2,NONINIT);
-      A(Index(0,0),Index(0,1)) = -trans(u1)*R1; // first matrix row
-      A(Index(1,1),Index(0,1)) = -trans(v1)*R1; // second matrix row
+      A(Index(0,0),Index(0,1)) = -u1.T()*R1; // first matrix row
+      A(Index(1,1),Index(0,1)) = -v1.T()*R1; // second matrix row
 
       Vec b(2,NONINIT);
-      b(0) = -trans(u1)*(vC2-vC1);
-      b(1) = -trans(v1)*(vC2-vC1);
+      b(0) = -u1.T()*(vC2-vC1);
+      b(1) = -v1.T()*(vC2-vC1);
       Vec zetad1 =  slvLU(A,b);
 
       Mat tOm1 = tilde(Om1); // tilde operator
-      wb(0) += trans(n1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
+      wb(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1); // acceleration in terms of contour parametrisation
 
       if(wb.size() > 1) {
-        wb(1) += trans(u1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
-        wb(2) += trans(v1)*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+        wb(1) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
+        wb(2) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1);
       }
     }
   }

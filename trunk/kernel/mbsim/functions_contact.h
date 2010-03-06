@@ -91,7 +91,7 @@ namespace MBSim {
       double operator()(const double &alpha, const void * =NULL) {
         fmatvec::Vec Wd = computeWrD(alpha);
         fmatvec::Vec Wt = cp.getFrameOfReference().getOrientation().col(1);
-        return trans(Wt)*Wd;
+        return Wt.T()*Wd;
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
@@ -134,7 +134,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha, const void * =NULL) {
         fmatvec::Vec Wd = computeWrD(alpha);
-        return trans(circle->getReferenceOrientation().col(2))*Wd;
+        return circle->getReferenceOrientation().col(2).T()*Wd;
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
@@ -180,7 +180,7 @@ namespace MBSim {
         fmatvec::Vec WrOC[2];
         WrOC[0] = point->getFrame()->getPosition();
         WrOC[1] = contour->computeWrOC(alpha);
-        return trans(Wt) * ( WrOC[1] - WrOC[0] ); 
+        return Wt.T() * ( WrOC[1] - WrOC[0] ); 
       }
 
       fmatvec::Vec computeWrD(const fmatvec::Vec &alpha) {
@@ -473,7 +473,7 @@ namespace MBSim {
         cp.getLagrangeParameterPosition() = fmatvec::Vec(1, fmatvec::INIT, alpha);
         fmatvec::Vec Wd = computeWrD(alpha);
         fmatvec::Vec Wt = contour->computeTangent(cp);
-        return trans(Wt)*Wd;
+        return Wt.T()*Wd;
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
@@ -539,7 +539,7 @@ namespace MBSim {
 
         //compute radial and azimuthal nurbsdisk-coordinates out of alpha (saved in the LagrangeParameterPosition)
         ContourPointData cp_nurbsdisk;
-        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( trans(AWK_disk) * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk 
+        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk 
 
         //get the position and the derivatives on the disk 
         nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,firstTangent); 
@@ -550,13 +550,13 @@ namespace MBSim {
         A_inv(0,1)=  sin(cp_nurbsdisk.getLagrangeParameterPosition()(1)); 
         A_inv(1,0)= -sin(cp_nurbsdisk.getLagrangeParameterPosition()(1)) / cp_nurbsdisk.getLagrangeParameterPosition()(0); 
         A_inv(1,1)=  cos(cp_nurbsdisk.getLagrangeParameterPosition()(1)) / cp_nurbsdisk.getLagrangeParameterPosition()(0);
-        fmatvec::Vec drphidalpha = A_inv * trans(AWK_disk)* circle_tangent; // AWK_disk * A_inv * trans(AWK_disk)* circle_tangent CHANGED
+        fmatvec::Vec drphidalpha = A_inv * AWK_disk.T()* circle_tangent; // AWK_disk * A_inv * trans(AWK_disk)* circle_tangent CHANGED
 
         //compution of the single elements in the function
         fmatvec::Vec nurbs_radial_tangent    = cp_nurbsdisk.getFrameOfReference().getOrientation().col(1);
         fmatvec::Vec nurbs_azimuthal_tangent = cp_nurbsdisk.getFrameOfReference().getOrientation().col(2);
 
-        return trans(nurbsdisk->getFrame()->getOrientation().col(2)) * (circle_tangent - (nurbs_radial_tangent *  drphidalpha(0)+ nurbs_azimuthal_tangent * drphidalpha(1)));
+        return nurbsdisk->getFrame()->getOrientation().col(2).T() * (circle_tangent - (nurbs_radial_tangent *  drphidalpha(0)+ nurbs_azimuthal_tangent * drphidalpha(1)));
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
@@ -568,7 +568,7 @@ namespace MBSim {
 
         //get the position on the nurbsdisk
         ContourPointData cp_nurbsdisk;
-        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(trans(nurbsdisk->getFrame()->getOrientation())*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk 
+        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk 
         nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,position);
         fmatvec::Vec WP_nurbsdisk = cp_nurbsdisk.getFrameOfReference().getPosition();
 

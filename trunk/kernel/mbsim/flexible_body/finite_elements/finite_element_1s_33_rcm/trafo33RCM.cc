@@ -42,8 +42,8 @@ namespace MBSim {
 
     Vec nS = angle->computen(pS);
     Vec bS = angle->computeb(pS);
-    RowVec ntilSH = trans(angle->computentil(pS));
-    RowVec btilSH = trans(angle->computebtil(pS));
+    RowVec ntilSH = angle->computentil(pS).T();
+    RowVec btilSH = angle->computebtil(pS).T();
     double xibtil = btilSH*nS; 
     double xintil = ntilSH*nS;
     double etabtil = btilSH*bS;
@@ -75,8 +75,8 @@ namespace MBSim {
 
     Vec nS = angle->computen(pS);
     Vec bS = angle->computeb(pS);
-    RowVec ntilSH = trans(angle->computentil(pS));
-    RowVec btilSH = trans(angle->computebtil(pS));
+    RowVec ntilSH = angle->computentil(pS).T();
+    RowVec btilSH = angle->computebtil(pS).T();
     double xibtil = btilSH*nS; 
     double xintil = ntilSH*nS;
     double etabtil = btilSH*bS;
@@ -84,13 +84,13 @@ namespace MBSim {
 
     Mat nSbE = angle->computenq(pS)*pSbE; 
     Mat bSbE = angle->computebq(pS)*pSbE;
-    Mat ntilSbEH = trans(angle->computentilq(pS)*pSbE); 
-    Mat btilSbEH = trans(angle->computebtilq(pS)*pSbE);
+    Mat ntilSbEH = (angle->computentilq(pS)*pSbE).T(); 
+    Mat btilSbEH = (angle->computebtilq(pS)*pSbE).T();
 
-    RowVec xibtilbE = trans(btilSbEH*nS)+btilSH*nSbE;
-    RowVec xintilbE = trans(ntilSbEH*nS)+ntilSH*nSbE;	
-    RowVec etabtilbE = trans(btilSbEH*bS)+btilSH*bSbE;
-    RowVec etantilbE = trans(ntilSbEH*bS)+ntilSH*bSbE;
+    RowVec xibtilbE = (btilSbEH*nS).T()+btilSH*nSbE;
+    RowVec xintilbE = (ntilSbEH*nS).T()+ntilSH*nSbE;	
+    RowVec etabtilbE = (btilSbEH*bS).T()+btilSH*bSbE;
+    RowVec etantilbE = (ntilSbEH*bS).T()+ntilSH*bSbE;
 
     SqrMat SMRHS_Jac(11,INIT,0.);
     SMRHS_Jac(0,0) = 1.;
@@ -177,7 +177,7 @@ namespace MBSim {
   Trafo33RCM::~Trafo33RCM() {}
 
   void Trafo33RCM::computeprelim(const Vec& qG) {
-    rRrLmH = trans(qG(10,12)-qG(0,2)); 
+    rRrLmH = (qG(10,12)-qG(0,2)).T(); 
   }
 
   Vec Trafo33RCM::computes0(const Vec& qG) {
@@ -190,10 +190,10 @@ namespace MBSim {
     SqrMat nMpM = angle->computenq(pM);
     SqrMat bMpM = angle->computebq(pM);
 
-    double xinMtil = trans(nM)*nMtil;
-    double xibMtil = trans(nM)*bMtil;
-    double etanMtil = trans(bM)*nMtil;
-    double etabMtil = trans(bM)*bMtil;
+    double xinMtil = nM.T()*nMtil;
+    double xibMtil = nM.T()*bMtil;
+    double etanMtil = bM.T()*nMtil;
+    double etabMtil = bM.T()*bMtil;
 
     RowVec rRrLmnMpM = 0.5*rRrLmH*nMpM;
     SMRHS(2,0) = -xinMtil; SMRHS(2,1) = xinMtil; SMRHS(2,4) = -xibMtil; SMRHS(2,5) = xibMtil;	
@@ -256,10 +256,10 @@ namespace MBSim {
     bS = angle->computeb(pS);
     ntilS = angle->computentil(pS);
     btilS = angle->computebtil(pS); 
-    nSH = trans(nS); 
-    bSH = trans(bS);
-    ntilSH = trans(ntilS);
-    btilSH = trans(btilS);
+    nSH = nS.T(); 
+    bSH = bS.T();
+    ntilSH = ntilS.T();
+    btilSH = btilS.T();
     tSpS = angle->computetq(pS);
     nSpS = angle->computenq(pS);
     bSpS = angle->computebq(pS);
@@ -375,7 +375,7 @@ namespace MBSim {
     computebeqG();
     computeCOSYqG();
 
-    RowVec tSH = trans(tS);
+    RowVec tSH = tS.T();
 
     JIG(0,0,2,15) = drRdrLp;
     JIG(0,0,2,15) -= nS*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(3,0,3,15)+beqG(4,0,4,15))+xibtil*(beqG(7,0,7,15)+beqG(8,0,8,15)));
@@ -413,10 +413,10 @@ namespace MBSim {
     Vec ntilSt = ntilSpS*pSt;
     Vec btilSt = btilSpS*pSt;
 
-    nStH = trans(nSt); 
-    bStH = trans(bSt);
-    ntilStH = trans(ntilSt);
-    btilStH = trans(btilSt);
+    nStH = nSt.T(); 
+    bStH = bSt.T();
+    ntilStH = ntilSt.T();
+    btilStH = btilSt.T();
 
     tSpSt = angle->computetqt(pS,pSt);
     nSpSt = angle->computenqt(pS,pSt);
@@ -433,8 +433,8 @@ namespace MBSim {
   void Trafo33RCM::computeJIGt(const Vec& qGt) {
     // REQUIRED	computeCOSYt()
 
-    RowVec rRrLtmH = trans(qGt(10,12)-qGt(0,2));		
-    RowVec tStH = trans(tSt); 
+    RowVec rRrLtmH = (qGt(10,12)-qGt(0,2)).T();		
+    RowVec tStH = tSt.T(); 
 
     Mat nSbEt = nSpSt*pSbE;
     Mat bSbEt = bSpSt*pSbE;	 
