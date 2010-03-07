@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/utils/contact_utils.h"
+#include "stdio.h"
 
 // --- List of contour implementations - BEGIN ---
 #include "mbsim/contours/area.h"
@@ -62,6 +63,7 @@
 #include <mbsim/contact_kinematics/point_contourinterpolation.h>
 #include <mbsim/contact_kinematics/point_cylinderflexible.h>
 #include <mbsim/contact_kinematics/point_flexibleband.h>
+#include <mbsim/contact_kinematics/circlesolid_flexibleband.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
 #include <mbsim/contact_kinematics/point_nurbsdisk2s.h>
@@ -90,6 +92,8 @@ namespace MBSim {
 
   ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1) {
 
+	// evtl. besser, alle Contour-Paarungen zu testen, dann wird immer die hoechste Spezialisierung verwendet
+
     if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
       return new ContactKinematicsCircleFrustum;
 
@@ -104,7 +108,10 @@ namespace MBSim {
 
     else if(dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleSolid*>(contour1))
       return new ContactKinematicsCircleSolidCircleSolid;
-
+//
+    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<FlexibleBand*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<FlexibleBand*>(contour0)))
+      return new ContactKinematicsCircleSolidFlexibleBand;  
+//
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Contour1s*>(contour0)))
       return new ContactKinematicsCircleSolidContour1s;
 
