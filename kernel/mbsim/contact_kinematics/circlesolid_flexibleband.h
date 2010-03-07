@@ -31,7 +31,7 @@ namespace MBSim {
   /**
    * \brief pairing solid cirlce to flexible band, planar only
    * \author Roland Zander
-   * \date 2009-xx-yy initial commit
+   * \date 2009-03-07 initial commit (Roland Zander)
    */
   class ContactKinematicsCircleSolidFlexibleBand : public ContactKinematics {
     public:

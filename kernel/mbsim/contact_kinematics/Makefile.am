@@ -5,6 +5,7 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 					circlesolid_circlehollow.cc\
 					circlesolid_circlesolid.cc\
 					circlesolid_contour1s.cc\
+					circlesolid_flexibleband.cc\
 					circlesolid_frustum2d.cc\
 					circlesolid_line.cc\
 					circlesolid_plane.cc\
@@ -38,6 +39,7 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   circlesolid_circlehollow.h \
   circlesolid_circlesolid.h \
   circlesolid_contour1s.h \
+  circlesolid_flexibleband.h\
   circlesolid_frustum2d.h \
   circlesolid_line.h \
   circlesolid_plane.h \
