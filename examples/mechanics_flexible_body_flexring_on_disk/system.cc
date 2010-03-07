@@ -6,12 +6,9 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/flexible_band.h"
-//#include "mbsim/contact_kinematics/circlesolid_flexibleband.h"
 #include "mbsim/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-
-#include "beltDriveFunctions.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
