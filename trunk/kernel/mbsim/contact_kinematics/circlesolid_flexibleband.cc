@@ -54,6 +54,7 @@ namespace MBSim {
     l0     =        (band->getAlphaEnd()-band->getAlphaStart()); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
     epsTol = 1.0e-3*l0;
 
+#if 0
     static int nr = 0;
     cout << "ContactKinematicsCircleSolidFlexibleBand " <<  nr++ << endl;
     cout <<  " wBand                          = "  << wBand                           << endl;
@@ -61,6 +62,7 @@ namespace MBSim {
     cout <<  " rCircle                        = "  << rCircle                         << endl;
     cout <<  " numberOfPotentialContactPoints = "  << numberOfPotentialContactPoints  << endl;
     cout <<  " epsTol                         = "  << epsTol                          << endl;
+#endif
   }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -86,19 +88,21 @@ namespace MBSim {
         band->updateKinematicsForFrame(cpData[icontour],position_cosy);
         Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
         (ig[i])(0) = nrm2(Wd) - rCircle - hBand;
-        if((ig[i])(0) <= 0.0) {
+//        if((ig[i])(0) <= 0.0)
+        {
 
           Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2).copy();
           cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
 
-          if(cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*wBand || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*wBand)
+          if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
             (ig[i])(0) = 1.0;
           else { // calculate the normal distance
             cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
             cpData[icircle] .getFrameOfReference().getOrientation().col(0)  = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
             cpData[icircle] .getFrameOfReference().getOrientation().col(1)  = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
             cpData[icircle] .getFrameOfReference().getOrientation().col(2)  =  cpData[icontour].getFrameOfReference().getOrientation().col(2);
-            cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
+            //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
+            cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
 
           }
           inContact++;
@@ -135,7 +139,7 @@ namespace MBSim {
     Vec innerContactPositions(result.rows());
     int innerContacts = 0;
 
-//#pragma omp parallel for schedule(dynamic) shared(ig,icpData,inContact,cp,result,innerContacts,innerContactPositions,cout) default(none) 
+#pragma omp parallel for schedule(dynamic) shared(ig,icpData,nrNodes,inContact,result,innerContacts,innerContactPositions) default(none) 
     for(int i=0;i<result.rows();i++) {
       ContourPointData* cpData = icpData[nrNodes + i];
 
@@ -151,11 +155,12 @@ namespace MBSim {
         Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
         (ig[nrNodes + i])(0) = nrm2(Wd) - rCircle - hBand;
 
-        if((ig[nrNodes + i])(0) <= 0.0) {
+//        if((ig[nrNodes + i])(0) <= 0.0)
+        {
           Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2).copy();
           cpData[icontour].getLagrangeParameterPosition()(1) = trans(Wb)*Wd; // get contact parameter of second tangential direction
 
-          if(cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*wBand || -cpData[icontour].getLagrangeParameterPosition()(1) > 0.5*wBand)
+          if(fabs(cpData[icontour].getLagrangeParameterPosition()(1)) > 0.5*wBand)
             (ig[i])(0) = 1.0;
           else { // calculate the normal distance
             cpData[icontour].getFrameOfReference().getPosition()           += cpData[icontour].getLagrangeParameterPosition()(1)*Wb; 
@@ -201,8 +206,8 @@ namespace MBSim {
         cpData[icontour].getLagrangeParameterPosition().resize() = Vec(2,INIT,0.0);
       cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;//result(0,0);
 
-      cpData[icontour].getFrameOfReference().setPosition(Vec("[100.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
-      cpData[icircle ].getFrameOfReference().setPosition(Vec("[100.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
+      cpData[icontour].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
+      cpData[icircle ].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
       cpData[icontour].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
       cpData[icircle ].getFrameOfReference().getOrientation() = -SqrMat(3,EYE);
       (ig[i])(0) = 1.0;
