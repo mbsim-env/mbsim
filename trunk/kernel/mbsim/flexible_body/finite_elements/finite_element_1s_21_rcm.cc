@@ -433,11 +433,11 @@ namespace MBSim {
     return Jeg.T()*Jp + Jegp.T()*JGeneralizedInternal(qElement,s);
   }
 
-  Vec FiniteElement1s21RCM::ElementData(Vec qElement, Vec qpElement) {
-    Vec Data(8,fmatvec::INIT,0.0);
+  Vec FiniteElement1s21RCM::computeAdditionalElementData(Vec &qElement, Vec &qpElement) {
+    Vec Data(8,fmatvec::NONINIT);
 
-    Vec qLocal(8,fmatvec::INIT,0.0), qpLocal(8,fmatvec::INIT,0.0);
-    SqrMat Jeg(8,fmatvec::INIT,0.0), Jegp(8,fmatvec::INIT,0.0);
+    Vec qLocal(8,fmatvec::NONINIT), qpLocal(8,fmatvec::NONINIT);
+    SqrMat Jeg(8,fmatvec::NONINIT), Jegp(8,fmatvec::NONINIT);
 
     double &xS     = qLocal(0);      double &yS     = qLocal(1);
     double &eps   = qLocal(3);
@@ -710,7 +710,7 @@ namespace MBSim {
 
     // gravitation
     double gx = g(0);
-    if(fabs(g(1))>epsroot()) throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
+    //if(fabs(g(1))>epsroot()) throw new MBSimError("ERROR (FiniteElement1s21RCM::hFullJacobi): Adapt to arbitrary gravitation!");
 
     // q-derivative
     SqrMat dhqJ(8,fmatvec::INIT,0.0), dhLq(8,fmatvec::INIT,0.0), dhLqM(8,fmatvec::INIT,0.0), dhLqJp(8,fmatvec::INIT,0.0);

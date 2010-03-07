@@ -34,6 +34,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-03-23 initial for kernel_dev
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
+   * \date 2010-03-07 renamed ElementData to computeAdditionalElementData and wired to class (Roland Zander)
    * \todo transform computeState to Position / Velocity / Orientation / AngularVelocity
    * \todo JacobianMinimalRepresentation
    *
@@ -83,6 +84,10 @@ namespace MBSim {
       virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const ContourPointData& cp) { throw new MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
+      /*!
+       * compute additional informations for element
+       */
+      fmatvec::Vec computeAdditionalElementData(fmatvec::Vec &qElement, fmatvec::Vec &qpElement);
 
       /* GETTER / SETTER */
       void setCurlRadius(double);
