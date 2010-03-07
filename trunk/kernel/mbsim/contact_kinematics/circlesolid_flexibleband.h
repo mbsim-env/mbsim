@@ -91,6 +91,7 @@ namespace MBSim {
       FlexibleBand *band;
 
       fmatvec::Vec lastContactPositions;
+      fmatvec::Vec staticNodes;
       double epsTol;
       double l0;
   };

@@ -50,19 +50,11 @@ namespace MBSim {
     hBand   = band->getNormalDistance();
     rCircle = circle->getRadius();
 
-    numberOfPotentialContactPoints = 2*possibleContactsPerNode*band->getNodes().size()-1;  // dies braeuchte einen eigenen init-Call
-    l0     = 1.0   * fabs(band->getAlphaEnd()-band->getAlphaStart()); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
-    epsTol = 5.e-2 * l0;
+    staticNodes                    =     band->getNodes();
+    numberOfPotentialContactPoints = 2 * possibleContactsPerNode*band->getNodes().size()-1;  // dies braeuchte einen eigenen init-Call
+    l0     = 1.0   * fabs(band->getAlphaEnd()-band->getAlphaStart())/staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
+    epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */
 
-#if 0
-    static int nr = 0;
-    cout << "ContactKinematicsCircleSolidFlexibleBand " <<  nr++ << endl;
-    cout <<  " wBand                          = "  << wBand                           << endl;
-    cout <<  " hBand                          = "  << hBand                           << endl;
-    cout <<  " rCircle                        = "  << rCircle                         << endl;
-    cout <<  " numberOfPotentialContactPoints = "  << numberOfPotentialContactPoints  << endl;
-    cout <<  " epsTol                         = "  << epsTol                          << endl;
-#endif
   }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,8 +63,7 @@ namespace MBSim {
     Vec contactPositions(numberOfPotentialContactPoints,NONINIT);
     int inContact = 0;
 
-    Vec orgNodes = band->getNodes();
-    Vec nodes    = orgNodes.copy();
+    Vec nodes    = staticNodes.copy();
     int nrNodes = nodes.size();
 
     // always use nodes for contact kinematics
@@ -120,8 +111,6 @@ namespace MBSim {
     FuncPairContour1sCircleSolid *func= new FuncPairContour1sCircleSolid(circle,band); // root function for searching contact parameters
     Contact1sSearch search(func);
 
-    //lastContactPositions.resize() = Vec("[0.0;0.5;1.2]");
-
 #if 0
     // deform mesh
     for(int i=0;i<nodes.size();i++) {
@@ -132,7 +121,7 @@ namespace MBSim {
     }
     if(result.rows()>0) {
       cout << endl <<endl<< "----------------------------------------------\nlast hits: "<< trans(lastContactPositions) << endl;
-      Vec tempVec = orgNodes;
+      Vec tempVec = staticNodes;
       cout << "original Nodes" << endl << trans( tempVec ) << endl;
       cout << "modified Nodes" << endl << trans( nodes   ) << endl;
       cout << trans(result) << endl;
@@ -157,8 +146,8 @@ namespace MBSim {
         (ig[nrNodes + i])(0) = 1.0;
       else {
         bool doubledNode = false;
-        for(int j=0;j<orgNodes.size();j++)
-          if(fabs(cpData[icontour].getLagrangeParameterPosition()(0)-orgNodes(j))<epsTol)
+        for(int j=0;j<staticNodes.size();j++)
+          if(fabs(cpData[icontour].getLagrangeParameterPosition()(0)-staticNodes(j))<epsTol)
             doubledNode = true;
 
         if(doubledNode)
