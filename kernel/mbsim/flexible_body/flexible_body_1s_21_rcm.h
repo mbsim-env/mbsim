@@ -40,6 +40,7 @@ namespace MBSim {
    * \date 2009-05-08 visualisation (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-23 implicit integration (Thorsten Schindler)
+   * \date 2010-03-07 element polt list for additional element data (Roland Zander)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    *
@@ -93,6 +94,7 @@ namespace MBSim {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
+      void setElementPlotList(fmatvec::Vector<int> plotElements_) {plotElements = plotElements_;} 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -169,6 +171,11 @@ namespace MBSim {
        * \brief coefficient of Lehr-damping
        */
       double dl;
+
+      /** 
+       * \brief coefficient of Lehr-damping
+       */
+      fmatvec::Vector<int> plotElements;
 
       /** 
        * \brief flag for open (cantilever beam) or closed (rings) structures
