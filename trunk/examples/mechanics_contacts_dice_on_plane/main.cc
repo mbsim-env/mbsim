@@ -7,6 +7,7 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   DynamicSystemSolver *sys = new System("TS");
+  sys->setImpactSolver(RootFinding);
 
   sys->initialize();
 
@@ -23,7 +24,7 @@ int main (int argc, char* argv[])
     sys->setLaTol(tol);
     sys->setlaTol(tol*1e-2);
     sys->setgddTol(tol*1e-2);
-    sys->setProjectionTolerance(1e-12);
+    //sys->setProjectionTolerance(1e-12);
     integrator.integrate(*sys);
   } 
   else { // time stepping integration
