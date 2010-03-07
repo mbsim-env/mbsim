@@ -41,10 +41,11 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
-  obj->setIvFileName("objects/pendel1.wrl");
+  obj->setIvFileName("wrl/pendel1.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab1->setOpenMBVRigidBody(obj);
+  stab1->setOpenMBVFrameOfReference(stab1->getFrame("R"));
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
@@ -64,10 +65,11 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::IvBody;
-  obj->setIvFileName("objects/pendel2.wrl");
+  obj->setIvFileName("wrl/pendel2.wrl");
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab2->setOpenMBVRigidBody(obj);
+  stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 #endif
 
 }
