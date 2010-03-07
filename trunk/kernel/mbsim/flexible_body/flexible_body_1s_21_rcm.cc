@@ -24,6 +24,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/contours/contour1s_flexible.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
 
@@ -229,6 +230,19 @@ namespace MBSim {
         static_cast<FiniteElement1s21RCM*>(discretization[i])->setLehrDamping(dl);
       }
     }
+    else if(stage==MBSim::plot) {
+      for(int i=0;i<plotElements.size();i++) {
+        plotColumns.push_back("eps ("+numtostr(plotElements(i))+")"); // 0
+        plotColumns.push_back("epsp("+numtostr(plotElements(i))+")"); // 1
+        plotColumns.push_back("xS  ("+numtostr(plotElements(i))+")"); // 2
+        plotColumns.push_back("yS  ("+numtostr(plotElements(i))+")"); // 3
+        plotColumns.push_back("xSp ("+numtostr(plotElements(i))+")"); // 4
+        plotColumns.push_back("ySp ("+numtostr(plotElements(i))+")"); // 5
+        plotColumns.push_back("Dal ("+numtostr(plotElements(i))+")"); // 6
+        plotColumns.push_back("Dalp("+numtostr(plotElements(i))+")"); // 7
+      }
+      FlexibleBodyContinuum<double>::init(stage);
+    }
     else
       FlexibleBodyContinuum<double>::init(stage);
   }
@@ -252,6 +266,11 @@ namespace MBSim {
         ((OpenMBV::SpineExtrusion*)openMBVBody)->append(data);
       }
 #endif
+    }
+    for(int i=0;i<plotElements.size();i++) {
+      Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(qElement[plotElements(i)],uElement[plotElements(i)]);
+      for(int j=0;j<elementData.size();j++)
+        plotVector.push_back(elementData(j));
     }
     FlexibleBodyContinuum<double>::plot(t,dt);
   }  
