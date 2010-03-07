@@ -7,6 +7,7 @@
 #include "mbsim/contours/flexible_band.h"
 #include "mbsim/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -19,14 +20,18 @@ using namespace fmatvec;
 using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
-  
+
+//  Vec grav(3);//"[0.0;-9.81;0.0]");
+//  grav(1) = -9.81;
+//  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+
   double l0 = 1.5; // length
   double b0 = 0.1; // width
   double E = 5.e7; // E-Modul  
   double A = b0*b0; // cross-section area
   double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
   double rho = 9.2e2; // density  
-  int elements = 2; // number of finite elements
+  int elements = 4; // number of finite elements
 
   double mass = 2.; // mass of ball
   double r = 1.e-2; // radius of ball

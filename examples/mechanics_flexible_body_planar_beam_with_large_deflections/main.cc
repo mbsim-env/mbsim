@@ -15,7 +15,7 @@ int main (int argc, char* argv[]) {
   ThetaTimeSteppingIntegrator integrator;
 
   integrator.setTheta(0.5);
-  integrator.setEndTime(0.4);
+  integrator.setEndTime(1.5);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
   integrator.integrate(*sys);
