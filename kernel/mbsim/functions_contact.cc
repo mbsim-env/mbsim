@@ -49,7 +49,7 @@ namespace MBSim {
 
     if(searchAll) { 
       RegulaFalsi rf(func);
-      gbuf = Vec(nodes.size()-1);
+      gbuf = Vec(alphaC.size());
 
       for(int i=0;i<nodes.size()-1; i++) {
         double fa = (*func)(nodes(i));
@@ -88,5 +88,42 @@ namespace MBSim {
     }
   }
 
+  Mat Contact1sSearch::slvAll() {
+     RegulaFalsi rf(func);
+     Vec alphaC(nodes.size()-1);
+     Vec gbuf  (alphaC.size());
+     int nRoots = 0;
+
+     for(int i=0;i<nodes.size()-1; i++) {
+        double fa = (*func)(nodes(i));
+        double fb = (*func)(nodes(i+1));
+        if(fa*fb < 0) {
+           alphaC(nRoots) = rf.solve(nodes(i),nodes(i+1));
+           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+           nRoots++;
+        } 
+        else if(fabs(fa) < epsroot() && fabs(fb) < epsroot()) {
+           alphaC(nRoots) = 0.5 * ( nodes(i) + nodes(i+1) ) ;
+           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+           nRoots++;
+        } 
+        else if(fabs(fa) < epsroot()) {
+           alphaC(nRoots) = nodes(i);
+           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+           nRoots++;
+        } 
+        else if(fabs(fb) < epsroot()) {
+           alphaC(nRoots) = nodes(i+1);
+           gbuf(nRoots)   = (*func)[alphaC(nRoots)] ;
+           nRoots++;
+        }
+     }
+
+     Mat results(nRoots,2);
+     results.col(0) = alphaC(Index(0,nRoots-1));
+     results.col(1) = gbuf  (Index(0,nRoots-1));
+
+     return results;
+  }
 }
 

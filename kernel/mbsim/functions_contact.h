@@ -80,10 +80,10 @@ namespace MBSim {
    */
   class FuncPairContour1sPoint : public DistanceFunction<double,double> {
     public:
-      /**
+      /*!
        * \brief constructor
-       * \param point contour
-       * \param contour with one contour parameter
+       * \param point   point contour or general rigid contour reduced to point of reference
+       * \param contour contour with one contour parameter
        */
       FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::Vec(1,fmatvec::INIT,0.)) {}
 
@@ -590,6 +590,7 @@ namespace MBSim {
    * \brief general class for contact search with respect to one contour-parameter
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
+   * \date 2010-03-07 added slvAll for finding "all" roots (Roland Zander)
    *
    * General remarks:
    * - both operators () and [] are necessary to calculate the root-function "()" and the distance of possible contact points "[]"
@@ -628,9 +629,16 @@ namespace MBSim {
       void setEqualSpacing(const int &n, const double &x0, const double &dx);
 
       /*!
+	   * \brief solve for the one potential contact point with minimal distance (might be negative)
        * \return point with minimal distance at contour-parameter
        */
       double slv();
+	  /*!
+	   * \brief solve for all potential contact points
+	   * \return matrix holding LagrangeParameterPosition in col(0) and respective distances in col(1)
+	   */
+	  fmatvec::Mat slvAll();
+
 
     private:
       /** 
