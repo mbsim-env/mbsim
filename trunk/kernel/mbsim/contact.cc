@@ -554,9 +554,9 @@ namespace MBSim {
           vector<double> data;
           if(contactArrow) {
             data.push_back(t);
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(0));
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(2));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
             Vec F(3,INIT,0);
             if(isSetValued()) {
               if(gActive[i]) F=fF[i][1].col(0)*lak[i](0)/dt;
@@ -572,9 +572,9 @@ namespace MBSim {
           if(frictionArrow && getFrictionDirections()>0) { // friction force
             data.clear();
             data.push_back(t);
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(0));
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(1));
-            data.push_back(cpData[i][0].getFrameOfReference().getPosition()(2));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(0));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
+            data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
             Vec F(3,INIT,0);
             if(isSetValued()) {
               if(gActive[i] && lak[i].size()>1) { // stick friction
