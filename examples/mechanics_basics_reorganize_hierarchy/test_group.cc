@@ -44,6 +44,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   obj1->setScaleFactor(0.1*0.3);
   obj1->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
   stab1->setOpenMBVRigidBody(obj1);
+  stab1->setOpenMBVFrameOfReference(stab1->getFrame("Ref"));
 #endif
 
   stab2 = new RigidBody("Stab2");
@@ -69,6 +70,7 @@ TestGroup::TestGroup(const string &projectName) : Group(projectName) {
   obj2->setScaleFactor(0.1*0.3);
   obj2->setInitialRotation(Vec("[0;0;1]")*M_PI/2);
   stab2->setOpenMBVRigidBody(obj2);
+  stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 #endif
 }
 

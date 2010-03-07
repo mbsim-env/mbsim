@@ -46,6 +46,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab1->setOpenMBVRigidBody(obj);
+  stab1->setOpenMBVFrameOfReference(stab1->getFrame("R"));
 #endif
 
   RigidBody* stab2 = new RigidBody("Stab2");
@@ -69,6 +70,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab2->setOpenMBVRigidBody(obj);
+  stab2->setOpenMBVFrameOfReference(stab2->getFrame("R"));
 #endif
 
   RigidBody* stab3 = new RigidBody("Stab3");
@@ -92,6 +94,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   obj->setScaleFactor(0.1*0.3);
   obj->setInitialRotation(0,0,M_PI/2);
   stab3->setOpenMBVRigidBody(obj);
+  stab3->setOpenMBVFrameOfReference(stab3->getFrame("R"));
 #endif
 
   RigidBody* stab4 = new RigidBody("Stab4");
