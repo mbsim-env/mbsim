@@ -1,5 +1,5 @@
 \section{\MBSim - Program Overview}
-From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. The programs described in \cite{Aca07} and \cite{Ber07} follow also this approach. It is approved and also used in \emph{MBSim} using the object-oriented C++ programming style. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and the use of self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
+From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. The programs described in \cite{Aca07} and \cite{Ber07} follow also this approach. It is approved and also used in \emph{MBSim} using the object-oriented C++ programming style. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
 
 Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} in the global simulation and analysing process. 
 \begin{figure}[hbt]%
@@ -15,22 +15,23 @@ Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} i
 \dot{\vx}&=\vf\left(\vx\right)\,,\\
 &\left(\vq,\vu,\vlambda,t\right)\in\mathcal{N}\,.
 \end{align*}
-Though, the simulation of hydraulics, electronics, control and power train systems is included within several modules. \MBSim{} is based on the interface \FMatVec{} using either LaPack\footnote{cf.~\url{http://www.netlib.org/lapack/}} or ATLAS\footnote{cf.~\url{http://www.netlib.org/atlas/}} for fast evaluation of linear algebra routines. Further, it uses \emph{HDF5Serie} to write files using the hierarchical HDF5 file format\footnote{cf.~\url{http://www.hdfgroup.org/HDF5/}} even for large dynamical systems. These files can be read by \emph{H5PlotSerie} for plotting or by \OpenMBV{} for visualisation. Thereby, \OpenMBV{} is based on the Coin implementation\footnote{cf.~\url{http://www.coin3d.org/}} of the Open Inventor Library\footnote{\url{http://oss.sgi.com/projects/inventor/}}. Also a co-simulation with Matlab/Simulink\footnote{cf.~\url{http://www.mathworks.de/}}, HySim \cite{Bor03} for hydraulic components and KetSim \cite{Fri98} for camshaft timing chains is possible. \MBSim{} is divided in a modelling part using C++ or XML and a simulation part. The simulation part is implemented quite modular distinguishing between the update of bodies and interactions concerning kinematics, kinetics as well as force laws and integration / nonlinear solution schemes. Also here external libraries are used where it is possible for having always a state-of-the-art numerical basis.
+Though, the simulation of hydraulics, electronics, control and power train systems is included within several modules. \MBSim{} is based on the interface \FMatVec{} using either LaPack\footnote{cf.~\url{http://www.netlib.org/lapack/}} or ATLAS\footnote{cf.~\url{http://www.netlib.org/atlas/}} for fast evaluation of linear algebra routines. Further, with \emph{HDF5Serie} it writes files in the hierarchical HDF5 file format\footnote{cf.~\url{http://www.hdfgroup.org/HDF5/}} even for large dynamical systems. These files can be read by \emph{H5PlotSerie} for plotting or by \OpenMBV{} for visualisation. Thereby, \OpenMBV{} is based on the Coin implementation\footnote{cf.~\url{http://www.coin3d.org/}} of the Open Inventor Library\footnote{\url{http://oss.sgi.com/projects/inventor/}}. Also a co-simulation with Matlab/Simulink\footnote{cf.~\url{http://www.mathworks.de/}}, \emph{HySim} \cite{Bor03} for hydraulic components and \emph{KetSim} \cite{Fri98} for camshaft timing chains is possible. \MBSim{} is divided in a modelling part using C++ or XML and a simulation part. The simulation part is implemented quite modular distinguishing between the update of bodies and interactions concerning kinematics, kinetics as well as force laws and integration / nonlinear solution schemes. Also here external libraries are used where it is possible for having always a state-of-the-art numerical basis.
 A typical example of a dynamical system only from mechanics is given by Figure~\ref{fig:objects}.
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-    \psfrag{Body}{\texttt{Body}}
+    \psfrag{Body}{\put(+2.0,+0.0){\texttt{Body}}}
     \psfrag{Frame}{\put(+4.0,+0.0){\texttt{Frame}}}
-    \psfrag{Contour}{\put(+2.0,+0.0){\texttt{Contour}}}
-    \psfrag{Joint}{\texttt{Joint}}
-    \psfrag{Contact}{\put(+2.0,+1.0){\texttt{Contact}}}
+    \psfrag{Contour}{\put(+2.0,+2.0){\texttt{Contour}}}
+    \psfrag{Joint}{\put(+4.0,+0.0){\texttt{Joint}}}
+    \psfrag{Contact}{\put(+1.0,+1.0){\texttt{Contact}}}
     \psfrag{Load}{\put(-50.0,+5.0){\texttt{KineticExcitation}}}
-  	\includegraphics[width=0.9\hsize]{Figures/mbsim_objectorientation.eps} 
+  	
+    \includegraphics[width=0.9\hsize]{Figures/mbsim_objectorientation.eps} 
   	\caption{Object structure in \emph{MBSim}.}
   	\label{fig:objects}
 \end{figure}
-One has the environment and two \texttt{Object}s, in mechanics called \texttt{Body}s, holding the inertia terms. Indicated are interconnecting \texttt{Link}s due to \texttt{Contact}s between \texttt{Body} \texttt{Contour}s giving also the possibility to model friction and ideal \texttt{Joint}s between body \texttt{Frame}s as well as an external \texttt{KineticExcitation} acting on a body \texttt{Frame}. These ingredients from the mechanical point of view and a schedule of the simulation are basically explained in the following.
+One has the environment and two \texttt{Object}s, in mechanics called \texttt{Body}s, holding the inertia terms. Indicated are interconnecting \texttt{Link}s due to \texttt{Contact}s between \texttt{Body} \texttt{Contour}s giving the possibility to model friction and ideal \texttt{Joint}s between body \texttt{Frame}s. External \texttt{KineticExcitation}s act on body \texttt{Frame}s. These ingredients and a schedule of the simulation are basically explained in the following from the mechanical point of view.
 
 \subsection{Description of the Components}
 The following classes can be used for modelling and simulating dynamical systems in \MBSim{}.
@@ -61,7 +62,7 @@ Shaded one can see interfaces for the different components of the modelling equa
   &\vh\left(\vq,\vu,t\right)\,,\vW\left(\vq\right)\vlambda
  \end{align} 
 \end{itemize}
-and \texttt{Element} for load/save mechanism as well as plot and data administration. Class \texttt{Graph} is dotted as it is not available for modelling. A graph structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
+and \texttt{Element} for a load/save mechanism as well as plot and data administration. Class \texttt{Graph} is dotted as it is not available for modelling. A graph structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{addObject}\\
@@ -122,7 +123,7 @@ Important settings next to position and Cartesian orientation are defined accord
 	\dot{\vu} +
    	  \begin{pmatrix}\rs{_I}[_P]{\viota}\\\rs{_I}[_R]{\viota}\end{pmatrix}
 \end{align*}
-of translational and angular acceleration. This is basically an affine relationship concerning the derivative of generalised velocities $\dot{\vu}$, appropriate \textsc{Jacobian} matrices and an explicit time dependent summand.
+of translational and angular acceleration. This is basically an affine relationship concerning the derivative of generalised velocities $\dot{\vu}$, appropriate \textsc{Jacobian} matrices $\vJ$ and an explicit time dependent summand $\viota$.
 Summarizing
 \begin{itemize}
 \item[] \texttt{getPosition} 
@@ -157,16 +158,16 @@ Important settings:
 \end{itemize}
 
 \paragraph{Rigid Bodies}
-For each \texttt{RigidBody} a \texttt{Frame} \texttt{"C"} in the centre of gravity is predefined. One perhaps newly created \texttt{Frame} of the \texttt{RigidBody} has to be chosen as frame for kinematics \texttt{"K"} with centre $P$ and one \texttt{Frame} of another \texttt{Body} or a \texttt{DynamicSystem} has to be chosen as frame of reference \texttt{"R"} with centre $O'$. Both absolute --if the frame of reference belongs to a \texttt{DynamicSystem}-- and relative --if the frame of reference belongs to another \texttt{RigidBody}-- kinematic structures are canonically given by the frame recursion. The motion of the frame of kinematics and so also the \texttt{RigidBody} with respect to the frame of reference is defined by the individual generalised coordinates ${\vq}_{\text{rel}}$ of the \texttt{RigidBody} or its constrained relative motion. These settings can be defined individually on position, velocity and acceleration level according to
+For each \texttt{RigidBody} a \texttt{Frame} \texttt{"C"} in the centre of gravity is predefined. One perhaps newly created \texttt{Frame} of the \texttt{RigidBody} has to be chosen as frame for kinematics \texttt{"K"} with centre $P$ and one \texttt{Frame} of another \texttt{Body} or a \texttt{DynamicSystem} has to be chosen as frame of reference \texttt{"R"} with centre $O'$. Both absolute --if the frame of reference belongs to a \texttt{DynamicSystem}-- and relative --if the frame of reference belongs to another \texttt{RigidBody}-- kinematic structures are canonically given by the frame recursion. The motion of the frame for kinematics and so also of the \texttt{RigidBody} with respect to the frame of reference is defined by the individual generalised coordinates ${\vq}_{\text{rel}}$ of the \texttt{RigidBody} or its constrained relative motion. These settings can be defined individually on position, velocity and acceleration level according to
 \begin{align}
         \rs{_R}[_{O'P}]{\vr} &= \rs{_R}[_{O'P}]{\vr}({\vq}_{\text{rel}},\,t)\,,\\
         \vA_{RK} &= \vA_{RK}({\vq}_{\text{rel}},\,t)\,,\\
         \rs{_R}[_{O'P,\text{rel}}]{\vv} &=  \rs{_R}[_{P,\text{rel}}]{\vJ} \,\vu_\text{rel} + \rs{_R}[_{P,\text{rel}}]{\viota}  \, \\
         \rs{_R}[_{RK}]{\vomega} &= \rs{_R}[_{R,\text{rel}}]{\vJ} \,\vu_\text{rel} + \rs{_R}[_{R,\text{rel}}]{\viota} \\
         \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{O'P,\text{rel}}]{\vv}\right) &= \rs{_I}[_{P,\text{rel}}]{\vJ} \,\dot{\vu}_\text{rel} +\frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{P,\text{rel}}]{\vJ} \right)\,\vu_\text{rel} + \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{P,\text{rel}}]{\viota} \right)  \,,\\ 
-        \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{RK}]{\vomega}\right) &= \rs{_I}[_{R,\text{rel}}]{\vJ} \,\dot{\vu}_\text{rel} +\frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{R,\text{rel}}]{\vJ} \right)\,\vu_\text{rel} + \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{P,\text{rel}}]{\viota} \right)
+        \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{RK}]{\vomega}\right) &= \rs{_I}[_{R,\text{rel}}]{\vJ} \,\dot{\vu}_\text{rel} +\frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{R,\text{rel}}]{\vJ} \right)\,\vu_\text{rel} + \frac{\mathrm{d}}{\mathrm{d} t}\left(\rs{_R}[_{P,\text{rel}}]{\viota} \right)\;.
 \end{align}
-and Figure~\ref{fig:departure:mbsim:rigid_kinematics} also including the link relationships of frames and contours.
+In the referencing coordinate frame Eq.~\eqref{eq:translation} describes the translational position of the frame for kinematics and Eq.~\eqref{eq:rotation} its orientation. Then, the velocity level is given by an affin relation involving \textsc{Jacobian} matrices $\vJ$, generalised velocities $\vu_\text{rel}$ and explicit time-dependent summands $\viota$. The acceleration level can be obtained by differentiation. Figure~\ref{fig:departure:mbsim:rigid_kinematics} shows the \texttt{Frame} recursion also including the link relationships of frames and contours.
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
@@ -182,7 +183,7 @@ and Figure~\ref{fig:departure:mbsim:rigid_kinematics} also including the link re
   	\caption{Rigid kinematics in \MBSim{}.}
   	\label{fig:departure:mbsim:rigid_kinematics}
 \end{figure}
-The drawback of this general description is a time-dependent mass-matrix also in the absolute kinematics case.\par
+In a \texttt{DynamicSystem} two stationary \texttt{Frame}s \texttt{"I"} and \texttt{"$\tilde{\text{I}}$"} are defined as frames of reference of the lower right or left \texttt{RigidBody} in an absolute parametrisation, respectively. For the left \texttt{RigidBody} the frame for kinematics is given by \texttt{Frame} \texttt{"B"}, whereas for the lower right \texttt{RigidBody} the canonic \texttt{Frame} \texttt{"C"} in the centre of gravity is used. The lower right \texttt{RigidBody} is also the reference of another \texttt{RigidBody} altogether yielding a relative parametrisation. These two \texttt{RigidBody}s are \texttt{Link}ed concerning their \texttt{"B"}-\texttt{Frame}s as well. For completing the description, two additional \texttt{Link}s are inserted. The drawback of this general description is a time-dependent mass-matrix also in the absolute kinematics case.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{setMass}
@@ -228,11 +229,11 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment only availab
 \begin{figure}[hbt]%
 	\centering
     \footnotesize
-  	\includegraphics[width=0.8\hsize]{Figures/mbsim_link.eps} 
+  	\includegraphics[width=0.85\hsize]{Figures/mbsim_link.eps} 
   	\caption{Link type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:link}
 \end{figure}
-If other connectors are used other link classes have to be inherited. Always \texttt{Link}s distribute locally to $\vh$ and $\vW\vlambda$ in the equations of motion.\par
+If other connectors are used, other link classes have to be inherited. Always \texttt{Link}s distribute locally to $\vh$ and $\vW\vlambda$ in the equations of motion.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{connect}\\
