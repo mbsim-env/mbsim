@@ -163,7 +163,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setFrictionForceLaw(new PlanarCoulombFriction(mu));
     contact->setFrictionImpactLaw(new PlanarCoulombImpact(mu));
     contact->connect(disk->getContour("cDisk"),belt->getContour("Top"));
-    contact->setPlotFeature(linkLagrangeParameters, enabled);
+    //contact->setPlotFeature(linkLagrangeParameters, enabled);
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Arrow *aC_N = new OpenMBV::Arrow;
     //aC_N->setEnable(false);
