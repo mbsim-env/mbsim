@@ -58,6 +58,12 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(cardan(i));
       }
+      if(getPlotFeature(globalVelocity)==enabled) {
+        for(int i=0; i<3; i++)
+          plotVector.push_back(WvP(i));
+        for(int i=0; i<3; i++)
+          plotVector.push_back(WomegaP(i));
+      }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVFrame && !openMBVFrame->isHDF5Link()) {
         vector<double> data;

@@ -67,6 +67,7 @@ namespace MBSim {
     stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
     rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
     globalPosition, /*!< plot some global (world) positions/orientation */
+    globalVelocity, /*!< plot some global (world) velocities */
     energy, /*!< plot the energy */
     openMBV, /*!< plot the OpenMBV part */
     generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */

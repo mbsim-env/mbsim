@@ -227,6 +227,14 @@ namespace MBSim {
           plotColumns.push_back("beta");
           plotColumns.push_back("gamma");
         }
+        if(getPlotFeature(globalVelocity)==enabled) {
+          plotColumns.push_back("WvS");
+          plotColumns.push_back("WvS");
+          plotColumns.push_back("WvS");
+          plotColumns.push_back("alphap");
+          plotColumns.push_back("betap");
+          plotColumns.push_back("gammap");
+        }
         Body::init(stage);
       }
     }
@@ -272,6 +280,16 @@ namespace MBSim {
         plotVector.push_back(cardan(0));
         plotVector.push_back(cardan(1));
         plotVector.push_back(cardan(2));
+      }
+      if(getPlotFeature(globalVelocity)==enabled) {
+        Vec WvS    =frame[0]->getPosition();
+        Vec WomegaS=frame[0]->getAngularVelocity();
+        plotVector.push_back(WvS(0));
+        plotVector.push_back(WvS(1));
+        plotVector.push_back(WvS(2));
+        plotVector.push_back(WomegaS(0));
+        plotVector.push_back(WomegaS(1));
+        plotVector.push_back(WomegaS(2));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
