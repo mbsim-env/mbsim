@@ -228,9 +228,9 @@ namespace MBSim {
           plotColumns.push_back("gamma");
         }
         if(getPlotFeature(globalVelocity)==enabled) {
-          plotColumns.push_back("WvS");
-          plotColumns.push_back("WvS");
-          plotColumns.push_back("WvS");
+          plotColumns.push_back("WvxS");
+          plotColumns.push_back("WvyS");
+          plotColumns.push_back("WvzS");
           plotColumns.push_back("alphap");
           plotColumns.push_back("betap");
           plotColumns.push_back("gammap");
@@ -282,7 +282,7 @@ namespace MBSim {
         plotVector.push_back(cardan(2));
       }
       if(getPlotFeature(globalVelocity)==enabled) {
-        Vec WvS    =frame[0]->getPosition();
+        Vec WvS    =frame[0]->getVelocity();
         Vec WomegaS=frame[0]->getAngularVelocity();
         plotVector.push_back(WvS(0));
         plotVector.push_back(WvS(1));
