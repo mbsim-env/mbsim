@@ -117,6 +117,7 @@ namespace MBSim {
    * \brief template class for differentiable functions with one scalar parameter
    * \author Thorsten Schindler
    * \date 2009-08-31 some comments (Thorsten Schindler)
+   * \date 2010-03-10 small correction: setDerivative(...,int) -> setDerivative(...,size_t) (Roland Zander)
    */
   template<class Ret>
     class DifferentiableFunction1 : public Function1<Ret,double> {
@@ -157,7 +158,7 @@ namespace MBSim {
          * \param derivative to add
          * \param degree of the derivative
          */
-        void setDerivative(Function1<Ret,double> *diff,int degree) { derivatives.resize(max(derivatives.size(),degree)); derivatives[degree]=diff; }
+        void setDerivative(Function1<Ret,double> *diff,size_t degree) { derivatives.resize(max(derivatives.size(),degree+1)); derivatives[degree]=diff; }
 
         /**
          * \param orderOfDerivative
