@@ -103,6 +103,7 @@ namespace MBSim {
       if(string(e->Attribute("feature")).substr(1)=="stateDerivative") feature=stateDerivative;
       if(string(e->Attribute("feature")).substr(1)=="rightHandSide") feature=rightHandSide;
       if(string(e->Attribute("feature")).substr(1)=="globalPosition") feature=globalPosition;
+      if(string(e->Attribute("feature")).substr(1)=="globalVelocity") feature=globalVelocity;
       if(string(e->Attribute("feature")).substr(1)=="energy") feature=energy;
       if(string(e->Attribute("feature")).substr(1)=="openMBV") feature=openMBV;
       if(string(e->Attribute("feature")).substr(1)=="generalizedLinkForce") feature=generalizedLinkForce;

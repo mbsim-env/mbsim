@@ -1457,6 +1457,7 @@ namespace MBSim {
     setPlotFeatureRecursive(stateDerivative, disabled);
     setPlotFeatureRecursive(rightHandSide, disabled);
     setPlotFeatureRecursive(globalPosition, disabled);
+    setPlotFeatureRecursive(globalVelocity, disabled);
     setPlotFeatureRecursive(energy, disabled);
     setPlotFeatureRecursive(openMBV, enabled);
     setPlotFeatureRecursive(generalizedLinkForce, enabled);
