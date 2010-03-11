@@ -82,8 +82,8 @@ namespace MBSim {
     public:
       /*!
        * \brief constructor
-       * \param point   point contour or general rigid contour reduced to point of reference
-       * \param contour contour with one contour parameter
+       * \param point contour or general rigid contour reduced to point of reference
+       * \param contour with one contour parameter
        */
       FuncPairContour1sPoint(Point* point_, Contour1s *contour_) : contour(contour_), point(point_), cp(fmatvec::Vec(1,fmatvec::INIT,0.)) {}
 

@@ -92,7 +92,7 @@ namespace MBSim {
 
   ContactKinematics* findContactPairing(Contour *contour0, Contour *contour1) {
 
-	// evtl. besser, alle Contour-Paarungen zu testen, dann wird immer die hoechste Spezialisierung verwendet
+    // evtl. besser, alle Contour-Paarungen zu testen, dann wird immer die hoechste Spezialisierung verwendet
 
     if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
       return new ContactKinematicsCircleFrustum;
@@ -100,18 +100,18 @@ namespace MBSim {
     else if((dynamic_cast<Circle*>(contour0) && dynamic_cast<NurbsDisk2s*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<NurbsDisk2s*>(contour0)))
       return new ContactKinematicsCircleNurbsDisk2s;
 
-     else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
-       return new ContactKinematicsCircleHollowCylinderFlexible;
+    else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
+      return new ContactKinematicsCircleHollowCylinderFlexible;
 
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleHollow*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<CircleHollow*>(contour0)))
       return new ContactKinematicsCircleSolidCircleHollow;
 
     else if(dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<CircleSolid*>(contour1))
       return new ContactKinematicsCircleSolidCircleSolid;
-//
+
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<FlexibleBand*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<FlexibleBand*>(contour0)))
-      return new ContactKinematicsCircleSolidFlexibleBand;  
-//
+      return new ContactKinematicsCircleSolidFlexibleBand;
+
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Contour1s*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Contour1s*>(contour0)))
       return new ContactKinematicsCircleSolidContour1s;
 
