@@ -40,9 +40,18 @@ The following classes can be used for modelling and simulating dynamical systems
 Hierarchically objects and links belong to \texttt{DynamicSystem}s, which themselves can be \texttt{Group}ed (cf.~Figure~\ref{fig:departure:mbsim:dynamicsystem}). 
 \begin{figure}[hbt]%
 	\centering
-    \footnotesize
+    \scriptsize
+    \psfrag{Element}{\put(+0.0,+0.0){\textbf{Element}}}
+    \psfrag{ExtraDynamicInterface}{\put(+0.0,+0.0){\textbf{ExtraDynamicInterface}}}
+    \psfrag{LinkInterface}{\put(+0.0,+0.0){\textbf{LinkInterface}}}
+    \psfrag{ObjectInterface}{\put(+0.0,+0.0){\textbf{ObjectInterface}}}
+    \psfrag{DynamicSystemSolver}{\put(+1.0,+0.0){\textbf{DynamicSystemSolver}}}
+    \psfrag{DynamicSystem}{\put(+0.0,+0.0){\textbf{DynamicSystem}}}
+    \psfrag{Group}{\put(+0.0,+0.0){\textbf{Group}}}
+    \psfrag{Graph}{\put(+0.0,+0.0){\textbf{Graph}}}
+
   	\includegraphics[width=0.7\hsize]{Figures/mbsim_dynamicsystem.eps} 
-  	\caption{Dynamic system type classes in \MBSim{}.}
+  	\caption{Dynamic system type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:dynamicsystem}
 \end{figure}
 Shaded one can see interfaces for the different components of the modelling equations
@@ -143,7 +152,15 @@ are important settings.
 Mechanical \texttt{Body}s provide their portion of a positive definite mass matrix, a smooth right hand side, state and energy expressions according to \texttt{Object}, which is e.g. similar to some hydraulic objects (cf.~Figure~\ref{fig:departure:mbsim:object}).
 \begin{figure}[hbt]%
 	\centering
-    \footnotesize
+    \scriptsize
+    \psfrag{ObjectInterface}{\put(+5.0,+0.0){\textbf{ObjectInterface}}}
+    \psfrag{Element}{\put(+2.0,+0.0){\textbf{Element}}}
+    \psfrag{HydraulicObject}{\put(+4.0,+0.0){\textbf{HydraulicObject}}}
+    \psfrag{Object}{\put(+2.0,+0.0){\textbf{Object}}}
+    \psfrag{FlexibleBody}{\put(+4.0,+0.0){\textbf{FlexibleBody}}}
+    \psfrag{RigidBody}{\put(+2.0,+0.0){\textbf{RigidBody}}}
+    \psfrag{Body}{\put(+1.0,+0.0){\textbf{Body}}}
+
   	\includegraphics[width=0.45\hsize]{Figures/mbsim_object.eps} 
   	\caption{Object type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:object}
@@ -228,7 +245,19 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment only availab
 \texttt{LinkMechanics} represents interconnections between mechanical bodies according to Figure~\ref{fig:departure:mbsim:link} using the connectors of \texttt{Body}s. 
 \begin{figure}[hbt]%
 	\centering
-    \footnotesize
+    \scriptsize
+    \psfrag{Element}{\put(+2.0,+0.0){\textbf{Element}}}
+    \psfrag{ExtraDynamicInterface}{\put(+3.0,+0.0){\textbf{ExtraDynamicInterface}}}
+    \psfrag{LinkInterface}{\put(+3.0,+0.0){\textbf{LinkInterface}}}
+    \psfrag{LinkMechanicsHydraulics}{\put(+4.0,+0.0){\textbf{LinkMechanicsHydraulics}}}
+    \psfrag{LinkMechanics}{\put(+2.0,+0.0){\textbf{LinkMechanics}}}
+    \psfrag{LinkHydraulics}{\put(+2.0,+0.0){\textbf{LinkHydraulics}}}
+    \psfrag{Link}{\put(+0.0,+0.0){\textbf{Link}}}
+    \psfrag{Contact}{\put(+1.0,+0.0){\textbf{Contact}}}
+    \psfrag{SpringDamper}{\put(+3.0,+0.0){\textbf{SpringDamper}}}
+    \psfrag{Joint}{\put(+0.0,+0.0){\textbf{Joint}}}
+    \psfrag{KineticExcitation}{\put(+2.0,+0.0){\textbf{KineticExcitation}}}
+    
   	\includegraphics[width=0.85\hsize]{Figures/mbsim_link.eps} 
   	\caption{Link type classes in \MBSim{}.}
   	\label{fig:departure:mbsim:link}
