@@ -70,15 +70,15 @@ namespace MBSim {
   //    
   //  }
 
-  double UnilateralConstraint::project(double la, double gdn, double r) {
-    return proxCN(la-r*gdn);
+  double UnilateralConstraint::project(double la, double gdn, double r, double laMin) {
+    return proxCN(la-r*gdn, laMin);
   }
 
-  Vec UnilateralConstraint::diff(double la, double gdn, double r) {
+  Vec UnilateralConstraint::diff(double la, double gdn, double r, double laMin) {
     Vec d(2,NONINIT);
-    if(la-r*gdn < 0) {
+    if(la-r*gdn < laMin)
       d.init(0);
-    } else {
+    else {
       d(0) = 1;
       d(1) = -r;
     }
@@ -92,10 +92,10 @@ namespace MBSim {
       return -gdn/G;
   }
 
-  bool UnilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol) {
-    if(gdn >= -gdTol && fabs(la) <= laTol)
+  bool UnilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
+    if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
       return true;
-    else if(la >= -laTol && fabs(gdn) <= gdTol)
+    else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
       return true;
     else 
       return false;
@@ -117,11 +117,11 @@ namespace MBSim {
   //  return (fabs(gdn(0)) <= gdTol);
   //}
 
-  double BilateralConstraint::project(double la, double gdn, double r) {
+  double BilateralConstraint::project(double la, double gdn, double r, double laMin) {
     return la-r*gdn;
   }
 
-  Vec BilateralConstraint::diff(double la, double gdn, double r) {
+  Vec BilateralConstraint::diff(double la, double gdn, double r, double laMin) {
     Vec d(2,NONINIT);
     d(0) = 1;
     d(1) = -r;
@@ -132,21 +132,21 @@ namespace MBSim {
     return -gdn/G;
   }
 
-  bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol) {
+  bool BilateralConstraint::isFulfilled(double la, double gdn, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
   }
 
-  double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r) {
+  double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
-    return proxCN(la-r*gdn);
+    return proxCN(la-r*gdn, laMin);
   }
 
-  Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r) {
+  Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r, double laMin) {
     Vec d(2,NONINIT);
-    if(la-r*gdn < 0) {
+    if(la-laMin-r*gdn < 0)
       d.init(0);
-    } else {
+    else {
       d(0) = 1;
       d(1) = -r;
     }
@@ -163,13 +163,13 @@ namespace MBSim {
       return -gdn/G;
   }
 
-  bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol) {
+  bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
     if(fabs(gda) > gd_limit)
       gdn += epsilon*gda;
 
-    if(gdn >= -gdTol && fabs(la) <= laTol)
+    if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
       return true;
-    else if(la >= -laTol && fabs(gdn) <= gdTol)
+    else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
       return true;
     else 
       return false;
@@ -182,11 +182,11 @@ namespace MBSim {
     epsilon=Element::getDouble(e);
   }
 
-  double BilateralImpact::project(double la, double gdn, double gda, double r) {
+  double BilateralImpact::project(double la, double gdn, double gda, double r, double laMin) {
     return la-r*gdn;
   }
 
-  Vec BilateralImpact::diff(double la, double gdn, double gda, double r) {
+  Vec BilateralImpact::diff(double la, double gdn, double gda, double r, double laMin) {
     Vec d(2,NONINIT);
     d(0) = 1;
     d(1) = -r;
@@ -197,7 +197,7 @@ namespace MBSim {
     return -gdn/G;
   }
 
-  bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol) {
+  bool BilateralImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
     return fabs(gdn) <= gdTol;
   }
 

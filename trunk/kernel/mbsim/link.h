@@ -237,7 +237,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with single step fixed point scheme on velocity level
        */
-      virtual void solveImpactsFixpointSingle() { throw MBSimError("ERROR (Link::solveImpactsFixpointSingle): Not implemented."); }
+      virtual void solveImpactsFixpointSingle(double dt) { throw MBSimError("ERROR (Link::solveImpactsFixpointSingle): Not implemented."); }
 
       /**
        * solve contact equations of motion with single step fixed point scheme on acceleration level
@@ -247,7 +247,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on velocity level
        */
-      virtual void solveImpactsGaussSeidel() { throw MBSimError("ERROR (Link::solveImpactsGaussSeidel): Not implemented."); }
+      virtual void solveImpactsGaussSeidel(double dt) { throw MBSimError("ERROR (Link::solveImpactsGaussSeidel): Not implemented."); }
 
       /**
        * solve contact equations of motion with Gauss-Seidel scheme on acceleration level
@@ -257,7 +257,7 @@ namespace MBSim {
       /**
        * solve contact equations of motion with Newton scheme on velocity level
        */
-      virtual void solveImpactsRootFinding() { throw MBSimError("ERROR (Link::solveImpactsRootFinding): Not implemented."); }
+      virtual void solveImpactsRootFinding(double dt) { throw MBSimError("ERROR (Link::solveImpactsRootFinding): Not implemented."); }
 
       /**
        * solve contact equations of motion with Newton scheme on acceleration level
@@ -282,7 +282,7 @@ namespace MBSim {
       /**
        * \brief verify underlying force laws on velocity level concerning given tolerances
        */
-      virtual void checkImpactsForTermination() { throw MBSimError("ERROR (Link::checkImpactsForTermination): Not implemented."); }
+      virtual void checkImpactsForTermination(double dt) { throw MBSimError("ERROR (Link::checkImpactsForTermination): Not implemented."); }
       
       /**
        * \brief verify underlying force laws on acceleration level concerning given tolerances

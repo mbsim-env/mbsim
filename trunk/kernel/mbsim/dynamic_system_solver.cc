@@ -400,7 +400,7 @@ namespace MBSim {
   int DynamicSystemSolver::solveImpactsFixpointSingle(double dt) {
     updaterFactors();
 
-    checkImpactsForTermination();
+    checkImpactsForTermination(dt);
     if(term) return 0;
 
     int iter, level = 0;
@@ -415,11 +415,11 @@ namespace MBSim {
         if(warnLevel>=2) cout << endl << "WARNING: decreasing r-factors at iter = " << iter << endl;
       }
 
-      Group::solveImpactsFixpointSingle();
+      Group::solveImpactsFixpointSingle(dt);
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination();
+        checkImpactsForTermination(dt);
         if(term) break;
       }
     }
@@ -445,17 +445,17 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveImpactsGaussSeidel(double dt) {
-    checkImpactsForTermination();
+    checkImpactsForTermination(dt);
     if(term) return 0 ;
 
     int iter;
     int checkTermLevel = 0;
 
     for(iter = 1; iter<=maxIter; iter++) {
-      Group::solveImpactsGaussSeidel();
+      Group::solveImpactsGaussSeidel(dt);
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination();
+        checkImpactsForTermination(dt);
         if(term) break;
       }
     }
@@ -468,7 +468,9 @@ namespace MBSim {
     int iter;
     int checkTermLevel = 0;
 
+    updateresRef(resParent(0,laSize-1));
     Group::solveConstraintsRootFinding(); 
+
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
 
@@ -482,12 +484,10 @@ namespace MBSim {
       if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
 
       if(numJac) {
-        double dx, xj;
-
         for(int j=0; j<la.size(); j++) {
-          xj = la(j);
-
-          dx = (epsroot() * 0.5);
+          const double xj = la(j);
+          double dx = epsroot()/2.;
+          
           do dx += dx;
           while (fabs(xj + dx - la(j)) < epsroot());
 
@@ -507,10 +507,8 @@ namespace MBSim {
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
 
-      double alpha = 1;       
-
       Vec La_old = la.copy();
-
+      double alpha = 1;       
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
@@ -518,7 +516,7 @@ namespace MBSim {
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
 
-        alpha = 0.5*alpha;  
+        alpha *= .5;
       }
       nrmf0 = nrmf;
       res0 = res;
@@ -538,11 +536,13 @@ namespace MBSim {
     int iter;
     int checkTermLevel = 0;
 
-    Group::solveImpactsRootFinding(); 
+    updateresRef(resParent(0,laSize-1));
+    Group::solveImpactsRootFinding(dt); 
+    
     double nrmf0 = nrm2(res);
     Vec res0 = res.copy();
 
-    checkImpactsForTermination();
+    checkImpactsForTermination(dt);
     if(term)
       return 0 ;
 
@@ -552,21 +552,19 @@ namespace MBSim {
       if(Jprox.size() != la.size()) Jprox.resize(la.size(),NONINIT);
 
       if(numJac) {
-        double dx, xj;
-
         for(int j=0; j<la.size(); j++) {
-          xj = la(j);
-
-          dx = (epsroot() * 0.5);
+          const double xj = la(j);
+          double dx = .5*epsroot();
+          
           do dx += dx;
           while (fabs(xj + dx - la(j)) < epsroot());
-
+          
           la(j) += dx;
-          Group::solveImpactsRootFinding(); 
+          Group::solveImpactsRootFinding(dt); 
           la(j) = xj;
           Jprox.col(j) = (res-res0)/dx;
         }
-      } 
+      }
       else jacobianImpacts();
       Vec dx;
       if(linAlg == LUDecomposition) dx >> slvLU(Jprox,res0);
@@ -577,25 +575,22 @@ namespace MBSim {
       else if(linAlg == PseudoInverse) dx >> slvLS(Jprox,res0);
       else throw 5;
 
-      double alpha = 1;       
-
       Vec La_old = la.copy();
-
+      double alpha = 1.;
       double nrmf = 1;
       for (int k=0; k<maxDampingSteps; k++) {
         la = La_old - alpha*dx;
-        solveImpactsRootFinding();
+        solveImpactsRootFinding(dt);
         nrmf = nrm2(res);
         if(nrmf < nrmf0) break;
-
-        alpha = 0.5*alpha;  
+        alpha *= .5;  
       }
       nrmf0 = nrmf;
       res0 = res;
 
       if(checkTermLevel >= checkTermLevels.size() || iter > checkTermLevels(checkTermLevel)) {
         checkTermLevel++;
-        checkImpactsForTermination();
+        checkImpactsForTermination(dt);
         if(term) break;
       }
     }
@@ -615,15 +610,15 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::checkImpactsForTermination() {
+  void DynamicSystemSolver::checkImpactsForTermination(double dt) {
     term = true;
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
-      (*i)->checkImpactsForTermination(); 
+      (*i)->checkImpactsForTermination(dt); 
       if(term == false) return;
     }
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) {
-      (**i).checkImpactsForTermination();
+      (**i).checkImpactsForTermination(dt);
       if(term == false) return;
     }
   }

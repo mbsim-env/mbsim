@@ -29,6 +29,8 @@ namespace OpenMBV {
 
 namespace MBSim {
   class Frame;
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
 }
 
 namespace MBSimHydraulics {
@@ -165,13 +167,14 @@ namespace MBSimHydraulics {
   /*! RigidNodeMec */
   class RigidNodeMec : public HNodeMec {
     public:
-      RigidNodeMec(const std::string &name) : HNodeMec(name), gdn(0) {}
+      RigidNodeMec(const std::string &name);
+      ~RigidNodeMec();
       virtual std::string getType() const { return "RigidNodeMec"; }
 
       bool isSetValued() const {return true; }
 
       void calclaSize() {laSize=1; }
-      void calclaSizeForActiveg() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize() {rFactorSize=1; }
 
       void init(MBSim::InitStage stage);
@@ -181,19 +184,21 @@ namespace MBSimHydraulics {
       void updategd(double t);
       void updateW(double t);
 
-      void solveImpactsFixpointSingle();
-      //      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      //      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      //      void solveConstraintsRootFinding();
-      //      void jacobianConstraints();
-      void jacobianImpacts();
       void updaterFactors();
-      void checkImpactsForTermination();
-      //      void checkConstraintsForTermination();
+      void solveImpactsFixpointSingle(double dt);
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel(double dt);
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding(double dt);
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination(double dt);
+      void checkConstraintsForTermination();
     private:
-      double gdn;
+      double gdn, gdd;
+      MBSim::GeneralizedForceLaw * gfl;
+      MBSim::GeneralizedImpactLaw * gil;
   };
 }
 

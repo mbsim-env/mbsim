@@ -21,9 +21,10 @@
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
 #include "mbsimHydraulics/objectfactory.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsimHydraulics/obsolet_hint.h"
+#include "mbsim/constitutive_laws.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -127,15 +128,15 @@ namespace MBSimHydraulics {
           ((connectedLines[i].inflow) ?
            connectedLines[i].line->getInflowFactor() :
            connectedLines[i].line->getOutflowFactor());
-        int cols=connectedLines[i].sign.size();
-        W.push_back(Mat(cols, laSize));
-        V.push_back(Mat(cols, laSize));
-        h.push_back(Vec(cols));
-        hLink.push_back(Vec(cols));
-        dhdq.push_back(Mat(cols, 0));
-        dhdu.push_back(SqrMat(cols));
-        dhdt.push_back(Vec(cols));
-        r.push_back(Vec(cols));
+        const int rows=connectedLines[i].sign.size();
+        W.push_back(Mat(rows, laSize));
+        V.push_back(Mat(rows, laSize));
+        h.push_back(Vec(rows));
+        hLink.push_back(Vec(rows));
+        dhdq.push_back(Mat(rows, 0));
+        dhdu.push_back(SqrMat(rows));
+        dhdt.push_back(Vec(rows));
+        r.push_back(Vec(rows));
       }
     }
     else if (stage==MBSim::plot) {
@@ -168,28 +169,29 @@ namespace MBSimHydraulics {
 
   void HNode::updateWRef(const Mat &WParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int laI=laInd;
-      int laJ=laInd;
-      int hI=connectedLines[i].line->gethInd(parent,j);
-      int hJ=hI+connectedLines[i].sign.size()-1;
+      const int laI=laInd;
+      const int laJ=laInd;
+      const int hI=connectedLines[i].line->gethInd(parent,j);
+      const int hJ=hI+connectedLines[i].sign.size()-1;
       W[i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
 
   void HNode::updateVRef(const Mat &VParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int laI=laInd;
-      int laJ=laInd;
-      int hI=connectedLines[i].line->gethInd(parent,j);
-      int hJ=hI+connectedLines[i].sign.size()-1;
+      const int laI=laInd;
+      const int laJ=laInd;
+      const int hI=connectedLines[i].line->gethInd(parent,j);
+      const int hJ=hI+connectedLines[i].sign.size()-1;
       V[i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
 
+
   void HNode::updatehRef(const Vec& hParent, const Vec& hLinkParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hInd=connectedLines[i].line->gethInd(parent, j);
-      Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
+      const int hInd=connectedLines[i].line->gethInd(parent, j);
+      const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
       h[i].resize() >> hParent(I);
       hLink[i].resize() >> hLinkParent(I);
     }
@@ -197,41 +199,33 @@ namespace MBSimHydraulics {
 
   void HNode::updaterRef(const Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hInd=connectedLines[i].line->gethInd(parent, j);
-      Index I(hInd, hInd+connectedLines[i].sign.size()-1);
+      const int hInd=connectedLines[i].line->gethInd(parent, j);
+      const Index I(hInd, hInd+connectedLines[i].sign.size()-1);
       r[i].resize() >> rParent(I);
     }
   }
 
   void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hInd = connectedLines[i].line->gethInd(parent, j);
-      Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
+      const int hInd = connectedLines[i].line->gethInd(parent, j);
+      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
       dhdq[i].resize()>>dhdqParent(I);
     }
   }
 
   void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hInd = connectedLines[i].line->gethInd(parent, j);
-      Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
+      const int hInd = connectedLines[i].line->gethInd(parent, j);
+      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
       dhdu[i].resize()>>dhduParent(I);
     }
   }
 
   void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hInd = connectedLines[i].line->gethInd(parent, j);
-      Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
+      const int hInd = connectedLines[i].line->gethInd(parent, j);
+      const Index I=Index(hInd, hInd+connectedLines[i].sign.size()-1);
       dhdt[i].resize()>>dhdtParent(I);
-    }
-  }
-
-  void HNode::updaterRef(const Vec &rParent) {
-    for (unsigned int i=0; i<nLines; i++) {
-      int rI=connectedLines[i].line->gethInd(parent);
-      int rJ=rI+connectedLines[i].sign.size()-1;
-      r[i]>>rParent(Index(rI, rJ));
     }
   }
 
@@ -250,8 +244,8 @@ namespace MBSimHydraulics {
 
   void HNode::updateh(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-        h[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
-        hLink[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
+      h[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
+      hLink[i] += trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign * la(0);
     }
   }
 
@@ -394,6 +388,7 @@ namespace MBSimHydraulics {
 
   ElasticNode::~ElasticNode() {
     delete bulkModulus;
+    bulkModulus=NULL;
   }
 
   void ElasticNode::init(InitStage stage) {
@@ -441,12 +436,12 @@ namespace MBSimHydraulics {
 
   void ElasticNode::updatexd(double t) {
     E=(*bulkModulus)(la(0));
-    xd=-E/V*gd;
+    xd(0)=E/V*QHyd;
   }
 
   void ElasticNode::updatedx(double t, double dt) {
     E=(*bulkModulus)(la(0));
-    xd=-E/V*gd*dt;
+    xd(0)=E/V*QHyd*dt;
   }
 
   void ElasticNode::plot(double t, double dt) {
@@ -456,6 +451,20 @@ namespace MBSimHydraulics {
     }
   }
 
+
+  RigidNode::RigidNode(const string &name) : HNode(name), gdn(0), gdd(0), gfl(new BilateralConstraint), gil(new BilateralImpact) {
+  }
+
+  RigidNode::~RigidNode() {
+    if (gfl) {
+      delete gfl;
+      gfl=NULL;
+    }
+    if (gil) {
+      delete gil;
+      gil=NULL;
+    }
+  }
 
   void RigidNode::init(InitStage stage) {
     if (stage==MBSim::unknownStage) {
@@ -489,71 +498,20 @@ namespace MBSimHydraulics {
 
   void RigidNode::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      int hJ=connectedLines[i].sign.size()-1;
+      const int hJ=connectedLines[i].sign.size()-1;
       W[i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
     }
   }
 
-  void RigidNode::solveImpactsFixpointSingle() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    la(0) -= rFactor(0)*gdn;
-  }
-
-  void RigidNode::solveImpactsGaussSeidel() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    la(0) -= gdn/a[ia[laIndDS+0]];
-  }
-
-  void RigidNode::solveImpactsRootFinding() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
-
-    gdn = b(laIndDS);
-    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
-      gdn += a[j]*laMBS(ja[j]);
-
-    res(0) = rFactor(0)*gdn;
-  }
-
-  void RigidNode::jacobianImpacts() {
-    SqrMat Jprox = ds->getJprox();
-    SqrMat G = ds->getG();
-    RowVec jp1=Jprox.row(laIndDS);
-    jp1.init(0);
-    for(int j=0; j<G.size(); j++) 
-      jp1(j) = rFactor(0) * G(laIndDS, j);
-  }
-
   void RigidNode::updaterFactors() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
 
     double sum = 0;
     for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
       sum += fabs(a[j]);
 
-    double ai = a[ia[laIndDS]];
+    const double ai = a[ia[laIndDS]];
     if(ai > sum) {
       rFactorUnsure(0) = 0;
       rFactor(0) = 1./ai;
@@ -564,18 +522,392 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::checkImpactsForTermination() {
-    double *a = ds->getGs()();
-    int *ia = ds->getGs().Ip();
-    int *ja = ds->getGs().Jp();
-    Vec &laMBS = ds->getla();
-    Vec &b = ds->getb();
+  void RigidNode::solveImpactsFixpointSingle(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+    
+    la(0) = gil->project(la(0), gdn, gd(0), rFactor(0));
+  }
+
+  void RigidNode::solveConstraintsFixpointSingle() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    la(0) = gfl->project(la(0), gdd, rFactor(0));
+  }
+
+  void RigidNode::solveImpactsGaussSeidel(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    la(0) = gil->solve(a[ia[laIndDS]], gdn, gd(0));
+  }
+
+  void RigidNode::solveConstraintsGaussSeidel() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    la(0) = gfl->solve(a[ia[laIndDS]], gdd);
+  }
+
+  void RigidNode::solveImpactsRootFinding(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
 
     gdn = b(laIndDS);
     for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
       gdn += a[j]*laMBS(ja[j]);
 
-    if(!(fabs(gdn)<gdTol))
+    res(0) = la(0) - gil->project(la(0), gdn, gd(0), rFactor(0));
+  }
+
+  void RigidNode::solveConstraintsRootFinding() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    res(0) = la(0) - gfl->project(la(0), gdd, rFactor(0));
+  }
+
+  void RigidNode::jacobianImpacts() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0));
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidNode::jacobianConstraints() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gfl->diff(la(0), gdd, rFactor(0));
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidNode::checkImpactsForTermination(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    if(!gil->isFulfilled(la(0),gdn,gd(0),LaTol,gdTol))
       ds->setTermination(false);
   }
+
+  void RigidNode::checkConstraintsForTermination() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    if(!gfl->isFulfilled(la(0),gdd,laTol,gddTol))
+      ds->setTermination(false);
+  }
+
+
+  RigidCavitationNode::RigidCavitationNode(const string &name) : HNode(name), pCav(0), active(false), active0(false), gdn(0), gdd(0), gfl(new UnilateralConstraint), gil(new UnilateralNewtonImpact) {
+  }
+
+  RigidCavitationNode::~RigidCavitationNode() {
+    if (gfl) {
+      delete gfl;
+      gfl=NULL;
+    }
+    if (gil) {
+      delete gil;
+      gil=NULL;
+    }
+  }
+
+  void RigidCavitationNode::init(InitStage stage) {
+    if (stage==MBSim::resize) {
+      HNode::init(stage);
+      g.resize(1, INIT, 0);
+      x.resize(1, INIT, 0);
+      //sv.resize(1, INIT, 0);
+      x0=Vec(1, INIT, 0);
+    }
+    else
+      HNode::init(stage);
+  }
+
+  void RigidCavitationNode::initializeUsingXML(TiXmlElement * element) {
+    HNode::initializeUsingXML(element);
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"cavitationPressure");
+    setCavitationPressure(getDouble(e));
+  }
+
+  void RigidCavitationNode::updatewbRef(const Vec &wbParent) {
+    Link::updatewbRef(wbParent);
+    gd >> wb;
+  }
+  
+  void RigidCavitationNode::checkActiveg() {
+    active=(g(0)<=0);
+  }
+
+  bool RigidCavitationNode::gActiveChanged() {
+    bool changed = false;
+    if (active0 != active)
+      changed = true;
+    active0=active;
+    return changed;
+  }
+
+  void RigidCavitationNode::updateg(double t) {
+    g(0)=x(0);
+  }
+
+  void RigidCavitationNode::updateW(double t) {
+    for (unsigned int i=0; i<nLines; i++) {
+      const int hJ=connectedLines[i].sign.size()-1;
+      W[i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
+    }
+  }
+
+  void RigidCavitationNode::updatexd(double t) {
+    xd(0) = (fabs(gdn)>(gdTol)?gdn:0);
+  }
+
+  void RigidCavitationNode::updatedx(double t, double dt) {
+    xd(0) = (fabs(gdn)>(gdTol)?gdn:0)*dt;
+  }
+
+  void RigidCavitationNode::updaterFactors() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+
+    double sum = 0;
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      sum += fabs(a[j]);
+
+    const double ai = a[ia[laIndDS]];
+    if(ai > sum) {
+      rFactorUnsure(0) = 0;
+      rFactor(0) = 1./ai;
+    }
+    else {
+      rFactorUnsure(0) = 1;
+      rFactor(0) = 1./ai;
+    }
+  }
+
+  void RigidCavitationNode::solveImpactsFixpointSingle(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+    
+    la(0) = active ? gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt) : pCav*dt;
+  }
+
+  void RigidCavitationNode::solveConstraintsFixpointSingle() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    la(0) = active ? gfl->project(la(0), gdd, rFactor(0), pCav) : pCav;
+  }
+
+  void RigidCavitationNode::solveImpactsGaussSeidel(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    if (active) {
+      const double om = 1.0;
+      const double buf = gil->solve(a[ia[laIndDS]], gdn, gd(0));
+      la(0) += om*(buf - la(0));
+      if (la(0)<pCav*dt)
+        la(0) = pCav*dt;
+    }
+    else
+      la(0) = pCav*dt;
+  }
+
+  void RigidCavitationNode::solveConstraintsGaussSeidel() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]+1; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    if (active) {
+      la(0) = gfl->solve(a[ia[laIndDS]], gdd);
+      if (la(0)<pCav)
+        la(0) = pCav;
+    }
+    else
+      la(0) = pCav;
+
+  }
+
+  void RigidCavitationNode::solveImpactsRootFinding(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+    
+    res(0) = active ? la(0)-gil->project(la(0), gdn, gd(0), rFactor(0), pCav*dt) : 0;
+  }
+
+  void RigidCavitationNode::solveConstraintsRootFinding() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    res(0) = active ? la(0) - gfl->project(la(0), gdd, rFactor(0), pCav) : 0;
+  }
+
+  void RigidCavitationNode::jacobianImpacts() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0), pCav);
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidCavitationNode::jacobianConstraints() {
+    const SqrMat Jprox = ds->getJprox();
+    const SqrMat G = ds->getG();
+
+    RowVec jp1=Jprox.row(laIndDS);
+    RowVec e1(jp1.size());
+    e1(laIndDS) = 1;
+    Vec diff = gfl->diff(la(0), gdd, rFactor(0));
+
+    jp1 = e1-diff(0)*e1;
+    for(int j=0; j<G.size(); j++) 
+      jp1(j) -= diff(1)*G(laIndDS,j);
+  }
+
+  void RigidCavitationNode::checkImpactsForTermination(double dt) {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdn = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdn += a[j]*laMBS(ja[j]);
+
+    if(active&&!gil->isFulfilled(la(0), gdn, gd(0), LaTol, gdTol, pCav*dt))
+      ds->setTermination(false);
+  }
+
+  void RigidCavitationNode::checkConstraintsForTermination() {
+    const double *a = ds->getGs()();
+    const int *ia = ds->getGs().Ip();
+    const int *ja = ds->getGs().Jp();
+    const Vec &laMBS = ds->getla();
+    const Vec &b = ds->getb();
+
+    gdd = b(laIndDS);
+    for(int j=ia[laIndDS]; j<ia[laIndDS+1]; j++)
+      gdd += a[j]*laMBS(ja[j]);
+
+    if(active&&!gfl->isFulfilled(la(0), gdd, laTol, gddTol, pCav))
+      ds->setTermination(false);
+  }
+
 }

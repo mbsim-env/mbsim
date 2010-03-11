@@ -141,7 +141,7 @@ namespace MBSim {
       virtual int solveConstraintsRootFinding(); 
       virtual int solveImpactsRootFinding(double dt = 0); 
       virtual void checkConstraintsForTermination(); 
-      virtual void checkImpactsForTermination(); 
+      virtual void checkImpactsForTermination(double dt = 0); 
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */

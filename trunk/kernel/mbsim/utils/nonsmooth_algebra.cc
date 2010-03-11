@@ -26,29 +26,25 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  double proxCN(double arg) {
-    return (arg < 0) ? 0 : arg;
+  double proxCN(const double arg, const double boundary) {
+    return ((arg < boundary) ? boundary : arg);
   }
 
-  double proxCT2D(double arg, double laNmue) {
+  double proxCT2D(const double arg, const double laNmue) {
     if(fabs(arg)<=laNmue)
       return arg;
     else 
       return (arg>=0) ? laNmue : -laNmue;
   }
 
-  Vec proxCT3D(const Vec& arg, double laNmue) {
+  Vec proxCT3D(const Vec& arg, const double laNmue) {
+    const double fabsLaT = nrm2(arg);
     Vec prox(2,NONINIT);
-    double fabsLaT = nrm2(arg);
     if(fabsLaT <=  laNmue) 
       prox = arg;
     else 
       prox = (laNmue/fabsLaT)*arg;
     return prox;
-  }
-
-  double proxCN(double arg,double boundary) {
-    return ((arg < boundary) ? boundary : arg);
   }
 
 }
