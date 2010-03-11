@@ -26,13 +26,11 @@
 
 namespace MBSim {
 
-  double proxCN(double arg);
+  double proxCN(const double arg, const double boundary=0);
 
-  double proxCT2D(double arg, double LaNmue);
+  double proxCT2D(const double arg, const double LaNmue);
 
-  fmatvec::Vec proxCT3D(const fmatvec::Vec& arg, double laNmue);
-
-  double proxCN(double arg,double boundary);
+  fmatvec::Vec proxCT3D(const fmatvec::Vec& arg, const double laNmue);
 
 }
 

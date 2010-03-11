@@ -22,6 +22,11 @@
 
 #include "mbsim/link.h"
 
+namespace MBSim {
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
+}
+
 namespace MBSimHydraulics {
 
   class RigidHLine; 
@@ -34,6 +39,7 @@ namespace MBSimHydraulics {
   class RigidLinePressureLoss : public MBSim::Link {
     public:
       RigidLinePressureLoss(const std::string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_=false, bool unilateral_=false);
+      ~RigidLinePressureLoss();
       virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void plot(double t, double dt);
 
@@ -43,8 +49,7 @@ namespace MBSimHydraulics {
       // ================================
       bool isSetValued() const {return (unilateral || bilateral); }
       void calcgdSize() {gdSize=1; }
-      // void updatelaRef(); // TODO
-      // void updategdRef(); // TODO
+      void calcsvSize() {svSize=isSetValued()?1:0; }
       void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hLinkRef, int i=0);
       void updaterRef(const fmatvec::Vec& rRef, int i=0);
       void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0) {};
@@ -53,9 +58,6 @@ namespace MBSimHydraulics {
       void updaterRef(const fmatvec::Vec& rRef);
       void updateWRef(const fmatvec::Mat& WRef, int i=0);
       void updateVRef(const fmatvec::Mat& VRef, int i=0);
-      void updatewbRef(const fmatvec::Vec& wbRef);
-      // void updateresRef(); // TODO
-      // void updaterFactorRef(); // TODO
       // ==== END Methods for init-Process ===
 
       // ================================
@@ -67,8 +69,10 @@ namespace MBSimHydraulics {
       bool isActive() const {return ((unilateral || bilateral)?active:false); } 
       void calcgdSizeActive() {gdSize=1; }
       void calclaSize() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; } // event-driven
       void calcrFactorSize() {rFactorSize=1; }
       void updategd(double t); /* zdotStandard */
+      void updateStopVector(double t); // event-driven
       void updateh(double t); /* zdotStandard */
       void updateW(double t); /* zdotStandard */
       // ==== END Methods for update-Process ===
@@ -76,30 +80,33 @@ namespace MBSimHydraulics {
       // ================================
       // Methods for solve-Process
       // ================================
+      void updateCondition();
       void updaterFactors();
-      void solveImpactsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      void solveImpactsRootFinding();
+      void solveImpactsFixpointSingle(double dt);
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel(double dt);
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding(double dt);
+      void solveConstraintsRootFinding();
       void jacobianImpacts();
-      void checkImpactsForTermination();
+      void jacobianConstraints();
+      void checkImpactsForTermination(double dt);
+      void checkConstraintsForTermination();
       // ==== END Methods for solve-Process ===
 
-      // ================================
-      // not needed methods
-      // ================================
-      void calclaSizeForActiveg() {laSize=1; }
-      // ==== END not needed methods ===
 
     private:
       RigidHLine * line;
       bool isActive0;
-      fmatvec::Vec gdn;
       bool unilateral, bilateral;
       bool active;
-      double pLoss;
+      double pLoss, gdn, gdd;
       LinePressureLoss * linePressureLoss;
       ClosablePressureLoss * closablePressureLoss;
       LeakagePressureLoss * leakagePressureLoss;
+
+      MBSim::GeneralizedForceLaw * gfl;
+      MBSim::GeneralizedImpactLaw * gil;
   };
 
 }

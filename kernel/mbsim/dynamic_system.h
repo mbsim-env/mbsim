@@ -154,7 +154,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with single step fixed point scheme on velocity level 
        */
-      virtual int solveImpactsFixpointSingle();
+      virtual int solveImpactsFixpointSingle(double dt);
 
       /**
        * \brief solve contact equations with Gauss-Seidel scheme on acceleration level 
@@ -164,7 +164,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with Gauss-Seidel scheme on velocity level 
        */
-      virtual int solveImpactsGaussSeidel();
+      virtual int solveImpactsGaussSeidel(double dt);
 
       /**
        * \brief solve contact equations with Newton scheme on acceleration level 
@@ -174,7 +174,7 @@ namespace MBSim {
       /**
        * \brief solve contact equations with Newton scheme on velocity level 
        */
-      virtual int solveImpactsRootFinding();
+      virtual int solveImpactsRootFinding(double dt);
 
       /**
        * \brief compute JACOBIAN of contact equations on acceleration level 
@@ -194,7 +194,7 @@ namespace MBSim {
       /**
        * \brief validate force laws concerning given tolerances on velocity level
        */
-      virtual void checkImpactsForTermination();
+      virtual void checkImpactsForTermination(double dt);
 
       /**
        * \brief update relaxation factors for contact equations

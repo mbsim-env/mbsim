@@ -54,8 +54,8 @@ namespace MBSim {
        */
       virtual bool isActive(double g, double gTol) { return true; }
       virtual bool remainsActive(double s, double sTol) { return true; }
-      virtual double project(double la, double gdn, double r) { return 0; }
-      virtual fmatvec::Vec diff(double la, double gdn, double r) { return fmatvec::Vec(2); }
+      virtual double project(double la, double gdn, double r, double laMin=0) { return 0; }
+      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0) { return fmatvec::Vec(2, fmatvec::INIT, 0); }
       virtual double solve(double G, double gdn) { return 0; }
 
       /**
@@ -65,7 +65,7 @@ namespace MBSim {
        * \param tolerance for relative velocity
        * \return flag if the force law is valid given the parameters
        */
-      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd) { return true; }
+      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0) { return true; }
 
       /**
        * \return flag if the force law is setvalued
@@ -111,10 +111,10 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
-      virtual double project(double la, double gdn, double r);
-      virtual fmatvec::Vec diff(double la, double gdn, double r);
+      virtual double project(double la, double gdn, double r, double laMin=0);
+      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
       virtual double solve(double G, double gdn);
-      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd);
+      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0);
       virtual bool isSetValued() const { return true; }
       /***************************************************/
 
@@ -140,10 +140,10 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return true; }
-      virtual double project(double la, double gdn, double r);
-      virtual fmatvec::Vec diff(double la, double gdn, double r);
+      virtual double project(double la, double gdn, double r, double laMin=0);
+      virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
       virtual double solve(double G, double gdn);
-      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd);
+      virtual bool isFulfilled(double la,  double gdn, double tolla, double tolgd, double laMin=0);
       virtual bool isSetValued() const { return true; }
       /***************************************************/
 
@@ -168,10 +168,10 @@ namespace MBSim {
       virtual ~GeneralizedImpactLaw() {};
 
       /* INTERFACE FOR DERIVED CLASSES */
-      virtual double project(double la, double gdn, double gda, double r) = 0;
-      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r) = 0;
+      virtual double project(double la, double gdn, double gda, double r, double laMin=0) = 0;
+      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0) = 0;
       virtual double solve(double G, double gdn, double gda) = 0;
-      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd) = 0;
+      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0) = 0;
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
   };
@@ -204,10 +204,10 @@ namespace MBSim {
       virtual ~UnilateralNewtonImpact() {};
 
       /* INHERITED INTERFACE */
-      virtual double project(double la, double gdn, double gda, double r);
-      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r);
+      virtual double project(double la, double gdn, double gda, double r, double laMin=0);
+      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
-      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd);
+      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -233,10 +233,10 @@ namespace MBSim {
       virtual ~BilateralImpact() {};
 
       /* INHERITED INTERFACE */
-      virtual double project(double la, double gdn, double gda, double r);
-      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r);
+      virtual double project(double la, double gdn, double gda, double r, double laMin=0);
+      virtual fmatvec::Vec diff(double la, double gdn, double gda, double r, double laMin=0);
       virtual double solve(double G, double gdn, double gda);
-      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd);
+      virtual bool isFulfilled(double la,  double gdn, double gda, double tolla, double tolgd, double laMin=0);
       /***************************************************/
   };
 

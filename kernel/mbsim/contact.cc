@@ -654,15 +654,15 @@ namespace MBSim {
 #endif
   }
 
-  void Contact::solveImpactsFixpointSingle() {
+  void Contact::solveImpactsFixpointSingle(double dt) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         gdnk[k](0) = b(laIndDS+laIndk[k]);
         for(int j=ia[laIndDS+laIndk[k]]; j<ia[laIndDS+laIndk[k]+1]; j++)
@@ -686,11 +686,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         gddk[k](0) = b(laIndDS+laIndk[k]);
         for(int j=ia[laIndDS+laIndk[k]]; j<ia[laIndDS+laIndk[k]+1]; j++)
@@ -712,24 +712,24 @@ namespace MBSim {
     }
   } 
 
-  void Contact::solveImpactsGaussSeidel() {
+  void Contact::solveImpactsGaussSeidel(double dt) {
     assert(getFrictionDirections() <= 1);
 
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         gdnk[k](0) = b(laIndDS+laIndk[k]);
         for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
           gdnk[k](0) += a[j]*laMBS(ja[j]);
 
-        double om = 1.0;
-        double buf = fnil->solve(a[ia[laIndDS+laIndk[k]]], gdnk[k](0), gdk[k](0));
+        const double om = 1.0;
+        const double buf = fnil->solve(a[ia[laIndDS+laIndk[k]]], gdnk[k](0), gdk[k](0));
         lak[k](0) += om*(buf - lak[k](0));
 
         if(getFrictionDirections()) {
@@ -752,18 +752,18 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         gddk[k](0) = b(laIndDS+laIndk[k]);
         for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
           gddk[k](0) += a[j]*laMBS(ja[j]);
 
-        double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
-        double buf = fcl->solve(a[ia[laIndDS+laIndk[k]]], gddk[k](0));
+        const double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
+        const double buf = fcl->solve(a[ia[laIndDS+laIndk[k]]], gddk[k](0));
         lak[k](0) += om*(buf - lak[k](0));
 
         if(getFrictionDirections() && gdActive[k][1]) {
@@ -780,14 +780,15 @@ namespace MBSim {
     }
   }
 
-  void Contact::solveImpactsRootFinding() {
+  void Contact::solveImpactsRootFinding(double dt) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gdnk[k](i) = b(laIndDS+laIndk[k]+i);
@@ -806,11 +807,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gddk[k](i) = b(laIndDS+laIndk[k]+i);
@@ -829,8 +830,8 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        SqrMat Jprox = ds->getJprox();
-        SqrMat G = ds->getG();
+        const SqrMat Jprox = ds->getJprox();
+        const SqrMat G = ds->getG();
 
         RowVec jp1=Jprox.row(laIndDS+laIndk[k]);
         RowVec e1(jp1.size());
@@ -875,8 +876,8 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        SqrMat Jprox = ds->getJprox();
-        SqrMat G = ds->getG();
+        const SqrMat Jprox = ds->getJprox();
+        const SqrMat G = ds->getG();
 
         RowVec jp1=Jprox.row(laIndDS+laIndk[k]);
         RowVec e1(jp1.size());
@@ -921,13 +922,13 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        double sumN = 0;
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
 
+        double sumN = 0;
         for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
           sumN += fabs(a[j]);
-        double aN = a[ia[laIndDS+laIndk[k]]];
+        const double aN = a[ia[laIndDS+laIndk[k]]];
         if(aN > sumN) {
           rFactorUnsure(0) = 0;
           rFactork[k](0) = 1.0/aN;
@@ -982,11 +983,11 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) { // TODO check if gdActive[k][0]
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         for(unsigned int i=0; i < 1+ gdActive[k][1]*getFrictionDirections(); i++) {
           gddk[k](i) = b(laIndDS+laIndk[k]+i);
@@ -1008,15 +1009,15 @@ namespace MBSim {
     }
   }
 
-  void Contact::checkImpactsForTermination() {
+  void Contact::checkImpactsForTermination(double dt) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
 
-        double *a = ds->getGs()();
-        int *ia = ds->getGs().Ip();
-        int *ja = ds->getGs().Jp();
-        Vec &laMBS = ds->getla();
-        Vec &b = ds->getb();
+        const double *a = ds->getGs()();
+        const int *ia = ds->getGs().Ip();
+        const int *ja = ds->getGs().Jp();
+        const Vec &laMBS = ds->getla();
+        const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
           gdnk[k](i) = b(laIndDS+laIndk[k]+i);

@@ -336,7 +336,7 @@ namespace MBSim {
   void DynamicSystem::updateStopVector(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateStopVector(t);
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (*i)->updateStopVector(t); 
   }   
 
@@ -498,12 +498,12 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsFixpointSingle() {
+  int DynamicSystem::solveImpactsFixpointSingle(double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsFixpointSingle(); 
+      (*i)->solveImpactsFixpointSingle(dt); 
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactsFixpointSingle();
+      (*i)->solveImpactsFixpointSingle(dt);
 
     return 0;
   }
@@ -518,12 +518,12 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsGaussSeidel() {
+  int DynamicSystem::solveImpactsGaussSeidel(double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsGaussSeidel(); 
+      (*i)->solveImpactsGaussSeidel(dt); 
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactsGaussSeidel();
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
+      (*i)->solveImpactsGaussSeidel(dt);
 
     return 0;
   }
@@ -538,12 +538,12 @@ namespace MBSim {
     return 0;
   }
 
-  int DynamicSystem::solveImpactsRootFinding() {
+  int DynamicSystem::solveImpactsRootFinding(double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsRootFinding(); 
+      (*i)->solveImpactsRootFinding(dt);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactsRootFinding();
+      (*i)->solveImpactsRootFinding(dt);
 
     return 0;
   }
@@ -576,19 +576,19 @@ namespace MBSim {
       (**i).checkConstraintsForTermination();
   }
 
-  void DynamicSystem::checkImpactsForTermination() {
+  void DynamicSystem::checkImpactsForTermination(double dt) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkImpactsForTermination(); 
+      (*i)->checkImpactsForTermination(dt);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).checkImpactsForTermination();
+      (**i).checkImpactsForTermination(dt);
   }
 
   void DynamicSystem::updaterFactors() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updaterFactors(); 
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updaterFactors();
   }
 
@@ -867,7 +867,8 @@ namespace MBSim {
       (*i)->updateWRef(W,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateWRef(W,j);
+      if ((*i)->getlaSize()) // needed for event-driven integration in ProjectGeneralizedPositions for Objects with qSize==0
+        (**i).updateWRef(W,j);
   }
 
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {

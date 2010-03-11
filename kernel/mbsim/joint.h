@@ -78,16 +78,16 @@ namespace MBSim {
       virtual bool isSetValued() const;
       virtual bool isActive() const { return true; }
       virtual bool gActiveChanged() { return false; }
-      virtual void solveImpactsFixpointSingle();
+      virtual void solveImpactsFixpointSingle(double dt);
       virtual void solveConstraintsFixpointSingle();
-      virtual void solveImpactsGaussSeidel();
+      virtual void solveImpactsGaussSeidel(double dt);
       virtual void solveConstraintsGaussSeidel();
-      virtual void solveImpactsRootFinding();
+      virtual void solveImpactsRootFinding(double dt);
       virtual void solveConstraintsRootFinding();
       virtual void jacobianConstraints();
       virtual void jacobianImpacts();
       virtual void updaterFactors();
-      virtual void checkImpactsForTermination();
+      virtual void checkImpactsForTermination(double dt);
       virtual void checkConstraintsForTermination();
       virtual void checkActiveg() {}
       virtual void checkActivegd() {}

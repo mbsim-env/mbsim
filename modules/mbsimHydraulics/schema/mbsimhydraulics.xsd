@@ -1461,6 +1461,29 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="RigidCavitationNode" substitutionGroup="HNode" type="RigidCavitationNodeType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Starrer hydraulischer Knoten mit Berücksichtigung der Kavitation.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidCavitationNodeType">
+    <xs:complexContent>
+      <xs:extension base="HNodeType">
+        <xs:sequence>
+          <xs:element name="cavitationPressure" type="pv:pressureScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Minimaler Druck bei dessen Unterschreitung sich im Knoten Kavitationsblasen ausbilden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="HNodeMec" abstract="true" substitutionGroup="HNode" type="HNodeMecType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

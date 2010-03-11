@@ -30,6 +30,11 @@ namespace OpenMBV {
 }
 #endif
 
+namespace MBSim {
+  class GeneralizedForceLaw;
+  class GeneralizedImpactLaw;
+}
+
 namespace MBSimHydraulics {
 
   class HLine;
@@ -68,7 +73,6 @@ namespace MBSimHydraulics {
       virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
       virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
       virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
-      virtual void updaterRef(const fmatvec::Vec& rRef);
 
       void updateh(double t);
       void updatedhdz(double t);
@@ -158,13 +162,14 @@ namespace MBSimHydraulics {
   /*! RigidNode */
   class RigidNode : public HNode {
     public:
-      RigidNode(const std::string &name) : HNode(name), gdn(0) {};
+      RigidNode(const std::string &name);
+      ~RigidNode();
       virtual std::string getType() const { return "RigidNode"; }
 
       bool isSetValued() const {return true; }
 
       void calclaSize() {laSize=1; }
-      void calclaSizeForActiveg() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize() {rFactorSize=1; }
 
       void init(MBSim::InitStage stage);
@@ -174,19 +179,76 @@ namespace MBSimHydraulics {
       void updategd(double t);
       void updateW(double t);
 
-      void solveImpactsFixpointSingle();
-      //      void solveConstraintsFixpointSingle();
-      void solveImpactsGaussSeidel();
-      //      void solveConstraintsGaussSeidel();
-      void solveImpactsRootFinding();
-      //      void solveConstraintsRootFinding();
-      //      void jacobianConstraints();
-      void jacobianImpacts();
       void updaterFactors();
-      void checkImpactsForTermination();
-      //      void checkConstraintsForTermination();
+      void solveImpactsFixpointSingle(double dt);
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel(double dt);
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding(double dt);
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination(double dt);
+      void checkConstraintsForTermination();
     private:
-      double gdn;
+      double gdn, gdd;
+      MBSim::GeneralizedForceLaw * gfl;
+      MBSim::GeneralizedImpactLaw * gil;
+  };
+
+
+  /*! RigidCavitationNode */
+  class RigidCavitationNode : public HNode {
+    public:
+      RigidCavitationNode(const std::string &name);
+      ~RigidCavitationNode();
+      virtual std::string getType() const { return "RigidCavitationNode"; }
+
+      void setCavitationPressure(double pCav_) {pCav=pCav_; }
+
+      bool isSetValued() const {return true; }
+
+      void calcxSize() {xSize=1; }
+      void calcgSize() {gSize=1; }
+      void calcgSizeActive() {gSize=0; }
+      void calclaSize() {laSize=1; }
+      void calclaSizeForActiveg() {laSize=0; }
+      void calcrFactorSize() {rFactorSize=1; }
+      //void calcsvSize() {svSize=1; }
+
+      void init(MBSim::InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
+
+      void updatewbRef(const fmatvec::Vec& wbParent);
+
+      void checkActiveg();
+      bool gActiveChanged();
+
+      void updateg(double t);
+      //void updateStopVector(double t);
+      void updateW(double t);
+      void updatexd(double t);
+      void updatedx(double t, double dt);
+      //void updateCondition();
+
+      void updaterFactors();
+      void solveImpactsFixpointSingle(double dt);
+      void solveConstraintsFixpointSingle();
+      void solveImpactsGaussSeidel(double dt);
+      void solveConstraintsGaussSeidel();
+      void solveImpactsRootFinding(double dt);
+      void solveConstraintsRootFinding();
+      void jacobianImpacts();
+      void jacobianConstraints();
+      void checkImpactsForTermination(double dt);
+      void checkConstraintsForTermination();
+    protected:
+      double pCav;
+    private:
+      bool active, active0;
+      double gdn, gdd;
+      MBSim::GeneralizedForceLaw * gfl;
+      MBSim::GeneralizedImpactLaw * gil;
   };
 }
 
