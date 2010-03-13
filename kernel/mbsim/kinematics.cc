@@ -38,6 +38,24 @@ namespace MBSim {
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
+  RotationAboutZAxis::RotationAboutZAxis() : Rotation(), APK(3) {  
+    APK(2,2) = 1;
+  }
+
+  SqrMat RotationAboutZAxis::operator()(const Vec &q, double t) {
+
+    int i = q.size()-1;
+    const double cosq=cos(q(i));
+    const double sinq=sin(q(i));
+
+    APK(0,0) = cosq;
+    APK(1,0) = sinq;
+    APK(0,1) = -sinq;
+    APK(1,1) = cosq;
+
+    return APK;
+  }
+
   SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {
     SqrMat APK(3,NONINIT);
 
