@@ -184,6 +184,29 @@ namespace MBSim {
   /**
    * \brief class to describe rotation about fixed axis
    * \author Martin Foerg
+   */
+  class RotationAboutZAxis: public Rotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutZAxis();
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 1; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+
+    protected:
+      /**
+       * \brief transformation matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
+  /**
+   * \brief class to describe rotation about fixed axis
+   * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    */
   class RotationAboutFixedAxis: public Rotation {
