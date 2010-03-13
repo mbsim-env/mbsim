@@ -94,6 +94,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updateh(t);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
+      (**i).updateh(t);
   }
 
   void DynamicSystem::updatehInverseKinetics(double t) {
@@ -126,6 +129,9 @@ namespace MBSim {
     }
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i) 
+      (**i).updatedhdz(t);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i) 
       (**i).updatedhdz(t);
   }
 
@@ -286,6 +292,12 @@ namespace MBSim {
 #pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSingleValued.size()>30)
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updategd(t); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
+
+#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30)
+    for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) { 
+      try { linkSetValuedNotActiveWithSmoothPart[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
@@ -713,6 +725,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatehRef(h,hLink,j);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
+      (**i).updatehRef(h,hLink,j);
   }
 
   void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {
@@ -726,6 +741,9 @@ namespace MBSim {
       (**i).updatedhdqRef(dhdqObject,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdqRef(dhdqLink);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
       (**i).updatedhdqRef(dhdqLink);
   }
 
@@ -741,6 +759,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatedhduRef(dhduLink);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
+      (**i).updatedhduRef(dhduLink);
   }
 
   void DynamicSystem::updatedhdtRef(const Vec &dhdtObjectParent, const Vec &dhdtLinkParent, int j) {
@@ -754,6 +775,9 @@ namespace MBSim {
       (**i).updatedhdtRef(dhdtObject,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
+      (**i).updatedhdtRef(dhdtLink);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
       (**i).updatedhdtRef(dhdtLink);
   }
 
@@ -776,7 +800,7 @@ namespace MBSim {
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updaterRef(r,j);
 
-    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
       (**i).updaterRef(r,j);
   }
 
@@ -1024,6 +1048,7 @@ namespace MBSim {
     // clear container first, because setUpLinks in called twice from InitStage resize (before and after the reorganization)
     linkSetValued.clear();
     linkSetValuedActive.clear();
+    linkSetValuedNotActiveWithSmoothPart.clear();
     linkSingleValued.clear();
     for(unsigned int i=0; i<link.size(); i++) {
       if(link[i]->isSetValued()) {
@@ -1211,14 +1236,16 @@ namespace MBSim {
   void DynamicSystem::checkActiveLinks() {
 
     linkSetValuedActive.clear();
+    linkSetValuedNotActiveWithSmoothPart.clear();
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkActiveLinks();
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
-      if((*i)->isActive()) {
+      if((*i)->isActive())
         linkSetValuedActive.push_back(*i);
-      }
+      else if((*i)->hasSmoothPart())
+        linkSetValuedNotActiveWithSmoothPart.push_back(*i);
     }
   }
 
