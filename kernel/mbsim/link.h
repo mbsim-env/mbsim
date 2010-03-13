@@ -225,6 +225,11 @@ namespace MBSim {
       virtual bool isSetValued() const { return false; }
 
       /**
+       * \return updateh is needed if set valued force law is not active?
+       */
+      virtual bool hasSmoothPart() const { return false; }
+
+      /**
        * \return are link equations active?
        */
       virtual bool isActive() const = 0;

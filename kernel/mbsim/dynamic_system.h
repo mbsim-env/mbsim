@@ -785,12 +785,13 @@ namespace MBSim {
        */
       std::vector<Object*> object;
       std::vector<Link*> link;
-      std::vector<ExtraDynamic*> extraDynamic;
-      std::vector<ModellingInterface*> model;
-      std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> linkSingleValued;
       std::vector<Link*> linkSetValued;
       std::vector<Link*> linkSetValuedActive;
+      std::vector<Link*> linkSetValuedNotActiveWithSmoothPart;
+      std::vector<ExtraDynamic*> extraDynamic;
+      std::vector<ModellingInterface*> model;
+      std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
 
       /** 
