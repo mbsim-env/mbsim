@@ -756,7 +756,7 @@ namespace MBSim {
 
       /** Return frame "I" */
       Frame *getFrameI() { return I; }
-      
+
       virtual Element *getByPathSearch(std::string path);
 
     protected:

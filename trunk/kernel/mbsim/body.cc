@@ -36,7 +36,7 @@ namespace MBSim {
                                    ,  openMBVBody(0), openMBVGrp(0), 
 #endif
                                    saved_frameOfReference("") {
-  } 
+                                   } 
 
   Body::~Body() {
     for(vector<Frame*>::iterator i = frame.begin(); i != frame.end(); ++i) 
@@ -176,9 +176,9 @@ namespace MBSim {
 
   Frame* Body::getFrame(const string &name_, bool check) {
     unsigned int i;
-    cout << getName() << endl;
+    //cout << getName() << endl;
     for(i=0; i<frame.size(); i++) {
-      cout << frame[i]->getName() << endl;
+      //cout << frame[i]->getName() << endl;
       if(frame[i]->getName() == name_)
         return frame[i];
     }             

@@ -51,7 +51,7 @@ namespace MBSim {
        * \param name of rigid body
        */
       RigidBody(const std::string &name);
-      
+
       /**
        * \brief destructor
        */
