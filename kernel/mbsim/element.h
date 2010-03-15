@@ -221,7 +221,7 @@ namespace MBSim {
        * \brief a general element search by path
        */
       virtual Element* getByPathSearch(std::string path) {return 0; }
-      
+
       // some convenience function for XML
       static double getDouble(TiXmlElement *e);
       static int getInt(TiXmlElement *e);

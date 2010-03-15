@@ -171,27 +171,27 @@ namespace MBSim {
       if(fPJR==0) {
         Mat JR(3,0);
 
-	if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
-	  JR.resize() = Vec("[0;0;1]");
-	else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
-	  JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-	else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
-	  fPJR = new JRotationAboutAxesYZ(uSize[0]);
-	  fPdJR = new JdRotationAboutAxesYZ(uSize[0]);
-	}
-	else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
-	  fPJR = new JRotationAboutAxesXY(uSize[0]);
-	  fPdJR = new JdRotationAboutAxesXY(uSize[0]);
-	}
-	else if(dynamic_cast<CardanAngles*>(fAPK)) {
-	  JR.resize() << DiagMat(3,INIT,1);
-	  if(cb) {
-	    fT = new TCardanAngles2(qSize,uSize[0]);
-	  }
-	  else {
-	    fT = new TCardanAngles(qSize,uSize[0]);
-	  }
-	}
+        if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
+          JR.resize() = Vec("[0;0;1]");
+        else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
+          JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+        else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
+          fPJR = new JRotationAboutAxesYZ(uSize[0]);
+          fPdJR = new JdRotationAboutAxesYZ(uSize[0]);
+        }
+        else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
+          fPJR = new JRotationAboutAxesXY(uSize[0]);
+          fPdJR = new JdRotationAboutAxesXY(uSize[0]);
+        }
+        else if(dynamic_cast<CardanAngles*>(fAPK)) {
+          JR.resize() << DiagMat(3,INIT,1);
+          if(cb) {
+            fT = new TCardanAngles2(qSize,uSize[0]);
+          }
+          else {
+            fT = new TCardanAngles(qSize,uSize[0]);
+          }
+        }
 
         Mat JRR(3, uSize[0]);
         PJR(Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
@@ -432,16 +432,16 @@ namespace MBSim {
 
   void RigidBody::updateInverseKineticsJacobiansForSelectedFrame(double t) {
     //if(forceDir.cols()+momentDir.cols()) {
-      SqrMat tWrPK = tilde(WrPK);
+    SqrMat tWrPK = tilde(WrPK);
     //  frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     //  frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
 
-      frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
-      frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
-      frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJTs;
-      frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJRs;
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJTs;
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJRs;
     //} else 
-      //updateJacobiansForSelectedFrame(t);
+    //updateJacobiansForSelectedFrame(t);
   }
 
   void RigidBody::setForceDirection(const Mat &fd) {
