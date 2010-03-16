@@ -726,8 +726,9 @@ namespace MBSim {
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
       (**i).updatehRef(h,hLink,j);
 
-    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
-      (**i).updatehRef(h,hLink,j);
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      if ((**i).hasSmoothPart())
+        (**i).updatehRef(h,hLink,j);
   }
 
   void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {
