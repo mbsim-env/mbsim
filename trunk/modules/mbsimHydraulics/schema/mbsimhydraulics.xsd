@@ -755,6 +755,43 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="UnidirectionalPressureLoss" abstract="true" substitutionGroup="PressureLoss" type="UnidirectionalPressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UnidirectionalPressureLossType">
+    <xs:complexContent>
+      <xs:extension base="PressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="UnidirectionalZetaPressureLoss" substitutionGroup="UnidirectionalPressureLoss" type="UnidirectionalZetaPressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UnidirectionalZetaPressureLossType">
+    <xs:complexContent>
+      <xs:extension base="UnidirectionalPressureLossType">
+        <xs:sequence>
+          <xs:element name="zeta" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
   <xs:element name="HLine" abstract="true" substitutionGroup="mbsim:Object" type="HLineType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -950,6 +987,43 @@
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Wenn gesetzt, so erfolgt eine Sperrung des Durchflusses durch numerische Nebenbedingungen.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:element name="UnidirectionalRigidLine" substitutionGroup="RigidLine" type="UnidirectionalRigidLineType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        TODO
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UnidirectionalRigidLineType">
+    <xs:complexContent>
+      <xs:extension base="RigidLineType">
+        <xs:sequence>
+          <xs:element name="unidirectionalPressureLoss">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="UnidirectionalPressureLoss" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Wenn gesetzt, so erfolgt eine Regularisierung des Druckverlustes. Andernfalls mengenwertig --> TimeStepping oder Ereignisbasiert.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="minimalPressureDrop" type="pv:pressureScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Minimaler Druckverlust. Solange dieser Wert nicht erreicht wird, wird kein Druckverlust in das Modell eingebracht.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>

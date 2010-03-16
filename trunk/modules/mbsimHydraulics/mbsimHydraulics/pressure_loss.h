@@ -252,6 +252,25 @@ namespace MBSimHydraulics {
   };
 
 
+  /*! UnidirectionalPressureLoss */
+  class UnidirectionalPressureLoss : public PressureLoss {
+    public:
+      UnidirectionalPressureLoss() : PressureLoss() {}
+  };
+
+
+  /*! RelativeAreaZetaClosablePressureLoss */
+  class UnidirectionalZetaPressureLoss : public UnidirectionalPressureLoss {
+    public:
+      UnidirectionalZetaPressureLoss() : UnidirectionalPressureLoss(), c(0) {}
+      void setZeta(double zeta_) {c=zeta_; }
+      virtual double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double c;
+  };
+
+
 //  //  class PositiveFlowLimittingPressureLoss : public VariablePressureLoss {
 //  //    public:
 //  //      PositiveFlowLimittingPressureLoss(const std::string &name, Signal * checkSizeSignal) : VariablePressureLoss(name, checkSizeSignal) {}

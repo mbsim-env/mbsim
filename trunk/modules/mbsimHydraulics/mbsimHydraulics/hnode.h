@@ -173,8 +173,6 @@ namespace MBSimHydraulics {
       void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize() {rFactorSize=1; }
 
-      void updatewbRef(const fmatvec::Vec& wbParent);
-
       void updategd(double t);
       void updateW(double t);
 
@@ -220,8 +218,6 @@ namespace MBSimHydraulics {
       void init(MBSim::InitStage stage);
       void initializeUsingXML(TiXmlElement *element);
       void plot(double t, double dt);
-
-      void updatewbRef(const fmatvec::Vec& wbParent);
 
       void checkActiveg();
       void checkActivegdn();
