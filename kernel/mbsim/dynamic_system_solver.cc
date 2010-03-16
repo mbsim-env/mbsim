@@ -295,9 +295,9 @@ namespace MBSim {
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
       updatezdRef(zdParent);
-      updatelaRef(laParent); // TODO why double?
-      updategRef(gParent); // TODO why double?
-      updategdRef(gdParent); // TODO why double?
+      updatelaRef(laParent);
+      updategRef(gParent);
+      updategdRef(gdParent);
       updatehRef(hParent,hObjectParent,hLinkParent);
       updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
       updatedhduRef(dhduObjectParent,dhduLinkParent);
@@ -306,9 +306,6 @@ namespace MBSim {
       updateWRef(WParent);
       updateVRef(VParent);
       updatewbRef(wbParent);
-      updategRef(gParent); // TODO why double?
-      updategdRef(gdParent); // TODO why double?
-      updatelaRef(laParent); // TODO why double?
       if(uSize[0] != uSize[1]) {
         resizeJacobians(1);
         updatelaInverseKineticsRef(laInverseKineticsParent);
