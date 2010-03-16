@@ -34,6 +34,7 @@ namespace MBSimHydraulics {
   class LinePressureLoss;
   class ClosablePressureLoss;
   class LeakagePressureLoss;
+  class UnidirectionalPressureLoss;
 
   /*! RigidLinePressureLoss */
   class RigidLinePressureLoss : public MBSim::Link {
@@ -42,6 +43,8 @@ namespace MBSimHydraulics {
       ~RigidLinePressureLoss();
       virtual std::string getType() const { return "RigidLinePressureLoss"; }
       void plot(double t, double dt);
+
+      bool hasSmoothPart() const {return bilateral; }
 
       void init(MBSim::InitStage stage);
       // ================================
@@ -66,7 +69,7 @@ namespace MBSimHydraulics {
       void updateg(double t); /* zdotStandard */
       void checkActiveg(); /* update */
       bool gActiveChanged(); /* update */
-      bool isActive() const {return ((unilateral || bilateral)?active:false); } 
+      bool isActive() const {return active; }
       void calcgdSizeActive() {gdSize=1; }
       void calclaSize() {laSize=1; }
       void calclaSizeForActiveg() {laSize=0; } // event-driven
@@ -97,13 +100,14 @@ namespace MBSimHydraulics {
 
     private:
       RigidHLine * line;
-      bool isActive0;
+      bool active, active0;
       bool unilateral, bilateral;
-      bool active;
-      double pLoss, gdn, gdd;
+      double gdn, gdd;
+      double dpMin;
       LinePressureLoss * linePressureLoss;
       ClosablePressureLoss * closablePressureLoss;
       LeakagePressureLoss * leakagePressureLoss;
+      UnidirectionalPressureLoss * unidirectionalPressureLoss;
 
       MBSim::GeneralizedForceLaw * gfl;
       MBSim::GeneralizedImpactLaw * gil;

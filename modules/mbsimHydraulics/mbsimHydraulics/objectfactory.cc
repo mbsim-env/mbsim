@@ -77,6 +77,8 @@ namespace MBSimHydraulics {
       return new EccentricCircularLeakagePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RealCircularLeakagePressureLoss")
       return new RealCircularLeakagePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"UnidirectionalZetaPressureLoss")
+      return new UnidirectionalZetaPressureLoss();
     return 0;
   }
 
@@ -87,6 +89,8 @@ namespace MBSimHydraulics {
       return new RigidLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ClosableRigidLine")
       return new ClosableRigidLine(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"UnidirectionalRigidLine")
+      return new UnidirectionalRigidLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"PlaneLeakageLine")
       return new PlaneLeakageLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"CircularLeakageLine")

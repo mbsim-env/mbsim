@@ -466,11 +466,6 @@ namespace MBSimHydraulics {
     }
   }
 
-  void RigidNode::updatewbRef(const Vec &wbParent) {
-    Link::updatewbRef(wbParent);
-    gd >> wb;
-  }
-
   void RigidNode::updategd(double t) {
     HNode::updategd(t);
     if (t<epsroot()) {
@@ -695,11 +690,6 @@ namespace MBSimHydraulics {
     setCavitationPressure(getDouble(e));
   }
 
-  void RigidCavitationNode::updatewbRef(const Vec &wbParent) {
-    Link::updatewbRef(wbParent);
-    gd >> wb;
-  }
-  
   void RigidCavitationNode::checkActiveg() {
     active=(g(0)<=0);
   }

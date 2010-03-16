@@ -437,6 +437,26 @@ namespace MBSimHydraulics {
   }
 
 
+  double UnidirectionalZetaPressureLoss::operator()(const double& Q, const void * line) {
+    if (!initialized) {
+      const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      const double d=((const RigidLine*)(line))->getDiameter();
+      const double A=M_PI*d*d/4.;
+      c*=rho/2./A/A;
+      initialized=true;
+    }
+    const double pressureLoss=c*Q*abs(Q);
+    const double pressureLossMin=-((const UnidirectionalRigidLine*)(line))->getMinimalPressureDrop();
+    return pressureLoss<pressureLossMin?pressureLoss:0;
+  }
+
+  void UnidirectionalZetaPressureLoss::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
+    setZeta(Element::getDouble(e));
+  }
+
+
   //  //  void PositiveFlowLimittingPressureLoss::update(const double& Q) {
   //  //    QLimit=checkSizeSignal->getSignal()(0);
   //  //    setClosed(Q>QLimit);
