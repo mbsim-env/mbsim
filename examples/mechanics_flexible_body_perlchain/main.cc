@@ -9,25 +9,27 @@ using namespace MBSim;
 using namespace std;
 
 int main(int argc, char* argv[]) {
+#ifdef _OPENMP 
+    omp_set_num_threads(1);
+#endif
 
   DynamicSystemSolver *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
-  sys->setConstraintSolver(RootFinding);
-  sys->setImpactSolver(RootFinding);
-  sys->setLinAlg(PseudoInverse);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1e-3);
+  integrator.setEndTime(5e-4);
   integrator.setStepSize(1e-6);
   integrator.setPlotStepSize(1e-4);
 
 #ifdef _OPENMP
   double start = omp_get_wtime();
 #endif
+
   integrator.integrate(*sys);
+
 #ifdef _OPENMP
   double elapsed = omp_get_wtime() -start;
   cout << "CPU-Time = " << elapsed << endl;
@@ -40,6 +42,5 @@ int main(int argc, char* argv[]) {
   delete sys;
 
   return 0;
-
 }
 
