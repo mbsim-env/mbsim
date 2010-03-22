@@ -45,8 +45,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
-                                         , saved_ref1(""), saved_ref2("")
-                                         {}
+                                           , saved_ref1(""), saved_ref2("")
+                                           {}
 
   Contact::~Contact() {
     if(contactKinematics) { delete contactKinematics; contactKinematics=0; }
@@ -67,6 +67,12 @@ namespace MBSim {
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    for(vector<OpenMBV::Arrow *>::iterator i = openMBVNormalForceArrow.begin(); i != openMBVNormalForceArrow.end(); ++i)
+      delete *i;
+    for(vector<OpenMBV::Arrow *>::iterator i = openMBVFrictionArrow.begin(); i != openMBVFrictionArrow.end(); ++i)
+      delete *i;
+#endif
   }
 
   void Contact::updatewb(double t) {
@@ -364,6 +370,7 @@ namespace MBSim {
       gdd.resize(gd.size());
       gdn.resize(gd.size());
 
+      for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i) delete[] *i;
       cpData.clear(); // clear container first, because InitStage resize is called twice (before and after the reorganization)
       for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
         if(getFrictionDirections() == 0)
@@ -1097,7 +1104,7 @@ namespace MBSim {
           else 
             gdActive[k][1] = false;
         }
-	else
+        else
           gdActive[k][1] = false;
       }
     }
@@ -1134,7 +1141,7 @@ namespace MBSim {
           if(gdActive[k][1]) {
             gdActive[k][1] = false;
           } 
-	  else if(nrm2(gdk[k](1,getFrictionDirections()))<gdTol) {
+          else if(nrm2(gdk[k](1,getFrictionDirections()))<gdTol) {
             gdActive[k][1] = true;
             ds->setSticking(true);
           }
