@@ -216,6 +216,8 @@ namespace MBSim {
 # endif
                                               {}
 
+      virtual ~RigidContour();
+
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "RigidContour"; }
       virtual void plot(double t, double dt = 1);

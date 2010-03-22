@@ -70,6 +70,12 @@ namespace MBSim {
   }
 
   /* Rigid Contour */
+  RigidContour::~RigidContour() {
+# ifdef HAVE_OPENMBVCPPINTERFACE
+    if(openMBVRigidBody) delete openMBVRigidBody;
+# endif
+  }
+
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
     if(ff==velocity || ff==velocities) {
       Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
@@ -99,14 +105,14 @@ namespace MBSim {
       Contour::init(stage);
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
-  
+
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
+#ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
           openMBVRigidBody->setName(name);
           parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
         }
-  #endif
+#endif
         Contour::init(stage);
       }
     }
