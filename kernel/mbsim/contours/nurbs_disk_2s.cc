@@ -35,12 +35,14 @@ using namespace fmatvec;
 namespace MBSim {
       
   NurbsDisk2s::~NurbsDisk2s() {
+#ifdef HAVE_NURBS
     if(Surface) { delete Surface; Surface=0; }
     if(SurfaceVelocities) { delete SurfaceVelocities; SurfaceVelocities=0; }
     if(uvec) { delete uvec; uvec=0; }
     if(uVec) { delete uVec; uVec=0; }
     if(vvec) { delete vvec; vvec=0; }
     if(vVec) { delete vVec; vVec=0; }
+#endif
   }
 
   void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
