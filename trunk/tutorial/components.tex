@@ -54,7 +54,7 @@ Hierarchically \texttt{Object}s and \texttt{Link}s belong to \texttt{DynamicSyst
   	\caption{Dynamic system type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:dynamicsystem}
 \end{figure}
-Shaded one can see interfaces for the different components of the modelling equations
+Shaded one can see interfaces for the different components of the e.g. smooth modelling equations
 \begin{itemize}
 \item \texttt{ExtraDynamicInterface} 
   \begin{align}
@@ -124,7 +124,7 @@ Important settings:
 \end{itemize}
 %
 \subsubsection{Frames}
-\texttt{Frame}s are a basic concept in the kernel of \MBSim{} to define an interface for \MBSim{} multibody components concerning kinematic and kinetic expressions. New \texttt{Frame}s can be added arbitrarily and recursively based on a predecessor \texttt{Frame}. That is why there has to be a first \texttt{Frame} for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary \texttt{Frame} \texttt{"I"} (inertia frame).\par
+\texttt{Frame}s are a basic concept in the kernel of \MBSim{} to define an interface for \MBSim{} multibody components concerning kinematic and kinetic expressions. New \texttt{Frame}s can be added arbitrarily and recursively based on a predecessor \texttt{Frame}. That is why there has to be a first \texttt{Frame} for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary \texttt{Frame} \texttt{"I"} (inertial frame).\par
 Important settings next to position and Cartesian orientation are defined according to the parametrisation
 \begin{align*}
   	\begin{pmatrix}	\rs{_I}[_P]{\va}\\ \rs{_I}{\vPsi}\end{pmatrix} 
