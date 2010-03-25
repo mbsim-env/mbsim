@@ -25,7 +25,7 @@
 
 namespace MBSim {
 
-  class NurbsDisk2s;
+  class NurbsDisk2sMFRMindlin;
 
   /**
    * \brief condensation setting for clamping to rigid body motion
@@ -105,7 +105,7 @@ namespace MBSim {
       virtual std::string getType() const { return "FlexibleBody2s13MFRMindlin"; }
       /***************************************************/
 
-      /* GETTER / SETTER */
+      
       void setRadius(double Ri_,double Ra_) { Ri = Ri_; Ra = Ra_; }		
       void setEModul(double E_) { E = E_; }				
       void setPoissonRatio(double nu_) { nu = nu_; }			
@@ -117,7 +117,9 @@ namespace MBSim {
       double getOuterRadius() const { return Ra; }
       double getAzimuthalDegree() const { return degU; }
       double getRadialDegree() const { return degV; }
-      void setReferenceInertia(double m0_, double J0_) { m0 = m0_; J0 = J0_; }	
+      fmatvec::SqrMat getA() const {return A;}
+      fmatvec::SqrMat getG() const {return G;}
+      void setReferenceInertia(double m0_, fmatvec::SymMat J0_) { m0 = m0_; J0 = J0_; }
       void setLockType(LockType LT_) { LType = LT_; }
       /***************************************************/
 
@@ -187,9 +189,14 @@ namespace MBSim {
       double dr, dj;
 
       /**
-       * \brief mass and inertia of the attached shaft
+       * \brief mass of the attached shaft
        */
-      double m0, J0;
+      double m0;
+
+      /**
+       * \brief inertia of the attached shaft
+       */
+      fmatvec::SymMat J0;
 
       /**
        * \brief degree of surface interpolation in radial and azimuthal direction
@@ -216,7 +223,7 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat MSave; 
+      fmatvec::SymMat MConst;
 
       /**
        * \brief stiffness matrix
@@ -230,11 +237,16 @@ namespace MBSim {
 
       /**
        * \brief matrix mapping nodes and coordinates (size number of nodes x number of node coordinates)
+       *
+       * NodeCoordinates(GlobalNodeNumber,0) = radius (at the node)
+       * NodeCoordinates(GlobalNodeNumber,1) = angle  (at the node)
        */
       fmatvec::Mat NodeCoordinates; 
 
       /** 
        * \brief matrix mapping elements and nodes (size number of elements x number of nodes per elements) 
+       *
+       * ElementNodeList(Element,LocalNodeNumber) = globalNodeNumber;
        */
       fmatvec::Matrix<fmatvec::General,int> ElementNodeList;
 
@@ -260,16 +272,52 @@ namespace MBSim {
        */
       fmatvec::Vec qext, uext; 
 
+      /**
+       * \brief Transformation Matrix of coordinates of the moving frame of reference into the reference frame
+       */
+      fmatvec::SqrMat A;
+
       /** 
-       * \brief Jacobian for condensation with size Dofs x qSize
+       * \brief Transformation Matrix of the time derivates of the KARDAN angles into tho angular velocity in reference coordinates
+       */
+      fmatvec::SqrMat G;
+
+      /**
+       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       */
+      fmatvec::Mat N_compl;
+
+      /**
+       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       */
+      fmatvec::SqrMat N_ij[3][3];
+
+      /**
+       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       */
+      fmatvec::RowVec NR_ij[3][3];
+
+      /**
+       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       */
+      fmatvec::Vec R_compl;
+
+      /**
+       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       */
+      fmatvec::SymMat R_ij;
+
+      /*
+	   * \brief Jacobian for condensation with size Dofs x qSize
        */
       fmatvec::Mat Jext;
 
       /**
        * \brief contour for contact description
        */
-      NurbsDisk2s *contour;
+      NurbsDisk2sMFRMindlin *contour;
 
+      fmatvec::SymMat M_old;//for testing
       /*! 
        * \brief detect involved element for contact description
        * \param parametrisation vector (radial / azimuthal)
@@ -277,11 +325,31 @@ namespace MBSim {
       void BuildElement(const fmatvec::Vec &s);
 
       /*! 
-       * \brief calculate constant mass and stiffness matrix
+       * \brief calculate the matrices for the first time
        */
       void initMatrices();
 
+      /*!
+       * \brief calculate constant stiffness matrix
+       */
+      void computeStiffnessMatrix();
+
       /*! 
+       * \brief calculate constant parts of the mass matrix
+       */
+      void computeConstantMassMatrixParts();
+
+      /*!
+       * \brief update the transformation matrices A and G
+       */
+      void updateAG();
+
+      /*!
+       * \brief Transformation of cylindrical coordinates into Cartesian coordinates
+       */
+      fmatvec::SqrMat TransformationMatrix(const double &phi);
+
+      /*!
        * \return thickness of disk at radial coordinate
        * \param radial coordinate
        */

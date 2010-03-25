@@ -49,6 +49,12 @@ namespace MBSim {
   };
 
 
+  /*! 
+   * \brief vector valued quadratic function with one scalar argument
+   * \author Markus Schneider
+   * \date 2010-03-25 some comments (Thorsten Schindler)
+   * \todo add deletes TODO
+   */
   class QuadraticFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
     public:
       QuadraticFunction1_VS();
@@ -85,6 +91,12 @@ namespace MBSim {
   };
 
 
+  /*! 
+   * \brief vector valued sine function with one scalar argument
+   * \author Markus Schneider
+   * \date 2010-03-25 some comments (Thorsten Schindler)
+   * \todo add deletes TODO
+   */
   class SinusFunction1_VS : public DifferentiableFunction1<fmatvec::Vec> {
     public:
       SinusFunction1_VS();

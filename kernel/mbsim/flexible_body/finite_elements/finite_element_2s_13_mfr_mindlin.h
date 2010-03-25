@@ -55,7 +55,6 @@ namespace MBSim {
       virtual const fmatvec::SqrMat& getdhdu() const;
       virtual int getqSize() const;
       virtual int getuSize() const;
-      virtual void computeM(const fmatvec::Vec& q); //TODO why not MEl too??
       virtual void computeh(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual void computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u);
       virtual double computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u);
@@ -69,28 +68,75 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      const fmatvec::SymMat& getK() const;  //TODO: s.u.
-      const fmatvec::SymMat& getM() const; //TODO: why not MEl??
+      const fmatvec::SymMat& getK() const;
+      const fmatvec::SymMat& getM() const; //TODO: not needed, but discretization_interface wants it ...
+      const fmatvec::SymMat& getM_RR() const;
+      const fmatvec::Mat& getN_compl() const;
+      const fmatvec::SqrMat& getN_ij(int i, int j)    const; 
+      const fmatvec::RowVec& getNR_ij(int i, int j)   const;
+      const fmatvec::Vec& getR_compl()       const;
+      const fmatvec::SymMat& getR_ij()    const; 
       void setEModul(double E_);
       void setPoissonRatio(double nu_);
       void setDensity(double rho_);
       void setShearCorrectionFactor(double alp_);
       /***************************************************/
 
-//TODO:
       /*!
        * \brief computes mass matrix
        * \param radial and azimuthal coordinates of corner nodes
-       * \param inner thickness of whole disk
-       * \param outer thickness of whole disk
        */
-      void computeConstantSystemMatrices(const fmatvec::Vec &NodeCoordinates,double d1,double d2);
+      void computeConstantSystemMatrices(const fmatvec::Vec &NodeCoordinates);
 
       /*!
        * \brief computes stiffnes matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeStiffnesMatrix(const fmatvec::Vec &NodeCoordinates,double d1,double d2);
+      void computeStiffnesMatrix(const fmatvec::Vec &NodeCoordinates);
+
+      /*!
+       * \brief computes stiffnes matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeM(const fmatvec::Vec &NodeCoordinates);    
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeM_RR(const fmatvec::Vec &NodeCoordinates);
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeN_compl(const fmatvec::Vec &NodeCoordinates);
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeN_ij(const fmatvec::Vec &NodeCoordinates);
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeNR_ij(const fmatvec::Vec &NodeCoordinates);
+      
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeR(const fmatvec::Vec &NodeCoordinates);
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeR_ij(const fmatvec::Vec &NodeCoordinates);
+
+
 
 //TODO:
       /*!
@@ -134,7 +180,7 @@ namespace MBSim {
 
 
       /**
-       * \brief geometric factors of the disk //TODO: hat hier nix verloren?
+       * \brief geometric factors of the disk 
        */
       double f0, f1, f2;
 
@@ -162,20 +208,51 @@ namespace MBSim {
        * \brief number of nodes
        */
       int Nodes;
+      
+      /**
+       * \brief stiffness elementmatrix
+       */
+      fmatvec::SymMat K;
+      
+      /**
+       * \brief part of the mass matrix
+       */
+      fmatvec::SymMat M_RR;
 
       /**
-       * \brief mass and stiffness elementmatrix
+       * \brief part of the mass matrix
        */
-      fmatvec::SymMat M, K; //TODO: why not KEl and why K=14x14?
+      fmatvec::Mat N_compl;
+
+      /**
+       * \brief part of the mass matrix
+       */
+      fmatvec::SqrMat N_ij[3][3];
+
+      /**
+       * \brief part of the mass matrix
+       */
+       fmatvec::RowVec NR_ij[3][3];
+
+      /**
+       * \brief part of the mass matrix
+       */
+      fmatvec::Vec R_compl;  //TODO: performed global or local??
+
+      /**
+       * \brief part of the mass matrix
+       */
+      fmatvec::SymMat R_ij;
+
   };
 
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { return M; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
+  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& NodeCoordinates){ throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); }
   inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
   inline int FiniteElement2s13MFRMindlin::getqSize() const { return RefDofs + 4*NodeDofs; }
   inline int FiniteElement2s13MFRMindlin::getuSize() const { return RefDofs + 4*NodeDofs; }
-  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& q) { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); } 
   inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
   inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
   inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
@@ -188,6 +265,12 @@ namespace MBSim {
   inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const ContourPointData& data) { throw new MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
 
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return K; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return M_RR; }
+  inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return N_compl; }
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return N_ij[i][j]; }
+  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const {return NR_ij[i][j]; }
+  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::getR_compl() const { return R_compl; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getR_ij() const { return R_ij; }
   inline void FiniteElement2s13MFRMindlin::setEModul(double E_) { E = E_; }
   inline void FiniteElement2s13MFRMindlin::setPoissonRatio(double nu_) { nu = nu_; }
   inline void FiniteElement2s13MFRMindlin::setDensity(double rho_) { rho = rho_; }

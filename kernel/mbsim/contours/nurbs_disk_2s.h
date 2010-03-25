@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -84,7 +84,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      virtual ~NurbsDisk2s() {}  
+      virtual ~NurbsDisk2s();  
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "NurbsDisk2s"; }
@@ -168,9 +168,9 @@ namespace MBSim {
 
 #ifdef HAVE_NURBS
       /*! 
-       * \brief interpolates the Jacobians of the surface with the node-data from the body
+       * \brief interpolates the Jacobians of translation of the surface with the node-data from the body
        */
-      void computeSurfaceJacobians();
+      void computeSurfaceJacobiansOfTranslation();
 #endif
 
 #ifdef HAVE_NURBS
@@ -244,7 +244,7 @@ namespace MBSim {
       /**
        * \brief interpolated Jacobians on the surface 
        */
-      std::vector<PlNurbsSurfaced> SurfaceJacobians; // size = number of generalized coordinates
+      std::vector<PlNurbsSurfaced> SurfaceJacobiansOfTranslation; // size = number of generalized coordinates
 
       /**
        * \brief knot vectors, used for the U und V coordinates of the surface

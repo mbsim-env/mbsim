@@ -32,6 +32,7 @@ namespace MBSim {
    * \date 2006-09-05 verified with matlab /octave (Robert Huber)
    * \date 2008-05-21 C++ beauty treatment, PLinear (Thorsten Schindler)
    * \date 2009-08-11 kernel_dev (Thorsten Schindler)
+   * \todo add deletes TODO
    * 
    * Spline / PP-Form info
    * Piecewise polynomial: c0* xloc^n + c1* xloc^(n-1) + c2* xloc^(n-2) + ... + cn

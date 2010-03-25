@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -77,6 +77,8 @@ namespace MBSim {
    * \brief root function for pairing Contour1s and Point
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
+   * \todo improve performance statement TODO
    */
   class FuncPairContour1sPoint : public DistanceFunction<double,double> {
     public:
@@ -95,11 +97,11 @@ namespace MBSim {
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
-        if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) {
+        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
           cp.getLagrangeParameterPosition()(0) = alpha;
           contour->computeRootFunctionPosition(cp);
           contour->computeRootFunctionFirstTangent(cp);
-        }
+        //}
         return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
       }
       /*************************************************/
@@ -121,6 +123,8 @@ namespace MBSim {
    * \brief root function for pairing CylinderFlexible and CircleHollow
    * \author Roland Zander
    * \date 2009-04-21 contour point data included (Thorsten Schindler)
+   * \date 2010-03-25 contour point data saving removed (Thorsten Schindler)
+   * \todo improve performance statement TODO
    */
   class FuncPairContour1sCircleHollow : public DistanceFunction<double,double> {
     public:
@@ -138,10 +142,10 @@ namespace MBSim {
       }
 
       fmatvec::Vec computeWrD(const double &alpha) {
-        if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) {
+        //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
           cp.getLagrangeParameterPosition()(0) = alpha;
           contour->computeRootFunctionPosition(cp);
-        }
+        //}
         return circle->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
       }
       /*************************************************/

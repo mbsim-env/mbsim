@@ -110,7 +110,7 @@ namespace MBSim {
 #ifdef HAVE_NURBS
     contour->computeSurface(); 
     contour->computeSurfaceVelocities();
-    contour->computeSurfaceJacobians();
+    contour->computeSurfaceJacobiansOfTranslation();
 #endif
   }
 
