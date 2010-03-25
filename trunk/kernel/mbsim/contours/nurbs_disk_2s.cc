@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -33,6 +33,15 @@ using namespace std;
 using namespace fmatvec;
 
 namespace MBSim {
+      
+  NurbsDisk2s::~NurbsDisk2s() {
+    if(Surface) { delete Surface; Surface=0; }
+    if(SurfaceVelocities) { delete SurfaceVelocities; SurfaceVelocities=0; }
+    if(uvec) { delete uvec; uvec=0; }
+    if(uVec) { delete uVec; uVec=0; }
+    if(vvec) { delete vvec; vvec=0; }
+    if(vVec) { delete vVec; vVec=0; }
+  }
 
   void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
 #ifdef HAVE_NURBS
@@ -96,7 +105,7 @@ namespace MBSim {
     cp.getFrameOfReference().getJacobianOfTranslation().resize(3,nj*nr*3+2); 
 
     for(int k=0; k<nj*nr*3+2; k++) {
-      Point3Dd TmpPt = SurfaceJacobians[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
+      Point3Dd TmpPt = SurfaceJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
 
       cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPt.x();
       cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPt.y();
@@ -128,7 +137,7 @@ namespace MBSim {
         }
       }
 
-      for(int k=0; k<nr*nj*3+2; k++) SurfaceJacobians.push_back(PlNurbsSurfaced());
+      for(int k=0; k<nr*nj*3+2; k++) SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
 
       computeSurface();
     }
@@ -326,7 +335,7 @@ namespace MBSim {
 #endif
 
 #ifdef HAVE_NURBS 
-  void NurbsDisk2s::computeSurfaceJacobians() {
+  void NurbsDisk2s::computeSurfaceJacobiansOfTranslation() {
     PLib::Matrix<Point3Dd> Nodelist(nj+degU,nr+1); // list of node-data for the nurbs interpolation 
 
     // gets Jacobians on the nodes from body for interpolation
@@ -347,7 +356,7 @@ namespace MBSim {
         }
       }
 
-      SurfaceJacobians[k].globalInterpClosedU_OwnKnotVecs(Nodelist, *uVec, *vVec, *uvec, *vvec, degU, degV);
+      SurfaceJacobiansOfTranslation[k].globalInterpClosedU_OwnKnotVecs(Nodelist, *uVec, *vVec, *uvec, *vvec, degU, degV);
     }
   }
 #endif

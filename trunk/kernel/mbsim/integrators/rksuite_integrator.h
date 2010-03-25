@@ -37,7 +37,7 @@ namespace MBSim {
       /**
        * \brief destructor
        */
-      ~RKSuiteIntegrator() {}
+      virtual ~RKSuiteIntegrator() { if(dworkarray) { delete[] dworkarray; dworkarray=0; } }
 
       void preIntegrate(DynamicSystemSolver& system);
       void subIntegrate(DynamicSystemSolver& system, double tStop);
