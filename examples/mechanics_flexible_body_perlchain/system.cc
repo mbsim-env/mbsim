@@ -33,7 +33,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I = 1./12.*b0*b0*b0*b0; // moment inertia
 
   // input infty-norm balls (cuboids)
-  int nBalls = 160; // number of balls
+  int nBalls = 80; // number of balls
   double mass = 0.025; // mass of ball
 
   // flexible ring
