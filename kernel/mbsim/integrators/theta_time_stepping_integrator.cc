@@ -170,5 +170,19 @@ namespace MBSim {
     cout << endl;
   }
 
+  void ThetaTimeSteppingIntegrator::initializeUsingXML(TiXmlElement *element) {
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMINTNS"stepSize");
+    setStepSize(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"theta");
+    const double theta=Element::getDouble(e);
+    assert(theta>=0);
+    assert(theta<=1);
+    setTheta(theta);
+    e=element->FirstChildElement(MBSIMINTNS"driftCompensation");
+    setDriftCompensation(Element::getBool(e));
+  }
+
 }
 
