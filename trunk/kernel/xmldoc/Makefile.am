@@ -13,14 +13,14 @@ xml/index.xml: ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ..
 	doxygen
 
 mbsim/mbsim.tex: $(USEDOXYGENDEP) ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsim.xsd xml figures:../doc MBSim MBSim:: $(USEDOXYGEN)
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSim/mbsim.xsd xml figures:../doc MBSim MBSim:: $(USEDOXYGEN)
 
 mbsimintegrator/mbsimintegrator.tex: $(USEDOXYGENDEP) ../schema/mbsim.xsd ../schema/mbsimintegrator.xsd ../mbsim/*.h ../mbsim/integrators/*.h
-	$$(pkg-config mbxmlutils --variable BINDIR)/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim:: $(USEDOXYGEN)
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd xml figures:../doc MBSim-Integrator MBSim:: $(USEDOXYGEN)
 
 
 install:
-	cp -r http___* $$(pkg-config mbxmlutils --variable DOCDIR)
+	cp -r http___* @MBXMLUTILSDOCDIR@
 
 
 
