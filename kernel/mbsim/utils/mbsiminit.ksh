@@ -23,14 +23,14 @@
 if test -z $MBSIMPREFIX; then
   echo "ERROR! You must set the environment variable MBSIMPREFIX first."
 else
-  MBXMLUTILSSCHEMADIR=${MBSIMPREFIX}/share/mbxmlutils/schema
-  MBXMLUTILSXMLDIR=${MBSIMPREFIX}/share/mbxmlutils/xml
-  MBXMLUTILSOCTAVEDIR=${MBSIMPREFIX}/share/mbxmlutils/octave
-  HDF5SERIEDATADIR=${MBSIMPREFIX}/share
-  HDF5SERIEH5DUMP=${MBSIMPREFIX}/bin/h5dump
-  MBSIMBINDIR=${MBSIMPREFIX}/bin
-  MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin
-  HDF5SERIEXSLTPROC=${MBSIMPREFIX}/bin/xsltproc
-  mbsimflatxml -h > /dev/null 2> /dev/null || LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MBSIMPREFIX}/lib
-  mbsimflatxml -h > /dev/null 2> /dev/null || PATH=$PATH:${MBSIMPREFIX}/bin
+  export MBXMLUTILSSCHEMADIR=${MBSIMPREFIX}/share/mbxmlutils/schema
+  export MBXMLUTILSXMLDIR=${MBSIMPREFIX}/share/mbxmlutils/xml
+  export MBXMLUTILSOCTAVEDIR=${MBSIMPREFIX}/share/mbxmlutils/octave
+  export HDF5SERIEDATADIR=${MBSIMPREFIX}/share
+  export HDF5SERIEH5DUMP=${MBSIMPREFIX}/bin/h5dump
+  export MBSIMBINDIR=${MBSIMPREFIX}/bin
+  export MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin
+  export HDF5SERIEXSLTPROC=${MBSIMPREFIX}/bin/xsltproc
+  mbsimflatxml -h > /dev/null 2> /dev/null || export PATH=$PATH:${MBSIMPREFIX}/bin
+  mbsimflatxml -h > /dev/null 2> /dev/null || export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MBSIMPREFIX}/lib
 fi
