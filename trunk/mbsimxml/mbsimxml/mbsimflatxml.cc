@@ -47,6 +47,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
     cerr<<"ERROR! Unable to load file: "<<argv[startArg]<<endl;
     return 1;
   }
+  TiXml_PostLoadFile(doc);
   TiXmlElement *e=doc->FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
@@ -94,6 +95,7 @@ int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
     cerr<<"ERROR! Unable to load file: "<<argv[startArg+1]<<endl;
     return 1;
   }
+  TiXml_PostLoadFile(doc);
   e=doc->FirstChildElement();
   TiXml_setLineNrFromProcessingInstruction(e);
   map<string,string> dummy;
