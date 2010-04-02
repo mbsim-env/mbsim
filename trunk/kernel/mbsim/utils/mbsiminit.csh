@@ -31,6 +31,6 @@ else
   setenv MBSIMBINDIR ${MBSIMPREFIX}/bin
   setenv MBXMLUTILSBINDIR ${MBSIMPREFIX}/bin
   setenv HDF5SERIEXSLTPROC ${MBSIMPREFIX}/bin/xsltproc
-  mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${MBSIMPREFIX}/lib
   mbsimflatxml -h >& /dev/null || setenv PATH ${PATH}:${MBSIMPREFIX}/bin
+  mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${MBSIMPREFIX}/lib
 endif
