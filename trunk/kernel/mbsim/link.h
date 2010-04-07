@@ -150,6 +150,11 @@ namespace MBSim {
       virtual void updatelaRef(const fmatvec::Vec& ref);
 
       /**
+       * \brief delete reference to contact force parameter of dynamic system parent
+       */
+      virtual void deletelaRef();
+
+      /**
        * \brief references to contact relative distances of dynamic system parent
        */
       virtual void updategRef(const fmatvec::Vec& ref);

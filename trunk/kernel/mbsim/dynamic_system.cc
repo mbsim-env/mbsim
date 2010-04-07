@@ -868,6 +868,9 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updatelaRef(la);
+
+    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i) 
+      (**i).deletelaRef();
   }
 
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
