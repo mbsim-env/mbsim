@@ -510,11 +510,17 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsFixpointSingle(double dt) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->solveImpactsFixpointSingle(dt); 
+//#pragma omp parallel for schedule(static) shared(dt) default(none)
+    for(int i=0; i<(int)dynamicsystem.size(); i++) {
+      try { dynamicsystem[i]->solveImpactsFixpointSingle(dt); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
 
-    for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (*i)->solveImpactsFixpointSingle(dt);
+//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedActive.size()/(10*omp_get_num_threads()))) shared(dt) default(none) if((int)linkSetValuedActive.size()>30) 
+    for(int i=0; i<(int)linkSetValuedActive.size(); i++) {
+      try { linkSetValuedActive[i]->solveImpactsFixpointSingle(dt); }
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
 
     return 0;
   }
