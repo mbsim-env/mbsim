@@ -207,9 +207,9 @@ namespace MBSim {
   void FlexibleBody1s21RCM::init(InitStage stage) {
     if(stage==unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
-  
+
       initialized = true;
-  
+
       contour1sFlexible->getFrame()->setOrientation(frameOfReference->getOrientation());
       contour1sFlexible->setAlphaStart(0); contour1sFlexible->setAlphaEnd(L);
       if(userContourNodes.size()==0) {
@@ -218,7 +218,7 @@ namespace MBSim {
         contour1sFlexible->setNodes(contourNodes);
       }
       else contour1sFlexible->setNodes(userContourNodes);
-  
+
       l0 = L/Elements;
       Vec g = frameOfReference->getOrientation()(0,0,2,1).T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
       for(int i=0;i<Elements;i++) {
@@ -342,6 +342,18 @@ namespace MBSim {
       setq0(q0Dummy);
       setu0(Vec(q0Dummy.size(),INIT,0.));
     }
+  }
+
+  void FlexibleBody1s21RCM::initInfo() {
+    FlexibleBodyContinuum<double>::init(unknownStage);
+    l0 = L/Elements;
+    Vec g = Vec("[0.;0.;0.]");
+    for(int i=0;i<Elements;i++) {
+      discretization.push_back(new FiniteElement1s21RCM(l0, A*rho, E*A, E*I, g));
+      qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+      uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+    }
+    BuildElements();
   }
 
   void FlexibleBody1s21RCM::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
