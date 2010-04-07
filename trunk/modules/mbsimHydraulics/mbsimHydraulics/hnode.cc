@@ -264,69 +264,79 @@ namespace MBSimHydraulics {
       hEnd.push_back(h[i].copy());
     }
 
-    for(unsigned int i=0; i<nLines; i++) { 
-      /** velocity dependent calculations **/
-      for(int j=0; j<connectedLines[i].sign.cols(); j++) {
-        hLink[i] = hLink0[i]; // set to old values
-        h[i] = h0[i];
+    /****************** velocity dependent calculations ***********************/
+    for(unsigned int i=0; i<nLines; i++) 
+      for(unsigned int l=0; l<nLines; l++) {
+        for(int j=0; j<connectedLines[i].sign.cols(); j++) {
+          hLink[i] = hLink0[i].copy(); // set to old values
+          h[i] = h0[i].copy();
 
-        double uParentj = connectedLines[i].line->getu()(j); // save correct position
-        connectedLines[i].line->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
-        connectedLines[i].line->updateStateDependentVariables(t); 
-        updategd(t);
-        updateh(t);
+          double uParentj = connectedLines[l].line->getu()(j); // save correct position
 
-        dhdu[i].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
-        connectedLines[i].line->getu()(j) = uParentj;
-      }
-
-      /** position dependent calculations **/
-      if(connectedLines[i].sign.cols() > 0) {
-        for(int j=0; j<connectedLines[i].line->getq().size(); j++) {
-          hLink[i] = hLink0[i]; // set to old values
-          h[i] = h0[i];
-
-          double qParentj = connectedLines[i].line->getq()(j); // save correct position
-
-          connectedLines[i].line->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
-          connectedLines[i].line->updateStateDependentVariables(t); 
-          updateg(t);
+          connectedLines[l].line->getu()(j) += epsroot(); // update with disturbed positions assuming same active links
+          connectedLines[l].line->updateStateDependentVariables(t); 
           updategd(t);
-          connectedLines[i].line->updateT(t); 
-          updateJacobians(t);
           updateh(t);
-          dhdq[i].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
-          connectedLines[i].line->getq()(j) = qParentj;
+
+          dhdu[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
+          connectedLines[l].line->getu()(j) = uParentj;
+          connectedLines[l].line->updateStateDependentVariables(t); 
         }
       }
 
-      /** time dependent calculations **/
-      hLink[i] = hLink0[i]; // set to old values
-      h[i] = h0[i];
+    /****************** position dependent calculations ***********************/
+    for(unsigned int i=0; i<nLines; i++) 
+      for(unsigned int l=0; l<nLines; l++) {
+        for(int j=0; j<connectedLines[l].line->getq().size(); j++) {
+          hLink[i] = hLink0[i].copy(); // set to old values
+          h[i] = h0[i].copy();
 
-      double t0 = t; // save correct position
+          double qParentj = connectedLines[l].line->getq()(j); // save correct position
 
-      t += epsroot(); // update with disturbed positions assuming same active links
-      connectedLines[i].line->updateStateDependentVariables(t); 
-      updateg(t);
-      updategd(t);
-      connectedLines[i].line->updateT(t); 
-      updateJacobians(t);
-      updateh(t);
+          connectedLines[l].line->getq()(j) += epsroot(); // update with disturbed positions assuming same active links
+          connectedLines[l].line->updateStateDependentVariables(t); 
+          updateg(t);
+          updategd(t);
+          connectedLines[l].line->updateT(t); 
+          updateJacobians(t);
+          updateh(t);
 
-      dhdt[i] += (hLink[i]-hLinkEnd[i])/epsroot();
-      t = t0;
-    }
+          dhdq[i*nLines+l].col(j) += (hLink[i]-hLinkEnd[i])/epsroot();
+          connectedLines[l].line->getq()(j) = qParentj;
+          connectedLines[l].line->updateStateDependentVariables(t); 
+          connectedLines[l].line->updateT(t); 
+        }
+      }
 
-    /** back to initial state **/
+    /******************** time dependent calculations ***************************/
+    // for(unsigned int i=0; i<nLines; i++) 
+    //   for(unsigned int l=0; l<nLines; l++) {
+    //     hLink[i] = hLink0[i].copy(); // set to old values
+    //     h[i] = h0[i].copy();
+
+    //     double t0 = t; // save correct position
+
+    //     t += epsroot(); // update with disturbed positions assuming same active links
+    //     connectedLines[l].line->updateStateDependentVariables(t); 
+    //     updateg(t);
+    //     updategd(t);
+    //     connectedLines[l].line->updateT(t); 
+    //     updateJacobians(t);
+    //     updateh(t);
+
+    //     dhdt[i] += (hLink[i]-hLinkEnd[i])/epsroot();
+    //     t = t0;
+    //   }
+
+    /************************ back to initial state ******************************/
     for(unsigned int i=0; i<nLines; i++) {
       connectedLines[i].line->updateStateDependentVariables(t); 
       updateg(t);
       updategd(t);
       connectedLines[i].line->updateT(t); 
       updateJacobians(t);
-      hLink[i] = hLinkEnd[i];
-      h[i] = hEnd[i];
+      hLink[i] = hLinkEnd[i].copy();
+      h[i] = hEnd[i].copy();
     }
   }
 
