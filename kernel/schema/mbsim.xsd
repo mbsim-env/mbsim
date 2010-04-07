@@ -199,6 +199,28 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- A reference form a Link to a Link somewhere in the hierarchy -->
+  <xs:simpleType name="LinkReferenceType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Definiert eine Pfadangabe zu einem <a class="link" href="mbsim:Link"><tt>&lt;Link&gt;</tt></a> an beliebiger
+        Position im Modell. Gültige Werte sind z.B. <tt>../../Group[X]/Group[X]/Link[Y]</tt>, wobei <tt>X</tt> und
+        <tt>Y</tt> geweils einen <a class="link" href="pv:name">Element-Namen</a> darstellt. Der Pfadteil <tt>..</tt>
+        kann dabei beliebig oft auftreten und wechselt eine Hierarchieebene nach oben. Der Pfadteil <tt>Group</tt>
+        kann beliebig oft oder nicht auftreten und wechselt eine Hierarchieebene tiefer in die <tt>Group</tt> mit dem
+        Element-Namen <tt>X</tt>. Als letzter Pfadteil wird das <tt>Link Y</tt> ausgewählt. Alternativ kann die
+        Pfadangabe anstatt mit <tt>..</tt> mit <tt>/</tt> beginnen, in diesem Fall beginnt die Referenzierung beim
+        obersten Element (<a class="link" href="mbsim:DynamicSystemSolver"><tt>DynamicSystemSolver</tt></a>) des Modells.
+        <p>Die Hierarchieebenen entsprechend prinzipiell den Ebenen von XML. Als neue Hierarchieebenen zählen jedoch NUR
+          Elemente die mit einem Großbuchstaben beginnen.</p>
+    </xs:documentation></xs:annotation>
+    <xs:restriction base="pv:partialOctaveString">
+      <!-- pattern value="(/|(\.\./)+)(Group\[X\]/)*Link\[X\]" with
+      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
+      from physicalvariable.xsd name attribute -->
+      <xs:pattern value="(/|(\.\./)+)(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <!-- A reference form a Link to a ExtraDynamic somewhere in the hierarchy -->
   <xs:simpleType name="ExtraDynamicReferenceType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

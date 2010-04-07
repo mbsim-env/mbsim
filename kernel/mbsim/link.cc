@@ -77,6 +77,10 @@ namespace MBSim {
     la.resize() >> laParent(laInd,laInd+laSize-1);
   }
 
+  void Link::deletelaRef() {
+    la.resize(la.size(), NONINIT);
+  }
+
   void Link::updategRef(const Vec& gParent) {
     g.resize() >> gParent(gInd,gInd+gSize-1);
   }
