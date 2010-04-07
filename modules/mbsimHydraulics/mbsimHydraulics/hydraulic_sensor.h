@@ -40,6 +40,19 @@ namespace MBSimHydraulics {
       std::string lineString;
   };
 
+  class PressureSensor : public MBSimControl::Sensor {
+    public:
+      PressureSensor(const std::string &name) : MBSimControl::Sensor(name), node(NULL), nodeString("") {}
+      std::string getType() const { return "PressureSensor"; }
+      fmatvec::Vec getSignal();
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setHNode(HNode * node_) {node=node_; }
+    protected:
+      HNode * node;
+      std::string nodeString;
+  };
+
   class TemperatureSensor : public MBSimControl::Sensor {
     public:
       TemperatureSensor(const std::string &name) : MBSimControl::Sensor(name), T(1) {}

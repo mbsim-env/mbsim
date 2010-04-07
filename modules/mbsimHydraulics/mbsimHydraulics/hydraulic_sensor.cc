@@ -49,6 +49,26 @@ namespace MBSimHydraulics {
       Sensor::init(stage);
   }
 
+  Vec PressureSensor::getSignal() {
+    return node->getla(); 
+  }
+
+  void PressureSensor::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"hnode");
+    nodeString=e->Attribute("ref");
+  }
+
+  void PressureSensor::init(MBSim::InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      if (nodeString!="")
+        setHNode(getByPath<HNode>(nodeString));
+      Sensor::init(stage);
+    }
+    else
+      Sensor::init(stage);
+  }
+
   
   void TemperatureSensor::init(MBSim::InitStage stage) {
     if (stage==MBSim::preInit) {
