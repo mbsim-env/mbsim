@@ -41,6 +41,7 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-23 implicit integration (Thorsten Schindler)
    * \date 2010-03-07 element polt list for additional element data (Roland Zander)
+   * \date 2010-04-07 added initInfo() function same as in FlexibleBody1s33RCM (Thomas Cebulla)
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    *
@@ -112,6 +113,11 @@ namespace MBSim {
        * \param angle of slope in case of cantilever
        */
       void initRelaxed(double alpha);
+
+      /**
+       * initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       */
+      void initInfo();
 
     protected:
       /**
