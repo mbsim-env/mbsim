@@ -260,7 +260,7 @@ namespace MBSim {
           c2 = eF2.copy(); // semi-minor axis
           double c2_star_nrm2;
 
-          if(abs(q) < 1.) { // ellipse
+          if(abs(q) <= 1.) { // ellipse and parabola
             c2_star_nrm2 = abs(p)/sqrt(abs(1. - q*q));
             if(DEBUG) {
               cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Ellipse Contact!" << endl;
@@ -313,10 +313,6 @@ namespace MBSim {
             jacRho = new JacobianPairHyperbolaCircle(c1_star_nrm2,c2_star_nrm2);
           }
           /********************************/
-          else { // parabola
-            cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Parabolic Intersection not defined!" << endl;
-            throw(1);
-          }
           if(DEBUG) {
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): p= " << p << endl;
             cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): q= " << q << endl;
