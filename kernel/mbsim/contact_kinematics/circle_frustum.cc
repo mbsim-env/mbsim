@@ -242,8 +242,8 @@ namespace MBSim {
         /**************************************************************************/
 
         else { // frustum
-          FuncPairConeSectionCircle* funcRho;
-          JacobianPairConeSectionCircle* jacRho;
+          FuncPairConeSectionCircle* funcRho=NULL;
+          JacobianPairConeSectionCircle* jacRho=NULL;
           Vec Wd_SC, c1, c2;
           int SEC = 16; // global search setting
           double drho, rhoStartSpacing;	
@@ -258,7 +258,7 @@ namespace MBSim {
           double c1_star_nrm2 = nrm2(c1_star);
           c1 = c1_star/c1_star_nrm2;
           c2 = eF2.copy(); // semi-minor axis
-          double c2_star_nrm2;
+          double c2_star_nrm2=0;
 
           if(abs(q) <= 1.) { // ellipse and parabola
             c2_star_nrm2 = abs(p)/sqrt(abs(1. - q*q));
