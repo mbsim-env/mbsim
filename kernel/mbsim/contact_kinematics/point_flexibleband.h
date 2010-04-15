@@ -32,7 +32,8 @@ namespace MBSim {
    * \brief pairing point to flexible band
    * \author Thorsten Schindler
    * \author Roland Zander
-   * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler) 
+   * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
+   * \date 2010-04-15 bug fixed: different sign in Wd (Thomas Cebulla)
    */
   class ContactKinematicsPointFlexibleBand : public ContactKinematics {
     public:
