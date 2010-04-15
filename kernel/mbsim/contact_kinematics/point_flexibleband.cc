@@ -68,7 +68,7 @@ namespace MBSim {
     if(cpData[icontour].getLagrangeParameterPosition()(0) < band->getAlphaStart() || cpData[icontour].getLagrangeParameterPosition()(0) > band->getAlphaEnd()) g(0) = 1.;
     else {
       band->updateKinematicsForFrame(cpData[icontour],position_cosy);
-      Vec Wd = cpData[icontour].getFrameOfReference().getPosition() - cpData[ipoint].getFrameOfReference().getPosition();
+      Vec Wd =  cpData[ipoint].getFrameOfReference().getPosition() - cpData[icontour].getFrameOfReference().getPosition();
       Vec Wb = cpData[icontour].getFrameOfReference().getOrientation().col(2).copy();
       cpData[icontour].getLagrangeParameterPosition()(1) = Wb.T()*Wd; // get contact parameter of second tangential direction
 
