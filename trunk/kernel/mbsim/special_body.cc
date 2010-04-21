@@ -75,6 +75,11 @@ namespace MBSim {
     hObject += frame[0]->getJacobianOfTranslation().T()*WF + frame[0]->getJacobianOfRotation().T()*WM;
   }
 
+  void SpecialBody::updatehInverseKinetics(double t) {
+
+    h -= frame[0]->getJacobianOfTranslation().T()*m*aT + frame[0]->getJacobianOfRotation().T()*WThetaS*aR;
+  }
+
   void SpecialBody::updateStateDerivativeDependentVariables(double t) {
 
     aT = frame[0]->getJacobianOfTranslation()*udall;// + frame[0]->getGyroscopicAccelerationOfTranslation();
@@ -83,54 +88,45 @@ namespace MBSim {
 
   void SpecialBody::calcqSize() {
     Body::calcqSize();
-    if(constraint) {
-      qSize = 0;
-    }
-    else {
-      qSize = 0;
-      if(fPrPK)
-	qSize += fPrPK->getqSize();
-      if(fAPK)
-	qSize += fAPK->getqSize();
-    }
+    nq = 0;
+    if(fPrPK)
+      nq += fPrPK->getqSize();
+    if(fAPK)
+      nq += fAPK->getqSize();
+    qSize = constraint ? 0 : nq;
   }
 
   void SpecialBody::calcuSize(int j) {
     Body::calcuSize(j);
-    if(constraint) {
-      uSize[0] = 0;
+    if(j==0) {
+      nu[j] = 0;
+      if(fPJT==0) {
+	LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
+	if(fPrPK_) 
+	  nu[j] += fPrPK->getqSize();
+      } else
+	nu[j] += fPJT->getuSize();
+      if(fPJR==0) {
+	//TODO  Euler-Parameter
+	//RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
+	if(fAPK)
+	  nu[j] += fAPK->getqSize();
+	//CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
+	//if(fAPK_)
+	//uSize += fAPK->getqSize();
+      } else
+	nu[j] += fPJR->getuSize();
+    } else {
+      nu[j] = nu[0];
+      nu[j] += forceDir.cols();
+      nu[j] += momentDir.cols();
     }
-    else {
-      if(j==0) {
-	uSize[j] = 0;
-	if(fPJT==0) {
-	  LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-	  if(fPrPK_) 
-	    uSize[j] += fPrPK->getqSize();
-	} else
-	  uSize[j] += fPJT->getuSize();
-	if(fPJR==0) {
-	  //TODO  Euler-Parameter
-	  //RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
-	  if(fAPK)
-	    uSize[j] += fAPK->getqSize();
-	  //CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-	  //if(fAPK_)
-	  //uSize += fAPK->getqSize();
-	} else
-	  uSize[j] += fPJR->getuSize();
-      } else {
-	uSize[j] = uSize[0];
-	uSize[j] += forceDir.cols();
-	uSize[j] += momentDir.cols();
-      }
-    }
+    uSize[j] = constraint ? 0 : nu[j];
   }
 
   void SpecialBody::init(InitStage stage) {
     if(stage==preInit) {
       Body::init(stage);
-      //for(unsigned int i=0; i<body.size(); i++)
       if(constraint)
 	dependency.push_back(constraint);
     }
@@ -158,39 +154,28 @@ namespace MBSim {
 
       Body::init(stage);
 
-      int nu1, nu2, nq;
-      if(constraint) {
-	nu1 = 1;
-	nu2 = 1;
-	nq = 1;
-	T.resize(nu1,nu1);
-      }
-      else {
-	nu1 = uSize[0];
-	nu2 = uSize[1];
-	nq = qSize;
-	//T.resize(qSize,nu1);
-      }
+      if(constraint)
+	T.resize(nq,nu[0]);
 
-      PJT.resize(3,nu1);
-      PJR.resize(3,nu1);
+      PJT.resize(3,nu[0]);
+      PJR.resize(3,nu[0]);
 
-      PdJT.resize(3,nu1);
-      PdJR.resize(3,nu1);
+      PdJT.resize(3,nu[0]);
+      PdJR.resize(3,nu[0]);
 
-      PJTs.resize(3,nu2);
-      PJRs.resize(3,nu2);
+      PJTs.resize(3,nu[1]);
+      PJRs.resize(3,nu[1]);
 
-      JRel.resize(nu1,hSize[0]);
+      JRel.resize(nu[0],hSize[0]);
       for(int i=0; i<uSize[0]; i++)
 	JRel(i,hSize[0]-uSize[0]+i) = 1;
-      jRel.resize(nu1);
+      jRel.resize(nu[0]);
       qRel.resize(nq);
-      uRel.resize(nu1);
+      uRel.resize(nu[0]);
 
-      WJTrel.resize(3,nu1);
+      WJTrel.resize(3,nu[0]);
       WjTrel.resize(3);
-      WJRrel.resize(3,nu1);
+      WJRrel.resize(3,nu[0]);
       WjRrel.resize(3);
 
       updateM_ = &SpecialBody::updateMNotConst;
@@ -213,27 +198,27 @@ namespace MBSim {
 	else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
 	  JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
 	else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
-	  fPJR = new JRotationAboutAxesYZ(nu1);
-	  fPdJR = new JdRotationAboutAxesYZ(nu1);
+	  fPJR = new JRotationAboutAxesYZ(nu[0]);
+	  fPdJR = new JdRotationAboutAxesYZ(nu[0]);
 	}
 	else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
-	  fPJR = new JRotationAboutAxesXY(nu1);
-	  fPdJR = new JdRotationAboutAxesXY(nu1);
+	  fPJR = new JRotationAboutAxesXY(nu[0]);
+	  fPdJR = new JdRotationAboutAxesXY(nu[0]);
 	}
 	else if(dynamic_cast<CardanAngles*>(fAPK)) {
 	  JR.resize() << DiagMat(3,INIT,1);
 	  if(cb) {
-	    fT = new TCardanAngles2(qSize,nu1);
+	    fT = new TCardanAngles2(qSize,nu[0]);
 	  }
 	  else {
-	    fT = new TCardanAngles(qSize,nu1);
+	    fT = new TCardanAngles(qSize,nu[0]);
 	  }
 	}
 
-        Mat JRR(3, nu1);
-        PJR(Index(0,2), Index(nu1-JR.cols(),nu1-1)) = JR;
-        PJRs(Index(0,2), Index(nu2-momentDir.cols()-JR.cols(),nu2-momentDir.cols()-1)) = JR;
-        PJRs(Index(0,2), Index(nu2-momentDir.cols(),nu2-1)) = momentDir;
+        Mat JRR(3, nu[0]);
+        PJR(Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1)) = JR;
+        PJRs(Index(0,2), Index(nu[1]-momentDir.cols()-JR.cols(),nu[1]-momentDir.cols()-1)) = JR;
+        PJRs(Index(0,2), Index(nu[1]-momentDir.cols(),nu[1]-1)) = momentDir;
 
         if(cb) {
           if(iKinematics == 0 && false) {
@@ -251,7 +236,7 @@ namespace MBSim {
       if(iInertia != 0)
         SThetaS = SymMat(ASF[iInertia]*SThetaS*ASF[iInertia].T()) - m*JTJ(tilde(SrSF[iInertia]));
 
-      for(int i=0; i<nu1; i++) 
+      for(int i=0; i<nu[0]; i++) 
         T(i,i) = 1;
     }
     else if(stage==MBSim::plot) {
@@ -289,8 +274,23 @@ namespace MBSim {
       contour[i]->resizeJacobians(j);
   }
 
-  void SpecialBody::updateqRef(const fmatvec::Vec& ref) {
-    Body::updateqRef(ref);
+  void SpecialBody::checkForConstraints() {
+    if(forceDir.cols()+momentDir.cols()) {
+      Joint *joint = new Joint(string("Joint.")+name);
+      ds->addInverseKineticsLink(joint);
+      //ds->addLink(joint);
+      if(forceDir.cols()) {
+        joint->setForceDirection(forceDir);
+        joint->setForceLaw(new BilateralConstraint);
+        joint->setImpactForceLaw(new BilateralImpact);
+      }
+      if(momentDir.cols()) {
+        joint->setMomentDirection(momentDir);
+        joint->setMomentLaw(new BilateralConstraint);
+        joint->setImpactMomentLaw(new BilateralImpact);
+      }
+      joint->connect(frameOfReference,frame[iKinematics]);
+    }
   }
 
   void SpecialBody::plot(double t, double dt) {
@@ -461,6 +461,20 @@ namespace MBSim {
     }
   }
 
+  void SpecialBody::updateInverseKineticsJacobiansForSelectedFrame(double t) {
+    //if(forceDir.cols()+momentDir.cols()) {
+    SqrMat tWrPK = tilde(WrPK);
+    //  frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
+    //  frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
+
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
+    frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJTs;
+    frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJRs;
+    //} else 
+    //updateJacobiansForSelectedFrame(t);
+  }
+
   void SpecialBody::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);
 
@@ -629,6 +643,145 @@ namespace MBSim {
       }
     }
 
+  }
+
+  void SpecialBody::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e;
+    Body::initializeUsingXML(element);
+
+    // frames
+    e=element->FirstChildElement(MBSIMNS"frames")->FirstChildElement();
+    while(e && e->ValueStr()==MBSIMNS"frame") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Frame *f=new Frame(ec->Attribute("name"));
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      TiXmlElement *ee;
+      if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
+        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
+            getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+#endif
+      ec=ec->NextSiblingElement();
+      string refF="C";
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+        ec=ec->NextSiblingElement();
+      }
+      Vec RrRF=getVec(ec,3);
+      ec=ec->NextSiblingElement();
+      SqrMat ARF=getSqrMat(ec,3);
+      addFrame(f, RrRF, ARF, refF);
+      e=e->NextSiblingElement();
+    }
+
+    // contours
+    e=element->FirstChildElement(MBSIMNS"contours")->FirstChildElement();
+    while(e && e->ValueStr()==MBSIMNS"contour") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Contour *c=ObjectFactory::getInstance()->createContour(ec);
+      TiXmlElement *contourElement=ec; // save for later initialization
+      ec=ec->NextSiblingElement();
+      string refF="C";
+      if(ec->ValueStr()==MBSIMNS"frameOfReference") {
+        refF=ec->Attribute("ref");
+        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+        ec=ec->NextSiblingElement();
+      }
+      Vec RrRC=getVec(ec,3);
+      ec=ec->NextSiblingElement();
+      SqrMat ARC=getSqrMat(ec,3);
+      addContour(c, RrRC, ARC, refF);
+      c->initializeUsingXML(contourElement);
+      e=e->NextSiblingElement();
+    }
+
+    e=element->FirstChildElement(MBSIMNS"frameForKinematics");
+    setFrameForKinematics(getByPath<Frame>(e->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    e=element->FirstChildElement(MBSIMNS"mass");
+    setMass(getDouble(e));
+    e=element->FirstChildElement(MBSIMNS"inertiaTensor");
+    setInertiaTensor(getSymMat(e,3));
+    e=element->FirstChildElement(MBSIMNS"translation");
+    Translation *trans=ObjectFactory::getInstance()->createTranslation(e->FirstChildElement());
+    if(trans) {
+      setTranslation(trans);
+      trans->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"rotation");
+    Rotation *rot=ObjectFactory::getInstance()->createRotation(e->FirstChildElement());
+    if(rot) {
+      setRotation(rot);
+      rot->initializeUsingXML(e->FirstChildElement());
+    }
+    // BEGIN The following elements are rarly used. That is why they are optional
+    e=element->FirstChildElement(MBSIMNS"jacobianOfTranslation");
+    if(e) {
+      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      setJacobianOfTranslation(jac);
+      jac->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"jacobianOfRotation");
+    if(e) {
+      Jacobian *jac=ObjectFactory::getInstance()->createJacobian(e->FirstChildElement());
+      setJacobianOfRotation(jac);
+      jac->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfTranslation");
+    if(e) {
+      Function3<Mat,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      setDerivativeOfJacobianOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfJacobianOfRotation");
+    if(e) {
+      Function3<Mat,Vec,Vec,double> *f=ObjectFactory::getInstance()->createFunction3_MVVS(e->FirstChildElement());
+      setDerivativeOfJacobianOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfTranslation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setGuidingVelocityOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"guidingVelocityOfRotation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setGuidingVelocityOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfTranslation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfTranslation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    e=element->FirstChildElement(MBSIMNS"derivativeOfGuidingVelocityOfRotation");
+    if(e) {
+      Function1<Vec,double> *f=ObjectFactory::getInstance()->createFunction1_VS(e->FirstChildElement());
+      setDerivativeOfGuidingVelocityOfRotation(f);
+      f->initializeUsingXML(e->FirstChildElement());
+    }
+    // END
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMNS"openMBVRigidBody");
+    if(e) {
+      OpenMBV::RigidBody *rb=dynamic_cast<OpenMBV::RigidBody*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(e->FirstChildElement());
+
+      if (e->FirstChildElement(MBSIMNS"frameOfReference"))
+        setOpenMBVFrameOfReference(getByPath<Frame>(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+    }
+
+    e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
+    if(e) {
+      if(!openMBVBody)
+        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+      C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
+          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+    }
+#endif
   }
 
 }

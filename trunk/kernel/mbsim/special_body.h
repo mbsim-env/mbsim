@@ -1,3 +1,22 @@
+/* Copyright (C) 2004-2009 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: mfoerg@users.berlios.de
+ */
+
 #ifndef _SPECIAL_BODY_H_
 #define _SPECIAL_BODY_H_
 
@@ -32,14 +51,11 @@ namespace MBSim {
        * \param name of rigid body
        */
       SpecialBody(const std::string &name);
-      
+
       /**
        * \brief destructor
        */
       virtual ~SpecialBody();
-
-      void updateqRef(const fmatvec::Vec& ref);
-
 
       void addDependency(Constraint* constraint_) {
 	//body.push_back(body_); 
@@ -48,19 +64,20 @@ namespace MBSim {
 
       virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
       virtual void updateh(double t);
+      virtual void updatehInverseKinetics(double t);
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t) { (this->*updateM_)(t); }
       virtual void updateStateDependentVariables(double t) { updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t); }
       virtual void updateJacobians(double t) { updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
+      virtual void updateInverseKineticsJacobians(double t) { updateInverseKineticsJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
       virtual void facLLM() { (this->*facLLM_)(); }
       virtual void resizeJacobians(int j);
-      virtual void checkForConstraints() {}
-      virtual void updateInverseKineticsJacobians(double t) {throw 5;}
+      virtual void checkForConstraints();
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -90,6 +107,7 @@ namespace MBSim {
       /**
        * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference frame
        */
+      virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -191,6 +209,7 @@ namespace MBSim {
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
 #endif
 
+      virtual void initializeUsingXML(TiXmlElement *element);
       void updatePositionAndOrientationOfFrame(double t, unsigned int i);
       void updateVelocities(double t, unsigned int i);
       void updateAcclerations(double t, unsigned int i);
@@ -386,6 +405,8 @@ namespace MBSim {
       fmatvec::Vec WjTrel,WjRrel;
 
       Constraint *constraint;
+
+      int nu[2], nq;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
