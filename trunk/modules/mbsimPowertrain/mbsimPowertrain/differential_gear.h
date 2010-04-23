@@ -2,7 +2,7 @@
 #define DIFFERENTIAL_GEAR_H_
 
 #include "mbsim/group.h"
-#include "mbsimPowertrain/shaft.h"
+#include "mbsim/rigid_body.h"
 
 namespace MBSimPowertrain {
 
@@ -31,14 +31,14 @@ namespace MBSimPowertrain {
       };
     protected:
       Data data;
-      Shaft *shaft2, *shaft4, *shaft5;
+      MBSim::RigidBody *shaft2, *shaft4, *shaft5;
 
     public:
       DifferentialGear(const std::string &name, Data data=Data());
       double getRadiusInputShaft() const {return data.radiusInputShaft;}
-      Shaft* getInputShaft() {return shaft2;}
-      Shaft* getRightOutputShaft() {return shaft5;}
-      Shaft* getLeftOutputShaft() {return shaft4;}
+      MBSim::RigidBody* getInputShaft() {return shaft2;}
+      MBSim::RigidBody* getRightOutputShaft() {return shaft5;}
+      MBSim::RigidBody* getLeftOutputShaft() {return shaft4;}
   };
 
 }

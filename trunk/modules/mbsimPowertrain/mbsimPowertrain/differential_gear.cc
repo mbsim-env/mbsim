@@ -1,6 +1,7 @@
 #include "differential_gear.h"
 #include "shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/constraint.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/cube.h"
@@ -77,7 +78,7 @@ namespace MBSimPowertrain {
     housing->setMass(data.massHousing);
     housing->setInertiaTensor(data.inertiaTensorHousing);
 
-    shaft2 = new Shaft("InputShaft");
+    shaft2 = new RigidBody("InputShaft");
     addObject(shaft2);
 
     double a = data.lengthInputShaft/2+data.radiusPlanet*1.2;
@@ -86,11 +87,12 @@ namespace MBSimPowertrain {
     housing->addFrame("Q",r,SqrMat(3,EYE));
     shaft2->setFrameOfReference(housing->getFrame("Q"));
     shaft2->setFrameForKinematics(shaft2->getFrame("C"));
+    shaft2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
     shaft2->setMass(data.massInputShaft);
     shaft2->setInertiaTensor(data.inertiaTensorInputShaft);
 
-    Shaft* planet = new Shaft("Planet");
+    RigidBody* planet = new RigidBody("Planet");
     addObject(planet);
 
     r.init(0);
@@ -103,7 +105,7 @@ namespace MBSimPowertrain {
     planet->setMass(data.massPlanet);
     planet->setInertiaTensor(data.inertiaTensorPlanet);
 
-    shaft4 = new Shaft("LeftOutputShaft");
+    shaft4 = new RigidBody("LeftOutputShaft");
     addObject(shaft4);
 
     r.init(0);
@@ -111,16 +113,23 @@ namespace MBSimPowertrain {
     housing->addFrame("L",r,SqrMat(3,EYE),housing->getFrame("Q"));
     shaft4->setFrameOfReference(housing->getFrame("L"));
     shaft4->setFrameForKinematics(shaft4->getFrame("C"));
+    shaft4->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = -data.lengthLeftOutputShaft/2;
     shaft4->addFrame("Q",r,BasicRotAKIy(M_PI));
     shaft4->getFrame("Q")->enableOpenMBV(0.3);
 
     shaft4->setMass(data.massLeftOutputShaft);
     shaft4->setInertiaTensor(data.inertiaTensorLeftOutputShaft);
-    shaft4->addDependecy(shaft2,1);
-    shaft4->addDependecy(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
 
-    shaft5 = new Shaft("RightOutputShaft");
+    Constraint2 *constraint = new Constraint2("C1",shaft4);
+    addObject(constraint);
+    constraint->addDependency(shaft2,1);
+    constraint->addDependency(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
+
+    //shaft4->addDependecy(shaft2,1);
+    //shaft4->addDependecy(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
+
+    shaft5 = new RigidBody("RightOutputShaft");
     addObject(shaft5);
 
     r.init(0);
@@ -128,14 +137,21 @@ namespace MBSimPowertrain {
     housing->addFrame("R",r,SqrMat(3,EYE),housing->getFrame("Q"));
     shaft5->setFrameOfReference(housing->getFrame("R"));
     shaft5->setFrameForKinematics(shaft5->getFrame("C"));
+    shaft5->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
     r(2) = data.lengthRightOutputShaft/2;
     shaft5->addFrame("Q",r,SqrMat(3,EYE));
     shaft5->getFrame("Q")->enableOpenMBV(0.3);
 
     shaft5->setMass(data.massRightOutputShaft);
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
-    shaft5->addDependecy(shaft2,1);
-    shaft5->addDependecy(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
+
+    constraint = new Constraint2("C2",shaft5);
+    addObject(constraint);
+    constraint->addDependency(shaft2,1);
+    constraint->addDependency(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
+
+    //shaft5->addDependecy(shaft2,1);
+    //shaft5->addDependecy(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cube *cube=new OpenMBV::Cube;
