@@ -32,6 +32,8 @@
 
 namespace MBSim {
 
+  class Constraint;
+
   /**
    * \brief rigid bodies with arbitrary kinematics 
    * \author Martin Foerg
@@ -57,7 +59,11 @@ namespace MBSim {
        */
       virtual ~RigidBody();
 
-      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      void addDependency(Constraint* constraint_) {
+	//body.push_back(body_); 
+	constraint = constraint_;
+      }
+
       virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
       virtual void updateh(double t);
       virtual void updatehInverseKinetics(double t);
@@ -68,7 +74,6 @@ namespace MBSim {
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
       virtual void updateInverseKineticsJacobians(double t) { updateInverseKineticsJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
-      /*****************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
@@ -142,11 +147,11 @@ namespace MBSim {
        * \param optional reference frame of inertia tensor, otherwise cog-frame will be used as reference
        */
       void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
-        if(refFrame)
-          iInertia = frameIndex(refFrame);
-        else
-          iInertia = 0;
-        SThetaS = RThetaR;
+	if(refFrame)
+	  iInertia = frameIndex(refFrame);
+	else
+	  iInertia = 0;
+	SThetaS = RThetaR;
       }
 
       /**
@@ -164,7 +169,7 @@ namespace MBSim {
        * \param optional reference frame, otherwise cog-frame will be used as reference
        */
       void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
-        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
+	addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
       }
 
       /**
@@ -190,15 +195,15 @@ namespace MBSim {
        * \param optional reference frame, otherwise cog-frame will be used as reference
        */
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
-        addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
+	addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
       }
 
       /**
        * \param frame to be used for kinematical description depending on reference frame and generalised positions / velocities
        */
       void setFrameForKinematics(Frame *frame) {
-        iKinematics = frameIndex(frame);
-        assert(iKinematics > -1);
+	iKinematics = frameIndex(frame);
+	assert(iKinematics > -1);
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -207,6 +212,15 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
+      void updatePositionAndOrientationOfFrame(double t, unsigned int i);
+      void updateVelocities(double t, unsigned int i);
+      void updateAcclerations(double t, unsigned int i);
+      const fmatvec::Mat& getWJTrel() const {return WJTrel;}
+      const fmatvec::Vec& getWjTrel() const {return WjTrel;}
+      fmatvec::Mat& getJRel() {return JRel;}
+      fmatvec::Vec& getjRel() {return jRel;}
+      fmatvec::Vec& getqRel() {return qRel;}
+      fmatvec::Vec& getuRel() {return uRel;}
 
     protected:
       /**
@@ -384,6 +398,17 @@ namespace MBSim {
       Frame *C;
 
       fmatvec::Vec aT, aR;
+
+      fmatvec::Vec qRel, uRel;
+      fmatvec::Mat JRel;
+      fmatvec::Vec jRel;
+
+      fmatvec::Mat WJTrel,WJRrel;
+      fmatvec::Vec WjTrel,WjRrel;
+
+      Constraint *constraint;
+
+      int nu[2], nq;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
