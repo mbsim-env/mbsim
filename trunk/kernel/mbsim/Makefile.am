@@ -29,7 +29,6 @@ extra_dynamic.cc\
 rigid_body.cc\
 tree.cc\
 graph.cc\
-special_body.cc\
 constraint.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
@@ -73,5 +72,4 @@ extra_dynamic.h\
 rigid_body.h\
 tree.h\
 graph.h\
-special_body.h\
 constraint.h
