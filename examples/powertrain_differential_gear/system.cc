@@ -3,8 +3,8 @@
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/rigid_body.h"
+#include "mbsim/constraint.h"
 #include "mbsimPowertrain/differential_gear.h"
-#include "mbsimPowertrain/shaft.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
@@ -41,7 +41,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   r(0) = l/2;
   addFrame("Q",r,BasicRotAKIy(M_PI/2));
 
-  Shaft* shaft1 = new Shaft("Shaft1");
+  RigidBody* shaft1 = new RigidBody("Shaft1");
   addObject(shaft1);
 
 
@@ -60,10 +60,14 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft1->getFrame("C")->enableOpenMBV(0.3);
 
 
-  DifferentialGear* differentialGear = new DifferentialGear("PlanetaryGear");
+  DifferentialGear* differentialGear = new DifferentialGear("DifferentialGear");
   addGroup(differentialGear);
-   double R2 = differentialGear->getRadiusInputShaft();
-  static_cast<Shaft*>(differentialGear->getObject("InputShaft"))->addDependecy(shaft1,-R1/R2);
+  double R2 = differentialGear->getRadiusInputShaft();
+
+  //static_cast<RigidBody*>(differentialGear->getObject("InputShaft"))->addDependecy(shaft1,-R1/R2);
+  Constraint2 *constraint = new Constraint2("C1",static_cast<RigidBody*>(differentialGear->getObject("InputShaft")));
+  addObject(constraint);
+  constraint->addDependency(shaft1,-R1/R2);
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MAn");
