@@ -2,7 +2,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/kinetic_excitation.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/special_body.h"
+#include "mbsim/rigid_body.h"
 #include "mbsim/constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -39,7 +39,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   r(0) = l/2;
   addFrame("Q",r,BasicRotAKIy(M_PI/2));
 
-  SpecialBody* shaft1 = new SpecialBody("Shaft1");
+  RigidBody* shaft1 = new RigidBody("Shaft1");
   addObject(shaft1);
   shaft1->setFrameOfReference(getFrame("I"));
   shaft1->setFrameForKinematics(shaft1->getFrame("C"));
@@ -50,7 +50,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->getFrame("C")->enableOpenMBV(0.3);
   //shaft1->setInitialGeneralizedVelocity("[1]");
 
-  SpecialBody* shaft2 = new SpecialBody("Shaft2");
+  RigidBody* shaft2 = new RigidBody("Shaft2");
   addObject(shaft2);
   shaft2->setFrameOfReference(getFrame("Q"));
   shaft2->setFrameForKinematics(shaft2->getFrame("C"));
@@ -63,7 +63,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   r(0) = 2*l;
   r(1) = l/5;
   addFrame("P",r,BasicRotAKIy(M_PI/2));
-  SpecialBody* shaft3 = new SpecialBody("Shaft3");
+  RigidBody* shaft3 = new RigidBody("Shaft3");
   addObject(shaft3);
   shaft3->setFrameOfReference(getFrame("P"));
   shaft3->setFrameForKinematics(shaft3->getFrame("C"));
