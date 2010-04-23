@@ -13,6 +13,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsimControl/function_sensor.h"
 #include "mbsim/joint.h" 
+#include "mbsim/constraint.h" 
 #include "mbsim/spring_damper.h"
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsimPowertrain/cardan_shaft.h"
@@ -331,8 +332,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   DifferentialGear::Data data;
   data.lengthLeftOutputShaft = 0.1; 
   data.lengthRightOutputShaft = 0.1; 
+
   DifferentialGear* differentialGear = new DifferentialGear("DifferentialGear",data);
   addGroup(differentialGear);
+ 
   Vec rSD(3);
   rSD(0) = -w/2;
   rSD(1) = -h+r;
@@ -372,7 +375,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rSD.init(0);
   rSD(2) = bR/2;
   hl->addFrame("K",rSD,SqrMat(3,EYE));
-
+//
   joint2 = new Joint("AnbindungRadLinks");
   addLink(joint2);
   joint2->setForceDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
@@ -390,7 +393,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     joint2->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e5,100)));
   }
 
-  Shaft* shaft1 = new Shaft("DriveShaft");
+  RigidBody* shaft1 = new RigidBody("DriveShaft");
   addObject(shaft1);
 
   rSD(1) = -h+r;
@@ -422,7 +425,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
 
-  differentialGear->getInputShaft()->addDependecy(shaft1,-r1/differentialGear->getRadiusInputShaft());
+  //differentialGear->getInputShaft()->addDependecy(shaft1,-r1/differentialGear->getRadiusInputShaft());
+ Constraint2 *constraint = new Constraint2("C0",static_cast<RigidBody*>(differentialGear->getObject("InputShaft")));//differentialGear->getInputShaft());
+ addObject(constraint);
+ constraint->addDependency(shaft1,-r1/differentialGear->getRadiusInputShaft());
 
   //actuator = new Actuator("Fahrwiderstand");
   //addLink(load);
