@@ -1,11 +1,10 @@
 #include "system.h"
 #include "mbsim/constraint.h"
-#include "mbsim/special_body.h"
+#include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
 #include "mbsim/joint.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/kinetic_excitation.h"
-
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cuboid.h"
@@ -58,7 +57,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Kr(0) = a;
   Kr(2) = 0.02;
 
-  SpecialBody* body1 = new SpecialBody("body1");
+  RigidBody* body1 = new RigidBody("body1");
   addObject(body1);
   body1->addFrame("Q", Kr,SqrMat(3,EYE));
 
@@ -74,7 +73,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Kr(2) = 0.02;
   addFrame("Q",Kr,SqrMat(3,EYE) );  
 
-  SpecialBody* body2 = new SpecialBody("body2");
+  RigidBody* body2 = new RigidBody("body2");
   addObject(body2);
   Kr(0) = b/2;
   Kr(2) = 0;
@@ -88,7 +87,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setInertiaTensor(Theta);
   body2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
-  SpecialBody* body3 = new SpecialBody("body3");
+  RigidBody* body3 = new RigidBody("body3");
   addObject(body3);
   body3->setFrameOfReference(getFrame("I"));
   body3->setFrameForKinematics(body3->getFrame("C"));
