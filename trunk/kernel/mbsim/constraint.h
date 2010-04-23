@@ -19,9 +19,13 @@
 #ifndef _CONSTRAINT_H
 #define _CONSTRAINT_H
 
-#include "special_body.h"
+//#include "special_body.h"
+#include "object.h"
 
 namespace MBSim {
+
+  class RigidBody;
+  class Frame;
 
   /** 
    * \brief class for constraints between generalized coordinates of objects
@@ -45,12 +49,12 @@ namespace MBSim {
    */
   class Constraint1 : public Constraint {
     private:
-      SpecialBody *bi, *bd1, *bd2;
+      RigidBody *bi, *bd1, *bd2;
 
       Frame *frame1,*frame2;
 
     public:
-      Constraint1(const std::string &name, SpecialBody* b0, SpecialBody* b1, SpecialBody* b2, Frame* frame1, Frame* frame2);
+      Constraint1(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2);
 
       void init(InitStage stage);
 
@@ -67,8 +71,8 @@ namespace MBSim {
    */
   class Constraint2 : public Constraint {
     private:
-      std::vector<SpecialBody*> bi;
-      SpecialBody *bd;
+      std::vector<RigidBody*> bi;
+      RigidBody *bd;
       std::vector<double> ratio;
 
 //      std::vector<Function2<fmatvec::Vec, fmatvec::Vec, double>*> fd;
@@ -77,9 +81,9 @@ namespace MBSim {
 //      std::vector<Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>*> fdJd;
 //      std::vector<Function1<fmatvec::Vec,double>*> fdjd;
     public:
-      Constraint2(const std::string &name, SpecialBody* body);
+      Constraint2(const std::string &name, RigidBody* body);
 
-      void addDependency(SpecialBody* body_, double ratio);
+      void addDependency(RigidBody* body_, double ratio);
 
       void init(InitStage stage);
 

@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "constraint.h"
+#include "rigid_body.h"
 #include "utils/nonlinear_algebra.h"
 
 using namespace MBSim;
@@ -25,13 +26,13 @@ using namespace fmatvec;
 using namespace std;
 
 class Residuum : public Function1<Vec,Vec> {
-  SpecialBody *body1, *body2;
+  RigidBody *body1, *body2;
   Mat d;
   Frame *frame1, *frame2;
   double t;
   int i1,i2;
   public:
-    Residuum(SpecialBody* body1_, SpecialBody* body2_, const Mat &d_,Frame *frame1_, Frame *frame2_,double t_,int i1_, int i2_) : body1(body1_),body2(body2_),d(d_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
+    Residuum(RigidBody* body1_, RigidBody* body2_, const Mat &d_,Frame *frame1_, Frame *frame2_,double t_,int i1_, int i2_) : body1(body1_),body2(body2_),d(d_),frame1(frame1_), frame2(frame2_), t(t_), i1(i1_), i2(i2_) {}
     Vec operator()(const Vec &x, const void * =NULL) {
       Vec res(2); 
 
@@ -50,7 +51,7 @@ class Residuum : public Function1<Vec,Vec> {
 Constraint::Constraint(const std::string &name) : Object(name) {
 }
 
-Constraint1::Constraint1(const std::string &name, SpecialBody *b0, SpecialBody* b1, SpecialBody* b2, Frame* frame1_, Frame* frame2_) : Constraint(name), frame1(frame1_), frame2(frame2_) {
+Constraint1::Constraint1(const std::string &name, RigidBody *b0, RigidBody* b1, RigidBody* b2, Frame* frame1_, Frame* frame2_) : Constraint(name), frame1(frame1_), frame2(frame2_) {
   bi = b0;
   bd1 = b1;
   bd2 = b2;
@@ -107,8 +108,8 @@ void Constraint1::updateJacobians(double t){
 
 }
 
-Constraint2::Constraint2(const std::string &name, SpecialBody* body) : Constraint(name), bd(body) {
-    bd->addDependency(this);
+Constraint2::Constraint2(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
+  bd->addDependency(this);
 }
 
 void Constraint2::init(InitStage stage) {
@@ -121,13 +122,14 @@ void Constraint2::init(InitStage stage) {
     Constraint::init(stage);
 }
 
-void Constraint2::addDependency(SpecialBody* body, double ratio_) {
+void Constraint2::addDependency(RigidBody* body, double ratio_) {
   bi.push_back(body); 
   ratio.push_back(ratio_);
 }
 
 void Constraint2::updateStateDependentVariables(double t){
   bd->getqRel().init(0);
+  bd->getuRel().init(0);
   for(unsigned int i=0; i<bi.size(); i++) {
     bd->getqRel() += bi[i]->getqRel()*ratio[i];
     bd->getuRel() += bi[i]->getuRel()*ratio[i];
@@ -136,10 +138,7 @@ void Constraint2::updateStateDependentVariables(double t){
 
 void Constraint2::updateJacobians(double t){
   bd->getJRel().init(0); 
-  for(unsigned int i=0; i<bi.size(); i++)
-    bd->getJRel() += bi[i]->getJRel()*ratio[i];
-
-  //bd1->getjRel()(0) = j12(0);
-  //bd2->getjRel()(0) = j12(1);
-
+  for(unsigned int i=0; i<bi.size(); i++) {
+    bd->getJRel()(Index(0,bi[i]->getJRel().rows()-1),Index(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[i];
+  }
 }
