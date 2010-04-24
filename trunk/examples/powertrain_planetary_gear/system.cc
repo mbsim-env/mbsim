@@ -33,8 +33,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
   PlanetaryGear* planetaryGear = new PlanetaryGear("PlanetaryGear");
   addGroup(planetaryGear);
-  static_cast<RigidBody*>(planetaryGear->getObject("Sun"))->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  static_cast<RigidBody*>(planetaryGear->getObject("Annulus"))->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
 
   KineticExcitation* ke;
   ke = new KineticExcitation("MS");
@@ -44,12 +42,12 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
 
 //  ke = new KineticExcitation("MT");
 //  addLink(ke);
-//  ke->connect(traeger->getFrame("C"));
+//  ke->connect(static_cast<RigidBody*>(planetaryGear->getObject("Carrier"))->getFrame("C"));
 //  ke->setMoment("[0;0;1]", new Moment(-0.3));
 //
 //  ke = new KineticExcitation("MH");
 //  addLink(ke);
-//  ke->connect(hohlrad->getFrame("C"));
+//  ke->connect(static_cast<RigidBody*>(planetaryGear->getObject("Annulus"))->getFrame("C"));
 //  ke->setMoment("[0;0;1]", new Moment(.99*0.2));
 
 }
