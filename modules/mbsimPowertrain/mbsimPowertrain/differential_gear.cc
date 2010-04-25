@@ -1,5 +1,4 @@
 #include "differential_gear.h"
-#include "shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/constraint.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE

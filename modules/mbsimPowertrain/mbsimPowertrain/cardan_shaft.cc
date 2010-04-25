@@ -1,6 +1,6 @@
 #include "cardan_shaft.h"
-#include "shaft.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/rigid_body.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
