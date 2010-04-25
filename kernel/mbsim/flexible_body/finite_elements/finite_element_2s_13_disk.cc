@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -20,6 +20,7 @@
 #include<config.h>
 #include<fstream>
 #include "mbsim/flexible_body/finite_elements/finite_element_2s_13_disk.h"
+
 using namespace std;
 using namespace fmatvec;
 

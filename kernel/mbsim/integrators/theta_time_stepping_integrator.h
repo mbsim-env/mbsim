@@ -27,12 +27,13 @@
 namespace MBSim {
 
   /** 
-   * brief half-explicit time-stepping integrator of first order
+   * brief theta-time-stepping integrator of first order
    * \author Roland Zander
    * \author Thorsten Schindler
    * \date 2009-07-18 new kernel_dev (Thorsten Schindler)
    * \date 2009-07-19 Delassus matrix / split of update (Thorsten Schindler)
    * \date 2009-07-27 some fixes (Thorsten Schindler)
+   * \date 2010-04-23 integrate splitted (Thorsten Schindler)
    */
   class ThetaTimeSteppingIntegrator : public Integrator { 
     public:
@@ -65,6 +66,25 @@ namespace MBSim {
        */
       void update(DynamicSystemSolver& system, const fmatvec::Vec& z, double t);
 
+      /**
+       * \brief preintegration steps
+       * \param dynamic system
+       */
+      void preIntegrate(DynamicSystemSolver& system);
+      
+      /**
+       * \brief integration steps
+       * \param dynamic system
+       * \param end time of integration
+       */
+      
+      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      /**
+       * \brief postintegration steps
+       * \param dynamic system
+       */
+      void postIntegrate(DynamicSystemSolver& system);
+
     private:
       /**
        * \brief step size
@@ -77,9 +97,39 @@ namespace MBSim {
       double theta;
 
       /**
+       * \brief time and plot time
+       */
+      double t, tPlot;
+
+      /**
+       * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
+       */
+      int iter,step, integrationSteps, maxIter, sumIter;
+
+      /**
+       * \brief computing time counter
+       */
+      double s0, time;
+
+      /**
+       * \brief plot step difference
+       */
+      int stepPlot;
+
+      /**
+       * \brief state, position, velocity, order coordinate of dynamical system
+       */
+      fmatvec::Vec z, q, u, x;
+
+      /**
+       * \brief file stream for integration information
+       */
+      std::ofstream integPlot;
+
+      /**
        * \brief flag for drift compensation
        */
-      bool driftCompensation;
+      bool driftCompensation;    
   };
 
 }

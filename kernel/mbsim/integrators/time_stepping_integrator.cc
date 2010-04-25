@@ -31,7 +31,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), driftCompensation(false) {}
+  TimeSteppingIntegrator::TimeSteppingIntegrator() : dt(1e-3), t(0.), tPlot(0.), iter(0), step(0), integrationSteps(0), maxIter(0), sumIter(0), s0(0.), time(0.), stepPlot(0), driftCompensation(false) {}
 
   void TimeSteppingIntegrator::preIntegrate(DynamicSystemSolver& system) {
     // initialisation
@@ -55,21 +55,13 @@ namespace MBSim {
     if(z0.size()) z = z0; // define initial state
     else system.initz(z);
 
-    tPlot = 0.;
     integPlot.open((name + ".plt").c_str());
     cout.setf(ios::scientific, ios::floatfield);
 
     stepPlot =(int) (dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
 
-    iter = 0;
-    step = 0;   
-    integrationSteps = 0;
-    maxIter = 0;
-    sumIter = 0;
-
     s0 = clock();
-    time = 0;
   }
 
   void TimeSteppingIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) {

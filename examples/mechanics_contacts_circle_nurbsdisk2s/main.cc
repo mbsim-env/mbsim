@@ -8,10 +8,6 @@ int main (int argc, char* argv[]) {
 
   DynamicSystemSolver *sys = new System("MBS");
 
-  sys->setImpactSolver(RootFinding);
-  sys->setConstraintSolver(RootFinding);
-  sys->setLinAlg(PseudoInverse);
-  sys->setNumJacProj(true);
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -62,11 +62,34 @@ namespace MBSim {
        */
       double dt;
 
+      /**
+       * \brief time and plot time
+       */
       double t, tPlot;
+
+      /**
+       * \brief iteration counter for constraints, plots, integration, maximum constraints, cummulation constraint
+       */
       int iter,step, integrationSteps, maxIter, sumIter;
+
+      /**
+       * \brief computing time counter
+       */
       double s0, time;
+
+      /**
+       * \brief plot step difference
+       */
       int stepPlot;
+
+      /**
+       * \brief state, position, velocity, order coordinate of dynamical system
+       */
       fmatvec::Vec z, q, u, x;
+
+      /**
+       * \brief file stream for integration information
+       */
       std::ofstream integPlot;
 
       /**

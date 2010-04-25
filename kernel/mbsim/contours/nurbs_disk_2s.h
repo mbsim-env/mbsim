@@ -65,6 +65,7 @@ namespace MBSim {
    * \date 2009-05-22 initial commit (Grundl / Missel / Schindler)
    * \date 2009-06-04 separate contour files (Thorsten Schindler)
    * \date 2009-08-16 contour / visualisation (Grundl / Missel / Schindler)
+   * \date 2010-04-21 flexible disks with parent (Grundl / Schindler)
    * \todo computeSurfaceJacobians / computeSurfaceVelocities only in contact case TODO
    * \todo angularVelocity TODO
    * \todo flexible body should only parametrise midplane -> other surfaces in contour TODO
@@ -211,6 +212,11 @@ namespace MBSim {
 
     protected:
       /** 
+       * \brief number of reference dofs of the flexible body
+       */
+      int RefDofs;
+
+      /**
        * \brief number of elements in azimuthal and radial direction
        */
       int nj, nr;
