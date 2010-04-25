@@ -46,7 +46,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   disk->setThickness(d);
   disk->setFrameOfReference(this->getFrame("I")); // location of disk
   disk->setLockType(innerring); // inner ring has no elastic dof
-  disk->setReferenceInertia(1.,1.); // inertia of the reference frame
+  disk->setReferenceInertia(1.,SymMat(3,EYE)); // inertia of the reference frame
   disk->setNumberElements(nr,nj);
 
   Vec q0 = Vec(2+nr*nj*3,INIT,0.); // initial position

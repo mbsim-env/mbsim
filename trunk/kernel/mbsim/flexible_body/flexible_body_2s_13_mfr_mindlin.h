@@ -20,49 +20,19 @@
 #ifndef _FLEXIBLE_BODY_2S_13_MFR_MINDLIN_H_
 #define _FLEXIBLE_BODY_2S_13_MFR_MINDLIN_H_
 
-#include "mbsim/flexible_body.h"
+#include "mbsim/flexible_body/flexible_body_2s_13.h"
 #include "mbsim/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin.h"
 
 namespace MBSim {
-
-  class NurbsDisk2sMFRMindlin;
-
-  /**
-   * \brief condensation setting for clamping to rigid body motion
-   */
-  enum LockType { innerring,outerring };
-
-  /*!
-   * \brief condenses rows of matrix concerning index
-   * \param input matrix
-   * \param indices to be condensed
-   * \return condensed matrix
-   */
-  fmatvec::Mat condenseMatrixRows_cd(fmatvec::Mat A, fmatvec::Index I); //TODO
-
-  /*! 
-   * \brief condenses symmetric matrix concerning index
-   * \param input matrix
-   * \param indices to be condensed
-   * \return condensed matrix
-   */
-  fmatvec::SymMat condenseMatrix_cd(fmatvec::SymMat A,fmatvec::Index I); //TODO
-
-  /*! 
-   * \brief calculates planar angle in [0,2\pi] with respect to cartesian coordinates 
-   * \param Cartesian x-coordinate
-   * \param Cartesian y-coordinate
-   * \return angle
-   */
-  double ArcTan_cd(double x,double y); //TODO: ArcTan da rausziehen??
 
   /*! 
    * \brief plate according to Reissner-Mindlin with moving frame of reference
    * \author Kilian Grundl
    * \author Thorsten Schindler
    * \date 2009-12-23 initial commit (Schindler / Grundl)
+   * \date 2010-04-21 parent class (Schindler / Grundl)
    */
-  class FlexibleBody2s13MFRMindlin : public MBSim::FlexibleBodyContinuum<fmatvec::Vec> {
+  class FlexibleBody2s13MFRMindlin : public MBSim::FlexibleBody2s13 {
     public:
       /**
        * \brief constructor
@@ -80,10 +50,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t);
       virtual void updateM(double t);
-      virtual void updatedhdz(double t);
-      virtual void updateStateDependentVariables(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
@@ -97,237 +64,48 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage);
-      virtual void facLLM() {};
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody2s13MFRMindlin"; }
       /***************************************************/
 
-      
-      void setRadius(double Ri_,double Ra_) { Ri = Ri_; Ra = Ra_; }		
-      void setEModul(double E_) { E = E_; }				
-      void setPoissonRatio(double nu_) { nu = nu_; }			
-      void setThickness(const fmatvec::Vec &d_) { d = d_; }		    
-      void setDensity(double rho_) { rho = rho_; }	
-      int getRadialNumberOfElements() const { return nr; }
-      int getAzimuthalNumberOfElements() const { return nj; }
-      double getInnerRadius() const { return Ri; }
-      double getOuterRadius() const { return Ra; }
-      double getAzimuthalDegree() const { return degU; }
-      double getRadialDegree() const { return degV; }
-      fmatvec::SqrMat getA() const {return A;}
-      fmatvec::SqrMat getG() const {return G;}
-      void setReferenceInertia(double m0_, fmatvec::SymMat J0_) { m0 = m0_; J0 = J0_; }
-      void setLockType(LockType LT_) { LType = LT_; }
+      /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
+      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
       /***************************************************/
 
-      /*! 
-       * \brief set number of elements in radial and azimuthal direction
-       * \param radial number of elements
-       * \param azimuthal number of elements
-       */
-      void setNumberElements(int nr_,int nj_);
-
-      /*!
-       * \return potential energy
-       */
-      double computePotentialEnergy() { return 0.5*q.T()*K*q; }
-
-      /*! 
-       * \brief transformation cartesian to cylinder system
-       * \param cartesian vector in world system
-       * \return cylindrical coordinates
-       */
-      fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
-
-    private:
-      /** 
-       * \brief total number of elements
-       */
-      int Elements;
-
-      /** 
-       * \brief elastic dof per node
-       */
-      int NodeDofs;
+    protected:
+      /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
+      virtual void initMatrices();
+      virtual void updateAG();
+      /***************************************************/
 
       /**
-       * \brief dof of moving frame of reference
-       */
-      int RefDofs;
-
-      /**
-       * \brief Young's modulus
-       */
-      double E;
-
-      /**
-       * \brief Poisson ratio
-       */
-      double nu;
-
-      /** 
-       * \brief density
-       */
-      double rho;
-
-      /**
-       * \brief inner and outer thickness
-       */
-      fmatvec::Vec d;
-
-      /**
-       * \brief inner and outer radius of disk
-       */
-      double Ri, Ra;
-
-      /**
-       * \brief radial and azimuthal length of an FE
-       */
-      double dr, dj;
-
-      /**
-       * \brief mass of the attached shaft
-       */
-      double m0;
-
-      /**
-       * \brief inertia of the attached shaft
-       */
-      fmatvec::SymMat J0;
-
-      /**
-       * \brief degree of surface interpolation in radial and azimuthal direction
-       *
-       * both degrees have to be smaller than 8
-       */
-      int degV, degU;
-
-      /**
-       * \brief number of points drawn between nodes
-       */
-      int drawDegree;
-
-      /**
-       * \brief vector of boundary data of the FE (r1,j1,r2,j2)
-       */
-      std::vector<fmatvec::Vec> ElementalNodes;
-
-      /**
-       * \brief number of element currently involved in contact calculations
-       */
-      int currentElement;
-
-      /**
-       * \brief mass matrix
-       */
-      fmatvec::SymMat MConst;
-
-      /**
-       * \brief stiffness matrix
-       */
-      fmatvec::SymMat K; 
-
-      /**
-       * \brief number of elements in radial and azimuthal direction, number of FE nodes
-       */
-      int nr, nj, Nodes;
-
-      /**
-       * \brief matrix mapping nodes and coordinates (size number of nodes x number of node coordinates)
-       *
-       * NodeCoordinates(GlobalNodeNumber,0) = radius (at the node)
-       * NodeCoordinates(GlobalNodeNumber,1) = angle  (at the node)
-       */
-      fmatvec::Mat NodeCoordinates; 
-
-      /** 
-       * \brief matrix mapping elements and nodes (size number of elements x number of nodes per elements) 
-       *
-       * ElementNodeList(Element,LocalNodeNumber) = globalNodeNumber;
-       */
-      fmatvec::Matrix<fmatvec::General,int> ElementNodeList;
-
-      /** 
-       * \brief total dof of disk with reference movement and elastic deformation but without including bearing
-       */
-      int Dofs;
-
-      /**
-       * \brief dirichlet boundary condition concerning reference movement
-       *
-       * possible settings: innering/outerring
-       */
-      LockType LType;
-
-      /**
-       * \brief index of condensated dofs
-       */
-      fmatvec::Index ILocked; 
-
-      /** 
-       * \brief position and velocity with respect to Dofs
-       */
-      fmatvec::Vec qext, uext; 
-
-      /**
-       * \brief Transformation Matrix of coordinates of the moving frame of reference into the reference frame
-       */
-      fmatvec::SqrMat A;
-
-      /** 
-       * \brief Transformation Matrix of the time derivates of the KARDAN angles into tho angular velocity in reference coordinates
-       */
-      fmatvec::SqrMat G;
-
-      /**
-       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::Mat N_compl;
 
       /**
-       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SqrMat N_ij[3][3];
 
       /**
-       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::RowVec NR_ij[3][3];
 
       /**
-       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::Vec R_compl;
 
       /**
-       * \brief Matrix for the compution of the Mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SymMat R_ij;
 
-      /*
-	   * \brief Jacobian for condensation with size Dofs x qSize
-       */
-      fmatvec::Mat Jext;
-
-      /**
-       * \brief contour for contact description
-       */
-      NurbsDisk2sMFRMindlin *contour;
-
-      fmatvec::SymMat M_old;//for testing
-      /*! 
-       * \brief detect involved element for contact description
-       * \param parametrisation vector (radial / azimuthal)
-       */
-      void BuildElement(const fmatvec::Vec &s);
-
-      /*! 
-       * \brief calculate the matrices for the first time
-       */
-      void initMatrices();
+      fmatvec::SymMat M_old; //for testing
 
       /*!
        * \brief calculate constant stiffness matrix
@@ -338,22 +116,6 @@ namespace MBSim {
        * \brief calculate constant parts of the mass matrix
        */
       void computeConstantMassMatrixParts();
-
-      /*!
-       * \brief update the transformation matrices A and G
-       */
-      void updateAG();
-
-      /*!
-       * \brief Transformation of cylindrical coordinates into Cartesian coordinates
-       */
-      fmatvec::SqrMat TransformationMatrix(const double &phi);
-
-      /*!
-       * \return thickness of disk at radial coordinate
-       * \param radial coordinate
-       */
-      double computeThickness(const double &r_);
   };
 
   inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
@@ -362,5 +124,5 @@ namespace MBSim {
 
 }
 
-#endif /* _FLEXIBLE_BODY_CYLINDIRCAL_DISK_H_*/
+#endif /* _FLEXIBLE_BODY_2S_13_MFR_MINDLIN_H_ */
 

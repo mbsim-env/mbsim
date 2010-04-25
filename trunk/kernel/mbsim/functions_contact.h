@@ -98,9 +98,9 @@ namespace MBSim {
 
       fmatvec::Vec computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-          cp.getLagrangeParameterPosition()(0) = alpha;
-          contour->computeRootFunctionPosition(cp);
-          contour->computeRootFunctionFirstTangent(cp);
+        cp.getLagrangeParameterPosition()(0) = alpha;
+        contour->computeRootFunctionPosition(cp);
+        contour->computeRootFunctionFirstTangent(cp);
         //}
         return point->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
       }
@@ -143,8 +143,8 @@ namespace MBSim {
 
       fmatvec::Vec computeWrD(const double &alpha) {
         //if(fabs(alpha-cp.getLagrangeParameterPosition()(0))>epsroot()) { TODO this is not working in all cases
-          cp.getLagrangeParameterPosition()(0) = alpha;
-          contour->computeRootFunctionPosition(cp);
+        cp.getLagrangeParameterPosition()(0) = alpha;
+        contour->computeRootFunctionPosition(cp);
         //}
         return circle->getFrame()->getPosition() - cp.getFrameOfReference().getPosition();
       }
@@ -543,7 +543,7 @@ namespace MBSim {
 
         //compute radial and azimuthal nurbsdisk-coordinates out of alpha (saved in the LagrangeParameterPosition)
         ContourPointData cp_nurbsdisk;
-        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk 
+        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW( AWK_disk.T() * (WP_circle - nurbsdisk->getFrame()->getPosition()) ); // position of the point in the cylinder-coordinates of the disk
 
         //get the position and the derivatives on the disk 
         nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,firstTangent); 
@@ -572,7 +572,7 @@ namespace MBSim {
 
         //get the position on the nurbsdisk
         ContourPointData cp_nurbsdisk;
-        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk 
+        cp_nurbsdisk.getLagrangeParameterPosition() = nurbsdisk->transformCW(nurbsdisk->getFrame()->getOrientation().T()*(WP_circle - nurbsdisk->getFrame()->getPosition())); // position of the point in the cylinder-coordinates of the disk
         nurbsdisk->updateKinematicsForFrame(cp_nurbsdisk,position);
         fmatvec::Vec WP_nurbsdisk = cp_nurbsdisk.getFrameOfReference().getPosition();
 
@@ -633,15 +633,15 @@ namespace MBSim {
       void setEqualSpacing(const int &n, const double &x0, const double &dx);
 
       /*!
-	   * \brief solve for the one potential contact point with minimal distance (might be negative)
+       * \brief solve for the one potential contact point with minimal distance (might be negative)
        * \return point with minimal distance at contour-parameter
        */
       double slv();
-	  /*!
-	   * \brief solve for all potential contact points
-	   * \return matrix holding LagrangeParameterPosition in col(0) and respective distances in col(1)
-	   */
-	  fmatvec::Mat slvAll();
+      /*!
+       * \brief solve for all potential contact points
+       * \return matrix holding LagrangeParameterPosition in col(0) and respective distances in col(1)
+       */
+      fmatvec::Mat slvAll();
 
 
     private:

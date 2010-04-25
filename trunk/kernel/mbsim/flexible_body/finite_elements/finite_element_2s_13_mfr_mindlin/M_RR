@@ -1,3 +1,0 @@
-M_RR(0,0) = rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f2 * (pow(r2, 0.4e1) - pow(r1, 0.4e1)) / 0.2e1 + 0.2e1 / 0.3e1 * rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f1 * (pow(r2, 0.3e1) - pow(r1, 0.3e1)) + rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f0 * (r2 * r2 - r1 * r1);
-M_RR(1,1) = rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f2 * (pow(r2, 0.4e1) - pow(r1, 0.4e1)) / 0.2e1 + 0.2e1 / 0.3e1 * rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f1 * (pow(r2, 0.3e1) - pow(r1, 0.3e1)) + rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f0 * (r2 * r2 - r1 * r1);
-M_RR(2,2) = rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f2 * (pow(r2, 0.4e1) - pow(r1, 0.4e1)) / 0.2e1 + 0.2e1 / 0.3e1 * rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f1 * (pow(r2, 0.3e1) - pow(r1, 0.3e1)) + rho * (phi2 / 0.2e1 - phi1 / 0.2e1) * f0 * (r2 * r2 - r1 * r1);

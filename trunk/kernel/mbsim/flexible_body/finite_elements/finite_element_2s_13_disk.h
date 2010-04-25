@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -22,7 +22,7 @@
 
 #include<cmath>
 #include "mbsim/discretization_interface.h"
-#include <mbsim/mbsim_event.h>
+#include "mbsim/mbsim_event.h"
 
 namespace MBSim {
 

@@ -32,7 +32,7 @@ namespace MBSim {
     return pow(base,exponent);
   }
 
-  FiniteElement2s13MFRMindlin::FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_, double d0_, double d1_, double d2_) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),E1(E_*(1.-nu_)/((1.+nu_)*(1.-2.*nu_))),E2(E_*nu_/((1.+nu_)*(1.-2.*nu_))),f0(d0_),f1(d1_),f2(d2_),rho(rho_),alphaS(5./6.),RefDofs(6),NodeDofs(3),Nodes(4),K(NodeDofs*Nodes,INIT,0.) {
+  FiniteElement2s13MFRMindlin::FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_, double d0_, double d1_, double d2_) : DiscretizationInterface(),E(E_),nu(nu_),G(E/(2.*(1.+nu))),E1(E_*(1.-nu_)/((1.+nu_)*(1.-2.*nu_))),E2(E_*nu_/((1.+nu_)*(1.-2.*nu_))),d0(d0_),d1(d1_),d2(d2_),rho(rho_),alphaS(5./6.),RefDofs(6),NodeDofs(3),Nodes(4),K(NodeDofs*Nodes,INIT,0.) {
     M_RR    = SymMat(3,INIT,0.);
     N_compl = Mat(3,NodeDofs*Nodes,INIT,0.);
     for(int i=0; i<3; i++)
@@ -51,99 +51,27 @@ namespace MBSim {
     computeN_compl(NodeCoordinates);
     computeN_ij(NodeCoordinates);
     computeNR_ij(NodeCoordinates);
-    computeR(NodeCoordinates);
+    computeR_compl(NodeCoordinates);
     computeR_ij(NodeCoordinates);
   }
 
-  void FiniteElement2s13MFRMindlin::computeStiffnesMatrix(const Vec &NodeCoordinates){
-
-    // node coordinates
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3);
-
-#include "finite_element_2s_13_mfr_mindlin/K"
-
-    /*testing */
-    //int Test_info = 0;
-    //for(int i=0;i<12;i++)
-    //  for(int j=0;j<12;j++)
-    //  {
-    //    cout << "KEl(" << i << "," << j << ") :" << KEl(i,j) << endl;
-    //    if (KEl(i,j) != KEl(j,i))
-    //      Test_info++;
-    //  }
-    //cout << "Anzahl nicht symmetrischer Einträge: " << Test_info << endl;
-    /**********/
-
-  }
-
-  void FiniteElement2s13MFRMindlin::computeM_RR(const fmatvec::Vec &NodeCoordinates) {
-    // node coordinates
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3);
-
-#include "finite_element_2s_13_mfr_mindlin/M_RR"
-  }
-
-  void FiniteElement2s13MFRMindlin::computeN_compl(const fmatvec::Vec &NodeCoordinates) {
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3);
-#include "finite_element_2s_13_mfr_mindlin/N_compl"
-  }
-
   void FiniteElement2s13MFRMindlin::computeN_ij(const fmatvec::Vec &NodeCoordinates) {
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3); 
+    //Mark: N_ij(1,3) = N_ij(2,3) = N_ij(3,1) = N_ij(3,2) = 0
 
-    //Mark: N_ij[1][3) = N_ij(2,3) = N_ij(3,1) = N_ij(3,2) = 0
-  
-#include "finite_element_2s_13_mfr_mindlin/N_11"
-#include "finite_element_2s_13_mfr_mindlin/N_12"
-#include "finite_element_2s_13_mfr_mindlin/N_21"
-#include "finite_element_2s_13_mfr_mindlin/N_22"
-#include "finite_element_2s_13_mfr_mindlin/N_33"
+	  computeN_11(NodeCoordinates);
+	  computeN_12(NodeCoordinates);
+	  computeN_21(NodeCoordinates);
+	  computeN_22(NodeCoordinates);
+	  computeN_33(NodeCoordinates);
   }
 
   void FiniteElement2s13MFRMindlin::computeNR_ij(const fmatvec::Vec &NodeCoordinates) {
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3); 
-
     //Mark: 0 = NR_ij(1,1) = NR_ij(1,2) = NR_ij(2,1) = NR_ij(2,2) = NR_ij(3,1) = NR_ij(3,2) = NR_ij(3,3) = 0  
   
-#include "finite_element_2s_13_mfr_mindlin/NR_13"
-#include "finite_element_2s_13_mfr_mindlin/NR_23"
-  
+	  computeNR_13(NodeCoordinates);
+	  computeNR_23(NodeCoordinates);
   }
 
-  void FiniteElement2s13MFRMindlin::computeR(const fmatvec::Vec &NodeCoordinates) {
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3); 
-
-#include "finite_element_2s_13_mfr_mindlin/R_compl"
-
-  }
-
-  void FiniteElement2s13MFRMindlin::computeR_ij(const fmatvec::Vec &NodeCoordinates) {
-    const double &r1 = NodeCoordinates(0);
-    const double &phi1 = NodeCoordinates(1);
-    const double &r2 = NodeCoordinates(2);
-    const double &phi2 = NodeCoordinates(3); 
-
-#include "finite_element_2s_13_mfr_mindlin/R_ij"
-
-  }
 
   Vec FiniteElement2s13MFRMindlin::computeState(const Vec &NodeCoordinates,const Vec &qElement,const Vec &qpElement,const Vec &s,double d1,double d2) {
     // state vector

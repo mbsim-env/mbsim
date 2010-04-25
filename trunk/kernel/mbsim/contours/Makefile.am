@@ -12,7 +12,6 @@ libcontour_la_SOURCES = area.cc\
 						frustum.cc\
 						frustum2d.cc\
 						nurbs_disk_2s.cc\
-						nurbs_disk_2s_mfr_mindlin.cc\
 						plane.cc\
 						planewithfrustum.cc\
 						sphere.cc
@@ -42,7 +41,6 @@ libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 						   frustum2d.h\
 						   line.h\
 						   nurbs_disk_2s.h\
-						   nurbs_disk_2s_mfr_mindlin.h\
 						   plane.h\
 						   planewithfrustum.h\
 						   point.h\

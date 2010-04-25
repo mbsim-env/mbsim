@@ -32,6 +32,13 @@ namespace MBSim {
    * \author Kilian Grundl
    * \author Thorsten Schindler
    * \date 2009-12-23 initial commit (Grundl / Schindler)
+   * \date 2010-04-23 check (Schindler)
+   * \todo transform computeState to Position / Orientation / Velocity / AngularVelocity
+   * \todo JacobianMinimalRepresentation
+   * \todo energy
+   * \todo right hand side
+   * \todo equations of motion
+   * \todo implicit integration
    */
   class FiniteElement2s13MFRMindlin : public DiscretizationInterface {
     public:
@@ -42,7 +49,7 @@ namespace MBSim {
        * \param density
        * \param thickness parametrisation
        */
-      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_, double d0_, double d1_, double d2_);
+      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_);
 
       /**
        * \brief destructor
@@ -69,17 +76,17 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       const fmatvec::SymMat& getK() const;
-      const fmatvec::SymMat& getM() const; //TODO: not needed, but discretization_interface wants it ...
+      const fmatvec::SymMat& getM() const; 
       const fmatvec::SymMat& getM_RR() const;
       const fmatvec::Mat& getN_compl() const;
-      const fmatvec::SqrMat& getN_ij(int i, int j)    const; 
-      const fmatvec::RowVec& getNR_ij(int i, int j)   const;
-      const fmatvec::Vec& getR_compl()       const;
-      const fmatvec::SymMat& getR_ij()    const; 
+      const fmatvec::SqrMat& getN_ij(int i, int j) const; 
+      const fmatvec::RowVec& getNR_ij(int i, int j) const;
+      const fmatvec::Vec& getR_compl() const;
+      const fmatvec::SymMat& getR_ij() const; 
       void setEModul(double E_);
       void setPoissonRatio(double nu_);
       void setDensity(double rho_);
-      void setShearCorrectionFactor(double alp_);
+      void setShearCorrectionFactor(double alphaS_);
       /***************************************************/
 
       /*!
@@ -95,7 +102,7 @@ namespace MBSim {
       void computeStiffnesMatrix(const fmatvec::Vec &NodeCoordinates);
 
       /*!
-       * \brief computes stiffnes matrix
+       * \brief computes mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
       void computeM(const fmatvec::Vec &NodeCoordinates);    
@@ -117,18 +124,37 @@ namespace MBSim {
        * \param radial and azimuthal coordinates of corner nodes
        */
       void computeN_ij(const fmatvec::Vec &NodeCoordinates);
+      void computeN_11(const fmatvec::Vec &NodeCoordinates);
+      void computeN_12(const fmatvec::Vec &NodeCoordinates);
+      void computeN_13(const fmatvec::Vec &NodeCoordinates);
+      void computeN_21(const fmatvec::Vec &NodeCoordinates);
+      void computeN_22(const fmatvec::Vec &NodeCoordinates);
+      void computeN_23(const fmatvec::Vec &NodeCoordinates);
+      void computeN_31(const fmatvec::Vec &NodeCoordinates);
+      void computeN_32(const fmatvec::Vec &NodeCoordinates);
+      void computeN_33(const fmatvec::Vec &NodeCoordinates);
 
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
       void computeNR_ij(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_11(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_12(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_13(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_21(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_22(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_23(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_31(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_32(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_33(const fmatvec::Vec &NodeCoordinates);
+
       
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeR(const fmatvec::Vec &NodeCoordinates);
+      void computeR_compl(const fmatvec::Vec &NodeCoordinates);
 
       /*!
        * \brief computes a part of the mass matrix
@@ -178,11 +204,10 @@ namespace MBSim {
        */
       double E1, E2;
 
-
       /**
        * \brief geometric factors of the disk 
        */
-      double f0, f1, f2;
+      double d0, d1, d2;
 
       /**
        * \brief density
@@ -210,7 +235,7 @@ namespace MBSim {
       int Nodes;
       
       /**
-       * \brief stiffness elementmatrix
+       * \brief stiffness matrix
        */
       fmatvec::SymMat K;
       
