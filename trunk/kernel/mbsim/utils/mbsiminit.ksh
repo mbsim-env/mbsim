@@ -33,4 +33,7 @@ else
   export HDF5SERIEXSLTPROC=${MBSIMPREFIX}/bin/xsltproc
   mbsimflatxml -h > /dev/null 2> /dev/null || export PATH=$PATH:${MBSIMPREFIX}/bin
   mbsimflatxml -h > /dev/null 2> /dev/null || export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MBSIMPREFIX}/lib
+
+# extension for other software tools
+  export KETSIMBINDIR=${MBSIMPREFIX}/bin
 fi
