@@ -33,4 +33,7 @@ else
   setenv HDF5SERIEXSLTPROC ${MBSIMPREFIX}/bin/xsltproc
   mbsimflatxml -h >& /dev/null || setenv PATH ${PATH}:${MBSIMPREFIX}/bin
   mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${MBSIMPREFIX}/lib
+
+# extension for other software tools
+  setenv KETSIMBINDIR ${MBSIMPREFIX}/bin
 endif

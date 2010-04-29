@@ -35,4 +35,8 @@ set HDF5SERIEH5DUMP=%PREFIX%/bin/h5dump
 set MBSIMBINDIR=%PREFIX%/bin
 set MBXMLUTILSBINDIR=%PREFIX%/bin
 set HDF5SERIEXSLTPROC=%PREFIX%/bin/xsltproc
+
+rem extension for other software tools
+set KETSIMBINDIR=%PREFIX%/bin
+
 set PATH=%PATH%;%PREFIX%\bin
