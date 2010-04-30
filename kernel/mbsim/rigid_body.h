@@ -214,10 +214,15 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
       void updatePositionAndOrientationOfFrame(double t, unsigned int i);
-      void updateVelocities(double t, unsigned int i);
+      //void updateVelocities(double t, unsigned int i);
+      void updateAngularVelocities(double t, unsigned int i);
       void updateAcclerations(double t, unsigned int i);
+      void updateRelativeJacobians(double t, unsigned int i);
+      void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
       const fmatvec::Mat& getWJTrel() const {return WJTrel;}
-      const fmatvec::Vec& getWjTrel() const {return WjTrel;}
+      const fmatvec::Mat& getWJRrel() const {return WJRrel;}
+      fmatvec::Mat& getWJTrel() {return WJTrel;}
+      fmatvec::Mat& getWJRrel() {return WJRrel;}
       fmatvec::Mat& getJRel() {return JRel;}
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
