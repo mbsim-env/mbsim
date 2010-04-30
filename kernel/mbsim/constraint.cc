@@ -129,8 +129,8 @@ namespace MBSim {
     bd2->getuRel() = u12(nu1,nu1+nu2-1);
     //bd1->updateVelocities(t,if1);
     //bd2->updateVelocities(t,if2);
-    bd1->updateAngularVelocities(t,if1);
-    bd2->updateAngularVelocities(t,if2);
+    //bd1->updateAngularVelocities(t,if1);
+    //bd2->updateAngularVelocities(t,if2);
   }
 
   void Constraint1::updateJacobians(double t){
@@ -259,8 +259,8 @@ namespace MBSim {
     bd2->getuRel() = u12(nu1,nu1+nu2-1);
     //bd1->updateVelocities(t,if1);
     //bd2->updateVelocities(t,if2);
-    bd1->updateAngularVelocities(t,if1);
-    bd2->updateAngularVelocities(t,if2);
+    //bd1->updateAngularVelocities(t,if1);
+    //bd2->updateAngularVelocities(t,if2);
   }
 
   void Constraint4::updateJacobians(double t){

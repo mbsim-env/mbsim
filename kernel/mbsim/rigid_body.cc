@@ -606,10 +606,10 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::updateAngularVelocities(double t, unsigned int i) {
-    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
-    frame[i]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
-  }
+//  void RigidBody::updateAngularVelocities(double t, unsigned int i) {
+//    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
+//    frame[i]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
+//  }
   //void RigidBody::updateVelocities(double t, unsigned int i) {
   //  WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
   //  WvPKrel = frameOfReference->getOrientation()*(PJT*uRel + PjT);
@@ -642,6 +642,10 @@ namespace MBSim {
       PdjT = (*fPdjT)(t);
     if(fPdjR)
       PdjR = (*fPdjR)(t);
+
+    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
+    WvPKrel = frameOfReference->getOrientation()*(PJT*uRel + PjT);
+    frame[i]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
 
     // TODO prüfen ob Optimierungspotential
 
