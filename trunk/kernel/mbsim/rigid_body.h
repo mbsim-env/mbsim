@@ -215,7 +215,7 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
       void updatePositionAndOrientationOfFrame(double t, unsigned int i);
       //void updateVelocities(double t, unsigned int i);
-      void updateAngularVelocities(double t, unsigned int i);
+      //void updateAngularVelocities(double t, unsigned int i);
       void updateAcclerations(double t, unsigned int i);
       void updateRelativeJacobians(double t, unsigned int i);
       void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
