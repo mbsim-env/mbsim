@@ -537,6 +537,7 @@ namespace MBSim {
     M += m*JTJ(frame[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation());
   }
 
+
   void RigidBody::updatePositionAndOrientationOfFrame(double t, unsigned int i) {
 
     if(fAPK)
@@ -570,7 +571,7 @@ namespace MBSim {
     }
   }
 
-  void RigidBody::updateVelocities(double t, unsigned int i) {
+  void RigidBody::updateRelativeJacobians(double t, unsigned int i) {
 
     if(fPJT)
       PJT = (*fPJT)(qRel,t);
@@ -583,33 +584,56 @@ namespace MBSim {
       PjR = (*fPjR)(t);
 
     WJRrel = frameOfReference->getOrientation()*PJR;
-    WjRrel = frameOfReference->getOrientation()*PjR;
-
     WJTrel = frameOfReference->getOrientation()*PJT;
-    WjTrel = frameOfReference->getOrientation()*PjT;
 
-    WjRrel += frameOfReference->getAngularVelocity(); // = WOmK = WOmC
-    WjTrel += frameOfReference->getVelocity() + crossProduct(frameOfReference->getAngularVelocity(),WrPK);
+    frame[iKinematics]->setVelocity(frameOfReference->getOrientation()*PjT+frameOfReference->getVelocity() + crossProduct(frameOfReference->getAngularVelocity(),WrPK));
+    frame[iKinematics]->setAngularVelocity(frameOfReference->getOrientation()*PjR + frameOfReference->getAngularVelocity());
 
     if(iKinematics != 0) {
-      WjTrel -= crossProduct(WjRrel, WrSF[iKinematics]); // + WJP*urel - crossProduct(WJRrel*urel, WrSF[iKinematics])  = WJC*urel;
+      frame[0]->setVelocity(frame[iKinematics]->getVelocity() - crossProduct(frame[iKinematics]->getAngularVelocity(), WrSF[iKinematics]));
+      frame[0]->setAngularVelocity(frame[iKinematics]->getAngularVelocity());
+
       WJTrel += tilde(WrSF[iKinematics])*WJRrel;
     }
 
     if(i>0) {
       if(i!=unsigned(iKinematics)) {
-
-	WjTrel += crossProduct(WjRrel, WrSF[i]); // WJC*urel + crossProduct(WJRrel*urel,WrSF[i]) = WJQ*urel
+	frame[i]->setAngularVelocity(frame[0]->getAngularVelocity());
+	frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSF[i]));
 	WJTrel -= tilde(WrSF[i])*WJRrel;
 
       }
     }
   }
 
+  void RigidBody::updateAngularVelocities(double t, unsigned int i) {
+    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
+    frame[i]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
+  }
+  //void RigidBody::updateVelocities(double t, unsigned int i) {
+  //  WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
+  //  WvPKrel = frameOfReference->getOrientation()*(PJT*uRel + PjT);
+
+  //  frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
+  //  frame[iKinematics]->setVelocity(frameOfReference->getVelocity() + WvPKrel + crossProduct(frameOfReference->getAngularVelocity(),WrPK));
+
+  //  if(iKinematics != 0) { // only if kinematics frame is not cog-frame, update JACOBIAN of cog
+  //    frame[0]->setVelocity(frame[iKinematics]->getVelocity() - crossProduct(frame[iKinematics]->getAngularVelocity(), WrSF[iKinematics]));
+  //    frame[0]->setAngularVelocity(frame[iKinematics]->getAngularVelocity());
+  //  }
+
+  //  if(i>0) {
+  //    if(i!=unsigned(iKinematics)) {
+  //      frame[i]->setAngularVelocity(frame[0]->getAngularVelocity());
+  //      frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSF[i]));
+  //    }
+  //  }
+  //}
+
   void RigidBody::updateAcclerations(double t, unsigned int i) {
     frame[iKinematics]->getJacobianOfTranslation().init(0);
     frame[iKinematics]->getJacobianOfRotation().init(0);
-     if(fPdJT)
+    if(fPdJT)
       PdJT = (*fPdJT)(T*uRel,qRel,t);
     if(fPdJR)
       PdJR = (*fPdJR)(T*uRel,qRel,t);
@@ -622,8 +646,6 @@ namespace MBSim {
     // TODO prüfen ob Optimierungspotential
 
     SqrMat tWrPK = tilde(WrPK);
-    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
-    WvPKrel = frameOfReference->getOrientation()*(PJT*uRel + PjT);
 
     frame[iKinematics]->setGyroscopicAccelerationOfTranslation(frameOfReference->getGyroscopicAccelerationOfTranslation() - tWrPK*frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJT*uRel + PdjT) + crossProduct(frameOfReference->getAngularVelocity(), 2*WvPKrel+crossProduct(frameOfReference->getAngularVelocity(),WrPK)));
     frame[iKinematics]->setGyroscopicAccelerationOfRotation(frameOfReference->getGyroscopicAccelerationOfRotation() + frameOfReference->getOrientation()*(PdJR*uRel + PdjR) + crossProduct(frameOfReference->getAngularVelocity(), WomPK));
@@ -631,28 +653,39 @@ namespace MBSim {
     frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation().cols()-1)) = frameOfReference->getJacobianOfTranslation() - tWrPK*frameOfReference->getJacobianOfRotation();
     frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
 
-    frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
-
-    if(iKinematics != 0) { // only if kinematics frame is not cog-frame, update JACOBIAN of cog
-      frame[0]->setAngularVelocity(frame[iKinematics]->getAngularVelocity());
+    if(iKinematics != 0) { 
 
       SqrMat tWrSK = tilde(WrSF[iKinematics]);
       frame[0]->setJacobianOfTranslation(frame[iKinematics]->getJacobianOfTranslation() + tWrSK*frame[iKinematics]->getJacobianOfRotation());
       frame[0]->setJacobianOfRotation(frame[iKinematics]->getJacobianOfRotation());
-      frame[0]->setGyroscopicAccelerationOfTranslation(frame[iKinematics]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iKinematics]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[iKinematics]->getAngularVelocity(),crossProduct(frame[iKinematics]->getAngularVelocity(),-WrSF[iKinematics])));
+      frame[0]->setGyroscopicAccelerationOfTranslation(frame[iKinematics]->getGyroscopicAccelerationOfTranslation() + tWrSK*frame[iKinematics]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[i]->getAngularVelocity(),crossProduct(frame[i]->getAngularVelocity(),-WrSF[iKinematics]))); // frame[iKinematics]->getAngularVelocity() not up to date
       frame[0]->setGyroscopicAccelerationOfRotation(frame[iKinematics]->getGyroscopicAccelerationOfRotation());
     }
 
     if(i>0) {
       if(i!=unsigned(iKinematics)) {
-        SqrMat tWrSK = tilde(WrSF[i]);
-        frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSK*frame[0]->getJacobianOfRotation());
-        frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation());
-        frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSF[i])));
-        frame[i]->setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
+	SqrMat tWrSK = tilde(WrSF[i]);
+	frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrSK*frame[0]->getJacobianOfRotation());
+	frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation());
+	frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[i]->getAngularVelocity(),crossProduct(frame[i]->getAngularVelocity(),WrSF[i])));// frame[0]->getAngularVelocity() not up to date
+	frame[i]->setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
       }
     }
 
+  }
+
+  void RigidBody::updateRelativeJacobians(double t, unsigned int i, Mat &WJTrel0, Mat &WJRrel0) {
+
+    if(iKinematics != 0) {
+      WJTrel0 += tilde(WrSF[iKinematics])*WJRrel0;
+    }
+
+    // TODO: Zusammenfassen
+    if(i>0) {
+      if(i!=unsigned(iKinematics)) {
+	WJTrel0 -= tilde(WrSF[i])*WJRrel0;
+      }
+    }
   }
 
   void RigidBody::initializeUsingXML(TiXmlElement *element) {
@@ -667,15 +700,15 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
-        f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
-            getDouble(ee->FirstChildElement(MBSIMNS"offset")));
+	f->enableOpenMBV(getDouble(ee->FirstChildElement(MBSIMNS"size")),
+	    getDouble(ee->FirstChildElement(MBSIMNS"offset")));
 #endif
       ec=ec->NextSiblingElement();
       string refF="C";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-        ec=ec->NextSiblingElement();
+	refF=ec->Attribute("ref");
+	refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+	ec=ec->NextSiblingElement();
       }
       Vec RrRF=getVec(ec,3);
       ec=ec->NextSiblingElement();
@@ -693,9 +726,9 @@ namespace MBSim {
       ec=ec->NextSiblingElement();
       string refF="C";
       if(ec->ValueStr()==MBSIMNS"frameOfReference") {
-        refF=ec->Attribute("ref");
-        refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
-        ec=ec->NextSiblingElement();
+	refF=ec->Attribute("ref");
+	refF=refF.substr(6, refF.length()-7); // reference frame is allways "Frame[X]"
+	ec=ec->NextSiblingElement();
       }
       Vec RrRC=getVec(ec,3);
       ec=ec->NextSiblingElement();
@@ -781,15 +814,15 @@ namespace MBSim {
       rb->initializeUsingXML(e->FirstChildElement());
 
       if (e->FirstChildElement(MBSIMNS"frameOfReference"))
-        setOpenMBVFrameOfReference(getByPath<Frame>(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
+	setOpenMBVFrameOfReference(getByPath<Frame>(e->FirstChildElement(MBSIMNS"frameOfReference")->Attribute("ref"))); // must be on of "Frame[X]" which allready exists
     }
 
     e=element->FirstChildElement(MBSIMNS"enableOpenMBVFrameC");
     if(e) {
       if(!openMBVBody)
-        setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
+	setOpenMBVRigidBody(new OpenMBV::InvisibleBody);
       C->enableOpenMBV(getDouble(e->FirstChildElement(MBSIMNS"size")),
-          getDouble(e->FirstChildElement(MBSIMNS"offset")));
+	  getDouble(e->FirstChildElement(MBSIMNS"offset")));
     }
 #endif
   }

@@ -110,6 +110,33 @@ namespace MBSim {
       void updateStateDependentVariables(double t);
       void updateJacobians(double t);
   };
+
+  /** 
+   * \brief example 4 for contraint 
+   * \todo generalization of this class
+   * \author Martin Foerg
+   */
+  class Constraint4 : public Constraint {
+    private:
+      RigidBody *bi, *bd1, *bd2;
+
+      Frame *frame1,*frame2,*frame3;
+      int if1, if2;
+      
+      fmatvec::Mat d;
+
+    public:
+      Constraint4(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2, Frame* frame3);
+
+      void init(InitStage stage);
+
+      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
+      void setForceDirection(const fmatvec::Mat& d_) {d = d_;}
+
+      void updateStateDependentVariables(double t); 
+      void updateJacobians(double t); 
+  };
+
 }
 
 #endif
