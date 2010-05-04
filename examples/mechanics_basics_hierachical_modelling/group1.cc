@@ -91,11 +91,15 @@ Group1::Group1(const string &name) : Group(name) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cuboid* body1=new OpenMBV::Cuboid;
   body1->setLength(Vec(3,INIT,1)*h1);
+  OpenMBV::Object::addSimpleParameter("color1", 0.5);
+  body1->setStaticColor("color1");
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("P1")->enableOpenMBV(0.5);
 
   OpenMBV::Cuboid* body2=new OpenMBV::Cuboid;
   body2->setLength(Vec(3,INIT,1)*h2);
+  OpenMBV::Object::addSimpleParameter("color2", 1);
+  body2->setStaticColor("color2");
   box2->setOpenMBVRigidBody(body2);
   box2->getFrame("P1")->enableOpenMBV(0.5);
 
