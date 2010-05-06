@@ -214,8 +214,6 @@ namespace MBSim {
 
       virtual void initializeUsingXML(TiXmlElement *element);
       void updatePositionAndOrientationOfFrame(double t, unsigned int i);
-      //void updateVelocities(double t, unsigned int i);
-      //void updateAngularVelocities(double t, unsigned int i);
       void updateAcclerations(double t, unsigned int i);
       void updateRelativeJacobians(double t, unsigned int i);
       void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
@@ -227,6 +225,10 @@ namespace MBSim {
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
+    //  void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
+     // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
+      void updateqRef(const fmatvec::Vec& ref);
+      void updateuRef(const fmatvec::Vec& ref);
 
     protected:
       /**
@@ -415,6 +417,8 @@ namespace MBSim {
       Constraint *constraint;
 
       int nu[2], nq;
+
+      //fmatvec::Vec qRel0, uRel0;
 
     private:
       std::vector<std::string> saved_refFrameF, saved_refFrameC;
