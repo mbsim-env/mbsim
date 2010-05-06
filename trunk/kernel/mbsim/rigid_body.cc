@@ -346,11 +346,18 @@ namespace MBSim {
     }
   }
 
+  void RigidBody::updateqRef(const Vec& ref) {
+    Object::updateqRef(ref);
+    if(!constraint) qRel >> q;
+    
+  }
+
+  void RigidBody::updateuRef(const Vec& ref) {
+    Object::updateuRef(ref);
+    if(!constraint) uRel >> u;
+  }
+
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
-    if(!constraint) {
-      qRel = q;
-      uRel = u;
-    }
 
     if(fPJT)
       PJT = (*fPJT)(qRel,t);
@@ -537,7 +544,6 @@ namespace MBSim {
     M += m*JTJ(frame[0]->getJacobianOfTranslation()) + JTMJ(WThetaS,frame[0]->getJacobianOfRotation());
   }
 
-
   void RigidBody::updatePositionAndOrientationOfFrame(double t, unsigned int i) {
 
     if(fAPK)
@@ -605,30 +611,6 @@ namespace MBSim {
       }
     }
   }
-
-//  void RigidBody::updateAngularVelocities(double t, unsigned int i) {
-//    WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
-//    frame[i]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
-//  }
-  //void RigidBody::updateVelocities(double t, unsigned int i) {
-  //  WomPK = frameOfReference->getOrientation()*(PJR*uRel + PjR);
-  //  WvPKrel = frameOfReference->getOrientation()*(PJT*uRel + PjT);
-
-  //  frame[iKinematics]->setAngularVelocity(frameOfReference->getAngularVelocity() + WomPK);
-  //  frame[iKinematics]->setVelocity(frameOfReference->getVelocity() + WvPKrel + crossProduct(frameOfReference->getAngularVelocity(),WrPK));
-
-  //  if(iKinematics != 0) { // only if kinematics frame is not cog-frame, update JACOBIAN of cog
-  //    frame[0]->setVelocity(frame[iKinematics]->getVelocity() - crossProduct(frame[iKinematics]->getAngularVelocity(), WrSF[iKinematics]));
-  //    frame[0]->setAngularVelocity(frame[iKinematics]->getAngularVelocity());
-  //  }
-
-  //  if(i>0) {
-  //    if(i!=unsigned(iKinematics)) {
-  //      frame[i]->setAngularVelocity(frame[0]->getAngularVelocity());
-  //      frame[i]->setVelocity(frame[0]->getVelocity() + crossProduct(frame[0]->getAngularVelocity(), WrSF[i]));
-  //    }
-  //  }
-  //}
 
   void RigidBody::updateAcclerations(double t, unsigned int i) {
     frame[iKinematics]->getJacobianOfTranslation().init(0);
