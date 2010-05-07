@@ -19,7 +19,6 @@
 #ifndef _CONSTRAINT_H
 #define _CONSTRAINT_H
 
-//#include "special_body.h"
 #include "object.h"
 
 namespace MBSim {
@@ -56,10 +55,16 @@ namespace MBSim {
       
       fmatvec::Mat d;
 
+      fmatvec::Vec q12, u12;
+      fmatvec::Mat J12;
+      fmatvec::Vec j12;
+      fmatvec::Mat J12t;
+
     public:
       Constraint1(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2);
 
       void init(InitStage stage);
+      void initz();
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void setForceDirection(const fmatvec::Mat& d_) {d = d_;}
@@ -125,14 +130,58 @@ namespace MBSim {
       
       fmatvec::Mat d;
 
+      fmatvec::Vec x0;
+
     public:
       Constraint4(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2, Frame* frame3);
 
       void init(InitStage stage);
+      void initz();
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void setForceDirection(const fmatvec::Mat& d_) {d = d_;}
 
+      void updateStateDependentVariables(double t); 
+      void updateJacobians(double t); 
+  };
+
+  /** 
+   * \brief example 5 for contraint 
+   * \todo generalization of this class
+   * \author Martin Foerg
+   */
+  class Constraint5 : public Constraint {
+    private:
+      RigidBody *bi;
+      std::vector<RigidBody*> bd1;
+      std::vector<RigidBody*> bd2;
+      std::vector<int> if1;
+      std::vector<int> if2;
+
+      Frame *frame1,*frame2;
+      
+      fmatvec::Mat dT;
+      fmatvec::Mat dR;
+
+      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2;
+      int nq, nu;
+      fmatvec::Vec q, u;
+      fmatvec::Mat J;
+      fmatvec::Vec j;
+      fmatvec::Mat JT, JR;
+      fmatvec::Vec q0;
+
+    public:
+      Constraint5(const std::string &name, RigidBody* bi, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
+
+      void init(InitStage stage);
+      void initz();
+
+      void setForceDirection(const fmatvec::Mat& d_) {dT = d_;}
+      void setMomentDirection(const fmatvec::Mat& d_) {dR = d_;}
+      void  setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
+
+      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
       void updateJacobians(double t); 
   };
