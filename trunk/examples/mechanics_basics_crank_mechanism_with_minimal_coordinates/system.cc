@@ -96,8 +96,11 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body3->setInertiaTensor(Theta);
   body3->setTranslation(new LinearTranslation(Vec("[1;0;0]")));
 
-  Constraint* constraint = new Constraint1("C",body1,body2,body3,body2->getFrame("Q"),body3->getFrame("C"));
+  vector<RigidBody*> bd1; bd1.push_back(body2);
+  vector<RigidBody*> bd2; bd2.push_back(body3);
+  JointConstraint* constraint = new JointConstraint("C",body1,bd1,bd2,body2->getFrame("Q"),body3->getFrame("C")); 
   addObject(constraint);
+  constraint->setForceDirection("[1,0;0,1;0,0]");
 
   KineticExcitation *load = new KineticExcitation("Motor");
   addLink(load);
