@@ -20,6 +20,7 @@
 #define _CONSTRAINT_H
 
 #include "object.h"
+#include "utils/function.h"
 
 namespace MBSim {
 
@@ -41,39 +42,7 @@ namespace MBSim {
 #endif
   };
 
-  /** 
-   * \brief example 1 for contraint 
-   * \todo generalization of this class
-   * \author Martin Foerg
-   */
-  class Constraint1 : public Constraint {
-    private:
-      RigidBody *bi, *bd1, *bd2;
-
-      Frame *frame1,*frame2;
-      int if1, if2;
-      
-      fmatvec::Mat d;
-
-      fmatvec::Vec q12, u12;
-      fmatvec::Mat J12;
-      fmatvec::Vec j12;
-      fmatvec::Mat J12t;
-
-    public:
-      Constraint1(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2);
-
-      void init(InitStage stage);
-      void initz();
-
-      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
-      void setForceDirection(const fmatvec::Mat& d_) {d = d_;}
-
-      void updateStateDependentVariables(double t); 
-      void updateJacobians(double t); 
-  };
-
-  /** 
+   /** 
    * \brief example 2 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
@@ -117,41 +86,22 @@ namespace MBSim {
   };
 
   /** 
-   * \brief example 4 for contraint 
-   * \todo generalization of this class
-   * \author Martin Foerg
-   */
-  class Constraint4 : public Constraint {
-    private:
-      RigidBody *bi, *bd1, *bd2;
-
-      Frame *frame1,*frame2,*frame3;
-      int if1, if2;
-      
-      fmatvec::Mat d;
-
-      fmatvec::Vec x0;
-
-    public:
-      Constraint4(const std::string &name, RigidBody* b0, RigidBody* b1, RigidBody* b2, Frame* frame1, Frame* frame2, Frame* frame3);
-
-      void init(InitStage stage);
-      void initz();
-
-      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
-      void setForceDirection(const fmatvec::Mat& d_) {d = d_;}
-
-      void updateStateDependentVariables(double t); 
-      void updateJacobians(double t); 
-  };
-
-  /** 
    * \brief example 5 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
    */
-  class Constraint5 : public Constraint {
-    private:
+  class JointConstraint : public Constraint {
+    protected:
+      class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
+	std::vector<RigidBody*> body1, body2;
+	fmatvec::Mat dT, dR;
+	Frame *frame1, *frame2;
+	double t;
+	std::vector<int> i1,i2;
+	public:
+	Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
+	fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
+      };
       RigidBody *bi;
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
@@ -159,7 +109,7 @@ namespace MBSim {
       std::vector<int> if2;
 
       Frame *frame1,*frame2;
-      
+
       fmatvec::Mat dT;
       fmatvec::Mat dR;
 
@@ -172,7 +122,7 @@ namespace MBSim {
       fmatvec::Vec q0;
 
     public:
-      Constraint5(const std::string &name, RigidBody* bi, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
+      JointConstraint(const std::string &name, RigidBody* bi, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
 
       void init(InitStage stage);
       void initz();
