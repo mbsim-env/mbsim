@@ -38,5 +38,6 @@ set HDF5SERIEXSLTPROC=%PREFIX%/bin/xsltproc
 
 rem extension for other software tools
 set KETSIMBINDIR=%PREFIX%/bin
+set MDPCOSIMBINDIR=%PREFIX%/bin
 
 set PATH=%PATH%;%PREFIX%\bin

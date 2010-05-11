@@ -36,4 +36,5 @@ else
 
 # extension for other software tools
   export KETSIMBINDIR=${MBSIMPREFIX}/bin
+  export MDPCOSIMBINDIR=${MBSIMPREFIX}/bin
 fi
