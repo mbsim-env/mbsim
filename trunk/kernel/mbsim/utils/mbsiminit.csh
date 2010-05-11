@@ -36,4 +36,5 @@ else
 
 # extension for other software tools
   setenv KETSIMBINDIR ${MBSIMPREFIX}/bin
+  setenv MDPCOSIMBINDIR=${MBSIMPREFIX}/bin
 endif
