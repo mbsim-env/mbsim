@@ -40,7 +40,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsCircleSolidContour1s() {}
+      ContactKinematicsCircleSolidContour1s() : icircle(0), icontour1s(0), circle(NULL), contour1s(NULL), func(NULL), searchAllCP(false) {}
 
       /**
        * \brief destructor
@@ -53,6 +53,8 @@ namespace MBSim {
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData);
       virtual void computeCurvatures(fmatvec::Vec &r, ContourPointData* cpData);
       /***************************************************/
+
+      void setSearchAllCP(bool searchAllCP_=true) {searchAllCP=searchAllCP_; }
 
     private:
       /**
@@ -70,6 +72,8 @@ namespace MBSim {
        * \brief root function
        */
       FuncPairContour1sCircleSolid *func;
+
+      bool searchAllCP;
   };
 
 }
