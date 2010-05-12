@@ -26,6 +26,7 @@ else
   setenv MBXMLUTILSSCHEMADIR ${MBSIMPREFIX}/share/mbxmlutils/schema
   setenv MBXMLUTILSXMLDIR ${MBSIMPREFIX}/share/mbxmlutils/xml
   setenv MBXMLUTILSOCTAVEDIR ${MBSIMPREFIX}/share/mbxmlutils/octave
+  setenv MBXMLUTILSOCTAVEPREFIX=${MBSIMPREFIX}
   setenv HDF5SERIEDATADIR ${MBSIMPREFIX}/share
   setenv HDF5SERIEH5DUMP ${MBSIMPREFIX}/bin/h5dump
   setenv MBSIMBINDIR ${MBSIMPREFIX}/bin
