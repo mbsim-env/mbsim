@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -232,9 +232,9 @@ namespace MBSim {
   void JointConstraint::updateJacobians(double t) {
 
     for(unsigned int i=0; i<bd1.size(); i++)
-      bd1[i]->updateAcclerations(t,if1[i]);
+      bd1[i]->updateAccelerations(t,if1[i]);
     for(unsigned int i=0; i<bd2.size(); i++)
-      bd2[i]->updateAcclerations(t,if2[i]);
+      bd2[i]->updateAccelerations(t,if2[i]);
 
     int nh = bd1[0]->getJRel().cols();
 
