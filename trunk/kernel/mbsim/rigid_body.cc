@@ -245,10 +245,12 @@ namespace MBSim {
       updatePlotFeatures(parent);
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        for(int i=0; i<nq; i++)
-          plotColumns.push_back("qRel("+numtostr(i)+")");
-        for(int i=0; i<nu[0]; i++)
-          plotColumns.push_back("uRel("+numtostr(i)+")");
+        if(getPlotFeature(notMinimalState)==enabled) {
+          for(int i=0; i<nq; i++)
+            plotColumns.push_back("qRel("+numtostr(i)+")");
+          for(int i=0; i<nu[0]; i++)
+            plotColumns.push_back("uRel("+numtostr(i)+")");
+        }
         if(getPlotFeature(globalPosition)==enabled) {
           plotColumns.push_back("WxOS");
           plotColumns.push_back("WyOS");
@@ -301,10 +303,12 @@ namespace MBSim {
 
   void RigidBody::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      for(int i=0; i<nq; i++)
-        plotVector.push_back(qRel(i));
-      for(int i=0; i<nu[0]; i++)
-        plotVector.push_back(uRel(i));
+      if(getPlotFeature(notMinimalState)==enabled) {
+        for(int i=0; i<nq; i++)
+          plotVector.push_back(qRel(i));
+        for(int i=0; i<nu[0]; i++)
+          plotVector.push_back(uRel(i));
+      }
       if(getPlotFeature(globalPosition)==enabled) {
         Vec WrOS=frame[0]->getPosition();
         Vec cardan=AIK2Cardan(frame[0]->getOrientation());
