@@ -65,6 +65,7 @@ namespace MBSim {
     separateFilePerGroup, /*!< create a separate h5 file for the Group */
     state, /*!< plot the state vector (x, q, u) */
     stateDerivative, /*!< plot the derivative of the state vector (xd, qd, ud) */
+    notMinimalState, // TODO
     rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
     globalPosition, /*!< plot some global (world) positions/orientation */
     globalVelocity, /*!< plot some global (world) velocities */
