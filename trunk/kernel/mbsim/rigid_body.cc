@@ -274,6 +274,12 @@ namespace MBSim {
       Body::init(stage);
   }
 
+  void RigidBody::initz() {
+    Object::initz();
+    if(!constraint) qRel>>q;
+    if(!constraint) uRel>>u;
+  }
+
   void RigidBody::resizeJacobians(int j) {
     for(unsigned int i=0; i<frame.size(); i++) 
       frame[i]->resizeJacobians(j);
