@@ -80,6 +80,7 @@ namespace MBSim {
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
+      virtual void initz();
       virtual void facLLM() { (this->*facLLM_)(); }
       virtual void resizeJacobians(int j);
       virtual void checkForConstraints();
