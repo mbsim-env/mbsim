@@ -20,6 +20,7 @@
 #include "constraint.h"
 #include "rigid_body.h"
 #include "utils/nonlinear_algebra.h"
+#include "utils/utils.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -54,8 +55,8 @@ namespace MBSim {
     if(nT) {
       res(0,nT-1) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
     }
-    if(nR) { // TODO
-      res(nT,nT+nR-1) = dR.T()*(frame1->getPosition()-frame2->getPosition()); 
+    if(nR) { 
+      res(nT,nT+nR-1) = dR.T()*tildetovec(trans(frame1->getOrientation())*frame2->getOrientation()); 
     }
 
     return res;
@@ -172,7 +173,8 @@ namespace MBSim {
       nq += dq;
       nu += du;
     }
-    int nh = bd1[0]->getJRel().cols();
+
+    int nh = hSize[0];
     q.resize(nq);
     u.resize(nu);
     J.resize(nu,nh);
@@ -236,7 +238,7 @@ namespace MBSim {
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->updateAccelerations(t,if2[i]);
 
-    int nh = bd1[0]->getJRel().cols();
+    int nh = hSize[0];
 
     SqrMat A(nu);
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
