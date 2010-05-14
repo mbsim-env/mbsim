@@ -210,10 +210,10 @@ namespace MBSim {
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
           if(cb) {
-            fT = new TCardanAngles2(qSize,nu[0]);
+            fT = new TCardanAngles2(nq,nu[0]);
           }
           else {
-            fT = new TCardanAngles(qSize,nu[0]);
+            fT = new TCardanAngles(nq,nu[0]);
           }
         }
 

@@ -65,7 +65,7 @@ namespace MBSim {
         constraint = constraint_;
       }
 
-      virtual void updateT(double t) { if(fT) T = (*fT)(q,t); }
+      virtual void updateT(double t) { if(fT) T = (*fT)(qRel,t); }
       virtual void updateh(double t);
       virtual void updatehInverseKinetics(double t);
       virtual void updateStateDerivativeDependentVariables(double t);
