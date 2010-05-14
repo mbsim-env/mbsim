@@ -8,6 +8,7 @@ libutils_la_SOURCES = eps.cc\
                       utils.cc\
                       function.cc\
                       function_library.cc\
+                      stopwatch.cc\
                       ansatz_functions.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
@@ -24,10 +25,9 @@ utilsinclude_HEADERS = eps.h\
                        contact_utils.h\
                        rotarymatrices.h\
                        utils.h\
+                       stopwatch.h\
                        ansatz_functions.h\
-											 contour_functions.h
-
-
+                       contour_functions.h
 
 
 
