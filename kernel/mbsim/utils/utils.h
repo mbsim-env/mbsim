@@ -31,6 +31,7 @@ double degtorad(double alpha);
 double radtodeg(double phi);
 fmatvec::Vec degtorad(fmatvec::Vec alpha);
 fmatvec::Vec radtodeg(fmatvec::Vec phi);
+fmatvec::Vec tildetovec(const fmatvec::SqrMat &A);
 
 double sign(double x);
 int min(int i, int j);
