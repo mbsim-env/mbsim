@@ -409,7 +409,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       bd2.push_back(psR->getInputShaft());
       bd2.push_back(psR->getIntermediateShaft());
       bd2.push_back(psR->getOutputShaft());
-      JointConstraint* jointconstraint = new JointConstraint("CR",hr,bd1,bd2,hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
+      JointConstraint* jointconstraint = new JointConstraint("CR",bd1,bd2,hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
       addObject(jointconstraint);
       jointconstraint->setForceDirection(Mat(3,3,EYE));
       jointconstraint->setMomentDirection(Mat(3,3,EYE));
@@ -422,7 +422,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
       bd2.push_back(psL->getInputShaft());
       bd2.push_back(psL->getIntermediateShaft());
       bd2.push_back(psL->getOutputShaft());
-      JointConstraint* jointconstraint = new JointConstraint("CL",hl,bd1,bd2,hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
+      JointConstraint* jointconstraint = new JointConstraint("CL",bd1,bd2,hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
       addObject(jointconstraint);
       jointconstraint->setForceDirection(Mat(3,3,EYE));
       jointconstraint->setMomentDirection(Mat(3,3,EYE));
