@@ -98,7 +98,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   vector<RigidBody*> bd1; bd1.push_back(body2);
   vector<RigidBody*> bd2; bd2.push_back(body3);
-  JointConstraint* constraint = new JointConstraint("C",body1,bd1,bd2,body2->getFrame("Q"),body3->getFrame("C")); 
+  JointConstraint* constraint = new JointConstraint("C",bd1,bd2,body2->getFrame("Q"),body3->getFrame("C")); 
   addObject(constraint);
   constraint->setForceDirection("[1,0;0,1;0,0]");
 
