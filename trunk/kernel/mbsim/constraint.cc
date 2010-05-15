@@ -53,13 +53,12 @@ namespace MBSim {
 
     int nT = dT.cols();
     int nR = dR.cols();
-    if(nT) {
+
+    if(nT) 
       res(0,nT-1) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
-    }
-    if(nR) { 
-      //res(nT,nT+nR-1) = dR.T()*tildetovec(trans(frame1->getOrientation())*frame2->getOrientation()); 
+
+    if(nR) 
       res(nT,nT+nR-1) = dR.T()*AIK2Cardan(trans(frame1->getOrientation())*frame2->getOrientation()); 
-    }
 
     return res;
   } 
@@ -115,14 +114,9 @@ namespace MBSim {
     bd->getJRel().init(0); 
   }
 
-  JointConstraint::JointConstraint(const std::string &name, RigidBody* bi_, std::vector<RigidBody*> bd1_, std::vector<RigidBody*> bd2_, Frame* frame1_, Frame* frame2_) : Constraint(name), frame1(frame1_), frame2(frame2_) {
-    bi = bi_;
+  JointConstraint::JointConstraint(const std::string &name, std::vector<RigidBody*> bd1_, std::vector<RigidBody*> bd2_, Frame* frame1_, Frame* frame2_) : Constraint(name), frame1(frame1_), frame2(frame2_) {
     bd1 = bd1_;
     bd2 = bd2_;
-    cout << bd1.size() << endl;
-    cout << bd2.size() << endl;
-    cout << bd1_.size() << endl;
-    cout << bd2_.size() << endl;
 
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->addDependency(this);
@@ -145,7 +139,16 @@ namespace MBSim {
   void JointConstraint::init(InitStage stage) {
     if(stage==preInit) {
       Constraint::init(stage);
-      dependency.push_back(bi);
+      if(bd1.size()) {
+	Body* obj = dynamic_cast<Body*>(bd1[0]->getFrameOfReference()->getParent());
+	if(obj)
+	  dependency.push_back(obj);
+      }
+      if(bd2.size()) {
+	Body* obj = dynamic_cast<Body*>(bd2[0]->getFrameOfReference()->getParent());
+	if(obj)
+	  dependency.push_back(obj);
+      }
     } 
     else if(stage==unknownStage) {
       if(!dT.cols()) 
@@ -192,14 +195,12 @@ namespace MBSim {
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->getqRel() >> q(Iq1[i]);
       bd1[i]->getuRel() >> u(Iu1[i]);
-      //bd1[i]->getJRel() >> J(Iu1[i],Index(0,nh-1));
       bd1[i]->getJRel() >> J(Iu1[i],Ih1[i]);
       bd1[i]->getjRel() >> j(Iu1[i]); 
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
       bd2[i]->getqRel() >> q(Iq2[i]);
       bd2[i]->getuRel() >> u(Iu2[i]);
-      //bd2[i]->getJRel() >> J(Iu2[i],Index(0,nh-1));
       bd2[i]->getJRel() >> J(Iu2[i],Ih2[i]);
       bd2[i]->getjRel() >> j(Iu2[i]); 
     }   
@@ -209,14 +210,8 @@ namespace MBSim {
 
   void JointConstraint::updateStateDependentVariables(double t){
     Residuum* f = new Residuum(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
-    //cout << t <<endl;
-    //cout << q.T() <<endl;
-    //cout << (*f)(q).T() <<endl;
     MultiDimNewtonMethod newton(f);
     q = newton.solve(q);
-    //cout << q.T() <<endl;
-    //cout << (*f)(q).T() <<endl;
-    //cout << "end" << endl;
     assert(newton.getInfo()==0);
 
     for(unsigned int i=0; i<bd1.size(); i++) {

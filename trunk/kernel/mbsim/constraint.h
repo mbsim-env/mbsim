@@ -102,7 +102,6 @@ namespace MBSim {
 	Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
 	fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
       };
-      RigidBody *bi;
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
       std::vector<int> if1;
@@ -122,7 +121,7 @@ namespace MBSim {
       fmatvec::Vec q0;
 
     public:
-      JointConstraint(const std::string &name, RigidBody* bi, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
+      JointConstraint(const std::string &name, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
 
       void init(InitStage stage);
       void initz();
