@@ -5,6 +5,8 @@ using namespace std;
 using namespace MBSim;
 
 bool rigidContacts;
+bool rigidJoints;
+bool useDAE;
 double ue;
 
 int main (int argc, char* argv[]) {
@@ -16,6 +18,10 @@ int main (int argc, char* argv[]) {
   // Beginn input
   ifstream is("input.asc");
   is >> rigidContacts;
+  is.getline(dummy,10000);
+  is >> rigidJoints;
+  is.getline(dummy,10000);
+  is >> useDAE;
   is.getline(dummy,10000);
   is >> eventDriven;
   is.getline(dummy,10000);
