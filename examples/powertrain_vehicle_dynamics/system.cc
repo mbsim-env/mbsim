@@ -20,6 +20,8 @@
 #include "mbsim/kinetic_excitation.h"
 
 extern bool rigidContacts;
+extern bool rigidJoints;
+extern bool useDAE;
 extern double ue;
 
 using namespace MBSim;
@@ -31,8 +33,6 @@ double mK = 1600;
 double mR = 10;
 double g0 = 9.81;
 double mu = 1.07;
-
-bool jointFlag = true;
 
 class Fahrwiderstand : public Function1<fmatvec::Vec, double> {
   private:
@@ -78,7 +78,7 @@ class Moment : public Function1<fmatvec::Vec, double> {
       if(tVal<t0)
 	return M;
 
-      Om_Ab = abs(shaft->getu()(0));
+      Om_Ab = abs(shaft->getuRel()(0));
       v_Fzg = fzg->getu()(0)*3.6; // km/h
 
       i = v_Fzg < 100 ? 12 : 5;
@@ -353,44 +353,80 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   rSD.init(0);
   rSD(2) = -bR/2;
-  hr->addFrame("K",rSD,SqrMat(3,EYE));
-
-  Joint *joint2 = new Joint("AnbindungRadRechts");
-  addLink(joint2);
-  joint2->setForceDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
-  joint2->setMomentDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
-  joint2->connect(hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
-
-  if(jointFlag) {
-    joint2->setForceLaw(new BilateralConstraint);
-    joint2->setImpactForceLaw(new BilateralImpact);
-    joint2->setMomentLaw(new BilateralConstraint);
-    joint2->setImpactMomentLaw(new BilateralImpact);
-  } 
-  else {
-    joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
-    joint2->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e5,100)));
-  }
+  hr->addFrame("K",rSD,BasicRotAKIz(M_PI/2));
+  hr->getFrame("K")->enableOpenMBV(0.3);
 
   rSD.init(0);
   rSD(2) = bR/2;
-  hl->addFrame("K",rSD,SqrMat(3,EYE));
-//
-  joint2 = new Joint("AnbindungRadLinks");
-  addLink(joint2);
-  joint2->setForceDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
-  joint2->setMomentDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
-  joint2->connect(hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
+  hl->addFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2));
+  hl->getFrame("K")->enableOpenMBV(0.3);
 
-  if(jointFlag) {
-    joint2->setForceLaw(new BilateralConstraint);
-    joint2->setImpactForceLaw(new BilateralImpact);
-    joint2->setMomentLaw(new BilateralConstraint);
-    joint2->setImpactMomentLaw(new BilateralImpact);
+  // Decide, wheter to use DAE- or minimal-form
+  if(useDAE) {
+    // Use DAE-form
+
+    Joint *joint2 = new Joint("AnbindungRadRechts");
+    addLink(joint2);
+    joint2->setForceDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
+    joint2->setMomentDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
+    joint2->connect(hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
+
+    if(rigidJoints) {
+      joint2->setForceLaw(new BilateralConstraint);
+      joint2->setImpactForceLaw(new BilateralImpact);
+      joint2->setMomentLaw(new BilateralConstraint);
+      joint2->setImpactMomentLaw(new BilateralImpact);
+    } 
+    else {
+      joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
+      joint2->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e5,100)));
+    }
+
+    joint2 = new Joint("AnbindungRadLinks");
+    addLink(joint2);
+    joint2->setForceDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
+    joint2->setMomentDirection(Mat("[1,0,0; 0,1,0; 0,0,1]"));
+    joint2->connect(hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
+
+    if(rigidJoints) {
+      joint2->setForceLaw(new BilateralConstraint);
+      joint2->setImpactForceLaw(new BilateralImpact);
+      joint2->setMomentLaw(new BilateralConstraint);
+      joint2->setImpactMomentLaw(new BilateralImpact);
+    } 
+    else {
+      joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
+      joint2->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e5,100)));
+    }
+
   } 
   else {
-    joint2->setForceLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e6,1000)));
-    joint2->setMomentLaw(new RegularizedBilateralConstraint(new LinearRegularizedBilateralConstraint(1e5,100)));
+    // Use minimal-form
+    {
+      vector<RigidBody*> bd1; 
+      vector<RigidBody*> bd2; 
+      bd2.push_back(differentialGear->getRightOutputShaft());
+      bd2.push_back(psR->getInputShaft());
+      bd2.push_back(psR->getIntermediateShaft());
+      bd2.push_back(psR->getOutputShaft());
+      JointConstraint* jointconstraint = new JointConstraint("CR",hr,bd1,bd2,hr->getFrame("K"),psR->getOutputShaft()->getFrame("Q"));
+      addObject(jointconstraint);
+      jointconstraint->setForceDirection(Mat(3,3,EYE));
+      jointconstraint->setMomentDirection(Mat(3,3,EYE));
+    }
+
+    {
+      vector<RigidBody*> bd1; 
+      vector<RigidBody*> bd2; 
+      bd2.push_back(differentialGear->getLeftOutputShaft());
+      bd2.push_back(psL->getInputShaft());
+      bd2.push_back(psL->getIntermediateShaft());
+      bd2.push_back(psL->getOutputShaft());
+      JointConstraint* jointconstraint = new JointConstraint("CL",hl,bd1,bd2,hl->getFrame("K"),psL->getOutputShaft()->getFrame("Q"));
+      addObject(jointconstraint);
+      jointconstraint->setForceDirection(Mat(3,3,EYE));
+      jointconstraint->setMomentDirection(Mat(3,3,EYE));
+    }
   }
 
   RigidBody* shaft1 = new RigidBody("DriveShaft");
@@ -417,18 +453,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   shaft1->addFrame("Q",rSD,SqrMat(3,EYE));
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
 
-  OpenMBV::Frustum* cylinder=new OpenMBV::Frustum;
-  cylinder->setTopRadius(r1);
-  cylinder->setBaseRadius(r1);
-  cylinder->setHeight(l);
-  cylinder->setStaticColor(0.1);
-  shaft1->setOpenMBVRigidBody(cylinder);
-  cylinder->setInitialTranslation(0,0,l/2);
-
-  //differentialGear->getInputShaft()->addDependecy(shaft1,-r1/differentialGear->getRadiusInputShaft());
- Constraint2 *constraint = new Constraint2("C0",static_cast<RigidBody*>(differentialGear->getObject("InputShaft")));//differentialGear->getInputShaft());
- addObject(constraint);
- constraint->addDependency(shaft1,-r1/differentialGear->getRadiusInputShaft());
+  Constraint2 *constraint = new Constraint2("C0",shaft1);
+  addObject(constraint);
+  constraint->addDependency(static_cast<RigidBody*>(differentialGear->getObject("InputShaft")),-differentialGear->getRadiusInputShaft()/r1);
 
   //actuator = new Actuator("Fahrwiderstand");
   //addLink(load);
@@ -452,7 +479,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   karosserie->setOpenMBVRigidBody(obj);
   obj->setScaleFactor(1);
 
-  cylinder = new OpenMBV::Frustum;
+  OpenMBV::Frustum* cylinder = new OpenMBV::Frustum;
   cylinder->setBaseRadius(r);
   cylinder->setTopRadius(r);
   cylinder->setHeight(bR);
@@ -487,6 +514,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   hr->setOpenMBVRigidBody(cylinder);
   cylinder -> setInitialTranslation(0,0,bR/2);
   cylinder -> setInitialRotation(0,0,0);
+
+  cylinder=new OpenMBV::Frustum;
+  cylinder->setTopRadius(r1);
+  cylinder->setBaseRadius(r1);
+  cylinder->setHeight(l);
+  cylinder->setStaticColor(0.1);
+  shaft1->setOpenMBVRigidBody(cylinder);
+  cylinder->setInitialTranslation(0,0,l/2);
 
 }
 

@@ -1,7 +1,7 @@
 #Inventor V2.0 ascii
 Translation { translation 0 0 0 }
 Cube {
-  width 100
+  width 50
   height 0.02
-  depth 5
+  depth 15
 }
