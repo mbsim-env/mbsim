@@ -120,14 +120,6 @@ namespace MBSimPowertrain {
     shaft4->setMass(data.massLeftOutputShaft);
     shaft4->setInertiaTensor(data.inertiaTensorLeftOutputShaft);
 
-    Constraint2 *constraint = new Constraint2("C1",shaft4);
-    addObject(constraint);
-    constraint->addDependency(shaft2,1);
-    constraint->addDependency(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
-
-    //shaft4->addDependecy(shaft2,1);
-    //shaft4->addDependecy(planet,data.radiusPlanet/data.radiusLeftOutputShaft);
-
     shaft5 = new RigidBody("RightOutputShaft");
     addObject(shaft5);
 
@@ -144,13 +136,17 @@ namespace MBSimPowertrain {
     shaft5->setMass(data.massRightOutputShaft);
     shaft5->setInertiaTensor(data.inertiaTensorRightOutputShaft);
 
-    constraint = new Constraint2("C2",shaft5);
+    double c1 = data.radiusLeftOutputShaft + data.radiusRightOutputShaft;
+    double c2 = data.radiusLeftOutputShaft*data.radiusRightOutputShaft;
+    Constraint2 *constraint = new Constraint2("C1",shaft2);
     addObject(constraint);
-    constraint->addDependency(shaft2,1);
-    constraint->addDependency(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
+    constraint->addDependency(shaft4,data.radiusLeftOutputShaft/c1);
+    constraint->addDependency(shaft5,data.radiusRightOutputShaft/c1);
 
-    //shaft5->addDependecy(shaft2,1);
-    //shaft5->addDependecy(planet,-data.radiusPlanet/data.radiusRightOutputShaft);
+    constraint = new Constraint2("C2",planet);
+    addObject(constraint);
+    constraint->addDependency(shaft4,c2/(data.radiusPlanet*c1));
+    constraint->addDependency(shaft5,-c2/(data.radiusPlanet*c1));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Cube *cube=new OpenMBV::Cube;
