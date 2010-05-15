@@ -21,6 +21,7 @@
 #include "rigid_body.h"
 #include "utils/nonlinear_algebra.h"
 #include "utils/utils.h"
+#include "utils/rotarymatrices.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -56,7 +57,8 @@ namespace MBSim {
       res(0,nT-1) = dT.T()*(frame1->getPosition()-frame2->getPosition()); 
     }
     if(nR) { 
-      res(nT,nT+nR-1) = dR.T()*tildetovec(trans(frame1->getOrientation())*frame2->getOrientation()); 
+      //res(nT,nT+nR-1) = dR.T()*tildetovec(trans(frame1->getOrientation())*frame2->getOrientation()); 
+      res(nT,nT+nR-1) = dR.T()*AIK2Cardan(trans(frame1->getOrientation())*frame2->getOrientation()); 
     }
 
     return res;
@@ -157,24 +159,30 @@ namespace MBSim {
   void JointConstraint::initz() {
     nq = 0;
     nu = 0;
+    nh = 0;
     for(unsigned int i=0; i<bd1.size(); i++) {
       int dq = bd1[i]->getqRel().size();
       int du = bd1[i]->getuRel().size();
+      int dh = bd1[i]->gethSize(0);
       Iq1.push_back(Index(nq,nq+dq-1));
       Iu1.push_back(Index(nu,nu+du-1));
+      Ih1.push_back(Index(0,dh-1));
       nq += dq;
       nu += du;
+      nh = max(nh,dh);
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
       int dq = bd2[i]->getqRel().size();
       int du = bd2[i]->getuRel().size();
+      int dh = bd2[i]->gethSize(0);
       Iq2.push_back(Index(nq,nq+dq-1));
       Iu2.push_back(Index(nu,nu+du-1));
+      Ih2.push_back(Index(0,dh-1));
       nq += dq;
       nu += du;
+      nh = max(nh,dh);
     }
 
-    int nh = hSize[0];
     q.resize(nq);
     u.resize(nu);
     J.resize(nu,nh);
@@ -184,13 +192,15 @@ namespace MBSim {
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->getqRel() >> q(Iq1[i]);
       bd1[i]->getuRel() >> u(Iu1[i]);
-      bd1[i]->getJRel() >> J(Iu1[i],Index(0,nh-1));
+      //bd1[i]->getJRel() >> J(Iu1[i],Index(0,nh-1));
+      bd1[i]->getJRel() >> J(Iu1[i],Ih1[i]);
       bd1[i]->getjRel() >> j(Iu1[i]); 
     }
     for(unsigned int i=0; i<bd2.size(); i++) {
       bd2[i]->getqRel() >> q(Iq2[i]);
       bd2[i]->getuRel() >> u(Iu2[i]);
-      bd2[i]->getJRel() >> J(Iu2[i],Index(0,nh-1));
+      //bd2[i]->getJRel() >> J(Iu2[i],Index(0,nh-1));
+      bd2[i]->getJRel() >> J(Iu2[i],Ih2[i]);
       bd2[i]->getjRel() >> j(Iu2[i]); 
     }   
     q = q0;
@@ -199,8 +209,15 @@ namespace MBSim {
 
   void JointConstraint::updateStateDependentVariables(double t){
     Residuum* f = new Residuum(bd1,bd2,dT,dR,frame1,frame2,t,if1,if2);
+    //cout << t <<endl;
+    //cout << q.T() <<endl;
+    //cout << (*f)(q).T() <<endl;
     MultiDimNewtonMethod newton(f);
     q = newton.solve(q);
+    //cout << q.T() <<endl;
+    //cout << (*f)(q).T() <<endl;
+    //cout << "end" << endl;
+    assert(newton.getInfo()==0);
 
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->updateRelativeJacobians(t,if1[i]);
@@ -238,8 +255,6 @@ namespace MBSim {
     for(unsigned int i=0; i<bd2.size(); i++)
       bd2[i]->updateAccelerations(t,if2[i]);
 
-    int nh = hSize[0];
-
     SqrMat A(nu);
     A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
     A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
@@ -247,12 +262,12 @@ namespace MBSim {
     Mat JT0(3,nh);
     Mat JR0(3,nh);
     if(frame1->getJacobianOfTranslation().cols()) {
-      JT0+=frame1->getJacobianOfTranslation();
-      JR0+=frame1->getJacobianOfRotation();
+      JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation().cols()-1))+=frame1->getJacobianOfTranslation();
+      JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation().cols()-1))+=frame1->getJacobianOfRotation();
     }
     if(frame2->getJacobianOfTranslation().cols()) {
-      JT0-=frame2->getJacobianOfTranslation();
-      JR0-=frame2->getJacobianOfRotation();
+      JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation().cols()-1))-=frame2->getJacobianOfTranslation();
+      JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation().cols()-1))-=frame2->getJacobianOfRotation();
     }
     B(Index(0,dT.cols()-1),Index(0,nh-1)) = -dT.T()*JT0;
     B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -dR.T()*JR0;

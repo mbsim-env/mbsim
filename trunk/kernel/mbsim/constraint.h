@@ -113,8 +113,8 @@ namespace MBSim {
       fmatvec::Mat dT;
       fmatvec::Mat dR;
 
-      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2;
-      int nq, nu;
+      std::vector<fmatvec::Index> Iq1, Iq2, Iu1, Iu2, Ih1, Ih2;
+      int nq, nu, nh;
       fmatvec::Vec q, u;
       fmatvec::Mat J;
       fmatvec::Vec j;
