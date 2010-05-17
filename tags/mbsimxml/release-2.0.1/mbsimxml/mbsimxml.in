@@ -1,0 +1,78 @@
+#! /bin/sh
+# Unix sh variant of mbsimxml (mbsimxml.in)
+# If editing this file, also edit the file mbsimxml.bat.in!
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+bindir=${exec_prefix}/bin
+MBXMLUTILSSCHEMA=@MBXMLUTILSSCHEMA@
+MBXMLUTILSBIN=@MBXMLUTILSBINDIR@
+
+# get environment variables (for none default intallation)
+test $MBSIMBINDIR && bindir=$MBSIMBINDIR
+test $MBXMLUTILSSCHEMADIR && MBXMLUTILSSCHEMA=$MBXMLUTILSSCHEMADIR
+test $MBXMLUTILSBINDIR && MBXMLUTILSBIN=$MBXMLUTILSBINDIR
+
+# help
+if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate]"
+  echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
+  echo "                [--intparam <integratorparameterfile>] <integratorfile>"
+  echo ""
+  echo "Copyright (C) 2004-2009 MBSim Development Team"
+  echo "This is free software; see the source for copying conditions. There is NO"
+  echo "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+  echo ""
+  echo "Licensed under the GNU Lesser General Public License (LGPL)"
+  echo ""
+  echo "--onlypreprocess     Stop after the preprocessing stage"
+  echo "--donotintegrate     Stop after the initialization stage, do not integrate"
+  echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
+  echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
+  echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
+  echo "<integratorfile>     Use <integratorfile> as mbsim integrator xml file"
+  exit
+fi
+
+# parameters
+ONLYPP="false"
+if [ "_$1" = "_--onlypreprocess" ]; then
+  ONLYPP="true"
+  shift
+fi
+NOINT="false"
+if [ "_$1" = "_--donotintegrate" ]; then
+  NOINT="true"
+  shift
+fi
+if [ "_$1" = "_--mbsimparam" ]; then
+  PARAM=$2
+  shift
+  shift
+else
+  PARAM=none
+fi
+MBSIM=$1
+PPMBSIM=.pp.$(basename $MBSIM)
+shift
+if [ "_$1" = "_--intparam" ]; then
+  PARAMINT=$2
+  shift
+  shift
+else
+  PARAMINT=none
+fi
+MBSIMINT=$1
+PPMBSIMINT=.pp.$(basename $MBSIMINT)
+
+rm -f $PPMBSIM $PPMBSIMINT
+
+$MBXMLUTILSBIN/mbxmlutilspp $PARAM $MBSIM $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd $PARAMINT $MBSIMINT $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || exit 1
+
+if [ $ONLYPP = "false" ]; then
+  if [ $NOINT = "false" ]; then
+    $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+  else
+    $bindir/mbsimflatxml --donotintegrate $PPMBSIM $PPMBSIMINT || exit 1
+  fi
+fi
