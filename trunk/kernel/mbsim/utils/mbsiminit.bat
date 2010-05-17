@@ -30,7 +30,6 @@ set PREFIX=%BINDIR:~0,-4%
 set MBXMLUTILSSCHEMADIR=%PREFIX%/share/mbxmlutils/schema
 set MBXMLUTILSXMLDIR=%PREFIX%/share/mbxmlutils/xml
 set MBXMLUTILSOCTAVEDIR=%PREFIX%/share/mbxmlutils/octave
-set MBXMLUTILSOCTAVEPREFIX=%PREFIX%
 set HDF5SERIEDATADIR=%PREFIX%/share
 set HDF5SERIEH5DUMP=%PREFIX%/bin/h5dump
 set MBSIMBINDIR=%PREFIX%/bin
@@ -38,6 +37,7 @@ set MBXMLUTILSBINDIR=%PREFIX%/bin
 set HDF5SERIEXSLTPROC=%PREFIX%/bin/xsltproc
 
 rem extension for other software tools
+set OCTAVE_HOME=%PREFIX%
 set KETSIMBINDIR=%PREFIX%/bin
 set MDPCOSIMBINDIR=%PREFIX%/bin
 
