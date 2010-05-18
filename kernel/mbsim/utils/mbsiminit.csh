@@ -31,11 +31,11 @@ else
   setenv MBSIMBINDIR ${MBSIMPREFIX}/bin
   setenv MBXMLUTILSBINDIR ${MBSIMPREFIX}/bin
   setenv HDF5SERIEXSLTPROC ${MBSIMPREFIX}/bin/xsltproc
-  mbsimflatxml -h >& /dev/null || setenv PATH ${PATH}:${MBSIMPREFIX}/bin
-  mbsimflatxml -h >& /dev/null || setenv LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${MBSIMPREFIX}/lib
+  echo ${PATH} | grep -E '(:|^)'${MBSIMPREFIX}'/bin(:|$)' >& /dev/null || setenv PATH ${MBSIMPREFIX}/bin:${PATH}
+  echo ${LD_LIBRARY_PATH} | grep -E '(:|^)'${MBSIMPREFIX}'/lib(:|$)' >& /dev/null || setenv LD_LIBRARY_PATH ${MBSIMPREFIX}/lib:${LD_LIBRARY_PATH}
 
 # extension for other software tools
-  setenv OCTAVE_HOME=${MBSIMPREFIX}
+  setenv OCTAVE_HOME ${MBSIMPREFIX}
   setenv KETSIMBINDIR ${MBSIMPREFIX}/bin
-  setenv MDPCOSIMBINDIR=${MBSIMPREFIX}/bin
+  setenv MDPCOSIMBINDIR ${MBSIMPREFIX}/bin
 endif

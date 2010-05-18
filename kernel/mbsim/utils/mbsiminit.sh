@@ -31,8 +31,8 @@ else
   export MBSIMBINDIR=${MBSIMPREFIX}/bin
   export MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin
   export HDF5SERIEXSLTPROC=${MBSIMPREFIX}/bin/xsltproc
-  mbsimflatxml -h >& /dev/null || export PATH=$PATH:${MBSIMPREFIX}/bin
-  mbsimflatxml -h >& /dev/null || export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${MBSIMPREFIX}/lib
+  echo ${PATH} | grep -E "(:|^)${MBSIMPREFIX}/bin(:|$)" >& /dev/null || export PATH=${MBSIMPREFIX}/bin:${PATH}
+  echo ${LD_LIBRARY_PATH} | grep -E "(:|^)${MBSIMPREFIX}/lib(:|$)" >& /dev/null || export LD_LIBRARY_PATH=${MBSIMPREFIX}/lib:${LD_LIBRARY_PATH}
 
 # extension for other software tools
   export OCTAVE_HOME=${MBSIMPREFIX}
