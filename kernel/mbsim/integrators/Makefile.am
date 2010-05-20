@@ -3,6 +3,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			     lsodar_integrator.cc \
 			     lsoder_integrator.cc \
 			     lsode_integrator.cc \
+			     daspk_integrator.cc \
 			     rksuite_integrator.cc \
 			     dopri5_integrator.cc \
 			     dop853_integrator.cc \
@@ -19,7 +20,9 @@ libintegrators_la_SOURCES = integrator.cc\
 			     fortran/odex.f\
 			     fortran/radau5.f\
 			     fortran/dc_lapack.f\
-			     fortran/rksuite.f
+			     fortran/rksuite.f\
+			     fortran/ddaspk.f\
+			     fortran/daux.f
 
 #fortran/mexax.f
 #mexax_integrator.cc 
@@ -38,6 +41,7 @@ integratorsinclude_HEADERS = integrator.h \
 			      lsodar_integrator.h \
 			      lsoder_integrator.h \
 			      lsode_integrator.h \
+			      daspk_integrator.h \
 			      rksuite_integrator.h \
 			      dopri5_integrator.h \
 			      dop853_integrator.h \
