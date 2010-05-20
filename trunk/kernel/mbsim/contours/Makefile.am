@@ -14,7 +14,8 @@ libcontour_la_SOURCES = area.cc\
 						nurbs_disk_2s.cc\
 						plane.cc\
 						planewithfrustum.cc\
-						sphere.cc
+						sphere.cc\
+ 						line_segment.cc
 
   libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
@@ -44,4 +45,5 @@ libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 						   plane.h\
 						   planewithfrustum.h\
 						   point.h\
-						   sphere.h
+						   sphere.h\
+						   line_segment.h
