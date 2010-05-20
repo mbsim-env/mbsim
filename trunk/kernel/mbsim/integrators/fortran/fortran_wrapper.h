@@ -7,6 +7,14 @@
 extern "C" {
 #endif
 
+#define DDASPK FC_FUNC(ddaspk,DDASPK)
+void DDASPK(void (*)(double*,double*,double*,double*,double*,int*,double*,int*),int*,double*,
+	    double*, double*,double*,int*,double*,double*,int*, double*, int*,
+	    int*, int*, double*,int*, void(*)(double*, int*, int*, double*,
+	    double*, double*, double*, double*, double*, double*, double*,
+	    double*, int*, int*, double*, int*),void(*)(int*, double*,
+	    double*, double*, double*, double*, double*, double*,double*,
+	    int*, double*,double*, int*,double*,int*));
 
 #define DLSODAR FC_FUNC(dlsodar,DLSODAR)
 void DLSODAR(void (*)(int*,double*,double*,double*), int*, double*, double*,
