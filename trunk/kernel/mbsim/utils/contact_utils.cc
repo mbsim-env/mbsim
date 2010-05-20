@@ -42,6 +42,7 @@
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/sphere.h"
+#include "mbsim/contours/line_segment.h"
 // --- List of contour implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -72,6 +73,7 @@
 #include <mbsim/contact_kinematics/sphere_frustum.h>
 #include <mbsim/contact_kinematics/sphere_plane.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
+#include <mbsim/contact_kinematics/point_line_segment.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace fmatvec;
@@ -174,6 +176,9 @@ namespace MBSim {
 
     else if(dynamic_cast<Sphere*>(contour0) && dynamic_cast<Sphere*>(contour1))
       return new ContactKinematicsSphereSphere;
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<LineSegment*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<LineSegment*>(contour0))) 
+      return new ContactKinematicsPointLineSegment; 
 
     else 
       return 0;
