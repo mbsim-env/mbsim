@@ -34,6 +34,6 @@
 #include "time_stepping_integrator.h"
 #include "theta_time_stepping_integrator.h"
 #include "euler_explicit_integrator.h"
-#include "daspk_integrator.h"
+//#include "daspk_integrator.h"
 
 #endif  /* INTEGRATORS_H_ */
