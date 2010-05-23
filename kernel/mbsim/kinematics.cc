@@ -38,11 +38,47 @@ namespace MBSim {
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
+  RotationAboutXAxis::RotationAboutXAxis() : Rotation(), APK(3) {  
+    APK(0,0) = 1;
+  }
+
+  SqrMat RotationAboutXAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+
+    int i = q.size()-1;
+    const double cosq=cos(q(i));
+    const double sinq=sin(q(i));
+
+    APK(1,1) = cosq;
+    APK(2,1) = sinq;
+    APK(1,2) = -sinq;
+    APK(2,2) = cosq;
+
+    return APK;
+  }
+
+  RotationAboutYAxis::RotationAboutYAxis() : Rotation(), APK(3) {  
+    APK(1,1) = 1;
+  }
+
+  SqrMat RotationAboutYAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+
+    int i = q.size()-1;
+    const double cosq=cos(q(i));
+    const double sinq=sin(q(i));
+
+    APK(0,0) = cosq;
+    APK(2,0) = -sinq;
+    APK(0,2) = sinq;
+    APK(2,2) = cosq;
+
+    return APK;
+  }
+
   RotationAboutZAxis::RotationAboutZAxis() : Rotation(), APK(3) {  
     APK(2,2) = 1;
   }
 
-  SqrMat RotationAboutZAxis::operator()(const Vec &q, double t) {
+  SqrMat RotationAboutZAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
 
     int i = q.size()-1;
     const double cosq=cos(q(i));
@@ -56,7 +92,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutFixedAxis::operator()(const Vec &q, double t) {
+  SqrMat RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat APK(3,NONINIT);
 
     int i = q.size()-1;
@@ -86,7 +122,7 @@ namespace MBSim {
     setAxisOfRotation(Element::getVec(e,3));
   }
 
-  SqrMat TimeDependentRotationAboutFixedAxis::operator()(const Vec &q, double t) {
+  SqrMat TimeDependentRotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     Vec phi(1,INIT,(*angle)(t));
     return (*rot)(phi,t);
   }
@@ -100,7 +136,7 @@ namespace MBSim {
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  SqrMat RotationAboutAxesXY::operator()(const Vec &q, double t) {
+  SqrMat RotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat APK(3,NONINIT);
 
     int i = q.size()-1;
@@ -120,7 +156,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat RotationAboutAxesYZ::operator()(const Vec &q, double t) {
+  SqrMat RotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat APK(3,NONINIT);
 
     int i = q.size()-1;
@@ -140,7 +176,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat CardanAngles::operator()(const Vec &q, double t) {
+  SqrMat CardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat APK(3,NONINIT);
 
     int i = q.size()-1;
@@ -161,7 +197,7 @@ namespace MBSim {
     return APK;
   }
 
-  SqrMat TimeDependentCardanAngles::operator()(const Vec &q, double t) {
+  SqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
   }
 
@@ -172,7 +208,7 @@ namespace MBSim {
     angle->initializeUsingXML(e->FirstChildElement());
   }
 
-  Mat JRotationAboutAxesXY::operator()(const Vec &q, double t) {
+  Mat JRotationAboutAxesXY::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double a = q(iq-1);
@@ -185,7 +221,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat JRotationAboutAxesYZ::operator()(const Vec &q, double t) {
+  Mat JRotationAboutAxesYZ::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = q.size()-1;
     int iu = uSize-1;
     double beta = q(iq-1);
@@ -198,7 +234,7 @@ namespace MBSim {
     return J;
   }
 
-  Mat TCardanAngles::operator()(const Vec &q, double t) {
+  Mat TCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double alpha = q(iq-2);
@@ -219,7 +255,7 @@ namespace MBSim {
     return T;
   }
 
-  Mat TCardanAngles2::operator()(const Vec &q, double t) {
+  Mat TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
     double beta = q(iq-1);

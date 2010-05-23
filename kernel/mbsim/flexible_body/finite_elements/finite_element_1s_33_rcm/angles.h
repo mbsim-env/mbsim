@@ -29,6 +29,7 @@ namespace MBSim {
    * \brief node class for angle parametrisation
    * \author Thorsten Schindler
    * \date 2009-04-24 initial commit (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    * \todo unify with Rotation TODO
    */
   class Angles : public Rotation {
@@ -43,7 +44,7 @@ namespace MBSim {
       virtual ~Angles();
 
       /* INTERFACE OF ROTATION */
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
       /* INTERFACE */
