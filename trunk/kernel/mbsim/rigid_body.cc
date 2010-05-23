@@ -195,7 +195,11 @@ namespace MBSim {
       if(fPJR==0) {
         Mat JR(3,0);
 
-        if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
+        if(dynamic_cast<RotationAboutXAxis*>(fAPK)) 
+          JR.resize() = Vec("[1;0;0]");
+	else if(dynamic_cast<RotationAboutYAxis*>(fAPK)) 
+          JR.resize() = Vec("[0;1;0]");
+	else if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
           JR.resize() = Vec("[0;0;1]");
         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
           JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();

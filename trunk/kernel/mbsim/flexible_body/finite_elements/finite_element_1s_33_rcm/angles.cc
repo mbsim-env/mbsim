@@ -30,7 +30,7 @@ namespace MBSim {
 
   Angles::~Angles() {}
 
-  SqrMat Angles::operator()(const fmatvec::Vec &q, double t) {
+  SqrMat Angles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     SqrMat AWK(3);
     AWK.col(0) = computet(q);
     AWK.col(1) = computen(q);

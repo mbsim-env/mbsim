@@ -31,8 +31,9 @@ namespace MBSim {
    * \brief base class to describe translations along a path
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 Translation inherits Function2 (Martin Foerg)
    */
-  class Translation {
+  class Translation : public Function2<fmatvec::Vec,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -51,11 +52,11 @@ namespace MBSim {
       virtual int getqSize() const = 0;
 
       /**
-       * \param functional coordinates 
+       * \param generalized position
        * \param time
-       * \return translational vector as a function of its degree of freedom
+       * \return translational vector as a function of generalized position and time, r=r(q,t)
        */
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) = 0; 
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
@@ -65,6 +66,7 @@ namespace MBSim {
    * \brief class to describe translations along a line
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Translation (Martin Foerg)
    */
   class LinearTranslation : public Translation {
     public:
@@ -81,9 +83,7 @@ namespace MBSim {
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { return PJT.cols(); }
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) {
-        return PJT*q(0,PJT.cols()-1);
-      }; 
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return PJT*q(0,PJT.cols()-1); } 
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -108,6 +108,7 @@ namespace MBSim {
    * \brief class to describe time dependent translations
    * \author Markus Schneider
    * \date 2009-12-21 some adaptations (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Translation (Martin Foerg)
    */
   class TimeDependentTranslation : public Translation {
     public:
@@ -129,7 +130,7 @@ namespace MBSim {
 
       /* INTERFACE OF TRANSLATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, double t) { return (*pos)(t); }
+      virtual fmatvec::Vec operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return (*pos)(t); }
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -151,8 +152,9 @@ namespace MBSim {
    * \brief base class to describe rotation along a path
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 Rotation inherits Function2 (Martin Foerg)
    */
-  class Rotation {
+  class Rotation : public Function2<fmatvec::SqrMat,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -170,20 +172,67 @@ namespace MBSim {
        */
       virtual int getqSize() const = 0;
 
-      /**
-       * \param functional coordinates 
+       /**
+       * \param generalized position
        * \param time
-       * \return rotational matrix as a function of its degree of freedom
+       * \return rotational matrix as a function of generalized position and time, A=A(q,t)
        */
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t) = 0; 
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
-      virtual void initializeUsingXML(TiXmlElement *element) {}
+     virtual void initializeUsingXML(TiXmlElement *element) {}
       /***************************************************/
   };
 
   /**
-   * \brief class to describe rotation about fixed axis
+   * \brief class to describe rotation about y-axis
    * \author Martin Foerg
+   */
+  class RotationAboutXAxis: public Rotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutXAxis();
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 1; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+
+    protected:
+      /**
+       * \brief transformation matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
+  /**
+   * \brief class to describe rotation about y-axis
+   * \author Martin Foerg
+   */
+  class RotationAboutYAxis: public Rotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      RotationAboutYAxis();
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 1; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual void initializeUsingXML(TiXmlElement *element) {}
+
+    protected:
+      /**
+       * \brief transformation matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
+  /**
+   * \brief class to describe rotation about z-axis
+   * \author Martin Foerg
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class RotationAboutZAxis: public Rotation {
     public:
@@ -194,7 +243,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 1; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
 
     protected:
@@ -208,6 +257,7 @@ namespace MBSim {
    * \brief class to describe rotation about fixed axis
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class RotationAboutFixedAxis: public Rotation {
     public:
@@ -224,7 +274,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 1; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -245,6 +295,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
    * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class TimeDependentRotationAboutFixedAxis: public Rotation {
     public:
@@ -268,7 +319,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -294,6 +345,7 @@ namespace MBSim {
    * \brief class to describe rotation about axes x and y with basic rotations interpretated in the current coordinate system
    * \author Martin Foerg
    * \date 2009-12-21 some localisations (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class RotationAboutAxesXY: public Rotation {
     public:
@@ -304,7 +356,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -313,6 +365,7 @@ namespace MBSim {
    * \brief class to describe rotation about axes y and z with basic rotations interpretated in the current coordinate system
    * \author Martin Foerg
    * \date 2009-12-21 some localisations (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class RotationAboutAxesYZ: public Rotation {
     public:
@@ -323,7 +376,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 2; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -332,6 +385,7 @@ namespace MBSim {
    * \brief class to describe rotation parametrised by cardan angles
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class CardanAngles: public Rotation {
     public:
@@ -342,7 +396,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 3; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
   };
@@ -352,6 +406,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
    * \date 2009-12-22 should be a rotation because otherwise it has some dof (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
   class TimeDependentCardanAngles: public Rotation {
     public:
@@ -373,7 +428,7 @@ namespace MBSim {
 
       /* INTERFACE OF ROTATION */
       virtual int getqSize() const { return 0; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -394,8 +449,9 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2009-04-20 some comments (Thorsten Schindler)
+   * \date 2010-05-23 Jacobian inherits Function2 (Martin Foerg)
    */
-  class Jacobian {
+  class Jacobian : public Function2<fmatvec::Mat,fmatvec::Vec,double> {
     public:
       /**
        * \brief constructor
@@ -414,11 +470,12 @@ namespace MBSim {
       virtual int getuSize() const = 0;
 
       /**
-       * \param functional coordinates 
+       * \param generalized position 
        * \param time
-       * \return Jacobian matrix as a function of its degree of freedom
+       * \return Jacobian matrix as a function of generalized position and time,
+       * J=J(q,t)
        */
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) = 0;
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) = 0;
 
       virtual void initializeUsingXML(TiXmlElement *element) {};
       /***************************************************/
@@ -428,6 +485,7 @@ namespace MBSim {
    * \brief class to describe a constant Jacobians
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
   class ConstantJacobian : public Jacobian {
     public:
@@ -445,7 +503,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       virtual int getuSize() const { return J.cols(); }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t) { return J; } 
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL) { return J; } 
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
@@ -459,6 +517,7 @@ namespace MBSim {
   /**
    * \brief Jacobian for rotation about axes x and y
    * \author Martin Foerg
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
   class JRotationAboutAxesXY : public Jacobian {
     public:
@@ -470,7 +529,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -488,6 +547,7 @@ namespace MBSim {
   /**
    * \brief Jacobian for rotation about axes y and z
    * \author Martin Foerg
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
   class JRotationAboutAxesYZ : public Jacobian {
     public:
@@ -499,7 +559,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -518,6 +578,7 @@ namespace MBSim {
    * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
   class TCardanAngles : public Jacobian {
     public:
@@ -530,7 +591,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
@@ -549,6 +610,7 @@ namespace MBSim {
    * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
    */
   class TCardanAngles2 : public Jacobian {
     public:
@@ -561,7 +623,7 @@ namespace MBSim {
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
-      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, double t);
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       /***************************************************/
 
     private:
