@@ -59,6 +59,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
 
+  setPlotFeatureForChildren(notMinimalState,enabled);
 
   DifferentialGear* differentialGear = new DifferentialGear("DifferentialGear");
   addGroup(differentialGear);
