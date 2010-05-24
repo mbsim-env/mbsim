@@ -367,8 +367,6 @@ namespace MBSim {
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
       const fmatvec::Index& getlaIndex() const { return Ila; }
-      int getlaIndDS() const { return laIndDS; }
-      void setlaIndDS(int laIndParent) { laIndDS = laInd + laIndParent; }
 
       const fmatvec::Vec& getg() const { return g; }
       fmatvec::Vec& getg() { return g; }
@@ -502,11 +500,6 @@ namespace MBSim {
        */
       double rMax;
 
-      /**
-       * \brief TODO
-       */
-      int laIndDS;
-      
       /**
        * residuum of nonlinear contact equations
        */

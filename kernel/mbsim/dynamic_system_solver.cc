@@ -252,8 +252,6 @@ namespace MBSim {
     else if(stage==unknownStage) {
       setDynamicSystemSolver(this);
 
-      setlaIndDS(laInd);
-
       // TODO memory problem with many contacts
       if(laSize>8000)
         laSize=8000;
@@ -838,7 +836,6 @@ namespace MBSim {
     updateJacobians(0);
     calclaSize();
     calcrFactorSize();
-    setlaIndDS(laInd);
     updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updatelaRef(laParent(0,laSize-1));
@@ -921,8 +918,6 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
 
-      setlaIndDS(laInd);
-
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1000,7 +995,6 @@ namespace MBSim {
       updategdRef(gdParent(0,gdSize-1));
       calclaSize();
       calcrFactorSize();
-      setlaIndDS(laInd);
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1029,7 +1023,6 @@ namespace MBSim {
 
       calclaSize();
       calcrFactorSize();
-      setlaIndDS(laInd);
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1053,7 +1046,6 @@ namespace MBSim {
         checkActiveLinks();
         calclaSize();
         calcrFactorSize();
-        setlaIndDS(laInd);
         updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updatelaRef(laParent(0,laSize-1));
@@ -1065,7 +1057,6 @@ namespace MBSim {
 
       calclaSize();
       calcrFactorSize();
-      setlaIndDS(laInd);
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
@@ -1092,7 +1083,6 @@ namespace MBSim {
         checkActiveLinks();
         calclaSize();
         calcrFactorSize();
-        setlaIndDS(laInd);
         updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updatelaRef(laParent(0,laSize-1));
@@ -1104,7 +1094,6 @@ namespace MBSim {
       checkActiveLinks();
       calclaSize();
       calcrFactorSize();
-      setlaIndDS(laInd);
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));

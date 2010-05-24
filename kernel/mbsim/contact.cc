@@ -671,15 +671,15 @@ namespace MBSim {
         const Vec &laMBS = ds->getla();
         const Vec &b = ds->getb();
 
-        gdnk[k](0) = b(laIndDS+laIndk[k]);
-        for(int j=ia[laIndDS+laIndk[k]]; j<ia[laIndDS+laIndk[k]+1]; j++)
+        gdnk[k](0) = b(laInd+laIndk[k]);
+        for(int j=ia[laInd+laIndk[k]]; j<ia[laInd+laIndk[k]+1]; j++)
           gdnk[k](0) += a[j]*laMBS(ja[j]);
 
         lak[k](0) = fnil->project(lak[k](0), gdnk[k](0), gdk[k](0), rFactork[k](0));
 
         for(int i=1; i<=getFrictionDirections(); i++) {
-          gdnk[k](i) = b(laIndDS+laIndk[k]+i);
-          for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+          gdnk[k](i) = b(laInd+laIndk[k]+i);
+          for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
             gdnk[k](i) += a[j]*laMBS(ja[j]);
         }
 
@@ -699,16 +699,16 @@ namespace MBSim {
         const Vec &laMBS = ds->getla();
         const Vec &b = ds->getb();
 
-        gddk[k](0) = b(laIndDS+laIndk[k]);
-        for(int j=ia[laIndDS+laIndk[k]]; j<ia[laIndDS+laIndk[k]+1]; j++)
+        gddk[k](0) = b(laInd+laIndk[k]);
+        for(int j=ia[laInd+laIndk[k]]; j<ia[laInd+laIndk[k]+1]; j++)
           gddk[k](0) += a[j]*laMBS(ja[j]);
 
         lak[k](0) = fcl->project(lak[k](0), gddk[k](0), rFactork[k](0));
 
         if(gdActive[k][1]) {
           for(int i=1; i<=getFrictionDirections(); i++) {
-            gddk[k](i) = b(laIndDS+laIndk[k]+i);
-            for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+            gddk[k](i) = b(laInd+laIndk[k]+i);
+            for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
               gddk[k](i) += a[j]*laMBS(ja[j]);
           }
 
@@ -731,21 +731,21 @@ namespace MBSim {
         const Vec &laMBS = ds->getla();
         const Vec &b = ds->getb();
 
-        gdnk[k](0) = b(laIndDS+laIndk[k]);
-        for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
+        gdnk[k](0) = b(laInd+laIndk[k]);
+        for(int j=ia[laInd+laIndk[k]]+1; j<ia[laInd+laIndk[k]+1]; j++)
           gdnk[k](0) += a[j]*laMBS(ja[j]);
 
         const double om = 1.0;
-        const double buf = fnil->solve(a[ia[laIndDS+laIndk[k]]], gdnk[k](0), gdk[k](0));
+        const double buf = fnil->solve(a[ia[laInd+laIndk[k]]], gdnk[k](0), gdk[k](0));
         lak[k](0) += om*(buf - lak[k](0));
 
         if(getFrictionDirections()) {
-          gdnk[k](1) = b(laIndDS+laIndk[k]+1);
-          for(int j=ia[laIndDS+laIndk[k]+1]+1; j<ia[laIndDS+laIndk[k]+2]; j++)
+          gdnk[k](1) = b(laInd+laIndk[k]+1);
+          for(int j=ia[laInd+laIndk[k]+1]+1; j<ia[laInd+laIndk[k]+2]; j++)
             gdnk[k](1) += a[j]*laMBS(ja[j]);
 
           if(ftil) {
-            Vec buf = ftil->solve(ds->getG()(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+getFrictionDirections())), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0));
+            Vec buf = ftil->solve(ds->getG()(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+getFrictionDirections())), gdnk[k](1,getFrictionDirections()), gdk[k](1,getFrictionDirections()), lak[k](0));
             lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
           }
         }
@@ -765,21 +765,21 @@ namespace MBSim {
         const Vec &laMBS = ds->getla();
         const Vec &b = ds->getb();
 
-        gddk[k](0) = b(laIndDS+laIndk[k]);
-        for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
+        gddk[k](0) = b(laInd+laIndk[k]);
+        for(int j=ia[laInd+laIndk[k]]+1; j<ia[laInd+laIndk[k]+1]; j++)
           gddk[k](0) += a[j]*laMBS(ja[j]);
 
         const double om = 1.0; // relaxation parameter omega (cf. Foerg, dissertation, p. 102)
-        const double buf = fcl->solve(a[ia[laIndDS+laIndk[k]]], gddk[k](0));
+        const double buf = fcl->solve(a[ia[laInd+laIndk[k]]], gddk[k](0));
         lak[k](0) += om*(buf - lak[k](0));
 
         if(getFrictionDirections() && gdActive[k][1]) {
-          gddk[k](1) = b(laIndDS+laIndk[k]+1);
-          for(int j=ia[laIndDS+laIndk[k]+1]+1; j<ia[laIndDS+laIndk[k]+2]; j++)
+          gddk[k](1) = b(laInd+laIndk[k]+1);
+          for(int j=ia[laInd+laIndk[k]+1]+1; j<ia[laInd+laIndk[k]+2]; j++)
             gddk[k](1) += a[j]*laMBS(ja[j]);
 
           if(fdf) {
-            Vec buf = fdf->solve(ds->getG()(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+getFrictionDirections())), gddk[k](1,getFrictionDirections()), lak[k](0));
+            Vec buf = fdf->solve(ds->getG()(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+getFrictionDirections())), gddk[k](1,getFrictionDirections()), lak[k](0));
             lak[k](1,getFrictionDirections()) += om*(buf - lak[k](1,getFrictionDirections()));
           }
         }
@@ -798,8 +798,8 @@ namespace MBSim {
         const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
-          gdnk[k](i) = b(laIndDS+laIndk[k]+i);
-          for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+          gdnk[k](i) = b(laInd+laIndk[k]+i);
+          for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
             gdnk[k](i) += a[j]*laMBS(ja[j]);
         }
 
@@ -821,8 +821,8 @@ namespace MBSim {
         const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
-          gddk[k](i) = b(laIndDS+laIndk[k]+i);
-          for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+          gddk[k](i) = b(laInd+laIndk[k]+i);
+          for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
             gddk[k](i) += a[j]*laMBS(ja[j]);
         }
 
@@ -840,39 +840,39 @@ namespace MBSim {
         const SqrMat Jprox = ds->getJprox();
         const SqrMat G = ds->getG();
 
-        RowVec jp1=Jprox.row(laIndDS+laIndk[k]);
+        RowVec jp1=Jprox.row(laInd+laIndk[k]);
         RowVec e1(jp1.size());
-        e1(laIndDS+laIndk[k]) = 1;
+        e1(laInd+laIndk[k]) = 1;
         Vec diff = fcl->diff(lak[k](0), gddk[k](0), rFactork[k](0));
 
-        jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+laIndk[k])
+        jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+laIndk[k])
         for(int i=0; i<G.size(); i++) 
-          jp1(i) -= diff(1)*G(laIndDS+laIndk[k],i);
+          jp1(i) -= diff(1)*G(laInd+laIndk[k],i);
 
         if(getFrictionDirections() == 1) {
           Mat diff = fdf->diff(lak[k](1,1), gddk[k](1,1), lak[k](0), rFactork[k](1));
-          RowVec jp2=Jprox.row(laIndDS+laIndk[k]+1);
+          RowVec jp2=Jprox.row(laInd+laIndk[k]+1);
           RowVec e2(jp2.size());
-          e2(laIndDS+laIndk[k]+1) = 1;
+          e2(laInd+laIndk[k]+1) = 1;
           Mat e(2,jp2.size());
-          e(0,laIndDS+laIndk[k]) = 1;
-          e(1,laIndDS+laIndk[k]+1) = 1;
-          jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndDS+laIndk[k])
-          //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndDS+laIndk[k])
+          e(0,laInd+laIndk[k]) = 1;
+          e(1,laInd+laIndk[k]+1) = 1;
+          jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laInd+laIndk[k])
+          //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laInd+laIndk[k])
           for(int i=0; i<G.size(); i++) 
-            jp2(i) -= diff(0,1)*G(laIndDS+laIndk[k]+1,i);
+            jp2(i) -= diff(0,1)*G(laInd+laIndk[k]+1,i);
 
         }
         else if(getFrictionDirections() == 2) {
           Mat diff = ftil->diff(lak[k](1,2), gddk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
-          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()-1));
+          Mat jp2=Jprox(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+2),Index(0,Jprox.cols()-1));
           Mat e2(2,jp2.cols());
-          e2(0,laIndDS+laIndk[k]+1) = 1;
-          e2(1,laIndDS+laIndk[k]+2) = 1;
-          jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,G.size()-1))
+          e2(0,laInd+laIndk[k]+1) = 1;
+          e2(1,laInd+laIndk[k]+2) = 1;
+          jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+2),Index(0,G.size()-1))
           for(int i=0; i<G.size(); i++) {
-            jp2(0,i) = diff(0,2)*G(laIndDS+laIndk[k]+1,i)+diff(0,3)*G(laIndDS+laIndk[k]+2,i);
-            jp2(1,i) = diff(1,2)*G(laIndDS+laIndk[k]+1,i)+diff(1,3)*G(laIndDS+laIndk[k]+2,i);
+            jp2(0,i) = diff(0,2)*G(laInd+laIndk[k]+1,i)+diff(0,3)*G(laInd+laIndk[k]+2,i);
+            jp2(1,i) = diff(1,2)*G(laInd+laIndk[k]+1,i)+diff(1,3)*G(laInd+laIndk[k]+2,i);
           }
         }
       }
@@ -886,39 +886,39 @@ namespace MBSim {
         const SqrMat Jprox = ds->getJprox();
         const SqrMat G = ds->getG();
 
-        RowVec jp1=Jprox.row(laIndDS+laIndk[k]);
+        RowVec jp1=Jprox.row(laInd+laIndk[k]);
         RowVec e1(jp1.size());
-        e1(laIndDS+laIndk[k]) = 1;
+        e1(laInd+laIndk[k]) = 1;
         Vec diff = fnil->diff(lak[k](0), gdnk[k](0), gdk[k](0), rFactork[k](0));
 
-        jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+laIndk[k])
+        jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+laIndk[k])
         for(int i=0; i<G.size(); i++) 
-          jp1(i) -= diff(1)*G(laIndDS+laIndk[k],i);
+          jp1(i) -= diff(1)*G(laInd+laIndk[k],i);
 
         if(getFrictionDirections() == 1) {
           Mat diff = ftil->diff(lak[k](1,1), gdnk[k](1,1), gdk[k](1,1), lak[k](0), rFactork[k](1));
-          RowVec jp2=Jprox.row(laIndDS+laIndk[k]+1);
+          RowVec jp2=Jprox.row(laInd+laIndk[k]+1);
           RowVec e2(jp2.size());
-          e2(laIndDS+laIndk[k]+1) = 1;
+          e2(laInd+laIndk[k]+1) = 1;
           Mat e(2,jp2.size());
-          e(0,laIndDS+laIndk[k]) = 1;
-          e(1,laIndDS+laIndk[k]+1) = 1;
-          jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laIndDS+laIndk[k])
-          //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laIndDS+laIndk[k])
+          e(0,laInd+laIndk[k]) = 1;
+          e(1,laInd+laIndk[k]+1) = 1;
+          jp2 = e2-diff(0,2)*e1-diff(0,0)*e2; // -diff(1)*G.row(laInd+laIndk[k])
+          //jp2 = e2-diff.row(0)(0,1)*e; // -diff(1)*G.row(laInd+laIndk[k])
           for(int i=0; i<G.size(); i++) 
-            jp2(i) -= diff(0,1)*G(laIndDS+laIndk[k]+1,i);
+            jp2(i) -= diff(0,1)*G(laInd+laIndk[k]+1,i);
 
         } 
         else if(getFrictionDirections() == 2) {
           Mat diff = ftil->diff(lak[k](1,2), gdnk[k](1,2), gdk[k](1,2), lak[k](0), rFactork[k](1));
-          Mat jp2=Jprox(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,Jprox.cols()-1));
+          Mat jp2=Jprox(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+2),Index(0,Jprox.cols()-1));
           Mat e2(2,jp2.cols());
-          e2(0,laIndDS+laIndk[k]+1) = 1;
-          e2(1,laIndDS+laIndk[k]+2) = 1;
-          jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laIndDS+laIndk[k]+1,laIndDS+laIndk[k]+2),Index(0,G.size()-1))
+          e2(0,laInd+laIndk[k]+1) = 1;
+          e2(1,laInd+laIndk[k]+2) = 1;
+          jp2 = e2-diff(Index(0,1),Index(4,4))*e1-diff(Index(0,1),Index(0,1))*e2; // -diff(Index(0,1),Index(4,5))*G(Index(laInd+laIndk[k]+1,laInd+laIndk[k]+2),Index(0,G.size()-1))
           for(int i=0; i<G.size(); i++) {
-            jp2(0,i) = diff(0,2)*G(laIndDS+laIndk[k]+1,i)+diff(0,3)*G(laIndDS+laIndk[k]+2,i);
-            jp2(1,i) = diff(1,2)*G(laIndDS+laIndk[k]+1,i)+diff(1,3)*G(laIndDS+laIndk[k]+2,i);
+            jp2(0,i) = diff(0,2)*G(laInd+laIndk[k]+1,i)+diff(0,3)*G(laInd+laIndk[k]+2,i);
+            jp2(1,i) = diff(1,2)*G(laInd+laIndk[k]+1,i)+diff(1,3)*G(laInd+laIndk[k]+2,i);
           }
         }
       }
@@ -933,9 +933,9 @@ namespace MBSim {
         const int *ia = ds->getGs().Ip();
 
         double sumN = 0;
-        for(int j=ia[laIndDS+laIndk[k]]+1; j<ia[laIndDS+laIndk[k]+1]; j++)
+        for(int j=ia[laInd+laIndk[k]]+1; j<ia[laInd+laIndk[k]+1]; j++)
           sumN += fabs(a[j]);
-        const double aN = a[ia[laIndDS+laIndk[k]]];
+        const double aN = a[ia[laInd+laIndk[k]]];
         if(aN > sumN) {
           rFactorUnsure(0) = 0;
           rFactork[k](0) = 1.0/aN;
@@ -949,9 +949,9 @@ namespace MBSim {
         double aT1, aT2;
         if(fdf && gdActive[k][1]) {
           if(getFrictionDirections() == 1) {
-            for(int j=ia[laIndDS+laIndk[k]+1]+1; j<ia[laIndDS+laIndk[k]+2]; j++)
+            for(int j=ia[laInd+laIndk[k]+1]+1; j<ia[laInd+laIndk[k]+2]; j++)
               sumT1 += fabs(a[j]);
-            aT1 = a[ia[laIndDS+laIndk[k]+1]];
+            aT1 = a[ia[laInd+laIndk[k]+1]];
             if(aT1 > sumT1) {
               rFactorUnsure(1)=0;
               rFactork[k](1) = 1.0/aT1;
@@ -962,12 +962,12 @@ namespace MBSim {
             }
           } 
           else if(getFrictionDirections() == 2) {
-            for(int j=ia[laIndDS+laIndk[k]+1]+1; j<ia[laIndDS+laIndk[k]+2]; j++)
+            for(int j=ia[laInd+laIndk[k]+1]+1; j<ia[laInd+laIndk[k]+2]; j++)
               sumT1 += fabs(a[j]);
-            for(int j=ia[laIndDS+laIndk[k]+2]+1; j<ia[laIndDS+laIndk[k]+3]; j++)
+            for(int j=ia[laInd+laIndk[k]+2]+1; j<ia[laInd+laIndk[k]+3]; j++)
               sumT2 += fabs(a[j]);
-            aT1 = a[ia[laIndDS+laIndk[k]+1]];
-            aT2 = a[ia[laIndDS+laIndk[k]+2]];
+            aT1 = a[ia[laInd+laIndk[k]+1]];
+            aT2 = a[ia[laInd+laIndk[k]+2]];
 
             // TODO rFactorUnsure
             if(aT1 - sumT1 >= aT2 - sumT2) 
@@ -997,8 +997,8 @@ namespace MBSim {
         const Vec &b = ds->getb();
 
         for(unsigned int i=0; i < 1+ gdActive[k][1]*getFrictionDirections(); i++) {
-          gddk[k](i) = b(laIndDS+laIndk[k]+i);
-          for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+          gddk[k](i) = b(laInd+laIndk[k]+i);
+          for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
             gddk[k](i) += a[j]*laMBS(ja[j]);
         }
 
@@ -1027,8 +1027,8 @@ namespace MBSim {
         const Vec &b = ds->getb();
 
         for(int i=0; i < 1+getFrictionDirections(); i++) {
-          gdnk[k](i) = b(laIndDS+laIndk[k]+i);
-          for(int j=ia[laIndDS+laIndk[k]+i]; j<ia[laIndDS+laIndk[k]+1+i]; j++)
+          gdnk[k](i) = b(laInd+laIndk[k]+i);
+          for(int j=ia[laInd+laIndk[k]+i]; j<ia[laInd+laIndk[k]+1+i]; j++)
             gdnk[k](i) += a[j]*laMBS(ja[j]);
         }
 

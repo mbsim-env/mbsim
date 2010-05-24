@@ -628,11 +628,6 @@ namespace MBSim {
       void setrMax(double rMax);
 
       /**
-       * \brief TODO
-       */
-      void setlaIndDS(int laIndParent);
-
-      /**
        * \param frame to add
        * \param relative position of frame
        * \param relative orientation of frame

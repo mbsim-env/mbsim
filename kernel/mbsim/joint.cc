@@ -241,15 +241,15 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fiml->project(la(i), gdn(i), gd(i), rFactor(i));
@@ -265,15 +265,15 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       la(i) = fml->project(la(i), gdd(i), rFactor(i));
@@ -289,18 +289,18 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fifl->solve(a[ia[laIndDS+i]], gdn(i), gd(i));
+      la(i) = fifl->solve(a[ia[laInd+i]], gdn(i), gd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fiml->solve(a[ia[laIndDS+i]], gdn(i), gd(i));
+      la(i) = fiml->solve(a[ia[laInd+i]], gdn(i), gd(i));
     }
   }
 
@@ -313,18 +313,18 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = ffl->solve(a[ia[laIndDS+i]], gdd(i));
+      la(i) = ffl->solve(a[ia[laInd+i]], gdd(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]+1; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
-      la(i) = fml->solve(a[ia[laIndDS+i]], gdd(i));
+      la(i) = fml->solve(a[ia[laInd+i]], gdd(i));
     }
   }
 
@@ -337,15 +337,15 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fifl->project(la(i), gdn(i), gd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fiml->project(la(i), gdn(i), gd(i), rFactor(i));
@@ -361,15 +361,15 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - ffl->project(la(i), gdd(i), rFactor(i));
     }
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       res(i) = la(i) - fml->project(la(i), gdd(i), rFactor(i));
@@ -382,26 +382,26 @@ namespace MBSim {
     const SqrMat G = ds->getG();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      RowVec jp1=Jprox.row(laIndDS+i);
+      RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
-      e1(laIndDS+i) = 1;
+      e1(laInd+i) = 1;
       Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+        jp1(j) -= diff(1)*G(laInd+i,j);
     }
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
 
-      RowVec jp1=Jprox.row(laIndDS+i);
+      RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
-      e1(laIndDS+i) = 1;
+      e1(laInd+i) = 1;
       Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+        jp1(j) -= diff(1)*G(laInd+i,j);
     }
   }
 
@@ -411,25 +411,25 @@ namespace MBSim {
     const SqrMat G = ds->getG();
 
     for(int i=0; i<forceDir.cols(); i++) {
-      RowVec jp1=Jprox.row(laIndDS+i);
+      RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
-      e1(laIndDS+i) = 1;
+      e1(laInd+i) = 1;
       Vec diff = fifl->diff(la(i), gdn(i), gd(i), rFactor(i));
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+        jp1(j) -= diff(1)*G(laInd+i,j);
     }
 
     for(int i=forceDir.cols(); i<forceDir.cols() + momentDir.cols(); i++) {
-      RowVec jp1=Jprox.row(laIndDS+i);
+      RowVec jp1=Jprox.row(laInd+i);
       RowVec e1(jp1.size());
-      e1(laIndDS+i) = 1;
+      e1(laInd+i) = 1;
       Vec diff = fiml->diff(la(i), gdn(i), gd(i), rFactor(i));
 
-      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laIndDS+i)
+      jp1 = e1-diff(0)*e1; // -diff(1)*G.row(laInd+i)
       for(int j=0; j<G.size(); j++) 
-        jp1(j) -= diff(1)*G(laIndDS+i,j);
+        jp1(j) -= diff(1)*G(laInd+i,j);
     }
   }
 
@@ -441,9 +441,9 @@ namespace MBSim {
 
       for(int i=0; i<rFactorSize; i++) {
         double sum = 0;
-        for(int j=ia[laIndDS+i]+1; j<ia[laIndDS+i+1]; j++)
+        for(int j=ia[laInd+i]+1; j<ia[laInd+i+1]; j++)
           sum += fabs(a[j]);
-        double ai = a[ia[laIndDS+i]];
+        double ai = a[ia[laInd+i]];
         if(ai > sum) {
           rFactorUnsure(i) = 0;
           rFactor(i) = 1.0/ai;
@@ -464,8 +464,8 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i < forceDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       if(!fifl->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
@@ -474,8 +474,8 @@ namespace MBSim {
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdn(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdn(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdn(i) += a[j]*laMBS(ja[j]);
 
       if(!fiml->isFulfilled(la(i),gdn(i),gd(i),LaTol,gdTol)) {
@@ -494,8 +494,8 @@ namespace MBSim {
     const Vec &b = ds->getb();
 
     for(int i=0; i < forceDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       if(!ffl->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
@@ -504,8 +504,8 @@ namespace MBSim {
       }
     }
     for(int i=forceDir.cols(); i < forceDir.cols() + momentDir.cols(); i++) {
-      gdd(i) = b(laIndDS+i);
-      for(int j=ia[laIndDS+i]; j<ia[laIndDS+1+i]; j++)
+      gdd(i) = b(laInd+i);
+      for(int j=ia[laInd+i]; j<ia[laInd+1+i]; j++)
         gdd(i) += a[j]*laMBS(ja[j]);
 
       if(!fml->isFulfilled(la(i),gdd(i),laTol,gddTol)) {
