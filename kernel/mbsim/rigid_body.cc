@@ -150,14 +150,11 @@ namespace MBSim {
         ASC[j]=ASF[i]*saved_ARC[j];
       }
     }
-    else if(stage==unknownStage) {
+    else if(stage==resize) {
       if(iKinematics == -1)
         iKinematics = 0;
 
       Body::init(stage);
-
-      if(constraint)
-        T.resize(nq,nu[0]);
 
       PJT.resize(3,nu[0]);
       PJR.resize(3,nu[0]);
@@ -174,6 +171,8 @@ namespace MBSim {
       jRel.resize(nu[0]);
       qRel.resize(nq);
       uRel.resize(nu[0]);
+      q.resize(qSize);
+      u.resize(uSize[0]);
 
       WJTrel.resize(3,nu[0]);
       WjTrel.resize(3);
@@ -182,6 +181,9 @@ namespace MBSim {
 
       updateM_ = &RigidBody::updateMNotConst;
       facLLM_ = &RigidBody::facLLMNotConst;
+    }
+    else if(stage==MBSim::unknownStage) {
+      Body::init(stage);
 
       if(fPJT==0) {
         Mat JT(3,0);
@@ -241,6 +243,9 @@ namespace MBSim {
 
       if(iInertia != 0)
         SThetaS = SymMat(ASF[iInertia]*SThetaS*ASF[iInertia].T()) - m*JTJ(tilde(SrSF[iInertia]));
+
+      if(constraint)
+        T.resize(nq,nu[0]);
 
       for(int i=0; i<nu[0]; i++) 
         T(i,i) = 1;
