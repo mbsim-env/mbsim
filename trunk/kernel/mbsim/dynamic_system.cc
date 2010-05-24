@@ -1345,15 +1345,6 @@ namespace MBSim {
       (**i).setrMax(rMax);
   }
 
-  void DynamicSystem::setlaIndDS(int laIndParent) {
-    int newlaInd = laInd + laIndParent;
-    for(unsigned i=0; i<dynamicsystem.size(); i++)
-      dynamicsystem[i]->setlaIndDS(newlaInd);
-
-    for(unsigned i=0; i<link.size(); i++)
-      link[i]->setlaIndDS(newlaInd);
-  }
-
   void DynamicSystem::addFrame(Frame* cosy) {
     if(getFrame(cosy->getName(),false)) { 
       cout << "ERROR (DynamicSystem:addFrame): The DynamicSystem " << name << " can only comprise one Frame by the name " <<  cosy->getName() << "!" << endl;

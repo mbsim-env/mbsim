@@ -28,7 +28,7 @@ using namespace std;
 
 namespace MBSim {
 
-  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rFactorSize(0), rFactorInd(0), rMax(1.), laIndDS(0) {}
+  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gdTol(1e-6), gddTol(1e-6), laTol(1e-6), LaTol(1e-6), rFactorSize(0), rFactorInd(0), rMax(1.) {}
 
   void Link::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {

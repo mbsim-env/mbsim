@@ -50,8 +50,6 @@ namespace MBSim {
       system.calclaSize();
       system.calcrFactorSize();
 
-      system.setlaIndDS(system.getlaInd());
-
       system.updateWRef(system.getWParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updateVRef(system.getVParent()(Index(0,system.getuSize()-1),Index(0,system.getlaSize()-1)));
       system.updatelaRef(system.getlaParent()(0,system.getlaSize()-1));
