@@ -19,7 +19,6 @@
 #include <config.h>
 #include "mbsim/graph.h"
 #include "mbsim/object.h"
-#include "mbsim/link.h"
 #include "mbsim/frame.h"
 #include "mbsim/extra_dynamic.h"
 
@@ -43,8 +42,6 @@ namespace MBSim {
       for(unsigned int j=0; j<obj[i].size(); j++) 
 	obj[i][j]->updateJacobians(t);
 
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
   }
 
   void Graph::updatedu(double t, double dt) {
@@ -57,9 +54,6 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexd(t);
 
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatexd(t);
@@ -99,8 +93,6 @@ namespace MBSim {
       for(unsigned int j=0; j<obj[i].size(); j++) 
 	obj[i][j]->updateInverseKineticsJacobians(t);
 
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->updateJacobians(t);
   }
 
   void Graph::facLLM() {
