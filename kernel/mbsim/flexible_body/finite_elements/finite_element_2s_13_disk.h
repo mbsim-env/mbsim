@@ -34,6 +34,7 @@ namespace MBSim {
    * \author Raphael Missel
    * \date 2009-05-22 initial commit (Grundl / Missel / Schindler)
    * \date 2009-07-24 implicit integration (Thorsten Schindler)
+   * \date 2010-05-25 fixed minus sign in azimuthal stiffness directions (Thorsten Schindler)
    * \todo transform computeState to Position / Orientation / Velocity / AngularVelocity
    * \todo JacobianMinimalRepresentation
    * \todo energy

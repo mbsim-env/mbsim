@@ -233,6 +233,52 @@ namespace MBSim {
     KEl(10,10) = -(alphaS*dj*G*(r1 - r2)*(d1*(2*r1 + 3*r2) + 3*d2*(r1 + 4*r2)))/180. - (E*(dr*(3*Power(d1,2)*d2*((9*(-1 + nu) + 8*Power(j1 - j2,2)*(-3 + 2*nu))*Power(r1,4) + (8*Power(j1 - j2,2)*(17 - 8*nu) - 81*(-1 + nu))*Power(r1,3)*r2 + (-141*(-1 + nu) + 16*Power(j1 - j2,2)*(11 + 6*nu))*Power(r1,2)*Power(r2,2) - (-39*(-1 + nu) + 64*Power(j1 - j2,2)*(1 + nu))*r1*Power(r2,3) + 2*(3 - 3*nu + 8*Power(j1 - j2,2)*(1 + nu))*Power(r2,4)) + Power(d1,3)*(2*(3*(-1 + nu) + 4*Power(j1 - j2,2)*(-7 + 3*nu))*Power(r1,4) + (8*Power(j1 - j2,2)*(23 - 12*nu) - 39*(-1 + nu))*Power(r1,3)*r2 + (141*(-1 + nu) + 8*Power(j1 - j2,2)*(-37 + 18*nu))*Power(r1,2)*Power(r2,2) - 3*(-27*(-1 + nu) + 32*Power(j1 - j2,2)*(1 + nu))*r1*Power(r2,3) + 3*(3 - 3*nu + 8*Power(j1 - j2,2)*(1 + nu))*Power(r2,4)) + 3*d1*Power(d2,2)*(4*(9*(-1 + nu) + 2*Power(j1 - j2,2)*(-7 + 3*nu))*Power(r1,4) - (-231*(-1 + nu) + 8*Power(j1 - j2,2)*(37 + 12*nu))*Power(r1,3)*r2 + (-129*(-1 + nu) + 8*Power(j1 - j2,2)*(23 + 18*nu))*Power(r1,2)*Power(r2,2) - 3*(-17*(-1 + nu) + 32*Power(j1 - j2,2)*(1 + nu))*r1*Power(r2,3) + 3*(3 - 3*nu + 8*Power(j1 - j2,2)*(1 + nu))*Power(r2,4)) + Power(d2,3)*((-411*(-1 + nu) + 8*Power(j1 - j2,2)*(67 + 12*nu))*Power(r1,4) - (-489*(-1 + nu) + 8*Power(j1 - j2,2)*(83 + 48*nu))*Power(r1,3)*r2 + (-411*(-1 + nu) + 16*Power(j1 - j2,2)*(41 + 36*nu))*Power(r1,2)*Power(r2,2) - 3*(-63*(-1 + nu) + 128*Power(j1 - j2,2)*(1 + nu))*r1*Power(r2,3) + 12*(3 - 3*nu + 8*Power(j1 - j2,2)*(1 + nu))*Power(r2,4))) + 60*(3 + 4*Power(j1 - j2,2) - 3*nu)*Power(r1,2)*Power(d2*r1 - d1*r2,3)*log(r1/r2)))/(8640.*dj*Power(dr,5)*(-1 + Power(nu,2)));
     KEl(10,11) = (E*(dr*(j1 - j2)*(-3*d1*Power(d2,2)*(3*(11 + nu)*Power(r1,4) + (243 + 113*nu)*Power(r1,3)*r2 - (147 + 97*nu)*Power(r1,2)*Power(r2,2) + (63 + 53*nu)*r1*Power(r2,3) - 12*(1 + nu)*Power(r2,4)) + 3*Power(d1,2)*d2*((-7 + 3*nu)*Power(r1,4) + (73 + 3*nu)*Power(r1,3)*r2 + (153 + 83*nu)*Power(r1,2)*Power(r2,2) - (47 + 37*nu)*r1*Power(r2,3) + 8*(1 + nu)*Power(r2,4)) + Power(d1,3)*((-3 + 7*nu)*Power(r1,4) + (27 - 23*nu)*Power(r1,3)*r2 + (-123 + 7*nu)*Power(r1,2)*Power(r2,2) - 3*(31 + 21*nu)*r1*Power(r2,3) + 12*(1 + nu)*Power(r2,4)) + Power(d2,3)*((423 + 173*nu)*Power(r1,4) - (537 + 307*nu)*Power(r1,3)*r2 + (483 + 353*nu)*Power(r1,2)*Power(r2,2) - 3*(79 + 69*nu)*r1*Power(r2,3) + 48*(1 + nu)*Power(r2,4))) + 60*dj*(3 + nu)*Power(r1,2)*Power(d2*r1 - d1*r2,3)*log(r2/r1)))/(5760.*dj*Power(dr,5)*(-1 + Power(nu,2)));
     KEl(11,11) = -(alphaS*dr*G*(j1 - j2)*(d1*(2*r1 + 3*r2) + 3*d2*(r1 + 4*r2)))/180. - (E*(dr*(3*Power(d1,2)*d2*((-18 + 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,4) + (162 - 25*Power(j1 - j2,2)*(-1 + nu))*Power(r1,3)*r2 + 2*(141 - 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,2)*Power(r2,2) - 78*r1*Power(r2,3) + 12*Power(r2,4)) + Power(d1,3)*(2*(-6 + 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,4) + (78 - 35*Power(j1 - j2,2)*(-1 + nu))*Power(r1,3)*r2 + (-282 + 55*Power(j1 - j2,2)*(-1 + nu))*Power(r1,2)*Power(r2,2) - 162*r1*Power(r2,3) + 18*Power(r2,4)) + 3*d1*Power(d2,2)*(2*(-36 + 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,4) + (-462 + 25*Power(j1 - j2,2)*(-1 + nu))*Power(r1,3)*r2 + (258 - 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,2)*Power(r2,2) - 102*r1*Power(r2,3) + 18*Power(r2,4)) + Power(d2,3)*((822 - 55*Power(j1 - j2,2)*(-1 + nu))*Power(r1,4) + (-978 + 35*Power(j1 - j2,2)*(-1 + nu))*Power(r1,3)*r2 + 2*(411 - 5*Power(j1 - j2,2)*(-1 + nu))*Power(r1,2)*Power(r2,2) - 378*r1*Power(r2,3) + 72*Power(r2,4))) - 30*(-12 + Power(j1 - j2,2)*(-1 + nu))*Power(r1,2)*Power(d2*r1 - d1*r2,3)*log(r1/r2)))/(4320.*dj*Power(dr,5)*(-1 + Power(nu,2)));
+
+    // correction of material law in stiffness matrix / minus sign in azimuthal direction (FIX)
+    KEl(1,2) *= -1.;
+    KEl(1,3) *= -1.;
+    KEl(1,4) *= -1.;
+    KEl(1,5) *= -1.;
+    KEl(1,6) *= -1.;
+    KEl(1,7) *= -1.;
+    KEl(1,8) *= -1.;
+    KEl(1,9) *= -1.;
+    KEl(1,10) *= -1.;
+    KEl(1,11) *= -1.;
+    KEl(4,5) *= -1.;
+    KEl(4,6) *= -1.;
+    KEl(4,7) *= -1.;
+    KEl(4,8) *= -1.;
+    KEl(4,9) *= -1.;
+    KEl(4,10) *= -1.;
+    KEl(4,11) *= -1.;
+    KEl(7,8) *= -1.;
+    KEl(7,9) *= -1.;
+    KEl(7,10) *= -1.;
+    KEl(7,11) *= -1.;
+    KEl(10,11) *= -1.;
+    KEl(0,1) *= -1.;
+    KEl(0,4) *= -1.;
+    KEl(0,7) *= -1.;
+    KEl(0,10) *= -1.;
+    KEl(1,4) *= -1.;
+    KEl(1,7) *= -1.;
+    KEl(1,10) *= -1.;
+    KEl(2,4) *= -1.;
+    KEl(2,7) *= -1.;
+    KEl(2,10) *= -1.;
+    KEl(3,4) *= -1.;
+    KEl(3,7) *= -1.;
+    KEl(3,10) *= -1.;
+    KEl(4,7) *= -1.;
+    KEl(4,10) *= -1.;
+    KEl(5,7) *= -1.;
+    KEl(5,10) *= -1.;
+    KEl(6,7) *= -1.;
+    KEl(6,10) *= -1.;
+    KEl(7,10) *= -1.;
+    KEl(8,10) *= -1.;
+    KEl(9,10) *= -1.;
   }
 
   Vec FiniteElement2s13Disk::computeState(const Vec &NodeCoordinates,const Vec &qElement,const Vec &qpElement,const Vec &s,double d1,double d2) {
