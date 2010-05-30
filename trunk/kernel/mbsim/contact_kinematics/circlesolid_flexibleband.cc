@@ -81,7 +81,7 @@ namespace MBSim {
       else {
         band->updateKinematicsForFrame(cpData[icontour],position_cosy);
         Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-        (ig[i])(0) = nrm2(Wd) - rCircle - hBand;
+        (ig[i])(0) = nrm2(Wd) - rCircle;
 
         if((ig[i])(0) <= 0.0) {
           contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
@@ -100,7 +100,7 @@ namespace MBSim {
             cpData[icircle] .getFrameOfReference().getOrientation().col(0)  = -cpData[icontour].getFrameOfReference().getOrientation().col(0);
             cpData[icircle] .getFrameOfReference().getOrientation().col(1)  = -cpData[icontour].getFrameOfReference().getOrientation().col(1);
             cpData[icircle] .getFrameOfReference().getOrientation().col(2)  =  cpData[icontour].getFrameOfReference().getOrientation().col(2);
-            //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
+          //cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() + cpData[icircle].getFrameOfReference().getOrientation().col(0)*rCircle;
             cpData[icircle] .getFrameOfReference().getPosition()            =  circle->getFrame()->getPosition() - rCircle*Wd/nrm2(Wd);
 
           }
@@ -155,7 +155,7 @@ namespace MBSim {
         else {
           band->updateKinematicsForFrame(cpData[icontour],position_cosy);
           Vec Wd = circle->getFrame()->getPosition() - cpData[icontour].getFrameOfReference().getPosition();
-          (ig[nrNodes + i])(0) = nrm2(Wd) - rCircle - hBand;
+          (ig[nrNodes + i])(0) = nrm2(Wd) - rCircle;
 
           if((ig[i])(0) <= 0.0) {
             contactPositions(inContact) = cpData[icontour].getLagrangeParameterPosition()(0);
@@ -201,15 +201,15 @@ namespace MBSim {
     }
     lastContactPositions.resize() = contactPositions(Index(0,inContact-1));
 
+    // flush data not being necessary
     for(int i=nrNodes + result.rows();i<numberOfPotentialContactPoints;i++)
     {
-      // flush data not being necessary
       ContourPointData* cpData = icpData[i];
 
       // positions -> dummy and centerOfCircle
       if(cpData[icontour].getLagrangeParameterPosition().size() != 2)
         cpData[icontour].getLagrangeParameterPosition().resize() = Vec(2,INIT,0.0);
-      cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;//result(0,0);
+      cpData[icontour].getLagrangeParameterPosition()(0) = 0.0;
 
       cpData[icontour].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
       cpData[icircle ].getFrameOfReference().setPosition(nodes(nodes.size()-1)*Vec("[1.0;0.0;0.0]"));//Vec(3,INIT,0.0));//
