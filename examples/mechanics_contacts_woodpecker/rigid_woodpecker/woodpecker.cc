@@ -1,13 +1,12 @@
 #include "woodpecker.h"
 
-#include "mbsim/flexible_body/flexible_body_1s_21_rcm.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contour.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/flexible_band.h"
-#include "mbsim/contact_kinematics/point_flexibleband.h"
+#include "mbsim/contours/line.h"
+#include "mbsim/contact_kinematics/point_line.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 #include "mbsim/rotational_spring_damper.h"
@@ -34,67 +33,28 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   JR(2) = 1;
 
   // Stange -------------------------------------
-  int Elements = 5;
-  double     L = 1.0;
   double     r = 10.0e-3;
   double spiel = 0.7e-3;
   double     R =  r + spiel/2.;
   double hoehe = R/2.;
 
-  FlexibleBody1s21RCM *balken = new FlexibleBody1s21RCM("Balken",true);
-  balken->setFrameOfReference(this->getFrame("I"));
+  Line *lL = new Line("LineL");
+  Line *lR = new Line("LineR");
 
-  balken->setNumberElements(Elements); 
-  balken->setLength(L);
-  balken->setEModul(7.5e09);
+cout << "------------------------------------------------" << endl;
+cout << "ATTENTION: settings of lines for rod still wrong" << endl;
+cout << "------------------------------------------------" << endl;
 
-  balken->setCrossSectionalArea(r*r*M_PI);
-  balken->setMomentInertia(r*r*r*r/12.);
-  balken->setLehrDamping(0.10);
-  balken->setDensity(2.3e3);
+  SqrMat TLine(3,INIT,0.0);
+  TLine(0,1) = -1.0; TLine(1,0) =  1.0; TLine(2,2) =  1.0;
+  this->addContour(lL, r*Vec("[1.0;0.0;0.0]"), TLine);
+  TLine(0,1) = -1.0; TLine(1,0) =  1.0; TLine(2,2) = -1.0;
+  this->addContour(lR,-r*Vec("[1.0;0.0;0.0]"), TLine);
 
-  balken->initRelaxed(90./180.*M_PI);
-  cout << "Balken.q0 = " << trans( balken->getq0() ) << endl;
 
-  addObject(balken);
-
-  // inertiale Einspannung -----------------------------
-  ContourPointData cpdata;
-  cpdata.getLagrangeParameterPosition() = Vec(1,INIT,0.);
-  cpdata.getContourParameterType() = CONTINUUM;
-  balken->addFrame("RJ",cpdata);
-  Joint *joint = new Joint("Clamping");
-  joint->connect(this->getFrame("I"),balken->getFrame("RJ")); 
-  joint->setForceDirection(Mat("[1,0; 0,1; 0,0]"));
-  joint->setForceLaw(new BilateralConstraint);
-  joint->setImpactForceLaw(new BilateralImpact);
-  joint->setMomentDirection("[0; 0; 1]");
-  joint->setMomentLaw(new BilateralConstraint);
-  joint->setImpactMomentLaw(new BilateralImpact);
-  this->addLink(joint);
-
-  Vec nodes(Elements+1);
-  for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
-  FlexibleBand *top = new FlexibleBand("Top");
-  top->setNodes(nodes);
-  top->setWidth(r);
-  top->setCn(Vec("[-1.;0.]"));
-  top->setAlphaStart(0.);
-  top->setAlphaEnd(L);  
-  top->setNormalDistance(r);
-  balken->addContour(top);
-  FlexibleBand *bot = new FlexibleBand("Bot");
-  bot->setNodes(nodes);
-  bot->setWidth(r);
-  bot->setCn(Vec("[1.;0.]"));
-  bot->setAlphaStart(0.);
-  bot->setAlphaEnd(L);  
-  bot->setNormalDistance(r);
-  balken->addContour(bot);
-
-  SymMat Theta(3,INIT,0.0);
-  Vec WrOS(3,INIT,0.0);
-  // Muffe -------------------------------------
+  SymMat Theta(3);
+  Vec WrOS(3);
+// Muffe -------------------------------------
   double FDPunkt = 27.e-3;
   double yMuffe0 =  0.925;
   double  mMuffe = 10.e-3;
@@ -134,16 +94,16 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
     Vec KrSPMuffe(3);
 
     switch(i){
-      case 0: contact->connect(pMuffe,balken->getContour("Top"));
+      case 0: contact->connect(pMuffe,this->getContour("LineL"));
               KrSPMuffe(0) =  R;   KrSPMuffe(1) =  hoehe/2.;
               break;
-      case 1: contact->connect(pMuffe,balken->getContour("Top"));
+      case 1: contact->connect(pMuffe,this->getContour("LineL"));
               KrSPMuffe(0) =  R;   KrSPMuffe(1) = -hoehe/2.;
               break;
-      case 2: contact->connect(pMuffe,balken->getContour("Bot"));
+      case 2: contact->connect(pMuffe,this->getContour("LineR"));
               KrSPMuffe(0) = -R;   KrSPMuffe(1) =  hoehe/2.;
               break;
-      case 3: contact->connect(pMuffe,balken->getContour("Bot"));
+      case 3: contact->connect(pMuffe,this->getContour("LineR"));
               KrSPMuffe(0) = -R;   KrSPMuffe(1) = -hoehe/2.;
               break;
     }
@@ -194,7 +154,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   addLink(feder);
 
   Contact *contact = new Contact("SchnabelKontakt");
-  contact->connect(schnabel,balken->getContour("Top"));
+  contact->connect(schnabel,this->getContour("LineL"));
   contact->setContactForceLaw  (cntForceLaw );
   contact->setContactImpactLaw (impForceLaw );
   contact->setFrictionForceLaw (coulFriction);
@@ -205,22 +165,6 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   specht->setInitialGeneralizedVelocity(Vec(1,INIT,-5.0));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-  OpenMBV::SpineExtrusion *cuboid=new OpenMBV::SpineExtrusion;
-  int spineDiscretisation = 4;
-  cuboid->setNumberOfSpinePoints(Elements*spineDiscretisation+1); // resolution of visualisation
-  cuboid->setStaticColor(0.6); // color in (minimalColorValue, maximalColorValue)
-  cuboid->setScaleFactor(1.); // orthotropic scaling of cross section
-  vector<OpenMBV::PolygonPoint*> *rectangle = new vector<OpenMBV::PolygonPoint*>; // clockwise ordering, no doubling for closure
-  int circDiscretisation = 36;
-  for(int i=0;i<=circDiscretisation;i++) {
-    double phi = 2*M_PI/circDiscretisation*i;
-    OpenMBV::PolygonPoint *corner = new OpenMBV::PolygonPoint(r*cos(phi),r*sin(phi),1);
-    rectangle->push_back(corner);
-  }
-
-  cuboid->setContour(rectangle);
-  balken->setOpenMBVSpineExtrusion(cuboid);
-
   OpenMBV::IvBody* muffeMBV = new OpenMBV::IvBody;
   muffeMBV->setIvFileName("../objects/muffe.wrl");
   muffeMBV->setInitialRotation( 0, 0, M_PI/2. );
