@@ -123,6 +123,7 @@ namespace MBSim {
       void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
       void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
       void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+      Rotation* getRotation() { return fAPK; }
 
       /** \brief Sets the time dependent function for the guiding velocity of translation */
       void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
