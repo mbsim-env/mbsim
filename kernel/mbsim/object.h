@@ -39,6 +39,7 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+   * \date 2010-06-20 revision of doxygen comments: add parameter names (Roland Zander)
    */
   class Object : public Element, public ObjectInterface {
     public: 
@@ -92,67 +93,67 @@ namespace MBSim {
 
       /**
        * \brief references to positions of dynamic system parent
-       * \param vector to be referenced
+       * \param qRef vector to be referenced
        */
-      virtual void updateqRef(const fmatvec::Vec& ref);
+      virtual void updateqRef(const fmatvec::Vec& qRef);
 
       /**
        * \brief references to differentiated positions of dynamic system parent
-       * \param vector to be referenced
+       * \param qdRef vector to be referenced
        */
-      virtual void updateqdRef(const fmatvec::Vec& ref);
+      virtual void updateqdRef(const fmatvec::Vec& qdRef);
 
       /**
        * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
+       * \param uRef vector to be referenced
        */
-      virtual void updateuRef(const fmatvec::Vec& ref);
+      virtual void updateuRef(const fmatvec::Vec& uRef);
 
       /**
        * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
+       * \param uallRef vector to be referenced
        */
-      virtual void updateuallRef(const fmatvec::Vec& ref);
+      virtual void updateuallRef(const fmatvec::Vec& uallRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
-       * \param vector to be referenced
+       * \param udRef vector to be referenced
        */
-      virtual void updateudRef(const fmatvec::Vec& ref);
+      virtual void updateudRef(const fmatvec::Vec& udRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
-       * \param vector to be referenced
+       * \param udallRef vector to be referenced
        */
-      virtual void updateudallRef(const fmatvec::Vec& ref);
+      virtual void updateudallRef(const fmatvec::Vec& udallRef);
 
       /**
        * \brief references to smooth force vector of dynamic system parent
-       * \param vector to be referenced
-       * \param index of normal usage and inverse kinetics
+       * \param hRef vector to be referenced
+       * \param i    index of normal usage and inverse kinetics
        */
       virtual void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hObjectRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
+       * \param dhdqRef matrix concerning links to be referenced
+       * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding velocities
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
+       * \param dhduRef matrix concerning links to be referenced
+       * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
+      virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding time
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
+       * \param dhdtRef matrix concerning links to be referenced
+       * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
@@ -213,7 +214,7 @@ namespace MBSim {
 
       /**
        * \brief calculates size of right hand side
-       * \param index of normal usage and inverse kinetics TODO
+       * \param j index of normal usage and inverse kinetics TODO
        */
       virtual void calcSize(int j) {}
 

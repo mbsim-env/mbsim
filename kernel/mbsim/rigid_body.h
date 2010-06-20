@@ -41,17 +41,18 @@ namespace MBSim {
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-04-24 class can handle constraints on generalized coordinates (Martin Foerg) 
+   * \date 2010-06-20 add getter for Kinematics; revision on doxygen comments (Roland Zander)
    * \todo kinetic energy TODO
    * \todo Euler parameter TODO
    * \todo check if inertial system for performance TODO
    *
-   * rigid bodies have a predefined canonic frame 'C' in their centre of gravity 
+   * rigid bodies have a predefined canonic Frame 'C' in their centre of gravity 
    */
   class RigidBody : public Body {
     public:
       /**
        * \brief constructor
-       * \param name of rigid body
+       * \param name name of rigid body
        */
       RigidBody(const std::string &name);
 
@@ -93,34 +94,52 @@ namespace MBSim {
 
       /* INTERFACE FOR DERIVED CLASSES */
       /**
-       * \brief updates kinematics of kinematic frame starting from reference frame
+       * \brief updates kinematics of kinematic Frame starting from reference Frame
        */
       virtual void updateKinematicsForSelectedFrame(double t);
       /**
-       * \brief updates JACOBIAN for kinematics starting from reference frame
+       * \brief updates JACOBIAN for kinematics starting from reference Frame
        */
       virtual void updateJacobiansForSelectedFrame(double t);
 
       /**
-       * \brief updates kinematics for remaining frames starting with and from cog frame
+       * \brief updates kinematics for remaining Frames starting with and from cog Frame
        */
       virtual void updateKinematicsForRemainingFramesAndContours(double t);
 
       /**
-       * \brief updates remaining JACOBIANS for kinematics starting with and from cog frame
+       * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
        */
       virtual void updateJacobiansForRemainingFramesAndContours(double t);
       /**
-       * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference frame
+       * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference Frame
        */
       virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
       /*****************************************************/
 
       /* GETTER / SETTER */
-      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_;}
-      void setRotation(Rotation* fAPK_) { fAPK = fAPK_;}
-      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_;}
-      void setJacobianOfRotation(Jacobian* fPJR_) { fPJR = fPJR_;}
+      /*!
+       * \brief set Kinematic for translational motion
+       * \param fPrPK translational kinematic description
+       */
+      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
+      /*!
+       * \brief set Kinematic for rotational motion
+       * \param fAPK rotational kinematic description
+       */
+      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
+      /*!
+       * \brief get Kinematic for translational motion
+       * \return translational kinematic description
+       */
+      Translation* getTranslation()            { return fPrPK;   }
+      /*!
+       * \brief get Kinematic for rotational motion
+       * \return rotational kinematic description
+       */
+      Rotation*    getRotation()               { return fAPK;    }
+      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
+      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
       void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
       void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
       Rotation* getRotation() { return fAPK; }
@@ -148,8 +167,8 @@ namespace MBSim {
       /*****************************************************/
 
       /**
-       * \param inertia tensor
-       * \param optional reference frame of inertia tensor, otherwise cog-frame will be used as reference
+       * \param RThetaR  inertia tensor
+       * \param refFrame optional reference Frame of inertia tensor, otherwise cog-Frame will be used as reference
        */
       void setInertiaTensor(const fmatvec::SymMat& RThetaR, const Frame* refFrame=0) {
         if(refFrame)
@@ -160,51 +179,51 @@ namespace MBSim {
       }
 
       /**
-       * \param specific frame to add
-       * \param constant relative vector from reference frame to specific frame in reference system
-       * \param constant relative rotation from specific frame to reference frame
-       * \param reference frame name
+       * \param frame        specific Frame to add
+       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
+       * \param ARF          constant relative rotation from specific Frame to reference Frame
+       * \param refFrameName reference Frame name
        */
       void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const std::string& refFrameName); 
 
       /**
-       * \param specific frame to add
-       * \param constant relative vector from reference frame to specific frame in reference system
-       * \param constant relative rotation from specific frame to reference frame
-       * \param optional reference frame, otherwise cog-frame will be used as reference
+       * \param frame        specific Frame to add
+       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
+       * \param ARF          constant relative rotation from specific Frame to reference Frame
+       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
       void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
         addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
       }
 
       /**
-       * \param name of frame to add
-       * \param constant relative vector from reference frame to specific frame in reference system
-       * \param constant relative rotation from specific frame to reference frame
-       * \param optional reference frame, otherwise cog-frame will be used as reference
+       * \param str          name of Frame to add
+       * \param RrRF         constant relative vector from reference Frame to specific Frame in reference system
+       * \param ARF          constant relative rotation from specific Frame to reference Frame
+       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
       void addFrame(const std::string &str, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
 
       /**
-       * \param specific contour to add
-       * \param constant relative vector from reference frame to specific contour in reference system
-       * \param constant relative rotation from specific contour to reference frame
-       * \param reference frame name
+       * \param contour      specific contour to add
+       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
+       * \param ARC          constant relative rotation from specific contour to reference Frame
+       * \param refFrameName reference Frame name
        */
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const std::string& refFrameName);
 
       /**
-       * \param specific contour to add
-       * \param constant relative vector from reference frame to specific contour in reference system
-       * \param constant relative rotation from specific contour to reference frame
-       * \param optional reference frame, otherwise cog-frame will be used as reference
+       * \param contour      specific contour to add
+       * \param RrRC         constant relative vector from reference Frame to specific contour in reference system
+       * \param ARC          constant relative rotation from specific contour to reference Frame
+       * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
       void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
         addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
       }
 
       /**
-       * \param frame to be used for kinematical description depending on reference frame and generalised positions / velocities
+       * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */
       void setFrameForKinematics(Frame *frame) {
         iKinematics = frameIndex(frame);
@@ -239,12 +258,12 @@ namespace MBSim {
       double m;
 
       /**
-       * \brief inertia tensor with respect to centre of gravity in centre of gravity and world frame
+       * \brief inertia tensor with respect to centre of gravity in centre of gravity and world Frame
        */
       fmatvec::SymMat SThetaS, WThetaS;
 
       /**
-       * \brief frame indices for kinematics and inertia description
+       * \brief Frame indices for kinematics and inertia description
        */
       int iKinematics, iInertia;
 
@@ -254,7 +273,7 @@ namespace MBSim {
       fmatvec::SymMat Mbuf;
 
       /**
-       * \brief boolean to use body fixed frame for rotation
+       * \brief boolean to use body fixed Frame for rotation
        */
       bool cb;
 
@@ -279,33 +298,33 @@ namespace MBSim {
       fmatvec::Mat PJTs, PJRs;
 
       /**
-       * \brief rotation matrix from kinematic frame to parent frame
+       * \brief rotation matrix from kinematic Frame to parent Frame
        */
       fmatvec::SqrMat APK;
 
       /**
-       * \brief translation from parent to kinematic frame in parent and world system
+       * \brief translation from parent to kinematic Frame in parent and world system
        */
       fmatvec::Vec PrPK, WrPK;
 
       /**
-       * \brief translational and angular velocity from parent to kinematic frame in world system
+       * \brief translational and angular velocity from parent to kinematic Frame in world system
        */
       fmatvec::Vec WvPKrel, WomPK;
 
       /** 
-       * \brief vector of rotations from cog-frame to specific frame
+       * \brief vector of rotations from cog-Frame to specific Frame
        */
       std::vector<fmatvec::SqrMat> ASF;
 
       /** 
-       * \brief vector of translations from cog to specific frame in cog- and world-system
+       * \brief vector of translations from cog to specific Frame in cog- and world-system
        */
       std::vector<fmatvec::Vec> SrSF, WrSF;
 
 
       /** 
-       * \brief vector of rotations from cog-frame to specific contour
+       * \brief vector of rotations from cog-Frame to specific contour
        */
       std::vector<fmatvec::SqrMat> ASC;
 
@@ -320,12 +339,12 @@ namespace MBSim {
       Jacobian *fT;
 
       /**
-       * \brief translation from parent frame to kinematic frame in parent system
+       * \brief translation from parent Frame to kinematic Frame in parent system
        */
       Translation *fPrPK;
 
       /**
-       * \brief rotation from kinematic frame to parent frame
+       * \brief rotation from kinematic Frame to parent Frame
        */
       Rotation *fAPK;
 
@@ -370,7 +389,7 @@ namespace MBSim {
       Function1<fmatvec::Vec,double> *fPdjR;
 
       /**
-       * \param force and moment directions for inverse kinetics
+       * \brief force and moment directions for inverse kinetics
        */
       fmatvec::Mat forceDir, momentDir;
 
@@ -404,7 +423,7 @@ namespace MBSim {
        */
       void facLLMNotConst() { Object::facLLM(); }
 
-      /** a pointer to frame "C" */
+      /** a pointer to Frame "C" */
       Frame *C;
 
       fmatvec::Vec aT, aR;
@@ -428,7 +447,7 @@ namespace MBSim {
       std::vector<fmatvec::SqrMat> saved_ARF, saved_ARC;
 #ifdef HAVE_OPENMBVCPPINTERFACE
       /**
-       * \brief frame of reference for drawing openMBVBody
+       * \brief Frame of reference for drawing openMBVBody
        */
       Frame * openMBVFrame;
 #endif
