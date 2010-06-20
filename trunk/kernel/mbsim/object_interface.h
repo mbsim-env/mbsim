@@ -39,6 +39,7 @@ namespace MBSim {
    * \date 2009-07-17 implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+   * \date 2010-06-20 revision of doxygen comments: add parameter names (Roland Zander)
     */
   class ObjectInterface {
     public:
@@ -53,82 +54,82 @@ namespace MBSim {
       virtual ~ObjectInterface() {}
 
       /**
-       * \brief update linear transformation between differentiated positions and generalised velocities
-       * \param simulation time
+       * \brief update linear transformation \f$ \boldsymbol{T} \f$ between differentiated positions and generalised velocities
+       * \param t simulation time
        */
       virtual void updateT(double t) = 0;
 
       /**
-       * \brief update smooth right hand side
-       * \param simulation time
+       * \brief update smooth right hand side \f[ \vh \f]
+       * \param t simulation time
        */
       virtual void updateh(double t) = 0;
 
       /**
        * \brief updates Jacobian for implicit integration regarding state
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updatedhdz(double t) = 0;
       
       /**
        * \brief update mass matrix
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateM(double t) = 0;
 
       /**
        * \brief update state dependent variables (e.g. kinematics of frames, contours and bodies)
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateStateDependentVariables(double t) = 0;
 
       /**
        * \brief update state derivative dependent variables (e.g. accelerations)
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateStateDerivativeDependentVariables(double t) = 0;
 
       /**
        * \brief update h-vector for inverse kinetics
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updatehInverseKinetics(double t) = 0;
 
       /**
        * \brief update acceleration description of frames, contours and bodies
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateJacobians(double t) = 0;
 
       /**
        * \brief update position increment
-       * \param simulation time
-       * \param simulation time step size
+       * \param  t simulation time
+       * \param dt simulation time step size
        */
       virtual void updatedq(double t, double dt) = 0;
 
       /**
        * \brief update velocity increment
-       * \param simulation time 
-       * \param simulation time step size
+       * \param  t simulation time
+       * \param dt simulation time step size
        */
       virtual void updatedu(double t, double dt) = 0;
 
       /**
        * \brief update differentiated velocity
-       * \param simulation time 
+       * \param t simulation time 
        */
       virtual void updateud(double t) = 0;
 
       /**
        * \brief update differentiated positions
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateqd(double t) = 0;
 
       /**
        * \brief update differentiated state
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updatezd(double t) = 0;
 
@@ -230,7 +231,7 @@ namespace MBSim {
       
       /**
        * \brief update JACOBIAN for inverse kinetics
-       * \param simulation time
+       * \param t simulation time
        */
       virtual void updateInverseKineticsJacobians(double t) = 0;
 

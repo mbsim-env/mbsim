@@ -41,6 +41,7 @@ namespace MBSim {
    * \date 2009-06-14 OpenMP (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-07-27 implicit integration (Thorsten Schindler)
+   * \date 2010-06-20 revision of doxygen comments: add parameter names (Roland Zander)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs TODO
    * \todo mass proportional damping should be distributed on discretization and is not at the correct place (dependence on M) TODO
    */
@@ -96,32 +97,32 @@ namespace MBSim {
 
       /** 
        * \brief insert 'local' information in global matrices
-       * \param number of finite element
-       * \param local matrix 
-       * \param global matrix
+       * \param CurrentElement number of current finite element
+       * \param locMat local matrix 
+       * \param gloMat global matrix
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat &locMat, fmatvec::Mat &gloMat) = 0;
 
       /** 
        * \brief insert 'local' information in global matrices
-       * \param number of finite element
-       * \param local matrix 
-       * \param global matrix
+       * \param CurrentElement number of current finite element
+       * \param locMat local matrix 
+       * \param gloMat global matrix
        */
       virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat &locMat, fmatvec::SymMat &gloMat) = 0;
 
       /**
        * \brief cartesian kinematic for contour or external frame (normal, tangent, binormal) is set by implementation class
-       * \param contour parameter
-       * \param selection of specific calculations for frames
-       * \param possible external frame, otherwise contour parameters are changed
+       * \param data contour parameter
+       * \param ff selection of specific calculations for frames
+       * \param frame optional: external frame, otherwise contour parameters are changed
        */
       virtual void updateKinematicsForFrame(ContourPointData &data, FrameFeature ff, Frame *frame=0) = 0;
 
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
-       * \param contour parameter
-       * \param possible external frame, otherwise contour parameters are changed
+       * \param data contour parameter
+       * \param frame: optional external frame, otherwise contour parameters are changed
        */
       virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0) = 0;
       /***************************************************/
