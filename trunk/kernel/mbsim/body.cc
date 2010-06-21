@@ -31,9 +31,9 @@ using namespace std;
 
 namespace MBSim {
 
-  Body::Body(const string &name) : Object(name), frameOfReference(0)
+  Body::Body(const string &name) : Object(name), frameOfReference(0),
 #ifdef HAVE_OPENMBVCPPINTERFACE
-                                   ,  openMBVBody(0), openMBVGrp(0), 
+                                     openMBVBody(0), openMBVGrp(0), 
 #endif
                                    saved_frameOfReference("") {
                                    } 

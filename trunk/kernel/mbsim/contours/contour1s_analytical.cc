@@ -210,9 +210,11 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"contourFunction");
     funcCrPC=ObjectFactory::getInstance()->createContourFunction1s(e->FirstChildElement());
     funcCrPC->initializeUsingXML(e->FirstChildElement());
-    e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
+#ifdef HAVE_OPENMBVCPPINTERFACE
+		e=element->FirstChildElement(MBSIMNS"enableOpenMBV");
     if (e)
       enableOpenMBV(true);
+#endif
   }
 
 }
