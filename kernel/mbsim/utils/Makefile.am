@@ -15,6 +15,7 @@ utilsincludedir = $(includedir)/mbsim/utils
 
 INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libutils_la_CPPFLAGS = -DTIXML_USE_STL
 
 utilsinclude_HEADERS = eps.h\
                        nonlinear_algebra.h\
