@@ -125,6 +125,12 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
 
   for(int i=0;i<4;i++) {
+
+    UnilateralConstraint   *cntForceLaw = new UnilateralConstraint;
+    UnilateralNewtonImpact *impForceLaw = new UnilateralNewtonImpact(0.0);
+    SpatialCoulombFriction *coulFriction = new SpatialCoulombFriction(mu);
+    SpatialCoulombImpact   *coulImptact  = new SpatialCoulombImpact(mu);
+
     stringstream name;
     name << "PM" << i;
     Point* pMuffe = new Point(name.str());
@@ -148,7 +154,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
               break;
     }
     muffe->addContour(pMuffe,KrSPMuffe,SqrMat(3,EYE));
-    contact->setContactForceLaw  (cntForceLaw );
+    contact->setContactForceLaw  (cntForceLaw);
     contact->setContactImpactLaw (impForceLaw );
     contact->setFrictionForceLaw (coulFriction);
     contact->setFrictionImpactLaw(coulImptact );
