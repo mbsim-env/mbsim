@@ -192,8 +192,8 @@ namespace MBSimHydraulics {
       updatePlotFeatures(parent);
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        plotColumns.push_back("QIn");
-        plotColumns.push_back("QOut");
+        plotColumns.push_back("QIn [l/min]");
+        plotColumns.push_back("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
           plotColumns.push_back("p(x="+numtostr(relPlotPoints(i)*l)+") [bar]");
         if(getPlotFeature(state)==enabled)
@@ -229,8 +229,8 @@ namespace MBSimHydraulics {
 
   void ElasticLineVariational::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      plotVector.push_back(QIn(0));
-      plotVector.push_back(QOut(0));
+      plotVector.push_back(QIn(0)*6e4);
+      plotVector.push_back(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
         plotVector.push_back((nFrom->getla()(0)*(1-relPlotPoints(i))+nTo->getla()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
       if(getPlotFeature(state)==enabled)
