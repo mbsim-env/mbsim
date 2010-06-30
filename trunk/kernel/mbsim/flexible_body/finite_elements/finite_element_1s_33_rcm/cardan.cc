@@ -22,6 +22,9 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsim/flexible_body/finite_elements/finite_element_1s_33_rcm/cardan.h"
+
+#include <iostream>
+
 using namespace fmatvec;
 using namespace std;
 
