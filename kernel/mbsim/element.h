@@ -35,6 +35,8 @@
 #include<fstream>
 #endif
 
+#include "mbsim/mbsim_event.h"
+
 namespace H5 {
   class Group;
 }
@@ -212,10 +214,8 @@ namespace MBSim {
           Element * e = getByPathSearch(path);
           if (dynamic_cast<T*>(e))
             return (T*)(e);
-          else {
-            std::cout << "Element \"" << path << "\" not found or not of wanted type. Sorry." << std::endl;
-            throw(123);
-          }
+          else
+            throw MBSimError("Element \"" + path + "\" not found or not of wanted type.");
         }
 
       /**
