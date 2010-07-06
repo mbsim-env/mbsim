@@ -13,6 +13,7 @@
 #include <openmbvcppinterface/polygonpoint.h>
 #endif
 
+using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;

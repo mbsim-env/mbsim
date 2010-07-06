@@ -10,12 +10,12 @@ CXX = g++
 libsources = 
 objects = $(sources:.cc=.o)
 
-OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -O2 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
-# CPPFLAGS= -g3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsimFlexibleBody` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -O2 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimFlexibleBody` 
+# CPPFLAGS= -g3 -Wall -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimFlexibleBody` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimFlexibleBody` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \

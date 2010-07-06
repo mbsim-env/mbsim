@@ -1,20 +1,20 @@
 #include "system.h"
 
-#include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/circle.h"
-#include "mbsim/contact_kinematics/circle_nurbsdisk2s.h" 
+#include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h" 
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
-#include "mbsim/contours/nurbs_disk_2s.h"
+#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #endif
 
-
+using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;

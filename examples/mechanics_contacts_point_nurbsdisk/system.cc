@@ -1,6 +1,6 @@
 #include "system.h"
 
-#include "mbsim/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
@@ -13,6 +13,7 @@
 #include "openmbvcppinterface/cube.h"
 #endif
 
+using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
