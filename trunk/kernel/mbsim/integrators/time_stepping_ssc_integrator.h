@@ -164,8 +164,8 @@ namespace MBSim {
       TimeSteppingSSCIntegrator();
       /*! Destructor */
       ~TimeSteppingSSCIntegrator();
-      /*! Set start step size */
-      void setStepSize(double dt_) {dt = dt_;}
+      /*! Set initial step size */
+      void setInitialStepSize(double dt_) {dt = dt_;}
       /*! Set maximal step size */
       void setStepSizeMax(double dtMax_) {dtMax = dtMax_;}
       /*! Set minimal step size (default 2*maxOrder*epsroot() */
@@ -177,8 +177,6 @@ namespace MBSim {
       void setsafetyFactorGapControl(double s){safetyFactorGapControl=s;}
       /*! Set Flag for output interpolation */
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
-      /*! Set Flag to plot every successful integration step*/
-      void plotEveryStep() {dtPlot =0;}
       /*! set Flag for  writing integrator info at each step to a file (default true)*/
       void setFlagPlotIntegrator(bool flag=true) {FlagPlotIntegrator = flag;}
       /*! Set Flag to optimise dt for minmal penetration of unilateral links;
@@ -187,16 +185,17 @@ namespace MBSim {
        *   2: score for all roots are evaluated
        *   3: gapTol is used
        *   4: uses smallest root (minimal penetration)
-       *   0: gap control deactivated
+       *   0: gap control deactivated with statistic calculations
+       *   -1: gap control deactivated without statistic calculations
        */
-      void setGapControl(bool flag=true, int strategy=0) {FlagGapControl=flag; GapControlStrategy=strategy;}
+      void setGapControl(int strategy=1) {FlagGapControl=(strategy>=0); GapControlStrategy=(strategy<0)?0:strategy; }
       /*! Set drift compensation */
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
       /*! set maximum order (1,2,3 (method=0) or 1 to 4 (method=1,2) and
        *      method 0: SSC by extrapolation (recommended!!);  
        *      1,2: embedded SSC; proceed with maxOrder [1] (recommended if you don't want to use 0) or with maxOrder+1 [2]*/  
       void setMaxOrder(int order_, int method_=0);
-      /* activate step size control */
+      /* deactivate step size control */
       void deactivateSSC(bool flag=false) {FlagSSC=flag;}
       /*! Set Flag vor ErrorTest (default 0: all variables are tested;  2: u is scaled with dt;  3: exclude u*/
       void setFlagErrorTest(int Flag);
@@ -206,11 +205,11 @@ namespace MBSim {
       /*! Threads: Number of Threads (0,1,2 or 3) 0: auto (number of threads depends on order and SSC)*/ 
       void integrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_, int Threads=0);
 
-      void setaTol(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setaTol(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setrTol(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setrTol(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
-      void setgapTol(double gTol) {gapTol = gTol;}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
+      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
+      void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setgapTolerance(double gTol) {gapTol = gTol;}
 
       /** subroutines for integrate function */
 
@@ -228,6 +227,7 @@ namespace MBSim {
       double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 
+      virtual void initializeUsingXML(TiXmlElement *element);
   };
 
 }

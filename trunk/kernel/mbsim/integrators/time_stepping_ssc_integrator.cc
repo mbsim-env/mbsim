@@ -20,10 +20,14 @@
 
 #include<config.h>
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/element.h"
 #include "mbsim/link.h"
 #include "time_stepping_ssc_integrator.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/stopwatch.h"
+#include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
+#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -38,7 +42,7 @@ using namespace fmatvec;
 namespace MBSim {
 
 
-  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : sysT1(NULL), sysT2(NULL), sysT3(NULL), dt(1e-6), dtOld(1e-6), dte(1e-6), dtMin(0), dtMax(1e-4), driftCompensation(false), t(0), tPlot(0), qSize(0), xSize(0), uSize(0),zSize(0), StepsWithUnchangedConstraints(-1), FlagErrorTest(2), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), method(0), FlagGapControl(false), gapTol(1e-6), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), safetyFactorGapControl(-1), GapControlStrategy(1), numThreads(0), time(0.0), iter(0), iterA(0), iterB1(0), iterB2(0), iterC1(0), iterC2(0), iterC3(0), iterC4(0), iterB2RE(0), maxIterUsed(0), maxIter(0), sumIter(0), integrationSteps(0), integrationStepswithChange(0), refusedSteps(0), refusedStepsWithImpact(0), wrongAlertGapControl(0), stepsOkAfterGapControl(0), stepsRefusedAfterGapControl(0), singleStepsT1(0), singleStepsT2(0), singleStepsT3(0), dtRelGapControl(1), Penetration(0), PenetrationCounter(0), PenetrationLog(0), PenetrationMin(0), PenetrationMax(0), maxdtUsed(0), mindtUsed(0), ChangeByGapControl(false), calcBlock2(0), IterConvergence(0), ConstraintsChanged(0), ConstraintsChangedBlock1(0), ConstraintsChangedBlock2(0), integrationStepsOrder1(0), integrationStepsOrder2(0), order(1), StepTrials(0), AnzahlAktiverKontakte(0), gNDurchschnittprostep(0) { 
+  TimeSteppingSSCIntegrator::TimeSteppingSSCIntegrator() : sysT1(NULL), sysT2(NULL), sysT3(NULL), dt(1e-6), dtOld(1e-6), dte(1e-6), dtMin(0), dtMax(1e-3), driftCompensation(false), t(0), tPlot(0), qSize(0), xSize(0), uSize(0),zSize(0), StepsWithUnchangedConstraints(-1), FlagErrorTest(2), aTol(1,INIT,1e-6), rTol(1,INIT,1e-4),FlagSSC(1), maxOrder(1), method(0), FlagGapControl(false), gapTol(1e-6), maxGainSSC(2.2), safetyFactorSSC(0.7), FlagPlotIntegrator(true), FlagPlotIntegrationSum(true), FlagCoutInfo(true), FlagPlotEveryStep(false), outputInterpolation(false), safetyFactorGapControl(-1), GapControlStrategy(1), numThreads(0), time(0.0), iter(0), iterA(0), iterB1(0), iterB2(0), iterC1(0), iterC2(0), iterC3(0), iterC4(0), iterB2RE(0), maxIterUsed(0), maxIter(0), sumIter(0), integrationSteps(0), integrationStepswithChange(0), refusedSteps(0), refusedStepsWithImpact(0), wrongAlertGapControl(0), stepsOkAfterGapControl(0), stepsRefusedAfterGapControl(0), singleStepsT1(0), singleStepsT2(0), singleStepsT3(0), dtRelGapControl(1), Penetration(0), PenetrationCounter(0), PenetrationLog(0), PenetrationMin(0), PenetrationMax(0), maxdtUsed(0), mindtUsed(0), ChangeByGapControl(false), calcBlock2(0), IterConvergence(0), ConstraintsChanged(0), ConstraintsChangedBlock1(0), ConstraintsChangedBlock2(0), integrationStepsOrder1(0), integrationStepsOrder2(0), order(1), StepTrials(0), AnzahlAktiverKontakte(0), gNDurchschnittprostep(0) { 
 
     // Flags for Output 
     FlagPlotIntegrator     = true;
@@ -55,17 +59,17 @@ namespace MBSim {
     maxGainSSC = 2.2;
     safetyFactorSSC = 0.7;
     aTol(0) = 1e-6;
-    rTol(0) = 1e-6;
+    rTol(0) = 1e-4;
 
     FlagGapControl = false;
     GapControlStrategy = 1;
     gapTol  = 1e-6;
     safetyFactorGapControl = -1;
     // integration
-    numThreads = 0;
+    numThreads = 1;
     driftCompensation = false;
     dtMin = 0;
-    dtMax = 0;
+    dtMax = 1e-3;
 
     // end options =================
 
@@ -112,7 +116,6 @@ namespace MBSim {
   }
 
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
-
 #ifdef _OPENMP
 cout << "openMP header included."<<endl; 
 #endif
@@ -1268,5 +1271,89 @@ cout << "openMP header included."<<endl;
       SetValuedLinkList[i]->LinearImpactEstimation(gInActive,gdInActive,&nInActive,gUniActive,&nActive);
   }
 
+  void TimeSteppingSSCIntegrator::initializeUsingXML(TiXmlElement *element) {
+
+    Integrator::initializeUsingXML(element);
+    TiXmlElement *e;
+
+    e=element->FirstChildElement(MBSIMINTNS"initialStepSize");
+    if (e) setInitialStepSize(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"maximalStepSize");
+    if (e) setStepSizeMax(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"minimalStepSize");
+    if (e) setStepSizeMin(Element::getDouble(e));
+    
+    e=element->FirstChildElement(MBSIMINTNS"outputInterpolation");
+    if (e) setOutputInterpolation(Element::getBool(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"gapControl");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement();
+      if (ee->ValueStr()==MBSIMINTNS"withoutGapControl") setGapControl(-1);
+      if (ee->ValueStr()==MBSIMINTNS"biggestRoot") setGapControl(1);
+      if (ee->ValueStr()==MBSIMINTNS"scooring") setGapControl(2);
+      if (ee->ValueStr()==MBSIMINTNS"gapTollerance") setGapControl(3);
+      if (ee->ValueStr()==MBSIMINTNS"smallestRoot") setGapControl(4);
+    }
+
+    e=element->FirstChildElement(MBSIMINTNS"maximalOrder");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement(MBSIMINTNS"order");
+      int orderXML=Element::getInt(ee);
+      int methodXML=0; 
+      ee=e->FirstChildElement(MBSIMINTNS"method");
+      if(ee) {
+         TiXmlElement *eee;
+         eee=ee->FirstChildElement();
+        if (eee->ValueStr()==MBSIMINTNS"extrapolation") methodXML=0;
+        if (eee->ValueStr()==MBSIMINTNS"embedded") methodXML=1;
+        if (eee->ValueStr()==MBSIMINTNS"embeddedHigherOrder") methodXML=2;
+      }
+      setMaxOrder(orderXML,methodXML); 
+    }
+   
+    e=element->FirstChildElement(MBSIMINTNS"errorTest");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement();
+      int FlagErrorTestXML=2;
+      if(ee) {
+        if (ee->ValueStr()==MBSIMINTNS"scale") FlagErrorTestXML=2;
+        if (ee->ValueStr()==MBSIMINTNS"all") FlagErrorTestXML=0;
+        if (ee->ValueStr()==MBSIMINTNS"exclude") FlagErrorTestXML=3;
+      }
+      setFlagErrorTest(FlagErrorTestXML); 
+    }
+
+    e=element->FirstChildElement(MBSIMINTNS"absoluteTolerance");
+    if(e) setAbsoluteTolerance(Element::getVec(e));
+    e=element->FirstChildElement(MBSIMINTNS"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMINTNS"relativeTolerance");
+    if(e) setRelativeTolerance(Element::getVec(e));
+    e=element->FirstChildElement(MBSIMINTNS"relativeToleranceScalar");
+    if(e) setRelativeTolerance(Element::getDouble(e));
+
+    e=element->FirstChildElement(MBSIMINTNS"advancedOptions");
+    if (e) {
+      TiXmlElement *ee;
+      ee=e->FirstChildElement(MBSIMINTNS"deactivateSSC");
+      if (ee) deactivateSSC(!(Element::getBool(ee)));
+ 
+      ee=e->FirstChildElement(MBSIMINTNS"gapTolerance");
+      if (ee) setgapTolerance(Element::getDouble(ee));
+
+      ee=e->FirstChildElement(MBSIMINTNS"maximalSSCGain");
+      if (ee) setmaxGainSSC(Element::getDouble(ee));
+
+      ee=e->FirstChildElement(MBSIMINTNS"safetyFactorSSC");
+      if (ee) setsafetyFactorSSC(Element::getDouble(ee));
+    }
+
+  }
 
 }
