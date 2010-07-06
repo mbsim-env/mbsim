@@ -23,6 +23,7 @@
  * \brief class for time measurement (timer, stopwatch) 
  * \author Robert Huber
  * \date 2010-05-11 portable version without gettimeofday added (if sys/time.h is not availible) (Robert Huber)
+ * \date 2010-07-06 flag in StopWatch::stop to reset timer (Robert Huber)
  */
 
 #ifdef HAVE_SYS_TIME_H 
@@ -49,10 +50,12 @@ namespace MBSim {
 
       /* \brief starts timer */
       void start();
-      /* \brief stops timer and returns enclosed time */
-      double stop();
+      /* \brief stops timer and returns enclosed time
+       * \param reset if flag = true clock is reseted
+       */
+      double stop(bool reset=true);
 
   };
+}
 #endif
 
-}
