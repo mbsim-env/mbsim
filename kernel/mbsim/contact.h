@@ -42,6 +42,7 @@ namespace MBSim {
    * \date 2009-04-02 some comments (Thorsten Schindler)
    * \date 2009-07-16 splitted link / object right hand side (Thorsten Schindler)
    * \date 2009-08-03 contacts can now visualize their ContactPointFrames (Markus Schneider)
+   * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
    *
    * basic class for contacts between contours, mainly implementing geometrical informations of contact-pairings
    * 
@@ -94,6 +95,7 @@ namespace MBSim {
       virtual void calcsvSize();
       virtual void init(InitStage stage);
       virtual bool isSetValued() const;
+      virtual void updateLinkStatus(double dt);
       virtual bool isActive() const;
       virtual bool gActiveChanged();
       virtual void solveImpactsFixpointSingle(double dt);
@@ -114,7 +116,10 @@ namespace MBSim {
       virtual void checkActivegdd(); 
       virtual void checkAllgd();
       virtual void updateCondition();
-      virtual void resizeJacobians(int j); 
+      virtual void resizeJacobians(int j);
+      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
+ 
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

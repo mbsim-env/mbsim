@@ -60,6 +60,8 @@ namespace MBSim {
    * \date 2009-08-07 preintegration (Thorsten Schindler)
    * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+   * \date 2010-07-06 modifications for timestepper ssc - e.g LinkStatus (Robert Huber)
+
    */
   class DynamicSystemSolver : public Group {
     public:
@@ -233,6 +235,7 @@ namespace MBSim {
 
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
+      int getMaxIter()  {return maxIter;}
       /***************************************************/
 
       /**
@@ -307,8 +310,10 @@ namespace MBSim {
        * \brief update of dynamic system for time-stepping integrator
        * \param state
        * \param time
+       * \param options  = 0 (default) nothing
+       *                 = 1 force updates as if active constraints has changed
        */
-      void update(const fmatvec::Vec &z, double t);
+      void update(const fmatvec::Vec &z, double t, int options=0);
 
       /**
        * \brief update for event driven integrator for event
@@ -340,6 +345,12 @@ namespace MBSim {
        * \param time
        */
       void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
+
+      /** brief collect status of all links
+       * \param result vector
+       * \param time
+       */
+      void getLinkStatus(fmatvec::Vector<int> &LinkStatusExt, double t);
 
       /**
        * \brief drift projection for positions
@@ -559,6 +570,11 @@ namespace MBSim {
        * \brief boolean evaluation of stopvector
        */
       fmatvec::Vector<int> jsvParent;
+      
+      /**
+       * \brief status vector of set valued links with piecewise link equation (which piece is valid)
+       */
+      fmatvec::Vector<int> LinkStatusParent;
 
       /**
        * \brief sparse mass action matrix

@@ -30,6 +30,7 @@ namespace MBSim {
    * \date 2009-03-09 some comments (Thorsten Schindler)
    * \date 2009-03-26 enhanced comments (Roland Zander)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
+   * \date 2010-07-06 LinkStatus added (Robert Huber)
    */
   class LinkInterface {
     public:
@@ -101,6 +102,11 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updateStopVector(double t) = 0;
+        
+      /*!
+       * \brief update status of set valued links with piecewise link equations (which piece is valid)
+       */ 
+      virtual void updateLinkStatus(double t) = 0;
 
       /*!
        * \brief update acceleration description of frames and contours

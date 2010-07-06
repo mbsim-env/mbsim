@@ -32,9 +32,9 @@
 #include "openmbvcppinterface/group.h"
 #endif
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+//#ifdef _OPENMP
+//#include <omp.h>
+//#endif
 
 #include<algorithm>
 
@@ -43,7 +43,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0)
 #endif
@@ -86,25 +86,25 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateh(double t) {
-#pragma omp parallel for schedule(static) shared(t) default(none)
+//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateh(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateh(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
+//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updateh(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedNotActiveWithSmoothPart.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30) 
+//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedNotActiveWithSmoothPart.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30) 
     for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) {
       try { linkSetValuedNotActiveWithSmoothPart[i]->updateh(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -153,7 +153,7 @@ namespace MBSim {
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
+//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateM(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -361,7 +361,14 @@ namespace MBSim {
       (*i)->updateStopVector(t);
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
       (*i)->updateStopVector(t); 
-  }   
+  }  
+ 
+  void DynamicSystem::updateLinkStatus(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateLinkStatus(t);
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+      (*i)->updateLinkStatus(t); 
+  } 
 
   void DynamicSystem::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Element::setDynamicSystemSolver(sys);
@@ -973,6 +980,16 @@ namespace MBSim {
       (**i).updaterFactorRef(rFactor);
   }
 
+  void DynamicSystem::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
+    LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateLinkStatusRef(LinkStatus);
+
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
+      (**i).updateLinkStatusRef(LinkStatus);
+  }
+
   void DynamicSystem::initz() {
     for(unsigned i=0; i<dynamicsystem.size(); i++)
       dynamicsystem[i]->initz();
@@ -998,6 +1015,14 @@ namespace MBSim {
     if(recursive)
       for(unsigned int i=0; i<dynamicsystem.size(); i++)
         dynamicsystem[i]->buildListOfLinks(lnk,recursive);
+  }
+
+  void DynamicSystem::buildListOfSetValuedLinks(vector<Link*> &lnk, bool recursive) {
+    for(unsigned int i=0; i<link.size(); i++)
+      if(link[i]->isSetValued()) lnk.push_back(link[i]);
+    if(recursive)
+      for(unsigned int i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->buildListOfSetValuedLinks(lnk,recursive);
   }
 
   void DynamicSystem::buildListOfFrames(vector<Frame*> &frm, bool recursive) {
@@ -1114,6 +1139,20 @@ namespace MBSim {
       (*i)->calcxSize();
       (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
+    }
+  }
+
+  void DynamicSystem::calcLinkStatusSize() {
+    LinkStatusSize = 0;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->calcLinkStatusSize();
+      (*i)->setLinkStatusInd(LinkStatusSize);
+      LinkStatusSize += (*i)->getLinkStatusSize();
+    }
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
+      (*i)->setLinkStatusInd(LinkStatusSize);
+      LinkStatusSize += (*i)->getLinkStatusSize();
     }
   }
 
