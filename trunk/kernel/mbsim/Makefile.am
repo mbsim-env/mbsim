@@ -1,4 +1,4 @@
-SUBDIRS =  utils integrators contact_kinematics flexible_body contours .
+SUBDIRS =  utils integrators contact_kinematics contours .
  
 lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_LDFLAGS = -version-info @LIBMBSIM_VERSION_INFO@
@@ -32,7 +32,7 @@ tree.cc\
 graph.cc\
 constraint.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la flexible_body/libflexiblebody.la contours/libcontour.la
+libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la
 
 libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
 
@@ -52,6 +52,7 @@ dynamic_system_solver.h\
 element.h\
 environment.h\
 extradynamic_interface.h\
+flexible_body.h\
 frame.h\
 functions_contact.h\
 group.h\
@@ -64,7 +65,6 @@ link.h\
 link_interface.h\
 link_mechanics.h\
 kinetic_excitation.h\
-flexible_body.h\
 mbsim_event.h\
 modelling_interface.h\
 object.h\

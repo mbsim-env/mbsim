@@ -37,7 +37,6 @@
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/contours/line.h"
-#include "mbsim/contours/nurbs_disk_2s.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/planewithfrustum.h"
 #include "mbsim/contours/point.h"
@@ -47,7 +46,6 @@
 
 // --- List of contact kinematic implementations - BEGIN ---
 #include <mbsim/contact_kinematics/circle_frustum.h>
-#include <mbsim/contact_kinematics/circle_nurbsdisk2s.h>
 #include <mbsim/contact_kinematics/circlehollow_cylinderflexible.h>
 #include <mbsim/contact_kinematics/circlesolid_circlehollow.h>
 #include <mbsim/contact_kinematics/circlesolid_circlesolid.h>
@@ -67,7 +65,6 @@
 #include <mbsim/contact_kinematics/circlesolid_flexibleband.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
-#include <mbsim/contact_kinematics/point_nurbsdisk2s.h>
 #include <mbsim/contact_kinematics/point_plane.h>
 #include <mbsim/contact_kinematics/point_planewithfrustum.h>
 #include <mbsim/contact_kinematics/sphere_frustum.h>
@@ -98,9 +95,6 @@ namespace MBSim {
 
     if((dynamic_cast<Circle*>(contour0) && dynamic_cast<Frustum*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<Frustum*>(contour0)))
       return new ContactKinematicsCircleFrustum;
-
-    else if((dynamic_cast<Circle*>(contour0) && dynamic_cast<NurbsDisk2s*>(contour1)) || (dynamic_cast<Circle*>(contour1) && dynamic_cast<NurbsDisk2s*>(contour0)))
-      return new ContactKinematicsCircleNurbsDisk2s;
 
     else if((dynamic_cast<CircleHollow*>(contour0) && dynamic_cast<CylinderFlexible*>(contour1)) || (dynamic_cast<CircleHollow*>(contour1) && dynamic_cast<CylinderFlexible*>(contour0))) 
       return new ContactKinematicsCircleHollowCylinderFlexible;
@@ -158,9 +152,6 @@ namespace MBSim {
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Line*>(contour0))) 
       return new ContactKinematicsPointLine; 
-
-    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<NurbsDisk2s*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<NurbsDisk2s*>(contour0))) 
-      return new ContactKinematicsPointNurbsDisk2s; 
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Plane*>(contour0))) 
       return new ContactKinematicsPointPlane;
