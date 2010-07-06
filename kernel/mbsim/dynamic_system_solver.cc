@@ -1166,10 +1166,10 @@ namespace MBSim {
   }
 
  void DynamicSystemSolver::getLinkStatus(Vector<int> &LinkStatusExt, double t) {
-    if(LinkStatusExt.size()<LinkStatusSize) LinkStatusExt.resize(LinkStatusSize,INIT,0.0);
-    if(LinkStatus()!=LinkStatusExt()) {
+    if(LinkStatusExt.size()<LinkStatusSize) 
+      LinkStatusExt.resize(LinkStatusSize, INIT, 0);
+    if(LinkStatus()!=LinkStatusExt())
       updateLinkStatusRef(LinkStatusExt);
-    }
     updateLinkStatus(t);
   }
 
