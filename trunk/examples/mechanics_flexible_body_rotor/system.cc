@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsim/flexible_body/flexible_body_1s_23_bta.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsim/environment.h"
@@ -12,6 +12,7 @@
 #include "openmbvcppinterface/frustum.h"
 #endif
 
+using namespace MBSimFlexibleBody;
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;

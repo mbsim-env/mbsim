@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsim/flexible_body/flexible_body_1s_33_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
@@ -14,6 +14,7 @@
 #include <openmbvcppinterface/polygonpoint.h>
 #endif
 
+using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
