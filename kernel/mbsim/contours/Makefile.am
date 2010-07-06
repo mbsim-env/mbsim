@@ -11,17 +11,16 @@ libcontour_la_SOURCES = area.cc\
 						flexible_band.cc\
 						frustum.cc\
 						frustum2d.cc\
-						nurbs_disk_2s.cc\
 						plane.cc\
 						planewithfrustum.cc\
 						sphere.cc\
  						line_segment.cc
 
-  libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
+libcontour_la_CPPFLAGS = -I.. -DTIXML_USE_STL $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
-  contourincludedir = $(includedir)/mbsim/contours
-  contourinclude_HEADERS = area.h\
+contourincludedir = $(includedir)/mbsim/contours
+contourinclude_HEADERS = area.h\
 						   circle.h\
 						   circle_hollow.h\
 						   circle_solid.h\
@@ -41,7 +40,6 @@ libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 						   frustum.h\
 						   frustum2d.h\
 						   line.h\
-						   nurbs_disk_2s.h\
 						   plane.h\
 						   planewithfrustum.h\
 						   point.h\
