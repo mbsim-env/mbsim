@@ -53,12 +53,12 @@ namespace MBSim {
     gettimeofday(begin_tv, 0);
   }
 
-  double StopWatch::stop() {
+  double StopWatch::stop(bool reset) {
     gettimeofday(end_tv, 0);
     double IntTime;
     IntTime = (end_tv->tv_sec -begin_tv->tv_sec);
     IntTime += end_tv->tv_usec*1.0/1000000.0 -begin_tv->tv_usec*1.0/1000000.0;
-    *begin_tv = *end_tv;
+    if(reset) *begin_tv = *end_tv;
     return IntTime;
   }
 #endif
@@ -77,7 +77,7 @@ namespace MBSim {
     end_d = clock();
     double IntTime = end_d - begin_d;
     IntTime /= CLOCKS_PER_SEC;
-    begin_d=end_d;
+    if(reset) begin_d=end_d;
     return IntTime;
   }
 #endif 
