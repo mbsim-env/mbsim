@@ -373,7 +373,7 @@ namespace MBSim {
     e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
     setFrictionCoefficient(Element::getDouble(e));
   }
-  
+
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
     return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(fabs(gdn(0)))*fabs(laN)));
   }
@@ -494,6 +494,11 @@ namespace MBSim {
       return false;
   }
 
+  int PlanarCoulombImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol) return 1;
+    else return 0;
+  }
+
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la-r*gdn,mu*fabs(laN));
   }
@@ -528,6 +533,11 @@ namespace MBSim {
       return true;
     else 
       return false;
+  }
+
+  int SpatialCoulombImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(nrm2(la) <= mu*fabs(laN)+laTol && nrm2(gdn) <= gdTol) return 1;
+    else return 0;
   }
 
   void SpatialCoulombImpact::initializeUsingXML(TiXmlElement *element) {
@@ -574,7 +584,12 @@ namespace MBSim {
     else 
       return false;
   }
-  
+
+  int PlanarStribeckImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol) return 1;
+    else return 0;
+  } 
+
   Vec SpatialStribeckImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
     return proxCT3D(la-r*gdn,(*fmu)(nrm2(gdn))*fabs(laN));
   }
@@ -609,6 +624,12 @@ namespace MBSim {
     else 
       return false;
   }
+
+  int SpatialStribeckImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
+    if(nrm2(la) <= (*fmu)(nrm2(gdn))*fabs(laN)+laTol && nrm2(gdn) <= gdTol) return 1;
+    else return 0;
+  }
+
 
 
   void RegularizedUnilateralConstraint::initializeUsingXML(TiXmlElement *element) {

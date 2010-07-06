@@ -51,6 +51,7 @@ namespace MBSim {
    * \date 2009-07-27 implicit integration improvement (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+   * \date 2010-07-06 modifications for timestepper ssc, e.g LinkStatus and buildListOfSetValuedLinks (Robert Huber)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
   class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
@@ -112,6 +113,7 @@ namespace MBSim {
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t); 
+      virtual void updateLinkStatus(double t);
 
       virtual void updategInverseKinetics(double t); 
       virtual void updategdInverseKinetics(double t);
@@ -256,6 +258,8 @@ namespace MBSim {
       const fmatvec::Vec& getsv() const { return sv; }
       fmatvec::Vector<int>& getjsv() { return jsv; }
       const fmatvec::Vector<int>& getjsv() const { return jsv; }
+      fmatvec::Vector<int>& getLinkStatus() { return LinkStatus; }
+      const fmatvec::Vector<int>& getLinkStatus() const { return LinkStatus; }
       const fmatvec::Vec& getres() const { return res; }
       fmatvec::Vec& getres() { return res; }
 
@@ -273,6 +277,7 @@ namespace MBSim {
       void setgdInd(int ind) { gdInd = ind; }
       void setrFactorInd(int ind) { rFactorInd = ind; }
       void setsvInd(int svInd_) { svInd = svInd_; };
+      void setLinkStatusInd(int LinkStatusInd_) {LinkStatusInd = LinkStatusInd_;};      
 
       int getzSize() const { return qSize + uSize[0] + xSize; }
 
@@ -285,6 +290,7 @@ namespace MBSim {
       int getgdSize() const { return gdSize; } 
       int getrFactorSize() const { return rFactorSize; } 
       int getsvSize() const { return svSize; }
+      int getLinkStatusSize() const { return LinkStatusSize; }
       /*****************************************************/
 
       /**
@@ -448,6 +454,12 @@ namespace MBSim {
       void updatejsvRef(const fmatvec::Vector<int> &ref);
 
       /**
+       * \brief references to status vector of set valued links with piecewise link equations (which piece is valid)
+       * \param vector to be referenced 
+       */
+      void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
+
+      /**
        * \brief references to residuum of contact equations of dynamic system parent
        * \param vector to be referenced
        */
@@ -472,6 +484,13 @@ namespace MBSim {
        * \param flag for recursive
        */
       virtual void buildListOfLinks(std::vector<Link*> &lnk, bool recursive=false);
+
+      /**
+       * \brief build flat list of all setvalued links
+       * \param list of links
+       * \param flag for recursive
+       */
+      virtual void buildListOfSetValuedLinks(std::vector<Link*> &lnk, bool recursive=false);
 
       /**
        * \brief build flat list of frames
@@ -536,6 +555,11 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       void calclaSize();
+
+      /**
+       * \brief calculates size of link status vector
+       */
+      void calcLinkStatusSize();
 
       /**
        * \brief calculates size of contact force parameters
@@ -871,6 +895,11 @@ namespace MBSim {
        */
       fmatvec::Vector<int> jsv;
 
+      /**
+       * \brief status of set valued links 
+       */
+      fmatvec::Vector<int> LinkStatus;
+
       /** 
        * \brief size and local start index of positions relative to parent
        */
@@ -915,6 +944,11 @@ namespace MBSim {
        * \brief size and local start index of stop vector relative to parent
        */
       int svSize, svInd;
+
+      /**
+       * \brief size and local start index of link status vector relative to parent
+       */
+      int LinkStatusSize, LinkStatusInd;
 
       /**
        * \brief inertial position of frames, contours (see group.h / tree.h)

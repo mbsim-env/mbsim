@@ -369,6 +369,8 @@ namespace MBSim {
       gd.resize(n*(1+getFrictionDirections()));
       gdd.resize(gd.size());
       gdn.resize(gd.size());
+      LinkStatusSize= n;
+      LinkStatus.resize(LinkStatusSize);
 
       for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i) delete[] *i;
       cpData.clear(); // clear container first, because InitStage resize is called twice (before and after the reorganization)
@@ -517,6 +519,20 @@ namespace MBSim {
     return flag;
   }
 
+ 
+  void Contact::updateLinkStatus(double t) {
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if (gActive[k])  {
+        LinkStatus(k) = 2;
+        if (ftil) {
+          if (ftil->isSticking(lak[k](1,getFrictionDirections()),gdnk[k](1,getFrictionDirections()),gdk[k](1,getFrictionDirections()),lak[k](0),LaTol,gdTol)) LinkStatus(k) = 3;
+          else LinkStatus(k) = 4;
+        }
+      }
+      else LinkStatus(k) = 1;
+    }
+  }
+
   bool Contact::isActive() const {
     for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
       if(gActive[i])
@@ -583,7 +599,7 @@ namespace MBSim {
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(1));
             data.push_back(cpData[i][1].getFrameOfReference().getPosition()(2));
             Vec F(3,INIT,0);
-            if(isSetValued()) {
+            if(isSetValued()) {                    // TODO switch between stick and slip not possible with TimeStepper
               if(gActive[i] && lak[i].size()>1) { // stick friction
                 F=fF[i][1].col(1)*lak[i](1)/dt;
                 if(getFrictionDirections()>1)
@@ -1173,6 +1189,31 @@ namespace MBSim {
 
   void Contact::computeCurvatures(Vec & r) const {
     contactKinematics->computeCurvatures(r, cpData[0]);
+  }
+
+  void Contact::LinearImpactEstimation(Vec &gInActive_,Vec &gdInActive_,int *IndInActive_,Vec &gAct_,int *IndActive_) {
+   for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+     if(gActive[k]) {
+       gAct_(*IndActive_) = gk[k](0);
+       (*IndActive_)++;
+     }
+     else {
+       for(unsigned int i=0; i<2; i++) contour[i]->updateKinematicsForFrame(cpData[k][i],velocities); 
+        Vec Wn = cpData[k][0].getFrameOfReference().getOrientation().col(0);
+        Vec WvD = cpData[k][1].getFrameOfReference().getVelocity() - cpData[k][0].getFrameOfReference().getVelocity();
+        gdInActive_(*IndInActive_) = Wn.T()*WvD;
+        gInActive_(*IndInActive_) = gk[k](0);
+        (*IndInActive_)++;
+     }
+   } 
+
+  }
+
+  void Contact::SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) { 
+    for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
+      if(gActive[k]) (*sizeActive_)++;
+      else (*sizeInActive_)++;
+    } 
   }
 
   void Contact::initializeUsingXML(TiXmlElement *element) {

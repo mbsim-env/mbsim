@@ -48,6 +48,7 @@ namespace MBSim {
    * \date 2009-07-27 enhanced structure for implicit integration (Thorsten Schindler)
    * \date 2009-07-28 splitted interfaces (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
+   * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
     */
   class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
@@ -69,6 +70,7 @@ namespace MBSim {
       virtual void updateh(double t) {};
       virtual void updatedhdz(double t) {};
       virtual void updateStopVector(double t) {}
+      virtual void updateLinkStatus(double t) {}
       virtual void updateJacobians(double t) {}
       /***************************************************/
 
@@ -183,6 +185,11 @@ namespace MBSim {
        * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
       virtual void updatejsvRef(const fmatvec::Vector<int> &jsvParent);
+
+      /**
+       * \brief reference to vector of link status (for set valued links with piecewise link equations)
+       */
+       virtual void updateLinkStatusRef(const fmatvec::Vector<int> &LinkStatusParent);
 
       /**
        * \brief calculates size of contact force parameters
@@ -361,6 +368,9 @@ namespace MBSim {
       void setsvInd(int svInd_) { svInd = svInd_; };
       int getsvSize() const { return svSize; }
 
+      void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
+      int getLinkStatusSize() const { return LinkStatusSize; }
+
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
       void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); } 
@@ -404,6 +414,21 @@ namespace MBSim {
        */
       virtual Element* getByPathSearch(std::string path);
 
+      /**
+       * \brief get gap distance and calculate gap velocity of unilateral links to estimate impacts within the next step
+       * \param gInActive gap distance of inactive links (return)
+       * \param gdInActive gap velocities of inactive links (return)
+       * \param IndInActive index for gInActive/gdInActive; incremented with size after storage (return and input)
+       * \param gAct gap distance of active links (return)
+       * \param IndActive index for gActive; incremented with size after storage (return and input)
+      */
+      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_){};
+      
+      /**
+       * \brief calculates the number of active and inactive unilateral constraints and increments sizeActive/sizeInActive
+       */
+      virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
+
     protected:
       /**
        * \brief parent of link 
@@ -444,7 +469,18 @@ namespace MBSim {
        * \brief size and local index of stop vector
        */
       int svSize, svInd;
+             
+      /**
+       * for set valued links with piecewise link equation (e.g. unilateral contacts or coulomb friction)
+       * \brief status of link (default 0) describing which pice of the equation is valid (e.g. stick or slip)
+       */
+      fmatvec::Vector<int> LinkStatus;
 
+      /**
+       * \brief size and local index of link status vector
+       */
+       int LinkStatusSize, LinkStatusInd;
+    
       /**
        * \brief relative distance, relative velocity, contact force parameters
        */

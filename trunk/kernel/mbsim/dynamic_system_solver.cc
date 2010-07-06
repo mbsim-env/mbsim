@@ -52,9 +52,9 @@
 #include "openmbvcppinterface/group.h"
 #endif
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+//#ifdef _OPENMP
+//#include <omp.h>
+//#endif
 
 using namespace std;
 using namespace fmatvec;
@@ -76,9 +76,9 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initialize() {
-#ifdef _OPENMP
-    omp_set_nested(true);
-#endif
+//#ifdef _OPENMP
+//    omp_set_nested(true);
+//#endif
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
@@ -234,6 +234,7 @@ namespace MBSim {
       calcrFactorSize();
       calcsvSize();
       svSize += 1; // TODO additional event for drift 
+      calcLinkStatusSize();      
 
       if(INFO) cout << "qSize = " << qSize << endl;
       if(INFO) cout << "uSize[0] = " << uSize[0] << endl;
@@ -242,6 +243,7 @@ namespace MBSim {
       if(INFO) cout << "gdSize = " << gdSize << endl;
       if(INFO) cout << "laSize = " << laSize << endl;
       if(INFO) cout << "svSize = " << svSize << endl;
+      if(INFO) cout << "LinkStatusSize = " << LinkStatusSize <<endl;
       if(INFO) cout << "hSize[0] = " << hSize[0] << endl;
 
       if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
@@ -281,6 +283,7 @@ namespace MBSim {
       fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
+      LinkStatusParent.resize(getLinkStatusSize());
       WInverseKineticsParent.resize(hSize[1],laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
 
@@ -292,6 +295,7 @@ namespace MBSim {
 
       updatesvRef(svParent);
       updatejsvRef(jsvParent);
+      updateLinkStatusRef(LinkStatusParent);
       updatezdRef(zdParent);
       updatelaRef(laParent);
       updategRef(gParent);
@@ -904,14 +908,14 @@ namespace MBSim {
       (*i)->decreaserFactors();
   }
 
-  void DynamicSystemSolver::update(const Vec &zParent, double t) {
+  void DynamicSystemSolver::update(const Vec &zParent, double t, int options) {
     if(q()!=zParent()) updatezRef(zParent);
 
     updateStateDependentVariables(t);
     updateg(t);
     checkActiveg();
     checkActiveLinks();
-    if(gActiveChanged()) {
+    if(gActiveChanged() || options==1 ) {
 
       // checkAllgd(); // TODO necessary?
       calcgdSizeActive();
@@ -1159,6 +1163,14 @@ namespace MBSim {
     }
     updateStopVector(t);
     sv(sv.size()-1) = driftCount*1e-0-t; 
+  }
+
+ void DynamicSystemSolver::getLinkStatus(Vector<int> &LinkStatusExt, double t) {
+    if(LinkStatusExt.size()<LinkStatusSize) LinkStatusExt.resize(LinkStatusSize,INIT,0.0);
+    if(LinkStatus()!=LinkStatusExt()) {
+      updateLinkStatusRef(LinkStatusExt);
+    }
+    updateLinkStatus(t);
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(double t) {
