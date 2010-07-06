@@ -25,9 +25,9 @@
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
+//#ifdef _OPENMP
+//#include <omp.h>
+//#endif
 
 using namespace fmatvec;
 using namespace std;
@@ -43,7 +43,7 @@ namespace MBSim {
   }
 
   void FlexibleBody::updateh(double t) {
-#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
       try { discretization[i]->computeh(qElement[i],uElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -58,7 +58,7 @@ namespace MBSim {
   }
 
   void FlexibleBody::updateM(double t) {
-#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
     for(int i=0;i<(int)discretization.size();i++) {
       try { discretization[i]->computeM(qElement[i]); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
