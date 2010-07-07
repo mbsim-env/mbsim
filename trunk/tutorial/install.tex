@@ -100,12 +100,23 @@ if LAPack is not located in a standard search path and selecting
  --with-atlas-lib-prefix=PFX (prefix, where the ATLAS libs are
      installed, when ATLAS is used)
 \end{verbatim}
-if ATLAS should be used instead of LAPack. The FLAGS
+if ATLAS should be used instead of LAPack. \newline 
+
+To use the GNU allocator instead of the \FMatVec{} built-in allocator you have to proceed with the FLAGS
 \begin{verbatim}
  --with-allocator-class=__gnu_cxx::new_allocator
  --with-allocator-header=ext/new_allocator.h
 \end{verbatim}
-are necessary to use a standard thread-safe memory allocator instead of the \FMatVec{} built-in allocator.\par
+For mulit threaded applications the GNU mt allocator can be used with the FLAGS
+\begin{verbatim}
+--with-allocator-class=__gnu_cxx::__mt_alloc 
+--with-allocator-header=ext/mt_allocator.h
+\end{verbatim}
+For more information about GNU allocators see \textit{GNU C++ Library}. \\
+To deactivate the OpenMP pragma \textit{omp critical} within reference counting use
+\begin{verbatim}
+--disable-pragma_omp_critical
+\end{verbatim}
 The code can be compiled and installed with a Doxygen HTML class documentation by \texttt{make doc} and the procedure \textsc{install}.
 
 \subsubsection{\HDF}
