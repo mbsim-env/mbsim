@@ -32,6 +32,7 @@
 #include "mbsim/integrators/lsode_integrator.h"
 #include "mbsim/integrators/lsodar_integrator.h"
 #include "mbsim/integrators/time_stepping_integrator.h"
+#include "mbsim/integrators/time_stepping_ssc_integrator.h"
 #include "mbsim/integrators/theta_time_stepping_integrator.h"
 #include "mbsim/integrators/euler_explicit_integrator.h"
 #include "mbsim/integrators/rksuite_integrator.h"
@@ -260,6 +261,8 @@ namespace MBSim {
       return new LSODARIntegrator;
     if(element->ValueStr()==MBSIMINTNS"TimeSteppingIntegrator")
       return new TimeSteppingIntegrator;
+    if(element->ValueStr()==MBSIMINTNS"TimeSteppingSSCIntegrator")
+      return new TimeSteppingSSCIntegrator;
     if(element->ValueStr()==MBSIMINTNS"ThetaTimeSteppingIntegrator")
       return new ThetaTimeSteppingIntegrator;
     if(element->ValueStr()==MBSIMINTNS"EulerExplicitIntegrator")
