@@ -116,9 +116,6 @@ namespace MBSim {
   }
 
   void TimeSteppingSSCIntegrator::preIntegrate(DynamicSystemSolver& systemT1_, DynamicSystemSolver& systemT2_, DynamicSystemSolver& systemT3_) {
-#ifdef _OPENMP
-cout << "openMP header included."<<endl; 
-#endif
 
     sysT1 = &systemT1_;
     sysT2 = &systemT2_;
