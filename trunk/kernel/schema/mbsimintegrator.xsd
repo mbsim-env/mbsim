@@ -282,6 +282,214 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="TimeSteppingSSCIntegrator" substitutionGroup="Integrator" type="TimeSteppingSSCIntegratorType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+       Halb-Explizite Timestepping Integration für Maßdifferentialinklusionen mit Schrittweitensteuerung und höherer Ordnung.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TimeSteppingSSCIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="IntegratorType">
+        <xs:sequence>
+          <xs:element name="initalStepsize" type="pv:timeScalar" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Anfangsschrittweite (default: 1e-6)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximalStepSize" type="pv:timeScalar" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                maximale Zeitschrittweite (default: 1e-4)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimalStepSize" type="pv:timeScalar" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                minimale Zeitschrittweite (default: sqrt(eps))
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="outputInterpolation" type="xs:boolean" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                flag zur Steuerung, ob für die Plotausgabe die vom Integrator angefahrenen Zeitpunkte verwendet werden oder ob auf die vorgegebenen Plotzeitpunkte interpoliert werden soll (default: false)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="gapControl" minOccurs="0"> 
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Zeitschrittweite wird angepasst, so dass Stöße/Ereignisse am Ende des Zeitschritts auftreten <br/> Bei mehr als einem Ereignis pro Zeitschritt ist können verschiedene Methoden verwendet werden, auf welches Ereignis sich GapControl beziehen soll.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element name="withoutGapControl">
+                  <xs:annotation>
+                    <xs:documentation>
+                      GapContol wird vollständig deaktiviert
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="biggestRoot">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Größte Nullstelle/Ereignis wird verwendet (maximaler Integrationsforschritt)
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="scooring">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Scoring Verfahren zur Auswahl der Nullstelle (Gewichtetes Mittel aus Eindringgeschwindigkeit und -zeit.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="smallestRoot">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Kleinste Nullstelle/Ereignis wird verwendet (am genauesten aber geringster Integrationsforschritt)
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="gapTollerance">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Zeitschrittweite werden so gewählt, dass Eindringtiefe gapTol nicht überschreitet
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="maximalOrder" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Auswahl der maximalen Integrationsordnung und der Methode zur Fehlerschätzung
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="order" type="xs:positiveInteger">
+                  <xs:annotation>
+                    <xs:documentation>
+                      maximale Integrationsordnung: default: 1; 1,2,3 bei Fehlerschätzung mittels Extrapolation; 1 ..4 bei embedded Verfahren 
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="method" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation>
+                      methode, Stadardwert: extrapolation
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:choice>
+                      <xs:element name="extrapolation">
+                        <xs:annotation>
+                          <xs:documentation>
+                            Fehlerschätzung mittels Extrapolationsverfahren (default)
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="embedded">
+                        <xs:annotation>
+                          <xs:documentation>
+                            Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit niedrigerer Ordnung 
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                      <xs:element name="embeddedHigherOrder">
+                        <xs:annotation>
+                          <xs:documentation>
+                            Embedded Verfahren zur Fehlerschätzung: Fortsetzen der Integration mit höherer Ordnung 
+                          </xs:documentation>
+                        </xs:annotation>
+                      </xs:element>
+                    </xs:choice>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element> 
+          <xs:element name="errorTest" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                Wie werden Geschwindigkeiten bei der Fehlertestung behandelt.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element name="scale">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Geschwindigkeiten werden mit Zeitschrittweite skaliert
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="all">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Geschwindigkeiten und Lagen werden gleich behandelt
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="exclude">
+                  <xs:annotation>
+                    <xs:documentation>
+                      Fehlertest wird nur mit Lagen durchgeführt.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:choice>
+            <xs:element name="absoluteTolerance" type="pv:unknownVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:choice>
+            <xs:element name="relativeTolerance" type="pv:nounitVector">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar"> 
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="advancedOptions" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                  <xs:element name="deactivateSSC" type="xs:boolean" minOccurs="0"> 
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Deaktivieren der Schrittweitenkontrolle und Umschalten auf konstante Zeitschrittweite
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              <xs:element name="gapTolerance" type="pv:nounitScalar" minOccurs="0"> 
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Toleranz für Eindringtiefe; nur in Verbindung mit richtiger GapControl Methode
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="maximalSSCGain" type="pv:nounitScalar" minOccurs="0"> 
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      maximale Vergrößerung der Zeitschrittweite zwischen zwei Schritten (default 2.2)
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="safetyFactorSSC" type="pv:nounitScalar" minOccurs="0"> 
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Sicherheitsfaktor bei der Berechnung der neuen Zeitschrittweite (default 0.7)
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="ThetaTimeSteppingIntegrator" substitutionGroup="Integrator" type="ThetaTimeSteppingIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Timestepping Integration für Maßdifferentialinklusionen.
