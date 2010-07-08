@@ -13,6 +13,8 @@
 #include "mbsim/contact_kinematics/circlesolid_contour1s.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
+#include <iostream>
+
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;

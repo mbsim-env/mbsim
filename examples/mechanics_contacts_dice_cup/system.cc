@@ -103,10 +103,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   }
 
   // Dice-Visualisation
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cube* diceAMV = new OpenMBV::Cube;
   diceAMV->setLength(length);
   diceAMV->setStaticColor(0.5);
   dice->setOpenMBVRigidBody(diceAMV);
+#endif
   // ************************************************************************
 
   // Frustum-Reference
@@ -205,12 +207,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   frustumVRML.close();
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody* frustumMBV = new OpenMBV::IvBody;
   frustumMBV->setIvFileName("frustum.iv");
   frustumMBV->setStaticColor(1.);
   frustumMBV->setInitialTranslation(0.,0.,0.);
   frustumMBV->setInitialRotation(0.,0.,0.);
   frustumRef->setOpenMBVRigidBody(frustumMBV); 
+#endif
   // ************************************************************************
 
   // Contact
@@ -224,7 +228,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact.push_back(new Contact(nameContact.str()));
     contact[i]->setContactForceLaw(new UnilateralConstraint());
     contact[i]->setContactImpactLaw(new UnilateralNewtonImpact(normalRestitutionCoefficient));
+#ifdef HAVE_OPENMBVCPPINTERFACE
     contact[i]->enableOpenMBVContactPoints(.05);
+#endif
     contact[i]->connect(frustumRef->getContour("Frustum"),dice->getContour(nameContour.str()));
     this->addLink(contact[i]);
   } 	

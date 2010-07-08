@@ -59,11 +59,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // contact
   Sphere *sphere1 = new Sphere("Sphere1");
   sphere1->setRadius(0.2);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere1->enableOpenMBV();
+#endif
   mass1->addContour(sphere1,Vec(3,INIT,0.),SqrMat(3,EYE));
   Sphere *sphere2 = new Sphere("Sphere2");
   sphere2->setRadius(0.2);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   sphere2->enableOpenMBV();
+#endif
   mass2->addContour(sphere2,Vec(3,INIT,0.),SqrMat(3,EYE));
   Contact *contact = new Contact("Contact");
   contact->connect(sphere1,sphere2);

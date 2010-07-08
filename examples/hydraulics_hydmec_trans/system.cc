@@ -11,6 +11,7 @@
 #include "mbsim/spring_damper.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/coilspring.h"
 #endif
@@ -59,19 +60,29 @@ System::System(const string &name, bool unilateral) : Group(name) {
   Vec KrCF(3, INIT, 0);
   KrCF(0)=-l/2.;
   traeger->addFrame(getBodyName(0), KrCF, SqrMat(3, EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(0))->enableOpenMBV(3.*lScheibe);
+#endif
   KrCF(0)=-l/4.;
   traeger->addFrame(getBodyName(1), KrCF, SqrMat(3, EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(1))->enableOpenMBV(3.*lScheibe);
+#endif
   KrCF(0)=0;
   traeger->addFrame(getBodyName(2), KrCF, SqrMat(3, EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(2))->enableOpenMBV(3.*lScheibe);
+#endif
   KrCF(0)=l/4.;
   traeger->addFrame(getBodyName(3), KrCF, SqrMat(3, EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(3))->enableOpenMBV(3.*lScheibe);
+#endif
   KrCF(0)=l/2.;
   traeger->addFrame(getBodyName(4), KrCF, SqrMat(3, EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   traeger->getFrame(getBodyName(4))->enableOpenMBV(3.*lScheibe);
+#endif
   traeger->setFrameOfReference(getFrame("I"));
   traeger->setFrameForKinematics(traeger->getFrame("C"));
   traeger->setMass(2.);

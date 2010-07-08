@@ -103,7 +103,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 
   EnvironmentNode * n1 = new EnvironmentNode("n1");
   addLink(n1);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n1->enableOpenMBV(.025, 0, 10e5, "[-.1; 0; 0]");
+#endif
   n1->addOutFlow(l12a);
   n1->addOutFlow(l12b);
   n1->addOutFlow(l15);
@@ -111,7 +113,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
 
   ConstrainedNode * n2 = new ConstrainedNode("n2");
   addLink(n2);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n2->enableOpenMBV(.025, 0, 10e5, "[-.05; .1; 0]");
+#endif
   n2->setpFunction(new ConstantFunction1<double, double>(5e5));
   n2->addInFlow(l12a);
   n2->addInFlow(l12b);
@@ -128,7 +132,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
     n3 = nTmp;
   }
   addLink(n3);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n3->enableOpenMBV(.025, 0, 10e5, "[.05; .1; 0]");
+#endif
   n3->addInFlow(l23);
   n3->addOutFlow(l34);
   n3->addOutFlow(l35);
@@ -144,7 +150,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
     n4 = nTmp;
   }
   addLink(n4);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n4->enableOpenMBV(.025, 0, 10e5, "[.1; 0; 0]");
+#endif
   n4->addInFlow(l34);
   n4->addOutFlow(l45);
 
@@ -159,7 +167,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
     n5 = nTmp;
   }
   addLink(n5);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n5->enableOpenMBV(.025, 0, 10e5, "[.05; -.1; 0]");
+#endif
   n5->addInFlow(l15);
   n5->addInFlow(l35);
   n5->addInFlow(l45);
@@ -176,7 +186,9 @@ System::System(const string &name, bool unilateral) : Group(name) {
     n6 = nTmp;
   }
   addLink(n6);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   n6->enableOpenMBV(.025, 0, 10e5, "[-.05; -.1; 0]");
+#endif
   n6->addInFlow(l16);
   n6->addInFlow(l56);
 }

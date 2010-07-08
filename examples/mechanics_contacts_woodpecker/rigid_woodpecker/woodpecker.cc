@@ -14,6 +14,9 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
 #endif
+
+#include <iostream>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;

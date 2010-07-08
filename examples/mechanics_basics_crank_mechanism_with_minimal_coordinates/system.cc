@@ -79,7 +79,9 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Kr(2) = 0;
   body2->addFrame("P",-Kr,SqrMat(3,EYE));
   body2->addFrame("Q", Kr,SqrMat(3,EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   body2->getFrame("Q")->enableOpenMBV(0.3);
+#endif
   body2->setFrameOfReference(body1->getFrame("Q"));
   body2->setFrameForKinematics(body2->getFrame("P"));
   body2->setMass(m2);

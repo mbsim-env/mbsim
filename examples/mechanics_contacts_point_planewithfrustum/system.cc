@@ -12,6 +12,8 @@
 #include "openmbvcppinterface/frustum.h"
 #endif
 
+#include <iostream>
+
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -127,7 +129,9 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
       c->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5, 1e3)));
       c->setFrictionForceLaw(new RegularizedSpatialFriction(new LinearRegularizedCoulombFriction(mue)));
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
     c->enableOpenMBVContactPoints(.1*rBar);
+#endif
   }
 
 }

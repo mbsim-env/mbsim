@@ -2,9 +2,6 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/contact.h"
 #include "mbsimControl/actuator.h"
-#include "openmbvcppinterface/cuboid.h"
-#include "openmbvcppinterface/frustum.h"
-#include "openmbvcppinterface/ivbody.h"
 #include "mbsim/utils/function_library.h"
 #include "mbsim/environment.h"
 #include "mbsim/contours/circle_solid.h"
@@ -18,6 +15,11 @@
 #include "mbsimPowertrain/differential_gear.h"
 #include "mbsimPowertrain/cardan_shaft.h"
 #include "mbsim/kinetic_excitation.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include "openmbvcppinterface/cuboid.h"
+#include "openmbvcppinterface/frustum.h"
+#include "openmbvcppinterface/ivbody.h"
+#endif
 
 extern bool rigidContacts;
 extern bool rigidJoints;
@@ -171,7 +173,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   karosserie->addFrame("FHL",SrSP,ASP);
   SrSP(2) = +b/2-bR/2;
   karosserie->addFrame("FHR",SrSP,ASP);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   karosserie->getFrame("FHL")->enableOpenMBV(0.3);
+#endif
 
   RigidBody *vl = new RigidBody("VorderradLinks");
   addObject(vl);
@@ -354,12 +358,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rSD.init(0);
   rSD(2) = -bR/2;
   hr->addFrame("K",rSD,BasicRotAKIz(M_PI/2));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   hr->getFrame("K")->enableOpenMBV(0.3);
+#endif
 
   rSD.init(0);
   rSD(2) = bR/2;
   hl->addFrame("K",rSD,BasicRotAKIy(-M_PI)*BasicRotAKIz(M_PI/2));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   hl->getFrame("K")->enableOpenMBV(0.3);
+#endif
 
   // Decide, wheter to use DAE- or minimal-form
   if(useDAE) {
@@ -451,7 +459,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rSD.init(0);
   rSD(2) = l/2;
   shaft1->addFrame("Q",rSD,SqrMat(3,EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
+#endif
 
   Constraint2 *constraint = new Constraint2("C0",shaft1);
   addObject(constraint);
@@ -473,6 +483,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   actuator->setMomentDirection("[1;0;0]");
   actuator->connect(karosserie->getFrame("C"),shaft1->getFrame("C"));
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
   obj->setInitialRotation(-M_PI/2,0,0);
   obj->setIvFileName("wrl/car.wrl");
@@ -522,6 +533,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylinder->setStaticColor(0.1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
+#endif
 
 }
 

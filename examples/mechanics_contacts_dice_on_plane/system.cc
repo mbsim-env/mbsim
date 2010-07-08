@@ -5,7 +5,9 @@
 #include "mbsim/contact.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/cuboid.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/cube.h"
+#endif
 #include "mbsim/environment.h"
 
 
@@ -73,8 +75,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cnf->connect(getContour("WandUnten"), body->getContour("Wuerfel"));
   addLink(cnf);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Cube *obj = new OpenMBV::Cube;
   body->setOpenMBVRigidBody(obj);
   obj->setLength(l);
+#endif
 }
 

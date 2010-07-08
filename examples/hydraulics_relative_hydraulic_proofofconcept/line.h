@@ -13,7 +13,9 @@ class Line : public Object {
     Line(std::string name);
     void updateStateDependentVariables(double);
     void updateInverseKineticsJacobians(double) {}
+#ifdef HAVE_OPENMBVCPPINTERFACE
     OpenMBV::Group* getOpenMBVGrp() { return 0; }
+#endif
 
     void calcqSize() { qSize=0; }
     void calcuSize(int j);

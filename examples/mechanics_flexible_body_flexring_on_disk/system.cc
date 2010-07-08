@@ -17,6 +17,8 @@
 #include <openmbvcppinterface/arrow.h>
 #endif
 
+#include <iostream>
+
 using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;

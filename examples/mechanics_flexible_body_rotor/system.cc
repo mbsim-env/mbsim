@@ -139,7 +139,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   cylsurf_GLS->setRadii(Vec(2,INIT,R_GLS));
   cylsurf_GLS->setHeight(2.*b_GLS);
   cylsurf_GLS->setOutCont(true);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   cylsurf_GLS->enableOpenMBV();
+#endif
   SqrMat AWK_cylsurf_GLS(3,INIT,0.); AWK_cylsurf_GLS(2,2) = 1.; AWK_cylsurf_GLS(0,0) = cos(M_PI/2.); AWK_cylsurf_GLS(1,1) = cos(M_PI/2.); AWK_cylsurf_GLS(0,1) = sin(M_PI/2.); AWK_cylsurf_GLS(1,0) = -sin(M_PI/2.);
   Vec KrKS_cylsurf_GLS(3,INIT,0.); KrKS_cylsurf_GLS(0) = -b_GLS;
   ScheibeGLS->addContour(cylsurf_GLS,KrKS_cylsurf_GLS,AWK_cylsurf_GLS);
@@ -157,7 +159,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Circle* rightCircle = new Circle("rightCircle");
   rightCircle->setRadius(R_GL);
   rightCircle->setOutCont(false);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   rightCircle->enableOpenMBV();
+#endif
   SqrMat AWK_rightCircle(3,INIT,0.); AWK_rightCircle(1,1) = 1.; AWK_rightCircle(0,0) = cos(M_PI/2.); AWK_rightCircle(2,2) = cos(M_PI/2.); AWK_rightCircle(0,2) = sin(M_PI/2.); AWK_rightCircle(2,0) = -sin(M_PI/2.);
   Vec PosRightCircle(3,INIT,0.); PosRightCircle(0) = b_GLS/2.;
   Gleitlager->addContour(rightCircle,PosRightCircle,AWK_rightCircle);

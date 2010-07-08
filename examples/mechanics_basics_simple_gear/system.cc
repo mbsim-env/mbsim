@@ -6,6 +6,7 @@
 #include "mbsim/constraint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/compoundrigidbody.h"
 #endif
@@ -27,8 +28,10 @@ class Moment : public Function1<fmatvec::Vec, double> {
 
 Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   double r1 = 0.02;
+#ifdef HAVE_OPENMBVCPPINTERFACE
   double r2 = 0.02;
   double r3 = 0.02;
+#endif
   double R1 = 0.02*2;
   double R2a = 0.04*2;
   double R2b = 0.02*2;
@@ -51,7 +54,9 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft1->setInertiaTensor(Theta);
   shaft1->setRotation(new RotationAboutZAxis);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("C")->enableOpenMBV(0.2);
+#endif
   //shaft1->setInitialGeneralizedVelocity("[1]");
 
   Vec r(3);
@@ -67,7 +72,9 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft2->setInertiaTensor(Theta);
   shaft2->setRotation(new RotationAboutZAxis);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft2->getFrame("C")->enableOpenMBV(0.2);
+#endif
 
   r(1) = R1+R2a-R2b-R3;
   r(2) = 2*l;
@@ -80,7 +87,9 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = J;
   shaft3->setInertiaTensor(Theta);
   shaft3->setRotation(new RotationAboutZAxis);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft3->getFrame("C")->enableOpenMBV(0.2);
+#endif
 
   Constraint2 *constraint = new Constraint2("C1",shaft2);
   addObject(constraint);
@@ -101,6 +110,7 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   ke->connect(shaft3->getFrame("C"));
   ke->setMoment("[0;0;1]", new Moment(-4.0/100.));
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *c1=new OpenMBV::Frustum;
   c1->setTopRadius(r1);
   c1->setBaseRadius(r1);
@@ -161,5 +171,6 @@ Gear::Gear(const string &projectName) : DynamicSystemSolver(projectName) {
   c->addRigidBody(c2);
   c->setStaticColor(0.5);
   shaft3->setOpenMBVRigidBody(c);
+#endif
 }
 
