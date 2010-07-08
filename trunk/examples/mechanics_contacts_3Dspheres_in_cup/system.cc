@@ -147,7 +147,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Frustum* frustumcontour = new Frustum("Frustum");
   frustumcontour->setRadii(radii);
   frustumcontour->setHeight(5*d);
+#ifdef HAVE_OPENMBVCPPINTERFACE
   frustumcontour->enableOpenMBV();
+#endif
   cup->addContour(frustumcontour,Vec(3,INIT,0.),SqrMat(3,EYE),cup->getFrame("C"));
 
 //  // Contour of Frustum 2

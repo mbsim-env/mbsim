@@ -2,7 +2,7 @@
 Target = main
 
 # Defining Sources
-sources = main.cc system.cc 
+sources = main.cc system.cc
 
 # Do Not Edit the Following Lines
 CXX = g++
@@ -10,11 +10,11 @@ CXX = g++
 libsources = 
 objects = $(sources:.cc=.o)
 
-OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsimPowertrain` main.cc >& /dev/null && echo "-fopenmp")
-CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsimPowertrain` 
+OPENMPFLAG = $(shell g++ -fopenmp -MM `pkg-config --cflags mbsim` main.cc >& /dev/null && echo "-fopenmp")
+CPPFLAGS= -g3 -Wall -Werror -Wno-unknown-pragmas $(OPENMPFLAG) `pkg-config --cflags mbsim` 
 
 $(Target) : $(objects)
-	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsimPowertrain` 
+	$(CXX) -o $@ $(objects) $(OPENMPFLAG) `pkg-config --libs mbsim` 
 
 %.d: %.cc
 	set -e; $(CXX) -MM $(CPPFLAGS) $< \

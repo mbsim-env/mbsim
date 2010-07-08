@@ -13,6 +13,8 @@
 #include "openmbvcppinterface/coilspring.h"
 #endif
 
+#include <iostream>
+
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;

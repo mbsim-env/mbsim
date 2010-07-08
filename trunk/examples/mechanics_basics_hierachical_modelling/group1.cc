@@ -2,6 +2,7 @@
 #include "mbsim/rigid_body.h"
 #include "mbsim/spring_damper.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/frame.h"
 #include <openmbvcppinterface/cuboid.h>
 #include <openmbvcppinterface/coilspring.h>
 #endif

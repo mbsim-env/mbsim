@@ -12,6 +12,8 @@
 #include "mbsim/environment.h"
 #include "mbsim/rotational_spring_damper.h"
 
+#include <iostream>
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
 #endif

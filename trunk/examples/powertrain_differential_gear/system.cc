@@ -7,6 +7,7 @@
 #include "mbsimPowertrain/differential_gear.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include "mbsim/frame.h"
 #include "openmbvcppinterface/frustum.h"
 #endif
 
@@ -56,8 +57,10 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   r.init(0);
   r(2) = l/2;
   shaft1->addFrame("Q",r,SqrMat(3,EYE));
+#ifdef HAVE_OPENMBVCPPINTERFACE
   shaft1->getFrame("Q")->enableOpenMBV(0.3);
   shaft1->getFrame("C")->enableOpenMBV(0.3);
+#endif
 
   setPlotFeatureForChildren(notMinimalState,enabled);
 
@@ -85,6 +88,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   ke->connect(static_cast<RigidBody*>(differentialGear->getObject("RightOutputShaft"))->getFrame("C"));
   ke->setMoment("[0;0;1]", new Moment(1/100.));
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Frustum *cylinder=new OpenMBV::Frustum;
   cylinder->setTopRadius(R1);
   cylinder->setBaseRadius(R1);
@@ -92,6 +96,7 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   cylinder->setStaticColor(0.1);
   shaft1->setOpenMBVRigidBody(cylinder);
   cylinder->setInitialTranslation(0,0,l/2);
+#endif
 
 }
 
