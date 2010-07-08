@@ -32,6 +32,8 @@
 #include "openmbvcppinterface/nurbsdisk.h"
 #endif
 
+#include <iostream>
+
 using namespace std;
 using namespace fmatvec;
 using namespace MBSim;

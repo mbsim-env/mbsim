@@ -26,6 +26,8 @@
 #include "mbsim/contour.h"
 #include "mbsim/dynamic_system_solver.h"
 
+#include <iostream>
+
 using namespace fmatvec;
 using namespace std;
 using namespace MBSim;
