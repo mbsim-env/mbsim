@@ -25,6 +25,8 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
+#include "mbsimControl/signal_.h"
+#include "mbsimHydraulics/obsolet_hint.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
@@ -69,6 +71,7 @@ namespace MBSimHydraulics {
         refOutflowString.push_back(e->Attribute("ref"));
       e=e->NextSiblingElement();
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
     if (e) {
       TiXmlElement * ee;
@@ -84,6 +87,7 @@ namespace MBSimHydraulics {
         localWrON=Element::getVec(ee, 3);
       enableOpenMBV(size, pMin, pMax, localWrON);
     }
+#endif
   }
 
   void HNode::addInFlow(HLine * in) {
@@ -339,6 +343,10 @@ namespace MBSimHydraulics {
       h[i] = hEnd[i].copy();
     }
   }
+
+ void HNode::updater(double t) {
+   cout << "HNode \"" << name << "\": updater()" << endl; 
+ }
 
   void HNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -930,6 +938,28 @@ namespace MBSimHydraulics {
 
     if(!gfl->isFulfilled(la(0), gdd, laTol, gddTol, pCav))
       ds->setTermination(false);
+  }
+
+
+  void PressurePump::initializeUsingXML(TiXmlElement * element) {
+    HNode::initializeUsingXML(element);
+    TiXmlElement * e=element->FirstChildElement(MBSIMHYDRAULICSNS"pressureSignal");
+    pSignalString=e->Attribute("ref");
+  }
+
+  void PressurePump::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      HNode::init(stage);
+      if (pSignalString!="")
+        setpSignal(getByPath<MBSimControl::Signal>(process_signal_string(pSignalString)));
+    }
+    else
+      HNode::init(stage);
+  }
+
+  void PressurePump::updateg(double t) {
+    HNode::updateg(t);
+    la(0)=(pSignal->getSignal())(0);
   }
 
 }

@@ -323,6 +323,10 @@ namespace MBSimHydraulics {
   void HNodeMec::updatedhdz(double t) {
   }
 
+  void HNodeMec::updater(double t) {
+    cout << "HNodeMec \"" << name << "\": updater()" << endl; 
+  }
+
   void HNodeMec::updatexd(double t) {
     xd(0)=QMec;
   }
@@ -424,9 +428,11 @@ namespace MBSimHydraulics {
       }
       e=e->NextSiblingElement();
     }
+#ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVArrows");
     if (e)
       enableOpenMBVArrows(getDouble(e->FirstChildElement(MBSIMHYDRAULICSNS"size")));
+#endif
   }
 
   void ConstrainedNodeMec::init(InitStage stage) {
