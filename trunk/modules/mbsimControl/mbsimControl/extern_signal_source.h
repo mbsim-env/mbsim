@@ -21,6 +21,7 @@
 #define _EXTERNSIGNALSOURCE_H_
 
 #include "mbsimControl/signal_.h"
+#include "mbsimControl/objectfactory.h"
 
 namespace MBSimControl {
 
