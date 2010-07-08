@@ -16,6 +16,7 @@ libmbsimControl_la_SOURCES = \
 														 obsolet_hint.cc
 
 
+libmbsimControl_la_CPPFLAGS = -DTIXML_USE_STL
 libmbsimControl_la_LIBADD = 
 INCLUDES = $(DEPS_CFLAGS)
 LDADD = $(DEPS_LIBS)
