@@ -22,7 +22,6 @@
 
 #include "mbsim/element.h"
 #include "mbsim/extradynamic_interface.h"
-#include "hdf5serie/vectorserie.h"
 
 namespace MBSim {
 

@@ -31,6 +31,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/objectfactory.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/utils/rotarymatrices.h>

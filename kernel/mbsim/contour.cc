@@ -28,6 +28,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <object_interface.h>
 #include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/sphere.h>
 #endif

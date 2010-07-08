@@ -27,12 +27,15 @@
 #include "mbsim/mbsim_event.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/rigidbody.h>
+namespace OpenMBV {
+  class RigidBody;
+}
 #endif
 
 namespace MBSim {
 
   class Object;
+  class ContourPointData;
 
   /** 
    * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies

@@ -20,8 +20,6 @@
 #define _EXTERNGENERALIZEDIO_H_
 
 #include "mbsim/link.h"
-#include "mbsim/object.h"
-#include <vector>
 
 namespace MBSim {
 

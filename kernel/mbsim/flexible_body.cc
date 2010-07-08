@@ -24,6 +24,8 @@
 #include <mbsim/frame.h>
 #include <mbsim/utils/function.h>
 #include <mbsim/mbsim_event.h>
+#include <mbsim/contour_pdata.h>
+#include <mbsim/discretization_interface.h>
 
 //#ifdef _OPENMP
 //#include <omp.h>
@@ -138,6 +140,13 @@ namespace MBSim {
     return V;
   }
 
+  void FlexibleBody::setFrameOfReference(Frame *frame) { 
+    if(dynamic_cast<DynamicSystem*>(frame->getParent())) 
+      frameOfReference = frame; 
+    else 
+      throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); 
+  }
+
   void FlexibleBody::addFrame(const string &name, const ContourPointData &S_) {
     Frame *frame = new Frame(name);
     addFrame(frame,S_);
@@ -146,6 +155,16 @@ namespace MBSim {
   void FlexibleBody::addFrame(Frame* frame, const ContourPointData &S_) {
     Body::addFrame(frame);
     S_Frame.push_back(S_);
+  }
+
+  void FlexibleBody::addFrame(const std::string &name, const int &id) {
+    ContourPointData cp(id);
+    addFrame(name,cp);
+  }
+
+  void FlexibleBody::addFrame(Frame *frame, const  int &id) {
+    ContourPointData cp(id);
+    addFrame(frame,cp);
   }
 
 }

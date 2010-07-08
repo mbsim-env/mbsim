@@ -21,9 +21,7 @@
 #define _KINEMATICS_H_
 
 #include "fmatvec.h"
-#include <fstream>
 #include "mbsim/utils/function.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 

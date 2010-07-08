@@ -23,6 +23,10 @@
 #include "mbsim/contour.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/utils.h"
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/arrow.h>
+#endif
 
 using namespace fmatvec;
 using namespace std;

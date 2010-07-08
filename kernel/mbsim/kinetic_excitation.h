@@ -22,7 +22,6 @@
 
 #include <mbsim/link_mechanics.h>
 #include <mbsim/utils/function.h>
-#include <mbsimtinyxml/tinyxml-src/tinyxml.h>
 
 namespace MBSim {
 

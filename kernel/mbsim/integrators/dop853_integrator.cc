@@ -27,10 +27,7 @@
 #include <time.h>
 #include <fstream>
 
-#ifndef NO_ISO_14882
 using namespace std;
-#endif
-
 using namespace fmatvec;
 
 namespace MBSim {

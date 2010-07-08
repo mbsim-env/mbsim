@@ -21,10 +21,12 @@
 #define _LINK_MECHANICS_H_
 
 #include "link.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/group.h>
-#include <openmbvcppinterface/arrow.h>
+namespace OpenMBV {
+  class Group;
+  class Arrow;
+}
 #endif
 
 namespace H5 {

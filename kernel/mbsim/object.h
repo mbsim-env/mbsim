@@ -22,9 +22,6 @@
 
 #include "mbsim/element.h"
 #include "mbsim/object_interface.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
-#include <string>
-#include <vector>
 
 namespace MBSim {
 

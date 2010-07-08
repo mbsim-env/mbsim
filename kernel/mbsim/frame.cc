@@ -24,6 +24,7 @@
 #include "mbsim/object_interface.h"
 #include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/frame.h>
 #include "openmbvcppinterface/group.h"
 #endif
 

@@ -23,9 +23,6 @@
 
 #include "mbsim/group.h"
 #include "sparse_matrix.h"
-#include "H5Cpp.h"
-#include <string>
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace MBSim {
 

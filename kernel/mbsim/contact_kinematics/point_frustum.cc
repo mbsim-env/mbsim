@@ -53,10 +53,8 @@ namespace MBSim {
     double h = frustum->getHeight(); // height of Frustum	    
     double s = Wd.T()*Wa; // projection of difference vector on axis
     double d = sqrt(pow(nrm2(Wd),2)-pow(s,2)); // distance Point to Frustum axis
-    if(fabs(h)<epsroot()) {
-      cout << "ERROR: Frustum with height = 0!" << endl;
-      throw(1);
-    }
+    if(fabs(h)<epsroot())
+      throw MBSimError("ERROR: Frustum with height = 0!");
     double r_h = r(0) + (r(1)-r(0))/h * s; // radius of Frustum at s
     bool outCont = frustum->getOutCont(); // contact on outer surface?
 

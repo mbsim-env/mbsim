@@ -24,9 +24,6 @@
 #include "mbsim/link_interface.h"
 #include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/frame.h"
-#include "hdf5serie/vectorserie.h"
-#include <vector>
 
 namespace H5 {
   class Group;
@@ -34,6 +31,7 @@ namespace H5 {
 
 namespace MBSim {
 
+  class Frame;
   class Object;
   class ExtraDynamic;
   class Contour;

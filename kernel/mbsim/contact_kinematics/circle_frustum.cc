@@ -23,6 +23,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contour.h"
 #include "mbsim/functions_contact.h"
+#include <iostream>
 
 using namespace std;
 using namespace fmatvec;
@@ -87,10 +88,8 @@ namespace MBSim {
       cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): z_CF= " << z_CF << endl;
     }
 
-    if(!outCont_F && !outCont_C) { // inner circle, inner frustum 
-      cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Contact setting not defined!" << endl;
-      throw(1);
-    }
+    if(!outCont_F && !outCont_C) // inner circle, inner frustum 
+      throw MBSimError("ERROR (ContactKinematicsCircleFrustum:updateg): Contact setting not defined!");
 
     double max = r_F(0)>r_F(1) ? r_F(0) : r_F(1); // too far away? -> HitSphere-Concept
     double min = r_F(0)<r_F(1) ? r_F(0) : r_F(1);

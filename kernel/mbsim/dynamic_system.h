@@ -24,8 +24,6 @@
 #include "mbsim/object_interface.h"
 #include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/frame.h"
-#include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 namespace H5 {
   class Group;
@@ -665,9 +663,7 @@ namespace MBSim {
        * \param relative orientation of frame
        * \param relation frame
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
-        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
-      }
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param name of frame to add
@@ -691,9 +687,7 @@ namespace MBSim {
        * \param relative orientation of contour
        * \param relation frame
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
-        addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
-      }
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       /**
        * \param contour to add

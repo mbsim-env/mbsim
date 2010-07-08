@@ -21,10 +21,11 @@
 #define _FRAME_H__
 
 #include "mbsim/element.h"
-#include "hdf5serie/vectorserie.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/frame.h>
+namespace OpenMBV {
+  class Frame;
+}
 #endif
 
 namespace MBSim {

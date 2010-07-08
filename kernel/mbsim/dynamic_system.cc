@@ -1403,6 +1403,10 @@ namespace MBSim {
     AIF.push_back(SqrMat(3));
   }
 
+  void DynamicSystem::addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame) {
+    addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"I");
+  }
+
   void DynamicSystem::addFrame(const string &str, const Vec &RrRF, const SqrMat &ARF, const Frame* refFrame) {
     addFrame(new Frame(str),RrRF,ARF,refFrame);
   }
@@ -1424,6 +1428,10 @@ namespace MBSim {
     saved_ARC.push_back(ARC.copy()); // use .copy() because the copy constructor of fmatvec is a reference
     IrOC.push_back(Vec(3));
     AIC.push_back(SqrMat(3));
+  }
+
+  void DynamicSystem::addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame) {
+    addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"I");
   }
 
   int DynamicSystem::frameIndex(const Frame *frame_) const {
