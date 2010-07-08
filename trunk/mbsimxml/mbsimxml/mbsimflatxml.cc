@@ -1,13 +1,11 @@
 #include "config.h"
 #include <iostream>
-#include <cstdlib>
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinyxml.h"
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinynamespace.h"
-#include "mbsim/objectfactory.h"
 #include "mbsim/dynamic_system_solver.h"
-#include <mbsim/integrators/integrator.h>
+#include "mbsim/integrators/integrator.h"
 #include "mbsimxml/headermodules.h"
-#include "mbsimflatxml.h"
+#include "mbsimxml/mbsimflatxml.h"
 
 using namespace std;
 
