@@ -105,28 +105,7 @@ namespace MBSimHydraulics {
         // HYSIM[2]=pow(pinf, 1./kappa) * fracAir * E0 / kappa;
         // HYSIM[3]=1./kappa;
       }
-      double operator()(const double &p) {
-        if(p<=0.1) {
-          std::cout << "OilBulkModulus of \"" << ownerName << "\": pressure near zero! Continuing anyway, using p=0.1 Pa" << std::endl;
-          return factor[0]/(1.+factor[1]*pow(.1, factor[2]));
-        }
-        else {
-          // Umdruck zur Vorlesung
-          // Grundlagen der Oelhydraulik
-          // W.Backe
-          // H.Murrenhoff
-          // 10. Auflage 1994
-          // Formel (3-11), S. 103
-          const double EBacke= factor[0]/(1.+factor[1]*pow(p, factor[2]));
-
-          // Formel nach HYSIM
-          // const double EHysim= HYSIM[0]*pow(1.+HYSIM[1]/p, HYSIM[3]) / (1. + HYSIM[2]/pow(p, 1+HYSIM[3]));
-          
-          // std::cerr << " " << p << " " << EBacke << " " << EHysim << std::endl;
-          
-          return EBacke;
-        }
-      }
+      double operator()(const double &p);
     private:
       std::string ownerName;
       double factor[3];

@@ -35,6 +35,10 @@ namespace MBSim {
   class GeneralizedImpactLaw;
 }
 
+namespace MBSimControl {
+  class Signal;
+}
+
 namespace MBSimHydraulics {
 
   class HLine;
@@ -76,7 +80,7 @@ namespace MBSimHydraulics {
 
       void updateh(double t);
       void updatedhdz(double t);
-      virtual void updater(double t) {std::cout << "HNode \"" << name << "\": updater()" << std::endl; }
+      virtual void updater(double t);
       virtual void updateg(double t) {};
       virtual void updategd(double t);
       virtual bool isActive() const {return false; }
@@ -250,6 +254,25 @@ namespace MBSimHydraulics {
       MBSim::GeneralizedForceLaw * gfl;
       MBSim::GeneralizedImpactLaw * gil;
   };
+
+
+  /*! PressurePump */
+  class PressurePump : public HNode {
+    public:
+      PressurePump(const std::string &name) : HNode(name), pSignal(NULL), pSignalString("") {}
+      virtual std::string getType() const { return "PressurePump"; }
+
+      void setpSignal(MBSimControl::Signal * pSignal_) {pSignal=pSignal_; }
+
+      void updateg(double t);
+      void init(MBSim::InitStage stage);
+      void initializeUsingXML(TiXmlElement *element);
+
+    private:
+      MBSimControl::Signal * pSignal;
+      std::string pSignalString;
+  };
+
 }
 
 #endif   /* ----- #ifndef _HYDNODE_H_  ----- */
