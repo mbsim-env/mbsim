@@ -21,14 +21,13 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
-#include "mbsim/dynamic_system.h"
 #include "mbsim/body.h"
-#include "mbsim/mbsim_event.h"
-#include "mbsim/contour_pdata.h"
-#include "mbsim/discretization_interface.h"
-#include <vector>
+#include "mbsim/frame.h"
 
 namespace MBSim {
+
+  class DiscretizationInterface;
+  class ContourPointData;
 
   /**
    * \brief upmost class for flexible body implementation
@@ -76,7 +75,7 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
-      virtual void setFrameOfReference(Frame *frame) { if(dynamic_cast<DynamicSystem*>(frame->getParent())) frameOfReference = frame; else throw MBSimError("ERROR (FlexibleBody::setFrameOfReference): Only stationary reference frames are implemented at the moment!"); }
+      virtual void setFrameOfReference(Frame *frame);
       void setq0(fmatvec::Vec q0_) { Body::setInitialGeneralizedPosition(q0_); q>>q0; }
       void setu0(fmatvec::Vec u0_) { Body::setInitialGeneralizedVelocity(u0_); u>>u0; }
       /***************************************************/
@@ -152,19 +151,13 @@ namespace MBSim {
        *  \param name of frame
        *  \param node of frame 
        */
-      void addFrame(const std::string &name, const int &id) {
-        ContourPointData cp(id);
-        addFrame(name,cp);
-      }
+      void addFrame(const std::string &name, const int &id);
 
       /**
        * \param frame
        * \param node of frame
        */
-      void addFrame(Frame *frame, const  int &id) {
-        ContourPointData cp(id);
-        addFrame(frame,cp);
-      }
+      void addFrame(Frame *frame, const  int &id);
 
     protected:
       /** 

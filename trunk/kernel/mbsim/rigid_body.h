@@ -22,16 +22,18 @@
 
 #include "mbsim/body.h"
 #include "fmatvec.h"
-#include "mbsim/frame.h"
 #include "mbsim/kinematics.h"
 #include "mbsim/utils/function.h"
-#include <vector>
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/rigidbody.h>
+namespace OpenMBV {
+  class RigidBody;
+}
 #endif
 
 namespace MBSim {
 
+  class Frame;
   class Constraint;
 
   /**
@@ -191,9 +193,7 @@ namespace MBSim {
        * \param ARF          constant relative rotation from specific Frame to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0) {
-        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
-      }
+      void addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame=0);
 
       /**
        * \param str          name of Frame to add
@@ -217,9 +217,7 @@ namespace MBSim {
        * \param ARC          constant relative rotation from specific contour to reference Frame
        * \param refFrameName optional reference Frame, otherwise cog-Frame will be used as reference
        */
-      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0) {
-        addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
-      }
+      void addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame=0);
 
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
@@ -230,7 +228,7 @@ namespace MBSim {
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      void setOpenMBVRigidBody(OpenMBV::RigidBody* body) { openMBVBody=body; }
+      void setOpenMBVRigidBody(OpenMBV::RigidBody* body);
       void setOpenMBVFrameOfReference(Frame * frame) {openMBVFrame=frame; }
 #endif
 

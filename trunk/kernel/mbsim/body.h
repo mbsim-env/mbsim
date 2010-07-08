@@ -22,7 +22,9 @@
 
 #include <mbsim/object.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/body.h>
+namespace OpenMBV {
+  class Body;
+}
 #endif
 
 namespace MBSim {

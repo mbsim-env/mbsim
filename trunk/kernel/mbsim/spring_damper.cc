@@ -21,6 +21,8 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/coilspring.h>
+#include <openmbvcppinterface/arrow.h>
 #include "openmbvcppinterface/group.h"
 #include "openmbvcppinterface/objectfactory.h"
 #endif

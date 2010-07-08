@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "mbsim/link.h"
+#include "mbsim/frame.h"
+#include "mbsim/object.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/dynamic_system_solver.h"

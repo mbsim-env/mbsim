@@ -25,10 +25,11 @@
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/objectfactory.h"
-#include <mbsim/environment.h>
-#include "constraint.h"
+#include "mbsim/environment.h"
+#include "mbsim/constraint.h"
 #include "mbsim/utils/utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #endif
@@ -538,6 +539,10 @@ namespace MBSim {
     ASF.push_back(SqrMat(3));
   }
 
+  void RigidBody::addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame) {
+        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
+  }
+
   void RigidBody::addFrame(const string &str, const Vec &SrSF, const SqrMat &ASF, const Frame* refFrame) {
     addFrame(new Frame(str),SrSF,ASF,refFrame);
   }
@@ -552,6 +557,16 @@ namespace MBSim {
     WrSC.push_back(Vec(3));
     ASC.push_back(SqrMat(3));
   }
+
+  void RigidBody::addContour(Contour* contour, const fmatvec::Vec &RrRC, const fmatvec::SqrMat &ARC, const Frame* refFrame) {
+    addContour(contour, RrRC, ARC, refFrame?refFrame->getName():"C");
+  }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  void RigidBody::setOpenMBVRigidBody(OpenMBV::RigidBody* body) { 
+    openMBVBody=body; 
+  }
+#endif
 
   void RigidBody::updateMConst(double t) {
     M += Mbuf;

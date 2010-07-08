@@ -23,17 +23,10 @@
 
 #include "fmatvec.h"
 #include <string>
-#include <vector>
 #include <hdf5serie/vectorserie.h>
 #include "mbsimtinyxml/tinyxml-src/tinyxml.h"
 
 #define MBSIMNS "{http://mbsim.berlios.de/MBSim}"
-
-#ifdef NO_ISO_14882
-#include<fstream.h>
-#else 
-#include<fstream>
-#endif
 
 #include "mbsim/mbsim_event.h"
 

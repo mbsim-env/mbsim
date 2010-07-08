@@ -23,6 +23,7 @@
 #include <mbsim/utils/utils.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
+#include "openmbvcppinterface/arrow.h"
 #endif
 
 using namespace std;

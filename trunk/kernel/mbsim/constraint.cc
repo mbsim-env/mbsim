@@ -17,11 +17,12 @@
  */
 
 #include <config.h>
-#include "constraint.h"
-#include "rigid_body.h"
-#include "utils/nonlinear_algebra.h"
-#include "utils/utils.h"
-#include "utils/rotarymatrices.h"
+#include "mbsim/constraint.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/frame.h"
+#include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/utils.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace MBSim;
 using namespace fmatvec;

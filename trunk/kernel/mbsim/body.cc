@@ -25,6 +25,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/group.h"
+#include <openmbvcppinterface/body.h>
 #endif
 
 using namespace std;

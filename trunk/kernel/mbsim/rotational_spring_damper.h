@@ -20,10 +20,12 @@
 #define _ROTATIONALSPRINGDAMPER_H_
 
 #include "mbsim/link_mechanics.h"
-//#include "mbsim/rigid_body.h"
 #include "mbsim/utils/function.h"
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <openmbvcppinterface/coilspring.h>
+namespace OpenMBV {
+  class CoilSpring;
+}
 #endif
 
 namespace MBSim {

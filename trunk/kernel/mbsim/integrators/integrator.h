@@ -25,6 +25,7 @@
 #include<fmatvec.h>
 #include"mbsimtinyxml/tinyxml-src/tinyxml.h"
 #include<string>
+#include<iostream>
 
 namespace MBSim {
 
