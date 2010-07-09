@@ -231,7 +231,7 @@ namespace MBSim {
       /*************************************************/
 
       /* GETTER / SETTER */
-      void setDiffVec(fmatvec::Vec d_) { std::cout<<"d_.size()="<<d_.size()<<std::endl; std::cout<<"   d.size()="<<d.size()<<std::endl<<std::endl; d=d_; }
+      void setDiffVec(fmatvec::Vec d_);
 
       void setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_);
       /*************************************************/
@@ -258,7 +258,7 @@ namespace MBSim {
       fmatvec::Vec d;  
   };
 
- // inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec d_) { std::cout<<"d_.size()="<<d_.size()<<std::endl; std::cout<<"   d.size()="<<d.size()<<std::endl<<std::endl; d=d_; }
+  inline void FuncPairConeSectionCircle::setDiffVec(fmatvec::Vec d_) { std::cout<<"d_.size()="<<d_.size()<<std::endl; std::cout<<"   d.size()="<<d.size()<<std::endl<<std::endl; d=d_; }
   inline void FuncPairConeSectionCircle::setSectionCOS(fmatvec::Vec b1_,fmatvec::Vec b2_) { b1=b1_; b2=b2_; }
   inline double FuncPairConeSectionCircle::operator[](const double &phi) { if(sec_IN_ci) return R - nrm2(computeWrD(phi)); else return nrm2(computeWrD(phi)) - R; }
 
