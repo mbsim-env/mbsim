@@ -148,13 +148,13 @@ namespace MBSim {
     x=x0;
   }
 
-  void Link::savela() {
-    la0.resize() = la;
+  void Link::savela(double dt) {
+    la0.resize() = la/dt;
   }
 
-  void Link::initla() {
+  void Link::initla(double dt) {
     if(la0.size() == la.size()) // TODO check if initialising to 0 is better if contact was inactive before
-      la = la0;
+      la = la0*dt;
     else
       la.init(0);
   }

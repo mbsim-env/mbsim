@@ -365,13 +365,13 @@ namespace MBSim {
        * \brief save contact force parameter for use as starting value in next time step
        * \todo put in dynamic system TODO 
        */
-      void savela();
+      void savela(double dt=1.0);
 
       /**
        * \brief load contact force parameter for use as starting value
        * \todo put in dynamic system TODO 
        */
-      void initla(); 
+      void initla(double dt=1.0); 
 
       /** 
        * \brief compute kinetic energy of entire dynamic system

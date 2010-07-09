@@ -1151,6 +1151,7 @@ namespace MBSim {
       LinkStatusSize += (*i)->getLinkStatusSize();
     }
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) {
+      (*i)->calcLinkStatusSize();
       (*i)->setLinkStatusInd(LinkStatusSize);
       LinkStatusSize += (*i)->getLinkStatusSize();
     }

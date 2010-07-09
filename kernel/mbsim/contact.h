@@ -93,6 +93,7 @@ namespace MBSim {
       virtual void calcgdSizeActive();
       virtual void calcrFactorSize();
       virtual void calcsvSize();
+      virtual void calcLinkStatusSize();
       virtual void init(InitStage stage);
       virtual bool isSetValued() const;
       virtual void updateLinkStatus(double dt);
