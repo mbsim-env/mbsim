@@ -355,6 +355,13 @@ namespace MBSim {
     }
   }
 
+  void Contact::calcLinkStatusSize() {
+    LinkMechanics::calcLinkStatusSize();
+    int n = contactKinematics->getNumberOfPotentialContactPoints();
+    LinkStatusSize= n;
+    LinkStatus.resize(LinkStatusSize);
+  }
+
   void Contact::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
@@ -370,8 +377,8 @@ namespace MBSim {
       gd.resize(n*(1+getFrictionDirections()));
       gdd.resize(gd.size());
       gdn.resize(gd.size());
-      LinkStatusSize= n;
-      LinkStatus.resize(LinkStatusSize);
+      //LinkStatusSize= n;
+      //LinkStatus.resize(LinkStatusSize);
 
       for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i) delete[] *i;
       cpData.clear(); // clear container first, because InitStage resize is called twice (before and after the reorganization)

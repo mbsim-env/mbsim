@@ -228,6 +228,11 @@ namespace MBSim {
        * \brief calculates size of stopvector (root function for event driven integration)
        */
       virtual void calcsvSize() { svSize = 0; }
+      
+      /**
+       * \brief calculates size of vector LinkStatus
+       */
+      virtual void calcLinkStatusSize() { LinkStatusSize =0;}
 
       /**
        * \return set valued force laws used?
@@ -395,12 +400,12 @@ namespace MBSim {
       /**
        * \brief saves contact force parameters for use as starting value in next time step
        */
-      void savela();
+      void savela(double dt=1.0);
 
       /**
        * \brief load contact force parameters for use as starting value
        */
-      void initla();
+      void initla(double dt=1.0);
 
       /**
        * \brief decrease rfactor if mass action matrix is not diagonal dominant (cf. Foerg: Dissertation, page 80 et seq.) 

@@ -803,8 +803,10 @@ namespace MBSim {
 
   int DynamicSystemSolver::solveImpacts(double dt) {
     if(la.size()==0) return 0;
-
-    if(useOldla)initla();
+    double H=1;
+    if (dt>0) H=dt;
+    
+    if(useOldla)initla(H);
     else la.init(0);
 
     int iter;
@@ -825,7 +827,7 @@ namespace MBSim {
     if(warnLevel>=1 && iter>highIter)
       cerr <<endl<< "Warning: high number of iterations: " << iter << endl;
 
-    if(useOldla) savela();
+    if(useOldla) savela(H);
 
     return iter;
   }
@@ -1217,14 +1219,14 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::savela() {
+  void DynamicSystemSolver::savela(double dt) {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).savela();
+      (**i).savela(dt);
   }
 
-  void DynamicSystemSolver::initla() {
+  void DynamicSystemSolver::initla(double dt) {
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).initla();
+      (**i).initla(dt);
   }
 
   double DynamicSystemSolver::computePotentialEnergy() {
