@@ -411,17 +411,17 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVForceGrp=new OpenMBV::Group;
         openMBVForceGrp->setExpand(false);
-        openMBVForceGrp->setName(name+"#ArrowGroup");
+        openMBVForceGrp->setName(name+"_ArrowGroup");
         parent->getOpenMBVGrp()->addObject(openMBVForceGrp);
         for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
           if(openMBVArrowF[i]) {
-            openMBVArrowF[i]->setName("Force#"+numtostr((int)i));
+            openMBVArrowF[i]->setName("Force_"+numtostr((int)i));
             openMBVForceGrp->addObject(openMBVArrowF[i]);
           }
         }
         for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
           if(openMBVArrowM[i]) {
-            openMBVArrowM[i]->setName("Moment#"+numtostr((int)i));
+            openMBVArrowM[i]->setName("Moment_"+numtostr((int)i));
             openMBVForceGrp->addObject(openMBVArrowM[i]);
           }
         }

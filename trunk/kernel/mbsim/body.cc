@@ -123,7 +123,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
           openMBVGrp=new OpenMBV::Group();
-          openMBVGrp->setName(name+"#Group");
+          openMBVGrp->setName(name+"_Group");
           openMBVGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVGrp);
           if(getPlotFeature(openMBV)==enabled && openMBVBody) {
