@@ -133,14 +133,14 @@ namespace MBSimHydraulics {
             openMBVArrows[i]->setName(
                 "ForceOn_"+
                 connectedTransFrames[i].frame->getName()+
-                "_#"+numtostr(int(i)));
+                "_"+numtostr(int(i)));
             openMBVGrp->addObject(openMBVArrows[i]);
           }
           for (unsigned int i=0; i<nRot; i++) {
             openMBVArrows[nTrans+i]->setName(
                 "ForceOn_"+
                 connectedRotFrames[i].frame->getName()+
-                "_#"+numtostr(int(nTrans+i)));
+                "_"+numtostr(int(nTrans+i)));
             openMBVGrp->addObject(openMBVArrows[nTrans+i]);
           }
         }

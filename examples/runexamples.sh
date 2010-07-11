@@ -66,9 +66,9 @@ if [ $# -eq 1 ]; then
     exit
   fi
   if [ "$1" = "validateXML" ]; then
-    find -maxdepth 2 -name "*.ombv.xml" | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR openmbvcppinterface)/openmbv.xsd 2>&1 | grep -v " validates$"
-    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/../../mbsimxml/schema/mbsimxml.xsd 2>&1 | grep -v " validates$"
-    find -maxdepth 2 -name "*.mbsimint.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbsim)/mbsimintegrator.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.ombv.xml" | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___openmbv_berlios_de_OpenMBV/openmbv.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.mbsimint.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd 2>&1 | grep -v " validates$"
     exit
   fi
   if cd $1 &> /dev/null; then
@@ -97,9 +97,12 @@ FAILED=""
 DIFF=""
 find -name "*.d" -exec rm -f {} \;
 
+NR=0
+NRMAX=$(echo $EXAMPLES | wc -w)
 for D in $EXAMPLES; do
-  echo -ne "\033]0;RUNNING EXAMPLE $D\007"
-  echo "RUNNING EXAMPLE $D"
+  NR=$[$NR+1]
+  echo -ne "\033]0;RUNNING EXAMPLE $NR/$NRMAX $D\007"
+  echo "RUNNING EXAMPLE $NR/$NRMAX $D"
   cd $D
 
   XMLEXAMPLE=false

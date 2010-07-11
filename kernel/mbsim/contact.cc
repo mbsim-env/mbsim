@@ -469,7 +469,7 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled && (openMBVContactFrameSize>epsroot() || contactArrow || frictionArrow)) {
           openMBVContactGrp = new OpenMBV::Group();
-          openMBVContactGrp->setName(name+"#ContactGroup");
+          openMBVContactGrp->setName(name+"_ContactGroup");
           openMBVContactGrp->setExpand(false);
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
           for(unsigned int i=0; i<cpData.size(); i++) {
@@ -478,7 +478,7 @@ namespace MBSim {
               for(unsigned int k=0; k<2; k++) { // frames
                 openMBVContactFrame[i][k].setOffset(1.);
                 openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
-                openMBVContactFrame[i][k].setName("ContactPoint#"+numtostr((int)i)+(k==0?"A":"B"));
+                openMBVContactFrame[i][k].setName("ContactPoint_"+numtostr((int)i)+(k==0?"A":"B"));
                 openMBVContactFrame[i][k].setEnable(openMBVContactFrameEnabled);
                 openMBVContactGrp->addObject(&openMBVContactFrame[i][k]);
               }
@@ -487,13 +487,13 @@ namespace MBSim {
             OpenMBV::Arrow *arrow;
             if(contactArrow) {
               arrow=new OpenMBV::Arrow(*contactArrow);
-              arrow->setName("NormalForce#"+numtostr((int)i)+"B");
+              arrow->setName("NormalForce_"+numtostr((int)i)+"B");
               openMBVNormalForceArrow.push_back(arrow); // normal force
               openMBVContactGrp->addObject(arrow);
             }
             if(frictionArrow && getFrictionDirections()>0) { // friction force
               arrow=new OpenMBV::Arrow(*frictionArrow);
-              arrow->setName("FrictionForce#"+numtostr((int)i)+"B");
+              arrow->setName("FrictionForce_"+numtostr((int)i)+"B");
               openMBVFrictionArrow.push_back(arrow);
               openMBVContactGrp->addObject(arrow);
             }

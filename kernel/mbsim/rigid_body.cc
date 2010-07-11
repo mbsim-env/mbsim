@@ -300,7 +300,7 @@ namespace MBSim {
 
   void RigidBody::checkForConstraints() {
     if(forceDir.cols()+momentDir.cols()) {
-      Joint *joint = new Joint(string("Joint.")+name);
+      Joint *joint = new Joint(string("Joint_")+name);
       ds->addInverseKineticsLink(joint);
       //ds->addLink(joint);
       if(forceDir.cols()) {
