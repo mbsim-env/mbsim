@@ -108,7 +108,7 @@ namespace MBSimElectronics {
       void init(MBSim::InitStage stage);
       void updatehRef(const fmatvec::Vec &hParent, const fmatvec::Vec &hLinkParent, int j=0);
       void updaterRef(const fmatvec::Vec &rParent, int j=0);
-      virtual double computeVoltage(double t) {return 0;}
+      virtual double computeVoltage() {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
@@ -130,7 +130,7 @@ namespace MBSimElectronics {
       Resistor(const std::string &name);
       void updateh(double t);
       void setResistance(double R_) { R = R_;}
-      double computeVoltage(double t);
+      double computeVoltage();
   };
 
   class Capacitor : public ElectronicLink {

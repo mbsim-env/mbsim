@@ -24,8 +24,8 @@ class VoltageSensor : public MBSimControl::Sensor {
     void setComponent(MBSimElectronics::ElectronicLink *comp_) {comp = comp_;}
     VoltageSensor(const std::string &name) : Sensor(name) {}
     std::string getType() const { return "VoltageSensor"; }
-    fmatvec::Vec getSignal(double t) {
-      return Vec(1,INIT,comp->computeVoltage(t));
+    Vec getSignal() {
+      return Vec(1,INIT,comp->computeVoltage());
     }
 };
 
@@ -34,26 +34,24 @@ class SwitchSignal : public MBSimControl::Signal {
   protected:
     double T,u1,uref,K,uu;
     Signal *inputSignal;
+    double h;
   public:
-    SwitchSignal(const std::string &name) : Signal(name) {
+    SwitchSignal(const std::string &name) : Signal(name), h(0) {
       T = 4e-4;
       u1 = 3.8;
       uu = 8.2;
       uref = 11.3;
       K=8.2;
     }
-    void setInputSignal(Signal *input) {inputSignal = input;}
-    Vec getSignal(double t) {
-      fmatvec::Vec U(1);
-      double UR = inputSignal->getSignal(t)(0);
+    void updateg(double t) {
       double ug = u1+mod(t,T)/T*(uu-u1);
-      double h = uref+1/K*ug;
-      if(-UR <= h)
-	U(0) = 0;
-      else
-	U(0) = 100;
-
-      return U;
+      h = uref+1/K*ug;
+      Signal::updateg(t);
+    }
+    void setInputSignal(Signal *input) {inputSignal = input;}
+    fmatvec::Vec getSignal() {
+      double UR = inputSignal->getSignal()(0);
+      return Vec(1, INIT, (-UR <= h ? 0 : 100));
     }
 };
 
