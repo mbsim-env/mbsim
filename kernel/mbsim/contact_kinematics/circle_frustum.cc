@@ -69,6 +69,9 @@ namespace MBSim {
       Wb_C *= -1.;
       t_CF *= -1.;
     }
+    if (t_CF > 1.0) t_CF=1;  // to avoid numerical errors e.g. acos(t_CF)=nan; HR 9.7.2010
+    if (t_CF <-1.0) t_CF=-1;
+
     double u_CF = Wd_CF.T()*Wa_F; // projection of difference vector on axis
     Vec c_CF = Wd_CF - u_CF*Wa_F; // projection of translational vector
     Vec z_CF = Wb_C - t_CF*Wa_F; // projection of rotational vector
