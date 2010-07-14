@@ -1,5 +1,5 @@
 \section{\MBSim - Program Overview}
-From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. The programs described in \cite{Aca07} and \cite{Ber07} follow also this approach. It is approved and also used in \emph{MBSim} using the object-oriented C++ programming style. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
+From the software development point of view, \cite{Sch97} proposed a standard structure for multibody simulation frameworks distinguishing between bodies and interactions. The programs described in \cite{Aca07} and \cite{Ber07} follow also this approach. It is approved and used in \emph{MBSim} using object-oriented C++ programming. The interface of all classes is documented in the source code using Doxygen. This documentation has been extracted for convenient study together with a class overview during installation with the command \texttt{make doc}. Just change to \texttt{\$HOME/MBSim/*/doc/html} and open \texttt{index.html} with an appropriate browser. With this class documentation and self-explaining names in the user interface it is goal of this section to give an overview about the main features of \MBSim{}.\par
 
 Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} in the global simulation and analysing process. 
 \begin{figure}[hbt]%
@@ -8,7 +8,7 @@ Figure~\ref{fig:departure:mbsim:embedding} shows the embedding of \emph{MBSim} i
     \includegraphics[width=0.9\hsize]{Figures/mbsim_embedding_grey.eps}
     \label{fig:departure:mbsim:embedding}
 \end{figure}                                                                                                                                                                                                                                                                                                                                      
-\MBSim{} can handle a set of dynamical systems from various domains not only separated but also exchanging data of the form
+\MBSim{} can handle a set of dynamical systems from various domains not only separated but also exchanging data of the examplary smooth form
 \begin{align*}
 \dot{\vq}&=\vY\vu\,,\\
 \vM\dot{\vu}&=\vh\left(\vq,\vu,t\right)+\vW\vlambda\,,\\
@@ -71,7 +71,7 @@ Shaded one can see interfaces for the different components of the e.g. smooth mo
   &\vh\left(\vq,\vu,t\right)\,,\vW\left(\vq\right)\vlambda
  \end{align} 
 \end{itemize}
-and \texttt{Element} for a load/save mechanism as well as plot and data administration. Class \texttt{Graph} is dotted as it is not available for modelling. A graph structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. Though, \texttt{DynamicSystem}s can be hierarchically assembled in \texttt{Group}s. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables (e.g. gravitation).\par
+and \texttt{Element} for a load/save mechanism as well as plot and data administration. Class \texttt{Graph} is dotted as it is not available for modelling. A graph structure is automatically built during initialisation for an efficient simulation process evaluating the hierarchical modelling structure. Though, \texttt{DynamicSystem}s can be hierarchically assembled in \texttt{Group}s. The top-most \texttt{DynamicSystem} is called \texttt{DynamicSystemSolver}. It also represents the interface to the integration schemes and allows the setting of environment variables like gravitation.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{addObject}\\
@@ -124,15 +124,15 @@ Important settings:
 \end{itemize}
 %
 \subsubsection{Frames}
-\texttt{Frame}s are a basic concept in the kernel of \MBSim{} to define an interface for \MBSim{} multibody components concerning kinematic and kinetic expressions. New \texttt{Frame}s can be added arbitrarily and recursively based on a predecessor \texttt{Frame}. That is why there has to be a first \texttt{Frame} for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary \texttt{Frame} \texttt{"I"} (inertial frame).\par
+\texttt{Frame}s are a basic concept in the kernel of \MBSim{} to define an interface for \MBSim{} multibody components concerning kinematic and kinetic expressions. They specify a unique point including position and orientation. New \texttt{Frame}s can be added arbitrarily and recursively based on a predecessor \texttt{Frame}. That is why there has to be a first \texttt{Frame} for specific \MBSim{} components, e.g. each \texttt{DynamicSystem} has got a stationary \texttt{Frame} \texttt{"I"} (inertial frame).\par
 Important settings next to position and Cartesian orientation are defined according to the parametrisation
 \begin{align*}
   	\begin{pmatrix}	\rs{_I}[_P]{\va}\\ \rs{_I}{\vPsi}\end{pmatrix} 
 	&= \begin{pmatrix}\rs{_I}[_P]{\vJ}\\ \rs{_I}[_R]{\vJ}\end{pmatrix} \,
 	\dot{\vu} +
-   	  \begin{pmatrix}\rs{_I}[_P]{\viota}\\\rs{_I}[_R]{\viota}\end{pmatrix}
+   	  \begin{pmatrix}\rs{_I}[_P]{\bar{\viota}}\\\rs{_I}[_R]{\bar{\viota}}\end{pmatrix}
 \end{align*}
-of translational and angular acceleration. This is basically an affine relationship concerning the derivative of generalised velocities $\dot{\vu}$, appropriate \textsc{Jacobian} matrices $\vJ$ and an explicit time dependent summand $\viota$.
+of translational and angular acceleration. This is basically an affine relationship concerning the derivative of generalised velocities $\dot{\vu}$, appropriate \textsc{Jacobian} matrices $\vJ$ and an additional summand $\viota$ with gyroscopic and explicit time dependent contributions.
 Summarizing
 \begin{itemize}
 \item[] \texttt{getPosition} 
@@ -149,7 +149,7 @@ Summarizing
 are important settings.
 %
 \subsubsection{Bodies}
-Mechanical \texttt{Body}s provide their portion of a positive definite mass matrix, a smooth right hand side, state and energy expressions according to \texttt{Object}, which is e.g. similar to some hydraulic objects, like pipes (cf.~Figure~\ref{fig:departure:mbsim:object}).
+Mechanical \texttt{Body}s provide their portion of a positive definite mass matrix, a smooth right hand side, state and energy expressions according to \texttt{Object}, which is e.g. similar for some hydraulic objects, like pipes (cf.~Figure~\ref{fig:departure:mbsim:object}).
 \begin{figure}[hbt]%
 	\centering
     \scriptsize
@@ -165,7 +165,7 @@ Mechanical \texttt{Body}s provide their portion of a positive definite mass matr
   	\caption{Object type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:object}
 \end{figure}
-Different is the kinematic description which is based on \texttt{Frame}s in the case of mechanical \texttt{Body}s. Also the connectors to other \texttt{Body}s might follow other structural rules. Depending on the type of linkage \texttt{Frame}s or \texttt{Contour}s occur in the case of \texttt{Body}s. One distinguished between rigid and flexible bodies.\par
+One difference is the kinematic description which is based on \texttt{Frame}s in the case of mechanical \texttt{Body}s. Also the connectors to other \texttt{Body}s might follow other structural rules. Depending on the type of linkage, \texttt{Frame}s or \texttt{Contour}s occur in the case of \texttt{Body}s. One distinguished between rigid and flexible bodies.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{addFrame}\\
@@ -262,7 +262,7 @@ The equations of motion of a \texttt{FlexibleBody} is at the moment only availab
   	\caption{Link type classes in \MBSim{} (UML).}
   	\label{fig:departure:mbsim:link}
 \end{figure}
-If other connectors are used, other link classes have to be inherited. Always \texttt{Link}s distribute locally to $\vh$ and $\vW\vlambda$ in the equations of motion.\par
+If other connectors are used, other link classes have to be inherited. \texttt{Link}s distribute locally to $\vh$ and $\vW\vlambda$ in the equations of motion.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{connect}\\
@@ -311,7 +311,7 @@ Important settings:
 \end{itemize}
 
 \paragraph{Contacts and Impacts}
-Contacts and impacts are managed by class \texttt{Contact}.\par
+Contacts and impacts are managed by the class \texttt{Contact}.\par
 Important settings: 
 \begin{itemize}
 \item[] \texttt{setContactForceLaw}\\ 
