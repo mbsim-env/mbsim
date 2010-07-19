@@ -244,6 +244,13 @@ namespace MBSim {
     return Vec(1,INIT,-mu*sign(gd(0)));
   }
 
+  void PlanarCoulombFriction::initializeUsingXML(TiXmlElement *element) {
+    FrictionForceLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    setFrictionCoefficient(Element::getDouble(e));
+  }
+  
   //Vec CoulombFriction::project(const Vec& la, const Vec& gdn, const Vec& r) {
   //  int nFric = gdn.size()-1;
   ////Vec lan(la.size()-1);
@@ -497,6 +504,13 @@ namespace MBSim {
   int PlanarCoulombImpact::isSticking(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double laTol, double gdTol) {
     if(fabs(la(0)) <= mu*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol) return 1;
     else return 0;
+  }
+
+  void PlanarCoulombImpact::initializeUsingXML(TiXmlElement *element) {
+    FrictionImpactLaw::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"frictionCoefficient");
+    setFrictionCoefficient(Element::getDouble(e));
   }
 
   Vec SpatialCoulombImpact::project(const Vec& la, const Vec& gdn, const Vec& gda, double laN, double r) {
