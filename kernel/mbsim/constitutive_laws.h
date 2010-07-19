@@ -316,6 +316,7 @@ namespace MBSim {
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) { return fabs(s(0)) <= sTol; }
       virtual double getFrictionCoefficient(double gd) { return mu; }
       virtual bool isSetValued() const { return true; }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
@@ -506,6 +507,7 @@ namespace MBSim {
       virtual bool isFulfilled(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double tolla, double tolgd);
       virtual int isSticking(const fmatvec::Vec& la, const fmatvec::Vec& gdn, const fmatvec::Vec& gda, double laN, double laTol, double gdTol);
       virtual int getFrictionDirections() { return 1; }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }
