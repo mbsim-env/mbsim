@@ -1,6 +1,7 @@
 #include "system.h"
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
@@ -176,6 +177,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setContactImpactLaw(new UnilateralNewtonImpact);
   contact->setFrictionForceLaw(new SpatialCoulombFriction(0.2));
   contact->setFrictionImpactLaw(new SpatialCoulombImpact(0.2));
+  contact->setContactKinematics(new ContactKinematicsCircleNurbsDisk2s());
   contact->enableOpenMBVContactPoints(); // shows the frames in openmbv
   this->addLink(contact);
 
