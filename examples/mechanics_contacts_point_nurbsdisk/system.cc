@@ -1,6 +1,7 @@
 #include "system.h"
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
@@ -124,6 +125,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact[k]->setContactImpactLaw(new UnilateralNewtonImpact(0.));
     contact[k]->setFrictionForceLaw(new SpatialCoulombFriction(0.4));
     contact[k]->setFrictionImpactLaw(new SpatialCoulombImpact(0.4));
+    contact[k]->setContactKinematics(new ContactKinematicsPointNurbsDisk2s());
     contact[k]->connect(balls[k]->getContour(pointname.str()),disk->getContour("SurfaceContour"));
     this->addLink(contact[k]);
   }

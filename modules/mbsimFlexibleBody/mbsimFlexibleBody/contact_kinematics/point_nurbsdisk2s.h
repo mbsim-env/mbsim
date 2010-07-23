@@ -37,11 +37,15 @@ namespace MBSimFlexibleBody {
    */
   class ContactKinematicsPointNurbsDisk2s : public MBSim::ContactKinematics {
     public:
-      ContactKinematicsPointNurbsDisk2s() {
-#ifndef HAVE_NURBS
-        throw new MBSim::MBSimError("ERROR(ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s): External NURBS library not implemented!");
-#endif        
-      }
+      /*! 
+       * \brief constructor 
+       */
+      ContactKinematicsPointNurbsDisk2s();
+      
+      /*! 
+       * \brief destructor
+       */
+      virtual ~ContactKinematicsPointNurbsDisk2s();
 
       /* INHERITED INTERFACE */
       virtual void assignContours(const std::vector<MBSim::Contour*> &contour);

@@ -18,7 +18,6 @@
  */
 
 #include <config.h>
-
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 
 using namespace fmatvec;
@@ -26,6 +25,15 @@ using namespace std;
 using namespace MBSim;
 
 namespace MBSimFlexibleBody {
+
+  ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s() : ipoint(0), inurbsdisk(0), nurbsdisk(0), point(0) {
+#ifndef HAVE_NURBS
+    throw new MBSim::MBSimError("ERROR(ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s): External NURBS library not implemented!");
+#endif        
+  }
+
+  ContactKinematicsPointNurbsDisk2s::~ContactKinematicsPointNurbsDisk2s() {}
+
   void ContactKinematicsPointNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
