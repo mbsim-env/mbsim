@@ -61,12 +61,18 @@ namespace MBSimControl {
       return new SignalProcessingSystemSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
       return new SignalAddition(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalMultiplication")
+      return new SignalMultiplication(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMux")
       return new SignalMux(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalLimitation")
       return new SignalLimitation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalTimeDiscretization")
       return new SignalTimeDiscretization(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalOperation")
+      return new SignalOperation(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SpecialSignalOperation")
+      return new SpecialSignalOperation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"Actuator")
       return new Actuator(element->Attribute("name"));
     return 0;

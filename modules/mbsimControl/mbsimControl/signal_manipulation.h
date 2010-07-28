@@ -42,6 +42,24 @@ namespace MBSimControl {
       std::vector<double> factorsTmp;
   };
 
+  /*!
+   * \brief SignalMultiplication
+   * \author Markus Schneider
+   */
+  class SignalMultiplication : public Signal {
+    public:
+      SignalMultiplication(const std::string &name) : Signal(name) {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void addSignal(Signal * signal, double exp);
+      fmatvec::Vec getSignal();
+    private:
+      std::vector<Signal *> signals;
+      std::vector<double> exponents;
+      std::vector<std::string> signalString;
+      std::vector<double> exponentsTmp;
+  };
+
 
   /*!
    * \brief SignalMux
@@ -97,6 +115,54 @@ namespace MBSimControl {
       fmatvec::Vec y;
       double tOld;
       std::string signalString;
+  };
+
+
+  /*!
+   * \brief SignalOperation according <cmath>
+   * \author Markus Schneider
+   */
+  class SignalOperation : public Signal {  
+    public:
+      SignalOperation(const std::string &name) : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * signal_) {s=signal_; }
+      void setSecondSignal(Signal * signal_) {s2=signal_; }
+      void setSecondSignalValues(fmatvec::Vec s2_) {s2values=s2_; }
+      void setOperator(unsigned int op_) {op=op_; };
+      fmatvec::Vec getSignal();
+    private:
+      Signal * s;
+      Signal * s2;
+      std::string signalString;
+      std::string signal2String;
+      unsigned int op;
+      fmatvec::Vec s2values;
+  };
+
+
+  /*!
+   * \brief SpecialSignalOperation with advanced functionality
+   * \author Markus Schneider
+   */
+  class SpecialSignalOperation : public Signal {  
+    public:
+      SpecialSignalOperation(const std::string &name) : Signal(name), s(NULL), s2(NULL), signalString(""), signal2String(""), op(0), s2values(0, fmatvec::NONINIT) {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * signal_) {s=signal_; }
+      void setSecondSignal(Signal * signal_) {s2=signal_; }
+      void setSecondSignalValues(fmatvec::Vec s2_) {s2values=s2_; }
+      void setOperator(unsigned int op_) {op=op_; };
+      fmatvec::Vec getSignal();
+    private:
+      Signal * s;
+      Signal * s2;
+      std::string signalString;
+      std::string signal2String;
+      unsigned int op;
+      fmatvec::Vec s2values;
   };
 
 
