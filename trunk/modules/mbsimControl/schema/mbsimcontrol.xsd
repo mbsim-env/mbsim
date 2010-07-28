@@ -24,8 +24,8 @@
         Durch Aktoren können Stellkräfte in die Systeme zurückgespeist werden.
         Da Aktoren als Eingangsgröße ebenfalls Signale erhalten, gibt es einen speziellen Sensor, der die Systeme 1. Ordnung ausliest und deren Systemausgänge an die Aktoren überträgt.
       </p>
-  </xs:documentation>
-</xs:annotation>
+    </xs:documentation>
+  </xs:annotation>
 
   <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
@@ -409,6 +409,41 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SignalMultiplication" substitutionGroup="Signal" type="SignalMultiplicationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Elementweise Multiplikation von Signalen
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalMultiplicationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence maxOccurs="unbounded">
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="exponent" type="xs:double">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Exponent des gesamten Eingangssignals.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalMux" substitutionGroup="Signal" type="SignalMuxType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -478,7 +513,362 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:element name="SignalOperation" substitutionGroup="Signal" type="SignalOperationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Einfache elementweise Signaloperationen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalOperationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:choice>
+            <xs:element name="acos">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  arc cosine<br/>
+                  The acos functions calculate the principal value of the arc cosine of x. <br/>
+                  Der Eigangswert wird auf pm1 beschränkt.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="asin">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  arc sine<br/>
+                  The asin functions calculate the principal value of the arcsine of x. asin calculates the arcsine of a double value; asinf calculates the arcsine of a floating-point value; and asinl calculates the arcsine of a long double value. The value of x must be between -1 and 1. <br/>
+                  Der Eigangswert wird auf pm1 beschränkt.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="atan">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  arc tangent<br/>
+                  The atan functions calculate the arc tangent of x.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="atan2">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  arc tangent in 4 quadrants <br/>
+                  The atan2 functions calculate the arc tangent of y/x.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:choice>
+                  <xs:element name="input2Signal">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="yValues" type="pv:nounitVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Vektor der y-Werte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="ceil">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  round upwards<br/>
+                  Returns the value of x rounded upward to the next integer (toward positive infinity.)
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="cos">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  cosine<br/>
+                  The cos functions calculate the cosine of x (measured in radians).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="cosh">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  hyperbolic cosine<br/>
+                  The cosh functions calculate the hyperbolic cosine of x. 
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="cbrt">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  cube root <br/>
+                  The cbrt functions calculate the cube root of x.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="exp">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  e**x<br/>
+                  The exp functions calculate the value of the natural logarithm base (e) raised to the power of x.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="exp2">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  2**x<br/>
+                  The exp2 functions calculate the value of 2 raised to the power of x. 
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="expm1">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  (e**x)-1<br/>
+                  Calculates the value of the natural logarithm base (e) raised to the power of x, minus 1. For very small x, expm1(x) is more accurate than exp(x) -1.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="fabs">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  absolute value <br/>
+                  The fabs, fabsf, and fabsl functions calculate the absolute value of floating-point number x.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="floor">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  round downwards <br/>
+                  Returns the value of x rounded down to the nearest integer.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="fmod">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  remainder after division <br/>
+                  These functions calculate the floating-point remainder of x/y. 
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:choice>
+                  <xs:element name="input2Signal">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="yValues" type="pv:nounitVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Vektor der y-Werte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="hypot">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  hypotenuse <br/>
+                  The hypot functions calculate the length of the hypotenuse of a right-angled triangle with sides of length x and y. The hypotenuse is the value of the square root of the sums of the squares of x and y:
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:choice>
+                  <xs:element name="input2Signal">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="yValues" type="pv:nounitVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Vektor der y-Werte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="log">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  natural logarithm<br/>
+                  The log functions calculate the natural logarithm of x.<br/>
+                  Der Absolutwert des Eingangssignals wird verwendet!.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="log2">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  base-2 logarithm<br/>
+                  The log2 functions calculate the base-2 logarithm of x, log2x. <br/>
+                  Der Absolutwert des Eingangssignals wird verwendet!.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="logb">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  logarithm base 2<br/>
+                  Extracts the exponent of x as a signed integral value. If x is subnormal, it is treated as if it were normalized. For a positive, finite x:
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="log10">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  logarithm base 10<br/>
+                  The log10 functions calculate the base-10 logarithm of x.
+                  Der Absolutwert des Eingangssignals wird verwendet!.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="log1p">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  natural logarithm of (1 + x) <br/>
+                  The log1p and log1pf functions calculate the natural logarithm of 1 + x. For very small x, log1p(x) will be more accurate than log(1 + x).<br/>
+                  Das Eingangssignal wird auf x>-1 beschränkt.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="pow">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  x**y <br/>
+                  The pow functions calculate xy.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:choice>
+                  <xs:element name="input2Signal">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="yValues" type="pv:nounitVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Vektor der y-Werte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="sin">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  sin<br/>
+                  The sin functions calculate the sine of x (measured in radians).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="sinh">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  hyperbolic sine <br/>
+                  The sinh functions calculate the hyperbolic sine of x.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="sqrt">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  square root<br/>
+                  The sqrt functions calculate the square root of x. <br/>
+                  Der Absolutwert des Eingangssignals wird verwendet!.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="tan">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  tangent<br/>
+                  The tan functions calculate the tangent of x (measured in radians).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="tanh">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  hyperboic tangent<br/>
+                  The tanh functions calculate the hyperbolic tangent of x. 
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   
+  <xs:element name="SpecialSignalOperation" substitutionGroup="Signal" type="SpecialSignalOperationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Spezielle und mehr komplexe Signaloperationen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SpecialSignalOperationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:choice>
+            <xs:element name="sign">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Signum-Funktion
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="selection">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  Durchleitung, wenn Eingang2 > 0, sonst 0.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:choice>
+                  <xs:element name="input2Signal">
+                    <xs:complexType>
+                      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="yValues" type="pv:nounitVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                        Vektor der y-Werte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:choice>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalProcessingSystem" substitutionGroup="mbsim:ExtraDynamicSystem" type="SignalProcessingSystemType"/>
   <xs:complexType name="SignalProcessingSystemType">
     <xs:complexContent>
