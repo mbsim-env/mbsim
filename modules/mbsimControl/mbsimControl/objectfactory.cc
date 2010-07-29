@@ -7,6 +7,7 @@
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/signal_processing_system_sensor.h"
 #include "mbsimControl/frame_sensors.h"
+#include "mbsimControl/link_sensors.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/linear_transfer_system.h"
 #include "mbsimControl/actuator.h"
@@ -59,8 +60,16 @@ namespace MBSimControl {
       return new FunctionSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalProcessingSystemSensor")
       return new SignalProcessingSystemSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"LinkDistanceSensor")
+      return new LinkDistanceSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"LinkVelocitySensor")
+      return new LinkVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
       return new SignalAddition(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalFunctionEvaluation")
+      return new SignalFunctionEvaluation(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalOffset")
+      return new SignalOffset(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMultiplication")
       return new SignalMultiplication(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMux")
