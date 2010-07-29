@@ -63,6 +63,51 @@ namespace MBSimControl {
     return y;
   }
 
+
+  void SignalFunctionEvaluation::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    signalString = e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    fun->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void SignalFunctionEvaluation::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec SignalFunctionEvaluation::getSignal() {
+    Vec y=signal->getSignal().copy();
+    for (int i=0; i<y.size(); i++)
+      y(i)=(*fun)(y(i));
+    return y;
+  }
+
+  
+  void SignalOffset::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    signalString=e->Attribute("ref");
+    setOffset(getVec(element->FirstChildElement(MBSIMCONTROLNS"offset")));
+  }
+
+  void SignalOffset::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec SignalOffset::getSignal() {
+    return signal->getSignal()+offset;
+  }
+
   
   void SignalMultiplication::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");

@@ -21,6 +21,7 @@
 #define _SIGNAL_MANIPULATION_H_
 
 #include "mbsimControl/signal_.h"
+#include "mbsim/utils/function.h"
 
 namespace MBSimControl {
 
@@ -40,6 +41,42 @@ namespace MBSimControl {
       std::vector<double> factors;
       std::vector<std::string> signalString;
       std::vector<double> factorsTmp;
+  };
+
+  /*!
+   * \brief SignalOffset
+   * \author Markus Schneider
+   */
+  class SignalOffset : public Signal {
+    public:
+      SignalOffset(const std::string &name) : Signal(name), offset(0, fmatvec::NONINIT), signalString("") {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * s) {signal=s; }
+      void setOffset(fmatvec::Vec o) {offset=o; }
+      fmatvec::Vec getSignal();
+    private:
+      Signal * signal;
+      fmatvec::Vec offset;
+      std::string signalString;
+  };
+
+  /*!
+   * \brief SignalFunctionEvaluation
+   * \author Markus Schneider
+   */
+  class SignalFunctionEvaluation : public Signal {
+    public:
+      SignalFunctionEvaluation(const std::string &name) : Signal(name), fun(NULL), signalString("") {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * s) {signal=s; }
+      void setFunction(MBSim::Function1<double, double>* fun_) {fun=fun_; }
+      fmatvec::Vec getSignal();
+    private:
+      Signal * signal;
+      MBSim::Function1<double, double>* fun;
+      std::string signalString;
   };
 
   /*!

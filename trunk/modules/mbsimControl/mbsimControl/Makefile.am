@@ -7,6 +7,7 @@ libmbsimControl_la_SOURCES = \
 														 object_sensors.cc\
 														 frame_sensors.cc\
 														 function_sensor.cc\
+														 link_sensors.cc\
 														 signal_manipulation.cc\
 														 signal_processing_system.cc\
 														 signal_processing_system_sensor.cc\
@@ -30,6 +31,7 @@ mbsimControlinclude_HEADERS = \
 															object_sensors.h\
 															frame_sensors.h\
 															function_sensor.h\
+															link_sensors.h\
 															signal_manipulation.h\
 															signal_processing_system.h\
 															signal_processing_system_sensor.h\

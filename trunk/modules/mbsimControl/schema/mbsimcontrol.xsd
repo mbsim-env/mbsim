@@ -374,6 +374,58 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="LinkSensor" abstract="true" substitutionGroup="Sensor" type="LinkSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen von Daten eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinkSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="link">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Pfad des Links
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinkDistanceSensor" substitutionGroup="LinkSensor" type="LinkDistanceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen des relativen Abstands g eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinkDistanceSensorType">
+    <xs:complexContent>
+      <xs:extension base="LinkSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinkVelocitySensor" substitutionGroup="LinkSensor" type="LinkVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Sensor zum Auslesen von gd eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinkVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="LinkSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalAddition" substitutionGroup="Signal" type="SignalAdditionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -402,6 +454,78 @@
                 </xs:element>
               </xs:sequence>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalOffset" substitutionGroup="Signal" type="SignalOffsetType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Addition eines konstanten Offsets auf ein Signal
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalOffsetType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="offset" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Vektor mit Offsetwerten
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:element name="SignalFunctionEvaluation" substitutionGroup="Signal" type="SignalFunctionEvaluationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Auswertung einer Funktion mit x=SignalWert.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalFunctionEvaluationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="function">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bennenung der Funktion
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS"/>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
