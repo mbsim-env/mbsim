@@ -27,15 +27,17 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  void FiniteElement2s13MFRMindlin::computeR_compl(const fmatvec::Vec &NodeCoordinates) {
+  void FiniteElement2s13MFRMindlin::computeR_compl() {
+
+    R_compl = new Vec(3,INIT,0.);
 
     const double &r1 = NodeCoordinates(0);
     const double &phi1 = NodeCoordinates(1);
     const double &r2 = NodeCoordinates(2);
     const double &phi2 = NodeCoordinates(3);
 
-    R_compl(0) = -rho * (0.12e2 * sin(phi1) * d2 * pow(r2, 0.5e1) - 0.12e2 * sin(phi1) * d2 * pow(r1, 0.5e1) - 0.12e2 * sin(phi2) * d2 * pow(r2, 0.5e1) + 0.12e2 * sin(phi2) * d2 * pow(r1, 0.5e1) + 0.15e2 * sin(phi1) * d1 * pow(r2, 0.4e1) - 0.15e2 * sin(phi1) * d1 * pow(r1, 0.4e1) - 0.15e2 * sin(phi2) * d1 * pow(r2, 0.4e1) + 0.15e2 * sin(phi2) * d1 * pow(r1, 0.4e1) + 0.20e2 * sin(phi1) * d0 * pow(r2, 0.3e1) - 0.20e2 * sin(phi1) * d0 * pow(r1, 0.3e1) - 0.20e2 * sin(phi2) * d0 * pow(r2, 0.3e1) + 0.20e2 * sin(phi2) * d0 * pow(r1, 0.3e1)) / 0.60e2;
-    R_compl(1) = rho * (0.12e2 * cos(phi1) * d2 * pow(r2, 0.5e1) - 0.12e2 * cos(phi1) * d2 * pow(r1, 0.5e1) - 0.12e2 * cos(phi2) * d2 * pow(r2, 0.5e1) + 0.12e2 * cos(phi2) * d2 * pow(r1, 0.5e1) + 0.15e2 * cos(phi1) * d1 * pow(r2, 0.4e1) - 0.15e2 * cos(phi1) * d1 * pow(r1, 0.4e1) - 0.15e2 * cos(phi2) * d1 * pow(r2, 0.4e1) + 0.15e2 * cos(phi2) * d1 * pow(r1, 0.4e1) + 0.20e2 * cos(phi1) * d0 * pow(r2, 0.3e1) - 0.20e2 * cos(phi1) * d0 * pow(r1, 0.3e1) - 0.20e2 * cos(phi2) * d0 * pow(r2, 0.3e1) + 0.20e2 * cos(phi2) * d0 * pow(r1, 0.3e1)) / 0.60e2;
+    (*R_compl)(0) = -rho * (0.12e2 * sin(phi1) * d2 * pow(r2, 0.5e1) - 0.12e2 * sin(phi1) * d2 * pow(r1, 0.5e1) - 0.12e2 * sin(phi2) * d2 * pow(r2, 0.5e1) + 0.12e2 * sin(phi2) * d2 * pow(r1, 0.5e1) + 0.15e2 * sin(phi1) * d1 * pow(r2, 0.4e1) - 0.15e2 * sin(phi1) * d1 * pow(r1, 0.4e1) - 0.15e2 * sin(phi2) * d1 * pow(r2, 0.4e1) + 0.15e2 * sin(phi2) * d1 * pow(r1, 0.4e1) + 0.20e2 * sin(phi1) * d0 * pow(r2, 0.3e1) - 0.20e2 * sin(phi1) * d0 * pow(r1, 0.3e1) - 0.20e2 * sin(phi2) * d0 * pow(r2, 0.3e1) + 0.20e2 * sin(phi2) * d0 * pow(r1, 0.3e1)) / 0.60e2;
+    (*R_compl)(1) = rho * (0.12e2 * cos(phi1) * d2 * pow(r2, 0.5e1) - 0.12e2 * cos(phi1) * d2 * pow(r1, 0.5e1) - 0.12e2 * cos(phi2) * d2 * pow(r2, 0.5e1) + 0.12e2 * cos(phi2) * d2 * pow(r1, 0.5e1) + 0.15e2 * cos(phi1) * d1 * pow(r2, 0.4e1) - 0.15e2 * cos(phi1) * d1 * pow(r1, 0.4e1) - 0.15e2 * cos(phi2) * d1 * pow(r2, 0.4e1) + 0.15e2 * cos(phi2) * d1 * pow(r1, 0.4e1) + 0.20e2 * cos(phi1) * d0 * pow(r2, 0.3e1) - 0.20e2 * cos(phi1) * d0 * pow(r1, 0.3e1) - 0.20e2 * cos(phi2) * d0 * pow(r2, 0.3e1) + 0.20e2 * cos(phi2) * d0 * pow(r1, 0.3e1)) / 0.60e2;
 
   }
 

@@ -171,7 +171,7 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief interpolates the Jacobians of translation of the surface with the node-data from the body
        */
-      void computeSurfaceJacobiansOfTranslation();
+      void computeSurfaceJacobians();
 #endif
 
 #ifdef HAVE_NURBS
@@ -248,9 +248,14 @@ namespace MBSimFlexibleBody {
       PlNurbsSurfaced *SurfaceVelocities;
 
       /**
-       * \brief interpolated Jacobians on the surface 
+       * \brief interpolated Jacobians of Translation on the surface 
        */
       std::vector<PlNurbsSurfaced> SurfaceJacobiansOfTranslation; // size = number of generalized coordinates
+
+      /**
+       * \brief interpolated Jacobians of Translation on the surface
+       */
+      std::vector<PlNurbsSurfaced> SurfaceJacobiansOfRotation; // size = number of generalized coordinates
 
       /**
        * \brief knot vectors, used for the U und V coordinates of the surface

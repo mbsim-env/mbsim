@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
        * \param density
        * \param thickness parametrisation
        */
-      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_);
+      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_, const fmatvec::Vec &NodeCoordinates);
 
       /**
        * \brief destructor
@@ -89,17 +89,23 @@ namespace MBSimFlexibleBody {
       void setShearCorrectionFactor(double alphaS_);
       /***************************************************/
 
-      /*!
-       * \brief computes mass matrix
-       * \param radial and azimuthal coordinates of corner nodes
-       */
-      void computeConstantSystemMatrices(const fmatvec::Vec &NodeCoordinates);
+      /* Freeer */
+      void freeK();
+      void freeM_RR();
+      void freeN_compl();
+      void freeN_ij(int i, int j);
+      void freeNR_ij(int i, int j);
+      void freeR_compl();
+      void freeR_ij();
+      /***************************************************/
+
 
       /*!
        * \brief computes stiffnes matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
       void computeStiffnesMatrix(const fmatvec::Vec &NodeCoordinates);
+      void computeStiffnesMatrix();
 
       /*!
        * \brief computes mass matrix
@@ -111,60 +117,60 @@ namespace MBSimFlexibleBody {
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeM_RR(const fmatvec::Vec &NodeCoordinates);
+      void computeM_RR();
 
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeN_compl(const fmatvec::Vec &NodeCoordinates);
+      void computeN_compl();
 
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeN_ij(const fmatvec::Vec &NodeCoordinates);
-      void computeN_11(const fmatvec::Vec &NodeCoordinates);
-      void computeN_12(const fmatvec::Vec &NodeCoordinates);
-      void computeN_13(const fmatvec::Vec &NodeCoordinates);
-      void computeN_21(const fmatvec::Vec &NodeCoordinates);
-      void computeN_22(const fmatvec::Vec &NodeCoordinates);
-      void computeN_23(const fmatvec::Vec &NodeCoordinates);
-      void computeN_31(const fmatvec::Vec &NodeCoordinates);
-      void computeN_32(const fmatvec::Vec &NodeCoordinates);
-      void computeN_33(const fmatvec::Vec &NodeCoordinates);
+      void computeN_ij(int i, int j);
+      void computeN_11();
+      void computeN_12();
+      void computeN_13();
+      void computeN_21();
+      void computeN_22();
+      void computeN_23();
+      void computeN_31();
+      void computeN_32();
+      void computeN_33();
 
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeNR_ij(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_11(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_12(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_13(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_21(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_22(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_23(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_31(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_32(const fmatvec::Vec &NodeCoordinates);
-      void computeNR_33(const fmatvec::Vec &NodeCoordinates);
+      void computeNR_ij(int i, int j);
+      void computeNR_11();
+      void computeNR_12();
+      void computeNR_13();
+      void computeNR_21();
+      void computeNR_22();
+      void computeNR_23();
+      void computeNR_31();
+      void computeNR_32();
+      void computeNR_33();
 
-      
-      /*!
-       * \brief computes a part of the mass matrix
-       * \param radial and azimuthal coordinates of corner nodes
-       */
-      void computeR_compl(const fmatvec::Vec &NodeCoordinates);
 
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
        */
-      void computeR_ij(const fmatvec::Vec &NodeCoordinates);
+      void computeR_compl();
+
+      /*!
+       * \brief computes a part of the mass matrix
+       * \param radial and azimuthal coordinates of corner nodes
+       */
+      void computeR_ij();
 
 
 
-//TODO:
+      //TODO:
       /*!
        * \param radial and azimuthal coordinates of corner nodes
        * \param generalised coordinates
@@ -200,11 +206,6 @@ namespace MBSimFlexibleBody {
       double G;
 
       /**
-       * \brief helping factors
-       */
-      double E1, E2;
-
-      /**
        * \brief geometric factors of the disk 
        */
       double d0, d1, d2;
@@ -233,46 +234,52 @@ namespace MBSimFlexibleBody {
        * \brief number of nodes
        */
       int Nodes;
-      
+
+      /**
+       * \brief number of nodes
+       */
+      fmatvec::Vec NodeCoordinates;
+
       /**
        * \brief stiffness matrix
        */
-      fmatvec::SymMat K;
-      
-      /**
-       * \brief part of the mass matrix
-       */
-      fmatvec::SymMat M_RR;
+      fmatvec::SymMat *K;
 
       /**
        * \brief part of the mass matrix
        */
-      fmatvec::Mat N_compl;
+      fmatvec::SymMat *M_RR;
 
       /**
        * \brief part of the mass matrix
        */
-      fmatvec::SqrMat N_ij[3][3];
+      fmatvec::Mat *N_compl;
 
       /**
        * \brief part of the mass matrix
        */
-       fmatvec::RowVec NR_ij[3][3];
+      fmatvec::SqrMat *N_ij[3][3];
 
       /**
        * \brief part of the mass matrix
        */
-      fmatvec::Vec R_compl;  //TODO: performed global or local??
+      fmatvec::RowVec *NR_ij[3][3];
 
       /**
        * \brief part of the mass matrix
        */
-      fmatvec::SymMat R_ij;
+      fmatvec::Vec *R_compl;
+
+      /**
+       * \brief part of the mass matrix
+       */
+      fmatvec::SymMat *R_ij;
 
   };
 
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
   inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& NodeCoordinates){ throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); }
+  inline void FiniteElement2s13MFRMindlin::computeStiffnesMatrix(const fmatvec::Vec& NodeCoordinates){ throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeStiffnessMatrix): Not implemented!"); }
   inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
@@ -289,13 +296,13 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); } 
   inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
 
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return K; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return M_RR; }
-  inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return N_compl; }
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return N_ij[i][j]; }
-  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const {return NR_ij[i][j]; }
-  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::getR_compl() const { return R_compl; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getR_ij() const { return R_ij; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return *K; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return *M_RR; }
+  inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return *N_compl; }
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return *(N_ij[i][j]); }
+  inline const fmatvec::RowVec& FiniteElement2s13MFRMindlin::getNR_ij(int i, int j) const {return *(NR_ij[i][j]); }
+  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::getR_compl() const { return *R_compl; }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getR_ij() const { return *R_ij; }
   inline void FiniteElement2s13MFRMindlin::setEModul(double E_) { E = E_; }
   inline void FiniteElement2s13MFRMindlin::setPoissonRatio(double nu_) { nu = nu_; }
   inline void FiniteElement2s13MFRMindlin::setDensity(double rho_) { rho = rho_; }
