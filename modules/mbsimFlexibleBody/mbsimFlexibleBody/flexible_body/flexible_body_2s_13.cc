@@ -89,6 +89,29 @@ namespace MBSimFlexibleBody {
     return phi;
   }
 
+  void MapleOutput(SymMat A, std::string MatName, std::string file)
+  {
+    ofstream dat(file.c_str() , ios::app);
+    dat << MatName;
+    dat << " := Matrix([";
+    for(int i = 0; i<A.rows(); i++)
+    {
+      dat <<"[";
+      for(int j = 0;j<A.cols(); j++)
+      {
+        dat << A(i,j);
+        if(j<A.cols()-1)
+          dat << ", ";
+      }
+      dat << "]";
+      if(i!=A.rows()-1)
+        dat << ",";
+    }
+    dat << "]):";
+    dat << '\n';
+    dat.close();
+  }
+
   FlexibleBody2s13::FlexibleBody2s13(const string &name) : FlexibleBodyContinuum<Vec> (name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3,INIT,0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3,INIT,0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3,EYE), G(3,EYE) {
 #ifdef HAVE_NURBS
     contour = new NurbsDisk2s("SurfaceContour");
@@ -127,7 +150,7 @@ namespace MBSimFlexibleBody {
 #ifdef HAVE_NURBS
     contour->computeSurface();
     contour->computeSurfaceVelocities();
-    contour->computeSurfaceJacobiansOfTranslation();
+    contour->computeSurfaceJacobians();
 #endif
   }
 

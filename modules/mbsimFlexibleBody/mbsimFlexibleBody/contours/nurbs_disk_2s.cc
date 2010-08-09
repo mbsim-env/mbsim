@@ -60,7 +60,7 @@ namespace MBSimFlexibleBody {
         case 6:
           cp.getFrameOfReference().setPosition(R.getPosition() + R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getq()(0,2));
           cp.getFrameOfReference().setVelocity(                  R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getu()(0,2));
-          cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
+          cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
           break;
         default:
           throw new MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
@@ -107,16 +107,31 @@ namespace MBSimFlexibleBody {
   void NurbsDisk2s::updateJacobiansForFrame(ContourPointData &cp) {
 #ifdef HAVE_NURBS
     cp.getFrameOfReference().getJacobianOfTranslation().resize(3,nj*nr*3+RefDofs);
+    cp.getFrameOfReference().getJacobianOfRotation().resize(3,nj*nr*3+RefDofs);
 
     for(int k=0; k<nj*nr*3+RefDofs; k++) {
-      Point3Dd TmpPt = SurfaceJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
+      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
+      Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(cp.getLagrangeParameterPosition()(1),cp.getLagrangeParameterPosition()(0));
 
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPt.x();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPt.y();
-      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPt.z();      
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(0) = TmpPtTrans.x();
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(1) = TmpPtTrans.y();
+      cp.getFrameOfReference().getJacobianOfTranslation().col(k)(2) = TmpPtTrans.z();
+
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(0) = TmpPtRot.x();
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(1) = TmpPtRot.y();
+      cp.getFrameOfReference().getJacobianOfRotation().col(k)(2) = TmpPtRot.z();
     }
-#endif
+
+    /*TESTING*/
+    ofstream file("JacTrans.txt");
+    file << cp.getFrameOfReference().getJacobianOfTranslation();
+    file.close();
+
+    ofstream file2("JacRot.txt");
+    file2 << cp.getFrameOfReference().getJacobianOfRotation();
+    file2.close();
   }
+#endif
 
 #ifdef HAVE_NURBS
   void NurbsDisk2s::initContourFromBody(InitStage stage){
@@ -142,7 +157,10 @@ namespace MBSimFlexibleBody {
         }
       }
 
-      for(int k=0; k<nr*nj*3+RefDofs; k++) SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
+      for(int k=0; k<nr*nj*3+RefDofs; k++) {
+        SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
+        SurfaceJacobiansOfRotation.push_back(PlNurbsSurfaced());
+      }
 
       computeSurface();
     }
@@ -340,8 +358,9 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::computeSurfaceJacobiansOfTranslation() {
-    PLib::Matrix<Point3Dd> Nodelist(nj+degU,nr+1); // list of node-data for the nurbs interpolation
+  void NurbsDisk2s::computeSurfaceJacobians() {
+    PLib::Matrix<Point3Dd> NodelistTrans(nj+degU,nr+1); // list of node-data for the nurbs interpolation
+    PLib::Matrix<Point3Dd> NodelistRot(nj+degU,nr+1); // list of node-data for the nurbs interpolation
 
     // gets Jacobians on the nodes from body for interpolation
     for(int i=0; i<nr+1; i++) {  
@@ -352,16 +371,22 @@ namespace MBSimFlexibleBody {
     for(int k=0; k<nr*nj*3+RefDofs; k++) {
       for(int i=0; i<nr+1; i++) {  
         for(int j=0; j<nj; j++) {
-          Nodelist(j,i) = Point3Dd(jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation()(0,k), 
+          NodelistTrans(j,i) = Point3Dd(jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation()(0,k),
               jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation()(1,k),
               jacobians[i*nj+j].getFrameOfReference().getJacobianOfTranslation()(2,k));
+
+          NodelistRot(j,i) = Point3Dd(jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation()(0,k),
+              jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation()(1,k),
+              jacobians[i*nj+j].getFrameOfReference().getJacobianOfRotation()(2,k));
         }
         for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction
-          Nodelist(nj+j,i) = Nodelist(j,i);
+          NodelistTrans(nj+j,i) = NodelistTrans(j,i);
+          NodelistRot(nj+j,i) = NodelistRot(j,i);
         }
       }
 
-      SurfaceJacobiansOfTranslation[k].globalInterpClosedU_OwnKnotVecs(Nodelist, *uVec, *vVec, *uvec, *vvec, degU, degV);
+      SurfaceJacobiansOfTranslation[k].globalInterpClosedU_OwnKnotVecs(NodelistTrans, *uVec, *vVec, *uvec, *vvec, degU, degV);
+      SurfaceJacobiansOfRotation[k].globalInterpClosedU_OwnKnotVecs(NodelistRot, *uVec, *vVec, *uvec, *vvec, degU, degV);
     }
   }
 #endif

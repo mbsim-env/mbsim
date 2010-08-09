@@ -83,29 +83,27 @@ namespace MBSimFlexibleBody {
       /**
        * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
-      fmatvec::Mat N_compl;
+      fmatvec::Mat* N_compl;
 
       /**
        * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
-      fmatvec::SqrMat N_ij[3][3];
+      fmatvec::SqrMat* N_ij[3][3];
 
       /**
        * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
-      fmatvec::RowVec NR_ij[3][3];
+      fmatvec::RowVec* NR_ij[3][3];
 
       /**
        * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
-      fmatvec::Vec R_compl;
+      fmatvec::Vec* R_compl;
 
       /**
        * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
        */
-      fmatvec::SymMat R_ij;
-
-      fmatvec::SymMat M_old; //for testing
+      fmatvec::SymMat* R_ij;
 
       /*!
        * \brief calculate constant stiffness matrix

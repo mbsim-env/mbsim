@@ -324,13 +324,8 @@ namespace MBSimFlexibleBody {
           Diskbody->setDrawDegree(drawDegree);
           Diskbody->setRadii(Ri,Ra);
 
-          float *openmbvUVec = new float[nj+1+2*degU];
-          float *openmbvVVec = new float[nr+2+degV];
-          for(int i=0;i<nj+1+2*degU;i++) openmbvUVec[i]=contour->getUVector()(i);
-          for(int i=0;i<nr+1+degV+1;i++) openmbvVVec[i]=contour->getVVector()(i);
-
-          Diskbody->setKnotVecAzimuthal(openmbvUVec);
-          Diskbody->setKnotVecRadial(openmbvVVec);
+          Diskbody->setKnotVecAzimuthal(contour->getUVector());
+          Diskbody->setKnotVecRadial(contour->getVVector());
 
           Diskbody->setElementNumberRadial(nr);
           Diskbody->setElementNumberAzimuthal(nj);

@@ -64,6 +64,12 @@ namespace MBSimFlexibleBody {
   double ArcTan(double x,double y); //TODO: ArcTan da rausziehen??
 
   /*!
+   * \brief generates an output for a matrix for the input in maple - just for testing
+   * \param matrix for the output
+   */
+  void MapleOutput(fmatvec::SymMat A, std::string MatName, std::string file);
+
+  /*!
    * \brief plate according to Reissner-Mindlin with moving frame of reference
    * \author Kilian Grundl
    * \author Thorsten Schindler
@@ -213,7 +219,7 @@ namespace MBSimFlexibleBody {
       int currentElement;
 
       /**
-       * \brief mass matrix
+       * \brief constant part of the mass matrix
        */
       fmatvec::SymMat MConst;
 
@@ -275,7 +281,7 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat G;
 
       /*
-	   * \brief Jacobian for condensation with size Dofs x qSize
+       * \brief Jacobian for condensation with size Dofs x qSize
        */
       fmatvec::Mat Jext;
 
