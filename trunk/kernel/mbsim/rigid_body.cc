@@ -715,6 +715,7 @@ namespace MBSim {
     while(e && e->ValueStr()==MBSIMNS"frame") {
       TiXmlElement *ec=e->FirstChildElement();
       Frame *f=new Frame(ec->Attribute("name"));
+      f->initializeUsingXML(ec);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       TiXmlElement *ee;
       if((ee=ec->FirstChildElement(MBSIMNS"enableOpenMBV")))
