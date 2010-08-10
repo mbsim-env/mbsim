@@ -264,4 +264,113 @@ namespace MBSim {
     }
   }
 
+
+  TabularFunction2_SSS::TabularFunction2_SSS() : xVec(Vec(0)), yVec(Vec(0)), XY(Mat(0,0)), xSize(0), ySize(0), x0Index(0), x1Index(0), y0Index(0), y1Index(0), func_value(Vec(1,INIT,0)), xy(Vec(4,INIT,1)), XYval(Vec(4,INIT,0)), XYfac(Mat(4,4,INIT,0)) {
+  }
+
+  void TabularFunction2_SSS::calcIndex(const double * x, Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus) {
+    if (*x<=X(0)) {
+      *xIndexPlus=1;
+      *xIndexMinus=0;
+      cerr << "TabularFunction2_SSS: Value (" << *x << ") is smaller than the smallest table value(" << X(0) << ")!" << endl;
+    }
+    else if (*x>=X(*xSize-1)) {
+      *xIndexPlus=*xSize-1;
+      *xIndexMinus=*xSize-2;
+      cerr << "TabularFunction2_SSS: Value (" << *x << ") is greater than the greatest table value(" << X(*xSize-1) << ")!" << endl;
+    }
+    else {
+      if (*x<X(*xIndexPlus))
+        while(*x<X(*xIndexPlus-1)&&*xIndexPlus>1)
+          (*xIndexPlus)--;
+      else if (*x>X(*xIndexPlus))
+        while(*x>X(*xIndexPlus)&&*xIndexPlus<*xSize-1)
+          (*xIndexPlus)++;
+      *xIndexMinus=*xIndexPlus-1;
+    }
+  }
+
+  void TabularFunction2_SSS::setXValues(Vec xVec_) {
+    xVec << xVec_;
+    xSize=xVec.size();
+
+    for (int i=1; i<xVec.size(); i++)
+      if (xVec(i-1)>=xVec(i))
+        throw MBSimError("xVec must be strictly monotonic increasing!");
+    xSize=xVec.size();
+  }
+
+  void TabularFunction2_SSS::setYValues(Vec yVec_) {
+    yVec << yVec_;
+    ySize=yVec.size();
+
+    for (int i=1; i<yVec.size(); i++)
+      if (yVec(i-1)>=yVec(i))
+        throw MBSimError("yVec must be strictly monotonic increasing!");
+  }
+
+  void TabularFunction2_SSS::setXYMat(Mat XY_) {
+    XY << XY_;
+
+    if(xSize==0)
+      cout << "It is strongly recommended to set x file first! Continuing anyway." << endl;
+    else if(ySize==0)
+      cout << "It is strongly recommended to set y file first! Continuing anyway." << endl;
+    else {
+      if(XY.cols()!=xSize)
+        throw MBSimError("Dimension missmatch in xSize");
+      else if(XY.rows()!=ySize)
+        throw MBSimError("Dimension missmatch in ySize");
+    }
+  }
+
+  double TabularFunction2_SSS::operator()(const double& x, const double& y, const void * ) {
+    calcIndex(&x, xVec, &xSize, &x0Index, &x1Index);
+    calcIndex(&y, yVec, &ySize, &y0Index, &y1Index);
+
+    xy(1)=x;
+    xy(2)=y;
+    xy(3)=x*y;
+    const double x0=xVec(x0Index);
+    const double x1=xVec(x1Index);
+    const double y0=yVec(y0Index);
+    const double y1=yVec(y1Index);
+    const double nenner=(x0-x1)*(y0-y1);
+    XYval(0)=XY(y0Index, x0Index);
+    XYval(1)=XY(y0Index, x1Index);
+    XYval(2)=XY(y1Index, x0Index);
+    XYval(3)=XY(y1Index, x1Index);
+    XYfac(0,0)=x1*y1;
+    XYfac(0,1)=-x0*y1;
+    XYfac(0,2)=-x1*y0;
+    XYfac(0,3)=x0*y0;
+    XYfac(1,0)=-y1;   
+    XYfac(1,1)=y1;   
+    XYfac(1,2)=y0;    
+    XYfac(1,3)=-y0;
+    XYfac(2,0)=-x1;   
+    XYfac(2,1)=x0;    
+    XYfac(2,2)=x1;    
+    XYfac(2,3)=-x0;
+    XYfac(3,0)=1.;    
+    XYfac(3,1)=-1.;   
+    XYfac(3,2)=-1.;  
+    XYfac(3,3)=1.;
+
+    return trans(1./nenner*XYfac*XYval)*xy;
+  }
+
+  void TabularFunction2_SSS::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e = element->FirstChildElement(MBSIMNS"xValues");
+    Vec x_=Element::getVec(e);
+    setXValues(x_);
+    e = element->FirstChildElement(MBSIMNS"yValues");
+    Vec y_=Element::getVec(e);
+    setYValues(y_);
+    e = element->FirstChildElement(MBSIMNS"xyValues");
+    Mat xy_=Element::getMat(e, y_.size(), x_.size());
+    setXYMat(xy_);
+  }
+
 }

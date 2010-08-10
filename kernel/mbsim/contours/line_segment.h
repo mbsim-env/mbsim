@@ -49,11 +49,15 @@ namespace MBSim {
       void enableOpenMBV(bool enable=true, double size=1., int number=10);
 #endif
 
-      void setBounds(const fmatvec::Vec &bound_) {bound = bound_;}
+      virtual void initializeUsingXML(TiXmlElement *element);
+
+      void setBounds(const fmatvec::Vec &bound_);
       const fmatvec::Vec& getBounds() const { return bound; }
+      const double& getSegmentLength() const {return length; }
       /***************************************************/
     private:
       fmatvec::Vec bound;
+      double length;
   };      
 }
 

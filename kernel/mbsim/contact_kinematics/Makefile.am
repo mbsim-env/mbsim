@@ -7,6 +7,7 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 					circlesolid_flexibleband.cc\
 					circlesolid_frustum2d.cc\
 					circlesolid_line.cc\
+					circlesolid_linesegment.cc\
 					circlesolid_plane.cc\
 					compoundcontour_compoundcontour.cc\
 					compoundcontour_contour.cc\
@@ -20,6 +21,7 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 					point_flexibleband.cc \
 					point_frustum.cc\
 					point_line.cc\
+					point_circlesolid.cc\
 					point_plane.cc\
 					point_planewithfrustum.cc\
 					sphere_frustum.cc\
@@ -40,6 +42,7 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   circlesolid_flexibleband.h\
   circlesolid_frustum2d.h \
   circlesolid_line.h \
+  circlesolid_linesegment.h \
   circlesolid_plane.h \
   compoundcontour_compoundcontour.h \
   compoundcontour_contour.h \
@@ -53,6 +56,7 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   point_flexibleband.h \
   point_frustum.h \
   point_line.h \
+  point_circlesolid.h\
   point_plane.h \
   point_planewithfrustum.h \
   sphere_frustum.h \

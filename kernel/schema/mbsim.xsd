@@ -1816,6 +1816,35 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="LineSegment" substitutionGroup="RigidContour" type="LineSegmentType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Einfache Linienkontur mit endlicher Ausdehnung.<br/>
+        Die Linie verläuft in Richtung der y-Achse des Referenzkoordinatensystems, die Normale weist in die Richtung der x-Achse des Referenzkoordinatensystems.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LineSegmentType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="bounds" type="pv:lengthVector">
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="size" type="pv:lengthScalar">
+                </xs:element>
+                <xs:element name="number" type="xs:nonNegativeInteger">
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Plane" substitutionGroup="RigidContour" type="PlaneType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -2963,6 +2992,43 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="TabularFunction2_SSS" substitutionGroup="Function2_SSS" type="TabularFunction2_SSSType">
+    <xs:annotation>
+      <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
+        Lineare Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TabularFunction2_SSSType">
+    <xs:complexContent>
+      <xs:extension base="Function2_SSSType">
+        <xs:sequence>
+          <xs:element name="xValues" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
+                x-Werte. Die Werte müssen streng mononton steigend sein.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="yValues" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
+                y-Werte. Die Werte müssen streng mononton steigend sein.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xyValues" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xmlns="http://www.w3.org/1999/xhtml"  xml:lang="de">
+                xy-Werte. Die Anzahl der Spalten der Matrix muss mit der Größe des x-Vektors und die Anzahl der Zeilen der Matrix muss mit der Größe des y-Vektors übereinstimmen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="LinearSpringDamperForce" substitutionGroup="Function2_SSS" type="LinearSpringDamperForceType">
     <xs:annotation>

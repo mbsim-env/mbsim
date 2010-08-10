@@ -52,6 +52,7 @@
 #include <mbsim/contact_kinematics/circlesolid_contour1s.h>
 #include <mbsim/contact_kinematics/circlesolid_frustum2d.h>
 #include <mbsim/contact_kinematics/circlesolid_line.h>
+#include <mbsim/contact_kinematics/circlesolid_linesegment.h>
 #include <mbsim/contact_kinematics/circlesolid_plane.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
@@ -65,6 +66,7 @@
 #include <mbsim/contact_kinematics/circlesolid_flexibleband.h>
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
+#include <mbsim/contact_kinematics/point_circlesolid.h>
 #include <mbsim/contact_kinematics/point_plane.h>
 #include <mbsim/contact_kinematics/point_planewithfrustum.h>
 #include <mbsim/contact_kinematics/sphere_frustum.h>
@@ -120,6 +122,9 @@ namespace MBSim {
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Line*>(contour0))) 
       return new ContactKinematicsCircleSolidLine;
 
+    else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<LineSegment*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<LineSegment*>(contour0))) 
+      return new ContactKinematicsCircleSolidLineSegment;
+
     else if((dynamic_cast<CircleSolid*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<CircleSolid*>(contour1) && dynamic_cast<Plane*>(contour0))) 
       return new ContactKinematicsCircleSolidPlane;
 
@@ -152,6 +157,9 @@ namespace MBSim {
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Line*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Line*>(contour0))) 
       return new ContactKinematicsPointLine; 
+
+    else if((dynamic_cast<Point*>(contour0) && dynamic_cast<CircleSolid*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<CircleSolid*>(contour0))) 
+      return new ContactKinematicsPointCircleSolid; 
 
     else if((dynamic_cast<Point*>(contour0) && dynamic_cast<Plane*>(contour1)) || (dynamic_cast<Point*>(contour1) && dynamic_cast<Plane*>(contour0))) 
       return new ContactKinematicsPointPlane;
