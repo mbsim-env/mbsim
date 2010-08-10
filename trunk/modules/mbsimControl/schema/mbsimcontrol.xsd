@@ -352,6 +352,93 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:element name="Function1_SSEvaluation" substitutionGroup="Signal" type="Function1_SSEvaluationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Auswertung einer Funktion mit x=SignalWert.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Function1_SSEvaluationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="function">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Bennenung der Funktion
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="Function2_SSSEvaluation" substitutionGroup="Signal" type="Function2_SSSEvaluationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Auswertung einer Funktion mit x=SignalWert.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Function2_SSSEvaluationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType" >
+        <xs:sequence>
+          <xs:element name="firstInputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondInputSignal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                ref=Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="function">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Definition der Funktion
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function2_SSS"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 
   <xs:element name="SignalProcessingSystemSensor" substitutionGroup="Sensor" type="SignalProcessingSystemSensorType">
     <xs:annotation>
@@ -445,7 +532,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="factor" type="xs:double">
+                <xs:element name="factor" type="pv:nounitScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Faktor, mit dem das Eingangssignal zur Summe hinzugefügt wird.
@@ -494,45 +581,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-
-  <xs:element name="SignalFunctionEvaluation" substitutionGroup="Signal" type="SignalFunctionEvaluationType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-        Auswertung einer Funktion mit x=SignalWert.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="SignalFunctionEvaluationType">
-    <xs:complexContent>
-      <xs:extension base="SignalType" >
-        <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                ref=Pfad des Eingangssignals
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="function">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Bennenung der Funktion
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="mbsim:Function1_SS"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="SignalMultiplication" substitutionGroup="Signal" type="SignalMultiplicationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -552,7 +600,7 @@
             </xs:annotation>
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="exponent" type="xs:double">
+                <xs:element name="exponent" type="pv:nounitScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                       Exponent des gesamten Eingangssignals.

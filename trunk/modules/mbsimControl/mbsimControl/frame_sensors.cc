@@ -29,6 +29,7 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void AbsolutCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
     frameString=e->Attribute("ref");
@@ -73,6 +74,7 @@ namespace MBSimControl {
   
 
   void RelativeCoordinateSensor::initializeUsingXML(TiXmlElement * element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"frame");
     refFrameString=e->Attribute("ref");

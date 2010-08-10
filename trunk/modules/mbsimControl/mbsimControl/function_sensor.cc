@@ -19,8 +19,10 @@
 
 #include "mbsimControl/function_sensor.h"
 #include "mbsimControl/objectfactory.h"
+#include "mbsimControl/obsolet_hint.h"
 
 using namespace MBSim;
+using namespace fmatvec;
 
 namespace MBSimControl {
       
@@ -38,10 +40,63 @@ namespace MBSimControl {
   }
 
   void FunctionSensor::initializeUsingXML(TiXmlElement *element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"function");
     function=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_VS(e->FirstChildElement()); 
     function->initializeUsingXML(e->FirstChildElement());
     y=(*function)(0);
+  }
+
+
+  void Function1_SSEvaluation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    signalString = e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
+    fun->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void Function1_SSEvaluation::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec Function1_SSEvaluation::getSignal() {
+    Vec y=signal->getSignal().copy();
+    for (int i=0; i<y.size(); i++)
+      y(i)=(*fun)(y(i));
+    return y;
+  }
+
+
+  void Function2_SSSEvaluation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMCONTROLNS"firstInputSignal");
+    signal1String = e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"secondInputSignal");
+    signal2String = e->Attribute("ref");
+    e=element->FirstChildElement(MBSIMCONTROLNS"function");
+    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction2_SSS(e->FirstChildElement()); 
+    fun->initializeUsingXML(e->FirstChildElement());
+  }
+
+  void Function2_SSSEvaluation::init(InitStage stage) {
+    if (stage==MBSim::resolveXMLPath) {
+      setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec Function2_SSSEvaluation::getSignal() {
+    return Vec(1, INIT, (*fun)(signal1->getSignal()(0), signal2->getSignal()(0)));
   }
 
 }

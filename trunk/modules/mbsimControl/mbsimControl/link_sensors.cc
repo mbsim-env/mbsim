@@ -29,6 +29,7 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void LinkSensor::initializeUsingXML(TiXmlElement * element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"link");
     linkString=e->Attribute("ref");

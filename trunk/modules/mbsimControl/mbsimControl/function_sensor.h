@@ -43,6 +43,44 @@ namespace MBSimControl {
       fmatvec::Vec y;
   };
 
+  /*!
+   * \brief Function1_SSEvaluation
+   * \author Markus Schneider
+   */
+  class Function1_SSEvaluation : public Signal {
+    public:
+      Function1_SSEvaluation(const std::string &name) : Signal(name), signal(NULL), fun(NULL), signalString("") {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignal(Signal * s) {signal=s; }
+      void setFunction(MBSim::Function1<double, double>* fun_) {fun=fun_; }
+      fmatvec::Vec getSignal();
+    private:
+      Signal * signal;
+      MBSim::Function1<double, double>* fun;
+      std::string signalString;
+  };
+
+  /*!
+   * \brief Function1_SSSEvaluation
+   * \author Markus Schneider
+   */
+  class Function2_SSSEvaluation : public Signal {
+    public:
+      Function2_SSSEvaluation(const std::string &name) : Signal(name), signal1(NULL), signal2(NULL), fun(NULL), signal1String(""), signal2String("") {}
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void setSignals(Signal * s1, Signal * s2) {signal1=s1; signal2=s2; }
+      void setFunction(MBSim::Function2<double, double, double>* fun_) {fun=fun_; }
+      fmatvec::Vec getSignal();
+    private:
+      Signal * signal1;
+      Signal * signal2;
+      MBSim::Function2<double, double, double>* fun;
+      std::string signal1String;
+      std::string signal2String;
+  };
+
 }
 
 #endif /* _FUNCTION_SENSOR_H_ */

@@ -58,6 +58,10 @@ namespace MBSimControl {
       return new RelativeAngularVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"FunctionSensor")
       return new FunctionSensor(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"Function1_SSEvaluation")
+      return new Function1_SSEvaluation(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"Function2_SSSEvaluation")
+      return new Function2_SSSEvaluation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalProcessingSystemSensor")
       return new SignalProcessingSystemSensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"LinkDistanceSensor")
@@ -66,8 +70,6 @@ namespace MBSimControl {
       return new LinkVelocitySensor(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalAddition")
       return new SignalAddition(element->Attribute("name"));
-    if(element->ValueStr()==MBSIMCONTROLNS"SignalFunctionEvaluation")
-      return new SignalFunctionEvaluation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalOffset")
       return new SignalOffset(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMultiplication")
