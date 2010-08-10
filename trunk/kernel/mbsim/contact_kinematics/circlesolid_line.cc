@@ -29,10 +29,6 @@ using namespace std;
 
 namespace MBSim {
 
-  double computeAngleOnUnitSphere(const Vec& r) {
-    return r(0)>=0 ? (r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0))) : (r(1)>=0 ? acos(r(0)) : 2*M_PI-acos(r(0)));
-  }
-
   void ContactKinematicsCircleSolidLine::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<CircleSolid*>(contour[0])) {
       icircle = 0; iline = 1;
