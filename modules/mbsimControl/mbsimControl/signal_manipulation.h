@@ -21,7 +21,6 @@
 #define _SIGNAL_MANIPULATION_H_
 
 #include "mbsimControl/signal_.h"
-#include "mbsim/utils/function.h"
 
 namespace MBSimControl {
 
@@ -58,24 +57,6 @@ namespace MBSimControl {
     private:
       Signal * signal;
       fmatvec::Vec offset;
-      std::string signalString;
-  };
-
-  /*!
-   * \brief SignalFunctionEvaluation
-   * \author Markus Schneider
-   */
-  class SignalFunctionEvaluation : public Signal {
-    public:
-      SignalFunctionEvaluation(const std::string &name) : Signal(name), fun(NULL), signalString("") {}
-      void initializeUsingXML(TiXmlElement *element);
-      void init(MBSim::InitStage stage);
-      void setSignal(Signal * s) {signal=s; }
-      void setFunction(MBSim::Function1<double, double>* fun_) {fun=fun_; }
-      fmatvec::Vec getSignal();
-    private:
-      Signal * signal;
-      MBSim::Function1<double, double>* fun;
       std::string signalString;
   };
 
@@ -121,7 +102,7 @@ namespace MBSimControl {
    */
   class SignalLimitation : public Signal {  
     public:
-      SignalLimitation(const std::string &name) : Signal(name), minValue(0), maxValue(0), signalString("") {}
+      SignalLimitation(const std::string &name) : Signal(name), s(NULL), minValue(0), maxValue(0), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setMinimalValue(fmatvec::Vec minValue_) {minValue=minValue_; }
@@ -201,7 +182,6 @@ namespace MBSimControl {
       unsigned int op;
       fmatvec::Vec s2values;
   };
-
 
 }
 

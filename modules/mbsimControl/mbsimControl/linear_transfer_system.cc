@@ -95,11 +95,16 @@ namespace MBSimControl {
       x.resize(xSize, INIT, 0);
     }
     else if (stage==MBSim::plot) {
-      for (int i=0; i<C.rows(); i++)
-        plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
-      for (int i=0; i<B.cols(); i++)
-        plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
-      SignalProcessingSystem::init(stage);
+      updatePlotFeatures(parent);
+      if(getPlotFeature(plotRecursive)==enabled) {
+        if (getPlotFeature(globalPosition)==enabled)
+          for (int i=0; i<C.rows(); i++)
+            plotColumns.push_back("Output Sigout (" + numtostr(i) + ")");
+        if (getPlotFeature(rightHandSide)==enabled)
+          for (int i=0; i<B.cols(); i++)
+            plotColumns.push_back("Input Signal (" + numtostr(i) + ")");
+        SignalProcessingSystem::init(stage);
+      }
     }
     else
       SignalProcessingSystem::init(stage);
@@ -160,6 +165,7 @@ namespace MBSimControl {
     B=B_;
     C=C_;
     D=D_;
+    calculateOutputMethod=&LinearTransferSystem::outputMethodCD;
   }
 
   void LinearTransferSystem::setBandwidth(double Hz_fg) {
@@ -202,10 +208,14 @@ namespace MBSimControl {
 
   void LinearTransferSystem::plot(double t, double dt) {
     Vec y=calculateOutput();
-    for (int i=0; i<y.size(); i++)
-      plotVector.push_back(y(i));
-    for (int i=0; i<B.cols(); i++)
-      plotVector.push_back(inputSignal->getSignal()(i));
+    if(getPlotFeature(plotRecursive)==enabled) {
+      if (getPlotFeature(globalPosition)==enabled)
+        for (int i=0; i<y.size(); i++)
+          plotVector.push_back(y(i));
+      if (getPlotFeature(rightHandSide)==enabled)
+        for (int i=0; i<B.cols(); i++)
+          plotVector.push_back(inputSignal->getSignal()(i));
+    }
     SignalProcessingSystem::plot(t,dt);
   }
 

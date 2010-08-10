@@ -29,6 +29,7 @@ using namespace MBSim;
 namespace MBSimControl {
 
   void SignalAddition::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
       string path=e->Attribute("ref");
@@ -63,33 +64,9 @@ namespace MBSimControl {
     return y;
   }
 
-
-  void SignalFunctionEvaluation::initializeUsingXML(TiXmlElement *element) {
-    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
-    signalString = e->Attribute("ref");
-    e=element->FirstChildElement(MBSIMCONTROLNS"function");
-    fun=MBSim::ObjectFactory::getInstance()->getInstance()->createFunction1_SS(e->FirstChildElement()); 
-    fun->initializeUsingXML(e->FirstChildElement());
-  }
-
-  void SignalFunctionEvaluation::init(InitStage stage) {
-    if (stage==MBSim::resolveXMLPath) {
-      setSignal(getByPath<Signal>(process_signal_string(signalString)));
-      Signal::init(stage);
-    }
-    else
-      Signal::init(stage);
-  }
-
-  Vec SignalFunctionEvaluation::getSignal() {
-    Vec y=signal->getSignal().copy();
-    for (int i=0; i<y.size(); i++)
-      y(i)=(*fun)(y(i));
-    return y;
-  }
-
   
   void SignalOffset::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString=e->Attribute("ref");
     setOffset(getVec(element->FirstChildElement(MBSIMCONTROLNS"offset")));
@@ -110,6 +87,7 @@ namespace MBSimControl {
 
   
   void SignalMultiplication::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
       signalString.push_back(e->Attribute("ref"));
@@ -149,6 +127,7 @@ namespace MBSimControl {
 
 
   void SignalMux::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
       string s=e->Attribute("ref");
@@ -182,6 +161,7 @@ namespace MBSimControl {
 
 
   void SignalLimitation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString=e->Attribute("ref");
@@ -215,6 +195,7 @@ namespace MBSimControl {
 
 
   void SignalTimeDiscretization::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString=e->Attribute("ref");
@@ -245,6 +226,7 @@ namespace MBSimControl {
 
 
   void SignalOperation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString=e->Attribute("ref");
@@ -424,6 +406,7 @@ namespace MBSimControl {
   }
   
   void SpecialSignalOperation::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
     signalString=e->Attribute("ref");
