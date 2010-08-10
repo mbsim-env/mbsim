@@ -19,15 +19,21 @@
 
 #include <config.h>
 #include <mbsim/mbsim_event.h>
+#include <mbsim/element.h>
 #include <iostream>
 
 using namespace std;
 
 namespace MBSim {
+  
   MBSimError::MBSimError(const std::string &mbsim_error_message_) : MBSimException(), mbsim_error_message(mbsim_error_message_) {}
 
   void MBSimError::printExceptionMessage() {
-    cout << mbsim_error_message << endl;
+    cout << endl;
+    cout << endl;
+    cout << "A MBSimError was detected: " << mbsim_error_message << endl;
+    cout << endl;
+    cout << endl;
   }
 
 }

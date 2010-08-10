@@ -61,22 +61,32 @@ namespace MBSim {
   void Element::init(InitStage stage, ObjectInterface* parent) {
     if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
-  
+
       if(getPlotFeature(plotRecursive)==enabled) {
-        plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
-        H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
-  
-        plotColumns.insert(plotColumns.begin(), "Time");
-        if(plotColumns.size()>1) {
-          plotVectorSerie=new H5::VectorSerie<double>;
-          // copy plotColumns to a std::vector
-          vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
-          plotVectorSerie->create(*plotGroup,"data",dummy);
-          plotVectorSerie->setDescription("Default dataset for class: "+getType());
+        unsigned int numEnabled=0;
+        int i=1;
+        while ((i<LASTPLOTFEATURE) && (numEnabled==0)) {
+          if (i!=openMBV)
+            if (getPlotFeature((PlotFeature)i)==enabled)
+              numEnabled++;
+          i++;
         }
-  
-        plotVector.clear();
-        plotVector.reserve(plotColumns.size()); // preallocation
+
+        if(numEnabled>0) {
+          plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+          H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+
+          plotColumns.insert(plotColumns.begin(), "Time");
+          if(plotColumns.size()>1) {
+            plotVectorSerie=new H5::VectorSerie<double>;
+            // copy plotColumns to a std::vector
+            vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
+            plotVectorSerie->create(*plotGroup,"data",dummy);
+            plotVectorSerie->setDescription("Default dataset for class: "+getType());
+          }
+          plotVector.clear();
+          plotVector.reserve(plotColumns.size()); // preallocation
+        }
       }
     }
   }
@@ -126,7 +136,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a scalar was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return NAN;
   }
@@ -140,7 +150,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a scalar integer was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return 0;
   }
@@ -154,7 +164,7 @@ namespace MBSim {
       ostringstream str;
       str<<": Obtained "<<e->GetText()<<" where a boolean was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return 0;
   }
@@ -168,7 +178,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a vector of size "<<((rows==0)?-1:rows)<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return Vec();
   }
@@ -182,7 +192,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a matrix of size "<<((rows==0)?-1:rows)<<"x"<<((cols==0)?-1:cols)<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return Mat();
   }
@@ -196,7 +206,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a square matrix of size "<<size<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return SqrMat();
   }
@@ -216,7 +226,7 @@ namespace MBSim {
       str<<": Obtained matrix of size "<<m.rows()<<"x"<<m.cols()<<" ("<<e->GetText()<<") "<<
            "where a symmetric matrix of size "<<size<<" was requested for element "<<e->ValueStr();
       TiXml_location(e, "", str.str());
-      throw MBSimError("Wrong type");
+      throw MBSimError("Wrong type"+str.str());
     }
     return SymMat();
   }

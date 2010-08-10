@@ -37,6 +37,8 @@ namespace MBSim {
     uInd[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
+
+    setPlotFeature(state, enabled);
   } 
 
   Object::~Object() {}

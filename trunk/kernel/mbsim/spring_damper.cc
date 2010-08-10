@@ -100,12 +100,14 @@ namespace MBSim {
       updatePlotFeatures(parent);
       plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
-  #ifdef HAVE_OPENMBVCPPINTERFACE
-        if(coilspringOpenMBV) {
-          coilspringOpenMBV->setName(name);
-          parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+        if(getPlotFeature(openMBV)==enabled) {
+          if(coilspringOpenMBV) {
+            coilspringOpenMBV->setName(name);
+            parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+          }
         }
-  #endif
+#endif
         LinkMechanics::init(stage);
       }
     }
@@ -117,22 +119,24 @@ namespace MBSim {
     plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if (coilspringOpenMBV) {
-        Vec WrOToPoint;
-        Vec WrOFromPoint;
+      if(getPlotFeature(openMBV)==enabled) {
+        if (coilspringOpenMBV) {
+          Vec WrOToPoint;
+          Vec WrOFromPoint;
 
-        WrOFromPoint = frame[0]->getPosition();
-        WrOToPoint   = frame[1]->getPosition();
-        vector<double> data;
-        data.push_back(t); 
-        data.push_back(WrOFromPoint(0));
-        data.push_back(WrOFromPoint(1));
-        data.push_back(WrOFromPoint(2));
-        data.push_back(WrOToPoint(0));
-        data.push_back(WrOToPoint(1));
-        data.push_back(WrOToPoint(2));
-        data.push_back(la(0));
-        coilspringOpenMBV->append(data);
+          WrOFromPoint = frame[0]->getPosition();
+          WrOToPoint   = frame[1]->getPosition();
+          vector<double> data;
+          data.push_back(t); 
+          data.push_back(WrOFromPoint(0));
+          data.push_back(WrOFromPoint(1));
+          data.push_back(WrOFromPoint(2));
+          data.push_back(WrOToPoint(0));
+          data.push_back(WrOToPoint(1));
+          data.push_back(WrOToPoint(2));
+          data.push_back(la(0));
+          coilspringOpenMBV->append(data);
+        }
       }
 #endif
       LinkMechanics::plot(t,dt);
