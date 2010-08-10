@@ -12,6 +12,7 @@
 #include "mbsim/contours/sphere.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/line.h"
+#include "mbsim/contours/line_segment.h"
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/circle_hollow.h"
 #include "mbsim/contours/frustum2d.h"
@@ -326,6 +327,8 @@ namespace MBSim {
       return new Frustum(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Line")
       return new Line(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMNS"LineSegment")
+      return new LineSegment(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"Plane")
       return new Plane(element->Attribute("name"));
     if(element->ValueStr()==MBSIMNS"PlaneWithFrustum")
@@ -389,6 +392,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"ConstantFunction2_SSS")
       return new ConstantFunction2<double,double,double>;
+    if(element->ValueStr()==MBSIMNS"TabularFunction2_SSS")
+      return new TabularFunction2_SSS();
     if(element->ValueStr()==MBSIMNS"LinearSpringDamperForce")
       return new LinearSpringDamperForce;
     if(element->ValueStr()==MBSIMNS"NonlinearSpringDamperForce")

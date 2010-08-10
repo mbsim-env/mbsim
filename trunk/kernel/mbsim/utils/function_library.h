@@ -222,6 +222,38 @@ namespace MBSim {
       int ySize;
   };
 
+
+  class TabularFunction2_SSS: public MBSim::Function2<double,double,double> {
+    public:
+      TabularFunction2_SSS();
+      /* INHERITED INTERFACE OF FUNCTION2 */
+      virtual void initializeUsingXML(TiXmlElement *element);
+      virtual double operator()(const double& x, const double& y, const void * = NULL);
+      /***************************************************/
+      /* GETTER / SETTER */
+      void setXValues(fmatvec::Vec x_);
+      void setYValues(fmatvec::Vec y_);
+      void setXYMat(fmatvec::Mat XY_);
+      /***************************************************/
+
+    private:
+      fmatvec::Vec xVec;
+      fmatvec::Vec yVec;
+      fmatvec::Mat XY;
+
+      int xSize;
+      int ySize;
+      int x0Index,x1Index;
+      int y0Index,y1Index;
+
+      fmatvec::Vec func_value;
+      fmatvec::Vec xy;
+      fmatvec::Vec XYval;
+      fmatvec::Mat XYfac;
+
+      void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
+  };
+
 }
 
 #endif /* _FUNCTION_LIBRARY_H_ */
