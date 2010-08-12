@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2010 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -38,40 +38,36 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) :
-    FlexibleBody2s13(name) {
-      RefDofs = 6;
-    }
+  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) : FlexibleBody2s13(name), N_compl(0), R_compl(0), R_ij(0) {
+    RefDofs = 6;
+    for(int i=0;i<3;i++) 
+      for(int j=0;j<3;j++) {
+        N_ij[i][j]=0;
+        NR_ij[i][j]=0;
+      }
+  }
+
+  FlexibleBody2s13MFRMindlin::~FlexibleBody2s13MFRMindlin() {
+    delete N_compl;
+    delete[] N_ij;
+    delete[] NR_ij;
+    delete R_compl;
+    delete R_ij;
+  }
 
   void FlexibleBody2s13MFRMindlin::updateM(double t) {
-    SymMat Mext(Dofs, INIT, 0.);
+    SymMat Mext = MConst.copy(); // copy constant mass matrix parts
     Vec qf = qext(RefDofs, Dofs - 1).copy();
 
-    /*M_RR is constant*/
+    /* M_RR is constant */
+    /* M_RTheta */
+    Vec u = (*N_compl) * qf + (*R_compl);
+    SqrMat M_RTheta = -A * tilde(u) * G;
 
-    /*M_RTheta*/
-    Vec u(3, INIT, 0.);
-    u = (*N_compl) * qf + (*R_compl);
-
-    SqrMat u_tyl(3, INIT, 0.);
-    u_tyl(0, 0) = 0;
-    u_tyl(0, 1) = -u(2);
-    u_tyl(0, 2) = u(1);
-
-    u_tyl(1, 0) = u(2);
-    u_tyl(1, 1) = 0;
-    u_tyl(1, 2) = -u(0);
-
-    u_tyl(2, 0) = -u(1);
-    u_tyl(2, 1) = u(0);
-    u_tyl(2, 2) = 0;
-
-    SqrMat M_RTheta = -A * u_tyl * G;
-
-    /*M_RF*/
+    /* M_RF */
     Mat M_RF = A * (*N_compl);
 
-    /*M_ThetaTheta*/
+    /* M_ThetaTheta */
     SymMat I(3, INIT, 0.);
 
     //TODO: proof signes
@@ -84,82 +80,34 @@ namespace MBSimFlexibleBody {
 
     Mat M_ThetaTheta = G.T() * (I + J0) * G; //TODO: SymMat was not possible ...
 
-    /*M_ThetaF*/
+    /* M_ThetaF */
     Mat qN(3, Dofs - RefDofs, INIT, 0.);
 
-    //Mark: N_ij[i][j].T() == N_ij[j][i]
+    // Mark: N_ij[i][j].T() == N_ij[j][i]
     qN(0, 0, 0, Dofs - RefDofs - 1) = (*NR_ij[1][2]) - (*NR_ij[2][1]) + qf.T() * ((*N_ij[1][2]) - (*N_ij[2][1]));
     qN(1, 0, 1, Dofs - RefDofs - 1) = (*NR_ij[2][0]) - (*NR_ij[0][2]) + qf.T() * ((*N_ij[2][0]) - (*N_ij[0][2]));
     qN(2, 0, 2, Dofs - RefDofs - 1) = (*NR_ij[0][1]) - (*NR_ij[1][0]) + qf.T() * ((*N_ij[0][1]) - (*N_ij[1][0]));
 
     Mat M_ThetaF = G.T() * qN;
 
-    /*M_FF is constant*/
+    /* M_FF is constant */
 
-    /*sort into Mext*/
-    Mext(0, 3, 2, 5) = M_RTheta;
+    /* sort into Mext */
+    Mext(0, 3, 2, 5) += M_RTheta;
 
-    Mext(0, RefDofs, 2, Dofs - 1) = M_RF;
+    Mext(0, RefDofs, 2, Dofs - 1) += M_RF;
 
     for (int i = 3; i < RefDofs; i++)//Because M_ThetaTheta is symmetric just sort in a triangular
       for (int j = i; j < RefDofs; j++)
-        Mext(i, j) = M_ThetaTheta(i - 3, j - 3);
+        Mext(i, j) += M_ThetaTheta(i - 3, j - 3);
 
-    Mext(3, RefDofs, 5, Dofs - 1) = M_ThetaF;
-
-    Mext += MConst;
-
-    /*TESING
-      for (int i = 0; i< Dofs; i++)
-      for (int j = RefDofs; j<Dofs; j++)
-      {
-      if (i==j)
-      {
-      Mext(i,j) = 1;
-      }
-      else
-      {
-      Mext(i,j) = 0;
-      }
-      }
-
-      for (int i=0; i<K.size(); i++)
-      for(int j = i; j<K.size(); j++)
-      {
-      if(i==j)
-      K(i,j) = 0;
-      else
-      K(i,j) = 0;
-      }
-
-
-      TESTING-END*/
+    Mext(3, RefDofs, 5, Dofs - 1) += M_ThetaF;
 
     M = condenseMatrix(Mext, ILocked).copy();
 
     ofstream file("M.txt");
     file << M << endl;
     file.close();
-
-
-    //stringstream filename;
-    //filename << "LLM" << t << ".txt";
-    //ofstream file(filename.str().c_str());
-    //file << LLM << endl;
-    //file.close();
-
-    //cout << eigval(M) << endl;
-    //inv(M);
-
-    /*TESTING*/
-    //cout << "Time:" << t << endl;
-    //cout << "M: " << M << endl;
-    //cout << "M_old-M: " << M_old-M << endl;
-    //cout << "Mext: " << Mext << endl;
-    //cout << "MConst:"  << MConst << endl;
-    //cout << "MConst-M: " << MConst-M << endl;
-    //M_old = M.copy();
-    /*END-TESTING*/
 
     /*NATURAL HARMONICS*/
     stringstream filename;
@@ -177,13 +125,12 @@ namespace MBSimFlexibleBody {
     //cout << "Reihen " <<  H.rows() << endl;
     //bool symm = true;
     //for(int i = 0; i< H.rows(); i++)
-    // 	for(int j=0; j< H.cols(); j++)
-    // 	{
+    // 	for(int j=0; j< H.cols(); j++) {
     //		Hsqr(i,j) = H(i,j);
     //		if(H(i,j) > H(j,i) or H(i,j) < H(j,i))
     //			symm = false;
     // 	}
-    //if (symm)
+    //if(symm)
     //	cout << "symmetrisch" << endl;
     //else
     //	cout << "nicht symmetrisch" << endl;
@@ -200,11 +147,11 @@ namespace MBSimFlexibleBody {
     /*END NATURAL HARMONICS*/
 
     // LU-decomposition of M
-    //LLM = facLL(M); //TODO: why this?, but it doesn't work anyway ...
+    LLM = facLL(M); 
   }
 
   void FlexibleBody2s13MFRMindlin::BuildElements() {
-    for (int i = 0; i < Elements; i++) {
+    for(int i = 0; i < Elements; i++) {
       //  ^ phi
       //  |
       //  |   4--------3
@@ -217,10 +164,7 @@ namespace MBSimFlexibleBody {
       ElementalNodes[i](0, 1) << NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
       ElementalNodes[i](2, 3) << NodeCoordinates.row(ElementNodeList(i, 2)).T(); // node 3
 
-      if (ElementalNodes[i](3) <= ElementalNodes[i](1)) //phi2 < phi1
-      { // ring closure
-        ElementalNodes[i](3) += 2 * M_PI;
-      }
+      if(ElementalNodes[i](3) <= ElementalNodes[i](1)) ElementalNodes[i](3) += 2 * M_PI; //phi2 < phi1, ring closure
 
       //TODO: needed?
       // mapping node dof position (w, a, b) from global vector to element vector
@@ -242,7 +186,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
-    if (cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
 #ifdef HAVE_NURBS
       contour->updateKinematicsForFrame(cp, ff);
 #endif
@@ -250,7 +194,7 @@ namespace MBSimFlexibleBody {
     else if (cp.getContourParameterType() == NODE) { // frame on node
       const int &node = cp.getNodeNumber();
 
-      if (ff == position || ff == position_cosy || ff == all) {
+      if(ff == position || ff == position_cosy || ff == all) {
         Vec r_ref(3, INIT, 0.);
         r_ref(0) = qext(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2 + NodeCoordinates(node, 0);
         r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2;
@@ -261,14 +205,14 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * r_ref);
       }
 
-      if (ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if(ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if (ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if(ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if (ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
+      if(ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all)
         throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
 
-      if (ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
+      if(ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
 
         Vec u(3, INIT, 0.);
         u(0) = computeThickness(NodeCoordinates(node, 0)) / 2 * uext(RefDofs + node * NodeDofs + 1);
@@ -282,27 +226,14 @@ namespace MBSimFlexibleBody {
 
         r_ref = TransformationMatrix(NodeCoordinates(node, 1)) * r_ref;
 
-        SqrMat r_tyl(3, INIT, 0.); //TODO: proof especially signes
-        r_tyl(0, 0) = 0;
-        r_tyl(0, 1) = -r_ref(2);
-        r_tyl(0, 2) = r_ref(1);
-
-        r_tyl(1, 0) = r_ref(2);
-        r_tyl(1, 1) = 0;
-        r_tyl(1, 2) = -r_ref(0);
-
-        r_tyl(2, 0) = -r_ref(1);
-        r_tyl(2, 1) = r_ref(0);
-        r_tyl(2, 2) = 0;
-
         Vec u_ref(3, INIT, 0.);
-        u_ref = A * (-r_tyl * G * uext(3, 5) + TransformationMatrix(NodeCoordinates(node, 1)) * u);
+        u_ref = A * (-tilde(r_ref) * G * uext(3, 5) + TransformationMatrix(NodeCoordinates(node, 1)) * u);
         u_ref += uext(0, 2);
 
         cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation() * u_ref);
       }
 
-      if (ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
+      if(ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
 
         Vec w_loc(3, INIT, 0.);
         w_loc(0) = uext(RefDofs + node * NodeDofs + 1);
@@ -317,7 +248,7 @@ namespace MBSimFlexibleBody {
     else
       throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
-    if (frame != 0) { // frame should be linked to contour point data
+    if(frame != 0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
       frame->setOrientation(cp.getFrameOfReference().getOrientation());
       frame->setVelocity(cp.getFrameOfReference().getVelocity());
@@ -327,10 +258,10 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
 
-    if (cp.getContourParameterType() == CONTINUUM) { // force on continuum
+    if(cp.getContourParameterType() == CONTINUUM) { // force on continuum
       Vec alpha = cp.getLagrangeParameterPosition();
 
-      if (nrm2(alpha) < epsroot()) { // center of gravity
+      if(nrm2(alpha) < epsroot()) { // center of gravity
 
         Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
@@ -448,7 +379,7 @@ namespace MBSimFlexibleBody {
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
 
-    if (frame != 0) { // frame should be linked to contour point data
+    if(frame != 0) { // frame should be linked to contour point data
       frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
       frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
       frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
@@ -457,7 +388,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::init(InitStage stage) {
-    if (stage == resize) {
+    if(stage == resize) {
       FlexibleBodyContinuum<Vec>::init(stage);
       assert(nr>0); // at least on radial row
       assert(nj>1); // at least two azimuthal elements
@@ -507,13 +438,13 @@ namespace MBSimFlexibleBody {
         }
       }
 
-      for (int i = 0; i < Elements; i++) {
+      for(int i = 0; i < Elements; i++) {
         ElementalNodes.push_back(Vec(4, INIT, 0.));
       }
 
       BuildElements();
 
-      for (int i = 0; i < Elements; i++) {
+      for(int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement2s13MFRMindlin(E, nu, rho, d(0), d(1), d(2), ElementalNodes[i]));
         qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.)); //TODO: discretization[i]?
         uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
@@ -543,10 +474,10 @@ namespace MBSimFlexibleBody {
       initMatrices(); // calculate constant stiffness matrix and the constant parts of the mass-matrix
 
     }
-    if (stage == MBSim::plot) {
+    if(stage == MBSim::plot) {
       updatePlotFeatures(parent);
 
-      if (getPlotFeature(plotRecursive) == enabled) {
+      if(getPlotFeature(plotRecursive) == enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #ifdef HAVE_NURBS
         if (getPlotFeature(openMBV) == enabled) {
@@ -601,10 +532,37 @@ namespace MBSimFlexibleBody {
     BuildElements();
     updateAG();
 
-    MConst = SymMat(Dofs,INIT,0.);
     computeStiffnessMatrix();
     computeConstantMassMatrixParts();
     updateM(0); //TODO: okay, that t=0?
+  }
+
+  void FlexibleBody2s13MFRMindlin::updateAG() {
+    double sinalpha = sin(q(3)), cosalpha = cos(q(3)), sinbeta = sin(q(4)), cosbeta = cos(q(4)), singamma = sin(q(5)), cosgamma = cos(q(5));
+
+    A(0, 0) = cosbeta * cosgamma;
+    A(0, 1) = -cosbeta * singamma;
+    A(0, 2) = sinbeta;
+
+    A(1, 0) = cosalpha * singamma + sinalpha * sinbeta * cosgamma;
+    A(1, 1) = cosalpha * cosgamma - sinalpha * sinbeta * singamma;
+    A(1, 2) = -sinalpha * cosbeta;
+
+    A(2, 0) = sinalpha * singamma - cosalpha * sinbeta * cosgamma;
+    A(2, 1) = sinalpha * cosgamma + cosalpha * sinbeta * singamma;
+    A(2, 2) = cosalpha * cosbeta;
+
+    G(0, 0) = cosbeta * cosgamma;
+    G(0, 1) = singamma;
+    G(0, 2) = 0;
+
+    G(1, 0) = -cosbeta * singamma;
+    G(1, 1) = cosgamma;
+    G(1, 2) = 0;
+
+    G(2, 0) = sinbeta;
+    G(2, 1) = 0;
+    G(2, 2) = 1;
   }
 
   void FlexibleBody2s13MFRMindlin::computeStiffnessMatrix() {
@@ -612,27 +570,25 @@ namespace MBSimFlexibleBody {
     int ElementNodes = 4;
 
     // element loop
-    for (int element = 0; element < Elements; element++) {
+    for(int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeStiffnesMatrix();
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getK();
 
-      for (int node = 0; node < ElementNodes; node++) {
-        for (int conode = node; conode < ElementNodes; conode++) {
+      for(int node = 0; node < ElementNodes; node++) {
+        for(int conode = node; conode < ElementNodes; conode++) {
           int GlobalNode = ElementNodeList(element, node) * NodeDofs;
           int localNode = node * NodeDofs;
           int GlobalCouplingNode = ElementNodeList(element, conode) * NodeDofs;
           int localCouplingNode = conode * NodeDofs;
 
-          for (int i = 0; i < NodeDofs; i++) {
-            if (node == conode)//a part on the diagonal is added, so just write the upper triangle-part
-            {
-              for (int j = i; j < NodeDofs; j++) {
+          for(int i = 0; i < NodeDofs; i++) {
+            if(node == conode) { //a part on the diagonal is added, so just write the upper triangle-part
+              for(int j = i; j < NodeDofs; j++) {
                 Kext(GlobalNode + i, GlobalCouplingNode + j) += ElK(localNode + i, localCouplingNode + j);
               }//j
             }
-            else //non-diagonal parts -> all entries have to be added
-            {
-              for (int j = 0; j < NodeDofs; j++) {
+            else { //non-diagonal parts -> all entries have to be added
+              for(int j = 0; j < NodeDofs; j++) {
                 Kext(GlobalNode + i, GlobalCouplingNode + j) += ElK(localNode + i, localCouplingNode + j);
               }//j
             }
@@ -647,19 +603,17 @@ namespace MBSimFlexibleBody {
           //cout << "Knoten:        " << node   << "  globale Nummer:" << GlobalNode << endl;
           //cout << "Koplungsknoten:" << conode << "  globale Nummer"  << GlobalCouplingNode << endl;
           //cout << "   ";
-          //for(int j=0; j<Kext.size(); j++)
-          //{
+          //for(int j=0; j<Kext.size(); j++) {
           //  if(j<10) cout << "       " << j << "        ";
           //  else     cout << "       " << j << "       ";
           //}
 
-          //for(int k=0; k<Kext.size(); k++)
-          //{
+          //for(int k=0; k<Kext.size(); k++) {
           //  //Zeilennummer
           //  if (k<10) cout << endl <<  k << "  ";
           //  else      cout << endl <<  k << " ";
 
-          //  for(int j=0; j<Kext.size(); j++){
+          //  for(int j=0; j<Kext.size(); j++) {
           //    if     (Kext(k,j)-K_old(k,j)>0)         cout << "  " << Kext(k,j)-K_old(k,j);
           //    else if(!(int)fabs(Kext(k,j)-K_old(k,j)))   cout << "        0       ";
           //    else if(Kext(k,j)-K_old(k,j)<0)         cout << " "  <<Kext(k,j)-K_old(k,j);
@@ -677,8 +631,8 @@ namespace MBSimFlexibleBody {
 
     SymMat Kgebl(Dofs, INIT, 0.);//TODO: muss das sein, kann man das nicht bei updatedhdz anpassen?
 
-    for (int i = 0; i < Dofs - RefDofs; i++)
-      for (int j = i; j < Dofs - RefDofs; j++)
+    for(int i = 0; i < Dofs - RefDofs; i++)
+      for(int j = i; j < Dofs - RefDofs; j++)
         Kgebl(RefDofs + i, RefDofs + j) = Kext(i, j); //TODO: proof, watch out: symmetric matrices!
 
     K = condenseMatrix(Kgebl, ILocked);
@@ -730,8 +684,7 @@ namespace MBSimFlexibleBody {
     double maxerr = err(pos);
 
     for(int i=0; i<11; i++)
-    if(abs(err(i))>abs(maxerr))
-    {
+    if(abs(err(i))>abs(maxerr)) {
     maxerr = err(i);
     pos = i;
     }
@@ -764,72 +717,64 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::computeConstantMassMatrixParts() {
+    MConst = SymMat(Dofs,INIT,0.);
     double ElementNodes = 4;
 
     /*M_RR*/
-    //cout << "computeConstantMassMatrixParts() --- M_RR " << endl;
     SymMat* M_RR = new SymMat(3, INIT, 0.);
-    for (int element = 0; element < Elements; element++) {
+    for(int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeM_RR();
       *M_RR += static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getM_RR(); //M_RR can be assembled directly
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeM_RR();
     }
 
-    for (int i = 0; i < 3; i++)
-      MConst(i, i) = m0 + (*M_RR)(i, i); //just diagonal entries!
-    free(M_RR);
-    /*M_RR end*/
+    for(int i = 0; i < 3; i++) MConst(i, i) = m0 + (*M_RR)(i, i); 
+    delete M_RR;
 
     /*N_compl*/
-    //cout << "computeConstantMassMatrixParts() --- N_compl " << endl;
     N_compl = new Mat(3, Dofs - RefDofs, INIT, 0.);
     // element loop
     Mat* ElN_compl = new Mat(3, NodeDofs * 4, INIT, 0.);
-    for (int element = 0; element < Elements; element++) {
+    for(int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeN_compl();
       Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getN_compl();
       //Assembly of N_compl (just the cols have to be assembled (there is no coupling node), but for every dimension)
-      for (int node = 0; node < ElementNodes; node++)//for every node
-      {
+      for(int node = 0; node < ElementNodes; node++) { //for every node
         int GlobalNode = ElementNodeList(element, node) * NodeDofs;
         int localNode = node * NodeDofs;
 
-        for (int dim = 0; dim < 3; dim++) {
-          for (int l = 0; l < NodeDofs; l++) {
+        for(int dim = 0; dim < 3; dim++) {
+          for(int l = 0; l < NodeDofs; l++) {
             (*N_compl)(dim, GlobalNode + l) += ElN_compl(dim, localNode + l);
           }//l
         }//dim
       }//node
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeN_compl();
     }//el
-    free(ElN_compl);
-    /*N_compl end*/
+    delete ElN_compl;
 
     /*N_ij*/
-    //cout << "computeConstantMassMatrixParts() --- N_ij " << endl;
     SqrMat* ElN_ij = new SqrMat(NodeDofs * 4, INIT, 0.);
     for (int i = 0; i < 3; i++) {
       //cout << "i " << i << endl;
-      for (int j = 0; j < 3; j++) {
+      for(int j = 0; j < 3; j++) {
         //cout << "j " << j << endl;
         N_ij[i][j] = new SqrMat(Dofs - RefDofs, INIT, 0.);
-        for (int element = 0; element < Elements; element++) {
+        for(int element = 0; element < Elements; element++) {
           static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeN_ij(i, j);
           *ElN_ij = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getN_ij(i, j);
 
-          for (int node = 0; node < ElementNodes; node++)//for every node...
-          {
+          for(int node = 0; node < ElementNodes; node++) { //for every node...
             int GlobalNode = ElementNodeList(element, node) * NodeDofs;
             int localNode = node * NodeDofs;
 
-            for (int conode = node; conode < ElementNodes; conode++)//...and its coupling node
-            {
+            for(int conode = node; conode < ElementNodes; conode++) { //...and its coupling node
               int GlobalCouplingNode = ElementNodeList(element, conode) * NodeDofs;
               int localCouplingNode = conode * NodeDofs;
 
               //Assembly of N_ij (both (rows and cols) have to be assembled)
-              for (int k = 0; k < NodeDofs; k++) {
-                for (int l = 0; l < NodeDofs; l++) {
+              for(int k = 0; k < NodeDofs; k++) {
+                for(int l = 0; l < NodeDofs; l++) {
                   (*(N_ij[i][j]))(GlobalNode + k, GlobalCouplingNode + l) += (*ElN_ij)(localNode + k, localCouplingNode + l);
                 }//l
               }//k
@@ -842,25 +787,23 @@ namespace MBSimFlexibleBody {
 
 
     //M_FF (coupling of the elastic DOFs)
-    for (int i = 0; i < 3; i++)
-      for (int k = RefDofs; k < Dofs; k++)
-        for (int l = k; l < Dofs; l++)
+    for(int i = 0; i < 3; i++)
+      for(int k = RefDofs; k < Dofs; k++)
+        for(int l = k; l < Dofs; l++)
           MConst(k, l) += (*(N_ij[i][i]))(k - RefDofs, l - RefDofs);
     /*N_ij end*/
 
     /*NR_ij*/
-    //cout << "computeConstantMassMatrixParts() --- NR_ij " << endl;
     RowVec* ElNR_ij = new RowVec(NodeDofs * 4, INIT, 0.);
-    for (int i = 0; i < 3; i++) {
+    for(int i = 0; i < 3; i++) {
       //cout << "i " << i << endl;
-      for (int j = 0; j < 3; j++) {
+      for(int j = 0; j < 3; j++) {
         //cout << "j " << j << endl;
         NR_ij[i][j] = new RowVec(Dofs - RefDofs, INIT, 0.);
-        for (int element = 0; element < Elements; element++) {
+        for(int element = 0; element < Elements; element++) {
           static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeNR_ij(i, j);
           *ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getNR_ij(i, j);
-          for (int node = 0; node < ElementNodes; node++)//for every node...
-          {
+          for(int node = 0; node < ElementNodes; node++) { //for every node...
             int GlobalNode = ElementNodeList(element, node) * NodeDofs;
             int localNode = node * NodeDofs;
 
@@ -873,28 +816,23 @@ namespace MBSimFlexibleBody {
         }//element
       }//j
     }//i
-    free(ElNR_ij);
-    /*NR_ij end*/
+    delete ElNR_ij;
 
     /*R_compl*/
-    //cout << "computeConstantMassMatrixParts() --- R_compl " << endl;
     R_compl = new Vec(3, INIT, 0.);
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeR_compl();
       *R_compl += static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getR_compl();
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeR_compl();
     }//element
-    /*R_compl end*/
 
     /*R_ij*/
-    //cout << "computeConstantMassMatrixParts() --- R_compl " << endl;
     R_ij = new SymMat(3, INIT, 0.);
     for (int element = 0; element < Elements; element++) {
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeR_ij();
       *R_ij += static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getR_ij();
       static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeR_ij();
     }//element
-    /*R_ij end*/
 
     //  // element loop
     //  for (int element = 0; element < Elements; element++) {
@@ -959,36 +897,6 @@ namespace MBSimFlexibleBody {
     //    }//i
     //  }//el
 
-    //cout << "computeConstantMassMatrixParts() --- Assembly beendet " << endl;
-
-  }
-
-  void FlexibleBody2s13MFRMindlin::updateAG() {
-    double sinalpha = sin(q(3)), cosalpha = cos(q(3)), sinbeta = sin(q(4)), cosbeta = cos(q(4)), singamma = sin(q(5)), cosgamma = cos(q(5));
-
-    A(0, 0) = cosbeta * cosgamma;
-    A(0, 1) = -cosbeta * singamma;
-    A(0, 2) = sinbeta;
-
-    A(1, 0) = cosalpha * singamma + sinalpha * sinbeta * cosgamma;
-    A(1, 1) = cosalpha * cosgamma - sinalpha * sinbeta * singamma;
-    A(1, 2) = -sinalpha * cosbeta;
-
-    A(2, 0) = sinalpha * singamma - cosalpha * sinbeta * cosgamma;
-    A(2, 1) = sinalpha * cosgamma + cosalpha * sinbeta * singamma;
-    A(2, 2) = cosalpha * cosbeta;
-
-    G(0, 0) = cosbeta * cosgamma;
-    G(0, 1) = singamma;
-    G(0, 2) = 0;
-
-    G(1, 0) = -cosbeta * singamma;
-    G(1, 1) = cosgamma;
-    G(1, 2) = 0;
-
-    G(2, 0) = sinbeta;
-    G(2, 1) = 0;
-    G(2, 2) = 1;
   }
 
 }
