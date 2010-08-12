@@ -43,7 +43,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody2s13MFRMindlin() {}
+      virtual ~FlexibleBody2s13MFRMindlin();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
       using MBSim::FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
@@ -81,27 +81,27 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /**
-       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::Mat* N_compl;
 
       /**
-       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SqrMat* N_ij[3][3];
 
       /**
-       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::RowVec* NR_ij[3][3];
 
       /**
-       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::Vec* R_compl;
 
       /**
-       * \brief matrix for the compution of the mass-matrix (assembled part of the element matrix)
+       * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SymMat* R_ij;
 

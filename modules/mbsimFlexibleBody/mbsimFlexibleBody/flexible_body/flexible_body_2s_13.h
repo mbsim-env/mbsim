@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixRows(fmatvec::Mat A, fmatvec::Index I); //TODO
+  fmatvec::Mat condenseMatrixRows(fmatvec::Mat A, fmatvec::Index I);
 
   /*!
    * \brief condenses cols of matrix concerning index
@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixCols(fmatvec::Mat A, fmatvec::Index I); //TODO
+  fmatvec::Mat condenseMatrixCols(fmatvec::Mat A, fmatvec::Index I);
 
   /*!
    * \brief condenses symmetric matrix concerning index
@@ -53,7 +53,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::Index I); //TODO
+  fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::Index I);
 
   /*!
    * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates
@@ -61,7 +61,7 @@ namespace MBSimFlexibleBody {
    * \param Cartesian y-coordinate
    * \return angle
    */
-  double ArcTan(double x,double y); //TODO: ArcTan da rausziehen??
+  double ArcTan(double x,double y);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
@@ -74,6 +74,7 @@ namespace MBSimFlexibleBody {
    * \author Kilian Grundl
    * \author Thorsten Schindler
    * \date 2010-04-23 initial commit (Schindler / Grundl)
+   * \date 2010-08-12 revision (Schindler)
    */
   class FlexibleBody2s13 : public MBSim::FlexibleBodyContinuum<fmatvec::Vec> {
     public:

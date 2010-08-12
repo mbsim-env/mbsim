@@ -82,23 +82,17 @@ namespace MBSimFlexibleBody {
     double phi;
     phi = atan2(y, x);
 
-    if(phi < 0.)
-      phi += 2 * M_PI;
-    //if(phi >= 2 * M_PI) TODO
-    //  phi -= 2 * M_PI;
+    if(phi < 0.) phi += 2 * M_PI;
     return phi;
   }
 
-  void MapleOutput(SymMat A, std::string MatName, std::string file)
-  {
+  void MapleOutput(SymMat A, std::string MatName, std::string file) {
     ofstream dat(file.c_str() , ios::app);
     dat << MatName;
     dat << " := Matrix([";
-    for(int i = 0; i<A.rows(); i++)
-    {
+    for(int i = 0; i<A.rows(); i++) {
       dat <<"[";
-      for(int j = 0;j<A.cols(); j++)
-      {
+      for(int j = 0;j<A.cols(); j++) {
         dat << A(i,j);
         if(j<A.cols()-1)
           dat << ", ";
