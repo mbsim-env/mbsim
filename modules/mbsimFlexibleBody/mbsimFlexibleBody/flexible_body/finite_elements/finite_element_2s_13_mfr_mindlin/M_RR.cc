@@ -30,6 +30,7 @@ namespace MBSimFlexibleBody {
   void FiniteElement2s13MFRMindlin::computeM_RR() {
 
     M_RR    = new SymMat(3,INIT,0.);
+
     const double &r1 = NodeCoordinates(0);
     const double &phi1 = NodeCoordinates(1);
     const double &r2 = NodeCoordinates(2);
