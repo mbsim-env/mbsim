@@ -130,8 +130,8 @@ namespace MBSimFlexibleBody {
     ofstream file2("JacRot.txt");
     file2 << cp.getFrameOfReference().getJacobianOfRotation();
     file2.close();
-  }
 #endif
+  }
 
 #ifdef HAVE_NURBS
   void NurbsDisk2s::initContourFromBody(InitStage stage){
