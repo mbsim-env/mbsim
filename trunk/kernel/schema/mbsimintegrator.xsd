@@ -291,7 +291,7 @@
     <xs:complexContent>
       <xs:extension base="IntegratorType">
         <xs:sequence>
-          <xs:element name="initalStepsize" type="pv:timeScalar" minOccurs="0"> 
+          <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0"> 
             <xs:annotation><xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
                 Anfangsschrittweite (default: 1e-6)
             </xs:documentation></xs:annotation>
