@@ -160,6 +160,52 @@ namespace MBSimControl {
   }
 
 
+  void SignalDemux::initializeUsingXML(TiXmlElement *element) {
+    Signal::initializeUsingXML(element);
+    TiXmlElement *e=element->FirstChildElement(MBSIMCONTROLNS"inputSignal");
+    while (e && e->ValueStr()==MBSIMCONTROLNS"inputSignal") {
+      string s=e->Attribute("ref");
+      signalString.push_back(s);
+      indizesTmp.push_back(getVec(e->FirstChildElement(MBSIMCONTROLNS"index")));
+      e=e->NextSiblingElement();
+    }
+  }
+
+  void SignalDemux::init(InitStage stage) {
+    if (stage==resolveXMLPath) {
+      for (unsigned int i=0; i<signalString.size(); i++) {
+        Vec tmp=indizesTmp[i];
+        fmatvec::Vector<int> tmpI(tmp.size(), INIT, 0);
+        for (int j=0; j<tmp.size(); j++)
+          tmpI(j)=int(tmp(j));
+        addSignal(getByPath<Signal>(process_signal_string(signalString[i])), tmpI);
+      }
+      signalString.clear();
+      Signal::init(stage);
+    }
+    else if (stage==MBSim::plot) {
+      for (unsigned int i=0; i<indizes.size(); i++)
+        totalSignalSize+=indizes[i].size();
+      Signal::init(stage);
+    }
+    else
+      Signal::init(stage);
+  }
+
+  Vec SignalDemux::getSignal() {
+    Vec y(totalSignalSize, INIT, 0);
+    int j=0;
+    for (unsigned int i=0; i<signals.size(); i++) {
+      Vec yy=signals[i]->getSignal().copy();
+      for (int k=0; k<indizes[i].size(); k++) {
+        y(j)=yy(indizes[i](k));
+        j++;
+      }
+    }
+    return y;
+  }
+
+
   void SignalLimitation::initializeUsingXML(TiXmlElement *element) {
     Signal::initializeUsingXML(element);
     TiXmlElement *e;
