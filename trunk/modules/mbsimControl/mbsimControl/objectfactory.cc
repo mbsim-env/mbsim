@@ -76,6 +76,8 @@ namespace MBSimControl {
       return new SignalMultiplication(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalMux")
       return new SignalMux(element->Attribute("name"));
+    if(element->ValueStr()==MBSIMCONTROLNS"SignalDemux")
+      return new SignalDemux(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalLimitation")
       return new SignalLimitation(element->Attribute("name"));
     if(element->ValueStr()==MBSIMCONTROLNS"SignalTimeDiscretization")

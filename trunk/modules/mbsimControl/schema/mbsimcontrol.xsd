@@ -642,6 +642,42 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SignalDemux" substitutionGroup="Signal" type="SignalDemuxType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Auswahl eines Index eines vektorwertigen Signals
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalDemuxType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de">
+                Pfad des Eingangssignals
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="index" type="pv:nounitVector">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de">
+                      Vektor der ausgewählten Indizes.
+                      Der erste Eintrag eines Signals ist dem Index 0 zugeordnet.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="SignalLimitation" substitutionGroup="Signal" type="SignalLimitationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
