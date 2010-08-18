@@ -34,20 +34,22 @@ namespace MBSim {
    *                      
    *  a) setMaxOrder(int order, int method=0)
    *                    order:   maximum order of integration scheme 
-   *                              1 to 3 with SSC by extrapolation (method=0)
+   *                              1 to 3 with SSC by extrapolation (method=0) (order=4 without SSC)
    *                              1 to 4 with embedded SSC (1=1(2), ... 4=4(5)) (method=1 or 2)
    *                    method:  method used for error estimation and step size control
    *                              0: step size control by extrapolation (steps wit dt and dt/2 are compared)  DEFAULT
    *                              1: embedded method (compare maxOrder maxOrder+1); proceed with maxOrder (recommended)
    *                              2: embedded method with local extrapolation (integration is continued with maxOrder+1)
    *
-   * b) setFlagErrorTest(int Flag)
+   * b) setFlagErrorTest(int Flag, bool alwaysValid= true)
    *                    Flag:    for scaling variables for the purpose of error estimation  
    *                              0: include velocities u for error test
    *                              2: scale velocities u with stepsize for error test
    *                              3: exclude velocities u for error test
+   *            alwaysValid:  true : u is scaled resp. exluded during smooth and nonsmooth steps
+   *            alwaysValid: false : u is scaled resp. exluded only during nonsmooth steps
    *
-   * c) deactivateSSC(bool flag=false)
+   * c) deactivateSSC(bool flag=false) : maximum order: 1 to 4
    *
    * d) setGapControl(bool FlagGapControl=true, int GapControlStrategy=0)                  
    *        FlagGapControl       activate / deactivate gap control
@@ -70,6 +72,7 @@ namespace MBSim {
 
       double dt, dtOld, dte;
       double dtMin, dtMax;
+      double dt_SSC_vorGapControl;
       bool driftCompensation;
       double t, tPlot;
       int qSize, xSize, uSize, zSize;
@@ -89,6 +92,8 @@ namespace MBSim {
 
       /** include (0) or exclude (3) variable u or scale (2) with stepsize for error test*/
       int FlagErrorTest;
+      /** FlagErrorTest is always valid or only during nonsmooth steps */
+      bool FlagErrorTestAlwaysValid;
       /** Absolute Toleranz */
       fmatvec::Vec aTol;
       /** Relative Toleranz */
@@ -142,9 +147,10 @@ namespace MBSim {
       StopWatch Timer;
       int iter, iterA, iterB1, iterB2, iterC1, iterC2, iterC3, iterC4, iterB2RE, maxIterUsed, maxIter, sumIter;
       int integrationSteps, integrationStepswithChange, refusedSteps, refusedStepsWithImpact;
-      int wrongAlertGapControl, stepsOkAfterGapControl, stepsRefusedAfterGapControl;
+      int wrongAlertGapControl, stepsOkAfterGapControl, stepsRefusedAfterGapControl, statusGapControl;
       int singleStepsT1, singleStepsT2, singleStepsT3;
-      double dtRelGapControl;
+      double dtRelGapControl, qUncertaintyByExtrapolation;
+      int indexLSException;
       fmatvec::Vec gUniActive;
       double Penetration, PenetrationCounter, PenetrationLog, PenetrationMin, PenetrationMax;
       double maxdtUsed, mindtUsed;
@@ -173,8 +179,8 @@ namespace MBSim {
       /*! Set maximal gain for increasing dt by stepsize control */
       void setmaxGainSSC(double maxGain) {maxGainSSC = maxGain;}
       /*! safety factor for stepsize estimation: dt = dt_estimate * safetyFactorSSC (]0;1]; default 0.6)*/
-      void setsafetyFactorSSC(double sfactor) {safetyFactorSSC=sfactor;}
-      void setsafetyFactorGapControl(double s){safetyFactorGapControl=s;}
+      void setSafetyFactorSSC(double sfactor) {safetyFactorSSC=sfactor;}
+      void setSafetyFactorGapControl(double s){safetyFactorGapControl=s;}
       /*! Set Flag for output interpolation */
       void setOutputInterpolation(bool flag=true) {outputInterpolation = flag;}
       /*! set Flag for  writing integrator info at each step to a file (default true)*/
@@ -193,12 +199,16 @@ namespace MBSim {
       void setDriftCompensation(bool dc) {driftCompensation = dc;}
       /*! set maximum order (1,2,3 (method=0) or 1 to 4 (method=1,2) and
        *      method 0: SSC by extrapolation (recommended!!);  
-       *      1,2: embedded SSC; proceed with maxOrder [1] (recommended if you don't want to use 0) or with maxOrder+1 [2]*/  
+       *      1,2: embedded SSC; proceed with maxOrder [1] (recommended if you don't want to use 0) or with maxOrder+1 [2]
+       *      without SSC maximum order from 1 to 4 is possible*/  
       void setMaxOrder(int order_, int method_=0);
       /* deactivate step size control */
       void deactivateSSC(bool flag=false) {FlagSSC=flag;}
-      /*! Set Flag vor ErrorTest (default 0: all variables are tested;  2: u is scaled with dt;  3: exclude u*/
-      void setFlagErrorTest(int Flag);
+      /*! Set Flag vor ErrorTest (default 0: all variables ae tested;  2: u is scaled with dt;  3: exclude u
+       *      alwaysValid = true  : u is scaled resp. exluded during the smooth and nonsmooth part
+       *      alwaysValid = false : u is scaled resp. exluded only during nonsmooth steps
+       */
+      void setFlagErrorTest(int Flag, bool alwaysValid=true);
 
       /*! Start the integration */
       void integrate(DynamicSystemSolver& system_);
@@ -221,9 +231,10 @@ namespace MBSim {
       /** internal subroutines */
       void getAllSetValuedla(fmatvec::Vec& la_,fmatvec::Vector<int>& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
       void setAllSetValuedla(const fmatvec::Vec& la_,const fmatvec::Vector<int>& la_Sizes,std::vector<MBSim::Link*> &SetValuedLinkList);
-      void getDataForGapControl(std::vector<MBSim::Link*> &SetValuedLinkList);
+      void getDataForGapControl();
       bool testTolerances();
-      bool GapControl(); 
+      bool GapControl(double qUnsafe, bool SSCTestOK); 
+      bool changedLinkStatus(const fmatvec::Vector<int> &L1, const fmatvec::Vector<int> &L2, int ex);
       double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 
