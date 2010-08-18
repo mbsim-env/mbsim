@@ -12,6 +12,7 @@
 #include <openmbvcppinterface/spineextrusion.h>
 #include "openmbvcppinterface/sphere.h"
 #include <openmbvcppinterface/polygonpoint.h>
+#include <openmbvcppinterface/arrow.h>
 #endif
 
 using namespace MBSimFlexibleBody;
@@ -33,11 +34,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double A = b0*b0; // cross-section area
   double I1 = 1./12.*b0*b0*b0*b0; // moment inertia
   double I2 = 1./12.*b0*b0*b0*b0; // moment inertia
-  double I0 = I1 + I2;
+  double I0 = 0.05*(I1 + I2);
   double rho = 9.2e2; // density 
   int elements = 2; // number of finite elements
 
-  double mass = 2.; // mass of ball
+  double mass = 50.; // mass of ball
   double r = 1.e-2; // radius of ball
 
   FlexibleBody1s33RCM *rod = new FlexibleBody1s33RCM("Rod", true);
@@ -53,7 +54,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec q0 = Vec(10*elements+6,INIT,0.);
   for(int i=1;i<=elements;i++) q0(10*i) = l0*i/elements;
   rod->setq0(q0);
-  Vec u0 = Vec(10*elements+6,INIT,0.);
   this->addObject(rod);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -77,7 +77,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   RigidBody *ball = new RigidBody("Ball");
   Vec WrOS0B(3,INIT,0.);
-  WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+0.05; WrOS0B(2) = b0*0.3;
+  WrOS0B(0) = l0*0.75; WrOS0B(1) = b0*0.5+r; WrOS0B(2) = b0*0.3;
   this->addFrame("B",WrOS0B,SqrMat(3,EYE),this->getFrame("I"));
   ball->setFrameOfReference(this->getFrame("B"));
   ball->setFrameForKinematics(ball->getFrame("C"));
@@ -104,6 +104,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   contact->setContactForceLaw(new UnilateralConstraint);
   contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
+  OpenMBV::Arrow *a_n = new OpenMBV::Arrow;
+  //a_n->setHeadDiameter(tP*0.05);
+  //a_n->setHeadLength(tP*0.07);
+  //a_n->setDiameter(tP*0.02);
+  //a_n->setScaleLength(tP*0.1);
+  //a_n->setEnable(false);
+  contact->setOpenMBVNormalForceArrow(a_n);
+  OpenMBV::Arrow *a_t = new OpenMBV::Arrow;
+  //a_t->setHeadDiameter(tP*0.05);
+  //a_t->setHeadLength(tP*0.07);
+  //a_t->setDiameter(tP*0.02);
+  //a_t->setScaleLength(tP*0.1);
+  //a_t->setEnable(false);
+  contact->setOpenMBVFrictionArrow(a_t);
+  contact->enableOpenMBVContactPoints();
+
   this->addLink(contact);
 
   ContourPointData cpdata;
