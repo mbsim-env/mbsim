@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
        * \param density
        * \param thickness parametrisation
        */
-      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_, const fmatvec::Vec &NodeCoordinates);
+      FiniteElement2s13MFRMindlin(double E_,double nu_,double rho_,double d0_,double d1_,double d2_,const fmatvec::Vec &NodeCoordinates);
 
       /**
        * \brief destructor
@@ -98,7 +98,6 @@ namespace MBSimFlexibleBody {
       void freeR_compl();
       void freeR_ij();
       /***************************************************/
-
 
       /*!
        * \brief computes stiffnes matrix
@@ -155,7 +154,6 @@ namespace MBSimFlexibleBody {
       void computeNR_32();
       void computeNR_33();
 
-
       /*!
        * \brief computes a part of the mass matrix
        * \param radial and azimuthal coordinates of corner nodes
@@ -167,8 +165,6 @@ namespace MBSimFlexibleBody {
        * \param radial and azimuthal coordinates of corner nodes
        */
       void computeR_ij();
-
-
 
       //TODO:
       /*!
@@ -274,7 +270,6 @@ namespace MBSimFlexibleBody {
        * \brief part of the mass matrix
        */
       fmatvec::SymMat *R_ij;
-
   };
 
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }

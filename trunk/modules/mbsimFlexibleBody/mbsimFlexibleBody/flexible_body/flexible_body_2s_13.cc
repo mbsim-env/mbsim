@@ -40,41 +40,41 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Mat condenseMatrixRows(Mat A, Index I) {
-    Mat B(A.rows() - (I.end() - I.start() + 1), A.cols());
+  Mat condenseMatrixRows(Mat C, Index I) {
+    Mat B(C.rows() - (I.end() - I.start() + 1), C.cols());
     Index upperPart(0, I.start() - 1);
-    Index lowerPartA(I.end() + 1, A.rows() - 1);
+    Index lowerPartC(I.end() + 1, C.rows() - 1);
     Index lowerPartB(I.start(), B.rows() - 1);
-    Index AllCols(0, A.cols() - 1);
+    Index AllCols(0, C.cols() - 1);
 
-    B(upperPart, AllCols) = A(upperPart, AllCols); // upper
-    B(lowerPartB, AllCols) = A(lowerPartA, AllCols); // lower
+    B(upperPart, AllCols) = C(upperPart, AllCols); // upper
+    B(lowerPartB, AllCols) = C(lowerPartC, AllCols); // lower
     return B;
   }
 
-  Mat condenseMatrixCols(Mat A, Index I) {
-    Mat B(A.rows(), A.cols() - (I.end() - I.start() + 1));
+  Mat condenseMatrixCols(Mat C, Index I) {
+    Mat B(C.rows(), C.cols() - (I.end() - I.start() + 1));
     Index leftPart(0, I.start() - 1);
-    Index rightPartA(I.end() + 1, A.cols() - 1);
+    Index rightPartC(I.end() + 1, C.cols() - 1);
     Index rightPartB(I.start(), B.cols() - 1);
-    Index AllRows(0, A.rows() - 1);
+    Index AllRows(0, C.rows() - 1);
 
-    B(AllRows, leftPart) = A(AllRows, leftPart); // left
-    B(AllRows, rightPartB) = A(AllRows, rightPartA); // right
+    B(AllRows, leftPart) = C(AllRows, leftPart); // left
+    B(AllRows, rightPartB) = C(AllRows, rightPartC); // right
     return B;
   }
 
-  SymMat condenseMatrix(SymMat A, Index I) {
+  SymMat condenseMatrix(SymMat C, Index I) {
     // build size of result matrix
-    SymMat B(A.size() - (I.end() - I.start() + 1));
+    SymMat B(C.size() - (I.end() - I.start() + 1));
     Index upperPart(0, I.start() - 1);
-    Index lowerPartA(I.end() + 1, A.size() - 1);
+    Index lowerPartC(I.end() + 1, C.size() - 1);
     Index lowerPartB(I.start(), B.size() - 1);
 
     // assemble result matrix
-    B(upperPart) << A(upperPart); // upper left
-    B(upperPart, lowerPartB) << A(upperPart, lowerPartA); // upper right
-    B(lowerPartB) << A(lowerPartA); // lower right
+    B(upperPart) << C(upperPart); // upper left
+    B(upperPart, lowerPartB) << C(upperPart, lowerPartC); // upper right
+    B(lowerPartB) << C(lowerPartC); // lower right
     return B;
   }
 
@@ -86,19 +86,19 @@ namespace MBSimFlexibleBody {
     return phi;
   }
 
-  void MapleOutput(SymMat A, std::string MatName, std::string file) {
+  void MapleOutput(SymMat C, std::string MatName, std::string file) {
     ofstream dat(file.c_str() , ios::app);
     dat << MatName;
     dat << " := Matrix([";
-    for(int i = 0; i<A.rows(); i++) {
+    for(int i = 0; i<C.rows(); i++) {
       dat <<"[";
-      for(int j = 0;j<A.cols(); j++) {
-        dat << A(i,j);
-        if(j<A.cols()-1)
+      for(int j = 0;j<C.cols(); j++) {
+        dat << C(i,j);
+        if(j<C.cols()-1)
           dat << ", ";
       }
       dat << "]";
-      if(i!=A.rows()-1)
+      if(i!=C.rows()-1)
         dat << ",";
     }
     dat << "]):";

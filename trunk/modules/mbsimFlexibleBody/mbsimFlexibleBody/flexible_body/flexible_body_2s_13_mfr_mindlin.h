@@ -80,6 +80,16 @@ namespace MBSimFlexibleBody {
       virtual void updateAG();
       /***************************************************/
 
+      /*!
+       * \brief calculate constant stiffness matrix
+       */
+      void computeStiffnessMatrix();
+
+      /*! 
+       * \brief calculate constant parts of the mass matrix
+       */
+      void computeConstantMassMatrixParts();
+      
       /**
        * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
@@ -104,16 +114,6 @@ namespace MBSimFlexibleBody {
        * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */
       fmatvec::SymMat* R_ij;
-
-      /*!
-       * \brief calculate constant stiffness matrix
-       */
-      void computeStiffnessMatrix();
-
-      /*! 
-       * \brief calculate constant parts of the mass matrix
-       */
-      void computeConstantMassMatrixParts();
   };
 
   inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
