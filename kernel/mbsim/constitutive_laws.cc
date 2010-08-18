@@ -137,9 +137,18 @@ namespace MBSim {
   }
 
   double UnilateralNewtonImpact::project(double la, double gdn, double gda, double r, double laMin) {
-    if(fabs(gda) > gd_limit)
-      gdn += epsilon*gda;
-    return proxCN(la-r*gdn, laMin);
+   if(gda <= -gd_limit) {       // 2 Aenderungen :
+      gdn += epsilon*gda;       // elastischer Anteil nur bei negativer Annäherungsgeschw. ueber gd_limit
+    }                           // zwischen gd_limit und gd_limit/10 wird eps stetig auf 0 zurueckgefuehrt
+    else {
+      if(gda < -0.1*gd_limit) {
+        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
+        gdn += epsi*gda;
+      }
+    }
+//      gdn += epsilon*gda;
+double r_=0.1;
+   return proxCN(la-r_*gdn, laMin);
   }
 
   Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r, double laMin) {
@@ -154,8 +163,16 @@ namespace MBSim {
   }
 
   double UnilateralNewtonImpact::solve(double G, double gdn, double gda) {
-    if(fabs(gda) > gd_limit)
+    if(gda <= -gd_limit) {
       gdn += epsilon*gda;
+    }
+    else {
+      if(gda < -0.1*gd_limit) {
+        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
+        gdn += epsi*gda;
+      }
+    }
+//      gdn += epsilon*gda;
 
     if(gdn >= 0)
       return 0;
@@ -164,9 +181,16 @@ namespace MBSim {
   }
 
   bool UnilateralNewtonImpact::isFulfilled(double la, double gdn, double gda, double laTol, double gdTol, double laMin) {
-    if(fabs(gda) > gd_limit)
+  if(gda <= -gd_limit) {
       gdn += epsilon*gda;
-
+    }
+    else {
+      if(gda < -0.1*gd_limit) {
+        double epsi=epsilon*0.5*(cos(M_PI/(0.9*gd_limit)*(fabs(gda)-gd_limit))+1);
+        gdn += epsi*gda;
+      }
+    }
+     // gdn += epsilon*gda;
     if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
       return true;
     else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
