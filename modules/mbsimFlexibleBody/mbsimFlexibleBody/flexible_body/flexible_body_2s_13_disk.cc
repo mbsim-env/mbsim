@@ -284,7 +284,7 @@ namespace MBSimFlexibleBody {
         uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
         ElementalNodes.push_back(Vec(4,INIT,0.));
       }
-      
+
       BuildElements();
 
 #ifdef HAVE_NURBS
@@ -389,7 +389,7 @@ namespace MBSimFlexibleBody {
         // position in global matrix
         Index Ikges    (RefDofs+ElementNodeList(i,k)*NodeDofs, RefDofs+(ElementNodeList(i,k)+1)*NodeDofs-1);
         // position in element matrix
-        Index Ikelement(RefDofs+                  k *NodeDofs, RefDofs+                   (k+1)*NodeDofs-1);
+        Index Ikelement(RefDofs+                   k*NodeDofs, RefDofs+                   (k+1)*NodeDofs-1);
 
         // four nodes
         // ref,0 and 0,Ref

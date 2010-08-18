@@ -461,8 +461,8 @@ namespace MBSimFlexibleBody {
     const double xt = CrPoint(0);
     const double yt = CrPoint(1);
 
-    CrPoint(0) = sqrt( xt*xt + yt*yt);
-    CrPoint(1) = ArcTan(xt, yt);
+    CrPoint(0) = sqrt(xt*xt + yt*yt);
+    CrPoint(1) = ArcTan(xt,yt);
 
     return CrPoint;
   }
@@ -509,233 +509,176 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::computeStiffnessMatrix() {
-    SymMat Kext(Dofs - RefDofs, INIT, 0.);
+    SymMat Kext(Dofs,INIT,0.); // CHANGED (TS, 18.08.10)
     int ElementNodes = 4;
 
     // element loop
-    for(int element = 0; element < Elements; element++) {
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeStiffnesMatrix();
-      SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getK();
+    for(int element=0;element< Elements;element++) {
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeStiffnesMatrix();
+      SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
-      for(int node = 0; node < ElementNodes; node++) {
-        for(int conode = node; conode < ElementNodes; conode++) {
-          int GlobalNode = ElementNodeList(element, node) * NodeDofs;
-          int localNode = node * NodeDofs;
-          int GlobalCouplingNode = ElementNodeList(element, conode) * NodeDofs;
-          int localCouplingNode = conode * NodeDofs;
+      for(int node=0;node<ElementNodes;node++) { // CHANGED (TS, 18.08.10)
+        // position in global matrix
+        Index Ikges(RefDofs+ElementNodeList(element,node)*NodeDofs,RefDofs+(ElementNodeList(element,node)+1)*NodeDofs-1);
+        // position in element matrix
+        Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
 
-          for(int i = 0; i < NodeDofs; i++) {
-            if(node == conode) { //a part on the diagonal is added, so just write the upper triangle-part
-              for(int j = i; j < NodeDofs; j++) {
-                Kext(GlobalNode + i, GlobalCouplingNode + j) += ElK(localNode + i, localCouplingNode + j);
-              }//j
-            }
-            else { //non-diagonal parts -> all entries have to be added
-              for(int j = 0; j < NodeDofs; j++) {
-                Kext(GlobalNode + i, GlobalCouplingNode + j) += ElK(localNode + i, localCouplingNode + j);
-              }//j
-            }
-          }
-        }
+        Kext(Ikges) += ElK(Ikelement); // diagonal
+        for(int n=node+1;n<ElementNodes;n++) // secondary diagonals
+          Kext(Ikges,Index(RefDofs+ElementNodeList(element,n)*NodeDofs,RefDofs+(ElementNodeList(element,n)+1)*NodeDofs-1)) += ElK(Ikelement,Index(n*NodeDofs,(n+1)*NodeDofs-1));
       }
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeK();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeK();
     }
 
-    SymMat Kgebl(Dofs, INIT, 0.);//TODO: muss das sein, kann man das nicht bei updatedhdz anpassen?
+    // condensation
+    K = condenseMatrix(Kext,ILocked);
 
-    for(int i = 0; i < Dofs - RefDofs; i++)
-      for(int j = i; j < Dofs - RefDofs; j++)
-        Kgebl(RefDofs + i, RefDofs + j) = Kext(i, j); //TODO: proof, watch out: symmetric matrices!
+    /* STATIC TEST */
+    Index Iall(RefDofs,K.size()-1);
 
-    K = condenseMatrix(Kgebl, ILocked);
+    // load
+    Vec F_test(K.size()-RefDofs,INIT,0.);
+    F_test((nr-1)*nj*3) = 1e10;
 
-    /*****TESTING********
-    //get values to compare with ANSYS
-    //cout << "KEL: " << KEl << endl;
-
-    Vec F_test(K.size()-RefDofs,INIT, 0.);
-
-    F_test(nj*(nr-1)*3) = 1e10;
-
-    SymMat Ktmp(K.size()-RefDofs,INIT,0.);
-    for(int i=0;i<Ktmp.size();i++)
-    for(int j=i;j<Ktmp.size();j++)
-    Ktmp(i,j) = K(i+RefDofs,j+RefDofs);
-
-    //cout << "Steifigkeitsmatrix: " << Ktmp << endl;
-    //cout << "Kraftlastvektor: " << F_test << endl;
-
-    Vec q_test = slvLL(Ktmp, F_test);
-    Vec u_mbsim(12,INIT,0.);
-    //first: positive x-axis
+    // displacements in MBSim    
+    Vec q_test = slvLL(K(Iall),F_test);
+    Vec u_mbsim(12,NONINIT);
+    // first: positive x-axis
     u_mbsim(0) = q_test(0);
     u_mbsim(1) = q_test(nr/2*nj*3);
     u_mbsim(2) = q_test((nr-1)*nj*3);
-    //second: positive y-axis
+    // second: positive y-axis
     u_mbsim(3) = q_test(nj/4*3);
-    u_mbsim(4) = q_test(nr/2*nj/4*3);
-    u_mbsim(5) = q_test((nr+1)*nj/4*3);
-    //third: negative x-axis
+    u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); // CHANGED (TS, 18.08.10)
+    // third: negative x-axis
     u_mbsim(6) = q_test(nj/2*3);
-    u_mbsim(7) = q_test(nr/2*nj/2*3);
-    u_mbsim(8) = q_test((nr+1)*nj/2*3);
-    //fourth: negative y-axis
+    u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3); // CHANGED (TS, 18.08.10)
+    // fourth: negative y-axis
     u_mbsim(9)  = q_test(3*nj/4*3);
-    u_mbsim(10) = q_test(nr/2*3*nj/4*3);
-    u_mbsim(11) = q_test((nr+1)*3*nj/4*3);
+    u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3); // CHANGED (TS, 18.08.10)
 
-    //the twelve displacements of the Ansys example:
-    Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926;   0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
+    // displacements in ANSYS
+    Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926; 0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
 
-    Vec err = u_ansys - u_mbsim;
+    // error
+    double maxerr = nrmInf(u_ansys-u_mbsim);
 
-    cout << "Ansys liefert: "<< u_ansys << endl;
-    cout << "MBSim liefert: "<< u_mbsim << endl;
-
-    int pos = 11;
-    double maxerr = err(pos);
-
-    for(int i=0; i<11; i++)
-    if(abs(err(i))>abs(maxerr)) {
-    maxerr = err(i);
-    pos = i;
-    }
-
-    cout << "positon of maximal error: " << pos << endl;
-
-    //Ausgabe als Matrix für maxima
-    //cout << "qf=matrix([" ;
-    //for(int i=0; i<q_test.size(); i++)
-    //  cout << q_test(i) << ",";
-
-    //cout << "]);" << endl;
-
-    //usgabe der Knotendurchsenkungen entlag der x-Achse (y=0)
-    //for(int i=0; i<nr; i++)
-    //  cout << q_test(i*nj*3) << endl;
-
-    //Ausgabe für Gnuplot
-    ofstream file;
-    stringstream stringstream;
-    stringstream << nr << "-nr" << "MBSim3D.txt";
-    file.open(stringstream.str().c_str() ,ios::app);
-    file << nj << "  ";
-    file << maxerr << endl;
-    file.close();
-
-    ******END TESTING*****************/
+    // output
+    ofstream file_static;
+    file_static.open("Static.txt");
+    file_static << "error=" << maxerr << endl;
+    file_static << "static_mbsim=matrix([" ;
+    for(int i=0;i<u_mbsim.size();i++)
+      file_static << u_mbsim(i) << ",";
+    file_static << "]);" << endl;
+    file_static.close();
   }
 
   void FlexibleBody2s13MFRMindlin::computeConstantMassMatrixParts() {
     MConst = SymMat(Dofs,INIT,0.);
     double ElementNodes = 4;
 
-    /*M_RR*/
-    SymMat* M_RR = new SymMat(3,INIT,0.);
-    for(int element=0;element<Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeM_RR();
-      *M_RR += static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getM_RR(); //M_RR can be assembled directly
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeM_RR();
+    /* M_RR */
+    for(int i=0;i<3;i++) {
+      MConst(i,i) += m0;
+      for(int element=0;element<Elements;element++) {
+        static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeM_RR();
+        MConst(i,i) += static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getM_RR()(i,i);
+        static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeM_RR();
+      }
     }
 
-    for(int i=0;i<3;i++) MConst(i,i) = m0 + (*M_RR)(i,i); 
-    delete M_RR;
-
-    /*N_compl*/
+    /* N_compl */
     N_compl = new Mat(3,Dofs-RefDofs,INIT,0.);
     // element loop
-    Mat* ElN_compl = new Mat(3,NodeDofs*4,INIT,0.);
     for(int element=0;element<Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeN_compl();
-      Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getN_compl();
-      //Assembly of N_compl (just the cols have to be assembled (there is no coupling node), but for every dimension)
-      for(int node = 0; node < ElementNodes; node++) { //for every node
-        int GlobalNode = ElementNodeList(element,node)*NodeDofs;
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
+      Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
+      // assembly of N_compl (just the cols have to be assembled (there is no coupling node), but for every dimension)
+      for(int node=0;node<ElementNodes;node++) { // for every node
+        int globalNode = ElementNodeList(element,node)*NodeDofs;
         int localNode = node*NodeDofs;
 
         for(int dim=0;dim<3;dim++) 
           for(int l=0;l<NodeDofs;l++)
-            (*N_compl)(dim,GlobalNode+l)+=ElN_compl(dim,localNode+l);
+            (*N_compl)(dim,globalNode+l)+=ElN_compl(dim,localNode+l);
       }
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeN_compl();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
     }
-    delete ElN_compl;
 
-    /*N_ij*/
-    SqrMat* ElN_ij = new SqrMat(NodeDofs*4,INIT,0.);
+    /* N_ij */
     for(int i=0;i<3;i++) {
       for(int j=0;j<3;j++) {
-        N_ij[i][j] = new SqrMat(Dofs - RefDofs, INIT, 0.);
+        N_ij[i][j] = new SqrMat(Dofs-RefDofs,INIT,0.);
         for(int element=0; element<Elements;element++) {
-          static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeN_ij(i,j);
-          *ElN_ij = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getN_ij(i,j);
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_ij(i,j);
+          SqrMat ElN_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_ij(i,j);
 
-          for(int node =0;node<ElementNodes;node++) { //for every node...
-            int GlobalNode = ElementNodeList(element,node)*NodeDofs;
+          for(int node =0;node<ElementNodes;node++) { // for every node...
+            int globalNode = ElementNodeList(element,node)*NodeDofs;
             int localNode = node*NodeDofs;
 
-            for(int conode=node; conode<ElementNodes;conode++) { //...and its coupling node
-              int GlobalCouplingNode = ElementNodeList(element,conode)*NodeDofs;
+            for(int conode=node;conode<ElementNodes;conode++) { //...and its coupling node
+              int globalCouplingNode = ElementNodeList(element,conode)*NodeDofs;
               int localCouplingNode = conode*NodeDofs;
 
-              //Assembly of N_ij (both (rows and cols) have to be assembled)
+              // Assembly of N_ij (both (rows and cols) have to be assembled)
               for(int k=0;k<NodeDofs;k++) {
                 for(int l=0;l< NodeDofs;l++) {
-                  (*(N_ij[i][j]))(GlobalNode+k,GlobalCouplingNode+l) += (*ElN_ij)(localNode+k,localCouplingNode+l);
+                  (*(N_ij[i][j]))(globalNode+k,globalCouplingNode+l) += ElN_ij(localNode+k,localCouplingNode+l);
                 }
               }
             }
           }
-          static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeN_ij(i, j);
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_ij(i,j);
         }
       }
     }
 
-    //M_FF (coupling of the elastic DOFs)
+    // M_FF (coupling of the elastic DOFs)
     for(int i=0;i<3;i++)
       for(int k=RefDofs;k<Dofs;k++)
         for(int l=k;l<Dofs;l++)
           MConst(k,l) += (*(N_ij[i][i]))(k-RefDofs,l-RefDofs);
 
-    /*NR_ij*/
-    RowVec* ElNR_ij = new RowVec(NodeDofs*4,INIT,0.);
+    /* NR_ij */
     for(int i=0;i<3;i++) {
       for(int j=0;j<3;j++) {
         NR_ij[i][j] = new RowVec(Dofs-RefDofs,INIT,0.);
         for(int element=0;element<Elements;element++) {
-          static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeNR_ij(i, j);
-          *ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getNR_ij(i, j);
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i, j);
+          RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i, j);
           for(int node=0;node<ElementNodes;node++) { //for every node...
-            int GlobalNode = ElementNodeList(element,node)*NodeDofs;
+            int globalNode = ElementNodeList(element,node)*NodeDofs;
             int localNode = node*NodeDofs;
 
-            //Assembly of NR_ij (just the cols have to be assembled (there is no coupling node))
+            // Assembly of NR_ij (just the cols have to be assembled (there is no coupling node))
             for(int l=0;l<NodeDofs;l++) 
-              (*(NR_ij[i][j]))(GlobalNode+l) += (*ElNR_ij)(localNode+l);
+              (*(NR_ij[i][j]))(globalNode+l) += ElNR_ij(localNode+l);
           }
-          static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeNR_ij(i,j);
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
         }
       }
     }
-    delete ElNR_ij;
 
-    /*R_compl*/
+    /* R_compl */
     R_compl = new Vec(3,INIT,0.);
     for(int element=0;element<Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeR_compl();
-      *R_compl += static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getR_compl();
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeR_compl();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeR_compl();
+      *R_compl += static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getR_compl();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeR_compl();
     }
 
-    /*R_ij*/
-    R_ij = new SymMat(3, INIT, 0.);
+    /* R_ij */
+    R_ij = new SymMat(3,INIT,0.);
     for(int element=0;element<Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->computeR_ij();
-      *R_ij+=static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->getR_ij();
-      static_cast<FiniteElement2s13MFRMindlin*> (discretization[element])->freeR_ij();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeR_ij();
+      *R_ij+=static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getR_ij();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeR_ij();
     }
-
   }
-
 }
 

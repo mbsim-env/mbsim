@@ -271,8 +271,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FiniteElement2s13Disk::computeState(const Vec &NodeCoordinates,const Vec &qElement,const Vec &qpElement,const Vec &s,double d1,double d2) {
-    // state vector
-    Vec X(12);
+    Vec X(12,NONINIT);
 
     const double &r1 = NodeCoordinates(0);
     const double &j1 = NodeCoordinates(1);
