@@ -783,14 +783,16 @@ namespace MBSim {
     laOld = la;
     iter = (this->*solveConstraints_)(); // solver election
     if(iter >= maxIter) {
-      cout << endl;
-      cout << "Iterations: " << iter << endl;
-      cout << "\nError: no convergence."<< endl;
+      if(INFO)  { 
+        cout << endl;
+        cout << "Iterations: " << iter << endl;
+        cout << "\nError: no convergence."<< endl;
+      }
       if(stopIfNoConvergence) {
         if(dropContactInfo) dropContactMatrices();
         assert(iter < maxIter);
       }
-      cout << "Anyway, continuing integration..."<< endl;
+      if(INFO) cout << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)
@@ -814,14 +816,16 @@ namespace MBSim {
     laOld = la;
     iter = (this->*solveImpacts_)(dt); // solver election
     if(iter >= maxIter) {
-      cout << endl;
-      cout << "Iterations: " << iter << endl;
-      cout << "\nError: no convergence."<< endl;
+      if (INFO) {
+        cout << endl;
+        cout << "Iterations: " << iter << endl;
+        cout << "\nError: no convergence."<< endl;
+      }
       if(stopIfNoConvergence) {
         if(dropContactInfo) dropContactMatrices();
         assert(iter < maxIter);
       }
-      cout << "Anyway, continuing integration..."<< endl;
+      if (INFO) cout << "Anyway, continuing integration..."<< endl;
     }
 
     if(warnLevel>=1 && iter>highIter)
