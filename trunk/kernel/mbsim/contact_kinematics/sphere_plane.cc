@@ -53,6 +53,7 @@ namespace MBSim {
 
     g(0) = Wn.T()*Wd - sphere->getRadius();
 
+
     cpData[isphere].getFrameOfReference().setPosition(sphere->getFrame()->getPosition() - Wn*sphere->getRadius());
     cpData[iplane].getFrameOfReference().setPosition(cpData[isphere].getFrameOfReference().getPosition() - Wn*g(0));
   }
