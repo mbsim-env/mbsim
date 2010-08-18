@@ -1101,7 +1101,7 @@ namespace MBSim {
       lae.resize() = la2b;
       laeSizes.resize()  = la2bSizes;
       iter = iterB1;
-      //if (testOK) ConstraintsChanged = ConstraintsChangedBlock1;
+      ConstraintsChanged = ConstraintsChangedBlock1;
       IterConvergenceBlock2 = true;
     }
     else {
@@ -1132,12 +1132,11 @@ namespace MBSim {
 
       if (dt > dtMax) dt = dtMax;
       if (dt < dtMin) dt = dtMin;
+      if (testOK && FlagGapControl) getDataForGapControl();  // verwendet wird sysT1, SetValuedLinkListT1, ze t, dte
       if (FlagGapControl && GapControlStrategy>0) {
         if (ChangeByGapControl && testOK) stepsOkAfterGapControl++;
         if (ChangeByGapControl && !testOK)stepsRefusedAfterGapControl++;
-        if (!testOK) statusGapControl=0;
-        else { 
-          getDataForGapControl();  // verwendet wird sysT1, SetValuedLinkListT1, ze t, dte
+        if (testOK) { 
           // Mittelwert berechnen
           Vec Dq;
           Dq= z1d(0,qSize) - ze(0,qSize);
@@ -1206,10 +1205,11 @@ namespace MBSim {
     // Strategie  5: event detection: 
     //               Integration bis kurz vor NS, dann mit kleiner dt ueber event hinweg und weiter mit alter dt
     // Strategie  0: GapControl wieder deaktiviert (z.B. um Penetration auszugeben)
+    double dtOrg=dt;    
 
     if (GapControlStrategy==0) {dtRelGapControl = 1; return false;}
-    if (indexLSException >=0) indexLSException=-1;
-    if (statusGapControl>2) statusGapControl=0;
+    if (statusGapControl>2) {statusGapControl=0; indexLSException=-1; }
+    if (statusGapControl && !SSCTestOK) statusGapControl=0;
     if (statusGapControl==2) { 
       if (ConstraintsChanged && SSCTestOK) 
         dt= 0.75*dt_SSC_vorGapControl;
@@ -1248,59 +1248,60 @@ namespace MBSim {
     }
 
     if (statusGapControl==2 && ConstraintsChanged && SSCTestOK) {
-      if (NSi<=0) {
-        // identifiziere Eintrag in LS Vektor der zu diesem Stoss gehoert; falls sich nur ein Eintrag geaendert hat
-        // wird maxOrder erzwungen dadurch dass dieser Eintrag im Vergleich der LS unberuecksichtigt bleibt
-        int n=0;
-        int ni;
-        if(LS.size()==LSe.size()) {
-          for(int i=0; i<LS.size(); i++) if (LSe(i)!=LS(i)) {n++; ni=i;}
-        }
-        if(n==1) { 
-          indexLSException=ni;
-          statusGapControl=3;}
-        else statusGapControl=0;
+      // identifiziere Eintrag in LS Vektor der zu diesem Stoss gehoert; falls sich nur ein Eintrag geaendert hat
+      // wird maxOrder erzwungen dadurch dass dieser Eintrag im Vergleich der LS unberuecksichtigt bleibt
+      statusGapControl=0;
+      int n=0;
+      int ni=-1;
+      if(LS.size()==LSe.size()) {
+        for(int i=0; i<LS.size(); i++) if (LSe(i)!=LS(i)) {n++; ni=i;}
       }
-}
-      if (NSi>0 || (NSiMin<NSi && GapControlStrategy==5)){ 
-        if (GapControlStrategy<=4 && GapControlStrategy) dt= safetyFactorGapControl*NSi+1e-15;
-        if (GapControlStrategy==1 && dt/Hold<0.3) dt =0.3*Hold;
-        if (GapControlStrategy==2 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15;
-        if (GapControlStrategy==3 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15; 
-        if (GapControlStrategy==4 && NSiMin<NSi) dt=safetyFactorGapControl*NSiMin+1e-15;
-        if (GapControlStrategy==5) {
-          if(NSi<NSiMin) {NSiMin=NSi; IndexNSMin=IndexNS;}
-          NS=NSiMin;
-          double dtUnsafe = fabs(qUnsafe/gdInActive(IndexNSMin));
-          dtUnsafe *= NS/dte; //pow(NS/dte,order);
+      if(n==1) indexLSException=ni;
+      if (n==1 && NSi<=0) statusGapControl=3;
+    }
+
+    if (NSi>0){ 
+      if (GapControlStrategy<=4 && GapControlStrategy) dt= safetyFactorGapControl*NSi+1e-15;
+      if (GapControlStrategy==1 && dt/Hold<0.3) dt =0.3*Hold;
+      if (GapControlStrategy==2 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15;
+      if (GapControlStrategy==3 && NS_>0) dt= safetyFactorGapControl*NS_ +1e-15; 
+      if (GapControlStrategy==4 && NSiMin<NSi) dt=safetyFactorGapControl*NSiMin+1e-15;
+      if (GapControlStrategy==5) {
+        if(NSi<NSiMin) {NSiMin=NSi; IndexNSMin=IndexNS;}
+        NSi=NSiMin;
+        double dtUnsafe = fabs(qUnsafe/gdInActive(IndexNSMin));
+        dtUnsafe *= NSiMin/dte; //pow(NS/dte,order);
+        if(dtUnsafe*10<dte) {  // Falls Unsicherheit zu gross macht gapContol keinen Sinn !
           if(dtUnsafe<0.4*dtMin) dtUnsafe=0.4*dtMin;
           if (statusGapControl==0) {
             dt_SSC_vorGapControl= dt;
             statusGapControl=1;
-            dt = NS*safetyFactorGapControl-dtUnsafe;
-            if (dt<=dtMin) { 
-              dt=dtMin; 
-              statusGapControl=2;
+            dt = NSiMin- (safetyFactorGapControl-1)*NSiMin;
+            if (dt<=dtMin) {dt=dtMin; statusGapControl=2;}
+            else {
+              dt = dt -dtUnsafe;
+              if (dt<=dtMin) dt=dtMin;
             }
           }
           else {  //statusGapControl==1
             statusGapControl=2;
-            dt = NS*safetyFactorGapControl+dtUnsafe;
+            dt = NSiMin*safetyFactorGapControl+dtUnsafe;
             if (dt<dtMin) dt=dtMin; 
           }
-        }
+        } else statusGapControl=0;
       }
-      else {
-        if(NSa>0 && GapControlStrategy && GapControlStrategy<=4){ 
-          dt = NSa*0.5;}
-        if (statusGapControl) statusGapControl=0;
-      }
-      if (dt<0.75*dtMin) dt=0.75*dtMin;
-
-      dtRelGapControl = dt/Hold;
-
-      return (NSi>0);
     }
+    else {
+      if(NSa>0 && GapControlStrategy && GapControlStrategy<=4){ 
+        dt = NSa*0.5;}
+      if (statusGapControl && statusGapControl<3) statusGapControl=0;
+    }
+    if (dt<0.75*dtMin) dt=0.75*dtMin;
+
+    dtRelGapControl = dt/Hold;
+
+    return (dt<dtOrg);
+  }
 
     // SetValuedLinkLists are build up within preIntegrate 
     // The Lagragian Multiplier of all Links stored in SetValuedLinkList of the corresponding DynamicSystemSolver (sysT1)
