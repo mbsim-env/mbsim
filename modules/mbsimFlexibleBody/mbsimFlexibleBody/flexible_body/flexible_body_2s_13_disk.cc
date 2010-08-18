@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](                 0,RefDofs           -1) << qext(                                    0,RefDofs                                  -1);
+      qElement[i](0                 ,RefDofs           -1) << qext(0                                    ,RefDofs                                  -1);
       qElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << qext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
       qElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
       qElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << qext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
@@ -70,7 +70,7 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](                 0,RefDofs           -1) << uext(                                    0,RefDofs                                  -1);
+      uElement[i](0                 ,RefDofs           -1) << uext(0                                    ,RefDofs                                  -1);
       uElement[i](RefDofs           ,RefDofs+  NodeDofs-1) << uext(RefDofs+ElementNodeList(i,0)*NodeDofs,RefDofs+(ElementNodeList(i,0)+1)*NodeDofs-1);
       uElement[i](RefDofs+  NodeDofs,RefDofs+2*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,1)*NodeDofs,RefDofs+(ElementNodeList(i,1)+1)*NodeDofs-1);
       uElement[i](RefDofs+2*NodeDofs,RefDofs+3*NodeDofs-1) << uext(RefDofs+ElementNodeList(i,2)*NodeDofs,RefDofs+(ElementNodeList(i,2)+1)*NodeDofs-1);
@@ -233,20 +233,13 @@ namespace MBSimFlexibleBody {
       assert(nr>0); // at least on radial row
       assert(nj>1); // at least two azimuthal elements
 
-      for(int i=0;i<Elements;i++) {
-        discretization.push_back(new FiniteElement2s13Disk(E,nu,rho));
-        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
-        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
-        ElementalNodes.push_back(Vec(4,INIT,0.));
-      }
-
       // condensation
       switch(LType) {
         case innerring: // 0: innerring
           ILocked = Index(RefDofs,RefDofs+NodeDofs*nj-1);
           Jext = Mat(Dofs,qSize,INIT,0.);
           Jext(0,0,RefDofs-1,RefDofs-1) << DiagMat(RefDofs,INIT,1.);
-          Jext(RefDofs+NodeDofs*nj,RefDofs,Dofs-1,qSize-1) << DiagMat(qSize - RefDofs,INIT,1.);
+          Jext(RefDofs+NodeDofs*nj,RefDofs,Dofs-1,qSize-1) << DiagMat(qSize-RefDofs,INIT,1.);
           break;
 
         case outerring: // 1: outerring
@@ -263,14 +256,12 @@ namespace MBSimFlexibleBody {
       ElementNodeList.resize(Elements,4);
 
       // mapping nodes - node coordinates - elements 
-      for(int i=0; i<=nr; i++) {
-        for(int j=0; j<nj; j++) {
-          // NodeCoordinates(radial,azimuthal)
+      for(int i=0;i<=nr;i++) {
+        for(int j=0;j<nj;j++) {
           // node number increases azimuthally from the inner to the outer ring
           NodeCoordinates(j+i*nj,0) = Ri+dr*i;
-          NodeCoordinates(j+i*nj,1) = 0. +dj*j;
+          NodeCoordinates(j+i*nj,1) = 0.+dj*j;
 
-          // ElementNodeList(node 1,node 2,node 3,node 4)
           // element number increases azimuthally from the inner to the outer ring
           if(i<nr && j<nj-1) {
             ElementNodeList(j+i*nj,0) =  j    +  i   *nj; // node 1
@@ -287,6 +278,15 @@ namespace MBSimFlexibleBody {
         }
       }
 
+      for(int i=0;i<Elements;i++) {
+        discretization.push_back(new FiniteElement2s13Disk(E,nu,rho));
+        qElement.push_back(Vec(discretization[0]->getqSize(),INIT,0.));
+        uElement.push_back(Vec(discretization[0]->getuSize(),INIT,0.));
+        ElementalNodes.push_back(Vec(4,INIT,0.));
+      }
+      
+      BuildElements();
+
 #ifdef HAVE_NURBS
       // borders of contour parametrisation 
       // beginning 
@@ -296,10 +296,11 @@ namespace MBSimFlexibleBody {
 
       // end 
       Vec alphaE(2);
-      alphaE(0) =     Ra; // radius
+      alphaE(0) = Ra; // radius
       alphaE(1) = 2*M_PI; // angle
 
-      contour->setAlphaStart(alphaS);  contour->setAlphaEnd(alphaE);
+      contour->setAlphaStart(alphaS);
+      contour->setAlphaEnd(alphaE);
 #endif
 
       qext = Jext * q0;
@@ -357,14 +358,12 @@ namespace MBSimFlexibleBody {
 
     CrPoint(0) = sqrt( xt*xt + yt*yt );
     CrPoint(1) = ArcTan(xt*cos(alpha) + yt*sin(alpha),yt*cos(alpha) - xt*sin(alpha));
-    CrPoint(2) = WrPoint(2);
+    CrPoint(2) = WrPoint(2)-q(0);
 
     return CrPoint;
   }
 
   void FlexibleBody2s13Disk::initMatrices() {
-    BuildElements();
-
     // initialising of mass and stiffness matrix
     SymMat Mext(Dofs,INIT,0.);
     SymMat Kext(Dofs,INIT,0.);
@@ -413,42 +412,18 @@ namespace MBSimFlexibleBody {
 
     // masse and inertia of shaft
     MConst(0,0) += m0;
-    MConst(1,1) += J0(2,2); //TODO: proof whether J=(2,2) is correct ..
+    MConst(1,1) += J0(2,2);
 
     // LU-decomposition of M
     LLM = facLL(MConst);
   }
 
   void FlexibleBody2s13Disk::updateAG() {
-    //TODO: sign of sin(...) correct?
-    A(0, 0) = cos(q(1));
-    A(0, 1) = -sin(q(1));
-    //A(0, 2) = 0;
+    //A(0,0) = cos(q(1)); // not used at the moment
+    //A(0,1) = -sin(q(1));
 
-    A(1, 0) = sin(q(1));
-    A(1, 1) = cos(q(1));
-    //A(1, 2) = 0;
-
-    //A(2, 0) = 0;
-    //A(2, 1) = 0;
-    //A(2, 2) = 1;
-
-    //G(0,0) = 1;
-    //G(0,1) = 0;
-    //G(0, 2) = sinbeta;
-
-    //G(1,0) = 0;
-    //G(1, 1) = cosalpha;
-    //G(1, 2) = -sinalpha * cosbeta;
-
-    //G(2,0) = 0;
-    //G(2, 1) = sinalpha;
-    //G(2, 2) = cosalpha * cosbeta;
-
-    /*TESTING*/
-    //cout << "A" << endl << A << endl;
-    //cout << "G" << endl << G << endl;
-    /*END-TESTING*/
+    //A(1,0) = sin(q(1));
+    //A(1,1) = cos(q(1));
   }
 
 }
