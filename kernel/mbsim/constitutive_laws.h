@@ -179,6 +179,7 @@ namespace MBSim {
    * \brief basic unilateral force law on velocity level for constraint description
    * \author Martin Foerg
    * \date 2009-07-29 some comments (Thorsten Schindler)
+   * \date 2010-08-18 epsilon is set to zero in a smooth way and elastic contribution only for negative gd
    */
   class UnilateralNewtonImpact : public GeneralizedImpactLaw {
     public:

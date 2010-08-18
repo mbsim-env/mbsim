@@ -146,9 +146,7 @@ namespace MBSim {
         gdn += epsi*gda;
       }
     }
-//      gdn += epsilon*gda;
-double r_=0.1;
-   return proxCN(la-r_*gdn, laMin);
+   return proxCN(la-r*gdn, laMin);
   }
 
   Vec UnilateralNewtonImpact::diff(double la, double gdn, double gda, double r, double laMin) {
@@ -172,7 +170,6 @@ double r_=0.1;
         gdn += epsi*gda;
       }
     }
-//      gdn += epsilon*gda;
 
     if(gdn >= 0)
       return 0;
@@ -190,7 +187,6 @@ double r_=0.1;
         gdn += epsi*gda;
       }
     }
-     // gdn += epsilon*gda;
     if(gdn >= -gdTol && fabs(la-laMin) <= laTol)
       return true;
     else if(la-laMin >= -laTol && fabs(gdn) <= gdTol)
