@@ -34,12 +34,6 @@ namespace MBSimFlexibleBody {
    * \date 2009-12-23 initial commit (Grundl / Schindler)
    * \date 2010-04-23 check (Schindler)
    * \date 2010-08-18 check (Schindler)
-   * \todo transform computeState to Position / Orientation / Velocity / AngularVelocity
-   * \todo JacobianMinimalRepresentation
-   * \todo energy
-   * \todo right hand side
-   * \todo equations of motion
-   * \todo implicit integration
    */
   class FiniteElement2s13MFRMindlin : public MBSim::DiscretizationInterface {
     public:
