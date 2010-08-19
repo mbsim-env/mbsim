@@ -49,15 +49,19 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody2s13MFRMindlin::~FlexibleBody2s13MFRMindlin() {
     delete N_compl;
-    delete[] N_ij;
-    delete[] NR_ij;
+    for(int i=0;i<3;i++) 
+      for(int j=0;j<3;j++) {
+        delete N_ij[i][j];
+        delete NR_ij[i][j];
+      }
     delete R_compl;
     delete R_ij;
   }
 
   void FlexibleBody2s13MFRMindlin::updateM(double t) {
     SymMat Mext = MConst.copy(); // copy constant mass matrix parts
-    Vec qf = qext(RefDofs,Dofs-1).copy();
+    Vec qf(Dofs-RefDofs,INIT,0.);
+    // Vec qf = qext(RefDofs,Dofs-1).copy(); TODO
 
     /* M_RR is constant */
     /* M_RTheta */
@@ -591,17 +595,17 @@ namespace MBSimFlexibleBody {
 
     /* N_compl */
     N_compl = new Mat(3,Dofs-RefDofs,INIT,0.);
-    for(int element=0;element<Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
-      Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
-      Index IRefTrans(0,2);
-      for(int node=0;node<ElementNodes;node++) {
-        Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
-        Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
-        (*N_compl)(IRefTrans,Ikges) += ElN_compl(IRefTrans,Ikelement);
-      }
-      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
-    }
+    //for(int element=0;element<Elements;element++) { // TODO
+    //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
+    //  Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
+    //  Index IRefTrans(0,2);
+    //  for(int node=0;node<ElementNodes;node++) {
+    //    Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+    //    Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+    //    (*N_compl)(IRefTrans,Ikges) += ElN_compl(IRefTrans,Ikelement);
+    //  }
+    //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
+    //}
 
     /* N_ij */
     for(int i=0;i<3;i++) {
@@ -634,16 +638,16 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<3;i++) {
       for(int j=0;j<3;j++) {
         NR_ij[i][j] = new RowVec(Dofs-RefDofs,INIT,0.);
-        for(int element=0;element<Elements;element++) {
-          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i,j);
-          RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i,j);
-          for(int node=0;node<ElementNodes;node++) {
-            Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
-            Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
-            (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
-          }
-          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
-        }
+        //for(int element=0;element<Elements;element++) { TODO
+        //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i,j);
+        //  RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i,j);
+        //  for(int node=0;node<ElementNodes;node++) {
+        //    Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+        //    Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+        //    (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
+        //  }
+        //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
+        //}
       }
     }
 

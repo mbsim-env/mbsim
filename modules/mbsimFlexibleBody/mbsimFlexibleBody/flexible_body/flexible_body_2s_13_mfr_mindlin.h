@@ -26,11 +26,13 @@
 namespace MBSimFlexibleBody {
 
   /*! 
-   * \brief plate according to Reissner-Mindlin with moving frame of reference
+   * \brief plate according to Reissner-Mindlin with moving frame of reference and small tilting assumption
    * \author Kilian Grundl
    * \author Thorsten Schindler
    * \date 2009-12-23 initial commit (Schindler / Grundl)
    * \date 2010-04-21 parent class (Schindler / Grundl)
+   * \date 2010-08-19 check (Schindler / Grundl)
+   * \todo gravity TODO
    */
   class FlexibleBody2s13MFRMindlin : public FlexibleBody2s13 {
     public:
