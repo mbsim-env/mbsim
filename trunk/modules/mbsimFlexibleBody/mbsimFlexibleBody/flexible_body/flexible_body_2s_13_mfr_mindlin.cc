@@ -518,9 +518,7 @@ namespace MBSimFlexibleBody {
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
       for(int node=0;node<ElementNodes;node++) { 
-        // position in global matrix
         Index Ikges(RefDofs+ElementNodeList(element,node)*NodeDofs,RefDofs+(ElementNodeList(element,node)+1)*NodeDofs-1);
-        // position in element matrix
         Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
 
         Kext(Ikges) += ElK(Ikelement); // diagonal
@@ -593,18 +591,14 @@ namespace MBSimFlexibleBody {
 
     /* N_compl */
     N_compl = new Mat(3,Dofs-RefDofs,INIT,0.);
-    // element loop
     for(int element=0;element<Elements;element++) {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
       Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
-      // assembly of N_compl (just the cols have to be assembled (there is no coupling node), but for every dimension)
-      for(int node=0;node<ElementNodes;node++) { // for every node
-        int globalNode = ElementNodeList(element,node)*NodeDofs;
-        int localNode = node*NodeDofs;
-
-        for(int dim=0;dim<3;dim++) 
-          for(int l=0;l<NodeDofs;l++)
-            (*N_compl)(dim,globalNode+l)+=ElN_compl(dim,localNode+l);
+      Index IRefTrans(0,2);
+      for(int node=0;node<ElementNodes;node++) {
+        Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+        Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+        (*N_compl)(IRefTrans,Ikges) += ElN_compl(IRefTrans,Ikelement);
       }
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
     }
@@ -613,32 +607,24 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<3;i++) {
       for(int j=0;j<3;j++) {
         N_ij[i][j] = new SqrMat(Dofs-RefDofs,INIT,0.);
-        for(int element=0; element<Elements;element++) {
+        for(int element=0;element<Elements;element++) {
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_ij(i,j);
           SqrMat ElN_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_ij(i,j);
 
-          for(int node =0;node<ElementNodes;node++) { // for every node...
-            int globalNode = ElementNodeList(element,node)*NodeDofs;
-            int localNode = node*NodeDofs;
+          for(int node=0;node<ElementNodes;node++) { 
+            Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+            Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
 
-            for(int conode=node;conode<ElementNodes;conode++) { //...and its coupling node
-              int globalCouplingNode = ElementNodeList(element,conode)*NodeDofs;
-              int localCouplingNode = conode*NodeDofs;
-
-              // Assembly of N_ij (both (rows and cols) have to be assembled)
-              for(int k=0;k<NodeDofs;k++) {
-                for(int l=0;l< NodeDofs;l++) {
-                  (*(N_ij[i][j]))(globalNode+k,globalCouplingNode+l) += ElN_ij(localNode+k,localCouplingNode+l);
-                }
-              }
-            }
+            (*(N_ij[i][j]))(Ikges) += ElN_ij(Ikelement); // diagonal
+            for(int n=node+1;n<ElementNodes;n++) // secondary diagonals
+              (*(N_ij[i][j]))(Ikges,Index(ElementNodeList(element,n)*NodeDofs,(ElementNodeList(element,n)+1)*NodeDofs-1)) += ElN_ij(Ikelement,Index(n*NodeDofs,(n+1)*NodeDofs-1));
           }
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_ij(i,j);
         }
       }
     }
 
-    // M_FF (coupling of the elastic DOFs)
+    /* M_FF */
     for(int i=0;i<3;i++)
       for(int k=RefDofs;k<Dofs;k++)
         for(int l=k;l<Dofs;l++)
@@ -649,15 +635,12 @@ namespace MBSimFlexibleBody {
       for(int j=0;j<3;j++) {
         NR_ij[i][j] = new RowVec(Dofs-RefDofs,INIT,0.);
         for(int element=0;element<Elements;element++) {
-          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i, j);
-          RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i, j);
-          for(int node=0;node<ElementNodes;node++) { //for every node...
-            int globalNode = ElementNodeList(element,node)*NodeDofs;
-            int localNode = node*NodeDofs;
-
-            // Assembly of NR_ij (just the cols have to be assembled (there is no coupling node))
-            for(int l=0;l<NodeDofs;l++) 
-              (*(NR_ij[i][j]))(globalNode+l) += ElNR_ij(localNode+l);
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i,j);
+          RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i,j);
+          for(int node=0;node<ElementNodes;node++) {
+            Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+            Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+            (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
           }
           static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
         }
@@ -679,6 +662,7 @@ namespace MBSimFlexibleBody {
       *R_ij+=static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getR_ij();
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeR_ij();
     }
+
   }
 }
 
