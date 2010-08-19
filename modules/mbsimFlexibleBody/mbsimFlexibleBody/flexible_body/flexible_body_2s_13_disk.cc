@@ -48,9 +48,13 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13Disk::BuildElements() {
     for(int i=0;i<Elements;i++) {
-      //  3--------4
-      //  |        |
-      //  1--------2
+      //  ^ phi
+      //  |
+      //  |   2--------4
+      //  |   |        |
+      //  |   1--------3
+      //  |
+      //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
       // r1 and j1 are defined with node 1, r2 and j2 with node 4
       ElementalNodes[i](0,1) << NodeCoordinates.row(ElementNodeList(i,0)).T(); // node 1
