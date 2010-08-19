@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
     const double &phi2 = NodeCoordinates(3);
     double beta = 0.2;
     double t_average = d0+d1*(r2+r1)/2.+d2*(pow(r2,3)-pow(r1,3))/((r2-r1)*3.);
-    double l_e = (r2-r1)/cos((phi2-phi1)/2.);
+    double l_e = (2.*(r2-r1)+(r1+r2)*(phi2-phi1))/M_PI;
     alphaS = 5./6.;
     if(t_average/l_e<beta) {
       alphaS *= pow(t_average/(l_e*beta),2);

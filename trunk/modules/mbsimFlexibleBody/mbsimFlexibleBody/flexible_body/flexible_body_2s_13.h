@@ -193,7 +193,7 @@ namespace MBSimFlexibleBody {
       double m0;
 
       /**
-       * \brief inertia of the attached shaft
+       * \brief inertia of the attached shaft in local coordinates
        */
       fmatvec::SymMat J0;
 

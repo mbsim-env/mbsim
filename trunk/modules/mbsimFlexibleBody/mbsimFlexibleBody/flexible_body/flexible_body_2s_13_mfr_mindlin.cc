@@ -71,13 +71,13 @@ namespace MBSimFlexibleBody {
     SymMat I(3,INIT,0.);
 
     I(0,0) = (*R_ij)(1,1)+(*R_ij)(2,2)+2*((*NR_ij[1][1])+(*NR_ij[2][2]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[2][2]))*qf;
-    I(0,1) = -((*R_ij)(1,0)+((*NR_ij[1][0])+(*NR_ij[0][1]))*qf+qf.T()*(*N_ij[1][0])*qf); // CHANGED (TS, 15.08.10)
-    I(0,2) = -((*R_ij)(2,0)+((*NR_ij[2][0])+(*NR_ij[0][2]))*qf+qf.T()*(*N_ij[2][0])*qf); // CHANGED (TS, 15.08.10)
+    I(0,1) = -((*R_ij)(1,0)+((*NR_ij[1][0])+(*NR_ij[0][1]))*qf+qf.T()*(*N_ij[1][0])*qf);
+    I(0,2) = -((*R_ij)(2,0)+((*NR_ij[2][0])+(*NR_ij[0][2]))*qf+qf.T()*(*N_ij[2][0])*qf);
     I(1,1) = (*R_ij)(2,2)+(*R_ij)(0,0)+2*((*NR_ij[2][2])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[2][2])+(*N_ij[0][0]))*qf;
-    I(1,2) = -((*R_ij)(2,1)+((*NR_ij[2][1])+(*NR_ij[1][2]))*qf+qf.T()*(*N_ij[2][1])*qf); // CHANGED (TS, 15.08.10)
+    I(1,2) = -((*R_ij)(2,1)+((*NR_ij[2][1])+(*NR_ij[1][2]))*qf+qf.T()*(*N_ij[2][1])*qf);
     I(2,2) = (*R_ij)(1,1)+(*R_ij)(0,0)+2*((*NR_ij[1][1])+(*NR_ij[0][0]))*qf+qf.T()*((*N_ij[1][1])+(*N_ij[0][0]))*qf;
 
-    Mat M_ThetaTheta = G.T()*I*G+J0; // CHANGED (TS, 15.08.10)
+    Mat M_ThetaTheta = G.T()*(I+J0)*G;
 
     /* M_ThetaF */
     Mat qN(3,Dofs-RefDofs);
@@ -182,7 +182,7 @@ namespace MBSimFlexibleBody {
 
       if(ff == angularVelocity || ff == velocities || ff == velocities_cosy || ff == all) {
         Vec w_ref_1(3,INIT,0.);
-        w_ref_1(0) = -uext(RefDofs+node*NodeDofs+2); // CHANGED (TS, 15.08.10)
+        w_ref_1(0) = -uext(RefDofs+node*NodeDofs+2);
         w_ref_1(1) = uext(RefDofs+node*NodeDofs+1);
 
         Vec w_ref_2 = A*(G*uext(3,5)+TransformationMatrix(NodeCoordinates(node,1))*w_ref_1);
@@ -366,17 +366,17 @@ namespace MBSimFlexibleBody {
           NodeCoordinates(j+i*nj,1) = 0.+dj*j;
 
           // element number increases azimuthally from the inner to the outer ring
-          if(i<nr && j<nj-1) { // CHANGED (TS, 17.08.10)
+          if(i<nr && j<nj-1) { 
             ElementNodeList(j+i*nj,0) = j     + i    *nj; // elementnode 1
-            ElementNodeList(j+i*nj,1) = (j+1) + i    *nj; // elementnode 2
+            ElementNodeList(j+i*nj,1) = j     + (i+1)*nj; // elementnode 2
             ElementNodeList(j+i*nj,2) = (j+1) + (i+1)*nj; // elementnode 3
-            ElementNodeList(j+i*nj,3) = j     + (i+1)*nj; // elementnode 4
+            ElementNodeList(j+i*nj,3) = (j+1) +  i   *nj; // elementnode 4
           }
-          else if(i<nr && j==nj-1) { // ring closure CHANGED (TS, 17.08.10)
+          else if(i<nr && j==nj-1) { // ring closure 
             ElementNodeList(j+i*nj,0) = j     + i    *nj; // elementnode 1
-            ElementNodeList(j+i*nj,1) = 0     + i    *nj; // elementnode 2
+            ElementNodeList(j+i*nj,1) = j     + (i+1)*nj; // elementnode 2
             ElementNodeList(j+i*nj,2) = 0     + (i+1)*nj; // elementnode 3
-            ElementNodeList(j+i*nj,3) = j     + (i+1)*nj; // elementnode 4
+            ElementNodeList(j+i*nj,3) = 0     +  i   *nj; // elementnode 4
           }
         }
       }
@@ -509,7 +509,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::computeStiffnessMatrix() {
-    SymMat Kext(Dofs,INIT,0.); // CHANGED (TS, 18.08.10)
+    SymMat Kext(Dofs,INIT,0.); 
     int ElementNodes = 4;
 
     // element loop
@@ -517,7 +517,7 @@ namespace MBSimFlexibleBody {
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeStiffnesMatrix();
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
-      for(int node=0;node<ElementNodes;node++) { // CHANGED (TS, 18.08.10)
+      for(int node=0;node<ElementNodes;node++) { 
         // position in global matrix
         Index Ikges(RefDofs+ElementNodeList(element,node)*NodeDofs,RefDofs+(ElementNodeList(element,node)+1)*NodeDofs-1);
         // position in element matrix
@@ -549,16 +549,16 @@ namespace MBSimFlexibleBody {
     u_mbsim(2) = q_test((nr-1)*nj*3);
     // second: positive y-axis
     u_mbsim(3) = q_test(nj/4*3);
-    u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); // CHANGED (TS, 18.08.10)
-    u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); 
+    u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); 
     // third: negative x-axis
     u_mbsim(6) = q_test(nj/2*3);
-    u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3); // CHANGED (TS, 18.08.10)
-    u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3);
+    u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3);
     // fourth: negative y-axis
     u_mbsim(9)  = q_test(3*nj/4*3);
-    u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); // CHANGED (TS, 18.08.10)
-    u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3); // CHANGED (TS, 18.08.10)
+    u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); 
+    u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3);
 
     // displacements in ANSYS
     Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926; 0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
