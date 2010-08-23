@@ -635,7 +635,11 @@ namespace MBSim {
         return frame[i];
     }
     if(check) {
-      if(!(i<frame.size())) cout << "ERROR (DynamicSystem:getFrame): The object " << this->name <<" comprises no frame " << name << "!" << endl; 
+      if(!(i<frame.size())) {
+        ostringstream str;
+        str << "The object \"" << name << "\" comprises no frame " << name << "!";
+        throw MBSimError(str.str());
+      }
       assert(i<frame.size());
     }
     return NULL;
@@ -648,7 +652,11 @@ namespace MBSim {
         return contour[i];
     }
     if(check) {
-      if(!(i<contour.size())) cout << "ERROR (DynamicSystem:getContour): The object " << this->name <<" comprises no contour " << name << "!" << endl; 
+      if(!(i<contour.size())) {
+        ostringstream str;
+        str << "The object \"" << name << "\" comprises no contour " << name << "!"; 
+        throw MBSimError(str.str());
+      }
       assert(i<contour.size());
     }
     return NULL;
@@ -1414,7 +1422,9 @@ namespace MBSim {
 
   void DynamicSystem::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { 
-      cout << "ERROR (DynamicSystem:addContour): The DynamicSystem " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one Contour by the name " <<  contour_->getName() << "!";
+      throw MBSimError(str.str());
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
@@ -1450,7 +1460,11 @@ namespace MBSim {
         return dynamicsystem[i];
     }
     if(check){
-      if(!(i<dynamicsystem.size())) cout << "ERROR (DynamicSystem:getDynamicSystem): The DynamicSystem " << this->name <<" comprises no DynamicSystem " << name << "!" << endl; 
+      if(!(i<dynamicsystem.size())) {
+        ostringstream str;
+        str << "The DynamicSystem " << this->name <<" comprises no DynamicSystem " << name << "!";
+        throw MBSimError(str.str());
+      }
       assert(i<dynamicsystem.size());
     }
     return NULL;
@@ -1463,7 +1477,11 @@ namespace MBSim {
         return object[i];
     }
     if(check){
-      if(!(i<object.size())) cout << "ERROR (DynamicSystem::getObject): The DynamicSystem " << this->name <<" comprises no Object " << name << "!" << endl; 
+      if(!(i<object.size())) {
+        ostringstream str;
+        str << "The DynamicSystem " << this->name <<" comprises no Object " << name << "!";
+        throw MBSimError(str.str());
+      }
       assert(i<object.size());
     }
     return NULL;
@@ -1471,7 +1489,9 @@ namespace MBSim {
 
   void DynamicSystem::addLink(Link *lnk) {
     if(getLink(lnk->getName(),false)) {
-      cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!";
+      throw MBSimError(str.str());
       assert(getLink(lnk->getName(),false) == NULL);
     }
 
@@ -1495,7 +1515,11 @@ namespace MBSim {
         return link[i];
     }
     if(check){
-      if(!(i<link.size())) cout << "ERROR (DynamicSystem::getLink): The DynamicSystem " << this->name <<" comprises no Link " << name << "!" << endl; 
+      if(!(i<link.size())) {
+        ostringstream str;
+        str << "The DynamicSystem " << this->name <<" comprises no Link " << name << "!" << endl; 
+        throw MBSimError(str.str());
+      }
       assert(i<link.size());
     }
     return NULL;
@@ -1503,7 +1527,9 @@ namespace MBSim {
 
   void DynamicSystem::addExtraDynamic(ExtraDynamic *ed_) {
     if(getExtraDynamic(ed_->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addExtraDynamic): The DynamicSystem " << name << " can only comprise one ExtraDynamic by the name " <<  ed_->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one ExtraDynamic by the name " <<  ed_->getName() << "!";
+      throw MBSimError(str.str());
       assert(getExtraDynamic(ed_->getName(),false) == NULL);
     }
     extraDynamic.push_back(ed_);
@@ -1517,7 +1543,11 @@ namespace MBSim {
         return extraDynamic[i];
     }
     if(check){
-      if(!(i<extraDynamic.size())) cout << "ERROR (DynamicSystem::getExtraDynamic): The DynamicSystem " << this->name <<" comprises no ExtraDynamic " << name << "!" << endl; 
+      if(!(i<extraDynamic.size())) {
+        ostringstream str;
+        str << "The DynamicSystem " << this->name <<" comprises no ExtraDynamic " << name << "!";
+        throw MBSimError(str.str());
+      }
       assert(i<extraDynamic.size());
     }
     return NULL;
@@ -1525,7 +1555,9 @@ namespace MBSim {
 
   void DynamicSystem::addModel(ModellingInterface *model_) {
     if(getModel(model_->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addModell): The DynamicSystem " << name << " can only comprise one model by the name " <<  model_->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one model by the name " <<  model_->getName() << "!";
+      throw MBSimError(str.str());
       assert(getModel(model_->getName(),false) == NULL); 
     }
     model.push_back(model_);
@@ -1539,7 +1571,11 @@ namespace MBSim {
         return model[i];
     }
     if(check){
-      if(!(i<model.size())) cout << "ERROR (DynamicSystem::getModell): The DynamicSystem " << name <<" comprises no model " << name << "!" << endl; 
+      if(!(i<model.size())) {
+        ostringstream str;
+        str << "The DynamicSystem " << name <<" comprises no model " << name << "!";
+        throw MBSimError(str.str());
+      }
       assert(i<model.size());
     }
     return NULL;
@@ -1547,7 +1583,9 @@ namespace MBSim {
 
   void DynamicSystem::addGroup(DynamicSystem *sys) {
     if(getGroup(sys->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addDynamicSystem): The DynamicSystem " << name << " can only comprise one DynamicSystem by the name " <<  sys->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one DynamicSystem by the name " <<  sys->getName() << "!";
+      throw MBSimError(str.str());
       assert(getGroup(sys->getName(),false) == NULL); 
     }
     dynamicsystem.push_back(sys);
@@ -1556,7 +1594,9 @@ namespace MBSim {
 
   void DynamicSystem::addObject(Object *obj) {
     if(getObject(obj->getName(),false)) {
-      cout << "ERROR (DynamicSystem::addObject): The DynamicSystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!" << endl;
+      ostringstream str;
+      str << "The DynamicSystem " << name << " can only comprise one Object by the name " <<  obj->getName() << "!";
+      throw MBSimError(str.str());
       assert(getObject(obj->getName(),false) == NULL); 
     }
     object.push_back(obj);
@@ -1587,10 +1627,8 @@ namespace MBSim {
           return getExtraDynamic(searched_name)->getByPathSearch(rest);
         else if (container=="Group")
           return getGroup(searched_name)->getByPathSearch(rest);
-        else {
-          cout << "Unknown name of container" << endl;
-          throw(123);
-        }
+        else
+          throw MBSimError("Unknown name of container");
       }
       else {
         if (container=="Object")
@@ -1605,10 +1643,8 @@ namespace MBSim {
           return getFrame(searched_name);
         else if (container=="Contour")
           return getContour(searched_name);
-        else {
-          cout << "Unknown name of container" << endl;
-          throw(123);
-        }
+        else
+          throw MBSimError("Unknown name of container");
       }
     }
   }
