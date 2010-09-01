@@ -95,7 +95,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation() * X(9,11));
       }
     }
-    else throw new MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition       (cp.getFrameOfReference().getPosition());
@@ -122,7 +122,7 @@ namespace MBSimFlexibleBody {
       Index activeElement( discretization[currentElement]->getuSize()/2*currentElement, discretization[currentElement]->getuSize()/2*(currentElement+2) -1 );
       Jacobian(activeElement,All) = static_cast<FiniteElement1s23BTA*>(discretization[currentElement])->JGeneralized(qElement[currentElement],sLocal);
     }
-    else throw new MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody1s23BTA::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()(0,1,2,2)*Jacobian(0,0,qSize-1,1).T());
     cp.getFrameOfReference().setJacobianOfRotation   (frameOfReference->getOrientation()*Jacobian(0,2,qSize-1,4).T());

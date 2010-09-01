@@ -83,9 +83,9 @@ namespace MBSimFlexibleBody {
 
   };
 
-  inline void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!"); }
-  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
-  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalVectorContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13Disk::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13Disk::GlobalMatrixContribution): Not implemented!"); }
 
 }
 

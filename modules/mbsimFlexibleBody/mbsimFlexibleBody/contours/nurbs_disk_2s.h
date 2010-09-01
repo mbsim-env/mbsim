@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
        */
       NurbsDisk2s(const std::string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
 #ifndef HAVE_NURBS
-        throw new MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
+        throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
 #endif
       }
 
@@ -92,10 +92,10 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw new MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */

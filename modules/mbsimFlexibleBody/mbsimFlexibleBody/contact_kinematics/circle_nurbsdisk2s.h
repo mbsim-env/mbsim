@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<MBSim::Contour*> &contour);
       virtual void updateg(fmatvec::Vec& g, MBSim::ContourPointData *cpData);   
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,MBSim::ContourPointData *cpData) { throw new MBSim::MBSimError("ERROR (PointNurbsDisk2s::updatewb): not implemented!"); }   
+      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("ERROR (PointNurbsDisk2s::updatewb): not implemented!"); }   
       /***************************************************/
 
       /* GETTER / SETTER */

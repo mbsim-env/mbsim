@@ -59,13 +59,25 @@ AC_SUBST([LIBMBSIMFLEXIBLEBODY_VERSION_INFO])
 
 CPPFLAGS="$CPPFLAGS"
 
+dnl needed for XML
+AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
+AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
+AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
+AM_CONDITIONAL([COND_XML], [test "_$MBXMLUTILSSCHEMADIR" != "_"])
+
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long -Wfloat-equal"
+AC_MSG_CHECKING([for -Wno-strict-overflow compiler flag])
+CPPFLAGS_OLD=$CPPFLAGS
+CPPFLAGS="$CPPFLAGS -Wno-strict-overflow"
+AC_COMPILE_IFELSE([int main() {}], [AC_MSG_RESULT([yes])], [AC_MSG_RESULT([no]); CPPFLAGS=$CPPFLAGS_OLD])
+
 AC_ARG_WITH([doxygenpath],[  --with-doxygenpath=PATH  The path to the 'doxygen' program.],[doxygenpath="$withval"],[doxygenpath=""])
 AC_PATH_PROG([doxygen],[doxygen],[no],[$doxygenpath:$PATH])
 if test $doxygen = "no" ; then
   AC_MSG_RESULT([can't generate documentation. 'doxygen' required.])
 fi
 
-AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody.pc])
+AC_CONFIG_FILES([Makefile mbsimFlexibleBody/Makefile mbsimFlexibleBody/flexible_body/Makefile mbsimFlexibleBody/flexible_body/finite_elements/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile mbsimFlexibleBody/contact_kinematics/Makefile mbsimFlexibleBody/contours/Makefile mbsimFlexibleBody.pc schema/Makefile xmldoc/Makefile])
 
 AC_OUTPUT
 

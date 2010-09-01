@@ -244,7 +244,7 @@ namespace MBSimFlexibleBody {
     else be = rf.solve(be);
 
     if(rf.getInfo()!=0) {
-      throw new MBSimError("ERROR (TRAFO33RCM:computebe): No convergence of Newton method during bending correction.");
+      throw MBSimError("ERROR (TRAFO33RCM:computebe): No convergence of Newton method during bending correction.");
     }
   }
 

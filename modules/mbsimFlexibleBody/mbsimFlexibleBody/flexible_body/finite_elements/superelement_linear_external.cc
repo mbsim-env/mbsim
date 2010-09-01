@@ -41,12 +41,12 @@ namespace MBSimFlexibleBody {
 
   void SuperElementLinearExternal::setM(const SymMat &M_) {
     if(M_.size()==getqSize() || getqSize()==0) M = M_;
-    else throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
+    else throw MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
   }
 
   void SuperElementLinearExternal::setK(const SqrMat &K_) {
     if(K_.size()==getuSize() || getuSize()==0) K = K_;
-    else throw new MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
+    else throw MBSimError("Massmatrix and stiffnessmatrix have unequal sizes!!!");
   }
 
   Vec SuperElementLinearExternal::computePosition(const Vec&q,const ContourPointData& cp) {
@@ -59,12 +59,12 @@ namespace MBSimFlexibleBody {
 
   MBSim::ContourPointData SuperElementLinearExternal::addInterface(Mat J_, Vec KrP_) {
     if( (J_.rows()!= M.size() && M.size()!=0) || (J_.rows()!= K.size() && K.size()!=0) ) {
-      throw new MBSimError("Jacobimatrix of interface does not fit in size to massmatrix and stiffnessmatrix!!!");
+      throw MBSimError("Jacobimatrix of interface does not fit in size to massmatrix and stiffnessmatrix!!!");
     }
     J.push_back(J_);
     KrP.push_back(KrP_);
     if(J.size()!=KrP.size()) {
-      throw new MBSimError("ERROR in memory management for SuperElementLinearExternal interfaces");
+      throw MBSimError("ERROR in memory management for SuperElementLinearExternal interfaces");
     }
     MBSim::ContourPointData CP;
     CP.getContourParameterType() = NODE;

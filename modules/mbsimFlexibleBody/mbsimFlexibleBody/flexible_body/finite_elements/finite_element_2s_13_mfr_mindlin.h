@@ -256,24 +256,24 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat *R_ij;
   };
 
-  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
-  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
+  inline const fmatvec::Vec& FiniteElement2s13MFRMindlin::geth() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::geth): Not implemented!"); } 
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdq() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdq): Not implemented!"); } 
+  inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getdhdu() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getdhdu): Not implemented!"); } 
   inline int FiniteElement2s13MFRMindlin::getqSize() const { return RefDofs + 4*NodeDofs; }
   inline int FiniteElement2s13MFRMindlin::getuSize() const { return RefDofs + 4*NodeDofs; }
-  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& q) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
-  inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const fmatvec::Vec& q) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!"); } 
-  inline double FiniteElement2s13MFRMindlin::computeElasticEnergy(const fmatvec::Vec& q) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computePosition): Not implemented!"); } 
-  inline fmatvec::SqrMat FiniteElement2s13MFRMindlin::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeOrientation): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeVelocity): Not implemented!"); } 
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); } 
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
+  inline void FiniteElement2s13MFRMindlin::computeM(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeM): Not implemented!"); } 
+  inline void FiniteElement2s13MFRMindlin::computeh(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeh): Not implemented!"); } 
+  inline void FiniteElement2s13MFRMindlin::computedhdz(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computedhdz): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeKineticEnergy(const fmatvec::Vec& q,const fmatvec::Vec& u) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeKineticEnergy): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeGravitationalEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeGravitationalEnergy): Not implemented!"); } 
+  inline double FiniteElement2s13MFRMindlin::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeElasticEnergy): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computePosition): Not implemented!"); } 
+  inline fmatvec::SqrMat FiniteElement2s13MFRMindlin::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeOrientation): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeVelocity): Not implemented!"); } 
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeAngularVelocity): Not implemented!"); } 
+  inline fmatvec::Mat FiniteElement2s13MFRMindlin::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeJacobianOfMotion): Not implemented!"); } 
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getK() const { return *K; }
-  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
+  inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM() const { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::getM): Not implemented!"); }
   inline const fmatvec::SymMat& FiniteElement2s13MFRMindlin::getM_RR() const { return *M_RR; }
   inline const fmatvec::Mat& FiniteElement2s13MFRMindlin::getN_compl() const { return *N_compl; }
   inline const fmatvec::SqrMat& FiniteElement2s13MFRMindlin::getN_ij(int i, int j) const { return *(N_ij[i][j]); }
@@ -291,8 +291,8 @@ namespace MBSimFlexibleBody {
   inline void FiniteElement2s13MFRMindlin::freeNR_ij(int i, int j) { delete NR_ij[i][j]; NR_ij[i][j]=0; }
   inline void FiniteElement2s13MFRMindlin::freeR_compl() { delete R_compl; R_compl=0; }
   inline void FiniteElement2s13MFRMindlin::freeR_ij() { delete R_ij; R_ij=0; }
-  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeState): Not implemented!"); }
-  inline fmatvec::Mat FiniteElement2s13MFRMindlin::JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s) { throw new MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!"); }
+  inline fmatvec::Vec FiniteElement2s13MFRMindlin::computeState(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &qElement,const fmatvec::Vec &qpElement,const fmatvec::Vec &s,double d1,double d2) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::computeState): Not implemented!"); }
+  inline fmatvec::Mat FiniteElement2s13MFRMindlin::JGeneralized(const fmatvec::Vec &NodeCoordinates,const fmatvec::Vec &s) { throw MBSim::MBSimError("ERROR(FiniteElement2s13MFRMindlin::JGeneralized): Not implemented!"); }
 }
 
 #endif /* _FINITE_ELEMENT_2S_13_MFR_MINDLIN_H_ */

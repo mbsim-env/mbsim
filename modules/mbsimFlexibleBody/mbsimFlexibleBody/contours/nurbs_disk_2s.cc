@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
           cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
           break;
         default:
-          throw new MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+          throw MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
       }
     }
     else { // somewhere else
@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
       }
 
       // if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) {
-      //   throw new MBSimError("ERROR(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
+      //   throw MBSimError("ERROR(FlexibleBody2s13::updateKinematicsForFrame::angularVelocity): Not implemented!");
       // }
     }
 #endif

@@ -93,7 +93,7 @@
 //
 //      // qG_Old = qG.copy();
 //
-//      throw new MBSimError("ERROR (FiniteElement1s33RCM::computeM): Not implemented!");
+//      throw MBSimError("ERROR (FiniteElement1s33RCM::computeM): Not implemented!");
 //    }
 //
 //    /* global description */

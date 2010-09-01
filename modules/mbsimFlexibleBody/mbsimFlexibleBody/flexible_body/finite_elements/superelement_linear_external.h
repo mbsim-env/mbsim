@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec computeVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const MBSim::ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
       fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q,const fmatvec::Vec&u,const MBSim::ContourPointData& cp) { return computeJacobianOfMotion(q,cp).T()*u;}
       fmatvec::Vec computePosition(const fmatvec::Vec&q,const MBSim::ContourPointData& cp);
-      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const MBSim::ContourPointData& cp) { throw new MBSim::MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
+      fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q,const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR(SuperElementLinearExternal::computeOrientation): Not Implemented");}
       fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q,const MBSim::ContourPointData& cp);
 
 	  MBSim::ContourPointData addInterface(fmatvec::Mat J_, fmatvec::Vec KrP_);

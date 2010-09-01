@@ -118,9 +118,9 @@ namespace MBSimFlexibleBody {
       fmatvec::SymMat* R_ij;
   };
 
-  inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
-  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw new MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalVectorContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
+  inline void FlexibleBody2s13MFRMindlin::GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) { throw MBSim::MBSimError("ERROR(FlexibleBody2s13MFRMindlin::GlobalMatrixContribution): Not implemented!"); }
 
 }
 
