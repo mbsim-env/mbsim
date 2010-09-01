@@ -29,7 +29,7 @@ namespace MBSimFlexibleBody {
 
   ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s() : icircle(0), inurbsdisk(0), nurbsdisk(0), circle(0), LOCALSEARCH(false) {
 #ifndef HAVE_NURBS
-    throw new MBSimError("ERROR(ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s): External NURBS library not implemented!");
+    throw MBSimError("ERROR(ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s): External NURBS library not implemented!");
 #endif   
   }
 

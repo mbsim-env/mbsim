@@ -125,7 +125,7 @@ namespace MBSimFlexibleBody {
         gp(4) = (322.-13.*sqrt(70.))/900.;
         break;
       default:
-        throw new MBSimError("ERROR (Weight33RCM::setGauss): Maximum of 5 Gauss points supported");
+        throw MBSimError("ERROR (Weight33RCM::setGauss): Maximum of 5 Gauss points supported");
     }
   }
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://mbsim.berlios.de/MBSimFlexibleBody"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://mbsim.berlios.de/MBSimFlexibleBody"
+  xmlns:mbsim="http://mbsim.berlios.de/MBSim"
+  xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+  xmlns:ombv="http://openmbv.berlios.de/OpenMBV"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
+    schemaLocation="../http___openmbv_berlios_de_MBXMLUtils/physicalvariable.xsd"/>
+
+  <xs:import namespace="http://openmbv.berlios.de/OpenMBV"
+    schemaLocation="../http___openmbv_berlios_de_OpenMBV/openmbv.xsd"/>
+
+  <xs:import namespace="http://mbsim.berlios.de/MBSim"
+    schemaLocation="../http___mbsim_berlios_de_MBSim/mbsim.xsd"/>
+
+
+</xs:schema>
+

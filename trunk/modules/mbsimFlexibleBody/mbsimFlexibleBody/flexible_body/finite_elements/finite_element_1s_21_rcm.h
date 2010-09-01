@@ -78,10 +78,10 @@ namespace MBSimFlexibleBody {
       virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
       virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
       virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
-      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw new MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
-      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw new MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
-      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw new MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
-      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw new MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
+      virtual fmatvec::Vec computePosition(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computePosition): not implemented!"); }
+      virtual fmatvec::SqrMat computeOrientation(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeOrientation): not implemented!"); }
+      virtual fmatvec::Vec computeVelocity (const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeVelocity): not implemented!"); }
+      virtual fmatvec::Vec computeAngularVelocity(const fmatvec::Vec&q, const fmatvec::Vec&u, const MBSim::ContourPointData& cp) { throw MBSim::MBSimError("ERROR (FiniteElement1s21RCM::computeAngularVelocity): not implemented!"); }
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec&q, const MBSim::ContourPointData& cp) { return JGeneralized(q,cp.getLagrangeParameterPosition()(0)); }
       /***************************************************/
       /*!

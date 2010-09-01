@@ -161,9 +161,9 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition()+frameOfReference->getOrientation()*r_ref);
       }
 
-      if(ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
-      if(ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == firstTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == normal || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
+      if(ff == secondTangent || ff == cosy || ff == position_cosy || ff == velocity_cosy || ff == velocities_cosy || ff == all) throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Not implemented!");
 
       if(ff == velocity || ff == velocities || ff == velocity_cosy || ff == velocities_cosy || ff == all) {
         Vec u_ref_1(3,NONINIT);
@@ -194,7 +194,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*w_ref_2);
       }
     }
-    else throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition       (cp.getFrameOfReference().getPosition());
@@ -321,7 +321,7 @@ namespace MBSimFlexibleBody {
       cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation() * Jacobian_rot);
 
     }
-    else throw new MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
+    else throw MBSimError("ERROR(FlexibleBody2s13MFRMindlin::updateJacobiansForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
     // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
