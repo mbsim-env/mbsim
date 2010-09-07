@@ -53,9 +53,9 @@ namespace MBSim {
       virtual void assignContours(const std::vector<Contour*>& contour);
 //      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData);   
       virtual void updateg(std::vector<fmatvec::Vec>::iterator ig, std::vector<ContourPointData*>::iterator icpData);   
-//      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updatewb): not implemented!"); }   
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updateg): Not implemented!"); }
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw new MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updatewb): Not implemented!"); };
+//      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updatewb): not implemented!"); }   
+      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updateg): Not implemented!"); }
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("ERROR (ContactKinematicsCircleSolidFlexibleBand::updatewb): Not implemented!"); };
       /***************************************************/
 
     private:
