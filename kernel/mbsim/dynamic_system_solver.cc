@@ -327,7 +327,7 @@ namespace MBSim {
       }
       else if(contactSolver == FixedPointSingle) solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
       else if(contactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveConstraints_ = &DynamicSystemSolver::solveConstraintsRootFinding; }
-      else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
+      else throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
       if(INFO) cout << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
@@ -338,7 +338,7 @@ namespace MBSim {
       }
       else if(impactSolver == FixedPointSingle) solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
       else if(impactSolver == RootFinding) { cout << "WARNING: RootFinding solver is BUGGY at least if there is friction!" << endl; solveImpacts_ = &DynamicSystemSolver::solveImpactsRootFinding; }
-      else throw new MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
+      else throw MBSimError("ERROR (DynamicSystemSolver::init()): Unknown impact solver");
     }
     else if(stage==MBSim::modelBuildup) {
       if(INFO) cout << "  initialising modelBuildup ..." << endl;
@@ -1251,7 +1251,7 @@ namespace MBSim {
     if(object_) addObject(object_);
     else if(link_) addLink(link_);
     else if(ed_) addExtraDynamic(ed_);
-    else{ throw new MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");}
+    else{ throw MBSimError("ERROR (DynamicSystemSolver: addElement()): No such type of Element to add!");}
   }
 
   Element* DynamicSystemSolver::getElement(const string &name) {
@@ -1412,10 +1412,10 @@ namespace MBSim {
       //     }
       //     rFactor.init(rFac);
 
-      throw new MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
+      throw MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Global r-Factor strategy not currently not available.");
     }
     else if(strategy == local) Group::updaterFactors();
-    else throw new MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Unknown strategy.");
+    else throw MBSimError("ERROR (DynamicSystemSolver::updaterFactors()): Unknown strategy.");
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {

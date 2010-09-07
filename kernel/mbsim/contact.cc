@@ -431,7 +431,7 @@ namespace MBSim {
       LinkMechanics::init(stage);
 
       if(contactKinematics==0) contactKinematics = findContactPairing(contour[0],contour[1]);
-      if(contactKinematics==0) throw new MBSimError("Unknown contact pairing");
+      if(contactKinematics==0) throw MBSimError("Unknown contact pairing");
 
       contactKinematics->assignContours(contour[0],contour[1]);
 

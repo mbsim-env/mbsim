@@ -41,7 +41,7 @@ namespace MBSim {
     else if(InterpolationMethod == "plinear") {
       calculatePLinear(x,f);
     }
-    else throw new MBSimError("ERROR (PPolynom::setXF): No valid method to calculate pp-form");
+    else throw MBSimError("ERROR (PPolynom::setXF): No valid method to calculate pp-form");
 
     index = 0;
     nPoly = x.size()-1;
@@ -51,7 +51,7 @@ namespace MBSim {
   void PPolynom::calculateSplinePeriodic(const Vec &x, const Mat &f) {
     double hi, hii;
     int N = x.size();
-    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw new MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
+    if(nrm2(f.row(0)-f.row(f.rows()-1))>epsroot()) throw MBSimError("ERROR (PPolynom::calculateSplinePeriodic): f(0)= "+numtostr(f.row(0))+"!="+numtostr(f.row(f.rows()-1))+" =f(end)");
     SqrMat C(N-1,N-1,INIT,0.0);
     Mat rs(N-1,f.cols(),INIT,0.0);
 
@@ -190,9 +190,9 @@ namespace MBSim {
           
   Vec PPolynom::ZerothDerivative::operator()(const double& x, const void *) {
     if(x>(parent->breaks)(parent->nPoly)) 
-      throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
+      throw MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
     if(x<(parent->breaks)(0)) 
-      throw new MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
+      throw MBSimError("ERROR (PPolynom::operator()): x out of range! x= "+numtostr(x)+", lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && ySave.size())
       return ySave;
@@ -217,8 +217,8 @@ namespace MBSim {
   }
 
   Vec PPolynom::FirstDerivative::operator()(const double& x, const void *) {
-    if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
+    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff1): x out of range! x= "+numtostr(x)+", upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
+    if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff1): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && ySave.size())
       return ySave;
@@ -243,8 +243,8 @@ namespace MBSim {
   }
 
   Vec PPolynom::SecondDerivative::operator()(const double& x, const void *) {
-    if(x>(parent->breaks)(parent->nPoly)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
-    if(x<(parent->breaks)(0)) throw new MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
+    if(x>(parent->breaks)(parent->nPoly)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" upper bound= "+numtostr((parent->breaks)(parent->nPoly)));
+    if(x<(parent->breaks)(0)) throw MBSimError("ERROR (PPolynom::diff2): x out of range!   x= "+numtostr(x)+" lower bound= "+numtostr((parent->breaks)(0)));
 
     if ((fabs(x-xSave)<macheps()) && ySave.size())
       return ySave;

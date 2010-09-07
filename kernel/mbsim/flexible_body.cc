@@ -95,7 +95,7 @@ namespace MBSim {
   }
 
   void FlexibleBody::updateInverseKineticsJacobians(double t) {
-    throw new MBSimError("ERROR (FlexibleBody::updateInverseKineticsJacobians): Not implemented!");
+    throw MBSimError("ERROR (FlexibleBody::updateInverseKineticsJacobians): Not implemented!");
   }
 
   void FlexibleBody::plot(double t, double dt) {
