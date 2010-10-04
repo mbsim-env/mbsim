@@ -165,7 +165,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==MBSim::unknownStage) {
       Link::init(stage);
-      gdTol*=1e-6;
+      gdTol/=6e4;
     }
     else
       Link::init(stage);
@@ -176,7 +176,7 @@ namespace MBSimHydraulics {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(parent,j);
-      const int hJ=hI+connectedLines[i].sign.size()-1;
+      const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
       W[i].resize()>>WParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -186,7 +186,7 @@ namespace MBSimHydraulics {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(parent,j);
-      const int hJ=hI+connectedLines[i].sign.size()-1;
+      const int hJ=hI+connectedLines[i].line->getJacobian().cols()-1;
       V[i].resize()>>VParent(Index(hI, hJ), Index(laI, laJ));
     }
   }
@@ -204,7 +204,7 @@ namespace MBSimHydraulics {
   void HNode::updaterRef(const Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(parent, j);
-      const Index I(hInd, hInd+connectedLines[i].sign.size()-1);
+      const Index I(hInd, hInd+connectedLines[i].line->getJacobian().cols()-1);
       r[i].resize() >> rParent(I);
     }
   }
@@ -494,8 +494,8 @@ namespace MBSimHydraulics {
 
   void RigidNode::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hJ=connectedLines[i].sign.size()-1;
-      W[i](Index(0,hJ), Index(0, 0))=connectedLines[i].sign;
+      const int hJ=connectedLines[i].line->getJacobian().cols()-1;
+      W[i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
     }
   }
 

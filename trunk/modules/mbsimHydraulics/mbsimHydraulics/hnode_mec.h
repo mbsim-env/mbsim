@@ -174,6 +174,7 @@ namespace MBSimHydraulics {
       virtual std::string getType() const { return "RigidNodeMec"; }
 
       bool isSetValued() const {return true; }
+      bool isActive() const {return true; }
 
       void calclaSize() {laSize=1; }
       void calclaSizeForActiveg() {laSize=0; }

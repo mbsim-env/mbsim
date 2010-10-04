@@ -180,9 +180,9 @@ namespace MBSimHydraulics {
       Group::init(stage);
 
       if (!dynamic_cast<HNodeMec*>(line->getFromNode()))
-        throw new MBSimError("ERROR! Hydraulic Node \""+line->getFromNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+        throw MBSimError("ERROR! Hydraulic Node \""+line->getFromNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
       if (!dynamic_cast<HNodeMec*>(line->getToNode()))
-        throw new MBSimError("ERROR! Hydraulic Node \""+line->getToNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
+        throw MBSimError("ERROR! Hydraulic Node \""+line->getToNode()->getName()+"\" connected to Checkvalve \""+name+"\" has to be of Type \"HNodeMec\"!");
       
       double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
       if (ballForceArea<0) {

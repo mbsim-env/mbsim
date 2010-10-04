@@ -55,6 +55,8 @@ namespace MBSimHydraulics {
       return new ParallelResistanceLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaLinePressureLoss")
       return new ZetaLinePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ZetaPosNegLinePressureLoss")
+      return new ZetaPosNegLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"LaminarTubeFlowLinePressureLoss")
       return new LaminarTubeFlowLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"TurbulentTubeFlowLinePressureLoss")
