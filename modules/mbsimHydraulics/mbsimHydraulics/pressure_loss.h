@@ -84,6 +84,19 @@ namespace MBSimHydraulics {
   };
 
 
+  /*! LinePressureLossZetaPosNeg */
+  class ZetaPosNegLinePressureLoss : public LinePressureLoss {
+    public:
+      ZetaPosNegLinePressureLoss() : LinePressureLoss(), cPos(0), cNeg(0) {};
+      void setZetaPos(double zeta_) {cPos=zeta_; }
+      void setZetaNeg(double zeta_) {cNeg=zeta_; }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double cPos, cNeg;
+  };
+
+
   /*! PressureLossLaminarTubeFlow */
   class LaminarTubeFlowLinePressureLoss : public LinePressureLoss {
     public:

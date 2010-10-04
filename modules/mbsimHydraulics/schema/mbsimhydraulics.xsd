@@ -352,6 +352,38 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ZetaPosNegLinePressureLoss" substitutionGroup="LinePressureLoss" type="ZetaPosNegLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Druckverluste aufgrund Ein-/Auslaufverluste sowie Umlenkverluste mit Berücksichtigung der Flussrichtung. Mit diesem Element können unilaterale Element wie etwa Rückflusssperrventile angenähert werden.<br/>
+        Die Berechnung erfolgt gemäß
+        <object class="eqn">\Delta p = \frac{\rho}{2} \, \begin{cases} \zeta_{Pos} &amp; Q\geq0 \\ \zeta_{Neg} &amp; Q&lt;0 \end{cases} \, \frac{Q \, |Q|}{A^2}</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ZetaPosNegLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="zetaPos" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{Pos}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="zetaNeg" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{Neg}</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="LaminarTubeFlowLinePressureLoss" substitutionGroup="LinePressureLoss" type="LaminarTubeFlowLinePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

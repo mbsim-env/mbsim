@@ -42,11 +42,11 @@ namespace MBSimHydraulics {
     else if (stage==preInit) {
       Object::init(stage);
       if (!nFrom && !nFromRelative) 
-        throw new MBSimError("ERROR! HLine \""+name+"\" has no fromNode!");
+        throw MBSimError("ERROR! HLine \""+name+"\" has no fromNode!");
       if (!nTo && !nToRelative) 
-        throw new MBSimError("ERROR! HLine \""+name+"\" has no toNode!");
+        throw MBSimError("ERROR! HLine \""+name+"\" has no toNode!");
       if (nFrom && nFrom==nTo) 
-        throw new MBSimError("ERROR! HLine \""+name+"\": fromNode and toNode are the same!");
+        throw MBSimError("ERROR! HLine \""+name+"\": fromNode and toNode are the same!");
     }
     else
       Object::init(stage);
@@ -82,7 +82,7 @@ namespace MBSimHydraulics {
   Mat RigidHLine::calculateJacobian(vector<RigidHLine*> dep_check) {
     for (unsigned int i=0; i<dep_check.size()-1; i++)
       if (this==dep_check[i])
-        throw new MBSimError("Kinematic Loop in hydraulic system. Check model!");
+        throw MBSimError("Kinematic Loop in hydraulic system. Check model!");
 
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
@@ -216,9 +216,9 @@ namespace MBSimHydraulics {
     if (stage==preInit) {
       Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
-        throw new MBSimError("ERROR! ConstrainedLine \""+name+"\" needs at least one connected node!");
+        throw MBSimError("ERROR! ConstrainedLine \""+name+"\" needs at least one connected node!");
       if (nFrom==nTo) 
-        throw new MBSimError("ERROR! ConstrainedLine \""+name+"\": fromNode and toNode are the same!");
+        throw MBSimError("ERROR! ConstrainedLine \""+name+"\": fromNode and toNode are the same!");
     }
     else
       HLine::init(stage);
@@ -243,9 +243,9 @@ namespace MBSimHydraulics {
     else if (stage==preInit) {
       Object::init(stage); // no check of connected lines
       if (!nFrom && !nTo) 
-        throw new MBSimError("ERROR! FluidPump \""+name+"\" needs at least one connected node!");
+        throw MBSimError("ERROR! FluidPump \""+name+"\" needs at least one connected node!");
       if (nFrom==nTo)
-        throw new MBSimError("ERROR! FluidPump \""+name+"\": fromNode and toNode are the same!");
+        throw MBSimError("ERROR! FluidPump \""+name+"\": fromNode and toNode are the same!");
     }
     else
       HLine::init(stage);

@@ -34,6 +34,7 @@ namespace MBSimHydraulics {
   }
 
   void FlowSensor::initializeUsingXML(TiXmlElement * element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"hline");
     lineString=e->Attribute("ref");
@@ -54,6 +55,7 @@ namespace MBSimHydraulics {
   }
 
   void PressureSensor::initializeUsingXML(TiXmlElement * element) {
+    Sensor::initializeUsingXML(element);
     TiXmlElement *e;
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"hnode");
     nodeString=e->Attribute("ref");

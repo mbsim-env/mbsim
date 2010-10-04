@@ -85,6 +85,27 @@ namespace MBSimHydraulics {
   }
 
 
+  double ZetaPosNegLinePressureLoss::operator()(const double& Q, const void * line) {
+    if (!initialized) {
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double d=((const RigidLine*)(line))->getDiameter();
+      double A=M_PI*d*d/4.;
+      cPos*=rho/2./A/A;
+      cNeg*=rho/2./A/A;
+      initialized=true;
+    }
+    return (Q>=0?cPos:cNeg)*Q*abs(Q);
+  }
+
+  void ZetaPosNegLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaPos");
+    setZetaPos(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaNeg");
+    setZetaNeg(Element::getDouble(e));
+  }
+
+
   double LaminarTubeFlowLinePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
@@ -316,7 +337,7 @@ namespace MBSimHydraulics {
 
   double PlaneLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((const Object*)(line))->getuSize(0))
+      if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
       double h;
       double w;
@@ -353,7 +374,7 @@ namespace MBSimHydraulics {
 
   double EccentricCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((const Object*)(line))->getuSize(0))
+      if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
       double rI;
       double rO;
@@ -401,7 +422,7 @@ namespace MBSimHydraulics {
 
   double RealCircularLeakagePressureLoss::operator()(const double& pVorQ, const void * line) {
     if (!initialized) {
-      if (((const Object*)(line))->getuSize(0))
+      if (((HLine*)(line))->getJacobian().rows())
         stateless=false;
       double rI;
       double rA;

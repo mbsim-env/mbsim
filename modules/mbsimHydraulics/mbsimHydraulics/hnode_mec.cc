@@ -324,7 +324,7 @@ namespace MBSimHydraulics {
   }
 
   void HNodeMec::updater(double t) {
-    cout << "HNodeMec \"" << name << "\": updater()" << endl; 
+    throw MBSimError("HNodeMec \"" + name + "\": updater(): not implemented."); 
   }
 
   void HNodeMec::updatexd(double t) {
@@ -603,18 +603,18 @@ namespace MBSimHydraulics {
     HNodeMec::updategd(t);
     if (t<epsroot()) {
       if (fabs(QHyd)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
+        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial hydraulic flow not equal to zero. Just Time-Stepping Integrators can handle this correctly (QHyd=" << QHyd << ")." << endl;
       if (fabs(QMecTrans)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
+        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial mechanical flow due to translatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecTrans=" << QMecTrans << ")." << endl;
       if (fabs(QMecRot)>epsroot())
-        cout << "WARNING: RigidNode \"" << name << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
+        cerr << "WARNING: RigidNodeMec \"" << name << "\": has an initial mechanical flow due to rotatorial interfaces not equal to zero. Just Time-Stepping Integrators can handle this correctly (QMecRot=" << QMecRot << ")." << endl;
     }
   }
 
   void RigidNodeMec::updateW(double t) {
     for (unsigned int i=0; i<nLines; i++) {
-      const int hJ=connectedLines[i].sign.cols()-1;
-      W[i](Index(0,hJ), Index(0, 0)) += connectedLines[i].sign;
+      const int hJ=connectedLines[i].line->getJacobian().cols()-1;
+      W[i](Index(0,hJ), Index(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;      
     }
     for (unsigned int i=0; i<nTrans; i++) {
       const int hJ=connectedTransFrames[i].frame->getJacobianOfTranslation().cols()-1;

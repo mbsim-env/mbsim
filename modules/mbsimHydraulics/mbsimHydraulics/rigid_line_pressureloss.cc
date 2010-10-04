@@ -103,7 +103,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==MBSim::unknownStage) {
-      gdTol*=1e-6;
+      gdTol/=6e4;
       Link::init(stage);
     }
     else
