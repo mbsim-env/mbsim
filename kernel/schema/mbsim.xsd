@@ -1662,7 +1662,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RigidContour" substitutionGroup="Contour" type="RigidContourType">
+  <xs:element name="RigidContour" abstract="true" substitutionGroup="Contour" type="RigidContourType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
         Abstrakte Klasse für starre Konturen.
