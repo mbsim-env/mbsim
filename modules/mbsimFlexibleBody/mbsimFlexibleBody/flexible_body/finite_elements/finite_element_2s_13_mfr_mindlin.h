@@ -99,7 +99,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief computes stiffnes matrix
        */
-      void computeStiffnesMatrix();
+      void computeStiffnessMatrix();
 
       /*!
        * \brief computes a part of the mass matrix

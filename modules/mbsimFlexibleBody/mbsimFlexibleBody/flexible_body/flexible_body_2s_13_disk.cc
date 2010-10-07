@@ -414,9 +414,64 @@ namespace MBSimFlexibleBody {
     MConst = condenseMatrix(Mext,ILocked);
     K = condenseMatrix(Kext,ILocked);
 
+
+    /* STATIC TEST */
+    //Index Iall(RefDofs,K.size()-1);
+    //
+    //// load
+    //Vec F_test(K.size()-RefDofs,INIT,0.);
+    //F_test((nr-1)*nj*3) = 1e10;
+    //
+    //// displacements in MBSim
+    //Vec q_test = slvLL(K(Iall),F_test);
+    //Vec u_mbsim(12,NONINIT);
+    //// first: positive x-axis
+    //u_mbsim(0) = q_test(0);
+    //u_mbsim(1) = q_test(nr/2*nj*3);
+    //u_mbsim(2) = q_test((nr-1)*nj*3);
+    //// second: positive y-axis
+    //u_mbsim(3) = q_test(nj/4*3);
+    //u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3);
+    //u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3);
+    //// third: negative x-axis
+    //u_mbsim(6) = q_test(nj/2*3);
+    //u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3);
+    //u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3);
+    //// fourth: negative y-axis
+    //u_mbsim(9) = q_test(3*nj/4*3);
+    //u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3);
+    //u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3);
+    //
+    //// displacements in ANSYS
+    //Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926; 0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
+    //
+    //// error
+    //double maxerr = nrmInf(u_ansys-u_mbsim);
+    //
+    //// output
+    //ofstream file_static;
+    //stringstream filename_static;
+    //filename_static <<  "Static" <<  nr << "x" << nj << ".txt";
+    //file_static.open(filename_static.str().c_str());
+    //file_static<<"error="<<maxerr<<endl;
+    //file_static<<"static_mbsim=matrix([";
+    //for(int i = 0; i<u_mbsim.size(); i++)
+    //  file_static<<u_mbsim(i)<<",";
+    //file_static<<"]);"<<endl;
+    //file_static.close();
+    ///*END-Static-Test*/
+
     // masse and inertia of shaft
     MConst(0,0) += m0;
     MConst(1,1) += J0(2,2);
+
+    /*Eigenfrequencies*/
+    //stringstream filename;
+    //filename << "Invertation" << nr << "x" << nj;
+    //MapleOutput(static_cast<Mat>(MConst), "M", filename.str());
+    //MapleOutput(static_cast<Mat>(K), "K", filename.str());
+    //throw new MBSimError("Natural Harmonics of flexible_body_2s13_mfr_mindlin were computed -> exit now ...");
+    /*END-Eigenfrequencies*/
 
     // LU-decomposition of M
     LLM = facLL(MConst);

@@ -123,13 +123,13 @@ namespace MBSimFlexibleBody {
     }
 
     /*TESTING*/
-    ofstream file("JacTrans.txt");
-    file << cp.getFrameOfReference().getJacobianOfTranslation();
-    file.close();
+    //ofstream file("JacTrans.txt");
+    //file << cp.getFrameOfReference().getJacobianOfTranslation();
+    //file.close();
 
-    ofstream file2("JacRot.txt");
-    file2 << cp.getFrameOfReference().getJacobianOfRotation();
-    file2.close();
+    //ofstream file2("JacRot.txt");
+    //file2 << cp.getFrameOfReference().getJacobianOfRotation();
+    //file2.close();
 #endif
   }
 
