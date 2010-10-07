@@ -60,16 +60,15 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateM(double t) {
     SymMat Mext = MConst.copy(); // copy constant mass matrix parts
-    Vec qf(Dofs-RefDofs,INIT,0.);
-    // Vec qf = qext(RefDofs,Dofs-1).copy(); TODO
+    Vec qf = qext(RefDofs,Dofs-1).copy();
 
     /* M_RR is constant */
     /* M_RTheta */
-    Vec u_bar = (*N_compl)*qf+(*R_compl);
+    Vec u_bar = (*R_compl) + (*N_compl)*qf;
     SqrMat M_RTheta = (-A)*tilde(u_bar)*G;
 
     /* M_RF */
-    Mat M_RF = A*(*N_compl);
+    Mat M_RF = Mat(3,Dofs-RefDofs,INIT,0.); //= A*(*N_compl);
 
     /* M_ThetaTheta */
     SymMat I(3,INIT,0.);
@@ -86,9 +85,9 @@ namespace MBSimFlexibleBody {
     /* M_ThetaF */
     Mat qN(3,Dofs-RefDofs);
 
-    qN(0,0,0,Dofs-RefDofs-1) = (*NR_ij[1][2])-(*NR_ij[2][1])+qf.T()*((*N_ij[1][2])-(*N_ij[2][1]));
-    qN(1,0,1,Dofs-RefDofs-1) = (*NR_ij[2][0])-(*NR_ij[0][2])+qf.T()*((*N_ij[2][0])-(*N_ij[0][2]));
-    qN(2,0,2,Dofs-RefDofs-1) = (*NR_ij[0][1])-(*NR_ij[1][0])+qf.T()*((*N_ij[0][1])-(*N_ij[1][0]));
+    qN(0,0,0,Dofs-RefDofs-1) =qf.T()*((*N_ij[1][2])-(*N_ij[2][1]));//+ (*NR_ij[1][2])-(*NR_ij[2][1]);
+    qN(1,0,1,Dofs-RefDofs-1) =qf.T()*((*N_ij[2][0])-(*N_ij[0][2]));//+ (*NR_ij[2][0])-(*NR_ij[0][2]);
+    qN(2,0,2,Dofs-RefDofs-1) =qf.T()*((*N_ij[0][1])-(*N_ij[1][0]));//+ (*NR_ij[0][1])-(*NR_ij[1][0]);
 
     Mat M_ThetaF = G.T()*qN;
 
@@ -106,16 +105,67 @@ namespace MBSimFlexibleBody {
 
     M = condenseMatrix(Mext,ILocked).copy();
 
-    ofstream file_M("M.txt");
-    file_M << M << endl;
-    file_M << eigval(M) << endl;
-    file_M.close();
+    /* Eigenvalues of M */
+    //stringstream filenameM;
+    //filenameM << "M" << nr << "x" << nj << "t" << t << ".txt";
+    //ofstream file_M(filenameM.str().c_str());
+    //file_M<<M<<endl;
+    //file_M<<eigval(M)<<endl;
+    //file_M.close();
+    //
+    //ofstream file_TS("LastTimeStep.txt");
+    //file_TS<<t<<endl;
+    //file_TS.close();
+
+    //stringstream filenameMpart;
+    //filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
+    //ofstream file_Mpart(filenameMpart.str().c_str());
+    //Index Ipart(3,5);
+    //file_Mpart <<"M_TT"<< endl << M(Ipart) << endl;
+    //file_Mpart << eigval(M(Ipart))<<endl;
+    //file_Mpart.close();
 
     /* EIGENFREQUENCIES */
-    SqrMat H = static_cast<SqrMat>(inv(M)*K);
-    ofstream file_eigval("EigVal.txt");
-    file_eigval << eigval(H) << endl;
-    file_eigval.close();
+    //if(eigval(M(Ipart))(0) < 0 )
+    //  throw MBSimError("TEST");
+
+    //with MAPLE
+    //stringstream filename;
+    //filename << "Invertation" << nr << "x" << nj;
+    //MapleOutput(static_cast<Mat>(M), "M", filename.str());
+    //MapleOutput(static_cast<Mat>(K), "K", filename.str());
+
+    //with MBSIM
+    //SqrMat H = static_cast<SqrMat> (inv(M)*K);
+    //Vector<std::complex<double> > EigVal = eigval(H);
+    //Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
+    //for(int i = 0; i<EigVal.size()-1; i++){
+    //  if (EigVal(i).imag()!=0)
+    //    throw new MBSimError("updateM() - imaginary parts in EigVal");
+    //  NaturalHarmonics(NaturalHarmonics.size() -1 - i) = 1/(M_PI*2)*EigVal(i).real();
+    //}
+    //for(int i=0; i<NaturalHarmonics.size(); i++)
+    //  for(int j=0; j<NaturalHarmonics.size()-i-1; j++) {
+    //    if(NaturalHarmonics(j)> NaturalHarmonics(j+1)) {
+    //      double tmp = NaturalHarmonics(j);
+    //      NaturalHarmonics(j) = NaturalHarmonics(j+1);
+    //      NaturalHarmonics(j+1) = tmp;
+    //    }
+    //  }
+    //stringstream filenameEigVal;
+    //filenameEigVal<<"EigVal"<<nr<<"x"<<nj<<".txt";
+    //ofstream file_eigval(filenameEigVal.str().c_str());
+    //file_eigval<<NaturalHarmonics<<endl;
+    //file_eigval.close();
+
+    // LU-decomposition of M
+    //SqrMat H = static_cast<SqrMat>(inv(M)*K);
+    //ofstream file_eigval("EigVal.txt");
+    //file_eigval << eigval(H) << endl;
+    //file_eigval.close();
+    
+    //for testing
+    //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
 
     // LU-decomposition of M
     LLM = facLL(M); 
@@ -518,7 +568,7 @@ namespace MBSimFlexibleBody {
 
     // element loop
     for(int element=0;element< Elements;element++) {
-      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeStiffnesMatrix();
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeStiffnessMatrix();
       SymMat ElK = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getK();
 
       for(int node=0;node<ElementNodes;node++) { 
@@ -536,47 +586,49 @@ namespace MBSimFlexibleBody {
     K = condenseMatrix(Kext,ILocked);
 
     /* STATIC TEST */
-    Index Iall(RefDofs,K.size()-1);
+    //Index Iall(RefDofs,K.size()-1);
 
-    // load
-    Vec F_test(K.size()-RefDofs,INIT,0.);
-    F_test((nr-1)*nj*3) = 1e10;
+    //// load
+    //Vec F_test(K.size()-RefDofs,INIT,0.);
+    //F_test((nr-1)*nj*3) = 1e10;
 
-    // displacements in MBSim    
-    Vec q_test = slvLL(K(Iall),F_test);
-    Vec u_mbsim(12,NONINIT);
-    // first: positive x-axis
-    u_mbsim(0) = q_test(0);
-    u_mbsim(1) = q_test(nr/2*nj*3);
-    u_mbsim(2) = q_test((nr-1)*nj*3);
-    // second: positive y-axis
-    u_mbsim(3) = q_test(nj/4*3);
-    u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); 
-    u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); 
-    // third: negative x-axis
-    u_mbsim(6) = q_test(nj/2*3);
-    u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3);
-    u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3);
-    // fourth: negative y-axis
-    u_mbsim(9)  = q_test(3*nj/4*3);
-    u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); 
-    u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3);
+    //// displacements in MBSim    
+    //Vec q_test = slvLL(K(Iall),F_test);
+    //Vec u_mbsim(12,NONINIT);
+    //// first: positive x-axis
+    //u_mbsim(0) = q_test(0);
+    //u_mbsim(1) = q_test(nr/2*nj*3);
+    //u_mbsim(2) = q_test((nr-1)*nj*3);
+    //// second: positive y-axis
+    //u_mbsim(3) = q_test(nj/4*3);
+    //u_mbsim(4) = q_test(nr/2*nj*3+nj/4*3); 
+    //u_mbsim(5) = q_test((nr-1)*nj*3+nj/4*3); 
+    //// third: negative x-axis
+    //u_mbsim(6) = q_test(nj/2*3);
+    //u_mbsim(7) = q_test(nr/2*nj*3+nj/2*3);
+    //u_mbsim(8) = q_test((nr-1)*nj*3+nj/2*3);
+    //// fourth: negative y-axis
+    //u_mbsim(9)  = q_test(3*nj/4*3);
+    //u_mbsim(10) = q_test(nr/2*nj*3+3*nj/4*3); 
+    //u_mbsim(11) = q_test((nr-1)*nj*3+3*nj/4*3);
 
-    // displacements in ANSYS
-    Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926; 0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
+    //// displacements in ANSYS
+    //Vec u_ansys("[0.10837E-15; 16.590; 50.111; -0.18542E-04; -0.85147; -2.4926; 0.0000; -0.17509; -0.31493; -0.18542E-04; -0.85147; -2.4926 ]");
 
-    // error
-    double maxerr = nrmInf(u_ansys-u_mbsim);
+    //// error
+    //double maxerr = nrmInf(u_ansys-u_mbsim);
 
-    // output
-    ofstream file_static;
-    file_static.open("Static.txt");
-    file_static << "error=" << maxerr << endl;
-    file_static << "static_mbsim=matrix([" ;
-    for(int i=0;i<u_mbsim.size();i++)
-      file_static << u_mbsim(i) << ",";
-    file_static << "]);" << endl;
-    file_static.close();
+    //// output
+    //ofstream file_static;
+    //stringstream filename_static
+    //filename_static <<  "Static" <<  nr << "x" << nj << ".txt";
+    //file_static.open(filename_static.str().c_str());
+    //file_static << "error=" << maxerr << endl;
+    //file_static << "static_mbsim=matrix([" ;
+    //for(int i=0;i<u_mbsim.size();i++)
+    //  file_static << u_mbsim(i) << ",";
+    //file_static << "]);" << endl;
+    //file_static.close();
   }
 
   void FlexibleBody2s13MFRMindlin::computeConstantMassMatrixParts() {
@@ -595,17 +647,17 @@ namespace MBSimFlexibleBody {
 
     /* N_compl */
     N_compl = new Mat(3,Dofs-RefDofs,INIT,0.);
-    //for(int element=0;element<Elements;element++) { // TODO
-    //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
-    //  Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
-    //  Index IRefTrans(0,2);
-    //  for(int node=0;node<ElementNodes;node++) {
-    //    Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
-    //    Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
-    //    (*N_compl)(IRefTrans,Ikges) += ElN_compl(IRefTrans,Ikelement);
-    //  }
-    //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
-    //}
+    for(int element=0;element<Elements;element++) { 
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeN_compl();
+      Mat ElN_compl = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getN_compl();
+      Index IRefTrans(0,2);
+      for(int node=0;node<ElementNodes;node++) {
+        Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+        Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+        (*N_compl)(IRefTrans,Ikges) += ElN_compl(IRefTrans,Ikelement);
+      }
+      static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeN_compl();
+    }
 
     /* N_ij */
     for(int i=0;i<3;i++) {
@@ -638,16 +690,16 @@ namespace MBSimFlexibleBody {
     for(int i=0;i<3;i++) {
       for(int j=0;j<3;j++) {
         NR_ij[i][j] = new RowVec(Dofs-RefDofs,INIT,0.);
-        //for(int element=0;element<Elements;element++) { TODO
-        //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i,j);
-        //  RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i,j);
-        //  for(int node=0;node<ElementNodes;node++) {
-        //    Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
-        //    Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
-        //    (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
-        //  }
-        //  static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
-        //}
+        for(int element=0;element<Elements;element++) {
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->computeNR_ij(i,j);
+          RowVec ElNR_ij = static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->getNR_ij(i,j);
+          for(int node=0;node<ElementNodes;node++) {
+            Index Ikges(ElementNodeList(element,node)*NodeDofs,(ElementNodeList(element,node)+1)*NodeDofs-1);
+            Index Ikelement(node*NodeDofs,(node+1)*NodeDofs-1);
+            (*(NR_ij[i][j]))(Ikges) += ElNR_ij(Ikelement);
+          }
+          static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeNR_ij(i,j);
+        }
       }
     }
 

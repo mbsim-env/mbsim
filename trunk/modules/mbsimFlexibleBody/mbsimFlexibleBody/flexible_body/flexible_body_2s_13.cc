@@ -86,7 +86,7 @@ namespace MBSimFlexibleBody {
     return phi;
   }
 
-  void MapleOutput(SymMat C, std::string MatName, std::string file) {
+  void MapleOutput(Mat C, std::string MatName, std::string file) {
     ofstream dat(file.c_str() , ios::app);
     dat << MatName;
     dat << " := Matrix([";

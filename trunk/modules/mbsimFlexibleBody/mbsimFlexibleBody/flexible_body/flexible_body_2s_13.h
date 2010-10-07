@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
    * \brief generates an output for a matrix for the input in maple - just for testing
    * \param matrix for the output
    */
-  void MapleOutput(fmatvec::SymMat A, std::string MatName, std::string file);
+  void MapleOutput(fmatvec::Mat A, std::string MatName, std::string file);
 
   /*!
    * \brief plate according to Reissner-Mindlin with moving frame of reference
