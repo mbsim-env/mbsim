@@ -209,7 +209,18 @@ Invoke the procedures \textsc{automake, configure} for dynamic compilation with 
 \begin{verbatim}
 $HOME/MBSim/mbsim/kernel/xmldoc
 \end{verbatim}
-invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.\vspace{5mm}
+%---------MODULES------------
+The following modules are available in MBSim:
+\begin{itemize}
+\item mbsimControl
+\item mbsimHydraulics
+\item mbsimFlexibleBody
+\item mbsimElectronics
+\item mbsimPowerTrain
+\end{itemize}
+
+The installation proceeds as follows:
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimControl
 \end{verbatim}
@@ -221,7 +232,8 @@ Invoke the procedures \textsc{automake, configure} for dynamic compilation with 
 \begin{verbatim}
 $HOME/MBSim/mbsim/modules/mbsimControl/xmldoc
 \end{verbatim}
-invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.\vspace{5mm}
+%---------------
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimHydraulics
 \end{verbatim}
@@ -233,7 +245,21 @@ Invoke the procedures \textsc{automake, configure} for dynamic compilation with 
 \begin{verbatim}
 $HOME/MBSim/mbsim/modules/mbsimHydraulics/xmldoc
 \end{verbatim}
-invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.\vspace{5mm}
+%---------------
+\begin{verbatim}
+ cd $HOME/MBSim/mbsim/modules/mbsimFlexibleBody
+\end{verbatim}
+Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
+\begin{verbatim}
+--prefix=$HOME/MBSim/Install
+\end{verbatim}
+\texttt{make doc} and \textsc{install} to install the flexible body module and to create a Doxygen HTML class documentation. In 
+\begin{verbatim}
+$HOME/MBSim/mbsim/modules/mbsimFlexibleBody/xmldoc
+\end{verbatim}
+invoke \textsc{install} for an XML documentation in \texttt{\$HOME/MBSim/Install/share/mbxmlutils/doc}.\vspace{5mm}
+%---------------
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimElectronics
 \end{verbatim}
@@ -241,7 +267,8 @@ Invoke the procedures \textsc{automake, configure} for dynamic compilation with 
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
-\texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation. 
+\texttt{make doc} and \textsc{install} to install the electronics module and to create a Doxygen HTML class documentation.\vspace{5mm}
+%---------------
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/modules/mbsimPowerTrain
 \end{verbatim}
@@ -249,7 +276,10 @@ Invoke the procedures \textsc{automake, configure} for dynamic compilation with 
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
-\texttt{make doc} and \textsc{install} to install the module for gears and to create a Doxygen HTML class documentation. 
+\texttt{make doc} and \textsc{install} to install the module for gears and to create a Doxygen HTML class documentation.\vspace{5mm} 
+
+%---------------MBSimXML---------------
+Finally mbsimxml has to be installed.
 \begin{verbatim}
  cd $HOME/MBSim/mbsim/mbsimxml
 \end{verbatim}
