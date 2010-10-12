@@ -43,10 +43,9 @@ The procedure \textsc{reinstall}
 make uninstall 
 make clean
  ./config.status --recheck
- ./config.status
- make install
+make install
 \end{verbatim}
-newly installs a project.\par
+newly installs a project with the same configure options used at the previous installation. These informations are stored in the file config.status.\par
 For restoring a not-configured version of the project
 \begin{verbatim}
  make maintainer-clean
@@ -54,12 +53,14 @@ For restoring a not-configured version of the project
 is used. After that \textsc{configure} has to be invoked again.
 
 \subsubsection{Uninstallation}
-For uninstall
+For uninstalling
 \begin{verbatim}
- make clean
  make uninstall
+ make clean
 \end{verbatim}
-has to be called in all directories.
+has to be called in all directories. If the files created by configure should be deleted too, type 
+\begin{verbatim} make distclean \end{verbatim} 
+in addition.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Installation of the Simulation Framework\label{sec:install:simulation}}
