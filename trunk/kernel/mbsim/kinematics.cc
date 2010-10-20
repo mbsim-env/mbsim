@@ -197,6 +197,33 @@ namespace MBSim {
     return APK;
   }
 
+  SqrMat EulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    SqrMat APK(3,NONINIT);
+
+    int i = q.size()-1;
+    double psi=q(i-2); 
+    double theta=q(i-1); 
+    double phi=q(i); 
+    double spsi = sin(psi);
+    double stheta = sin(theta);
+    double sphi = sin(phi);
+    double cpsi = cos(psi);
+    double ctheta = cos(theta);
+    double cphi = cos(phi);
+
+    APK(0,0) = cpsi*cphi-spsi*ctheta*sphi;
+    APK(1,0) = spsi*cphi+cpsi*ctheta*sphi;
+    APK(2,0) = stheta*sphi;
+    APK(0,1) = -cpsi*sphi-spsi*ctheta*cphi;
+    APK(1,1) = -spsi*sphi+cpsi*ctheta*cphi;
+    APK(2,1) = stheta*cphi;
+    APK(0,2) = spsi*stheta;
+    APK(1,2) = -cpsi*stheta;
+    APK(2,2) = ctheta;
+
+    return APK;
+  }
+
   SqrMat TimeDependentCardanAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     return (*rot)((*angle)(t),t);
   }
@@ -255,6 +282,30 @@ namespace MBSim {
     return T;
   }
 
+  Mat TEulerAngles::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    int iq = qSize-1;
+    int iu = uSize-1;
+    double psi = q(iq-2);
+    double theta = q(iq-1);
+    double cos_theta = cos(theta);
+    double sin_theta = sin(theta);
+    double cos_psi = cos(psi);
+    double sin_psi = sin(psi);
+    double tan_theta = sin_theta/cos_theta;
+
+    T(iq-2,iu-2) = -sin_psi/tan_theta;
+    T(iq-2,iu-1) = cos_psi/tan_theta;
+    //T(iq-2,iu) = 1;
+    T(iq-1,iu-2) = cos_psi;
+    T(iq-1,iu-1) = sin_psi;
+    //T(iq-1,iu) = 0;
+    T(iq,iu-2) = sin_psi/sin_theta;           
+    T(iq,iu-1) = -cos_psi/sin_theta;
+    //T(iq,iu) = 0;
+
+    return T;
+  }
+
   Mat TCardanAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
     int iq = qSize-1;
     int iu = uSize-1;
@@ -272,6 +323,30 @@ namespace MBSim {
     T(iq-1,iu-1) = cos_gamma;
     T(iq,iu-2) = -cos_gamma*tan_beta;
     T(iq,iu-1) = sin_gamma*tan_beta;           
+    return T;
+  }
+
+  Mat TEulerAngles2::operator()(const fmatvec::Vec &q, const double &t, const void *) {
+    int iq = qSize-1;
+    int iu = uSize-1;
+    double theta = q(iq-1);
+    double phi = q(iq);
+    double cos_theta = cos(theta);
+    double sin_theta = sin(theta);
+    double cos_phi = cos(phi);
+    double sin_phi = sin(phi);
+    double tan_theta = sin_theta/cos_theta;
+
+    T(iq-2,iu-2) = sin_phi/sin_theta;
+    T(iq-2,iu-1) = cos_phi/sin_theta;
+    //T(iq-2,iu) = 0;
+    T(iq-1,iu-2) = cos_phi;
+    T(iq-1,iu-1) = -sin_phi;
+    //T(iq-1,iu) = 0;
+    T(iq,iu-2) = -sin_phi/tan_theta;           
+    T(iq,iu-1) = -cos_phi/tan_theta;
+    //T(iq,iu) = 1;
+
     return T;
   }
 

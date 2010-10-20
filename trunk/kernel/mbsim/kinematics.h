@@ -400,6 +400,26 @@ namespace MBSim {
   };
 
   /**
+   * \brief class to describe rotation parametrised by cardan angles
+   * \author Martin Foerg
+   * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
+   */
+  class EulerAngles: public Rotation {
+    public:
+      /**
+       * \brief constructor
+       */
+      EulerAngles() : Rotation() {}
+
+      /* INTERFACE OF ROTATION */
+      virtual int getqSize() const { return 3; }
+      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      virtual void initializeUsingXML(TiXmlElement *element) {};
+      /***************************************************/
+  };
+
+  /**
    * \brief class to describe time dependent rotation parametrised by Cardan angles
    * \author Thorsten Schindler
    * \date 2009-12-21 initial commit (Thorsten Schindler)
@@ -605,6 +625,43 @@ namespace MBSim {
   };
 
   /**
+   * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
+   * \author Martin Foerg
+   * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
+   */
+  class TEulerAngles : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       * \param size of positions
+       * \param size of velocities
+       */
+      TEulerAngles(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {  
+	int iq = qSize-1;
+	int iu = uSize-1;
+	T(iq-2,iu) = 1;
+	T(iq,iu) = 0;
+      }
+
+      /* INTERFACE OF JACOBIAN */
+      int getuSize() const { return uSize; }
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int qSize, uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat T;
+  };
+
+  /**
    * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
    * \author Martin Foerg
    * \date 2009-04-08 some comments (Thorsten Schindler)
@@ -618,6 +675,39 @@ namespace MBSim {
        * \param size of velocities
        */
       TCardanAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {}
+
+      /* INTERFACE OF JACOBIAN */
+      int getuSize() const { return uSize; }
+      virtual fmatvec::Mat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+      /***************************************************/
+
+    private:
+      /**
+       * \brief size of positions and velocities
+       */
+      int qSize, uSize;
+
+      /**
+       * \brief linear relation between differentiated positions and velocities
+       */
+      fmatvec::Mat T;
+  };
+
+  /**
+   * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
+   * \author Martin Foerg
+   * \date 2009-04-08 some comments (Thorsten Schindler)
+   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
+   */
+  class TEulerAngles2 : public Jacobian {
+    public:
+      /**
+       * \brief constructor
+       * \param size of positions
+       * \param size of velocities
+       */
+      TEulerAngles2(int qSize_, int uSize_) : qSize(qSize_), uSize(uSize_), T(qSize,uSize,fmatvec::EYE) {
+      }
 
       /* INTERFACE OF JACOBIAN */
       int getuSize() const { return uSize; }
