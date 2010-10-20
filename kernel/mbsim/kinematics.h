@@ -400,10 +400,9 @@ namespace MBSim {
   };
 
   /**
-   * \brief class to describe rotation parametrised by cardan angles
+   * \brief class to describe rotation parametrised by Euler angles
    * \author Martin Foerg
-   * \date 2009-04-08 some comments (Thorsten Schindler)
-   * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
+   * \date 2010-10-20 first commit (Martin Foerg)
    */
   class EulerAngles: public Rotation {
     public:
@@ -627,8 +626,7 @@ namespace MBSim {
   /**
    * \brief standard parametrisation with angular velocity in reference system yields time-dependent mass matrix
    * \author Martin Foerg
-   * \date 2009-04-08 some comments (Thorsten Schindler)
-   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
+   * \date 2010-10-20 first commit (Martin Foerg)
    */
   class TEulerAngles : public Jacobian {
     public:
@@ -696,8 +694,7 @@ namespace MBSim {
   /**
    * \brief alternative parametrisation with angular velocity in body frame yields constant mass matrix for absolute coordinates
    * \author Martin Foerg
-   * \date 2009-04-08 some comments (Thorsten Schindler)
-   * \date 2010-05-23 update according to change in Jacobian (Martin Foerg)
+   * \date 2010-10-20 first commit (Martin Foerg)
    */
   class TEulerAngles2 : public Jacobian {
     public:
