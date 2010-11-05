@@ -29,7 +29,7 @@
   <scalarParameter name="omega0">0</scalarParameter>
 
   <!-- Height of the Pendulum-Sphere (EIGENFREQUENCY OF THE PENDULUM) -->
-  <vectorParameter name="sphereHeight">[.24 .241 .242]</vectorParameter>
+  <vectorParameter name="sphereHeight">[.24 .241 .242]'</vectorParameter>
   <!--<vectorParameter name="sphereHeight">[.24 .24 .24]</vectorParameter>-->
 
   <!-- Derived Sizes -->
@@ -49,9 +49,9 @@
   <matrixParameter name="sphereTheta">2/5*sphereMass*(sphereD/2)^2*eye(3)</matrixParameter>
 
   <!-- Simulatin Control -->
-  <vectorParameter name="tStart">[1 11.9 75]</vectorParameter>
-  <vectorParameter name="tEnd">[105 110 115]</vectorParameter>
-  <vectorParameter name="timalOffset">[0 6.9 70]</vectorParameter>
+  <vectorParameter name="tStart">[1 11.9 75]'</vectorParameter>
+  <vectorParameter name="tEnd">[105 110 115]'</vectorParameter>
+  <vectorParameter name="timalOffset">[0 6.9 70]'</vectorParameter>
 
   <!-- Calculation of relevant sizes -->
   <scalarParameter name="Calculations">
