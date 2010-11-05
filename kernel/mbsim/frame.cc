@@ -106,7 +106,7 @@ namespace MBSim {
           plotColumns.push_back("beta");
           plotColumns.push_back("gamma");
         }
-        if(getPlotFeature(globalPosition)==enabled) {
+        if(getPlotFeature(globalVelocity)==enabled) {
           for(int i=0; i<3; i++)
             plotColumns.push_back("WvP("+numtostr(i)+")");
           for(int i=0; i<3; i++)
