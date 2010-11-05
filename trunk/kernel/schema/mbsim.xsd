@@ -84,6 +84,8 @@
       <xs:enumeration value="-rightHandSide"/>
       <xs:enumeration value="+globalPosition"/>
       <xs:enumeration value="-globalPosition"/>
+      <xs:enumeration value="+globalVelocity"/>
+      <xs:enumeration value="-globalVelocity"/>
       <xs:enumeration value="+energy"/>
       <xs:enumeration value="-energy"/>
       <xs:enumeration value="+openMBV"/>
