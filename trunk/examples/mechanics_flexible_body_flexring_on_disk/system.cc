@@ -5,8 +5,8 @@
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle_solid.h"
-#include "mbsim/contours/flexible_band.h"
-#include "mbsim/contact_kinematics/point_flexibleband.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 
