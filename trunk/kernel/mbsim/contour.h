@@ -36,6 +36,7 @@ namespace MBSim {
 
   class Object;
   class ContourPointData;
+  class ContactKinematics;
 
   /** 
    * \brief basic class for contour definition for rigid (which do not know about their shape) and flexible (they know how they look like) bodies
@@ -155,6 +156,13 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      /**
+       * \brief find contact kinematics
+       * \author Markus Schneider
+       * \date 2010-11-05 initial commit (Markus Schneider)
+       */
+      virtual ContactKinematics * findContactPairingWith(std::string type0, std::string type1) = 0;
+
       /* GETTER / SETTER */
       Frame* getFrame() { return &R; }
       const fmatvec::Vec& getReferencePosition() const { return R.getPosition(); }
@@ -231,6 +239,13 @@ namespace MBSim {
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
       virtual void updateJacobiansForFrame(ContourPointData &cp);
       /***************************************************/
+
+      /**
+       * \brief contact search for RigidContours
+       * \author Markus Schneider
+       * \date 2010-11-05 initial commit (Markus Schneider)
+       */
+      ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE

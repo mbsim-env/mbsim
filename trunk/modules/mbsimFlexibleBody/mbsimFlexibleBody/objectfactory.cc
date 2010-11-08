@@ -19,6 +19,8 @@
 
 #include "config.h"
 #include "mbsimFlexibleBody/objectfactory.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
+#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 
 using namespace std;
 using namespace MBSim;
@@ -38,10 +40,12 @@ namespace MBSimFlexibleBody {
 
   Object * ObjectFactory::createObject(TiXmlElement * element) {
     if (element==0) return 0;
-    /*
-     *if (element->ValueStr()==MBSIMFLEXIBLEBODYNS"XXX")
-     *  return new XXX(element->Attribute("name"));
-     */
+    if (element->ValueStr()==MBSIMFLEXIBLEBODYNS"FlexibleBody1s23BTA")
+      return new FlexibleBody1s23BTA(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMCantilever")
+      return new FlexibleBody1s33RCM(element->Attribute("name"), true);
+    if (element->ValueStr()==MBSIMFLEXIBLEBODYNS"FlexibleBody1s33RCMRing")
+      return new FlexibleBody1s33RCM(element->Attribute("name"), false);
     return 0;
   }
 

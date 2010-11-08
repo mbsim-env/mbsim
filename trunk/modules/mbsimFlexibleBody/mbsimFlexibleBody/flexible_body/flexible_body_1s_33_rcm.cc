@@ -22,11 +22,16 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
 #include "mbsim/frame.h"
 #include <mbsim/environment.h>
+#ifdef HAVE_OPENMBVCPPINTERFACE
+#include <openmbvcppinterface/spineextrusion.h>
+#include <openmbvcppinterface/objectfactory.h>
+#endif
+
 
 using namespace std;
 using namespace fmatvec;
@@ -344,6 +349,60 @@ namespace MBSimFlexibleBody {
       currentElement =  Elements-1;
       sLocal += l0;
     }
+  }
+
+  void FlexibleBody1s33RCM::initializeUsingXML(TiXmlElement * element) {
+    FlexibleBody::initializeUsingXML(element);
+    TiXmlElement * e;
+
+    // frames
+    e=element->FirstChildElement(MBSIMFLEXNS"frames")->FirstChildElement();
+    while(e && e->ValueStr()==MBSIMFLEXNS"frameOnFlexibleBody1s") {
+      TiXmlElement *ec=e->FirstChildElement();
+      Frame *f=new Frame(ec->Attribute("name"));
+      f->initializeUsingXML(ec);
+      ec=ec->NextSiblingElement();
+      addFrame(f, getDouble(ec));
+      e=e->NextSiblingElement();
+    }
+
+    //other properties 
+
+    e=element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
+    setNumberElements(getInt(e));
+    e=element->FirstChildElement(MBSIMFLEXNS"length");
+    setLength(getDouble(e));
+
+    e=element->FirstChildElement(MBSIMFLEXNS"youngsModulus");
+    double E=getDouble(e);
+    e=element->FirstChildElement(MBSIMFLEXNS"shearModulus");
+    double G=getDouble(e);
+    setEGModuls(E, G);
+
+    e=element->FirstChildElement(MBSIMFLEXNS"density");
+    setDensity(getDouble(e));
+    e=element->FirstChildElement(MBSIMFLEXNS"crossSectionArea");
+    setCrossSectionalArea(getDouble(e));
+
+    e=element->FirstChildElement(MBSIMFLEXNS"momentOfInertia");
+    Vec TempVec2=getVec(e);
+    setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
+
+    e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
+    setCylinder(getDouble(e));
+    e=element->FirstChildElement(MBSIMFLEXNS"dampingOfMaterial");
+    Vec TempVec=getVec(e);
+    setMaterialDamping(TempVec(0), TempVec(1));
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+    e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
+    if(e) {
+      OpenMBV::SpineExtrusion *rb=dynamic_cast<OpenMBV::SpineExtrusion*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
+      setOpenMBVSpineExtrusion(rb);
+      rb->initializeUsingXML(e->FirstChildElement());
+      rb->setNumberOfSpinePoints(4*Elements+1);
+    }
+#endif
   }
 
 }

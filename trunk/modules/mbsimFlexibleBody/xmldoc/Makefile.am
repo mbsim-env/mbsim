@@ -13,7 +13,7 @@ xml/index.xml: ../schema/mbsimflexiblebody.xsd ../mbsimFlexibleBody/*.h
 	doxygen
 
 mbsimflexiblebody/mbsimflexiblebody.tex: $(USEDOXYGENDEP) ../schema/mbsimflexiblebody.xsd ../mbsimFlexibleBody/*.h
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/ttp___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd xml figures:../doc MBSimHydraulics MBSim:: $(USEDOXYGEN)
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMADIR@/http___mbsim_berlios_de_MBSimFlexibleBody/mbsimflexiblebody.xsd xml figures:../doc MBSimFlexibleBody MBSim:: $(USEDOXYGEN)
 
 
 install:

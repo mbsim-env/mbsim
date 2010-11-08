@@ -25,6 +25,7 @@
 namespace MBSim {
 
   class ContourFunction1s;
+  class ContactKinematics;
 
   /** 
    * \brief analytical description of contours with one contour parameter
@@ -79,6 +80,13 @@ namespace MBSim {
 #endif
       
       virtual void initializeUsingXML(TiXmlElement *element);
+
+      /**
+       * \brief contact search for RigidContours
+       * \author Markus Schneider
+       * \date 2010-11-05 initial commit (Markus Schneider)
+       */
+      ContactKinematics * findContactPairingWith(std::string type0, std::string type1);
 
     protected:
       ContourFunction1s * funcCrPC;

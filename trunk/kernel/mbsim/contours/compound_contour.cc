@@ -25,7 +25,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  CompoundContour::CompoundContour(const string &name) : Contour(name) {
+  CompoundContour::CompoundContour(const string &name) : RigidContour(name) {
   }
 
   void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {

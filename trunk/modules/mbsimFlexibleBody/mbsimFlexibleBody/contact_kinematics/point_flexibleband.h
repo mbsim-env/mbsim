@@ -24,9 +24,12 @@
 #include "mbsim/mbsim_event.h"
 
 namespace MBSim {
+  class Point;
+}
+
+namespace MBSimFlexibleBody {
 
   class FlexibleBand;
-  class Point;
 
   /**
    * \brief pairing point to flexible band
@@ -35,7 +38,7 @@ namespace MBSim {
    * \date 2009-04-17 initial commit kernel_dev (Thorsten Schindler)
    * \date 2010-04-15 bug fixed: different sign in Wd (Thomas Cebulla)
    */
-  class ContactKinematicsPointFlexibleBand : public ContactKinematics {
+  class ContactKinematicsPointFlexibleBand : public MBSim::ContactKinematics {
     public:
       /**
        * \brief constructor
@@ -48,9 +51,9 @@ namespace MBSim {
       virtual ~ContactKinematicsPointFlexibleBand();
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
-      virtual void assignContours(const std::vector<Contour*>& contour);
-      virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData);   
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
+      virtual void assignContours(const std::vector<MBSim::Contour*>& contour);
+      virtual void updateg(fmatvec::Vec& g, MBSim::ContourPointData *cpData);   
+      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g, MBSim::ContourPointData *cpData) { throw MBSim::MBSimError("ERROR (ContactKinematicsPointFlexibleBand::updatewb): not implemented!"); }   
       /***************************************************/
 
     private:
@@ -62,7 +65,7 @@ namespace MBSim {
       /** 
        * \brief contour classes 
        */
-      Point *point;
+      MBSim::Point *point;
       FlexibleBand *band;
   };
 

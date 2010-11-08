@@ -8,7 +8,6 @@ libcontour_la_SOURCES = area.cc\
 						contour_interpolation.cc\
 						contour_quad.cc\
 						cuboid.cc\
-						flexible_band.cc\
 						frustum.cc\
 						frustum2d.cc\
 						plane.cc\
@@ -30,13 +29,9 @@ contourinclude_HEADERS = area.h\
 						   contour_quad.h\
 						   contour1s.h\
 						   contour1s_analytical.h\
-						   contour1s_flexible.h\
 						   contour2s.h\
-						   contour2s_flexible.h\
 						   cuboid.h\
-						   cylinder_flexible.h\
 						   edge.h\
-						   flexible_band.h\
 						   frustum.h\
 						   frustum2d.h\
 						   line.h\

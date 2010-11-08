@@ -46,7 +46,7 @@ namespace MBSim {
     numberOfPotentialContactPoints = 0;
     for(unsigned int i=0; i<compound->getNumberOfElements(); i++) {
       c[icompound] = compound->getContourElement(i);
-      ContactKinematics *tmp = findContactPairing(c[0],c[1]);
+      ContactKinematics *tmp = findContactPairingRigidRigid(c[0]->getType().c_str(), c[1]->getType().c_str());
       if(tmp) {
         contactKinematics.push_back(tmp); 
         tmp->assignContours(c[0],c[1]);

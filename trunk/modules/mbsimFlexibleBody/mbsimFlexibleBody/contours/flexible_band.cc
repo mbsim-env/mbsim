@@ -18,13 +18,14 @@
  */
 
 #include<config.h>
-#include "mbsim/contours/flexible_band.h"
-#include "mbsim/flexible_body.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   FlexibleBand::FlexibleBand(const string& name) : Contour1sFlexible(name),Cn(2,INIT,0.),width(0.),nDist(0.) {}
 

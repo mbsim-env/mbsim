@@ -24,6 +24,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/contours/point.h"
+#include "mbsim/utils/contact_utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <object_interface.h>
@@ -140,6 +141,10 @@ namespace MBSim {
 #endif
       Element::plot(t,dt);
     }
+  }
+
+  ContactKinematics * RigidContour::findContactPairingWith(std::string type0, std::string type1) {
+    return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
   }
 
 }

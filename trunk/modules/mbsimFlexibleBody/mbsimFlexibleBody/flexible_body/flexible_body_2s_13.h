@@ -20,7 +20,7 @@
 #ifndef FLEXIBLEBODY2S13_H_
 #define FLEXIBLEBODY2S13_H_
 
-#include "mbsim/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 
 namespace MBSimFlexibleBody {
 
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
    * \date 2010-04-23 initial commit (Schindler / Grundl)
    * \date 2010-08-12 revision (Schindler)
    */
-  class FlexibleBody2s13 : public MBSim::FlexibleBodyContinuum<fmatvec::Vec> {
+  class FlexibleBody2s13 : public FlexibleBodyContinuum<fmatvec::Vec> {
     public:
       /**
        * \brief constructor

@@ -30,13 +30,17 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2009-04-20 some comments (Thorsten Schindler) 
    */
-  class CompoundContour : public Contour {
+  class CompoundContour : public RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
       CompoundContour(const std::string &name);
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      std::string getType() const { return "CompoundContour"; }
+      /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
       void setReferencePosition(const fmatvec::Vec &WrOP);

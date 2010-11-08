@@ -20,16 +20,20 @@
 #ifndef _CONTOUR2SFLEXIBLE_H_
 #define _CONTOUR2SFLEXIBLE_H_
 
-#include "mbsim/contours/contour_continuum.h"
+#include "mbsim/contours/contour_2s.h"
 
 namespace MBSim {
+  class ContactKinematics;
+}
+
+namespace MBSimFlexibleBody {
 
   /** 
    * \brief numerical description of contours with two contour parameter
    * \author Thorsten Schindler
    * \date 2009-04-21 initial comment (Thorsten Schindler)
    */
-  class Contour2sFlexible : public Contour2s {
+  class Contour2sFlexible : public MBSim::Contour2s {
     public:
       /**
        * \brief constructor
@@ -37,10 +41,19 @@ namespace MBSim {
        */
       Contour2sFlexible(const std::string &name) : Contour2s(name) {}
 
-      /* INHERITED INTERFACE OF CONTOUR */
-      virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
-      virtual void updateJacobiansForFrame(ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual std::string getType() const { return "Contour2sFlexible"; }
       /***************************************************/
+
+      /* INHERITED INTERFACE OF CONTOUR */
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff) { static_cast<FlexibleBody*>(parent)->updateKinematicsForFrame(cp,ff); }
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp) { static_cast<FlexibleBody*>(parent)->updateJacobiansForFrame(cp); }
+      /***************************************************/
+
+      MBSim::ContactKinematics * findContactPairingWith(std::string type0, std::string type1) {
+        return findContactPairingFlexible(type0.c_str(), type1.c_str());
+      }
+
   };
 
 }

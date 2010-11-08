@@ -15,46 +15,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: mfoerg@users.berlios.de
+ *          rzander@users.berlios.de
  */
 
-#ifndef _CUBOID_H_
-#define _CUBOID_H_
-
-#include "mbsim/contour.h"
-#include "mbsim/contours/compound_contour.h"
+#ifndef _CONTACT_UTILS_FLEXIBLE_H_
+#define _CONTACT_UTILS_FLEXIBLE_H_
 
 namespace MBSim {
-
-  /**
-   * \brief Cuboid with 8 vertices, 12 edges and 6 faces
-   */
-  class Cuboid : public CompoundContour {
-    public:
-      /**
-       * \brief constructor
-       * \param name of contour
-       */
-      Cuboid(const std::string &name);
-
-      /* INHERITED INTERFACE OF ELEMENT */
-      std::string getType() const { return "Cuboid"; }
-      /***************************************************/
-
-      /* GETTER / SETTER */
-      void setLength(double l_) { l = l_; }
-      void setHeight(double h_) { h = h_; }
-      void setDepth(double d_) { d = d_; }
-      /***************************************************/
-
-    private:
-      /**
-       * \brief length, height and depth of cuboid
-       */
-      double l,h,d;
-
-      void init(InitStage stage);
-  };
+  class ContactKinematics;
 }
 
-#endif /* _CUBOID_H_ */
+namespace MBSimFlexibleBody {
+
+  /**
+   * \brief defines contact kinematics between two contours with one flexible
+   * \author Markus Schneider
+   * \date 2010-11-05 initialCommit (Markus Schneider)
+   */
+  MBSim::ContactKinematics* findContactPairingFlexible(const char *contour0, const char *contour1);
+
+}
+
+#endif /* _CONTACT_UTILS_FLEXIBLE_H_ */
 

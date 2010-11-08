@@ -18,15 +18,16 @@
  */
 
 #include <config.h> 
-#include "mbsim/contact_kinematics/circlehollow_cylinderflexible.h"
-#include "mbsim/contours/cylinder_flexible.h"
+#include "mbsimFlexibleBody/contact_kinematics/circlehollow_cylinderflexible.h"
+#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsim/contours/circle_hollow.h"
 #include "mbsim/functions_contact.h"
 
 using namespace fmatvec;
 using namespace std;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   ContactKinematicsCircleHollowCylinderFlexible::~ContactKinematicsCircleHollowCylinderFlexible() {
     delete func;

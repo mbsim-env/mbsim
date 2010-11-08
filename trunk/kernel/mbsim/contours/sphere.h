@@ -45,6 +45,10 @@ namespace MBSim {
        * \param radius of sphere
        */
       Sphere(const std::string &name, double r_) : RigidContour(name), r(r_) {}
+      
+      /* INHERITED INTERFACE OF ELEMENT */
+      std::string getType() const { return "Sphere"; }
+      /***************************************************/
 
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }

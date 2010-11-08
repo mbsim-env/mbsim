@@ -23,7 +23,7 @@
 #ifndef _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_
 #define _FLEXIBLE_BODY_LINEAR_EXTERNAL_H_
 
-#include "mbsim/flexible_body.h"
+#include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsim/mbsim_event.h"
 #include <fstream>
 
@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
    * \f[ \vM{\rm d}\vu = -( \vK \vq + \vD \vu){\rm d}t - \vW{\rm d}\vLambda \f]
    * with CONSTANT matrices \f$\vM,\vK,\vD\f$. The model uses n degrees of freedom (dimension of \f$\vq,\vu\f$) and d translational directions (dimension of Jacobi-matrizes \f$n\times d\f$)
    */
-  class FlexibleBodyLinearExternal : public MBSim::FlexibleBody {
+  class FlexibleBodyLinearExternal : public FlexibleBody {
     public:
 	  /*!
 	   * \brief constructor
@@ -118,7 +118,7 @@ namespace MBSimFlexibleBody {
 //      */
 //      void plotParameters();
 
-      using MBSim::FlexibleBody::addFrame;
+      using FlexibleBody::addFrame;
       /*!
        * add Port using JACOBIAN matrix and frame location form given file
        * n x d   \n   [1.0  \n  0.0 ] \n

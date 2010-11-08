@@ -21,13 +21,17 @@
 #ifndef _FLEXIBLE_BODY_H_
 #define _FLEXIBLE_BODY_H_
 
+#define MBSIMFLEXNS "{http://mbsim.berlios.de/MBSimFlexibleBody}"
+
 #include "mbsim/body.h"
 #include "mbsim/frame.h"
 
 namespace MBSim {
-
   class DiscretizationInterface;
   class ContourPointData;
+}
+
+namespace MBSimFlexibleBody {
 
   /**
    * \brief upmost class for flexible body implementation
@@ -44,7 +48,7 @@ namespace MBSim {
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs TODO
    * \todo mass proportional damping should be distributed on discretization and is not at the correct place (dependence on M) TODO
    */
-  class FlexibleBody : public Body {
+  class FlexibleBody : public MBSim::Body {
     public:
       /**
        * \brief constructor
@@ -70,14 +74,16 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody"; }
+      virtual void initializeUsingXML(TiXmlElement *element);
+      /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage);
+      virtual void init(MBSim::InitStage stage);
       virtual double computeKineticEnergy();
       virtual double computePotentialEnergy();
-      virtual void setFrameOfReference(Frame *frame);
-      void setq0(fmatvec::Vec q0_) { Body::setInitialGeneralizedPosition(q0_); q>>q0; }
-      void setu0(fmatvec::Vec u0_) { Body::setInitialGeneralizedVelocity(u0_); u>>u0; }
+      virtual void setFrameOfReference(MBSim::Frame *frame);
+      void setq0(fmatvec::Vec q0_) { MBSim::Body::setInitialGeneralizedPosition(q0_); q>>q0; }
+      void setu0(fmatvec::Vec u0_) { MBSim::Body::setInitialGeneralizedVelocity(u0_); u>>u0; }
       /***************************************************/
 
       /* INTERFACE TO BE DEFINED IN DERIVED CLASSES */
@@ -116,14 +122,14 @@ namespace MBSim {
        * \param ff selection of specific calculations for frames
        * \param frame optional: external frame, otherwise contour parameters are changed
        */
-      virtual void updateKinematicsForFrame(ContourPointData &data, FrameFeature ff, Frame *frame=0) = 0;
+      virtual void updateKinematicsForFrame(MBSim::ContourPointData &data, MBSim::FrameFeature ff, MBSim::Frame *frame=0) = 0;
 
       /**
        * \brief Jacobians and gyroscopes for contour or external frame are set by implementation class
        * \param data contour parameter
        * \param frame: optional external frame, otherwise contour parameters are changed
        */
-      virtual void updateJacobiansForFrame(ContourPointData &data, Frame *frame=0) = 0;
+      virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0) = 0;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -139,13 +145,13 @@ namespace MBSim {
        *  \param name of frame
        *  \param frame location
        */
-      void addFrame(const std::string &name, const ContourPointData &S_);
+      void addFrame(const std::string &name, const MBSim::ContourPointData &S_);
 
       /**
        * \param frame
        * \param frame location
        */
-      void addFrame(Frame *frame, const ContourPointData &S_);
+      void addFrame(MBSim::Frame *frame, const MBSim::ContourPointData &S_);
 
       /** 
        *  \param name of frame
@@ -157,13 +163,13 @@ namespace MBSim {
        * \param frame
        * \param node of frame
        */
-      void addFrame(Frame *frame, const  int &id);
+      void addFrame(MBSim::Frame *frame, const  int &id);
 
     protected:
       /** 
        * \brief stl-vector of discretizations/finite elements
        */
-      std::vector<DiscretizationInterface*> discretization;
+      std::vector<MBSim::DiscretizationInterface*> discretization;
 
       /** 
        * \brief stl-vector of finite element wise positions
@@ -183,7 +189,7 @@ namespace MBSim {
       /** 
        * \brief vector of contour parameters each describing a frame
        */
-      std::vector<ContourPointData> S_Frame;
+      std::vector<MBSim::ContourPointData> S_Frame;
   };
 
   /**
@@ -214,7 +220,7 @@ namespace MBSim {
          * \param location of frame
          */
         void addFrame(const std::string &name, const AT& alpha) {
-          ContourPointData cp(alpha);
+          MBSim::ContourPointData cp(alpha);
           FlexibleBody::addFrame(name,cp);
         }
 
@@ -222,8 +228,8 @@ namespace MBSim {
          * \param frame
          * \param location of frame
          */
-        void addFrame(Frame *frame, const AT& alpha) {
-          ContourPointData cp(alpha);
+        void addFrame(MBSim::Frame *frame, const AT& alpha) {
+          MBSim::ContourPointData cp(alpha);
           FlexibleBody::addFrame(frame,cp);
         }
 

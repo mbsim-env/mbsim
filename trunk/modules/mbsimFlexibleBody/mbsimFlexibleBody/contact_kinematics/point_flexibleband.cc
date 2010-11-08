@@ -18,16 +18,17 @@
  */
 
 #include<config.h>
-#include "mbsim/contact_kinematics/point_flexibleband.h"
+#include "mbsimFlexibleBody/contact_kinematics/point_flexibleband.h"
 #include "mbsim/contour.h"
-#include "mbsim/contours/flexible_band.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/functions_contact.h"
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   ContactKinematicsPointFlexibleBand::ContactKinematicsPointFlexibleBand() : ContactKinematics(),ipoint(0),icontour(0),point(0),band(0) {}
   ContactKinematicsPointFlexibleBand::~ContactKinematicsPointFlexibleBand() {}

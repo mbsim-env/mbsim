@@ -23,6 +23,7 @@
 #include "mbsim/mbsim_event.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/contour_functions.h"
+#include "mbsim/utils/contact_utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "mbsim/object.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -215,6 +216,10 @@ namespace MBSim {
     if (e)
       enableOpenMBV(true);
 #endif
+  }
+
+  ContactKinematics * Contour1sAnalytical::findContactPairingWith(std::string type0, std::string type1) {
+    return findContactPairingRigidRigid(type0.c_str(), type1.c_str());
   }
 
 }

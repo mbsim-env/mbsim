@@ -19,7 +19,7 @@
  */
 
 #include <config.h>
-#include <mbsim/flexible_body.h>
+#include <mbsimFlexibleBody/flexible_body.h>
 #include <mbsim/dynamic_system.h>
 #include <mbsim/frame.h>
 #include <mbsim/utils/function.h>
@@ -33,8 +33,9 @@
 
 using namespace fmatvec;
 using namespace std;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   FlexibleBody::FlexibleBody(const string &name) : Body(name), d_massproportional(0.) {}
 
@@ -165,6 +166,14 @@ namespace MBSim {
   void FlexibleBody::addFrame(Frame *frame, const  int &id) {
     ContourPointData cp(id);
     addFrame(frame,cp);
+  }
+
+  void FlexibleBody::initializeUsingXML(TiXmlElement *element) {
+    Body::initializeUsingXML(element);
+    
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMFLEXNS"massProportionalDamping");
+    setMassProportionalDamping(getDouble(e));
   }
 
 }

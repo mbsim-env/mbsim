@@ -430,8 +430,16 @@ namespace MBSim {
     else if(stage==preInit) {
       LinkMechanics::init(stage);
 
-      if(contactKinematics==0) contactKinematics = findContactPairing(contour[0],contour[1]);
-      if(contactKinematics==0) throw MBSimError("Unknown contact pairing");
+      if(contactKinematics==0)
+        contactKinematics = contour[0]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+      if(contactKinematics==0)
+        contactKinematics = contour[1]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+      if(contactKinematics==0)
+        contactKinematics = contour[0]->findContactPairingWith(contour[1]->getType(), contour[0]->getType());
+      if(contactKinematics==0)
+        contactKinematics = contour[1]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
+      if(contactKinematics==0)
+        throw MBSimError("Unknown contact pairing between Contour \""+contour[0]->getType()+"\" and Contour\""+contour[1]->getType()+"\"!");
 
       contactKinematics->assignContours(contour[0],contour[1]);
 
