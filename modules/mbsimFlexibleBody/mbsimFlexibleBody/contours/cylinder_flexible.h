@@ -20,9 +20,9 @@
 #ifndef _CYLINDER_FLEXIBLE_H_
 #define _CYLINDER_FLEXIBLE_H_
 
-#include "mbsim/contours/contour1s_flexible.h"
+#include "mbsimFlexibleBody/contours/contour1s_flexible.h"
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   /** 
    * \brief flexible cylinder for one dimensional flexible bodies
@@ -38,6 +38,10 @@ namespace MBSim {
        * \param name of contour
        */
       CylinderFlexible(const std::string &name) : Contour1sFlexible(name) {}
+
+      /* INHERITED INTERFACE OF ELEMENT */
+      virtual std::string getType() const { return "CylinderFlexible"; }
+      /***************************************************/
 
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }

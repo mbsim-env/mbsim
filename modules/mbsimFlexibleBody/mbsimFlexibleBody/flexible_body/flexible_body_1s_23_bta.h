@@ -21,8 +21,8 @@
 #ifndef _FLEXIBLE_BODY_1S_23_BTA_H_
 #define _FLEXIBLE_BODY_1S_23_BTA_H_
 
-#include "mbsim/flexible_body.h"
-#include "mbsim/contours/cylinder_flexible.h"
+#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-11-22 initial commit kernel_dev
    * \todo gravity, handling for contour-node information, tangents and AWK TODO
    */
-  class FlexibleBody1s23BTA : public MBSim::FlexibleBodyContinuum<double> {
+  class FlexibleBody1s23BTA : public FlexibleBodyContinuum<double> {
     public:
       /**
        * \brief constructor
@@ -65,6 +65,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s23BTA"; }
+      virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -74,11 +75,11 @@ namespace MBSimFlexibleBody {
       void setNumberElements(int n); 
       void setLength(double L_) { L = L_; }
       void setElastModuls(double E_, double G_) { E = E_;G = G_; }
+      void setDensity(double rho_) { rho = rho_; }
       void setCrossSectionalArea(double A_) { A = A_; }
       void setMomentsInertia(double Iyy_,double Izz_,double It_) { Iyy = Iyy_; Izz = Izz_; It = It_; }
-      void setDensity(double rho_) { rho = rho_; }
-      void setTorsionalDamping(double d) { dTorsional = d; }
       void setContourRadius(double r) { cylinderFlexible->setRadius(r); }
+      void setTorsionalDamping(double d) { dTorsional = d; }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -136,7 +137,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour of body
        */
-      MBSim::CylinderFlexible *cylinderFlexible;
+      CylinderFlexible *cylinderFlexible;
   };
 
 }

@@ -1,10 +1,8 @@
 noinst_LTLIBRARIES = libcontactkinematics.la
 libcontactkinematics_la_SOURCES = circle_frustum.cc\
-					circlehollow_cylinderflexible.cc \
 					circlesolid_circlehollow.cc\
 					circlesolid_circlesolid.cc\
 					circlesolid_contour1s.cc\
-					circlesolid_flexibleband.cc\
 					circlesolid_frustum2d.cc\
 					circlesolid_line.cc\
 					circlesolid_linesegment.cc\
@@ -17,8 +15,6 @@ libcontactkinematics_la_SOURCES = circle_frustum.cc\
 					point_area.cc\
 					point_contour1s.cc\
 					point_contourinterpolation.cc\
-  					point_cylinderflexible.cc \
-					point_flexibleband.cc \
 					point_frustum.cc\
 					point_line.cc\
 					point_circlesolid.cc\
@@ -35,11 +31,9 @@ INCLUDES = $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = circle_frustum.h\
-  circlehollow_cylinderflexible.h \
   circlesolid_circlehollow.h \
   circlesolid_circlesolid.h \
   circlesolid_contour1s.h \
-  circlesolid_flexibleband.h\
   circlesolid_frustum2d.h \
   circlesolid_line.h \
   circlesolid_linesegment.h \
@@ -52,8 +46,6 @@ contactkinematicsinclude_HEADERS = circle_frustum.h\
   point_area.h \
   point_contour1s.h \
   point_contourinterpolation.h \
-  point_cylinderflexible.h \
-  point_flexibleband.h \
   point_frustum.h \
   point_line.h \
   point_circlesolid.h\

@@ -20,13 +20,16 @@
 #ifndef _CONTACT_KINEMATICS_CIRCLEHOLLOW_CYLINDERFLEXIBLE_H_
 #define _CONTACT_KINEMATICS_CIRCLEHOLLOW_CYLINDERFLEXIBLE_H_
 
-#include "contact_kinematics.h"
+#include "mbsim/contact_kinematics/contact_kinematics.h"
 
 namespace MBSim {
-
   class CircleHollow;
-  class CylinderFlexible;
   class FuncPairContour1sCircleHollow;
+}
+
+namespace MBSimFlexibleBody {
+
+  class CylinderFlexible;
 
   /**
    * \brief pairing CircleHollow to CylinderFlexible
@@ -34,7 +37,7 @@ namespace MBSim {
    * \date 2009-07-28 pure virtual updates (Thorsten Schindler)
    * \todo change stage to new interface TODO
    */
-  class ContactKinematicsCircleHollowCylinderFlexible : public ContactKinematics {
+  class ContactKinematicsCircleHollowCylinderFlexible : public MBSim::ContactKinematics {
     public:
       /**
        * \brief constructor
@@ -47,9 +50,9 @@ namespace MBSim {
       virtual ~ContactKinematicsCircleHollowCylinderFlexible();
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
-      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData* cpData) { throw MBSimError("ERROR (ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
+      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData);
+      virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, MBSim::ContourPointData* cpData) { throw MBSim::MBSimError("ERROR (ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
       /***************************************************/
     
     private:
@@ -61,13 +64,13 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      CircleHollow *circle;
+      MBSim::CircleHollow *circle;
       CylinderFlexible *cylinder;
 
       /**
        * \brief root function
        */
-      FuncPairContour1sCircleHollow *func;
+      MBSim::FuncPairContour1sCircleHollow *func;
   };
 
 }

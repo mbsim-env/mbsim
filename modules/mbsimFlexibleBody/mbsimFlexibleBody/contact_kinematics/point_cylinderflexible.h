@@ -21,20 +21,23 @@
 #ifndef _CONTACT_KINEMATICS_POINT_CYLINDERFLEXIBLE_H_
 #define _CONTACT_KINEMATICS_POINT_CYLINDERFLEXIBLE_H_
 
-#include "contact_kinematics.h"
+#include "mbsim/contact_kinematics/contact_kinematics.h"
 
 namespace MBSim {
-
   class Point;
-  class CylinderFlexible;
   class FuncPairContour1sPoint;
+}
+
+namespace MBSimFlexibleBody {
+
+  class CylinderFlexible;
 
   /**
    * \brief pairing point to cylinder flexible
    * \author: Roland Zander
    * \date 2009-03-19 changes for new kernel (Thorsten Schindler)
    */
-  class ContactKinematicsPointCylinderFlexible : public ContactKinematics {
+  class ContactKinematicsPointCylinderFlexible : public MBSim::ContactKinematics {
     public:
       /**
        * \brief constructor
@@ -47,8 +50,8 @@ namespace MBSim {
       virtual ~ContactKinematicsPointCylinderFlexible();
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
-      virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
+      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
+      virtual void updateg(fmatvec::Vec &g, MBSim::ContourPointData *cpData);
       /***************************************************/
 
     private:
@@ -60,13 +63,13 @@ namespace MBSim {
       /** 
        * \brief pointer to point and cylinder
        */
-      Point *point;
+      MBSim::Point *point;
       CylinderFlexible *cylinder;
 
       /**
        * \brief root function
        */
-      FuncPairContour1sPoint *func;
+      MBSim::FuncPairContour1sPoint *func;
   };
 
 }

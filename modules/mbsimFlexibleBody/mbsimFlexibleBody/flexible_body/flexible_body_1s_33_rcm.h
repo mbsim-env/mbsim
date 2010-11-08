@@ -20,9 +20,9 @@
 #ifndef _FLEXIBLE_BODY_1S_33_RCM_H_
 #define _FLEXIBLE_BODY_1S_33_RCM_H_
 
-#include "mbsim/flexible_body.h"
-#include "mbsim/contours/flexible_band.h"
-#include "mbsim/contours/cylinder_flexible.h"
+#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
+#include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
    * \todo gyroscopic accelerations TODO
    * \todo inverse kinetics TODO
    */
-  class FlexibleBody1s33RCM : public MBSim::FlexibleBodyContinuum<double> {
+  class FlexibleBody1s33RCM : public FlexibleBodyContinuum<double> {
     public:
       /**
        * \brief constructor
@@ -70,21 +70,23 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s33RCM"; }
+      void initializeUsingXML(TiXmlElement * element);
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setGauss(int nGauss);
-      void setCylinder(double cylinderRadius_);		
-      void setCuboid(double cuboidBreadth_,double cuboidHeight_);
+      void setNumberElements(int n);   	
       void setLength(double L_);   	
       void setEGModuls(double E_,double G_);    	
+      void setDensity(double rho_);	
       void setCrossSectionalArea(double A_);    	
       void setMomentsInertia(double I1_,double I2_,double I0_);
-      void setDensity(double rho_);	
-      void setCurlRadius(double R1_,double R2_);
+      void setCylinder(double cylinderRadius_);		
       void setMaterialDamping(double epstD_,double k0D_);
+      
+      void setGauss(int nGauss);
+      void setCuboid(double cuboidBreadth_,double cuboidHeight_);
+      void setCurlRadius(double R1_,double R2_);
       void setLehrDamping(double epstL_,double k0L_);
-      void setNumberElements(int n);   	
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
@@ -105,8 +107,8 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contours
        */
-      MBSim::CylinderFlexible *cylinder;
-      MBSim::FlexibleBand *top, *bottom, *left, *right;
+      CylinderFlexible *cylinder;
+      FlexibleBand *top, *bottom, *left, *right;
 
       /**
        * \brief angle parametrisation

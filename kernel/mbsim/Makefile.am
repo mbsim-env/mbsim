@@ -11,7 +11,6 @@ dynamic_system.cc\
 dynamic_system_solver.cc\
 element.cc\
 environment.cc\
-flexible_body.cc\
 frame.cc\
 functions_contact.cc\
 group.cc\
@@ -52,7 +51,6 @@ dynamic_system_solver.h\
 element.h\
 environment.h\
 extradynamic_interface.h\
-flexible_body.h\
 frame.h\
 functions_contact.h\
 group.h\

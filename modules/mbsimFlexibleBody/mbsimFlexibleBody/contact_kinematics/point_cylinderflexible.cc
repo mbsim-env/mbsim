@@ -19,16 +19,17 @@
  */
 
 #include <config.h> 
-#include <mbsim/contact_kinematics/point_cylinderflexible.h>
+#include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
+#include <mbsimFlexibleBody/contours/cylinder_flexible.h>
 #include <mbsim/contour.h>
-#include <mbsim/contours/cylinder_flexible.h>
 #include <mbsim/functions_contact.h>
 #include "mbsim/contours/point.h"
 
 using namespace fmatvec;
 using namespace std;
+using namespace MBSim;
 
-namespace MBSim {
+namespace MBSimFlexibleBody {
 
   ContactKinematicsPointCylinderFlexible::~ContactKinematicsPointCylinderFlexible() {
     delete func;

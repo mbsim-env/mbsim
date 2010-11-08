@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
       virtual ~FlexibleBody2s13MFRMindlin();
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY CONTINUUM */
-      using MBSim::FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
+      using FlexibleBodyContinuum<fmatvec::Vec>::addFrame;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
