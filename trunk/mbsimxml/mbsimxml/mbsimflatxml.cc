@@ -2,8 +2,9 @@
 #include <iostream>
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinyxml.h"
 #include "openmbvcppinterfacetinyxml/tinyxml-src/tinynamespace.h"
+
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/integrators/integrator.h"
+#include "mbsim/objectfactory.h"
 #include "mbsimxml/headermodules.h"
 #include "mbsimxml/mbsimflatxml.h"
 
