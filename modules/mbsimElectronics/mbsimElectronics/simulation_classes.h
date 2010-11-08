@@ -111,7 +111,7 @@ namespace MBSimElectronics {
       virtual double computeVoltage() {return 0;}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updater(double t) { throw new MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
+      virtual void updater(double t) { throw MBSim::MBSimError("ERROR (ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */
