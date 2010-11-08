@@ -4,8 +4,7 @@
 #include "mbsim/joint.h"
 #include "mbsim/contact.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/flexible_band.h"
-#include "mbsim/contact_kinematics/point_flexibleband.h"
+#include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsim/constitutive_laws.h"
 #include "mbsim/environment.h"
 
@@ -107,9 +106,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ball->setOpenMBVRigidBody(sphere);
 #endif
 
-  ContactKinematicsPointFlexibleBand *ck = new ContactKinematicsPointFlexibleBand();
   Contact *contact = new Contact("Contact");
-  contact->setContactKinematics(ck);
   contact->setContactForceLaw(new UnilateralConstraint);
   contact->setContactImpactLaw(new UnilateralNewtonImpact(1.0));
   contact->connect(ball->getContour("Point"),rod->getContour("Top"));
