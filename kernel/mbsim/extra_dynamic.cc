@@ -31,6 +31,7 @@ namespace MBSim {
 
   ExtraDynamic::ExtraDynamic(const string &name) : Element(name), y(0) {
     setPlotFeature(globalPosition, enabled);
+    setPlotFeature(state, enabled);
   }
 
   void ExtraDynamic::updatexRef(const Vec& xParent) {
