@@ -237,7 +237,7 @@
           <xs:element name="density" type="pv:densityScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Dichte des flexiblen Körpers.
+                Materialdichte.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -258,16 +258,34 @@
           <xs:element name="radiusOfContourCylinder" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Angabe der Trägheitsheitsmoment. Der Vektor setzt sich aus (IB, IB, 2*IB) zusammen.
+                Radius des Kontur-Zylinders
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="dampingOfMaterial" type="pv:dampingVector">
+          <xs:element name="dampingOfMaterial">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
-                Werte der Materialdämpfung, übergeben als Vektor.
+                Werte der Materialdämpfung
               </xs:documentation>
             </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="prolongational" type="pv:dampingScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Dämpfung in Verlängerungsrichtung<object class="inlineeqn">\vartheta_{\varepsilon}</object>
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+                <xs:element name="torsional" type="pv:dampingScalar">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Dämpfung in Torsionsrichtung<object class="inlineeqn">\vartheta_{\kappa_0}</object>
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
           <xs:element name="openMBVBody" minOccurs="0">
             <xs:annotation>
