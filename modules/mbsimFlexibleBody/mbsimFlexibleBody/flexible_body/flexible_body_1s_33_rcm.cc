@@ -312,10 +312,27 @@ namespace MBSimFlexibleBody {
     if(openStructure) qSize = 10*n+6;
     else qSize = 10*n;
 
+    Vec q0Tmp(0, INIT, 0);
+    if (q0.size())
+      q0Tmp=q0.copy();
+    q0.resize(qSize, INIT, 0);
+    if (q0Tmp.size())
+      if (q0Tmp.size()==q0.size())
+        q0=q0Tmp.copy();
+      else
+        throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \""+name+"\"!");
+    
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    q0.resize(qSize);
-    u0.resize(uSize[0]);
+    Vec u0Tmp(0, INIT, 0);
+    if (u0.size())
+      u0Tmp=u0.copy();
+    u0.resize(uSize[0], INIT, 0);
+    if (u0Tmp.size())
+      if (u0Tmp.size()==u0.size())
+        u0=u0Tmp.copy();
+      else
+        throw MBSimError("Error in dimension of u0 of FlexibleBody1s33RCM \""+name+"\"!");
   }
 
   Vec FlexibleBody1s33RCM::computeState(double sGlobal) {
@@ -390,9 +407,11 @@ namespace MBSimFlexibleBody {
 
     e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
     setCylinder(getDouble(e));
+    
     e=element->FirstChildElement(MBSIMFLEXNS"dampingOfMaterial");
-    Vec TempVec=getVec(e);
-    setMaterialDamping(TempVec(0), TempVec(1));
+    double thetaEps=getDouble(e->FirstChildElement(MBSIMFLEXNS"prolongational"));
+    double thetaKappa0=getDouble(e->FirstChildElement(MBSIMFLEXNS"torsional"));
+    setMaterialDamping(thetaEps, thetaKappa0);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
