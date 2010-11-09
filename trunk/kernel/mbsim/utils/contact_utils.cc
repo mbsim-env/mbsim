@@ -64,7 +64,9 @@ namespace MBSim {
 
   ContactKinematics* findContactPairingRigidRigid(const char* contour0, const char* contour1) {
 
-    if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "Frustum")==0 )
+    if(( strcmp(contour0, "Circle")==0 && strcmp(contour1, "Frustum")==0 ) ||
+       ( strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "Frustum")==0 ) ||
+       ( strcmp(contour0, "CircleHollow")==0 && strcmp(contour1, "Frustum")==0 ) )
       return new ContactKinematicsCircleFrustum;
     
     else if ( strcmp(contour0, "CircleSolid")==0 && strcmp(contour1, "CircleHollow")==0 )
