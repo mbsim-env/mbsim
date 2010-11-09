@@ -316,11 +316,12 @@ namespace MBSimFlexibleBody {
     if (q0.size())
       q0Tmp=q0.copy();
     q0.resize(qSize, INIT, 0);
-    if (q0Tmp.size())
+    if (q0Tmp.size()) {
       if (q0Tmp.size()==q0.size())
         q0=q0Tmp.copy();
       else
         throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \""+name+"\"!");
+    }
     
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
@@ -328,11 +329,12 @@ namespace MBSimFlexibleBody {
     if (u0.size())
       u0Tmp=u0.copy();
     u0.resize(uSize[0], INIT, 0);
-    if (u0Tmp.size())
+    if (u0Tmp.size()) {
       if (u0Tmp.size()==u0.size())
         u0=u0Tmp.copy();
       else
         throw MBSimError("Error in dimension of u0 of FlexibleBody1s33RCM \""+name+"\"!");
+    }
   }
 
   Vec FlexibleBody1s33RCM::computeState(double sGlobal) {
