@@ -323,8 +323,7 @@ namespace MBSim {
     else if (path.substr(0, 3)=="../") // relative path
       return parent->getByPathSearch(path.substr(3));
     else { // local path
-      cout << "Unknown name of container" << endl;
-      throw(123);
+      throw MBSimError("Unknown identifier of container");
     }
   }
 
