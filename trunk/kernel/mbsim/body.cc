@@ -146,7 +146,7 @@ namespace MBSim {
 
   void Body::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { //Contourname exists already
-      cout << "Error: The body \"" << name << "\" can only comprise one contour by the name \"" << contour_->getName() << "\"!" << endl;
+      throw MBSimError("The body \""+name+"\" can only comprise one contour by the name \""+contour_->getName()+"\"!");
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
@@ -155,7 +155,7 @@ namespace MBSim {
 
   void Body::addFrame(Frame* frame_) {
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
-      cout << "Error: The body \"" << name << "\" can only comprise one frame by the name \"" << frame_->getName() << "\"!" << endl;
+      throw MBSimError("The body \""+name+"\" can only comprise one frame by the name \""+frame_->getName()+"\"!");
       assert(getFrame(frame_->getName(),false)==NULL);
     }
     frame.push_back(frame_);
@@ -169,7 +169,8 @@ namespace MBSim {
         return contour[i];
     }
     if(check) {
-      if(!(i<contour.size())) cout << "Error: The body \"" << name << "\" comprises no contour \"" << name_ << "\"!" << endl; 
+      if(!(i<contour.size()))
+        throw MBSimError("The body \""+name+"\" comprises no contour \""+name_+"\"!"); 
       assert(i<contour.size());
     }
     return NULL;
@@ -177,14 +178,13 @@ namespace MBSim {
 
   Frame* Body::getFrame(const string &name_, bool check) {
     unsigned int i;
-    //cout << getName() << endl;
     for(i=0; i<frame.size(); i++) {
-      //cout << frame[i]->getName() << endl;
       if(frame[i]->getName() == name_)
         return frame[i];
     }             
     if(check) {
-      if(!(i<frame.size())) cout << "Error: The body \"" << name << "\" comprises no frame \"" << name_ << "\"!" << endl; 
+      if(!(i<frame.size()))
+        throw MBSimError("Error: The body \""+name+"\" comprises no frame \""+name_+"\"!"); 
       assert(i<frame.size());
     }
     return NULL;
@@ -230,10 +230,8 @@ namespace MBSim {
         return getFrame(searched_name);
       else if (container=="Contour")
         return getContour(searched_name);
-      else {
-        cout << "Unknown name of container" << endl;
-        throw(123);
-      }
+      else
+        throw MBSimError("Unknown name of container!");
     }
   }
 
