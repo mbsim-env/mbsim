@@ -25,6 +25,7 @@
 #include "mbsim/contours/contour1s_analytical.h"
 #include "mbsim/functions_contact.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/contour_functions.h"
 
 using namespace fmatvec;
@@ -58,14 +59,8 @@ namespace MBSim {
         double radius=1./static_cast<Contour1sAnalytical*>(contour1s)->getContourFunction1s()->computeCurvature(alpha);
         minRadius=(radius<minRadius)?radius:minRadius;
       }
-      if (circle->getRadius()>minRadius) {
-        ostringstream errorMessage;
-        errorMessage << "Error! Just one contact point is allowed in Contactpairing Contour1s-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour1s is to small." << endl;
-        errorMessage << "minimal radius of Contour1sAnalytical=" << minRadius << endl;
-        errorMessage << "Radius of CircleSolid=" << circle->getRadius() << endl;
-
-        throw MBSimError(errorMessage.str());
-      }
+      if (circle->getRadius()>minRadius)
+        throw MBSimError("Error! Just one contact point is allowed in Contactpairing Contour1s-CircleSolid, but either the circle radius is to big or the minimal Radius of Contour1s is to small.\n minimal radius of Contour1sAnalytical="+numtostr(minRadius)+"\n Radius of CircleSolid="+numtostr(circle->getRadius()));
     }
 
   }
