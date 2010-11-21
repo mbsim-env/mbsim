@@ -16,6 +16,8 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
+LDFLAGS="-Wl,--no-undefined"
+
 PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0)
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
