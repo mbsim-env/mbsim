@@ -18,9 +18,8 @@ libmbsimControl_la_SOURCES = \
 
 
 libmbsimControl_la_CPPFLAGS = -DTIXML_USE_STL
-libmbsimControl_la_LIBADD = 
+libmbsimControl_la_LIBADD = $(DEPS_LIBS)
 INCLUDES = $(DEPS_CFLAGS)
-LDADD = $(DEPS_LIBS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \

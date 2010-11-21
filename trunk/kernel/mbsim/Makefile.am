@@ -31,7 +31,7 @@ tree.cc\
 graph.cc\
 constraint.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la
+libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la -lgfortran
 
 libmbsim_la_CPPFLAGS = -DTIXML_USE_STL
 
