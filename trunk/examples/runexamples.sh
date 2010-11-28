@@ -65,10 +65,13 @@ if [ $# -eq 1 ]; then
     tar -xjf reference.tar.bz2
     exit
   fi
+  XMLLINT=xmllint
+  test -f $(pkg-config --variable=BINDIR mbxmlutils)/xmllint && XMLLINT=$(pkg-config --variable=BINDIR mbxmlutils)/xmllint
   if [ "$1" = "validateXML" ]; then
-    find -maxdepth 2 -name "*.ombv.xml" | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___openmbv_berlios_de_OpenMBV/openmbv.xsd 2>&1 | grep -v " validates$"
-    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd 2>&1 | grep -v " validates$"
-    find -maxdepth 2 -name "*.mbsimint.xml" | grep -v ".*/\." | xargs $(pkg-config --variable=BINDIR mbxmlutils)/xmllint --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.ombv.xml" | xargs $XMLLINT --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___openmbv_berlios_de_OpenMBV/openmbv.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.ombv.env.xml" | xargs $XMLLINT --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___openmbv_berlios_de_OpenMBV/openmbv.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.mbsim.xml" | grep -v ".*/\." | xargs $XMLLINT --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd 2>&1 | grep -v " validates$"
+    find -maxdepth 2 -name "*.mbsimint.xml" | grep -v ".*/\." | xargs $XMLLINT --xinclude --noout --schema $(pkg-config --variable SCHEMADIR mbxmlutils)/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd 2>&1 | grep -v " validates$"
     exit
   fi
   if cd $1 &> /dev/null; then
