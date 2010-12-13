@@ -27,6 +27,8 @@
 #include <mbsimFlexibleBody/contact_kinematics/point_cylinderflexible.h>
 #include <mbsimFlexibleBody/contact_kinematics/point_flexibleband.h>
 #include <mbsimFlexibleBody/contact_kinematics/circlesolid_flexibleband.h>
+#include <mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h>
+#include <mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h>
 // --- List of contact kinematic implementations - END ---
 
 namespace MBSimFlexibleBody {
@@ -46,7 +48,13 @@ namespace MBSimFlexibleBody {
       return new ContactKinematicsPointFlexibleBand;  
     
     else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "Contour1sFlexible")==0 )
-      return new MBSim::ContactKinematicsPointContour1s;  
+      return new MBSim::ContactKinematicsPointContour1s;
+
+    else if ( strcmp(contour0, "Point")==0 && strcmp(contour1, "NurbsDisk2s")==0 )
+      return new ContactKinematicsPointNurbsDisk2s;  
+
+    else if ( strcmp(contour0, "Circle")==0 && strcmp(contour1, "NurbsDisk2s")==0 )
+      return new ContactKinematicsCircleNurbsDisk2s;  
 
     else 
       return 0;
