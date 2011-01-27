@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2010 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -29,13 +29,14 @@ namespace MBSim {
   /**
    * \brief line segment with two bounds
    * \author Martin Foerg
-   * \date 2009-04-20 some comments (Thorsten Schindler)
+   * \date 2010-05-20 initial commit (Martin Foerg)
+   * \date 2011-01-27 some comments (Thomas Cebulla)
    */ 
   class LineSegment : public MBSim::RigidContour {	
     public:
       /**
        * \brief constructor
-       * \param name of line
+       * \param name of line segment
        */
       LineSegment(const std::string& name);
 
@@ -44,22 +45,33 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual double computeCurvature(ContourPointData &cp) { return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { return 0; }
+      /***************************************************/
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void enableOpenMBV(bool enable=true, double size=1., int number=10);
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
 
+      /* GETTER / SETTER */
       void setBounds(const fmatvec::Vec &bound_);
       const fmatvec::Vec& getBounds() const { return bound; }
       const double& getSegmentLength() const {return length; }
       /***************************************************/
+
     private:
+      /**
+       * \brief bounds of line segment
+       */
       fmatvec::Vec bound;
+
+      /**
+       * \brief length of line segment
+       */
       double length;
   };      
 }
 
-#endif /* _LINE_H_ */
+#endif /* _LINE_SEGMENT_H_ */
 

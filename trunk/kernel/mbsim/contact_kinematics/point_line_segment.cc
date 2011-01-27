@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -50,7 +50,7 @@ namespace MBSim {
     Vec Wt = cpData[iline].getFrameOfReference().getOrientation().col(1);
 
     Vec Wd =  point->getFrame()->getPosition() - line->getFrame()->getPosition();
-    
+
     double s = Wt.T()*Wd; 
     if(s > line->getBounds()(1) || s < line->getBounds()(0))
       g(0) = 1;
@@ -58,7 +58,7 @@ namespace MBSim {
     {
       g(0) = Wn.T()*Wd;
       if(g(0) < -0.01)
-	g(0) = 1;
+        g(0) = 1;
     }
 
     cpData[ipoint].getFrameOfReference().setPosition(point->getFrame()->getPosition());
