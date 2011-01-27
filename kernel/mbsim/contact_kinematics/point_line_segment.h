@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -28,13 +28,14 @@ namespace MBSim {
   class LineSegment;
 
   /**
-   * \brief pairing point to line
+   * \brief pairing point to line segment
    * \author Martin Foerg
-   * \date 2009-04-02 some comments (Thorsten Schindler)
+   * \date 2010-05-20 initial commit (Martin Foerg)
+   * \date 2011-01-27 some comments (Thomas Cebulla)
    */
   class ContactKinematicsPointLineSegment : public ContactKinematics {
     public:
-      /* INHERITED INTERFACE */
+      /* INHERITED INTERFACE OF CONTACT_KINEMATICS */
       virtual void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec &g, ContourPointData *cpData);
       virtual void updatewb(fmatvec::Vec &wb, const fmatvec::Vec &g, ContourPointData *cpData);
@@ -45,7 +46,7 @@ namespace MBSim {
        * \brief contour index
        */
       int ipoint, iline;
-      
+
       /**
        * \brief contour classes
        */
