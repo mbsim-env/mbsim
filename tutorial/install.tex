@@ -37,15 +37,23 @@ For the installation of the specific projects always the same \emph{procedures} 
 All procedures belong to the GNU-Build-System (cf.~Sec.~\ref{sec:gnu}).\par
 It is reasonable to write an executable script file invoking the procedures.
 
-\subsubsection{Reinstallation}
+\subsubsection{Reinstallation/Update}
 The procedure \textsc{reinstall}
 \begin{verbatim}
-make uninstall 
-make clean
+ make uninstall 
+ make clean
+ svn update // only for Update
  ./config.status --recheck
-make install
+ make install
 \end{verbatim}
-newly installs a project with the same configure options used at the previous installation. These informations are stored in the file config.status.\par
+newly installs a project with the same configure options used at the previous installation. These informations are stored in the file config.status.\par 
+
+The procedure \textsc{update} is similar to the reinstallation with the additional 
+\begin{verbatim} 
+ svn update 
+\end{verbatim}
+before the recheck option.\par
+
 For restoring a not-configured version of the project
 \begin{verbatim}
  make maintainer-clean
@@ -59,7 +67,9 @@ For uninstalling
  make clean
 \end{verbatim}
 has to be called in all directories. If the files created by configure should be deleted too, type 
-\begin{verbatim} make distclean \end{verbatim} 
+\begin{verbatim} 
+ make distclean 
+\end{verbatim} 
 in addition.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
@@ -121,7 +131,8 @@ To deactivate the OpenMP pragma \textit{omp critical} within reference counting 
 The code can be compiled and installed with a Doxygen HTML class documentation by \texttt{make doc} and the procedure \textsc{install}.
 
 \subsubsection{\HDF}
-\HDF{} is a hierarchical data format enabling the effective administration of plot and visualisation data. It can be downloaded as source code from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2.\par
+\HDF{} is a hierarchical data format enabling the effective administration of plot and visualisation data. It can be downloaded as \textbf{source code} ("ALL Platforms") 
+from \url{http://www.hdfgroup.org/HDF5/} with at least version 1.8.2.\par
 Extract the source archive to \texttt{\$HOME/MBSim/hdf5}.\par
 Change to \texttt{\$HOME/MBSim/hdf5}.\par
 Use the procedure \textsc{configure} for dynamic compilation with the prefix
@@ -314,7 +325,7 @@ The examples are used for testing successful installation. There are two possibi
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Installation of the Visualisation Framework\label{sec:install:visualisation}}
-In the following it is assumed, that a directory~\texttt{OpenMBV} and a directory \texttt{MBSim/OpenMBV} has been created in the \texttt{\$HOME} path of the Linux operating system.\par
+In the following it is assumed, that a directory~\texttt{OpenMBV} and a directory \texttt{OpenMBV/Install} has been created in the \texttt{\$HOME} path of the Linux operating system.\par
 %
 Invoke 
 \begin{verbatim}
@@ -323,6 +334,11 @@ Invoke
     $HOME/OpenMBV/Install/lib/pkgconfig (only at the institute)
 \end{verbatim}
 to change to a computer defining minimal requirements for further usage of the executable files and having installed the necessary software (cf. Sec.~\ref{sec:third_party}).
+
+This subsection describes a \textbf{static} compilation, therefore the additional FLAG have to be used in each step
+\begin{verbatim}
+ --disable-shared --enable-static
+\end{verbatim}
 
 \subsubsection{\HDF}
 Install \HDF{} and the \HDF{} wrapper as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation.\par
@@ -339,7 +355,14 @@ to gain overall access to the command \texttt{h5plotserie}.
 
 \subsubsection{\OpenMBV{}}
 \paragraph{XML Utils}
-Install XML Utils as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation
+Install XML Utils as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation.
+
+\paragraph{OpenMBV-C++Interface}
+Install OpenMBV-C++Interface as described in Sec.~\ref{sec:install:simulation} but in the directory \texttt{OpenMBV} and using a static compilation with the following additional FLAG
+\begin{verbatim}
+ --with-qwt-inc-prefix=/home/OpenMBV/local/include 
+ --with-qwt-lib-prefix=/home/OpenMBV/local/lib
+\end{verbatim}
 
 \paragraph{\OpenMBV{}}
 There is a static Linux binary available at \url{www.berlios.de} being updated from time to time. For the installation of a static visualisation using always the newest source files it is assumed that
@@ -358,7 +381,8 @@ With
 \end{verbatim} 
 and the procedures \textsc{automake, configure} for static compilation with the additional FLAG
 \begin{verbatim}
- --Wno-non-virtual-dtor
+ --with-qwt-inc-prefix=/home/OpenMBV/local/include 
+ --with-qwt-lib-prefix=/home/OpenMBV/local/lib CXXFLAGS="--Wno-non-virtual-dtor" 
 \end{verbatim}
 \texttt{make doc} and \textsc{install} a static build of the viewer together with an Doxygen HTML class documentation completes the installation. Then,
 \begin{verbatim}
