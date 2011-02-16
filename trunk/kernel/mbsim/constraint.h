@@ -104,6 +104,7 @@ namespace MBSim {
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
+      RigidBody *bi;
       std::vector<int> if1;
       std::vector<int> if2;
 
@@ -121,18 +122,27 @@ namespace MBSim {
       fmatvec::Vec q0;
 
     public:
-      JointConstraint(const std::string &name, std::vector<RigidBody*> bd1, std::vector<RigidBody*> bd2, Frame* frame1, Frame* frame2);
+      JointConstraint(const std::string &name);
 
       void init(InitStage stage);
       void initz();
 
+      void connect(Frame* frame1, Frame* frame2);
+      void setDependentBodiesFirstSide(std::vector<RigidBody*> bd);
+      void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
+      void setIndependentBody(RigidBody* bi);
+
       void setForceDirection(const fmatvec::Mat& d_) {dT = d_;}
       void setMomentDirection(const fmatvec::Mat& d_) {dR = d_;}
-      void  setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
+      void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
       void updateJacobians(double t); 
+      virtual void initializeUsingXML(TiXmlElement *element);
+
+    private:
+      std::string saved_ref1, saved_ref2;
   };
 
 }
