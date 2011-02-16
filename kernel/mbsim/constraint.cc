@@ -115,41 +115,53 @@ namespace MBSim {
     bd->getJRel().init(0); 
   }
 
-  JointConstraint::JointConstraint(const std::string &name, std::vector<RigidBody*> bd1_, std::vector<RigidBody*> bd2_, Frame* frame1_, Frame* frame2_) : Constraint(name), frame1(frame1_), frame2(frame2_) {
-    bd1 = bd1_;
-    bd2 = bd2_;
+  void JointConstraint::connect(Frame* frame1_, Frame* frame2_) {
+    frame1 = frame1_;
+    frame2 = frame2_;
+  }
 
-    for(unsigned int i=0; i<bd1.size(); i++) {
-      bd1[i]->addDependency(this);
-    }
-    for(unsigned int i=0; i<bd2.size(); i++) {
-      bd2[i]->addDependency(this);
-    }
-    if(bd1.size()) {
-      for(unsigned int i=0; i<bd1.size()-1; i++) 
-	if1.push_back(bd1[i]->frameIndex(bd1[i+1]->getFrameOfReference()));
-      if1.push_back(bd1[bd1.size()-1]->frameIndex(frame1));
-    }
-    if(bd2.size()) {
-      for(unsigned int i=0; i<bd2.size()-1; i++) 
-	if2.push_back(bd2[i]->frameIndex(bd2[i+1]->getFrameOfReference()));
-      if2.push_back(bd2[bd2.size()-1]->frameIndex(frame2));
-    }
+  void JointConstraint::setDependentBodiesFirstSide(vector<RigidBody*> bd) {    
+    bd1 = bd;
+  }
+
+  void JointConstraint::setDependentBodiesSecondSide(vector<RigidBody*> bd) {
+    bd2 = bd;
+  }
+
+  void JointConstraint::setIndependentBody(RigidBody *bi_) {
+    bi = bi_;
+  }
+
+  JointConstraint::JointConstraint(const string &name) : Constraint(name), bi(0), frame1(0), frame2(0) {
   }
 
   void JointConstraint::init(InitStage stage) {
-    if(stage==preInit) {
-      Constraint::init(stage);
+    if(stage==resolveXMLPath) {
+      if(saved_ref1!="" && saved_ref2!="")
+        connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
+    //}
+    //if(stage==modelBuildup) {
+     // Constraint::init(stage);
+      for(unsigned int i=0; i<bd1.size(); i++) 
+	bd1[i]->addDependency(this);
       if(bd1.size()) {
-	Body* obj = dynamic_cast<Body*>(bd1[0]->getFrameOfReference()->getParent());
-	if(obj)
-	  dependency.push_back(obj);
+	for(unsigned int i=0; i<bd1.size()-1; i++) 
+	  if1.push_back(bd1[i]->frameIndex(bd1[i+1]->getFrameOfReference()));
+	if1.push_back(bd1[bd1.size()-1]->frameIndex(frame1));
       }
+      for(unsigned int i=0; i<bd2.size(); i++)
+	bd2[i]->addDependency(this);
       if(bd2.size()) {
-	Body* obj = dynamic_cast<Body*>(bd2[0]->getFrameOfReference()->getParent());
-	if(obj)
-	  dependency.push_back(obj);
+	for(unsigned int i=0; i<bd2.size()-1; i++) 
+	  if2.push_back(bd2[i]->frameIndex(bd2[i+1]->getFrameOfReference()));
+	if2.push_back(bd2[bd2.size()-1]->frameIndex(frame2));
       }
+      Constraint::init(stage);
+    }
+    else if(stage==preInit) {
+      Constraint::init(stage);
+      if(bi)
+	dependency.push_back(bi);
     } 
     else if(stage==unknownStage) {
       if(!dT.cols()) 
@@ -275,4 +287,42 @@ namespace MBSim {
     j = slvLU(A,b); 
   }
 
+  void JointConstraint::initializeUsingXML(TiXmlElement *element) {
+    TiXmlElement *e, *ee;
+    Constraint::initializeUsingXML(element);
+    e=element->FirstChildElement(MBSIMNS"initialGeneralizedPosition");
+    if (e)
+      setq0(getVec(e));
+    e=element->FirstChildElement(MBSIMNS"force");
+    if(e) {
+      ee=e->FirstChildElement(MBSIMNS"direction");
+      setForceDirection(getMat(ee,3,0));
+      //ee=ee->NextSiblingElement();
+    }
+    e=element->FirstChildElement(MBSIMNS"moment");
+    if(e) {
+      ee=e->FirstChildElement(MBSIMNS"direction");
+      setMomentDirection(getMat(ee,3,0));
+      //ee=ee->NextSiblingElement();
+    }
+    e=element->FirstChildElement(MBSIMNS"dependentBodiesFirstSide");
+    vector<RigidBody*> bd1;
+    cout << "here" << endl;
+    bd1.push_back(getByPath<RigidBody>(e->Attribute("ref1"))); 
+    cout << (getByPath<RigidBody>(e->Attribute("ref1"))) << endl;
+    bd1.push_back(getByPath<RigidBody>(e->Attribute("ref2"))); 
+    e=element->FirstChildElement(MBSIMNS"dependentBodiesSecondSide");
+    if(e) {
+    vector<RigidBody*> bd2;
+    bd2.push_back(getByPath<RigidBody>(e->Attribute("ref"))); 
+    }
+    e=element->FirstChildElement(MBSIMNS"connect");
+    cout << "still here1" << endl;
+    setDependentBodiesFirstSide(bd1);
+    cout << "still here2" << endl;
+    setDependentBodiesSecondSide(bd2);
+    saved_ref1=e->Attribute("ref1");
+    saved_ref2=e->Attribute("ref2");
+    cout << "still here3" << endl;
+  }
 }
