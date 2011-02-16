@@ -38,7 +38,7 @@
         </parameter>
       </localParameter>
     </embed>
-    <embed href="m.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
+    <embed href="_m.xml" count="1" counterName="xxx" xmlns="http://openmbv.berlios.de/MBXMLUtils/physicalvariable">
       <localParameter>
         <parameter xmlns="http://openmbv.berlios.de/MBXMLUtils/parameter">
           <scalarParameter name="c">7/8</scalarParameter>
