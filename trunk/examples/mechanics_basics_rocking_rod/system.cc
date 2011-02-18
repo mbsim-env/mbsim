@@ -7,7 +7,8 @@
 #include "mbsim/environment.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/ivbody.h"
+//#include "openmbvcppinterface/ivbody.h"
+#include "openmbvcppinterface/cuboid.h"
 #endif
 
 using namespace MBSim;
@@ -92,10 +93,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // Visualisation with OpenMBV
-  OpenMBV::IvBody *obj=new OpenMBV::IvBody;
-  obj->setIvFileName("objects/rod.wrl");
-  obj->setInitialRotation(M_PI/2,M_PI/2,0);
-  obj->setScaleFactor(0.1);
+  //OpenMBV::IvBody *obj=new OpenMBV::IvBody;
+  OpenMBV::Cuboid *obj=new OpenMBV::Cuboid;
+  obj->setLength(l,h,l/5.);
+  obj->setInitialRotation(0,0,M_PI/2);
   body->setOpenMBVRigidBody(obj);
 #endif
 }
