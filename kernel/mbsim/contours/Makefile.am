@@ -3,6 +3,7 @@ SUBDIRS = .
 noinst_LTLIBRARIES = libcontour.la
 libcontour_la_SOURCES = face.cc\
 						circle.cc\
+						area.cc\
 						compound_contour.cc\
 						contour1s_analytical.cc\
 						contour_interpolation.cc\
@@ -21,6 +22,7 @@ libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 contourincludedir = $(includedir)/mbsim/contours
 contourinclude_HEADERS = face.h\
 						   circle.h\
+						   area.h\
 						   circle_hollow.h\
 						   circle_solid.h\
 						   compound_contour.h\
