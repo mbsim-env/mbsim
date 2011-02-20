@@ -6,4 +6,4 @@ doc_DATA = html/*
 
 html/*:
 all-local: clean
-	@doxygen@ doxyfile
+	TEXINPUTS="@abs_top_srcdir@/doc:" @doxygen@ doxyfile

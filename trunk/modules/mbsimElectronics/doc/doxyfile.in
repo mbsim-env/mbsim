@@ -168,7 +168,7 @@ INLINE_INFO          = YES
 # with spaces.
 # !!! Geaendert !!!
 
- INPUT                = @top_srcdir@/src/
+ INPUT                = @top_srcdir@/mbsimElectronics/
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
