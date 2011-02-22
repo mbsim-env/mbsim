@@ -4,6 +4,9 @@
   xmlns="http://www.w3.org/1999/xhtml"
   version="1.0">
 
+  <xsl:param name="DATETIME"/>
+  <xsl:param name="MBSIMXMLVERSION"/>
+
   <!-- output method -->
   <xsl:output method="xml"
     encoding="UTF-8"
@@ -37,6 +40,7 @@
         *.namespaceSmall { font-style:italic;font-size:0.6em }
         ul.content { padding-left:3ex;list-style-type:none }
         h2 { margin-top:8ex }
+        p.footer { text-align:right;font-size:0.7em }
 
         span.expandcollapsecontent { cursor:nw-resize;color:blue;font-family:monospace;font-weight:bold;font-size:1.25em }
       </style>
@@ -92,6 +96,8 @@
         <xsl:sort select="@name"/>
       </xsl:apply-templates>
     </ul>
+    <hr/>
+    <p class="footer">Generated on <xsl:value-of select="$DATETIME"/> for MBSimXML by <a href="http://mbsim.berlios.de">MBSimXML</a><xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/></p>
     </body></html>
   </xsl:template>
 
