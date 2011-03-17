@@ -45,7 +45,7 @@ namespace MBSim {
        * \param name of circle
        * \param radius of circle
        */
-      CircleHollow(const std::string &name, double r_) : Circle(name,r,false) {}
+      CircleHollow(const std::string &name, double r_) : Circle(name,r_,false) {}
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "CircleHollow"; }
