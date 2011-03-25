@@ -27,10 +27,9 @@ else
   export MBXMLUTILSXMLDIR=${MBSIMPREFIX}/share/mbxmlutils/xml
   export MBXMLUTILSOCTAVEDIR=${MBSIMPREFIX}/share/mbxmlutils/octave
   export HDF5SERIEDATADIR=${MBSIMPREFIX}/share
-  export HDF5SERIEH5DUMP=${MBSIMPREFIX}/bin/h5dump
+  export HDF5SERIEBINDIR=${MBSIMPREFIX}/bin
   export MBSIMBINDIR=${MBSIMPREFIX}/bin
   export MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin
-  export HDF5SERIEXSLTPROC=${MBSIMPREFIX}/bin/xsltproc
   echo ${PATH} | grep -E "(:|^)${MBSIMPREFIX}/bin(:|$)" >/dev/null 2>&1 || export PATH=${MBSIMPREFIX}/bin:${PATH}
   echo ${LD_LIBRARY_PATH} | grep -E "(:|^)${MBSIMPREFIX}/lib(:|$)" >/dev/null 2>&1 || export LD_LIBRARY_PATH=${MBSIMPREFIX}/lib:${LD_LIBRARY_PATH}
 
