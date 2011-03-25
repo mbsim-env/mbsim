@@ -1,4 +1,4 @@
-# Unix C-Shell variant of mbsiminit
+# Unix Bourne-Shell variant of mbsiminit
 # DEVELOPER: If editing this file, edit also the files mbsiminit.*!
 #
 # Copyright (C) 2009 Markus Friedrich
@@ -20,22 +20,21 @@
 # Contact:
 #   mafriedrich@users.berlios.de
 
-if ( $?MBSIMPREFIX == 0 ) then
+if test -z $MBSIMPREFIX; then
   echo "ERROR! You must set the environment variable MBSIMPREFIX first."
 else
-  setenv MBXMLUTILSSCHEMADIR ${MBSIMPREFIX}/share/mbxmlutils/schema
-  setenv MBXMLUTILSXMLDIR ${MBSIMPREFIX}/share/mbxmlutils/xml
-  setenv MBXMLUTILSOCTAVEDIR ${MBSIMPREFIX}/share/mbxmlutils/octave
-  setenv HDF5SERIEDATADIR ${MBSIMPREFIX}/share
-  setenv HDF5SERIEH5DUMP ${MBSIMPREFIX}/bin/h5dump
-  setenv MBSIMBINDIR ${MBSIMPREFIX}/bin
-  setenv MBXMLUTILSBINDIR ${MBSIMPREFIX}/bin
-  setenv HDF5SERIEXSLTPROC ${MBSIMPREFIX}/bin/xsltproc
-  echo ${PATH} | grep -E '(:|^)'${MBSIMPREFIX}'/bin(:|$)' >& /dev/null || setenv PATH ${MBSIMPREFIX}/bin:${PATH}
-  echo ${LD_LIBRARY_PATH} | grep -E '(:|^)'${MBSIMPREFIX}'/lib(:|$)' >& /dev/null || setenv LD_LIBRARY_PATH ${MBSIMPREFIX}/lib:${LD_LIBRARY_PATH}
+  export MBXMLUTILSSCHEMADIR=${MBSIMPREFIX}/share/mbxmlutils/schema
+  export MBXMLUTILSXMLDIR=${MBSIMPREFIX}/share/mbxmlutils/xml
+  export MBXMLUTILSOCTAVEDIR=${MBSIMPREFIX}/share/mbxmlutils/octave
+  export HDF5SERIEDATADIR=${MBSIMPREFIX}/share
+  export HDF5SERIEBINDIR=${MBSIMPREFIX}/bin
+  export MBSIMBINDIR=${MBSIMPREFIX}/bin
+  export MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin
+  echo ${PATH} | grep -E "(:|^)${MBSIMPREFIX}/bin(:|$)" >& /dev/null || export PATH=${MBSIMPREFIX}/bin:${PATH}
+  echo ${LD_LIBRARY_PATH} | grep -E "(:|^)${MBSIMPREFIX}/lib(:|$)" >& /dev/null || export LD_LIBRARY_PATH=${MBSIMPREFIX}/lib:${LD_LIBRARY_PATH}
 
 # extension for other software tools
-  setenv OCTAVE_HOME ${MBSIMPREFIX}
-  setenv KETSIMBINDIR ${MBSIMPREFIX}/bin
-  setenv MDPCOSIMBINDIR ${MBSIMPREFIX}/bin
-endif
+  export OCTAVE_HOME=${MBSIMPREFIX}
+  export KETSIMBINDIR=${MBSIMPREFIX}/bin
+  export MDPCOSIMBINDIR=${MBSIMPREFIX}/bin
+fi
