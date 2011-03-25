@@ -32,4 +32,4 @@ utilsinclude_HEADERS = eps.h\
 
 
 
-bin_SCRIPTS = mbsiminit.sh mbsiminit.csh mbsiminit.ksh mbsiminit.bat
+bin_SCRIPTS = mbsimxmlinit.sh mbsimxmlinit.csh mbsimxmlinit.ksh mbsimxmlinit.bat
