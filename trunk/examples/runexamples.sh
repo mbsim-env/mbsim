@@ -47,7 +47,7 @@ if [ $# -eq 1 ]; then
   fi
   if [ "$1" = "dist" ]; then
     echo "Making a distribution of reference files: reference.tar.bz2"
-    tar -cjf reference.tar.bz2 $(find -maxdepth 2 -name "reference")
+    tar -cvjf reference.tar.bz2 $(find -maxdepth 2 -name "reference")
     exit
   fi
   if [ "$1" = "pushdist" ]; then
@@ -62,7 +62,7 @@ if [ $# -eq 1 ]; then
     rm reference.tar.bz2
     wget ftp://ftp.berlios.de/pub/mbsim/reference.tar.bz2
     echo "Install the reference file"
-    tar -xjf reference.tar.bz2
+    tar -xvjf reference.tar.bz2
     exit
   fi
   XMLLINT=xmllint
@@ -85,7 +85,7 @@ fi
 if [ $# -eq 2 ]; then
   if [ "$1" = "install" ]; then
     echo "Install the reference file: $2"
-    tar -xjf $2
+    tar -xvjf $2
     exit
   fi
   EXAMPLES=$1
@@ -146,7 +146,7 @@ for D in $EXAMPLES; do
     for H5F in $(cd reference && find -name "*.h5"); do
       for DS in $($(pkg-config hdf5serie --variable=bindir)/h5lsserie reference/$H5F | sed -nre "s|^.*\(Path: \"(.*)\"\)$|\1|p"); do
         P=$(echo $DS | sed -re "s|^.*\.h5/(.*)|\1|")
-        $H5DIFF --relative=$RTOL --delta=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
+        $H5DIFF --nan --relative=$RTOL --delta=$ATOL "$H5F" "reference/$H5F" "$P" "$P"
         RET=$?
         if [ $RET -ne 0 ]; then
           echo "EXAMPLE $DS FAILED DIFF WITH REFERENCE SOLUTION"
@@ -168,7 +168,13 @@ echo -e "EXAMPLES FAILED DIFF WITH REFERENCE SOLUTION:$DIFF"
 
 
 
-echo -e "\n\n\n\n\n\n\n\n\n\n" >> runexamples.log
+echo -e "\n\n\n\n\n\n\n\n\n\n" > runexamples.log
 echo -e "EXAMPLES FAILED COMPILING OR RUNNING:$FAILED" >> runexamples.log
 echo -e "\n" >> runexamples.log
 echo -e "EXAMPLES FAILED DIFF WITH REFERENCE SOLUTION:$DIFF" >> runexamples.log
+
+# return
+if [ "_$FAILED" != "_" -o "_$DIFF" != "_" ]; then
+  exit 1 # return with error
+fi
+exit 0 # return without error
