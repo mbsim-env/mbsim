@@ -51,10 +51,12 @@ namespace MBSim {
 
   Contact::~Contact() {
     if(contactKinematics) { delete contactKinematics; contactKinematics=0; }
+    /* Delete will fail if the same object is used for more than one Contact.
+     * TODO: A delete concept (who deletes what) is still missing in MBSim.
     if(fcl) { delete fcl; fcl=0; }
     if(fdf) { delete fdf; fdf=0; }
     if(fnil) { delete fnil; fnil=0; }
-    if(ftil) { delete ftil; ftil=0; }
+    if(ftil) { delete ftil; ftil=0; }*/
 
     for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
       delete[] *i;
