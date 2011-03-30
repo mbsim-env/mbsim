@@ -74,11 +74,38 @@ namespace MBSimHydraulics {
     rotFrame.fref = frameOfReference;
     rotFrame.considerVolumeChange = considerVolumeChange;
     connectedRotFrames.push_back(rotFrame);
-    return connectedTransFrames.size()-1;
+    return connectedRotFrames.size()-1;
   }
 
   void HNodeMec::init(InitStage stage) {
-    if (stage==MBSim::resize) {
+    if(stage==resolveXMLPath) {
+      for (unsigned int i=0; i<saved_translatorial_frameOfReference.size(); i++) {
+        addTransMecArea(
+            getByPath<Frame>(saved_translatorial_frameOfReference[i]),
+            saved_translatorial_normal[i],
+            saved_translatorial_area[i],
+            !saved_translatorial_noVolumeChange[i]);
+      }
+      saved_translatorial_frameOfReference.clear();
+      saved_translatorial_normal.clear();
+      saved_translatorial_area.clear();
+      saved_translatorial_noVolumeChange.clear();
+      for (unsigned int i=0; i<saved_rotatorial_frameOfReference.size(); i++) {
+        addRotMecArea(
+            getByPath<Frame>(saved_rotatorial_frameOfReference[i]),
+            saved_rotatorial_normal[i],
+            saved_rotatorial_area[i],
+            getByPath<Frame>(saved_rotatorial_frameOfRotationCenter[i]),
+            !saved_rotatorial_noVolumeChange[i]);
+      }
+      saved_rotatorial_frameOfReference.clear();
+      saved_rotatorial_normal.clear();
+      saved_rotatorial_area.clear();
+      saved_rotatorial_frameOfRotationCenter.clear();
+      saved_rotatorial_noVolumeChange.clear();
+      HNode::init(stage);
+    }
+    else if (stage==MBSim::resize) {
       HNode::init(stage);
       nTrans=connectedTransFrames.size();
       for (unsigned int i=0; i<nTrans; i++) {
@@ -406,25 +433,23 @@ namespace MBSimHydraulics {
     while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface" || e->ValueStr()==MBSIMHYDRAULICSNS"rotatorialBoundarySourface")) {
       if (e->ValueStr()==MBSIMHYDRAULICSNS"translatorialBoundarySourface") {
         TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        Frame *ref=getByPath<Frame>(ee->Attribute("ref"));
+        saved_translatorial_frameOfReference.push_back(ee->Attribute("ref"));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
-        Vec normal=getVec(ee);
+        saved_translatorial_normal.push_back(getVec(ee));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
-        double area=getDouble(ee);
-        bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
-        addTransMecArea(ref, normal, area, !noVolumeChange);
+        saved_translatorial_area.push_back(getDouble(ee));
+        saved_translatorial_noVolumeChange.push_back(e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange"));
       }
       else {
         TiXmlElement *ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfReference");
-        Frame *ref=getByPath<Frame>(ee->Attribute("ref"));
+        saved_rotatorial_frameOfReference.push_back(ee->Attribute("ref"));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"normal");
-        Vec normal=getVec(ee);
+        saved_rotatorial_normal.push_back(getVec(ee));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"area");
-        double area=getDouble(ee);
+        saved_rotatorial_area.push_back(getDouble(ee));
         ee=e->FirstChildElement(MBSIMHYDRAULICSNS"frameOfRotationCenter");
-        Frame *center=getByPath<Frame>(ee->Attribute("ref"));
-        bool noVolumeChange=e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange");
-        addRotMecArea(ref, normal, area, center, !noVolumeChange);
+        saved_rotatorial_frameOfRotationCenter.push_back(ee->Attribute("ref"));
+        saved_rotatorial_noVolumeChange.push_back(e->FirstChildElement(MBSIMHYDRAULICSNS"noVolumeChange"));
       }
       e=e->NextSiblingElement();
     }

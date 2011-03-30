@@ -103,6 +103,12 @@ namespace MBSimHydraulics {
       std::vector<OpenMBV::Arrow *> openMBVArrows;
       double openMBVArrowSize;
 #endif
+
+    private:
+      std::vector<std::string> saved_translatorial_frameOfReference, saved_rotatorial_frameOfReference, saved_rotatorial_frameOfRotationCenter;
+      std::vector<fmatvec::Vec> saved_translatorial_normal, saved_rotatorial_normal;
+      std::vector<double> saved_translatorial_area, saved_rotatorial_area;
+      std::vector<bool> saved_translatorial_noVolumeChange, saved_rotatorial_noVolumeChange;
   };
 
   /*! ConstrainedNodeMec */

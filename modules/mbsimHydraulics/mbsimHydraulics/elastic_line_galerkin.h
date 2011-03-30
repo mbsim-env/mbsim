@@ -62,8 +62,8 @@ namespace MBSimHydraulics {
 
       void setQ0(double Q0_) {Q0=Q0_; }
 
-      fmatvec::Vec getQIn(double t) {return QIn; }
-      fmatvec::Vec getQOut(double t) {return QOut; }
+      fmatvec::Vec getQIn() {return QIn; }
+      fmatvec::Vec getQOut() {return QOut; }
       fmatvec::Vec getInflowFactor() {return -Area*wE; }
       fmatvec::Vec getOutflowFactor() {return Area*wA; }
 

@@ -157,7 +157,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateg(double t) {
     if (unilateral)
-      gd=line->getQIn(t);
+      gd=line->getQIn();
   }
 
   void RigidLinePressureLoss::checkActiveg() {
@@ -182,7 +182,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updategd(double t) {
     if (!unilateral)
-      gd=line->getQIn(t);
+      gd=line->getQIn();
   }
 
   void RigidLinePressureLoss::updateStopVector(double t) {
@@ -194,11 +194,11 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateh(double t) {
     if (linePressureLoss)
-      la(0)=(*linePressureLoss)(line->getQIn(t)(0), line);
+      la(0)=(*linePressureLoss)(line->getQIn()(0), line);
     else if (closablePressureLoss)
-      la(0)=(*closablePressureLoss)(line->getQIn(t)(0), line);
+      la(0)=(*closablePressureLoss)(line->getQIn()(0), line);
     else if (leakagePressureLoss)
-      la(0)=(*leakagePressureLoss)(line->getQIn(t)(0), line);
+      la(0)=(*leakagePressureLoss)(line->getQIn()(0), line);
     else if (unilateral || unidirectionalPressureLoss) {
       la(0)=0*dpMin+(unilateral ? 0 : (*unidirectionalPressureLoss)(gd(0), line));
     }

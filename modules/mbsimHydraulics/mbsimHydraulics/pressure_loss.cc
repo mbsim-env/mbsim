@@ -220,6 +220,19 @@ namespace MBSimHydraulics {
     bNeg=Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"bNegative"));
   }
 
+
+  double TabularLinePressureLoss::operator()(const double& Q, const void * line) {
+    return ((*zetaTabular)(Q));
+  }
+
+  void TabularLinePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"function");
+    zetaTabular=MBSim::ObjectFactory::getInstance()->createFunction1_SS(e->FirstChildElement());
+    zetaTabular->initializeUsingXML(e->FirstChildElement());
+  }
+
+
   double RelativeAreaZetaClosablePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();

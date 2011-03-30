@@ -147,7 +147,8 @@ namespace MBSimHydraulics {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node pressure [bar]");
-        plotColumns.push_back("Fluidflow into and out the node [l/min]");
+        plotColumns.push_back("Volume flow into and out the node [l/min]");
+        plotColumns.push_back("Mass flow into and out the node [kg/min]");
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if (openMBVSphere) {
           if (openMBVGrp) {
@@ -237,12 +238,12 @@ namespace MBSimHydraulics {
     QHyd=0;
     for (unsigned int i=0; i<nLines; i++)
       QHyd-=((connectedLines[i].inflow) ?
-          connectedLines[i].line->getQOut(t) :
-          connectedLines[i].line->getQIn(t))(0);
+          connectedLines[i].line->getQOut() :
+          connectedLines[i].line->getQIn())(0);
     for (unsigned int i=0; i<connected0DOFLines.size(); i++)
       QHyd-=((connected0DOFLines[i].inflow) ?
-          connected0DOFLines[i].line->getQOut(t) :
-          connected0DOFLines[i].line->getQIn(t))(0);
+          connected0DOFLines[i].line->getQOut() :
+          connected0DOFLines[i].line->getQIn())(0);
     gd(0)=-QHyd;
   }
 
@@ -352,6 +353,7 @@ namespace MBSimHydraulics {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(la(0)*1e-5/(isActive()?dt:1.));
       plotVector.push_back(QHyd*6e4);
+      plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
         vector<double> data;
