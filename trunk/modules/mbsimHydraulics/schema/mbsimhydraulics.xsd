@@ -494,6 +494,35 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="TabularLinePressureLoss" substitutionGroup="LinePressureLoss" type="TabularLinePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Der auftretende Druckverlust wird direkt aus einer Tabelle abgelesen: <object class="inlineeqn">\Delta p=f \left( Q \right)</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TabularLinePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="LinePressureLossType">
+        <xs:sequence>
+          <xs:element name="function">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function1_SS">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                      Angabe der Druckverlustwerte.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ClosablePressureLoss" abstract="true" substitutionGroup="PressureLoss" type="ClosablePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">

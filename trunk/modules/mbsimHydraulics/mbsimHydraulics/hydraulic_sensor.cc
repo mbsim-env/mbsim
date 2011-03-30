@@ -30,7 +30,7 @@ using namespace fmatvec;
 namespace MBSimHydraulics {
 
   Vec FlowSensor::getSignal() {
-    return line->getQIn(0); 
+    return line->getQIn(); 
   }
 
   void FlowSensor::initializeUsingXML(TiXmlElement * element) {

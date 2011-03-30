@@ -63,8 +63,8 @@ namespace MBSimHydraulics {
       /*! print system state vector */
       void printLineStateSpace(bool print=true) {printStateSpace=print; }
 
-      fmatvec::Vec getQIn(double t) {return QIn; }
-      fmatvec::Vec getQOut(double t) {return QOut; }
+      fmatvec::Vec getQIn() {return QIn; }
+      fmatvec::Vec getQOut() {return QOut; }
       fmatvec::Vec getInflowFactor() {return wI; }
       fmatvec::Vec getOutflowFactor() {return wO; }
 

@@ -45,15 +45,15 @@ namespace MBSimHydraulics {
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
-        plotColumns.push_back("Fluidflow [l/min]");
-        plotColumns.push_back("Massflow [kg/min]");
+        plotColumns.push_back("Volume flow [l/min]");
+        plotColumns.push_back("Mass flow [kg/min]");
         HLine::init(stage);
       }
     }
     else
       HLine::init(stage);
   }
-  
+
   void DimensionlessLine::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(Q(0)*6e4);
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"length");
     setLength(getDouble(e));
   }
-  
+
 
   double Leakage0DOF::getGapLength() const {
     return ((glSignal)?glSignal->getSignal()(0):length);

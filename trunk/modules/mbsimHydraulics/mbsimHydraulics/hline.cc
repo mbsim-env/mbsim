@@ -115,9 +115,9 @@ namespace MBSimHydraulics {
     else {
       Q.init(0);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++)
-        Q+=(dependencyOnOutflow[i])->getQIn(t);
+        Q+=(dependencyOnOutflow[i])->getQIn();
       for (unsigned int i=0; i<dependencyOnInflow.size(); i++)
-        Q-=(dependencyOnInflow[i])->getQIn(t);
+        Q-=(dependencyOnInflow[i])->getQIn();
     }
   }
 
@@ -149,8 +149,8 @@ namespace MBSimHydraulics {
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
-        plotColumns.push_back("Fluidflow [l/min]");
-        plotColumns.push_back("Massflow [kg/min]");
+        plotColumns.push_back("Volume flow [l/min]");
+        plotColumns.push_back("Mass flow [kg/min]");
         if (frameOfReference)
           plotColumns.push_back("pressureLoss due to gravity [bar]");
         HLine::init(stage);
@@ -225,8 +225,8 @@ namespace MBSimHydraulics {
   }
 
 
-  Vec FluidPump::getQIn(double t) {return QSignal->getSignal(); }
-  Vec FluidPump::getQOut(double t) {return -1.*QSignal->getSignal(); }
+  Vec FluidPump::getQIn() {return QSignal->getSignal(); }
+  Vec FluidPump::getQOut() {return -1.*QSignal->getSignal(); }
 
   void FluidPump::initializeUsingXML(TiXmlElement * element) {
     HLine::initializeUsingXML(element);

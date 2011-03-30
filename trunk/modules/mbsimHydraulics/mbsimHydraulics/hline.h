@@ -61,8 +61,8 @@ namespace MBSimHydraulics {
       void setOutflowRelative(bool rel=true) {nToRelative=rel; }
       void setInflowRelative(bool rel=true) {nFromRelative=rel; }
 
-      virtual fmatvec::Vec getQIn(double t) = 0;
-      virtual fmatvec::Vec getQOut(double t) = 0;
+      virtual fmatvec::Vec getQIn() = 0;
+      virtual fmatvec::Vec getQOut() = 0;
       virtual fmatvec::Vec getInflowFactor() = 0;
       virtual fmatvec::Vec getOutflowFactor() = 0;
       virtual fmatvec::Mat& getJacobian() {return Jacobian; }
@@ -95,8 +95,8 @@ namespace MBSimHydraulics {
       void addInflowDependencyOnOutflow(RigidHLine* line);
       void addInflowDependencyOnInflow(RigidHLine* line);
 
-      virtual fmatvec::Vec getQIn(double t) {return Q; }
-      virtual fmatvec::Vec getQOut(double t) {return -Q; }
+      virtual fmatvec::Vec getQIn() {return Q; }
+      virtual fmatvec::Vec getQOut() {return -Q; }
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
@@ -127,8 +127,8 @@ namespace MBSimHydraulics {
       
       void setQFunction(MBSim::Function1<double,double> * QFun_) {QFun=QFun_; }
 
-      virtual fmatvec::Vec getQIn(double t) {return Q; }
-      virtual fmatvec::Vec getQOut(double t) {return -Q; }
+      virtual fmatvec::Vec getQIn() {return Q; }
+      virtual fmatvec::Vec getQOut() {return -Q; }
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
@@ -153,8 +153,8 @@ namespace MBSimHydraulics {
       
       void setQSignal(MBSimControl::Signal * QSignal_) {QSignal=QSignal_; }
 
-      virtual fmatvec::Vec getQIn(double t);
-      virtual fmatvec::Vec getQOut(double t);
+      virtual fmatvec::Vec getQIn();
+      virtual fmatvec::Vec getQOut();
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }

@@ -33,8 +33,8 @@ namespace MBSimHydraulics {
       void setLength(double length_) {length=length_; }
       double getLength() const {return length; }
 
-      virtual fmatvec::Vec getQIn(double t) {return Q; }
-      virtual fmatvec::Vec getQOut(double t) {return -Q; }
+      virtual fmatvec::Vec getQIn() {return Q; }
+      virtual fmatvec::Vec getQOut() {return -Q; }
       virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
       virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
       void calcqSize() {qSize=0; }
@@ -110,9 +110,6 @@ namespace MBSimHydraulics {
     private:
       double rI, rO, hGap;
   };
-
-
-
 
 }
 

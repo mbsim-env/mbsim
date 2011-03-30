@@ -25,6 +25,7 @@
 
 namespace MBSim {
   class TabularFunction1_VS;
+  class Function1_SS;
 }
 
 namespace MBSimHydraulics {
@@ -133,6 +134,18 @@ namespace MBSimHydraulics {
       double dRef, dHyd;
       double aPos, bPos, aNeg, bNeg;
       double ReynoldsFactor;
+  };
+
+
+  /*! LinePressureLossTabular */
+  class TabularLinePressureLoss : public LinePressureLoss {
+    public:
+      TabularLinePressureLoss() : LinePressureLoss(), zetaTabular(NULL) {};
+      void setZetaTabular(MBSim::Function1<double, double> * zetaTabular_) {zetaTabular=zetaTabular_; }
+      double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      MBSim::Function1<double, double> * zetaTabular;
   };
 
 
