@@ -30,7 +30,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/contours/frustum2d.h"
 #include "mbsim/contours/edge.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contours/face.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/planewithfrustum.h"
