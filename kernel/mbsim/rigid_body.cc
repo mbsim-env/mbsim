@@ -125,6 +125,10 @@ namespace MBSim {
       nu[j] += momentDir.cols();
     }
     uSize[j] = constraint ? 0 : nu[j];
+    if(j==1) {
+      nu[j] = 6;
+      uSize[j] = 6;
+    }
   }
 
   void RigidBody::init(InitStage stage) {
@@ -165,6 +169,10 @@ namespace MBSim {
 
       PJTs.resize(3,nu[1]);
       PJRs.resize(3,nu[1]);
+      for(int i=0; i<3; i++)
+	PJTs(i,i) = 1;
+      for(int i=3; i<6; i++)
+	PJRs(i-3,i) = 1;
 
       JRel.resize(nu[0],hSize[0]);
       for(int i=0; i<uSize[0]; i++)
@@ -192,8 +200,8 @@ namespace MBSim {
           JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
         } 
         PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
-        PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
-        PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
+        //PJTs(Index(0,2), Index(0,JT.cols()-1)) = JT;
+        //PJTs(Index(0,2), Index(JT.cols(),JT.cols()+forceDir.cols()-1)) = forceDir;
       }
       if(fPJR==0) {
         Mat JR(3,0);
@@ -223,6 +231,15 @@ namespace MBSim {
             fT = new TCardanAngles(nq,nu[0]);
           }
         }
+	else if(dynamic_cast<EulerAngles*>(fAPK)) {
+          JR.resize() << DiagMat(3,INIT,1);
+          if(cb) {
+            fT = new TEulerAngles2(nq,nu[0]);
+          }
+          else {
+            fT = new TEulerAngles(nq,nu[0]);
+          }
+        }
 
         Mat JRR(3, nu[0]);
         PJR(Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1)) = JR;
@@ -230,7 +247,7 @@ namespace MBSim {
         PJRs(Index(0,2), Index(nu[1]-momentDir.cols(),nu[1]-1)) = momentDir;
 
         if(cb) {
-          if(iKinematics == 0 && false) {
+          if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
             updateM_ = &RigidBody::updateMConst;
             Mbuf = m*JTJ(PJT) + JTMJ(SThetaS,PJR);
             LLM = facLL(Mbuf);
@@ -238,8 +255,6 @@ namespace MBSim {
           }
           PJR0 = PJR;
         } 
-        else {
-        }
       }
 
       if(iInertia != 0)
@@ -496,8 +511,6 @@ namespace MBSim {
     frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation().cols()-1)) = frameOfReference->getJacobianOfRotation();
     frame[iKinematics]->getJacobianOfTranslation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJTs;
     frame[iKinematics]->getJacobianOfRotation()(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJRs;
-    //} else 
-    //updateJacobiansForSelectedFrame(t);
   }
 
   void RigidBody::updateqRef(const Vec& ref) {
