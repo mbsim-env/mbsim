@@ -397,6 +397,11 @@ namespace MBSim {
         cpData[i][1].getFrameOfReference().getJacobianOfTranslation().resize();
         cpData[i][1].getFrameOfReference().getJacobianOfRotation().resize();
 
+	cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(0),0);
+        cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(1),1);
+        cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(0),0);
+        cpData[i][1].getFrameOfReference().sethSize(contour[1]->gethSize(1),1);
+
         int laSizek = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
 
         Wk.push_back(new Mat[2]);
