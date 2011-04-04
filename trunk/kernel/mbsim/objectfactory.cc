@@ -16,7 +16,7 @@
 #include "mbsim/contours/circle_solid.h"
 #include "mbsim/contours/circle_hollow.h"
 #include "mbsim/contours/frustum2d.h"
-#include "mbsim/contours/area.h"
+#include "mbsim/contours/face.h"
 #include "mbsim/contours/edge.h"
 #include "mbsim/contours/frustum.h"
 #include "mbsim/contours/plane.h"
