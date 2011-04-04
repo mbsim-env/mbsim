@@ -38,6 +38,7 @@
 #include "mbsim/integrators/euler_explicit_integrator.h"
 #include "mbsim/integrators/rksuite_integrator.h"
 #include "mbsim/utils/contour_functions.h"
+#include "mbsim/constraint.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -210,6 +211,8 @@ namespace MBSim {
     if(element==0) return 0;
     if(element->ValueStr()==MBSIMNS"RigidBody")
       return new RigidBody(element->Attribute("name"));
+    else if(element->ValueStr()==MBSIMNS"JointConstraint")
+      return new JointConstraint(element->Attribute("name"));
     return 0;
   }
 
