@@ -11,7 +11,7 @@ AC_LANG([C++])
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface mbxmlutils)
 
-LDFLAGS="-Wl,--no-undefined"
+LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 dnl Check for xslt
 AC_ARG_WITH([xsltprocpath],

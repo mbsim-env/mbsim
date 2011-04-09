@@ -18,7 +18,7 @@ AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0 mbsimControl)
 
-LDFLAGS="-Wl,--no-undefined"
+LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 dnl versioning (see http://www.gnu.org/software/libtool/manual.html)
 dnl current: 	The most recent interface number that this library implements. 
