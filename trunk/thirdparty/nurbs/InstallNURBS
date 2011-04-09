@@ -6,6 +6,7 @@ How to install external Nurbs++ Library for MBSim
 - change to ../MBSim/thirdparty/nurbs/nurbs++-3.0.11
 - use patch ("patch -p1 < ../nurbs++-3.0.11.1.patch")
 - use patch ("patch -p1 < ../nurbs++-3.0.11.2.patch")
+- use patch ("patch -p1 < ../nurbs++-3.0.11.3.patch"); Only required for MinGW build, but should always work.
 
 3. Installation
 - configure project in ../MBSim/thirdparty/nurbs/nurbs++-3.0.11/ ("./configure --prefix=../MBSim/Install")
@@ -15,3 +16,6 @@ How to install external Nurbs++ Library for MBSim
 - virtual destructor
 - plib_config.h <-> plib.h
 
+
+5. Compile using MinGW
+- configure with: ./configure ... CPPFLAGS="-fpermissive"

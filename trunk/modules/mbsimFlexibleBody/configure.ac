@@ -18,7 +18,7 @@ AC_HEADER_STDBOOL
 
 PKG_CHECK_MODULES(DEPS, mbsim >= 0.1.0)
 
-LDFLAGS="-Wl,--no-undefined"
+LDFLAGS="$LDFLAGS -Wl,--no-undefined"
 
 dnl NURBS Package
 AC_ARG_WITH(nurbs-inc-prefix,[  --with-nurbs-inc-prefix=PFX  Prefix where nurbs includes are installed], [nurbs_inc_prefix="$withval"], [nurbs_inc_prefix="$prefix/include"])
@@ -32,7 +32,7 @@ LIBS_OLD="$LIBS"
 
 CPPFLAGS="$CPPFLAGS -I$nurbs_inc_prefix/nurbs++"
 LDFLAGS="$LDFLAGS -L$nurbs_lib_prefix"
-LIBS="$LIBS -lnurbsd -lnurbsf -lmatrix -lmatrixI -lmatrixN"
+LIBS="$LIBS -lnurbsd -lnurbsf -lmatrixN -lmatrixI -lmatrix"
 
 AC_LINK_IFELSE([AC_LANG_PROGRAM([#include "nurbs.h"],[PlNurbsCurvef var1; PlNurbsCurved var2;])],[AC_MSG_RESULT([yes]); nurbs="yes"],[AC_MSG_RESULT([no]); nurbs="no"])
 
