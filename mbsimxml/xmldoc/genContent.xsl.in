@@ -14,7 +14,7 @@
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
   <!-- all nodes of all imported schemas -->
-  <xsl:param name="ALLNODES" select="document(/xs:schema/xs:import/@schemaLocation)|document('@MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd')|document('@MBXMLUTILSSCHEMA@/http___openmbv_berlios_de_OpenMBV/openmbv.xsd')"/>
+  <xsl:param name="ALLNODES" select="document(/xs:schema/xs:import/@schemaLocation)|document('@native_MBXMLUTILSSCHEMA@/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd')|document('@native_MBXMLUTILSSCHEMA@/http___openmbv_berlios_de_OpenMBV/openmbv.xsd')"/>
 
   <!-- generate html link form a attribute -->
   <xsl:template mode="GENLINK" match="@*">
