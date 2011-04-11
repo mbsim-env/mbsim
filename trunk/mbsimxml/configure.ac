@@ -50,6 +50,13 @@ AC_SUBST([win_MBXMLUTILSBINDIR])
 mkdir -p $(eval echo $(eval echo $prefix/bin)) 2> /dev/null
 win_bindir=$(dirtowin $(eval echo $(eval echo $prefix/bin)))
 AC_SUBST([win_bindir])
+dnl Convert to native path
+if pwd -W &> /dev/null; then
+  native_MBXMLUTILSSCHEMA=$win_MBXMLUTILSSCHEMA
+else
+  native_MBXMLUTILSSCHEMA=$MBXMLUTILSSCHEMA
+fi
+AC_SUBST([native_MBXMLUTILSSCHEMA])
 
 
 
