@@ -25,7 +25,9 @@ rem   mafriedrich@users.berlios.de
 rem get BINDIR
 set BINDIR=%~dp0
 rem get PREFIX
-set PREFIX=%BINDIR:~0,-4%
+set PREFIX=%BINDIR:~0,-5%
+rem Convert \ to /
+set PREFIX=%PREFIX:\=/%
 
 set MBXMLUTILSSCHEMADIR=%PREFIX%/share/mbxmlutils/schema
 set MBXMLUTILSXMLDIR=%PREFIX%/share/mbxmlutils/xml
@@ -40,4 +42,4 @@ set OCTAVE_HOME=%PREFIX%
 set KETSIMBINDIR=%PREFIX%/bin
 set MDPCOSIMBINDIR=%PREFIX%/bin
 
-set PATH=%PATH%;%PREFIX%\bin
+set PATH=%PATH%;%PREFIX%/bin

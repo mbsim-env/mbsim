@@ -104,7 +104,7 @@ CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile schema/mbsimxml.xsd schema/Makefile xmldoc/Makefile mbsimxml.pc xmldoc/genContent.xsl])
 AC_CONFIG_FILES([mbsimxml/mbsimxml], [chmod +x mbsimxml/mbsimxml])
-AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat])
+AC_CONFIG_FILES([mbsimxml/mbsimxml.bat], [chmod +x mbsimxml/mbsimxml.bat; unix2dos mbsimxml/mbsimxml.bat])
 
 AC_OUTPUT
 
