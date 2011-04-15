@@ -239,15 +239,44 @@ namespace MBSimHydraulics {
       double d=((const RigidLine*)(line))->getDiameter();
       double A=M_PI*d*d/4.;
       c*=rho/2./A/A;
+      if (cNeg<0)
+        cNeg=c;
+      else
+        cNeg*=rho/2./A/A;
       initialized=true;
     }
     const double areaRel=((const ClosableRigidLine*)(line))->getRegularizedValue();
-    return c*Q*abs(Q)/areaRel/areaRel;
+    if (Q<0)
+      return cNeg*Q*abs(Q)/areaRel/areaRel;
+    else
+      return c*Q*abs(Q)/areaRel/areaRel;
   }
 
   void RelativeAreaZetaClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
     ClosablePressureLoss::initializeUsingXML(element);
-    setZeta(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"zeta")));
+    TiXmlElement * e;
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zeta");
+    setZeta(Element::getDouble(e));
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"zetaNegative");
+    if (e)
+      setZetaNegative(Element::getDouble(e));
+  }
+
+
+  double GapHeightClosablePressureLoss::operator()(const double& Q, const void * line) {
+    if (!initialized) {
+      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      c=12.*eta*l/b;
+      initialized=true;
+    }
+    const double h=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    return c/h/h/h*Q;
+  }
+
+  void GapHeightClosablePressureLoss::initializeUsingXML(TiXmlElement * element) {
+    ClosablePressureLoss::initializeUsingXML(element);
+    setLength(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"length")));
+    setWidth(Element::getDouble(element->FirstChildElement(MBSIMHYDRAULICSNS"width")));
   }
 
 

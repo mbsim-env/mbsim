@@ -67,6 +67,8 @@ namespace MBSimHydraulics {
       return new TabularLinePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAreaZetaClosablePressureLoss")
       return new RelativeAreaZetaClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"GapHeightClosablePressureLoss")
+      return new GapHeightClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
       return new RelativeAlphaClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")

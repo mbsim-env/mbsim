@@ -561,6 +561,48 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="zetaNegative" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Druckverlustzahl <object class="inlineeqn">\zeta_{negative}</object>
+                Falls dieser Wert gesetzt wird, erfolgt bei der Berechnung des Druckverlustes eine Unterscheidung gemäß der Strömungsrichtung des Fluids.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GapHeightClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="GapHeightClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes mittels einer laminaren Spaltströmung mit veränderlicher Höhe.
+        <object class="eqn">
+          <![CDATA[p_V=\frac{12 \, \eta \l}{b \, h^3} \, Q]]>
+        </object>
+        mit <object class="inlineeqn">h>0</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GapHeightClosablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="ClosablePressureLossType">
+        <xs:sequence>
+          <xs:element name="length" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Länge des Spalts <object class="inlineeqn">l</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="width" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Breite des Spalts <object class="inlineeqn">b</object>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
