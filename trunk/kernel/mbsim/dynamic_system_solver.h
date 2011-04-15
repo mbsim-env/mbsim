@@ -429,8 +429,9 @@ namespace MBSim {
       /**
        * \brief writes state to a file
        * \param name of the file
+       * \param h5, else ascii
        */
-      void writez(std::string fileName);
+      void writez(std::string fileName, bool formatH5=true);
 
       /**
        * \brief reads state from a file
