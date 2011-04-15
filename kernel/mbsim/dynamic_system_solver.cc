@@ -1336,22 +1336,36 @@ namespace MBSim {
     H5::FileSerie::flushAllFiles();
   }
 
-  void DynamicSystemSolver::writez(string fileName) {
-    H5::H5File file(fileName, H5F_ACC_TRUNC);
+  void DynamicSystemSolver::writez(string fileName, bool formatH5) {
+    if (formatH5) {
+      H5::H5File file(fileName, H5F_ACC_TRUNC);
 
-    H5::SimpleDataSet<vector<double> > qToWrite;
-    qToWrite.create(file,"q0");
-    qToWrite.write(q);
+      H5::SimpleDataSet<vector<double> > qToWrite;
+      qToWrite.create(file,"q0");
+      qToWrite.write(q);
 
-    H5::SimpleDataSet<vector<double> > uToWrite;
-    uToWrite.create(file,"u0");
-    uToWrite.write(u);
+      H5::SimpleDataSet<vector<double> > uToWrite;
+      uToWrite.create(file,"u0");
+      uToWrite.write(u);
 
-    H5::SimpleDataSet<vector<double> > xToWrite;
-    xToWrite.create(file,"x0");
-    xToWrite.write(x);
+      H5::SimpleDataSet<vector<double> > xToWrite;
+      xToWrite.create(file,"x0");
+      xToWrite.write(x);
 
-    file.close();
+      file.close();
+    }
+    else {
+      ofstream file(fileName.c_str());
+      file.setf(ios::scientific);
+      file.precision(15);
+      for (int i=0; i<q.size(); i++)
+        file << q(i) << endl;
+      for (int i=0; i<u.size(); i++)
+        file << u(i) << endl;
+      for (int i=0; i<x.size(); i++)
+        file << x(i) << endl;
+      file.close();
+    }
   }
 
   void DynamicSystemSolver::readz0(string fileName) {
