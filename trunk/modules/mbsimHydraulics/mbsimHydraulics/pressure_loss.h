@@ -159,12 +159,26 @@ namespace MBSimHydraulics {
   /*! RelativeAreaZetaClosablePressureLoss */
   class RelativeAreaZetaClosablePressureLoss : public ClosablePressureLoss {
     public:
-      RelativeAreaZetaClosablePressureLoss() : ClosablePressureLoss(), c(0) {}
+      RelativeAreaZetaClosablePressureLoss() : ClosablePressureLoss(), c(0), cNeg(-1.) {}
       void setZeta(double zeta_) {c=zeta_; }
+      void setZetaNegative(double zeta_) {cNeg=zeta_; }
       virtual double operator()(const double& Q, const void * line);
       void initializeUsingXML(TiXmlElement *element);
     private:
-      double c;
+      double c, cNeg;
+  };
+
+
+  /*! GapHeightClosablePressureLoss */
+  class GapHeightClosablePressureLoss : public ClosablePressureLoss {
+    public:
+      GapHeightClosablePressureLoss() : ClosablePressureLoss(), c(0) {}
+      void setLength(double l_) {l=l_; }
+      void setWidth(double b_) {b=b_; }
+      virtual double operator()(const double& Q, const void * line);
+      void initializeUsingXML(TiXmlElement *element);
+    private:
+      double c, l, b;
   };
 
 
