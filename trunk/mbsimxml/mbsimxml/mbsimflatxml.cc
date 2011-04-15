@@ -15,7 +15,7 @@ namespace MBSim {
 int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   // help
   if(argc<3 || argc>4) {
-    cout<<"Usage: mbsimflatxml [--donotintegrate] <mbsimfile> <mbsimintegratorfile>"<<endl;
+    cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector] <mbsimfile> <mbsimintegratorfile>"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
     cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
@@ -23,9 +23,10 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
     cout<<endl;
     cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
     cout<<endl;
-    cout<<"--donotintegrate       Stop after the initialization stage, do not integrate"<<endl;
-    cout<<"<mbsimfile>            The preprocessed mbsim xml file"<<endl;
-    cout<<"<mbsimintegratorfile>  The preprocessed mbsim integrator xml file"<<endl;
+    cout<<"--donotintegrate        Stop after the initialization stage, do not integrate"<<endl;
+    cout<<"--savefinalstatevector  Save the state vector to the file \"statevector.asc\" after integration"<<endl;
+    cout<<"<mbsimfile>             The preprocessed mbsim xml file"<<endl;
+    cout<<"<mbsimintegratorfile>   The preprocessed mbsim integrator xml file"<<endl;
     return -1;
   }
 
@@ -36,7 +37,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
 
   int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0)
+  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0)
     startArg=2;
 
 
@@ -83,7 +84,7 @@ int MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolve
 
 int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0)
+  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0)
     startArg=2;
 
   TiXmlElement *e;
@@ -117,7 +118,10 @@ int MBSimXML::main(Integrator *&integrator, DynamicSystemSolver *&dss) {
   return 0;
 }
 
-int MBSimXML::postMain(Integrator *&integrator, DynamicSystemSolver*& dss) {
+int MBSimXML::postMain(int argc, char *argv[], Integrator *&integrator, DynamicSystemSolver*& dss) {
+
+  if(strcmp(argv[1],"--savefinalstatevector")==0)
+    dss->writez("statevector.asc", false);
   delete dss;
   delete integrator;
   return 0;
