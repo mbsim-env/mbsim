@@ -82,6 +82,7 @@ namespace MBSim {
     SetValuedLinkListT2.clear();
     SetValuedLinkListT3.clear();
   }
+
   void TimeSteppingSSCIntegrator::setFlagErrorTest(int Flag, bool alwaysValid) {
     FlagErrorTest = Flag;
     FlagErrorTestAlwaysValid = alwaysValid;
@@ -228,13 +229,17 @@ namespace MBSim {
       integPlot << "#6 active contacts: " << endl;
       integPlot << "#7 calculation time [s]:" << endl;
     }
+    
+    if(z0.size()) zi = z0; 					// define initial state
+    else sysT1->initz(zi); 
+
+    sysT1->plot(zi,t,1.);
+
   }
 
   void TimeSteppingSSCIntegrator::subIntegrate(DynamicSystemSolver& system, double tStop) { // system: only dummy!
     Timer.start();
     tPlot = t;
-    if(z0.size()) zi = z0; 					// define initial state
-    else sysT1->initz(zi); 
     if (outputInterpolation) {
       getAllSetValuedla(la,laSizes,SetValuedLinkListT1);
       la.init(0.0);
@@ -698,7 +703,7 @@ namespace MBSim {
           StepTrials++;
           if (dtOld<=dtMin+macheps()) {
             StepFinished = -1;
-            cout << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
+            cerr << " TimeStepperSSC reached minimum stepsize dt= "<<dt<<" at t= "<<t<<endl;
             //exit(StepFinished);
           }
         }
@@ -984,7 +989,7 @@ namespace MBSim {
                       dte= dt/2.0;
                     }
                   }   
-                  if (testOK) cout<<"Hohe Ordnung abgeleht aber dafuer Order 1 akzeptiert!!!"<<endl; 
+                  if (testOK) cerr<<"High order refused; order 1 accepted."<<endl; 
             }
 
           }     
