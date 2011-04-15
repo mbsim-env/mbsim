@@ -1,5 +1,5 @@
 /* Copyright (C) 2004-2006  Martin Förg
- 
+
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -49,6 +49,11 @@ namespace MBSim {
 
       bool plotOnRoot;
 
+      int zSize, iTol, istate, nsv, lrWork, liWork, integrationSteps;
+      double t, tPlot, s0, time;
+      fmatvec::Vec z, rWork;
+      fmatvec::Vector<int> iWork, jsv;
+      std::ofstream integPlot;
     public:
 
       LSODARIntegrator();
@@ -64,6 +69,9 @@ namespace MBSim {
       void setPlotOnRoot(bool b) {plotOnRoot = b;}
 
       void integrate(DynamicSystemSolver& system);
+      void preIntegrate(DynamicSystemSolver& system);
+      void subIntegrate(DynamicSystemSolver& system, double tStop);
+      void postIntegrate(DynamicSystemSolver& system);
 
       virtual void initializeUsingXML(TiXmlElement *element);
   };

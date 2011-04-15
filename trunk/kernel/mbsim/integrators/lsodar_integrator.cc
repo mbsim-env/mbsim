@@ -49,90 +49,6 @@ namespace MBSim {
     system->getsv(z, sv, *t);
   }
 
-  void LSODARIntegrator::integrate(DynamicSystemSolver& system_) {
-    system = &system_;
-
-    int zSize=system->getzSize();
-    Vec z(zSize);
-    if(z0.size())
-      z = z0;
-    else
-      system->initz(z);
-    system->computeInitialCondition();
-    double t=tStart;
-    double tPlot=t+dtPlot;
-
-    int iTol; 
-    if(aTol.size() == 1) {
-      iTol = 1; // Skalar
-    } else {
-      iTol = 2; // Vektor
-      assert (aTol.size() >= zSize);
-    }
-
-    int one=1, two=2, istate=1;
-
-    int nsv=system->getsvSize();
-    int lrWork = (22+zSize*max(16,zSize+9)+3*nsv)*2;
-    Vec rWork(lrWork);
-    rWork(4) = dt0; 
-    rWork(5) = dtMax;
-    rWork(6) = dtMin;
-    int liWork=(20+zSize)*10;
-    Vector<int> iWork(liWork);
-    iWork(5) = 10000;
-
-    system->plot(z, t);
-
-    double s0 = clock();
-    double time = 0;
-    int integrationSteps = 0;
-
-    ofstream integPlot((name + ".plt").c_str());
-
-    Vector<int> jsv(nsv);  
-
-    cout.setf(ios::scientific, ios::floatfield);
-
-    while(t<tEnd) {  
-
-      integrationSteps++;
-
-      DLSODAR(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
-          &istate, &one, rWork(), &lrWork, iWork(),
-          &liWork, NULL, &two, fsv, &nsv, jsv());
-      if(istate==2 || fabs(t-tPlot)<epsroot()) {
-        system->plot(z, t);
-        if(output)
-          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
-        integPlot<< t << " " << rWork(10) << " " << time << endl;
-        tPlot += dtPlot;
-      }
-      if(istate==3) {
-        system->shift(z, jsv, t);
-        if(plotOnRoot)
-          system->plot(z, t);
-        istate=1;
-        rWork(4)=dt0;
-      }
-      if(istate<0) exit(istate);
-    }
-
-    integPlot.close();
-
-    ofstream integSum((name + ".sum").c_str());
-    integSum << "Integration time: " << time << endl;
-    integSum << "Integration steps: " << integrationSteps << endl;
-    integSum.close();
-
-    cout.unsetf (ios::scientific);
-    cout << endl;
-  }
-
-
   void LSODARIntegrator::initializeUsingXML(TiXmlElement *element) {
     Integrator::initializeUsingXML(element);
     TiXmlElement *e;
@@ -150,6 +66,96 @@ namespace MBSim {
     setMaximalStepSize(Element::getDouble(e));
     e=element->FirstChildElement(MBSIMINTNS"plotOnRoot");
     setPlotOnRoot(Element::getBool(e));
+  }
+
+  void LSODARIntegrator::integrate(DynamicSystemSolver& system) {
+    preIntegrate(system);
+    subIntegrate(system, tEnd);
+    postIntegrate(system);
+  }
+
+  void LSODARIntegrator::preIntegrate(DynamicSystemSolver& system_) {
+    system = &system_;
+    zSize=system->getzSize();
+    z.resize(zSize, INIT, 0);
+    if(z0.size())
+      z = z0;
+    else
+      system->initz(z);
+    system->computeInitialCondition();
+    t=tStart;
+    tPlot=t+dtPlot;
+    if(aTol.size() == 1) {
+      iTol = 1; // Skalar
+    } else {
+      iTol = 2; // Vektor
+      assert (aTol.size() >= zSize);
+    }
+    istate=1;
+    nsv=system->getsvSize();
+    lrWork = (22 + zSize * max(16, zSize + 9) + 3 * nsv) * 2;
+    rWork.resize(lrWork, INIT, 0);
+    rWork(4) = dt0; 
+    rWork(5) = dtMax;
+    rWork(6) = dtMin;
+    liWork = (20+zSize)*10;
+    iWork.resize(liWork, INIT, 0);
+    iWork(5) = 10000;
+    system->plot(z, t);
+    s0 = clock();
+    time = 0;
+    integrationSteps = 0;
+    integPlot.open((name + ".plt").c_str());
+    jsv.resize(nsv, INIT, 0);  
+    cout.setf(ios::scientific, ios::floatfield);
+  }
+
+  void LSODARIntegrator::subIntegrate(DynamicSystemSolver& system_, double tStop) {
+    int one = 1;
+    int two = 2;
+    rWork(4) = dt0;
+    system->shift(z, jsv, t);
+    system->plot(z, t);
+    cout << "System shiftet and plotted" << endl;
+    while(t < tStop) {  
+      integrationSteps++;
+      DLSODAR(fzdot, &zSize, z(), &t, &tPlot, &iTol, &rTol, aTol(), &one,
+          &istate, &one, rWork(), &lrWork, iWork(),
+          &liWork, NULL, &two, fsv, &nsv, jsv());
+      if(istate==2 || fabs(t-tPlot)<epsroot()) {
+        system->plot(z, t);
+        if(output)
+          cout << "   t = " <<  t << ",\tdt = "<< rWork(10) << "\r"<<flush;
+        double s1 = clock();
+        time += (s1-s0)/CLOCKS_PER_SEC;
+        s0 = s1; 
+        integPlot<< t << " " << rWork(10) << " " << time << endl;
+        tPlot += dtPlot;
+        if (tPlot > tStop)
+          tPlot = tStop;
+      }
+      if(istate==3) {
+        system->shift(z, jsv, t);
+        if(plotOnRoot)
+          system->plot(z, t);
+        istate=1;
+        rWork(4)=dt0;
+      }
+      if(istate<0) exit(istate);
+    }
+  }
+
+  void LSODARIntegrator::postIntegrate(DynamicSystemSolver& system_) {
+    system->plot(z, t);
+    integPlot.close();
+
+    ofstream integSum((name + ".sum").c_str());
+    integSum << "Integration time: " << time << endl;
+    integSum << "Integration steps: " << integrationSteps << endl;
+    integSum.close();
+    
+    cout.unsetf (ios::scientific);
+    cout << endl;
   }
 
 }
