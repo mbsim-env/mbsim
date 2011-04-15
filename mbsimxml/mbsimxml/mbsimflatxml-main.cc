@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   }
 
   try {
-    ret=MBSimXML::postMain(integrator, dss);
+    ret=MBSimXML::postMain(argc, argv, integrator, dss);
   }
   catch (MBSimError error) {
     error.printExceptionMessage();
