@@ -402,13 +402,13 @@ namespace MBSim {
   }
 
   Vec PlanarStribeckFriction::project(const Vec& la, const Vec& gdn, double laN, double r) {
-    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(fabs(gdn(0)))*fabs(laN)));
+    return Vec(1,INIT,proxCT2D(la(0)-r*gdn(0),(*fmu)(0)*fabs(laN)));
   }
 
   Mat PlanarStribeckFriction::diff(const Vec& la, const Vec& gdn, double laN, double r) {
     double argT = la(0)-r*gdn(0);
     Mat d(1,3,NONINIT);
-    if(abs(argT) < (*fmu)(fabs(gdn(0)))*fabs(laN)) {
+    if(abs(argT) < (*fmu)(0)*fabs(laN)) {
       d(0,0) = 1;
       d(0,1) = -r;
       d(0,2) = 0;
@@ -416,13 +416,13 @@ namespace MBSim {
     else {
       d(0,0) = 0;
       d(0,1) = 0;
-      d(0,2) = sign(argT)*sign(laN)*(*fmu)(fabs(gdn(0)));
+      d(0,2) = sign(argT)*sign(laN)*(*fmu)(0);
     }
     return d;
   }
 
   Vec PlanarStribeckFriction::solve(const SqrMat& G, const Vec& gdn, double laN) {
-    double laNmu = fabs(laN)*(*fmu)(fabs(gdn(0)));
+    double laNmu = fabs(laN)*(*fmu)(0);
     double sdG = -gdn(0)/G(0,0);
     if(fabs(sdG)<=laNmu) 
       return Vec(1,INIT,sdG);
@@ -431,9 +431,9 @@ namespace MBSim {
   }
 
   bool PlanarStribeckFriction::isFulfilled(const Vec& la, const Vec& gdn, double laN, double laTol, double gdTol) {
-    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(fabs(gdn(0)))*fabs(laN)) <= laTol)
+    if(fabs(la(0) + gdn(0)/fabs(gdn(0))*(*fmu)(0)*fabs(laN)) <= laTol)
       return true;
-    else if(fabs(la(0)) <= (*fmu)(fabs(gdn(0)))*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
+    else if(fabs(la(0)) <= (*fmu)(0)*fabs(laN)+laTol && fabs(gdn(0)) <= gdTol)
       return true;
     else 
       return false;

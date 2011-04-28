@@ -326,14 +326,14 @@ namespace MBSim {
        * \param differentiated state (return)
        * \param time
        */
-      void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
+      virtual void zdot(const fmatvec::Vec& z, fmatvec::Vec& zd, double t);
 
       /**
        * \brief standard invocation of smooth update for event driven integration 
        * \param state
        * \param time
        */
-      fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t);
+      virtual fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t);
 
       /**
        * \brief evaluation of stop vector
@@ -341,7 +341,7 @@ namespace MBSim {
        * \param TODO
        * \param time
        */
-      void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
+      virtual void getsv(const fmatvec::Vec& z, fmatvec::Vec& svExt, double t);
 
       /** brief collect status of all links
        * \param result vector
@@ -768,6 +768,16 @@ namespace MBSim {
 
       bool truncateSimulationFiles;
   };
+
+class MySolver : public DynamicSystemSolver {
+  public:
+    MySolver(const std::string &projectName) : DynamicSystemSolver(projectName) {}
+    void shift(fmatvec::Vec &zParent, const fmatvec::Vector<int> &jsv_, double t); 
+    void getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t); 
+    fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t); 
+    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
+
+};
 
 }
 
