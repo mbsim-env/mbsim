@@ -109,6 +109,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       virtual bool isActive(double g, double gTol) { return g<=gTol; }
+      virtual bool remainsActive(double gd, double gdTol) { return gd<=gdTol; }
       virtual double project(double la, double gdn, double r, double laMin=0);
       virtual fmatvec::Vec diff(double la, double gdn, double r, double laMin=0);
       virtual double solve(double G, double gdn);

@@ -921,7 +921,7 @@ namespace MBSim {
       (*i)->updateWRef(W,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      if ((*i)->getlaSize()) // needed for event-driven integration in ProjectGeneralizedPositions for Objects with qSize==0
+      //if ((*i)->getlaSize()) // needed for event-driven integration in ProjectGeneralizedPositions for Objects with qSize==0
         (**i).updateWRef(W,j);
   }
 
@@ -1065,6 +1065,14 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       (*i)->updateCondition();
+  }
+
+  void DynamicSystem::checkState() {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->checkState();
+
+    for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
+      (*i)->checkState();
   }
 
   void DynamicSystem::resizeJacobians(int j) {

@@ -522,6 +522,7 @@ namespace MBSim {
        * \brief set possible attribute for active relative kinematics for updating event driven simulation before case study
        */
       void updateCondition();
+      void checkState();
 
       /**
        * \brief change JACOBIAN of contact size concerning use of inverse kinetics

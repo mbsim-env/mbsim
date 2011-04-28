@@ -338,6 +338,7 @@ namespace MBSim {
        * \brief set possible attributes for active relative kinematics in derived classes for updating event driven simulation before case study
        */
       virtual void updateCondition() {}
+      virtual void checkState() {}
 
       /**
        * \brief compute potential energy
