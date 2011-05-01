@@ -101,7 +101,7 @@ namespace MBSim {
     liWork = (20+zSize)*10;
     iWork.resize(liWork, INIT, 0);
     iWork(5) = 10000;
-    system->plot(z, t);
+    //system->plot(z, t);
     s0 = clock();
     time = 0;
     integrationSteps = 0;
@@ -114,7 +114,7 @@ namespace MBSim {
     int one = 1;
     int two = 2;
     rWork(4) = dt0;
-    system->shift(z, jsv, t);
+    //system->shift(z, jsv, t);
     system->plot(z, t);
     cout << "System shiftet and plotted" << endl;
     while(t < tStop) {  
