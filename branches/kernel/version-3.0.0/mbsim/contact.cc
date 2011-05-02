@@ -165,18 +165,17 @@ namespace MBSim {
 
           gdk[k](1,gdk[k].size()-1) = Wt.T()*WvD;
         }
-	cout << name << " updategd at t = " << t << endl;
-	cout << gk[0] << endl;
-	cout << gdk[0] << endl;
+	//cout << name << " updategd at t = " << t << endl;
+	//cout << gk[0] << endl;
+	//cout << gdk[0] << endl;
       }
     }
   }
 
   void Contact::updateStopVector(double t) {
-    cout << name << " updateStopVector at t= " << t << endl;
-    cout << gk[0] << endl;
-    cout << gdk[0] << endl;
-    //cout << fcl->isActive(gk[0](0),1e-10) << endl;
+    //cout << name << " updateStopVector at t= " << t << endl;
+    //cout << gk[0] << endl;
+    //cout << gdk[0] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
        //svk[k](0) = (fcl->remainsActive(gdk[k](0),gdTol)&& fcl->isActive(gk[k](0),1e-10)) ? 1 : -1; // TODO
        //svk[k](0) = gk[k](0); // TODO
@@ -216,7 +215,7 @@ namespace MBSim {
        //svk[k](1) = 1;
     }
     }
-    cout << sv << endl;
+    //cout << sv << endl;
   }
 
   void Contact::updateJacobians(double t) {
@@ -682,13 +681,9 @@ namespace MBSim {
         }
       }
 #endif
-  	//if (t>0.85) {
-      cout << name << " plot at t = " << t << endl;
-      cout << gk[0] << endl;
-      cout << gdk[0] << endl;
-	//}
-	//if(t>0.9)
-	  //throw 5;
+      //cout << name << " plot at t = " << t << endl;
+      //cout << gk[0] << endl;
+      //cout << gdk[0] << endl;
     if(getPlotFeature(generalizedLinkForce)==enabled) {
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
           if(gActive[i] && gdActive[i][0]) {
