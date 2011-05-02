@@ -46,8 +46,13 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
-                                           , saved_ref1(""), saved_ref2(""), bufg(false), bufgd(false), bufgd0(false), slide_right(true)
-                                           {}
+                                           , saved_ref1(""), saved_ref2("")
+                                           {
+ watchg = true; 
+ watchgd[0] = true; 
+ watchgd[1] = true; 
+ slide_right = true;
+					   }
 
   Contact::~Contact() {
     if(contactKinematics) { delete contactKinematics; contactKinematics=0; }
@@ -177,24 +182,24 @@ namespace MBSim {
        //svk[k](0) = gk[k](0); // TODO
        //svk[k](0) =  fcl->isActive(gk[k](0),0) && gdk[k](0)<-gdTol ? 1 : -1; // TODO
        //svk[k](0) =  fcl->isActive(gk[k](0),1e-8) ? 1 : -1; // TODO
-       if(!bufg) {
+       if(watchg) {
 	 svk[k](0) =  gk[k](0)>0 ? 1 : -1; // TODO
        } else {
-	 if(!bufgd0) {
+	 if(watchgd[0]) {
 	   svk[k](0) =  gdk[k](0)>0 ? 1 : -1; // TODO
 	 } else {
 	   if(gdk[k](0)>gdTol)
-	     bufgd0 = false;
+	     watchgd[0]= true;
 	   svk[k](0) = 1;
 	 }
 	 if(gk[k](0)>1e-8)
-	   bufg = false;
+	   watchg = true;
        }
        if(getFrictionDirections()){
 	 //svk[k](1) = (fcl->isActive(gk[k](0),1e-8) && abs(gdk[k](0))<gdTol && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
 	 //svk[k](1) = (fcl->isActive(gk[k](0),1e-8) && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
-	 if(bufg && bufgd0) {
-	   if(!bufgd) {
+	 if(!watchg && !watchgd[0]) {
+	   if(watchgd[1]) {
 	     if(slide_right)
 	       svk[k](1) =  gdk[k](1)>0 ? 1 : -1; // TODO
 	     else
@@ -202,7 +207,7 @@ namespace MBSim {
 	   } else {
 	       svk[k](1) = 1;
 	       if(abs(gdk[k](1))>gdTol) {
-		 bufgd = false;
+		 watchgd[1]= true;
 		 slide_right = gdk[k](1) > 0;
 	       }
 	   }
@@ -1204,27 +1209,28 @@ namespace MBSim {
     }
   }
 
+  // überprüfen, was der Root Finder beobachten soll
   void Contact::checkState() {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gk[k](0) > 1e-8) {
-	bufg = false;
-	bufgd = false;
-	bufgd0 = false;
+	watchg = true;
+	watchgd[0] = true;
+	watchgd[1] = true;
       } else {
-	bufg = true;
+	watchg = false;
 	if(gdk[k](0) > gdTol) {
-	  bufgd0 = false;
-	  bufgd = false;
+	  watchgd[0] = true;
+	  watchgd[1] = true;
 	} else {
-	  bufgd0 = true;
+	  watchgd[0] = false;
 	  if(abs(gdk[k](1)) > gdTol)
-	    bufgd = false;
+	    watchgd[1] = true;
 	  else
-	    bufgd = true;
+	    watchgd[1] = false;
 	}
       }
       //cout << name << " checkState" << endl; 
-      //cout << bufg << " " << bufgd << endl; 
+      //cout << watchg << " " << watchgd[1] << endl; 
     }
   }
 
@@ -1232,10 +1238,10 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(jsvk[k](0)) {
 	ds->setImpact(true);
-	//bufg = true;
+	//watchg = false;
       }
       if(jsvk[k](1)) {
-	//bufgd = true;
+	//watchgd[1] = false;
       }
       //        if(gActive[k]) {
       //          gActive[k] = false;
