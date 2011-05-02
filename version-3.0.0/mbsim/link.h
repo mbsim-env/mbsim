@@ -353,6 +353,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       virtual void setlaTol(double tol) { laTol = tol; }
       virtual void setLaTol(double tol) { LaTol = tol; }
+      virtual void setgTol(double tol) { gTol = tol; }
       virtual void setgdTol(double tol) { gdTol = tol; }
       virtual void setgddTol(double tol) { gddTol = tol; }
       virtual void setrMax(double rMax_) { rMax = rMax_; }
@@ -513,7 +514,7 @@ namespace MBSim {
       /**
        * \brief tolerance for relative velocity, relative acceleration, force and impact  
        */
-      double gdTol, gddTol, laTol, LaTol;
+      double gTol, gdTol, gddTol, laTol, LaTol;
       
       /**
        * \brief attribute to save contact force parameter of previous time step

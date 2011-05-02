@@ -181,7 +181,7 @@ namespace MBSim {
        //svk[k](0) = (fcl->remainsActive(gdk[k](0),gdTol)&& fcl->isActive(gk[k](0),1e-10)) ? 1 : -1; // TODO
        //svk[k](0) = gk[k](0); // TODO
        //svk[k](0) =  fcl->isActive(gk[k](0),0) && gdk[k](0)<-gdTol ? 1 : -1; // TODO
-       //svk[k](0) =  fcl->isActive(gk[k](0),1e-8) ? 1 : -1; // TODO
+       //svk[k](0) =  fcl->isActive(gk[k](0),gTol) ? 1 : -1; // TODO
        if(watchg) {
 	 svk[k](0) =  gk[k](0)>0 ? 1 : -1; // TODO
        } else {
@@ -192,12 +192,12 @@ namespace MBSim {
 	     watchgd[0]= true;
 	   svk[k](0) = 1;
 	 }
-	 if(gk[k](0)>1e-8)
+	 if(gk[k](0)>gTol)
 	   watchg = true;
        }
        if(getFrictionDirections()){
-	 //svk[k](1) = (fcl->isActive(gk[k](0),1e-8) && abs(gdk[k](0))<gdTol && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
-	 //svk[k](1) = (fcl->isActive(gk[k](0),1e-8) && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
+	 //svk[k](1) = (fcl->isActive(gk[k](0),gTol) && abs(gdk[k](0))<gdTol && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
+	 //svk[k](1) = (fcl->isActive(gk[k](0),gTol) && fdf->isSticking(gdk[k](1,getFrictionDirections()),gdTol)) ? 1 : -1;
 	 if(!watchg && !watchgd[0]) {
 	   if(watchgd[1]) {
 	     if(slide_right)
@@ -1134,7 +1134,7 @@ namespace MBSim {
     //cout << name << endl;
     //cout << gk[0] << endl;
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
-      gActive[k] = fcl->isActive(gk[k](0),1e-8) ? 1 : 0; 
+      gActive[k] = fcl->isActive(gk[k](0),gTol) ? 1 : 0; 
     //cout << gActive[0] << endl;
   }
 
@@ -1212,7 +1212,7 @@ namespace MBSim {
   // überprüfen, was der Root Finder beobachten soll
   void Contact::checkState() {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-      if(gk[k](0) > 1e-8) {
+      if(gk[k](0) > gTol) {
 	watchg = true;
 	watchgd[0] = true;
 	watchgd[1] = true;
