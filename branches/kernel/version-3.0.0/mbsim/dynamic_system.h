@@ -628,6 +628,11 @@ namespace MBSim {
       /**
        * \param tolerance for relative velocity
        */
+      void setgTol(double tol);
+
+      /**
+       * \param tolerance for relative velocity
+       */
       void setgdTol(double tol);
 
       /**

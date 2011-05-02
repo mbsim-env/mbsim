@@ -1360,6 +1360,13 @@ namespace MBSim {
       (*i)->checkAllgd();
   }
 
+  void DynamicSystem::setgTol(double tol) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
+      (**i).setgTol(tol);
+    for(vector<Link*>::iterator i = link.begin(); i!= link.end(); ++i)
+      (**i).setgTol(tol);
+  }
+
   void DynamicSystem::setgdTol(double tol) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i!= dynamicsystem.end(); ++i)
       (**i).setgdTol(tol);
