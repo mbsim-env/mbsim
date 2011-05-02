@@ -978,8 +978,8 @@ namespace MBSim {
           ret = false;
       if(ret) return;
     }
-    cout << t << endl;
-    cout << sv << endl;
+    //cout << t << endl;
+    //cout << sv << endl;
 
     updateStateDependentVariables(t);
     updateg(t);
@@ -1553,29 +1553,29 @@ namespace MBSim {
     }
     jsv = jsv_;
 
-    cout << endl << "shift at" <<  endl;
-    cout << t << endl;
-    cout << sv << endl;
-    cout << jsv << endl;
-    cout << "laSize = " << laSize << endl;
-    cout << "gdSize = " << gdSize << endl;
-    cout << "g = " << endl << g << endl;
-    cout << "gd = " << endl << gd << endl;
+   // cout << endl << "shift at" <<  endl;
+   // cout << t << endl;
+   // cout << sv << endl;
+   // cout << jsv << endl;
+   // cout << "laSize = " << laSize << endl;
+   // cout << "gdSize = " << gdSize << endl;
+   // cout << "g = " << endl << g << endl;
+   // cout << "gd = " << endl << gd << endl;
     updateCondition(); // check for impact
 
     if(impact) { // impact
 
       updateStateDependentVariables(t);
       updateg(t);
-      cout << "g = " << endl << g << endl;
+   //   cout << "g = " << endl << g << endl;
       checkActiveg();
       checkActiveLinks(); // list with active links (g<=0)
       checkAllgd(); // look at all closed contacts
       calcgdSizeActive(); // Prüfen
       updategdRef(gdParent(0,gdSize-1));
       calclaSize();
-      cout << "laSize = " << laSize << endl;
-      cout << "gdSize = " << gdSize << endl;
+ //     cout << "laSize = " << laSize << endl;
+ //     cout << "gdSize = " << gdSize << endl;
       calcrFactorSize();
       updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
@@ -1593,11 +1593,11 @@ namespace MBSim {
       b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
       int iter;
       iter = solveImpacts();
-      cout << "vorher: u = " << endl << u << endl;
+      //cout << "vorher: u = " << endl << u << endl;
       u += deltau(zParent,t,0);
-      cout << "nacher: u = " << endl << u << endl;
+      //cout << "nacher: u = " << endl << u << endl;
       calcgdSize();
-      cout << "gdSize = " << gdSize << endl;
+      //cout << "gdSize = " << gdSize << endl;
      updategdRef(gdParent(0,gdSize-1));
    updateStateDependentVariables(t); // TODO necessary?
       updateg(t); // TODO necessary?
@@ -1609,7 +1609,7 @@ namespace MBSim {
   }
 
   void MySolver::getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t) {
-    cout << "getsv at t = " << t << endl;
+    //cout << "getsv at t = " << t << endl;
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -1634,7 +1634,7 @@ namespace MBSim {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-    cout << "zdot at t = " << t << endl;
+   // cout << "zdot at t = " << t << endl;
     updateStateDependentVariables(t);
     updateg(t);
     checkActiveg();
@@ -1663,9 +1663,8 @@ namespace MBSim {
       b.resize() = W.T()*slvLLFac(LLM,h) + wb;
       int iter;
       iter = solveConstraints();
-      std::cout << "iter = " << iter << std::endl;
-      std::cout << la << std::endl;
-      //     computeConstraintForces(t); 
+    //  std::cout << "iter = " << iter << std::endl;
+    //  std::cout << la << std::endl;
     }
     updater(t); 
     updatezd(t);
@@ -1676,9 +1675,9 @@ namespace MBSim {
     //std::cout << q(1) - 0.25 << std::endl;
     //std::cout <<  std::endl;
 
-    std::cout << h << std::endl;
-    std::cout << r << std::endl;
-    std::cout << ud << std::endl;
+  //  std::cout << h << std::endl;
+  //  std::cout << r << std::endl;
+  //  std::cout << ud << std::endl;
     return zdParent;
   }
 
@@ -1687,7 +1686,7 @@ namespace MBSim {
       updatezRef(zParent);
     }
 
-    cout << "plot at t = " << t << endl;
+  //  cout << "plot at t = " << t << endl;
     if(qd()!=zdParent()) 
       updatezdRef(zdParent);
     updateStateDependentVariables(t);
