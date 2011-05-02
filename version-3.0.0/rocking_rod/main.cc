@@ -41,10 +41,6 @@ int main (int argc, char* argv[]) {
     //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
     //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
-    sys->setgdTol(1e-10);
-    sys->setLaTol(1e-10);
-  sys->setlaTol(1e-12);
-    sys->setgddTol(1e-12);
   } 
   else { // time stepping integration
     sys->setLaTol(1e-2*dt);
