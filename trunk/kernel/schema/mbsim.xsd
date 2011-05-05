@@ -1171,7 +1171,17 @@
   </xs:element>
   <xs:complexType name="ExtraDynamicSystemType">
     <xs:complexContent>
-      <xs:extension base="ElementType"/>
+      <xs:extension base="ElementType">
+        <xs:sequence>
+          <xs:element name="initialState" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Anfangszustand der Uebertragungsfunktion
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
 
