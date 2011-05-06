@@ -55,20 +55,20 @@ namespace MBSimFlexibleBody {
   void FiniteElement1s33RCM::setMaterialDamping(double epstD_,double k0D_) {
     epstD = epstD_;
     k0D = k0D_;
-    Damp(6,6) = -epstD;
-    Damp(15,15) = -k0D;
+    Damp(6,6) += -epstD;
+    Damp(15,15) += -k0D;
   }
 
   void FiniteElement1s33RCM::setLehrDamping(double epstL,double k0L) {
     /* elongation */
     double omgepst = sqrt(12.*E/(rho*l0h2)); // eigenfrequency
-    epstD = rho*A*l0h3*epstL*omgepst/6.;
-    Damp(6,6) = -epstD;
+    epstD += rho*A*l0h3*epstL*omgepst/6.;
+    Damp(6,6) += -epstD;
 
     /* torsion */
     double omgk0 = sqrt(12.*G/(rho*l0h2)); // eigenfrequency
-    k0D = rho*I0*l0h3*k0L*omgk0/6.;
-    Damp(15,15) = -k0D;
+    k0D += rho*I0*l0h3*k0L*omgk0/6.;
+    Damp(15,15) += -k0D;
   }
 
   void FiniteElement1s33RCM::computeM(const Vec& qG) { 
