@@ -38,7 +38,9 @@ int main (int argc, char* argv[]) {
   else if(eventDriven) { // Event driven time integration
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
+    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
+    static_cast<LSODARIntegrator*>(integrator)->setRelativeTolerance(1e-8);
+    static_cast<LSODARIntegrator*>(integrator)->setAbsoluteTolerance(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
   } 
