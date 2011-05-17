@@ -681,9 +681,6 @@ namespace MBSim {
         }
       }
 #endif
-      //cout << name << " plot at t = " << t << endl;
-      //cout << gk[0] << endl;
-      //cout << gdk[0] << endl;
     if(getPlotFeature(generalizedLinkForce)==enabled) {
         for(int i=0; i<contactKinematics->getNumberOfPotentialContactPoints(); i++) {
           if(gActive[i] && gdActive[i][0]) {
@@ -1233,10 +1230,8 @@ namespace MBSim {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(jsvk[k](0)) {
 	ds->setImpact(true);
-	//watchg = false;
       }
       if(jsvk[k](1)) {
-	//watchgd[1] = false;
       }
       //        if(gActive[k]) {
       //          gActive[k] = false;

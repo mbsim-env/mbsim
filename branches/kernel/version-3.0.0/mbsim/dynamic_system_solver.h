@@ -470,6 +470,7 @@ namespace MBSim {
        */
       void setFlushEvery(unsigned int every) {flushEvery = every;}
 
+      void setWatchAlways(bool watchAlways_) {watchAlways = watchAlways_;}
 
     protected:
       /**
@@ -730,6 +731,8 @@ namespace MBSim {
        */
       fmatvec::Mat WInverseKineticsParent;
 
+      bool watchAlways;
+
     private:
       /**
        * \brief set plot feature default values
@@ -767,6 +770,7 @@ namespace MBSim {
       void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Object*> &objList);
 
       bool truncateSimulationFiles;
+
   };
 
 class MySolver : public DynamicSystemSolver {

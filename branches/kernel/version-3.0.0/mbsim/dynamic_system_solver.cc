@@ -63,11 +63,11 @@ namespace MBSim {
 
   bool DynamicSystemSolver::exitRequest=false;
 
-  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-16), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver() : Group("Default"), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-16), watchAlways(true), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   } 
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-16), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
+  DynamicSystemSolver::DynamicSystemSolver(const string &projectName) : Group(projectName), maxIter(10000), highIter(1000), maxDampingSteps(3), lmParm(0.001), contactSolver(FixedPointSingle), impactSolver(FixedPointSingle), strategy(local), linAlg(LUDecomposition), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), warnLevel(0), peds(false), impact(false), sticking(false), driftCount(1), flushEvery(100000), flushCount(flushEvery), reorganizeHierarchy(true), tolProj(1e-16), watchAlways(true), INFO(true), READZ0(false), truncateSimulationFiles(true) { 
     constructor();
   }
 
@@ -1598,12 +1598,21 @@ namespace MBSim {
       //cout << "nacher: u = " << endl << u << endl;
       calcgdSize();
       //cout << "gdSize = " << gdSize << endl;
-     updategdRef(gdParent(0,gdSize-1));
-   updateStateDependentVariables(t); // TODO necessary?
+      updategdRef(gdParent(0,gdSize-1));
+    }
+    updateStateDependentVariables(t); // TODO necessary?
+    if(watchAlways) {
       updateg(t); // TODO necessary?
-     updategd(t);
-   }
-    checkState();
+      updategd(t);
+      checkState();
+    } else {
+      updateg(t); // TODO necessary?
+      checkActiveg();
+      checkActiveLinks(); // TODO
+      updategd(t);
+      checkActivegd();
+      checkState();
+    }
     impact = false;
 
   }
@@ -1622,11 +1631,16 @@ namespace MBSim {
 
     updateStateDependentVariables(t);
     updateg(t);
-  checkActiveg();
-    checkActiveLinks();
-    updategd(t);
-     checkActivegd();
-  updateStopVector(t);
+    if(watchAlways) {
+      checkActiveg();
+      checkActiveLinks();
+      updategd(t);
+      checkActivegd();
+    } else {
+      checkActiveLinks();
+      updategd(t);
+    }
+    updateStopVector(t);
     sv(sv.size()-1) = 1;
 
   }
@@ -1637,10 +1651,15 @@ namespace MBSim {
    // cout << "zdot at t = " << t << endl;
     updateStateDependentVariables(t);
     updateg(t);
-    checkActiveg();
-    checkActiveLinks();
-    updategd(t);
-    checkActivegd();
+    if(watchAlways) {
+      checkActiveg();
+      checkActiveLinks();
+      updategd(t);
+      checkActivegd();
+    } else {
+      checkActiveLinks(); // TODO: nicht nötig
+      updategd(t);
+    }
     updateT(t); 
     updateJacobians(t);
     updateh(t); 
@@ -1686,15 +1705,19 @@ namespace MBSim {
       updatezRef(zParent);
     }
 
-  //  cout << "plot at t = " << t << endl;
     if(qd()!=zdParent()) 
       updatezdRef(zdParent);
     updateStateDependentVariables(t);
     updateg(t);
-    checkActiveg();
-    checkActiveLinks();
-    updategd(t);
-    checkActivegd();
+    if(watchAlways) {
+      checkActiveg();
+      checkActiveLinks();
+      updategd(t);
+      checkActivegd();
+    } else {
+      checkActiveLinks();
+      updategd(t);
+    }
     updateT(t); 
     updateJacobians(t);
     updateh(t); 
