@@ -470,7 +470,7 @@ namespace MBSim {
        */
       void setFlushEvery(unsigned int every) {flushEvery = every;}
 
-      void setWatchAlways(bool watchAlways_) {watchAlways = watchAlways_;}
+      void setAlwaysConsiderContact(bool alwaysConsiderContact_) {alwaysConsiderContact = alwaysConsiderContact_;}
 
     protected:
       /**
@@ -731,7 +731,7 @@ namespace MBSim {
        */
       fmatvec::Mat WInverseKineticsParent;
 
-      bool watchAlways;
+      bool alwaysConsiderContact;
 
     private:
       /**
