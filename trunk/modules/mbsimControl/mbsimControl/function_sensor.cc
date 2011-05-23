@@ -59,7 +59,8 @@ namespace MBSimControl {
 
   void Function1_SSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      setSignal(getByPath<Signal>(process_signal_string(signalString)));
+      if (signalString!="")
+        setSignal(getByPath<Signal>(process_signal_string(signalString)));
       Signal::init(stage);
     }
     else
@@ -88,7 +89,8 @@ namespace MBSimControl {
 
   void Function2_SSSEvaluation::init(InitStage stage) {
     if (stage==MBSim::resolveXMLPath) {
-      setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
+      if (signal1String!="")
+        setSignals(getByPath<Signal>(process_signal_string(signal1String)), getByPath<Signal>(process_signal_string(signal2String)));
       Signal::init(stage);
     }
     else
