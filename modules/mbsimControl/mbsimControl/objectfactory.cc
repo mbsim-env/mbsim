@@ -10,6 +10,7 @@
 #include "mbsimControl/link_sensors.h"
 #include "mbsimControl/signal_manipulation.h"
 #include "mbsimControl/linear_transfer_system.h"
+#include "mbsimControl/massless_spring_damper.h"
 #include "mbsimControl/actuator.h"
 
 using namespace std;
@@ -29,6 +30,8 @@ namespace MBSimControl {
     if(element==0) return 0;
     if (element->ValueStr()==MBSIMCONTROLNS"LinearTransferSystem")
       return new LinearTransferSystem(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMCONTROLNS"MasslessSpringDamper")
+      return new MasslessSpringDamper(element->Attribute("name"));
     return 0;
   }
 
