@@ -48,7 +48,7 @@ namespace MBSimControl {
    */
   class SignalOffset : public Signal {
     public:
-      SignalOffset(const std::string &name) : Signal(name), offset(0, fmatvec::NONINIT), signalString("") {}
+      SignalOffset(const std::string &name) : Signal(name), signal(0), offset(0, fmatvec::NONINIT), signalString("") {}
       void initializeUsingXML(TiXmlElement *element);
       void init(MBSim::InitStage stage);
       void setSignal(Signal * s) {signal=s; }

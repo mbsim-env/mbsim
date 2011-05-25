@@ -1139,6 +1139,81 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="MasslessSpringDamper" substitutionGroup="SignalProcessingSystem" type="MasslessSpringDamperType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Feder-Dämpfer System, bei dem die Masse vernachlässigt wird. <br/>
+        <object class="figure" standby="8cm" data="massless_spring_damper" title="Größen"></object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MasslessSpringDamperType">
+    <xs:complexContent>
+      <xs:extension base="SignalProcessingSystemType">
+        <xs:sequence>
+          <xs:sequence>
+            <xs:element name="springStiffness" type="pv:stiffnessScalar">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">c</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="basicSpringForce" type="pv:forceScalar">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">F_0</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="dampingCoefficient" type="pv:dampingScalar">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">d</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="negativeDampingCoefficient" type="pv:dampingScalar" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">d_{neg}</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="frictionForce" type="pv:forceScalar" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">F_{fric}</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="negativeFrictionForce" type="pv:forceScalar" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">F_{fric, neg}</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="minimalPositionValue" type="pv:lengthScalar" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">x_{min}</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="maximalPositionValue" type="pv:lengthScalar" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                  <object class="inlineeqn">x_{max}</object>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Actuator" substitutionGroup="mbsim:LinkMechanics" type="ActuatorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
