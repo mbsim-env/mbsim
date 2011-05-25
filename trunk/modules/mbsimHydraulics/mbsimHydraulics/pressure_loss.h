@@ -182,6 +182,16 @@ namespace MBSimHydraulics {
   };
 
 
+  /*! ReynoldsClosablePressureLoss */
+  class ReynoldsClosablePressureLoss : public ClosablePressureLoss {
+    public:
+      ReynoldsClosablePressureLoss() : ClosablePressureLoss(), nu(0), lambdaSlope(0), lambdaOffset(0), zetaFactor(0) {}
+      virtual double operator()(const double& Q, const void * line);
+    private:
+      double nu, lambdaSlope, lambdaOffset, zetaFactor;
+  };
+
+
   /*! VariablePressureLossControlvalveAreaAlpha */
   class RelativeAlphaClosablePressureLoss : public ClosablePressureLoss {
     public:

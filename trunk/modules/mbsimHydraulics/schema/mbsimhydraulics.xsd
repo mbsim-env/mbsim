@@ -608,6 +608,32 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ReynoldsClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="ReynoldsClosablePressureLossType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Berechnung des Druckverlustes in einem Ventil mit verstellbarem Durchmesser mittels der <object class="inlineeqn">Re</object>-Zahl.<br/>
+        Der Druckverlust bestimmt sich zu
+        <object class="eqn">
+          <![CDATA[p_V=\frac{\rho}{2} \, \lambda \, \frac{l}{d \left(x\right)} \, \frac{Q \, \left| Q \right|}{A\left(x\right)^2}]]>
+        </object>
+        Der Druckverlustkoeffizient <object class="inlineeqn">\lambda</object> wird darin in Abhängigkeit der <object class="inlineeqn">Re</object>-Zahl
+        <object class="eqn">
+          <![CDATA[Re = \frac{d(x)}{A(x)} \, \frac{Q}{\nu}]]>
+        </object>
+        bestimmt.
+        Die Fläche <object class="inlineeqn">A(x)</object> wird aus dem Durchmesser <object class="inlineeqn">d(x)</object> berechnet; der Druckverlust wird somit unabhängig vom Leitungsdurchmesser berechnet.
+        Die Druckverlustzahl <object class="inlineeqn">\lambda</object> wird nach Blasius unter Annahme eines glatten Rohres und eines turbulenten Strömungszustandes zu
+        <object class="eqn">\lambda = \frac{0.3164}{Re^{0.25}}</object>
+        bestimmt, wobei für <object class="inlineeqn">0 &lt; Re &lt; 0.1 </object> eine lineare Extrapolation des <object class="inlineeqn">\lambda</object>-Wertes erfolgt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ReynoldsClosablePressureLossType">
+    <xs:complexContent>
+      <xs:extension base="ClosablePressureLossType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="RelativeAlphaClosablePressureLoss" substitutionGroup="ClosablePressureLoss" type="RelativeAlphaClosablePressureLossType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
@@ -1046,6 +1072,60 @@
             <xs:complexType>
               <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
             </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:element name="StatelessOrifice" substitutionGroup="HLine" type="StatelessOrificeType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Dummymodell zur Berechnung einer zustandslosen Blende.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="StatelessOrificeType">
+    <xs:complexContent>
+      <xs:extension base="HLineType">
+        <xs:sequence>
+          <xs:element name="inflowPressureSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outflowPressureSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openingSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsimcontrol:SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="diameter" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                d=dF*dSignal
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="alpha" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                alpha
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="areaModus" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+                Berechnung der Öffnungsfläche; <br/>
+                0: wie GammaCheckvalveClosablePressureLoss <br/>
+                1: Zylinderfläche
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>

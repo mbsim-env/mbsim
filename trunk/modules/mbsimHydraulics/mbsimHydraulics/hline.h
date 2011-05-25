@@ -171,6 +171,42 @@ namespace MBSimHydraulics {
       fmatvec::Vec Q;
   };
 
+  /*! StatelessOrifice */
+  class StatelessOrifice : public HLine {
+    public:
+      StatelessOrifice(const std::string &name) : HLine(name), inflowSignal(NULL), outflowSignal(NULL), openingSignal(NULL), inflowSignalString(""), outflowSignalString(""), openingSignalString(""), diameter(0), alpha(0.), calcAreaModus(0) {}
+      virtual std::string getType() const { return "StatelessOrifice"; }
+      
+      void setInflowSignal(MBSimControl::Signal * inflowSignal_) {inflowSignal=inflowSignal_; }
+      void setOutflowSignal(MBSimControl::Signal * outflowSignal_) {outflowSignal=outflowSignal_; }
+      void setDiameter(double diameter_) {diameter=diameter_; }
+      void setOpeningSignal(MBSimControl::Signal * openingSignal_) {openingSignal=openingSignal_; }
+      void setAlpha(double alpha_) {alpha=alpha_; }
+      void setCalcAreaModus(int calcAreaModus_) {calcAreaModus=calcAreaModus_; }
+
+      virtual fmatvec::Vec getQIn();
+      virtual fmatvec::Vec getQOut();
+      virtual fmatvec::Vec getInflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, -1.); }
+      virtual fmatvec::Vec getOutflowFactor() {return fmatvec::Vec(1, fmatvec::INIT, 1.); }
+      void calcqSize() {qSize=0; }
+      void calcuSize(int j) {uSize[j]=0; }
+      
+      void updateh(double t) {};
+      
+      void initializeUsingXML(TiXmlElement *element);
+      void init(MBSim::InitStage stage);
+      void plot(double t, double dt);
+      
+    private:
+      MBSimControl::Signal *inflowSignal, *outflowSignal, *openingSignal;
+      std::string inflowSignalString, outflowSignalString, openingSignalString;
+      double diameter, alpha;
+      int calcAreaModus;
+      fmatvec::Vec calculateQ();
+
+      double pIn, pOut, dp, sign, opening, area, sqrt_dp;
+  };
+
 }
 
 #endif   /* ----- #ifndef _HLINE_H_  ----- */

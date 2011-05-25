@@ -280,6 +280,38 @@ namespace MBSimHydraulics {
   }
 
 
+  double ReynoldsClosablePressureLoss::operator()(const double& Q, const void * line) {
+    if (!initialized) {
+      nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      const double x0=1404.;
+      const double x1=2320.;
+      const double y0=64./1404.;
+      const double y1=.3164/pow(2320, .25);
+      lambdaSlope=(y1-y0)/(x1-x0);
+      lambdaOffset=y0-lambdaSlope*x0;
+      zetaFactor=rho/2.*((const RigidLine*)(line))->getLength();
+      initialized=true;
+    }
+    const double diameter=((const ClosableRigidLine*)(line))->getRegularizedValue();
+    const double area=M_PI*diameter*diameter/4.;
+    const double Re=fabs(Q)*diameter/area/nu;
+    double lambda=0;
+    
+    const double ReCritical = .1;
+    if (Re<ReCritical) {
+      const double lambdaCritical = .3164 * pow(ReCritical, -.25);
+      const double lambdaSlope = .3164 * (-.25) * pow(ReCritical, -.25-1.);
+      const double lambdaOffset = lambdaCritical - lambdaSlope * ReCritical;
+      lambda = lambdaSlope * Re + lambdaOffset;
+    }
+    else
+      lambda=.3164 * pow(Re, -.25);
+    
+    return zetaFactor * lambda/diameter * Q * fabs(Q) / area /area;
+  }
+
+
   double RelativeAlphaClosablePressureLoss::operator()(const double& Q, const void * line) {
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
