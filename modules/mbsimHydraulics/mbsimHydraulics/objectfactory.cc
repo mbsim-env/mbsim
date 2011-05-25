@@ -69,6 +69,8 @@ namespace MBSimHydraulics {
       return new RelativeAreaZetaClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"GapHeightClosablePressureLoss")
       return new GapHeightClosablePressureLoss();
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"ReynoldsClosablePressureLoss")
+      return new ReynoldsClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"RelativeAlphaClosablePressureLoss")
       return new RelativeAlphaClosablePressureLoss();
     if (element->ValueStr()==MBSIMHYDRAULICSNS"GammaCheckvalveClosablePressureLoss")
@@ -109,6 +111,8 @@ namespace MBSimHydraulics {
       return new ConstrainedLine(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"FluidPump")
       return new FluidPump(element->Attribute("name"));
+    if (element->ValueStr()==MBSIMHYDRAULICSNS"StatelessOrifice")
+      return new StatelessOrifice(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineGalerkin")
       return new ElasticLineGalerkin(element->Attribute("name"));
     if (element->ValueStr()==MBSIMHYDRAULICSNS"ElasticLineVariational")
