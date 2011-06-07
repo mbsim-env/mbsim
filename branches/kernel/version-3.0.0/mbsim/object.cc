@@ -44,16 +44,13 @@ namespace MBSim {
   Object::~Object() {}
 
   void Object::updatedhdz(double t) {
-    Vec hObject0 = hObject.copy(); // save old values
     Vec h0 = h.copy();
 
     updateh(t); // update with correct state
-    Vec hObjectEnd = hObject.copy();
     Vec hEnd = h.copy();
 
     /**************** velocity dependent calculations ********************/
     for(int i=0;i<uSize[0];i++) {  
-      hObject = hObject0; // set to old values
       h = h0;
 
       double ui = u(i); // save correct position
@@ -62,13 +59,12 @@ namespace MBSim {
       updateStateDependentVariables(t); 
       updateh(t);
 
-      dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
+      //dhdu.col(i) = (hObject-hObjectEnd)/epsroot();
       u(i) = ui;
     }
 
     /***************** position dependent calculations ********************/
     for(int i=0;i<qSize;i++) { 
-      hObject = hObject0; // set to old values
       h = h0;
 
       double qi = q(i); // save correct position
@@ -79,7 +75,7 @@ namespace MBSim {
       updateJacobians(t);
       updateh(t);
 
-      dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
+      //dhdq.col(i) = (hObject-hObjectEnd)/epsroot();
       q(i) = qi;
     }
 
@@ -102,7 +98,6 @@ namespace MBSim {
     updateStateDependentVariables(t); 
     updateT(t); 
     updateJacobians(t);
-    hObject = hObjectEnd;
     h = hEnd;
   }
 
@@ -209,9 +204,8 @@ namespace MBSim {
     udall>>udParent(hInd[0],hInd[0]+hSize[0]-1);
   }
 
-  void Object::updatehRef(const Vec& hParent, const Vec& hObjectParent, int i) {
+  void Object::updatehRef(const Vec& hParent, int i) {
     h.resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
-    hObject.resize()>>hObjectParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {

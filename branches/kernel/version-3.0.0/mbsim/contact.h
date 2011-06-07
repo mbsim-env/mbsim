@@ -76,7 +76,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF LINK */
       virtual void updateWRef(const fmatvec::Mat &ref, int j=0);
       virtual void updateVRef(const fmatvec::Mat &ref, int j=0);
-      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int j=0);
+      virtual void updatehRef(const fmatvec::Vec &hRef, int j=0);
       virtual void updatewbRef(const fmatvec::Vec &ref);
       virtual void updatelaRef(const fmatvec::Vec& ref);
       virtual void updategRef(const fmatvec::Vec& ref);

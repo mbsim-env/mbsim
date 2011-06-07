@@ -75,7 +75,6 @@ namespace MBSim {
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation();
 
     h += frame[0]->getJacobianOfTranslation().T()*WF + frame[0]->getJacobianOfRotation().T()*WM;
-    hObject += frame[0]->getJacobianOfTranslation().T()*WF + frame[0]->getJacobianOfRotation().T()*WM;
   }
 
   void RigidBody::updatehInverseKinetics(double t) {

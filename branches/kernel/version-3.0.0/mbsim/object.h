@@ -129,7 +129,7 @@ namespace MBSim {
        * \param hRef vector to be referenced
        * \param i    index of normal usage and inverse kinetics
        */
-      virtual void updatehRef(const fmatvec::Vec& hRef, const fmatvec::Vec& hObjectRef, int i=0);
+      virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
@@ -337,7 +337,7 @@ namespace MBSim {
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
        */
-      fmatvec::Vec h, hObject, r;
+      fmatvec::Vec h, r;
 
       /** 
        * \brief Jacobians of h

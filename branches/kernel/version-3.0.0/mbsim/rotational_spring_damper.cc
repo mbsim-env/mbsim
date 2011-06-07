@@ -50,7 +50,6 @@ namespace MBSim {
     WM[1] = -WM[0];
     for(unsigned int i=0; i<2; i++) {
       h[i]+=trans(frame[i]->getJacobianOfRotation())*WM[i];
-      hLink[i]+=trans(frame[i]->getJacobianOfRotation())*WM[i];
     }
   }
 
