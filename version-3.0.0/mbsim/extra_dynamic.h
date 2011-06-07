@@ -69,9 +69,11 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setParent(DynamicSystem *parent_) { parent = parent_; }
       DynamicSystem* getParent() { return parent; }
-      void setx0(fmatvec::Vec x_) { x0 = x_; }
+      void setInitialState(const fmatvec::Vec &x0_) { x0 = x0_; }
       virtual Element *getByPathSearch(std::string path);
       /***************************************************/
+      
+      virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
       /**
