@@ -93,7 +93,14 @@ namespace MBSim {
       else
         return getByPathSearch(path.substr(1));
   }
-
+      
+  void ExtraDynamic::initializeUsingXML(TiXmlElement *element) {
+    Element::initializeUsingXML(element);
+    TiXmlElement *e;
+    e=element->FirstChildElement(MBSIMNS"initialState");
+    if (e)
+      setInitialState(getVec(e));
+  }
 
 }
 
