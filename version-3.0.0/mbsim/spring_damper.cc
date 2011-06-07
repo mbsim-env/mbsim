@@ -49,7 +49,6 @@ namespace MBSim {
     WF[1]=-WF[0];
     for(unsigned int i=0; i<2; i++) {
       h[i]+=frame[i]->getJacobianOfTranslation().T()*WF[i];
-      hLink[i]+=frame[i]->getJacobianOfTranslation().T()*WF[i];
     }
   }
 

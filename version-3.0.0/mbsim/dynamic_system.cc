@@ -738,23 +738,21 @@ namespace MBSim {
       (**i).updatexdRef(xd);
   }
 
-  void DynamicSystem::updatehRef(const Vec &hParent, const Vec &hObjectParent, const Vec &hLinkParent, int j) {
+  void DynamicSystem::updatehRef(const Vec &hParent, int j) {
     h.resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
-    hObject.resize() >> hObjectParent(hInd[j],hInd[j]+hSize[j]-1);
-    hLink.resize() >> hLinkParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatehRef(h,hObject,hLink,j);
+      (**i).updatehRef(h,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef(h,hObject,j);
+      (**i).updatehRef(h,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatehRef(h,hLink,j);
+      (**i).updatehRef(h,j);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       if ((**i).hasSmoothPart())
-        (**i).updatehRef(h,hLink,j);
+        (**i).updatehRef(h,j);
   }
 
   void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {

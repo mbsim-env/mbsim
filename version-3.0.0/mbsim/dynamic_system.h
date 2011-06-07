@@ -334,7 +334,7 @@ namespace MBSim {
        * \param vector concerning links to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hObjectRef, const fmatvec::Vec &hLinkRef, int i=0);
+      void updatehRef(const fmatvec::Vec &hRef, int i=0);
 
       /**
        * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding positions
@@ -846,7 +846,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
-      fmatvec::Vec h, hObject, hLink, r, f;
+      fmatvec::Vec h, r, f;
 
       /**
        * \brief matrices for implicit integration

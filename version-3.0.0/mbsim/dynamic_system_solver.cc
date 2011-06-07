@@ -271,8 +271,6 @@ namespace MBSim {
       gdParent.resize(getgdSize());
       zdParent.resize(getzSize());
       hParent.resize(getuSize(1));
-      hObjectParent.resize(getuSize(1));
-      hLinkParent.resize(getuSize(1));
       dhdqObjectParent.resize(getuSize(1),getqSize());
       dhdqLinkParent.resize(getuSize(1),getqSize());
       dhduObjectParent.resize(getuSize(1));
@@ -300,10 +298,10 @@ namespace MBSim {
       updatelaRef(laParent);
       updategRef(gParent);
       updategdRef(gdParent);
-      updatehRef(hParent,hObjectParent,hLinkParent);
-      updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
-      updatedhduRef(dhduObjectParent,dhduLinkParent);
-      updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
+      updatehRef(hParent);
+      //updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
+      //updatedhduRef(dhduObjectParent,dhduLinkParent);
+      //updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
       updaterRef(rParent);
       updateWRef(WParent);
       updateVRef(VParent);
@@ -624,15 +622,11 @@ namespace MBSim {
 
   void DynamicSystemSolver::updateh(double t) {
     h.init(0);
-    hObject.init(0);
-    hLink.init(0);
     Group::updateh(t);
   }
 
   void DynamicSystemSolver::updatedhdz(double t) {
     h.init(0);
-    hObject.init(0);
-    hLink.init(0);
     dhdqObject.init(0);
     dhdqLink.init(0);
     dhduObject.init(0);
@@ -740,7 +734,7 @@ namespace MBSim {
 
     if(uSize[0] != uSize[1]) {
       resizeJacobians(1);
-      updatehRef(hParent,hObjectParent,hLinkParent,1);
+      updatehRef(hParent,1);
       updaterRef(rParent,1);
       updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
       updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
@@ -757,7 +751,7 @@ namespace MBSim {
       laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h+r));
       plot(t,1);
       resizeJacobians(0);
-      updatehRef(hParent,hObjectParent,hLinkParent);
+      updatehRef(hParent);
       updaterRef(rParent);
       updateWRef(WParent);
       updateVRef(VParent);

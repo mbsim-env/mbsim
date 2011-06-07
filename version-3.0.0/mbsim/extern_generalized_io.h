@@ -65,7 +65,7 @@ namespace MBSim {
 
       virtual void updateWRef(const fmatvec::Mat&, int) {}
       virtual void updateVRef(const fmatvec::Mat&, int) {}
-      virtual void updatehRef(const fmatvec::Vec&, const fmatvec::Vec&, int) {}
+      virtual void updatehRef(const fmatvec::Vec&, int) {}
       virtual void updatedhdqRef(const fmatvec::Mat&, int) {}
       virtual void updatedhduRef(const fmatvec::SqrMat&, int) {}
       virtual void updatedhdtRef(const fmatvec::Vec&, int) {}

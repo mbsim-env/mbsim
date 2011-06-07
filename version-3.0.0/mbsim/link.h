@@ -106,7 +106,7 @@ namespace MBSim {
       /**
        * \brief references to complete and link smooth force vector of dynamic system parent
        */
-      virtual void updatehRef(const fmatvec::Vec &hRef, const fmatvec::Vec &hLinkRef, int i=0) = 0;
+      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) = 0;
 
       /**
        * \brief references to link Jacobian for implicit integration of dynamic system parent regarding positions
@@ -559,7 +559,7 @@ namespace MBSim {
       /**
        * \brief smooth complete and link right hand side
        */
-      std::vector<fmatvec::Vec> h, hLink;
+      std::vector<fmatvec::Vec> h;
       
       /**
        * \brief smooth Jacobians for implicit integration
