@@ -58,7 +58,7 @@ namespace MBSim {
     AW1.col(1) = yAchse;
     AW1.col(2) = zAchse;
 
-    int fall = 0;
+    //int fall = 0;
     double h = frustum->getHeight();
     Vec r = frustum->getRadii(); // r(0): Basisradius, r(1): Topradius
     double r_h = r(0) + (r(1)-r(0))/h * loc; // Radius an der Stelle des Kreismittelpunkts
@@ -79,10 +79,10 @@ namespace MBSim {
       if(fabs(psi)<epsroot()) {
         // Zylinder
         if(l-r(0) > 0) {
-          fall = 1; // außen
+          //fall = 1; // außen
         }
         else {
-          fall = 2; // innen
+          //fall = 2; // innen
           out = -1;
         }
         
@@ -98,10 +98,10 @@ namespace MBSim {
         // Kegel
         if(l-r_h > -1e-5)
         {
-          fall = 3; // außen
+          //fall = 3; // außen
         }
         else {
-          fall = 4; // innen
+          //fall = 4; // innen
           out = -1;
         }
 
