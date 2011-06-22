@@ -585,20 +585,20 @@ namespace MBSimHydraulics {
       x0=Vec(1, INIT, V0);
       for (unsigned int i=0; i<nLines; i++) {
         Vec u0=connectedLines[i].line->getu0();
-        bool zero=true;
-        for (int j=0; j<u0.size(); j++)
-          if (fabs(u0(j))>epsroot())
-            zero=false;
+//        bool zero=true;
+//        for (int j=0; j<u0.size(); j++)
+//          if (fabs(u0(j))>epsroot())
+//            zero=false;
 //        if (!zero)
 //          cout << "WARNING in RigidNodeMec \"" << getName() << "\": HydraulicLine \"" << connectedLines[i].line->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
       }
       for (unsigned int i=0; i<nTrans; i++) { // TODO Baumstruktur
         if(dynamic_cast<Object*>(connectedTransFrames[i].frame->getParent())) {
           Vec u0=((Object*)connectedTransFrames[i].frame->getParent())->getu0();
-          bool zero=true;
-          for (int j=0; j<u0.size(); j++)
-            if (fabs(u0(j))>epsroot())
-              zero=false;
+//          bool zero=true;
+//          for (int j=0; j<u0.size(); j++)
+//            if (fabs(u0(j))>epsroot())
+//              zero=false;
 //          if (!zero)
 //            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedTransFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedTransFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }
@@ -606,10 +606,10 @@ namespace MBSimHydraulics {
       for (unsigned int i=0; i<nRot; i++) { // TODO Baumstruktur
         if(dynamic_cast<Object*>(connectedRotFrames[i].frame->getParent())) {
           Vec u0=((Object*)connectedRotFrames[i].frame->getParent())->getu0();
-          bool zero=true;
-          for (int j=0; j<u0.size(); j++)
-            if (fabs(u0(j))>epsroot())
-              zero=false;
+//          bool zero=true;
+//          for (int j=0; j<u0.size(); j++)
+//            if (fabs(u0(j))>epsroot())
+//              zero=false;
 //          if (!zero)
 //            cout << "WARNING in RigidNodeMec \"" << getName() << "\": Object \"" << ((Object*)connectedRotFrames[i].frame->getParent())->getName() << "\" of connected Frame \"" <<  connectedRotFrames[i].frame->getName() << "\" has an initialGeneralizedVelocity not equal to zero. Just Time-Stepping Integrators can handle this correctly." << endl;
         }

@@ -13,8 +13,8 @@ int main (int argc, char* argv[]) {
 
   ThetaTimeSteppingIntegrator integrator;
   integrator.setTheta(1.);
-  integrator.setEndTime(1.);
-  integrator.setStepSize(1e-5);
+  integrator.setEndTime(5.e-2);
+  integrator.setStepSize(5e-6);
   integrator.setPlotStepSize(5e-4);
   integrator.integrate(*sys);
 

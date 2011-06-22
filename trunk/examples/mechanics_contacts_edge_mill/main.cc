@@ -6,7 +6,7 @@ using namespace MBSim;
 
 int main (int argc, char* argv[]) {
   DynamicSystemSolver *sys = new System("TS");
-  sys->setImpactSolver(RootFinding);
+  sys->setImpactSolver(LinearEquations);
   sys->setConstraintSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);
   //sys->setNumJacProj(true);
