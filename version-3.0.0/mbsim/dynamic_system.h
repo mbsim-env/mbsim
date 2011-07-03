@@ -66,12 +66,12 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t); 
-      virtual void updateh(double t); 
-      virtual void updatehInverseKinetics(double t); 
+      virtual void updateh(double t, int i=0); 
+      virtual void updateh0Fromh1(double t); 
       virtual void updateStateDerivativeDependentVariables(double t); 
       virtual void updatedhdz(double t);
-      virtual void updateM(double t);
-      virtual void updateJacobians(double t) = 0;
+      virtual void updateM(double t, int i=0);
+      virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
       virtual void updateud(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
       virtual void updateqd(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
@@ -105,9 +105,9 @@ namespace MBSim {
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t); 
-      virtual void updateW(double t); 
-      virtual void updateV(double t); 
+      virtual void updatewb(double t, int j=0); 
+      virtual void updateW(double t, int j=0); 
+      virtual void updateV(double t, int j=0); 
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t); 
@@ -115,7 +115,9 @@ namespace MBSim {
 
       virtual void updategInverseKinetics(double t); 
       virtual void updategdInverseKinetics(double t);
-      virtual void updateWInverseKinetics(double t); 
+      virtual void updateWInverseKinetics(double t, int j=0); 
+      virtual void updatehInverseKinetics(double t, int j=0); 
+      virtual void updateJacobiansInverseKinetics(double t, int j=0); 
       /*****************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -230,19 +232,19 @@ namespace MBSim {
       fmatvec::Vec& getx0() { return x0; };
 
       const fmatvec::Mat& getT() const { return T; };
-      const fmatvec::SymMat& getM() const { return M; };
-      const fmatvec::SymMat& getLLM() const { return LLM; };
-      const fmatvec::Vec& geth() const { return h; };
+      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
+      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
+      const fmatvec::Vec& geth(int j=0) const { return h[j]; };
       const fmatvec::Vec& getf() const { return f; };
       fmatvec::Vec& getf() { return f; };
       fmatvec::Mat getdhdq() const { return dhdqObject + dhdqLink; }
       fmatvec::SqrMat getdhdu() const { return dhduObject + dhduLink; }
       fmatvec::Vec getdhdt() const { return dhdtObject + dhdtLink; }
 
-      const fmatvec::Mat& getW() const { return W; }
-      fmatvec::Mat& getW() { return W; }
-      const fmatvec::Mat& getV() const { return V; }
-      fmatvec::Mat& getV() { return V; }
+      const fmatvec::Mat& getW(int i=0) const { return W[i]; }
+      fmatvec::Mat& getW(int i=0) { return W[i]; }
+      const fmatvec::Mat& getV(int i=0) const { return V[i]; }
+      fmatvec::Mat& getV(int i=0) { return V[i]; }
 
       const fmatvec::Vec& getla() const { return la; }
       fmatvec::Vec& getla() { return la; }
@@ -430,7 +432,7 @@ namespace MBSim {
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWInverseKineticsRef(const fmatvec::Mat &ref, int i=0);
+      void updateWInverseKineticsRef(const fmatvec::Mat &ref);
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
@@ -821,12 +823,12 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat M;
+      fmatvec::SymMat M[2];
 
       /** 
        * \brief Cholesky decomposition of mass matrix
        */
-      fmatvec::SymMat LLM;
+      fmatvec::SymMat LLM[2];
 
       /**
        * \brief positions, differentiated positions, initial positions
@@ -846,7 +848,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links, nonsmooth and order one right hand side
        */
-      fmatvec::Vec h, r, f;
+      fmatvec::Vec h[2], r[2], f;
 
       /**
        * \brief matrices for implicit integration
@@ -858,7 +860,7 @@ namespace MBSim {
       /**
        * \brief 
        */
-      fmatvec::Mat W, V;
+      fmatvec::Mat W[2], V[2];
 
       /**
        * \brief contact force parameters

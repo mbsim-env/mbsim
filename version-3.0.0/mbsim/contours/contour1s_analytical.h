@@ -57,7 +57,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
-      virtual void updateJacobiansForFrame(ContourPointData &cp);
+      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
       virtual void init(InitStage stage);
       virtual double computeCurvature(ContourPointData &cp);
       virtual double computeDistance(const double s, const int order=0);

@@ -85,38 +85,46 @@ namespace MBSim {
       (**i).updateT(t);
   }
 
-  void DynamicSystem::updateh(double t) {
+  void DynamicSystem::updateh(double t, int j) {
 //#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateh(t); }
+      try { dynamicsystem[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 //#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateh(t); }
+      try { object[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 //#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
-      try { linkSingleValued[i]->updateh(t); }
+      try { linkSingleValued[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 //#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedNotActiveWithSmoothPart.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30) 
     for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) {
-      try { linkSetValuedNotActiveWithSmoothPart[i]->updateh(t); }
+      try { linkSetValuedNotActiveWithSmoothPart[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
 
-  void DynamicSystem::updatehInverseKinetics(double t) {
+  void DynamicSystem::updateh0Fromh1(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatehInverseKinetics(t);
+      (**i).updateh0Fromh1(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehInverseKinetics(t);
+      (**i).updateh0Fromh1(t);
+  }
+
+  void DynamicSystem::updatehInverseKinetics(double t, int j) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updatehInverseKinetics(t,j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updatehInverseKinetics(t,j);
   }
 
   void DynamicSystem::updateStateDerivativeDependentVariables(double t) {
@@ -147,15 +155,15 @@ namespace MBSim {
       (**i).updatedhdz(t);
   }
 
-  void DynamicSystem::updateM(double t) {
+  void DynamicSystem::updateM(double t, int j) {
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
-      try { dynamicsystem[i]->updateM(t); }
+      try { dynamicsystem[i]->updateM(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
 //#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
-      try { object[i]->updateM(t); }
+      try { object[i]->updateM(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
   }
@@ -228,35 +236,41 @@ namespace MBSim {
   OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
 #endif
 
-  void DynamicSystem::updatewb(double t) {
+  void DynamicSystem::updatewb(double t, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatewb(t);
+      (*i)->updatewb(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updatewb(t);
+      (**i).updatewb(t,j);
   }
 
-  void DynamicSystem::updateW(double t) {
+  void DynamicSystem::updateW(double t, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateW(t);
+      (**i).updateW(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updateW(t);
+      (**i).updateW(t,j);
   }
 
-  void DynamicSystem::updateWInverseKinetics(double t) {
+  void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
+
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+      (**i).updateJacobians(t,j);
+  }
+
+  void DynamicSystem::updateWInverseKinetics(double t, int j) {
     WInverseKinetics.init(0);
 
     for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateW(t);
+      (**i).updateW(t,j);
   }
 
-  void DynamicSystem::updateV(double t) {
+  void DynamicSystem::updateV(double t, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateV(t);
+      (**i).updateV(t,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updateV(t);
+      (**i).updateV(t,j);
   }
 
   void DynamicSystem::updateg(double t) {
@@ -739,20 +753,20 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatehRef(const Vec &hParent, int j) {
-    h.resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
+    h[j].resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatehRef(h,j);
+      (**i).updatehRef(h[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef(h,j);
+      (**i).updatehRef(h[j],j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatehRef(h,j);
+      (**i).updatehRef(h[j],j);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       if ((**i).hasSmoothPart())
-        (**i).updatehRef(h,j);
+        (**i).updatehRef(h[j],j);
   }
 
   void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {
@@ -817,16 +831,16 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent, int j) {
-    r.resize() >> rParent(hInd[j],hInd[j]+hSize[j]-1);
+    r[j].resize() >> rParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updaterRef(r,j);
+      (**i).updaterRef(r[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updaterRef(r,j);
+      (**i).updaterRef(r[j],j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updaterRef(r,j);
+      (**i).updaterRef(r[j],j);
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
@@ -840,23 +854,23 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateMRef(const SymMat& MParent, int j) {
-    M.resize() >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
+    M[j].resize() >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateMRef(M,j);
+      (*i)->updateMRef(M[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateMRef(M,j);
+      (*i)->updateMRef(M[j],j);
   }
 
   void DynamicSystem::updateLLMRef(const SymMat& LLMParent, int j) {
-    LLM.resize() >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
+    LLM[j].resize() >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateLLMRef(LLM,j);
+      (*i)->updateLLMRef(LLM[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateLLMRef(LLM,j);
+      (*i)->updateLLMRef(LLM[j],j);
   }
 
   void DynamicSystem::updategRef(const Vec& gParent) {
@@ -913,31 +927,30 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
-    W.resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
+    W[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateWRef(W,j);
+      (*i)->updateWRef(W[j],j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      //if ((*i)->getlaSize()) // needed for event-driven integration in ProjectGeneralizedPositions for Objects with qSize==0
-        (**i).updateWRef(W,j);
+      (**i).updateWRef(W[j],j);
   }
 
-  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
-    WInverseKinetics.resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
+  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {
+    WInverseKinetics.resize() >> WParent(Index(hInd[1],hInd[1]+hSize[1]-1),Index(0,laInverseKineticsSize-1));
 
     for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (**i).updateWRef(WInverseKinetics,j);
+      (**i).updateWRef(WInverseKinetics,1);
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
-    V.resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
+    V[j].resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateVRef(V,j);
+      (*i)->updateVRef(V[j],j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateVRef(V,j);
+      (**i).updateVRef(V[j],j);
   }
 
   void DynamicSystem::updatesvRef(const Vec &svParent) {

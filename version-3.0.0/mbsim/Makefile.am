@@ -27,7 +27,6 @@ object.cc\
 objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
-tree.cc\
 graph.cc\
 constraint.cc
 
@@ -70,6 +69,5 @@ objectfactory.h\
 object_interface.h\
 extra_dynamic.h\
 rigid_body.h\
-tree.h\
 graph.h\
 constraint.h

@@ -78,7 +78,7 @@ namespace MBSim {
        * \param contour parameter
        * \param selection of specific calculations for frames
        */
-      virtual void updateJacobiansForFrame(ContourPointData &cp) = 0;
+      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0) = 0;
 
       /**
        * \return normal in world frame
@@ -133,22 +133,22 @@ namespace MBSim {
       /**
        * \param JACOBIAN of translation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat &WJP) { R.setJacobianOfTranslation(WJP); }
+      virtual void setReferenceJacobianOfTranslation(const fmatvec::Mat &WJP, int j=0) { R.setJacobianOfTranslation(WJP,j); }
 
       /**
        * \param gyroscopic acceleration of translation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP) { R.setGyroscopicAccelerationOfTranslation(WjP); }
+      virtual void setReferenceGyroscopicAccelerationOfTranslation(const fmatvec::Vec &WjP, int j=0) { R.setGyroscopicAccelerationOfTranslation(WjP,j); }
 
       /**
        * \param JACOBIAN of rotation of contour in inertial frame
        */
-      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat &WJR) { R.setJacobianOfRotation(WJR); }
+      virtual void setReferenceJacobianOfRotation(const fmatvec::Mat &WJR, int j=0) { R.setJacobianOfRotation(WJR,j); }
 
       /**
        * \param gyroscopic acceleration of rotation of contour in inertial frame
        */
-      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR) { R.setGyroscopicAccelerationOfRotation(WjR); }
+      virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
 
       /**
        * \brief TODO
@@ -169,10 +169,10 @@ namespace MBSim {
       const fmatvec::SqrMat& getReferenceOrientation() const { return R.getOrientation(); }
       const fmatvec::Vec& getReferenceVelocity() const { return R.getVelocity(); }
       const fmatvec::Vec& getReferenceAngularVelocity() const { return R.getAngularVelocity(); }
-      const fmatvec::Mat& getReferenceJacobianOfTranslation() const { return R.getJacobianOfTranslation(); }
-      const fmatvec::Mat& getReferenceJacobianOfRotation() const { return R.getJacobianOfRotation(); }
-      fmatvec::Mat& getReferenceJacobianOfTranslation() { return R.getJacobianOfTranslation(); }
-      fmatvec::Mat& getReferenceJacobianOfRotation() { return R.getJacobianOfRotation(); }
+      const fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) const { return R.getJacobianOfTranslation(j); }
+      const fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) const { return R.getJacobianOfRotation(j); }
+      fmatvec::Mat& getReferenceJacobianOfTranslation(int j=0) { return R.getJacobianOfTranslation(j); }
+      fmatvec::Mat& getReferenceJacobianOfRotation(int j=0) { return R.getJacobianOfRotation(j); }
       const fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() const { return R.getGyroscopicAccelerationOfTranslation(); }
       const fmatvec::Vec& getReferenceGyroscopicAccelerationOfRotation() const { return R.getGyroscopicAccelerationOfRotation(); }
       fmatvec::Vec& getReferenceGyroscopicAccelerationOfTranslation() { return R.getGyroscopicAccelerationOfTranslation(); }
@@ -237,7 +237,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       virtual void updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff);
-      virtual void updateJacobiansForFrame(ContourPointData &cp);
+      virtual void updateJacobiansForFrame(ContourPointData &cp, int j=0);
       /***************************************************/
 
       /**

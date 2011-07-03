@@ -37,20 +37,20 @@ namespace MBSim {
 	obj[i][j]->updateStateDependentVariables(t);
   }
 
-  void Graph::updateJacobians(double t) {
+  void Graph::updateJacobians(double t, int k) {
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) 
-	obj[i][j]->updateJacobians(t);
+	obj[i][j]->updateJacobians(t,k);
 
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud = slvLLFac(LLM, h*dt+r);
+    ud = slvLLFac(LLM[0], h[0]*dt+r[0]);
   }
 
   void Graph::updatezd(double t) {
     qd = T*u;
-    ud =  slvLLFac(LLM, h+r);
+    ud =  slvLLFac(LLM[0], h[0]+r[0]);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
@@ -60,11 +60,15 @@ namespace MBSim {
   }
 
   void Graph::sethSize(int hSize_, int k) {
+    if(k==1) // TODO schöner impl.
+      DynamicSystem::sethSize(hSize_,k);
+    else {
     hSize[k] = hSize_;
     //root->sethSize(hSize_,k);
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->sethSize((*i)->getuSize(k)+(*i)->getuInd(k),k);
       (*i)->sethInd(0,k);
+    }
     }
   } 
 
@@ -79,6 +83,9 @@ namespace MBSim {
   }
 
   void Graph::calcuSize(int k) {
+    if(k==1) // TODO schöner impl.
+      DynamicSystem::calcuSize(k);
+    else {
     uSize[k] = 0;
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
@@ -86,17 +93,18 @@ namespace MBSim {
 	obj[i][j]->setuInd(uSize[k],k);
 	uSize[k] += obj[i][j]->getuSize(k);
       }
+    }
   }
 
-  void Graph::updateInverseKineticsJacobians(double t) {
-    for(unsigned int i=0; i<obj.size(); i++) 
-      for(unsigned int j=0; j<obj[i].size(); j++) 
-	obj[i][j]->updateInverseKineticsJacobians(t);
+  //void Graph::updateInverseKineticsJacobians(double t) {
+  //  for(unsigned int i=0; i<obj.size(); i++) 
+  //    for(unsigned int j=0; j<obj[i].size(); j++) 
+  //      obj[i][j]->updateInverseKineticsJacobians(t);
 
-  }
+  //}
 
   void Graph::facLLM() {
-    LLM = facLL(M); 
+    LLM[0] = facLL(M[0]); 
   }
 
   void Graph::addObject(int level, Object* object) {

@@ -42,16 +42,17 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), wbk(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), Vk(0), Wk(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
+  Contact::Contact(const string &name) : LinkMechanics(name), contactKinematics(0), fcl(0), fdf(0), fnil(0), ftil(0), cpData(0), gActive(0), gActive0(0), gdActive(0), gk(0), gdk(0), gdnk(0), gddk(0), lak(0), svk(0), rFactork(0), jsvk(0), fF(0), WF(0), laSizek(0), laIndk(0), gSizek(0), gIndk(0), gdSizek(0), gdIndk(0), svSizek(0), svIndk(0), rFactorSizek(0), rFactorIndk(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE
                                          , openMBVContactGrp(0), openMBVContactFrame(0), openMBVNormalForceArrow(0), openMBVFrictionArrow(0), openMBVContactFrameSize(0), openMBVContactFrameEnabled(true), contactArrow(NULL), frictionArrow(NULL)
 #endif
                                            , saved_ref1(""), saved_ref2("")
-                                           {
+					   {
  watchg = true; 
  watchgd[0] = true; 
  watchgd[1] = true; 
  slide_right = true;
+
 					   }
 
   Contact::~Contact() {
@@ -65,9 +66,9 @@ namespace MBSim {
 
     for(vector<ContourPointData*>::iterator i = cpData.begin(); i != cpData.end(); ++i)
       delete[] *i;
-    for(vector<Mat*>::iterator i = Wk.begin(); i != Wk.end(); ++i)
+    for(vector<Mat*>::iterator i = Wk[0].begin(); i != Wk[0].end(); ++i)
       delete[] *i;
-    for(vector<Mat*>::iterator i = Vk.begin(); i != Vk.end(); ++i)
+    for(vector<Mat*>::iterator i = Vk[0].begin(); i != Vk[0].end(); ++i)
       delete[] *i;
     for(vector<Mat*>::iterator i = fF.begin(); i != fF.end(); ++i)
       delete[] *i;
@@ -83,17 +84,17 @@ namespace MBSim {
 #endif
   }
 
-  void Contact::updatewb(double t) {
+  void Contact::updatewb(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) {
         for(unsigned i=0; i<contour.size(); i++) 
-          wbk[k] += fF[k][i](Index(0,2),Index(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation();
+          wbk[k] += fF[k][i](Index(0,2),Index(0,laSizek[k]-1)).T()*cpData[k][i].getFrameOfReference().getGyroscopicAccelerationOfTranslation(j);
       }
     }
     contactKinematics->updatewb(wbk.begin(),gk.begin(),cpData.begin());
   }
 
-  void Contact::updateW(double t) {
+  void Contact::updateW(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
       if(gActive[k]) { // TODO
         fF[k][1].col(0) = cpData[k][0].getFrameOfReference().getOrientation().col(0);
@@ -106,23 +107,23 @@ namespace MBSim {
         fF[k][0] = -fF[k][1];
 
         for(unsigned int i=0; i<contour.size(); i++) 
-          Wk[k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
+          Wk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Index(0,2),Index(0,laSizek[k]-1));
       }
     }
   }
 
-  void Contact::updateV(double t) {
+  void Contact::updateV(double t, int j) {
     if(getFrictionDirections()) {
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
         if(gdActive[k][0] && !gdActive[k][1]) {
           for(unsigned int i=0; i<contour.size(); i++) 
-            Vk[k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
+            Vk[j][k][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*fF[k][i](Index(0,2),iT)*fdf->dlaTdlaN(gdk[k](1,getFrictionDirections()), lak[k](0));
         }
       }
     }
   }
 
-  void Contact::updateh(double t) {
+  void Contact::updateh(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) { // gActive should not be checked, e.g. because of possible predamping in constitutive laws
       lak[k](0) = (*fcl)(gk[k](0),gdk[k](0), this);
       if(fdf) lak[k](1,getFrictionDirections()) = (*fdf)(gdk[k](1,getFrictionDirections()),fabs(lak[k](0)));
@@ -135,7 +136,7 @@ namespace MBSim {
       }
       WF[k][0] = -WF[k][1];
       for(unsigned int i=0; i<contour.size(); i++) {
-        h[i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation().T()*WF[k][i];
+        h[j][i] += cpData[k][i].getFrameOfReference().getJacobianOfTranslation(j).T()*WF[k][i];
       }
     }
   }
@@ -217,10 +218,10 @@ namespace MBSim {
     //cout << sv << endl;
   }
 
-  void Contact::updateJacobians(double t) {
+  void Contact::updateJacobians(double t, int j) {
     for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) 
       if(gActive[k]) 
-        for(unsigned int i=0; i<2; i++) contour[i]->updateJacobiansForFrame(cpData[k][i]);
+        for(unsigned int i=0; i<2; i++) contour[i]->updateJacobiansForFrame(cpData[k][i],j);
   }
 
   void Contact::updateWRef(const Mat& WParent, int j) {
@@ -228,11 +229,11 @@ namespace MBSim {
       int hInd =  contour[i]->getParent()->gethInd(parent,j);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
       Index J = Index(laInd,laInd+laSize-1);
-      W[i].resize()>>WParent(I,J);
+      W[j][i].resize()>>WParent(I,J);
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-        Index Ik = Index(0,W[i].rows()-1);
+        Index Ik = Index(0,W[j][i].rows()-1);
         Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-        Wk[k][i].resize()>>W[i](Ik,Jk);
+        Wk[j][k][i].resize()>>W[j][i](Ik,Jk);
       }
     }
   } 
@@ -242,11 +243,11 @@ namespace MBSim {
       int hInd =  contour[i]->getParent()->gethInd(parent,j);
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-      V[i].resize()>>VParent(I,J);
+      V[j][i].resize()>>VParent(I,J);
       for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-        Index Ik = Index(0,V[i].rows()-1);
+        Index Ik = Index(0,V[j][i].rows()-1);
         Index Jk = Index(laIndk[k],laIndk[k]+laSizek[k]-1);
-        Vk[k][i].resize()>>V[i](Ik,Jk);
+        Vk[j][k][i].resize()>>V[j][i](Ik,Jk);
       }
     } 
   }
@@ -255,7 +256,7 @@ namespace MBSim {
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->getParent()->gethInd(parent,j);
       Index I = Index(hInd,hInd+contour[i]->gethSize(j)-1);
-      h[i].resize()>>hParent(I);
+      h[j][i].resize()>>hParent(I);
     }
   } 
 
@@ -438,13 +439,21 @@ namespace MBSim {
 
         int laSizek = gdActive[i][0]+gdActive[i][1]*getFrictionDirections();
 
-        Wk.push_back(new Mat[2]);
-        Wk[i][0].resize(contour[0]->gethSize(),laSizek);
-        Wk[i][1].resize(contour[1]->gethSize(),laSizek);
+        Wk[0].push_back(new Mat[2]);
+        Wk[0][i][0].resize(contour[0]->gethSize(),laSizek);
+        Wk[0][i][1].resize(contour[1]->gethSize(),laSizek);
 
-        Vk.push_back(new Mat[2]);
-        Vk[i][0].resize(contour[0]->gethSize(),laSizek);
-        Vk[i][1].resize(contour[1]->gethSize(),laSizek);
+        Vk[0].push_back(new Mat[2]);
+        Vk[0][i][0].resize(contour[0]->gethSize(),laSizek);
+        Vk[0][i][1].resize(contour[1]->gethSize(),laSizek);
+
+        Wk[1].push_back(new Mat[2]);
+        Wk[1][i][0].resize(contour[0]->gethSize(1),laSizek);
+        Wk[1][i][1].resize(contour[1]->gethSize(1),laSizek);
+
+        Vk[1].push_back(new Mat[2]);
+        Vk[1][i][0].resize(contour[0]->gethSize(1),laSizek);
+        Vk[1][i][1].resize(contour[1]->gethSize(1),laSizek);
 
         fF.push_back(new Mat[2]);
         fF[i][0].resize(3,laSizek);

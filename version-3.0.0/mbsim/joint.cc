@@ -49,25 +49,33 @@ namespace MBSim {
     LinkMechanics::connect(frame1);
   }
 
-  void Joint::updatewb(double t) {
+  void Joint::updatewb(double t, int j) {
     Mat WJT = frame[0]->getOrientation()*JT;
     Vec sdT = WJT.T()*(WvP0P1);
 
-    wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation() - C.getGyroscopicAccelerationOfTranslation() - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
-    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation() - C.getGyroscopicAccelerationOfRotation() - crossProduct(C.getAngularVelocity(),WomP0P1));
+    wb(0,Wf.cols()-1) += Wf.T()*(frame[1]->getGyroscopicAccelerationOfTranslation(j) - C.getGyroscopicAccelerationOfTranslation(j) - crossProduct(C.getAngularVelocity(),WvP0P1+WJT*sdT));
+    wb(Wf.cols(),Wm.cols()+Wf.cols()-1) += Wm.T()*(frame[1]->getGyroscopicAccelerationOfRotation(j) - C.getGyroscopicAccelerationOfRotation(j) - crossProduct(C.getAngularVelocity(),WomP0P1));
   }
 
-  void Joint::updateW(double t) {
+  void Joint::updateW(double t, int j) {
     fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
     fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
     fF[1] = -fF[0];
     fM[1] = -fM[0];
+ //cout << "updateW" << endl;
+ // cout << "j = " << j << endl;
+ //  cout << "JT0 = " << C.getJacobianOfTranslation(j) << endl;
+ //  cout << "JT1 = " << frame[1]->getJacobianOfTranslation(j) << endl;
+ //  cout << "fF[0] = " << fF[0] << endl;
+ //  cout << "fF[1] = " << fF[1] << endl;
 
-    W[0] += C.getJacobianOfTranslation().T()*fF[0] + C.getJacobianOfRotation().T()*fM[0];
-    W[1] += frame[1]->getJacobianOfTranslation().T()*fF[1] + frame[1]->getJacobianOfRotation().T()*fM[1];
+    W[j][0] += C.getJacobianOfTranslation(j).T()*fF[0] + C.getJacobianOfRotation(j).T()*fM[0];
+    W[j][1] += frame[1]->getJacobianOfTranslation(j).T()*fF[1] + frame[1]->getJacobianOfRotation(j).T()*fM[1];
+ //  cout << "W[j][0] = " << W[j][0] << endl;
+ //  cout << "W[j][1] = " << W[j][1] << endl;
   }
 
-  void Joint::updateh(double t) {
+  void Joint::updateh(double t, int j) {
     for(int i=0; i<forceDir.cols(); i++) 
       la(i) = (*ffl)(g(i), gd(i));
 
@@ -78,8 +86,8 @@ namespace MBSim {
     WM[1] = Wm*la(IR);
     WF[0] = -WF[1];
     WM[0] = -WM[1];
-    h[0] += C.getJacobianOfTranslation().T()*WF[0] + C.getJacobianOfRotation().T()*WM[0];
-    h[1] += frame[1]->getJacobianOfTranslation().T()*WF[1] + frame[1]->getJacobianOfRotation().T()*WM[1];
+    h[j][0] += C.getJacobianOfTranslation(j).T()*WF[0] + C.getJacobianOfRotation(j).T()*WM[0];
+    h[j][1] += frame[1]->getJacobianOfTranslation(j).T()*WF[1] + frame[1]->getJacobianOfRotation(j).T()*WM[1];
   }
 
   void Joint::updateg(double t) {
@@ -103,12 +111,17 @@ namespace MBSim {
     gd(IR) = Wm.T()*WomP0P1;
   }
 
-  void Joint::updateJacobians(double t) {
+  void Joint::updateJacobians(double t, int j) {
     Mat tWrP0P1 = tilde(WrP0P1);
-    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation() - tWrP0P1*frame[0]->getJacobianOfRotation());
-    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation());
-    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation() - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation() + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)));
-    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation());
+    //cout << "---------------------------------------" << endl;
+    //cout << frame[0]->getJacobianOfTranslation(j) << endl;
+    //cout << frame[0]->getJacobianOfRotation(j) << endl;
+    //cout << "---------------------------------------" << endl;
+
+    C.setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrP0P1*frame[0]->getJacobianOfRotation(j),j);
+    C.setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
+    C.setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrP0P1*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrP0P1)),j);
+    C.setGyroscopicAccelerationOfRotation(frame[0]->getGyroscopicAccelerationOfRotation(j),j);
   }
 
   void Joint::updatexd(double t) {
@@ -157,6 +170,7 @@ namespace MBSim {
         Wm.resize(3,0);
       }
       resizeJacobians(0);
+      resizeJacobians(1);
       JT.resize(3,3-forceDir.cols());
       if(forceDir.cols() == 2)
         JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
@@ -515,8 +529,8 @@ namespace MBSim {
   }
 
   void Joint::resizeJacobians(int j) {
-    C.getJacobianOfTranslation().resize(3,frame[0]->getJacobianOfTranslation().cols());
-    C.getJacobianOfRotation().resize(3,frame[0]->getJacobianOfRotation().cols());
+    C.getJacobianOfTranslation(j).resize(3,frame[0]->getJacobianOfTranslation(j).cols());
+    C.getJacobianOfRotation(j).resize(3,frame[0]->getJacobianOfRotation(j).cols());
   }
 
 

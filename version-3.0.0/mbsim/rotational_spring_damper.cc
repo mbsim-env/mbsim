@@ -44,12 +44,12 @@ namespace MBSim {
     refFrame = body->getFrameOfReference();
   }
 
-  void RelativeRotationalSpringDamper::updateh(double t) {
+  void RelativeRotationalSpringDamper::updateh(double t, int j) {
     la(0) = (*func)(g(0),gd(0));
     WM[0] =  WtorqueDir*la; // projected force in direction of WtorqueDir
     WM[1] = -WM[0];
     for(unsigned int i=0; i<2; i++) {
-      h[i]+=trans(frame[i]->getJacobianOfRotation())*WM[i];
+      h[j][i]+=trans(frame[i]->getJacobianOfRotation())*WM[i];
     }
   }
 

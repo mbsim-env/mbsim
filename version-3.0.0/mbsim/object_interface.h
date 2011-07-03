@@ -63,7 +63,10 @@ namespace MBSim {
        * \brief update smooth right hand side \f[ \vh \f]
        * \param t simulation time
        */
-      virtual void updateh(double t) = 0;
+      virtual void updateh(double t, int i=0) = 0;
+
+      // TODO
+      virtual void updateh0Fromh1(double t) = 0;
 
       /**
        * \brief updates Jacobian for implicit integration regarding state
@@ -75,7 +78,7 @@ namespace MBSim {
        * \brief update mass matrix
        * \param t simulation time
        */
-      virtual void updateM(double t) = 0;
+      virtual void updateM(double t, int i=0) = 0;
 
       /**
        * \brief update state dependent variables (e.g. kinematics of frames, contours and bodies)
@@ -93,13 +96,13 @@ namespace MBSim {
        * \brief update h-vector for inverse kinetics
        * \param t simulation time
        */
-      virtual void updatehInverseKinetics(double t) = 0;
+      virtual void updatehInverseKinetics(double t, int i=0) = 0;
 
       /**
        * \brief update acceleration description of frames, contours and bodies
        * \param t simulation time
        */
-      virtual void updateJacobians(double t) = 0;
+      virtual void updateJacobians(double t, int j=0) = 0;
 
       /**
        * \brief update position increment
@@ -233,7 +236,7 @@ namespace MBSim {
        * \brief update JACOBIAN for inverse kinetics
        * \param t simulation time
        */
-      virtual void updateInverseKineticsJacobians(double t) = 0;
+//      virtual void updateInverseKineticsJacobians(double t) = 0;
 
       /**
        * \return associated plot group

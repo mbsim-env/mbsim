@@ -44,14 +44,14 @@ namespace MBSim {
   Object::~Object() {}
 
   void Object::updatedhdz(double t) {
-    Vec h0 = h.copy();
+    Vec h0 = h[0].copy();
 
     updateh(t); // update with correct state
-    Vec hEnd = h.copy();
+    Vec hEnd = h[0].copy();
 
     /**************** velocity dependent calculations ********************/
     for(int i=0;i<uSize[0];i++) {  
-      h = h0;
+      h[0] = h0;
 
       double ui = u(i); // save correct position
 
@@ -65,7 +65,7 @@ namespace MBSim {
 
     /***************** position dependent calculations ********************/
     for(int i=0;i<qSize;i++) { 
-      h = h0;
+      h[0] = h0;
 
       double qi = q(i); // save correct position
 
@@ -98,7 +98,7 @@ namespace MBSim {
     updateStateDependentVariables(t); 
     updateT(t); 
     updateJacobians(t);
-    h = hEnd;
+    h[0] = hEnd;
   }
 
   void Object::updatedq(double t, double dt) {
@@ -106,11 +106,11 @@ namespace MBSim {
   }
 
   void Object::updatedu(double t, double dt) {
-    ud = slvLLFac(LLM, h*dt+r);
+    ud = slvLLFac(LLM[0], h[0]*dt+r[0]);
   }
 
   void Object::updateud(double t) {
-    ud =  slvLLFac(LLM, h+r);
+    ud =  slvLLFac(LLM[0], h[0]+r[0]);
   }
 
   void Object::updateqd(double t) {
@@ -154,9 +154,9 @@ namespace MBSim {
       }
       if(getPlotFeature(rightHandSide)==enabled) {
         for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(h(i));
+          plotVector.push_back(h[0](i));
         for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(r(i)/dt);
+          plotVector.push_back(r[0](i)/dt);
       }
       if(getPlotFeature(energy)==enabled) {
         double Ttemp = computeKineticEnergy();
@@ -205,7 +205,7 @@ namespace MBSim {
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
-    h.resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
+    h[i].resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
@@ -221,7 +221,7 @@ namespace MBSim {
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r.resize()>>rParent(uInd[i],uInd[i]+uSize[i]-1);
+    r[i].resize()>>rParent(uInd[i],uInd[i]+uSize[i]-1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
@@ -229,11 +229,11 @@ namespace MBSim {
   }
 
   void Object::updateMRef(const SymMat &MParent, int i) {
-    M.resize()>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    M[i].resize()>>MParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::updateLLMRef(const SymMat &LLMParent, int i) {
-    LLM.resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
+    LLM[i].resize()>>LLMParent(Index(hInd[i],hInd[i]+hSize[i]-1));
   }
 
   void Object::init(InitStage stage) {  
@@ -286,7 +286,7 @@ namespace MBSim {
   }
 
   void Object::facLLM() {
-    LLM = facLL(M); 
+    LLM[0] = facLL(M[0]); 
   }
 
   void Object::sethInd(int hInd_, int j) {
