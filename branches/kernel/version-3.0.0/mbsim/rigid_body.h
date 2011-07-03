@@ -69,15 +69,31 @@ namespace MBSim {
       }
 
       virtual void updateT(double t) { if(fT) T = (*fT)(qRel,t); }
-      virtual void updateh(double t);
-      virtual void updatehInverseKinetics(double t);
+      virtual void updateh(double t, int j=0);
+      virtual void updateh0Fromh1(double t);
+      virtual void updatehInverseKinetics(double t, int j=0);
       virtual void updateStateDerivativeDependentVariables(double t);
-      virtual void updateM(double t) { (this->*updateM_)(t); }
-      virtual void updateStateDependentVariables(double t) { updateKinematicsForSelectedFrame(t); updateKinematicsForRemainingFramesAndContours(t); }
-      virtual void updateJacobians(double t) { updateJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
+      virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
+      virtual void updateStateDependentVariables(double t) { 
+	updateKinematicsForSelectedFrame(t); 
+	updateKinematicsForRemainingFramesAndContours(t); 
+      }
+      void  (RigidBody::*updateJacobians_[2])(double t); 
+      virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
+      void updateJacobians0(double t) { 
+	updateJacobiansForSelectedFrame0(t); 
+	updateJacobiansForRemainingFramesAndContours(t,0); 
+      }
+      void updateJacobians1(double t) { 
+	//updateJacobiansForSelectedFrame1(t); 
+	updateJacobiansForRemainingFramesAndContours1(t); 
+      }
+      //virtual void updateInverseKineticsJacobians(double t) { 
+      //  updateInverseKineticsJacobiansForSelectedFrame(t); 
+      //  updateJacobiansForRemainingFramesAndContours(t); 
+      //}
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
-      virtual void updateInverseKineticsJacobians(double t) { updateInverseKineticsJacobiansForSelectedFrame(t); updateJacobiansForRemainingFramesAndContours(t); }
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
@@ -102,7 +118,8 @@ namespace MBSim {
       /**
        * \brief updates JACOBIAN for kinematics starting from reference Frame
        */
-      virtual void updateJacobiansForSelectedFrame(double t);
+      virtual void updateJacobiansForSelectedFrame0(double t); 
+      virtual void updateJacobiansForSelectedFrame1(double t); 
 
       /**
        * \brief updates kinematics for remaining Frames starting with and from cog Frame
@@ -112,11 +129,12 @@ namespace MBSim {
       /**
        * \brief updates remaining JACOBIANS for kinematics starting with and from cog Frame
        */
-      virtual void updateJacobiansForRemainingFramesAndContours(double t);
+      virtual void updateJacobiansForRemainingFramesAndContours(double t, int j=0);
+      virtual void updateJacobiansForRemainingFramesAndContours1(double t);
       /**
        * \brief updates JACOBIAN for kinematics with involved inverse kinetics starting from reference Frame
        */
-      virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
+      //virtual void updateInverseKineticsJacobiansForSelectedFrame(double t);
       /*****************************************************/
 
       /* GETTER / SETTER */
@@ -277,7 +295,7 @@ namespace MBSim {
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
        */
-      fmatvec::Mat PJT, PJR, PdJT, PdJR;
+      fmatvec::Mat PJT[2], PJR[2], PdJT, PdJR;
 
       /**
        * guiding velocities of translation, rotation and their derivatives in parent system
@@ -288,11 +306,6 @@ namespace MBSim {
        * \brief TODO
        */
       fmatvec::Mat PJR0;
-
-      /** 
-       * \brief JACOBIAN of translation and rotation together with additional force and moment directions because of inverse kinetics
-       */
-      fmatvec::Mat PJTs, PJRs;
 
       /**
        * \brief rotation matrix from kinematic Frame to parent Frame
@@ -393,17 +406,17 @@ namespace MBSim {
       /**
        * \brief function pointer to update mass matrix
        */
-      void (RigidBody::*updateM_)(double t);
+      void (RigidBody::*updateM_)(double t, int i);
 
       /**
        * \brief update constant mass matrix
        */
-      void updateMConst(double t);
+      void updateMConst(double t, int i);
 
       /**
        * \brief update time dependend mass matrix
        */
-      void updateMNotConst(double t); 
+      void updateMNotConst(double t, int i); 
 
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix

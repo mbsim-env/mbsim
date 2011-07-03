@@ -106,12 +106,12 @@ namespace MBSim {
   }
 
   void Tree::updatedu(double t, double dt) {
-    ud = slvLLFac(LLM, h*dt+r);
+    ud = slvLLFac(LLM, h[0]*dt+r);
   }
 
   void Tree::updatezd(double t) {
     qd = T*u;
-    ud =  slvLLFac(LLM, h+r);
+    ud =  slvLLFac(LLM, h[0]+r);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);

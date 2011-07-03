@@ -260,8 +260,10 @@ namespace MBSim {
       MParent.resize(getuSize(1));
       TParent.resize(getqSize(),getuSize());
       LLMParent.resize(getuSize(1));
-      WParent.resize(getuSize(1),getlaSize());
-      VParent.resize(getuSize(1),getlaSize());
+      WParent[0].resize(getuSize(0),getlaSize());
+      VParent[0].resize(getuSize(0),getlaSize());
+      WParent[1].resize(getuSize(1),getlaSize());
+      VParent[1].resize(getuSize(1),getlaSize());
       wbParent.resize(getlaSize());
       laParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
@@ -270,14 +272,16 @@ namespace MBSim {
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
       zdParent.resize(getzSize());
-      hParent.resize(getuSize(1));
+      hParent[0].resize(getuSize(0));
+      hParent[1].resize(getuSize(1));
       dhdqObjectParent.resize(getuSize(1),getqSize());
       dhdqLinkParent.resize(getuSize(1),getqSize());
       dhduObjectParent.resize(getuSize(1));
       dhduLinkParent.resize(getuSize(1));
       dhdtObjectParent.resize(getuSize(1));
       dhdtLinkParent.resize(getuSize(1));
-      rParent.resize(getuSize(1));
+      rParent[0].resize(getuSize(0));
+      rParent[1].resize(getuSize(1));
       fParent.resize(getxSize());
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
@@ -298,20 +302,22 @@ namespace MBSim {
       updatelaRef(laParent);
       updategRef(gParent);
       updategdRef(gdParent);
-      updatehRef(hParent);
-      //updatedhdqRef(dhdqObjectParent,dhdqLinkParent);
-      //updatedhduRef(dhduObjectParent,dhduLinkParent);
-      //updatedhdtRef(dhdtObjectParent,dhdtLinkParent);
-      updaterRef(rParent);
-      updateWRef(WParent);
-      updateVRef(VParent);
+      updatehRef(hParent[0],0);
+      updaterRef(rParent[0],0);
+      updatehRef(hParent[1],1);
+      updaterRef(rParent[1],1);
+      updateWRef(WParent[0],0);
+      updateWRef(WParent[1],1);
+      updateVRef(VParent[0],0);
+      updateVRef(VParent[1],1);
       updatewbRef(wbParent);
-      if(uSize[0] != uSize[1]) {
-        resizeJacobians(1);
-        updatelaInverseKineticsRef(laInverseKineticsParent);
-        updateWInverseKineticsRef(WInverseKineticsParent,1);
-        resizeJacobians(0);
-      }
+
+      updatelaInverseKineticsRef(laInverseKineticsParent);
+      updateWInverseKineticsRef(WInverseKineticsParent);
+      updatehRef(hParent[1],1);
+      updaterRef(rParent[1],1);
+      updateWRef(WParent[1],1);
+      updateVRef(VParent[1],1);
 
       if(impactSolver==RootFinding) updateresRef(resParent);
       updaterFactorRef(rFactorParent);
@@ -620,13 +626,18 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystemSolver::updateh(double t) {
-    h.init(0);
-    Group::updateh(t);
+  void DynamicSystemSolver::updateh(double t, int j) {
+    h[j].init(0);
+    Group::updateh(t,j);
+  }
+
+  void DynamicSystemSolver::updateh0Fromh1(double t) {
+    h[0].init(0);
+    Group::updateh0Fromh1(t);
   }
 
   void DynamicSystemSolver::updatedhdz(double t) {
-    h.init(0);
+    h[0].init(0);
     dhdqObject.init(0);
     dhdqLink.init(0);
     dhduObject.init(0);
@@ -637,7 +648,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateM(double t) {
-    M.init(0);
+    M[0].init(0);
     Group::updateM(t);
   }
 
@@ -659,8 +670,8 @@ namespace MBSim {
     if(H5::FileSerie::getFlushOnes()) H5::FileSerie::flushAllFiles(); // flush files ones if requested
   }
 
-  void DynamicSystemSolver::updater(double t) {
-    r = V*la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+  void DynamicSystemSolver::updater(double t, int j) {
+    r[j] = V[j]*la; // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
   }
 
   void DynamicSystemSolver::updatewb(double t) {
@@ -668,14 +679,14 @@ namespace MBSim {
     Group::updatewb(t);
   }
 
-  void DynamicSystemSolver::updateW(double t) {
-    W.init(0);
-    Group::updateW(t);
+  void DynamicSystemSolver::updateW(double t, int j) {
+    W[j].init(0);
+    Group::updateW(t,j);
   }
 
-  void DynamicSystemSolver::updateV(double t) {
-    V = W;
-    Group::updateV(t);
+  void DynamicSystemSolver::updateV(double t, int j) {
+    V[j] = W[j];
+    Group::updateV(t,j);
   }
 
   void DynamicSystemSolver::plot(const Vec& zParent, double t, double dt) {
@@ -734,27 +745,26 @@ namespace MBSim {
 
     if(uSize[0] != uSize[1]) {
       resizeJacobians(1);
-      updatehRef(hParent,1);
-      updaterRef(rParent,1);
-      updateWRef(WParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updateVRef(VParent(Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updatehRef(hParent[1],1);
+      updaterRef(rParent[1],1);
+      updateWRef(WParent[1](Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
+      updateVRef(VParent[1](Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
       updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
       updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-      //updateStateDependentVariablesSpecial(t);
-      updateInverseKineticsJacobians(t);
+      //updateInverseKineticsJacobians(t);
       updateh(t);
       updateW(t); 
       updateV(t); 
       updater(t);
       updatehInverseKinetics(t);
       updateWInverseKinetics(t); 
-      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h+r));
+      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[0]+r[0]));
       plot(t,1);
       resizeJacobians(0);
-      updatehRef(hParent);
-      updaterRef(rParent);
-      updateWRef(WParent);
-      updateVRef(VParent);
+      updatehRef(hParent[0]);
+      updaterRef(rParent[0]);
+      updateWRef(WParent[0]);
+      updateVRef(VParent[0]);
     }
     else
       plot(t,1);
@@ -841,8 +851,8 @@ namespace MBSim {
     updateJacobians(0);
     calclaSize();
     calcrFactorSize();
-    updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
+    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)),0);
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -882,17 +892,17 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
-    la = slvLS(G,-(W.T()*slvLLFac(LLM,h) + wb));
+    la = slvLS(G,-(W[0].T()*slvLLFac(LLM[0],h[0]) + wb));
     return 1;
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations(double dt) {
-    la = slvLS(G,-(gd + W.T()*slvLLFac(LLM,h)*dt));
+    la = slvLS(G,-(gd + W[0].T()*slvLLFac(LLM[0],h[0])*dt));
     return 1;
   }
 
   void DynamicSystemSolver::updateG(double t) {
-    G.resize() = SqrMat(W.T()*slvLLFac(LLM,V)); 
+    G.resize() = SqrMat(W[0].T()*slvLLFac(LLM[0],V[0])); 
 
     if(checkGSize) Gs.resize();
     else if(Gs.cols() != G.size()) {
@@ -923,8 +933,8 @@ namespace MBSim {
       calclaSize();
       calcrFactorSize();
 
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updategdRef(gdParent(0,gdSize-1));
       if(impactSolver==RootFinding) updateresRef(resParent(0,laSize-1));
@@ -1002,8 +1012,8 @@ namespace MBSim {
       updategdRef(gdParent(0,gdSize-1));
       calclaSize();
       calcrFactorSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -1030,8 +1040,8 @@ namespace MBSim {
 
       calclaSize();
       calcrFactorSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1046,15 +1056,15 @@ namespace MBSim {
         updateV(t); 
         updateG(t); 
         updatewb(t); 
-        b.resize() = W.T()*slvLLFac(LLM,h) + wb;
+        b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();
         checkActiveLinks();
         calclaSize();
         calcrFactorSize();
-        updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updatelaRef(laParent(0,laSize-1));
         updatewbRef(wbParent(0,laSize-1));
         updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1064,8 +1074,8 @@ namespace MBSim {
 
       calclaSize();
       calcrFactorSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1083,15 +1093,15 @@ namespace MBSim {
         updateV(t);  // TODO necessary
         updateG(t);  // TODO necessary 
         updatewb(t);  // TODO necessary 
-        b.resize() = W.T()*slvLLFac(LLM,h) + wb;
+        b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
         int iter;
         iter = solveConstraints();
         checkActivegdd();
         checkActiveLinks();
         calclaSize();
         calcrFactorSize();
-        updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
         updatelaRef(laParent(0,laSize-1));
         updatewbRef(wbParent(0,laSize-1));
         updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1101,8 +1111,8 @@ namespace MBSim {
       checkActiveLinks();
       calclaSize();
       calcrFactorSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updatewbRef(wbParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1184,23 +1194,23 @@ namespace MBSim {
       updateg(t);
       Vec nu(getuSize());
       calclaSizeForActiveg();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updateW(t);
       Vec corr;
       corr = g;
       corr.init(0*tolProj);
-      SqrMat Gv= SqrMat(W.T()*slvLLFac(LLM,W)); 
+      SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
       // TODO: Wv*T check
       while(nrmInf(g-corr) >= tolProj) {
-        Vec mu = slvLS(Gv, -g+W.T()*nu+0.5*corr);
-        Vec dnu = slvLLFac(LLM,W*mu)-nu;
+        Vec mu = slvLS(Gv, -g+W[0].T()*nu+0.5*corr);
+        Vec dnu = slvLLFac(LLM[0],W[0]*mu)-nu;
         nu += dnu;
         q += T*dnu;
         updateStateDependentVariables(t);
         updateg(t);
       }
       calclaSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       calcgSize();
       updategRef(gParent(0,gSize-1));
     }
@@ -1212,9 +1222,9 @@ namespace MBSim {
       updategdRef(gdParent(0,gdSize-1));
       updategd(t);
 
-      SqrMat Gv= SqrMat(W.T()*slvLLFac(LLM,W)); 
+      SqrMat Gv= SqrMat(W[0].T()*slvLLFac(LLM[0],W[0])); 
       Vec mu = slvLS(Gv,-gd);
-      u += slvLLFac(LLM,W*mu);
+      u += slvLLFac(LLM[0],W[0]*mu);
       calcgdSize();
       updategdRef(gdParent(0,gdSize-1));
     }
@@ -1430,7 +1440,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::computeConstraintForces(double t) {
-    la = slvLS(G, -(W.T()*slvLLFac(LLM,h) + wb)); // slvLS because of undeterminded system of equations
+    la = slvLS(G, -(W[0].T()*slvLLFac(LLM[0],h[0]) + wb)); // slvLS because of undeterminded system of equations
   } 
 
   Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
@@ -1571,8 +1581,8 @@ namespace MBSim {
  //     cout << "laSize = " << laSize << endl;
  //     cout << "gdSize = " << gdSize << endl;
       calcrFactorSize();
-      updateWRef(WParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent(Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
       updatelaRef(laParent(0,laSize-1));
       updaterFactorRef(rFactorParent(0,rFactorSize-1));
 
@@ -1661,8 +1671,8 @@ namespace MBSim {
     facLLM(); 
     calclaSize();
     calcrFactorSize();
-    updateWRef(WParent(fmatvec::Index(0,getuSize()-1),fmatvec::Index(0,getlaSize()-1)));
-    updateVRef(VParent(fmatvec::Index(0,getuSize()-1),fmatvec::Index(0,getlaSize()-1)));
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1673,7 +1683,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      b.resize() = W.T()*slvLLFac(LLM,h) + wb;
+      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       int iter;
       iter = solveConstraints();
     //  std::cout << "iter = " << iter << std::endl;
@@ -1719,8 +1729,68 @@ namespace MBSim {
     facLLM(); 
     calclaSize();
     calcrFactorSize();
-    updateWRef(WParent(fmatvec::Index(0,getuSize()-1),fmatvec::Index(0,getlaSize()-1)));
-    updateVRef(VParent(fmatvec::Index(0,getuSize()-1),fmatvec::Index(0,getlaSize()-1)));
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updatelaRef(laParent(0,laSize-1));
+    updatewbRef(wbParent(0,laSize-1));
+    updaterFactorRef(rFactorParent(0,rFactorSize-1));
+    //std::cout << t << std::endl;
+    //std::cout << "laSize = " << laSize << std::endl;
+    if(laSize) {
+      updateW(t); 
+       cout << t << endl;
+      cout << "W= " <<endl << W[0]<< endl;
+    updateV(t); 
+      updateG(t); 
+      updatewb(t); 
+      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+      int iter;
+      iter = solveConstraints();
+      //std::cout << "iter = " << iter << std::endl;
+      //std::cout << la << std::endl;
+      //std::cout <<  std::endl;
+      //     computeConstraintForces(t); 
+    }
+    DynamicSystemSolver::plot(t,dt);
+
+    if(++flushCount > flushEvery) {
+      flushCount = 0;
+      H5::FileSerie::flushAllFiles();
+    }
+
+  }
+
+  void MySolver2::plot(const fmatvec::Vec& zParent, double t, double dt) {
+    if(q()!=zParent()) {
+      updatezRef(zParent);
+    }
+
+    if(qd()!=zdParent()) 
+      updatezdRef(zdParent);
+    updateStateDependentVariables(t);
+    updateg(t);
+    if(alwaysConsiderContact) {
+      checkActiveg();
+      checkActiveLinks();
+      updategd(t);
+      checkActivegd();
+    } else {
+      checkActiveLinks();
+      updategd(t);
+    }
+    updateT(t); 
+    updateJacobians(t);
+   // updateh(t); 
+   //cout << h[0] << endl;
+    updateJacobians(t,1);
+    updateh(t,1);
+    updateh0Fromh1(t);
+    updateM(t); 
+    facLLM(); 
+    calclaSize();
+    calcrFactorSize();
+    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
+    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
@@ -1731,7 +1801,7 @@ namespace MBSim {
       updateV(t); 
       updateG(t); 
       updatewb(t); 
-      b.resize() = W.T()*slvLLFac(LLM,h) + wb;
+      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       int iter;
       iter = solveConstraints();
       //std::cout << "iter = " << iter << std::endl;
@@ -1739,6 +1809,28 @@ namespace MBSim {
       //std::cout <<  std::endl;
       //     computeConstraintForces(t); 
     }
+    updater(t); 
+    updatezd(t);
+    //updateStateDerivativeDependentVariables(t);
+
+    updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
+    updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
+   // updateJacobians(t,1);
+    updateJacobiansInverseKinetics(t,1);
+   // h[0].init(0);
+   //cout << h[0] << endl;
+   //updateh(t,1);
+   //cout << h[1] << endl;
+   // updateh_(t);
+   // cout << h[0] << endl;
+  updateW(t,1); 
+    updateV(t,1); 
+    updater(t,1);
+    updatehInverseKinetics(t,1); // Accelerations of objects
+    updateWInverseKinetics(t,1); 
+      //cout << "WInverse = " <<endl << WInverseKinetics << endl;
+   if(WInverseKinetics.cols() >0)
+    laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[1]+r[1]));
     DynamicSystemSolver::plot(t,dt);
 
     if(++flushCount > flushEvery) {

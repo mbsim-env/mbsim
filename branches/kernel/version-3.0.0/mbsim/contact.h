@@ -63,14 +63,14 @@ namespace MBSim {
       virtual ~Contact();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t);
-      virtual void updateW(double t);
-      virtual void updateV(double t);
-      virtual void updateh(double t);
+      virtual void updatewb(double t, int i=0);
+      virtual void updateW(double t, int i=0);
+      virtual void updateV(double t, int i=0);
+      virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
       virtual void updateStopVector(double t);
-      virtual void updateJacobians(double t);
+      virtual void updateJacobians(double t, int j=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
@@ -255,7 +255,7 @@ namespace MBSim {
       /**
        * \brief condensed and full force direction matrix for possible contact points
        */
-      std::vector<fmatvec::Mat*> Vk, Wk;
+      std::vector<fmatvec::Mat*> Vk[2], Wk[2];
 
       /**
        * \brief size and index of force parameters, relative distances, relative velocities, stop vector and relaxation factors for possible contact points

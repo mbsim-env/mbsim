@@ -48,13 +48,13 @@ namespace MBSim {
        * \brief updates nonlinear relative acceleration term
        * \param simulation time
        */
-      virtual void updatewb(double t) = 0;
+      virtual void updatewb(double t, int i=0) = 0;
 
       /*!
        * \brief updates JACOBIAN matrix \f$\vW\f$ between Lagrangian multipliers and generalised velocities
        * \param simulation time
        */
-      virtual void updateW(double t) = 0;
+      virtual void updateW(double t, int i=0) = 0;
 
       /*!
        * for event driven integration, \f$\vW\f$ can be condensed regarding dependent
@@ -63,7 +63,7 @@ namespace MBSim {
        * \brief updates condensed JACOBIAN matrix between condensed Lagrangian multipliers and generalised velocities
        * \param simulation time
        */
-      virtual void updateV(double t) = 0;
+      virtual void updateV(double t, int i=0) = 0;
 
       /*!
        * for links holding smooth contributions \f$\vF\f$, the respective forces are projected
@@ -75,7 +75,7 @@ namespace MBSim {
        * \brief update smooth link force law
        * \param simulation time
        */
-      virtual void updateh(double t) = 0;
+      virtual void updateh(double t, int i=0) = 0;
 
       /**
        * \brief updates Jacobian for implicit integration regarding state
@@ -112,7 +112,7 @@ namespace MBSim {
        * \brief update acceleration description of frames and contours
        * \param simulation time
        */
-      virtual void updateJacobians(double t) = 0;
+      virtual void updateJacobians(double t, int j=0) = 0;
   };
 
 }

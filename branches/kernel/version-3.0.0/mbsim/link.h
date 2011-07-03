@@ -62,14 +62,14 @@ namespace MBSim {
       virtual ~Link() {}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t) {};
-      virtual void updateW(double t) {};
-      virtual void updateV(double t) {};
-      virtual void updateh(double t) {};
+      virtual void updatewb(double t, int i=0) {};
+      virtual void updateW(double t, int i=0) {};
+      virtual void updateV(double t, int i=0) {};
+      virtual void updateh(double t, int i=0) {};
       virtual void updatedhdz(double t) {};
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
-      virtual void updateJacobians(double t) {}
+      virtual void updateJacobians(double t, int j=0) {}
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -363,9 +363,9 @@ namespace MBSim {
       DynamicSystem* getParent() { return parent; }
       void setParent(DynamicSystem* sys) { parent = sys; }
 
-      const std::vector<fmatvec::Mat>& getW() const { return W; }
-      const std::vector<fmatvec::Mat>& getV() const { return V; }
-      const std::vector<fmatvec::Vec>& geth() const { return h; }
+      const std::vector<fmatvec::Mat>& getW(int i=0) const { return W[i]; }
+      const std::vector<fmatvec::Mat>& getV(int i=0) const { return V[i]; }
+      const std::vector<fmatvec::Vec>& geth(int i=0) const { return h[i]; }
 
       void setx(const fmatvec::Vec &x_) { x = x_; }
       const fmatvec::Vec& getxd() const { return xd; }
@@ -549,17 +549,17 @@ namespace MBSim {
       /** 
        * \brief force direction matrix for nonsmooth right hand side
        */
-      std::vector<fmatvec::Mat> W;
+      std::vector<fmatvec::Mat> W[2];
 
       /**
        * \brief reduced force direction matrix for nonsmooth right hand side
        */
-      std::vector<fmatvec::Mat> V;
+      std::vector<fmatvec::Mat> V[2];
       
       /**
        * \brief smooth complete and link right hand side
        */
-      std::vector<fmatvec::Vec> h;
+      std::vector<fmatvec::Vec> h[2];
       
       /**
        * \brief smooth Jacobians for implicit integration
@@ -571,7 +571,7 @@ namespace MBSim {
       /**
        * \brief nonsmooth right hand side
        */
-      std::vector<fmatvec::Vec> r;
+      std::vector<fmatvec::Vec> r[2];
       
       /**
        * \brief TODO

@@ -95,7 +95,7 @@ namespace MBSim {
     }
   }
 
-  void Constraint2::updateJacobians(double t){
+  void Constraint2::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel()(Index(0,bi[i]->getJRel().rows()-1),Index(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[i];
@@ -111,7 +111,7 @@ namespace MBSim {
     bd->getuRel().init(0);
   }
 
-  void Constraint3::updateJacobians(double t) {
+  void Constraint3::updateJacobians(double t, int jj) {
     bd->getJRel().init(0); 
   }
 
@@ -256,7 +256,7 @@ namespace MBSim {
     u = slvLU(A,b); 
   }
 
-  void JointConstraint::updateJacobians(double t) {
+  void JointConstraint::updateJacobians(double t, int jj) {
 
     for(unsigned int i=0; i<bd1.size(); i++)
       bd1[i]->updateAccelerations(t,if1[i]);

@@ -52,12 +52,12 @@ namespace MBSim {
       virtual ~Joint();
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updatewb(double t);
-      virtual void updateW(double t);
-      virtual void updateh(double t);
+      virtual void updatewb(double t, int i=0);
+      virtual void updateW(double t, int i=0);
+      virtual void updateh(double t, int i=0);
       virtual void updateg(double t);
       virtual void updategd(double t);
-      virtual void updateJacobians(double t);
+      virtual void updateJacobians(double t, int j=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */

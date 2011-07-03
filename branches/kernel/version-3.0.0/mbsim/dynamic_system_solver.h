@@ -144,7 +144,8 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(double t);
+      virtual void updateh(double t, int i=0);
+      virtual void updateh0Fromh1(double t);
       virtual void updatedhdz(double t);
       virtual void updateM(double t);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
@@ -162,10 +163,10 @@ namespace MBSim {
        * \brief update smooth link force law
        * \param simulation time
        */
-      virtual void updater(double t);
+      virtual void updater(double t, int j=0);
       virtual void updatewb(double t);
-      virtual void updateW(double t);
-      virtual void updateV(double t);
+      virtual void updateW(double t, int j=0);
+      virtual void updateV(double t, int j=0);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -223,8 +224,8 @@ namespace MBSim {
       const fmatvec::SqrMat& getJprox() const { return Jprox; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
 
-      const fmatvec::Mat& getWParent() const { return WParent; }
-      const fmatvec::Mat& getVParent() const { return VParent; }
+      const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
+      const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
       const fmatvec::Vec& getlaParent() const { return laParent; }
       const fmatvec::Vec& getgdParent() const { return gdParent; }
       const fmatvec::Vec& getresParent() const { return resParent; }
@@ -376,7 +377,7 @@ namespace MBSim {
       /** 
        * \brief compute kinetic energy of entire dynamic system
        */
-      double computeKineticEnergy() { return 0.5*u.T()*M*u; }
+      double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
 
       /** 
        * \brief compute potential energy of entire dynamic system 
@@ -491,12 +492,12 @@ namespace MBSim {
       /**
        * \brief contact force directions
        */
-      fmatvec::Mat WParent;
+      fmatvec::Mat WParent[2];
 
       /**
        * \brief condensed contact force directions
        */
-      fmatvec::Mat VParent;
+      fmatvec::Mat VParent[2];
 
       /**
        * \brief TODO
@@ -541,7 +542,7 @@ namespace MBSim {
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
        */
-      fmatvec::Vec hParent, hObjectParent, hLinkParent;
+      fmatvec::Vec hParent[2], hObjectParent, hLinkParent;
 
       /**
        * \brief matrices for implicit integration
@@ -553,7 +554,7 @@ namespace MBSim {
       /**
        * \brief nonsmooth right hand side
        */
-      fmatvec::Vec rParent;
+      fmatvec::Vec rParent[2];
 
       /**
        * \brief right hand side of order one parameters
@@ -779,6 +780,13 @@ class MySolver : public DynamicSystemSolver {
     void shift(fmatvec::Vec &zParent, const fmatvec::Vector<int> &jsv_, double t); 
     void getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t); 
     fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t); 
+    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
+
+};
+
+class MySolver2 : public DynamicSystemSolver {
+  public:
+    MySolver2(const std::string &projectName) : DynamicSystemSolver(projectName) {}
     virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
 
 };

@@ -60,14 +60,14 @@ namespace MBSim {
       cp.getFrameOfReference().setAngularVelocity(R.getAngularVelocity());
   }
 
-  void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp) {
+  void Contour1sAnalytical::updateJacobiansForFrame(ContourPointData &cp, int j) {
     Vec WrPC = cp.getFrameOfReference().getPosition() - R.getPosition();
     Mat tWrPC = tilde(WrPC);
 
     cp.getFrameOfReference().setJacobianOfTranslation(
-        R.getJacobianOfTranslation() - tWrPC*R.getJacobianOfRotation());
+        R.getJacobianOfTranslation(j) - tWrPC*R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setJacobianOfRotation(
-        R.getJacobianOfRotation());
+        R.getJacobianOfRotation(j),j);
     cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(
         R.getGyroscopicAccelerationOfTranslation() - tWrPC*R.getGyroscopicAccelerationOfRotation() + 
         crossProduct(R.getAngularVelocity(),crossProduct(R.getAngularVelocity(),WrPC)));
@@ -75,10 +75,10 @@ namespace MBSim {
         R.getGyroscopicAccelerationOfRotation());
 
     // adapt dimensions if necessary
-    if(cp.getFrameOfReference().getJacobianOfTranslation().rows() == 0)
-      cp.getFrameOfReference().getJacobianOfTranslation().resize(3,R.getJacobianOfTranslation().cols());
-    if(cp.getFrameOfReference().getJacobianOfRotation().rows() == 0)
-      cp.getFrameOfReference().getJacobianOfRotation().resize(3,R.getJacobianOfRotation().cols());
+    if(cp.getFrameOfReference().getJacobianOfTranslation(j).rows() == 0)
+      cp.getFrameOfReference().getJacobianOfTranslation(j).resize(3,R.getJacobianOfTranslation(j).cols());
+    if(cp.getFrameOfReference().getJacobianOfRotation(j).rows() == 0)
+      cp.getFrameOfReference().getJacobianOfRotation(j).resize(3,R.getJacobianOfRotation(j).cols());
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

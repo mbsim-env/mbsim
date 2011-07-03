@@ -38,7 +38,7 @@ namespace MBSim {
 #endif
   {}
 
-  void SpringDamper::updateh(double t) {
+  void SpringDamper::updateh(double t, int j) {
     la(0)=(*func)(g(0),gd(0));
     if(refFrame==0 && dist<=epsroot() && abs(la(0))>epsroot())
       cout<<"Warning! The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<t<<endl;
@@ -48,7 +48,7 @@ namespace MBSim {
       WF[0]=WforceDir*la; // projected force in direction of WforceDir
     WF[1]=-WF[0];
     for(unsigned int i=0; i<2; i++) {
-      h[i]+=frame[i]->getJacobianOfTranslation().T()*WF[i];
+      h[j][i]+=frame[i]->getJacobianOfTranslation(j).T()*WF[i];
     }
   }
 

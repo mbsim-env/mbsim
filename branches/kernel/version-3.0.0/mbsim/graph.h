@@ -54,7 +54,7 @@ namespace MBSim {
       virtual void sethSize(int h, int j=0);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
-      virtual void updateInverseKineticsJacobians(double t);
+      //virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -62,7 +62,7 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
-      virtual void updateJacobians(double t);
+      virtual void updateJacobians(double t, int j=0);
       void facLLM(); 
       /***************************************************/
 

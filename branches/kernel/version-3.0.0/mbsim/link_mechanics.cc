@@ -45,19 +45,19 @@ namespace MBSim {
     /***************************** FRAMES ***************************************/
     vector<Vec> h0;
     for(unsigned int i=0; i<frame.size(); i++) { // save old values
-      h0.push_back(h[i].copy());
+      h0.push_back(h[0][i].copy());
     }
     if(frame.size()) updateh(t);
     vector<Vec> hEnd;
     for(unsigned int i=0; i<frame.size(); i++) { // save with correct state
-      hEnd.push_back(h[i].copy());
+      hEnd.push_back(h[0][i].copy());
     }
 
     /****************** velocity dependent calculations ***********************/
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int l=0; l<frame.size(); l++) {
         for(int j=0; j<frame[l]->getParent()->getuSize(); j++) {
-          h[i] = h0[i].copy();
+          h[0][i] = h0[i].copy();
 
           double uParentj = frame[l]->getParent()->getu()(j); // save correct position
 
@@ -76,7 +76,7 @@ namespace MBSim {
     for(unsigned int i=0; i<frame.size(); i++) 
       for(unsigned int l=0; l<frame.size(); l++) {
         for(int j=0; j<frame[l]->getParent()->getq().size(); j++) {
-          h[i] = h0[i].copy();
+          h[0][i] = h0[i].copy();
 
           double qParentj = frame[l]->getParent()->getq()(j); // save correct position
 
@@ -122,23 +122,23 @@ namespace MBSim {
       updategd(t);
       frame[i]->getParent()->updateT(t); 
       updateJacobians(t);
-      h[i] = hEnd[i].copy();
+      h[0][i] = hEnd[i].copy();
     }
 
     /**************************** CONTOURES ****************************************/
     for(unsigned int i=0; i<contour.size(); i++) { // save old values
-      h0.push_back(h[frame.size()+i].copy());
+      h0.push_back(h[0][frame.size()+i].copy());
     }
     if(contour.size()) updateh(t); 
     for(unsigned int i=0; i<contour.size(); i++) { // save with correct state
-      hEnd.push_back(h[frame.size()+i].copy());
+      hEnd.push_back(h[0][frame.size()+i].copy());
     }
 
     /****************** velocity dependent calculations *************************/
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int l=0; l<contour.size(); l++) { 
         for(int j=0; j<contour[l]->getParent()->getuSize(); j++) {
-          h[frame.size()+i] = h0[frame.size()+i].copy();
+          h[0][frame.size()+i] = h0[frame.size()+i].copy();
 
           double uParentj = contour[l]->getParent()->getu()(j); // save correct position
 
@@ -157,7 +157,7 @@ namespace MBSim {
     for(unsigned int i=0; i<contour.size(); i++) 
       for(unsigned int l=0; l<contour.size(); l++) { 
         for(int j=0; j<contour[l]->getParent()->getq().size(); j++) {
-          h[frame.size()+i] = h0[frame.size()+i].copy();
+          h[0][frame.size()+i] = h0[frame.size()+i].copy();
 
           double qParentj = contour[l]->getParent()->getq()(j); // save correct position
 
@@ -202,7 +202,7 @@ namespace MBSim {
       updategd(t);
       contour[i]->getParent()->updateT(t); 
       updateJacobians(t);
-      h[frame.size()+i] = hEnd[frame.size()+i].copy();
+      h[0][frame.size()+i] = hEnd[frame.size()+i].copy();
     }
   }
 
@@ -262,13 +262,13 @@ namespace MBSim {
   void LinkMechanics::updateWRef(const Mat& WParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
-      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
-      W[i].resize()>>WParent(I,J);
+      Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation(j).cols()-1); // TODO Prüfen ob hSize
+      W[j][i].resize()>>WParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->gethSize(j)-1);
-      W[i]>>WParent(I,J);
+      W[j][i]>>WParent(I,J);
     }
   } 
 
@@ -276,23 +276,23 @@ namespace MBSim {
     for(unsigned i=0; i<frame.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
-      V[i].resize()>>VParent(I,J);
+      V[j][i].resize()>>VParent(I,J);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index J = Index(laInd,laInd+laSize-1);
       Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-      V[i]>>VParent(I,J);
+      V[j][i]>>VParent(I,J);
     }
   } 
 
   void LinkMechanics::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<frame.size(); i++) {
       Index I = Index(frame[i]->getParent()->gethInd(parent,j),frame[i]->getParent()->gethInd(parent,j)+frame[i]->getJacobianOfTranslation().cols()-1);
-      h[i].resize()>>hParent(I);
+      h[j][i].resize()>>hParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       Index I = Index(contour[i]->getParent()->gethInd(parent,j),contour[i]->getParent()->gethInd(parent,j)+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-      h[i].resize()>>hParent(I);
+      h[j][i].resize()>>hParent(I);
     }
   } 
 
@@ -341,12 +341,12 @@ namespace MBSim {
   for(unsigned i=0; i<frame.size(); i++) {
       int hInd =  frame[i]->getParent()->gethInd(parent,j);
       Index I = Index(hInd,hInd+frame[i]->getJacobianOfTranslation().cols()-1);
-      r[i].resize()>>rParent(I);
+      r[j][i].resize()>>rParent(I);
     }
     for(unsigned i=0; i<contour.size(); i++) {
       int hInd =  contour[i]->getParent()->gethInd(parent,j);
       Index I = Index(hInd,hInd+contour[i]->getReferenceJacobianOfTranslation().cols()-1);
-      r[i].resize()>>rParent(I);
+      r[j][i].resize()>>rParent(I);
     }
   } 
 
@@ -355,15 +355,22 @@ namespace MBSim {
       Link::init(stage);
 
       for(unsigned int i=0; i<frame.size(); i++) {
-        W.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
-        V.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),laSize));
-        h.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        W[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
+        V[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
+        h[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
+        W[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
+        V[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
+        h[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
+	cout << "init" << endl;
+	cout << i << endl;
+	cout << frame[i]->getJacobianOfTranslation(1).cols() << endl;
         for(unsigned int j=0; j<frame.size(); j++) {
           dhdq.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getqSize()));
           dhdu.push_back(Mat(frame[i]->getJacobianOfTranslation().cols(),frame[j]->getParent()->getuSize()));
         }
         dhdt.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
-        r.push_back(Vec(frame[i]->getJacobianOfTranslation().cols()));
+        r[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
+        r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
         WF.push_back(Vec(3));
         WM.push_back(Vec(3));
         fF.push_back(Mat(3,laSize));
@@ -375,15 +382,19 @@ namespace MBSim {
 #endif
 
       for(unsigned int i=0; i<contour.size(); i++) {
-        W.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
-        V.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),laSize));
-        h.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        W[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
+        V[0].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(0).cols(),laSize));
+        h[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
+        W[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
+        V[1].push_back(Mat(contour[i]->getReferenceJacobianOfTranslation(1).cols(),laSize));
+        h[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
         for(unsigned int j=0; j<contour.size(); j++) {
           dhdq.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getqSize()));
           dhdu.push_back(Mat(contour[i]->getReferenceJacobianOfTranslation().cols(),contour[j]->getParent()->getuSize()));
         }
         dhdt.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
-        r.push_back(Vec(contour[i]->getReferenceJacobianOfTranslation().cols()));
+        r[0].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(0).cols()));
+        r[1].push_back(Vec(contour[i]->getReferenceJacobianOfTranslation(1).cols()));
         WF.push_back(Vec(3));
         WM.push_back(Vec(3));
         fF.push_back(Mat(3,laSize));

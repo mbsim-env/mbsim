@@ -66,7 +66,7 @@ namespace MBSim {
       void init(InitStage stage);
 
       void updateStateDependentVariables(double t);
-      void updateJacobians(double t);
+      void updateJacobians(double t, int j=0);
   };
 
   /** 
@@ -82,7 +82,7 @@ namespace MBSim {
       Constraint3(const std::string &name, RigidBody* body);
 
       void updateStateDependentVariables(double t);
-      void updateJacobians(double t);
+      void updateJacobians(double t, int j=0);
   };
 
   /** 
@@ -138,7 +138,7 @@ namespace MBSim {
 
       fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
       void updateStateDependentVariables(double t); 
-      void updateJacobians(double t); 
+      void updateJacobians(double t, int j=0); 
       virtual void initializeUsingXML(TiXmlElement *element);
 
     private:

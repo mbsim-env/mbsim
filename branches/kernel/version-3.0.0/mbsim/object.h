@@ -52,8 +52,9 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) {};
-      virtual void updateh(double t) {};
-      virtual void updateM(double t) {};
+      virtual void updateh(double t, int j=0) {};
+      virtual void updateh0Fromh1(double t) {};
+      virtual void updateM(double t, int i=0) {};
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt);
       virtual void updatedu(double t, double dt);
@@ -78,7 +79,7 @@ namespace MBSim {
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
       virtual void updateStateDerivativeDependentVariables(double t) {};
-      virtual void updatehInverseKinetics(double t) {};
+      virtual void updatehInverseKinetics(double t, int i=0) {};
       /*******************************************************/ 
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -218,7 +219,7 @@ namespace MBSim {
       /**
        * \return kinetic energy 
        */
-      virtual double computeKineticEnergy() { return 0.5*u.T()*M*u; }
+      virtual double computeKineticEnergy() { return 0.5*u.T()*M[0]*u; }
 
       /**
        * \return potential energy
@@ -250,16 +251,16 @@ namespace MBSim {
       const fmatvec::Index& getuIndex() const { return Iu;}
       const fmatvec::Index& gethIndex() const { return Ih;}
 
-      const fmatvec::Vec& geth() const { return h; };
-      fmatvec::Vec& geth() { return h; };
-      const fmatvec::Vec& getr() const { return r; };
-      fmatvec::Vec& getr() { return r; };
-      const fmatvec::SymMat& getM() const { return M; };
-      fmatvec::SymMat& getM() { return M; };
+      const fmatvec::Vec& geth(int i=0) const { return h[i]; };
+      fmatvec::Vec& geth(int i=0) { return h[i]; };
+      const fmatvec::Vec& getr(int i=0) const { return r[i]; };
+      fmatvec::Vec& getr(int i=0) { return r[i]; };
+      const fmatvec::SymMat& getM(int i=0) const { return M[i]; };
+      fmatvec::SymMat& getM(int i=0) { return M[i]; };
       const fmatvec::Mat& getT() const { return T; };
       fmatvec::Mat& getT() { return T; };
-      const fmatvec::SymMat& getLLM() const { return LLM; };
-      fmatvec::SymMat& getLLM() { return LLM; };
+      const fmatvec::SymMat& getLLM(int i=0) const { return LLM[i]; };
+      fmatvec::SymMat& getLLM(int i=0) { return LLM[i]; };
 
       fmatvec::Vec& getq() { return q; };
       fmatvec::Vec& getu() { return u; };
@@ -337,7 +338,7 @@ namespace MBSim {
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
        */
-      fmatvec::Vec h, r;
+      fmatvec::Vec h[2], r[2];
 
       /** 
        * \brief Jacobians of h
@@ -354,12 +355,12 @@ namespace MBSim {
       /** 
        * \brief mass matrix 
        */
-      fmatvec::SymMat M;
+      fmatvec::SymMat M[2];
 
       /**
        * \brief LU-decomposition of mass matrix 
        */
-      fmatvec::SymMat LLM;
+      fmatvec::SymMat LLM[2];
 
       /**
        * \brief indices for velocities and right hand side
