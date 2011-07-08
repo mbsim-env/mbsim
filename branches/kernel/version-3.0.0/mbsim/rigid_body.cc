@@ -88,18 +88,39 @@ namespace MBSim {
     h[0] += frame[0]->getJacobianOfTranslation(0).T()*(h[1](0,2) - m*frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(0).T()*(h[1](3,5) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation());
   }
 
+  void RigidBody::updateW0FromW1(double t) {
+    W[0] += frame[0]->getJacobianOfTranslation(0).T()*W[1](Index(0,2),Index(0,W[1].cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*W[1](Index(3,5),Index(0,W[1].cols()-1));
+  }
+
+  void RigidBody::updateV0FromV1(double t) {
+    V[0] += frame[0]->getJacobianOfTranslation(0).T()*V[1](Index(0,2),Index(0,V[1].cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
+  }
+
+  void RigidBody::updateud0Fromud1(double t) {
+  //  cout << name << endl;
+  //  cout << uSize[0] << endl;
+  //  cout << uSize[1] << endl;
+  //  cout << ud[0] << endl;
+  //  cout << ud[1] << endl;
+  //  cout << udall[0] << endl;
+  //  cout << udall[1] << endl;
+  //  cout <<  frame[0]->getJacobianOfTranslation(0)  << endl;
+  //  cout <<  frame[0]->getJacobianOfTranslation(1)  << endl;
+    udall[0] += frame[0]->getJacobianOfTranslation(0).T()*udall[1](0,2) + frame[0]->getJacobianOfRotation(0).T()*udall[1](3,5);
+  }
+
   void RigidBody::updatehInverseKinetics(double t, int j) {
     //cout << name << endl,
     //cout << j << endl;
     //cout << frame[0]->getJacobianOfTranslation(j) << endl;
     //cout << frame[0]->getJacobianOfRotation(j) << endl;
-    h[j] -= frame[0]->getJacobianOfTranslation(j).T()*m*(frame[0]->getJacobianOfTranslation()*udall + frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(j).T()*WThetaS*(frame[0]->getJacobianOfRotation()*udall + frame[0]->getGyroscopicAccelerationOfRotation());
+    h[j] -= frame[0]->getJacobianOfTranslation(j).T()*m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(j).T()*WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation());
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
 
-    aT = frame[0]->getJacobianOfTranslation()*udall;// + frame[0]->getGyroscopicAccelerationOfTranslation();
-    aR = frame[0]->getJacobianOfRotation()*udall; //+ frame[0]->getGyroscopicAccelerationOfRotation(); 
+    aT = frame[0]->getJacobianOfTranslation()*udall[0];// + frame[0]->getGyroscopicAccelerationOfTranslation();
+    aR = frame[0]->getJacobianOfRotation()*udall[0]; //+ frame[0]->getGyroscopicAccelerationOfRotation(); 
   }
 
   void RigidBody::calcqSize() {
@@ -614,7 +635,7 @@ namespace MBSim {
 #endif
 
   void RigidBody::updateMConst(double t, int i) {
-    M[i] += Mbuf;
+    M[i] += Mbuf; // TODO
   }
 
   void RigidBody::updateMNotConst(double t, int i) {

@@ -53,12 +53,15 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateT(double t) {};
       virtual void updateh(double t, int j=0) {};
-      virtual void updateh0Fromh1(double t) {};
+      virtual void updateh0Fromh1(double t);
+      virtual void updateW0FromW1(double t);
+      virtual void updateV0FromV1(double t);
       virtual void updateM(double t, int i=0) {};
       virtual void updatedhdz(double t);
       virtual void updatedq(double t, double dt);
       virtual void updatedu(double t, double dt);
-      virtual void updateud(double t);
+      virtual void updateud(double t, int i=0);
+      virtual void updateud0Fromud1(double t);
       virtual void updateqd(double t);
       virtual void updatezd(double t);
       virtual void sethSize(int hSize_, int i=0);
@@ -117,13 +120,13 @@ namespace MBSim {
        * \brief references to differentiated velocities of dynamic system parent
        * \param udRef vector to be referenced
        */
-      virtual void updateudRef(const fmatvec::Vec& udRef);
+      virtual void updateudRef(const fmatvec::Vec& udRef, int i=0);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param udallRef vector to be referenced
        */
-      virtual void updateudallRef(const fmatvec::Vec& udallRef);
+      virtual void updateudallRef(const fmatvec::Vec& udallRef, int i=0);
 
       /**
        * \brief references to smooth force vector of dynamic system parent
@@ -131,6 +134,9 @@ namespace MBSim {
        * \param i    index of normal usage and inverse kinetics
        */
       virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
+
+      virtual void updateWRef(const fmatvec::Mat& WRef, int i=0);
+      virtual void updateVRef(const fmatvec::Mat& VRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
@@ -192,7 +198,7 @@ namespace MBSim {
       /**
        * \brief perform Cholesky decomposition of mass martix
        */
-      virtual void facLLM();
+      virtual void facLLM(int i=0);
 
       /**
        * \brief checks dependency on other objects.
@@ -271,9 +277,9 @@ namespace MBSim {
       fmatvec::Vec& getu0() { return u0; };
 
       const fmatvec::Vec& getqd() const { return qd; };
-      const fmatvec::Vec& getud() const { return ud; };
+      const fmatvec::Vec& getud(int i=0) const { return ud[i]; };
       fmatvec::Vec& getqd() { return qd; };
-      fmatvec::Vec& getud() { return ud; };
+      fmatvec::Vec& getud(int i=0) { return ud[i]; };
 
       void setq(const fmatvec::Vec &q_) { q = q_; }
       void setu(const fmatvec::Vec &u_) { u = u_; }
@@ -333,12 +339,14 @@ namespace MBSim {
       /**
        * \brief differentiated positions, velocities
        */
-      fmatvec::Vec qd, ud, udall;
+      fmatvec::Vec qd, ud[2], udall[2];
 
       /** 
        * \brief complete and object smooth and nonsmooth right hand side
        */
       fmatvec::Vec h[2], r[2];
+
+      fmatvec::Mat W[2], V[2];
 
       /** 
        * \brief Jacobians of h

@@ -68,13 +68,14 @@ namespace MBSim {
       virtual void updateT(double t); 
       virtual void updateh(double t, int i=0); 
       virtual void updateh0Fromh1(double t); 
+      virtual void updateud0Fromud1(double t); 
       virtual void updateStateDerivativeDependentVariables(double t); 
       virtual void updatedhdz(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
-      virtual void updateud(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
-      virtual void updateqd(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateud(double t, int i=0) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateqd(double t);
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -146,7 +147,7 @@ namespace MBSim {
       /**
        * \brief compute Cholesky decomposition of mass matrix TODO necessary?
        */
-      virtual void facLLM() = 0;
+      virtual void facLLM(int i=0) = 0;
 
       /**
        * \brief solve contact equations with single step fixed point scheme on acceleration level 
@@ -321,13 +322,13 @@ namespace MBSim {
        * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudRef(const fmatvec::Vec &ref);
+      void updateudRef(const fmatvec::Vec &ref, int i=0);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudallRef(const fmatvec::Vec &ref);
+      void updateudallRef(const fmatvec::Vec &ref, int i=0);
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
@@ -426,6 +427,8 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updateWRef(const fmatvec::Mat &ref, int i=0);
+
+      void updateWnVRefObjects();
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
@@ -838,7 +841,7 @@ namespace MBSim {
       /**
        * \brief velocities, differentiated velocities, initial velocities
        */
-      fmatvec::Vec u, ud, u0;
+      fmatvec::Vec u, ud[2], u0;
 
       /**
        * \brief order one parameters, differentiated order one parameters, initial order one parameters

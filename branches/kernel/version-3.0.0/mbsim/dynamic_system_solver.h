@@ -147,7 +147,7 @@ namespace MBSim {
       virtual void updateh(double t, int i=0);
       virtual void updateh0Fromh1(double t);
       virtual void updatedhdz(double t);
-      virtual void updateM(double t);
+      virtual void updateM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
       /***************************************************/
 
@@ -164,7 +164,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updater(double t, int j=0);
-      virtual void updatewb(double t);
+      virtual void updatewb(double t, int j=0);
       virtual void updateW(double t, int j=0);
       virtual void updateV(double t, int j=0);
       /***************************************************/
@@ -297,7 +297,7 @@ namespace MBSim {
        * \brief updates mass action matrix
        * \param time
        */
-      void updateG(double t);
+      void updateG(double t, int i=0);
 
       /**
        * \brief decrease relaxation factors if mass action matrix is not diagonal dominant
@@ -477,12 +477,12 @@ namespace MBSim {
       /**
        * \brief mass matrix
        */
-      fmatvec::SymMat MParent;
+      fmatvec::SymMat MParent[2];
 
       /**
        * \brief Cholesky decomposition of mass matrix
        */
-      fmatvec::SymMat LLMParent;
+      fmatvec::SymMat LLMParent[2];
 
       /**
        * \brief matrix of linear relation between differentiated positions and velocities
@@ -538,6 +538,8 @@ namespace MBSim {
        * \brief differentiated state
        */
       fmatvec::Vec zdParent;
+
+      fmatvec::Vec udParent1;
 
       /**
        * \brief smooth, smooth with respect to objects, smooth with respect to links right hand side
@@ -774,6 +776,7 @@ namespace MBSim {
 
   };
 
+  // Test für neues ereignisbasiertes Verfahren
 class MySolver : public DynamicSystemSolver {
   public:
     MySolver(const std::string &projectName) : DynamicSystemSolver(projectName) {}
@@ -784,9 +787,20 @@ class MySolver : public DynamicSystemSolver {
 
 };
 
+  // Test für Berechnung der Gelenkkräfte bei Baumstrukturen
 class MySolver2 : public DynamicSystemSolver {
   public:
     MySolver2(const std::string &projectName) : DynamicSystemSolver(projectName) {}
+    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
+
+};
+
+  // Test für Berechnung der Gelenkkräfte bei Baumstrukturen bei
+  // Gelenkkraftabhängigkeiten
+class MySolver3 : public DynamicSystemSolver {
+  public:
+    MySolver3(const std::string &projectName) : DynamicSystemSolver(projectName) {}
+    fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t); 
     virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
 
 };

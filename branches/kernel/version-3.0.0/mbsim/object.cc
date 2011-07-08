@@ -106,11 +106,11 @@ namespace MBSim {
   }
 
   void Object::updatedu(double t, double dt) {
-    ud = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
   }
 
-  void Object::updateud(double t) {
-    ud =  slvLLFac(LLM[0], h[0]+r[0]);
+  void Object::updateud(double t, int i) {
+    ud[i] =  slvLLFac(LLM[i], h[i]+r[i]);
   }
 
   void Object::updateqd(double t) {
@@ -150,7 +150,7 @@ namespace MBSim {
         for(int i=0; i<qSize; ++i)
           plotVector.push_back(qd(i)/dt);
         for(int i=0; i<uSize[0]; ++i)
-          plotVector.push_back(ud(i)/dt);
+          plotVector.push_back(ud[0](i)/dt);
       }
       if(getPlotFeature(rightHandSide)==enabled) {
         for(int i=0; i<uSize[0]; ++i)
@@ -196,16 +196,24 @@ namespace MBSim {
     uall>>uParent(hInd[0],hInd[0]+hSize[0]-1);
   }
 
-  void Object::updateudRef(const Vec &udParent) {
-    ud>>udParent(uInd[0],uInd[0]+uSize[0]-1);
+  void Object::updateudRef(const Vec &udParent, int i) {
+    ud[i]>>udParent(uInd[i],uInd[i]+uSize[i]-1);
   }
 
-  void Object::updateudallRef(const Vec &udParent) {
-    udall>>udParent(hInd[0],hInd[0]+hSize[0]-1);
+  void Object::updateudallRef(const Vec &udParent, int i) {
+    udall[i]>>udParent(hInd[i],hInd[i]+hSize[i]-1);
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
     h[i].resize()>>hParent(hInd[i],hInd[i]+hSize[i]-1);
+  }
+
+  void Object::updateWRef(const Mat& WParent, int i) {
+    W[i].resize()>>WParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,WParent.cols()-1));
+  }
+
+  void Object::updateVRef(const Mat& VParent, int i) {
+    V[i].resize()>>VParent(Index(hInd[i],hInd[i]+hSize[i]-1),Index(0,VParent.cols()-1));
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
@@ -285,8 +293,8 @@ namespace MBSim {
       u = Vec(uSize[0], INIT, 0);
   }
 
-  void Object::facLLM() {
-    LLM[0] = facLL(M[0]); 
+  void Object::facLLM(int i) {
+    LLM[i] = facLL(M[i]); 
   }
 
   void Object::sethInd(int hInd_, int j) {
@@ -347,6 +355,19 @@ namespace MBSim {
       dependency.push_back(buf);
     }
     return lOld;
+  }
+
+  void Object::updateW0FromW1(double t) {
+    W[0] = W[1];
+  }
+  void Object::updateV0FromV1(double t) {
+    V[0] = V[1];
+  }
+  void Object::updateh0Fromh1(double t) {
+    h[0] = h[1];
+  }
+  void Object::updateud0Fromud1(double t) {
+    ud[0] = ud[1];
   }
 }
 

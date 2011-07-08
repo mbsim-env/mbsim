@@ -41,12 +41,12 @@ namespace MBSim {
 
   Group::~Group() {}
 
-  void Group::facLLM() {
+  void Group::facLLM(int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (*i)->facLLM();
+      (*i)->facLLM(j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->facLLM();
+      (*i)->facLLM(j);
   }
 
   void Group::updateStateDependentVariables(double t) {
@@ -89,6 +89,14 @@ namespace MBSim {
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
       (*i)->updatedu(t,dt);
+  }
+
+  void Group::updateud(double t, int j) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateud(t,j);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i)
+      (*i)->updateud(t,j);
   }
 
   void Group::updatezd(double t) {

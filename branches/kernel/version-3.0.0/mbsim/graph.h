@@ -51,6 +51,7 @@ namespace MBSim {
       virtual void updateStateDependentVariables(double t);
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
+      virtual void updateud(double t, int i=0);
       virtual void sethSize(int h, int j=0);
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
@@ -63,7 +64,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF SUBSYSTEM */
       virtual void updateJacobians(double t, int j=0);
-      void facLLM(); 
+      void facLLM(int i=0); 
       /***************************************************/
 
       /**

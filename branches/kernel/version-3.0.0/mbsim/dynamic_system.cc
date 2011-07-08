@@ -111,6 +111,14 @@ namespace MBSim {
     }
   }
 
+  void DynamicSystem::updateud0Fromud1(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updateud0Fromud1(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updateud0Fromud1(t);
+  }
+
   void DynamicSystem::updateh0Fromh1(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateh0Fromh1(t);
@@ -357,6 +365,14 @@ namespace MBSim {
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
       (**i).updatedx(t,dt);
 
+  }
+
+  void DynamicSystem::updateqd(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateqd(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (*i)->updateqd(t);
   }
 
   void DynamicSystem::updatexd(double t) {
@@ -708,22 +724,22 @@ namespace MBSim {
       (**i).updateuallRef(u);
   }
 
-  void DynamicSystem::updateudRef(const Vec &udParent) {
-    ud >> udParent(uInd[0],uInd[0]+uSize[0]-1);
+  void DynamicSystem::updateudRef(const Vec &udParent, int j) {
+    ud[j] >> udParent(uInd[j],uInd[j]+uSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateudRef(ud);
+      (**i).updateudRef(ud[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateudRef(ud);
+      (**i).updateudRef(ud[j],j);
   }
 
-  void DynamicSystem::updateudallRef(const Vec &udParent) {
+  void DynamicSystem::updateudallRef(const Vec &udParent, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateudallRef(ud);
+      (**i).updateudallRef(ud[j],j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateudallRef(ud);
+      (**i).updateudallRef(ud[j],j);
   }
 
   void DynamicSystem::updatexRef(const Vec &xParent) {
@@ -934,6 +950,19 @@ namespace MBSim {
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
       (**i).updateWRef(W[j],j);
+  }
+
+  void DynamicSystem::updateWnVRefObjects() {
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (*i)->updateWnVRefObjects();
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (**i).updateWRef(W[0],0);
+      (**i).updateVRef(V[0],0);
+      (**i).updateWRef(W[1],1);
+      (**i).updateVRef(V[1],1);
+    }
   }
 
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {

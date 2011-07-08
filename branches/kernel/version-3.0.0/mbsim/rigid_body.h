@@ -71,6 +71,9 @@ namespace MBSim {
       virtual void updateT(double t) { if(fT) T = (*fT)(qRel,t); }
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
+      virtual void updateW0FromW1(double t);
+      virtual void updateV0FromV1(double t);
+      virtual void updateud0Fromud1(double t);
       virtual void updatehInverseKinetics(double t, int j=0);
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }
@@ -100,7 +103,7 @@ namespace MBSim {
       virtual void updateuRef(const fmatvec::Vec& ref);
       virtual void init(InitStage stage);
       virtual void initz();
-      virtual void facLLM() { (this->*facLLM_)(); }
+      virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
       virtual void resizeJacobians(int j);
       virtual void checkForConstraints();
       /*****************************************************/
@@ -411,27 +414,27 @@ namespace MBSim {
       /**
        * \brief update constant mass matrix
        */
-      void updateMConst(double t, int i);
+      void updateMConst(double t, int i=0);
 
       /**
        * \brief update time dependend mass matrix
        */
-      void updateMNotConst(double t, int i); 
+      void updateMNotConst(double t, int i=0); 
 
       /**
        * \brief function pointer for Cholesky decomposition of mass matrix
        */
-      void (RigidBody::*facLLM_)();
+      void (RigidBody::*facLLM_)(int i);
 
       /**
        * \brief Cholesky decomposition of constant mass matrix
        */
-      void facLLMConst() {};
+      void facLLMConst(int i=0) {};
 
       /**
        * \brief Cholesky decomposition of time dependent mass matrix
        */
-      void facLLMNotConst() { Object::facLLM(); }
+      void facLLMNotConst(int i=0) { Object::facLLM(i); }
 
       /** a pointer to Frame "C" */
       Frame *C;
