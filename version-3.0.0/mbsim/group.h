@@ -47,7 +47,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DYNAMICSYSTEM */
       virtual void updateJacobians(double t, int j=0);
-      virtual void facLLM();
+      virtual void facLLM(int i=0);
       using DynamicSystem::addObject;
       /***************************************************/
 
@@ -55,6 +55,7 @@ namespace MBSim {
       virtual void updateStateDependentVariables(double t);
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
+      virtual void updateud(double t, int i=0);
       //virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 

@@ -66,7 +66,8 @@ namespace MBSim {
       virtual void updateh(double t, int i=0) = 0;
 
       // TODO
-      virtual void updateh0Fromh1(double t) = 0;
+      //virtual void updateh0Fromh1(double t) = 0;
+      //virtual void updateud0Fromud1(double t) = 0;
 
       /**
        * \brief updates Jacobian for implicit integration regarding state
@@ -122,7 +123,7 @@ namespace MBSim {
        * \brief update differentiated velocity
        * \param t simulation time 
        */
-      virtual void updateud(double t) = 0;
+      virtual void updateud(double t, int i=0) = 0;
 
       /**
        * \brief update differentiated positions

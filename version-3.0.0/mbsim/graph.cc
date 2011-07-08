@@ -45,12 +45,16 @@ namespace MBSim {
   }
 
   void Graph::updatedu(double t, double dt) {
-    ud = slvLLFac(LLM[0], h[0]*dt+r[0]);
+    ud[0] = slvLLFac(LLM[0], h[0]*dt+r[0]);
+  }
+
+  void Graph::updateud(double t, int j) {
+    ud[j] =  slvLLFac(LLM[j], h[j]+r[j]);
   }
 
   void Graph::updatezd(double t) {
     qd = T*u;
-    ud =  slvLLFac(LLM[0], h[0]+r[0]);
+    ud[0] = slvLLFac(LLM[0], h[0]+r[0]);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updatexd(t);
@@ -103,8 +107,8 @@ namespace MBSim {
 
   //}
 
-  void Graph::facLLM() {
-    LLM[0] = facLL(M[0]); 
+  void Graph::facLLM(int i) {
+    LLM[i] = facLL(M[i]); 
   }
 
   void Graph::addObject(int level, Object* object) {
