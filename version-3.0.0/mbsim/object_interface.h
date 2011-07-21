@@ -67,7 +67,6 @@ namespace MBSim {
 
       // TODO
       //virtual void updateh0Fromh1(double t) = 0;
-      //virtual void updateud0Fromud1(double t) = 0;
 
       /**
        * \brief updates Jacobian for implicit integration regarding state

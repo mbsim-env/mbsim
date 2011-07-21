@@ -111,20 +111,28 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::updateud0Fromud1(double t) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateud0Fromud1(t);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateud0Fromud1(t);
-  }
-
   void DynamicSystem::updateh0Fromh1(double t) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateh0Fromh1(t);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
       (**i).updateh0Fromh1(t);
+  }
+
+  void DynamicSystem::updateW0FromW1(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updateW0FromW1(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updateW0FromW1(t);
+  }
+
+  void DynamicSystem::updateV0FromV1(double t) {
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
+      (**i).updateV0FromV1(t);
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
+      (**i).updateV0FromV1(t);
   }
 
   void DynamicSystem::updatehInverseKinetics(double t, int j) {
@@ -957,11 +965,12 @@ namespace MBSim {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->updateWnVRefObjects();
 
+    // TODO: Prüfen ob sauber
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (**i).updateWRef(W[0],0);
-      (**i).updateVRef(V[0],0);
-      (**i).updateWRef(W[1],1);
-      (**i).updateVRef(V[1],1);
+      (**i).updateWRef(ds->getW(0),0);
+      (**i).updateVRef(ds->getV(0),0);
+      (**i).updateWRef(ds->getW(1),1);
+      (**i).updateVRef(ds->getV(1),1);
     }
   }
 

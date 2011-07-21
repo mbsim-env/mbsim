@@ -61,7 +61,6 @@ namespace MBSim {
       virtual void updatedq(double t, double dt);
       virtual void updatedu(double t, double dt);
       virtual void updateud(double t, int i=0);
-      virtual void updateud0Fromud1(double t);
       virtual void updateqd(double t);
       virtual void updatezd(double t);
       virtual void sethSize(int hSize_, int i=0);

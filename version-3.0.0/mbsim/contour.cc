@@ -52,8 +52,10 @@ namespace MBSim {
 
   void Contour::init(InitStage stage) {
     if(stage==unknownStage) {
-      getFrame()->getJacobianOfTranslation().resize(3,hSize[0]);
-      getFrame()->getJacobianOfRotation().resize(3,hSize[0]);
+      getFrame()->getJacobianOfTranslation(0).resize(3,hSize[0]);
+      getFrame()->getJacobianOfRotation(0).resize(3,hSize[0]);
+      getFrame()->getJacobianOfTranslation(1).resize(3,hSize[1]);
+      getFrame()->getJacobianOfRotation(1).resize(3,hSize[1]);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures(parent);
