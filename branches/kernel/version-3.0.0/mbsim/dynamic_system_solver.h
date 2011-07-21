@@ -146,6 +146,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t, int i=0);
       virtual void updateh0Fromh1(double t);
+      virtual void updateW0FromW1(double t);
+      virtual void updateV0FromV1(double t);
       virtual void updatedhdz(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateStateDependentVariables(double t); // this function is called once every time step by every integrator
@@ -788,9 +790,9 @@ class MySolver : public DynamicSystemSolver {
 };
 
   // Test für Berechnung der Gelenkkräfte bei Baumstrukturen
-class MySolver2 : public DynamicSystemSolver {
+class MySolver2 : public MySolver {
   public:
-    MySolver2(const std::string &projectName) : DynamicSystemSolver(projectName) {}
+    MySolver2(const std::string &projectName) : MySolver(projectName) {}
     virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
 
 };

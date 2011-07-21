@@ -266,6 +266,8 @@ namespace MBSim {
       VParent[0].resize(getuSize(0),getlaSize());
       WParent[1].resize(getuSize(1),getlaSize());
       VParent[1].resize(getuSize(1),getlaSize());
+      cout << WParent[0] << endl;
+      cout << WParent[1] << endl;
       wbParent.resize(getlaSize());
       laParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
@@ -641,6 +643,16 @@ namespace MBSim {
   void DynamicSystemSolver::updateh0Fromh1(double t) {
     h[0].init(0);
     Group::updateh0Fromh1(t);
+  }
+
+  void DynamicSystemSolver::updateW0FromW1(double t) {
+    W[0].init(0);
+    Group::updateW0FromW1(t);
+  }
+
+  void DynamicSystemSolver::updateV0FromV1(double t) {
+    V[0].init(0);
+    Group::updateV0FromV1(t);
   }
 
   void DynamicSystemSolver::updatedhdz(double t) {
@@ -1790,26 +1802,34 @@ namespace MBSim {
       updategd(t);
     }
     updateT(t); 
-    updateJacobians(t);
-   // updateh(t); 
-   //cout << h[0] << endl;
+    updateJacobians(t,0);
     updateJacobians(t,1);
     updateh(t,1);
     updateh0Fromh1(t);
-    updateM(t); 
-    facLLM(); 
+    updateM(t,0); 
+    facLLM(0); 
     calclaSize();
     calcrFactorSize();
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updatelaRef(laParent(0,laSize-1));
-    updatewbRef(wbParent(0,laSize-1));
-    updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    //std::cout << t << std::endl;
-    //std::cout << "laSize = " << laSize << std::endl;
+      updateWRef(WParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
+      updateVRef(VParent[1](Index(0,getuSize(1)-1),Index(0,getlaSize()-1)),1);
+      updatelaRef(laParent(0,laSize-1));
+      updatewbRef(wbParent(0,laSize-1));
+      updaterFactorRef(rFactorParent(0,rFactorSize-1));
+      updateWRef(WParent[0](Index(0,getuSize(0)-1),Index(0,getlaSize()-1)),0);
+      updateVRef(VParent[0](Index(0,getuSize(0)-1),Index(0,getlaSize()-1)),0);
     if(laSize) {
-      updateW(t); 
-      updateV(t); 
+      updateW(t,1); 
+      updateV(t,1); 
+      updateWnVRefObjects();
+      updateW0FromW1(t);
+      updateV0FromV1(t);
+      //cout << "-----------"<<endl;
+      //cout << W[1] << endl;
+      //cout << W[0] << endl;
+      //updateW(t);
+      //cout << W[0] << endl;
+      //cout << "-----------"<<endl;
+      //updateV(t);
       updateG(t); 
       updatewb(t); 
       b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
@@ -1818,9 +1838,11 @@ namespace MBSim {
       //std::cout << "iter = " << iter << std::endl;
       //std::cout << la << std::endl;
       //std::cout <<  std::endl;
-      //     computeConstraintForces(t); 
     }
-    updater(t); 
+
+    //std::cout << t << std::endl;
+    //std::cout << "laSize = " << laSize << std::endl;
+    updater(t,0); 
     updatezd(t);
     //updateStateDerivativeDependentVariables(t);
 
@@ -1834,9 +1856,6 @@ namespace MBSim {
    //cout << h[1] << endl;
    // updateh_(t);
    // cout << h[0] << endl;
-  updateW(t,1); 
-    updateWnVRefObjects();
-    updateV(t,1); 
     updater(t,1);
     updatehInverseKinetics(t,1); // Accelerations of objects
     updateWInverseKinetics(t,1); 
@@ -1890,7 +1909,8 @@ namespace MBSim {
       cout << "la= " << la << endl;
        }
     updateJacobians(t,0);
-    updateh(t);
+    //updateh(t);
+    updateh0Fromh1(t);
     updateM(t);
     facLLM();
     updateW(t); 
@@ -1903,11 +1923,6 @@ namespace MBSim {
       cout << "la= " << la << endl;
     updater(t); 
     updatezd(t);
-//    updater(t,1); 
-//    updateud(t,1); 
-//    updateud0Fromud1(t);
-//    updateqd(t);
-//    updatexd(t);
     cout << t << endl;
     cout << qd << endl;
     cout << ud[0] << endl;

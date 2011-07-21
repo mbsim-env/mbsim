@@ -427,10 +427,14 @@ namespace MBSim {
 
         cpData[i][0].getFrameOfReference().setName("0");
         cpData[i][1].getFrameOfReference().setName("1");
-        cpData[i][0].getFrameOfReference().getJacobianOfTranslation().resize();
-        cpData[i][0].getFrameOfReference().getJacobianOfRotation().resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfTranslation().resize();
-        cpData[i][1].getFrameOfReference().getJacobianOfRotation().resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(0).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfTranslation(1).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfRotation(1).resize();
+        cpData[i][0].getFrameOfReference().getJacobianOfRotation(0).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(0).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfTranslation(1).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfRotation(0).resize();
+        cpData[i][1].getFrameOfReference().getJacobianOfRotation(1).resize();
 
 	cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(0),0);
         cpData[i][0].getFrameOfReference().sethSize(contour[0]->gethSize(1),1);

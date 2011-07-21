@@ -366,8 +366,5 @@ namespace MBSim {
   void Object::updateh0Fromh1(double t) {
     h[0] = h[1];
   }
-  void Object::updateud0Fromud1(double t) {
-    ud[0] = ud[1];
-  }
 }
 

@@ -73,7 +73,6 @@ namespace MBSim {
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
       virtual void updateV0FromV1(double t);
-      virtual void updateud0Fromud1(double t);
       virtual void updatehInverseKinetics(double t, int j=0);
       virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updateM(double t, int i=0) { (this->*updateM_)(t,i); }

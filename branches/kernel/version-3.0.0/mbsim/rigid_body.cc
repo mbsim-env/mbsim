@@ -96,19 +96,6 @@ namespace MBSim {
     V[0] += frame[0]->getJacobianOfTranslation(0).T()*V[1](Index(0,2),Index(0,V[1].cols()-1)) + frame[0]->getJacobianOfRotation(0).T()*V[1](Index(3,5),Index(0,V[1].cols()-1));
   }
 
-  void RigidBody::updateud0Fromud1(double t) {
-  //  cout << name << endl;
-  //  cout << uSize[0] << endl;
-  //  cout << uSize[1] << endl;
-  //  cout << ud[0] << endl;
-  //  cout << ud[1] << endl;
-  //  cout << udall[0] << endl;
-  //  cout << udall[1] << endl;
-  //  cout <<  frame[0]->getJacobianOfTranslation(0)  << endl;
-  //  cout <<  frame[0]->getJacobianOfTranslation(1)  << endl;
-    udall[0] += frame[0]->getJacobianOfTranslation(0).T()*udall[1](0,2) + frame[0]->getJacobianOfRotation(0).T()*udall[1](3,5);
-  }
-
   void RigidBody::updatehInverseKinetics(double t, int j) {
     //cout << name << endl,
     //cout << j << endl;
