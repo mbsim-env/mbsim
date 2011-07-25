@@ -96,7 +96,7 @@ class Schwerpunkt : public LinkMechanics {
     }
 };
 
-System::System(const string &projectName) : MySolver(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   bool twoContacts = true;
   bool Coulomb = false;
