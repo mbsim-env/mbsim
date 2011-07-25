@@ -18,7 +18,7 @@ using namespace std;
 
 extern bool rigidContact;
 
-System::System(const string &projectName) : MySolver(projectName) {
+System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
   Vec grav(3);
   grav(1)=-9.81;
