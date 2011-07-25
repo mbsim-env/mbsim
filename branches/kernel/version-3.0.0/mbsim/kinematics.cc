@@ -38,7 +38,7 @@ namespace MBSim {
     pos->initializeUsingXML(e->FirstChildElement());
   }
 
-  RotationAboutXAxis::RotationAboutXAxis() : Rotation(), APK(3) {  
+  RotationAboutXAxis::RotationAboutXAxis() : RotationAboutOneAxis() {  
     APK(0,0) = 1;
   }
 
@@ -56,7 +56,7 @@ namespace MBSim {
     return APK;
   }
 
-  RotationAboutYAxis::RotationAboutYAxis() : Rotation(), APK(3) {  
+  RotationAboutYAxis::RotationAboutYAxis() : RotationAboutOneAxis() {  
     APK(1,1) = 1;
   }
 
@@ -74,7 +74,7 @@ namespace MBSim {
     return APK;
   }
 
-  RotationAboutZAxis::RotationAboutZAxis() : Rotation(), APK(3) {  
+  RotationAboutZAxis::RotationAboutZAxis() : RotationAboutOneAxis() {  
     APK(2,2) = 1;
   }
 
@@ -93,7 +93,6 @@ namespace MBSim {
   }
 
   SqrMat RotationAboutFixedAxis::operator()(const fmatvec::Vec &q, const double &t, const void *) {
-    SqrMat APK(3,NONINIT);
 
     int i = q.size()-1;
     const double cosq=cos(q(i));

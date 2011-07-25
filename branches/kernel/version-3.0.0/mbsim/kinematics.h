@@ -181,11 +181,27 @@ namespace MBSim {
       /***************************************************/
   };
 
+  class RotationAboutOneAxis: public Rotation {
+    public:
+    /**
+       * \brief constructor
+       */
+      RotationAboutOneAxis(): APK(3) {}
+
+      virtual int getqSize() const { return 1; }
+
+    protected:
+      /**
+       * \brief transformation matrix
+       */
+      fmatvec::SqrMat APK;
+  };
+
   /**
    * \brief class to describe rotation about y-axis
    * \author Martin Foerg
    */
-  class RotationAboutXAxis: public Rotation {
+  class RotationAboutXAxis: public RotationAboutOneAxis {
     public:
       /**
        * \brief constructor
@@ -193,22 +209,15 @@ namespace MBSim {
       RotationAboutXAxis();
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 1; }
-      virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
+       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
-
-    protected:
-      /**
-       * \brief transformation matrix
-       */
-      fmatvec::SqrMat APK;
   };
 
   /**
    * \brief class to describe rotation about y-axis
    * \author Martin Foerg
    */
-  class RotationAboutYAxis: public Rotation {
+  class RotationAboutYAxis: public RotationAboutOneAxis {
     public:
       /**
        * \brief constructor
@@ -216,15 +225,8 @@ namespace MBSim {
       RotationAboutYAxis();
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 1; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
-
-    protected:
-      /**
-       * \brief transformation matrix
-       */
-      fmatvec::SqrMat APK;
   };
 
   /**
@@ -232,7 +234,7 @@ namespace MBSim {
    * \author Martin Foerg
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutZAxis: public Rotation {
+  class RotationAboutZAxis: public RotationAboutOneAxis {
     public:
       /**
        * \brief constructor
@@ -240,15 +242,8 @@ namespace MBSim {
       RotationAboutZAxis();
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 1; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element) {}
-
-    protected:
-      /**
-       * \brief transformation matrix
-       */
-      fmatvec::SqrMat APK;
   };
 
   /**
@@ -257,21 +252,20 @@ namespace MBSim {
    * \date 2009-04-08 some comments (Thorsten Schindler)
    * \date 2010-05-23 update according to change in Rotation (Martin Foerg)
    */
-  class RotationAboutFixedAxis: public Rotation {
+  class RotationAboutFixedAxis: public RotationAboutOneAxis {
     public:
       /**
        * \brief constructor
        */
-      RotationAboutFixedAxis() : Rotation(), a(3) {}
+      RotationAboutFixedAxis() : RotationAboutOneAxis(), a(3) {}
 
       /**
        * \brief constructor
        * \param axis of rotation
        */
-      RotationAboutFixedAxis(const fmatvec::Vec &a_) : Rotation() { a = a_; } 
+      RotationAboutFixedAxis(const fmatvec::Vec &a_) : RotationAboutOneAxis() { a = a_; } 
 
       /* INTERFACE OF ROTATION */
-      virtual int getqSize() const { return 1; }
       virtual fmatvec::SqrMat operator()(const fmatvec::Vec &q, const double &t, const void * =NULL);
       virtual void initializeUsingXML(TiXmlElement *element);
       /***************************************************/
@@ -773,6 +767,106 @@ namespace MBSim {
        * \brief linear relation between differentiated positions and velocities
        */
       fmatvec::Mat Jd;
+  };
+
+  class Kinematics {
+    public:
+     /* GETTER / SETTER */
+      /*!
+       * \brief set Kinematic for translational motion
+       * \param fPrPK translational kinematic description
+       */
+      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
+      /*!
+       * \brief set Kinematic for rotational motion
+       * \param fAPK rotational kinematic description
+       */
+      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
+      /*!
+       * \brief get Kinematic for translational motion
+       * \return translational kinematic description
+       */
+      Translation* getTranslation()            { return fPrPK;   }
+      /*!
+       * \brief get Kinematic for rotational motion
+       * \return rotational kinematic description
+       */
+      Rotation*    getRotation()               { return fAPK;    }
+      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
+      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
+      void setDerivativeOfJacobianOfTranslation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJT_) { fPdJT = fPdJT_;}
+      void setDerivativeOfJacobianOfRotation(Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>* fPdJR_) { fPdJR = fPdJR_;}
+
+      /** \brief Sets the time dependent function for the guiding velocity of translation */
+      void setGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPjT_) { fPjT = fPjT_;}
+
+      /** \brief Sets the time dependent function for the guiding velocity of rotation */
+      void setGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPjR_) { fPjR = fPjR_;}
+
+      /** \brief Sets the time dependent function for the derivative of the guilding velocity of translation */
+      void setDerivativeOfGuidingVelocityOfTranslation(Function1<fmatvec::Vec,double>* fPdjT_) { fPdjT = fPdjT_;}
+
+      /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
+      void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
+
+      virtual int getqSize() const = 0;
+      virtual int getuSize() const = 0;
+    protected:
+      /**
+       * \brief JACOBIAN for linear transformation between differentiated positions and velocities
+       */
+      Jacobian *fT;
+
+      /**
+       * \brief translation from parent Frame to kinematic Frame in parent system
+       */
+      Translation *fPrPK;
+
+      /**
+       * \brief rotation from kinematic Frame to parent Frame
+       */
+      Rotation *fAPK;
+
+      /**
+       * \brief JACOBIAN of translation in parent system
+       */
+      Jacobian *fPJT;
+
+      /**
+       * \brief JACOBIAN of rotation in parent system
+       */
+      Jacobian *fPJR;
+
+      /**
+       * \brief differentiated JACOBIAN of translation in parent system
+       */
+      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJT;
+
+      /**
+       * \brief differentiated JACOBIAN of rotation in parent system
+       */
+      Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double> *fPdJR;
+
+      /**
+       * \brief guiding vecloity of translation in parent system
+       */
+      Function1<fmatvec::Vec,double> *fPjT;
+
+      /**
+       * \brief guiding vecloity of rotation in parent system
+       */
+      Function1<fmatvec::Vec,double> *fPjR;
+
+      /**
+       * \brief differentiated guiding veclocity of translation in parent system
+       */
+      Function1<fmatvec::Vec,double> *fPdjT;
+
+      /**
+       * \brief differentiated guiding veclocity of rotation in parent system
+       */
+      Function1<fmatvec::Vec,double> *fPdjR;
+
   };
 
 }

@@ -708,87 +708,6 @@ namespace MBSim {
     Group::updateV(t,j);
   }
 
-  void DynamicSystemSolver::plot(const Vec& zParent, double t, double dt) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-
-    if(qd()!=zdParent()) 
-      updatezdRef(zdParent);
-
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateJacobians(t);
-    updateT(t);
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-
-    plot(t,dt);
-
-    if(++flushCount > flushEvery) {
-      flushCount = 0;
-      H5::FileSerie::flushAllFiles();
-    }
-  }
-
-  void DynamicSystemSolver::plotWithIK(const Vec& zParent, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-
-    if(qd()!=zdParent()) 
-      updatezdRef(zdParent);
-
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateJacobians(t);
-    updateT(t);
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-
-    if(laSize) {
-      updateW(t); 
-      updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      computeConstraintForces(t); 
-    }
-    updater(t); 
-    updatezd(t);
-    updateStateDerivativeDependentVariables(t);
-
-    if(uSize[0] != uSize[1]) {
-      resizeJacobians(1);
-      updatehRef(hParent[1],1);
-      updaterRef(rParent[1],1);
-      updateWRef(WParent[1](Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updateVRef(VParent[1](Index(0,hSize[1]-1),Index(0,getlaSize()-1)),1);
-      updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-      updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-      //updateInverseKineticsJacobians(t);
-      updateh(t);
-      updateW(t); 
-      updateV(t); 
-      updater(t);
-      updatehInverseKinetics(t);
-      updateWInverseKinetics(t); 
-      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[0]+r[0]));
-      plot(t,1);
-      resizeJacobians(0);
-      updatehRef(hParent[0]);
-      updaterRef(rParent[0]);
-      updateWRef(WParent[0]);
-      updateVRef(VParent[0]);
-    }
-    else
-      plot(t,1);
-  }
-
   void DynamicSystemSolver::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {
       Group::closePlot();
@@ -972,229 +891,11 @@ namespace MBSim {
     updateG(t); 
   }
 
-  void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-    jsv = jsv_;
-
-    if(jsv(sv.size()-1)) { // projection
-      driftCount++;
-      updateStateDependentVariables(t);
-      updateg(t);
-      updateT(t); 
-      updateJacobians(t);
-      updateM(t); 
-      facLLM(); 
-      updateW(t); 
-      projectGeneralizedPositions(t);
-      updategd(t);
-      updateT(t); 
-      updateJacobians(t);
-      updateM(t); 
-      facLLM(); 
-      updateW(t); 
-      projectGeneralizedVelocities(t);
-      bool ret = true;
-      for(int j=0; j<jsv.size()-1; j++)
-        if(jsv(j)>0)
-          ret = false;
-      if(ret) return;
-    }
-    //cout << t << endl;
-    //cout << sv << endl;
-
-    updateStateDependentVariables(t);
-    updateg(t);
-    //updategd(t); // TODO necessary?
-    updateT(t); 
-    updateJacobians(t);
-    //updateh(t); // TODO necessary?
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    //updateG(t); // TODO necessary?
-
-    projectGeneralizedPositions(t);
-
-    updateCondition(); // decide which constraints should be added and deleted
-    checkActiveLinks(); // list with active links (g<=0)
-    calclaSize();
-    updatelaRef(laParent(0,laSize-1));
-    updateJacobians(t);
-    projectGeneralizedPositions(t);
-
-    if(impact) { // impact
-
-      checkAllgd(); // look at all closed contacts
-      calcgdSizeActive();
-      updategdRef(gdParent(0,gdSize-1));
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-
-      updateStateDependentVariables(t); // TODO necessary?
-      updateg(t); // TODO necessary?
-      updategd(t); // important because of updategdRef
-      updateJacobians(t);
-      updateW(t); // important because of updateWRef
-      updateV(t); 
-      updateG(t); 
-
-      // projectGeneralizedPositions(t);
-      b.resize() = gd; // b = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
-      int iter;
-      iter = solveImpacts();
-      u += deltau(zParent,t,0);
-
-      //saveActive();
-      checkActivegdn(); // which contacts open / close after impact?
-      checkActiveLinks(); 
-
-      //calcgdSize(); no invocation allowed 
-      //updategdRef(); no invocation allowed 
-
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-
-      if(laSize) {
-
-        updateStateDependentVariables(t); // necessary because of velocity change 
-        updategd(t); // necessary because of velocity change 
-        updateJacobians(t);
-        updateh(t); 
-        updateW(t); 
-        updateV(t); 
-        updateG(t); 
-        updatewb(t); 
-        b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-        int iter;
-        iter = solveConstraints();
-        checkActivegdd();
-        checkActiveLinks();
-        calclaSize();
-        calcrFactorSize();
-        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updatelaRef(laParent(0,laSize-1));
-        updatewbRef(wbParent(0,laSize-1));
-        updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      }
-    } 
-    else if(sticking) { // sticking->slip
-
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-
-      if(laSize) {
-        updateStateDependentVariables(t); // TODO necessary
-        updateg(t); // TODO necessary
-        updategd(t); // TODO necessary
-        updateT(t);  // TODO necessary
-        updateJacobians(t);
-        updateh(t);  // TODO necessary
-        updateM(t);  // TODO necessary
-        facLLM();  // TODO necessary 
-        updateW(t);  // TODO necessary
-        updateV(t);  // TODO necessary
-        updateG(t);  // TODO necessary 
-        updatewb(t);  // TODO necessary 
-        b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-        int iter;
-        iter = solveConstraints();
-        checkActivegdd();
-        checkActiveLinks();
-        calclaSize();
-        calcrFactorSize();
-        updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-        updatelaRef(laParent(0,laSize-1));
-        updatewbRef(wbParent(0,laSize-1));
-        updaterFactorRef(rFactorParent(0,rFactorSize-1));
-      }
-    } 
-    else { // contact opens
-      checkActiveLinks();
-      calclaSize();
-      calcrFactorSize();
-      updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-      updatelaRef(laParent(0,laSize-1));
-      updatewbRef(wbParent(0,laSize-1));
-      updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    }
-    impact = false;
-    sticking = false;
-    updateStateDependentVariables(t);
-    updateg(t);
-    //updategd(t); TODO
-    updateT(t); 
-    updateJacobians(t);
-    //updateh(t); TODO
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    //updateG(t); TODO
-
-    projectGeneralizedPositions(t);
-    updategd(t);
-    updateT(t); 
-    updateJacobians(t);
-    //updateh(t); TODO
-    updateM(t); 
-    facLLM(); 
-    updateW(t); 
-    projectGeneralizedVelocities(t);
-  }
-
   void DynamicSystemSolver::zdot(const Vec &zParent, Vec &zdParent, double t) {
     if(qd()!=zdParent()) {
       updatezdRef(zdParent);
     }
     zdot(zParent,t);
-  }
-
-  void DynamicSystemSolver::getsv(const Vec& zParent, Vec& svExt, double t) { 
-    if(sv()!=svExt()) {
-      updatesvRef(svExt);
-    }
-
-    if(q()!=zParent())
-      updatezRef(zParent);
-
-    if(qd()!=zdParent()) 
-      updatezdRef(zdParent);
-
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t); 
-    updateJacobians(t);
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-    if(laSize) {
-      updateW(t); 
-      updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      computeConstraintForces(t); 
-    }
-    updateStopVector(t);
-    sv(sv.size()-1) = driftCount*1e-0-t; 
   }
 
  void DynamicSystemSolver::getLinkStatus(Vector<int> &LinkStatusExt, double t) {
@@ -1462,35 +1163,6 @@ namespace MBSim {
     la = slvLS(G, -(W[0].T()*slvLLFac(LLM[0],h[0]) + wb)); // slvLS because of undeterminded system of equations
   } 
 
-  Vec DynamicSystemSolver::zdot(const Vec &zParent, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-    updateStateDependentVariables(t);
-    updateg(t);
-    updategd(t);
-    updateT(t); 
-    updateJacobians(t);
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-    if(laSize) {
-      updateW(t); 
-      updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      computeConstraintForces(t); 
-    }
-    updater(t); 
-    updatezd(t);
-
-  cout << t << endl;
-    cout << qd << endl;
-    cout << ud[0] << endl;
-    cout << ud[1] << endl;
-   return zdParent;
-  }
-
   void DynamicSystemSolver::constructor() {
     integratorExitRequest=false;
     setPlotFeatureRecursive(plotRecursive, enabled);
@@ -1574,7 +1246,7 @@ namespace MBSim {
         addToGraph(graph, A, j, objList);
   }
 
-  void MySolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
+  void DynamicSystemSolver::shift(Vec &zParent, const Vector<int> &jsv_, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1644,8 +1316,7 @@ namespace MBSim {
 
   }
 
-  void MySolver::getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t) {
-    //cout << "getsv at t = " << t << endl;
+  void DynamicSystemSolver::getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t) {
     if(sv()!=svExt()) {
       updatesvRef(svExt);
     }
@@ -1669,13 +1340,12 @@ namespace MBSim {
     }
     updateStopVector(t);
     sv(sv.size()-1) = 1;
-
   }
-  fmatvec::Vec MySolver::zdot(const fmatvec::Vec &zParent, double t) {
+
+  fmatvec::Vec DynamicSystemSolver::zdot(const fmatvec::Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
-   // cout << "zdot at t = " << t << endl;
     updateStateDependentVariables(t);
     updateg(t);
     if(alwaysConsiderContact) {
@@ -1699,8 +1369,6 @@ namespace MBSim {
     updatelaRef(laParent(0,laSize-1));
     updatewbRef(wbParent(0,laSize-1));
     updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    //std::cout << t << std::endl;
-    //std::cout << "laSize = " << laSize << std::endl;
     if(laSize) {
       updateW(t); 
       updateV(t); 
@@ -1709,81 +1377,13 @@ namespace MBSim {
       b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       int iter;
       iter = solveConstraints();
-    //  std::cout << "iter = " << iter << std::endl;
-    //  std::cout << la << std::endl;
     }
     updater(t); 
     updatezd(t);
-    //std::cout <<  q << std::endl;
-    //std::cout <<  u << std::endl;
-    //std::cout <<  qd << std::endl;
-    //std::cout <<  ud << std::endl;
-    //std::cout << q(1) - 0.25 << std::endl;
-    //std::cout <<  std::endl;
-
-  //  std::cout << h << std::endl;
-  //  std::cout << r << std::endl;
-  //  std::cout << ud << std::endl;
     return zdParent;
   }
 
-  void MySolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-
-    if(qd()!=zdParent()) 
-      updatezdRef(zdParent);
-    updateStateDependentVariables(t);
-    updateg(t);
-    if(alwaysConsiderContact) {
-      checkActiveg();
-      checkActiveLinks();
-      updategd(t);
-      checkActivegd();
-    } else {
-      checkActiveLinks();
-      updategd(t);
-    }
-    updateT(t); 
-    updateJacobians(t);
-    updateh(t); 
-    updateM(t); 
-    facLLM(); 
-    calclaSize();
-    calcrFactorSize();
-    updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    updatelaRef(laParent(0,laSize-1));
-    updatewbRef(wbParent(0,laSize-1));
-    updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    //std::cout << t << std::endl;
-    //std::cout << "laSize = " << laSize << std::endl;
-    if(laSize) {
-      updateW(t); 
-      // cout << t << endl;
-      //cout << "W= " <<endl << W[0]<< endl;
-    updateV(t); 
-      updateG(t); 
-      updatewb(t); 
-      b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-      int iter;
-      iter = solveConstraints();
-      //std::cout << "iter = " << iter << std::endl;
-      //std::cout << la << std::endl;
-      //std::cout <<  std::endl;
-      //     computeConstraintForces(t); 
-    }
-    DynamicSystemSolver::plot(t,dt);
-
-    if(++flushCount > flushEvery) {
-      flushCount = 0;
-      H5::FileSerie::flushAllFiles();
-    }
-
-  }
-
-  void MySolver2::plot(const fmatvec::Vec& zParent, double t, double dt) {
+  void DynamicSystemSolver::plot(const fmatvec::Vec& zParent, double t, double dt) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1823,45 +1423,27 @@ namespace MBSim {
       updateWnVRefObjects();
       updateW0FromW1(t);
       updateV0FromV1(t);
-      //cout << "-----------"<<endl;
-      //cout << W[1] << endl;
-      //cout << W[0] << endl;
-      //updateW(t);
-      //cout << W[0] << endl;
-      //cout << "-----------"<<endl;
-      //updateV(t);
       updateG(t); 
       updatewb(t); 
       b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
       int iter;
       iter = solveConstraints();
-      //std::cout << "iter = " << iter << std::endl;
-      //std::cout << la << std::endl;
-      //std::cout <<  std::endl;
     }
 
-    //std::cout << t << std::endl;
-    //std::cout << "laSize = " << laSize << std::endl;
     updater(t,0); 
     updatezd(t);
     //updateStateDerivativeDependentVariables(t);
 
     updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
     updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-   // updateJacobians(t,1);
     updateJacobiansInverseKinetics(t,1);
-   // h[0].init(0);
-   //cout << h[0] << endl;
-   //updateh(t,1);
-   //cout << h[1] << endl;
-   // updateh_(t);
-   // cout << h[0] << endl;
     updater(t,1);
     updatehInverseKinetics(t,1); // Accelerations of objects
     updateWInverseKinetics(t,1); 
-      //cout << "WInverse = " <<endl << WInverseKinetics << endl;
-   if(WInverseKinetics.cols() >0)
-    laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[1]+r[1]));
+
+    if(WInverseKinetics.cols() >0)
+      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[1]+r[1]));
+
     DynamicSystemSolver::plot(t,dt);
 
     if(++flushCount > flushEvery) {
@@ -1871,7 +1453,7 @@ namespace MBSim {
 
   }
 
-   fmatvec::Vec MySolver3::zdot(const fmatvec::Vec &zParent, double t) {
+  fmatvec::Vec MySolver3::zdot(const fmatvec::Vec &zParent, double t) {
     if(q()!=zParent()) {
       updatezRef(zParent);
     }
@@ -1907,7 +1489,7 @@ namespace MBSim {
       int iter;
       iter = solveConstraints();
       cout << "la= " << la << endl;
-       }
+    }
     updateJacobians(t,0);
     //updateh(t);
     updateh0Fromh1(t);
@@ -1920,7 +1502,7 @@ namespace MBSim {
     b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
     int iter;
     iter = solveConstraints();
-      cout << "la= " << la << endl;
+    cout << "la= " << la << endl;
     updater(t); 
     updatezd(t);
     cout << t << endl;
@@ -1928,7 +1510,7 @@ namespace MBSim {
     cout << ud[0] << endl;
     cout << ud[1] << endl;
     //updatezd(t);
-      return zdParent;
+    return zdParent;
   }
 
   void MySolver3::plot(const fmatvec::Vec& zParent, double t, double dt) {
@@ -1970,20 +1552,20 @@ namespace MBSim {
       int iter;
       iter = solveConstraints();
       cout << "la= " << la << endl;
-       }
-  //  updateJacobians(t,0);
-  //  updateh(t);
-  //  updateM(t);
-  //  facLLM();
-  //  updateW(t); 
-  //  updateV(t); 
-  //  updateG(t); 
-  //  updatewb(t); 
-  //  b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-  //  int iter;
-  //  iter = solveConstraints();
-  //    cout << "la= " << la << endl;
-  //  updater(t); 
+    }
+    //  updateJacobians(t,0);
+    //  updateh(t);
+    //  updateM(t);
+    //  facLLM();
+    //  updateW(t); 
+    //  updateV(t); 
+    //  updateG(t); 
+    //  updatewb(t); 
+    //  b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
+    //  int iter;
+    //  iter = solveConstraints();
+    //    cout << "la= " << la << endl;
+    //  updater(t); 
     DynamicSystemSolver::plot(t,dt);
 
     if(++flushCount > flushEvery) {
