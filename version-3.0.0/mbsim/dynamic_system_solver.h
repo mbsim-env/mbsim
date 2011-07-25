@@ -176,9 +176,6 @@ namespace MBSim {
       virtual std::string getType() const { return "DynamicSystemSolver"; }
       virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
 
-      // TODO function is only temporarily. Shows inverse kinetics feature
-      virtual void plotWithIK(const fmatvec::Vec& z, double t); 
-
       virtual void closePlot();
       /***************************************************/
 
@@ -777,25 +774,6 @@ namespace MBSim {
       bool truncateSimulationFiles;
 
   };
-
-  // Test für neues ereignisbasiertes Verfahren
-class MySolver : public DynamicSystemSolver {
-  public:
-    MySolver(const std::string &projectName) : DynamicSystemSolver(projectName) {}
-    void shift(fmatvec::Vec &zParent, const fmatvec::Vector<int> &jsv_, double t); 
-    void getsv(const fmatvec::Vec& zParent, fmatvec::Vec& svExt, double t); 
-    fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t); 
-    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
-
-};
-
-  // Test für Berechnung der Gelenkkräfte bei Baumstrukturen
-class MySolver2 : public MySolver {
-  public:
-    MySolver2(const std::string &projectName) : MySolver(projectName) {}
-    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
-
-};
 
   // Test für Berechnung der Gelenkkräfte bei Baumstrukturen bei
   // Gelenkkraftabhängigkeiten

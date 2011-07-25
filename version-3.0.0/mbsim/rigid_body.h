@@ -87,13 +87,8 @@ namespace MBSim {
 	updateJacobiansForRemainingFramesAndContours(t,0); 
       }
       void updateJacobians1(double t) { 
-	//updateJacobiansForSelectedFrame1(t); 
-	updateJacobiansForRemainingFramesAndContours1(t); 
+        updateJacobiansForRemainingFramesAndContours1(t); 
       }
-      //virtual void updateInverseKineticsJacobians(double t) { 
-      //  updateInverseKineticsJacobiansForSelectedFrame(t); 
-      //  updateJacobiansForRemainingFramesAndContours(t); 
-      //}
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
 
@@ -121,7 +116,6 @@ namespace MBSim {
        * \brief updates JACOBIAN for kinematics starting from reference Frame
        */
       virtual void updateJacobiansForSelectedFrame0(double t); 
-      virtual void updateJacobiansForSelectedFrame1(double t); 
 
       /**
        * \brief updates kinematics for remaining Frames starting with and from cog Frame

@@ -97,11 +97,16 @@ namespace MBSim {
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
+    //cout << endl << endl,
     //cout << name << endl,
     //cout << j << endl;
-    //cout << frame[0]->getJacobianOfTranslation(j) << endl;
-    //cout << frame[0]->getJacobianOfRotation(j) << endl;
+    //cout << frame[0]->getJacobianOfTranslation() << endl;
+    //cout << frame[0]->getJacobianOfRotation() << endl;
+    //cout << frame[0]->getGyroscopicAccelerationOfTranslation() << endl;
+    //cout << frame[0]->getGyroscopicAccelerationOfRotation() << endl;
+    //cout << udall[0] << endl;
     h[j] -= frame[0]->getJacobianOfTranslation(j).T()*m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(j).T()*WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation());
+    //cout << h[j] << endl;
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -112,41 +117,54 @@ namespace MBSim {
 
   void RigidBody::calcqSize() {
     Body::calcqSize();
-    nq = 0;
-    if(fPrPK)
-      nq += fPrPK->getqSize();
-    if(fAPK)
-      nq += fAPK->getqSize();
+    int nqT=0, nqR=0;
+    if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+      nqT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+      nqR = nqT;
+    }
+    else if(fPrPK)
+      nqT = fPrPK->getqSize();
+    else
+      nqT = 0;
+    if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
+      nqR += 1; 
+      nqT = nqR;
+    }
+    else if(fAPK)
+      nqR = fAPK->getqSize();
+    else
+      nqR = 0;
+    // TODO: besseres Konzept überlegen
+    assert(nqT == nqR);
+    nq = nqT;
     qSize = constraint ? 0 : nq;
   }
 
   void RigidBody::calcuSize(int j) {
     Body::calcuSize(j);
+    int nuT=0, nuR=0;
     if(j==0) {
-      nu[j] = 0;
       if(fPJT==0) {
-        LinearTranslation* fPrPK_ = dynamic_cast<LinearTranslation*>(fPrPK);
-        if(fPrPK_) 
-          nu[j] += fPrPK->getqSize();
+	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+	  nuT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+	  nuR = nuT;
+	} else
+	  nuT = 0;
       } else
-        nu[j] += fPJT->getuSize();
+	nuT = fPJT->getuSize();
+
       if(fPJR==0) {
-        //TODO  Euler-Parameter
-        //RotationAxis* fAPK_ = dynamic_cast<RotationAxis*>(fAPK);
-        if(fAPK)
-          nu[j] += fAPK->getqSize();
-        //CardanAngles* fAPK_ = dynamic_cast<CardanAngles*>(fAPK);
-        //if(fAPK_)
-        //uSize += fAPK->getqSize();
+	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
+	  nuR += 1; 
+	  nuT = nuR;
+	} else
+	  nuR = 0;
       } else
-        nu[j] += fPJR->getuSize();
+        nuR = fPJR->getuSize();
+      assert(nuT == nuR);
+      nu[j] = nuT;
+      uSize[j] = constraint ? 0 : nu[j];
     } else {
-      nu[j] = nu[0];
-      nu[j] += forceDir.cols();
-      nu[j] += momentDir.cols();
-    }
-    uSize[j] = constraint ? 0 : nu[j];
-    if(j==1) {
       nu[j] = 6;
       uSize[j] = 6;
     }
@@ -540,17 +558,6 @@ namespace MBSim {
       contour[i]->setReferenceJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSC*frame[0]->getJacobianOfRotation(j),j);
       contour[i]->setReferenceGyroscopicAccelerationOfTranslation( - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])),j);
     }
-  }
-
-  void RigidBody::updateJacobiansForSelectedFrame1(double t) {
-  //  SqrMat tWrPK = tilde(WrPK);
-
-  //  frame[iKinematics]->getJacobianOfTranslation(1)(Index(0,2),Index(0,frameOfReference->getJacobianOfTranslation(1).cols()-1)) = frameOfReference->getJacobianOfTranslation(1) - tWrPK*frameOfReference->getJacobianOfRotation(1);
-  //  frame[iKinematics]->getJacobianOfRotation(1)(Index(0,2),Index(0,frameOfReference->getJacobianOfRotation(1).cols()-1)) = frameOfReference->getJacobianOfRotation(1);
-  //  frame[iKinematics]->getJacobianOfTranslation(1)(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJT[1];
-  //  frame[iKinematics]->getJacobianOfRotation(1)(Index(0,2),Index(hSize[1]-uSize[1],hSize[1]-1)) = frameOfReference->getOrientation()*PJR[1];
-  frame[0]->getJacobianOfTranslation(1) = PJT[1];
-  frame[0]->getJacobianOfRotation(1) = PJR[1];
   }
 
   void RigidBody::updateqRef(const Vec& ref) {

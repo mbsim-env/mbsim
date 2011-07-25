@@ -60,7 +60,7 @@ namespace MBSim {
     zMax.resize(zSize, INIT, 0);
 
     t=tStart;
-    system->plotWithIK(z, t);
+    system->plot(z, t);
 
     tPlot = t + dtPlot;
     integPlot.open((name + ".plt").c_str());
@@ -89,7 +89,7 @@ namespace MBSim {
       UT(fzdot, &tPlot, &t, z(), zdGot(), zMax(), dworkarray, &result, &dtLast);
 
       if(result==1 || result==2 || fabs(t-tPlot)<epsroot()) {
-        system->plotWithIK(z, t);
+        system->plot(z, t);
 
         if(output) cout << "   t = " <<  t << ",\tdt = "<< dtLast << "\r"<<flush;
 
