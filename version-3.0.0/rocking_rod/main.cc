@@ -27,6 +27,7 @@ int main (int argc, char* argv[]) {
   is.close();
 
   DynamicSystemSolver *sys = new System("TS");
+  sys->setAlwaysConsiderContact(false);
 
   sys->initialize();
 
@@ -39,8 +40,9 @@ int main (int argc, char* argv[]) {
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
     static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
-    static_cast<LSODARIntegrator*>(integrator)->setRelativeTolerance(1e-8);
-    static_cast<LSODARIntegrator*>(integrator)->setAbsoluteTolerance(1e-8);
+    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
+    //static_cast<LSODARIntegrator*>(integrator)->setRelativeTolerance(1e-8);
+    //static_cast<LSODARIntegrator*>(integrator)->setAbsoluteTolerance(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
   } 
