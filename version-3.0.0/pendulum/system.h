@@ -4,7 +4,7 @@
 #include "mbsim/dynamic_system_solver.h"
 #include <string>
 
-class Pendulum : public MBSim::MySolver2 {
+class Pendulum : public MBSim::DynamicSystemSolver {
   public:
     Pendulum(const std::string &projectName); 
 };

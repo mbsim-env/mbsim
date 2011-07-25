@@ -10,7 +10,7 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 
-Pendulum::Pendulum(const string &projectName) : MySolver2(projectName) {
+Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
