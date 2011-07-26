@@ -362,7 +362,7 @@ namespace MBSim {
       if(INFO) cout << "  initialising modelBuildup ..." << endl;
       Group::init(stage);
       setDynamicSystemSolver(this);
-      checkForConstraints(); // TODO for preinit
+      setUpInverseKinetics(); // TODO for preinit
     }
     else if(stage==MBSim::plot) {
       if(INFO) cout << "  initialising plot-files ..." << endl;
@@ -1410,7 +1410,6 @@ namespace MBSim {
     updateJacobians(t,0);
     updateJacobians(t,1);
     updateh(t,1);
-    buf.resize(3,20);
     updateh0Fromh1(t);
     updateM(t,0); 
     facLLM(0); 
@@ -1446,12 +1445,8 @@ namespace MBSim {
     updater(t,1);
     updatehInverseKinetics(t,1); // Accelerations of objects
     updateWInverseKinetics(t,1); 
-    ///updateWInverseKinetics(t,0); 
     updatebInverseKinetics(t); 
 
-    //if(WInverseKinetics[1].cols() >0)
-  //    cout << WInverseKinetics[0] << endl;
-    //  laInverseKinetics = slvLL(JTJ(WInverseKinetics[1]),-WInverseKinetics[1].T()*(h[1]+r[1]));
       int n = WInverseKinetics[1].cols();
       int m1 = WInverseKinetics[1].rows();
       int m2 = bInverseKinetics.rows();
@@ -1460,8 +1455,7 @@ namespace MBSim {
     A(Index(0,m1-1),Index(0,n-1)) = WInverseKinetics[1];
     A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
       b(0,m1-1) = -h[1]-r[1];
-      Vec x =  slvLL(JTJ(A),A.T()*b);
-      laInverseKinetics = x(0,n-1);
+      laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
 
     DynamicSystemSolver::plot(t,dt);
 

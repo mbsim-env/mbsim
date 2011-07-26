@@ -98,7 +98,7 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
-      virtual void checkForConstraints();
+      virtual void setUpInverseKinetics();
       /*****************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
