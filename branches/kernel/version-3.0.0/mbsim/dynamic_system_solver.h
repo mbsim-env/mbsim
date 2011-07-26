@@ -472,6 +472,8 @@ namespace MBSim {
 
       void setAlwaysConsiderContact(bool alwaysConsiderContact_) {alwaysConsiderContact = alwaysConsiderContact_;}
 
+      void setInverseKinetics(bool inverseKinetics_) {inverseKinetics = inverseKinetics_;}
+
     protected:
       /**
        * \brief mass matrix
@@ -735,6 +737,7 @@ namespace MBSim {
       fmatvec::Mat WInverseKineticsParent[2];
 
       bool alwaysConsiderContact;
+      bool inverseKinetics;
 
     private:
       /**
