@@ -37,7 +37,7 @@ namespace MBSim {
   class Link;
   class ModellingInterface;
   class Contact;
-  class MyJoint;
+  class InverseKineticsJoint;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -121,7 +121,7 @@ namespace MBSim {
       virtual void updateWInverseKinetics(double t, int j=0); 
       virtual void updatehInverseKinetics(double t, int j=0); 
       virtual void updateJacobiansInverseKinetics(double t, int j=0); 
-      virtual void updateWnbInverseKinetics(double t); 
+      virtual void updatebInverseKinetics(double t); 
       /*****************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -748,7 +748,7 @@ namespace MBSim {
       /**
        * \param add link for inverse kinetics
        */
-      void addInverseKineticsLink(MyJoint *link);
+      void addInverseKineticsLink(InverseKineticsJoint *link);
 
       /**
        * \param name of the link
@@ -819,7 +819,7 @@ namespace MBSim {
       std::vector<ExtraDynamic*> extraDynamic;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
-      std::vector<MyJoint*> inverseKineticsLink;
+      std::vector<InverseKineticsJoint*> inverseKineticsLink;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

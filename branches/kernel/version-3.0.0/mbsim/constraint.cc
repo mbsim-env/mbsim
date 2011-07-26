@@ -293,26 +293,17 @@ namespace MBSim {
   }
 
   void JointConstraint::setUpInverseKinetics() {
-   // if(forceDir.cols()+momentDir.cols()) {
-      MyJoint *joint = new MyJoint(string("Joint_")+name);
-      ds->addInverseKineticsLink(joint);
-      //ds->addLink(joint);
-      //if(forceDir.cols()) {
-        //joint->setForceDirection(forceDir);
-	if(dT.cols())
-	  joint->setForceDirection(dT);
-        joint->setForceLaw(new BilateralConstraint);
-        joint->setImpactForceLaw(new BilateralImpact);
-      //}
-      //if(momentDir.cols()) {
-        //joint->setMomentDirection(momentDir);
-	if(dR.cols())
-	  joint->setMomentDirection(dR);
-        joint->setMomentLaw(new BilateralConstraint);
-        joint->setImpactMomentLaw(new BilateralImpact);
-      //}
-      joint->connect(frame1,frame2);
-    //}
+    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
+    ds->addInverseKineticsLink(joint);
+    if(dT.cols())
+      joint->setForceDirection(dT);
+    joint->setForceLaw(new BilateralConstraint);
+    joint->setImpactForceLaw(new BilateralImpact);
+    if(dR.cols())
+      joint->setMomentDirection(dR);
+    joint->setMomentLaw(new BilateralConstraint);
+    joint->setImpactMomentLaw(new BilateralImpact);
+    joint->connect(frame1,frame2);
   }
 
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
