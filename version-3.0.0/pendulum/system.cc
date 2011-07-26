@@ -38,7 +38,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   Theta(2,2) = JStab;
   stab1->setInertiaTensor(Theta);
   stab1->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-  stab1->setForceDirection(Mat("[1,0;0,1;0,0]"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::IvBody *obj=new OpenMBV::IvBody;
@@ -63,7 +62,6 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
-  stab2->setForceDirection(Mat("[1,0;0,1;0,0]"));
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::IvBody;
