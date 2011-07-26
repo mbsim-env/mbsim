@@ -282,11 +282,12 @@ namespace MBSim {
       (**i).updateW(t,j);
   }
 
-  void DynamicSystem::updatebInverseKinetics(double t) {
+  void DynamicSystem::updateWnbInverseKinetics(double t) {
+    WInverseKinetics[1].init(0);
     bInverseKinetics.init(0);
 
     for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateb(t);
+      (**i).updateWnb(t);
   }
 
   void DynamicSystem::updateV(double t, int j) {

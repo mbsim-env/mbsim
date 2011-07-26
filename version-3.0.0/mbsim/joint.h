@@ -196,7 +196,7 @@ namespace MBSim {
       void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
       virtual void init(InitStage stage);
       //virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updateb(double t);
+      virtual void updateWnb(double t);
       void calcbSize();
       void setbInd(int bInd_) { bInd = bInd_; };
       int getbSize() const { return bSize; }

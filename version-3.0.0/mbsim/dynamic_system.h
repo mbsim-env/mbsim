@@ -121,7 +121,7 @@ namespace MBSim {
       virtual void updateWInverseKinetics(double t, int j=0); 
       virtual void updatehInverseKinetics(double t, int j=0); 
       virtual void updateJacobiansInverseKinetics(double t, int j=0); 
-      virtual void updatebInverseKinetics(double t); 
+      virtual void updateWnbInverseKinetics(double t); 
       /*****************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
