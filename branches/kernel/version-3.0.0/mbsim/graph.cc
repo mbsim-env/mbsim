@@ -46,7 +46,6 @@ namespace MBSim {
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) 
 	obj[i][j]->updateJacobians(t,k);
-
   }
 
   void Graph::updatedu(double t, double dt) {
