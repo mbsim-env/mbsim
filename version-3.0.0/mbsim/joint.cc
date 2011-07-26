@@ -169,8 +169,12 @@ namespace MBSim {
         momentDir.resize(3,0);
         Wm.resize(3,0);
       }
-      resizeJacobians(0);
-      resizeJacobians(1);
+
+      C.getJacobianOfTranslation(0).resize(3,frame[0]->getJacobianOfTranslation(0).cols());
+      C.getJacobianOfRotation(0).resize(3,frame[0]->getJacobianOfRotation(0).cols());
+      C.getJacobianOfTranslation(1).resize(3,frame[0]->getJacobianOfTranslation(1).cols());
+      C.getJacobianOfRotation(1).resize(3,frame[0]->getJacobianOfRotation(1).cols());
+
       JT.resize(3,3-forceDir.cols());
       if(forceDir.cols() == 2)
         JT.col(0) = crossProduct(forceDir.col(0),forceDir.col(1));
@@ -527,12 +531,6 @@ namespace MBSim {
       }
     }
   }
-
-  void Joint::resizeJacobians(int j) {
-    C.getJacobianOfTranslation(j).resize(3,frame[0]->getJacobianOfTranslation(j).cols());
-    C.getJacobianOfRotation(j).resize(3,frame[0]->getJacobianOfRotation(j).cols());
-  }
-
 
   void Joint::setForceDirection(const Mat &fd) {
     assert(fd.rows() == 3);

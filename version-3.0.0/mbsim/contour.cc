@@ -68,11 +68,6 @@ namespace MBSim {
       Element::init(stage, parent);
   }
 
-  void Contour::resizeJacobians(int j) {
-    getFrame()->getJacobianOfTranslation().resize(3,hSize[j]);
-    getFrame()->getJacobianOfRotation().resize(3,hSize[j]);
-  }
-
   /* Rigid Contour */
   RigidContour::~RigidContour() {
 # ifdef HAVE_OPENMBVCPPINTERFACE

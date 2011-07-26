@@ -92,7 +92,6 @@ namespace MBSim {
       virtual void checkConstraintsForTermination();
       virtual void checkActiveg() {}
       virtual void checkActivegd() {}
-      virtual void resizeJacobians(int j); 
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */

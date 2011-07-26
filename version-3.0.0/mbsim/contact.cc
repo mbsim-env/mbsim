@@ -1274,15 +1274,6 @@ namespace MBSim {
   }
 }
 
-void Contact::resizeJacobians(int j) {
-  for(int k=0; k<contactKinematics->getNumberOfPotentialContactPoints(); k++) {
-    if(gActive[k]) {
-      for(unsigned int i=0; i<2; i++) 
-	cpData[k][i].getFrameOfReference().resizeJacobians(j);
-    }
-  }
-}
-
 int Contact::getFrictionDirections() {
   if(fdf) 
     return fdf->getFrictionDirections();

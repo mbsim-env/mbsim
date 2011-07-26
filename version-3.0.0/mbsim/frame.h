@@ -105,17 +105,6 @@ namespace MBSim {
       fmatvec::Vec& getGyroscopicAccelerationOfRotation(int j=0) { return WjR[j]; }
       /***************************************************/
 
-      /**
-       * \brief updates size of JACOBIANS mainly necessary for inverse kinetics
-       * \param index of right hand side
-       */
-      void resizeJacobians(int j);
-
-      /**
-       * \brief updates size of JACOBIANS 
-       */
-      void resizeJacobians();
-
     protected:
       /**
        * \brief parent object for plot invocation

@@ -160,15 +160,6 @@ namespace MBSim {
     else openMBVFrame=0;
   }
 #endif
-  void Frame::resizeJacobians() {
-    getJacobianOfTranslation().resize();
-    getJacobianOfRotation().resize();
-  }
-
-  void Frame::resizeJacobians(int j) {
-    getJacobianOfTranslation().resize(3,hSize[j]);
-    getJacobianOfRotation().resize(3,hSize[j]);
-  }
 
 }
 

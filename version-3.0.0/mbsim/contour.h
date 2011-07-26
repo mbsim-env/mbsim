@@ -187,11 +187,6 @@ namespace MBSim {
       void setParent(ObjectInterface* parent_) { parent = parent_; }
       /***************************************************/
 
-      /**
-       * \brief TODO
-       */
-      void resizeJacobians(int j);
-
     protected:
       /**
        * \brief object the contour belongs to

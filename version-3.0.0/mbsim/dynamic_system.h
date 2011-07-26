@@ -534,12 +534,6 @@ namespace MBSim {
       void checkState();
 
       /**
-       * \brief change JACOBIAN of contact size concerning use of inverse kinetics
-       * \param index of normal usage and inverse kinetics
-       */
-      void resizeJacobians(int j);
-
-      /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
       void checkForConstraints();

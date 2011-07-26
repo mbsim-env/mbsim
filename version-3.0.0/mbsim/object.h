@@ -234,11 +234,6 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      virtual void resizeJacobians(int j) {}
-
-      /**
-       * \brief TODO
-       */
       virtual void checkForConstraints() {}
       /*******************************************************/ 
 

@@ -1139,20 +1139,6 @@ namespace MBSim {
       (*i)->checkState();
   }
 
-  void DynamicSystem::resizeJacobians(int j) {
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->resizeJacobians(j);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->resizeJacobians(j);
-
-    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (*i)->resizeJacobians(j);
-
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (*i)->resizeJacobians(j);
-  }
-
   void DynamicSystem::checkForConstraints() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (*i)->checkForConstraints();
