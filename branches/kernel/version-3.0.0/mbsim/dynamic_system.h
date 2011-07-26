@@ -37,6 +37,7 @@ namespace MBSim {
   class Link;
   class ModellingInterface;
   class Contact;
+  class MyJoint;
 
   /**
    * \brief dynamic system as topmost hierarchical level
@@ -120,6 +121,7 @@ namespace MBSim {
       virtual void updateWInverseKinetics(double t, int j=0); 
       virtual void updatehInverseKinetics(double t, int j=0); 
       virtual void updateJacobiansInverseKinetics(double t, int j=0); 
+      virtual void updatebInverseKinetics(double t); 
       /*****************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -415,6 +417,7 @@ namespace MBSim {
       void updatelaRef(const fmatvec::Vec &ref);
 
       void updatelaInverseKineticsRef(const fmatvec::Vec &ref);
+      void updatebInverseKineticsRef(const fmatvec::Mat &ref);
 
       /**
        * \brief references to TODO of dynamic system parent
@@ -436,7 +439,7 @@ namespace MBSim {
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWInverseKineticsRef(const fmatvec::Mat &ref);
+      void updateWInverseKineticsRef(const fmatvec::Mat &ref, int i=0);
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
@@ -570,6 +573,11 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       void calclaInverseKineticsSize();
+
+      /**
+       * \brief calculates size of contact force parameters
+       */
+      void calcbInverseKineticsSize();
 
       /**
        * \brief calculates size of active contact force parameters
@@ -746,7 +754,7 @@ namespace MBSim {
       /**
        * \param add link for inverse kinetics
        */
-      void addInverseKineticsLink(Link *link);
+      void addInverseKineticsLink(MyJoint *link);
 
       /**
        * \param name of the link
@@ -817,7 +825,7 @@ namespace MBSim {
       std::vector<ExtraDynamic*> extraDynamic;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
-      std::vector<Link*> inverseKineticsLink;
+      std::vector<MyJoint*> inverseKineticsLink;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters
@@ -992,9 +1000,9 @@ namespace MBSim {
       /** 
        * \brief size of contact force parameters of special links relative to parent
        */
-      int laInverseKineticsSize;
+      int laInverseKineticsSize, bInverseKineticsSize;
 
-      fmatvec::Mat WInverseKinetics;
+      fmatvec::Mat WInverseKinetics[2], bInverseKinetics;
       fmatvec::Vec laInverseKinetics;
 
     private:
