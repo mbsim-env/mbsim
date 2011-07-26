@@ -328,8 +328,10 @@ namespace MBSim {
   }
 
   void RigidBody::setUpInverseKinetics() {
-    MyJoint *joint = new MyJoint(string("Joint_")+name);
+    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
     ds->addInverseKineticsLink(joint);
+    joint->setForceDirection(SqrMat(3,EYE));
+    joint->setMomentDirection(SqrMat(3,EYE));
     joint->setJacobianOfTranslation(fPJT);
     joint->setTranslation(fPrPK);
     joint->setJacobianOfRotation(fPJR);

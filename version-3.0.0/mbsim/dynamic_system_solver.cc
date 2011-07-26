@@ -1441,7 +1441,12 @@ namespace MBSim {
     //updateStateDerivativeDependentVariables(t);
 
     updatehInverseKinetics(t,1); // Accelerations of objects
-    updateWnbInverseKinetics(t); 
+
+    updategInverseKinetics(t); // necessary because of update of force direction 	 
+    updategdInverseKinetics(t); // necessary because of update of force direction 	 
+    updateJacobiansInverseKinetics(t,1); 	 
+    updateWInverseKinetics(t,1); 	     
+    updatebInverseKinetics(t);
 
     int n = WInverseKinetics[1].cols();
     int m1 = WInverseKinetics[1].rows();

@@ -631,12 +631,10 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
   }
 
-  MyJoint::MyJoint(const string &name) : Joint(name), fPrPK(0), fAPK(0), fPJT(0), fPJR(0) {
-    setForceDirection(SqrMat(3,EYE));
-    setMomentDirection(SqrMat(3,EYE));
+  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), fPrPK(0), fAPK(0), fPJT(0), fPJR(0) {
   }
 
-  void MyJoint::calcbSize() {
+  void InverseKineticsJoint::calcbSize() {
      int nuT=0, nuR=0;
       if(fPJT==0) {
 	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
@@ -660,7 +658,7 @@ namespace MBSim {
       cout << "bSize = " << bSize << endl;
   }
 
-  void MyJoint::init(InitStage stage) {
+  void InverseKineticsJoint::init(InitStage stage) {
     if(stage==resolveXMLPath) {
       Joint::init(stage);
     }
@@ -708,22 +706,14 @@ namespace MBSim {
       Joint::init(stage);
   }
 
-  void MyJoint::updateWnb(double t) {
-    Mat Wf = frame[0]->getOrientation()*forceDir;
-    Mat Wm = frame[0]->getOrientation()*momentDir;
-    fF[0](Index(0,2),Index(0,Wf.cols()-1)) = -Wf;
-    fM[0](Index(0,2),Index(Wf.cols(),Wf.cols()+Wm.cols()-1)) = -Wm;
-    fF[1] = -fF[0];
-    fM[1] = -fM[0];
-    W[1][0] += frame[0]->getJacobianOfTranslation(1).T()*fF[0] + frame[0]->getJacobianOfRotation(1).T()*fM[0];
-    W[1][1] += frame[1]->getJacobianOfTranslation(1).T()*fF[1] + frame[1]->getJacobianOfRotation(1).T()*fM[1];
+  void InverseKineticsJoint::updateb(double t) {
     if(bSize) {
       b(Index(0,bSize-1),Index(0,2)) = PJT.T();
       b(Index(0,bSize-1),Index(3,5)) = PJR.T();
     }
   }
 
-  void MyJoint::updatebRef(const Mat &bParent) {
+  void InverseKineticsJoint::updatebRef(const Mat &bParent) {
     Index J = Index(laInd,laInd+laSize-1);
     Index I = Index(bInd,bInd+bSize-1);
     b.resize()>>bParent(I,J);

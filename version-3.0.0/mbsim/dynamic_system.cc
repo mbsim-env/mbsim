@@ -271,23 +271,22 @@ namespace MBSim {
 
   void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateJacobians(t,j);
   }
 
   void DynamicSystem::updateWInverseKinetics(double t, int j) {
     WInverseKinetics[j].init(0);
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateW(t,j);
   }
 
-  void DynamicSystem::updateWnbInverseKinetics(double t) {
-    WInverseKinetics[1].init(0);
+  void DynamicSystem::updatebInverseKinetics(double t) {
     bInverseKinetics.init(0);
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
-      (**i).updateWnb(t);
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+      (**i).updateb(t);
   }
 
   void DynamicSystem::updateV(double t, int j) {
@@ -945,7 +944,7 @@ namespace MBSim {
     //for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
     //  (*i)->updatelaRefSpecial(la);
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updatelaRef(laInverseKinetics);
   }
 
@@ -986,14 +985,14 @@ namespace MBSim {
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
     WInverseKinetics[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updateWRef(WInverseKinetics[j],j);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
     bInverseKinetics.resize() >> bParent(Index(0,bInverseKineticsSize-1),Index(0,laInverseKineticsSize-1));
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updatebRef(bInverseKinetics);
   }
 
@@ -1252,7 +1251,7 @@ namespace MBSim {
   void DynamicSystem::calclaInverseKineticsSize() {
     laInverseKineticsSize = 0;
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
       (*i)->calclaSize();
       (*i)->setlaInd(laInverseKineticsSize);
       laInverseKineticsSize += (*i)->getlaSize();
@@ -1262,7 +1261,7 @@ namespace MBSim {
   void DynamicSystem::calcbInverseKineticsSize() {
     bInverseKineticsSize = 0;
 
-    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
       (*i)->calcbSize();
       (*i)->setbInd(bInverseKineticsSize);
       bInverseKineticsSize += (*i)->getbSize();
@@ -1559,7 +1558,7 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
-  void DynamicSystem::addInverseKineticsLink(MyJoint *lnk) {
+  void DynamicSystem::addInverseKineticsLink(InverseKineticsJoint *lnk) {
     //if(getLink(lnk->getName(),false)) {
     //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
     //  assert(getLink(lnk->getName(),false) == NULL);
