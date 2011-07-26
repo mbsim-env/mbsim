@@ -93,11 +93,6 @@ namespace MBSim {
        */
       virtual void connect(Contour *contour_);
 
-      /**
-       * \brief TODO
-       */
-      virtual void resizeJacobians(int j) {}
-
     protected:
 #ifdef HAVE_OPENMBVCPPINTERFACE
       void setOpenMBVForceArrow(OpenMBV::Arrow *arrow, const std::vector<bool>& which);

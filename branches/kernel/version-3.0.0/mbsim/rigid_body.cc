@@ -327,37 +327,16 @@ namespace MBSim {
     if(!constraint) uRel>>u;
   }
 
-  void RigidBody::resizeJacobians(int j) {
-    for(unsigned int i=0; i<frame.size(); i++) 
-      frame[i]->resizeJacobians(j);
-
-    for(unsigned int i=0; i<contour.size(); i++)
-      contour[i]->resizeJacobians(j);
-  }
-
   void RigidBody::checkForConstraints() {
-   // if(forceDir.cols()+momentDir.cols()) {
-      MyJoint *joint = new MyJoint(string("Joint_")+name);
-      ds->addInverseKineticsLink(joint);
-      //ds->addLink(joint);
-      //if(forceDir.cols()) {
-        //joint->setForceDirection(forceDir);
-        joint->setForceDirection(SqrMat(3,EYE));
-	joint->setJacobianOfTranslation(fPJT);
-	joint->setTranslation(fPrPK);
-        joint->setForceLaw(new BilateralConstraint);
-        joint->setImpactForceLaw(new BilateralImpact);
-      //}
-      //if(momentDir.cols()) {
-        //joint->setMomentDirection(momentDir);
-        joint->setMomentDirection(SqrMat(3,EYE));
-	joint->setJacobianOfRotation(fPJR);
-	joint->setRotation(fAPK);
-        joint->setMomentLaw(new BilateralConstraint);
-        joint->setImpactMomentLaw(new BilateralImpact);
-      //}
-      joint->connect(frameOfReference,frame[iKinematics]);
-    //}
+    MyJoint *joint = new MyJoint(string("Joint_")+name);
+    ds->addInverseKineticsLink(joint);
+    joint->setForceDirection(SqrMat(3,EYE));
+    joint->setJacobianOfTranslation(fPJT);
+    joint->setTranslation(fPrPK);
+    joint->setMomentDirection(SqrMat(3,EYE));
+    joint->setJacobianOfRotation(fPJR);
+    joint->setRotation(fAPK);
+    joint->connect(frameOfReference,frame[iKinematics]);
   }
 
   void RigidBody::plot(double t, double dt) {
@@ -556,24 +535,6 @@ namespace MBSim {
   void RigidBody::updateuRef(const Vec& ref) {
     Object::updateuRef(ref);
     if(!constraint) uRel>>u;
-  }
-
-  void RigidBody::setForceDirection(const Mat &fd) {
-    assert(fd.rows() == 3);
-
-    forceDir = fd;
-
-    for(int i=0; i<fd.cols(); i++)
-      forceDir.col(i) = forceDir.col(i)/nrm2(fd.col(i));
-  }
-
-  void RigidBody::setMomentDirection(const Mat &md) {
-    assert(md.rows() == 3);
-
-    momentDir = md;
-
-    for(int i=0; i<md.cols(); i++)
-      momentDir.col(i) = momentDir.col(i)/nrm2(md.col(i));
   }
 
   void RigidBody::addFrame(Frame *cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {

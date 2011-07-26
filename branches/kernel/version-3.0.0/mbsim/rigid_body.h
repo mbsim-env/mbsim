@@ -98,7 +98,6 @@ namespace MBSim {
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
-      virtual void resizeJacobians(int j);
       virtual void checkForConstraints();
       /*****************************************************/
 
@@ -171,8 +170,6 @@ namespace MBSim {
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
-      void setForceDirection(const fmatvec::Mat& fd);
-      void setMomentDirection(const fmatvec::Mat& md);
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
       std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const { return ASF; }
@@ -393,11 +390,6 @@ namespace MBSim {
        * \brief differentiated guiding veclocity of rotation in parent system
        */
       Function1<fmatvec::Vec,double> *fPdjR;
-
-      /**
-       * \brief force and moment directions for inverse kinetics
-       */
-      fmatvec::Mat forceDir, momentDir;
 
       /**
        * \brief function pointer to update mass matrix

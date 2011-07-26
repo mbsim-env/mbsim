@@ -345,11 +345,6 @@ namespace MBSim {
        */
       virtual double computePotentialEnergy() { return 0; }
 
-      /**
-       * \brief TODO
-       */
-      virtual void resizeJacobians(int j) {}
-
       /* GETTER / SETTER */
       virtual void setlaTol(double tol) { laTol = tol; }
       virtual void setLaTol(double tol) { LaTol = tol; }

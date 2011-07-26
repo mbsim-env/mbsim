@@ -118,7 +118,6 @@ namespace MBSim {
       virtual void checkAllgd();
       virtual void updateCondition();
       virtual void checkState();
-      virtual void resizeJacobians(int j);
       virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,fmatvec::Vec &gdInActive_,int *IndInActive_,fmatvec::Vec &gAct_,int *IndActive_);
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_);
  
