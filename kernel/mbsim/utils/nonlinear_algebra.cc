@@ -132,7 +132,7 @@ namespace MBSim {
 
       if (nrmf0 <= tol) {
         info = 0;
-        return x0;
+        return x;
       }
 
       if(jac)
