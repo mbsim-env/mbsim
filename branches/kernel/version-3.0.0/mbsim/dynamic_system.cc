@@ -1139,12 +1139,12 @@ namespace MBSim {
       (*i)->checkState();
   }
 
-  void DynamicSystem::checkForConstraints() {
+  void DynamicSystem::setUpInverseKinetics() {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->checkForConstraints();
+      (*i)->setUpInverseKinetics();
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->checkForConstraints();
+      (*i)->setUpInverseKinetics();
   }
 
   void DynamicSystem::setUpLinks() {

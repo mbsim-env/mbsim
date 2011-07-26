@@ -536,7 +536,7 @@ namespace MBSim {
       /**
        * \brief analyse constraints of dynamic systems for usage in inverse kinetics
        */
-      void checkForConstraints();
+      void setUpInverseKinetics();
 
       /**
        * \brief distribute links to set- and single valued container

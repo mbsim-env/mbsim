@@ -234,7 +234,7 @@ namespace MBSim {
       /**
        * \brief TODO
        */
-      virtual void checkForConstraints() {}
+      virtual void setUpInverseKinetics() {}
       /*******************************************************/ 
 
       /* GETTER / SETTER */

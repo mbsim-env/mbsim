@@ -292,7 +292,7 @@ namespace MBSim {
     }
   }
 
-  void JointConstraint::checkForConstraints() {
+  void JointConstraint::setUpInverseKinetics() {
    // if(forceDir.cols()+momentDir.cols()) {
       MyJoint *joint = new MyJoint(string("Joint_")+name);
       ds->addInverseKineticsLink(joint);

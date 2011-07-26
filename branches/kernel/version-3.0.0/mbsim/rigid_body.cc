@@ -327,7 +327,7 @@ namespace MBSim {
     if(!constraint) uRel>>u;
   }
 
-  void RigidBody::checkForConstraints() {
+  void RigidBody::setUpInverseKinetics() {
     MyJoint *joint = new MyJoint(string("Joint_")+name);
     ds->addInverseKineticsLink(joint);
     joint->setForceDirection(SqrMat(3,EYE));

@@ -472,8 +472,6 @@ namespace MBSim {
 
       void setAlwaysConsiderContact(bool alwaysConsiderContact_) {alwaysConsiderContact = alwaysConsiderContact_;}
 
-      fmatvec::Mat& getBuf() {return buf;}
-
     protected:
       /**
        * \brief mass matrix
@@ -735,8 +733,6 @@ namespace MBSim {
        * \brief 
        */
       fmatvec::Mat WInverseKineticsParent[2];
-
-      fmatvec::Mat buf;
 
       bool alwaysConsiderContact;
 
