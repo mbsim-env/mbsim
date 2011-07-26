@@ -1436,26 +1436,22 @@ namespace MBSim {
     }
 
     updater(t,0); 
+    updater(t,1);
     updatezd(t);
     //updateStateDerivativeDependentVariables(t);
 
-    updategInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-    updategdInverseKinetics(t); // TODO not optimal, but necessary because of update of force direction
-    updateJacobiansInverseKinetics(t,1);
-    updater(t,1);
     updatehInverseKinetics(t,1); // Accelerations of objects
-    updateWInverseKinetics(t,1); 
-    updatebInverseKinetics(t); 
+    updateWnbInverseKinetics(t); 
 
-      int n = WInverseKinetics[1].cols();
-      int m1 = WInverseKinetics[1].rows();
-      int m2 = bInverseKinetics.rows();
-      Mat A(m1+m2,n);
-      Vec b(m1+m2);
+    int n = WInverseKinetics[1].cols();
+    int m1 = WInverseKinetics[1].rows();
+    int m2 = bInverseKinetics.rows();
+    Mat A(m1+m2,n);
+    Vec b(m1+m2);
     A(Index(0,m1-1),Index(0,n-1)) = WInverseKinetics[1];
     A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
-      b(0,m1-1) = -h[1]-r[1];
-      laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
+    b(0,m1-1) = -h[1]-r[1];
+    laInverseKinetics =  slvLL(JTJ(A),A.T()*b);
 
     DynamicSystemSolver::plot(t,dt);
 
