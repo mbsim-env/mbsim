@@ -27,7 +27,12 @@ using namespace std;
 
 namespace MBSim {
 
-  Graph::Graph(const string &projectName) : DynamicSystem(projectName) {}
+  Graph::Graph(const string &projectName) : DynamicSystem(projectName) {
+    calcuSize_[0] = &Graph::calcuSize0;
+    calcuSize_[1] = &Graph::calcuSize1;
+    sethSize_[0] = &Graph::sethSize0;
+    sethSize_[1] = &Graph::sethSize1;
+  }
 
   Graph::~Graph() {}
 
@@ -63,17 +68,16 @@ namespace MBSim {
       (**i).updatexd(t);
   }
 
-  void Graph::sethSize(int hSize_, int k) {
-    if(k==1) // TODO schöner impl.
-      DynamicSystem::sethSize(hSize_,k);
-    else {
-    hSize[k] = hSize_;
-    //root->sethSize(hSize_,k);
+  void Graph::sethSize0(int hSize_) {
+    hSize[0] = hSize_;
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->sethSize((*i)->getuSize(k)+(*i)->getuInd(k),k);
-      (*i)->sethInd(0,k);
+      (*i)->sethSize((*i)->getuSize(0)+(*i)->getuInd(0),0);
+      (*i)->sethInd(0,0);
     }
-    }
+  } 
+
+  void Graph::sethSize1(int hSize_) {
+    DynamicSystem::sethSize(hSize_,1);
   } 
 
   void Graph::calcqSize() {
@@ -86,26 +90,19 @@ namespace MBSim {
       }
   }
 
-  void Graph::calcuSize(int k) {
-    if(k==1) // TODO schöner impl.
-      DynamicSystem::calcuSize(k);
-    else {
-    uSize[k] = 0;
+  void Graph::calcuSize0() {
+    uSize[0] = 0;
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
-	obj[i][j]->calcuSize(k);
-	obj[i][j]->setuInd(uSize[k],k);
-	uSize[k] += obj[i][j]->getuSize(k);
+	obj[i][j]->calcuSize(0);
+	obj[i][j]->setuInd(uSize[0],0);
+	uSize[0] += obj[i][j]->getuSize(0);
       }
-    }
   }
 
-  //void Graph::updateInverseKineticsJacobians(double t) {
-  //  for(unsigned int i=0; i<obj.size(); i++) 
-  //    for(unsigned int j=0; j<obj[i].size(); j++) 
-  //      obj[i][j]->updateInverseKineticsJacobians(t);
-
-  //}
+  void Graph::calcuSize1() {
+    DynamicSystem::calcuSize(1);
+  }
 
   void Graph::facLLM(int i) {
     LLM[i] = facLL(M[i]); 
