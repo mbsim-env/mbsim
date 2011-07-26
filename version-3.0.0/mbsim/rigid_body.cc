@@ -77,10 +77,6 @@ namespace MBSim {
     Vec WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity() - m*frame[0]->getGyroscopicAccelerationOfTranslation(j);
     Vec WM = crossProduct(WThetaS*frame[0]->getAngularVelocity(),frame[0]->getAngularVelocity()) - WThetaS*frame[0]->getGyroscopicAccelerationOfRotation(j);
 
-    //cout << "updateh" << endl;
-    //cout << "j = " << j << endl;
-    //cout << "h[j] = " << h[j] << endl;
-    //cout << "JT = " << frame[0]->getJacobianOfTranslation(j) << endl;
     h[j] += frame[0]->getJacobianOfTranslation(j).T()*WF + frame[0]->getJacobianOfRotation(j).T()*WM;
   }
 
@@ -97,16 +93,7 @@ namespace MBSim {
   }
 
   void RigidBody::updatehInverseKinetics(double t, int j) {
-    //cout << endl << endl,
-    //cout << name << endl,
-    //cout << j << endl;
-    //cout << frame[0]->getJacobianOfTranslation() << endl;
-    //cout << frame[0]->getJacobianOfRotation() << endl;
-    //cout << frame[0]->getGyroscopicAccelerationOfTranslation() << endl;
-    //cout << frame[0]->getGyroscopicAccelerationOfRotation() << endl;
-    //cout << udall[0] << endl;
     h[j] -= frame[0]->getJacobianOfTranslation(j).T()*m*(frame[0]->getJacobianOfTranslation()*udall[0] + frame[0]->getGyroscopicAccelerationOfTranslation()) + frame[0]->getJacobianOfRotation(j).T()*WThetaS*(frame[0]->getJacobianOfRotation()*udall[0] + frame[0]->getGyroscopicAccelerationOfRotation());
-    //cout << h[j] << endl;
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
@@ -124,16 +111,12 @@ namespace MBSim {
     }
     else if(fPrPK)
       nqT = fPrPK->getqSize();
-    else
-      nqT = 0;
     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
       nqR += 1; 
       nqT = nqR;
     }
     else if(fAPK)
       nqR = fAPK->getqSize();
-    else
-      nqR = 0;
     // TODO: besseres Konzept überlegen
     assert(nqT == nqR);
     nq = nqT;
@@ -150,15 +133,13 @@ namespace MBSim {
 	  nuR = nuT;
 	} else
 	  nuT = 0;
-      } else
-	nuT = fPJT->getuSize();
+      } 
 
       if(fPJR==0) {
 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
 	  nuR += 1; 
 	  nuT = nuR;
-	} else
-	  nuR = 0;
+	} 
       } else
         nuR = fPJR->getuSize();
       assert(nuT == nuR);
@@ -355,22 +336,28 @@ namespace MBSim {
   }
 
   void RigidBody::checkForConstraints() {
-    if(forceDir.cols()+momentDir.cols()) {
-      Joint *joint = new Joint(string("Joint_")+name);
+   // if(forceDir.cols()+momentDir.cols()) {
+      MyJoint *joint = new MyJoint(string("Joint_")+name);
       ds->addInverseKineticsLink(joint);
       //ds->addLink(joint);
-      if(forceDir.cols()) {
-        joint->setForceDirection(forceDir);
+      //if(forceDir.cols()) {
+        //joint->setForceDirection(forceDir);
+        joint->setForceDirection(SqrMat(3,EYE));
+	joint->setJacobianOfTranslation(fPJT);
+	joint->setTranslation(fPrPK);
         joint->setForceLaw(new BilateralConstraint);
         joint->setImpactForceLaw(new BilateralImpact);
-      }
-      if(momentDir.cols()) {
-        joint->setMomentDirection(momentDir);
+      //}
+      //if(momentDir.cols()) {
+        //joint->setMomentDirection(momentDir);
+        joint->setMomentDirection(SqrMat(3,EYE));
+	joint->setJacobianOfRotation(fPJR);
+	joint->setRotation(fAPK);
         joint->setMomentLaw(new BilateralConstraint);
         joint->setImpactMomentLaw(new BilateralImpact);
-      }
+      //}
       joint->connect(frameOfReference,frame[iKinematics]);
-    }
+    //}
   }
 
   void RigidBody::plot(double t, double dt) {
@@ -540,6 +527,7 @@ namespace MBSim {
       contour[i]->setReferenceJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSC*frame[0]->getJacobianOfRotation(j),j);
       contour[i]->setReferenceGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrSC*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSC[i])),j);
     }
+
   }
 
   void RigidBody::updateJacobiansForRemainingFramesAndContours1(double t) {

@@ -227,6 +227,7 @@ namespace MBSim {
       calcxSize();
 
       calclaInverseKineticsSize(); 
+      calcbInverseKineticsSize(); 
 
       calclaSize();
       calcgSize();
@@ -291,7 +292,9 @@ namespace MBSim {
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
       LinkStatusParent.resize(getLinkStatusSize());
-      WInverseKineticsParent.resize(hSize[1],laInverseKineticsSize);
+      WInverseKineticsParent[0].resize(hSize[0],laInverseKineticsSize);
+      WInverseKineticsParent[1].resize(hSize[1],laInverseKineticsSize);
+      bInverseKineticsParent.resize(bInverseKineticsSize,laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
 
       updateMRef(MParent[0],0);
@@ -322,7 +325,9 @@ namespace MBSim {
       updatewbRef(wbParent);
 
       updatelaInverseKineticsRef(laInverseKineticsParent);
-      updateWInverseKineticsRef(WInverseKineticsParent);
+      updateWInverseKineticsRef(WInverseKineticsParent[0],0);
+      updateWInverseKineticsRef(WInverseKineticsParent[1],1);
+      updatebInverseKineticsRef(bInverseKineticsParent);
       updatehRef(hParent[1],1);
       updaterRef(rParent[1],1);
       updateWRef(WParent[1],1);
@@ -1405,6 +1410,7 @@ namespace MBSim {
     updateJacobians(t,0);
     updateJacobians(t,1);
     updateh(t,1);
+    buf.resize(3,20);
     updateh0Fromh1(t);
     updateM(t,0); 
     facLLM(0); 
@@ -1440,9 +1446,22 @@ namespace MBSim {
     updater(t,1);
     updatehInverseKinetics(t,1); // Accelerations of objects
     updateWInverseKinetics(t,1); 
+    ///updateWInverseKinetics(t,0); 
+    updatebInverseKinetics(t); 
 
-    if(WInverseKinetics.cols() >0)
-      laInverseKinetics = slvLS(WInverseKinetics.T()*WInverseKinetics,-WInverseKinetics.T()*(h[1]+r[1]));
+    //if(WInverseKinetics[1].cols() >0)
+  //    cout << WInverseKinetics[0] << endl;
+    //  laInverseKinetics = slvLL(JTJ(WInverseKinetics[1]),-WInverseKinetics[1].T()*(h[1]+r[1]));
+      int n = WInverseKinetics[1].cols();
+      int m1 = WInverseKinetics[1].rows();
+      int m2 = bInverseKinetics.rows();
+      Mat A(m1+m2,n);
+      Vec b(m1+m2);
+    A(Index(0,m1-1),Index(0,n-1)) = WInverseKinetics[1];
+    A(Index(m1,m1+m2-1),Index(0,n-1)) = bInverseKinetics;
+      b(0,m1-1) = -h[1]-r[1];
+      Vec x =  slvLL(JTJ(A),A.T()*b);
+      laInverseKinetics = x(0,n-1);
 
     DynamicSystemSolver::plot(t,dt);
 

@@ -25,6 +25,7 @@
 #include "mbsim/object.h"
 #include "mbsim/frame.h"
 #include "mbsim/contact.h"
+#include "mbsim/joint.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "hdf5serie/fileserie.h"
 
@@ -270,15 +271,22 @@ namespace MBSim {
 
   void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateJacobians(t,j);
   }
 
   void DynamicSystem::updateWInverseKinetics(double t, int j) {
-    WInverseKinetics.init(0);
+    WInverseKinetics[j].init(0);
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateW(t,j);
+  }
+
+  void DynamicSystem::updatebInverseKinetics(double t) {
+    bInverseKinetics.init(0);
+
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+      (**i).updateb(t);
   }
 
   void DynamicSystem::updateV(double t, int j) {
@@ -936,7 +944,7 @@ namespace MBSim {
     //for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
     //  (*i)->updatelaRefSpecial(la);
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updatelaRef(laInverseKinetics);
   }
 
@@ -974,11 +982,18 @@ namespace MBSim {
     }
   }
 
-  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {
-    WInverseKinetics.resize() >> WParent(Index(hInd[1],hInd[1]+hSize[1]-1),Index(0,laInverseKineticsSize-1));
+  void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
+    WInverseKinetics[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (**i).updateWRef(WInverseKinetics,1);
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+      (**i).updateWRef(WInverseKinetics[j],j);
+  }
+
+  void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
+    bInverseKinetics.resize() >> bParent(Index(0,bInverseKineticsSize-1),Index(0,laInverseKineticsSize-1));
+
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+      (**i).updatebRef(bInverseKinetics);
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
@@ -1134,7 +1149,7 @@ namespace MBSim {
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
       (*i)->resizeJacobians(j);
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (*i)->resizeJacobians(j);
   }
 
@@ -1250,10 +1265,20 @@ namespace MBSim {
   void DynamicSystem::calclaInverseKineticsSize() {
     laInverseKineticsSize = 0;
 
-    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
       (*i)->calclaSize();
       (*i)->setlaInd(laInverseKineticsSize);
       laInverseKineticsSize += (*i)->getlaSize();
+    }
+  }
+
+  void DynamicSystem::calcbInverseKineticsSize() {
+    bInverseKineticsSize = 0;
+
+    for(vector<MyJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+      (*i)->calcbSize();
+      (*i)->setbInd(bInverseKineticsSize);
+      bInverseKineticsSize += (*i)->getbSize();
     }
   }
 
@@ -1547,7 +1572,7 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
-  void DynamicSystem::addInverseKineticsLink(Link *lnk) {
+  void DynamicSystem::addInverseKineticsLink(MyJoint *lnk) {
     //if(getLink(lnk->getName(),false)) {
     //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
     //  assert(getLink(lnk->getName(),false) == NULL);

@@ -132,6 +132,7 @@ namespace MBSim {
       void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
       void setIndependentBody(RigidBody* bi);
 
+      virtual void checkForConstraints();
       void setForceDirection(const fmatvec::Mat& d_) {dT = d_;}
       void setMomentDirection(const fmatvec::Mat& d_) {dR = d_;}
       void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}

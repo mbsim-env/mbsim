@@ -22,6 +22,7 @@
 
 #include "mbsim/link_mechanics.h"
 #include "mbsim/frame.h"
+#include "mbsim/kinematics.h"
 
 namespace MBSim {
 
@@ -185,6 +186,30 @@ namespace MBSim {
 
     private:
       std::string saved_ref1, saved_ref2;
+  };
+
+  class MyJoint: public Joint {
+    public: 
+      MyJoint(const std::string &name);
+      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
+      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
+      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
+      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
+      virtual void init(InitStage stage);
+      //virtual void updateWRef(const fmatvec::Mat& ref, int i=0);
+      virtual void updateb(double t);
+      void calcbSize();
+      void setbInd(int bInd_) { bInd = bInd_; };
+      int getbSize() const { return bSize; }
+      virtual void updatebRef(const fmatvec::Mat &hRef);
+
+    protected:
+      int bSize, bInd;
+      Translation *fPrPK;
+      Rotation *fAPK;
+      Jacobian *fPJT;
+      Jacobian *fPJR;
+      fmatvec::Mat PJT, PJR, b;
   };
 
 }

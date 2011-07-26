@@ -23,6 +23,9 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/joint.h"
+#include "mbsim/dynamic_system_solver.h"
+#include "mbsim/constitutive_laws.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -257,6 +260,7 @@ namespace MBSim {
   }
 
   void JointConstraint::updateJacobians(double t, int jj) {
+    if(jj == 0) {
 
     for(unsigned int i=0; i<bd1.size(); i++)
       bd1[i]->updateAccelerations(t,if1[i]);
@@ -285,6 +289,30 @@ namespace MBSim {
 
     J = slvLU(A,B); 
     j = slvLU(A,b); 
+    }
+  }
+
+  void JointConstraint::checkForConstraints() {
+   // if(forceDir.cols()+momentDir.cols()) {
+      MyJoint *joint = new MyJoint(string("Joint_")+name);
+      ds->addInverseKineticsLink(joint);
+      //ds->addLink(joint);
+      //if(forceDir.cols()) {
+        //joint->setForceDirection(forceDir);
+	if(dT.cols())
+	  joint->setForceDirection(dT);
+        joint->setForceLaw(new BilateralConstraint);
+        joint->setImpactForceLaw(new BilateralImpact);
+      //}
+      //if(momentDir.cols()) {
+        //joint->setMomentDirection(momentDir);
+	if(dR.cols())
+	  joint->setMomentDirection(dR);
+        joint->setMomentLaw(new BilateralConstraint);
+        joint->setImpactMomentLaw(new BilateralImpact);
+      //}
+      joint->connect(frame1,frame2);
+    //}
   }
 
   void JointConstraint::initializeUsingXML(TiXmlElement *element) {
