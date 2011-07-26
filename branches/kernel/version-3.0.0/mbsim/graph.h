@@ -52,9 +52,9 @@ namespace MBSim {
       virtual void updatedu(double t, double dt);
       virtual void updatezd(double t);
       virtual void updateud(double t, int i=0);
-      virtual void sethSize(int h, int j=0);
+      virtual void sethSize(int h, int j=0) {(this->*sethSize_[j])(h);}
       virtual void calcqSize();
-      virtual void calcuSize(int j=0);
+      virtual void calcuSize(int j=0) {(this->*calcuSize_[j])();}
       //virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
@@ -65,6 +65,14 @@ namespace MBSim {
       /* INHERITED INTERFACE OF SUBSYSTEM */
       virtual void updateJacobians(double t, int j=0);
       void facLLM(int i=0); 
+
+      void (Graph::*calcuSize_[2])(); 
+      void (Graph::*sethSize_[2])(int h); 
+      void calcuSize0();
+      void calcuSize1();
+      void sethSize0(int h);
+      void sethSize1(int h);
+
       /***************************************************/
 
       /**
