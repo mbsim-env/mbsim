@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     omp_set_num_threads(1);
 #endif
 
-  DynamicSystemSolver *sys = new System("MBS");
+  System *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
   sys->setMaxIter(100000); // set up to 100000 because of "No Convergence" in only ONE step

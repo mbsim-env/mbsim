@@ -6,7 +6,7 @@ using namespace std;
 
 int main (int argc, char* argv[]) {
 
-  DynamicSystemSolver *sys = new System("MBS");
+  System *sys = new System("MBS");
 
   sys->setStopIfNoConvergence(true,true);
   sys->dropContactMatrices();

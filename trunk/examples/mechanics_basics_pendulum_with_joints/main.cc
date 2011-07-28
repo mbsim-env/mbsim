@@ -21,7 +21,7 @@ int main (int argc, char* argv[]) {
   is.getline(dummy,10000);
   is.close();
 
-  DynamicSystemSolver *sys = new System("MBS");
+  System *sys = new System("MBS");
 
   sys->initialize();
 

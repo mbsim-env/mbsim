@@ -5,7 +5,7 @@ using namespace std;
 using namespace MBSim;
 
 int main (int argc, char* argv[]) {
-  DynamicSystemSolver *sys = new System("TS");
+  System *sys = new System("TS");
   sys->setImpactSolver(LinearEquations);
   sys->setConstraintSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);

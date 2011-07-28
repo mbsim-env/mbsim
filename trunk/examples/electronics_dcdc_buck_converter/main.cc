@@ -9,7 +9,7 @@ bool setValued = true;
 int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
-  DynamicSystemSolver *sys = new System("TS");
+  System *sys = new System("TS");
   sys->setConstraintSolver(GaussSeidel);
   sys->setImpactSolver(GaussSeidel);
 
