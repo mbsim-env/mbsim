@@ -36,7 +36,7 @@ int main (int argc, char* argv[]) {
   is.close();
   cout << ue << endl;
 
-  DynamicSystemSolver *sys = new System("TS");
+  System *sys = new System("TS");
   sys->setReorganizeHierarchy(true);
   //sys->setImpactSolver(GaussSeidel);
   //sys->setImpactSolver(FixedPointSingle);

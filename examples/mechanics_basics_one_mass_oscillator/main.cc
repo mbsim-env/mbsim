@@ -7,7 +7,7 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   // build single modules
-  DynamicSystemSolver *sys = new System("TS");
+  System *sys = new System("TS");
 
   // add modules to overall dynamical system 
   sys->initialize();

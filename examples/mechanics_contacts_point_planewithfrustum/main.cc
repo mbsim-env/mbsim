@@ -7,7 +7,7 @@ int main (int argc, char* argv[]) {
 
   bool setValued=false;
 
-  DynamicSystemSolver *sys = new System("MBS", setValued);
+  System *sys = new System("MBS", setValued);
   sys->setPlotFeature(plotRecursive, enabled);
   sys->setPlotFeature(state, enabled);
   sys->setPlotFeature(globalPosition, enabled);

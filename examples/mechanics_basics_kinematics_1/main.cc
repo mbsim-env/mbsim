@@ -7,7 +7,7 @@ using namespace MBSim;
 int main (int argc, char* argv[])
 {
   // Einzelne Bausteine des MKS erschaffen
-  DynamicSystemSolver *sys = new System("TS");
+  System *sys = new System("TS");
 
   // Bausteine zum Gesamtsystem zusammenfuegen (zu einem DGL-System) 
   sys->initialize();
