@@ -40,7 +40,7 @@ ${MAIN}.dvi : ${SOURCES} ${EPSFIGURES} ${OCTAVECODE}
 	$(BIBTEX) ${MAIN}
 
 	@echo " "
-	@(while( grep -i "Rerun" ${MAIN}.log > /dev/null ) do \
+	@(while( grep -i "Rerun to get" ${MAIN}.log > /dev/null ) do \
 		echo "--- Re-running $(ReRuns) $(LATEX):"; \
 		$(LATEX) ${MAIN}  > /dev/null; \
 	done)
