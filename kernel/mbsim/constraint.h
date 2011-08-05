@@ -48,25 +48,28 @@ namespace MBSim {
    * \author Martin Foerg
    */
   class Constraint2 : public Constraint {
+    public:
+      Constraint2(const std::string &name);
+      Constraint2(const std::string &name, RigidBody* body);
+
+      void init(InitStage stage);
+
+      void setReferenceBody(RigidBody* body_) {bd=body_; }
+      void addDependency(RigidBody* body_, double ratio);
+
+      void updateStateDependentVariables(double t);
+      void updateJacobians(double t);
+
+      void initializeUsingXML(TiXmlElement * element);
+    
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
       std::vector<double> ratio;
-
-//      std::vector<Function2<fmatvec::Vec, fmatvec::Vec, double>*> fd;
-//      std::vector<Function2<fmatvec::Mat, fmatvec::Vec, double>*> fdJ;
-//      std::vector<Function1<fmatvec::Vec,double>*> fdj;
-//      std::vector<Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>*> fdJd;
-//      std::vector<Function1<fmatvec::Vec,double>*> fdjd;
-    public:
-      Constraint2(const std::string &name, RigidBody* body);
-
-      void addDependency(RigidBody* body_, double ratio);
-
-      void init(InitStage stage);
-
-      void updateStateDependentVariables(double t);
-      void updateJacobians(double t);
+      
+      std::string saved_ReferenceBody;
+      std::vector<std::string> saved_DependencyBodies;
+      std::vector<double> saved_ratio;
   };
 
   /** 
@@ -89,18 +92,38 @@ namespace MBSim {
    * \brief example 5 for contraint 
    * \todo generalization of this class
    * \author Martin Foerg
+   * 2011-08-04 XML Interface added (Markus Schneider)
    */
   class JointConstraint : public Constraint {
-    protected:
+    public:
+      JointConstraint(const std::string &name);
+
+      void init(InitStage stage);
+      void initz();
+
+      void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
+      void setDependentBodiesFirstSide(std::vector<RigidBody*> bd) {bd1=bd; }
+      void setDependentBodiesSecondSide(std::vector<RigidBody*> bd) {bd2=bd; }
+      void setIndependentBody(RigidBody* bi_) {bi=bi_; }
+      void setForceDirection(const fmatvec::Mat& d_) {dT = d_;}
+      void setMomentDirection(const fmatvec::Mat& d_) {dR = d_;}
+      void connect(Frame* frame1_, Frame* frame2_) {frame1=frame1_; frame2=frame2_; }
+
+      void updateStateDependentVariables(double t); 
+      void updateJacobians(double t); 
+      virtual void initializeUsingXML(TiXmlElement *element);
+    
+    private:
       class Residuum : public Function1<fmatvec::Vec,fmatvec::Vec> {
-	std::vector<RigidBody*> body1, body2;
-	fmatvec::Mat dT, dR;
-	Frame *frame1, *frame2;
-	double t;
-	std::vector<int> i1,i2;
-	public:
-	Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
-	fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
+        private:
+          std::vector<RigidBody*> body1, body2;
+          fmatvec::Mat dT, dR;
+          Frame *frame1, *frame2;
+          double t;
+          std::vector<int> i1,i2;
+        public:
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat &dT_, const fmatvec::Mat &dR_,Frame *frame1_, Frame *frame2_,double t_,std::vector<int> i1_, std::vector<int> i2_);
+          fmatvec::Vec operator()(const fmatvec::Vec &x, const void * =NULL);
       };
       std::vector<RigidBody*> bd1;
       std::vector<RigidBody*> bd2;
@@ -121,28 +144,9 @@ namespace MBSim {
       fmatvec::Mat JT, JR;
       fmatvec::Vec q0;
 
-    public:
-      JointConstraint(const std::string &name);
-
-      void init(InitStage stage);
-      void initz();
-
-      void connect(Frame* frame1, Frame* frame2);
-      void setDependentBodiesFirstSide(std::vector<RigidBody*> bd);
-      void setDependentBodiesSecondSide(std::vector<RigidBody*> bd);
-      void setIndependentBody(RigidBody* bi);
-
-      void setForceDirection(const fmatvec::Mat& d_) {dT = d_;}
-      void setMomentDirection(const fmatvec::Mat& d_) {dR = d_;}
-      void setq0(const fmatvec::Vec& q0_) {q0 = q0_;}
-
-      fmatvec::Vec res(const fmatvec::Vec& q, const double& t);
-      void updateStateDependentVariables(double t); 
-      void updateJacobians(double t); 
-      virtual void initializeUsingXML(TiXmlElement *element);
-
-    private:
       std::string saved_ref1, saved_ref2;
+      std::vector<std::string> saved_RigidBodyFirstSide, saved_RigidBodySecondSide;
+      std::string saved_IndependentBody;
   };
 
 }

@@ -213,6 +213,8 @@ namespace MBSim {
       return new RigidBody(element->Attribute("name"));
     else if(element->ValueStr()==MBSIMNS"JointConstraint")
       return new JointConstraint(element->Attribute("name"));
+    else if(element->ValueStr()==MBSIMNS"Constraint2")
+      return new Constraint2(element->Attribute("name"));
     return 0;
   }
 
