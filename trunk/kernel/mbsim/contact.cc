@@ -446,7 +446,7 @@ namespace MBSim {
       if(contactKinematics==0)
         contactKinematics = contour[1]->findContactPairingWith(contour[0]->getType(), contour[1]->getType());
       if(contactKinematics==0)
-        throw MBSimError("Unknown contact pairing between Contour \""+contour[0]->getType()+"\" and Contour\""+contour[1]->getType()+"\"!");
+        throw MBSimError("ERROR in "+getName()+" (Contact::init): Unknown contact pairing between Contour \""+contour[0]->getType()+"\" and Contour\""+contour[1]->getType()+"\"!");
 
       contactKinematics->assignContours(contour[0],contour[1]);
 

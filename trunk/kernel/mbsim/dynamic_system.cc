@@ -401,6 +401,23 @@ namespace MBSim {
         inverseKineticsLink[i]->plot(t,dt);
     }
   }
+  
+  void DynamicSystem::plotAtSpecialEvent(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for(unsigned i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<extraDynamic.size(); i++)
+        extraDynamic[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<frame.size(); i++)
+        frame[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<inverseKineticsLink.size(); i++)
+        inverseKineticsLink[i]->plotAtSpecialEvent(t,dt);
+    }
+  }
 
   void DynamicSystem::closePlot() {
     if(getPlotFeature(plotRecursive)==enabled) {

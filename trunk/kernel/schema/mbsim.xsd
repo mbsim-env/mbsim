@@ -56,6 +56,8 @@
           <dd>Zustandsvektor plotten (x, q, u) [+]</dd>
           <dt>stateDerivative</dt>
           <dd>Ableitung des Zustandsvektors plotten (xd, qd, ud) [-]</dd>
+          <dt>notMinimalState</dt>
+          <dd>TODO</dd>
           <dt>rightHandSide</dt>
           <dd>Glatte und nicht glatte rechte Seite plotten (h, r=W*l) [-]</dd>
           <dt>globalPosition</dt>
@@ -68,7 +70,9 @@
           <dt>linkKinematics</dt>
           <dd>Kinematic der Links plotten (g, gd) [+]</dd>
           <dt>stopVector</dt>
-          <dd>Stopvektor der Schaltpunktsuche plotten [+]</dd>
+          <dd>Stopvektor der Schaltpunktsuche ausgeben [-]</dd>
+          <dt>debug</dt>
+          <dd>interne Größen ausgeben [-]</dd>
         </dl>
     </xs:documentation></xs:annotation>
     <xs:restriction base="xs:token">
@@ -80,6 +84,8 @@
       <xs:enumeration value="-state"/>
       <xs:enumeration value="+stateDerivative"/>
       <xs:enumeration value="-stateDerivative"/>
+      <xs:enumeration value="+notMinimalState"/>
+      <xs:enumeration value="-notMinimalState"/>
       <xs:enumeration value="+rightHandSide"/>
       <xs:enumeration value="-rightHandSide"/>
       <xs:enumeration value="+globalPosition"/>
@@ -96,6 +102,8 @@
       <xs:enumeration value="-linkKinematics"/>
       <xs:enumeration value="+stopVector"/>
       <xs:enumeration value="-stopVector"/>
+      <xs:enumeration value="+debug"/>
+      <xs:enumeration value="-debug"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -2766,6 +2774,29 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
+
+  <xs:element name="Polynom1_SS" substitutionGroup="DifferentiableFunction1_SS" type="Polynom1_SSType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="http://www.w3.org/1999/xhtml">
+        Polynomfunktion <object class="inlineeqn">y=\sum_{i=0}^n a_i \, x^i</object>.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="Polynom1_SSType">
+    <xs:complexContent>
+      <xs:extension base="DifferentiableFunction1_SSType">
+     <xs:sequence>
+       <xs:element name="coefficients" type="pv:unknownVector">
+         <xs:annotation>
+           <xs:documentation xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+                Vektor der Koeffizienten des Polynoms <object class="inlineeqn">\left[ a_0; a_1; \ldots; a_n \right]</object>
+              </xs:documentation>
+         </xs:annotation>
+       </xs:element>
+     </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
 
   <xs:element name="Function1_VS" abstract="true" type="Function1_VSType">
     <xs:annotation>
