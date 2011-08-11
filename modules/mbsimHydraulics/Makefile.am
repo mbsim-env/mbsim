@@ -10,7 +10,7 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimHydraulics.pc
 
 # wrapper target for doxygen in dir doc
-.PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc intall-xmldoc uninstall-xmldoc
+.PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc
 
 doc:
 	(cd doc && $(MAKE) $(AM_MAKEFLAGS) all)
