@@ -33,9 +33,11 @@ namespace MBSimControl {
     if (stage==MBSim::plot) {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
-        Vec y=getSignal();
-        for (int i=0; i<y.size(); i++)
-          plotColumns.push_back("Signal (" + numtostr(i) + ")");
+        if(getPlotFeature(state)==enabled) {
+          Vec y=getSignal();
+          for (int i=0; i<y.size(); i++)
+            plotColumns.push_back("Signal (" + numtostr(i) + ")");
+        }
       }
       Link::init(stage);
     }
@@ -46,9 +48,11 @@ namespace MBSimControl {
 
   void Signal::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
-      Vec y=getSignal();
-      for (int i=0; i<y.size(); i++)
-        plotVector.push_back(y(i));
+      if(getPlotFeature(state)==enabled) {
+        Vec y=getSignal();
+        for (int i=0; i<y.size(); i++)
+          plotVector.push_back(y(i));
+      }
     }
     Link::plot(t, dt);
   }
