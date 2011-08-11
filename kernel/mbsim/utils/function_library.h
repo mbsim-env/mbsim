@@ -254,6 +254,23 @@ namespace MBSim {
       void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
   };
 
+
+  class Polynom1_SS : public MBSim::DifferentiableFunction1<double> {
+    public:
+      Polynom1_SS() {}
+      void initializeUsingXML(TiXmlElement *element);
+
+      class Polynom1_SSEvaluation : public MBSim::Function1<double,double> {
+        public:
+          Polynom1_SSEvaluation(fmatvec::Vec a_) : MBSim::Function1<double,double>(), a(a_) {}
+          double operator()(const double& x, const void * =NULL);
+        private:
+          fmatvec::Vec a;
+      };
+
+      void setCoefficients(fmatvec::Vec a);
+  };
+
 }
 
 #endif /* _FUNCTION_LIBRARY_H_ */

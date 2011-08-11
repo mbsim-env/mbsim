@@ -373,4 +373,31 @@ namespace MBSim {
     setXYMat(xy_);
   }
 
+
+  void Polynom1_SS::setCoefficients(Vec a) {
+    for (int i=0; i<a.size(); i++) {
+      addDerivative(new Polynom1_SS::Polynom1_SSEvaluation(a.copy()));
+      Vec b(a.size()-1, INIT, 0);
+      for (int j=0; j<b.size(); j++)
+        b(j)=a(j+1)*(j+1.);
+      a.resize(a.size()-1);
+      a=b.copy();
+    }
+    addDerivative(new Polynom1_SS::Polynom1_SSEvaluation(a.copy()));
+  }
+
+  void Polynom1_SS::initializeUsingXML(TiXmlElement * element) {
+    MBSim::DifferentiableFunction1<double>::initializeUsingXML(element);
+    TiXmlElement * e=element->FirstChildElement(MBSIMNS"coefficients");
+    setCoefficients(MBSim::Element::getVec(e));
+  }
+
+  double Polynom1_SS::Polynom1_SSEvaluation::operator()(const double& tVal, const void *) {
+    double value=a(a.size()-1);
+    for (int i=a.size()-2; i>-1; i--)
+      value=value*tVal+a(i);
+    return value;
+  }
+
+
 }

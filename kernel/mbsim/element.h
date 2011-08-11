@@ -69,6 +69,7 @@ namespace MBSim {
     generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
     linkKinematics, /*!< plot the kinematic of links (g, gd) */
     stopVector, /*!< plot the stop vector (sv) */
+    debug, /*!< plot internal sizes */
     LASTPLOTFEATURE
   };
 
@@ -132,6 +133,13 @@ namespace MBSim {
        * \param simulation time step size for derivative calculation
        */
       virtual void plot(double t, double dt = 1);
+
+      /**
+       * \brief plots time dependent data at special events
+       * \param simulation time
+       * \param simulation time step size for derivative calculation
+       */
+      virtual void plotAtSpecialEvent(double t, double dt = 1) {}
 
       /**
        * \brief closes plot file
@@ -208,7 +216,7 @@ namespace MBSim {
           if (dynamic_cast<T*>(e))
             return (T*)(e);
           else
-            throw MBSimError("Element \"" + path + "\" not found or not of wanted type.");
+            throw MBSimError("ERROR in "+getName()+" (Element::getByPath): Element \""+path+"\" not found or not of wanted type!");
         }
 
       /**

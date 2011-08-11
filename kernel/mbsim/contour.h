@@ -108,7 +108,7 @@ namespace MBSim {
        * \return curvature of contour in contour point
        * \param contour position
        */
-      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR (Contour::computeCurvature): Not implemented."); return 0; } 
+      virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR in "+getName()+"(Contour::computeCurvature): Not implemented."); return 0; } 
 
       /**
        * \param position of contour in inertial frame

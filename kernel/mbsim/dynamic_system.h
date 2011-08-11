@@ -73,8 +73,8 @@ namespace MBSim {
       virtual void updateM(double t);
       virtual void updateJacobians(double t) = 0;
       virtual void updatedq(double t, double dt); 
-      virtual void updateud(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
-      virtual void updateqd(double t) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateud(double t) { throw MBSimError("ERROR in "+getName()+" (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updateqd(double t) { throw MBSimError("ERROR in "+getName()+" (DynamicSystem::updateud): Not implemented!"); }
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
       virtual int getqSize() const { return qSize; }
@@ -137,6 +137,7 @@ namespace MBSim {
       virtual std::string getType() const { return "DynamicSystem"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot(double t, double dt);
+      virtual void plotAtSpecialEvent(double t, double dt=1.);
       virtual void closePlot();
       /*****************************************************/
 

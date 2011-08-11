@@ -136,8 +136,10 @@ namespace MBSim {
       }
       if(istate==3) {
         system->shift(z, jsv, t);
-        if(plotOnRoot)
+        if(plotOnRoot) {
           system->plot(z, t);
+          system->plotAtSpecialEvent(t);
+        }
         istate=1;
         rWork(4)=dt0;
       }
