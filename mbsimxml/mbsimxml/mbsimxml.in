@@ -2,13 +2,20 @@
 # Unix sh variant of mbsimxml (mbsimxml.in)
 # If editing this file, also edit the file mbsimxml.bat.in!
 
+# variables from build configuration
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 bindir=${exec_prefix}/bin
 MBXMLUTILSSCHEMA=@MBXMLUTILSSCHEMA@
 MBXMLUTILSBIN=@MBXMLUTILSBINDIR@
 
-# get environment variables (for none default intallation)
+# try relative path (rel to this file) if build configuration dose not work
+INSTDIR=$(dirname $(dirname $0))
+test -x $bindir/mbsimflatxml || bindir=$INSTDIR/bin
+test -e $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd || MBXMLUTILSSCHEMA=$INSTDIR/share/mbxmlutils/schema
+test -x $MBXMLUTILSBIN/mbxmlutilspp || MBXMLUTILSBIN=$INSTDIR/bin
+
+# get environment variables (for none default intallation; overwrites all others)
 test $MBSIMBINDIR && bindir=$MBSIMBINDIR
 test $MBXMLUTILSSCHEMADIR && MBXMLUTILSSCHEMA=$MBXMLUTILSSCHEMADIR
 test $MBXMLUTILSBINDIR && MBXMLUTILSBIN=$MBXMLUTILSBINDIR

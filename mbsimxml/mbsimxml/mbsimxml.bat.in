@@ -2,11 +2,18 @@
 rem Windows batch variant of mbsimxml (mbsimxml.bat.in)
 rem If editing this file, also edit the file mbsimxml.in!
 
+rem variables from build configuration
 set bindir=@win_bindir@
 set MBXMLUTILSSCHEMA=@win_MBXMLUTILSSCHEMA@
 set MBXMLUTILSBIN=@win_MBXMLUTILSBINDIR@
 
-rem get environment variables (for none default intallation)
+rem try relative path (rel to this file) if build configuration dose not work
+set INSTDIR=%~dp0..
+if not exist %bindir%/mbsimflatxml set bindir=%INSTDIR%/bin
+if not exist %MBXMLUTILSSCHEMA%/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd set MBXMLUTILSSCHEMA=%INSTDIR%/share/mbxmlutils/schema
+if not exist %MBXMLUTILSBIN%/mbxmlutilspp set MBXMLUTILSBIN=%INSTDIR%/bin
+
+rem get environment variables (for none default intallation; overwrites all others)
 if defined MBSIMBINDIR set bindir=%MBSIMBINDIR%
 if defined MBXMLUTILSSCHEMADIR set MBXMLUTILSSCHEMA=%MBXMLUTILSSCHEMADIR%
 if defined MBXMLUTILSBINDIR set MBXMLUTILSBIN=%MBXMLUTILSBINDIR%
