@@ -32,7 +32,6 @@ set PREFIX=%PREFIX:\=/%
 set MBXMLUTILSSCHEMADIR=%PREFIX%/share/mbxmlutils/schema
 set MBXMLUTILSXMLDIR=%PREFIX%/share/mbxmlutils/xml
 set MBXMLUTILSOCTAVEDIR=%PREFIX%/share/mbxmlutils/octave
-set HDF5SERIEDATADIR=%PREFIX%/share
 set HDF5SERIEBINDIR=%PREFIX%/bin
 set MBSIMBINDIR=%PREFIX%/bin
 set MBXMLUTILSBINDIR=%PREFIX%/bin

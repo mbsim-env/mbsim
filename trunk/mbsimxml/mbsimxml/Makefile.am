@@ -1,4 +1,4 @@
-bin_SCRIPTS = mbsimxml mbsimxml.bat
+bin_SCRIPTS = mbsimxml mbsimxml.bat mbsimxmlinit.sh mbsimxmlinit.csh mbsimxmlinit.ksh mbsimxmlinit.bat
 
 
 lib_LTLIBRARIES = libmbsimflatxml.la
@@ -13,7 +13,8 @@ mbsimxmlinclude_HEADERS = mbsimflatxml.h headermodules.h
 bin_PROGRAMS = mbsimflatxml
 
 mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBSIMMODULES_CFLAGS)
-mbsimflatxml_LDFLAGS = -L.
+mbsimflatxml_LDFLAGS = -L. -Wl,-rpath -Wl,\$$ORIGIN/../lib
 mbsimflatxml_LDADD = ./libmbsimflatxml.la
 
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc
+

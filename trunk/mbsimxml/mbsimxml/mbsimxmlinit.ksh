@@ -26,7 +26,6 @@ else
   export MBXMLUTILSSCHEMADIR=${MBSIMPREFIX}/share/mbxmlutils/schema
   export MBXMLUTILSXMLDIR=${MBSIMPREFIX}/share/mbxmlutils/xml
   export MBXMLUTILSOCTAVEDIR=${MBSIMPREFIX}/share/mbxmlutils/octave
-  export HDF5SERIEDATADIR=${MBSIMPREFIX}/share
   export HDF5SERIEBINDIR=${MBSIMPREFIX}/bin
   export MBSIMBINDIR=${MBSIMPREFIX}/bin
   export MBXMLUTILSBINDIR=${MBSIMPREFIX}/bin

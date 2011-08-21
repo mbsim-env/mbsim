@@ -2,7 +2,7 @@
 <Group name="Untergruppe" xmlns="http://mbsim.berlios.de/MBSim"
     xmlns:pv="http://openmbv.berlios.de/MBXMLUtils/physicalvariable"
     xmlns:ombv="http://openmbv.berlios.de/OpenMBV">
-  <position>[1;0;0]</position>
+  <position>[cot(2)/cot(2);0;0]</position>
   <orientation>[cos(alphaUG),sin(alphaUG),0;-sin(alphaUG),cos(alphaUG),0;0,0,1]</orientation>
   <frames/>
   <contours/>
