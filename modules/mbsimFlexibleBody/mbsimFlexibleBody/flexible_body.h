@@ -165,6 +165,10 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(MBSim::Frame *frame, const  int &id);
 
+      virtual void saveProfile(const std::string& filename, const bool &writePsFile = false){throw  MBSim::MBSimError("saveProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+
+      virtual void loadProfile(const std::string& filename){throw  MBSim::MBSimError("loadProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+
     protected:
       /** 
        * \brief stl-vector of discretizations/finite elements

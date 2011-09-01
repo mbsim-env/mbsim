@@ -70,7 +70,9 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      /***************************************************/
+      virtual void saveProfile(const std::string& filename, const bool &writePsFile = false);
+      virtual void loadProfile(const std::string& filename);
+      /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage);
@@ -114,7 +116,7 @@ namespace MBSimFlexibleBody {
       void initRelaxed(double alpha);
 
       /**
-       * initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
+       * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
       void initInfo();
 

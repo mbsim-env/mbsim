@@ -61,6 +61,7 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
+      virtual void saveProfile(const std::string& filename, const bool &writePsFile = false);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
@@ -185,7 +186,7 @@ namespace MBSimFlexibleBody {
   };
 
   inline void FlexibleBody1s33RCM::setGauss(int nGauss_) { nGauss = nGauss_; }
-  inline void FlexibleBody1s33RCM::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }		
+  inline void FlexibleBody1s33RCM::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius_; }
   inline void FlexibleBody1s33RCM::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
   inline void FlexibleBody1s33RCM::setLength(double L_) { L = L_; }    	
   inline void FlexibleBody1s33RCM::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
