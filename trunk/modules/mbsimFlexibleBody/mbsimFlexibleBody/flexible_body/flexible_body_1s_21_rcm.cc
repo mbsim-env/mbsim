@@ -27,6 +27,33 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/environment.h"
 
+#ifdef HAVE_NURBS
+#define MY_PACKAGE_BUGREPORT PACKAGE_BUGREPORT
+#define MY_PACKAGE_NAME PACKAGE_NAME
+#define MY_PACKAGE_VERSION PACKAGE_VERSION
+#define MY_PACKAGE_TARNAME PACKAGE_TARNAME
+#define MY_PACKAGE_STRING PACKAGE_STRING
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_VERSION
+#undef PACKAGE_TARNAME
+#undef PACKAGE_STRING
+#include "nurbs.h"
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_VERSION
+#undef PACKAGE_TARNAME
+#undef PACKAGE_STRING
+#include "vector.h"
+#define PACKAGE_BUGREPORT MY_PACKAGE_BUGREPORT
+#define PACKAGE_NAME MY_PACKAGE_NAME
+#define PACKAGE_VERSION MY_PACKAGE_VERSION
+#define PACKAGE_TARNAME MY_PACKAGE_TARNAME
+#define PACKAGE_STRING MY_PACKAGE_STRING
+
+using namespace PLib;
+#endif
+
 #define FMATVEC_DEEP_COPY
 
 using namespace fmatvec;
@@ -356,6 +383,100 @@ namespace MBSimFlexibleBody {
     BuildElements();
   }
 
+  void FlexibleBody1s21RCM::saveProfile(const string& filename, const bool &writePsFile /*= false*/) {
+#ifdef HAVE_NURBS
+    int deg = 3;
+
+    PlNurbsCurved curve;
+    if (!openStructure) {
+      PLib::Vector<PLib::HPoint3Dd> Nodelist(Elements + deg);
+
+      for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
+        ContourPointData cp(i);
+        if (i >= Elements)
+          cp.getNodeNumber() = i - Elements;
+        updateKinematicsForFrame(cp, position);
+        double factor = 500; //TODO: delete later on (good for testing and looking at it as a ps-file)
+
+        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0) * factor, cp.getFrameOfReference().getPosition()(1) * factor, cp.getFrameOfReference().getPosition()(2) * factor, 1);
+      }
+
+      /*create own vVec and vvec like in nurbsdisk_2s*/
+      PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
+      PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
+
+      const double stepU = 1. / Elements;
+
+      uvec[0] = 0;
+      for (int i = 1; i < uvec.size(); i++) {
+        uvec[i] = uvec[i - 1] + stepU;
+      }
+
+      uVec[0] = (-deg) * stepU;
+      for (int i = 1; i < uVec.size(); i++) {
+        uVec[i] = uVec[i - 1] + stepU;
+      }
+
+      curve.globalInterpClosedH(Nodelist, uvec, uVec, deg);
+
+      curve.write(filename.c_str());
+
+      if (writePsFile) {
+        string psfile = filename + ".ps";
+
+        cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      }
+
+      /*Testing*/
+
+//      int j = 0;
+//      for (double i = 0; i < 1; i += stepU) {
+//        cout << "i=" << i << endl << curve.pointAt(i) << endl;
+//        cout << Nodelist[j] << endl;
+//        j++;
+//      }
+
+      for (double i = 0; i < curve.knot(curve.knot().n() - 1); i += curve.knot(curve.degree() + 1)) {
+        cout << "i = " << i << "with point " << endl << curve.pointAt(i).x() << " , " << curve.pointAt(i).y() << " , " << curve.pointAt(i).z() << endl;
+      }
+
+      /*END - Testing*/
+    }
+#else
+    throw MBSimError("No Nurbs-Library installed ...");
+#endif
+
+  }
+
+  void FlexibleBody1s21RCM::loadProfile(const string & filename) {
+#ifdef HAVE_NURBS
+
+    PlNurbsCurved curve;
+    curve.read(filename.c_str());
+
+    //TODO_grundl: read funktioniert (die neue Kurve entspricht der alten). Nun kann man die finiten Elemente anpassen an die Kurve
+
+    /*Testing
+
+     int j = 0;
+     for (double i = 0; i < 1; i += stepU) {
+     cout << "i=" << i << endl << curve.pointAt(i) << endl;
+     cout << Nodelist[j] << endl;
+     j++;
+     }
+
+     cout << "Test of Nurbs-Curve" << endl;
+
+     string psfile = "test.ps";
+
+     cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+
+     END - Testing*/
+#else
+    throw MBSimError("No Nurbs-Library installed ...");
+#endif
+  }
+
   void FlexibleBody1s21RCM::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
     double remainder = fmod(sGlobal,L);
     if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
@@ -369,6 +490,5 @@ namespace MBSimFlexibleBody {
       sLocal += l0;
     }
   }
-
 }
 
