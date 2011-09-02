@@ -72,11 +72,11 @@ namespace MBSim {
     if (t_CF > 1.0) t_CF=1;  // to avoid numerical errors e.g. acos(t_CF)=nan; HR 9.7.2010
     if (t_CF <-1.0) t_CF=-1;
 
-    double u_CF = Wd_CF.T()*Wa_F; // projection of difference vector on axis
-    Vec c_CF = Wd_CF - u_CF*Wa_F; // projection of translational vector
-    Vec z_CF = Wb_C - t_CF*Wa_F; // projection of rotational vector
-    double z_CF_nrm2 = nrm2(z_CF);
-    double c_CF_nrm2 = nrm2(c_CF);
+    double u_CF = Wd_CF.T() * Wa_F; // projection of difference vector on axis
+    Vec c_CF = Wd_CF - u_CF * Wa_F; // projection of translational vector
+    Vec z_CF = Wb_C - t_CF * Wa_F; // projection of rotational vector
+    double z_CF_nrm2 = nrm2(z_CF);  //length of projection of rotational vector
+    double c_CF_nrm2 = nrm2(c_CF);  // length of projection of translational vector
 
     if(DEBUG) {
       cout << "DEBUG (ContactKinematicsCircleFrustum:updateg): Wa_F= " << Wa_F << endl;
@@ -161,7 +161,7 @@ namespace MBSim {
       }
       /**************************************************************************/
 
-      else { // circle - ?
+      else { // circle - ellipse (frustum=cylinder) or circle - frustum
         double al_CF = acos(t_CF);
         Vec eF1 = -z_CF/z_CF_nrm2;
         Vec eF2 = crossProduct(Wa_F,eF1);	
@@ -169,7 +169,7 @@ namespace MBSim {
         double xi_2 = Wa_F.T()*Wd_CF;
         if(xi_2 < -sin(al_CF)*r_C || xi_2 > h_F + sin(al_CF)*r_C) g(0) = 1.;
 
-        else if(fabs(phi_F)<epsroot()) { // special case: cylinder (circle-ellipse)	
+        else if (fabs(phi_F) < epsroot()) { // special case: frustum=cylinder (circle-ellipse)
           if(fabs(al_CF-M_PI/2.)<epsroot()) {
             cout << "ERROR (ContactKinematicsCircleFrustum:updateg): Circle axis-Cylinder axis angle equals 90° -> indefinite contact configuration!" << endl;
             throw(1);
@@ -243,7 +243,7 @@ namespace MBSim {
         }
         /**************************************************************************/
 
-        else { // frustum
+        else { // no special case: it is frustum-circle
           FuncPairConeSectionCircle* funcRho=NULL;
           JacobianPairConeSectionCircle* jacRho=NULL;
           Vec Wd_SC, c1, c2;
