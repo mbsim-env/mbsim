@@ -6,6 +6,7 @@ libmbsim_la_SOURCES = \
 body.cc\
 constitutive_laws.cc\
 contact.cc\
+maxwell_contact.cc\
 contour.cc\
 dynamic_system.cc\
 dynamic_system_solver.cc\
@@ -42,6 +43,7 @@ mbsimincludedir = $(includedir)/mbsim
 mbsiminclude_HEADERS = \
 body.h\
 contact.h\
+maxwell_contact.h\
 contour.h\
 contour_pdata.h\
 constitutive_laws.h\

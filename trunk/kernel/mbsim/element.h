@@ -153,6 +153,20 @@ namespace MBSim {
       const std::string& getName() const { return name; }
 
       /**
+       * \return the short name of the element (without hierarchical structure)
+       */
+      const std::string getShortName() const {
+        std::string shortname = "";
+
+        size_t i = name.length() - 1;
+
+        while ((name[i-1] != '/') and (i > 0)) {
+          i--;
+        }
+        return name.substr(i, name.length() - i);
+      }
+
+      /**
        * \param element name
        */
       void setName(const std::string &str) { name = str; }
