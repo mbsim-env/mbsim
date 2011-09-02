@@ -78,27 +78,19 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  double ArcTan(double x, double y) {
-    double phi;
-    phi = atan2(y, x);
-
-    if(phi < 0.) phi += 2 * M_PI;
-    return phi;
-  }
-
   void MapleOutput(Mat C, std::string MatName, std::string file) {
-    ofstream dat(file.c_str() , ios::app);
+    ofstream dat(file.c_str(), ios::app);
     dat << MatName;
     dat << " := Matrix([";
-    for(int i = 0; i<C.rows(); i++) {
-      dat <<"[";
-      for(int j = 0;j<C.cols(); j++) {
-        dat << C(i,j);
-        if(j<C.cols()-1)
+    for (int i = 0; i < C.rows(); i++) {
+      dat << "[";
+      for (int j = 0; j < C.cols(); j++) {
+        dat << C(i, j);
+        if (j < C.cols() - 1)
           dat << ", ";
       }
       dat << "]";
-      if(i!=C.rows()-1)
+      if (i != C.rows() - 1)
         dat << ",";
     }
     dat << "]):";
@@ -106,7 +98,28 @@ namespace MBSimFlexibleBody {
     dat.close();
   }
 
-  FlexibleBody2s13::FlexibleBody2s13(const string &name) : FlexibleBodyContinuum<Vec> (name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3,INIT,0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3,INIT,0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3,EYE), G(3,EYE) {
+
+  void MapleOutput(SymMat C, std::string MatName, std::string file) {
+    ofstream dat(file.c_str(), ios::app);
+    dat << MatName;
+    dat << " := Matrix([";
+    for (int i = 0; i < C.rows(); i++) {
+      dat << "[";
+      for (int j = 0; j < C.cols(); j++) {
+        dat << C(i, j);
+        if (j < C.cols() - 1)
+          dat << ", ";
+      }
+      dat << "]";
+      if (i != C.rows() - 1)
+        dat << ",";
+    }
+    dat << "]):";
+    dat << '\n';
+    dat.close();
+  }
+
+  FlexibleBody2s13::FlexibleBody2s13(const string &name, const int & DEBUGLEVEL_) : FlexibleBodyContinuum<Vec>(name), Elements(0), NodeDofs(3), RefDofs(0), E(0.), nu(0.), rho(0.), d(3, INIT, 0.), Ri(0), Ra(0), dr(0), dj(0), m0(0), J0(3, INIT, 0.), degV(3), degU(3), drawDegree(0), currentElement(0), nr(0), nj(0), Nodes(0), Dofs(0), LType(innerring), A(3, EYE), G(3, EYE), DEBUGLEVEL(DEBUGLEVEL_) {
 #ifdef HAVE_NURBS
     contour = new NurbsDisk2s("SurfaceContour");
     Body::addContour(contour);

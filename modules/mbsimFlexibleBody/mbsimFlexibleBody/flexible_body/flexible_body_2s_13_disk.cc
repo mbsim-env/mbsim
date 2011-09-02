@@ -27,6 +27,7 @@
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
