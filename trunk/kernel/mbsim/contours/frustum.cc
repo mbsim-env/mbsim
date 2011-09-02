@@ -19,6 +19,10 @@
 
 #include<config.h>
 #include "mbsim/contours/frustum.h"
+#include <mbsim/utils/utils.h>
+
+
+#include <fmatvec.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
@@ -48,6 +52,24 @@ namespace MBSim {
     }
     else
       RigidContour::init(stage);
+  }
+
+  //TODO: Same function as in flexible_body_2s_13_mfr_mindlin (transformCW) --> this is just the transformation into cylindrical coordinates --> get it into utils?
+  Vec Frustum::computeLagrangeParameter(const Vec &WrPoint) {
+    Vec CrPoint = WrPoint.copy();
+
+    CrPoint -= R.getPosition();
+    CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference
+
+    const double xt = CrPoint(0);
+    const double yt = CrPoint(2);
+
+    CrPoint.resize(2);
+
+    CrPoint(0) = sqrt(xt * xt + yt * yt);
+    CrPoint(1) = ArcTan(yt, xt);
+
+    return CrPoint;
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

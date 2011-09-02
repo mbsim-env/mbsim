@@ -43,6 +43,10 @@ namespace MBSim {
       virtual void init(InitStage stage);
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
+      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
+      /***************************************************/
+
       /**
        * \brief constructor
        * \param name of the contour

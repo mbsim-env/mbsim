@@ -34,6 +34,8 @@ namespace MBSim {
    * \author Bastian Esefeld
    * \date 2009-07-13 initial commit kernel_dev
    * \date 2009-09-02 performance improvement
+   *
+   * \theoretical background: "Spatial Dynamics of Pushbelt CVTs" (Schindler 2010 p.34 ff)
    */
   class ContactKinematicsCircleFrustum : public ContactKinematics {
     public:
@@ -53,7 +55,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<Contour*> &contour);
       virtual void updateg(fmatvec::Vec& g, ContourPointData *cpData);   
-      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsCircleFrustum::updateg): not implemented!"); }   
+      virtual void updatewb(fmatvec::Vec& wb, const fmatvec::Vec &g,ContourPointData *cpData) { throw MBSimError("ERROR (ContactKinematicsCircleFrustum::updatewb): not implemented!"); }
       /***************************************************/
 
       /* GETTER / SETTER */

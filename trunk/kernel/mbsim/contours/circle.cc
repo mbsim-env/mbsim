@@ -20,11 +20,17 @@
 #include<config.h>
 #include "mbsim/contours/circle.h"
 
+#include <mbsim/utils/contact_utils.h>
+#include <mbsim/utils/utils.h>
+
+#include <fmatvec.h>
+
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frustum.h>
 #endif
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSim {
   Circle::Circle(const string& name) : RigidContour(name),r(0.),curvature(0),outCont(false) {}
@@ -34,6 +40,19 @@ namespace MBSim {
   Circle::Circle(const string& name, double r_, bool outCont_) : RigidContour(name),r(r_),curvature(outCont_ ? 1./r_ : -1./r_),outCont(outCont_) {}
 
   Circle::~Circle() {}
+
+  Vec Circle::computeLagrangeParameter(const Vec& WrPoint) {
+    Vec LagrangeParameter(2,INIT,0.);
+
+    Vec CrPoint = WrPoint.copy();
+
+    CrPoint -= R.getPosition();
+    CrPoint = R.getOrientation().T() * CrPoint; // position in moving frame of reference
+
+    LagrangeParameter(0) = ArcTan(CrPoint(0), CrPoint(1));
+
+    return LagrangeParameter;
+  }
 
   void Circle::init(InitStage stage) {
     if(stage==MBSim::plot) {

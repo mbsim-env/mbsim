@@ -111,6 +111,13 @@ namespace MBSim {
       virtual double computeCurvature(ContourPointData &cp) { throw MBSimError("ERROR in "+getName()+"(Contour::computeCurvature): Not implemented."); return 0; } 
 
       /**
+       * \brief projects the point on the contour to compute the Lagrange parameter
+       * \param WrPoint point in world coordinates
+       * \return Vec of lagrange parameters
+       */
+      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint) {throw MBSimError("ERROR computeLagrangeParameter(const fmatvec::Vec &WrPoint): Not implemented for this contour: \"" + this->getType() + "\"."); return 0; }
+
+      /**
        * \param position of contour in inertial frame
        */
       virtual void setReferencePosition(const fmatvec::Vec &WrOP) { R.setPosition(WrOP); }
