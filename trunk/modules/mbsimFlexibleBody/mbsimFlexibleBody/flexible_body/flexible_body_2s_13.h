@@ -56,18 +56,16 @@ namespace MBSimFlexibleBody {
   fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::Index I);
 
   /*!
-   * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates
-   * \param Cartesian x-coordinate
-   * \param Cartesian y-coordinate
-   * \return angle
+   * \brief generates an output for a matrix for the input in maple - just for testing
+   * \param matrix for the output
    */
-  double ArcTan(double x,double y);
+  void MapleOutput(fmatvec::Mat A, std::string MatName, std::string file);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
    * \param matrix for the output
    */
-  void MapleOutput(fmatvec::Mat A, std::string MatName, std::string file);
+  void MapleOutput(fmatvec::SymMat C, std::string MatName, std::string file);
 
   /*!
    * \brief plate according to Reissner-Mindlin with moving frame of reference
@@ -82,7 +80,7 @@ namespace MBSimFlexibleBody {
        * \brief constructor
        * \param name of body
        */
-      FlexibleBody2s13(const std::string &name);
+      FlexibleBody2s13(const std::string &name, const int & DEBUGLEVEL_=0);
 
       /**
        * \brief destructor
@@ -291,6 +289,15 @@ namespace MBSimFlexibleBody {
        */
       NurbsDisk2s *contour;
 
+      /*
+       * \brief Debug-Output-Level
+       *
+       * 0 = no Debug output
+       * 1 = console Debug Output
+       * 2 = File Debug Output
+       */
+      int DEBUGLEVEL;
+
       /*! 
        * \brief detect involved element for contact description
        * \param parametrisation vector (radial / azimuthal)
@@ -310,6 +317,8 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief rotation matrix about z-axis
        * \param angle of rotation
+       *
+       * \todo replace by utils-function (rotation about z-axis)
        */
       fmatvec::SqrMat TransformationMatrix(const double &phi);
 

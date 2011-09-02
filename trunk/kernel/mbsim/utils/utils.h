@@ -36,4 +36,13 @@ fmatvec::Vec tildetovec(const fmatvec::SqrMat &A);
 double sign(double x);
 int min(int i, int j);
 
+
+/*!
+ * \brief calculates planar angle in [0,2\pi] with respect to Cartesian coordinates
+ * \param Cartesian x-coordinate
+ * \param Cartesian y-coordinate
+ * \return angle
+ */
+double ArcTan(double x,double y);
+
 #endif

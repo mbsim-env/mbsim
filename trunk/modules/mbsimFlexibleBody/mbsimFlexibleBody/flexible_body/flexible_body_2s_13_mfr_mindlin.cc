@@ -27,6 +27,7 @@
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/utils/eps.h"
+#include <mbsim/utils/utils.h>
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/nurbsdisk.h"
@@ -38,7 +39,8 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) : FlexibleBody2s13(name), N_compl(0), R_compl(0), R_ij(0) {
+  FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name, const int & DEBUGLEVEL_) :
+      FlexibleBody2s13(name, DEBUGLEVEL_), N_compl(0), R_compl(0), R_ij(0) {
     RefDofs = 6;
     for(int i=0;i<3;i++) 
       for(int j=0;j<3;j++) {
@@ -106,63 +108,61 @@ namespace MBSimFlexibleBody {
     M = condenseMatrix(Mext,ILocked).copy();
 
     /* Eigenvalues of M */
-    //stringstream filenameM;
-    //filenameM << "M" << nr << "x" << nj << "t" << t << ".txt";
-    //ofstream file_M(filenameM.str().c_str());
-    //file_M<<M<<endl;
-    //file_M<<eigval(M)<<endl;
-    //file_M.close();
-    //
-    //ofstream file_TS("LastTimeStep.txt");
-    //file_TS<<t<<endl;
-    //file_TS.close();
+    if (DEBUGLEVEL >= 2) {
+      stringstream filenameM;
+      filenameM << "M" << nr << "x" << nj << "t" << t << ".txt";
+      ofstream file_M(filenameM.str().c_str());
+      file_M << M << endl;
+      file_M << eigval(M) << endl;
+      file_M.close();
 
-    //stringstream filenameMpart;
-    //filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
-    //ofstream file_Mpart(filenameMpart.str().c_str());
-    //Index Ipart(3,5);
-    //file_Mpart <<"M_TT"<< endl << M(Ipart) << endl;
-    //file_Mpart << eigval(M(Ipart))<<endl;
-    //file_Mpart.close();
+      ofstream file_TS("LastTimeStep.txt");
+      file_TS << t << endl;
+      file_TS.close();
 
-    /* EIGENFREQUENCIES */
-    //if(eigval(M(Ipart))(0) < 0 )
-    //  throw MBSimError("TEST");
+      stringstream filenameMpart;
+      filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
+      ofstream file_Mpart(filenameMpart.str().c_str());
+      Index Ipart(3, 5);
+      file_Mpart << "M_TT" << endl << M(Ipart) << endl;
+      file_Mpart << eigval(M(Ipart)) << endl;
+      file_Mpart.close();
 
-    //with MAPLE
-    //stringstream filename;
-    //filename << "Invertation" << nr << "x" << nj;
-    //MapleOutput(static_cast<Mat>(M), "M", filename.str());
-    //MapleOutput(static_cast<Mat>(K), "K", filename.str());
+      /* EIGENFREQUENCIES */
+      if (eigval(M(Ipart))(0) < 0)
+        throw MBSimError("TEST");
 
-    //with MBSIM
-    //SqrMat H = static_cast<SqrMat> (inv(M)*K);
-    //Vector<std::complex<double> > EigVal = eigval(H);
-    //Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
-    //for(int i = 0; i<EigVal.size()-1; i++){
-    //  if (EigVal(i).imag()!=0)
-    //    throw new MBSimError("updateM() - imaginary parts in EigVal");
-    //  NaturalHarmonics(NaturalHarmonics.size() -1 - i) = 1/(M_PI*2)*EigVal(i).real();
-    //}
-    //for(int i=0; i<NaturalHarmonics.size(); i++)
-    //  for(int j=0; j<NaturalHarmonics.size()-i-1; j++) {
-    //    if(NaturalHarmonics(j)> NaturalHarmonics(j+1)) {
-    //      double tmp = NaturalHarmonics(j);
-    //      NaturalHarmonics(j) = NaturalHarmonics(j+1);
-    //      NaturalHarmonics(j+1) = tmp;
-    //    }
-    //  }
-    //stringstream filenameEigVal;
-    //filenameEigVal<<"EigVal"<<nr<<"x"<<nj<<".txt";
-    //ofstream file_eigval(filenameEigVal.str().c_str());
-    //file_eigval<<NaturalHarmonics<<endl;
-    //file_eigval.close();
+      //with MAPLE
+      stringstream filename;
+      filename << "Invertation" << nr << "x" << nj;
+      MapleOutput(M, "M", filename.str());
+      MapleOutput(K, "K", filename.str());
 
-    // LU-decomposition of M
-    //SqrMat H = static_cast<SqrMat>(inv(M)*K);
-    //ofstream file_eigval("EigVal.txt");
-    //file_eigval << eigval(H) << endl;
-    //file_eigval.close();
+      //with MBSIM
+      SqrMat H = static_cast<SqrMat>(inv(M) * K);
+      Vector<std::complex<double> > EigVal = eigval(H);
+      Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
+      for (int i = 0; i < EigVal.size() - 1; i++) {
+        if (EigVal(i).imag() < 0 or EigVal(i).imag() > 0)
+          throw new MBSimError("updateM() - imaginary parts in EigVal");
+        NaturalHarmonics(NaturalHarmonics.size() - 1 - i) = 1 / (M_PI * 2) * EigVal(i).real();
+      }
+      for (int i = 0; i < NaturalHarmonics.size(); i++)
+        for (int j = 0; j < NaturalHarmonics.size() - i - 1; j++) {
+          if (NaturalHarmonics(j) > NaturalHarmonics(j + 1)) {
+            double tmp = NaturalHarmonics(j);
+            NaturalHarmonics(j) = NaturalHarmonics(j + 1);
+            NaturalHarmonics(j + 1) = tmp;
+          }
+        }
+      stringstream filenameEigVal;
+      filenameEigVal << "EigVal" << nr << "x" << nj << ".txt";
+      ofstream file_eigval(filenameEigVal.str().c_str());
+      file_eigval << NaturalHarmonics << endl;
+
+      file_eigval << eigval(H) << endl;
+      file_eigval.close();
+    }
     
     //for testing
     //throw new MBSimError("FlexibleBody2s13MFRMindlin::updateM -- Testing the Mass matrix");
@@ -206,7 +206,7 @@ namespace MBSimFlexibleBody {
         r_ref(1) = -qext(RefDofs+node*NodeDofs+2)*computeThickness(NodeCoordinates(node,0))/2.;
         r_ref(2) = qext(RefDofs+node*NodeDofs)+computeThickness(NodeCoordinates(node,0))/2.;
 
-        r_ref = A*TransformationMatrix(NodeCoordinates(node,1))*r_ref;
+        r_ref = A*TransformationMatrix(NodeCoordinates(node,1))*r_ref; //transformation into reference-frame
         r_ref += qext(0,2);
         cp.getFrameOfReference().setPosition(frameOfReference->getPosition()+frameOfReference->getOrientation()*r_ref);
       }
