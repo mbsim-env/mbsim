@@ -13,11 +13,11 @@ int main(int argc, char *argv[]) {
   DynamicSystemSolver *sys;
   TimeSteppingIntegrator *integrator;
   double stepSize = 1e-5;
-  double plotStepSize = 1e-5;//1000 * stepSize;
+  double plotStepSize = 1e-4;//1000 * stepSize;
   double endTime = 5e-2;
 
   for (int contactType = 0; contactType <= 0; contactType++) {
-    for (int circleNums = 6; circleNums <= 66; circleNums+=5) {
+    for (int circleNums = 7; circleNums <= 7; circleNums+=5) {
       stringstream MBSName;
       MBSName << "MBS_";
 
@@ -57,12 +57,11 @@ int main(int argc, char *argv[]) {
 
       double elapsedIntegrationTime = timer.elapsed();
 
-      cout << "finished" << endl;
       delete sys;
       delete integrator;
 
       cout << "******** Results of speed are:****************" << endl;
-      cout << "*  That makes a difference of: " << elapsedIntegrationTime << endl;
+      cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
       cout << "**********************************************" << endl;
 
       if(circleNums == 1)

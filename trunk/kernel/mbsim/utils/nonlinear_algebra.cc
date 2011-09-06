@@ -1,17 +1,17 @@
 /* Copyright (C) 2004-2009 MBSim Development Team
  *
- * This library is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public 
- * License as published by the Free Software Foundation; either 
- * version 2.1 of the License, or (at your option) any later version. 
- *  
- * This library is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public 
- * License along with this library; if not, write to the Free Software 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
  * Contact: mfoerg@users.berlios.de
@@ -60,7 +60,7 @@ namespace MBSim {
       }
     }
     info = -1;
-    return u; 
+    return u;
   }
 
   MultiDimFixPointIteration::MultiDimFixPointIteration(Function1<Vec, Vec> *function_) :
@@ -120,11 +120,11 @@ namespace MBSim {
       if(jac)
         J = (*jac)(x);
       else {
-        double delta = epsroot(); 
+        double delta = epsroot();
         double xtmp = x;
         x += delta;
         double f_new = (*fct)(x);
-        J = (f_new - f)/delta; 
+        J = (f_new - f)/delta;
         x = xtmp;
       }
       double dx = 0;
@@ -179,7 +179,7 @@ namespace MBSim {
       if(jac)
         J = (*jac)(x);
       else {
-        J = SqrMat(x.size()); // initialise size 
+        J = SqrMat(x.size()); // initialise size
         double dx, xj;
         Vec f2;
 
@@ -187,7 +187,7 @@ namespace MBSim {
           xj = x(j);
 
           dx = (epsroot() * 0.5);
-          do {                   
+          do {
             dx += dx;
           } while (fabs(xj + dx - x(j))<epsroot());
 
@@ -262,38 +262,51 @@ namespace MBSim {
       cout << "pivotColIndex " << pivotColIndex << endl;
       cout << "Basis: ";
       for (size_t i = 0; i < basis.size(); i++)
-        cout << basis[i];
+        cout << basis[i] << " ";
       cout << endl;
     }
 
-    while (!greaterZero(q_) or !validBasis(basis)) {
+    if(!greaterZero(q_)) {
+      int i=0;
+      for(; i < pow(2,dim); i++ ) {
 
-      GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
+        if (i>0 and validBasis(basis))
+          break;
 
-      if (INFO) {
-        cout << "A: " << A << endl;
-        cout << "pivotRowIndex " << pivotRowIndex << endl;
-        cout << "pivotColIndex " << pivotColIndex << endl;
-        cout << "Basis: ";
-        for (size_t i = 0; i < basis.size(); i++)
-          cout << basis[i];
-        cout << endl;
+        GaussJordanEliminationStep(A, pivotRowIndex, pivotColIndex, basis);
+
+        if (INFO) {
+          cout << "A: " << A << endl;
+          cout << "pivotRowIndex " << pivotRowIndex << endl;
+          cout << "pivotColIndex " << pivotColIndex << endl;
+          cout << "Basis: ";
+          for (size_t i = 0; i < basis.size(); i++)
+            cout << basis[i] << " ";
+          cout << endl;
+        }
+
+        int pivotColIndexOld = pivotColIndex;
+
+        /*find new column index */
+        if (basis[pivotRowIndex] < dim) //if a w-value left the basis get in the correspondent z-value
+          pivotColIndex = basis[pivotRowIndex] + dim;
+        else
+          //else do it the other way round and get in the corresponding w-value
+          pivotColIndex = basis[pivotRowIndex] - dim;
+
+        /*the column becomes part of the basis*/
+        basis[pivotRowIndex] = pivotColIndexOld;
+
+        pivotRowIndex = findLexicographicMinimum(A, pivotColIndex);
+
+      }
+      if(INFO) {
+        cout << "Number of loops: " << i << endl;
+        cout << "Number of maximal loops: " << pow(2,dim) << endl;
       }
 
-      int pivotColIndexOld = pivotColIndex;
-
-      /*find new column index */
-      if (basis[pivotRowIndex] < dim) //if a w-value left the basis get in the correspondent z-value
-        pivotColIndex = basis[pivotRowIndex] + dim;
-      else
-        //else do it the other way round and get in the corresponding w-value
-        pivotColIndex = basis[pivotRowIndex] - dim;
-
-      /*the column becomes part of the basis*/
-      basis[pivotRowIndex] = pivotColIndexOld;
-
-      pivotRowIndex = findLexicographicMinimum(A, pivotColIndex);
-
+      if(!validBasis(basis))
+        throw MBSimError("LemkeAlgorithm::solve: Solution process ended with ray termination!");
     }
 
     if (INFO) {

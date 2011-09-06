@@ -39,7 +39,7 @@ class CountourCouplingPyramid : public InfluenceFunction {
     double operator()(const fmatvec::Vec &Arg1, const fmatvec::Vec &Arg2, const void * = NULL) {
       if (fabs(Arg1(1) - Arg2(1)) < M_PI_2
       )
-        return 1e-5 * cos(1e2 * (Arg1(1) - Arg2(1)));
+        return 1e-5 * pow(cos(Arg1(1) - Arg2(1)),2);
       else
         return 0;
     }
@@ -131,7 +131,7 @@ System::System(const string &projectName, int contactType, int circleNums) :
     double circAzimuthalPosition = circIter/100.;// circIter * M_PI / 60 + floor(circIter / 2) * M_PI / 100.;
 
     CircInitialTranslation(0) = circRadiusPosition * cos(circAzimuthalPosition);
-    CircInitialTranslation(1) = radiusCirc + heightPyr / 2 + 0.1;// + 0.0001 * circIter;
+    CircInitialTranslation(1) = radiusCirc + heightPyr / 2 + 0.06;// + 0.0001 * circIter;
     CircInitialTranslation(2) = circRadiusPosition * sin(circAzimuthalPosition);
 
     SqrMat CircRot(3, EYE);
