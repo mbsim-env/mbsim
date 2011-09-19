@@ -23,7 +23,6 @@
 //
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsim/frame.h"
 #include <mbsim/environment.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -224,58 +223,6 @@ namespace MBSimFlexibleBody {
 #endif
     }
     FlexibleBodyContinuum<double>::plot(t, dt);
-  }
-
-  void FlexibleBody1s33Cosserat::initializeUsingXML(TiXmlElement * element) {
-    FlexibleBody::initializeUsingXML(element);
-    TiXmlElement* e;
-
-    // frames
-    e=element->FirstChildElement(MBSIMFLEXNS"frames")->FirstChildElement();
-    while(e && e->ValueStr()==MBSIMFLEXNS"frameOnFlexibleBody1s") {
-      TiXmlElement *ec=e->FirstChildElement();
-      Frame *f=new Frame(ec->Attribute("name"));
-      f->initializeUsingXML(ec);
-      ec=ec->NextSiblingElement();
-      addFrame(f, getDouble(ec));
-      e=e->NextSiblingElement();
-    }
-
-    // other properties
-    e=element->FirstChildElement(MBSIMFLEXNS"numberOfElements");
-    setNumberElements(getInt(e));
-
-    e=element->FirstChildElement(MBSIMFLEXNS"length");
-    setLength(getDouble(e));
-
-    e=element->FirstChildElement(MBSIMFLEXNS"youngsModulus");
-    double E=getDouble(e);
-    e=element->FirstChildElement(MBSIMFLEXNS"shearModulus");
-    double G=getDouble(e);
-    setEGModuls(E, G);
-
-    e=element->FirstChildElement(MBSIMFLEXNS"density");
-    setDensity(getDouble(e));
-
-    e=element->FirstChildElement(MBSIMFLEXNS"crossSectionArea");
-    setCrossSectionalArea(getDouble(e));
-
-    e=element->FirstChildElement(MBSIMFLEXNS"momentOfInertia");
-    Vec TempVec2=getVec(e);
-    setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
-
-    e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
-    setCylinder(getDouble(e));
-
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    e=element->FirstChildElement(MBSIMFLEXNS"openMBVBody");
-    if(e) {
-      OpenMBV::SpineExtrusion *rb=dynamic_cast<OpenMBV::SpineExtrusion*>(OpenMBV::ObjectFactory::createObject(e->FirstChildElement()));
-      setOpenMBVSpineExtrusion(rb);
-      rb->initializeUsingXML(e->FirstChildElement());
-      rb->setNumberOfSpinePoints(4*Elements+1);
-    }
-#endif
   }
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {

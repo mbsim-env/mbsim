@@ -102,10 +102,6 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
 
     private:
-      FiniteElement1s33Cosserat(); // standard constructor
-      FiniteElement1s33Cosserat(const FiniteElement1s33Cosserat&); // copy constructor
-      FiniteElement1s33Cosserat& operator=(const FiniteElement1s33Cosserat&); // assignment operator
-
       /**
        * \brief length of finite element
        */
@@ -171,6 +167,11 @@ namespace MBSimFlexibleBody {
        * \brief state at Lagrangian coordinate
        */
       fmatvec::Vec X;
+      
+      FiniteElement1s33Cosserat(); // standard constructor
+      FiniteElement1s33Cosserat(const FiniteElement1s33Cosserat&); // copy constructor
+      FiniteElement1s33Cosserat& operator=(const FiniteElement1s33Cosserat&); // assignment operator
+
   };
 
   inline const fmatvec::SymMat& FiniteElement1s33Cosserat::getM() const { return M; }

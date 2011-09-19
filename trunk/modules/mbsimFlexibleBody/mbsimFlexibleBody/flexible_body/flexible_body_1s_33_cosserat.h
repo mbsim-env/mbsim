@@ -72,7 +72,6 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s33Cosserat"; }
-      void initializeUsingXML(TiXmlElement * element);
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -166,6 +165,10 @@ namespace MBSimFlexibleBody {
        */
       double cuboidBreadth, cuboidHeight, cylinderRadius,;
 
+      FlexibleBody1s33Cosserat(); // standard constructor
+      FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor
+      FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
+
       /**
        * \brief detect current finite element
        * \param global parametrisation
@@ -181,9 +184,9 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
   inline void FlexibleBody1s33Cosserat::setDensity(double rho_) { rho = rho_;}     	
   inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
-  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_,double I2_,double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
+  inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33Cosserat::setRelaxed(const fmatvec::Vec& relaxed_) { relaxed = relaxed_; }
-  inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_orient_1_,fmatvec::Vec bound_orient_2_,fmatvec::Vec bound_ang_vel_1_,fmatvec::Vec bound_ang_vel_2_){ bound_orient_1 = bound_orient_1_; bound_orient_2 = bound_orient_2_; bound_ang_vel_1 = bound_ang_vel_1_ ; bound_ang_vel_2 = bound_ang_vel_2_; }
+  inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_orient_1_, fmatvec::Vec bound_orient_2_, fmatvec::Vec bound_ang_vel_1_, fmatvec::Vec bound_ang_vel_2_){ bound_orient_1 = bound_orient_1_; bound_orient_2 = bound_orient_2_; bound_ang_vel_1 = bound_ang_vel_1_ ; bound_ang_vel_2 = bound_ang_vel_2_; }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
 
