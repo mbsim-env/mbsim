@@ -20,6 +20,7 @@
 #ifndef _FLEXIBLE_BODY_1S_33_RCM_H_
 #define _FLEXIBLE_BODY_1S_33_RCM_H_
 
+#include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contours/cylinder_flexible.h"
@@ -27,6 +28,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
 #endif
+
 
 namespace MBSimFlexibleBody {
 
@@ -52,7 +54,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody1s33RCM();
+      virtual ~FlexibleBody1s33RCM() {}
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
       virtual void BuildElements();
@@ -114,7 +116,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief angle parametrisation
        */
-      RevCardan *angle;
+      RevCardanPtr angle;
 
       /**
        * \brief number of elements 

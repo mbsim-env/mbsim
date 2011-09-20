@@ -15,5 +15,6 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 mbsimFlexibleBodyincludedir = $(includedir)/mbsimFlexibleBody
 mbsimFlexibleBodyinclude_HEADERS = flexible_body.h\
 																	 functions_contact.h \
-																	 objectfactory.h
+																	 objectfactory.h\
+																	 pointer.h
 

@@ -23,13 +23,11 @@
 #include "mbsim/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/contour_pdata.h"
+#include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/weight33RCM.h"
 #include "fmatvec.h"
 
 namespace MBSimFlexibleBody {
-
-  class RevCardan;
-  class Trafo33RCM;
 
   /**
    * \brief finite element for spatial beam using Redundant Coordinate Method (RCM)
@@ -56,12 +54,12 @@ namespace MBSimFlexibleBody {
        * \param cardan object
        * \param warning level for outputs
        */
-      FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,RevCardan* ag_);		
+      FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,RevCardanPtr ag_);		
 
       /**
        * \brief destructor
        */
-      virtual ~FiniteElement1s33RCM();		
+      virtual ~FiniteElement1s33RCM() {}		
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
       virtual const fmatvec::SymMat& getM() const;		
@@ -197,7 +195,6 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec X;
 
-
       /**
        * \brief global and local state of the last time step 
        */
@@ -217,17 +214,17 @@ namespace MBSimFlexibleBody {
       /**
        * \brief reversed Cardan-object 
        */
-      RevCardan *ag;
+      RevCardanPtr ag;
 
       /**
        * \brief trafo-object
        */
-      Trafo33RCM *tf;
+      Trafo33RCMPtr tf;
 
       /**
        * \brief weight-function-object
        */
-      Weight33RCM *wt;
+      Weight33RCMPtr wt;
 
       /**
        * \brief compute delta matrix for CP with respect to translation

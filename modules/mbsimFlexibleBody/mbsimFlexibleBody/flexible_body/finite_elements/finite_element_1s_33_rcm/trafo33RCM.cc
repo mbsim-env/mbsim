@@ -34,7 +34,7 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   /* Class PositionFunction */
-  PositionFunction::PositionFunction(RevCardan *angle_,double l0_,const Vec& pL_,const Vec& pR_,double cL1_,double cR1_,double cL2_,double cR2_,const fmatvec::RowVec& rRrLmH_) : angle(angle_),l0(l0_),pL(pL_),pR(pR_),cL1(cL1_),cR1(cR1_),cL2(cL2_),cR2(cR2_),rRrLmH(rRrLmH_) {}
+  PositionFunction::PositionFunction(RevCardanPtr angle_,double l0_,const Vec& pL_,const Vec& pR_,double cL1_,double cR1_,double cL2_,double cR2_,const fmatvec::RowVec& rRrLmH_) : angle(angle_),l0(l0_),pL(pL_),pR(pR_),cL1(cL1_),cR1(cR1_),cL2(cL2_),cR2(cR2_),rRrLmH(rRrLmH_) {}
 
   PositionFunction::~PositionFunction() {}
 
@@ -67,7 +67,7 @@ namespace MBSimFlexibleBody {
   /*******************************************************************/
 
   /* Class PositionJacobian */
-  PositionJacobian::PositionJacobian(RevCardan *angle_,double l0_,const fmatvec::RowVec &rRrLmH_,const fmatvec::Mat &pSbE_) : angle(angle_),l0(l0_),rRrLmH(rRrLmH_),pSbE(pSbE_) {}
+  PositionJacobian::PositionJacobian(RevCardanPtr angle_,double l0_,const fmatvec::RowVec &rRrLmH_,const fmatvec::Mat &pSbE_) : angle(angle_),l0(l0_),rRrLmH(rRrLmH_),pSbE(pSbE_) {}
 
   PositionJacobian::~PositionJacobian() {}
 
@@ -126,7 +126,7 @@ namespace MBSimFlexibleBody {
   /*******************************************************************/
 
   /* CLASS TRAFO33RCM */
-  Trafo33RCM::Trafo33RCM(RevCardan *angle_,double l0_) : angle(angle_),l0(l0_),l0h2(l0*l0),l0h3(l0h2*l0),l0h4(l0h3*l0),l0h5(l0h4*l0),xstar(0.25*l0),xstarh2(xstar*xstar),xstarh3(xstarh2*xstar),
+  Trafo33RCM::Trafo33RCM(RevCardanPtr angle_,double l0_) : angle(angle_),l0(l0_),l0h2(l0*l0),l0h3(l0h2*l0),l0h4(l0h3*l0),l0h5(l0h4*l0),xstar(0.25*l0),xstarh2(xstar*xstar),xstarh3(xstarh2*xstar),
   epstil(0.),k0(0.),rS(3,INIT,0.),pS(3,INIT,0.),rRrLp(3,INIT,0.),rRrLmH(3,INIT,0.),be(11,INIT,0.),tS(3,INIT,0.),nS(3,INIT,0.),bS(3,INIT,0.),ntilS(3,INIT,0.),btilS(3,INIT,0.),
   nSH(3,INIT,0.),bSH(3,INIT,0.),ntilSH(3,INIT,0.),btilSH(3,INIT,0.),tSpS(3,INIT,0.),nSpS(3,INIT,0.),bSpS(3,INIT,0.),ntilSpS(3,INIT,0.),btilSpS(3,INIT,0.),
   xibtil(0.),xintil(0.),etabtil(0.),etantil(0.),SMRHS_Jac(11,27,INIT,0.),V(4,INIT,0.),drRdrLp(3,16,INIT,0.),drRdrLm(3,16,INIT,0.),pSbE(3,11,INIT,0.),

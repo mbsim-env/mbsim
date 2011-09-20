@@ -65,27 +65,12 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(0),top(0),bottom(0),left(0),right(0),angle(0),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
-    cylinder = new CylinderFlexible("Cylinder");
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name,bool openStructure_) : FlexibleBodyContinuum<double>(name),cylinder(new CylinderFlexible("Cylinder")),top(new FlexibleBand("Top")),bottom(new FlexibleBand("Bottom")),left(new FlexibleBand("Left")),right(new FlexibleBand("Right")),angle(new RevCardan()),Elements(0),L(0.),l0(0.),E(0.),G(0.),A(0.),I1(0.),I2(0.),I0(0.),rho(0.),R1(0.),R2(0.),epstD(0.),k0D(0.),epstL(0.),k0L(0.),openStructure(openStructure_),initialised(false),nGauss(3),cylinderRadius(0.),cuboidBreadth(0.),cuboidHeight(0.) {
     Body::addContour(cylinder);
-
-    top = new FlexibleBand("Top");
     Body::addContour(top);
-
-    bottom = new FlexibleBand("Bottom");
     Body::addContour(bottom);
-
-    left = new FlexibleBand("Left");
     Body::addContour(left);
-
-    right = new FlexibleBand("Right");
     Body::addContour(right);
-
-    angle = new RevCardan();
-  }
-
-  FlexibleBody1s33RCM::~FlexibleBody1s33RCM() {
-    delete angle;
   }
 
   void FlexibleBody1s33RCM::BuildElements() {
