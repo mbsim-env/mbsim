@@ -22,10 +22,9 @@
 
 #include "fmatvec.h"
 #include "mbsim/utils/function.h"
+#include "mbsimFlexibleBody/pointer.h"
 
 namespace MBSimFlexibleBody {
-
-  class RevCardan;
 
   /***
    * \brief computation of FiniteElement1s33RCM position coordinates (cp-angles and bending)
@@ -42,7 +41,7 @@ namespace MBSimFlexibleBody {
        * \param global bending parameters
        * \param transpose of difference of right and left beam position
        */
-      PositionFunction(RevCardan *angle_,double l0_,const fmatvec::Vec& pL_,const fmatvec::Vec& pR_,
+      PositionFunction(RevCardanPtr angle_,double l0_,const fmatvec::Vec& pL_,const fmatvec::Vec& pR_,
           double cL1_,double cR1_,double cL2_,double cR2_,const fmatvec::RowVec& rRrLmH_);
       
       /**
@@ -58,7 +57,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief reversed Cardan-Object
        */
-      RevCardan* angle;
+       RevCardanPtr angle;
 
       /** 
        * \brief length of FiniteElement1s33RCM 
@@ -95,7 +94,7 @@ namespace MBSimFlexibleBody {
        * \param transpose of difference of right and left beam position
        * \param differentiated centre angles with respect to bending coordinates
        */
-      PositionJacobian(RevCardan *angle_,double l0_,const fmatvec::RowVec &rRrLmH_,const fmatvec::Mat &pSbE_);
+      PositionJacobian(RevCardanPtr angle_,double l0_,const fmatvec::RowVec &rRrLmH_,const fmatvec::Mat &pSbE_);
       
       /**
        * \brief destructor
@@ -110,7 +109,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief reversed Cardan-Object
        */
-      RevCardan* angle;
+      RevCardanPtr angle;
 
       /** 
        * \brief length of FiniteElement1s33RCM 
@@ -139,7 +138,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      Trafo33RCM(RevCardan *angle_,double l0_);
+      Trafo33RCM(RevCardanPtr angle_,double l0_);
       
       /**
        * \brief destructor
@@ -237,7 +236,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief reversed Cardan-Object
        */
-      RevCardan* angle;
+      RevCardanPtr angle;
 
       /** 
        * \brief length of FiniteElement1s33RCM and powers

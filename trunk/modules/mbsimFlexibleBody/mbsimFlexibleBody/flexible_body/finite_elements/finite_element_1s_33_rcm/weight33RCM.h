@@ -21,10 +21,9 @@
 #define WEIGHT33RCM_H_
 
 #include "fmatvec.h"
+#include "mbsimFlexibleBody/pointer.h"
 
 namespace MBSimFlexibleBody {
-
-  class Trafo33RCM;
 
   /**
    * \brief integrals of bending parametrisation for FiniteElement1s33RCM
@@ -36,7 +35,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      Weight33RCM(double l0_,double l0h2_,double l0h3_,Trafo33RCM* tf_);
+      Weight33RCM(double l0_,double l0h2_,double l0h3_,Trafo33RCMPtr tf_);
       /**
        * \brief Destructor */
       virtual ~Weight33RCM();
@@ -229,7 +228,7 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief Trafo-Object
        */
-      Trafo33RCM* tf;
+      Trafo33RCMPtr tf;
 
       /** 
        * \brief length of FEM1s33RCM

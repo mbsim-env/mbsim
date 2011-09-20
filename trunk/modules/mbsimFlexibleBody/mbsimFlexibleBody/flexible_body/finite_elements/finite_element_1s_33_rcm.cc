@@ -32,17 +32,10 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const Vec& g_,RevCardan* ag_) : l0(l0_),rho(rho_),A(A_),E(E_),G(G_),I1(I1_),I2(I2_),I0(I0_),g(g_),k10(0.),k20(0.),epstD(0.),k0D(0.),M(16,INIT,0.),h(16,INIT,0.),dhdq(16,INIT,0.),dhdu(16,INIT,0.),Damp(16,INIT,0.),l0h2(l0*l0),l0h3(l0h2*l0),x_Old(-l0),X(12,INIT,0.),qG_Old(16,INIT,0.),qGt_Old(16,INIT,0.),tol_comp(1e-8),drS(3,16,INIT,0.),depstil(16,INIT,0.),dk0(16,INIT,0.),ag(ag_),tf(0),wt(0) {
-    tf = new Trafo33RCM(ag,l0);
-    wt = new Weight33RCM(l0,l0h2,l0h3,tf);
+  FiniteElement1s33RCM::FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const Vec& g_,RevCardanPtr ag_) : l0(l0_),rho(rho_),A(A_),E(E_),G(G_),I1(I1_),I2(I2_),I0(I0_),g(g_),k10(0.),k20(0.),epstD(0.),k0D(0.),M(16,INIT,0.),h(16,INIT,0.),dhdq(16,INIT,0.),dhdu(16,INIT,0.),Damp(16,INIT,0.),l0h2(l0*l0),l0h3(l0h2*l0),x_Old(-l0),X(12,INIT,0.),qG_Old(16,INIT,0.),qGt_Old(16,INIT,0.),tol_comp(1e-8),drS(3,16,INIT,0.),depstil(16,INIT,0.),dk0(16,INIT,0.),ag(ag_),tf(new Trafo33RCM(ag,l0)),wt(new Weight33RCM(l0,l0h2,l0h3,tf)) {
     computedrS();
     computedepstil();
     computedk0();			 
-  }
-
-  FiniteElement1s33RCM::~FiniteElement1s33RCM() {
-    delete wt;
-    delete tf;	
   }
 
   void FiniteElement1s33RCM::setCurlRadius(double R1,double R2) {
