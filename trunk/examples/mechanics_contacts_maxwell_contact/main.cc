@@ -53,8 +53,8 @@ int main(int argc, char *argv[]) {
 
       boost::timer timer;
 
+      timer.restart();
       integrator->integrate(*sys);
-
       double elapsedIntegrationTime = timer.elapsed();
 
       delete sys;

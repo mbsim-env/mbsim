@@ -23,6 +23,7 @@ int main (int argc, char* argv[]) {
   integrator.setPlotStepSize(1e-5);
 
   boost::timer timer;
+  timer.restart();
   integrator.integrate(*sys);
   double calctime = timer.elapsed();
   sys->closePlot();
