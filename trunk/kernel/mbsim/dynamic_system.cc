@@ -438,9 +438,6 @@ namespace MBSim {
         delete (H5::Group*)plotGroup;
     }
 
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVGrp) { delete openMBVGrp; openMBVGrp=0; }
-#endif
   }
 
   void DynamicSystem::init(InitStage stage) {

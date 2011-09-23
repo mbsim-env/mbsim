@@ -258,15 +258,6 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       Link::closePlot();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    for(unsigned int i=0; i<openMBVArrowF.size(); i++) {
-      delete openMBVArrowF[i]; openMBVArrowF[i]=0;
-    }
-    for(unsigned int i=0; i<openMBVArrowM.size(); i++) {
-      delete openMBVArrowM[i]; openMBVArrowM[i]=0;
-    }
-    if(openMBVForceGrp) { delete openMBVForceGrp; openMBVForceGrp=0; }
-#endif
   }
 
   void LinkMechanics::updateWRef(const Mat& WParent, int j) {
