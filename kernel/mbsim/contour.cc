@@ -73,9 +73,6 @@ namespace MBSim {
 
   /* Rigid Contour */
   RigidContour::~RigidContour() {
-# ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVRigidBody) delete openMBVRigidBody;
-# endif
   }
 
   void RigidContour::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {

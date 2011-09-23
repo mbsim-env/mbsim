@@ -347,13 +347,13 @@ namespace MBSim {
 
           for (size_t iterPlotContactPoint = 0; iterPlotContactPoint < plotContactPoints.size(); iterPlotContactPoint++) {
             if (openMBVContactFrameSize > epsroot()) {
-              openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
+              openMBVContactFrame.push_back(vector<OpenMBV::Frame*>(2, new OpenMBV::Frame));
               for (unsigned int k = 0; k < 2; k++) { // frames
-                openMBVContactFrame[iterPlotContactPoint][k].setOffset(1.);
-                openMBVContactFrame[iterPlotContactPoint][k].setSize(openMBVContactFrameSize);
-                openMBVContactFrame[iterPlotContactPoint][k].setName("ContactPoint_" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + (k == 0 ? "A" : "B"));
-                openMBVContactFrame[iterPlotContactPoint][k].setEnable(openMBVContactFrameEnabled);
-                openMBVContactGrp->addObject(&openMBVContactFrame[iterPlotContactPoint][k]);
+                openMBVContactFrame[iterPlotContactPoint][k]->setOffset(1.);
+                openMBVContactFrame[iterPlotContactPoint][k]->setSize(openMBVContactFrameSize);
+                openMBVContactFrame[iterPlotContactPoint][k]->setName("ContactPoint_" + numtostr((int) plotContactPoints[iterPlotContactPoint]) + (k == 0 ? "A" : "B"));
+                openMBVContactFrame[iterPlotContactPoint][k]->setEnable(openMBVContactFrameEnabled);
+                openMBVContactGrp->addObject(openMBVContactFrame[iterPlotContactPoint][k]);
               }
               // arrows
               OpenMBV::Arrow *arrow;
@@ -437,7 +437,7 @@ namespace MBSim {
               data.push_back(cardan(1));
               data.push_back(cardan(2));
               data.push_back(0);
-              openMBVContactFrame[iterPlotContactPoint][k].append(data);
+              openMBVContactFrame[iterPlotContactPoint][k]->append(data);
             }
           }
 
@@ -504,25 +504,6 @@ namespace MBSim {
     if (getPlotFeature(plotRecursive) == enabled) {
       LinkMechanics::closePlot();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    for (unsigned int i = 0; i < openMBVContactFrame.size(); i++) {
-      delete[] openMBVContactFrame[i];
-      openMBVContactFrame[i] = 0;
-    }
-
-    for (vector<OpenMBV::Arrow *>::iterator i = openMBVNormalForceArrow.begin(); i != openMBVNormalForceArrow.end(); ++i)
-      if (*i)
-        delete *i;
-
-    for (vector<OpenMBV::Arrow *>::iterator i = openMBVFrictionForceArrow.begin(); i != openMBVFrictionForceArrow.end(); ++i)
-      if (*i)
-        delete *i;
-
-    if (openMBVContactGrp) {
-      delete openMBVContactGrp;
-      openMBVContactGrp = 0;
-    }
-#endif
   }
 
   void MaxwellContact::setPlotContactPoint(const int & contactNumber, bool enable) {
