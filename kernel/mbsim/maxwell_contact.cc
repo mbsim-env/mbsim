@@ -347,7 +347,10 @@ namespace MBSim {
 
           for (size_t iterPlotContactPoint = 0; iterPlotContactPoint < plotContactPoints.size(); iterPlotContactPoint++) {
             if (openMBVContactFrameSize > epsroot()) {
-              openMBVContactFrame.push_back(vector<OpenMBV::Frame*>(2, new OpenMBV::Frame));
+              vector<OpenMBV::Frame*> temp;
+              temp.push_back(new OpenMBV::Frame);
+              temp.push_back(new OpenMBV::Frame);
+              openMBVContactFrame.push_back(temp);
               for (unsigned int k = 0; k < 2; k++) { // frames
                 openMBVContactFrame[iterPlotContactPoint][k]->setOffset(1.);
                 openMBVContactFrame[iterPlotContactPoint][k]->setSize(openMBVContactFrameSize);
