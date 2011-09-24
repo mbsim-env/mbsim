@@ -483,13 +483,18 @@ namespace MBSim {
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
           for(unsigned int i=0; i<cpData.size(); i++) {
             if(openMBVContactFrameSize>epsroot()) {
-              openMBVContactFrame.push_back(vector<OpenMBV::Frame*>(2, new OpenMBV::Frame));
+              vector<OpenMBV::Frame*> temp;
+              temp.push_back(new OpenMBV::Frame);
+              temp.push_back(new OpenMBV::Frame);
+              openMBVContactFrame.push_back(temp);
               for(unsigned int k=0; k<2; k++) { // frames
                 openMBVContactFrame[i][k]->setOffset(1.);
                 openMBVContactFrame[i][k]->setSize(openMBVContactFrameSize);
                 openMBVContactFrame[i][k]->setName("ContactPoint_"+numtostr((int)i)+(k==0?"A":"B"));
                 openMBVContactFrame[i][k]->setEnable(openMBVContactFrameEnabled);
+cout<<"MFMF2 "<<openMBVContactFrame[i][k]->getName()<<endl;
                 openMBVContactGrp->addObject(openMBVContactFrame[i][k]);
+cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
               }
             }
             // arrows
