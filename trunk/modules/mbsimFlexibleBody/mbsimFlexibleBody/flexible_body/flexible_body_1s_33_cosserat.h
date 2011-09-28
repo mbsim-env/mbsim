@@ -93,7 +93,6 @@ namespace MBSimFlexibleBody {
       double getLength() const { return L; }
       /***************************************************/
 
-
       /**
        * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
@@ -138,7 +137,7 @@ namespace MBSimFlexibleBody {
       double rho;
 
       /**
-       * \brief ? TODO
+       * \brief open or closed beam structure
        */
       bool openStructure;
 

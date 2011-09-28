@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33RCM::BuildElements() {
     for(int i=0;i<Elements;i++) {
-      int j = 10 * i; // start index in entire beam coordinates
+      int j = 10*i; // start index in entire beam coordinates
 
       if(i<Elements-1 || openStructure) {
         qElement[i] = q(j,j+15);

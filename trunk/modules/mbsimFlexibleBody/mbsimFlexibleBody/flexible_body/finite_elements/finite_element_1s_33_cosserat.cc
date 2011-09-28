@@ -34,17 +34,16 @@ namespace MBSimFlexibleBody {
   FiniteElement1s33Cosserat::~FiniteElement1s33Cosserat() {}
 
   void FiniteElement1s33Cosserat::computeM(const Vec& qG ) {
-    const double &be = qG(10);
-    const double &ga = qG(11);
+    //const double &be = qG(10); // beta from next element -> should produce Cardan lock
+    //const double &ga = qG(11); // gamma from next element
+
     M(0,0) = 0.5*rho*A*l0;
     M(1,1) = 0.5*rho*A*l0;
     M(2,2) = 0.5*rho*A*l0;
-    M(3,3) = -rho*l0*(-pow(cos(be),2.0)*pow(cos(ga),2.0)*I1-pow(cos(be),2.0)*I2+pow(cos(be),2.0)*I2*pow(cos(ga),2.0)-I0+I0*pow(cos(be),2.0));
-    M(3,4) = sin(ga)*rho*l0*cos(be)*cos(ga)*(I1-1.0*I2);
-    M(3,5) = 0.1E1*rho*l0*I0*sin(be);
-    M(4,3) = sin(ga)*rho*l0*cos(be)*cos(ga)*(I1-1.0*I2);
-    M(4,4) = -rho*l0*(-pow(cos(ga),2.0)*I2-I1+I1*pow(cos(ga),2.0));
-    M(5,3) = 0.1E1*rho*l0*I0*sin(be);
+    M(3,3) = rho*l0*I2;//-rho*l0*(pow(cos(be),2.0)*pow(cos(ga),2.0)*(I2-I1)-I2*pow(cos(be),2.0)+I0*(pow(cos(be),2.0)-1.));
+    M(3,4) = 0.;//sin(ga)*rho*l0*cos(be)*cos(ga)*(I1-I2);
+    M(3,5) = 0.;//0.1E1*rho*l0*I0*sin(be);
+    M(4,4) = rho*l0*I1;//-rho*l0*(pow(cos(ga),2.0)*(I1-I2)-I1);
     M(5,5) = rho*l0*I0;
   }
 
@@ -132,12 +131,11 @@ namespace MBSimFlexibleBody {
     SE2(1) = -0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)*sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *G*A1*(cos(al)*sin(ga)+sin(al)*sin(be)*cos(ga))-0.1E1*(-cos(be)*sin(ga)*(xf-x)/ Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al) *sin(be)*sin(ga))*(zf-z)/Ds)*G*A2*(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))+ 0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)*(yf-y)/Ds+cos(al)*cos(be)*(zf-z)/Ds -1.0)*E*A*sin(al)*cos(be);
     SE2(2) = -0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *G*A1*(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))-0.1E1*(-cos(be)*sin(ga)*(xf-x)/ Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al) *sin(be)*sin(ga))*(zf-z)/Ds)*G*A2*(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga)) -0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)*(yf-y)/Ds+cos(al)*cos(be)*(zf-z)/Ds -1.0)*E*A*cos(al)*cos(be);
 
-    double MapleGenVar1 = 0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *Ds*G*A1*((-sin(al)*sin(ga)+cos(al)*sin(be)*cos(ga))*(yf-y)/Ds+(cos(al)*sin(ga) +sin(al)*sin(be)*cos(ga))*(zf-z)/Ds); 
-    double MapleGenVar2 = 0.1E1*(-cos(be)*sin(ga)*(xf-x)/Ds+(cos(al)*cos(ga)-sin(al) *sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga))*(zf-z)/Ds)*Ds*G*A2*((-sin(al)*cos(ga)-cos(al)*sin(be)*sin(ga))*(yf-y)/Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(zf-z)/Ds)+0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)* (yf-y)/Ds+cos(al)*cos(be)*(zf-z)/Ds-1.0)*Ds*E*A*(-cos(al)*cos(be)*(yf-y)/Ds-sin (al)*cos(be)*(zf-z)/Ds);
-    SE2(3) = MapleGenVar1+MapleGenVar2;
+    SE2(3) = 0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *Ds*G*A1*((-sin(al)*sin(ga)+cos(al)*sin(be)*cos(ga))*(yf-y)/Ds+(cos(al)*sin(ga) +sin(al)*sin(be)*cos(ga))*(zf-z)/Ds) +
+     0.1E1*(-cos(be)*sin(ga)*(xf-x)/Ds+(cos(al)*cos(ga)-sin(al) *sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga))*(zf-z)/Ds)*Ds*G*A2*((-sin(al)*cos(ga)-cos(al)*sin(be)*sin(ga))*(yf-y)/Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(zf-z)/Ds)+0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)* (yf-y)/Ds+cos(al)*cos(be)*(zf-z)/Ds-1.0)*Ds*E*A*(-cos(al)*cos(be)*(yf-y)/Ds-sin (al)*cos(be)*(zf-z)/Ds);
 
-    MapleGenVar1 = 0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *Ds*G*A1*(-sin(be)*cos(ga)*(xf-x)/Ds+sin(al)*cos(be)*cos(ga)*(yf-y)/Ds-cos(al)*cos(be)*cos(ga)*(zf-z)/Ds);
-    MapleGenVar2 = 0.1E1*(-cos(be)*sin(ga)*(xf-x)/Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga))*(zf-z)/Ds)*Ds*G*A2*(sin(be)*sin(ga)*(xf-x)/Ds-sin(al)*cos(be)*sin(ga)*(yf-y)/Ds+cos(al)* cos(be)*sin(ga)*(zf-z)/Ds)+0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)*(yf-y)/Ds+ cos(al)*cos(be)*(zf-z)/Ds-1.0)*Ds*E*A*(cos(be)*(xf-x)/Ds+sin(al)*sin(be)*(yf-y) /Ds-cos(al)*sin(be)*(zf-z)/Ds);
+    double MapleGenVar1 = 0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *Ds*G*A1*(-sin(be)*cos(ga)*(xf-x)/Ds+sin(al)*cos(be)*cos(ga)*(yf-y)/Ds-cos(al)*cos(be)*cos(ga)*(zf-z)/Ds);
+    double MapleGenVar2 = 0.1E1*(-cos(be)*sin(ga)*(xf-x)/Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))*(yf-y)/Ds+(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga))*(zf-z)/Ds)*Ds*G*A2*(sin(be)*sin(ga)*(xf-x)/Ds-sin(al)*cos(be)*sin(ga)*(yf-y)/Ds+cos(al)* cos(be)*sin(ga)*(zf-z)/Ds)+0.1E1*(sin(be)*(xf-x)/Ds-sin(al)*cos(be)*(yf-y)/Ds+ cos(al)*cos(be)*(zf-z)/Ds-1.0)*Ds*E*A*(cos(be)*(xf-x)/Ds+sin(al)*sin(be)*(yf-y) /Ds-cos(al)*sin(be)*(zf-z)/Ds);
     SE2(4) = MapleGenVar1+MapleGenVar2;
 
     MapleGenVar1 = 0.1E1*(cos(be)*cos(ga)*(xf-x)/Ds+(cos(al)*sin(ga)+sin(al)* sin(be)*cos(ga))*(yf-y)/Ds+(sin(al)*sin(ga)-cos(al)*sin(be)*cos(ga))*(zf-z)/Ds) *Ds*G*A1*(-cos(be)*sin(ga)*(xf-x)/Ds+(cos(al)*cos(ga)-sin(al)*sin(be)*sin(ga))* (yf-y)/Ds+(sin(al)*cos(ga)+cos(al)*sin(be)*sin(ga))*(zf-z)/Ds);
@@ -151,19 +149,19 @@ namespace MBSimFlexibleBody {
     BT1(5) = 0.5*((be-bep)/Ds*sin(ga/2.0+gap/2.0)+cos(be/2.0+bep/2.0)*cos( ga/2.0+gap/2.0)*(al-alp)/Ds)*Ds*E*I1*(cos(ga/2.0+gap/2.0)*(be-bep)/Ds/2.0-sin( ga/2.0+gap/2.0)*(al-alp)/Ds*cos(be/2.0+bep/2.0)/2.0)+0.5*(cos(ga/2.0+gap/2.0)*( be-bep)/Ds-sin(ga/2.0+gap/2.0)*(al-alp)/Ds*cos(be/2.0+bep/2.0))*Ds*E*I2*(-(be- bep)/Ds*sin(ga/2.0+gap/2.0)/2.0-cos(be/2.0+bep/2.0)*cos(ga/2.0+gap/2.0)*(al-alp)/Ds/2.0);
 
     Vec BT1_0(6,INIT,0.);
-    BT1_0(3) = 0.5*((be_0-bep_0)/Ds*sin(ga_0/2.0+gap_0/2.0)+cos(be_0/2.0+bep_0/2.0)*cos( ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds)*E*I1*cos(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)-0.5*(cos(ga_0/2.0+gap_0/2.0)*(be_0-bep_0)/Ds-sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*cos(be_0/2.0+bep_0/ 2.0))*E*I2*sin(ga_0/2.0+gap_0/2.0)*cos(be_0/2.0+bep_0/2.0);
+    BT1_0(3) = 0.5*((be_0-bep_0)/Ds*sin(ga_0/2.0+gap_0/2.0)+cos(be_0/2.0+bep_0/2.0)*cos( ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds)*E*I1*cos(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)-0.5*(cos(ga_0/2.0+gap_0/2.0)*(be_0-bep_0)/Ds-sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*cos(be_0/2.0+bep_0/2.0))*E*I2*sin(ga_0/2.0+gap_0/2.0)*cos(be_0/2.0+bep_0/2.0);
     BT1_0(4) = 0.5*((be_0-bep_0)/Ds*sin(ga_0/2.0+gap_0/2.0)+ cos(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds)*Ds*E*I1*(1/Ds*sin(ga_0/2.0+gap_0/2.0)- sin(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds/2.0)+0.5*(cos(ga_0/2.0+gap_0/2.0)*(be_0-bep_0)/Ds-sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*cos(be_0/2.0+bep_0/2.0))*Ds*E*I2*(cos(ga_0/2.0+gap_0/2.0)/Ds+ sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*sin(be_0/2.0+bep_0/2.0)/2.0);
     BT1_0(5) = 0.5*((be_0-bep_0)/Ds*sin(ga_0/2.0+gap_0/2.0)+ cos(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds)*Ds*E*I1*(cos(ga_0/2.0+gap_0/2.0)*(be_0-bep_0)/Ds/2.0- sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*cos(be_0/2.0+bep_0/2.0)/2.0)+ 0.5*(cos(ga_0/2.0+gap_0/2.0)*(be_0-bep_0)/Ds-sin(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds*cos(be_0/2.0+ bep_0/2.0))*Ds*E*I2*(-(be_0-bep_0)/Ds*sin(ga_0/2.0+gap_0/2.0)/2.0-cos(be_0/2.0+bep_0/2.0)*cos(ga_0/2.0+gap_0/2.0)*(al_0-alp_0)/Ds/2.0);
 
     Vec BT2(6,INIT,0.);
     BT2(3) = -0.5*((bef-be)/Ds*sin(gaf/2.0+ga/2.0)+cos(bef/2.0+be/2.0)*cos (gaf/2.0+ga/2.0)*(alf-al)/Ds)*E*I1*cos(bef/2.0+be/2.0)*cos(gaf/2.0+ga/2.0)+0.5* (cos(gaf/2.0+ga/2.0)*(bef-be)/Ds-sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be /2.0))*E*I2*sin(gaf/2.0+ga/2.0)*cos(bef/2.0+be/2.0)-0.5*((alf-al)/Ds*sin(bef/ 2.0+be/2.0)+(gaf-ga)/Ds)*G*I0*sin(bef/2.0+be/2.0);
-    BT2(4) = 0.5*((bef-be)/Ds*sin(gaf/2.0+ga/2.0)+cos(bef/2.0+be/2.0)*cos( gaf/2.0+ga/2.0)*(alf-al)/Ds)*Ds*E*I1*(-1/Ds*sin(gaf/2.0+ga/2.0)-sin(bef/2.0+be/ 2.0)*cos(gaf/2.0+ga/2.0)*(alf-al)/Ds/2.0)+0.5*(cos(gaf/2.0+ga/2.0)*(bef-be)/Ds- sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0))*Ds*E*I2*(-cos(gaf/2.0+ga/ 2.0)/Ds+sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*sin(bef/2.0+be/2.0)/2.0)+0.25*((alf-al) /Ds*sin(bef/2.0+be/2.0)+(gaf-ga)/Ds)*G*I0*(alf-al)*cos(bef/2.0+be/2.0);
-    BT2(5) = 0.5*((bef-be)/Ds*sin(gaf/2.0+ga/2.0)+cos(bef/2.0+be/2.0)*cos( gaf/2.0+ga/2.0)*(alf-al)/Ds)*Ds*E*I1*(cos(gaf/2.0+ga/2.0)*(bef-be)/Ds/2.0-sin( gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0)/2.0)+0.5*(cos(gaf/2.0+ga/2.0)*( bef-be)/Ds-sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0))*Ds*E*I2*(-(bef- be)/Ds*sin(gaf/2.0+ga/2.0)/2.0-cos(bef/2.0+be/2.0)*cos(gaf/2.0+ga/2.0)*(alf-al) /Ds/2.0)-0.5*((alf-al)/Ds*sin(bef/2.0+be/2.0)+(gaf-ga)/Ds)*G*I0;
+    BT2(4) = 0.5*((bef-be)/Ds*sin(gaf/2.0+ga/2.0)+cos(bef/2.0+be/2.0)*cos( gaf/2.0+ga/2.0)*(alf-al)/Ds)*Ds*E*I1*(-1/Ds*sin(gaf/2.0+ga/2.0)-sin(bef/2.0+be/ 2.0)*cos(gaf/2.0+ga/2.0)*(alf-al)/Ds/2.0)+0.5*(cos(gaf/2.0+ga/2.0)*(bef-be)/Ds- sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0))*Ds*E*I2*(-cos(gaf/2.0+ga/ 2.0)/Ds+sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*sin(bef/2.0+be/2.0)/2.0)+0.25*((alf-al)/Ds*sin(bef/2.0+be/2.0)+(gaf-ga)/Ds)*G*I0*(alf-al)*cos(bef/2.0+be/2.0);
+    BT2(5) = 0.5*((bef-be)/Ds*sin(gaf/2.0+ga/2.0)+cos(bef/2.0+be/2.0)*cos( gaf/2.0+ga/2.0)*(alf-al)/Ds)*Ds*E*I1*(cos(gaf/2.0+ga/2.0)*(bef-be)/Ds/2.0-sin( gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0)/2.0)+0.5*(cos(gaf/2.0+ga/2.0)*(bef-be)/Ds-sin(gaf/2.0+ga/2.0)*(alf-al)/Ds*cos(bef/2.0+be/2.0))*Ds*E*I2*(-(bef- be)/Ds*sin(gaf/2.0+ga/2.0)/2.0-cos(bef/2.0+be/2.0)*cos(gaf/2.0+ga/2.0)*(alf-al) /Ds/2.0)-0.5*((alf-al)/Ds*sin(bef/2.0+be/2.0)+(gaf-ga)/Ds)*G*I0;
 
     Vec BT2_0(6,INIT,0.);
     BT2_0(3) = -0.5*((bef_0-be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)+cos(bef_0/2.0+be_0/2.0)*cos (gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds)*E*I1*cos(bef_0/2.0+be_0/2.0)*cos(gaf_0/2.0+ga_0/2.0)+0.5*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds-sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0))*E*I2*sin(gaf_0/2.0+ga_0/2.0)*cos(bef_0/2.0+be_0/2.0)-0.5*((alf_0-al_0)/Ds*sin(bef_0/ 2.0+be_0/2.0)+(gaf_0-ga_0)/Ds)*G*I0*sin(bef_0/2.0+be_0/2.0);
-    BT2_0(4) = 0.5*((bef_0-be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)+cos(bef_0/2.0+be_0/2.0)*cos( gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds)*Ds*E*I1*(-1/Ds*sin(gaf_0/2.0+ga_0/2.0)-sin(bef_0/2.0+be_0/ 2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds/2.0)+0.5*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds-sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0))*Ds*E*I2*(-cos(gaf_0/2.0+ga_0/ 2.0)/Ds+sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*sin(bef_0/2.0+be_0/2.0)/2.0)+0.25*((alf_0-al_0) /Ds*sin(bef_0/2.0+be_0/2.0)+(gaf_0-ga_0)/Ds)*G*I0*(alf_0-al_0)*cos(bef_0/2.0+be_0/2.0);
-    BT2_0(5) = 0.5*((bef_0-be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)+cos(bef_0/2.0+be_0/2.0)*cos( gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds)*Ds*E*I1*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds/2.0-sin( gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0)/2.0)+0.5*(cos(gaf_0/2.0+ga_0/2.0)*( bef_0-be_0)/Ds-sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0))*Ds*E*I2*(-(bef_0- be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)/2.0-cos(bef_0/2.0+be/2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0) /Ds/2.0)-0.5*((alf_0-al)/Ds*sin(bef_0/2.0+be_0/2.0)+(gaf_0-ga_0)/Ds)*G*I0;
+    BT2_0(4) = 0.5*((bef_0-be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)+cos(bef_0/2.0+be_0/2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds)*Ds*E*I1*(-1/Ds*sin(gaf_0/2.0+ga_0/2.0)-sin(bef_0/2.0+be_0/ 2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds/2.0)+0.5*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds-sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0))*Ds*E*I2*(-cos(gaf_0/2.0+ga_0/ 2.0)/Ds+sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*sin(bef_0/2.0+be_0/2.0)/2.0)+0.25*((alf_0-al_0)/Ds*sin(bef_0/2.0+be_0/2.0)+(gaf_0-ga_0)/Ds)*G*I0*(alf_0-al_0)*cos(bef_0/2.0+be_0/2.0);
+    BT2_0(5) = 0.5*((bef_0-be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)+cos(bef_0/2.0+be_0/2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds)*Ds*E*I1*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds/2.0-sin( gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0)/2.0)+0.5*(cos(gaf_0/2.0+ga_0/2.0)*(bef_0-be_0)/Ds-sin(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0)/Ds*cos(bef_0/2.0+be_0/2.0))*Ds*E*I2*(-(bef_0- be_0)/Ds*sin(gaf_0/2.0+ga_0/2.0)/2.0-cos(bef_0/2.0+be/2.0)*cos(gaf_0/2.0+ga_0/2.0)*(alf_0-al_0) /Ds/2.0)-0.5*((alf_0-al)/Ds*sin(bef_0/2.0+be_0/2.0)+(gaf_0-ga_0)/Ds)*G*I0;
 
     Vec V = SE1 + SE2 + BT1 + BT2 - BT1_0 - BT2_0;
     /*****************************************************************************************************************************/
