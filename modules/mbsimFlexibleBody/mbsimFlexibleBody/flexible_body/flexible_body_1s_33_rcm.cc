@@ -323,35 +323,35 @@ namespace MBSimFlexibleBody {
     if(openStructure) qSize = 10*n+6;
     else qSize = 10*n;
 
-    Vec q0Tmp(0, INIT, 0);
-    if (q0.size())
-      q0Tmp=q0.copy();
-    q0.resize(qSize, INIT, 0);
-    if (q0Tmp.size()) {
-      if (q0Tmp.size()==q0.size())
-        q0=q0Tmp.copy();
+    Vec q0Tmp(0,INIT,0.);
+    if(q0.size())
+      q0Tmp = q0.copy();
+    q0.resize(qSize,INIT,0.);
+    if(q0Tmp.size()) {
+      if(q0Tmp.size()==q0.size())
+        q0 = q0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \""+name+"\"!");
+        throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \"" + name + "\"!");
     }
     
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    Vec u0Tmp(0, INIT, 0);
-    if (u0.size())
+    Vec u0Tmp(0,INIT,0);
+    if(u0.size())
       u0Tmp=u0.copy();
-    u0.resize(uSize[0], INIT, 0);
-    if (u0Tmp.size()) {
-      if (u0Tmp.size()==u0.size())
+    u0.resize(uSize[0],INIT,0.);
+    if(u0Tmp.size()) {
+      if(u0Tmp.size()==u0.size())
         u0=u0Tmp.copy();
       else
-        throw MBSimError("Error in dimension of u0 of FlexibleBody1s33RCM \""+name+"\"!");
+        throw MBSimError("Error in dimension of u0 of FlexibleBody1s33RCM \"" + name + "\"!");
     }
   }
 
   Vec FlexibleBody1s33RCM::computeState(double sGlobal) {
     double sLocal;
     int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    BuildElement(sGlobal,sLocal,currentElement); // Lagrange parameter of affected FE
     return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
   }
 

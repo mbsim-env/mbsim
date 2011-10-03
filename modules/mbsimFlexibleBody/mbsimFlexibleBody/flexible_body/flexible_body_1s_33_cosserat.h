@@ -82,7 +82,7 @@ namespace MBSimFlexibleBody {
       void setCrossSectionalArea(double A_);    	
       void setMomentsInertia(double I1_,double I2_,double I0_);
       void setRelaxed(const fmatvec::Vec& relaxed_);
-      void setBoundary(fmatvec::Vec bound_orient_1_,fmatvec::Vec bound_orient_2_,fmatvec::Vec bound_ang_vel_1_,fmatvec::Vec bound_ang_vel_2_);
+      void setBoundary(fmatvec::Vec bound_ang_start_,fmatvec::Vec bound_ang_end_,fmatvec::Vec bound_ang_vel_start_,fmatvec::Vec bound_ang_vel_end_);
       void setCylinder(double cylinderRadius_);
       void setCuboid(double cuboidBreadth_,double cuboidHeight_);
 
@@ -97,7 +97,7 @@ namespace MBSimFlexibleBody {
        * \brief compute state (positions, angles, velocities, differentiated angles) at Lagrangian coordinate in local FE coordinates
        * \param Lagrangian coordinate
        */
-      fmatvec::Vec computeState(double x);
+      fmatvec::Vec computeState(double s);
 
     private:
       /**
@@ -149,10 +149,10 @@ namespace MBSimFlexibleBody {
       /**
        * \brief boundary conditions for first and last finite difference beam element
        */
-      fmatvec::Vec bound_orient_1;
-      fmatvec::Vec bound_orient_2;
-      fmatvec::Vec bound_ang_vel_1;
-      fmatvec::Vec bound_ang_vel_2;
+      fmatvec::Vec bound_ang_start;
+      fmatvec::Vec bound_ang_end;
+      fmatvec::Vec bound_ang_vel_start;
+      fmatvec::Vec bound_ang_vel_end;
 
       /**
        * \brief ? TODO
@@ -185,7 +185,7 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33Cosserat::setRelaxed(const fmatvec::Vec& relaxed_) { relaxed = relaxed_; }
-  inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_orient_1_, fmatvec::Vec bound_orient_2_, fmatvec::Vec bound_ang_vel_1_, fmatvec::Vec bound_ang_vel_2_){ bound_orient_1 = bound_orient_1_; bound_orient_2 = bound_orient_2_; bound_ang_vel_1 = bound_ang_vel_1_ ; bound_ang_vel_2 = bound_ang_vel_2_; }
+  inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_ang_start_, fmatvec::Vec bound_ang_end_, fmatvec::Vec bound_ang_vel_start_, fmatvec::Vec bound_ang_vel_end_){ bound_ang_start = bound_ang_start_; bound_ang_end = bound_ang_end_; bound_ang_vel_start = bound_ang_vel_start_ ; bound_ang_vel_end = bound_ang_vel_end_; }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
 
