@@ -188,6 +188,7 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement1s33Cosserat::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s33Cosserat::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeJacobianOfMotion): Not implemented!"); }
   inline double FiniteElement1s33Cosserat::getl0() const { return l0; }
+  fmatvec::Vec FiniteElement1s33Cosserat::computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeData): Not implemented!"); }
 
 }
 
