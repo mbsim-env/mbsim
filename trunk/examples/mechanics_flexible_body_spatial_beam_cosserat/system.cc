@@ -28,13 +28,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I2 = 1./12.*b0*b0*b0*b0; 
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
-  int elements = 20; // number of finite elements
+  int elements = 12; // number of finite elements
   fmatvec::Vec bound_orient_1(3,INIT,0.); // ? TODO
   fmatvec::Vec bound_orient_2(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_2(3,INIT,0.);
 
-  FlexibleBody1s33Cosserat *rod = new FlexibleBody1s33Cosserat("Rod", false);
+  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
   rod->setLength(l0);
   rod->setEGModuls(E,G);
   rod->setCrossSectionalArea(A);
@@ -66,18 +66,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // circle shape
   Vec q = Vec(6*elements,INIT,0.);
-  double R = l0/(2*M_PI);
-  double phi0 = M_PI/2;
+  Vec qRelaxed = Vec(6*elements,INIT,0.);
+  double R = l0/(2.*M_PI);
+  double phi0 = M_PI/2.;
   double dphi = (2*M_PI)/elements;
-  double phi = 0;
   for(int i=0; i<elements; i++) {
-    phi = phi0 + i*dphi;	
+    double phi = phi0 + i*dphi;	
     q(6*i+0) = R*cos(phi);
     q(6*i+1) = R*sin(phi);
-    q(6*i+5) = M_PI/2+M_PI*(i+1)/(elements);
+    q(6*i+5) = (M_PI+dphi)/2.+i*dphi;
+    qRelaxed(6*i+0) = R*cos(phi);
+    qRelaxed(6*i+1) = R*sin(phi);
+    if(fmod(i,4.)) qRelaxed(6*i+5) = (M_PI+dphi)/2.+i*dphi+1e-1;
   }
-  rod->setRelaxed(q);
   rod->setq0(q);
+  rod->setRelaxed(qRelaxed);
   this->addObject(rod);
 }
 
