@@ -13,13 +13,10 @@ int main (int argc, char* argv[]) {
   sys->setStopIfNoConvergence(true,true);
   sys->initialize();
 
-  double endtime = 6e-4;
-  double stepsize = 1e-6;
-
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(endtime);
-  integrator.setStepSize(stepsize);
+  integrator.setEndTime(1e-3);
+  integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-5);
 
   boost::timer timer;
@@ -28,15 +25,10 @@ int main (int argc, char* argv[]) {
   double calctime = timer.elapsed();
   sys->closePlot();
 
-  cout << "finished"<<endl;
+  cout << "finished after calculation time [s] : " << calctime << endl;
 
   delete sys;
-
-  cout << "************************" << endl;
-  cout << "results of speed measurement : " << endl;
-  cout << "endtime of integration [s] :" << endtime << endl;
-  cout << "integrator stepsize [s] :"<< stepsize << endl;
-  cout << "calculation time [s] : " << calctime << endl;
+  
   return 0;
 
 }
