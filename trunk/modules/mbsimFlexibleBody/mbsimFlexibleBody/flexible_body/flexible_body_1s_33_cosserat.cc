@@ -55,51 +55,45 @@ namespace MBSimFlexibleBody {
         uElement[i] = u(j-6,j+11);
       }
       else if(openStructure && i==0) { // first element and open structure: 15 dof
-        qElement[i](0,2) = q(3,5) - bound_orient_1(0,2)*l0; // estimated predecessor angles
-        uElement[i](0,2) = q(3,5) - bound_ang_vel_1(0,2)*l0;
-        qElement[i](3,14) = q(j,j+11); // current / succesor 
+        qElement[i](0,2) = q(3,5) - bound_ang_start(0,2)*l0; // estimated predecessor angles
+        uElement[i](0,2) = q(3,5) - bound_ang_vel_start(0,2)*l0;
+        qElement[i](3,14) = q(j,j+11); // current / successor 
         uElement[i](3,14) = u(j,j+11);
       }
       else if(openStructure && i==Elements-1) { // last element and open structure: 18 dof
         qElement[i](0,14) = q(j-6,j+8); // predecessor / current / successor position (last position node)
         uElement[i](0,14) = q(j-6,j+8);
-        qElement[i](15,17) = bound_orient_2(0,2)*l0 + qElement[i](9,11); // estimated succesor angles
-        uElement[i](15,17) = bound_ang_vel_2(0,2)*l0 + uElement[i](9,11);
+        qElement[i](15,17) = bound_ang_end(0,2)*l0 + qElement[i](9,11); // estimated successor angles
+        uElement[i](15,17) = bound_ang_vel_end(0,2)*l0 + uElement[i](9,11);
       }
       else if(!openStructure && i==0) { // first element and closed structure: 18 dof
-        qElement[i](0,5) = q(6*(Elements-1),6*(Elements)-1);
+        qElement[i](0,5) = q(6*(Elements-1),6*(Elements)-1); // predecessor = last element
         uElement[i](0,5) = u(6*(Elements-1),6*(Elements)-1);
-        qElement[i](6,17) = q(j,j+11);
+        qElement[i](6,17) = q(j,j+11); // current / successor
         uElement[i](6,17) = u(j,j+11);
       }
       else { // last element and closed structure: 18 dof
-        qElement[i](0, 11) = q(j-6,j+5);
-        uElement[i](0, 11) = u(j-6,j+5);
-        qElement[i](12, 17) = q(0,5);
-        uElement[i](12, 17) = u(0,5);
+        qElement[i](0,11) = q(j-6,j+5); // predecessor / current
+        uElement[i](0,11) = u(j-6,j+5);
+        qElement[i](12,17) = q(0,5); // successor = first element
+        uElement[i](12,17) = u(0,5);
       }
     }
   }
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 6 * n; 
-    gloVec(j, j + 5) += locVec;
+    int j = 6*n; 
+    gloVec(j,j+5) += locVec;
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
-    int j = 6 * n;
-    gloMat(Index(j, j + 5)) += locMat(Index(0,5));
+    int j = 6*n;
+    gloMat(Index(j,j+5)) += locMat;
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
-    int j = 6 * n;
-
-    if(n < Elements-1) {
-      gloMat(Index(j,j+5)) += locMat;  
-    }
-    else {
-      gloMat(Index(j,j+5)) += locMat;
-    }
+    int j = 6*n;
+    gloMat(Index(j,j+5)) += locMat;  
   }
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
@@ -112,10 +106,9 @@ namespace MBSimFlexibleBody {
       cylinder->setAlphaStart(0.);
       cylinder->setAlphaEnd(L);
 
-      if(userContourNodes.size() == 0) {
-        Vec contourNodes(Elements + 1);
-        for(int i = 0; i <= Elements; i++)
-          contourNodes(i) = L / Elements * i; // own search area for each element
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L / Elements * i; // own search area for each element
         cylinder->setNodes(contourNodes);
       }
       else {
@@ -142,10 +135,9 @@ namespace MBSimFlexibleBody {
       right->setAlphaStart(0.);
       right->setAlphaEnd(L);
 
-      if(userContourNodes.size() == 0) {
-        Vec contourNodes(Elements + 1);
-        for(int i = 0; i <= Elements; i++)
-          contourNodes(i) = L / Elements * i;
+      if(userContourNodes.size()==0) {
+        Vec contourNodes(Elements+1);
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L / Elements * i;
         top->setNodes(contourNodes);
         bottom->setNodes(contourNodes);
         left->setNodes(contourNodes);
@@ -160,33 +152,34 @@ namespace MBSimFlexibleBody {
 
       top->setWidth(cuboidBreadth);
       bottom->setWidth(cuboidBreadth);
-      top->setNormalDistance(0.5 * cuboidHeight);
-      bottom->setNormalDistance(0.5 * cuboidHeight);
+      top->setNormalDistance(0.5*cuboidHeight);
+      bottom->setNormalDistance(0.5*cuboidHeight);
       left->setWidth(cuboidHeight);
       right->setWidth(cuboidHeight);
-      left->setNormalDistance(0.5 * cuboidBreadth);
-      right->setNormalDistance(0.5 * cuboidBreadth);
+      left->setNormalDistance(0.5*cuboidBreadth);
+      right->setNormalDistance(0.5*cuboidBreadth);
 
       l0 = L / Elements;
       Vec g = frameOfReference->getOrientation().T()* MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
-      for (int i = 0; i < Elements; i++) {
-        Vec relaxedElement(18, INIT, 0.);
-        int j = 6 * i;
-        if(i > 0 && i < Elements - 1) { 
-          relaxedElement(0,17) = relaxed(j-6,j+11);
+      for(int i=0;i<Elements;i++) {
+        Vec relaxedElement(18,INIT,0.);
+        int j = 6*i;
+        if(i>0 && i<Elements-1) { // inner elements: 18 dof
+          relaxedElement(0,17) = relaxed(j-6,j+11); // predecessor / current / successor
         }
-        else if(!openStructure && i == 0) {
-          relaxedElement(0,5) = relaxed(6*(Elements-1),6*Elements-1);
-          relaxedElement(6,17) = relaxed(j,j+11);
+        else if(!openStructure && i==0) { // first element and closed structure: 18 dof
+          relaxedElement(0,5) = relaxed(6*(Elements-1),6*Elements-1); // predecessor = last element
+          relaxedElement(6,17) = relaxed(j,j+11); // current / successor
         }
-        else if(!openStructure && i == Elements - 1) {
-          relaxedElement(0,11) = relaxed(j-6,j+5);
-          relaxedElement(12,17) = relaxed(0,5);
+        else if(!openStructure && i==Elements-1) { // last element and closed structure: 18 dof
+          relaxedElement(0,11) = relaxed(j-6,j+5); // predecessor / current
+          relaxedElement(12,17) = relaxed(0,5); // successor = first element
         }
-        discretization.push_back(new FiniteElement1s33Cosserat(l0, rho, A,E, G, I1, I2, I0, g, i, openStructure, relaxedElement));
-        qElement.push_back(Vec(discretization[i]->getqSize(), INIT, 0.));
-        uElement.push_back(Vec(discretization[i]->getuSize(), INIT, 0.));
+        // TODO other cases
+        discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g,i,openStructure,relaxedElement));
+        qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
+        uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
       }
     }
 
@@ -202,8 +195,8 @@ namespace MBSimFlexibleBody {
         data.push_back(t);
         double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints()- 1) : L/(((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints()- 2);
         for(int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints(); i++) {
-          Vec X = computeState(ds * i);
-          Vec pos = frameOfReference->getPosition()+ frameOfReference->getOrientation() * X(0, 2);
+          Vec X = computeState(ds*i);
+          Vec pos = frameOfReference->getPosition()+ frameOfReference->getOrientation() * X(0,2);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
@@ -214,25 +207,22 @@ namespace MBSimFlexibleBody {
       }
 #endif
     }
-    FlexibleBodyContinuum<double>::plot(t, dt);
+    FlexibleBodyContinuum<double>::plot(t,dt);
   }
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {
     Elements = n;
     if(openStructure)
-      qSize = 6 * n + 3;
+      qSize = 6*n+3;
     else
-      qSize = 6 * n;
+      qSize = 6*n;
 
-    q.resize(qSize);
-    u.resize(qSize);
-
-    Vec q0Tmp(0, INIT, 0);
+    Vec q0Tmp(0,INIT,0.);
     if(q0.size())
       q0Tmp = q0.copy();
-    q0.resize(qSize, INIT, 0);
+    q0.resize(qSize,INIT,0.);
     if(q0Tmp.size()) {
-      if(q0Tmp.size() == q0.size())
+      if(q0Tmp.size()==q0.size())
         q0 = q0Tmp.copy();
       else
         throw MBSimError("Error in dimension of q0 of FlexibleBody1s33Cosserat \"" + name + "\"!");
@@ -240,10 +230,10 @@ namespace MBSimFlexibleBody {
 
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
-    Vec u0Tmp(0, INIT, 0);
+    Vec u0Tmp(0,INIT,0);
     if(u0.size())
       u0Tmp = u0.copy();
-    u0.resize(uSize[0], INIT, 0);
+    u0.resize(uSize[0],INIT,0.);
     if(u0Tmp.size()) {
       if(u0Tmp.size() == u0.size())
         u0 = u0Tmp.copy();
@@ -255,19 +245,20 @@ namespace MBSimFlexibleBody {
   Vec FlexibleBody1s33Cosserat::computeState(double sGlobal) {
     double sLocal;
     int currentElement;
-    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33Cosserat*> (discretization[currentElement])->computeState(qElement[currentElement], uElement[currentElement], sLocal);
+    BuildElement(sGlobal,sLocal,currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s33Cosserat*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
   }
 
   void FlexibleBody1s33Cosserat::BuildElement(const double& sGlobal, double& sLocal,int& currentElement) {
-    double remainder = fmod(sGlobal, L);
-    if(openStructure && sGlobal >= L)
-      remainder += L;
-    if(!openStructure && sGlobal < 0.)
-      remainder += L;
+    double remainder = fmod(sGlobal,L);
+    if(openStructure && sGlobal >= L) remainder += L; // remainder \in (-eps,L+eps)
+    if(!openStructure && sGlobal < 0.) remainder += L; // remainder \in [0,L)
 
-    currentElement = int(remainder / l0);
-    sLocal = remainder - (currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
+    currentElement = int(remainder/l0);
+    sLocal = remainder - (currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 and sGlobal==0 at the beginning of the beam
+    
+    assert(sLocal>-1e-8);
+    assert(sLocal<l0+1e-8);
 
     if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
       currentElement = Elements - 1;
