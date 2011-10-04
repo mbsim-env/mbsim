@@ -70,14 +70,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double R = l0/(2.*M_PI);
   double phi0 = M_PI/2.;
   double dphi = (2*M_PI)/elements;
-  for(int i=0; i<elements; i++) {
+  for(int i=0; i<elements; i++) { // circle in around x-axis because local z-axis is tangent
     double phi = phi0 + i*dphi;	
-    q(6*i+0) = R*cos(phi);
-    q(6*i+1) = R*sin(phi);
-    q(6*i+5) = (M_PI+dphi)/2.+i*dphi;
-    qRelaxed(6*i+0) = R*cos(phi);
-    qRelaxed(6*i+1) = R*sin(phi);
-    if(fmod(i,4.)) qRelaxed(6*i+5) = (M_PI+dphi)/2.+i*dphi+1e-1;
+    q(6*i+1) = R*cos(phi);
+    q(6*i+2) = R*sin(phi);
+    q(6*i+3) = phi + dphi/2.;
+    qRelaxed(6*i+1) = R*cos(phi);
+    qRelaxed(6*i+2) = R*sin(phi);
+    if(i==4.) qRelaxed(6*i+3) = phi+dphi/2.-1e-2;
   }
   rod->setq0(q);
   rod->setRelaxed(qRelaxed);

@@ -33,17 +33,17 @@ namespace MBSimFlexibleBody {
   FiniteElement1s33Cosserat::~FiniteElement1s33Cosserat() {}
 
   void FiniteElement1s33Cosserat::computeM(const Vec& qG) {
-    //const double &be = qG(10); // beta from current element -> should produce Cardan lock
-    //const double &ga = qG(11); // gamma from current element
+    const double &be = qG(10); // beta from current element -> should produce Cardan lock
+    const double &ga = qG(11); // gamma from current element
     // TODO openstructure and first element (cf. FlexibleBody::BuildElements)
 
     M(0,0) = 0.5*rho*A*l0;
     M(1,1) = 0.5*rho*A*l0;
     M(2,2) = 0.5*rho*A*l0;
-    M(3,3) = rho*l0*I2;//-rho*l0*(pow(cos(be),2.0)*pow(cos(ga),2.0)*(I2-I1)-I2*pow(cos(be),2.0)+I0*(pow(cos(be),2.0)-1.));
-    M(3,4) = 0.;//sin(ga)*rho*l0*cos(be)*cos(ga)*(I1-I2);
-    M(3,5) = 0.;//0.1E1*rho*l0*I0*sin(be);
-    M(4,4) = rho*l0*I1;//-rho*l0*(pow(cos(ga),2.0)*(I1-I2)-I1);
+    M(3,3) = -rho*l0*(pow(cos(be),2.0)*pow(cos(ga),2.0)*(I2-I1)-I2*pow(cos(be),2.0)+I0*(pow(cos(be),2.0)-1.));
+    M(3,4) = sin(ga)*rho*l0*cos(be)*cos(ga)*(I1-I2);
+    M(3,5) = 0.1E1*rho*l0*I0*sin(be);
+    M(4,4) = -rho*l0*(pow(cos(ga),2.0)*(I1-I2)-I1);
     M(5,5) = rho*l0*I0;
   }
 
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
     dissBT2(4) = (-sin(gaf/2.0+ga/2.0)/l0-sin(bef/2.0+be/2.0)*cos(gaf/2.0+ ga/2.0)*(alf-al)/l0/2.0)*(0.25*(bet-bept)*sin(ga/2.0+gap/2.0)/l0+0.25*(be-bep)* cos(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)/l0-0.25*sin(be/2.0+bep/2.0)*(bet/2.0+ bept/2.0)*cos(ga/2.0+gap/2.0)*(al-alp)/l0-0.25*cos(be/2.0+bep/2.0)*sin(ga/2.0+ gap/2.0)*(gat/2.0+gapt/2.0)*(al-alp)/l0+0.25*cos(be/2.0+bep/2.0)*cos(ga/2.0+gap /2.0)*(alt-alpt)/l0)*E*I1 + ((beft-bet)*sin(gaf/2.0+ga/2.0)/l0+(bef-be)*cos(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)/l0-sin(bef/2.0+be/2.0)*(beft/2.0+bet/2.0)*cos(gaf/2.0+ ga/2.0)*(alf-al)/l0-cos(bef/2.0+be/2.0)*sin(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)* (alf-al)/l0+cos(bef/2.0+be/2.0)*cos(gaf/2.0+ga/2.0)*(alft-alt)/l0)*(0.25*sin(ga /2.0+gap/2.0)/l0-0.125*sin(be/2.0+bep/2.0)*cos(ga/2.0+gap/2.0)*(al-alp)/l0)*E*I1 + (-cos(gaf/2.0+ga/2.0)/l0+sin(gaf/2.0+ga/2.0)*(alf-al)*sin(bef/2.0+be/2.0)/l0/2.0)*(-0.25*sin(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)*(be-bep)/l0+0.25*cos(ga/2.0+gap/2.0)*(bet-bept)/l0-0.25*cos(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)*(al-alp)*cos(be/2.0+bep/2.0)/l0-0.25*sin(ga/2.0+gap/2.0)*(alt-alpt)*cos(be/2.0+bep/2.0)/l0+0.25*sin(ga/2.0+gap/2.0)*(al-alp)*sin(be/2.0+bep/2.0)*(bet/2.0+bept/2.0)/l0)*E*I2 + (-sin(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)*(bef-be)/l0+cos(gaf/2.0+ga/2.0)*(beft-bet)/l0-cos(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)*(alf-al)*cos(bef/2.0+be/2.0)/l0-sin(gaf/2.0+ga/2.0)*(alft-alt)*cos(bef/2.0+be /2.0)/l0+sin(gaf/2.0+ga/2.0)*(alf-al)*sin(bef/2.0+be/2.0)*(beft/2.0+bet/2.0)/l0)*(0.25*cos(ga/2.0+gap/2.0)/l0+0.125*sin(ga/2.0+gap/2.0)*(al-alp)*sin(be/2.0+ bep/2.0)/l0)*E*I2 + (alf-al)*cos(bef/2.0+be/2.0)/l0*(0.25*(alt-alpt)*sin(be/2.0+bep/2.0)/l0+0.25*(al-alp)*cos(be/2.0+bep/2.0)*(bet/2.0+bept/2.0)/l0+0.25*(gat-gapt)/l0)*G*I0/2.0+0.125*((alft-alt)*sin(bef/2.0+be/2.0)/l0+( alf-al)*cos(bef/2.0+be/2.0)*(beft/2.0+bet/2.0)/l0+(gaft-gat)/l0)*(al-alp)*cos( be/2.0+bep/2.0)/l0*G*I0;
     dissBT2(5) = ((bef-be)*cos(gaf/2.0+ga/2.0)/l0/2.0-cos(bef/2.0+be/2.0)* sin(gaf/2.0+ga/2.0)*(alf-al)/l0/2.0)*(0.25*(bet-bept)*sin(ga/2.0+gap/2.0)/l0+ 0.25*(be-bep)*cos(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)/l0-0.25*sin(be/2.0+bep/2.0)*(bet/2.0+bept/2.0)*cos(ga/2.0+gap/2.0)*(al-alp)/l0-0.25*cos(be/2.0+bep/2.0)* sin(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)*(al-alp)/l0+0.25*cos(be/2.0+bep/2.0)*cos (ga/2.0+gap/2.0)*(alt-alpt)/l0)*E*I1 + ((beft-bet)*sin(gaf/2.0+ga/2.0)/l0+(bef-be)*cos(gaf/2.0+ga /2.0)*(gaft/2.0+gat/2.0)/l0-sin(bef/2.0+be/2.0)*(beft/2.0+bet/2.0)*cos(gaf/2.0+ ga/2.0)*(alf-al)/l0-cos(bef/2.0+be/2.0)*sin(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)* (alf-al)/l0+cos(bef/2.0+be/2.0)*cos(gaf/2.0+ga/2.0)*(alft-alt)/l0)*(0.125*(be-bep)*cos(ga/2.0+gap/2.0)/l0-0.125*cos(be/2.0+bep/2.0)*sin(ga/2.0+gap/2.0)*(al-alp)/l0)*E*I1 + (-sin(gaf/2.0+ga/2.0)*(bef-be)/l0/2.0-cos(gaf/2.0+ga/2.0)* (alf-al)*cos(bef/2.0+be/2.0)/l0/2.0)*(-0.25*sin(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)*(be-bep)/l0+0.25*cos(ga/2.0+gap/2.0)*(bet-bept)/l0-0.25*cos(ga/2.0+gap/2.0)*(gat/2.0+gapt/2.0)*(al-alp)*cos(be/2.0+bep/2.0)/l0-0.25*sin(ga/2.0+gap/2.0)*( alt-alpt)*cos(be/2.0+bep/2.0)/l0+0.25*sin(ga/2.0+gap/2.0)*(al-alp)*sin(be/2.0+ bep/2.0)*(bet/2.0+bept/2.0)/l0)*E*I2 + (-sin(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)*(bef -be)/l0+cos(gaf/2.0+ga/2.0)*(beft-bet)/l0-cos(gaf/2.0+ga/2.0)*(gaft/2.0+gat/2.0)*(alf-al)*cos(bef/2.0+be/2.0)/l0-sin(gaf/2.0+ga/2.0)*(alft-alt)*cos(bef/2.0+be /2.0)/l0+sin(gaf/2.0+ga/2.0)*(alf-al)*sin(bef/2.0+be/2.0)*(beft/2.0+bet/2.0)/l0)*(-0.125*sin(ga/2.0+gap/2.0)*(be-bep)/l0-0.125*cos(ga/2.0+gap/2.0)*(al-alp)* cos(be/2.0+bep/2.0)/l0)*E*I2-1/l0*(0.25*(alt-alpt)*sin(be/2.0+bep/2.0)/l0 +0.25*(al-alp)*cos(be/2.0+bep/2.0)*(bet/2.0+bept/2.0)/l0+0.25*(gat-gapt)/l0)*G* I0+0.25*((alft-alt)*sin(bef/2.0+be/2.0)/l0+(alf-al)*cos(bef/2.0+be/2.0)*(beft/ 2.0+bet/2.0)/l0+(gaft-gat)/l0)/l0*G*I0; 
 
-    Vec D = dissSE1 + dissSE2 + dissBT1 + dissBT1;
+    Vec D = dissBT1 + dissBT1 + dissSE1 + dissSE2;
 
     /* Differentation of 'kinetic energy' with respect to qG */
     Vec dTdqG(6,INIT,0.);
