@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
   void FiniteElement1s33Cosserat::computeM(const Vec& qG) {
     const double &be = qG(10); // beta from current element -> should produce Cardan lock
     const double &ga = qG(11); // gamma from current element
-    // TODO openstructure and first element (cf. FlexibleBody::BuildElements)
+    // TODO openstructure and first element (cf. FlexibleBody::BuildElements) / dof-dependency
 
     M(0,0) = 0.5*rho*A*l0;
     M(1,1) = 0.5*rho*A*l0;
@@ -185,25 +185,6 @@ namespace MBSimFlexibleBody {
 
     /* Vec of generalized forces */
     h = dTdqG-dTdqGtqG*qGt(6,11)-V;//-D;
-  }
-
-  double FiniteElement1s33Cosserat::computeKineticEnergy(const Vec& qG, const Vec& qGt) {
-    int k;
-    if(openStructure == true && currentElement == 0)
-      k = 0;
-    else
-      k = 3;
-
-    return rho*A*l0*(0.25*pow(nrm2(qGt(6+k,8+k)),2) + 0.5*(pow((I1*(cos(qG(7+k))*cos(qG(8+k))*qGt(6+k)+sin(qG(8+k))*qGt(7+k))),2) + pow((I2*(-cos(qG(7+k))*sin(qG(8+k))*qGt(6+k)+cos(qG(8+k)*qGt(7+k)))),2) + pow((I0*(qGt(8+k)+sin(qG(7+k))*qGt(6+k))),2)));
-  }
-
-  double FiniteElement1s33Cosserat::computeGravitationalEnergy(const Vec& qG) {
-    int k;
-    if(currentElement == 0 && openStructure == true)
-      k = 0;
-    else
-      k = 3;
-    return -rho*A*g(1)*qG(5+k);
   }
 
   const Vec& FiniteElement1s33Cosserat::computeState(const Vec& qG, const Vec& qGt,double s) {

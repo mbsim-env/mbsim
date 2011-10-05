@@ -82,17 +82,17 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 6*n; 
+    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
     gloVec(j,j+5) += locVec;
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
-    int j = 6*n;
+    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
     gloMat(Index(j,j+5)) += locMat;
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
-    int j = 6*n;
+    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
     gloMat(Index(j,j+5)) += locMat;  
   }
 
@@ -200,7 +200,7 @@ namespace MBSimFlexibleBody {
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(X(5)); // local twist
+          data.push_back(X(5)); // local twist TODO what is the tangent?
         }
 
         ((OpenMBV::SpineExtrusion*) openMBVBody)->append(data);
