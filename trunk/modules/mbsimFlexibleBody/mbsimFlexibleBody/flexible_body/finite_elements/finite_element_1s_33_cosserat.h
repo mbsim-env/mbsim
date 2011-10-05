@@ -33,6 +33,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \todo everything
+   * \todo no gravitation
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -87,7 +88,7 @@ namespace MBSimFlexibleBody {
       double getl0() const;
 
       /**
-       * \brief compute state of finite element
+       * \brief compute state of finite element with a linear centerline
        * \param global coordinates
        * \param global velocities
        * \param LAGRANGIAN parameter in [0,l0]
@@ -99,7 +100,7 @@ namespace MBSimFlexibleBody {
        * \param global coordinates
        * \param global velocities
        */
-      fmatvec::Vec computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeData): Not implemented!"); }
+      fmatvec::Vec computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
 
     private:
       /**
@@ -181,6 +182,8 @@ namespace MBSimFlexibleBody {
   inline int FiniteElement1s33Cosserat::getqSize() const {if(openStructure == true && currentElement==0){ return 15; } else { return 18; }}
   inline int FiniteElement1s33Cosserat::getuSize() const {if(openStructure == true && currentElement==0){ return 15; } else { return 18; }}
   inline void  FiniteElement1s33Cosserat::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){throw MBSim::MBSimError("Error(FiniteElement1s33Cosserat::dhdz): Not implemented");}
+  inline double FiniteElement1s33Cosserat::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeKineticEnergy): Not implemented!"); }
+  inline double FiniteElement1s33Cosserat::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeGravitationalEnergy): Not implemented!"); }
   inline double FiniteElement1s33Cosserat::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeElasticEnergy): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s33Cosserat::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computePosition): Not implemented!"); }
   inline fmatvec::SqrMat FiniteElement1s33Cosserat::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeOrientation): Not implemented!"); }
@@ -188,6 +191,7 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement1s33Cosserat::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s33Cosserat::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeJacobianOfMotion): Not implemented!"); }
   inline double FiniteElement1s33Cosserat::getl0() const { return l0; }
+  inline fmatvec::Vec FiniteElement1s33Cosserat::computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){ throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeData): Not implemented!"); }
 
 }
 

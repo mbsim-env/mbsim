@@ -37,6 +37,7 @@ namespace MBSimFlexibleBody {
    * \author Thorsten Schindler
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \todo everything
+   * \todo no gravitation
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -148,6 +149,7 @@ namespace MBSimFlexibleBody {
 
       /**
        * \brief boundary conditions for first and last finite difference beam element
+       * TODO
        */
       fmatvec::Vec bound_ang_start;
       fmatvec::Vec bound_ang_end;
