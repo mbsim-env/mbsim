@@ -15,7 +15,7 @@ using namespace std;
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3,INIT,0.);
-  grav(1) = -9.81;
+  //grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
   double l0 = 1.; // length
@@ -28,7 +28,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I2 = 1./12.*b0*b0*b0*b0; 
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
-  int elements = 3; // number of finite elements
+  int elements = 20; // number of finite elements
   fmatvec::Vec bound_orient_1(3,INIT,0.); // ? TODO
   fmatvec::Vec bound_orient_2(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
@@ -40,6 +40,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setCrossSectionalArea(A);
   rod->setMomentsInertia(I1,I2,I0);
   rod->setDensity(rho);
+  rod->setMassProportionalDamping(20.);
+  //rod->setLehrElongationDamping(0.05);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCuboid(b0,b0);
