@@ -82,7 +82,7 @@ namespace MBSimFlexibleBody {
       void setDensity(double rho_);	
       void setCrossSectionalArea(double A_);    	
       void setMomentsInertia(double I1_,double I2_,double I0_);
-      void setRelaxed(const fmatvec::Vec& relaxed_);
+      void setCurlRadius(double R1_,double R2_);
       void setBoundary(fmatvec::Vec bound_ang_start_,fmatvec::Vec bound_ang_end_,fmatvec::Vec bound_ang_vel_start_,fmatvec::Vec bound_ang_vel_end_);
       void setCylinder(double cylinderRadius_);
       void setCuboid(double cuboidBreadth_,double cuboidHeight_);
@@ -138,6 +138,11 @@ namespace MBSimFlexibleBody {
       double rho;
 
       /**
+       * \brief radius of undeformed shape
+       */
+      double R1, R2;
+
+      /**
        * \brief open or closed beam structure
        */
       bool openStructure;
@@ -145,7 +150,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief initialised FLAG 
        */
-      bool initialized;
+      bool initialised;
 
       /**
        * \brief boundary conditions for first and last finite difference beam element
@@ -155,11 +160,6 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec bound_ang_end;
       fmatvec::Vec bound_ang_vel_start;
       fmatvec::Vec bound_ang_vel_end;
-
-      /**
-       * \brief ? TODO
-       */
-      fmatvec::Vec relaxed;
 
       /**
        * \brief contour data 
@@ -186,7 +186,7 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setDensity(double rho_) { rho = rho_;}     	
   inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
-  inline void FlexibleBody1s33Cosserat::setRelaxed(const fmatvec::Vec& relaxed_) { relaxed = relaxed_; }
+  inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2); }    	
   inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_ang_start_, fmatvec::Vec bound_ang_end_, fmatvec::Vec bound_ang_vel_start_, fmatvec::Vec bound_ang_vel_end_){ bound_ang_start = bound_ang_start_; bound_ang_end = bound_ang_end_; bound_ang_vel_start = bound_ang_vel_start_ ; bound_ang_vel_end = bound_ang_vel_end_; }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
