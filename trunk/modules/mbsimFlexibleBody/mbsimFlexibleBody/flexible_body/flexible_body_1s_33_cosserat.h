@@ -77,6 +77,9 @@ namespace MBSimFlexibleBody {
       virtual void facLLM();
       /***************************************************/
 
+      /* INHERITED INTERFACE OF OBJECTINTERFACE */
+      virtual void updateh(double t);
+
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
       virtual std::string getType() const { return "FlexibleBody1s33Cosserat"; }
@@ -110,6 +113,21 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec computeState(double s);
 
     private:
+      /** 
+       * \brief stl-vector of finite elements for rotation grid
+       */
+      std::vector<MBSim::DiscretizationInterface*> rotationDiscretization;
+
+      /** 
+       * \brief stl-vector of finite element positions for rotation grid
+       */
+      std::vector<fmatvec::Vec> qRotationElement;
+
+      /** 
+       * \brief stl-vector of finite element wise velocities for rotation grid
+       */
+      std::vector<fmatvec::Vec> uRotationElement;
+
       /**
        * \brief contours
        */

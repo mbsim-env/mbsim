@@ -45,7 +45,11 @@ namespace MBSimFlexibleBody {
     Body::addContour(right);
   }
 
-  FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {}
+  FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {
+    for(unsigned int i=0; i<rotationDiscretization.size(); i++) {
+      if(rotationDiscretization[i]) { delete rotationDiscretization[i]; rotationDiscretization[i] = NULL; }
+    }
+  }
 
   void FlexibleBody1s33Cosserat::BuildElements() {
     for(int i=0;i<Elements;i++) {
@@ -189,6 +193,10 @@ namespace MBSimFlexibleBody {
       int j = 6*i; 
       LLM(Index(j+3,j+5)) = facLL(discretization[i]->getM()(Index(3,5)));
     }
+  }
+
+  void FlexibleBody1s33Cosserat::updateh(double t) {
+    FlexibleBodyContinuum<double>::updateh(t);
   }
 
   void FlexibleBody1s33Cosserat::plot(double t, double dt) {
