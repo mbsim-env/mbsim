@@ -15,9 +15,9 @@ int main (int argc, char* argv[]) {
 
   TimeSteppingIntegrator integrator;
 
-  integrator.setEndTime(1e-2);
-  integrator.setStepSize(1e-5);
-  integrator.setPlotStepSize(1e-5);
+  integrator.setEndTime(1.);
+  integrator.setStepSize(1e-4);
+  integrator.setPlotStepSize(1e-4);
 
   boost::timer timer;
   timer.restart();

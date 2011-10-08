@@ -52,7 +52,6 @@ namespace MBSimFlexibleBody {
        * \param torsional moment of inertia
        * \param acceleration of gravity
        * \param cardan object
-       * \param warning level for outputs
        */
       FiniteElement1s33RCM(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,RevCardanPtr ag_);		
 

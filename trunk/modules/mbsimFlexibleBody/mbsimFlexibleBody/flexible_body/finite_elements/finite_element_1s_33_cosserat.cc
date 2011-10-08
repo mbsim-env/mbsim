@@ -29,7 +29,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33Cosserat::FiniteElement1s33Cosserat(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), k10(0.), k20(0.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
+  FiniteElement1s33Cosserat::FiniteElement1s33Cosserat(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), k10(0.), k20(0.), cEps0D(0.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
 
   FiniteElement1s33Cosserat::~FiniteElement1s33Cosserat() {}
 
@@ -38,12 +38,18 @@ namespace MBSimFlexibleBody {
     if (fabs(R2)>epsroot()) k20 = 1./R2;
   }
 
+  void FiniteElement1s33Cosserat::setMaterialElongationDamping(double cEps0D_) {
+    cEps0D = cEps0D_;
+  }
+
   void FiniteElement1s33Cosserat::computeM(const Vec& qG) {
+    /* Cardan angles */
     double sbeta = sin(qG(4));
     double sgamma = sin(qG(5));
     double cbeta = cos(qG(4));
     double cgamma = cos(qG(5));
 
+    /* mass matrix is just standard rigid body translational and rotational part */
     M(0,0) = 0.5*rho*A*l0;
     M(1,1) = 0.5*rho*A*l0;
     M(2,2) = 0.5*rho*A*l0;
@@ -75,55 +81,127 @@ namespace MBSimFlexibleBody {
     dtangentdphi(0,0) = 0.;
     dtangentdphi(0,1) = -sbeta*cgamma;
     dtangentdphi(0,2) = -cbeta*sgamma;
-
     dtangentdphi(1,0) = -salpha*sgamma+calpha*sbeta*cgamma; 
     dtangentdphi(1,1) = salpha*cbeta*cgamma;
     dtangentdphi(1,2) = calpha*cgamma-salpha*sbeta*sgamma;
-
     dtangentdphi(2,0) = calpha*sgamma+salpha*sbeta*cgamma;
     dtangentdphi(2,1) = -calpha*cbeta*cgamma;
     dtangentdphi(2,2) = salpha*cgamma+calpha*sbeta*sgamma;
 
-    /* position difference */
+    Vec tangentt = dtangentdphi*qGt(3,5);
+
+    /* position and velocity difference */
     Vec deltax = qG(6,8)-qG(0,2);
+    Vec deltaxt = qGt(6,8)-qGt(0,2);
 
-    /* Differentiation of 'strain energy' with respect to qG
-     * This is a stiff term; hence, we only consider elongation
+    /* differentiation of 'gravitational energy' with respect to qG */
+    Vec dVgdqG(9,INIT,0.);
+    dVgdqG(0,2) = -0.5*rho*A*l0*g;
+    dVgdqG(6,8) = -0.5*rho*A*l0*g;
+
+    /* differentiation of 'strain energy' with respect to qG
+     * this is a stiff term; hence, we only consider elongation
      */
-    Vec SE(9); 
-    SE(0) = -tangent(0);
-    SE(1) = -tangent(1);
-    SE(2) = -tangent(2);
-    SE(3,5) = deltax(0)*dtangentdphi.col(0) + deltax(1)*dtangentdphi.col(1) + deltax(2)*dtangentdphi.col(2);
-    SE(6) = tangent(0);
-    SE(7) = tangent(1);
-    SE(8) = tangent(2);
-    SE *= E*A*(tangent.T()*deltax-l0)/l0;
+    Vec dSEdqG(9); 
+    dSEdqG(0,2) = -tangent.copy();
+    dSEdqG(3) = deltax.T()*dtangentdphi.col(0);
+    dSEdqG(4) = deltax.T()*dtangentdphi.col(1);
+    dSEdqG(5) = deltax.T()*dtangentdphi.col(2);
+    dSEdqG(6,8) = tangent.copy();
+    dSEdqG *= E*A*(tangent.T()*deltax-l0)/l0;
 
-    /* Differentiation of 'bending and torsion energy' with respect to qG */
+    /* differentiation of 'bending and torsion energy' with respect to qG */
+    // TODO
     //Vec BT1(6,INIT,0.);
 
     //Vec BT2(9,INIT,0.);
 
-    Vec Vel = SE;
+    Vec dVeldqG = dSEdqG;
 
-    /* Differentation of 'kinetic energy' with respect to phi */
-    Vec dTRdphi(3,INIT,0.); // translational part is zero TODO
+    /* differentation of 'kinetic energy' with respect to phi
+     * remark: translational part is zero
+     */
+    Vec dTRdphi(3,INIT,0.); //  TODO
 
-    /* Differentiation of 'kinetic energy' with respect to phit, phi */
-    SqrMat dTRdphitphi(3,INIT,0.); // translational part is zero TODO
+    /* differentiation of 'kinetic energy' with respect to phit, phi
+     * remark: translational part is zero
+     */
+    SqrMat dTRdphitphi(3,INIT,0.); // TODO
 
-    /* Vec of generalized forces */
-    h = -Vel;
+    /* differentiation of 'strain dissipation' with respect to qG
+     * we only consider elongation because of the stiffness of the respective energy terms
+     */
+    Vec dSDdqGt(9); 
+    dSDdqGt(0,2) = -tangent.copy();
+    dSDdqGt(3) = deltax.T()*dtangentdphi.col(0);
+    dSDdqGt(4) = deltax.T()*dtangentdphi.col(1);
+    dSDdqGt(5) = deltax.T()*dtangentdphi.col(2);
+    dSDdqGt(6,8) = tangent.copy();
+    dSDdqGt *= cEps0D*(deltax.T()*tangentt + deltaxt.T()*tangent)/l0;
+
+    /* generalized forces */
+    h = -dVgdqG-dVeldqG;
     h(3,5) += dTRdphi-dTRdphitphi*qGt(3,5);
+  }
+
+  double FiniteElement1s33Cosserat::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
+    /* translational kinetic energy */
+    double TT = 0.25*rho*A*l0*(pow(nrm2(qGt(0,2)),2.)+pow(nrm2(qGt(6,8)),2.)); 
+    
+    /* Cardan angles */
+    double sbeta = sin(qG(4));
+    double sgamma = sin(qG(5));
+    double cbeta = cos(qG(4));
+    double cgamma = cos(qG(5));
+
+    /* inertia tensor */
+    SymMat Itilde(3,INIT,0.); 
+    Itilde(0,0) = (I0*cbeta*cbeta*cgamma*cgamma + I1*cbeta*cbeta*sgamma*sgamma + I2*sbeta*sbeta);
+    Itilde(0,1) = (I0*cbeta*cgamma*sgamma - I1*cbeta*sgamma*cgamma);
+    Itilde(0,2) = I2*sbeta;
+    Itilde(1,1) = (I0*sgamma*sgamma + I1*cgamma*cgamma);
+    Itilde(2,2) = I2;
+    
+    /* rotational kinetic energy */
+    double TR = 0.5*rho*l0*qGt.T()(3,5)*Itilde*qGt(3,5); 
+
+    return TT + TR;
+  }
+
+  double FiniteElement1s33Cosserat::computeGravitationalEnergy(const fmatvec::Vec& qG) {
+   return -0.5*rho*A*l0*g.T()*(qG(0,2)+qG(6,8)); 
+  }
+
+  double FiniteElement1s33Cosserat::computeElasticEnergy(const fmatvec::Vec& qG) {
+    /* Cardan angles */
+    double salpha = sin(qG(3));
+    double sbeta = sin(qG(4));
+    double sgamma = sin(qG(5));
+    double calpha = cos(qG(3));
+    double cbeta = cos(qG(4));
+    double cgamma = cos(qG(5));
+
+    Vec tangent(3);
+    tangent(0) = cbeta*cgamma;
+    tangent(1) = calpha*sgamma+salpha*sbeta*cgamma;
+    tangent(2) = salpha*sgamma-calpha*sbeta*cgamma;
+
+    /* position difference */
+    Vec deltax = qG(6,8)-qG(0,2);
+   
+    /* elongation energy */
+    double SE = 0.5*E*A*pow(tangent.T()*deltax-l0,2.)/l0;
+
+    // TODO bending and torsion energy
+    return SE;
   }
 
   const Vec& FiniteElement1s33Cosserat::computeState(const Vec& qG, const Vec& qGt,double s) {
     X(0,2) = qG(0,2) + s*(qG(6,8)-qG(0,2))/l0; // position
     X(6,8) = qGt(0,2) + s*((qGt(6,8)-qGt(0,2))/l0); // velocity
 
-    X(3,5) = qG(3,5); // angles TODO in angle element
-    X(9,11) = qGt(3,5); // time differentiated angels TODO in angle element
+    X(3,5) = qG(3,5); // angles TODO in angle element or better in FlexibleBody
+    X(9,11) = qGt(3,5); // time differentiated angels TODO in angle element or better in FlexibleBody
 
     return X;
   }
