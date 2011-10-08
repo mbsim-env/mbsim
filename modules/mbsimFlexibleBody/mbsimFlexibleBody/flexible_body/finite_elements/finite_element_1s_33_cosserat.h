@@ -103,6 +103,11 @@ namespace MBSimFlexibleBody {
        * \param LAGRANGIAN parameter in [0,l0]
        */
       const fmatvec::Vec& computeState(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double s);
+      
+      /**
+       * \brief initialize translational part of mass matrix
+       */
+      void initM();
 
     private:
       /**
@@ -169,7 +174,6 @@ namespace MBSimFlexibleBody {
       FiniteElement1s33Cosserat(); // standard constructor
       FiniteElement1s33Cosserat(const FiniteElement1s33Cosserat&); // copy constructor
       FiniteElement1s33Cosserat& operator=(const FiniteElement1s33Cosserat&); // assignment operator
-
   };
 
   inline const fmatvec::SymMat& FiniteElement1s33Cosserat::getM() const { return M; }

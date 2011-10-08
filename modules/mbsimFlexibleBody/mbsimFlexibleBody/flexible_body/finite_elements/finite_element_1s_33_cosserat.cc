@@ -49,18 +49,12 @@ namespace MBSimFlexibleBody {
     double cbeta = cos(qG(4));
     double cgamma = cos(qG(5));
 
-    /* mass matrix is just standard rigid body translational and rotational part */
-    M(0,0) = 0.5*rho*A*l0;
-    M(1,1) = 0.5*rho*A*l0;
-    M(2,2) = 0.5*rho*A*l0;
+    /* transient mass matrix is just standard rigid body rotational part */
     M(3,3) = rho*l0*(I0*cbeta*cbeta*cgamma*cgamma + I1*cbeta*cbeta*sgamma*sgamma + I2*sbeta*sbeta);
     M(3,4) = rho*l0*(I0*cbeta*cgamma*sgamma - I1*cbeta*sgamma*cgamma);
     M(3,5) = rho*l0*I2*sbeta;
     M(4,4) = rho*l0*(I0*sgamma*sgamma + I1*cgamma*cgamma);
     M(5,5) = rho*l0*I2;
-    M(6,6) = 0.5*rho*A*l0;
-    M(7,7) = 0.5*rho*A*l0;
-    M(8,8) = 0.5*rho*A*l0;
   }
 
   void FiniteElement1s33Cosserat::computeh(const Vec& qG, const Vec& qGt) {
@@ -204,6 +198,16 @@ namespace MBSimFlexibleBody {
     X(9,11) = qGt(3,5); // time differentiated angels TODO in angle element or better in FlexibleBody
 
     return X;
+  }
+      
+  void FiniteElement1s33Cosserat::initM() {
+    /* constant mass matrix is just standard rigid body translational part */
+    M(0,0) = 0.5*rho*A*l0;
+    M(1,1) = 0.5*rho*A*l0;
+    M(2,2) = 0.5*rho*A*l0;
+    M(6,6) = 0.5*rho*A*l0;
+    M(7,7) = 0.5*rho*A*l0;
+    M(8,8) = 0.5*rho*A*l0;
   }
 
 }

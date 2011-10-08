@@ -28,7 +28,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I2 = 1./12.*b0*b0*b0*b0; 
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
-  int elements = 12; // number of finite elements
+  int elements = 3; // number of finite elements
   fmatvec::Vec bound_orient_1(3,INIT,0.); // ? TODO
   fmatvec::Vec bound_orient_2(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
