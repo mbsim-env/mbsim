@@ -41,7 +41,7 @@ namespace MBSimFlexibleBody {
 
   FlexibleBody::~FlexibleBody() {
     for(unsigned int i=0; i<discretization.size(); i++) {
-      delete discretization[i]; discretization[i] = NULL;
+      if(discretization[i]) { delete discretization[i]; discretization[i] = NULL; }
     }
   }
 
