@@ -34,7 +34,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_2(3,INIT,0.);
 
-  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
+  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",true);
   rod->setLength(l0);
   rod->setEGModuls(E,G);
   rod->setCrossSectionalArea(A);
@@ -65,22 +65,21 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   // circle shape
-  Vec q = Vec(6*elements,INIT,0.);
-  Vec qRelaxed = Vec(6*elements,INIT,0.);
-  double R = l0/(2.*M_PI);
-  double phi0 = M_PI/2.;
-  double dphi = (2*M_PI)/elements;
-  for(int i=0; i<elements; i++) { // circle in around x-axis because local z-axis is tangent
-    double phi = phi0 + i*dphi;	
-    q(6*i+1) = R*cos(phi);
-    q(6*i+2) = R*sin(phi);
-    q(6*i+3) = phi + dphi/2.;
-    qRelaxed(6*i+1) = R*cos(phi);
-    qRelaxed(6*i+2) = R*sin(phi);
-    if(i==4.) qRelaxed(6*i+3) = phi+dphi/2.-1e-2;
+  double lstretched = 1.1*l0;
+  Vec q0 = Vec(6*elements+3,INIT,0.);
+  for(int i=1; i<=elements; i++) { 
+    q0(6*i) = i*lstretched/elements;
   }
-  rod->setq0(q);
-  rod->setRelaxed(qRelaxed);
+  //double R = l0/(2.*M_PI);
+  //double phi0 = M_PI/2.;
+  //double dphi = (2*M_PI)/elements;
+  //for(int i=0; i<elements; i++) { 
+  //  double phi = phi0 + i*dphi;	
+  //  q0(6*i) = R*cos(phi);
+  //  q0(6*i+1) = R*sin(phi);
+  //  q0(6*i+5) = phi + dphi/2.;
+  //}
+  rod->setq0(q0);
   this->addObject(rod);
 }
 

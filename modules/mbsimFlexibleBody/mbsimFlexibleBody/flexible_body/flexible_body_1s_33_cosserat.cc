@@ -24,6 +24,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/environment.h>
+#include "mbsim/utils/eps.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -36,7 +37,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), openStructure(openStructure_), initialized(false), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), openStructure(openStructure_), initialised(false), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -48,59 +49,65 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::BuildElements() {
     for(int i=0;i<Elements;i++) {
-      int j = 6*i;
+      int j = 6*i; // start index in entire beam coordinates
 
-      if(i>0 && i<Elements-1) { // inner elements: 18 dof
-        qElement[i] = q(j-6,j+11); // predecessor / current / successor
-        uElement[i] = u(j-6,j+11);
+      if(i<Elements-1 || openStructure) {
+        qElement[i] = q(j,j+8);
+        uElement[i] = u(j,j+8);
       }
-      else if(openStructure && i==0) { // first element and open structure: 15 dof
-        qElement[i](0,2) = q(3,5) - bound_ang_start(0,2)*l0; // estimated predecessor angles
-        uElement[i](0,2) = q(3,5) - bound_ang_vel_start(0,2)*l0;
-        qElement[i](3,14) = q(j,j+11); // current / successor 
-        uElement[i](3,14) = u(j,j+11);
-      }
-      else if(openStructure && i==Elements-1) { // last element and open structure: 18 dof
-        qElement[i](0,14) = q(j-6,j+8); // predecessor / current / successor position (last position node)
-        uElement[i](0,14) = q(j-6,j+8);
-        qElement[i](15,17) = bound_ang_end(0,2)*l0 + qElement[i](9,11); // estimated successor angles
-        uElement[i](15,17) = bound_ang_vel_end(0,2)*l0 + uElement[i](9,11);
-      }
-      else if(!openStructure && i==0) { // first element and closed structure: 18 dof
-        qElement[i](0,5) = q(6*(Elements-1),6*(Elements)-1); // predecessor = last element
-        uElement[i](0,5) = u(6*(Elements-1),6*(Elements)-1);
-        qElement[i](6,17) = q(j,j+11); // current / successor
-        uElement[i](6,17) = u(j,j+11);
-      }
-      else { // last element and closed structure: 18 dof
-        qElement[i](0,11) = q(j-6,j+5); // predecessor / current
-        uElement[i](0,11) = u(j-6,j+5);
-        qElement[i](12,17) = q(0,5); // successor = first element
-        uElement[i](12,17) = u(0,5);
+      else { // last FE-Beam for closed structure	
+        qElement[i](0,5) = q(j,j+5);
+        uElement[i](0,5) = u(j,j+5);
+        qElement[i](6,8) = q(0,2);
+        uElement[i](6,8) = u(0,2);
       }
     }
   }
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
-    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
-    gloVec(j,j+5) += locVec;
+    int j = 6*n; // start index in entire beam coordinates
+    
+    if(n<Elements-1 || openStructure) {
+      gloVec(j,j+8) += locVec;
+    }
+    else { // last FE for closed structure
+      gloVec(j,j+5) += locVec(0,5);
+      gloVec(0,2) += locVec(6,8);
+    }
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
-    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
-    gloMat(Index(j,j+5)) += locMat;
+    int j = 6*n; // start index in entire beam coordinates
+
+    if(n<Elements-1 || openStructure) {
+      gloMat(Index(j,j+8),Index(j,j+8)) += locMat;
+    }
+    else { // last FE for closed structure
+      gloMat(Index(j,j+5),Index(j,j+5)) += locMat(Index(0,5),Index(0,5)); 
+      gloMat(Index(j,j+5),Index(0,2)) += locMat(Index(0,5),Index(6,8));
+      gloMat(Index(0,2),Index(j,j+5)) += locMat(Index(6,8),Index(0,5));
+      gloMat(Index(0,2),Index(0,2)) += locMat(Index(6,8),Index(6,8));
+    }
   }
 
   void FlexibleBody1s33Cosserat::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
-    int j = 6*n; // TODO no difference open / closed / 6 contribution but 18 dof?
-    gloMat(Index(j,j+5)) += locMat;  
+    int j = 6*n; // start index in entire beam coordinates
+
+    if(n<Elements-1 || openStructure) {
+      gloMat(Index(j,j+8)) += locMat;
+    }
+    else { // last FE for closed structure
+      gloMat(Index(j,j+5)) += locMat(Index(0,5)); 
+      gloMat(Index(j,j+5),Index(0,2)) += locMat(Index(0,5),Index(6,8));
+      gloMat(Index(0,2)) += locMat(Index(6,8));
+    }
   }
 
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
     if(stage == unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
 
-      initialized = true;
+      initialised = true;
 
       /* cylinder */
       cylinder->setAlphaStart(0.);
@@ -163,23 +170,10 @@ namespace MBSimFlexibleBody {
       Vec g = frameOfReference->getOrientation().T()* MBSimEnvironment::getInstance()->getAccelerationOfGravity();
 
       for(int i=0;i<Elements;i++) {
-        Vec relaxedElement(18,INIT,0.);
-        int j = 6*i;
-        if(i>0 && i<Elements-1) { // inner elements: 18 dof
-          relaxedElement(0,17) = relaxed(j-6,j+11); // predecessor / current / successor
-        }
-        else if(!openStructure && i==0) { // first element and closed structure: 18 dof
-          relaxedElement(0,5) = relaxed(6*(Elements-1),6*Elements-1); // predecessor = last element
-          relaxedElement(6,17) = relaxed(j,j+11); // current / successor
-        }
-        else if(!openStructure && i==Elements-1) { // last element and closed structure: 18 dof
-          relaxedElement(0,11) = relaxed(j-6,j+5); // predecessor / current
-          relaxedElement(12,17) = relaxed(0,5); // successor = first element
-        }
-        // TODO other cases
-        discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g,i,openStructure,relaxedElement));
+        discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
+        if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
       }
     }
 
@@ -194,13 +188,13 @@ namespace MBSimFlexibleBody {
         vector<double> data;
         data.push_back(t);
         double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints()- 1) : L/(((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints()- 2);
-        for(int i = 0; i < ((OpenMBV::SpineExtrusion*) openMBVBody)->getNumberOfSpinePoints(); i++) {
+        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody)->getNumberOfSpinePoints(); i++) {
           Vec X = computeState(ds*i);
           Vec pos = frameOfReference->getPosition()+ frameOfReference->getOrientation() * X(0,2);
           data.push_back(pos(0)); // global x-position
           data.push_back(pos(1)); // global y-position
           data.push_back(pos(2)); // global z-position
-          data.push_back(X(5)); // local twist TODO what is the tangent?
+          data.push_back(X(3)); // local twist
         }
 
         ((OpenMBV::SpineExtrusion*) openMBVBody)->append(data);
@@ -212,10 +206,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33Cosserat::setNumberElements(int n) {
     Elements = n;
-    if(openStructure)
-      qSize = 6*n+3;
-    else
-      qSize = 6*n;
+    if(openStructure) qSize = 6*n+3;
+    else qSize = 6*n;
 
     Vec q0Tmp(0,INIT,0.);
     if(q0.size())

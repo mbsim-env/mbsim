@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
        * \param open or closed structure
        * \param ? TODO
        */
-      FiniteElement1s33Cosserat(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,int currentElement_,bool openStructure,const fmatvec::Vec& relaxedElement_);
+      FiniteElement1s33Cosserat(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_);
 
       /**
        * \brief destructor
@@ -85,6 +85,7 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
+      void setCurlRadius(double R1,double R2);		
       double getl0() const;
 
       /**
@@ -94,13 +95,6 @@ namespace MBSimFlexibleBody {
        * \param LAGRANGIAN parameter in [0,l0]
        */
       const fmatvec::Vec& computeState(const fmatvec::Vec& qG, const fmatvec::Vec& qGt, double s);
-
-      /**
-       * \brief compute interesting data
-       * \param global coordinates
-       * \param global velocities
-       */
-      fmatvec::Vec computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
 
     private:
       /**
@@ -139,19 +133,9 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec g;
 
       /**
-       *  brief number of element
+       * \brief predefined bending 
        */
-      int currentElement;
-
-      /**
-       *  brief open or closed structure
-       */
-      bool openStructure;
-
-      /**
-       * ? TODO
-       */
-      fmatvec::Vec relaxedElement;
+      double k10, k20;
 
       /**
        * \brief global system description 
@@ -179,8 +163,8 @@ namespace MBSimFlexibleBody {
   inline const fmatvec::Vec& FiniteElement1s33Cosserat::geth() const { return h; }
   inline const fmatvec::SqrMat& FiniteElement1s33Cosserat::getdhdq() const { return dhdq; }
   inline const fmatvec::SqrMat& FiniteElement1s33Cosserat::getdhdu() const { return dhdu; }
-  inline int FiniteElement1s33Cosserat::getqSize() const {if(openStructure == true && currentElement==0){ return 15; } else { return 18; }}
-  inline int FiniteElement1s33Cosserat::getuSize() const {if(openStructure == true && currentElement==0){ return 15; } else { return 18; }}
+  inline int FiniteElement1s33Cosserat::getqSize() const { return 9; }
+  inline int FiniteElement1s33Cosserat::getuSize() const { return 9; }
   inline void  FiniteElement1s33Cosserat::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){throw MBSim::MBSimError("Error(FiniteElement1s33Cosserat::dhdz): Not implemented");}
   inline double FiniteElement1s33Cosserat::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeKineticEnergy): Not implemented!"); }
   inline double FiniteElement1s33Cosserat::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeGravitationalEnergy): Not implemented!"); }
@@ -191,7 +175,6 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement1s33Cosserat::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s33Cosserat::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeJacobianOfMotion): Not implemented!"); }
   inline double FiniteElement1s33Cosserat::getl0() const { return l0; }
-  inline fmatvec::Vec FiniteElement1s33Cosserat::computeData(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){ throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeData): Not implemented!"); }
 
 }
 
