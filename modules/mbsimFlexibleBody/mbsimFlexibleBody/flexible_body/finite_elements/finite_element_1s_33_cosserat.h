@@ -28,15 +28,25 @@ namespace MBSimFlexibleBody {
 
   /**
    * \brief finite element for spatial beam using Cosserat model
+   * \author Thorsten Schindler
    * \author Christian Käsbauer
    * \author Thomas Cebulla
-   * \author Thorsten Schindler
    * \date 2011-09-10 initial commit (Thorsten Schindler)
-   * \todo everything
-   * \todo no gravitation
+   * \data 2011-10-08 basics derived and included (Thorsten Schindler)
+   * \todo bending/torsion in rhs TODO
+   * \todo gyroscopic rotational stuff in rhs TODO
+   * \todo contact Jacobian TODO
+   * \todo computeState only in FlexibleBody TODO
+   * \todo implicit integration TODO
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
+   * but with 
+   *  - Kirchhoff assumption (-> less stiff)
+   *  - Cardan parametrisation (-> less problems with condition and drift for quaternion dae system)
+   *  - piecewise constant Darboux vector with evaluation according to
+   *    I. Romero: The interpolation of rotations and its application to finite element models of
+   *    geometrically exact beams
    */
   class FiniteElement1s33Cosserat : public MBSim::DiscretizationInterface {
     public:
@@ -52,9 +62,6 @@ namespace MBSimFlexibleBody {
        * \param second area moment of inertia
        * \param torsional moment of inertia
        * \param acceleration of gravity
-       * \param current element
-       * \param open or closed structure
-       * \param ? TODO
        */
       FiniteElement1s33Cosserat(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_);
 
@@ -86,6 +93,7 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setCurlRadius(double R1,double R2);		
+      void setMaterialElongationDamping(double cEps0D_);		
       double getl0() const;
 
       /**
@@ -138,6 +146,11 @@ namespace MBSimFlexibleBody {
       double k10, k20;
 
       /**
+       * \brief elongational damping
+       */
+      double cEps0D;
+
+      /**
        * \brief global system description 
        */
       fmatvec::SymMat M;
@@ -166,9 +179,6 @@ namespace MBSimFlexibleBody {
   inline int FiniteElement1s33Cosserat::getqSize() const { return 9; }
   inline int FiniteElement1s33Cosserat::getuSize() const { return 9; }
   inline void  FiniteElement1s33Cosserat::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){throw MBSim::MBSimError("Error(FiniteElement1s33Cosserat::dhdz): Not implemented");}
-  inline double FiniteElement1s33Cosserat::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeKineticEnergy): Not implemented!"); }
-  inline double FiniteElement1s33Cosserat::computeGravitationalEnergy(const fmatvec::Vec& qG) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeGravitationalEnergy): Not implemented!"); }
-  inline double FiniteElement1s33Cosserat::computeElasticEnergy(const fmatvec::Vec& q) { throw MBSim::MBSimError("ERROR(FiniteElement1s33Cosserat::computeElasticEnergy): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s33Cosserat::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computePosition): Not implemented!"); }
   inline fmatvec::SqrMat FiniteElement1s33Cosserat::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeOrientation): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s33Cosserat::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeVelocity): Not implemented!"); }

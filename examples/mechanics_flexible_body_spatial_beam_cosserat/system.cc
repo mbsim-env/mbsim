@@ -18,9 +18,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   grav(1) = -9.81;
   MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
 
-  double l0 = 1.5; // length
+  double l0 = 1.; // length
   double b0 = 0.05; // width
-  double E = 5.e7; // E-Modul
+  double E = 1.e5; // E-Modul
   double mu = 0.3; // Poisson ratio
   double G = E/(2*(1+mu)); // shear modulus
   double A = b0*b0; // cross-section area
@@ -34,7 +34,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
   fmatvec::Vec bound_ang_vel_2(3,INIT,0.);
 
-  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",true);
+  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
   rod->setLength(l0);
   rod->setEGModuls(E,G);
   rod->setCrossSectionalArea(A);
@@ -65,21 +65,16 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   // circle shape
-  double lstretched = 1.1*l0;
-  Vec q0 = Vec(6*elements+3,INIT,0.);
-  for(int i=1; i<=elements; i++) { 
-    q0(6*i) = i*lstretched/elements;
+  Vec q0 = Vec(6*elements,INIT,0.);
+  double R = l0/(2.*M_PI);
+  double phi0 = M_PI/2.;
+  double dphi = (2*M_PI)/elements;
+  for(int i=0; i<elements; i++) { 
+    double phi = phi0 + i*dphi;	
+    q0(6*i) = R*cos(phi);
+    q0(6*i+1) = R*sin(phi);
+    q0(6*i+5) = phi + dphi/2.;
   }
-  //double R = l0/(2.*M_PI);
-  //double phi0 = M_PI/2.;
-  //double dphi = (2*M_PI)/elements;
-  //for(int i=0; i<elements; i++) { 
-  //  double phi = phi0 + i*dphi;	
-  //  q0(6*i) = R*cos(phi);
-  //  q0(6*i+1) = R*sin(phi);
-  //  q0(6*i+5) = phi + dphi/2.;
-  //}
   rod->setq0(q0);
   this->addObject(rod);
 }
-
