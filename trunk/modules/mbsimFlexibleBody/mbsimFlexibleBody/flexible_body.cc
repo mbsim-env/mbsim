@@ -67,6 +67,7 @@ namespace MBSimFlexibleBody {
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
+    cout << M << endl;
   }
 
   void FlexibleBody::updatedhdz(double t) {

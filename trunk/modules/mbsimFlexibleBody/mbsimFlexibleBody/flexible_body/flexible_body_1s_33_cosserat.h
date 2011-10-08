@@ -37,7 +37,6 @@ namespace MBSimFlexibleBody {
    * \author Thomas Cebulla
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
-   * \todo special LU decomposition TODO
    * \todo understand boundary conditions TODO
    * \todo Lehr damping TODO
    *
@@ -76,6 +75,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(MBSim::InitStage stage);
+      virtual void facLLM();
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -191,6 +191,11 @@ namespace MBSimFlexibleBody {
        * \param finite element number
        */
       void BuildElement(const double& sGlobal, double& sLocal, int& currentElement);
+      
+      /**
+       * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
+       */
+      void initM();
   };
 
   inline void FlexibleBody1s33Cosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame) { throw MBSim::MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): Not implemented!"); }

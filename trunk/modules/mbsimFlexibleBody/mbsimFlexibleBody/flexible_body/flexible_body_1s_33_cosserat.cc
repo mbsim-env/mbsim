@@ -175,9 +175,18 @@ namespace MBSimFlexibleBody {
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
         if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
       }
+
+      initM();
     }
 
     else FlexibleBodyContinuum<double>::init(stage);
+  }
+
+  void FlexibleBody1s33Cosserat::facLLM() {
+    for(int i=0;i<(int)discretization.size();i++) {
+      int j = 6*i; 
+      LLM(Index(j+3,j+5)) = facLL(discretization[i]->getM()(Index(3,5)));
+    }
   }
 
   void FlexibleBody1s33Cosserat::plot(double t, double dt) {
@@ -255,6 +264,20 @@ namespace MBSimFlexibleBody {
     if(currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
       currentElement = Elements - 1;
       sLocal += l0;
+    }
+  }
+  
+  void FlexibleBody1s33Cosserat::initM() {
+    for(int i=0;i<(int)discretization.size();i++) {
+      try { static_cast<FiniteElement1s33Cosserat*>(discretization[i])->initM(); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
+    for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
+    for(int i=0;i<(int)discretization.size();i++) {
+      int j = 6*i; 
+      LLM(Index(j,j+2)) = facLL(M(Index(j,j+2)));
+      if(openStructure && i==(int)discretization.size()-1)
+        LLM(Index(j+6,j+8)) = facLL(M(Index(j+6,j+8)));
     }
   }
 
