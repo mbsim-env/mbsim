@@ -174,6 +174,8 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
         if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
+        static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialElongationDamping(Elements*cEps0D);
+        if(fabs(cEps0D)<epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setLehrElongationDamping(Elements*cEps0L);
       }
 
       initM();

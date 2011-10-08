@@ -42,6 +42,15 @@ namespace MBSimFlexibleBody {
     cEps0D = cEps0D_;
   }
 
+  void FiniteElement1s33Cosserat::setLehrElongationDamping(double cEps0L_) {
+    /* eigenfrequency concerning truss equation 
+     * attention: Cosserat model seems to underestimate the longitudinal stiffness by factor 3 
+     */
+    double omgEps0 = sqrt(4.*E/(rho*l0*l0)); 
+    cEps0D += rho*A*l0*l0*cEps0L_*omgEps0/4.;
+  }
+
+
   void FiniteElement1s33Cosserat::computeM(const Vec& qG) {
     /* Cardan angles */
     double sbeta = sin(qG(4));
@@ -124,6 +133,8 @@ namespace MBSimFlexibleBody {
 
     /* differentiation of 'strain dissipation' with respect to qG
      * we only consider elongation because of the stiffness of the respective energy terms
+     * attention: for ring structures damping like this seems not ro be appropriate
+     * -> use setMassProportionalDamping
      */
     Vec dSDdqGt(9); 
     dSDdqGt(0,2) = -tangent.copy();
@@ -131,10 +142,10 @@ namespace MBSimFlexibleBody {
     dSDdqGt(4) = deltax.T()*dtangentdphi.col(1);
     dSDdqGt(5) = deltax.T()*dtangentdphi.col(2);
     dSDdqGt(6,8) = tangent.copy();
-    dSDdqGt *= cEps0D*(deltax.T()*tangentt + deltaxt.T()*tangent)/l0;
+    dSDdqGt *= 2.*cEps0D*(deltax.T()*tangentt + deltaxt.T()*tangent)/l0;
 
     /* generalized forces */
-    h = -dVgdqG-dVeldqG;
+    h = -dVgdqG-dVeldqG-dSDdqGt;
     h(3,5) += dTRdphi-dTRdphitphi*qGt(3,5);
   }
 

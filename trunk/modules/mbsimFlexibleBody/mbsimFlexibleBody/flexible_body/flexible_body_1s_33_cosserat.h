@@ -38,7 +38,6 @@ namespace MBSimFlexibleBody {
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
    * \todo understand boundary conditions TODO
-   * \todo Lehr damping TODO
    *
    * Cosserat model based on
    * H. Lang, J. Linn, M. Arnold: Multi-body dynamics simulation of geometrically exact Cosserat rods
@@ -92,6 +91,7 @@ namespace MBSimFlexibleBody {
       void setMomentsInertia(double I1_,double I2_,double I0_);
       void setCurlRadius(double R1_,double R2_);
       void setMaterialElongationDamping(double cEps0D_);
+      void setLehrElongationDamping(double cEps0L_);
       void setBoundary(fmatvec::Vec bound_ang_start_,fmatvec::Vec bound_ang_end_,fmatvec::Vec bound_ang_vel_start_,fmatvec::Vec bound_ang_vel_end_);
       void setCylinder(double cylinderRadius_);
       void setCuboid(double cuboidBreadth_,double cuboidHeight_);
@@ -207,6 +207,7 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2); }    	
   inline void FlexibleBody1s33Cosserat::setMaterialElongationDamping(double cEps0D_) { cEps0D = cEps0D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialElongationDamping(Elements*cEps0D); }
+  inline void FlexibleBody1s33Cosserat::setLehrElongationDamping(double cEps0L_) { cEps0L = cEps0L_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setLehrElongationDamping(Elements*cEps0L); }   	
   inline void FlexibleBody1s33Cosserat::setBoundary(fmatvec::Vec bound_ang_start_, fmatvec::Vec bound_ang_end_, fmatvec::Vec bound_ang_vel_start_, fmatvec::Vec bound_ang_vel_end_){ bound_ang_start = bound_ang_start_; bound_ang_end = bound_ang_end_; bound_ang_vel_start = bound_ang_vel_start_ ; bound_ang_vel_end = bound_ang_vel_end_; }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
