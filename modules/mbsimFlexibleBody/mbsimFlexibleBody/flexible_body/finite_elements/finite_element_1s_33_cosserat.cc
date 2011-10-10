@@ -38,18 +38,9 @@ namespace MBSimFlexibleBody {
     if (fabs(R2)>epsroot()) k20 = 1./R2;
   }
 
-  void FiniteElement1s33Cosserat::setMaterialElongationDamping(double cEps0D_) {
+  void FiniteElement1s33Cosserat::setMaterialDamping(double cEps0D_) {
     cEps0D = cEps0D_;
   }
-
-  void FiniteElement1s33Cosserat::setLehrElongationDamping(double cEps0L_) {
-    /* eigenfrequency concerning truss equation 
-     * attention: Cosserat model seems to underestimate the longitudinal stiffness by factor 3 
-     */
-    double omgEps0 = sqrt(4.*E/(rho*l0*l0)); 
-    cEps0D += rho*A*l0*l0*cEps0L_*omgEps0/4.;
-  }
-
 
   void FiniteElement1s33Cosserat::computeM(const Vec& qG) {
     /* Cardan angles */
