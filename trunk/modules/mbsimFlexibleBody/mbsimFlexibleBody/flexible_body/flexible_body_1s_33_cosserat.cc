@@ -37,7 +37,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps0L(0.), openStructure(openStructure_), initialised(false), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), openStructure(openStructure_), initialised(false), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -178,8 +178,7 @@ namespace MBSimFlexibleBody {
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
         if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
-        static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialElongationDamping(Elements*cEps0D);
-        if(fabs(cEps0D)<epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setLehrElongationDamping(Elements*cEps0L);
+        static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
       }
 
       initM();
