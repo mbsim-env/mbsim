@@ -1,22 +1,14 @@
 #include "system.h"
-#include "mbsim/rigid_body.h"
-#include "mbsim/spring_damper.h"
 #include "mbsim/environment.h"
+#include "mbsim/rigid_body.h"
+#include "mbsim/joint.h"
 #include "mbsim/contours/point.h"
-#include "mbsim/contours/line_segment.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/contact.h"
-#include "mbsim/joint.h"
-#include "mbsim/kinetic_excitation.h"
-#include "mbsim/utils/function.h"
 #include "mbsim/constitutive_laws.h"
 
-#include <cmath>
-
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include "openmbvcppinterface/coilspring.h"
 #include "openmbvcppinterface/cuboid.h"
-#include "openmbvcppinterface/frustum.h"
 #endif
 
 using namespace MBSim;
@@ -25,181 +17,223 @@ using namespace std;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
-//  // gravitation
-//  Vec grav(3,INIT,0.);
-//  grav(1)=-9.81;
-//  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
-//
-//  // bodies
-//  RigidBody *crank = new RigidBody("Crank");
-//  this->addObject(Crank);	
-//
-//  RigidBody *rod = new RigidBody("Rod");
-//  this->addObject(Rod);
-//
-//  RigidBody *piston = new RigidBody("Piston");
-//  this->addObject(Piston);
-//
-//  // geometrical characteristics
-//  double width_crank = 0.05;
-//  double thickness_crank = 0.05;
-//  double length_crank = 0.153; // l1
-//
-//  double width_rod = 0.05;
-//  double thickness_rod = 0.05;
-//  double length_rod = 0.306; // l2
-//
-//  double length_piston = 2.*0.05; // 2a
-//
-//  // inertial properties
-//  double mass_crank = 0.038; // m1
-//  double mass_rod = 0.038; // m2
-//  double mass_piston = 0.076; // m3
-//
-//  SymMat inertia_crank(3,INIT,0.);
-//  inertia_crank(0,0) = 1.; // DUMMY
-//  inertia_crank(1,1) = 1.; // DUMMY
-//  inertia_crank(2,2) = 7.4e-5; // J1
-//
-//  SymMat inertia_rod(3,INIT,0.);
-//  inertia_rod(0,0) = 1.; // DUMMY
-//  inertia_rod(1,1) = 1.; // DUMMY
-//  inertia_rod(2,2) = 5.9e-4; // J2
-//
-//  SymMat inertia_piston(3,INIT,0.);
-//  inertia_piston(0,0) = 1.; // DUMMY
-//  inertia_piston(1,1) = 1.; // DUMMY
-//  inertia_piston(2,2) = 2.7e-6; // J3
-//
-//  crank->setMass(mass_crank);
-//  rod->setMass(mass_rod);
-//  piston->setMass(mass_piston);
-//  crank->setInertiaTensor(inertia_crank);
-//  rod->setInertiaTensor(inertia_rod);
-//  piston->setInertiaTensor(inertia_piston);
-//
-//  // generalised coordinates
-//  crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-//  rod->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
-//  piston->setTranslation(new LinearTranslation("[1,0;0,1;0,0]"));
-//  //------------------------------------------------------------------------------
-//
-//  // Körper Crank: Setzen des Frame of Reference
-//  Crank->setFrameOfReference(getFrame("I"));
-//
-//  // Körper Crank: Setzen des Frame for Kinematics
-//  Vec Crank_KrCK(3,INIT,0.);
-//  Crank_KrCK(0) = -Laenge_Crank/2.0;
-//  Crank->addFrame("K",Crank_KrCK,SqrMat(3,EYE));
-//  Crank->setFrameForKinematics(Crank->getFrame("K"));
-//
-//  // Körper Crank: Erstellung des P-Frames
-//  Vec Crank_KrCP(3,INIT,0.);
-//  Crank_KrCP(0) = Laenge_Crank/2.0;
-//  Crank->addFrame("P",Crank_KrCP,SqrMat(3,EYE));
-//
-//  // Körper Rod: Setzen des Frame of Reference
-//  Rod->setFrameOfReference(Crank->getFrame("P"));
-//
-//  // Körper Rod: Setzen des Frame of Kinematics
-//  Vec Rod_KrCK(3,INIT,0.);
-//  Rod_KrCK(0) = -Laenge_Rod/2.0;
-//  Rod->addFrame("K",Rod_KrCK,SqrMat(3,EYE));
-//  Rod->setFrameForKinematics(Rod->getFrame("K"));
-//
-//  // Körper Rod: Erstellung des P-Frames
-//  Vec Rod_KrCP(3,INIT,0.);
-//  Rod_KrCP(0) = Laenge_Rod/2.0;
-//  Rod->addFrame("P",Rod_KrCP,SqrMat(3,EYE));
-//
-//  // Körper Piston: Setzen des Frame of Reference
-//  Piston->setFrameOfReference(getFrame("I"));
-//
-//  // Körper Piston: Setzen des Frame of Kinematics
-//  Piston->setFrameForKinematics(Piston->getFrame("C"));
-//
-//  // Anfangsbedingungen für Körper Crank:
-//  double crank_u0 = 150.;
-//  crank->setInitialGeneralizedPosition(0.);
-//  crank->setInitialGeneralizedVelocity(crank_u0);
-//
-//  //Anfangsbedingunen für Körper Rod:
-//  double rod_u0 = -75.;
-//  rod->setInitialGeneralizedPosition(0.);
-//  rod->setInitialGeneralizedVelocity(rod_u0);
-//
-//  //Anfangsbedingunen für Körper Piston:
-//  Vec Piston_q0(2,INIT,0.);
-//  Piston_q0(0) = Laenge_Crank+Laenge_Rod;
-//  Piston->setInitialGeneralizedPosition(Piston_q0);
-//  //------------------------------------------------------------------------------
-//
-//  // Joints
-//  Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");
-//  joint_rod_piston->setForceDirection("[1,0;0,1;0,0]");
-//  joint_rod_piston->setForceLaw( new BilateralConstraint());
-//  joint_rod_piston->setImpactForceLaw( new BilateralImpact());
-//  joint_rod_piston->connect(rod->getFrame("P"), Piston->getFrameForKinematics() );
-//  addLink(joint_rod_piston);
-//
-//  // Contours
-//  // Point an Piston
-//  Point *Point_Piston = new Point("Point_Piston");
-//  Piston->addContour(Point_Piston,Vec(3,INIT,0.),SqrMat(3,EYE));
-//
-//  // Ebene der Welt von unten
-//  Line *plane1 = new Line("plane1");
-//  SqrMat A(3,INIT,0.);
-//  A(0,1) = -1; A(1,0) = 1; A(2,2) = 1;
-//  addContour(plane1,Vec("[0;0;0]"),A);
-//
-//  // Ebene der Welt von oben
-//  Line *plane2 = new Line("plane2");
-//  SqrMat B(3,INIT,0.);
-//  B(0,1) = 1; B(1,0) = -1; B(2,2) = 1;
-//  addContour(plane2,Vec("[0;0;0]"),B);
-//  //---------------------------------------------------------------------------
-//
-//  // Contacts
-//  // Contact Point an Piston und Ebene der Welt unten
-//  Contact *contact_Point_Piston_Ebene = new Contact("Contact_Point_Piston_Plane1");
-//  contact_Point_Piston_Ebene->connect(Point_Piston,plane1);
-//
-//  contact_point_piston_plane1->setFrictionForceLaw(new PlanarCoulombFriction(0.01));
-//  contact_point_piston_plane1->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
-//  contact_point_piston_plane1->setContactForceLaw(new UnilateralConstraint());
-//  contact_point_piston_plane1->setContactImpactLaw(new UnilateralNewtonImpact(0.4));
-//  this->addLink(contact_point_piston_plane1);
-//
-//  // Contact Point an Piston und Ebene der Welt oben
-//  Contact *contact_Point_Piston_Ebene2 = new Contact("contact_Point_Piston_Ebene2");
-//  contact_Point_Piston_Ebene2->connect(Point_Piston,plane2);
-//
-//  contact_Point_Piston_Ebene2->setFrictionForceLaw(new PlanarCoulombFriction(0.1) );
-//  contact_Point_Piston_Ebene2->setFrictionImpactLaw(new PlanarCoulombImpact(0.1));
-//  contact_Point_Piston_Ebene2->setContactForceLaw(new UnilateralConstraint());
-//  contact_Point_Piston_Ebene2->setContactImpactLaw(new UnilateralNewtonImpact(0.2));
-//  this->addLink(contact_Point_Piston_Ebene2);
-//  //---------------------------------------------------------------------------
-//
-//  // visualisation
-//#ifdef HAVE_OPENMBVCPPINTERFACE
-//  OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
-//  openMBVCrank->setLength(length_crank, width_crank, thickness_crank);
-//  openMBVCrank->setInitialTranslation(0, 0, 0.05);
-//  openMBVCrank->setStaticColor(0.5);
-//  crank->setOpenMBVRigidBody(openMBVCrank);
-//
-//  OpenMBV::Cuboid *openMBVRod = new OpenMBV::Cuboid();
-//  openMBVRod->setLength(length_rod, width_rod, thickness_rod);
-//  openMBVRod->setStaticColor(0.5);
-//  rod->setOpenMBVRigidBody(openMBVRod);
-//
-//  OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
-//  openMBVPiston->setLength(length_piston, width_piston, thickness_piston);
-//  openMBVPiston->setStaticColor(0.8);
-//  piston->setOpenMBVRigidBody(openMBVPiston);
-//#endif
+  // gravitation
+  Vec grav(3,INIT,0.);
+  grav(1)=-9.81;
+  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+
+  // geometrical characteristics
+  double width_crank = 0.05;
+  double thickness_crank = 0.05;
+  double length_crank = 0.153; // l1
+
+  double width_rod = 0.05;
+  double thickness_rod = 0.05;
+  double length_rod = 0.306; // l2
+
+  double width_piston = 2.*0.025; // 2b
+  double thickness_piston = 0.05;
+  double length_piston = 2.*0.05; // 2a
+
+  double clearance = 0.001; // c
+  
+  // bodies
+  RigidBody *crank = new RigidBody("Crank");
+  this->addObject(crank);	
+
+  RigidBody *rod = new RigidBody("Rod");
+  this->addObject(rod);
+
+  RigidBody *piston = new RigidBody("Piston");
+  this->addObject(piston);
+
+  // generalised coordinates
+  crank->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  rod->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  rod->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
+  piston->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
+  piston->setTranslation(new LinearTranslation(Mat("[1,0;0,1;0,0]")));
+
+  // inertial properties
+  double mass_crank = 0.038; // m1
+  crank->setMass(mass_crank);
+
+  SymMat inertia_crank(3,INIT,0.);
+  inertia_crank(0,0) = 1.; // DUMMY
+  inertia_crank(1,1) = 1.; // DUMMY
+  inertia_crank(2,2) = 7.4e-5; // J1
+  crank->setInertiaTensor(inertia_crank);
+
+  double mass_rod = 0.038; // m2
+  rod->setMass(mass_rod);
+  
+  SymMat inertia_rod(3,INIT,0.);
+  inertia_rod(0,0) = 1.; // DUMMY
+  inertia_rod(1,1) = 1.; // DUMMY
+  inertia_rod(2,2) = 5.9e-4; // J2
+  rod->setInertiaTensor(inertia_rod);
+
+  double mass_piston = 0.076; // m3
+  piston->setMass(mass_piston);
+
+  SymMat inertia_piston(3,INIT,0.);
+  inertia_piston(0,0) = 1.; // DUMMY
+  inertia_piston(1,1) = 1.; // DUMMY
+  inertia_piston(2,2) = 2.7e-6; // J3
+  piston->setInertiaTensor(inertia_piston);
+
+  // kinematics 
+  crank->setFrameOfReference(getFrame("I"));
+  
+  Vec crank_KrCP(3,INIT,0.);
+  crank_KrCP(0) = -0.5*length_crank;
+  crank->addFrame("P",crank_KrCP,SqrMat(3,EYE));
+  crank->setFrameForKinematics(crank->getFrame("P"));
+  
+  rod->setFrameOfReference(getFrame("I"));
+  rod->setFrameForKinematics(rod->getFrame("C"));
+
+  Joint *joint_crank_rod = new Joint("Joint_Crank_Rod");
+  addLink(joint_crank_rod);
+  Vec crank_KrCS(3,INIT,0.);
+  crank_KrCS(0) = 0.5*length_crank;
+  crank->addFrame("S",crank_KrCS,SqrMat(3,EYE));
+  Vec rod_KrCP(3,INIT,0.);
+  rod_KrCP(0) = -0.5*length_rod;
+  rod->addFrame("P",rod_KrCP,SqrMat(3,EYE));
+  joint_crank_rod->setForceDirection("[1,0;0,1;0,0]");
+  joint_crank_rod->setForceLaw( new BilateralConstraint());
+  joint_crank_rod->setImpactForceLaw( new BilateralImpact());
+  joint_crank_rod->connect(crank->getFrame("S"),rod->getFrame("P"));
+
+  piston->setFrameOfReference(getFrame("I"));
+  piston->setFrameForKinematics(piston->getFrame("C"));
+  
+  Joint *joint_rod_piston = new Joint("Joint_Rod_Piston");
+  addLink(joint_rod_piston);
+  Vec rod_KrCS(3,INIT,0.);
+  rod_KrCS(0) = 0.5*length_rod;
+  rod->addFrame("S",rod_KrCS,SqrMat(3,EYE));
+  joint_rod_piston->setForceDirection("[1,0;0,1;0,0]");
+  joint_rod_piston->setForceLaw( new BilateralConstraint());
+  joint_rod_piston->setImpactForceLaw( new BilateralImpact());
+  joint_rod_piston->connect(rod->getFrame("S"),piston->getFrame("C"));
+
+  // initial conditions
+  crank->setInitialGeneralizedVelocity(150.);
+  Vec q0_rod(3,INIT,0.);
+  q0_rod(0) = length_crank+0.5*length_rod;
+  rod->setInitialGeneralizedPosition(q0_rod);
+  Vec u0_rod(3,INIT,0.);
+  u0_rod(2) = -75;
+  rod->setInitialGeneralizedVelocity(u0_rod);
+  Vec q0_piston(3,INIT,0.);
+  q0_piston(0) = length_crank+length_rod+0.5*length_piston;
+  piston->setInitialGeneralizedPosition(q0_piston);
+  //------------------------------------------------------------------------------
+
+  // contours
+  // points on piston
+  Point *point_piston_1 = new Point("Point_Piston_1");
+  Vec piston_KrCP1(3,INIT,0.);
+  piston_KrCP1(0) = -0.5*length_piston;
+  piston_KrCP1(1) = 0.5*width_piston;
+  rod->addFrame("P1",piston_KrCP1,SqrMat(3,EYE));
+  piston->addContour(point_piston_1,piston_KrCP1,SqrMat(3,EYE));
+
+  Point *point_piston_2 = new Point("Point_Piston_2");
+  Vec piston_KrCP2(3,INIT,0.);
+  piston_KrCP2(0) = 0.5*length_piston;
+  piston_KrCP2(1) = 0.5*width_piston;
+  rod->addFrame("P2",piston_KrCP2,SqrMat(3,EYE));
+  piston->addContour(point_piston_2,piston_KrCP2,SqrMat(3,EYE));
+
+  Point *point_piston_3 = new Point("Point_Piston_3");
+  Vec piston_KrCP3(3,INIT,0.);
+  piston_KrCP3(0) = -0.5*length_piston;
+  piston_KrCP3(1) = -0.5*width_piston;
+  rod->addFrame("P3",piston_KrCP3,SqrMat(3,EYE));
+  piston->addContour(point_piston_3,piston_KrCP3,SqrMat(3,EYE));
+
+  Point *point_piston_4 = new Point("Point_Piston_4");
+  Vec piston_KrCP4(3,INIT,0.);
+  piston_KrCP4(0) = 0.5*length_piston;
+  piston_KrCP4(1) = -0.5*width_piston;
+  rod->addFrame("P4",piston_KrCP4,SqrMat(3,EYE));
+  piston->addContour(point_piston_4,piston_KrCP4,SqrMat(3,EYE));
+
+  // bottom plane
+  Line *bottom = new Line("Bottom");
+  Vec bottom_IrIB(3,INIT,0.);
+  bottom_IrIB(1) = -clearance-0.5*width_piston;
+  SqrMat bottom_A(3,INIT,0.);
+  bottom_A(0,1) = -1; bottom_A(1,0) = 1; bottom_A(2,2) = 1;
+  this->addContour(bottom,bottom_IrIB,bottom_A);
+
+  // top plane
+  Line *top = new Line("Top");
+  Vec top_IrIT(3,INIT,0.);
+  top_IrIT(1) = clearance+0.5*width_piston;
+  SqrMat top_A(3,INIT,0.);
+  top_A(0,1) = 1; top_A(1,0) = -1; top_A(2,2) = 1;
+  this->addContour(top,top_IrIT,top_A);
+  //---------------------------------------------------------------------------
+
+  // contacts
+  Contact *contact_point_piston_1_top = new Contact("Contact_Point_Piston_1_Top");
+  contact_point_piston_1_top->connect(point_piston_1,top);
+  contact_point_piston_1_top->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu1
+  contact_point_piston_1_top->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_1_top->setContactForceLaw(new UnilateralConstraint());
+  contact_point_piston_1_top->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN1
+  contact_point_piston_1_top->enableOpenMBVContactPoints();
+  this->addLink(contact_point_piston_1_top);
+
+  Contact *contact_point_piston_2_top = new Contact("Contact_Point_Piston_2_Top");
+  contact_point_piston_2_top->connect(point_piston_2,top);
+  contact_point_piston_2_top->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu2
+  contact_point_piston_2_top->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_2_top->setContactForceLaw(new UnilateralConstraint());
+  contact_point_piston_2_top->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN2
+  contact_point_piston_2_top->enableOpenMBVContactPoints();
+  this->addLink(contact_point_piston_2_top);
+
+  Contact *contact_point_piston_3_bottom = new Contact("Contact_Point_Piston_3_Bottom");
+  contact_point_piston_3_bottom->connect(point_piston_3,bottom);
+  contact_point_piston_3_bottom->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu3
+  contact_point_piston_3_bottom->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_3_bottom->setContactForceLaw(new UnilateralConstraint());
+  contact_point_piston_3_bottom->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN3
+  contact_point_piston_3_bottom->enableOpenMBVContactPoints();
+  this->addLink(contact_point_piston_3_bottom);
+  
+  Contact *contact_point_piston_4_bottom = new Contact("Contact_Point_Piston_4_Bottom");
+  contact_point_piston_4_bottom->connect(point_piston_4,bottom);
+  contact_point_piston_4_bottom->setFrictionForceLaw(new PlanarCoulombFriction(0.01)); // mu4
+  contact_point_piston_4_bottom->setFrictionImpactLaw(new PlanarCoulombImpact(0.01));
+  contact_point_piston_4_bottom->setContactForceLaw(new UnilateralConstraint());
+  contact_point_piston_4_bottom->setContactImpactLaw(new UnilateralNewtonImpact(0.4)); // epsN4
+  contact_point_piston_4_bottom->enableOpenMBVContactPoints();
+  this->addLink(contact_point_piston_4_bottom);
+  //---------------------------------------------------------------------------
+
+  // visualisation
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  OpenMBV::Cuboid *openMBVCrank = new OpenMBV::Cuboid();
+  openMBVCrank->setLength(length_crank,width_crank,thickness_crank);
+  openMBVCrank->setStaticColor(0.5);
+  crank->setOpenMBVRigidBody(openMBVCrank);
+
+  OpenMBV::Cuboid *openMBVRod = new OpenMBV::Cuboid();
+  openMBVRod->setLength(length_rod,width_rod,thickness_rod);
+  openMBVRod->setStaticColor(0.5);
+  rod->setOpenMBVRigidBody(openMBVRod);
+
+  OpenMBV::Cuboid *openMBVPiston=new OpenMBV::Cuboid();
+  openMBVPiston->setLength(length_piston,width_piston,thickness_piston);
+  openMBVPiston->setStaticColor(0.8);
+  piston->setOpenMBVRigidBody(openMBVPiston);
+#endif
 
 }
 
