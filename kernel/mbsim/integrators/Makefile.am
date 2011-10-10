@@ -9,7 +9,8 @@ libintegrators_la_SOURCES = integrator.cc\
 			     odex_integrator.cc \
 			     radau5_integrator.cc \
 			     time_stepping_integrator.cc \
-                             time_stepping_ssc_integrator.cc \
+           time_stepping_ssc_integrator.cc \
+           time_stepping_d1minuslinear_integrator.cc \
 			     theta_time_stepping_integrator.cc \
 			     euler_explicit_integrator.cc \
 			     fortran/opkda1.f\
@@ -38,7 +39,8 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 integratorsinclude_HEADERS = integrator.h \
 			      integrators.h \
 			      time_stepping_integrator.h \
-                              time_stepping_ssc_integrator.h \
+            time_stepping_ssc_integrator.h \
+            time_stepping_d1minuslinear_integrator.h \
 			      theta_time_stepping_integrator.h \
 			      euler_explicit_integrator.h \
 			      lsodar_integrator.h \
