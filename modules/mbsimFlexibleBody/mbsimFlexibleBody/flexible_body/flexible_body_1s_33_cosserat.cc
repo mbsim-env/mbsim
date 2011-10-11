@@ -180,6 +180,11 @@ namespace MBSimFlexibleBody {
         if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
         static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
       }
+      for(int i=0;i<Elements+1;i++) { // staggered rotation grid
+        rotationDiscretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
+        qRotationElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
+        uRotationElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
+      }
 
       initM();
     }
