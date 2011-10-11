@@ -18,7 +18,7 @@ int main (int argc, char* argv[])
 
   TimeSteppingD1MinusLinearIntegrator integrator;
 
-  integrator.setEndTime(0.14);
+  integrator.setEndTime(0.25);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-4);
 

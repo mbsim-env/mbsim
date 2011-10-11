@@ -102,8 +102,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod_KrCP(0) = -0.5*length_rod;
   rod->addFrame("P",rod_KrCP,SqrMat(3,EYE));
   joint_crank_rod->setForceDirection("[1,0;0,1;0,0]");
-  joint_crank_rod->setForceLaw( new BilateralConstraint());
-  joint_crank_rod->setImpactForceLaw( new BilateralImpact());
+  joint_crank_rod->setForceLaw(new BilateralConstraint());
+  joint_crank_rod->setImpactForceLaw(new BilateralImpact());
   joint_crank_rod->connect(crank->getFrame("S"),rod->getFrame("P"));
 
   piston->setFrameOfReference(getFrame("I"));
@@ -115,8 +115,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod_KrCS(0) = 0.5*length_rod;
   rod->addFrame("S",rod_KrCS,SqrMat(3,EYE));
   joint_rod_piston->setForceDirection("[1,0;0,1;0,0]");
-  joint_rod_piston->setForceLaw( new BilateralConstraint());
-  joint_rod_piston->setImpactForceLaw( new BilateralImpact());
+  joint_rod_piston->setForceLaw(new BilateralConstraint());
+  joint_rod_piston->setImpactForceLaw(new BilateralImpact());
   joint_rod_piston->connect(rod->getFrame("S"),piston->getFrame("C"));
 
   // initial conditions
@@ -128,7 +128,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   u0_rod(2) = -75;
   rod->setInitialGeneralizedVelocity(u0_rod);
   Vec q0_piston(3,INIT,0.);
-  q0_piston(0) = length_crank+length_rod+0.5*length_piston;
+  q0_piston(0) = length_crank+length_rod;
   piston->setInitialGeneralizedPosition(q0_piston);
   //------------------------------------------------------------------------------
 

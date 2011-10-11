@@ -58,7 +58,8 @@ namespace MBSim {
    * \date 2009-08-21 reorganize hierarchy (Thorsten Schindler)
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 modifications for timestepper ssc - e.g LinkStatus (Robert Huber)
-
+   * \todo projectGeneralizedPositions seems to be buggy with at least TimeSteppingIntegrator (see SliderCrank)
+   * \todo RootFinding seems to be buggy (see EdgeMill)
    */
   class DynamicSystemSolver : public Group {
     public:
