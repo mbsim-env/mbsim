@@ -6,10 +6,10 @@ using namespace MBSim;
 
 int main (int argc, char* argv[]) {
   System *sys = new System("TS");
-  sys->setImpactSolver(LinearEquations);
+  sys->setImpactSolver(RootFinding);
   sys->setConstraintSolver(RootFinding);
   sys->setLinAlg(PseudoInverse);
-  //sys->setNumJacProj(true);
+  sys->setNumJacProj(true);
   sys->initialize();
 
   TimeSteppingIntegrator integrator;
