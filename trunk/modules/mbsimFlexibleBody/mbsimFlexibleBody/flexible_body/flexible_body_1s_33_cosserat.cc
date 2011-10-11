@@ -66,6 +66,34 @@ namespace MBSimFlexibleBody {
         uElement[i](6,8) = u(0,2);
       }
     }
+    for(int i=0;i<Elements+1;i++) {
+      int j = 6*i; // start index in entire beam coordinates
+
+      if(i>0 && i<Elements) { // no problem case
+        qRotationElement[i] = q(j-3,j+5); // staggered grid -> rotation offset 
+        uRotationElement[i] = u(j-3,j+5);
+      }
+      else if(i==0) { // first element 
+        if(openStructure) { // TODO boundary stuff
+        }
+        else { // closed structure
+          //qRotationElement[i](0,2) = q(0,2); // TODO
+          //uRotationElement[i](0,2) = u(0,2);
+          //qRotationElement[i](3,8) = q(j,j+5);
+          //uRotationElement[i](3,8) = u(j,j+5);
+        }
+      }
+      else if(i==Elements) { // last element
+        if(openStructure) { // TODO boundary stuff
+        }
+        else { // closed structure
+          //qRotationElement[i](0,5) = q(j,j+5); // TODO
+          //uRotationElement[i](0,5) = u(j,j+5);
+          //qRotationElement[i](6,8) = q(0,2);
+          //uRotationElement[i](6,8) = u(0,2);
+        }
+      }
+    }
   }
 
   void FlexibleBody1s33Cosserat::GlobalVectorContribution(int n, const Vec& locVec,Vec& gloVec) {
@@ -177,13 +205,13 @@ namespace MBSimFlexibleBody {
         discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
-        if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setCurlRadius(R1,R2);
         static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
       }
       for(int i=0;i<Elements+1;i++) { // staggered rotation grid
-        rotationDiscretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
-        qRotationElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
-        uRotationElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
+        rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0));
+        qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
+        uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
+        if(fabs(R1)>epsroot() || fabs(R2)>epsroot()) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2);
       }
 
       initM();

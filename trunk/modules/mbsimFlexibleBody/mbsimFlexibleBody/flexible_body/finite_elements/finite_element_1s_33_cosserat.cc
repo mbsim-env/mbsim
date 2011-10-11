@@ -29,14 +29,9 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33Cosserat::FiniteElement1s33Cosserat(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), k10(0.), k20(0.), cEps0D(0.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
+  FiniteElement1s33Cosserat::FiniteElement1s33Cosserat(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
 
   FiniteElement1s33Cosserat::~FiniteElement1s33Cosserat() {}
-
-  void FiniteElement1s33Cosserat::setCurlRadius(double R1,double R2) {
-    if (fabs(R1)>epsroot()) k10 = 1./R1;
-    if (fabs(R2)>epsroot()) k20 = 1./R2;
-  }
 
   void FiniteElement1s33Cosserat::setMaterialDamping(double cEps0D_) {
     cEps0D = cEps0D_;
@@ -93,22 +88,14 @@ namespace MBSimFlexibleBody {
     dVgdqG(0,2) = -0.5*rho*A*l0*g;
     dVgdqG(6,8) = -0.5*rho*A*l0*g;
 
-    /* differentiation of 'strain energy' with respect to qG
-     * this is a stiff term; hence, we only consider elongation
-     */
-    Vec dSEdqG(9); 
+    /* differentiation of 'strain energy' with respect to qG */
+    Vec dSEdqG(9); // elongation TODO remaining terms
     dSEdqG(0,2) = -tangent.copy();
     dSEdqG(3) = deltax.T()*dtangentdphi.col(0);
     dSEdqG(4) = deltax.T()*dtangentdphi.col(1);
     dSEdqG(5) = deltax.T()*dtangentdphi.col(2);
     dSEdqG(6,8) = tangent.copy();
     dSEdqG *= E*A*(tangent.T()*deltax-l0)/l0;
-
-    /* differentiation of 'bending and torsion energy' with respect to qG */
-    // TODO
-    //Vec BT1(6,INIT,0.);
-
-    //Vec BT2(9,INIT,0.);
 
     Vec dVeldqG = dSEdqG;
 
@@ -123,11 +110,10 @@ namespace MBSimFlexibleBody {
     SqrMat dTRdphitphi(3,INIT,0.); // TODO
 
     /* differentiation of 'strain dissipation' with respect to qG
-     * we only consider elongation because of the stiffness of the respective energy terms
      * attention: for ring structures damping like this seems not ro be appropriate
      * -> use setMassProportionalDamping
      */
-    Vec dSDdqGt(9); 
+    Vec dSDdqGt(9); // elongation TODO remaining terms
     dSDdqGt(0,2) = -tangent.copy();
     dSDdqGt(3) = deltax.T()*dtangentdphi.col(0);
     dSDdqGt(4) = deltax.T()*dtangentdphi.col(1);
@@ -188,7 +174,7 @@ namespace MBSimFlexibleBody {
     /* elongation energy */
     double SE = 0.5*E*A*pow(tangent.T()*deltax-l0,2.)/l0;
 
-    // TODO bending and torsion energy
+    // TODO remaining strain stuff
     return SE;
   }
 
@@ -213,3 +199,4 @@ namespace MBSimFlexibleBody {
   }
 
 }
+
