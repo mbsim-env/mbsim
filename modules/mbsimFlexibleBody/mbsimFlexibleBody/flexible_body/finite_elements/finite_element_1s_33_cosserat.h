@@ -33,8 +33,9 @@ namespace MBSimFlexibleBody {
    * \author Thomas Cebulla
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
-   * \todo bending/torsion in rhs TODO
    * \todo gyroscopic rotational stuff in rhs TODO
+   * \todo strain stuff in rhs and energy TODO
+   * \todo strain dissipation in rhs TODO
    * \todo contact Jacobian TODO
    * \todo computeState only in FlexibleBody TODO
    * \todo implicit integration TODO
@@ -92,7 +93,6 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
-      void setCurlRadius(double R1,double R2);		
       void setMaterialDamping(double cEps0D_);		
       double getl0() const;
 
@@ -146,11 +146,6 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec g;
 
       /**
-       * \brief predefined bending 
-       */
-      double k10, k20;
-
-      /**
        * \brief elongational damping
        */
       double cEps0D;
@@ -182,7 +177,7 @@ namespace MBSimFlexibleBody {
   inline const fmatvec::SqrMat& FiniteElement1s33Cosserat::getdhdu() const { return dhdu; }
   inline int FiniteElement1s33Cosserat::getqSize() const { return 9; }
   inline int FiniteElement1s33Cosserat::getuSize() const { return 9; }
-  inline void  FiniteElement1s33Cosserat::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt){throw MBSim::MBSimError("Error(FiniteElement1s33Cosserat::dhdz): Not implemented");}
+  inline void  FiniteElement1s33Cosserat::computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) { throw MBSim::MBSimError("Error(FiniteElement1s33Cosserat::computedhdz): Not implemented"); }
   inline fmatvec::Vec FiniteElement1s33Cosserat::computePosition(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computePosition): Not implemented!"); }
   inline fmatvec::SqrMat FiniteElement1s33Cosserat::computeOrientation(const fmatvec::Vec& q, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeOrientation): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s33Cosserat::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33Cosserat::computeVelocity): Not implemented!"); }

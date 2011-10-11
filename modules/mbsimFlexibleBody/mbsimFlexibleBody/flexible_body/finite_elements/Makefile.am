@@ -5,6 +5,7 @@ libfe_la_SOURCES = 	finite_element_1s_21_ancf.cc\
 			finite_element_1s_21_rcm.cc\
 			finite_element_1s_33_rcm.cc\
 			finite_element_1s_33_cosserat.cc\
+			finite_element_1s_33_cosserat_rotation.cc\
 			finite_element_1s_23_bta.cc\
 			finite_element_2s_13_disk.cc\
 			finite_element_2s_13_mfr_mindlin.cc\
@@ -22,6 +23,7 @@ feinclude_HEADERS = finite_element_1s_21_ancf.h\
 			finite_element_1s_21_rcm.h\
 			finite_element_1s_33_rcm.h\
 			finite_element_1s_33_cosserat.h\
+			finite_element_1s_33_cosserat_rotation.h\
 			finite_element_1s_23_bta.h\
 			finite_element_2s_13_disk.h\
 			finite_element_2s_13_mfr_mindlin.h\
