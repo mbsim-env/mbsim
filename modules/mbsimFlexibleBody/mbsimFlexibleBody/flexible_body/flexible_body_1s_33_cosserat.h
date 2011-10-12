@@ -23,7 +23,7 @@
 #include "mbsimFlexibleBody/flexible_body.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contours/cylinder_flexible.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_rotation.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/spineextrusion.h>
@@ -231,7 +231,7 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }    	
-  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_) { cEps0D = cEps0D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D); }
+  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_) { cEps0D = cEps0D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D); }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
 
