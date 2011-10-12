@@ -37,7 +37,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), openStructure(openStructure_), initialised(false), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
@@ -52,6 +52,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::BuildElements() {
+    /* translational elements */
     for(int i=0;i<Elements;i++) {
       int j = 6*i; // start index in entire beam coordinates
 
@@ -66,6 +67,10 @@ namespace MBSimFlexibleBody {
         uElement[i](6,8) = u(0,2);
       }
     }
+
+    /* rotational elements */
+    if(openStructure) computeBoundaryCondition();
+
     for(int i=0;i<Elements+1;i++) {
       int j = 6*i; // start index in entire beam coordinates
 
@@ -74,23 +79,35 @@ namespace MBSimFlexibleBody {
         uRotationElement[i] = u(j-3,j+5);
       }
       else if(i==0) { // first element 
-        if(openStructure) { // TODO boundary stuff
+        if(openStructure) { // open structure
+          qRotationElement[i](0,2) = bound_ang_start;
+          uRotationElement[i](0,2) = bound_ang_vel_start;
+          qRotationElement[i](3,8) = q(j,j+5);
+          uRotationElement[i](3,8) = u(j,j+5);
         }
-        else { // closed structure
-          //qRotationElement[i](0,2) = q(0,2); // TODO
-          //uRotationElement[i](0,2) = u(0,2);
-          //qRotationElement[i](3,8) = q(j,j+5);
-          //uRotationElement[i](3,8) = u(j,j+5);
+        else { // closed structure concerning gamma
+          qRotationElement[i](0,2) = q(q.size()-3,q.size()-1); 
+          uRotationElement[i](0,2) = u(u.size()-3,u.size()-1); 
+          qRotationElement[i](3,8) = q(j,j+5);
+          uRotationElement[i](3,8) = u(j,j+5);
+          if(q(j+5)<q(q.size()-1)) qRotationElement[i](2) -= 2.*M_PI;
+          else qRotationElement[i](2) += 2.*M_PI;
         }
       }
       else if(i==Elements) { // last element
-        if(openStructure) { // TODO boundary stuff
+        if(openStructure) { // open structure
+          qRotationElement[i](0,5) = q(j-3,j+2);
+          uRotationElement[i](0,5) = u(j-3,j+2);
+          qRotationElement[i](6,8) = bound_ang_end;
+          uRotationElement[i](6,8) = bound_ang_vel_end;
         }
-        else { // closed structure
-          //qRotationElement[i](0,5) = q(j,j+5); // TODO
-          //uRotationElement[i](0,5) = u(j,j+5);
-          //qRotationElement[i](6,8) = q(0,2);
-          //uRotationElement[i](6,8) = u(0,2);
+        else { // closed structure concerning gamma
+          qRotationElement[i](0,2) = q(j-3,j-1); 
+          uRotationElement[i](0,2) = u(j-3,j-1);
+          qRotationElement[i](3,8) = q(0,5);
+          uRotationElement[i](3,8) = u(0,5);
+          if(q(j-1)<q(5)) qRotationElement[i](8) -= 2.*M_PI;
+          else qRotationElement[i](8) += 2.*M_PI;
         }
       }
     }
@@ -200,14 +217,17 @@ namespace MBSimFlexibleBody {
 
       l0 = L / Elements;
       Vec g = frameOfReference->getOrientation().T()* MBSimEnvironment::getInstance()->getAccelerationOfGravity();
-
+      
+      /* translational elements */
       for(int i=0;i<Elements;i++) {
         discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
         static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
       }
-      for(int i=0;i<Elements+1;i++) { // staggered rotation grid
+
+      /* rotational elements */
+      for(int i=0;i<Elements+1;i++) { 
         rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0,E,G,I1,I2,I0));
         qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(),INIT,0.));
         uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(),INIT,0.));
@@ -321,6 +341,10 @@ namespace MBSimFlexibleBody {
       if(openStructure && i==(int)discretization.size()-1)
         LLM(Index(j+6,j+8)) = facLL(M(Index(j+6,j+8)));
     }
+  }
+  
+  void FlexibleBody1s33Cosserat::computeBoundaryCondition() {
+    // TODO
   }
 
 }
