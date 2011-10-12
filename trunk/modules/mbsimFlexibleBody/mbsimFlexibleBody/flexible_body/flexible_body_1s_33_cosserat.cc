@@ -164,7 +164,7 @@ namespace MBSimFlexibleBody {
 
       if(userContourNodes.size()==0) {
         Vec contourNodes(Elements+1);
-        for(int i=0;i<=Elements;i++) contourNodes(i) = L / Elements * i; // own search area for each element
+        for(int i=0;i<=Elements;i++) contourNodes(i) = L/Elements*i; // own search area for each element
         cylinder->setNodes(contourNodes);
       }
       else {
@@ -238,6 +238,10 @@ namespace MBSimFlexibleBody {
     }
 
     else FlexibleBodyContinuum<double>::init(stage);
+  }
+
+  double FlexibleBody1s33Cosserat::computePotentialEnergy() {
+    return FlexibleBodyContinuum<double>::computePotentialEnergy();
   }
 
   void FlexibleBody1s33Cosserat::facLLM() {
