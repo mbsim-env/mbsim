@@ -241,7 +241,15 @@ namespace MBSimFlexibleBody {
   }
 
   double FlexibleBody1s33Cosserat::computePotentialEnergy() {
-    return FlexibleBodyContinuum<double>::computePotentialEnergy();
+    /* translational elements */
+    double V = FlexibleBodyContinuum<double>::computePotentialEnergy();
+
+    /* rotational elements */
+    for(unsigned int i=0;i<rotationDiscretization.size();i++) {
+      V += rotationDiscretization[i]->computeElasticEnergy(qRotationElement[i]);
+    }
+
+    return V;
   }
 
   void FlexibleBody1s33Cosserat::facLLM() {
@@ -252,7 +260,17 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::updateh(double t) {
+    /* translational elements */
     FlexibleBodyContinuum<double>::updateh(t);
+
+    /* rotational elements */
+    //#pragma omp parallel for schedule(static) shared(t) default(none) if((int)discretization.size()>4) 
+    for(int i=0;i<(int)rotationDiscretization.size();i++) {
+      try { rotationDiscretization[i]->computeh(qRotationElement[i],uRotationElement[i]); } // compute attributes of finite element
+      catch(MBSimError error) { error.printExceptionMessage(); throw; }
+    }
+    for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h); // assemble
+    for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),hObject); // assemble
   }
 
   void FlexibleBody1s33Cosserat::plot(double t, double dt) {
@@ -349,6 +367,34 @@ namespace MBSimFlexibleBody {
   
   void FlexibleBody1s33Cosserat::computeBoundaryCondition() {
     // TODO
+  }
+  
+  void FlexibleBody1s33Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
+    int j = 6*n; // start index in entire beam coordinates
+    
+    if(n>0 && n<Elements) { // no problem case
+      gloVec(j-3,j+5) += locVec; // staggered grid -> rotation offset
+    }
+    else if(n==0) { // first element 
+      if(openStructure) { // open structure
+        gloVec(j,j+5) += locVec(3,8);
+        gloVec(j+3,j+5) += locVec(0,2); // TODO depends on computeBoundaryConditions()
+      }
+      else { // closed structure 
+        gloVec(j,j+5) += locVec(3,8);
+        gloVec(q.size()-3,q.size()-1) += locVec(0,2);
+      }
+    }
+    else if(n==Elements) { // last element
+      if(openStructure) { // open structure
+        gloVec(j-3,j+2) += locVec(0,5);
+        gloVec(j-3,j-1) += locVec(6,8); // TODO depends on computeBoundaryConditions()
+      }
+      else { // closed structure
+        gloVec(j-3,j-1) += locVec(0,2); 
+        gloVec(0,5) += locVec(3,8);
+      }
+    }
   }
 
 }

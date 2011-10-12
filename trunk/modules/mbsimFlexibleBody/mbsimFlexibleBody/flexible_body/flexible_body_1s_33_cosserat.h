@@ -222,6 +222,14 @@ namespace MBSimFlexibleBody {
        * they have to be estimated in the following function
        */
       void computeBoundaryCondition();
+      
+      /** 
+       * \brief insert 'local' information in global vectors for rotation grid
+       * \param number of finite element
+       * \param local vector
+       * \param global vector
+       */
+      void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
   inline void FlexibleBody1s33Cosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame) { throw MBSim::MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): Not implemented!"); }
