@@ -220,10 +220,10 @@ namespace MBSimFlexibleBody {
       
       /* translational elements */
       for(int i=0;i<Elements;i++) {
-        discretization.push_back(new FiniteElement1s33Cosserat(l0,rho,A,E,G,I1,I2,I0,g));
+        discretization.push_back(new FiniteElement1s33CosseratTranslation(l0,rho,A,E,G,I1,I2,I0,g));
         qElement.push_back(Vec(discretization[i]->getqSize(),INIT,0.));
         uElement.push_back(Vec(discretization[i]->getuSize(),INIT,0.));
-        static_cast<FiniteElement1s33Cosserat*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
+        static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D);
       }
 
       /* rotational elements */
@@ -309,7 +309,7 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal,sLocal,currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33Cosserat*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
+    return static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
   }
 
   void FlexibleBody1s33Cosserat::BuildElement(const double& sGlobal, double& sLocal,int& currentElement) {
@@ -331,7 +331,7 @@ namespace MBSimFlexibleBody {
   
   void FlexibleBody1s33Cosserat::initM() {
     for(int i=0;i<(int)discretization.size();i++) {
-      try { static_cast<FiniteElement1s33Cosserat*>(discretization[i])->initM(); } // compute attributes of finite element
+      try { static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); } // compute attributes of finite element
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
     for(int i=0;i<(int)discretization.size();i++) GlobalMatrixContribution(i,discretization[i]->getM(),M); // assemble
