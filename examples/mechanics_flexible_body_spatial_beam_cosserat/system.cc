@@ -29,10 +29,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
   int elements = 20; // number of finite elements
-  fmatvec::Vec bound_orient_1(3,INIT,0.); // ? TODO
-  fmatvec::Vec bound_orient_2(3,INIT,0.);
-  fmatvec::Vec bound_ang_vel_1(3,INIT,0.);
-  fmatvec::Vec bound_ang_vel_2(3,INIT,0.);
 
   FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
   rod->setLength(l0);
@@ -45,7 +41,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCuboid(b0,b0);
-  rod->setBoundary(bound_orient_1,bound_orient_2,bound_ang_vel_1,bound_ang_vel_2);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::SpineExtrusion *cuboid = new OpenMBV::SpineExtrusion;
