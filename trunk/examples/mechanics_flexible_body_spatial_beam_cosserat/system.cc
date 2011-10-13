@@ -64,13 +64,13 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // circle shape
   Vec q0 = Vec(6*elements,INIT,0.);
   double R = l0/(2.*M_PI);
-  double phi0 = M_PI/2.;
   double dphi = (2*M_PI)/elements;
+  double phi0 = M_PI/2. + dphi;
   for(int i=0; i<elements; i++) { 
-    double phi = phi0 + i*dphi;	
+    double phi = phi0 - i*dphi;	
     q0(6*i) = R*cos(phi);
     q0(6*i+1) = R*sin(phi);
-    q0(6*i+5) = phi + dphi/2.;
+    q0(6*i+5) = phi - dphi/2.-M_PI/2.;
   }
   rod->setq0(q0);
   this->addObject(rod);

@@ -34,7 +34,7 @@ namespace MBSimFlexibleBody {
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
    * \date 2011-10-13 strain rhs corrected and added, strain energy calculated (Thorsten Schindler)
-   * \todo gyrosocopic rotation rhs terms TODO
+   * \date 2011-10-13 gyroscopic terms added (Christian Kaesbauer, Thorsten Schindler)
    * \todo strain dissipation in rhs TODO
    * \todo contact Jacobian TODO
    * \todo computeState only in FlexibleBody TODO

@@ -61,9 +61,9 @@ namespace MBSimFlexibleBody {
     double cbeta = cos(qG(4));
     double cgamma = cos(qG(5));
     
-    //const double &alphat = qGt(3);
-    //const double &betat = qGt(4);
-    //const double &gammat = qGt(5);
+    const double &alphat = qGt(3);
+    const double &betat = qGt(4);
+    const double &gammat = qGt(5);
 
     Vec tangent(3);
     tangent(0) = cbeta*cgamma;
@@ -158,26 +158,20 @@ namespace MBSimFlexibleBody {
     /* differentation of 'kinetic energy' with respect to phi
      * remark: translational part is zero
      */
-    Vec dTRdphi(3,INIT,0.); // TODO : check -> LIKE THIS IT IS AGAIN WRONG
-    //dTRdphi(0) = 0.;
-    //dTRdphi(1) = -(alphat*cgamma*cgamma*cbeta*I0*sbeta*alphat+cgamma*sbeta*I0*sgamma*betat+cbeta*I1*sbeta*alphat-1.0*cbeta*I1*sbeta*alphat*cgamma*cgamma-1.0*sgamma*sbeta*I1*cgamma*betat-1.0*sbeta*I2*cbeta*alphat-1.0*cbeta*I2*gammat);
-    //dTRdphi(2) = (-1.0*sgamma*cbeta*cbeta*I0*cgamma*alphat*alphat-1.0*alphat*cbeta*I0*betat+2.0*alphat*cgamma*cgamma*cbeta*I0*betat+cgamma*cbeta*cbeta*I1*sgamma*alphat*alphat-2.0*alphat*cgamma*cgamma*cbeta*I1*betat+alphat*cbeta*I1*betat+cgamma*I0*sgamma*betat*betat-1.0*sgamma*I1*cgamma*betat*betat);
-    //dTRdphi*=rho*l0;
+    Vec dTRdphi(3,INIT,0.);
+    dTRdphi(0) = 0.0;
+    dTRdphi(1) = -1.0*rho*l0*alphat*(pow(cgamma,2.0)*cbeta*I0*alphat*sbeta+cgamma*sbeta*I0*sgamma*betat+cbeta*I1*alphat*sbeta-1.0*cbeta*I1*alphat*pow(cgamma,2.0)*sbeta-1.0*sgamma*sbeta*I1*cgamma*betat-1.0*I2*alphat*cbeta*sbeta-1.0*cbeta*I2*gammat);
+    dTRdphi(2) = rho*l0*(-1.0*cgamma*pow(cbeta,2.0)*I0*alphat*alphat*sgamma-1.0*alphat*cbeta*I0*betat+2.0*alphat*pow(cgamma,2.0)*cbeta*I0*betat+pow(cbeta,2.0)*I1*alphat*alphat*cgamma*sgamma-2.0*alphat*pow(cgamma,2.0)*cbeta*I1*betat+alphat*cbeta*I1*betat+I0*betat*betat*cgamma*sgamma-1.0*cgamma*I1*betat*betat*sgamma);
 
     /* differentiation of 'kinetic energy' with respect to phit, phi
      * remark: translational part is zero
      */
-    SqrMat dTRdphitphi(3,INIT,0.); // TODO : check -> LIKE THIS IT IS AGAIN WRONG
-    //dTRdphitphi(0,0) = 0.0;
-    //dTRdphitphi(0,1) = 0.5*(-2.0*cgamma*cgamma*cbeta*I0*sbeta-2.0*sgamma*sgamma*cbeta*I1*sbeta+2.0*sbeta*I2*cbeta)*alphat+0.5*(-cgamma*sbeta*I0*(cgamma*cbeta*alphat+sgamma*betat)-cgamma*cgamma*cbeta*I0*sbeta*alphat+sgamma*sbeta*I1*(-sgamma*cbeta*alphat+cgamma*betat)-sgamma*sgamma*cbeta*I1*sbeta*alphat+cbeta*I2*(sbeta*alphat+gammat)+sbeta*I2*cbeta*alphat)+0.5*(-sgamma*I0*cgamma*sbeta+cgamma*I1*sgamma*sbeta)*betat+0.5*I2*cbeta*gammat;
-    //dTRdphitphi(0,2) = 0.5*(-2.0*cgamma*cbeta*cbeta*I0*sgamma+2.0*sgamma*cbeta*cbeta*I1*cgamma)*alphat+0.5*(-sgamma*cbeta*I0*(cgamma*cbeta*alphat+sgamma*betat)+cgamma*cbeta*I0*(-sgamma*cbeta*alphat+cgamma*betat)-cgamma*cbeta*I1*(-sgamma*cbeta*alphat+cgamma*betat)-sgamma*cbeta*I1*(-cgamma*cbeta*alphat-sgamma*betat))+0.5*(cgamma*cgamma*I0*cbeta-sgamma*sgamma*I0*cbeta+sgamma*sgamma*I1*cbeta-cgamma*cgamma*I1*cbeta)*betat;
-    //dTRdphitphi(1,0) = 0.0;
-    //dTRdphitphi(1,1) = 0.5*(-sgamma*I0*cgamma*sbeta+cgamma*I1*sgamma*sbeta)*alphat+0.5*(-sgamma*I0*cgamma*sbeta*alphat+cgamma*I1*sgamma*sbeta*alphat);
-    //dTRdphitphi(1,2) = 0.5*(cgamma*cgamma*I0*cbeta-sgamma*sgamma*I0*cbeta+sgamma*sgamma*I1*cbeta-cgamma*cgamma*I1*cbeta)*alphat+0.5*(2.0*sgamma*I0*cgamma-2.0*cgamma*I1*sgamma)*betat+0.5*(cgamma*I0*(cgamma*cbeta*alphat+sgamma*betat)+sgamma*I0*(-sgamma*cbeta*alphat+cgamma*betat)-sgamma*I1*(-sgamma*cbeta*alphat+cgamma*betat)+cgamma*I1*(-cgamma*cbeta*alphat-sgamma*betat));
-    //dTRdphitphi(2,0) = 0.0;
-    //dTRdphitphi(2,1) = 0.1E1*cbeta*I2*alphat;
-    //dTRdphitphi(2,2) = 0.0;
-    //dTRdphitphi*=rho*l0;
+    SqrMat dTRdphitphi(3,INIT,0.);
+    dTRdphitphi(0,1) = -1.0*rho*l0*(2.0*pow(cgamma,2.0)*cbeta*I0*alphat*sbeta+cgamma*sbeta*I0*sgamma*betat+2.0*cbeta*I1*alphat*sbeta-2.0*cbeta*I1*alphat*pow(cgamma,2.0)*sbeta-1.0*sgamma*sbeta*I1*cgamma*betat-2.0*I2*alphat*cbeta*sbeta-1.0*cbeta*I2*gammat);
+    dTRdphitphi(0,2) = 0.1E1*rho*l0*cbeta*(-2.0*alphat*cgamma*cbeta*I0*sgamma-1.0*I0*betat+2.0*I0*betat*pow(cgamma,2.0)+2.0*alphat*sgamma*cbeta*I1*cgamma-2.0*pow(cgamma,2.0)*I1*betat+I1*betat);
+    dTRdphitphi(1,1) = -0.1E1*rho*l0*alphat*cgamma*sbeta*sgamma*(I0-1.0*I1);
+    dTRdphitphi(1,2) = rho*l0*(-1.0*alphat*cbeta*I0+2.0*alphat*pow(cgamma,2.0)*cbeta*I0-2.0*alphat*pow(cgamma,2.0)*cbeta*I1+alphat*cbeta*I1+2.0*I0*betat*cgamma*sgamma-2.0*cgamma*I1*betat*sgamma);
+    dTRdphitphi(2,1) = 0.1E1*rho*l0*alphat*cbeta*I2;
 
     /* differentiation of 'strain dissipation' with respect to qG
      * attention: for ring structures damping like this seems not ro be appropriate
