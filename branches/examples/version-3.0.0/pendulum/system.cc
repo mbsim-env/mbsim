@@ -1,6 +1,7 @@
 #include "system.h"
 #include "mbsim/rigid_body.h"
 #include "mbsim/environment.h"
+#include "mbsim/frame.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/ivbody.h"
@@ -62,6 +63,9 @@ Pendulum::Pendulum(const string &projectName) : DynamicSystemSolver(projectName)
   stab2->setInertiaTensor(Theta,stab2->getFrame("C"));
   stab2->setRotation(new RotationAboutFixedAxis(Vec("[0;0;1]")));
   stab2->setInitialGeneralizedPosition(Vec("[-1.6]"));
+  stab1->getFrame("C")->setPlotFeature(globalVelocity,enabled);
+  stab1->getFrame("C")->setPlotFeature(globalAcceleration,enabled);
+  stab1->setPlotFeature(stateDerivative,enabled);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   obj=new OpenMBV::IvBody;
