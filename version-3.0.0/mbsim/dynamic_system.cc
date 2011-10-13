@@ -44,7 +44,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  DynamicSystem::DynamicSystem(const string &name) : Element(name), parent(0), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0)
+  DynamicSystem::DynamicSystem(const string &name) : Element(name), frameParent(0), PrPF(Vec(3,INIT,0.)), APF(SqrMat(3,EYE)), q0(0), u0(0), x0(0), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0)
 #ifdef HAVE_OPENMBVCPPINTERFACE                      
                                                      , openMBVGrp(0)
 #endif
@@ -145,6 +145,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateStateDerivativeDependentVariables(double t) {
+    cout << name << endl;
+    cout << hInd[0] << endl;
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateStateDerivativeDependentVariables(t);
 
@@ -198,11 +200,23 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->sethSize((*i)->getuSize(j),j);
-      (*i)->sethInd((*i)->getuInd(j),j);
+      //(*i)->sethInd((*i)->getuInd(j),j);
     }
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->sethSize((*i)->getuSize(j),j);
+      //(*i)->sethInd((*i)->getuInd(j),j);
+    }
+  }
+
+  void DynamicSystem::sethInd(int hInd_, int j) {
+    hInd[j] = hInd_;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->sethInd((*i)->getuInd(j),j);
+    }
+
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->sethInd((*i)->getuInd(j),j);
     }
   }
@@ -212,13 +226,27 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->calcqSize();
-      (*i)->setqInd(qSize);
+      //(*i)->setqInd(qSize);
       qSize += (*i)->getqSize();
     }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->calcqSize();
-      (*i)->setqInd(qSize);
+      //(*i)->setqInd(qSize);
       qSize += (*i)->getqSize();
+    }
+  }
+
+  void DynamicSystem::setqInd(int qInd_) {
+    qInd = qInd_;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->setqInd(qInd_);
+      qInd_ += (*i)->getqSize();
+    }
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      cout << (*i)->getName() << " " << qInd_ << endl;
+      (*i)->setqInd(qInd_);
+      qInd_ += (*i)->getqSize();
     }
   }
 
@@ -227,27 +255,41 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->calcuSize(j);
-      (*i)->setuInd(uSize[j],j);
+ //     (*i)->setuInd(uSize[j],j);
       uSize[j] += (*i)->getuSize(j);
     }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
       (*i)->calcuSize(j);
-      (*i)->setuInd(uSize[j],j);
+  //    (*i)->setuInd(uSize[j],j);
       uSize[j] += (*i)->getuSize(j);
     }
   }
 
-  int DynamicSystem::gethInd(DynamicSystem* sys, int i) {
-    return (this == sys) ? 0 : hInd[i] + parent->gethInd(sys,i);
+  void DynamicSystem::setuInd(int uInd_, int j) {
+    uInd[j] = uInd_;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->setuInd(uInd_,j);
+      uInd_ += (*i)->getuSize(j);
+    }
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      cout << (*i)->getName() << " " << uInd_ << endl;
+      (*i)->setuInd(uInd_,j);
+      uInd_ += (*i)->getuSize(j);
+    }
   }
 
-  int DynamicSystem::getuInd(DynamicSystem* sys, int i) {
-    return (this == sys) ? 0 : uInd[i] + parent->getuInd(sys,i);
-  }
-
-  int DynamicSystem::getqInd(DynamicSystem* sys) {
-    return (this == sys) ? 0 : qInd + parent->getqInd(sys);
-  }
+//  int DynamicSystem::gethInd(DynamicSystem* sys, int i) {
+//    return (this == sys) ? 0 : hInd[i] + parent->gethInd(sys,i);
+//  }
+//
+//  int DynamicSystem::getuInd(DynamicSystem* sys, int i) {
+//    return (this == sys) ? 0 : uInd[i] + parent->getuInd(sys,i);
+//  }
+//
+//  int DynamicSystem::getqInd(DynamicSystem* sys) {
+//    return (this == sys) ? 0 : qInd + parent->getqInd(sys);
+//  }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   OpenMBV::Group* DynamicSystem::getOpenMBVGrp() { return openMBVGrp; }
@@ -443,6 +485,8 @@ namespace MBSim {
         extraDynamic[i]->plot(t,dt);
       for(unsigned i=0; i<frame.size(); i++)
         frame[i]->plot(t,dt);
+      for(unsigned i=0; i<contour.size(); i++)
+        contour[i]->plot(t,dt);
       for(unsigned i=0; i<inverseKineticsLink.size(); i++)
         inverseKineticsLink[i]->plot(t,dt);
     }
@@ -497,9 +541,10 @@ namespace MBSim {
         I->setOrientation(frameParent->getOrientation()*APF);
       }
       else {
-        if(parent) {
-          I->setPosition(parent->getFrameI()->getPosition() + parent->getFrameI()->getOrientation()*PrPF);
-          I->setOrientation(parent->getFrameI()->getOrientation()*APF);
+        DynamicSystem* sys = dynamic_cast<DynamicSystem*>(parent);
+        if(sys) {
+          I->setPosition(sys->getFrameI()->getPosition() + sys->getFrameI()->getOrientation()*PrPF);
+          I->setOrientation(sys->getFrameI()->getOrientation()*APF);
         }
         else {
           I->setPosition(getFrameI()->getPosition() + getFrameI()->getOrientation()*PrPF);
@@ -517,7 +562,7 @@ namespace MBSim {
     }
     else if(stage==MBSim::plot) {
       if(parent)
-        updatePlotFeatures(parent);
+        updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(separateFilePerGroup)==enabled) {
@@ -537,7 +582,8 @@ namespace MBSim {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         openMBVGrp=new OpenMBV::Group();
         openMBVGrp->setName(name);
-        if(parent) parent->openMBVGrp->addObject(openMBVGrp);
+        //if(parent) parent->openMBVGrp->addObject(openMBVGrp);
+        if(parent) parent->getOpenMBVGrp()->addObject(openMBVGrp);
         if(getPlotFeature(separateFilePerGroup)==enabled)
           openMBVGrp->setSeparateFile(true);
 #endif
@@ -706,266 +752,215 @@ namespace MBSim {
     q >> qParent(qInd,qInd+qSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateqRef(q);
+      (**i).updateqRef(qParent);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateqRef(q);
+      (**i).updateqRef(qParent);
   }
 
   void DynamicSystem::updateqdRef(const Vec &qdParent) {
     qd >> qdParent(qInd,qInd+qSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateqdRef(qd);
+      (**i).updateqdRef(qdParent);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateqdRef(qd);
+      (**i).updateqdRef(qdParent);
   }
 
   void DynamicSystem::updateuRef(const Vec &uParent) {
     u >> uParent(uInd[0],uInd[0]+uSize[0]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateuRef(u);
+      (**i).updateuRef(uParent);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateuRef(u);
+      (**i).updateuRef(uParent);
   }
 
   void DynamicSystem::updateuallRef(const Vec &uParent) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateuallRef(u);
+      (**i).updateuallRef(uParent);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateuallRef(u);
+      (**i).updateuallRef(uParent);
   }
 
   void DynamicSystem::updateudRef(const Vec &udParent, int j) {
     ud[j] >> udParent(uInd[j],uInd[j]+uSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateudRef(ud[j],j);
+      (**i).updateudRef(udParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateudRef(ud[j],j);
+      (**i).updateudRef(udParent,j);
   }
 
   void DynamicSystem::updateudallRef(const Vec &udParent, int j) {
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updateudallRef(ud[j],j);
+      (**i).updateudallRef(udParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updateudallRef(ud[j],j);
+      (**i).updateudallRef(udParent,j);
   }
 
   void DynamicSystem::updatexRef(const Vec &xParent) {
     x >> xParent(xInd,xInd+xSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatexRef(x);
+      (**i).updatexRef(xParent);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexRef(x);
+      (**i).updatexRef(xParent);
 
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
-      (**i).updatexRef(x);
+      (**i).updatexRef(xParent);
   }
 
   void DynamicSystem::updatexdRef(const Vec &xdParent) {
     xd >> xdParent(xInd,xInd+xSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatexdRef(xd);
+      (**i).updatexdRef(xdParent);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i)
-      (**i).updatexdRef(xd);
+      (**i).updatexdRef(xdParent);
 
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i!= extraDynamic.end(); ++i) 
-      (**i).updatexdRef(xd);
+      (**i).updatexdRef(xdParent);
   }
 
   void DynamicSystem::updatehRef(const Vec &hParent, int j) {
-    h[j].resize() >> hParent(hInd[j],hInd[j]+hSize[j]-1);
+    h[j] >> hParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatehRef(h[j],j);
+      (**i).updatehRef(hParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatehRef(h[j],j);
+      (**i).updatehRef(hParent,j);
 
     for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatehRef(h[j],j);
+      (**i).updatehRef(hParent,j);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i)
       if ((**i).hasSmoothPart())
-        (**i).updatehRef(h[j],j);
-  }
-
-  void DynamicSystem::updatedhdqRef(const Mat &dhdqObjectParent, const Mat &dhdqLinkParent, int j) {
-    dhdqObject.resize() >> dhdqObjectParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(qInd,qInd+qSize-1));
-    dhdqLink.  resize() >> dhdqLinkParent  (Index(hInd[j],hInd[j]+hSize[j]-1),Index(qInd,qInd+qSize-1));
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatedhdqRef(dhdqObject,dhdqLink,j);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdqRef(dhdqObject,j);
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhdqRef(dhdqLink);
-
-    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
-      (**i).updatedhdqRef(dhdqLink);
-  }
-
-  void DynamicSystem::updatedhduRef(const SqrMat &dhduObjectParent, const SqrMat &dhduLinkParent, int j) {
-    dhduObject.resize() >> dhduObjectParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
-    dhduLink.  resize() >> dhduLinkParent  (Index(hInd[j],hInd[j]+hSize[j]-1),Index(uInd[0],uInd[0]+uSize[0]-1));
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatedhduRef(dhduObject,dhduLink,j);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhduRef(dhduObject,j);
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhduRef(dhduLink);
-
-    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
-      (**i).updatedhduRef(dhduLink);
-  }
-
-  void DynamicSystem::updatedhdtRef(const Vec &dhdtObjectParent, const Vec &dhdtLinkParent, int j) {
-    dhdtObject.resize() >> dhdtObjectParent(hInd[j],hInd[j]+hSize[j]-1);
-    dhdtLink.  resize() >> dhdtLinkParent  (hInd[j],hInd[j]+hSize[j]-1);
-
-    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i)
-      (**i).updatedhdtRef(dhdtObject,dhdtLink,j);
-
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updatedhdtRef(dhdtObject,j);
-
-    for(vector<Link*>::iterator i = linkSingleValued.begin(); i != linkSingleValued.end(); ++i)
-      (**i).updatedhdtRef(dhdtLink);
-
-    for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i)
-      (**i).updatedhdtRef(dhdtLink);
+        (**i).updatehRef(hParent,j);
   }
 
   void DynamicSystem::updatefRef(const Vec &fParent) {
     f >> fParent(xInd,xInd+xSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updatefRef(f);
+      (**i).updatefRef(fParent);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatefRef(f);
+      (**i).updatefRef(fParent);
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent, int j) {
-    r[j].resize() >> rParent(hInd[j],hInd[j]+hSize[j]-1);
+    r[j] >> rParent(hInd[j],hInd[j]+hSize[j]-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (**i).updaterRef(r[j],j);
+      (**i).updaterRef(rParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (**i).updaterRef(r[j],j);
+      (**i).updaterRef(rParent,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i)
-      (**i).updaterRef(r[j],j);
+      (**i).updaterRef(rParent,j);
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
     T >> TParent(Index(qInd,qInd+qSize-1),Index(uInd[0],uInd[0]+uSize[0]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateTRef(T);
+      (*i)->updateTRef(TParent);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateTRef(T);
+      (*i)->updateTRef(TParent);
   }
 
   void DynamicSystem::updateMRef(const SymMat& MParent, int j) {
-    M[j].resize() >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
+    M[j] >> MParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateMRef(M[j],j);
+      (*i)->updateMRef(MParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateMRef(M[j],j);
+      (*i)->updateMRef(MParent,j);
   }
 
   void DynamicSystem::updateLLMRef(const SymMat& LLMParent, int j) {
-    LLM[j].resize() >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
+    LLM[j] >> LLMParent(Index(hInd[j],hInd[j]+hSize[j]-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateLLMRef(LLM[j],j);
+      (*i)->updateLLMRef(LLMParent,j);
 
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) 
-      (*i)->updateLLMRef(LLM[j],j);
+      (*i)->updateLLMRef(LLMParent,j);
   }
 
   void DynamicSystem::updategRef(const Vec& gParent) {
     g.resize() >> gParent(gInd,gInd+gSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updategRef(g);
+      (*i)->updategRef(gParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updategRef(g);
+      (**i).updategRef(gParent);
   }
 
   void DynamicSystem::updategdRef(const Vec& gdParent) {
     gd.resize() >> gdParent(gdInd,gdInd+gdSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updategdRef(gd);
+      (*i)->updategdRef(gdParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updategdRef(gd);
+      (**i).updategdRef(gdParent);
   }
 
   void DynamicSystem::updatelaRef(const Vec &laParent) {
     la.resize() >> laParent(laInd,laInd+laSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatelaRef(la);
+      (*i)->updatelaRef(laParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updatelaRef(la);
+      (**i).updatelaRef(laParent);
 
     for(vector<Link*>::iterator i = linkSetValuedNotActiveWithSmoothPart.begin(); i != linkSetValuedNotActiveWithSmoothPart.end(); ++i) 
       (**i).deletelaRef();
   }
 
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
-    laInverseKinetics.resize() >> laParent(0,laInverseKineticsSize-1);
+    laInverseKinetics >> laParent(0,laInverseKineticsSize-1);
 
     //for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
     //  (*i)->updatelaRefSpecial(la);
 
     for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (**i).updatelaRef(laInverseKinetics);
+      (**i).updatelaRef(laParent);
   }
 
   void DynamicSystem::updatewbRef(const Vec &wbParent) {
     wb.resize() >> wbParent(laInd,laInd+laSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatewbRef(wb);
+      (*i)->updatewbRef(wbParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updatewbRef(wb);
+      (**i).updatewbRef(wbParent);
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
     W[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateWRef(W[j],j);
+      (*i)->updateWRef(WParent,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateWRef(W[j],j);
+      (**i).updateWRef(WParent,j);
   }
 
   void DynamicSystem::updateWnVRefObjects() {
@@ -983,77 +978,77 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
-    WInverseKinetics[j].resize() >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
+    WInverseKinetics[j] >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
 
     for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (**i).updateWRef(WInverseKinetics[j],j);
+      (**i).updateWRef(WParent,j);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
-    bInverseKinetics.resize() >> bParent(Index(0,bInverseKineticsSize-1),Index(0,laInverseKineticsSize-1));
+    bInverseKinetics >> bParent(Index(0,bInverseKineticsSize-1),Index(0,laInverseKineticsSize-1));
 
     for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
-      (**i).updatebRef(bInverseKinetics);
+      (**i).updatebRef(bParent);
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
     V[j].resize() >> VParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(laInd,laInd+laSize-1));
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateVRef(V[j],j);
+      (*i)->updateVRef(VParent,j);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateVRef(V[j],j);
+      (**i).updateVRef(VParent,j);
   }
 
   void DynamicSystem::updatesvRef(const Vec &svParent) {
     sv >> svParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatesvRef(sv);
+      (*i)->updatesvRef(svParent);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatesvRef(sv);
+      (**i).updatesvRef(svParent);
   }
 
   void DynamicSystem::updatejsvRef(const Vector<int> &jsvParent) {
     jsv >> jsvParent(svInd,svInd+svSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updatejsvRef(jsv);
+      (*i)->updatejsvRef(jsvParent);
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) 
-      (**i).updatejsvRef(jsv);
+      (**i).updatejsvRef(jsvParent);
   }
 
   void DynamicSystem::updateresRef(const Vec &resParent) {
     res.resize() >> resParent(laInd,laInd+laSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateresRef(res);
+      (*i)->updateresRef(resParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updateresRef(res);
+      (**i).updateresRef(resParent);
   }
 
   void DynamicSystem::updaterFactorRef(const Vec &rFactorParent) {
     rFactor.resize() >> rFactorParent(rFactorInd,rFactorInd+rFactorSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updaterFactorRef(rFactor);
+      (*i)->updaterFactorRef(rFactorParent);
 
     for(vector<Link*>::iterator i = linkSetValuedActive.begin(); i != linkSetValuedActive.end(); ++i) 
-      (**i).updaterFactorRef(rFactor);
+      (**i).updaterFactorRef(rFactorParent);
   }
 
   void DynamicSystem::updateLinkStatusRef(const Vector<int> &LinkStatusParent) {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
-      (*i)->updateLinkStatusRef(LinkStatus);
+      (*i)->updateLinkStatusRef(LinkStatusParent);
 
     for(vector<Link*>::iterator i = linkSetValued.begin(); i != linkSetValued.end(); ++i) 
-      (**i).updateLinkStatusRef(LinkStatus);
+      (**i).updateLinkStatusRef(LinkStatusParent);
   }
 
   void DynamicSystem::initz() {

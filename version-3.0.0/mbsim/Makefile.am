@@ -66,7 +66,6 @@ mbsim_event.h\
 modelling_interface.h\
 object.h\
 objectfactory.h\
-object_interface.h\
 extra_dynamic.h\
 rigid_body.h\
 graph.h\

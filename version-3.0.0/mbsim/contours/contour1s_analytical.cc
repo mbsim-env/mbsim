@@ -140,7 +140,7 @@ namespace MBSim {
 
   void Contour1sAnalytical::init(InitStage stage) {
     if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE

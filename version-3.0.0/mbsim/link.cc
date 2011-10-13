@@ -30,7 +30,7 @@ using namespace std;
 
 namespace MBSim {
 
-  Link::Link(const string &name) : Element(name), parent(0), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.) {
+  Link::Link(const string &name) : Element(name), xSize(0), xInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), gTol(1e-8), gdTol(1e-10), gddTol(1e-12), laTol(1e-12), LaTol(1e-10), rFactorSize(0), rFactorInd(0), rMax(1.) {
     setPlotFeature(state, enabled);
     setPlotFeature(generalizedLinkForce, enabled);
     setPlotFeature(linkKinematics, enabled);
@@ -49,6 +49,10 @@ namespace MBSim {
           plotVector.push_back(g(i));
         for(int i=0; i<gd.size(); ++i)
           plotVector.push_back(gd(i));
+      }
+      if(getPlotFeature(generalizedLinkForce)==enabled) {
+        for(int i=0; i<la.size(); ++i)
+          plotVector.push_back(la(i));
       }
       if(getPlotFeature(stopVector)==enabled)
         for(int i=0; i<sv.size(); ++i)
@@ -120,7 +124,7 @@ namespace MBSim {
       rFactorUnsure.resize(rFactorSize);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled)
@@ -135,17 +139,21 @@ namespace MBSim {
           for(int i=0; i<gd.size(); ++i)
             plotColumns.push_back("gd("+numtostr(i)+")");
         }
+        if(getPlotFeature(generalizedLinkForce)==enabled) {
+          for(int i=0; i<la.size(); ++i)
+            plotColumns.push_back("la("+numtostr(i)+")");
+        }
         if(getPlotFeature(stopVector)==enabled)
           for(int i=0; i<svSize; ++i)
             plotColumns.push_back("sv("+numtostr(i)+")");
         if(getPlotFeature(energy)==enabled)
           plotColumns.push_back("V");
 
-        Element::init(stage, parent);
+        Element::init(stage);
       }
     }
     else
-      Element::init(stage, parent);
+      Element::init(stage);
   }
 
   void Link::initz() {

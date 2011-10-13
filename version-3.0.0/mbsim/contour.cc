@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include "mbsim/contour.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/object.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/utils/rotarymatrices.h"
@@ -27,7 +28,6 @@
 #include "mbsim/utils/contact_utils.h"
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-#include <object_interface.h>
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/frustum.h>
@@ -40,12 +40,13 @@ using namespace std;
 namespace MBSim {
 
   /* Contour */
-  Contour::Contour(const string &name) : Element(name), parent(0), R("R") {
+  Contour::Contour(const string &name) : Element(name), R("R") {
     // no canonic output...
     hSize[0] = 0;
     hSize[1] = 0;
     hInd[0] = 0;
     hInd[1] = 0;
+    R.setParent(this);
   }
 
   Contour::~Contour() {}
@@ -58,15 +59,62 @@ namespace MBSim {
       getFrame()->getJacobianOfRotation(1).resize(3,hSize[1]);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
-        Element::init(stage, parent);
+	//
+//   plotGroup=new H5::Group(parent->getPlotGroup()->createGroup(name));
+//          H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+//
+//          plotColumns.insert(plotColumns.begin(), "Time");
+//          if(plotColumns.size()>1) {
+//            plotVectorSerie=new H5::VectorSerie<double>;
+//            // copy plotColumns to a std::vector
+//            vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
+//            plotVectorSerie->create(*plotGroup,"data",dummy);
+//            plotVectorSerie->setDescription("Default dataset for class: "+getType());
+//          }
+//          plotVector.clear();
+//          plotVector.reserve(plotColumns.size()); // preallocation
+//
+	// 
+	Element::init(stage);
+R.init(stage);
+	//if(plotGroup) {
+	//H5::Group *plotGroup = new H5::Group(getPlotGroup()->createGroup(R.getName()));
+	// H5::SimpleAttribute<string>::setData(*plotGroup, "Description", "Object of class: "+getType());
+	// plotColumns.insert(plotColumns.begin(), "Time");
+	// if(plotColumns.size()>1) {
+	//   plotVectorSerie=new H5::VectorSerie<double>;
+	//   // copy plotColumns to a std::vector
+	//   vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
+	//   plotVectorSerie->create(*plotGroup,"data",dummy);
+	//   plotVectorSerie->setDescription("Default dataset for class: "+getType());
+	// }
+	// plotVector.clear();
+	// plotVector.reserve(plotColumns.size()); // preallocation
+        //}
       }
     }
     else
-      Element::init(stage, parent);
+      Element::init(stage);
   }
+
+  void Contour::plot(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      Element::plot(t,dt);
+      R.plot(t,dt);
+      //if(getPlotFeature(plotRecursive)==enabled) {
+      //  if(plotColumns.size()>1) {
+      //    plotVector.insert(plotVector.begin(), t);
+      //    assert(plotColumns.size()==plotVector.size());
+      //    plotVectorSerie->append(plotVector);
+      //    plotVector.clear();
+      //  }
+      //}
+    }
+  }
+
 
   /* Rigid Contour */
   RigidContour::~RigidContour() {
@@ -103,7 +151,7 @@ namespace MBSim {
     if(stage==unknownStage)
       Contour::init(stage);
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -118,8 +166,8 @@ namespace MBSim {
     else
       Contour::init(stage);
   }
-
-  void RigidContour::plot(double t, double dt) {
+  
+   void RigidContour::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVRigidBody) {
@@ -136,7 +184,7 @@ namespace MBSim {
         openMBVRigidBody->append(data);
       }
 #endif
-      Element::plot(t,dt);
+      Contour::plot(t,dt);
     }
   }
 

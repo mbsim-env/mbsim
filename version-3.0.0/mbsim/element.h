@@ -30,6 +30,12 @@
 
 #include "mbsim/mbsim_event.h"
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+namespace OpenMBV {
+  class Group;
+}
+#endif
+
 namespace H5 {
   class Group;
 }
@@ -64,6 +70,7 @@ namespace MBSim {
     rightHandSide, /*!< plot the smooth and non smooth right hand size (h, r=W*l) */
     globalPosition, /*!< plot some global (world) positions/orientation */
     globalVelocity, /*!< plot some global (world) velocities */
+    globalAcceleration, /*!< plot some global (world) accelerations */
     energy, /*!< plot the energy */
     openMBV, /*!< plot the OpenMBV part */
     generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
@@ -158,7 +165,7 @@ namespace MBSim {
        * \brief plots time series header
        * \param invocing parent class
        */
-      void init(InitStage stage, ObjectInterface* parent); 
+      virtual void init(InitStage stage); 
 
       /**
        * \return associated plot group
@@ -171,7 +178,7 @@ namespace MBSim {
        * Set the plot feature pf of this object to enabled, disabled or unset.
        * If unset, this object uses the value of the plot feature pf of its parent object.
        */
-      void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
+      virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { plotFeature[pf]=value; }
 
       /**
        * \brief Set a plot feature for the children of this object
@@ -225,7 +232,22 @@ namespace MBSim {
       static fmatvec::SqrMat getSqrMat(TiXmlElement *e, int size=0);
       static fmatvec::SymMat getSymMat(TiXmlElement *e, int size=0);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
+#endif
+
+      Element* getParent() {return parent;}
+      const Element* getParent() const {return parent;}
+      void setParent(Element* parent_) {parent = parent_;}
+      /** 
+       * \return full path of the object
+       * \param delimiter of the path
+       */
+      std::string getPath(char pathDelim='.');
+
     protected:
+      Element *parent;
+
       /** 
        * \brief name of element 
        */
@@ -256,7 +278,7 @@ namespace MBSim {
        */
       H5::Group *plotGroup;
 
-      void updatePlotFeatures(ObjectInterface* parent);
+      void updatePlotFeatures();
 
     private:
       /**

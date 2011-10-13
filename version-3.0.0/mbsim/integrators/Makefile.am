@@ -1,9 +1,11 @@
 noinst_LTLIBRARIES = libintegrators.la
 libintegrators_la_SOURCES = integrator.cc\
+			     my_integrator.cc \
 			     lsodar_integrator.cc \
 			     lsoder_integrator.cc \
 			     lsode_integrator.cc \
 			     rksuite_integrator.cc \
+			     my_rksuite_integrator.cc \
 			     dopri5_integrator.cc \
 			     dop853_integrator.cc \
 			     odex_integrator.cc \
@@ -37,6 +39,7 @@ LDADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 integratorsinclude_HEADERS = integrator.h \
 			      integrators.h \
+			     my_integrator.h \
 			      time_stepping_integrator.h \
                               time_stepping_ssc_integrator.h \
 			      theta_time_stepping_integrator.h \
@@ -45,6 +48,7 @@ integratorsinclude_HEADERS = integrator.h \
 			      lsoder_integrator.h \
 			      lsode_integrator.h \
 			      rksuite_integrator.h \
+			      my_rksuite_integrator.h \
 			      dopri5_integrator.h \
 			      dop853_integrator.h \
 			      odex_integrator.h \

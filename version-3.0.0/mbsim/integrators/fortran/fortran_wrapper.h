@@ -43,6 +43,11 @@ void SETUP(int*, double*, double*, double*,
 #define UT FC_FUNC(ut,UT)
 void UT(void (*)(double*,double*,double*), double*, double*, double*, double*,
         double*, double*, int*, double*);
+#define CT FC_FUNC(ct,CT)
+void CT(void (*)(double*,double*,double*), double*, double*, 
+        double*, double*, int*, double*);
+#define INTRP FC_FUNC(intrp,INTRP)
+void INTRP(double*,char*,int*,double*,double*,void (*)(double*,double*,double*),double*,double*,int*);
 
 #define DOPRI5 FC_FUNC(dopri5,DOPRI5)
 void DOPRI5(int*,void(*)(int*,double*,double*,double*,double*,int*),double*,double*,

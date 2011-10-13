@@ -297,12 +297,8 @@ namespace MBSim {
     ds->addInverseKineticsLink(joint);
     if(dT.cols())
       joint->setForceDirection(dT);
-    joint->setForceLaw(new BilateralConstraint);
-    joint->setImpactForceLaw(new BilateralImpact);
     if(dR.cols())
       joint->setMomentDirection(dR);
-    joint->setMomentLaw(new BilateralConstraint);
-    joint->setImpactMomentLaw(new BilateralImpact);
     joint->connect(frame1,frame2);
   }
 

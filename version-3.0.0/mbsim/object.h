@@ -21,7 +21,7 @@
 #define _OBJECT_H_
 
 #include "mbsim/element.h"
-#include "mbsim/object_interface.h"
+//#include "mbsim/object_interface.h"
 
 namespace MBSim {
 
@@ -38,7 +38,8 @@ namespace MBSim {
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-06-20 revision of doxygen comments: add parameter names (Roland Zander)
    */
-  class Object : public Element, public ObjectInterface {
+  //class Object : public Element, public ObjectInterface {
+  class Object : public Element {
     public: 
       /**
        * \brief constructor
@@ -69,18 +70,20 @@ namespace MBSim {
       virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() {};
       virtual void calcuSize(int j) {};
-      virtual int getqInd(DynamicSystem* sys);
+      //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      virtual int getuInd(DynamicSystem* sys, int i=0);
+      //virtual int getuInd(DynamicSystem* sys, int i=0);
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      virtual int gethInd(DynamicSystem* sys,int i=0); 
+      //virtual int gethInd(DynamicSystem* sys,int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual H5::Group *getPlotGroup() { return plotGroup; }
       virtual PlotFeatureStatus getPlotFeature(PlotFeature fp) { return Element::getPlotFeature(fp); };
       virtual PlotFeatureStatus getPlotFeatureForChildren(PlotFeature fp) { return Element::getPlotFeatureForChildren(fp); };
+      virtual void updateStateDependentVariables(double t) = 0;
       virtual void updateStateDerivativeDependentVariables(double t) {};
+      virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatehInverseKinetics(double t, int i=0) {};
       /*******************************************************/ 
 
@@ -88,7 +91,7 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1); 
       virtual void closePlot();
       virtual std::string getType() const { return "Object"; }
-      virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
+      //virtual void setDynamicSystemSolver(DynamicSystemSolver *sys);
       /*******************************************************/ 
 
       /**
@@ -238,14 +241,11 @@ namespace MBSim {
       /*******************************************************/ 
 
       /* GETTER / SETTER */
-      DynamicSystem* getParent() { return parent; }
-      void setParent(DynamicSystem* sys) { parent = sys; }
-
       void setqSize(int qSize_) { qSize = qSize_; }
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
       int getzSize() const { return qSize + uSize[0]; }
 
-      void sethInd(int hInd_, int i=0); 
+      virtual void sethInd(int hInd_, int i=0); 
       int gethInd(int i=0) { return hInd[i]; }
 
       const fmatvec::Index& getuIndex() const { return Iu;}
@@ -283,11 +283,6 @@ namespace MBSim {
       void setInitialGeneralizedPosition(double q0_) { q0 = fmatvec::Vec(1,fmatvec::INIT,q0_); }
       void setInitialGeneralizedVelocity(double u0_) { u0 = fmatvec::Vec(1,fmatvec::INIT,u0_); }
 
-      /** 
-       * \return full path of the object
-       * \param delimiter of the path
-       */
-      std::string getPath(char pathDelim='.');
       /*******************************************************/ 
 
       virtual void initializeUsingXML(TiXmlElement *element);
@@ -295,11 +290,6 @@ namespace MBSim {
       virtual Element* getByPathSearch(std::string path);
 
     protected:
-      /**
-       * \brief dynamic system, object belongs to
-       */
-      DynamicSystem * parent;
-
       /**
        * \brief size of object positions
        */

@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include <mbsim/element.h>
-#include <mbsim/object_interface.h>
+//#include <mbsim/object_interface.h>
 #include <mbsim/mbsim_event.h>
 #include <mbsim/utils/eps.h>
 #include "mbsimtinyxml/tinyxml-src/tinynamespace.h"
@@ -30,7 +30,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Element::Element(const string &name_) : name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
+  Element::Element(const string &name_) : parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
     for(int i=0; i<LASTPLOTFEATURE; i++) {
       plotFeature[(PlotFeature)i]=unset;
       plotFeatureForChildren[(PlotFeature)i]=unset;
@@ -58,9 +58,9 @@ namespace MBSim {
     }
   }
 
-  void Element::init(InitStage stage, ObjectInterface* parent) {
+  void Element::init(InitStage stage) {
     if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         unsigned int numEnabled=0;
@@ -91,11 +91,15 @@ namespace MBSim {
     }
   }
 
-  void Element::updatePlotFeatures(ObjectInterface* parent) {
+  void Element::updatePlotFeatures() {
     for(int i=0; i<LASTPLOTFEATURE; i++) {
       if(getPlotFeature((PlotFeature)i)==unset) setPlotFeature((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
       if(getPlotFeatureForChildren((PlotFeature)i)==unset) setPlotFeatureForChildren((PlotFeature)i, parent->getPlotFeatureForChildren((PlotFeature)i));
     }
+  }
+
+  string Element::getPath(char pathDelim) {
+    return parent?parent->getPath()+pathDelim+name:name;
   }
 
   void Element::initializeUsingXML(TiXmlElement *element) {

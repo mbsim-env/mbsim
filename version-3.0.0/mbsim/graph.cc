@@ -32,6 +32,10 @@ namespace MBSim {
     calcuSize_[1] = &Graph::calcuSize1;
     sethSize_[0] = &Graph::sethSize0;
     sethSize_[1] = &Graph::sethSize1;
+    setuInd_[0] = &Graph::setuInd0;
+    setuInd_[1] = &Graph::setuInd1;
+    sethInd_[0] = &Graph::sethInd0;
+    sethInd_[1] = &Graph::sethInd1;
   }
 
   Graph::~Graph() {}
@@ -69,9 +73,12 @@ namespace MBSim {
 
   void Graph::sethSize0(int hSize_) {
     hSize[0] = hSize_;
-    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      (*i)->sethSize((*i)->getuSize(0)+(*i)->getuInd(0),0);
-      (*i)->sethInd(0,0);
+    int buf = 0;
+    for(unsigned int i=0; i<obj.size(); i++) 
+      for(unsigned int j=0; j<obj[i].size(); j++)  {
+      buf += obj[i][j]->getuSize(0);
+      obj[i][j]->sethSize(buf,0);
+      //(*i)->sethInd(0,0);
     }
   } 
 
@@ -79,13 +86,35 @@ namespace MBSim {
     DynamicSystem::sethSize(hSize_,1);
   } 
 
+  void Graph::sethInd0(int hInd_) {
+    hInd[0] = hInd_;
+    for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
+      (*i)->sethInd(hInd_,0);
+    }
+  } 
+
+  void Graph::sethInd1(int hInd_) {
+    DynamicSystem::sethInd(hInd_,1);
+  } 
+
   void Graph::calcqSize() {
     qSize = 0;
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
 	obj[i][j]->calcqSize();
-	obj[i][j]->setqInd(qSize);
+	//obj[i][j]->setqInd(qSize);
 	qSize += obj[i][j]->getqSize();
+      }
+  }
+
+  void Graph::setqInd(int qInd_) {
+    qInd = qInd_;
+    cout << "setqInd" << endl;
+    for(unsigned int i=0; i<obj.size(); i++) 
+      for(unsigned int j=0; j<obj[i].size(); j++) {
+	cout << obj[i][j]->getName() << " " << qInd_ << endl;
+	obj[i][j]->setqInd(qInd_);
+	qInd_ += obj[i][j]->getqSize();
       }
   }
 
@@ -94,9 +123,24 @@ namespace MBSim {
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
 	obj[i][j]->calcuSize(0);
-	obj[i][j]->setuInd(uSize[0],0);
+	//obj[i][j]->setuInd(uSize[0],0);
 	uSize[0] += obj[i][j]->getuSize(0);
       }
+  }
+
+  void Graph::setuInd0(int uInd_) {
+    uInd[0] = uInd_;
+    cout << "setuInd" << endl;
+    for(unsigned int i=0; i<obj.size(); i++) 
+      for(unsigned int j=0; j<obj[i].size(); j++) {
+	cout << obj[i][j]->getName() << " " << uInd_ << endl;
+	obj[i][j]->setuInd(uInd_,0);
+	uInd_ += obj[i][j]->getuSize(0);
+      }
+  }
+
+  void Graph::setuInd1(int uInd) {
+    DynamicSystem::setuInd(uInd,1);
   }
 
   void Graph::calcuSize1() {

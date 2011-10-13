@@ -94,7 +94,7 @@ namespace MBSim {
       la.resize(body->getRotation()->getqSize());
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       plotColumns.push_back("la(0)");
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE
