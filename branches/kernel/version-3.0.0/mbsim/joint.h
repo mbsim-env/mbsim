@@ -30,6 +30,7 @@ namespace MBSim {
   class GeneralizedImpactLaw;
   class FrictionForceLaw;
   class FrictionImpactLaw;
+  class RigidBody;
 
   /** 
    * \brief class for connections: constraints on frames
@@ -190,24 +191,17 @@ namespace MBSim {
   class InverseKineticsJoint: public Joint {
     public: 
       InverseKineticsJoint(const std::string &name);
-      void setTranslation(Translation* fPrPK_) { fPrPK = fPrPK_; }
-      void setRotation(Rotation* fAPK_)        { fAPK  = fAPK_;  }
-      void setJacobianOfTranslation(Jacobian* fPJT_) { fPJT = fPJT_; }
-      void setJacobianOfRotation(Jacobian* fPJR_)    { fPJR = fPJR_; }
-      virtual void init(InitStage stage);
       virtual void updateb(double t);
       void calcbSize();
       void setbInd(int bInd_) { bInd = bInd_; };
       int getbSize() const { return bSize; }
       virtual void updatebRef(const fmatvec::Mat &hRef);
+      void setBody(RigidBody* body_)    { body = body_; }
 
     protected:
       int bSize, bInd;
-      Translation *fPrPK;
-      Rotation *fAPK;
-      Jacobian *fPJT;
-      Jacobian *fPJR;
-      fmatvec::Mat PJT, PJR, b;
+      RigidBody* body;
+      fmatvec::Mat b;
   };
 
 }
