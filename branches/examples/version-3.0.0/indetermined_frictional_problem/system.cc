@@ -139,6 +139,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   if(twoContacts)
     box2->setRotation(new RotationAboutZAxis);
 
+  box2->getFrame("C")->enableOpenMBV();
+  box2->getFrame("C")->setPlotFeature(globalPosition,enabled);
+
   Line* line = new Line("Boden");
   addContour(line,Vec(3),BasicRotAKIz(-M_PI/2));
 
@@ -236,6 +239,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
    arrow->setHeadDiameter(0.2);
    arrow->setHeadLength(0.2);
   rc->setOpenMBVFrictionArrow(arrow);
+  rc->enableOpenMBVContactPoints();
+
   }
 
 

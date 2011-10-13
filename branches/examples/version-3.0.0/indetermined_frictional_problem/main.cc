@@ -27,6 +27,11 @@ int main (int argc, char* argv[]) {
   is.close();
 
   DynamicSystemSolver *sys = new System("TS");
+ sys->setgTol(1e-6);
+  sys->setgdTol(1e-8);
+  sys->setLaTol(1e-8);
+  sys->setgddTol(1e-8);
+  sys->setlaTol(1e-8);
 
   sys->initialize();
 
@@ -40,9 +45,9 @@ int main (int argc, char* argv[]) {
     //integrator = new DOPRI5Integrator;
     //integrator = new LSODEIntegrator;
     integrator = new LSODARIntegrator;
-    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
-    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-1);
+    static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(true);
+    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
+    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-2);
   } 
   else { // time stepping integration
     sys->setLaTol(1e-2*dt);
