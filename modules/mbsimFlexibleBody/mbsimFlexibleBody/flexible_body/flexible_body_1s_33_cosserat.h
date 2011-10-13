@@ -38,6 +38,7 @@ namespace MBSimFlexibleBody {
    * \author Thomas Cebulla
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
+   * \date 2011-10-12 rotation grid added (Thorsten Schindler)
    * \todo compute boundary conditions TODO
    *
    * Cosserat model based on
