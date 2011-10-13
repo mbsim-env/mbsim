@@ -219,7 +219,6 @@ namespace MBSim {
       init(resize);
     }
     else if(stage==resize) {
-      cout << "we do a resize" << endl;
       calcqSize();
       calcuSize(0);
       calcuSize(1);
@@ -1635,127 +1634,6 @@ projectGeneralizedVelocities(t);
       flushCount = 0;
       H5::FileSerie::flushAllFiles();
     }
-  }
-
-  fmatvec::Vec MySolver3::zdot(const fmatvec::Vec &zParent, double t) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-    updateStateDependentVariables(t);
-    updateg(t);
-    if(alwaysConsiderContact) {
-      checkActiveg();
-      checkActiveLinks();
-      updategd(t);
-      checkActivegd();
-    } else {
-      checkActiveLinks(); // TODO: nicht nötig
-      updategd(t);
-    }
-    updateT(t); 
-    updateJacobians(t,1);
-    updateh(t,1); 
-    updateM(t,1); 
-    facLLM(1); 
-    calclaSize();
-    calcrFactorSize();
-    //updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    //updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    //updatelaRef(laParent(0,laSize-1));
-    //updatewbRef(wbParent(0,laSize-1));
-    //updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    if(laSize) {
-      updateW(t,1); 
-      updateV(t,1); 
-      updateG(t,1); 
-      updatewb(t,1); 
-      b.resize() = W[1].T()*slvLLFac(LLM[1],h[1]) + wb;
-      int iter;
-      iter = solveConstraints();
-    }
-    updateJacobians(t,0);
-    //updateh(t);
-    updateh0Fromh1(t);
-    updateM(t);
-    facLLM();
-    updateW(t); 
-    updateV(t); 
-    updateG(t); 
-    updatewb(t); 
-    b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-    int iter;
-    iter = solveConstraints();
-    cout << "la= " << la << endl;
-    updater(t); 
-    updatezd(t);
-    cout << t << endl;
-    cout << qd << endl;
-    cout << ud[0] << endl;
-    cout << ud[1] << endl;
-    //updatezd(t);
-    return zdParent;
-  }
-
-  void MySolver3::plot(const fmatvec::Vec& zParent, double t, double dt) {
-    if(q()!=zParent()) {
-      updatezRef(zParent);
-    }
-
-    if(qd()!=zdParent()) 
-      updatezdRef(zdParent);
-    updateStateDependentVariables(t);
-    updateg(t);
-    if(alwaysConsiderContact) {
-      checkActiveg();
-      checkActiveLinks();
-      updategd(t);
-      checkActivegd();
-    } else {
-      checkActiveLinks(); // TODO: nicht nötig
-      updategd(t);
-    }
-    updateT(t); 
-    updateJacobians(t,1);
-    updateh(t,1); 
-    updateM(t,1); 
-    facLLM(1); 
-    calclaSize();
-    calcrFactorSize();
-    //updateWRef(WParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    //updateVRef(VParent[0](Index(0,getuSize()-1),Index(0,getlaSize()-1)));
-    //updatelaRef(laParent(0,laSize-1));
-    //updatewbRef(wbParent(0,laSize-1));
-    //updaterFactorRef(rFactorParent(0,rFactorSize-1));
-    if(laSize) {
-      updateW(t,1); 
-      updateV(t,1); 
-      updateG(t,1); 
-      updatewb(t,1); 
-      b.resize() = W[1].T()*slvLLFac(LLM[1],h[1]) + wb;
-      int iter;
-      iter = solveConstraints();
-      cout << "la= " << la << endl;
-    }
-    //  updateJacobians(t,0);
-    //  updateh(t);
-    //  updateM(t);
-    //  facLLM();
-    //  updateW(t); 
-    //  updateV(t); 
-    //  updateG(t); 
-    //  updatewb(t); 
-    //  b.resize() = W[0].T()*slvLLFac(LLM[0],h[0]) + wb;
-    //  int iter;
-    //  iter = solveConstraints();
-    //    cout << "la= " << la << endl;
-    //  updater(t); 
-    DynamicSystemSolver::plot(t,dt);
-
-    if(++flushCount > flushEvery) {
-      flushCount = 0;
-      H5::FileSerie::flushAllFiles();
-    }
-
   }
 
 }

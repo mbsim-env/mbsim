@@ -170,20 +170,14 @@ namespace MBSim {
   void LinkMechanics::init(InitStage stage) {
     if(stage==unknownStage) {
       Link::init(stage);
-      cout << name << endl;
 
       for(unsigned int i=0; i<frame.size(); i++) {
-	cout << frame[i]->getName() << endl;
-	cout << frame[i]->getJacobianOfTranslation(0) << endl;
         W[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
         V[0].push_back(Mat(frame[i]->getJacobianOfTranslation(0).cols(),laSize));
         h[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
         W[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
         V[1].push_back(Mat(frame[i]->getJacobianOfTranslation(1).cols(),laSize));
         h[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
-	cout << "init" << endl;
-	cout << i << endl;
-	cout << frame[i]->getJacobianOfTranslation(1).cols() << endl;
         r[0].push_back(Vec(frame[i]->getJacobianOfTranslation(0).cols()));
         r[1].push_back(Vec(frame[i]->getJacobianOfTranslation(1).cols()));
         WF.push_back(Vec(3));

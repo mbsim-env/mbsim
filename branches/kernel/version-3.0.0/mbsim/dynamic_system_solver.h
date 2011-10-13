@@ -780,16 +780,6 @@ namespace MBSim {
 
   };
 
-  // Test für Berechnung der Gelenkkräfte bei Baumstrukturen bei
-  // Gelenkkraftabhängigkeiten
-class MySolver3 : public DynamicSystemSolver {
-  public:
-    MySolver3(const std::string &projectName) : DynamicSystemSolver(projectName) {}
-    fmatvec::Vec zdot(const fmatvec::Vec &zParent, double t); 
-    virtual void plot(const fmatvec::Vec& zParent, double t, double dt=1); 
-
-};
-
 }
 
 #endif /* _DYNAMIC_SYSTEM_SOLVER_H_ */
