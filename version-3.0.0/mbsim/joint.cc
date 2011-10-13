@@ -24,6 +24,7 @@
 #include "mbsim/objectfactory.h"
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include <mbsim/utils/utils.h>
+#include <mbsim/rigid_body.h>
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include "openmbvcppinterface/objectfactory.h"
 #include "openmbvcppinterface/arrow.h"
@@ -186,7 +187,7 @@ namespace MBSim {
       }
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #endif
@@ -631,85 +632,19 @@ namespace MBSim {
     saved_ref2=e->Attribute("ref2");
   }
 
-  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), fPrPK(0), fAPK(0), fPJT(0), fPJR(0) {
+  InverseKineticsJoint::InverseKineticsJoint(const string &name) : Joint(name), body(0) {
   }
 
   void InverseKineticsJoint::calcbSize() {
-     int nuT=0, nuR=0;
-      if(fPJT==0) {
-	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-	  nuT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
-	  nuR = nuT;
-	} else
-	  nuT = 0;
-      } 
-
-      if(fPJR==0) {
-	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
-	  nuR += 1; 
-	  nuT = nuR;
-	} 
-      } else
-	nuR = fPJR->getuSize();
-      assert(nuT == nuR);
-      bSize = nuT;
-
-      cout << name << endl;
-      cout << "bSize = " << bSize << endl;
-  }
-
-  void InverseKineticsJoint::init(InitStage stage) {
-    if(stage==resolveXMLPath) {
-      Joint::init(stage);
-    }
-    else if(stage==unknownStage) {
-      Joint::init(stage);
-      int nu = bSize;
-  
-      PJT.resize(3,nu);
-      PJR.resize(3,nu);
-      if(fPJT==0) {
-        Mat JT(3,0);
-        if(dynamic_cast<LinearTranslation*>(fPrPK)) {
-          JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
-        } 
-        PJT(Index(0,2), Index(0,JT.cols()-1)) = JT;
-      }
-      if(fPJR==0) {
-        Mat JR(3,0);
-
-        if(dynamic_cast<RotationAboutXAxis*>(fAPK)) 
-          JR.resize() = Vec("[1;0;0]");
-	else if(dynamic_cast<RotationAboutYAxis*>(fAPK)) 
-          JR.resize() = Vec("[0;1;0]");
-	else if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
-          JR.resize() = Vec("[0;0;1]");
-        else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
-          JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
-        else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
-          fPJR = new JRotationAboutAxesYZ(nu);
-        }
-        else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
-          fPJR = new JRotationAboutAxesXY(nu);
-        }
-        else if(dynamic_cast<CardanAngles*>(fAPK)) {
-          JR.resize() << DiagMat(3,INIT,1);
-        }
-	else if(dynamic_cast<EulerAngles*>(fAPK)) {
-          JR.resize() << DiagMat(3,INIT,1);
-        }
-
-        PJR(Index(0,2), Index(nu-JR.cols(),nu-1)) = JR;
-      }
-   }
-    else
-      Joint::init(stage);
+      bSize = body?body->getuRel().size():0;
   }
 
   void InverseKineticsJoint::updateb(double t) {
     if(bSize) {
-      b(Index(0,bSize-1),Index(0,2)) = PJT.T();
-      b(Index(0,bSize-1),Index(3,5)) = PJR.T();
+      //b(Index(0,bSize-1),Index(0,2)) = PJT.T();
+      //b(Index(0,bSize-1),Index(3,5)) = PJR.T();
+      b(Index(0,bSize-1),Index(0,2)) = body->getPJT().T();
+      b(Index(0,bSize-1),Index(3,5)) = body->getPJR().T();
     }
   }
 
