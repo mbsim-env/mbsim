@@ -27,8 +27,15 @@ int main (int argc, char* argv[]) {
   is.close();
 
   DynamicSystemSolver *sys = new System("TS");
-  sys->setAlwaysConsiderContact(false);
+  sys->setInverseKinetics(true);
+  //sys->setAlwaysConsiderContact(false);
+sys->setProjectionTolerance(1e-15);
 
+  sys->setgTol(1e-6);
+  sys->setgdTol(1e-6);
+  sys->setLaTol(1e-6);
+  sys->setgddTol(1e-8);
+  sys->setlaTol(1e-8);
   sys->initialize();
 
   Integrator* integrator;
@@ -39,8 +46,8 @@ int main (int argc, char* argv[]) {
   else if(eventDriven) { // Event driven time integration
     integrator = new LSODARIntegrator;
     static_cast<LSODARIntegrator*>(integrator)->setPlotOnRoot(false);
-    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-13);
-    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-3);
+    static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);
+    static_cast<LSODARIntegrator*>(integrator)->setMaximalStepSize(1e-2);
     //static_cast<LSODARIntegrator*>(integrator)->setRelativeTolerance(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setAbsoluteTolerance(1e-8);
     //static_cast<LSODARIntegrator*>(integrator)->setInitialStepSize(1e-8);

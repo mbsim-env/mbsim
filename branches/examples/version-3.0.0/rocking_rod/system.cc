@@ -54,6 +54,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec KrSC(3);
   KrSC(0) = 0.5*h;
   body->addContour(line,KrSC,SqrMat(3,EYE));
+  line->setPlotFeature(globalVelocity,enabled);
+  line->setPlotFeature(globalAcceleration,enabled);
 
   // Obstacles
   Vec delta1(3); 
@@ -90,6 +92,12 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     cr2S->setContactForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(1e5,1e4)));
     cr2S->setFrictionForceLaw(new RegularizedPlanarFriction(new LinearRegularizedCoulombFriction(mu)));
   }
+  getFrame("I")->setPlotFeature(globalPosition,enabled);
+  getFrame("I")->setPlotFeature(globalVelocity,enabled);
+  getFrame("I")->setPlotFeature(globalAcceleration,enabled);
+  getContour("Point1")->setPlotFeature(globalPosition,enabled);
+  getContour("Point1")->setPlotFeature(globalVelocity,enabled);
+  getContour("Point1")->setPlotFeature(globalAcceleration,enabled);
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
   // Visualisation with OpenMBV
