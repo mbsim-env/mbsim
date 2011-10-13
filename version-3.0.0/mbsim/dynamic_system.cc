@@ -145,8 +145,6 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateStateDerivativeDependentVariables(double t) {
-    cout << name << endl;
-    cout << hInd[0] << endl;
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
       (**i).updateStateDerivativeDependentVariables(t);
 
@@ -244,7 +242,6 @@ namespace MBSim {
       qInd_ += (*i)->getqSize();
     }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      cout << (*i)->getName() << " " << qInd_ << endl;
       (*i)->setqInd(qInd_);
       qInd_ += (*i)->getqSize();
     }
@@ -273,7 +270,6 @@ namespace MBSim {
       uInd_ += (*i)->getuSize(j);
     }
     for(vector<Object*>::iterator i = object.begin(); i != object.end(); ++i) {
-      cout << (*i)->getName() << " " << uInd_ << endl;
       (*i)->setuInd(uInd_,j);
       uInd_ += (*i)->getuSize(j);
     }

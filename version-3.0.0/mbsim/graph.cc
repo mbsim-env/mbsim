@@ -109,10 +109,8 @@ namespace MBSim {
 
   void Graph::setqInd(int qInd_) {
     qInd = qInd_;
-    cout << "setqInd" << endl;
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
-	cout << obj[i][j]->getName() << " " << qInd_ << endl;
 	obj[i][j]->setqInd(qInd_);
 	qInd_ += obj[i][j]->getqSize();
       }
@@ -130,10 +128,8 @@ namespace MBSim {
 
   void Graph::setuInd0(int uInd_) {
     uInd[0] = uInd_;
-    cout << "setuInd" << endl;
     for(unsigned int i=0; i<obj.size(); i++) 
       for(unsigned int j=0; j<obj[i].size(); j++) {
-	cout << obj[i][j]->getName() << " " << uInd_ << endl;
 	obj[i][j]->setuInd(uInd_,0);
 	uInd_ += obj[i][j]->getuSize(0);
       }
