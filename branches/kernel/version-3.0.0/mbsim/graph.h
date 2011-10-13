@@ -55,6 +55,11 @@ namespace MBSim {
       virtual void sethSize(int h, int j=0) {(this->*sethSize_[j])(h);}
       virtual void calcqSize();
       virtual void calcuSize(int j=0) {(this->*calcuSize_[j])();}
+      virtual void setqInd(int qInd);
+      virtual void setuInd(int uInd, int j=0) {(this->*setuInd_[j])(uInd);}
+      virtual void sethInd(int hInd, int j=0) {(this->*sethInd_[j])(hInd);}
+
+
       //virtual void updateInverseKineticsJacobians(double t);
       /***************************************************/
 
@@ -68,10 +73,16 @@ namespace MBSim {
 
       void (Graph::*calcuSize_[2])(); 
       void (Graph::*sethSize_[2])(int h); 
+      void (Graph::*setuInd_[2])(int uInd); 
+      void (Graph::*sethInd_[2])(int hInd); 
       void calcuSize0();
       void calcuSize1();
       void sethSize0(int h);
       void sethSize1(int h);
+      void setuInd0(int uInd);
+      void setuInd1(int uInd);
+      void sethInd0(int hInd);
+      void sethInd1(int hInd);
 
       /***************************************************/
 

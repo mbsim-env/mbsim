@@ -30,6 +30,7 @@ namespace MBSim {
 
   void CompoundContour::addContourElement(Contour* c, const Vec& Kr_) {
     element.push_back(c);
+    c->setParent(this);
     Kr.push_back(Kr_);
     Wr.push_back(Vec(3));
   }
@@ -94,7 +95,7 @@ namespace MBSim {
       Contour::init(stage);
 
     for(unsigned int i=0; i<element.size(); i++) {
-      element[i]->setParent(parent);
+      //element[i]->setParent(parent); // PARENT
       element[i]->init(stage);
     }
   }

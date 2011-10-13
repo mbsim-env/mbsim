@@ -28,7 +28,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Object::Object(const string &name) : Element(name), parent(0), qSize(0), qInd(0) {
+  Object::Object(const string &name) : Element(name), qSize(0), qInd(0) {
     uSize[0] = 0;
     uSize[1] = 0;
     hSize[0] = 0;
@@ -126,17 +126,17 @@ namespace MBSim {
     hSize[j] = hSize_;
   }
 
-  int Object::gethInd(DynamicSystem* sys, int i) {
-    return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
-  }
+  //int Object::gethInd(DynamicSystem* sys, int i) {
+  //  return (parent == sys) ? hInd[i] : hInd[i] + parent->gethInd(sys,i);
+  //}
 
-  int Object::getqInd(DynamicSystem* sys) {
-    return (parent == sys) ? qInd : qInd + parent->getqInd(sys);
-  }
+  //int Object::getqInd(DynamicSystem* sys) {
+  //  return (parent == sys) ? qInd : qInd + parent->getqInd(sys);
+  //}
 
-  int Object::getuInd(DynamicSystem* sys, int i) {
-    return (parent == sys) ? uInd[i] : uInd[i] + parent->getuInd(sys,i);
-  }
+  //int Object::getuInd(DynamicSystem* sys, int i) {
+  //  return (parent == sys) ? uInd[i] : uInd[i] + parent->getuInd(sys,i);
+  //}
 
   void Object::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
@@ -176,9 +176,9 @@ namespace MBSim {
     }
   }
 
-  void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
-    Element::setDynamicSystemSolver(sys);
-  }
+  //void Object::setDynamicSystemSolver(DynamicSystemSolver* sys) {
+  //  Element::setDynamicSystemSolver(sys);
+  //}
 
   void Object::updateqRef(const Vec &qParent) {
     q>>qParent(qInd,qInd+qSize-1);
@@ -250,7 +250,7 @@ namespace MBSim {
       Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled) {
@@ -277,11 +277,11 @@ namespace MBSim {
           plotColumns.push_back("E");
         }
 
-        Element::init(stage, parent);
+        Element::init(stage);
       }
     }
     else
-      Element::init(stage, parent);
+      Element::init(stage);
   }
 
   void Object::initz() {
@@ -300,10 +300,6 @@ namespace MBSim {
   void Object::sethInd(int hInd_, int j) {
     hInd[j] = hInd_;
   }  
-
-  string Object::getPath(char pathDelim) {
-    return parent?parent->getPath()+pathDelim+name:name;
-  }
 
   void Object::initializeUsingXML(TiXmlElement *element) {
     TiXmlElement *e;

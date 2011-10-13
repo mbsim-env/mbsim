@@ -53,10 +53,11 @@ namespace MBSim {
     Contact1sSearch search(func);
     search.setNodes(contour1s->getNodes()); // defining search areas for contacts
 
-    if(cpData[icontour].getLagrangeParameterPosition().size()!=0) { // select start value from last search
+    if(false && cpData[icontour].getLagrangeParameterPosition().size()!=0) { // select start value from last search
       search.setInitialValue(cpData[icontour].getLagrangeParameterPosition()(0));
     } 
     else { // define start search with regula falsi
+      cout << "searchAll = true" << endl;
       search.setSearchAll(true);
       cpData[icontour].getLagrangeParameterPosition() = Vec(1,NONINIT);
     }

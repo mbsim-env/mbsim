@@ -67,8 +67,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setParent(DynamicSystem *parent_) { parent = parent_; }
-      DynamicSystem* getParent() { return parent; }
       void setInitialState(const fmatvec::Vec &x0_) { x0 = x0_; }
       virtual Element *getByPathSearch(std::string path);
       /***************************************************/
@@ -76,11 +74,6 @@ namespace MBSim {
       virtual void initializeUsingXML(TiXmlElement *element);
 
     protected:
-      /**
-       * \brief dynamic system parent for plotting
-       */
-      DynamicSystem* parent;
-
       /**
        * \brief order one parameter, differentiated order one parameter, initial order one parameters
        */

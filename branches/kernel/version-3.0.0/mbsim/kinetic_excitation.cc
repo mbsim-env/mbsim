@@ -49,7 +49,7 @@ namespace MBSim {
       if(!refFrame) refFrame=frame[0];
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(generalizedLinkForce)==enabled)
           for(int j=0; j<forceDir.cols()+momentDir.cols(); ++j) 
@@ -64,7 +64,7 @@ namespace MBSim {
   void KineticExcitation::updateh(double t, int j) {
     if(F) WF[0]=refFrame->getOrientation()*forceDir * (*F)(t);
     if(M) WM[0]=refFrame->getOrientation()*momentDir * (*M)(t);
-    h[j][0]+=frame[0]->getJacobianOfTranslation().T()*WF[0] + frame[0]->getJacobianOfRotation().T()*WM[0];
+    h[j][0]+=frame[0]->getJacobianOfTranslation(j).T()*WF[0] + frame[0]->getJacobianOfRotation(j).T()*WM[0];
   }
 
   void KineticExcitation::calclaSize() {

@@ -92,7 +92,7 @@ namespace MBSim {
         x.resize(1);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("la(0)");
         Link::init(stage);

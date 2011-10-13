@@ -39,7 +39,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  RigidBody::RigidBody(const string &name) : Body(name), m(0), SThetaS(3,INIT,0.), WThetaS(3,INIT,0.), iKinematics(-1), iInertia(-1), cb(false), PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,INIT,0.), PrPK(3,INIT,0.), WrPK(3,INIT,0.), WvPKrel(3,INIT,0.), WomPK(3,INIT,0.), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0) {
+  RigidBody::RigidBody(const string &name) : Body(name), m(0), SThetaS(3,INIT,0.), WThetaS(3,INIT,0.), iKinematics(-1), iInertia(-1), PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,INIT,0.), PrPK(3,INIT,0.), WrPK(3,INIT,0.), WvPKrel(3,INIT,0.), WomPK(3,INIT,0.), fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0), constraint(0) {
     APK(0,0)=1.;
     APK(1,1)=1.;
     APK(2,2)=1.;
@@ -97,9 +97,14 @@ namespace MBSim {
   }
 
   void RigidBody::updateStateDerivativeDependentVariables(double t) {
-
-    aT = frame[0]->getJacobianOfTranslation()*udall[0];// + frame[0]->getGyroscopicAccelerationOfTranslation();
-    aR = frame[0]->getJacobianOfRotation()*udall[0]; //+ frame[0]->getGyroscopicAccelerationOfRotation(); 
+    for(unsigned int i=0; i<frame.size(); i++) {
+      frame[i]->setAcceleration(frame[i]->getJacobianOfTranslation()*udall[0] + frame[i]->getGyroscopicAccelerationOfTranslation());
+      frame[i]->setAngularAcceleration(frame[i]->getJacobianOfRotation()*udall[0] + frame[i]->getGyroscopicAccelerationOfRotation()); 
+    }
+    for(unsigned int i=0; i<contour.size(); i++) {
+      contour[i]->setReferenceAcceleration(contour[i]->getReferenceJacobianOfTranslation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfTranslation());
+      contour[i]->setReferenceAngularAcceleration(contour[i]->getReferenceJacobianOfRotation()*udall[0] + contour[i]->getReferenceGyroscopicAccelerationOfRotation()); 
+    }
   }
 
   void RigidBody::calcqSize() {
@@ -113,6 +118,14 @@ namespace MBSim {
       nqT = fPrPK->getqSize();
     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
       nqR += 1; 
+      nqT = nqR;
+    }
+    else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
+      nqR += 2; 
+      nqT = nqR;
+    }
+    else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
+      nqR += 3; 
       nqT = nqR;
     }
     else if(fAPK)
@@ -138,6 +151,14 @@ namespace MBSim {
       if(fPJR==0) {
 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
 	  nuR += 1; 
+	  nuT = nuR;
+	} 
+	else if(dynamic_cast<RotationAboutTwoAxes*>(fAPK)) {
+	  nuR += 2; 
+	  nuT = nuR;
+	} 
+	else if(dynamic_cast<RotationAboutThreeAxes*>(fAPK)) {
+	  nuR += 3; 
 	  nuT = nuR;
 	} 
       } else
@@ -247,49 +268,30 @@ namespace MBSim {
         }
         else if(dynamic_cast<CardanAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
-          if(cb) {
-            fT = new TCardanAngles2(nq,nu[0]);
-          }
-          else {
-            fT = new TCardanAngles(nq,nu[0]);
-          }
+	  fT = new TCardanAngles(nq,nu[0]);
         }
 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
           JR.resize() << DiagMat(3,INIT,1);
-          if(cb) {
-            fT = new TEulerAngles2(nq,nu[0]);
-          }
-          else {
-            fT = new TEulerAngles(nq,nu[0]);
-          }
+	  fT = new TEulerAngles(nq,nu[0]);
         }
 
         PJR[0](Index(0,2), Index(nu[0]-JR.cols(),nu[0]-1)) = JR;
        // PJR[1](Index(0,2), Index(nu[1]-momentDir.cols()-JR.cols(),nu[1]-momentDir.cols()-1)) = JR;
        // PJR[1](Index(0,2), Index(nu[1]-momentDir.cols(),nu[1]-1)) = momentDir;
 
-        if(cb) {
-          if(iKinematics == 0 && dynamic_cast<DynamicSystem*>(frameOfReference->getParent())) {
-            updateM_ = &RigidBody::updateMConst;
-            Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
-            LLM[0] = facLL(Mbuf);
-            facLLM_ = &RigidBody::facLLMConst;
-          }
-          PJR0 = PJR[0];
-        } 
       }
 
       if(iInertia != 0)
         SThetaS = SymMat(ASF[iInertia]*SThetaS*ASF[iInertia].T()) - m*JTJ(tilde(SrSF[iInertia]));
 
       if(constraint)
-        T.resize(nq,nu[0]);
+	TRel.resize(nq,nu[0]);
 
       for(int i=0; i<nu[0]; i++) 
-        T(i,i) = 1;
+        TRel(i,i) = 1;
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
 
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(notMinimalState)==enabled) {
@@ -297,22 +299,6 @@ namespace MBSim {
             plotColumns.push_back("qRel("+numtostr(i)+")");
           for(int i=0; i<nu[0]; i++)
             plotColumns.push_back("uRel("+numtostr(i)+")");
-        }
-        if(getPlotFeature(globalPosition)==enabled) {
-          plotColumns.push_back("WxOS");
-          plotColumns.push_back("WyOS");
-          plotColumns.push_back("WzOS");
-          plotColumns.push_back("alpha");
-          plotColumns.push_back("beta");
-          plotColumns.push_back("gamma");
-        }
-        if(getPlotFeature(globalVelocity)==enabled) {
-          plotColumns.push_back("WvxS");
-          plotColumns.push_back("WvyS");
-          plotColumns.push_back("WvzS");
-          plotColumns.push_back("alphap");
-          plotColumns.push_back("betap");
-          plotColumns.push_back("gammap");
         }
         Body::init(stage);
       }
@@ -328,15 +314,12 @@ namespace MBSim {
   }
 
   void RigidBody::setUpInverseKinetics() {
-    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+name);
+    InverseKineticsJoint *joint = new InverseKineticsJoint(parent->getName()+string("_Joint_")+name);
     ds->addInverseKineticsLink(joint);
     joint->setForceDirection(SqrMat(3,EYE));
     joint->setMomentDirection(SqrMat(3,EYE));
-    joint->setJacobianOfTranslation(fPJT);
-    joint->setTranslation(fPrPK);
-    joint->setJacobianOfRotation(fPJR);
-    joint->setRotation(fAPK);
     joint->connect(frameOfReference,frame[iKinematics]);
+    joint->setBody(this);
   }
 
   void RigidBody::plot(double t, double dt) {
@@ -346,26 +329,6 @@ namespace MBSim {
           plotVector.push_back(qRel(i));
         for(int i=0; i<nu[0]; i++)
           plotVector.push_back(uRel(i));
-      }
-      if(getPlotFeature(globalPosition)==enabled) {
-        Vec WrOS=frame[0]->getPosition();
-        Vec cardan=AIK2Cardan(frame[0]->getOrientation());
-        plotVector.push_back(WrOS(0));
-        plotVector.push_back(WrOS(1));
-        plotVector.push_back(WrOS(2));
-        plotVector.push_back(cardan(0));
-        plotVector.push_back(cardan(1));
-        plotVector.push_back(cardan(2));
-      }
-      if(getPlotFeature(globalVelocity)==enabled) {
-        Vec WvS    =frame[0]->getVelocity();
-        Vec WomegaS=frame[0]->getAngularVelocity();
-        plotVector.push_back(WvS(0));
-        plotVector.push_back(WvS(1));
-        plotVector.push_back(WvS(2));
-        plotVector.push_back(WomegaS(0));
-        plotVector.push_back(WomegaS(1));
-        plotVector.push_back(WomegaS(2));
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -389,6 +352,13 @@ namespace MBSim {
   }
 
   void RigidBody::updateKinematicsForSelectedFrame(double t) {
+   // cout << name << endl;
+   // cout << uSize[0] << " ";// <<uSize[1] << " ";
+   // cout << hSize[0] << " ";// <<hSize[1] << " ";
+   // cout << uInd[0] << " " ;//<<uInd[1] << " ";
+   // cout << hInd[0] << " " <<endl;;//<<hInd[1] << endl;
+//cout << dynamic_cast<DynamicSystem*>(parent)->getName() << " ";
+//cout << dynamic_cast<DynamicSystem*>(parent)->gethInd(0) << endl;
     if(fPJT)
       PJT[0] = (*fPJT)(qRel,t);
     if(fPJR)
@@ -406,10 +376,6 @@ namespace MBSim {
 
     frame[iKinematics]->setOrientation(frameOfReference->getOrientation()*APK);
 
-    if(cb) {
-      PJR[0] = frameOfReference->getOrientation().T()*frame[iKinematics]->getOrientation()*PJR0;
-    }
-
     WrPK = frameOfReference->getOrientation()*PrPK;
     WomPK = frameOfReference->getOrientation()*(PJR[0]*uRel + PjR);
     WvPKrel = frameOfReference->getOrientation()*(PJT[0]*uRel + PjT);
@@ -424,9 +390,9 @@ namespace MBSim {
     frame[iKinematics]->getJacobianOfRotation().init(0);
 
     if(fPdJT)
-      PdJT = (*fPdJT)(T*uRel,qRel,t);
+      PdJT = (*fPdJT)(TRel*uRel,qRel,t);
     if(fPdJR)
-      PdJR = (*fPdJR)(T*uRel,qRel,t);
+      PdJR = (*fPdJR)(TRel*uRel,qRel,t);
 
     if(fPdjT)
       PdjT = (*fPdjT)(t);
@@ -535,6 +501,11 @@ namespace MBSim {
   void RigidBody::updateuRef(const Vec& ref) {
     Object::updateuRef(ref);
     if(!constraint) uRel>>u;
+  }
+
+  void RigidBody::updateTRef(const Mat& ref) {
+    Object::updateTRef(ref);
+    if(!constraint) TRel>>T;
   }
 
   void RigidBody::addFrame(Frame *cosy, const Vec &RrRF, const SqrMat &ARF, const string& refFrameName) {
@@ -657,9 +628,9 @@ namespace MBSim {
     frame[iKinematics]->getJacobianOfTranslation().init(0);
     frame[iKinematics]->getJacobianOfRotation().init(0);
     if(fPdJT)
-      PdJT = (*fPdJT)(T*uRel,qRel,t);
+      PdJT = (*fPdJT)(TRel*uRel,qRel,t);
     if(fPdJR)
-      PdJR = (*fPdJR)(T*uRel,qRel,t);
+      PdJR = (*fPdJR)(TRel*uRel,qRel,t);
 
     if(fPdjT)
       PdjT = (*fPdjT)(t);

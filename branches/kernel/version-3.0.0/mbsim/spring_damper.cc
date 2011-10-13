@@ -96,8 +96,7 @@ namespace MBSim {
       la.resize(1);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
-      plotColumns.push_back("la(0)");
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
         if(getPlotFeature(openMBV)==enabled) {
@@ -115,7 +114,6 @@ namespace MBSim {
   }
 
   void SpringDamper::plot(double t,double dt) {
-    plotVector.push_back(la(0));
     if(getPlotFeature(plotRecursive)==enabled) {
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled) {

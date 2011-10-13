@@ -63,6 +63,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual std::string getType() const { return "Contour"; }
+      virtual void plot(double t, double dt = 1);
       /***************************************************/
 
       /* INTERFACE FOR DERIVED CLASSES */
@@ -151,6 +152,16 @@ namespace MBSim {
       virtual void setReferenceGyroscopicAccelerationOfRotation(const fmatvec::Vec &WjR, int j=0) { R.setGyroscopicAccelerationOfRotation(WjR,j); }
 
       /**
+       * \param acceleration of contour in inertial frame
+       */
+      virtual void setReferenceAcceleration(const fmatvec::Vec &WaP) { R.setAcceleration(WaP); }
+
+      /**
+       * \param angular acceleration of contour in inertial frame
+       */
+      virtual void setReferenceAngularAcceleration(const fmatvec::Vec &WpsiC) { R.setAngularAcceleration(WpsiC); }
+
+      /**
        * \brief TODO
        */
       virtual void init(InitStage stage);
@@ -183,15 +194,16 @@ namespace MBSim {
       void sethSize(int size, int i=0) { hSize[i] = size; }
       void sethInd(int ind, int i=0) { hInd[i] = ind; }
 
-      ObjectInterface* getParent() { return parent; }
-      void setParent(ObjectInterface* parent_) { parent = parent_; }
+      virtual void setPlotFeature(PlotFeature pf, PlotFeatureStatus value) { Element::setPlotFeature(pf,value); R.setPlotFeature(pf,value);}
+//      ObjectInterface* getParent() { return parent; }
+//      void setParent(ObjectInterface* parent_) { parent = parent_; }
       /***************************************************/
 
     protected:
-      /**
-       * \brief object the contour belongs to
-       */
-      ObjectInterface* parent;
+//      /**
+//       * \brief object the contour belongs to
+//       */
+//      ObjectInterface* parent;
 
       /**
        * \brief size and index of right hand side for frame JACOBIAN settings

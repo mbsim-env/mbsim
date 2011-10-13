@@ -68,7 +68,7 @@ namespace MBSim {
         constraint = constraint_;
       }
 
-      virtual void updateT(double t) { if(fT) T = (*fT)(qRel,t); }
+      virtual void updateT(double t) { if(fT) TRel = (*fT)(qRel,t); }
       virtual void updateh(double t, int j=0);
       virtual void updateh0Fromh1(double t);
       virtual void updateW0FromW1(double t);
@@ -95,6 +95,7 @@ namespace MBSim {
       /* INHERITED INTERFACE OF OBJECT */
       virtual void updateqRef(const fmatvec::Vec& ref);
       virtual void updateuRef(const fmatvec::Vec& ref);
+      virtual void updateTRef(const fmatvec::Mat &ref);
       virtual void init(InitStage stage);
       virtual void initz();
       virtual void facLLM(int i=0) { (this->*facLLM_)(i); }
@@ -171,7 +172,6 @@ namespace MBSim {
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
-      void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
       std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const { return ASF; }
       std::vector<fmatvec::Vec> getContainerForFramePositions() const { return SrSF; }
       std::vector<fmatvec::SqrMat> getContainerForContourOrientations() const { return ASC; }
@@ -244,10 +244,10 @@ namespace MBSim {
 #endif
 
       virtual void initializeUsingXML(TiXmlElement *element);
-      void updatePositionAndOrientationOfFrame(double t, unsigned int i);
-      void updateAccelerations(double t, unsigned int i);
-      void updateRelativeJacobians(double t, unsigned int i);
-      void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
+      virtual void updatePositionAndOrientationOfFrame(double t, unsigned int i);
+      virtual void updateAccelerations(double t, unsigned int i);
+      virtual void updateRelativeJacobians(double t, unsigned int i);
+      virtual void updateRelativeJacobians(double t, unsigned int i, fmatvec::Mat &WJTrel, fmatvec::Mat &WJRrel);
       const fmatvec::Mat& getWJTrel() const {return WJTrel;}
       const fmatvec::Mat& getWJRrel() const {return WJRrel;}
       fmatvec::Mat& getWJTrel() {return WJTrel;}
@@ -258,6 +258,8 @@ namespace MBSim {
       fmatvec::Vec& getuRel() {return uRel;}
       // void setqRel(const fmatvec::Vec &q) {qRel0 = q;}
       // void setuRel(const fmatvec::Vec &u) {uRel0 = u;}
+      fmatvec::Mat& getPJT(int i=0) {return PJT[i];}
+      fmatvec::Mat& getPJR(int i=0) {return PJR[i];}
 
     protected:
       /**
@@ -279,11 +281,6 @@ namespace MBSim {
        * \brief TODO
        */
       fmatvec::SymMat Mbuf;
-
-      /**
-       * \brief boolean to use body fixed Frame for rotation
-       */
-      bool cb;
 
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
@@ -432,6 +429,8 @@ namespace MBSim {
 
       fmatvec::Mat WJTrel,WJRrel;
       fmatvec::Vec WjTrel,WjRrel;
+
+      fmatvec::Mat TRel;
 
       Constraint *constraint;
 

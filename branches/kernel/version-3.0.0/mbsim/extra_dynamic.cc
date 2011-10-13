@@ -67,7 +67,7 @@ namespace MBSim {
 
   void ExtraDynamic::init(InitStage stage) {
     if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled)
@@ -77,11 +77,11 @@ namespace MBSim {
           for(int i=0; i<xSize; ++i)
             plotColumns.push_back("xd("+numtostr(i)+")");
   
-        Element::init(stage, parent);
+        Element::init(stage);
       }
     }
     else
-      Element::init(stage, parent);
+      Element::init(stage);
   }
 
   Element * ExtraDynamic::getByPathSearch(string path) {

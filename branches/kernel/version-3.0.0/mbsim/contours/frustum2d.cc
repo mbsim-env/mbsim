@@ -32,7 +32,7 @@ namespace MBSim {
 
   void Frustum2D::init(InitStage stage) {
     if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
   #ifdef HAVE_OPENMBVCPPINTERFACE

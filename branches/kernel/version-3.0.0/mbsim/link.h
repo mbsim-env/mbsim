@@ -21,7 +21,7 @@
 #define _LINK_H_
 
 #include "mbsim/element.h"
-#include "mbsim/link_interface.h"
+//#include "mbsim/link_interface.h"
 #include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 
@@ -48,7 +48,8 @@ namespace MBSim {
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-07-06 added LinkStatus and LinearImpactEstimation for timestepper ssc (Robert Huber)
     */
-  class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
+  //class Link : public Element, public LinkInterface, public ExtraDynamicInterface {
+  class Link : public Element, public ExtraDynamicInterface {
     public:
       /**
        * \brief constructor
@@ -62,6 +63,8 @@ namespace MBSim {
       virtual ~Link() {}
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
+      virtual void updateg(double t) = 0;
+      virtual void updategd(double t) = 0;
       virtual void updatewb(double t, int i=0) {};
       virtual void updateW(double t, int i=0) {};
       virtual void updateV(double t, int i=0) {};
@@ -355,9 +358,6 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      DynamicSystem* getParent() { return parent; }
-      void setParent(DynamicSystem* sys) { parent = sys; }
-
       const std::vector<fmatvec::Mat>& getW(int i=0) const { return W[i]; }
       const std::vector<fmatvec::Mat>& getV(int i=0) const { return V[i]; }
       const std::vector<fmatvec::Vec>& geth(int i=0) const { return h[i]; }
@@ -430,11 +430,6 @@ namespace MBSim {
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) {};
 
     protected:
-      /**
-       * \brief parent of link 
-       */
-      DynamicSystem* parent;
-
       /** 
        * \brief order one parameters
        */

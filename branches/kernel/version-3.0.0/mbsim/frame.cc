@@ -21,7 +21,7 @@
 #include "mbsim/frame.h"
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/object_interface.h"
+//#include "mbsim/object_interface.h"
 #include "mbsim/mbsim_event.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/frame.h>
@@ -33,7 +33,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  Frame::Frame(const string &name) : Element(name), parent(0), WrOP(3,INIT,0.), AWP(3,INIT,0.), WvP(3,INIT,0.), WomegaP(3,INIT,0.) {
+  Frame::Frame(const string &name) : Element(name), WrOP(3,INIT,0.), AWP(3,INIT,0.), WvP(3,INIT,0.), WomegaP(3,INIT,0.), WaP(3,INIT,0), WpsiP(3,INIT,0) {
     AWP(0,0) = 1;
     AWP(1,1) = 1;
     AWP(2,2) = 1;
@@ -71,6 +71,12 @@ namespace MBSim {
         for(int i=0; i<3; i++)
           plotVector.push_back(WomegaP(i));
       }
+      if(getPlotFeature(globalAcceleration)==enabled) {
+        for(int i=0; i<3; i++)
+          plotVector.push_back(WaP(i));
+        for(int i=0; i<3; i++)
+          plotVector.push_back(WpsiP(i));
+      }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVFrame && !openMBVFrame->isHDF5Link()) {
         vector<double> data;
@@ -104,7 +110,7 @@ namespace MBSim {
       getJacobianOfRotation(1).resize(3,hSize[1]);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
   
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(globalPosition)==enabled) {
@@ -119,6 +125,12 @@ namespace MBSim {
             plotColumns.push_back("WvP("+numtostr(i)+")");
           for(int i=0; i<3; i++)
             plotColumns.push_back("WomegaP("+numtostr(i)+")");
+        }
+        if(getPlotFeature(globalAcceleration)==enabled) {
+          for(int i=0; i<3; i++)
+            plotColumns.push_back("WaP("+numtostr(i)+")");
+          for(int i=0; i<3; i++)
+            plotColumns.push_back("WpsiP("+numtostr(i)+")");
         }
   
   #ifdef HAVE_OPENMBVCPPINTERFACE
@@ -143,11 +155,11 @@ namespace MBSim {
           // END
         }
   #endif
-        Element::init(stage, parent);
+        Element::init(stage);
       }
     }
     else
-      Element::init(stage, parent);
+      Element::init(stage);
   }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE

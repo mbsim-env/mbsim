@@ -21,7 +21,7 @@
 
 #include "mbsim/element.h"
 #include "mbsim/link_interface.h"
-#include "mbsim/object_interface.h"
+//#include "mbsim/object_interface.h"
 #include "mbsim/extradynamic_interface.h"
 #include "mbsim/mbsim_event.h"
 
@@ -53,7 +53,8 @@ namespace MBSim {
    * \date 2010-07-06 modifications for timestepper ssc, e.g LinkStatus and buildListOfSetValuedLinks (Robert Huber)
    * \todo OpenMP only static scheduling with intelligent reordering of vectors by dynamic test runs
    */
-  class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
+  //class DynamicSystem : public Element, public ObjectInterface, public LinkInterface, public ExtraDynamicInterface {
+  class DynamicSystem : public Element, public LinkInterface, public ExtraDynamicInterface {
     public:
       /** 
        * \brief constructor
@@ -71,12 +72,15 @@ namespace MBSim {
       virtual void updateh0Fromh1(double t); 
       virtual void updateW0FromW1(double t); 
       virtual void updateV0FromV1(double t); 
-      virtual void updateStateDerivativeDependentVariables(double t); 
+      virtual void updateStateDependentVariables(double t) = 0;
+      virtual void updateStateDerivativeDependentVariables(double t);
       virtual void updatedhdz(double t);
       virtual void updateM(double t, int i=0);
       virtual void updateJacobians(double t, int j=0) = 0;
       virtual void updatedq(double t, double dt); 
       virtual void updateud(double t, int i=0) { throw MBSimError("ERROR (DynamicSystem::updateud): Not implemented!"); }
+      virtual void updatezd(double t) = 0;
+      virtual void updatedu(double t, double dt) = 0;
       virtual void updateqd(double t);
       virtual void sethSize(int hSize_, int i=0);
       virtual int gethSize(int i=0) const { return hSize[i]; }
@@ -84,12 +88,15 @@ namespace MBSim {
       virtual int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize();
       virtual void calcuSize(int j=0);
-      virtual int getqInd(DynamicSystem* sys);
+      //virtual int getqInd(DynamicSystem* sys);
       virtual int getuInd(int i=0) { return uInd[i]; }
-      virtual int getuInd(DynamicSystem* sys, int i=0);
-      virtual void setqInd(int qInd_) { qInd = qInd_; }
-      virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      virtual int gethInd(DynamicSystem* sys, int i=0); 
+      //virtual int getuInd(DynamicSystem* sys, int i=0);
+      //virtual void setqInd(int qInd_) { qInd = qInd_; }
+      //virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
+      virtual void setqInd(int qInd_);
+      virtual void setuInd(int uInd_, int i=0);
+      virtual void sethInd(int hInd_, int i=0);
+      //virtual int gethInd(DynamicSystem* sys, int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
@@ -223,9 +230,6 @@ namespace MBSim {
       /*****************************************************/
 
       /* GETTER / SETTER */
-      DynamicSystem* getParent() { return parent; }
-      void setParent(DynamicSystem* sys) { parent = sys; }
-
       void setPosition(const fmatvec::Vec& PrPF_) { PrPF = PrPF_; }
       void setOrientation(const fmatvec::SqrMat& APF_) { APF = APF_; }
       void setFrameOfReference(Frame *frame) { frameParent = frame; };
@@ -275,7 +279,6 @@ namespace MBSim {
       int getlaInd() const { return laInd; } 
 
       int gethInd(int i=0) { return hInd[i]; }
-      void sethInd(int hInd_, int i=0) { hInd[i] = hInd_; }
       void setlaInd(int ind) { laInd = ind; }
       void setgInd(int ind) { gInd = ind; }
       void setgdInd(int ind) { gdInd = ind; }
@@ -341,30 +344,6 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updatehRef(const fmatvec::Vec &hRef, int i=0);
-
-      /**
-       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding positions
-       * \param matrix concerning objects to be referenced
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updatedhdqRef(const fmatvec::Mat &dhdqObjectParent, const fmatvec::Mat &dhdqLinkParent, int j=0);
-
-      /**
-       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding velocities
-       * \param matrix concerning objects to be referenced
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updatedhduRef(const fmatvec::SqrMat &dhduObjectParent, const fmatvec::SqrMat &dhduLinkParent, int j=0);
-
-      /**
-       * \brief references to smooth object and link Jacobian for implicit integration of dynamic system parent regarding time
-       * \param matrix concerning objects to be referenced
-       * \param matrix concerning links to be referenced
-       * \param index of normal usage and inverse kinetics
-       */
-      void updatedhdtRef(const fmatvec::Vec    &dhdtObjectParent, const fmatvec::Vec    &dhdtLinkParent, int j=0);
 
       /**
        * \brief references to order one right hand side of dynamic system parent
@@ -787,11 +766,6 @@ namespace MBSim {
       virtual Element *getByPathSearch(std::string path);
 
     protected:
-      /**
-       * \brief parent dynamic system
-       */
-      DynamicSystem *parent;
-
       /**
        * \brief parent frame
        */

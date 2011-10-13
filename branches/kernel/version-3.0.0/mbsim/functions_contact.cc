@@ -71,6 +71,7 @@ namespace MBSim {
         }
       }
     }
+    std::cout << "nRoots = " << nRoots << std::endl;
 
     if(nRoots > 1) { // compare roots with respect to contact distances
       double g_=1e10;
@@ -81,6 +82,8 @@ namespace MBSim {
           sMin = alphaC(i);
           g_=gbuf(i);
         }
+      std::cout << "sMin = "<< sMin << std::endl;
+      std::cout << "g_ = "<< g_ << std::endl;
       return sMin;
     }
     else { // at most one root (even if no root: solution is signalising OutOfBounds)

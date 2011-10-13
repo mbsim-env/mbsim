@@ -175,6 +175,7 @@ namespace MBSim {
       /** DEPRECATED */
       virtual std::string getType() const { return "DynamicSystemSolver"; }
       virtual void plot(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
+      virtual void plot2(const fmatvec::Vec& z, double t, double dt=1); // TODO completely rearrange
 
       virtual void closePlot();
       /***************************************************/

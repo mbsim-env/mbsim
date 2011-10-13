@@ -384,5 +384,200 @@ namespace MBSim {
     return Jd;
   }
 
+////   Kinematics::Kinematics() : PjT(3,INIT,0.), PjR(3,INIT,0.), PdjT(3,INIT,0.), PdjR(3,INIT,0.), APK(3,EYE), PrPK(3,INIT,0.),  fT(0), fPrPK(0), fAPK(0), fPJT(0), fPJR(0), fPdJT(0), fPdJR(0), fPjT(0), fPjR(0), fPdjT(0), fPdjR(0) {
+////   }
+//// 
+//// //  void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
+//// //    updateT(qRel,t);
+//// //    updateqdRel(uRel);
+//// //    updatePJT(qRel,t);
+//// //    updatePJR(qRel,t);
+//// //    updatePjT(t);
+//// //    updatePjR(t);
+//// //    updateAPK(qRel,t);
+//// //    updatePrPK(qRel,t);
+//// //    updatePdJT(qdRel,qRel,t);
+//// //    updatePdJR(qdRel,qRel,t);
+//// //    updatePdjT(t);
+//// //    updatePdjR(t);
+//// //  }
+//// 
+////   void Kinematics::calcqSize() {
+////     int nqT=0, nqR=0;
+////     if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+////       nqT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+////       nqR = nqT;
+////     }
+////     else if(fPrPK)
+////       nqT = fPrPK->getqSize();
+////     if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
+////       nqR += 1; 
+////       nqT = nqR;
+////     }
+////     else if(fAPK)
+////       nqR = fAPK->getqSize();
+////     // TODO: besseres Konzept überlegen
+////     assert(nqT == nqR);
+////     qSize = nqT;
+////   }
+//// 
+////   void Kinematics::calcuSize(int j) {
+////     int nuT=0, nuR=0;
+////     if(j==0) {
+////       if(fPJT==0) {
+//// 	if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+//// 	  nuT += dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors().cols();
+//// 	  nuR = nuT;
+//// 	} else
+//// 	  nuT = 0;
+////       } 
+//// 
+////       if(fPJR==0) {
+//// 	if(dynamic_cast<RotationAboutOneAxis*>(fAPK)) {
+//// 	  nuR += 1; 
+//// 	  nuT = nuR;
+//// 	} 
+////       } else
+////         nuR = fPJR->getuSize();
+////       assert(nuT == nuR);
+////       uSize[j] = nuT;
+////     } else {
+////       uSize[j] = 6;
+////     }
+////   }
+//// 
+////   void Kinematics::init(InitStage stage) {
+////     if(stage==resize) {
+//// 
+////       PJT[0].resize(3,uSize[0]);
+////       PJR[0].resize(3,uSize[0]);
+//// 
+////       PdJT.resize(3,uSize[0]);
+////       PdJR.resize(3,uSize[0]);
+//// 
+////       PJT[1].resize(3,uSize[1]);
+////       PJR[1].resize(3,uSize[1]);
+////       for(int i=0; i<3; i++)
+//// 	PJT[1](i,i) = 1;
+////       for(int i=3; i<6; i++)
+//// 	PJR[1](i-3,i) = 1;
+////     }
+////     else if(stage==MBSim::unknownStage) {
+//// 
+////       if(fPJT==0) {
+////         Mat JT(3,0);
+////         if(dynamic_cast<LinearTranslation*>(fPrPK)) {
+////           JT.resize() = dynamic_cast<LinearTranslation*>(fPrPK)->getTranslationVectors();
+////         } 
+////         PJT[0](Index(0,2), Index(0,JT.cols()-1)) = JT;
+////       }
+////       if(fPJR==0) {
+////         Mat JR(3,0);
+//// 
+////         if(dynamic_cast<RotationAboutXAxis*>(fAPK)) 
+////           JR.resize() = Vec("[1;0;0]");
+//// 	else if(dynamic_cast<RotationAboutYAxis*>(fAPK)) 
+////           JR.resize() = Vec("[0;1;0]");
+//// 	else if(dynamic_cast<RotationAboutZAxis*>(fAPK)) 
+////           JR.resize() = Vec("[0;0;1]");
+////         else if(dynamic_cast<RotationAboutFixedAxis*>(fAPK)) 
+////           JR.resize() = dynamic_cast<RotationAboutFixedAxis*>(fAPK)->getAxisOfRotation();
+////         else if(dynamic_cast<RotationAboutAxesYZ*>(fAPK)) {
+////           fPJR = new JRotationAboutAxesYZ(uSize[0]);
+////           fPdJR = new JdRotationAboutAxesYZ(uSize[0]);
+////         }
+////         else if(dynamic_cast<RotationAboutAxesXY*>(fAPK)) {
+////           fPJR = new JRotationAboutAxesXY(uSize[0]);
+////           fPdJR = new JdRotationAboutAxesXY(uSize[0]);
+////         }
+////         else if(dynamic_cast<CardanAngles*>(fAPK)) {
+////           JR.resize() << DiagMat(3,INIT,1);
+//// 	  fT = new TCardanAngles(qSize,uSize[0]);
+////         }
+//// 	else if(dynamic_cast<EulerAngles*>(fAPK)) {
+////           JR.resize() << DiagMat(3,INIT,1);
+//// 	  fT = new TEulerAngles(qSize,uSize[0]);
+////         }
+//// 
+////         PJR[0](Index(0,2), Index(uSize[0]-JR.cols(),uSize[0]-1)) = JR;
+////       }
+//// 
+////       T.resize(qSize,uSize[0]); // TODO: nach resize
+//// 
+////       for(int i=0; i<uSize[0]; i++) 
+////         T(i,i) = 1;
+////     }
+////     //else
+////     //  Body::init(stage);
+////   }
+////  // KinematicsTranslation::KinematicsTranslation() {
+////  // }
+//// 
+////  // void KinematicsTranslation::update(const Vec& qdRel, const Vec& qRel, double t) {
+////  //   //if(fPJT)
+////  //     PJT = fPJT(qRel,t);
+//// 
+////  //   //if(fPjT)
+////  //     PjT = fPjT(t);
+//// 
+////  //   //if(fPrPK)
+////  //     PrPK = fPrPK(qRel,t);
+//// 
+////  //   //if(fPdJT)
+////  //     PdJT = fPdJT(qdRel,qRel,t);
+//// 
+////  //   //if(fPdjT)
+////  //     PdjT = fPdjT(t);
+//// 
+////  // }
+//// 
+////  // void KinematicsRotation::update(const Vec& qdRel, const Vec& qRel, double t) {
+////  //   //if(fPJR)
+////  //     PJR = fPJR(qRel,t);
+//// 
+////  //   //if(fPjR)
+////  //     PjR = fPjR(t);
+//// 
+////  //   //if(fAPK)
+////  //     APK = fAPK(qRel,t);
+//// 
+////  //   //if(fPdJR)
+////  //     PdJR = fPdJR(qdRel,qRel,t);
+//// 
+////  //   //if(fPdjR)
+////  //     PdjR = fPdjR(t);
+////  // }
+//// 
+////  // void Kinematics::update(const Vec& uRel, const Vec& qRel, double t) {
+////  //   if(fT) 
+////  //     T = (*fT)(qRel,t); 
+////  //   Vec qdRel = T*uRel;
+////  //   translation->update(qdRel,qRel,t); 
+////  //   rotation->update(qdRel,qRel,t);
+////  // }
+//// 
+////  // SqrMat KinematicsRotationAboutFixedAxis::fAPK(const fmatvec::Vec &q, const double &t, const void *) {
+//// 
+////  //   int i = q.size()-1;
+////  //   const double cosq=cos(q(i));
+////  //   const double sinq=sin(q(i));
+////  //   const double onemcosq=1-cosq;
+////  //   const double a0a1=a(0)*a(1);
+////  //   const double a0a2=a(0)*a(2);
+////  //   const double a1a2=a(1)*a(2);
+//// 
+////  //   APK(0,0) = cosq+onemcosq*a(0)*a(0);
+////  //   APK(1,0) = onemcosq*a0a1+a(2)*sinq;
+////  //   APK(2,0) = onemcosq*a0a2-a(1)*sinq;
+////  //   APK(0,1) = onemcosq*a0a1-a(2)*sinq;
+////  //   APK(1,1) = cosq+onemcosq*a(1)*a(1);
+////  //   APK(2,1) = onemcosq*a1a2+a(0)*sinq;
+////  //   APK(0,2) = onemcosq*a0a2+a(1)*sinq;
+////  //   APK(1,2) = onemcosq*a1a2-a(0)*sinq;
+////  //   APK(2,2) = cosq+onemcosq*a(2)*a(2);
+//// 
+////  //   return APK;
+////  // }
+
 }
 

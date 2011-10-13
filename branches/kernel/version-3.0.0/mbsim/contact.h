@@ -295,7 +295,8 @@ namespace MBSim {
 
     private:
       std::string saved_ref1, saved_ref2;
-      bool watchg, watchgd[2], slide_right;
+      bool watchg, watchgd;
+      double gLim;
   };
 
 }
