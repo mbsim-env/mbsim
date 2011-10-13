@@ -33,8 +33,8 @@ namespace MBSimFlexibleBody {
    * \author Thomas Cebulla
    * \date 2011-09-10 initial commit (Thorsten Schindler)
    * \data 2011-10-08 basics derived and included (Thorsten Schindler)
-   * \todo gyroscopic rotational stuff in rhs TODO
-   * \todo strain stuff in rhs and energy TODO
+   * \date 2011-10-13 strain rhs corrected and added, strain energy calculated (Thorsten Schindler)
+   * \todo gyrosocopic rotation rhs terms TODO
    * \todo strain dissipation in rhs TODO
    * \todo contact Jacobian TODO
    * \todo computeState only in FlexibleBody TODO
@@ -94,6 +94,7 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setMaterialDamping(double cEps0D_);		
+      void setShearCorrectionFactors(double sigma1_, double sigma2_);		
       double getl0() const;
 
       /**
@@ -151,6 +152,11 @@ namespace MBSimFlexibleBody {
       double cEps0D;
 
       /**
+       * \brief shear correction factors
+       */
+      double sigma1, sigma2;
+
+      /**
        * \brief global system description 
        */
       fmatvec::SymMat M;
@@ -183,6 +189,7 @@ namespace MBSimFlexibleBody {
   inline fmatvec::Vec FiniteElement1s33CosseratTranslation::computeVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratTranslation::computeVelocity): Not implemented!"); }
   inline fmatvec::Vec FiniteElement1s33CosseratTranslation::computeAngularVelocity(const fmatvec::Vec& q, const fmatvec::Vec& u, const MBSim::ContourPointData &data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratTranslation::computeAngularVelocity): Not implemented!"); }
   inline fmatvec::Mat FiniteElement1s33CosseratTranslation::computeJacobianOfMotion(const fmatvec::Vec& qG,const MBSim::ContourPointData& data) { throw MBSim::MBSimError("ERROR (FiniteElement1s33CosseratTranslation::computeJacobianOfMotion): Not implemented!"); }
+  inline void FiniteElement1s33CosseratTranslation::setShearCorrectionFactors(double sigma1_, double sigma2_) { sigma1 = sigma1_; sigma2 = sigma2_; }		
   inline double FiniteElement1s33CosseratTranslation::getl0() const { return l0; }
 
 }
