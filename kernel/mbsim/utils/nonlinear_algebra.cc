@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -268,7 +268,7 @@ namespace MBSim {
 
     if(!greaterZero(q_)) {
       int i=0;
-      for(; i < pow(2,dim); i++ ) {
+      for(; i < ::pow(2,dim); i++ ) {
 
         if (i>0 and validBasis(basis))
           break;
@@ -302,7 +302,7 @@ namespace MBSim {
       }
       if(INFO) {
         cout << "Number of loops: " << i << endl;
-        cout << "Number of maximal loops: " << pow(2,dim) << endl;
+        cout << "Number of maximal loops: " << ::pow(2,dim) << endl;
       }
 
       if(!validBasis(basis))
