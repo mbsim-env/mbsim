@@ -96,7 +96,7 @@ namespace MBSimFlexibleBody {
       void setCrossSectionalArea(double A_);    	
       void setMomentsInertia(double I1_,double I2_,double I0_);
       void setCurlRadius(double R1_,double R2_);
-      void setMaterialDamping(double cEps0D_);
+      void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);
       void setCylinder(double cylinderRadius_);
       void setCuboid(double cuboidBreadth_,double cuboidHeight_);
 
@@ -171,9 +171,9 @@ namespace MBSimFlexibleBody {
       double R1, R2;
 
       /**
-       * \brief elongational damping 
+       * \brief strain damping 
        */
-      double cEps0D;
+      double cEps0D, cEps1D, cEps2D;
 
       /**
        * \brief open or closed beam structure
@@ -241,7 +241,7 @@ namespace MBSimFlexibleBody {
   inline void FlexibleBody1s33Cosserat::setCrossSectionalArea(double A_) { A = A_; }    	
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) { I1 = I1_; I2 = I2_; I0 = I0_; }    	
   inline void FlexibleBody1s33Cosserat::setCurlRadius(double R1_,double R2_) { R1 = R1_; R2 = R2_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1,R2); }    	
-  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_) { cEps0D = cEps0D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D); }
+  inline void FlexibleBody1s33Cosserat::setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_) { cEps0D = cEps0D_; cEps1D = cEps1D_; cEps2D = cEps2D_; if(initialised) for(int i=0;i<Elements;i++) static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements*cEps0D,cEps1D,cEps2D); }
   inline void FlexibleBody1s33Cosserat::setCylinder(double cylinderRadius_) { cylinderRadius = cylinderRadius_; }
   inline void FlexibleBody1s33Cosserat::setCuboid(double cuboidBreadth_,double cuboidHeight_) { cuboidBreadth = cuboidBreadth_; cuboidHeight = cuboidHeight_; }
 

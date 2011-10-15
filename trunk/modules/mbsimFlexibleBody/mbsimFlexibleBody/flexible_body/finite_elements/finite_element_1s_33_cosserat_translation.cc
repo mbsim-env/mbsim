@@ -29,12 +29,14 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
+  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), cEps1D(0.), cEps2D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
 
   FiniteElement1s33CosseratTranslation::~FiniteElement1s33CosseratTranslation() {}
 
-  void FiniteElement1s33CosseratTranslation::setMaterialDamping(double cEps0D_) {
+  void FiniteElement1s33CosseratTranslation::setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
     cEps0D = cEps0D_;
+    cEps1D = cEps1D_;
+    cEps2D = cEps2D_;
   }
 
   void FiniteElement1s33CosseratTranslation::computeM(const Vec& qG) {
@@ -177,13 +179,31 @@ namespace MBSimFlexibleBody {
      * attention: for ring structures damping like this seems not ro be appropriate
      * -> use setMassProportionalDamping
      */
-    Vec dSDdqGt(9); // elongation TODO remaining terms
-    dSDdqGt(0,2) = -tangent.copy();
-    dSDdqGt(3) = deltax.T()*dtangentdphi.col(0);
-    dSDdqGt(4) = deltax.T()*dtangentdphi.col(1);
-    dSDdqGt(5) = deltax.T()*dtangentdphi.col(2);
-    dSDdqGt(6,8) = tangent.copy();
-    dSDdqGt *= 2.*cEps0D*(deltax.T()*tangentt + deltaxt.T()*tangent)/l0;
+    Vec dSDTdqGt(9); // TODO CHECK
+    dSDTdqGt(0,2) = -tangent.copy() ;
+    dSDTdqGt(3) = -tangent.T()*dtangentdphi.col(0);
+    dSDTdqGt(4) = -tangent.T()*dtangentdphi.col(1);
+    dSDTdqGt(5) = -tangent.T()*dtangentdphi.col(2);
+    dSDTdqGt(6,8) = tangent.copy();
+    dSDTdqGt *= 2.*cEps0D*(deltaxt.T()*tangent/l0 - tangent.T()*tangentt.copy());
+
+    Vec dSDNdqGt(9);
+    dSDNdqGt(0,2) = -normal.copy();
+    dSDNdqGt(3) = -normal.T()*dtangentdphi.col(0);
+    dSDNdqGt(4) = -normal.T()*dtangentdphi.col(1);
+    dSDNdqGt(5) = -normal.T()*dtangentdphi.col(2);
+    dSDNdqGt(6,8) = normal.copy();
+    dSDNdqGt *= 2.*cEps1D*(deltaxt.T()*normal/l0 -normal.T()*tangentt.copy());
+ 
+    Vec dSDBdqGt(9);
+    dSDBdqGt(0,2) = -binormal.copy();
+    dSDBdqGt(3) = -binormal.T()*dtangentdphi.col(0);
+    dSDBdqGt(4) = -binormal.T()*dtangentdphi.col(1);
+    dSDBdqGt(5) = -binormal.T()*dtangentdphi.col(2);
+    dSDBdqGt(6,8) = binormal.copy();
+    dSDBdqGt *= 2.*cEps2D*(deltax.T()*binormal/l0 - binormal.T()*tangentt.copy());
+ 
+    Vec dSDdqGt = dSDTdqGt + dSDNdqGt + dSDBdqGt;
 
     /* generalized forces */
     h = -dVgdqG-dVeldqG-dSDdqGt;
