@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
       virtual fmatvec::Mat computeJacobianOfMotion(const fmatvec::Vec& qG, const MBSim::ContourPointData& data);
 
       /* GETTER / SETTER */
-      void setMaterialDamping(double cEps0D_);		
+      void setMaterialDamping(double cEps0D_,double cEps1D_,double cEps2D_);		
       void setShearCorrectionFactors(double sigma1_, double sigma2_);		
       double getl0() const;
 
@@ -147,9 +147,9 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec g;
 
       /**
-       * \brief elongational damping
+       * \brief strain damping
        */
-      double cEps0D;
+      double cEps0D, cEps1D, cEps2D;
 
       /**
        * \brief shear correction factors
