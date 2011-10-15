@@ -21,6 +21,7 @@
 #define FMATVEC_NO_INITIALIZATION
 #define FMATVEC_NO_BOUNDS_CHECK
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
+#include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -29,7 +30,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), cEps1D(0.), cEps2D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.) {}
+  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_ ,CardanPtr ag_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), cEps1D(0.), cEps2D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.), ag(ag_) {}
 
   FiniteElement1s33CosseratTranslation::~FiniteElement1s33CosseratTranslation() {}
 
@@ -56,70 +57,29 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s33CosseratTranslation::computeh(const Vec& qG, const Vec& qGt) {
     /* Cardan angles */
-    double salpha = sin(qG(3));
-    double sbeta = sin(qG(4));
-    double sgamma = sin(qG(5));
-    double calpha = cos(qG(3));
-    double cbeta = cos(qG(4));
-    double cgamma = cos(qG(5));
+    const Vec &Phi = qG(3,5);
+    const Vec &Phit = qGt(3,5);
     
     const double &alphat = qGt(3);
     const double &betat = qGt(4);
     const double &gammat = qGt(5);
 
-    Vec tangent(3);
-    tangent(0) = cbeta*cgamma;
-    tangent(1) = calpha*sgamma+salpha*sbeta*cgamma;
-    tangent(2) = salpha*sgamma-calpha*sbeta*cgamma;
-
-    SqrMat dtangentdphi(3);
-    dtangentdphi(0,0) = 0.;
-    dtangentdphi(0,1) = -sbeta*cgamma;
-    dtangentdphi(0,2) = -cbeta*sgamma;
-    dtangentdphi(1,0) = -salpha*sgamma+calpha*sbeta*cgamma; 
-    dtangentdphi(1,1) = salpha*cbeta*cgamma;
-    dtangentdphi(1,2) = calpha*cgamma-salpha*sbeta*sgamma;
-    dtangentdphi(2,0) = calpha*sgamma+salpha*sbeta*cgamma;
-    dtangentdphi(2,1) = -calpha*cbeta*cgamma;
-    dtangentdphi(2,2) = salpha*cgamma+calpha*sbeta*sgamma;
-
-    Vec tangentt = dtangentdphi*qGt(3,5);
+    double sbeta = sin(qG(4));
+    double sgamma = sin(qG(5));
+    double cbeta = cos(qG(4));
+    double cgamma = cos(qG(5));
     
-    Vec normal(3);
-    normal(0) = -sgamma*cbeta;
-    normal(1) = cgamma*calpha-salpha*sbeta*sgamma;
-    normal(2) = salpha*cgamma+calpha*sbeta*sgamma;
-
-    SqrMat dnormaldphi(3);
-    dnormaldphi(0,0)= 0.;
-    dnormaldphi(0,1)= sbeta*sgamma;
-    dnormaldphi(0,2)= -cgamma*cbeta;
-    dnormaldphi(1,0)= -salpha*cgamma-calpha*sbeta*sgamma;
-    dnormaldphi(1,1)= -salpha*cbeta*sgamma;
-    dnormaldphi(1,2)= -sgamma*calpha-salpha*sbeta*cgamma;
-    dnormaldphi(2,0)= calpha*cgamma-salpha*sbeta*sgamma;
-    dnormaldphi(2,1)= calpha*cbeta*sgamma;
-    dnormaldphi(2,2)= -salpha*sgamma+calpha*sbeta*cgamma;
-
-    Vec normaltt = dnormaldphi*qGt(3,5);
-
-    Vec binormal(3);
-    binormal(0) = sbeta;
-    binormal(1) = -cbeta*salpha;
-    binormal(2) = cbeta*calpha;
+    Vec tangent = ag->computet(Phi);
+    SqrMat dtangentdphi = ag->computetq(Phi);
+    Vec tangentt = dtangentdphi*Phit;
     
-    SqrMat dbinormaldphi(3);
-    dbinormaldphi(0,0) = 0.;
-    dbinormaldphi(0,1) = cbeta;
-    dbinormaldphi(0,2) = 0.;
-    dbinormaldphi(1,0) = -cbeta*calpha;
-    dbinormaldphi(1,1) = sbeta*salpha;
-    dbinormaldphi(1,2) = 0.;
-    dbinormaldphi(2,0) = -salpha*cbeta;
-    dbinormaldphi(2,1) = -sbeta*calpha;
-    dbinormaldphi(2,2) = 0.;
+    Vec normal = ag->computen(Phi);
+    SqrMat dnormaldphi = ag->computenq(Phi);
+    Vec normaltt = dnormaldphi*Phit;
 
-    Vec binormaltt = dbinormaldphi*qGt(3,5);
+    Vec binormal = ag->computeb(Phi);
+    SqrMat dbinormaldphi = ag->computebq(Phi);
+    Vec binormaltt = dbinormaldphi*Phit;
 
     /* position and velocity difference */
     Vec deltax = qG(6,8)-qG(0,2);
@@ -161,7 +121,6 @@ namespace MBSimFlexibleBody {
      * remark: translational part is zero
      */
     Vec dTRdphi(3,INIT,0.);
-    dTRdphi(0) = 0.0;
     dTRdphi(1) = -1.0*rho*l0*alphat*(pow(cgamma,2.0)*cbeta*I0*alphat*sbeta+cgamma*sbeta*I0*sgamma*betat+cbeta*I1*alphat*sbeta-1.0*cbeta*I1*alphat*pow(cgamma,2.0)*sbeta-1.0*sgamma*sbeta*I1*cgamma*betat-1.0*I2*alphat*cbeta*sbeta-1.0*cbeta*I2*gammat);
     dTRdphi(2) = rho*l0*(-1.0*cgamma*pow(cbeta,2.0)*I0*alphat*alphat*sgamma-1.0*alphat*cbeta*I0*betat+2.0*alphat*pow(cgamma,2.0)*cbeta*I0*betat+pow(cbeta,2.0)*I1*alphat*alphat*cgamma*sgamma-2.0*alphat*pow(cgamma,2.0)*cbeta*I1*betat+alphat*cbeta*I1*betat+I0*betat*betat*cgamma*sgamma-1.0*cgamma*I1*betat*betat*sgamma);
 
@@ -204,7 +163,7 @@ namespace MBSimFlexibleBody {
 
     /* generalized forces */
     h = -dVgdqG-dVeldqG-dSDdqGt;
-    h(3,5) += dTRdphi-dTRdphitphi*qGt(3,5);
+    h(3,5) += dTRdphi-dTRdphitphi*Phit;
   }
 
   double FiniteElement1s33CosseratTranslation::computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) {
@@ -237,27 +196,11 @@ namespace MBSimFlexibleBody {
 
   double FiniteElement1s33CosseratTranslation::computeElasticEnergy(const fmatvec::Vec& qG) {
     /* Cardan angles */
-    double salpha = sin(qG(3));
-    double sbeta = sin(qG(4));
-    double sgamma = sin(qG(5));
-    double calpha = cos(qG(3));
-    double cbeta = cos(qG(4));
-    double cgamma = cos(qG(5));
-
-    Vec tangent(3);
-    tangent(0) = cbeta*cgamma;
-    tangent(1) = calpha*sgamma+salpha*sbeta*cgamma;
-    tangent(2) = salpha*sgamma-calpha*sbeta*cgamma;
-
-    Vec normal(3);
-    normal(0) = -sgamma*cbeta;
-    normal(1) = cgamma*calpha-salpha*sbeta*sgamma;
-    normal(2) = salpha*cgamma+calpha*sbeta*sgamma;
-
-    Vec binormal(3);
-    binormal(0) = sbeta;
-    binormal(1) = -cbeta*salpha;
-    binormal(2) = cbeta*calpha;
+    const Vec &Phi = qG(3,5);
+    
+    Vec tangent = ag->computet(Phi);
+    Vec normal = ag->computen(Phi);
+    Vec binormal = ag->computeb(Phi);
 
     /* position difference */
     Vec deltax = qG(6,8)-qG(0,2);

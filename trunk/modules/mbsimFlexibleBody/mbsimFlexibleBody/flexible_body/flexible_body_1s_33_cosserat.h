@@ -21,6 +21,7 @@
 #define _FLEXIBLE_BODY_1S_33_COSSERAT_H_
 
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_cosserat_translation.h"
@@ -136,6 +137,11 @@ namespace MBSimFlexibleBody {
       FlexibleBand *top, *bottom, *left, *right;
 
       /**
+       * \brief angle parametrisation
+       */
+      CardanPtr angle;
+
+      /**
        * \brief number of elements
        */
       int Elements;
@@ -233,7 +239,6 @@ namespace MBSimFlexibleBody {
       void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
-  inline void FlexibleBody1s33Cosserat::updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame) { throw MBSim::MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): Not implemented!"); }
   inline void FlexibleBody1s33Cosserat::updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame) { throw MBSim::MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): Not implemented!"); }
   inline void FlexibleBody1s33Cosserat::setLength(double L_) { L = L_; }
   inline void FlexibleBody1s33Cosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	

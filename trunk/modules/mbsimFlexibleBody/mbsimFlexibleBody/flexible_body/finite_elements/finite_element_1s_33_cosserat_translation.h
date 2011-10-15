@@ -22,6 +22,7 @@
 
 #include "mbsim/discretization_interface.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsimFlexibleBody/pointer.h"
 #include "fmatvec.h"
 
 namespace MBSimFlexibleBody {
@@ -63,8 +64,9 @@ namespace MBSimFlexibleBody {
        * \param second area moment of inertia
        * \param torsional moment of inertia
        * \param acceleration of gravity
+       * \param cardan object
        */
-      FiniteElement1s33CosseratTranslation(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_);
+      FiniteElement1s33CosseratTranslation(double l0_,double rho_,double A_,double E_,double G_,double I1_,double I2_,double I0_,const fmatvec::Vec& g_,CardanPtr ag_);
 
       /**
        * \brief destructor
@@ -171,6 +173,11 @@ namespace MBSimFlexibleBody {
        * \brief state at Lagrangian coordinate
        */
       fmatvec::Vec X;
+      
+      /**
+       * \brief Cardan-object 
+       */
+      CardanPtr ag;
       
       FiniteElement1s33CosseratTranslation(); // standard constructor
       FiniteElement1s33CosseratTranslation(const FiniteElement1s33CosseratTranslation&); // copy constructor

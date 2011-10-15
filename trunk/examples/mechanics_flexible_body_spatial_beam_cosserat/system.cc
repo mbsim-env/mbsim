@@ -37,7 +37,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setMomentsInertia(I1,I2,I0);
   rod->setDensity(rho);
   //rod->setMassProportionalDamping(20.);
-  rod->setMaterialDamping(0.5,0.5,0.5);
+  rod->setMaterialDamping(0.1,0.1,0.1);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCuboid(b0,b0);
