@@ -37,7 +37,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->setMomentsInertia(I1,I2,I0);
   rod->setDensity(rho);
   //rod->setMassProportionalDamping(20.);
-  rod->setMaterialDamping(0.,0.,0.);
+  rod->setMaterialDamping(0.5,0.5,0.5);
   rod->setFrameOfReference(this->getFrame("I"));
   rod->setNumberElements(elements);
   rod->setCuboid(b0,b0);
@@ -63,7 +63,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // circle shape
   Vec q0 = Vec(6*elements,INIT,0.);
-  double R = l0/(2.*M_PI);
+  double R = l0*(1.2)/(2.*M_PI); // stretched circle
   double dphi = (2*M_PI)/elements;
   double phi0 = M_PI/2. + dphi;
   for(int i=0; i<elements; i++) { 
