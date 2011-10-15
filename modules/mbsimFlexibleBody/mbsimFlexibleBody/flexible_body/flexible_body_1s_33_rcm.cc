@@ -22,7 +22,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
+#include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/frame.h"
@@ -134,8 +134,8 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33RCM::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
       Vec X = computeState(cp.getLagrangeParameterPosition()(0)); // state of affected FE
-      Vec Phi = X(3,5);
-      Vec Phit = X(9,11);
+      const Vec &Phi = X(3,5);
+      const Vec &Phit = X(9,11);
 
       if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(Phi); // tangent
@@ -146,8 +146,8 @@ namespace MBSimFlexibleBody {
     }
     else if(cp.getContourParameterType() == NODE) { // frame on node
       int node = cp.getNodeNumber();
-      Vec Phi = q(10*node+3,10*node+5);
-      Vec Phit = u(10*node+3,10*node+5);
+      const Vec &Phi = q(10*node+3,10*node+5);
+      const Vec &Phit = u(10*node+3,10*node+5);
 
       if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(10*node+0,10*node+2));
       if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(Phi); // tangent

@@ -22,7 +22,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/trafo33RCM.h"
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/revcardan.h"
+#include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/mbsim_event.h"

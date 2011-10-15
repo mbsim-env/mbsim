@@ -20,8 +20,8 @@
 #ifndef _FLEXIBLE_BODY_1S_33_RCM_H_
 #define _FLEXIBLE_BODY_1S_33_RCM_H_
 
-#include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/pointer.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include "mbsimFlexibleBody/contours/cylinder_flexible.h"
 #include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm.h"
