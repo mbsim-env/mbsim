@@ -108,7 +108,9 @@ namespace MBSimFlexibleBody {
       void setOpenMBVSpineExtrusion(OpenMBV::SpineExtrusion* body) { openMBVBody=body; }
 #endif
 
+      int getNumberElements() const { return Elements; }   	
       double getLength() const { return L; }
+      bool isOpenStructure() const { return openStructure; }
       /***************************************************/
 
       /**
