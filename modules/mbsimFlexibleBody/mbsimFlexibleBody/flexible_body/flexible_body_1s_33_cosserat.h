@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief contour for state description
        */
-      NurbsCurve1s *contour;
+      NurbsCurve1s *curve;
 
       FlexibleBody1s33Cosserat(); // standard constructor
       FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor

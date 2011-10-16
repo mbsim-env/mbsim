@@ -21,9 +21,6 @@
 
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
-#include "mbsim/utils/eps.h"
-
-#include <iostream>
 
 #ifdef HAVE_NURBS
 using namespace PLib;
@@ -47,6 +44,24 @@ namespace MBSimFlexibleBody {
     if(curveVelocities) {delete curveVelocities; curveVelocities=NULL;}
     if(uvec) {delete uvec; uvec=NULL;}
     if(uVec) {delete uVec; uVec=NULL;}
+#endif
+  }
+
+  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+#ifdef HAVE_NURBS
+    if(ff==position) {
+      Point3Dd Tmppt = curveTranslations->pointAt(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().getPosition()(0) = Tmppt.x();
+      cp.getFrameOfReference().getPosition()(1) = Tmppt.y();
+      cp.getFrameOfReference().getPosition()(2) = Tmppt.z();
+    }
+
+    if(ff==velocity) {
+      Point3Dd Tmpv = curveVelocities->pointAt(cp.getLagrangeParameterPosition()(0));
+      cp.getFrameOfReference().getVelocity()(0) = Tmpv.x();
+      cp.getFrameOfReference().getVelocity()(1) = Tmpv.y();
+      cp.getFrameOfReference().getVelocity()(2) = Tmpv.z();
+    }
 #endif
   }
 
@@ -136,7 +151,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+1);
       for(int i=0; i<Elements+1; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,position);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2),1);
       }
       curveTranslations->globalInterpH(Nodelist, *uvec, *uVec, degU);
@@ -145,7 +160,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<HPoint3Dd> Nodelist(Elements+degU);
       for(int i=0; i<Elements; i++) {
         ContourPointData cp(i);
-        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,position);
+        static_cast<FlexibleBody1s33Cosserat*>(parent)->updateKinematicsForFrame(cp,velocity);
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getVelocity()(0),cp.getFrameOfReference().getVelocity()(1),cp.getFrameOfReference().getVelocity()(2),1);
       }
       for(int i=0;i<degU;i++) {
