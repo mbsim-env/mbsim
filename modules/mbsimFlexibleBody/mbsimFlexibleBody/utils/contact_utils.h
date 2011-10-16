@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,12 +14,11 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: martin.o.foerg@googlemail.com
- *          rzander@users.berlios.de
+ * Contact: markus.ms.schneider@googlemail.com
  */
 
-#ifndef _CONTACT_UTILS_FLEXIBLE_H_
-#define _CONTACT_UTILS_FLEXIBLE_H_
+#ifndef _MBSIMFLEXIBLEBODY_CONTACT_UTILS_H_
+#define _MBSIMFLEXIBLEBODY_CONTACT_UTILS_H_
 
 namespace MBSim {
   class ContactKinematics;
@@ -28,13 +27,16 @@ namespace MBSim {
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief defines contact kinematics between two contours with one flexible
+   * \brief defines contact kinematics between one rigid and one flexible contour
+   * \param first contour
+   * \param second contour
+   * \return contact kinematics
    * \author Markus Schneider
-   * \date 2010-11-05 initialCommit (Markus Schneider)
+   * \date 2010-11-05 initial commit (Markus Schneider)
    */
   MBSim::ContactKinematics* findContactPairingFlexible(const char *contour0, const char *contour1);
 
 }
 
-#endif /* _CONTACT_UTILS_FLEXIBLE_H_ */
+#endif /* _MBSIMFLEXIBLEBODY_CONTACT_UTILS_H_ */
 

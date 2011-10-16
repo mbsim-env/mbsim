@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Roland Zander
- 
+/* Copyright (C) 2004-2011 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *   rzander@users.berlios.de
- *
+ * Contact: thorsten.schindler@mytum.de
+ *          rzander@users.berlios.de
  */
+
 #ifndef _FINITE_ELEMENT_1S_21_ANCF_H_
 #define _FINITE_ELEMENT_1S_21_ANCF_H_
 
@@ -26,13 +25,14 @@
 
 namespace MBSimFlexibleBody {
 
-  /*! \brief
-   * Finite %Element for 2D-Beam using Absolute Nodal Coordinate Formulation(ANCF)
+  /**
+   * \brief finite element for planar beam using Absolute Nodal Coordinate Formulation (ANCF)
+   * \author Roland Zander
    *
-   * see SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306 and
-   *
-   *     SHABANA, A. A.: Definition of the Slopes and the Finite %Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
-   * */
+   * model based on
+   * SHABANA, A. A.: Computer Implementation of the Absolute Nodal Coordinate Formulation for Flexible Multibody Dynamics. In: Nonlinear Dynamics 16 (1998), S. 293-306
+   * SHABANA, A. A.: Definition of the Slopes and the Finite Element Absolute Nodal Coordinate Formulation. In: Nonlinear Dynamics 1 (1997), S. 339-348
+   */
   class FiniteElement1s21ANCF
   {
     protected:

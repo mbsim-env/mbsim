@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2011 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@googlemail.com
  */
 
 #ifndef _MBSIMFLEXIBLEBODY_OBJECTFACTORY_H_
@@ -31,18 +31,37 @@ namespace MBSim {
 
 namespace MBSimFlexibleBody {
 
+  /**
+   * \brief object factory for XML modeling
+   * \author Markus Schneider
+   * \date 2011-10-16 some comments (Thorsten Schindler)
+   */
   class ObjectFactory : protected MBSim::ObjectFactory {
-    private:
-      static ObjectFactory *instance;
-      ObjectFactory() {}
     public:
-      // This static function must be called before the ObjectFactory is usend to create
-      // objects from MBSimObjectFactory
+      /**
+       * \brief create and register new ObjectFactory
+       */
       static void initialize();
+    
     protected:
+      /**
+       * \brief create objects with registered ObjectFactory
+       * \param XML object
+       * \return analogous MBSim::Object
+       */
       MBSim::Object* createObject(TiXmlElement *element);
+    
+    private:
+      /**
+       * \brief instance of ObjectFactory
+       */
+      static ObjectFactory *instance;
+      
+      ObjectFactory() {} // standard constructor
+      ObjectFactory(const ObjectFactory&); // copy constructor
+      ObjectFactory& operator=(const ObjectFactory&); // assignment operator
   };
 
 }
 
-#endif
+#endif /* _MBSIMFLEXIBLEBODY_OBJECTFACTORY_H_ */

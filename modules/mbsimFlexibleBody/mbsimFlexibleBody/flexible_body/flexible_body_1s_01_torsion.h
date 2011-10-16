@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Rainer Britz, Roland Zander
- 
+/* Copyright (C) 2004-2011 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,11 +13,9 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *    rzander@users.berlios.de
- *
+ * Contact: thorsten.schindler@mytum.de
+ *          rzander@users.berlios.de
  */
 
 #ifndef BODY_FLEXIBLE_1S_01_TORSION_H_
@@ -29,7 +27,11 @@ namespace MBSim {
 
 //  class Contour1sFlexible;
 
-  /*! \brief torsional axis with polinomial ansatz system of order \f$n\f$ */
+  /**
+   * \brief torsional axis with polynomial ansatz of order \f$n\f$
+   * \author Roland Zander
+   * \author Rainer Britz
+   */
   class BodyFlexible1s01Torsion : public BodyFlexible1s {
     protected:
       int n;
