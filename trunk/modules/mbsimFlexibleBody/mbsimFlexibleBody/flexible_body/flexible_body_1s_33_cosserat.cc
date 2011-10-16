@@ -22,6 +22,7 @@
 #define FMATVEC_NO_BOUNDS_CHECK
 
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
+#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/utils/cardan.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <mbsim/environment.h>
@@ -38,12 +39,13 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), angle(new Cardan()), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.) {
+  FlexibleBody1s33Cosserat::FlexibleBody1s33Cosserat(const string &name, bool openStructure_) : FlexibleBodyContinuum<double> (name), cylinder(new CylinderFlexible("Cylinder")), top(new FlexibleBand("Top")), bottom(new FlexibleBand("Bottom")), left(new FlexibleBand("Left")), right(new FlexibleBand("Right")), angle(new Cardan()), Elements(0), L(0.), l0(0.), E(0.), G(0.),A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), cEps0D(0.), cEps1D(0.), cEps2D(0.), openStructure(openStructure_), initialised(false), bound_ang_start(3,INIT,0.), bound_ang_end(3,INIT,0.), bound_ang_vel_start(3,INIT,0.), bound_ang_vel_end(3,INIT,0.), cuboidBreadth(0.), cuboidHeight(0.), cylinderRadius(0.), curve(new NurbsCurve1s("Curve")) {
     Body::addContour(cylinder);
     Body::addContour(top);
     Body::addContour(bottom);
     Body::addContour(left);
     Body::addContour(right);
+    Body::addContour(curve);
   }
 
   FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {
@@ -155,18 +157,17 @@ namespace MBSimFlexibleBody {
   
   void FlexibleBody1s33Cosserat::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff, Frame *frame) {
     if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
-      Vec X = computeState(cp.getLagrangeParameterPosition()(0)); // state of affected FE
-      const Vec &Phi = X(3,5);
-      const Vec &Phit = X(9,11);
-
-      if(ff==position || ff==position_cosy || ff==all) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation() * X(0,2));
-      if(ff==firstTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(1) = frameOfReference->getOrientation()*angle->computet(Phi); // tangent
-      if(ff==normal || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(0) = frameOfReference->getOrientation()*angle->computen(Phi); // normal
-      if(ff==secondTangent || ff==cosy || ff==position_cosy || ff==velocity_cosy || ff==velocities_cosy || ff==all) cp.getFrameOfReference().getOrientation().col(2) = crossProduct(cp.getFrameOfReference().getOrientation().col(0),cp.getFrameOfReference().getOrientation().col(1)); // binormal
-      if(ff==velocity || ff==velocity_cosy || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*X(6,8));
-      if(ff==angularVelocity || ff==velocities || ff==velocities_cosy || ff==all) cp.getFrameOfReference().setAngularVelocity(frameOfReference->getOrientation()*angle->computeOmega(Phi,Phit));
+#ifdef HAVE_NURBS
+      curve->updateKinematicsForFrame(cp,ff);
+#endif
     }
-    else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'CONTINUUM'");
+    else if(cp.getContourParameterType() == NODE) { // frame on node
+      int node = cp.getNodeNumber();
+
+      if(ff==position) cp.getFrameOfReference().setPosition(frameOfReference->getPosition() + frameOfReference->getOrientation()*q(6*node+0,6*node+2));
+      if(ff==velocity) cp.getFrameOfReference().setVelocity(frameOfReference->getOrientation()*u(6*node+0,6*node+2));
+    }
+    else throw MBSimError("ERROR(FlexibleBody1s33Cosserat::updateKinematicsForFrame): ContourPointDataType should be 'NODE' or 'CONTINUUM'");
 
     if(frame!=0) { // frame should be linked to contour point data
       frame->setPosition(cp.getFrameOfReference().getPosition());
@@ -296,6 +297,10 @@ namespace MBSimFlexibleBody {
     }
 
     else FlexibleBodyContinuum<double>::init(stage);
+
+#ifdef HAVE_NURBS
+    curve->initContourFromBody(stage);
+#endif
   }
 
   double FlexibleBody1s33Cosserat::computePotentialEnergy() {
@@ -334,11 +339,10 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33Cosserat::updateStateDependentVariables(double t) {
     FlexibleBodyContinuum<double>::updateStateDependentVariables(t);
 
-//#ifdef HAVE_NURBS
-//    contour->computeSurface();
-//    contour->computeSurfaceVelocities();
-//    contour->computeSurfaceJacobians();
-//#endif
+#ifdef HAVE_NURBS
+    curve->computeCurveTranslations();
+    curve->computeCurveVelocities();
+#endif
   }
 
   void FlexibleBody1s33Cosserat::plot(double t, double dt) {
@@ -399,7 +403,14 @@ namespace MBSimFlexibleBody {
     double sLocal;
     int currentElement;
     BuildElement(sGlobal,sLocal,currentElement); // Lagrange parameter of affected FE
-    return static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
+    Vec temp = static_cast<FiniteElement1s33CosseratTranslation*> (discretization[currentElement])->computeState(qElement[currentElement],uElement[currentElement],sLocal);
+
+    //ContourPointData cp(sGlobal);
+    //updateKinematicsForFrame(cp,position);
+    //temp(0,2) = cp.getFrameOfReference().getPosition().copy();
+    //updateKinematicsForFrame(cp,velocity);
+    //temp(6,8) = cp.getFrameOfReference().getVelocity().copy();
+    return temp.copy();
   }
 
   void FlexibleBody1s33Cosserat::BuildElement(const double& sGlobal, double& sLocal,int& currentElement) {
