@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thschindler@users.berlios.de
+ * Contact: thorsten.schindler@mytum.de
  */
 
 #include<config.h>
@@ -176,6 +176,40 @@ namespace MBSimFlexibleBody {
     }
   }
 
+  void FlexibleBody1s33Cosserat::updateJacobiansForFrame(ContourPointData &cp, Frame *frame) {
+    Index All(0,5);
+    Index One(0,2);
+    Mat Jacobian(qSize,6,INIT,0.);
+
+    if(cp.getContourParameterType() == CONTINUUM) { // frame on continuum
+      double sLocal;
+      int currentElement;
+      BuildElement(cp.getLagrangeParameterPosition()(0), sLocal, currentElement); // compute parameters of affected FE
+      Mat Jtmp = static_cast<FiniteElement1s33CosseratTranslation*>(discretization[currentElement])->computeJacobianOfMotion(qElement[currentElement],sLocal); // this local ansatz yields continuous and finite wave propagation 
+
+      if(currentElement<Elements-1 || openStructure) {
+        Jacobian(Index(10*currentElement,10*currentElement+15),All) = Jtmp;
+      }
+      else { // last FE for closed structure
+        Jacobian(Index(10*currentElement,10*currentElement+9),All) = Jtmp(Index(0,9),All);
+        Jacobian(Index(0,5),All) = Jtmp(Index(10,15),All);
+      }
+    }
+    else throw MBSimError("ERROR(FlexibleBody1s33RCM::updateJacobiansForFrame): ContourPointDataType should be 'CONTINUUM'");
+
+    cp.getFrameOfReference().setJacobianOfTranslation(frameOfReference->getOrientation()*Jacobian(0,0,qSize-1,2).T());
+    cp.getFrameOfReference().setJacobianOfRotation(frameOfReference->getOrientation()*Jacobian(0,3,qSize-1,5).T()); 
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfTranslation(TODO)
+    // cp.getFrameOfReference().setGyroscopicAccelerationOfRotation(TODO)
+
+    if(frame!=0) { // frame should be linked to contour point data
+      frame->setJacobianOfTranslation(cp.getFrameOfReference().getJacobianOfTranslation());
+      frame->setJacobianOfRotation(cp.getFrameOfReference().getJacobianOfRotation());
+      frame->setGyroscopicAccelerationOfTranslation(cp.getFrameOfReference().getGyroscopicAccelerationOfTranslation());
+      frame->setGyroscopicAccelerationOfRotation(cp.getFrameOfReference().getGyroscopicAccelerationOfRotation());
+    }
+  }
+
   void FlexibleBody1s33Cosserat::init(InitStage stage) {
     if(stage == unknownStage) {
       FlexibleBodyContinuum<double>::init(stage);
@@ -295,6 +329,16 @@ namespace MBSimFlexibleBody {
     }
     for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),h); // assemble
     for(int i=0;i<(int)rotationDiscretization.size();i++) GlobalVectorContributionRotation(i,rotationDiscretization[i]->geth(),hObject); // assemble
+  }
+
+  void FlexibleBody1s33Cosserat::updateStateDependentVariables(double t) {
+    FlexibleBodyContinuum<double>::updateStateDependentVariables(t);
+
+//#ifdef HAVE_NURBS
+//    contour->computeSurface();
+//    contour->computeSurfaceVelocities();
+//    contour->computeSurfaceJacobians();
+//#endif
   }
 
   void FlexibleBody1s33Cosserat::plot(double t, double dt) {

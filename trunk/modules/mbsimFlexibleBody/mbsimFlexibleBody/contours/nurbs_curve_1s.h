@@ -17,12 +17,12 @@
  * Contact: thorsten.schindler@mytum.de
  */
 
-#ifndef NURBSDISK2S_H_
-#define NURBSDISK2S_H_
+#ifndef NURBSCURVE1S_H_
+#define NURBSCURVE1S_H_
 
 #include "fmatvec.h"
 #include "mbsim/mbsim_event.h"
-#include "mbsim/contours/contour2s.h"
+#include "mbsim/contours/contour1s.h"
 #include "mbsimFlexibleBody/utils/contact_utils.h"
 
 #ifdef HAVE_NURBS
@@ -59,44 +59,36 @@
 namespace MBSimFlexibleBody {
 
   /*!  
-   * \brief 2s flexible
-   * \author Kilian Grundl
-   * \author Raphael Missel
+   * \brief contour 1s flexible with NURBS parametrization
    * \author Thorsten Schindler
-   * \date 2009-05-22 initial commit (Grundl / Missel / Schindler)
-   * \date 2009-06-04 separate contour files (Thorsten Schindler)
-   * \date 2009-08-16 contour / visualisation (Grundl / Missel / Schindler)
-   * \date 2010-04-21 flexible disks with parent (Grundl / Schindler)
-   * \todo computeSurfaceJacobians / computeSurfaceVelocities only in contact case TODO
-   * \todo angularVelocity TODO
-   * \todo flexible body should only parametrise midplane -> other surfaces in contour TODO
+   * \date 2011-10-16 initial commit (Thorsten Schindler)
    */
-  class NurbsDisk2s : public MBSim::Contour2s {
+  class NurbsCurve1s : public MBSim::Contour1s {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      NurbsDisk2s(const std::string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
+      NurbsCurve1s(const std::string &name) : MBSim::Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
 #ifndef HAVE_NURBS
-        throw MBSim::MBSimError("ERROR(NurbsDisk2s::NurbsDisk2s): External NURBS library not implemented!");
+        throw MBSim::MBSimError("ERROR(NurbsCurve1s::NurbsCurve1s): External NURBS library not implemented!");
 #endif
       }
 
       /**
        * \brief destructor
        */
-      virtual ~NurbsDisk2s();  
+      virtual ~NurbsCurve1s();  
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual std::string getType() const { return "NurbsDisk2s"; }
+      virtual std::string getType() const { return "NurbsCurve1s"; }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOURCONTINUUM */
-      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionPosition): Not implemented!"); }
-      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionFirstTangent): Not implemented!"); }
-      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionNormal): Not implemented!"); }
-      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsDisk2s::computeRootFunctionSecondTangent): Not implemented!"); }
+      virtual void computeRootFunctionPosition(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionPosition): Not implemented!"); }
+      virtual void computeRootFunctionFirstTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionFirstTangent): Not implemented!"); }
+      virtual void computeRootFunctionNormal(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionNormal): Not implemented!"); }
+      virtual void computeRootFunctionSecondTangent(MBSim::ContourPointData &cp) { throw MBSim::MBSimError("ERROR(NurbsCurve1s::computeRootFunctionSecondTangent): Not implemented!"); }
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
@@ -273,5 +265,5 @@ namespace MBSimFlexibleBody {
 
 }
 
-#endif /* NURBSDISK2S_H_ */
+#endif /* NURBSCURVE1S_H_ */
 

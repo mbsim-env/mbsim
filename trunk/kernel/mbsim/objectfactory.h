@@ -55,7 +55,7 @@ class MBSimObjectFactory : protected ObjectFactory {
     static MBSimObjectFactory *instance;
     MBSimObjectFactory() {}
   public:
-    // This static function must be called before the ObjectFactory is usend to create
+    // This static function must be called before the ObjectFactory is used to create
     // objects from MBSimObjectFactory
     static void initialize();
   protected:

@@ -19,7 +19,7 @@
 
 #include<config.h>
 
-#include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
+#include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13.h"
 #include "mbsim/utils/eps.h"
 
@@ -35,7 +35,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  NurbsDisk2s::~NurbsDisk2s() {
+  NurbsCurve1s::~NurbsCurve1s() {
 #ifdef HAVE_NURBS
     if(Surface) {delete Surface; Surface=0;}
     if(SurfaceVelocities) {delete SurfaceVelocities; SurfaceVelocities=0;}
@@ -46,7 +46,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void NurbsDisk2s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
+  void NurbsCurve1s::updateKinematicsForFrame(ContourPointData &cp, FrameFeature ff) {
 #ifdef HAVE_NURBS
     if(nrm2(cp.getLagrangeParameterPosition()) < epsroot()) { // center of gravity
       cp.getFrameOfReference().setOrientation(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA());
@@ -63,7 +63,7 @@ namespace MBSimFlexibleBody {
         cp.getFrameOfReference().setAngularVelocity(R.getOrientation() * static_cast<FlexibleBody2s13*>(parent)->getA() * static_cast<FlexibleBody2s13*>(parent)->getG() * static_cast<FlexibleBody2s13*>(parent)->getu()(3,5));
         break;
         default:
-        throw MBSimError("ERROR(NurbsDisk2s::updateKinematicsForFrame): Unknown number of reference dofs!");
+        throw MBSimError("ERROR(NurbsCurve1s::updateKinematicsForFrame): Unknown number of reference dofs!");
       }
     }
     else { // somewhere else
@@ -104,7 +104,7 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void NurbsDisk2s::updateJacobiansForFrame(ContourPointData &cp) {
+  void NurbsCurve1s::updateJacobiansForFrame(ContourPointData &cp) {
 #ifdef HAVE_NURBS
     cp.getFrameOfReference().getJacobianOfTranslation().resize(3,nj*nr*3+RefDofs);
     cp.getFrameOfReference().getJacobianOfRotation().resize(3,nj*nr*3+RefDofs);
@@ -133,7 +133,7 @@ namespace MBSimFlexibleBody {
   }
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::initContourFromBody(InitStage stage) {
+  void NurbsCurve1s::initContourFromBody(InitStage stage) {
     if(stage==resize) {
       degU = (static_cast<FlexibleBody2s13*>(parent))->getAzimuthalDegree();
       degV = (static_cast<FlexibleBody2s13*>(parent))->getRadialDegree();
@@ -171,12 +171,12 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  Vec NurbsDisk2s::transformCW(const Vec& WrPoint) {
+  Vec NurbsCurve1s::transformCW(const Vec& WrPoint) {
     return (static_cast<FlexibleBody2s13*>(parent))->transformCW(WrPoint);
   }
 
 #ifdef HAVE_NURBS
-  Mat NurbsDisk2s::computeDirectionalDerivatives(const double &radius, const double &phi, const int &deg) {
+  Mat NurbsCurve1s::computeDirectionalDerivatives(const double &radius, const double &phi, const int &deg) {
     PLib::Matrix<Point3Dd> Derivates(deg+1,deg+1);  // matrix that contains the derivates of the surface
 
     Surface->deriveAt(phi, radius, deg, Derivates);// azimuthal-direction is U-direction, radial-direction is V-direction!
@@ -203,13 +203,13 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS
-  Mat NurbsDisk2s::computeCurvatures(const double &radius, const double &phi) {
+  Mat NurbsCurve1s::computeCurvatures(const double &radius, const double &phi) {
     return computeDirectionalDerivatives(radius, phi, 2);
   }
 #endif
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::computeUVector(const int NbPts) {
+  void NurbsCurve1s::computeUVector(const int NbPts) {
     uvec = new PLib::Vector<double>(NbPts);
     uVec = new PLib::Vector<double>(NbPts + degU+1);
 
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::computeVVector(const int NbPts) {
+  void NurbsCurve1s::computeVVector(const int NbPts) {
     vvec = new PLib::Vector<double>(NbPts);
     vVec = new PLib::Vector<double>(NbPts + degV+1);
 
@@ -251,7 +251,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  void NurbsDisk2s::computeSurface() {
+  void NurbsCurve1s::computeSurface() {
     PLib::Matrix<HPoint3Dd> Nodelist(nj+degU,nr+1); // list of Cartesian node-coordinates for the nurbs interpolation (2*degU+1 is used for the 2 outline of the surface in azimuthal direction)
 
     // gets Points from body for interpolation
@@ -337,7 +337,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::computeSurfaceVelocities() {
+  void NurbsCurve1s::computeSurfaceVelocities() {
     PLib::Matrix<HPoint3Dd> Nodelist(nj+degU,nr+1); // list of Cartesian node-velocities for the nurbs interpolation (2*degU+1 is used for the 2 outline of the surface in azimuthal direction)
 
     // gets velocities from body for the interpolation
@@ -357,7 +357,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS
-  void NurbsDisk2s::computeSurfaceJacobians() {
+  void NurbsCurve1s::computeSurfaceJacobians() {
     PLib::Matrix<HPoint3Dd> NodelistTrans(nj+degU,nr+1); // list of node-data for the nurbs interpolation
     PLib::Matrix<HPoint3Dd> NodelistRot(nj+degU,nr+1);// list of node-data for the nurbs interpolation
 
@@ -393,7 +393,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getControlPoints(const int u, const int v) {
+  Vec NurbsCurve1s::getControlPoints(const int u, const int v) {
     Vec TmpVec(3);
 
     TmpVec(0) = Surface->ctrlPnts(u,v).x();
@@ -405,7 +405,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getUVector() {
+  Vec NurbsCurve1s::getUVector() {
     Vec TmpUVec(Surface->knotU().rows());
 
     for (int i=0;i<Surface->knotU().rows();i++)
@@ -416,7 +416,7 @@ namespace MBSimFlexibleBody {
 #endif
 
 #ifdef HAVE_NURBS 
-  Vec NurbsDisk2s::getVVector() {
+  Vec NurbsCurve1s::getVVector() {
     Vec TmpVVec(Surface->knotV().rows());
 
     for (int i=0;i<Surface->knotV().rows();i++)
@@ -426,7 +426,7 @@ namespace MBSimFlexibleBody {
   }
 #endif
 
-  int NurbsDisk2s::testInsideBounds(const Vec &s) {
+  int NurbsCurve1s::testInsideBounds(const Vec &s) {
     if ((s(0) < Ri) || (s(0) > Ra))
       return 0;
 
@@ -436,7 +436,7 @@ namespace MBSimFlexibleBody {
     return 1;
   }
 
-  double NurbsDisk2s::computeError(const Vec &Vec1, const Vec &Vec2) {
+  double NurbsCurve1s::computeError(const Vec &Vec1, const Vec &Vec2) {
     return nrm2(Vec1 - Vec2);
   }
 }

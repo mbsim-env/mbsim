@@ -1,36 +1,29 @@
-FlexibleBody - FlexibleBody for MBSim, Lehrstuhl für Angewandte Mechanik
-==============================
+FlexibleBody
+===========
 
-Benötigt:
-=========
+Necessary:
+===========
 	- mbsim
 
 Installation:
-=============
-	1. aclocal, autoconf, libtoolize und automake ausführen
-		
-                aclocal
-                autoheader
-                autoconf
-                libtoolize -c --force
-                automake -a -c --force
+===========
+	1. 
+        aclocal
+        autoheader
+        libtoolize -c --force
+        autoconf
+        automake -a -c --force
 			                
-	2. configure Skript ausführen.
+	2. 
+		    ./configure
 
-		./configure
+	      important options
 
-	   Hier sind folgende Optionen wichtig:
-
-  		--prefix=PREFIX (Dorthin werden die Bibliotheken installiert)
-          	­-help (Weitere Optionen)
+  		  --prefix=PREFIX (where to install the library)
+        -help (further options)
     
-  	3. make ausfuehren, um shared libraries zu erzeugen.
-                  
-                  make
+  3. 
+        make
 
-	4. make install ausfuehren, um libmbsimflexiblebody.so zu installieren.
-
-                  make install 
-				  
-Anmerkungen:
-============
+	4. 
+        make install 

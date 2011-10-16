@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: thschindler@users.berlios.de
+ * Contact: thorsten.schindler@mytum.de
  */
 
 #ifndef _FLEXIBLE_BODY_1S_33_COSSERAT_H_
@@ -31,6 +31,8 @@
 #endif
 
 namespace MBSimFlexibleBody {
+
+  class NurbsCurve1s;
 
   /**
    * \brief finite element for spatial beam using Cosserat model
@@ -83,6 +85,7 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
       virtual void updateh(double t);
+      virtual void updateStateDependentVariables(double t);
 
       /* INHERITED INTERFACE OF ELEMENT */
       virtual void plot(double t, double dt=1);
@@ -206,6 +209,11 @@ namespace MBSimFlexibleBody {
        */
       double cuboidBreadth, cuboidHeight, cylinderRadius;
 
+      /**
+       * \brief contour for state description
+       */
+      NurbsCurve1s *contour;
+
       FlexibleBody1s33Cosserat(); // standard constructor
       FlexibleBody1s33Cosserat(const FlexibleBody1s33Cosserat&); // copy constructor
       FlexibleBody1s33Cosserat& operator=(const FlexibleBody1s33Cosserat&); // assignment operator
@@ -239,7 +247,6 @@ namespace MBSimFlexibleBody {
       void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
   };
 
-  inline void FlexibleBody1s33Cosserat::updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame) { throw MBSim::MBSimError("ERROR(FlexibleBody1s33Cosserat::updateJacobiansForFrame): Not implemented!"); }
   inline void FlexibleBody1s33Cosserat::setLength(double L_) { L = L_; }
   inline void FlexibleBody1s33Cosserat::setEGModuls(double E_,double G_) { E = E_; G = G_; }    	
   inline void FlexibleBody1s33Cosserat::setDensity(double rho_) { rho = rho_;}     	

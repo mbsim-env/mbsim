@@ -1,5 +1,5 @@
-/* Copyright (C) 2005-2006  Rainer Britz, Roland Zander
- 
+/* Copyright (C) 2004-2011 MBSim Development Team
+ *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -13,12 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public 
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-
  *
- * Contact:
- *    rzander@users.berlios.de
- *
+ * Contact: thorsten.schindler@mytum.de
+ *          rzander@users.berlios.de
  */
+
 #include <config.h>
 #define FMATVEC_DEEP_COPY
 #include "body_flexible_1s_01_torsion.h"
@@ -30,13 +29,8 @@
 
 namespace MBSim {
 
-  BodyFlexible1s01Torsion::BodyFlexible1s01Torsion(const string &name)
-    :BodyFlexible1s(name),
-    E(0),rho(0),A(0),I(0),
-    Wt(3,2), Wn(3), CrOC(3), CvC(3),
-    WrON00(3), WrON0(3){ 
-
-    }
+  BodyFlexible1s01Torsion::BodyFlexible1s01Torsion(const string &name) : BodyFlexible1s(name), E(0),rho(0),A(0),I(0), Wt(3,2), Wn(3), CrOC(3), CvC(3), WrON00(3), WrON0(3) {
+  }
 
   void BodyFlexible1s01Torsion::setNumberShapeFunctions(int n_) {
     n = n_;
@@ -62,10 +56,6 @@ namespace MBSim {
   }
 
 
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
-  //oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-  //------------------------------------------------------------------------------
   void BodyFlexible1s01Torsion::initMatrizes()
   {
     //Massenmatrix
@@ -132,5 +122,3 @@ namespace MBSim {
 
 }
 
-  //------------------------------------------------------------------------------
-  // ENDE
