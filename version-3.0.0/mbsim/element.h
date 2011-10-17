@@ -236,9 +236,9 @@ namespace MBSim {
       virtual OpenMBV::Group* getOpenMBVGrp() {return 0;}
 #endif
 
-      Element* getParent() {return parent;}
-      const Element* getParent() const {return parent;}
-      void setParent(Element* parent_) {parent = parent_;}
+      virtual Element* getParent() {return parent;}
+      virtual const Element* getParent() const {return parent;}
+      virtual void setParent(Element* parent_) {parent = parent_;}
       /** 
        * \return full path of the object
        * \param delimiter of the path

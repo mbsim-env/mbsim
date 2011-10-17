@@ -96,6 +96,7 @@ namespace MBSim {
       virtual void setqInd(int qInd_);
       virtual void setuInd(int uInd_, int i=0);
       virtual void sethInd(int hInd_, int i=0);
+      virtual void setxInd(int xInd_);
       //virtual int gethInd(DynamicSystem* sys, int i=0); 
       virtual const fmatvec::Vec& getq() const { return q; };
       virtual fmatvec::Vec& getq() { return q; };
@@ -137,7 +138,6 @@ namespace MBSim {
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
       fmatvec::Vec& getx() { return x; };
-      void setxInd(int xInd_) { xInd = xInd_; }
       int getxSize() const { return xSize; }
       void updatexRef(const fmatvec::Vec &ref);
       void updatexdRef(const fmatvec::Vec &ref);

@@ -93,6 +93,8 @@ namespace MBSim {
        */
       void addObject(int level, Object* object); 
 
+      void co();
+
     protected:
       /**
        * \brief none

@@ -217,7 +217,11 @@ namespace MBSim {
 
       // after reorganizing a resize is required
       init(resize);
-    }
+//    cout << dynamicsystem.size() << endl;
+//      for(unsigned int i=0; i<dynamicsystem.size();i++)
+//	cout << dynamicsystem[i]->getName() << endl;
+//      dynamic_cast<Graph*>(dynamicsystem[0])->co();
+   }
     else if(stage==resize) {
       calcqSize();
       calcuSize(0);
@@ -229,6 +233,7 @@ namespace MBSim {
       sethSize(uSize[1],1);
       sethInd(0,0);
       sethInd(0,1);
+      setxInd(0);
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
@@ -256,7 +261,7 @@ namespace MBSim {
 
       if(INFO) cout << "uSize[1] = " << uSize[1] << endl;
       if(INFO) cout << "hSize[1] = " << hSize[1] << endl;
-
+   
       Group::init(stage);
     }
     else if(stage==unknownStage) {

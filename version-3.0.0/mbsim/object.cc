@@ -246,8 +246,6 @@ namespace MBSim {
 
   void Object::init(InitStage stage) {  
     if(stage==unknownStage) {
-      Iu = Index(uInd[0],uInd[0]+uSize[0]-1);
-      Ih = Index(hInd[0],hInd[0]+hSize[0]-1);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
@@ -354,13 +352,13 @@ namespace MBSim {
   }
 
   void Object::updateW0FromW1(double t) {
-    W[0] = W[1];
+    //W[0] = W[1];
   }
   void Object::updateV0FromV1(double t) {
-    V[0] = V[1];
+    //V[0] = V[1];
   }
   void Object::updateh0Fromh1(double t) {
-    h[0] = h[1];
+    //h[0] = h[1];
   }
 }
 

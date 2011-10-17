@@ -158,5 +158,15 @@ namespace MBSim {
     obj[level].push_back(object);
   }
 
+  void Graph::co() {
+    cout << name << endl;
+    for(unsigned int i=0; i<obj.size(); i++) {
+      for(unsigned int j=0; j<obj[i].size(); j++) {
+	cout << obj[i][j]->getName()<<"(" <<obj[i][j]->getuSize()<<","<< obj[i][j]->gethSize()<<"," << obj[i][j]->getuInd()<<"," << obj[i][j]->gethInd()<< ") ";
+      }
+      cout << endl;
+    }
+  }
+
 }
 

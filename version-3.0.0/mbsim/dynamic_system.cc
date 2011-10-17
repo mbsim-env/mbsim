@@ -1172,20 +1172,34 @@ namespace MBSim {
 
     for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
       (*i)->calcxSize();
-      (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
     }
 
     for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
       (*i)->calcxSize();
-      (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
     }
 
     for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) {
       (*i)->calcxSize();
-      (*i)->setxInd(xSize);
       xSize += (*i)->getxSize();
+    }
+  }
+
+ void DynamicSystem::setxInd(int xInd_) {
+    xInd = xInd_;
+
+    for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) {
+      (*i)->setxInd(xInd_);
+      xInd_ += (*i)->getxSize();
+    }
+    for(vector<Link*>::iterator i = link.begin(); i != link.end(); ++i) {
+      (*i)->setxInd(xInd_);
+      xInd_ += (*i)->getxSize();
+    }
+    for(vector<ExtraDynamic*>::iterator i = extraDynamic.begin(); i != extraDynamic.end(); ++i) {
+      (*i)->setxInd(xInd_);
+      xInd_ += (*i)->getxSize();
     }
   }
 
