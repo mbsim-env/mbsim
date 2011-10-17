@@ -270,7 +270,7 @@ namespace MBSim {
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<OpenMBV::Frame *> openMBVContactFrame;
+      std::vector<std::vector<OpenMBV::Frame*> > openMBVContactFrame;
 
       /**
        * \brief container of normal and friction forces to draw

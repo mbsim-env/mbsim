@@ -44,9 +44,6 @@ namespace MBSim {
       delete *i;
     for(vector<Contour*>::iterator i = contour.begin(); i != contour.end(); ++i) 
       delete *i;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
-#endif
   }
 
   void Body::sethSize(int hSize_, int j) {
@@ -87,10 +84,6 @@ namespace MBSim {
       for(unsigned int j=0; j<contour.size(); j++)
         contour[j]->closePlot();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    if(openMBVGrp) { delete openMBVGrp; openMBVGrp=0; }
-    if(openMBVBody) { delete openMBVBody; openMBVBody=0; }
-#endif
   }
 
   void Body::setDynamicSystemSolver(DynamicSystemSolver* sys) {

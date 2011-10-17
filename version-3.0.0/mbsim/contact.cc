@@ -73,12 +73,6 @@ namespace MBSim {
       delete[] *i;
     for(vector<unsigned int*>::iterator i = gdActive.begin(); i != gdActive.end(); ++i)
       delete[] *i;
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    for(vector<OpenMBV::Arrow *>::iterator i = openMBVNormalForceArrow.begin(); i != openMBVNormalForceArrow.end(); ++i)
-      delete *i;
-    for(vector<OpenMBV::Arrow *>::iterator i = openMBVFrictionArrow.begin(); i != openMBVFrictionArrow.end(); ++i)
-      delete *i;
-#endif
   }
 
   void Contact::updatewb(double t, int j) {
@@ -534,13 +528,18 @@ namespace MBSim {
           parent->getOpenMBVGrp()->addObject(openMBVContactGrp);
           for(unsigned int i=0; i<cpData.size(); i++) {
             if(openMBVContactFrameSize>epsroot()) {
-              openMBVContactFrame.push_back(new OpenMBV::Frame[2]);
+              vector<OpenMBV::Frame*> temp;
+              temp.push_back(new OpenMBV::Frame);
+              temp.push_back(new OpenMBV::Frame);
+              openMBVContactFrame.push_back(temp);
               for(unsigned int k=0; k<2; k++) { // frames
-                openMBVContactFrame[i][k].setOffset(1.);
-                openMBVContactFrame[i][k].setSize(openMBVContactFrameSize);
-                openMBVContactFrame[i][k].setName("ContactPoint_"+numtostr((int)i)+(k==0?"A":"B"));
-                openMBVContactFrame[i][k].setEnable(openMBVContactFrameEnabled);
-                openMBVContactGrp->addObject(&openMBVContactFrame[i][k]);
+                openMBVContactFrame[i][k]->setOffset(1.);
+                openMBVContactFrame[i][k]->setSize(openMBVContactFrameSize);
+                openMBVContactFrame[i][k]->setName("ContactPoint_"+numtostr((int)i)+(k==0?"A":"B"));
+                openMBVContactFrame[i][k]->setEnable(openMBVContactFrameEnabled);
+cout<<"MFMF2 "<<openMBVContactFrame[i][k]->getName()<<endl;
+                openMBVContactGrp->addObject(openMBVContactFrame[i][k]);
+cout<<"MFMF3 "<<openMBVContactFrame[i][k]->getName()<<endl;
               }
             }
             // arrows
@@ -643,7 +642,7 @@ namespace MBSim {
               data.push_back(cardan(1));
               data.push_back(cardan(2));
               data.push_back(0);
-              openMBVContactFrame[i][k].append(data);
+              openMBVContactFrame[i][k]->append(data);
             }
           }
           // arrows
@@ -746,15 +745,6 @@ namespace MBSim {
     if(getPlotFeature(plotRecursive)==enabled) {
       LinkMechanics::closePlot();
     }
-#ifdef HAVE_OPENMBVCPPINTERFACE
-    for(unsigned int i=0; i<openMBVContactFrame.size(); i++) {
-      delete[] openMBVContactFrame[i];
-      openMBVContactFrame[i]=0;
-    }
-    if(contactArrow) { delete contactArrow; contactArrow=0; }
-    if(frictionArrow) { delete frictionArrow; frictionArrow=0; }
-    if(openMBVContactGrp) { delete openMBVContactGrp; openMBVContactGrp=0; }
-#endif
   }
 
   void Contact::solveImpactsFixpointSingle(double dt) {
