@@ -20,7 +20,7 @@
 #ifndef REVCARDAN_H_
 #define REVCARDAN_H_
 
-#include "mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/angles.h"
+#include "mbsimFlexibleBody/utils/angles.h"
 
 namespace MBSimFlexibleBody {
 
