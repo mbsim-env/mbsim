@@ -248,9 +248,6 @@ namespace MBSim {
       virtual void sethInd(int hInd_, int i=0); 
       int gethInd(int i=0) { return hInd[i]; }
 
-      const fmatvec::Index& getuIndex() const { return Iu;}
-      const fmatvec::Index& gethIndex() const { return Ih;}
-
       const fmatvec::Vec& geth(int i=0) const { return h[i]; };
       fmatvec::Vec& geth(int i=0) { return h[i]; };
       const fmatvec::Vec& getr(int i=0) const { return r[i]; };
@@ -357,7 +354,7 @@ namespace MBSim {
       /**
        * \brief indices for velocities and right hand side
        */
-      fmatvec::Index Iu, Ih;
+      //fmatvec::Index Iu, Ih;
 
       /**
        * \brief vector containing all dependencies.

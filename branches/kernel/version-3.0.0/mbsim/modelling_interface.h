@@ -24,7 +24,7 @@ namespace MBSim {
 
   class Object;
   class Link;
-  class DynamicSystem;
+  class Element;
 
   /*!
    * \brief Interface for models of arbitrary domains, e.g. electrical components 
@@ -57,8 +57,9 @@ namespace MBSim {
        */
       virtual void setName(std::string name) = 0;
 
-      virtual DynamicSystem* getParent() = 0;
-      virtual void setParent(DynamicSystem* sys) = 0; 
+      virtual Element* getParent() = 0;
+      virtual const Element* getParent() const = 0;
+      virtual void setParent(Element* parent_) = 0;
 
       /*!
        * \brief Process all models of the same type as the calling model. 
