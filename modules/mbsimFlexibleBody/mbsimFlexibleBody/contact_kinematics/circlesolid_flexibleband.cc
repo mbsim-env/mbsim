@@ -70,7 +70,7 @@ namespace MBSimFlexibleBody {
     int nrNodes = nodes.size();
 
     // always use nodes for contact kinematics
-#pragma omp parallel for schedule(dynamic) shared(ig,icpData,nodes,nrNodes,inContact,contactPositions) default(none) 
+//#pragma omp parallel for schedule(dynamic) shared(ig,icpData,nodes,nrNodes,inContact,contactPositions) default(none) 
     for(int i=0;i<nrNodes;i++) {
       ContourPointData* cpData = icpData[i];
 
@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
 	Mat result = search.slvAll();
     delete func;
 
-#pragma omp parallel for schedule(dynamic) shared(ig,icpData,result,nrNodes,inContact,contactPositions) default(none) 
+//#pragma omp parallel for schedule(dynamic) shared(ig,icpData,result,nrNodes,inContact,contactPositions) default(none) 
     for(int i=0;i<result.rows();i++) {
       ContourPointData* cpData = icpData[nrNodes + i];
 

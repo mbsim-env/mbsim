@@ -3,7 +3,7 @@ This section summarizes the necessary steps to install \MBSim{}.
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Where To Find the Source Code}
-The source code of \MBSim{} together with some examples, the necessary \FMatVec{} library, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{www.berlios.de} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} from \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL}\footnote{see file~\texttt{COPYING} in the root directory of the specific source code}.\par
+The source code of \MBSim{} together with some examples, the necessary \FMatVec{} library, a \HDF{} wrapper for output and the visualisation program \OpenMBV{} can be found at \url{http://code.google.com} using subversion code administration\footnote{SVN Quick Reference Card: \url{http://www.cs.put.poznan.pl/csobaniec/edu/svn-refcard.pdf}}. Further, one needs \HDF{} from \url{http://www.hdfgroup.org}. Everything is placed under \href{http://www.gnu.org/licenses/lgpl.html}{LGPL}\footnote{see file~\texttt{COPYING} in the root directory of the specific source code}.\par
 
 %%------------------------------------------------------------ SUBSECTION ---------------------
 \subsection{Installation Procedures}
@@ -84,26 +84,28 @@ All projects depend on PKG package administration. That is why the file \texttt{
 \end{verbatim}
 
 \subsubsection{\FMatVec{}}
-\FMatVec{} is a library for fast matrix-vector evaluations based on LAPack with the possibility to use ATLAS, which is faster for large system dimensions because of internal parallelisation.\\
+\FMatVec{} is a library for fast matrix-vector evaluations based on LAPack/Blas, ATLAS or the IntelMKL in its sequential or parallel version.\\
 For the installation the following instructions have to be completed:
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://svn.berlios.de/svnroot/repos/fmatvec/trunk fmatvec
+ svn checkout http://fmatvec.googlecode.com/svn/trunk/ fmatvec
  cd $HOME/MBSim/fmatvec
 \end{verbatim}
 Continue with the procedure \textsc{automake}.\par
-Then, the procedure \textsc{configure} for dynamic compilation is used with the prefix
+Then, the procedure \textsc{configure} for dynamic compilation is used with the prefix:
 \begin{verbatim}
 --prefix=$HOME/MBSim/Install
 \end{verbatim}
-as well as selecting the FLAGS
+
+By default, Lapack/Blas is used. If Lapack/Blas is not located in a standard search path, the following FLAGS must be used:
 \begin{verbatim}
  --with-blas-lib-prefix=PFX (prefix, where the BLAS lib is
      installed, when ATLAS is not used)
  --with-lapack-lib-prefix=PFX (prefix, where the LAPACK lib is
      installed, when ATLAS is not used)
 \end{verbatim}
-if LAPack is not located in a standard search path and selecting
+
+If ATLAS should be used instead of Lapack/Blas, the following FLAGS must be used:
 \begin{verbatim}
  --enable-atlas (use ATLAS)
  --with-atlas-inc-prefix=PFX (prefix, where the ATLAS includes 
@@ -111,19 +113,21 @@ if LAPack is not located in a standard search path and selecting
  --with-atlas-lib-prefix=PFX (prefix, where the ATLAS libs are
      installed, when ATLAS is used)
 \end{verbatim}
-if ATLAS should be used instead of LAPack. \newline 
 
-To use the GNU allocator instead of the \FMatVec{} built-in allocator you have to proceed with the FLAGS
+If the IntelMKL should be used instead of Lapack/Blas, the following FLAGS must be used:
 \begin{verbatim}
- --with-allocator-class=__gnu_cxx::new_allocator
- --with-allocator-header=ext/new_allocator.h
+ --enable-intelmkl (use IntelMKL)
+ --with-intelmkl-inc-prefix=PFX  (prefix where IntelMKL includes
+     are installed, when the IntelMKL is used)
+ --with-intelmkl-lib-prefix=PFX  (prefix where IntelMKL libraries are
+     installed, when the IntelMKL is used)
 \end{verbatim}
-For mulit threaded applications the GNU mt allocator can be used with the FLAGS
+
+By default the sequential version of the IntelMKL is used. For using the parallel version of the IntelMKL, set the following FLAG:
 \begin{verbatim}
---with-allocator-class=__gnu_cxx::__mt_alloc 
---with-allocator-header=ext/mt_allocator.h
+  --enable-parallelIntelMKL
 \end{verbatim}
-For more information about GNU allocators see \textit{GNU C++ Library}. \\
+
 To deactivate the OpenMP pragma \textit{omp critical} within reference counting use
 \begin{verbatim}
 --disable-pragma_omp_critical
@@ -147,7 +151,7 @@ Compilation is done with the procedure \textsc{install}.\par
 A \HDF{} wrapper makes it possible to use \HDF{} very easily. It is available by
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://svn.berlios.de/svnroot/repos/hdf5serie/trunk HDF5Serie
+ svn checkout http://hdf5serie.googlecode.com/svn/trunk/ hdf5serie
 \end{verbatim}
 For having \MBSim{} creating \HDF{} files invoke
 \begin{verbatim}
@@ -169,7 +173,7 @@ to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpseri
 \OpenMBV{} visualises \MBSim{} simulations using XML and \HDF{} in a coinciding hierarchical structure. The installation for the simulation framework consists of two steps: first the XML utils have to be installed, then \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://svn.berlios.de/svnroot/repos/openmbv/trunk OpenMBV
+ svn checkout http://openmbv.googlecode.com/svn/trunk/ openmbv
 \end{verbatim}
 
 \paragraph{XML Utils}
@@ -210,7 +214,7 @@ Necessary for the installation of \MBSim{} are
 For installation of \MBSim{} one types
 \begin{verbatim}
  cd $HOME/MBSim
- svn checkout http://svn.berlios.de/svnroot/repos/mbsim/trunk mbsim
+ svn checkout http://mbsim-env.googlecode.com/svn/trunk/ mbsim
  cd $HOME/MBSim/mbsim/kernel
 \end{verbatim}
 Invoke the procedures \textsc{automake, configure} for dynamic compilation with the prefix
@@ -365,7 +369,7 @@ Install OpenMBV-C++Interface as described in Sec.~\ref{sec:install:simulation} b
 \end{verbatim}
 
 \paragraph{\OpenMBV{}}
-There is a static Linux binary available at \url{www.berlios.de} being updated from time to time. For the installation of a static visualisation using always the newest source files it is assumed that
+There is a static Linux binary available at \url{http://code.google.com} being updated from time to time. For the installation of a static visualisation using always the newest source files it is assumed that
 \begin{itemize}
 \item Coin3d with version 3 or newer 
 \item hdf5 with version 1.8.2 or newer 
