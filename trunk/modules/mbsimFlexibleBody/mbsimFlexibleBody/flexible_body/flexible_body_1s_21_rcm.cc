@@ -396,7 +396,7 @@ namespace MBSimFlexibleBody {
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
         updateKinematicsForFrame(cp, position);
-        double factor = 500; //TODO: delete later on (good for testing and looking at it as a ps-file)
+        double factor = 1; //TODO: delete later on (good for testing and looking at it as a ps-file)
 
         Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0) * factor, cp.getFrameOfReference().getPosition()(1) * factor, cp.getFrameOfReference().getPosition()(2) * factor, 1);
       }
@@ -405,7 +405,7 @@ namespace MBSimFlexibleBody {
       PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
       PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
 
-      const double stepU = 1. / Elements;
+      const double stepU = L / Elements;
 
       uvec[0] = 0;
       for (int i = 1; i < uvec.size(); i++) {
@@ -427,20 +427,20 @@ namespace MBSimFlexibleBody {
         cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
       }
 
-      /*Testing*/
+      /*Testing
 
-//      int j = 0;
-//      for (double i = 0; i < 1; i += stepU) {
-//        cout << "i=" << i << endl << curve.pointAt(i) << endl;
-//        cout << Nodelist[j] << endl;
-//        j++;
-//      }
+      int j = 0;
+      for (double i = 0; i < 1; i += stepU) {
+        cout << "i=" << i << endl << curve.pointAt(i) << endl;
+        cout << Nodelist[j] << endl;
+        j++;
+      }
 
       for (double i = 0; i < curve.knot(curve.knot().n() - 1); i += curve.knot(curve.degree() + 1)) {
         cout << "i = " << i << "with point " << endl << curve.pointAt(i).x() << " , " << curve.pointAt(i).y() << " , " << curve.pointAt(i).z() << endl;
       }
 
-      /*END - Testing*/
+      END - Testing*/
     }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
@@ -454,7 +454,28 @@ namespace MBSimFlexibleBody {
     PlNurbsCurved curve;
     curve.read(filename.c_str());
 
-    //TODO_grundl: read funktioniert (die neue Kurve entspricht der alten). Nun kann man die finiten Elemente anpassen an die Kurve
+    //double L = curve.length(); // TODO ungenauer als mit L
+    l0 = L/Elements;
+    Vec q0Dummy(q0.size(),INIT,0.);
+
+    for(int i = 0; i < Elements; i++) {
+      Point3Dd posStart = curve.pointAt(i*l0);
+      Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
+      Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
+      Point3Dd posEnd = curve.pointAt(i*l0 + l0);
+      Point3Dd velStart = curve.derive3D(i*l0, 1);
+      Point3Dd velEnd = curve.derive3D(i*l0 + l0, 1);
+
+      q0Dummy(i*5)   = posStart.x(); // x
+      q0Dummy(i*5+1) = posStart.y(); // y
+      q0Dummy(i*5+2) = ArcTan(velStart.x(),velStart.y()); // phi
+      if(i>0)
+        if(q0Dummy(i*5+2) < q0Dummy((i-1)*5+2))
+          q0Dummy(i*5+2)+=2*M_PI;
+      q0Dummy(i*5+3) = absolute((pos1Quart.x()-posStart.x())*velStart.y() - (pos1Quart.y()-posStart.y())*velStart.x())/norm2(velStart); // c
+      q0Dummy(i*5+4) = absolute((pos3Quart.x()-posEnd.x())*velEnd.y() - (pos3Quart.y()-posEnd.y())*velEnd.x())/norm2(velEnd); // d
+    }
+    setq0(q0Dummy);
 
     /*Testing
 
@@ -464,11 +485,8 @@ namespace MBSimFlexibleBody {
      cout << Nodelist[j] << endl;
      j++;
      }
-
      cout << "Test of Nurbs-Curve" << endl;
-
      string psfile = "test.ps";
-
      cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
 
      END - Testing*/
