@@ -80,7 +80,6 @@ namespace MBSim {
 	updateKinematicsForSelectedFrame(t); 
 	updateKinematicsForRemainingFramesAndContours(t); 
       }
-      void  (RigidBody::*updateJacobians_[2])(double t); 
       virtual void updateJacobians(double t, int j=0) { (this->*updateJacobians_[j])(t); }
       void updateJacobians0(double t) { 
 	updateJacobiansForSelectedFrame0(t); 
@@ -172,6 +171,8 @@ namespace MBSim {
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
+      Frame* getFrameOfReference() { return frameOfReference; };
+      void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
       std::vector<fmatvec::SqrMat> getContainerForFrameOrientations() const { return ASF; }
       std::vector<fmatvec::Vec> getContainerForFramePositions() const { return SrSF; }
       std::vector<fmatvec::SqrMat> getContainerForContourOrientations() const { return ASC; }
@@ -252,7 +253,7 @@ namespace MBSim {
       const fmatvec::Mat& getWJRrel() const {return WJRrel;}
       fmatvec::Mat& getWJTrel() {return WJTrel;}
       fmatvec::Mat& getWJRrel() {return WJRrel;}
-      fmatvec::Mat& getJRel() {return JRel;}
+      fmatvec::Mat& getJRel(int i=0) {return JRel[i];}
       fmatvec::Vec& getjRel() {return jRel;}
       fmatvec::Vec& getqRel() {return qRel;}
       fmatvec::Vec& getuRel() {return uRel;}
@@ -281,6 +282,11 @@ namespace MBSim {
        * \brief TODO
        */
       fmatvec::SymMat Mbuf;
+
+      /**
+       * \brief boolean to use body fixed Frame for rotation
+       */
+      bool cb;
 
       /**
        * JACOBIAN of translation, rotation and their derivatives in parent system
@@ -418,13 +424,15 @@ namespace MBSim {
        */
       void facLLMNotConst(int i=0) { Object::facLLM(i); }
 
+      void (RigidBody::*updateJacobians_[2])(double t); 
+
       /** a pointer to Frame "C" */
       Frame *C;
 
       fmatvec::Vec aT, aR;
 
       fmatvec::Vec qRel, uRel;
-      fmatvec::Mat JRel;
+      fmatvec::Mat JRel[2];
       fmatvec::Vec jRel;
 
       fmatvec::Mat WJTrel,WJRrel;

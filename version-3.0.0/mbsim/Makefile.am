@@ -15,6 +15,7 @@ frame.cc\
 functions_contact.cc\
 group.cc\
 joint.cc\
+gear.cc\
 kinematics.cc\
 spring_damper.cc\
 rotational_spring_damper.cc\
@@ -54,6 +55,7 @@ frame.h\
 functions_contact.h\
 group.h\
 joint.h\
+gear.h\
 kinematics.h\
 spring_damper.h\
 rotational_spring_damper.h\

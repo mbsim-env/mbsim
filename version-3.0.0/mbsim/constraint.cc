@@ -24,6 +24,7 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/joint.h"
+#include "mbsim/gear.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws.h"
 
@@ -70,11 +71,11 @@ namespace MBSim {
   Constraint::Constraint(const std::string &name) : Object(name) {
   }
 
-  Constraint2::Constraint2(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
+  GearConstraint::GearConstraint(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
     bd->addDependency(this);
   }
 
-  void Constraint2::init(InitStage stage) {
+  void GearConstraint::init(InitStage stage) {
     if(stage==preInit) {
       Constraint::init(stage);
       for(unsigned int i=0; i<bi.size(); i++)
@@ -84,12 +85,12 @@ namespace MBSim {
       Constraint::init(stage);
   }
 
-  void Constraint2::addDependency(RigidBody* body, double ratio_) {
+  void GearConstraint::addDependency(RigidBody* body, double ratio_) {
     bi.push_back(body); 
     ratio.push_back(ratio_);
   }
 
-  void Constraint2::updateStateDependentVariables(double t){
+  void GearConstraint::updateStateDependentVariables(double t){
     bd->getqRel().init(0);
     bd->getuRel().init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
@@ -98,11 +99,20 @@ namespace MBSim {
     }
   }
 
-  void Constraint2::updateJacobians(double t, int jj){
+  void GearConstraint::updateJacobians(double t, int jj){
     bd->getJRel().init(0); 
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel()(Index(0,bi[i]->getJRel().rows()-1),Index(0,bi[i]->getJRel().cols()-1)) += bi[i]->getJRel()*ratio[i];
     }
+  }
+
+  void GearConstraint::setUpInverseKinetics() {
+   Gear *gear = new Gear(string("Gear")+name);
+   ds->addInverseKineticsLink(gear);
+   gear->setDependentBody(bd);
+   for(unsigned int i=0; i<bi.size(); i++) {
+     gear->addDependency(bi[i],ratio[i]);
+   }
   }
 
   Constraint3::Constraint3(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {

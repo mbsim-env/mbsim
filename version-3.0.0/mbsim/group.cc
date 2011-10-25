@@ -50,13 +50,11 @@ namespace MBSim {
   }
 
   void Group::updateStateDependentVariables(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateStateDependentVariables(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateStateDependentVariables(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -64,19 +62,16 @@ namespace MBSim {
   }
 
   void Group::updateJacobians(double t, int j) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateJacobians(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateJacobians(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)link.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)link.size()>30) 
     for(int i=0; i<(int)link.size(); i++) {
       try { link[i]->updateJacobians(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }

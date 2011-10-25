@@ -87,25 +87,21 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateh(double t, int j) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedNotActiveWithSmoothPart.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30) 
     for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) {
       try { linkSetValuedNotActiveWithSmoothPart[i]->updateh(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -153,13 +149,11 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedhdz(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updatedhdz(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updatedhdz(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -178,7 +172,6 @@ namespace MBSim {
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)object.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)object.size()>30) 
     for(int i=0; i<(int)object.size(); i++) {
       try { object[i]->updateM(t,j); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -309,21 +302,21 @@ namespace MBSim {
 
   void DynamicSystem::updateJacobiansInverseKinetics(double t, int j) {
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateJacobians(t,j);
   }
 
   void DynamicSystem::updateWInverseKinetics(double t, int j) {
     WInverseKinetics[j].init(0);
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateW(t,j);
   }
 
   void DynamicSystem::updatebInverseKinetics(double t) {
     bInverseKinetics.init(0);
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i)
       (**i).updateb(t);
   }
 
@@ -336,19 +329,16 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateg(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none) 
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updateg(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)linkSingleValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSingleValued.size()>30) 
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updateg(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)linkSetValued.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)linkSetValued.size()>30) 
     for(int i=0; i<(int)linkSetValued.size(); i++) {
       try { linkSetValued[i]->updateg(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -356,13 +346,11 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategInverseKinetics(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none) 
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updategInverseKinetics(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(dynamic, max(1,(int)inverseKineticsLink.size()/(10*omp_get_num_threads()))) shared(t) default(none) if((int)inverseKineticsLink.size()>30) 
     for(int i=0; i<(int)inverseKineticsLink.size(); i++) {
       try { inverseKineticsLink[i]->updateg(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -370,25 +358,21 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategd(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSingleValued.size()>30)
     for(int i=0; i<(int)linkSingleValued.size(); i++) {
       try { linkSingleValued[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSetValuedNotActiveWithSmoothPart.size()>30)
     for(int i=0; i<(int)linkSetValuedNotActiveWithSmoothPart.size(); i++) { 
       try { linkSetValuedNotActiveWithSmoothPart[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)linkSetValuedActive.size()>30)
     for(int i=0; i<(int)linkSetValuedActive.size(); i++) { 
       try { linkSetValuedActive[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -396,13 +380,11 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategdInverseKinetics(double t) {
-//#pragma omp parallel for schedule(static) shared(t) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->updategdInverseKinetics(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for schedule(static) shared(t) default(none) if((int)inverseKineticsLink.size()>30)
     for(int i=0; i<(int)inverseKineticsLink.size(); i++) { 
       try { inverseKineticsLink[i]->updategd(t); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -613,13 +595,11 @@ namespace MBSim {
   }
 
   int DynamicSystem::solveImpactsFixpointSingle(double dt) {
-//#pragma omp parallel for schedule(static) shared(dt) default(none)
     for(int i=0; i<(int)dynamicsystem.size(); i++) {
       try { dynamicsystem[i]->solveImpactsFixpointSingle(dt); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
     }
 
-//#pragma omp parallel for num_threads(omp_get_max_threads()-1) schedule(dynamic, max(1,(int)linkSetValuedActive.size()/(10*omp_get_num_threads()))) shared(dt) default(none) if((int)linkSetValuedActive.size()>30) 
     for(int i=0; i<(int)linkSetValuedActive.size(); i++) {
       try { linkSetValuedActive[i]->solveImpactsFixpointSingle(dt); }
       catch(MBSimError error) { error.printExceptionMessage(); throw; }
@@ -931,7 +911,7 @@ namespace MBSim {
     //for(vector<DynamicSystem*>::iterator i = dynamicsystem.begin(); i != dynamicsystem.end(); ++i) 
     //  (*i)->updatelaRefSpecial(la);
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updatelaRef(laParent);
   }
 
@@ -972,14 +952,14 @@ namespace MBSim {
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent, int j) {
     WInverseKinetics[j] >> WParent(Index(hInd[j],hInd[j]+hSize[j]-1),Index(0,laInverseKineticsSize-1));
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updateWRef(WParent,j);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
     bInverseKinetics >> bParent(Index(0,bInverseKineticsSize-1),Index(0,laInverseKineticsSize-1));
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) 
       (**i).updatebRef(bParent);
   }
 
@@ -1252,7 +1232,7 @@ namespace MBSim {
   void DynamicSystem::calclaInverseKineticsSize() {
     laInverseKineticsSize = 0;
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
       (*i)->calclaSize();
       (*i)->setlaInd(laInverseKineticsSize);
       laInverseKineticsSize += (*i)->getlaSize();
@@ -1262,11 +1242,14 @@ namespace MBSim {
   void DynamicSystem::calcbInverseKineticsSize() {
     bInverseKineticsSize = 0;
 
-    for(vector<InverseKineticsJoint*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
+    for(vector<Link*>::iterator i = inverseKineticsLink.begin(); i != inverseKineticsLink.end(); ++i) {
       (*i)->calcbSize();
       (*i)->setbInd(bInverseKineticsSize);
       bInverseKineticsSize += (*i)->getbSize();
     }
+    cout << name << endl;
+    cout << bInverseKineticsSize << endl;
+    //throw;
   }
 
   void DynamicSystem::calclaSizeForActiveg() {
@@ -1559,7 +1542,7 @@ namespace MBSim {
     lnk->setParent(this);
   }
 
-  void DynamicSystem::addInverseKineticsLink(InverseKineticsJoint *lnk) {
+  void DynamicSystem::addInverseKineticsLink(Link *lnk) {
     //if(getLink(lnk->getName(),false)) {
     //  cout << "ERROR (DynamicSystem: addLink): The DynamicSystem " << name << " can only comprise one Link by the name " <<  lnk->getName() << "!" << endl;
     //  assert(getLink(lnk->getName(),false) == NULL);

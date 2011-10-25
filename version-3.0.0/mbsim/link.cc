@@ -119,6 +119,12 @@ namespace MBSim {
     LinkStatus.resize() >> LinkStatusParent(LinkStatusInd,LinkStatusInd+LinkStatusSize-1);
   }
 
+  void Link::updatebRef(const Mat &bParent) {
+    Index J = Index(laInd,laInd+laSize-1);
+    Index I = Index(bInd,bInd+bSize-1);
+    b.resize()>>bParent(I,J);
+  } 
+
   void Link::init(InitStage stage) {
     if(stage==unknownStage) {
       rFactorUnsure.resize(rFactorSize);
