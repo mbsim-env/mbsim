@@ -73,6 +73,7 @@ namespace MBSim {
       virtual void updateStopVector(double t) {}
       virtual void updateLinkStatus(double t) {}
       virtual void updateJacobians(double t, int j=0) {}
+      virtual void updateb(double t) {};
       /***************************************************/
 
       /* INHERITED INTERFACE OF EXTRADYNAMICINTERFACE */
@@ -85,9 +86,12 @@ namespace MBSim {
       virtual int getxSize() const { return xSize; }
       virtual void updatexRef(const fmatvec::Vec& ref);
       virtual void updatexdRef(const fmatvec::Vec& ref);
+      virtual void updatebRef(const fmatvec::Mat &hRef);
       virtual void init(InitStage stage);
       virtual void initz();
       /***************************************************/
+
+      virtual void setbInd(int bInd_) { bInd = bInd_; };
 
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Link"; }
@@ -226,6 +230,11 @@ namespace MBSim {
        * \brief calculates size of rfactors
        */
       virtual void calcrFactorSize() { rFactorSize = 0; }
+
+      /**
+       * \brief calculates size of rfactors
+       */
+      virtual void calcbSize() { bSize = 0; }
 
       /**
        * \brief calculates size of stopvector (root function for event driven integration)
@@ -376,6 +385,7 @@ namespace MBSim {
       void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::Index(laInd,laInd+laSize-1); } 
       int getlaInd() const { return laInd; } 
       int getlaSize() const { return laSize; } 
+      int getbSize() const { return bSize; }
       const fmatvec::Index& getlaIndex() const { return Ila; }
 
       const fmatvec::Vec& getg() const { return g; }
@@ -495,7 +505,12 @@ namespace MBSim {
        * \brief size and local index of contact force parameters
        */
       int laSize, laInd;
-      
+
+      /**
+       * \brief size and local index of contact force parameters
+       */
+      int bSize, bInd;
+
       /**
        * \brief local index of relative distances and contact force parameters
        */
@@ -567,6 +582,11 @@ namespace MBSim {
        * \brief TODO
        */
       fmatvec::Vec wb;
+
+      /**
+       * \brief TODO
+       */
+      fmatvec::Mat b;
 
   };
 }

@@ -727,7 +727,7 @@ namespace MBSim {
       /**
        * \param add link for inverse kinetics
        */
-      void addInverseKineticsLink(InverseKineticsJoint *link);
+      void addInverseKineticsLink(Link *link);
 
       /**
        * \param name of the link
@@ -793,7 +793,7 @@ namespace MBSim {
       std::vector<ExtraDynamic*> extraDynamic;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
-      std::vector<InverseKineticsJoint*> inverseKineticsLink;
+      std::vector<Link*> inverseKineticsLink;
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

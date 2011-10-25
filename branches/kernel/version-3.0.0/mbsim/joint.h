@@ -193,15 +193,10 @@ namespace MBSim {
       InverseKineticsJoint(const std::string &name);
       virtual void updateb(double t);
       void calcbSize();
-      void setbInd(int bInd_) { bInd = bInd_; };
-      int getbSize() const { return bSize; }
-      virtual void updatebRef(const fmatvec::Mat &hRef);
       void setBody(RigidBody* body_)    { body = body_; }
 
     protected:
-      int bSize, bInd;
       RigidBody* body;
-      fmatvec::Mat b;
   };
 
 }

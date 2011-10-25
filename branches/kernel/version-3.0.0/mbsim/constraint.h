@@ -47,7 +47,7 @@ namespace MBSim {
    * \todo generalization of this class
    * \author Martin Foerg
    */
-  class Constraint2 : public Constraint {
+  class GearConstraint : public Constraint {
     private:
       std::vector<RigidBody*> bi;
       RigidBody *bd;
@@ -59,7 +59,7 @@ namespace MBSim {
 //      std::vector<Function3<fmatvec::Mat, fmatvec::Vec, fmatvec::Vec, double>*> fdJd;
 //      std::vector<Function1<fmatvec::Vec,double>*> fdjd;
     public:
-      Constraint2(const std::string &name, RigidBody* body);
+      GearConstraint(const std::string &name, RigidBody* body);
 
       void addDependency(RigidBody* body_, double ratio);
 
@@ -67,6 +67,7 @@ namespace MBSim {
 
       void updateStateDependentVariables(double t);
       void updateJacobians(double t, int j=0);
+      void setUpInverseKinetics();
   };
 
   /** 

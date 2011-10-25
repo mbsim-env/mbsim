@@ -25,6 +25,7 @@
 #ifdef HAVE_OPENMBVCPPINTERFACE
 namespace OpenMBV {
   class Frame;
+  class Arrow;
 }
 #endif
 
@@ -85,6 +86,11 @@ namespace MBSim {
       virtual void init(InitStage stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
       virtual void enableOpenMBV(double size=1, double offset=1);
+      virtual void enableOpenMBVPosition(double scaleLength=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVVelocity(double scaleLength=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAcceleration(double scaleLength=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAngularVelocity(double scaleLength=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
+      virtual void enableOpenMBVAngularAcceleration(double scaleLength=1, double diameter=0.5, double headDiameter=1, double headLength=1, double color=0.5);
 #endif
       /***************************************************/
       
@@ -154,6 +160,7 @@ namespace MBSim {
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
       OpenMBV::Frame* openMBVFrame;
+      OpenMBV::Arrow *openMBVPosition, *openMBVVelocity, *openMBVAcceleration, *openMBVAngularVelocity, *openMBVAngularAcceleration;
 #endif
   };
 

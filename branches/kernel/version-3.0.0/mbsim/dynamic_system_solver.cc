@@ -78,9 +78,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::initialize() {
-//#ifdef _OPENMP
-//    omp_set_nested(true);
-//#endif
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
@@ -217,10 +214,9 @@ namespace MBSim {
 
       // after reorganizing a resize is required
       init(resize);
-//    cout << dynamicsystem.size() << endl;
-//      for(unsigned int i=0; i<dynamicsystem.size();i++)
-//	cout << dynamicsystem[i]->getName() << endl;
-//      dynamic_cast<Graph*>(dynamicsystem[0])->co();
+      for(unsigned int i=0; i< dynamicsystem.size(); i++)
+        if(dynamic_cast<Graph*>(dynamicsystem[0]))
+          dynamic_cast<Graph*>(dynamicsystem[0])->co();
    }
     else if(stage==resize) {
       calcqSize();
