@@ -30,6 +30,7 @@
 #include "mbsim/utils/utils.h"
 #ifdef HAVE_OPENMBVCPPINTERFACE
 #include <openmbvcppinterface/rigidbody.h>
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/invisiblebody.h>
 #include <openmbvcppinterface/objectfactory.h>
 #endif
@@ -238,8 +239,8 @@ namespace MBSim {
     else if(stage==MBSim::unknownStage) {
       Body::init(stage);
 
-  frame[0]->getJacobianOfTranslation(1) = PJT[1];
-  frame[0]->getJacobianOfRotation(1) = PJR[1];
+      frame[0]->getJacobianOfTranslation(1) = PJT[1];
+      frame[0]->getJacobianOfRotation(1) = PJR[1];
 
       if(fPJT==0) {
         Mat JT(3,0);
@@ -346,19 +347,21 @@ namespace MBSim {
       }
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(openMBV)==enabled && openMBVBody) {
-        vector<double> data;
-        data.push_back(t);
-        Vec WrOS=openMBVFrame->getPosition();
-        Vec cardan=AIK2Cardan(openMBVFrame->getOrientation());
-        data.push_back(WrOS(0));
-        data.push_back(WrOS(1));
-        data.push_back(WrOS(2));
-        data.push_back(cardan(0));
-        data.push_back(cardan(1));
-        data.push_back(cardan(2));
-        data.push_back(0);
-        ((OpenMBV::RigidBody*)openMBVBody)->append(data);
+      if(getPlotFeature(openMBV)==enabled) {
+        if(openMBVBody) {
+          vector<double> data;
+          data.push_back(t);
+          Vec WrOS=openMBVFrame->getPosition();
+          Vec cardan=AIK2Cardan(openMBVFrame->getOrientation());
+          data.push_back(WrOS(0));
+          data.push_back(WrOS(1));
+          data.push_back(WrOS(2));
+          data.push_back(cardan(0));
+          data.push_back(cardan(1));
+          data.push_back(cardan(2));
+          data.push_back(0);
+          ((OpenMBV::RigidBody*)openMBVBody)->append(data);
+        }
       }
 #endif
       Body::plot(t,dt);
@@ -467,7 +470,7 @@ namespace MBSim {
 
     for(unsigned int i=1; i<frame.size(); i++) {
       if(i!=unsigned(iKinematics)) {
-	SqrMat tWrSK = tilde(WrSF[i]);
+        SqrMat tWrSK = tilde(WrSF[i]);
         frame[i]->setJacobianOfTranslation(frame[0]->getJacobianOfTranslation(j) - tWrSK*frame[0]->getJacobianOfRotation(j),j);
         frame[i]->setJacobianOfRotation(frame[0]->getJacobianOfRotation(j),j);
         frame[i]->setGyroscopicAccelerationOfTranslation(frame[0]->getGyroscopicAccelerationOfTranslation(j) - tWrSK*frame[0]->getGyroscopicAccelerationOfRotation(j) + crossProduct(frame[0]->getAngularVelocity(),crossProduct(frame[0]->getAngularVelocity(),WrSF[i])),j);
@@ -530,7 +533,7 @@ namespace MBSim {
   }
 
   void RigidBody::addFrame(Frame *frame_, const fmatvec::Vec &RrRF, const fmatvec::SqrMat &ARF, const Frame* refFrame) {
-        addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
+    addFrame(frame_, RrRF, ARF, refFrame?refFrame->getName():"C");
   }
 
   void RigidBody::addFrame(const string &str, const Vec &SrSF, const SqrMat &ASF, const Frame* refFrame) {
