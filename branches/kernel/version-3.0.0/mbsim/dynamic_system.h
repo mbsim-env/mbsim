@@ -729,6 +729,11 @@ namespace MBSim {
        */
       void addInverseKineticsLink(Link *link);
 
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      Element* getOpenMBVElement(const std::string &name,bool check=true);
+      void addPlotElement(Element *element);
+#endif
+
       /**
        * \param name of the link
        * \param check for existence of link
@@ -794,6 +799,9 @@ namespace MBSim {
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      std::vector<Element*> plotElement;
+#endif
 
       /** 
        * \brief linear relation matrix of position and velocity parameters

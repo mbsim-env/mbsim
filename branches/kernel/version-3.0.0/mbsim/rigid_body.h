@@ -170,6 +170,7 @@ namespace MBSim {
       /** \brief Sets the time dependent function for the derivative of the guilding velocity of rotation */
       void setDerivativeOfGuidingVelocityOfRotation(Function1<fmatvec::Vec,double>* fPdjR_) { fPdjR = fPdjR_;}
       void setMass(double m_) { m = m_; }
+      double getMass() const { return m; }
       Frame* getFrameForKinematics() { return frame[iKinematics]; };
       Frame* getFrameOfReference() { return frameOfReference; };
       void isFrameOfBodyForRotation(bool cb_) { cb = cb_; }
@@ -190,6 +191,9 @@ namespace MBSim {
           iInertia = 0;
         SThetaS = RThetaR;
       }
+
+      const fmatvec::SymMat& getInertiaTensor() const {return SThetaS;}
+      fmatvec::SymMat& getInertiaTensor() {return SThetaS;}
 
       /**
        * \param frame        specific Frame to add

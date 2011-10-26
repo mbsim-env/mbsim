@@ -467,6 +467,10 @@ namespace MBSim {
         contour[i]->plot(t,dt);
       for(unsigned i=0; i<inverseKineticsLink.size(); i++)
         inverseKineticsLink[i]->plot(t,dt);
+#ifdef HAVE_OPENMBVCPPINTERFACE
+      for(unsigned i=0; i<plotElement.size(); i++)
+        plotElement[i]->plot(t,dt);
+#endif
     }
   }
 
@@ -582,6 +586,8 @@ namespace MBSim {
       model[i]->init(stage);
     for(unsigned i=0; i<inverseKineticsLink.size(); i++)
       inverseKineticsLink[i]->init(stage);
+    for(unsigned i=0; i<plotElement.size(); i++)
+      plotElement[i]->init(stage);
   }
 
   int DynamicSystem::solveConstraintsFixpointSingle() {
@@ -1674,5 +1680,30 @@ namespace MBSim {
       }
     }
   }
+
+#ifdef HAVE_OPENMBVCPPINTERFACE
+  Element* DynamicSystem::getOpenMBVElement(const string &name, bool check) {
+    unsigned int i;
+    for(i=0; i<plotElement.size(); i++) {
+      if(plotElement[i]->getName() == name)
+        return plotElement[i];
+    }
+    if(check){
+      if(!(i<plotElement.size()))
+        throw MBSimError("The DynamicSystem \""+this->name+"\" comprises no OpenMBVElement \""+name+"\"!");
+      assert(i<plotElement.size());
+    }
+    return NULL;
+  }
+
+  void DynamicSystem::addPlotElement(Element *ele) {
+    if(getOpenMBVElement(ele->getName(),false)) {
+      throw MBSimError("The DynamicSystem \""+name+"\" can only comprise one OpenMBVElement by the name \""+ele->getName()+"\"!");
+      assert(getOpenMBVElement(ele->getName(),false) == NULL); 
+    }
+    plotElement.push_back(ele);
+    ele->setParent(this);
+  }
+#endif
 }
 

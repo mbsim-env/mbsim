@@ -29,7 +29,8 @@ objectfactory.cc\
 extra_dynamic.cc\
 rigid_body.cc\
 graph.cc\
-constraint.cc
+constraint.cc\
+plot_elements.cc
 
 libmbsim_la_LIBADD = integrators/libintegrators.la utils/libutils.la contact_kinematics/libcontactkinematics.la contours/libcontour.la -lgfortran
 
@@ -71,4 +72,5 @@ objectfactory.h\
 extra_dynamic.h\
 rigid_body.h\
 graph.h\
-constraint.h
+constraint.h\
+plot_elements.h
