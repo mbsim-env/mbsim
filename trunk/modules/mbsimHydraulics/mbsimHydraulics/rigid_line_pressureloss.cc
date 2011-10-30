@@ -94,6 +94,8 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==MBSim::plot) {
+      if (line->getPlotFeature(plotRecursive)!=enabled)
+        this->setPlotFeature(plotRecursive, disabled);
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("pressureLoss [bar]");

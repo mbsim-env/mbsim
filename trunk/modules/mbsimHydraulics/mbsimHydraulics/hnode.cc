@@ -62,14 +62,17 @@ namespace MBSimHydraulics {
 
 
   void HNode::initializeUsingXML(TiXmlElement *element) {
+    Link::initializeUsingXML(element);
     TiXmlElement *e;
-    e=element->FirstChildElement();
-    while (e && (e->ValueStr()==MBSIMHYDRAULICSNS"inflow" || e->ValueStr()==MBSIMHYDRAULICSNS"outflow")) {
-      if (e->ValueStr()==MBSIMHYDRAULICSNS"inflow")
-        refInflowString.push_back(e->Attribute("ref"));
-      else
-        refOutflowString.push_back(e->Attribute("ref"));
-      e=e->NextSiblingElement();
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"inflow");
+    while (e) {
+      refInflowString.push_back(e->Attribute("ref"));
+      e=e->NextSiblingElement(MBSIMHYDRAULICSNS"inflow");
+    }
+    e=element->FirstChildElement(MBSIMHYDRAULICSNS"outflow");
+    while (e) {
+      refOutflowString.push_back(e->Attribute("ref"));
+      e=e->NextSiblingElement(MBSIMHYDRAULICSNS"outflow");
     }
 #ifdef HAVE_OPENMBVCPPINTERFACE
     e=element->FirstChildElement(MBSIMHYDRAULICSNS"enableOpenMBVSphere");
@@ -147,10 +150,12 @@ namespace MBSimHydraulics {
       updatePlotFeatures(parent);
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Node pressure [bar]");
-        plotColumns.push_back("Volume flow into and out the node [l/min]");
-        plotColumns.push_back("Mass flow into and out the node [kg/min]");
+        if(getPlotFeature(debug)==enabled) {
+          plotColumns.push_back("Volume flow into and out the node [l/min]");
+          plotColumns.push_back("Mass flow into and out the node [kg/min]");
+        }
 #ifdef HAVE_OPENMBVCPPINTERFACE
-        if (openMBVSphere) {
+        if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
           if (openMBVGrp) {
             openMBVSphere->setName("Node");
             openMBVGrp->addObject(openMBVSphere);
@@ -345,15 +350,17 @@ namespace MBSimHydraulics {
     }
   }
 
- void HNode::updater(double t) {
-   cout << "HNode \"" << name << "\": updater()" << endl; 
- }
+  void HNode::updater(double t) {
+    cout << "HNode \"" << name << "\": updater()" << endl; 
+  }
 
   void HNode::plot(double t, double dt) {
     if(getPlotFeature(plotRecursive)==enabled) {
       plotVector.push_back(la(0)*1e-5/(isActive()?dt:1.));
-      plotVector.push_back(QHyd*6e4);
-      plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      if(getPlotFeature(debug)==enabled) {
+        plotVector.push_back(QHyd*6e4);
+        plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      }
 #ifdef HAVE_OPENMBVCPPINTERFACE
       if(getPlotFeature(openMBV)==enabled && openMBVSphere) {
         vector<double> data;
