@@ -63,7 +63,8 @@ namespace MBSimFlexibleBody {
       virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
       virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::FrameFeature ff, MBSim::Frame *frame=0);
       virtual void updateJacobiansForFrame(MBSim::ContourPointData &data, MBSim::Frame *frame=0);
-      virtual void saveProfile(const std::string& filename, const bool &writePsFile = false);
+      virtual void exportProfile(const std::string& filename, const int & deg = 3, const bool &writePsFile = false);
+      virtual void importProfile(const std::string& filename);
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECT */

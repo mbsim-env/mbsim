@@ -165,9 +165,21 @@ namespace MBSimFlexibleBody {
        */
       void addFrame(MBSim::Frame *frame, const  int &id);
 
-      virtual void saveProfile(const std::string& filename, const bool &writePsFile = false){throw  MBSim::MBSimError("saveProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+      /**
+       * \brief exports the position coordinates in a nurbs curve in the specified file
+       * \param filename    Name of the exported curve file
+       * \param deg         Degree of Nurbs interpolation
+       * \param writePsFile A Postscript-file of the curve profile is created
+       *
+       * Remark: the knot vector is parametrized between [0,L]
+       */
+      virtual void exportProfile(const std::string& filename, const int & deg = 3, const bool &writePsFile = false){throw  MBSim::MBSimError("exportProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
 
-      virtual void loadProfile(const std::string& filename){throw  MBSim::MBSimError("loadProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
+      /**
+       * \brief imports the profile (created with exportProfile) and fits the flexible body to the imported curve
+       * \param filename Name of the imported curve file
+       */
+      virtual void importProfile(const std::string& filename){throw  MBSim::MBSimError("importProfile(const std::string& filename) is not implemented for " + this->getType()) ;}
 
     protected:
       /** 
