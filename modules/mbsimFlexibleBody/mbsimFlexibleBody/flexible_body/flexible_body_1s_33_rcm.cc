@@ -24,6 +24,7 @@
 #include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
 #include "mbsimFlexibleBody/utils/revcardan.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/utils.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/frame.h"
 #include <mbsim/environment.h>
@@ -333,7 +334,7 @@ namespace MBSimFlexibleBody {
       else
         throw MBSimError("Error in dimension of q0 of FlexibleBody1s33RCM \"" + name + "\"!");
     }
-    
+
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
     Vec u0Tmp(0,INIT,0);
@@ -420,7 +421,7 @@ namespace MBSimFlexibleBody {
 
     e=element->FirstChildElement(MBSIMFLEXNS"radiusOfContourCylinder");
     setCylinder(getDouble(e));
-    
+
     e=element->FirstChildElement(MBSIMFLEXNS"dampingOfMaterial");
     double thetaEps=getDouble(e->FirstChildElement(MBSIMFLEXNS"prolongational"));
     double thetaKappa0=getDouble(e->FirstChildElement(MBSIMFLEXNS"torsional"));
@@ -437,9 +438,8 @@ namespace MBSimFlexibleBody {
 #endif
   }
 
-  void FlexibleBody1s33RCM::saveProfile(const std::string& filename, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s33RCM::exportProfile(const string& filename, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
-    int deg = 3;
 
     PlNurbsCurved curve;
     if (!openStructure) {
@@ -450,16 +450,15 @@ namespace MBSimFlexibleBody {
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
         updateKinematicsForFrame(cp, position);
-        double factor = 500; //TODO: delete later on (good for testing and looking at it as a ps-file)
 
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0) * factor, cp.getFrameOfReference().getPosition()(1) * factor, cp.getFrameOfReference().getPosition()(2) * factor, 1);
+        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
       }
 
       /*create own vVec and vvec like in nurbsdisk_2s*/
       PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
       PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
 
-      const double stepU = 1. / Elements;
+      const double stepU = L / Elements;
 
       uvec[0] = 0;
       for (int i = 1; i < uvec.size(); i++) {
@@ -480,25 +479,51 @@ namespace MBSimFlexibleBody {
 
         cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
       }
-
-      /*Testing
-
-       int j = 0;
-       for (double i = 0; i < 1; i += stepU) {
-       cout << "i=" << i << endl << curve.pointAt(i) << endl;
-       cout << Nodelist[j] << endl;
-       j++;
-       }
-
-       cout << "Test of Nurbs-Curve" << endl;
-
-       END - Testing*/
     }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
-
   }
 
+  void FlexibleBody1s33RCM::importProfile(const string & filename) {
+#ifdef HAVE_NURBS
+
+    PlNurbsCurved curve;
+    curve.read(filename.c_str());
+
+    //double L = curve.length(); // TODO ungenauer als mit L
+    l0 = L/Elements;
+    Vec q0Dummy(q0.size(),INIT,0.);
+
+    for(int i = 0; i < Elements; i++) {
+      Point3Dd posStart = curve.pointAt(i*l0);
+      Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
+      Point3Dd posHalf = curve.pointAt(i*l0 + l0/2.);
+      Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
+      Point3Dd tangStart = curve.derive3D(i*l0, 1);
+      Point3Dd tangHalf = curve.derive3D(i*l0 + l0/2., 1);
+      Point3Dd zAxis; zAxis.z() = 1.;
+      Point3Dd norStart = crossProduct(tangStart,zAxis);
+
+      q0Dummy(i*10)   = posStart.x(); // x
+      q0Dummy(i*10+1) = posStart.y(); // y
+      q0Dummy(i*10+2) = posStart.z(); // z
+      if(norStart.y()<0) { q0Dummy(i*10+3) = ArcTan(-norStart.y(),norStart.z()); } // angle around x-axis
+      else { q0Dummy(i*10+3) = ArcTan(norStart.y(),norStart.z()); }
+      if(tangStart.x()>0) { q0Dummy(i*10+4) = ArcTan(tangStart.z(),tangStart.x())-M_PI/2.; } // angle around y-axis
+      else { q0Dummy(i*10+4) = ArcTan(tangStart.z(),-tangStart.x())-M_PI/2.; }
+      q0Dummy(i*10+5) = ArcTan(tangStart.x(),tangStart.y())-2.*M_PI; // angle around z-axis
+
+      q0Dummy(i*10+6) = -absolute((pos1Quart.y()-posHalf.y())*(-tangHalf.z()) - (pos1Quart.z()-posHalf.z())*(-tangHalf.y()))/sqrt(tangHalf.y()*tangHalf.y() + tangHalf.z()*tangHalf.z()); // cL1
+      q0Dummy(i*10+7) = -absolute((pos3Quart.y()-posHalf.y())*tangHalf.z() - (pos3Quart.z()-posHalf.z())*tangHalf.y())/sqrt(tangHalf.y()*tangHalf.y() + tangHalf.z()*tangHalf.z()); // cR1
+      q0Dummy(i*10+8) = -absolute((pos1Quart.x()-posHalf.x())*(-tangHalf.y()) - (pos1Quart.y()-posHalf.y())*(-tangHalf.x()))/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cL2
+      q0Dummy(i*10+9) = -absolute((pos3Quart.x()-posHalf.x())*tangHalf.y() - (pos3Quart.y()-posHalf.y())*tangHalf.x())/sqrt(tangHalf.x()*tangHalf.x() + tangHalf.y()*tangHalf.y()); // cR2
+    }
+    setq0(q0Dummy);
+
+#else
+    throw MBSimError("No Nurbs-Library installed ...");
+#endif
+  }
 }
 

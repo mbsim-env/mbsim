@@ -383,9 +383,8 @@ namespace MBSimFlexibleBody {
     BuildElements();
   }
 
-  void FlexibleBody1s21RCM::saveProfile(const string& filename, const bool &writePsFile /*= false*/) {
+  void FlexibleBody1s21RCM::exportProfile(const string& filename, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
 #ifdef HAVE_NURBS
-    int deg = 3;
 
     PlNurbsCurved curve;
     if (!openStructure) {
@@ -396,9 +395,8 @@ namespace MBSimFlexibleBody {
         if (i >= Elements)
           cp.getNodeNumber() = i - Elements;
         updateKinematicsForFrame(cp, position);
-        double factor = 1; //TODO: delete later on (good for testing and looking at it as a ps-file)
 
-        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0) * factor, cp.getFrameOfReference().getPosition()(1) * factor, cp.getFrameOfReference().getPosition()(2) * factor, 1);
+        Nodelist[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
       }
 
       /*create own vVec and vvec like in nurbsdisk_2s*/
@@ -426,21 +424,6 @@ namespace MBSimFlexibleBody {
 
         cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
       }
-
-      /*Testing
-
-      int j = 0;
-      for (double i = 0; i < 1; i += stepU) {
-        cout << "i=" << i << endl << curve.pointAt(i) << endl;
-        cout << Nodelist[j] << endl;
-        j++;
-      }
-
-      for (double i = 0; i < curve.knot(curve.knot().n() - 1); i += curve.knot(curve.degree() + 1)) {
-        cout << "i = " << i << "with point " << endl << curve.pointAt(i).x() << " , " << curve.pointAt(i).y() << " , " << curve.pointAt(i).z() << endl;
-      }
-
-      END - Testing*/
     }
 #else
     throw MBSimError("No Nurbs-Library installed ...");
@@ -448,48 +431,46 @@ namespace MBSimFlexibleBody {
 
   }
 
-  void FlexibleBody1s21RCM::loadProfile(const string & filename) {
+  void FlexibleBody1s21RCM::importProfile(const string & filename) {
 #ifdef HAVE_NURBS
 
     PlNurbsCurved curve;
     curve.read(filename.c_str());
 
     //double L = curve.length(); // TODO ungenauer als mit L
-    l0 = L/Elements;
+    double l0 = L/Elements;
     Vec q0Dummy(q0.size(),INIT,0.);
 
     for(int i = 0; i < Elements; i++) {
       Point3Dd posStart = curve.pointAt(i*l0);
       Point3Dd pos1Quart = curve.pointAt(i*l0 + l0/4.);
+      Point3Dd posHalf = curve.pointAt(i*l0 + l0/2.);
       Point3Dd pos3Quart = curve.pointAt(i*l0 + l0*3./4.);
-      Point3Dd posEnd = curve.pointAt(i*l0 + l0);
       Point3Dd velStart = curve.derive3D(i*l0, 1);
-      Point3Dd velEnd = curve.derive3D(i*l0 + l0, 1);
+      Point3Dd velHalf = curve.derive3D(i*l0 + l0/2., 1);
 
       q0Dummy(i*5)   = posStart.x(); // x
       q0Dummy(i*5+1) = posStart.y(); // y
       q0Dummy(i*5+2) = ArcTan(velStart.x(),velStart.y()); // phi
-      if(i>0)
-        if(q0Dummy(i*5+2) < q0Dummy((i-1)*5+2))
-          q0Dummy(i*5+2)+=2*M_PI;
-      q0Dummy(i*5+3) = absolute((pos1Quart.x()-posStart.x())*velStart.y() - (pos1Quart.y()-posStart.y())*velStart.x())/norm2(velStart); // c
-      q0Dummy(i*5+4) = absolute((pos3Quart.x()-posEnd.x())*velEnd.y() - (pos3Quart.y()-posEnd.y())*velEnd.x())/norm2(velEnd); // d
+
+      q0Dummy(i*5+3) = -absolute((pos1Quart.x()-posHalf.x())*(-velHalf.y()) - (pos1Quart.y()-posHalf.y())*(-velHalf.x()))/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cL
+      q0Dummy(i*5+4) = -absolute((pos3Quart.x()-posHalf.x())*velHalf.y() - (pos3Quart.y()-posHalf.y())*velHalf.x())/sqrt(velHalf.x()*velHalf.x() + velHalf.y()*velHalf.y()); // cR
     }
     setq0(q0Dummy);
 
     /*Testing
 
-     int j = 0;
-     for (double i = 0; i < 1; i += stepU) {
-     cout << "i=" << i << endl << curve.pointAt(i) << endl;
-     cout << Nodelist[j] << endl;
-     j++;
-     }
-     cout << "Test of Nurbs-Curve" << endl;
-     string psfile = "test.ps";
-     cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+      int j = 0;
+      for (double i = 0; i < 1; i += stepU) {
+      cout << "i=" << i << endl << curve.pointAt(i) << endl;
+      cout << Nodelist[j] << endl;
+      j++;
+      }
+      cout << "Test of Nurbs-Curve" << endl;
+      string psfile = "test.ps";
+      cout << curve.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
 
-     END - Testing*/
+      END - Testing*/
 #else
     throw MBSimError("No Nurbs-Library installed ...");
 #endif
