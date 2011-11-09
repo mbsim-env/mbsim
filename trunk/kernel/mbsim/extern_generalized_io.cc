@@ -42,7 +42,6 @@ namespace MBSim {
       for(unsigned int i=0; i<applyForceAlsoTo.size(); i++)
         applyForceAlsoTo[i].ref->geth()(applyForceAlsoTo[i].index)+=applyForceAlsoTo[i].factor*la(0);
     }
-   
   }
 
   void ExternGeneralizedIO::updateg(double) {
