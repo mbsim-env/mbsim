@@ -24,7 +24,7 @@ if "%1"=="-h" goto help
 if "%1"=="--help" goto help
 goto help_cont
 :help
-  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate]"
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep]"
   echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
@@ -36,6 +36,8 @@ goto help_cont
   echo ""
   echo "--onlypreprocess     Stop after the preprocessing stage"
   echo "--donotintegrate     Stop after the initialization stage, do not integrate"
+  echo "--stopafterfirststep Stop after outputting the first step (usually at t=0)"
+  echo "                     This generates a HDF5 output file with only one time serie"
   echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
   echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
   echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
@@ -52,6 +54,10 @@ if "%1" == "--onlypreprocess" (
 set NOINT=false
 if "%1" == "--donotintegrate" (
   set NOINT=true
+  shift
+)
+if "%1" == "--stopafterfirststep" (
+  set ONLY1OUT=true
   shift
 )
 if "%1" == "--mbsimparam" (
@@ -81,10 +87,14 @@ del %PPMBSIM% %PPMBSIMINT% 2> NUL
 %MBXMLUTILSBIN%/mbxmlutilspp %PARAM% %MBSIM% %MBXMLUTILSSCHEMA%/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd %PARAMINT% %MBSIMINT% %MBXMLUTILSSCHEMA%/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || goto end
 
 if "%ONLYPP%" == "false" (
-  if "%NOINT%" == "false" (
-    %bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
-  ) else (
+  if "%NOINT%" == "true" (
     %bindir%/mbsimflatxml --donotintegrate %PPMBSIM% %PPMBSIMINT% || goto end
+  ) else (
+    if "%ONLY1OUT%" == "true" (
+      %bindir%/mbsimflatxml --stopafterfirststep %PPMBSIM% %PPMBSIMINT% || goto end
+    ) else (
+      %bindir%/mbsimflatxml %PPMBSIM% %PPMBSIMINT% || goto end
+    )
   )
 )
 

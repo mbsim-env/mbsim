@@ -22,7 +22,7 @@ test $MBXMLUTILSBINDIR && MBXMLUTILSBIN=$MBXMLUTILSBINDIR
 
 # help
 if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
-  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate]"
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep]"
   echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
@@ -34,6 +34,8 @@ if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
   echo ""
   echo "--onlypreprocess     Stop after the preprocessing stage"
   echo "--donotintegrate     Stop after the initialization stage, do not integrate"
+  echo "--stopafterfirststep Stop after outputting the first step (usually at t=0)"
+  echo "                     This generates a HDF5 output file with only one time serie"
   echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
   echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
   echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
@@ -50,6 +52,10 @@ fi
 NOINT="false"
 if [ "_$1" = "_--donotintegrate" ]; then
   NOINT="true"
+  shift
+fi
+if [ "_$1" = "_--stopafterfirststep" ]; then
+  ONLY1OUT="true"
   shift
 fi
 if [ "_$1" = "_--mbsimparam" ]; then
@@ -77,9 +83,13 @@ rm -f $PPMBSIM $PPMBSIMINT
 $MBXMLUTILSBIN/mbxmlutilspp $PARAM $MBSIM $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd $PARAMINT $MBSIMINT $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || exit 1
 
 if [ $ONLYPP = "false" ]; then
-  if [ $NOINT = "false" ]; then
-    $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
-  else
+  if [ $NOINT = "true" ]; then
     $bindir/mbsimflatxml --donotintegrate $PPMBSIM $PPMBSIMINT || exit 1
+  else
+    if [ $ONLY1OUT = "true" ]; then
+      $bindir/mbsimflatxml --stopafterfirststep $PPMBSIM $PPMBSIMINT || exit 1
+    else
+      $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
+    fi
   fi
 fi
