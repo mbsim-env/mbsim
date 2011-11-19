@@ -15,7 +15,8 @@ namespace MBSim {
 int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolver*& dss) {
   // help
   if(argc<3 || argc>4) {
-    cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector] <mbsimfile> <mbsimintegratorfile>"<<endl;
+    cout<<"Usage: mbsimflatxml [--donotintegrate|--savestatevector|--stopafterfirststep]"<<endl;
+    cout<<"                    <mbsimfile> <mbsimintegratorfile>"<<endl;
     cout<<endl;
     cout<<"Copyright (C) 2004-2009 MBSim Development Team"<<endl;
     cout<<"This is free software; see the source for copying conditions. There is NO"<<endl;
@@ -24,6 +25,8 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
     cout<<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl;
     cout<<endl;
     cout<<"--donotintegrate        Stop after the initialization stage, do not integrate"<<endl;
+    cout<<"--stopafterfirststep    Stop after outputting the first step (usually at t=0)"<<endl;
+    cout<<"                        This generates a HDF5 output file with only one time serie"<<endl;
     cout<<"--savefinalstatevector  Save the state vector to the file \"statevector.asc\" after integration"<<endl;
     cout<<"<mbsimfile>             The preprocessed mbsim xml file"<<endl;
     cout<<"<mbsimintegratorfile>   The preprocessed mbsim integrator xml file"<<endl;
@@ -37,7 +40,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
 
   int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0)
+  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector") || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
 
 
@@ -84,7 +87,7 @@ int MBSimXML::initDynamicSystemSolver(int argc, char *argv[], DynamicSystemSolve
 
 int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0)
+  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
 
   TiXmlElement *e;
@@ -109,6 +112,12 @@ int MBSimXML::initIntegrator(int argc, char *argv[], Integrator *&integrator) {
   }
   integrator->initializeUsingXML(e);
   delete doc;
+
+  // handle command line options
+  if(strcmp(argv[1],"--stopafterfirststep")==0) {
+    // reset integrator end time to start time to force only one output
+    integrator->setEndTime(integrator->getStartTime());
+  }
 
   return 0;
 }
