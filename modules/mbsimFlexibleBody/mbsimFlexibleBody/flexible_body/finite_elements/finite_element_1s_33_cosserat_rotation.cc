@@ -49,8 +49,18 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s33CosseratRotation::computeElasticEnergy(const fmatvec::Vec& qG) {
-    // TODO bending and torsion energy
-    return 0.;
+    Vec phi = (qG(0,2)+qG(6,8))/2.;
+    Vec dphids = (qG(6,8)-qG(0,2))/l0;
+
+    Vec tangent = ag->computet(phi);
+    Vec normal = ag->computen(phi);
+    Vec binormal = ag->computeb(phi);
+
+    SqrMat dtangentdphi = ag->computetq(phi);
+    SqrMat dnormaldphi = ag->computenq(phi);
+    SqrMat dbinormaldphi = ag->computebq(phi);
+
+    return 0.5*l0*(G*I0*pow(binormal.T()*dnormaldphi*dphids,2.)+E*I1*pow(tangent.T()*dbinormaldphi*dphids-k10,2.)+E*I2*pow(normal.T()*dtangentdphi*dphids-k20,2.));
   }
 
 }
