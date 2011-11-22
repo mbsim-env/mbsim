@@ -450,7 +450,6 @@ namespace MBSimFlexibleBody {
   
   void FlexibleBody1s33Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec,Vec& gloVec) {
     int j = 6*n; // start index in entire beam coordinates
-    
     if(n>0 && n<Elements) { // no problem case
       gloVec(j-3,j+5) += locVec; // staggered grid -> rotation offset
     }
