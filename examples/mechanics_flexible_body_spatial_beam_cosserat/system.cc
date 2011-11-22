@@ -28,7 +28,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I2 = 1./12.*b0*b0*b0*b0; 
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
-  int elements = 20; // number of finite elements
+  int elements = 3; // number of finite elements
 
   FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
   rod->setLength(l0);

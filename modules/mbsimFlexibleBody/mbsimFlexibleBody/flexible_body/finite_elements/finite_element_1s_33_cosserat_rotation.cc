@@ -53,35 +53,48 @@ namespace MBSimFlexibleBody {
     SqrMat dbinormaldphi = ag->computebq(phi);
 
     /* differentiation of 'bending and torsion energy' with respect to qG */
-    double GI0ktilde0 = G*I0*binormal.T()*dnormaldphi*dphids;
-    Vec ktilde0_0 = 0.5*dbinormaldphi.T()*dnormaldphi*phi;
+    //double GI0ktilde0 = G*I0*binormal.T()*dnormaldphi*dphids;
+    Vec ktilde0_0 = 0.5*dbinormaldphi.T()*dnormaldphi*dphids;
     Vec ktilde0_1 = dnormaldphi.T()*binormal/l0;
     Vec ktilde0_2 = 0.5*(ag->computenqt(phi,dphids)).T()*binormal;
     Vec dBTtorsiondqG(9,INIT,0.);
     dBTtorsiondqG(0,2) = ktilde0_0 - ktilde0_1 + ktilde0_2;
     dBTtorsiondqG(6,8) = ktilde0_0 + ktilde0_1 + ktilde0_2;
-    dBTtorsiondqG *= GI0ktilde0;
+    dBTtorsiondqG *= 0.; //GI0ktilde0;
+    //cout << dBTtorsiondqG << endl;
 
     double EI1ktilde1 = E*I1*(tangent.T()*dbinormaldphi*dphids-k10);
-    Vec ktilde1_0 = 0.5*dtangentdphi.T()*dbinormaldphi*phi;
+    cout << tangent << endl;
+    cout << dphids << endl;
+    cout << dbinormaldphi << endl;
+    cout << k10 << endl;
+    cout << EI1ktilde1 << endl;
+    Vec ktilde1_0 = 0.5*dtangentdphi.T()*dbinormaldphi*dphids;
     Vec ktilde1_1 = dbinormaldphi.T()*tangent/l0;
     Vec ktilde1_2 = 0.5*(ag->computebqt(phi,dphids)).T()*tangent;
+    cout << ktilde1_0 << endl;
+    cout << ktilde1_1 << endl;
+    cout << ktilde1_2 << endl;
     Vec dBTbending1dqG(9,INIT,0.);
     dBTbending1dqG(0,2) = ktilde1_0 - ktilde1_1 + ktilde1_2;
     dBTbending1dqG(6,8) = ktilde1_0 + ktilde1_1 + ktilde1_2;
     dBTbending1dqG *= EI1ktilde1;
+    cout << dBTbending1dqG << endl;
 
-    double EI2ktilde2 = E*I2*(normal.T()*dtangentdphi*dphids-k20);
-    Vec ktilde2_0 = 0.5*dnormaldphi.T()*dtangentdphi*phi;
+    //double EI2ktilde2 = E*I2*(normal.T()*dtangentdphi*dphids-k20);
+    Vec ktilde2_0 = 0.5*dnormaldphi.T()*dtangentdphi*dphids;
     Vec ktilde2_1 = dtangentdphi.T()*normal/l0;
     Vec ktilde2_2 = 0.5*(ag->computetqt(phi,dphids)).T()*normal;
     Vec dBTbending2dqG(9,INIT,0.);
     dBTbending2dqG(0,2) = ktilde2_0 - ktilde2_1 + ktilde2_2;
     dBTbending2dqG(6,8) = ktilde2_0 + ktilde2_1 + ktilde2_2;
-    dBTbending2dqG *= EI2ktilde2;
+    dBTbending2dqG *= 0.; //EI2ktilde2;
+    //cout << dBTbending2dqG << endl;
 
     /* generalized forces */
-    h = (-l0)*(dBTtorsiondqG+dBTbending1dqG+dBTbending2dqG);
+    h = (dBTtorsiondqG+dBTbending1dqG+dBTbending2dqG)*(-l0);
+    cout << h << endl;
+    throw;
   }
 
   double FiniteElement1s33CosseratRotation::computeElasticEnergy(const fmatvec::Vec& qG) {
