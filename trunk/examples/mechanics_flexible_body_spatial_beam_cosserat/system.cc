@@ -28,15 +28,14 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   double I2 = 1./12.*b0*b0*b0*b0; 
   double I0 = I1 + I2;
   double rho = 9.2e2; // density
-  int elements = 3; // number of finite elements
+  int elements = 20; // number of finite elements
 
-  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",false);
+  FlexibleBody1s33Cosserat* rod = new FlexibleBody1s33Cosserat("Rod",true);
   rod->setLength(l0);
   rod->setEGModuls(E,G);
   rod->setCrossSectionalArea(A);
   rod->setMomentsInertia(I1,I2,I0);
   rod->setDensity(rho);
-  rod->setCurlRadius(l0/(2.*M_PI),0.);
   //rod->setMassProportionalDamping(20.);
   rod->setMaterialDamping(0.1,0.1,0.1);
   rod->setFrameOfReference(this->getFrame("I"));
@@ -63,16 +62,25 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 #endif
 
   // circle shape
-  Vec q0 = Vec(6*elements,INIT,0.);
-  double R = l0/(2.*M_PI); // stretched circle
-  double dphi = (2*M_PI)/elements;
-  double phi0 = M_PI/2. + dphi;
-  for(int i=0; i<elements; i++) { 
-    double phi = phi0 - i*dphi;	
-    q0(6*i) = R*cos(phi);
-    q0(6*i+1) = R*sin(phi);
-    q0(6*i+5) = phi - dphi/2.-M_PI/2.;
+  //rod->setCurlRadius(l0/(2.*M_PI),0.);
+  //Vec q0 = Vec(6*elements,INIT,0.);
+  //double R = l0/(2.*M_PI); // stretched circle
+  //double dphi = (2*M_PI)/elements;
+  //double phi0 = M_PI/2. + dphi;
+  //for(int i=0; i<elements; i++) { 
+  //  double phi = phi0 - i*dphi;	
+  //  q0(6*i) = R*cos(phi);
+  //  q0(6*i+1) = R*sin(phi);
+  //  q0(6*i+5) = phi - dphi/2.-M_PI/2.;
+  //}
+
+  // relaxed
+  rod->setCurlRadius(1e2,0.);
+  Vec q0 = Vec(6*elements+3,INIT,0.);
+  for(int i=0; i<=elements; i++) { 
+    q0(6*i) = i*l0/elements;
   }
+  
   rod->setq0(q0);
   this->addObject(rod);
 }
