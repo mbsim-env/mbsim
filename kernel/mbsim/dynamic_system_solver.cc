@@ -32,13 +32,6 @@
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
 
-#ifndef MINGW
-#  include<sys/stat.h>
-#else
-#  include<io.h>
-#  define mkdir(a,b) mkdir(a)
-#endif
-
 #include <H5Cpp.h>
 #include <hdf5serie/fileserie.h>
 #include <hdf5serie/simpleattribute.h>
