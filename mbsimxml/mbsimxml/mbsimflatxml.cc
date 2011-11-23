@@ -40,7 +40,7 @@ int MBSimXML::preInitDynamicSystemSolver(int argc, char *argv[], DynamicSystemSo
 
 
   int startArg=1;
-  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector") || strcmp(argv[1],"--stopafterfirststep")==0)
+  if(strcmp(argv[1],"--donotintegrate")==0 || strcmp(argv[1],"--savefinalstatevector")==0 || strcmp(argv[1],"--stopafterfirststep")==0)
     startArg=2;
 
 
