@@ -22,7 +22,8 @@ test $MBXMLUTILSBINDIR && MBXMLUTILSBIN=$MBXMLUTILSBINDIR
 
 # help
 if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
-  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep]"
+  echo "Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"
+  echo "                 --autoreload]"
   echo "                [--mbsimparam <mbsimparameterfile>] <mbsimfile>"
   echo "                [--intparam <integratorparameterfile>] <integratorfile>"
   echo ""
@@ -36,6 +37,8 @@ if [ $# -eq 0 -o "_$1" = "_-h" -o "_$1" = "_--help" ]; then
   echo "--donotintegrate     Stop after the initialization stage, do not integrate"
   echo "--stopafterfirststep Stop after outputting the first step (usually at t=0)"
   echo "                     This generates a HDF5 output file with only one time serie"
+  echo "--autoreload         Same as --stopafterfirststep but rerun mbsimxml each time"
+  echo "                     a input file is newer than the output file"
   echo "--mbsimparam <file>  Use <file> as parameter file for mbsim xml file"
   echo "<mbsimfile>          Use <mbsimfile> as mbsim xml file"
   echo "--intparam <file>    Use <file> as parameter file for mbsim integrator xml file"
@@ -49,13 +52,17 @@ if [ "_$1" = "_--onlypreprocess" ]; then
   ONLYPP="true"
   shift
 fi
-NOINT="false"
 if [ "_$1" = "_--donotintegrate" ]; then
-  NOINT="true"
+  NOINT="--donotintegrate"
   shift
 fi
 if [ "_$1" = "_--stopafterfirststep" ]; then
-  ONLY1OUT="true"
+  ONLY1OUT="--stopafterfirststep"
+  shift
+fi
+if [ "_$1" = "_--autoreload" ]; then
+  AUTORELOAD="--dependencies"
+  ONLY1OUT="--stopafterfirststep"
   shift
 fi
 if [ "_$1" = "_--mbsimparam" ]; then
@@ -67,6 +74,7 @@ else
 fi
 MBSIM=$1
 PPMBSIM=.pp.$(basename $MBSIM)
+DEPMBSIM=.dep.$(basename $MBSIM)
 shift
 if [ "_$1" = "_--intparam" ]; then
   PARAMINT=$2
@@ -77,19 +85,31 @@ else
 fi
 MBSIMINT=$1
 PPMBSIMINT=.pp.$(basename $MBSIMINT)
-
-rm -f $PPMBSIM $PPMBSIMINT
-
-$MBXMLUTILSBIN/mbxmlutilspp $PARAM $MBSIM $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd $PARAMINT $MBSIMINT $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || exit 1
-
-if [ $ONLYPP = "false" ]; then
-  if [ $NOINT = "true" ]; then
-    $bindir/mbsimflatxml --donotintegrate $PPMBSIM $PPMBSIMINT || exit 1
-  else
-    if [ $ONLY1OUT = "true" ]; then
-      $bindir/mbsimflatxml --stopafterfirststep $PPMBSIM $PPMBSIMINT || exit 1
-    else
-      $bindir/mbsimflatxml $PPMBSIM $PPMBSIMINT || exit 1
-    fi
-  fi
+if [ "_$AUTORELOAD" != "_" ]; then
+  AUTORELOAD="$AUTORELOAD $DEPMBSIM"
 fi
+
+# always run the first time
+RUN="true"
+while [ $RUN = "true" ]; do
+
+  rm -f $PPMBSIM $PPMBSIMINT
+
+  $MBXMLUTILSBIN/mbxmlutilspp $AUTORELOAD $PARAM $MBSIM $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSimXML/mbsimxml.xsd $PARAMINT $MBSIMINT $MBXMLUTILSSCHEMA/http___mbsim_berlios_de_MBSim/mbsimintegrator.xsd || exit 1
+
+  if [ $ONLYPP = "false" ]; then
+    $bindir/mbsimflatxml $NOINT $ONLY1OUT $PPMBSIM $PPMBSIMINT || exit 1
+  fi
+
+  # only run ones except --autoreload is given
+  RUN="false"
+  if [ "_$AUTORELOAD" != "_" ]; then
+    # check for dependent files being newer then the output file
+    while [ $RUN != "true" ]; do
+      sleep 0.25
+      for F in $(cat $DEPMBSIM); do
+        test $F -nt $PPMBSIM && RUN="true" # if newer run again
+      done
+    done
+  fi
+done

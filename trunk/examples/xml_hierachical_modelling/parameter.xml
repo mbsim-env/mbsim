@@ -2,7 +2,7 @@
   <vectorParameter name="rHG">[0;2]</vectorParameter>
   <vectorParameter name="alphaHG">[0;pi/4]</vectorParameter>
   <scalarParameter name="m">5</scalarParameter>
-  <scalarParameter name="h">0.5</scalarParameter>
+  <scalarParameter name="h">0.8</scalarParameter>
   <scalarParameter name="alphaUG">pi/4</scalarParameter>
   <scalarParameter name="m1">5</scalarParameter>
   <scalarParameter name="m2">2</scalarParameter>
