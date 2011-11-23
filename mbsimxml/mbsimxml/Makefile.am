@@ -1,4 +1,4 @@
-bin_SCRIPTS = mbsimxml mbsimxml.bat mbsimxmlinit.sh mbsimxmlinit.csh mbsimxmlinit.ksh mbsimxmlinit.bat
+bin_SCRIPTS = mbsimxml mbsimxml.bat
 
 
 lib_LTLIBRARIES = libmbsimflatxml.la
