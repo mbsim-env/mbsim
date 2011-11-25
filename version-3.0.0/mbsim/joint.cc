@@ -96,6 +96,8 @@ namespace MBSim {
     Wm = frame[0]->getOrientation()*momentDir;
 
     WrP0P1 = frame[1]->getPosition()-frame[0]->getPosition();
+    C.setOrientation(frame[0]->getOrientation());
+    C.setPosition(frame[0]->getPosition() + WrP0P1);
 
     g(IT) = Wf.T()*WrP0P1;
     g(IR) = x;
