@@ -29,17 +29,21 @@ namespace MBSim {
     protected:
       Function2<double,double,double> *func;
       std::vector<RigidBody*> body;
-      std::vector<double> ratio;
+      std::vector<double> ratio[2];
+      Frame *frame;
     public:
       Gear(const std::string &name);
       void updateh(double, int i=0);
       void updateW(double, int i=0);
       void updateg(double);
       void updategd(double);
+      void updatewb(double t, int i=0);
       void updatehRef(const fmatvec::Vec &hParent, int j=0);
       void updateWRef(const fmatvec::Mat &WParent, int j=0);
       void setDependentBody(RigidBody* body_) {body[0] = body_;}
-      void addDependency(RigidBody* body_, double ratio);
+      void addDependency(RigidBody* body_, double ratio1, double ratio2=0);
+      void connect(Frame* frame_) {frame = frame_;}
+     // {LinkMechanics::connect(frame);}
 
       bool isActive() const { return true; }
       bool gActiveChanged() { return false; }
