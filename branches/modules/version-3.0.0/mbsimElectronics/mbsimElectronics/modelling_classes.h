@@ -27,8 +27,8 @@ namespace MBSimElectronics {
     void addConnectedBranch(Branch* branch);
     void setFlag(int f) { flag = f; }
     int getFlag() const { return flag; }
-    void setParent(ElectronicComponent* p) { parent = p; }
-    ElectronicComponent* getParent() const { return parent; }
+    //void setParent(ElectronicComponent* p) { parent = p; }
+    //ElectronicComponent* getParent() const { return parent; }
     int getNumberOfConnectedTerminals() const {return connectedTerminal.size();}
     int getNumberOfConnectedBranches() const {return connectedBranch.size();}
     Branch* getBranch(int i) {return connectedBranch[i];}
@@ -39,6 +39,7 @@ namespace MBSimElectronics {
   void connectTerminal(Terminal *terminal1, Terminal *terminal2);
   void connectBranch(Branch *branch1, Branch *branch2);
 
+  //class ElectronicComponent : public MBSim::Element, MBSim::ModellingInterface {
   class ElectronicComponent : public MBSim::ModellingInterface {
     protected:
       std::vector<Terminal*> terminal;
