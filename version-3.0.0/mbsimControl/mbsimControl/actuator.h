@@ -52,7 +52,7 @@ namespace MBSimControl {
       virtual ~Actuator() {};
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
-      virtual void updateh(double t);
+      virtual void updateh(double t, int j=0);
       virtual void updateg(double t) {}
       virtual void updategd(double t) {};
       /***************************************************/
