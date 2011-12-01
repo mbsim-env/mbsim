@@ -79,7 +79,7 @@ namespace MBSim {
     if(stage==preInit) {
       Constraint::init(stage);
       for(unsigned int i=0; i<bi.size(); i++)
-	dependency.push_back(bi[i]);
+        dependency.push_back(bi[i]);
     }
     else
       Constraint::init(stage);
@@ -108,13 +108,13 @@ namespace MBSim {
   }
 
   void GearConstraint::setUpInverseKinetics() {
-   Gear *gear = new Gear(string("Gear")+name);
-   ds->addInverseKineticsLink(gear);
-   gear->setDependentBody(bd);
-   gear->connect(frame);
-   for(unsigned int i=0; i<bi.size(); i++) {
-     gear->addDependency(bi[i],ratio[0][i],ratio[1][i]);
-   }
+    Gear *gear = new Gear(string("Gear")+name);
+    ds->addInverseKineticsLink(gear);
+    gear->setDependentBody(bd);
+    gear->connect(frame);
+    for(unsigned int i=0; i<bi.size(); i++) {
+      gear->addDependency(bi[i],ratio[0][i],ratio[1][i]);
+    }
   }
 
   Constraint3::Constraint3(const std::string &name, RigidBody* body) : Constraint(name), bd(body) {
@@ -154,35 +154,35 @@ namespace MBSim {
     if(stage==resolveXMLPath) {
       if(saved_ref1!="" && saved_ref2!="")
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-    //}
-    //if(stage==modelBuildup) {
-     // Constraint::init(stage);
-      for(unsigned int i=0; i<bd1.size(); i++) 
-	bd1[i]->addDependency(this);
-      if(bd1.size()) {
-	for(unsigned int i=0; i<bd1.size()-1; i++) 
-	  if1.push_back(bd1[i]->frameIndex(bd1[i+1]->getFrameOfReference()));
-	if1.push_back(bd1[bd1.size()-1]->frameIndex(frame1));
-      }
-      for(unsigned int i=0; i<bd2.size(); i++)
-	bd2[i]->addDependency(this);
-      if(bd2.size()) {
-	for(unsigned int i=0; i<bd2.size()-1; i++) 
-	  if2.push_back(bd2[i]->frameIndex(bd2[i+1]->getFrameOfReference()));
-	if2.push_back(bd2[bd2.size()-1]->frameIndex(frame2));
-      }
-      Constraint::init(stage);
+      //}
+      //if(stage==modelBuildup) {
+      // Constraint::init(stage);
+    for(unsigned int i=0; i<bd1.size(); i++) 
+      bd1[i]->addDependency(this);
+    if(bd1.size()) {
+      for(unsigned int i=0; i<bd1.size()-1; i++) 
+        if1.push_back(bd1[i]->frameIndex(bd1[i+1]->getFrameOfReference()));
+      if1.push_back(bd1[bd1.size()-1]->frameIndex(frame1));
     }
+    for(unsigned int i=0; i<bd2.size(); i++)
+      bd2[i]->addDependency(this);
+    if(bd2.size()) {
+      for(unsigned int i=0; i<bd2.size()-1; i++) 
+        if2.push_back(bd2[i]->frameIndex(bd2[i+1]->getFrameOfReference()));
+      if2.push_back(bd2[bd2.size()-1]->frameIndex(frame2));
+    }
+    Constraint::init(stage);
+  }
     else if(stage==preInit) {
       Constraint::init(stage);
       if(bi)
-	dependency.push_back(bi);
+        dependency.push_back(bi);
     } 
     else if(stage==unknownStage) {
       if(!dT.cols()) 
-	dT.resize(3,0);
+        dT.resize(3,0);
       if(!dR.cols()) 
-	dR.resize(3,0);
+        dR.resize(3,0);
     } else
       Constraint::init(stage);
   }
@@ -245,13 +245,13 @@ namespace MBSim {
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->updateRelativeJacobians(t,if1[i]);
       for(unsigned int j=i+1; j<bd1.size(); j++) 
-	bd1[j]->updateRelativeJacobians(t,if1[j],bd1[i]->getWJTrel(),bd1[i]->getWJRrel());
+        bd1[j]->updateRelativeJacobians(t,if1[j],bd1[i]->getWJTrel(),bd1[i]->getWJRrel());
     }
 
     for(unsigned int i=0; i<bd2.size(); i++) {
       bd2[i]->updateRelativeJacobians(t,if2[i]);
       for(unsigned int j=i+1; j<bd2.size(); j++) 
-	bd2[j]->updateRelativeJacobians(t,if2[j],bd2[i]->getWJTrel(),bd2[i]->getWJRrel());
+        bd2[j]->updateRelativeJacobians(t,if2[j],bd2[i]->getWJTrel(),bd2[i]->getWJRrel());
     }
 
     for(unsigned int i=0; i<bd1.size(); i++) {
@@ -274,33 +274,33 @@ namespace MBSim {
   void JointConstraint::updateJacobians(double t, int jj) {
     if(jj == 0) {
 
-    for(unsigned int i=0; i<bd1.size(); i++)
-      bd1[i]->updateAccelerations(t,if1[i]);
-    for(unsigned int i=0; i<bd2.size(); i++)
-      bd2[i]->updateAccelerations(t,if2[i]);
+      for(unsigned int i=0; i<bd1.size(); i++)
+        bd1[i]->updateAccelerations(t,if1[i]);
+      for(unsigned int i=0; i<bd2.size(); i++)
+        bd2[i]->updateAccelerations(t,if2[i]);
 
-    SqrMat A(nu);
-    A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
-    A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
-    Mat B(nu,nh);
-    Mat JT0(3,nh);
-    Mat JR0(3,nh);
-    if(frame1->getJacobianOfTranslation().cols()) {
-      JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation().cols()-1))+=frame1->getJacobianOfTranslation();
-      JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation().cols()-1))+=frame1->getJacobianOfRotation();
-    }
-    if(frame2->getJacobianOfTranslation().cols()) {
-      JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation().cols()-1))-=frame2->getJacobianOfTranslation();
-      JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation().cols()-1))-=frame2->getJacobianOfRotation();
-    }
-    B(Index(0,dT.cols()-1),Index(0,nh-1)) = -dT.T()*JT0;
-    B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -dR.T()*JR0;
-    Vec b(nu);
-    b(0,dT.cols()-1) = -dT.T()*(frame1->getGyroscopicAccelerationOfTranslation()-frame2->getGyroscopicAccelerationOfTranslation());
-    b(dT.cols(),dT.cols()+dR.cols()-1) = -dR.T()*(frame1->getGyroscopicAccelerationOfRotation()-frame2->getGyroscopicAccelerationOfRotation());
+      SqrMat A(nu);
+      A(Index(0,dT.cols()-1),Index(0,nu-1)) = dT.T()*JT;
+      A(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nu-1)) = dR.T()*JR;
+      Mat B(nu,nh);
+      Mat JT0(3,nh);
+      Mat JR0(3,nh);
+      if(frame1->getJacobianOfTranslation().cols()) {
+        JT0(Index(0,2),Index(0,frame1->getJacobianOfTranslation().cols()-1))+=frame1->getJacobianOfTranslation();
+        JR0(Index(0,2),Index(0,frame1->getJacobianOfRotation().cols()-1))+=frame1->getJacobianOfRotation();
+      }
+      if(frame2->getJacobianOfTranslation().cols()) {
+        JT0(Index(0,2),Index(0,frame2->getJacobianOfTranslation().cols()-1))-=frame2->getJacobianOfTranslation();
+        JR0(Index(0,2),Index(0,frame2->getJacobianOfRotation().cols()-1))-=frame2->getJacobianOfRotation();
+      }
+      B(Index(0,dT.cols()-1),Index(0,nh-1)) = -dT.T()*JT0;
+      B(Index(dT.cols(),dT.cols()+dR.cols()-1),Index(0,nh-1)) = -dR.T()*JR0;
+      Vec b(nu);
+      b(0,dT.cols()-1) = -dT.T()*(frame1->getGyroscopicAccelerationOfTranslation()-frame2->getGyroscopicAccelerationOfTranslation());
+      b(dT.cols(),dT.cols()+dR.cols()-1) = -dR.T()*(frame1->getGyroscopicAccelerationOfRotation()-frame2->getGyroscopicAccelerationOfRotation());
 
-    J = slvLU(A,B); 
-    j = slvLU(A,b); 
+      J = slvLU(A,B); 
+      j = slvLU(A,b); 
     }
   }
 
@@ -340,8 +340,8 @@ namespace MBSim {
     bd1.push_back(getByPath<RigidBody>(e->Attribute("ref2"))); 
     e=element->FirstChildElement(MBSIMNS"dependentBodiesSecondSide");
     if(e) {
-    vector<RigidBody*> bd2;
-    bd2.push_back(getByPath<RigidBody>(e->Attribute("ref"))); 
+      vector<RigidBody*> bd2;
+      bd2.push_back(getByPath<RigidBody>(e->Attribute("ref"))); 
     }
     e=element->FirstChildElement(MBSIMNS"connect");
     cout << "still here1" << endl;
