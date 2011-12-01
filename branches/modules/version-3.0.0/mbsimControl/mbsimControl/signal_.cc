@@ -31,7 +31,7 @@ namespace MBSimControl {
 
   void Signal::init(InitStage stage) {
     if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         if(getPlotFeature(state)==enabled) {
           Vec y=getSignal();
