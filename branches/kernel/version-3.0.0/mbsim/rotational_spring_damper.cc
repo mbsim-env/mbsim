@@ -49,7 +49,7 @@ namespace MBSim {
     WM[0] =  WtorqueDir*la; // projected force in direction of WtorqueDir
     WM[1] = -WM[0];
     for(unsigned int i=0; i<2; i++) {
-      h[j][i]+=trans(frame[i]->getJacobianOfRotation())*WM[i];
+      h[j][i]+=trans(frame[i]->getJacobianOfRotation(j))*WM[i];
     }
   }
 
@@ -89,9 +89,9 @@ namespace MBSim {
 //    else
     if(stage==resize) {
       LinkMechanics::init(stage);
-      g.resize(body->getRotation()->getqSize());
-      gd.resize(body->getRotation()->getqSize());
-      la.resize(body->getRotation()->getqSize());
+      g.resize(1);
+      gd.resize(1);
+      la.resize(1);
     }
     else if(stage==MBSim::plot) {
       updatePlotFeatures();
