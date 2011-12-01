@@ -343,10 +343,8 @@ namespace MBSim {
       if(INFO) cout << "  initialising plot-files ..." << endl;
       Group::init(stage);
 #ifdef HAVE_OPENMBVCPPINTERFACE
-      if(getPlotFeature(plotRecursive)==enabled) {
-        openMBVGrp->writeXML();
-        if(truncateSimulationFiles) openMBVGrp->writeH5();
-      }
+      if(getPlotFeature(plotRecursive)==enabled)
+        openMBVGrp->write(true, truncateSimulationFiles);
 #endif
       if(INFO) cout << "...... done initialising." << endl << endl;
     }
