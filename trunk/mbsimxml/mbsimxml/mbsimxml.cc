@@ -1,3 +1,4 @@
+#include "config.h"
 #include <iostream>
 #include <list>
 #include <vector>
