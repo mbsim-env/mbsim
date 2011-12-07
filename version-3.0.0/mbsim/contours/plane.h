@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _PLANE_H_
@@ -31,7 +31,7 @@ namespace MBSim {
    * \date 2009-03-23 some comments (Thorsten Schindler)
    * \date 2009-10-30 visualization added (Markus Schneider)
    *
-   * normal equals first column in orientation matrix
+   * normal equals first column in orientation matrix (x-axis)
    */
   class Plane : public RigidContour {
     public:
@@ -43,6 +43,10 @@ namespace MBSim {
       
       /* INHERITED INTERFACE OF ELEMENT */
       std::string getType() const { return "Plane"; }
+      /***************************************************/
+      
+      /* INTERFACE OF CONTOUR */
+      virtual fmatvec::Vec computeLagrangeParameter(const fmatvec::Vec &WrPoint);
       /***************************************************/
 
 #ifdef HAVE_OPENMBVCPPINTERFACE
