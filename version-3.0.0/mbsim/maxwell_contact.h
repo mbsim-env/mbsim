@@ -137,7 +137,6 @@ namespace MBSim {
       //      virtual void checkActivegdd();
       //      virtual void checkAllgd();
       //      virtual void updateCondition();
-      virtual void resizeJacobians(int j);
       //      virtual void LinearImpactEstimation(fmatvec::Vec &gInActive_,
       //          fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_,
       //          int *IndActive_);
