@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef NONLINEAR_ALGEBRA_H_
@@ -24,6 +24,10 @@
 #include "fmatvec.h"
 
 namespace MBSim {
+
+  enum SolverType {
+    RegulaFalsiSolver, FixPointIterationSolver, NewtonMethodSolver
+  };
 
   /*! 
    * \brief Regular Falsi for one-dimensional root-finding
@@ -69,6 +73,83 @@ namespace MBSim {
       double tol;
   };
 
+  /**
+   * \brief FixpointIteration for multi-dimensional fixpoint-finding
+   * \author Kilian Grundl
+   * \date 2011-07-13 initial algorithm
+   */
+  class MultiDimFixPointIteration {
+    public:
+      /*
+       * \brief constructor
+       * \param fct pointer to used fix-point-function
+       */
+      MultiDimFixPointIteration(Function1<fmatvec::Vec, fmatvec::Vec> *function_);
+
+      /* GETTER / SETTER */
+      /*
+       * \brief returns info of iteration progress
+       * info == 0 :  a solution has been found
+       * info == -1:  no converge
+       * info == 1:   process (seems to) converge but hasn't finished
+       */
+      int getInfo() {
+        return info;
+      }
+      std::vector<double> getNorms() {
+        return norms;
+      }
+      double getNumberOfIterations() {
+        return iter;
+      }
+      double getNumberOfMaximalIterations() {
+        return itermax;
+      }
+      void setNumberOfMaximalIterations(int itermax_) {
+        itermax = itermax_;
+      }
+      double getTolerance() {
+        return tol;
+      }
+      void setTolerance(double tol_) {
+        tol = tol_;
+      }
+      /*******************/
+
+      fmatvec::Vec solve(const fmatvec::Vec &initialGuess);
+
+    private:
+      /**
+       * \brief fix-point function
+       */
+      Function1<fmatvec::Vec, fmatvec::Vec> *function;
+
+      /**
+       * \brief tolerance
+       */
+      double tol;
+
+      /**
+       *  \brief number of iterations
+       */
+      int iter;
+
+      /**
+       * \brief maximal iterations
+       */
+      double itermax;
+
+      /**
+       *  \brief vector of norms
+       */
+      std::vector<double> norms;
+
+      /**
+       *  \brief information variable about success of iteration
+       */
+      int info;
+  };
+
   /*! 
    * \brief Newton method for one-dimensional root-finding
    * \author Martin Foerg
@@ -87,6 +168,7 @@ namespace MBSim {
       int getNumberOfIterations() const { return iter; }
       int getInfo() const { return info; }
       void setMaximumNumberOfIterations(int itmax_) { itmax = itmax_; }
+      void setMaximumDampingSteps(int kmax_) { kmax = kmax_; }
       void setTolerance(double tol_) { tol = tol_; }
       /***************************************************/
 
@@ -134,8 +216,11 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       int getNumberOfIterations() const { return iter; }
+      int getNumberOfMaximalIterations() const { return itmax; }
       int getInfo() const { return info; }
+      std::vector<double> getNorms() { return norms; }
       void setMaximumNumberOfIterations(int itmax_) { itmax = itmax_; }
+      void setMaximumDampingSteps(int kmax_) { kmax = kmax_; }
       void setTolerance(double tol_) { tol = tol_; }
       /***************************************************/
 
@@ -160,13 +245,52 @@ namespace MBSim {
        * \brief maximum number of iterations, actual number of iterations, maximum number of damping steps, information about success 
        */
       int itmax, iter, kmax, info;
-      
+
+      /**
+       *  \brief vector of norms for each iteration step
+       */
+      std::vector<double> norms;
+
       /** 
        * \brief tolerance
        */
       double tol;
   };
+  
+  /*
+   * \brief Lemke Algorithm that solves an LCP with w = Mz + q, w^Tz = 0 and w >= 0, z >= 0
+   *
+   * \todo it is linear algebra, or optimisation, but actually no nonlinear algebra
+   * \todo stabilize the algorithm (examples are given in "A Numerically Robust LCP Solver for Simulating Articulated Rigid Bodies in Contact" (Katsu Yamane and  Yoshihiko Nakamura) )
+   * \todo make it faster (now it is Order of 2*n^2 (=GaussJordanEliminationStep) for one step) --> n^2 should be possible)
+   */
 
+  class LemkeAlgorithm {
+    public:
+      LemkeAlgorithm(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_, const bool & INFO_ = false) : M(M_), q(q_), INFO(INFO_) {
+        assert(M_.rows() == q.size());
+        assert(M_.cols() == q.size());
+      };
+
+      /**
+       * \brief solve algorithm adapted from : Fast Implementation of Lemke’s Algorithm for Rigid Body Contact Simulation (John E. Lloyd)
+       *
+       */
+      fmatvec::Vec solve() ;
+
+      virtual ~LemkeAlgorithm() {};
+    protected:
+      int findLexicographicMinimum(const fmatvec::Mat &A, const int & pivotColIndex);
+      bool LexicographicPositive(const fmatvec::Vec & v);
+      void GaussJordanEliminationStep(fmatvec::Mat &A, int pivotRowIndex, int pivotColumnIndex, const std::vector<size_t> & basis);
+      bool greaterZero(const fmatvec::Vec & vector);
+      bool validBasis(const std::vector<size_t> & basis);
+
+      fmatvec::SqrMat M;
+      fmatvec::Vec q;
+
+      bool INFO;
+  };
 }
 
 #endif /* NONLINEAR_ALGEBRA_H_ */

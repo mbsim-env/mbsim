@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: schneidm@users.berlios.de
+ * Contact: markus.ms.schneider@gmail.com
  */
 
 #ifndef _FUNCTION_LIBRARY_H_
@@ -252,6 +252,23 @@ namespace MBSim {
       fmatvec::Mat XYfac;
 
       void calcIndex(const double * x, fmatvec::Vec X, int * xSize, int * xIndexMinus, int * xIndexPlus);
+  };
+
+
+  class Polynom1_SS : public MBSim::DifferentiableFunction1<double> {
+    public:
+      Polynom1_SS() {}
+      void initializeUsingXML(TiXmlElement *element);
+
+      class Polynom1_SSEvaluation : public MBSim::Function1<double,double> {
+        public:
+          Polynom1_SSEvaluation(fmatvec::Vec a_) : MBSim::Function1<double,double>(), a(a_) {}
+          double operator()(const double& x, const void * =NULL);
+        private:
+          fmatvec::Vec a;
+      };
+
+      void setCoefficients(fmatvec::Vec a);
   };
 
 }
