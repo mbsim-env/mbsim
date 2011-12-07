@@ -13,7 +13,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -453,6 +453,23 @@ namespace MBSim {
       for(unsigned i=0; i<plotElement.size(); i++)
         plotElement[i]->plot(t,dt);
 #endif
+    }
+  }
+  
+  void DynamicSystem::plotAtSpecialEvent(double t, double dt) {
+    if(getPlotFeature(plotRecursive)==enabled) {
+      for(unsigned i=0; i<dynamicsystem.size(); i++)
+        dynamicsystem[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<object.size(); i++)
+        object[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<link.size(); i++)
+        link[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<extraDynamic.size(); i++)
+        extraDynamic[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<frame.size(); i++)
+        frame[i]->plotAtSpecialEvent(t,dt);
+      for(unsigned i=0; i<inverseKineticsLink.size(); i++)
+        inverseKineticsLink[i]->plotAtSpecialEvent(t,dt);
     }
   }
 

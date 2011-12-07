@@ -13,7 +13,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #ifndef _DYNAMIC_SYSTEM_H_
@@ -149,6 +149,7 @@ namespace MBSim {
       virtual std::string getType() const { return "DynamicSystem"; }
       virtual void setDynamicSystemSolver(DynamicSystemSolver* sys);
       virtual void plot(double t, double dt);
+      virtual void plotAtSpecialEvent(double t, double dt=1.);
       virtual void closePlot();
       /*****************************************************/
 
