@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  */
 
 #include <config.h>
@@ -139,7 +139,7 @@ namespace MBSim {
 
   void Body::addContour(Contour* contour_) {
     if(getContour(contour_->getName(),false)) { //Contourname exists already
-      throw MBSimError("The body \""+name+"\" can only comprise one contour by the name \""+contour_->getName()+"\"!");
+      throw MBSimError("ERROR in "+getName()+" (Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
       assert(getContour(contour_->getName(),false)==NULL);
     }
     contour.push_back(contour_);
@@ -148,7 +148,7 @@ namespace MBSim {
 
   void Body::addFrame(Frame* frame_) {
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
-      throw MBSimError("The body \""+name+"\" can only comprise one frame by the name \""+frame_->getName()+"\"!");
+      throw MBSimError("ERROR in "+getName()+" (Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
       assert(getFrame(frame_->getName(),false)==NULL);
     }
     frame.push_back(frame_);
@@ -163,7 +163,7 @@ namespace MBSim {
     }
     if(check) {
       if(!(i<contour.size()))
-        throw MBSimError("The body \""+name+"\" comprises no contour \""+name_+"\"!"); 
+        throw MBSimError("ERROR in "+getName()+" (Body::getContour): The body comprises no contour \""+name_+"\"!"); 
       assert(i<contour.size());
     }
     return NULL;
@@ -177,7 +177,7 @@ namespace MBSim {
     }             
     if(check) {
       if(!(i<frame.size()))
-        throw MBSimError("Error: The body \""+name+"\" comprises no frame \""+name_+"\"!"); 
+        throw MBSimError("ERROR in "+getName()+": (Body::getFrame): The body comprises no frame \""+name_+"\"!"); 
       assert(i<frame.size());
     }
     return NULL;
@@ -224,7 +224,7 @@ namespace MBSim {
       else if (container=="Contour")
         return getContour(searched_name);
       else
-        throw MBSimError("Unknown name of container!");
+        throw MBSimError("ERROR in "+getName()+" (Body::getByPathSearch): Unknown name of container!");
     }
   }
 
