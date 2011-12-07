@@ -87,15 +87,15 @@ namespace MBSimHydraulics {
     // TODO efficient calculation (not every loop is necessary)
     Mat JLocal;
     if(dependency.size()==0) {
-      if(M.size()==1)
+      if(M[0].size()==1)
         JLocal=Mat(1,1,INIT,1);
       else {
-        JLocal=Mat(1,M.size(),INIT,0);
+        JLocal=Mat(1,M[0].size(),INIT,0);
         JLocal(0,uInd[0])=1;
       }
     }
     else {
-      JLocal=Mat(1,M.size(),INIT,0);
+      JLocal=Mat(1,M[0].size(),INIT,0);
       dep_check.push_back(this);
       for (unsigned int i=0; i<dependencyOnOutflow.size(); i++) {
         const Mat Jdep=((RigidHLine*)dependencyOnOutflow[i])->calculateJacobian(dep_check);
@@ -124,11 +124,11 @@ namespace MBSimHydraulics {
   void RigidHLine::updateh(double t) {
     if (frameOfReference)
       pressureLossGravity=-trans(frameOfReference->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
-    h-=trans(Jacobian.row(0))*pressureLossGravity;
+    h[0]-=trans(Jacobian.row(0))*pressureLossGravity;
   }
       
   void RigidHLine::updateM(double t) {
-    M+=Mlocal(0,0)*JTJ(Jacobian); 
+    M[0]+=Mlocal(0,0)*JTJ(Jacobian); 
   }
 
   void RigidHLine::init(InitStage stage) {
@@ -147,7 +147,7 @@ namespace MBSimHydraulics {
         dependency.push_back(dependencyOnOutflow[i]);
     }
     else if(stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("Volume flow [l/min]");
         plotColumns.push_back("Mass flow [kg/min]");
@@ -289,7 +289,7 @@ namespace MBSimHydraulics {
         throw MBSimError("ERROR! StatelessOrifice \""+name+"\": fromNode and toNode are the same!");
     }
     else if (stage==MBSim::plot) {
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if (getPlotFeature(plotRecursive)==enabled) {
         plotColumns.push_back("pInflow [bar]");
         plotColumns.push_back("pOutflow [bar]");

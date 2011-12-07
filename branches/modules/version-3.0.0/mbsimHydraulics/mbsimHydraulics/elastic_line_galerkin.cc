@@ -65,7 +65,7 @@ namespace MBSimHydraulics {
       HLine::init(stage);
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
-        g=trans(parent->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+        g=trans(static_cast<DynamicSystem*>(parent)->getFrame("I")->getOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
       else
         g=0;
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
@@ -118,7 +118,7 @@ namespace MBSimHydraulics {
         setPlotFeature(globalPosition, enabled);
         setPlotFeature(globalVelocity, enabled);
       }
-      updatePlotFeatures(parent);
+      updatePlotFeatures();
       if(getPlotFeature(plotRecursive)==enabled) {
         plotdim=relPlotPoints.size();
         plotVecW.resize(mdim, plotdim);
@@ -151,8 +151,8 @@ namespace MBSimHydraulics {
     T=SqrMat(mdim, EYE);
   }
 
-  void ElasticLineGalerkin::updateM(double t) {
-    M=MFac;
+  void ElasticLineGalerkin::updateM(double t, int j) {
+    M[j]=MFac;
   }
 
   void ElasticLineGalerkin::updateStateDependentVariables(double t) {
@@ -160,9 +160,9 @@ namespace MBSimHydraulics {
     QOut(0)=-Area*trans(wE)*u;
   }
 
-  void ElasticLineGalerkin::updateh(double t) {
-    HLine::updateh(t);
-    h = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
+  void ElasticLineGalerkin::updateh(double t, int j) {
+    HLine::updateh(t,j);
+    h[j] = (-k*WInt + p0*(wE-wA))*Area - D*u - K*q;
   }
 
   void ElasticLineGalerkin::plot(double t, double dt) {
