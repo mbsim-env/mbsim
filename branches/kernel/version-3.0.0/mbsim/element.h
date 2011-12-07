@@ -14,7 +14,7 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  * 
- * Contact: mfoerg@users.berlios.de
+ * Contact: martin.o.foerg@googlemail.com
  *          rzander@users.berlios.de
  */
 
@@ -142,6 +142,13 @@ namespace MBSim {
       virtual void plot(double t, double dt = 1);
 
       /**
+       * \brief plots time dependent data at special events
+       * \param simulation time
+       * \param simulation time step size for derivative calculation
+       */
+      virtual void plotAtSpecialEvent(double t, double dt = 1) {}
+
+      /**
        * \brief closes plot file
        */
       virtual void closePlot();
@@ -151,6 +158,20 @@ namespace MBSim {
        * \return element name
        */
       const std::string& getName() const { return name; }
+
+      /**
+       * \return the short name of the element (without hierarchical structure)
+       */
+      const std::string getShortName() const {
+        std::string shortname = "";
+
+        size_t i = name.length() - 1;
+
+        while ((name[i-1] != '/') and (i > 0)) {
+          i--;
+        }
+        return name.substr(i, name.length() - i);
+      }
 
       /**
        * \param element name
@@ -216,7 +237,7 @@ namespace MBSim {
           if (dynamic_cast<T*>(e))
             return (T*)(e);
           else
-            throw MBSimError("Element \"" + path + "\" not found or not of wanted type.");
+            throw MBSimError("ERROR in "+getName()+" (Element::getByPath): Element \""+path+"\" not found or not of wanted type!");
         }
 
       /**
