@@ -76,6 +76,7 @@ namespace MBSim {
     generalizedLinkForce, /*!< plot the smooth/non smooth generalized link force (l) */
     linkKinematics, /*!< plot the kinematic of links (g, gd) */
     stopVector, /*!< plot the stop vector (sv) */
+    debug, /*!< plot internal sizes */
     LASTPLOTFEATURE
   };
 
