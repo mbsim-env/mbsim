@@ -18,6 +18,7 @@
  */
 
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
 
 using namespace fmatvec;
 
@@ -70,3 +71,11 @@ Vec tildetovec(const SqrMat &A) {
   return x;
 }
 
+double ArcTan(double x, double y) {
+  double phi;
+  phi = atan2(y, x);
+
+  if (phi < -MBSim::macheps())
+    phi += 2 * M_PI;
+  return phi;
+}
